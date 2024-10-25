@@ -32,7 +32,7 @@ func TestParseAndPrintNodes(t *testing.T) {
 		path := filepath.ToSlash(sourceFile.fileName)
 		path = path[len(repo.TypeScriptSubmodulePath)+1:]
 		path = strings.ReplaceAll(path, "/", "_")
-		outputFileName := path + ".ast.txt"
+		outputFileName := path + ".ast"
 		baseline.Run(outputFileName, printAST(sourceFile), baseline.Options{})
 	}
 }
