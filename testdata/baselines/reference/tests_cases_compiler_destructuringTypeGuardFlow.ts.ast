@@ -1,0 +1,216 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' foo'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+  bar'
+        UnionType
+          NumberKeyword
+          LiteralType
+            NullKeyword
+      PropertySignature
+        Identifier: '
+  baz'
+        StringKeyword
+      PropertySignature
+        Identifier: '
+  nested'
+        TypeLiteral
+          PropertySignature
+            Identifier: '
+    a'
+            NumberKeyword
+          PropertySignature
+            Identifier: '
+    b'
+            UnionType
+              StringKeyword
+              LiteralType
+                NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' aFoo'
+        TypeReference
+          Identifier: ' foo'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' bar'
+            NumericLiteral
+          PropertyAssignment
+            Identifier: ' baz'
+            StringLiteral
+          PropertyAssignment
+            Identifier: ' nested'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' a'
+                NumericLiteral
+              PropertyAssignment
+                Identifier: ' b'
+                StringLiteral
+  IfStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: 'aFoo'
+        Identifier: 'bar'
+      AmpersandAmpersandToken
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: ' aFoo'
+          Identifier: 'nested'
+        Identifier: 'b'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' bar'
+              BindingElement
+                Identifier: ' baz'
+              BindingElement
+                Identifier: ' nested'
+                ObjectBindingPattern
+                  BindingElement
+                    Identifier: 'a'
+                  BindingElement
+                    Identifier: ' b'
+                    Identifier: ' text'
+            Identifier: ' aFoo'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' right'
+            NumberKeyword
+            PropertyAccessExpression
+              Identifier: ' aFoo'
+              Identifier: 'bar'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' wrong'
+            NumberKeyword
+            Identifier: ' bar'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' another'
+            StringKeyword
+            Identifier: ' baz'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' aAgain'
+            NumberKeyword
+            Identifier: ' a'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' bAgain'
+            StringKeyword
+            Identifier: ' text'
+  TypeAliasDeclaration
+    Identifier: ' bar'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+  elem1'
+        UnionType
+          NumberKeyword
+          LiteralType
+            NullKeyword
+      PropertySignature
+        Identifier: '
+  elem2'
+        UnionType
+          TypeReference
+            Identifier: ' foo'
+          LiteralType
+            NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' bBar'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' elem1'
+            NumericLiteral
+          PropertyAssignment
+            Identifier: ' elem2'
+            Identifier: ' aFoo'
+  IfStatement
+    BinaryExpression
+      BinaryExpression
+        PropertyAccessExpression
+          Identifier: 'bBar'
+          Identifier: 'elem2'
+        AmpersandAmpersandToken
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: ' bBar'
+            Identifier: 'elem2'
+          Identifier: 'bar'
+      AmpersandAmpersandToken
+      PropertyAccessExpression
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: ' bBar'
+            Identifier: 'elem2'
+          Identifier: 'nested'
+        Identifier: 'b'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' bar'
+              BindingElement
+                Identifier: ' baz'
+              BindingElement
+                Identifier: ' nested'
+                ObjectBindingPattern
+                  BindingElement
+                    Identifier: 'a'
+                  BindingElement
+                    Identifier: ' b'
+                    Identifier: ' text'
+            PropertyAccessExpression
+              Identifier: ' bBar'
+              Identifier: 'elem2'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' right'
+            NumberKeyword
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' bBar'
+                Identifier: 'elem2'
+              Identifier: 'bar'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' wrong'
+            NumberKeyword
+            Identifier: ' bar'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' another'
+            StringKeyword
+            Identifier: ' baz'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' aAgain'
+            NumberKeyword
+            Identifier: ' a'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' bAgain'
+            StringKeyword
+            Identifier: ' text'

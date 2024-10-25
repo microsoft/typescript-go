@@ -1,0 +1,15 @@
+SourceFile
+  Block
+    FunctionDeclaration
+      DeclareKeyword
+      Identifier: ' f'
+      Block
+    FunctionDeclaration
+      ExportKeyword
+      Identifier: ' f'
+      Block
+    FunctionDeclaration
+      DeclareKeyword
+      ExportKeyword
+      Identifier: ' f'
+      Block

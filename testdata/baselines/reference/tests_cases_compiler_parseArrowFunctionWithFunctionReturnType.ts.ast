@@ -1,0 +1,16 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fn'
+        ArrowFunction
+          TypeParameter
+            Identifier: 'T'
+          ParenthesizedType
+            FunctionType
+              TypeReference
+                Identifier: ' T'
+          EqualsGreaterThanToken
+          AsExpression
+            NullKeyword
+            AnyKeyword

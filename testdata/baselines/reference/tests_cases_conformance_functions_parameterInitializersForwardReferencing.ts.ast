@@ -1,0 +1,161 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' left'
+    Parameter
+      Identifier: 'a'
+    Parameter
+      Identifier: ' b'
+      Identifier: ' a'
+    Parameter
+      Identifier: ' c'
+      Identifier: ' b'
+    Block
+      ExpressionStatement
+        Identifier: '
+    a'
+      ExpressionStatement
+        Identifier: '
+    b'
+  FunctionDeclaration
+    Identifier: ' right'
+    Parameter
+      Identifier: 'a'
+      Identifier: ' b'
+    Parameter
+      Identifier: ' b'
+      Identifier: ' a'
+    Block
+      ExpressionStatement
+        Identifier: '
+    a'
+      ExpressionStatement
+        Identifier: '
+    b'
+  FunctionDeclaration
+    Identifier: ' right2'
+    Parameter
+      Identifier: 'a'
+      Identifier: ' b'
+    Parameter
+      Identifier: ' b'
+      Identifier: ' c'
+    Parameter
+      Identifier: ' c'
+      Identifier: ' a'
+    Block
+      ExpressionStatement
+        Identifier: '
+    a'
+      ExpressionStatement
+        Identifier: '
+    b'
+      ExpressionStatement
+        Identifier: '
+    c'
+  FunctionDeclaration
+    Identifier: ' inside'
+    Parameter
+      Identifier: 'a'
+      Identifier: ' b'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' b'
+  FunctionDeclaration
+    Identifier: ' outside'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' b'
+      FunctionDeclaration
+        Identifier: ' inside'
+        Parameter
+          Identifier: 'a'
+          Identifier: ' b'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' b'
+  FunctionDeclaration
+    Identifier: ' defaultArgFunction'
+    Parameter
+      Identifier: 'a'
+      FunctionExpression
+        Block
+          ReturnStatement
+            Identifier: ' b'
+    Parameter
+      Identifier: ' b'
+      NumericLiteral
+    Block
+  FunctionDeclaration
+    Identifier: ' defaultArgArrow'
+    Parameter
+      Identifier: 'a'
+      ArrowFunction
+        EqualsGreaterThanToken
+        ArrowFunction
+          EqualsGreaterThanToken
+          Identifier: ' b'
+    Parameter
+      Identifier: ' b'
+      NumericLiteral
+    Block
+  ClassDeclaration
+    Identifier: ' C'
+    Constructor
+      Parameter
+        Identifier: 'a'
+        Identifier: ' b'
+      Parameter
+        Identifier: ' b'
+        NumericLiteral
+      Block
+    MethodDeclaration
+      Identifier: '
+    method'
+      Parameter
+        Identifier: 'a'
+        Identifier: ' b'
+      Parameter
+        Identifier: ' b'
+        NumericLiteral
+      Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        ArrowFunction
+          Parameter
+            Identifier: 'a'
+            Identifier: ' b'
+          Parameter
+            Identifier: ' b'
+            Identifier: ' c'
+          Parameter
+            Identifier: ' c'
+            Identifier: ' d'
+          EqualsGreaterThanToken
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' d'
+  FunctionDeclaration
+    Identifier: ' f'
+    Parameter
+      Identifier: 'a'
+    Parameter
+      Identifier: ' b'
+      FunctionExpression
+        Block
+          ReturnStatement
+            Identifier: ' c'
+    Parameter
+      Identifier: ' c'
+      CallExpression
+        Identifier: ' b'
+    Block

@@ -1,0 +1,1353 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' IFoo'
+    PropertySignature
+      Identifier: '
+    n'
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+    s'
+      StringKeyword
+    MethodSignature
+      Identifier: '
+    f'
+      Parameter
+        Identifier: 'i'
+        NumberKeyword
+      Parameter
+        Identifier: ' s'
+        StringKeyword
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    a'
+      ArrayType
+        NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' IBar'
+    PropertySignature
+      Identifier: '
+    foo'
+      TypeReference
+        Identifier: ' IFoo'
+  ClassDeclaration
+    Identifier: ' C1T5'
+    PropertyDeclaration
+      Identifier: '
+    foo'
+      FunctionType
+        Parameter
+          Identifier: 'i'
+          NumberKeyword
+        Parameter
+          Identifier: ' s'
+          StringKeyword
+        NumberKeyword
+      FunctionExpression
+        Parameter
+          Identifier: 'i'
+        Block
+          ReturnStatement
+            Identifier: ' i'
+  ModuleDeclaration
+    Identifier: ' C2T5'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' foo'
+            FunctionType
+              Parameter
+                Identifier: 'i'
+                NumberKeyword
+              Parameter
+                Identifier: ' s'
+                StringKeyword
+              NumberKeyword
+            FunctionExpression
+              Parameter
+                Identifier: 'i'
+              Block
+                ReturnStatement
+                  Identifier: ' i'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c3t1'
+        FunctionType
+          Parameter
+            Identifier: 's'
+            StringKeyword
+          StringKeyword
+        ParenthesizedExpression
+          FunctionExpression
+            Parameter
+              Identifier: 's'
+            Block
+              ReturnStatement
+                Identifier: ' s'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c3t2'
+        TypeAssertionExpression
+          TypeReference
+            Identifier: 'IFoo'
+          ParenthesizedExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+    n'
+                NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c3t3'
+        ArrayType
+          NumberKeyword
+        ArrayLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c3t4'
+        FunctionType
+          TypeReference
+            Identifier: ' IFoo'
+        FunctionExpression
+          Block
+            ReturnStatement
+              TypeAssertionExpression
+                TypeReference
+                  Identifier: 'IFoo'
+                ParenthesizedExpression
+                  ObjectLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c3t5'
+        FunctionType
+          Parameter
+            Identifier: 'n'
+            NumberKeyword
+          TypeReference
+            Identifier: ' IFoo'
+        FunctionExpression
+          Parameter
+            Identifier: 'n'
+          Block
+            ReturnStatement
+              TypeAssertionExpression
+                TypeReference
+                  Identifier: 'IFoo'
+                ParenthesizedExpression
+                  ObjectLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c3t6'
+        FunctionType
+          Parameter
+            Identifier: 'n'
+            NumberKeyword
+          Parameter
+            Identifier: ' s'
+            StringKeyword
+          TypeReference
+            Identifier: ' IFoo'
+        FunctionExpression
+          Parameter
+            Identifier: 'n'
+          Parameter
+            Identifier: ' s'
+          Block
+            ReturnStatement
+              TypeAssertionExpression
+                TypeReference
+                  Identifier: 'IFoo'
+                ParenthesizedExpression
+                  ObjectLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c3t7'
+        TypeLiteral
+          CallSignature
+            Parameter
+              Identifier: 'n'
+              NumberKeyword
+            NumberKeyword
+          CallSignature
+            Parameter
+              Identifier: 's1'
+              StringKeyword
+            NumberKeyword
+        FunctionExpression
+          Parameter
+            Identifier: 'n'
+          Block
+            ReturnStatement
+              Identifier: ' n'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c3t8'
+        FunctionType
+          Parameter
+            Identifier: 'n'
+            NumberKeyword
+          Parameter
+            Identifier: ' s'
+            StringKeyword
+          NumberKeyword
+        FunctionExpression
+          Parameter
+            Identifier: 'n'
+          Block
+            ReturnStatement
+              Identifier: ' n'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c3t9'
+        ArrayType
+          ArrayType
+            NumberKeyword
+        ArrayLiteralExpression
+          ArrayLiteralExpression
+          ArrayLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c3t10'
+        ArrayType
+          TypeReference
+            Identifier: ' IFoo'
+        ArrayLiteralExpression
+          TypeAssertionExpression
+            TypeReference
+              Identifier: 'IFoo'
+            ParenthesizedExpression
+              ObjectLiteralExpression
+          TypeAssertionExpression
+            TypeReference
+              Identifier: 'IFoo'
+            ParenthesizedExpression
+              ObjectLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c3t11'
+        ArrayType
+          TypeLiteral
+            CallSignature
+              Parameter
+                Identifier: 'n'
+                NumberKeyword
+              Parameter
+                Identifier: ' s'
+                StringKeyword
+              StringKeyword
+        ArrayLiteralExpression
+          FunctionExpression
+            Parameter
+              Identifier: 'n'
+            Parameter
+              Identifier: ' s'
+            Block
+              ReturnStatement
+                Identifier: ' s'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c3t12'
+        TypeReference
+          Identifier: ' IBar'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    foo'
+            TypeAssertionExpression
+              TypeReference
+                Identifier: 'IFoo'
+              ParenthesizedExpression
+                ObjectLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c3t13'
+        TypeAssertionExpression
+          TypeReference
+            Identifier: 'IFoo'
+          ParenthesizedExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+    f'
+                FunctionExpression
+                  Parameter
+                    Identifier: 'i'
+                  Parameter
+                    Identifier: ' s'
+                  Block
+                    ReturnStatement
+                      Identifier: ' s'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c3t14'
+        TypeAssertionExpression
+          TypeReference
+            Identifier: 'IFoo'
+          ParenthesizedExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+    a'
+                ArrayLiteralExpression
+  ClassDeclaration
+    Identifier: ' C4T5'
+    PropertyDeclaration
+      Identifier: '
+    foo'
+      FunctionType
+        Parameter
+          Identifier: 'i'
+          NumberKeyword
+        Parameter
+          Identifier: ' s'
+          StringKeyword
+        StringKeyword
+    Constructor
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'foo'
+            EqualsToken
+            FunctionExpression
+              Parameter
+                Identifier: 'i'
+              Parameter
+                Identifier: ' s'
+              Block
+                ReturnStatement
+                  Identifier: ' s'
+  ModuleDeclaration
+    Identifier: ' C5T5'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' foo'
+            FunctionType
+              Parameter
+                Identifier: 'i'
+                NumberKeyword
+              Parameter
+                Identifier: ' s'
+                StringKeyword
+              StringKeyword
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    foo'
+          EqualsToken
+          FunctionExpression
+            Parameter
+              Identifier: 'i'
+            Parameter
+              Identifier: ' s'
+            Block
+              ReturnStatement
+                Identifier: ' s'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c6t5'
+        FunctionType
+          Parameter
+            Identifier: 'n'
+            NumberKeyword
+          TypeReference
+            Identifier: ' IFoo'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+c6t5'
+      EqualsToken
+      TypeAssertionExpression
+        FunctionType
+          Parameter
+            Identifier: 'n'
+            NumberKeyword
+          TypeReference
+            Identifier: ' IFoo'
+        FunctionExpression
+          Parameter
+            Identifier: 'n'
+          Block
+            ReturnStatement
+              TypeAssertionExpression
+                TypeReference
+                  Identifier: 'IFoo'
+                ParenthesizedExpression
+                  ObjectLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c7t2'
+        ArrayType
+          TypeReference
+            Identifier: ' IFoo'
+  ExpressionStatement
+    BinaryExpression
+      ElementAccessExpression
+        Identifier: '
+c7t2'
+        NumericLiteral
+      EqualsToken
+      TypeAssertionExpression
+        TypeReference
+          Identifier: 'IFoo'
+        ParenthesizedExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: 'n'
+              NumericLiteral
+  InterfaceDeclaration
+    Identifier: ' IPlaceHolder'
+    PropertySignature
+      Identifier: '
+    t1'
+      FunctionType
+        Parameter
+          Identifier: 's'
+          StringKeyword
+        StringKeyword
+    PropertySignature
+      Identifier: '
+    t2'
+      TypeReference
+        Identifier: ' IFoo'
+    PropertySignature
+      Identifier: '
+    t3'
+      ArrayType
+        NumberKeyword
+    PropertySignature
+      Identifier: '
+    t4'
+      FunctionType
+        TypeReference
+          Identifier: ' IFoo'
+    PropertySignature
+      Identifier: '
+    t5'
+      FunctionType
+        Parameter
+          Identifier: 'n'
+          NumberKeyword
+        TypeReference
+          Identifier: ' IFoo'
+    PropertySignature
+      Identifier: '
+    t6'
+      FunctionType
+        Parameter
+          Identifier: 'n'
+          NumberKeyword
+        Parameter
+          Identifier: ' s'
+          StringKeyword
+        TypeReference
+          Identifier: ' IFoo'
+    PropertySignature
+      Identifier: '
+    t7'
+      TypeLiteral
+        CallSignature
+          Parameter
+            Identifier: 'n'
+            NumberKeyword
+          Parameter
+            Identifier: ' s'
+            StringKeyword
+          NumberKeyword
+    PropertySignature
+      Identifier: '
+    t8'
+      FunctionType
+        Parameter
+          Identifier: 'n'
+          NumberKeyword
+        Parameter
+          Identifier: ' s'
+          StringKeyword
+        NumberKeyword
+    PropertySignature
+      Identifier: '
+    t9'
+      ArrayType
+        ArrayType
+          NumberKeyword
+    PropertySignature
+      Identifier: '
+    t10'
+      ArrayType
+        TypeReference
+          Identifier: ' IFoo'
+    PropertySignature
+      Identifier: '
+    t11'
+      ArrayType
+        TypeLiteral
+          CallSignature
+            Parameter
+              Identifier: 'n'
+              NumberKeyword
+            Parameter
+              Identifier: ' s'
+              StringKeyword
+            StringKeyword
+    PropertySignature
+      Identifier: '
+    t12'
+      TypeReference
+        Identifier: ' IBar'
+    PropertySignature
+      Identifier: '
+    t13'
+      TypeReference
+        Identifier: ' IFoo'
+    PropertySignature
+      Identifier: '
+    t14'
+      TypeReference
+        Identifier: ' IFoo'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' objc8'
+        TypeLiteral
+          PropertySignature
+            Identifier: '
+    t1'
+            FunctionType
+              Parameter
+                Identifier: 's'
+                StringKeyword
+              StringKeyword
+          PropertySignature
+            Identifier: '
+    t2'
+            TypeReference
+              Identifier: ' IFoo'
+          PropertySignature
+            Identifier: '
+    t3'
+            ArrayType
+              NumberKeyword
+          PropertySignature
+            Identifier: '
+    t4'
+            FunctionType
+              TypeReference
+                Identifier: ' IFoo'
+          PropertySignature
+            Identifier: '
+    t5'
+            FunctionType
+              Parameter
+                Identifier: 'n'
+                NumberKeyword
+              TypeReference
+                Identifier: ' IFoo'
+          PropertySignature
+            Identifier: '
+    t6'
+            FunctionType
+              Parameter
+                Identifier: 'n'
+                NumberKeyword
+              Parameter
+                Identifier: ' s'
+                StringKeyword
+              TypeReference
+                Identifier: ' IFoo'
+          PropertySignature
+            Identifier: '
+    t7'
+            TypeLiteral
+              CallSignature
+                Parameter
+                  Identifier: 'n'
+                  NumberKeyword
+                Parameter
+                  Identifier: ' s'
+                  StringKeyword
+                NumberKeyword
+          PropertySignature
+            Identifier: '
+    t8'
+            FunctionType
+              Parameter
+                Identifier: 'n'
+                NumberKeyword
+              Parameter
+                Identifier: ' s'
+                StringKeyword
+              NumberKeyword
+          PropertySignature
+            Identifier: '
+    t9'
+            ArrayType
+              ArrayType
+                NumberKeyword
+          PropertySignature
+            Identifier: '
+    t10'
+            ArrayType
+              TypeReference
+                Identifier: ' IFoo'
+          PropertySignature
+            Identifier: '
+    t11'
+            ArrayType
+              TypeLiteral
+                CallSignature
+                  Parameter
+                    Identifier: 'n'
+                    NumberKeyword
+                  Parameter
+                    Identifier: ' s'
+                    StringKeyword
+                  StringKeyword
+          PropertySignature
+            Identifier: '
+    t12'
+            TypeReference
+              Identifier: ' IBar'
+          PropertySignature
+            Identifier: '
+    t13'
+            TypeReference
+              Identifier: ' IFoo'
+          PropertySignature
+            Identifier: '
+    t14'
+            TypeReference
+              Identifier: ' IFoo'
+        TypeAssertionExpression
+          TypeReference
+            Identifier: 'IPlaceHolder'
+          ParenthesizedExpression
+            ObjectLiteralExpression
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+
+objc8'
+        Identifier: 't1'
+      EqualsToken
+      ParenthesizedExpression
+        FunctionExpression
+          Parameter
+            Identifier: 's'
+          Block
+            ReturnStatement
+              Identifier: ' s'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+objc8'
+        Identifier: 't2'
+      EqualsToken
+      TypeAssertionExpression
+        TypeReference
+          Identifier: 'IFoo'
+        ParenthesizedExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+    n'
+              NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+objc8'
+        Identifier: 't3'
+      EqualsToken
+      ArrayLiteralExpression
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+objc8'
+        Identifier: 't4'
+      EqualsToken
+      FunctionExpression
+        Block
+          ReturnStatement
+            TypeAssertionExpression
+              TypeReference
+                Identifier: 'IFoo'
+              ParenthesizedExpression
+                ObjectLiteralExpression
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+objc8'
+        Identifier: 't5'
+      EqualsToken
+      FunctionExpression
+        Parameter
+          Identifier: 'n'
+        Block
+          ReturnStatement
+            TypeAssertionExpression
+              TypeReference
+                Identifier: 'IFoo'
+              ParenthesizedExpression
+                ObjectLiteralExpression
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+objc8'
+        Identifier: 't6'
+      EqualsToken
+      FunctionExpression
+        Parameter
+          Identifier: 'n'
+        Parameter
+          Identifier: ' s'
+        Block
+          ReturnStatement
+            TypeAssertionExpression
+              TypeReference
+                Identifier: 'IFoo'
+              ParenthesizedExpression
+                ObjectLiteralExpression
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+objc8'
+        Identifier: 't7'
+      EqualsToken
+      FunctionExpression
+        Parameter
+          Identifier: 'n'
+          NumberKeyword
+        Block
+          ReturnStatement
+            Identifier: ' n'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+
+objc8'
+        Identifier: 't8'
+      EqualsToken
+      FunctionExpression
+        Parameter
+          Identifier: 'n'
+        Block
+          ReturnStatement
+            Identifier: ' n'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+objc8'
+        Identifier: 't9'
+      EqualsToken
+      ArrayLiteralExpression
+        ArrayLiteralExpression
+        ArrayLiteralExpression
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+objc8'
+        Identifier: 't10'
+      EqualsToken
+      ArrayLiteralExpression
+        TypeAssertionExpression
+          TypeReference
+            Identifier: 'IFoo'
+          ParenthesizedExpression
+            ObjectLiteralExpression
+        TypeAssertionExpression
+          TypeReference
+            Identifier: 'IFoo'
+          ParenthesizedExpression
+            ObjectLiteralExpression
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+objc8'
+        Identifier: 't11'
+      EqualsToken
+      ArrayLiteralExpression
+        FunctionExpression
+          Parameter
+            Identifier: 'n'
+          Parameter
+            Identifier: ' s'
+          Block
+            ReturnStatement
+              Identifier: ' s'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+objc8'
+        Identifier: 't12'
+      EqualsToken
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    foo'
+          TypeAssertionExpression
+            TypeReference
+              Identifier: 'IFoo'
+            ParenthesizedExpression
+              ObjectLiteralExpression
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+objc8'
+        Identifier: 't13'
+      EqualsToken
+      TypeAssertionExpression
+        TypeReference
+          Identifier: 'IFoo'
+        ParenthesizedExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+    f'
+              FunctionExpression
+                Parameter
+                  Identifier: 'i'
+                Parameter
+                  Identifier: ' s'
+                Block
+                  ReturnStatement
+                    Identifier: ' s'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+objc8'
+        Identifier: 't14'
+      EqualsToken
+      TypeAssertionExpression
+        TypeReference
+          Identifier: 'IFoo'
+        ParenthesizedExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+    a'
+              ArrayLiteralExpression
+  FunctionDeclaration
+    Identifier: ' c9t5'
+    Parameter
+      Identifier: 'f'
+      FunctionType
+        Parameter
+          Identifier: 'n'
+          NumberKeyword
+        TypeReference
+          Identifier: ' IFoo'
+    Block
+  EmptyStatement
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+c9t5'
+      FunctionExpression
+        Parameter
+          Identifier: 'n'
+        Block
+          ReturnStatement
+            TypeAssertionExpression
+              TypeReference
+                Identifier: 'IFoo'
+              ParenthesizedExpression
+                ObjectLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c10t5'
+        FunctionType
+          FunctionType
+            Parameter
+              Identifier: 'n'
+              NumberKeyword
+            TypeReference
+              Identifier: ' IFoo'
+        FunctionExpression
+          Block
+            ReturnStatement
+              FunctionExpression
+                Parameter
+                  Identifier: 'n'
+                Block
+                  ReturnStatement
+                    TypeAssertionExpression
+                      TypeReference
+                        Identifier: 'IFoo'
+                      ParenthesizedExpression
+                        ObjectLiteralExpression
+  ClassDeclaration
+    Identifier: ' C11t5'
+    Constructor
+      Parameter
+        Identifier: 'f'
+        FunctionType
+          Parameter
+            Identifier: 'n'
+            NumberKeyword
+          TypeReference
+            Identifier: ' IFoo'
+      Block
+  EmptyStatement
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i'
+        NewExpression
+          Identifier: ' C11t5'
+          FunctionExpression
+            Parameter
+              Identifier: 'n'
+            Block
+              ReturnStatement
+                TypeAssertionExpression
+                  TypeReference
+                    Identifier: 'IFoo'
+                  ParenthesizedExpression
+                    ObjectLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c12t1'
+        TypeAssertionExpression
+          FunctionType
+            Parameter
+              Identifier: 's'
+              StringKeyword
+            StringKeyword
+          ParenthesizedExpression
+            FunctionExpression
+              Parameter
+                Identifier: 's'
+              Block
+                ReturnStatement
+                  Identifier: ' s'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c12t2'
+        TypeAssertionExpression
+          TypeReference
+            Identifier: 'IFoo'
+          ParenthesizedExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+    n'
+                NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c12t3'
+        TypeAssertionExpression
+          ArrayType
+            NumberKeyword
+          ArrayLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c12t4'
+        TypeAssertionExpression
+          FunctionType
+            TypeReference
+              Identifier: ' IFoo'
+          FunctionExpression
+            Block
+              ReturnStatement
+                TypeAssertionExpression
+                  TypeReference
+                    Identifier: 'IFoo'
+                  ParenthesizedExpression
+                    ObjectLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c12t5'
+        TypeAssertionExpression
+          FunctionType
+            Parameter
+              Identifier: 'n'
+              NumberKeyword
+            TypeReference
+              Identifier: ' IFoo'
+          FunctionExpression
+            Parameter
+              Identifier: 'n'
+            Block
+              ReturnStatement
+                TypeAssertionExpression
+                  TypeReference
+                    Identifier: 'IFoo'
+                  ParenthesizedExpression
+                    ObjectLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c12t6'
+        TypeAssertionExpression
+          FunctionType
+            Parameter
+              Identifier: 'n'
+              NumberKeyword
+            Parameter
+              Identifier: ' s'
+              StringKeyword
+            TypeReference
+              Identifier: ' IFoo'
+          FunctionExpression
+            Parameter
+              Identifier: 'n'
+            Parameter
+              Identifier: ' s'
+            Block
+              ReturnStatement
+                TypeAssertionExpression
+                  TypeReference
+                    Identifier: 'IFoo'
+                  ParenthesizedExpression
+                    ObjectLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c12t7'
+        TypeAssertionExpression
+          TypeLiteral
+            CallSignature
+              Parameter
+                Identifier: 'n'
+                NumberKeyword
+              Parameter
+                Identifier: ' s'
+                StringKeyword
+              NumberKeyword
+          FunctionExpression
+            Parameter
+              Identifier: 'n'
+              NumberKeyword
+            Block
+              ReturnStatement
+                Identifier: ' n'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c12t8'
+        TypeAssertionExpression
+          FunctionType
+            Parameter
+              Identifier: 'n'
+              NumberKeyword
+            Parameter
+              Identifier: ' s'
+              StringKeyword
+            NumberKeyword
+          FunctionExpression
+            Parameter
+              Identifier: 'n'
+            Block
+              ReturnStatement
+                Identifier: ' n'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c12t9'
+        TypeAssertionExpression
+          ArrayType
+            ArrayType
+              NumberKeyword
+          ArrayLiteralExpression
+            ArrayLiteralExpression
+            ArrayLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c12t10'
+        TypeAssertionExpression
+          ArrayType
+            TypeReference
+              Identifier: 'IFoo'
+          ArrayLiteralExpression
+            TypeAssertionExpression
+              TypeReference
+                Identifier: 'IFoo'
+              ParenthesizedExpression
+                ObjectLiteralExpression
+            TypeAssertionExpression
+              TypeReference
+                Identifier: 'IFoo'
+              ParenthesizedExpression
+                ObjectLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c12t11'
+        TypeAssertionExpression
+          ArrayType
+            TypeLiteral
+              CallSignature
+                Parameter
+                  Identifier: 'n'
+                  NumberKeyword
+                Parameter
+                  Identifier: ' s'
+                  StringKeyword
+                StringKeyword
+          ArrayLiteralExpression
+            FunctionExpression
+              Parameter
+                Identifier: 'n'
+              Parameter
+                Identifier: ' s'
+              Block
+                ReturnStatement
+                  Identifier: ' s'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c12t12'
+        TypeAssertionExpression
+          TypeReference
+            Identifier: 'IBar'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+    foo'
+              TypeAssertionExpression
+                TypeReference
+                  Identifier: 'IFoo'
+                ParenthesizedExpression
+                  ObjectLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c12t13'
+        TypeAssertionExpression
+          TypeReference
+            Identifier: 'IFoo'
+          ParenthesizedExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+    f'
+                FunctionExpression
+                  Parameter
+                    Identifier: 'i'
+                  Parameter
+                    Identifier: ' s'
+                  Block
+                    ReturnStatement
+                      Identifier: ' s'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c12t14'
+        TypeAssertionExpression
+          TypeReference
+            Identifier: 'IFoo'
+          ParenthesizedExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+    a'
+                ArrayLiteralExpression
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' EF1'
+    Parameter
+      Identifier: 'a'
+      NumberKeyword
+    Parameter
+      Identifier: ' b'
+      NumberKeyword
+    NumberKeyword
+  FunctionDeclaration
+    Identifier: ' EF1'
+    Parameter
+      Identifier: 'a'
+    Parameter
+      Identifier: 'b'
+    Block
+      ReturnStatement
+        BinaryExpression
+          Identifier: ' a'
+          PlusToken
+          Identifier: 'b'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' efv'
+        CallExpression
+          Identifier: ' EF1'
+          NumericLiteral
+          NumericLiteral
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' Point'
+    Constructor
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      Parameter
+        Identifier: ' y'
+        NumberKeyword
+    PropertyDeclaration
+      Identifier: '
+      x'
+      NumberKeyword
+    PropertyDeclaration
+      Identifier: '
+      y'
+      NumberKeyword
+    MethodDeclaration
+      Identifier: '
+      add'
+      Parameter
+        Identifier: 'dx'
+        NumberKeyword
+      Parameter
+        Identifier: ' dy'
+        NumberKeyword
+      TypeReference
+        Identifier: ' Point'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' origin'
+      TypeReference
+        Identifier: ' Point'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+
+Point'
+        Identifier: 'origin'
+      EqualsToken
+      NewExpression
+        Identifier: ' Point'
+        NumericLiteral
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+
+Point'
+          Identifier: 'prototype'
+        Identifier: 'add'
+      EqualsToken
+      FunctionExpression
+        Parameter
+          Identifier: 'dx'
+        Parameter
+          Identifier: ' dy'
+        Block
+          ReturnStatement
+            NewExpression
+              Identifier: ' Point'
+              BinaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'x'
+                PlusToken
+                Identifier: ' dx'
+              BinaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'y'
+                PlusToken
+                Identifier: ' dy'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+
+Point'
+        Identifier: 'prototype'
+      EqualsToken
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    x'
+          NumericLiteral
+        PropertyAssignment
+          Identifier: '
+    y'
+          NumericLiteral
+        PropertyAssignment
+          Identifier: '
+    add'
+          FunctionExpression
+            Parameter
+              Identifier: 'dx'
+            Parameter
+              Identifier: ' dy'
+            Block
+              ReturnStatement
+                NewExpression
+                  Identifier: ' Point'
+                  BinaryExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'x'
+                    PlusToken
+                    Identifier: ' dx'
+                  BinaryExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'y'
+                    PlusToken
+                    Identifier: ' dy'
+  InterfaceDeclaration
+    Identifier: ' A'
+    PropertySignature
+      Identifier: ' x'
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' B'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TypeReference
+          Identifier: ' B'
+        ObjectLiteralExpression

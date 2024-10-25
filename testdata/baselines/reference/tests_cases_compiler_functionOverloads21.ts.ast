@@ -1,0 +1,38 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'bar'
+      ArrayType
+        TypeLiteral
+          PropertySignature
+            Identifier: 'a'
+            NumberKeyword
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'bar'
+      ArrayType
+        TypeLiteral
+          PropertySignature
+            Identifier: 'a'
+            NumberKeyword
+          PropertySignature
+            Identifier: ' b'
+            StringKeyword
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'bar'
+      ArrayType
+        TypeLiteral
+          PropertySignature
+            Identifier: 'a'
+            AnyKeyword
+          PropertySignature
+            Identifier: ' b'
+            QuestionToken
+            StringKeyword
+    Block
+      ReturnStatement
+        NumericLiteral

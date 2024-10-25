@@ -1,0 +1,203 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' Path'
+        ImportSpecifier
+          Identifier: ' Type'
+    StringLiteral
+  VariableStatement
+    ExportKeyword
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' tracing'
+        UnionType
+          TypeQuery
+            Identifier: ' tracingEnabled'
+          UndefinedKeyword
+  ModuleDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' tracingEnabled'
+    ModuleBlock
+      TypeAliasDeclaration
+        Identifier: ' Mode'
+        UnionType
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+      InterfaceDeclaration
+        Identifier: ' Args'
+        IndexSignature
+          Parameter
+            Identifier: 'key'
+            StringKeyword
+          UnionType
+            StringKeyword
+            NumberKeyword
+            BooleanKeyword
+            LiteralType
+              NullKeyword
+            UndefinedKeyword
+            TypeReference
+              Identifier: ' Args'
+            TypeOperator
+              ArrayType
+                ParenthesizedType
+                  UnionType
+                    StringKeyword
+                    NumberKeyword
+                    BooleanKeyword
+                    LiteralType
+                      NullKeyword
+                    UndefinedKeyword
+                    TypeReference
+                      Identifier: ' Args'
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' startTracing'
+        Parameter
+          Identifier: 'tracingMode'
+          TypeReference
+            Identifier: ' Mode'
+        Parameter
+          Identifier: ' traceDir'
+          StringKeyword
+        Parameter
+          Identifier: ' configFilePath'
+          QuestionToken
+          StringKeyword
+        VoidKeyword
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' stopTracing'
+        VoidKeyword
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' recordType'
+        Parameter
+          Identifier: 'type'
+          TypeReference
+            Identifier: ' Type'
+        VoidKeyword
+      EnumDeclaration
+        ExportKeyword
+        ConstKeyword
+        Identifier: ' Phase'
+        EnumMember
+          Identifier: '
+        Parse'
+          StringLiteral
+        EnumMember
+          Identifier: '
+        Program'
+          StringLiteral
+        EnumMember
+          Identifier: '
+        Bind'
+          StringLiteral
+        EnumMember
+          Identifier: '
+        Check'
+          StringLiteral
+        EnumMember
+          Identifier: '// Before we get into checking types (e.g. checkSourceFile)
+        CheckTypes'
+          StringLiteral
+        EnumMember
+          Identifier: '
+        Emit'
+          StringLiteral
+        EnumMember
+          Identifier: '
+        Session'
+          StringLiteral
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' instant'
+        Parameter
+          Identifier: 'phase'
+          TypeReference
+            Identifier: ' Phase'
+        Parameter
+          Identifier: ' name'
+          StringKeyword
+        Parameter
+          Identifier: ' args'
+          QuestionToken
+          TypeReference
+            Identifier: ' Args'
+        VoidKeyword
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' push'
+        Parameter
+          Identifier: 'phase'
+          TypeReference
+            Identifier: ' Phase'
+        Parameter
+          Identifier: ' name'
+          StringKeyword
+        Parameter
+          Identifier: ' args'
+          QuestionToken
+          TypeReference
+            Identifier: ' Args'
+        Parameter
+          Identifier: ' separateBeginAndEnd'
+          QuestionToken
+          BooleanKeyword
+        VoidKeyword
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' pop'
+        Parameter
+          Identifier: 'results'
+          QuestionToken
+          TypeReference
+            Identifier: ' Args'
+        VoidKeyword
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' popAll'
+        VoidKeyword
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' dumpLegend'
+        VoidKeyword
+      ExportDeclaration
+        NamedExports
+  VariableStatement
+    ExportKeyword
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' startTracing'
+        TypeQuery
+          QualifiedName
+            Identifier: ' tracingEnabled'
+            Identifier: 'startTracing'
+  VariableStatement
+    ExportKeyword
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' dumpTracingLegend'
+        TypeQuery
+          QualifiedName
+            Identifier: ' tracingEnabled'
+            Identifier: 'dumpLegend'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' TracingNode'
+    PropertySignature
+      Identifier: '
+    tracingPath'
+      QuestionToken
+      TypeReference
+        Identifier: ' Path'

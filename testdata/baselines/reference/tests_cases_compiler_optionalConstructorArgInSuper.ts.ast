@@ -1,0 +1,38 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Base'
+    Constructor
+      Parameter
+        Identifier: 'opt'
+        QuestionToken
+      Block
+    MethodDeclaration
+      Identifier: '
+    foo'
+      Parameter
+        Identifier: 'other'
+        QuestionToken
+      Block
+  ClassDeclaration
+    Identifier: ' Derived'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d'
+        NewExpression
+          Identifier: ' Derived'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d2'
+        TypeReference
+          Identifier: ' Derived'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+d2'
+        Identifier: 'foo'

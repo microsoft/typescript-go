@@ -1,0 +1,229 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' test'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeLiteral
+        IndexSignature
+          Parameter
+            Identifier: 'key'
+            StringKeyword
+          TypeReference
+            Identifier: ' T'
+    TypeReference
+      Identifier: ' T'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x1'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' a'
+            QuestionToken
+            StringKeyword
+          PropertySignature
+            Identifier: ' b'
+            QuestionToken
+            NumberKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x2'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' a'
+            QuestionToken
+            StringKeyword
+          PropertySignature
+            Identifier: ' b'
+            QuestionToken
+            UnionType
+              NumberKeyword
+              UndefinedKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y1'
+        CallExpression
+          Identifier: ' test'
+          Identifier: 'x1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y2'
+        CallExpression
+          Identifier: ' test'
+          Identifier: 'x2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v1'
+        TypeReference
+          Identifier: ' Required'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' a'
+              QuestionToken
+              StringKeyword
+            PropertySignature
+              Identifier: ' b'
+              QuestionToken
+              NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v1'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' a'
+            StringKeyword
+          PropertySignature
+            Identifier: ' b'
+            NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v2'
+        TypeReference
+          Identifier: ' Required'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' a'
+              QuestionToken
+              StringKeyword
+            PropertySignature
+              Identifier: ' b'
+              QuestionToken
+              UnionType
+                NumberKeyword
+                UndefinedKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v2'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' a'
+            StringKeyword
+          PropertySignature
+            Identifier: ' b'
+            UnionType
+              NumberKeyword
+              UndefinedKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v3'
+        TypeReference
+          Identifier: ' Partial'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' a'
+              StringKeyword
+            PropertySignature
+              Identifier: ' b'
+              StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v3'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' a'
+            QuestionToken
+            StringKeyword
+          PropertySignature
+            Identifier: ' b'
+            QuestionToken
+            StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v4'
+        TypeReference
+          Identifier: ' Partial'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' a'
+              StringKeyword
+            PropertySignature
+              Identifier: ' b'
+              UnionType
+                StringKeyword
+                UndefinedKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v4'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' a'
+            QuestionToken
+            StringKeyword
+          PropertySignature
+            Identifier: ' b'
+            QuestionToken
+            UnionType
+              StringKeyword
+              UndefinedKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v5'
+        TypeReference
+          Identifier: ' Required'
+          TypeReference
+            Identifier: 'Partial'
+            TypeLiteral
+              PropertySignature
+                Identifier: ' a'
+                StringKeyword
+              PropertySignature
+                Identifier: ' b'
+                StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v5'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' a'
+            StringKeyword
+          PropertySignature
+            Identifier: ' b'
+            StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v6'
+        TypeReference
+          Identifier: ' Required'
+          TypeReference
+            Identifier: 'Partial'
+            TypeLiteral
+              PropertySignature
+                Identifier: ' a'
+                StringKeyword
+              PropertySignature
+                Identifier: ' b'
+                UnionType
+                  StringKeyword
+                  UndefinedKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v6'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' a'
+            StringKeyword
+          PropertySignature
+            Identifier: ' b'
+            UnionType
+              StringKeyword
+              UndefinedKeyword

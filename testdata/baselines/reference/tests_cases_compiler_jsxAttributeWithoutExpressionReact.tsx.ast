@@ -1,0 +1,46 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' React'
+        AnyKeyword
+  ExpressionStatement
+    JsxElement
+      JsxOpeningElement
+        Identifier: 'View'
+        JsxAttributes
+      JsxText
+      JsxElement
+        JsxOpeningElement
+          Identifier: 'ListView'
+          JsxAttributes
+            JsxAttribute
+              Identifier: ' refreshControl'
+              JsxExpression
+                JsxSelfClosingElement
+                  Identifier: 'RefreshControl'
+                  JsxAttributes
+                    JsxAttribute
+                      Identifier: ' onRefresh'
+                      JsxExpression
+                    JsxAttribute
+                      Identifier: ' refreshing'
+                      JsxExpression
+            JsxAttribute
+              Identifier: ' dataSource'
+              JsxExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'state'
+                  Identifier: 'ds'
+            JsxAttribute
+              Identifier: ' renderRow'
+              JsxExpression
+        JsxText
+        JsxClosingElement
+          Identifier: 'ListView'
+      JsxText
+      JsxClosingElement
+        Identifier: 'View'

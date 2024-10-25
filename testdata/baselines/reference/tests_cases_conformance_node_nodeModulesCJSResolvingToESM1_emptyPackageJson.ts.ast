@@ -1,0 +1,20 @@
+SourceFile
+  Block
+  ExportDeclaration
+    NamedExports
+  ImportDeclaration
+    ImportClause
+      NamedImports
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+    StringLiteral

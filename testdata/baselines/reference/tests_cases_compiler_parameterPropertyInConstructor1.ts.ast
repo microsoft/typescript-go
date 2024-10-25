@@ -1,0 +1,12 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' mod'
+    ModuleBlock
+      ClassDeclaration
+        Identifier: ' Customers'
+        Constructor
+          Parameter
+            PublicKeyword
+            Identifier: ' names'
+            StringKeyword

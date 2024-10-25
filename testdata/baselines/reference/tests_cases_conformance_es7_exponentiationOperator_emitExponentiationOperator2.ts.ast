@@ -1,0 +1,389 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' temp'
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PrefixUnaryExpression
+        Identifier: 'temp'
+      AsteriskAsteriskToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PrefixUnaryExpression
+        Identifier: 'temp'
+      AsteriskAsteriskToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PostfixUnaryExpression
+        Identifier: '
+temp'
+      AsteriskAsteriskToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PostfixUnaryExpression
+        Identifier: '
+temp'
+      AsteriskAsteriskToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PrefixUnaryExpression
+        Identifier: 'temp'
+      PlusToken
+      BinaryExpression
+        Identifier: ' temp'
+        AsteriskAsteriskToken
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PrefixUnaryExpression
+        Identifier: 'temp'
+      MinusToken
+      BinaryExpression
+        Identifier: ' temp'
+        AsteriskAsteriskToken
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PrefixUnaryExpression
+        Identifier: 'temp'
+      AsteriskToken
+      BinaryExpression
+        Identifier: ' temp'
+        AsteriskAsteriskToken
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PrefixUnaryExpression
+        Identifier: 'temp'
+      SlashToken
+      BinaryExpression
+        Identifier: ' temp'
+        AsteriskAsteriskToken
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PrefixUnaryExpression
+        Identifier: 'temp'
+      PercentToken
+      BinaryExpression
+        Identifier: ' temp'
+        AsteriskAsteriskToken
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PostfixUnaryExpression
+        Identifier: '
+temp'
+      AsteriskAsteriskToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PostfixUnaryExpression
+        Identifier: '
+temp'
+      AsteriskAsteriskToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PostfixUnaryExpression
+        Identifier: '
+temp'
+      AsteriskAsteriskToken
+      PrefixUnaryExpression
+        Identifier: 'temp'
+  ExpressionStatement
+    BinaryExpression
+      PostfixUnaryExpression
+        Identifier: '
+temp'
+      AsteriskAsteriskToken
+      PrefixUnaryExpression
+        Identifier: 'temp'
+  ExpressionStatement
+    BinaryExpression
+      PostfixUnaryExpression
+        Identifier: '
+
+temp'
+      PlusToken
+      BinaryExpression
+        Identifier: ' temp'
+        AsteriskAsteriskToken
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PostfixUnaryExpression
+        Identifier: '
+temp'
+      MinusToken
+      BinaryExpression
+        Identifier: ' temp'
+        AsteriskAsteriskToken
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PostfixUnaryExpression
+        Identifier: '
+temp'
+      AsteriskToken
+      BinaryExpression
+        Identifier: ' temp'
+        AsteriskAsteriskToken
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PostfixUnaryExpression
+        Identifier: '
+temp'
+      SlashToken
+      BinaryExpression
+        Identifier: ' temp'
+        AsteriskAsteriskToken
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PostfixUnaryExpression
+        Identifier: '
+temp'
+      PercentToken
+      BinaryExpression
+        Identifier: ' temp'
+        AsteriskAsteriskToken
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PrefixUnaryExpression
+        Identifier: 'temp'
+      PlusToken
+      BinaryExpression
+        NumericLiteral
+        AsteriskAsteriskToken
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PrefixUnaryExpression
+        Identifier: 'temp'
+      MinusToken
+      BinaryExpression
+        NumericLiteral
+        AsteriskAsteriskToken
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PrefixUnaryExpression
+        Identifier: 'temp'
+      AsteriskToken
+      BinaryExpression
+        NumericLiteral
+        AsteriskAsteriskToken
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PrefixUnaryExpression
+        Identifier: 'temp'
+      SlashToken
+      BinaryExpression
+        NumericLiteral
+        AsteriskAsteriskToken
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PrefixUnaryExpression
+        Identifier: 'temp'
+      PercentToken
+      BinaryExpression
+        NumericLiteral
+        AsteriskAsteriskToken
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PrefixUnaryExpression
+        Identifier: 'temp'
+      PlusToken
+      BinaryExpression
+        NumericLiteral
+        AsteriskAsteriskToken
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PrefixUnaryExpression
+        Identifier: 'temp'
+      MinusToken
+      BinaryExpression
+        NumericLiteral
+        AsteriskAsteriskToken
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PrefixUnaryExpression
+        Identifier: 'temp'
+      AsteriskToken
+      BinaryExpression
+        NumericLiteral
+        AsteriskAsteriskToken
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PrefixUnaryExpression
+        Identifier: 'temp'
+      SlashToken
+      BinaryExpression
+        NumericLiteral
+        AsteriskAsteriskToken
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      NumericLiteral
+      AsteriskAsteriskToken
+      PrefixUnaryExpression
+        Identifier: 'temp'
+  ExpressionStatement
+    BinaryExpression
+      NumericLiteral
+      AsteriskAsteriskToken
+      PrefixUnaryExpression
+        Identifier: 'temp'
+  ExpressionStatement
+    BinaryExpression
+      NumericLiteral
+      AsteriskAsteriskToken
+      PostfixUnaryExpression
+        Identifier: ' temp'
+  ExpressionStatement
+    BinaryExpression
+      NumericLiteral
+      AsteriskAsteriskToken
+      PostfixUnaryExpression
+        Identifier: ' temp'
+  ExpressionStatement
+    BinaryExpression
+      NumericLiteral
+      AsteriskAsteriskToken
+      BinaryExpression
+        PrefixUnaryExpression
+          Identifier: 'temp'
+        AsteriskAsteriskToken
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      NumericLiteral
+      AsteriskAsteriskToken
+      BinaryExpression
+        PrefixUnaryExpression
+          Identifier: 'temp'
+        AsteriskAsteriskToken
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      NumericLiteral
+      AsteriskAsteriskToken
+      BinaryExpression
+        PostfixUnaryExpression
+          Identifier: ' temp'
+        AsteriskAsteriskToken
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      NumericLiteral
+      AsteriskAsteriskToken
+      BinaryExpression
+        PostfixUnaryExpression
+          Identifier: ' temp'
+        AsteriskAsteriskToken
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      BinaryExpression
+        NumericLiteral
+        AsteriskAsteriskToken
+        PrefixUnaryExpression
+          Identifier: 'temp'
+      PlusToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      BinaryExpression
+        NumericLiteral
+        AsteriskAsteriskToken
+        PrefixUnaryExpression
+          Identifier: 'temp'
+      MinusToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      BinaryExpression
+        NumericLiteral
+        AsteriskAsteriskToken
+        PrefixUnaryExpression
+          Identifier: 'temp'
+      AsteriskToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      BinaryExpression
+        NumericLiteral
+        AsteriskAsteriskToken
+        PrefixUnaryExpression
+          Identifier: 'temp'
+      SlashToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      BinaryExpression
+        NumericLiteral
+        AsteriskAsteriskToken
+        PrefixUnaryExpression
+          Identifier: 'temp'
+      PercentToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      BinaryExpression
+        NumericLiteral
+        AsteriskAsteriskToken
+        PrefixUnaryExpression
+          Identifier: 'temp'
+      PlusToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      BinaryExpression
+        NumericLiteral
+        AsteriskAsteriskToken
+        PrefixUnaryExpression
+          Identifier: 'temp'
+      MinusToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      BinaryExpression
+        NumericLiteral
+        AsteriskAsteriskToken
+        PrefixUnaryExpression
+          Identifier: 'temp'
+      AsteriskToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      BinaryExpression
+        NumericLiteral
+        AsteriskAsteriskToken
+        PrefixUnaryExpression
+          Identifier: 'temp'
+      SlashToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      BinaryExpression
+        NumericLiteral
+        AsteriskAsteriskToken
+        PrefixUnaryExpression
+          Identifier: 'temp'
+      PercentToken
+      NumericLiteral

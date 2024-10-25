@@ -1,0 +1,12 @@
+SourceFile
+  ExpressionStatement
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v'
+        FunctionExpression
+          Identifier: ' f'
+          Parameter
+            Identifier: 'eval'
+          Block

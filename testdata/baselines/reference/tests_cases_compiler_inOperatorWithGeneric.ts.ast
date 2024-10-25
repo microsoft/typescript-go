@@ -1,0 +1,19 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    TypeParameter
+      Identifier: 'T'
+    MethodDeclaration
+      Identifier: '
+    foo'
+      Parameter
+        Identifier: 'x'
+        TypeReference
+          Identifier: 'T'
+      Block
+        ForInStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' p'
+          Identifier: ' x'
+          Block

@@ -1,0 +1,39 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Base'
+    Constructor
+      Parameter
+        Identifier: 'a'
+        ThisType
+      Block
+  ClassDeclaration
+    Identifier: ' Generic'
+    TypeParameter
+      Identifier: 'T'
+  ClassDeclaration
+    Identifier: ' Derived'
+    PropertyDeclaration
+      Identifier: '
+    n'
+      NumberKeyword
+    Constructor
+      Parameter
+        PublicKeyword
+        Identifier: ' host'
+        TypeReference
+          Identifier: ' Generic'
+          ThisType
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' self'
+              ThisType
+              ThisKeyword
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'n'
+            EqualsToken
+            NumericLiteral

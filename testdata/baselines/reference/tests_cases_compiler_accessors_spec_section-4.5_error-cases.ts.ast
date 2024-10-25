@@ -1,0 +1,65 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' LanguageSpec_section_4_5_error_cases'
+    SetAccessor
+      PublicKeyword
+      Identifier: ' AnnotatedSetter_SetterFirst'
+      Parameter
+        Identifier: 'a'
+        NumberKeyword
+      Block
+    GetAccessor
+      PublicKeyword
+      Identifier: ' AnnotatedSetter_SetterFirst'
+      Block
+        ReturnStatement
+          StringLiteral
+    GetAccessor
+      PublicKeyword
+      Identifier: ' AnnotatedSetter_SetterLast'
+      Block
+        ReturnStatement
+          StringLiteral
+    SetAccessor
+      PublicKeyword
+      Identifier: ' AnnotatedSetter_SetterLast'
+      Parameter
+        Identifier: 'a'
+        NumberKeyword
+      Block
+    GetAccessor
+      PublicKeyword
+      Identifier: ' AnnotatedGetter_GetterFirst'
+      StringKeyword
+      Block
+        ReturnStatement
+          StringLiteral
+    SetAccessor
+      PublicKeyword
+      Identifier: ' AnnotatedGetter_GetterFirst'
+      Parameter
+        Identifier: 'aStr'
+      Block
+        ExpressionStatement
+          BinaryExpression
+            Identifier: ' aStr'
+            EqualsToken
+            NumericLiteral
+    SetAccessor
+      PublicKeyword
+      Identifier: ' AnnotatedGetter_GetterLast'
+      Parameter
+        Identifier: 'aStr'
+      Block
+        ExpressionStatement
+          BinaryExpression
+            Identifier: ' aStr'
+            EqualsToken
+            NumericLiteral
+    GetAccessor
+      PublicKeyword
+      Identifier: ' AnnotatedGetter_GetterLast'
+      StringKeyword
+      Block
+        ReturnStatement
+          StringLiteral

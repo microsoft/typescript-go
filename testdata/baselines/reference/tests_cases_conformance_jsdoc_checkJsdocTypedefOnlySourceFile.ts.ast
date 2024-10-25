@@ -1,0 +1,20 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' exports'
+        ObjectLiteralExpression
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+
+/**
+ * @typedef {string}
+ */
+exports'
+      Identifier: 'SomeName'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' myString'
+        StringLiteral

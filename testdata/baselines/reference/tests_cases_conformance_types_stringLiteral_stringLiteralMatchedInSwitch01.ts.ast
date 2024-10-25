@@ -1,0 +1,45 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' S'
+    UnionType
+      LiteralType
+        StringLiteral
+      LiteralType
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' T'
+    UnionType
+      ArrayType
+        TypeReference
+          Identifier: ' S'
+      TypeReference
+        Identifier: ' S'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foo'
+        TypeReference
+          Identifier: ' T'
+  SwitchStatement
+    Identifier: 'foo'
+    CaseBlock
+      CaseClause
+        StringLiteral
+      CaseClause
+        StringLiteral
+        BreakStatement
+      DefaultClause
+        ExpressionStatement
+          BinaryExpression
+            Identifier: '
+        foo'
+            EqualsToken
+            ElementAccessExpression
+              ParenthesizedExpression
+                AsExpression
+                  Identifier: 'foo'
+                  ArrayType
+                    TypeReference
+                      Identifier: ' S'
+              NumericLiteral
+        BreakStatement

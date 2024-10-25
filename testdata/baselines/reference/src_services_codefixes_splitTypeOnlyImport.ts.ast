@@ -1,0 +1,306 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    codeFixAll'
+        ImportSpecifier
+          Identifier: '
+    createCodeFixAction'
+        ImportSpecifier
+          Identifier: '
+    registerCodeFix'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    CodeFixContextBase'
+        ImportSpecifier
+          Identifier: '
+    Debug'
+        ImportSpecifier
+          Identifier: '
+    Diagnostics'
+        ImportSpecifier
+          Identifier: '
+    factory'
+        ImportSpecifier
+          Identifier: '
+    findAncestor'
+        ImportSpecifier
+          Identifier: '
+    getTokenAtPosition'
+        ImportSpecifier
+          Identifier: '
+    ImportDeclaration'
+        ImportSpecifier
+          Identifier: '
+    isImportDeclaration'
+        ImportSpecifier
+          Identifier: '
+    SourceFile'
+        ImportSpecifier
+          Identifier: '
+    textChanges'
+        ImportSpecifier
+          Identifier: '
+    TextSpan'
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' errorCodes'
+        ArrayLiteralExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: 'Diagnostics'
+              Identifier: 'A_type_only_import_can_specify_a_default_import_or_named_bindings_but_not_both'
+            Identifier: 'code'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fixId'
+        StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+registerCodeFix'
+      ObjectLiteralExpression
+        ShorthandPropertyAssignment
+          Identifier: '
+    errorCodes'
+        PropertyAssignment
+          Identifier: '
+    fixIds'
+          ArrayLiteralExpression
+            Identifier: 'fixId'
+        PropertyAssignment
+          Identifier: '
+    getCodeActions'
+          FunctionExpression
+            Identifier: ' getCodeActionsToSplitTypeOnlyImport'
+            Parameter
+              Identifier: 'context'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' changes'
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: ' textChanges'
+                          Identifier: 'ChangeTracker'
+                        Identifier: 'with'
+                      Identifier: 'context'
+                      ArrowFunction
+                        Parameter
+                          Identifier: ' t'
+                        EqualsGreaterThanToken
+                        Block
+                          ReturnStatement
+                            CallExpression
+                              Identifier: ' splitTypeOnlyImport'
+                              Identifier: 't'
+                              CallExpression
+                                Identifier: ' getImportDeclaration'
+                                PropertyAccessExpression
+                                  Identifier: 'context'
+                                  Identifier: 'sourceFile'
+                                PropertyAccessExpression
+                                  Identifier: ' context'
+                                  Identifier: 'span'
+                              Identifier: ' context'
+              IfStatement
+                PropertyAccessExpression
+                  Identifier: 'changes'
+                  Identifier: 'length'
+                Block
+                  ReturnStatement
+                    ArrayLiteralExpression
+                      CallExpression
+                        Identifier: 'createCodeFixAction'
+                        Identifier: 'fixId'
+                        Identifier: ' changes'
+                        PropertyAccessExpression
+                          Identifier: ' Diagnostics'
+                          Identifier: 'Split_into_two_separate_import_declarations'
+                        Identifier: ' fixId'
+                        PropertyAccessExpression
+                          Identifier: ' Diagnostics'
+                          Identifier: 'Split_all_invalid_type_only_imports'
+        PropertyAssignment
+          Identifier: '
+    getAllCodeActions'
+          ArrowFunction
+            Parameter
+              Identifier: ' context'
+            EqualsGreaterThanToken
+            CallExpression
+              Identifier: '
+        codeFixAll'
+              Identifier: 'context'
+              Identifier: ' errorCodes'
+              ArrowFunction
+                Parameter
+                  Identifier: 'changes'
+                Parameter
+                  Identifier: ' error'
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+            splitTypeOnlyImport'
+                      Identifier: 'changes'
+                      CallExpression
+                        Identifier: ' getImportDeclaration'
+                        PropertyAccessExpression
+                          Identifier: 'context'
+                          Identifier: 'sourceFile'
+                        Identifier: ' error'
+                      Identifier: ' context'
+  FunctionDeclaration
+    Identifier: ' getImportDeclaration'
+    Parameter
+      Identifier: 'sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' span'
+      TypeReference
+        Identifier: ' TextSpan'
+    Block
+      ReturnStatement
+        CallExpression
+          Identifier: ' findAncestor'
+          CallExpression
+            Identifier: 'getTokenAtPosition'
+            Identifier: 'sourceFile'
+            PropertyAccessExpression
+              Identifier: ' span'
+              Identifier: 'start'
+          Identifier: ' isImportDeclaration'
+  FunctionDeclaration
+    Identifier: ' splitTypeOnlyImport'
+    Parameter
+      Identifier: 'changes'
+      TypeReference
+        QualifiedName
+          Identifier: ' textChanges'
+          Identifier: 'ChangeTracker'
+    Parameter
+      Identifier: ' importDeclaration'
+      UnionType
+        TypeReference
+          Identifier: ' ImportDeclaration'
+        UndefinedKeyword
+    Parameter
+      Identifier: ' context'
+      TypeReference
+        Identifier: ' CodeFixContextBase'
+    Block
+      IfStatement
+        PrefixUnaryExpression
+          Identifier: 'importDeclaration'
+        Block
+          ReturnStatement
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' importClause'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' Debug'
+                Identifier: 'checkDefined'
+              PropertyAccessExpression
+                Identifier: 'importDeclaration'
+                Identifier: 'importClause'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    changes'
+            Identifier: 'replaceNode'
+          PropertyAccessExpression
+            Identifier: '
+        context'
+            Identifier: 'sourceFile'
+          Identifier: '
+        importDeclaration'
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+        factory'
+              Identifier: 'updateImportDeclaration'
+            Identifier: '
+            importDeclaration'
+            PropertyAccessExpression
+              Identifier: '
+            importDeclaration'
+              Identifier: 'modifiers'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+            factory'
+                Identifier: 'updateImportClause'
+              Identifier: 'importClause'
+              PropertyAccessExpression
+                Identifier: ' importClause'
+                Identifier: 'isTypeOnly'
+              PropertyAccessExpression
+                Identifier: ' importClause'
+                Identifier: 'name'
+              Identifier: ' /*namedBindings*/ undefined'
+            PropertyAccessExpression
+              Identifier: '
+            importDeclaration'
+              Identifier: 'moduleSpecifier'
+            PropertyAccessExpression
+              Identifier: '
+            importDeclaration'
+              Identifier: 'attributes'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+
+    changes'
+            Identifier: 'insertNodeAfter'
+          PropertyAccessExpression
+            Identifier: '
+        context'
+            Identifier: 'sourceFile'
+          Identifier: '
+        importDeclaration'
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+        factory'
+              Identifier: 'createImportDeclaration'
+            Identifier: '
+            /*modifiers*/ undefined'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+            factory'
+                Identifier: 'updateImportClause'
+              Identifier: 'importClause'
+              PropertyAccessExpression
+                Identifier: ' importClause'
+                Identifier: 'isTypeOnly'
+              Identifier: ' /*name*/ undefined'
+              PropertyAccessExpression
+                Identifier: ' importClause'
+                Identifier: 'namedBindings'
+            PropertyAccessExpression
+              Identifier: '
+            importDeclaration'
+              Identifier: 'moduleSpecifier'
+            PropertyAccessExpression
+              Identifier: '
+            importDeclaration'
+              Identifier: 'attributes'

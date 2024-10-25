@@ -1,0 +1,29 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts'/>
+
+// @allowJs: true
+
+// @Filename: a.js
+//// import foo from 'unfound';
+//// export {
+////   foo,
+//// };
+
+// @Filename: b.js
+//// export {
+////    /**/foo
+//// } from './a';
+
+goTo'
+        Identifier: 'marker'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'baselineRename'
+      StringLiteral
+      ObjectLiteralExpression

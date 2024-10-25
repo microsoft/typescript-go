@@ -1,0 +1,274 @@
+SourceFile
+  ExpressionStatement
+    Identifier: 'declare'
+  ExpressionStatement
+    Identifier: ' module'
+  Block
+    ClassDeclaration
+      ExportKeyword
+      Identifier: ' XDate'
+      MethodDeclaration
+        PublicKeyword
+        Identifier: ' getDay'
+        NumberKeyword
+      MethodDeclaration
+        PublicKeyword
+        Identifier: ' getXDate'
+        NumberKeyword
+      Constructor
+        Parameter
+          Identifier: 'year'
+          NumberKeyword
+        Parameter
+          Identifier: ' month'
+          NumberKeyword
+      Constructor
+        Parameter
+          Identifier: 'year'
+          NumberKeyword
+        Parameter
+          Identifier: ' month'
+          NumberKeyword
+        Parameter
+          Identifier: ' date'
+          NumberKeyword
+      Constructor
+        Parameter
+          Identifier: 'year'
+          NumberKeyword
+        Parameter
+          Identifier: ' month'
+          NumberKeyword
+        Parameter
+          Identifier: ' date'
+          NumberKeyword
+        Parameter
+          Identifier: ' hours'
+          NumberKeyword
+      Constructor
+        Parameter
+          Identifier: 'year'
+          NumberKeyword
+        Parameter
+          Identifier: ' month'
+          NumberKeyword
+        Parameter
+          Identifier: ' date'
+          NumberKeyword
+        Parameter
+          Identifier: ' hours'
+          NumberKeyword
+        Parameter
+          Identifier: ' minutes'
+          NumberKeyword
+      Constructor
+        Parameter
+          Identifier: 'year'
+          NumberKeyword
+        Parameter
+          Identifier: ' month'
+          NumberKeyword
+        Parameter
+          Identifier: ' date'
+          NumberKeyword
+        Parameter
+          Identifier: ' hours'
+          NumberKeyword
+        Parameter
+          Identifier: ' minutes'
+          NumberKeyword
+        Parameter
+          Identifier: ' seconds'
+          NumberKeyword
+      Constructor
+        Parameter
+          Identifier: 'year'
+          NumberKeyword
+        Parameter
+          Identifier: ' month'
+          NumberKeyword
+        Parameter
+          Identifier: ' date'
+          NumberKeyword
+        Parameter
+          Identifier: ' hours'
+          NumberKeyword
+        Parameter
+          Identifier: ' minutes'
+          NumberKeyword
+        Parameter
+          Identifier: ' seconds'
+          NumberKeyword
+        Parameter
+          Identifier: ' ms'
+          NumberKeyword
+      Constructor
+        Parameter
+          Identifier: 'value'
+          NumberKeyword
+      Constructor
+      MethodDeclaration
+        StaticKeyword
+        Identifier: ' parse'
+        Parameter
+          Identifier: 'string'
+          StringKeyword
+        NumberKeyword
+      MethodDeclaration
+        StaticKeyword
+        Identifier: ' UTC'
+        Parameter
+          Identifier: 'year'
+          NumberKeyword
+        Parameter
+          Identifier: ' month'
+          NumberKeyword
+        NumberKeyword
+      MethodDeclaration
+        StaticKeyword
+        Identifier: ' UTC'
+        Parameter
+          Identifier: 'year'
+          NumberKeyword
+        Parameter
+          Identifier: ' month'
+          NumberKeyword
+        Parameter
+          Identifier: ' date'
+          NumberKeyword
+        NumberKeyword
+      MethodDeclaration
+        StaticKeyword
+        Identifier: ' UTC'
+        Parameter
+          Identifier: 'year'
+          NumberKeyword
+        Parameter
+          Identifier: ' month'
+          NumberKeyword
+        Parameter
+          Identifier: ' date'
+          NumberKeyword
+        Parameter
+          Identifier: ' hours'
+          NumberKeyword
+        NumberKeyword
+      MethodDeclaration
+        StaticKeyword
+        Identifier: ' UTC'
+        Parameter
+          Identifier: 'year'
+          NumberKeyword
+        Parameter
+          Identifier: ' month'
+          NumberKeyword
+        Parameter
+          Identifier: ' date'
+          NumberKeyword
+        Parameter
+          Identifier: ' hours'
+          NumberKeyword
+        Parameter
+          Identifier: ' minutes'
+          NumberKeyword
+        NumberKeyword
+      MethodDeclaration
+        StaticKeyword
+        Identifier: ' UTC'
+        Parameter
+          Identifier: 'year'
+          NumberKeyword
+        Parameter
+          Identifier: ' month'
+          NumberKeyword
+        Parameter
+          Identifier: ' date'
+          NumberKeyword
+        Parameter
+          Identifier: ' hours'
+          NumberKeyword
+        Parameter
+          Identifier: ' minutes'
+          NumberKeyword
+        Parameter
+          Identifier: ' seconds'
+          NumberKeyword
+        NumberKeyword
+      MethodDeclaration
+        StaticKeyword
+        Identifier: ' UTC'
+        Parameter
+          Identifier: 'year'
+          NumberKeyword
+        Parameter
+          Identifier: ' month'
+          NumberKeyword
+        Parameter
+          Identifier: ' date'
+          NumberKeyword
+        Parameter
+          Identifier: ' hours'
+          NumberKeyword
+        Parameter
+          Identifier: ' minutes'
+          NumberKeyword
+        Parameter
+          Identifier: ' seconds'
+          NumberKeyword
+        Parameter
+          Identifier: '
+		         ms'
+          NumberKeyword
+        NumberKeyword
+      MethodDeclaration
+        StaticKeyword
+        Identifier: ' now'
+        NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d'
+        NewExpression
+          Identifier: ' XDate'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+d'
+        Identifier: 'getDay'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+d'
+      EqualsToken
+      NewExpression
+        Identifier: ' XDate'
+        NumericLiteral
+        NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+d'
+        Identifier: 'getXDate'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' n'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: 'XDate'
+            Identifier: 'parse'
+          StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+n'
+      EqualsToken
+      CallExpression
+        PropertyAccessExpression
+          Identifier: 'XDate'
+          Identifier: 'UTC'
+        NumericLiteral
+        NumericLiteral
+        NumericLiteral

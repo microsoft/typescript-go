@@ -1,0 +1,253 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+  ExpressionStatement
+    ParenthesizedExpression
+      TypeAssertionExpression
+        AnyKeyword
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: 'a'
+            NumericLiteral
+  ExpressionStatement
+    ParenthesizedExpression
+      TypeAssertionExpression
+        AnyKeyword
+        ArrayLiteralExpression
+          NumericLiteral
+          NumericLiteral
+  ExpressionStatement
+    ParenthesizedExpression
+      TypeAssertionExpression
+        AnyKeyword
+        StringLiteral
+  ExpressionStatement
+    ParenthesizedExpression
+      TypeAssertionExpression
+        AnyKeyword
+        NumericLiteral
+  ExpressionStatement
+    ParenthesizedExpression
+      TypeAssertionExpression
+        AnyKeyword
+        NumericLiteral
+  ExpressionStatement
+    ParenthesizedExpression
+      TypeAssertionExpression
+        AnyKeyword
+        NumericLiteral
+  ExpressionStatement
+    ParenthesizedExpression
+      TypeAssertionExpression
+        AnyKeyword
+        NumericLiteral
+  ExpressionStatement
+    ParenthesizedExpression
+      TypeAssertionExpression
+        AnyKeyword
+        NumericLiteral
+  ExpressionStatement
+    ParenthesizedExpression
+      TypeAssertionExpression
+        AnyKeyword
+        NumericLiteral
+  ExpressionStatement
+    ParenthesizedExpression
+      TypeAssertionExpression
+        AnyKeyword
+        RegularExpressionLiteral
+  ExpressionStatement
+    ParenthesizedExpression
+      TypeAssertionExpression
+        AnyKeyword
+        FalseKeyword
+  ExpressionStatement
+    ParenthesizedExpression
+      TypeAssertionExpression
+        AnyKeyword
+        TrueKeyword
+  ExpressionStatement
+    ParenthesizedExpression
+      TypeAssertionExpression
+        AnyKeyword
+        NullKeyword
+  ExpressionStatement
+    ParenthesizedExpression
+      TypeAssertionExpression
+        AnyKeyword
+        ThisKeyword
+  ExpressionStatement
+    ParenthesizedExpression
+      TypeAssertionExpression
+        AnyKeyword
+        PropertyAccessExpression
+          ThisKeyword
+          Identifier: 'x'
+  ExpressionStatement
+    ParenthesizedExpression
+      TypeAssertionExpression
+        AnyKeyword
+        PropertyAccessExpression
+          ParenthesizedExpression
+            TypeAssertionExpression
+              AnyKeyword
+              Identifier: 'a'
+          Identifier: 'x'
+  ExpressionStatement
+    ParenthesizedExpression
+      TypeAssertionExpression
+        AnyKeyword
+        TypeAssertionExpression
+          AnyKeyword
+          Identifier: 'a'
+  ExpressionStatement
+    ParenthesizedExpression
+      TypeAssertionExpression
+        AnyKeyword
+        ElementAccessExpression
+          Identifier: 'a'
+          NumericLiteral
+  ExpressionStatement
+    ParenthesizedExpression
+      TypeAssertionExpression
+        AnyKeyword
+        ElementAccessExpression
+          PropertyAccessExpression
+            Identifier: 'a'
+            Identifier: 'b'
+          StringLiteral
+  ExpressionStatement
+    PropertyAccessExpression
+      ParenthesizedExpression
+        TypeAssertionExpression
+          AnyKeyword
+          CallExpression
+            Identifier: 'a'
+      Identifier: 'x'
+  ExpressionStatement
+    PropertyAccessExpression
+      ParenthesizedExpression
+        TypeAssertionExpression
+          AnyKeyword
+          NumericLiteral
+      Identifier: 'foo'
+  ExpressionStatement
+    PropertyAccessExpression
+      ParenthesizedExpression
+        TypeAssertionExpression
+          AnyKeyword
+          NumericLiteral
+      Identifier: 'foo'
+  ExpressionStatement
+    PropertyAccessExpression
+      ParenthesizedExpression
+        TypeAssertionExpression
+          AnyKeyword
+          NumericLiteral
+      Identifier: 'foo'
+  ExpressionStatement
+    PropertyAccessExpression
+      ParenthesizedExpression
+        TypeAssertionExpression
+          AnyKeyword
+          NumericLiteral
+      Identifier: 'foo'
+  ExpressionStatement
+    PropertyAccessExpression
+      ParenthesizedExpression
+        TypeAssertionExpression
+          AnyKeyword
+          NumericLiteral
+      Identifier: 'foo'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' A'
+  ExpressionStatement
+    ParenthesizedExpression
+      TypeAssertionExpression
+        AnyKeyword
+        ParenthesizedExpression
+          NumericLiteral
+  ExpressionStatement
+    PropertyAccessExpression
+      ParenthesizedExpression
+        TypeAssertionExpression
+          AnyKeyword
+          NewExpression
+            Identifier: ' A'
+      Identifier: 'foo'
+  ExpressionStatement
+    PropertyAccessExpression
+      ParenthesizedExpression
+        TypeAssertionExpression
+          AnyKeyword
+          TypeOfExpression
+            Identifier: ' A'
+      Identifier: 'x'
+  ExpressionStatement
+    PropertyAccessExpression
+      ParenthesizedExpression
+        TypeAssertionExpression
+          AnyKeyword
+          PrefixUnaryExpression
+            Identifier: 'A'
+      Identifier: 'x'
+  ExpressionStatement
+    NewExpression
+      ParenthesizedExpression
+        TypeAssertionExpression
+          AnyKeyword
+          CallExpression
+            Identifier: 'A'
+  ExpressionStatement
+    CallExpression
+      ParenthesizedExpression
+        ArrowFunction
+          TypeParameter
+            Identifier: 'Tany'
+          EqualsGreaterThanToken
+          Block
+  ExpressionStatement
+    CallExpression
+      ParenthesizedExpression
+        TypeAssertionExpression
+          AnyKeyword
+          FunctionExpression
+            Identifier: ' foo'
+            Block
+  ExpressionStatement
+    PropertyAccessExpression
+      ParenthesizedExpression
+        TypeAssertionExpression
+          AnyKeyword
+          TypeAssertionExpression
+            NumberKeyword
+            TypeAssertionExpression
+              AnyKeyword
+              PrefixUnaryExpression
+                Identifier: 'A'
+      Identifier: 'x'
+  ExpressionStatement
+    PropertyAccessExpression
+      ParenthesizedExpression
+        TypeAssertionExpression
+          AnyKeyword
+          TypeAssertionExpression
+            NumberKeyword
+            ParenthesizedExpression
+              TypeAssertionExpression
+                AnyKeyword
+                PrefixUnaryExpression
+                  Identifier: 'A'
+      Identifier: 'x'
+  ExpressionStatement
+    ParenthesizedExpression
+      TypeAssertionExpression
+        AnyKeyword
+        ParenthesizedExpression
+          Identifier: 'A'

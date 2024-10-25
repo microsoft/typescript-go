@@ -1,0 +1,100 @@
+SourceFile
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' overloaded'
+    Parameter
+      Identifier: 'a'
+    Parameter
+      Identifier: 'b'
+    Block
+      IfStatement
+        BinaryExpression
+          BinaryExpression
+            TypeOfExpression
+              Identifier: ' a'
+            EqualsEqualsEqualsToken
+            StringLiteral
+          AmpersandAmpersandToken
+          BinaryExpression
+            TypeOfExpression
+              Identifier: ' b'
+            EqualsEqualsEqualsToken
+            StringLiteral
+        Block
+          ReturnStatement
+            BinaryExpression
+              Identifier: ' a'
+              PlusToken
+              Identifier: ' b'
+        IfStatement
+          BinaryExpression
+            BinaryExpression
+              TypeOfExpression
+                Identifier: ' a'
+              EqualsEqualsEqualsToken
+              StringLiteral
+            AmpersandAmpersandToken
+            BinaryExpression
+              TypeOfExpression
+                Identifier: ' b'
+              EqualsEqualsEqualsToken
+              StringLiteral
+          Block
+            ReturnStatement
+              BinaryExpression
+                Identifier: ' a'
+                PlusToken
+                Identifier: ' b'
+      ThrowStatement
+        NewExpression
+          Identifier: ' Error'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o1'
+        CallExpression
+          Identifier: ' overloaded'
+          NumericLiteral
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o2'
+        CallExpression
+          Identifier: ' overloaded'
+          StringLiteral
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o3'
+        CallExpression
+          Identifier: ' overloaded'
+          StringLiteral
+          FalseKeyword
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' uncheckedInternally'
+    Parameter
+      Identifier: 'a'
+    Parameter
+      Identifier: ' b'
+    Block
+      ReturnStatement
+        BinaryExpression
+          Identifier: ' a'
+          PlusToken
+          Identifier: ' b'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+uncheckedInternally'
+      NumericLiteral
+      NumericLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+uncheckedInternally'
+      StringLiteral
+      StringLiteral

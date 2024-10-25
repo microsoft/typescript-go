@@ -1,0 +1,53 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Based'
+  ClassDeclaration
+    Identifier: ' Derived'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Based'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' x'
+      NumberKeyword
+    Constructor
+      Block
+        ExpressionStatement
+          ParenthesizedExpression
+            ArrowFunction
+              EqualsGreaterThanToken
+              Block
+                ExpressionStatement
+                  ThisKeyword
+        ExpressionStatement
+          ArrowFunction
+            EqualsGreaterThanToken
+            Block
+              ExpressionStatement
+                ThisKeyword
+        ExpressionStatement
+          CallExpression
+            ParenthesizedExpression
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    ThisKeyword
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'x'
+            EqualsToken
+            NumericLiteral
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' that'
+              ThisKeyword

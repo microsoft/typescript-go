@@ -1,0 +1,21 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    MethodDeclaration
+      ComputedPropertyName
+        PropertyAccessExpression
+          Identifier: 'Symbol'
+          Identifier: 'iterator'
+      Parameter
+        Identifier: 'x'
+        StringKeyword
+      StringKeyword
+    MethodDeclaration
+      ComputedPropertyName
+        PropertyAccessExpression
+          Identifier: 'Symbol'
+          Identifier: 'iterator'
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      NumberKeyword

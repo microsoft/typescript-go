@@ -1,0 +1,8 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' m2'
+    ModuleBlock
+      ImportEqualsDeclaration
+        Identifier: ' m3'
+        ExternalModuleReference
+          StringLiteral

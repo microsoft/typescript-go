@@ -1,0 +1,31 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="../fourslash.ts"/>
+
+// @allowNonTsExtensions: true
+// @Filename: jsdocCompletion_typedef.js
+
+//// /**
+////  * @typedef {Object} MyType
+////  * @property {string} yes
+////  */
+//// function foo() { }
+
+//// /**
+////  * @param {MyType} my
+////  */
+//// function a(my) {
+////     my.yes./*1*/
+//// }
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' includes'
+          StringLiteral

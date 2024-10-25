@@ -1,0 +1,15 @@
+SourceFile
+  ExpressionStatement
+    NewExpression
+      Identifier: ' /*2*/ Array'
+  ExpressionStatement
+    TypeOfExpression
+      Identifier: ' /*2*/ Array'
+  ExpressionStatement
+    VoidExpression
+      Identifier: ' /*2*/ Array'
+  ExpressionStatement
+    DeleteExpression
+      PropertyAccessExpression
+        Identifier: ' /*2*/ Array'
+        Identifier: 'toString'

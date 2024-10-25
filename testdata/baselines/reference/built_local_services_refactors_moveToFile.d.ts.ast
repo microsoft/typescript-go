@@ -1,0 +1,515 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' BinaryExpression'
+        ImportSpecifier
+          Identifier: ' BindingElement'
+        ImportSpecifier
+          Identifier: ' ClassDeclaration'
+        ImportSpecifier
+          Identifier: ' codefix'
+        ImportSpecifier
+          Identifier: ' Declaration'
+        ImportSpecifier
+          Identifier: ' EnumDeclaration'
+        ImportSpecifier
+          Identifier: ' ExpressionStatement'
+        ImportSpecifier
+          Identifier: ' ExternalModuleReference'
+        ImportSpecifier
+          Identifier: ' FunctionDeclaration'
+        ImportSpecifier
+          Identifier: ' FutureSourceFile'
+        ImportSpecifier
+          Identifier: ' GetCanonicalFileName'
+        ImportSpecifier
+          Identifier: ' ImportDeclaration'
+        ImportSpecifier
+          Identifier: ' ImportEqualsDeclaration'
+        ImportSpecifier
+          Identifier: ' InterfaceDeclaration'
+        ImportSpecifier
+          Identifier: ' LanguageServiceHost'
+        ImportSpecifier
+          Identifier: ' ModuleDeclaration'
+        ImportSpecifier
+          Identifier: ' Program'
+        ImportSpecifier
+          Identifier: ' PropertyAccessExpression'
+        ImportSpecifier
+          Identifier: ' RefactorContext'
+        ImportSpecifier
+          Identifier: ' RequireOrImportCall'
+        ImportSpecifier
+          Identifier: ' SourceFile'
+        ImportSpecifier
+          Identifier: ' Statement'
+        ImportSpecifier
+          Identifier: ' StringLiteralLike'
+        ImportSpecifier
+          Identifier: ' Symbol'
+        ImportSpecifier
+          Identifier: ' textChanges'
+        ImportSpecifier
+          Identifier: ' TextRange'
+        ImportSpecifier
+          Identifier: ' TypeAliasDeclaration'
+        ImportSpecifier
+          Identifier: ' TypeChecker'
+        ImportSpecifier
+          Identifier: ' UserPreferences'
+        ImportSpecifier
+          Identifier: ' VariableDeclaration'
+        ImportSpecifier
+          Identifier: ' VariableDeclarationList'
+        ImportSpecifier
+          Identifier: ' VariableStatement'
+    StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getNewStatementsAndRemoveFromOldFile'
+    Parameter
+      Identifier: 'oldFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' targetFile'
+      UnionType
+        TypeReference
+          Identifier: ' SourceFile'
+        TypeReference
+          Identifier: ' FutureSourceFile'
+    Parameter
+      Identifier: ' usage'
+      TypeReference
+        Identifier: ' UsageInfo'
+    Parameter
+      Identifier: ' changes'
+      TypeReference
+        QualifiedName
+          Identifier: ' textChanges'
+          Identifier: 'ChangeTracker'
+    Parameter
+      Identifier: ' toMove'
+      TypeReference
+        Identifier: ' ToMove'
+    Parameter
+      Identifier: ' program'
+      TypeReference
+        Identifier: ' Program'
+    Parameter
+      Identifier: ' host'
+      TypeReference
+        Identifier: ' LanguageServiceHost'
+    Parameter
+      Identifier: ' preferences'
+      TypeReference
+        Identifier: ' UserPreferences'
+    Parameter
+      Identifier: ' importAdderForNewFile'
+      TypeReference
+        QualifiedName
+          Identifier: ' codefix'
+          Identifier: 'ImportAdder'
+    Parameter
+      Identifier: ' importAdderForOldFile'
+      TypeReference
+        QualifiedName
+          Identifier: ' codefix'
+          Identifier: 'ImportAdder'
+    VoidKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' addNewFileToTsconfig'
+    Parameter
+      Identifier: 'program'
+      TypeReference
+        Identifier: ' Program'
+    Parameter
+      Identifier: ' changes'
+      TypeReference
+        QualifiedName
+          Identifier: ' textChanges'
+          Identifier: 'ChangeTracker'
+    Parameter
+      Identifier: ' oldFileName'
+      StringKeyword
+    Parameter
+      Identifier: ' newFileNameWithExtension'
+      StringKeyword
+    Parameter
+      Identifier: ' getCanonicalFileName'
+      TypeReference
+        Identifier: ' GetCanonicalFileName'
+    VoidKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' addExportsInOldFile'
+    Parameter
+      Identifier: 'oldFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' targetFileImportsFromOldFile'
+      TypeReference
+        Identifier: ' Map'
+        TypeReference
+          Identifier: 'Symbol'
+        BooleanKeyword
+    Parameter
+      Identifier: ' changes'
+      TypeReference
+        QualifiedName
+          Identifier: ' textChanges'
+          Identifier: 'ChangeTracker'
+    Parameter
+      Identifier: ' useEsModuleSyntax'
+      BooleanKeyword
+    VoidKeyword
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' SupportedImport'
+    UnionType
+      IntersectionType
+        TypeReference
+          Identifier: ' ImportDeclaration'
+        TypeLiteral
+          PropertySignature
+            Identifier: '
+    moduleSpecifier'
+            TypeReference
+              Identifier: ' StringLiteralLike'
+      IntersectionType
+        TypeReference
+          Identifier: ' ImportEqualsDeclaration'
+        TypeLiteral
+          PropertySignature
+            Identifier: '
+    moduleReference'
+            IntersectionType
+              TypeReference
+                Identifier: ' ExternalModuleReference'
+              TypeLiteral
+                PropertySignature
+                  Identifier: '
+        expression'
+                  TypeReference
+                    Identifier: ' StringLiteralLike'
+      IntersectionType
+        TypeReference
+          Identifier: ' VariableDeclaration'
+        TypeLiteral
+          PropertySignature
+            Identifier: '
+    initializer'
+            TypeReference
+              Identifier: ' RequireOrImportCall'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' SupportedImportStatement'
+    UnionType
+      TypeReference
+        Identifier: ' ImportDeclaration'
+      TypeReference
+        Identifier: ' ImportEqualsDeclaration'
+      TypeReference
+        Identifier: ' VariableStatement'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' addImportsForMovedSymbols'
+    Parameter
+      Identifier: 'symbols'
+      TypeReference
+        Identifier: ' Map'
+        TypeReference
+          Identifier: 'Symbol'
+        BooleanKeyword
+    Parameter
+      Identifier: ' targetFileName'
+      StringKeyword
+    Parameter
+      Identifier: ' importAdder'
+      TypeReference
+        QualifiedName
+          Identifier: ' codefix'
+          Identifier: 'ImportAdder'
+    Parameter
+      Identifier: ' program'
+      TypeReference
+        Identifier: ' Program'
+    VoidKeyword
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' TopLevelDeclarationStatement'
+    UnionType
+      TypeReference
+        Identifier: ' NonVariableTopLevelDeclaration'
+      TypeReference
+        Identifier: ' VariableStatement'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' ToMove'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' all'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' Statement'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' ranges'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' StatementRange'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' StatementRange'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' first'
+      TypeReference
+        Identifier: ' Statement'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' afterLast'
+      UnionType
+        TypeReference
+          Identifier: ' Statement'
+        UndefinedKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' UsageInfo'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' movedSymbols'
+      TypeReference
+        Identifier: ' Set'
+        TypeReference
+          Identifier: 'Symbol'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' targetFileImportsFromOldFile'
+      TypeReference
+        Identifier: ' Map'
+        TypeReference
+          Identifier: 'Symbol'
+        BooleanKeyword
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' oldFileImportsFromTargetFile'
+      TypeReference
+        Identifier: ' Map'
+        TypeReference
+          Identifier: 'Symbol'
+        BooleanKeyword
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' oldImportsNeededByTargetFile'
+      TypeReference
+        Identifier: ' Map'
+        TypeReference
+          Identifier: 'Symbol'
+        TupleType
+          BooleanKeyword
+          UnionType
+            TypeReference
+              QualifiedName
+                Identifier: ' codefix'
+                Identifier: 'ImportOrRequireAliasDeclaration'
+            UndefinedKeyword
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' unusedImportsFromOldFile'
+      TypeReference
+        Identifier: ' Set'
+        TypeReference
+          Identifier: 'Symbol'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' TopLevelExpressionStatement'
+    IntersectionType
+      TypeReference
+        Identifier: ' ExpressionStatement'
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+    expression'
+          IntersectionType
+            TypeReference
+              Identifier: ' BinaryExpression'
+            TypeLiteral
+              PropertySignature
+                Identifier: '
+        left'
+                TypeReference
+                  Identifier: ' PropertyAccessExpression'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' NonVariableTopLevelDeclaration'
+    UnionType
+      TypeReference
+        Identifier: ' FunctionDeclaration'
+      TypeReference
+        Identifier: ' ClassDeclaration'
+      TypeReference
+        Identifier: ' EnumDeclaration'
+      TypeReference
+        Identifier: ' TypeAliasDeclaration'
+      TypeReference
+        Identifier: ' InterfaceDeclaration'
+      TypeReference
+        Identifier: ' ModuleDeclaration'
+      TypeReference
+        Identifier: ' TopLevelExpressionStatement'
+      TypeReference
+        Identifier: ' ImportEqualsDeclaration'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' TopLevelVariableDeclaration'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' VariableDeclaration'
+    PropertySignature
+      Identifier: '
+    parent'
+      IntersectionType
+        TypeReference
+          Identifier: ' VariableDeclarationList'
+        TypeLiteral
+          PropertySignature
+            Identifier: '
+        parent'
+            TypeReference
+              Identifier: ' VariableStatement'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' TopLevelDeclaration'
+    UnionType
+      TypeReference
+        Identifier: ' NonVariableTopLevelDeclaration'
+      TypeReference
+        Identifier: ' TopLevelVariableDeclaration'
+      TypeReference
+        Identifier: ' BindingElement'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' createNewFileName'
+    Parameter
+      Identifier: 'oldFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' program'
+      TypeReference
+        Identifier: ' Program'
+    Parameter
+      Identifier: ' host'
+      TypeReference
+        Identifier: ' LanguageServiceHost'
+    Parameter
+      Identifier: ' toMove'
+      UnionType
+        TypeReference
+          Identifier: ' ToMove'
+        UndefinedKeyword
+    StringKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getStatementsToMove'
+    Parameter
+      Identifier: 'context'
+      TypeReference
+        Identifier: ' RefactorContext'
+    UnionType
+      TypeReference
+        Identifier: ' ToMove'
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' containsJsx'
+    Parameter
+      Identifier: 'statements'
+      UnionType
+        TypeOperator
+          ArrayType
+            TypeReference
+              Identifier: ' Statement'
+        UndefinedKeyword
+    UnionType
+      TypeReference
+        Identifier: ' Statement'
+      UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getUsageInfo'
+    Parameter
+      Identifier: 'oldFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' toMove'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' Statement'
+    Parameter
+      Identifier: ' checker'
+      TypeReference
+        Identifier: ' TypeChecker'
+    Parameter
+      Identifier: ' existingTargetLocals'
+      QuestionToken
+      TypeReference
+        Identifier: ' ReadonlySet'
+        TypeReference
+          Identifier: 'Symbol'
+    Parameter
+      Identifier: ' enclosingRange'
+      QuestionToken
+      TypeReference
+        Identifier: ' TextRange'
+    TypeReference
+      Identifier: ' UsageInfo'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isInImport'
+    Parameter
+      Identifier: 'decl'
+      TypeReference
+        Identifier: ' Declaration'
+    BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getExistingLocals'
+    Parameter
+      Identifier: 'sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' statements'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' Statement'
+    Parameter
+      Identifier: ' checker'
+      TypeReference
+        Identifier: ' TypeChecker'
+    TypeReference
+      Identifier: ' Set'
+      TypeReference
+        Identifier: 'Symbol'

@@ -1,0 +1,15 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' Thing'
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' OtherThing'
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' Thing'
+      ExportSpecifier
+        Identifier: ' OtherThing'
+        Identifier: ' default'
+    StringLiteral

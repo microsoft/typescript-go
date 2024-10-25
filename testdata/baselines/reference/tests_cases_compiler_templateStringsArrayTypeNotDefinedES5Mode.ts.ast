@@ -1,0 +1,35 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' TemplateStringsArray'
+    Parameter
+      Identifier: ' y'
+      NumberKeyword
+    Parameter
+      Identifier: ' z'
+      NumberKeyword
+    Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+f'
+      ObjectLiteralExpression
+      NumericLiteral
+      NumericLiteral
+  ExpressionStatement
+    TaggedTemplateExpression
+      Identifier: '
+
+f'
+      TemplateExpression
+        TemplateHead
+        TemplateSpan
+          NumericLiteral
+          TemplateMiddle
+        TemplateSpan
+          NumericLiteral
+          TemplateTail

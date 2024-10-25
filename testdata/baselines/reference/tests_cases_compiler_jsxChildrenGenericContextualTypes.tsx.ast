@@ -1,0 +1,276 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' JSX'
+    ModuleBlock
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' Element'
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' ElementAttributesProperty'
+        PropertySignature
+          Identifier: ' props'
+          TypeLiteral
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' ElementChildrenAttribute'
+        PropertySignature
+          Identifier: ' children'
+          TypeLiteral
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' IntrinsicAttributes'
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' IntrinsicElements'
+        IndexSignature
+          Parameter
+            Identifier: 'key'
+            StringKeyword
+          TypeReference
+            Identifier: ' Element'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' Elem'
+        ArrowFunction
+          TypeParameter
+            Identifier: 'T'
+          TypeParameter
+            Identifier: 'U'
+            NeverKeyword
+          Parameter
+            Identifier: 'p'
+            TypeLiteral
+              PropertySignature
+                Identifier: ' prop'
+                TypeReference
+                  Identifier: ' T'
+              PropertySignature
+                Identifier: ' children'
+                FunctionType
+                  Parameter
+                    Identifier: 't'
+                    TypeReference
+                      Identifier: ' T'
+                  TypeReference
+                    Identifier: ' T'
+          EqualsGreaterThanToken
+          JsxElement
+            JsxOpeningElement
+              Identifier: 'div'
+              JsxAttributes
+            JsxClosingElement
+              Identifier: 'div'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+Elem'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: 'prop'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: 'a'
+              StringLiteral
+        PropertyAssignment
+          Identifier: ' children'
+          ArrowFunction
+            Parameter
+              Identifier: ' i'
+            EqualsGreaterThanToken
+            ParenthesizedExpression
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: 'a'
+                  StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' q'
+        JsxSelfClosingElement
+          Identifier: 'Elem'
+          JsxAttributes
+            JsxAttribute
+              Identifier: ' prop'
+              JsxExpression
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: 'a'
+                    StringLiteral
+            JsxAttribute
+              Identifier: ' children'
+              JsxExpression
+                ArrowFunction
+                  Parameter
+                    Identifier: 'i'
+                  EqualsGreaterThanToken
+                  ParenthesizedExpression
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: 'a'
+                        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' qq'
+        JsxElement
+          JsxOpeningElement
+            Identifier: 'Elem'
+            JsxAttributes
+              JsxAttribute
+                Identifier: ' prop'
+                JsxExpression
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: 'a'
+                      StringLiteral
+          JsxExpression
+            ArrowFunction
+              Parameter
+                Identifier: 'i'
+              EqualsGreaterThanToken
+              ParenthesizedExpression
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: 'a'
+                    StringLiteral
+          JsxClosingElement
+            Identifier: 'Elem'
+  InterfaceDeclaration
+    Identifier: ' LitProps'
+    TypeParameter
+      Identifier: 'T'
+    PropertySignature
+      Identifier: ' prop'
+      TypeReference
+        Identifier: ' T'
+    PropertySignature
+      Identifier: ' children'
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          ThisType
+        TypeReference
+          Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ElemLit'
+        ArrowFunction
+          TypeParameter
+            Identifier: 'T'
+            StringKeyword
+          Parameter
+            Identifier: 'p'
+            TypeReference
+              Identifier: ' LitProps'
+              TypeReference
+                Identifier: 'T'
+          EqualsGreaterThanToken
+          JsxElement
+            JsxOpeningElement
+              Identifier: 'div'
+              JsxAttributes
+            JsxClosingElement
+              Identifier: 'div'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+ElemLit'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: 'prop'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' children'
+          ArrowFunction
+            EqualsGreaterThanToken
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' j'
+        JsxSelfClosingElement
+          Identifier: 'ElemLit'
+          JsxAttributes
+            JsxAttribute
+              Identifier: ' prop'
+              StringLiteral
+            JsxAttribute
+              Identifier: ' children'
+              JsxExpression
+                ArrowFunction
+                  EqualsGreaterThanToken
+                  StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' jj'
+        JsxElement
+          JsxOpeningElement
+            Identifier: 'ElemLit'
+            JsxAttributes
+              JsxAttribute
+                Identifier: ' prop'
+                StringLiteral
+          JsxExpression
+            ArrowFunction
+              EqualsGreaterThanToken
+              StringLiteral
+          JsxClosingElement
+            Identifier: 'ElemLit'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' arg'
+        JsxSelfClosingElement
+          Identifier: 'ElemLit'
+          JsxAttributes
+            JsxAttribute
+              Identifier: ' prop'
+              StringLiteral
+            JsxAttribute
+              Identifier: ' children'
+              JsxExpression
+                ArrowFunction
+                  Parameter
+                    Identifier: 'p'
+                  EqualsGreaterThanToken
+                  StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' argchild'
+        JsxElement
+          JsxOpeningElement
+            Identifier: 'ElemLit'
+            JsxAttributes
+              JsxAttribute
+                Identifier: ' prop'
+                StringLiteral
+          JsxExpression
+            ArrowFunction
+              Parameter
+                Identifier: 'p'
+              EqualsGreaterThanToken
+              StringLiteral
+          JsxClosingElement
+            Identifier: 'ElemLit'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' mismatched'
+        JsxElement
+          JsxOpeningElement
+            Identifier: 'ElemLit'
+            JsxAttributes
+              JsxAttribute
+                Identifier: ' prop'
+                StringLiteral
+          JsxExpression
+            ArrowFunction
+              EqualsGreaterThanToken
+              NumericLiteral
+          JsxClosingElement
+            Identifier: 'ElemLit'

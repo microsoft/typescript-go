@@ -1,0 +1,25 @@
+SourceFile
+  ExpressionStatement
+    ArrowFunction
+      EqualsGreaterThanToken
+      Block
+        ReturnStatement
+          NumericLiteral
+  ExpressionStatement
+    ArrowFunction
+      EqualsGreaterThanToken
+      Block
+        ReturnStatement
+          NumericLiteral
+  ExpressionStatement
+    ArrowFunction
+      EqualsGreaterThanToken
+      Block
+        ReturnStatement
+          NumericLiteral
+  ExpressionStatement
+    ArrowFunction
+      EqualsGreaterThanToken
+      Block
+        ReturnStatement
+          NumericLiteral

@@ -1,0 +1,1054 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' TypeScript'
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' TypeCollectionContext'
+        PropertyDeclaration
+          PublicKeyword
+          Identifier: ' script'
+          TypeReference
+            Identifier: ' Script'
+          NullKeyword
+        Constructor
+          Parameter
+            PublicKeyword
+            Identifier: ' scopeChain'
+            TypeReference
+              Identifier: ' ScopeChain'
+          Parameter
+            PublicKeyword
+            Identifier: ' checker'
+            TypeReference
+              Identifier: ' TypeChecker'
+          Block
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' MemberScopeContext'
+        PropertyDeclaration
+          PublicKeyword
+          Identifier: ' type'
+          TypeReference
+            Identifier: ' Type'
+          NullKeyword
+        PropertyDeclaration
+          PublicKeyword
+          Identifier: ' ast'
+          TypeReference
+            Identifier: ' AST'
+          NullKeyword
+        PropertyDeclaration
+          PublicKeyword
+          Identifier: ' scope'
+          TypeReference
+            Identifier: ' SymbolScope'
+        PropertyDeclaration
+          PublicKeyword
+          Identifier: ' options'
+          NewExpression
+            Identifier: ' AstWalkOptions'
+        Constructor
+          Parameter
+            PublicKeyword
+            Identifier: ' flow'
+            TypeReference
+              Identifier: ' TypeFlow'
+          Parameter
+            PublicKeyword
+            Identifier: ' pos'
+            NumberKeyword
+          Parameter
+            PublicKeyword
+            Identifier: ' matchFlag'
+            TypeReference
+              Identifier: ' ASTFlags'
+          Block
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' EnclosingScopeContext'
+        PropertyDeclaration
+          PublicKeyword
+          Identifier: ' scopeGetter'
+          FunctionType
+            TypeReference
+              Identifier: ' SymbolScope'
+          NullKeyword
+        PropertyDeclaration
+          PublicKeyword
+          Identifier: ' objectLiteralScopeGetter'
+          FunctionType
+            TypeReference
+              Identifier: ' SymbolScope'
+          NullKeyword
+        PropertyDeclaration
+          PublicKeyword
+          Identifier: ' scopeStartAST'
+          TypeReference
+            Identifier: ' AST'
+          NullKeyword
+        PropertyDeclaration
+          PublicKeyword
+          Identifier: ' skipNextFuncDeclForClass'
+          FalseKeyword
+        PropertyDeclaration
+          PublicKeyword
+          Identifier: ' deepestModuleDecl'
+          TypeReference
+            Identifier: ' ModuleDeclaration'
+          NullKeyword
+        PropertyDeclaration
+          PublicKeyword
+          Identifier: ' enclosingClassDecl'
+          TypeReference
+            Identifier: ' TypeDeclaration'
+          NullKeyword
+        PropertyDeclaration
+          PublicKeyword
+          Identifier: ' enclosingObjectLit'
+          TypeReference
+            Identifier: ' UnaryExpression'
+          NullKeyword
+        PropertyDeclaration
+          PublicKeyword
+          Identifier: ' publicsOnly'
+          TrueKeyword
+        PropertyDeclaration
+          PublicKeyword
+          Identifier: ' useFullAst'
+          FalseKeyword
+        PropertyDeclaration
+          PrivateKeyword
+          Identifier: ' scriptFragment'
+          TypeReference
+            Identifier: ' Script'
+        Constructor
+          Parameter
+            PublicKeyword
+            Identifier: ' logger'
+            TypeReference
+              Identifier: ' ILogger'
+          Parameter
+            PublicKeyword
+            Identifier: ' script'
+            TypeReference
+              Identifier: ' Script'
+          Parameter
+            PublicKeyword
+            Identifier: ' text'
+            TypeReference
+              Identifier: ' ISourceText'
+          Parameter
+            PublicKeyword
+            Identifier: ' pos'
+            NumberKeyword
+          Parameter
+            PublicKeyword
+            Identifier: ' isMemberCompletion'
+            BooleanKeyword
+          Block
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' getScope'
+          TypeReference
+            Identifier: ' SymbolScope'
+          Block
+            ReturnStatement
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'scopeGetter'
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' getObjectLiteralScope'
+          TypeReference
+            Identifier: ' SymbolScope'
+          Block
+            ReturnStatement
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'objectLiteralScopeGetter'
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' getScopeAST'
+          Block
+            ReturnStatement
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'scopeStartAST'
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' getScopePosition'
+          Block
+            ReturnStatement
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'scopeStartAST'
+                Identifier: 'minChar'
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' getScriptFragmentStartAST'
+          TypeReference
+            Identifier: ' AST'
+          Block
+            ReturnStatement
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'scopeStartAST'
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' getScriptFragmentPosition'
+          NumberKeyword
+          Block
+            ReturnStatement
+              PropertyAccessExpression
+                CallExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'getScriptFragmentStartAST'
+                Identifier: 'minChar'
+        MethodDeclaration
+          PublicKeyword
+          Identifier: ' getScriptFragment'
+          TypeReference
+            Identifier: ' Script'
+          Block
+            IfStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'scriptFragment'
+                EqualsEqualsToken
+                NullKeyword
+              Block
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' ast'
+                      CallExpression
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'getScriptFragmentStartAST'
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' minChar'
+                      PropertyAccessExpression
+                        Identifier: ' ast'
+                        Identifier: 'minChar'
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' limChar'
+                      ParenthesizedExpression
+                        ConditionalExpression
+                          PropertyAccessExpression
+                            ThisKeyword
+                            Identifier: 'isMemberCompletion'
+                          QuestionToken
+                          PropertyAccessExpression
+                            ThisKeyword
+                            Identifier: 'pos'
+                          ColonToken
+                          BinaryExpression
+                            PropertyAccessExpression
+                              ThisKeyword
+                              Identifier: 'pos'
+                            PlusToken
+                            NumericLiteral
+                ExpressionStatement
+                  BinaryExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'scriptFragment'
+                    EqualsToken
+                    PropertyAccessExpression
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' TypeScript'
+                          Identifier: 'quickParse'
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'logger'
+                        Identifier: ' ast'
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'text'
+                        Identifier: ' minChar'
+                        Identifier: ' limChar'
+                        NullKeyword
+                      Identifier: 'Script'
+            ReturnStatement
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'scriptFragment'
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' preFindMemberScope'
+        Parameter
+          Identifier: 'ast'
+          TypeReference
+            Identifier: ' AST'
+        Parameter
+          Identifier: ' parent'
+          TypeReference
+            Identifier: ' AST'
+        Parameter
+          Identifier: ' walker'
+          TypeReference
+            Identifier: ' IAstWalker'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' memScope'
+                TypeReference
+                  Identifier: ' MemberScopeContext'
+                PropertyAccessExpression
+                  Identifier: ' walker'
+                  Identifier: 'state'
+          IfStatement
+            BinaryExpression
+              CallExpression
+                Identifier: 'hasFlag'
+                PropertyAccessExpression
+                  Identifier: 'ast'
+                  Identifier: 'flags'
+                PropertyAccessExpression
+                  Identifier: ' memScope'
+                  Identifier: 'matchFlag'
+              AmpersandAmpersandToken
+              ParenthesizedExpression
+                BinaryExpression
+                  ParenthesizedExpression
+                    BinaryExpression
+                      PropertyAccessExpression
+                        Identifier: 'memScope'
+                        Identifier: 'pos'
+                      LessThanToken
+                      NumericLiteral
+                  BarBarToken
+                  ParenthesizedExpression
+                    BinaryExpression
+                      PropertyAccessExpression
+                        Identifier: 'memScope'
+                        Identifier: 'pos'
+                      EqualsEqualsToken
+                      PropertyAccessExpression
+                        Identifier: ' ast'
+                        Identifier: 'limChar'
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            memScope'
+                    Identifier: 'ast'
+                  EqualsToken
+                  Identifier: ' ast'
+              IfStatement
+                BinaryExpression
+                  ParenthesizedExpression
+                    BinaryExpression
+                      PropertyAccessExpression
+                        Identifier: 'ast'
+                        Identifier: 'type'
+                      EqualsEqualsToken
+                      NullKeyword
+                  AmpersandAmpersandToken
+                  ParenthesizedExpression
+                    BinaryExpression
+                      PropertyAccessExpression
+                        Identifier: 'memScope'
+                        Identifier: 'pos'
+                      GreaterThanEqualsToken
+                      NumericLiteral
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: '
+                memScope'
+                          Identifier: 'flow'
+                        Identifier: 'inScopeTypeCheck'
+                      Identifier: 'ast'
+                      PropertyAccessExpression
+                        Identifier: ' memScope'
+                        Identifier: 'scope'
+              ExpressionStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            memScope'
+                    Identifier: 'type'
+                  EqualsToken
+                  PropertyAccessExpression
+                    Identifier: ' ast'
+                    Identifier: 'type'
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: '
+            memScope'
+                      Identifier: 'options'
+                    Identifier: 'stopWalk'
+          ReturnStatement
+            Identifier: ' ast'
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' pushTypeCollectionScope'
+        Parameter
+          Identifier: 'container'
+          TypeReference
+            Identifier: ' Symbol'
+        Parameter
+          Identifier: '
+        valueMembers'
+          TypeReference
+            Identifier: ' ScopedMembers'
+        Parameter
+          Identifier: '
+        ambientValueMembers'
+          TypeReference
+            Identifier: ' ScopedMembers'
+        Parameter
+          Identifier: '
+        enclosedTypes'
+          TypeReference
+            Identifier: ' ScopedMembers'
+        Parameter
+          Identifier: '
+        ambientEnclosedTypes'
+          TypeReference
+            Identifier: ' ScopedMembers'
+        Parameter
+          Identifier: '
+        context'
+          TypeReference
+            Identifier: ' TypeCollectionContext'
+        Parameter
+          Identifier: '
+        thisType'
+          TypeReference
+            Identifier: ' Type'
+        Parameter
+          Identifier: '
+        classType'
+          TypeReference
+            Identifier: ' Type'
+        Parameter
+          Identifier: '
+        moduleDecl'
+          TypeReference
+            Identifier: ' ModuleDeclaration'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' builder'
+                NewExpression
+                  Identifier: ' SymbolScopeBuilder'
+                  Identifier: 'valueMembers'
+                  Identifier: ' ambientValueMembers'
+                  Identifier: ' enclosedTypes'
+                  Identifier: ' ambientEnclosedTypes'
+                  NullKeyword
+                  Identifier: ' container'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' chain'
+                TypeReference
+                  Identifier: ' ScopeChain'
+                NewExpression
+                  Identifier: ' ScopeChain'
+                  Identifier: 'container'
+                  PropertyAccessExpression
+                    Identifier: ' context'
+                    Identifier: 'scopeChain'
+                  Identifier: ' builder'
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: '
+        chain'
+                Identifier: 'thisType'
+              EqualsToken
+              Identifier: ' thisType'
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: '
+        chain'
+                Identifier: 'classType'
+              EqualsToken
+              Identifier: ' classType'
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: '
+        chain'
+                Identifier: 'moduleDecl'
+              EqualsToken
+              Identifier: ' moduleDecl'
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: '
+        context'
+                Identifier: 'scopeChain'
+              EqualsToken
+              Identifier: ' chain'
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' popTypeCollectionScope'
+        Parameter
+          Identifier: 'context'
+          TypeReference
+            Identifier: ' TypeCollectionContext'
+        Block
+          ExpressionStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: '
+        context'
+                Identifier: 'scopeChain'
+              EqualsToken
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' context'
+                  Identifier: 'scopeChain'
+                Identifier: 'previous'
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' preFindEnclosingScope'
+        Parameter
+          Identifier: 'ast'
+          TypeReference
+            Identifier: ' AST'
+        Parameter
+          Identifier: ' parent'
+          TypeReference
+            Identifier: ' AST'
+        Parameter
+          Identifier: ' walker'
+          TypeReference
+            Identifier: ' IAstWalker'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' context'
+                TypeReference
+                  Identifier: ' EnclosingScopeContext'
+                PropertyAccessExpression
+                  Identifier: ' walker'
+                  Identifier: 'state'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' minChar'
+                PropertyAccessExpression
+                  Identifier: ' ast'
+                  Identifier: 'minChar'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' limChar'
+                PropertyAccessExpression
+                  Identifier: ' ast'
+                  Identifier: 'limChar'
+          IfStatement
+            BinaryExpression
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: 'ast'
+                  Identifier: 'nodeType'
+                EqualsEqualsToken
+                PropertyAccessExpression
+                  Identifier: ' NodeType'
+                  Identifier: 'Script'
+              AmpersandAmpersandToken
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: ' context'
+                  Identifier: 'pos'
+                GreaterThanToken
+                Identifier: ' limChar'
+            ExpressionStatement
+              BinaryExpression
+                Identifier: '
+            limChar'
+                EqualsToken
+                PropertyAccessExpression
+                  Identifier: ' context'
+                  Identifier: 'pos'
+          IfStatement
+            BinaryExpression
+              ParenthesizedExpression
+                BinaryExpression
+                  Identifier: 'minChar'
+                  LessThanEqualsToken
+                  PropertyAccessExpression
+                    Identifier: ' context'
+                    Identifier: 'pos'
+              AmpersandAmpersandToken
+              ParenthesizedExpression
+                BinaryExpression
+                  Identifier: 'limChar'
+                  GreaterThanEqualsToken
+                  PropertyAccessExpression
+                    Identifier: ' context'
+                    Identifier: 'pos'
+            Block
+              SwitchStatement
+                PropertyAccessExpression
+                  Identifier: 'ast'
+                  Identifier: 'nodeType'
+                CaseBlock
+                  CaseClause
+                    PropertyAccessExpression
+                      Identifier: ' NodeType'
+                      Identifier: 'Script'
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' script'
+                          TypeAssertionExpression
+                            TypeReference
+                              Identifier: 'Script'
+                            Identifier: 'ast'
+                    ExpressionStatement
+                      BinaryExpression
+                        PropertyAccessExpression
+                          Identifier: '
+                    context'
+                          Identifier: 'scopeGetter'
+                        EqualsToken
+                        FunctionExpression
+                          Block
+                            ReturnStatement
+                              ConditionalExpression
+                                BinaryExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' script'
+                                    Identifier: 'bod'
+                                  EqualsEqualsEqualsToken
+                                  NullKeyword
+                                QuestionToken
+                                NullKeyword
+                                ColonToken
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' script'
+                                    Identifier: 'bod'
+                                  Identifier: 'enclosingScope'
+                    ExpressionStatement
+                      BinaryExpression
+                        PropertyAccessExpression
+                          Identifier: '
+                    context'
+                          Identifier: 'scopeStartAST'
+                        EqualsToken
+                        Identifier: ' script'
+                    BreakStatement
+                  CaseClause
+                    PropertyAccessExpression
+                      Identifier: ' NodeType'
+                      Identifier: 'ClassDeclaration'
+                    ExpressionStatement
+                      BinaryExpression
+                        PropertyAccessExpression
+                          Identifier: '
+                    context'
+                          Identifier: 'scopeGetter'
+                        EqualsToken
+                        FunctionExpression
+                          Block
+                            ReturnStatement
+                              ConditionalExpression
+                                ParenthesizedExpression
+                                  BinaryExpression
+                                    BinaryExpression
+                                      PropertyAccessExpression
+                                        Identifier: 'ast'
+                                        Identifier: 'type'
+                                      EqualsEqualsEqualsToken
+                                      NullKeyword
+                                    BarBarToken
+                                    BinaryExpression
+                                      PropertyAccessExpression
+                                        PropertyAccessExpression
+                                          PropertyAccessExpression
+                                            Identifier: ' ast'
+                                            Identifier: 'type'
+                                          Identifier: 'instanceType'
+                                        Identifier: 'containedScope'
+                                      EqualsEqualsEqualsToken
+                                      NullKeyword
+                                QuestionToken
+                                NullKeyword
+                                ColonToken
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' ast'
+                                      Identifier: 'type'
+                                    Identifier: 'instanceType'
+                                  Identifier: 'containedScope'
+                    ExpressionStatement
+                      BinaryExpression
+                        PropertyAccessExpression
+                          Identifier: '
+                    context'
+                          Identifier: 'scopeStartAST'
+                        EqualsToken
+                        Identifier: ' ast'
+                    ExpressionStatement
+                      BinaryExpression
+                        PropertyAccessExpression
+                          Identifier: '
+                    context'
+                          Identifier: 'enclosingClassDecl'
+                        EqualsToken
+                        TypeAssertionExpression
+                          TypeReference
+                            Identifier: 'TypeDeclaration'
+                          Identifier: 'ast'
+                    BreakStatement
+                  CaseClause
+                    PropertyAccessExpression
+                      Identifier: ' NodeType'
+                      Identifier: 'ObjectLit'
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' objectLit'
+                          TypeAssertionExpression
+                            TypeReference
+                              Identifier: 'UnaryExpression'
+                            Identifier: 'ast'
+                    IfStatement
+                      PropertyAccessExpression
+                        Identifier: 'objectLit'
+                        Identifier: 'targetType'
+                      Block
+                        ExpressionStatement
+                          BinaryExpression
+                            PropertyAccessExpression
+                              Identifier: '
+                        context'
+                              Identifier: 'scopeGetter'
+                            EqualsToken
+                            FunctionExpression
+                              Block
+                                ReturnStatement
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' objectLit'
+                                      Identifier: 'targetType'
+                                    Identifier: 'containedScope'
+                        ExpressionStatement
+                          BinaryExpression
+                            PropertyAccessExpression
+                              Identifier: '
+                        context'
+                              Identifier: 'objectLiteralScopeGetter'
+                            EqualsToken
+                            FunctionExpression
+                              Block
+                                ReturnStatement
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' objectLit'
+                                      Identifier: 'targetType'
+                                    Identifier: 'memberScope'
+                        ExpressionStatement
+                          BinaryExpression
+                            PropertyAccessExpression
+                              Identifier: '
+                        context'
+                              Identifier: 'enclosingObjectLit'
+                            EqualsToken
+                            Identifier: ' objectLit'
+                    BreakStatement
+                  CaseClause
+                    PropertyAccessExpression
+                      Identifier: ' NodeType'
+                      Identifier: 'ModuleDeclaration'
+                    ExpressionStatement
+                      BinaryExpression
+                        PropertyAccessExpression
+                          Identifier: '
+                    context'
+                          Identifier: 'deepestModuleDecl'
+                        EqualsToken
+                        TypeAssertionExpression
+                          TypeReference
+                            Identifier: 'ModuleDeclaration'
+                          Identifier: 'ast'
+                    ExpressionStatement
+                      BinaryExpression
+                        PropertyAccessExpression
+                          Identifier: '
+                    context'
+                          Identifier: 'scopeGetter'
+                        EqualsToken
+                        FunctionExpression
+                          Block
+                            ReturnStatement
+                              ConditionalExpression
+                                BinaryExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' ast'
+                                    Identifier: 'type'
+                                  EqualsEqualsEqualsToken
+                                  NullKeyword
+                                QuestionToken
+                                NullKeyword
+                                ColonToken
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' ast'
+                                    Identifier: 'type'
+                                  Identifier: 'containedScope'
+                    ExpressionStatement
+                      BinaryExpression
+                        PropertyAccessExpression
+                          Identifier: '
+                    context'
+                          Identifier: 'scopeStartAST'
+                        EqualsToken
+                        Identifier: ' ast'
+                    BreakStatement
+                  CaseClause
+                    PropertyAccessExpression
+                      Identifier: ' NodeType'
+                      Identifier: 'InterfaceDeclaration'
+                    ExpressionStatement
+                      BinaryExpression
+                        PropertyAccessExpression
+                          Identifier: '
+                    context'
+                          Identifier: 'scopeGetter'
+                        EqualsToken
+                        FunctionExpression
+                          Block
+                            ReturnStatement
+                              ConditionalExpression
+                                ParenthesizedExpression
+                                  BinaryExpression
+                                    PropertyAccessExpression
+                                      Identifier: 'ast'
+                                      Identifier: 'type'
+                                    EqualsEqualsEqualsToken
+                                    NullKeyword
+                                QuestionToken
+                                NullKeyword
+                                ColonToken
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' ast'
+                                    Identifier: 'type'
+                                  Identifier: 'containedScope'
+                    ExpressionStatement
+                      BinaryExpression
+                        PropertyAccessExpression
+                          Identifier: '
+                    context'
+                          Identifier: 'scopeStartAST'
+                        EqualsToken
+                        Identifier: ' ast'
+                    BreakStatement
+                  CaseClause
+                    PropertyAccessExpression
+                      Identifier: ' NodeType'
+                      Identifier: 'FuncDecl'
+                    Block
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' funcDecl'
+                            TypeAssertionExpression
+                              TypeReference
+                                Identifier: 'FuncDecl'
+                              Identifier: 'ast'
+                      IfStatement
+                        PropertyAccessExpression
+                          Identifier: 'context'
+                          Identifier: 'skipNextFuncDeclForClass'
+                        Block
+                          ExpressionStatement
+                            BinaryExpression
+                              PropertyAccessExpression
+                                Identifier: '
+                        context'
+                                Identifier: 'skipNextFuncDeclForClass'
+                              EqualsToken
+                              FalseKeyword
+                        Block
+                          ExpressionStatement
+                            BinaryExpression
+                              PropertyAccessExpression
+                                Identifier: '
+                        context'
+                                Identifier: 'scopeGetter'
+                              EqualsToken
+                              FunctionExpression
+                                Block
+                                  IfStatement
+                                    BinaryExpression
+                                      PropertyAccessExpression
+                                        Identifier: 'funcDecl'
+                                        Identifier: 'isConstructor'
+                                      AmpersandAmpersandToken
+                                      CallExpression
+                                        Identifier: ' hasFlag'
+                                        PropertyAccessExpression
+                                          Identifier: 'funcDecl'
+                                          Identifier: 'fncFlags'
+                                        PropertyAccessExpression
+                                          Identifier: ' FncFlags'
+                                          Identifier: 'ClassMethod'
+                                    Block
+                                      IfStatement
+                                        BinaryExpression
+                                          PropertyAccessExpression
+                                            Identifier: 'ast'
+                                            Identifier: 'type'
+                                          AmpersandAmpersandToken
+                                          PropertyAccessExpression
+                                            PropertyAccessExpression
+                                              Identifier: ' ast'
+                                              Identifier: 'type'
+                                            Identifier: 'enclosingType'
+                                        Block
+                                          ReturnStatement
+                                            PropertyAccessExpression
+                                              PropertyAccessExpression
+                                                PropertyAccessExpression
+                                                  Identifier: ' ast'
+                                                  Identifier: 'type'
+                                                Identifier: 'enclosingType'
+                                              Identifier: 'constructorScope'
+                                  IfStatement
+                                    PropertyAccessExpression
+                                      Identifier: 'funcDecl'
+                                      Identifier: 'scopeType'
+                                    Block
+                                      ReturnStatement
+                                        PropertyAccessExpression
+                                          PropertyAccessExpression
+                                            Identifier: ' funcDecl'
+                                            Identifier: 'scopeType'
+                                          Identifier: 'containedScope'
+                                  IfStatement
+                                    PropertyAccessExpression
+                                      Identifier: 'funcDecl'
+                                      Identifier: 'type'
+                                    Block
+                                      ReturnStatement
+                                        PropertyAccessExpression
+                                          PropertyAccessExpression
+                                            Identifier: ' funcDecl'
+                                            Identifier: 'type'
+                                          Identifier: 'containedScope'
+                                  ReturnStatement
+                                    NullKeyword
+                          ExpressionStatement
+                            BinaryExpression
+                              PropertyAccessExpression
+                                Identifier: '
+                        context'
+                                Identifier: 'scopeStartAST'
+                              EqualsToken
+                              Identifier: ' ast'
+                    BreakStatement
+              ExpressionStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: '
+            walker'
+                      Identifier: 'options'
+                    Identifier: 'goChildren'
+                  EqualsToken
+                  TrueKeyword
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: '
+            walker'
+                      Identifier: 'options'
+                    Identifier: 'goChildren'
+                  EqualsToken
+                  FalseKeyword
+          ReturnStatement
+            Identifier: ' ast'
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' findEnclosingScopeAt'
+        Parameter
+          Identifier: 'logger'
+          TypeReference
+            Identifier: ' ILogger'
+        Parameter
+          Identifier: ' script'
+          TypeReference
+            Identifier: ' Script'
+        Parameter
+          Identifier: ' text'
+          TypeReference
+            Identifier: ' ISourceText'
+        Parameter
+          Identifier: ' pos'
+          NumberKeyword
+        Parameter
+          Identifier: ' isMemberCompletion'
+          BooleanKeyword
+        TypeReference
+          Identifier: ' EnclosingScopeContext'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' context'
+                NewExpression
+                  Identifier: ' EnclosingScopeContext'
+                  Identifier: 'logger'
+                  Identifier: ' script'
+                  Identifier: ' text'
+                  Identifier: ' pos'
+                  Identifier: ' isMemberCompletion'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+
+        TypeScript'
+                    Identifier: 'getAstWalkerFactory'
+                Identifier: 'walk'
+              Identifier: 'script'
+              Identifier: ' preFindEnclosingScope'
+              NullKeyword
+              NullKeyword
+              Identifier: ' context'
+          IfStatement
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: 'context'
+                Identifier: 'scopeStartAST'
+              EqualsEqualsEqualsToken
+              NullKeyword
+            ReturnStatement
+              NullKeyword
+          ReturnStatement
+            Identifier: ' context'

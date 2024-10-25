@@ -1,0 +1,9 @@
+SourceFile
+  FunctionDeclaration
+    AsteriskToken
+    Identifier: ' foo'
+    Block
+      ExpressionStatement
+        YieldExpression
+          AsteriskToken
+          Identifier: 'foo'

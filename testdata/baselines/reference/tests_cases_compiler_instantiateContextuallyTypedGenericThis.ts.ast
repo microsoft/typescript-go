@@ -1,0 +1,66 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' JQuery'
+    MethodSignature
+      Identifier: '
+    each'
+      TypeParameter
+        Identifier: 'T'
+      Parameter
+        Identifier: '
+        collection'
+        ArrayType
+          TypeReference
+            Identifier: ' T'
+      Parameter
+        Identifier: ' callback'
+        FunctionType
+          Parameter
+            Identifier: 'this'
+            TypeReference
+              Identifier: ' T'
+          Parameter
+            Identifier: ' dit'
+            TypeReference
+              Identifier: ' T'
+          TypeReference
+            Identifier: ' T'
+      ArrayType
+        TypeReference
+          Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' $'
+        TypeReference
+          Identifier: ' JQuery'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' lines'
+        ArrayType
+          StringKeyword
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+$'
+        Identifier: 'each'
+      Identifier: 'lines'
+      FunctionExpression
+        Parameter
+          Identifier: 'dit'
+        Block
+          ReturnStatement
+            BinaryExpression
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' dit'
+                  Identifier: 'charAt'
+                NumericLiteral
+              PlusToken
+              CallExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'charAt'
+                NumericLiteral

@@ -1,0 +1,143 @@
+SourceFile
+  ExportDeclaration
+    StringLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' default'
+        Identifier: ' SvgIcon'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' StyledComponentProps'
+    StringLiteral
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' SvgIconProps'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' StyledComponentProps'
+        LiteralType
+          StringLiteral
+    PropertySignature
+      Identifier: '
+    children'
+      QuestionToken
+      ArrayType
+        StringKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' SomeInterface'
+    PropertySignature
+      Identifier: '
+    myProp'
+      StringKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' SvgIcon'
+        TypeReference
+          Identifier: ' SomeInterface'
+  ExportAssignment
+    Identifier: ' SvgIcon'
+  ImportDeclaration
+    ImportClause
+      Identifier: ' SvgIcon'
+    StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' createSvgIcon'
+    Parameter
+      Identifier: 'path'
+      StringKeyword
+    Parameter
+      Identifier: ' displayName'
+      StringKeyword
+    TypeQuery
+      Identifier: ' SvgIcon'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' StyledComponentProps'
+    TypeParameter
+      Identifier: 'ClassKey'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    classes'
+      QuestionToken
+      TypeReference
+        Identifier: ' Record'
+        TypeReference
+          Identifier: 'ClassKey'
+        StringKeyword
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' createSvgIcon'
+    StringLiteral
+  ExportAssignment
+    CallExpression
+      Identifier: ' createSvgIcon'
+      StringLiteral
+      StringLiteral
+  Block
+    ExpressionStatement
+      StringLiteral
+    Block
+      ExpressionStatement
+        StringLiteral
+      ExpressionStatement
+        BinaryExpression
+          StringLiteral
+          CommaToken
+          StringLiteral
+      ExpressionStatement
+        BinaryExpression
+          TrueKeyword
+          CommaToken
+          StringLiteral
+      ExpressionStatement
+        BinaryExpression
+          StringLiteral
+          CommaToken
+          StringLiteral
+      Block
+        ExpressionStatement
+          StringLiteral
+        ExpressionStatement
+          BinaryExpression
+            ArrayLiteralExpression
+              StringLiteral
+            CommaToken
+            StringLiteral
+        ExpressionStatement
+          BinaryExpression
+            ArrayLiteralExpression
+              StringLiteral
+            CommaToken
+            StringLiteral
+        ExpressionStatement
+          BinaryExpression
+            ArrayLiteralExpression
+              StringLiteral
+            CommaToken
+            StringLiteral
+        ExpressionStatement
+          BinaryExpression
+            ArrayLiteralExpression
+              StringLiteral
+            CommaToken
+            StringLiteral
+        ExpressionStatement
+          BinaryExpression
+            ArrayLiteralExpression
+              StringLiteral
+            CommaToken
+            StringLiteral
+        ExpressionStatement
+          ArrayLiteralExpression
+            StringLiteral

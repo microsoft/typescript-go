@@ -1,0 +1,37 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'x'
+      StringKeyword
+    Parameter
+      Identifier: ' y'
+      NumericLiteral
+    Block
+  FunctionDeclaration
+    Identifier: ' baz'
+    Parameter
+      Identifier: 'x'
+      StringKeyword
+    Parameter
+      Identifier: ' y'
+      NumericLiteral
+    Parameter
+      DotDotDotToken
+      Identifier: 'rest'
+    Block
+  FunctionDeclaration
+    Identifier: ' bar'
+    Parameter
+      Identifier: 'y'
+      NumericLiteral
+    Block
+  FunctionDeclaration
+    Identifier: ' bar1'
+    Parameter
+      Identifier: 'y'
+      NumericLiteral
+    Parameter
+      DotDotDotToken
+      Identifier: 'rest'
+    Block

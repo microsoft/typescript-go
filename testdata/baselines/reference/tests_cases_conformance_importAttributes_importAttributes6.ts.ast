@@ -1,0 +1,83 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' thing1'
+    StringLiteral
+    ImportAttributes
+  WithStatement
+    ObjectLiteralExpression
+      PropertyAssignment
+        Identifier: ' field'
+        NumericLiteral
+    EmptyStatement
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' thing2'
+    StringLiteral
+    ImportAttributes
+  WithStatement
+    ObjectLiteralExpression
+      PropertyAssignment
+        Identifier: ' field'
+        NoSubstitutionTemplateLiteral
+    EmptyStatement
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' thing3'
+    StringLiteral
+    ImportAttributes
+  WithStatement
+    ObjectLiteralExpression
+      PropertyAssignment
+        Identifier: ' field'
+        RegularExpressionLiteral
+    EmptyStatement
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' thing4'
+    StringLiteral
+    ImportAttributes
+  WithStatement
+    ObjectLiteralExpression
+      PropertyAssignment
+        Identifier: ' field'
+        ArrayLiteralExpression
+          StringLiteral
+    EmptyStatement
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' thing5'
+    StringLiteral
+    ImportAttributes
+  WithStatement
+    ObjectLiteralExpression
+      PropertyAssignment
+        Identifier: ' field'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' a'
+            NumericLiteral
+    EmptyStatement
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' thing6'
+    StringLiteral
+    ImportAttributes
+  WithStatement
+    ObjectLiteralExpression
+      PropertyAssignment
+        Identifier: ' type'
+        StringLiteral
+      PropertyAssignment
+        Identifier: ' field'
+        CallExpression
+          PropertyAccessExpression
+            NumericLiteral
+            Identifier: 'toString'
+    EmptyStatement

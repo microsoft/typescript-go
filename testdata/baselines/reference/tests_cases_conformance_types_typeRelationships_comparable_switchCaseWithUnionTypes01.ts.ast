@@ -1,0 +1,47 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' strOrNum'
+        UnionType
+          StringKeyword
+          NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' numOrBool'
+        UnionType
+          NumberKeyword
+          BooleanKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' str'
+        StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' num'
+        NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' bool'
+        BooleanKeyword
+  SwitchStatement
+    Identifier: 'strOrNum'
+    CaseBlock
+      CaseClause
+        Identifier: ' strOrNum'
+        BreakStatement
+      CaseClause
+        Identifier: ' str'
+      CaseClause
+        Identifier: ' num'
+        BreakStatement
+      CaseClause
+        Identifier: ' numOrBool'
+        BreakStatement
+      CaseClause
+        Identifier: ' bool'
+        BreakStatement

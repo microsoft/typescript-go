@@ -1,0 +1,32 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' test'
+    TypeParameter
+      Identifier: 'A'
+    TypeParameter
+      Identifier: ' B'
+      TypeReference
+        Identifier: ' A'
+    VoidKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+test'
+      TypeLiteral
+        PropertySignature
+          Identifier: 't'
+          QuestionToken
+          StringKeyword
+      ObjectKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+test'
+      TypeLiteral
+        PropertySignature
+          Identifier: 't'
+          QuestionToken
+          StringKeyword
+      BigIntKeyword

@@ -1,0 +1,472 @@
+SourceFile
+  ImportEqualsDeclaration
+    Identifier: ' b'
+    ExternalModuleReference
+      StringLiteral
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+b'
+      Identifier: 'func1'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+b'
+      Identifier: 'func2'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+b'
+      Identifier: 'func3'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+b'
+      Identifier: 'func4'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+b'
+      Identifier: 'func5'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+b'
+      Identifier: 'func6'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+b'
+      Identifier: 'func7'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+b'
+      Identifier: 'func8'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+b'
+      Identifier: 'func9'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+b'
+      Identifier: 'func10'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+b'
+      Identifier: 'func11'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+b'
+      Identifier: 'func12'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+b'
+      Identifier: 'func13'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+b'
+      Identifier: 'func14'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+b'
+      Identifier: 'func15'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+b'
+      Identifier: 'func16'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+b'
+      Identifier: 'func17'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+b'
+      Identifier: 'func18'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+b'
+      Identifier: 'func19'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+b'
+      Identifier: 'func20'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' exportsAlias'
+        Identifier: ' exports'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+exportsAlias'
+        Identifier: 'func1'
+      EqualsToken
+      FunctionExpression
+        Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+exports'
+        Identifier: 'func2'
+      EqualsToken
+      FunctionExpression
+        Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' moduleExportsAlias'
+        PropertyAccessExpression
+          Identifier: ' module'
+          Identifier: 'exports'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+moduleExportsAlias'
+        Identifier: 'func3'
+      EqualsToken
+      FunctionExpression
+        Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+module'
+          Identifier: 'exports'
+        Identifier: 'func4'
+      EqualsToken
+      FunctionExpression
+        Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' multipleDeclarationAlias1'
+        BinaryExpression
+          Identifier: ' exports'
+          EqualsToken
+          PropertyAccessExpression
+            Identifier: ' module'
+            Identifier: 'exports'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+multipleDeclarationAlias1'
+        Identifier: 'func5'
+      EqualsToken
+      FunctionExpression
+        Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' multipleDeclarationAlias2'
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: ' module'
+            Identifier: 'exports'
+          EqualsToken
+          Identifier: ' exports'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+multipleDeclarationAlias2'
+        Identifier: 'func6'
+      EqualsToken
+      FunctionExpression
+        Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' someOtherVariable'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' multipleDeclarationAlias3'
+        BinaryExpression
+          Identifier: ' someOtherVariable'
+          EqualsToken
+          Identifier: ' exports'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+multipleDeclarationAlias3'
+        Identifier: 'func7'
+      EqualsToken
+      FunctionExpression
+        Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' multipleDeclarationAlias4'
+        BinaryExpression
+          Identifier: ' someOtherVariable'
+          EqualsToken
+          PropertyAccessExpression
+            Identifier: ' module'
+            Identifier: 'exports'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+multipleDeclarationAlias4'
+        Identifier: 'func8'
+      EqualsToken
+      FunctionExpression
+        Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' multipleDeclarationAlias5'
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: ' module'
+            Identifier: 'exports'
+          EqualsToken
+          BinaryExpression
+            Identifier: ' exports'
+            EqualsToken
+            ObjectLiteralExpression
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+multipleDeclarationAlias5'
+        Identifier: 'func9'
+      EqualsToken
+      FunctionExpression
+        Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' multipleDeclarationAlias6'
+        BinaryExpression
+          Identifier: ' exports'
+          EqualsToken
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: ' module'
+              Identifier: 'exports'
+            EqualsToken
+            ObjectLiteralExpression
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+multipleDeclarationAlias6'
+        Identifier: 'func10'
+      EqualsToken
+      FunctionExpression
+        Block
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+exports'
+      EqualsToken
+      BinaryExpression
+        PropertyAccessExpression
+          Identifier: ' module'
+          Identifier: 'exports'
+        EqualsToken
+        BinaryExpression
+          Identifier: ' someOtherVariable'
+          EqualsToken
+          ObjectLiteralExpression
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+exports'
+        Identifier: 'func11'
+      EqualsToken
+      FunctionExpression
+        Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+module'
+          Identifier: 'exports'
+        Identifier: 'func12'
+      EqualsToken
+      FunctionExpression
+        Block
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+exports'
+      EqualsToken
+      BinaryExpression
+        PropertyAccessExpression
+          Identifier: ' module'
+          Identifier: 'exports'
+        EqualsToken
+        BinaryExpression
+          Identifier: ' someOtherVariable'
+          EqualsToken
+          ObjectLiteralExpression
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+exports'
+        Identifier: 'func11'
+      EqualsToken
+      FunctionExpression
+        Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+module'
+          Identifier: 'exports'
+        Identifier: 'func12'
+      EqualsToken
+      FunctionExpression
+        Block
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+exports'
+      EqualsToken
+      BinaryExpression
+        PropertyAccessExpression
+          Identifier: ' module'
+          Identifier: 'exports'
+        EqualsToken
+        ObjectLiteralExpression
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+exports'
+        Identifier: 'func13'
+      EqualsToken
+      FunctionExpression
+        Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+module'
+          Identifier: 'exports'
+        Identifier: 'func14'
+      EqualsToken
+      FunctionExpression
+        Block
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+exports'
+      EqualsToken
+      BinaryExpression
+        PropertyAccessExpression
+          Identifier: ' module'
+          Identifier: 'exports'
+        EqualsToken
+        ObjectLiteralExpression
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+exports'
+        Identifier: 'func15'
+      EqualsToken
+      FunctionExpression
+        Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+module'
+          Identifier: 'exports'
+        Identifier: 'func16'
+      EqualsToken
+      FunctionExpression
+        Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+
+module'
+        Identifier: 'exports'
+      EqualsToken
+      BinaryExpression
+        Identifier: ' exports'
+        EqualsToken
+        ObjectLiteralExpression
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+exports'
+        Identifier: 'func17'
+      EqualsToken
+      FunctionExpression
+        Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+module'
+          Identifier: 'exports'
+        Identifier: 'func18'
+      EqualsToken
+      FunctionExpression
+        Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+
+module'
+        Identifier: 'exports'
+      EqualsToken
+      ObjectLiteralExpression
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+exports'
+        Identifier: 'func19'
+      EqualsToken
+      FunctionExpression
+        Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+module'
+          Identifier: 'exports'
+        Identifier: 'func20'
+      EqualsToken
+      FunctionExpression
+        Block

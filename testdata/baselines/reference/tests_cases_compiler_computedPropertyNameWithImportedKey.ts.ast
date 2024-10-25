@@ -1,0 +1,28 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        CallExpression
+          Identifier: ' Symbol'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' a'
+    StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' fn'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          ComputedPropertyName
+            Identifier: 'a'
+          Identifier: ' value'
+      AnyKeyword
+    StringKeyword
+    Block
+      ReturnStatement
+        Identifier: ' value'

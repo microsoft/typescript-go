@@ -1,0 +1,84 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      Identifier: '
+  test'
+      StringKeyword
+  ClassDeclaration
+    Identifier: ' D'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' C'
+    PropertyDeclaration
+      Identifier: '
+  test2'
+      StringKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' testError'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' C'
+    Parameter
+      Identifier: 'a'
+      FunctionType
+        Parameter
+          Identifier: 't'
+          TypeReference
+            Identifier: ' T'
+        Parameter
+          Identifier: ' t1'
+          TypeReference
+            Identifier: ' T'
+        VoidKeyword
+    TypeReference
+      Identifier: ' T'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+// more args
+testError'
+      ArrowFunction
+        Parameter
+          Identifier: 't1'
+          TypeReference
+            Identifier: ' D'
+        Parameter
+          Identifier: ' t2'
+        Parameter
+          Identifier: ' t3'
+        EqualsGreaterThanToken
+        Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+testError'
+      ArrowFunction
+        Parameter
+          Identifier: 't1'
+        Parameter
+          Identifier: ' t2'
+          TypeReference
+            Identifier: ' D'
+        Parameter
+          Identifier: ' t3'
+        EqualsGreaterThanToken
+        Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+testError'
+      ArrowFunction
+        Parameter
+          Identifier: 't1'
+        Parameter
+          Identifier: ' t2'
+        Parameter
+          Identifier: ' t3'
+          TypeReference
+            Identifier: ' D'
+        EqualsGreaterThanToken
+        Block

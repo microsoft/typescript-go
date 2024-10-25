@@ -1,0 +1,271 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' func1'
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    aFunc'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+
+    console'
+            Identifier: 'log'
+          PropertyAccessExpression
+            Identifier: 'EnumA'
+            Identifier: 'Value'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    console'
+            Identifier: 'log'
+          PropertyAccessExpression
+            Identifier: 'EnumB'
+            Identifier: 'Value'
+      ReturnStatement
+      FunctionDeclaration
+        Identifier: ' aFunc'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        console'
+                Identifier: 'log'
+              PropertyAccessExpression
+                Identifier: 'EnumA'
+                Identifier: 'Value'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        console'
+                Identifier: 'log'
+              PropertyAccessExpression
+                Identifier: 'EnumB'
+                Identifier: 'Value'
+      EnumDeclaration
+        Identifier: ' EnumA'
+        EnumMember
+          Identifier: ' Value'
+      EnumDeclaration
+        ConstKeyword
+        Identifier: ' EnumB'
+        EnumMember
+          Identifier: ' Value'
+  FunctionDeclaration
+    Identifier: ' func2'
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    aFunc'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+
+    console'
+            Identifier: 'log'
+          PropertyAccessExpression
+            Identifier: 'EnumA'
+            Identifier: 'Value'
+      ReturnStatement
+      FunctionDeclaration
+        Identifier: ' aFunc'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        console'
+                Identifier: 'log'
+              PropertyAccessExpression
+                Identifier: 'EnumA'
+                Identifier: 'Value'
+      EnumDeclaration
+        Identifier: ' EnumA'
+        EnumMember
+          Identifier: ' Value'
+  FunctionDeclaration
+    Identifier: ' func3'
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    aFunc'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+
+    console'
+            Identifier: 'log'
+          PropertyAccessExpression
+            Identifier: 'EnumB'
+            Identifier: 'Value'
+      ReturnStatement
+      FunctionDeclaration
+        Identifier: ' aFunc'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        console'
+                Identifier: 'log'
+              PropertyAccessExpression
+                Identifier: 'EnumB'
+                Identifier: 'Value'
+      EnumDeclaration
+        ConstKeyword
+        Identifier: ' EnumB'
+        EnumMember
+          Identifier: ' Value'
+  FunctionDeclaration
+    Identifier: ' func4'
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    aFunc'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+
+    console'
+            Identifier: 'log'
+          PropertyAccessExpression
+            Identifier: 'ClassA'
+            Identifier: 'Value'
+      ReturnStatement
+      FunctionDeclaration
+        Identifier: ' aFunc'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        console'
+                Identifier: 'log'
+              PropertyAccessExpression
+                Identifier: 'ClassA'
+                Identifier: 'Value'
+      ClassDeclaration
+        Identifier: ' ClassA'
+        PropertyDeclaration
+          StaticKeyword
+          Identifier: ' Value'
+          NumericLiteral
+  FunctionDeclaration
+    Identifier: ' func5'
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+	aFunc'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+
+	console'
+            Identifier: 'log'
+          PropertyAccessExpression
+            Identifier: 'Bar'
+            Identifier: 'A'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+	console'
+            Identifier: 'log'
+          PropertyAccessExpression
+            Identifier: 'blah'
+            Identifier: 'prop'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+	console'
+            Identifier: 'log'
+          NewExpression
+            Identifier: ' Foo'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+	console'
+            Identifier: 'log'
+          PropertyAccessExpression
+            Identifier: 'Baz'
+            Identifier: 'value'
+      ReturnStatement
+      FunctionDeclaration
+        Identifier: ' aFunc'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+		console'
+                Identifier: 'log'
+              PropertyAccessExpression
+                Identifier: 'Bar'
+                Identifier: 'A'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+		console'
+                Identifier: 'log'
+              PropertyAccessExpression
+                Identifier: 'blah'
+                Identifier: 'prop'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+		console'
+                Identifier: 'log'
+              NewExpression
+                Identifier: ' Foo'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+		console'
+                Identifier: 'log'
+              PropertyAccessExpression
+                Identifier: 'Baz'
+                Identifier: 'value'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' blah'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' prop'
+                NumericLiteral
+      EnumDeclaration
+        Identifier: ' Bar'
+        EnumMember
+          Identifier: ' A'
+      ClassDeclaration
+        Identifier: ' Foo'
+        PropertyDeclaration
+          Identifier: ' x'
+          NumericLiteral
+      ModuleDeclaration
+        Identifier: ' Baz'
+        ModuleBlock
+          VariableStatement
+            ExportKeyword
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' value'
+                NumericLiteral

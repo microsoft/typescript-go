@@ -1,0 +1,97 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts'/>
+
+// @Filename: a.ts
+////[|namespace /*A*/[|{| "isWriteAccess": true, "isDefinition": true, "contextRangeIndex": 0 |}A|] {
+////    export const x = 0;
+////}|]
+
+// @Filename: b.ts
+////[|export import /*B*/[|{| "isWriteAccess": true, "isDefinition": true, "contextRangeIndex": 2 |}B|] = [|A|];|]
+////[|B|].x;
+
+// @Filename: c.ts
+////[|import { /*C*/[|{| "isWriteAccess": true, "isDefinition": true, "contextRangeIndex": 6 |}B|] } from "./b";|]
+
+verify'
+        Identifier: 'noErrors'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'A0Def'
+          BindingElement
+            Identifier: ' A0'
+          BindingElement
+            Identifier: ' B0Def'
+          BindingElement
+            Identifier: ' B0'
+          BindingElement
+            Identifier: ' A1'
+          BindingElement
+            Identifier: ' B1'
+          BindingElement
+            Identifier: ' B2Def'
+          BindingElement
+            Identifier: ' B2'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' test'
+            Identifier: 'ranges'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' aRanges'
+        ArrayLiteralExpression
+          Identifier: 'A0'
+          Identifier: ' A1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' bRanges'
+        ArrayLiteralExpression
+          Identifier: 'B0'
+          Identifier: ' B1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' cRanges'
+        ArrayLiteralExpression
+          Identifier: 'B2'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+verify'
+        Identifier: 'baselineFindAllReferences'
+      StringLiteral
+      StringLiteral
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'baselineRename'
+      Identifier: 'aRanges'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'baselineRename'
+      ArrayLiteralExpression
+        Identifier: 'B0'
+        Identifier: ' B1'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'baselineRename'
+      Identifier: 'B2'

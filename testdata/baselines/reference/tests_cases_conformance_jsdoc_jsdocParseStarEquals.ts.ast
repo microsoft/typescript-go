@@ -1,0 +1,18 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f'
+    Parameter
+      DotDotDotToken
+      Identifier: 'args'
+    Block
+      ReturnStatement
+        NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+  FunctionDeclaration
+    Identifier: ' cbf'
+    Parameter
+      Identifier: 'f'
+    Block

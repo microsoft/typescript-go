@@ -1,0 +1,100 @@
+SourceFile
+  ExpressionStatement
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'public'
+        ArrayLiteralExpression
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' x'
+            Identifier: ' public'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' x'
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            ArrayBindingPattern
+              BindingElement
+                Identifier: 'private'
+        ArrayLiteralExpression
+          ArrayLiteralExpression
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' y'
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' s'
+                Identifier: ' static'
+          BindingElement
+            Identifier: ' z'
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' o'
+                ObjectBindingPattern
+                  BindingElement
+                    Identifier: ' p'
+                    Identifier: ' package'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' y'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' s'
+                NumericLiteral
+          PropertyAssignment
+            Identifier: ' z'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' o'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: ' p'
+                    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' public'
+          BindingElement
+            Identifier: ' protected'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' public'
+            NumericLiteral
+          PropertyAssignment
+            Identifier: ' protected'
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: ' public'
+            Identifier: ' a'
+          BindingElement
+            Identifier: ' protected'
+            Identifier: ' b'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' public'
+            NumericLiteral
+          PropertyAssignment
+            Identifier: ' protected'
+            NumericLiteral

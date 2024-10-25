@@ -1,0 +1,74 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' ObjectLiteral'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' ThisInObjectLiteral'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+        _foo'
+                StringLiteral
+              GetAccessor
+                Identifier: ' foo'
+                StringKeyword
+                Block
+                  ReturnStatement
+                    PropertyAccessExpression
+                      SuperKeyword
+                      Identifier: '_foo'
+              SetAccessor
+                Identifier: ' foo'
+                Parameter
+                  Identifier: 'value'
+                  StringKeyword
+                Block
+                  ExpressionStatement
+                    BinaryExpression
+                      PropertyAccessExpression
+                        SuperKeyword
+                        Identifier: '_foo'
+                      EqualsToken
+                      Identifier: ' value'
+              PropertyAssignment
+                Identifier: '
+        test'
+                FunctionExpression
+                  Block
+                    ReturnStatement
+                      PropertyAccessExpression
+                        SuperKeyword
+                        Identifier: '_foo'
+  ClassDeclaration
+    Identifier: ' F'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' test'
+      StringKeyword
+      Block
+        ReturnStatement
+          StringLiteral
+  ClassDeclaration
+    Identifier: ' SuperObjectTest'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' F'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' testing'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' test'
+              ObjectLiteralExpression
+                GetAccessor
+                  Identifier: ' F'
+                  Block
+                    ReturnStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          SuperKeyword
+                          Identifier: 'test'

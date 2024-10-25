@@ -1,0 +1,180 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' firstCommentStart'
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' firstCommentEnd'
+        NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+goTo'
+        Identifier: 'position'
+      Identifier: 'firstCommentStart'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+verify'
+          Identifier: 'not'
+        Identifier: 'isInCommentAtPosition'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+goTo'
+        Identifier: 'position'
+      BinaryExpression
+        Identifier: 'firstCommentStart'
+        PlusToken
+        NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'isInCommentAtPosition'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+goTo'
+        Identifier: 'position'
+      BinaryExpression
+        Identifier: 'firstCommentEnd'
+        MinusToken
+        NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'isInCommentAtPosition'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+goTo'
+        Identifier: 'position'
+      Identifier: 'firstCommentEnd'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+verify'
+          Identifier: 'not'
+        Identifier: 'isInCommentAtPosition'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' multilineJsDocStart'
+        BinaryExpression
+          Identifier: ' firstCommentEnd'
+          PlusToken
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' multilineJsDocEnd'
+        BinaryExpression
+          Identifier: ' multilineJsDocStart'
+          PlusToken
+          NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+goTo'
+        Identifier: 'position'
+      Identifier: 'multilineJsDocStart'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+verify'
+          Identifier: 'not'
+        Identifier: 'isInCommentAtPosition'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+goTo'
+        Identifier: 'position'
+      BinaryExpression
+        Identifier: 'multilineJsDocStart'
+        PlusToken
+        NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'isInCommentAtPosition'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+goTo'
+        Identifier: 'position'
+      BinaryExpression
+        Identifier: 'multilineJsDocEnd'
+        MinusToken
+        NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'isInCommentAtPosition'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+goTo'
+        Identifier: 'position'
+      Identifier: 'multilineJsDocEnd'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+verify'
+          Identifier: 'not'
+        Identifier: 'isInCommentAtPosition'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' singleLineCommentStart'
+        BinaryExpression
+          Identifier: ' multilineJsDocEnd'
+          PlusToken
+          NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+goTo'
+        Identifier: 'position'
+      BinaryExpression
+        Identifier: 'singleLineCommentStart'
+        PlusToken
+        NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'isInCommentAtPosition'
+      TrueKeyword

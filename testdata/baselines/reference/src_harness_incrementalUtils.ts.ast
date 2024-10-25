@@ -1,0 +1,4460 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' ts'
+    StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' reportDocumentRegistryStats'
+    Parameter
+      Identifier: 'documentRegistry'
+      TypeReference
+        QualifiedName
+          Identifier: ' ts'
+          Identifier: 'DocumentRegistry'
+    ArrayType
+      StringKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' str'
+            ArrayType
+              StringKeyword
+            ArrayLiteralExpression
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+    documentRegistry'
+                Identifier: 'getBuckets'
+            Identifier: 'forEach'
+          ArrowFunction
+            Parameter
+              Identifier: 'bucketEntries'
+            Parameter
+              Identifier: ' key'
+            EqualsGreaterThanToken
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+        str'
+                    Identifier: 'push'
+                  TemplateExpression
+                    TemplateHead
+                    TemplateSpan
+                      Identifier: 'key'
+                      TemplateTail
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+        bucketEntries'
+                    Identifier: 'forEach'
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'entry'
+                    Parameter
+                      Identifier: ' path'
+                    EqualsGreaterThanToken
+                    Block
+                      IfStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: 'ts'
+                            Identifier: 'isDocumentRegistryEntry'
+                          Identifier: 'entry'
+                        Block
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+                str'
+                                Identifier: 'push'
+                              TemplateExpression
+                                TemplateHead
+                                TemplateSpan
+                                  Identifier: 'path'
+                                  TemplateMiddle
+                                TemplateSpan
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        Identifier: 'ts'
+                                        Identifier: 'Debug'
+                                      Identifier: 'formatScriptKind'
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        Identifier: 'entry'
+                                        Identifier: 'sourceFile'
+                                      Identifier: 'scriptKind'
+                                  TemplateMiddle
+                                TemplateSpan
+                                  PropertyAccessExpression
+                                    Identifier: 'entry'
+                                    Identifier: 'languageServiceRefCount'
+                                  TemplateTail
+                        Block
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+                entry'
+                                Identifier: 'forEach'
+                              ArrowFunction
+                                Parameter
+                                  Identifier: 'real'
+                                Parameter
+                                  Identifier: ' kind'
+                                EqualsGreaterThanToken
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' str'
+                                    Identifier: 'push'
+                                  TemplateExpression
+                                    TemplateHead
+                                    TemplateSpan
+                                      Identifier: 'path'
+                                      TemplateMiddle
+                                    TemplateSpan
+                                      CallExpression
+                                        PropertyAccessExpression
+                                          PropertyAccessExpression
+                                            Identifier: 'ts'
+                                            Identifier: 'Debug'
+                                          Identifier: 'formatScriptKind'
+                                        Identifier: 'kind'
+                                      TemplateMiddle
+                                    TemplateSpan
+                                      PropertyAccessExpression
+                                        Identifier: 'real'
+                                        Identifier: 'languageServiceRefCount'
+                                      TemplateTail
+      ReturnStatement
+        Identifier: ' str'
+  TypeAliasDeclaration
+    Identifier: ' DocumentRegistryExpectedStats'
+    TypeReference
+      Identifier: ' Map'
+      TypeReference
+        QualifiedName
+          Identifier: 'ts'
+          Identifier: 'DocumentRegistryBucketKeyWithMode'
+      TypeReference
+        Identifier: ' Map'
+        TypeReference
+          QualifiedName
+            Identifier: 'ts'
+            Identifier: 'Path'
+        TypeReference
+          Identifier: ' Map'
+          TypeReference
+            QualifiedName
+              Identifier: 'ts'
+              Identifier: 'ScriptKind'
+          NumberKeyword
+  FunctionDeclaration
+    Identifier: ' verifyDocumentRegistryStats'
+    Parameter
+      Identifier: '
+    documentRegistry'
+      TypeReference
+        QualifiedName
+          Identifier: ' ts'
+          Identifier: 'DocumentRegistry'
+    Parameter
+      Identifier: '
+    stats'
+      TypeReference
+        Identifier: ' DocumentRegistryExpectedStats'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+    documentRegistry'
+                Identifier: 'getBuckets'
+            Identifier: 'forEach'
+          ArrowFunction
+            Parameter
+              Identifier: 'bucketEntries'
+            Parameter
+              Identifier: ' key'
+            EqualsGreaterThanToken
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' statsByPath'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' stats'
+                        Identifier: 'get'
+                      Identifier: 'key'
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+        bucketEntries'
+                    Identifier: 'forEach'
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'entry'
+                    Parameter
+                      Identifier: ' path'
+                    EqualsGreaterThanToken
+                    Block
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' expected'
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' statsByPath'
+                                QuestionDotToken
+                                Identifier: 'get'
+                              Identifier: 'path'
+                      IfStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: 'ts'
+                            Identifier: 'isDocumentRegistryEntry'
+                          Identifier: 'entry'
+                        Block
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: '
+                ts'
+                                  Identifier: 'Debug'
+                                Identifier: 'assert'
+                              BinaryExpression
+                                BinaryExpression
+                                  BinaryExpression
+                                    PropertyAccessExpression
+                                      Identifier: '
+                    expected'
+                                      QuestionDotToken
+                                      Identifier: 'size'
+                                    EqualsEqualsEqualsToken
+                                    NumericLiteral
+                                  AmpersandAmpersandToken
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' expected'
+                                      Identifier: 'has'
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        Identifier: 'entry'
+                                        Identifier: 'sourceFile'
+                                      Identifier: 'scriptKind'
+                                AmpersandAmpersandToken
+                                BinaryExpression
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' expected'
+                                      Identifier: 'get'
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        Identifier: 'entry'
+                                        Identifier: 'sourceFile'
+                                      Identifier: 'scriptKind'
+                                  EqualsEqualsEqualsToken
+                                  PropertyAccessExpression
+                                    Identifier: ' entry'
+                                    Identifier: 'languageServiceRefCount'
+                              TemplateExpression
+                                TemplateHead
+                                TemplateSpan
+                                  Identifier: 'key'
+                                  TemplateMiddle
+                                TemplateSpan
+                                  Identifier: 'path'
+                                  TemplateMiddle
+                                TemplateSpan
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        Identifier: 'ts'
+                                        Identifier: 'Debug'
+                                      Identifier: 'formatScriptKind'
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        Identifier: 'entry'
+                                        Identifier: 'sourceFile'
+                                      Identifier: 'scriptKind'
+                                  TemplateMiddle
+                                TemplateSpan
+                                  PropertyAccessExpression
+                                    Identifier: 'entry'
+                                    Identifier: 'languageServiceRefCount'
+                                  TemplateTail
+                              Identifier: '
+                    reportStats'
+                        Block
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+                entry'
+                                Identifier: 'forEach'
+                              ArrowFunction
+                                Parameter
+                                  Identifier: 'real'
+                                Parameter
+                                  Identifier: ' kind'
+                                EqualsGreaterThanToken
+                                CallExpression
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: '
+                    ts'
+                                      Identifier: 'Debug'
+                                    Identifier: 'assert'
+                                  BinaryExpression
+                                    PropertyAccessExpression
+                                      Identifier: '
+                        real'
+                                      Identifier: 'languageServiceRefCount'
+                                    EqualsEqualsEqualsToken
+                                    CallExpression
+                                      PropertyAccessExpression
+                                        Identifier: ' expected'
+                                        QuestionDotToken
+                                        Identifier: 'get'
+                                      Identifier: 'kind'
+                                  TemplateExpression
+                                    TemplateHead
+                                    TemplateSpan
+                                      Identifier: 'key'
+                                      TemplateMiddle
+                                    TemplateSpan
+                                      Identifier: 'path'
+                                      TemplateMiddle
+                                    TemplateSpan
+                                      CallExpression
+                                        PropertyAccessExpression
+                                          PropertyAccessExpression
+                                            Identifier: 'ts'
+                                            Identifier: 'Debug'
+                                          Identifier: 'formatScriptKind'
+                                        Identifier: 'kind'
+                                      TemplateMiddle
+                                    TemplateSpan
+                                      PropertyAccessExpression
+                                        Identifier: 'real'
+                                        Identifier: 'languageServiceRefCount'
+                                      TemplateTail
+                                  Identifier: '
+                        reportStats'
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+                expected'
+                                QuestionDotToken
+                                Identifier: 'forEach'
+                              ArrowFunction
+                                Parameter
+                                  Identifier: 'value'
+                                Parameter
+                                  Identifier: ' kind'
+                                EqualsGreaterThanToken
+                                CallExpression
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: '
+                    ts'
+                                      Identifier: 'Debug'
+                                    Identifier: 'assert'
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: '
+                        entry'
+                                      Identifier: 'has'
+                                    Identifier: 'kind'
+                                  TemplateExpression
+                                    TemplateHead
+                                    TemplateSpan
+                                      Identifier: 'key'
+                                      TemplateMiddle
+                                    TemplateSpan
+                                      Identifier: 'path'
+                                      TemplateMiddle
+                                    TemplateSpan
+                                      CallExpression
+                                        PropertyAccessExpression
+                                          PropertyAccessExpression
+                                            Identifier: 'ts'
+                                            Identifier: 'Debug'
+                                          Identifier: 'formatScriptKind'
+                                        Identifier: 'kind'
+                                      TemplateMiddle
+                                    TemplateSpan
+                                      Identifier: 'value'
+                                      TemplateTail
+                                  Identifier: '
+                        reportStats'
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+        statsByPath'
+                    QuestionDotToken
+                    Identifier: 'forEach'
+                  ArrowFunction
+                    Parameter
+                      Identifier: '_value'
+                    Parameter
+                      Identifier: ' path'
+                    EqualsGreaterThanToken
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: '
+            ts'
+                          Identifier: 'Debug'
+                        Identifier: 'assert'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: '
+                bucketEntries'
+                          Identifier: 'has'
+                        Identifier: 'path'
+                      TemplateExpression
+                        TemplateHead
+                        TemplateSpan
+                          Identifier: 'key'
+                          TemplateMiddle
+                        TemplateSpan
+                          Identifier: 'path'
+                          TemplateTail
+                      Identifier: '
+                reportStats'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    stats'
+            Identifier: 'forEach'
+          ArrowFunction
+            Parameter
+              Identifier: '_value'
+            Parameter
+              Identifier: ' key'
+            EqualsGreaterThanToken
+            CallExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: '
+        ts'
+                  Identifier: 'Debug'
+                Identifier: 'assert'
+              CallExpression
+                PropertyAccessExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+            documentRegistry'
+                      Identifier: 'getBuckets'
+                  Identifier: 'has'
+                Identifier: 'key'
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  Identifier: 'key'
+                  TemplateTail
+              Identifier: '
+            reportStats'
+      FunctionDeclaration
+        Identifier: ' reportStats'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' str'
+                ArrayType
+                  StringKeyword
+                ArrayLiteralExpression
+                  StringLiteral
+                  StringLiteral
+                  SpreadElement
+                    CallExpression
+                      Identifier: 'reportDocumentRegistryStats'
+                      Identifier: 'documentRegistry'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        str'
+                Identifier: 'push'
+              StringLiteral
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        stats'
+                QuestionDotToken
+                Identifier: 'forEach'
+              ArrowFunction
+                Parameter
+                  Identifier: 'statsByPath'
+                Parameter
+                  Identifier: ' key'
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+            str'
+                        Identifier: 'push'
+                      TemplateExpression
+                        TemplateHead
+                        TemplateSpan
+                          Identifier: 'key'
+                          TemplateTail
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+            statsByPath'
+                        Identifier: 'forEach'
+                      ArrowFunction
+                        Parameter
+                          Identifier: 'entry'
+                        Parameter
+                          Identifier: ' path'
+                        EqualsGreaterThanToken
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' entry'
+                            Identifier: 'forEach'
+                          ArrowFunction
+                            Parameter
+                              Identifier: 'refCount'
+                            Parameter
+                              Identifier: ' kind'
+                            EqualsGreaterThanToken
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: ' str'
+                                Identifier: 'push'
+                              TemplateExpression
+                                TemplateHead
+                                TemplateSpan
+                                  Identifier: 'path'
+                                  TemplateMiddle
+                                TemplateSpan
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        Identifier: 'ts'
+                                        Identifier: 'Debug'
+                                      Identifier: 'formatScriptKind'
+                                    Identifier: 'kind'
+                                  TemplateMiddle
+                                TemplateSpan
+                                  Identifier: 'refCount'
+                                  TemplateTail
+          ReturnStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' str'
+                Identifier: 'join'
+              StringLiteral
+  FunctionDeclaration
+    Identifier: ' verifyDocumentRegistry'
+    Parameter
+      Identifier: 'service'
+      TypeReference
+        QualifiedName
+          QualifiedName
+            Identifier: ' ts'
+            Identifier: 'server'
+          Identifier: 'ProjectService'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' stats'
+            TypeReference
+              Identifier: ' DocumentRegistryExpectedStats'
+            NewExpression
+              Identifier: ' Map'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' collectStats'
+            ArrowFunction
+              Parameter
+                Identifier: 'project'
+                TypeReference
+                  QualifiedName
+                    QualifiedName
+                      Identifier: ' ts'
+                      Identifier: 'server'
+                    Identifier: 'Project'
+              EqualsGreaterThanToken
+              Block
+                IfStatement
+                  PropertyAccessExpression
+                    Identifier: 'project'
+                    Identifier: 'autoImportProviderHost'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: ' collectStats'
+                      PropertyAccessExpression
+                        Identifier: 'project'
+                        Identifier: 'autoImportProviderHost'
+                IfStatement
+                  PropertyAccessExpression
+                    Identifier: 'project'
+                    Identifier: 'noDtsResolutionProject'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: ' collectStats'
+                      PropertyAccessExpression
+                        Identifier: 'project'
+                        Identifier: 'noDtsResolutionProject'
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' program'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' project'
+                          Identifier: 'getCurrentProgram'
+                IfStatement
+                  PrefixUnaryExpression
+                    Identifier: 'program'
+                  ReturnStatement
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' key'
+                      CallExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            Identifier: ' service'
+                            Identifier: 'documentRegistry'
+                          Identifier: 'getKeyForCompilationSettings'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: 'program'
+                            Identifier: 'getCompilerOptions'
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: '
+        program'
+                          Identifier: 'getSourceFiles'
+                      Identifier: 'forEach'
+                    ArrowFunction
+                      Parameter
+                        Identifier: 'f'
+                      EqualsGreaterThanToken
+                      Block
+                        VariableStatement
+                          VariableDeclarationList
+                            VariableDeclaration
+                              Identifier: ' keyWithMode'
+                              CallExpression
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' service'
+                                    Identifier: 'documentRegistry'
+                                  Identifier: 'getDocumentRegistryBucketKeyWithMode'
+                                Identifier: 'key'
+                                PropertyAccessExpression
+                                  Identifier: ' f'
+                                  Identifier: 'impliedNodeFormat'
+                        VariableStatement
+                          VariableDeclarationList
+                            VariableDeclaration
+                              Identifier: ' mapForKeyWithMode'
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: ' stats'
+                                  Identifier: 'get'
+                                Identifier: 'keyWithMode'
+                        VariableStatement
+                          VariableDeclarationList
+                            VariableDeclaration
+                              Identifier: ' result'
+                              UnionType
+                                TypeReference
+                                  Identifier: ' Map'
+                                  TypeReference
+                                    QualifiedName
+                                      Identifier: 'ts'
+                                      Identifier: 'ScriptKind'
+                                  NumberKeyword
+                                UndefinedKeyword
+                        IfStatement
+                          BinaryExpression
+                            Identifier: 'mapForKeyWithMode'
+                            EqualsEqualsEqualsToken
+                            Identifier: ' undefined'
+                          Block
+                            ExpressionStatement
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: '
+                stats'
+                                  Identifier: 'set'
+                                Identifier: 'keyWithMode'
+                                BinaryExpression
+                                  Identifier: ' mapForKeyWithMode'
+                                  EqualsToken
+                                  NewExpression
+                                    Identifier: ' Map'
+                            ExpressionStatement
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: '
+                mapForKeyWithMode'
+                                  Identifier: 'set'
+                                PropertyAccessExpression
+                                  Identifier: 'f'
+                                  Identifier: 'resolvedPath'
+                                BinaryExpression
+                                  Identifier: ' result'
+                                  EqualsToken
+                                  NewExpression
+                                    Identifier: ' Map'
+                          Block
+                            ExpressionStatement
+                              BinaryExpression
+                                Identifier: '
+                result'
+                                EqualsToken
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' mapForKeyWithMode'
+                                    Identifier: 'get'
+                                  PropertyAccessExpression
+                                    Identifier: 'f'
+                                    Identifier: 'resolvedPath'
+                            IfStatement
+                              PrefixUnaryExpression
+                                Identifier: 'result'
+                              ExpressionStatement
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' mapForKeyWithMode'
+                                    Identifier: 'set'
+                                  PropertyAccessExpression
+                                    Identifier: 'f'
+                                    Identifier: 'resolvedPath'
+                                  BinaryExpression
+                                    Identifier: ' result'
+                                    EqualsToken
+                                    NewExpression
+                                      Identifier: ' Map'
+                        ExpressionStatement
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: '
+            result'
+                              Identifier: 'set'
+                            PropertyAccessExpression
+                              Identifier: 'f'
+                              Identifier: 'scriptKind'
+                            BinaryExpression
+                              ParenthesizedExpression
+                                BinaryExpression
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: 'result'
+                                      Identifier: 'get'
+                                    PropertyAccessExpression
+                                      Identifier: 'f'
+                                      Identifier: 'scriptKind'
+                                  BarBarToken
+                                  NumericLiteral
+                              PlusToken
+                              NumericLiteral
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    service'
+            Identifier: 'forEachProject'
+          Identifier: 'collectStats'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    verifyDocumentRegistryStats'
+          PropertyAccessExpression
+            Identifier: 'service'
+            Identifier: 'documentRegistry'
+          Identifier: ' stats'
+  InterfaceDeclaration
+    Identifier: ' ResolutionInfo'
+    PropertySignature
+      Identifier: '
+    cacheType'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    fileName'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    name'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    mode'
+      TypeReference
+        QualifiedName
+          Identifier: ' ts'
+          Identifier: 'ResolutionMode'
+  FunctionDeclaration
+    Identifier: ' getResolutionCacheDetails'
+    TypeParameter
+      Identifier: 'File'
+    TypeParameter
+      Identifier: ' T'
+      TypeReference
+        QualifiedName
+          Identifier: ' ts'
+          Identifier: 'ResolutionWithFailedLookupLocations'
+    Parameter
+      Identifier: '
+    baseline'
+      ArrayType
+        StringKeyword
+    Parameter
+      Identifier: '
+    cacheType'
+      StringKeyword
+    Parameter
+      Identifier: '
+    file'
+      TypeReference
+        Identifier: ' File'
+    Parameter
+      Identifier: '
+    forEach'
+      UnionType
+        ParenthesizedType
+          FunctionType
+            Parameter
+              Identifier: '
+            callback'
+              FunctionType
+                Parameter
+                  Identifier: 'resolvedModule'
+                  TypeReference
+                    Identifier: ' T'
+                Parameter
+                  Identifier: ' moduleName'
+                  StringKeyword
+                Parameter
+                  Identifier: ' mode'
+                  TypeReference
+                    QualifiedName
+                      Identifier: ' ts'
+                      Identifier: 'ResolutionMode'
+                VoidKeyword
+            Parameter
+              Identifier: '
+            file'
+              TypeReference
+                Identifier: ' File'
+            VoidKeyword
+        UndefinedKeyword
+    Parameter
+      Identifier: '
+    getResolvedFileName'
+      FunctionType
+        Parameter
+          Identifier: 'resolution'
+          TypeReference
+            Identifier: ' T'
+        UnionType
+          StringKeyword
+          UndefinedKeyword
+    Parameter
+      Identifier: '
+    indent'
+      StringKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' addedCacheType'
+            FalseKeyword
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    forEach'
+          QuestionDotToken
+          ArrowFunction
+            Parameter
+              Identifier: 'resolved'
+            Parameter
+              Identifier: ' key'
+            Parameter
+              Identifier: ' mode'
+            EqualsGreaterThanToken
+            Block
+              IfStatement
+                PrefixUnaryExpression
+                  Identifier: 'addedCacheType'
+                Block
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+            addedCacheType'
+                      EqualsToken
+                      TrueKeyword
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+            baseline'
+                        Identifier: 'push'
+                      TemplateExpression
+                        TemplateHead
+                        TemplateSpan
+                          Identifier: 'indent'
+                          TemplateMiddle
+                        TemplateSpan
+                          Identifier: 'cacheType'
+                          TemplateTail
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+        baseline'
+                    Identifier: 'push'
+                  TemplateExpression
+                    TemplateHead
+                    TemplateSpan
+                      Identifier: 'indent'
+                      TemplateMiddle
+                    TemplateSpan
+                      Identifier: 'key'
+                      TemplateMiddle
+                    TemplateSpan
+                      ConditionalExpression
+                        Identifier: 'mode'
+                        QuestionToken
+                        BinaryExpression
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' ts'
+                              Identifier: 'getNameOfCompilerOptionValue'
+                            Identifier: 'mode'
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                Identifier: ' ts'
+                                Identifier: 'moduleOptionDeclaration'
+                              Identifier: 'type'
+                          PlusToken
+                          StringLiteral
+                        ColonToken
+                        StringLiteral
+                      TemplateMiddle
+                    TemplateSpan
+                      CallExpression
+                        Identifier: 'getResolvedFileName'
+                        Identifier: 'resolved'
+                      TemplateTail
+          Identifier: ' file'
+  FunctionDeclaration
+    Identifier: ' getResolvedModuleFileName'
+    Parameter
+      Identifier: 'r'
+      TypeReference
+        QualifiedName
+          Identifier: ' ts'
+          Identifier: 'ResolvedModuleWithFailedLookupLocations'
+    Block
+      ReturnStatement
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: ' r'
+            Identifier: 'resolvedModule'
+          QuestionDotToken
+          Identifier: 'resolvedFileName'
+  FunctionDeclaration
+    Identifier: ' getResolvedTypeRefFileName'
+    Parameter
+      Identifier: 'r'
+      TypeReference
+        QualifiedName
+          Identifier: ' ts'
+          Identifier: 'ResolvedTypeReferenceDirectiveWithFailedLookupLocations'
+    Block
+      ReturnStatement
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: ' r'
+            Identifier: 'resolvedTypeReferenceDirective'
+          QuestionDotToken
+          Identifier: 'resolvedFileName'
+  FunctionDeclaration
+    Identifier: ' getLibResolutionCacheDetails'
+    Parameter
+      Identifier: '
+    baseline'
+      ArrayType
+        StringKeyword
+    Parameter
+      Identifier: '
+    cache'
+      UnionType
+        TypeReference
+          Identifier: ' Map'
+          StringKeyword
+          TypeReference
+            QualifiedName
+              Identifier: ' ts'
+              Identifier: 'LibResolution'
+        UndefinedKeyword
+    Parameter
+      Identifier: '
+    indent'
+      StringKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' addedCacheType'
+            FalseKeyword
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    cache'
+            QuestionDotToken
+            Identifier: 'forEach'
+          ArrowFunction
+            Parameter
+              Identifier: 'resolved'
+            Parameter
+              Identifier: ' libFileName'
+            EqualsGreaterThanToken
+            Block
+              IfStatement
+                PrefixUnaryExpression
+                  Identifier: 'addedCacheType'
+                Block
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+            addedCacheType'
+                      EqualsToken
+                      TrueKeyword
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+            baseline'
+                        Identifier: 'push'
+                      TemplateExpression
+                        TemplateHead
+                        TemplateSpan
+                          Identifier: 'indent'
+                          TemplateTail
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+        baseline'
+                    Identifier: 'push'
+                  TemplateExpression
+                    TemplateHead
+                    TemplateSpan
+                      Identifier: 'indent'
+                      TemplateMiddle
+                    TemplateSpan
+                      Identifier: 'libFileName'
+                      TemplateMiddle
+                    TemplateSpan
+                      PropertyAccessExpression
+                        Identifier: 'resolved'
+                        Identifier: 'actual'
+                      TemplateMiddle
+                    TemplateSpan
+                      CallExpression
+                        Identifier: 'getResolvedModuleFileName'
+                        PropertyAccessExpression
+                          Identifier: 'resolved'
+                          Identifier: 'resolution'
+                      TemplateTail
+  FunctionDeclaration
+    Identifier: ' getProgramStructure'
+    Parameter
+      Identifier: 'program'
+      UnionType
+        TypeReference
+          QualifiedName
+            Identifier: ' ts'
+            Identifier: 'Program'
+        UndefinedKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' baseline'
+            ArrayType
+              StringKeyword
+            ArrayLiteralExpression
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            CallExpression
+              PropertyAccessExpression
+                CallExpression
+                  PropertyAccessExpression
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+    program'
+                        QuestionDotToken
+                        Identifier: 'getSourceFiles'
+                    Identifier: 'slice'
+                Identifier: 'sort'
+              ArrowFunction
+                Parameter
+                  Identifier: 'f1'
+                Parameter
+                  Identifier: ' f2'
+                EqualsGreaterThanToken
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' ts'
+                    Identifier: 'comparePathsCaseSensitive'
+                  PropertyAccessExpression
+                    Identifier: 'f1'
+                    Identifier: 'path'
+                  PropertyAccessExpression
+                    Identifier: ' f2'
+                    Identifier: 'path'
+            Identifier: 'forEach'
+          ArrowFunction
+            Parameter
+              Identifier: 'f'
+            EqualsGreaterThanToken
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+        baseline'
+                    Identifier: 'push'
+                  TemplateExpression
+                    TemplateHead
+                    TemplateSpan
+                      PropertyAccessExpression
+                        Identifier: 'f'
+                        Identifier: 'fileName'
+                      TemplateMiddle
+                    TemplateSpan
+                      PropertyAccessExpression
+                        Identifier: 'f'
+                        Identifier: 'path'
+                      TemplateMiddle
+                    TemplateSpan
+                      PropertyAccessExpression
+                        Identifier: 'f'
+                        Identifier: 'resolvedPath'
+                      TemplateMiddle
+                    TemplateSpan
+                      PropertyAccessExpression
+                        Identifier: 'f'
+                        Identifier: 'impliedNodeFormat'
+                      TemplateTail
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+        baseline'
+                    Identifier: 'push'
+                  CallExpression
+                    PropertyAccessExpression
+                      CallExpression
+                        PropertyAccessExpression
+                          CallExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                Identifier: 'f'
+                                Identifier: 'text'
+                              Identifier: 'split'
+                            RegularExpressionLiteral
+                          Identifier: 'map'
+                        ArrowFunction
+                          Parameter
+                            Identifier: 'l'
+                          EqualsGreaterThanToken
+                          ConditionalExpression
+                            Identifier: ' l'
+                            QuestionToken
+                            BinaryExpression
+                              StringLiteral
+                              PlusToken
+                              Identifier: ' l'
+                            ColonToken
+                            StringLiteral
+                      Identifier: 'join'
+                    StringLiteral
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+        getResolutionCacheDetails'
+                  Identifier: '
+            baseline'
+                  StringLiteral
+                  Identifier: '
+            f'
+                  PropertyAccessExpression
+                    Identifier: '
+            program'
+                    Identifier: 'forEachResolvedModule'
+                  Identifier: '
+            getResolvedModuleFileName'
+                  StringLiteral
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+        getResolutionCacheDetails'
+                  Identifier: '
+            baseline'
+                  StringLiteral
+                  Identifier: '
+            f'
+                  PropertyAccessExpression
+                    Identifier: '
+            program'
+                    Identifier: 'forEachResolvedTypeReferenceDirective'
+                  Identifier: '
+            getResolvedTypeRefFileName'
+                  StringLiteral
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    getResolutionCacheDetails'
+          Identifier: '
+        baseline'
+          StringLiteral
+          Identifier: '
+        /*file*/ undefined'
+          PropertyAccessExpression
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        program'
+                QuestionDotToken
+                Identifier: 'getAutomaticTypeDirectiveResolutions'
+            Identifier: 'forEach'
+          Identifier: '
+        getResolvedTypeRefFileName'
+          StringLiteral
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    getLibResolutionCacheDetails'
+          Identifier: '
+        baseline'
+          PropertyAccessExpression
+            Identifier: '
+        program'
+            QuestionDotToken
+            Identifier: 'resolvedLibReferences'
+          StringLiteral
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' baseline'
+            Identifier: 'join'
+          StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' verifyProgramStructure'
+    Parameter
+      Identifier: 'expectedProgram'
+      TypeReference
+        QualifiedName
+          Identifier: ' ts'
+          Identifier: 'Program'
+    Parameter
+      Identifier: ' actualProgram'
+      TypeReference
+        QualifiedName
+          Identifier: ' ts'
+          Identifier: 'Program'
+    Parameter
+      Identifier: ' projectName'
+      StringKeyword
+    VoidKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' actual'
+            CallExpression
+              Identifier: ' getProgramStructure'
+              Identifier: 'actualProgram'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' expected'
+            CallExpression
+              Identifier: ' getProgramStructure'
+              Identifier: 'expectedProgram'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: '
+    ts'
+              Identifier: 'Debug'
+            Identifier: 'assert'
+          BinaryExpression
+            Identifier: 'actual'
+            EqualsEqualsEqualsToken
+            Identifier: ' expected'
+          TemplateExpression
+            TemplateHead
+            TemplateSpan
+              Identifier: 'projectName'
+              TemplateTail
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' verifyResolutionCache'
+    Parameter
+      Identifier: '
+    actual'
+      TypeReference
+        QualifiedName
+          Identifier: ' ts'
+          Identifier: 'ResolutionCache'
+    Parameter
+      Identifier: '
+    actualProgram'
+      TypeReference
+        QualifiedName
+          Identifier: ' ts'
+          Identifier: 'Program'
+    Parameter
+      Identifier: '
+    resolutionHostCacheHost'
+      TypeReference
+        QualifiedName
+          Identifier: ' ts'
+          Identifier: 'ResolutionCacheHost'
+    Parameter
+      Identifier: '
+    projectName'
+      StringKeyword
+    VoidKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' currentDirectory'
+            CallExpression
+              NonNullExpression
+                PropertyAccessExpression
+                  Identifier: ' resolutionHostCacheHost'
+                  Identifier: 'getCurrentDirectory'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' expected'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' ts'
+                Identifier: 'createResolutionCache'
+              Identifier: 'resolutionHostCacheHost'
+              PropertyAccessExpression
+                Identifier: ' actual'
+                Identifier: 'rootDirForResolution'
+              FalseKeyword
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    expected'
+            Identifier: 'startCachingPerDirectoryResolution'
+      TypeAliasDeclaration
+        Identifier: ' ExpectedResolution'
+        IntersectionType
+          TypeReference
+            QualifiedName
+              Identifier: ' ts'
+              Identifier: 'CachedResolvedModuleWithFailedLookupLocations'
+          TypeReference
+            QualifiedName
+              Identifier: ' ts'
+              Identifier: 'CachedResolvedTypeReferenceDirectiveWithFailedLookupLocations'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' expectedToResolution'
+            NewExpression
+              Identifier: ' Map'
+              TypeReference
+                Identifier: 'ExpectedResolution'
+              TypeReference
+                QualifiedName
+                  Identifier: ' ts'
+                  Identifier: 'ResolutionWithFailedLookupLocations'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' resolutionToExpected'
+            NewExpression
+              Identifier: ' Map'
+              TypeReference
+                QualifiedName
+                  Identifier: 'ts'
+                  Identifier: 'ResolutionWithFailedLookupLocations'
+              TypeReference
+                Identifier: ' ExpectedResolution'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' resolutionToRefs'
+            NewExpression
+              Identifier: ' Map'
+              TypeReference
+                QualifiedName
+                  Identifier: 'ts'
+                  Identifier: 'ResolutionWithFailedLookupLocations'
+              ArrayType
+                TypeReference
+                  Identifier: ' ResolutionInfo'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: '
+    actual'
+              Identifier: 'resolvedModuleNames'
+            Identifier: 'forEach'
+          ArrowFunction
+            Parameter
+              Identifier: 'resolutions'
+            Parameter
+              Identifier: ' path'
+            EqualsGreaterThanToken
+            CallExpression
+              Identifier: '
+        collectResolutionToRefFromCache'
+              StringLiteral
+              Identifier: '
+            path'
+              Identifier: '
+            resolutions'
+              Identifier: '
+            getResolvedModuleFileName'
+              TrueKeyword
+              PropertyAccessExpression
+                Identifier: '
+            expected'
+                Identifier: 'resolvedModuleNames'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: '
+    actual'
+              Identifier: 'resolvedTypeReferenceDirectives'
+            Identifier: 'forEach'
+          ArrowFunction
+            Parameter
+              Identifier: 'resolutions'
+            Parameter
+              Identifier: ' path'
+            EqualsGreaterThanToken
+            CallExpression
+              Identifier: '
+        collectResolutionToRefFromCache'
+              StringLiteral
+              Identifier: '
+            path'
+              Identifier: '
+            resolutions'
+              Identifier: '
+            getResolvedTypeRefFileName'
+              FalseKeyword
+              PropertyAccessExpression
+                Identifier: '
+            expected'
+                Identifier: 'resolvedTypeReferenceDirectives'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: '
+    actual'
+              Identifier: 'resolvedLibraries'
+            Identifier: 'forEach'
+          ArrowFunction
+            Parameter
+              Identifier: 'resolved'
+            Parameter
+              Identifier: ' libFileName'
+            EqualsGreaterThanToken
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' expectedResolution'
+                    CallExpression
+                      Identifier: ' collectResolution'
+                      StringLiteral
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: '
+            resolutionHostCacheHost'
+                          Identifier: 'toPath'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+                ts'
+                            Identifier: 'getInferredLibraryNameResolveFrom'
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: 'actualProgram'
+                              Identifier: 'getCompilerOptions'
+                          Identifier: ' currentDirectory'
+                          Identifier: ' libFileName'
+                      Identifier: '
+            resolved'
+                      CallExpression
+                        Identifier: '
+            getResolvedModuleFileName'
+                        Identifier: 'resolved'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: '
+            ts'
+                          Identifier: 'getLibraryNameFromLibFileName'
+                        Identifier: 'libFileName'
+                      Identifier: '
+            /*mode*/ undefined'
+                      FalseKeyword
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: '
+        expected'
+                      Identifier: 'resolvedLibraries'
+                    Identifier: 'set'
+                  Identifier: 'libFileName'
+                  Identifier: ' expectedResolution'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+
+    expected'
+            Identifier: 'finishCachingPerDirectoryResolution'
+          Identifier: 'actualProgram'
+          Identifier: ' /*oldProgram*/ undefined'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+
+    // Verify ref count
+    resolutionToRefs'
+            Identifier: 'forEach'
+          ArrowFunction
+            Parameter
+              Identifier: 'info'
+            Parameter
+              Identifier: ' resolution'
+            EqualsGreaterThanToken
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: '
+        ts'
+                      Identifier: 'Debug'
+                    Identifier: 'assert'
+                  BinaryExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: '
+            resolution'
+                        Identifier: 'files'
+                      QuestionDotToken
+                      Identifier: 'size'
+                    EqualsEqualsEqualsToken
+                    PropertyAccessExpression
+                      Identifier: ' info'
+                      Identifier: 'length'
+                  TemplateExpression
+                    TemplateHead
+                    TemplateSpan
+                      Identifier: 'projectName'
+                      TemplateMiddle
+                    TemplateSpan
+                      PropertyAccessExpression
+                        Identifier: 'info'
+                        Identifier: 'length'
+                      TemplateMiddle
+                    TemplateSpan
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: 'resolution'
+                          Identifier: 'files'
+                        QuestionDotToken
+                        Identifier: 'size'
+                      TemplateTail
+                  ArrowFunction
+                    EqualsGreaterThanToken
+                    BinaryExpression
+                      TemplateExpression
+                        TemplateHead
+                        TemplateSpan
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: 'JSON'
+                              Identifier: 'stringify'
+                            Identifier: 'info'
+                            Identifier: ' undefined'
+                            StringLiteral
+                          TemplateTail
+                      PlusToken
+                      TemplateExpression
+                        TemplateHead
+                        TemplateSpan
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: 'resolution'
+                              Identifier: 'files'
+                            QuestionDotToken
+                            Identifier: 'size'
+                          TemplateTail
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+        verifySet'
+                  PropertyAccessExpression
+                    NonNullExpression
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: 'resolutionToExpected'
+                          Identifier: 'get'
+                        Identifier: 'resolution'
+                    Identifier: 'files'
+                  PropertyAccessExpression
+                    Identifier: ' resolution'
+                    Identifier: 'files'
+                  TemplateExpression
+                    TemplateHead
+                    TemplateSpan
+                      Identifier: 'projectName'
+                      TemplateTail
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    verifyMapOfResolutionSet'
+          PropertyAccessExpression
+            Identifier: 'expected'
+            Identifier: 'resolvedFileToResolution'
+          PropertyAccessExpression
+            Identifier: ' actual'
+            Identifier: 'resolvedFileToResolution'
+          NoSubstitutionTemplateLiteral
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    verifyResolutionSet'
+          PropertyAccessExpression
+            Identifier: 'expected'
+            Identifier: 'resolutionsWithFailedLookups'
+          PropertyAccessExpression
+            Identifier: ' actual'
+            Identifier: 'resolutionsWithFailedLookups'
+          NoSubstitutionTemplateLiteral
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    verifyResolutionSet'
+          PropertyAccessExpression
+            Identifier: 'expected'
+            Identifier: 'resolutionsWithOnlyAffectingLocations'
+          PropertyAccessExpression
+            Identifier: ' actual'
+            Identifier: 'resolutionsWithOnlyAffectingLocations'
+          NoSubstitutionTemplateLiteral
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    verifyDirectoryWatchesOfFailedLookups'
+          PropertyAccessExpression
+            Identifier: 'expected'
+            Identifier: 'directoryWatchesOfFailedLookups'
+          PropertyAccessExpression
+            Identifier: ' actual'
+            Identifier: 'directoryWatchesOfFailedLookups'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    verifyFileWatchesOfAffectingLocations'
+          PropertyAccessExpression
+            Identifier: 'expected'
+            Identifier: 'fileWatchesOfAffectingLocations'
+          PropertyAccessExpression
+            Identifier: ' actual'
+            Identifier: 'fileWatchesOfAffectingLocations'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    verifyPackageDirWatchers'
+          PropertyAccessExpression
+            Identifier: 'expected'
+            Identifier: 'packageDirWatchers'
+          PropertyAccessExpression
+            Identifier: ' actual'
+            Identifier: 'packageDirWatchers'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    verifyDirPathToSymlinkPackageRefCount'
+          PropertyAccessExpression
+            Identifier: 'expected'
+            Identifier: 'dirPathToSymlinkPackageRefCount'
+          PropertyAccessExpression
+            Identifier: ' actual'
+            Identifier: 'dirPathToSymlinkPackageRefCount'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+
+    // Stop watching resolutions to verify everything gets closed.
+    expected'
+            Identifier: 'startCachingPerDirectoryResolution'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: '
+    actual'
+              Identifier: 'resolvedModuleNames'
+            Identifier: 'forEach'
+          ArrowFunction
+            Parameter
+              Identifier: '_resolutions'
+            Parameter
+              Identifier: ' path'
+            EqualsGreaterThanToken
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' expected'
+                Identifier: 'removeResolutionsOfFile'
+              Identifier: 'path'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: '
+    actual'
+              Identifier: 'resolvedTypeReferenceDirectives'
+            Identifier: 'forEach'
+          ArrowFunction
+            Parameter
+              Identifier: '_resolutions'
+            Parameter
+              Identifier: ' path'
+            EqualsGreaterThanToken
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' expected'
+                Identifier: 'removeResolutionsOfFile'
+              Identifier: 'path'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    expected'
+            Identifier: 'finishCachingPerDirectoryResolution'
+          Identifier: '/*newProgram*/ undefined'
+          Identifier: ' actualProgram'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+
+    resolutionToExpected'
+            Identifier: 'forEach'
+          ArrowFunction
+            Parameter
+              Identifier: '
+        expected'
+            EqualsGreaterThanToken
+            CallExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' ts'
+                  Identifier: 'Debug'
+                Identifier: 'assert'
+              PrefixUnaryExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: 'expected'
+                    Identifier: 'files'
+                  QuestionDotToken
+                  Identifier: 'size'
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  Identifier: 'projectName'
+                  TemplateTail
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: '
+    ts'
+              Identifier: 'Debug'
+            Identifier: 'assert'
+          BinaryExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: 'expected'
+                Identifier: 'resolvedFileToResolution'
+              Identifier: 'size'
+            EqualsEqualsEqualsToken
+            NumericLiteral
+          TemplateExpression
+            TemplateHead
+            TemplateSpan
+              Identifier: 'projectName'
+              TemplateTail
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: '
+    ts'
+              Identifier: 'Debug'
+            Identifier: 'assert'
+          BinaryExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: 'expected'
+                Identifier: 'resolutionsWithFailedLookups'
+              Identifier: 'size'
+            EqualsEqualsEqualsToken
+            NumericLiteral
+          TemplateExpression
+            TemplateHead
+            TemplateSpan
+              Identifier: 'projectName'
+              TemplateTail
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: '
+    ts'
+              Identifier: 'Debug'
+            Identifier: 'assert'
+          BinaryExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: 'expected'
+                Identifier: 'resolutionsWithOnlyAffectingLocations'
+              Identifier: 'size'
+            EqualsEqualsEqualsToken
+            NumericLiteral
+          TemplateExpression
+            TemplateHead
+            TemplateSpan
+              Identifier: 'projectName'
+              TemplateTail
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: '
+    ts'
+              Identifier: 'Debug'
+            Identifier: 'assert'
+          BinaryExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: 'expected'
+                Identifier: 'directoryWatchesOfFailedLookups'
+              Identifier: 'size'
+            EqualsEqualsEqualsToken
+            NumericLiteral
+          TemplateExpression
+            TemplateHead
+            TemplateSpan
+              Identifier: 'projectName'
+              TemplateTail
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: '
+    ts'
+              Identifier: 'Debug'
+            Identifier: 'assert'
+          BinaryExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: 'expected'
+                Identifier: 'fileWatchesOfAffectingLocations'
+              Identifier: 'size'
+            EqualsEqualsEqualsToken
+            NumericLiteral
+          TemplateExpression
+            TemplateHead
+            TemplateSpan
+              Identifier: 'projectName'
+              TemplateTail
+      FunctionDeclaration
+        Identifier: ' collectResolutionToRefFromCache'
+        TypeParameter
+          Identifier: 'T'
+          TypeReference
+            QualifiedName
+              Identifier: ' ts'
+              Identifier: 'ResolutionWithFailedLookupLocations'
+        Parameter
+          Identifier: '
+        cacheType'
+          StringKeyword
+        Parameter
+          Identifier: '
+        fileName'
+          TypeReference
+            QualifiedName
+              Identifier: ' ts'
+              Identifier: 'Path'
+        Parameter
+          Identifier: '
+        cache'
+          UnionType
+            TypeReference
+              QualifiedName
+                Identifier: ' ts'
+                Identifier: 'ModeAwareCache'
+              TypeReference
+                Identifier: 'T'
+            UndefinedKeyword
+        Parameter
+          Identifier: '
+        getResolvedFileName'
+          FunctionType
+            Parameter
+              Identifier: 'resolution'
+              TypeReference
+                Identifier: ' T'
+            UnionType
+              StringKeyword
+              UndefinedKeyword
+        Parameter
+          Identifier: '
+        deferWatchingNonRelativeResolution'
+          BooleanKeyword
+        Parameter
+          Identifier: '
+        storeExpcted'
+          TypeReference
+            Identifier: ' Map'
+            TypeReference
+              QualifiedName
+                Identifier: 'ts'
+                Identifier: 'Path'
+            TypeReference
+              QualifiedName
+                Identifier: ' ts'
+                Identifier: 'ModeAwareCache'
+              TypeReference
+                QualifiedName
+                  Identifier: 'ts'
+                  Identifier: 'ResolutionWithFailedLookupLocations'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: '
+        ts'
+                  Identifier: 'Debug'
+                Identifier: 'assert'
+              BinaryExpression
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            actualProgram'
+                    Identifier: 'getSourceFileByPath'
+                  Identifier: 'fileName'
+                BarBarToken
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' ts'
+                    Identifier: 'endsWith'
+                  Identifier: 'fileName'
+                  PropertyAccessExpression
+                    Identifier: ' ts'
+                    Identifier: 'inferredTypesContainingFile'
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  Identifier: 'projectName'
+                  TemplateMiddle
+                TemplateSpan
+                  Identifier: 'cacheType'
+                  TemplateMiddle
+                TemplateSpan
+                  Identifier: 'fileName'
+                  TemplateTail
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' expectedCache'
+                UnionType
+                  TypeReference
+                    QualifiedName
+                      Identifier: ' ts'
+                      Identifier: 'ModeAwareCache'
+                    TypeReference
+                      QualifiedName
+                        Identifier: 'ts'
+                        Identifier: 'ResolutionWithFailedLookupLocations'
+                  UndefinedKeyword
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        cache'
+                QuestionDotToken
+                Identifier: 'forEach'
+              ArrowFunction
+                Parameter
+                  Identifier: 'resolved'
+                Parameter
+                  Identifier: ' name'
+                Parameter
+                  Identifier: ' mode'
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' resolvedFileName'
+                        CallExpression
+                          Identifier: ' getResolvedFileName'
+                          Identifier: 'resolved'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' expected'
+                        CallExpression
+                          Identifier: ' collectResolution'
+                          Identifier: 'cacheType'
+                          Identifier: ' fileName'
+                          Identifier: ' resolved'
+                          Identifier: ' resolvedFileName'
+                          Identifier: ' name'
+                          Identifier: ' mode'
+                          Identifier: ' deferWatchingNonRelativeResolution'
+                  IfStatement
+                    PrefixUnaryExpression
+                      Identifier: 'expectedCache'
+                    ExpressionStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' storeExpcted'
+                          Identifier: 'set'
+                        Identifier: 'fileName'
+                        BinaryExpression
+                          Identifier: ' expectedCache'
+                          EqualsToken
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' ts'
+                              Identifier: 'createModeAwareCache'
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+            expectedCache'
+                        Identifier: 'set'
+                      Identifier: 'name'
+                      Identifier: ' mode'
+                      Identifier: ' expected'
+      FunctionDeclaration
+        Identifier: ' collectResolution'
+        TypeParameter
+          Identifier: 'T'
+          TypeReference
+            QualifiedName
+              Identifier: ' ts'
+              Identifier: 'ResolutionWithFailedLookupLocations'
+        Parameter
+          Identifier: '
+        cacheType'
+          StringKeyword
+        Parameter
+          Identifier: '
+        fileName'
+          TypeReference
+            QualifiedName
+              Identifier: ' ts'
+              Identifier: 'Path'
+        Parameter
+          Identifier: '
+        resolved'
+          TypeReference
+            Identifier: ' T'
+        Parameter
+          Identifier: '
+        resolvedFileName'
+          UnionType
+            StringKeyword
+            UndefinedKeyword
+        Parameter
+          Identifier: '
+        name'
+          StringKeyword
+        Parameter
+          Identifier: '
+        mode'
+          TypeReference
+            QualifiedName
+              Identifier: ' ts'
+              Identifier: 'ResolutionMode'
+        Parameter
+          Identifier: '
+        deferWatchingNonRelativeResolution'
+          BooleanKeyword
+        TypeReference
+          Identifier: ' ExpectedResolution'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' existing'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' resolutionToRefs'
+                    Identifier: 'get'
+                  Identifier: 'resolved'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' expectedResolution'
+                TypeReference
+                  Identifier: ' ExpectedResolution'
+          IfStatement
+            Identifier: 'existing'
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            existing'
+                    Identifier: 'push'
+                  ObjectLiteralExpression
+                    ShorthandPropertyAssignment
+                      Identifier: ' cacheType'
+                    ShorthandPropertyAssignment
+                      Identifier: ' fileName'
+                    ShorthandPropertyAssignment
+                      Identifier: ' name'
+                    ShorthandPropertyAssignment
+                      Identifier: ' mode'
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            expectedResolution'
+                  EqualsToken
+                  NonNullExpression
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' resolutionToExpected'
+                        Identifier: 'get'
+                      Identifier: 'resolved'
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            resolutionToRefs'
+                    Identifier: 'set'
+                  Identifier: 'resolved'
+                  ArrayLiteralExpression
+                    ObjectLiteralExpression
+                      ShorthandPropertyAssignment
+                        Identifier: ' cacheType'
+                      ShorthandPropertyAssignment
+                        Identifier: ' fileName'
+                      ShorthandPropertyAssignment
+                        Identifier: ' name'
+                      ShorthandPropertyAssignment
+                        Identifier: ' mode'
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            expectedResolution'
+                  EqualsToken
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: '
+                resolvedModule'
+                      PropertyAccessExpression
+                        ParenthesizedExpression
+                          AsExpression
+                            Identifier: 'resolved'
+                            AnyKeyword
+                        Identifier: 'resolvedModule'
+                    PropertyAssignment
+                      Identifier: '
+                resolvedTypeReferenceDirective'
+                      PropertyAccessExpression
+                        ParenthesizedExpression
+                          AsExpression
+                            Identifier: 'resolved'
+                            AnyKeyword
+                        Identifier: 'resolvedTypeReferenceDirective'
+                    PropertyAssignment
+                      Identifier: '
+                failedLookupLocations'
+                      PropertyAccessExpression
+                        Identifier: ' resolved'
+                        Identifier: 'failedLookupLocations'
+                    PropertyAssignment
+                      Identifier: '
+                affectingLocations'
+                      PropertyAccessExpression
+                        Identifier: ' resolved'
+                        Identifier: 'affectingLocations'
+                    PropertyAssignment
+                      Identifier: '
+                alternateResult'
+                      PropertyAccessExpression
+                        Identifier: ' resolved'
+                        Identifier: 'alternateResult'
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            expectedToResolution'
+                    Identifier: 'set'
+                  Identifier: 'expectedResolution'
+                  Identifier: ' resolved'
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            resolutionToExpected'
+                    Identifier: 'set'
+                  Identifier: 'resolved'
+                  Identifier: ' expectedResolution'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        expected'
+                Identifier: 'watchFailedLookupLocationsOfExternalModuleResolutions'
+              Identifier: 'name'
+              Identifier: ' expectedResolution'
+              Identifier: ' fileName'
+              ArrowFunction
+                EqualsGreaterThanToken
+                ParenthesizedExpression
+                  ObjectLiteralExpression
+                    ShorthandPropertyAssignment
+                      Identifier: ' resolvedFileName'
+              Identifier: ' deferWatchingNonRelativeResolution'
+          ReturnStatement
+            Identifier: ' expectedResolution'
+      FunctionDeclaration
+        Identifier: ' verifyMapOfResolutionSet'
+        Parameter
+          Identifier: '
+        expected'
+          UnionType
+            TypeReference
+              Identifier: ' Map'
+              TypeReference
+                QualifiedName
+                  Identifier: 'ts'
+                  Identifier: 'Path'
+              TypeReference
+                Identifier: ' Set'
+                TypeReference
+                  QualifiedName
+                    Identifier: 'ts'
+                    Identifier: 'ResolutionWithFailedLookupLocations'
+            UndefinedKeyword
+        Parameter
+          Identifier: '
+        actual'
+          UnionType
+            TypeReference
+              Identifier: ' Map'
+              TypeReference
+                QualifiedName
+                  Identifier: 'ts'
+                  Identifier: 'Path'
+              TypeReference
+                Identifier: ' Set'
+                TypeReference
+                  QualifiedName
+                    Identifier: 'ts'
+                    Identifier: 'ResolutionWithFailedLookupLocations'
+            UndefinedKeyword
+        Parameter
+          Identifier: '
+        caption'
+          StringKeyword
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        verifyMap'
+              Identifier: 'expected'
+              Identifier: ' actual'
+              Identifier: ' verifyResolutionSet'
+              Identifier: ' caption'
+      FunctionDeclaration
+        Identifier: ' verifyResolutionSet'
+        Parameter
+          Identifier: '
+        expected'
+          UnionType
+            TypeReference
+              Identifier: ' Set'
+              TypeReference
+                QualifiedName
+                  Identifier: 'ts'
+                  Identifier: 'ResolutionWithFailedLookupLocations'
+            UndefinedKeyword
+        Parameter
+          Identifier: '
+        actual'
+          UnionType
+            TypeReference
+              Identifier: ' Set'
+              TypeReference
+                QualifiedName
+                  Identifier: 'ts'
+                  Identifier: 'ResolutionWithFailedLookupLocations'
+            UndefinedKeyword
+        Parameter
+          Identifier: '
+        caption'
+          StringKeyword
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        expected'
+                QuestionDotToken
+                Identifier: 'forEach'
+              ArrowFunction
+                Parameter
+                  Identifier: 'resolution'
+                EqualsGreaterThanToken
+                CallExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: '
+            ts'
+                      Identifier: 'Debug'
+                    Identifier: 'assert'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+                actual'
+                      QuestionDotToken
+                      Identifier: 'has'
+                    NonNullExpression
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: 'expectedToResolution'
+                          Identifier: 'get'
+                        AsExpression
+                          Identifier: 'resolution'
+                          TypeReference
+                            Identifier: ' ExpectedResolution'
+                  TemplateExpression
+                    TemplateHead
+                    TemplateSpan
+                      Identifier: 'projectName'
+                      TemplateMiddle
+                    TemplateSpan
+                      Identifier: 'caption'
+                      TemplateTail
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        actual'
+                QuestionDotToken
+                Identifier: 'forEach'
+              ArrowFunction
+                Parameter
+                  Identifier: 'resolution'
+                EqualsGreaterThanToken
+                CallExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: '
+            ts'
+                      Identifier: 'Debug'
+                    Identifier: 'assert'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+                expected'
+                      QuestionDotToken
+                      Identifier: 'has'
+                    NonNullExpression
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: 'resolutionToExpected'
+                          Identifier: 'get'
+                        Identifier: 'resolution'
+                  TemplateExpression
+                    TemplateHead
+                    TemplateSpan
+                      Identifier: 'projectName'
+                      TemplateMiddle
+                    TemplateSpan
+                      Identifier: 'caption'
+                      TemplateTail
+      FunctionDeclaration
+        Identifier: ' verifyDirectoryWatchesOfFailedLookups'
+        Parameter
+          Identifier: 'expected'
+          TypeReference
+            Identifier: ' Map'
+            StringKeyword
+            TypeReference
+              QualifiedName
+                Identifier: ' ts'
+                Identifier: 'DirectoryWatchesOfFailedLookup'
+        Parameter
+          Identifier: ' actual'
+          TypeReference
+            Identifier: ' Map'
+            StringKeyword
+            TypeReference
+              QualifiedName
+                Identifier: ' ts'
+                Identifier: 'DirectoryWatchesOfFailedLookup'
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        verifyMap'
+              Identifier: 'expected'
+              Identifier: ' actual'
+              Identifier: ' verifyDirectoryWatchesOfFailedLookup'
+              StringLiteral
+      FunctionDeclaration
+        Identifier: ' verifyDirectoryWatchesOfFailedLookup'
+        Parameter
+          Identifier: '
+        expected'
+          UnionType
+            TypeReference
+              QualifiedName
+                Identifier: ' ts'
+                Identifier: 'DirectoryWatchesOfFailedLookup'
+            UndefinedKeyword
+        Parameter
+          Identifier: '
+        actual'
+          UnionType
+            TypeReference
+              QualifiedName
+                Identifier: ' ts'
+                Identifier: 'DirectoryWatchesOfFailedLookup'
+            UndefinedKeyword
+        Parameter
+          Identifier: '
+        caption'
+          StringKeyword
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: '
+        ts'
+                  Identifier: 'Debug'
+                Identifier: 'assert'
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: 'expected'
+                  QuestionDotToken
+                  Identifier: 'refCount'
+                EqualsEqualsEqualsToken
+                PropertyAccessExpression
+                  Identifier: ' actual'
+                  QuestionDotToken
+                  Identifier: 'refCount'
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  Identifier: 'projectName'
+                  TemplateMiddle
+                TemplateSpan
+                  Identifier: 'caption'
+                  TemplateTail
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: '
+        ts'
+                  Identifier: 'Debug'
+                Identifier: 'assert'
+              PrefixUnaryExpression
+                PrefixUnaryExpression
+                  PropertyAccessExpression
+                    Identifier: 'expected'
+                    QuestionDotToken
+                    Identifier: 'refCount'
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  Identifier: 'projectName'
+                  TemplateMiddle
+                TemplateSpan
+                  Identifier: 'caption'
+                  TemplateTail
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: '
+        ts'
+                  Identifier: 'Debug'
+                Identifier: 'assert'
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: 'expected'
+                  QuestionDotToken
+                  Identifier: 'nonRecursive'
+                EqualsEqualsEqualsToken
+                PropertyAccessExpression
+                  Identifier: ' actual'
+                  QuestionDotToken
+                  Identifier: 'nonRecursive'
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  Identifier: 'projectName'
+                  TemplateMiddle
+                TemplateSpan
+                  Identifier: 'caption'
+                  TemplateTail
+      FunctionDeclaration
+        Identifier: ' verifyFileWatchesOfAffectingLocations'
+        Parameter
+          Identifier: '
+        expected'
+          TypeReference
+            Identifier: ' Map'
+            StringKeyword
+            TypeReference
+              QualifiedName
+                Identifier: ' ts'
+                Identifier: 'FileWatcherOfAffectingLocation'
+        Parameter
+          Identifier: '
+        actual'
+          TypeReference
+            Identifier: ' Map'
+            StringKeyword
+            TypeReference
+              QualifiedName
+                Identifier: ' ts'
+                Identifier: 'FileWatcherOfAffectingLocation'
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        verifyMap'
+              Identifier: 'expected'
+              Identifier: ' actual'
+              Identifier: ' verifyFileWatcherOfAffectingLocation'
+              StringLiteral
+      FunctionDeclaration
+        Identifier: ' verifyFileWatcherOfAffectingLocation'
+        Parameter
+          Identifier: '
+        expected'
+          UnionType
+            TypeReference
+              QualifiedName
+                Identifier: ' ts'
+                Identifier: 'FileWatcherOfAffectingLocation'
+            UndefinedKeyword
+        Parameter
+          Identifier: '
+        actual'
+          UnionType
+            TypeReference
+              QualifiedName
+                Identifier: ' ts'
+                Identifier: 'FileWatcherOfAffectingLocation'
+            UndefinedKeyword
+        Parameter
+          Identifier: '
+        caption'
+          StringKeyword
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: '
+        ts'
+                  Identifier: 'Debug'
+                Identifier: 'assert'
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: 'expected'
+                  QuestionDotToken
+                  Identifier: 'resolutions'
+                EqualsEqualsEqualsToken
+                PropertyAccessExpression
+                  Identifier: ' actual'
+                  QuestionDotToken
+                  Identifier: 'resolutions'
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  Identifier: 'projectName'
+                  TemplateMiddle
+                TemplateSpan
+                  Identifier: 'caption'
+                  TemplateTail
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: '
+        ts'
+                  Identifier: 'Debug'
+                Identifier: 'assert'
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: 'expected'
+                  QuestionDotToken
+                  Identifier: 'files'
+                EqualsEqualsEqualsToken
+                PropertyAccessExpression
+                  Identifier: ' actual'
+                  QuestionDotToken
+                  Identifier: 'files'
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  Identifier: 'projectName'
+                  TemplateMiddle
+                TemplateSpan
+                  Identifier: 'caption'
+                  TemplateTail
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        verifySet'
+              PropertyAccessExpression
+                Identifier: 'expected'
+                QuestionDotToken
+                Identifier: 'symlinks'
+              PropertyAccessExpression
+                Identifier: ' actual'
+                QuestionDotToken
+                Identifier: 'symlinks'
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  Identifier: 'projectName'
+                  TemplateMiddle
+                TemplateSpan
+                  Identifier: 'caption'
+                  TemplateTail
+      FunctionDeclaration
+        Identifier: ' verifyPackageDirWatchers'
+        Parameter
+          Identifier: '
+        expected'
+          TypeReference
+            Identifier: ' Map'
+            TypeReference
+              QualifiedName
+                Identifier: 'ts'
+                Identifier: 'Path'
+            TypeReference
+              QualifiedName
+                Identifier: ' ts'
+                Identifier: 'PackageDirWatcher'
+        Parameter
+          Identifier: '
+        actual'
+          TypeReference
+            Identifier: ' Map'
+            TypeReference
+              QualifiedName
+                Identifier: 'ts'
+                Identifier: 'Path'
+            TypeReference
+              QualifiedName
+                Identifier: ' ts'
+                Identifier: 'PackageDirWatcher'
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        verifyMap'
+              Identifier: 'expected'
+              Identifier: ' actual'
+              Identifier: ' verifyPackageDirWatcher'
+              StringLiteral
+      FunctionDeclaration
+        Identifier: ' verifyPackageDirWatcher'
+        Parameter
+          Identifier: '
+        expected'
+          UnionType
+            TypeReference
+              QualifiedName
+                Identifier: ' ts'
+                Identifier: 'PackageDirWatcher'
+            UndefinedKeyword
+        Parameter
+          Identifier: '
+        actual'
+          UnionType
+            TypeReference
+              QualifiedName
+                Identifier: ' ts'
+                Identifier: 'PackageDirWatcher'
+            UndefinedKeyword
+        Parameter
+          Identifier: '
+        caption'
+          StringKeyword
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: '
+        ts'
+                  Identifier: 'Debug'
+                Identifier: 'assert'
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: 'expected'
+                  QuestionDotToken
+                  Identifier: 'isSymlink'
+                EqualsEqualsEqualsToken
+                PropertyAccessExpression
+                  Identifier: ' actual'
+                  QuestionDotToken
+                  Identifier: 'isSymlink'
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  Identifier: 'projectName'
+                  TemplateMiddle
+                TemplateSpan
+                  Identifier: 'caption'
+                  TemplateTail
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        verifyMap'
+              PropertyAccessExpression
+                Identifier: 'expected'
+                QuestionDotToken
+                Identifier: 'dirPathToWatcher'
+              PropertyAccessExpression
+                Identifier: ' actual'
+                QuestionDotToken
+                Identifier: 'dirPathToWatcher'
+              Identifier: ' verfiyDirPathToWatcherOfPackageDirWatcher'
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  Identifier: 'projectName'
+                  TemplateMiddle
+                TemplateSpan
+                  Identifier: 'caption'
+                  TemplateTail
+      FunctionDeclaration
+        Identifier: ' verfiyDirPathToWatcherOfPackageDirWatcher'
+        Parameter
+          Identifier: '
+        expected'
+          UnionType
+            TypeReference
+              QualifiedName
+                Identifier: ' ts'
+                Identifier: 'DirPathToWatcherOfPackageDirWatcher'
+            UndefinedKeyword
+        Parameter
+          Identifier: '
+        actual'
+          UnionType
+            TypeReference
+              QualifiedName
+                Identifier: ' ts'
+                Identifier: 'DirPathToWatcherOfPackageDirWatcher'
+            UndefinedKeyword
+        Parameter
+          Identifier: '
+        caption'
+          StringKeyword
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: '
+        ts'
+                  Identifier: 'Debug'
+                Identifier: 'assert'
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: 'expected'
+                  QuestionDotToken
+                  Identifier: 'refCount'
+                EqualsEqualsEqualsToken
+                PropertyAccessExpression
+                  Identifier: ' actual'
+                  QuestionDotToken
+                  Identifier: 'refCount'
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  Identifier: 'projectName'
+                  TemplateMiddle
+                TemplateSpan
+                  Identifier: 'caption'
+                  TemplateTail
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        verifyDirectoryWatchesOfFailedLookup'
+              PropertyAccessExpression
+                Identifier: 'expected'
+                QuestionDotToken
+                Identifier: 'watcher'
+              PropertyAccessExpression
+                Identifier: ' actual'
+                QuestionDotToken
+                Identifier: 'watcher'
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  Identifier: 'projectName'
+                  TemplateMiddle
+                TemplateSpan
+                  Identifier: 'caption'
+                  TemplateTail
+      FunctionDeclaration
+        Identifier: ' verifyDirPathToSymlinkPackageRefCount'
+        Parameter
+          Identifier: '
+        expected'
+          TypeReference
+            Identifier: ' Map'
+            TypeReference
+              QualifiedName
+                Identifier: 'ts'
+                Identifier: 'Path'
+            NumberKeyword
+        Parameter
+          Identifier: '
+        actual'
+          TypeReference
+            Identifier: ' Map'
+            TypeReference
+              QualifiedName
+                Identifier: 'ts'
+                Identifier: 'Path'
+            NumberKeyword
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        verifyMap'
+              Identifier: 'expected'
+              Identifier: ' actual'
+              ArrowFunction
+                Parameter
+                  Identifier: 'expected'
+                Parameter
+                  Identifier: ' actual'
+                Parameter
+                  Identifier: ' caption'
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: '
+            ts'
+                          Identifier: 'Debug'
+                        Identifier: 'assert'
+                      BinaryExpression
+                        Identifier: 'expected'
+                        EqualsEqualsEqualsToken
+                        Identifier: ' actual'
+                      TemplateExpression
+                        TemplateHead
+                        TemplateSpan
+                          Identifier: 'projectName'
+                          TemplateMiddle
+                        TemplateSpan
+                          Identifier: 'caption'
+                          TemplateTail
+              StringLiteral
+  FunctionDeclaration
+    Identifier: ' verifyMap'
+    TypeParameter
+      Identifier: 'Key'
+      StringKeyword
+    TypeParameter
+      Identifier: ' Expected'
+    TypeParameter
+      Identifier: ' Actual'
+    Parameter
+      Identifier: '
+    expected'
+      UnionType
+        TypeReference
+          Identifier: ' Map'
+          TypeReference
+            Identifier: 'Key'
+          TypeReference
+            Identifier: ' Expected'
+        UndefinedKeyword
+    Parameter
+      Identifier: '
+    actual'
+      UnionType
+        TypeReference
+          Identifier: ' Map'
+          TypeReference
+            Identifier: 'Key'
+          TypeReference
+            Identifier: ' Actual'
+        UndefinedKeyword
+    Parameter
+      Identifier: '
+    verifyValue'
+      FunctionType
+        Parameter
+          Identifier: 'expected'
+          UnionType
+            TypeReference
+              Identifier: ' Expected'
+            UndefinedKeyword
+        Parameter
+          Identifier: ' actual'
+          UnionType
+            TypeReference
+              Identifier: ' Actual'
+            UndefinedKeyword
+        Parameter
+          Identifier: ' key'
+          StringKeyword
+        VoidKeyword
+    Parameter
+      Identifier: '
+    caption'
+      StringKeyword
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    expected'
+            QuestionDotToken
+            Identifier: 'forEach'
+          ArrowFunction
+            Parameter
+              Identifier: 'expected'
+            Parameter
+              Identifier: ' path'
+            EqualsGreaterThanToken
+            CallExpression
+              Identifier: ' verifyValue'
+              Identifier: 'expected'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' actual'
+                  QuestionDotToken
+                  Identifier: 'get'
+                Identifier: 'path'
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  Identifier: 'caption'
+                  TemplateMiddle
+                TemplateSpan
+                  Identifier: 'path'
+                  TemplateTail
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    actual'
+            QuestionDotToken
+            Identifier: 'forEach'
+          ArrowFunction
+            Parameter
+              Identifier: 'actual'
+            Parameter
+              Identifier: ' path'
+            EqualsGreaterThanToken
+            CallExpression
+              Identifier: ' verifyValue'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: 'expected'
+                  QuestionDotToken
+                  Identifier: 'get'
+                Identifier: 'path'
+              Identifier: ' actual'
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  Identifier: 'caption'
+                  TemplateMiddle
+                TemplateSpan
+                  Identifier: 'path'
+                  TemplateTail
+  FunctionDeclaration
+    Identifier: ' verifySet'
+    Parameter
+      Identifier: '
+    expected'
+      UnionType
+        TypeReference
+          Identifier: ' Set'
+          StringKeyword
+        UndefinedKeyword
+    Parameter
+      Identifier: '
+    actual'
+      UnionType
+        TypeReference
+          Identifier: ' Set'
+          StringKeyword
+        UndefinedKeyword
+    Parameter
+      Identifier: '
+    caption'
+      StringKeyword
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    expected'
+            QuestionDotToken
+            Identifier: 'forEach'
+          ArrowFunction
+            Parameter
+              Identifier: 'expected'
+            EqualsGreaterThanToken
+            CallExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: '
+        ts'
+                  Identifier: 'Debug'
+                Identifier: 'assert'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: '
+            actual'
+                  QuestionDotToken
+                  Identifier: 'has'
+                Identifier: 'expected'
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  Identifier: 'caption'
+                  TemplateTail
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    actual'
+            QuestionDotToken
+            Identifier: 'forEach'
+          ArrowFunction
+            Parameter
+              Identifier: 'actual'
+            EqualsGreaterThanToken
+            CallExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: '
+        ts'
+                  Identifier: 'Debug'
+                Identifier: 'assert'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: '
+            expected'
+                  QuestionDotToken
+                  Identifier: 'has'
+                Identifier: 'actual'
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  Identifier: 'caption'
+                  TemplateTail
+  FunctionDeclaration
+    Identifier: ' verifyProgram'
+    Parameter
+      Identifier: 'service'
+      TypeReference
+        QualifiedName
+          QualifiedName
+            Identifier: ' ts'
+            Identifier: 'server'
+          Identifier: 'ProjectService'
+    Parameter
+      Identifier: ' project'
+      TypeReference
+        QualifiedName
+          QualifiedName
+            Identifier: ' ts'
+            Identifier: 'server'
+          Identifier: 'Project'
+    Block
+      IfStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: 'service'
+            Identifier: 'serverMode'
+          EqualsEqualsEqualsToken
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: ' ts'
+              Identifier: 'LanguageServiceMode'
+            Identifier: 'Syntactic'
+        ReturnStatement
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' options'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' project'
+                Identifier: 'getCompilerOptions'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' compilerHost'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' ts'
+                Identifier: 'createCompilerHostWorker'
+              Identifier: 'options'
+              Identifier: ' /*setParentNodes*/ undefined'
+              PropertyAccessExpression
+                Identifier: ' service'
+                Identifier: 'host'
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    compilerHost'
+            Identifier: 'useSourceOfProjectReferenceRedirect'
+          EqualsToken
+          CallExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' project'
+                Identifier: 'useSourceOfProjectReferenceRedirect'
+              QuestionDotToken
+              Identifier: 'bind'
+            Identifier: 'project'
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    compilerHost'
+            Identifier: 'getCurrentDirectory'
+          EqualsToken
+          CallExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' project'
+                Identifier: 'getCurrentDirectory'
+              Identifier: 'bind'
+            Identifier: 'project'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' getDefaultLibLocation'
+            NonNullExpression
+              PropertyAccessExpression
+                Identifier: ' compilerHost'
+                Identifier: 'getDefaultLibLocation'
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    compilerHost'
+            Identifier: 'getDefaultLibLocation'
+          EqualsToken
+          ArrowFunction
+            EqualsGreaterThanToken
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' ts'
+                Identifier: 'getNormalizedAbsolutePath'
+              CallExpression
+                Identifier: 'getDefaultLibLocation'
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' service'
+                    Identifier: 'host'
+                  Identifier: 'getCurrentDirectory'
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    compilerHost'
+            Identifier: 'getDefaultLibFileName'
+          EqualsToken
+          ArrowFunction
+            Parameter
+              Identifier: ' options'
+            EqualsGreaterThanToken
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' ts'
+                Identifier: 'combinePaths'
+              CallExpression
+                NonNullExpression
+                  PropertyAccessExpression
+                    Identifier: 'compilerHost'
+                    Identifier: 'getDefaultLibLocation'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' ts'
+                  Identifier: 'getDefaultLibFileName'
+                Identifier: 'options'
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    compilerHost'
+            Identifier: 'trace'
+          EqualsToken
+          PropertyAccessExpression
+            Identifier: ' ts'
+            Identifier: 'noop'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' readFile'
+            PropertyAccessExpression
+              Identifier: ' compilerHost'
+              Identifier: 'readFile'
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    compilerHost'
+            Identifier: 'readFile'
+          EqualsToken
+          ArrowFunction
+            Parameter
+              Identifier: ' fileName'
+            EqualsGreaterThanToken
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' path'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' project'
+                        Identifier: 'toPath'
+                      Identifier: 'fileName'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' info'
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            Identifier: ' project'
+                            Identifier: 'projectService'
+                          Identifier: 'filenameToScriptInfo'
+                        Identifier: 'get'
+                      Identifier: 'path'
+              IfStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: 'info'
+                    QuestionDotToken
+                    Identifier: 'isDynamicOrHasMixedContent'
+                Block
+                  ReturnStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' ts'
+                        Identifier: 'getSnapshotText'
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: 'info'
+                          Identifier: 'getSnapshot'
+              IfStatement
+                PrefixUnaryExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: 'ts'
+                      Identifier: 'isAnySupportedFileExtension'
+                    Identifier: 'path'
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' snapshot'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' project'
+                            Identifier: 'getScriptSnapshot'
+                          Identifier: 'path'
+                  ReturnStatement
+                    ConditionalExpression
+                      Identifier: ' snapshot'
+                      QuestionToken
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' ts'
+                          Identifier: 'getSnapshotText'
+                        Identifier: 'snapshot'
+                      ColonToken
+                      Identifier: ' undefined'
+              IfStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: 'project'
+                    Identifier: 'fileIsOpen'
+                  Identifier: 'path'
+                Block
+                  ReturnStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' ts'
+                        Identifier: 'getSnapshotText'
+                      CallExpression
+                        PropertyAccessExpression
+                          NonNullExpression
+                            Identifier: 'info'
+                          Identifier: 'getSnapshot'
+              IfStatement
+                BinaryExpression
+                  PrefixUnaryExpression
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: 'ts'
+                        Identifier: 'isRootedDiskPath'
+                      Identifier: 'fileName'
+                  BarBarToken
+                  PrefixUnaryExpression
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: 'compilerHost'
+                        Identifier: 'fileExists'
+                      Identifier: 'fileName'
+                ReturnStatement
+                  Identifier: ' undefined'
+              IfStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: 'ts'
+                    Identifier: 'hasTSFileExtension'
+                  Identifier: 'fileName'
+                ReturnStatement
+                  CallExpression
+                    Identifier: ' readFile'
+                    Identifier: 'fileName'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' text'
+                    UnionType
+                      StringKeyword
+                      UndefinedKeyword
+                      LiteralType
+                        FalseKeyword
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' fileSize'
+                    NumberKeyword
+              IfStatement
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: 'service'
+                    Identifier: 'host'
+                  Identifier: 'getFileSize'
+                ExpressionStatement
+                  BinaryExpression
+                    Identifier: ' fileSize'
+                    EqualsToken
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: ' service'
+                          Identifier: 'host'
+                        Identifier: 'getFileSize'
+                      Identifier: 'fileName'
+                Block
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+            text'
+                      EqualsToken
+                      CallExpression
+                        Identifier: ' readFile'
+                        Identifier: 'fileName'
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+            fileSize'
+                      EqualsToken
+                      BinaryExpression
+                        PropertyAccessExpression
+                          Identifier: ' text'
+                          QuestionDotToken
+                          Identifier: 'length'
+                        BarBarToken
+                        NumericLiteral
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+            text'
+                      EqualsToken
+                      ConditionalExpression
+                        BinaryExpression
+                          Identifier: ' text'
+                          ExclamationEqualsEqualsToken
+                          Identifier: ' undefined'
+                        QuestionToken
+                        Identifier: ' text'
+                        ColonToken
+                        FalseKeyword
+              IfStatement
+                BinaryExpression
+                  Identifier: 'fileSize'
+                  GreaterThanToken
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' ts'
+                      Identifier: 'server'
+                    Identifier: 'maxFileSize'
+                ReturnStatement
+                  StringLiteral
+              ReturnStatement
+                ConditionalExpression
+                  BinaryExpression
+                    Identifier: ' text'
+                    ExclamationEqualsEqualsToken
+                    Identifier: ' undefined'
+                  QuestionToken
+                  BinaryExpression
+                    Identifier: ' text'
+                    BarBarToken
+                    Identifier: ' undefined'
+                  ColonToken
+                  CallExpression
+                    Identifier: ' readFile'
+                    Identifier: 'fileName'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' getSourceFile'
+            PropertyAccessExpression
+              Identifier: ' compilerHost'
+              Identifier: 'getSourceFile'
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    compilerHost'
+            Identifier: 'getSourceFile'
+          EqualsToken
+          ArrowFunction
+            Parameter
+              Identifier: 'fileName'
+            Parameter
+              Identifier: ' languageVersionOrOptions'
+            Parameter
+              Identifier: ' onError'
+            Parameter
+              Identifier: ' shouldCreateNewSourceFile'
+            EqualsGreaterThanToken
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' projectScriptKind'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' project'
+                        Identifier: 'getScriptKind'
+                      Identifier: 'fileName'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' scriptKind'
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' ts'
+                        Identifier: 'ensureScriptKind'
+                      Identifier: 'fileName'
+                      Identifier: ' /*scriptKind*/ undefined'
+              IfStatement
+                BinaryExpression
+                  Identifier: 'scriptKind'
+                  EqualsEqualsEqualsToken
+                  Identifier: ' projectScriptKind'
+                ReturnStatement
+                  CallExpression
+                    Identifier: ' getSourceFile'
+                    Identifier: 'fileName'
+                    Identifier: ' languageVersionOrOptions'
+                    Identifier: ' onError'
+                    Identifier: ' shouldCreateNewSourceFile'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' text'
+                    UnionType
+                      StringKeyword
+                      UndefinedKeyword
+              TryStatement
+                Block
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+            text'
+                      EqualsToken
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' compilerHost'
+                          Identifier: 'readFile'
+                        Identifier: 'fileName'
+                CatchClause
+                  VariableDeclaration
+                    Identifier: 'e'
+                  Block
+                    ExpressionStatement
+                      CallExpression
+                        Identifier: '
+            onError'
+                        QuestionDotToken
+                        PropertyAccessExpression
+                          Identifier: 'e'
+                          Identifier: 'message'
+                    ExpressionStatement
+                      BinaryExpression
+                        Identifier: '
+            text'
+                        EqualsToken
+                        StringLiteral
+              ReturnStatement
+                ConditionalExpression
+                  BinaryExpression
+                    Identifier: ' text'
+                    ExclamationEqualsEqualsToken
+                    Identifier: ' undefined'
+                  QuestionToken
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+            ts'
+                      Identifier: 'createSourceFile'
+                    Identifier: 'fileName'
+                    Identifier: ' text'
+                    Identifier: ' languageVersionOrOptions'
+                    Identifier: ' /*setParentNodes*/ undefined'
+                    Identifier: ' projectScriptKind'
+                  ColonToken
+                  Identifier: '
+            undefined'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' resolutionHostCacheHost'
+            TypeReference
+              QualifiedName
+                Identifier: ' ts'
+                Identifier: 'ResolutionCacheHost'
+            ObjectLiteralExpression
+              SpreadAssignment
+                Identifier: 'compilerHost'
+              PropertyAssignment
+                Identifier: '
+
+        getCompilerHost'
+                ArrowFunction
+                  EqualsGreaterThanToken
+                  Identifier: ' compilerHost'
+              PropertyAssignment
+                Identifier: '
+        toPath'
+                CallExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' project'
+                      Identifier: 'toPath'
+                    Identifier: 'bind'
+                  Identifier: 'project'
+              PropertyAssignment
+                Identifier: '
+        getCompilationSettings'
+                CallExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' project'
+                      Identifier: 'getCompilationSettings'
+                    Identifier: 'bind'
+                  Identifier: 'project'
+              PropertyAssignment
+                Identifier: '
+        projectName'
+                PropertyAccessExpression
+                  Identifier: ' project'
+                  Identifier: 'projectName'
+              PropertyAssignment
+                Identifier: '
+        getGlobalTypingsCacheLocation'
+                CallExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' project'
+                      Identifier: 'getGlobalTypingsCacheLocation'
+                    Identifier: 'bind'
+                  Identifier: 'project'
+              PropertyAssignment
+                Identifier: '
+        globalCacheResolutionModuleName'
+                CallExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' project'
+                      Identifier: 'globalCacheResolutionModuleName'
+                    Identifier: 'bind'
+                  Identifier: 'project'
+              PropertyAssignment
+                Identifier: '
+        fileIsOpen'
+                CallExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' project'
+                      Identifier: 'fileIsOpen'
+                    Identifier: 'bind'
+                  Identifier: 'project'
+              PropertyAssignment
+                Identifier: '
+        getCurrentProgram'
+                ArrowFunction
+                  EqualsGreaterThanToken
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' project'
+                      Identifier: 'getCurrentProgram'
+              PropertyAssignment
+                Identifier: '
+
+        preferNonRecursiveWatch'
+                PropertyAccessExpression
+                  Identifier: ' project'
+                  Identifier: 'preferNonRecursiveWatch'
+              PropertyAssignment
+                Identifier: '
+        watchDirectoryOfFailedLookupLocation'
+                PropertyAccessExpression
+                  Identifier: ' ts'
+                  Identifier: 'returnNoopFileWatcher'
+              PropertyAssignment
+                Identifier: '
+        watchAffectingFileLocation'
+                PropertyAccessExpression
+                  Identifier: ' ts'
+                  Identifier: 'returnNoopFileWatcher'
+              PropertyAssignment
+                Identifier: '
+        onInvalidatedResolution'
+                PropertyAccessExpression
+                  Identifier: ' ts'
+                  Identifier: 'noop'
+              PropertyAssignment
+                Identifier: '
+        watchTypeRootsDirectory'
+                PropertyAccessExpression
+                  Identifier: ' ts'
+                  Identifier: 'returnNoopFileWatcher'
+              PropertyAssignment
+                Identifier: '
+        onChangedAutomaticTypeDirectiveNames'
+                PropertyAccessExpression
+                  Identifier: ' ts'
+                  Identifier: 'noop'
+              PropertyAssignment
+                Identifier: '
+        scheduleInvalidateResolutionsOfFailedLookupLocations'
+                PropertyAccessExpression
+                  Identifier: ' ts'
+                  Identifier: 'noop'
+              PropertyAssignment
+                Identifier: '
+        getCachedDirectoryStructureHost'
+                PropertyAccessExpression
+                  Identifier: ' ts'
+                  Identifier: 'returnUndefined'
+              PropertyAssignment
+                Identifier: '
+        writeLog'
+                PropertyAccessExpression
+                  Identifier: ' ts'
+                  Identifier: 'noop'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' moduleResolutionCache'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' ts'
+                Identifier: 'createModuleResolutionCache'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: 'compilerHost'
+                  Identifier: 'getCurrentDirectory'
+              PropertyAccessExpression
+                Identifier: ' compilerHost'
+                Identifier: 'getCanonicalFileName'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' project'
+                  Identifier: 'getCompilerOptions'
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    compilerHost'
+            Identifier: 'resolveModuleNameLiterals'
+          EqualsToken
+          ArrowFunction
+            Parameter
+              Identifier: 'moduleNames'
+            Parameter
+              Identifier: ' containingFile'
+            Parameter
+              Identifier: ' redirectedReference'
+            Parameter
+              Identifier: ' options'
+            Parameter
+              Identifier: ' containingSourceFile'
+            EqualsGreaterThanToken
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        ts'
+                Identifier: 'loadWithModeAwareCache'
+              Identifier: '
+            moduleNames'
+              Identifier: '
+            containingFile'
+              Identifier: '
+            redirectedReference'
+              Identifier: '
+            options'
+              Identifier: '
+            containingSourceFile'
+              Identifier: '
+            compilerHost'
+              Identifier: '
+            moduleResolutionCache'
+              ArrowFunction
+                Parameter
+                  Identifier: 'containingFile'
+                Parameter
+                  Identifier: ' redirectedReference'
+                Parameter
+                  Identifier: ' options'
+                EqualsGreaterThanToken
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+                ts'
+                    Identifier: 'createModuleResolutionLoaderUsingGlobalCache'
+                  Identifier: '
+                    containingFile'
+                  Identifier: '
+                    redirectedReference'
+                  Identifier: '
+                    options'
+                  Identifier: '
+                    resolutionHostCacheHost'
+                  Identifier: '
+                    moduleResolutionCache'
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    compilerHost'
+            Identifier: 'getGlobalTypingsCacheLocation'
+          EqualsToken
+          PropertyAccessExpression
+            Identifier: ' resolutionHostCacheHost'
+            Identifier: 'getGlobalTypingsCacheLocation'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    verifyProgramStructure'
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+        ts'
+              Identifier: 'createProgram'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+            rootNames'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' project'
+                    Identifier: 'getScriptFileNames'
+              PropertyAssignment
+                Identifier: '
+            options'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' project'
+                    Identifier: 'getCompilationSettings'
+              PropertyAssignment
+                Identifier: '
+            projectReferences'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' project'
+                    Identifier: 'getProjectReferences'
+              PropertyAssignment
+                Identifier: '
+            host'
+                Identifier: ' compilerHost'
+          NonNullExpression
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        project'
+                Identifier: 'getCurrentProgram'
+          PropertyAccessExpression
+            Identifier: '
+        project'
+            Identifier: 'projectName'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    verifyResolutionCache'
+          PropertyAccessExpression
+            Identifier: 'project'
+            Identifier: 'resolutionCache'
+          NonNullExpression
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' project'
+                Identifier: 'getCurrentProgram'
+          Identifier: ' resolutionHostCacheHost'
+          PropertyAccessExpression
+            Identifier: ' project'
+            Identifier: 'projectName'
+  InterfaceDeclaration
+    Identifier: ' ResolveSingleModuleNameWithoutWatchingData'
+    PropertySignature
+      Identifier: '
+    resolutionToData'
+      TypeReference
+        Identifier: ' Map'
+        TypeReference
+          QualifiedName
+            Identifier: 'ts'
+            Identifier: 'ResolutionWithFailedLookupLocations'
+        TypeReference
+          Identifier: ' Pick'
+          TypeReference
+            QualifiedName
+              Identifier: 'ts'
+              Identifier: 'ResolvedModuleWithFailedLookupLocations'
+          UnionType
+            LiteralType
+              StringLiteral
+            LiteralType
+              StringLiteral
+            LiteralType
+              StringLiteral
+    PropertySignature
+      Identifier: '
+    packageJsonMap'
+      UnionType
+        TypeReference
+          Identifier: ' Map'
+          TypeReference
+            QualifiedName
+              Identifier: 'ts'
+              Identifier: 'Path'
+          TypeReference
+            QualifiedName
+              Identifier: ' ts'
+              Identifier: 'PackageJsonInfoCacheEntry'
+        UndefinedKeyword
+  FunctionDeclaration
+    Identifier: ' beforeResolveSingleModuleNameWithoutWatching'
+    Parameter
+      Identifier: '
+    moduleResolutionCache'
+      TypeReference
+        QualifiedName
+          Identifier: ' ts'
+          Identifier: 'ModuleResolutionCache'
+    TypeReference
+      Identifier: ' ResolveSingleModuleNameWithoutWatchingData'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' resolutionToData'
+            IndexedAccessType
+              TypeReference
+                Identifier: ' ResolveSingleModuleNameWithoutWatchingData'
+              LiteralType
+                StringLiteral
+            NewExpression
+              Identifier: ' Map'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            CallExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: '
+    // Currently it doesnt matter if moduleResolutionCache itself changes or not so just verify resolutions:
+    moduleResolutionCache'
+                  Identifier: 'directoryToModuleNameMap'
+                Identifier: 'getOwnMap'
+            Identifier: 'forEach'
+          ArrowFunction
+            Parameter
+              Identifier: 'cache'
+            EqualsGreaterThanToken
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+        cache'
+                    Identifier: 'forEach'
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'resolution'
+                    EqualsGreaterThanToken
+                    Block
+                      IfStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: 'resolutionToData'
+                            Identifier: 'has'
+                          Identifier: 'resolution'
+                        ReturnStatement
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+            resolutionToData'
+                            Identifier: 'set'
+                          Identifier: 'resolution'
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: '
+                failedLookupLocations'
+                              CallExpression
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' resolution'
+                                    Identifier: 'failedLookupLocations'
+                                  QuestionDotToken
+                                  Identifier: 'slice'
+                            PropertyAssignment
+                              Identifier: '
+                affectingLocations'
+                              CallExpression
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' resolution'
+                                    Identifier: 'affectingLocations'
+                                  QuestionDotToken
+                                  Identifier: 'slice'
+                            PropertyAssignment
+                              Identifier: '
+                resolutionDiagnostics'
+                              CallExpression
+                                PropertyAccessExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' resolution'
+                                    Identifier: 'resolutionDiagnostics'
+                                  QuestionDotToken
+                                  Identifier: 'slice'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' packageJsonMap'
+            CallExpression
+              PropertyAccessExpression
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' moduleResolutionCache'
+                    Identifier: 'getPackageJsonInfoCache'
+                Identifier: 'getInternalMap'
+      ReturnStatement
+        ObjectLiteralExpression
+          ShorthandPropertyAssignment
+            Identifier: '
+        resolutionToData'
+          PropertyAssignment
+            Identifier: '
+        packageJsonMap'
+            BinaryExpression
+              Identifier: ' packageJsonMap'
+              AmpersandAmpersandToken
+              NewExpression
+                Identifier: ' Map'
+                Identifier: 'packageJsonMap'
+  FunctionDeclaration
+    Identifier: ' afterResolveSingleModuleNameWithoutWatching'
+    Parameter
+      Identifier: '
+    moduleResolutionCache'
+      TypeReference
+        QualifiedName
+          Identifier: ' ts'
+          Identifier: 'ModuleResolutionCache'
+    Parameter
+      Identifier: '
+    moduleName'
+      StringKeyword
+    Parameter
+      Identifier: '
+    containingFile'
+      StringKeyword
+    Parameter
+      Identifier: '
+    result'
+      TypeReference
+        QualifiedName
+          Identifier: ' ts'
+          Identifier: 'ResolvedModuleWithFailedLookupLocations'
+    Parameter
+      Identifier: '
+    data'
+      TypeReference
+        Identifier: ' ResolveSingleModuleNameWithoutWatchingData'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' existing'
+            CallExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' data'
+                  Identifier: 'resolutionToData'
+                Identifier: 'get'
+              Identifier: 'result'
+      IfStatement
+        Identifier: 'existing'
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        verifyArrayLength'
+              PropertyAccessExpression
+                Identifier: 'existing'
+                Identifier: 'failedLookupLocations'
+              PropertyAccessExpression
+                Identifier: ' result'
+                Identifier: 'failedLookupLocations'
+              StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        verifyArrayLength'
+              PropertyAccessExpression
+                Identifier: 'existing'
+                Identifier: 'affectingLocations'
+              PropertyAccessExpression
+                Identifier: ' result'
+                Identifier: 'affectingLocations'
+              StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        verifyArrayLength'
+              PropertyAccessExpression
+                Identifier: 'existing'
+                Identifier: 'resolutionDiagnostics'
+              PropertyAccessExpression
+                Identifier: ' result'
+                Identifier: 'resolutionDiagnostics'
+              StringLiteral
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+
+    verifyMap'
+          PropertyAccessExpression
+            Identifier: '
+        data'
+            Identifier: 'packageJsonMap'
+          CallExpression
+            PropertyAccessExpression
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: '
+        moduleResolutionCache'
+                  Identifier: 'getPackageJsonInfoCache'
+              Identifier: 'getInternalMap'
+          ArrowFunction
+            Parameter
+              Identifier: 'expected'
+            Parameter
+              Identifier: ' actual'
+            Parameter
+              Identifier: ' caption'
+            EqualsGreaterThanToken
+            CallExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' ts'
+                  Identifier: 'Debug'
+                Identifier: 'assert'
+              BinaryExpression
+                Identifier: 'expected'
+                EqualsEqualsEqualsToken
+                Identifier: ' actual'
+              Identifier: ' caption'
+          TemplateExpression
+            TemplateHead
+            TemplateSpan
+              Identifier: 'moduleName'
+              TemplateMiddle
+            TemplateSpan
+              Identifier: 'containingFile'
+              TemplateTail
+      FunctionDeclaration
+        Identifier: ' verifyArrayLength'
+        TypeParameter
+          Identifier: 'T'
+        Parameter
+          Identifier: 'expected'
+          UnionType
+            ArrayType
+              TypeReference
+                Identifier: ' T'
+            UndefinedKeyword
+        Parameter
+          Identifier: ' actual'
+          UnionType
+            ArrayType
+              TypeReference
+                Identifier: ' T'
+            UndefinedKeyword
+        Parameter
+          Identifier: ' caption'
+          StringKeyword
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: '
+        ts'
+                  Identifier: 'Debug'
+                Identifier: 'assert'
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: '
+            expected'
+                  QuestionDotToken
+                  Identifier: 'length'
+                EqualsEqualsEqualsToken
+                PropertyAccessExpression
+                  Identifier: ' actual'
+                  QuestionDotToken
+                  Identifier: 'length'
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  Identifier: 'caption'
+                  TemplateMiddle
+                TemplateSpan
+                  Identifier: 'moduleName'
+                  TemplateMiddle
+                TemplateSpan
+                  Identifier: 'containingFile'
+                  TemplateTail
+              ArrowFunction
+                EqualsGreaterThanToken
+                BinaryExpression
+                  TemplateExpression
+                    TemplateHead
+                    TemplateSpan
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: 'JSON'
+                          Identifier: 'stringify'
+                        Identifier: 'expected'
+                        Identifier: ' undefined'
+                        StringLiteral
+                      TemplateTail
+                  PlusToken
+                  TemplateExpression
+                    TemplateHead
+                    TemplateSpan
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: 'JSON'
+                          Identifier: 'stringify'
+                        Identifier: 'actual'
+                        Identifier: ' undefined'
+                        StringLiteral
+                      TemplateTail
+  FunctionDeclaration
+    Identifier: ' onProjectCreation'
+    Parameter
+      Identifier: 'project'
+      TypeReference
+        QualifiedName
+          QualifiedName
+            Identifier: ' ts'
+            Identifier: 'server'
+          Identifier: 'Project'
+    Block
+      IfStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: 'project'
+            Identifier: 'projectKind'
+          ExclamationEqualsEqualsToken
+          PropertyAccessExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' ts'
+                Identifier: 'server'
+              Identifier: 'ProjectKind'
+            Identifier: 'Auxiliary'
+        ReturnStatement
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            ParenthesizedExpression
+              AsExpression
+                Identifier: 'project'
+                TypeReference
+                  QualifiedName
+                    Identifier: ' ts'
+                    Identifier: 'ResolutionCacheHost'
+            Identifier: 'beforeResolveSingleModuleNameWithoutWatching'
+          EqualsToken
+          Identifier: ' beforeResolveSingleModuleNameWithoutWatching'
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            ParenthesizedExpression
+              AsExpression
+                Identifier: 'project'
+                TypeReference
+                  QualifiedName
+                    Identifier: ' ts'
+                    Identifier: 'ResolutionCacheHost'
+            Identifier: 'afterResolveSingleModuleNameWithoutWatching'
+          EqualsToken
+          Identifier: ' afterResolveSingleModuleNameWithoutWatching'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' IncrementalVerifierCallbacks'
+    MethodSignature
+      Identifier: '
+    beforeVerification'
+      QuestionToken
+      AnyKeyword
+    MethodSignature
+      Identifier: '
+    afterVerification'
+      QuestionToken
+      Parameter
+        Identifier: 'dataFromBefore'
+        AnyKeyword
+      VoidKeyword
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' incrementalVerifier'
+    Parameter
+      Identifier: 'service'
+      TypeReference
+        QualifiedName
+          QualifiedName
+            Identifier: ' ts'
+            Identifier: 'server'
+          Identifier: 'ProjectService'
+    VoidKeyword
+    Block
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    service'
+            Identifier: 'verifyDocumentRegistry'
+          EqualsToken
+          CallExpression
+            Identifier: ' withIncrementalVerifierCallbacks'
+            Identifier: 'service'
+            Identifier: ' verifyDocumentRegistry'
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    service'
+            Identifier: 'verifyProgram'
+          EqualsToken
+          CallExpression
+            Identifier: ' withIncrementalVerifierCallbacks'
+            Identifier: 'service'
+            Identifier: ' verifyProgram'
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    service'
+            Identifier: 'onProjectCreation'
+          EqualsToken
+          Identifier: ' onProjectCreation'
+  FunctionDeclaration
+    Identifier: ' withIncrementalVerifierCallbacks'
+    Parameter
+      Identifier: '
+    service'
+      TypeReference
+        QualifiedName
+          QualifiedName
+            Identifier: ' ts'
+            Identifier: 'server'
+          Identifier: 'ProjectService'
+    Parameter
+      Identifier: '
+    callback'
+      FunctionType
+        Parameter
+          Identifier: 'service'
+          TypeReference
+            QualifiedName
+              QualifiedName
+                Identifier: ' ts'
+                Identifier: 'server'
+              Identifier: 'ProjectService'
+        Parameter
+          DotDotDotToken
+          Identifier: 'args'
+          ArrayType
+            AnyKeyword
+        VoidKeyword
+    FunctionType
+      Parameter
+        DotDotDotToken
+        Identifier: 'args'
+        ArrayType
+          AnyKeyword
+      VoidKeyword
+    Block
+      ReturnStatement
+        ArrowFunction
+          Parameter
+            DotDotDotToken
+            Identifier: 'args'
+            ArrayType
+              AnyKeyword
+          EqualsGreaterThanToken
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' data'
+                  CallExpression
+                    PropertyAccessExpression
+                      ParenthesizedExpression
+                        AsExpression
+                          PropertyAccessExpression
+                            Identifier: 'service'
+                            Identifier: 'host'
+                          TypeReference
+                            Identifier: ' IncrementalVerifierCallbacks'
+                      Identifier: 'beforeVerification'
+                    QuestionDotToken
+            ExpressionStatement
+              CallExpression
+                Identifier: '
+        callback'
+                Identifier: 'service'
+                SpreadElement
+                  Identifier: 'args'
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  ParenthesizedExpression
+                    AsExpression
+                      PropertyAccessExpression
+                        Identifier: 'service'
+                        Identifier: 'host'
+                      TypeReference
+                        Identifier: ' IncrementalVerifierCallbacks'
+                  Identifier: 'afterVerification'
+                QuestionDotToken
+                Identifier: 'data'

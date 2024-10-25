@@ -1,0 +1,19 @@
+SourceFile
+  EnumDeclaration
+    ExportKeyword
+    Identifier: ' Mode'
+    EnumMember
+      Identifier: ' Open'
+  ImportEqualsDeclaration
+    Identifier: ' f'
+    ExternalModuleReference
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: ' f'
+            Identifier: 'Mode'
+          Identifier: 'Open'

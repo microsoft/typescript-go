@@ -1,0 +1,68 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    Constructor
+      Parameter
+        Identifier: 'x'
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'x'
+            EqualsToken
+            Identifier: ' x'
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'exports'
+            EqualsToken
+            ArrayLiteralExpression
+              Identifier: 'x'
+    MethodDeclaration
+      Identifier: '
+    /** @param {number} y */
+    m'
+      Parameter
+        Identifier: 'y'
+      Block
+        ReturnStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'x'
+            PlusToken
+            Identifier: ' y'
+  FunctionDeclaration
+    Identifier: ' exec'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' module'
+            NewExpression
+              Identifier: ' C'
+              NumericLiteral
+      ReturnStatement
+        PropertyAccessExpression
+          Identifier: ' module'
+          Identifier: 'exports'
+  FunctionDeclaration
+    Identifier: ' tricky'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' module'
+            NewExpression
+              Identifier: ' C'
+              NumericLiteral
+      ReturnStatement
+        ArrowFunction
+          EqualsGreaterThanToken
+          Block
+            ReturnStatement
+              PropertyAccessExpression
+                Identifier: ' module'
+                Identifier: 'exports'

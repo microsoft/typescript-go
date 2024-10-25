@@ -1,0 +1,50 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' JSX'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' Element'
+      InterfaceDeclaration
+        Identifier: ' IntrinsicElements'
+      InterfaceDeclaration
+        Identifier: ' ElementAttributesProperty'
+        PropertySignature
+          Identifier: '
+		props'
+  InterfaceDeclaration
+    Identifier: ' Props'
+    PropertySignature
+      Identifier: '  
+  foo'
+      StringKeyword
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' MyComponent'
+    MethodDeclaration
+      Identifier: '  
+  render'
+      Block
+    PropertyDeclaration
+      Identifier: '
+
+  props'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' foo'
+          StringKeyword
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'MyComponent'
+      JsxAttributes
+        JsxAttribute
+          Identifier: ' foo'
+          StringLiteral
+  ExpressionStatement
+    JsxSelfClosingElement
+      Identifier: 'MyComponent'
+      JsxAttributes
+        JsxAttribute
+          Identifier: ' foo'
+          JsxExpression
+            NumericLiteral

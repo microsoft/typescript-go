@@ -1,0 +1,32 @@
+SourceFile
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            ComputedPropertyName
+              Identifier: 'a'
+            Identifier: ' a'
+    ArrayLiteralExpression
+      ObjectLiteralExpression
+    ContinueStatement
+  ForStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            ComputedPropertyName
+              Identifier: 'a'
+            Identifier: ' a'
+        ObjectLiteralExpression
+    FalseKeyword
+    ContinueStatement
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            ComputedPropertyName
+              Identifier: 'b'
+            Identifier: ' b'
+        ObjectLiteralExpression

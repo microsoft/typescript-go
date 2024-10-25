@@ -1,0 +1,173 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x'
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    PostfixUnaryExpression
+      Identifier: '
+x'
+  ExpressionStatement
+    PostfixUnaryExpression
+      Identifier: '
+x'
+  ExpressionStatement
+    PrefixUnaryExpression
+      Identifier: 'x'
+  ExpressionStatement
+    PrefixUnaryExpression
+      Identifier: 'x'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x'
+      PlusEqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x'
+      MinusEqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x'
+      AsteriskEqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x'
+      SlashEqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x'
+      BarEqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x'
+      AmpersandEqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x'
+      PlusToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x'
+      MinusToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x'
+      AmpersandToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x'
+      BarToken
+      NumericLiteral
+  ForStatement
+    BinaryExpression
+      Identifier: 'x'
+      EqualsToken
+      NumericLiteral
+    PostfixUnaryExpression
+      Identifier: 'x'
+    Block
+  ForStatement
+    BinaryExpression
+      Identifier: 'x'
+      EqualsToken
+      NumericLiteral
+    PostfixUnaryExpression
+      Identifier: 'x'
+    Block
+  ForStatement
+    BinaryExpression
+      Identifier: 'x'
+      EqualsToken
+      NumericLiteral
+    PrefixUnaryExpression
+      Identifier: 'x'
+    Block
+  ForStatement
+    BinaryExpression
+      Identifier: 'x'
+      EqualsToken
+      NumericLiteral
+    PrefixUnaryExpression
+      Identifier: 'x'
+    Block
+  ForStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumericLiteral
+    Block
+  FunctionDeclaration
+    Identifier: ' foo'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    x'
+          EqualsToken
+          NumericLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'y'
+        ArrayLiteralExpression
+          NumericLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: 'a'
+            Identifier: ' z0'
+          BindingElement
+            Identifier: ' b'
+            ObjectBindingPattern
+              BindingElement
+                Identifier: 'c'
+                Identifier: ' z1'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: 'a'
+            TrueKeyword
+          PropertyAssignment
+            Identifier: ' b'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: 'c'
+                StringLiteral
+  ForOfStatement
+    ArrayLiteralExpression
+      Identifier: 'x'
+    ArrayLiteralExpression
+      ArrayLiteralExpression
+        NumericLiteral
+    Block

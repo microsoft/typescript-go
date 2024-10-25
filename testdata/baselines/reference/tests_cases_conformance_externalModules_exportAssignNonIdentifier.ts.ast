@@ -1,0 +1,28 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumericLiteral
+  ExportAssignment
+    TypeOfExpression
+      Identifier: ' x'
+  ExportAssignment
+    StringLiteral
+  ExportAssignment
+    ClassExpression
+      Identifier: ' Foo3'
+  ExportAssignment
+    TrueKeyword
+  ExportAssignment
+    Identifier: ' undefined'
+  ExportAssignment
+    VoidExpression
+      Identifier: ''
+  ExportAssignment
+    BinaryExpression
+      Identifier: ' Date'
+      BarBarToken
+      Identifier: ' String'
+  ExportAssignment
+    NullKeyword

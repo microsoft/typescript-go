@@ -1,0 +1,13 @@
+SourceFile
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' getHtml'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: '
+    return'
+          Identifier: ''
+        BindingElement
+          StringLiteral
+          Identifier: ''

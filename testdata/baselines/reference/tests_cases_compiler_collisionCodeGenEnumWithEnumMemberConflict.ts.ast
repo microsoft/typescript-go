@@ -1,0 +1,10 @@
+SourceFile
+  EnumDeclaration
+    Identifier: ' Color'
+    EnumMember
+      Identifier: '
+    Color'
+    EnumMember
+      Identifier: '
+    Thing'
+      Identifier: ' Color'

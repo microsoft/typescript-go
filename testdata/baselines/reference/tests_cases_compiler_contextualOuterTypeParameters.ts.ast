@@ -1,0 +1,197 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f'
+    Parameter
+      Identifier: 'fun'
+      FunctionType
+        TypeParameter
+          Identifier: 'T'
+        Parameter
+          Identifier: 't'
+          TypeReference
+            Identifier: ' T'
+        VoidKeyword
+    VoidKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+f'
+      ArrowFunction
+        Parameter
+          Identifier: 't'
+        EqualsGreaterThanToken
+        Block
+          TypeAliasDeclaration
+            Identifier: ' isArray'
+            ConditionalType
+              ArrayType
+                ParenthesizedType
+                  TypeQuery
+                    Identifier: ' t'
+              ArrayType
+                StringKeyword
+              LiteralType
+                TrueKeyword
+              LiteralType
+                FalseKeyword
+          TypeAliasDeclaration
+            Identifier: ' IsObject'
+            ConditionalType
+              TypeLiteral
+                PropertySignature
+                  Identifier: ' x'
+                  TypeQuery
+                    Identifier: ' t'
+              TypeLiteral
+                PropertySignature
+                  Identifier: ' x'
+                  StringKeyword
+              LiteralType
+                TrueKeyword
+              LiteralType
+                FalseKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fn1'
+        FunctionType
+          TypeParameter
+            Identifier: 'T'
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' T'
+          VoidKeyword
+        ArrowFunction
+          Parameter
+            Identifier: ' t'
+          EqualsGreaterThanToken
+          Block
+            TypeAliasDeclaration
+              Identifier: ' isArray'
+              ConditionalType
+                ArrayType
+                  ParenthesizedType
+                    TypeQuery
+                      Identifier: ' t'
+                ArrayType
+                  StringKeyword
+                LiteralType
+                  TrueKeyword
+                LiteralType
+                  FalseKeyword
+            TypeAliasDeclaration
+              Identifier: ' IsObject'
+              ConditionalType
+                TypeLiteral
+                  PropertySignature
+                    Identifier: ' x'
+                    TypeQuery
+                      Identifier: ' t'
+                TypeLiteral
+                  PropertySignature
+                    Identifier: ' x'
+                    StringKeyword
+                LiteralType
+                  TrueKeyword
+                LiteralType
+                  FalseKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fn2'
+        FunctionType
+          TypeParameter
+            Identifier: 'T'
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' T'
+          VoidKeyword
+        FunctionExpression
+          Identifier: ' test'
+          Parameter
+            Identifier: 't'
+          Block
+            TypeAliasDeclaration
+              Identifier: ' isArray'
+              ConditionalType
+                ArrayType
+                  ParenthesizedType
+                    TypeQuery
+                      Identifier: ' t'
+                ArrayType
+                  StringKeyword
+                LiteralType
+                  TrueKeyword
+                LiteralType
+                  FalseKeyword
+            TypeAliasDeclaration
+              Identifier: ' IsObject'
+              ConditionalType
+                TypeLiteral
+                  PropertySignature
+                    Identifier: ' x'
+                    TypeQuery
+                      Identifier: ' t'
+                TypeLiteral
+                  PropertySignature
+                    Identifier: ' x'
+                    StringKeyword
+                LiteralType
+                  TrueKeyword
+                LiteralType
+                  FalseKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' obj'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' f'
+            FunctionType
+              TypeParameter
+                Identifier: 'T'
+              Parameter
+                Identifier: 'x'
+                TypeReference
+                  Identifier: ' T'
+              VoidKeyword
+        ObjectLiteralExpression
+          MethodDeclaration
+            Identifier: '
+    f'
+            Parameter
+              Identifier: 't'
+            Block
+              TypeAliasDeclaration
+                Identifier: ' isArray'
+                ConditionalType
+                  ArrayType
+                    ParenthesizedType
+                      TypeQuery
+                        Identifier: ' t'
+                  ArrayType
+                    StringKeyword
+                  LiteralType
+                    TrueKeyword
+                  LiteralType
+                    FalseKeyword
+              TypeAliasDeclaration
+                Identifier: ' IsObject'
+                ConditionalType
+                  TypeLiteral
+                    PropertySignature
+                      Identifier: ' x'
+                      TypeQuery
+                        Identifier: ' t'
+                  TypeLiteral
+                    PropertySignature
+                      Identifier: ' x'
+                      StringKeyword
+                  LiteralType
+                    TrueKeyword
+                  LiteralType
+                    FalseKeyword

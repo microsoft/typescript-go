@@ -1,0 +1,7 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' I'
+    MethodSignature
+      ComputedPropertyName
+        Identifier: 'e'
+      NumberKeyword

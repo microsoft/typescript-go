@@ -1,0 +1,42 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' array'
+        ArrayLiteralExpression
+  ForStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i'
+        NumericLiteral
+    BinaryExpression
+      Identifier: ' i'
+      LessThanToken
+      NumericLiteral
+    PrefixUnaryExpression
+      Identifier: 'i'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    array'
+            Identifier: 'push'
+          ClassExpression
+            Identifier: ' C'
+            PropertyDeclaration
+              PrivateIdentifier
+              StringLiteral
+            MethodDeclaration
+              PrivateIdentifier
+              Block
+            GetAccessor
+              PrivateIdentifier
+              Block
+                ReturnStatement
+                  NumericLiteral
+            SetAccessor
+              PrivateIdentifier
+              Parameter
+                Identifier: 'val'
+              Block

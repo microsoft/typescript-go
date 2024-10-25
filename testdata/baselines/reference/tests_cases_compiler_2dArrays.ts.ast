@@ -1,0 +1,42 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Cell'
+  ClassDeclaration
+    Identifier: ' Ship'
+    PropertyDeclaration
+      Identifier: '
+    isSunk'
+      BooleanKeyword
+  ClassDeclaration
+    Identifier: ' Board'
+    PropertyDeclaration
+      Identifier: '
+    ships'
+      ArrayType
+        TypeReference
+          Identifier: ' Ship'
+    PropertyDeclaration
+      Identifier: '
+    cells'
+      ArrayType
+        TypeReference
+          Identifier: ' Cell'
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' allShipsSunk'
+      Block
+        ReturnStatement
+          CallExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'ships'
+              Identifier: 'every'
+            FunctionExpression
+              Parameter
+                Identifier: 'val'
+              Block
+                ReturnStatement
+                  PropertyAccessExpression
+                    Identifier: ' val'
+                    Identifier: 'isSunk'

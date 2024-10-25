@@ -1,0 +1,14 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+  ExpressionStatement
+    BinaryExpression
+      NumericLiteral
+      PlusToken
+      NumericLiteral
+  FunctionDeclaration
+    Identifier: ' foo'
+    StringKeyword
+    Block
+      ReturnStatement
+        StringLiteral

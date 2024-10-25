@@ -1,0 +1,28 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' salt'
+    Block
+      FunctionDeclaration
+        Identifier: ' pepper'
+        Block
+          ReturnStatement
+            NumericLiteral
+      ReturnStatement
+        CallExpression
+          Identifier: ' pepper'
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' tungsten'
+        Block
+          FunctionDeclaration
+            Identifier: ' oxygen'
+            Block
+              ReturnStatement
+                NumericLiteral
+          EmptyStatement
+          ReturnStatement
+            CallExpression
+              Identifier: ' oxygen'

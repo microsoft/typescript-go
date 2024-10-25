@@ -1,0 +1,38 @@
+SourceFile
+  ExportDeclaration
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' B'
+    StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' f'
+    Block
+      ReturnStatement
+        NewExpression
+          Identifier: ' B'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' f'
+    StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' g'
+    Block
+      ReturnStatement
+        CallExpression
+          Identifier: ' f'
+  ExportDeclaration
+    StringLiteral
+  ExportDeclaration
+    StringLiteral
+  ExportDeclaration
+    StringLiteral
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' B'

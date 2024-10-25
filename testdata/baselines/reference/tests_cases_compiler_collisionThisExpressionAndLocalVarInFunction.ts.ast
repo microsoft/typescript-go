@@ -1,0 +1,35 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' console'
+        TypeLiteral
+          MethodSignature
+            Identifier: '
+    log'
+            Parameter
+              Identifier: 'val'
+              AnyKeyword
+  FunctionDeclaration
+    Identifier: ' x'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' _this'
+            NumericLiteral
+      ExpressionStatement
+        ArrowFunction
+          Parameter
+            Identifier: '
+    x'
+          EqualsGreaterThanToken
+          Block
+            ExpressionStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' console'
+                  Identifier: 'log'
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'x'

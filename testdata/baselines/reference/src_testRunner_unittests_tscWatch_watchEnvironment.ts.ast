@@ -1,0 +1,3674 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' ts'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' jsonToReadableText'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    noopChange'
+        ImportSpecifier
+          Identifier: '
+    verifyTscWatch'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    File'
+        ImportSpecifier
+          Identifier: '
+    SymLink'
+        ImportSpecifier
+          Identifier: '
+    TestServerHost'
+        ImportSpecifier
+          Identifier: '
+    TestServerHostOsFlavor'
+        ImportSpecifier
+          Identifier: '
+    Tsc_WatchDirectory'
+        ImportSpecifier
+          Identifier: '
+    Tsc_WatchFile'
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+describe'
+      StringLiteral
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' scenario'
+                StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    verifyTscWatch'
+              ObjectLiteralExpression
+                ShorthandPropertyAssignment
+                  Identifier: '
+        scenario'
+                PropertyAssignment
+                  Identifier: '
+        subScenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        commandLineArgs'
+                  ArrayLiteralExpression
+                    StringLiteral
+                    StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        sys'
+                  ArrowFunction
+                    EqualsGreaterThanToken
+                    Block
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' projectFolder'
+                            StringLiteral
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' file1'
+                            TypeReference
+                              Identifier: ' File'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                path'
+                                TemplateExpression
+                                  TemplateHead
+                                  TemplateSpan
+                                    Identifier: 'projectFolder'
+                                    TemplateTail
+                              PropertyAssignment
+                                Identifier: '
+                content'
+                                StringLiteral
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' environmentVariables'
+                            NewExpression
+                              Identifier: ' Map'
+                              StringKeyword
+                              StringKeyword
+                      ExpressionStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: '
+            environmentVariables'
+                            Identifier: 'set'
+                          StringLiteral
+                          PropertyAccessExpression
+                            Identifier: ' Tsc_WatchFile'
+                            Identifier: 'DynamicPolling'
+                      ReturnStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' TestServerHost'
+                            Identifier: 'createWatchedSystem'
+                          ArrayLiteralExpression
+                            Identifier: 'file1'
+                          ObjectLiteralExpression
+                            ShorthandPropertyAssignment
+                              Identifier: '
+                    environmentVariables'
+                            PropertyAssignment
+                              Identifier: '
+                    currentDirectory'
+                              Identifier: ' projectFolder'
+                PropertyAssignment
+                  Identifier: '
+        edits'
+                  ArrayLiteralExpression
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+                caption'
+                        StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+                edit'
+                        PropertyAccessExpression
+                          Identifier: ' ts'
+                          Identifier: 'noop'
+                      PropertyAssignment
+                        Identifier: '
+                timeouts'
+                        ArrowFunction
+                          Parameter
+                            Identifier: 'sys'
+                          Parameter
+                            Identifier: ' programs'
+                          EqualsGreaterThanToken
+                          Block
+                            VariableStatement
+                              VariableDeclarationList
+                                VariableDeclaration
+                                  Identifier: ' initialProgram'
+                                  ElementAccessExpression
+                                    ElementAccessExpression
+                                      Identifier: ' programs'
+                                      NumericLiteral
+                                    NumericLiteral
+                            VariableStatement
+                              VariableDeclarationList
+                                VariableDeclaration
+                                  Identifier: ' mediumPollingIntervalThreshold'
+                                  ElementAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' ts'
+                                      Identifier: 'unchangedPollThresholds'
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        Identifier: 'ts'
+                                        Identifier: 'PollingInterval'
+                                      Identifier: 'Medium'
+                            ForStatement
+                              VariableDeclarationList
+                                VariableDeclaration
+                                  Identifier: ' index'
+                                  NumericLiteral
+                              BinaryExpression
+                                Identifier: ' index'
+                                LessThanToken
+                                Identifier: ' mediumPollingIntervalThreshold'
+                              PostfixUnaryExpression
+                                Identifier: ' index'
+                              Block
+                                ExpressionStatement
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: '
+                        // Transition libFile and file1 to low priority queue
+                        sys'
+                                      Identifier: 'runQueuedTimeoutCallbacks'
+                                ExpressionStatement
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: '
+                        assert'
+                                      Identifier: 'deepEqual'
+                                    ElementAccessExpression
+                                      ElementAccessExpression
+                                        Identifier: 'programs'
+                                        NumericLiteral
+                                      NumericLiteral
+                                    Identifier: ' initialProgram'
+                            ReturnStatement
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+                caption'
+                        StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+                // Make a change to file
+                edit'
+                        ArrowFunction
+                          Parameter
+                            Identifier: ' sys'
+                          EqualsGreaterThanToken
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' sys'
+                              Identifier: 'writeFile'
+                            StringLiteral
+                            StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+                // During this timeout the file would be detected as unchanged
+                timeouts'
+                        ArrowFunction
+                          Parameter
+                            Identifier: ' sys'
+                          EqualsGreaterThanToken
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' sys'
+                              Identifier: 'runQueuedTimeoutCallbacks'
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+                caption'
+                        StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+                edit'
+                        PropertyAccessExpression
+                          Identifier: ' ts'
+                          Identifier: 'noop'
+                      PropertyAssignment
+                        Identifier: '
+                // Callbacks: medium priority + high priority queue and scheduled program update
+                // This should detect change in the file
+                timeouts'
+                        ArrowFunction
+                          Parameter
+                            Identifier: ' sys'
+                          EqualsGreaterThanToken
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' sys'
+                              Identifier: 'runQueuedTimeoutCallbacks'
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+                caption'
+                        StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+                edit'
+                        PropertyAccessExpression
+                          Identifier: ' ts'
+                          Identifier: 'noop'
+                      PropertyAssignment
+                        Identifier: '
+                timeouts'
+                        ArrowFunction
+                          Parameter
+                            Identifier: 'sys'
+                          Parameter
+                            Identifier: ' programs'
+                          EqualsGreaterThanToken
+                          Block
+                            VariableStatement
+                              VariableDeclarationList
+                                VariableDeclaration
+                                  Identifier: ' initialProgram'
+                                  ElementAccessExpression
+                                    ElementAccessExpression
+                                      Identifier: ' programs'
+                                      NumericLiteral
+                                    NumericLiteral
+                            VariableStatement
+                              VariableDeclarationList
+                                VariableDeclaration
+                                  Identifier: ' mediumPollingIntervalThreshold'
+                                  ElementAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' ts'
+                                      Identifier: 'unchangedPollThresholds'
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        Identifier: 'ts'
+                                        Identifier: 'PollingInterval'
+                                      Identifier: 'Medium'
+                            VariableStatement
+                              VariableDeclarationList
+                                VariableDeclaration
+                                  Identifier: ' newThreshold'
+                                  BinaryExpression
+                                    ElementAccessExpression
+                                      PropertyAccessExpression
+                                        Identifier: ' ts'
+                                        Identifier: 'unchangedPollThresholds'
+                                      PropertyAccessExpression
+                                        PropertyAccessExpression
+                                          Identifier: 'ts'
+                                          Identifier: 'PollingInterval'
+                                        Identifier: 'Low'
+                                    PlusToken
+                                    Identifier: ' mediumPollingIntervalThreshold'
+                            ForStatement
+                              VariableDeclarationList
+                                VariableDeclaration
+                                  Identifier: ' fileUnchangeDetected'
+                                  NumericLiteral
+                              BinaryExpression
+                                Identifier: ' fileUnchangeDetected'
+                                LessThanToken
+                                Identifier: ' newThreshold'
+                              PostfixUnaryExpression
+                                Identifier: ' fileUnchangeDetected'
+                              Block
+                                ExpressionStatement
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: '
+                        // For high + Medium/low polling interval
+                        sys'
+                                      Identifier: 'runQueuedTimeoutCallbacks'
+                                ExpressionStatement
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: '
+                        assert'
+                                      Identifier: 'deepEqual'
+                                    ElementAccessExpression
+                                      ElementAccessExpression
+                                        Identifier: 'programs'
+                                        NumericLiteral
+                                      NumericLiteral
+                                    Identifier: ' initialProgram'
+                            ExpressionStatement
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: '
+
+                    // Everything goes in high polling interval queue
+                    sys'
+                                  Identifier: 'runQueuedTimeoutCallbacks'
+                            ReturnStatement
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    verifyTscWatch'
+              ObjectLiteralExpression
+                ShorthandPropertyAssignment
+                  Identifier: '
+        scenario'
+                PropertyAssignment
+                  Identifier: '
+        subScenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        commandLineArgs'
+                  ArrayLiteralExpression
+                    StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        sys'
+                  ArrowFunction
+                    EqualsGreaterThanToken
+                    Block
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' configFile'
+                            TypeReference
+                              Identifier: ' File'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                path'
+                                StringLiteral
+                              PropertyAssignment
+                                Identifier: '
+                content'
+                                CallExpression
+                                  Identifier: ' jsonToReadableText'
+                                  ObjectLiteralExpression
+                                    PropertyAssignment
+                                      Identifier: '
+                    watchOptions'
+                                      ObjectLiteralExpression
+                                        PropertyAssignment
+                                          Identifier: '
+                        watchFile'
+                                          StringLiteral
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' commonFile1'
+                            TypeReference
+                              Identifier: ' File'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                path'
+                                StringLiteral
+                              PropertyAssignment
+                                Identifier: '
+                content'
+                                StringLiteral
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' commonFile2'
+                            TypeReference
+                              Identifier: ' File'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                path'
+                                StringLiteral
+                              PropertyAssignment
+                                Identifier: '
+                content'
+                                StringLiteral
+                      ReturnStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' TestServerHost'
+                            Identifier: 'createWatchedSystem'
+                          ArrayLiteralExpression
+                            Identifier: 'commonFile1'
+                            Identifier: ' commonFile2'
+                            Identifier: ' configFile'
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: ' currentDirectory'
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'getDirectoryPath'
+                                PropertyAccessExpression
+                                  Identifier: 'configFile'
+                                  Identifier: 'path'
+                PropertyAssignment
+                  Identifier: '
+        edits'
+                  ArrayLiteralExpression
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+                caption'
+                        StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+                edit'
+                        PropertyAccessExpression
+                          Identifier: ' ts'
+                          Identifier: 'noop'
+                      PropertyAssignment
+                        Identifier: '
+                timeouts'
+                        ArrowFunction
+                          Parameter
+                            Identifier: 'sys'
+                          Parameter
+                            Identifier: ' programs'
+                          EqualsGreaterThanToken
+                          Block
+                            VariableStatement
+                              VariableDeclarationList
+                                VariableDeclaration
+                                  Identifier: ' initialProgram'
+                                  ElementAccessExpression
+                                    ElementAccessExpression
+                                      Identifier: ' programs'
+                                      NumericLiteral
+                                    NumericLiteral
+                            ForStatement
+                              VariableDeclarationList
+                                VariableDeclaration
+                                  Identifier: ' index'
+                                  NumericLiteral
+                              BinaryExpression
+                                Identifier: ' index'
+                                LessThanToken
+                                NumericLiteral
+                              PostfixUnaryExpression
+                                Identifier: ' index'
+                              Block
+                                ExpressionStatement
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: '
+                        sys'
+                                      Identifier: 'runQueuedTimeoutCallbacks'
+                                ExpressionStatement
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: '
+                        assert'
+                                      Identifier: 'deepEqual'
+                                    ElementAccessExpression
+                                      ElementAccessExpression
+                                        Identifier: 'programs'
+                                        NumericLiteral
+                                      NumericLiteral
+                                    Identifier: ' initialProgram'
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+                caption'
+                        StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+                // Make a change to file
+                edit'
+                        ArrowFunction
+                          Parameter
+                            Identifier: ' sys'
+                          EqualsGreaterThanToken
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' sys'
+                              Identifier: 'writeFile'
+                            StringLiteral
+                            StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+                timeouts'
+                        ArrowFunction
+                          Parameter
+                            Identifier: ' sys'
+                          EqualsGreaterThanToken
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' sys'
+                              Identifier: 'runQueuedTimeoutCallbacks'
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+                caption'
+                        StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+                edit'
+                        PropertyAccessExpression
+                          Identifier: ' ts'
+                          Identifier: 'noop'
+                      PropertyAssignment
+                        Identifier: '
+                // Callbacks: scheduled program update and queue for the polling
+                timeouts'
+                        ArrowFunction
+                          Parameter
+                            Identifier: ' sys'
+                          EqualsGreaterThanToken
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' sys'
+                              Identifier: 'runQueuedTimeoutCallbacks'
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+                caption'
+                        StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+                edit'
+                        PropertyAccessExpression
+                          Identifier: ' ts'
+                          Identifier: 'noop'
+                      PropertyAssignment
+                        Identifier: '
+                timeouts'
+                        ArrowFunction
+                          Parameter
+                            Identifier: 'sys'
+                          Parameter
+                            Identifier: ' programs'
+                          EqualsGreaterThanToken
+                          Block
+                            VariableStatement
+                              VariableDeclarationList
+                                VariableDeclaration
+                                  Identifier: ' initialProgram'
+                                  ElementAccessExpression
+                                    ElementAccessExpression
+                                      Identifier: ' programs'
+                                      NumericLiteral
+                                    NumericLiteral
+                            ExpressionStatement
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: '
+                    sys'
+                                  Identifier: 'runQueuedTimeoutCallbacks'
+                            ExpressionStatement
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: '
+                    assert'
+                                  Identifier: 'deepEqual'
+                                ElementAccessExpression
+                                  ElementAccessExpression
+                                    Identifier: 'programs'
+                                    NumericLiteral
+                                  NumericLiteral
+                                Identifier: ' initialProgram'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    describe'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  FunctionDeclaration
+                    Identifier: ' verifyRenamingFileInSubFolder'
+                    Parameter
+                      Identifier: 'subScenario'
+                      StringKeyword
+                    Parameter
+                      Identifier: ' tscWatchDirectory'
+                      TypeReference
+                        Identifier: ' Tsc_WatchDirectory'
+                    Block
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' projectFolder'
+                            StringLiteral
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' projectSrcFolder'
+                            TemplateExpression
+                              TemplateHead
+                              TemplateSpan
+                                Identifier: 'projectFolder'
+                                TemplateTail
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' configFile'
+                            TypeReference
+                              Identifier: ' File'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                path'
+                                TemplateExpression
+                                  TemplateHead
+                                  TemplateSpan
+                                    Identifier: 'projectFolder'
+                                    TemplateTail
+                              PropertyAssignment
+                                Identifier: '
+                content'
+                                CallExpression
+                                  Identifier: ' jsonToReadableText'
+                                  ObjectLiteralExpression
+                                    PropertyAssignment
+                                      Identifier: '
+                    watchOptions'
+                                      ObjectLiteralExpression
+                                        PropertyAssignment
+                                          Identifier: '
+                        synchronousWatchDirectory'
+                                          TrueKeyword
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' file'
+                            TypeReference
+                              Identifier: ' File'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                path'
+                                TemplateExpression
+                                  TemplateHead
+                                  TemplateSpan
+                                    Identifier: 'projectSrcFolder'
+                                    TemplateTail
+                              PropertyAssignment
+                                Identifier: '
+                content'
+                                StringLiteral
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+            verifyTscWatch'
+                          ObjectLiteralExpression
+                            ShorthandPropertyAssignment
+                              Identifier: '
+                scenario'
+                            PropertyAssignment
+                              Identifier: '
+                subScenario'
+                              TemplateExpression
+                                TemplateHead
+                                TemplateSpan
+                                  Identifier: 'subScenario'
+                                  TemplateTail
+                            PropertyAssignment
+                              Identifier: '
+                commandLineArgs'
+                              ArrayLiteralExpression
+                                StringLiteral
+                            PropertyAssignment
+                              Identifier: '
+                sys'
+                              ArrowFunction
+                                EqualsGreaterThanToken
+                                Block
+                                  VariableStatement
+                                    VariableDeclarationList
+                                      VariableDeclaration
+                                        Identifier: ' environmentVariables'
+                                        NewExpression
+                                          Identifier: ' Map'
+                                          StringKeyword
+                                          StringKeyword
+                                  ExpressionStatement
+                                    CallExpression
+                                      PropertyAccessExpression
+                                        Identifier: '
+                    environmentVariables'
+                                        Identifier: 'set'
+                                      StringLiteral
+                                      Identifier: ' tscWatchDirectory'
+                                  ReturnStatement
+                                    CallExpression
+                                      PropertyAccessExpression
+                                        Identifier: ' TestServerHost'
+                                        Identifier: 'createWatchedSystem'
+                                      ArrayLiteralExpression
+                                        Identifier: 'file'
+                                        Identifier: ' configFile'
+                                      ObjectLiteralExpression
+                                        PropertyAssignment
+                                          Identifier: '
+                            osFlavor'
+                                          PropertyAccessExpression
+                                            Identifier: ' TestServerHostOsFlavor'
+                                            Identifier: 'Linux'
+                                        ShorthandPropertyAssignment
+                                          Identifier: '
+                            environmentVariables'
+                                        PropertyAssignment
+                                          Identifier: '
+                            currentDirectory'
+                                          Identifier: ' projectFolder'
+                            PropertyAssignment
+                              Identifier: '
+                edits'
+                              ArrayLiteralExpression
+                                ObjectLiteralExpression
+                                  PropertyAssignment
+                                    Identifier: '
+                        caption'
+                                    StringLiteral
+                                  PropertyAssignment
+                                    Identifier: '
+                        // Rename the file:
+                        edit'
+                                    ArrowFunction
+                                      Parameter
+                                        Identifier: ' sys'
+                                      EqualsGreaterThanToken
+                                      CallExpression
+                                        PropertyAccessExpression
+                                          Identifier: ' sys'
+                                          Identifier: 'renameFile'
+                                        PropertyAccessExpression
+                                          Identifier: 'file'
+                                          Identifier: 'path'
+                                        CallExpression
+                                          PropertyAccessExpression
+                                            PropertyAccessExpression
+                                              Identifier: ' file'
+                                              Identifier: 'path'
+                                            Identifier: 'replace'
+                                          StringLiteral
+                                          StringLiteral
+                                  PropertyAssignment
+                                    Identifier: '
+                        timeouts'
+                                    ArrowFunction
+                                      Parameter
+                                        Identifier: ' sys'
+                                      EqualsGreaterThanToken
+                                      Block
+                                        IfStatement
+                                          BinaryExpression
+                                            Identifier: 'tscWatchDirectory'
+                                            EqualsEqualsEqualsToken
+                                            PropertyAccessExpression
+                                              Identifier: ' Tsc_WatchDirectory'
+                                              Identifier: 'DynamicPolling'
+                                          Block
+                                            ExpressionStatement
+                                              CallExpression
+                                                PropertyAccessExpression
+                                                  Identifier: '
+                                // With dynamic polling the fs change would be detected only by running timeouts
+                                sys'
+                                                  Identifier: 'runQueuedTimeoutCallbacks'
+                                        ExpressionStatement
+                                          CallExpression
+                                            PropertyAccessExpression
+                                              Identifier: '
+                            // Delayed update program
+                            sys'
+                                              Identifier: 'runQueuedTimeoutCallbacks'
+                                        ReturnStatement
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        verifyRenamingFileInSubFolder'
+                      StringLiteral
+                      PropertyAccessExpression
+                        Identifier: ' Tsc_WatchDirectory'
+                        Identifier: 'WatchFile'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        verifyRenamingFileInSubFolder'
+                      StringLiteral
+                      PropertyAccessExpression
+                        Identifier: ' Tsc_WatchDirectory'
+                        Identifier: 'NonRecursiveWatchDirectory'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        verifyRenamingFileInSubFolder'
+                      StringLiteral
+                      PropertyAccessExpression
+                        Identifier: ' Tsc_WatchDirectory'
+                        Identifier: 'DynamicPolling'
+                  FunctionDeclaration
+                    Identifier: ' verifySymlinks'
+                    Parameter
+                      Identifier: 'synchronousWatchDirectory'
+                      BooleanKeyword
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+            verifyTscWatch'
+                          ObjectLiteralExpression
+                            ShorthandPropertyAssignment
+                              Identifier: '
+                scenario'
+                            PropertyAssignment
+                              Identifier: '
+                subScenario'
+                              TemplateExpression
+                                TemplateHead
+                                TemplateSpan
+                                  ConditionalExpression
+                                    Identifier: 'synchronousWatchDirectory'
+                                    QuestionToken
+                                    StringLiteral
+                                    ColonToken
+                                    StringLiteral
+                                  TemplateTail
+                            PropertyAssignment
+                              Identifier: '
+                commandLineArgs'
+                              ArrayLiteralExpression
+                                StringLiteral
+                            PropertyAssignment
+                              Identifier: '
+                sys'
+                              ArrowFunction
+                                EqualsGreaterThanToken
+                                Block
+                                  VariableStatement
+                                    VariableDeclarationList
+                                      VariableDeclaration
+                                        Identifier: ' cwd'
+                                        StringLiteral
+                                  VariableStatement
+                                    VariableDeclarationList
+                                      VariableDeclaration
+                                        Identifier: ' file1'
+                                        TypeReference
+                                          Identifier: ' File'
+                                        ObjectLiteralExpression
+                                          PropertyAssignment
+                                            Identifier: '
+                        path'
+                                            TemplateExpression
+                                              TemplateHead
+                                              TemplateSpan
+                                                Identifier: 'cwd'
+                                                TemplateTail
+                                          PropertyAssignment
+                                            Identifier: '
+                        content'
+                                            NoSubstitutionTemplateLiteral
+                                  VariableStatement
+                                    VariableDeclarationList
+                                      VariableDeclaration
+                                        Identifier: ' tsconfig'
+                                        TypeReference
+                                          Identifier: ' File'
+                                        ObjectLiteralExpression
+                                          PropertyAssignment
+                                            Identifier: '
+                        path'
+                                            TemplateExpression
+                                              TemplateHead
+                                              TemplateSpan
+                                                Identifier: 'cwd'
+                                                TemplateTail
+                                          PropertyAssignment
+                                            Identifier: '
+                        content'
+                                            CallExpression
+                                              Identifier: ' jsonToReadableText'
+                                              ObjectLiteralExpression
+                                                PropertyAssignment
+                                                  Identifier: '
+                            compilerOptions'
+                                                  ObjectLiteralExpression
+                                                    PropertyAssignment
+                                                      Identifier: ' extendedDiagnostics'
+                                                      TrueKeyword
+                                                    PropertyAssignment
+                                                      Identifier: ' traceResolution'
+                                                      TrueKeyword
+                                                PropertyAssignment
+                                                  Identifier: '
+                            watchOptions'
+                                                  ConditionalExpression
+                                                    Identifier: ' synchronousWatchDirectory'
+                                                    QuestionToken
+                                                    ObjectLiteralExpression
+                                                      ShorthandPropertyAssignment
+                                                        Identifier: ' synchronousWatchDirectory'
+                                                    ColonToken
+                                                    Identifier: ' undefined'
+                                  VariableStatement
+                                    VariableDeclarationList
+                                      VariableDeclaration
+                                        Identifier: ' realA'
+                                        TypeReference
+                                          Identifier: ' File'
+                                        ObjectLiteralExpression
+                                          PropertyAssignment
+                                            Identifier: '
+                        path'
+                                            TemplateExpression
+                                              TemplateHead
+                                              TemplateSpan
+                                                Identifier: 'cwd'
+                                                TemplateTail
+                                          PropertyAssignment
+                                            Identifier: '
+                        content'
+                                            NoSubstitutionTemplateLiteral
+                                  VariableStatement
+                                    VariableDeclarationList
+                                      VariableDeclaration
+                                        Identifier: ' realB'
+                                        TypeReference
+                                          Identifier: ' File'
+                                        ObjectLiteralExpression
+                                          PropertyAssignment
+                                            Identifier: '
+                        path'
+                                            TemplateExpression
+                                              TemplateHead
+                                              TemplateSpan
+                                                Identifier: 'cwd'
+                                                TemplateTail
+                                          PropertyAssignment
+                                            Identifier: '
+                        content'
+                                            NoSubstitutionTemplateLiteral
+                                  VariableStatement
+                                    VariableDeclarationList
+                                      VariableDeclaration
+                                        Identifier: ' symLinkA'
+                                        TypeReference
+                                          Identifier: ' SymLink'
+                                        ObjectLiteralExpression
+                                          PropertyAssignment
+                                            Identifier: '
+                        path'
+                                            TemplateExpression
+                                              TemplateHead
+                                              TemplateSpan
+                                                Identifier: 'cwd'
+                                                TemplateTail
+                                          PropertyAssignment
+                                            Identifier: '
+                        symLink'
+                                            TemplateExpression
+                                              TemplateHead
+                                              TemplateSpan
+                                                Identifier: 'cwd'
+                                                TemplateTail
+                                  VariableStatement
+                                    VariableDeclarationList
+                                      VariableDeclaration
+                                        Identifier: ' symLinkB'
+                                        TypeReference
+                                          Identifier: ' SymLink'
+                                        ObjectLiteralExpression
+                                          PropertyAssignment
+                                            Identifier: '
+                        path'
+                                            TemplateExpression
+                                              TemplateHead
+                                              TemplateSpan
+                                                Identifier: 'cwd'
+                                                TemplateTail
+                                          PropertyAssignment
+                                            Identifier: '
+                        symLink'
+                                            TemplateExpression
+                                              TemplateHead
+                                              TemplateSpan
+                                                Identifier: 'cwd'
+                                                TemplateTail
+                                  VariableStatement
+                                    VariableDeclarationList
+                                      VariableDeclaration
+                                        Identifier: ' symLinkBInA'
+                                        TypeReference
+                                          Identifier: ' SymLink'
+                                        ObjectLiteralExpression
+                                          PropertyAssignment
+                                            Identifier: '
+                        path'
+                                            TemplateExpression
+                                              TemplateHead
+                                              TemplateSpan
+                                                Identifier: 'cwd'
+                                                TemplateTail
+                                          PropertyAssignment
+                                            Identifier: '
+                        symLink'
+                                            TemplateExpression
+                                              TemplateHead
+                                              TemplateSpan
+                                                Identifier: 'cwd'
+                                                TemplateTail
+                                  VariableStatement
+                                    VariableDeclarationList
+                                      VariableDeclaration
+                                        Identifier: ' symLinkAInB'
+                                        TypeReference
+                                          Identifier: ' SymLink'
+                                        ObjectLiteralExpression
+                                          PropertyAssignment
+                                            Identifier: '
+                        path'
+                                            TemplateExpression
+                                              TemplateHead
+                                              TemplateSpan
+                                                Identifier: 'cwd'
+                                                TemplateTail
+                                          PropertyAssignment
+                                            Identifier: '
+                        symLink'
+                                            TemplateExpression
+                                              TemplateHead
+                                              TemplateSpan
+                                                Identifier: 'cwd'
+                                                TemplateTail
+                                  VariableStatement
+                                    VariableDeclarationList
+                                      VariableDeclaration
+                                        Identifier: ' environmentVariables'
+                                        NewExpression
+                                          Identifier: ' Map'
+                                          StringKeyword
+                                          StringKeyword
+                                  ExpressionStatement
+                                    CallExpression
+                                      PropertyAccessExpression
+                                        Identifier: '
+                    environmentVariables'
+                                        Identifier: 'set'
+                                      StringLiteral
+                                      PropertyAccessExpression
+                                        Identifier: ' Tsc_WatchDirectory'
+                                        Identifier: 'NonRecursiveWatchDirectory'
+                                  ReturnStatement
+                                    CallExpression
+                                      PropertyAccessExpression
+                                        Identifier: ' TestServerHost'
+                                        Identifier: 'createWatchedSystem'
+                                      ArrayLiteralExpression
+                                        Identifier: 'file1'
+                                        Identifier: ' tsconfig'
+                                        Identifier: ' realA'
+                                        Identifier: ' realB'
+                                        Identifier: ' symLinkA'
+                                        Identifier: ' symLinkB'
+                                        Identifier: ' symLinkBInA'
+                                        Identifier: ' symLinkAInB'
+                                      ObjectLiteralExpression
+                                        PropertyAssignment
+                                          Identifier: '
+                            osFlavor'
+                                          PropertyAccessExpression
+                                            Identifier: ' TestServerHostOsFlavor'
+                                            Identifier: 'Linux'
+                                        ShorthandPropertyAssignment
+                                          Identifier: '
+                            environmentVariables'
+                                        PropertyAssignment
+                                          Identifier: '
+                            currentDirectory'
+                                          Identifier: ' cwd'
+                            PropertyAssignment
+                              Identifier: '
+                edits'
+                              ArrayLiteralExpression
+                                ObjectLiteralExpression
+                                  PropertyAssignment
+                                    Identifier: '
+                        caption'
+                                    StringLiteral
+                                  PropertyAssignment
+                                    Identifier: '
+                        edit'
+                                    ArrowFunction
+                                      Parameter
+                                        Identifier: ' sys'
+                                      EqualsGreaterThanToken
+                                      CallExpression
+                                        PropertyAccessExpression
+                                          Identifier: ' sys'
+                                          Identifier: 'deleteFile'
+                                        StringLiteral
+                                  PropertyAssignment
+                                    Identifier: '
+                        timeouts'
+                                    ArrowFunction
+                                      Parameter
+                                        Identifier: ' sys'
+                                      EqualsGreaterThanToken
+                                      CallExpression
+                                        PropertyAccessExpression
+                                          Identifier: ' sys'
+                                          Identifier: 'runQueuedTimeoutCallbacks'
+                                ObjectLiteralExpression
+                                  PropertyAssignment
+                                    Identifier: '
+                        caption'
+                                    StringLiteral
+                                  PropertyAssignment
+                                    Identifier: '
+                        edit'
+                                    PropertyAccessExpression
+                                      Identifier: ' ts'
+                                      Identifier: 'noop'
+                                  PropertyAssignment
+                                    Identifier: '
+                        timeouts'
+                                    ArrowFunction
+                                      Parameter
+                                        Identifier: ' sys'
+                                      EqualsGreaterThanToken
+                                      CallExpression
+                                        PropertyAccessExpression
+                                          Identifier: ' sys'
+                                          Identifier: 'runQueuedTimeoutCallbacks'
+                                ObjectLiteralExpression
+                                  PropertyAssignment
+                                    Identifier: '
+                        caption'
+                                    StringLiteral
+                                  PropertyAssignment
+                                    Identifier: '
+                        edit'
+                                    PropertyAccessExpression
+                                      Identifier: ' ts'
+                                      Identifier: 'noop'
+                                  PropertyAssignment
+                                    Identifier: '
+                        timeouts'
+                                    ArrowFunction
+                                      Parameter
+                                        Identifier: ' sys'
+                                      EqualsGreaterThanToken
+                                      CallExpression
+                                        PropertyAccessExpression
+                                          Identifier: ' sys'
+                                          Identifier: 'runQueuedTimeoutCallbacks'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        verifySymlinks'
+                      TrueKeyword
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        verifySymlinks'
+                      FalseKeyword
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        verifyTscWatch'
+                      ObjectLiteralExpression
+                        ShorthandPropertyAssignment
+                          Identifier: '
+            scenario'
+                        PropertyAssignment
+                          Identifier: '
+            subScenario'
+                          StringLiteral
+                        PropertyAssignment
+                          Identifier: '
+            commandLineArgs'
+                          ArrayLiteralExpression
+                            StringLiteral
+                        PropertyAssignment
+                          Identifier: '
+            sys'
+                          ArrowFunction
+                            EqualsGreaterThanToken
+                            Block
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' configFile'
+                                    TypeReference
+                                      Identifier: ' File'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    path'
+                                        NoSubstitutionTemplateLiteral
+                                      PropertyAssignment
+                                        Identifier: '
+                    content'
+                                        StringLiteral
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' file1'
+                                    TypeReference
+                                      Identifier: ' File'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    path'
+                                        NoSubstitutionTemplateLiteral
+                                      PropertyAssignment
+                                        Identifier: '
+                    content'
+                                        NoSubstitutionTemplateLiteral
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' file2'
+                                    TypeReference
+                                      Identifier: ' File'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    path'
+                                        NoSubstitutionTemplateLiteral
+                                      PropertyAssignment
+                                        Identifier: '
+                    content'
+                                        NoSubstitutionTemplateLiteral
+                              ReturnStatement
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' TestServerHost'
+                                    Identifier: 'createWatchedSystem'
+                                  ArrayLiteralExpression
+                                    Identifier: 'file1'
+                                    Identifier: ' file2'
+                                    Identifier: ' configFile'
+                                  ObjectLiteralExpression
+                                    PropertyAssignment
+                                      Identifier: '
+                        currentDirectory'
+                                      CallExpression
+                                        PropertyAccessExpression
+                                          Identifier: ' ts'
+                                          Identifier: 'getDirectoryPath'
+                                        PropertyAccessExpression
+                                          Identifier: 'configFile'
+                                          Identifier: 'path'
+                                    PropertyAssignment
+                                      Identifier: '
+                        osFlavor'
+                                      PropertyAccessExpression
+                                        Identifier: ' TestServerHostOsFlavor'
+                                        Identifier: 'Linux'
+                        PropertyAssignment
+                          Identifier: '
+            edits'
+                          ArrayLiteralExpression
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                    caption'
+                                StringLiteral
+                              PropertyAssignment
+                                Identifier: '
+                    edit'
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'noop'
+                              PropertyAssignment
+                                Identifier: '
+                    timeouts'
+                                ArrowFunction
+                                  Parameter
+                                    Identifier: ' sys'
+                                  EqualsGreaterThanToken
+                                  Block
+                                    ExpressionStatement
+                                      CallExpression
+                                        PropertyAccessExpression
+                                          Identifier: '
+                        sys'
+                                          Identifier: 'runQueuedTimeoutCallbacks'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                    caption'
+                                StringLiteral
+                              PropertyAssignment
+                                Identifier: '
+                    // Remove directory node_modules
+                    edit'
+                                ArrowFunction
+                                  Parameter
+                                    Identifier: ' sys'
+                                  EqualsGreaterThanToken
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' sys'
+                                      Identifier: 'deleteFolder'
+                                    NoSubstitutionTemplateLiteral
+                                    TrueKeyword
+                              PropertyAssignment
+                                Identifier: '
+                    // 1. Failed lookup invalidation 2. For updating program and 3. for updating child watches
+                    timeouts'
+                                ArrowFunction
+                                  Parameter
+                                    Identifier: ' sys'
+                                  EqualsGreaterThanToken
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' sys'
+                                      Identifier: 'runQueuedTimeoutCallbacks'
+                                    BinaryExpression
+                                      CallExpression
+                                        PropertyAccessExpression
+                                          Identifier: 'sys'
+                                          Identifier: 'getNextTimeoutId'
+                                      MinusToken
+                                      NumericLiteral
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                    caption'
+                                StringLiteral
+                              PropertyAssignment
+                                Identifier: '
+                    edit'
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'noop'
+                              PropertyAssignment
+                                Identifier: '
+                    timeouts'
+                                ArrowFunction
+                                  Parameter
+                                    Identifier: ' sys'
+                                  EqualsGreaterThanToken
+                                  Block
+                                    ExpressionStatement
+                                      CallExpression
+                                        PropertyAccessExpression
+                                          Identifier: '
+                        sys'
+                                          Identifier: 'runQueuedTimeoutCallbacks'
+                                    ExpressionStatement
+                                      CallExpression
+                                        PropertyAccessExpression
+                                          Identifier: ' // To update directory watchers
+                        sys'
+                                          Identifier: 'runQueuedTimeoutCallbacks'
+                                    ExpressionStatement
+                                      CallExpression
+                                        PropertyAccessExpression
+                                          Identifier: ' // To Update program and failed lookup update
+                        sys'
+                                          Identifier: 'runQueuedTimeoutCallbacks'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                    caption'
+                                StringLiteral
+                              PropertyAssignment
+                                Identifier: '
+                    // npm install
+                    edit'
+                                ArrowFunction
+                                  Parameter
+                                    Identifier: ' sys'
+                                  EqualsGreaterThanToken
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' sys'
+                                      Identifier: 'createDirectory'
+                                    NoSubstitutionTemplateLiteral
+                              PropertyAssignment
+                                Identifier: '
+                    timeouts'
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'noop'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                    caption'
+                                StringLiteral
+                              PropertyAssignment
+                                Identifier: '
+                    edit'
+                                ArrowFunction
+                                  Parameter
+                                    Identifier: ' sys'
+                                  EqualsGreaterThanToken
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' sys'
+                                      Identifier: 'createDirectory'
+                                    NoSubstitutionTemplateLiteral
+                              PropertyAssignment
+                                Identifier: '
+                    timeouts'
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'noop'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                    caption'
+                                StringLiteral
+                              PropertyAssignment
+                                Identifier: '
+                    edit'
+                                ArrowFunction
+                                  Parameter
+                                    Identifier: ' sys'
+                                  EqualsGreaterThanToken
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' sys'
+                                      Identifier: 'writeFile'
+                                    NoSubstitutionTemplateLiteral
+                                    NoSubstitutionTemplateLiteral
+                              PropertyAssignment
+                                Identifier: '
+                    timeouts'
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'noop'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                    caption'
+                                StringLiteral
+                              PropertyAssignment
+                                Identifier: '
+                    edit'
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'noop'
+                              PropertyAssignment
+                                Identifier: '
+                    timeouts'
+                                ArrowFunction
+                                  Parameter
+                                    Identifier: ' sys'
+                                  EqualsGreaterThanToken
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' sys'
+                                      Identifier: 'runQueuedTimeoutCallbacks'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                    caption'
+                                StringLiteral
+                              PropertyAssignment
+                                Identifier: '
+                    edit'
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'noop'
+                              PropertyAssignment
+                                Identifier: '
+                    timeouts'
+                                ArrowFunction
+                                  Parameter
+                                    Identifier: ' sys'
+                                  EqualsGreaterThanToken
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' sys'
+                                      Identifier: 'runQueuedTimeoutCallbacks'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                    caption'
+                                StringLiteral
+                              PropertyAssignment
+                                Identifier: '
+                    edit'
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'noop'
+                              PropertyAssignment
+                                Identifier: '
+                    timeouts'
+                                ArrowFunction
+                                  Parameter
+                                    Identifier: ' sys'
+                                  EqualsGreaterThanToken
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' sys'
+                                      Identifier: 'runQueuedTimeoutCallbacks'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        verifyTscWatch'
+                      ObjectLiteralExpression
+                        ShorthandPropertyAssignment
+                          Identifier: '
+            scenario'
+                        PropertyAssignment
+                          Identifier: '
+            subScenario'
+                          StringLiteral
+                        PropertyAssignment
+                          Identifier: '
+            commandLineArgs'
+                          ArrayLiteralExpression
+                            StringLiteral
+                        PropertyAssignment
+                          Identifier: '
+            sys'
+                          ArrowFunction
+                            EqualsGreaterThanToken
+                            Block
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' configFile'
+                                    TypeReference
+                                      Identifier: ' File'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    path'
+                                        NoSubstitutionTemplateLiteral
+                                      PropertyAssignment
+                                        Identifier: '
+                    content'
+                                        CallExpression
+                                          Identifier: ' jsonToReadableText'
+                                          ObjectLiteralExpression
+                                            PropertyAssignment
+                                              Identifier: ' compilerOptions'
+                                              ObjectLiteralExpression
+                                                PropertyAssignment
+                                                  Identifier: ' outDir'
+                                                  StringLiteral
+                                                PropertyAssignment
+                                                  Identifier: ' declaration'
+                                                  TrueKeyword
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' file1'
+                                    TypeReference
+                                      Identifier: ' File'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    path'
+                                        NoSubstitutionTemplateLiteral
+                                      PropertyAssignment
+                                        Identifier: '
+                    content'
+                                        NoSubstitutionTemplateLiteral
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' file2'
+                                    TypeReference
+                                      Identifier: ' File'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    path'
+                                        NoSubstitutionTemplateLiteral
+                                      PropertyAssignment
+                                        Identifier: '
+                    content'
+                                        NoSubstitutionTemplateLiteral
+                              ReturnStatement
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' TestServerHost'
+                                    Identifier: 'createWatchedSystem'
+                                  ArrayLiteralExpression
+                                    Identifier: 'file1'
+                                    Identifier: ' file2'
+                                    Identifier: ' configFile'
+                                  ObjectLiteralExpression
+                                    PropertyAssignment
+                                      Identifier: '
+                        currentDirectory'
+                                      CallExpression
+                                        PropertyAccessExpression
+                                          Identifier: ' ts'
+                                          Identifier: 'getDirectoryPath'
+                                        PropertyAccessExpression
+                                          Identifier: 'configFile'
+                                          Identifier: 'path'
+                                    PropertyAssignment
+                                      Identifier: '
+                        osFlavor'
+                                      PropertyAccessExpression
+                                        Identifier: ' TestServerHostOsFlavor'
+                                        Identifier: 'Linux'
+                        PropertyAssignment
+                          Identifier: '
+            edits'
+                          ArrayLiteralExpression
+                            Identifier: '
+                noopChange'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                    caption'
+                                StringLiteral
+                              PropertyAssignment
+                                Identifier: '
+                    edit'
+                                ArrowFunction
+                                  Parameter
+                                    Identifier: ' sys'
+                                  EqualsGreaterThanToken
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' sys'
+                                      Identifier: 'writeFile'
+                                    NoSubstitutionTemplateLiteral
+                                    NoSubstitutionTemplateLiteral
+                              PropertyAssignment
+                                Identifier: '
+                    timeouts'
+                                ArrowFunction
+                                  Parameter
+                                    Identifier: ' sys'
+                                  EqualsGreaterThanToken
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' sys'
+                                      Identifier: 'runQueuedTimeoutCallbacks'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                    caption'
+                                StringLiteral
+                              PropertyAssignment
+                                Identifier: '
+                    edit'
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'noop'
+                              PropertyAssignment
+                                Identifier: '
+                    timeouts'
+                                ArrowFunction
+                                  Parameter
+                                    Identifier: ' sys'
+                                  EqualsGreaterThanToken
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' sys'
+                                      Identifier: 'runQueuedTimeoutCallbacks'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                    caption'
+                                StringLiteral
+                              PropertyAssignment
+                                Identifier: '
+                    edit'
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'noop'
+                              PropertyAssignment
+                                Identifier: '
+                    timeouts'
+                                ArrowFunction
+                                  Parameter
+                                    Identifier: ' sys'
+                                  EqualsGreaterThanToken
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' sys'
+                                      Identifier: 'runQueuedTimeoutCallbacks'
+                            Identifier: '
+                noopChange'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        verifyTscWatch'
+                      ObjectLiteralExpression
+                        ShorthandPropertyAssignment
+                          Identifier: '
+            scenario'
+                        PropertyAssignment
+                          Identifier: '
+            subScenario'
+                          StringLiteral
+                        PropertyAssignment
+                          Identifier: '
+            commandLineArgs'
+                          ArrayLiteralExpression
+                            StringLiteral
+                        PropertyAssignment
+                          Identifier: '
+            sys'
+                          ArrowFunction
+                            EqualsGreaterThanToken
+                            Block
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' configFile'
+                                    TypeReference
+                                      Identifier: ' File'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    path'
+                                        NoSubstitutionTemplateLiteral
+                                      PropertyAssignment
+                                        Identifier: '
+                    content'
+                                        CallExpression
+                                          Identifier: ' jsonToReadableText'
+                                          ObjectLiteralExpression
+                                            PropertyAssignment
+                                              Identifier: ' compilerOptions'
+                                              ObjectLiteralExpression
+                                                PropertyAssignment
+                                                  Identifier: ' outDir'
+                                                  StringLiteral
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' file1'
+                                    TypeReference
+                                      Identifier: ' File'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    path'
+                                        NoSubstitutionTemplateLiteral
+                                      PropertyAssignment
+                                        Identifier: '
+                    content'
+                                        NoSubstitutionTemplateLiteral
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' file2'
+                                    TypeReference
+                                      Identifier: ' File'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    path'
+                                        NoSubstitutionTemplateLiteral
+                                      PropertyAssignment
+                                        Identifier: '
+                    content'
+                                        NoSubstitutionTemplateLiteral
+                              ReturnStatement
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' TestServerHost'
+                                    Identifier: 'createWatchedSystem'
+                                  ArrayLiteralExpression
+                                    Identifier: 'file1'
+                                    Identifier: ' file2'
+                                    Identifier: ' configFile'
+                                  ObjectLiteralExpression
+                                    PropertyAssignment
+                                      Identifier: '
+                        currentDirectory'
+                                      CallExpression
+                                        PropertyAccessExpression
+                                          Identifier: ' ts'
+                                          Identifier: 'getDirectoryPath'
+                                        PropertyAccessExpression
+                                          Identifier: 'configFile'
+                                          Identifier: 'path'
+                                    PropertyAssignment
+                                      Identifier: '
+                        osFlavor'
+                                      PropertyAccessExpression
+                                        Identifier: ' TestServerHostOsFlavor'
+                                        Identifier: 'Linux'
+                        PropertyAssignment
+                          Identifier: '
+            edits'
+                          ArrayLiteralExpression
+                            Identifier: '
+                noopChange'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                    caption'
+                                StringLiteral
+                              PropertyAssignment
+                                Identifier: '
+                    edit'
+                                ArrowFunction
+                                  Parameter
+                                    Identifier: ' sys'
+                                  EqualsGreaterThanToken
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' sys'
+                                      Identifier: 'renameFile'
+                                    NoSubstitutionTemplateLiteral
+                                    NoSubstitutionTemplateLiteral
+                              PropertyAssignment
+                                Identifier: '
+                    // 1. For updating program and 2. for updating child watches
+                    timeouts'
+                                ArrowFunction
+                                  Parameter
+                                    Identifier: ' sys'
+                                  EqualsGreaterThanToken
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' sys'
+                                      Identifier: 'runQueuedTimeoutCallbacks'
+                                    NumericLiteral
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                    caption'
+                                StringLiteral
+                              PropertyAssignment
+                                Identifier: '
+                    edit'
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'noop'
+                              PropertyAssignment
+                                Identifier: '
+                    timeouts'
+                                ArrowFunction
+                                  Parameter
+                                    Identifier: ' sys'
+                                  EqualsGreaterThanToken
+                                  Block
+                                    ExpressionStatement
+                                      CallExpression
+                                        PropertyAccessExpression
+                                          Identifier: '
+                        sys'
+                                          Identifier: 'runQueuedTimeoutCallbacks'
+                                    ExpressionStatement
+                                      CallExpression
+                                        PropertyAccessExpression
+                                          Identifier: ' // To update directory watchers
+                        sys'
+                                          Identifier: 'runQueuedTimeoutCallbacks'
+                                    ExpressionStatement
+                                      CallExpression
+                                        PropertyAccessExpression
+                                          Identifier: ' // To Update program and failed lookup update
+                        sys'
+                                          Identifier: 'runQueuedTimeoutCallbacks'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    describe'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        verifyTscWatch'
+                      ObjectLiteralExpression
+                        ShorthandPropertyAssignment
+                          Identifier: '
+            scenario'
+                        PropertyAssignment
+                          Identifier: '
+            subScenario'
+                          StringLiteral
+                        PropertyAssignment
+                          Identifier: '
+            commandLineArgs'
+                          ArrayLiteralExpression
+                            StringLiteral
+                        PropertyAssignment
+                          Identifier: '
+            sys'
+                          ArrowFunction
+                            EqualsGreaterThanToken
+                            Block
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' configFile'
+                                    TypeReference
+                                      Identifier: ' File'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    path'
+                                        StringLiteral
+                                      PropertyAssignment
+                                        Identifier: '
+                    content'
+                                        CallExpression
+                                          Identifier: ' jsonToReadableText'
+                                          ObjectLiteralExpression
+                                            PropertyAssignment
+                                              Identifier: '
+                        watchOptions'
+                                              ObjectLiteralExpression
+                                                PropertyAssignment
+                                                  Identifier: '
+                            watchFile'
+                                                  StringLiteral
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' commonFile1'
+                                    TypeReference
+                                      Identifier: ' File'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    path'
+                                        StringLiteral
+                                      PropertyAssignment
+                                        Identifier: '
+                    content'
+                                        StringLiteral
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' commonFile2'
+                                    TypeReference
+                                      Identifier: ' File'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    path'
+                                        StringLiteral
+                                      PropertyAssignment
+                                        Identifier: '
+                    content'
+                                        StringLiteral
+                              ReturnStatement
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' TestServerHost'
+                                    Identifier: 'createWatchedSystem'
+                                  ArrayLiteralExpression
+                                    Identifier: 'commonFile1'
+                                    Identifier: ' commonFile2'
+                                    Identifier: ' configFile'
+                                  ObjectLiteralExpression
+                                    PropertyAssignment
+                                      Identifier: ' currentDirectory'
+                                      CallExpression
+                                        PropertyAccessExpression
+                                          Identifier: ' ts'
+                                          Identifier: 'getDirectoryPath'
+                                        PropertyAccessExpression
+                                          Identifier: 'configFile'
+                                          Identifier: 'path'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        verifyTscWatch'
+                      ObjectLiteralExpression
+                        ShorthandPropertyAssignment
+                          Identifier: '
+            scenario'
+                        PropertyAssignment
+                          Identifier: '
+            subScenario'
+                          StringLiteral
+                        PropertyAssignment
+                          Identifier: '
+            commandLineArgs'
+                          ArrayLiteralExpression
+                            StringLiteral
+                        PropertyAssignment
+                          Identifier: '
+            sys'
+                          ArrowFunction
+                            EqualsGreaterThanToken
+                            Block
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' configFile'
+                                    TypeReference
+                                      Identifier: ' File'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    path'
+                                        StringLiteral
+                                      PropertyAssignment
+                                        Identifier: '
+                    content'
+                                        CallExpression
+                                          Identifier: ' jsonToReadableText'
+                                          ObjectLiteralExpression
+                                            PropertyAssignment
+                                              Identifier: '
+                        watchOptions'
+                                              ObjectLiteralExpression
+                                                PropertyAssignment
+                                                  Identifier: '
+                            watchDirectory'
+                                                  StringLiteral
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' commonFile1'
+                                    TypeReference
+                                      Identifier: ' File'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    path'
+                                        StringLiteral
+                                      PropertyAssignment
+                                        Identifier: '
+                    content'
+                                        StringLiteral
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' commonFile2'
+                                    TypeReference
+                                      Identifier: ' File'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    path'
+                                        StringLiteral
+                                      PropertyAssignment
+                                        Identifier: '
+                    content'
+                                        StringLiteral
+                              ReturnStatement
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' TestServerHost'
+                                    Identifier: 'createWatchedSystem'
+                                  ArrayLiteralExpression
+                                    Identifier: 'commonFile1'
+                                    Identifier: ' commonFile2'
+                                    Identifier: ' configFile'
+                                  ObjectLiteralExpression
+                                    PropertyAssignment
+                                      Identifier: '
+                        currentDirectory'
+                                      CallExpression
+                                        PropertyAccessExpression
+                                          Identifier: ' ts'
+                                          Identifier: 'getDirectoryPath'
+                                        PropertyAccessExpression
+                                          Identifier: 'configFile'
+                                          Identifier: 'path'
+                                    PropertyAssignment
+                                      Identifier: '
+                        osFlavor'
+                                      PropertyAccessExpression
+                                        Identifier: ' TestServerHostOsFlavor'
+                                        Identifier: 'Linux'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        verifyTscWatch'
+                      ObjectLiteralExpression
+                        ShorthandPropertyAssignment
+                          Identifier: '
+            scenario'
+                        PropertyAssignment
+                          Identifier: '
+            subScenario'
+                          StringLiteral
+                        PropertyAssignment
+                          Identifier: '
+            commandLineArgs'
+                          ArrayLiteralExpression
+                            StringLiteral
+                        PropertyAssignment
+                          Identifier: '
+            sys'
+                          ArrowFunction
+                            EqualsGreaterThanToken
+                            Block
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' configFile'
+                                    TypeReference
+                                      Identifier: ' File'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    path'
+                                        StringLiteral
+                                      PropertyAssignment
+                                        Identifier: '
+                    content'
+                                        CallExpression
+                                          Identifier: ' jsonToReadableText'
+                                          ObjectLiteralExpression
+                                            PropertyAssignment
+                                              Identifier: '
+                        watchOptions'
+                                              ObjectLiteralExpression
+                                                PropertyAssignment
+                                                  Identifier: '
+                            fallbackPolling'
+                                                  StringLiteral
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' commonFile1'
+                                    TypeReference
+                                      Identifier: ' File'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    path'
+                                        StringLiteral
+                                      PropertyAssignment
+                                        Identifier: '
+                    content'
+                                        StringLiteral
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' commonFile2'
+                                    TypeReference
+                                      Identifier: ' File'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    path'
+                                        StringLiteral
+                                      PropertyAssignment
+                                        Identifier: '
+                    content'
+                                        StringLiteral
+                              ReturnStatement
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' TestServerHost'
+                                    Identifier: 'createWatchedSystem'
+                                  ArrayLiteralExpression
+                                    Identifier: 'commonFile1'
+                                    Identifier: ' commonFile2'
+                                    Identifier: ' configFile'
+                                  ObjectLiteralExpression
+                                    PropertyAssignment
+                                      Identifier: '
+                        currentDirectory'
+                                      CallExpression
+                                        PropertyAccessExpression
+                                          Identifier: ' ts'
+                                          Identifier: 'getDirectoryPath'
+                                        PropertyAccessExpression
+                                          Identifier: 'configFile'
+                                          Identifier: 'path'
+                                    PropertyAssignment
+                                      Identifier: '
+                        osFlavor'
+                                      PropertyAccessExpression
+                                        Identifier: ' TestServerHostOsFlavor'
+                                        Identifier: 'Linux'
+                                    PropertyAssignment
+                                      Identifier: '
+                        runWithFallbackPolling'
+                                      TrueKeyword
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        verifyTscWatch'
+                      ObjectLiteralExpression
+                        ShorthandPropertyAssignment
+                          Identifier: '
+            scenario'
+                        PropertyAssignment
+                          Identifier: '
+            subScenario'
+                          StringLiteral
+                        PropertyAssignment
+                          Identifier: '
+            commandLineArgs'
+                          ArrayLiteralExpression
+                            StringLiteral
+                            StringLiteral
+                            StringLiteral
+                        PropertyAssignment
+                          Identifier: '
+            sys'
+                          ArrowFunction
+                            EqualsGreaterThanToken
+                            Block
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' configFile'
+                                    TypeReference
+                                      Identifier: ' File'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    path'
+                                        StringLiteral
+                                      PropertyAssignment
+                                        Identifier: '
+                    content'
+                                        StringLiteral
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' commonFile1'
+                                    TypeReference
+                                      Identifier: ' File'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    path'
+                                        StringLiteral
+                                      PropertyAssignment
+                                        Identifier: '
+                    content'
+                                        StringLiteral
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' commonFile2'
+                                    TypeReference
+                                      Identifier: ' File'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    path'
+                                        StringLiteral
+                                      PropertyAssignment
+                                        Identifier: '
+                    content'
+                                        StringLiteral
+                              ReturnStatement
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' TestServerHost'
+                                    Identifier: 'createWatchedSystem'
+                                  ArrayLiteralExpression
+                                    Identifier: 'commonFile1'
+                                    Identifier: ' commonFile2'
+                                    Identifier: ' configFile'
+                                  ObjectLiteralExpression
+                                    PropertyAssignment
+                                      Identifier: ' currentDirectory'
+                                      CallExpression
+                                        PropertyAccessExpression
+                                          Identifier: ' ts'
+                                          Identifier: 'getDirectoryPath'
+                                        PropertyAccessExpression
+                                          Identifier: 'configFile'
+                                          Identifier: 'path'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        describe'
+                      StringLiteral
+                      ArrowFunction
+                        EqualsGreaterThanToken
+                        Block
+                          FunctionDeclaration
+                            Identifier: ' sys'
+                            Parameter
+                              Identifier: 'watchOptions'
+                              TypeReference
+                                QualifiedName
+                                  Identifier: ' ts'
+                                  Identifier: 'WatchOptions'
+                            Parameter
+                              Identifier: ' osFlavor'
+                              QuestionToken
+                              TypeReference
+                                QualifiedName
+                                  Identifier: ' TestServerHostOsFlavor'
+                                  Identifier: 'Linux'
+                            TypeReference
+                              Identifier: ' TestServerHost'
+                            Block
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' configFile'
+                                    TypeReference
+                                      Identifier: ' File'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    path'
+                                        NoSubstitutionTemplateLiteral
+                                      PropertyAssignment
+                                        Identifier: '
+                    content'
+                                        CallExpression
+                                          Identifier: ' jsonToReadableText'
+                                          ObjectLiteralExpression
+                                            PropertyAssignment
+                                              Identifier: ' exclude'
+                                              ArrayLiteralExpression
+                                                StringLiteral
+                                            ShorthandPropertyAssignment
+                                              Identifier: ' watchOptions'
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' main'
+                                    TypeReference
+                                      Identifier: ' File'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    path'
+                                        NoSubstitutionTemplateLiteral
+                                      PropertyAssignment
+                                        Identifier: '
+                    content'
+                                        NoSubstitutionTemplateLiteral
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' bar'
+                                    TypeReference
+                                      Identifier: ' File'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    path'
+                                        NoSubstitutionTemplateLiteral
+                                      PropertyAssignment
+                                        Identifier: '
+                    content'
+                                        NoSubstitutionTemplateLiteral
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' foo'
+                                    TypeReference
+                                      Identifier: ' File'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    path'
+                                        NoSubstitutionTemplateLiteral
+                                      PropertyAssignment
+                                        Identifier: '
+                    content'
+                                        NoSubstitutionTemplateLiteral
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' fooBar'
+                                    TypeReference
+                                      Identifier: ' File'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    path'
+                                        NoSubstitutionTemplateLiteral
+                                      PropertyAssignment
+                                        Identifier: '
+                    content'
+                                        NoSubstitutionTemplateLiteral
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' temp'
+                                    TypeReference
+                                      Identifier: ' File'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                    path'
+                                        NoSubstitutionTemplateLiteral
+                                      PropertyAssignment
+                                        Identifier: '
+                    content'
+                                        StringLiteral
+                              ReturnStatement
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' TestServerHost'
+                                    Identifier: 'createWatchedSystem'
+                                  ArrayLiteralExpression
+                                    Identifier: 'main'
+                                    Identifier: ' bar'
+                                    Identifier: ' foo'
+                                    Identifier: ' fooBar'
+                                    Identifier: ' temp'
+                                    Identifier: ' configFile'
+                                  ObjectLiteralExpression
+                                    PropertyAssignment
+                                      Identifier: ' currentDirectory'
+                                      StringLiteral
+                                    ShorthandPropertyAssignment
+                                      Identifier: ' osFlavor'
+                          FunctionDeclaration
+                            Identifier: ' verifyWorker'
+                            Parameter
+                              DotDotDotToken
+                              Identifier: 'additionalFlags'
+                              ArrayType
+                                StringKeyword
+                            Block
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+                verifyTscWatch'
+                                  ObjectLiteralExpression
+                                    ShorthandPropertyAssignment
+                                      Identifier: '
+                    scenario'
+                                    PropertyAssignment
+                                      Identifier: '
+                    subScenario'
+                                      TemplateExpression
+                                        TemplateHead
+                                        TemplateSpan
+                                          CallExpression
+                                            PropertyAccessExpression
+                                              Identifier: 'additionalFlags'
+                                              Identifier: 'join'
+                                            StringLiteral
+                                          TemplateTail
+                                    PropertyAssignment
+                                      Identifier: '
+                    commandLineArgs'
+                                      ArrayLiteralExpression
+                                        StringLiteral
+                                        SpreadElement
+                                          Identifier: 'additionalFlags'
+                                    PropertyAssignment
+                                      Identifier: '
+                    sys'
+                                      ArrowFunction
+                                        EqualsGreaterThanToken
+                                        CallExpression
+                                          Identifier: ' sys'
+                                          ObjectLiteralExpression
+                                            PropertyAssignment
+                                              Identifier: ' excludeFiles'
+                                              ArrayLiteralExpression
+                                                StringLiteral
+                                    PropertyAssignment
+                                      Identifier: '
+                    edits'
+                                      ArrayLiteralExpression
+                                        ObjectLiteralExpression
+                                          PropertyAssignment
+                                            Identifier: '
+                            caption'
+                                            StringLiteral
+                                          PropertyAssignment
+                                            Identifier: '
+                            edit'
+                                            ArrowFunction
+                                              Parameter
+                                                Identifier: ' sys'
+                                              EqualsGreaterThanToken
+                                              CallExpression
+                                                PropertyAccessExpression
+                                                  Identifier: ' sys'
+                                                  Identifier: 'replaceFileText'
+                                                NoSubstitutionTemplateLiteral
+                                                StringLiteral
+                                                StringLiteral
+                                          PropertyAssignment
+                                            Identifier: '
+                            timeouts'
+                                            PropertyAccessExpression
+                                              Identifier: ' ts'
+                                              Identifier: 'noop'
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+
+                verifyTscWatch'
+                                  ObjectLiteralExpression
+                                    ShorthandPropertyAssignment
+                                      Identifier: '
+                    scenario'
+                                    PropertyAssignment
+                                      Identifier: '
+                    subScenario'
+                                      TemplateExpression
+                                        TemplateHead
+                                        TemplateSpan
+                                          CallExpression
+                                            PropertyAccessExpression
+                                              Identifier: 'additionalFlags'
+                                              Identifier: 'join'
+                                            StringLiteral
+                                          TemplateTail
+                                    PropertyAssignment
+                                      Identifier: '
+                    commandLineArgs'
+                                      ArrayLiteralExpression
+                                        StringLiteral
+                                        SpreadElement
+                                          Identifier: 'additionalFlags'
+                                    PropertyAssignment
+                                      Identifier: '
+                    sys'
+                                      ArrowFunction
+                                        EqualsGreaterThanToken
+                                        CallExpression
+                                          Identifier: ' sys'
+                                          ObjectLiteralExpression
+                                            PropertyAssignment
+                                              Identifier: ' excludeDirectories'
+                                              ArrayLiteralExpression
+                                                StringLiteral
+                                    PropertyAssignment
+                                      Identifier: '
+                    edits'
+                                      ArrayLiteralExpression
+                                        ObjectLiteralExpression
+                                          PropertyAssignment
+                                            Identifier: '
+                            caption'
+                                            StringLiteral
+                                          PropertyAssignment
+                                            Identifier: '
+                            edit'
+                                            ArrowFunction
+                                              Parameter
+                                                Identifier: ' sys'
+                                              EqualsGreaterThanToken
+                                              CallExpression
+                                                PropertyAccessExpression
+                                                  Identifier: ' sys'
+                                                  Identifier: 'deleteFile'
+                                                NoSubstitutionTemplateLiteral
+                                          PropertyAssignment
+                                            Identifier: '
+                            timeouts'
+                                            PropertyAccessExpression
+                                              Identifier: ' ts'
+                                              Identifier: 'noop'
+                              ExpressionStatement
+                                CallExpression
+                                  Identifier: '
+
+                verifyTscWatch'
+                                  ObjectLiteralExpression
+                                    ShorthandPropertyAssignment
+                                      Identifier: '
+                    scenario'
+                                    PropertyAssignment
+                                      Identifier: '
+                    subScenario'
+                                      TemplateExpression
+                                        TemplateHead
+                                        TemplateSpan
+                                          CallExpression
+                                            PropertyAccessExpression
+                                              Identifier: 'additionalFlags'
+                                              Identifier: 'join'
+                                            StringLiteral
+                                          TemplateTail
+                                    PropertyAssignment
+                                      Identifier: '
+                    commandLineArgs'
+                                      ArrayLiteralExpression
+                                        StringLiteral
+                                        SpreadElement
+                                          Identifier: 'additionalFlags'
+                                    PropertyAssignment
+                                      Identifier: '
+                    sys'
+                                      ArrowFunction
+                                        EqualsGreaterThanToken
+                                        CallExpression
+                                          Identifier: ' sys'
+                                          ObjectLiteralExpression
+                                            PropertyAssignment
+                                              Identifier: ' excludeDirectories'
+                                              ArrayLiteralExpression
+                                                StringLiteral
+                                          PropertyAccessExpression
+                                            Identifier: ' TestServerHostOsFlavor'
+                                            Identifier: 'Linux'
+                                    PropertyAssignment
+                                      Identifier: '
+                    edits'
+                                      ArrayLiteralExpression
+                                        ObjectLiteralExpression
+                                          PropertyAssignment
+                                            Identifier: '
+                            caption'
+                                            StringLiteral
+                                          PropertyAssignment
+                                            Identifier: '
+                            edit'
+                                            PropertyAccessExpression
+                                              Identifier: ' ts'
+                                              Identifier: 'noop'
+                                          PropertyAssignment
+                                            Identifier: '
+                            timeouts'
+                                            ArrowFunction
+                                              Parameter
+                                                Identifier: ' sys'
+                                              EqualsGreaterThanToken
+                                              CallExpression
+                                                PropertyAccessExpression
+                                                  Identifier: ' sys'
+                                                  Identifier: 'runQueuedTimeoutCallbacks'
+                                        ObjectLiteralExpression
+                                          PropertyAssignment
+                                            Identifier: '
+                            caption'
+                                            StringLiteral
+                                          PropertyAssignment
+                                            Identifier: '
+                            edit'
+                                            ArrowFunction
+                                              Parameter
+                                                Identifier: ' sys'
+                                              EqualsGreaterThanToken
+                                              CallExpression
+                                                PropertyAccessExpression
+                                                  Identifier: ' sys'
+                                                  Identifier: 'ensureFileOrFolder'
+                                                ObjectLiteralExpression
+                                                  PropertyAssignment
+                                                    Identifier: ' path'
+                                                    NoSubstitutionTemplateLiteral
+                                                  PropertyAssignment
+                                                    Identifier: ' content'
+                                                    StringLiteral
+                                          PropertyAssignment
+                                            Identifier: '
+                            timeouts'
+                                            PropertyAccessExpression
+                                              Identifier: ' ts'
+                                              Identifier: 'noop'
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+
+            verifyWorker'
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            verifyWorker'
+                              StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    verifyTscWatch'
+              ObjectLiteralExpression
+                ShorthandPropertyAssignment
+                  Identifier: '
+        scenario'
+                PropertyAssignment
+                  Identifier: '
+        subScenario'
+                  NoSubstitutionTemplateLiteral
+                PropertyAssignment
+                  Identifier: '
+        commandLineArgs'
+                  ArrayLiteralExpression
+                    StringLiteral
+                    StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        sys'
+                  ArrowFunction
+                    EqualsGreaterThanToken
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+            TestServerHost'
+                        Identifier: 'createWatchedSystem'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          ComputedPropertyName
+                            NoSubstitutionTemplateLiteral
+                          NoSubstitutionTemplateLiteral
+                        PropertyAssignment
+                          ComputedPropertyName
+                            NoSubstitutionTemplateLiteral
+                          NoSubstitutionTemplateLiteral
+                        PropertyAssignment
+                          ComputedPropertyName
+                            NoSubstitutionTemplateLiteral
+                          CallExpression
+                            Identifier: ' jsonToReadableText'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                        watchOptions'
+                                ObjectLiteralExpression
+                                  PropertyAssignment
+                                    Identifier: ' watchFile'
+                                    StringLiteral
+                              PropertyAssignment
+                                Identifier: '
+                        files'
+                                ArrayLiteralExpression
+                                  StringLiteral
+                                  StringLiteral
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' currentDirectory'
+                          StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        edits'
+                  ArrayLiteralExpression
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+                caption'
+                        StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+                // vm's wq generates this kind of event
+                // Skip delete event so inode changes but when the create's rename occurs file is on disk
+                edit'
+                        ArrowFunction
+                          Parameter
+                            Identifier: ' sys'
+                          EqualsGreaterThanToken
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: '
+                    sys'
+                              Identifier: 'modifyFile'
+                            NoSubstitutionTemplateLiteral
+                            NoSubstitutionTemplateLiteral
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                        invokeFileDeleteCreateAsPartInsteadOfChange'
+                                TrueKeyword
+                              PropertyAssignment
+                                Identifier: '
+                        ignoreDelete'
+                                TrueKeyword
+                      PropertyAssignment
+                        Identifier: '
+                timeouts'
+                        ArrowFunction
+                          Parameter
+                            Identifier: ' sys'
+                          EqualsGreaterThanToken
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' sys'
+                              Identifier: 'runQueuedTimeoutCallbacks'
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+                caption'
+                        StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+                edit'
+                        ArrowFunction
+                          Parameter
+                            Identifier: ' sys'
+                          EqualsGreaterThanToken
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' sys'
+                              Identifier: 'modifyFile'
+                            NoSubstitutionTemplateLiteral
+                            NoSubstitutionTemplateLiteral
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: ' invokeFileDeleteCreateAsPartInsteadOfChange'
+                                TrueKeyword
+                      PropertyAssignment
+                        Identifier: '
+                timeouts'
+                        ArrowFunction
+                          Parameter
+                            Identifier: ' sys'
+                          EqualsGreaterThanToken
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' sys'
+                              Identifier: 'runQueuedTimeoutCallbacks'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    describe'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        verifyTscWatch'
+                      ObjectLiteralExpression
+                        ShorthandPropertyAssignment
+                          Identifier: '
+            scenario'
+                        PropertyAssignment
+                          Identifier: '
+            subScenario'
+                          NoSubstitutionTemplateLiteral
+                        PropertyAssignment
+                          Identifier: '
+            commandLineArgs'
+                          ArrayLiteralExpression
+                            StringLiteral
+                            StringLiteral
+                        PropertyAssignment
+                          Identifier: '
+            sys'
+                          ArrowFunction
+                            EqualsGreaterThanToken
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+                TestServerHost'
+                                Identifier: 'createWatchedSystem'
+                              ObjectLiteralExpression
+                                PropertyAssignment
+                                  ComputedPropertyName
+                                    NoSubstitutionTemplateLiteral
+                                  NoSubstitutionTemplateLiteral
+                                PropertyAssignment
+                                  ComputedPropertyName
+                                    NoSubstitutionTemplateLiteral
+                                  NoSubstitutionTemplateLiteral
+                                PropertyAssignment
+                                  ComputedPropertyName
+                                    NoSubstitutionTemplateLiteral
+                                  CallExpression
+                                    Identifier: ' jsonToReadableText'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: ' watchOptions'
+                                        ObjectLiteralExpression
+                                          PropertyAssignment
+                                            Identifier: ' watchFile'
+                                            StringLiteral
+                                      PropertyAssignment
+                                        Identifier: ' files'
+                                        ArrayLiteralExpression
+                                          StringLiteral
+                                          StringLiteral
+                              ObjectLiteralExpression
+                                PropertyAssignment
+                                  Identifier: '
+                        currentDirectory'
+                                  StringLiteral
+                                PropertyAssignment
+                                  Identifier: '
+                        osFlavor'
+                                  PropertyAccessExpression
+                                    Identifier: ' TestServerHostOsFlavor'
+                                    Identifier: 'MacOs'
+                        PropertyAssignment
+                          Identifier: '
+            edits'
+                          ArrayLiteralExpression
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                    caption'
+                                StringLiteral
+                              PropertyAssignment
+                                Identifier: '
+                    edit'
+                                ArrowFunction
+                                  Parameter
+                                    Identifier: ' sys'
+                                  EqualsGreaterThanToken
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' sys'
+                                      Identifier: 'modifyFile'
+                                    NoSubstitutionTemplateLiteral
+                                    NoSubstitutionTemplateLiteral
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: ' invokeFileDeleteCreateAsPartInsteadOfChange'
+                                        TrueKeyword
+                              PropertyAssignment
+                                Identifier: '
+                    timeouts'
+                                ArrowFunction
+                                  Parameter
+                                    Identifier: ' sys'
+                                  EqualsGreaterThanToken
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' sys'
+                                      Identifier: 'runQueuedTimeoutCallbacks'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                    caption'
+                                StringLiteral
+                              PropertyAssignment
+                                Identifier: '
+                    edit'
+                                ArrowFunction
+                                  Parameter
+                                    Identifier: ' sys'
+                                  EqualsGreaterThanToken
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' sys'
+                                      Identifier: 'modifyFile'
+                                    NoSubstitutionTemplateLiteral
+                                    NoSubstitutionTemplateLiteral
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: ' invokeFileDeleteCreateAsPartInsteadOfChange'
+                                        TrueKeyword
+                              PropertyAssignment
+                                Identifier: '
+                    timeouts'
+                                ArrowFunction
+                                  Parameter
+                                    Identifier: ' sys'
+                                  EqualsGreaterThanToken
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' sys'
+                                      Identifier: 'runQueuedTimeoutCallbacks'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        verifyTscWatch'
+                      ObjectLiteralExpression
+                        ShorthandPropertyAssignment
+                          Identifier: '
+            scenario'
+                        PropertyAssignment
+                          Identifier: '
+            subScenario'
+                          NoSubstitutionTemplateLiteral
+                        PropertyAssignment
+                          Identifier: '
+            commandLineArgs'
+                          ArrayLiteralExpression
+                            StringLiteral
+                            StringLiteral
+                        PropertyAssignment
+                          Identifier: '
+            sys'
+                          ArrowFunction
+                            EqualsGreaterThanToken
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+                TestServerHost'
+                                Identifier: 'createWatchedSystem'
+                              ObjectLiteralExpression
+                                PropertyAssignment
+                                  ComputedPropertyName
+                                    NoSubstitutionTemplateLiteral
+                                  NoSubstitutionTemplateLiteral
+                                PropertyAssignment
+                                  ComputedPropertyName
+                                    NoSubstitutionTemplateLiteral
+                                  NoSubstitutionTemplateLiteral
+                                PropertyAssignment
+                                  ComputedPropertyName
+                                    NoSubstitutionTemplateLiteral
+                                  CallExpression
+                                    Identifier: ' jsonToReadableText'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: ' watchOptions'
+                                        ObjectLiteralExpression
+                                          PropertyAssignment
+                                            Identifier: ' watchFile'
+                                            StringLiteral
+                                      PropertyAssignment
+                                        Identifier: ' files'
+                                        ArrayLiteralExpression
+                                          StringLiteral
+                                          StringLiteral
+                              ObjectLiteralExpression
+                                PropertyAssignment
+                                  Identifier: '
+                        currentDirectory'
+                                  StringLiteral
+                                PropertyAssignment
+                                  Identifier: '
+                        osFlavor'
+                                  PropertyAccessExpression
+                                    Identifier: ' TestServerHostOsFlavor'
+                                    Identifier: 'MacOs'
+                        PropertyAssignment
+                          Identifier: '
+            edits'
+                          ArrayLiteralExpression
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                    caption'
+                                StringLiteral
+                              PropertyAssignment
+                                Identifier: '
+                    edit'
+                                ArrowFunction
+                                  Parameter
+                                    Identifier: ' sys'
+                                  EqualsGreaterThanToken
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' sys'
+                                      Identifier: 'modifyFile'
+                                    NoSubstitutionTemplateLiteral
+                                    NoSubstitutionTemplateLiteral
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: ' invokeFileDeleteCreateAsPartInsteadOfChange'
+                                        TrueKeyword
+                                      PropertyAssignment
+                                        Identifier: ' useTildeAsSuffixInRenameEventFileName'
+                                        TrueKeyword
+                              PropertyAssignment
+                                Identifier: '
+                    timeouts'
+                                ArrowFunction
+                                  Parameter
+                                    Identifier: ' sys'
+                                  EqualsGreaterThanToken
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' sys'
+                                      Identifier: 'runQueuedTimeoutCallbacks'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                    caption'
+                                StringLiteral
+                              PropertyAssignment
+                                Identifier: '
+                    edit'
+                                ArrowFunction
+                                  Parameter
+                                    Identifier: ' sys'
+                                  EqualsGreaterThanToken
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' sys'
+                                      Identifier: 'modifyFile'
+                                    NoSubstitutionTemplateLiteral
+                                    NoSubstitutionTemplateLiteral
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: ' invokeFileDeleteCreateAsPartInsteadOfChange'
+                                        TrueKeyword
+                                      PropertyAssignment
+                                        Identifier: ' useTildeAsSuffixInRenameEventFileName'
+                                        TrueKeyword
+                              PropertyAssignment
+                                Identifier: '
+                    timeouts'
+                                ArrowFunction
+                                  Parameter
+                                    Identifier: ' sys'
+                                  EqualsGreaterThanToken
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' sys'
+                                      Identifier: 'runQueuedTimeoutCallbacks'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        verifyTscWatch'
+                      ObjectLiteralExpression
+                        ShorthandPropertyAssignment
+                          Identifier: '
+            scenario'
+                        PropertyAssignment
+                          Identifier: '
+            subScenario'
+                          NoSubstitutionTemplateLiteral
+                        PropertyAssignment
+                          Identifier: '
+            commandLineArgs'
+                          ArrayLiteralExpression
+                            StringLiteral
+                            StringLiteral
+                        PropertyAssignment
+                          Identifier: '
+            sys'
+                          ArrowFunction
+                            EqualsGreaterThanToken
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+                TestServerHost'
+                                Identifier: 'createWatchedSystem'
+                              ObjectLiteralExpression
+                                PropertyAssignment
+                                  ComputedPropertyName
+                                    NoSubstitutionTemplateLiteral
+                                  NoSubstitutionTemplateLiteral
+                                PropertyAssignment
+                                  ComputedPropertyName
+                                    NoSubstitutionTemplateLiteral
+                                  NoSubstitutionTemplateLiteral
+                                PropertyAssignment
+                                  ComputedPropertyName
+                                    NoSubstitutionTemplateLiteral
+                                  CallExpression
+                                    Identifier: ' jsonToReadableText'
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                            watchOptions'
+                                        ObjectLiteralExpression
+                                          PropertyAssignment
+                                            Identifier: ' watchFile'
+                                            StringLiteral
+                                      PropertyAssignment
+                                        Identifier: '
+                            files'
+                                        ArrayLiteralExpression
+                                          StringLiteral
+                                          StringLiteral
+                              ObjectLiteralExpression
+                                PropertyAssignment
+                                  Identifier: '
+                        currentDirectory'
+                                  StringLiteral
+                                PropertyAssignment
+                                  Identifier: '
+                        osFlavor'
+                                  PropertyAccessExpression
+                                    Identifier: ' TestServerHostOsFlavor'
+                                    Identifier: 'MacOs'
+                        PropertyAssignment
+                          Identifier: '
+            edits'
+                          ArrayLiteralExpression
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                    caption'
+                                StringLiteral
+                              PropertyAssignment
+                                Identifier: '
+                    // vm's wq generates this kind of event
+                    // Skip delete event so inode changes but when the create's rename occurs file is on disk
+                    edit'
+                                ArrowFunction
+                                  Parameter
+                                    Identifier: ' sys'
+                                  EqualsGreaterThanToken
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: '
+                        sys'
+                                      Identifier: 'modifyFile'
+                                    NoSubstitutionTemplateLiteral
+                                    NoSubstitutionTemplateLiteral
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: '
+                            invokeFileDeleteCreateAsPartInsteadOfChange'
+                                        TrueKeyword
+                                      PropertyAssignment
+                                        Identifier: '
+                            ignoreDelete'
+                                        TrueKeyword
+                                      PropertyAssignment
+                                        Identifier: '
+                            skipInodeCheckOnCreate'
+                                        TrueKeyword
+                              PropertyAssignment
+                                Identifier: '
+                    timeouts'
+                                ArrowFunction
+                                  Parameter
+                                    Identifier: ' sys'
+                                  EqualsGreaterThanToken
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' sys'
+                                      Identifier: 'runQueuedTimeoutCallbacks'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                    caption'
+                                StringLiteral
+                              PropertyAssignment
+                                Identifier: '
+                    edit'
+                                ArrowFunction
+                                  Parameter
+                                    Identifier: ' sys'
+                                  EqualsGreaterThanToken
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' sys'
+                                      Identifier: 'modifyFile'
+                                    NoSubstitutionTemplateLiteral
+                                    NoSubstitutionTemplateLiteral
+                                    ObjectLiteralExpression
+                                      PropertyAssignment
+                                        Identifier: ' invokeFileDeleteCreateAsPartInsteadOfChange'
+                                        TrueKeyword
+                              PropertyAssignment
+                                Identifier: '
+                    timeouts'
+                                ArrowFunction
+                                  Parameter
+                                    Identifier: ' sys'
+                                  EqualsGreaterThanToken
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' sys'
+                                      Identifier: 'runQueuedTimeoutCallbacks'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    describe'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  FunctionDeclaration
+                    Identifier: ' verify'
+                    Parameter
+                      Identifier: 'osFlavor'
+                      TypeReference
+                        Identifier: ' TestServerHostOsFlavor'
+                    Parameter
+                      Identifier: ' watchFile'
+                      QuestionToken
+                      LiteralType
+                        StringLiteral
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+            verifyTscWatch'
+                          ObjectLiteralExpression
+                            ShorthandPropertyAssignment
+                              Identifier: '
+                scenario'
+                            PropertyAssignment
+                              Identifier: '
+                subScenario'
+                              TemplateExpression
+                                TemplateHead
+                                TemplateSpan
+                                  BinaryExpression
+                                    Identifier: 'osFlavor'
+                                    EqualsEqualsEqualsToken
+                                    PropertyAccessExpression
+                                      Identifier: ' TestServerHostOsFlavor'
+                                      Identifier: 'MacOs'
+                                  TemplateMiddle
+                                TemplateSpan
+                                  ConditionalExpression
+                                    Identifier: 'watchFile'
+                                    QuestionToken
+                                    TemplateExpression
+                                      TemplateHead
+                                      TemplateSpan
+                                        Identifier: 'watchFile'
+                                        TemplateTail
+                                    ColonToken
+                                    StringLiteral
+                                  TemplateTail
+                            PropertyAssignment
+                              Identifier: '
+                commandLineArgs'
+                              ArrayLiteralExpression
+                                StringLiteral
+                                StringLiteral
+                                SpreadElement
+                                  ParenthesizedExpression
+                                    ConditionalExpression
+                                      Identifier: 'watchFile'
+                                      QuestionToken
+                                      ArrayLiteralExpression
+                                        StringLiteral
+                                        Identifier: ' watchFile'
+                                      ColonToken
+                                      ArrayLiteralExpression
+                            PropertyAssignment
+                              Identifier: '
+                sys'
+                              ArrowFunction
+                                EqualsGreaterThanToken
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: '
+                    TestServerHost'
+                                    Identifier: 'createWatchedSystem'
+                                  ObjectLiteralExpression
+                                    PropertyAssignment
+                                      StringLiteral
+                                      NoSubstitutionTemplateLiteral
+                                    PropertyAssignment
+                                      StringLiteral
+                                      CallExpression
+                                        Identifier: ' jsonToReadableText'
+                                        ObjectLiteralExpression
+                                          PropertyAssignment
+                                            Identifier: ' files'
+                                            ArrayLiteralExpression
+                                              StringLiteral
+                                  ObjectLiteralExpression
+                                    PropertyAssignment
+                                      Identifier: '
+                            currentDirectory'
+                                      StringLiteral
+                                    ShorthandPropertyAssignment
+                                      Identifier: '
+                            osFlavor'
+                            PropertyAssignment
+                              Identifier: '
+                edits'
+                              ArrayLiteralExpression
+                                ObjectLiteralExpression
+                                  PropertyAssignment
+                                    Identifier: '
+                        caption'
+                                    StringLiteral
+                                  PropertyAssignment
+                                    Identifier: '
+                        edit'
+                                    ArrowFunction
+                                      Parameter
+                                        Identifier: ' sys'
+                                      EqualsGreaterThanToken
+                                      CallExpression
+                                        PropertyAccessExpression
+                                          Identifier: ' sys'
+                                          Identifier: 'invokeFsWatches'
+                                        StringLiteral
+                                        StringLiteral
+                                        StringLiteral
+                                        Identifier: ' /*useTildeSuffix*/ undefined'
+                                  PropertyAssignment
+                                    Identifier: '
+                        timeouts'
+                                    ArrowFunction
+                                      Parameter
+                                        Identifier: ' sys'
+                                      EqualsGreaterThanToken
+                                      CallExpression
+                                        PropertyAccessExpression
+                                          Identifier: ' sys'
+                                          Identifier: 'runQueuedTimeoutCallbacks'
+                                ObjectLiteralExpression
+                                  PropertyAssignment
+                                    Identifier: '
+                        caption'
+                                    StringLiteral
+                                  PropertyAssignment
+                                    Identifier: '
+                        edit'
+                                    ArrowFunction
+                                      Parameter
+                                        Identifier: ' sys'
+                                      EqualsGreaterThanToken
+                                      CallExpression
+                                        PropertyAccessExpression
+                                          Identifier: ' sys'
+                                          Identifier: 'appendFile'
+                                        StringLiteral
+                                        StringLiteral
+                                  PropertyAssignment
+                                    Identifier: '
+                        timeouts'
+                                    ArrowFunction
+                                      Parameter
+                                        Identifier: ' sys'
+                                      EqualsGreaterThanToken
+                                      CallExpression
+                                        PropertyAccessExpression
+                                          Identifier: ' sys'
+                                          Identifier: 'runQueuedTimeoutCallbacks'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        verify'
+                      PropertyAccessExpression
+                        Identifier: 'TestServerHostOsFlavor'
+                        Identifier: 'MacOs'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        verify'
+                      PropertyAccessExpression
+                        Identifier: 'TestServerHostOsFlavor'
+                        Identifier: 'Windows'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        verify'
+                      PropertyAccessExpression
+                        Identifier: 'TestServerHostOsFlavor'
+                        Identifier: 'MacOs'
+                      StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        verify'
+                      PropertyAccessExpression
+                        Identifier: 'TestServerHostOsFlavor'
+                        Identifier: 'Windows'
+                      StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    verifyTscWatch'
+              ObjectLiteralExpression
+                ShorthandPropertyAssignment
+                  Identifier: '
+        scenario'
+                PropertyAssignment
+                  Identifier: '
+        subScenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        commandLineArgs'
+                  ArrayLiteralExpression
+                    StringLiteral
+                    StringLiteral
+                    StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        sys'
+                  ArrowFunction
+                    EqualsGreaterThanToken
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+            TestServerHost'
+                        Identifier: 'createWatchedSystem'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          StringLiteral
+                          NoSubstitutionTemplateLiteral
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' currentDirectory'
+                          StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        edits'
+                  ArrayLiteralExpression
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+                caption'
+                        StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+                edit'
+                        ArrowFunction
+                          Parameter
+                            Identifier: ' sys'
+                          EqualsGreaterThanToken
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' sys'
+                              Identifier: 'replaceFileText'
+                            StringLiteral
+                            StringLiteral
+                            StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+                timeouts'
+                        ArrowFunction
+                          Parameter
+                            Identifier: ' sys'
+                          EqualsGreaterThanToken
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' sys'
+                              Identifier: 'runQueuedTimeoutCallbacks'
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+                caption'
+                        StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+                edit'
+                        ArrowFunction
+                          Parameter
+                            Identifier: ' sys'
+                          EqualsGreaterThanToken
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' sys'
+                              Identifier: 'invokeFsWatches'
+                            StringLiteral
+                            StringLiteral
+                            StringLiteral
+                            Identifier: ' /*useTildeSuffix*/ undefined'
+                      PropertyAssignment
+                        Identifier: '
+                timeouts'
+                        ArrowFunction
+                          Parameter
+                            Identifier: ' sys'
+                          EqualsGreaterThanToken
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' sys'
+                              Identifier: 'runQueuedTimeoutCallbacks'
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+                caption'
+                        StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+                edit'
+                        ArrowFunction
+                          Parameter
+                            Identifier: ' sys'
+                          EqualsGreaterThanToken
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' sys'
+                              Identifier: 'writeFile'
+                            StringLiteral
+                            StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+                timeouts'
+                        ArrowFunction
+                          Parameter
+                            Identifier: ' sys'
+                          EqualsGreaterThanToken
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' sys'
+                              Identifier: 'runQueuedTimeoutCallbacks'
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+                caption'
+                        StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+                edit'
+                        ArrowFunction
+                          Parameter
+                            Identifier: ' sys'
+                          EqualsGreaterThanToken
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' sys'
+                              Identifier: 'invokeFsWatches'
+                            StringLiteral
+                            StringLiteral
+                            StringLiteral
+                            Identifier: ' /*useTildeSuffix*/ undefined'
+                      PropertyAssignment
+                        Identifier: '
+                timeouts'
+                        ArrowFunction
+                          Parameter
+                            Identifier: ' sys'
+                          EqualsGreaterThanToken
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' sys'
+                              Identifier: 'runQueuedTimeoutCallbacks'

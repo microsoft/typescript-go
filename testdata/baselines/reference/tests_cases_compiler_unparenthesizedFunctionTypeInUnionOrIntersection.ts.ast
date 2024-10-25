@@ -1,0 +1,173 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' U1'
+    UnionType
+      StringKeyword
+      FunctionType
+        VoidKeyword
+  TypeAliasDeclaration
+    Identifier: ' U2'
+    UnionType
+      StringKeyword
+      FunctionType
+        Parameter
+          Identifier: 'foo'
+          NumberKeyword
+        VoidKeyword
+  TypeAliasDeclaration
+    Identifier: ' U3'
+    UnionType
+      FunctionType
+        NumberKeyword
+  TypeAliasDeclaration
+    Identifier: ' U4'
+    UnionType
+      FunctionType
+        Parameter
+          Identifier: 'foo'
+          QuestionToken
+          NumberKeyword
+        VoidKeyword
+  TypeAliasDeclaration
+    Identifier: ' U5'
+    UnionType
+      StringKeyword
+      FunctionType
+        Parameter
+          Identifier: 'number'
+          NumberKeyword
+        Parameter
+          Identifier: ' foo'
+          QuestionToken
+          StringKeyword
+        UnionType
+          VoidKeyword
+          NumberKeyword
+  TypeAliasDeclaration
+    Identifier: ' U6'
+    UnionType
+      StringKeyword
+      FunctionType
+        Parameter
+          DotDotDotToken
+          Identifier: 'args'
+          ArrayType
+            AnyKeyword
+        UnionType
+          VoidKeyword
+          NumberKeyword
+  TypeAliasDeclaration
+    Identifier: ' I1'
+    IntersectionType
+      StringKeyword
+      FunctionType
+        VoidKeyword
+  TypeAliasDeclaration
+    Identifier: ' I2'
+    IntersectionType
+      StringKeyword
+      FunctionType
+        Parameter
+          DotDotDotToken
+          Identifier: 'foo'
+          ArrayType
+            NumberKeyword
+        VoidKeyword
+  TypeAliasDeclaration
+    Identifier: ' I3'
+    IntersectionType
+      FunctionType
+        BooleanKeyword
+  TypeAliasDeclaration
+    Identifier: ' I4'
+    IntersectionType
+      FunctionType
+        IntersectionType
+          BooleanKeyword
+          LiteralType
+            NullKeyword
+  TypeAliasDeclaration
+    Identifier: ' I5'
+    IntersectionType
+      StringKeyword
+      FunctionType
+        Parameter
+          Identifier: 'any'
+          AnyKeyword
+        Parameter
+          Identifier: ' any2'
+          AnyKeyword
+        IntersectionType
+          AnyKeyword
+          AnyKeyword
+  TypeAliasDeclaration
+    Identifier: ' I6'
+    IntersectionType
+      StringKeyword
+      FunctionType
+        Parameter
+          Identifier: 'foo'
+          AnyKeyword
+        VoidKeyword
+  TypeAliasDeclaration
+    Identifier: ' M1'
+    UnionType
+      StringKeyword
+      IntersectionType
+        NumberKeyword
+        StringKeyword
+      FunctionType
+        NumberKeyword
+  TypeAliasDeclaration
+    Identifier: ' M2'
+    UnionType
+      IntersectionType
+        AnyKeyword
+        StringKeyword
+      IntersectionType
+        AnyKeyword
+        FunctionType
+          VoidKeyword
+  TypeAliasDeclaration
+    Identifier: ' M3'
+    IntersectionType
+      AnyKeyword
+      FunctionType
+        Parameter
+          Identifier: 'foo'
+          AnyKeyword
+        UnionType
+          VoidKeyword
+          FunctionType
+            IntersectionType
+              VoidKeyword
+              AnyKeyword
+  TypeAliasDeclaration
+    Identifier: ' OK1'
+    UnionType
+      StringKeyword
+      ParenthesizedType
+        NumberKeyword
+  TypeAliasDeclaration
+    Identifier: ' OK2'
+    UnionType
+      StringKeyword
+      ParenthesizedType
+        ParenthesizedType
+          NumberKeyword
+  TypeAliasDeclaration
+    Identifier: ' OK3'
+    UnionType
+      StringKeyword
+      ParenthesizedType
+        FunctionType
+          VoidKeyword
+  TypeAliasDeclaration
+    Identifier: ' OK4'
+    UnionType
+      StringKeyword
+      ParenthesizedType
+        FunctionType
+          UnionType
+            StringKeyword
+            NumberKeyword

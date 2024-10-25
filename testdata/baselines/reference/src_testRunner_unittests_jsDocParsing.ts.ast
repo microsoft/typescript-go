@@ -1,0 +1,1498 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' Harness'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' ts'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' Utils'
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+describe'
+      StringLiteral
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    describe'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  FunctionDeclaration
+                    Identifier: ' parsesCorrectly'
+                    Parameter
+                      Identifier: 'name'
+                      StringKeyword
+                    Parameter
+                      Identifier: ' content'
+                      StringKeyword
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+            it'
+                          Identifier: 'name'
+                          ArrowFunction
+                            EqualsGreaterThanToken
+                            Block
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' typeAndDiagnostics'
+                                    CallExpression
+                                      PropertyAccessExpression
+                                        Identifier: ' ts'
+                                        Identifier: 'parseJSDocTypeExpressionForTests'
+                                      Identifier: 'content'
+                              ExpressionStatement
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: '
+                assert'
+                                    Identifier: 'isTrue'
+                                  BinaryExpression
+                                    Identifier: 'typeAndDiagnostics'
+                                    AmpersandAmpersandToken
+                                    BinaryExpression
+                                      PropertyAccessExpression
+                                        PropertyAccessExpression
+                                          Identifier: ' typeAndDiagnostics'
+                                          Identifier: 'diagnostics'
+                                        Identifier: 'length'
+                                      EqualsEqualsEqualsToken
+                                      NumericLiteral
+                                  StringLiteral
+                              ExpressionStatement
+                                CallExpression
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: '
+
+                Harness'
+                                      Identifier: 'Baseline'
+                                    Identifier: 'runBaseline'
+                                  BinaryExpression
+                                    BinaryExpression
+                                      StringLiteral
+                                      PlusToken
+                                      Identifier: ' name'
+                                    PlusToken
+                                    StringLiteral
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' Utils'
+                                      Identifier: 'sourceFileToJSON'
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        NonNullExpression
+                                          Identifier: 'typeAndDiagnostics'
+                                        Identifier: 'jsDocTypeExpression'
+                                      Identifier: 'type'
+                  FunctionDeclaration
+                    Identifier: ' parsesIncorrectly'
+                    Parameter
+                      Identifier: 'name'
+                      StringKeyword
+                    Parameter
+                      Identifier: ' content'
+                      StringKeyword
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+            it'
+                          Identifier: 'name'
+                          ArrowFunction
+                            EqualsGreaterThanToken
+                            Block
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' type'
+                                    CallExpression
+                                      PropertyAccessExpression
+                                        Identifier: ' ts'
+                                        Identifier: 'parseJSDocTypeExpressionForTests'
+                                      Identifier: 'content'
+                              ExpressionStatement
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: '
+                assert'
+                                    Identifier: 'isTrue'
+                                  BinaryExpression
+                                    PrefixUnaryExpression
+                                      Identifier: 'type'
+                                    BarBarToken
+                                    BinaryExpression
+                                      PropertyAccessExpression
+                                        PropertyAccessExpression
+                                          Identifier: ' type'
+                                          Identifier: 'diagnostics'
+                                        Identifier: 'length'
+                                      GreaterThanToken
+                                      NumericLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        describe'
+                      StringLiteral
+                      ArrowFunction
+                        EqualsGreaterThanToken
+                        Block
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            parsesCorrectly'
+                              StringLiteral
+                              StringLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            parsesCorrectly'
+                              StringLiteral
+                              StringLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            parsesCorrectly'
+                              StringLiteral
+                              StringLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            parsesCorrectly'
+                              StringLiteral
+                              StringLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            parsesCorrectly'
+                              StringLiteral
+                              StringLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            parsesCorrectly'
+                              StringLiteral
+                              StringLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            parsesCorrectly'
+                              StringLiteral
+                              StringLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            parsesCorrectly'
+                              StringLiteral
+                              StringLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            parsesCorrectly'
+                              StringLiteral
+                              StringLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            parsesCorrectly'
+                              StringLiteral
+                              StringLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            parsesCorrectly'
+                              StringLiteral
+                              StringLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            parsesCorrectly'
+                              StringLiteral
+                              StringLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            parsesCorrectly'
+                              StringLiteral
+                              StringLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            parsesCorrectly'
+                              StringLiteral
+                              StringLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            parsesCorrectly'
+                              StringLiteral
+                              StringLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            parsesCorrectly'
+                              StringLiteral
+                              StringLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            parsesCorrectly'
+                              StringLiteral
+                              StringLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            parsesCorrectly'
+                              StringLiteral
+                              StringLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            parsesCorrectly'
+                              StringLiteral
+                              StringLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            parsesCorrectly'
+                              StringLiteral
+                              StringLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            parsesCorrectly'
+                              StringLiteral
+                              StringLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            parsesCorrectly'
+                              StringLiteral
+                              StringLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            parsesCorrectly'
+                              StringLiteral
+                              StringLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            parsesCorrectly'
+                              StringLiteral
+                              StringLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            parsesCorrectly'
+                              StringLiteral
+                              StringLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            parsesCorrectly'
+                              StringLiteral
+                              StringLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            parsesCorrectly'
+                              StringLiteral
+                              StringLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            parsesCorrectly'
+                              StringLiteral
+                              StringLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            parsesCorrectly'
+                              StringLiteral
+                              StringLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            parsesCorrectly'
+                              StringLiteral
+                              StringLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            parsesCorrectly'
+                              StringLiteral
+                              StringLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            parsesCorrectly'
+                              StringLiteral
+                              StringLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            parsesCorrectly'
+                              StringLiteral
+                              StringLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            parsesCorrectly'
+                              StringLiteral
+                              StringLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            parsesCorrectly'
+                              StringLiteral
+                              StringLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            parsesCorrectly'
+                              StringLiteral
+                              StringLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            parsesCorrectly'
+                              StringLiteral
+                              StringLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            parsesCorrectly'
+                              StringLiteral
+                              StringLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            parsesCorrectly'
+                              StringLiteral
+                              StringLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            parsesCorrectly'
+                              StringLiteral
+                              StringLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            parsesCorrectly'
+                              StringLiteral
+                              StringLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            parsesCorrectly'
+                              StringLiteral
+                              StringLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            parsesCorrectly'
+                              StringLiteral
+                              StringLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            parsesCorrectly'
+                              StringLiteral
+                              StringLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            parsesCorrectly'
+                              StringLiteral
+                              StringLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            parsesCorrectly'
+                              StringLiteral
+                              StringLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            parsesCorrectly'
+                              StringLiteral
+                              StringLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            parsesCorrectly'
+                              StringLiteral
+                              StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        describe'
+                      StringLiteral
+                      ArrowFunction
+                        EqualsGreaterThanToken
+                        Block
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            parsesIncorrectly'
+                              StringLiteral
+                              StringLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            parsesIncorrectly'
+                              StringLiteral
+                              StringLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            parsesIncorrectly'
+                              StringLiteral
+                              StringLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            parsesIncorrectly'
+                              StringLiteral
+                              StringLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            parsesIncorrectly'
+                              StringLiteral
+                              StringLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            parsesIncorrectly'
+                              StringLiteral
+                              StringLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            parsesIncorrectly'
+                              StringLiteral
+                              StringLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            parsesIncorrectly'
+                              StringLiteral
+                              StringLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            parsesIncorrectly'
+                              StringLiteral
+                              StringLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            parsesIncorrectly'
+                              StringLiteral
+                              StringLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            parsesIncorrectly'
+                              StringLiteral
+                              StringLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            parsesIncorrectly'
+                              StringLiteral
+                              StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    describe'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  FunctionDeclaration
+                    Identifier: ' parsesCorrectly'
+                    Parameter
+                      Identifier: 'name'
+                      StringKeyword
+                    Parameter
+                      Identifier: ' content'
+                      StringKeyword
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+            it'
+                          Identifier: 'name'
+                          ArrowFunction
+                            EqualsGreaterThanToken
+                            Block
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' comment'
+                                    NonNullExpression
+                                      CallExpression
+                                        PropertyAccessExpression
+                                          Identifier: ' ts'
+                                          Identifier: 'parseIsolatedJSDocComment'
+                                        Identifier: 'content'
+                              IfStatement
+                                PrefixUnaryExpression
+                                  Identifier: 'comment'
+                                Block
+                                  ExpressionStatement
+                                    CallExpression
+                                      PropertyAccessExpression
+                                        PropertyAccessExpression
+                                          Identifier: '
+                    ts'
+                                          Identifier: 'Debug'
+                                        Identifier: 'fail'
+                                      StringLiteral
+                              IfStatement
+                                BinaryExpression
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: 'comment'
+                                      Identifier: 'diagnostics'
+                                    Identifier: 'length'
+                                  GreaterThanToken
+                                  NumericLiteral
+                                Block
+                                  ExpressionStatement
+                                    CallExpression
+                                      PropertyAccessExpression
+                                        PropertyAccessExpression
+                                          Identifier: '
+                    ts'
+                                          Identifier: 'Debug'
+                                        Identifier: 'fail'
+                                      BinaryExpression
+                                        StringLiteral
+                                        PlusToken
+                                        PropertyAccessExpression
+                                          ElementAccessExpression
+                                            PropertyAccessExpression
+                                              Identifier: ' comment'
+                                              Identifier: 'diagnostics'
+                                            NumericLiteral
+                                          Identifier: 'messageText'
+                              ExpressionStatement
+                                CallExpression
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: '
+
+                Harness'
+                                      Identifier: 'Baseline'
+                                    Identifier: 'runBaseline'
+                                  BinaryExpression
+                                    BinaryExpression
+                                      StringLiteral
+                                      PlusToken
+                                      Identifier: ' name'
+                                    PlusToken
+                                    StringLiteral
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' JSON'
+                                      Identifier: 'stringify'
+                                    PropertyAccessExpression
+                                      Identifier: 'comment'
+                                      Identifier: 'jsDoc'
+                                    ArrowFunction
+                                      Parameter
+                                        Identifier: '_'
+                                      Parameter
+                                        Identifier: ' v'
+                                      EqualsGreaterThanToken
+                                      ConditionalExpression
+                                        BinaryExpression
+                                          Identifier: ' v'
+                                          AmpersandAmpersandToken
+                                          BinaryExpression
+                                            PropertyAccessExpression
+                                              Identifier: ' v'
+                                              Identifier: 'pos'
+                                            ExclamationEqualsEqualsToken
+                                            Identifier: ' undefined'
+                                        QuestionToken
+                                        CallExpression
+                                          PropertyAccessExpression
+                                            Identifier: ' JSON'
+                                            Identifier: 'parse'
+                                          CallExpression
+                                            PropertyAccessExpression
+                                              Identifier: 'Utils'
+                                              Identifier: 'sourceFileToJSON'
+                                            Identifier: 'v'
+                                        ColonToken
+                                        Identifier: ' v'
+                                    NumericLiteral
+                  FunctionDeclaration
+                    Identifier: ' parsesIncorrectly'
+                    Parameter
+                      Identifier: 'name'
+                      StringKeyword
+                    Parameter
+                      Identifier: ' content'
+                      StringKeyword
+                    Block
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+            it'
+                          Identifier: 'name'
+                          ArrowFunction
+                            EqualsGreaterThanToken
+                            Block
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' type'
+                                    CallExpression
+                                      PropertyAccessExpression
+                                        Identifier: ' ts'
+                                        Identifier: 'parseIsolatedJSDocComment'
+                                      Identifier: 'content'
+                              ExpressionStatement
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: '
+                assert'
+                                    Identifier: 'isTrue'
+                                  BinaryExpression
+                                    PrefixUnaryExpression
+                                      Identifier: 'type'
+                                    BarBarToken
+                                    BinaryExpression
+                                      PropertyAccessExpression
+                                        PropertyAccessExpression
+                                          Identifier: ' type'
+                                          Identifier: 'diagnostics'
+                                        Identifier: 'length'
+                                      GreaterThanToken
+                                      NumericLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        describe'
+                      StringLiteral
+                      ArrowFunction
+                        EqualsGreaterThanToken
+                        Block
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            parsesIncorrectly'
+                              StringLiteral
+                              NoSubstitutionTemplateLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            parsesIncorrectly'
+                              StringLiteral
+                              NoSubstitutionTemplateLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            parsesIncorrectly'
+                              StringLiteral
+                              NoSubstitutionTemplateLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            parsesIncorrectly'
+                              StringLiteral
+                              NoSubstitutionTemplateLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            parsesIncorrectly'
+                              StringLiteral
+                              NoSubstitutionTemplateLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            parsesIncorrectly'
+                              StringLiteral
+                              NoSubstitutionTemplateLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+
+            parsesIncorrectly'
+                              StringLiteral
+                              NoSubstitutionTemplateLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+
+            parsesIncorrectly'
+                              StringLiteral
+                              NoSubstitutionTemplateLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+
+        describe'
+                      StringLiteral
+                      ArrowFunction
+                        EqualsGreaterThanToken
+                        Block
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            parsesCorrectly'
+                              StringLiteral
+                              StringLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            parsesCorrectly'
+                              StringLiteral
+                              StringLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            parsesCorrectly'
+                              StringLiteral
+                              NoSubstitutionTemplateLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+
+            parsesCorrectly'
+                              StringLiteral
+                              NoSubstitutionTemplateLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+
+            parsesCorrectly'
+                              StringLiteral
+                              NoSubstitutionTemplateLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+
+            parsesCorrectly'
+                              StringLiteral
+                              StringLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+
+            parsesCorrectly'
+                              StringLiteral
+                              NoSubstitutionTemplateLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+
+            parsesCorrectly'
+                              StringLiteral
+                              NoSubstitutionTemplateLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+
+            parsesCorrectly'
+                              StringLiteral
+                              NoSubstitutionTemplateLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+
+            parsesCorrectly'
+                              StringLiteral
+                              NoSubstitutionTemplateLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+
+            parsesCorrectly'
+                              StringLiteral
+                              NoSubstitutionTemplateLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+
+            parsesCorrectly'
+                              StringLiteral
+                              NoSubstitutionTemplateLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+
+            parsesCorrectly'
+                              StringLiteral
+                              NoSubstitutionTemplateLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+
+            parsesCorrectly'
+                              StringLiteral
+                              NoSubstitutionTemplateLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+
+            parsesCorrectly'
+                              StringLiteral
+                              NoSubstitutionTemplateLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+
+            parsesCorrectly'
+                              StringLiteral
+                              NoSubstitutionTemplateLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+
+            parsesCorrectly'
+                              StringLiteral
+                              NoSubstitutionTemplateLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+
+            parsesCorrectly'
+                              StringLiteral
+                              NoSubstitutionTemplateLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+
+            parsesCorrectly'
+                              StringLiteral
+                              NoSubstitutionTemplateLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+
+            parsesCorrectly'
+                              StringLiteral
+                              NoSubstitutionTemplateLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+
+            parsesCorrectly'
+                              StringLiteral
+                              NoSubstitutionTemplateLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+
+            parsesCorrectly'
+                              StringLiteral
+                              NoSubstitutionTemplateLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+
+            parsesCorrectly'
+                              StringLiteral
+                              NoSubstitutionTemplateLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+
+            parsesCorrectly'
+                              StringLiteral
+                              NoSubstitutionTemplateLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+
+            parsesCorrectly'
+                              StringLiteral
+                              NoSubstitutionTemplateLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+
+            parsesCorrectly'
+                              StringLiteral
+                              NoSubstitutionTemplateLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+
+            parsesCorrectly'
+                              StringLiteral
+                              NoSubstitutionTemplateLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+
+            parsesCorrectly'
+                              StringLiteral
+                              NoSubstitutionTemplateLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+
+            parsesCorrectly'
+                              StringLiteral
+                              NoSubstitutionTemplateLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+
+            parsesCorrectly'
+                              StringLiteral
+                              NoSubstitutionTemplateLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+
+            parsesCorrectly'
+                              StringLiteral
+                              NoSubstitutionTemplateLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+
+            parsesCorrectly'
+                              StringLiteral
+                              NoSubstitutionTemplateLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            parsesCorrectly'
+                              StringLiteral
+                              NoSubstitutionTemplateLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+
+            parsesCorrectly'
+                              StringLiteral
+                              NoSubstitutionTemplateLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+
+            parsesCorrectly'
+                              StringLiteral
+                              NoSubstitutionTemplateLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+
+            parsesCorrectly'
+                              StringLiteral
+                              NoSubstitutionTemplateLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+
+            parsesCorrectly'
+                              StringLiteral
+                              NoSubstitutionTemplateLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+
+            parsesCorrectly'
+                              StringLiteral
+                              NoSubstitutionTemplateLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            parsesCorrectly'
+                              StringLiteral
+                              NoSubstitutionTemplateLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            parsesCorrectly'
+                              StringLiteral
+                              NoSubstitutionTemplateLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+
+            parsesCorrectly'
+                              StringLiteral
+                              NoSubstitutionTemplateLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            parsesCorrectly'
+                              StringLiteral
+                              NoSubstitutionTemplateLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            parsesCorrectly'
+                              StringLiteral
+                              NoSubstitutionTemplateLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+
+            parsesCorrectly'
+                              StringLiteral
+                              NoSubstitutionTemplateLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            parsesCorrectly'
+                              StringLiteral
+                              NoSubstitutionTemplateLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            parsesCorrectly'
+                              StringLiteral
+                              NoSubstitutionTemplateLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            parsesCorrectly'
+                              StringLiteral
+                              NoSubstitutionTemplateLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            parsesCorrectly'
+                              StringLiteral
+                              NoSubstitutionTemplateLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            parsesCorrectly'
+                              StringLiteral
+                              NoSubstitutionTemplateLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            parsesCorrectly'
+                              StringLiteral
+                              NoSubstitutionTemplateLiteral
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            parsesCorrectly'
+                              StringLiteral
+                              NoSubstitutionTemplateLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    describe'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        it'
+                      StringLiteral
+                      ArrowFunction
+                        EqualsGreaterThanToken
+                        Block
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' root'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' ts'
+                                    Identifier: 'createSourceFile'
+                                  StringLiteral
+                                  StringLiteral
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' ts'
+                                      Identifier: 'ScriptTarget'
+                                    Identifier: 'ES5'
+                                  TrueKeyword
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+            assert'
+                                Identifier: 'isDefined'
+                              Identifier: 'root'
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+            assert'
+                                Identifier: 'equal'
+                              PropertyAccessExpression
+                                Identifier: 'root'
+                                Identifier: 'kind'
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'SyntaxKind'
+                                Identifier: 'SourceFile'
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' first'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' root'
+                                    Identifier: 'getFirstToken'
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+            assert'
+                                Identifier: 'isDefined'
+                              Identifier: 'first'
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+            assert'
+                                Identifier: 'equal'
+                              PropertyAccessExpression
+                                Identifier: 'first'
+                                Identifier: 'kind'
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'SyntaxKind'
+                                Identifier: 'VarKeyword'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    describe'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        it'
+                      StringLiteral
+                      ArrowFunction
+                        EqualsGreaterThanToken
+                        Block
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' root'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' ts'
+                                    Identifier: 'createSourceFile'
+                                  StringLiteral
+                                  StringLiteral
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' ts'
+                                      Identifier: 'ScriptTarget'
+                                    Identifier: 'ES5'
+                                  TrueKeyword
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+            assert'
+                                Identifier: 'isDefined'
+                              Identifier: 'root'
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' last'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' root'
+                                    Identifier: 'getLastToken'
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+            assert'
+                                Identifier: 'isDefined'
+                              Identifier: 'last'
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+            assert'
+                                Identifier: 'equal'
+                              PropertyAccessExpression
+                                Identifier: 'last'
+                                Identifier: 'kind'
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: ' ts'
+                                  Identifier: 'SyntaxKind'
+                                Identifier: 'EndOfFileToken'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    describe'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        it'
+                      StringLiteral
+                      ArrowFunction
+                        EqualsGreaterThanToken
+                        Block
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' root'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' ts'
+                                    Identifier: 'createSourceFile'
+                                  StringLiteral
+                                  StringLiteral
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' ts'
+                                      Identifier: 'ScriptTarget'
+                                    Identifier: 'ES5'
+                                  FalseKeyword
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                ElementAccessExpression
+                                  PropertyAccessExpression
+                                    Identifier: '
+            root'
+                                    Identifier: 'statements'
+                                  NumericLiteral
+                                Identifier: 'getStart'
+                              Identifier: 'root'
+                              TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    describe'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        it'
+                      StringLiteral
+                      ArrowFunction
+                        EqualsGreaterThanToken
+                        Block
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' doc'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' ts'
+                                    Identifier: 'parseIsolatedJSDocComment'
+                                  StringLiteral
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+            assert'
+                                Identifier: 'equal'
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  ParenthesizedExpression
+                                    AsExpression
+                                      ElementAccessExpression
+                                        PropertyAccessExpression
+                                          PropertyAccessExpression
+                                            Identifier: 'doc'
+                                            QuestionDotToken
+                                            Identifier: 'jsDoc'
+                                          Identifier: 'tags'
+                                        QuestionDotToken
+                                        NumericLiteral
+                                      TypeReference
+                                        QualifiedName
+                                          Identifier: ' ts'
+                                          Identifier: 'JSDocTemplateTag'
+                                  Identifier: 'typeParameters'
+                                Identifier: 'length'
+                              NumericLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    describe'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        it'
+                      StringLiteral
+                      ArrowFunction
+                        EqualsGreaterThanToken
+                        Block
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' sourceText'
+                                NoSubstitutionTemplateLiteral
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' root'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' ts'
+                                    Identifier: 'createSourceFile'
+                                  StringLiteral
+                                  Identifier: ' sourceText'
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' ts'
+                                      Identifier: 'ScriptTarget'
+                                    Identifier: 'ES5'
+                                  TrueKeyword
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                ArrayBindingPattern
+                                  BindingElement
+                                    Identifier: 'classDecl'
+                                PropertyAccessExpression
+                                  Identifier: ' root'
+                                  Identifier: 'statements'
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                ArrayBindingPattern
+                                  BindingElement
+                                    Identifier: 'seeTag'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' ts'
+                                    Identifier: 'getJSDocTags'
+                                  Identifier: 'classDecl'
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+
+            assert'
+                                Identifier: 'equal'
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: 'ts'
+                                  Identifier: 'getTextOfJSDocComment'
+                                PropertyAccessExpression
+                                  Identifier: 'seeTag'
+                                  Identifier: 'comment'
+                              StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    describe'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        it'
+                      StringLiteral
+                      ArrowFunction
+                        EqualsGreaterThanToken
+                        Block
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' sourceText'
+                                NoSubstitutionTemplateLiteral
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' root'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' ts'
+                                    Identifier: 'createSourceFile'
+                                  StringLiteral
+                                  Identifier: ' sourceText'
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: ' ts'
+                                      Identifier: 'ScriptTarget'
+                                    Identifier: 'ES5'
+                                  TrueKeyword
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                ArrayBindingPattern
+                                  BindingElement
+                                    Identifier: 'classDecl'
+                                PropertyAccessExpression
+                                  Identifier: ' root'
+                                  Identifier: 'statements'
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                ArrayBindingPattern
+                                  BindingElement
+                                    Identifier: 'seeTag'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: ' ts'
+                                    Identifier: 'getJSDocTags'
+                                  Identifier: 'classDecl'
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+
+            assert'
+                                Identifier: 'equal'
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: 'ts'
+                                  Identifier: 'getTextOfJSDocComment'
+                                PropertyAccessExpression
+                                  Identifier: 'seeTag'
+                                  Identifier: 'comment'
+                              StringLiteral

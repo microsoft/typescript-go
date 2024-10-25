@@ -1,0 +1,22 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' declare'
+    Parameter
+      Identifier: 'x'
+      AnyKeyword
+    Parameter
+      DotDotDotToken
+      Identifier: 'ys'
+      ArrayType
+        AnyKeyword
+    Block
+  ExpressionStatement
+    TaggedTemplateExpression
+      Identifier: '
+
+declare'
+      TemplateExpression
+        TemplateHead
+        TemplateSpan
+          NumericLiteral
+          TemplateTail

@@ -1,0 +1,66 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Bar'
+    PropertyDeclaration
+      Identifier: ' x'
+  ClassDeclaration
+    Identifier: ' Foo'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Bar'
+    PropertyDeclaration
+      Identifier: ' y'
+  ClassDeclaration
+    Identifier: ' FooArrayIterator'
+    MethodDeclaration
+      Identifier: '
+    next'
+      Block
+        ReturnStatement
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+            value'
+              ArrayLiteralExpression
+                NewExpression
+                  Identifier: ' Foo'
+            PropertyAssignment
+              Identifier: '
+            done'
+              FalseKeyword
+    MethodDeclaration
+      ComputedPropertyName
+        PropertyAccessExpression
+          Identifier: 'Symbol'
+          Identifier: 'iterator'
+      Block
+        ReturnStatement
+          ThisKeyword
+  FunctionDeclaration
+    Identifier: ' fun'
+    Parameter
+      DotDotDotToken
+      ArrayBindingPattern
+        BindingElement
+          ArrayBindingPattern
+            BindingElement
+              Identifier: 'a'
+              NewExpression
+                Identifier: ' Foo'
+        BindingElement
+          Identifier: ' b'
+          ArrayLiteralExpression
+            NewExpression
+              Identifier: ' Foo'
+      ArrayType
+        ArrayType
+          TypeReference
+            Identifier: ' Bar'
+    Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+fun'
+      SpreadElement
+        NewExpression
+          Identifier: ' FooArrayIterator'

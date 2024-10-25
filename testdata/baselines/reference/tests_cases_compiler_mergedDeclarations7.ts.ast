@@ -1,0 +1,57 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      ModuleDeclaration
+        Identifier: ' passport'
+        ModuleBlock
+          InterfaceDeclaration
+            Identifier: ' Passport'
+            MethodSignature
+              Identifier: '
+            use'
+              ThisType
+          InterfaceDeclaration
+            Identifier: ' PassportStatic'
+            HeritageClause
+              ExpressionWithTypeArguments
+                Identifier: ' Passport'
+            PropertySignature
+              Identifier: '
+            Passport'
+              TypeLiteral
+                ConstructSignature
+                  TypeReference
+                    Identifier: ' Passport'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' passport'
+            TypeReference
+              QualifiedName
+                Identifier: ' passport'
+                Identifier: 'PassportStatic'
+      ExportAssignment
+        Identifier: ' passport'
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' passport'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' Passport'
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p'
+        TypeReference
+          Identifier: ' Passport'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' passport'
+            Identifier: 'use'

@@ -1,0 +1,40 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeLiteral
+          PropertySignature
+            Identifier: '
+    __foo'
+            LiteralType
+              NumericLiteral
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+
+a'
+      Identifier: '___foo'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        TypeLiteral
+          PropertySignature
+            Identifier: '
+    __foo'
+            NumberKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+b'
+      EqualsToken
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    ___foo'
+          NumericLiteral

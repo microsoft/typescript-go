@@ -1,0 +1,47 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' g'
+        FunctionType
+          TypeParameter
+            Identifier: 'T'
+          TypeParameter
+            Identifier: ' U'
+          TypeParameter
+            Identifier: ' V'
+          TypeReference
+            Identifier: ' Generator'
+            TypeReference
+              Identifier: 'T'
+            TypeReference
+              Identifier: ' U'
+            TypeReference
+              Identifier: ' V'
+  FunctionDeclaration
+    AsteriskToken
+    Identifier: ' f'
+    TypeReference
+      Identifier: ' Generator'
+      StringKeyword
+      VoidKeyword
+      UnknownKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x1'
+            YieldExpression
+              AsteriskToken
+              CallExpression
+                Identifier: ' g'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x2'
+            NumberKeyword
+            YieldExpression
+              AsteriskToken
+              CallExpression
+                Identifier: ' g'

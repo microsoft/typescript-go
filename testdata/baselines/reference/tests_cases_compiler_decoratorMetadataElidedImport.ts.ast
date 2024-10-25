@@ -1,0 +1,47 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' Observable'
+    TypeParameter
+      Identifier: 'T'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' Observable'
+    StringLiteral
+  FunctionDeclaration
+    Identifier: ' whatever'
+    Parameter
+      Identifier: 'a'
+      AnyKeyword
+    Parameter
+      Identifier: ' b'
+      AnyKeyword
+    Parameter
+      Identifier: ' c'
+      AnyKeyword
+    Block
+  ClassDeclaration
+    Identifier: ' Test'
+    MethodDeclaration
+      Identifier: '
+    foo'
+      Parameter
+        Decorator
+          Identifier: 'whatever'
+        Identifier: ' arg1'
+        StringKeyword
+      Parameter
+        Decorator
+          Identifier: 'whatever'
+        Identifier: ' arg2'
+        NumberKeyword
+      TypeReference
+        Identifier: ' Observable'
+        StringKeyword
+      Block
+        ReturnStatement
+          NonNullExpression
+            NullKeyword

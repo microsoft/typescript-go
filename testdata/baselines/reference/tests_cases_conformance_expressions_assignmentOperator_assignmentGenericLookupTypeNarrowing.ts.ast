@@ -1,0 +1,71 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' mappedObject'
+        MappedType
+          TypeParameter
+            Identifier: 'K'
+            LiteralType
+              StringLiteral
+          UnionType
+            LiteralType
+              NullKeyword
+            TypeLiteral
+              PropertySignature
+                Identifier: 'x'
+                StringKeyword
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: 'foo'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: 'x'
+                StringLiteral
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    UnionType
+      LiteralType
+        NullKeyword
+      TypeReference
+        Identifier: ' T'
+  FunctionDeclaration
+    Identifier: ' bar'
+    TypeParameter
+      Identifier: 'K'
+      LiteralType
+        StringLiteral
+    Parameter
+      Identifier: 'key'
+      TypeReference
+        Identifier: ' K'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' element'
+            CallExpression
+              Identifier: ' foo'
+              ElementAccessExpression
+                Identifier: 'mappedObject'
+                Identifier: 'key'
+      IfStatement
+        BinaryExpression
+          Identifier: 'element'
+          EqualsEqualsToken
+          NullKeyword
+        ReturnStatement
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            PropertyAccessExpression
+              Identifier: ' element'
+              Identifier: 'x'

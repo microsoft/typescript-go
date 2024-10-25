@@ -1,0 +1,15 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v'
+        StringKeyword
+  ForOfStatement
+    Identifier: 'v'
+    ArrayLiteralExpression
+      StringLiteral
+    Block
+  ForOfStatement
+    Identifier: 'v'
+    StringLiteral
+    Block

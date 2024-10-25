@@ -1,0 +1,29 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' InterfaceWithMultipleTypars'
+    TypeParameter
+      Identifier: 'A'
+    TypeParameter
+      Identifier: ' A'
+    MethodSignature
+      Identifier: ' // should error
+	bar'
+      VoidKeyword
+  InterfaceDeclaration
+    Identifier: ' InterfaceWithSomeTypars'
+    TypeParameter
+      Identifier: 'B'
+    MethodSignature
+      Identifier: ' // should not error
+	bar'
+      VoidKeyword
+  InterfaceDeclaration
+    Identifier: ' InterfaceWithSomeTypars'
+    TypeParameter
+      Identifier: 'C'
+    TypeParameter
+      Identifier: ' C'
+    MethodSignature
+      Identifier: ' // should error
+	bar2'
+      VoidKeyword

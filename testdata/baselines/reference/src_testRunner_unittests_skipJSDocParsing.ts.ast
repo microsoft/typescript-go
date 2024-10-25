@@ -1,0 +1,261 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' Diff'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' Harness'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' ts'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' Utils'
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+describe'
+      StringLiteral
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' kinds'
+                ArrayLiteralExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: '
+        ts'
+                      Identifier: 'JSDocParsingMode'
+                    Identifier: 'ParseAll'
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: '
+        ts'
+                      Identifier: 'JSDocParsingMode'
+                    Identifier: 'ParseForTypeErrors'
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: '
+        ts'
+                      Identifier: 'JSDocParsingMode'
+                    Identifier: 'ParseForTypeInfo'
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: '
+        ts'
+                      Identifier: 'JSDocParsingMode'
+                    Identifier: 'ParseNone'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' filenames'
+                ArrayLiteralExpression
+                  StringLiteral
+                  StringLiteral
+          FunctionDeclaration
+            Identifier: ' diffSourceFiles'
+            Parameter
+              Identifier: 'name'
+              StringKeyword
+            Parameter
+              Identifier: ' content'
+              StringKeyword
+            Block
+              ForOfStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' jsDocParsingMode'
+                Identifier: ' kinds'
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' kindName'
+                        CallExpression
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: ' ts'
+                              Identifier: 'Debug'
+                            Identifier: 'formatEnum'
+                          Identifier: 'jsDocParsingMode'
+                          PropertyAccessExpression
+                            ParenthesizedExpression
+                              AsExpression
+                                Identifier: 'ts'
+                                AnyKeyword
+                            Identifier: 'JSDocParsingMode'
+                  ForOfStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' filename'
+                    Identifier: ' filenames'
+                    Block
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' testName'
+                            TemplateExpression
+                              TemplateHead
+                              TemplateSpan
+                                Identifier: 'name'
+                                TemplateMiddle
+                              TemplateSpan
+                                Identifier: 'kindName'
+                                TemplateMiddle
+                              TemplateSpan
+                                Identifier: 'filename'
+                                TemplateTail
+                      ExpressionStatement
+                        CallExpression
+                          Identifier: '
+                it'
+                          Identifier: 'testName'
+                          ArrowFunction
+                            EqualsGreaterThanToken
+                            Block
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' sourceFile'
+                                    CallExpression
+                                      PropertyAccessExpression
+                                        Identifier: ' ts'
+                                        Identifier: 'createSourceFile'
+                                      Identifier: 'filename'
+                                      Identifier: ' content'
+                                      ObjectLiteralExpression
+                                        PropertyAssignment
+                                          Identifier: ' languageVersion'
+                                          PropertyAccessExpression
+                                            PropertyAccessExpression
+                                              Identifier: ' ts'
+                                              Identifier: 'ScriptTarget'
+                                            Identifier: 'ESNext'
+                                        PropertyAssignment
+                                          Identifier: ' jsDocParsingMode'
+                                          Identifier: ' undefined'
+                              ExpressionStatement
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: '
+                    assert'
+                                    Identifier: 'isTrue'
+                                  BinaryExpression
+                                    Identifier: 'sourceFile'
+                                    AmpersandAmpersandToken
+                                    BinaryExpression
+                                      PropertyAccessExpression
+                                        PropertyAccessExpression
+                                          Identifier: ' sourceFile'
+                                          Identifier: 'parseDiagnostics'
+                                        Identifier: 'length'
+                                      EqualsEqualsEqualsToken
+                                      NumericLiteral
+                                  StringLiteral
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' sourceFileSkipped'
+                                    CallExpression
+                                      PropertyAccessExpression
+                                        Identifier: ' ts'
+                                        Identifier: 'createSourceFile'
+                                      Identifier: 'filename'
+                                      Identifier: ' content'
+                                      ObjectLiteralExpression
+                                        PropertyAssignment
+                                          Identifier: ' languageVersion'
+                                          PropertyAccessExpression
+                                            PropertyAccessExpression
+                                              Identifier: ' ts'
+                                              Identifier: 'ScriptTarget'
+                                            Identifier: 'ESNext'
+                                        ShorthandPropertyAssignment
+                                          Identifier: ' jsDocParsingMode'
+                              ExpressionStatement
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: '
+                    assert'
+                                    Identifier: 'isTrue'
+                                  BinaryExpression
+                                    Identifier: 'sourceFileSkipped'
+                                    AmpersandAmpersandToken
+                                    BinaryExpression
+                                      PropertyAccessExpression
+                                        PropertyAccessExpression
+                                          Identifier: ' sourceFileSkipped'
+                                          Identifier: 'parseDiagnostics'
+                                        Identifier: 'length'
+                                      EqualsEqualsEqualsToken
+                                      NumericLiteral
+                                  StringLiteral
+                              VariableStatement
+                                VariableDeclarationList
+                                  VariableDeclaration
+                                    Identifier: ' patch'
+                                    CallExpression
+                                      PropertyAccessExpression
+                                        Identifier: ' Diff'
+                                        Identifier: 'createTwoFilesPatch'
+                                      StringLiteral
+                                      Identifier: ' kindName'
+                                      CallExpression
+                                        PropertyAccessExpression
+                                          Identifier: ' Utils'
+                                          Identifier: 'sourceFileToJSON'
+                                        Identifier: 'sourceFile'
+                                      CallExpression
+                                        PropertyAccessExpression
+                                          Identifier: ' Utils'
+                                          Identifier: 'sourceFileToJSON'
+                                        Identifier: 'sourceFileSkipped'
+                              ExpressionStatement
+                                CallExpression
+                                  PropertyAccessExpression
+                                    PropertyAccessExpression
+                                      Identifier: '
+                    Harness'
+                                      Identifier: 'Baseline'
+                                    Identifier: 'runBaseline'
+                                  BinaryExpression
+                                    BinaryExpression
+                                      StringLiteral
+                                      PlusToken
+                                      Identifier: ' testName'
+                                    PlusToken
+                                    StringLiteral
+                                  Identifier: ' patch'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    diffSourceFiles'
+              StringLiteral
+              NoSubstitutionTemplateLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    diffSourceFiles'
+              StringLiteral
+              NoSubstitutionTemplateLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    diffSourceFiles'
+              StringLiteral
+              NoSubstitutionTemplateLiteral

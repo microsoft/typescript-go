@@ -1,0 +1,44 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' FilterManager'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' _filterProviders'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' index'
+          TypeReference
+            Identifier: ' IFilterProvider'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' _filterProviders2'
+      TypeLiteral
+        IndexSignature
+          Parameter
+            Identifier: 'index'
+            NumberKeyword
+          TypeReference
+            Identifier: ' IFilterProvider'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' _filterProviders3'
+      TypeLiteral
+        CallSignature
+          Parameter
+            Identifier: 'index'
+            NumberKeyword
+          TypeReference
+            Identifier: ' IFilterProvider'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' _filterProviders4'
+      FunctionType
+        Parameter
+          Identifier: 'index'
+          NumberKeyword
+        TypeReference
+          Identifier: ' IFilterProvider'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' IFilterProvider'

@@ -1,0 +1,10 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TaggedTemplateExpression
+          ObjectLiteralExpression
+          NoSubstitutionTemplateLiteral
+  ExpressionStatement
+    NumericLiteral

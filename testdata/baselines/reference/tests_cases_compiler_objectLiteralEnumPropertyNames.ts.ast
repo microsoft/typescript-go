@@ -1,0 +1,199 @@
+SourceFile
+  EnumDeclaration
+    Identifier: ' Strs'
+    EnumMember
+      Identifier: '
+    A'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    B'
+      StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' TestStrs'
+    MappedType
+      TypeParameter
+        Identifier: 'key'
+        TypeReference
+          Identifier: ' Strs'
+      StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TypeReference
+          Identifier: ' TestStrs'
+        ObjectLiteralExpression
+          PropertyAssignment
+            ComputedPropertyName
+              PropertyAccessExpression
+                Identifier: 'Strs'
+                Identifier: 'A'
+            StringLiteral
+          PropertyAssignment
+            ComputedPropertyName
+              PropertyAccessExpression
+                Identifier: 'Strs'
+                Identifier: 'B'
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ux'
+        ObjectLiteralExpression
+          PropertyAssignment
+            ComputedPropertyName
+              PropertyAccessExpression
+                Identifier: 'Strs'
+                Identifier: 'A'
+            StringLiteral
+          PropertyAssignment
+            ComputedPropertyName
+              PropertyAccessExpression
+                Identifier: 'Strs'
+                Identifier: 'B'
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        TypeReference
+          Identifier: ' TestStrs'
+        ObjectLiteralExpression
+          PropertyAssignment
+            ComputedPropertyName
+              StringLiteral
+            StringLiteral
+          PropertyAssignment
+            ComputedPropertyName
+              StringLiteral
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' z'
+        TypeReference
+          Identifier: ' TestStrs'
+        ObjectLiteralExpression
+          PropertyAssignment
+            ComputedPropertyName
+              Identifier: 'a'
+            StringLiteral
+          PropertyAssignment
+            ComputedPropertyName
+              Identifier: 'b'
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' uz'
+        ObjectLiteralExpression
+          PropertyAssignment
+            ComputedPropertyName
+              Identifier: 'a'
+            StringLiteral
+          PropertyAssignment
+            ComputedPropertyName
+              Identifier: 'b'
+            StringLiteral
+  EnumDeclaration
+    Identifier: ' Nums'
+    EnumMember
+      Identifier: '
+    A'
+    EnumMember
+      Identifier: '
+    B'
+  TypeAliasDeclaration
+    Identifier: ' TestNums'
+    TypeLiteral
+      PropertySignature
+        NumericLiteral
+        NumberKeyword
+      PropertySignature
+        NumericLiteral
+        NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' n'
+        TypeReference
+          Identifier: ' TestNums'
+        ObjectLiteralExpression
+          PropertyAssignment
+            ComputedPropertyName
+              PropertyAccessExpression
+                Identifier: 'Nums'
+                Identifier: 'A'
+            NumericLiteral
+          PropertyAssignment
+            ComputedPropertyName
+              PropertyAccessExpression
+                Identifier: 'Nums'
+                Identifier: 'B'
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' un'
+        ObjectLiteralExpression
+          PropertyAssignment
+            ComputedPropertyName
+              PropertyAccessExpression
+                Identifier: 'Nums'
+                Identifier: 'A'
+            NumericLiteral
+          PropertyAssignment
+            ComputedPropertyName
+              PropertyAccessExpression
+                Identifier: 'Nums'
+                Identifier: 'B'
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' an'
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' bn'
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' m'
+        TypeReference
+          Identifier: ' TestNums'
+        ObjectLiteralExpression
+          PropertyAssignment
+            ComputedPropertyName
+              Identifier: 'an'
+            NumericLiteral
+          PropertyAssignment
+            ComputedPropertyName
+              Identifier: 'bn'
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' um'
+        ObjectLiteralExpression
+          PropertyAssignment
+            ComputedPropertyName
+              Identifier: 'an'
+            NumericLiteral
+          PropertyAssignment
+            ComputedPropertyName
+              Identifier: 'bn'
+            NumericLiteral

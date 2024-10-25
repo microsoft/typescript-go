@@ -1,0 +1,783 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' ft1'
+    TypeParameter
+      Identifier: 'T'
+      StringKeyword
+    Parameter
+      Identifier: 's'
+      StringKeyword
+    Parameter
+      Identifier: ' n'
+      NumberKeyword
+    Parameter
+      Identifier: ' u'
+      UnionType
+        LiteralType
+          StringLiteral
+        LiteralType
+          StringLiteral
+        LiteralType
+          StringLiteral
+    Parameter
+      Identifier: ' t'
+      TypeReference
+        Identifier: ' T'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c1'
+            TemplateExpression
+              TemplateHead
+              TemplateSpan
+                Identifier: 's'
+                TemplateTail
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c2'
+            TemplateExpression
+              TemplateHead
+              TemplateSpan
+                Identifier: 'n'
+                TemplateTail
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c3'
+            TemplateExpression
+              TemplateHead
+              TemplateSpan
+                Identifier: 'u'
+                TemplateTail
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c4'
+            TemplateExpression
+              TemplateHead
+              TemplateSpan
+                Identifier: 't'
+                TemplateTail
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' d1'
+            TemplateLiteralType
+              TemplateHead
+              TemplateLiteralTypeSpan
+                StringKeyword
+                TemplateTail
+            TemplateExpression
+              TemplateHead
+              TemplateSpan
+                Identifier: 's'
+                TemplateTail
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' d2'
+            TemplateLiteralType
+              TemplateHead
+              TemplateLiteralTypeSpan
+                NumberKeyword
+                TemplateTail
+            TemplateExpression
+              TemplateHead
+              TemplateSpan
+                Identifier: 'n'
+                TemplateTail
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' d3'
+            TemplateLiteralType
+              TemplateHead
+              TemplateLiteralTypeSpan
+                UnionType
+                  LiteralType
+                    StringLiteral
+                  LiteralType
+                    StringLiteral
+                  LiteralType
+                    StringLiteral
+                TemplateTail
+            TemplateExpression
+              TemplateHead
+              TemplateSpan
+                Identifier: 'u'
+                TemplateTail
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' d4'
+            TemplateLiteralType
+              TemplateHead
+              TemplateLiteralTypeSpan
+                TypeReference
+                  Identifier: 'T'
+                TemplateTail
+            TemplateExpression
+              TemplateHead
+              TemplateSpan
+                Identifier: 't'
+                TemplateTail
+  FunctionDeclaration
+    Identifier: ' ft2'
+    Parameter
+      Identifier: 's'
+      StringKeyword
+    Block
+      ReturnStatement
+        TemplateExpression
+          TemplateHead
+          TemplateSpan
+            Identifier: 's'
+            TemplateTail
+  FunctionDeclaration
+    Identifier: ' ft10'
+    Parameter
+      Identifier: 's'
+      StringKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c1'
+            TemplateExpression
+              TemplateHead
+              TemplateSpan
+                Identifier: 's'
+                TemplateTail
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' v1'
+            Identifier: ' c1'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c2'
+            Identifier: ' c1'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' v2'
+            Identifier: ' c2'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c3'
+            TemplateLiteralType
+              TemplateHead
+              TemplateLiteralTypeSpan
+                StringKeyword
+                TemplateTail
+            TemplateExpression
+              TemplateHead
+              TemplateSpan
+                Identifier: 's'
+                TemplateTail
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' v3'
+            Identifier: ' c3'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c4'
+            TemplateLiteralType
+              TemplateHead
+              TemplateLiteralTypeSpan
+                StringKeyword
+                TemplateTail
+            Identifier: ' c1'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' v4'
+            Identifier: ' c4'
+  FunctionDeclaration
+    Identifier: ' ft11'
+    Parameter
+      Identifier: 's'
+      StringKeyword
+    Parameter
+      Identifier: ' cond'
+      BooleanKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c1'
+            ConditionalExpression
+              Identifier: ' cond'
+              QuestionToken
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  Identifier: 's'
+                  TemplateTail
+              ColonToken
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  Identifier: 's'
+                  TemplateTail
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c2'
+            UnionType
+              TemplateLiteralType
+                TemplateHead
+                TemplateLiteralTypeSpan
+                  StringKeyword
+                  TemplateTail
+              TemplateLiteralType
+                TemplateHead
+                TemplateLiteralTypeSpan
+                  StringKeyword
+                  TemplateTail
+            Identifier: ' c1'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c3'
+            ConditionalExpression
+              Identifier: ' cond'
+              QuestionToken
+              Identifier: ' c1'
+              ColonToken
+              Identifier: ' c2'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c4'
+            ConditionalExpression
+              Identifier: ' cond'
+              QuestionToken
+              Identifier: ' c3'
+              ColonToken
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  Identifier: 's'
+                  TemplateTail
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c5'
+            UnionType
+              TemplateLiteralType
+                TemplateHead
+                TemplateLiteralTypeSpan
+                  StringKeyword
+                  TemplateTail
+              TemplateLiteralType
+                TemplateHead
+                TemplateLiteralTypeSpan
+                  StringKeyword
+                  TemplateTail
+              TemplateLiteralType
+                TemplateHead
+                TemplateLiteralTypeSpan
+                  StringKeyword
+                  TemplateTail
+            Identifier: ' c4'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' v1'
+            Identifier: ' c1'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' v2'
+            Identifier: ' c2'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' v3'
+            Identifier: ' c3'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' v4'
+            Identifier: ' c4'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' v5'
+            Identifier: ' c5'
+  FunctionDeclaration
+    Identifier: ' ft12'
+    Parameter
+      Identifier: 's'
+      StringKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c1'
+            TemplateExpression
+              TemplateHead
+              TemplateSpan
+                Identifier: 's'
+                TemplateTail
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' v1'
+            Identifier: ' c1'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c2'
+            TemplateLiteralType
+              TemplateHead
+              TemplateLiteralTypeSpan
+                StringKeyword
+                TemplateTail
+            TemplateExpression
+              TemplateHead
+              TemplateSpan
+                Identifier: 's'
+                TemplateTail
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' v2'
+            Identifier: ' c2'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c3'
+            AsExpression
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  Identifier: 's'
+                  TemplateTail
+              TemplateLiteralType
+                TemplateHead
+                TemplateLiteralTypeSpan
+                  StringKeyword
+                  TemplateTail
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' v3'
+            Identifier: ' c3'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c4'
+            TypeAssertionExpression
+              TemplateLiteralType
+                TemplateHead
+                TemplateLiteralTypeSpan
+                  StringKeyword
+                  TemplateTail
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  Identifier: 's'
+                  TemplateTail
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' v4'
+            Identifier: ' c4'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c5'
+            AsExpression
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  Identifier: 's'
+                  TemplateTail
+              TypeReference
+                Identifier: ' const'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' v5'
+            Identifier: ' c5'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' widening'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    TypeReference
+      Identifier: ' T'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' nonWidening'
+    TypeParameter
+      Identifier: 'T'
+      UnionType
+        StringKeyword
+        NumberKeyword
+        SymbolKeyword
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    TypeReference
+      Identifier: ' T'
+  FunctionDeclaration
+    Identifier: ' ft13'
+    Parameter
+      Identifier: 's'
+      StringKeyword
+    Parameter
+      Identifier: ' cond'
+      BooleanKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x1'
+            CallExpression
+              Identifier: ' widening'
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  Identifier: 's'
+                  TemplateTail
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x2'
+            CallExpression
+              Identifier: ' widening'
+              ConditionalExpression
+                Identifier: 'cond'
+                QuestionToken
+                StringLiteral
+                ColonToken
+                TemplateExpression
+                  TemplateHead
+                  TemplateSpan
+                    Identifier: 's'
+                    TemplateTail
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y1'
+            CallExpression
+              Identifier: ' nonWidening'
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  Identifier: 's'
+                  TemplateTail
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y2'
+            CallExpression
+              Identifier: ' nonWidening'
+              ConditionalExpression
+                Identifier: 'cond'
+                QuestionToken
+                StringLiteral
+                ColonToken
+                TemplateExpression
+                  TemplateHead
+                  TemplateSpan
+                    Identifier: 's'
+                    TemplateTail
+  TypeAliasDeclaration
+    Identifier: ' T0'
+    UnionType
+      StringKeyword
+      TemplateLiteralType
+        TemplateHead
+        TemplateLiteralTypeSpan
+          NumberKeyword
+          TemplateTail
+  FunctionDeclaration
+    Identifier: ' ft14'
+    Parameter
+      Identifier: 't'
+      TemplateLiteralType
+        TemplateHead
+        TemplateLiteralTypeSpan
+          NumberKeyword
+          TemplateTail
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x1'
+            StringKeyword
+            Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x2'
+            TypeReference
+              Identifier: ' String'
+            Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x3'
+            TypeReference
+              Identifier: ' Object'
+            Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x4'
+            TypeLiteral
+            Identifier: ' t'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x6'
+            TypeLiteral
+              PropertySignature
+                Identifier: ' length'
+                NumberKeyword
+            Identifier: ' t'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' g1'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    TypeReference
+      Identifier: ' T'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' g2'
+    TypeParameter
+      Identifier: 'T'
+      StringKeyword
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    TypeReference
+      Identifier: ' T'
+  FunctionDeclaration
+    Identifier: ' ft20'
+    Parameter
+      Identifier: 's'
+      StringKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x1'
+            CallExpression
+              Identifier: ' g1'
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  Identifier: 's'
+                  TemplateTail
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x2'
+            CallExpression
+              Identifier: ' g2'
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  Identifier: 's'
+                  TemplateTail
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' takesLiteral'
+    TypeParameter
+      Identifier: 'T'
+      StringKeyword
+    Parameter
+      Identifier: 'literal'
+      TypeReference
+        Identifier: ' T'
+    ConditionalType
+      TypeReference
+        Identifier: ' T'
+      TemplateLiteralType
+        TemplateHead
+        TemplateLiteralTypeSpan
+          InferType
+            TypeParameter
+              Identifier: ' R'
+          TemplateTail
+      TypeReference
+        Identifier: ' R'
+      UnknownKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t1'
+        CallExpression
+          Identifier: ' takesLiteral'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' id2'
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t2'
+        CallExpression
+          Identifier: ' takesLiteral'
+          Identifier: 'id2'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' someString'
+        StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t3'
+        CallExpression
+          Identifier: ' takesLiteral'
+          TemplateExpression
+            TemplateHead
+            TemplateSpan
+              Identifier: 'someString'
+              TemplateTail
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' id4'
+        TemplateExpression
+          TemplateHead
+          TemplateSpan
+            Identifier: 'someString'
+            TemplateTail
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t4'
+        CallExpression
+          Identifier: ' takesLiteral'
+          Identifier: 'id4'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' someUnion'
+        UnionType
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t5'
+        CallExpression
+          Identifier: ' takesLiteral'
+          TemplateExpression
+            TemplateHead
+            TemplateSpan
+              Identifier: 'someUnion'
+              TemplateTail
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' pixelValue'
+        NumberKeyword
+        NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' PixelValueType'
+    TemplateLiteralType
+      TemplateHead
+      TemplateLiteralTypeSpan
+        NumberKeyword
+        TemplateTail
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' pixelString'
+        TypeReference
+          Identifier: ' PixelValueType'
+        NoSubstitutionTemplateLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' pixelStringWithTemplate'
+        TypeReference
+          Identifier: ' PixelValueType'
+        TemplateExpression
+          TemplateHead
+          TemplateSpan
+            Identifier: 'pixelValue'
+            TemplateTail
+  FunctionDeclaration
+    Identifier: ' getCardTitle'
+    Parameter
+      Identifier: 'title'
+      StringKeyword
+    TemplateLiteralType
+      TemplateHead
+      TemplateLiteralTypeSpan
+        StringKeyword
+        TemplateTail
+    Block
+      ReturnStatement
+        TemplateExpression
+          TemplateHead
+          TemplateSpan
+            Identifier: 'title'
+            TemplateTail
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' interpolatedStyle'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' rotate'
+            NumericLiteral
+  FunctionDeclaration
+    Identifier: ' C2'
+    Parameter
+      Identifier: 'transform'
+      UnionType
+        LiteralType
+          StringLiteral
+        ParenthesizedType
+          IntersectionType
+            StringKeyword
+            TypeLiteral
+    Block
+      ReturnStatement
+        NumericLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+C2'
+      TemplateExpression
+        TemplateHead
+        TemplateSpan
+          PropertyAccessExpression
+            Identifier: 'interpolatedStyle'
+            Identifier: 'rotate'
+          TemplateTail

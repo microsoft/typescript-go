@@ -1,0 +1,6 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' somefn'
+    Block
+      ReturnStatement
+        Identifier: ' somefn'

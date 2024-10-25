@@ -1,0 +1,31 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' arr'
+        ArrayLiteralExpression
+  ForStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i'
+        NumericLiteral
+    BinaryExpression
+      Identifier: ' i'
+      LessThanToken
+      NumericLiteral
+    PrefixUnaryExpression
+      Identifier: 'i'
+    Block
+      ClassDeclaration
+        Identifier: ' C'
+        PropertyDeclaration
+          Identifier: '
+        prop'
+          Identifier: ' i'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    arr'
+            Identifier: 'push'
+          Identifier: 'C'

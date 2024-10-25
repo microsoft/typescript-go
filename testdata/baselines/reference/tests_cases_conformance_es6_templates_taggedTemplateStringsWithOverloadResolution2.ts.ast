@@ -1,0 +1,101 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo1'
+    Parameter
+      Identifier: 'strs'
+      TypeReference
+        Identifier: ' TemplateStringsArray'
+    Parameter
+      Identifier: ' x'
+      NumberKeyword
+    StringKeyword
+  FunctionDeclaration
+    Identifier: ' foo1'
+    Parameter
+      Identifier: 'strs'
+      ArrayType
+        StringKeyword
+    Parameter
+      Identifier: ' x'
+      NumberKeyword
+    NumberKeyword
+  FunctionDeclaration
+    Identifier: ' foo1'
+    Parameter
+      DotDotDotToken
+      Identifier: 'stuff'
+      ArrayType
+        AnyKeyword
+    AnyKeyword
+    Block
+      ReturnStatement
+        Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TaggedTemplateExpression
+          Identifier: ' foo1'
+          TemplateExpression
+            TemplateHead
+            TemplateSpan
+              NumericLiteral
+              TemplateTail
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        CallExpression
+          Identifier: ' foo1'
+          ArrayLiteralExpression
+          NumericLiteral
+  FunctionDeclaration
+    Identifier: ' foo2'
+    Parameter
+      Identifier: 'strs'
+      ArrayType
+        StringKeyword
+    Parameter
+      Identifier: ' x'
+      NumberKeyword
+    NumberKeyword
+  FunctionDeclaration
+    Identifier: ' foo2'
+    Parameter
+      Identifier: 'strs'
+      TypeReference
+        Identifier: ' TemplateStringsArray'
+    Parameter
+      Identifier: ' x'
+      NumberKeyword
+    StringKeyword
+  FunctionDeclaration
+    Identifier: ' foo2'
+    Parameter
+      DotDotDotToken
+      Identifier: 'stuff'
+      ArrayType
+        AnyKeyword
+    AnyKeyword
+    Block
+      ReturnStatement
+        Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        TaggedTemplateExpression
+          Identifier: ' foo2'
+          TemplateExpression
+            TemplateHead
+            TemplateSpan
+              NumericLiteral
+              TemplateTail
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d'
+        CallExpression
+          Identifier: ' foo2'
+          ArrayLiteralExpression
+          NumericLiteral

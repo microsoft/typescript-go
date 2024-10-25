@@ -1,0 +1,108 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Atomics'
+    MethodSignature
+      Identifier: '
+    /**
+     * A non-blocking, asynchronous version of wait which is usable on the main thread.
+     * Waits asynchronously on a shared memory location and returns a Promise
+     * @param typedArray A shared Int32Array or BigInt64Array.
+     * @param index The position in the typedArray to wait on.
+     * @param value The expected value to test.
+     * @param [timeout] The expected value to test.
+     */
+    waitAsync'
+      Parameter
+        Identifier: 'typedArray'
+        TypeReference
+          Identifier: ' Int32Array'
+      Parameter
+        Identifier: ' index'
+        NumberKeyword
+      Parameter
+        Identifier: ' value'
+        NumberKeyword
+      Parameter
+        Identifier: ' timeout'
+        QuestionToken
+        NumberKeyword
+      UnionType
+        TypeLiteral
+          PropertySignature
+            Identifier: ' async'
+            LiteralType
+              FalseKeyword
+          PropertySignature
+            Identifier: ' value'
+            UnionType
+              LiteralType
+                StringLiteral
+              LiteralType
+                StringLiteral
+        TypeLiteral
+          PropertySignature
+            Identifier: ' async'
+            LiteralType
+              TrueKeyword
+          PropertySignature
+            Identifier: ' value'
+            TypeReference
+              Identifier: ' Promise'
+              UnionType
+                LiteralType
+                  StringLiteral
+                LiteralType
+                  StringLiteral
+    MethodSignature
+      Identifier: '
+
+    /**
+     * A non-blocking, asynchronous version of wait which is usable on the main thread.
+     * Waits asynchronously on a shared memory location and returns a Promise
+     * @param typedArray A shared Int32Array or BigInt64Array.
+     * @param index The position in the typedArray to wait on.
+     * @param value The expected value to test.
+     * @param [timeout] The expected value to test.
+     */
+    waitAsync'
+      Parameter
+        Identifier: 'typedArray'
+        TypeReference
+          Identifier: ' BigInt64Array'
+      Parameter
+        Identifier: ' index'
+        NumberKeyword
+      Parameter
+        Identifier: ' value'
+        BigIntKeyword
+      Parameter
+        Identifier: ' timeout'
+        QuestionToken
+        NumberKeyword
+      UnionType
+        TypeLiteral
+          PropertySignature
+            Identifier: ' async'
+            LiteralType
+              FalseKeyword
+          PropertySignature
+            Identifier: ' value'
+            UnionType
+              LiteralType
+                StringLiteral
+              LiteralType
+                StringLiteral
+        TypeLiteral
+          PropertySignature
+            Identifier: ' async'
+            LiteralType
+              TrueKeyword
+          PropertySignature
+            Identifier: ' value'
+            TypeReference
+              Identifier: ' Promise'
+              UnionType
+                LiteralType
+                  StringLiteral
+                LiteralType
+                  StringLiteral

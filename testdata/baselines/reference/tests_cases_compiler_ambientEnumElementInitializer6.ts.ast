@@ -1,0 +1,11 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' M'
+    ModuleBlock
+      EnumDeclaration
+        Identifier: ' E'
+        EnumMember
+          Identifier: '
+        e'
+          NumericLiteral

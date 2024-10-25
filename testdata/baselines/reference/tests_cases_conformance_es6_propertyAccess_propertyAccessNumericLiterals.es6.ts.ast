@@ -1,0 +1,26 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        NumericLiteral
+        Identifier: 'toString'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        NumericLiteral
+        Identifier: 'toString'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        NumericLiteral
+        Identifier: 'toString'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        NumericLiteral
+        Identifier: 'toString'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        NumericLiteral
+        Identifier: 'toString'

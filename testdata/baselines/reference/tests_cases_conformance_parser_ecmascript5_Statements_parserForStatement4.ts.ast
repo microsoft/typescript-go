@@ -1,0 +1,8 @@
+SourceFile
+  ForInStatement
+    BinaryExpression
+      Identifier: 'a'
+      EqualsToken
+      NumericLiteral
+    Identifier: ' b'
+    Block

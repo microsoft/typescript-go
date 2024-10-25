@@ -1,0 +1,26 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    Constructor
+      Parameter
+        Identifier: 'y'
+        AnyKeyword
+    Constructor
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      Block
+  ClassDeclaration
+    Identifier: ' D'
+    Constructor
+      Parameter
+        Identifier: 'y'
+        AnyKeyword
+    Constructor
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      Parameter
+        Identifier: ' z'
+        StringLiteral
+      Block

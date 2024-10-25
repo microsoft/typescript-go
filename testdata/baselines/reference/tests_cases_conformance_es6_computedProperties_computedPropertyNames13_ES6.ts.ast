@@ -1,0 +1,79 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s'
+        StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' n'
+        NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        AnyKeyword
+  ClassDeclaration
+    Identifier: ' C'
+    MethodDeclaration
+      ComputedPropertyName
+        Identifier: 's'
+      Block
+    MethodDeclaration
+      ComputedPropertyName
+        Identifier: 'n'
+      Block
+    MethodDeclaration
+      StaticKeyword
+      ComputedPropertyName
+        BinaryExpression
+          Identifier: 's'
+          PlusToken
+          Identifier: ' s'
+      Block
+    MethodDeclaration
+      ComputedPropertyName
+        BinaryExpression
+          Identifier: 's'
+          PlusToken
+          Identifier: ' n'
+      Block
+    MethodDeclaration
+      ComputedPropertyName
+        PrefixUnaryExpression
+          Identifier: 's'
+      Block
+    MethodDeclaration
+      StaticKeyword
+      ComputedPropertyName
+        StringLiteral
+      Block
+    MethodDeclaration
+      ComputedPropertyName
+        NumericLiteral
+      Block
+    MethodDeclaration
+      ComputedPropertyName
+        Identifier: 'a'
+      Block
+    MethodDeclaration
+      StaticKeyword
+      ComputedPropertyName
+        TypeAssertionExpression
+          AnyKeyword
+          TrueKeyword
+      Block
+    MethodDeclaration
+      ComputedPropertyName
+        NoSubstitutionTemplateLiteral
+      Block
+    MethodDeclaration
+      StaticKeyword
+      ComputedPropertyName
+        TemplateExpression
+          TemplateHead
+          TemplateSpan
+            Identifier: 'a'
+            TemplateTail
+      Block

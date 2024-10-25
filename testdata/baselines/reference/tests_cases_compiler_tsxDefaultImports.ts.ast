@@ -1,0 +1,31 @@
+SourceFile
+  EnumDeclaration
+    Identifier: ' SomeEnum'
+    EnumMember
+      Identifier: '
+  one'
+  ClassDeclaration
+    ExportKeyword
+    DefaultKeyword
+    Identifier: ' SomeClass'
+    PropertyDeclaration
+      PublicKeyword
+      StaticKeyword
+      Identifier: ' E'
+      Identifier: ' SomeEnum'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: 'default'
+          Identifier: ' Def'
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: ' Def'
+            Identifier: 'E'
+          Identifier: 'one'

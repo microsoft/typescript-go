@@ -1,0 +1,99 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' m2'
+    ModuleBlock
+  FunctionDeclaration
+    Identifier: ' m2'
+    Block
+  EmptyStatement
+  ModuleDeclaration
+    Identifier: ' m2a'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            NumericLiteral
+  FunctionDeclaration
+    Identifier: ' m2a'
+    Block
+  EmptyStatement
+  ModuleDeclaration
+    Identifier: ' m2b'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            NumericLiteral
+  FunctionDeclaration
+    Identifier: ' m2b'
+    Block
+  EmptyStatement
+  FunctionDeclaration
+    Identifier: ' m2c'
+    Block
+  EmptyStatement
+  ModuleDeclaration
+    Identifier: ' m2c'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            NumericLiteral
+  ModuleDeclaration
+    Identifier: ' m2cc'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            NumericLiteral
+  FunctionDeclaration
+    Identifier: ' m2cc'
+    Block
+  EmptyStatement
+  ModuleDeclaration
+    Identifier: ' m2d'
+    ModuleBlock
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' m2d'
+    VoidKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' m2e'
+    VoidKeyword
+  ModuleDeclaration
+    Identifier: ' m2e'
+    ModuleBlock
+  FunctionDeclaration
+    Identifier: ' m2f'
+    Block
+  EmptyStatement
+  ModuleDeclaration
+    Identifier: ' m2f'
+    ModuleBlock
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' I'
+        MethodSignature
+          Identifier: ' foo'
+          VoidKeyword
+  FunctionDeclaration
+    Identifier: ' m2g'
+    Block
+  EmptyStatement
+  ModuleDeclaration
+    Identifier: ' m2g'
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' C'
+        MethodDeclaration
+          Identifier: ' foo'
+          Block

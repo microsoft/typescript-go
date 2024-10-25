@@ -1,0 +1,68 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' F1'
+        ImportSpecifier
+          Identifier: ' F2'
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+F1'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+F2'
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' NS'
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+NS'
+        Identifier: 'F1'
+  ImportDeclaration
+    ImportClause
+      Identifier: ' D'
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+D'
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' NS'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      Identifier: ' D'
+      NamedImports
+        ImportSpecifier
+          Identifier: ' F1'
+        ImportSpecifier
+          Identifier: ' F2'
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+F1'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+F2'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+NS'
+        Identifier: 'F1'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+D'

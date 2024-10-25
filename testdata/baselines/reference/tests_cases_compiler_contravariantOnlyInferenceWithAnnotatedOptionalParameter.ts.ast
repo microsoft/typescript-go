@@ -1,0 +1,49 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' filter'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'predicate'
+      FunctionType
+        Parameter
+          Identifier: 'value'
+          TypeReference
+            Identifier: ' T'
+        Parameter
+          Identifier: ' index'
+          NumberKeyword
+        BooleanKeyword
+    TypeReference
+      Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        CallExpression
+          Identifier: ' filter'
+          ArrowFunction
+            Parameter
+              Identifier: 'pose'
+              QuestionToken
+              NumberKeyword
+            EqualsGreaterThanToken
+            TrueKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        CallExpression
+          Identifier: ' filter'
+          ArrowFunction
+            Parameter
+              Identifier: 'pose'
+              QuestionToken
+              NumberKeyword
+            Parameter
+              Identifier: ' _'
+              QuestionToken
+              NumberKeyword
+            EqualsGreaterThanToken
+            TrueKeyword

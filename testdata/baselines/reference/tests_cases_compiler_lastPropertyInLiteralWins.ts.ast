@@ -1,0 +1,72 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Thing'
+    PropertySignature
+      Identifier: '
+    thunk'
+      FunctionType
+        Parameter
+          Identifier: 'str'
+          StringKeyword
+        VoidKeyword
+  FunctionDeclaration
+    Identifier: ' test'
+    Parameter
+      Identifier: 'thing'
+      TypeReference
+        Identifier: ' Thing'
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    thing'
+            Identifier: 'thunk'
+          StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+test'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' // Should error, as last one wins, and is wrong type
+    thunk'
+          ArrowFunction
+            Parameter
+              Identifier: 'str'
+              StringKeyword
+            EqualsGreaterThanToken
+            Block
+        PropertyAssignment
+          Identifier: '
+    thunk'
+          ArrowFunction
+            Parameter
+              Identifier: 'num'
+              NumberKeyword
+            EqualsGreaterThanToken
+            Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+test'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' // Should be OK.  Last 'thunk' is of correct type
+    thunk'
+          ArrowFunction
+            Parameter
+              Identifier: 'num'
+              NumberKeyword
+            EqualsGreaterThanToken
+            Block
+        PropertyAssignment
+          Identifier: '
+    thunk'
+          ArrowFunction
+            Parameter
+              Identifier: 'str'
+              StringKeyword
+            EqualsGreaterThanToken
+            Block

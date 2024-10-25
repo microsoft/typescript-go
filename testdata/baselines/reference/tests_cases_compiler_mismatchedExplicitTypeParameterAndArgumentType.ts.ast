@@ -1,0 +1,162 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' map'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+    Parameter
+      Identifier: 'xs'
+      ArrayType
+        TypeReference
+          Identifier: ' T'
+    Parameter
+      Identifier: ' f'
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          TypeReference
+            Identifier: ' T'
+        TypeReference
+          Identifier: ' U'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' ys'
+            ArrayType
+              TypeReference
+                Identifier: ' U'
+            ArrayLiteralExpression
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    xs'
+            Identifier: 'forEach'
+          ArrowFunction
+            Parameter
+              Identifier: 'x'
+            EqualsGreaterThanToken
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' ys'
+                Identifier: 'push'
+              CallExpression
+                Identifier: 'f'
+                Identifier: 'x'
+      ReturnStatement
+        Identifier: ' ys'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r0'
+        CallExpression
+          Identifier: ' map'
+          ArrayLiteralExpression
+            NumericLiteral
+            StringLiteral
+          ArrowFunction
+            Parameter
+              Identifier: 'x'
+            EqualsGreaterThanToken
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' x'
+                Identifier: 'toString'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r5'
+        CallExpression
+          Identifier: ' map'
+          AnyKeyword
+          AnyKeyword
+          ArrayLiteralExpression
+            NumericLiteral
+            StringLiteral
+          ArrowFunction
+            Parameter
+              Identifier: 'x'
+            EqualsGreaterThanToken
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' x'
+                Identifier: 'toString'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r6'
+        CallExpression
+          Identifier: ' map'
+          TypeReference
+            Identifier: 'Object'
+          TypeReference
+            Identifier: ' Object'
+          ArrayLiteralExpression
+            NumericLiteral
+            StringLiteral
+          ArrowFunction
+            Parameter
+              Identifier: 'x'
+            EqualsGreaterThanToken
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' x'
+                Identifier: 'toString'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r7'
+        CallExpression
+          Identifier: ' map'
+          NumberKeyword
+          StringKeyword
+          ArrayLiteralExpression
+            NumericLiteral
+            StringLiteral
+          ArrowFunction
+            Parameter
+              Identifier: 'x'
+            EqualsGreaterThanToken
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' x'
+                Identifier: 'toString'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r7b'
+        CallExpression
+          Identifier: ' map'
+          NumberKeyword
+          ArrayLiteralExpression
+            NumericLiteral
+            StringLiteral
+          ArrowFunction
+            Parameter
+              Identifier: 'x'
+            EqualsGreaterThanToken
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' x'
+                Identifier: 'toString'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r8'
+        CallExpression
+          Identifier: ' map'
+          AnyKeyword
+          StringKeyword
+          ArrayLiteralExpression
+            NumericLiteral
+            StringLiteral
+          ArrowFunction
+            Parameter
+              Identifier: 'x'
+            EqualsGreaterThanToken
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' x'
+                Identifier: 'toString'

@@ -1,0 +1,130 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    d'
+            StringLiteral
+          MethodDeclaration
+            Identifier: '
+    m'
+            Block
+              ReturnStatement
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'd'
+                  Identifier: 'length'
+          PropertyAssignment
+            Identifier: '
+    f'
+            FunctionExpression
+              Block
+                ReturnStatement
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'd'
+                    Identifier: 'length'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' mutuallyRecursive'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    a'
+            NumericLiteral
+          MethodDeclaration
+            Identifier: '
+    start'
+            Block
+              ReturnStatement
+                CallExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'passthrough'
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'a'
+          MethodDeclaration
+            Identifier: '
+    passthrough'
+            Parameter
+              Identifier: 'n'
+              NumberKeyword
+            Block
+              ReturnStatement
+                CallExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'sub1'
+                  Identifier: 'n'
+          MethodDeclaration
+            Identifier: '
+    sub1'
+            Parameter
+              Identifier: 'n'
+              NumberKeyword
+            NumberKeyword
+            Block
+              IfStatement
+                BinaryExpression
+                  Identifier: 'n'
+                  GreaterThanToken
+                  NumericLiteral
+                Block
+                  ReturnStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'passthrough'
+                      BinaryExpression
+                        Identifier: 'n'
+                        MinusToken
+                        NumericLiteral
+              ReturnStatement
+                Identifier: ' n'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i'
+        NumberKeyword
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' mutuallyRecursive'
+            Identifier: 'start'
+  InterfaceDeclaration
+    Identifier: ' I'
+    PropertySignature
+      Identifier: '
+    a'
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    start'
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    passthrough'
+      Parameter
+        Identifier: 'n'
+        NumberKeyword
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    sub1'
+      Parameter
+        Identifier: 'n'
+        NumberKeyword
+      NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' impl'
+        TypeReference
+          Identifier: ' I'
+        Identifier: ' mutuallyRecursive'

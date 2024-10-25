@@ -1,0 +1,123 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Person'
+    PropertySignature
+      Identifier: '
+  first'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+  last'
+      StringKeyword
+  Block
+    VariableStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' dice'
+          ArrowFunction
+            EqualsGreaterThanToken
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' Math'
+                Identifier: 'floor'
+              BinaryExpression
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: 'Math'
+                    Identifier: 'random'
+                AsteriskToken
+                NumericLiteral
+    ExpressionStatement
+      BinaryExpression
+        PropertyAccessExpression
+          Identifier: '
+  dice'
+          Identifier: 'first'
+        EqualsToken
+        StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        PropertyAccessExpression
+          Identifier: '  
+  dice'
+          Identifier: 'last'
+        EqualsToken
+        StringLiteral
+    VariableStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' diceP'
+          TypeReference
+            Identifier: ' Person'
+          Identifier: ' dice'
+  FunctionDeclaration
+    Identifier: ' doHumanThings'
+    Parameter
+      Identifier: 'param'
+    Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' dice1'
+        ArrowFunction
+          EqualsGreaterThanToken
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' Math'
+              Identifier: 'floor'
+            BinaryExpression
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: 'Math'
+                  Identifier: 'random'
+              AsteriskToken
+              NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+// dice1.first = 'Rando';
+dice1'
+        Identifier: 'last'
+      EqualsToken
+      StringLiteral
+  Block
+    VariableStatement
+      VariableDeclarationList
+        VariableDeclaration
+          Identifier: ' dice2'
+          ArrowFunction
+            EqualsGreaterThanToken
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' Math'
+                Identifier: 'floor'
+              BinaryExpression
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: 'Math'
+                    Identifier: 'random'
+                AsteriskToken
+                NumericLiteral
+    ExpressionStatement
+      BinaryExpression
+        PropertyAccessExpression
+          Identifier: '
+  dice2'
+          Identifier: 'first'
+        EqualsToken
+        StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        PropertyAccessExpression
+          Identifier: '
+  dice2'
+          Identifier: 'last'
+        EqualsToken
+        StringLiteral
+    ExpressionStatement
+      CallExpression
+        Identifier: ' 
+  
+  doHumanThings'
+        Identifier: 'dice2'

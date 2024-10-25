@@ -1,0 +1,18 @@
+SourceFile
+  ClassDeclaration
+    AbstractKeyword
+    Identifier: ' A'
+    PropertyDeclaration
+      AbstractKeyword
+      Identifier: ' p'
+      StringLiteral
+  ClassDeclaration
+    Identifier: ' B'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+    GetAccessor
+      Identifier: ' p'
+      Block
+        ReturnStatement
+          StringLiteral

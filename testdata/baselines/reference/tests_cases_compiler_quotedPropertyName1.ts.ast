@@ -1,0 +1,6 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Test1'
+    PropertyDeclaration
+      StringLiteral
+      NumericLiteral

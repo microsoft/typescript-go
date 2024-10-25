@@ -1,0 +1,16 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+/////**/
+////class Foo {
+////}
+
+////var f/*A*/ff = new Foo();
+
+verify'
+        Identifier: 'quickInfoAt'
+      StringLiteral
+      StringLiteral

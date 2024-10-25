@@ -1,0 +1,22 @@
+SourceFile
+  ExpressionStatement
+    Identifier: 'abstract'
+  ClassDeclaration
+    Identifier: ' NonAbstractClass'
+    MethodDeclaration
+      AbstractKeyword
+      Identifier: ' s'
+  ClassDeclaration
+    Identifier: ' C2'
+    PropertyDeclaration
+      Identifier: '
+    abstract'
+    MethodDeclaration
+      Identifier: '
+    nonAbstractFunction'
+      Block
+  ClassDeclaration
+    Identifier: ' C3'
+    PropertyDeclaration
+      Identifier: '
+    abstract'

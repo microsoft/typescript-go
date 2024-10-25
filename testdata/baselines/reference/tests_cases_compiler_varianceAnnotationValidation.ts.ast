@@ -1,0 +1,85 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Controller'
+    TypeParameter
+      OutKeyword
+      Identifier: ' T'
+    PropertySignature
+      Identifier: '
+	createAnimal'
+      FunctionType
+        TypeReference
+          Identifier: ' T'
+    PropertySignature
+      Identifier: '
+	run'
+      FunctionType
+        Parameter
+          Identifier: 'animal'
+          TypeReference
+            Identifier: ' T'
+        VoidKeyword
+  InterfaceDeclaration
+    Identifier: ' Animal'
+    MethodSignature
+      Identifier: '
+	run'
+      VoidKeyword
+  EmptyStatement
+  ClassDeclaration
+    Identifier: ' Dog'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Animal'
+    MethodDeclaration
+      Identifier: '
+	run'
+      Block
+    SemicolonClassElement
+    MethodDeclaration
+      Identifier: '
+	bark'
+      Block
+    SemicolonClassElement
+  InterfaceDeclaration
+    Identifier: ' AnimalContainer'
+    TypeParameter
+      Identifier: 'T'
+    PropertySignature
+      Identifier: '
+	controller'
+      TypeReference
+        Identifier: ' Controller'
+        TypeReference
+          Identifier: 'T'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ca'
+        TypeReference
+          Identifier: ' AnimalContainer'
+          TypeReference
+            Identifier: 'Animal'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' cd'
+        TypeReference
+          Identifier: ' AnimalContainer'
+          TypeReference
+            Identifier: 'Dog'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+ca'
+      EqualsToken
+      Identifier: ' cd'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '  // Ok
+cd'
+      EqualsToken
+      Identifier: ' ca'

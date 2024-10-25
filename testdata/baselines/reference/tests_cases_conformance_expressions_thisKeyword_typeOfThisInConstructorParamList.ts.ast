@@ -1,0 +1,8 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' ErrClass'
+    Constructor
+      Parameter
+        Identifier: 'f'
+        ThisKeyword
+      Block

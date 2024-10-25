@@ -1,0 +1,16 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'name'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' s'
+            CallExpression
+              Identifier: ' require'
+              BinaryExpression
+                StringLiteral
+                PlusToken
+                Identifier: ' name'

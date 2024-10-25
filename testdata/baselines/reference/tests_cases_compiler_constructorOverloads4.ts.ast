@@ -1,0 +1,48 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' M'
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' Function'
+        Constructor
+          Parameter
+            DotDotDotToken
+            Identifier: 'args'
+            ArrayType
+              StringKeyword
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' Function'
+        Parameter
+          DotDotDotToken
+          Identifier: 'args'
+          ArrayType
+            AnyKeyword
+        AnyKeyword
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' Function'
+        Parameter
+          DotDotDotToken
+          Identifier: 'args'
+          ArrayType
+            StringKeyword
+        TypeReference
+          Identifier: ' Function'
+  ExpressionStatement
+    CallExpression
+      ParenthesizedExpression
+        NewExpression
+          PropertyAccessExpression
+            Identifier: ' M'
+            Identifier: 'Function'
+          StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+M'
+        Identifier: 'Function'
+      StringLiteral

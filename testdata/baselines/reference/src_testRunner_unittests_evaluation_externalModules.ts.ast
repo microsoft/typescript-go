@@ -1,0 +1,193 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' evaluator'
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+describe'
+      StringLiteral
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    // https://github.com/microsoft/TypeScript/issues/35420
+    it'
+              StringLiteral
+              ArrowFunction
+                AsyncKeyword
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' result'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' evaluator'
+                            Identifier: 'evaluateTypeScript'
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: '
+            files'
+                              ObjectLiteralExpression
+                                PropertyAssignment
+                                  StringLiteral
+                                  NoSubstitutionTemplateLiteral
+                                PropertyAssignment
+                                  StringLiteral
+                                  NoSubstitutionTemplateLiteral
+                                PropertyAssignment
+                                  StringLiteral
+                                  NoSubstitutionTemplateLiteral
+                            PropertyAssignment
+                              Identifier: '
+            rootFiles'
+                              ArrayLiteralExpression
+                                StringLiteral
+                            PropertyAssignment
+                              Identifier: '
+            main'
+                              StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'equal'
+                      ElementAccessExpression
+                        PropertyAccessExpression
+                          Identifier: 'result'
+                          Identifier: 'output'
+                        NumericLiteral
+                      TrueKeyword
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' // `f(undefined)` inside module. Existing behavior is correct.
+        assert'
+                        Identifier: 'equal'
+                      ElementAccessExpression
+                        PropertyAccessExpression
+                          Identifier: 'result'
+                          Identifier: 'output'
+                        NumericLiteral
+                      TrueKeyword
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' // `f(undefined)` from import. New behavior to match first case.
+        assert'
+                        Identifier: 'equal'
+                      ElementAccessExpression
+                        PropertyAccessExpression
+                          Identifier: 'result'
+                          Identifier: 'output'
+                        NumericLiteral
+                      TrueKeyword
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' // `f.call(obj, obj)`. Behavior of `.call` (or `.apply`, etc.) should not be affected.
+        assert'
+                        Identifier: 'equal'
+                      ElementAccessExpression
+                        PropertyAccessExpression
+                          Identifier: 'result'
+                          Identifier: 'output'
+                        NumericLiteral
+                      TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    it'
+              StringLiteral
+              ArrowFunction
+                AsyncKeyword
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' result'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' evaluator'
+                            Identifier: 'evaluateTypeScript'
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: '
+            files'
+                              ObjectLiteralExpression
+                                PropertyAssignment
+                                  StringLiteral
+                                  NoSubstitutionTemplateLiteral
+                                PropertyAssignment
+                                  StringLiteral
+                                  NoSubstitutionTemplateLiteral
+                                PropertyAssignment
+                                  StringLiteral
+                                  NoSubstitutionTemplateLiteral
+                            PropertyAssignment
+                              Identifier: '
+            rootFiles'
+                              ArrayLiteralExpression
+                                StringLiteral
+                            PropertyAssignment
+                              Identifier: '
+            main'
+                              StringLiteral
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+        assert'
+                        Identifier: 'equal'
+                      ElementAccessExpression
+                        PropertyAccessExpression
+                          Identifier: 'result'
+                          Identifier: 'output'
+                        NumericLiteral
+                      TrueKeyword
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' // `f(undefined)` inside module. Existing behavior is incorrect.
+        assert'
+                        Identifier: 'equal'
+                      ElementAccessExpression
+                        PropertyAccessExpression
+                          Identifier: 'result'
+                          Identifier: 'output'
+                        NumericLiteral
+                      TrueKeyword
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' // `f(undefined)` from import. New behavior to match first case.
+        assert'
+                        Identifier: 'equal'
+                      ElementAccessExpression
+                        PropertyAccessExpression
+                          Identifier: 'result'
+                          Identifier: 'output'
+                        NumericLiteral
+                      TrueKeyword
+                  ExpressionStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' // `f.call(obj, obj)`. Behavior of `.call` (or `.apply`, etc.) should not be affected.
+        assert'
+                        Identifier: 'equal'
+                      ElementAccessExpression
+                        PropertyAccessExpression
+                          Identifier: 'result'
+                          Identifier: 'output'
+                        NumericLiteral
+                      TrueKeyword

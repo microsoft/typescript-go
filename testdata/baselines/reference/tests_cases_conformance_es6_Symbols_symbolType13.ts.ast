@@ -1,0 +1,26 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s'
+        CallExpression
+          Identifier: ' Symbol'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        AnyKeyword
+  ForInStatement
+    Identifier: 's'
+    ObjectLiteralExpression
+    Block
+  ForInStatement
+    Identifier: 'x'
+    Identifier: ' s'
+    Block
+  ForInStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+    Identifier: ' s'
+    Block

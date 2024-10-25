@@ -1,0 +1,69 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' Foo'
+    MethodDeclaration
+      Identifier: '
+    doThing'
+      Parameter
+        Identifier: 'x'
+        TypeLiteral
+          PropertySignature
+            Identifier: 'a'
+            NumberKeyword
+      Block
+        ReturnStatement
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: 'b'
+              PropertyAccessExpression
+                Identifier: ' x'
+                Identifier: 'a'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' make'
+      Block
+        ReturnStatement
+          NewExpression
+            Identifier: ' Foo'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: 'Foo'
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        NewExpression
+          Identifier: ' Foo'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+c'
+        Identifier: 'doThing'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: 'a'
+          NumericLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' c'
+            Identifier: 'doThing'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: 'a'
+              NumericLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' c'
+      ExportSpecifier
+        Identifier: ' Foo'

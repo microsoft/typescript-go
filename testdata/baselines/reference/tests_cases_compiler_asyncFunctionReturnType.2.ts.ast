@@ -1,0 +1,13 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' X'
+    PropertyDeclaration
+      Identifier: '
+    f'
+      ArrowFunction
+        AsyncKeyword
+        TypeReference
+          Identifier: ' Promise'
+          ThisType
+        EqualsGreaterThanToken
+        ThisKeyword

@@ -1,0 +1,137 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      Identifier: ' React'
+    StringLiteral
+  InterfaceDeclaration
+    Identifier: ' Foo'
+    PropertySignature
+      Identifier: '
+  bar'
+      BooleanKeyword
+  FunctionDeclaration
+    Identifier: ' test1'
+    Parameter
+      Identifier: 'foo'
+      UnionType
+        TypeReference
+          Identifier: ' Foo'
+        UndefinedKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: 'foo'
+            QuestionDotToken
+            Identifier: 'bar'
+          EqualsEqualsEqualsToken
+          FalseKeyword
+        Block
+          ExpressionStatement
+            Identifier: '
+    foo'
+      ExpressionStatement
+        Identifier: '
+  foo'
+  FunctionDeclaration
+    Identifier: ' test2'
+    Parameter
+      Identifier: 'foo'
+      UnionType
+        TypeReference
+          Identifier: ' Foo'
+        UndefinedKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: 'foo'
+            QuestionDotToken
+            Identifier: 'bar'
+          EqualsEqualsEqualsToken
+          FalseKeyword
+        Block
+          ExpressionStatement
+            Identifier: '
+    foo'
+        Block
+          ExpressionStatement
+            Identifier: '
+    foo'
+  FunctionDeclaration
+    Identifier: ' Test3'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: ' foo'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' foo'
+          UnionType
+            TypeReference
+              Identifier: ' Foo'
+            UndefinedKeyword
+    Block
+      ReturnStatement
+        ParenthesizedExpression
+          JsxElement
+            JsxOpeningElement
+              Identifier: 'div'
+              JsxAttributes
+            JsxText
+            JsxExpression
+              BinaryExpression
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: 'foo'
+                    QuestionDotToken
+                    Identifier: 'bar'
+                  EqualsEqualsEqualsToken
+                  FalseKeyword
+                AmpersandAmpersandToken
+                StringLiteral
+            JsxText
+            JsxExpression
+              ConditionalExpression
+                PropertyAccessExpression
+                  Identifier: 'foo'
+                  Identifier: 'bar'
+                QuestionToken
+                StringLiteral
+                ColonToken
+                StringLiteral
+            JsxText
+            JsxClosingElement
+              Identifier: 'div'
+  FunctionDeclaration
+    Identifier: ' test4'
+    Parameter
+      Identifier: 'options'
+      QuestionToken
+      TypeLiteral
+        PropertySignature
+          Identifier: ' a'
+          QuestionToken
+          BooleanKeyword
+        PropertySignature
+          Identifier: ' b'
+          QuestionToken
+          BooleanKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: 'options'
+              QuestionDotToken
+              Identifier: 'a'
+            EqualsEqualsEqualsToken
+            FalseKeyword
+          BarBarToken
+          PropertyAccessExpression
+            Identifier: ' options'
+            Identifier: 'b'
+        Block
+          ExpressionStatement
+            Identifier: '
+    options'

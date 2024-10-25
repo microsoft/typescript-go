@@ -1,0 +1,28 @@
+SourceFile
+  ModuleDeclaration
+    ExportKeyword
+    Identifier: ' m'
+    ModuleBlock
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' foo'
+        Block
+  ImportEqualsDeclaration
+    Identifier: ' r'
+    ExternalModuleReference
+      StringLiteral
+  ModuleDeclaration
+    Identifier: ' m_private'
+    ModuleBlock
+      ImportEqualsDeclaration
+        ExportKeyword
+        Identifier: ' C'
+        Identifier: ' r'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: ' // no error
+    C'
+              Identifier: 'm'
+            Identifier: 'foo'

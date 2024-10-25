@@ -1,0 +1,344 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        NumberKeyword
+        StringKeyword
+        BooleanKeyword
+    Block
+      ReturnStatement
+        ConditionalExpression
+          BinaryExpression
+            TypeOfExpression
+              Identifier: ' x'
+            EqualsEqualsEqualsToken
+            StringLiteral
+          QuestionToken
+          Identifier: ' x'
+          ColonToken
+          CallExpression
+            FunctionExpression
+              Identifier: ' f'
+              Block
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' b'
+                      Identifier: ' x'
+                ReturnStatement
+                  ConditionalExpression
+                    BinaryExpression
+                      TypeOfExpression
+                        Identifier: ' x'
+                      EqualsEqualsEqualsToken
+                      StringLiteral
+                    QuestionToken
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' x'
+                        Identifier: 'toString'
+                    ColonToken
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' x'
+                        Identifier: 'toString'
+  FunctionDeclaration
+    Identifier: ' foo2'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        NumberKeyword
+        StringKeyword
+        BooleanKeyword
+    Block
+      ReturnStatement
+        ConditionalExpression
+          BinaryExpression
+            TypeOfExpression
+              Identifier: ' x'
+            EqualsEqualsEqualsToken
+            StringLiteral
+          QuestionToken
+          Identifier: ' x'
+          ColonToken
+          CallExpression
+            FunctionExpression
+              Identifier: ' f'
+              Parameter
+                Identifier: 'a'
+                UnionType
+                  NumberKeyword
+                  BooleanKeyword
+              Block
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' b'
+                      Identifier: ' x'
+                ReturnStatement
+                  ConditionalExpression
+                    BinaryExpression
+                      TypeOfExpression
+                        Identifier: ' x'
+                      EqualsEqualsEqualsToken
+                      StringLiteral
+                    QuestionToken
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' x'
+                        Identifier: 'toString'
+                    ColonToken
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' x'
+                        Identifier: 'toString'
+            Identifier: 'x'
+  FunctionDeclaration
+    Identifier: ' foo3'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        NumberKeyword
+        StringKeyword
+        BooleanKeyword
+    Block
+      ReturnStatement
+        ConditionalExpression
+          BinaryExpression
+            TypeOfExpression
+              Identifier: ' x'
+            EqualsEqualsEqualsToken
+            StringLiteral
+          QuestionToken
+          Identifier: ' x'
+          ColonToken
+          CallExpression
+            ParenthesizedExpression
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' b'
+                        Identifier: ' x'
+                  ReturnStatement
+                    ConditionalExpression
+                      BinaryExpression
+                        TypeOfExpression
+                          Identifier: ' x'
+                        EqualsEqualsEqualsToken
+                        StringLiteral
+                      QuestionToken
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' x'
+                          Identifier: 'toString'
+                      ColonToken
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' x'
+                          Identifier: 'toString'
+  FunctionDeclaration
+    Identifier: ' foo4'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        NumberKeyword
+        StringKeyword
+        BooleanKeyword
+    Block
+      ReturnStatement
+        ConditionalExpression
+          BinaryExpression
+            TypeOfExpression
+              Identifier: ' x'
+            EqualsEqualsEqualsToken
+            StringLiteral
+          QuestionToken
+          Identifier: ' x'
+          ColonToken
+          CallExpression
+            ParenthesizedExpression
+              ArrowFunction
+                Parameter
+                  Identifier: 'a'
+                  UnionType
+                    NumberKeyword
+                    BooleanKeyword
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' b'
+                        Identifier: ' x'
+                  ReturnStatement
+                    ConditionalExpression
+                      BinaryExpression
+                        TypeOfExpression
+                          Identifier: ' x'
+                        EqualsEqualsEqualsToken
+                        StringLiteral
+                      QuestionToken
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' x'
+                          Identifier: 'toString'
+                      ColonToken
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' x'
+                          Identifier: 'toString'
+            Identifier: 'x'
+  FunctionDeclaration
+    Identifier: ' foo5'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        NumberKeyword
+        StringKeyword
+        BooleanKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          TypeOfExpression
+            Identifier: ' x'
+          EqualsEqualsEqualsToken
+          StringLiteral
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' y'
+                Identifier: ' x'
+          FunctionDeclaration
+            Identifier: ' foo'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' z'
+                    Identifier: ' x'
+  ModuleDeclaration
+    Identifier: ' m'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            UnionType
+              NumberKeyword
+              StringKeyword
+              BooleanKeyword
+      ModuleDeclaration
+        Identifier: ' m2'
+        ModuleBlock
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' b'
+                Identifier: ' x'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' y'
+                StringKeyword
+          IfStatement
+            BinaryExpression
+              TypeOfExpression
+                Identifier: ' x'
+              EqualsEqualsEqualsToken
+              StringLiteral
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            y'
+                  EqualsToken
+                  Identifier: ' x'
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            y'
+                  EqualsToken
+                  ConditionalExpression
+                    BinaryExpression
+                      TypeOfExpression
+                        Identifier: ' x'
+                      EqualsEqualsEqualsToken
+                      StringLiteral
+                    QuestionToken
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' x'
+                        Identifier: 'toString'
+                    ColonToken
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' x'
+                        Identifier: 'toString'
+  ModuleDeclaration
+    Identifier: ' m1'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            UnionType
+              NumberKeyword
+              StringKeyword
+              BooleanKeyword
+      ModuleDeclaration
+        Identifier: ' m2'
+        ModuleDeclaration
+          Identifier: 'm3'
+          ModuleBlock
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' b'
+                  Identifier: ' x'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' y'
+                  StringKeyword
+            IfStatement
+              BinaryExpression
+                TypeOfExpression
+                  Identifier: ' x'
+                EqualsEqualsEqualsToken
+                StringLiteral
+              Block
+                ExpressionStatement
+                  BinaryExpression
+                    Identifier: '
+            y'
+                    EqualsToken
+                    Identifier: ' x'
+              Block
+                ExpressionStatement
+                  BinaryExpression
+                    Identifier: '
+            y'
+                    EqualsToken
+                    ConditionalExpression
+                      BinaryExpression
+                        TypeOfExpression
+                          Identifier: ' x'
+                        EqualsEqualsEqualsToken
+                        StringLiteral
+                      QuestionToken
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' x'
+                          Identifier: 'toString'
+                      ColonToken
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' x'
+                          Identifier: 'toString'

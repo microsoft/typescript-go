@@ -1,0 +1,12 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+  ExportAssignment
+    Identifier: ' x'
+  ExpressionStatement
+    CallExpression
+      ImportKeyword
+      StringLiteral

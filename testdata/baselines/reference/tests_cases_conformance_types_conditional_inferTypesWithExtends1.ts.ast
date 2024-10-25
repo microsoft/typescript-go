@@ -1,0 +1,1181 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' X1'
+    TypeParameter
+      Identifier: 'T'
+      ArrayType
+        AnyKeyword
+    ConditionalType
+      TypeReference
+        Identifier: '
+    T'
+      TupleType
+        InferType
+          TypeParameter
+            Identifier: ' U'
+            StringKeyword
+      TupleType
+        LiteralType
+          StringLiteral
+        TypeReference
+          Identifier: ' U'
+      ConditionalType
+        TypeReference
+          Identifier: '
+    T'
+        TupleType
+          InferType
+            TypeParameter
+              Identifier: ' U'
+              NumberKeyword
+        TupleType
+          LiteralType
+            StringLiteral
+          TypeReference
+            Identifier: ' U'
+        NeverKeyword
+  TypeAliasDeclaration
+    Identifier: ' X1_T1'
+    TypeReference
+      Identifier: ' X1'
+      TupleType
+        LiteralType
+          StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' X1_T2'
+    TypeReference
+      Identifier: ' X1'
+      TupleType
+        LiteralType
+          NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' X1_T3'
+    TypeReference
+      Identifier: ' X1'
+      TupleType
+        ObjectKeyword
+  TypeAliasDeclaration
+    Identifier: ' X2'
+    TypeParameter
+      Identifier: 'T'
+      FunctionType
+        Parameter
+          DotDotDotToken
+          Identifier: 'args'
+          ArrayType
+            AnyKeyword
+        VoidKeyword
+    ConditionalType
+      TypeReference
+        Identifier: '
+    T'
+      FunctionType
+        Parameter
+          Identifier: 'a'
+          InferType
+            TypeParameter
+              Identifier: ' U'
+              StringKeyword
+        VoidKeyword
+      TupleType
+        LiteralType
+          StringLiteral
+        TypeReference
+          Identifier: ' U'
+      ConditionalType
+        TypeReference
+          Identifier: '
+    T'
+        FunctionType
+          Parameter
+            Identifier: 'a'
+            InferType
+              TypeParameter
+                Identifier: ' U'
+                NumberKeyword
+          VoidKeyword
+        TupleType
+          LiteralType
+            StringLiteral
+          TypeReference
+            Identifier: ' U'
+        NeverKeyword
+  TypeAliasDeclaration
+    Identifier: ' X2_T1'
+    TypeReference
+      Identifier: ' X2'
+      FunctionType
+        Parameter
+          Identifier: 'a'
+          LiteralType
+            StringLiteral
+        VoidKeyword
+  TypeAliasDeclaration
+    Identifier: ' X2_T2'
+    TypeReference
+      Identifier: ' X2'
+      FunctionType
+        Parameter
+          Identifier: 'a'
+          LiteralType
+            NumericLiteral
+        VoidKeyword
+  TypeAliasDeclaration
+    Identifier: ' X2_T3'
+    TypeReference
+      Identifier: ' X2'
+      FunctionType
+        Parameter
+          Identifier: 'a'
+          ObjectKeyword
+        VoidKeyword
+  TypeAliasDeclaration
+    Identifier: ' X3'
+    TypeParameter
+      Identifier: 'T'
+      FunctionType
+        Parameter
+          DotDotDotToken
+          Identifier: 'args'
+          ArrayType
+            AnyKeyword
+        AnyKeyword
+    ConditionalType
+      TypeReference
+        Identifier: '
+    T'
+      FunctionType
+        Parameter
+          DotDotDotToken
+          Identifier: 'args'
+          ArrayType
+            AnyKeyword
+        ParenthesizedType
+          InferType
+            TypeParameter
+              Identifier: ' U'
+              StringKeyword
+      TupleType
+        LiteralType
+          StringLiteral
+        TypeReference
+          Identifier: ' U'
+      ConditionalType
+        TypeReference
+          Identifier: '
+    T'
+        FunctionType
+          Parameter
+            DotDotDotToken
+            Identifier: 'args'
+            ArrayType
+              AnyKeyword
+          ParenthesizedType
+            InferType
+              TypeParameter
+                Identifier: ' U'
+                NumberKeyword
+        TupleType
+          LiteralType
+            StringLiteral
+          TypeReference
+            Identifier: ' U'
+        NeverKeyword
+  TypeAliasDeclaration
+    Identifier: ' X3_T1'
+    TypeReference
+      Identifier: ' X3'
+      FunctionType
+        LiteralType
+          StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' X3_T2'
+    TypeReference
+      Identifier: ' X3'
+      FunctionType
+        LiteralType
+          NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' X3_T3'
+    TypeReference
+      Identifier: ' X3'
+      FunctionType
+        ObjectKeyword
+  TypeAliasDeclaration
+    Identifier: ' X4'
+    TypeParameter
+      Identifier: 'T'
+      ConstructorType
+        Parameter
+          DotDotDotToken
+          Identifier: 'args'
+          ArrayType
+            AnyKeyword
+        AnyKeyword
+    ConditionalType
+      TypeReference
+        Identifier: '
+    T'
+      ConstructorType
+        Parameter
+          DotDotDotToken
+          Identifier: 'args'
+          ArrayType
+            AnyKeyword
+        ParenthesizedType
+          InferType
+            TypeParameter
+              Identifier: ' U'
+              TypeLiteral
+                PropertySignature
+                  Identifier: ' a'
+                  StringKeyword
+      TupleType
+        LiteralType
+          StringLiteral
+        TypeReference
+          Identifier: ' U'
+      ConditionalType
+        TypeReference
+          Identifier: '
+    T'
+        ConstructorType
+          Parameter
+            DotDotDotToken
+            Identifier: 'args'
+            ArrayType
+              AnyKeyword
+          ParenthesizedType
+            InferType
+              TypeParameter
+                Identifier: ' U'
+                TypeLiteral
+                  PropertySignature
+                    Identifier: ' a'
+                    NumberKeyword
+        TupleType
+          LiteralType
+            StringLiteral
+          TypeReference
+            Identifier: ' U'
+        NeverKeyword
+  TypeAliasDeclaration
+    Identifier: ' X4_T1'
+    TypeReference
+      Identifier: ' X4'
+      ConstructorType
+        TypeLiteral
+          PropertySignature
+            Identifier: ' a'
+            LiteralType
+              StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' X4_T2'
+    TypeReference
+      Identifier: ' X4'
+      ConstructorType
+        TypeLiteral
+          PropertySignature
+            Identifier: ' a'
+            LiteralType
+              NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' X4_T3'
+    TypeReference
+      Identifier: ' X4'
+      ConstructorType
+        TypeLiteral
+          PropertySignature
+            Identifier: ' a'
+            ObjectKeyword
+  TypeAliasDeclaration
+    Identifier: ' X5'
+    TypeParameter
+      Identifier: 'T'
+    ConditionalType
+      TypeReference
+        Identifier: '
+    T'
+      TypeReference
+        Identifier: ' Promise'
+        InferType
+          TypeParameter
+            Identifier: ' U'
+            StringKeyword
+      TupleType
+        LiteralType
+          StringLiteral
+        TypeReference
+          Identifier: ' U'
+      ConditionalType
+        TypeReference
+          Identifier: '
+    T'
+        TypeReference
+          Identifier: ' Promise'
+          InferType
+            TypeParameter
+              Identifier: ' U'
+              NumberKeyword
+        TupleType
+          LiteralType
+            StringLiteral
+          TypeReference
+            Identifier: ' U'
+        NeverKeyword
+  TypeAliasDeclaration
+    Identifier: ' X5_T1'
+    TypeReference
+      Identifier: ' X5'
+      TypeReference
+        Identifier: 'Promise'
+        UnionType
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' X5_T2'
+    TypeReference
+      Identifier: ' X5'
+      TypeReference
+        Identifier: 'Promise'
+        UnionType
+          LiteralType
+            NumericLiteral
+          LiteralType
+            NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' X5_T3'
+    TypeReference
+      Identifier: ' X5'
+      TypeReference
+        Identifier: 'Promise'
+        UnionType
+          LiteralType
+            BigintLiteral
+          LiteralType
+            BigintLiteral
+  TypeAliasDeclaration
+    Identifier: ' X6'
+    TypeParameter
+      Identifier: 'T'
+    ConditionalType
+      TypeReference
+        Identifier: '
+    T'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' a'
+          InferType
+            TypeParameter
+              Identifier: ' U'
+              StringKeyword
+      TupleType
+        LiteralType
+          StringLiteral
+        TypeReference
+          Identifier: ' U'
+      ConditionalType
+        TypeReference
+          Identifier: '
+    T'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' a'
+            InferType
+              TypeParameter
+                Identifier: ' U'
+                NumberKeyword
+        TupleType
+          LiteralType
+            StringLiteral
+          TypeReference
+            Identifier: ' U'
+        NeverKeyword
+  TypeAliasDeclaration
+    Identifier: ' X6_T1'
+    TypeReference
+      Identifier: ' X6'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' a'
+          LiteralType
+            StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' X6_T2'
+    TypeReference
+      Identifier: ' X6'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' a'
+          LiteralType
+            NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' X6_T3'
+    TypeReference
+      Identifier: ' X6'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' a'
+          ObjectKeyword
+  TypeAliasDeclaration
+    Identifier: ' X7'
+    TypeParameter
+      Identifier: 'T'
+    ConditionalType
+      TypeReference
+        Identifier: '
+    T'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' a'
+          InferType
+            TypeParameter
+              Identifier: ' U'
+              StringKeyword
+        PropertySignature
+          Identifier: ' b'
+          InferType
+            TypeParameter
+              Identifier: ' U'
+              StringKeyword
+      TupleType
+        LiteralType
+          StringLiteral
+        TypeReference
+          Identifier: ' U'
+      ConditionalType
+        TypeReference
+          Identifier: '
+    T'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' a'
+            InferType
+              TypeParameter
+                Identifier: ' U'
+                NumberKeyword
+          PropertySignature
+            Identifier: ' b'
+            InferType
+              TypeParameter
+                Identifier: ' U'
+                NumberKeyword
+        TupleType
+          LiteralType
+            StringLiteral
+          TypeReference
+            Identifier: ' U'
+        NeverKeyword
+  TypeAliasDeclaration
+    Identifier: ' X7_T1'
+    TypeReference
+      Identifier: ' X7'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' a'
+          LiteralType
+            StringLiteral
+        PropertySignature
+          Identifier: ' b'
+          LiteralType
+            StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' X7_T2'
+    TypeReference
+      Identifier: ' X7'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' a'
+          LiteralType
+            NumericLiteral
+        PropertySignature
+          Identifier: ' b'
+          LiteralType
+            NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' X7_T3'
+    TypeReference
+      Identifier: ' X7'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' a'
+          ObjectKeyword
+        PropertySignature
+          Identifier: ' b'
+          ObjectKeyword
+  TypeAliasDeclaration
+    Identifier: ' X7_T4'
+    TypeReference
+      Identifier: ' X7'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' a'
+          LiteralType
+            StringLiteral
+        PropertySignature
+          Identifier: ' b'
+          LiteralType
+            NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' X8'
+    TypeParameter
+      Identifier: 'T'
+    ConditionalType
+      TypeReference
+        Identifier: '
+    T'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' a'
+          InferType
+            TypeParameter
+              Identifier: ' U'
+              StringKeyword
+        PropertySignature
+          Identifier: ' b'
+          InferType
+            TypeParameter
+              Identifier: ' U'
+      TupleType
+        LiteralType
+          StringLiteral
+        TypeReference
+          Identifier: ' U'
+      ConditionalType
+        TypeReference
+          Identifier: '
+    T'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' a'
+            InferType
+              TypeParameter
+                Identifier: ' U'
+                NumberKeyword
+          PropertySignature
+            Identifier: ' b'
+            InferType
+              TypeParameter
+                Identifier: ' U'
+        TupleType
+          LiteralType
+            StringLiteral
+          TypeReference
+            Identifier: ' U'
+        NeverKeyword
+  TypeAliasDeclaration
+    Identifier: ' X8_T1'
+    TypeReference
+      Identifier: ' X8'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' a'
+          LiteralType
+            StringLiteral
+        PropertySignature
+          Identifier: ' b'
+          LiteralType
+            StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' X8_T2'
+    TypeReference
+      Identifier: ' X8'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' a'
+          LiteralType
+            NumericLiteral
+        PropertySignature
+          Identifier: ' b'
+          LiteralType
+            NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' X8_T3'
+    TypeReference
+      Identifier: ' X8'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' a'
+          ObjectKeyword
+        PropertySignature
+          Identifier: ' b'
+          ObjectKeyword
+  TypeAliasDeclaration
+    Identifier: ' X8_T4'
+    TypeReference
+      Identifier: ' X8'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' a'
+          LiteralType
+            StringLiteral
+        PropertySignature
+          Identifier: ' b'
+          LiteralType
+            NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' X9'
+    TypeParameter
+      Identifier: 'T'
+    ConditionalType
+      TypeReference
+        Identifier: '
+    T'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' a'
+          InferType
+            TypeParameter
+              Identifier: ' U'
+        PropertySignature
+          Identifier: ' b'
+          InferType
+            TypeParameter
+              Identifier: ' U'
+              StringKeyword
+      TupleType
+        LiteralType
+          StringLiteral
+        TypeReference
+          Identifier: ' U'
+      ConditionalType
+        TypeReference
+          Identifier: '
+    T'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' a'
+            InferType
+              TypeParameter
+                Identifier: ' U'
+          PropertySignature
+            Identifier: ' b'
+            InferType
+              TypeParameter
+                Identifier: ' U'
+                NumberKeyword
+        TupleType
+          LiteralType
+            StringLiteral
+          TypeReference
+            Identifier: ' U'
+        NeverKeyword
+  TypeAliasDeclaration
+    Identifier: ' X9_T1'
+    TypeReference
+      Identifier: ' X9'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' a'
+          LiteralType
+            StringLiteral
+        PropertySignature
+          Identifier: ' b'
+          LiteralType
+            StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' X9_T2'
+    TypeReference
+      Identifier: ' X9'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' a'
+          LiteralType
+            NumericLiteral
+        PropertySignature
+          Identifier: ' b'
+          LiteralType
+            NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' X9_T3'
+    TypeReference
+      Identifier: ' X9'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' a'
+          ObjectKeyword
+        PropertySignature
+          Identifier: ' b'
+          ObjectKeyword
+  TypeAliasDeclaration
+    Identifier: ' X9_T4'
+    TypeReference
+      Identifier: ' X9'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' a'
+          LiteralType
+            StringLiteral
+        PropertySignature
+          Identifier: ' b'
+          LiteralType
+            NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' X10'
+    TypeParameter
+      Identifier: 'T'
+    ConditionalType
+      TypeReference
+        Identifier: ' T'
+      ParenthesizedType
+        ConditionalType
+          InferType
+            TypeParameter
+              Identifier: ' U'
+          NumberKeyword
+          LiteralType
+            NumericLiteral
+          LiteralType
+            NumericLiteral
+      LiteralType
+        NumericLiteral
+      LiteralType
+        NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' X10_Y1'
+    TypeParameter
+      Identifier: 'T'
+    TypeReference
+      Identifier: ' X10'
+      ConditionalType
+        TypeReference
+          Identifier: 'T'
+        NumberKeyword
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' X10_T1_T1'
+    TypeReference
+      Identifier: ' X10_Y1'
+      NumberKeyword
+  TypeAliasDeclaration
+    Identifier: ' X11'
+    TypeParameter
+      Identifier: 'T'
+    ConditionalType
+      TypeReference
+        Identifier: ' T'
+      ParenthesizedType
+        ConditionalType
+          ParenthesizedType
+            InferType
+              TypeParameter
+                Identifier: ' U'
+          NumberKeyword
+          LiteralType
+            NumericLiteral
+          LiteralType
+            NumericLiteral
+      LiteralType
+        NumericLiteral
+      LiteralType
+        NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' X12'
+    TypeParameter
+      Identifier: 'T'
+    ConditionalType
+      TypeReference
+        Identifier: ' T'
+      ParenthesizedType
+        InferType
+          TypeParameter
+            Identifier: ' U'
+            NumberKeyword
+      LiteralType
+        NumericLiteral
+      LiteralType
+        NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' X13'
+    TypeParameter
+      Identifier: 'T'
+    ConditionalType
+      TypeReference
+        Identifier: ' T'
+      InferType
+        TypeParameter
+          Identifier: ' U'
+          NumberKeyword
+      LiteralType
+        NumericLiteral
+      LiteralType
+        NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' X14'
+    TypeParameter
+      Identifier: 'T'
+    ConditionalType
+      TypeReference
+        Identifier: ' T'
+      TypeOperator
+        InferType
+          TypeParameter
+            Identifier: ' U'
+            NumberKeyword
+      LiteralType
+        NumericLiteral
+      LiteralType
+        NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' X15'
+    TypeParameter
+      Identifier: 'T'
+    ConditionalType
+      TypeReference
+        Identifier: ' T'
+      MappedType
+        TypeParameter
+          Identifier: 'P'
+          ConditionalType
+            InferType
+              TypeParameter
+                Identifier: ' U'
+            TypeOperator
+              TypeReference
+                Identifier: ' T'
+            LiteralType
+              NumericLiteral
+            LiteralType
+              NumericLiteral
+        LiteralType
+          NumericLiteral
+      LiteralType
+        NumericLiteral
+      LiteralType
+        NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' X16'
+    TypeParameter
+      Identifier: 'T'
+    ConditionalType
+      TypeReference
+        Identifier: ' T'
+      MappedType
+        TypeParameter
+          Identifier: 'P'
+          InferType
+            TypeParameter
+              Identifier: ' U'
+              TypeOperator
+                TypeReference
+                  Identifier: ' T'
+        LiteralType
+          NumericLiteral
+      LiteralType
+        NumericLiteral
+      LiteralType
+        NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' X17'
+    TypeParameter
+      Identifier: 'T'
+    ConditionalType
+      TypeReference
+        Identifier: ' T'
+      MappedType
+        TypeParameter
+          Identifier: 'P'
+          TypeOperator
+            TypeReference
+              Identifier: ' T'
+        ConditionalType
+          InferType
+            TypeParameter
+              Identifier: ' U'
+          TypeReference
+            Identifier: ' P'
+          LiteralType
+            NumericLiteral
+          LiteralType
+            NumericLiteral
+        LiteralType
+          NumericLiteral
+      LiteralType
+        NumericLiteral
+      LiteralType
+        NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' X18'
+    TypeParameter
+      Identifier: 'T'
+    ConditionalType
+      TypeReference
+        Identifier: ' T'
+      MappedType
+        TypeParameter
+          Identifier: 'P'
+          TypeOperator
+            TypeReference
+              Identifier: ' T'
+        InferType
+          TypeParameter
+            Identifier: ' U'
+            TypeReference
+              Identifier: ' P'
+        LiteralType
+          NumericLiteral
+      LiteralType
+        NumericLiteral
+      LiteralType
+        NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' X19'
+    TypeParameter
+      Identifier: 'T'
+      UnionType
+        StringKeyword
+        NumberKeyword
+    ConditionalType
+      TypeReference
+        Identifier: ' T'
+      ParenthesizedType
+        InferType
+          TypeParameter
+            Identifier: ' U'
+            NumberKeyword
+      TupleType
+        TypeReference
+          Identifier: 'T'
+        TypeReference
+          Identifier: ' U'
+      NeverKeyword
+  TypeAliasDeclaration
+    Identifier: ' X19_T1'
+    TypeReference
+      Identifier: ' X19'
+      LiteralType
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' X19_T2'
+    TypeReference
+      Identifier: ' X19'
+      LiteralType
+        NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' X19_T3'
+    TypeReference
+      Identifier: ' X19'
+      UnionType
+        LiteralType
+          NumericLiteral
+        LiteralType
+          StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' X20'
+    TypeParameter
+      Identifier: 'T'
+    ConditionalType
+      TypeReference
+        Identifier: ' T'
+      ParenthesizedType
+        InferType
+          TypeParameter
+            Identifier: ' U'
+            NumberKeyword
+      ConditionalType
+        TypeReference
+          Identifier: ' T'
+        ParenthesizedType
+          InferType
+            TypeParameter
+              Identifier: ' V'
+              TypeReference
+                Identifier: ' U'
+        TupleType
+          TypeReference
+            Identifier: 'T'
+          TypeReference
+            Identifier: ' U'
+          TypeReference
+            Identifier: ' V'
+        NeverKeyword
+      NeverKeyword
+  TypeAliasDeclaration
+    Identifier: ' X20_T1'
+    TypeReference
+      Identifier: ' X20'
+      UnionType
+        LiteralType
+          NumericLiteral
+        LiteralType
+          StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' X21'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' N'
+      NumberKeyword
+    ConditionalType
+      TypeReference
+        Identifier: ' T'
+      ParenthesizedType
+        InferType
+          TypeParameter
+            Identifier: ' U'
+            TypeReference
+              Identifier: ' N'
+      TupleType
+        TypeReference
+          Identifier: 'T'
+        TypeReference
+          Identifier: ' U'
+      NeverKeyword
+  TypeAliasDeclaration
+    Identifier: ' X21_T1'
+    TypeReference
+      Identifier: ' X21'
+      LiteralType
+        NumericLiteral
+      LiteralType
+        NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' X21_T2'
+    TypeReference
+      Identifier: ' X21'
+      UnionType
+        LiteralType
+          NumericLiteral
+        LiteralType
+          StringLiteral
+      LiteralType
+        NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' X21_T3'
+    TypeReference
+      Identifier: ' X21'
+      UnionType
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+      LiteralType
+        NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' X21_T4'
+    TypeReference
+      Identifier: ' X21'
+      UnionType
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+      UnionType
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' X21_T5'
+    TypeReference
+      Identifier: ' X21'
+      UnionType
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+      LiteralType
+        NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' IfEquals'
+    TypeParameter
+      Identifier: 'X'
+    TypeParameter
+      Identifier: ' Y'
+    TypeParameter
+      Identifier: ' A'
+    TypeParameter
+      Identifier: ' B'
+    ConditionalType
+      ParenthesizedType
+        FunctionType
+          TypeParameter
+            Identifier: 'T'
+          ConditionalType
+            TypeReference
+              Identifier: ' T'
+            TypeReference
+              Identifier: ' X'
+            LiteralType
+              NumericLiteral
+            LiteralType
+              NumericLiteral
+      FunctionType
+        TypeParameter
+          Identifier: 'T'
+        ConditionalType
+          TypeReference
+            Identifier: ' T'
+          TypeReference
+            Identifier: ' Y'
+          LiteralType
+            NumericLiteral
+          LiteralType
+            NumericLiteral
+      TypeReference
+        Identifier: ' A'
+      TypeReference
+        Identifier: ' B'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x1'
+        FunctionType
+          TypeParameter
+            Identifier: 'T'
+          ParenthesizedType
+            ConditionalType
+              TypeReference
+                Identifier: 'T'
+              InferType
+                TypeParameter
+                  Identifier: ' U'
+                  NumberKeyword
+              LiteralType
+                NumericLiteral
+              LiteralType
+                NumericLiteral
+  FunctionDeclaration
+    Identifier: ' f1'
+    Block
+      ReturnStatement
+        Identifier: ' x1'
+  TypeAliasDeclaration
+    Identifier: ' ExpectNumber'
+    TypeParameter
+      Identifier: 'T'
+      NumberKeyword
+    TypeReference
+      Identifier: ' T'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x2'
+        FunctionType
+          TypeParameter
+            Identifier: 'T'
+          ParenthesizedType
+            ConditionalType
+              TypeReference
+                Identifier: 'T'
+              TypeReference
+                Identifier: ' ExpectNumber'
+                InferType
+                  TypeParameter
+                    Identifier: ' U'
+              LiteralType
+                NumericLiteral
+              LiteralType
+                NumericLiteral
+  FunctionDeclaration
+    Identifier: ' f2'
+    Block
+      ReturnStatement
+        Identifier: ' x2'

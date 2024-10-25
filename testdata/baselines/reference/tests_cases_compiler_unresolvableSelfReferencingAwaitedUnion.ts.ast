@@ -1,0 +1,103 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' EnvFunction'
+    FunctionType
+      TypeParameter
+        Identifier: 'T'
+      TypeReference
+        Identifier: ' T'
+  TypeAliasDeclaration
+    Identifier: ' SimpleType'
+    UnionType
+      StringKeyword
+      TypeReference
+        Identifier: ' Promise'
+        TypeReference
+          Identifier: 'SimpleType'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' simple'
+        TypeReference
+          Identifier: ' SimpleType'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' env'
+        TypeReference
+          Identifier: ' EnvFunction'
+        ArrowFunction
+          EqualsGreaterThanToken
+          Identifier: ' simple'
+  TypeAliasDeclaration
+    Identifier: ' T1'
+    UnionType
+      LiteralType
+        NumericLiteral
+      TypeReference
+        Identifier: ' Promise'
+        TypeReference
+          Identifier: 'T1'
+      ArrayType
+        TypeReference
+          Identifier: ' T1'
+  FunctionDeclaration
+    ExportKeyword
+    AsyncKeyword
+    Identifier: ' myFunction'
+    Parameter
+      Identifier: 'param'
+      TypeReference
+        Identifier: ' T1'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' awaited'
+            AwaitExpression
+              Identifier: ' param'
+  TypeAliasDeclaration
+    Identifier: ' EffectResult'
+    UnionType
+      ParenthesizedType
+        FunctionType
+          TypeReference
+            Identifier: ' EffectResult'
+      TypeReference
+        Identifier: ' Promise'
+        TypeReference
+          Identifier: 'EffectResult'
+  FunctionDeclaration
+    ExportKeyword
+    AsyncKeyword
+    Identifier: ' handleEffectResult'
+    Parameter
+      Identifier: 'result'
+      TypeReference
+        Identifier: ' EffectResult'
+    Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'result'
+          InstanceOfKeyword
+          Identifier: ' Function'
+        Block
+          ExpressionStatement
+            AwaitExpression
+              CallExpression
+                Identifier: ' handleEffectResult'
+                CallExpression
+                  Identifier: 'result'
+        IfStatement
+          BinaryExpression
+            Identifier: 'result'
+            InstanceOfKeyword
+            Identifier: ' Promise'
+          Block
+            ExpressionStatement
+              AwaitExpression
+                CallExpression
+                  Identifier: ' handleEffectResult'
+                  AwaitExpression
+                    Identifier: ' result'

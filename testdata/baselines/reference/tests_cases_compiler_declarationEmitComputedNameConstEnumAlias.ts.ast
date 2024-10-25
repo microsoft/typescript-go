@@ -1,0 +1,21 @@
+SourceFile
+  EnumDeclaration
+    Identifier: ' EnumExample'
+    EnumMember
+      Identifier: '
+    TEST'
+      StringLiteral
+  ExportAssignment
+    Identifier: ' EnumExample'
+  ImportDeclaration
+    ImportClause
+      Identifier: ' EnumExample'
+    StringLiteral
+  ExportAssignment
+    ObjectLiteralExpression
+      PropertyAssignment
+        ComputedPropertyName
+          PropertyAccessExpression
+            Identifier: 'EnumExample'
+            Identifier: 'TEST'
+        ObjectLiteralExpression

@@ -1,0 +1,102 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' Entity'
+    IntersectionType
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+    someDate'
+          UnionType
+            TypeReference
+              Identifier: ' Date'
+            LiteralType
+              NullKeyword
+      ParenthesizedType
+        UnionType
+          TypeLiteral
+            PropertySignature
+              Identifier: ' id'
+              StringKeyword
+          TypeLiteral
+            PropertySignature
+              Identifier: ' id'
+              NumberKeyword
+  TypeAliasDeclaration
+    Identifier: ' RowRendererMeta'
+    TypeParameter
+      Identifier: 'TInput'
+      TypeLiteral
+    MappedType
+      TypeParameter
+        Identifier: 'key'
+        TypeOperator
+          TypeReference
+            Identifier: ' TInput'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' key'
+          TypeReference
+            Identifier: ' key'
+        PropertySignature
+          Identifier: ' caption'
+          StringKeyword
+        PropertySignature
+          Identifier: ' formatter'
+          QuestionToken
+          FunctionType
+            Parameter
+              Identifier: 'value'
+              IndexedAccessType
+                TypeReference
+                  Identifier: ' TInput'
+                TypeReference
+                  Identifier: 'key'
+            StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' RowRenderer'
+    TypeParameter
+      Identifier: 'TInput'
+      TypeLiteral
+    IndexedAccessType
+      TypeReference
+        Identifier: ' RowRendererMeta'
+        TypeReference
+          Identifier: 'TInput'
+      TypeOperator
+        TypeReference
+          Identifier: ' RowRendererMeta'
+          TypeReference
+            Identifier: 'TInput'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' test'
+        TypeReference
+          Identifier: ' RowRenderer'
+          TypeReference
+            Identifier: 'Entity'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    key'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    caption'
+            StringLiteral
+          PropertyAssignment
+            Identifier: '
+    formatter'
+            ArrowFunction
+              Parameter
+                Identifier: 'value'
+              EqualsGreaterThanToken
+              ConditionalExpression
+                Identifier: ' value'
+                QuestionToken
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' value'
+                    Identifier: 'toString'
+                ColonToken
+                StringLiteral

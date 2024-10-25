@@ -1,0 +1,1082 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    codeFixAll'
+        ImportSpecifier
+          Identifier: '
+    createCodeFixAction'
+        ImportSpecifier
+          Identifier: '
+    registerCodeFix'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    append'
+        ImportSpecifier
+          Identifier: '
+    BigIntLiteralType'
+        ImportSpecifier
+          Identifier: '
+    CodeFixAction'
+        ImportSpecifier
+          Identifier: '
+    CodeFixContext'
+        ImportSpecifier
+          Identifier: '
+    Debug'
+        ImportSpecifier
+          Identifier: '
+    Diagnostics'
+        ImportSpecifier
+          Identifier: '
+    Expression'
+        ImportSpecifier
+          Identifier: '
+    factory'
+        ImportSpecifier
+          Identifier: '
+    firstDefined'
+        ImportSpecifier
+          Identifier: '
+    getClassLikeDeclarationOfSymbol'
+        ImportSpecifier
+          Identifier: '
+    getEffectiveTypeAnnotationNode'
+        ImportSpecifier
+          Identifier: '
+    getFirstConstructorWithBody'
+        ImportSpecifier
+          Identifier: '
+    getTokenAtPosition'
+        ImportSpecifier
+          Identifier: '
+    hasSyntacticModifier'
+        ImportSpecifier
+          Identifier: '
+    isIdentifier'
+        ImportSpecifier
+          Identifier: '
+    isInJSFile'
+        ImportSpecifier
+          Identifier: '
+    isPropertyDeclaration'
+        ImportSpecifier
+          Identifier: '
+    isUnionTypeNode'
+        ImportSpecifier
+          Identifier: '
+    ModifierFlags'
+        ImportSpecifier
+          Identifier: '
+    PropertyDeclaration'
+        ImportSpecifier
+          Identifier: '
+    SourceFile'
+        ImportSpecifier
+          Identifier: '
+    suppressLeadingAndTrailingTrivia'
+        ImportSpecifier
+          Identifier: '
+    SyntaxKind'
+        ImportSpecifier
+          Identifier: '
+    textChanges'
+        ImportSpecifier
+          Identifier: '
+    Type'
+        ImportSpecifier
+          Identifier: '
+    TypeChecker'
+        ImportSpecifier
+          Identifier: '
+    TypeFlags'
+        ImportSpecifier
+          Identifier: '
+    TypeNode'
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fixName'
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fixIdAddDefiniteAssignmentAssertions'
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fixIdAddUndefinedType'
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fixIdAddInitializer'
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' errorCodes'
+        ArrayLiteralExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: 'Diagnostics'
+              Identifier: 'Property_0_has_no_initializer_and_is_not_definitely_assigned_in_the_constructor'
+            Identifier: 'code'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+registerCodeFix'
+      ObjectLiteralExpression
+        ShorthandPropertyAssignment
+          Identifier: '
+    errorCodes'
+        PropertyAssignment
+          Identifier: '
+    getCodeActions'
+          FunctionExpression
+            Identifier: ' getCodeActionsForStrictClassInitializationErrors'
+            Parameter
+              Identifier: 'context'
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' info'
+                    CallExpression
+                      Identifier: ' getInfo'
+                      PropertyAccessExpression
+                        Identifier: 'context'
+                        Identifier: 'sourceFile'
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: ' context'
+                          Identifier: 'span'
+                        Identifier: 'start'
+              IfStatement
+                PrefixUnaryExpression
+                  Identifier: 'info'
+                ReturnStatement
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' result'
+                    ArrayType
+                      TypeReference
+                        Identifier: ' CodeFixAction'
+                    ArrayLiteralExpression
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+        append'
+                  Identifier: 'result'
+                  CallExpression
+                    Identifier: ' getActionForAddMissingUndefinedType'
+                    Identifier: 'context'
+                    Identifier: ' info'
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+        append'
+                  Identifier: 'result'
+                  CallExpression
+                    Identifier: ' getActionForAddMissingDefiniteAssignmentAssertion'
+                    Identifier: 'context'
+                    Identifier: ' info'
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+        append'
+                  Identifier: 'result'
+                  CallExpression
+                    Identifier: ' getActionForAddMissingInitializer'
+                    Identifier: 'context'
+                    Identifier: ' info'
+              ReturnStatement
+                Identifier: ' result'
+        PropertyAssignment
+          Identifier: '
+    fixIds'
+          ArrayLiteralExpression
+            Identifier: 'fixIdAddDefiniteAssignmentAssertions'
+            Identifier: ' fixIdAddUndefinedType'
+            Identifier: ' fixIdAddInitializer'
+        PropertyAssignment
+          Identifier: '
+    getAllCodeActions'
+          ArrowFunction
+            Parameter
+              Identifier: ' context'
+            EqualsGreaterThanToken
+            Block
+              ReturnStatement
+                CallExpression
+                  Identifier: ' codeFixAll'
+                  Identifier: 'context'
+                  Identifier: ' errorCodes'
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'changes'
+                    Parameter
+                      Identifier: ' diag'
+                    EqualsGreaterThanToken
+                    Block
+                      VariableStatement
+                        VariableDeclarationList
+                          VariableDeclaration
+                            Identifier: ' info'
+                            CallExpression
+                              Identifier: ' getInfo'
+                              PropertyAccessExpression
+                                Identifier: 'diag'
+                                Identifier: 'file'
+                              PropertyAccessExpression
+                                Identifier: ' diag'
+                                Identifier: 'start'
+                      IfStatement
+                        PrefixUnaryExpression
+                          Identifier: 'info'
+                        ReturnStatement
+                      SwitchStatement
+                        PropertyAccessExpression
+                          Identifier: 'context'
+                          Identifier: 'fixId'
+                        CaseBlock
+                          CaseClause
+                            Identifier: ' fixIdAddDefiniteAssignmentAssertions'
+                            ExpressionStatement
+                              CallExpression
+                                Identifier: '
+                    addDefiniteAssignmentAssertion'
+                                Identifier: 'changes'
+                                PropertyAccessExpression
+                                  Identifier: ' diag'
+                                  Identifier: 'file'
+                                PropertyAccessExpression
+                                  Identifier: ' info'
+                                  Identifier: 'prop'
+                            BreakStatement
+                          CaseClause
+                            Identifier: ' fixIdAddUndefinedType'
+                            ExpressionStatement
+                              CallExpression
+                                Identifier: '
+                    addUndefinedType'
+                                Identifier: 'changes'
+                                PropertyAccessExpression
+                                  Identifier: ' diag'
+                                  Identifier: 'file'
+                                Identifier: ' info'
+                            BreakStatement
+                          CaseClause
+                            Identifier: ' fixIdAddInitializer'
+                            VariableStatement
+                              VariableDeclarationList
+                                VariableDeclaration
+                                  Identifier: ' checker'
+                                  CallExpression
+                                    PropertyAccessExpression
+                                      PropertyAccessExpression
+                                        Identifier: ' context'
+                                        Identifier: 'program'
+                                      Identifier: 'getTypeChecker'
+                            VariableStatement
+                              VariableDeclarationList
+                                VariableDeclaration
+                                  Identifier: ' initializer'
+                                  CallExpression
+                                    Identifier: ' getInitializer'
+                                    Identifier: 'checker'
+                                    PropertyAccessExpression
+                                      Identifier: ' info'
+                                      Identifier: 'prop'
+                            IfStatement
+                              PrefixUnaryExpression
+                                Identifier: 'initializer'
+                              ReturnStatement
+                            ExpressionStatement
+                              CallExpression
+                                Identifier: '
+                    addInitializer'
+                                Identifier: 'changes'
+                                PropertyAccessExpression
+                                  Identifier: ' diag'
+                                  Identifier: 'file'
+                                PropertyAccessExpression
+                                  Identifier: ' info'
+                                  Identifier: 'prop'
+                                Identifier: ' initializer'
+                            BreakStatement
+                          DefaultClause
+                            ExpressionStatement
+                              CallExpression
+                                PropertyAccessExpression
+                                  Identifier: '
+                    Debug'
+                                  Identifier: 'fail'
+                                CallExpression
+                                  PropertyAccessExpression
+                                    Identifier: 'JSON'
+                                    Identifier: 'stringify'
+                                  PropertyAccessExpression
+                                    Identifier: 'context'
+                                    Identifier: 'fixId'
+  InterfaceDeclaration
+    Identifier: ' Info'
+    PropertySignature
+      Identifier: '
+    prop'
+      TypeReference
+        Identifier: ' PropertyDeclaration'
+    PropertySignature
+      Identifier: '
+    type'
+      TypeReference
+        Identifier: ' TypeNode'
+    PropertySignature
+      Identifier: '
+    isJs'
+      BooleanKeyword
+  FunctionDeclaration
+    Identifier: ' getInfo'
+    Parameter
+      Identifier: 'sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' pos'
+      NumberKeyword
+    UnionType
+      TypeReference
+        Identifier: ' Info'
+      UndefinedKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' token'
+            CallExpression
+              Identifier: ' getTokenAtPosition'
+              Identifier: 'sourceFile'
+              Identifier: ' pos'
+      IfStatement
+        BinaryExpression
+          CallExpression
+            Identifier: 'isIdentifier'
+            Identifier: 'token'
+          AmpersandAmpersandToken
+          CallExpression
+            Identifier: ' isPropertyDeclaration'
+            PropertyAccessExpression
+              Identifier: 'token'
+              Identifier: 'parent'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' type'
+                CallExpression
+                  Identifier: ' getEffectiveTypeAnnotationNode'
+                  PropertyAccessExpression
+                    Identifier: 'token'
+                    Identifier: 'parent'
+          IfStatement
+            Identifier: 'type'
+            Block
+              ReturnStatement
+                ObjectLiteralExpression
+                  ShorthandPropertyAssignment
+                    Identifier: ' type'
+                  PropertyAssignment
+                    Identifier: ' prop'
+                    PropertyAccessExpression
+                      Identifier: ' token'
+                      Identifier: 'parent'
+                  PropertyAssignment
+                    Identifier: ' isJs'
+                    CallExpression
+                      Identifier: ' isInJSFile'
+                      PropertyAccessExpression
+                        Identifier: 'token'
+                        Identifier: 'parent'
+      ReturnStatement
+        Identifier: ' undefined'
+  FunctionDeclaration
+    Identifier: ' getActionForAddMissingDefiniteAssignmentAssertion'
+    Parameter
+      Identifier: 'context'
+      TypeReference
+        Identifier: ' CodeFixContext'
+    Parameter
+      Identifier: ' info'
+      TypeReference
+        Identifier: ' Info'
+    UnionType
+      TypeReference
+        Identifier: ' CodeFixAction'
+      UndefinedKeyword
+    Block
+      IfStatement
+        PropertyAccessExpression
+          Identifier: 'info'
+          Identifier: 'isJs'
+        ReturnStatement
+          Identifier: ' undefined'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' changes'
+            CallExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' textChanges'
+                  Identifier: 'ChangeTracker'
+                Identifier: 'with'
+              Identifier: 'context'
+              ArrowFunction
+                Parameter
+                  Identifier: ' t'
+                EqualsGreaterThanToken
+                CallExpression
+                  Identifier: ' addDefiniteAssignmentAssertion'
+                  Identifier: 't'
+                  PropertyAccessExpression
+                    Identifier: ' context'
+                    Identifier: 'sourceFile'
+                  PropertyAccessExpression
+                    Identifier: ' info'
+                    Identifier: 'prop'
+      ReturnStatement
+        CallExpression
+          Identifier: ' createCodeFixAction'
+          Identifier: 'fixName'
+          Identifier: ' changes'
+          ArrayLiteralExpression
+            PropertyAccessExpression
+              Identifier: 'Diagnostics'
+              Identifier: 'Add_definite_assignment_assertion_to_property_0'
+            CallExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' info'
+                  Identifier: 'prop'
+                Identifier: 'getText'
+          Identifier: ' fixIdAddDefiniteAssignmentAssertions'
+          PropertyAccessExpression
+            Identifier: ' Diagnostics'
+            Identifier: 'Add_definite_assignment_assertions_to_all_uninitialized_properties'
+  FunctionDeclaration
+    Identifier: ' addDefiniteAssignmentAssertion'
+    Parameter
+      Identifier: 'changeTracker'
+      TypeReference
+        QualifiedName
+          Identifier: ' textChanges'
+          Identifier: 'ChangeTracker'
+    Parameter
+      Identifier: ' propertyDeclarationSourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' propertyDeclaration'
+      TypeReference
+        Identifier: ' PropertyDeclaration'
+    VoidKeyword
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    suppressLeadingAndTrailingTrivia'
+          Identifier: 'propertyDeclaration'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' property'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' factory'
+                Identifier: 'updatePropertyDeclaration'
+              Identifier: '
+        propertyDeclaration'
+              PropertyAccessExpression
+                Identifier: '
+        propertyDeclaration'
+                Identifier: 'modifiers'
+              PropertyAccessExpression
+                Identifier: '
+        propertyDeclaration'
+                Identifier: 'name'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: '
+        factory'
+                  Identifier: 'createToken'
+                PropertyAccessExpression
+                  Identifier: 'SyntaxKind'
+                  Identifier: 'ExclamationToken'
+              PropertyAccessExpression
+                Identifier: '
+        propertyDeclaration'
+                Identifier: 'type'
+              PropertyAccessExpression
+                Identifier: '
+        propertyDeclaration'
+                Identifier: 'initializer'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    changeTracker'
+            Identifier: 'replaceNode'
+          Identifier: 'propertyDeclarationSourceFile'
+          Identifier: ' propertyDeclaration'
+          Identifier: ' property'
+  FunctionDeclaration
+    Identifier: ' getActionForAddMissingUndefinedType'
+    Parameter
+      Identifier: 'context'
+      TypeReference
+        Identifier: ' CodeFixContext'
+    Parameter
+      Identifier: ' info'
+      TypeReference
+        Identifier: ' Info'
+    TypeReference
+      Identifier: ' CodeFixAction'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' changes'
+            CallExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' textChanges'
+                  Identifier: 'ChangeTracker'
+                Identifier: 'with'
+              Identifier: 'context'
+              ArrowFunction
+                Parameter
+                  Identifier: ' t'
+                EqualsGreaterThanToken
+                CallExpression
+                  Identifier: ' addUndefinedType'
+                  Identifier: 't'
+                  PropertyAccessExpression
+                    Identifier: ' context'
+                    Identifier: 'sourceFile'
+                  Identifier: ' info'
+      ReturnStatement
+        CallExpression
+          Identifier: ' createCodeFixAction'
+          Identifier: 'fixName'
+          Identifier: ' changes'
+          ArrayLiteralExpression
+            PropertyAccessExpression
+              Identifier: 'Diagnostics'
+              Identifier: 'Add_undefined_type_to_property_0'
+            CallExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' info'
+                    Identifier: 'prop'
+                  Identifier: 'name'
+                Identifier: 'getText'
+          Identifier: ' fixIdAddUndefinedType'
+          PropertyAccessExpression
+            Identifier: ' Diagnostics'
+            Identifier: 'Add_undefined_type_to_all_uninitialized_properties'
+  FunctionDeclaration
+    Identifier: ' addUndefinedType'
+    Parameter
+      Identifier: 'changeTracker'
+      TypeReference
+        QualifiedName
+          Identifier: ' textChanges'
+          Identifier: 'ChangeTracker'
+    Parameter
+      Identifier: ' sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' info'
+      TypeReference
+        Identifier: ' Info'
+    VoidKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' undefinedTypeNode'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' factory'
+                Identifier: 'createKeywordTypeNode'
+              PropertyAccessExpression
+                Identifier: 'SyntaxKind'
+                Identifier: 'UndefinedKeyword'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' types'
+            ConditionalExpression
+              CallExpression
+                Identifier: ' isUnionTypeNode'
+                PropertyAccessExpression
+                  Identifier: 'info'
+                  Identifier: 'type'
+              QuestionToken
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' info'
+                      Identifier: 'type'
+                    Identifier: 'types'
+                  Identifier: 'concat'
+                Identifier: 'undefinedTypeNode'
+              ColonToken
+              ArrayLiteralExpression
+                PropertyAccessExpression
+                  Identifier: 'info'
+                  Identifier: 'type'
+                Identifier: ' undefinedTypeNode'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' unionTypeNode'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' factory'
+                Identifier: 'createUnionTypeNode'
+              Identifier: 'types'
+      IfStatement
+        PropertyAccessExpression
+          Identifier: 'info'
+          Identifier: 'isJs'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        changeTracker'
+                Identifier: 'addJSDocTags'
+              Identifier: 'sourceFile'
+              PropertyAccessExpression
+                Identifier: ' info'
+                Identifier: 'prop'
+              ArrayLiteralExpression
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: 'factory'
+                    Identifier: 'createJSDocTypeTag'
+                  Identifier: '/*tagName*/ undefined'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' factory'
+                      Identifier: 'createJSDocTypeExpression'
+                    Identifier: 'unionTypeNode'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        changeTracker'
+                Identifier: 'replaceNode'
+              Identifier: 'sourceFile'
+              PropertyAccessExpression
+                Identifier: ' info'
+                Identifier: 'type'
+              Identifier: ' unionTypeNode'
+  FunctionDeclaration
+    Identifier: ' getActionForAddMissingInitializer'
+    Parameter
+      Identifier: 'context'
+      TypeReference
+        Identifier: ' CodeFixContext'
+    Parameter
+      Identifier: ' info'
+      TypeReference
+        Identifier: ' Info'
+    UnionType
+      TypeReference
+        Identifier: ' CodeFixAction'
+      UndefinedKeyword
+    Block
+      IfStatement
+        PropertyAccessExpression
+          Identifier: 'info'
+          Identifier: 'isJs'
+        ReturnStatement
+          Identifier: ' undefined'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' checker'
+            CallExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' context'
+                  Identifier: 'program'
+                Identifier: 'getTypeChecker'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' initializer'
+            CallExpression
+              Identifier: ' getInitializer'
+              Identifier: 'checker'
+              PropertyAccessExpression
+                Identifier: ' info'
+                Identifier: 'prop'
+      IfStatement
+        PrefixUnaryExpression
+          Identifier: 'initializer'
+        ReturnStatement
+          Identifier: ' undefined'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' changes'
+            CallExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' textChanges'
+                  Identifier: 'ChangeTracker'
+                Identifier: 'with'
+              Identifier: 'context'
+              ArrowFunction
+                Parameter
+                  Identifier: ' t'
+                EqualsGreaterThanToken
+                CallExpression
+                  Identifier: ' addInitializer'
+                  Identifier: 't'
+                  PropertyAccessExpression
+                    Identifier: ' context'
+                    Identifier: 'sourceFile'
+                  PropertyAccessExpression
+                    Identifier: ' info'
+                    Identifier: 'prop'
+                  Identifier: ' initializer'
+      ReturnStatement
+        CallExpression
+          Identifier: ' createCodeFixAction'
+          Identifier: 'fixName'
+          Identifier: ' changes'
+          ArrayLiteralExpression
+            PropertyAccessExpression
+              Identifier: 'Diagnostics'
+              Identifier: 'Add_initializer_to_property_0'
+            CallExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' info'
+                    Identifier: 'prop'
+                  Identifier: 'name'
+                Identifier: 'getText'
+          Identifier: ' fixIdAddInitializer'
+          PropertyAccessExpression
+            Identifier: ' Diagnostics'
+            Identifier: 'Add_initializers_to_all_uninitialized_properties'
+  FunctionDeclaration
+    Identifier: ' addInitializer'
+    Parameter
+      Identifier: 'changeTracker'
+      TypeReference
+        QualifiedName
+          Identifier: ' textChanges'
+          Identifier: 'ChangeTracker'
+    Parameter
+      Identifier: ' propertyDeclarationSourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' propertyDeclaration'
+      TypeReference
+        Identifier: ' PropertyDeclaration'
+    Parameter
+      Identifier: ' initializer'
+      TypeReference
+        Identifier: ' Expression'
+    VoidKeyword
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    suppressLeadingAndTrailingTrivia'
+          Identifier: 'propertyDeclaration'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' property'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' factory'
+                Identifier: 'updatePropertyDeclaration'
+              Identifier: '
+        propertyDeclaration'
+              PropertyAccessExpression
+                Identifier: '
+        propertyDeclaration'
+                Identifier: 'modifiers'
+              PropertyAccessExpression
+                Identifier: '
+        propertyDeclaration'
+                Identifier: 'name'
+              PropertyAccessExpression
+                Identifier: '
+        propertyDeclaration'
+                Identifier: 'questionToken'
+              PropertyAccessExpression
+                Identifier: '
+        propertyDeclaration'
+                Identifier: 'type'
+              Identifier: '
+        initializer'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    changeTracker'
+            Identifier: 'replaceNode'
+          Identifier: 'propertyDeclarationSourceFile'
+          Identifier: ' propertyDeclaration'
+          Identifier: ' property'
+  FunctionDeclaration
+    Identifier: ' getInitializer'
+    Parameter
+      Identifier: 'checker'
+      TypeReference
+        Identifier: ' TypeChecker'
+    Parameter
+      Identifier: ' propertyDeclaration'
+      TypeReference
+        Identifier: ' PropertyDeclaration'
+    UnionType
+      TypeReference
+        Identifier: ' Expression'
+      UndefinedKeyword
+    Block
+      ReturnStatement
+        CallExpression
+          Identifier: ' getDefaultValueFromType'
+          Identifier: 'checker'
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' checker'
+              Identifier: 'getTypeFromTypeNode'
+            NonNullExpression
+              PropertyAccessExpression
+                Identifier: 'propertyDeclaration'
+                Identifier: 'type'
+  FunctionDeclaration
+    Identifier: ' getDefaultValueFromType'
+    Parameter
+      Identifier: 'checker'
+      TypeReference
+        Identifier: ' TypeChecker'
+    Parameter
+      Identifier: ' type'
+      TypeReference
+        Identifier: ' Type'
+    UnionType
+      TypeReference
+        Identifier: ' Expression'
+      UndefinedKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: 'type'
+            Identifier: 'flags'
+          AmpersandToken
+          PropertyAccessExpression
+            Identifier: ' TypeFlags'
+            Identifier: 'BooleanLiteral'
+        Block
+          ReturnStatement
+            ConditionalExpression
+              ParenthesizedExpression
+                BinaryExpression
+                  BinaryExpression
+                    Identifier: 'type'
+                    EqualsEqualsEqualsToken
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' checker'
+                        Identifier: 'getFalseType'
+                  BarBarToken
+                  BinaryExpression
+                    Identifier: ' type'
+                    EqualsEqualsEqualsToken
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: ' checker'
+                        Identifier: 'getFalseType'
+                      TrueKeyword
+              QuestionToken
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' factory'
+                  Identifier: 'createFalse'
+              ColonToken
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' factory'
+                  Identifier: 'createTrue'
+        IfStatement
+          CallExpression
+            PropertyAccessExpression
+              Identifier: 'type'
+              Identifier: 'isStringLiteral'
+          Block
+            ReturnStatement
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' factory'
+                  Identifier: 'createStringLiteral'
+                PropertyAccessExpression
+                  Identifier: 'type'
+                  Identifier: 'value'
+          IfStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: 'type'
+                Identifier: 'isNumberLiteral'
+            Block
+              ReturnStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' factory'
+                    Identifier: 'createNumericLiteral'
+                  PropertyAccessExpression
+                    Identifier: 'type'
+                    Identifier: 'value'
+            IfStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: 'type'
+                  Identifier: 'flags'
+                AmpersandToken
+                PropertyAccessExpression
+                  Identifier: ' TypeFlags'
+                  Identifier: 'BigIntLiteral'
+              Block
+                ReturnStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' factory'
+                      Identifier: 'createBigIntLiteral'
+                    PropertyAccessExpression
+                      ParenthesizedExpression
+                        AsExpression
+                          Identifier: 'type'
+                          TypeReference
+                            Identifier: ' BigIntLiteralType'
+                      Identifier: 'value'
+              IfStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: 'type'
+                    Identifier: 'isUnion'
+                Block
+                  ReturnStatement
+                    CallExpression
+                      Identifier: ' firstDefined'
+                      PropertyAccessExpression
+                        Identifier: 'type'
+                        Identifier: 'types'
+                      ArrowFunction
+                        Parameter
+                          Identifier: ' t'
+                        EqualsGreaterThanToken
+                        CallExpression
+                          Identifier: ' getDefaultValueFromType'
+                          Identifier: 'checker'
+                          Identifier: ' t'
+                IfStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: 'type'
+                      Identifier: 'isClass'
+                  Block
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' classDeclaration'
+                          CallExpression
+                            Identifier: ' getClassLikeDeclarationOfSymbol'
+                            PropertyAccessExpression
+                              Identifier: 'type'
+                              Identifier: 'symbol'
+                    IfStatement
+                      BinaryExpression
+                        PrefixUnaryExpression
+                          Identifier: 'classDeclaration'
+                        BarBarToken
+                        CallExpression
+                          Identifier: ' hasSyntacticModifier'
+                          Identifier: 'classDeclaration'
+                          PropertyAccessExpression
+                            Identifier: ' ModifierFlags'
+                            Identifier: 'Abstract'
+                      ReturnStatement
+                        Identifier: ' undefined'
+                    VariableStatement
+                      VariableDeclarationList
+                        VariableDeclaration
+                          Identifier: ' constructorDeclaration'
+                          CallExpression
+                            Identifier: ' getFirstConstructorWithBody'
+                            Identifier: 'classDeclaration'
+                    IfStatement
+                      BinaryExpression
+                        Identifier: 'constructorDeclaration'
+                        AmpersandAmpersandToken
+                        PropertyAccessExpression
+                          PropertyAccessExpression
+                            Identifier: ' constructorDeclaration'
+                            Identifier: 'parameters'
+                          Identifier: 'length'
+                      ReturnStatement
+                        Identifier: ' undefined'
+                    ReturnStatement
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: ' factory'
+                          Identifier: 'createNewExpression'
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: 'factory'
+                            Identifier: 'createIdentifier'
+                          PropertyAccessExpression
+                            PropertyAccessExpression
+                              Identifier: 'type'
+                              Identifier: 'symbol'
+                            Identifier: 'name'
+                        Identifier: ' /*typeArguments*/ undefined'
+                        Identifier: ' /*argumentsArray*/ undefined'
+                  IfStatement
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: 'checker'
+                        Identifier: 'isArrayLikeType'
+                      Identifier: 'type'
+                    Block
+                      ReturnStatement
+                        CallExpression
+                          PropertyAccessExpression
+                            Identifier: ' factory'
+                            Identifier: 'createArrayLiteralExpression'
+      ReturnStatement
+        Identifier: ' undefined'

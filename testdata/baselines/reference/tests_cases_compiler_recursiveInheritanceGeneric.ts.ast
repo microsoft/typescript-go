@@ -1,0 +1,14 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' I5'
+    TypeParameter
+      Identifier: 'T'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' I5'
+        TypeReference
+          Identifier: 'T'
+    MethodSignature
+      Identifier: ' 
+    foo'
+      VoidKeyword

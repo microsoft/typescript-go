@@ -1,0 +1,12 @@
+SourceFile
+  ExpressionStatement
+    ConditionalExpression
+      BinaryExpression
+        NewExpression
+          Identifier: ' Date'
+        LessThanToken
+        Identifier: 'A'
+      QuestionToken
+      Identifier: ' B'
+      ColonToken
+      Identifier: ' C'

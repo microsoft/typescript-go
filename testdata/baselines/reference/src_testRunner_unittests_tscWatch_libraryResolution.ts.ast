@@ -1,0 +1,260 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' dedent'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    forEachLibResolutionScenario'
+        ImportSpecifier
+          Identifier: '
+    getCommandLineArgsForLibResolution'
+        ImportSpecifier
+          Identifier: '
+    getSysForLibResolutionUnknown'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' verifyTscWatch'
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+describe'
+      StringLiteral
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          FunctionDeclaration
+            Identifier: ' commandLineArgs'
+            Parameter
+              Identifier: 'withoutConfig'
+              UnionType
+                LiteralType
+                  TrueKeyword
+                UndefinedKeyword
+            Block
+              ReturnStatement
+                ArrayLiteralExpression
+                  StringLiteral
+                  SpreadElement
+                    CallExpression
+                      Identifier: 'getCommandLineArgsForLibResolution'
+                      Identifier: 'withoutConfig'
+                  StringLiteral
+          FunctionDeclaration
+            Identifier: ' verify'
+            Parameter
+              Identifier: 'withoutConfig'
+              QuestionToken
+              LiteralType
+                TrueKeyword
+            Block
+              ExpressionStatement
+                CallExpression
+                  Identifier: '
+        forEachLibResolutionScenario'
+                  FalseKeyword
+                  Identifier: '
+            withoutConfig'
+                  ArrowFunction
+                    Parameter
+                      Identifier: 'subScenario'
+                    Parameter
+                      Identifier: ' sys'
+                    Parameter
+                      Identifier: ' edits'
+                    EqualsGreaterThanToken
+                    CallExpression
+                      Identifier: '
+                verifyTscWatch'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: '
+                    scenario'
+                          StringLiteral
+                        ShorthandPropertyAssignment
+                          Identifier: '
+                    subScenario'
+                        ShorthandPropertyAssignment
+                          Identifier: '
+                    sys'
+                        PropertyAssignment
+                          Identifier: '
+                    commandLineArgs'
+                          CallExpression
+                            Identifier: ' commandLineArgs'
+                            Identifier: 'withoutConfig'
+                        PropertyAssignment
+                          Identifier: '
+                    edits'
+                          CallExpression
+                            Identifier: ' edits'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    verify'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    verify'
+              TrueKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    verifyTscWatch'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        scenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        subScenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        sys'
+                  Identifier: ' getSysForLibResolutionUnknown'
+                PropertyAssignment
+                  Identifier: '
+        commandLineArgs'
+                  CallExpression
+                    Identifier: ' commandLineArgs'
+                    Identifier: '/*withoutConfig*/ undefined'
+                PropertyAssignment
+                  Identifier: '
+        edits'
+                  ArrayLiteralExpression
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+                caption'
+                        StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+                edit'
+                        ArrowFunction
+                          Parameter
+                            Identifier: ' sys'
+                          EqualsGreaterThanToken
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' sys'
+                              Identifier: 'appendFile'
+                            StringLiteral
+                            StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+                timeouts'
+                        ArrowFunction
+                          Parameter
+                            Identifier: ' sys'
+                          EqualsGreaterThanToken
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' sys'
+                              Identifier: 'runQueuedTimeoutCallbacks'
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+                caption'
+                        StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+                edit'
+                        ArrowFunction
+                          Parameter
+                            Identifier: ' sys'
+                          EqualsGreaterThanToken
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' sys'
+                              Identifier: 'deleteFile'
+                            StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+                timeouts'
+                        ArrowFunction
+                          Parameter
+                            Identifier: ' sys'
+                          EqualsGreaterThanToken
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' sys'
+                              Identifier: 'runQueuedTimeoutCallbacks'
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+                caption'
+                        StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+                edit'
+                        ArrowFunction
+                          Parameter
+                            Identifier: ' sys'
+                          EqualsGreaterThanToken
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: '
+                    sys'
+                              Identifier: 'writeFile'
+                            StringLiteral
+                            TaggedTemplateExpression
+                              Identifier: '
+                        dedent'
+                              NoSubstitutionTemplateLiteral
+                      PropertyAssignment
+                        Identifier: '
+                timeouts'
+                        ArrowFunction
+                          Parameter
+                            Identifier: ' sys'
+                          EqualsGreaterThanToken
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' sys'
+                              Identifier: 'runQueuedTimeoutCallbacks'
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+                caption'
+                        StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+                edit'
+                        ArrowFunction
+                          Parameter
+                            Identifier: ' sys'
+                          EqualsGreaterThanToken
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: '
+                    sys'
+                              Identifier: 'writeFile'
+                            StringLiteral
+                            TaggedTemplateExpression
+                              Identifier: '
+                        dedent'
+                              NoSubstitutionTemplateLiteral
+                      PropertyAssignment
+                        Identifier: '
+                timeouts'
+                        ArrowFunction
+                          Parameter
+                            Identifier: ' sys'
+                          EqualsGreaterThanToken
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' sys'
+                              Identifier: 'runQueuedTimeoutCallbacks'

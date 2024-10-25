@@ -1,0 +1,137 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' MyBase'
+    MethodDeclaration
+      Identifier: '
+    m1'
+      Parameter
+        Identifier: 'a'
+        StringKeyword
+      Block
+        ReturnStatement
+          Identifier: ' a'
+    MethodDeclaration
+      PrivateKeyword
+      Identifier: ' p1'
+      Block
+    PropertyDeclaration
+      Identifier: '
+    m2'
+      FunctionType
+        VoidKeyword
+      FunctionExpression
+        Block
+    PropertyDeclaration
+      Identifier: '
+    d1'
+      NumberKeyword
+      NumericLiteral
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' d2'
+      NumberKeyword
+      NumericLiteral
+    GetAccessor
+      Identifier: ' value'
+      Block
+        ReturnStatement
+          NumericLiteral
+    SetAccessor
+      Identifier: ' value'
+      Parameter
+        Identifier: 'v'
+        NumberKeyword
+      Block
+  ClassDeclaration
+    Identifier: ' MyDerived'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' MyBase'
+    MethodDeclaration
+      Identifier: '
+
+    foo'
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              SuperKeyword
+              Identifier: 'm1'
+            StringLiteral
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' l2'
+              CallExpression
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    SuperKeyword
+                    Identifier: 'm1'
+                  Identifier: 'bind'
+                ThisKeyword
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' x'
+              FunctionType
+                Parameter
+                  Identifier: 'a'
+                  StringKeyword
+                StringKeyword
+              PropertyAccessExpression
+                SuperKeyword
+                Identifier: 'm1'
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                SuperKeyword
+                Identifier: 'm2'
+              Identifier: 'bind'
+            ThisKeyword
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              SuperKeyword
+              Identifier: 'p1'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' l1'
+              PropertyAccessExpression
+                SuperKeyword
+                Identifier: 'd1'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' l1'
+              PropertyAccessExpression
+                SuperKeyword
+                Identifier: 'd2'
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              SuperKeyword
+              Identifier: 'm1'
+            EqualsToken
+            FunctionExpression
+              Parameter
+                Identifier: 'a'
+                StringKeyword
+              Block
+                ReturnStatement
+                  StringLiteral
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              SuperKeyword
+              Identifier: 'value'
+            EqualsToken
+            NumericLiteral
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' z'
+              PropertyAccessExpression
+                SuperKeyword
+                Identifier: 'value'

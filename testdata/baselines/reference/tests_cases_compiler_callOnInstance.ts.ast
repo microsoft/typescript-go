@@ -1,0 +1,42 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' D'
+    StringKeyword
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' D'
+    Constructor
+      Parameter
+        Identifier: 'value'
+        NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s1'
+        StringKeyword
+        CallExpression
+          Identifier: ' D'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s2'
+        StringKeyword
+        CallExpression
+          ParenthesizedExpression
+            NewExpression
+              Identifier: ' D'
+              NumericLiteral
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' C'
+    Constructor
+      Parameter
+        Identifier: 'value'
+        NumberKeyword
+  ExpressionStatement
+    CallExpression
+      ParenthesizedExpression
+        NewExpression
+          Identifier: ' C'
+          NumericLiteral

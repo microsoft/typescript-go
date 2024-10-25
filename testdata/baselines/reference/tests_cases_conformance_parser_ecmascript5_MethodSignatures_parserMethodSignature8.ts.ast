@@ -1,0 +1,8 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' I'
+    MethodSignature
+      StringLiteral
+      QuestionToken
+      TypeParameter
+        Identifier: 'T'

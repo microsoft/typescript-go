@@ -1,0 +1,46 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' Mappy'
+    TypeParameter
+      Identifier: 'T'
+      ArrayType
+        UnknownKeyword
+    MappedType
+      TypeParameter
+        Identifier: 'K'
+        TypeOperator
+          TypeReference
+            Identifier: ' T'
+      TypeReference
+        Identifier: ' K'
+      IndexedAccessType
+        TypeReference
+          Identifier: ' T'
+        TypeReference
+          Identifier: 'K'
+  TypeAliasDeclaration
+    Identifier: ' NotArray'
+    TypeReference
+      Identifier: ' Mappy'
+      ArrayType
+        NumberKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' doArrayStuff'
+    Parameter
+      Identifier: 'x'
+      ArrayType
+        UnknownKeyword
+    VoidKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TypeReference
+          Identifier: ' NotArray'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+doArrayStuff'
+      Identifier: 'x'

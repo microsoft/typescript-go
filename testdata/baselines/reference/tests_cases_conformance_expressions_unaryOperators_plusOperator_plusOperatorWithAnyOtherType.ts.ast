@@ -1,0 +1,257 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ANY'
+        AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ANY1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ANY2'
+        ArrayType
+          AnyKeyword
+        ArrayLiteralExpression
+          StringLiteral
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' obj'
+        FunctionType
+          TypeLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' obj1'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' x'
+            ArrowFunction
+              Parameter
+                Identifier: 's'
+                StringKeyword
+              EqualsGreaterThanToken
+              Block
+          PropertyAssignment
+            Identifier: ' y'
+            ArrowFunction
+              Parameter
+                Identifier: 's1'
+              EqualsGreaterThanToken
+              Block
+  FunctionDeclaration
+    Identifier: ' foo'
+    AnyKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a'
+      ReturnStatement
+        Identifier: ' a'
+  ClassDeclaration
+    Identifier: ' A'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' a'
+      AnyKeyword
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' foo'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' a'
+        ReturnStatement
+          Identifier: ' a'
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' n'
+            AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' objA'
+        NewExpression
+          Identifier: ' A'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsNumber1'
+        PrefixUnaryExpression
+          Identifier: 'ANY1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsNumber2'
+        PrefixUnaryExpression
+          Identifier: 'ANY2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsNumber3'
+        PrefixUnaryExpression
+          Identifier: 'A'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsNumber4'
+        PrefixUnaryExpression
+          Identifier: 'M'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsNumber5'
+        PrefixUnaryExpression
+          Identifier: 'obj'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsNumber6'
+        PrefixUnaryExpression
+          Identifier: 'obj1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsNumber7'
+        PrefixUnaryExpression
+          Identifier: 'undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsNumber8'
+        PrefixUnaryExpression
+          NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsNumber9'
+        PrefixUnaryExpression
+          ElementAccessExpression
+            Identifier: 'ANY2'
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsNumber10'
+        PrefixUnaryExpression
+          PropertyAccessExpression
+            Identifier: 'obj1'
+            Identifier: 'x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsNumber11'
+        PrefixUnaryExpression
+          PropertyAccessExpression
+            Identifier: 'obj1'
+            Identifier: 'y'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsNumber12'
+        PrefixUnaryExpression
+          PropertyAccessExpression
+            Identifier: 'objA'
+            Identifier: 'a'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsNumber13'
+        PrefixUnaryExpression
+          PropertyAccessExpression
+            Identifier: 'M'
+            Identifier: 'n'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsNumber14'
+        PrefixUnaryExpression
+          CallExpression
+            Identifier: 'foo'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsNumber15'
+        PrefixUnaryExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: 'A'
+              Identifier: 'foo'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsNumber16'
+        PrefixUnaryExpression
+          ParenthesizedExpression
+            BinaryExpression
+              Identifier: 'ANY'
+              PlusToken
+              Identifier: ' ANY1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsNumber17'
+        PrefixUnaryExpression
+          ParenthesizedExpression
+            BinaryExpression
+              NullKeyword
+              PlusToken
+              Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsNumber18'
+        PrefixUnaryExpression
+          ParenthesizedExpression
+            BinaryExpression
+              NullKeyword
+              PlusToken
+              NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ResultIsNumber19'
+        PrefixUnaryExpression
+          ParenthesizedExpression
+            BinaryExpression
+              Identifier: 'undefined'
+              PlusToken
+              Identifier: ' undefined'
+  ExpressionStatement
+    PrefixUnaryExpression
+      Identifier: 'ANY'
+  ExpressionStatement
+    PrefixUnaryExpression
+      Identifier: 'ANY1'
+  ExpressionStatement
+    PrefixUnaryExpression
+      ElementAccessExpression
+        Identifier: 'ANY2'
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PrefixUnaryExpression
+        Identifier: 'ANY'
+      CommaToken
+      Identifier: ' ANY1'
+  ExpressionStatement
+    PrefixUnaryExpression
+      PropertyAccessExpression
+        Identifier: 'objA'
+        Identifier: 'a'
+  ExpressionStatement
+    PrefixUnaryExpression
+      PropertyAccessExpression
+        Identifier: 'M'
+        Identifier: 'n'

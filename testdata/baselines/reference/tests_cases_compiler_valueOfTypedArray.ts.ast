@@ -1,0 +1,121 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' typedArray0'
+        TypeReference
+          Identifier: ' Int8Array'
+        CallExpression
+          PropertyAccessExpression
+            ParenthesizedExpression
+              NewExpression
+                Identifier: ' Int8Array'
+            Identifier: 'valueOf'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' typedArray1'
+        TypeReference
+          Identifier: ' Uint8Array'
+        CallExpression
+          PropertyAccessExpression
+            ParenthesizedExpression
+              NewExpression
+                Identifier: ' Uint8Array'
+            Identifier: 'valueOf'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' typedArray2'
+        TypeReference
+          Identifier: ' Int16Array'
+        CallExpression
+          PropertyAccessExpression
+            ParenthesizedExpression
+              NewExpression
+                Identifier: ' Int16Array'
+            Identifier: 'valueOf'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' typedArray3'
+        TypeReference
+          Identifier: ' Uint16Array'
+        CallExpression
+          PropertyAccessExpression
+            ParenthesizedExpression
+              NewExpression
+                Identifier: ' Uint16Array'
+            Identifier: 'valueOf'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' typedArray4'
+        TypeReference
+          Identifier: ' Int32Array'
+        CallExpression
+          PropertyAccessExpression
+            ParenthesizedExpression
+              NewExpression
+                Identifier: ' Int32Array'
+            Identifier: 'valueOf'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' typedArray5'
+        TypeReference
+          Identifier: ' Uint32Array'
+        CallExpression
+          PropertyAccessExpression
+            ParenthesizedExpression
+              NewExpression
+                Identifier: ' Uint32Array'
+            Identifier: 'valueOf'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' typedArray6'
+        TypeReference
+          Identifier: ' Float32Array'
+        CallExpression
+          PropertyAccessExpression
+            ParenthesizedExpression
+              NewExpression
+                Identifier: ' Float32Array'
+            Identifier: 'valueOf'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' typedArray7'
+        TypeReference
+          Identifier: ' Float64Array'
+        CallExpression
+          PropertyAccessExpression
+            ParenthesizedExpression
+              NewExpression
+                Identifier: ' Float64Array'
+            Identifier: 'valueOf'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' typedArray8'
+        TypeReference
+          Identifier: ' BigInt64Array'
+        CallExpression
+          PropertyAccessExpression
+            ParenthesizedExpression
+              NewExpression
+                Identifier: ' BigInt64Array'
+            Identifier: 'valueOf'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' typedArray9'
+        TypeReference
+          Identifier: ' BigUint64Array'
+        CallExpression
+          PropertyAccessExpression
+            ParenthesizedExpression
+              NewExpression
+                Identifier: ' BigUint64Array'
+            Identifier: 'valueOf'

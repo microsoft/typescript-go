@@ -1,0 +1,215 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' List'
+    TypeParameter
+      Identifier: 'T'
+    PropertyDeclaration
+      Identifier: '
+    data'
+      TypeReference
+        Identifier: ' T'
+    PropertyDeclaration
+      Identifier: '
+    next'
+      TypeReference
+        Identifier: ' List'
+        TypeReference
+          Identifier: 'List'
+          TypeReference
+            Identifier: 'T'
+  ClassDeclaration
+    Identifier: ' MyList'
+    TypeParameter
+      Identifier: 'T'
+    PropertyDeclaration
+      Identifier: '
+    data'
+      TypeReference
+        Identifier: ' T'
+    PropertyDeclaration
+      Identifier: '
+    next'
+      TypeReference
+        Identifier: ' MyList'
+        TypeReference
+          Identifier: 'MyList'
+          TypeReference
+            Identifier: 'T'
+  FunctionDeclaration
+    Identifier: ' foo'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' List'
+        TypeReference
+          Identifier: 'T'
+  FunctionDeclaration
+    Identifier: ' foo'
+    TypeParameter
+      Identifier: 'U'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' List'
+        TypeReference
+          Identifier: 'U'
+  FunctionDeclaration
+    Identifier: ' foo'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' List'
+        TypeReference
+          Identifier: 'T'
+    Block
+  FunctionDeclaration
+    Identifier: ' foo2'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' List'
+        TypeReference
+          Identifier: 'T'
+  FunctionDeclaration
+    Identifier: ' foo2'
+    TypeParameter
+      Identifier: 'U'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' MyList'
+        TypeReference
+          Identifier: 'U'
+  FunctionDeclaration
+    Identifier: ' foo2'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      AnyKeyword
+    Block
+  FunctionDeclaration
+    Identifier: ' other'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' List'
+        TypeReference
+          Identifier: 'U'
+    TypeParameter
+      Identifier: ' U'
+    Block
+      FunctionDeclaration
+        Identifier: ' foo3'
+        TypeParameter
+          Identifier: 'V'
+        Parameter
+          Identifier: 'x'
+          TypeReference
+            Identifier: ' T'
+      FunctionDeclaration
+        Identifier: ' foo3'
+        TypeParameter
+          Identifier: 'V'
+        Parameter
+          Identifier: 'x'
+          TypeReference
+            Identifier: ' MyList'
+            TypeReference
+              Identifier: 'V'
+        Block
+      FunctionDeclaration
+        Identifier: ' foo4'
+        TypeParameter
+          Identifier: 'V'
+        Parameter
+          Identifier: 'x'
+          TypeReference
+            Identifier: ' T'
+      FunctionDeclaration
+        Identifier: ' foo4'
+        TypeParameter
+          Identifier: 'V'
+        Parameter
+          Identifier: 'x'
+          TypeReference
+            Identifier: ' List'
+            TypeReference
+              Identifier: 'V'
+        Block
+      FunctionDeclaration
+        Identifier: ' foo5'
+        TypeParameter
+          Identifier: 'V'
+        Parameter
+          Identifier: 'x'
+          TypeReference
+            Identifier: ' T'
+        StringKeyword
+      FunctionDeclaration
+        Identifier: ' foo5'
+        TypeParameter
+          Identifier: 'V'
+        Parameter
+          Identifier: 'x'
+          TypeReference
+            Identifier: ' List'
+            TypeReference
+              Identifier: 'V'
+        NumberKeyword
+      FunctionDeclaration
+        Identifier: ' foo5'
+        TypeParameter
+          Identifier: 'V'
+        Parameter
+          Identifier: 'x'
+          TypeReference
+            Identifier: ' MyList'
+            TypeReference
+              Identifier: 'V'
+        BooleanKeyword
+      FunctionDeclaration
+        Identifier: ' foo5'
+        TypeParameter
+          Identifier: 'V'
+        Parameter
+          Identifier: 'x'
+          AnyKeyword
+        AnyKeyword
+        Block
+          ReturnStatement
+            NullKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' list'
+            TypeReference
+              Identifier: ' List'
+              StringKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' myList'
+            TypeReference
+              Identifier: ' MyList'
+              StringKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r'
+            CallExpression
+              Identifier: ' foo5'
+              Identifier: 'list'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' r2'
+            CallExpression
+              Identifier: ' foo5'
+              Identifier: 'myList'

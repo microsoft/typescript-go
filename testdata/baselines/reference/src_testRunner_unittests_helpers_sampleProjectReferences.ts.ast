@@ -1,0 +1,243 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' dedent'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' jsonToReadableText'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' getProjectConfigWithNodeNext'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' solutionBuildWithBaseline'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' TestServerHost'
+    StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' getFsContentsForSampleProjectReferencesLogicConfig'
+    Parameter
+      Identifier: 'withNodeNext'
+      QuestionToken
+      BooleanKeyword
+    StringKeyword
+    Block
+      ReturnStatement
+        CallExpression
+          Identifier: ' jsonToReadableText'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+        compilerOptions'
+              ObjectLiteralExpression
+                SpreadAssignment
+                  CallExpression
+                    Identifier: 'getProjectConfigWithNodeNext'
+                    Identifier: 'withNodeNext'
+                PropertyAssignment
+                  Identifier: '
+            composite'
+                  TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+            declaration'
+                  TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+            sourceMap'
+                  TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+            forceConsistentCasingInFileNames'
+                  TrueKeyword
+                PropertyAssignment
+                  Identifier: '
+            skipDefaultLibCheck'
+                  TrueKeyword
+            PropertyAssignment
+              Identifier: '
+        references'
+              ArrayLiteralExpression
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: ' path'
+                    StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' getSysForSampleProjectReferences'
+    Parameter
+      Identifier: '
+    withNodeNext'
+      QuestionToken
+      BooleanKeyword
+    Parameter
+      Identifier: '
+    skipReferenceCoreFromTest'
+      QuestionToken
+      BooleanKeyword
+    Parameter
+      Identifier: '
+    forTsserver'
+      QuestionToken
+      BooleanKeyword
+    TypeReference
+      Identifier: ' TestServerHost'
+    Block
+      ReturnStatement
+        CallExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' TestServerHost'
+              Identifier: 'getCreateWatchedSystem'
+            Identifier: 'forTsserver'
+          ObjectLiteralExpression
+            PropertyAssignment
+              StringLiteral
+              CallExpression
+                Identifier: ' jsonToReadableText'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: '
+            compilerOptions'
+                    ObjectLiteralExpression
+                      SpreadAssignment
+                        CallExpression
+                          Identifier: 'getProjectConfigWithNodeNext'
+                          Identifier: 'withNodeNext'
+                      PropertyAssignment
+                        Identifier: '
+                composite'
+                        TrueKeyword
+                      PropertyAssignment
+                        Identifier: '
+                declaration'
+                        TrueKeyword
+                      PropertyAssignment
+                        Identifier: '
+                declarationMap'
+                        TrueKeyword
+                      PropertyAssignment
+                        Identifier: '
+                skipDefaultLibCheck'
+                        TrueKeyword
+            PropertyAssignment
+              StringLiteral
+              TaggedTemplateExpression
+                Identifier: ' dedent'
+                NoSubstitutionTemplateLiteral
+            PropertyAssignment
+              StringLiteral
+              NoSubstitutionTemplateLiteral
+            PropertyAssignment
+              StringLiteral
+              NoSubstitutionTemplateLiteral
+            PropertyAssignment
+              StringLiteral
+              CallExpression
+                Identifier: ' getFsContentsForSampleProjectReferencesLogicConfig'
+                Identifier: 'withNodeNext'
+            PropertyAssignment
+              StringLiteral
+              TaggedTemplateExpression
+                Identifier: ' dedent'
+                NoSubstitutionTemplateLiteral
+            PropertyAssignment
+              StringLiteral
+              CallExpression
+                Identifier: ' jsonToReadableText'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: '
+            references'
+                    ConditionalExpression
+                      PrefixUnaryExpression
+                        Identifier: 'skipReferenceCoreFromTest'
+                      QuestionToken
+                      ArrayLiteralExpression
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: ' path'
+                            StringLiteral
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: ' path'
+                            StringLiteral
+                      ColonToken
+                      ArrayLiteralExpression
+                        ObjectLiteralExpression
+                          PropertyAssignment
+                            Identifier: ' path'
+                            StringLiteral
+                  PropertyAssignment
+                    Identifier: '
+            files'
+                    ArrayLiteralExpression
+                      StringLiteral
+                  PropertyAssignment
+                    Identifier: '
+            compilerOptions'
+                    ObjectLiteralExpression
+                      SpreadAssignment
+                        CallExpression
+                          Identifier: 'getProjectConfigWithNodeNext'
+                          Identifier: 'withNodeNext'
+                      PropertyAssignment
+                        Identifier: '
+                composite'
+                        TrueKeyword
+                      PropertyAssignment
+                        Identifier: '
+                declaration'
+                        TrueKeyword
+                      PropertyAssignment
+                        Identifier: '
+                forceConsistentCasingInFileNames'
+                        TrueKeyword
+                      PropertyAssignment
+                        Identifier: '
+                skipDefaultLibCheck'
+                        TrueKeyword
+            PropertyAssignment
+              StringLiteral
+              TaggedTemplateExpression
+                Identifier: ' dedent'
+                NoSubstitutionTemplateLiteral
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' currentDirectory'
+              StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' getSysForSampleProjectReferencesBuilt'
+    Parameter
+      Identifier: 'withNodeNext'
+      QuestionToken
+      BooleanKeyword
+    TypeReference
+      Identifier: ' TestServerHost'
+    Block
+      ReturnStatement
+        CallExpression
+          Identifier: ' solutionBuildWithBaseline'
+          CallExpression
+            Identifier: '
+        getSysForSampleProjectReferences'
+            Identifier: 'withNodeNext'
+          ArrayLiteralExpression
+            StringLiteral

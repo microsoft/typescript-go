@@ -1,0 +1,188 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' c1'
+    GetAccessor
+      PublicKeyword
+      Identifier: ' p3'
+      Block
+        ReturnStatement
+          NumericLiteral
+    SetAccessor
+      PublicKeyword
+      Identifier: ' p3'
+      Parameter
+        Identifier: '/** this is value*/value'
+        NumberKeyword
+      Block
+    GetAccessor
+      PrivateKeyword
+      Identifier: ' pp3'
+      Block
+        ReturnStatement
+          NumericLiteral
+    SetAccessor
+      PrivateKeyword
+      Identifier: ' pp3'
+      Parameter
+        Identifier: '/** this is value*/value'
+        NumberKeyword
+      Block
+    GetAccessor
+      StaticKeyword
+      Identifier: ' s3'
+      Block
+        ReturnStatement
+          NumericLiteral
+    SetAccessor
+      StaticKeyword
+      Identifier: ' s3'
+      Parameter
+        Identifier: ' /** this is value*/value'
+        NumberKeyword
+      Block
+    GetAccessor
+      PublicKeyword
+      Identifier: ' nc_p3'
+      Block
+        ReturnStatement
+          NumericLiteral
+    SetAccessor
+      PublicKeyword
+      Identifier: ' nc_p3'
+      Parameter
+        Identifier: 'value'
+        NumberKeyword
+      Block
+    GetAccessor
+      PrivateKeyword
+      Identifier: ' nc_pp3'
+      Block
+        ReturnStatement
+          NumericLiteral
+    SetAccessor
+      PrivateKeyword
+      Identifier: ' nc_pp3'
+      Parameter
+        Identifier: 'value'
+        NumberKeyword
+      Block
+    GetAccessor
+      StaticKeyword
+      Identifier: ' nc_s3'
+      Block
+        ReturnStatement
+          StringLiteral
+    SetAccessor
+      StaticKeyword
+      Identifier: ' nc_s3'
+      Parameter
+        Identifier: 'value'
+        StringKeyword
+      Block
+    GetAccessor
+      PublicKeyword
+      Identifier: ' onlyGetter'
+      Block
+        ReturnStatement
+          NumericLiteral
+    SetAccessor
+      PublicKeyword
+      Identifier: ' onlySetter'
+      Parameter
+        Identifier: 'value'
+        NumberKeyword
+      Block
+  ClassDeclaration
+    Identifier: ' c2'
+    GetAccessor
+      PublicKeyword
+      Identifier: ' p3'
+      Block
+        ReturnStatement
+          NumericLiteral
+    SetAccessor
+      PublicKeyword
+      Identifier: ' p3'
+      Parameter
+        Identifier: '/** this is value*/value'
+        NumberKeyword
+      Block
+    GetAccessor
+      PrivateKeyword
+      Identifier: ' pp3'
+      Block
+        ReturnStatement
+          NumericLiteral
+    SetAccessor
+      PrivateKeyword
+      Identifier: ' pp3'
+      Parameter
+        Identifier: '/** this is value*/value'
+        NumberKeyword
+      Block
+    GetAccessor
+      StaticKeyword
+      Identifier: ' s3'
+      Block
+        ReturnStatement
+          NumericLiteral
+    SetAccessor
+      StaticKeyword
+      Identifier: ' s3'
+      Parameter
+        Identifier: ' /** this is value*/value'
+        NumberKeyword
+      Block
+    GetAccessor
+      PublicKeyword
+      Identifier: ' nc_p3'
+      Block
+        ReturnStatement
+          NumericLiteral
+    SetAccessor
+      PublicKeyword
+      Identifier: ' nc_p3'
+      Parameter
+        Identifier: 'value'
+        NumberKeyword
+      Block
+    GetAccessor
+      PrivateKeyword
+      Identifier: ' nc_pp3'
+      Block
+        ReturnStatement
+          NumericLiteral
+    SetAccessor
+      PrivateKeyword
+      Identifier: ' nc_pp3'
+      Parameter
+        Identifier: 'value'
+        NumberKeyword
+      Block
+    GetAccessor
+      StaticKeyword
+      Identifier: ' nc_s3'
+      Block
+        ReturnStatement
+          StringLiteral
+    SetAccessor
+      StaticKeyword
+      Identifier: ' nc_s3'
+      Parameter
+        Identifier: 'value'
+        StringKeyword
+      Block
+    GetAccessor
+      PublicKeyword
+      Identifier: ' onlyGetter'
+      Block
+        ReturnStatement
+          NumericLiteral
+    SetAccessor
+      PublicKeyword
+      Identifier: ' onlySetter'
+      Parameter
+        Identifier: 'value'
+        NumberKeyword
+      Block

@@ -1,0 +1,437 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    Bundle'
+        ImportSpecifier
+          Identifier: '
+    Debug'
+        ImportSpecifier
+          Identifier: '
+    EmitHint'
+        ImportSpecifier
+          Identifier: '
+    isSourceFile'
+        ImportSpecifier
+          Identifier: '
+    map'
+        ImportSpecifier
+          Identifier: '
+    ModuleKind'
+        ImportSpecifier
+          Identifier: '
+    Node'
+        ImportSpecifier
+          Identifier: '
+    SourceFile'
+        ImportSpecifier
+          Identifier: '
+    SyntaxKind'
+        ImportSpecifier
+          Identifier: '
+    TransformationContext'
+        ImportSpecifier
+          Identifier: '
+    transformECMAScriptModule'
+        ImportSpecifier
+          Identifier: '
+    Transformer'
+        ImportSpecifier
+          Identifier: '
+    transformModule'
+    StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' transformImpliedNodeFormatDependentModule'
+    Parameter
+      Identifier: 'context'
+      TypeReference
+        Identifier: ' TransformationContext'
+    TypeReference
+      Identifier: ' Transformer'
+      UnionType
+        TypeReference
+          Identifier: 'SourceFile'
+        TypeReference
+          Identifier: ' Bundle'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' previousOnSubstituteNode'
+            PropertyAccessExpression
+              Identifier: ' context'
+              Identifier: 'onSubstituteNode'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' previousOnEmitNode'
+            PropertyAccessExpression
+              Identifier: ' context'
+              Identifier: 'onEmitNode'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' esmTransform'
+            CallExpression
+              Identifier: ' transformECMAScriptModule'
+              Identifier: 'context'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' esmOnSubstituteNode'
+            PropertyAccessExpression
+              Identifier: ' context'
+              Identifier: 'onSubstituteNode'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' esmOnEmitNode'
+            PropertyAccessExpression
+              Identifier: ' context'
+              Identifier: 'onEmitNode'
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+
+    context'
+            Identifier: 'onSubstituteNode'
+          EqualsToken
+          Identifier: ' previousOnSubstituteNode'
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    context'
+            Identifier: 'onEmitNode'
+          EqualsToken
+          Identifier: ' previousOnEmitNode'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' cjsTransform'
+            CallExpression
+              Identifier: ' transformModule'
+              Identifier: 'context'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' cjsOnSubstituteNode'
+            PropertyAccessExpression
+              Identifier: ' context'
+              Identifier: 'onSubstituteNode'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' cjsOnEmitNode'
+            PropertyAccessExpression
+              Identifier: ' context'
+              Identifier: 'onEmitNode'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' getEmitModuleFormatOfFile'
+            ArrowFunction
+              Parameter
+                Identifier: 'file'
+                TypeReference
+                  Identifier: ' SourceFile'
+              EqualsGreaterThanToken
+              CallExpression
+                PropertyAccessExpression
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' context'
+                      Identifier: 'getEmitHost'
+                  Identifier: 'getEmitModuleFormatOfFile'
+                Identifier: 'file'
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+
+    context'
+            Identifier: 'onSubstituteNode'
+          EqualsToken
+          Identifier: ' onSubstituteNode'
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: '
+    context'
+            Identifier: 'onEmitNode'
+          EqualsToken
+          Identifier: ' onEmitNode'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    context'
+            Identifier: 'enableSubstitution'
+          PropertyAccessExpression
+            Identifier: 'SyntaxKind'
+            Identifier: 'SourceFile'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    context'
+            Identifier: 'enableEmitNotification'
+          PropertyAccessExpression
+            Identifier: 'SyntaxKind'
+            Identifier: 'SourceFile'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' currentSourceFile'
+            UnionType
+              TypeReference
+                Identifier: ' SourceFile'
+              UndefinedKeyword
+      ReturnStatement
+        Identifier: ' transformSourceFileOrBundle'
+      FunctionDeclaration
+        Identifier: ' onSubstituteNode'
+        Parameter
+          Identifier: 'hint'
+          TypeReference
+            Identifier: ' EmitHint'
+        Parameter
+          Identifier: ' node'
+          TypeReference
+            Identifier: ' Node'
+        Block
+          IfStatement
+            CallExpression
+              Identifier: 'isSourceFile'
+              Identifier: 'node'
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            currentSourceFile'
+                  EqualsToken
+                  Identifier: ' node'
+              ReturnStatement
+                CallExpression
+                  Identifier: ' previousOnSubstituteNode'
+                  Identifier: 'hint'
+                  Identifier: ' node'
+            Block
+              IfStatement
+                PrefixUnaryExpression
+                  Identifier: 'currentSourceFile'
+                Block
+                  ReturnStatement
+                    CallExpression
+                      Identifier: ' previousOnSubstituteNode'
+                      Identifier: 'hint'
+                      Identifier: ' node'
+              IfStatement
+                BinaryExpression
+                  CallExpression
+                    Identifier: 'getEmitModuleFormatOfFile'
+                    Identifier: 'currentSourceFile'
+                  GreaterThanEqualsToken
+                  PropertyAccessExpression
+                    Identifier: ' ModuleKind'
+                    Identifier: 'ES2015'
+                Block
+                  ReturnStatement
+                    CallExpression
+                      Identifier: ' esmOnSubstituteNode'
+                      Identifier: 'hint'
+                      Identifier: ' node'
+              ReturnStatement
+                CallExpression
+                  Identifier: ' cjsOnSubstituteNode'
+                  Identifier: 'hint'
+                  Identifier: ' node'
+      FunctionDeclaration
+        Identifier: ' onEmitNode'
+        Parameter
+          Identifier: 'hint'
+          TypeReference
+            Identifier: ' EmitHint'
+        Parameter
+          Identifier: ' node'
+          TypeReference
+            Identifier: ' Node'
+        Parameter
+          Identifier: ' emitCallback'
+          FunctionType
+            Parameter
+              Identifier: 'hint'
+              TypeReference
+                Identifier: ' EmitHint'
+            Parameter
+              Identifier: ' node'
+              TypeReference
+                Identifier: ' Node'
+            VoidKeyword
+        VoidKeyword
+        Block
+          IfStatement
+            CallExpression
+              Identifier: 'isSourceFile'
+              Identifier: 'node'
+            Block
+              ExpressionStatement
+                BinaryExpression
+                  Identifier: '
+            currentSourceFile'
+                  EqualsToken
+                  Identifier: ' node'
+          IfStatement
+            PrefixUnaryExpression
+              Identifier: 'currentSourceFile'
+            Block
+              ReturnStatement
+                CallExpression
+                  Identifier: ' previousOnEmitNode'
+                  Identifier: 'hint'
+                  Identifier: ' node'
+                  Identifier: ' emitCallback'
+          IfStatement
+            BinaryExpression
+              CallExpression
+                Identifier: 'getEmitModuleFormatOfFile'
+                Identifier: 'currentSourceFile'
+              GreaterThanEqualsToken
+              PropertyAccessExpression
+                Identifier: ' ModuleKind'
+                Identifier: 'ES2015'
+            Block
+              ReturnStatement
+                CallExpression
+                  Identifier: ' esmOnEmitNode'
+                  Identifier: 'hint'
+                  Identifier: ' node'
+                  Identifier: ' emitCallback'
+          ReturnStatement
+            CallExpression
+              Identifier: ' cjsOnEmitNode'
+              Identifier: 'hint'
+              Identifier: ' node'
+              Identifier: ' emitCallback'
+      FunctionDeclaration
+        Identifier: ' getModuleTransformForFile'
+        Parameter
+          Identifier: 'file'
+          TypeReference
+            Identifier: ' SourceFile'
+        TypeQuery
+          Identifier: ' esmTransform'
+        Block
+          ReturnStatement
+            ConditionalExpression
+              BinaryExpression
+                CallExpression
+                  Identifier: ' getEmitModuleFormatOfFile'
+                  Identifier: 'file'
+                GreaterThanEqualsToken
+                PropertyAccessExpression
+                  Identifier: ' ModuleKind'
+                  Identifier: 'ES2015'
+              QuestionToken
+              Identifier: ' esmTransform'
+              ColonToken
+              Identifier: ' cjsTransform'
+      FunctionDeclaration
+        Identifier: ' transformSourceFile'
+        Parameter
+          Identifier: 'node'
+          TypeReference
+            Identifier: ' SourceFile'
+        Block
+          IfStatement
+            PropertyAccessExpression
+              Identifier: 'node'
+              Identifier: 'isDeclarationFile'
+            Block
+              ReturnStatement
+                Identifier: ' node'
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+
+        currentSourceFile'
+              EqualsToken
+              Identifier: ' node'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' result'
+                CallExpression
+                  CallExpression
+                    Identifier: ' getModuleTransformForFile'
+                    Identifier: 'node'
+                  Identifier: 'node'
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        currentSourceFile'
+              EqualsToken
+              Identifier: ' undefined'
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        Debug'
+                Identifier: 'assert'
+              CallExpression
+                Identifier: 'isSourceFile'
+                Identifier: 'result'
+          ReturnStatement
+            Identifier: ' result'
+      FunctionDeclaration
+        Identifier: ' transformSourceFileOrBundle'
+        Parameter
+          Identifier: 'node'
+          UnionType
+            TypeReference
+              Identifier: ' SourceFile'
+            TypeReference
+              Identifier: ' Bundle'
+        Block
+          ReturnStatement
+            ConditionalExpression
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: ' node'
+                  Identifier: 'kind'
+                EqualsEqualsEqualsToken
+                PropertyAccessExpression
+                  Identifier: ' SyntaxKind'
+                  Identifier: 'SourceFile'
+              QuestionToken
+              CallExpression
+                Identifier: ' transformSourceFile'
+                Identifier: 'node'
+              ColonToken
+              CallExpression
+                Identifier: ' transformBundle'
+                Identifier: 'node'
+      FunctionDeclaration
+        Identifier: ' transformBundle'
+        Parameter
+          Identifier: 'node'
+          TypeReference
+            Identifier: ' Bundle'
+        Block
+          ReturnStatement
+            CallExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' context'
+                  Identifier: 'factory'
+                Identifier: 'createBundle'
+              CallExpression
+                Identifier: 'map'
+                PropertyAccessExpression
+                  Identifier: 'node'
+                  Identifier: 'sourceFiles'
+                Identifier: ' transformSourceFile'

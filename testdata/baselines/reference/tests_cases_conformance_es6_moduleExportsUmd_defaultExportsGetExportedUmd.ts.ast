@@ -1,0 +1,10 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    DefaultKeyword
+    Identifier: ' Foo'
+  FunctionDeclaration
+    ExportKeyword
+    DefaultKeyword
+    Identifier: ' foo'
+    Block

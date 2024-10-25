@@ -1,0 +1,169 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Box'
+    TypeParameter
+      Identifier: 'P'
+    PropertyDeclaration
+      Identifier: '
+    value'
+      TypeReference
+        Identifier: ' P'
+  TypeAliasDeclaration
+    Identifier: ' Boxified'
+    TypeParameter
+      Identifier: 'T'
+    MappedType
+      TypeParameter
+        Identifier: 'K'
+        TypeOperator
+          TypeReference
+            Identifier: ' T'
+      TypeReference
+        Identifier: ' Box'
+        IndexedAccessType
+          TypeReference
+            Identifier: 'T'
+          TypeReference
+            Identifier: 'K'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' boxify'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'obj'
+      TypeReference
+        Identifier: ' T'
+    TypeReference
+      Identifier: ' Boxified'
+      TypeReference
+        Identifier: 'T'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' unboxify'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'obj'
+      TypeReference
+        Identifier: ' Boxified'
+        TypeReference
+          Identifier: 'T'
+    TypeReference
+      Identifier: ' T'
+  InterfaceDeclaration
+    Identifier: ' Bacon'
+    PropertySignature
+      Identifier: '
+    isPerfect'
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    weight'
+      NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' BoxifiedBacon'
+    PropertySignature
+      Identifier: '
+    isPerfect'
+      TypeReference
+        Identifier: ' Box'
+        BooleanKeyword
+    PropertySignature
+      Identifier: '
+    weight'
+      TypeReference
+        Identifier: ' Box'
+        NumberKeyword
+  FunctionDeclaration
+    Identifier: ' f1'
+    Parameter
+      Identifier: 'b'
+      TypeReference
+        Identifier: ' Bacon'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' bb'
+            CallExpression
+              Identifier: ' boxify'
+              Identifier: 'b'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' isPerfect'
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' bb'
+                Identifier: 'isPerfect'
+              Identifier: 'value'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' weight'
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' bb'
+                Identifier: 'weight'
+              Identifier: 'value'
+  FunctionDeclaration
+    Identifier: ' f2'
+    Parameter
+      Identifier: 'bb'
+      TypeReference
+        Identifier: ' Boxified'
+        TypeReference
+          Identifier: 'Bacon'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' b'
+            CallExpression
+              Identifier: ' unboxify'
+              Identifier: 'bb'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' bool'
+            PropertyAccessExpression
+              Identifier: ' b'
+              Identifier: 'isPerfect'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' weight'
+            PropertyAccessExpression
+              Identifier: ' b'
+              Identifier: 'weight'
+  FunctionDeclaration
+    Identifier: ' f3'
+    Parameter
+      Identifier: 'bb'
+      TypeReference
+        Identifier: ' BoxifiedBacon'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' b'
+            CallExpression
+              Identifier: ' unboxify'
+              TypeReference
+                Identifier: 'Bacon'
+              Identifier: 'bb'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' bool'
+            PropertyAccessExpression
+              Identifier: ' b'
+              Identifier: 'isPerfect'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' weight'
+            PropertyAccessExpression
+              Identifier: ' bb'
+              Identifier: 'weight'

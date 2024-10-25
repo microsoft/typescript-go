@@ -1,0 +1,276 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f1'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Record'
+        StringKeyword
+        AnyKeyword
+    TypeParameter
+      Identifier: ' K'
+      TypeOperator
+        TypeReference
+          Identifier: ' T'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        IndexedAccessType
+          TypeReference
+            Identifier: ' T'
+          TypeReference
+            Identifier: 'K'
+        UndefinedKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'x'
+          EqualsEqualsEqualsToken
+          Identifier: ' undefined'
+        ReturnStatement
+      ExpressionStatement
+        Identifier: '
+    x'
+      IfStatement
+        BinaryExpression
+          Identifier: 'x'
+          EqualsEqualsEqualsToken
+          Identifier: ' undefined'
+        ReturnStatement
+      ExpressionStatement
+        Identifier: '
+    x'
+  FunctionDeclaration
+    Identifier: ' f2'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Record'
+        StringKeyword
+        AnyKeyword
+    TypeParameter
+      Identifier: ' K'
+      TypeOperator
+        TypeReference
+          Identifier: ' T'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        IndexedAccessType
+          TypeReference
+            Identifier: ' T'
+          TypeReference
+            Identifier: 'K'
+        LiteralType
+          NullKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'x'
+          EqualsEqualsEqualsToken
+          NullKeyword
+        ReturnStatement
+      ExpressionStatement
+        Identifier: '
+    x'
+      IfStatement
+        BinaryExpression
+          Identifier: 'x'
+          EqualsEqualsEqualsToken
+          NullKeyword
+        ReturnStatement
+      ExpressionStatement
+        Identifier: '
+    x'
+  FunctionDeclaration
+    Identifier: ' f3'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' K'
+      TypeOperator
+        TypeReference
+          Identifier: ' T'
+    Parameter
+      Identifier: 't'
+      IndexedAccessType
+        TypeReference
+          Identifier: ' T'
+        TypeReference
+          Identifier: 'K'
+    Parameter
+      Identifier: ' p1'
+      IntersectionType
+        IndexedAccessType
+          TypeReference
+            Identifier: ' Partial'
+            TypeReference
+              Identifier: 'T'
+          TypeReference
+            Identifier: 'K'
+        TypeLiteral
+    Parameter
+      Identifier: ' p2'
+      IntersectionType
+        IndexedAccessType
+          TypeReference
+            Identifier: ' Partial'
+            TypeReference
+              Identifier: 'T'
+          TypeReference
+            Identifier: 'K'
+        ParenthesizedType
+          UnionType
+            TypeLiteral
+            LiteralType
+              NullKeyword
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    t'
+          EqualsToken
+          Identifier: ' p1'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    t'
+          EqualsToken
+          Identifier: ' p2'
+  TypeAliasDeclaration
+    Identifier: ' AnyObject'
+    TypeReference
+      Identifier: ' Record'
+      StringKeyword
+      AnyKeyword
+  TypeAliasDeclaration
+    Identifier: ' State'
+    TypeReference
+      Identifier: ' AnyObject'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' hasOwnProperty'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' AnyObject'
+    Parameter
+      Identifier: '
+    object'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: '
+    prop'
+      TypeReference
+        Identifier: ' PropertyKey'
+    TypePredicate
+      Identifier: ' prop'
+      TypeOperator
+        TypeReference
+          Identifier: ' T'
+  InterfaceDeclaration
+    Identifier: ' Store'
+    TypeParameter
+      Identifier: 'S'
+      TypeReference
+        Identifier: ' State'
+    MethodSignature
+      Identifier: '
+    setState'
+      TypeParameter
+        Identifier: 'K'
+        TypeOperator
+          TypeReference
+            Identifier: ' S'
+      Parameter
+        Identifier: 'key'
+        TypeReference
+          Identifier: ' K'
+      Parameter
+        Identifier: ' value'
+        IndexedAccessType
+          TypeReference
+            Identifier: ' S'
+          TypeReference
+            Identifier: 'K'
+      VoidKeyword
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' syncStoreProp'
+    TypeParameter
+      Identifier: '
+    S'
+      TypeReference
+        Identifier: ' State'
+    TypeParameter
+      Identifier: '
+    P'
+      TypeReference
+        Identifier: ' Partial'
+        TypeReference
+          Identifier: 'S'
+    TypeParameter
+      Identifier: '
+    K'
+      TypeOperator
+        TypeReference
+          Identifier: ' S'
+    Parameter
+      Identifier: 'store'
+      TypeReference
+        Identifier: ' Store'
+        TypeReference
+          Identifier: 'S'
+    Parameter
+      Identifier: ' props'
+      TypeReference
+        Identifier: ' P'
+    Parameter
+      Identifier: ' key'
+      TypeReference
+        Identifier: ' K'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' value'
+            ConditionalExpression
+              CallExpression
+                Identifier: ' hasOwnProperty'
+                Identifier: 'props'
+                Identifier: ' key'
+              QuestionToken
+              ElementAccessExpression
+                Identifier: ' props'
+                Identifier: 'key'
+              ColonToken
+              Identifier: ' undefined'
+      IfStatement
+        BinaryExpression
+          Identifier: 'value'
+          EqualsEqualsEqualsToken
+          Identifier: ' undefined'
+        ReturnStatement
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    store'
+            Identifier: 'setState'
+          Identifier: 'key'
+          Identifier: ' value'
+      IfStatement
+        BinaryExpression
+          Identifier: 'value'
+          EqualsEqualsEqualsToken
+          Identifier: ' undefined'
+        ReturnStatement
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    store'
+            Identifier: 'setState'
+          Identifier: 'key'
+          Identifier: ' value'

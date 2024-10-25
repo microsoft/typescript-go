@@ -1,0 +1,13 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        NumericLiteral
+  ExportAssignment
+    Identifier: ' a'
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' nameSpaceBinding'
+    StringLiteral

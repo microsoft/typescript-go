@@ -1,0 +1,515 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    emptyArray'
+        ImportSpecifier
+          Identifier: '
+    ModuleKind'
+        ImportSpecifier
+          Identifier: '
+    ScriptTarget'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' dedent'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' jsonToReadableText'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' verifyAlternateResultScenario'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' compilerOptionsToConfigJson'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' verifyTsc'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' TestServerHost'
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+describe'
+      StringLiteral
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    verifyAlternateResultScenario'
+              FalseKeyword
+              ArrowFunction
+                Parameter
+                  Identifier: 'subScenario'
+                Parameter
+                  Identifier: ' sys'
+                Parameter
+                  Identifier: ' edits'
+                EqualsGreaterThanToken
+                CallExpression
+                  Identifier: '
+            verifyTsc'
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: '
+                scenario'
+                      StringLiteral
+                    ShorthandPropertyAssignment
+                      Identifier: '
+                subScenario'
+                    ShorthandPropertyAssignment
+                      Identifier: '
+                sys'
+                    PropertyAssignment
+                      Identifier: '
+                commandLineArgs'
+                      Identifier: ' emptyArray'
+                    PropertyAssignment
+                      Identifier: '
+                baselinePrograms'
+                      TrueKeyword
+                    PropertyAssignment
+                      Identifier: '
+                edits'
+                      CallExpression
+                        Identifier: ' edits'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    verifyTsc'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        scenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        subScenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        sys'
+                  ArrowFunction
+                    EqualsGreaterThanToken
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+            TestServerHost'
+                        Identifier: 'createWatchedSystem'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          StringLiteral
+                          TaggedTemplateExpression
+                            Identifier: ' dedent'
+                            NoSubstitutionTemplateLiteral
+                        PropertyAssignment
+                          StringLiteral
+                          CallExpression
+                            Identifier: ' jsonToReadableText'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                    name'
+                                StringLiteral
+                              PropertyAssignment
+                                Identifier: '
+                    version'
+                                StringLiteral
+                              PropertyAssignment
+                                Identifier: '
+                    main'
+                                StringLiteral
+                        PropertyAssignment
+                          StringLiteral
+                          TaggedTemplateExpression
+                            Identifier: ' dedent'
+                            NoSubstitutionTemplateLiteral
+                        PropertyAssignment
+                          StringLiteral
+                          CallExpression
+                            Identifier: ' jsonToReadableText'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                    name'
+                                StringLiteral
+                              PropertyAssignment
+                                Identifier: '
+                    version'
+                                StringLiteral
+                              PropertyAssignment
+                                Identifier: '
+                    main'
+                                StringLiteral
+                        PropertyAssignment
+                          StringLiteral
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: '
+                    symLink'
+                              StringLiteral
+                        PropertyAssignment
+                          StringLiteral
+                          TaggedTemplateExpression
+                            Identifier: ' dedent'
+                            NoSubstitutionTemplateLiteral
+                        PropertyAssignment
+                          StringLiteral
+                          CallExpression
+                            Identifier: ' jsonToReadableText'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                    name'
+                                StringLiteral
+                              PropertyAssignment
+                                Identifier: '
+                    version'
+                                StringLiteral
+                              PropertyAssignment
+                                Identifier: '
+                    main'
+                                StringLiteral
+                              PropertyAssignment
+                                Identifier: '
+                    peerDependencies'
+                                ObjectLiteralExpression
+                                  PropertyAssignment
+                                    StringLiteral
+                                    StringLiteral
+                              PropertyAssignment
+                                Identifier: '
+                    devDependencies'
+                                ObjectLiteralExpression
+                                  PropertyAssignment
+                                    StringLiteral
+                                    StringLiteral
+                        PropertyAssignment
+                          StringLiteral
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: '
+                    symLink'
+                              StringLiteral
+                        PropertyAssignment
+                          StringLiteral
+                          TaggedTemplateExpression
+                            Identifier: ' dedent'
+                            NoSubstitutionTemplateLiteral
+                        PropertyAssignment
+                          StringLiteral
+                          CallExpression
+                            Identifier: ' jsonToReadableText'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                    name'
+                                StringLiteral
+                              PropertyAssignment
+                                Identifier: '
+                    version'
+                                StringLiteral
+                              PropertyAssignment
+                                Identifier: '
+                    main'
+                                StringLiteral
+                              PropertyAssignment
+                                Identifier: '
+                    peerDependencies'
+                                ObjectLiteralExpression
+                                  PropertyAssignment
+                                    StringLiteral
+                                    StringLiteral
+                              PropertyAssignment
+                                Identifier: '
+                    devDependencies'
+                                ObjectLiteralExpression
+                                  PropertyAssignment
+                                    StringLiteral
+                                    StringLiteral
+                        PropertyAssignment
+                          StringLiteral
+                          TaggedTemplateExpression
+                            Identifier: ' dedent'
+                            NoSubstitutionTemplateLiteral
+                        PropertyAssignment
+                          StringLiteral
+                          CallExpression
+                            Identifier: ' jsonToReadableText'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                    name'
+                                StringLiteral
+                              PropertyAssignment
+                                Identifier: '
+                    version'
+                                StringLiteral
+                              PropertyAssignment
+                                Identifier: '
+                    main'
+                                StringLiteral
+                              PropertyAssignment
+                                Identifier: '
+                    dependencies'
+                                ObjectLiteralExpression
+                                  PropertyAssignment
+                                    StringLiteral
+                                    StringLiteral
+                                  PropertyAssignment
+                                    StringLiteral
+                                    StringLiteral
+                        PropertyAssignment
+                          StringLiteral
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: '
+                    symLink'
+                              StringLiteral
+                        PropertyAssignment
+                          StringLiteral
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: '
+                    symLink'
+                              StringLiteral
+                        PropertyAssignment
+                          StringLiteral
+                          TaggedTemplateExpression
+                            Identifier: ' dedent'
+                            NoSubstitutionTemplateLiteral
+                        PropertyAssignment
+                          StringLiteral
+                          CallExpression
+                            Identifier: ' jsonToReadableText'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                    name'
+                                StringLiteral
+                              PropertyAssignment
+                                Identifier: '
+                    version'
+                                StringLiteral
+                              PropertyAssignment
+                                Identifier: '
+                    dependencies'
+                                ObjectLiteralExpression
+                                  PropertyAssignment
+                                    StringLiteral
+                                    StringLiteral
+                                  PropertyAssignment
+                                    StringLiteral
+                                    StringLiteral
+                                  PropertyAssignment
+                                    StringLiteral
+                                    StringLiteral
+                        PropertyAssignment
+                          StringLiteral
+                          CallExpression
+                            Identifier: ' jsonToReadableText'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                    compilerOptions'
+                                ObjectLiteralExpression
+                                  PropertyAssignment
+                                    Identifier: '
+                        target'
+                                    StringLiteral
+                                  PropertyAssignment
+                                    Identifier: '
+                        module'
+                                    StringLiteral
+                                  PropertyAssignment
+                                    Identifier: '
+                        lib'
+                                    ArrayLiteralExpression
+                                      StringLiteral
+                                  PropertyAssignment
+                                    Identifier: '
+                        moduleResolution'
+                                    StringLiteral
+                                  PropertyAssignment
+                                    Identifier: '
+                        baseUrl'
+                                    StringLiteral
+                                  PropertyAssignment
+                                    Identifier: '
+                        outDir'
+                                    StringLiteral
+                              PropertyAssignment
+                                Identifier: '
+                    include'
+                                ArrayLiteralExpression
+                                  StringLiteral
+                        PropertyAssignment
+                          StringLiteral
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: '
+                    symLink'
+                              StringLiteral
+                        PropertyAssignment
+                          StringLiteral
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: '
+                    symLink'
+                              StringLiteral
+                        PropertyAssignment
+                          StringLiteral
+                          ObjectLiteralExpression
+                            PropertyAssignment
+                              Identifier: '
+                    symLink'
+                              StringLiteral
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          Identifier: ' currentDirectory'
+                          StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        commandLineArgs'
+                  ArrayLiteralExpression
+                    StringLiteral
+                    StringLiteral
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+
+    verifyTsc'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: '
+        scenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        subScenario'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        sys'
+                  ArrowFunction
+                    EqualsGreaterThanToken
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: '
+            TestServerHost'
+                        Identifier: 'createWatchedSystem'
+                      ObjectLiteralExpression
+                        PropertyAssignment
+                          StringLiteral
+                          CallExpression
+                            Identifier: ' jsonToReadableText'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: '
+                    compilerOptions'
+                                CallExpression
+                                  Identifier: ' compilerOptionsToConfigJson'
+                                  ObjectLiteralExpression
+                                    PropertyAssignment
+                                      Identifier: '
+                        target'
+                                      PropertyAccessExpression
+                                        Identifier: ' ScriptTarget'
+                                        Identifier: 'ES2016'
+                                    PropertyAssignment
+                                      Identifier: '
+                        composite'
+                                      TrueKeyword
+                                    PropertyAssignment
+                                      Identifier: '
+                        module'
+                                      PropertyAccessExpression
+                                        Identifier: ' ModuleKind'
+                                        Identifier: 'Node16'
+                                    PropertyAssignment
+                                      Identifier: '
+                        traceResolution'
+                                      TrueKeyword
+                              PropertyAssignment
+                                Identifier: '
+                    files'
+                                ArrayLiteralExpression
+                                  StringLiteral
+                                  StringLiteral
+                                  StringLiteral
+                        PropertyAssignment
+                          StringLiteral
+                          StringLiteral
+                        PropertyAssignment
+                          StringLiteral
+                          TaggedTemplateExpression
+                            Identifier: ' dedent'
+                            NoSubstitutionTemplateLiteral
+                        PropertyAssignment
+                          StringLiteral
+                          StringLiteral
+                        PropertyAssignment
+                          StringLiteral
+                          CallExpression
+                            Identifier: ' jsonToReadableText'
+                            ObjectLiteralExpression
+                              PropertyAssignment
+                                Identifier: ' name'
+                                StringLiteral
+                              PropertyAssignment
+                                Identifier: ' version'
+                                StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        commandLineArgs'
+                  ArrayLiteralExpression
+                    StringLiteral
+                    StringLiteral
+                    StringLiteral
+                    StringLiteral
+                PropertyAssignment
+                  Identifier: '
+        edits'
+                  ArrayLiteralExpression
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: '
+                caption'
+                        StringLiteral
+                      PropertyAssignment
+                        Identifier: '
+                edit'
+                        ArrowFunction
+                          Parameter
+                            Identifier: ' sys'
+                          EqualsGreaterThanToken
+                          CallExpression
+                            PropertyAccessExpression
+                              Identifier: ' sys'
+                              Identifier: 'deleteFile'
+                            StringLiteral

@@ -1,0 +1,205 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' M'
+    ModuleBlock
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            NumberKeyword
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+
+// Errors
+M'
+        Identifier: 'x'
+      EqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+M'
+        Identifier: 'x'
+      PlusEqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+M'
+        Identifier: 'x'
+      MinusEqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+M'
+        Identifier: 'x'
+      AsteriskEqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+M'
+        Identifier: 'x'
+      SlashEqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+M'
+        Identifier: 'x'
+      PercentEqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+M'
+        Identifier: 'x'
+      LessThanLessThanEqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+M'
+        Identifier: 'x'
+      GreaterThanGreaterThanEqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+M'
+        Identifier: 'x'
+      GreaterThanGreaterThanGreaterThanEqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+M'
+        Identifier: 'x'
+      AmpersandEqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+M'
+        Identifier: 'x'
+      BarEqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+M'
+        Identifier: 'x'
+      CaretEqualsToken
+      NumericLiteral
+  ExpressionStatement
+    PostfixUnaryExpression
+      PropertyAccessExpression
+        Identifier: '
+
+M'
+        Identifier: 'x'
+  ExpressionStatement
+    PostfixUnaryExpression
+      PropertyAccessExpression
+        Identifier: '
+M'
+        Identifier: 'x'
+  ExpressionStatement
+    PrefixUnaryExpression
+      PropertyAccessExpression
+        Identifier: 'M'
+        Identifier: 'x'
+  ExpressionStatement
+    PrefixUnaryExpression
+      PropertyAccessExpression
+        Identifier: 'M'
+        Identifier: 'x'
+  ExpressionStatement
+    PrefixUnaryExpression
+      ParenthesizedExpression
+        ParenthesizedExpression
+          PropertyAccessExpression
+            Identifier: 'M'
+            Identifier: 'x'
+  ExpressionStatement
+    BinaryExpression
+      ElementAccessExpression
+        Identifier: '
+
+M'
+        StringLiteral
+      EqualsToken
+      NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        BinaryExpression
+          PropertyAccessExpression
+            Identifier: ' M'
+            Identifier: 'x'
+          PlusToken
+          NumericLiteral
+  FunctionDeclaration
+    Identifier: ' f'
+    Parameter
+      Identifier: 'v'
+      NumberKeyword
+    Block
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+f'
+      PropertyAccessExpression
+        Identifier: 'M'
+        Identifier: 'x'
+  IfStatement
+    PropertyAccessExpression
+      Identifier: 'M'
+      Identifier: 'x'
+    Block
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+
+M'
+      Identifier: 'x'
+  ExpressionStatement
+    ParenthesizedExpression
+      PropertyAccessExpression
+        Identifier: 'M'
+        Identifier: 'x'
+  ExpressionStatement
+    PrefixUnaryExpression
+      PropertyAccessExpression
+        Identifier: 'M'
+        Identifier: 'x'
+  ExpressionStatement
+    PrefixUnaryExpression
+      PropertyAccessExpression
+        Identifier: 'M'
+        Identifier: 'x'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+
+M'
+          Identifier: 'x'
+        Identifier: 'toString'

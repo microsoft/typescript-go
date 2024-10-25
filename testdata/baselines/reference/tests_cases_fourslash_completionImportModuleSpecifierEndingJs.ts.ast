@@ -1,0 +1,60 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts'/>
+//@allowJs: true
+//@Filename:test.js
+////export function f(){
+////    return 1
+////}
+
+//@Filename:module.js
+////import { f } from ".//**/"
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' includes'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: 'name'
+              StringLiteral
+        PropertyAssignment
+          Identifier: ' preferences'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: 'importModuleSpecifierEnding'
+              StringLiteral
+        PropertyAssignment
+          Identifier: ' isNewIdentifierLocation'
+          TrueKeyword
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' includes'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: 'name'
+              StringLiteral
+        PropertyAssignment
+          Identifier: ' preferences'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: 'importModuleSpecifierEnding'
+              StringLiteral
+        PropertyAssignment
+          Identifier: ' isNewIdentifierLocation'
+          TrueKeyword

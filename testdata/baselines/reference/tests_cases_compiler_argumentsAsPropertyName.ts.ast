@@ -1,0 +1,65 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' MyType'
+    TypeLiteral
+      PropertySignature
+        Identifier: '
+    arguments'
+        TypeReference
+          Identifier: ' Array'
+          StringKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' use'
+    Parameter
+      Identifier: 's'
+      AnyKeyword
+  FunctionDeclaration
+    Identifier: ' myFunction'
+    Parameter
+      Identifier: 'myType'
+      TypeReference
+        Identifier: ' MyType'
+    Block
+      ForStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' i'
+            NumericLiteral
+        BinaryExpression
+          Identifier: ' i'
+          LessThanToken
+          NumericLiteral
+        PostfixUnaryExpression
+          Identifier: ' i'
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        use'
+              ElementAccessExpression
+                PropertyAccessExpression
+                  Identifier: 'myType'
+                  Identifier: 'arguments'
+                Identifier: 'i'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' x'
+                NumericLiteral
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                ArrayLiteralExpression
+                  NumericLiteral
+                  NumericLiteral
+                  NumericLiteral
+                Identifier: 'forEach'
+              FunctionExpression
+                Parameter
+                  Identifier: 'j'
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: ' use'
+                      Identifier: 'x'

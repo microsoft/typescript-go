@@ -1,0 +1,492 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' value'
+        AnyKeyword
+  ClassDeclaration
+    Identifier: ' C'
+    Constructor
+      Block
+        ExpressionStatement
+          BinaryExpression
+            ThisKeyword
+            AsteriskEqualsToken
+            Identifier: ' value'
+        ExpressionStatement
+          BinaryExpression
+            ThisKeyword
+            PlusEqualsToken
+            Identifier: ' value'
+    MethodDeclaration
+      Identifier: '
+    foo'
+      Block
+        ExpressionStatement
+          BinaryExpression
+            ThisKeyword
+            AsteriskEqualsToken
+            Identifier: ' value'
+        ExpressionStatement
+          BinaryExpression
+            ThisKeyword
+            PlusEqualsToken
+            Identifier: ' value'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' sfoo'
+      Block
+        ExpressionStatement
+          BinaryExpression
+            ThisKeyword
+            AsteriskEqualsToken
+            Identifier: ' value'
+        ExpressionStatement
+          BinaryExpression
+            ThisKeyword
+            PlusEqualsToken
+            Identifier: ' value'
+  FunctionDeclaration
+    Identifier: ' foo'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          ThisKeyword
+          AsteriskEqualsToken
+          Identifier: ' value'
+      ExpressionStatement
+        BinaryExpression
+          ThisKeyword
+          PlusEqualsToken
+          Identifier: ' value'
+  ExpressionStatement
+    BinaryExpression
+      ThisKeyword
+      AsteriskEqualsToken
+      Identifier: ' value'
+  ExpressionStatement
+    BinaryExpression
+      ThisKeyword
+      PlusEqualsToken
+      Identifier: ' value'
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+M'
+      AsteriskEqualsToken
+      Identifier: ' value'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+M'
+      PlusEqualsToken
+      Identifier: ' value'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+C'
+      AsteriskEqualsToken
+      Identifier: ' value'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+C'
+      PlusEqualsToken
+      Identifier: ' value'
+  EnumDeclaration
+    Identifier: ' E'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+E'
+      AsteriskEqualsToken
+      Identifier: ' value'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+E'
+      PlusEqualsToken
+      Identifier: ' value'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+foo'
+      AsteriskEqualsToken
+      Identifier: ' value'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+foo'
+      PlusEqualsToken
+      Identifier: ' value'
+  ExpressionStatement
+    BinaryExpression
+      NullKeyword
+      AsteriskEqualsToken
+      Identifier: ' value'
+  ExpressionStatement
+    BinaryExpression
+      NullKeyword
+      PlusEqualsToken
+      Identifier: ' value'
+  ExpressionStatement
+    BinaryExpression
+      TrueKeyword
+      AsteriskEqualsToken
+      Identifier: ' value'
+  ExpressionStatement
+    BinaryExpression
+      TrueKeyword
+      PlusEqualsToken
+      Identifier: ' value'
+  ExpressionStatement
+    BinaryExpression
+      FalseKeyword
+      AsteriskEqualsToken
+      Identifier: ' value'
+  ExpressionStatement
+    BinaryExpression
+      FalseKeyword
+      PlusEqualsToken
+      Identifier: ' value'
+  ExpressionStatement
+    BinaryExpression
+      NumericLiteral
+      AsteriskEqualsToken
+      Identifier: ' value'
+  ExpressionStatement
+    BinaryExpression
+      NumericLiteral
+      PlusEqualsToken
+      Identifier: ' value'
+  ExpressionStatement
+    BinaryExpression
+      StringLiteral
+      AsteriskEqualsToken
+      Identifier: ' value'
+  ExpressionStatement
+    BinaryExpression
+      StringLiteral
+      PlusEqualsToken
+      Identifier: ' value'
+  ExpressionStatement
+    BinaryExpression
+      RegularExpressionLiteral
+      AsteriskEqualsToken
+      Identifier: ' value'
+  ExpressionStatement
+    BinaryExpression
+      RegularExpressionLiteral
+      PlusEqualsToken
+      Identifier: ' value'
+  Block
+    LabeledStatement
+      Identifier: ' a'
+      ExpressionStatement
+        NumericLiteral
+  ExpressionStatement
+    Identifier: ' value'
+  Block
+    LabeledStatement
+      Identifier: ' a'
+      ExpressionStatement
+        NumericLiteral
+  ExpressionStatement
+    Identifier: ' value'
+  ExpressionStatement
+    BinaryExpression
+      ArrayLiteralExpression
+        StringLiteral
+        StringLiteral
+      AsteriskEqualsToken
+      Identifier: ' value'
+  ExpressionStatement
+    BinaryExpression
+      ArrayLiteralExpression
+        StringLiteral
+        StringLiteral
+      PlusEqualsToken
+      Identifier: ' value'
+  ClassDeclaration
+    Identifier: ' Derived'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' C'
+    Constructor
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              SuperKeyword
+              Identifier: ''
+            AsteriskEqualsToken
+            Identifier: ' value'
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              SuperKeyword
+              Identifier: ''
+            PlusEqualsToken
+            Identifier: ' value'
+    MethodDeclaration
+      Identifier: '
+
+    foo'
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              SuperKeyword
+              Identifier: ''
+            AsteriskEqualsToken
+            Identifier: ' value'
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              SuperKeyword
+              Identifier: ''
+            PlusEqualsToken
+            Identifier: ' value'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' sfoo'
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              SuperKeyword
+              Identifier: ''
+            AsteriskEqualsToken
+            Identifier: ' value'
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              SuperKeyword
+              Identifier: ''
+            PlusEqualsToken
+            Identifier: ' value'
+  FunctionDeclaration
+    Identifier: ' bar1'
+    Block
+  ExpressionStatement
+    Identifier: ' value'
+  FunctionDeclaration
+    Identifier: ' bar2'
+    Block
+  ExpressionStatement
+    Identifier: ' value'
+  ExpressionStatement
+    ArrowFunction
+      EqualsGreaterThanToken
+      Block
+  ExpressionStatement
+    Identifier: ' value'
+  ExpressionStatement
+    ArrowFunction
+      EqualsGreaterThanToken
+      Block
+  ExpressionStatement
+    Identifier: ' value'
+  ExpressionStatement
+    BinaryExpression
+      CallExpression
+        Identifier: '
+
+// function calls
+foo'
+      AsteriskEqualsToken
+      Identifier: ' value'
+  ExpressionStatement
+    BinaryExpression
+      CallExpression
+        Identifier: '
+foo'
+      PlusEqualsToken
+      Identifier: ' value'
+  ExpressionStatement
+    BinaryExpression
+      ParenthesizedExpression
+        ThisKeyword
+      AsteriskEqualsToken
+      Identifier: ' value'
+  ExpressionStatement
+    BinaryExpression
+      ParenthesizedExpression
+        ThisKeyword
+      PlusEqualsToken
+      Identifier: ' value'
+  ExpressionStatement
+    BinaryExpression
+      ParenthesizedExpression
+        Identifier: 'M'
+      AsteriskEqualsToken
+      Identifier: ' value'
+  ExpressionStatement
+    BinaryExpression
+      ParenthesizedExpression
+        Identifier: 'M'
+      PlusEqualsToken
+      Identifier: ' value'
+  ExpressionStatement
+    BinaryExpression
+      ParenthesizedExpression
+        Identifier: 'C'
+      AsteriskEqualsToken
+      Identifier: ' value'
+  ExpressionStatement
+    BinaryExpression
+      ParenthesizedExpression
+        Identifier: 'C'
+      PlusEqualsToken
+      Identifier: ' value'
+  ExpressionStatement
+    BinaryExpression
+      ParenthesizedExpression
+        Identifier: 'E'
+      AsteriskEqualsToken
+      Identifier: ' value'
+  ExpressionStatement
+    BinaryExpression
+      ParenthesizedExpression
+        Identifier: 'E'
+      PlusEqualsToken
+      Identifier: ' value'
+  ExpressionStatement
+    BinaryExpression
+      ParenthesizedExpression
+        Identifier: 'foo'
+      AsteriskEqualsToken
+      Identifier: ' value'
+  ExpressionStatement
+    BinaryExpression
+      ParenthesizedExpression
+        Identifier: 'foo'
+      PlusEqualsToken
+      Identifier: ' value'
+  ExpressionStatement
+    BinaryExpression
+      ParenthesizedExpression
+        NullKeyword
+      AsteriskEqualsToken
+      Identifier: ' value'
+  ExpressionStatement
+    BinaryExpression
+      ParenthesizedExpression
+        NullKeyword
+      PlusEqualsToken
+      Identifier: ' value'
+  ExpressionStatement
+    BinaryExpression
+      ParenthesizedExpression
+        TrueKeyword
+      AsteriskEqualsToken
+      Identifier: ' value'
+  ExpressionStatement
+    BinaryExpression
+      ParenthesizedExpression
+        TrueKeyword
+      PlusEqualsToken
+      Identifier: ' value'
+  ExpressionStatement
+    BinaryExpression
+      ParenthesizedExpression
+        NumericLiteral
+      AsteriskEqualsToken
+      Identifier: ' value'
+  ExpressionStatement
+    BinaryExpression
+      ParenthesizedExpression
+        NumericLiteral
+      PlusEqualsToken
+      Identifier: ' value'
+  ExpressionStatement
+    BinaryExpression
+      ParenthesizedExpression
+        StringLiteral
+      AsteriskEqualsToken
+      Identifier: ' value'
+  ExpressionStatement
+    BinaryExpression
+      ParenthesizedExpression
+        StringLiteral
+      PlusEqualsToken
+      Identifier: ' value'
+  ExpressionStatement
+    BinaryExpression
+      ParenthesizedExpression
+        RegularExpressionLiteral
+      AsteriskEqualsToken
+      Identifier: ' value'
+  ExpressionStatement
+    BinaryExpression
+      ParenthesizedExpression
+        RegularExpressionLiteral
+      PlusEqualsToken
+      Identifier: ' value'
+  ExpressionStatement
+    BinaryExpression
+      ParenthesizedExpression
+        ObjectLiteralExpression
+      AsteriskEqualsToken
+      Identifier: ' value'
+  ExpressionStatement
+    BinaryExpression
+      ParenthesizedExpression
+        ObjectLiteralExpression
+      PlusEqualsToken
+      Identifier: ' value'
+  ExpressionStatement
+    BinaryExpression
+      ParenthesizedExpression
+        ArrayLiteralExpression
+      AsteriskEqualsToken
+      Identifier: ' value'
+  ExpressionStatement
+    BinaryExpression
+      ParenthesizedExpression
+        ArrayLiteralExpression
+      PlusEqualsToken
+      Identifier: ' value'
+  ExpressionStatement
+    BinaryExpression
+      ParenthesizedExpression
+        FunctionExpression
+          Identifier: ' baz1'
+          Block
+      AsteriskEqualsToken
+      Identifier: ' value'
+  ExpressionStatement
+    BinaryExpression
+      ParenthesizedExpression
+        FunctionExpression
+          Identifier: ' baz2'
+          Block
+      PlusEqualsToken
+      Identifier: ' value'
+  ExpressionStatement
+    BinaryExpression
+      ParenthesizedExpression
+        CallExpression
+          Identifier: 'foo'
+      AsteriskEqualsToken
+      Identifier: ' value'
+  ExpressionStatement
+    BinaryExpression
+      ParenthesizedExpression
+        CallExpression
+          Identifier: 'foo'
+      PlusEqualsToken
+      Identifier: ' value'

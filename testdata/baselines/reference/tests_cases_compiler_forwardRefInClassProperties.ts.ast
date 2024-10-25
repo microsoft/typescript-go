@@ -1,0 +1,38 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Test'
+    PropertyDeclaration
+      Identifier: '
+    _b'
+      PropertyAccessExpression
+        ThisKeyword
+        Identifier: '_a'
+    PropertyDeclaration
+      Identifier: ' // undefined, no error/warning
+    _a'
+      NumericLiteral
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' _B'
+      PropertyAccessExpression
+        Identifier: ' Test'
+        Identifier: '_A'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' _A'
+      NumericLiteral
+    MethodDeclaration
+      Identifier: '
+
+    method'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' a'
+              Identifier: ' b'
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' b'
+              NumericLiteral

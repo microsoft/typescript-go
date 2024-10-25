@@ -1,0 +1,51 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ooo'
+        AnyKeyword
+  WithStatement
+    PropertyAccessExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: 'ooo'
+                  Identifier: 'eee'
+                Identifier: 'oo'
+              Identifier: 'ah_ah'
+            Identifier: 'ting'
+          Identifier: 'tang'
+        Identifier: 'walla'
+      Identifier: 'walla'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: ' // error
+    bing'
+          EqualsToken
+          TrueKeyword
+      ExpressionStatement
+        BinaryExpression
+          Identifier: ' // no error
+    bang'
+          EqualsToken
+          TrueKeyword
+      FunctionDeclaration
+        Identifier: ' bar'
+        Block
+      ExpressionStatement
+        CallExpression
+          Identifier: ' // no error
+
+    bar'
+      ClassDeclaration
+        Identifier: ' C'
+      InterfaceDeclaration
+        Identifier: ' I'
+      ModuleDeclaration
+        Identifier: ' M'
+        ModuleBlock

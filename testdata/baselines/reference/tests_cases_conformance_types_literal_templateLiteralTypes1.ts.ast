@@ -1,0 +1,2292 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' createScopedActionType'
+        ArrowFunction
+          TypeParameter
+            Identifier: 'S'
+            StringKeyword
+          Parameter
+            Identifier: 'scope'
+            TypeReference
+              Identifier: ' S'
+          EqualsGreaterThanToken
+          ArrowFunction
+            TypeParameter
+              Identifier: 'T'
+              StringKeyword
+            Parameter
+              Identifier: 'type'
+              TypeReference
+                Identifier: ' T'
+            EqualsGreaterThanToken
+            AsExpression
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  Identifier: 'scope'
+                  TemplateMiddle
+                TemplateSpan
+                  Identifier: 'type'
+                  TemplateTail
+              TemplateLiteralType
+                TemplateHead
+                TemplateLiteralTypeSpan
+                  TypeReference
+                    Identifier: 'S'
+                  TemplateMiddle
+                TemplateLiteralTypeSpan
+                  TypeReference
+                    Identifier: 'T'
+                  TemplateTail
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' createActionInMyScope'
+        CallExpression
+          Identifier: ' createScopedActionType'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' MY_ACTION'
+        CallExpression
+          Identifier: ' createActionInMyScope'
+          StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' EventName'
+    TypeParameter
+      Identifier: 'S'
+      StringKeyword
+    TemplateLiteralType
+      TemplateHead
+      TemplateLiteralTypeSpan
+        TypeReference
+          Identifier: 'S'
+        TemplateTail
+  TypeAliasDeclaration
+    Identifier: ' EN1'
+    TypeReference
+      Identifier: ' EventName'
+      UnionType
+        LiteralType
+          StringLiteral
+        LiteralType
+          StringLiteral
+        LiteralType
+          StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' Loc'
+    TemplateLiteralType
+      TemplateHead
+      TemplateLiteralTypeSpan
+        UnionType
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+        TemplateMiddle
+      TemplateLiteralTypeSpan
+        UnionType
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+        TemplateTail
+  TypeAliasDeclaration
+    Identifier: ' ToString'
+    TypeParameter
+      Identifier: 'T'
+      UnionType
+        StringKeyword
+        NumberKeyword
+        BooleanKeyword
+        BigIntKeyword
+    TemplateLiteralType
+      TemplateHead
+      TemplateLiteralTypeSpan
+        TypeReference
+          Identifier: 'T'
+        TemplateTail
+  TypeAliasDeclaration
+    Identifier: ' TS1'
+    TypeReference
+      Identifier: ' ToString'
+      UnionType
+        LiteralType
+          StringLiteral
+        LiteralType
+          NumericLiteral
+        LiteralType
+          TrueKeyword
+        LiteralType
+          PrefixUnaryExpression
+            BigintLiteral
+  TypeAliasDeclaration
+    Identifier: ' TL1'
+    TypeParameter
+      Identifier: 'T'
+      StringKeyword
+    TemplateLiteralType
+      TemplateHead
+      TemplateLiteralTypeSpan
+        TypeReference
+          Identifier: 'T'
+        TemplateMiddle
+      TemplateLiteralTypeSpan
+        TypeReference
+          Identifier: 'T'
+        TemplateTail
+  TypeAliasDeclaration
+    Identifier: ' TL2'
+    TypeParameter
+      Identifier: 'U'
+      StringKeyword
+    TypeReference
+      Identifier: ' TL1'
+      TemplateLiteralType
+        TemplateHead
+        TemplateLiteralTypeSpan
+          TypeReference
+            Identifier: 'U'
+          TemplateTail
+  TypeAliasDeclaration
+    Identifier: ' TL3'
+    TypeReference
+      Identifier: ' TL2'
+      LiteralType
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' Cases'
+    TypeParameter
+      Identifier: 'T'
+      StringKeyword
+    TemplateLiteralType
+      TemplateHead
+      TemplateLiteralTypeSpan
+        TypeReference
+          Identifier: 'Uppercase'
+          TypeReference
+            Identifier: 'T'
+        TemplateMiddle
+      TemplateLiteralTypeSpan
+        TypeReference
+          Identifier: 'Lowercase'
+          TypeReference
+            Identifier: 'T'
+        TemplateMiddle
+      TemplateLiteralTypeSpan
+        TypeReference
+          Identifier: 'Capitalize'
+          TypeReference
+            Identifier: 'T'
+        TemplateMiddle
+      TemplateLiteralTypeSpan
+        TypeReference
+          Identifier: 'Uncapitalize'
+          TypeReference
+            Identifier: 'T'
+        TemplateTail
+  TypeAliasDeclaration
+    Identifier: ' TCA1'
+    TypeReference
+      Identifier: ' Cases'
+      LiteralType
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' TCA2'
+    TypeReference
+      Identifier: ' Cases'
+      LiteralType
+        StringLiteral
+  FunctionDeclaration
+    Identifier: ' test'
+    TypeParameter
+      Identifier: 'T'
+      UnionType
+        LiteralType
+          StringLiteral
+        LiteralType
+          StringLiteral
+    Parameter
+      Identifier: 'name'
+      TemplateLiteralType
+        TemplateHead
+        TemplateLiteralTypeSpan
+          TypeReference
+            Identifier: 'Capitalize'
+            TypeReference
+              Identifier: 'T'
+          TemplateTail
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' s1'
+            StringKeyword
+            Identifier: ' name'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' s2'
+            UnionType
+              LiteralType
+                StringLiteral
+              LiteralType
+                StringLiteral
+            Identifier: ' name'
+  FunctionDeclaration
+    Identifier: ' fa1'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' y'
+      MappedType
+        TypeParameter
+          Identifier: 'P'
+          TypeOperator
+            TypeReference
+              Identifier: ' T'
+        IndexedAccessType
+          TypeReference
+            Identifier: ' T'
+          TypeReference
+            Identifier: 'P'
+    Parameter
+      Identifier: ' z'
+      MappedType
+        TypeParameter
+          Identifier: 'P'
+          IntersectionType
+            TypeOperator
+              TypeReference
+                Identifier: ' T'
+            StringKeyword
+        TemplateLiteralType
+          TemplateHead
+          TemplateLiteralTypeSpan
+            TypeReference
+              Identifier: 'P'
+            TemplateTail
+        IndexedAccessType
+          TypeReference
+            Identifier: ' T'
+          TypeReference
+            Identifier: 'P'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    y'
+          EqualsToken
+          Identifier: ' x'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    z'
+          EqualsToken
+          Identifier: ' x'
+  FunctionDeclaration
+    Identifier: ' fa2'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+      TypeReference
+        Identifier: ' T'
+    TypeParameter
+      Identifier: ' A'
+      StringKeyword
+    TypeParameter
+      Identifier: ' B'
+      TypeReference
+        Identifier: ' A'
+    Parameter
+      Identifier: 'x'
+      MappedType
+        TypeParameter
+          Identifier: 'P'
+          TypeReference
+            Identifier: ' B'
+        TemplateLiteralType
+          TemplateHead
+          TemplateLiteralTypeSpan
+            TypeReference
+              Identifier: 'P'
+            TemplateTail
+        TypeReference
+          Identifier: ' T'
+    Parameter
+      Identifier: ' y'
+      MappedType
+        TypeParameter
+          Identifier: 'Q'
+          TypeReference
+            Identifier: ' A'
+        TemplateLiteralType
+          TemplateHead
+          TemplateLiteralTypeSpan
+            TypeReference
+              Identifier: 'Q'
+            TemplateTail
+        TypeReference
+          Identifier: ' U'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    x'
+          EqualsToken
+          Identifier: ' y'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    y'
+          EqualsToken
+          Identifier: ' x'
+  TypeAliasDeclaration
+    Identifier: ' Join'
+    TypeParameter
+      Identifier: 'T'
+      ArrayType
+        UnknownKeyword
+    TypeParameter
+      Identifier: ' D'
+      StringKeyword
+    ConditionalType
+      TypeReference
+        Identifier: '
+    T'
+      TupleType
+      LiteralType
+        StringLiteral
+      ConditionalType
+        TypeReference
+          Identifier: '
+    T'
+        TupleType
+          UnionType
+            StringKeyword
+            NumberKeyword
+            BooleanKeyword
+            BigIntKeyword
+        TemplateLiteralType
+          TemplateHead
+          TemplateLiteralTypeSpan
+            IndexedAccessType
+              TypeReference
+                Identifier: 'T'
+              LiteralType
+                NumericLiteral
+            TemplateTail
+        ConditionalType
+          TypeReference
+            Identifier: '
+    T'
+          TupleType
+            UnionType
+              StringKeyword
+              NumberKeyword
+              BooleanKeyword
+              BigIntKeyword
+            RestType
+              InferType
+                TypeParameter
+                  Identifier: ' U'
+          TemplateLiteralType
+            TemplateHead
+            TemplateLiteralTypeSpan
+              IndexedAccessType
+                TypeReference
+                  Identifier: 'T'
+                LiteralType
+                  NumericLiteral
+              TemplateMiddle
+            TemplateLiteralTypeSpan
+              TypeReference
+                Identifier: 'D'
+              TemplateMiddle
+            TemplateLiteralTypeSpan
+              TypeReference
+                Identifier: 'Join'
+                TypeReference
+                  Identifier: 'U'
+                TypeReference
+                  Identifier: ' D'
+              TemplateTail
+          StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' TJ1'
+    TypeReference
+      Identifier: ' Join'
+      TupleType
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+      LiteralType
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' TJ2'
+    TypeReference
+      Identifier: ' Join'
+      TupleType
+        LiteralType
+          StringLiteral
+        LiteralType
+          StringLiteral
+        LiteralType
+          StringLiteral
+      LiteralType
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' TJ3'
+    TypeReference
+      Identifier: ' Join'
+      TupleType
+      LiteralType
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' MatchPair'
+    TypeParameter
+      Identifier: 'S'
+      StringKeyword
+    ConditionalType
+      TypeReference
+        Identifier: ' S'
+      TemplateLiteralType
+        TemplateHead
+        TemplateLiteralTypeSpan
+          InferType
+            TypeParameter
+              Identifier: ' A'
+          TemplateMiddle
+        TemplateLiteralTypeSpan
+          InferType
+            TypeParameter
+              Identifier: ' B'
+          TemplateTail
+      TupleType
+        TypeReference
+          Identifier: 'A'
+        TypeReference
+          Identifier: ' B'
+      UnknownKeyword
+  TypeAliasDeclaration
+    Identifier: ' T20'
+    TypeReference
+      Identifier: ' MatchPair'
+      LiteralType
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' T21'
+    TypeReference
+      Identifier: ' MatchPair'
+      LiteralType
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' T22'
+    TypeReference
+      Identifier: ' MatchPair'
+      LiteralType
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' T23'
+    TypeReference
+      Identifier: ' MatchPair'
+      LiteralType
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' T24'
+    TypeReference
+      Identifier: ' MatchPair'
+      LiteralType
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' SnakeToCamelCase'
+    TypeParameter
+      Identifier: 'S'
+      StringKeyword
+    ConditionalType
+      TypeReference
+        Identifier: '
+    S'
+      TemplateLiteralType
+        TemplateHead
+        TemplateLiteralTypeSpan
+          InferType
+            TypeParameter
+              Identifier: ' T'
+          TemplateMiddle
+        TemplateLiteralTypeSpan
+          InferType
+            TypeParameter
+              Identifier: ' U'
+          TemplateTail
+      TemplateLiteralType
+        TemplateHead
+        TemplateLiteralTypeSpan
+          TypeReference
+            Identifier: 'Lowercase'
+            TypeReference
+              Identifier: 'T'
+          TemplateMiddle
+        TemplateLiteralTypeSpan
+          TypeReference
+            Identifier: 'SnakeToPascalCase'
+            TypeReference
+              Identifier: 'U'
+          TemplateTail
+      ConditionalType
+        TypeReference
+          Identifier: '
+    S'
+        TemplateLiteralType
+          TemplateHead
+          TemplateLiteralTypeSpan
+            InferType
+              TypeParameter
+                Identifier: ' T'
+            TemplateTail
+        TemplateLiteralType
+          TemplateHead
+          TemplateLiteralTypeSpan
+            TypeReference
+              Identifier: 'Lowercase'
+              TypeReference
+                Identifier: 'T'
+            TemplateTail
+        TypeReference
+          Identifier: '
+    SnakeToPascalCase'
+          TypeReference
+            Identifier: 'S'
+  TypeAliasDeclaration
+    Identifier: ' SnakeToPascalCase'
+    TypeParameter
+      Identifier: 'S'
+      StringKeyword
+    ConditionalType
+      StringKeyword
+      TypeReference
+        Identifier: ' S'
+      StringKeyword
+      ConditionalType
+        TypeReference
+          Identifier: '
+    S'
+        TemplateLiteralType
+          TemplateHead
+          TemplateLiteralTypeSpan
+            InferType
+              TypeParameter
+                Identifier: ' T'
+            TemplateMiddle
+          TemplateLiteralTypeSpan
+            InferType
+              TypeParameter
+                Identifier: ' U'
+            TemplateTail
+        TemplateLiteralType
+          TemplateHead
+          TemplateLiteralTypeSpan
+            TypeReference
+              Identifier: 'Capitalize'
+              TypeReference
+                Identifier: 'Lowercase'
+                TypeReference
+                  Identifier: 'T'
+            TemplateMiddle
+          TemplateLiteralTypeSpan
+            TypeReference
+              Identifier: 'SnakeToPascalCase'
+              TypeReference
+                Identifier: 'U'
+            TemplateTail
+        ConditionalType
+          TypeReference
+            Identifier: '
+    S'
+          TemplateLiteralType
+            TemplateHead
+            TemplateLiteralTypeSpan
+              InferType
+                TypeParameter
+                  Identifier: ' T'
+              TemplateTail
+          TemplateLiteralType
+            TemplateHead
+            TemplateLiteralTypeSpan
+              TypeReference
+                Identifier: 'Capitalize'
+                TypeReference
+                  Identifier: 'Lowercase'
+                  TypeReference
+                    Identifier: 'T'
+              TemplateTail
+          NeverKeyword
+  TypeAliasDeclaration
+    Identifier: ' RR0'
+    TypeReference
+      Identifier: ' SnakeToPascalCase'
+      LiteralType
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' RR1'
+    TypeReference
+      Identifier: ' SnakeToPascalCase'
+      LiteralType
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' RR2'
+    TypeReference
+      Identifier: ' SnakeToCamelCase'
+      LiteralType
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' RR3'
+    TypeReference
+      Identifier: ' SnakeToCamelCase'
+      LiteralType
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' FirstTwoAndRest'
+    TypeParameter
+      Identifier: 'S'
+      StringKeyword
+    ConditionalType
+      TypeReference
+        Identifier: ' S'
+      TemplateLiteralType
+        TemplateHead
+        TemplateLiteralTypeSpan
+          InferType
+            TypeParameter
+              Identifier: ' A'
+          TemplateMiddle
+        TemplateLiteralTypeSpan
+          InferType
+            TypeParameter
+              Identifier: ' B'
+          TemplateMiddle
+        TemplateLiteralTypeSpan
+          InferType
+            TypeParameter
+              Identifier: ' R'
+          TemplateTail
+      TupleType
+        TemplateLiteralType
+          TemplateHead
+          TemplateLiteralTypeSpan
+            TypeReference
+              Identifier: 'A'
+            TemplateMiddle
+          TemplateLiteralTypeSpan
+            TypeReference
+              Identifier: 'B'
+            TemplateTail
+        TypeReference
+          Identifier: ' R'
+      UnknownKeyword
+  TypeAliasDeclaration
+    Identifier: ' T25'
+    TypeReference
+      Identifier: ' FirstTwoAndRest'
+      LiteralType
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' T26'
+    TypeReference
+      Identifier: ' FirstTwoAndRest'
+      LiteralType
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' T27'
+    TypeReference
+      Identifier: ' FirstTwoAndRest'
+      LiteralType
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' HexDigit'
+    UnionType
+      LiteralType
+        StringLiteral
+      LiteralType
+        StringLiteral
+      LiteralType
+        StringLiteral
+      LiteralType
+        StringLiteral
+      LiteralType
+        StringLiteral
+      LiteralType
+        StringLiteral
+      LiteralType
+        StringLiteral
+      LiteralType
+        StringLiteral
+      LiteralType
+        StringLiteral
+      LiteralType
+        StringLiteral
+      LiteralType
+        StringLiteral
+      LiteralType
+        StringLiteral
+      LiteralType
+        StringLiteral
+      LiteralType
+        StringLiteral
+      LiteralType
+        StringLiteral
+      LiteralType
+        StringLiteral
+      LiteralType
+        StringLiteral
+      LiteralType
+        StringLiteral
+      LiteralType
+        StringLiteral
+      LiteralType
+        StringLiteral
+      LiteralType
+        StringLiteral
+      LiteralType
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' HexColor'
+    TypeParameter
+      Identifier: 'S'
+      StringKeyword
+    ConditionalType
+      TypeReference
+        Identifier: '
+    S'
+      TemplateLiteralType
+        TemplateHead
+        TemplateLiteralTypeSpan
+          InferType
+            TypeParameter
+              Identifier: ' R1'
+          TemplateMiddle
+        TemplateLiteralTypeSpan
+          InferType
+            TypeParameter
+              Identifier: ' R2'
+          TemplateMiddle
+        TemplateLiteralTypeSpan
+          InferType
+            TypeParameter
+              Identifier: ' G1'
+          TemplateMiddle
+        TemplateLiteralTypeSpan
+          InferType
+            TypeParameter
+              Identifier: ' G2'
+          TemplateMiddle
+        TemplateLiteralTypeSpan
+          InferType
+            TypeParameter
+              Identifier: ' B1'
+          TemplateMiddle
+        TemplateLiteralTypeSpan
+          InferType
+            TypeParameter
+              Identifier: ' B2'
+          TemplateTail
+      ConditionalType
+        TupleType
+          TypeReference
+            Identifier: 'R1'
+          TypeReference
+            Identifier: ' R2'
+          TypeReference
+            Identifier: ' G1'
+          TypeReference
+            Identifier: ' G2'
+          TypeReference
+            Identifier: ' B1'
+          TypeReference
+            Identifier: ' B2'
+        TupleType
+          TypeReference
+            Identifier: 'HexDigit'
+          TypeReference
+            Identifier: ' HexDigit'
+          TypeReference
+            Identifier: ' HexDigit'
+          TypeReference
+            Identifier: ' HexDigit'
+          TypeReference
+            Identifier: ' HexDigit'
+          TypeReference
+            Identifier: ' HexDigit'
+        TypeReference
+          Identifier: '
+            S'
+        NeverKeyword
+      NeverKeyword
+  TypeAliasDeclaration
+    Identifier: ' TH1'
+    TypeReference
+      Identifier: ' HexColor'
+      LiteralType
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' TH2'
+    TypeReference
+      Identifier: ' HexColor'
+      LiteralType
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' TH3'
+    TypeReference
+      Identifier: ' HexColor'
+      LiteralType
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' TH4'
+    TypeReference
+      Identifier: ' HexColor'
+      LiteralType
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' Trim'
+    TypeParameter
+      Identifier: 'S'
+      StringKeyword
+    ConditionalType
+      TypeReference
+        Identifier: '
+    S'
+      TemplateLiteralType
+        TemplateHead
+        TemplateLiteralTypeSpan
+          InferType
+            TypeParameter
+              Identifier: ' T'
+          TemplateTail
+      TypeReference
+        Identifier: ' Trim'
+        TypeReference
+          Identifier: 'T'
+      ConditionalType
+        TypeReference
+          Identifier: '
+    S'
+        TemplateLiteralType
+          TemplateHead
+          TemplateLiteralTypeSpan
+            InferType
+              TypeParameter
+                Identifier: ' T'
+            TemplateTail
+        TypeReference
+          Identifier: ' Trim'
+          TypeReference
+            Identifier: 'T'
+        TypeReference
+          Identifier: '
+    S'
+  TypeAliasDeclaration
+    Identifier: ' TR1'
+    TypeReference
+      Identifier: ' Trim'
+      LiteralType
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' TR2'
+    TypeReference
+      Identifier: ' Trim'
+      LiteralType
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' TR3'
+    TypeReference
+      Identifier: ' Trim'
+      LiteralType
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' Split'
+    TypeParameter
+      Identifier: 'S'
+      StringKeyword
+    TypeParameter
+      Identifier: ' D'
+      StringKeyword
+    ConditionalType
+      StringKeyword
+      TypeReference
+        Identifier: ' S'
+      ArrayType
+        StringKeyword
+      ConditionalType
+        TypeReference
+          Identifier: '
+    S'
+        LiteralType
+          StringLiteral
+        TupleType
+        ConditionalType
+          TypeReference
+            Identifier: '
+    S'
+          TemplateLiteralType
+            TemplateHead
+            TemplateLiteralTypeSpan
+              InferType
+                TypeParameter
+                  Identifier: ' T'
+              TemplateMiddle
+            TemplateLiteralTypeSpan
+              TypeReference
+                Identifier: 'D'
+              TemplateMiddle
+            TemplateLiteralTypeSpan
+              InferType
+                TypeParameter
+                  Identifier: ' U'
+              TemplateTail
+          TupleType
+            TypeReference
+              Identifier: 'T'
+            RestType
+              TypeReference
+                Identifier: 'Split'
+                TypeReference
+                  Identifier: 'U'
+                TypeReference
+                  Identifier: ' D'
+          TupleType
+            TypeReference
+              Identifier: 'S'
+  TypeAliasDeclaration
+    Identifier: ' T40'
+    TypeReference
+      Identifier: ' Split'
+      LiteralType
+        StringLiteral
+      LiteralType
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' T41'
+    TypeReference
+      Identifier: ' Split'
+      LiteralType
+        StringLiteral
+      LiteralType
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' T42'
+    TypeReference
+      Identifier: ' Split'
+      LiteralType
+        StringLiteral
+      LiteralType
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' T43'
+    TypeReference
+      Identifier: ' Split'
+      AnyKeyword
+      LiteralType
+        StringLiteral
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' getProp'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' P0'
+      IntersectionType
+        TypeOperator
+          TypeReference
+            Identifier: ' T'
+        StringKeyword
+    TypeParameter
+      Identifier: ' P1'
+      IntersectionType
+        TypeOperator
+          IndexedAccessType
+            TypeReference
+              Identifier: ' T'
+            TypeReference
+              Identifier: 'P0'
+        StringKeyword
+    TypeParameter
+      Identifier: ' P2'
+      IntersectionType
+        TypeOperator
+          IndexedAccessType
+            IndexedAccessType
+              TypeReference
+                Identifier: ' T'
+              TypeReference
+                Identifier: 'P0'
+            TypeReference
+              Identifier: 'P1'
+        StringKeyword
+    Parameter
+      Identifier: 'obj'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' path'
+      TemplateLiteralType
+        TemplateHead
+        TemplateLiteralTypeSpan
+          TypeReference
+            Identifier: 'P0'
+          TemplateMiddle
+        TemplateLiteralTypeSpan
+          TypeReference
+            Identifier: 'P1'
+          TemplateMiddle
+        TemplateLiteralTypeSpan
+          TypeReference
+            Identifier: 'P2'
+          TemplateTail
+    IndexedAccessType
+      IndexedAccessType
+        IndexedAccessType
+          TypeReference
+            Identifier: ' T'
+          TypeReference
+            Identifier: 'P0'
+        TypeReference
+          Identifier: 'P1'
+      TypeReference
+        Identifier: 'P2'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' getProp'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' P0'
+      IntersectionType
+        TypeOperator
+          TypeReference
+            Identifier: ' T'
+        StringKeyword
+    TypeParameter
+      Identifier: ' P1'
+      IntersectionType
+        TypeOperator
+          IndexedAccessType
+            TypeReference
+              Identifier: ' T'
+            TypeReference
+              Identifier: 'P0'
+        StringKeyword
+    Parameter
+      Identifier: 'obj'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' path'
+      TemplateLiteralType
+        TemplateHead
+        TemplateLiteralTypeSpan
+          TypeReference
+            Identifier: 'P0'
+          TemplateMiddle
+        TemplateLiteralTypeSpan
+          TypeReference
+            Identifier: 'P1'
+          TemplateTail
+    IndexedAccessType
+      IndexedAccessType
+        TypeReference
+          Identifier: ' T'
+        TypeReference
+          Identifier: 'P0'
+      TypeReference
+        Identifier: 'P1'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' getProp'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' P0'
+      IntersectionType
+        TypeOperator
+          TypeReference
+            Identifier: ' T'
+        StringKeyword
+    Parameter
+      Identifier: 'obj'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' path'
+      TypeReference
+        Identifier: ' P0'
+    IndexedAccessType
+      TypeReference
+        Identifier: ' T'
+      TypeReference
+        Identifier: 'P0'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' getProp'
+    Parameter
+      Identifier: 'obj'
+      ObjectKeyword
+    Parameter
+      Identifier: ' path'
+      StringKeyword
+    UnknownKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p1'
+        CallExpression
+          Identifier: ' getProp'
+          AsExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' a'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: ' b'
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: 'c'
+                        NumericLiteral
+                      PropertyAssignment
+                        Identifier: ' d'
+                        StringLiteral
+            TypeReference
+              Identifier: ' const'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p2'
+        CallExpression
+          Identifier: ' getProp'
+          AsExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' a'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: ' b'
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: 'c'
+                        NumericLiteral
+                      PropertyAssignment
+                        Identifier: ' d'
+                        StringLiteral
+            TypeReference
+              Identifier: ' const'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p3'
+        CallExpression
+          Identifier: ' getProp'
+          AsExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' a'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: ' b'
+                    ObjectLiteralExpression
+                      PropertyAssignment
+                        Identifier: 'c'
+                        NumericLiteral
+                      PropertyAssignment
+                        Identifier: ' d'
+                        StringLiteral
+            TypeReference
+              Identifier: ' const'
+          StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' PropType'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' Path'
+      StringKeyword
+    ConditionalType
+      StringKeyword
+      TypeReference
+        Identifier: ' Path'
+      UnknownKeyword
+      ConditionalType
+        TypeReference
+          Identifier: '
+    Path'
+        TypeOperator
+          TypeReference
+            Identifier: ' T'
+        IndexedAccessType
+          TypeReference
+            Identifier: ' T'
+          TypeReference
+            Identifier: 'Path'
+        ConditionalType
+          TypeReference
+            Identifier: '
+    Path'
+          TemplateLiteralType
+            TemplateHead
+            TemplateLiteralTypeSpan
+              InferType
+                TypeParameter
+                  Identifier: ' K'
+              TemplateMiddle
+            TemplateLiteralTypeSpan
+              InferType
+                TypeParameter
+                  Identifier: ' R'
+              TemplateTail
+          ConditionalType
+            TypeReference
+              Identifier: ' K'
+            TypeOperator
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' PropType'
+              IndexedAccessType
+                TypeReference
+                  Identifier: 'T'
+                TypeReference
+                  Identifier: 'K'
+              TypeReference
+                Identifier: ' R'
+            UnknownKeyword
+          UnknownKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' getPropValue'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' P'
+      StringKeyword
+    Parameter
+      Identifier: 'obj'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' path'
+      TypeReference
+        Identifier: ' P'
+    TypeReference
+      Identifier: ' PropType'
+      TypeReference
+        Identifier: 'T'
+      TypeReference
+        Identifier: ' P'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s'
+        StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' obj'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' a'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' b'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: 'c'
+                    NumericLiteral
+                  PropertyAssignment
+                    Identifier: ' d'
+                    StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+getPropValue'
+      Identifier: 'obj'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '  // { b: {c: number, d: string } }
+getPropValue'
+      Identifier: 'obj'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '  // {c: number, d: string }
+getPropValue'
+      Identifier: 'obj'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '  // string
+getPropValue'
+      Identifier: 'obj'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '  // unknown
+getPropValue'
+      Identifier: 'obj'
+      Identifier: ' s'
+  TypeAliasDeclaration
+    Identifier: ' S1'
+    TypeParameter
+      Identifier: 'T'
+    ConditionalType
+      TypeReference
+        Identifier: ' T'
+      TemplateLiteralType
+        TemplateHead
+        TemplateLiteralTypeSpan
+          InferType
+            TypeParameter
+              Identifier: ' U'
+          TemplateTail
+      TypeReference
+        Identifier: ' S2'
+        TypeReference
+          Identifier: 'U'
+      NeverKeyword
+  TypeAliasDeclaration
+    Identifier: ' S2'
+    TypeParameter
+      Identifier: 'S'
+      StringKeyword
+    TypeReference
+      Identifier: ' S'
+  TypeAliasDeclaration
+    Identifier: ' TV1'
+    TemplateLiteralType
+      TemplateHead
+      TemplateLiteralTypeSpan
+        InferType
+          TypeParameter
+            Identifier: ' X'
+        TemplateTail
+  TypeAliasDeclaration
+    Identifier: ' Chars'
+    TypeParameter
+      Identifier: 'S'
+      StringKeyword
+    ConditionalType
+      StringKeyword
+      TypeReference
+        Identifier: ' S'
+      ArrayType
+        StringKeyword
+      ConditionalType
+        TypeReference
+          Identifier: '
+    S'
+        TemplateLiteralType
+          TemplateHead
+          TemplateLiteralTypeSpan
+            InferType
+              TypeParameter
+                Identifier: ' C0'
+            TemplateMiddle
+          TemplateLiteralTypeSpan
+            InferType
+              TypeParameter
+                Identifier: ' C1'
+            TemplateMiddle
+          TemplateLiteralTypeSpan
+            InferType
+              TypeParameter
+                Identifier: ' C2'
+            TemplateMiddle
+          TemplateLiteralTypeSpan
+            InferType
+              TypeParameter
+                Identifier: ' C3'
+            TemplateMiddle
+          TemplateLiteralTypeSpan
+            InferType
+              TypeParameter
+                Identifier: ' C4'
+            TemplateMiddle
+          TemplateLiteralTypeSpan
+            InferType
+              TypeParameter
+                Identifier: ' C5'
+            TemplateMiddle
+          TemplateLiteralTypeSpan
+            InferType
+              TypeParameter
+                Identifier: ' C6'
+            TemplateMiddle
+          TemplateLiteralTypeSpan
+            InferType
+              TypeParameter
+                Identifier: ' C7'
+            TemplateMiddle
+          TemplateLiteralTypeSpan
+            InferType
+              TypeParameter
+                Identifier: ' C8'
+            TemplateMiddle
+          TemplateLiteralTypeSpan
+            InferType
+              TypeParameter
+                Identifier: ' C9'
+            TemplateMiddle
+          TemplateLiteralTypeSpan
+            InferType
+              TypeParameter
+                Identifier: ' R'
+            TemplateTail
+        TupleType
+          TypeReference
+            Identifier: 'C0'
+          TypeReference
+            Identifier: ' C1'
+          TypeReference
+            Identifier: ' C2'
+          TypeReference
+            Identifier: ' C3'
+          TypeReference
+            Identifier: ' C4'
+          TypeReference
+            Identifier: ' C5'
+          TypeReference
+            Identifier: ' C6'
+          TypeReference
+            Identifier: ' C7'
+          TypeReference
+            Identifier: ' C8'
+          TypeReference
+            Identifier: ' C9'
+          RestType
+            TypeReference
+              Identifier: 'Chars'
+              TypeReference
+                Identifier: 'R'
+        ConditionalType
+          TypeReference
+            Identifier: '
+    S'
+          TemplateLiteralType
+            TemplateHead
+            TemplateLiteralTypeSpan
+              InferType
+                TypeParameter
+                  Identifier: ' C'
+              TemplateMiddle
+            TemplateLiteralTypeSpan
+              InferType
+                TypeParameter
+                  Identifier: ' R'
+              TemplateTail
+          TupleType
+            TypeReference
+              Identifier: 'C'
+            RestType
+              TypeReference
+                Identifier: 'Chars'
+                TypeReference
+                  Identifier: 'R'
+          ConditionalType
+            TypeReference
+              Identifier: '
+    S'
+            LiteralType
+              StringLiteral
+            TupleType
+            NeverKeyword
+  TypeAliasDeclaration
+    Identifier: ' L1'
+    TypeReference
+      Identifier: ' Chars'
+      LiteralType
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' Foo'
+    TypeParameter
+      Identifier: 'T'
+    ConditionalType
+      TypeReference
+        Identifier: ' T'
+      TemplateLiteralType
+        TemplateHead
+        TemplateLiteralTypeSpan
+          InferType
+            TypeParameter
+              Identifier: ' S'
+          TemplateTail
+      TypeReference
+        Identifier: ' S'
+      NeverKeyword
+  TypeAliasDeclaration
+    Identifier: ' TF1'
+    TypeReference
+      Identifier: ' Foo'
+      AnyKeyword
+  TypeAliasDeclaration
+    Identifier: ' TF2'
+    TypeReference
+      Identifier: ' Foo'
+      StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' TF3'
+    TypeReference
+      Identifier: ' Foo'
+      LiteralType
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' TF4'
+    TypeReference
+      Identifier: ' Foo'
+      LiteralType
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' A'
+    AnyKeyword
+  TypeAliasDeclaration
+    Identifier: ' U1'
+    UnionType
+      TypeLiteral
+        PropertySignature
+          Identifier: 'a1'
+          TypeReference
+            Identifier: 'A'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'b1'
+          TypeReference
+            Identifier: 'A'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'c1'
+          TypeReference
+            Identifier: 'A'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'd1'
+          TypeReference
+            Identifier: 'A'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'e1'
+          TypeReference
+            Identifier: 'A'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'f1'
+          TypeReference
+            Identifier: 'A'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'g1'
+          TypeReference
+            Identifier: 'A'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'h1'
+          TypeReference
+            Identifier: 'A'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'i1'
+          TypeReference
+            Identifier: 'A'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'j1'
+          TypeReference
+            Identifier: 'A'
+  TypeAliasDeclaration
+    Identifier: ' U2'
+    UnionType
+      TypeLiteral
+        PropertySignature
+          Identifier: 'a2'
+          TypeReference
+            Identifier: 'A'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'b2'
+          TypeReference
+            Identifier: 'A'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'c2'
+          TypeReference
+            Identifier: 'A'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'd2'
+          TypeReference
+            Identifier: 'A'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'e2'
+          TypeReference
+            Identifier: 'A'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'f2'
+          TypeReference
+            Identifier: 'A'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'g2'
+          TypeReference
+            Identifier: 'A'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'h2'
+          TypeReference
+            Identifier: 'A'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'i2'
+          TypeReference
+            Identifier: 'A'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'j2'
+          TypeReference
+            Identifier: 'A'
+  TypeAliasDeclaration
+    Identifier: ' U3'
+    UnionType
+      TypeLiteral
+        PropertySignature
+          Identifier: 'a3'
+          TypeReference
+            Identifier: 'A'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'b3'
+          TypeReference
+            Identifier: 'A'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'c3'
+          TypeReference
+            Identifier: 'A'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'd3'
+          TypeReference
+            Identifier: 'A'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'e3'
+          TypeReference
+            Identifier: 'A'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'f3'
+          TypeReference
+            Identifier: 'A'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'g3'
+          TypeReference
+            Identifier: 'A'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'h3'
+          TypeReference
+            Identifier: 'A'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'i3'
+          TypeReference
+            Identifier: 'A'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'j3'
+          TypeReference
+            Identifier: 'A'
+  TypeAliasDeclaration
+    Identifier: ' U4'
+    UnionType
+      TypeLiteral
+        PropertySignature
+          Identifier: 'a4'
+          TypeReference
+            Identifier: 'A'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'b4'
+          TypeReference
+            Identifier: 'A'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'c4'
+          TypeReference
+            Identifier: 'A'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'd4'
+          TypeReference
+            Identifier: 'A'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'e4'
+          TypeReference
+            Identifier: 'A'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'f4'
+          TypeReference
+            Identifier: 'A'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'g4'
+          TypeReference
+            Identifier: 'A'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'h4'
+          TypeReference
+            Identifier: 'A'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'i4'
+          TypeReference
+            Identifier: 'A'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'j4'
+          TypeReference
+            Identifier: 'A'
+  TypeAliasDeclaration
+    Identifier: ' U5'
+    UnionType
+      TypeLiteral
+        PropertySignature
+          Identifier: 'a5'
+          TypeReference
+            Identifier: 'A'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'b5'
+          TypeReference
+            Identifier: 'A'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'c5'
+          TypeReference
+            Identifier: 'A'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'd5'
+          TypeReference
+            Identifier: 'A'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'e5'
+          TypeReference
+            Identifier: 'A'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'f5'
+          TypeReference
+            Identifier: 'A'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'g5'
+          TypeReference
+            Identifier: 'A'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'h5'
+          TypeReference
+            Identifier: 'A'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'i5'
+          TypeReference
+            Identifier: 'A'
+      TypeLiteral
+        PropertySignature
+          Identifier: 'j5'
+          TypeReference
+            Identifier: 'A'
+  TypeAliasDeclaration
+    Identifier: ' U100000'
+    IntersectionType
+      TypeReference
+        Identifier: ' U1'
+      TypeReference
+        Identifier: ' U2'
+      TypeReference
+        Identifier: ' U3'
+      TypeReference
+        Identifier: ' U4'
+      TypeReference
+        Identifier: ' U5'
+  TypeAliasDeclaration
+    Identifier: ' Digits'
+    UnionType
+      LiteralType
+        NumericLiteral
+      LiteralType
+        NumericLiteral
+      LiteralType
+        NumericLiteral
+      LiteralType
+        NumericLiteral
+      LiteralType
+        NumericLiteral
+      LiteralType
+        NumericLiteral
+      LiteralType
+        NumericLiteral
+      LiteralType
+        NumericLiteral
+      LiteralType
+        NumericLiteral
+      LiteralType
+        NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' D100000'
+    TemplateLiteralType
+      TemplateHead
+      TemplateLiteralTypeSpan
+        TypeReference
+          Identifier: 'Digits'
+        TemplateMiddle
+      TemplateLiteralTypeSpan
+        TypeReference
+          Identifier: 'Digits'
+        TemplateMiddle
+      TemplateLiteralTypeSpan
+        TypeReference
+          Identifier: 'Digits'
+        TemplateMiddle
+      TemplateLiteralTypeSpan
+        TypeReference
+          Identifier: 'Digits'
+        TemplateMiddle
+      TemplateLiteralTypeSpan
+        TypeReference
+          Identifier: 'Digits'
+        TemplateTail
+  TypeAliasDeclaration
+    Identifier: ' TDigits'
+    UnionType
+      TupleType
+        LiteralType
+          NumericLiteral
+      TupleType
+        LiteralType
+          NumericLiteral
+      TupleType
+        LiteralType
+          NumericLiteral
+      TupleType
+        LiteralType
+          NumericLiteral
+      TupleType
+        LiteralType
+          NumericLiteral
+      TupleType
+        LiteralType
+          NumericLiteral
+      TupleType
+        LiteralType
+          NumericLiteral
+      TupleType
+        LiteralType
+          NumericLiteral
+      TupleType
+        LiteralType
+          NumericLiteral
+      TupleType
+        LiteralType
+          NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' T100000'
+    TupleType
+      RestType
+        TypeReference
+          Identifier: 'TDigits'
+      RestType
+        TypeReference
+          Identifier: 'TDigits'
+      RestType
+        TypeReference
+          Identifier: 'TDigits'
+      RestType
+        TypeReference
+          Identifier: 'TDigits'
+      RestType
+        TypeReference
+          Identifier: 'TDigits'
+  TypeAliasDeclaration
+    Identifier: ' IsNegative'
+    TypeParameter
+      Identifier: 'T'
+      NumberKeyword
+    ConditionalType
+      TemplateLiteralType
+        TemplateHead
+        TemplateLiteralTypeSpan
+          TypeReference
+            Identifier: 'T'
+          TemplateTail
+      TemplateLiteralType
+        TemplateHead
+        TemplateLiteralTypeSpan
+          StringKeyword
+          TemplateTail
+      LiteralType
+        TrueKeyword
+      LiteralType
+        FalseKeyword
+  TypeAliasDeclaration
+    Identifier: ' AA'
+    TypeParameter
+      Identifier: 'T'
+      NumberKeyword
+    TypeParameter
+      Identifier: ' Q'
+      NumberKeyword
+    ConditionalType
+      TupleType
+        LiteralType
+          TrueKeyword
+        LiteralType
+          TrueKeyword
+      TupleType
+        TypeReference
+          Identifier: 'IsNegative'
+          TypeReference
+            Identifier: 'T'
+        TypeReference
+          Identifier: ' IsNegative'
+          TypeReference
+            Identifier: 'Q'
+      LiteralType
+        StringLiteral
+      TupleType
+        LiteralType
+          StringLiteral
+        TypeReference
+          Identifier: ' IsNegative'
+          TypeReference
+            Identifier: 'T'
+        TypeReference
+          Identifier: ' IsNegative'
+          TypeReference
+            Identifier: 'Q'
+  TypeAliasDeclaration
+    Identifier: ' BB'
+    TypeReference
+      Identifier: ' AA'
+      LiteralType
+        PrefixUnaryExpression
+          NumericLiteral
+      LiteralType
+        PrefixUnaryExpression
+          NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' PathKeys'
+    TypeParameter
+      Identifier: 'T'
+    ConditionalType
+      UnknownKeyword
+      TypeReference
+        Identifier: ' T'
+      NeverKeyword
+      ConditionalType
+        TypeReference
+          Identifier: '
+    T'
+        TypeOperator
+          ArrayType
+            AnyKeyword
+        UnionType
+          TypeReference
+            Identifier: ' Extract'
+            TypeOperator
+              TypeReference
+                Identifier: ' T'
+            TemplateLiteralType
+              TemplateHead
+              TemplateLiteralTypeSpan
+                NumberKeyword
+                TemplateTail
+          TypeReference
+            Identifier: ' SubKeys'
+            TypeReference
+              Identifier: 'T'
+            TypeReference
+              Identifier: ' Extract'
+              TypeOperator
+                TypeReference
+                  Identifier: ' T'
+              TemplateLiteralType
+                TemplateHead
+                TemplateLiteralTypeSpan
+                  NumberKeyword
+                  TemplateTail
+        ConditionalType
+          TypeReference
+            Identifier: '
+    T'
+          ObjectKeyword
+          UnionType
+            TypeReference
+              Identifier: ' Extract'
+              TypeOperator
+                TypeReference
+                  Identifier: ' T'
+              StringKeyword
+            TypeReference
+              Identifier: ' SubKeys'
+              TypeReference
+                Identifier: 'T'
+              TypeReference
+                Identifier: ' Extract'
+                TypeOperator
+                  TypeReference
+                    Identifier: ' T'
+                StringKeyword
+          NeverKeyword
+  TypeAliasDeclaration
+    Identifier: ' SubKeys'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' K'
+      StringKeyword
+    ConditionalType
+      TypeReference
+        Identifier: ' K'
+      TypeOperator
+        TypeReference
+          Identifier: ' T'
+      TemplateLiteralType
+        TemplateHead
+        TemplateLiteralTypeSpan
+          TypeReference
+            Identifier: 'K'
+          TemplateMiddle
+        TemplateLiteralTypeSpan
+          TypeReference
+            Identifier: 'PathKeys'
+            IndexedAccessType
+              TypeReference
+                Identifier: 'T'
+              TypeReference
+                Identifier: 'K'
+          TemplateTail
+      NeverKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' getProp2'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' P'
+      TypeReference
+        Identifier: ' PathKeys'
+        TypeReference
+          Identifier: 'T'
+    Parameter
+      Identifier: 'obj'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' path'
+      TypeReference
+        Identifier: ' P'
+    TypeReference
+      Identifier: ' PropType'
+      TypeReference
+        Identifier: 'T'
+      TypeReference
+        Identifier: ' P'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' obj2'
+        AsExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+    name'
+              StringLiteral
+            PropertyAssignment
+              Identifier: '
+    age'
+              NumericLiteral
+            PropertyAssignment
+              Identifier: '
+    cars'
+              ArrayLiteralExpression
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: ' make'
+                    StringLiteral
+                  PropertyAssignment
+                    Identifier: ' age'
+                    NumericLiteral
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: ' make'
+                    StringLiteral
+                  PropertyAssignment
+                    Identifier: ' age'
+                    NumericLiteral
+          TypeReference
+            Identifier: ' const'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' make'
+        CallExpression
+          Identifier: ' getProp2'
+          Identifier: 'obj2'
+          StringLiteral
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' Spacing'
+    UnionType
+      LiteralType
+        NoSubstitutionTemplateLiteral
+      TemplateLiteralType
+        TemplateHead
+        TemplateLiteralTypeSpan
+          NumberKeyword
+          TemplateTail
+      TemplateLiteralType
+        TemplateHead
+        TemplateLiteralTypeSpan
+          NumberKeyword
+          TemplateTail
+      TemplateLiteralType
+        TemplateHead
+        TemplateLiteralTypeSpan
+          UnionType
+            LiteralType
+              NumericLiteral
+            LiteralType
+              NumericLiteral
+            LiteralType
+              NumericLiteral
+            LiteralType
+              NumericLiteral
+            LiteralType
+              NumericLiteral
+            LiteralType
+              NumericLiteral
+            LiteralType
+              NumericLiteral
+            LiteralType
+              NumericLiteral
+            LiteralType
+              NumericLiteral
+            LiteralType
+              NumericLiteral
+            LiteralType
+              NumericLiteral
+            LiteralType
+              NumericLiteral
+            LiteralType
+              NumericLiteral
+            LiteralType
+              NumericLiteral
+            LiteralType
+              NumericLiteral
+            LiteralType
+              NumericLiteral
+            LiteralType
+              NumericLiteral
+            LiteralType
+              NumericLiteral
+            LiteralType
+              NumericLiteral
+            LiteralType
+              NumericLiteral
+          TemplateTail
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' spacing'
+        TypeReference
+          Identifier: ' Spacing'
+        StringLiteral
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' SpacingShorthand'
+    UnionType
+      TemplateLiteralType
+        TemplateHead
+        TemplateLiteralTypeSpan
+          TypeReference
+            Identifier: 'Spacing'
+          TemplateMiddle
+        TemplateLiteralTypeSpan
+          TypeReference
+            Identifier: 'Spacing'
+          TemplateTail
+      TemplateLiteralType
+        TemplateHead
+        TemplateLiteralTypeSpan
+          TypeReference
+            Identifier: 'Spacing'
+          TemplateMiddle
+        TemplateLiteralTypeSpan
+          TypeReference
+            Identifier: 'Spacing'
+          TemplateMiddle
+        TemplateLiteralTypeSpan
+          TypeReference
+            Identifier: 'Spacing'
+          TemplateTail
+      TemplateLiteralType
+        TemplateHead
+        TemplateLiteralTypeSpan
+          TypeReference
+            Identifier: 'Spacing'
+          TemplateMiddle
+        TemplateLiteralTypeSpan
+          TypeReference
+            Identifier: 'Spacing'
+          TemplateMiddle
+        TemplateLiteralTypeSpan
+          TypeReference
+            Identifier: 'Spacing'
+          TemplateMiddle
+        TemplateLiteralTypeSpan
+          TypeReference
+            Identifier: 'Spacing'
+          TemplateTail
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' test1'
+        TypeReference
+          Identifier: ' SpacingShorthand'
+        StringLiteral

@@ -1,0 +1,320 @@
+SourceFile
+  EnumDeclaration
+    Identifier: ' E'
+    EnumMember
+      Identifier: ' a'
+    EnumMember
+      Identifier: ' b'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        VoidKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x1'
+        BooleanKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x1'
+      AsteriskEqualsToken
+      Identifier: ' a'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x1'
+      AsteriskEqualsToken
+      Identifier: ' b'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x1'
+      AsteriskEqualsToken
+      TrueKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x1'
+      AsteriskEqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x1'
+      AsteriskEqualsToken
+      StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x1'
+      AsteriskEqualsToken
+      PropertyAccessExpression
+        Identifier: ' E'
+        Identifier: 'a'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x1'
+      AsteriskEqualsToken
+      ObjectLiteralExpression
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x1'
+      AsteriskEqualsToken
+      NullKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x1'
+      AsteriskEqualsToken
+      Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x2'
+        StringKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x2'
+      AsteriskEqualsToken
+      Identifier: ' a'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x2'
+      AsteriskEqualsToken
+      Identifier: ' b'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x2'
+      AsteriskEqualsToken
+      TrueKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x2'
+      AsteriskEqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x2'
+      AsteriskEqualsToken
+      StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x2'
+      AsteriskEqualsToken
+      PropertyAccessExpression
+        Identifier: ' E'
+        Identifier: 'a'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x2'
+      AsteriskEqualsToken
+      ObjectLiteralExpression
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x2'
+      AsteriskEqualsToken
+      NullKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x2'
+      AsteriskEqualsToken
+      Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x3'
+        TypeLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x3'
+      AsteriskEqualsToken
+      Identifier: ' a'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x3'
+      AsteriskEqualsToken
+      Identifier: ' b'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x3'
+      AsteriskEqualsToken
+      TrueKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x3'
+      AsteriskEqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x3'
+      AsteriskEqualsToken
+      StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x3'
+      AsteriskEqualsToken
+      PropertyAccessExpression
+        Identifier: ' E'
+        Identifier: 'a'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x3'
+      AsteriskEqualsToken
+      ObjectLiteralExpression
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x3'
+      AsteriskEqualsToken
+      NullKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x3'
+      AsteriskEqualsToken
+      Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x4'
+        VoidKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x4'
+      AsteriskEqualsToken
+      Identifier: ' a'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x4'
+      AsteriskEqualsToken
+      Identifier: ' b'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x4'
+      AsteriskEqualsToken
+      TrueKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x4'
+      AsteriskEqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x4'
+      AsteriskEqualsToken
+      StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x4'
+      AsteriskEqualsToken
+      PropertyAccessExpression
+        Identifier: ' E'
+        Identifier: 'a'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x4'
+      AsteriskEqualsToken
+      ObjectLiteralExpression
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x4'
+      AsteriskEqualsToken
+      NullKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x4'
+      AsteriskEqualsToken
+      Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x5'
+        NumberKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x5'
+      AsteriskEqualsToken
+      Identifier: ' b'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x5'
+      AsteriskEqualsToken
+      TrueKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x5'
+      AsteriskEqualsToken
+      StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x5'
+      AsteriskEqualsToken
+      ObjectLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x6'
+        TypeReference
+          Identifier: ' E'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x6'
+      AsteriskEqualsToken
+      Identifier: ' b'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x6'
+      AsteriskEqualsToken
+      TrueKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x6'
+      AsteriskEqualsToken
+      StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x6'
+      AsteriskEqualsToken
+      ObjectLiteralExpression

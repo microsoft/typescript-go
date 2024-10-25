@@ -1,0 +1,51 @@
+SourceFile
+  ClassDeclaration
+    DeclareKeyword
+    AbstractKeyword
+    Identifier: ' A'
+    Constructor
+      Parameter
+        Identifier: 'p'
+        NumberKeyword
+    PropertyDeclaration
+      Identifier: '
+    a'
+      NumberKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' B'
+    Parameter
+      Identifier: 'p'
+      StringKeyword
+    TypeReference
+      Identifier: ' B'
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' B'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+    Constructor
+      Parameter
+        Identifier: 'p'
+        StringKeyword
+    PropertyDeclaration
+      Identifier: '
+    b'
+      NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        NewExpression
+          Identifier: ' B'
+          StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+console'
+        Identifier: 'log'
+      PropertyAccessExpression
+        Identifier: 'b'
+        Identifier: 'a'

@@ -1,0 +1,113 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: 'h'
+    StringLiteral
+  ImportEqualsDeclaration
+    Identifier: ' mod'
+    ExternalModuleReference
+      StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: 'f'
+          Identifier: ' _f'
+    StringLiteral
+  ImportEqualsDeclaration
+    Identifier: ' mod2'
+    ExternalModuleReference
+      StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    AsyncKeyword
+    Identifier: ' f'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' mod3'
+            AwaitExpression
+              CallExpression
+                ImportKeyword
+                StringLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' mod4'
+            AwaitExpression
+              CallExpression
+                ImportKeyword
+                StringLiteral
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    h'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: 'h'
+          Identifier: ' _h'
+    StringLiteral
+  ImportEqualsDeclaration
+    Identifier: ' mod'
+    ExternalModuleReference
+      StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: 'f'
+    StringLiteral
+  ImportEqualsDeclaration
+    Identifier: ' mod2'
+    ExternalModuleReference
+      StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    AsyncKeyword
+    Identifier: ' h'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' mod3'
+            AwaitExpression
+              CallExpression
+                ImportKeyword
+                StringLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' mod4'
+            AwaitExpression
+              CallExpression
+                ImportKeyword
+                StringLiteral
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    f'
+  Block
+    ExpressionStatement
+      StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        TrueKeyword
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      StringLiteral
+  Block
+    ExpressionStatement
+      StringLiteral
+    ExpressionStatement
+      StringLiteral

@@ -1,0 +1,20 @@
+SourceFile
+  Block
+    ExpressionStatement
+      StringLiteral
+    ExpressionStatement
+      StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' test'
+    Block
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' test'
+    VoidKeyword
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' test'
+    StringLiteral

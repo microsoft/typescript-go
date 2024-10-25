@@ -1,0 +1,24 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' css'
+    StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    DefaultKeyword
+    Identifier: ' Component'
+    Block
+      ReturnStatement
+        ParenthesizedExpression
+          JsxSelfClosingElement
+            Identifier: 'input'
+            JsxAttributes
+              JsxAttribute
+                Identifier: '
+      css'
+                JsxExpression
+                  TaggedTemplateExpression
+                    Identifier: 'css'
+                    NoSubstitutionTemplateLiteral

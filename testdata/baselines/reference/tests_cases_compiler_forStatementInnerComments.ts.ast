@@ -1,0 +1,31 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+  ForInStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' /*3*/ x'
+    Identifier: ' /*5*/ a'
+    Block
+  ForOfStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' /*3*/ y'
+    Identifier: ' /*5*/ a'
+    Block
+  ForInStatement
+    Identifier: ' /*2*/ x'
+    Identifier: ' /*4*/ a'
+    Block
+  ForOfStatement
+    Identifier: ' /*2*/ y'
+    Identifier: ' /*4*/ a'
+    Block
+  ForStatement
+    Identifier: ' /*2*/ a'
+    Identifier: ' /*4*/ a'
+    Identifier: ' /*6*/ a'
+    Block

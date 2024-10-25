@@ -1,0 +1,745 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'a'
+      NumberKeyword
+    Parameter
+      Identifier: ' b'
+      StringKeyword
+    StringKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' overloaded'
+    Parameter
+      Identifier: 's'
+      StringKeyword
+    NumberKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' overloaded'
+    Parameter
+      Identifier: 'n'
+      NumberKeyword
+    StringKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' generic'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    TypeReference
+      Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f00'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' foo'
+            Identifier: 'bind'
+          Identifier: 'undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f01'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' foo'
+            Identifier: 'bind'
+          Identifier: 'undefined'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f02'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' foo'
+            Identifier: 'bind'
+          Identifier: 'undefined'
+          NumericLiteral
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f03'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' foo'
+            Identifier: 'bind'
+          Identifier: 'undefined'
+          NumericLiteral
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f04'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' overloaded'
+            Identifier: 'bind'
+          Identifier: 'undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f05'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' generic'
+            Identifier: 'bind'
+          Identifier: 'undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c00'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' foo'
+            Identifier: 'call'
+          Identifier: 'undefined'
+          NumericLiteral
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c01'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' foo'
+            Identifier: 'call'
+          Identifier: 'undefined'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c02'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' foo'
+            Identifier: 'call'
+          Identifier: 'undefined'
+          NumericLiteral
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c03'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' foo'
+            Identifier: 'call'
+          Identifier: 'undefined'
+          NumericLiteral
+          StringLiteral
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a00'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' foo'
+            Identifier: 'apply'
+          Identifier: 'undefined'
+          ArrayLiteralExpression
+            NumericLiteral
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a01'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' foo'
+            Identifier: 'apply'
+          Identifier: 'undefined'
+          ArrayLiteralExpression
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a02'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' foo'
+            Identifier: 'apply'
+          Identifier: 'undefined'
+          ArrayLiteralExpression
+            NumericLiteral
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a03'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' foo'
+            Identifier: 'apply'
+          Identifier: 'undefined'
+          ArrayLiteralExpression
+            NumericLiteral
+            StringLiteral
+            NumericLiteral
+  ClassDeclaration
+    Identifier: ' C'
+    Constructor
+      Parameter
+        Identifier: 'a'
+        NumberKeyword
+      Parameter
+        Identifier: ' b'
+        StringKeyword
+      Block
+    MethodDeclaration
+      Identifier: '
+    foo'
+      Parameter
+        Identifier: 'this'
+        ThisType
+      Parameter
+        Identifier: ' a'
+        NumberKeyword
+      Parameter
+        Identifier: ' b'
+        StringKeyword
+      StringKeyword
+      Block
+        ReturnStatement
+          StringLiteral
+    MethodDeclaration
+      Identifier: '
+    overloaded'
+      Parameter
+        Identifier: 's'
+        StringKeyword
+      NumberKeyword
+    MethodDeclaration
+      Identifier: '
+    overloaded'
+      Parameter
+        Identifier: 'n'
+        NumberKeyword
+      StringKeyword
+    MethodDeclaration
+      Identifier: '
+    overloaded'
+      Parameter
+        Identifier: 'x'
+        AnyKeyword
+      AnyKeyword
+      Block
+        ReturnStatement
+          TypeAssertionExpression
+            AnyKeyword
+            Identifier: 'undefined'
+    MethodDeclaration
+      Identifier: '
+    generic'
+      TypeParameter
+        Identifier: 'T'
+      Parameter
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' T'
+      TypeReference
+        Identifier: ' T'
+      Block
+        ReturnStatement
+          Identifier: ' x'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        TypeReference
+          Identifier: ' C'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' obj'
+        TypeLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f10'
+        CallExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: ' c'
+              Identifier: 'foo'
+            Identifier: 'bind'
+          Identifier: 'c'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f11'
+        CallExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: ' c'
+              Identifier: 'foo'
+            Identifier: 'bind'
+          Identifier: 'c'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f12'
+        CallExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: ' c'
+              Identifier: 'foo'
+            Identifier: 'bind'
+          Identifier: 'c'
+          NumericLiteral
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f13'
+        CallExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: ' c'
+              Identifier: 'foo'
+            Identifier: 'bind'
+          Identifier: 'c'
+          NumericLiteral
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f14'
+        CallExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: ' c'
+              Identifier: 'foo'
+            Identifier: 'bind'
+          Identifier: 'undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f15'
+        CallExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: ' c'
+              Identifier: 'overloaded'
+            Identifier: 'bind'
+          Identifier: 'c'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f16'
+        CallExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: ' c'
+              Identifier: 'generic'
+            Identifier: 'bind'
+          Identifier: 'c'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c10'
+        CallExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: ' c'
+              Identifier: 'foo'
+            Identifier: 'call'
+          Identifier: 'c'
+          NumericLiteral
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c11'
+        CallExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: ' c'
+              Identifier: 'foo'
+            Identifier: 'call'
+          Identifier: 'c'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c12'
+        CallExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: ' c'
+              Identifier: 'foo'
+            Identifier: 'call'
+          Identifier: 'c'
+          NumericLiteral
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c13'
+        CallExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: ' c'
+              Identifier: 'foo'
+            Identifier: 'call'
+          Identifier: 'c'
+          NumericLiteral
+          StringLiteral
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c14'
+        CallExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: ' c'
+              Identifier: 'foo'
+            Identifier: 'call'
+          Identifier: 'undefined'
+          NumericLiteral
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a10'
+        CallExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: ' c'
+              Identifier: 'foo'
+            Identifier: 'apply'
+          Identifier: 'c'
+          ArrayLiteralExpression
+            NumericLiteral
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a11'
+        CallExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: ' c'
+              Identifier: 'foo'
+            Identifier: 'apply'
+          Identifier: 'c'
+          ArrayLiteralExpression
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a12'
+        CallExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: ' c'
+              Identifier: 'foo'
+            Identifier: 'apply'
+          Identifier: 'c'
+          ArrayLiteralExpression
+            NumericLiteral
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a13'
+        CallExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: ' c'
+              Identifier: 'foo'
+            Identifier: 'apply'
+          Identifier: 'c'
+          ArrayLiteralExpression
+            NumericLiteral
+            StringLiteral
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a14'
+        CallExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: ' c'
+              Identifier: 'foo'
+            Identifier: 'apply'
+          Identifier: 'undefined'
+          ArrayLiteralExpression
+            NumericLiteral
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f20'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' C'
+            Identifier: 'bind'
+          Identifier: 'undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f21'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' C'
+            Identifier: 'bind'
+          Identifier: 'undefined'
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f22'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' C'
+            Identifier: 'bind'
+          Identifier: 'undefined'
+          NumericLiteral
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f23'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' C'
+            Identifier: 'bind'
+          Identifier: 'undefined'
+          NumericLiteral
+          NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '  // Error
+
+C'
+        Identifier: 'call'
+      Identifier: 'c'
+      NumericLiteral
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+C'
+        Identifier: 'call'
+      Identifier: 'c'
+      NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '  // Error
+C'
+        Identifier: 'call'
+      Identifier: 'c'
+      NumericLiteral
+      NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '  // Error
+C'
+        Identifier: 'call'
+      Identifier: 'c'
+      NumericLiteral
+      StringLiteral
+      NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '  // Error
+
+C'
+        Identifier: 'apply'
+      Identifier: 'c'
+      ArrayLiteralExpression
+        NumericLiteral
+        StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+C'
+        Identifier: 'apply'
+      Identifier: 'c'
+      ArrayLiteralExpression
+        NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '  // Error
+C'
+        Identifier: 'apply'
+      Identifier: 'c'
+      ArrayLiteralExpression
+        NumericLiteral
+        NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '  // Error
+C'
+        Identifier: 'apply'
+      Identifier: 'c'
+      ArrayLiteralExpression
+        NumericLiteral
+        StringLiteral
+        NumericLiteral
+  FunctionDeclaration
+    Identifier: ' bar'
+    TypeParameter
+      Identifier: 'T'
+      ArrayType
+        UnknownKeyword
+    Parameter
+      Identifier: 'callback'
+      FunctionType
+        Parameter
+          Identifier: 'this'
+          LiteralType
+            NumericLiteral
+        Parameter
+          DotDotDotToken
+          Identifier: 'args'
+          TypeReference
+            Identifier: ' T'
+        VoidKeyword
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    callback'
+            Identifier: 'bind'
+          NumericLiteral
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    callback'
+            Identifier: 'bind'
+          NumericLiteral
+  FunctionDeclaration
+    Identifier: ' baz'
+    TypeParameter
+      Identifier: 'T'
+      UnionType
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+    Parameter
+      Identifier: 'callback'
+      FunctionType
+        Parameter
+          Identifier: 'this'
+          LiteralType
+            NumericLiteral
+        Parameter
+          DotDotDotToken
+          Identifier: 'args'
+          ConditionalType
+            TypeReference
+              Identifier: ' T'
+            LiteralType
+              NumericLiteral
+            TupleType
+              UnknownKeyword
+            TupleType
+              UnknownKeyword
+              UnknownKeyword
+        VoidKeyword
+    Block
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    callback'
+            Identifier: 'bind'
+          NumericLiteral
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    callback'
+            Identifier: 'bind'
+          NumericLiteral
+  ClassDeclaration
+    Identifier: ' Foo'
+    TypeParameter
+      Identifier: 'T'
+      ArrayType
+        UnknownKeyword
+    Constructor
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'fn'
+              Identifier: 'bind'
+            ThisKeyword
+    MethodDeclaration
+      Identifier: '
+
+    fn'
+      Parameter
+        DotDotDotToken
+        Identifier: 'args'
+        TypeReference
+          Identifier: ' T'
+      VoidKeyword
+      Block
+  ClassDeclaration
+    Identifier: ' Bar'
+    TypeParameter
+      Identifier: 'T'
+      UnionType
+        LiteralType
+          NumericLiteral
+        LiteralType
+          NumericLiteral
+    Constructor
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'fn'
+              Identifier: 'bind'
+            ThisKeyword
+    MethodDeclaration
+      Identifier: '
+
+    fn'
+      Parameter
+        DotDotDotToken
+        Identifier: 'args'
+        ConditionalType
+          TypeReference
+            Identifier: ' T'
+          LiteralType
+            NumericLiteral
+          TupleType
+            UnknownKeyword
+          TupleType
+            UnknownKeyword
+            UnknownKeyword
+      Block

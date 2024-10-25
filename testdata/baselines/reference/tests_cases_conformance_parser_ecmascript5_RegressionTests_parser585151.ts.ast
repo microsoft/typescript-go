@@ -1,0 +1,8 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Foo2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' icecream'
+        StringLiteral

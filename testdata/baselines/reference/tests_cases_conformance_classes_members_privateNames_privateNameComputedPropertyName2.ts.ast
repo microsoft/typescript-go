@@ -1,0 +1,46 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' getX'
+        FunctionType
+          Parameter
+            Identifier: 'a'
+            TypeReference
+              Identifier: ' A'
+          NumberKeyword
+  ClassDeclaration
+    Identifier: ' A'
+    PropertyDeclaration
+      PrivateIdentifier
+      NumericLiteral
+    MethodDeclaration
+      ComputedPropertyName
+        ParenthesizedExpression
+          BinaryExpression
+            BinaryExpression
+              Identifier: 'getX'
+              EqualsToken
+              ArrowFunction
+                Parameter
+                  Identifier: 'a'
+                  TypeReference
+                    Identifier: ' A'
+                EqualsGreaterThanToken
+                PropertyAccessExpression
+                  Identifier: ' a'
+                  PrivateIdentifier
+            CommaToken
+            StringLiteral
+      Block
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+console'
+        Identifier: 'log'
+      CallExpression
+        Identifier: 'getX'
+        NewExpression
+          Identifier: ' A'

@@ -1,0 +1,11 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' Intl'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' DateTimeFormatPartTypesRegistry'
+        PropertySignature
+          Identifier: '
+        unknown'
+          NeverKeyword

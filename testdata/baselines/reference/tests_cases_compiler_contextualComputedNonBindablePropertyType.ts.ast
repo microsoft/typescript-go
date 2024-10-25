@@ -1,0 +1,158 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' testD'
+    LiteralType
+      StringLiteral
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' forceMatch'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'matched'
+      MappedType
+        TypeParameter
+          Identifier: 'key'
+          TypeOperator
+            TypeReference
+              Identifier: ' T'
+        TypeReference
+          Identifier: ' key'
+    VoidKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+forceMatch'
+      ObjectLiteralExpression
+        PropertyAssignment
+          ComputedPropertyName
+            CallExpression
+              Identifier: 'testD'
+          StringLiteral
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' forceMatch2'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'matched'
+      MappedType
+        TypeParameter
+          Identifier: 'key'
+          TypeOperator
+            TypeReference
+              Identifier: ' T'
+        FunctionType
+          Parameter
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' key'
+            TypeLiteral
+              PropertySignature
+                Identifier: ' key'
+                TypeReference
+                  Identifier: ' key'
+          VoidKeyword
+    VoidKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+forceMatch2'
+      ObjectLiteralExpression
+        PropertyAssignment
+          ComputedPropertyName
+            CallExpression
+              Identifier: 'testD'
+          ArrowFunction
+            Parameter
+              ObjectBindingPattern
+                BindingElement
+                  Identifier: ' key'
+            EqualsGreaterThanToken
+            Block
+  TypeAliasDeclaration
+    Identifier: ' Original'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' foo'
+        LiteralType
+          StringLiteral
+      PropertySignature
+        Identifier: ' baz'
+        BooleanKeyword
+      PropertySignature
+        Identifier: ' bar'
+        NumberKeyword
+  TypeAliasDeclaration
+    Identifier: ' Mapped'
+    MappedType
+      TypeParameter
+        Identifier: 'prop'
+        TypeOperator
+          TypeReference
+            Identifier: ' Original'
+      FunctionType
+        Parameter
+          Identifier: 'arg'
+          IndexedAccessType
+            TypeReference
+              Identifier: ' Original'
+            TypeReference
+              Identifier: 'prop'
+        IndexedAccessType
+          TypeReference
+            Identifier: ' Original'
+          TypeReference
+            Identifier: 'prop'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' propSelector'
+        ArrowFunction
+          TypeParameter
+            Identifier: 'propName'
+            StringKeyword
+          Parameter
+            Identifier: 'propName'
+            TypeReference
+              Identifier: ' propName'
+          TypeReference
+            Identifier: ' propName'
+          EqualsGreaterThanToken
+          Identifier: ' propName'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' unexpectedlyFailingExample'
+        TypeReference
+          Identifier: ' Mapped'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+  foo'
+            ArrowFunction
+              Parameter
+                Identifier: 'arg'
+              EqualsGreaterThanToken
+              StringLiteral
+          PropertyAssignment
+            Identifier: '
+  baz'
+            ArrowFunction
+              Parameter
+                Identifier: 'arg'
+              EqualsGreaterThanToken
+              TrueKeyword
+          PropertyAssignment
+            ComputedPropertyName
+              CallExpression
+                Identifier: 'propSelector'
+                StringLiteral
+            ArrowFunction
+              Parameter
+                Identifier: 'arg'
+              EqualsGreaterThanToken
+              NumericLiteral

@@ -1,0 +1,28 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' C'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'a'
+          EqualsToken
+          NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+
+// @Filename: other.js
+C'
+          Identifier: 'prototype'
+        Identifier: 'foo'
+      EqualsToken
+      FunctionExpression
+        Block
+          ReturnStatement
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'a'

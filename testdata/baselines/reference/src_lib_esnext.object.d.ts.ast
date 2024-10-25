@@ -1,0 +1,46 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' ObjectConstructor'
+    MethodSignature
+      Identifier: '
+    /**
+     * Groups members of an iterable according to the return value of the passed callback.
+     * @param items An iterable.
+     * @param keySelector A callback which will be invoked for each item in items.
+     */
+    groupBy'
+      TypeParameter
+        Identifier: 'K'
+        TypeReference
+          Identifier: ' PropertyKey'
+      TypeParameter
+        Identifier: ' T'
+      Parameter
+        Identifier: '
+        items'
+        TypeReference
+          Identifier: ' Iterable'
+          TypeReference
+            Identifier: 'T'
+      Parameter
+        Identifier: '
+        keySelector'
+        FunctionType
+          Parameter
+            Identifier: 'item'
+            TypeReference
+              Identifier: ' T'
+          Parameter
+            Identifier: ' index'
+            NumberKeyword
+          TypeReference
+            Identifier: ' K'
+      TypeReference
+        Identifier: ' Partial'
+        TypeReference
+          Identifier: 'Record'
+          TypeReference
+            Identifier: 'K'
+          ArrayType
+            TypeReference
+              Identifier: ' T'

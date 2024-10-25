@@ -1,0 +1,53 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fn1'
+        ArrowFunction
+          Parameter
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' prop'
+                Identifier: ' a'
+              BindingElement
+                Identifier: ' prop'
+                Identifier: ' b'
+            TypeLiteral
+              PropertySignature
+                Identifier: ' prop'
+                NumberKeyword
+          EqualsGreaterThanToken
+          BinaryExpression
+            Identifier: ' a'
+            PlusToken
+            Identifier: ' b'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fn2'
+        ArrowFunction
+          Parameter
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' prop'
+                Identifier: ' a'
+            TypeLiteral
+              PropertySignature
+                Identifier: ' prop'
+                NumberKeyword
+          Parameter
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' prop'
+                Identifier: ' b'
+            TypeLiteral
+              PropertySignature
+                Identifier: ' prop'
+                NumberKeyword
+          EqualsGreaterThanToken
+          BinaryExpression
+            Identifier: ' a'
+            PlusToken
+            Identifier: ' b'

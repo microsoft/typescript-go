@@ -1,0 +1,35 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' x3'
+    Parameter
+      Identifier: 'callback'
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          QuestionToken
+          LiteralType
+            StringLiteral
+        NumberKeyword
+  FunctionDeclaration
+    Identifier: ' x3'
+    Parameter
+      Identifier: 'callback'
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          StringKeyword
+        NumberKeyword
+  FunctionDeclaration
+    Identifier: ' x3'
+    Parameter
+      Identifier: 'callback'
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          AnyKeyword
+        NumberKeyword
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    cb'

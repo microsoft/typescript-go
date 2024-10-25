@@ -1,0 +1,19 @@
+SourceFile
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '// @allowJs: true
+// @noImplicitReferences: true
+// @maxNodeModuleJsDepth: 0
+
+// @Filename: /node_modules/foo/index.js
+exports'
+        Identifier: 'x'
+      EqualsToken
+      NumericLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' y'
+    StringLiteral

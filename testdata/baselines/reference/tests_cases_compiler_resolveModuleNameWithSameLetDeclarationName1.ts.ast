@@ -1,0 +1,15 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' foo'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' Bar'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foo'
+        TypeReference
+          QualifiedName
+            Identifier: ' foo'
+            Identifier: 'Bar'

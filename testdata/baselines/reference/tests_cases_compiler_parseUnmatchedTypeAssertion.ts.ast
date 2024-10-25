@@ -1,0 +1,13 @@
+SourceFile
+  MissingDeclaration
+    Decorator
+      Identifier: ''
+  ExpressionStatement
+    TypeAssertionExpression
+      TupleType
+        TupleType
+          ImportType
+            TypeReference
+              Identifier: 'obju2c77'
+            ImportAttributes
+      Identifier: ''

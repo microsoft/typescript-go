@@ -1,0 +1,40 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' dupe'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    TypeReference
+      Identifier: ' T'
+    Block
+      ReturnStatement
+        Identifier: ' x'
+  FunctionDeclaration
+    Identifier: ' dupeAndGetDist'
+    TypeParameter
+      Identifier: 'U'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' U'
+    TypeReference
+      Identifier: ' U'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            CallExpression
+              Identifier: ' dupe'
+              Identifier: 'x'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' //<-- dupe has incorrect type here
+  y'
+            Identifier: 'getDist'
+      ReturnStatement
+        Identifier: ' y'

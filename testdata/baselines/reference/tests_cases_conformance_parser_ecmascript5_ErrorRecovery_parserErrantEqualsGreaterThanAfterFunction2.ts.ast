@@ -1,0 +1,10 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f'
+    Parameter
+      Identifier: 'p'
+      TypeReference
+        Identifier: ' A'
+    Block
+  ExpressionStatement
+    Identifier: ' p'

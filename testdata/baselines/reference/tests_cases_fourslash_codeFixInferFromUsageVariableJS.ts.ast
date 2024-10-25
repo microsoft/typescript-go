@@ -1,0 +1,23 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+// @allowJs: true
+// @checkJs: true
+// @noEmit: true
+// @noImplicitAny: true
+// @Filename: important.js
+
+////[|var x;|]
+////function f() {
+////    x++;
+////}
+
+verify'
+        Identifier: 'rangeAfterCodeFix'
+      StringLiteral
+      Identifier: ' /*includeWhiteSpace*/ undefined'
+      Identifier: ' /*errorCode*/ undefined'
+      NumericLiteral

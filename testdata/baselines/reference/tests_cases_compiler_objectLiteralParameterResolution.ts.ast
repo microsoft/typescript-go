@@ -1,0 +1,96 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Foo'
+    MethodSignature
+      Identifier: '
+    extend'
+      TypeParameter
+        Identifier: 'T'
+      Parameter
+        Identifier: 'target'
+        TypeReference
+          Identifier: ' T'
+      Parameter
+        DotDotDotToken
+        Identifier: 'objs'
+        ArrayType
+          AnyKeyword
+      TypeReference
+        Identifier: ' T'
+    MethodSignature
+      Identifier: '
+    extend'
+      TypeParameter
+        Identifier: 'T'
+      Parameter
+        Identifier: 'deep'
+        BooleanKeyword
+      Parameter
+        Identifier: ' target'
+        TypeReference
+          Identifier: ' T'
+      Parameter
+        DotDotDotToken
+        Identifier: 'objs'
+        ArrayType
+          AnyKeyword
+      TypeReference
+        Identifier: ' T'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' $'
+        TypeReference
+          Identifier: ' Foo'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' $'
+            Identifier: 'extend'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+    type'
+              StringLiteral
+            PropertyAssignment
+              Identifier: '
+    data'
+              StringLiteral
+            PropertyAssignment
+              Identifier: '
+    success'
+              CallExpression
+                Identifier: ' wrapSuccessCallback'
+                Identifier: 'requestContext'
+                Identifier: ' callback'
+            PropertyAssignment
+              Identifier: '
+    error'
+              CallExpression
+                Identifier: ' wrapErrorCallback'
+                Identifier: 'requestContext'
+                Identifier: ' errorCallback'
+            PropertyAssignment
+              Identifier: '
+    dataType'
+              StringLiteral
+            PropertyAssignment
+              Identifier: '
+    converters'
+              ObjectLiteralExpression
+                PropertyAssignment
+                  StringLiteral
+                  StringLiteral
+            PropertyAssignment
+              Identifier: '
+    traditional'
+              TrueKeyword
+            PropertyAssignment
+              Identifier: '
+    timeout'
+              NumericLiteral
+          StringLiteral

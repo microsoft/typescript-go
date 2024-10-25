@@ -1,0 +1,49 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' M'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' m'
+            ClassExpression
+              Identifier: ' C'
+              TypeParameter
+                Identifier: 'X'
+              MethodDeclaration
+                Identifier: '
+        f'
+                TypeParameter
+                  Identifier: 'T'
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' t'
+                        TypeReference
+                          Identifier: ' T'
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' x'
+                        TypeReference
+                          Identifier: ' X'
+                  ReturnStatement
+                    ObjectLiteralExpression
+                      ShorthandPropertyAssignment
+                        Identifier: ' t'
+                      ShorthandPropertyAssignment
+                        Identifier: ' x'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' v'
+            NewExpression
+              Identifier: ' m'
+              NumberKeyword
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' v'
+            Identifier: 'f'
+          StringKeyword

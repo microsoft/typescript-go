@@ -1,0 +1,57 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' ConstantIterator'
+    TypeParameter
+      Identifier: 'T'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' AsyncIterator'
+        TypeReference
+          Identifier: 'T'
+        VoidKeyword
+        UnionType
+          TypeReference
+            Identifier: ' T'
+          UndefinedKeyword
+    Constructor
+      Parameter
+        PrivateKeyword
+        Identifier: ' constant'
+        TypeReference
+          Identifier: ' T'
+      Block
+    MethodDeclaration
+      AsyncKeyword
+      Identifier: ' next'
+      Parameter
+        Identifier: 'value'
+        QuestionToken
+        TypeReference
+          Identifier: ' T'
+      TypeReference
+        Identifier: ' Promise'
+        TypeReference
+          Identifier: 'IteratorResult'
+          TypeReference
+            Identifier: 'T'
+      Block
+        IfStatement
+          BinaryExpression
+            Identifier: 'value'
+            ExclamationEqualsToken
+            NullKeyword
+          Block
+            ThrowStatement
+              NewExpression
+                Identifier: ' Error'
+                StringLiteral
+        ReturnStatement
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' value'
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'constant'
+            PropertyAssignment
+              Identifier: ' done'
+              FalseKeyword

@@ -1,0 +1,169 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' ifc'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i'
+        NewExpression
+          Identifier: ' ifc'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NewExpression
+          Identifier: ' Date'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        NewExpression
+          Identifier: ' Date'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t1'
+        NewExpression
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t2'
+        NewExpression
+          StringLiteral
+  ExpressionStatement
+    NewExpression
+      Identifier: ' string'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        ParenthesizedExpression
+          NewExpression
+            Identifier: ' Date'
+        Identifier: 'toString'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t3'
+        NewExpression
+          ElementAccessExpression
+            Identifier: ' string'
+            Identifier: ''
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t4'
+        NewExpression
+          ElementAccessExpression
+            Identifier: '
+string'
+            Identifier: ''
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f'
+        NewExpression
+          Identifier: ' q'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t5'
+        NewExpression
+          NewExpression
+            Identifier: ' Date'
+  ExpressionStatement
+    NewExpression
+      Identifier: ' String'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' union'
+        UnionType
+          TypeLiteral
+            PropertySignature
+              Identifier: ' a'
+              StringKeyword
+          TypeLiteral
+            PropertySignature
+              Identifier: ' b'
+              StringKeyword
+  ExpressionStatement
+    NewExpression
+      Identifier: ' union'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ctorUnion'
+        UnionType
+          TypeLiteral
+            PropertySignature
+              Identifier: ' a'
+              StringKeyword
+          ParenthesizedType
+            ConstructorType
+              Parameter
+                Identifier: 'a'
+                StringKeyword
+              VoidKeyword
+  ExpressionStatement
+    NewExpression
+      Identifier: ' ctorUnion'
+      StringLiteral
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ctorUnion2'
+        UnionType
+          ParenthesizedType
+            ConstructorType
+              TypeParameter
+                Identifier: 'T'
+                NumberKeyword
+              Parameter
+                Identifier: 'a'
+                TypeReference
+                  Identifier: ' T'
+              VoidKeyword
+          ParenthesizedType
+            ConstructorType
+              TypeParameter
+                Identifier: 'T'
+              Parameter
+                Identifier: 'a'
+                StringKeyword
+              VoidKeyword
+  ExpressionStatement
+    NewExpression
+      Identifier: ' ctorUnion2'
+      StringLiteral
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' T'
+        PropertyDeclaration
+          Identifier: '
+        x'
+          NumberKeyword
+  ClassDeclaration
+    Identifier: ' S'
+    GetAccessor
+      PublicKeyword
+      Identifier: ' xs'
+      ArrayType
+        TypeReference
+          QualifiedName
+            Identifier: ' M'
+            Identifier: 'T'
+      Block
+        ReturnStatement
+          NewExpression
+            ElementAccessExpression
+              PropertyAccessExpression
+                Identifier: ' M'
+                Identifier: 'T'
+              Identifier: ''

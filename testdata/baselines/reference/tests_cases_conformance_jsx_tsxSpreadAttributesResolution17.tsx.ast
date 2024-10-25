@@ -1,0 +1,65 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    Identifier: ' global'
+    ModuleBlock
+      ModuleDeclaration
+        Identifier: ' JSX'
+        ModuleBlock
+          InterfaceDeclaration
+            Identifier: ' Element'
+          InterfaceDeclaration
+            Identifier: ' ElementAttributesProperty'
+            PropertySignature
+              Identifier: ' props'
+              TypeLiteral
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' React'
+        AnyKeyword
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' Empty'
+    HeritageClause
+      ExpressionWithTypeArguments
+        PropertyAccessExpression
+          Identifier: ' React'
+          Identifier: 'Component'
+        TypeLiteral
+        TypeLiteral
+    MethodDeclaration
+      Identifier: '
+    render'
+      Block
+        ReturnStatement
+          JsxElement
+            JsxOpeningElement
+              Identifier: 'div'
+              JsxAttributes
+            JsxText
+            JsxClosingElement
+              Identifier: 'div'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' obj'
+        UnionType
+          TypeLiteral
+            PropertySignature
+              Identifier: ' a'
+              UnionType
+                NumberKeyword
+                UndefinedKeyword
+          UndefinedKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' unionedSpread'
+        JsxSelfClosingElement
+          Identifier: 'Empty'
+          JsxAttributes
+            JsxAttribute
+              Identifier: 'obj'

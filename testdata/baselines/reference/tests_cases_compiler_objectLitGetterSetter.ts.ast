@@ -1,0 +1,38 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' obj'
+        ObjectLiteralExpression
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+            Object'
+        Identifier: 'defineProperty'
+      Identifier: 'obj'
+      StringLiteral
+      TypeAssertionExpression
+        TypeReference
+          Identifier: 'PropertyDescriptor'
+        ParenthesizedExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+                get'
+              FunctionExpression
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+                    eval'
+                      StringLiteral
+                  ReturnStatement
+                    NumericLiteral
+            PropertyAssignment
+              Identifier: '
+                set'
+              FunctionExpression
+                Parameter
+                  Identifier: 'v'
+                Block

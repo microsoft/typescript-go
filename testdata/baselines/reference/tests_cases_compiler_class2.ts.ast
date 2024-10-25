@@ -1,0 +1,9 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' foo'
+    Constructor
+      Block
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' f'
+      NumericLiteral

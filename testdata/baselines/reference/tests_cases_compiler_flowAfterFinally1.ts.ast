@@ -1,0 +1,40 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' openFile'
+    VoidKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' closeFile'
+    VoidKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' someOperation'
+    TypeLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' result'
+        TypeLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+openFile'
+  TryStatement
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+  result'
+          EqualsToken
+          CallExpression
+            Identifier: ' someOperation'
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  closeFile'
+  ExpressionStatement
+    Identifier: '
+
+result'

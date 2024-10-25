@@ -1,0 +1,1052 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' x'
+    Parameter
+      Identifier: 'o'
+      ObjectKeyword
+    Parameter
+      Identifier: ' k'
+      TypeReference
+        Identifier: ' PropertyKey'
+    Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i'
+        NumericLiteral
+  FunctionDeclaration
+    Identifier: ' foo'
+    StringKeyword
+    Block
+      ReturnStatement
+        BinaryExpression
+          PrefixUnaryExpression
+            Identifier: 'i'
+          PlusToken
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fieldNameA'
+        StringKeyword
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fieldNameB'
+        StringKeyword
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fieldNameC'
+        StringKeyword
+        StringLiteral
+  ClassDeclaration
+    Identifier: ' A'
+    PropertyDeclaration
+      Decorator
+        Identifier: 'x'
+      ComputedPropertyName
+        StringLiteral
+      AnyKeyword
+    PropertyDeclaration
+      Decorator
+        Identifier: 'x'
+      ComputedPropertyName
+        PropertyAccessExpression
+          Identifier: 'Symbol'
+          Identifier: 'toStringTag'
+      AnyKeyword
+    PropertyDeclaration
+      Decorator
+        Identifier: 'x'
+      ComputedPropertyName
+        StringLiteral
+      AnyKeyword
+      NumericLiteral
+    PropertyDeclaration
+      Decorator
+        Identifier: 'x'
+      ComputedPropertyName
+        PropertyAccessExpression
+          Identifier: 'Symbol'
+          Identifier: 'iterator'
+      AnyKeyword
+      NullKeyword
+    PropertyDeclaration
+      ComputedPropertyName
+        StringLiteral
+      AnyKeyword
+    PropertyDeclaration
+      ComputedPropertyName
+        PropertyAccessExpression
+          Identifier: 'Symbol'
+          Identifier: 'isConcatSpreadable'
+      AnyKeyword
+    PropertyDeclaration
+      ComputedPropertyName
+        StringLiteral
+      AnyKeyword
+      NumericLiteral
+    PropertyDeclaration
+      ComputedPropertyName
+        PropertyAccessExpression
+          Identifier: 'Symbol'
+          Identifier: 'match'
+      AnyKeyword
+      NullKeyword
+    PropertyDeclaration
+      ComputedPropertyName
+        CallExpression
+          Identifier: 'foo'
+      AnyKeyword
+    PropertyDeclaration
+      Decorator
+        Identifier: 'x'
+      ComputedPropertyName
+        CallExpression
+          Identifier: 'foo'
+      AnyKeyword
+    PropertyDeclaration
+      Decorator
+        Identifier: 'x'
+      ComputedPropertyName
+        CallExpression
+          Identifier: 'foo'
+      AnyKeyword
+      NullKeyword
+    PropertyDeclaration
+      ComputedPropertyName
+        Identifier: 'fieldNameA'
+      AnyKeyword
+    PropertyDeclaration
+      Decorator
+        Identifier: 'x'
+      ComputedPropertyName
+        Identifier: 'fieldNameB'
+      AnyKeyword
+    PropertyDeclaration
+      Decorator
+        Identifier: 'x'
+      ComputedPropertyName
+        Identifier: 'fieldNameC'
+      AnyKeyword
+      NullKeyword
+  ExpressionStatement
+    VoidExpression
+      ClassExpression
+        Identifier: ' B'
+        PropertyDeclaration
+          Decorator
+            Identifier: 'x'
+          ComputedPropertyName
+            StringLiteral
+          AnyKeyword
+        PropertyDeclaration
+          Decorator
+            Identifier: 'x'
+          ComputedPropertyName
+            PropertyAccessExpression
+              Identifier: 'Symbol'
+              Identifier: 'toStringTag'
+          AnyKeyword
+        PropertyDeclaration
+          Decorator
+            Identifier: 'x'
+          ComputedPropertyName
+            StringLiteral
+          AnyKeyword
+          NumericLiteral
+        PropertyDeclaration
+          Decorator
+            Identifier: 'x'
+          ComputedPropertyName
+            PropertyAccessExpression
+              Identifier: 'Symbol'
+              Identifier: 'iterator'
+          AnyKeyword
+          NullKeyword
+        PropertyDeclaration
+          ComputedPropertyName
+            StringLiteral
+          AnyKeyword
+        PropertyDeclaration
+          ComputedPropertyName
+            PropertyAccessExpression
+              Identifier: 'Symbol'
+              Identifier: 'isConcatSpreadable'
+          AnyKeyword
+        PropertyDeclaration
+          ComputedPropertyName
+            StringLiteral
+          AnyKeyword
+          NumericLiteral
+        PropertyDeclaration
+          ComputedPropertyName
+            PropertyAccessExpression
+              Identifier: 'Symbol'
+              Identifier: 'match'
+          AnyKeyword
+          NullKeyword
+        PropertyDeclaration
+          ComputedPropertyName
+            CallExpression
+              Identifier: 'foo'
+          AnyKeyword
+        PropertyDeclaration
+          Decorator
+            Identifier: 'x'
+          ComputedPropertyName
+            CallExpression
+              Identifier: 'foo'
+          AnyKeyword
+        PropertyDeclaration
+          Decorator
+            Identifier: 'x'
+          ComputedPropertyName
+            CallExpression
+              Identifier: 'foo'
+          AnyKeyword
+          NullKeyword
+        PropertyDeclaration
+          ComputedPropertyName
+            Identifier: 'fieldNameA'
+          AnyKeyword
+        PropertyDeclaration
+          Decorator
+            Identifier: 'x'
+          ComputedPropertyName
+            Identifier: 'fieldNameB'
+          AnyKeyword
+        PropertyDeclaration
+          Decorator
+            Identifier: 'x'
+          ComputedPropertyName
+            Identifier: 'fieldNameC'
+          AnyKeyword
+          NullKeyword
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      Decorator
+        Identifier: 'x'
+      ComputedPropertyName
+        StringLiteral
+      AnyKeyword
+    PropertyDeclaration
+      Decorator
+        Identifier: 'x'
+      ComputedPropertyName
+        PropertyAccessExpression
+          Identifier: 'Symbol'
+          Identifier: 'toStringTag'
+      AnyKeyword
+    PropertyDeclaration
+      Decorator
+        Identifier: 'x'
+      ComputedPropertyName
+        StringLiteral
+      AnyKeyword
+      NumericLiteral
+    PropertyDeclaration
+      Decorator
+        Identifier: 'x'
+      ComputedPropertyName
+        PropertyAccessExpression
+          Identifier: 'Symbol'
+          Identifier: 'iterator'
+      AnyKeyword
+      NullKeyword
+    PropertyDeclaration
+      ComputedPropertyName
+        StringLiteral
+      AnyKeyword
+    PropertyDeclaration
+      ComputedPropertyName
+        PropertyAccessExpression
+          Identifier: 'Symbol'
+          Identifier: 'isConcatSpreadable'
+      AnyKeyword
+    PropertyDeclaration
+      ComputedPropertyName
+        StringLiteral
+      AnyKeyword
+      NumericLiteral
+    PropertyDeclaration
+      ComputedPropertyName
+        PropertyAccessExpression
+          Identifier: 'Symbol'
+          Identifier: 'match'
+      AnyKeyword
+      NullKeyword
+    PropertyDeclaration
+      ComputedPropertyName
+        CallExpression
+          Identifier: 'foo'
+      AnyKeyword
+    PropertyDeclaration
+      Decorator
+        Identifier: 'x'
+      ComputedPropertyName
+        CallExpression
+          Identifier: 'foo'
+      AnyKeyword
+    PropertyDeclaration
+      Decorator
+        Identifier: 'x'
+      ComputedPropertyName
+        CallExpression
+          Identifier: 'foo'
+      AnyKeyword
+      NullKeyword
+    PropertyDeclaration
+      ComputedPropertyName
+        Identifier: 'fieldNameA'
+      AnyKeyword
+    PropertyDeclaration
+      Decorator
+        Identifier: 'x'
+      ComputedPropertyName
+        Identifier: 'fieldNameB'
+      AnyKeyword
+    PropertyDeclaration
+      Decorator
+        Identifier: 'x'
+      ComputedPropertyName
+        Identifier: 'fieldNameC'
+      AnyKeyword
+      NullKeyword
+    MethodDeclaration
+      ComputedPropertyName
+        BinaryExpression
+          StringLiteral
+          PlusToken
+          StringLiteral
+      Block
+  ExpressionStatement
+    VoidExpression
+      ClassExpression
+        Identifier: ' D'
+        PropertyDeclaration
+          Decorator
+            Identifier: 'x'
+          ComputedPropertyName
+            StringLiteral
+          AnyKeyword
+        PropertyDeclaration
+          Decorator
+            Identifier: 'x'
+          ComputedPropertyName
+            PropertyAccessExpression
+              Identifier: 'Symbol'
+              Identifier: 'toStringTag'
+          AnyKeyword
+        PropertyDeclaration
+          Decorator
+            Identifier: 'x'
+          ComputedPropertyName
+            StringLiteral
+          AnyKeyword
+          NumericLiteral
+        PropertyDeclaration
+          Decorator
+            Identifier: 'x'
+          ComputedPropertyName
+            PropertyAccessExpression
+              Identifier: 'Symbol'
+              Identifier: 'iterator'
+          AnyKeyword
+          NullKeyword
+        PropertyDeclaration
+          ComputedPropertyName
+            StringLiteral
+          AnyKeyword
+        PropertyDeclaration
+          ComputedPropertyName
+            PropertyAccessExpression
+              Identifier: 'Symbol'
+              Identifier: 'isConcatSpreadable'
+          AnyKeyword
+        PropertyDeclaration
+          ComputedPropertyName
+            StringLiteral
+          AnyKeyword
+          NumericLiteral
+        PropertyDeclaration
+          ComputedPropertyName
+            PropertyAccessExpression
+              Identifier: 'Symbol'
+              Identifier: 'match'
+          AnyKeyword
+          NullKeyword
+        PropertyDeclaration
+          ComputedPropertyName
+            CallExpression
+              Identifier: 'foo'
+          AnyKeyword
+        PropertyDeclaration
+          Decorator
+            Identifier: 'x'
+          ComputedPropertyName
+            CallExpression
+              Identifier: 'foo'
+          AnyKeyword
+        PropertyDeclaration
+          Decorator
+            Identifier: 'x'
+          ComputedPropertyName
+            CallExpression
+              Identifier: 'foo'
+          AnyKeyword
+          NullKeyword
+        PropertyDeclaration
+          ComputedPropertyName
+            Identifier: 'fieldNameA'
+          AnyKeyword
+        PropertyDeclaration
+          Decorator
+            Identifier: 'x'
+          ComputedPropertyName
+            Identifier: 'fieldNameB'
+          AnyKeyword
+        PropertyDeclaration
+          Decorator
+            Identifier: 'x'
+          ComputedPropertyName
+            Identifier: 'fieldNameC'
+          AnyKeyword
+          NullKeyword
+        MethodDeclaration
+          ComputedPropertyName
+            BinaryExpression
+              StringLiteral
+              PlusToken
+              StringLiteral
+          Block
+  ClassDeclaration
+    Identifier: ' E'
+    PropertyDeclaration
+      Decorator
+        Identifier: 'x'
+      ComputedPropertyName
+        StringLiteral
+      AnyKeyword
+    PropertyDeclaration
+      Decorator
+        Identifier: 'x'
+      ComputedPropertyName
+        PropertyAccessExpression
+          Identifier: 'Symbol'
+          Identifier: 'toStringTag'
+      AnyKeyword
+    PropertyDeclaration
+      Decorator
+        Identifier: 'x'
+      ComputedPropertyName
+        StringLiteral
+      AnyKeyword
+      NumericLiteral
+    PropertyDeclaration
+      Decorator
+        Identifier: 'x'
+      ComputedPropertyName
+        PropertyAccessExpression
+          Identifier: 'Symbol'
+          Identifier: 'iterator'
+      AnyKeyword
+      NullKeyword
+    PropertyDeclaration
+      ComputedPropertyName
+        StringLiteral
+      AnyKeyword
+    PropertyDeclaration
+      ComputedPropertyName
+        PropertyAccessExpression
+          Identifier: 'Symbol'
+          Identifier: 'isConcatSpreadable'
+      AnyKeyword
+    PropertyDeclaration
+      ComputedPropertyName
+        StringLiteral
+      AnyKeyword
+      NumericLiteral
+    PropertyDeclaration
+      ComputedPropertyName
+        PropertyAccessExpression
+          Identifier: 'Symbol'
+          Identifier: 'match'
+      AnyKeyword
+      NullKeyword
+    PropertyDeclaration
+      ComputedPropertyName
+        CallExpression
+          Identifier: 'foo'
+      AnyKeyword
+    PropertyDeclaration
+      Decorator
+        Identifier: 'x'
+      ComputedPropertyName
+        CallExpression
+          Identifier: 'foo'
+      AnyKeyword
+    PropertyDeclaration
+      Decorator
+        Identifier: 'x'
+      ComputedPropertyName
+        CallExpression
+          Identifier: 'foo'
+      AnyKeyword
+      NullKeyword
+    MethodDeclaration
+      ComputedPropertyName
+        BinaryExpression
+          StringLiteral
+          PlusToken
+          StringLiteral
+      Block
+    PropertyDeclaration
+      ComputedPropertyName
+        Identifier: 'fieldNameA'
+      AnyKeyword
+    PropertyDeclaration
+      Decorator
+        Identifier: 'x'
+      ComputedPropertyName
+        Identifier: 'fieldNameB'
+      AnyKeyword
+    PropertyDeclaration
+      Decorator
+        Identifier: 'x'
+      ComputedPropertyName
+        Identifier: 'fieldNameC'
+      AnyKeyword
+      NullKeyword
+  ExpressionStatement
+    VoidExpression
+      ClassExpression
+        Identifier: ' F'
+        PropertyDeclaration
+          Decorator
+            Identifier: 'x'
+          ComputedPropertyName
+            StringLiteral
+          AnyKeyword
+        PropertyDeclaration
+          Decorator
+            Identifier: 'x'
+          ComputedPropertyName
+            PropertyAccessExpression
+              Identifier: 'Symbol'
+              Identifier: 'toStringTag'
+          AnyKeyword
+        PropertyDeclaration
+          Decorator
+            Identifier: 'x'
+          ComputedPropertyName
+            StringLiteral
+          AnyKeyword
+          NumericLiteral
+        PropertyDeclaration
+          Decorator
+            Identifier: 'x'
+          ComputedPropertyName
+            PropertyAccessExpression
+              Identifier: 'Symbol'
+              Identifier: 'iterator'
+          AnyKeyword
+          NullKeyword
+        PropertyDeclaration
+          ComputedPropertyName
+            StringLiteral
+          AnyKeyword
+        PropertyDeclaration
+          ComputedPropertyName
+            PropertyAccessExpression
+              Identifier: 'Symbol'
+              Identifier: 'isConcatSpreadable'
+          AnyKeyword
+        PropertyDeclaration
+          ComputedPropertyName
+            StringLiteral
+          AnyKeyword
+          NumericLiteral
+        PropertyDeclaration
+          ComputedPropertyName
+            PropertyAccessExpression
+              Identifier: 'Symbol'
+              Identifier: 'match'
+          AnyKeyword
+          NullKeyword
+        PropertyDeclaration
+          ComputedPropertyName
+            CallExpression
+              Identifier: 'foo'
+          AnyKeyword
+        PropertyDeclaration
+          Decorator
+            Identifier: 'x'
+          ComputedPropertyName
+            CallExpression
+              Identifier: 'foo'
+          AnyKeyword
+        PropertyDeclaration
+          Decorator
+            Identifier: 'x'
+          ComputedPropertyName
+            CallExpression
+              Identifier: 'foo'
+          AnyKeyword
+          NullKeyword
+        MethodDeclaration
+          ComputedPropertyName
+            BinaryExpression
+              StringLiteral
+              PlusToken
+              StringLiteral
+          Block
+        PropertyDeclaration
+          ComputedPropertyName
+            Identifier: 'fieldNameA'
+          AnyKeyword
+        PropertyDeclaration
+          Decorator
+            Identifier: 'x'
+          ComputedPropertyName
+            Identifier: 'fieldNameB'
+          AnyKeyword
+        PropertyDeclaration
+          Decorator
+            Identifier: 'x'
+          ComputedPropertyName
+            Identifier: 'fieldNameC'
+          AnyKeyword
+          NullKeyword
+  ClassDeclaration
+    Identifier: ' G'
+    PropertyDeclaration
+      Decorator
+        Identifier: 'x'
+      ComputedPropertyName
+        StringLiteral
+      AnyKeyword
+    PropertyDeclaration
+      Decorator
+        Identifier: 'x'
+      ComputedPropertyName
+        PropertyAccessExpression
+          Identifier: 'Symbol'
+          Identifier: 'toStringTag'
+      AnyKeyword
+    PropertyDeclaration
+      Decorator
+        Identifier: 'x'
+      ComputedPropertyName
+        StringLiteral
+      AnyKeyword
+      NumericLiteral
+    PropertyDeclaration
+      Decorator
+        Identifier: 'x'
+      ComputedPropertyName
+        PropertyAccessExpression
+          Identifier: 'Symbol'
+          Identifier: 'iterator'
+      AnyKeyword
+      NullKeyword
+    PropertyDeclaration
+      ComputedPropertyName
+        StringLiteral
+      AnyKeyword
+    PropertyDeclaration
+      ComputedPropertyName
+        PropertyAccessExpression
+          Identifier: 'Symbol'
+          Identifier: 'isConcatSpreadable'
+      AnyKeyword
+    PropertyDeclaration
+      ComputedPropertyName
+        StringLiteral
+      AnyKeyword
+      NumericLiteral
+    PropertyDeclaration
+      ComputedPropertyName
+        PropertyAccessExpression
+          Identifier: 'Symbol'
+          Identifier: 'match'
+      AnyKeyword
+      NullKeyword
+    PropertyDeclaration
+      ComputedPropertyName
+        CallExpression
+          Identifier: 'foo'
+      AnyKeyword
+    PropertyDeclaration
+      Decorator
+        Identifier: 'x'
+      ComputedPropertyName
+        CallExpression
+          Identifier: 'foo'
+      AnyKeyword
+    PropertyDeclaration
+      Decorator
+        Identifier: 'x'
+      ComputedPropertyName
+        CallExpression
+          Identifier: 'foo'
+      AnyKeyword
+      NullKeyword
+    MethodDeclaration
+      ComputedPropertyName
+        BinaryExpression
+          StringLiteral
+          PlusToken
+          StringLiteral
+      Block
+    PropertyDeclaration
+      ComputedPropertyName
+        Identifier: 'fieldNameA'
+      AnyKeyword
+    PropertyDeclaration
+      Decorator
+        Identifier: 'x'
+      ComputedPropertyName
+        Identifier: 'fieldNameB'
+      AnyKeyword
+    MethodDeclaration
+      ComputedPropertyName
+        BinaryExpression
+          StringLiteral
+          PlusToken
+          StringLiteral
+      Block
+    PropertyDeclaration
+      Decorator
+        Identifier: 'x'
+      ComputedPropertyName
+        Identifier: 'fieldNameC'
+      AnyKeyword
+      NullKeyword
+  ExpressionStatement
+    VoidExpression
+      ClassExpression
+        Identifier: ' H'
+        PropertyDeclaration
+          Decorator
+            Identifier: 'x'
+          ComputedPropertyName
+            StringLiteral
+          AnyKeyword
+        PropertyDeclaration
+          Decorator
+            Identifier: 'x'
+          ComputedPropertyName
+            PropertyAccessExpression
+              Identifier: 'Symbol'
+              Identifier: 'toStringTag'
+          AnyKeyword
+        PropertyDeclaration
+          Decorator
+            Identifier: 'x'
+          ComputedPropertyName
+            StringLiteral
+          AnyKeyword
+          NumericLiteral
+        PropertyDeclaration
+          Decorator
+            Identifier: 'x'
+          ComputedPropertyName
+            PropertyAccessExpression
+              Identifier: 'Symbol'
+              Identifier: 'iterator'
+          AnyKeyword
+          NullKeyword
+        PropertyDeclaration
+          ComputedPropertyName
+            StringLiteral
+          AnyKeyword
+        PropertyDeclaration
+          ComputedPropertyName
+            PropertyAccessExpression
+              Identifier: 'Symbol'
+              Identifier: 'isConcatSpreadable'
+          AnyKeyword
+        PropertyDeclaration
+          ComputedPropertyName
+            StringLiteral
+          AnyKeyword
+          NumericLiteral
+        PropertyDeclaration
+          ComputedPropertyName
+            PropertyAccessExpression
+              Identifier: 'Symbol'
+              Identifier: 'match'
+          AnyKeyword
+          NullKeyword
+        PropertyDeclaration
+          ComputedPropertyName
+            CallExpression
+              Identifier: 'foo'
+          AnyKeyword
+        PropertyDeclaration
+          Decorator
+            Identifier: 'x'
+          ComputedPropertyName
+            CallExpression
+              Identifier: 'foo'
+          AnyKeyword
+        PropertyDeclaration
+          Decorator
+            Identifier: 'x'
+          ComputedPropertyName
+            CallExpression
+              Identifier: 'foo'
+          AnyKeyword
+          NullKeyword
+        MethodDeclaration
+          ComputedPropertyName
+            BinaryExpression
+              StringLiteral
+              PlusToken
+              StringLiteral
+          Block
+        PropertyDeclaration
+          ComputedPropertyName
+            Identifier: 'fieldNameA'
+          AnyKeyword
+        PropertyDeclaration
+          Decorator
+            Identifier: 'x'
+          ComputedPropertyName
+            Identifier: 'fieldNameB'
+          AnyKeyword
+        MethodDeclaration
+          ComputedPropertyName
+            BinaryExpression
+              StringLiteral
+              PlusToken
+              StringLiteral
+          Block
+        PropertyDeclaration
+          Decorator
+            Identifier: 'x'
+          ComputedPropertyName
+            Identifier: 'fieldNameC'
+          AnyKeyword
+          NullKeyword
+  ClassDeclaration
+    Identifier: ' I'
+    PropertyDeclaration
+      Decorator
+        Identifier: 'x'
+      ComputedPropertyName
+        StringLiteral
+      AnyKeyword
+    PropertyDeclaration
+      Decorator
+        Identifier: 'x'
+      ComputedPropertyName
+        PropertyAccessExpression
+          Identifier: 'Symbol'
+          Identifier: 'toStringTag'
+      AnyKeyword
+    PropertyDeclaration
+      Decorator
+        Identifier: 'x'
+      ComputedPropertyName
+        StringLiteral
+      AnyKeyword
+      NumericLiteral
+    PropertyDeclaration
+      Decorator
+        Identifier: 'x'
+      ComputedPropertyName
+        PropertyAccessExpression
+          Identifier: 'Symbol'
+          Identifier: 'iterator'
+      AnyKeyword
+      NullKeyword
+    PropertyDeclaration
+      ComputedPropertyName
+        StringLiteral
+      AnyKeyword
+    PropertyDeclaration
+      ComputedPropertyName
+        PropertyAccessExpression
+          Identifier: 'Symbol'
+          Identifier: 'isConcatSpreadable'
+      AnyKeyword
+    PropertyDeclaration
+      ComputedPropertyName
+        StringLiteral
+      AnyKeyword
+      NumericLiteral
+    PropertyDeclaration
+      ComputedPropertyName
+        PropertyAccessExpression
+          Identifier: 'Symbol'
+          Identifier: 'match'
+      AnyKeyword
+      NullKeyword
+    PropertyDeclaration
+      ComputedPropertyName
+        CallExpression
+          Identifier: 'foo'
+      AnyKeyword
+    PropertyDeclaration
+      Decorator
+        Identifier: 'x'
+      ComputedPropertyName
+        CallExpression
+          Identifier: 'foo'
+      AnyKeyword
+    PropertyDeclaration
+      Decorator
+        Identifier: 'x'
+      ComputedPropertyName
+        CallExpression
+          Identifier: 'foo'
+      AnyKeyword
+      NullKeyword
+    MethodDeclaration
+      Decorator
+        Identifier: 'x'
+      ComputedPropertyName
+        BinaryExpression
+          StringLiteral
+          PlusToken
+          StringLiteral
+      Block
+    PropertyDeclaration
+      ComputedPropertyName
+        Identifier: 'fieldNameA'
+      AnyKeyword
+    PropertyDeclaration
+      Decorator
+        Identifier: 'x'
+      ComputedPropertyName
+        Identifier: 'fieldNameB'
+      AnyKeyword
+    MethodDeclaration
+      ComputedPropertyName
+        BinaryExpression
+          StringLiteral
+          PlusToken
+          StringLiteral
+      Block
+    PropertyDeclaration
+      Decorator
+        Identifier: 'x'
+      ComputedPropertyName
+        Identifier: 'fieldNameC'
+      AnyKeyword
+      NullKeyword
+  ExpressionStatement
+    VoidExpression
+      ClassExpression
+        Identifier: ' J'
+        PropertyDeclaration
+          Decorator
+            Identifier: 'x'
+          ComputedPropertyName
+            StringLiteral
+          AnyKeyword
+        PropertyDeclaration
+          Decorator
+            Identifier: 'x'
+          ComputedPropertyName
+            PropertyAccessExpression
+              Identifier: 'Symbol'
+              Identifier: 'toStringTag'
+          AnyKeyword
+        PropertyDeclaration
+          Decorator
+            Identifier: 'x'
+          ComputedPropertyName
+            StringLiteral
+          AnyKeyword
+          NumericLiteral
+        PropertyDeclaration
+          Decorator
+            Identifier: 'x'
+          ComputedPropertyName
+            PropertyAccessExpression
+              Identifier: 'Symbol'
+              Identifier: 'iterator'
+          AnyKeyword
+          NullKeyword
+        PropertyDeclaration
+          ComputedPropertyName
+            StringLiteral
+          AnyKeyword
+        PropertyDeclaration
+          ComputedPropertyName
+            PropertyAccessExpression
+              Identifier: 'Symbol'
+              Identifier: 'isConcatSpreadable'
+          AnyKeyword
+        PropertyDeclaration
+          ComputedPropertyName
+            StringLiteral
+          AnyKeyword
+          NumericLiteral
+        PropertyDeclaration
+          ComputedPropertyName
+            PropertyAccessExpression
+              Identifier: 'Symbol'
+              Identifier: 'match'
+          AnyKeyword
+          NullKeyword
+        PropertyDeclaration
+          ComputedPropertyName
+            CallExpression
+              Identifier: 'foo'
+          AnyKeyword
+        PropertyDeclaration
+          Decorator
+            Identifier: 'x'
+          ComputedPropertyName
+            CallExpression
+              Identifier: 'foo'
+          AnyKeyword
+        PropertyDeclaration
+          Decorator
+            Identifier: 'x'
+          ComputedPropertyName
+            CallExpression
+              Identifier: 'foo'
+          AnyKeyword
+          NullKeyword
+        MethodDeclaration
+          Decorator
+            Identifier: 'x'
+          ComputedPropertyName
+            BinaryExpression
+              StringLiteral
+              PlusToken
+              StringLiteral
+          Block
+        PropertyDeclaration
+          ComputedPropertyName
+            Identifier: 'fieldNameA'
+          AnyKeyword
+        PropertyDeclaration
+          Decorator
+            Identifier: 'x'
+          ComputedPropertyName
+            Identifier: 'fieldNameB'
+          AnyKeyword
+        MethodDeclaration
+          ComputedPropertyName
+            BinaryExpression
+              StringLiteral
+              PlusToken
+              StringLiteral
+          Block
+        PropertyDeclaration
+          Decorator
+            Identifier: 'x'
+          ComputedPropertyName
+            Identifier: 'fieldNameC'
+          AnyKeyword
+          NullKeyword

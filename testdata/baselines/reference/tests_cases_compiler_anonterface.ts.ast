@@ -1,0 +1,51 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' C'
+        MethodDeclaration
+          Identifier: '
+        m'
+          Parameter
+            Identifier: 'fn'
+            TypeLiteral
+              CallSignature
+                Parameter
+                  Identifier: 'n'
+                  NumberKeyword
+                StringKeyword
+          Parameter
+            Identifier: 'n2'
+            NumberKeyword
+          StringKeyword
+          Block
+            ReturnStatement
+              CallExpression
+                Identifier: ' fn'
+                Identifier: 'n2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        NewExpression
+          PropertyAccessExpression
+            Identifier: ' M'
+            Identifier: 'C'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+c'
+        Identifier: 'm'
+      FunctionExpression
+        Parameter
+          Identifier: 'n'
+        Block
+          ReturnStatement
+            BinaryExpression
+              StringLiteral
+              PlusToken
+              Identifier: 'n'
+      NumericLiteral

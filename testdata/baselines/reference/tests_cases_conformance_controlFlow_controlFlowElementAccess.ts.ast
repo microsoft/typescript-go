@@ -1,0 +1,56 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' o'
+            BooleanKeyword
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' o'
+            FalseKeyword
+  IfStatement
+    BinaryExpression
+      ElementAccessExpression
+        Identifier: 'x'
+        StringLiteral
+      EqualsEqualsEqualsToken
+      FalseKeyword
+    Block
+      ExpressionStatement
+        BinaryExpression
+          ElementAccessExpression
+            Identifier: '
+    x'
+            StringLiteral
+          EqualsToken
+          TrueKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        TupleType
+          NumberKeyword
+          NumberKeyword
+        ArrayLiteralExpression
+          NumericLiteral
+          NumericLiteral
+  IfStatement
+    BinaryExpression
+      ElementAccessExpression
+        Identifier: 'y'
+        NumericLiteral
+      EqualsEqualsEqualsToken
+      NumericLiteral
+    Block
+      ExpressionStatement
+        BinaryExpression
+          ElementAccessExpression
+            Identifier: '
+    y'
+            NumericLiteral
+          EqualsToken
+          PrefixUnaryExpression
+            NumericLiteral

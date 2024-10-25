@@ -1,0 +1,20 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' c'
+  ExportAssignment
+    Identifier: ' c'
+  ImportDeclaration
+    ImportClause
+      Identifier: ' defaultBinding'
+    StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NewExpression
+          Identifier: ' defaultBinding'
+  ImportDeclaration
+    ImportClause
+      Identifier: ' defaultBinding2'
+    StringLiteral

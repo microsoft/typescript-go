@@ -1,0 +1,20 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Baz'
+    MethodDeclaration
+      Identifier: '
+    m'
+      Block
+        ClassDeclaration
+          Identifier: ' Bar'
+          MethodDeclaration
+            StaticKeyword
+            Identifier: ' bar'
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      ThisKeyword
+                      Identifier: 'prototype'
+                    Identifier: 'foo'

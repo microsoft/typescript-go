@@ -1,0 +1,123 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            Identifier: 'r0'
+          BindingElement
+            Identifier: ' r1'
+          BindingElement
+            Identifier: ' r2'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' test'
+            Identifier: 'ranges'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' aTs'
+        TypeReference
+          Identifier: ' ReadonlyArray'
+          TypeReference
+            QualifiedName
+              Identifier: 'FourSlashInterface'
+              Identifier: 'ExpectedNavigateToItem'
+        ArrayLiteralExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' name'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' kind'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' range'
+              Identifier: ' r0'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' bTs'
+        TypeReference
+          Identifier: ' ReadonlyArray'
+          TypeReference
+            QualifiedName
+              Identifier: 'FourSlashInterface'
+              Identifier: 'ExpectedNavigateToItem'
+        CallExpression
+          PropertyAccessExpression
+            ArrayLiteralExpression
+              Identifier: 'r1'
+              Identifier: ' r2'
+            Identifier: 'map'
+          ArrowFunction
+            Parameter
+              Identifier: 'range'
+            TypeReference
+              QualifiedName
+                Identifier: ' FourSlashInterface'
+                Identifier: 'ExpectedNavigateToItem'
+            EqualsGreaterThanToken
+            ParenthesizedExpression
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' name'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: ' kind'
+                  StringLiteral
+                PropertyAssignment
+                  Identifier: ' kindModifiers'
+                  StringLiteral
+                ShorthandPropertyAssignment
+                  Identifier: ' range'
+                PropertyAssignment
+                  Identifier: ' containerName'
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' range'
+                        Identifier: 'marker'
+                      Identifier: 'data'
+                    Identifier: 'containerName'
+                PropertyAssignment
+                  Identifier: ' containerKind'
+                  StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+verify'
+        Identifier: 'navigateTo'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' pattern'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' expected'
+          ArrayLiteralExpression
+            SpreadElement
+              Identifier: 'aTs'
+            SpreadElement
+              Identifier: 'bTs'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' pattern'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' fileName'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' expected'
+          Identifier: ' aTs'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' pattern'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' fileName'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' expected'
+          Identifier: ' bTs'

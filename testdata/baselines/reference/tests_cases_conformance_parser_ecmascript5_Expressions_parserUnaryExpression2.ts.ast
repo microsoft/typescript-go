@@ -1,0 +1,7 @@
+SourceFile
+  ExpressionStatement
+    PrefixUnaryExpression
+      FunctionExpression
+        Parameter
+          Identifier: 'e'
+        Block

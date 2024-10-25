@@ -1,0 +1,67 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' IBar'
+    IndexSignature
+      Parameter
+        Identifier: 'barId'
+        StringKeyword
+      AnyKeyword
+  InterfaceDeclaration
+    Identifier: ' IFoo'
+    MethodSignature
+      Identifier: '
+    foo'
+      TypeParameter
+        Identifier: 'TBar'
+        TypeReference
+          Identifier: ' IBar'
+      Parameter
+        Identifier: 'bar'
+        TypeReference
+          Identifier: ' TBar'
+      Parameter
+        Identifier: ' bar1'
+        FunctionType
+          Parameter
+            Identifier: 'bar'
+            TypeReference
+              Identifier: ' TBar'
+          TypeReference
+            Identifier: ' TBar'
+      Parameter
+        Identifier: ' bar2'
+        FunctionType
+          Parameter
+            Identifier: 'bar'
+            TypeReference
+              Identifier: ' TBar'
+          TypeReference
+            Identifier: ' TBar'
+      TypeReference
+        Identifier: ' TBar'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foo'
+        TypeReference
+          Identifier: ' IFoo'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+foo'
+        Identifier: 'foo'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' bar'
+          NullKeyword
+      ArrowFunction
+        Parameter
+          Identifier: ' bar'
+        EqualsGreaterThanToken
+        NullKeyword
+      ArrowFunction
+        Parameter
+          Identifier: ' bar'
+        EqualsGreaterThanToken
+        NullKeyword

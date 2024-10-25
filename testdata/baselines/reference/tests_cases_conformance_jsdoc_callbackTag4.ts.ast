@@ -1,0 +1,15 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' cb'
+        FunctionExpression
+          Parameter
+            Identifier: 'a'
+          Parameter
+            Identifier: ' b'
+          Block
+            ExpressionStatement
+              ThisKeyword
+            ReturnStatement
+              TrueKeyword

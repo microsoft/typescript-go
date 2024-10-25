@@ -1,0 +1,85 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts'/>
+
+////globalThis./**/
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    unsorted'
+          CallExpression
+            PropertyAccessExpression
+              ArrayLiteralExpression
+                PropertyAccessExpression
+                  Identifier: '
+        completion'
+                  Identifier: 'globalThisEntry'
+                SpreadElement
+                  PropertyAccessExpression
+                    Identifier: 'completion'
+                    Identifier: 'globalsVars'
+                PropertyAccessExpression
+                  Identifier: '
+        completion'
+                  Identifier: 'undefinedVarEntry'
+              Identifier: 'map'
+            ArrowFunction
+              Parameter
+                Identifier: 'e'
+              EqualsGreaterThanToken
+              Block
+                IfStatement
+                  BinaryExpression
+                    PropertyAccessExpression
+                      Identifier: 'e'
+                      Identifier: 'sortText'
+                    EqualsEqualsEqualsToken
+                    CallExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: ' completion'
+                          Identifier: 'SortText'
+                        Identifier: 'Deprecated'
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: 'completion'
+                          Identifier: 'SortText'
+                        Identifier: 'GlobalsOrKeywords'
+                  Block
+                    ReturnStatement
+                      ObjectLiteralExpression
+                        SpreadAssignment
+                          Identifier: 'e'
+                        PropertyAssignment
+                          Identifier: ' sortText'
+                          CallExpression
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                Identifier: ' completion'
+                                Identifier: 'SortText'
+                              Identifier: 'Deprecated'
+                            PropertyAccessExpression
+                              PropertyAccessExpression
+                                Identifier: 'completion'
+                                Identifier: 'SortText'
+                              Identifier: 'LocationPriority'
+                ReturnStatement
+                  ObjectLiteralExpression
+                    SpreadAssignment
+                      Identifier: 'e'
+                    PropertyAssignment
+                      Identifier: ' sortText'
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: ' completion'
+                          Identifier: 'SortText'
+                        Identifier: 'LocationPriority'

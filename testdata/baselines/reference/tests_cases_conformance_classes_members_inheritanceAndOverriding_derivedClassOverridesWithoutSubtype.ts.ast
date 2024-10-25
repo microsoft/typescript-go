@@ -1,0 +1,47 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: '
+    x'
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+        foo'
+          StringKeyword
+  ClassDeclaration
+    Identifier: ' Derived'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: '
+    x'
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+        foo'
+          AnyKeyword
+  ClassDeclaration
+    Identifier: ' Base2'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' y'
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+        foo'
+          StringKeyword
+  ClassDeclaration
+    Identifier: ' Derived2'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base2'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' y'
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+        foo'
+          AnyKeyword

@@ -1,0 +1,20 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '// @noEmit: true
+// @allowJs: true
+// @checkJs: true
+// @filename: x.js
+exports'
+        Identifier: 'fn1'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+exports'
+        Identifier: 'fn2'
+      EqualsToken
+      PropertyAccessExpression
+        Identifier: ' Math'
+        Identifier: 'min'

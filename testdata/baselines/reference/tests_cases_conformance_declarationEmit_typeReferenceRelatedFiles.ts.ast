@@ -1,0 +1,32 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' FSWatcher'
+  Block
+    ExpressionStatement
+      StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' FSWatcher'
+    StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' f'
+    Block
+      ReturnStatement
+        AsExpression
+          ObjectLiteralExpression
+          TypeReference
+            Identifier: ' FSWatcher'

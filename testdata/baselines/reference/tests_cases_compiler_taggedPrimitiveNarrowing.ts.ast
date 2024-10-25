@@ -1,0 +1,64 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' Hash'
+    IntersectionType
+      StringKeyword
+      TypeLiteral
+        PropertySignature
+          Identifier: ' __hash'
+          LiteralType
+            TrueKeyword
+  FunctionDeclaration
+    Identifier: ' getHashLength'
+    Parameter
+      Identifier: 'hash'
+      TypeReference
+        Identifier: ' Hash'
+    NumberKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          TypeOfExpression
+            Identifier: ' hash'
+          ExclamationEqualsEqualsToken
+          StringLiteral
+        Block
+          ThrowStatement
+            NewExpression
+              Identifier: ' Error'
+              StringLiteral
+      ReturnStatement
+        PropertyAccessExpression
+          Identifier: ' hash'
+          Identifier: 'length'
+  FunctionDeclaration
+    Identifier: ' getHashLength2'
+    TypeParameter
+      Identifier: 'T'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' __tag__'
+          UnknownKeyword
+    Parameter
+      Identifier: 'hash'
+      IntersectionType
+        StringKeyword
+        TypeReference
+          Identifier: ' T'
+    NumberKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          TypeOfExpression
+            Identifier: ' hash'
+          ExclamationEqualsEqualsToken
+          StringLiteral
+        Block
+          ThrowStatement
+            NewExpression
+              Identifier: ' Error'
+              StringLiteral
+      ReturnStatement
+        PropertyAccessExpression
+          Identifier: ' hash'
+          Identifier: 'length'

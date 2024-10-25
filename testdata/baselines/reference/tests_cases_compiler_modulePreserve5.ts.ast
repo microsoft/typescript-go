@@ -1,0 +1,28 @@
+SourceFile
+  Block
+  ImportDeclaration
+    ImportClause
+      Identifier: ' data1'
+    StringLiteral
+    ImportAttributes
+  WithStatement
+    ObjectLiteralExpression
+      PropertyAssignment
+        Identifier: ' type'
+        StringLiteral
+    EmptyStatement
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' data2'
+        AwaitExpression
+          CallExpression
+            ImportKeyword
+            StringLiteral
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' with'
+                ObjectLiteralExpression
+                  PropertyAssignment
+                    Identifier: ' type'
+                    StringLiteral

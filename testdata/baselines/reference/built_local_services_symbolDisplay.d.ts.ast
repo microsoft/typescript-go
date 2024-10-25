@@ -1,0 +1,118 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' JSDocTagInfo'
+        ImportSpecifier
+          Identifier: ' Node'
+        ImportSpecifier
+          Identifier: ' ScriptElementKind'
+        ImportSpecifier
+          Identifier: ' SemanticMeaning'
+        ImportSpecifier
+          Identifier: ' SourceFile'
+        ImportSpecifier
+          Identifier: ' Symbol'
+        ImportSpecifier
+          Identifier: ' SymbolDisplayPart'
+        ImportSpecifier
+          Identifier: ' TypeChecker'
+    StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getSymbolKind'
+    Parameter
+      Identifier: 'typeChecker'
+      TypeReference
+        Identifier: ' TypeChecker'
+    Parameter
+      Identifier: ' symbol'
+      TypeReference
+        Identifier: ' Symbol'
+    Parameter
+      Identifier: ' location'
+      TypeReference
+        Identifier: ' Node'
+    TypeReference
+      Identifier: ' ScriptElementKind'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getSymbolModifiers'
+    Parameter
+      Identifier: 'typeChecker'
+      TypeReference
+        Identifier: ' TypeChecker'
+    Parameter
+      Identifier: ' symbol'
+      TypeReference
+        Identifier: ' Symbol'
+    StringKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' SymbolDisplayPartsDocumentationAndSymbolKind'
+    PropertySignature
+      Identifier: '
+    displayParts'
+      ArrayType
+        TypeReference
+          Identifier: ' SymbolDisplayPart'
+    PropertySignature
+      Identifier: '
+    documentation'
+      ArrayType
+        TypeReference
+          Identifier: ' SymbolDisplayPart'
+    PropertySignature
+      Identifier: '
+    symbolKind'
+      TypeReference
+        Identifier: ' ScriptElementKind'
+    PropertySignature
+      Identifier: '
+    tags'
+      UnionType
+        ArrayType
+          TypeReference
+            Identifier: ' JSDocTagInfo'
+        UndefinedKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getSymbolDisplayPartsDocumentationAndSymbolKind'
+    Parameter
+      Identifier: 'typeChecker'
+      TypeReference
+        Identifier: ' TypeChecker'
+    Parameter
+      Identifier: ' symbol'
+      TypeReference
+        Identifier: ' Symbol'
+    Parameter
+      Identifier: ' sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' enclosingDeclaration'
+      UnionType
+        TypeReference
+          Identifier: ' Node'
+        UndefinedKeyword
+    Parameter
+      Identifier: ' location'
+      TypeReference
+        Identifier: ' Node'
+    Parameter
+      Identifier: ' semanticMeaning'
+      QuestionToken
+      TypeReference
+        Identifier: ' SemanticMeaning'
+    Parameter
+      Identifier: ' alias'
+      QuestionToken
+      TypeReference
+        Identifier: ' Symbol'
+    TypeReference
+      Identifier: ' SymbolDisplayPartsDocumentationAndSymbolKind'

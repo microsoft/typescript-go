@@ -1,0 +1,448 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' ModuleDeclaration'
+        ImportSpecifier
+          Identifier: ' Node'
+        ImportSpecifier
+          Identifier: ' Signature'
+        ImportSpecifier
+          Identifier: ' Symbol'
+        ImportSpecifier
+          Identifier: ' SymbolId'
+        ImportSpecifier
+          Identifier: ' TypeChecker'
+        ImportSpecifier
+          Identifier: ' TypeCheckerHost'
+    StringLiteral
+  EnumDeclaration
+    ExportKeyword
+    DeclareKeyword
+    ConstKeyword
+    Identifier: ' TypeFacts'
+    EnumMember
+      Identifier: '
+    None'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    TypeofEQString'
+      NumericLiteral
+    EnumMember
+      Identifier: '// typeof x === "string"
+    TypeofEQNumber'
+      NumericLiteral
+    EnumMember
+      Identifier: '// typeof x === "number"
+    TypeofEQBigInt'
+      NumericLiteral
+    EnumMember
+      Identifier: '// typeof x === "bigint"
+    TypeofEQBoolean'
+      NumericLiteral
+    EnumMember
+      Identifier: '// typeof x === "boolean"
+    TypeofEQSymbol'
+      NumericLiteral
+    EnumMember
+      Identifier: '// typeof x === "symbol"
+    TypeofEQObject'
+      NumericLiteral
+    EnumMember
+      Identifier: '// typeof x === "object"
+    TypeofEQFunction'
+      NumericLiteral
+    EnumMember
+      Identifier: '// typeof x === "function"
+    TypeofEQHostObject'
+      NumericLiteral
+    EnumMember
+      Identifier: '// typeof x === "xxx"
+    TypeofNEString'
+      NumericLiteral
+    EnumMember
+      Identifier: '// typeof x !== "string"
+    TypeofNENumber'
+      NumericLiteral
+    EnumMember
+      Identifier: '// typeof x !== "number"
+    TypeofNEBigInt'
+      NumericLiteral
+    EnumMember
+      Identifier: '// typeof x !== "bigint"
+    TypeofNEBoolean'
+      NumericLiteral
+    EnumMember
+      Identifier: '// typeof x !== "boolean"
+    TypeofNESymbol'
+      NumericLiteral
+    EnumMember
+      Identifier: '// typeof x !== "symbol"
+    TypeofNEObject'
+      NumericLiteral
+    EnumMember
+      Identifier: '// typeof x !== "object"
+    TypeofNEFunction'
+      NumericLiteral
+    EnumMember
+      Identifier: '// typeof x !== "function"
+    TypeofNEHostObject'
+      NumericLiteral
+    EnumMember
+      Identifier: '// typeof x !== "xxx"
+    EQUndefined'
+      NumericLiteral
+    EnumMember
+      Identifier: '// x === undefined
+    EQNull'
+      NumericLiteral
+    EnumMember
+      Identifier: '// x === null
+    EQUndefinedOrNull'
+      NumericLiteral
+    EnumMember
+      Identifier: '// x === undefined / x === null
+    NEUndefined'
+      NumericLiteral
+    EnumMember
+      Identifier: '// x !== undefined
+    NENull'
+      NumericLiteral
+    EnumMember
+      Identifier: '// x !== null
+    NEUndefinedOrNull'
+      NumericLiteral
+    EnumMember
+      Identifier: '// x != undefined / x != null
+    Truthy'
+      NumericLiteral
+    EnumMember
+      Identifier: '// x
+    Falsy'
+      NumericLiteral
+    EnumMember
+      Identifier: '// !x
+    IsUndefined'
+      NumericLiteral
+    EnumMember
+      Identifier: '// Contains undefined or intersection with undefined
+    IsNull'
+      NumericLiteral
+    EnumMember
+      Identifier: '// Contains null or intersection with null
+    IsUndefinedOrNull'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    All'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    BaseStringStrictFacts'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    BaseStringFacts'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    StringStrictFacts'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    StringFacts'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    EmptyStringStrictFacts'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    EmptyStringFacts'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    NonEmptyStringStrictFacts'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    NonEmptyStringFacts'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    BaseNumberStrictFacts'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    BaseNumberFacts'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    NumberStrictFacts'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    NumberFacts'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    ZeroNumberStrictFacts'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    ZeroNumberFacts'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    NonZeroNumberStrictFacts'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    NonZeroNumberFacts'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    BaseBigIntStrictFacts'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    BaseBigIntFacts'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    BigIntStrictFacts'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    BigIntFacts'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    ZeroBigIntStrictFacts'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    ZeroBigIntFacts'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    NonZeroBigIntStrictFacts'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    NonZeroBigIntFacts'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    BaseBooleanStrictFacts'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    BaseBooleanFacts'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    BooleanStrictFacts'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    BooleanFacts'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    FalseStrictFacts'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    FalseFacts'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    TrueStrictFacts'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    TrueFacts'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    SymbolStrictFacts'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    SymbolFacts'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    ObjectStrictFacts'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    ObjectFacts'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    FunctionStrictFacts'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    FunctionFacts'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    VoidFacts'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    UndefinedFacts'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    NullFacts'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    EmptyObjectStrictFacts'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    EmptyObjectFacts'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    UnknownFacts'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    AllTypeofNE'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    OrFactsMask'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    AndFactsMask'
+      NumericLiteral
+  EnumDeclaration
+    ExportKeyword
+    DeclareKeyword
+    ConstKeyword
+    Identifier: ' CheckMode'
+    EnumMember
+      Identifier: '
+    Normal'
+      NumericLiteral
+    EnumMember
+      Identifier: '// Normal type checking
+    Contextual'
+      NumericLiteral
+    EnumMember
+      Identifier: '// Explicitly assigned contextual type, therefore not cacheable
+    Inferential'
+      NumericLiteral
+    EnumMember
+      Identifier: '// Inferential typing
+    SkipContextSensitive'
+      NumericLiteral
+    EnumMember
+      Identifier: '// Skip context sensitive function expressions
+    SkipGenericFunctions'
+      NumericLiteral
+    EnumMember
+      Identifier: '// Skip single signature generic functions
+    IsForSignatureHelp'
+      NumericLiteral
+    EnumMember
+      Identifier: '// Call resolution for purposes of signature help
+    RestBindingElement'
+      NumericLiteral
+    EnumMember
+      Identifier: '// Checking a type that is going to be used to determine the type of a rest binding element
+    TypeOnly'
+      NumericLiteral
+  EnumDeclaration
+    ExportKeyword
+    DeclareKeyword
+    ConstKeyword
+    Identifier: ' SignatureCheckMode'
+    EnumMember
+      Identifier: '
+    None'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    BivariantCallback'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    StrictCallback'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    IgnoreReturnTypes'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    StrictArity'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    StrictTopSignature'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    Callback'
+      NumericLiteral
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getNodeId'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' Node'
+    NumberKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getSymbolId'
+    Parameter
+      Identifier: 'symbol'
+      TypeReference
+        Identifier: ' Symbol'
+    TypeReference
+      Identifier: ' SymbolId'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' isInstantiatedModule'
+    Parameter
+      Identifier: 'node'
+      TypeReference
+        Identifier: ' ModuleDeclaration'
+    Parameter
+      Identifier: ' preserveConstEnums'
+      BooleanKeyword
+    BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' createTypeChecker'
+    Parameter
+      Identifier: 'host'
+      TypeReference
+        Identifier: ' TypeCheckerHost'
+    TypeReference
+      Identifier: ' TypeChecker'
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' signatureHasRestParameter'
+    Parameter
+      Identifier: 's'
+      TypeReference
+        Identifier: ' Signature'
+    BooleanKeyword

@@ -1,0 +1,194 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    PropertyDeclaration
+      Identifier: '
+    propA'
+      NumberKeyword
+  ClassDeclaration
+    Identifier: ' B'
+    PropertyDeclaration
+      Identifier: '
+    propB'
+      NumberKeyword
+  ClassDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+    PropertyDeclaration
+      Identifier: '
+    propC'
+      NumberKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' isB'
+    Parameter
+      Identifier: 'p1'
+    TypePredicate
+      Identifier: ' p1'
+      TypeReference
+        Identifier: ' B'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' isC'
+    Parameter
+      Identifier: 'p1'
+    TypePredicate
+      Identifier: ' p1'
+      TypeReference
+        Identifier: ' C'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' retC'
+    Parameter
+      Identifier: 'x'
+    TypeReference
+      Identifier: ' C'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' funA'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'p1'
+      FunctionType
+        Parameter
+          Identifier: 'p1'
+        TypeReference
+          Identifier: ' T'
+    TypeReference
+      Identifier: ' T'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' funB'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'p1'
+      FunctionType
+        Parameter
+          Identifier: 'p1'
+        TypeReference
+          Identifier: ' T'
+    Parameter
+      Identifier: ' p2'
+      AnyKeyword
+    TypePredicate
+      Identifier: ' p2'
+      TypeReference
+        Identifier: ' T'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' funC'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'p1'
+      FunctionType
+        Parameter
+          Identifier: 'p1'
+        TypePredicate
+          Identifier: ' p1'
+          TypeReference
+            Identifier: ' T'
+    TypeReference
+      Identifier: ' T'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' funD'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'p1'
+      FunctionType
+        Parameter
+          Identifier: 'p1'
+        TypePredicate
+          Identifier: ' p1'
+          TypeReference
+            Identifier: ' T'
+    Parameter
+      Identifier: ' p2'
+      AnyKeyword
+    TypePredicate
+      Identifier: ' p2'
+      TypeReference
+        Identifier: ' T'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' funE'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+    Parameter
+      Identifier: 'p1'
+      FunctionType
+        Parameter
+          Identifier: 'p1'
+        TypePredicate
+          Identifier: ' p1'
+          TypeReference
+            Identifier: ' T'
+    Parameter
+      Identifier: ' p2'
+      TypeReference
+        Identifier: ' U'
+    TypeReference
+      Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeReference
+          Identifier: ' A'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' test1'
+        BooleanKeyword
+        CallExpression
+          Identifier: ' funA'
+          Identifier: 'isB'
+  IfStatement
+    CallExpression
+      Identifier: 'funB'
+      Identifier: 'retC'
+      Identifier: ' a'
+    Block
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    a'
+          Identifier: 'propC'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' test2'
+        TypeReference
+          Identifier: ' B'
+        CallExpression
+          Identifier: ' funC'
+          Identifier: 'isB'
+  IfStatement
+    CallExpression
+      Identifier: 'funD'
+      Identifier: 'isC'
+      Identifier: ' a'
+    Block
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    a'
+          Identifier: 'propC'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' test3'
+        TypeReference
+          Identifier: ' B'
+        CallExpression
+          Identifier: ' funE'
+          Identifier: 'isB'
+          NumericLiteral

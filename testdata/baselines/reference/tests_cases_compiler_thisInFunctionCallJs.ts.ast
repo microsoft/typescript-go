@@ -1,0 +1,127 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Test'
+    Constructor
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'data'
+            EqualsToken
+            ArrayLiteralExpression
+              NumericLiteral
+              NumericLiteral
+              NumericLiteral
+    MethodDeclaration
+      Identifier: '
+
+    finderRaw'
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'data'
+              Identifier: 'find'
+            FunctionExpression
+              Parameter
+                Identifier: 'd'
+              Block
+                ReturnStatement
+                  BinaryExpression
+                    Identifier: ' d'
+                    EqualsEqualsEqualsToken
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'data'
+                      Identifier: 'length'
+    MethodDeclaration
+      Identifier: '
+
+    forEacherRaw'
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'data'
+              Identifier: 'forEach'
+            FunctionExpression
+              Parameter
+                Identifier: 'd'
+              Block
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+            console'
+                      Identifier: 'log'
+                    BinaryExpression
+                      Identifier: 'd'
+                      EqualsEqualsEqualsToken
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'data'
+                        Identifier: 'length'
+    MethodDeclaration
+      Identifier: '
+
+    forEacher'
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'data'
+              Identifier: 'forEach'
+            FunctionExpression
+              Parameter
+                Identifier: 'd'
+              Block
+                ExpressionStatement
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: '
+            console'
+                      Identifier: 'log'
+                    BinaryExpression
+                      Identifier: 'd'
+                      EqualsEqualsEqualsToken
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'data'
+                        Identifier: 'length'
+            ThisKeyword
+    MethodDeclaration
+      Identifier: '
+
+    finder'
+      Block
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'data'
+              Identifier: 'find'
+            FunctionExpression
+              Parameter
+                Identifier: 'd'
+              Block
+                ReturnStatement
+                  BinaryExpression
+                    Identifier: ' d'
+                    EqualsEqualsEqualsToken
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        ThisKeyword
+                        Identifier: 'data'
+                      Identifier: 'length'
+            ThisKeyword

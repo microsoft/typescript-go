@@ -1,0 +1,36 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' greeter'
+        FunctionExpression
+          Parameter
+            Identifier: 'person'
+            StringKeyword
+          Parameter
+            Identifier: ' person2'
+            StringKeyword
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' unused'
+                  NumericLiteral
+            FunctionDeclaration
+              Identifier: ' maker'
+              Parameter
+                Identifier: 'child'
+                StringKeyword
+              VoidKeyword
+              Block
+                VariableStatement
+                  VariableDeclarationList
+                    VariableDeclaration
+                      Identifier: ' unused2'
+                      NumericLiteral
+            ExpressionStatement
+              BinaryExpression
+                Identifier: '
+    person2'
+                EqualsToken
+                StringLiteral

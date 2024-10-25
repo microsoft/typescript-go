@@ -1,0 +1,258 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' ListItem'
+    TypeParameter
+      Identifier: 'TData'
+    PropertySignature
+      Identifier: '
+    prev'
+      UnionType
+        TypeReference
+          Identifier: ' ListItem'
+          TypeReference
+            Identifier: 'TData'
+        LiteralType
+          NullKeyword
+    PropertySignature
+      Identifier: '
+    next'
+      UnionType
+        TypeReference
+          Identifier: ' ListItem'
+          TypeReference
+            Identifier: 'TData'
+        LiteralType
+          NullKeyword
+    PropertySignature
+      Identifier: '
+    data'
+      TypeReference
+        Identifier: ' TData'
+  TypeAliasDeclaration
+    Identifier: ' IteratorFn'
+    TypeParameter
+      Identifier: 'TData'
+    TypeParameter
+      Identifier: ' TResult'
+    TypeParameter
+      Identifier: ' TContext'
+      TypeReference
+        Identifier: ' List'
+        TypeReference
+          Identifier: 'TData'
+    FunctionType
+      Parameter
+        Identifier: 'this'
+        TypeReference
+          Identifier: ' TContext'
+      Parameter
+        Identifier: ' item'
+        TypeReference
+          Identifier: ' TData'
+      Parameter
+        Identifier: ' node'
+        TypeReference
+          Identifier: ' ListItem'
+          TypeReference
+            Identifier: 'TData'
+      Parameter
+        Identifier: ' list'
+        TypeReference
+          Identifier: ' List'
+          TypeReference
+            Identifier: 'TData'
+      TypeReference
+        Identifier: ' TResult'
+  TypeAliasDeclaration
+    Identifier: ' FilterFn'
+    TypeParameter
+      Identifier: 'TData'
+    TypeParameter
+      Identifier: ' TResult'
+      TypeReference
+        Identifier: ' TData'
+    TypeParameter
+      Identifier: ' TContext'
+      TypeReference
+        Identifier: ' List'
+        TypeReference
+          Identifier: 'TData'
+    FunctionType
+      Parameter
+        Identifier: 'this'
+        TypeReference
+          Identifier: ' TContext'
+      Parameter
+        Identifier: ' item'
+        TypeReference
+          Identifier: ' TData'
+      Parameter
+        Identifier: ' node'
+        TypeReference
+          Identifier: ' ListItem'
+          TypeReference
+            Identifier: 'TData'
+      Parameter
+        Identifier: ' list'
+        TypeReference
+          Identifier: ' List'
+          TypeReference
+            Identifier: 'TData'
+      TypePredicate
+        Identifier: ' item'
+        TypeReference
+          Identifier: ' TResult'
+  ClassDeclaration
+    DeclareKeyword
+    Identifier: ' List'
+    TypeParameter
+      Identifier: 'TData'
+    MethodDeclaration
+      Identifier: '
+    filter'
+      TypeParameter
+        Identifier: 'TContext'
+      TypeParameter
+        Identifier: ' TResult'
+        TypeReference
+          Identifier: ' TData'
+      Parameter
+        Identifier: 'fn'
+        TypeReference
+          Identifier: ' FilterFn'
+          TypeReference
+            Identifier: 'TData'
+          TypeReference
+            Identifier: ' TResult'
+          TypeReference
+            Identifier: ' TContext'
+      Parameter
+        Identifier: ' context'
+        TypeReference
+          Identifier: ' TContext'
+      TypeReference
+        Identifier: ' List'
+        TypeReference
+          Identifier: 'TResult'
+    MethodDeclaration
+      Identifier: '
+    filter'
+      TypeParameter
+        Identifier: 'TResult'
+        TypeReference
+          Identifier: ' TData'
+      Parameter
+        Identifier: 'fn'
+        TypeReference
+          Identifier: ' FilterFn'
+          TypeReference
+            Identifier: 'TData'
+          TypeReference
+            Identifier: ' TResult'
+      TypeReference
+        Identifier: ' List'
+        TypeReference
+          Identifier: 'TResult'
+    MethodDeclaration
+      Identifier: '
+    filter'
+      TypeParameter
+        Identifier: 'TContext'
+      Parameter
+        Identifier: 'fn'
+        TypeReference
+          Identifier: ' IteratorFn'
+          TypeReference
+            Identifier: 'TData'
+          BooleanKeyword
+          TypeReference
+            Identifier: ' TContext'
+      Parameter
+        Identifier: ' context'
+        TypeReference
+          Identifier: ' TContext'
+      TypeReference
+        Identifier: ' List'
+        TypeReference
+          Identifier: 'TData'
+    MethodDeclaration
+      Identifier: '
+    filter'
+      Parameter
+        Identifier: 'fn'
+        TypeReference
+          Identifier: ' IteratorFn'
+          TypeReference
+            Identifier: 'TData'
+          BooleanKeyword
+      TypeReference
+        Identifier: ' List'
+        TypeReference
+          Identifier: 'TData'
+  InterfaceDeclaration
+    Identifier: ' Test'
+    PropertySignature
+      Identifier: '
+    a'
+      StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' list2'
+        NewExpression
+          Identifier: ' List'
+          UnionType
+            TypeReference
+              Identifier: 'Test'
+            LiteralType
+              NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' filter1'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' list2'
+            Identifier: 'filter'
+          FunctionExpression
+            Parameter
+              Identifier: 'item'
+            Parameter
+              Identifier: ' node'
+            Parameter
+              Identifier: ' list'
+            TypePredicate
+              Identifier: ' item'
+              TypeReference
+                Identifier: ' Test'
+            Block
+              ExpressionStatement
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'b'
+              ExpressionStatement
+                Identifier: ' // $ExpectType string
+    item'
+              ExpressionStatement
+                Identifier: ' // $ExpectType Test | null
+    node'
+              ExpressionStatement
+                Identifier: ' // $ExpectType ListItem<Test | null>
+    list'
+              ReturnStatement
+                PrefixUnaryExpression
+                  PrefixUnaryExpression
+                    Identifier: 'item'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: 'b'
+              StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        TypeReference
+          Identifier: ' List'
+          TypeReference
+            Identifier: 'Test'
+        Identifier: ' filter1'

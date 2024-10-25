@@ -1,0 +1,28 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' n'
+    ModuleBlock
+      FunctionDeclaration
+        Identifier: ' f'
+        Block
+          ExpressionStatement
+            Identifier: '
+        f'
+      SwitchStatement
+        NumericLiteral
+        CaseBlock
+          CaseClause
+            NumericLiteral
+            FunctionDeclaration
+              Identifier: ' g'
+              Block
+                ExpressionStatement
+                  Identifier: '
+                g'
+          DefaultClause
+            FunctionDeclaration
+              Identifier: ' h'
+              Block
+                ExpressionStatement
+                  Identifier: '
+                h'

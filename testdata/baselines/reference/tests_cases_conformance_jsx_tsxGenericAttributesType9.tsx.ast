@@ -1,0 +1,46 @@
+SourceFile
+  ImportEqualsDeclaration
+    Identifier: ' React'
+    ExternalModuleReference
+      StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' makeP'
+    TypeParameter
+      Identifier: 'P'
+    Parameter
+      Identifier: 'Ctor'
+      TypeReference
+        QualifiedName
+          Identifier: ' React'
+          Identifier: 'ComponentClass'
+        TypeReference
+          Identifier: 'P'
+    Block
+      ReturnStatement
+        ClassExpression
+          HeritageClause
+            ExpressionWithTypeArguments
+              PropertyAccessExpression
+                Identifier: ' React'
+                Identifier: 'PureComponent'
+              TypeReference
+                Identifier: 'P'
+              VoidKeyword
+          MethodDeclaration
+            PublicKeyword
+            Identifier: ' render'
+            TypeReference
+              QualifiedName
+                Identifier: ' JSX'
+                Identifier: 'Element'
+            Block
+              ReturnStatement
+                ParenthesizedExpression
+                  JsxSelfClosingElement
+                    Identifier: 'Ctor'
+                    JsxAttributes
+                      JsxAttribute
+                        PropertyAccessExpression
+                          ThisKeyword
+                          Identifier: 'props'

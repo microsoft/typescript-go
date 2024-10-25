@@ -1,0 +1,25 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        ArrayType
+          NumberKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        Identifier: ' x'
+  FunctionDeclaration
+    Identifier: ' map'
+    TypeParameter
+      Identifier: 'U'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' ys'
+            ArrayType
+              TypeReference
+                Identifier: ' U'
+            ArrayLiteralExpression

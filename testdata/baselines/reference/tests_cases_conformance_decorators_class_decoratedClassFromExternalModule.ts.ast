@@ -1,0 +1,17 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' decorate'
+    Parameter
+      Identifier: 'target'
+      AnyKeyword
+    Block
+  ClassDeclaration
+    Decorator
+      Identifier: 'decorate'
+    ExportKeyword
+    DefaultKeyword
+    Identifier: ' Decorated'
+  ImportDeclaration
+    ImportClause
+      Identifier: ' Decorated'
+    StringLiteral

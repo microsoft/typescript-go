@@ -1,0 +1,173 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        FunctionExpression
+          Block
+            ReturnStatement
+              TypeAssertionExpression
+                AnyKeyword
+                NumericLiteral
+  FunctionDeclaration
+    Identifier: ' foo'
+    Block
+      ReturnStatement
+        TypeAssertionExpression
+          AnyKeyword
+          StringLiteral
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      Identifier: '
+    bar'
+      NullKeyword
+    PropertyDeclaration
+      Identifier: '  // this should be an error
+    foo'
+      Identifier: ' undefined'
+    GetAccessor
+      PublicKeyword
+      Identifier: ' tempVar'
+      Block
+        ReturnStatement
+          TypeAssertionExpression
+            AnyKeyword
+            NumericLiteral
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' returnBarWithCase'
+      Block
+        ReturnStatement
+          TypeAssertionExpression
+            AnyKeyword
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'bar'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' returnFooWithCase'
+      Block
+        ReturnStatement
+          TypeAssertionExpression
+            AnyKeyword
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'foo'
+  ClassDeclaration
+    Identifier: ' C1'
+    PropertyDeclaration
+      Identifier: '
+    getValue'
+      NullKeyword
+    GetAccessor
+      PublicKeyword
+      Identifier: ' castedGet'
+      Block
+        ReturnStatement
+          TypeAssertionExpression
+            AnyKeyword
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'getValue'
+    GetAccessor
+      PublicKeyword
+      Identifier: ' notCastedGet'
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'getValue'
+  FunctionDeclaration
+    Identifier: ' castedNull'
+    Block
+      ReturnStatement
+        TypeAssertionExpression
+          AnyKeyword
+          NullKeyword
+  FunctionDeclaration
+    Identifier: ' notCastedNull'
+    Block
+      ReturnStatement
+        NullKeyword
+  FunctionDeclaration
+    Identifier: ' returnTypeBar'
+    AnyKeyword
+    Block
+      ReturnStatement
+        NullKeyword
+  FunctionDeclaration
+    Identifier: ' undefinedBar'
+    Block
+      ReturnStatement
+        TypeAssertionExpression
+          AnyKeyword
+          Identifier: 'undefined'
+  FunctionDeclaration
+    Identifier: ' multipleRets1'
+    Parameter
+      Identifier: 'x'
+    Block
+      IfStatement
+        Identifier: 'x'
+        Block
+          ReturnStatement
+            TypeAssertionExpression
+              AnyKeyword
+              NumericLiteral
+        Block
+          ReturnStatement
+            NullKeyword
+  FunctionDeclaration
+    Identifier: ' multipleRets2'
+    Parameter
+      Identifier: 'x'
+    Block
+      IfStatement
+        Identifier: 'x'
+        Block
+          ReturnStatement
+            NullKeyword
+        IfStatement
+          BinaryExpression
+            Identifier: 'x'
+            EqualsEqualsToken
+            NumericLiteral
+          Block
+            ReturnStatement
+              TypeAssertionExpression
+                AnyKeyword
+                NumericLiteral
+          Block
+            ReturnStatement
+              Identifier: ' undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' bar1'
+        TypeAssertionExpression
+          AnyKeyword
+          NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' bar2'
+        TypeAssertionExpression
+          AnyKeyword
+          Identifier: 'undefined'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' bar3'
+        TypeAssertionExpression
+          AnyKeyword
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' array'
+        TypeAssertionExpression
+          AnyKeyword
+          ArrayLiteralExpression
+            NullKeyword
+            Identifier: ' undefined'

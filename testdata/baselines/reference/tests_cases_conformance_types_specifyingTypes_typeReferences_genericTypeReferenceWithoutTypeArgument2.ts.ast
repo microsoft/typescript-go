@@ -1,0 +1,192 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' I'
+    TypeParameter
+      Identifier: 'T'
+    PropertySignature
+      Identifier: '
+    foo'
+      TypeReference
+        Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        TypeReference
+          Identifier: ' I'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' x'
+            TypeReference
+              Identifier: ' I'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        TypeLiteral
+          CallSignature
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' I'
+            TypeReference
+              Identifier: ' I'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d'
+        TypeLiteral
+          IndexSignature
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' I'
+            TypeReference
+              Identifier: ' I'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' e'
+        ArrowFunction
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' I'
+          EqualsGreaterThanToken
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' y'
+                  TypeReference
+                    Identifier: ' I'
+            ReturnStatement
+              Identifier: ' y'
+  FunctionDeclaration
+    Identifier: ' f'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' I'
+    TypeReference
+      Identifier: ' I'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            TypeReference
+              Identifier: ' I'
+      ReturnStatement
+        Identifier: ' y'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' g'
+        FunctionExpression
+          Identifier: ' f'
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' I'
+          TypeReference
+            Identifier: ' I'
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' y'
+                  TypeReference
+                    Identifier: ' I'
+            ReturnStatement
+              Identifier: ' y'
+  ClassDeclaration
+    Identifier: ' D'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' I'
+  InterfaceDeclaration
+    Identifier: ' U'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' I'
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' E'
+        TypeParameter
+          Identifier: 'T'
+        PropertySignature
+          Identifier: ' foo'
+          TypeReference
+            Identifier: ' T'
+  ClassDeclaration
+    Identifier: ' D2'
+    HeritageClause
+      ExpressionWithTypeArguments
+        PropertyAccessExpression
+          Identifier: ' M'
+          Identifier: 'C'
+  InterfaceDeclaration
+    Identifier: ' D3'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        QualifiedName
+          Identifier: ' M'
+          Identifier: 'E'
+  InterfaceDeclaration
+    Identifier: ' I2'
+    HeritageClause
+      ExpressionWithTypeArguments
+        PropertyAccessExpression
+          Identifier: ' M'
+          Identifier: 'C'
+  FunctionDeclaration
+    Identifier: ' h'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' I'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    Block
+  FunctionDeclaration
+    Identifier: ' i'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        QualifiedName
+          Identifier: ' M'
+          Identifier: 'E'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' j'
+        TypeAssertionExpression
+          TypeReference
+            Identifier: 'C'
+          NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' k'
+        TypeAssertionExpression
+          TypeReference
+            QualifiedName
+              Identifier: 'M'
+              Identifier: 'E'
+          NullKeyword

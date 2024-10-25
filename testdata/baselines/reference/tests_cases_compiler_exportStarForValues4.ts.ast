@@ -1,0 +1,32 @@
+SourceFile
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' Foo'
+    PropertySignature
+      Identifier: ' x'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' A'
+    PropertySignature
+      Identifier: ' x'
+  ExportDeclaration
+    StringLiteral
+  ExportDeclaration
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumericLiteral
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' B'
+    PropertySignature
+      Identifier: ' x'
+  ExportDeclaration
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumericLiteral

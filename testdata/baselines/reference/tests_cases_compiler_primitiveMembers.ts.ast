@@ -1,0 +1,130 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r'
+        RegularExpressionLiteral
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+r'
+      Identifier: 'source'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+x'
+        Identifier: 'toBAZ'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+x'
+        Identifier: 'toString'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' n'
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' N'
+        TypeReference
+          Identifier: ' Number'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+n'
+      EqualsToken
+      Identifier: ' N'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '  // should not work, as 'number' has a different brand
+N'
+      EqualsToken
+      Identifier: ' n'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' o'
+        TypeReference
+          Identifier: ' Object'
+        ObjectLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f'
+        TypeReference
+          Identifier: ' Function'
+        ArrowFunction
+          Parameter
+            Identifier: 'x'
+            StringKeyword
+          EqualsGreaterThanToken
+          PropertyAccessExpression
+            Identifier: ' x'
+            Identifier: 'length'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r2'
+        TypeReference
+          Identifier: ' RegExp'
+        RegularExpressionLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' n2'
+        TypeReference
+          Identifier: ' Number'
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s'
+        TypeReference
+          Identifier: ' String'
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        TypeReference
+          Identifier: ' Boolean'
+        TrueKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' n3'
+        BinaryExpression
+          NumericLiteral
+          BarBarToken
+          ObjectLiteralExpression
+  ClassDeclaration
+    Identifier: ' baz'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' bar'
+      VoidKeyword
+      Block
+    SemicolonClassElement
+  ClassDeclaration
+    Identifier: ' foo'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' baz'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' bar'
+      Block
+        ReturnStatement
+          Identifier: ' undefined'
+    SemicolonClassElement

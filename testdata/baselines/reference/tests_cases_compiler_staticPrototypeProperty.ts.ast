@@ -1,0 +1,12 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    MethodDeclaration
+      StaticKeyword
+      Identifier: ' prototype'
+      Block
+  ClassDeclaration
+    Identifier: ' C2'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' prototype'

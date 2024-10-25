@@ -1,0 +1,817 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    createCodeFixAction'
+        ImportSpecifier
+          Identifier: '
+    createCombinedCodeActions'
+        ImportSpecifier
+          Identifier: '
+    createImportAdder'
+        ImportSpecifier
+          Identifier: '
+    eachDiagnostic'
+        ImportSpecifier
+          Identifier: '
+    findAncestorMatchingSpan'
+        ImportSpecifier
+          Identifier: '
+    getNoopSymbolTrackerWithResolver'
+        ImportSpecifier
+          Identifier: '
+    registerCodeFix'
+        ImportSpecifier
+          Identifier: '
+    typeToAutoImportableTypeNode'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    addToSeen'
+        ImportSpecifier
+          Identifier: '
+    createTextSpan'
+        ImportSpecifier
+          Identifier: '
+    DiagnosticMessageChain'
+        ImportSpecifier
+          Identifier: '
+    Diagnostics'
+        ImportSpecifier
+          Identifier: '
+    factory'
+        ImportSpecifier
+          Identifier: '
+    find'
+        ImportSpecifier
+          Identifier: '
+    flattenDiagnosticMessageText'
+        ImportSpecifier
+          Identifier: '
+    getEmitScriptTarget'
+        ImportSpecifier
+          Identifier: '
+    getNodeId'
+        ImportSpecifier
+          Identifier: '
+    getTokenAtPosition'
+        ImportSpecifier
+          Identifier: '
+    isExpression'
+        ImportSpecifier
+          Identifier: '
+    isIdentifier'
+        ImportSpecifier
+          Identifier: '
+    isMappedTypeNode'
+        ImportSpecifier
+          Identifier: '
+    isString'
+        ImportSpecifier
+          Identifier: '
+    isTypeNode'
+        ImportSpecifier
+          Identifier: '
+    isTypeParameterDeclaration'
+        ImportSpecifier
+          Identifier: '
+    LanguageServiceHost'
+        ImportSpecifier
+          Identifier: '
+    Node'
+        ImportSpecifier
+          Identifier: '
+    Program'
+        ImportSpecifier
+          Identifier: '
+    SourceFile'
+        ImportSpecifier
+          Identifier: '
+    textChanges'
+        ImportSpecifier
+          Identifier: '
+    TextSpan'
+        ImportSpecifier
+          Identifier: '
+    Type'
+        ImportSpecifier
+          Identifier: '
+    TypeChecker'
+        ImportSpecifier
+          Identifier: '
+    TypeParameterDeclaration'
+        ImportSpecifier
+          Identifier: '
+    UserPreferences'
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fixId'
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' errorCodes'
+        ArrayLiteralExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: '
+    // We want errors this could be attached to:
+    // Diagnostics.This_type_parameter_probably_needs_an_extends_0_constraint
+    Diagnostics'
+              Identifier: 'Type_0_is_not_comparable_to_type_1'
+            Identifier: 'code'
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: '
+    Diagnostics'
+              Identifier: 'Type_0_is_not_assignable_to_type_1_Two_different_types_with_this_name_exist_but_they_are_unrelated'
+            Identifier: 'code'
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: '
+    Diagnostics'
+              Identifier: 'Type_0_is_not_assignable_to_type_1_with_exactOptionalPropertyTypes_Colon_true_Consider_adding_undefined_to_the_types_of_the_target_s_properties'
+            Identifier: 'code'
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: '
+    Diagnostics'
+              Identifier: 'Type_0_is_not_assignable_to_type_1'
+            Identifier: 'code'
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: '
+    Diagnostics'
+              Identifier: 'Argument_of_type_0_is_not_assignable_to_parameter_of_type_1_with_exactOptionalPropertyTypes_Colon_true_Consider_adding_undefined_to_the_types_of_the_target_s_properties'
+            Identifier: 'code'
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: '
+    Diagnostics'
+              Identifier: 'Property_0_is_incompatible_with_index_signature'
+            Identifier: 'code'
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: '
+    Diagnostics'
+              Identifier: 'Property_0_in_type_1_is_not_assignable_to_type_2'
+            Identifier: 'code'
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: '
+    Diagnostics'
+              Identifier: 'Type_0_does_not_satisfy_the_constraint_1'
+            Identifier: 'code'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+registerCodeFix'
+      ObjectLiteralExpression
+        ShorthandPropertyAssignment
+          Identifier: '
+    errorCodes'
+        MethodDeclaration
+          Identifier: '
+    getCodeActions'
+          Parameter
+            Identifier: 'context'
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  ObjectBindingPattern
+                    BindingElement
+                      Identifier: ' sourceFile'
+                    BindingElement
+                      Identifier: ' span'
+                    BindingElement
+                      Identifier: ' program'
+                    BindingElement
+                      Identifier: ' preferences'
+                    BindingElement
+                      Identifier: ' host'
+                  Identifier: ' context'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' info'
+                  CallExpression
+                    Identifier: ' getInfo'
+                    Identifier: 'program'
+                    Identifier: ' sourceFile'
+                    Identifier: ' span'
+            IfStatement
+              BinaryExpression
+                Identifier: 'info'
+                EqualsEqualsEqualsToken
+                Identifier: ' undefined'
+              ReturnStatement
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' changes'
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' textChanges'
+                        Identifier: 'ChangeTracker'
+                      Identifier: 'with'
+                    Identifier: 'context'
+                    ArrowFunction
+                      Parameter
+                        Identifier: ' t'
+                      EqualsGreaterThanToken
+                      CallExpression
+                        Identifier: ' addMissingConstraint'
+                        Identifier: 't'
+                        Identifier: ' program'
+                        Identifier: ' preferences'
+                        Identifier: ' host'
+                        Identifier: ' sourceFile'
+                        Identifier: ' info'
+            ReturnStatement
+              ArrayLiteralExpression
+                CallExpression
+                  Identifier: 'createCodeFixAction'
+                  Identifier: 'fixId'
+                  Identifier: ' changes'
+                  PropertyAccessExpression
+                    Identifier: ' Diagnostics'
+                    Identifier: 'Add_extends_constraint'
+                  Identifier: ' fixId'
+                  PropertyAccessExpression
+                    Identifier: ' Diagnostics'
+                    Identifier: 'Add_extends_constraint_to_all_type_parameters'
+        PropertyAssignment
+          Identifier: '
+    fixIds'
+          ArrayLiteralExpression
+            Identifier: 'fixId'
+        PropertyAssignment
+          Identifier: '
+    getAllCodeActions'
+          ArrowFunction
+            Parameter
+              Identifier: ' context'
+            EqualsGreaterThanToken
+            Block
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    ObjectBindingPattern
+                      BindingElement
+                        Identifier: ' program'
+                      BindingElement
+                        Identifier: ' preferences'
+                      BindingElement
+                        Identifier: ' host'
+                    Identifier: ' context'
+              VariableStatement
+                VariableDeclarationList
+                  VariableDeclaration
+                    Identifier: ' seen'
+                    NewExpression
+                      Identifier: ' Map'
+                      NumberKeyword
+                      LiteralType
+                        TrueKeyword
+              ReturnStatement
+                CallExpression
+                  Identifier: ' createCombinedCodeActions'
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: 'textChanges'
+                        Identifier: 'ChangeTracker'
+                      Identifier: 'with'
+                    Identifier: 'context'
+                    ArrowFunction
+                      Parameter
+                        Identifier: ' changes'
+                      EqualsGreaterThanToken
+                      Block
+                        ExpressionStatement
+                          CallExpression
+                            Identifier: '
+            eachDiagnostic'
+                            Identifier: 'context'
+                            Identifier: ' errorCodes'
+                            ArrowFunction
+                              Parameter
+                                Identifier: ' diag'
+                              EqualsGreaterThanToken
+                              Block
+                                VariableStatement
+                                  VariableDeclarationList
+                                    VariableDeclaration
+                                      Identifier: ' info'
+                                      CallExpression
+                                        Identifier: ' getInfo'
+                                        Identifier: 'program'
+                                        PropertyAccessExpression
+                                          Identifier: ' diag'
+                                          Identifier: 'file'
+                                        CallExpression
+                                          Identifier: ' createTextSpan'
+                                          PropertyAccessExpression
+                                            Identifier: 'diag'
+                                            Identifier: 'start'
+                                          PropertyAccessExpression
+                                            Identifier: ' diag'
+                                            Identifier: 'length'
+                                IfStatement
+                                  Identifier: 'info'
+                                  Block
+                                    IfStatement
+                                      CallExpression
+                                        Identifier: 'addToSeen'
+                                        Identifier: 'seen'
+                                        CallExpression
+                                          Identifier: ' getNodeId'
+                                          PropertyAccessExpression
+                                            Identifier: 'info'
+                                            Identifier: 'declaration'
+                                      Block
+                                        ReturnStatement
+                                          CallExpression
+                                            Identifier: ' addMissingConstraint'
+                                            Identifier: 'changes'
+                                            Identifier: ' program'
+                                            Identifier: ' preferences'
+                                            Identifier: ' host'
+                                            PropertyAccessExpression
+                                              Identifier: ' diag'
+                                              Identifier: 'file'
+                                            Identifier: ' info'
+                                ReturnStatement
+                                  Identifier: ' undefined'
+  InterfaceDeclaration
+    Identifier: ' Info'
+    PropertySignature
+      Identifier: '
+    constraint'
+      UnionType
+        TypeReference
+          Identifier: ' Type'
+        StringKeyword
+    PropertySignature
+      Identifier: '
+    declaration'
+      TypeReference
+        Identifier: ' TypeParameterDeclaration'
+    PropertySignature
+      Identifier: '
+    token'
+      TypeReference
+        Identifier: ' Node'
+  FunctionDeclaration
+    Identifier: ' getInfo'
+    Parameter
+      Identifier: 'program'
+      TypeReference
+        Identifier: ' Program'
+    Parameter
+      Identifier: ' sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' span'
+      TypeReference
+        Identifier: ' TextSpan'
+    UnionType
+      TypeReference
+        Identifier: ' Info'
+      UndefinedKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' diag'
+            CallExpression
+              Identifier: ' find'
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: 'program'
+                  Identifier: 'getSemanticDiagnostics'
+                Identifier: 'sourceFile'
+              ArrowFunction
+                Parameter
+                  Identifier: ' diag'
+                EqualsGreaterThanToken
+                BinaryExpression
+                  BinaryExpression
+                    PropertyAccessExpression
+                      Identifier: ' diag'
+                      Identifier: 'start'
+                    EqualsEqualsEqualsToken
+                    PropertyAccessExpression
+                      Identifier: ' span'
+                      Identifier: 'start'
+                  AmpersandAmpersandToken
+                  BinaryExpression
+                    PropertyAccessExpression
+                      Identifier: ' diag'
+                      Identifier: 'length'
+                    EqualsEqualsEqualsToken
+                    PropertyAccessExpression
+                      Identifier: ' span'
+                      Identifier: 'length'
+      IfStatement
+        BinaryExpression
+          BinaryExpression
+            Identifier: 'diag'
+            EqualsEqualsEqualsToken
+            Identifier: ' undefined'
+          BarBarToken
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: ' diag'
+              Identifier: 'relatedInformation'
+            EqualsEqualsEqualsToken
+            Identifier: ' undefined'
+        ReturnStatement
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' related'
+            CallExpression
+              Identifier: ' find'
+              PropertyAccessExpression
+                Identifier: 'diag'
+                Identifier: 'relatedInformation'
+              ArrowFunction
+                Parameter
+                  Identifier: ' related'
+                EqualsGreaterThanToken
+                BinaryExpression
+                  PropertyAccessExpression
+                    Identifier: ' related'
+                    Identifier: 'code'
+                  EqualsEqualsEqualsToken
+                  PropertyAccessExpression
+                    PropertyAccessExpression
+                      Identifier: ' Diagnostics'
+                      Identifier: 'This_type_parameter_might_need_an_extends_0_constraint'
+                    Identifier: 'code'
+      IfStatement
+        BinaryExpression
+          BinaryExpression
+            BinaryExpression
+              BinaryExpression
+                Identifier: 'related'
+                EqualsEqualsEqualsToken
+                Identifier: ' undefined'
+              BarBarToken
+              BinaryExpression
+                PropertyAccessExpression
+                  Identifier: ' related'
+                  Identifier: 'file'
+                EqualsEqualsEqualsToken
+                Identifier: ' undefined'
+            BarBarToken
+            BinaryExpression
+              PropertyAccessExpression
+                Identifier: ' related'
+                Identifier: 'start'
+              EqualsEqualsEqualsToken
+              Identifier: ' undefined'
+          BarBarToken
+          BinaryExpression
+            PropertyAccessExpression
+              Identifier: ' related'
+              Identifier: 'length'
+            EqualsEqualsEqualsToken
+            Identifier: ' undefined'
+        ReturnStatement
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' declaration'
+            CallExpression
+              Identifier: ' findAncestorMatchingSpan'
+              PropertyAccessExpression
+                Identifier: 'related'
+                Identifier: 'file'
+              CallExpression
+                Identifier: ' createTextSpan'
+                PropertyAccessExpression
+                  Identifier: 'related'
+                  Identifier: 'start'
+                PropertyAccessExpression
+                  Identifier: ' related'
+                  Identifier: 'length'
+      IfStatement
+        BinaryExpression
+          Identifier: 'declaration'
+          EqualsEqualsEqualsToken
+          Identifier: ' undefined'
+        ReturnStatement
+      IfStatement
+        BinaryExpression
+          CallExpression
+            Identifier: 'isIdentifier'
+            Identifier: 'declaration'
+          AmpersandAmpersandToken
+          CallExpression
+            Identifier: ' isTypeParameterDeclaration'
+            PropertyAccessExpression
+              Identifier: 'declaration'
+              Identifier: 'parent'
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+        declaration'
+              EqualsToken
+              PropertyAccessExpression
+                Identifier: ' declaration'
+                Identifier: 'parent'
+      IfStatement
+        CallExpression
+          Identifier: 'isTypeParameterDeclaration'
+          Identifier: 'declaration'
+        Block
+          IfStatement
+            CallExpression
+              Identifier: 'isMappedTypeNode'
+              PropertyAccessExpression
+                Identifier: 'declaration'
+                Identifier: 'parent'
+            ReturnStatement
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' token'
+                CallExpression
+                  Identifier: ' getTokenAtPosition'
+                  Identifier: 'sourceFile'
+                  PropertyAccessExpression
+                    Identifier: ' span'
+                    Identifier: 'start'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' checker'
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: ' program'
+                    Identifier: 'getTypeChecker'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' constraint'
+                BinaryExpression
+                  CallExpression
+                    Identifier: ' tryGetConstraintType'
+                    Identifier: 'checker'
+                    Identifier: ' token'
+                  BarBarToken
+                  CallExpression
+                    Identifier: ' tryGetConstraintFromDiagnosticMessage'
+                    PropertyAccessExpression
+                      Identifier: 'related'
+                      Identifier: 'messageText'
+          ReturnStatement
+            ObjectLiteralExpression
+              ShorthandPropertyAssignment
+                Identifier: ' constraint'
+              ShorthandPropertyAssignment
+                Identifier: ' declaration'
+              ShorthandPropertyAssignment
+                Identifier: ' token'
+      ReturnStatement
+        Identifier: ' undefined'
+  FunctionDeclaration
+    Identifier: ' addMissingConstraint'
+    Parameter
+      Identifier: 'changes'
+      TypeReference
+        QualifiedName
+          Identifier: ' textChanges'
+          Identifier: 'ChangeTracker'
+    Parameter
+      Identifier: ' program'
+      TypeReference
+        Identifier: ' Program'
+    Parameter
+      Identifier: ' preferences'
+      TypeReference
+        Identifier: ' UserPreferences'
+    Parameter
+      Identifier: ' host'
+      TypeReference
+        Identifier: ' LanguageServiceHost'
+    Parameter
+      Identifier: ' sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' info'
+      TypeReference
+        Identifier: ' Info'
+    VoidKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ObjectBindingPattern
+              BindingElement
+                Identifier: ' declaration'
+              BindingElement
+                Identifier: ' constraint'
+            Identifier: ' info'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' checker'
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' program'
+                Identifier: 'getTypeChecker'
+      IfStatement
+        CallExpression
+          Identifier: 'isString'
+          Identifier: 'constraint'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: '
+        changes'
+                Identifier: 'insertText'
+              Identifier: 'sourceFile'
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' declaration'
+                  Identifier: 'name'
+                Identifier: 'end'
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  Identifier: 'constraint'
+                  TemplateTail
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' scriptTarget'
+                CallExpression
+                  Identifier: ' getEmitScriptTarget'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: 'program'
+                      Identifier: 'getCompilerOptions'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' tracker'
+                CallExpression
+                  Identifier: ' getNoopSymbolTrackerWithResolver'
+                  ObjectLiteralExpression
+                    ShorthandPropertyAssignment
+                      Identifier: ' program'
+                    ShorthandPropertyAssignment
+                      Identifier: ' host'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' importAdder'
+                CallExpression
+                  Identifier: ' createImportAdder'
+                  Identifier: 'sourceFile'
+                  Identifier: ' program'
+                  Identifier: ' preferences'
+                  Identifier: ' host'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' typeNode'
+                CallExpression
+                  Identifier: ' typeToAutoImportableTypeNode'
+                  Identifier: 'checker'
+                  Identifier: ' importAdder'
+                  Identifier: ' constraint'
+                  Identifier: ' /*contextNode*/ undefined'
+                  Identifier: ' scriptTarget'
+                  Identifier: ' /*flags*/ undefined'
+                  Identifier: ' /*internalFlags*/ undefined'
+                  Identifier: ' tracker'
+          IfStatement
+            Identifier: 'typeNode'
+            Block
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            changes'
+                    Identifier: 'replaceNode'
+                  Identifier: 'sourceFile'
+                  Identifier: ' declaration'
+                  CallExpression
+                    PropertyAccessExpression
+                      Identifier: ' factory'
+                      Identifier: 'updateTypeParameterDeclaration'
+                    Identifier: 'declaration'
+                    Identifier: ' /*modifiers*/ undefined'
+                    PropertyAccessExpression
+                      Identifier: ' declaration'
+                      Identifier: 'name'
+                    Identifier: ' typeNode'
+                    PropertyAccessExpression
+                      Identifier: ' declaration'
+                      Identifier: 'default'
+              ExpressionStatement
+                CallExpression
+                  PropertyAccessExpression
+                    Identifier: '
+            importAdder'
+                    Identifier: 'writeFixes'
+                  Identifier: 'changes'
+  FunctionDeclaration
+    Identifier: ' tryGetConstraintFromDiagnosticMessage'
+    Parameter
+      Identifier: 'messageText'
+      UnionType
+        StringKeyword
+        TypeReference
+          Identifier: ' DiagnosticMessageChain'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            ArrayBindingPattern
+              OmittedExpression
+              BindingElement
+                Identifier: ' constraint'
+            BinaryExpression
+              CallExpression
+                PropertyAccessExpression
+                  CallExpression
+                    Identifier: ' flattenDiagnosticMessageText'
+                    Identifier: 'messageText'
+                    StringLiteral
+                    NumericLiteral
+                  Identifier: 'match'
+                RegularExpressionLiteral
+              BarBarToken
+              ArrayLiteralExpression
+      ReturnStatement
+        Identifier: ' constraint'
+  FunctionDeclaration
+    Identifier: ' tryGetConstraintType'
+    Parameter
+      Identifier: 'checker'
+      TypeReference
+        Identifier: ' TypeChecker'
+    Parameter
+      Identifier: ' node'
+      TypeReference
+        Identifier: ' Node'
+    Block
+      IfStatement
+        CallExpression
+          Identifier: 'isTypeNode'
+          PropertyAccessExpression
+            Identifier: 'node'
+            Identifier: 'parent'
+        Block
+          ReturnStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' checker'
+                Identifier: 'getTypeArgumentConstraint'
+              PropertyAccessExpression
+                Identifier: 'node'
+                Identifier: 'parent'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' contextualType'
+            ConditionalExpression
+              CallExpression
+                Identifier: ' isExpression'
+                Identifier: 'node'
+              QuestionToken
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' checker'
+                  Identifier: 'getContextualType'
+                Identifier: 'node'
+              ColonToken
+              Identifier: ' undefined'
+      ReturnStatement
+        BinaryExpression
+          Identifier: ' contextualType'
+          BarBarToken
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' checker'
+              Identifier: 'getTypeAtLocation'
+            Identifier: 'node'

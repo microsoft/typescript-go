@@ -1,0 +1,52 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' CollectionItem2'
+  ClassDeclaration
+    Identifier: ' BaseCollection2'
+    TypeParameter
+      Identifier: 'TItem'
+      TypeReference
+        Identifier: ' CollectionItem2'
+    PropertyDeclaration
+      Identifier: '
+    _itemsByKey'
+      TypeLiteral
+        IndexSignature
+          Parameter
+            Identifier: 'key'
+            StringKeyword
+          TypeReference
+            Identifier: ' TItem'
+    Constructor
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: '_itemsByKey'
+            EqualsToken
+            ObjectLiteralExpression
+  ClassDeclaration
+    Identifier: ' DataView2'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' BaseCollection2'
+        TypeReference
+          Identifier: 'CollectionItem2'
+    MethodDeclaration
+      Identifier: '
+    fillItems'
+      Parameter
+        Identifier: 'item'
+        TypeReference
+          Identifier: ' CollectionItem2'
+      Block
+        ExpressionStatement
+          BinaryExpression
+            ElementAccessExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: '_itemsByKey'
+              StringLiteral
+            EqualsToken
+            Identifier: ' item'

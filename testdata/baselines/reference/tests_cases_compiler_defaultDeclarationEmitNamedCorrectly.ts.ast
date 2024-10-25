@@ -1,0 +1,66 @@
+SourceFile
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' Things'
+    TypeParameter
+      Identifier: 'P'
+    TypeParameter
+      Identifier: ' T'
+    PropertySignature
+      Identifier: '
+    p'
+      TypeReference
+        Identifier: ' P'
+    PropertySignature
+      Identifier: '
+    t'
+      TypeReference
+        Identifier: ' T'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' make'
+    TypeParameter
+      Identifier: 'P'
+    TypeParameter
+      Identifier: ' CTor'
+    Parameter
+      Identifier: 'x'
+      TypeLiteral
+        ConstructSignature
+          IntersectionType
+            TypeReference
+              Identifier: ' CTor'
+            TypeLiteral
+              PropertySignature
+                Identifier: 'props'
+                TypeReference
+                  Identifier: ' P'
+    TypeReference
+      Identifier: ' Things'
+      TypeReference
+        Identifier: 'P'
+      TypeReference
+        Identifier: ' CTor'
+    Block
+      ReturnStatement
+        AsExpression
+          NullKeyword
+          AnyKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' Props'
+  ClassDeclaration
+    ExportKeyword
+    DefaultKeyword
+    Identifier: ' MyComponent'
+    PropertyDeclaration
+      Identifier: '
+    props'
+      TypeReference
+        Identifier: ' Props'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' create'
+      CallExpression
+        Identifier: ' make'
+        Identifier: 'MyComponent'

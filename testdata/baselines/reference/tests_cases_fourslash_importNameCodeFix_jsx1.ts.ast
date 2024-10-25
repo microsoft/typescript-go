@@ -1,0 +1,70 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+// @jsx: react
+
+// @Filename: /node_modules/react/index.d.ts
+////export const React: any;
+
+// @Filename: /a.tsx
+////[|<this>|]</this>
+
+// @Filename: /Foo.tsx
+////export const Foo = 0;
+
+// @Filename: /c.tsx
+////import { React } from "react";
+////<Foo />;
+
+// @Filename: /d.tsx
+////import { Foo } from "./Foo";
+////<Foo />;
+
+// Tests that we don't crash at non-identifier location.
+goTo'
+        Identifier: 'file'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'importFixAtPosition'
+      ArrayLiteralExpression
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+// When constructor is missing, provide fix for that
+goTo'
+        Identifier: 'file'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'importFixAtPosition'
+      ArrayLiteralExpression
+        NoSubstitutionTemplateLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+// When JSX namespace is missing, provide fix for that
+goTo'
+        Identifier: 'file'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'importFixAtPosition'
+      ArrayLiteralExpression
+        NoSubstitutionTemplateLiteral

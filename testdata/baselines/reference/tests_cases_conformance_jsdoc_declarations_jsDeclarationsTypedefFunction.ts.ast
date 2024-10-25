@@ -1,0 +1,34 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' id'
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' send'
+        ArrowFunction
+          Parameter
+            Identifier: ' handlers'
+          EqualsGreaterThanToken
+          NewExpression
+            Identifier: ' Promise'
+            ArrowFunction
+              Parameter
+                Identifier: 'resolve'
+              Parameter
+                Identifier: ' reject'
+              EqualsGreaterThanToken
+              Block
+                ExpressionStatement
+                  BinaryExpression
+                    ElementAccessExpression
+                      Identifier: '
+  handlers'
+                      PrefixUnaryExpression
+                        Identifier: 'id'
+                    EqualsToken
+                    ArrayLiteralExpression
+                      Identifier: 'resolve'
+                      Identifier: ' reject'

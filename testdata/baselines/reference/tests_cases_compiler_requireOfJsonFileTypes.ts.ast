@@ -1,0 +1,158 @@
+SourceFile
+  ImportEqualsDeclaration
+    Identifier: ' b'
+    ExternalModuleReference
+      StringLiteral
+  ImportEqualsDeclaration
+    Identifier: ' c'
+    ExternalModuleReference
+      StringLiteral
+  ImportEqualsDeclaration
+    Identifier: ' d'
+    ExternalModuleReference
+      StringLiteral
+  ImportEqualsDeclaration
+    Identifier: ' e'
+    ExternalModuleReference
+      StringLiteral
+  ImportEqualsDeclaration
+    Identifier: ' f'
+    ExternalModuleReference
+      StringLiteral
+  ImportEqualsDeclaration
+    Identifier: ' g'
+    ExternalModuleReference
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' booleanLiteral'
+        BooleanKeyword
+      VariableDeclaration
+        Identifier: ' nullLiteral'
+        LiteralType
+          NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' stringLiteral'
+        StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' numberLiteral'
+        NumberKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+booleanLiteral'
+      EqualsToken
+      PropertyAccessExpression
+        Identifier: ' b'
+        Identifier: 'a'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+stringLiteral'
+      EqualsToken
+      PropertyAccessExpression
+        Identifier: ' b'
+        Identifier: 'b'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+nullLiteral'
+      EqualsToken
+      PropertyAccessExpression
+        Identifier: ' b'
+        Identifier: 'c'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+booleanLiteral'
+      EqualsToken
+      PropertyAccessExpression
+        Identifier: ' b'
+        Identifier: 'd'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' stringOrNumberOrNull'
+        UnionType
+          StringKeyword
+          NumberKeyword
+          LiteralType
+            NullKeyword
+        ElementAccessExpression
+          Identifier: ' c'
+          NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+stringLiteral'
+      EqualsToken
+      Identifier: ' d'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+numberLiteral'
+      EqualsToken
+      Identifier: ' e'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+numberLiteral'
+      EqualsToken
+      ElementAccessExpression
+        Identifier: ' f'
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+booleanLiteral'
+      EqualsToken
+      ElementAccessExpression
+        Identifier: ' g'
+        NumericLiteral
+  Block
+    ExpressionStatement
+      StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        TrueKeyword
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        NullKeyword
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      FalseKeyword
+  ExpressionStatement
+    ArrayLiteralExpression
+      StringLiteral
+      NullKeyword
+      StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      StringLiteral
+      MinusToken
+      ElementAccessExpression
+        ElementAccessExpression
+          NumericLiteral
+          BinaryExpression
+            PrefixUnaryExpression
+              NumericLiteral
+            CommaToken
+            NumericLiteral
+        BinaryExpression
+          TrueKeyword
+          CommaToken
+          FalseKeyword

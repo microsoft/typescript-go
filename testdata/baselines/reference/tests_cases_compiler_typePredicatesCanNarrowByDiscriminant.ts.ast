@@ -1,0 +1,113 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fruit'
+        UnionType
+          TypeLiteral
+            PropertySignature
+              Identifier: ' kind'
+              LiteralType
+                StringLiteral
+          TypeLiteral
+            PropertySignature
+              Identifier: ' kind'
+              LiteralType
+                StringLiteral
+          TypeLiteral
+            PropertySignature
+              Identifier: ' kind'
+              LiteralType
+                StringLiteral
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' isOneOf'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: 'item'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' array'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' U'
+    TypePredicate
+      Identifier: ' item'
+      TypeReference
+        Identifier: ' U'
+  IfStatement
+    CallExpression
+      Identifier: 'isOneOf'
+      PropertyAccessExpression
+        Identifier: 'fruit'
+        Identifier: 'kind'
+      AsExpression
+        ArrayLiteralExpression
+          StringLiteral
+          StringLiteral
+        TypeReference
+          Identifier: ' const'
+    Block
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    fruit'
+          Identifier: 'kind'
+      ExpressionStatement
+        Identifier: '
+    fruit'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fruit2'
+        UnionType
+          TypeLiteral
+            PropertySignature
+              Identifier: ' kind'
+              LiteralType
+                StringLiteral
+          TypeLiteral
+            PropertySignature
+              Identifier: ' kind'
+              LiteralType
+                StringLiteral
+          TypeLiteral
+            PropertySignature
+              Identifier: ' kind'
+              LiteralType
+                StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' kind'
+        PropertyAccessExpression
+          Identifier: ' fruit2'
+          Identifier: 'kind'
+  IfStatement
+    CallExpression
+      Identifier: 'isOneOf'
+      Identifier: 'kind'
+      AsExpression
+        ArrayLiteralExpression
+          StringLiteral
+          StringLiteral
+        TypeReference
+          Identifier: ' const'
+    Block
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    fruit2'
+          Identifier: 'kind'
+      ExpressionStatement
+        Identifier: '
+    fruit2'

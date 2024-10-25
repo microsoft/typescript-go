@@ -1,0 +1,96 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="../fourslash.ts" />
+
+// @Filename: /home/src/workspaces/project/packages/a/package.json
+//// {
+////   "name": "package-a",
+////   "dependencies": {
+////     "package-b": "*"
+////   }
+//// }
+
+// @Filename: /home/src/workspaces/project/packages/a/index.js
+//// packageB/**/
+
+// @Filename: /home/src/workspaces/project/packages/b/package.json
+//// { "name": "package-b", "main": "index.js" }
+
+// @Filename: /home/src/workspaces/project/packages/b/index.js
+//// export const packageB = "package-b";
+
+// @link: /home/src/workspaces/project/packages/b -> /home/src/workspaces/project/packages/a/node_modules/package-b
+
+config'
+        Identifier: 'setCompilerOptionsForInferredProjects'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: ' module'
+          StringLiteral
+        PropertyAssignment
+          Identifier: ' allowJs'
+          TrueKeyword
+        PropertyAssignment
+          Identifier: ' maxNodeModulesJsDepth'
+          NumericLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+goTo'
+        Identifier: 'marker'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+  marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+  includes'
+          ArrayLiteralExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+    name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+    source'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+    sourceDisplay'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+    hasAction'
+                TrueKeyword
+              PropertyAssignment
+                Identifier: '
+    sortText'
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' completion'
+                    Identifier: 'SortText'
+                  Identifier: 'AutoImportSuggestions'
+        PropertyAssignment
+          Identifier: '
+  preferences'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+    includeCompletionsForModuleExports'
+              TrueKeyword
+            PropertyAssignment
+              Identifier: '
+    allowIncompleteCompletions'
+              TrueKeyword

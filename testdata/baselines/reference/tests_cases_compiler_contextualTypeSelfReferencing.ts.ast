@@ -1,0 +1,61 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' narrow'
+    TypeParameter
+      Identifier: 'def'
+    ConditionalType
+      TypeReference
+        Identifier: ' def'
+      StringKeyword
+      TypeReference
+        Identifier: ' def'
+      ConditionalType
+        TypeReference
+          Identifier: ' def'
+        TupleType
+          UnknownKeyword
+          RestType
+            ArrayType
+              UnknownKeyword
+        TypeReference
+          Identifier: ' def'
+        MappedType
+          TypeParameter
+            Identifier: 'k'
+            TypeOperator
+              TypeReference
+                Identifier: ' def'
+          TypeReference
+            Identifier: ' narrow'
+            IndexedAccessType
+              TypeReference
+                Identifier: 'def'
+              TypeReference
+                Identifier: 'k'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' parse'
+        FunctionType
+          TypeParameter
+            Identifier: 'def'
+          Parameter
+            Identifier: 'def'
+            TypeReference
+              Identifier: ' narrow'
+              TypeReference
+                Identifier: 'def'
+          TypeReference
+            Identifier: ' def'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' result'
+        CallExpression
+          Identifier: ' parse'
+          ArrayLiteralExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' a'
+                StringLiteral

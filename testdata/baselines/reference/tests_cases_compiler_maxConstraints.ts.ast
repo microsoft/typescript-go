@@ -1,0 +1,68 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Comparable'
+    TypeParameter
+      Identifier: 'T'
+    MethodSignature
+      Identifier: '
+    compareTo'
+      Parameter
+        Identifier: 'other'
+        TypeReference
+          Identifier: ' T'
+      NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' Comparer'
+    CallSignature
+      TypeParameter
+        Identifier: 'T'
+        TypeReference
+          Identifier: ' Comparable'
+          TypeReference
+            Identifier: 'T'
+      Parameter
+        Identifier: 'x'
+        TypeReference
+          Identifier: ' T'
+      Parameter
+        Identifier: ' y'
+        TypeReference
+          Identifier: ' T'
+      TypeReference
+        Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' max2'
+        TypeReference
+          Identifier: ' Comparer'
+        ArrowFunction
+          Parameter
+            Identifier: 'x'
+          Parameter
+            Identifier: ' y'
+          EqualsGreaterThanToken
+          Block
+            ReturnStatement
+              ConditionalExpression
+                ParenthesizedExpression
+                  BinaryExpression
+                    CallExpression
+                      PropertyAccessExpression
+                        Identifier: 'x'
+                        Identifier: 'compareTo'
+                      Identifier: 'y'
+                    GreaterThanToken
+                    NumericLiteral
+                QuestionToken
+                Identifier: ' x'
+                ColonToken
+                Identifier: ' y'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' maxResult'
+        CallExpression
+          Identifier: ' max2'
+          NumericLiteral
+          NumericLiteral

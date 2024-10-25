@@ -1,0 +1,401 @@
+SourceFile
+  Block
+    ExpressionStatement
+      StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    Block
+      ExpressionStatement
+        StringLiteral
+      ExpressionStatement
+        BinaryExpression
+          StringLiteral
+          CommaToken
+          StringLiteral
+      ExpressionStatement
+        StringLiteral
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' ImportInterface'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' RequireInterface'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' LocalInterface'
+    IntersectionType
+      ImportType
+        LiteralType
+          StringLiteral
+        ImportAttributes
+          ImportAttribute
+            StringLiteral
+            StringLiteral
+        Identifier: 'RequireInterface'
+      ImportType
+        LiteralType
+          StringLiteral
+        ImportAttributes
+          ImportAttribute
+            StringLiteral
+            StringLiteral
+        Identifier: 'ImportInterface'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        ParenthesizedExpression
+          AsExpression
+            AsExpression
+              NullKeyword
+              AnyKeyword
+            ImportType
+              LiteralType
+                StringLiteral
+              ImportAttributes
+                ImportAttribute
+                  StringLiteral
+                  StringLiteral
+              Identifier: 'RequireInterface'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        ParenthesizedExpression
+          AsExpression
+            AsExpression
+              NullKeyword
+              AnyKeyword
+            ImportType
+              LiteralType
+                StringLiteral
+              ImportAttributes
+                ImportAttribute
+                  StringLiteral
+                  StringLiteral
+              Identifier: 'ImportInterface'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' LocalInterface'
+    IntersectionType
+      ImportType
+        LiteralType
+          StringLiteral
+        ImportAttributes
+  ExpressionStatement
+    StringLiteral
+  ExpressionStatement
+    StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: 'RequireInterface'
+      AmpersandToken
+      PropertyAccessExpression
+        CallExpression
+          ImportKeyword
+          StringLiteral
+          ObjectLiteralExpression
+            PropertyAssignment
+              StringLiteral
+              StringLiteral
+        Identifier: 'ImportInterface'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        ParenthesizedExpression
+          AsExpression
+            AsExpression
+              NullKeyword
+              AnyKeyword
+            ImportType
+              LiteralType
+                StringLiteral
+              ImportAttributes
+  ExpressionStatement
+    StringLiteral
+  ExpressionStatement
+    StringLiteral
+  ExpressionStatement
+    Identifier: 'RequireInterface'
+  EmptyStatement
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        ParenthesizedExpression
+          AsExpression
+            AsExpression
+              NullKeyword
+              AnyKeyword
+            ImportType
+              LiteralType
+                StringLiteral
+              ImportAttributes
+  ExpressionStatement
+    StringLiteral
+  ExpressionStatement
+    StringLiteral
+  ExpressionStatement
+    Identifier: 'ImportInterface'
+  EmptyStatement
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' LocalInterface'
+    IntersectionType
+      ImportType
+        LiteralType
+          StringLiteral
+        ImportAttributes
+          ImportAttribute
+            StringLiteral
+            StringLiteral
+        Identifier: 'RequireInterface'
+      ImportType
+        LiteralType
+          StringLiteral
+        ImportAttributes
+          ImportAttribute
+            StringLiteral
+            StringLiteral
+        Identifier: 'ImportInterface'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        ParenthesizedExpression
+          AsExpression
+            AsExpression
+              NullKeyword
+              AnyKeyword
+            ImportType
+              LiteralType
+                StringLiteral
+              ImportAttributes
+                ImportAttribute
+                  StringLiteral
+                  StringLiteral
+              Identifier: 'RequireInterface'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        ParenthesizedExpression
+          AsExpression
+            AsExpression
+              NullKeyword
+              AnyKeyword
+            ImportType
+              LiteralType
+                StringLiteral
+              ImportAttributes
+                ImportAttribute
+                  StringLiteral
+                  StringLiteral
+              Identifier: 'ImportInterface'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' LocalInterface'
+    IntersectionType
+      IndexedAccessType
+        ImportType
+          LiteralType
+            StringLiteral
+          ImportAttributes
+        TypeLiteral
+          PropertySignature
+            StringLiteral
+            LiteralType
+              StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: 'RequireInterface'
+      AmpersandToken
+      PropertyAccessExpression
+        CallExpression
+          ImportKeyword
+          StringLiteral
+          ArrayLiteralExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                StringLiteral
+                StringLiteral
+        Identifier: 'ImportInterface'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        PropertyAccessExpression
+          ParenthesizedExpression
+            AsExpression
+              AsExpression
+                NullKeyword
+                AnyKeyword
+              IndexedAccessType
+                ImportType
+                  LiteralType
+                    StringLiteral
+                  ImportAttributes
+                TypeLiteral
+                  PropertySignature
+                    StringLiteral
+                    LiteralType
+                      StringLiteral
+          Identifier: 'RequireInterface'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        PropertyAccessExpression
+          ParenthesizedExpression
+            AsExpression
+              AsExpression
+                NullKeyword
+                AnyKeyword
+              IndexedAccessType
+                ImportType
+                  LiteralType
+                    StringLiteral
+                  ImportAttributes
+                TypeLiteral
+                  PropertySignature
+                    StringLiteral
+                    LiteralType
+                      StringLiteral
+          Identifier: 'ImportInterface'
+  TypeAliasDeclaration
+    Identifier: ' Attribute1'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' with'
+        TypeLiteral
+          PropertySignature
+            StringLiteral
+            LiteralType
+              StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' Attribute2'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' with'
+        TypeLiteral
+          PropertySignature
+            StringLiteral
+            LiteralType
+              StringLiteral
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' LocalInterface'
+    IntersectionType
+      ImportType
+        LiteralType
+          StringLiteral
+        ImportAttributes
+  ExpressionStatement
+    Identifier: ' Attribute1'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: 'RequireInterface'
+      AmpersandToken
+      PropertyAccessExpression
+        CallExpression
+          ImportKeyword
+          StringLiteral
+          Identifier: ' Attribute2'
+        Identifier: 'ImportInterface'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        ParenthesizedExpression
+          AsExpression
+            AsExpression
+              NullKeyword
+              AnyKeyword
+            ImportType
+              LiteralType
+                StringLiteral
+              ImportAttributes
+      VariableDeclaration
+        Identifier: ' Attribute1'
+      VariableDeclaration
+        Identifier: 'RequireInterface'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        ParenthesizedExpression
+          AsExpression
+            AsExpression
+              NullKeyword
+              AnyKeyword
+            ImportType
+              LiteralType
+                StringLiteral
+              ImportAttributes
+      VariableDeclaration
+        Identifier: ' Attribute2'
+      VariableDeclaration
+        Identifier: 'ImportInterface'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' LocalInterface'
+    IntersectionType
+      ImportType
+        LiteralType
+          StringLiteral
+        ImportAttributes
+        Identifier: 'RequireInterface'
+      ImportType
+        LiteralType
+          StringLiteral
+        ImportAttributes
+        Identifier: 'ImportInterface'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        ParenthesizedExpression
+          AsExpression
+            AsExpression
+              NullKeyword
+              AnyKeyword
+            ImportType
+              LiteralType
+                StringLiteral
+              ImportAttributes
+              Identifier: 'RequireInterface'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        ParenthesizedExpression
+          AsExpression
+            AsExpression
+              NullKeyword
+              AnyKeyword
+            ImportType
+              LiteralType
+                StringLiteral
+              ImportAttributes
+              Identifier: 'ImportInterface'

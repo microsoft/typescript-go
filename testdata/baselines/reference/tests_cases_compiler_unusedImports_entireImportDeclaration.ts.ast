@@ -1,0 +1,64 @@
+SourceFile
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        NumericLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        NumericLiteral
+  ExportAssignment
+    NumericLiteral
+  ImportDeclaration
+    ImportClause
+      Identifier: ' d1'
+      NamedImports
+        ImportSpecifier
+          Identifier: ' a'
+          Identifier: ' a1'
+        ImportSpecifier
+          Identifier: ' b'
+          Identifier: ' b1'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      Identifier: ' d2'
+      NamespaceImport
+        Identifier: ' ns'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      Identifier: ' d3'
+      NamedImports
+        ImportSpecifier
+          Identifier: ' a'
+          Identifier: ' a2'
+        ImportSpecifier
+          Identifier: ' b'
+          Identifier: ' b2'
+    StringLiteral
+  ExpressionStatement
+    Identifier: '
+d3'
+  ImportDeclaration
+    ImportClause
+      Identifier: ' d4'
+      NamespaceImport
+        Identifier: ' ns2'
+    StringLiteral
+  ExpressionStatement
+    Identifier: '
+d4'
+  ImportDeclaration
+    ImportClause
+      Identifier: ' d5'
+      NamespaceImport
+        Identifier: ' ns3'
+    StringLiteral
+  ExpressionStatement
+    Identifier: '
+ns3'

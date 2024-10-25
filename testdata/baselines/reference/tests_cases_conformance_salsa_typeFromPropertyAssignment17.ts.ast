@@ -1,0 +1,110 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' require'
+        AnyKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' module'
+        AnyKeyword
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+// @Filename: minimatch.js
+/// <reference path='./types.d.ts'/>
+module'
+        Identifier: 'exports'
+      EqualsToken
+      Identifier: ' minimatch'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+minimatch'
+        Identifier: 'M'
+      EqualsToken
+      Identifier: ' M'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+minimatch'
+        Identifier: 'filter'
+      EqualsToken
+      Identifier: ' filter'
+  FunctionDeclaration
+    Identifier: ' filter'
+    Block
+      ReturnStatement
+        CallExpression
+          Identifier: ' minimatch'
+  FunctionDeclaration
+    Identifier: ' minimatch'
+    Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+M'
+        Identifier: 'defaults'
+      EqualsToken
+      FunctionExpression
+        Parameter
+          Identifier: 'def'
+        Block
+          ReturnStatement
+            Identifier: ' def'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+M'
+          Identifier: 'prototype'
+        Identifier: 'm'
+      EqualsToken
+      FunctionExpression
+        Block
+  FunctionDeclaration
+    Identifier: ' M'
+    Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' mini'
+        CallExpression
+          Identifier: ' require'
+          StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+mini'
+          Identifier: 'M'
+        Identifier: 'defaults'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' m'
+        NewExpression
+          PropertyAccessExpression
+            Identifier: ' mini'
+            Identifier: 'M'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+m'
+        Identifier: 'm'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+mini'
+        Identifier: 'filter'

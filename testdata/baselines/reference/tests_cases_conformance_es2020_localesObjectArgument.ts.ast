@@ -1,0 +1,419 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' enUS'
+        NewExpression
+          PropertyAccessExpression
+            Identifier: ' Intl'
+            Identifier: 'Locale'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' deDE'
+        NewExpression
+          PropertyAccessExpression
+            Identifier: ' Intl'
+            Identifier: 'Locale'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' jaJP'
+        NewExpression
+          PropertyAccessExpression
+            Identifier: ' Intl'
+            Identifier: 'Locale'
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' now'
+        NewExpression
+          Identifier: ' Date'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' num'
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' bigint'
+        BigintLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' str'
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' readonlyLocales'
+        TypeReference
+          Identifier: ' Readonly'
+          ArrayType
+            StringKeyword
+        ArrayLiteralExpression
+          StringLiteral
+          StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+now'
+        Identifier: 'toLocaleString'
+      Identifier: 'enUS'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+now'
+        Identifier: 'toLocaleDateString'
+      Identifier: 'enUS'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+now'
+        Identifier: 'toLocaleTimeString'
+      Identifier: 'enUS'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+now'
+        Identifier: 'toLocaleString'
+      ArrayLiteralExpression
+        Identifier: 'deDE'
+        Identifier: ' jaJP'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+now'
+        Identifier: 'toLocaleDateString'
+      ArrayLiteralExpression
+        Identifier: 'deDE'
+        Identifier: ' jaJP'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+now'
+        Identifier: 'toLocaleTimeString'
+      ArrayLiteralExpression
+        Identifier: 'deDE'
+        Identifier: ' jaJP'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+num'
+        Identifier: 'toLocaleString'
+      Identifier: 'enUS'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+num'
+        Identifier: 'toLocaleString'
+      ArrayLiteralExpression
+        Identifier: 'deDE'
+        Identifier: ' jaJP'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+bigint'
+        Identifier: 'toLocaleString'
+      Identifier: 'enUS'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+bigint'
+        Identifier: 'toLocaleString'
+      ArrayLiteralExpression
+        Identifier: 'deDE'
+        Identifier: ' jaJP'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+str'
+        Identifier: 'toLocaleLowerCase'
+      Identifier: 'enUS'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+str'
+        Identifier: 'toLocaleLowerCase'
+      ArrayLiteralExpression
+        Identifier: 'deDE'
+        Identifier: ' jaJP'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+str'
+        Identifier: 'toLocaleUpperCase'
+      Identifier: 'enUS'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+str'
+        Identifier: 'toLocaleUpperCase'
+      ArrayLiteralExpression
+        Identifier: 'deDE'
+        Identifier: ' jaJP'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+str'
+        Identifier: 'localeCompare'
+      Identifier: 'str'
+      Identifier: ' enUS'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+str'
+        Identifier: 'localeCompare'
+      Identifier: 'str'
+      ArrayLiteralExpression
+        Identifier: 'deDE'
+        Identifier: ' jaJP'
+  ExpressionStatement
+    NewExpression
+      PropertyAccessExpression
+        Identifier: ' Intl'
+        Identifier: 'PluralRules'
+      Identifier: 'enUS'
+  ExpressionStatement
+    NewExpression
+      PropertyAccessExpression
+        Identifier: ' Intl'
+        Identifier: 'PluralRules'
+      ArrayLiteralExpression
+        Identifier: 'deDE'
+        Identifier: ' jaJP'
+  ExpressionStatement
+    NewExpression
+      PropertyAccessExpression
+        Identifier: ' Intl'
+        Identifier: 'PluralRules'
+      Identifier: 'readonlyLocales'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+Intl'
+          Identifier: 'PluralRules'
+        Identifier: 'supportedLocalesOf'
+      Identifier: 'enUS'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+Intl'
+          Identifier: 'PluralRules'
+        Identifier: 'supportedLocalesOf'
+      ArrayLiteralExpression
+        Identifier: 'deDE'
+        Identifier: ' jaJP'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+Intl'
+          Identifier: 'PluralRules'
+        Identifier: 'supportedLocalesOf'
+      Identifier: 'readonlyLocales'
+  ExpressionStatement
+    NewExpression
+      PropertyAccessExpression
+        Identifier: ' Intl'
+        Identifier: 'RelativeTimeFormat'
+      Identifier: 'enUS'
+  ExpressionStatement
+    NewExpression
+      PropertyAccessExpression
+        Identifier: ' Intl'
+        Identifier: 'RelativeTimeFormat'
+      ArrayLiteralExpression
+        Identifier: 'deDE'
+        Identifier: ' jaJP'
+  ExpressionStatement
+    NewExpression
+      PropertyAccessExpression
+        Identifier: ' Intl'
+        Identifier: 'RelativeTimeFormat'
+      Identifier: 'readonlyLocales'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+Intl'
+          Identifier: 'RelativeTimeFormat'
+        Identifier: 'supportedLocalesOf'
+      Identifier: 'enUS'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+Intl'
+          Identifier: 'RelativeTimeFormat'
+        Identifier: 'supportedLocalesOf'
+      ArrayLiteralExpression
+        Identifier: 'deDE'
+        Identifier: ' jaJP'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+Intl'
+          Identifier: 'RelativeTimeFormat'
+        Identifier: 'supportedLocalesOf'
+      Identifier: 'readonlyLocales'
+  ExpressionStatement
+    NewExpression
+      PropertyAccessExpression
+        Identifier: ' Intl'
+        Identifier: 'Collator'
+      Identifier: 'enUS'
+  ExpressionStatement
+    NewExpression
+      PropertyAccessExpression
+        Identifier: ' Intl'
+        Identifier: 'Collator'
+      ArrayLiteralExpression
+        Identifier: 'deDE'
+        Identifier: ' jaJP'
+  ExpressionStatement
+    NewExpression
+      PropertyAccessExpression
+        Identifier: ' Intl'
+        Identifier: 'Collator'
+      Identifier: 'readonlyLocales'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+Intl'
+          Identifier: 'Collator'
+        Identifier: 'supportedLocalesOf'
+      Identifier: 'enUS'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+Intl'
+          Identifier: 'Collator'
+        Identifier: 'supportedLocalesOf'
+      ArrayLiteralExpression
+        Identifier: 'deDE'
+        Identifier: ' jaJP'
+  ExpressionStatement
+    NewExpression
+      PropertyAccessExpression
+        Identifier: ' Intl'
+        Identifier: 'DateTimeFormat'
+      Identifier: 'enUS'
+  ExpressionStatement
+    NewExpression
+      PropertyAccessExpression
+        Identifier: ' Intl'
+        Identifier: 'DateTimeFormat'
+      ArrayLiteralExpression
+        Identifier: 'deDE'
+        Identifier: ' jaJP'
+  ExpressionStatement
+    NewExpression
+      PropertyAccessExpression
+        Identifier: ' Intl'
+        Identifier: 'DateTimeFormat'
+      Identifier: 'readonlyLocales'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+Intl'
+          Identifier: 'DateTimeFormat'
+        Identifier: 'supportedLocalesOf'
+      Identifier: 'enUS'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+Intl'
+          Identifier: 'DateTimeFormat'
+        Identifier: 'supportedLocalesOf'
+      ArrayLiteralExpression
+        Identifier: 'deDE'
+        Identifier: ' jaJP'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+Intl'
+          Identifier: 'DateTimeFormat'
+        Identifier: 'supportedLocalesOf'
+      Identifier: 'readonlyLocales'
+  ExpressionStatement
+    NewExpression
+      PropertyAccessExpression
+        Identifier: ' Intl'
+        Identifier: 'NumberFormat'
+      Identifier: 'enUS'
+  ExpressionStatement
+    NewExpression
+      PropertyAccessExpression
+        Identifier: ' Intl'
+        Identifier: 'NumberFormat'
+      ArrayLiteralExpression
+        Identifier: 'deDE'
+        Identifier: ' jaJP'
+  ExpressionStatement
+    NewExpression
+      PropertyAccessExpression
+        Identifier: ' Intl'
+        Identifier: 'NumberFormat'
+      Identifier: 'readonlyLocales'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+Intl'
+          Identifier: 'NumberFormat'
+        Identifier: 'supportedLocalesOf'
+      Identifier: 'enUS'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+Intl'
+          Identifier: 'NumberFormat'
+        Identifier: 'supportedLocalesOf'
+      Identifier: 'readonlyLocales'

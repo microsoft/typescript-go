@@ -1,0 +1,90 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' JSX'
+    ModuleBlock
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' Element'
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' a'
+      JsxElement
+        JsxOpeningElement
+          PropertyAccessExpression
+            Identifier: 'C'
+            Identifier: 'z'
+          JsxAttributes
+        JsxClosingElement
+          PropertyAccessExpression
+            Identifier: 'C'
+            Identifier: 'z'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' b'
+      JsxSelfClosingElement
+        PropertyAccessExpression
+          Identifier: 'C'
+          Identifier: 'z'
+        JsxAttributes
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' c'
+      JsxElement
+        JsxOpeningElement
+          Identifier: 'span'
+          JsxAttributes
+            JsxAttribute
+              PropertyAccessExpression
+                Identifier: 'C'
+                Identifier: 'x'
+        JsxClosingElement
+          Identifier: 'span'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' d'
+      JsxElement
+        JsxOpeningElement
+          Identifier: 'span'
+          JsxAttributes
+            JsxAttribute
+              Identifier: ' id'
+              JsxExpression
+                PropertyAccessExpression
+                  Identifier: 'C'
+                  Identifier: 'y'
+        JsxClosingElement
+          Identifier: 'span'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' e'
+      JsxElement
+        JsxOpeningElement
+          Identifier: 'span'
+          JsxAttributes
+        JsxExpression
+          PropertyAccessExpression
+            Identifier: 'C'
+            Identifier: 'y'
+        JsxClosingElement
+          Identifier: 'span'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' x'
+      ObjectLiteralExpression
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' y'
+      StringLiteral
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' z'
+      ArrowFunction
+        EqualsGreaterThanToken
+        JsxElement
+          JsxOpeningElement
+            Identifier: 'b'
+            JsxAttributes
+          JsxClosingElement
+            Identifier: 'b'

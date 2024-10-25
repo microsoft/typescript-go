@@ -1,0 +1,10 @@
+SourceFile
+  TryStatement
+    Block
+      ThrowStatement
+        StringLiteral
+    CatchClause
+      VariableDeclaration
+        Identifier: ' /*10*/ e'
+      Block
+    Block

@@ -1,0 +1,43 @@
+SourceFile
+  EnumDeclaration
+    Identifier: ' Foo'
+    EnumMember
+      StringLiteral
+      NumericLiteral
+    EnumMember
+      StringLiteral
+      NumericLiteral
+    EnumMember
+      StringLiteral
+      NumericLiteral
+    EnumMember
+      StringLiteral
+      NumericLiteral
+  ModuleDeclaration
+    Identifier: ' Foo'
+    ModuleBlock
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' ___call'
+        NumberKeyword
+        Block
+          ReturnStatement
+            NumericLiteral
+  FunctionDeclaration
+    Identifier: ' Bar'
+    Block
+      ReturnStatement
+        StringLiteral
+  ModuleDeclaration
+    Identifier: ' Bar'
+    ModuleBlock
+      FunctionDeclaration
+        ExportKeyword
+        Identifier: ' __call'
+        Parameter
+          Identifier: 'x'
+          NumberKeyword
+        NumberKeyword
+        Block
+          ReturnStatement
+            NumericLiteral

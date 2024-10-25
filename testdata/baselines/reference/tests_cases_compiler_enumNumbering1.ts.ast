@@ -1,0 +1,30 @@
+SourceFile
+  EnumDeclaration
+    Identifier: ' Test'
+    EnumMember
+      Identifier: '
+    A'
+    EnumMember
+      Identifier: '
+    B'
+    EnumMember
+      Identifier: '
+    C'
+      CallExpression
+        PropertyAccessExpression
+          Identifier: ' Math'
+          Identifier: 'floor'
+        BinaryExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: 'Math'
+              Identifier: 'random'
+          AsteriskToken
+          NumericLiteral
+    EnumMember
+      Identifier: '
+    D'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    E'

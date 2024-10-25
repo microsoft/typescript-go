@@ -1,0 +1,61 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    TypeReference
+      Identifier: ' T'
+    Block
+      ReturnStatement
+        NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r'
+        ArrowFunction
+          TypeParameter
+            Identifier: 'T'
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: ' T'
+          EqualsGreaterThanToken
+          Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r2'
+        TypeAssertionExpression
+          FunctionType
+            TypeParameter
+              Identifier: 'T'
+            Parameter
+              Identifier: 'x'
+              TypeReference
+                Identifier: ' T'
+            TypeReference
+              Identifier: ' T'
+          Identifier: 'f'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r3'
+        BinaryExpression
+          BinaryExpression
+            Identifier: ''
+            LessThanLessThanToken
+            Identifier: 'T'
+          GreaterThanToken
+          ParenthesizedExpression
+            Identifier: 'x'
+      VariableDeclaration
+        Identifier: ' T'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' T'
+      GreaterThanToken
+      Identifier: 'f'

@@ -1,0 +1,22 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' A'
+  FunctionDeclaration
+    Identifier: ' factory'
+    Parameter
+      Identifier: 'a'
+      AnyKeyword
+    TypeLiteral
+      ConstructSignature
+        TypeReference
+          Identifier: ' Object'
+    Block
+      ReturnStatement
+        NullKeyword
+  ClassDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        CallExpression
+          Identifier: ' factory'
+          Identifier: 'A'

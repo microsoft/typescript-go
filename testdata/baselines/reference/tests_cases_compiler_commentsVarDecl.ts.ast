@@ -1,0 +1,94 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' myVariable'
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' anotherVariable'
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' aVar'
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' anotherAnotherVariable'
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' /* multiline trailing comment 
+this is multiline trailing comment */
+/** Triple slash comment on the assignment shouldnt be in .d.ts file*/
+x'
+      EqualsToken
+      Identifier: ' myVariable'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' n'
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' yy'
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' z'
+        ArrowFunction
+          Parameter
+            Identifier: 'x'
+            NumberKeyword
+          Parameter
+            Identifier: ' y'
+            NumberKeyword
+          EqualsGreaterThanToken
+          BinaryExpression
+            Identifier: ' x'
+            PlusToken
+            Identifier: ' y'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' z2'
+        FunctionType
+          Parameter
+            Identifier: 'x'
+            NumberKeyword
+          StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x2'
+        Identifier: ' z2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' n4'
+        FunctionType
+          Parameter
+            Identifier: 'x'
+            NumberKeyword
+          StringKeyword
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+n4'
+      EqualsToken
+      Identifier: ' z2'

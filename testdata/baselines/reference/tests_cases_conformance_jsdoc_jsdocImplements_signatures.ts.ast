@@ -1,0 +1,10 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Sig'
+    IndexSignature
+      Parameter
+        Identifier: 'index'
+        StringKeyword
+      StringKeyword
+  ClassDeclaration
+    Identifier: ' B'

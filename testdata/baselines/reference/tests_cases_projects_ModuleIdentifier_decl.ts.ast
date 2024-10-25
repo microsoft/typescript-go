@@ -1,0 +1,16 @@
+SourceFile
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' P'
+    PropertySignature
+      Identifier: ' x'
+      NumberKeyword
+    PropertySignature
+      Identifier: ' y'
+      NumberKeyword
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        NumericLiteral

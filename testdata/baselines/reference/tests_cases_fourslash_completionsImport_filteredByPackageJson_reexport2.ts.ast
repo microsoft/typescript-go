@@ -1,0 +1,98 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+//@noEmit: true
+
+//@Filename: /package.json
+////{
+////  "dependencies": {
+////    "b_": "*",
+////    "_c": "*"
+////  }
+////}
+
+//@Filename: /node_modules/a/index.d.ts
+////export const foo = 0;
+
+//@Filename: /node_modules/a/package.json
+////{
+////  "name": "a",
+////  "types": "./index.d.ts"
+////}
+
+//@Filename: /node_modules/b_/index.d.ts
+////export { foo } from "a";
+
+//@Filename: /node_modules/b_/package.json
+////{
+////  "name": "b_",
+////  "types": "./index.d.ts"
+////}
+
+//@Filename: /node_modules/_c/index.d.ts
+////export { foo } from "b_";
+
+//@Filename: /node_modules/_c/package.json
+////{
+////  "name": "_c",
+////  "types": "./index.d.ts"
+////}
+
+//@Filename: /src/index.ts
+////fo/**/
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+  marker'
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' test'
+              Identifier: 'marker'
+            StringLiteral
+        PropertyAssignment
+          Identifier: '
+  includes'
+          ArrayLiteralExpression
+            PropertyAccessExpression
+              Identifier: '
+    completion'
+              Identifier: 'undefinedVarEntry'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+      name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+      source'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+      hasAction'
+                TrueKeyword
+              PropertyAssignment
+                Identifier: '
+      sortText'
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' completion'
+                    Identifier: 'SortText'
+                  Identifier: 'AutoImportSuggestions'
+            SpreadElement
+              PropertyAccessExpression
+                Identifier: 'completion'
+                Identifier: 'statementKeywordsWithTypes'
+        PropertyAssignment
+          Identifier: '
+  preferences'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+    includeCompletionsForModuleExports'
+              TrueKeyword

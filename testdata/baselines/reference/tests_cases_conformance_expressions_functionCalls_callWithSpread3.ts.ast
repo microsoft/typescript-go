@@ -1,0 +1,254 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s2'
+        TupleType
+          StringKeyword
+          StringKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s3'
+        TupleType
+          StringKeyword
+          StringKeyword
+          StringKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s2_'
+        TupleType
+          StringKeyword
+          StringKeyword
+          RestType
+            ArrayType
+              StringKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s_'
+        ArrayType
+          StringKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' n_'
+        ArrayType
+          NumberKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s2n_'
+        TupleType
+          StringKeyword
+          StringKeyword
+          RestType
+            ArrayType
+              NumberKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' fs2'
+    Parameter
+      Identifier: 'a'
+      StringKeyword
+    Parameter
+      Identifier: ' b'
+      StringKeyword
+    VoidKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' fs2_'
+    Parameter
+      Identifier: 'a'
+      StringKeyword
+    Parameter
+      Identifier: ' b'
+      StringKeyword
+    Parameter
+      DotDotDotToken
+      Identifier: 'c'
+      ArrayType
+        StringKeyword
+    VoidKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' fs2n_'
+    Parameter
+      Identifier: 'a'
+      StringKeyword
+    Parameter
+      Identifier: ' b'
+      StringKeyword
+    Parameter
+      DotDotDotToken
+      Identifier: 'c'
+      ArrayType
+        NumberKeyword
+    VoidKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' fs5'
+    Parameter
+      Identifier: 'a'
+      StringKeyword
+    Parameter
+      Identifier: ' b'
+      StringKeyword
+    Parameter
+      Identifier: ' c'
+      StringKeyword
+    Parameter
+      Identifier: ' d'
+      StringKeyword
+    Parameter
+      Identifier: ' e'
+      StringKeyword
+    VoidKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+// error
+fs2'
+      StringLiteral
+      SpreadElement
+        Identifier: 's2'
+  ExpressionStatement
+    CallExpression
+      Identifier: ' // error on ...s2
+fs2'
+      StringLiteral
+      StringLiteral
+      StringLiteral
+      SpreadElement
+        Identifier: 's2'
+  ExpressionStatement
+    CallExpression
+      Identifier: ' // error on 'c' and ...s2
+fs2'
+      StringLiteral
+      StringLiteral
+      SpreadElement
+        Identifier: 's2'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: ' // error on ...s2 and 'c'
+fs2'
+      StringLiteral
+      StringLiteral
+      StringLiteral
+      SpreadElement
+        Identifier: 's2'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: ' // error on 'c', ...s2 and 'd'
+fs2'
+      SpreadElement
+        Identifier: 's2'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: ' // error on 'a'
+fs2'
+      SpreadElement
+        Identifier: 's3'
+  ExpressionStatement
+    CallExpression
+      Identifier: ' // error on ...s3
+fs2_'
+      SpreadElement
+        Identifier: 's_'
+  ExpressionStatement
+    CallExpression
+      Identifier: ' // error on ...s_
+fs2_'
+      SpreadElement
+        Identifier: 's2n_'
+  ExpressionStatement
+    CallExpression
+      Identifier: ' // error on ...s2n_
+fs2_'
+      SpreadElement
+        Identifier: 's_'
+      SpreadElement
+        Identifier: 's_'
+  ExpressionStatement
+    CallExpression
+      Identifier: ' // error on ...s_
+fs2_'
+      SpreadElement
+        Identifier: 's_'
+      SpreadElement
+        Identifier: 's_'
+      SpreadElement
+        Identifier: 's_'
+  ExpressionStatement
+    CallExpression
+      Identifier: ' // error on ...s_
+// fs2n_(...s2, ...s_); //           FIXME: should be a type error
+fs2n_'
+      SpreadElement
+        Identifier: 's2_'
+  ExpressionStatement
+    CallExpression
+      Identifier: ' // error on ...s2_
+
+// ok
+fs2_'
+      SpreadElement
+        Identifier: 's2_'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+fs2_'
+      SpreadElement
+        Identifier: 's2_'
+      SpreadElement
+        Identifier: 's_'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+fs2_'
+      SpreadElement
+        Identifier: 's2_'
+      SpreadElement
+        Identifier: 's2_'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+fs2_'
+      SpreadElement
+        Identifier: 's_'
+      SpreadElement
+        Identifier: 's2_'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+fs2n_'
+      SpreadElement
+        Identifier: 's2n_'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+fs2n_'
+      SpreadElement
+        Identifier: 's2'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+// fs2n_(...s2, ...n_); // FIXME: should compile
+fs5'
+      SpreadElement
+        Identifier: 's2'
+      StringLiteral
+      SpreadElement
+        Identifier: 's2'

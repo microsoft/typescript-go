@@ -1,0 +1,578 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' test'
+    Parameter
+      Identifier: 'x'
+      BooleanKeyword
+    BooleanKeyword
+    Block
+      ReturnStatement
+        Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' state'
+        TrueKeyword
+  IfStatement
+    Identifier: 'state'
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  test'
+          BinaryExpression
+            AsExpression
+              Identifier: 'state'
+              AnyKeyword
+            AmpersandAmpersandToken
+            Identifier: ' state'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  test'
+          BinaryExpression
+            AsExpression
+              Identifier: 'state'
+              AnyKeyword
+            AmpersandAmpersandToken
+            Identifier: ' state'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  test'
+          BinaryExpression
+            AsExpression
+              Identifier: 'state'
+              AnyKeyword
+            AmpersandAmpersandToken
+            Identifier: ' state'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  test'
+          BinaryExpression
+            AsExpression
+              Identifier: 'state'
+              AnyKeyword
+            AmpersandAmpersandToken
+            Identifier: ' state'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  test'
+          BinaryExpression
+            AsExpression
+              Identifier: 'state'
+              AnyKeyword
+            AmpersandAmpersandToken
+            Identifier: ' state'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  test'
+          BinaryExpression
+            AsExpression
+              Identifier: 'state'
+              AnyKeyword
+            AmpersandAmpersandToken
+            Identifier: ' state'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  test'
+          BinaryExpression
+            AsExpression
+              Identifier: 'state'
+              AnyKeyword
+            AmpersandAmpersandToken
+            Identifier: ' state'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  test'
+          BinaryExpression
+            AsExpression
+              Identifier: 'state'
+              AnyKeyword
+            AmpersandAmpersandToken
+            Identifier: ' state'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  test'
+          BinaryExpression
+            AsExpression
+              Identifier: 'state'
+              AnyKeyword
+            AmpersandAmpersandToken
+            Identifier: ' state'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  test'
+          BinaryExpression
+            AsExpression
+              Identifier: 'state'
+              AnyKeyword
+            AmpersandAmpersandToken
+            Identifier: ' state'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  test'
+          BinaryExpression
+            AsExpression
+              Identifier: 'state'
+              AnyKeyword
+            AmpersandAmpersandToken
+            Identifier: ' state'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  test'
+          BinaryExpression
+            AsExpression
+              Identifier: 'state'
+              AnyKeyword
+            AmpersandAmpersandToken
+            Identifier: ' state'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  test'
+          BinaryExpression
+            AsExpression
+              Identifier: 'state'
+              AnyKeyword
+            AmpersandAmpersandToken
+            Identifier: ' state'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  test'
+          BinaryExpression
+            AsExpression
+              Identifier: 'state'
+              AnyKeyword
+            AmpersandAmpersandToken
+            Identifier: ' state'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  test'
+          BinaryExpression
+            AsExpression
+              Identifier: 'state'
+              AnyKeyword
+            AmpersandAmpersandToken
+            Identifier: ' state'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  test'
+          BinaryExpression
+            AsExpression
+              Identifier: 'state'
+              AnyKeyword
+            AmpersandAmpersandToken
+            Identifier: ' state'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  test'
+          BinaryExpression
+            AsExpression
+              Identifier: 'state'
+              AnyKeyword
+            AmpersandAmpersandToken
+            Identifier: ' state'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  test'
+          BinaryExpression
+            AsExpression
+              Identifier: 'state'
+              AnyKeyword
+            AmpersandAmpersandToken
+            Identifier: ' state'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  test'
+          BinaryExpression
+            AsExpression
+              Identifier: 'state'
+              AnyKeyword
+            AmpersandAmpersandToken
+            Identifier: ' state'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  test'
+          BinaryExpression
+            AsExpression
+              Identifier: 'state'
+              AnyKeyword
+            AmpersandAmpersandToken
+            Identifier: ' state'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  test'
+          BinaryExpression
+            AsExpression
+              Identifier: 'state'
+              AnyKeyword
+            AmpersandAmpersandToken
+            Identifier: ' state'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  test'
+          BinaryExpression
+            AsExpression
+              Identifier: 'state'
+              AnyKeyword
+            AmpersandAmpersandToken
+            Identifier: ' state'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  test'
+          BinaryExpression
+            AsExpression
+              Identifier: 'state'
+              AnyKeyword
+            AmpersandAmpersandToken
+            Identifier: ' state'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  test'
+          BinaryExpression
+            AsExpression
+              Identifier: 'state'
+              AnyKeyword
+            AmpersandAmpersandToken
+            Identifier: ' state'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  test'
+          BinaryExpression
+            AsExpression
+              Identifier: 'state'
+              AnyKeyword
+            AmpersandAmpersandToken
+            Identifier: ' state'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  test'
+          BinaryExpression
+            AsExpression
+              Identifier: 'state'
+              AnyKeyword
+            AmpersandAmpersandToken
+            Identifier: ' state'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  test'
+          BinaryExpression
+            AsExpression
+              Identifier: 'state'
+              AnyKeyword
+            AmpersandAmpersandToken
+            Identifier: ' state'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  test'
+          BinaryExpression
+            AsExpression
+              Identifier: 'state'
+              AnyKeyword
+            AmpersandAmpersandToken
+            Identifier: ' state'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  test'
+          BinaryExpression
+            AsExpression
+              Identifier: 'state'
+              AnyKeyword
+            AmpersandAmpersandToken
+            Identifier: ' state'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  test'
+          BinaryExpression
+            AsExpression
+              Identifier: 'state'
+              AnyKeyword
+            AmpersandAmpersandToken
+            Identifier: ' state'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  test'
+          BinaryExpression
+            AsExpression
+              Identifier: 'state'
+              AnyKeyword
+            AmpersandAmpersandToken
+            Identifier: ' state'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  test'
+          BinaryExpression
+            AsExpression
+              Identifier: 'state'
+              AnyKeyword
+            AmpersandAmpersandToken
+            Identifier: ' state'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  test'
+          BinaryExpression
+            AsExpression
+              Identifier: 'state'
+              AnyKeyword
+            AmpersandAmpersandToken
+            Identifier: ' state'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  test'
+          BinaryExpression
+            AsExpression
+              Identifier: 'state'
+              AnyKeyword
+            AmpersandAmpersandToken
+            Identifier: ' state'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  test'
+          BinaryExpression
+            AsExpression
+              Identifier: 'state'
+              AnyKeyword
+            AmpersandAmpersandToken
+            Identifier: ' state'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  test'
+          BinaryExpression
+            AsExpression
+              Identifier: 'state'
+              AnyKeyword
+            AmpersandAmpersandToken
+            Identifier: ' state'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  test'
+          BinaryExpression
+            AsExpression
+              Identifier: 'state'
+              AnyKeyword
+            AmpersandAmpersandToken
+            Identifier: ' state'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  test'
+          BinaryExpression
+            AsExpression
+              Identifier: 'state'
+              AnyKeyword
+            AmpersandAmpersandToken
+            Identifier: ' state'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  test'
+          BinaryExpression
+            AsExpression
+              Identifier: 'state'
+              AnyKeyword
+            AmpersandAmpersandToken
+            Identifier: ' state'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  test'
+          BinaryExpression
+            AsExpression
+              Identifier: 'state'
+              AnyKeyword
+            AmpersandAmpersandToken
+            Identifier: ' state'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  test'
+          BinaryExpression
+            AsExpression
+              Identifier: 'state'
+              AnyKeyword
+            AmpersandAmpersandToken
+            Identifier: ' state'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  test'
+          BinaryExpression
+            AsExpression
+              Identifier: 'state'
+              AnyKeyword
+            AmpersandAmpersandToken
+            Identifier: ' state'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  test'
+          BinaryExpression
+            AsExpression
+              Identifier: 'state'
+              AnyKeyword
+            AmpersandAmpersandToken
+            Identifier: ' state'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  test'
+          BinaryExpression
+            AsExpression
+              Identifier: 'state'
+              AnyKeyword
+            AmpersandAmpersandToken
+            Identifier: ' state'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  test'
+          BinaryExpression
+            AsExpression
+              Identifier: 'state'
+              AnyKeyword
+            AmpersandAmpersandToken
+            Identifier: ' state'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  test'
+          BinaryExpression
+            AsExpression
+              Identifier: 'state'
+              AnyKeyword
+            AmpersandAmpersandToken
+            Identifier: ' state'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  test'
+          BinaryExpression
+            AsExpression
+              Identifier: 'state'
+              AnyKeyword
+            AmpersandAmpersandToken
+            Identifier: ' state'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  test'
+          BinaryExpression
+            AsExpression
+              Identifier: 'state'
+              AnyKeyword
+            AmpersandAmpersandToken
+            Identifier: ' state'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  test'
+          BinaryExpression
+            AsExpression
+              Identifier: 'state'
+              AnyKeyword
+            AmpersandAmpersandToken
+            Identifier: ' state'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  test'
+          BinaryExpression
+            AsExpression
+              Identifier: 'state'
+              AnyKeyword
+            AmpersandAmpersandToken
+            Identifier: ' state'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  test'
+          BinaryExpression
+            AsExpression
+              Identifier: 'state'
+              AnyKeyword
+            AmpersandAmpersandToken
+            Identifier: ' state'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  test'
+          BinaryExpression
+            AsExpression
+              Identifier: 'state'
+              AnyKeyword
+            AmpersandAmpersandToken
+            Identifier: ' state'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  test'
+          BinaryExpression
+            AsExpression
+              Identifier: 'state'
+              AnyKeyword
+            AmpersandAmpersandToken
+            Identifier: ' state'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  test'
+          BinaryExpression
+            AsExpression
+              Identifier: 'state'
+              AnyKeyword
+            AmpersandAmpersandToken
+            Identifier: ' state'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  test'
+          BinaryExpression
+            AsExpression
+              Identifier: 'state'
+              AnyKeyword
+            AmpersandAmpersandToken
+            Identifier: ' state'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+  test'
+          BinaryExpression
+            AsExpression
+              Identifier: 'state'
+              AnyKeyword
+            AmpersandAmpersandToken
+            Identifier: ' state'

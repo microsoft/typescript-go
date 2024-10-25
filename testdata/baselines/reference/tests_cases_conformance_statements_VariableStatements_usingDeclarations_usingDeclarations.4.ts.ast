@@ -1,0 +1,10 @@
+SourceFile
+  Block
+    ExpressionStatement
+      BinaryExpression
+        ElementAccessExpression
+          Identifier: '
+    using'
+          Identifier: 'a'
+        EqualsToken
+        NullKeyword

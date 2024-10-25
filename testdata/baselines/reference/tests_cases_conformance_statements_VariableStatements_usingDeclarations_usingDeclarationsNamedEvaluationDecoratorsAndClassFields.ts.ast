@@ -1,0 +1,69 @@
+SourceFile
+  ExportDeclaration
+    NamedExports
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' dec'
+        AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' C1'
+        ClassExpression
+          MethodDeclaration
+            StaticKeyword
+            ComputedPropertyName
+              PropertyAccessExpression
+                Identifier: 'Symbol'
+                Identifier: 'dispose'
+            Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' C2'
+        ClassExpression
+          PropertyDeclaration
+            StaticKeyword
+            Identifier: ' x'
+            NumericLiteral
+          MethodDeclaration
+            StaticKeyword
+            ComputedPropertyName
+              PropertyAccessExpression
+                Identifier: 'Symbol'
+                Identifier: 'dispose'
+            Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' C3'
+        ClassExpression
+          Decorator
+            Identifier: 'dec'
+          MethodDeclaration
+            StaticKeyword
+            ComputedPropertyName
+              PropertyAccessExpression
+                Identifier: 'Symbol'
+                Identifier: 'dispose'
+            Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' C4'
+        ClassExpression
+          Decorator
+            Identifier: 'dec'
+          PropertyDeclaration
+            StaticKeyword
+            Identifier: ' x'
+            NumericLiteral
+          MethodDeclaration
+            StaticKeyword
+            ComputedPropertyName
+              PropertyAccessExpression
+                Identifier: 'Symbol'
+                Identifier: 'dispose'
+            Block

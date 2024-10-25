@@ -1,0 +1,31 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'bar'
+      FunctionType
+        Parameter
+          Identifier: 'b'
+          StringKeyword
+        VoidKeyword
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'bar'
+      FunctionType
+        Parameter
+          Identifier: 'a'
+          NumberKeyword
+        VoidKeyword
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'bar'
+      FunctionType
+        Parameter
+          Identifier: 'a'
+          QuestionToken
+        VoidKeyword
+    Block
+      ReturnStatement
+        NumericLiteral

@@ -1,0 +1,24 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t1'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' f'
+            ArrowFunction
+              Parameter
+                Identifier: ' s'
+              EqualsGreaterThanToken
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' s'
+                  Identifier: 'toLowerCase'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t2'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' g'
+            StringLiteral

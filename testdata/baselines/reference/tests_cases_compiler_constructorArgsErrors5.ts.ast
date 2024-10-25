@@ -1,0 +1,9 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' foo'
+    Constructor
+      Parameter
+        ExportKeyword
+        Identifier: ' a'
+        NumberKeyword
+      Block

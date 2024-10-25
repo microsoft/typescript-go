@@ -1,0 +1,165 @@
+SourceFile
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' SomethingTaggable'
+    CallSignature
+      TypeParameter
+        Identifier: 'T'
+      Parameter
+        Identifier: 't'
+        TypeReference
+          Identifier: ' TemplateStringsArray'
+      Parameter
+        DotDotDotToken
+        Identifier: 'args'
+        ArrayType
+          TypeReference
+            Identifier: ' T'
+      TypeReference
+        Identifier: ' SomethingNewable'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' SomethingNewable'
+    ConstructSignature
+      TypeParameter
+        Identifier: 'T'
+      Parameter
+        DotDotDotToken
+        Identifier: 'args'
+        ArrayType
+          TypeReference
+            Identifier: ' T'
+      AnyKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' tag'
+        TypeReference
+          Identifier: ' SomethingTaggable'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        NewExpression
+          TaggedTemplateExpression
+            Identifier: ' tag'
+            TemplateExpression
+              TemplateHead
+              TemplateSpan
+                NumericLiteral
+                TemplateMiddle
+              TemplateSpan
+                NumericLiteral
+                TemplateTail
+          StringKeyword
+          StringLiteral
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        NewExpression
+          TaggedTemplateExpression
+            Identifier: ' tag'
+            NumberKeyword
+            TemplateExpression
+              TemplateHead
+              TemplateSpan
+                StringLiteral
+                TemplateMiddle
+              TemplateSpan
+                StringLiteral
+                TemplateTail
+          NumericLiteral
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        NewExpression
+          TaggedTemplateExpression
+            Identifier: ' tag'
+            NumberKeyword
+            TemplateExpression
+              TemplateHead
+              TemplateSpan
+                NumericLiteral
+                TemplateMiddle
+              TemplateSpan
+                NumericLiteral
+                TemplateTail
+          StringKeyword
+          StringLiteral
+          StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d'
+        NewExpression
+          TaggedTemplateExpression
+            Identifier: ' tag'
+            NumberKeyword
+            TemplateExpression
+              TemplateHead
+              TemplateSpan
+                StringLiteral
+                TemplateMiddle
+              TemplateSpan
+                StringLiteral
+                TemplateTail
+          StringKeyword
+          NumericLiteral
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' e'
+        NewExpression
+          TaggedTemplateExpression
+            Identifier: ' tag'
+            NumberKeyword
+            NoSubstitutionTemplateLiteral
+  ClassDeclaration
+    Identifier: ' SomeBase'
+    TypeParameter
+      Identifier: 'A'
+    TypeParameter
+      Identifier: ' B'
+    TypeParameter
+      Identifier: ' C'
+    PropertyDeclaration
+      Identifier: '
+    a'
+      ExclamationToken
+      TypeReference
+        Identifier: ' A'
+    PropertyDeclaration
+      Identifier: ' b'
+      ExclamationToken
+      TypeReference
+        Identifier: ' B'
+    PropertyDeclaration
+      Identifier: ' c'
+      ExclamationToken
+      TypeReference
+        Identifier: ' C'
+  ClassDeclaration
+    Identifier: ' SomeDerived'
+    TypeParameter
+      Identifier: 'T'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' SomeBase'
+        NumberKeyword
+        StringKeyword
+        TypeReference
+          Identifier: ' T'
+    Constructor
+      Block
+        ExpressionStatement
+          TaggedTemplateExpression
+            PropertyAccessExpression
+              SuperKeyword
+              Identifier: ''
+            NoSubstitutionTemplateLiteral

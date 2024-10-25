@@ -1,0 +1,7 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    Constructor
+      PublicKeyword
+      PublicKeyword
+      Block

@@ -1,0 +1,94 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' union'
+        UnionType
+          TypeLiteral
+            PropertySignature
+              Identifier: ' a'
+              NumberKeyword
+            PropertySignature
+              Identifier: ' c'
+              BooleanKeyword
+          TypeLiteral
+            PropertySignature
+              Identifier: ' a'
+              StringKeyword
+            PropertySignature
+              Identifier: ' b'
+              StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' rest1'
+        UnionType
+          TypeLiteral
+            PropertySignature
+              Identifier: ' c'
+              BooleanKeyword
+          TypeLiteral
+            PropertySignature
+              Identifier: ' b'
+              StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: 'a'
+          BindingElement
+            DotDotDotToken
+            Identifier: 'rest1'
+        Identifier: ' union'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' undefinedUnion'
+        UnionType
+          TypeLiteral
+            PropertySignature
+              Identifier: ' n'
+              NumberKeyword
+          UndefinedKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' rest2'
+        TypeLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: 'n'
+          BindingElement
+            DotDotDotToken
+            Identifier: 'rest2'
+        Identifier: ' undefinedUnion'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' nullUnion'
+        UnionType
+          TypeLiteral
+            PropertySignature
+              Identifier: ' n'
+              NumberKeyword
+          LiteralType
+            NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' rest3'
+        TypeLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            Identifier: 'n'
+          BindingElement
+            DotDotDotToken
+            Identifier: 'rest3'
+        Identifier: ' nullUnion'

@@ -1,0 +1,14 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts"/>
+////someCall(
+////    /*start*/"firstParameter",/*end*/
+////    "something else"
+////);
+
+format'
+        Identifier: 'selection'
+      StringLiteral
+      StringLiteral

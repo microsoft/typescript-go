@@ -1,0 +1,263 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' onlyErrorsWhenTestingNonNullableFunctionType'
+    Parameter
+      Identifier: 'required'
+      FunctionType
+        BooleanKeyword
+    Parameter
+      Identifier: ' optional'
+      QuestionToken
+      FunctionType
+        BooleanKeyword
+    Block
+      IfStatement
+        Identifier: 'required'
+        Block
+      IfStatement
+        Identifier: 'optional'
+        Block
+      IfStatement
+        PrefixUnaryExpression
+          PrefixUnaryExpression
+            Identifier: 'required'
+        Block
+      IfStatement
+        CallExpression
+          Identifier: 'required'
+        Block
+  FunctionDeclaration
+    Identifier: ' onlyErrorsWhenUnusedInBody'
+    Block
+      FunctionDeclaration
+        Identifier: ' test'
+        Block
+          ReturnStatement
+            BinaryExpression
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' Math'
+                  Identifier: 'random'
+              GreaterThanToken
+              NumericLiteral
+      IfStatement
+        Identifier: 'test'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' // error
+        console'
+                Identifier: 'log'
+              StringLiteral
+      IfStatement
+        Identifier: 'test'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' // ok
+        console'
+                Identifier: 'log'
+              Identifier: 'test'
+      IfStatement
+        Identifier: 'test'
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: ' // ok
+        test'
+      IfStatement
+        Identifier: 'test'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                ArrayLiteralExpression
+                  ArrowFunction
+                    EqualsGreaterThanToken
+                    NullKeyword
+                Identifier: 'forEach'
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+            test'
+      IfStatement
+        Identifier: 'test'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                ArrayLiteralExpression
+                  ArrowFunction
+                    EqualsGreaterThanToken
+                    NullKeyword
+                Identifier: 'forEach'
+              ArrowFunction
+                Parameter
+                  Identifier: 'test'
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+            test'
+  FunctionDeclaration
+    Identifier: ' checksPropertyAccess'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+        foo'
+                ObjectLiteralExpression
+                  MethodDeclaration
+                    Identifier: '
+            bar'
+                    Block
+                      ReturnStatement
+                        TrueKeyword
+      IfStatement
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: 'x'
+            Identifier: 'foo'
+          Identifier: 'bar'
+        Block
+      IfStatement
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: 'x'
+            Identifier: 'foo'
+          Identifier: 'bar'
+        Block
+          ExpressionStatement
+            PropertyAccessExpression
+              PropertyAccessExpression
+                Identifier: ' // ok
+        x'
+                Identifier: 'foo'
+              Identifier: 'bar'
+  ClassDeclaration
+    Identifier: ' Foo'
+    PropertyDeclaration
+      Identifier: '
+    maybeIsUser'
+      QuestionToken
+      FunctionType
+        BooleanKeyword
+    MethodDeclaration
+      Identifier: '
+
+    isUser'
+      Block
+        ReturnStatement
+          TrueKeyword
+    MethodDeclaration
+      Identifier: '
+
+    test'
+      Block
+        IfStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'isUser'
+          Block
+        IfStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'maybeIsUser'
+          Block
+  FunctionDeclaration
+    Identifier: ' A'
+    Parameter
+      Identifier: 'stats'
+      TypeReference
+        Identifier: ' StatsBase'
+        AnyKeyword
+    Block
+      IfStatement
+        PropertyAccessExpression
+          Identifier: 'stats'
+          Identifier: 'isDirectory'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' // err
+        console'
+                Identifier: 'log'
+              TemplateExpression
+                TemplateHead
+                TemplateSpan
+                  PropertyAccessExpression
+                    Identifier: 'stats'
+                    Identifier: 'ctime'
+                  TemplateTail
+  FunctionDeclaration
+    Identifier: ' B'
+    Parameter
+      Identifier: 'a'
+      TypeReference
+        Identifier: ' Nested'
+    Parameter
+      Identifier: ' b'
+      TypeReference
+        Identifier: ' Nested'
+    Block
+      IfStatement
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: 'a'
+            Identifier: 'stats'
+          Identifier: 'isDirectory'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' // err
+        b'
+                  Identifier: 'stats'
+                Identifier: 'isDirectory'
+      IfStatement
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: 'a'
+            Identifier: 'stats'
+          Identifier: 'isDirectory'
+        Block
+          ExpressionStatement
+            CallExpression
+              PropertyAccessExpression
+                PropertyAccessExpression
+                  Identifier: ' // ok
+        a'
+                  Identifier: 'stats'
+                Identifier: 'isDirectory'
+  InterfaceDeclaration
+    Identifier: ' StatsBase'
+    TypeParameter
+      Identifier: 'T'
+    MethodSignature
+      Identifier: '
+    isDirectory'
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    ctime'
+      NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' Nested'
+    PropertySignature
+      Identifier: '
+    stats'
+      TypeReference
+        Identifier: ' StatsBase'
+        AnyKeyword

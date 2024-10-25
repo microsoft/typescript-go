@@ -1,0 +1,1392 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Covariant'
+    TypeParameter
+      Identifier: 'T'
+    PropertySignature
+      Identifier: '
+    foo'
+      ConditionalType
+        TypeReference
+          Identifier: ' T'
+        StringKeyword
+        TypeReference
+          Identifier: ' T'
+        NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' Contravariant'
+    TypeParameter
+      Identifier: 'T'
+    PropertySignature
+      Identifier: '
+    foo'
+      ConditionalType
+        TypeReference
+          Identifier: ' T'
+        StringKeyword
+        TypeOperator
+          TypeReference
+            Identifier: ' T'
+        NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' Invariant'
+    TypeParameter
+      Identifier: 'T'
+    PropertySignature
+      Identifier: '
+    foo'
+      ConditionalType
+        TypeReference
+          Identifier: ' T'
+        StringKeyword
+        TypeOperator
+          TypeReference
+            Identifier: ' T'
+        TypeReference
+          Identifier: ' T'
+  FunctionDeclaration
+    Identifier: ' f1'
+    TypeParameter
+      Identifier: 'A'
+    TypeParameter
+      Identifier: ' B'
+      TypeReference
+        Identifier: ' A'
+    Parameter
+      Identifier: 'a'
+      TypeReference
+        Identifier: ' Covariant'
+        TypeReference
+          Identifier: 'A'
+    Parameter
+      Identifier: ' b'
+      TypeReference
+        Identifier: ' Covariant'
+        TypeReference
+          Identifier: 'B'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    a'
+          EqualsToken
+          Identifier: ' b'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    b'
+          EqualsToken
+          Identifier: ' a'
+  FunctionDeclaration
+    Identifier: ' f2'
+    TypeParameter
+      Identifier: 'A'
+    TypeParameter
+      Identifier: ' B'
+      TypeReference
+        Identifier: ' A'
+    Parameter
+      Identifier: 'a'
+      TypeReference
+        Identifier: ' Contravariant'
+        TypeReference
+          Identifier: 'A'
+    Parameter
+      Identifier: ' b'
+      TypeReference
+        Identifier: ' Contravariant'
+        TypeReference
+          Identifier: 'B'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    a'
+          EqualsToken
+          Identifier: ' b'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '  // Error
+    b'
+          EqualsToken
+          Identifier: ' a'
+  FunctionDeclaration
+    Identifier: ' f3'
+    TypeParameter
+      Identifier: 'A'
+    TypeParameter
+      Identifier: ' B'
+      TypeReference
+        Identifier: ' A'
+    Parameter
+      Identifier: 'a'
+      TypeReference
+        Identifier: ' Invariant'
+        TypeReference
+          Identifier: 'A'
+    Parameter
+      Identifier: ' b'
+      TypeReference
+        Identifier: ' Invariant'
+        TypeReference
+          Identifier: 'B'
+    Block
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    a'
+          EqualsToken
+          Identifier: ' b'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '  // Error
+    b'
+          EqualsToken
+          Identifier: ' a'
+  FunctionDeclaration
+    Identifier: ' isFunction'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'value'
+      TypeReference
+        Identifier: ' T'
+    TypePredicate
+      Identifier: ' value'
+      TypeReference
+        Identifier: ' Extract'
+        TypeReference
+          Identifier: 'T'
+        TypeReference
+          Identifier: ' Function'
+    Block
+      ReturnStatement
+        BinaryExpression
+          TypeOfExpression
+            Identifier: ' value'
+          EqualsEqualsEqualsToken
+          StringLiteral
+  FunctionDeclaration
+    Identifier: ' getFunction'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'item'
+      TypeReference
+        Identifier: ' T'
+    Block
+      IfStatement
+        CallExpression
+          Identifier: 'isFunction'
+          Identifier: 'item'
+        Block
+          ReturnStatement
+            Identifier: ' item'
+      ThrowStatement
+        NewExpression
+          Identifier: ' Error'
+  FunctionDeclaration
+    Identifier: ' f10'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    Block
+      IfStatement
+        CallExpression
+          Identifier: 'isFunction'
+          Identifier: 'x'
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' f'
+                TypeReference
+                  Identifier: ' Function'
+                Identifier: ' x'
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' t'
+                TypeReference
+                  Identifier: ' T'
+                Identifier: ' x'
+  FunctionDeclaration
+    Identifier: ' f11'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        StringKeyword
+        ParenthesizedType
+          FunctionType
+            StringKeyword
+        UndefinedKeyword
+    Block
+      IfStatement
+        CallExpression
+          Identifier: 'isFunction'
+          Identifier: 'x'
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        x'
+  FunctionDeclaration
+    Identifier: ' f12'
+    Parameter
+      Identifier: 'x'
+      UnionType
+        StringKeyword
+        ParenthesizedType
+          FunctionType
+            StringKeyword
+        UndefinedKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' f'
+            CallExpression
+              Identifier: ' getFunction'
+              Identifier: 'x'
+      ExpressionStatement
+        CallExpression
+          Identifier: '  // () => string
+    f'
+  TypeAliasDeclaration
+    Identifier: ' Foo'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' foo'
+        StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' Bar'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' bar'
+        StringKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' fooBar'
+    Parameter
+      Identifier: 'x'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' foo'
+          StringKeyword
+        PropertySignature
+          Identifier: ' bar'
+          StringKeyword
+    VoidKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' fooBat'
+    Parameter
+      Identifier: 'x'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' foo'
+          StringKeyword
+        PropertySignature
+          Identifier: ' bat'
+          StringKeyword
+    VoidKeyword
+  TypeAliasDeclaration
+    Identifier: ' Extract2'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+    TypeParameter
+      Identifier: ' V'
+    ConditionalType
+      TypeReference
+        Identifier: ' T'
+      TypeReference
+        Identifier: ' U'
+      ConditionalType
+        TypeReference
+          Identifier: ' T'
+        TypeReference
+          Identifier: ' V'
+        TypeReference
+          Identifier: ' T'
+        NeverKeyword
+      NeverKeyword
+  FunctionDeclaration
+    Identifier: ' f20'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' Extract'
+        TypeReference
+          Identifier: 'Extract'
+          TypeReference
+            Identifier: 'T'
+          TypeReference
+            Identifier: ' Foo'
+        TypeReference
+          Identifier: ' Bar'
+    Parameter
+      Identifier: ' y'
+      TypeReference
+        Identifier: ' Extract'
+        TypeReference
+          Identifier: 'T'
+        IntersectionType
+          TypeReference
+            Identifier: ' Foo'
+          TypeReference
+            Identifier: ' Bar'
+    Parameter
+      Identifier: ' z'
+      TypeReference
+        Identifier: ' Extract2'
+        TypeReference
+          Identifier: 'T'
+        TypeReference
+          Identifier: ' Foo'
+        TypeReference
+          Identifier: ' Bar'
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    fooBar'
+          Identifier: 'x'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    fooBar'
+          Identifier: 'y'
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    fooBar'
+          Identifier: 'z'
+  FunctionDeclaration
+    Identifier: ' f21'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' Extract'
+        TypeReference
+          Identifier: 'Extract'
+          TypeReference
+            Identifier: 'T'
+          TypeReference
+            Identifier: ' Foo'
+        TypeReference
+          Identifier: ' Bar'
+    Parameter
+      Identifier: ' y'
+      TypeReference
+        Identifier: ' Extract'
+        TypeReference
+          Identifier: 'T'
+        IntersectionType
+          TypeReference
+            Identifier: ' Foo'
+          TypeReference
+            Identifier: ' Bar'
+    Parameter
+      Identifier: ' z'
+      TypeReference
+        Identifier: ' Extract2'
+        TypeReference
+          Identifier: 'T'
+        TypeReference
+          Identifier: ' Foo'
+        TypeReference
+          Identifier: ' Bar'
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    fooBat'
+          Identifier: 'x'
+      ExpressionStatement
+        CallExpression
+          Identifier: '  // Error
+    fooBat'
+          Identifier: 'y'
+      ExpressionStatement
+        CallExpression
+          Identifier: '  // Error
+    fooBat'
+          Identifier: 'z'
+  ClassDeclaration
+    Identifier: ' Opt'
+    TypeParameter
+      Identifier: 'T'
+    MethodDeclaration
+      Identifier: '
+    toVector'
+      TypeReference
+        Identifier: ' Vector'
+        TypeReference
+          Identifier: 'T'
+      Block
+        ReturnStatement
+          TypeAssertionExpression
+            AnyKeyword
+            Identifier: 'undefined'
+  InterfaceDeclaration
+    Identifier: ' Seq'
+    TypeParameter
+      Identifier: 'T'
+    MethodSignature
+      Identifier: '
+    tail'
+      TypeReference
+        Identifier: ' Opt'
+        TypeReference
+          Identifier: 'Seq'
+          TypeReference
+            Identifier: 'T'
+  ClassDeclaration
+    Identifier: ' Vector'
+    TypeParameter
+      Identifier: 'T'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Seq'
+        TypeReference
+          Identifier: 'T'
+    MethodDeclaration
+      Identifier: '
+    tail'
+      TypeReference
+        Identifier: ' Opt'
+        TypeReference
+          Identifier: 'Vector'
+          TypeReference
+            Identifier: 'T'
+      Block
+        ReturnStatement
+          TypeAssertionExpression
+            AnyKeyword
+            Identifier: 'undefined'
+    MethodDeclaration
+      Identifier: '
+    partition2'
+      TypeParameter
+        Identifier: 'U'
+        TypeReference
+          Identifier: ' T'
+      Parameter
+        Identifier: 'predicate'
+        FunctionType
+          Parameter
+            Identifier: 'v'
+            TypeReference
+              Identifier: 'T'
+          TypePredicate
+            Identifier: 'v'
+            TypeReference
+              Identifier: ' U'
+      TupleType
+        TypeReference
+          Identifier: 'Vector'
+          TypeReference
+            Identifier: 'U'
+        TypeReference
+          Identifier: 'Vector'
+          TypeReference
+            Identifier: 'Exclude'
+            TypeReference
+              Identifier: 'T'
+            TypeReference
+              Identifier: ' U'
+    MethodDeclaration
+      Identifier: '
+    partition2'
+      Parameter
+        Identifier: 'predicate'
+        FunctionType
+          Parameter
+            Identifier: 'x'
+            TypeReference
+              Identifier: 'T'
+          BooleanKeyword
+      TupleType
+        TypeReference
+          Identifier: 'Vector'
+          TypeReference
+            Identifier: 'T'
+        TypeReference
+          Identifier: 'Vector'
+          TypeReference
+            Identifier: 'T'
+    MethodDeclaration
+      Identifier: '
+    partition2'
+      TypeParameter
+        Identifier: 'U'
+        TypeReference
+          Identifier: ' T'
+      Parameter
+        Identifier: 'predicate'
+        FunctionType
+          Parameter
+            Identifier: 'v'
+            TypeReference
+              Identifier: 'T'
+          BooleanKeyword
+      TupleType
+        TypeReference
+          Identifier: 'Vector'
+          TypeReference
+            Identifier: 'U'
+        TypeReference
+          Identifier: 'Vector'
+          AnyKeyword
+      Block
+        ReturnStatement
+          TypeAssertionExpression
+            AnyKeyword
+            Identifier: 'undefined'
+  InterfaceDeclaration
+    Identifier: ' A1'
+    TypeParameter
+      Identifier: 'T'
+    PropertySignature
+      Identifier: '
+    bat'
+      TypeReference
+        Identifier: ' B1'
+        TypeReference
+          Identifier: 'A1'
+          TypeReference
+            Identifier: 'T'
+  InterfaceDeclaration
+    Identifier: ' B1'
+    TypeParameter
+      Identifier: 'T'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A1'
+        TypeReference
+          Identifier: 'T'
+    PropertySignature
+      Identifier: '
+    bat'
+      TypeReference
+        Identifier: ' B1'
+        TypeReference
+          Identifier: 'B1'
+          TypeReference
+            Identifier: 'T'
+    PropertySignature
+      Identifier: '
+    boom'
+      ConditionalType
+        TypeReference
+          Identifier: ' T'
+        AnyKeyword
+        LiteralType
+          TrueKeyword
+        LiteralType
+          TrueKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' toString1'
+    Parameter
+      Identifier: 'value'
+      UnionType
+        ObjectKeyword
+        TypeReference
+          Identifier: ' Function'
+    StringKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' toString2'
+    Parameter
+      Identifier: 'value'
+      TypeReference
+        Identifier: ' Function'
+    StringKeyword
+  FunctionDeclaration
+    Identifier: ' foo'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'value'
+      TypeReference
+        Identifier: ' T'
+    Block
+      IfStatement
+        CallExpression
+          Identifier: 'isFunction'
+          Identifier: 'value'
+        Block
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        toString1'
+              Identifier: 'value'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+        toString2'
+              Identifier: 'value'
+  TypeAliasDeclaration
+    Identifier: ' A'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' V'
+    TypeParameter
+      Identifier: ' E'
+    ConditionalType
+      TypeReference
+        Identifier: '
+  T'
+      ObjectKeyword
+      MappedType
+        TypeParameter
+          Identifier: 'Q'
+          IndexedAccessType
+            MappedType
+              TypeParameter
+                Identifier: 'P'
+                TypeOperator
+                  TypeReference
+                    Identifier: ' T'
+              ConditionalType
+                IndexedAccessType
+                  TypeReference
+                    Identifier: ' T'
+                  TypeReference
+                    Identifier: 'P'
+                TypeReference
+                  Identifier: ' V'
+                TypeReference
+                  Identifier: ' P'
+                TypeReference
+                  Identifier: ' P'
+            TypeOperator
+              TypeReference
+                Identifier: ' T'
+        TypeReference
+          Identifier: ' A'
+          IndexedAccessType
+            TypeReference
+              Identifier: 'T'
+            TypeReference
+              Identifier: 'Q'
+          TypeReference
+            Identifier: ' V'
+          TypeReference
+            Identifier: ' E'
+      ConditionalType
+        TypeReference
+          Identifier: ' T'
+        TypeReference
+          Identifier: ' V'
+        TypeReference
+          Identifier: ' T'
+        NeverKeyword
+  TypeAliasDeclaration
+    Identifier: ' B'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' V'
+    ConditionalType
+      TypeReference
+        Identifier: '
+  T'
+      ObjectKeyword
+      MappedType
+        TypeParameter
+          Identifier: 'Q'
+          IndexedAccessType
+            MappedType
+              TypeParameter
+                Identifier: 'P'
+                TypeOperator
+                  TypeReference
+                    Identifier: ' T'
+              ConditionalType
+                IndexedAccessType
+                  TypeReference
+                    Identifier: ' T'
+                  TypeReference
+                    Identifier: 'P'
+                TypeReference
+                  Identifier: ' V'
+                TypeReference
+                  Identifier: ' P'
+                TypeReference
+                  Identifier: ' P'
+            TypeOperator
+              TypeReference
+                Identifier: ' T'
+        TypeReference
+          Identifier: ' B'
+          IndexedAccessType
+            TypeReference
+              Identifier: 'T'
+            TypeReference
+              Identifier: 'Q'
+          TypeReference
+            Identifier: ' V'
+      ConditionalType
+        TypeReference
+          Identifier: ' T'
+        TypeReference
+          Identifier: ' V'
+        TypeReference
+          Identifier: ' T'
+        NeverKeyword
+  TypeAliasDeclaration
+    Identifier: ' C'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' V'
+    TypeParameter
+      Identifier: ' E'
+    MappedType
+      TypeParameter
+        Identifier: 'Q'
+        IndexedAccessType
+          MappedType
+            TypeParameter
+              Identifier: 'P'
+              TypeOperator
+                TypeReference
+                  Identifier: ' T'
+            ConditionalType
+              IndexedAccessType
+                TypeReference
+                  Identifier: ' T'
+                TypeReference
+                  Identifier: 'P'
+              TypeReference
+                Identifier: ' V'
+              TypeReference
+                Identifier: ' P'
+              TypeReference
+                Identifier: ' P'
+          TypeOperator
+            TypeReference
+              Identifier: ' T'
+      TypeReference
+        Identifier: ' C'
+        IndexedAccessType
+          TypeReference
+            Identifier: 'T'
+          TypeReference
+            Identifier: 'Q'
+        TypeReference
+          Identifier: ' V'
+        TypeReference
+          Identifier: ' E'
+  TypeAliasDeclaration
+    Identifier: ' A2'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' V'
+    TypeParameter
+      Identifier: ' E'
+    ConditionalType
+      TypeReference
+        Identifier: '
+    T'
+      ObjectKeyword
+      ConditionalType
+        TypeReference
+          Identifier: ' T'
+        ArrayType
+          AnyKeyword
+        TypeReference
+          Identifier: ' T'
+        MappedType
+          TypeParameter
+            Identifier: 'Q'
+            TypeOperator
+              TypeReference
+                Identifier: ' T'
+          TypeReference
+            Identifier: ' A2'
+            IndexedAccessType
+              TypeReference
+                Identifier: 'T'
+              TypeReference
+                Identifier: 'Q'
+            TypeReference
+              Identifier: ' V'
+            TypeReference
+              Identifier: ' E'
+      TypeReference
+        Identifier: ' T'
+  TypeAliasDeclaration
+    Identifier: ' B2'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' V'
+    ConditionalType
+      TypeReference
+        Identifier: '
+    T'
+      ObjectKeyword
+      ConditionalType
+        TypeReference
+          Identifier: ' T'
+        ArrayType
+          AnyKeyword
+        TypeReference
+          Identifier: ' T'
+        MappedType
+          TypeParameter
+            Identifier: 'Q'
+            TypeOperator
+              TypeReference
+                Identifier: ' T'
+          TypeReference
+            Identifier: ' B2'
+            IndexedAccessType
+              TypeReference
+                Identifier: 'T'
+              TypeReference
+                Identifier: 'Q'
+            TypeReference
+              Identifier: ' V'
+      TypeReference
+        Identifier: ' T'
+  TypeAliasDeclaration
+    Identifier: ' C2'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' V'
+    TypeParameter
+      Identifier: ' E'
+    ConditionalType
+      TypeReference
+        Identifier: '
+    T'
+      ObjectKeyword
+      MappedType
+        TypeParameter
+          Identifier: 'Q'
+          TypeOperator
+            TypeReference
+              Identifier: ' T'
+        TypeReference
+          Identifier: ' C2'
+          IndexedAccessType
+            TypeReference
+              Identifier: 'T'
+            TypeReference
+              Identifier: 'Q'
+          TypeReference
+            Identifier: ' V'
+          TypeReference
+            Identifier: ' E'
+      TypeReference
+        Identifier: ' T'
+  TypeAliasDeclaration
+    Identifier: ' MaybeTrue'
+    TypeParameter
+      Identifier: 'T'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' b'
+          BooleanKeyword
+    ConditionalType
+      LiteralType
+        TrueKeyword
+      IndexedAccessType
+        TypeReference
+          Identifier: ' T'
+        LiteralType
+          StringLiteral
+      LiteralType
+        StringLiteral
+      LiteralType
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' T0'
+    TypeReference
+      Identifier: ' MaybeTrue'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' b'
+          NeverKeyword
+  TypeAliasDeclaration
+    Identifier: ' T1'
+    TypeReference
+      Identifier: ' MaybeTrue'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' b'
+          LiteralType
+            FalseKeyword
+  TypeAliasDeclaration
+    Identifier: ' T2'
+    TypeReference
+      Identifier: ' MaybeTrue'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' b'
+          LiteralType
+            TrueKeyword
+  TypeAliasDeclaration
+    Identifier: ' T3'
+    TypeReference
+      Identifier: ' MaybeTrue'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' b'
+          BooleanKeyword
+  TypeAliasDeclaration
+    Identifier: ' Union'
+    UnionType
+      LiteralType
+        StringLiteral
+      LiteralType
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' Product'
+    TypeParameter
+      Identifier: 'A'
+      TypeReference
+        Identifier: ' Union'
+    TypeParameter
+      Identifier: ' B'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' f1'
+        TypeReference
+          Identifier: ' A'
+      PropertySignature
+        Identifier: ' f2'
+        TypeReference
+          Identifier: ' B'
+  TypeAliasDeclaration
+    Identifier: ' ProductUnion'
+    UnionType
+      TypeReference
+        Identifier: ' Product'
+        LiteralType
+          StringLiteral
+        LiteralType
+          NumericLiteral
+      TypeReference
+        Identifier: ' Product'
+        LiteralType
+          StringLiteral
+        LiteralType
+          NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' UnionComplement'
+    MappedType
+      TypeParameter
+        Identifier: 'K'
+        TypeReference
+          Identifier: ' Union'
+      TypeReference
+        Identifier: ' Exclude'
+        TypeReference
+          Identifier: 'Union'
+        TypeReference
+          Identifier: ' K'
+  TypeAliasDeclaration
+    Identifier: ' UCA'
+    IndexedAccessType
+      TypeReference
+        Identifier: ' UnionComplement'
+      LiteralType
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' UCB'
+    IndexedAccessType
+      TypeReference
+        Identifier: ' UnionComplement'
+      LiteralType
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' UnionComplementComplement'
+    MappedType
+      TypeParameter
+        Identifier: 'K'
+        TypeReference
+          Identifier: ' Union'
+      TypeReference
+        Identifier: ' Exclude'
+        TypeReference
+          Identifier: 'Union'
+        TypeReference
+          Identifier: ' Exclude'
+          TypeReference
+            Identifier: 'Union'
+          TypeReference
+            Identifier: ' K'
+  TypeAliasDeclaration
+    Identifier: ' UCCA'
+    IndexedAccessType
+      TypeReference
+        Identifier: ' UnionComplementComplement'
+      LiteralType
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' UCCB'
+    IndexedAccessType
+      TypeReference
+        Identifier: ' UnionComplementComplement'
+      LiteralType
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' ProductComplement'
+    MappedType
+      TypeParameter
+        Identifier: 'K'
+        TypeReference
+          Identifier: ' Union'
+      TypeReference
+        Identifier: ' Exclude'
+        TypeReference
+          Identifier: 'ProductUnion'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' f1'
+            TypeReference
+              Identifier: ' K'
+  TypeAliasDeclaration
+    Identifier: ' PCA'
+    IndexedAccessType
+      TypeReference
+        Identifier: ' ProductComplement'
+      LiteralType
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' PCB'
+    IndexedAccessType
+      TypeReference
+        Identifier: ' ProductComplement'
+      LiteralType
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' ProductComplementComplement'
+    MappedType
+      TypeParameter
+        Identifier: 'K'
+        TypeReference
+          Identifier: ' Union'
+      TypeReference
+        Identifier: ' Exclude'
+        TypeReference
+          Identifier: 'ProductUnion'
+        TypeReference
+          Identifier: ' Exclude'
+          TypeReference
+            Identifier: 'ProductUnion'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' f1'
+              TypeReference
+                Identifier: ' K'
+  TypeAliasDeclaration
+    Identifier: ' PCCA'
+    IndexedAccessType
+      TypeReference
+        Identifier: ' ProductComplementComplement'
+      LiteralType
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' PCCB'
+    IndexedAccessType
+      TypeReference
+        Identifier: ' ProductComplementComplement'
+      LiteralType
+        StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' Hmm'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' U'
+      TypeReference
+        Identifier: ' T'
+    ConditionalType
+      TypeReference
+        Identifier: ' U'
+      TypeReference
+        Identifier: ' T'
+      MappedType
+        TypeParameter
+          Identifier: 'K'
+          TypeOperator
+            TypeReference
+              Identifier: ' U'
+        NumberKeyword
+      NeverKeyword
+  TypeAliasDeclaration
+    Identifier: ' What'
+    TypeReference
+      Identifier: ' Hmm'
+      TypeLiteral
+      TypeLiteral
+        PropertySignature
+          Identifier: ' a'
+          StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' w'
+        TypeReference
+          Identifier: ' What'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' a'
+            NumericLiteral
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' save'
+    Parameter
+      Identifier: '_response'
+      TypeReference
+        Identifier: ' IRootResponse'
+        StringKeyword
+    VoidKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+exportCommand'
+      Identifier: 'save'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' exportCommand'
+    TypeParameter
+      Identifier: 'TResponse'
+    Parameter
+      Identifier: 'functionToCall'
+      TypeReference
+        Identifier: ' IExportCallback'
+        TypeReference
+          Identifier: 'TResponse'
+    VoidKeyword
+  InterfaceDeclaration
+    Identifier: ' IExportCallback'
+    TypeParameter
+      Identifier: 'TResponse'
+    CallSignature
+      Parameter
+        Identifier: 'response'
+        TypeReference
+          Identifier: ' IRootResponse'
+          TypeReference
+            Identifier: 'TResponse'
+      VoidKeyword
+  TypeAliasDeclaration
+    Identifier: ' IRootResponse'
+    TypeParameter
+      Identifier: 'TResponse'
+    ConditionalType
+      TypeReference
+        Identifier: '
+	TResponse'
+      TypeReference
+        Identifier: ' IRecord'
+      TypeReference
+        Identifier: ' IRecordResponse'
+        TypeReference
+          Identifier: 'TResponse'
+      TypeReference
+        Identifier: ' IResponse'
+        TypeReference
+          Identifier: 'TResponse'
+  InterfaceDeclaration
+    Identifier: ' IRecord'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' Id'
+      StringKeyword
+  TypeAliasDeclaration
+    DeclareKeyword
+    Identifier: ' IRecordResponse'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' IRecord'
+    IntersectionType
+      TypeReference
+        Identifier: ' IResponse'
+        TypeReference
+          Identifier: 'T'
+      TypeLiteral
+        MethodSignature
+          Identifier: '
+	sendRecord'
+          VoidKeyword
+  TypeAliasDeclaration
+    DeclareKeyword
+    Identifier: ' IResponse'
+    TypeParameter
+      Identifier: 'T'
+    TypeLiteral
+      MethodSignature
+        Identifier: '
+	sendValue'
+        Parameter
+          Identifier: 'name'
+          TypeOperator
+            TypeReference
+              Identifier: ' GetAllPropertiesOfType'
+              TypeReference
+                Identifier: 'T'
+              StringKeyword
+        VoidKeyword
+  TypeAliasDeclaration
+    DeclareKeyword
+    Identifier: ' GetPropertyNamesOfType'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' RestrictToType'
+    IndexedAccessType
+      MappedType
+        TypeParameter
+          Identifier: 'PropertyName'
+          TypeReference
+            Identifier: ' Extract'
+            TypeOperator
+              TypeReference
+                Identifier: ' T'
+            StringKeyword
+        ConditionalType
+          IndexedAccessType
+            TypeReference
+              Identifier: ' T'
+            TypeReference
+              Identifier: 'PropertyName'
+          TypeReference
+            Identifier: ' RestrictToType'
+          TypeReference
+            Identifier: ' PropertyName'
+          NeverKeyword
+      TypeReference
+        Identifier: 'Extract'
+        TypeOperator
+          TypeReference
+            Identifier: ' T'
+        StringKeyword
+  TypeAliasDeclaration
+    DeclareKeyword
+    Identifier: ' GetAllPropertiesOfType'
+    TypeParameter
+      Identifier: 'T'
+    TypeParameter
+      Identifier: ' RestrictToType'
+    TypeReference
+      Identifier: ' Pick'
+      TypeReference
+        Identifier: '
+	T'
+      TypeReference
+        Identifier: '
+	GetPropertyNamesOfType'
+        TypeReference
+          Identifier: 'Required'
+          TypeReference
+            Identifier: 'T'
+        TypeReference
+          Identifier: ' RestrictToType'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' ff'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' Foo3'
+        StringKeyword
+    VoidKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' gg'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'f'
+      FunctionType
+        Parameter
+          Identifier: 'x'
+          TypeReference
+            Identifier: ' Foo3'
+            TypeReference
+              Identifier: 'T'
+        VoidKeyword
+    VoidKeyword
+  TypeAliasDeclaration
+    Identifier: ' Foo3'
+    TypeParameter
+      Identifier: 'T'
+    ConditionalType
+      TypeReference
+        Identifier: ' T'
+      NumberKeyword
+      TypeLiteral
+        PropertySignature
+          Identifier: ' n'
+          TypeReference
+            Identifier: ' T'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' x'
+          TypeReference
+            Identifier: ' T'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+gg'
+      Identifier: 'ff'
+  TypeAliasDeclaration
+    Identifier: ' Wat'
+    TypeParameter
+      Identifier: 'K'
+      StringKeyword
+    ConditionalType
+      TypeLiteral
+        PropertySignature
+          Identifier: ' x'
+          TypeLiteral
+            PropertySignature
+              Identifier: ' y'
+              LiteralType
+                NumericLiteral
+            PropertySignature
+              Identifier: ' z'
+              LiteralType
+                NumericLiteral
+      TypeLiteral
+        PropertySignature
+          Identifier: ' x'
+          MappedType
+            TypeParameter
+              Identifier: 'P'
+              TypeReference
+                Identifier: ' K'
+            LiteralType
+              NumericLiteral
+      LiteralType
+        TrueKeyword
+      LiteralType
+        FalseKeyword
+  TypeAliasDeclaration
+    Identifier: ' Huh'
+    TypeReference
+      Identifier: ' Wat'
+      LiteralType
+        StringLiteral

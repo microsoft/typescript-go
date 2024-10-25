@@ -1,0 +1,47 @@
+SourceFile
+  ClassDeclaration
+    AbstractKeyword
+    Identifier: ' A'
+    PropertyDeclaration
+      AbstractKeyword
+      Identifier: ' x'
+      NumberKeyword
+    PropertyDeclaration
+      PublicKeyword
+      AbstractKeyword
+      Identifier: ' y'
+      NumberKeyword
+    PropertyDeclaration
+      ProtectedKeyword
+      AbstractKeyword
+      Identifier: ' z'
+      NumberKeyword
+    PropertyDeclaration
+      PrivateKeyword
+      AbstractKeyword
+      Identifier: ' w'
+      NumberKeyword
+    PropertyDeclaration
+      AbstractKeyword
+      Identifier: ' m'
+      FunctionType
+        VoidKeyword
+    MethodDeclaration
+      AbstractKeyword
+      Identifier: ' foo_x'
+      NumberKeyword
+    MethodDeclaration
+      PublicKeyword
+      AbstractKeyword
+      Identifier: ' foo_y'
+      NumberKeyword
+    MethodDeclaration
+      ProtectedKeyword
+      AbstractKeyword
+      Identifier: ' foo_z'
+      NumberKeyword
+    MethodDeclaration
+      PrivateKeyword
+      AbstractKeyword
+      Identifier: ' foo_w'
+      NumberKeyword

@@ -1,0 +1,236 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' A'
+    PropertySignature
+      Identifier: ' a'
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' B'
+    PropertySignature
+      Identifier: ' b'
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' C'
+    PropertySignature
+      Identifier: ' c'
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' D'
+    PropertySignature
+      Identifier: ' d'
+      StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeReference
+          Identifier: ' A'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        TypeReference
+          Identifier: ' B'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        TypeReference
+          Identifier: ' C'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' d'
+        TypeReference
+          Identifier: ' D'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' anb'
+        IntersectionType
+          TypeReference
+            Identifier: ' A'
+          TypeReference
+            Identifier: ' B'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' aob'
+        UnionType
+          TypeReference
+            Identifier: ' A'
+          TypeReference
+            Identifier: ' B'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' cnd'
+        IntersectionType
+          TypeReference
+            Identifier: ' C'
+          TypeReference
+            Identifier: ' D'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' cod'
+        UnionType
+          TypeReference
+            Identifier: ' C'
+          TypeReference
+            Identifier: ' D'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        UnionType
+          IntersectionType
+            TypeReference
+              Identifier: ' A'
+            TypeReference
+              Identifier: ' B'
+          IntersectionType
+            TypeReference
+              Identifier: ' C'
+            TypeReference
+              Identifier: ' D'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        IntersectionType
+          ParenthesizedType
+            UnionType
+              TypeReference
+                Identifier: 'A'
+              TypeReference
+                Identifier: ' B'
+          ParenthesizedType
+            UnionType
+              TypeReference
+                Identifier: 'C'
+              TypeReference
+                Identifier: ' D'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+a'
+      EqualsToken
+      Identifier: ' anb'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '  // Ok
+b'
+      EqualsToken
+      Identifier: ' anb'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '  // Ok
+anb'
+      EqualsToken
+      Identifier: ' a'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+anb'
+      EqualsToken
+      Identifier: ' b'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+x'
+      EqualsToken
+      Identifier: ' anb'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '  // Ok
+x'
+      EqualsToken
+      Identifier: ' aob'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+x'
+      EqualsToken
+      Identifier: ' cnd'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '  // Ok
+x'
+      EqualsToken
+      Identifier: ' cod'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+anb'
+      EqualsToken
+      Identifier: ' x'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+aob'
+      EqualsToken
+      Identifier: ' x'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+cnd'
+      EqualsToken
+      Identifier: ' x'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+cod'
+      EqualsToken
+      Identifier: ' x'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+y'
+      EqualsToken
+      Identifier: ' anb'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+y'
+      EqualsToken
+      Identifier: ' aob'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+y'
+      EqualsToken
+      Identifier: ' cnd'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+y'
+      EqualsToken
+      Identifier: ' cod'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+anb'
+      EqualsToken
+      Identifier: ' y'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+aob'
+      EqualsToken
+      Identifier: ' y'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '  // Ok
+cnd'
+      EqualsToken
+      Identifier: ' y'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+cod'
+      EqualsToken
+      Identifier: ' y'

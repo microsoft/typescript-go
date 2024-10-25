@@ -1,0 +1,19 @@
+SourceFile
+  SwitchStatement
+    Identifier: 'e'
+    CaseBlock
+      CaseClause
+        NumericLiteral
+        ExpressionStatement
+          BinaryExpression
+            NumericLiteral
+            PlusToken
+            Identifier: ''
+      CaseClause
+        NumericLiteral
+        ExpressionStatement
+          BinaryExpression
+            NumericLiteral
+            PlusToken
+            Identifier: ''
+      DefaultClause

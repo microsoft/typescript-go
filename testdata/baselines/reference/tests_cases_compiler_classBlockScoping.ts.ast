@@ -1,0 +1,71 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f'
+    Parameter
+      Identifier: 'b'
+      BooleanKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' Foo'
+            AnyKeyword
+      IfStatement
+        Identifier: 'b'
+        Block
+          ExpressionStatement
+            BinaryExpression
+              Identifier: '
+    Foo'
+              EqualsToken
+              ClassExpression
+                Identifier: ' Foo'
+                PropertyDeclaration
+                  StaticKeyword
+                  Identifier: ' y'
+                  NewExpression
+                    Identifier: ' Foo'
+                MethodDeclaration
+                  StaticKeyword
+                  Identifier: ' x'
+                  Block
+                    ExpressionStatement
+                      NewExpression
+                        Identifier: ' Foo'
+                MethodDeclaration
+                  Identifier: '
+
+      m'
+                  Block
+                    ExpressionStatement
+                      NewExpression
+                        Identifier: ' Foo'
+          ExpressionStatement
+            NewExpression
+              Identifier: ' Foo'
+        Block
+          ClassDeclaration
+            Identifier: ' Foo'
+            PropertyDeclaration
+              StaticKeyword
+              Identifier: ' y'
+              NewExpression
+                Identifier: ' Foo'
+            MethodDeclaration
+              StaticKeyword
+              Identifier: ' x'
+              Block
+                ExpressionStatement
+                  NewExpression
+                    Identifier: ' Foo'
+            MethodDeclaration
+              Identifier: '
+
+      m'
+              Block
+                ExpressionStatement
+                  NewExpression
+                    Identifier: ' Foo'
+          ExpressionStatement
+            NewExpression
+              Identifier: ' Foo'

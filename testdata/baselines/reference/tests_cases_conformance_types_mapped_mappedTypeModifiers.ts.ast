@@ -1,0 +1,806 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' T'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' a'
+        NumberKeyword
+      PropertySignature
+        Identifier: ' b'
+        StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' TP'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' a'
+        QuestionToken
+        NumberKeyword
+      PropertySignature
+        Identifier: ' b'
+        QuestionToken
+        StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' TR'
+    TypeLiteral
+      PropertySignature
+        ReadonlyKeyword
+        Identifier: ' a'
+        NumberKeyword
+      PropertySignature
+        ReadonlyKeyword
+        Identifier: ' b'
+        StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' TPR'
+    TypeLiteral
+      PropertySignature
+        ReadonlyKeyword
+        Identifier: ' a'
+        QuestionToken
+        NumberKeyword
+      PropertySignature
+        ReadonlyKeyword
+        Identifier: ' b'
+        QuestionToken
+        StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v00'
+        UnionType
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v00'
+        TypeOperator
+          TypeReference
+            Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v00'
+        TypeOperator
+          TypeReference
+            Identifier: ' TP'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v00'
+        TypeOperator
+          TypeReference
+            Identifier: ' TR'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v00'
+        TypeOperator
+          TypeReference
+            Identifier: ' TPR'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v01'
+        TypeReference
+          Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v01'
+        MappedType
+          TypeParameter
+            Identifier: 'P'
+            TypeOperator
+              TypeReference
+                Identifier: ' T'
+          IndexedAccessType
+            TypeReference
+              Identifier: ' T'
+            TypeReference
+              Identifier: 'P'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v01'
+        TypeReference
+          Identifier: ' Pick'
+          TypeReference
+            Identifier: 'T'
+          TypeOperator
+            TypeReference
+              Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v01'
+        TypeReference
+          Identifier: ' Pick'
+          TypeReference
+            Identifier: 'Pick'
+            TypeReference
+              Identifier: 'T'
+            TypeOperator
+              TypeReference
+                Identifier: ' T'
+          TypeOperator
+            TypeReference
+              Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v02'
+        TypeReference
+          Identifier: ' TP'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v02'
+        MappedType
+          TypeParameter
+            Identifier: 'P'
+            TypeOperator
+              TypeReference
+                Identifier: ' T'
+          QuestionToken
+          IndexedAccessType
+            TypeReference
+              Identifier: ' T'
+            TypeReference
+              Identifier: 'P'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v02'
+        TypeReference
+          Identifier: ' Partial'
+          TypeReference
+            Identifier: 'T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v02'
+        MappedType
+          TypeParameter
+            Identifier: 'P'
+            TypeOperator
+              TypeReference
+                Identifier: ' TP'
+          IndexedAccessType
+            TypeReference
+              Identifier: ' TP'
+            TypeReference
+              Identifier: 'P'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v02'
+        TypeReference
+          Identifier: ' Pick'
+          TypeReference
+            Identifier: 'TP'
+          TypeOperator
+            TypeReference
+              Identifier: ' TP'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v03'
+        TypeReference
+          Identifier: ' TR'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v03'
+        MappedType
+          ReadonlyKeyword
+          TypeParameter
+            Identifier: 'P'
+            TypeOperator
+              TypeReference
+                Identifier: ' T'
+          IndexedAccessType
+            TypeReference
+              Identifier: ' T'
+            TypeReference
+              Identifier: 'P'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v03'
+        TypeReference
+          Identifier: ' Readonly'
+          TypeReference
+            Identifier: 'T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v03'
+        MappedType
+          TypeParameter
+            Identifier: 'P'
+            TypeOperator
+              TypeReference
+                Identifier: ' TR'
+          IndexedAccessType
+            TypeReference
+              Identifier: ' TR'
+            TypeReference
+              Identifier: 'P'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v03'
+        TypeReference
+          Identifier: ' Pick'
+          TypeReference
+            Identifier: 'TR'
+          TypeOperator
+            TypeReference
+              Identifier: ' TR'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v04'
+        TypeReference
+          Identifier: ' TPR'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v04'
+        MappedType
+          ReadonlyKeyword
+          TypeParameter
+            Identifier: 'P'
+            TypeOperator
+              TypeReference
+                Identifier: ' T'
+          QuestionToken
+          IndexedAccessType
+            TypeReference
+              Identifier: ' T'
+            TypeReference
+              Identifier: 'P'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v04'
+        TypeReference
+          Identifier: ' Partial'
+          TypeReference
+            Identifier: 'TR'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v04'
+        TypeReference
+          Identifier: ' Readonly'
+          TypeReference
+            Identifier: 'TP'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v04'
+        TypeReference
+          Identifier: ' Partial'
+          TypeReference
+            Identifier: 'Readonly'
+            TypeReference
+              Identifier: 'T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v04'
+        TypeReference
+          Identifier: ' Readonly'
+          TypeReference
+            Identifier: 'Partial'
+            TypeReference
+              Identifier: 'T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v04'
+        MappedType
+          TypeParameter
+            Identifier: 'P'
+            TypeOperator
+              TypeReference
+                Identifier: ' TPR'
+          IndexedAccessType
+            TypeReference
+              Identifier: ' TPR'
+            TypeReference
+              Identifier: 'P'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v04'
+        TypeReference
+          Identifier: ' Pick'
+          TypeReference
+            Identifier: 'TPR'
+          TypeOperator
+            TypeReference
+              Identifier: ' T'
+  TypeAliasDeclaration
+    Identifier: ' Boxified'
+    TypeParameter
+      Identifier: 'T'
+    MappedType
+      TypeParameter
+        Identifier: 'P'
+        TypeOperator
+          TypeReference
+            Identifier: ' T'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' x'
+          IndexedAccessType
+            TypeReference
+              Identifier: ' T'
+            TypeReference
+              Identifier: 'P'
+  TypeAliasDeclaration
+    Identifier: ' B'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' a'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' x'
+            NumberKeyword
+      PropertySignature
+        Identifier: ' b'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' x'
+            StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' BP'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' a'
+        QuestionToken
+        TypeLiteral
+          PropertySignature
+            Identifier: ' x'
+            NumberKeyword
+      PropertySignature
+        Identifier: ' b'
+        QuestionToken
+        TypeLiteral
+          PropertySignature
+            Identifier: ' x'
+            StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' BR'
+    TypeLiteral
+      PropertySignature
+        ReadonlyKeyword
+        Identifier: ' a'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' x'
+            NumberKeyword
+      PropertySignature
+        ReadonlyKeyword
+        Identifier: ' b'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' x'
+            StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' BPR'
+    TypeLiteral
+      PropertySignature
+        ReadonlyKeyword
+        Identifier: ' a'
+        QuestionToken
+        TypeLiteral
+          PropertySignature
+            Identifier: ' x'
+            NumberKeyword
+      PropertySignature
+        ReadonlyKeyword
+        Identifier: ' b'
+        QuestionToken
+        TypeLiteral
+          PropertySignature
+            Identifier: ' x'
+            StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b00'
+        UnionType
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b00'
+        TypeOperator
+          TypeReference
+            Identifier: ' B'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b00'
+        TypeOperator
+          TypeReference
+            Identifier: ' BP'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b00'
+        TypeOperator
+          TypeReference
+            Identifier: ' BR'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b00'
+        TypeOperator
+          TypeReference
+            Identifier: ' BPR'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b01'
+        TypeReference
+          Identifier: ' B'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b01'
+        MappedType
+          TypeParameter
+            Identifier: 'P'
+            TypeOperator
+              TypeReference
+                Identifier: ' B'
+          IndexedAccessType
+            TypeReference
+              Identifier: ' B'
+            TypeReference
+              Identifier: 'P'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b01'
+        TypeReference
+          Identifier: ' Pick'
+          TypeReference
+            Identifier: 'B'
+          TypeOperator
+            TypeReference
+              Identifier: ' B'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b01'
+        TypeReference
+          Identifier: ' Pick'
+          TypeReference
+            Identifier: 'Pick'
+            TypeReference
+              Identifier: 'B'
+            TypeOperator
+              TypeReference
+                Identifier: ' B'
+          TypeOperator
+            TypeReference
+              Identifier: ' B'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b02'
+        TypeReference
+          Identifier: ' BP'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b02'
+        MappedType
+          TypeParameter
+            Identifier: 'P'
+            TypeOperator
+              TypeReference
+                Identifier: ' B'
+          QuestionToken
+          IndexedAccessType
+            TypeReference
+              Identifier: ' B'
+            TypeReference
+              Identifier: 'P'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b02'
+        TypeReference
+          Identifier: ' Partial'
+          TypeReference
+            Identifier: 'B'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b02'
+        MappedType
+          TypeParameter
+            Identifier: 'P'
+            TypeOperator
+              TypeReference
+                Identifier: ' BP'
+          IndexedAccessType
+            TypeReference
+              Identifier: ' BP'
+            TypeReference
+              Identifier: 'P'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b02'
+        TypeReference
+          Identifier: ' Pick'
+          TypeReference
+            Identifier: 'BP'
+          TypeOperator
+            TypeReference
+              Identifier: ' BP'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b03'
+        TypeReference
+          Identifier: ' BR'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b03'
+        MappedType
+          ReadonlyKeyword
+          TypeParameter
+            Identifier: 'P'
+            TypeOperator
+              TypeReference
+                Identifier: ' B'
+          IndexedAccessType
+            TypeReference
+              Identifier: ' B'
+            TypeReference
+              Identifier: 'P'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b03'
+        TypeReference
+          Identifier: ' Readonly'
+          TypeReference
+            Identifier: 'B'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b03'
+        MappedType
+          TypeParameter
+            Identifier: 'P'
+            TypeOperator
+              TypeReference
+                Identifier: ' BR'
+          IndexedAccessType
+            TypeReference
+              Identifier: ' BR'
+            TypeReference
+              Identifier: 'P'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b03'
+        TypeReference
+          Identifier: ' Pick'
+          TypeReference
+            Identifier: 'BR'
+          TypeOperator
+            TypeReference
+              Identifier: ' BR'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b04'
+        TypeReference
+          Identifier: ' BPR'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b04'
+        MappedType
+          ReadonlyKeyword
+          TypeParameter
+            Identifier: 'P'
+            TypeOperator
+              TypeReference
+                Identifier: ' B'
+          QuestionToken
+          IndexedAccessType
+            TypeReference
+              Identifier: ' B'
+            TypeReference
+              Identifier: 'P'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b04'
+        TypeReference
+          Identifier: ' Partial'
+          TypeReference
+            Identifier: 'BR'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b04'
+        TypeReference
+          Identifier: ' Readonly'
+          TypeReference
+            Identifier: 'BP'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b04'
+        TypeReference
+          Identifier: ' Partial'
+          TypeReference
+            Identifier: 'Readonly'
+            TypeReference
+              Identifier: 'B'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b04'
+        TypeReference
+          Identifier: ' Readonly'
+          TypeReference
+            Identifier: 'Partial'
+            TypeReference
+              Identifier: 'B'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b04'
+        MappedType
+          TypeParameter
+            Identifier: 'P'
+            TypeOperator
+              TypeReference
+                Identifier: ' BPR'
+          IndexedAccessType
+            TypeReference
+              Identifier: ' BPR'
+            TypeReference
+              Identifier: 'P'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b04'
+        TypeReference
+          Identifier: ' Pick'
+          TypeReference
+            Identifier: 'BPR'
+          TypeOperator
+            TypeReference
+              Identifier: ' BPR'
+  TypeAliasDeclaration
+    Identifier: ' Foo'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' prop'
+        NumberKeyword
+      IndexSignature
+        Parameter
+          Identifier: 'x'
+          StringKeyword
+        NumberKeyword
+  FunctionDeclaration
+    Identifier: ' f1'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' Partial'
+        TypeReference
+          Identifier: 'Foo'
+    Block
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    x'
+          Identifier: 'prop'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            ParenthesizedExpression
+              BinaryExpression
+                ElementAccessExpression
+                  Identifier: 'x'
+                  StringLiteral
+                BarBarToken
+                NumericLiteral
+            Identifier: 'toFixed'
+  FunctionDeclaration
+    Identifier: ' f2'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' Readonly'
+        TypeReference
+          Identifier: 'Foo'
+    Block
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    x'
+          Identifier: 'prop'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            ElementAccessExpression
+              Identifier: ' // ok
+    x'
+              StringLiteral
+            Identifier: 'toFixed'
+  FunctionDeclaration
+    Identifier: ' f3'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' Boxified'
+        TypeReference
+          Identifier: 'Foo'
+    Block
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    x'
+          Identifier: 'prop'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              ElementAccessExpression
+                Identifier: ' // ok
+    x'
+                StringLiteral
+              Identifier: 'x'
+            Identifier: 'toFixed'
+  FunctionDeclaration
+    Identifier: ' f4'
+    Parameter
+      Identifier: 'x'
+      MappedType
+        TypeParameter
+          Identifier: 'P'
+          TypeOperator
+            TypeReference
+              Identifier: ' Foo'
+        IndexedAccessType
+          TypeReference
+            Identifier: ' Foo'
+          TypeReference
+            Identifier: 'P'
+    Block
+      ExpressionStatement
+        PropertyAccessExpression
+          Identifier: '
+    x'
+          Identifier: 'prop'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            ElementAccessExpression
+              Identifier: ' // ok
+    x'
+              StringLiteral
+            Identifier: 'toFixed'

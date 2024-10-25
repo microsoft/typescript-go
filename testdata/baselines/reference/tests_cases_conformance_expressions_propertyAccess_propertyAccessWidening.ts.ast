@@ -1,0 +1,120 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' g1'
+    Parameter
+      Identifier: 'headerNames'
+      AnyKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' t'
+            ArrayLiteralExpression
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' hasLineBreak'
+                  FalseKeyword
+                PropertyAssignment
+                  Identifier: ' cells'
+                  ArrayLiteralExpression
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' table'
+            CallExpression
+              PropertyAccessExpression
+                ArrayLiteralExpression
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: 'cells'
+                      Identifier: ' headerNames'
+                Identifier: 'concat'
+              Identifier: 't'
+  FunctionDeclaration
+    Identifier: ' g2'
+    Parameter
+      Identifier: 'headerNames'
+      AnyKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' t'
+            ArrayLiteralExpression
+              ObjectLiteralExpression
+                PropertyAssignment
+                  Identifier: ' hasLineBreak'
+                  FalseKeyword
+                PropertyAssignment
+                  Identifier: ' cells'
+                  ArrayLiteralExpression
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' table'
+            CallExpression
+              ElementAccessExpression
+                ArrayLiteralExpression
+                  ObjectLiteralExpression
+                    PropertyAssignment
+                      Identifier: 'cells'
+                      Identifier: ' headerNames'
+                StringLiteral
+              Identifier: 't'
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'options'
+      QuestionToken
+      TypeLiteral
+        PropertySignature
+          Identifier: ' a'
+          StringKeyword
+        PropertySignature
+          Identifier: ' b'
+          NumberKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x1'
+            PropertyAccessExpression
+              ParenthesizedExpression
+                BinaryExpression
+                  Identifier: 'options'
+                  BarBarToken
+                  ObjectLiteralExpression
+              Identifier: 'a'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x2'
+            ElementAccessExpression
+              ParenthesizedExpression
+                BinaryExpression
+                  Identifier: 'options'
+                  BarBarToken
+                  ObjectLiteralExpression
+              StringLiteral
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            ParenthesizedExpression
+              BinaryExpression
+                Identifier: 'options'
+                BarBarToken
+                ObjectLiteralExpression
+            Identifier: 'a'
+          EqualsToken
+          NumericLiteral
+      ExpressionStatement
+        BinaryExpression
+          ElementAccessExpression
+            ParenthesizedExpression
+              BinaryExpression
+                Identifier: 'options'
+                BarBarToken
+                ObjectLiteralExpression
+            StringLiteral
+          EqualsToken
+          NumericLiteral

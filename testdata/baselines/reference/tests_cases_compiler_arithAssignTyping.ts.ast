@@ -1,0 +1,76 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' f'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+f'
+      PlusEqualsToken
+      StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // error
+f'
+      PlusEqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // error
+f'
+      MinusEqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // error
+f'
+      AsteriskEqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // error
+f'
+      SlashEqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // error
+f'
+      PercentEqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // error
+f'
+      AmpersandEqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // error
+f'
+      BarEqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // error
+f'
+      LessThanLessThanEqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // error
+f'
+      GreaterThanGreaterThanEqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // error
+f'
+      GreaterThanGreaterThanGreaterThanEqualsToken
+      NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // error
+f'
+      CaretEqualsToken
+      NumericLiteral

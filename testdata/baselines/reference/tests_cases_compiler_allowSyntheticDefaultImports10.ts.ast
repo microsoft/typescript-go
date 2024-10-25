@@ -1,0 +1,29 @@
+SourceFile
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' foo'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' bar'
+  ImportEqualsDeclaration
+    Identifier: ' Foo'
+    ExternalModuleReference
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          Identifier: '
+Foo'
+          Identifier: 'default'
+        Identifier: 'bar'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: '
+Foo'
+            Identifier: 'default'
+          Identifier: 'default'
+        Identifier: 'foo'

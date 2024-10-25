@@ -1,0 +1,41 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' b'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        NumericLiteral
+  TypeAliasDeclaration
+    Identifier: ' t'
+    LiteralType
+      NumericLiteral
+  ModuleDeclaration
+    Identifier: ' t'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' I'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' t'
+        NumericLiteral
+  InterfaceDeclaration
+    Identifier: ' c'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' c'
+  InterfaceDeclaration
+    Identifier: ' d'
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' d'
+  ModuleDeclaration
+    Identifier: ' N'
+    ModuleBlock
+  ModuleDeclaration
+    ExportKeyword
+    Identifier: ' N'
+    ModuleBlock

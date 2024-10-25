@@ -1,0 +1,97 @@
+SourceFile
+  ClassDeclaration
+    AbstractKeyword
+    Identifier: ' AB'
+    MethodDeclaration
+      AbstractKeyword
+      Identifier: ' foo'
+      Parameter
+        Identifier: 'v'
+        StringKeyword
+      VoidKeyword
+    MethodDeclaration
+      AbstractKeyword
+      Identifier: ' bar'
+      Parameter
+        Identifier: 'v'
+        StringKeyword
+      VoidKeyword
+    MethodDeclaration
+      AbstractKeyword
+      Identifier: ' baz'
+      Parameter
+        Identifier: 'v'
+        StringKeyword
+      VoidKeyword
+  ClassDeclaration
+    AbstractKeyword
+    Identifier: ' AD1'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' AB'
+  ClassDeclaration
+    AbstractKeyword
+    Identifier: ' AD2'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' AB'
+    MethodDeclaration
+      AbstractKeyword
+      Identifier: ' foo'
+      Parameter
+        Identifier: 'v'
+        LiteralType
+          StringLiteral
+      VoidKeyword
+  ClassDeclaration
+    AbstractKeyword
+    Identifier: ' AD3'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' AB'
+    MethodDeclaration
+      OverrideKeyword
+      Identifier: ' foo'
+      Parameter
+        Identifier: 'v'
+        LiteralType
+          StringLiteral
+      VoidKeyword
+      Block
+    MethodDeclaration
+      AbstractKeyword
+      Identifier: ' bar'
+      VoidKeyword
+    MethodDeclaration
+      Identifier: '
+    baz'
+      VoidKeyword
+      Block
+  ClassDeclaration
+    Identifier: ' D4'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' AB'
+    MethodDeclaration
+      OverrideKeyword
+      Identifier: ' foo'
+      Parameter
+        Identifier: 'v'
+        LiteralType
+          StringLiteral
+      VoidKeyword
+      Block
+    MethodDeclaration
+      OverrideKeyword
+      Identifier: ' bar'
+      Parameter
+        Identifier: 'v'
+        LiteralType
+          StringLiteral
+      VoidKeyword
+      Block
+    MethodDeclaration
+      Identifier: '
+    baz'
+      VoidKeyword
+      Block

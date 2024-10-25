@@ -1,0 +1,17 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C234'
+    SetAccessor
+      PublicKeyword
+      Identifier: ' p1'
+      Parameter
+        Identifier: 'arg1'
+      Block
+        IfStatement
+          TrueKeyword
+          Block
+            ReturnStatement
+              Identifier: ' arg1'
+          Block
+            ReturnStatement
+              NumericLiteral

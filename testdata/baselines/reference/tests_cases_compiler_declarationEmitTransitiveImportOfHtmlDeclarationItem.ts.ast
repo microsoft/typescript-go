@@ -1,0 +1,31 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' CustomHtmlRepresentationThing'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' CustomHtmlRepresentationThing'
+    StringLiteral
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' func'
+    Block
+      ReturnStatement
+        NewExpression
+          Identifier: ' CustomHtmlRepresentationThing'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' func'
+    StringLiteral
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        CallExpression
+          Identifier: ' func'

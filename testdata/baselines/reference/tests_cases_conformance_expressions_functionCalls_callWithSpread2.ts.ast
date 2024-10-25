@@ -1,0 +1,241 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' all'
+    Parameter
+      Identifier: 'a'
+      QuestionToken
+      NumberKeyword
+    Parameter
+      Identifier: ' b'
+      QuestionToken
+      NumberKeyword
+    VoidKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' weird'
+    Parameter
+      Identifier: 'a'
+      QuestionToken
+      UnionType
+        NumberKeyword
+        StringKeyword
+    Parameter
+      Identifier: ' b'
+      QuestionToken
+      UnionType
+        NumberKeyword
+        StringKeyword
+    VoidKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' prefix'
+    Parameter
+      Identifier: 's'
+      StringKeyword
+    Parameter
+      Identifier: ' a'
+      QuestionToken
+      NumberKeyword
+    Parameter
+      Identifier: ' b'
+      QuestionToken
+      NumberKeyword
+    VoidKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' rest'
+    Parameter
+      Identifier: 's'
+      StringKeyword
+    Parameter
+      Identifier: ' a'
+      QuestionToken
+      NumberKeyword
+    Parameter
+      Identifier: ' b'
+      QuestionToken
+      NumberKeyword
+    Parameter
+      DotDotDotToken
+      Identifier: 'rest'
+      ArrayType
+        NumberKeyword
+    VoidKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' normal'
+    Parameter
+      Identifier: 's'
+      StringKeyword
+    VoidKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' thunk'
+    StringKeyword
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' prefix2'
+    Parameter
+      Identifier: 's'
+      StringKeyword
+    Parameter
+      Identifier: ' n'
+      NumberKeyword
+    Parameter
+      Identifier: ' a'
+      QuestionToken
+      NumberKeyword
+    Parameter
+      Identifier: ' b'
+      QuestionToken
+      NumberKeyword
+    VoidKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ns'
+        ArrayType
+          NumberKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' mixed'
+        ArrayType
+          ParenthesizedType
+            UnionType
+              NumberKeyword
+              StringKeyword
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' tuple'
+        TupleType
+          NumberKeyword
+          StringKeyword
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+// good
+all'
+      SpreadElement
+        Identifier: 'ns'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+weird'
+      SpreadElement
+        Identifier: 'ns'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+weird'
+      SpreadElement
+        Identifier: 'mixed'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+weird'
+      SpreadElement
+        Identifier: 'tuple'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+prefix'
+      StringLiteral
+      SpreadElement
+        Identifier: 'ns'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+rest'
+      StringLiteral
+      SpreadElement
+        Identifier: 'ns'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+
+// extra arguments
+normal'
+      StringLiteral
+      SpreadElement
+        Identifier: 'ns'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+thunk'
+      SpreadElement
+        Identifier: 'ns'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+// bad
+all'
+      SpreadElement
+        Identifier: 'mixed'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+all'
+      SpreadElement
+        Identifier: 'tuple'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+prefix'
+      StringLiteral
+      SpreadElement
+        Identifier: 'mixed'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+prefix'
+      StringLiteral
+      SpreadElement
+        Identifier: 'tuple'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+rest'
+      StringLiteral
+      SpreadElement
+        Identifier: 'mixed'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+rest'
+      StringLiteral
+      SpreadElement
+        Identifier: 'tuple'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+prefix'
+      SpreadElement
+        Identifier: 'ns'
+  ExpressionStatement
+    CallExpression
+      Identifier: ' // required parameters are required
+prefix'
+      SpreadElement
+        Identifier: 'mixed'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+prefix'
+      SpreadElement
+        Identifier: 'tuple'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+prefix2'
+      StringLiteral
+      SpreadElement
+        Identifier: 'ns'

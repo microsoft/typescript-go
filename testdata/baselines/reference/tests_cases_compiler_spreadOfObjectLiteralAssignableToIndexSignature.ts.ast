@@ -1,0 +1,156 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foo'
+        TypeReference
+          Identifier: ' Record'
+          NeverKeyword
+          NeverKeyword
+        ObjectLiteralExpression
+  InterfaceDeclaration
+    Identifier: ' RecordOfRecords'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Record'
+        TypeOperator
+          AnyKeyword
+        TypeReference
+          Identifier: ' RecordOfRecords'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' recordOfRecords'
+        TypeReference
+          Identifier: ' RecordOfRecords'
+        ObjectLiteralExpression
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+recordOfRecords'
+        Identifier: 'propA'
+      EqualsToken
+      ObjectLiteralExpression
+        SpreadAssignment
+          ParenthesizedExpression
+            ConditionalExpression
+              BinaryExpression
+                Identifier: 'foo'
+                ExclamationEqualsEqualsToken
+                Identifier: ' undefined'
+              QuestionToken
+              ObjectLiteralExpression
+                ShorthandPropertyAssignment
+                  Identifier: 'foo'
+              ColonToken
+              ObjectLiteralExpression
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: ' // OK
+recordOfRecords'
+        Identifier: 'propB'
+      EqualsToken
+      ObjectLiteralExpression
+        SpreadAssignment
+          ParenthesizedExpression
+            BinaryExpression
+              Identifier: 'foo'
+              AmpersandAmpersandToken
+              ObjectLiteralExpression
+                ShorthandPropertyAssignment
+                  Identifier: 'foo'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: ' // OK
+recordOfRecords'
+        Identifier: 'propC'
+      EqualsToken
+      ObjectLiteralExpression
+        SpreadAssignment
+          ParenthesizedExpression
+            BinaryExpression
+              BinaryExpression
+                Identifier: 'foo'
+                ExclamationEqualsEqualsToken
+                Identifier: ' undefined'
+              AmpersandAmpersandToken
+              ObjectLiteralExpression
+                ShorthandPropertyAssignment
+                  Identifier: 'foo'
+  InterfaceDeclaration
+    Identifier: ' RecordOfRecordsOrEmpty'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Record'
+        TypeOperator
+          AnyKeyword
+        UnionType
+          TypeReference
+            Identifier: ' RecordOfRecordsOrEmpty'
+          TypeLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' recordsOfRecordsOrEmpty'
+        TypeReference
+          Identifier: ' RecordOfRecordsOrEmpty'
+        ObjectLiteralExpression
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+recordsOfRecordsOrEmpty'
+        Identifier: 'propA'
+      EqualsToken
+      ObjectLiteralExpression
+        SpreadAssignment
+          ParenthesizedExpression
+            ConditionalExpression
+              BinaryExpression
+                Identifier: 'foo'
+                ExclamationEqualsEqualsToken
+                Identifier: ' undefined'
+              QuestionToken
+              ObjectLiteralExpression
+                ShorthandPropertyAssignment
+                  Identifier: 'foo'
+              ColonToken
+              ObjectLiteralExpression
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: ' // OK
+recordsOfRecordsOrEmpty'
+        Identifier: 'propB'
+      EqualsToken
+      ObjectLiteralExpression
+        SpreadAssignment
+          ParenthesizedExpression
+            BinaryExpression
+              Identifier: 'foo'
+              AmpersandAmpersandToken
+              ObjectLiteralExpression
+                ShorthandPropertyAssignment
+                  Identifier: 'foo'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: ' // OK
+recordsOfRecordsOrEmpty'
+        Identifier: 'propC'
+      EqualsToken
+      ObjectLiteralExpression
+        SpreadAssignment
+          ParenthesizedExpression
+            BinaryExpression
+              BinaryExpression
+                Identifier: 'foo'
+                ExclamationEqualsEqualsToken
+                Identifier: ' undefined'
+              AmpersandAmpersandToken
+              ObjectLiteralExpression
+                ShorthandPropertyAssignment
+                  Identifier: 'foo'

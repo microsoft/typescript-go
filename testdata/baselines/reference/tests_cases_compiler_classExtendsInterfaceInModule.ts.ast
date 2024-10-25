@@ -1,0 +1,49 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' M'
+    ModuleBlock
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' I1'
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' I2'
+        TypeParameter
+          Identifier: 'T'
+  ClassDeclaration
+    Identifier: ' C1'
+    HeritageClause
+      ExpressionWithTypeArguments
+        PropertyAccessExpression
+          Identifier: ' M'
+          Identifier: 'I1'
+  ClassDeclaration
+    Identifier: ' C2'
+    TypeParameter
+      Identifier: 'T'
+    HeritageClause
+      ExpressionWithTypeArguments
+        PropertyAccessExpression
+          Identifier: ' M'
+          Identifier: 'I2'
+        TypeReference
+          Identifier: 'T'
+  ModuleDeclaration
+    Identifier: ' Mod'
+    ModuleBlock
+      ModuleDeclaration
+        ExportKeyword
+        Identifier: ' Nested'
+        ModuleBlock
+          InterfaceDeclaration
+            ExportKeyword
+            Identifier: ' I'
+  ClassDeclaration
+    Identifier: ' D'
+    HeritageClause
+      ExpressionWithTypeArguments
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: ' Mod'
+            Identifier: 'Nested'
+          Identifier: 'I'

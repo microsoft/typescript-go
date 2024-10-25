@@ -1,0 +1,9 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    DefaultKeyword
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' z'
+      StringKeyword
+      StringLiteral

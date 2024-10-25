@@ -1,0 +1,12 @@
+SourceFile
+  TypeAliasDeclaration
+    Identifier: ' undefined'
+    StringKeyword
+  FunctionDeclaration
+    Identifier: ' p'
+    Parameter
+      Identifier: 'undefined'
+      StringLiteral
+    Block
+      ReturnStatement
+        Identifier: ' undefined'

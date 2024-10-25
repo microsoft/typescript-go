@@ -1,0 +1,8 @@
+SourceFile
+  FunctionDeclaration
+    AsteriskToken
+    Identifier: ' g1'
+    TypeReference
+      Identifier: ' Iterable'
+      StringKeyword
+    Block

@@ -1,0 +1,26 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' v'
+        ObjectLiteralExpression
+          PropertyAssignment
+            ComputedPropertyName
+              PrefixUnaryExpression
+                NumericLiteral
+            ObjectLiteralExpression
+          PropertyAssignment
+            ComputedPropertyName
+              PrefixUnaryExpression
+                NumericLiteral
+            ObjectLiteralExpression
+          PropertyAssignment
+            ComputedPropertyName
+              PrefixUnaryExpression
+                NumericLiteral
+            ObjectLiteralExpression
+          PropertyAssignment
+            ComputedPropertyName
+              PrefixUnaryExpression
+                NumericLiteral
+            ObjectLiteralExpression

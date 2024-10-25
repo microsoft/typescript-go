@@ -1,0 +1,8 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        PropertyAccessExpression
+          StringLiteral
+          Identifier: 'bogus'

@@ -1,0 +1,98 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' A'
+    MethodSignature
+      Identifier: '
+    prop'
+  ClassDeclaration
+    Identifier: ' B'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' prop'
+      Block
+  ClassDeclaration
+    Identifier: ' C'
+    MethodDeclaration
+      PublicKeyword
+      StaticKeyword
+      Identifier: ' prop'
+      Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeReference
+          Identifier: ' A'
+        NewExpression
+          Identifier: ' B'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+a'
+      EqualsToken
+      NewExpression
+        Identifier: ' C'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // error prop is missing
+a'
+      EqualsToken
+      Identifier: ' B'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // error prop is missing
+a'
+      EqualsToken
+      Identifier: ' C'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        TypeReference
+          Identifier: ' B'
+        NewExpression
+          Identifier: ' C'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // error prop is missing
+b'
+      EqualsToken
+      Identifier: ' B'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // error prop is missing
+b'
+      EqualsToken
+      Identifier: ' C'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+b'
+      EqualsToken
+      Identifier: ' a'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        TypeReference
+          Identifier: ' C'
+        NewExpression
+          Identifier: ' B'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+c'
+      EqualsToken
+      Identifier: ' B'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+c'
+      EqualsToken
+      Identifier: ' C'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+c'
+      EqualsToken
+      Identifier: ' a'

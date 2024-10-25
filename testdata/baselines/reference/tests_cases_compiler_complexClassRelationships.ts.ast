@@ -1,0 +1,135 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Derived'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    MethodDeclaration
+      PublicKeyword
+      StaticKeyword
+      Identifier: ' createEmpty'
+      TypeReference
+        Identifier: ' Derived'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' item'
+              NewExpression
+                Identifier: ' Derived'
+        ReturnStatement
+          Identifier: ' item'
+  ClassDeclaration
+    Identifier: ' BaseCollection'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Base'
+    Constructor
+      Parameter
+        Identifier: 'f'
+        FunctionType
+          TypeReference
+            Identifier: ' T'
+      Block
+        ExpressionStatement
+          ArrowFunction
+            Parameter
+              Identifier: 'item'
+              TypeReference
+                Identifier: ' Thing'
+            EqualsGreaterThanToken
+            Block
+              ReturnStatement
+                ArrayLiteralExpression
+                  PropertyAccessExpression
+                    Identifier: 'item'
+                    Identifier: 'Components'
+  ClassDeclaration
+    Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: '
+    ownerCollection'
+      TypeReference
+        Identifier: ' BaseCollection'
+        TypeReference
+          Identifier: 'Base'
+  ClassDeclaration
+    Identifier: ' Thing'
+    GetAccessor
+      PublicKeyword
+      Identifier: ' Components'
+      TypeReference
+        Identifier: ' ComponentCollection'
+        AnyKeyword
+      Block
+        ReturnStatement
+          NullKeyword
+  ClassDeclaration
+    Identifier: ' ComponentCollection'
+    TypeParameter
+      Identifier: 'T'
+    MethodDeclaration
+      PrivateKeyword
+      StaticKeyword
+      Identifier: ' sortComponents'
+      Parameter
+        Identifier: 'p'
+        TypeReference
+          Identifier: ' Foo'
+      Block
+        ReturnStatement
+          PropertyAccessExpression
+            Identifier: ' p'
+            Identifier: 'prop1'
+  ClassDeclaration
+    Identifier: ' Foo'
+    GetAccessor
+      PublicKeyword
+      Identifier: ' prop1'
+      Block
+        ReturnStatement
+          NewExpression
+            Identifier: ' GenericType'
+            StringKeyword
+            ThisKeyword
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' populate'
+      Block
+        ExpressionStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'prop2'
+    GetAccessor
+      PublicKeyword
+      Identifier: ' prop2'
+      TypeReference
+        Identifier: ' BaseCollection'
+        TypeReference
+          Identifier: 'Derived'
+      Block
+        ReturnStatement
+          NewExpression
+            Identifier: ' BaseCollection'
+            TypeReference
+              Identifier: 'Derived'
+            PropertyAccessExpression
+              Identifier: 'Derived'
+              Identifier: 'createEmpty'
+  ClassDeclaration
+    Identifier: ' GenericType'
+    TypeParameter
+      Identifier: 'T'
+    Constructor
+      Parameter
+        Identifier: 'parent'
+        TypeReference
+          Identifier: ' FooBase'
+      Block
+  ClassDeclaration
+    Identifier: ' FooBase'
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' populate'
+      Block

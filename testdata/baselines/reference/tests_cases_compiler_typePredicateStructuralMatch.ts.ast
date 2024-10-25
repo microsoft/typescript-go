@@ -1,0 +1,146 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      Identifier: '// Repro from #12235
+
+getResults1'
+      ArrayLiteralExpression
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+getResults1'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: 'data'
+          ArrayLiteralExpression
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+getResults2'
+      ArrayLiteralExpression
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+getResults2'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: 'data'
+          ArrayLiteralExpression
+  TypeAliasDeclaration
+    Identifier: ' Result'
+    TypeLiteral
+      PropertySignature
+        Identifier: ' value'
+        StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' Results'
+    ArrayType
+      TypeReference
+        Identifier: ' Result'
+  FunctionDeclaration
+    Identifier: ' isResponseInData'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'value'
+      UnionType
+        TypeReference
+          Identifier: ' T'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' data'
+            TypeReference
+              Identifier: ' T'
+    TypePredicate
+      Identifier: ' value'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' data'
+          TypeReference
+            Identifier: ' T'
+    Block
+      ReturnStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' value'
+            Identifier: 'hasOwnProperty'
+          StringLiteral
+  FunctionDeclaration
+    Identifier: ' getResults1'
+    Parameter
+      Identifier: 'value'
+      UnionType
+        TypeReference
+          Identifier: ' Results'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' data'
+            TypeReference
+              Identifier: ' Results'
+    TypeReference
+      Identifier: ' Results'
+    Block
+      ReturnStatement
+        ConditionalExpression
+          CallExpression
+            Identifier: ' isResponseInData'
+            Identifier: 'value'
+          QuestionToken
+          PropertyAccessExpression
+            Identifier: ' value'
+            Identifier: 'data'
+          ColonToken
+          Identifier: ' value'
+  FunctionDeclaration
+    Identifier: ' isPlainResponse'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'value'
+      UnionType
+        TypeReference
+          Identifier: ' T'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' data'
+            TypeReference
+              Identifier: ' T'
+    TypePredicate
+      Identifier: ' value'
+      TypeReference
+        Identifier: ' T'
+    Block
+      ReturnStatement
+        PrefixUnaryExpression
+          CallExpression
+            PropertyAccessExpression
+              Identifier: 'value'
+              Identifier: 'hasOwnProperty'
+            StringLiteral
+  FunctionDeclaration
+    Identifier: ' getResults2'
+    Parameter
+      Identifier: 'value'
+      UnionType
+        TypeReference
+          Identifier: ' Results'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' data'
+            TypeReference
+              Identifier: ' Results'
+    TypeReference
+      Identifier: ' Results'
+    Block
+      ReturnStatement
+        ConditionalExpression
+          CallExpression
+            Identifier: ' isPlainResponse'
+            Identifier: 'value'
+          QuestionToken
+          Identifier: ' value'
+          ColonToken
+          PropertyAccessExpression
+            Identifier: ' value'
+            Identifier: 'data'

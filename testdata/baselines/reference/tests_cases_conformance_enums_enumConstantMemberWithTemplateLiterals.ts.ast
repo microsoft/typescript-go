@@ -1,0 +1,155 @@
+SourceFile
+  EnumDeclaration
+    Identifier: ' T1'
+    EnumMember
+      Identifier: '
+    a'
+      NoSubstitutionTemplateLiteral
+  EnumDeclaration
+    Identifier: ' T2'
+    EnumMember
+      Identifier: '
+    a'
+      NoSubstitutionTemplateLiteral
+    EnumMember
+      Identifier: '
+    b'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    c'
+      NumericLiteral
+  EnumDeclaration
+    Identifier: ' T3'
+    EnumMember
+      Identifier: '
+    a'
+      BinaryExpression
+        NoSubstitutionTemplateLiteral
+        PlusToken
+        NoSubstitutionTemplateLiteral
+  EnumDeclaration
+    Identifier: ' T4'
+    EnumMember
+      Identifier: '
+    a'
+      NoSubstitutionTemplateLiteral
+    EnumMember
+      Identifier: '
+    b'
+      BinaryExpression
+        NoSubstitutionTemplateLiteral
+        PlusToken
+        NoSubstitutionTemplateLiteral
+    EnumMember
+      Identifier: '
+    c'
+      BinaryExpression
+        NoSubstitutionTemplateLiteral
+        PlusToken
+        StringLiteral
+    EnumMember
+      Identifier: '
+    d'
+      BinaryExpression
+        StringLiteral
+        PlusToken
+        NoSubstitutionTemplateLiteral
+    EnumMember
+      Identifier: '
+    e'
+      BinaryExpression
+        BinaryExpression
+          StringLiteral
+          PlusToken
+          NoSubstitutionTemplateLiteral
+        PlusToken
+        NoSubstitutionTemplateLiteral
+  EnumDeclaration
+    Identifier: ' T5'
+    EnumMember
+      Identifier: '
+    a'
+      NoSubstitutionTemplateLiteral
+    EnumMember
+      Identifier: '
+    b'
+      BinaryExpression
+        NoSubstitutionTemplateLiteral
+        PlusToken
+        NoSubstitutionTemplateLiteral
+    EnumMember
+      Identifier: '
+    c'
+      BinaryExpression
+        BinaryExpression
+          NoSubstitutionTemplateLiteral
+          PlusToken
+          NoSubstitutionTemplateLiteral
+        PlusToken
+        NoSubstitutionTemplateLiteral
+    EnumMember
+      Identifier: '
+    d'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    e'
+      BinaryExpression
+        NoSubstitutionTemplateLiteral
+        MinusToken
+        NoSubstitutionTemplateLiteral
+    EnumMember
+      Identifier: '
+    f'
+      BinaryExpression
+        NoSubstitutionTemplateLiteral
+        PlusToken
+        NumericLiteral
+    EnumMember
+      Identifier: '
+    g'
+      TemplateExpression
+        TemplateHead
+        TemplateSpan
+          StringLiteral
+          TemplateTail
+    EnumMember
+      Identifier: '
+    h'
+      PropertyAccessExpression
+        NoSubstitutionTemplateLiteral
+        Identifier: 'length'
+  EnumDeclaration
+    Identifier: ' T6'
+    EnumMember
+      Identifier: '
+    a'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    b'
+      PropertyAccessExpression
+        NoSubstitutionTemplateLiteral
+        Identifier: 'length'
+  EnumDeclaration
+    DeclareKeyword
+    Identifier: ' T7'
+    EnumMember
+      Identifier: '
+    a'
+      NoSubstitutionTemplateLiteral
+    EnumMember
+      Identifier: '
+    b'
+      BinaryExpression
+        NoSubstitutionTemplateLiteral
+        PlusToken
+        NoSubstitutionTemplateLiteral
+    EnumMember
+      Identifier: '
+    c'
+      BinaryExpression
+        StringLiteral
+        PlusToken
+        NoSubstitutionTemplateLiteral

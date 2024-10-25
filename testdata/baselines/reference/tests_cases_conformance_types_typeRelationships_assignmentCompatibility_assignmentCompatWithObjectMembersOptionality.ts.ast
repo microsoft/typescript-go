@@ -1,0 +1,338 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: ' foo'
+      StringKeyword
+  ClassDeclaration
+    Identifier: ' Derived'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Base'
+    PropertyDeclaration
+      Identifier: ' bar'
+      StringKeyword
+  ClassDeclaration
+    Identifier: ' Derived2'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' Derived'
+    PropertyDeclaration
+      Identifier: ' baz'
+      StringKeyword
+  ModuleDeclaration
+    Identifier: ' TargetHasOptional'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' C'
+        PropertySignature
+          Identifier: '
+        opt'
+          QuestionToken
+          TypeReference
+            Identifier: ' Base'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c'
+            TypeReference
+              Identifier: ' C'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a'
+            TypeLiteral
+              PropertySignature
+                Identifier: ' opt'
+                QuestionToken
+                TypeReference
+                  Identifier: ' Base'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' b'
+            TypeQuery
+              Identifier: ' a'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' opt'
+                NewExpression
+                  Identifier: ' Base'
+      InterfaceDeclaration
+        Identifier: ' D'
+        PropertySignature
+          Identifier: '
+        opt'
+          TypeReference
+            Identifier: ' Base'
+      InterfaceDeclaration
+        Identifier: ' E'
+        PropertySignature
+          Identifier: '
+        opt'
+          TypeReference
+            Identifier: ' Derived'
+      InterfaceDeclaration
+        Identifier: ' F'
+        PropertySignature
+          Identifier: '
+        opt'
+          QuestionToken
+          TypeReference
+            Identifier: ' Derived'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' d'
+            TypeReference
+              Identifier: ' D'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' e'
+            TypeReference
+              Identifier: ' E'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' f'
+            TypeReference
+              Identifier: ' F'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+
+    // all ok
+    c'
+          EqualsToken
+          Identifier: ' d'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    c'
+          EqualsToken
+          Identifier: ' e'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    c'
+          EqualsToken
+          Identifier: ' f'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    c'
+          EqualsToken
+          Identifier: ' a'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+
+    a'
+          EqualsToken
+          Identifier: ' d'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    a'
+          EqualsToken
+          Identifier: ' e'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    a'
+          EqualsToken
+          Identifier: ' f'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    a'
+          EqualsToken
+          Identifier: ' c'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+
+    b'
+          EqualsToken
+          Identifier: ' d'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    b'
+          EqualsToken
+          Identifier: ' e'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    b'
+          EqualsToken
+          Identifier: ' f'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    b'
+          EqualsToken
+          Identifier: ' a'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    b'
+          EqualsToken
+          Identifier: ' c'
+  ModuleDeclaration
+    Identifier: ' SourceHasOptional'
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' C'
+        PropertySignature
+          Identifier: '
+        opt'
+          TypeReference
+            Identifier: ' Base'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' c'
+            TypeReference
+              Identifier: ' C'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' a'
+            TypeLiteral
+              PropertySignature
+                Identifier: ' opt'
+                TypeReference
+                  Identifier: ' Base'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' b'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' opt'
+                NewExpression
+                  Identifier: ' Base'
+      InterfaceDeclaration
+        Identifier: ' D'
+        PropertySignature
+          Identifier: '
+        opt'
+          QuestionToken
+          TypeReference
+            Identifier: ' Base'
+      InterfaceDeclaration
+        Identifier: ' E'
+        PropertySignature
+          Identifier: '
+        opt'
+          QuestionToken
+          TypeReference
+            Identifier: ' Derived'
+      InterfaceDeclaration
+        Identifier: ' F'
+        PropertySignature
+          Identifier: '
+        opt'
+          TypeReference
+            Identifier: ' Derived'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' d'
+            TypeReference
+              Identifier: ' D'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' e'
+            TypeReference
+              Identifier: ' E'
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' f'
+            TypeReference
+              Identifier: ' F'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+
+    c'
+          EqualsToken
+          Identifier: ' d'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: ' // error
+    c'
+          EqualsToken
+          Identifier: ' e'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: ' // error
+    c'
+          EqualsToken
+          Identifier: ' f'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: ' // ok
+    c'
+          EqualsToken
+          Identifier: ' a'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: ' // ok
+
+    a'
+          EqualsToken
+          Identifier: ' d'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: ' // error
+    a'
+          EqualsToken
+          Identifier: ' e'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: ' // error
+    a'
+          EqualsToken
+          Identifier: ' f'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: ' // ok
+    a'
+          EqualsToken
+          Identifier: ' c'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: ' // ok
+
+    b'
+          EqualsToken
+          Identifier: ' d'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: ' // error
+    b'
+          EqualsToken
+          Identifier: ' e'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: ' // error
+    b'
+          EqualsToken
+          Identifier: ' f'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: ' // ok
+    b'
+          EqualsToken
+          Identifier: ' a'
+      ExpressionStatement
+        BinaryExpression
+          Identifier: ' // ok
+    b'
+          EqualsToken
+          Identifier: ' c'

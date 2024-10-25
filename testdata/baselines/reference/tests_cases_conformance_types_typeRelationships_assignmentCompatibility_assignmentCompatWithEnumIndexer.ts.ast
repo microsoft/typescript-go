@@ -1,0 +1,16 @@
+SourceFile
+  EnumDeclaration
+    Identifier: ' E'
+    EnumMember
+      Identifier: '
+    A'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foo'
+        TypeReference
+          Identifier: ' Record'
+          TypeReference
+            Identifier: 'E'
+          AnyKeyword
+        ObjectLiteralExpression

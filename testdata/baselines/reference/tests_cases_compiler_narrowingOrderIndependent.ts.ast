@@ -1,0 +1,94 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' A'
+    Constructor
+      Parameter
+        PublicKeyword
+        Identifier: ' stringOrUndefined'
+        UnionType
+          StringKeyword
+          UndefinedKeyword
+      Block
+  ClassDeclaration
+    Identifier: ' B'
+    Constructor
+      Parameter
+        PublicKeyword
+        Identifier: ' str'
+        StringKeyword
+      Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        NewExpression
+          Identifier: ' A'
+          StringLiteral
+  IfStatement
+    BinaryExpression
+      BinaryExpression
+        Identifier: 'a'
+        InstanceOfKeyword
+        Identifier: ' A'
+      AmpersandAmpersandToken
+      PropertyAccessExpression
+        Identifier: ' a'
+        Identifier: 'stringOrUndefined'
+    Block
+      ExpressionStatement
+        NewExpression
+          Identifier: ' B'
+          PropertyAccessExpression
+            Identifier: 'a'
+            Identifier: 'stringOrUndefined'
+  IfStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: 'a'
+        Identifier: 'stringOrUndefined'
+      AmpersandAmpersandToken
+      BinaryExpression
+        Identifier: ' a'
+        InstanceOfKeyword
+        Identifier: ' A'
+    Block
+      ExpressionStatement
+        NewExpression
+          Identifier: ' B'
+          PropertyAccessExpression
+            Identifier: 'a'
+            Identifier: 'stringOrUndefined'
+  IfStatement
+    BinaryExpression
+      Identifier: 'a'
+      InstanceOfKeyword
+      Identifier: ' A'
+    Block
+      IfStatement
+        PropertyAccessExpression
+          Identifier: 'a'
+          Identifier: 'stringOrUndefined'
+        Block
+          ExpressionStatement
+            NewExpression
+              Identifier: ' B'
+              PropertyAccessExpression
+                Identifier: 'a'
+                Identifier: 'stringOrUndefined'
+  IfStatement
+    PropertyAccessExpression
+      Identifier: 'a'
+      Identifier: 'stringOrUndefined'
+    Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'a'
+          InstanceOfKeyword
+          Identifier: ' A'
+        Block
+          ExpressionStatement
+            NewExpression
+              Identifier: ' B'
+              PropertyAccessExpression
+                Identifier: 'a'
+                Identifier: 'stringOrUndefined'

@@ -1,0 +1,66 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' n'
+    ModuleBlock
+      FunctionDeclaration
+        Identifier: ' id'
+        TypeParameter
+          Identifier: 'T'
+        Parameter
+          Identifier: 'x'
+          TypeReference
+            Identifier: ' T'
+        TypeReference
+          Identifier: ' T'
+        Block
+          ReturnStatement
+            Identifier: ' x'
+      FunctionDeclaration
+        Identifier: ' templateObjectFactory'
+        Block
+          ReturnStatement
+            TaggedTemplateExpression
+              Identifier: ' id'
+              NoSubstitutionTemplateLiteral
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' result'
+            BinaryExpression
+              CallExpression
+                Identifier: ' templateObjectFactory'
+              EqualsEqualsEqualsToken
+              CallExpression
+                Identifier: ' templateObjectFactory'
+  ExportDeclaration
+    NamedExports
+  FunctionDeclaration
+    Identifier: ' id'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    TypeReference
+      Identifier: ' T'
+    Block
+      ReturnStatement
+        Identifier: ' x'
+  FunctionDeclaration
+    Identifier: ' templateObjectFactory'
+    Block
+      ReturnStatement
+        TaggedTemplateExpression
+          Identifier: ' id'
+          NoSubstitutionTemplateLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' result'
+        BinaryExpression
+          CallExpression
+            Identifier: ' templateObjectFactory'
+          EqualsEqualsEqualsToken
+          CallExpression
+            Identifier: ' templateObjectFactory'

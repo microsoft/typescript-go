@@ -1,0 +1,25 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' dec'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'target'
+      TypeReference
+        Identifier: ' T'
+    TypeReference
+      Identifier: ' T'
+  ClassDeclaration
+    Identifier: ' A'
+    PropertyDeclaration
+      Decorator
+        Identifier: 'dec'
+      PrivateIdentifier
+      NumericLiteral
+    MethodDeclaration
+      Decorator
+        Identifier: 'dec'
+      PrivateIdentifier
+      VoidKeyword
+      Block

@@ -1,0 +1,18 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' Square'
+    PropertyDeclaration
+      StaticKeyword
+      Identifier: ' sideLength'
+    Constructor
+      Parameter
+        Identifier: 'sideLength'
+        NumberKeyword
+      Block
+        ExpressionStatement
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'sideLength'
+            EqualsToken
+            Identifier: ' sideLength'

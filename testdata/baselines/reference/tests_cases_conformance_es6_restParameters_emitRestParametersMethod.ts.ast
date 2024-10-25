@@ -1,0 +1,52 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    Constructor
+      Parameter
+        Identifier: 'name'
+        StringKeyword
+      Parameter
+        DotDotDotToken
+        Identifier: 'rest'
+      Block
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' bar'
+      Parameter
+        DotDotDotToken
+        Identifier: 'rest'
+      Block
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' foo'
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      Parameter
+        DotDotDotToken
+        Identifier: 'rest'
+      Block
+  ClassDeclaration
+    Identifier: ' D'
+    Constructor
+      Parameter
+        DotDotDotToken
+        Identifier: 'rest'
+      Block
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' bar'
+      Parameter
+        DotDotDotToken
+        Identifier: 'rest'
+      Block
+    MethodDeclaration
+      PublicKeyword
+      Identifier: ' foo'
+      Parameter
+        Identifier: 'x'
+        NumberKeyword
+      Parameter
+        DotDotDotToken
+        Identifier: 'rest'
+      Block

@@ -1,0 +1,28 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+////module Test {
+////    class Mocked {
+////        myProp: string;
+////    }
+////    class Tester {
+////        willThrowError() {
+////            Mocked = Mocked || function () { // => Error: Invalid left-hand side of assignment expression.
+////                return { /**/myProp: "test" };
+////            };
+////        }
+////    }
+////}
+
+goTo'
+        Identifier: 'marker'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+// Verify no crash
+verify'
+        Identifier: 'quickInfoExists'

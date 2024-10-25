@@ -1,0 +1,137 @@
+SourceFile
+  EnumDeclaration
+    Identifier: ' ABC'
+    EnumMember
+      Identifier: ' A'
+    EnumMember
+      Identifier: ' B'
+  TypeAliasDeclaration
+    Identifier: ' Gen'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' ABC'
+    IntersectionType
+      TypeLiteral
+        PropertySignature
+          Identifier: ' v'
+          TypeReference
+            Identifier: ' T'
+      ParenthesizedType
+        UnionType
+          TypeLiteral
+            PropertySignature
+              Identifier: '
+    v'
+              TypeReference
+                QualifiedName
+                  Identifier: ' ABC'
+                  Identifier: 'A'
+            PropertySignature
+              Identifier: '
+    a'
+              StringKeyword
+          TypeLiteral
+            PropertySignature
+              Identifier: '
+    v'
+              TypeReference
+                QualifiedName
+                  Identifier: ' ABC'
+                  Identifier: 'B'
+            PropertySignature
+              Identifier: '
+    b'
+              StringKeyword
+  TypeAliasDeclaration
+    Identifier: ' Gen2'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' ABC'
+    MappedType
+      TypeParameter
+        Identifier: 'Property'
+        TypeOperator
+          TypeReference
+            Identifier: ' Gen'
+            TypeReference
+              Identifier: 'T'
+      StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' gen2TypeA'
+        TypeReference
+          Identifier: ' Gen2'
+          TypeReference
+            QualifiedName
+              Identifier: 'ABC'
+              Identifier: 'A'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' v'
+            StringLiteral
+          PropertyAssignment
+            Identifier: ' a'
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' gen2TypeB'
+        TypeReference
+          Identifier: ' Gen2'
+          TypeReference
+            QualifiedName
+              Identifier: 'ABC'
+              Identifier: 'B'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' v'
+            StringLiteral
+          PropertyAssignment
+            Identifier: ' b'
+            StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' K'
+    TypeOperator
+      TypeReference
+        Identifier: ' Gen2'
+        TypeReference
+          QualifiedName
+            Identifier: 'ABC'
+            Identifier: 'A'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeReference
+          Identifier: ' Gen2'
+          TypeReference
+            QualifiedName
+              Identifier: 'ABC'
+              Identifier: 'A'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        TypeReference
+          Identifier: ' Gen2'
+          TypeReference
+            QualifiedName
+              Identifier: 'ABC'
+              Identifier: 'B'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+a'
+      EqualsToken
+      Identifier: ' b'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+b'
+      EqualsToken
+      Identifier: ' a'

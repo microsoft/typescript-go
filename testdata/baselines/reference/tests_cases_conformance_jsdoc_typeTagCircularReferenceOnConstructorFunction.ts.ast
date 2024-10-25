@@ -1,0 +1,12 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' MyClass'
+    Block
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+MyClass'
+        Identifier: 'prototype'
+      EqualsToken
+      ObjectLiteralExpression

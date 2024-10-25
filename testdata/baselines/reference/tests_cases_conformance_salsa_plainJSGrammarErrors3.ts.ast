@@ -1,0 +1,9 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    Block
+      ExpressionStatement
+        AwaitExpression
+          NewExpression
+            Identifier: ' Promise'
+            Identifier: 'undefined'

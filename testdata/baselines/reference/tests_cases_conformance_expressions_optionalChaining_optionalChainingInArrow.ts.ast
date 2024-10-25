@@ -1,0 +1,23 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' test'
+        ArrowFunction
+          Parameter
+            Identifier: 'names'
+            ArrayType
+              StringKeyword
+          EqualsGreaterThanToken
+          CallExpression
+            PropertyAccessExpression
+              Identifier: '
+    // single-line comment
+    names'
+              QuestionDotToken
+              Identifier: 'filter'
+            ArrowFunction
+              Parameter
+                Identifier: 'x'
+              EqualsGreaterThanToken
+              Identifier: ' x'

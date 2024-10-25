@@ -1,0 +1,108 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' I1'
+    PropertySignature
+      Identifier: '
+    i1P1'
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    i1P2'
+      VoidKeyword
+  InterfaceDeclaration
+    Identifier: ' I2'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' I1'
+    PropertySignature
+      Identifier: '
+    i2P1'
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' I3'
+    PropertySignature
+      Identifier: '
+    i2P1'
+      StringKeyword
+  InterfaceDeclaration
+    Identifier: ' I4'
+    PropertySignature
+      Identifier: '
+	one'
+      NumberKeyword
+  InterfaceDeclaration
+    Identifier: ' I5'
+    PropertySignature
+      Identifier: '
+	one'
+      StringKeyword
+  ClassDeclaration
+    Identifier: ' C1'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' I2'
+    PropertyDeclaration
+      PublicKeyword
+      Identifier: ' i2P1'
+      StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i2'
+        TypeReference
+          Identifier: ' I2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i1'
+        TypeReference
+          Identifier: ' I1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i3'
+        TypeReference
+          Identifier: ' I3'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+i1'
+      EqualsToken
+      Identifier: ' i2'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+i2'
+      EqualsToken
+      Identifier: ' i3'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c1'
+        TypeReference
+          Identifier: ' C1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i4'
+        TypeReference
+          Identifier: ' I4'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i5'
+        TypeReference
+          Identifier: ' I5'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+i4'
+      EqualsToken
+      Identifier: ' i5'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: ' // should be an error
+i5'
+      EqualsToken
+      Identifier: ' i4'

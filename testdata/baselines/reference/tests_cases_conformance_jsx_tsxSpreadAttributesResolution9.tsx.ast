@@ -1,0 +1,105 @@
+SourceFile
+  ImportEqualsDeclaration
+    Identifier: ' React'
+    ExternalModuleReference
+      StringLiteral
+  InterfaceDeclaration
+    Identifier: ' OptionProp'
+    PropertySignature
+      Identifier: '
+    x'
+      QuestionToken
+      LiteralType
+        NumericLiteral
+    PropertySignature
+      Identifier: '
+    y'
+      QuestionToken
+      BooleanKeyword
+  ClassDeclaration
+    Identifier: ' Opt'
+    HeritageClause
+      ExpressionWithTypeArguments
+        PropertyAccessExpression
+          Identifier: ' React'
+          Identifier: 'Component'
+        TypeReference
+          Identifier: 'OptionProp'
+        TypeLiteral
+    MethodDeclaration
+      Identifier: '
+    render'
+      Block
+        ReturnStatement
+          JsxElement
+            JsxOpeningElement
+              Identifier: 'div'
+              JsxAttributes
+            JsxText
+            JsxClosingElement
+              Identifier: 'div'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' obj'
+        TypeReference
+          Identifier: ' OptionProp'
+        ObjectLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' obj1'
+        TypeReference
+          Identifier: ' OptionProp'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: '
+    x'
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' p'
+        JsxSelfClosingElement
+          Identifier: 'Opt'
+          JsxAttributes
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        JsxSelfClosingElement
+          Identifier: 'Opt'
+          JsxAttributes
+            JsxAttribute
+              Identifier: 'obj'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y1'
+        JsxSelfClosingElement
+          Identifier: 'Opt'
+          JsxAttributes
+            JsxAttribute
+              Identifier: 'obj1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y2'
+        JsxSelfClosingElement
+          Identifier: 'Opt'
+          JsxAttributes
+            JsxAttribute
+              Identifier: 'obj1'
+            JsxAttribute
+              Identifier: ' y'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y3'
+        JsxSelfClosingElement
+          Identifier: 'Opt'
+          JsxAttributes
+            JsxAttribute
+              Identifier: ' x'
+              JsxExpression
+                NumericLiteral

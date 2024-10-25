@@ -1,0 +1,35 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+////class SuperCallBase {
+////    constructor(b: boolean) {
+////    }
+////}
+////class SuperCall extends SuperCallBase {
+////    constructor() {
+////        super(/*superCall*/);
+////    }
+////}
+
+verify'
+        Identifier: 'signatureHelp'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    text'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    parameterName'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+    parameterSpan'
+          StringLiteral

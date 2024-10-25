@@ -1,0 +1,12 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C1'
+    GetAccessor
+      Identifier: ' constructor'
+      Block
+        ReturnStatement
+    SetAccessor
+      Identifier: ' constructor'
+      Parameter
+        Identifier: 'value'
+      Block

@@ -1,0 +1,73 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' a'
+  ClassDeclaration
+    Identifier: ' b1'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' a'
+    Constructor
+      Parameter
+        Identifier: '_super'
+        NumberKeyword
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+  ClassDeclaration
+    Identifier: ' b2'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' a'
+    Constructor
+      Parameter
+        PrivateKeyword
+        Identifier: ' _super'
+        NumberKeyword
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+  ClassDeclaration
+    Identifier: ' b3'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' a'
+    Constructor
+      Parameter
+        Identifier: '_super'
+        NumberKeyword
+    Constructor
+      Parameter
+        Identifier: '_super'
+        StringKeyword
+    Constructor
+      Parameter
+        Identifier: '_super'
+        AnyKeyword
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword
+  ClassDeclaration
+    Identifier: ' b4'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' a'
+    Constructor
+      Parameter
+        Identifier: '_super'
+        NumberKeyword
+    Constructor
+      Parameter
+        Identifier: '_super'
+        StringKeyword
+    Constructor
+      Parameter
+        PrivateKeyword
+        Identifier: ' _super'
+        AnyKeyword
+      Block
+        ExpressionStatement
+          CallExpression
+            SuperKeyword

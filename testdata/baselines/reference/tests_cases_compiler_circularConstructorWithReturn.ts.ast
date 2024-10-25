@@ -1,0 +1,59 @@
+SourceFile
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' Client'
+    ConditionalType
+      TypeReference
+        Identifier: ' ReturnType'
+        TypeQuery
+          Identifier: ' getPrismaClient'
+      ConstructorType
+        InferType
+          TypeParameter
+            Identifier: ' T'
+      TypeReference
+        Identifier: ' T'
+      NeverKeyword
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' getPrismaClient'
+    Parameter
+      Identifier: 'options'
+      QuestionToken
+      AnyKeyword
+    Block
+      ClassDeclaration
+        Identifier: ' PrismaClient'
+        PropertyDeclaration
+          Identifier: '
+    self'
+          TypeReference
+            Identifier: ' Client'
+        Constructor
+          Parameter
+            Identifier: 'options'
+            QuestionToken
+            AnyKeyword
+          Block
+            ReturnStatement
+              ParenthesizedExpression
+                BinaryExpression
+                  PropertyAccessExpression
+                    ThisKeyword
+                    Identifier: 'self'
+                  EqualsToken
+                  CallExpression
+                    Identifier: ' applyModelsAndClientExtensions'
+                    ThisKeyword
+      ReturnStatement
+        Identifier: ' PrismaClient'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' applyModelsAndClientExtensions'
+    Parameter
+      Identifier: 'client'
+      TypeReference
+        Identifier: ' Client'
+    Block
+      ReturnStatement
+        Identifier: ' client'

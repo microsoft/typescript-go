@@ -1,0 +1,68 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' Foo1'
+    ModuleBlock
+      ModuleDeclaration
+        ExportKeyword
+        Identifier: ' Bar'
+        ModuleBlock
+          VariableStatement
+            ExportKeyword
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' x'
+                NumericLiteral
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' Bar'
+        PropertySignature
+          Identifier: ' 
+        y'
+          StringKeyword
+  ModuleDeclaration
+    Identifier: ' Foo2'
+    ModuleBlock
+      ModuleDeclaration
+        Identifier: ' Bar'
+        ModuleBlock
+          VariableStatement
+            ExportKeyword
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' x'
+                NumericLiteral
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' Bar'
+        PropertySignature
+          Identifier: '
+        y'
+          StringKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' z2'
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: ' Foo2'
+            Identifier: 'Bar'
+          Identifier: 'y'
+  ModuleDeclaration
+    Identifier: ' Foo3'
+    ModuleBlock
+      ModuleDeclaration
+        ExportKeyword
+        Identifier: ' Bar'
+        ModuleBlock
+          VariableStatement
+            ExportKeyword
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' x'
+                NumericLiteral
+      InterfaceDeclaration
+        Identifier: ' Bar'
+        PropertySignature
+          Identifier: ' 
+        y'
+          StringKeyword

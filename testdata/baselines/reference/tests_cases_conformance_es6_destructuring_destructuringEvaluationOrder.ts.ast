@@ -1,0 +1,100 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' trace'
+        ArrayType
+          AnyKeyword
+        ArrayLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' order'
+        ArrowFunction
+          Parameter
+            Identifier: 'n'
+            AnyKeyword
+          AnyKeyword
+          EqualsGreaterThanToken
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' trace'
+              Identifier: 'push'
+            Identifier: 'n'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            ObjectBindingPattern
+              BindingElement
+                ComputedPropertyName
+                  CallExpression
+                    Identifier: 'order'
+                    NumericLiteral
+                Identifier: ' x'
+            CallExpression
+              Identifier: ' order'
+              NumericLiteral
+        ArrayLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            ObjectBindingPattern
+              BindingElement
+                ComputedPropertyName
+                  CallExpression
+                    Identifier: 'order'
+                    NumericLiteral
+                Identifier: ' y'
+            CallExpression
+              Identifier: ' order'
+              NumericLiteral
+        ArrayLiteralExpression
+          ObjectLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ObjectBindingPattern
+          BindingElement
+            ComputedPropertyName
+              CallExpression
+                Identifier: 'order'
+                NumericLiteral
+            ObjectBindingPattern
+              BindingElement
+                ComputedPropertyName
+                  CallExpression
+                    Identifier: 'order'
+                    NumericLiteral
+                Identifier: ' z'
+            CallExpression
+              Identifier: ' order'
+              NumericLiteral
+          BindingElement
+            DotDotDotToken
+            Identifier: 'w'
+        AsExpression
+          ObjectLiteralExpression
+          AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          BindingElement
+            ObjectBindingPattern
+              BindingElement
+                DotDotDotToken
+                Identifier: 'a'
+          BindingElement
+            Identifier: ' b'
+            Identifier: ' a'
+        ArrayType
+          AnyKeyword
+        ArrayLiteralExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' x'
+              NumericLiteral

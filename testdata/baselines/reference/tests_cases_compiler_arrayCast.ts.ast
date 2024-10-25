@@ -1,0 +1,26 @@
+SourceFile
+  ExpressionStatement
+    TypeAssertionExpression
+      ArrayType
+        TypeLiteral
+          PropertySignature
+            Identifier: ' id'
+            NumberKeyword
+      ArrayLiteralExpression
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' foo'
+            StringLiteral
+  ExpressionStatement
+    TypeAssertionExpression
+      ArrayType
+        TypeLiteral
+          PropertySignature
+            Identifier: ' id'
+            NumberKeyword
+      ArrayLiteralExpression
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' foo'
+            StringLiteral
+        ObjectLiteralExpression

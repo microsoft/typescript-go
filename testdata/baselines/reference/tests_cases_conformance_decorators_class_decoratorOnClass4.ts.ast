@@ -1,0 +1,18 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' dec'
+    FunctionType
+      TypeParameter
+        Identifier: 'T'
+      Parameter
+        Identifier: 'target'
+        TypeReference
+          Identifier: ' T'
+      TypeReference
+        Identifier: ' T'
+  ClassDeclaration
+    Decorator
+      CallExpression
+        Identifier: 'dec'
+    Identifier: ' C'

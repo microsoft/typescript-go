@@ -1,0 +1,17 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts' />
+
+////enum E {
+////    value1,
+////    /*definition*/value2
+////}
+////var x = E.value2;
+////
+/////*reference*/x;
+
+verify'
+        Identifier: 'baselineGoToType'
+      StringLiteral

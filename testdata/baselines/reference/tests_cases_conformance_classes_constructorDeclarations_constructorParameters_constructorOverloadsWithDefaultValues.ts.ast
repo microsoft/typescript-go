@@ -1,0 +1,27 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      Identifier: '
+    foo'
+      StringKeyword
+    Constructor
+      Parameter
+        Identifier: 'x'
+        NumericLiteral
+    Constructor
+      Block
+  ClassDeclaration
+    Identifier: ' D'
+    TypeParameter
+      Identifier: 'T'
+    PropertyDeclaration
+      Identifier: '
+    foo'
+      StringKeyword
+    Constructor
+      Parameter
+        Identifier: 'x'
+        NumericLiteral
+    Constructor
+      Block

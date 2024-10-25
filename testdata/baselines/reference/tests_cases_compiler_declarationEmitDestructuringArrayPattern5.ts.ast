@@ -1,0 +1,42 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          OmittedExpression
+          OmittedExpression
+          BindingElement
+            Identifier: ' z'
+        ArrayLiteralExpression
+          NumericLiteral
+          NumericLiteral
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          OmittedExpression
+          BindingElement
+            Identifier: ' a'
+          OmittedExpression
+        ArrayLiteralExpression
+          NumericLiteral
+          NumericLiteral
+          NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        ArrayBindingPattern
+          OmittedExpression
+          OmittedExpression
+          BindingElement
+            ArrayBindingPattern
+              OmittedExpression
+              BindingElement
+                Identifier: ' b'
+        ArrayLiteralExpression
+          NumericLiteral
+          NumericLiteral
+          ArrayLiteralExpression
+            NumericLiteral
+            NumericLiteral

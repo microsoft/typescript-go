@@ -1,0 +1,221 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f1'
+    Parameter
+      Identifier: 'x'
+      StringKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'x'
+          EqualsEqualsToken
+          Identifier: ' undefined'
+        Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'x'
+          ExclamationEqualsToken
+          Identifier: ' undefined'
+        Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'x'
+          EqualsEqualsEqualsToken
+          Identifier: ' undefined'
+        Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'x'
+          ExclamationEqualsEqualsToken
+          Identifier: ' undefined'
+        Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'x'
+          EqualsEqualsToken
+          NullKeyword
+        Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'x'
+          ExclamationEqualsToken
+          NullKeyword
+        Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'x'
+          EqualsEqualsEqualsToken
+          NullKeyword
+        Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'x'
+          ExclamationEqualsEqualsToken
+          NullKeyword
+        Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'undefined'
+          EqualsEqualsToken
+          Identifier: ' x'
+        Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'undefined'
+          ExclamationEqualsToken
+          Identifier: ' x'
+        Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'undefined'
+          EqualsEqualsEqualsToken
+          Identifier: ' x'
+        Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'undefined'
+          ExclamationEqualsEqualsToken
+          Identifier: ' x'
+        Block
+      IfStatement
+        BinaryExpression
+          NullKeyword
+          EqualsEqualsToken
+          Identifier: ' x'
+        Block
+      IfStatement
+        BinaryExpression
+          NullKeyword
+          ExclamationEqualsToken
+          Identifier: ' x'
+        Block
+      IfStatement
+        BinaryExpression
+          NullKeyword
+          EqualsEqualsEqualsToken
+          Identifier: ' x'
+        Block
+      IfStatement
+        BinaryExpression
+          NullKeyword
+          ExclamationEqualsEqualsToken
+          Identifier: ' x'
+        Block
+  FunctionDeclaration
+    Identifier: ' f2'
+    Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'undefined'
+          EqualsEqualsToken
+          Identifier: ' undefined'
+        Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'undefined'
+          EqualsEqualsToken
+          NullKeyword
+        Block
+      IfStatement
+        BinaryExpression
+          NullKeyword
+          EqualsEqualsToken
+          Identifier: ' undefined'
+        Block
+      IfStatement
+        BinaryExpression
+          NullKeyword
+          EqualsEqualsToken
+          NullKeyword
+        Block
+  FunctionDeclaration
+    Identifier: ' f3'
+    Parameter
+      Identifier: 'a'
+      NumberKeyword
+    Parameter
+      Identifier: ' b'
+      BooleanKeyword
+    Parameter
+      Identifier: ' c'
+      TypeLiteral
+        PropertySignature
+          Identifier: ' x'
+          NumberKeyword
+    Parameter
+      Identifier: ' d'
+      UnionType
+        NumberKeyword
+        StringKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'a'
+          EqualsEqualsToken
+          NullKeyword
+        Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'b'
+          EqualsEqualsToken
+          NullKeyword
+        Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'c'
+          EqualsEqualsToken
+          NullKeyword
+        Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'd'
+          EqualsEqualsToken
+          NullKeyword
+        Block
+  FunctionDeclaration
+    Identifier: ' f4'
+    Parameter
+      Identifier: 'x'
+      NumberKeyword
+    Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'x'
+          GreaterThanToken
+          Identifier: ' undefined'
+        Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'x'
+          LessThanToken
+          Identifier: ' undefined'
+        Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'x'
+          GreaterThanEqualsToken
+          Identifier: ' undefined'
+        Block
+      IfStatement
+        BinaryExpression
+          Identifier: 'x'
+          LessThanEqualsToken
+          Identifier: ' undefined'
+        Block
+  FunctionDeclaration
+    Identifier: ' f5'
+    Parameter
+      Identifier: 'x'
+      StringKeyword
+    Block
+      SwitchStatement
+        Identifier: 'x'
+        CaseBlock
+          CaseClause
+            NullKeyword
+            BreakStatement
+          CaseClause
+            Identifier: ' undefined'
+            BreakStatement
+          DefaultClause
+            ReturnStatement

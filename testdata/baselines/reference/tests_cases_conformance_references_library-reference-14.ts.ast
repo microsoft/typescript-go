@@ -1,0 +1,19 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' $'
+        TypeLiteral
+          MethodSignature
+            Identifier: ' foo'
+            VoidKeyword
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+
+// @filename: /a/b/consumer.ts
+$'
+        Identifier: 'foo'

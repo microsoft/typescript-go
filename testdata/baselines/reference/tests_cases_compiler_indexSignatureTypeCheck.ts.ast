@@ -1,0 +1,59 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' IPropertySet'
+    IndexSignature
+      Parameter
+        Identifier: 'index'
+        StringKeyword
+      AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' ps'
+        TypeReference
+          Identifier: ' IPropertySet'
+        NullKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' index'
+        AnyKeyword
+        StringLiteral
+  ExpressionStatement
+    BinaryExpression
+      ElementAccessExpression
+        Identifier: '
+ps'
+        Identifier: 'index'
+      EqualsToken
+      NumericLiteral
+  InterfaceDeclaration
+    Identifier: ' indexErrors'
+    IndexSignature
+      Parameter
+        Identifier: 'p2'
+        QuestionToken
+        StringKeyword
+    IndexSignature
+      Parameter
+        DotDotDotToken
+        Identifier: 'p3'
+        ArrayType
+          AnyKeyword
+    IndexSignature
+      Parameter
+        Identifier: 'p4'
+        StringKeyword
+      Parameter
+        Identifier: ' p5'
+        QuestionToken
+        StringKeyword
+    IndexSignature
+      Parameter
+        Identifier: 'p6'
+        StringKeyword
+      Parameter
+        DotDotDotToken
+        Identifier: 'p7'
+        ArrayType
+          AnyKeyword

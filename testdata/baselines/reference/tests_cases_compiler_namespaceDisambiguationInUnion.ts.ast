@@ -1,0 +1,72 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' Foo'
+    ModuleBlock
+      TypeAliasDeclaration
+        ExportKeyword
+        Identifier: ' Yep'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' type'
+            LiteralType
+              StringLiteral
+  ModuleDeclaration
+    Identifier: ' Bar'
+    ModuleBlock
+      TypeAliasDeclaration
+        ExportKeyword
+        Identifier: ' Yep'
+        TypeLiteral
+          PropertySignature
+            Identifier: ' type'
+            LiteralType
+              StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' type'
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' val1'
+        UnionType
+          TypeReference
+            QualifiedName
+              Identifier: ' Foo'
+              Identifier: 'Yep'
+          TypeReference
+            QualifiedName
+              Identifier: ' Bar'
+              Identifier: 'Yep'
+        Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        ArrayLiteralExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' type'
+              StringLiteral
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' type'
+              StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' val2'
+        TupleType
+          TypeReference
+            QualifiedName
+              Identifier: 'Foo'
+              Identifier: 'Yep'
+          TypeReference
+            QualifiedName
+              Identifier: ' Bar'
+              Identifier: 'Yep'
+        Identifier: ' y'

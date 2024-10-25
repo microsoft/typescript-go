@@ -1,0 +1,11 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path='fourslash.ts'/>
+
+////[|case|]
+////[|default|]
+
+verify'
+        Identifier: 'baselineDocumentHighlights'

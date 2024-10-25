@@ -1,0 +1,6525 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' CancellationToken'
+        ImportSpecifier
+          Identifier: ' CompilerHost'
+        ImportSpecifier
+          Identifier: ' CompilerOptions'
+        ImportSpecifier
+          Identifier: ' CustomTransformers'
+        ImportSpecifier
+          Identifier: ' Diagnostic'
+        ImportSpecifier
+          Identifier: ' DiagnosticWithLocation'
+        ImportSpecifier
+          Identifier: ' DocumentHighlights'
+        ImportSpecifier
+          Identifier: ' DocumentPositionMapper'
+        ImportSpecifier
+          Identifier: ' EmitOutput'
+        ImportSpecifier
+          Identifier: ' ExportInfoMap'
+        ImportSpecifier
+          Identifier: ' ExportMapInfoKey'
+        ImportSpecifier
+          Identifier: ' FileReference'
+        ImportSpecifier
+          Identifier: ' GetEffectiveTypeRootsHost'
+        ImportSpecifier
+          Identifier: ' HasChangedAutomaticTypeDirectiveNames'
+        ImportSpecifier
+          Identifier: ' HasInvalidatedResolutions'
+        ImportSpecifier
+          Identifier: ' JSDocParsingMode'
+        ImportSpecifier
+          Identifier: ' LineAndCharacter'
+        ImportSpecifier
+          Identifier: ' MinimalResolutionCacheHost'
+        ImportSpecifier
+          Identifier: ' ModuleResolutionCache'
+        ImportSpecifier
+          Identifier: ' ModuleSpecifierCache'
+        ImportSpecifier
+          Identifier: ' ParsedCommandLine'
+        ImportSpecifier
+          Identifier: ' Path'
+        ImportSpecifier
+          Identifier: ' Program'
+        ImportSpecifier
+          Identifier: ' ProjectReference'
+        ImportSpecifier
+          Identifier: ' ResolutionMode'
+        ImportSpecifier
+          Identifier: ' ResolvedModule'
+        ImportSpecifier
+          Identifier: ' ResolvedModuleWithFailedLookupLocations'
+        ImportSpecifier
+          Identifier: ' ResolvedProjectReference'
+        ImportSpecifier
+          Identifier: ' ResolvedTypeReferenceDirective'
+        ImportSpecifier
+          Identifier: ' ResolvedTypeReferenceDirectiveWithFailedLookupLocations'
+        ImportSpecifier
+          Identifier: ' ScriptKind'
+        ImportSpecifier
+          Identifier: ' SourceFile'
+        ImportSpecifier
+          Identifier: ' SourceFileLike'
+        ImportSpecifier
+          Identifier: ' SourceMapper'
+        ImportSpecifier
+          Identifier: ' StringLiteralLike'
+        ImportSpecifier
+          Identifier: ' Symbol'
+        ImportSpecifier
+          Identifier: ' SymlinkCache'
+        ImportSpecifier
+          Identifier: ' TextChangeRange'
+        ImportSpecifier
+          Identifier: ' textChanges'
+        ImportSpecifier
+          Identifier: ' TextRange'
+        ImportSpecifier
+          Identifier: ' TextSpan'
+        ImportSpecifier
+          Identifier: ' UserPreferences'
+    StringLiteral
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' Node'
+        MethodSignature
+          Identifier: '
+        getSourceFile'
+          TypeReference
+            Identifier: ' SourceFile'
+        MethodSignature
+          Identifier: '
+        getChildCount'
+          Parameter
+            Identifier: 'sourceFile'
+            QuestionToken
+            TypeReference
+              Identifier: ' SourceFile'
+          NumberKeyword
+        MethodSignature
+          Identifier: '
+        getChildAt'
+          Parameter
+            Identifier: 'index'
+            NumberKeyword
+          Parameter
+            Identifier: ' sourceFile'
+            QuestionToken
+            TypeReference
+              Identifier: ' SourceFile'
+          TypeReference
+            Identifier: ' Node'
+        MethodSignature
+          Identifier: '
+        getChildren'
+          Parameter
+            Identifier: 'sourceFile'
+            QuestionToken
+            TypeReference
+              Identifier: ' SourceFile'
+          TypeOperator
+            ArrayType
+              TypeReference
+                Identifier: ' Node'
+        MethodSignature
+          Identifier: '
+        /** @internal */
+        getChildren'
+          Parameter
+            Identifier: 'sourceFile'
+            QuestionToken
+            TypeReference
+              Identifier: ' SourceFileLike'
+          TypeOperator
+            ArrayType
+              TypeReference
+                Identifier: ' Node'
+        MethodSignature
+          Identifier: '
+        getStart'
+          Parameter
+            Identifier: 'sourceFile'
+            QuestionToken
+            TypeReference
+              Identifier: ' SourceFile'
+          Parameter
+            Identifier: ' includeJsDocComment'
+            QuestionToken
+            BooleanKeyword
+          NumberKeyword
+        MethodSignature
+          Identifier: '
+        /** @internal */
+        getStart'
+          Parameter
+            Identifier: 'sourceFile'
+            QuestionToken
+            TypeReference
+              Identifier: ' SourceFileLike'
+          Parameter
+            Identifier: ' includeJsDocComment'
+            QuestionToken
+            BooleanKeyword
+          NumberKeyword
+        MethodSignature
+          Identifier: '
+        getFullStart'
+          NumberKeyword
+        MethodSignature
+          Identifier: '
+        getEnd'
+          NumberKeyword
+        MethodSignature
+          Identifier: '
+        getWidth'
+          Parameter
+            Identifier: 'sourceFile'
+            QuestionToken
+            TypeReference
+              Identifier: ' SourceFileLike'
+          NumberKeyword
+        MethodSignature
+          Identifier: '
+        getFullWidth'
+          NumberKeyword
+        MethodSignature
+          Identifier: '
+        getLeadingTriviaWidth'
+          Parameter
+            Identifier: 'sourceFile'
+            QuestionToken
+            TypeReference
+              Identifier: ' SourceFile'
+          NumberKeyword
+        MethodSignature
+          Identifier: '
+        getFullText'
+          Parameter
+            Identifier: 'sourceFile'
+            QuestionToken
+            TypeReference
+              Identifier: ' SourceFile'
+          StringKeyword
+        MethodSignature
+          Identifier: '
+        getText'
+          Parameter
+            Identifier: 'sourceFile'
+            QuestionToken
+            TypeReference
+              Identifier: ' SourceFile'
+          StringKeyword
+        MethodSignature
+          Identifier: '
+        getFirstToken'
+          Parameter
+            Identifier: 'sourceFile'
+            QuestionToken
+            TypeReference
+              Identifier: ' SourceFile'
+          UnionType
+            TypeReference
+              Identifier: ' Node'
+            UndefinedKeyword
+        MethodSignature
+          Identifier: '
+        /** @internal */
+        getFirstToken'
+          Parameter
+            Identifier: 'sourceFile'
+            QuestionToken
+            TypeReference
+              Identifier: ' SourceFileLike'
+          UnionType
+            TypeReference
+              Identifier: ' Node'
+            UndefinedKeyword
+        MethodSignature
+          Identifier: '
+        getLastToken'
+          Parameter
+            Identifier: 'sourceFile'
+            QuestionToken
+            TypeReference
+              Identifier: ' SourceFile'
+          UnionType
+            TypeReference
+              Identifier: ' Node'
+            UndefinedKeyword
+        MethodSignature
+          Identifier: '
+        /** @internal */
+        getLastToken'
+          Parameter
+            Identifier: 'sourceFile'
+            QuestionToken
+            TypeReference
+              Identifier: ' SourceFileLike'
+          UnionType
+            TypeReference
+              Identifier: ' Node'
+            UndefinedKeyword
+        MethodSignature
+          Identifier: '
+        forEachChild'
+          TypeParameter
+            Identifier: 'T'
+          Parameter
+            Identifier: 'cbNode'
+            FunctionType
+              Parameter
+                Identifier: 'node'
+                TypeReference
+                  Identifier: ' Node'
+              UnionType
+                TypeReference
+                  Identifier: ' T'
+                UndefinedKeyword
+          Parameter
+            Identifier: ' cbNodeArray'
+            QuestionToken
+            FunctionType
+              Parameter
+                Identifier: 'nodes'
+                TypeReference
+                  Identifier: ' NodeArray'
+                  TypeReference
+                    Identifier: 'Node'
+              UnionType
+                TypeReference
+                  Identifier: ' T'
+                UndefinedKeyword
+          UnionType
+            TypeReference
+              Identifier: ' T'
+            UndefinedKeyword
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' Identifier'
+        PropertySignature
+          ReadonlyKeyword
+          Identifier: ' text'
+          StringKeyword
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' PrivateIdentifier'
+        PropertySignature
+          ReadonlyKeyword
+          Identifier: ' text'
+          StringKeyword
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' Symbol'
+        PropertySignature
+          ReadonlyKeyword
+          Identifier: ' name'
+          StringKeyword
+        MethodSignature
+          Identifier: '
+        getFlags'
+          TypeReference
+            Identifier: ' SymbolFlags'
+        MethodSignature
+          Identifier: '
+        getEscapedName'
+          TypeReference
+            Identifier: ' __String'
+        MethodSignature
+          Identifier: '
+        getName'
+          StringKeyword
+        MethodSignature
+          Identifier: '
+        getDeclarations'
+          UnionType
+            ArrayType
+              TypeReference
+                Identifier: ' Declaration'
+            UndefinedKeyword
+        MethodSignature
+          Identifier: '
+        getDocumentationComment'
+          Parameter
+            Identifier: 'typeChecker'
+            UnionType
+              TypeReference
+                Identifier: ' TypeChecker'
+              UndefinedKeyword
+          ArrayType
+            TypeReference
+              Identifier: ' SymbolDisplayPart'
+        MethodSignature
+          Identifier: '
+        /** @internal */
+        getContextualDocumentationComment'
+          Parameter
+            Identifier: 'context'
+            UnionType
+              TypeReference
+                Identifier: ' Node'
+              UndefinedKeyword
+          Parameter
+            Identifier: ' checker'
+            UnionType
+              TypeReference
+                Identifier: ' TypeChecker'
+              UndefinedKeyword
+          ArrayType
+            TypeReference
+              Identifier: ' SymbolDisplayPart'
+        MethodSignature
+          Identifier: '
+        getJsDocTags'
+          Parameter
+            Identifier: 'checker'
+            QuestionToken
+            TypeReference
+              Identifier: ' TypeChecker'
+          ArrayType
+            TypeReference
+              Identifier: ' JSDocTagInfo'
+        MethodSignature
+          Identifier: '
+        /** @internal */
+        getContextualJsDocTags'
+          Parameter
+            Identifier: 'context'
+            UnionType
+              TypeReference
+                Identifier: ' Node'
+              UndefinedKeyword
+          Parameter
+            Identifier: ' checker'
+            UnionType
+              TypeReference
+                Identifier: ' TypeChecker'
+              UndefinedKeyword
+          ArrayType
+            TypeReference
+              Identifier: ' JSDocTagInfo'
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' Type'
+        MethodSignature
+          Identifier: '
+        getFlags'
+          TypeReference
+            Identifier: ' TypeFlags'
+        MethodSignature
+          Identifier: '
+        getSymbol'
+          UnionType
+            TypeReference
+              Identifier: ' Symbol'
+            UndefinedKeyword
+        MethodSignature
+          Identifier: '
+        getProperties'
+          ArrayType
+            TypeReference
+              Identifier: ' Symbol'
+        MethodSignature
+          Identifier: '
+        getProperty'
+          Parameter
+            Identifier: 'propertyName'
+            StringKeyword
+          UnionType
+            TypeReference
+              Identifier: ' Symbol'
+            UndefinedKeyword
+        MethodSignature
+          Identifier: '
+        getApparentProperties'
+          ArrayType
+            TypeReference
+              Identifier: ' Symbol'
+        MethodSignature
+          Identifier: '
+        getCallSignatures'
+          TypeOperator
+            ArrayType
+              TypeReference
+                Identifier: ' Signature'
+        MethodSignature
+          Identifier: '
+        getConstructSignatures'
+          TypeOperator
+            ArrayType
+              TypeReference
+                Identifier: ' Signature'
+        MethodSignature
+          Identifier: '
+        getStringIndexType'
+          UnionType
+            TypeReference
+              Identifier: ' Type'
+            UndefinedKeyword
+        MethodSignature
+          Identifier: '
+        getNumberIndexType'
+          UnionType
+            TypeReference
+              Identifier: ' Type'
+            UndefinedKeyword
+        MethodSignature
+          Identifier: '
+        getBaseTypes'
+          UnionType
+            ArrayType
+              TypeReference
+                Identifier: ' BaseType'
+            UndefinedKeyword
+        MethodSignature
+          Identifier: '
+        getNonNullableType'
+          TypeReference
+            Identifier: ' Type'
+        MethodSignature
+          Identifier: '
+        /** @internal */ getNonOptionalType'
+          TypeReference
+            Identifier: ' Type'
+        MethodSignature
+          Identifier: '
+        /** @internal */ isNullableType'
+          BooleanKeyword
+        MethodSignature
+          Identifier: '
+        getConstraint'
+          UnionType
+            TypeReference
+              Identifier: ' Type'
+            UndefinedKeyword
+        MethodSignature
+          Identifier: '
+        getDefault'
+          UnionType
+            TypeReference
+              Identifier: ' Type'
+            UndefinedKeyword
+        MethodSignature
+          Identifier: '
+        isUnion'
+          TypePredicate
+            ThisType
+            TypeReference
+              Identifier: ' UnionType'
+        MethodSignature
+          Identifier: '
+        isIntersection'
+          TypePredicate
+            ThisType
+            TypeReference
+              Identifier: ' IntersectionType'
+        MethodSignature
+          Identifier: '
+        isUnionOrIntersection'
+          TypePredicate
+            ThisType
+            TypeReference
+              Identifier: ' UnionOrIntersectionType'
+        MethodSignature
+          Identifier: '
+        isLiteral'
+          TypePredicate
+            ThisType
+            TypeReference
+              Identifier: ' LiteralType'
+        MethodSignature
+          Identifier: '
+        isStringLiteral'
+          TypePredicate
+            ThisType
+            TypeReference
+              Identifier: ' StringLiteralType'
+        MethodSignature
+          Identifier: '
+        isNumberLiteral'
+          TypePredicate
+            ThisType
+            TypeReference
+              Identifier: ' NumberLiteralType'
+        MethodSignature
+          Identifier: '
+        isTypeParameter'
+          TypePredicate
+            ThisType
+            TypeReference
+              Identifier: ' TypeParameter'
+        MethodSignature
+          Identifier: '
+        isClassOrInterface'
+          TypePredicate
+            ThisType
+            TypeReference
+              Identifier: ' InterfaceType'
+        MethodSignature
+          Identifier: '
+        isClass'
+          TypePredicate
+            ThisType
+            TypeReference
+              Identifier: ' InterfaceType'
+        MethodSignature
+          Identifier: '
+        isIndexType'
+          TypePredicate
+            ThisType
+            TypeReference
+              Identifier: ' IndexType'
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' TypeReference'
+        PropertySignature
+          Identifier: '
+        typeArguments'
+          QuestionToken
+          TypeOperator
+            ArrayType
+              TypeReference
+                Identifier: ' Type'
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' Signature'
+        MethodSignature
+          Identifier: '
+        getDeclaration'
+          TypeReference
+            Identifier: ' SignatureDeclaration'
+        MethodSignature
+          Identifier: '
+        getTypeParameters'
+          UnionType
+            ArrayType
+              TypeReference
+                Identifier: ' TypeParameter'
+            UndefinedKeyword
+        MethodSignature
+          Identifier: '
+        getParameters'
+          ArrayType
+            TypeReference
+              Identifier: ' Symbol'
+        MethodSignature
+          Identifier: '
+        getTypeParameterAtPosition'
+          Parameter
+            Identifier: 'pos'
+            NumberKeyword
+          TypeReference
+            Identifier: ' Type'
+        MethodSignature
+          Identifier: '
+        getReturnType'
+          TypeReference
+            Identifier: ' Type'
+        MethodSignature
+          Identifier: '
+        getDocumentationComment'
+          Parameter
+            Identifier: 'typeChecker'
+            UnionType
+              TypeReference
+                Identifier: ' TypeChecker'
+              UndefinedKeyword
+          ArrayType
+            TypeReference
+              Identifier: ' SymbolDisplayPart'
+        MethodSignature
+          Identifier: '
+        getJsDocTags'
+          ArrayType
+            TypeReference
+              Identifier: ' JSDocTagInfo'
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' SourceFile'
+        PropertySignature
+          Identifier: '
+        /** @internal */ version'
+          StringKeyword
+        PropertySignature
+          Identifier: '
+        /** @internal */ scriptSnapshot'
+          UnionType
+            TypeReference
+              Identifier: ' IScriptSnapshot'
+            UndefinedKeyword
+        PropertySignature
+          Identifier: '
+        /** @internal */ nameTable'
+          UnionType
+            TypeReference
+              Identifier: ' Map'
+              TypeReference
+                Identifier: '__String'
+              NumberKeyword
+            UndefinedKeyword
+        MethodSignature
+          Identifier: '
+        /** @internal */ getNamedDeclarations'
+          TypeReference
+            Identifier: ' Map'
+            StringKeyword
+            TypeOperator
+              ArrayType
+                TypeReference
+                  Identifier: ' Declaration'
+        MethodSignature
+          Identifier: '
+        getLineAndCharacterOfPosition'
+          Parameter
+            Identifier: 'pos'
+            NumberKeyword
+          TypeReference
+            Identifier: ' LineAndCharacter'
+        MethodSignature
+          Identifier: '
+        getLineEndOfPosition'
+          Parameter
+            Identifier: 'pos'
+            NumberKeyword
+          NumberKeyword
+        MethodSignature
+          Identifier: '
+        getLineStarts'
+          TypeOperator
+            ArrayType
+              NumberKeyword
+        MethodSignature
+          Identifier: '
+        getPositionOfLineAndCharacter'
+          Parameter
+            Identifier: 'line'
+            NumberKeyword
+          Parameter
+            Identifier: ' character'
+            NumberKeyword
+          NumberKeyword
+        MethodSignature
+          Identifier: '
+        update'
+          Parameter
+            Identifier: 'newText'
+            StringKeyword
+          Parameter
+            Identifier: ' textChangeRange'
+            TypeReference
+              Identifier: ' TextChangeRange'
+          TypeReference
+            Identifier: ' SourceFile'
+        PropertySignature
+          Identifier: '
+        /** @internal */ sourceMapper'
+          QuestionToken
+          TypeReference
+            Identifier: ' DocumentPositionMapper'
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' SourceFileLike'
+        MethodSignature
+          Identifier: '
+        getLineAndCharacterOfPosition'
+          Parameter
+            Identifier: 'pos'
+            NumberKeyword
+          TypeReference
+            Identifier: ' LineAndCharacter'
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      InterfaceDeclaration
+        Identifier: ' SourceMapSource'
+        MethodSignature
+          Identifier: '
+        getLineAndCharacterOfPosition'
+          Parameter
+            Identifier: 'pos'
+            NumberKeyword
+          TypeReference
+            Identifier: ' LineAndCharacter'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' IScriptSnapshot'
+    MethodSignature
+      Identifier: '
+    /** Gets a portion of the script snapshot specified by [start, end). */
+    getText'
+      Parameter
+        Identifier: 'start'
+        NumberKeyword
+      Parameter
+        Identifier: ' end'
+        NumberKeyword
+      StringKeyword
+    MethodSignature
+      Identifier: '
+    /** Gets the length of this script snapshot. */
+    getLength'
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    /**
+     * Gets the TextChangeRange that describe how the text changed between this text and
+     * an older version.  This information is used by the incremental parser to determine
+     * what sections of the script need to be re-parsed.  'undefined' can be returned if the
+     * change range cannot be determined.  However, in that case, incremental parsing will
+     * not happen and the entire document will be re - parsed.
+     */
+    getChangeRange'
+      Parameter
+        Identifier: 'oldSnapshot'
+        TypeReference
+          Identifier: ' IScriptSnapshot'
+      UnionType
+        TypeReference
+          Identifier: ' TextChangeRange'
+        UndefinedKeyword
+    MethodSignature
+      Identifier: '
+    /** Releases all resources held by this script snapshot */
+    dispose'
+      QuestionToken
+      VoidKeyword
+  ModuleDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' ScriptSnapshot'
+    ModuleBlock
+      FunctionDeclaration
+        Identifier: ' fromString'
+        Parameter
+          Identifier: 'text'
+          StringKeyword
+        TypeReference
+          Identifier: ' IScriptSnapshot'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' PreProcessedFileInfo'
+    PropertySignature
+      Identifier: '
+    referencedFiles'
+      ArrayType
+        TypeReference
+          Identifier: ' FileReference'
+    PropertySignature
+      Identifier: '
+    typeReferenceDirectives'
+      ArrayType
+        TypeReference
+          Identifier: ' FileReference'
+    PropertySignature
+      Identifier: '
+    libReferenceDirectives'
+      ArrayType
+        TypeReference
+          Identifier: ' FileReference'
+    PropertySignature
+      Identifier: '
+    importedFiles'
+      ArrayType
+        TypeReference
+          Identifier: ' FileReference'
+    PropertySignature
+      Identifier: '
+    ambientExternalModules'
+      QuestionToken
+      ArrayType
+        StringKeyword
+    PropertySignature
+      Identifier: '
+    isLibFile'
+      BooleanKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' HostCancellationToken'
+    MethodSignature
+      Identifier: '
+    isCancellationRequested'
+      BooleanKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' InstallPackageOptions'
+    PropertySignature
+      Identifier: '
+    fileName'
+      TypeReference
+        Identifier: ' Path'
+    PropertySignature
+      Identifier: '
+    packageName'
+      StringKeyword
+  EnumDeclaration
+    ExportKeyword
+    DeclareKeyword
+    ConstKeyword
+    Identifier: ' PackageJsonDependencyGroup'
+    EnumMember
+      Identifier: '
+    Dependencies'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    DevDependencies'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    PeerDependencies'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    OptionalDependencies'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    All'
+      NumericLiteral
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' ProjectPackageJsonInfo'
+    PropertySignature
+      Identifier: '
+    fileName'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    parseable'
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    dependencies'
+      QuestionToken
+      TypeReference
+        Identifier: ' Map'
+        StringKeyword
+        StringKeyword
+    PropertySignature
+      Identifier: '
+    devDependencies'
+      QuestionToken
+      TypeReference
+        Identifier: ' Map'
+        StringKeyword
+        StringKeyword
+    PropertySignature
+      Identifier: '
+    peerDependencies'
+      QuestionToken
+      TypeReference
+        Identifier: ' Map'
+        StringKeyword
+        StringKeyword
+    PropertySignature
+      Identifier: '
+    optionalDependencies'
+      QuestionToken
+      TypeReference
+        Identifier: ' Map'
+        StringKeyword
+        StringKeyword
+    MethodSignature
+      Identifier: '
+    get'
+      Parameter
+        Identifier: 'dependencyName'
+        StringKeyword
+      Parameter
+        Identifier: ' inGroups'
+        QuestionToken
+        TypeReference
+          Identifier: ' PackageJsonDependencyGroup'
+      UnionType
+        StringKeyword
+        UndefinedKeyword
+    MethodSignature
+      Identifier: '
+    has'
+      Parameter
+        Identifier: 'dependencyName'
+        StringKeyword
+      Parameter
+        Identifier: ' inGroups'
+        QuestionToken
+        TypeReference
+          Identifier: ' PackageJsonDependencyGroup'
+      BooleanKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' FormattingHost'
+    MethodSignature
+      Identifier: '
+    getNewLine'
+      QuestionToken
+      StringKeyword
+  EnumDeclaration
+    ExportKeyword
+    DeclareKeyword
+    ConstKeyword
+    Identifier: ' PackageJsonAutoImportPreference'
+    EnumMember
+      Identifier: '
+    Off'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    On'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    Auto'
+      NumericLiteral
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' PerformanceEvent'
+    PropertySignature
+      Identifier: '
+    kind'
+      UnionType
+        LiteralType
+          StringLiteral
+        LiteralType
+          StringLiteral
+    PropertySignature
+      Identifier: '
+    durationMs'
+      NumberKeyword
+  EnumDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' LanguageServiceMode'
+    EnumMember
+      Identifier: '
+    Semantic'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    PartialSemantic'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    Syntactic'
+      NumericLiteral
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' IncompleteCompletionsCache'
+    MethodSignature
+      Identifier: '
+    get'
+      UnionType
+        TypeReference
+          Identifier: ' CompletionInfo'
+        UndefinedKeyword
+    MethodSignature
+      Identifier: '
+    set'
+      Parameter
+        Identifier: 'response'
+        TypeReference
+          Identifier: ' CompletionInfo'
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    clear'
+      VoidKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' LanguageServiceHost'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' GetEffectiveTypeRootsHost'
+      ExpressionWithTypeArguments
+        Identifier: ' MinimalResolutionCacheHost'
+    MethodSignature
+      Identifier: '
+    getCompilationSettings'
+      TypeReference
+        Identifier: ' CompilerOptions'
+    MethodSignature
+      Identifier: '
+    getNewLine'
+      QuestionToken
+      StringKeyword
+    MethodSignature
+      Identifier: '
+    /** @internal */ updateFromProject'
+      QuestionToken
+      VoidKeyword
+    PropertySignature
+      Identifier: '
+    /** @internal */ updateFromProjectInProgress'
+      QuestionToken
+      BooleanKeyword
+    MethodSignature
+      Identifier: '
+    getProjectVersion'
+      QuestionToken
+      StringKeyword
+    MethodSignature
+      Identifier: '
+    getScriptFileNames'
+      ArrayType
+        StringKeyword
+    MethodSignature
+      Identifier: '
+    getScriptKind'
+      QuestionToken
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      TypeReference
+        Identifier: ' ScriptKind'
+    MethodSignature
+      Identifier: '
+    getScriptVersion'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      StringKeyword
+    MethodSignature
+      Identifier: '
+    getScriptSnapshot'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      UnionType
+        TypeReference
+          Identifier: ' IScriptSnapshot'
+        UndefinedKeyword
+    MethodSignature
+      Identifier: '
+    getProjectReferences'
+      QuestionToken
+      UnionType
+        TypeOperator
+          ArrayType
+            TypeReference
+              Identifier: ' ProjectReference'
+        UndefinedKeyword
+    MethodSignature
+      Identifier: '
+    getLocalizedDiagnosticMessages'
+      QuestionToken
+      AnyKeyword
+    MethodSignature
+      Identifier: '
+    getCancellationToken'
+      QuestionToken
+      TypeReference
+        Identifier: ' HostCancellationToken'
+    MethodSignature
+      Identifier: '
+    getCurrentDirectory'
+      StringKeyword
+    MethodSignature
+      Identifier: '
+    getDefaultLibFileName'
+      Parameter
+        Identifier: 'options'
+        TypeReference
+          Identifier: ' CompilerOptions'
+      StringKeyword
+    MethodSignature
+      Identifier: '
+    log'
+      QuestionToken
+      Parameter
+        Identifier: 's'
+        StringKeyword
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    trace'
+      QuestionToken
+      Parameter
+        Identifier: 's'
+        StringKeyword
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    error'
+      QuestionToken
+      Parameter
+        Identifier: 's'
+        StringKeyword
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    useCaseSensitiveFileNames'
+      QuestionToken
+      BooleanKeyword
+    MethodSignature
+      Identifier: '
+    readDirectory'
+      QuestionToken
+      Parameter
+        Identifier: 'path'
+        StringKeyword
+      Parameter
+        Identifier: ' extensions'
+        QuestionToken
+        TypeOperator
+          ArrayType
+            StringKeyword
+      Parameter
+        Identifier: ' exclude'
+        QuestionToken
+        TypeOperator
+          ArrayType
+            StringKeyword
+      Parameter
+        Identifier: ' include'
+        QuestionToken
+        TypeOperator
+          ArrayType
+            StringKeyword
+      Parameter
+        Identifier: ' depth'
+        QuestionToken
+        NumberKeyword
+      ArrayType
+        StringKeyword
+    MethodSignature
+      Identifier: '
+    realpath'
+      QuestionToken
+      Parameter
+        Identifier: 'path'
+        StringKeyword
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    /** @internal */ createHash'
+      QuestionToken
+      UnionType
+        ParenthesizedType
+          FunctionType
+            Parameter
+              Identifier: 'data'
+              StringKeyword
+            StringKeyword
+        UndefinedKeyword
+    MethodSignature
+      Identifier: '
+    readFile'
+      Parameter
+        Identifier: 'path'
+        StringKeyword
+      Parameter
+        Identifier: ' encoding'
+        QuestionToken
+        StringKeyword
+      UnionType
+        StringKeyword
+        UndefinedKeyword
+    MethodSignature
+      Identifier: '
+    fileExists'
+      Parameter
+        Identifier: 'path'
+        StringKeyword
+      BooleanKeyword
+    MethodSignature
+      Identifier: '
+    getTypeRootsVersion'
+      QuestionToken
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    /** @deprecated supply resolveModuleNameLiterals instead for resolution that can handle newer resolution modes like nodenext */
+    resolveModuleNames'
+      QuestionToken
+      Parameter
+        Identifier: 'moduleNames'
+        ArrayType
+          StringKeyword
+      Parameter
+        Identifier: ' containingFile'
+        StringKeyword
+      Parameter
+        Identifier: ' reusedNames'
+        UnionType
+          ArrayType
+            StringKeyword
+          UndefinedKeyword
+      Parameter
+        Identifier: ' redirectedReference'
+        UnionType
+          TypeReference
+            Identifier: ' ResolvedProjectReference'
+          UndefinedKeyword
+      Parameter
+        Identifier: ' options'
+        TypeReference
+          Identifier: ' CompilerOptions'
+      Parameter
+        Identifier: ' containingSourceFile'
+        QuestionToken
+        TypeReference
+          Identifier: ' SourceFile'
+      ArrayType
+        ParenthesizedType
+          UnionType
+            TypeReference
+              Identifier: 'ResolvedModule'
+            UndefinedKeyword
+    MethodSignature
+      Identifier: '
+    getResolvedModuleWithFailedLookupLocationsFromCache'
+      QuestionToken
+      Parameter
+        Identifier: 'modulename'
+        StringKeyword
+      Parameter
+        Identifier: ' containingFile'
+        StringKeyword
+      Parameter
+        Identifier: ' resolutionMode'
+        QuestionToken
+        TypeReference
+          Identifier: ' ResolutionMode'
+      UnionType
+        TypeReference
+          Identifier: ' ResolvedModuleWithFailedLookupLocations'
+        UndefinedKeyword
+    MethodSignature
+      Identifier: '
+    /** @deprecated supply resolveTypeReferenceDirectiveReferences instead for resolution that can handle newer resolution modes like nodenext */
+    resolveTypeReferenceDirectives'
+      QuestionToken
+      Parameter
+        Identifier: 'typeDirectiveNames'
+        UnionType
+          ArrayType
+            StringKeyword
+          ArrayType
+            TypeReference
+              Identifier: ' FileReference'
+      Parameter
+        Identifier: ' containingFile'
+        StringKeyword
+      Parameter
+        Identifier: ' redirectedReference'
+        UnionType
+          TypeReference
+            Identifier: ' ResolvedProjectReference'
+          UndefinedKeyword
+      Parameter
+        Identifier: ' options'
+        TypeReference
+          Identifier: ' CompilerOptions'
+      Parameter
+        Identifier: ' containingFileMode'
+        QuestionToken
+        TypeReference
+          Identifier: ' ResolutionMode'
+      ArrayType
+        ParenthesizedType
+          UnionType
+            TypeReference
+              Identifier: 'ResolvedTypeReferenceDirective'
+            UndefinedKeyword
+    MethodSignature
+      Identifier: '
+    resolveModuleNameLiterals'
+      QuestionToken
+      Parameter
+        Identifier: 'moduleLiterals'
+        TypeOperator
+          ArrayType
+            TypeReference
+              Identifier: ' StringLiteralLike'
+      Parameter
+        Identifier: ' containingFile'
+        StringKeyword
+      Parameter
+        Identifier: ' redirectedReference'
+        UnionType
+          TypeReference
+            Identifier: ' ResolvedProjectReference'
+          UndefinedKeyword
+      Parameter
+        Identifier: ' options'
+        TypeReference
+          Identifier: ' CompilerOptions'
+      Parameter
+        Identifier: ' containingSourceFile'
+        TypeReference
+          Identifier: ' SourceFile'
+      Parameter
+        Identifier: ' reusedNames'
+        UnionType
+          TypeOperator
+            ArrayType
+              TypeReference
+                Identifier: ' StringLiteralLike'
+          UndefinedKeyword
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' ResolvedModuleWithFailedLookupLocations'
+    MethodSignature
+      Identifier: '
+    resolveTypeReferenceDirectiveReferences'
+      QuestionToken
+      TypeParameter
+        Identifier: 'T'
+        UnionType
+          TypeReference
+            Identifier: ' FileReference'
+          StringKeyword
+      Parameter
+        Identifier: 'typeDirectiveReferences'
+        TypeOperator
+          ArrayType
+            TypeReference
+              Identifier: ' T'
+      Parameter
+        Identifier: ' containingFile'
+        StringKeyword
+      Parameter
+        Identifier: ' redirectedReference'
+        UnionType
+          TypeReference
+            Identifier: ' ResolvedProjectReference'
+          UndefinedKeyword
+      Parameter
+        Identifier: ' options'
+        TypeReference
+          Identifier: ' CompilerOptions'
+      Parameter
+        Identifier: ' containingSourceFile'
+        UnionType
+          TypeReference
+            Identifier: ' SourceFile'
+          UndefinedKeyword
+      Parameter
+        Identifier: ' reusedNames'
+        UnionType
+          TypeOperator
+            ArrayType
+              TypeReference
+                Identifier: ' T'
+          UndefinedKeyword
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' ResolvedTypeReferenceDirectiveWithFailedLookupLocations'
+    MethodSignature
+      Identifier: '
+    /** @internal */
+    resolveLibrary'
+      QuestionToken
+      Parameter
+        Identifier: 'libraryName'
+        StringKeyword
+      Parameter
+        Identifier: ' resolveFrom'
+        StringKeyword
+      Parameter
+        Identifier: ' options'
+        TypeReference
+          Identifier: ' CompilerOptions'
+      Parameter
+        Identifier: ' libFileName'
+        StringKeyword
+      TypeReference
+        Identifier: ' ResolvedModuleWithFailedLookupLocations'
+    PropertySignature
+      Identifier: '
+    /**
+     * If provided along with custom resolveLibrary, used to determine if we should redo library resolutions
+     * @internal
+     */
+    hasInvalidatedLibResolutions'
+      QuestionToken
+      UnionType
+        ParenthesizedType
+          FunctionType
+            Parameter
+              Identifier: 'libFileName'
+              StringKeyword
+            BooleanKeyword
+        UndefinedKeyword
+    PropertySignature
+      Identifier: '
+    /** @internal */ hasInvalidatedResolutions'
+      QuestionToken
+      UnionType
+        TypeReference
+          Identifier: ' HasInvalidatedResolutions'
+        UndefinedKeyword
+    PropertySignature
+      Identifier: '
+    /** @internal */ hasChangedAutomaticTypeDirectiveNames'
+      QuestionToken
+      TypeReference
+        Identifier: ' HasChangedAutomaticTypeDirectiveNames'
+    MethodSignature
+      Identifier: '
+    /** @internal */ getGlobalTypingsCacheLocation'
+      QuestionToken
+      UnionType
+        StringKeyword
+        UndefinedKeyword
+    MethodSignature
+      Identifier: '
+    /** @internal */ getSymlinkCache'
+      QuestionToken
+      Parameter
+        Identifier: 'files'
+        QuestionToken
+        TypeOperator
+          ArrayType
+            TypeReference
+              Identifier: ' SourceFile'
+      TypeReference
+        Identifier: ' SymlinkCache'
+    MethodSignature
+      Identifier: '
+    /** @internal */ getModuleResolutionCache'
+      QuestionToken
+      UnionType
+        TypeReference
+          Identifier: ' ModuleResolutionCache'
+        UndefinedKeyword
+    MethodSignature
+      Identifier: '
+    getDirectories'
+      QuestionToken
+      Parameter
+        Identifier: 'directoryName'
+        StringKeyword
+      ArrayType
+        StringKeyword
+    MethodSignature
+      Identifier: '
+    /**
+     * Gets a set of custom transformers to use during emit.
+     */
+    getCustomTransformers'
+      QuestionToken
+      UnionType
+        TypeReference
+          Identifier: ' CustomTransformers'
+        UndefinedKeyword
+    MethodSignature
+      Identifier: '
+    isKnownTypesPackageName'
+      QuestionToken
+      Parameter
+        Identifier: 'name'
+        StringKeyword
+      BooleanKeyword
+    MethodSignature
+      Identifier: '
+    installPackage'
+      QuestionToken
+      Parameter
+        Identifier: 'options'
+        TypeReference
+          Identifier: ' InstallPackageOptions'
+      TypeReference
+        Identifier: ' Promise'
+        TypeReference
+          Identifier: 'ApplyCodeActionCommandResult'
+    MethodSignature
+      Identifier: '
+    writeFile'
+      QuestionToken
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      Parameter
+        Identifier: ' content'
+        StringKeyword
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    /** @internal */ getDocumentPositionMapper'
+      QuestionToken
+      Parameter
+        Identifier: 'generatedFileName'
+        StringKeyword
+      Parameter
+        Identifier: ' sourceFileName'
+        QuestionToken
+        StringKeyword
+      UnionType
+        TypeReference
+          Identifier: ' DocumentPositionMapper'
+        UndefinedKeyword
+    MethodSignature
+      Identifier: '
+    /** @internal */ getSourceFileLike'
+      QuestionToken
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      UnionType
+        TypeReference
+          Identifier: ' SourceFileLike'
+        UndefinedKeyword
+    MethodSignature
+      Identifier: '
+    /** @internal */ getPackageJsonsVisibleToFile'
+      QuestionToken
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      Parameter
+        Identifier: ' rootDir'
+        QuestionToken
+        StringKeyword
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' ProjectPackageJsonInfo'
+    MethodSignature
+      Identifier: '
+    /** @internal */ getNearestAncestorDirectoryWithPackageJson'
+      QuestionToken
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      UnionType
+        StringKeyword
+        UndefinedKeyword
+    MethodSignature
+      Identifier: '
+    /** @internal */ getPackageJsonsForAutoImport'
+      QuestionToken
+      Parameter
+        Identifier: 'rootDir'
+        QuestionToken
+        StringKeyword
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' ProjectPackageJsonInfo'
+    MethodSignature
+      Identifier: '
+    /** @internal */ getCachedExportInfoMap'
+      QuestionToken
+      TypeReference
+        Identifier: ' ExportInfoMap'
+    MethodSignature
+      Identifier: '
+    /** @internal */ getModuleSpecifierCache'
+      QuestionToken
+      TypeReference
+        Identifier: ' ModuleSpecifierCache'
+    MethodSignature
+      Identifier: '
+    /** @internal */ setCompilerHost'
+      QuestionToken
+      Parameter
+        Identifier: 'host'
+        TypeReference
+          Identifier: ' CompilerHost'
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    /** @internal */ useSourceOfProjectReferenceRedirect'
+      QuestionToken
+      BooleanKeyword
+    MethodSignature
+      Identifier: '
+    /** @internal */ getPackageJsonAutoImportProvider'
+      QuestionToken
+      UnionType
+        TypeReference
+          Identifier: ' Program'
+        UndefinedKeyword
+    MethodSignature
+      Identifier: '
+    /** @internal */ sendPerformanceEvent'
+      QuestionToken
+      Parameter
+        Identifier: 'kind'
+        IndexedAccessType
+          TypeReference
+            Identifier: ' PerformanceEvent'
+          LiteralType
+            StringLiteral
+      Parameter
+        Identifier: ' durationMs'
+        NumberKeyword
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    getParsedCommandLine'
+      QuestionToken
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      UnionType
+        TypeReference
+          Identifier: ' ParsedCommandLine'
+        UndefinedKeyword
+    MethodSignature
+      Identifier: '
+    /** @internal */ onReleaseParsedCommandLine'
+      QuestionToken
+      Parameter
+        Identifier: 'configFileName'
+        StringKeyword
+      Parameter
+        Identifier: ' oldResolvedRef'
+        UnionType
+          TypeReference
+            Identifier: ' ResolvedProjectReference'
+          UndefinedKeyword
+      Parameter
+        Identifier: ' optionOptions'
+        TypeReference
+          Identifier: ' CompilerOptions'
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    /** @internal */ onReleaseOldSourceFile'
+      QuestionToken
+      Parameter
+        Identifier: 'oldSourceFile'
+        TypeReference
+          Identifier: ' SourceFile'
+      Parameter
+        Identifier: ' oldOptions'
+        TypeReference
+          Identifier: ' CompilerOptions'
+      Parameter
+        Identifier: ' hasSourceFileByPath'
+        BooleanKeyword
+      Parameter
+        Identifier: ' newSourceFileByResolvedPath'
+        UnionType
+          TypeReference
+            Identifier: ' SourceFile'
+          UndefinedKeyword
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    /** @internal */ getIncompleteCompletionsCache'
+      QuestionToken
+      TypeReference
+        Identifier: ' IncompleteCompletionsCache'
+    MethodSignature
+      Identifier: '
+    /** @internal */ runWithTemporaryFileUpdate'
+      QuestionToken
+      Parameter
+        Identifier: 'rootFile'
+        StringKeyword
+      Parameter
+        Identifier: ' updatedText'
+        StringKeyword
+      Parameter
+        Identifier: ' cb'
+        FunctionType
+          Parameter
+            Identifier: 'updatedProgram'
+            TypeReference
+              Identifier: ' Program'
+          Parameter
+            Identifier: ' originalProgram'
+            UnionType
+              TypeReference
+                Identifier: ' Program'
+              UndefinedKeyword
+          Parameter
+            Identifier: ' updatedPastedText'
+            TypeReference
+              Identifier: ' SourceFile'
+          VoidKeyword
+      VoidKeyword
+    PropertySignature
+      Identifier: '
+    jsDocParsingMode'
+      QuestionToken
+      UnionType
+        TypeReference
+          Identifier: ' JSDocParsingMode'
+        UndefinedKeyword
+  VariableStatement
+    ExportKeyword
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' emptyOptions'
+        TypeLiteral
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' WithMetadata'
+    TypeParameter
+      Identifier: 'T'
+    IntersectionType
+      TypeReference
+        Identifier: ' T'
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+    metadata'
+          QuestionToken
+          UnknownKeyword
+  EnumDeclaration
+    ExportKeyword
+    DeclareKeyword
+    ConstKeyword
+    Identifier: ' SemanticClassificationFormat'
+    EnumMember
+      Identifier: '
+    Original'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    TwentyTwenty'
+      StringLiteral
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' RegionDiagnosticsResult'
+    PropertySignature
+      Identifier: '
+    diagnostics'
+      ArrayType
+        TypeReference
+          Identifier: ' Diagnostic'
+    PropertySignature
+      Identifier: '
+    spans'
+      ArrayType
+        TypeReference
+          Identifier: ' TextSpan'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' LanguageService'
+    MethodSignature
+      Identifier: '
+    /** This is used as a part of restarting the language service. */
+    cleanupSemanticCache'
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    /**
+     * Gets errors indicating invalid syntax in a file.
+     *
+     * In English, "this cdeo have, erorrs" is syntactically invalid because it has typos,
+     * grammatical errors, and misplaced punctuation. Likewise, examples of syntax
+     * errors in TypeScript are missing parentheses in an `if` statement, mismatched
+     * curly braces, and using a reserved keyword as a variable name.
+     *
+     * These diagnostics are inexpensive to compute and don't require knowledge of
+     * other files. Note that a non-empty result increases the likelihood of false positives
+     * from `getSemanticDiagnostics`.
+     *
+     * While these represent the majority of syntax-related diagnostics, there are some
+     * that require the type system, which will be present in `getSemanticDiagnostics`.
+     *
+     * @param fileName A path to the file you want syntactic diagnostics for
+     */
+    getSyntacticDiagnostics'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      ArrayType
+        TypeReference
+          Identifier: ' DiagnosticWithLocation'
+    MethodSignature
+      Identifier: '
+    /**
+     * Gets warnings or errors indicating type system issues in a given file.
+     * Requesting semantic diagnostics may start up the type system and
+     * run deferred work, so the first call may take longer than subsequent calls.
+     *
+     * Unlike the other get*Diagnostics functions, these diagnostics can potentially not
+     * include a reference to a source file. Specifically, the first time this is called,
+     * it will return global diagnostics with no associated location.
+     *
+     * To contrast the differences between semantic and syntactic diagnostics, consider the
+     * sentence: "The sun is green." is syntactically correct; those are real English words with
+     * correct sentence structure. However, it is semantically invalid, because it is not true.
+     *
+     * @param fileName A path to the file you want semantic diagnostics for
+     */
+    getSemanticDiagnostics'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      ArrayType
+        TypeReference
+          Identifier: ' Diagnostic'
+    MethodSignature
+      Identifier: '
+    /**
+     * Similar to {@link getSemanticDiagnostics}, but only checks the specified ranges of the file for diagnostics.
+     * @internal
+     */
+    getRegionSemanticDiagnostics'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      Parameter
+        Identifier: ' ranges'
+        ArrayType
+          TypeReference
+            Identifier: ' TextRange'
+      UnionType
+        TypeReference
+          Identifier: ' RegionDiagnosticsResult'
+        UndefinedKeyword
+    MethodSignature
+      Identifier: '
+    /**
+     * Gets suggestion diagnostics for a specific file. These diagnostics tend to
+     * proactively suggest refactors, as opposed to diagnostics that indicate
+     * potentially incorrect runtime behavior.
+     *
+     * @param fileName A path to the file you want semantic diagnostics for
+     */
+    getSuggestionDiagnostics'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      ArrayType
+        TypeReference
+          Identifier: ' DiagnosticWithLocation'
+    MethodSignature
+      Identifier: '
+    /**
+     * Gets global diagnostics related to the program configuration and compiler options.
+     */
+    getCompilerOptionsDiagnostics'
+      ArrayType
+        TypeReference
+          Identifier: ' Diagnostic'
+    MethodSignature
+      Identifier: '
+    /** @deprecated Use getEncodedSyntacticClassifications instead. */
+    getSyntacticClassifications'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      Parameter
+        Identifier: ' span'
+        TypeReference
+          Identifier: ' TextSpan'
+      ArrayType
+        TypeReference
+          Identifier: ' ClassifiedSpan'
+    MethodSignature
+      Identifier: '
+    getSyntacticClassifications'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      Parameter
+        Identifier: ' span'
+        TypeReference
+          Identifier: ' TextSpan'
+      Parameter
+        Identifier: ' format'
+        TypeReference
+          Identifier: ' SemanticClassificationFormat'
+      UnionType
+        ArrayType
+          TypeReference
+            Identifier: ' ClassifiedSpan'
+        ArrayType
+          TypeReference
+            Identifier: ' ClassifiedSpan2020'
+    MethodSignature
+      Identifier: '
+    /** @deprecated Use getEncodedSemanticClassifications instead. */
+    getSemanticClassifications'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      Parameter
+        Identifier: ' span'
+        TypeReference
+          Identifier: ' TextSpan'
+      ArrayType
+        TypeReference
+          Identifier: ' ClassifiedSpan'
+    MethodSignature
+      Identifier: '
+    getSemanticClassifications'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      Parameter
+        Identifier: ' span'
+        TypeReference
+          Identifier: ' TextSpan'
+      Parameter
+        Identifier: ' format'
+        TypeReference
+          Identifier: ' SemanticClassificationFormat'
+      UnionType
+        ArrayType
+          TypeReference
+            Identifier: ' ClassifiedSpan'
+        ArrayType
+          TypeReference
+            Identifier: ' ClassifiedSpan2020'
+    MethodSignature
+      Identifier: '
+    /** Encoded as triples of [start, length, ClassificationType]. */
+    getEncodedSyntacticClassifications'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      Parameter
+        Identifier: ' span'
+        TypeReference
+          Identifier: ' TextSpan'
+      TypeReference
+        Identifier: ' Classifications'
+    MethodSignature
+      Identifier: '
+    /**
+     * Gets semantic highlights information for a particular file. Has two formats, an older
+     * version used by VS and a format used by VS Code.
+     *
+     * @param fileName The path to the file
+     * @param position A text span to return results within
+     * @param format Which format to use, defaults to "original"
+     * @returns a number array encoded as triples of [start, length, ClassificationType, ...].
+     */
+    getEncodedSemanticClassifications'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      Parameter
+        Identifier: ' span'
+        TypeReference
+          Identifier: ' TextSpan'
+      Parameter
+        Identifier: ' format'
+        QuestionToken
+        TypeReference
+          Identifier: ' SemanticClassificationFormat'
+      TypeReference
+        Identifier: ' Classifications'
+    MethodSignature
+      Identifier: '
+    /**
+     * Gets completion entries at a particular position in a file.
+     *
+     * @param fileName The path to the file
+     * @param position A zero-based index of the character where you want the entries
+     * @param options An object describing how the request was triggered and what kinds
+     * of code actions can be returned with the completions.
+     * @param formattingSettings settings needed for calling formatting functions.
+     */
+    getCompletionsAtPosition'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      Parameter
+        Identifier: ' position'
+        NumberKeyword
+      Parameter
+        Identifier: ' options'
+        UnionType
+          TypeReference
+            Identifier: ' GetCompletionsAtPositionOptions'
+          UndefinedKeyword
+      Parameter
+        Identifier: ' formattingSettings'
+        QuestionToken
+        TypeReference
+          Identifier: ' FormatCodeSettings'
+      UnionType
+        TypeReference
+          Identifier: ' WithMetadata'
+          TypeReference
+            Identifier: 'CompletionInfo'
+        UndefinedKeyword
+    MethodSignature
+      Identifier: '
+    /**
+     * Gets the extended details for a completion entry retrieved from `getCompletionsAtPosition`.
+     *
+     * @param fileName The path to the file
+     * @param position A zero based index of the character where you want the entries
+     * @param entryName The `name` from an existing completion which came from `getCompletionsAtPosition`
+     * @param formatOptions How should code samples in the completions be formatted, can be undefined for backwards compatibility
+     * @param source `source` property from the completion entry
+     * @param preferences User settings, can be undefined for backwards compatibility
+     * @param data `data` property from the completion entry
+     */
+    getCompletionEntryDetails'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      Parameter
+        Identifier: ' position'
+        NumberKeyword
+      Parameter
+        Identifier: ' entryName'
+        StringKeyword
+      Parameter
+        Identifier: ' formatOptions'
+        UnionType
+          TypeReference
+            Identifier: ' FormatCodeOptions'
+          TypeReference
+            Identifier: ' FormatCodeSettings'
+          UndefinedKeyword
+      Parameter
+        Identifier: ' source'
+        UnionType
+          StringKeyword
+          UndefinedKeyword
+      Parameter
+        Identifier: ' preferences'
+        UnionType
+          TypeReference
+            Identifier: ' UserPreferences'
+          UndefinedKeyword
+      Parameter
+        Identifier: ' data'
+        UnionType
+          TypeReference
+            Identifier: ' CompletionEntryData'
+          UndefinedKeyword
+      UnionType
+        TypeReference
+          Identifier: ' CompletionEntryDetails'
+        UndefinedKeyword
+    MethodSignature
+      Identifier: '
+    getCompletionEntrySymbol'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      Parameter
+        Identifier: ' position'
+        NumberKeyword
+      Parameter
+        Identifier: ' name'
+        StringKeyword
+      Parameter
+        Identifier: ' source'
+        UnionType
+          StringKeyword
+          UndefinedKeyword
+      UnionType
+        TypeReference
+          Identifier: ' Symbol'
+        UndefinedKeyword
+    MethodSignature
+      Identifier: '
+    /**
+     * Gets semantic information about the identifier at a particular position in a
+     * file. Quick info is what you typically see when you hover in an editor.
+     *
+     * @param fileName The path to the file
+     * @param position A zero-based index of the character where you want the quick info
+     */
+    getQuickInfoAtPosition'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      Parameter
+        Identifier: ' position'
+        NumberKeyword
+      UnionType
+        TypeReference
+          Identifier: ' QuickInfo'
+        UndefinedKeyword
+    MethodSignature
+      Identifier: '
+    getNameOrDottedNameSpan'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      Parameter
+        Identifier: ' startPos'
+        NumberKeyword
+      Parameter
+        Identifier: ' endPos'
+        NumberKeyword
+      UnionType
+        TypeReference
+          Identifier: ' TextSpan'
+        UndefinedKeyword
+    MethodSignature
+      Identifier: '
+    getBreakpointStatementAtPosition'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      Parameter
+        Identifier: ' position'
+        NumberKeyword
+      UnionType
+        TypeReference
+          Identifier: ' TextSpan'
+        UndefinedKeyword
+    MethodSignature
+      Identifier: '
+    getSignatureHelpItems'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      Parameter
+        Identifier: ' position'
+        NumberKeyword
+      Parameter
+        Identifier: ' options'
+        UnionType
+          TypeReference
+            Identifier: ' SignatureHelpItemsOptions'
+          UndefinedKeyword
+      UnionType
+        TypeReference
+          Identifier: ' SignatureHelpItems'
+        UndefinedKeyword
+    MethodSignature
+      Identifier: '
+    getRenameInfo'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      Parameter
+        Identifier: ' position'
+        NumberKeyword
+      Parameter
+        Identifier: ' preferences'
+        TypeReference
+          Identifier: ' UserPreferences'
+      TypeReference
+        Identifier: ' RenameInfo'
+    MethodSignature
+      Identifier: '
+    /** @deprecated Use the signature with `UserPreferences` instead. */
+    getRenameInfo'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      Parameter
+        Identifier: ' position'
+        NumberKeyword
+      Parameter
+        Identifier: ' options'
+        QuestionToken
+        TypeReference
+          Identifier: ' RenameInfoOptions'
+      TypeReference
+        Identifier: ' RenameInfo'
+    MethodSignature
+      Identifier: '
+    findRenameLocations'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      Parameter
+        Identifier: ' position'
+        NumberKeyword
+      Parameter
+        Identifier: ' findInStrings'
+        BooleanKeyword
+      Parameter
+        Identifier: ' findInComments'
+        BooleanKeyword
+      Parameter
+        Identifier: ' preferences'
+        TypeReference
+          Identifier: ' UserPreferences'
+      UnionType
+        TypeOperator
+          ArrayType
+            TypeReference
+              Identifier: ' RenameLocation'
+        UndefinedKeyword
+    MethodSignature
+      Identifier: '
+    /** @deprecated Pass `providePrefixAndSuffixTextForRename` as part of a `UserPreferences` parameter. */
+    findRenameLocations'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      Parameter
+        Identifier: ' position'
+        NumberKeyword
+      Parameter
+        Identifier: ' findInStrings'
+        BooleanKeyword
+      Parameter
+        Identifier: ' findInComments'
+        BooleanKeyword
+      Parameter
+        Identifier: ' providePrefixAndSuffixTextForRename'
+        QuestionToken
+        BooleanKeyword
+      UnionType
+        TypeOperator
+          ArrayType
+            TypeReference
+              Identifier: ' RenameLocation'
+        UndefinedKeyword
+    MethodSignature
+      Identifier: '
+    getSmartSelectionRange'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      Parameter
+        Identifier: ' position'
+        NumberKeyword
+      TypeReference
+        Identifier: ' SelectionRange'
+    MethodSignature
+      Identifier: '
+    /** @internal */
+    getDefinitionAtPosition'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      Parameter
+        Identifier: ' position'
+        NumberKeyword
+      Parameter
+        Identifier: ' searchOtherFilesOnly'
+        LiteralType
+          FalseKeyword
+      Parameter
+        Identifier: ' stopAtAlias'
+        BooleanKeyword
+      UnionType
+        TypeOperator
+          ArrayType
+            TypeReference
+              Identifier: ' DefinitionInfo'
+        UndefinedKeyword
+    MethodSignature
+      Identifier: '
+    /** @internal */
+    getDefinitionAtPosition'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      Parameter
+        Identifier: ' position'
+        NumberKeyword
+      Parameter
+        Identifier: ' searchOtherFilesOnly'
+        BooleanKeyword
+      Parameter
+        Identifier: ' stopAtAlias'
+        LiteralType
+          FalseKeyword
+      UnionType
+        TypeOperator
+          ArrayType
+            TypeReference
+              Identifier: ' DefinitionInfo'
+        UndefinedKeyword
+    MethodSignature
+      Identifier: '
+    getDefinitionAtPosition'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      Parameter
+        Identifier: ' position'
+        NumberKeyword
+      UnionType
+        TypeOperator
+          ArrayType
+            TypeReference
+              Identifier: ' DefinitionInfo'
+        UndefinedKeyword
+    MethodSignature
+      Identifier: '
+    getDefinitionAndBoundSpan'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      Parameter
+        Identifier: ' position'
+        NumberKeyword
+      UnionType
+        TypeReference
+          Identifier: ' DefinitionInfoAndBoundSpan'
+        UndefinedKeyword
+    MethodSignature
+      Identifier: '
+    getTypeDefinitionAtPosition'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      Parameter
+        Identifier: ' position'
+        NumberKeyword
+      UnionType
+        TypeOperator
+          ArrayType
+            TypeReference
+              Identifier: ' DefinitionInfo'
+        UndefinedKeyword
+    MethodSignature
+      Identifier: '
+    getImplementationAtPosition'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      Parameter
+        Identifier: ' position'
+        NumberKeyword
+      UnionType
+        TypeOperator
+          ArrayType
+            TypeReference
+              Identifier: ' ImplementationLocation'
+        UndefinedKeyword
+    MethodSignature
+      Identifier: '
+    getReferencesAtPosition'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      Parameter
+        Identifier: ' position'
+        NumberKeyword
+      UnionType
+        ArrayType
+          TypeReference
+            Identifier: ' ReferenceEntry'
+        UndefinedKeyword
+    MethodSignature
+      Identifier: '
+    findReferences'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      Parameter
+        Identifier: ' position'
+        NumberKeyword
+      UnionType
+        ArrayType
+          TypeReference
+            Identifier: ' ReferencedSymbol'
+        UndefinedKeyword
+    MethodSignature
+      Identifier: '
+    getDocumentHighlights'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      Parameter
+        Identifier: ' position'
+        NumberKeyword
+      Parameter
+        Identifier: ' filesToSearch'
+        ArrayType
+          StringKeyword
+      UnionType
+        ArrayType
+          TypeReference
+            Identifier: ' DocumentHighlights'
+        UndefinedKeyword
+    MethodSignature
+      Identifier: '
+    getFileReferences'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      ArrayType
+        TypeReference
+          Identifier: ' ReferenceEntry'
+    MethodSignature
+      Identifier: '
+    getNavigateToItems'
+      Parameter
+        Identifier: 'searchValue'
+        StringKeyword
+      Parameter
+        Identifier: ' maxResultCount'
+        QuestionToken
+        NumberKeyword
+      Parameter
+        Identifier: ' fileName'
+        QuestionToken
+        StringKeyword
+      Parameter
+        Identifier: ' excludeDtsFiles'
+        QuestionToken
+        BooleanKeyword
+      Parameter
+        Identifier: ' excludeLibFiles'
+        QuestionToken
+        BooleanKeyword
+      ArrayType
+        TypeReference
+          Identifier: ' NavigateToItem'
+    MethodSignature
+      Identifier: '
+    getNavigationBarItems'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      ArrayType
+        TypeReference
+          Identifier: ' NavigationBarItem'
+    MethodSignature
+      Identifier: '
+    getNavigationTree'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      TypeReference
+        Identifier: ' NavigationTree'
+    MethodSignature
+      Identifier: '
+    prepareCallHierarchy'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      Parameter
+        Identifier: ' position'
+        NumberKeyword
+      UnionType
+        TypeReference
+          Identifier: ' CallHierarchyItem'
+        ArrayType
+          TypeReference
+            Identifier: ' CallHierarchyItem'
+        UndefinedKeyword
+    MethodSignature
+      Identifier: '
+    provideCallHierarchyIncomingCalls'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      Parameter
+        Identifier: ' position'
+        NumberKeyword
+      ArrayType
+        TypeReference
+          Identifier: ' CallHierarchyIncomingCall'
+    MethodSignature
+      Identifier: '
+    provideCallHierarchyOutgoingCalls'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      Parameter
+        Identifier: ' position'
+        NumberKeyword
+      ArrayType
+        TypeReference
+          Identifier: ' CallHierarchyOutgoingCall'
+    MethodSignature
+      Identifier: '
+    provideInlayHints'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      Parameter
+        Identifier: ' span'
+        TypeReference
+          Identifier: ' TextSpan'
+      Parameter
+        Identifier: ' preferences'
+        UnionType
+          TypeReference
+            Identifier: ' UserPreferences'
+          UndefinedKeyword
+      ArrayType
+        TypeReference
+          Identifier: ' InlayHint'
+    MethodSignature
+      Identifier: '
+    getOutliningSpans'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      ArrayType
+        TypeReference
+          Identifier: ' OutliningSpan'
+    MethodSignature
+      Identifier: '
+    getTodoComments'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      Parameter
+        Identifier: ' descriptors'
+        ArrayType
+          TypeReference
+            Identifier: ' TodoCommentDescriptor'
+      ArrayType
+        TypeReference
+          Identifier: ' TodoComment'
+    MethodSignature
+      Identifier: '
+    getBraceMatchingAtPosition'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      Parameter
+        Identifier: ' position'
+        NumberKeyword
+      ArrayType
+        TypeReference
+          Identifier: ' TextSpan'
+    MethodSignature
+      Identifier: '
+    getIndentationAtPosition'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      Parameter
+        Identifier: ' position'
+        NumberKeyword
+      Parameter
+        Identifier: ' options'
+        UnionType
+          TypeReference
+            Identifier: ' EditorOptions'
+          TypeReference
+            Identifier: ' EditorSettings'
+      NumberKeyword
+    MethodSignature
+      Identifier: '
+    getFormattingEditsForRange'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      Parameter
+        Identifier: ' start'
+        NumberKeyword
+      Parameter
+        Identifier: ' end'
+        NumberKeyword
+      Parameter
+        Identifier: ' options'
+        UnionType
+          TypeReference
+            Identifier: ' FormatCodeOptions'
+          TypeReference
+            Identifier: ' FormatCodeSettings'
+      ArrayType
+        TypeReference
+          Identifier: ' TextChange'
+    MethodSignature
+      Identifier: '
+    getFormattingEditsForDocument'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      Parameter
+        Identifier: ' options'
+        UnionType
+          TypeReference
+            Identifier: ' FormatCodeOptions'
+          TypeReference
+            Identifier: ' FormatCodeSettings'
+      ArrayType
+        TypeReference
+          Identifier: ' TextChange'
+    MethodSignature
+      Identifier: '
+    getFormattingEditsAfterKeystroke'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      Parameter
+        Identifier: ' position'
+        NumberKeyword
+      Parameter
+        Identifier: ' key'
+        StringKeyword
+      Parameter
+        Identifier: ' options'
+        UnionType
+          TypeReference
+            Identifier: ' FormatCodeOptions'
+          TypeReference
+            Identifier: ' FormatCodeSettings'
+      ArrayType
+        TypeReference
+          Identifier: ' TextChange'
+    MethodSignature
+      Identifier: '
+    getDocCommentTemplateAtPosition'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      Parameter
+        Identifier: ' position'
+        NumberKeyword
+      Parameter
+        Identifier: ' options'
+        QuestionToken
+        TypeReference
+          Identifier: ' DocCommentTemplateOptions'
+      Parameter
+        Identifier: ' formatOptions'
+        QuestionToken
+        TypeReference
+          Identifier: ' FormatCodeSettings'
+      UnionType
+        TypeReference
+          Identifier: ' TextInsertion'
+        UndefinedKeyword
+    MethodSignature
+      Identifier: '
+    isValidBraceCompletionAtPosition'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      Parameter
+        Identifier: ' position'
+        NumberKeyword
+      Parameter
+        Identifier: ' openingBrace'
+        NumberKeyword
+      BooleanKeyword
+    MethodSignature
+      Identifier: '
+    /**
+     * This will return a defined result if the position is after the `>` of the opening tag, or somewhere in the text, of a JSXElement with no closing tag.
+     * Editors should call this after `>` is typed.
+     */
+    getJsxClosingTagAtPosition'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      Parameter
+        Identifier: ' position'
+        NumberKeyword
+      UnionType
+        TypeReference
+          Identifier: ' JsxClosingTagInfo'
+        UndefinedKeyword
+    MethodSignature
+      Identifier: '
+    getLinkedEditingRangeAtPosition'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      Parameter
+        Identifier: ' position'
+        NumberKeyword
+      UnionType
+        TypeReference
+          Identifier: ' LinkedEditingInfo'
+        UndefinedKeyword
+    MethodSignature
+      Identifier: '
+    getSpanOfEnclosingComment'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      Parameter
+        Identifier: ' position'
+        NumberKeyword
+      Parameter
+        Identifier: ' onlyMultiLine'
+        BooleanKeyword
+      UnionType
+        TypeReference
+          Identifier: ' TextSpan'
+        UndefinedKeyword
+    MethodSignature
+      Identifier: '
+    toLineColumnOffset'
+      QuestionToken
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      Parameter
+        Identifier: ' position'
+        NumberKeyword
+      TypeReference
+        Identifier: ' LineAndCharacter'
+    MethodSignature
+      Identifier: '
+    /** @internal */
+    getSourceMapper'
+      TypeReference
+        Identifier: ' SourceMapper'
+    MethodSignature
+      Identifier: '
+    /** @internal */
+    clearSourceMapperCache'
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    getCodeFixesAtPosition'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      Parameter
+        Identifier: ' start'
+        NumberKeyword
+      Parameter
+        Identifier: ' end'
+        NumberKeyword
+      Parameter
+        Identifier: ' errorCodes'
+        TypeOperator
+          ArrayType
+            NumberKeyword
+      Parameter
+        Identifier: ' formatOptions'
+        TypeReference
+          Identifier: ' FormatCodeSettings'
+      Parameter
+        Identifier: ' preferences'
+        TypeReference
+          Identifier: ' UserPreferences'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' CodeFixAction'
+    MethodSignature
+      Identifier: '
+    getCombinedCodeFix'
+      Parameter
+        Identifier: 'scope'
+        TypeReference
+          Identifier: ' CombinedCodeFixScope'
+      Parameter
+        Identifier: ' fixId'
+        TypeLiteral
+      Parameter
+        Identifier: ' formatOptions'
+        TypeReference
+          Identifier: ' FormatCodeSettings'
+      Parameter
+        Identifier: ' preferences'
+        TypeReference
+          Identifier: ' UserPreferences'
+      TypeReference
+        Identifier: ' CombinedCodeActions'
+    MethodSignature
+      Identifier: '
+    applyCodeActionCommand'
+      Parameter
+        Identifier: 'action'
+        TypeReference
+          Identifier: ' CodeActionCommand'
+      Parameter
+        Identifier: ' formatSettings'
+        QuestionToken
+        TypeReference
+          Identifier: ' FormatCodeSettings'
+      TypeReference
+        Identifier: ' Promise'
+        TypeReference
+          Identifier: 'ApplyCodeActionCommandResult'
+    MethodSignature
+      Identifier: '
+    applyCodeActionCommand'
+      Parameter
+        Identifier: 'action'
+        ArrayType
+          TypeReference
+            Identifier: ' CodeActionCommand'
+      Parameter
+        Identifier: ' formatSettings'
+        QuestionToken
+        TypeReference
+          Identifier: ' FormatCodeSettings'
+      TypeReference
+        Identifier: ' Promise'
+        ArrayType
+          TypeReference
+            Identifier: 'ApplyCodeActionCommandResult'
+    MethodSignature
+      Identifier: '
+    applyCodeActionCommand'
+      Parameter
+        Identifier: 'action'
+        UnionType
+          TypeReference
+            Identifier: ' CodeActionCommand'
+          ArrayType
+            TypeReference
+              Identifier: ' CodeActionCommand'
+      Parameter
+        Identifier: ' formatSettings'
+        QuestionToken
+        TypeReference
+          Identifier: ' FormatCodeSettings'
+      TypeReference
+        Identifier: ' Promise'
+        UnionType
+          TypeReference
+            Identifier: 'ApplyCodeActionCommandResult'
+          ArrayType
+            TypeReference
+              Identifier: ' ApplyCodeActionCommandResult'
+    MethodSignature
+      Identifier: '
+    /** @deprecated `fileName` will be ignored */
+    applyCodeActionCommand'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      Parameter
+        Identifier: ' action'
+        TypeReference
+          Identifier: ' CodeActionCommand'
+      TypeReference
+        Identifier: ' Promise'
+        TypeReference
+          Identifier: 'ApplyCodeActionCommandResult'
+    MethodSignature
+      Identifier: '
+    /** @deprecated `fileName` will be ignored */
+    applyCodeActionCommand'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      Parameter
+        Identifier: ' action'
+        ArrayType
+          TypeReference
+            Identifier: ' CodeActionCommand'
+      TypeReference
+        Identifier: ' Promise'
+        ArrayType
+          TypeReference
+            Identifier: 'ApplyCodeActionCommandResult'
+    MethodSignature
+      Identifier: '
+    /** @deprecated `fileName` will be ignored */
+    applyCodeActionCommand'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      Parameter
+        Identifier: ' action'
+        UnionType
+          TypeReference
+            Identifier: ' CodeActionCommand'
+          ArrayType
+            TypeReference
+              Identifier: ' CodeActionCommand'
+      TypeReference
+        Identifier: ' Promise'
+        UnionType
+          TypeReference
+            Identifier: 'ApplyCodeActionCommandResult'
+          ArrayType
+            TypeReference
+              Identifier: ' ApplyCodeActionCommandResult'
+    MethodSignature
+      Identifier: '
+    /**
+     * @param includeInteractiveActions Include refactor actions that require additional arguments to be
+     * passed when calling `getEditsForRefactor`. When true, clients should inspect the `isInteractive`
+     * property of each returned `RefactorActionInfo` and ensure they are able to collect the appropriate
+     * arguments for any interactive action before offering it.
+     */
+    getApplicableRefactors'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      Parameter
+        Identifier: ' positionOrRange'
+        UnionType
+          NumberKeyword
+          TypeReference
+            Identifier: ' TextRange'
+      Parameter
+        Identifier: ' preferences'
+        UnionType
+          TypeReference
+            Identifier: ' UserPreferences'
+          UndefinedKeyword
+      Parameter
+        Identifier: ' triggerReason'
+        QuestionToken
+        TypeReference
+          Identifier: ' RefactorTriggerReason'
+      Parameter
+        Identifier: ' kind'
+        QuestionToken
+        StringKeyword
+      Parameter
+        Identifier: ' includeInteractiveActions'
+        QuestionToken
+        BooleanKeyword
+      ArrayType
+        TypeReference
+          Identifier: ' ApplicableRefactorInfo'
+    MethodSignature
+      Identifier: '
+    getEditsForRefactor'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      Parameter
+        Identifier: ' formatOptions'
+        TypeReference
+          Identifier: ' FormatCodeSettings'
+      Parameter
+        Identifier: ' positionOrRange'
+        UnionType
+          NumberKeyword
+          TypeReference
+            Identifier: ' TextRange'
+      Parameter
+        Identifier: ' refactorName'
+        StringKeyword
+      Parameter
+        Identifier: ' actionName'
+        StringKeyword
+      Parameter
+        Identifier: ' preferences'
+        UnionType
+          TypeReference
+            Identifier: ' UserPreferences'
+          UndefinedKeyword
+      Parameter
+        Identifier: ' interactiveRefactorArguments'
+        QuestionToken
+        TypeReference
+          Identifier: ' InteractiveRefactorArguments'
+      UnionType
+        TypeReference
+          Identifier: ' RefactorEditInfo'
+        UndefinedKeyword
+    MethodSignature
+      Identifier: '
+    getMoveToRefactoringFileSuggestions'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      Parameter
+        Identifier: ' positionOrRange'
+        UnionType
+          NumberKeyword
+          TypeReference
+            Identifier: ' TextRange'
+      Parameter
+        Identifier: ' preferences'
+        UnionType
+          TypeReference
+            Identifier: ' UserPreferences'
+          UndefinedKeyword
+      Parameter
+        Identifier: ' triggerReason'
+        QuestionToken
+        TypeReference
+          Identifier: ' RefactorTriggerReason'
+      Parameter
+        Identifier: ' kind'
+        QuestionToken
+        StringKeyword
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+        newFileName'
+          StringKeyword
+        PropertySignature
+          Identifier: '
+        files'
+          ArrayType
+            StringKeyword
+    MethodSignature
+      Identifier: '
+    organizeImports'
+      Parameter
+        Identifier: 'args'
+        TypeReference
+          Identifier: ' OrganizeImportsArgs'
+      Parameter
+        Identifier: ' formatOptions'
+        TypeReference
+          Identifier: ' FormatCodeSettings'
+      Parameter
+        Identifier: ' preferences'
+        UnionType
+          TypeReference
+            Identifier: ' UserPreferences'
+          UndefinedKeyword
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' FileTextChanges'
+    MethodSignature
+      Identifier: '
+    getEditsForFileRename'
+      Parameter
+        Identifier: 'oldFilePath'
+        StringKeyword
+      Parameter
+        Identifier: ' newFilePath'
+        StringKeyword
+      Parameter
+        Identifier: ' formatOptions'
+        TypeReference
+          Identifier: ' FormatCodeSettings'
+      Parameter
+        Identifier: ' preferences'
+        UnionType
+          TypeReference
+            Identifier: ' UserPreferences'
+          UndefinedKeyword
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' FileTextChanges'
+    MethodSignature
+      Identifier: '
+    getEmitOutput'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      Parameter
+        Identifier: ' emitOnlyDtsFiles'
+        QuestionToken
+        BooleanKeyword
+      Parameter
+        Identifier: ' forceDtsEmit'
+        QuestionToken
+        BooleanKeyword
+      TypeReference
+        Identifier: ' EmitOutput'
+    MethodSignature
+      Identifier: '
+    getProgram'
+      UnionType
+        TypeReference
+          Identifier: ' Program'
+        UndefinedKeyword
+    MethodSignature
+      Identifier: '
+    /** @internal */ getCurrentProgram'
+      UnionType
+        TypeReference
+          Identifier: ' Program'
+        UndefinedKeyword
+    MethodSignature
+      Identifier: '
+    /** @internal */ getNonBoundSourceFile'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      TypeReference
+        Identifier: ' SourceFile'
+    MethodSignature
+      Identifier: '
+    /** @internal */ getAutoImportProvider'
+      UnionType
+        TypeReference
+          Identifier: ' Program'
+        UndefinedKeyword
+    MethodSignature
+      Identifier: '
+    /** @internal */ updateIsDefinitionOfReferencedSymbols'
+      Parameter
+        Identifier: 'referencedSymbols'
+        TypeOperator
+          ArrayType
+            TypeReference
+              Identifier: ' ReferencedSymbol'
+      Parameter
+        Identifier: ' knownSymbolSpans'
+        TypeReference
+          Identifier: ' Set'
+          TypeReference
+            Identifier: 'DocumentSpan'
+      BooleanKeyword
+    MethodSignature
+      Identifier: '
+    toggleLineComment'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      Parameter
+        Identifier: ' textRange'
+        TypeReference
+          Identifier: ' TextRange'
+      ArrayType
+        TypeReference
+          Identifier: ' TextChange'
+    MethodSignature
+      Identifier: '
+    toggleMultilineComment'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      Parameter
+        Identifier: ' textRange'
+        TypeReference
+          Identifier: ' TextRange'
+      ArrayType
+        TypeReference
+          Identifier: ' TextChange'
+    MethodSignature
+      Identifier: '
+    commentSelection'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      Parameter
+        Identifier: ' textRange'
+        TypeReference
+          Identifier: ' TextRange'
+      ArrayType
+        TypeReference
+          Identifier: ' TextChange'
+    MethodSignature
+      Identifier: '
+    uncommentSelection'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      Parameter
+        Identifier: ' textRange'
+        TypeReference
+          Identifier: ' TextRange'
+      ArrayType
+        TypeReference
+          Identifier: ' TextChange'
+    MethodSignature
+      Identifier: '
+    getSupportedCodeFixes'
+      Parameter
+        Identifier: 'fileName'
+        QuestionToken
+        StringKeyword
+      TypeOperator
+        ArrayType
+          StringKeyword
+    MethodSignature
+      Identifier: '
+    /** @internal */ mapCode'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      Parameter
+        Identifier: ' contents'
+        ArrayType
+          StringKeyword
+      Parameter
+        Identifier: ' focusLocations'
+        UnionType
+          ArrayType
+            ArrayType
+              TypeReference
+                Identifier: ' TextSpan'
+          UndefinedKeyword
+      Parameter
+        Identifier: ' formatOptions'
+        TypeReference
+          Identifier: ' FormatCodeSettings'
+      Parameter
+        Identifier: ' preferences'
+        TypeReference
+          Identifier: ' UserPreferences'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' FileTextChanges'
+    MethodSignature
+      Identifier: '
+    /** @internal */ getImports'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      TypeOperator
+        ArrayType
+          StringKeyword
+    MethodSignature
+      Identifier: '
+    dispose'
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    preparePasteEditsForFile'
+      Parameter
+        Identifier: 'fileName'
+        StringKeyword
+      Parameter
+        Identifier: ' copiedTextRanges'
+        ArrayType
+          TypeReference
+            Identifier: ' TextRange'
+      BooleanKeyword
+    MethodSignature
+      Identifier: '
+    getPasteEdits'
+      Parameter
+        Identifier: 'args'
+        TypeReference
+          Identifier: ' PasteEditsArgs'
+      Parameter
+        Identifier: ' formatOptions'
+        TypeReference
+          Identifier: ' FormatCodeSettings'
+      TypeReference
+        Identifier: ' PasteEdits'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' JsxClosingTagInfo'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' newText'
+      StringKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' LinkedEditingInfo'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' ranges'
+      ArrayType
+        TypeReference
+          Identifier: ' TextSpan'
+    PropertySignature
+      Identifier: '
+    wordPattern'
+      QuestionToken
+      StringKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' CombinedCodeFixScope'
+    PropertySignature
+      Identifier: '
+    type'
+      LiteralType
+        StringLiteral
+    PropertySignature
+      Identifier: '
+    fileName'
+      StringKeyword
+  EnumDeclaration
+    ExportKeyword
+    DeclareKeyword
+    ConstKeyword
+    Identifier: ' OrganizeImportsMode'
+    EnumMember
+      Identifier: '
+    All'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    SortAndCombine'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    RemoveUnused'
+      StringLiteral
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' PasteEdits'
+    PropertySignature
+      Identifier: '
+    edits'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' FileTextChanges'
+    PropertySignature
+      Identifier: '
+    fixId'
+      QuestionToken
+      TypeLiteral
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' PasteEditsArgs'
+    PropertySignature
+      Identifier: '
+    targetFile'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    pastedText'
+      ArrayType
+        StringKeyword
+    PropertySignature
+      Identifier: '
+    pasteLocations'
+      ArrayType
+        TypeReference
+          Identifier: ' TextRange'
+    PropertySignature
+      Identifier: '
+    copiedFrom'
+      UnionType
+        TypeLiteral
+          PropertySignature
+            Identifier: '
+        file'
+            StringKeyword
+          PropertySignature
+            Identifier: '
+        range'
+            ArrayType
+              TypeReference
+                Identifier: ' TextRange'
+        UndefinedKeyword
+    PropertySignature
+      Identifier: '
+    preferences'
+      TypeReference
+        Identifier: ' UserPreferences'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' OrganizeImportsArgs'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' CombinedCodeFixScope'
+    PropertySignature
+      Identifier: '
+    /** @deprecated Use `mode` instead */
+    skipDestructiveCodeActions'
+      QuestionToken
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    mode'
+      QuestionToken
+      TypeReference
+        Identifier: ' OrganizeImportsMode'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' CompletionsTriggerCharacter'
+    UnionType
+      LiteralType
+        StringLiteral
+      LiteralType
+        StringLiteral
+      LiteralType
+        StringLiteral
+      LiteralType
+        StringLiteral
+      LiteralType
+        StringLiteral
+      LiteralType
+        StringLiteral
+      LiteralType
+        StringLiteral
+      LiteralType
+        StringLiteral
+      LiteralType
+        StringLiteral
+  EnumDeclaration
+    ExportKeyword
+    DeclareKeyword
+    ConstKeyword
+    Identifier: ' CompletionTriggerKind'
+    EnumMember
+      Identifier: '
+    /** Completion was triggered by typing an identifier, manual invocation (e.g Ctrl+Space) or via API. */
+    Invoked'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    /** Completion was triggered by a trigger character. */
+    TriggerCharacter'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    /** Completion was re-triggered as the current completion list is incomplete. */
+    TriggerForIncompleteCompletions'
+      NumericLiteral
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' GetCompletionsAtPositionOptions'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' UserPreferences'
+    PropertySignature
+      Identifier: '
+    /**
+     * If the editor is asking for completions because a certain character was typed
+     * (as opposed to when the user explicitly requested them) this should be set.
+     */
+    triggerCharacter'
+      QuestionToken
+      TypeReference
+        Identifier: ' CompletionsTriggerCharacter'
+    PropertySignature
+      Identifier: '
+    triggerKind'
+      QuestionToken
+      TypeReference
+        Identifier: ' CompletionTriggerKind'
+    PropertySignature
+      Identifier: '
+    /**
+     * Include a `symbol` property on each completion entry object.
+     * Symbols reference cyclic data structures and sometimes an entire TypeChecker instance,
+     * so use caution when serializing or retaining completion entries retrieved with this option.
+     * @default false
+     */
+    includeSymbol'
+      QuestionToken
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    /** @deprecated Use includeCompletionsForModuleExports */
+    includeExternalModuleExports'
+      QuestionToken
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    /** @deprecated Use includeCompletionsWithInsertText */
+    includeInsertTextCompletions'
+      QuestionToken
+      BooleanKeyword
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' SignatureHelpTriggerCharacter'
+    UnionType
+      LiteralType
+        StringLiteral
+      LiteralType
+        StringLiteral
+      LiteralType
+        StringLiteral
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' SignatureHelpRetriggerCharacter'
+    UnionType
+      TypeReference
+        Identifier: ' SignatureHelpTriggerCharacter'
+      LiteralType
+        StringLiteral
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' SignatureHelpItemsOptions'
+    PropertySignature
+      Identifier: '
+    triggerReason'
+      QuestionToken
+      TypeReference
+        Identifier: ' SignatureHelpTriggerReason'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' SignatureHelpTriggerReason'
+    UnionType
+      TypeReference
+        Identifier: ' SignatureHelpInvokedReason'
+      TypeReference
+        Identifier: ' SignatureHelpCharacterTypedReason'
+      TypeReference
+        Identifier: ' SignatureHelpRetriggeredReason'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' SignatureHelpInvokedReason'
+    PropertySignature
+      Identifier: '
+    kind'
+      LiteralType
+        StringLiteral
+    PropertySignature
+      Identifier: '
+    triggerCharacter'
+      QuestionToken
+      UndefinedKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' SignatureHelpCharacterTypedReason'
+    PropertySignature
+      Identifier: '
+    kind'
+      LiteralType
+        StringLiteral
+    PropertySignature
+      Identifier: '
+    /**
+     * Character that was responsible for triggering signature help.
+     */
+    triggerCharacter'
+      TypeReference
+        Identifier: ' SignatureHelpTriggerCharacter'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' SignatureHelpRetriggeredReason'
+    PropertySignature
+      Identifier: '
+    kind'
+      LiteralType
+        StringLiteral
+    PropertySignature
+      Identifier: '
+    /**
+     * Character that was responsible for triggering signature help.
+     */
+    triggerCharacter'
+      QuestionToken
+      TypeReference
+        Identifier: ' SignatureHelpRetriggerCharacter'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' ApplyCodeActionCommandResult'
+    PropertySignature
+      Identifier: '
+    successMessage'
+      StringKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' Classifications'
+    PropertySignature
+      Identifier: '
+    spans'
+      ArrayType
+        NumberKeyword
+    PropertySignature
+      Identifier: '
+    endOfLineState'
+      TypeReference
+        Identifier: ' EndOfLineState'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' ClassifiedSpan'
+    PropertySignature
+      Identifier: '
+    textSpan'
+      TypeReference
+        Identifier: ' TextSpan'
+    PropertySignature
+      Identifier: '
+    classificationType'
+      TypeReference
+        Identifier: ' ClassificationTypeNames'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' ClassifiedSpan2020'
+    PropertySignature
+      Identifier: '
+    textSpan'
+      TypeReference
+        Identifier: ' TextSpan'
+    PropertySignature
+      Identifier: '
+    classificationType'
+      NumberKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' NavigationBarItem'
+    PropertySignature
+      Identifier: '
+    text'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    kind'
+      TypeReference
+        Identifier: ' ScriptElementKind'
+    PropertySignature
+      Identifier: '
+    kindModifiers'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    spans'
+      ArrayType
+        TypeReference
+          Identifier: ' TextSpan'
+    PropertySignature
+      Identifier: '
+    childItems'
+      ArrayType
+        TypeReference
+          Identifier: ' NavigationBarItem'
+    PropertySignature
+      Identifier: '
+    indent'
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+    bolded'
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    grayed'
+      BooleanKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' NavigationTree'
+    PropertySignature
+      Identifier: '
+    /** Name of the declaration, or a short description, e.g. "<class>". */
+    text'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    kind'
+      TypeReference
+        Identifier: ' ScriptElementKind'
+    PropertySignature
+      Identifier: '
+    /** ScriptElementKindModifier separated by commas, e.g. "public,abstract" */
+    kindModifiers'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    /**
+     * Spans of the nodes that generated this declaration.
+     * There will be more than one if this is the result of merging.
+     */
+    spans'
+      ArrayType
+        TypeReference
+          Identifier: ' TextSpan'
+    PropertySignature
+      Identifier: '
+    nameSpan'
+      UnionType
+        TypeReference
+          Identifier: ' TextSpan'
+        UndefinedKeyword
+    PropertySignature
+      Identifier: '
+    /** Present if non-empty */
+    childItems'
+      QuestionToken
+      ArrayType
+        TypeReference
+          Identifier: ' NavigationTree'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' CallHierarchyItem'
+    PropertySignature
+      Identifier: '
+    name'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    kind'
+      TypeReference
+        Identifier: ' ScriptElementKind'
+    PropertySignature
+      Identifier: '
+    kindModifiers'
+      QuestionToken
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    file'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    span'
+      TypeReference
+        Identifier: ' TextSpan'
+    PropertySignature
+      Identifier: '
+    selectionSpan'
+      TypeReference
+        Identifier: ' TextSpan'
+    PropertySignature
+      Identifier: '
+    containerName'
+      QuestionToken
+      StringKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' CallHierarchyIncomingCall'
+    PropertySignature
+      Identifier: '
+    from'
+      TypeReference
+        Identifier: ' CallHierarchyItem'
+    PropertySignature
+      Identifier: '
+    fromSpans'
+      ArrayType
+        TypeReference
+          Identifier: ' TextSpan'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' CallHierarchyOutgoingCall'
+    PropertySignature
+      Identifier: '
+    to'
+      TypeReference
+        Identifier: ' CallHierarchyItem'
+    PropertySignature
+      Identifier: '
+    fromSpans'
+      ArrayType
+        TypeReference
+          Identifier: ' TextSpan'
+  EnumDeclaration
+    ExportKeyword
+    DeclareKeyword
+    ConstKeyword
+    Identifier: ' InlayHintKind'
+    EnumMember
+      Identifier: '
+    Type'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    Parameter'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    Enum'
+      StringLiteral
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' InlayHint'
+    PropertySignature
+      Identifier: '
+    /** This property will be the empty string when displayParts is set. */
+    text'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    position'
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+    kind'
+      TypeReference
+        Identifier: ' InlayHintKind'
+    PropertySignature
+      Identifier: '
+    whitespaceBefore'
+      QuestionToken
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    whitespaceAfter'
+      QuestionToken
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    displayParts'
+      QuestionToken
+      ArrayType
+        TypeReference
+          Identifier: ' InlayHintDisplayPart'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' InlayHintDisplayPart'
+    PropertySignature
+      Identifier: '
+    text'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    span'
+      QuestionToken
+      TypeReference
+        Identifier: ' TextSpan'
+    PropertySignature
+      Identifier: '
+    file'
+      QuestionToken
+      StringKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' TodoCommentDescriptor'
+    PropertySignature
+      Identifier: '
+    text'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    priority'
+      NumberKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' TodoComment'
+    PropertySignature
+      Identifier: '
+    descriptor'
+      TypeReference
+        Identifier: ' TodoCommentDescriptor'
+    PropertySignature
+      Identifier: '
+    message'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    position'
+      NumberKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' TextChange'
+    PropertySignature
+      Identifier: '
+    span'
+      TypeReference
+        Identifier: ' TextSpan'
+    PropertySignature
+      Identifier: '
+    newText'
+      StringKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' FileTextChanges'
+    PropertySignature
+      Identifier: '
+    fileName'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    textChanges'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' TextChange'
+    PropertySignature
+      Identifier: '
+    isNewFile'
+      QuestionToken
+      BooleanKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' CodeAction'
+    PropertySignature
+      Identifier: '
+    /** Description of the code action to display in the UI of the editor */
+    description'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    /** Text changes to apply to each file as part of the code action */
+    changes'
+      ArrayType
+        TypeReference
+          Identifier: ' FileTextChanges'
+    PropertySignature
+      Identifier: '
+    /**
+     * If the user accepts the code fix, the editor should send the action back in a `applyAction` request.
+     * This allows the language service to have side effects (e.g. installing dependencies) upon a code fix.
+     */
+    commands'
+      QuestionToken
+      ArrayType
+        TypeReference
+          Identifier: ' CodeActionCommand'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' CodeFixAction'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' CodeAction'
+    PropertySignature
+      Identifier: '
+    /** Short name to identify the fix, for use by telemetry. */
+    fixName'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    /**
+     * If present, one may call 'getCombinedCodeFix' with this fixId.
+     * This may be omitted to indicate that the code fix can't be applied in a group.
+     */
+    fixId'
+      QuestionToken
+      TypeLiteral
+    PropertySignature
+      Identifier: '
+    fixAllDescription'
+      QuestionToken
+      StringKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' CombinedCodeActions'
+    PropertySignature
+      Identifier: '
+    changes'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' FileTextChanges'
+    PropertySignature
+      Identifier: '
+    commands'
+      QuestionToken
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' CodeActionCommand'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' CodeActionCommand'
+    TypeReference
+      Identifier: ' InstallPackageAction'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' InstallPackageAction'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' type'
+      LiteralType
+        StringLiteral
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' file'
+      StringKeyword
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' packageName'
+      StringKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' ApplicableRefactorInfo'
+    PropertySignature
+      Identifier: '
+    /**
+     * The programmatic name of the refactoring
+     */
+    name'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    /**
+     * A description of this refactoring category to show to the user.
+     * If the refactoring gets inlined (see below), this text will not be visible.
+     */
+    description'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    /**
+     * Inlineable refactorings can have their actions hoisted out to the top level
+     * of a context menu. Non-inlineanable refactorings should always be shown inside
+     * their parent grouping.
+     *
+     * If not specified, this value is assumed to be 'true'
+     */
+    inlineable'
+      QuestionToken
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    actions'
+      ArrayType
+        TypeReference
+          Identifier: ' RefactorActionInfo'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' RefactorActionInfo'
+    PropertySignature
+      Identifier: '
+    /**
+     * The programmatic name of the refactoring action
+     */
+    name'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    /**
+     * A description of this refactoring action to show to the user.
+     * If the parent refactoring is inlined away, this will be the only text shown,
+     * so this description should make sense by itself if the parent is inlineable=true
+     */
+    description'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    /**
+     * A message to show to the user if the refactoring cannot be applied in
+     * the current context.
+     */
+    notApplicableReason'
+      QuestionToken
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    /**
+     * The hierarchical dotted name of the refactor action.
+     */
+    kind'
+      QuestionToken
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    /**
+     * Indicates that the action requires additional arguments to be passed
+     * when calling `getEditsForRefactor`.
+     */
+    isInteractive'
+      QuestionToken
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    /**
+     * Range of code the refactoring will be applied to.
+     */
+    range'
+      QuestionToken
+      TypeLiteral
+        PropertySignature
+          Identifier: '
+        start'
+          TypeLiteral
+            PropertySignature
+              Identifier: '
+            line'
+              NumberKeyword
+            PropertySignature
+              Identifier: '
+            offset'
+              NumberKeyword
+        PropertySignature
+          Identifier: '
+        end'
+          TypeLiteral
+            PropertySignature
+              Identifier: '
+            line'
+              NumberKeyword
+            PropertySignature
+              Identifier: '
+            offset'
+              NumberKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' RefactorEditInfo'
+    PropertySignature
+      Identifier: '
+    edits'
+      ArrayType
+        TypeReference
+          Identifier: ' FileTextChanges'
+    PropertySignature
+      Identifier: '
+    renameFilename'
+      QuestionToken
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    renameLocation'
+      QuestionToken
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+    commands'
+      QuestionToken
+      ArrayType
+        TypeReference
+          Identifier: ' CodeActionCommand'
+    PropertySignature
+      Identifier: '
+    notApplicableReason'
+      QuestionToken
+      StringKeyword
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' RefactorTriggerReason'
+    UnionType
+      LiteralType
+        StringLiteral
+      LiteralType
+        StringLiteral
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' TextInsertion'
+    PropertySignature
+      Identifier: '
+    newText'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    /** The position in newText the caret should point to after the insertion. */
+    caretOffset'
+      NumberKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' DocumentSpan'
+    PropertySignature
+      Identifier: '
+    textSpan'
+      TypeReference
+        Identifier: ' TextSpan'
+    PropertySignature
+      Identifier: '
+    fileName'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    /**
+     * If the span represents a location that was remapped (e.g. via a .d.ts.map file),
+     * then the original filename and span will be specified here
+     */
+    originalTextSpan'
+      QuestionToken
+      TypeReference
+        Identifier: ' TextSpan'
+    PropertySignature
+      Identifier: '
+    originalFileName'
+      QuestionToken
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    /**
+     * If DocumentSpan.textSpan is the span for name of the declaration,
+     * then this is the span for relevant declaration
+     */
+    contextSpan'
+      QuestionToken
+      TypeReference
+        Identifier: ' TextSpan'
+    PropertySignature
+      Identifier: '
+    originalContextSpan'
+      QuestionToken
+      TypeReference
+        Identifier: ' TextSpan'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' RenameLocation'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' DocumentSpan'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' prefixText'
+      QuestionToken
+      StringKeyword
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' suffixText'
+      QuestionToken
+      StringKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' ReferenceEntry'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' DocumentSpan'
+    PropertySignature
+      Identifier: '
+    isWriteAccess'
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    isInString'
+      QuestionToken
+      LiteralType
+        TrueKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' ImplementationLocation'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' DocumentSpan'
+    PropertySignature
+      Identifier: '
+    kind'
+      TypeReference
+        Identifier: ' ScriptElementKind'
+    PropertySignature
+      Identifier: '
+    displayParts'
+      ArrayType
+        TypeReference
+          Identifier: ' SymbolDisplayPart'
+  EnumDeclaration
+    ExportKeyword
+    DeclareKeyword
+    ConstKeyword
+    Identifier: ' HighlightSpanKind'
+    EnumMember
+      Identifier: '
+    none'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    definition'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    reference'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    writtenReference'
+      StringLiteral
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' HighlightSpan'
+    PropertySignature
+      Identifier: '
+    fileName'
+      QuestionToken
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    isInString'
+      QuestionToken
+      LiteralType
+        TrueKeyword
+    PropertySignature
+      Identifier: '
+    textSpan'
+      TypeReference
+        Identifier: ' TextSpan'
+    PropertySignature
+      Identifier: '
+    contextSpan'
+      QuestionToken
+      TypeReference
+        Identifier: ' TextSpan'
+    PropertySignature
+      Identifier: '
+    kind'
+      TypeReference
+        Identifier: ' HighlightSpanKind'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' NavigateToItem'
+    PropertySignature
+      Identifier: '
+    name'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    kind'
+      TypeReference
+        Identifier: ' ScriptElementKind'
+    PropertySignature
+      Identifier: '
+    kindModifiers'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    matchKind'
+      UnionType
+        LiteralType
+          StringLiteral
+        LiteralType
+          StringLiteral
+        LiteralType
+          StringLiteral
+        LiteralType
+          StringLiteral
+    PropertySignature
+      Identifier: '
+    isCaseSensitive'
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    fileName'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    textSpan'
+      TypeReference
+        Identifier: ' TextSpan'
+    PropertySignature
+      Identifier: '
+    containerName'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    containerKind'
+      TypeReference
+        Identifier: ' ScriptElementKind'
+  EnumDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' IndentStyle'
+    EnumMember
+      Identifier: '
+    None'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    Block'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    Smart'
+      NumericLiteral
+  EnumDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' SemicolonPreference'
+    EnumMember
+      Identifier: '
+    Ignore'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    Insert'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    Remove'
+      StringLiteral
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' EditorOptions'
+    PropertySignature
+      Identifier: '
+    BaseIndentSize'
+      QuestionToken
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+    IndentSize'
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+    TabSize'
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+    NewLineCharacter'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    ConvertTabsToSpaces'
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    IndentStyle'
+      TypeReference
+        Identifier: ' IndentStyle'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' EditorSettings'
+    PropertySignature
+      Identifier: '
+    baseIndentSize'
+      QuestionToken
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+    indentSize'
+      QuestionToken
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+    tabSize'
+      QuestionToken
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+    newLineCharacter'
+      QuestionToken
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    convertTabsToSpaces'
+      QuestionToken
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    indentStyle'
+      QuestionToken
+      TypeReference
+        Identifier: ' IndentStyle'
+    PropertySignature
+      Identifier: '
+    trimTrailingWhitespace'
+      QuestionToken
+      BooleanKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' FormatCodeOptions'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' EditorOptions'
+    PropertySignature
+      Identifier: '
+    InsertSpaceAfterCommaDelimiter'
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    InsertSpaceAfterSemicolonInForStatements'
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    InsertSpaceBeforeAndAfterBinaryOperators'
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    InsertSpaceAfterConstructor'
+      QuestionToken
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    InsertSpaceAfterKeywordsInControlFlowStatements'
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    InsertSpaceAfterFunctionKeywordForAnonymousFunctions'
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    InsertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis'
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    InsertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets'
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    InsertSpaceAfterOpeningAndBeforeClosingNonemptyBraces'
+      QuestionToken
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    InsertSpaceAfterOpeningAndBeforeClosingTemplateStringBraces'
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    InsertSpaceAfterOpeningAndBeforeClosingJsxExpressionBraces'
+      QuestionToken
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    InsertSpaceAfterTypeAssertion'
+      QuestionToken
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    InsertSpaceBeforeFunctionParenthesis'
+      QuestionToken
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    PlaceOpenBraceOnNewLineForFunctions'
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    PlaceOpenBraceOnNewLineForControlBlocks'
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    insertSpaceBeforeTypeAnnotation'
+      QuestionToken
+      BooleanKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' FormatCodeSettings'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' EditorSettings'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' insertSpaceAfterCommaDelimiter'
+      QuestionToken
+      BooleanKeyword
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' insertSpaceAfterSemicolonInForStatements'
+      QuestionToken
+      BooleanKeyword
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' insertSpaceBeforeAndAfterBinaryOperators'
+      QuestionToken
+      BooleanKeyword
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' insertSpaceAfterConstructor'
+      QuestionToken
+      BooleanKeyword
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' insertSpaceAfterKeywordsInControlFlowStatements'
+      QuestionToken
+      BooleanKeyword
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' insertSpaceAfterFunctionKeywordForAnonymousFunctions'
+      QuestionToken
+      BooleanKeyword
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' insertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis'
+      QuestionToken
+      BooleanKeyword
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' insertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets'
+      QuestionToken
+      BooleanKeyword
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces'
+      QuestionToken
+      BooleanKeyword
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' insertSpaceAfterOpeningAndBeforeClosingEmptyBraces'
+      QuestionToken
+      BooleanKeyword
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' insertSpaceAfterOpeningAndBeforeClosingTemplateStringBraces'
+      QuestionToken
+      BooleanKeyword
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' insertSpaceAfterOpeningAndBeforeClosingJsxExpressionBraces'
+      QuestionToken
+      BooleanKeyword
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' insertSpaceAfterTypeAssertion'
+      QuestionToken
+      BooleanKeyword
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' insertSpaceBeforeFunctionParenthesis'
+      QuestionToken
+      BooleanKeyword
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' placeOpenBraceOnNewLineForFunctions'
+      QuestionToken
+      BooleanKeyword
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' placeOpenBraceOnNewLineForControlBlocks'
+      QuestionToken
+      BooleanKeyword
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' insertSpaceBeforeTypeAnnotation'
+      QuestionToken
+      BooleanKeyword
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' indentMultiLineObjectLiteralBeginningOnBlankLine'
+      QuestionToken
+      BooleanKeyword
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' semicolons'
+      QuestionToken
+      TypeReference
+        Identifier: ' SemicolonPreference'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' indentSwitchCase'
+      QuestionToken
+      BooleanKeyword
+  FunctionDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' getDefaultFormatCodeSettings'
+    Parameter
+      Identifier: 'newLineCharacter'
+      QuestionToken
+      StringKeyword
+    TypeReference
+      Identifier: ' FormatCodeSettings'
+  VariableStatement
+    ExportKeyword
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' testFormatSettings'
+        TypeReference
+          Identifier: ' FormatCodeSettings'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' DefinitionInfo'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' DocumentSpan'
+    PropertySignature
+      Identifier: '
+    kind'
+      TypeReference
+        Identifier: ' ScriptElementKind'
+    PropertySignature
+      Identifier: '
+    name'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    containerKind'
+      TypeReference
+        Identifier: ' ScriptElementKind'
+    PropertySignature
+      Identifier: '
+    containerName'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    unverified'
+      QuestionToken
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    /** @internal
+     * Initially, this value is determined syntactically, but it is updated by the checker to cover
+     * cases like declarations that are exported in subsequent statements.  As a result, the value
+     * may be "incomplete" if this span has yet to be checked.
+     */
+    isLocal'
+      QuestionToken
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    /** @internal */ isAmbient'
+      QuestionToken
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    /** @internal */ failedAliasResolution'
+      QuestionToken
+      BooleanKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' DefinitionInfoAndBoundSpan'
+    PropertySignature
+      Identifier: '
+    definitions'
+      QuestionToken
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' DefinitionInfo'
+    PropertySignature
+      Identifier: '
+    textSpan'
+      TypeReference
+        Identifier: ' TextSpan'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' ReferencedSymbolDefinitionInfo'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' DefinitionInfo'
+    PropertySignature
+      Identifier: '
+    displayParts'
+      ArrayType
+        TypeReference
+          Identifier: ' SymbolDisplayPart'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' ReferencedSymbol'
+    PropertySignature
+      Identifier: '
+    definition'
+      TypeReference
+        Identifier: ' ReferencedSymbolDefinitionInfo'
+    PropertySignature
+      Identifier: '
+    references'
+      ArrayType
+        TypeReference
+          Identifier: ' ReferencedSymbolEntry'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' ReferencedSymbolEntry'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' ReferenceEntry'
+    PropertySignature
+      Identifier: '
+    isDefinition'
+      QuestionToken
+      BooleanKeyword
+  EnumDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' SymbolDisplayPartKind'
+    EnumMember
+      Identifier: '
+    aliasName'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    className'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    enumName'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    fieldName'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    interfaceName'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    keyword'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    lineBreak'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    numericLiteral'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    stringLiteral'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    localName'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    methodName'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    moduleName'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    operator'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    parameterName'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    propertyName'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    punctuation'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    space'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    text'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    typeParameterName'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    enumMemberName'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    functionName'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    regularExpressionLiteral'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    link'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    linkName'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    linkText'
+      NumericLiteral
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' SymbolDisplayPart'
+    PropertySignature
+      Identifier: '
+    /**
+     * Text of an item describing the symbol.
+     */
+    text'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    /**
+     * The symbol's kind (such as 'className' or 'parameterName' or plain 'text').
+     */
+    kind'
+      StringKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' JSDocLinkDisplayPart'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' SymbolDisplayPart'
+    PropertySignature
+      Identifier: '
+    target'
+      TypeReference
+        Identifier: ' DocumentSpan'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' JSDocTagInfo'
+    PropertySignature
+      Identifier: '
+    name'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    text'
+      QuestionToken
+      ArrayType
+        TypeReference
+          Identifier: ' SymbolDisplayPart'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' QuickInfo'
+    PropertySignature
+      Identifier: '
+    kind'
+      TypeReference
+        Identifier: ' ScriptElementKind'
+    PropertySignature
+      Identifier: '
+    kindModifiers'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    textSpan'
+      TypeReference
+        Identifier: ' TextSpan'
+    PropertySignature
+      Identifier: '
+    displayParts'
+      QuestionToken
+      ArrayType
+        TypeReference
+          Identifier: ' SymbolDisplayPart'
+    PropertySignature
+      Identifier: '
+    documentation'
+      QuestionToken
+      ArrayType
+        TypeReference
+          Identifier: ' SymbolDisplayPart'
+    PropertySignature
+      Identifier: '
+    tags'
+      QuestionToken
+      ArrayType
+        TypeReference
+          Identifier: ' JSDocTagInfo'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' RenameInfo'
+    UnionType
+      TypeReference
+        Identifier: ' RenameInfoSuccess'
+      TypeReference
+        Identifier: ' RenameInfoFailure'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' RenameInfoSuccess'
+    PropertySignature
+      Identifier: '
+    canRename'
+      LiteralType
+        TrueKeyword
+    PropertySignature
+      Identifier: '
+    /**
+     * File or directory to rename.
+     * If set, `getEditsForFileRename` should be called instead of `findRenameLocations`.
+     */
+    fileToRename'
+      QuestionToken
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    displayName'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    /**
+     * Full display name of item to be renamed.
+     * If item to be renamed is a file, then this is the original text of the module specifer
+     */
+    fullDisplayName'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    kind'
+      TypeReference
+        Identifier: ' ScriptElementKind'
+    PropertySignature
+      Identifier: '
+    kindModifiers'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    triggerSpan'
+      TypeReference
+        Identifier: ' TextSpan'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' RenameInfoFailure'
+    PropertySignature
+      Identifier: '
+    canRename'
+      LiteralType
+        FalseKeyword
+    PropertySignature
+      Identifier: '
+    localizedErrorMessage'
+      StringKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' RenameInfoOptions'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' allowRenameOfImportPath'
+      QuestionToken
+      BooleanKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' DocCommentTemplateOptions'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' generateReturnInDocTemplate'
+      QuestionToken
+      BooleanKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' InteractiveRefactorArguments'
+    PropertySignature
+      Identifier: '
+    targetFile'
+      StringKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' SignatureHelpParameter'
+    PropertySignature
+      Identifier: '
+    name'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    documentation'
+      ArrayType
+        TypeReference
+          Identifier: ' SymbolDisplayPart'
+    PropertySignature
+      Identifier: '
+    displayParts'
+      ArrayType
+        TypeReference
+          Identifier: ' SymbolDisplayPart'
+    PropertySignature
+      Identifier: '
+    isOptional'
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    isRest'
+      QuestionToken
+      BooleanKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' SelectionRange'
+    PropertySignature
+      Identifier: '
+    textSpan'
+      TypeReference
+        Identifier: ' TextSpan'
+    PropertySignature
+      Identifier: '
+    parent'
+      QuestionToken
+      TypeReference
+        Identifier: ' SelectionRange'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' SignatureHelpItem'
+    PropertySignature
+      Identifier: '
+    isVariadic'
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    prefixDisplayParts'
+      ArrayType
+        TypeReference
+          Identifier: ' SymbolDisplayPart'
+    PropertySignature
+      Identifier: '
+    suffixDisplayParts'
+      ArrayType
+        TypeReference
+          Identifier: ' SymbolDisplayPart'
+    PropertySignature
+      Identifier: '
+    separatorDisplayParts'
+      ArrayType
+        TypeReference
+          Identifier: ' SymbolDisplayPart'
+    PropertySignature
+      Identifier: '
+    parameters'
+      ArrayType
+        TypeReference
+          Identifier: ' SignatureHelpParameter'
+    PropertySignature
+      Identifier: '
+    documentation'
+      ArrayType
+        TypeReference
+          Identifier: ' SymbolDisplayPart'
+    PropertySignature
+      Identifier: '
+    tags'
+      ArrayType
+        TypeReference
+          Identifier: ' JSDocTagInfo'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' SignatureHelpItems'
+    PropertySignature
+      Identifier: '
+    items'
+      ArrayType
+        TypeReference
+          Identifier: ' SignatureHelpItem'
+    PropertySignature
+      Identifier: '
+    applicableSpan'
+      TypeReference
+        Identifier: ' TextSpan'
+    PropertySignature
+      Identifier: '
+    selectedItemIndex'
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+    argumentIndex'
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+    argumentCount'
+      NumberKeyword
+  EnumDeclaration
+    ExportKeyword
+    DeclareKeyword
+    ConstKeyword
+    Identifier: ' CompletionInfoFlags'
+    EnumMember
+      Identifier: '
+    None'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    MayIncludeAutoImports'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    IsImportStatementCompletion'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    IsContinuation'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    ResolvedModuleSpecifiers'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    ResolvedModuleSpecifiersBeyondLimit'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    MayIncludeMethodSnippets'
+      NumericLiteral
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' CompletionInfo'
+    PropertySignature
+      Identifier: '
+    /** For performance telemetry. */
+    flags'
+      QuestionToken
+      TypeReference
+        Identifier: ' CompletionInfoFlags'
+    PropertySignature
+      Identifier: '
+    /** Not true for all global completions. This will be true if the enclosing scope matches a few syntax kinds. See `isSnippetScope`. */
+    isGlobalCompletion'
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    isMemberCompletion'
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    /**
+     * In the absence of `CompletionEntry["replacementSpan"]`, the editor may choose whether to use
+     * this span or its default one. If `CompletionEntry["replacementSpan"]` is defined, that span
+     * must be used to commit that completion entry.
+     */
+    optionalReplacementSpan'
+      QuestionToken
+      TypeReference
+        Identifier: ' TextSpan'
+    PropertySignature
+      Identifier: '
+    /**
+     * true when the current location also allows for a new identifier
+     */
+    isNewIdentifierLocation'
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    /**
+     * Indicates to client to continue requesting completions on subsequent keystrokes.
+     */
+    isIncomplete'
+      QuestionToken
+      LiteralType
+        TrueKeyword
+    PropertySignature
+      Identifier: '
+    entries'
+      ArrayType
+        TypeReference
+          Identifier: ' CompletionEntry'
+    PropertySignature
+      Identifier: '
+    /**
+     * Default commit characters for the completion entries.
+     */
+    defaultCommitCharacters'
+      QuestionToken
+      ArrayType
+        StringKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' CompletionEntryDataAutoImport'
+    PropertySignature
+      Identifier: '
+    /**
+     * The name of the property or export in the module's symbol table. Differs from the completion name
+     * in the case of InternalSymbolName.ExportEquals and InternalSymbolName.Default.
+     */
+    exportName'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    exportMapKey'
+      QuestionToken
+      TypeReference
+        Identifier: ' ExportMapInfoKey'
+    PropertySignature
+      Identifier: '
+    moduleSpecifier'
+      QuestionToken
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    /** The file name declaring the export's module symbol, if it was an external module */
+    fileName'
+      QuestionToken
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    /** The module name (with quotes stripped) of the export's module symbol, if it was an ambient module */
+    ambientModuleName'
+      QuestionToken
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    /** True if the export was found in the package.json AutoImportProvider */
+    isPackageJsonImport'
+      QuestionToken
+      LiteralType
+        TrueKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' CompletionEntryDataUnresolved'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' CompletionEntryDataAutoImport'
+    PropertySignature
+      Identifier: '
+    exportMapKey'
+      TypeReference
+        Identifier: ' ExportMapInfoKey'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' CompletionEntryDataResolved'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' CompletionEntryDataAutoImport'
+    PropertySignature
+      Identifier: '
+    moduleSpecifier'
+      StringKeyword
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' CompletionEntryData'
+    UnionType
+      TypeReference
+        Identifier: ' CompletionEntryDataUnresolved'
+      TypeReference
+        Identifier: ' CompletionEntryDataResolved'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' CompletionEntry'
+    PropertySignature
+      Identifier: '
+    name'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    kind'
+      TypeReference
+        Identifier: ' ScriptElementKind'
+    PropertySignature
+      Identifier: '
+    kindModifiers'
+      QuestionToken
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    /**
+     * A string that is used for comparing completion items so that they can be ordered. This
+     * is often the same as the name but may be different in certain circumstances.
+     */
+    sortText'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    /**
+     * Text to insert instead of `name`.
+     * This is used to support bracketed completions; If `name` might be "a-b" but `insertText` would be `["a-b"]`,
+     * coupled with `replacementSpan` to replace a dotted access with a bracket access.
+     */
+    insertText'
+      QuestionToken
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    /**
+     * A string that should be used when filtering a set of
+     * completion items.
+     */
+    filterText'
+      QuestionToken
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    /**
+     * `insertText` should be interpreted as a snippet if true.
+     */
+    isSnippet'
+      QuestionToken
+      LiteralType
+        TrueKeyword
+    PropertySignature
+      Identifier: '
+    /**
+     * An optional span that indicates the text to be replaced by this completion item.
+     * If present, this span should be used instead of the default one.
+     * It will be set if the required span differs from the one generated by the default replacement behavior.
+     */
+    replacementSpan'
+      QuestionToken
+      TypeReference
+        Identifier: ' TextSpan'
+    PropertySignature
+      Identifier: '
+    /**
+     * Indicates whether commiting this completion entry will require additional code actions to be
+     * made to avoid errors. The CompletionEntryDetails will have these actions.
+     */
+    hasAction'
+      QuestionToken
+      LiteralType
+        TrueKeyword
+    PropertySignature
+      Identifier: '
+    /**
+     * Identifier (not necessarily human-readable) identifying where this completion came from.
+     */
+    source'
+      QuestionToken
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    /**
+     * Human-readable description of the `source`.
+     */
+    sourceDisplay'
+      QuestionToken
+      ArrayType
+        TypeReference
+          Identifier: ' SymbolDisplayPart'
+    PropertySignature
+      Identifier: '
+    /**
+     * Additional details for the label.
+     */
+    labelDetails'
+      QuestionToken
+      TypeReference
+        Identifier: ' CompletionEntryLabelDetails'
+    PropertySignature
+      Identifier: '
+    /**
+     * If true, this completion should be highlighted as recommended. There will only be one of these.
+     * This will be set when we know the user should write an expression with a certain type and that type is an enum or constructable class.
+     * Then either that enum/class or a namespace containing it will be the recommended symbol.
+     */
+    isRecommended'
+      QuestionToken
+      LiteralType
+        TrueKeyword
+    PropertySignature
+      Identifier: '
+    /**
+     * If true, this completion was generated from traversing the name table of an unchecked JS file,
+     * and therefore may not be accurate.
+     */
+    isFromUncheckedFile'
+      QuestionToken
+      LiteralType
+        TrueKeyword
+    PropertySignature
+      Identifier: '
+    /**
+     * If true, this completion was for an auto-import of a module not yet in the program, but listed
+     * in the project package.json. Used for telemetry reporting.
+     */
+    isPackageJsonImport'
+      QuestionToken
+      LiteralType
+        TrueKeyword
+    PropertySignature
+      Identifier: '
+    /**
+     * If true, this completion was an auto-import-style completion of an import statement (i.e., the
+     * module specifier was inserted along with the imported identifier). Used for telemetry reporting.
+     */
+    isImportStatementCompletion'
+      QuestionToken
+      LiteralType
+        TrueKeyword
+    PropertySignature
+      Identifier: '
+    /**
+     * For API purposes.
+     * Included for non-string completions only when `includeSymbol: true` option is passed to `getCompletionsAtPosition`.
+     * @example Get declaration of completion: `symbol.valueDeclaration`
+     */
+    symbol'
+      QuestionToken
+      TypeReference
+        Identifier: ' Symbol'
+    PropertySignature
+      Identifier: '
+    /**
+     * A property to be sent back to TS Server in the CompletionDetailsRequest, along with `name`,
+     * that allows TS Server to look up the symbol represented by the completion item, disambiguating
+     * items with the same name. Currently only defined for auto-import completions, but the type is
+     * `unknown` in the protocol, so it can be changed as needed to support other kinds of completions.
+     * The presence of this property should generally not be used to assume that this completion entry
+     * is an auto-import.
+     */
+    data'
+      QuestionToken
+      TypeReference
+        Identifier: ' CompletionEntryData'
+    PropertySignature
+      Identifier: '
+    /**
+     * If this completion entry is selected, typing a commit character will cause the entry to be accepted.
+     */
+    commitCharacters'
+      QuestionToken
+      ArrayType
+        StringKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' CompletionEntryLabelDetails'
+    PropertySignature
+      Identifier: '
+    /**
+     * An optional string which is rendered less prominently directly after
+     * {@link CompletionEntry.name name}, without any spacing. Should be
+     * used for function signatures or type annotations.
+     */
+    detail'
+      QuestionToken
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    /**
+     * An optional string which is rendered less prominently after
+     * {@link CompletionEntryLabelDetails.detail}. Should be used for fully qualified
+     * names or file path.
+     */
+    description'
+      QuestionToken
+      StringKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' CompletionEntryDetails'
+    PropertySignature
+      Identifier: '
+    name'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    kind'
+      TypeReference
+        Identifier: ' ScriptElementKind'
+    PropertySignature
+      Identifier: '
+    kindModifiers'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    displayParts'
+      ArrayType
+        TypeReference
+          Identifier: ' SymbolDisplayPart'
+    PropertySignature
+      Identifier: '
+    documentation'
+      QuestionToken
+      ArrayType
+        TypeReference
+          Identifier: ' SymbolDisplayPart'
+    PropertySignature
+      Identifier: '
+    tags'
+      QuestionToken
+      ArrayType
+        TypeReference
+          Identifier: ' JSDocTagInfo'
+    PropertySignature
+      Identifier: '
+    codeActions'
+      QuestionToken
+      ArrayType
+        TypeReference
+          Identifier: ' CodeAction'
+    PropertySignature
+      Identifier: '
+    /** @deprecated Use `sourceDisplay` instead. */
+    source'
+      QuestionToken
+      ArrayType
+        TypeReference
+          Identifier: ' SymbolDisplayPart'
+    PropertySignature
+      Identifier: '
+    sourceDisplay'
+      QuestionToken
+      ArrayType
+        TypeReference
+          Identifier: ' SymbolDisplayPart'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' OutliningSpan'
+    PropertySignature
+      Identifier: '
+    /** The span of the document to actually collapse. */
+    textSpan'
+      TypeReference
+        Identifier: ' TextSpan'
+    PropertySignature
+      Identifier: '
+    /** The span of the document to display when the user hovers over the collapsed span. */
+    hintSpan'
+      TypeReference
+        Identifier: ' TextSpan'
+    PropertySignature
+      Identifier: '
+    /** The text to display in the editor for the collapsed region. */
+    bannerText'
+      StringKeyword
+    PropertySignature
+      Identifier: '
+    /**
+     * Whether or not this region should be automatically collapsed when
+     * the 'Collapse to Definitions' command is invoked.
+     */
+    autoCollapse'
+      BooleanKeyword
+    PropertySignature
+      Identifier: '
+    /**
+     * Classification of the contents of the span
+     */
+    kind'
+      TypeReference
+        Identifier: ' OutliningSpanKind'
+  EnumDeclaration
+    ExportKeyword
+    DeclareKeyword
+    ConstKeyword
+    Identifier: ' OutliningSpanKind'
+    EnumMember
+      Identifier: '
+    /** Single or multi-line comments */
+    Comment'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    /** Sections marked by '// #region' and '// #endregion' comments */
+    Region'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    /** Declarations and expressions */
+    Code'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    /** Contiguous blocks of import declarations */
+    Imports'
+      StringLiteral
+  EnumDeclaration
+    ExportKeyword
+    DeclareKeyword
+    ConstKeyword
+    Identifier: ' OutputFileType'
+    EnumMember
+      Identifier: '
+    JavaScript'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    SourceMap'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    Declaration'
+      NumericLiteral
+  EnumDeclaration
+    ExportKeyword
+    DeclareKeyword
+    ConstKeyword
+    Identifier: ' EndOfLineState'
+    EnumMember
+      Identifier: '
+    None'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    InMultiLineCommentTrivia'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    InSingleQuoteStringLiteral'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    InDoubleQuoteStringLiteral'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    InTemplateHeadOrNoSubstitutionTemplate'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    InTemplateMiddleOrTail'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    InTemplateSubstitutionPosition'
+      NumericLiteral
+  EnumDeclaration
+    ExportKeyword
+    DeclareKeyword
+    Identifier: ' TokenClass'
+    EnumMember
+      Identifier: '
+    Punctuation'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    Keyword'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    Operator'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    Comment'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    Whitespace'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    Identifier'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    NumberLiteral'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    BigIntLiteral'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    StringLiteral'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    RegExpLiteral'
+      NumericLiteral
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' ClassificationResult'
+    PropertySignature
+      Identifier: '
+    finalLexState'
+      TypeReference
+        Identifier: ' EndOfLineState'
+    PropertySignature
+      Identifier: '
+    entries'
+      ArrayType
+        TypeReference
+          Identifier: ' ClassificationInfo'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' ClassificationInfo'
+    PropertySignature
+      Identifier: '
+    length'
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+    classification'
+      TypeReference
+        Identifier: ' TokenClass'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' Classifier'
+    MethodSignature
+      Identifier: '
+    /**
+     * Gives lexical classifications of tokens on a line without any syntactic context.
+     * For instance, a token consisting of the text 'string' can be either an identifier
+     * named 'string' or the keyword 'string', however, because this classifier is not aware,
+     * it relies on certain heuristics to give acceptable results. For classifications where
+     * speed trumps accuracy, this function is preferable; however, for true accuracy, the
+     * syntactic classifier is ideal. In fact, in certain editing scenarios, combining the
+     * lexical, syntactic, and semantic classifiers may issue the best user experience.
+     *
+     * @param text                      The text of a line to classify.
+     * @param lexState                  The state of the lexical classifier at the end of the previous line.
+     * @param syntacticClassifierAbsent Whether the client is *not* using a syntactic classifier.
+     *                                  If there is no syntactic classifier (syntacticClassifierAbsent=true),
+     *                                  certain heuristics may be used in its place; however, if there is a
+     *                                  syntactic classifier (syntacticClassifierAbsent=false), certain
+     *                                  classifications which may be incorrectly categorized will be given
+     *                                  back as Identifiers in order to allow the syntactic classifier to
+     *                                  subsume the classification.
+     * @deprecated Use getLexicalClassifications instead.
+     */
+    getClassificationsForLine'
+      Parameter
+        Identifier: 'text'
+        StringKeyword
+      Parameter
+        Identifier: ' lexState'
+        TypeReference
+          Identifier: ' EndOfLineState'
+      Parameter
+        Identifier: ' syntacticClassifierAbsent'
+        BooleanKeyword
+      TypeReference
+        Identifier: ' ClassificationResult'
+    MethodSignature
+      Identifier: '
+    getEncodedLexicalClassifications'
+      Parameter
+        Identifier: 'text'
+        StringKeyword
+      Parameter
+        Identifier: ' endOfLineState'
+        TypeReference
+          Identifier: ' EndOfLineState'
+      Parameter
+        Identifier: ' syntacticClassifierAbsent'
+        BooleanKeyword
+      TypeReference
+        Identifier: ' Classifications'
+  EnumDeclaration
+    ExportKeyword
+    DeclareKeyword
+    ConstKeyword
+    Identifier: ' ScriptElementKind'
+    EnumMember
+      Identifier: '
+    unknown'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    warning'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    /** predefined type (void) or keyword (class) */
+    keyword'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    /** top level script node */
+    scriptElement'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    /** module foo {} */
+    moduleElement'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    /** class X {} */
+    classElement'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    /** var x = class X {} */
+    localClassElement'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    /** interface Y {} */
+    interfaceElement'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    /** type T = ... */
+    typeElement'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    /** enum E */
+    enumElement'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    enumMemberElement'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    /**
+     * Inside module and script only
+     * const v = ..
+     */
+    variableElement'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    /** Inside function */
+    localVariableElement'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    /** using foo = ... */
+    variableUsingElement'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    /** await using foo = ... */
+    variableAwaitUsingElement'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    /**
+     * Inside module and script only
+     * function f() { }
+     */
+    functionElement'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    /** Inside function */
+    localFunctionElement'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    /** class X { [public|private]* foo() {} } */
+    memberFunctionElement'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    /** class X { [public|private]* [get|set] foo:number; } */
+    memberGetAccessorElement'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    memberSetAccessorElement'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    /**
+     * class X { [public|private]* foo:number; }
+     * interface Y { foo:number; }
+     */
+    memberVariableElement'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    /** class X { [public|private]* accessor foo: number; } */
+    memberAccessorVariableElement'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    /**
+     * class X { constructor() { } }
+     * class X { static { } }
+     */
+    constructorImplementationElement'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    /** interface Y { ():number; } */
+    callSignatureElement'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    /** interface Y { []:number; } */
+    indexSignatureElement'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    /** interface Y { new():Y; } */
+    constructSignatureElement'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    /** function foo(*Y*: string) */
+    parameterElement'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    typeParameterElement'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    primitiveType'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    label'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    alias'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    constElement'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    letElement'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    directory'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    externalModuleName'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    /**
+     * <JsxTagName attribute1 attribute2={0} />
+     * @deprecated
+     */
+    jsxAttribute'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    /** String literal */
+    string'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    /** Jsdoc @link: in `{@link C link text}`, the before and after text "{@link " and "}" */
+    link'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    /** Jsdoc @link: in `{@link C link text}`, the entity name "C" */
+    linkName'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    /** Jsdoc @link: in `{@link C link text}`, the link text "link text" */
+    linkText'
+      StringLiteral
+  EnumDeclaration
+    ExportKeyword
+    DeclareKeyword
+    ConstKeyword
+    Identifier: ' ScriptElementKindModifier'
+    EnumMember
+      Identifier: '
+    none'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    publicMemberModifier'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    privateMemberModifier'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    protectedMemberModifier'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    exportedModifier'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    ambientModifier'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    staticModifier'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    abstractModifier'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    optionalModifier'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    deprecatedModifier'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    dtsModifier'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    tsModifier'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    tsxModifier'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    jsModifier'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    jsxModifier'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    jsonModifier'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    dmtsModifier'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    mtsModifier'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    mjsModifier'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    dctsModifier'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    ctsModifier'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    cjsModifier'
+      StringLiteral
+  EnumDeclaration
+    ExportKeyword
+    DeclareKeyword
+    ConstKeyword
+    Identifier: ' ClassificationTypeNames'
+    EnumMember
+      Identifier: '
+    comment'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    identifier'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    keyword'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    numericLiteral'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    bigintLiteral'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    operator'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    stringLiteral'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    whiteSpace'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    text'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    punctuation'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    className'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    enumName'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    interfaceName'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    moduleName'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    typeParameterName'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    typeAliasName'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    parameterName'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    docCommentTagName'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    jsxOpenTagName'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    jsxCloseTagName'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    jsxSelfClosingTagName'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    jsxAttribute'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    jsxText'
+      StringLiteral
+    EnumMember
+      Identifier: '
+    jsxAttributeStringLiteralValue'
+      StringLiteral
+  EnumDeclaration
+    ExportKeyword
+    DeclareKeyword
+    ConstKeyword
+    Identifier: ' ClassificationType'
+    EnumMember
+      Identifier: '
+    comment'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    identifier'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    keyword'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    numericLiteral'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    operator'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    stringLiteral'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    regularExpressionLiteral'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    whiteSpace'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    text'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    punctuation'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    className'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    enumName'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    interfaceName'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    moduleName'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    typeParameterName'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    typeAliasName'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    parameterName'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    docCommentTagName'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    jsxOpenTagName'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    jsxCloseTagName'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    jsxSelfClosingTagName'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    jsxAttribute'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    jsxText'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    jsxAttributeStringLiteralValue'
+      NumericLiteral
+    EnumMember
+      Identifier: '
+    bigintLiteral'
+      NumericLiteral
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' CodeFixRegistration'
+    PropertySignature
+      Identifier: '
+    errorCodes'
+      TypeOperator
+        ArrayType
+          NumberKeyword
+    MethodSignature
+      Identifier: '
+    getCodeActions'
+      Parameter
+        Identifier: 'context'
+        TypeReference
+          Identifier: ' CodeFixContext'
+      UnionType
+        ArrayType
+          TypeReference
+            Identifier: ' CodeFixAction'
+        UndefinedKeyword
+    PropertySignature
+      Identifier: '
+    fixIds'
+      QuestionToken
+      TypeOperator
+        ArrayType
+          StringKeyword
+    MethodSignature
+      Identifier: '
+    getAllCodeActions'
+      QuestionToken
+      Parameter
+        Identifier: 'context'
+        TypeReference
+          Identifier: ' CodeFixAllContext'
+      TypeReference
+        Identifier: ' CombinedCodeActions'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' CodeFixContextBase'
+    HeritageClause
+      ExpressionWithTypeArguments
+        PropertyAccessExpression
+          Identifier: ' textChanges'
+          Identifier: 'TextChangesContext'
+    PropertySignature
+      Identifier: '
+    sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    PropertySignature
+      Identifier: '
+    program'
+      TypeReference
+        Identifier: ' Program'
+    PropertySignature
+      Identifier: '
+    cancellationToken'
+      TypeReference
+        Identifier: ' CancellationToken'
+    PropertySignature
+      Identifier: '
+    preferences'
+      TypeReference
+        Identifier: ' UserPreferences'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' CodeFixAllContext'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' CodeFixContextBase'
+    PropertySignature
+      Identifier: '
+    fixId'
+      TypeLiteral
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' CodeFixContext'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' CodeFixContextBase'
+    PropertySignature
+      Identifier: '
+    errorCode'
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+    span'
+      TypeReference
+        Identifier: ' TextSpan'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' Refactor'
+    PropertySignature
+      Identifier: '
+    /** List of action kinds a refactor can provide.
+     * Used to skip unnecessary calculation when specific refactors are requested. */
+    kinds'
+      QuestionToken
+      ArrayType
+        StringKeyword
+    MethodSignature
+      Identifier: '
+    /** Compute the associated code actions */
+    getEditsForAction'
+      Parameter
+        Identifier: 'context'
+        TypeReference
+          Identifier: ' RefactorContext'
+      Parameter
+        Identifier: ' actionName'
+        StringKeyword
+      Parameter
+        Identifier: ' interactiveRefactorArguments'
+        QuestionToken
+        TypeReference
+          Identifier: ' InteractiveRefactorArguments'
+      UnionType
+        TypeReference
+          Identifier: ' RefactorEditInfo'
+        UndefinedKeyword
+    MethodSignature
+      Identifier: '
+    /** Compute (quickly) which actions are available here */
+    getAvailableActions'
+      Parameter
+        Identifier: 'context'
+        TypeReference
+          Identifier: ' RefactorContext'
+      Parameter
+        Identifier: ' includeInteractive'
+        QuestionToken
+        BooleanKeyword
+      Parameter
+        Identifier: ' interactiveRefactorArguments'
+        QuestionToken
+        TypeReference
+          Identifier: ' InteractiveRefactorArguments'
+      TypeOperator
+        ArrayType
+          TypeReference
+            Identifier: ' ApplicableRefactorInfo'
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' RefactorContext'
+    HeritageClause
+      ExpressionWithTypeArguments
+        PropertyAccessExpression
+          Identifier: ' textChanges'
+          Identifier: 'TextChangesContext'
+    PropertySignature
+      Identifier: '
+    file'
+      TypeReference
+        Identifier: ' SourceFile'
+    PropertySignature
+      Identifier: '
+    startPosition'
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+    endPosition'
+      QuestionToken
+      NumberKeyword
+    PropertySignature
+      Identifier: '
+    program'
+      TypeReference
+        Identifier: ' Program'
+    PropertySignature
+      Identifier: '
+    cancellationToken'
+      QuestionToken
+      TypeReference
+        Identifier: ' CancellationToken'
+    PropertySignature
+      Identifier: '
+    preferences'
+      TypeReference
+        Identifier: ' UserPreferences'
+    PropertySignature
+      Identifier: '
+    triggerReason'
+      QuestionToken
+      TypeReference
+        Identifier: ' RefactorTriggerReason'
+    PropertySignature
+      Identifier: '
+    kind'
+      QuestionToken
+      StringKeyword
+  InterfaceDeclaration
+    ExportKeyword
+    Identifier: ' InlayHintsContext'
+    PropertySignature
+      Identifier: '
+    file'
+      TypeReference
+        Identifier: ' SourceFile'
+    PropertySignature
+      Identifier: '
+    program'
+      TypeReference
+        Identifier: ' Program'
+    PropertySignature
+      Identifier: '
+    cancellationToken'
+      TypeReference
+        Identifier: ' CancellationToken'
+    PropertySignature
+      Identifier: '
+    host'
+      TypeReference
+        Identifier: ' LanguageServiceHost'
+    PropertySignature
+      Identifier: '
+    span'
+      TypeReference
+        Identifier: ' TextSpan'
+    PropertySignature
+      Identifier: '
+    preferences'
+      TypeReference
+        Identifier: ' UserPreferences'

@@ -1,0 +1,30 @@
+SourceFile
+  ExportDeclaration
+    NamedExports
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i'
+        NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' limit'
+        NumericLiteral
+  ForStatement
+    BinaryExpression
+      Identifier: ' i'
+      LessThanToken
+      Identifier: ' limit'
+    PrefixUnaryExpression
+      Identifier: 'i'
+    Block
+      BreakStatement
+  ForStatement
+    PrefixUnaryExpression
+      Identifier: 'i'
+    Block
+      BreakStatement
+  ForStatement
+    Block
+      BreakStatement

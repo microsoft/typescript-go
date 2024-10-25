@@ -1,0 +1,47 @@
+SourceFile
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' bar1'
+    Block
+      ExpressionStatement
+        PrefixUnaryExpression
+          Identifier: ''
+      ExpressionStatement
+        AwaitExpression
+          NumericLiteral
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' bar2'
+    Block
+      ExpressionStatement
+        PrefixUnaryExpression
+          Identifier: ''
+      ExpressionStatement
+        AwaitExpression
+          NumericLiteral
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' bar3'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            NumericLiteral
+      ExpressionStatement
+        AwaitExpression
+          PostfixUnaryExpression
+            Identifier: ' x'
+  FunctionDeclaration
+    AsyncKeyword
+    Identifier: ' bar4'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            NumericLiteral
+      ExpressionStatement
+        AwaitExpression
+          PostfixUnaryExpression
+            Identifier: ' x'

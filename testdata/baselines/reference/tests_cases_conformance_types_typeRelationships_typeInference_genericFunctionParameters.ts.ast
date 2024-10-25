@@ -1,0 +1,131 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f1'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'cb'
+      FunctionType
+        TypeParameter
+          Identifier: 'S'
+        Parameter
+          Identifier: 'x'
+          TypeReference
+            Identifier: ' S'
+        TypeReference
+          Identifier: ' T'
+    TypeReference
+      Identifier: ' T'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f2'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'cb'
+      FunctionType
+        TypeParameter
+          Identifier: 'S'
+          NumberKeyword
+        Parameter
+          Identifier: 'x'
+          TypeReference
+            Identifier: ' S'
+        TypeReference
+          Identifier: ' T'
+    TypeReference
+      Identifier: ' T'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' f3'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'cb'
+      FunctionType
+        TypeParameter
+          Identifier: 'S'
+          TypeReference
+            Identifier: ' Array'
+            TypeReference
+              Identifier: 'S'
+        Parameter
+          Identifier: 'x'
+          TypeReference
+            Identifier: ' S'
+        TypeReference
+          Identifier: ' T'
+    TypeReference
+      Identifier: ' T'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x1'
+        CallExpression
+          Identifier: ' f1'
+          ArrowFunction
+            Parameter
+              Identifier: 'x'
+            EqualsGreaterThanToken
+            Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x2'
+        CallExpression
+          Identifier: ' f2'
+          ArrowFunction
+            Parameter
+              Identifier: 'x'
+            EqualsGreaterThanToken
+            Identifier: ' x'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x3'
+        CallExpression
+          Identifier: ' f3'
+          ArrowFunction
+            Parameter
+              Identifier: 'x'
+            EqualsGreaterThanToken
+            Identifier: ' x'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' s'
+        FunctionType
+          TypeParameter
+            Identifier: 'R'
+          Parameter
+            Identifier: 'go'
+            FunctionType
+              TypeParameter
+                Identifier: 'S'
+              Parameter
+                Identifier: 'ops'
+                TypeLiteral
+                  MethodSignature
+                    Identifier: ' init'
+                    TypeReference
+                      Identifier: ' S'
+              TypeReference
+                Identifier: ' R'
+          TypeReference
+            Identifier: ' R'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        CallExpression
+          Identifier: ' s'
+          ArrowFunction
+            Parameter
+              Identifier: 'a'
+            EqualsGreaterThanToken
+            CallExpression
+              PropertyAccessExpression
+                Identifier: ' a'
+                Identifier: 'init'

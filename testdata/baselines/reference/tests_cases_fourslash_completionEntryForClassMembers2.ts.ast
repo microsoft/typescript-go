@@ -1,0 +1,879 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' validInstanceMembersOfBaseClassB'
+        TypeReference
+          Identifier: ' ReadonlyArray'
+          TypeReference
+            QualifiedName
+              Identifier: 'FourSlashInterface'
+              Identifier: 'ExpectedCompletionEntryObject'
+        ArrayLiteralExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' name'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' text'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' kindModifiers'
+              StringLiteral
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' name'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' text'
+              StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' validStaticMembersOfBaseClassB'
+        TypeReference
+          Identifier: ' ReadonlyArray'
+          TypeReference
+            QualifiedName
+              Identifier: 'FourSlashInterface'
+              Identifier: 'ExpectedCompletionEntryObject'
+        ArrayLiteralExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' name'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' text'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' kindModifiers'
+              StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' privateMembersOfBaseClassB'
+        TypeReference
+          Identifier: ' ReadonlyArray'
+          TypeReference
+            QualifiedName
+              Identifier: 'FourSlashInterface'
+              Identifier: 'ExpectedCompletionEntryObject'
+        ArrayLiteralExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' name'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' text'
+              StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' protectedPropertiesOfBaseClassB0'
+        TypeReference
+          Identifier: ' ReadonlyArray'
+          TypeReference
+            QualifiedName
+              Identifier: 'FourSlashInterface'
+              Identifier: 'ExpectedCompletionEntryObject'
+        ArrayLiteralExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' name'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' text'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' kindModifiers'
+              StringLiteral
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' name'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' text'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' kindModifiers'
+              StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' publicPropertiesOfBaseClassB0'
+        TypeReference
+          Identifier: ' ReadonlyArray'
+          TypeReference
+            QualifiedName
+              Identifier: 'FourSlashInterface'
+              Identifier: 'ExpectedCompletionEntryObject'
+        ArrayLiteralExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' name'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' text'
+              StringLiteral
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' name'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' text'
+              StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' validInstanceMembersOfBaseClassB0'
+        TypeReference
+          Identifier: ' ReadonlyArray'
+          TypeReference
+            QualifiedName
+              Identifier: 'FourSlashInterface'
+              Identifier: 'ExpectedCompletionEntryObject'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' protectedPropertiesOfBaseClassB0'
+            Identifier: 'concat'
+          Identifier: 'publicPropertiesOfBaseClassB0'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' validInstanceMembersOfBaseClassB0_2'
+        TypeReference
+          Identifier: ' ReadonlyArray'
+          TypeReference
+            QualifiedName
+              Identifier: 'FourSlashInterface'
+              Identifier: 'ExpectedCompletionEntryObject'
+        ArrayLiteralExpression
+          ElementAccessExpression
+            Identifier: '
+    protectedPropertiesOfBaseClassB0'
+            NumericLiteral
+          ElementAccessExpression
+            Identifier: '
+    publicPropertiesOfBaseClassB0'
+            NumericLiteral
+          ElementAccessExpression
+            Identifier: '
+    protectedPropertiesOfBaseClassB0'
+            NumericLiteral
+          ElementAccessExpression
+            Identifier: '
+    publicPropertiesOfBaseClassB0'
+            NumericLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' validStaticMembersOfBaseClassB0'
+        TypeReference
+          Identifier: ' ReadonlyArray'
+          TypeReference
+            QualifiedName
+              Identifier: 'FourSlashInterface'
+              Identifier: 'ExpectedCompletionEntryObject'
+        ArrayLiteralExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' name'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' text'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' kindModifiers'
+              StringLiteral
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' name'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' text'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' kindModifiers'
+              StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' privateMembersOfBaseClassB0'
+        TypeReference
+          Identifier: ' ReadonlyArray'
+          TypeReference
+            QualifiedName
+              Identifier: 'FourSlashInterface'
+              Identifier: 'ExpectedCompletionEntryObject'
+        ArrayLiteralExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' name'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' text'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' kindModifiers'
+              StringLiteral
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' name'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' text'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' kindModifiers'
+              StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' membersOfI'
+        TypeReference
+          Identifier: ' ReadonlyArray'
+          TypeReference
+            QualifiedName
+              Identifier: 'FourSlashInterface'
+              Identifier: 'ExpectedCompletionEntryObject'
+        ArrayLiteralExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' name'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' text'
+              StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' membersOfI2'
+        TypeReference
+          Identifier: ' ReadonlyArray'
+          TypeReference
+            QualifiedName
+              Identifier: 'FourSlashInterface'
+              Identifier: 'ExpectedCompletionEntryObject'
+        ArrayLiteralExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' name'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' text'
+              StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' membersOfI3'
+        TypeReference
+          Identifier: ' ReadonlyArray'
+          TypeReference
+            QualifiedName
+              Identifier: 'FourSlashInterface'
+              Identifier: 'ExpectedCompletionEntryObject'
+        ArrayLiteralExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' name'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' text'
+              StringLiteral
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' name'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' text'
+              StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' membersOfI4'
+        TypeReference
+          Identifier: ' ReadonlyArray'
+          TypeReference
+            QualifiedName
+              Identifier: 'FourSlashInterface'
+              Identifier: 'ExpectedCompletionEntryObject'
+        ArrayLiteralExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' name'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' text'
+              StringLiteral
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' name'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' text'
+              StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' membersOfI5'
+        TypeReference
+          Identifier: ' ReadonlyArray'
+          TypeReference
+            QualifiedName
+              Identifier: 'FourSlashInterface'
+              Identifier: 'ExpectedCompletionEntryObject'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' publicPropertiesOfBaseClassB0'
+            Identifier: 'concat'
+          ArrayLiteralExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' text'
+                StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' membersOfJustI5'
+        TypeReference
+          Identifier: ' ReadonlyArray'
+          TypeReference
+            QualifiedName
+              Identifier: 'FourSlashInterface'
+              Identifier: 'ExpectedCompletionEntryObject'
+        ArrayLiteralExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' name'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' text'
+              StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' membersOfI6'
+        TypeReference
+          Identifier: ' ReadonlyArray'
+          TypeReference
+            QualifiedName
+              Identifier: 'FourSlashInterface'
+              Identifier: 'ExpectedCompletionEntryObject'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' publicPropertiesOfBaseClassB0'
+            Identifier: 'concat'
+          ArrayLiteralExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' text'
+                StringLiteral
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: ' name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: ' text'
+                StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' membersOfI7'
+        TypeReference
+          Identifier: ' ReadonlyArray'
+          TypeReference
+            QualifiedName
+              Identifier: 'FourSlashInterface'
+              Identifier: 'ExpectedCompletionEntryObject'
+        ArrayLiteralExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' name'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' text'
+              StringLiteral
+          SpreadElement
+            Identifier: 'membersOfI'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' membersOfI7_2'
+        TypeReference
+          Identifier: ' ReadonlyArray'
+          TypeReference
+            QualifiedName
+              Identifier: 'FourSlashInterface'
+              Identifier: 'ExpectedCompletionEntryObject'
+        ArrayLiteralExpression
+          SpreadElement
+            Identifier: 'membersOfI'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' name'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' text'
+              StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' noMembers'
+        TypeReference
+          Identifier: ' ReadonlyArray'
+          TypeReference
+            QualifiedName
+              Identifier: 'FourSlashInterface'
+              Identifier: 'ExpectedCompletionEntryObject'
+        ArrayLiteralExpression
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' membersOfIAndI2'
+        ArrayLiteralExpression
+          SpreadElement
+            Identifier: 'membersOfI'
+          SpreadElement
+            Identifier: 'membersOfI2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' invalidMembersOfBAtInstanceLocation'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' privateMembersOfBaseClassB'
+            Identifier: 'concat'
+          Identifier: 'validStaticMembersOfBaseClassB'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' allInstanceBAndIAndI2'
+        ArrayLiteralExpression
+          SpreadElement
+            Identifier: 'validInstanceMembersOfBaseClassB'
+          SpreadElement
+            Identifier: 'membersOfIAndI2'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' invalidMembersOfB0AtInstanceSide'
+        ArrayLiteralExpression
+          SpreadElement
+            Identifier: 'privateMembersOfBaseClassB0'
+          SpreadElement
+            Identifier: 'validStaticMembersOfBaseClassB0'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' invalidMembersOfB0AtStaticSide'
+        ArrayLiteralExpression
+          SpreadElement
+            Identifier: 'privateMembersOfBaseClassB0'
+          Identifier: ' validInstanceMembersOfBaseClassB0'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' invalidMembersOfB0AtInstanceSideFromInterfaceExtendingB0'
+        Identifier: ' invalidMembersOfB0AtInstanceSide'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' tests'
+        TypeReference
+          Identifier: ' ReadonlyArray'
+          TypeLiteral
+            PropertySignature
+              ReadonlyKeyword
+              Identifier: ' marker'
+              UnionType
+                StringKeyword
+                TypeReference
+                  Identifier: ' ReadonlyArray'
+                  StringKeyword
+            PropertySignature
+              ReadonlyKeyword
+              Identifier: ' members'
+              TypeReference
+                Identifier: ' ReadonlyArray'
+                TypeReference
+                  QualifiedName
+                    Identifier: 'FourSlashInterface'
+                    Identifier: 'ExpectedCompletionEntryObject'
+        ArrayLiteralExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' marker'
+              ArrayLiteralExpression
+                StringLiteral
+                StringLiteral
+            PropertyAssignment
+              Identifier: ' members'
+              Identifier: ' membersOfIAndI2'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' marker'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' members'
+              ArrayLiteralExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' marker'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' members'
+              Identifier: ' allInstanceBAndIAndI2'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+        marker'
+              ArrayLiteralExpression
+                StringLiteral
+                StringLiteral
+            PropertyAssignment
+              Identifier: '
+        members'
+              Identifier: ' validStaticMembersOfBaseClassB'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' marker'
+              StringLiteral
+            PropertyAssignment
+              Identifier: 'members'
+              ArrayLiteralExpression
+                ElementAccessExpression
+                  Identifier: 'validInstanceMembersOfBaseClassB'
+                  NumericLiteral
+                SpreadElement
+                  Identifier: 'membersOfIAndI2'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' marker'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' members'
+              ArrayLiteralExpression
+                SpreadElement
+                  Identifier: 'validInstanceMembersOfBaseClassB'
+                SpreadElement
+                  Identifier: 'membersOfI2'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' marker'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' members'
+              ArrayLiteralExpression
+                ElementAccessExpression
+                  Identifier: 'validInstanceMembersOfBaseClassB'
+                  NumericLiteral
+                SpreadElement
+                  Identifier: 'membersOfI2'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' marker'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' members'
+              ArrayLiteralExpression
+                SpreadElement
+                  Identifier: 'validInstanceMembersOfBaseClassB'
+                ElementAccessExpression
+                  Identifier: ' membersOfI3'
+                  NumericLiteral
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' marker'
+              StringLiteral
+            PropertyAssignment
+              Identifier: ' members'
+              ArrayLiteralExpression
+                ElementAccessExpression
+                  Identifier: 'validInstanceMembersOfBaseClassB'
+                  NumericLiteral
+                ElementAccessExpression
+                  Identifier: ' membersOfI3'
+                  NumericLiteral
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+        marker'
+              ArrayLiteralExpression
+                StringLiteral
+                StringLiteral
+                StringLiteral
+            PropertyAssignment
+              Identifier: '
+        members'
+              ArrayLiteralExpression
+                SpreadElement
+                  Identifier: 'validInstanceMembersOfBaseClassB0_2'
+                SpreadElement
+                  Identifier: 'membersOfI4'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+        marker'
+              ArrayLiteralExpression
+                StringLiteral
+                StringLiteral
+            PropertyAssignment
+              Identifier: '
+        members'
+              ArrayLiteralExpression
+                SpreadElement
+                  Identifier: 'validInstanceMembersOfBaseClassB0_2'
+                ElementAccessExpression
+                  Identifier: ' membersOfI4'
+                  NumericLiteral
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+        marker'
+              ArrayLiteralExpression
+                StringLiteral
+                StringLiteral
+                StringLiteral
+            PropertyAssignment
+              Identifier: '
+        members'
+              Identifier: ' validStaticMembersOfBaseClassB0'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+        marker'
+              ArrayLiteralExpression
+                StringLiteral
+                StringLiteral
+            PropertyAssignment
+              Identifier: '
+        members'
+              ArrayLiteralExpression
+                ElementAccessExpression
+                  Identifier: 'validStaticMembersOfBaseClassB0'
+                  NumericLiteral
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+        marker'
+              ArrayLiteralExpression
+                StringLiteral
+                StringLiteral
+            PropertyAssignment
+              Identifier: '
+        members'
+              Identifier: ' membersOfI7'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+        marker'
+              StringLiteral
+            PropertyAssignment
+              Identifier: '
+        members'
+              Identifier: ' membersOfI7_2'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+        marker'
+              StringLiteral
+            PropertyAssignment
+              Identifier: '
+        members'
+              ArrayLiteralExpression
+                SpreadElement
+                  Identifier: 'membersOfJustI5'
+                ElementAccessExpression
+                  Identifier: ' protectedPropertiesOfBaseClassB0'
+                  NumericLiteral
+                ElementAccessExpression
+                  Identifier: ' publicPropertiesOfBaseClassB0'
+                  NumericLiteral
+                ElementAccessExpression
+                  Identifier: ' protectedPropertiesOfBaseClassB0'
+                  NumericLiteral
+                ElementAccessExpression
+                  Identifier: ' publicPropertiesOfBaseClassB0'
+                  NumericLiteral
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+        marker'
+              StringLiteral
+            PropertyAssignment
+              Identifier: '
+        //TODO:NEATER
+        members'
+              ArrayLiteralExpression
+                ElementAccessExpression
+                  Identifier: '
+            membersOfI6'
+                  NumericLiteral
+                ElementAccessExpression
+                  Identifier: '
+            membersOfI6'
+                  NumericLiteral
+                ElementAccessExpression
+                  Identifier: '
+            protectedPropertiesOfBaseClassB0'
+                  NumericLiteral
+                ElementAccessExpression
+                  Identifier: '
+            membersOfI6'
+                  NumericLiteral
+                ElementAccessExpression
+                  Identifier: '
+            protectedPropertiesOfBaseClassB0'
+                  NumericLiteral
+                ElementAccessExpression
+                  Identifier: '
+            membersOfI6'
+                  NumericLiteral
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+        marker'
+              StringLiteral
+            PropertyAssignment
+              Identifier: '
+        members'
+              ArrayLiteralExpression
+                ElementAccessExpression
+                  Identifier: '
+            protectedPropertiesOfBaseClassB0'
+                  NumericLiteral
+                ElementAccessExpression
+                  Identifier: '
+            membersOfI5'
+                  NumericLiteral
+                ElementAccessExpression
+                  Identifier: '
+            protectedPropertiesOfBaseClassB0'
+                  NumericLiteral
+                ElementAccessExpression
+                  Identifier: '
+            membersOfI5'
+                  NumericLiteral
+                ElementAccessExpression
+                  Identifier: '
+            membersOfI5'
+                  NumericLiteral
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+        marker'
+              StringLiteral
+            PropertyAssignment
+              Identifier: '
+        members'
+              ArrayLiteralExpression
+                ElementAccessExpression
+                  Identifier: '
+            protectedPropertiesOfBaseClassB0'
+                  NumericLiteral
+                ElementAccessExpression
+                  Identifier: '
+            membersOfI6'
+                  NumericLiteral
+                ElementAccessExpression
+                  Identifier: '
+            protectedPropertiesOfBaseClassB0'
+                  NumericLiteral
+                ElementAccessExpression
+                  Identifier: '
+            membersOfI6'
+                  NumericLiteral
+                ElementAccessExpression
+                  Identifier: '
+            membersOfI6'
+                  NumericLiteral
+                ElementAccessExpression
+                  Identifier: '
+            membersOfI6'
+                  NumericLiteral
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+        marker'
+              ArrayLiteralExpression
+                StringLiteral
+                StringLiteral
+            PropertyAssignment
+              Identifier: '
+        members'
+              ArrayLiteralExpression
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+        marker'
+              ArrayLiteralExpression
+                StringLiteral
+                StringLiteral
+            PropertyAssignment
+              Identifier: '
+        // statics of base B but nothing from instance side
+        members'
+              Identifier: ' validStaticMembersOfBaseClassB0'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+verify'
+        Identifier: 'completions'
+      SpreadElement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: 'tests'
+            Identifier: 'map'
+          ArrowFunction
+            Parameter
+              ObjectBindingPattern
+                BindingElement
+                  Identifier: ' marker'
+                BindingElement
+                  Identifier: ' members'
+            TypeReference
+              QualifiedName
+                Identifier: ' FourSlashInterface'
+                Identifier: 'CompletionsOptions'
+            EqualsGreaterThanToken
+            ParenthesizedExpression
+              ObjectLiteralExpression
+                ShorthandPropertyAssignment
+                  Identifier: '
+    marker'
+                PropertyAssignment
+                  Identifier: '
+    unsorted'
+                  ArrayLiteralExpression
+                    SpreadElement
+                      CallExpression
+                        PropertyAccessExpression
+                          Identifier: 'members'
+                          Identifier: 'map'
+                        ArrowFunction
+                          Parameter
+                            Identifier: 'm'
+                          EqualsGreaterThanToken
+                          ParenthesizedExpression
+                            ObjectLiteralExpression
+                              SpreadAssignment
+                                Identifier: 'm'
+                              PropertyAssignment
+                                Identifier: ' kind'
+                                StringLiteral
+                    SpreadElement
+                      PropertyAccessExpression
+                        Identifier: 'completion'
+                        Identifier: 'classElementKeywords'
+                PropertyAssignment
+                  Identifier: '
+    isNewIdentifierLocation'
+                  TrueKeyword

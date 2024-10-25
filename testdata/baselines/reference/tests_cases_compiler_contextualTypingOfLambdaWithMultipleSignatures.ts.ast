@@ -1,0 +1,35 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' Foo'
+    MethodSignature
+      Identifier: '
+    getFoo'
+      Parameter
+        Identifier: 'n'
+        NumberKeyword
+      VoidKeyword
+    MethodSignature
+      Identifier: '
+    getFoo'
+      Parameter
+        Identifier: 's'
+        StringKeyword
+      VoidKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' foo'
+        TypeReference
+          Identifier: ' Foo'
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+foo'
+        Identifier: 'getFoo'
+      EqualsToken
+      ArrowFunction
+        Parameter
+          Identifier: ' bar'
+        EqualsGreaterThanToken
+        Block

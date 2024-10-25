@@ -1,0 +1,125 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' c_public'
+    PropertyDeclaration
+      Identifier: '
+    foo'
+      StringKeyword
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' c_public'
+    PropertyDeclaration
+      Identifier: '
+    bar'
+      StringKeyword
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' c_private'
+        PropertyDeclaration
+          Identifier: '
+        baz'
+          StringKeyword
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      ClassDeclaration
+        ExportKeyword
+        Identifier: ' c_private'
+        PropertyDeclaration
+          Identifier: '
+        bing'
+          StringKeyword
+  ImportEqualsDeclaration
+    ExportKeyword
+    Identifier: ' im_public_mi_private'
+    ExternalModuleReference
+      StringLiteral
+  ImportEqualsDeclaration
+    ExportKeyword
+    Identifier: ' im_public_mu_private'
+    ExternalModuleReference
+      StringLiteral
+  ImportEqualsDeclaration
+    ExportKeyword
+    Identifier: ' im_public_mi_public'
+    ExternalModuleReference
+      StringLiteral
+  ImportEqualsDeclaration
+    ExportKeyword
+    Identifier: ' im_public_mu_public'
+    ExternalModuleReference
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' privateUse_im_public_mi_private'
+        NewExpression
+          PropertyAccessExpression
+            Identifier: ' im_public_mi_private'
+            Identifier: 'c_public'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' publicUse_im_public_mi_private'
+        NewExpression
+          PropertyAccessExpression
+            Identifier: ' im_public_mi_private'
+            Identifier: 'c_public'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' privateUse_im_public_mu_private'
+        NewExpression
+          PropertyAccessExpression
+            Identifier: ' im_public_mu_private'
+            Identifier: 'c_public'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' publicUse_im_public_mu_private'
+        NewExpression
+          PropertyAccessExpression
+            Identifier: ' im_public_mu_private'
+            Identifier: 'c_public'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' privateUse_im_public_mi_public'
+        NewExpression
+          PropertyAccessExpression
+            Identifier: ' im_public_mi_public'
+            Identifier: 'c_private'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' publicUse_im_public_mi_public'
+        NewExpression
+          PropertyAccessExpression
+            Identifier: ' im_public_mi_public'
+            Identifier: 'c_private'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' privateUse_im_public_mi_public'
+        NewExpression
+          PropertyAccessExpression
+            Identifier: ' im_public_mi_public'
+            Identifier: 'c_private'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' publicUse_im_public_mi_public'
+        NewExpression
+          PropertyAccessExpression
+            Identifier: ' im_public_mi_public'
+            Identifier: 'c_private'

@@ -1,0 +1,150 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+// @noLib: true
+////
+/////**
+//// * Pad `str` to `width`.
+//// *
+//// * @param {String} str
+//// * @param {Number} wid/*1*/
+goTo'
+        Identifier: 'marker'
+      StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+edit'
+        Identifier: 'insert'
+      StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        CallExpression
+          Identifier: ' classification'
+          StringLiteral
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+verify'
+        Identifier: 'syntacticClassificationsAre'
+      CallExpression
+        PropertyAccessExpression
+          Identifier: '
+    c'
+          Identifier: 'comment'
+        StringLiteral
+      CallExpression
+        PropertyAccessExpression
+          Identifier: '
+    c'
+          Identifier: 'punctuation'
+        StringLiteral
+      CallExpression
+        PropertyAccessExpression
+          Identifier: '
+    c'
+          Identifier: 'docCommentTagName'
+        StringLiteral
+      CallExpression
+        PropertyAccessExpression
+          Identifier: '
+    c'
+          Identifier: 'comment'
+        StringLiteral
+      CallExpression
+        PropertyAccessExpression
+          Identifier: '
+    c'
+          Identifier: 'punctuation'
+        StringLiteral
+      CallExpression
+        PropertyAccessExpression
+          Identifier: '
+    c'
+          Identifier: 'identifier'
+        StringLiteral
+      CallExpression
+        PropertyAccessExpression
+          Identifier: '
+    c'
+          Identifier: 'punctuation'
+        StringLiteral
+      CallExpression
+        PropertyAccessExpression
+          Identifier: '
+    c'
+          Identifier: 'comment'
+        StringLiteral
+      CallExpression
+        PropertyAccessExpression
+          Identifier: '
+    c'
+          Identifier: 'parameterName'
+        StringLiteral
+      CallExpression
+        PropertyAccessExpression
+          Identifier: '
+    c'
+          Identifier: 'comment'
+        StringLiteral
+      CallExpression
+        PropertyAccessExpression
+          Identifier: '
+    c'
+          Identifier: 'punctuation'
+        StringLiteral
+      CallExpression
+        PropertyAccessExpression
+          Identifier: '
+    c'
+          Identifier: 'docCommentTagName'
+        StringLiteral
+      CallExpression
+        PropertyAccessExpression
+          Identifier: '
+    c'
+          Identifier: 'comment'
+        StringLiteral
+      CallExpression
+        PropertyAccessExpression
+          Identifier: '
+    c'
+          Identifier: 'punctuation'
+        StringLiteral
+      CallExpression
+        PropertyAccessExpression
+          Identifier: '
+    c'
+          Identifier: 'identifier'
+        StringLiteral
+      CallExpression
+        PropertyAccessExpression
+          Identifier: '
+    c'
+          Identifier: 'punctuation'
+        StringLiteral
+      CallExpression
+        PropertyAccessExpression
+          Identifier: '
+    c'
+          Identifier: 'comment'
+        StringLiteral
+      CallExpression
+        PropertyAccessExpression
+          Identifier: '
+    c'
+          Identifier: 'parameterName'
+        StringLiteral
+      CallExpression
+        PropertyAccessExpression
+          Identifier: '
+    c'
+          Identifier: 'comment'
+        StringLiteral

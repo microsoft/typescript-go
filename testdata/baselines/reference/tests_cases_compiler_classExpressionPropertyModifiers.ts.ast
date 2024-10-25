@@ -1,0 +1,18 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        ClassExpression
+          Identifier: ' Cat'
+          PropertyDeclaration
+            DeclareKeyword
+            ComputedPropertyName
+              PropertyAccessExpression
+                Identifier: 'Symbol'
+                Identifier: 'toStringTag'
+            StringLiteral
+          PropertyDeclaration
+            ExportKeyword
+            Identifier: ' foo'
+            NumericLiteral

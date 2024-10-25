@@ -1,0 +1,57 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' UI'
+        ObjectLiteralExpression
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+UI'
+        Identifier: 'TreeElement'
+      EqualsToken
+      ClassExpression
+        Constructor
+          Block
+            ExpressionStatement
+              BinaryExpression
+                PropertyAccessExpression
+                  ThisKeyword
+                  Identifier: 'treeOutline'
+                EqualsToken
+                NumericLiteral
+  ExpressionStatement
+    BinaryExpression
+      PropertyAccessExpression
+        Identifier: '
+UI'
+        Identifier: 'context'
+      EqualsToken
+      NewExpression
+        PropertyAccessExpression
+          Identifier: ' UI'
+          Identifier: 'TreeElement'
+  ClassDeclaration
+    Identifier: ' C'
+    HeritageClause
+      ExpressionWithTypeArguments
+        PropertyAccessExpression
+          Identifier: ' UI'
+          Identifier: 'TreeElement'
+    MethodDeclaration
+      Identifier: '
+    onpopulate'
+      Block
+        ExpressionStatement
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'doesNotExist'
+        ExpressionStatement
+          CallExpression
+            PropertyAccessExpression
+              PropertyAccessExpression
+                ThisKeyword
+                Identifier: 'treeOutline'
+              Identifier: 'doesntExistEither'
+  EmptyStatement

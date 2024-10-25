@@ -1,0 +1,7 @@
+SourceFile
+  ExportDeclaration
+    NamedExports
+  ExportDeclaration
+    NamespaceExport
+      Identifier: ' ns'
+    StringLiteral

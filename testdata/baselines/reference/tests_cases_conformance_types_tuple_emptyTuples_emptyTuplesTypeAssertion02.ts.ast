@@ -1,0 +1,15 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        AsExpression
+          ArrayLiteralExpression
+          TupleType
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        ElementAccessExpression
+          Identifier: ' x'
+          NumericLiteral

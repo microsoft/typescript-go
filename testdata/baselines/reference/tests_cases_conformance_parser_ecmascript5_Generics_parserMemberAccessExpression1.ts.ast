@@ -1,0 +1,34 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      Identifier: 'Foo'
+      TypeReference
+        Identifier: 'T'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+Foo'
+        Identifier: 'Bar'
+      TypeReference
+        Identifier: 'T'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        ExpressionWithTypeArguments
+          Identifier: '
+Foo'
+          TypeReference
+            Identifier: 'T'
+        Identifier: 'Bar'
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        ExpressionWithTypeArguments
+          Identifier: '
+Foo'
+          TypeReference
+            Identifier: 'T'
+        Identifier: 'Bar'
+      TypeReference
+        Identifier: 'T'

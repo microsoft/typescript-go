@@ -1,0 +1,70 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' inference1'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'name'
+      TypeOperator
+        TypeReference
+          Identifier: ' T'
+    TypeReference
+      Identifier: ' T'
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' inference2'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'target'
+      TypeReference
+        Identifier: ' T'
+    Parameter
+      Identifier: ' name'
+      TypeOperator
+        TypeReference
+          Identifier: ' T'
+    TypeReference
+      Identifier: ' T'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' two'
+        UnionType
+          LiteralType
+            StringLiteral
+          LiteralType
+            StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        CallExpression
+          Identifier: ' inference1'
+          Identifier: 'two'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' y'
+        CallExpression
+          Identifier: ' inference2'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' a'
+              NumericLiteral
+            PropertyAssignment
+              Identifier: ' b'
+              NumericLiteral
+            PropertyAssignment
+              Identifier: ' c'
+              NumericLiteral
+            MethodDeclaration
+              Identifier: ' d'
+              Parameter
+                Identifier: 'n'
+              Block
+                ReturnStatement
+                  Identifier: ' n'
+          Identifier: ' two'

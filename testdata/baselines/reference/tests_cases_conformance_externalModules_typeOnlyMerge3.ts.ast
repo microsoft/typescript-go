@@ -1,0 +1,45 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' A'
+    Block
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' A'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' A'
+    StringLiteral
+  ModuleDeclaration
+    Identifier: ' A'
+    ModuleBlock
+      VariableStatement
+        ExportKeyword
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' displayName'
+            StringLiteral
+  ExportDeclaration
+    NamedExports
+      ExportSpecifier
+        Identifier: ' A'
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' A'
+    StringLiteral
+  ExpressionStatement
+    Identifier: '
+A'
+  ExpressionStatement
+    PropertyAccessExpression
+      Identifier: '
+A'
+      Identifier: 'displayName'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+A'

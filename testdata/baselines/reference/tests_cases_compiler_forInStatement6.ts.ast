@@ -1,0 +1,15 @@
+SourceFile
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        AnyKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' expr'
+        AnyKeyword
+  ForInStatement
+    Identifier: 'a'
+    Identifier: ' expr'
+    Block

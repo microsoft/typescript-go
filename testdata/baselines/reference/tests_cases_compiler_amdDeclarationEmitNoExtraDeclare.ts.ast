@@ -1,0 +1,64 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' Configurable'
+    StringLiteral
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' HiddenClass'
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' ActualClass'
+    HeritageClause
+      ExpressionWithTypeArguments
+        CallExpression
+          Identifier: ' Configurable'
+          Identifier: 'HiddenClass'
+  TypeAliasDeclaration
+    ExportKeyword
+    Identifier: ' Constructor'
+    TypeParameter
+      Identifier: 'T'
+    TypeLiteral
+      ConstructSignature
+        Parameter
+          DotDotDotToken
+          Identifier: 'args'
+          ArrayType
+            AnyKeyword
+        TypeReference
+          Identifier: ' T'
+  FunctionDeclaration
+    ExportKeyword
+    Identifier: ' Configurable'
+    TypeParameter
+      Identifier: 'T'
+      TypeReference
+        Identifier: ' Constructor'
+        TypeLiteral
+    Parameter
+      Identifier: 'base'
+      TypeReference
+        Identifier: ' T'
+    TypeReference
+      Identifier: ' T'
+    Block
+      ReturnStatement
+        ClassExpression
+          HeritageClause
+            ExpressionWithTypeArguments
+              Identifier: ' base'
+          Constructor
+            Parameter
+              DotDotDotToken
+              Identifier: 'args'
+              ArrayType
+                AnyKeyword
+            Block
+              ExpressionStatement
+                CallExpression
+                  SuperKeyword
+                  SpreadElement
+                    Identifier: 'args'

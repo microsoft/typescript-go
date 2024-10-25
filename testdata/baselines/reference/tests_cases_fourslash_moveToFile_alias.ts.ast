@@ -1,0 +1,46 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+/// <reference path='fourslash.ts' />
+
+
+// @filename: /producer.ts
+//// export function doit() {}
+
+// @filename: /test.ts
+//// import { doit as doit2 } from "./producer";
+//// 
+//// class Another {}
+//// 
+//// [|class Consumer {
+////     constructor() {
+////         doit2();
+////     }
+//// }|]
+
+// @filename: /consumer.ts
+////
+
+
+verify'
+        Identifier: 'moveToFile'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+    newFileContents'
+          ObjectLiteralExpression
+            PropertyAssignment
+              StringLiteral
+              NoSubstitutionTemplateLiteral
+            PropertyAssignment
+              StringLiteral
+              NoSubstitutionTemplateLiteral
+        PropertyAssignment
+          Identifier: '
+    interactiveRefactorArguments'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: ' targetFile'
+              StringLiteral

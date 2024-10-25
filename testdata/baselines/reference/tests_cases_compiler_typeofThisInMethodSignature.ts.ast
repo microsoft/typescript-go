@@ -1,0 +1,29 @@
+SourceFile
+  ClassDeclaration
+    ExportKeyword
+    Identifier: ' A'
+    PropertyDeclaration
+      Identifier: '
+	x'
+      NumericLiteral
+    MethodDeclaration
+      Identifier: '
+	a'
+      Parameter
+        Identifier: 'x'
+        TypeQuery
+          QualifiedName
+            Identifier: ' this'
+            Identifier: 'x'
+      VoidKeyword
+      Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        CallExpression
+          PropertyAccessExpression
+            NewExpression
+              Identifier: ' A'
+            Identifier: 'a'
+          NumericLiteral

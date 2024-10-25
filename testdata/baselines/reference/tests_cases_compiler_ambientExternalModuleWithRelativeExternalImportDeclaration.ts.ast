@@ -1,0 +1,30 @@
+SourceFile
+  ModuleDeclaration
+    DeclareKeyword
+    StringLiteral
+    ModuleBlock
+      ImportEqualsDeclaration
+        Identifier: ' m2'
+        ExternalModuleReference
+          StringLiteral
+      ClassDeclaration
+        Identifier: ' SubModule'
+        PropertyDeclaration
+          PublicKeyword
+          StaticKeyword
+          Identifier: ' StaticVar'
+          NumberKeyword
+        PropertyDeclaration
+          PublicKeyword
+          Identifier: ' InstanceVar'
+          NumberKeyword
+        PropertyDeclaration
+          PublicKeyword
+          Identifier: ' x'
+          TypeReference
+            QualifiedName
+              Identifier: ' m2'
+              Identifier: 'c'
+        Constructor
+      ExportAssignment
+        Identifier: ' SubModule'

@@ -1,0 +1,41 @@
+SourceFile
+  ClassDeclaration
+    AbstractKeyword
+    Identifier: ' A'
+    MethodDeclaration
+      AbstractKeyword
+      Identifier: ' m1'
+      NumberKeyword
+    MethodDeclaration
+      AbstractKeyword
+      Identifier: ' m2'
+      NumberKeyword
+    MethodDeclaration
+      AbstractKeyword
+      Identifier: ' m3'
+      NumberKeyword
+    MethodDeclaration
+      AbstractKeyword
+      Identifier: ' m4'
+      NumberKeyword
+    MethodDeclaration
+      AbstractKeyword
+      Identifier: ' m5'
+      NumberKeyword
+    MethodDeclaration
+      AbstractKeyword
+      Identifier: ' m6'
+      NumberKeyword
+  ClassDeclaration
+    Identifier: ' B'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' A'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' C'
+        ClassExpression
+          HeritageClause
+            ExpressionWithTypeArguments
+              Identifier: ' A'

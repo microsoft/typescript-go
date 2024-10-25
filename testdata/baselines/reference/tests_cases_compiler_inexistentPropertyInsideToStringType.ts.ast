@@ -1,0 +1,15 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' toString'
+    Block
+      ExpressionStatement
+        PropertyAccessExpression
+          ThisKeyword
+          Identifier: 'yadda'
+      ExpressionStatement
+        BinaryExpression
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'someValue'
+          EqualsToken
+          StringLiteral

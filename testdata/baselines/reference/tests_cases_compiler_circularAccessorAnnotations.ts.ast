@@ -1,0 +1,81 @@
+SourceFile
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c1'
+        TypeLiteral
+          GetAccessor
+            Identifier: ' foo'
+            TypeQuery
+              QualifiedName
+                Identifier: ' c1'
+                Identifier: 'foo'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c2'
+        TypeLiteral
+          SetAccessor
+            Identifier: ' foo'
+            Parameter
+              Identifier: 'value'
+              TypeQuery
+                QualifiedName
+                  Identifier: ' c2'
+                  Identifier: 'foo'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c3'
+        TypeLiteral
+          GetAccessor
+            Identifier: ' foo'
+            StringKeyword
+          SetAccessor
+            Identifier: ' foo'
+            Parameter
+              Identifier: 'value'
+              TypeQuery
+                QualifiedName
+                  Identifier: ' c3'
+                  Identifier: 'foo'
+  TypeAliasDeclaration
+    Identifier: ' T1'
+    TypeLiteral
+      GetAccessor
+        Identifier: ' foo'
+        IndexedAccessType
+          TypeReference
+            Identifier: ' T1'
+          LiteralType
+            StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' T2'
+    TypeLiteral
+      SetAccessor
+        Identifier: ' foo'
+        Parameter
+          Identifier: 'value'
+          IndexedAccessType
+            TypeReference
+              Identifier: ' T2'
+            LiteralType
+              StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' T3'
+    TypeLiteral
+      GetAccessor
+        Identifier: ' foo'
+        StringKeyword
+      SetAccessor
+        Identifier: ' foo'
+        Parameter
+          Identifier: 'value'
+          IndexedAccessType
+            TypeReference
+              Identifier: ' T3'
+            LiteralType
+              StringLiteral

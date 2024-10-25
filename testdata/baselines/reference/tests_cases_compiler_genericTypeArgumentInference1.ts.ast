@@ -1,0 +1,127 @@
+SourceFile
+  ModuleDeclaration
+    Identifier: ' Underscore'
+    ModuleBlock
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' Iterator'
+        TypeParameter
+          Identifier: 'T'
+        TypeParameter
+          Identifier: ' U'
+        CallSignature
+          Parameter
+            Identifier: 'value'
+            TypeReference
+              Identifier: ' T'
+          Parameter
+            Identifier: ' index'
+            AnyKeyword
+          Parameter
+            Identifier: ' list'
+            AnyKeyword
+          TypeReference
+            Identifier: ' U'
+      InterfaceDeclaration
+        ExportKeyword
+        Identifier: ' Static'
+        MethodSignature
+          Identifier: '
+        all'
+          TypeParameter
+            Identifier: 'T'
+          Parameter
+            Identifier: 'list'
+            ArrayType
+              TypeReference
+                Identifier: ' T'
+          Parameter
+            Identifier: ' iterator'
+            QuestionToken
+            TypeReference
+              Identifier: ' Iterator'
+              TypeReference
+                Identifier: 'T'
+              BooleanKeyword
+          Parameter
+            Identifier: ' context'
+            QuestionToken
+            AnyKeyword
+          TypeReference
+            Identifier: ' T'
+        MethodSignature
+          Identifier: '
+        identity'
+          TypeParameter
+            Identifier: 'T'
+          Parameter
+            Identifier: 'value'
+            TypeReference
+              Identifier: ' T'
+          TypeReference
+            Identifier: ' T'
+  VariableStatement
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' _'
+        TypeReference
+          QualifiedName
+            Identifier: ' Underscore'
+            Identifier: 'Static'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' _'
+            Identifier: 'all'
+          ArrayLiteralExpression
+            TrueKeyword
+            NumericLiteral
+            NullKeyword
+            StringLiteral
+          PropertyAccessExpression
+            Identifier: ' _'
+            Identifier: 'identity'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r2'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' _'
+            Identifier: 'all'
+          ArrayLiteralExpression
+            TrueKeyword
+          PropertyAccessExpression
+            Identifier: ' _'
+            Identifier: 'identity'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r3'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' _'
+            Identifier: 'all'
+          ArrayLiteralExpression
+          PropertyAccessExpression
+            Identifier: ' _'
+            Identifier: 'identity'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r4'
+        CallExpression
+          PropertyAccessExpression
+            Identifier: ' _'
+            Identifier: 'all'
+          ArrayLiteralExpression
+            TypeAssertionExpression
+              AnyKeyword
+              TrueKeyword
+          PropertyAccessExpression
+            Identifier: ' _'
+            Identifier: 'identity'

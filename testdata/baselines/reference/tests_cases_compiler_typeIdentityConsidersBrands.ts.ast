@@ -1,0 +1,87 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' X'
+    PropertyDeclaration
+      Identifier: '
+      name'
+      StringKeyword
+  ClassDeclaration
+    Identifier: ' Y'
+    PropertyDeclaration
+      Identifier: '
+      name'
+      StringKeyword
+  ClassDeclaration
+    Identifier: ' X_1'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' name'
+      StringKeyword
+  ClassDeclaration
+    Identifier: ' Y_1'
+    PropertyDeclaration
+      PrivateKeyword
+      Identifier: ' name'
+      StringKeyword
+  FunctionDeclaration
+    Identifier: ' foo'
+    Parameter
+      Identifier: 'arg'
+      TypeReference
+        Identifier: ' X'
+    Block
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        NewExpression
+          Identifier: ' Y'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        NewExpression
+          Identifier: ' X'
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+ 
+a'
+      EqualsToken
+      Identifier: ' b'
+  ExpressionStatement
+    CallExpression
+      Identifier: ' // ok
+foo'
+      Identifier: 'a'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a2'
+        NewExpression
+          Identifier: ' Y_1'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b2'
+        NewExpression
+          Identifier: ' X_1'
+  FunctionDeclaration
+    Identifier: ' foo2'
+    Parameter
+      Identifier: 'arg'
+      TypeReference
+        Identifier: ' X_1'
+    Block
+  ExpressionStatement
+    BinaryExpression
+      Identifier: '
+
+a2'
+      EqualsToken
+      Identifier: ' b2'
+  ExpressionStatement
+    CallExpression
+      Identifier: ' // should error
+foo2'
+      Identifier: 'a2'

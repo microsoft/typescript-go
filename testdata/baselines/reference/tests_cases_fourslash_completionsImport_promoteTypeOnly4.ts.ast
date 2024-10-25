@@ -1,0 +1,89 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+// @module: es2015
+// @verbatimModuleSyntax: true
+
+// @Filename: /exports.ts
+//// export interface SomeInterface {}
+//// export class SomePig {}
+
+// @Filename: /a.ts
+//// import type { SomePig, SomeInterface } from "./exports.js";
+//// new SomePig/**/
+
+verify'
+        Identifier: 'completions'
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+  marker'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+  includes'
+          ArrayLiteralExpression
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: '
+    name'
+                StringLiteral
+              PropertyAssignment
+                Identifier: '
+    source'
+                PropertyAccessExpression
+                  PropertyAccessExpression
+                    Identifier: ' completion'
+                    Identifier: 'CompletionSource'
+                  Identifier: 'TypeOnlyAlias'
+              PropertyAssignment
+                Identifier: '
+    hasAction'
+                TrueKeyword
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '
+
+verify'
+        Identifier: 'applyCodeActionFromCompletion'
+      StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+  name'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+  source'
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: ' completion'
+              Identifier: 'CompletionSource'
+            Identifier: 'TypeOnlyAlias'
+        PropertyAssignment
+          Identifier: '
+  description'
+          NoSubstitutionTemplateLiteral
+        PropertyAssignment
+          Identifier: '
+  newFileContent'
+          NoSubstitutionTemplateLiteral
+        PropertyAssignment
+          Identifier: '
+  preferences'
+          ObjectLiteralExpression
+            PropertyAssignment
+              Identifier: '
+    includeCompletionsForModuleExports'
+              TrueKeyword
+            PropertyAssignment
+              Identifier: '
+    allowIncompleteCompletions'
+              TrueKeyword
+            PropertyAssignment
+              Identifier: '
+    includeInsertTextCompletions'
+              TrueKeyword

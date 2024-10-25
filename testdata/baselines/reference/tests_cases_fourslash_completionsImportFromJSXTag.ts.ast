@@ -1,0 +1,45 @@
+SourceFile
+  ExpressionStatement
+    CallExpression
+      PropertyAccessExpression
+        Identifier: '/// <reference path="fourslash.ts" />
+
+// @jsx: react
+
+// @Filename: /types.d.ts
+//// declare namespace JSX {
+////   interface IntrinsicElements { a }
+//// }
+
+// @Filename: /Box.tsx
+//// export function Box(props: any) { return null; }
+
+// @Filename: /App.tsx
+//// export function App() {
+////   return (
+////     <div className="App">
+////       <Box/**/
+////     </div>
+////   )
+//// }
+
+verify'
+        Identifier: 'applyCodeActionFromCompletion'
+      StringLiteral
+      ObjectLiteralExpression
+        PropertyAssignment
+          Identifier: '
+  name'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+  source'
+          StringLiteral
+        PropertyAssignment
+          Identifier: '
+  description'
+          NoSubstitutionTemplateLiteral
+        PropertyAssignment
+          Identifier: '
+  newFileContent'
+          NoSubstitutionTemplateLiteral

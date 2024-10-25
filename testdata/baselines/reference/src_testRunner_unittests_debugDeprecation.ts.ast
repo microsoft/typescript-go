@@ -1,0 +1,454 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: ' deprecate'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamespaceImport
+        Identifier: ' ts'
+    StringLiteral
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+
+describe'
+      StringLiteral
+      ArrowFunction
+        EqualsGreaterThanToken
+        Block
+          VariableStatement
+            VariableDeclarationList
+              VariableDeclaration
+                Identifier: ' loggingHost'
+                UnionType
+                  TypeReference
+                    QualifiedName
+                      Identifier: ' ts'
+                      Identifier: 'LoggingHost'
+                  UndefinedKeyword
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    beforeEach'
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+        loggingHost'
+                      EqualsToken
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: ' ts'
+                          Identifier: 'Debug'
+                        Identifier: 'loggingHost'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    afterEach'
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    BinaryExpression
+                      PropertyAccessExpression
+                        PropertyAccessExpression
+                          Identifier: '
+        ts'
+                          Identifier: 'Debug'
+                        Identifier: 'loggingHost'
+                      EqualsToken
+                      Identifier: ' loggingHost'
+                  ExpressionStatement
+                    BinaryExpression
+                      Identifier: '
+        loggingHost'
+                      EqualsToken
+                      Identifier: ' undefined'
+          ExpressionStatement
+            CallExpression
+              Identifier: '
+    describe'
+              StringLiteral
+              ArrowFunction
+                EqualsGreaterThanToken
+                Block
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        it'
+                      StringLiteral
+                      ArrowFunction
+                        EqualsGreaterThanToken
+                        Block
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' deprecation'
+                                CallExpression
+                                  Identifier: ' deprecate'
+                                  PropertyAccessExpression
+                                    Identifier: 'ts'
+                                    Identifier: 'noop'
+                                  ObjectLiteralExpression
+                                    PropertyAssignment
+                                      Identifier: '
+                warnAfter'
+                                      StringLiteral
+                                    PropertyAssignment
+                                      Identifier: '
+                typeScriptVersion'
+                                      StringLiteral
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' logWritten'
+                                FalseKeyword
+                          ExpressionStatement
+                            BinaryExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: '
+            ts'
+                                  Identifier: 'Debug'
+                                Identifier: 'loggingHost'
+                              EqualsToken
+                              ObjectLiteralExpression
+                                MethodDeclaration
+                                  Identifier: '
+                log'
+                                  Block
+                                    ExpressionStatement
+                                      BinaryExpression
+                                        Identifier: '
+                    logWritten'
+                                        EqualsToken
+                                        TrueKeyword
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            deprecation'
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+            assert'
+                                Identifier: 'isFalse'
+                              Identifier: 'logWritten'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        it'
+                      StringLiteral
+                      ArrowFunction
+                        EqualsGreaterThanToken
+                        Block
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' deprecation'
+                                CallExpression
+                                  Identifier: ' deprecate'
+                                  PropertyAccessExpression
+                                    Identifier: 'ts'
+                                    Identifier: 'noop'
+                                  ObjectLiteralExpression
+                                    PropertyAssignment
+                                      Identifier: '
+                warnAfter'
+                                      StringLiteral
+                                    PropertyAssignment
+                                      Identifier: '
+                typeScriptVersion'
+                                      StringLiteral
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' logWritten'
+                                FalseKeyword
+                          ExpressionStatement
+                            BinaryExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: '
+            ts'
+                                  Identifier: 'Debug'
+                                Identifier: 'loggingHost'
+                              EqualsToken
+                              ObjectLiteralExpression
+                                MethodDeclaration
+                                  Identifier: '
+                log'
+                                  Block
+                                    ExpressionStatement
+                                      BinaryExpression
+                                        Identifier: '
+                    logWritten'
+                                        EqualsToken
+                                        TrueKeyword
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            deprecation'
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+            assert'
+                                Identifier: 'isTrue'
+                              Identifier: 'logWritten'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        it'
+                      StringLiteral
+                      ArrowFunction
+                        EqualsGreaterThanToken
+                        Block
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' deprecation'
+                                CallExpression
+                                  Identifier: ' deprecate'
+                                  PropertyAccessExpression
+                                    Identifier: 'ts'
+                                    Identifier: 'noop'
+                                  ObjectLiteralExpression
+                                    PropertyAssignment
+                                      Identifier: '
+                typeScriptVersion'
+                                      StringLiteral
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' logWritten'
+                                FalseKeyword
+                          ExpressionStatement
+                            BinaryExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: '
+            ts'
+                                  Identifier: 'Debug'
+                                Identifier: 'loggingHost'
+                              EqualsToken
+                              ObjectLiteralExpression
+                                MethodDeclaration
+                                  Identifier: '
+                log'
+                                  Block
+                                    ExpressionStatement
+                                      BinaryExpression
+                                        Identifier: '
+                    logWritten'
+                                        EqualsToken
+                                        TrueKeyword
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            deprecation'
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+            assert'
+                                Identifier: 'isTrue'
+                              Identifier: 'logWritten'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        it'
+                      StringLiteral
+                      ArrowFunction
+                        EqualsGreaterThanToken
+                        Block
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' deprecation'
+                                CallExpression
+                                  Identifier: ' deprecate'
+                                  PropertyAccessExpression
+                                    Identifier: 'ts'
+                                    Identifier: 'noop'
+                                  ObjectLiteralExpression
+                                    PropertyAssignment
+                                      Identifier: '
+                typeScriptVersion'
+                                      StringLiteral
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' logWrites'
+                                NumericLiteral
+                          ExpressionStatement
+                            BinaryExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: '
+            ts'
+                                  Identifier: 'Debug'
+                                Identifier: 'loggingHost'
+                              EqualsToken
+                              ObjectLiteralExpression
+                                MethodDeclaration
+                                  Identifier: '
+                log'
+                                  Block
+                                    ExpressionStatement
+                                      PostfixUnaryExpression
+                                        Identifier: '
+                    logWrites'
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            deprecation'
+                          ExpressionStatement
+                            CallExpression
+                              Identifier: '
+            deprecation'
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+            assert'
+                                Identifier: 'equal'
+                              Identifier: 'logWrites'
+                              NumericLiteral
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        it'
+                      StringLiteral
+                      ArrowFunction
+                        EqualsGreaterThanToken
+                        Block
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' deprecation'
+                                CallExpression
+                                  Identifier: ' deprecate'
+                                  PropertyAccessExpression
+                                    Identifier: 'ts'
+                                    Identifier: 'noop'
+                                  ObjectLiteralExpression
+                                    PropertyAssignment
+                                      Identifier: '
+                warnAfter'
+                                      StringLiteral
+                                    PropertyAssignment
+                                      Identifier: '
+                errorAfter'
+                                      StringLiteral
+                                    PropertyAssignment
+                                      Identifier: '
+                typeScriptVersion'
+                                      StringLiteral
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' logWritten'
+                                FalseKeyword
+                          ExpressionStatement
+                            BinaryExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: '
+            ts'
+                                  Identifier: 'Debug'
+                                Identifier: 'loggingHost'
+                              EqualsToken
+                              ObjectLiteralExpression
+                                MethodDeclaration
+                                  Identifier: '
+                log'
+                                  Block
+                                    ExpressionStatement
+                                      BinaryExpression
+                                        Identifier: '
+                    logWritten'
+                                        EqualsToken
+                                        TrueKeyword
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                CallExpression
+                                  Identifier: '
+            expect'
+                                  Identifier: 'deprecation'
+                                Identifier: 'throws'
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+            assert'
+                                Identifier: 'isFalse'
+                              Identifier: 'logWritten'
+                  ExpressionStatement
+                    CallExpression
+                      Identifier: '
+        it'
+                      StringLiteral
+                      ArrowFunction
+                        EqualsGreaterThanToken
+                        Block
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' deprecation'
+                                CallExpression
+                                  Identifier: ' deprecate'
+                                  PropertyAccessExpression
+                                    Identifier: 'ts'
+                                    Identifier: 'noop'
+                                  ObjectLiteralExpression
+                                    PropertyAssignment
+                                      Identifier: '
+                error'
+                                      TrueKeyword
+                          VariableStatement
+                            VariableDeclarationList
+                              VariableDeclaration
+                                Identifier: ' logWritten'
+                                FalseKeyword
+                          ExpressionStatement
+                            BinaryExpression
+                              PropertyAccessExpression
+                                PropertyAccessExpression
+                                  Identifier: '
+            ts'
+                                  Identifier: 'Debug'
+                                Identifier: 'loggingHost'
+                              EqualsToken
+                              ObjectLiteralExpression
+                                MethodDeclaration
+                                  Identifier: '
+                log'
+                                  Block
+                                    ExpressionStatement
+                                      BinaryExpression
+                                        Identifier: '
+                    logWritten'
+                                        EqualsToken
+                                        TrueKeyword
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                CallExpression
+                                  Identifier: '
+            expect'
+                                  Identifier: 'deprecation'
+                                Identifier: 'throws'
+                          ExpressionStatement
+                            CallExpression
+                              PropertyAccessExpression
+                                Identifier: '
+            assert'
+                                Identifier: 'isFalse'
+                              Identifier: 'logWritten'

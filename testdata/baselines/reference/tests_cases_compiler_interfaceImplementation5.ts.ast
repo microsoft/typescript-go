@@ -1,0 +1,99 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' I1'
+    PropertySignature
+      Identifier: '
+    getset1'
+      NumberKeyword
+  ClassDeclaration
+    Identifier: ' C1'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' I1'
+    GetAccessor
+      PublicKeyword
+      Identifier: ' getset1'
+      Block
+        ReturnStatement
+          NumericLiteral
+  ClassDeclaration
+    Identifier: ' C2'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' I1'
+    SetAccessor
+      PublicKeyword
+      Identifier: ' getset1'
+      Parameter
+        Identifier: 'baz'
+        NumberKeyword
+      Block
+  ClassDeclaration
+    Identifier: ' C3'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' I1'
+    GetAccessor
+      PublicKeyword
+      Identifier: ' getset1'
+      Block
+        ReturnStatement
+          NumericLiteral
+    SetAccessor
+      PublicKeyword
+      Identifier: ' getset1'
+      Parameter
+        Identifier: 'baz'
+        NumberKeyword
+      Block
+  ClassDeclaration
+    Identifier: ' C4'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' I1'
+    GetAccessor
+      PublicKeyword
+      Identifier: ' getset1'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' x'
+              AnyKeyword
+        ReturnStatement
+          Identifier: ' x'
+  ClassDeclaration
+    Identifier: ' C5'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' I1'
+    SetAccessor
+      PublicKeyword
+      Identifier: ' getset1'
+      Parameter
+        Identifier: 'baz'
+        AnyKeyword
+      Block
+  ClassDeclaration
+    Identifier: ' C6'
+    HeritageClause
+      ExpressionWithTypeArguments
+        Identifier: ' I1'
+    SetAccessor
+      PublicKeyword
+      Identifier: ' getset1'
+      Parameter
+        Identifier: 'baz'
+        AnyKeyword
+      Block
+    GetAccessor
+      PublicKeyword
+      Identifier: ' getset1'
+      Block
+        VariableStatement
+          VariableDeclarationList
+            VariableDeclaration
+              Identifier: ' x'
+              AnyKeyword
+        ReturnStatement
+          Identifier: ' x'

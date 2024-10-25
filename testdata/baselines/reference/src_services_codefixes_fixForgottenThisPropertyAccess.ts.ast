@@ -1,0 +1,343 @@
+SourceFile
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    codeFixAll'
+        ImportSpecifier
+          Identifier: '
+    createCodeFixAction'
+        ImportSpecifier
+          Identifier: '
+    registerCodeFix'
+    StringLiteral
+  ImportDeclaration
+    ImportClause
+      NamedImports
+        ImportSpecifier
+          Identifier: '
+    Diagnostics'
+        ImportSpecifier
+          Identifier: '
+    factory'
+        ImportSpecifier
+          Identifier: '
+    getContainingClass'
+        ImportSpecifier
+          Identifier: '
+    getTokenAtPosition'
+        ImportSpecifier
+          Identifier: '
+    Identifier'
+        ImportSpecifier
+          Identifier: '
+    isIdentifier'
+        ImportSpecifier
+          Identifier: '
+    isPrivateIdentifier'
+        ImportSpecifier
+          Identifier: '
+    PrivateIdentifier'
+        ImportSpecifier
+          Identifier: '
+    SourceFile'
+        ImportSpecifier
+          Identifier: '
+    suppressLeadingAndTrailingTrivia'
+        ImportSpecifier
+          Identifier: '
+    textChanges'
+    StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' fixId'
+        StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' didYouMeanStaticMemberCode'
+        PropertyAccessExpression
+          PropertyAccessExpression
+            Identifier: ' Diagnostics'
+            Identifier: 'Cannot_find_name_0_Did_you_mean_the_static_member_1_0'
+          Identifier: 'code'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' errorCodes'
+        ArrayLiteralExpression
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: '
+    Diagnostics'
+              Identifier: 'Cannot_find_name_0_Did_you_mean_the_instance_member_this_0'
+            Identifier: 'code'
+          PropertyAccessExpression
+            PropertyAccessExpression
+              Identifier: '
+    Diagnostics'
+              Identifier: 'Private_identifiers_are_only_allowed_in_class_bodies_and_may_only_be_used_as_part_of_a_class_member_declaration_property_access_or_on_the_left_hand_side_of_an_in_expression'
+            Identifier: 'code'
+          Identifier: '
+    didYouMeanStaticMemberCode'
+  ExpressionStatement
+    CallExpression
+      Identifier: '
+registerCodeFix'
+      ObjectLiteralExpression
+        ShorthandPropertyAssignment
+          Identifier: '
+    errorCodes'
+        MethodDeclaration
+          Identifier: '
+    getCodeActions'
+          Parameter
+            Identifier: 'context'
+          Block
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  ObjectBindingPattern
+                    BindingElement
+                      Identifier: ' sourceFile'
+                  Identifier: ' context'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' info'
+                  CallExpression
+                    Identifier: ' getInfo'
+                    Identifier: 'sourceFile'
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' context'
+                        Identifier: 'span'
+                      Identifier: 'start'
+                    PropertyAccessExpression
+                      Identifier: ' context'
+                      Identifier: 'errorCode'
+            IfStatement
+              PrefixUnaryExpression
+                Identifier: 'info'
+              Block
+                ReturnStatement
+                  Identifier: ' undefined'
+            VariableStatement
+              VariableDeclarationList
+                VariableDeclaration
+                  Identifier: ' changes'
+                  CallExpression
+                    PropertyAccessExpression
+                      PropertyAccessExpression
+                        Identifier: ' textChanges'
+                        Identifier: 'ChangeTracker'
+                      Identifier: 'with'
+                    Identifier: 'context'
+                    ArrowFunction
+                      Parameter
+                        Identifier: ' t'
+                      EqualsGreaterThanToken
+                      CallExpression
+                        Identifier: ' doChange'
+                        Identifier: 't'
+                        Identifier: ' sourceFile'
+                        Identifier: ' info'
+            ReturnStatement
+              ArrayLiteralExpression
+                CallExpression
+                  Identifier: 'createCodeFixAction'
+                  Identifier: 'fixId'
+                  Identifier: ' changes'
+                  ArrayLiteralExpression
+                    PropertyAccessExpression
+                      Identifier: 'Diagnostics'
+                      Identifier: 'Add_0_to_unresolved_variable'
+                    BinaryExpression
+                      PropertyAccessExpression
+                        Identifier: ' info'
+                        Identifier: 'className'
+                      BarBarToken
+                      StringLiteral
+                  Identifier: ' fixId'
+                  PropertyAccessExpression
+                    Identifier: ' Diagnostics'
+                    Identifier: 'Add_qualifier_to_all_unresolved_variables_matching_a_member_name'
+        PropertyAssignment
+          Identifier: '
+    fixIds'
+          ArrayLiteralExpression
+            Identifier: 'fixId'
+        PropertyAssignment
+          Identifier: '
+    getAllCodeActions'
+          ArrowFunction
+            Parameter
+              Identifier: ' context'
+            EqualsGreaterThanToken
+            CallExpression
+              Identifier: '
+        codeFixAll'
+              Identifier: 'context'
+              Identifier: ' errorCodes'
+              ArrowFunction
+                Parameter
+                  Identifier: 'changes'
+                Parameter
+                  Identifier: ' diag'
+                EqualsGreaterThanToken
+                Block
+                  VariableStatement
+                    VariableDeclarationList
+                      VariableDeclaration
+                        Identifier: ' info'
+                        CallExpression
+                          Identifier: ' getInfo'
+                          PropertyAccessExpression
+                            Identifier: 'diag'
+                            Identifier: 'file'
+                          PropertyAccessExpression
+                            Identifier: ' diag'
+                            Identifier: 'start'
+                          PropertyAccessExpression
+                            Identifier: ' diag'
+                            Identifier: 'code'
+                  IfStatement
+                    Identifier: 'info'
+                    ExpressionStatement
+                      CallExpression
+                        Identifier: ' doChange'
+                        Identifier: 'changes'
+                        PropertyAccessExpression
+                          Identifier: ' context'
+                          Identifier: 'sourceFile'
+                        Identifier: ' info'
+  InterfaceDeclaration
+    Identifier: ' Info'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' node'
+      UnionType
+        TypeReference
+          Identifier: ' Identifier'
+        TypeReference
+          Identifier: ' PrivateIdentifier'
+    PropertySignature
+      ReadonlyKeyword
+      Identifier: ' className'
+      UnionType
+        StringKeyword
+        UndefinedKeyword
+  FunctionDeclaration
+    Identifier: ' getInfo'
+    Parameter
+      Identifier: 'sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      Identifier: ' pos'
+      NumberKeyword
+    Parameter
+      Identifier: ' diagCode'
+      NumberKeyword
+    UnionType
+      TypeReference
+        Identifier: ' Info'
+      UndefinedKeyword
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' node'
+            CallExpression
+              Identifier: ' getTokenAtPosition'
+              Identifier: 'sourceFile'
+              Identifier: ' pos'
+      IfStatement
+        BinaryExpression
+          CallExpression
+            Identifier: 'isIdentifier'
+            Identifier: 'node'
+          BarBarToken
+          CallExpression
+            Identifier: ' isPrivateIdentifier'
+            Identifier: 'node'
+        Block
+          ReturnStatement
+            ObjectLiteralExpression
+              ShorthandPropertyAssignment
+                Identifier: ' node'
+              PropertyAssignment
+                Identifier: ' className'
+                ConditionalExpression
+                  BinaryExpression
+                    Identifier: ' diagCode'
+                    EqualsEqualsEqualsToken
+                    Identifier: ' didYouMeanStaticMemberCode'
+                  QuestionToken
+                  PropertyAccessExpression
+                    NonNullExpression
+                      PropertyAccessExpression
+                        NonNullExpression
+                          CallExpression
+                            Identifier: ' getContainingClass'
+                            Identifier: 'node'
+                        Identifier: 'name'
+                    Identifier: 'text'
+                  ColonToken
+                  Identifier: ' undefined'
+  FunctionDeclaration
+    Identifier: ' doChange'
+    Parameter
+      Identifier: 'changes'
+      TypeReference
+        QualifiedName
+          Identifier: ' textChanges'
+          Identifier: 'ChangeTracker'
+    Parameter
+      Identifier: ' sourceFile'
+      TypeReference
+        Identifier: ' SourceFile'
+    Parameter
+      ObjectBindingPattern
+        BindingElement
+          Identifier: ' node'
+        BindingElement
+          Identifier: ' className'
+      TypeReference
+        Identifier: ' Info'
+    VoidKeyword
+    Block
+      ExpressionStatement
+        CallExpression
+          Identifier: '
+    // TODO (https://github.com/Microsoft/TypeScript/issues/21246): use shared helper
+    suppressLeadingAndTrailingTrivia'
+          Identifier: 'node'
+      ExpressionStatement
+        CallExpression
+          PropertyAccessExpression
+            Identifier: '
+    changes'
+            Identifier: 'replaceNode'
+          Identifier: 'sourceFile'
+          Identifier: ' node'
+          CallExpression
+            PropertyAccessExpression
+              Identifier: ' factory'
+              Identifier: 'createPropertyAccessExpression'
+            ConditionalExpression
+              Identifier: 'className'
+              QuestionToken
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' factory'
+                  Identifier: 'createIdentifier'
+                Identifier: 'className'
+              ColonToken
+              CallExpression
+                PropertyAccessExpression
+                  Identifier: ' factory'
+                  Identifier: 'createThis'
+            Identifier: ' node'

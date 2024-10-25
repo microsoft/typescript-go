@@ -1,0 +1,30 @@
+SourceFile
+  InterfaceDeclaration
+    Identifier: ' WithNonPrimitive'
+    PropertySignature
+      Identifier: '
+    foo'
+      ObjectKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeReference
+          Identifier: ' WithNonPrimitive'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: ' foo'
+            ObjectLiteralExpression
+              PropertyAssignment
+                Identifier: 'bar'
+                StringLiteral
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' b'
+        TypeReference
+          Identifier: ' WithNonPrimitive'
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: 'foo'
+            StringLiteral

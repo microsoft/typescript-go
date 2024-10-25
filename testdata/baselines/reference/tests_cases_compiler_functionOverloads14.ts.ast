@@ -1,0 +1,25 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' foo'
+    TypeLiteral
+      PropertySignature
+        Identifier: 'a'
+        NumberKeyword
+  FunctionDeclaration
+    Identifier: ' foo'
+    TypeLiteral
+      PropertySignature
+        Identifier: 'a'
+        StringKeyword
+  FunctionDeclaration
+    Identifier: ' foo'
+    TypeLiteral
+      PropertySignature
+        Identifier: 'a'
+        AnyKeyword
+    Block
+      ReturnStatement
+        ObjectLiteralExpression
+          PropertyAssignment
+            Identifier: 'a'
+            NumericLiteral

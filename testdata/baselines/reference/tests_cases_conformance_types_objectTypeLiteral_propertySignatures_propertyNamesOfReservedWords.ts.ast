@@ -1,0 +1,836 @@
+SourceFile
+  ClassDeclaration
+    Identifier: ' C'
+    PropertyDeclaration
+      Identifier: '
+    abstract'
+    PropertyDeclaration
+      Identifier: '
+    as'
+    PropertyDeclaration
+      Identifier: '
+    boolean'
+    PropertyDeclaration
+      Identifier: '
+    break'
+    PropertyDeclaration
+      Identifier: '
+    byte'
+    PropertyDeclaration
+      Identifier: '
+    case'
+    PropertyDeclaration
+      Identifier: '
+    catch'
+    PropertyDeclaration
+      Identifier: '
+    char'
+    PropertyDeclaration
+      Identifier: '
+    class'
+    PropertyDeclaration
+      Identifier: '
+    continue'
+    PropertyDeclaration
+      Identifier: '
+    const'
+    PropertyDeclaration
+      Identifier: '
+    debugger'
+    PropertyDeclaration
+      Identifier: '
+    default'
+    PropertyDeclaration
+      Identifier: '
+    delete'
+    PropertyDeclaration
+      Identifier: '
+    do'
+    PropertyDeclaration
+      Identifier: '
+    double'
+    PropertyDeclaration
+      Identifier: '
+    else'
+    PropertyDeclaration
+      Identifier: '
+    enum'
+    PropertyDeclaration
+      Identifier: '
+    export'
+    PropertyDeclaration
+      Identifier: '
+    extends'
+    PropertyDeclaration
+      Identifier: '
+    false'
+    PropertyDeclaration
+      Identifier: '
+    final'
+    PropertyDeclaration
+      Identifier: '
+    finally'
+    PropertyDeclaration
+      Identifier: '
+    float'
+    PropertyDeclaration
+      Identifier: '
+    for'
+    PropertyDeclaration
+      Identifier: '
+    function'
+    PropertyDeclaration
+      Identifier: '
+    goto'
+    PropertyDeclaration
+      Identifier: '
+    if'
+    PropertyDeclaration
+      Identifier: '
+    implements'
+    PropertyDeclaration
+      Identifier: '
+    import'
+    PropertyDeclaration
+      Identifier: '
+    in'
+    PropertyDeclaration
+      Identifier: '
+    instanceof'
+    PropertyDeclaration
+      Identifier: '
+    int'
+    PropertyDeclaration
+      Identifier: '
+    interface'
+    PropertyDeclaration
+      Identifier: '
+    is'
+    PropertyDeclaration
+      Identifier: '
+    long'
+    PropertyDeclaration
+      Identifier: '
+    namespace'
+    PropertyDeclaration
+      Identifier: '
+    native'
+    PropertyDeclaration
+      Identifier: '
+    new'
+    PropertyDeclaration
+      Identifier: '
+    null'
+    PropertyDeclaration
+      Identifier: '
+    package'
+    PropertyDeclaration
+      Identifier: '
+    private'
+    PropertyDeclaration
+      Identifier: '
+    protected'
+    PropertyDeclaration
+      Identifier: '
+    public'
+    PropertyDeclaration
+      Identifier: '
+    return'
+    PropertyDeclaration
+      Identifier: '
+    short'
+    PropertyDeclaration
+      Identifier: '
+    static'
+    PropertyDeclaration
+      Identifier: '
+    super'
+    PropertyDeclaration
+      Identifier: '
+    switch'
+    PropertyDeclaration
+      Identifier: '
+    synchronized'
+    PropertyDeclaration
+      Identifier: '
+    this'
+    PropertyDeclaration
+      Identifier: '
+    throw'
+    PropertyDeclaration
+      Identifier: '
+    throws'
+    PropertyDeclaration
+      Identifier: '
+    transient'
+    PropertyDeclaration
+      Identifier: '
+    true'
+    PropertyDeclaration
+      Identifier: '
+    try'
+    PropertyDeclaration
+      Identifier: '
+    typeof'
+    PropertyDeclaration
+      Identifier: '
+    use'
+    PropertyDeclaration
+      Identifier: '
+    var'
+    PropertyDeclaration
+      Identifier: '
+    void'
+    PropertyDeclaration
+      Identifier: '
+    volatile'
+    PropertyDeclaration
+      Identifier: '
+    while'
+    PropertyDeclaration
+      Identifier: '
+    with'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' c'
+        TypeReference
+          Identifier: ' C'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r1'
+        PropertyAccessExpression
+          Identifier: ' c'
+          Identifier: 'abstract'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r2'
+        PropertyAccessExpression
+          Identifier: ' c'
+          Identifier: 'as'
+  InterfaceDeclaration
+    Identifier: ' I'
+    PropertySignature
+      Identifier: '
+    abstract'
+    PropertySignature
+      Identifier: '
+    as'
+    PropertySignature
+      Identifier: '
+    boolean'
+    PropertySignature
+      Identifier: '
+    break'
+    PropertySignature
+      Identifier: '
+    byte'
+    PropertySignature
+      Identifier: '
+    case'
+    PropertySignature
+      Identifier: '
+    catch'
+    PropertySignature
+      Identifier: '
+    char'
+    PropertySignature
+      Identifier: '
+    class'
+    PropertySignature
+      Identifier: '
+    continue'
+    PropertySignature
+      Identifier: '
+    const'
+    PropertySignature
+      Identifier: '
+    debugger'
+    PropertySignature
+      Identifier: '
+    default'
+    PropertySignature
+      Identifier: '
+    delete'
+    PropertySignature
+      Identifier: '
+    do'
+    PropertySignature
+      Identifier: '
+    double'
+    PropertySignature
+      Identifier: '
+    else'
+    PropertySignature
+      Identifier: '
+    enum'
+    PropertySignature
+      Identifier: '
+    export'
+    PropertySignature
+      Identifier: '
+    extends'
+    PropertySignature
+      Identifier: '
+    false'
+    PropertySignature
+      Identifier: '
+    final'
+    PropertySignature
+      Identifier: '
+    finally'
+    PropertySignature
+      Identifier: '
+    float'
+    PropertySignature
+      Identifier: '
+    for'
+    PropertySignature
+      Identifier: '
+    function'
+    PropertySignature
+      Identifier: '
+    goto'
+    PropertySignature
+      Identifier: '
+    if'
+    PropertySignature
+      Identifier: '
+    implements'
+    PropertySignature
+      Identifier: '
+    import'
+    PropertySignature
+      Identifier: '
+    in'
+    PropertySignature
+      Identifier: '
+    instanceof'
+    PropertySignature
+      Identifier: '
+    int'
+    PropertySignature
+      Identifier: '
+    interface'
+    PropertySignature
+      Identifier: '
+    is'
+    PropertySignature
+      Identifier: '
+    long'
+    PropertySignature
+      Identifier: '
+    namespace'
+    PropertySignature
+      Identifier: '
+    native'
+    PropertySignature
+      Identifier: '
+    new'
+    PropertySignature
+      Identifier: '
+    null'
+    PropertySignature
+      Identifier: '
+    package'
+    PropertySignature
+      Identifier: '
+    private'
+    PropertySignature
+      Identifier: '
+    protected'
+    PropertySignature
+      Identifier: '
+    public'
+    PropertySignature
+      Identifier: '
+    return'
+    PropertySignature
+      Identifier: '
+    short'
+    PropertySignature
+      Identifier: '
+    static'
+    PropertySignature
+      Identifier: '
+    super'
+    PropertySignature
+      Identifier: '
+    switch'
+    PropertySignature
+      Identifier: '
+    synchronized'
+    PropertySignature
+      Identifier: '
+    this'
+    PropertySignature
+      Identifier: '
+    throw'
+    PropertySignature
+      Identifier: '
+    throws'
+    PropertySignature
+      Identifier: '
+    transient'
+    PropertySignature
+      Identifier: '
+    true'
+    PropertySignature
+      Identifier: '
+    try'
+    PropertySignature
+      Identifier: '
+    typeof'
+    PropertySignature
+      Identifier: '
+    use'
+    PropertySignature
+      Identifier: '
+    var'
+    PropertySignature
+      Identifier: '
+    void'
+    PropertySignature
+      Identifier: '
+    volatile'
+    PropertySignature
+      Identifier: '
+    while'
+    PropertySignature
+      Identifier: '
+    with'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' i'
+        TypeReference
+          Identifier: ' I'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r3'
+        PropertyAccessExpression
+          Identifier: ' i'
+          Identifier: 'abstract'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r4'
+        PropertyAccessExpression
+          Identifier: ' i'
+          Identifier: 'as'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' a'
+        TypeLiteral
+          PropertySignature
+            Identifier: '
+    abstract'
+          PropertySignature
+            Identifier: '
+    as'
+          PropertySignature
+            Identifier: '
+    boolean'
+          PropertySignature
+            Identifier: '
+    break'
+          PropertySignature
+            Identifier: '
+    byte'
+          PropertySignature
+            Identifier: '
+    case'
+          PropertySignature
+            Identifier: '
+    catch'
+          PropertySignature
+            Identifier: '
+    char'
+          PropertySignature
+            Identifier: '
+    class'
+          PropertySignature
+            Identifier: '
+    continue'
+          PropertySignature
+            Identifier: '
+    const'
+          PropertySignature
+            Identifier: '
+    debugger'
+          PropertySignature
+            Identifier: '
+    default'
+          PropertySignature
+            Identifier: '
+    delete'
+          PropertySignature
+            Identifier: '
+    do'
+          PropertySignature
+            Identifier: '
+    double'
+          PropertySignature
+            Identifier: '
+    else'
+          PropertySignature
+            Identifier: '
+    enum'
+          PropertySignature
+            Identifier: '
+    export'
+          PropertySignature
+            Identifier: '
+    extends'
+          PropertySignature
+            Identifier: '
+    false'
+          PropertySignature
+            Identifier: '
+    final'
+          PropertySignature
+            Identifier: '
+    finally'
+          PropertySignature
+            Identifier: '
+    float'
+          PropertySignature
+            Identifier: '
+    for'
+          PropertySignature
+            Identifier: '
+    function'
+          PropertySignature
+            Identifier: '
+    goto'
+          PropertySignature
+            Identifier: '
+    if'
+          PropertySignature
+            Identifier: '
+    implements'
+          PropertySignature
+            Identifier: '
+    import'
+          PropertySignature
+            Identifier: '
+    in'
+          PropertySignature
+            Identifier: '
+    instanceof'
+          PropertySignature
+            Identifier: '
+    int'
+          PropertySignature
+            Identifier: '
+    interface'
+          PropertySignature
+            Identifier: '
+    is'
+          PropertySignature
+            Identifier: '
+    long'
+          PropertySignature
+            Identifier: '
+    namespace'
+          PropertySignature
+            Identifier: '
+    native'
+          PropertySignature
+            Identifier: '
+    new'
+          PropertySignature
+            Identifier: '
+    null'
+          PropertySignature
+            Identifier: '
+    package'
+          PropertySignature
+            Identifier: '
+    private'
+          PropertySignature
+            Identifier: '
+    protected'
+          PropertySignature
+            Identifier: '
+    public'
+          PropertySignature
+            Identifier: '
+    return'
+          PropertySignature
+            Identifier: '
+    short'
+          PropertySignature
+            Identifier: '
+    static'
+          PropertySignature
+            Identifier: '
+    super'
+          PropertySignature
+            Identifier: '
+    switch'
+          PropertySignature
+            Identifier: '
+    synchronized'
+          PropertySignature
+            Identifier: '
+    this'
+          PropertySignature
+            Identifier: '
+    throw'
+          PropertySignature
+            Identifier: '
+    throws'
+          PropertySignature
+            Identifier: '
+    transient'
+          PropertySignature
+            Identifier: '
+    true'
+          PropertySignature
+            Identifier: '
+    try'
+          PropertySignature
+            Identifier: '
+    typeof'
+          PropertySignature
+            Identifier: '
+    use'
+          PropertySignature
+            Identifier: '
+    var'
+          PropertySignature
+            Identifier: '
+    void'
+          PropertySignature
+            Identifier: '
+    volatile'
+          PropertySignature
+            Identifier: '
+    while'
+          PropertySignature
+            Identifier: '
+    with'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r5'
+        PropertyAccessExpression
+          Identifier: ' a'
+          Identifier: 'abstract'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r6'
+        PropertyAccessExpression
+          Identifier: ' a'
+          Identifier: 'as'
+  EnumDeclaration
+    Identifier: ' E'
+    EnumMember
+      Identifier: '
+    abstract'
+    EnumMember
+      Identifier: '
+    as'
+    EnumMember
+      Identifier: '
+    boolean'
+    EnumMember
+      Identifier: '
+    break'
+    EnumMember
+      Identifier: '
+    byte'
+    EnumMember
+      Identifier: '
+    case'
+    EnumMember
+      Identifier: '
+    catch'
+    EnumMember
+      Identifier: '
+    char'
+    EnumMember
+      Identifier: '
+    class'
+    EnumMember
+      Identifier: '
+    continue'
+    EnumMember
+      Identifier: '
+    const'
+    EnumMember
+      Identifier: '
+    debugger'
+    EnumMember
+      Identifier: '
+    default'
+    EnumMember
+      Identifier: '
+    delete'
+    EnumMember
+      Identifier: '
+    do'
+    EnumMember
+      Identifier: '
+    double'
+    EnumMember
+      Identifier: '
+    else'
+    EnumMember
+      Identifier: '
+    enum'
+    EnumMember
+      Identifier: '
+    export'
+    EnumMember
+      Identifier: '
+    extends'
+    EnumMember
+      Identifier: '
+    false'
+    EnumMember
+      Identifier: '
+    final'
+    EnumMember
+      Identifier: '
+    finally'
+    EnumMember
+      Identifier: '
+    float'
+    EnumMember
+      Identifier: '
+    for'
+    EnumMember
+      Identifier: '
+    function'
+    EnumMember
+      Identifier: '
+    goto'
+    EnumMember
+      Identifier: '
+    if'
+    EnumMember
+      Identifier: '
+    implements'
+    EnumMember
+      Identifier: '
+    import'
+    EnumMember
+      Identifier: '
+    in'
+    EnumMember
+      Identifier: '
+    instanceof'
+    EnumMember
+      Identifier: '
+    int'
+    EnumMember
+      Identifier: '
+    interface'
+    EnumMember
+      Identifier: '
+    is'
+    EnumMember
+      Identifier: '
+    long'
+    EnumMember
+      Identifier: '
+    namespace'
+    EnumMember
+      Identifier: '
+    native'
+    EnumMember
+      Identifier: '
+    new'
+    EnumMember
+      Identifier: '
+    null'
+    EnumMember
+      Identifier: '
+    package'
+    EnumMember
+      Identifier: '
+    private'
+    EnumMember
+      Identifier: '
+    protected'
+    EnumMember
+      Identifier: '
+    public'
+    EnumMember
+      Identifier: '
+    return'
+    EnumMember
+      Identifier: '
+    short'
+    EnumMember
+      Identifier: '
+    static'
+    EnumMember
+      Identifier: '
+    super'
+    EnumMember
+      Identifier: '
+    switch'
+    EnumMember
+      Identifier: '
+    synchronized'
+    EnumMember
+      Identifier: '
+    this'
+    EnumMember
+      Identifier: '
+    throw'
+    EnumMember
+      Identifier: '
+    throws'
+    EnumMember
+      Identifier: '
+    transient'
+    EnumMember
+      Identifier: '
+    true'
+    EnumMember
+      Identifier: '
+    try'
+    EnumMember
+      Identifier: '
+    typeof'
+    EnumMember
+      Identifier: '
+    use'
+    EnumMember
+      Identifier: '
+    var'
+    EnumMember
+      Identifier: '
+    void'
+    EnumMember
+      Identifier: '
+    volatile'
+    EnumMember
+      Identifier: '
+    while'
+    EnumMember
+      Identifier: '
+    with'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r7'
+        PropertyAccessExpression
+          Identifier: ' E'
+          Identifier: 'abstract'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' r8'
+        PropertyAccessExpression
+          Identifier: ' E'
+          Identifier: 'as'

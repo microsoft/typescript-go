@@ -1,0 +1,95 @@
+SourceFile
+  Block
+    ExpressionStatement
+      StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    ExpressionStatement
+      BinaryExpression
+        StringLiteral
+        CommaToken
+        StringLiteral
+    Block
+      ExpressionStatement
+        StringLiteral
+      Block
+        ExpressionStatement
+          StringLiteral
+        ExpressionStatement
+          BinaryExpression
+            StringLiteral
+            CommaToken
+            StringLiteral
+        ExpressionStatement
+          StringLiteral
+  VariableStatement
+    ExportKeyword
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        LiteralType
+          StringLiteral
+  VariableStatement
+    ExportKeyword
+    DeclareKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        LiteralType
+          StringLiteral
+  TypeAliasDeclaration
+    Identifier: ' Default'
+    ImportType
+      LiteralType
+        StringLiteral
+      Identifier: 'x'
+  TypeAliasDeclaration
+    Identifier: ' Import'
+    ImportType
+      LiteralType
+        StringLiteral
+      ImportAttributes
+        ImportAttribute
+          StringLiteral
+          StringLiteral
+      Identifier: 'x'
+  TypeAliasDeclaration
+    Identifier: ' Require'
+    ImportType
+      LiteralType
+        StringLiteral
+      ImportAttributes
+        ImportAttribute
+          StringLiteral
+          StringLiteral
+      Identifier: 'x'
+  TypeAliasDeclaration
+    Identifier: ' ImportRelative'
+    ImportType
+      LiteralType
+        StringLiteral
+      ImportAttributes
+        ImportAttribute
+          StringLiteral
+          StringLiteral
+      Identifier: 'x'
+  TypeAliasDeclaration
+    Identifier: ' RequireRelative'
+    ImportType
+      LiteralType
+        StringLiteral
+      ImportAttributes
+        ImportAttribute
+          StringLiteral
+          StringLiteral
+      Identifier: 'x'
+  VariableStatement
+    ExportKeyword
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' x'
+        StringLiteral

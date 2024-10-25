@@ -1,0 +1,242 @@
+SourceFile
+  FunctionDeclaration
+    DeclareKeyword
+    Identifier: ' foo'
+    UnionType
+      StringKeyword
+      UndefinedKeyword
+  FunctionDeclaration
+    Identifier: ' f1'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            CallExpression
+              Identifier: ' foo'
+      IfStatement
+        Identifier: 'x'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+  FunctionDeclaration
+    Identifier: ' f2'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            UnionType
+              StringKeyword
+              UndefinedKeyword
+      ExpressionStatement
+        BinaryExpression
+          Identifier: '
+    x'
+          EqualsToken
+          CallExpression
+            Identifier: ' foo'
+      IfStatement
+        Identifier: 'x'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+  FunctionDeclaration
+    Identifier: ' f3'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            UnionType
+              StringKeyword
+              UndefinedKeyword
+      IfStatement
+        BinaryExpression
+          Identifier: 'x'
+          EqualsToken
+          CallExpression
+            Identifier: ' foo'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+  FunctionDeclaration
+    Identifier: ' f4'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            UnionType
+              StringKeyword
+              UndefinedKeyword
+      IfStatement
+        PrefixUnaryExpression
+          ParenthesizedExpression
+            BinaryExpression
+              Identifier: 'x'
+              EqualsToken
+              CallExpression
+                Identifier: ' foo'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+  FunctionDeclaration
+    Identifier: ' f5'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            UnionType
+              StringKeyword
+              UndefinedKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            UnionType
+              StringKeyword
+              UndefinedKeyword
+      IfStatement
+        BinaryExpression
+          Identifier: 'x'
+          EqualsToken
+          BinaryExpression
+            Identifier: ' y'
+            EqualsToken
+            CallExpression
+              Identifier: ' foo'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+          ExpressionStatement
+            Identifier: ' // string
+        y'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+          ExpressionStatement
+            Identifier: ' // string | undefined
+        y'
+  FunctionDeclaration
+    Identifier: ' f6'
+    Block
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' x'
+            UnionType
+              StringKeyword
+              UndefinedKeyword
+      VariableStatement
+        VariableDeclarationList
+          VariableDeclaration
+            Identifier: ' y'
+            UnionType
+              StringKeyword
+              UndefinedKeyword
+      IfStatement
+        BinaryExpression
+          BinaryExpression
+            Identifier: 'x'
+            EqualsToken
+            CallExpression
+              Identifier: ' foo'
+          CommaToken
+          BinaryExpression
+            Identifier: ' y'
+            EqualsToken
+            CallExpression
+              Identifier: ' foo'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+          ExpressionStatement
+            Identifier: ' // string | undefined
+        y'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+          ExpressionStatement
+            Identifier: ' // string | undefined
+        y'
+  FunctionDeclaration
+    Identifier: ' f7'
+    Parameter
+      Identifier: 'x'
+      TypeLiteral
+    Block
+      IfStatement
+        Identifier: 'x'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+  FunctionDeclaration
+    Identifier: ' f8'
+    TypeParameter
+      Identifier: 'T'
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    Block
+      IfStatement
+        Identifier: 'x'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+  FunctionDeclaration
+    Identifier: ' f9'
+    TypeParameter
+      Identifier: 'T'
+      ObjectKeyword
+    Parameter
+      Identifier: 'x'
+      TypeReference
+        Identifier: ' T'
+    Block
+      IfStatement
+        Identifier: 'x'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'
+        Block
+          ExpressionStatement
+            Identifier: '
+        x'

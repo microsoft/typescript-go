@@ -1,0 +1,85 @@
+SourceFile
+  FunctionDeclaration
+    Identifier: ' f1'
+    Parameter
+      Identifier: 'x'
+    Block
+      ReturnStatement
+        BinaryExpression
+          Identifier: ' x'
+          PlusToken
+          NumericLiteral
+  FunctionDeclaration
+    Identifier: ' f2'
+    Parameter
+      Identifier: 'y'
+      NumberKeyword
+    Block
+      ReturnStatement
+        BinaryExpression
+          Identifier: ' y'
+          PlusToken
+          NumericLiteral
+  FunctionDeclaration
+    Identifier: ' f3'
+    Parameter
+      Identifier: 'z'
+      NumberKeyword
+    NumberKeyword
+    Block
+      ReturnStatement
+        BinaryExpression
+          PropertyAccessExpression
+            ThisKeyword
+            Identifier: 'a'
+          PlusToken
+          Identifier: ' z'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f4'
+        FunctionType
+          Parameter
+            Identifier: 'b'
+            NumberKeyword
+          NumberKeyword
+        ArrowFunction
+          Parameter
+            Identifier: ' b'
+          EqualsGreaterThanToken
+          BinaryExpression
+            PropertyAccessExpression
+              ThisKeyword
+              Identifier: 'c'
+            PlusToken
+            Identifier: ' b'
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f5'
+        ArrowFunction
+          EqualsGreaterThanToken
+          ArrowFunction
+            EqualsGreaterThanToken
+            ThisKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f6'
+        FunctionExpression
+          Block
+            ReturnStatement
+              ArrowFunction
+                EqualsGreaterThanToken
+                ThisKeyword
+  VariableStatement
+    VariableDeclarationList
+      VariableDeclaration
+        Identifier: ' f7'
+        FunctionExpression
+          Block
+            ReturnStatement
+              FunctionExpression
+                Block
+                  ReturnStatement
+                    ThisKeyword
