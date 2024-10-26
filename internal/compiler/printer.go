@@ -1,7 +1,6 @@
 package compiler
 
 import (
-	"strconv"
 	"strings"
 )
 
@@ -120,7 +119,7 @@ func (p *Printer) printStringLiteral(s string) {
 }
 
 func (p *Printer) printNumberLiteral(f float64) {
-	p.print(strconv.FormatFloat(f, 'g', -1, 64))
+	p.print(numberToString(f))
 }
 
 func (p *Printer) printBooleanLiteral(b bool) {

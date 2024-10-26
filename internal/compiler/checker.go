@@ -852,7 +852,8 @@ func (c *Checker) checkExpressionWorker(node *Node, checkMode CheckMode) *Type {
 		return c.getFreshTypeOfLiteralType(c.getStringLiteralType(node.AsNoSubstitutionTemplateLiteral().text))
 	case SyntaxKindNumericLiteral:
 		// !!! checkGrammarNumericLiteral(node as NumericLiteral)
-		value, _ := strconv.ParseFloat(node.AsNumericLiteral().text, 64)
+		// !!! Revise this to handle NaN, Infinity, etc. in the same manner as JS
+		value := stringToNumber(node.AsNumericLiteral().text)
 		return c.getFreshTypeOfLiteralType(c.getNumberLiteralType(value))
 	case SyntaxKindBigintLiteral:
 		// !!! checkGrammarBigIntLiteral(node as BigIntLiteral);
@@ -7131,7 +7132,7 @@ func (c *Checker) getPropertyTypeForIndexType(originalObjectType *Type, objectTy
 			}
 		}
 		if everyType(objectType, c.isTupleType) && isNumericLiteralName(propName) {
-			index, _ := strconv.ParseFloat(propName, 64)
+			index := stringToNumber(propName)
 			if accessNode != nil && everyType(objectType, func(t *Type) bool {
 				return t.TargetTupleType().combinedFlags&ElementFlagsVariable == 0
 			}) && accessFlags&AccessFlagsAllowMissing == 0 {
@@ -7375,7 +7376,7 @@ func indexTypeLessThan(indexType *Type, limit int) bool {
 		if t.flags&TypeFlagsStringOrNumberLiteral != 0 {
 			propName := getPropertyNameFromType(t)
 			if isNumericLiteralName(propName) {
-				index, _ := strconv.ParseFloat(propName, 64)
+				index := stringToNumber(propName)
 				return index >= 0 && index < float64(limit)
 			}
 		}

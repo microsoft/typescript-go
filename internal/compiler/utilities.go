@@ -3,6 +3,7 @@ package compiler
 import (
 	"fmt"
 	"maps"
+	"math"
 	"path/filepath"
 	"regexp"
 	"slices"
@@ -3855,7 +3856,7 @@ func getPropertyNameFromType(t *Type) string {
 	case t.flags&TypeFlagsStringLiteral != 0:
 		return t.AsLiteralType().value.(string)
 	case t.flags&TypeFlagsNumberLiteral != 0:
-		return strconv.FormatFloat(t.AsLiteralType().value.(float64), 'g', -1, 64)
+		return numberToString(t.AsLiteralType().value.(float64))
 	case t.flags&TypeFlagsUniqueESSymbol != 0:
 		return t.AsUniqueESSymbolType().name
 	}
@@ -3884,8 +3885,7 @@ func isNumericLiteralName(name string) bool {
 	// Note that this accepts the values 'Infinity', '-Infinity', and 'NaN', and that this is intentional.
 	// This is desired behavior, because when indexing with them as numeric entities, you are indexing
 	// with the strings '"Infinity"', '"-Infinity"', and '"NaN"' respectively.
-	value, err := strconv.ParseFloat(name, 64)
-	return err == nil && strconv.FormatFloat(value, 'g', -1, 64) == name
+	return numberToString(stringToNumber(name)) == name
 }
 
 func isPropertyName(node *Node) bool {
@@ -3926,4 +3926,19 @@ func getTextOfJsxNamespacedName(node *Node) string {
 
 func isThisProperty(node *Node) bool {
 	return (isPropertyAccessExpression(node) || isElementAccessExpression(node)) && getAccessedExpression(node).kind == SyntaxKindThisKeyword
+}
+
+func numberToString(f float64) string {
+	// !!! This function should behave identically to the expression `"" + f` in JS
+	return strconv.FormatFloat(f, 'g', -1, 64)
+}
+
+func stringToNumber(s string) float64 {
+	// !!! This function should behave identically to the expression `+s` in JS
+	// This includes parsing binary, octal, and hex numeric strings
+	value, err := strconv.ParseFloat(s, 64)
+	if err != nil {
+		return math.NaN()
+	}
+	return value
 }
