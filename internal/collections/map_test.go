@@ -156,3 +156,82 @@ func TestMapWithSizeHint(t *testing.T) {
 
 	assert.Assert(t, allocs < 10, "allocs = %v", allocs)
 }
+
+var benchmarkSizes = []int{0, 1, 100, 10000}
+
+var sinkInt int
+
+func BenchmarkMap(b *testing.B) {
+	for _, size := range benchmarkSizes {
+		sizePlusOne := size + 1
+
+		newSeededMap := func() *collections.Map[int, int] {
+			m := &collections.Map[int, int]{}
+			for i := range size {
+				m.Set(i, i)
+			}
+			return m
+		}
+
+		b.Run(fmt.Sprintf("size=%d", size), func(b *testing.B) {
+			b.Run("SetSameKey", func(b *testing.B) {
+				m := newSeededMap()
+				b.ResetTimer()
+				for i := 0; i < b.N; i++ {
+					m.Set(sizePlusOne, 1)
+				}
+			})
+
+			b.Run("GetSameKey", func(b *testing.B) {
+				m := newSeededMap()
+				b.ResetTimer()
+				for i := 0; i < b.N; i++ {
+					sinkInt, _ = m.Get(sizePlusOne)
+				}
+			})
+
+			b.Run("SetDifferentKey", func(b *testing.B) {
+				var m collections.Map[int, int]
+				for i := 0; i < b.N; i++ {
+					m.Set(i, i)
+				}
+			})
+
+			b.Run("DeleteAndReaddFirst", func(b *testing.B) {
+				m := newSeededMap()
+				b.ResetTimer()
+				for i := 0; i < b.N; i++ {
+					var firstKey int
+					var firstValue int
+					for key, value := range m.Entries() {
+						firstKey = key
+						firstValue = value
+						break
+					}
+					m.Delete(firstKey)
+					m.Set(firstKey, firstValue)
+				}
+			})
+
+			b.Run("GetAllKeys", func(b *testing.B) {
+				m := newSeededMap()
+				b.ResetTimer()
+				for i := 0; i < b.N; i++ {
+					for key := range m.Keys() {
+						sinkInt = key
+					}
+				}
+			})
+
+			b.Run("GetAllValues", func(b *testing.B) {
+				m := newSeededMap()
+				b.ResetTimer()
+				for i := 0; i < b.N; i++ {
+					for value := range m.Values() {
+						sinkInt = value
+					}
+				}
+			})
+		})
+	}
+}
