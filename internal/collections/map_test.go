@@ -162,76 +162,68 @@ var benchmarkSizes = []int{0, 1, 100, 10000}
 var sinkInt int
 
 func BenchmarkMap(b *testing.B) {
-	for _, size := range benchmarkSizes {
-		sizePlusOne := size + 1
-
-		newSeededMap := func() *collections.Map[int, int] {
-			m := &collections.Map[int, int]{}
-			for i := range size {
+	type benchmark struct {
+		name string
+		fn   func(b *testing.B, m *collections.Map[int, int], nextIndex int)
+	}
+	benchmarks := []benchmark{
+		{"SetSameKey", func(b *testing.B, m *collections.Map[int, int], nextIndex int) {
+			for i := 0; i < b.N; i++ {
+				m.Set(nextIndex, 1)
+			}
+		}},
+		{"SetNewKey", func(b *testing.B, m *collections.Map[int, int], nextIndex int) {
+			end := nextIndex + b.N
+			for i := nextIndex; i < end; i++ {
 				m.Set(i, i)
 			}
-			return m
-		}
-
-		b.Run(fmt.Sprintf("size=%d", size), func(b *testing.B) {
-			b.Run("SetSameKey", func(b *testing.B) {
-				m := newSeededMap()
-				b.ResetTimer()
-				for i := 0; i < b.N; i++ {
-					m.Set(sizePlusOne, 1)
+		}},
+		{"GetSameKey", func(b *testing.B, m *collections.Map[int, int], nextIndex int) {
+			for i := 0; i < b.N; i++ {
+				sinkInt, _ = m.Get(nextIndex)
+			}
+		}},
+		{"DeleteAndReaddFirst", func(b *testing.B, m *collections.Map[int, int], nextIndex int) {
+			for i := 0; i < b.N; i++ {
+				var firstKey int
+				var firstValue int
+				for key, value := range m.Entries() {
+					firstKey = key
+					firstValue = value
+					break
 				}
-			})
-
-			b.Run("GetSameKey", func(b *testing.B) {
-				m := newSeededMap()
-				b.ResetTimer()
-				for i := 0; i < b.N; i++ {
-					sinkInt, _ = m.Get(sizePlusOne)
+				m.Delete(firstKey)
+				m.Set(firstKey, firstValue)
+			}
+		}},
+		{"GetAllKeys", func(b *testing.B, m *collections.Map[int, int], nextIndex int) {
+			for i := 0; i < b.N; i++ {
+				for key := range m.Keys() {
+					sinkInt = key
 				}
-			})
+			}
+		}},
+		{"GetAllValues", func(b *testing.B, m *collections.Map[int, int], nextIndex int) {
+			for i := 0; i < b.N; i++ {
+				for value := range m.Values() {
+					sinkInt = value
+				}
+			}
+		}},
+	}
 
-			b.Run("SetDifferentKey", func(b *testing.B) {
-				var m collections.Map[int, int]
-				for i := 0; i < b.N; i++ {
+	for _, benchmark := range benchmarks {
+		for _, size := range benchmarkSizes {
+			sizePlusOne := size + 1
+
+			b.Run(fmt.Sprintf("%s_%d", benchmark.name, size), func(b *testing.B) {
+				m := &collections.Map[int, int]{}
+				for i := 0; i < size; i++ {
 					m.Set(i, i)
 				}
-			})
-
-			b.Run("DeleteAndReaddFirst", func(b *testing.B) {
-				m := newSeededMap()
 				b.ResetTimer()
-				for i := 0; i < b.N; i++ {
-					var firstKey int
-					var firstValue int
-					for key, value := range m.Entries() {
-						firstKey = key
-						firstValue = value
-						break
-					}
-					m.Delete(firstKey)
-					m.Set(firstKey, firstValue)
-				}
+				benchmark.fn(b, m, sizePlusOne)
 			})
-
-			b.Run("GetAllKeys", func(b *testing.B) {
-				m := newSeededMap()
-				b.ResetTimer()
-				for i := 0; i < b.N; i++ {
-					for key := range m.Keys() {
-						sinkInt = key
-					}
-				}
-			})
-
-			b.Run("GetAllValues", func(b *testing.B) {
-				m := newSeededMap()
-				b.ResetTimer()
-				for i := 0; i < b.N; i++ {
-					for value := range m.Values() {
-						sinkInt = value
-					}
-				}
-			})
-		})
+		}
 	}
 }
