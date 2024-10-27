@@ -298,7 +298,7 @@ func (b *Binder) getDeclarationName(node *Node) string {
 	name := getNameOfDeclaration(node)
 	if name != nil {
 		if isAmbientModule(node) {
-			moduleName := getTextOfIdentifierOrLiteral(name)
+			moduleName := name.Text()
 			if isGlobalScopeAugmentation(node) {
 				return InternalSymbolNameGlobal
 			}
@@ -312,20 +312,20 @@ func (b *Binder) getDeclarationName(node *Node) string {
 				return InternalSymbolNameMissing
 			}
 			containingClassSymbol := getSymbolFromNode(containingClass)
-			return getSymbolNameForPrivateIdentifier(containingClassSymbol, getTextOfIdentifierOrLiteral(name))
+			return getSymbolNameForPrivateIdentifier(containingClassSymbol, name.Text())
 		}
 		if isPropertyNameLiteral(name) {
-			return getTextOfIdentifierOrLiteral(name)
+			return name.Text()
 		}
 		if isComputedPropertyName(name) {
 			nameExpression := name.AsComputedPropertyName().expression
 			// treat computed property names where expression is string/numeric literal as just string/numeric literal
 			if isStringOrNumericLiteralLike(nameExpression) {
-				return getTextOfIdentifierOrLiteral(nameExpression)
+				return nameExpression.Text()
 			}
 			if isSignedNumericLiteral(nameExpression) {
 				unaryExpression := nameExpression.AsPrefixUnaryExpression()
-				return TokenToString(unaryExpression.operator) + getTextOfIdentifierOrLiteral(unaryExpression.operand)
+				return TokenToString(unaryExpression.operator) + unaryExpression.operand.Text()
 			}
 			panic("Only computed properties with literal names have declaration names")
 		}
@@ -364,7 +364,7 @@ func (b *Binder) getDisplayName(node *Node) string {
 }
 
 func moduleExportNameIsDefault(node *Node) bool {
-	return getTextOfIdentifierOrLiteral(node) == InternalSymbolNameDefault
+	return node.Text() == InternalSymbolNameDefault
 }
 
 func getSymbolNameForPrivateIdentifier(containingClassSymbol *Symbol, description string) string {
@@ -1111,7 +1111,7 @@ func addLateBoundAssignmentDeclarationToSymbol(node *Node, symbol *Symbol) {
 
 func (b *Binder) bindFunctionPropertyAssignment(node *Node) {
 	expr := node.AsBinaryExpression()
-	parentName := getAccessedExpression(expr.left).AsIdentifier().text
+	parentName := expr.left.Expression().AsIdentifier().text
 	parentSymbol := b.lookupName(parentName, b.blockScopeContainer)
 	if parentSymbol == nil {
 		parentSymbol = b.lookupName(parentName, b.container)
@@ -2404,7 +2404,7 @@ func (b *Binder) bindOptionalChain(node *Node, trueTarget *FlowLabel, falseTarge
 	if isOptionalChainRoot(node) {
 		preChainLabel = b.createBranchLabel()
 	}
-	b.bindOptionalExpression(getAccessedExpression(node), ifElse(preChainLabel != nil, preChainLabel, trueTarget), falseTarget)
+	b.bindOptionalExpression(node.Expression(), ifElse(preChainLabel != nil, preChainLabel, trueTarget), falseTarget)
 	if preChainLabel != nil {
 		b.currentFlow = finishFlowLabel(preChainLabel)
 	}

@@ -443,7 +443,7 @@ func (c *Checker) mergeModuleAugmentation(moduleName *Node) {
 					c.patternAmbientModuleAugmentations = make(SymbolTable)
 				}
 				// moduleName will be a StringLiteral since this is not `declare global`.
-				c.patternAmbientModuleAugmentations[getTextOfIdentifierOrLiteral(moduleName)] = merged
+				c.patternAmbientModuleAugmentations[moduleName.Text()] = merged
 			} else {
 				if mainModule.exports[InternalSymbolNameExportStar] != nil && len(moduleAugmentation.symbol.exports) != 0 {
 					// We may need to merge the module augmentation's exports into the target symbols of the resolved exports
@@ -458,7 +458,7 @@ func (c *Checker) mergeModuleAugmentation(moduleName *Node) {
 			}
 		} else {
 			// moduleName will be a StringLiteral since this is not `declare global`.
-			c.error(moduleName, diagnostics.Cannot_augment_module_0_because_it_resolves_to_a_non_module_entity, getTextOfIdentifierOrLiteral(moduleName))
+			c.error(moduleName, diagnostics.Cannot_augment_module_0_because_it_resolves_to_a_non_module_entity, moduleName.Text())
 		}
 	}
 }
@@ -1474,7 +1474,7 @@ func (c *Checker) getTargetOfImportEqualsDeclaration(node *Node, dontResolveAlia
 		access := commonJSPropertyAccess.AsPropertyAccessExpression()
 		name := getLeftmostAccessExpression(access.expression).AsCallExpression().arguments[0]
 		if isIdentifier(access.name) {
-			return c.resolveSymbol(c.getPropertyOfType(c.resolveExternalModuleTypeByLiteral(name), getTextOfIdentifierOrLiteral(access.name)))
+			return c.resolveSymbol(c.getPropertyOfType(c.resolveExternalModuleTypeByLiteral(name), access.name.Text()))
 		}
 		return nil
 	}
@@ -1678,7 +1678,7 @@ func (c *Checker) getExternalModuleMember(node *Node, specifier *Node, dontResol
 	if !isIdentifier(name) && !isStringLiteral(name) {
 		return nil
 	}
-	nameText := getTextOfIdentifierOrLiteral(name)
+	nameText := name.Text()
 	suppressInteropError := nameText == InternalSymbolNameDefault && c.allowSyntheticDefaultImports
 	targetSymbol := c.resolveESModuleSymbol(moduleSymbol, moduleSpecifier /*dontResolveAlias*/, false, suppressInteropError)
 	if targetSymbol != nil {
@@ -1885,7 +1885,7 @@ func (c *Checker) errorNoModuleMemberSymbol(moduleSymbol *Symbol, targetSymbol *
 func (c *Checker) reportNonExportedMember(node *Node, name *Node, declarationName string, moduleSymbol *Symbol, moduleName string) {
 	var localSymbol *Symbol
 	if locals := getLocalsOfNode(moduleSymbol.valueDeclaration); locals != nil {
-		localSymbol = locals[getTextOfIdentifierOrLiteral(name)]
+		localSymbol = locals[name.Text()]
 	}
 	exports := moduleSymbol.exports
 	if localSymbol != nil {
@@ -2133,7 +2133,7 @@ func (c *Checker) resolveExternalModuleName(location *Node, moduleReferenceExpre
 
 func (c *Checker) resolveExternalModuleNameWorker(location *Node, moduleReferenceExpression *Node, moduleNotFoundError *diagnostics.Message, ignoreErrors bool, isForAugmentation bool) *Symbol {
 	if isStringLiteralLike(moduleReferenceExpression) {
-		return c.resolveExternalModule(location, getTextOfIdentifierOrLiteral(moduleReferenceExpression), moduleNotFoundError, ifElse(!ignoreErrors, moduleReferenceExpression, nil), isForAugmentation)
+		return c.resolveExternalModule(location, moduleReferenceExpression.Text(), moduleNotFoundError, ifElse(!ignoreErrors, moduleReferenceExpression, nil), isForAugmentation)
 	}
 	return nil
 }
@@ -4797,7 +4797,7 @@ func (c *Checker) getTypeFromTypeReference(node *Node) *Type {
 		// handle LS queries on the `const` in `x as const` by resolving to the type of `x`
 		if isConstTypeReference(node) && isAssertionExpression(node.parent) {
 			links.resolvedSymbol = c.unknownSymbol
-			links.resolvedType = c.checkExpressionCached(getAccessedExpression(node.parent))
+			links.resolvedType = c.checkExpressionCached(node.parent.Expression())
 			return links.resolvedType
 		}
 		symbol := c.resolveTypeReferenceName(node, SymbolFlagsType, false /*ignoreErrors*/)
@@ -7104,7 +7104,7 @@ func (c *Checker) getPropertyTypeForIndexType(originalObjectType *Type, objectTy
 			// 	c.addDeprecatedSuggestion(deprecatedNode, prop.declarations, propName /* as string */)
 			// }
 			if accessExpression != nil {
-				c.markPropertyAsReferenced(prop, accessExpression, c.isSelfTypeAccess(getAccessedExpression(accessExpression), objectType.symbol))
+				c.markPropertyAsReferenced(prop, accessExpression, c.isSelfTypeAccess(accessExpression.Expression(), objectType.symbol))
 				if c.isAssignmentToReadonlyEntity(accessExpression, prop, getAssignmentTargetKind(accessExpression)) {
 					c.error(accessExpression.AsElementAccessExpression().argumentExpression, diagnostics.Cannot_assign_to_0_because_it_is_a_read_only_property, c.symbolToString(prop))
 					return nil

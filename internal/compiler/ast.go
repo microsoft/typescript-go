@@ -63,6 +63,50 @@ func (n *Node) FunctionLikeData() *FunctionLikeBase       { return n.data.Functi
 func (n *Node) ClassLikeData() *ClassLikeBase             { return n.data.ClassLikeData() }
 func (n *Node) BodyData() *BodyBase                       { return n.data.BodyData() }
 
+func (n *Node) Text() string {
+	switch n.kind {
+	case SyntaxKindIdentifier:
+		return n.AsIdentifier().text
+	case SyntaxKindPrivateIdentifier:
+		return n.AsPrivateIdentifier().text
+	case SyntaxKindStringLiteral:
+		return n.AsStringLiteral().text
+	case SyntaxKindNumericLiteral:
+		return n.AsNumericLiteral().text
+	case SyntaxKindBigintLiteral:
+		return n.AsBigintLiteral().text
+	case SyntaxKindNoSubstitutionTemplateLiteral:
+		return n.AsNoSubstitutionTemplateLiteral().text
+	case SyntaxKindJsxNamespacedName:
+		return n.AsJsxNamespacedName().namespace.Text() + ":" + n.AsJsxNamespacedName().name.Text()
+	}
+	panic("Unhandled case in Node.Text")
+}
+
+func (node *Node) Expression() *Node {
+	switch node.kind {
+	case SyntaxKindPropertyAccessExpression:
+		return node.AsPropertyAccessExpression().expression
+	case SyntaxKindElementAccessExpression:
+		return node.AsElementAccessExpression().expression
+	case SyntaxKindParenthesizedExpression:
+		return node.AsParenthesizedExpression().expression
+	case SyntaxKindCallExpression:
+		return node.AsCallExpression().expression
+	case SyntaxKindExpressionWithTypeArguments:
+		return node.AsExpressionWithTypeArguments().expression
+	case SyntaxKindNonNullExpression:
+		return node.AsNonNullExpression().expression
+	case SyntaxKindTypeAssertionExpression:
+		return node.AsTypeAssertion().expression
+	case SyntaxKindAsExpression:
+		return node.AsAsExpression().expression
+	case SyntaxKindSatisfiesExpression:
+		return node.AsSatisfiesExpression().expression
+	}
+	panic("Unhandled case in Node.Expression")
+}
+
 // Node casts
 
 func (n *Node) AsIdentifier() *Identifier {

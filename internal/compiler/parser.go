@@ -1644,7 +1644,7 @@ func (p *Parser) parseAmbientExternalModuleDeclaration(pos int, hasJSDoc bool, m
 	} else {
 		// parse string literal
 		name = p.parseLiteralExpression()
-		p.internIdentifier(getTextOfIdentifierOrLiteral(name))
+		p.internIdentifier(name.Text())
 	}
 	var body *Node
 	if p.token == SyntaxKindOpenBraceToken {
@@ -1768,7 +1768,7 @@ func (p *Parser) parseExternalModuleReference() *Node {
 func (p *Parser) parseModuleSpecifier() *Expression {
 	if p.token == SyntaxKindStringLiteral {
 		result := p.parseLiteralExpression()
-		p.internIdentifier(getTextOfIdentifierOrLiteral(result))
+		p.internIdentifier(result.Text())
 		return result
 	}
 	// We allow arbitrary expressions here, even though the grammar only allows string
@@ -2882,7 +2882,7 @@ func (p *Parser) parsePropertyName() *Node {
 func (p *Parser) parsePropertyNameWorker(allowComputedPropertyNames bool) *Node {
 	if p.token == SyntaxKindStringLiteral || p.token == SyntaxKindNumericLiteral || p.token == SyntaxKindBigintLiteral {
 		literal := p.parseLiteralExpression()
-		p.internIdentifier(getTextOfIdentifierOrLiteral(literal))
+		p.internIdentifier(literal.Text())
 		return literal
 	}
 	if allowComputedPropertyNames && p.token == SyntaxKindOpenBracketToken {
@@ -4908,7 +4908,7 @@ func (p *Parser) parseElementAccessExpressionRest(pos int, expression *Expressio
 	} else {
 		argument := p.parseExpressionAllowIn()
 		if isStringOrNumericLiteralLike(argument) {
-			p.internIdentifier(getTextOfIdentifierOrLiteral(argument))
+			p.internIdentifier(argument.Text())
 		}
 		argumentExpression = argument
 	}
@@ -5882,7 +5882,7 @@ func tagNamesAreEquivalent(lhs *Expression, rhs *Expression) bool {
 		return lhs.AsJsxNamespacedName().namespace.AsIdentifier().text == rhs.AsJsxNamespacedName().namespace.AsIdentifier().text &&
 			lhs.AsJsxNamespacedName().name.AsIdentifier().text == rhs.AsJsxNamespacedName().name.AsIdentifier().text
 	case SyntaxKindPropertyAccessExpression:
-		return getTextOfIdentifierOrLiteral(lhs.AsPropertyAccessExpression().name) == getTextOfIdentifierOrLiteral(rhs.AsPropertyAccessExpression().name) &&
+		return lhs.AsPropertyAccessExpression().name.Text() == rhs.AsPropertyAccessExpression().name.Text() &&
 			tagNamesAreEquivalent(lhs.AsPropertyAccessExpression().expression, rhs.AsPropertyAccessExpression().expression)
 	}
 	panic("Unhandled case in tagNamesAreEquivalent")

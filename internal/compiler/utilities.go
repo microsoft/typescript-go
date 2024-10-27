@@ -894,31 +894,13 @@ func isOuterExpression(node *Node, kinds OuterExpressionKinds) bool {
 	return false
 }
 
-func getInnerExpression(node *Node) *Node {
-	switch node.kind {
-	case SyntaxKindParenthesizedExpression:
-		return node.AsParenthesizedExpression().expression
-	case SyntaxKindTypeAssertionExpression:
-		return node.AsTypeAssertion().expression
-	case SyntaxKindAsExpression:
-		return node.AsAsExpression().expression
-	case SyntaxKindSatisfiesExpression:
-		return node.AsSatisfiesExpression().expression
-	case SyntaxKindExpressionWithTypeArguments:
-		return node.AsExpressionWithTypeArguments().expression
-	case SyntaxKindNonNullExpression:
-		return node.AsNonNullExpression().expression
-	}
-	panic("Unhandled case in getInnerExpression")
-}
-
 func getSymbolFromNode(node *Node) *Symbol {
 	return node.Symbol()
 }
 
 func skipOuterExpressions(node *Node, kinds OuterExpressionKinds) *Node {
 	for isOuterExpression(node, kinds) {
-		node = getInnerExpression(node)
+		node = node.Expression()
 	}
 	return node
 }
@@ -1225,26 +1207,6 @@ func getElementOrPropertyAccessArgumentExpressionOrName(node *Node) *Node {
 	panic("Unhandled case in getElementOrPropertyAccessArgumentExpressionOrName")
 }
 
-func getAccessedExpression(node *Node) *Node {
-	switch node.kind {
-	case SyntaxKindPropertyAccessExpression:
-		return node.AsPropertyAccessExpression().expression
-	case SyntaxKindElementAccessExpression:
-		return node.AsElementAccessExpression().expression
-	case SyntaxKindCallExpression:
-		return node.AsCallExpression().expression
-	case SyntaxKindParenthesizedExpression:
-		return node.AsParenthesizedExpression().expression
-	case SyntaxKindNonNullExpression:
-		return node.AsNonNullExpression().expression
-	case SyntaxKindTypeAssertionExpression:
-		return node.AsTypeAssertion().expression
-	case SyntaxKindAsExpression:
-		return node.AsAsExpression().expression
-	}
-	panic("Unhandled case in getAccessedExpression")
-}
-
 func getQuestionDotToken(node *Node) *Node {
 	switch node.kind {
 	case SyntaxKindPropertyAccessExpression:
@@ -1398,26 +1360,6 @@ func isPropertyNameLiteral(node *Node) bool {
 	return false
 }
 
-func getTextOfIdentifierOrLiteral(node *Node) string {
-	switch node.kind {
-	case SyntaxKindIdentifier:
-		return node.AsIdentifier().text
-	case SyntaxKindPrivateIdentifier:
-		return node.AsPrivateIdentifier().text
-	case SyntaxKindStringLiteral:
-		return node.AsStringLiteral().text
-	case SyntaxKindNumericLiteral:
-		return node.AsNumericLiteral().text
-	case SyntaxKindBigintLiteral:
-		return node.AsBigintLiteral().text
-	case SyntaxKindNoSubstitutionTemplateLiteral:
-		return node.AsNoSubstitutionTemplateLiteral().text
-		// case isJsxNamespacedName(node):
-		// 	return getTextOfJsxNamespacedName(node)
-	}
-	panic("Unhandled case in getTextOfIdentifierOrLiteral")
-}
-
 func isMemberName(node *Node) bool {
 	return node.kind == SyntaxKindIdentifier || node.kind == SyntaxKindPrivateIdentifier
 }
@@ -1488,7 +1430,7 @@ func isVariableDeclarationInitializedWithRequireHelper(node *Node, allowAccessed
 
 func getLeftmostAccessExpression(expr *Node) *Node {
 	for isAccessExpression(expr) {
-		expr = getAccessedExpression(expr)
+		expr = expr.Expression()
 	}
 	return expr
 }
@@ -1716,7 +1658,7 @@ func isOutermostOptionalChain(node *Node) bool {
 	parent := node.parent
 	return !isOptionalChain(parent) || // cases 1, 2, and 3
 		isOptionalChainRoot(parent) || // case 4
-		node != getAccessedExpression(parent) // case 5
+		node != parent.Expression() // case 5
 }
 
 func isNullishCoalesce(node *Node) bool {
@@ -1728,7 +1670,7 @@ func isDottedName(node *Node) bool {
 	case SyntaxKindIdentifier, SyntaxKindThisKeyword, SyntaxKindSuperKeyword, SyntaxKindMetaProperty:
 		return true
 	case SyntaxKindPropertyAccessExpression, SyntaxKindParenthesizedExpression:
-		return isDottedName(getAccessedExpression(node))
+		return isDottedName(node.Expression())
 	}
 	return false
 }
@@ -1753,7 +1695,7 @@ func isTopLevelLogicalExpression(node *Node) bool {
 	for isParenthesizedExpression(node.parent) || isPrefixUnaryExpression(node.parent) && node.parent.AsPrefixUnaryExpression().operator == SyntaxKindExclamationToken {
 		node = node.parent
 	}
-	return !isStatementCondition(node) && !isLogicalExpression(node.parent) && !(isOptionalChain(node.parent) && getAccessedExpression(node.parent) == node)
+	return !isStatementCondition(node) && !isLogicalExpression(node.parent) && !(isOptionalChain(node.parent) && node.parent.Expression() == node)
 }
 
 func isStatementCondition(node *Node) bool {
@@ -1897,7 +1839,7 @@ func isOptionalChainRoot(node *Node) bool {
  * Determines whether a node is the expression preceding an optional chain (i.e. `a` in `a?.b`).
  */
 func isExpressionOfOptionalChainRoot(node *Node) bool {
-	return isOptionalChainRoot(node.parent) && getAccessedExpression(node.parent) == node
+	return isOptionalChainRoot(node.parent) && node.parent.Expression() == node
 }
 
 func isEntityNameExpression(node *Node) bool {
@@ -3899,33 +3841,27 @@ func isPropertyName(node *Node) bool {
 func getPropertyNameForPropertyNameNode(name *Node) string {
 	switch name.kind {
 	case SyntaxKindIdentifier, SyntaxKindPrivateIdentifier, SyntaxKindStringLiteral, SyntaxKindNoSubstitutionTemplateLiteral,
-		SyntaxKindNumericLiteral, SyntaxKindBigintLiteral:
-		return getTextOfIdentifierOrLiteral(name)
+		SyntaxKindNumericLiteral, SyntaxKindBigintLiteral, SyntaxKindJsxNamespacedName:
+		return name.Text()
 	case SyntaxKindComputedPropertyName:
 		nameExpression := name.AsComputedPropertyName().expression
 		if isStringOrNumericLiteralLike(nameExpression) {
-			return getTextOfIdentifierOrLiteral(nameExpression)
+			return nameExpression.Text()
 		}
 		if isSignedNumericLiteral(nameExpression) {
-			text := getTextOfIdentifierOrLiteral(nameExpression.AsPrefixUnaryExpression().operand)
+			text := nameExpression.AsPrefixUnaryExpression().operand.Text()
 			if nameExpression.AsPrefixUnaryExpression().operator == SyntaxKindMinusToken {
 				text = "-" + text
 			}
 			return text
 		}
 		return InternalSymbolNameMissing
-	case SyntaxKindJsxNamespacedName:
-		return getTextOfJsxNamespacedName(name)
 	}
 	panic("Unhandled case in getPropertyNameForPropertyNameNode")
 }
 
-func getTextOfJsxNamespacedName(node *Node) string {
-	return getTextOfIdentifierOrLiteral(node.AsJsxNamespacedName().namespace) + ":" + getTextOfIdentifierOrLiteral(node.AsJsxNamespacedName().name)
-}
-
 func isThisProperty(node *Node) bool {
-	return (isPropertyAccessExpression(node) || isElementAccessExpression(node)) && getAccessedExpression(node).kind == SyntaxKindThisKeyword
+	return (isPropertyAccessExpression(node) || isElementAccessExpression(node)) && node.Expression().kind == SyntaxKindThisKeyword
 }
 
 func numberToString(f float64) string {
