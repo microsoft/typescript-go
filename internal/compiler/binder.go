@@ -58,7 +58,7 @@ type Binder struct {
 	inStrictMode           bool
 	inAssignmentPattern    bool
 	symbolCount            int
-	classifiableNames      map[string]bool
+	classifiableNames      set[string]
 	symbolPool             Pool[Symbol]
 	flowNodePool           Pool[FlowNode]
 	flowListPool           Pool[FlowList]
@@ -91,7 +91,6 @@ func bindSourceFile(file *SourceFile, options *CompilerOptions) {
 		b.file = file
 		b.options = options
 		b.languageVersion = getEmitScriptTarget(options)
-		b.classifiableNames = make(map[string]bool)
 		b.bind(file.AsNode())
 		file.isBound = true
 		file.symbolCount = b.symbolCount
@@ -161,7 +160,7 @@ func (b *Binder) declareSymbolEx(symbolTable SymbolTable, parent *Symbol, node *
 		// just add this node into the declarations list of the symbol.
 		symbol = symbolTable[name]
 		if includes&SymbolFlagsClassifiable != 0 {
-			b.classifiableNames[name] = true
+			b.classifiableNames.add(name)
 		}
 		if symbol == nil {
 			symbol = b.newSymbol(SymbolFlagsNone, name)
@@ -1024,7 +1023,7 @@ func (b *Binder) bindClassLikeDeclaration(node *Node) {
 		nameText := InternalSymbolNameClass
 		if name != nil {
 			nameText = name.AsIdentifier().text
-			b.classifiableNames[nameText] = true
+			b.classifiableNames.add(nameText)
 		}
 		b.bindAnonymousDeclaration(node, SymbolFlagsClass, nameText)
 	}

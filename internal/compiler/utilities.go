@@ -3806,6 +3806,34 @@ func (m *orderedMap[K, V]) add(key K, value V) {
 	m.values = append(m.values, value)
 }
 
+type set[T comparable] struct {
+	m map[T]struct{}
+}
+
+func (s *set[T]) has(key T) bool {
+	_, ok := s.m[key]
+	return ok
+}
+
+func (s *set[T]) add(key T) {
+	if s.m == nil {
+		s.m = make(map[T]struct{})
+	}
+	s.m[key] = struct{}{}
+}
+
+func (s *set[T]) delete(key T) {
+	delete(s.m, key)
+}
+
+func (s *set[T]) len() int {
+	return len(s.m)
+}
+
+func (s *set[T]) keys() map[T]struct{} {
+	return s.m
+}
+
 func getContainingFunction(node *Node) *Node {
 	return findAncestor(node.parent, isFunctionLike)
 }

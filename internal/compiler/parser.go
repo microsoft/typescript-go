@@ -53,9 +53,9 @@ type Parser struct {
 	token                 SyntaxKind
 	parsingContexts       ParsingContexts
 	diagnostics           []*Diagnostic
-	identifiers           map[string]bool
+	identifiers           set[string]
 	sourceFlags           NodeFlags
-	notParenthesizedArrow map[int]bool
+	notParenthesizedArrow set[int]
 	identifierPool        Pool[Identifier]
 }
 
@@ -73,7 +73,6 @@ func ParseSourceFile(fileName string, sourceText string, languageVersion ScriptT
 	p.languageVersion = languageVersion
 	p.scriptKind = ensureScriptKind(fileName, ScriptKindUnknown)
 	p.languageVariant = getLanguageVariant(p.scriptKind)
-	p.identifiers = make(map[string]bool)
 	switch p.scriptKind {
 	case ScriptKindJS, ScriptKindJSX:
 		p.contextFlags = NodeFlagsJavaScriptFile
@@ -3943,15 +3942,12 @@ func (p *Parser) isStartOfExpressionStatement() bool {
 
 func (p *Parser) parsePossibleParenthesizedArrowFunctionExpression(allowReturnTypeInArrowFunction bool) *Node {
 	tokenPos := p.scanner.TokenStart()
-	if p.notParenthesizedArrow[tokenPos] {
+	if p.notParenthesizedArrow.has(tokenPos) {
 		return nil
 	}
 	result := p.parseParenthesizedArrowFunctionExpression(false /*allowAmbiguity*/, allowReturnTypeInArrowFunction)
 	if result == nil {
-		if p.notParenthesizedArrow == nil {
-			p.notParenthesizedArrow = make(map[int]bool)
-		}
-		p.notParenthesizedArrow[tokenPos] = true
+		p.notParenthesizedArrow.add(tokenPos)
 	}
 	return result
 }
@@ -5341,7 +5337,7 @@ func (p *Parser) createIdentifierWithDiagnostic(isIdentifier bool, diagnosticMes
 }
 
 func (p *Parser) internIdentifier(text string) {
-	p.identifiers[text] = true
+	p.identifiers.add(text)
 }
 
 func (p *Parser) finishNode(node *Node, pos int) {

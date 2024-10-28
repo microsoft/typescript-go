@@ -2517,7 +2517,7 @@ type ExportCollisionTable = map[string]*ExportCollision
 
 func (c *Checker) getExportsOfModuleWorker(moduleSymbol *Symbol) (exports SymbolTable, typeOnlyExportStarMap map[string]*Node) {
 	var visitedSymbols []*Symbol
-	nonTypeOnlyNames := make(map[string]bool)
+	var nonTypeOnlyNames set[string]
 	// The ES6 spec permits export * declarations in a module to circularly reference the module itself. For example,
 	// module 'a' can 'export * from "b"' and 'b' can 'export * from "a"' without error.
 	var visit func(*Symbol, *Node, bool) SymbolTable
@@ -2527,7 +2527,7 @@ func (c *Checker) getExportsOfModuleWorker(moduleSymbol *Symbol) (exports Symbol
 			// because we might have visited it via an 'export type *', and visiting
 			// again with 'export *' will override the type-onlyness of its exports.
 			for name := range symbol.exports {
-				nonTypeOnlyNames[name] = true
+				nonTypeOnlyNames.add(name)
 			}
 		}
 		if symbol == nil || symbol.exports == nil || slices.Contains(visitedSymbols, symbol) {
@@ -2571,7 +2571,7 @@ func (c *Checker) getExportsOfModuleWorker(moduleSymbol *Symbol) (exports Symbol
 	if exports == nil {
 		exports = make(SymbolTable)
 	}
-	for name := range nonTypeOnlyNames {
+	for name := range nonTypeOnlyNames.keys() {
 		delete(typeOnlyExportStarMap, name)
 	}
 	return
@@ -2689,7 +2689,7 @@ func (c *Checker) getSymbolFlagsEx(symbol *Symbol, excludeTypeOnlyMeanings bool,
 	if !excludeLocalMeanings {
 		flags = symbol.flags
 	}
-	var seenSymbols map[*Symbol]bool
+	var seenSymbols set[*Symbol]
 	for symbol.flags&SymbolFlagsAlias != 0 {
 		target := c.getExportSymbolOfValueSymbolIfExported(c.resolveAlias(symbol))
 		if !typeOnlyDeclarationIsExportStar && target == typeOnlyResolution || typeOnlyExportStarTargets[target.name] == target {
@@ -2700,15 +2700,14 @@ func (c *Checker) getSymbolFlagsEx(symbol *Symbol, excludeTypeOnlyMeanings bool,
 		}
 		// Optimizations - try to avoid creating or adding to
 		// `seenSymbols` if possible
-		if target == symbol || seenSymbols[target] {
+		if target == symbol || seenSymbols.has(target) {
 			break
 		}
 		if target.flags&SymbolFlagsAlias != 0 {
-			if seenSymbols == nil {
-				seenSymbols = make(map[*Symbol]bool)
-				seenSymbols[symbol] = true
+			if seenSymbols.len() == 0 {
+				seenSymbols.add(symbol)
 			}
-			seenSymbols[target] = true
+			seenSymbols.add(target)
 		}
 		flags |= target.flags
 		symbol = target
@@ -3598,7 +3597,29 @@ func (c *Checker) getPropertiesOfObjectType(t *Type) []*Symbol {
 }
 
 func (c *Checker) getPropertiesOfUnionOrIntersectionType(t *Type) []*Symbol {
-	return nil
+	d := t.AsUnionOrIntersectionType()
+	if d.resolvedProperties == nil {
+		var checked set[string]
+		props := []*Symbol{}
+		for _, current := range d.types {
+			for _, prop := range c.getPropertiesOfType(current) {
+				if !checked.has(prop.name) {
+					checked.add(prop.name)
+					combinedProp := c.getPropertyOfUnionOrIntersectionType(t, prop.name, t.flags&TypeFlagsIntersection != 0 /*skipObjectFunctionPropertyAugment*/)
+					if combinedProp != nil {
+						props = append(props, combinedProp)
+					}
+				}
+			}
+			// The properties of a union type are those that are present in all constituent types, so
+			// we only need to check the properties of the first type without index signature
+			if t.flags&TypeFlagsUnion != 0 && len(c.getIndexInfosOfType(current)) == 0 {
+				break
+			}
+		}
+		d.resolvedProperties = props
+	}
+	return d.resolvedProperties
 }
 
 func (c *Checker) getPropertyOfType(t *Type, name string) *Symbol {
@@ -4142,7 +4163,7 @@ func (c *Checker) getUnionOrIntersectionProperty(t *Type, name string, skipObjec
 
 func (c *Checker) createUnionOrIntersectionProperty(containingType *Type, name string, skipObjectFunctionPropertyAugment bool) *Symbol {
 	var singleProp *Symbol
-	var propSet map[*Symbol]bool
+	var propSet set[*Symbol]
 	var indexTypes []*Type
 	isUnion := containingType.flags&TypeFlagsUnion != 0
 	// Flags we want to propagate to the result if they exist in all source symbols
@@ -4181,11 +4202,10 @@ func (c *Checker) createUnionOrIntersectionProperty(containingType *Type, name s
 						// back and not `Array<string>.length` when we're looking at a `.length` access on a `string[] | number[]`
 						mergedInstantiations = singleProp.parent != nil && len(c.getLocalTypeParametersOfClassOrInterfaceOrTypeAlias(singleProp.parent)) != 0
 					} else {
-						if propSet == nil {
-							propSet = make(map[*Symbol]bool)
-							propSet[singleProp] = true
+						if propSet.len() == 0 {
+							propSet.add(singleProp)
 						}
-						propSet[prop] = true
+						propSet.add(prop)
 					}
 				}
 				if isUnion && c.isReadonlySymbol(prop) {
@@ -4234,14 +4254,14 @@ func (c *Checker) createUnionOrIntersectionProperty(containingType *Type, name s
 		}
 	}
 	if singleProp == nil || isUnion &&
-		(propSet == nil || checkFlags&CheckFlagsPartial != 0) &&
+		(propSet.len() == 0 || checkFlags&CheckFlagsPartial != 0) &&
 		checkFlags&(CheckFlagsContainsPrivate|CheckFlagsContainsProtected) != 0 &&
-		!(propSet != nil && c.getCommonDeclarationsOfSymbols(propSet) != nil) {
+		!(propSet.len() != 0 && c.hasCommonDeclaration(propSet)) {
 		// No property was found, or, in a union, a property has a private or protected declaration in one
 		// constituent, but is missing or has a different declaration in another constituent.
 		return nil
 	}
-	if propSet == nil && checkFlags&CheckFlagsReadPartial == 0 && len(indexTypes) == 0 {
+	if propSet.len() == 0 && checkFlags&CheckFlagsReadPartial == 0 && len(indexTypes) == 0 {
 		if !mergedInstantiations {
 			return singleProp
 		}
@@ -4265,9 +4285,8 @@ func (c *Checker) createUnionOrIntersectionProperty(containingType *Type, name s
 		links.writeType = c.getWriteTypeOfSymbol(singleProp)
 		return clone
 	}
-	if propSet == nil {
-		propSet = make(map[*Symbol]bool)
-		propSet[singleProp] = true
+	if propSet.len() == 0 {
+		propSet.add(singleProp)
 	}
 	var declarations []*Node
 	var firstType *Type
@@ -4276,7 +4295,7 @@ func (c *Checker) createUnionOrIntersectionProperty(containingType *Type, name s
 	var writeTypes []*Type
 	var firstValueDeclaration *Node
 	var hasNonUniformValueDeclaration bool
-	for prop := range propSet {
+	for prop := range propSet.keys() {
 		if firstValueDeclaration == nil {
 			firstValueDeclaration = prop.valueDeclaration
 		} else if prop.valueDeclaration != nil && prop.valueDeclaration != firstValueDeclaration {
@@ -4358,29 +4377,28 @@ func isPrototypeProperty(symbol *Symbol) bool {
 	return symbol.flags&SymbolFlagsMethod != 0 || symbol.checkFlags&CheckFlagsSyntheticMethod != 0
 }
 
-func (c *Checker) getCommonDeclarationsOfSymbols(symbols map[*Symbol]bool) map[*Node]bool {
-	var commonDeclarations map[*Node]bool
-	for symbol := range symbols {
+func (c *Checker) hasCommonDeclaration(symbols set[*Symbol]) bool {
+	var commonDeclarations set[*Node]
+	for symbol := range symbols.keys() {
 		if len(symbol.declarations) == 0 {
-			return nil
+			return false
 		}
-		if commonDeclarations == nil {
-			commonDeclarations = make(map[*Node]bool)
+		if commonDeclarations.len() == 0 {
 			for _, d := range symbol.declarations {
-				commonDeclarations[d] = true
+				commonDeclarations.add(d)
 			}
 			continue
 		}
-		for d := range commonDeclarations {
+		for d := range commonDeclarations.keys() {
 			if !slices.Contains(symbol.declarations, d) {
-				delete(commonDeclarations, d)
+				commonDeclarations.delete(d)
 			}
 		}
-		if len(commonDeclarations) == 0 {
-			return nil
+		if commonDeclarations.len() == 0 {
+			return false
 		}
 	}
-	return commonDeclarations
+	return commonDeclarations.len() != 0
 }
 
 func (c *Checker) createSymbolWithType(source *Symbol, t *Type) *Symbol {
@@ -4599,6 +4617,9 @@ func (c *Checker) instantiateTypeWithAlias(t *Type, m *TypeMapper, alias *TypeAl
 // we perform type inference (i.e. a type parameter of a generic function). We cache
 // results for union and intersection types for performance reasons.
 func (c *Checker) couldContainTypeVariablesWorker(t *Type) bool {
+	if t.flags&TypeFlagsStructuredOrInstantiable == 0 {
+		return false
+	}
 	objectFlags := t.objectFlags
 	if objectFlags&ObjectFlagsCouldContainTypeVariablesComputed != 0 {
 		return objectFlags&ObjectFlagsCouldContainTypeVariables != 0
@@ -6219,7 +6240,7 @@ func (c *Checker) newType(flags TypeFlags, objectFlags ObjectFlags, data TypeDat
 	c.typeCount++
 	t := data.AsType()
 	t.flags = flags
-	t.objectFlags = objectFlags
+	t.objectFlags = objectFlags &^ (ObjectFlagsCouldContainTypeVariablesComputed | ObjectFlagsCouldContainTypeVariables | ObjectFlagsMembersResolved)
 	t.id = TypeId(c.typeCount)
 	t.data = data
 	return t
@@ -6284,7 +6305,7 @@ func (c *Checker) newObjectType(objectFlags ObjectFlags, symbol *Symbol) *Type {
 	default:
 		panic("Unhandled case in newObjectType")
 	}
-	t := c.newType(TypeFlagsObject, objectFlags&^ObjectFlagsMembersResolved, data)
+	t := c.newType(TypeFlagsObject, objectFlags, data)
 	t.symbol = symbol
 	return t
 }

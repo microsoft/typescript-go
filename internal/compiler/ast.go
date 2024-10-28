@@ -4157,7 +4157,7 @@ type SourceFile struct {
 	moduleReferencesProcessed   bool
 	usesUriStyleNodeCoreModules Tristate
 	symbolCount                 int
-	classifiableNames           map[string]bool
+	classifiableNames           set[string]
 	imports                     []*LiteralLikeNode
 	moduleAugmentations         []*ModuleName
 	patternAmbientModules       []PatternAmbientModule
