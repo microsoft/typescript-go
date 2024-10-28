@@ -405,143 +405,144 @@ func (n *Node) AsOptionalTypeNode() *OptionalTypeNode {
 	return n.data.(*OptionalTypeNode)
 }
 func (n *Node) AsJSDoc() *JSDoc {
-    return n.data.(*JSDoc)
+	return n.data.(*JSDoc)
 }
 func (n *Node) AsJSDocCommentList() *JSDocCommentList {
-    return n.data.(*JSDocCommentList)
+	return n.data.(*JSDocCommentList)
 }
 func (n *Node) AsJSDocTagList() *JSDocTagList {
-    return n.data.(*JSDocTagList)
+	return n.data.(*JSDocTagList)
 }
 func (n *Node) AsJSDocTagBase() *JSDocTagBase {
-    return n.data.(*JSDocTagBase)
+	return n.data.(*JSDocTagBase)
 }
 func (n *Node) AsJSDocCommentBase() *JSDocCommentBase {
-    return n.data.(*JSDocCommentBase)
+	return n.data.(*JSDocCommentBase)
 }
 func (n *Node) AsJSDocText() *JSDocText {
-    return n.data.(*JSDocText)
+	return n.data.(*JSDocText)
 }
 func (n *Node) AsJSDocLink() *JSDocLink {
-    return n.data.(*JSDocLink)
+	return n.data.(*JSDocLink)
 }
 func (n *Node) AsJSDocLinkPlain() *JSDocLinkPlain {
-    return n.data.(*JSDocLinkPlain)
+	return n.data.(*JSDocLinkPlain)
 }
 func (n *Node) AsJSDocLinkCode() *JSDocLinkCode {
-    return n.data.(*JSDocLinkCode)
+	return n.data.(*JSDocLinkCode)
 }
 func (n *Node) AsJSDocTypeExpression() *JSDocTypeExpression {
-    return n.data.(*JSDocTypeExpression)
+	return n.data.(*JSDocTypeExpression)
 }
 func (n *Node) AsJSDocNonNullableType() *JSDocNonNullableType {
-    return n.data.(*JSDocNonNullableType)
+	return n.data.(*JSDocNonNullableType)
 }
 func (n *Node) AsJSDocNullableType() *JSDocNullableType {
-    return n.data.(*JSDocNullableType)
+	return n.data.(*JSDocNullableType)
 }
 func (n *Node) AsJSDocAllType() *JSDocAllType {
-    return n.data.(*JSDocAllType)
+	return n.data.(*JSDocAllType)
 }
 func (n *Node) AsJSDocUnknownType() *JSDocUnknownType {
-    return n.data.(*JSDocUnknownType)
+	return n.data.(*JSDocUnknownType)
 }
 func (n *Node) AsJSDocFunctionType() *JSDocFunctionType {
-    return n.data.(*JSDocFunctionType)
+	return n.data.(*JSDocFunctionType)
 }
 func (n *Node) AsJSDocNamepathType() *JSDocNamepathType {
-    return n.data.(*JSDocNamepathType)
+	return n.data.(*JSDocNamepathType)
 }
 func (n *Node) AsJSDocVariadicType() *JSDocVariadicType {
-    return n.data.(*JSDocVariadicType)
+	return n.data.(*JSDocVariadicType)
 }
 func (n *Node) AsJSDocOptionalType() *JSDocOptionalType {
-    return n.data.(*JSDocOptionalType)
+	return n.data.(*JSDocOptionalType)
 }
 func (n *Node) AsJSDocTypeTag() *JSDocTypeTag {
-    return n.data.(*JSDocTypeTag)
+	return n.data.(*JSDocTypeTag)
 }
 func (n *Node) AsJSDocUnknownTag() *JSDocUnknownTag {
-    return n.data.(*JSDocUnknownTag)
+	return n.data.(*JSDocUnknownTag)
 }
 func (n *Node) AsJSDocTemplateTag() *JSDocTemplateTag {
-    return n.data.(*JSDocTemplateTag)
+	return n.data.(*JSDocTemplateTag)
 }
 func (n *Node) AsJSDocPropertyTag() *JSDocPropertyTag {
-    return n.data.(*JSDocPropertyTag)
+	return n.data.(*JSDocPropertyTag)
 }
 func (n *Node) AsJSDocParameterTag() *JSDocParameterTag {
-    return n.data.(*JSDocParameterTag)
+	return n.data.(*JSDocParameterTag)
 }
 func (n *Node) AsJSDocReturnTag() *JSDocReturnTag {
-    return n.data.(*JSDocReturnTag)
+	return n.data.(*JSDocReturnTag)
 }
 func (n *Node) AsJSDocClassTag() *JSDocClassTag {
-    return n.data.(*JSDocClassTag)
+	return n.data.(*JSDocClassTag)
 }
 func (n *Node) AsJSDocPublicTag() *JSDocPublicTag {
-    return n.data.(*JSDocPublicTag)
+	return n.data.(*JSDocPublicTag)
 }
 func (n *Node) AsJSDocPrivateTag() *JSDocPrivateTag {
-    return n.data.(*JSDocPrivateTag)
+	return n.data.(*JSDocPrivateTag)
 }
 func (n *Node) AsJSDocProtectedTag() *JSDocProtectedTag {
-    return n.data.(*JSDocProtectedTag)
+	return n.data.(*JSDocProtectedTag)
 }
 func (n *Node) AsJSDocReadonlyTag() *JSDocReadonlyTag {
-    return n.data.(*JSDocReadonlyTag)
+	return n.data.(*JSDocReadonlyTag)
 }
 func (n *Node) AsJSDocOverrideTag() *JSDocOverrideTag {
-    return n.data.(*JSDocOverrideTag)
+	return n.data.(*JSDocOverrideTag)
 }
 func (n *Node) AsJSDocDeprecatedTag() *JSDocDeprecatedTag {
-    return n.data.(*JSDocDeprecatedTag)
+	return n.data.(*JSDocDeprecatedTag)
 }
 func (n *Node) AsJSDocSeeTag() *JSDocSeeTag {
-    return n.data.(*JSDocSeeTag)
+	return n.data.(*JSDocSeeTag)
 }
 func (n *Node) AsJSDocThrowsTag() *JSDocThrowsTag {
-    return n.data.(*JSDocThrowsTag)
+	return n.data.(*JSDocThrowsTag)
 }
 func (n *Node) AsJSDocAuthorTag() *JSDocAuthorTag {
-    return n.data.(*JSDocAuthorTag)
+	return n.data.(*JSDocAuthorTag)
 }
 func (n *Node) AsJSDocImplementsTag() *JSDocImplementsTag {
-    return n.data.(*JSDocImplementsTag)
+	return n.data.(*JSDocImplementsTag)
 }
 func (n *Node) AsJSDocAugmentsTag() *JSDocAugmentsTag {
-    return n.data.(*JSDocAugmentsTag)
+	return n.data.(*JSDocAugmentsTag)
 }
 func (n *Node) AsJSDocSatisfiesTag() *JSDocSatisfiesTag {
-    return n.data.(*JSDocSatisfiesTag)
+	return n.data.(*JSDocSatisfiesTag)
 }
 func (n *Node) AsJSDocThisTag() *JSDocThisTag {
-    return n.data.(*JSDocThisTag)
+	return n.data.(*JSDocThisTag)
 }
 func (n *Node) AsJSDocEnumTag() *JSDocEnumTag {
-    return n.data.(*JSDocEnumTag)
+	return n.data.(*JSDocEnumTag)
 }
 func (n *Node) AsJSDocImportTag() *JSDocImportTag {
-    return n.data.(*JSDocImportTag)
+	return n.data.(*JSDocImportTag)
 }
 func (n *Node) AsJSDocCallbackTag() *JSDocCallbackTag {
-    return n.data.(*JSDocCallbackTag)
+	return n.data.(*JSDocCallbackTag)
 }
 func (n *Node) AsJSDocOverloadTag() *JSDocOverloadTag {
-    return n.data.(*JSDocOverloadTag)
+	return n.data.(*JSDocOverloadTag)
 }
 func (n *Node) AsJSDocTypedefTag() *JSDocTypedefTag {
-    return n.data.(*JSDocTypedefTag)
+	return n.data.(*JSDocTypedefTag)
 }
 func (n *Node) AsJSDocTypeLiteral() *JSDocTypeLiteral {
-    return n.data.(*JSDocTypeLiteral)
+	return n.data.(*JSDocTypeLiteral)
 }
 func (n *Node) AsJSDocSignature() *JSDocSignature {
-    return n.data.(*JSDocSignature)
+	return n.data.(*JSDocSignature)
 }
 func (n *Node) AsJSDocNameReference() *JSDocNameReference {
-    return n.data.(*JSDocNameReference)
-} func (n *Node) AsTypeReferenceNode() *TypeReferenceNode {
+	return n.data.(*JSDocNameReference)
+}
+func (n *Node) AsTypeReferenceNode() *TypeReferenceNode {
 	return n.data.(*TypeReferenceNode)
 }
 func (n *Node) AsTypeQueryNode() *TypeQueryNode {
@@ -4225,7 +4226,6 @@ type JSDoc struct {
 	tags    *JSDocTagListNode
 }
 
-
 func (f *NodeFactory) NewJSDoc(comment *JSDocCommentListNode, tags *JSDocTagListNode) *Node {
 	result := &JSDoc{}
 	result.comment = comment
@@ -4266,7 +4266,6 @@ func (f *NodeFactory) NewJSDocTagList(tags []*JSDocTag) *Node {
 func (node *JSDocTagList) ForEachChild(v Visitor) bool {
 	return visitNodes(v, node.tags)
 }
-
 
 type JSDocTagBase struct {
 	NodeBase
@@ -4927,8 +4926,8 @@ func (node *JSDocTypedefTag) ForEachChild(v Visitor) bool {
 type JSDocTypeLiteral struct {
 	TypeNodeBase
 	DeclarationBase
-	jsDocPropertyTags    []*Node
-	isArrayType bool
+	jsDocPropertyTags []*Node
+	isArrayType       bool
 }
 
 func NewJSDocTypeLiteral(jsDocPropertyTags []*Node, isArrayType bool) *JSDocTypeLiteral {
