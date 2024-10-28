@@ -497,7 +497,7 @@ func (p *Parser) parseExpectedMatchingBrackets(openKind SyntaxKind, closeKind Sy
 	}
 	if lastError != nil {
 		related := NewDiagnostic(nil, NewTextRange(openPosition, openPosition+1), diagnostics.The_parser_expected_to_find_a_1_to_match_the_0_token_here, TokenToString(openKind), TokenToString(closeKind))
-		addRelatedInfo(lastError, related)
+		lastError.addRelatedInfo(related)
 	}
 }
 
@@ -2468,7 +2468,7 @@ func (p *Parser) parseImportType() *Node {
 				lastDiagnostic := p.diagnostics[len(p.diagnostics)-1]
 				if lastDiagnostic.Code() == diagnostics.X_0_expected.Code() {
 					related := NewDiagnostic(nil, NewTextRange(openBracePosition, openBracePosition+1), diagnostics.The_parser_expected_to_find_a_1_to_match_the_0_token_here, "{", "}")
-					addRelatedInfo(lastDiagnostic, related)
+					lastDiagnostic.addRelatedInfo(related)
 				}
 			}
 		}
@@ -2519,7 +2519,7 @@ func (p *Parser) parseImportAttributes(token SyntaxKind, skipKeyword bool) *Node
 				lastDiagnostic := p.diagnostics[len(p.diagnostics)-1]
 				if lastDiagnostic.Code() == diagnostics.X_0_expected.Code() {
 					related := NewDiagnostic(nil, NewTextRange(openBracePosition, openBracePosition+1), diagnostics.The_parser_expected_to_find_a_1_to_match_the_0_token_here, "{", "}")
-					addRelatedInfo(lastDiagnostic, related)
+					lastDiagnostic.addRelatedInfo(related)
 				}
 			}
 		}
@@ -3085,8 +3085,8 @@ func (p *Parser) parseTupleElementType() *TypeNode {
 		return result
 	}
 	typeNode := p.parseType()
-	if typeNode.kind == SyntaxKindJSDocNonNullableType {
-		nullableType := typeNode.data.(*JSDocNonNullableType)
+	if typeNode.kind == SyntaxKindJSDocNullableType {
+		nullableType := typeNode.data.(*JSDocNullableType)
 		if typeNode.loc.pos == nullableType.typeNode.loc.pos {
 			result := p.factory.NewOptionalTypeNode(nullableType.typeNode)
 			result.loc = typeNode.loc

@@ -2,6 +2,7 @@ package compiler
 
 import (
 	"encoding/json"
+	"fmt"
 	"path/filepath"
 	"slices"
 	"strings"
@@ -154,6 +155,13 @@ func (p *Program) GetGlobalDiagnostics() []*Diagnostic {
 	return sortAndDeduplicateDiagnostics(p.getTypeChecker().GetGlobalDiagnostics())
 }
 
+func (p *Program) TypeCount() int {
+	if p.checker == nil {
+		return 0
+	}
+	return int(p.checker.typeCount)
+}
+
 func (p *Program) getTypeChecker() *Checker {
 	if p.checker == nil {
 		p.checker = NewChecker(p)
@@ -182,6 +190,21 @@ func (p *Program) getDiagnosticsHelper(sourceFile *SourceFile, getDiagnostics fu
 		result = append(result, getDiagnostics(file)...)
 	}
 	return sortAndDeduplicateDiagnostics(result)
+}
+
+func (p *Program) PrintTypeAliases() {
+	for _, file := range p.files {
+		if filepath.Base(file.fileName) == "main.ts" {
+			file.AsNode().ForEachChild(p.printTypeAlias)
+		}
+	}
+}
+
+func (p *Program) printTypeAlias(node *Node) bool {
+	if isTypeAliasDeclaration(node) {
+		fmt.Println(p.getTypeChecker().typeAliasToString(node.AsTypeAliasDeclaration()))
+	}
+	return node.ForEachChild(p.printTypeAlias)
 }
 
 func (p *Program) collectExternalModuleReferences(file *SourceFile) {
