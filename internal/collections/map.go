@@ -1,9 +1,16 @@
 package collections
 
 import (
+	"bytes"
+	"encoding/json"
+	"fmt"
 	"iter"
 	"maps"
+	"reflect"
 	"slices"
+
+	jsonExp "github.com/go-json-experiment/json"
+	"github.com/go-json-experiment/json/jsontext"
 )
 
 // Map is an insertion ordered map.
@@ -41,6 +48,12 @@ func (m *Map[K, V]) Set(key K, value V) {
 func (m *Map[K, V]) Get(key K) (V, bool) {
 	v, ok := m.mp[key]
 	return v, ok
+}
+
+// GetOrZero retrieves a value from the map, or returns the zero value of the value type if the key is not present.
+func (m *Map[K, V]) GetOrZero(key K) V {
+	v, _ := m.mp[key]
+	return v
 }
 
 // Has returns true if the map contains the key.
@@ -134,4 +147,69 @@ func (m *Map[K, V]) clone() Map[K, V] {
 		keys: slices.Clone(m.keys),
 		mp:   maps.Clone(m.mp),
 	}
+}
+
+func (m *Map[K, V]) UnmarshalJSON(data []byte) error {
+	if string(data) == "null" {
+		return nil
+	}
+	dec := json.NewDecoder(bytes.NewReader(data))
+	token, err := dec.Token()
+	if err != nil {
+		return err
+	}
+	if token != json.Delim('{') {
+		return fmt.Errorf("cannot unmarshal non-object JSON value into Map")
+	}
+	for dec.More() {
+		nameToken, err := dec.Token()
+		if err != nil {
+			return err
+		}
+		if nameToken == json.Delim('}') {
+			break
+		}
+		if key, ok := nameToken.(K); ok {
+			var valueBytes json.RawMessage
+			if err := dec.Decode(&valueBytes); err != nil {
+				return err
+			}
+			var value V
+			if err := json.Unmarshal(valueBytes, &value); err != nil {
+				return err
+			}
+			m.Set(key, value)
+		} else {
+			return fmt.Errorf("cannot unmarshal key into Map[%v, ...]", reflect.TypeFor[K]())
+		}
+	}
+	return nil
+}
+
+func (m *Map[K, V]) UnmarshalJSONV2(dec *jsontext.Decoder, opts jsonExp.Options) error {
+	token, err := dec.ReadToken()
+	if err != nil {
+		return err
+	}
+	if token.Kind() == jsontext.Null.Kind() {
+		return nil
+	}
+	if token.Kind() != jsontext.ObjectStart.Kind() {
+		return fmt.Errorf("cannot unmarshal non-object JSON value into Map")
+	}
+	for dec.PeekKind() != jsontext.ObjectEnd.Kind() {
+		var key K
+		var value V
+		if err := jsonExp.UnmarshalDecode(dec, &key, opts); err != nil {
+			return err
+		}
+		if err := jsonExp.UnmarshalDecode(dec, &value, opts); err != nil {
+			return err
+		}
+		m.Set(key, value)
+	}
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+	return nil
 }

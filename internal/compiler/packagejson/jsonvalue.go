@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"github.com/microsoft/typescript-go/internal/collections"
+
 	jsonExp "github.com/go-json-experiment/json"
 	"github.com/go-json-experiment/json/jsontext"
 )
@@ -24,11 +26,11 @@ type JSONValue struct {
 	Value any
 }
 
-func (v *JSONValue) AsObject() map[string]*JSONValue {
+func (v *JSONValue) AsObject() *collections.Map[string, *JSONValue] {
 	if v.Type != JSONValueTypeObject {
 		panic(fmt.Sprintf("expected object, got %v", v.Type))
 	}
-	return v.Value.(map[string]*JSONValue)
+	return v.Value.(*collections.Map[string, *JSONValue])
 }
 
 func (v *JSONValue) AsArray() []*JSONValue {
@@ -60,12 +62,12 @@ func unmarshalJSONValue[T any](v *JSONValue, data []byte) error {
 		v.Type = JSONValueTypeArray
 		v.Value = elements
 	} else if data[0] == '{' {
-		var object map[string]*T
+		var object collections.Map[string, *T]
 		if err := json.Unmarshal(data, &object); err != nil {
 			return err
 		}
 		v.Type = JSONValueTypeObject
-		v.Value = object
+		v.Value = &object
 	} else if string(data) == "true" {
 		v.Type = JSONValueTypeBoolean
 		v.Value = true
@@ -110,26 +112,12 @@ func unmarshalJSONValueV2[T any](v *JSONValue, dec *jsontext.Decoder, opts jsonE
 		v.Type = JSONValueTypeArray
 		v.Value = elements
 	case '{':
-		if _, err := dec.ReadToken(); err != nil {
-			return err
-		}
-		object := make(map[string]*T)
-		for dec.PeekKind() != jsontext.ObjectEnd.Kind() {
-			var key string
-			var value *T
-			if err := jsonExp.UnmarshalDecode(dec, &key, opts); err != nil {
-				return err
-			}
-			if err := jsonExp.UnmarshalDecode(dec, &value, opts); err != nil {
-				return err
-			}
-			object[key] = value
-		}
-		if _, err := dec.ReadToken(); err != nil {
+		var object collections.Map[string, *T]
+		if err := jsonExp.UnmarshalDecode(dec, &object, opts); err != nil {
 			return err
 		}
 		v.Type = JSONValueTypeObject
-		v.Value = object
+		v.Value = &object
 	case jsontext.True.Kind(), jsontext.False.Kind():
 		v.Type = JSONValueTypeBoolean
 		if err := jsonExp.UnmarshalDecode(dec, &v.Value, opts); err != nil {

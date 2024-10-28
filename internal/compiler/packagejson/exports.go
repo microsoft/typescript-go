@@ -3,6 +3,7 @@ package packagejson
 import (
 	jsonExp "github.com/go-json-experiment/json"
 	"github.com/go-json-experiment/json/jsontext"
+	"github.com/microsoft/typescript-go/internal/collections"
 )
 
 type exportsObjectKind int8
@@ -27,11 +28,11 @@ func (e *Exports) UnmarshalJSONV2(dec *jsontext.Decoder, opts jsonExp.Options) e
 	return unmarshalJSONValueV2[Exports](&e.JSONValue, dec, opts)
 }
 
-func (e *Exports) AsObject() map[string]*Exports {
+func (e *Exports) AsObject() *collections.Map[string, *Exports] {
 	if e.Type != JSONValueTypeObject {
 		panic("expected object")
 	}
-	return e.Value.(map[string]*Exports)
+	return e.Value.(*collections.Map[string, *Exports])
 }
 
 func (e *Exports) AsArray() []*Exports {
@@ -46,7 +47,7 @@ func (e *Exports) IsSubpaths() bool {
 	return e.objectKind == exportsObjectKindSubpaths
 }
 
-func (e *Exports) GetSubpaths() map[string]*Exports {
+func (e *Exports) GetSubpaths() *collections.Map[string, *Exports] {
 	if e.IsSubpaths() {
 		return e.AsObject()
 	}
@@ -60,9 +61,9 @@ func (e *Exports) IsConditions() bool {
 
 func (e *Exports) initObjectKind() {
 	if e.objectKind == exportsObjectKindUnknown && e.Type == JSONValueTypeObject {
-		if obj := e.AsObject(); len(obj) > 0 {
+		if obj := e.AsObject(); obj.Size() > 0 {
 			seenDot, seenNonDot := false, false
-			for k := range obj {
+			for k := range obj.Keys() {
 				if len(k) > 0 {
 					seenDot = seenDot || k[0] == '.'
 					seenNonDot = seenNonDot || k[0] != '.'
