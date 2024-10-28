@@ -243,6 +243,7 @@ type ScannerState struct {
 	token        SyntaxKind // SyntaxKind of current token
 	tokenValue   string     // Parsed value of current token
 	tokenFlags   TokenFlags // Flags for current token
+	skipJSDocLeadingAsterisks int
 }
 
 type Scanner struct {
@@ -295,6 +296,14 @@ func (s *Scanner) Mark() ScannerState {
 
 func (s *Scanner) Rewind(state ScannerState) {
 	s.ScannerState = state
+}
+
+func (scanner *Scanner) SetSkipJsDocLeadingAsterisks(skip bool) {
+	if skip {
+		scanner.skipJSDocLeadingAsterisks += 1
+	} else {
+		scanner.skipJSDocLeadingAsterisks += -1
+	}
 }
 
 func (s *Scanner) HasUnicodeEscape() bool {
@@ -781,6 +790,14 @@ func (s *Scanner) ReScanTemplateToken(isTaggedTemplate bool) SyntaxKind {
 	s.token = s.scanTemplateAndSetTokenValue(!isTaggedTemplate)
 	return s.token
 }
+func (scanner *Scanner) ReScanAsteriskEqualsToken() SyntaxKind {
+	if scanner.token != SyntaxKindAsteriskEqualsToken {
+		panic("'ReScanAsteriskEqualsToken' should only be called on a '*='")
+	}
+	scanner.pos = scanner.tokenStart + 1
+	scanner.token = SyntaxKindEqualsToken
+	return scanner.token
+}
 
 // !!! https://github.com/microsoft/TypeScript/pull/55600
 func (s *Scanner) ReScanSlashToken() SyntaxKind {
@@ -835,7 +852,22 @@ func (s *Scanner) reScanJsxToken(allowMultilineJsxText bool) SyntaxKind {
 	s.token = s.scanJsxTokenEx(allowMultilineJsxText)
 	return s.token
 }
+func (s *Scanner) ReScanHashToken() SyntaxKind {
+	if s.token == SyntaxKindPrivateIdentifier {
+		s.pos = s.tokenStart + 1
+		s.token = SyntaxKindHashToken
+	}
+	return s.token
+}
 
+func (scanner *Scanner) ReScanQuestionToken() SyntaxKind {
+	if scanner.token != SyntaxKindQuestionQuestionToken {
+		panic("'reScanQuestionToken' should only be called on a '??'")
+	}
+	scanner.pos = scanner.tokenStart + 1
+	scanner.token = SyntaxKindQuestionToken
+	return scanner.token
+}
 func (s *Scanner) scanJsxToken() SyntaxKind {
 	return s.scanJsxTokenEx(true /*allowMultilineJsxText*/)
 }
@@ -952,6 +984,114 @@ func (s *Scanner) reScanJsxAttributeValue() SyntaxKind {
 	s.pos = s.fullStartPos
 	s.tokenStart = s.fullStartPos
 	return s.scanJsxAttributeValue()
+}
+
+func (scanner *Scanner) ScanJSDocToken() SyntaxKind {
+	scanner.fullStartPos = scanner.pos
+	scanner.tokenFlags = TokenFlagsNone
+	if scanner.pos >= len(scanner.text) {
+		scanner.token = SyntaxKindEndOfFile
+		return scanner.token
+	}
+
+	ch, size := scanner.charAndSize()
+	scanner.pos += size
+	switch ch {
+	case '\t', '\v', '\f', ' ':
+		ch2 := scanner.char()
+		for ch2 > -1 && isWhiteSpaceSingleLine(ch2) {
+			scanner.pos++
+		}
+		scanner.token = SyntaxKindWhitespaceTrivia
+		return scanner.token
+	case '@':
+		scanner.token = SyntaxKindAtToken
+		return scanner.token
+	case '\r':
+		if scanner.char() == '\n' {
+			scanner.pos++
+		}
+		fallthrough
+	case '\n':
+		scanner.tokenFlags |= TokenFlagsPrecedingLineBreak
+		scanner.token = SyntaxKindNewLineTrivia
+		return scanner.token
+	case '*':
+		scanner.token = SyntaxKindAsteriskToken
+		return scanner.token
+	case '{':
+		scanner.token = SyntaxKindOpenBraceToken
+		return scanner.token
+	case '}':
+		scanner.token = SyntaxKindCloseBraceToken
+		return scanner.token
+	case '[':
+		scanner.token = SyntaxKindOpenBracketToken
+		return scanner.token
+	case ']':
+		scanner.token = SyntaxKindCloseBracketToken
+		return scanner.token
+	case '(':
+		scanner.token = SyntaxKindOpenParenToken
+		return scanner.token
+	case ')':
+		scanner.token = SyntaxKindCloseParenToken
+		return scanner.token
+	case '<':
+		scanner.token = SyntaxKindLessThanToken
+		return scanner.token
+	case '>':
+		scanner.token = SyntaxKindGreaterThanToken
+		return scanner.token
+	case '=':
+		scanner.token = SyntaxKindEqualsToken
+		return scanner.token
+	case ',':
+		scanner.token = SyntaxKindCommaToken
+		return scanner.token
+	case '.':
+		scanner.token = SyntaxKindDotToken
+		return scanner.token
+	case '`':
+		scanner.token = SyntaxKindBacktickToken
+		return scanner.token
+	case '#':
+		scanner.token = SyntaxKindHashToken
+		return scanner.token
+	case '\\':
+		scanner.pos--
+		cp := scanner.peekUnicodeEscape()
+		if cp >= 0 && isIdentifierStart(cp, scanner.languageVersion) {
+			scanner.tokenValue = string(scanner.scanUnicodeEscape(true)) + scanner.scanIdentifierParts()
+			scanner.token = getIdentifierToken(scanner.tokenValue)
+		} else {
+			scanner.scanInvalidCharacter()
+		}
+		return scanner.token
+	}
+
+	if isIdentifierStart(ch, scanner.languageVersion) {
+		char := ch
+		for true {
+			if scanner.pos >= len(scanner.text) {
+				break
+			}
+			char, size = scanner.charAndSize()
+			if !isIdentifierPart(char, scanner.languageVersion, scanner.languageVariant) && char != '-' {
+				break
+			}
+			scanner.pos += size
+		}
+		scanner.tokenValue = scanner.text[scanner.tokenStart:scanner.pos]
+		if char == '\\' {
+			scanner.tokenValue += scanner.scanIdentifierParts()
+		}
+		scanner.token = getIdentifierToken(scanner.tokenValue)
+		return scanner.token
+	} else {
+		scanner.token = SyntaxKindUnknown
+		return scanner.token
+	}
 }
 
 func (s *Scanner) scanIdentifier(prefixLength int) bool {

@@ -141,6 +141,11 @@ func (p *Parser) nextToken() SyntaxKind {
 	return p.token
 }
 
+func (p *Parser) nextTokenJSDoc() SyntaxKind {
+	p.token = p.scanner.ScanJSDocToken()
+	return p.token
+}
+
 func (p *Parser) nodePos() int {
 	return p.scanner.TokenFullStart()
 }
@@ -2199,23 +2204,22 @@ func (p *Parser) parseNonArrayType() *Node {
 		}
 		p.rewind(state)
 		return p.parseTypeReference()
-		// !!!
-		// case SyntaxKindAsteriskEqualsToken:
-		// 	// If there is '*=', treat it as * followed by postfix =
-		// 	p.scanner.reScanAsteriskEqualsToken()
-		// 	fallthrough
-		// case SyntaxKindAsteriskToken:
-		// 	return p.parseJSDocAllType()
-		// case SyntaxKindQuestionQuestionToken:
-		// 	// If there is '??', treat it as prefix-'?' in JSDoc type.
-		// 	p.scanner.reScanQuestionToken()
-		// 	fallthrough
-		// case SyntaxKindQuestionToken:
-		// 	return p.parseJSDocUnknownOrNullableType()
-		// case SyntaxKindFunctionKeyword:
-		// 	return p.parseJSDocFunctionType()
-		// case SyntaxKindExclamationToken:
-		// 	return p.parseJSDocNonNullableType()
+	case SyntaxKindAsteriskEqualsToken:
+		// If there is '*=', treat it as * followed by postfix =
+		p.scanner.ReScanAsteriskEqualsToken()
+		fallthrough
+	case SyntaxKindAsteriskToken:
+		return p.parseJSDocAllType()
+	case SyntaxKindQuestionQuestionToken:
+		// If there is '??', treat it as prefix-'?' in JSDoc type.
+		p.scanner.ReScanQuestionToken()
+		fallthrough
+	case SyntaxKindQuestionToken:
+		return p.parseJSDocUnknownOrNullableType()
+	case SyntaxKindFunctionKeyword:
+		return p.parseJSDocFunctionType()
+	case SyntaxKindExclamationToken:
+		return p.parseJSDocNonNullableType()
 	case SyntaxKindNoSubstitutionTemplateLiteral, SyntaxKindStringLiteral, SyntaxKindNumericLiteral, SyntaxKindBigintLiteral, SyntaxKindTrueKeyword,
 		SyntaxKindFalseKeyword, SyntaxKindNullKeyword:
 		return p.parseLiteralTypeNode(false /*negative*/)
@@ -2283,6 +2287,117 @@ func (p *Parser) parseThisTypePredicate(lhs *Node) *Node {
 	return result
 }
 
+func (p *Parser) parseJSDocAllType() *Node {
+	pos := p.nodePos()
+	p.nextToken()
+	result := p.factory.NewJSDocAllType()
+	p.finishNode(result, pos)
+	return result
+}
+
+func (p *Parser) parseJSDocNonNullableType() *TypeNode {
+	pos := p.nodePos()
+	p.nextToken()
+	result := p.factory.NewJSDocNonNullableType(p.parseNonArrayType() /*postfix*/, false)
+	p.finishNode(result, pos)
+	return result
+}
+
+func (p *Parser) parseJSDocUnknownOrNullableType() *Node {
+	pos := p.nodePos()
+	// skip the ?
+	p.nextToken()
+
+	// Need to lookahead to decide if this is a nullable or unknown type.
+
+	// Here are cases where we'll pick the unknown type:
+	//
+	//      Foo(?,
+	//      { a: ? }
+	//      Foo(?)
+	//      Foo<?>
+	//      Foo(?=
+	//      (?|
+	if p.token == SyntaxKindCommaToken || p.token == SyntaxKindCloseBraceToken || p.token == SyntaxKindCloseParenToken || p.token == SyntaxKindGreaterThanToken || p.token == SyntaxKindEqualsToken || p.token == SyntaxKindBarToken {
+		result := p.factory.NewJSDocUnknownType()
+		p.finishNode(result, pos)
+		return result
+	} else {
+		result := p.factory.NewJSDocNullableType(p.parseType() /*postfix*/, false)
+		p.finishNode(result, pos)
+		return result
+	}
+}
+
+func (p *Parser) parseJSDocFunctionType() *Node {
+	pos := p.nodePos()
+	// hasJSDoc := p.hasPrecedingJSDocComment()
+	state := p.mark()
+	if p.nextTokenIsOpenParen() {
+		parameters := p.parseParameters(SignatureFlagsType | SignatureFlagsJSDoc)
+		type_ := p.parseReturnType(SyntaxKindColonToken /*isType*/, false)
+		result := p.factory.NewJSDocFunctionType(parameters, type_)
+		p.finishNode(result, pos)
+		// p.withJSDoc(result, hasJSDoc)
+		return result
+	}
+	p.rewind(state)
+	result := p.factory.NewTypeReferenceNode(p.parseIdentifierName() /*typeArguments*/, nil)
+	p.finishNode(result, pos)
+	return result
+}
+
+func (p *Parser) parseJSDocParameter() *ParameterDeclarationNode {
+	pos := p.nodePos()
+	var name *Node
+	if p.token == SyntaxKindThisKeyword || p.token == SyntaxKindNewKeyword {
+		name = p.parseIdentifierName()
+		p.parseExpected(SyntaxKindColonToken)
+	}
+	result := p.factory.NewParameterDeclaration(nil, nil, name, nil, p.parseJSDocType(), nil)
+	p.finishNode(result, pos)
+	return result
+}
+
+func (p *Parser) parseJSDocType() *TypeNode {
+	p.scanner.SetSkipJsDocLeadingAsterisks(true)
+	pos := p.nodePos()
+	if p.parseOptional(SyntaxKindModuleKeyword) {
+		// TODO(rbuckton): We never set `type TypeNode` for a JSDocNamepathType. What should we put here?
+		moduleTag := p.factory.NewJSDocNamepathType()
+	terminate:
+		for true {
+			switch p.token {
+			case SyntaxKindCloseBraceToken,
+				SyntaxKindEndOfFile,
+				SyntaxKindCommaToken,
+				SyntaxKindWhitespaceTrivia:
+				break terminate
+			default:
+				p.nextTokenJSDoc()
+			}
+		}
+
+		p.scanner.SetSkipJsDocLeadingAsterisks(false)
+		p.finishNode(moduleTag, pos)
+		return moduleTag
+	}
+
+	hasDotDotDot := p.parseOptional(SyntaxKindDotDotDotToken)
+	type_ := p.parseTypeOrTypePredicate()
+	p.scanner.SetSkipJsDocLeadingAsterisks(false)
+	if hasDotDotDot {
+		type_ = p.factory.NewJSDocVariadicType(type_)
+		p.finishNode(type_, pos)
+	}
+	if p.token == SyntaxKindEqualsToken {
+		p.nextToken()
+		result := p.factory.NewJSDocOptionalType(type_)
+		p.finishNode(result, pos)
+		return result
+	}
+	return type_
+}
 func (p *Parser) parseLiteralTypeNode(negative bool) *Node {
 	pos := p.nodePos()
 	if negative {
