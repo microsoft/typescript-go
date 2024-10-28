@@ -404,6 +404,15 @@ func (n *Node) AsNamedTupleMember() *NamedTupleMember {
 func (n *Node) AsOptionalTypeNode() *OptionalTypeNode {
 	return n.data.(*OptionalTypeNode)
 }
+func (n *Node) AsTypeReferenceNode() *TypeReferenceNode {
+	return n.data.(*TypeReferenceNode)
+}
+func (n *Node) AsTypeQueryNode() *TypeQueryNode {
+	return n.data.(*TypeQueryNode)
+}
+func (n *Node) AsIndexedAccessTypeNode() *IndexedAccessTypeNode {
+	return n.data.(*IndexedAccessTypeNode)
+}
 func (n *Node) AsJSDoc() *JSDoc {
 	return n.data.(*JSDoc)
 }
@@ -541,15 +550,6 @@ func (n *Node) AsJSDocSignature() *JSDocSignature {
 }
 func (n *Node) AsJSDocNameReference() *JSDocNameReference {
 	return n.data.(*JSDocNameReference)
-}
-func (n *Node) AsTypeReferenceNode() *TypeReferenceNode {
-	return n.data.(*TypeReferenceNode)
-}
-func (n *Node) AsTypeQueryNode() *TypeQueryNode {
-	return n.data.(*TypeQueryNode)
-}
-func (n *Node) AsIndexedAccessTypeNode() *IndexedAccessTypeNode {
-	return n.data.(*IndexedAccessTypeNode)
 }
 
 // NodeData
@@ -4452,14 +4452,14 @@ type JSDocVariadicType struct {
 	typeNode *TypeNode
 }
 
-func (node *JSDocVariadicType) ForEachChild(v Visitor) bool {
-	return visit(v, node.typeNode)
-}
-
-func NewJSDocVariadicType(typeNode *TypeNode) *JSDocVariadicType {
+func (f *NodeFactory) NewJSDocVariadicType(typeNode *TypeNode) *Node {
 	result := &JSDocVariadicType{}
 	result.typeNode = typeNode
-	return result
+	return f.NewNode(SyntaxKindJSDocVariadicType, result)
+}
+
+func (node *JSDocVariadicType) ForEachChild(v Visitor) bool {
+	return visit(v, node.typeNode)
 }
 
 // JSDocOptionalType
