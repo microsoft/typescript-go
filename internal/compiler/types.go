@@ -9,6 +9,8 @@ type SyntaxKind int16
 const (
 	SyntaxKindUnknown SyntaxKind = iota
 	SyntaxKindEndOfFile
+	SyntaxKindWhitespaceTrivia
+	SyntaxKindNewLineTrivia
 	SyntaxKindConflictMarkerTrivia
 	SyntaxKindNonTextFileMarkerTrivia
 	SyntaxKindNumericLiteral
