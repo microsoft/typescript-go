@@ -11,8 +11,8 @@ type PathFields struct {
 	Main          Expected[string]           `json:"main"`
 	Types         Expected[string]           `json:"types"`
 	Typings       Nullable[Expected[string]] `json:"typings"`
-	TypesVersions any                        `json:"typesVersions"`
-	Imports       any                        `json:"imports"`
+	TypesVersions JSONValue                  `json:"typesVersions"`
+	Imports       JSONValue                  `json:"imports"`
 	Exports       Exports                    `json:"exports"`
 }
 
