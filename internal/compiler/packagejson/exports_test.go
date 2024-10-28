@@ -39,5 +39,5 @@ func testExportsWithUnmarshal(t *testing.T, unmarshal func([]byte, any) error) {
 
 	assert.Assert(t, e.Exports.IsSubpaths())
 	assert.Equal(t, len(e.Exports.GetSubpaths()), 2)
-	assert.Equal(t, e.Exports.GetSubpaths()["."].IsConditions(), true)
+	assert.Assert(t, e.Exports.GetSubpaths()["."].IsConditions())
 }
