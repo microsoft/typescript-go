@@ -76,12 +76,17 @@ func main() {
 				currentDirectory = ""
 			}
 
-			output := ts.FormatDiagnosticsWithColorAndContext(diagnostics, &ts.DiagnosticsFormattingOptions{
+			output := strings.Builder{}
+			formatOpts := ts.DiagnosticsFormattingOptions{
 				NewLine:              "\n",
 				CurrentDirectory:     currentDirectory,
 				GetCanonicalFileName: getCanonicalFileName,
-			})
-			fmt.Println(output)
+			}
+			ts.FormatDiagnosticsWithColorAndContext(&output, diagnostics, &formatOpts)
+			output.WriteByte('\n')
+			ts.WriteErrorSummaryText(&output, diagnostics, &formatOpts)
+			output.WriteByte('\n')
+			fmt.Print(output.String())
 		} else {
 			for _, diagnostic := range diagnostics {
 				printDiagnostic(diagnostic, 0)
@@ -91,6 +96,8 @@ func main() {
 	if printTypes {
 		program.PrintTypeAliases()
 	}
+
+	fmt.Println("")
 	fmt.Printf("Files:         %v\n", len(program.SourceFiles()))
 	fmt.Printf("Compile time:  %v\n", compileTime)
 	fmt.Printf("Memory used:   %vK\n", memStats.Alloc/1024)

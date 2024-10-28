@@ -3,6 +3,7 @@ package compiler
 import (
 	"encoding/json"
 	"fmt"
+	"maps"
 	"path/filepath"
 	"slices"
 	"strconv"
@@ -415,28 +416,26 @@ const (
 	ellipsis            = "..."
 )
 
-func FormatDiagnosticsWithColorAndContext(diags []*Diagnostic, formatOpts *DiagnosticsFormattingOptions) string {
+func FormatDiagnosticsWithColorAndContext(output *strings.Builder, diags []*Diagnostic, formatOpts *DiagnosticsFormattingOptions) {
 	if len(diags) == 0 {
-		return ""
+		return
 	}
-
-	var output strings.Builder
 
 	for _, diagnostic := range diags {
 		if diagnostic.file != nil {
 			file := diagnostic.file
 			pos := diagnostic.loc.Pos()
-			writeLocation(&output, file, pos, formatOpts, writeWithStyleAndReset)
+			WriteLocation(output, file, pos, formatOpts, writeWithStyleAndReset)
 			output.WriteString(" - ")
 		}
 
-		writeWithStyleAndReset(&output, diagnostic.Category().Name(), getCategoryFormat(diagnostic.Category()))
-		fmt.Fprintf(&output, "%s TS%d: %s", foregroundColorEscapeGrey, diagnostic.Code(), resetEscapeSequence)
-		WriteFlattenedDiagnosticMessage(&output, diagnostic, formatOpts.NewLine)
+		writeWithStyleAndReset(output, diagnostic.Category().Name(), getCategoryFormat(diagnostic.Category()))
+		fmt.Fprintf(output, "%s TS%d: %s", foregroundColorEscapeGrey, diagnostic.Code(), resetEscapeSequence)
+		WriteFlattenedDiagnosticMessage(output, diagnostic, formatOpts.NewLine)
 
 		if diagnostic.File() != nil && diagnostic.Code() != diagnostics.File_appears_to_be_binary.Code() {
 			output.WriteString(formatOpts.NewLine)
-			writeCodeSnippet(&output, diagnostic.File(), diagnostic.Pos(), diagnostic.Length(), getCategoryFormat(diagnostic.Category()), formatOpts)
+			writeCodeSnippet(output, diagnostic.File(), diagnostic.Pos(), diagnostic.Length(), getCategoryFormat(diagnostic.Category()), formatOpts)
 		}
 
 		if (diagnostic.RelatedInformation() != nil) && (len(diagnostic.RelatedInformation()) > 0) {
@@ -446,17 +445,16 @@ func FormatDiagnosticsWithColorAndContext(diags []*Diagnostic, formatOpts *Diagn
 				if file != nil {
 					output.WriteString(formatOpts.NewLine)
 					pos := relatedInformation.Pos()
-					writeLocation(&output, file, pos, formatOpts, writeWithStyleAndReset)
-					writeCodeSnippet(&output, file, pos, relatedInformation.Length(), foregroundColorEscapeCyan, formatOpts)
+					WriteLocation(output, file, pos, formatOpts, writeWithStyleAndReset)
+					writeCodeSnippet(output, file, pos, relatedInformation.Length(), foregroundColorEscapeCyan, formatOpts)
 				}
-
 				output.WriteString(formatOpts.NewLine)
-				WriteFlattenedDiagnosticMessage(&output, relatedInformation, formatOpts.NewLine)
+				WriteFlattenedDiagnosticMessage(output, relatedInformation, formatOpts.NewLine)
 			}
 		}
-	}
 
-	return output.String()
+		output.WriteString(formatOpts.NewLine)
+	}
 }
 
 func writeCodeSnippet(writer *strings.Builder, sourceFile *SourceFile, start int, length int, squiggleColor string, formatOpts *DiagnosticsFormattingOptions) {
@@ -533,15 +531,15 @@ func WriteFlattenedDiagnosticMessage(writer *strings.Builder, diagnostic *Diagno
 	}
 }
 
-func flattenDiagnosticMessageChain(writer *strings.Builder, chain *MessageChain, newline string, level int) {
-	writer.WriteString(newline)
+func flattenDiagnosticMessageChain(writer *strings.Builder, chain *MessageChain, newLine string, level int) {
+	writer.WriteString(newLine)
 	for i := 0; i < level; i++ {
 		writer.WriteString("  ")
 	}
 
 	writer.WriteString(chain.message)
 	for _, child := range chain.messageChain {
-		flattenDiagnosticMessageChain(writer, child, newline, level+1)
+		flattenDiagnosticMessageChain(writer, child, newLine, level+1)
 	}
 }
 
@@ -567,7 +565,7 @@ func writeWithStyleAndReset(output *strings.Builder, text string, formatStyle st
 	output.WriteString(resetEscapeSequence)
 }
 
-func writeLocation(output *strings.Builder, file *SourceFile, pos int, formatOpts *DiagnosticsFormattingOptions, writeWithStyleAndReset FormattedWriter) {
+func WriteLocation(output *strings.Builder, file *SourceFile, pos int, formatOpts *DiagnosticsFormattingOptions, writeWithStyleAndReset FormattedWriter) {
 	firstLine, firstChar := GetLineAndCharacterOfPosition(file, pos)
 	var relativeFileName string
 	if formatOpts != nil {
@@ -581,4 +579,135 @@ func writeLocation(output *strings.Builder, file *SourceFile, pos int, formatOpt
 	writeWithStyleAndReset(output, strconv.Itoa(firstLine+1), foregroundColorEscapeYellow)
 	output.WriteByte(':')
 	writeWithStyleAndReset(output, strconv.Itoa(firstChar+1), foregroundColorEscapeYellow)
+}
+
+// Some of these lived in watch.ts, but they're not specific to the watch API.
+
+type ErrorSummary struct {
+	TotalErrorCount int
+	GlobalErrors    []*Diagnostic
+	ErrorsByFiles   map[*SourceFile][]*Diagnostic
+	SortedFileList  []*SourceFile
+}
+
+func WriteErrorSummaryText(output *strings.Builder, allDiagnostics []*Diagnostic, formatOpts *DiagnosticsFormattingOptions) {
+	// Roughly corresponds to 'getErrorSummaryText' from watch.ts
+
+	errorSummary := getErrorSummary(allDiagnostics)
+	totalErrorCount := errorSummary.TotalErrorCount
+	if totalErrorCount == 0 {
+		return
+	}
+
+	firstFile := errorSummary.SortedFileList[0]
+	firstFileName := prettyPathForFileError(firstFile, errorSummary.ErrorsByFiles[firstFile], formatOpts)
+	numErroringFiles := len(errorSummary.ErrorsByFiles)
+
+	var message string
+	if totalErrorCount == 1 {
+		// Special-case a single error.
+		if len(errorSummary.GlobalErrors) > 0 {
+			message = formatMessage(diagnostics.Found_1_error)
+		} else {
+			message = formatMessage(diagnostics.Found_1_error_in_0, firstFileName)
+		}
+	} else {
+		if numErroringFiles == 0 {
+			// No file-specific errors.
+			message = formatMessage(diagnostics.Found_0_errors, totalErrorCount)
+		} else if numErroringFiles == 1 {
+			// One file with errors.
+			message = formatMessage(diagnostics.Found_0_errors_in_the_same_file_starting_at_Colon_1, totalErrorCount, firstFileName)
+		} else {
+			// Multiple files with errors.
+			message = formatMessage(diagnostics.Found_0_errors_in_1_files, totalErrorCount, numErroringFiles)
+		}
+	}
+	output.WriteString(formatOpts.NewLine)
+	output.WriteString(message)
+	output.WriteString(formatOpts.NewLine)
+	output.WriteString(formatOpts.NewLine)
+	if numErroringFiles > 0 {
+		writeTabularErrorsDisplay(output, errorSummary, formatOpts)
+	}
+}
+
+func getErrorSummary(diags []*Diagnostic) *ErrorSummary {
+	var totalErrorCount int
+	var globalErrors []*Diagnostic
+	var errorsByFiles map[*SourceFile][]*Diagnostic
+
+	for _, diagnostic := range diags {
+		if diagnostic.Category() != diagnostics.CategoryError {
+			continue
+		}
+
+		totalErrorCount++
+		if diagnostic.file == nil {
+			globalErrors = append(globalErrors, diagnostic)
+		} else {
+			if errorsByFiles == nil {
+				errorsByFiles = make(map[*SourceFile][]*Diagnostic)
+			}
+			errorsByFiles[diagnostic.file] = append(errorsByFiles[diagnostic.file], diagnostic)
+		}
+	}
+
+	// !!!
+	// Need an ordered map here, but sorting for consistency.
+	sortedFileList := slices.SortedFunc(maps.Keys(errorsByFiles), func(a, b *SourceFile) int {
+		return strings.Compare(a.fileName, b.fileName)
+	})
+
+	return &ErrorSummary{
+		TotalErrorCount: totalErrorCount,
+		GlobalErrors:    globalErrors,
+		ErrorsByFiles:   errorsByFiles,
+		SortedFileList:  sortedFileList,
+	}
+}
+
+func writeTabularErrorsDisplay(output *strings.Builder, errorSummary *ErrorSummary, formatOpts *DiagnosticsFormattingOptions) {
+	sortedFiles := errorSummary.SortedFileList
+
+	maxErrors := 0
+	for _, errorsForFile := range errorSummary.ErrorsByFiles {
+		maxErrors = max(maxErrors, len(errorsForFile))
+	}
+
+	// !!!
+	// TODO (drosen): This was never localized.
+	// Should make this better.
+	headerRow := diagnostics.Errors_Files.Message()
+	leftColumnHeadingLength := len(strings.Split(headerRow, " ")[0])
+	lengthOfBiggestErrorCount := len(strconv.Itoa(maxErrors))
+	leftPaddingGoal := max(leftColumnHeadingLength, lengthOfBiggestErrorCount)
+	headerPadding := max(lengthOfBiggestErrorCount-leftColumnHeadingLength, 0)
+
+	output.WriteString(strings.Repeat(" ", headerPadding))
+	output.WriteString(headerRow)
+	output.WriteString(formatOpts.NewLine)
+
+	for _, file := range sortedFiles {
+		fileErrors := errorSummary.ErrorsByFiles[file]
+		errorCount := len(fileErrors)
+
+		fmt.Fprintf(output, "%*d  ", leftPaddingGoal, errorCount)
+		output.WriteString(prettyPathForFileError(file, fileErrors, formatOpts))
+		output.WriteString(formatOpts.NewLine)
+	}
+}
+
+func prettyPathForFileError(file *SourceFile, fileErrors []*Diagnostic, formatOpts *DiagnosticsFormattingOptions) string {
+	line, _ := GetLineAndCharacterOfPosition(file, fileErrors[0].loc.Pos())
+	fileName := file.fileName
+	if filepath.IsAbs(fileName) && filepath.IsAbs(formatOpts.CurrentDirectory) {
+		fileName = ConvertToRelativePath(file.path, formatOpts.CurrentDirectory, formatOpts.GetCanonicalFileName)
+	}
+	return fmt.Sprintf("%s%s:%d%s",
+		fileName,
+		foregroundColorEscapeGrey,
+		line+1,
+		resetEscapeSequence,
+	)
 }
