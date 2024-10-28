@@ -122,14 +122,12 @@ func isFileSystemCaseSensitive() bool {
 
 // Convert all lowercase chars to uppercase, and vice-versa
 func swapCase(str string) string {
-	runes := make([]rune, len(str))
-	for i, c := range str {
-		upper := unicode.ToUpper(c)
-		if upper == c {
-			runes[i] = unicode.ToLower(c)
+	return strings.Map(func(r rune) rune {
+		upper := unicode.ToUpper(r)
+		if upper == r {
+			return unicode.ToLower(r)
 		} else {
-			runes[i] = upper
+			return upper
 		}
-	}
-	return string(runes)
+	}, str)
 }
