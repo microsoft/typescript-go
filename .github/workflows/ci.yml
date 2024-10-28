@@ -45,7 +45,7 @@ jobs:
           - os: ubuntu-latest
             submodules: false
 
-    name: Test on ${{ matrix.os }}${{ (!matrix.submodules && ' without submodules') || '' }}
+    name: test (${{ matrix.os }}${{ (!matrix.submodules && ' without submodules') || '' }})
 
     runs-on: ${{ matrix.os }}
 
