@@ -421,7 +421,11 @@ func FormatDiagnosticsWithColorAndContext(output *strings.Builder, diags []*Diag
 		return
 	}
 
-	for _, diagnostic := range diags {
+	for i, diagnostic := range diags {
+		if i > 0 {
+			output.WriteString(formatOpts.NewLine)
+		}
+
 		if diagnostic.file != nil {
 			file := diagnostic.file
 			pos := diagnostic.loc.Pos()
@@ -481,10 +485,13 @@ func writeCodeSnippet(writer *strings.Builder, sourceFile *SourceFile, start int
 		}
 
 		lineStart := GetPositionOfLineAndCharacter(sourceFile, i, 0)
-		lineEnd := sourceFile.loc.end
+		var lineEnd TextPos
 		if i < lastLineOfFile {
 			lineEnd = GetPositionOfLineAndCharacter(sourceFile, i+1, 0)
+		} else {
+			lineEnd = sourceFile.loc.end
 		}
+
 		lineContent := strings.TrimRightFunc(sourceFile.text[lineStart:lineEnd], unicode.IsSpace) // trim from end
 		lineContent = strings.ReplaceAll(lineContent, "\t", " ")                                  // convert tabs to single spaces
 

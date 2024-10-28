@@ -85,7 +85,6 @@ func main() {
 			ts.FormatDiagnosticsWithColorAndContext(&output, diagnostics, &formatOpts)
 			output.WriteByte('\n')
 			ts.WriteErrorSummaryText(&output, diagnostics, &formatOpts)
-			output.WriteByte('\n')
 			fmt.Print(output.String())
 		} else {
 			for _, diagnostic := range diagnostics {
