@@ -7,12 +7,13 @@ type HeaderFields struct {
 }
 
 type PathFields struct {
-	TSConfig      Expected[string] `json:"tsconfig"`
-	Main          Expected[string] `json:"main"`
-	Types         Expected[string] `json:"types"`
-	TypesVersions any              `json:"typesVersions"`
-	Imports       any              `json:"imports"`
-	Exports       Exports          `json:"exports"`
+	TSConfig      Expected[string]           `json:"tsconfig"`
+	Main          Expected[string]           `json:"main"`
+	Types         Expected[string]           `json:"types"`
+	Typings       Nullable[Expected[string]] `json:"typings"`
+	TypesVersions any                        `json:"typesVersions"`
+	Imports       any                        `json:"imports"`
+	Exports       Exports                    `json:"exports"`
 }
 
 type DependencyFields struct {
