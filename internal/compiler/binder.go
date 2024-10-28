@@ -107,28 +107,6 @@ func (b *Binder) newSymbol(flags SymbolFlags, name string) *Symbol {
 	return result
 }
 
-func getMembers(symbol *Symbol) SymbolTable {
-	if symbol.members == nil {
-		symbol.members = make(SymbolTable)
-	}
-	return symbol.members
-}
-
-func getExports(symbol *Symbol) SymbolTable {
-	if symbol.exports == nil {
-		symbol.exports = make(SymbolTable)
-	}
-	return symbol.exports
-}
-
-func getLocals(container *Node) SymbolTable {
-	data := container.LocalsContainerData()
-	if data.locals == nil {
-		data.locals = make(SymbolTable)
-	}
-	return data.locals
-}
-
 /**
  * Declares a Symbol for the node and adds it to symbols. Reports errors for conflicting identifier names.
  * @param symbolTable - The symbol table which node will be added to.
@@ -814,10 +792,7 @@ func (b *Binder) bindNamespaceExportDeclaration(node *Node) {
 	case !node.parent.AsSourceFile().isDeclarationFile:
 		b.errorOnNode(node, diagnostics.Global_module_exports_may_only_appear_in_declaration_files)
 	default:
-		if b.file.symbol.globalExports == nil {
-			b.file.symbol.globalExports = make(SymbolTable)
-		}
-		b.declareSymbol(b.file.symbol.globalExports, b.file.symbol, node, SymbolFlagsAlias, SymbolFlagsAliasExcludes)
+		b.declareSymbol(getSymbolTable(&b.file.symbol.globalExports), b.file.symbol, node, SymbolFlagsAlias, SymbolFlagsAliasExcludes)
 	}
 }
 

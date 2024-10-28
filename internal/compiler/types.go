@@ -762,11 +762,12 @@ type SymbolTable map[string]*Symbol
 // Links for value symbols
 
 type ValueSymbolLinks struct {
-	resolvedType *Type // Type of value symbol
-	writeType    *Type
-	target       *Symbol
-	mapper       *TypeMapper
-	nameType     *Type
+	resolvedType   *Type // Type of value symbol
+	writeType      *Type
+	target         *Symbol
+	mapper         *TypeMapper
+	nameType       *Type
+	containingType *Type
 }
 
 // Links for alias symbols
@@ -1077,6 +1078,10 @@ type NodeLinks struct {
 	declarationRequiresScopeChange Tristate
 }
 
+type IdentifierLinks struct {
+	resolvedSymbol *Symbol // Cached name resolution result
+}
+
 type TypeNodeLinks struct {
 	resolvedType        *Type   // Cached type of type node
 	resolvedSymbol      *Symbol // Cached name resolution result
@@ -1332,10 +1337,12 @@ func (t *Type) AsReverseMappedType() *ReverseMappedType     { return t.data.(*Re
 func (t *Type) AsTypeParameter() *TypeParameter             { return t.data.(*TypeParameter) }
 func (t *Type) AsUnionType() *UnionType                     { return t.data.(*UnionType) }
 func (t *Type) AsIntersectionType() *IntersectionType       { return t.data.(*IntersectionType) }
+func (t *Type) AsIndexType() *IndexType                     { return t.data.(*IndexType) }
 func (t *Type) AsIndexedAccessType() *IndexedAccessType     { return t.data.(*IndexedAccessType) }
 func (t *Type) AsTemplateLiteralType() *TemplateLiteralType { return t.data.(*TemplateLiteralType) }
 func (t *Type) AsStringMappingType() *StringMappingType     { return t.data.(*StringMappingType) }
 func (t *Type) AsSubstitutionType() *SubstitutionType       { return t.data.(*SubstitutionType) }
+func (t *Type) AsConditionalType() *ConditionalType         { return t.data.(*ConditionalType) }
 
 // Casts for embedded struct types
 
@@ -1607,6 +1614,25 @@ type TypeParameter struct {
 	resolvedDefaultType *Type
 }
 
+// IndexFlags
+
+type IndexFlags uint32
+
+const (
+	IndexFlagsNone              IndexFlags = 0
+	IndexFlagsStringsOnly       IndexFlags = 1 << 0
+	IndexFlagsNoIndexSignatures IndexFlags = 1 << 1
+	IndexFlagsNoReducibleCheck  IndexFlags = 1 << 2
+)
+
+// IndexType
+
+type IndexType struct {
+	TypeBase
+	target     *Type
+	indexFlags IndexFlags
+}
+
 // IndexedAccessType
 
 type IndexedAccessType struct {
@@ -1633,6 +1659,31 @@ type SubstitutionType struct {
 	constraint *Type // Constraint that target type is known to satisfy
 }
 
+type ConditionalRoot struct {
+	node                *Node // ConditionalTypeNode
+	checkType           *Type
+	extendsType         *Type
+	isDistributive      bool
+	inferTypeParameters []*Type
+	outerTypeParameters []*Type
+	instantiations      map[string]*Type
+	alias               *TypeAlias
+}
+
+type ConditionalType struct {
+	TypeBase
+	root                             *ConditionalRoot
+	checkType                        *Type
+	extendsType                      *Type
+	resolvedTrueType                 *Type
+	resolvedFalseType                *Type
+	resolvedInferredTrueType         *Type // The `trueType` instantiated with the `combinedMapper`, if present
+	resolvedDefaultConstraint        *Type
+	resolvedConstraintOfDistributive *Type
+	mapper                           *TypeMapper
+	combinedMapper                   *TypeMapper
+}
+
 // Signature
 
 type Signature struct {
@@ -1655,3 +1706,20 @@ type IndexInfo struct {
 	isReadonly  bool
 	declaration *IndexSignatureDeclaration
 }
+
+/**
+ * Ternary values are defined such that
+ * x & y picks the lesser in the order False < Unknown < Maybe < True, and
+ * x | y picks the greater in the order False < Unknown < Maybe < True.
+ * Generally, Ternary.Maybe is used as the result of a relation that depends on itself, and
+ * Ternary.Unknown is used as the result of a variance check that depends on itself. We make
+ * a distinction because we don't want to cache circular variance check results.
+ */
+type Ternary int8
+
+const (
+	TernaryFalse   Ternary = 0
+	TernaryUnknown Ternary = 1
+	TernaryMaybe   Ternary = 3
+	TernaryTrue    Ternary = -1
+)

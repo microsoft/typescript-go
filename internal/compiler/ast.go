@@ -1287,6 +1287,10 @@ func (node *VariableDeclarationList) ForEachChild(v Visitor) bool {
 	return visitNodes(v, node.declarations)
 }
 
+func isVariableDeclarationList(node *Node) bool {
+	return node.kind == SyntaxKindVariableDeclarationList
+}
+
 // BindingPattern (SyntaxBindObjectBindingPattern | SyntaxKindArrayBindingPattern)
 
 type BindingPattern struct {

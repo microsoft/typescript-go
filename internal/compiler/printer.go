@@ -90,6 +90,8 @@ func (p *Printer) printType(t *Type) {
 		p.printUnionType(t)
 	case t.flags&TypeFlagsIntersection != 0:
 		p.printIntersectionType(t)
+	case t.flags&TypeFlagsIndex != 0:
+		p.printIndexType(t)
 	case t.flags&TypeFlagsIndexedAccess != 0:
 		p.printIndexedAccessType(t)
 	}
@@ -275,6 +277,11 @@ func (p *Printer) printIntersectionType(t *Type) {
 		p.printTypeEx(t, TypePrecedenceIntersection)
 		tail = true
 	}
+}
+
+func (p *Printer) printIndexType(t *Type) {
+	p.print("keyof ")
+	p.printTypeEx(t.AsIndexType().target, TypePrecedenceTypeOperator)
 }
 
 func (p *Printer) printIndexedAccessType(t *Type) {

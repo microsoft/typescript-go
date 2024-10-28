@@ -742,6 +742,36 @@ func isLeftHandSideExpressionKind(kind SyntaxKind) bool {
 	return false
 }
 
+func isUnaryExpression(node *Node) bool {
+	return isUnaryExpressionKind(node.kind)
+}
+
+func isUnaryExpressionKind(kind SyntaxKind) bool {
+	switch kind {
+	case SyntaxKindPrefixUnaryExpression, SyntaxKindPostfixUnaryExpression, SyntaxKindDeleteExpression, SyntaxKindTypeOfExpression,
+		SyntaxKindVoidExpression, SyntaxKindAwaitExpression, SyntaxKindTypeAssertionExpression:
+		return true
+	}
+	return isLeftHandSideExpressionKind(kind)
+}
+
+/**
+ * Determines whether a node is an expression based only on its kind.
+ */
+func isExpression(node *Node) bool {
+	return isExpressionKind(node.kind)
+}
+
+func isExpressionKind(kind SyntaxKind) bool {
+	switch kind {
+	case SyntaxKindConditionalExpression, SyntaxKindYieldExpression, SyntaxKindArrowFunction, SyntaxKindBinaryExpression,
+		SyntaxKindSpreadElement, SyntaxKindAsExpression, SyntaxKindOmittedExpression, SyntaxKindCommaListExpression,
+		SyntaxKindPartiallyEmittedExpression, SyntaxKindSatisfiesExpression:
+		return true
+	}
+	return isUnaryExpressionKind(kind)
+}
+
 func isAssignmentOperator(token SyntaxKind) bool {
 	return token >= SyntaxKindFirstAssignment && token <= SyntaxKindLastAssignment
 }
@@ -1174,6 +1204,10 @@ func getEffectiveModifierFlags(node *Node) ModifierFlags {
 
 func hasEffectiveModifier(node *Node, flags ModifierFlags) bool {
 	return getEffectiveModifierFlags(node)&flags != 0
+}
+
+func hasEffectiveReadonlyModifier(node *Node) bool {
+	return hasEffectiveModifier(node, ModifierFlagsReadonly)
 }
 
 func getImmediatelyInvokedFunctionExpression(fn *Node) *Node {
@@ -3599,7 +3633,11 @@ func identifierIsThisKeyword(id *Node) bool {
 	return id.AsIdentifier().text == "this"
 }
 
-func getDeclarationModifierFlagsFromSymbol(s *Symbol, isWrite bool) ModifierFlags {
+func getDeclarationModifierFlagsFromSymbol(s *Symbol) ModifierFlags {
+	return getDeclarationModifierFlagsFromSymbolEx(s, false /*isWrite*/)
+}
+
+func getDeclarationModifierFlagsFromSymbolEx(s *Symbol, isWrite bool) ModifierFlags {
 	if s.valueDeclaration != nil {
 		var declaration *Node
 		if isWrite {
@@ -3877,4 +3915,49 @@ func stringToNumber(s string) float64 {
 		return math.NaN()
 	}
 	return value
+}
+
+func isValidESSymbolDeclaration(node *Node) bool {
+	if isVariableDeclaration(node) {
+		return isVarConst(node) && isIdentifier(node.AsVariableDeclaration().name) && isVariableDeclarationInVariableStatement(node)
+	}
+	if isPropertyDeclaration(node) {
+		return hasEffectiveReadonlyModifier(node) && hasStaticModifier(node)
+	}
+	return isPropertySignatureDeclaration(node) && hasEffectiveReadonlyModifier(node)
+}
+
+func isVarConst(node *Node) bool {
+	return getCombinedNodeFlags(node)&NodeFlagsBlockScoped == NodeFlagsConst
+}
+
+func isVariableDeclarationInVariableStatement(node *Node) bool {
+	return isVariableDeclarationList(node.parent) && isVariableStatement(node.parent.parent)
+}
+
+func isKnownSymbol(symbol *Symbol) bool {
+	return isLateBoundName(symbol.name)
+}
+
+func isLateBoundName(name string) bool {
+	return len(name) >= 2 && name[0] == '\xfe' && name[1] == '@'
+}
+
+func getSymbolTable(data *SymbolTable) SymbolTable {
+	if *data == nil {
+		*data = make(SymbolTable)
+	}
+	return *data
+}
+
+func getMembers(symbol *Symbol) SymbolTable {
+	return getSymbolTable(&symbol.members)
+}
+
+func getExports(symbol *Symbol) SymbolTable {
+	return getSymbolTable(&symbol.exports)
+}
+
+func getLocals(container *Node) SymbolTable {
+	return getSymbolTable(&container.LocalsContainerData().locals)
 }
