@@ -186,6 +186,9 @@ const (
 	SyntaxKindModifierList
 	SyntaxKindTypeParameterList
 	SyntaxKindTypeArgumentList
+	SyntaxKindJSDocList
+	SyntaxKindJSDocCommentList
+	SyntaxKindJSDocTagList
 	// Signature elements
 	SyntaxKindTypeParameter
 	SyntaxKindParameter
