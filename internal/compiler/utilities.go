@@ -38,7 +38,7 @@ func (t TextRange) End() int {
 	return int(t.end)
 }
 
-func (t TextRange) Length() int {
+func (t TextRange) Len() int {
 	return int(t.end - t.pos)
 }
 
@@ -123,7 +123,7 @@ type Diagnostic struct {
 func (d *Diagnostic) File() *SourceFile                 { return d.file }
 func (d *Diagnostic) Pos() int                          { return d.loc.Pos() }
 func (d *Diagnostic) End() int                          { return d.loc.End() }
-func (d *Diagnostic) Length() int                       { return d.loc.Length() }
+func (d *Diagnostic) Len() int                          { return d.loc.Len() }
 func (d *Diagnostic) Loc() TextRange                    { return d.loc }
 func (d *Diagnostic) Code() int32                       { return d.code }
 func (d *Diagnostic) Category() diagnostics.Category    { return d.category }

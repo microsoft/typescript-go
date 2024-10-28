@@ -2795,7 +2795,7 @@ func (p *Parser) parseNameOfParameter(modifiers *Node) *Node {
 	// FormalParameter [Yield,Await]:
 	//      BindingElement[?Yield,?Await]
 	name := p.parseIdentifierOrPatternWithDiagnostic(diagnostics.Private_identifiers_cannot_be_used_as_parameters)
-	if name.loc.Length() == 0 && modifiers == nil && isModifierKind(p.token) {
+	if name.loc.Len() == 0 && modifiers == nil && isModifierKind(p.token) {
 		// in cases like
 		// 'use strict'
 		// function foo(static)

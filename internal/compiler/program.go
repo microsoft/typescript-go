@@ -446,7 +446,7 @@ func FormatDiagnosticsWithColorAndContext(output *strings.Builder, diags []*Diag
 
 		if diagnostic.File() != nil && diagnostic.Code() != diagnostics.File_appears_to_be_binary.Code() {
 			output.WriteString(formatOpts.NewLine)
-			writeCodeSnippet(output, diagnostic.File(), diagnostic.Pos(), diagnostic.Length(), getCategoryFormat(diagnostic.Category()), formatOpts)
+			writeCodeSnippet(output, diagnostic.File(), diagnostic.Pos(), diagnostic.Len(), getCategoryFormat(diagnostic.Category()), formatOpts)
 		}
 
 		if (diagnostic.RelatedInformation() != nil) && (len(diagnostic.RelatedInformation()) > 0) {
@@ -457,7 +457,7 @@ func FormatDiagnosticsWithColorAndContext(output *strings.Builder, diags []*Diag
 					output.WriteString(formatOpts.NewLine)
 					pos := relatedInformation.Pos()
 					WriteLocation(output, file, pos, formatOpts, writeWithStyleAndReset)
-					writeCodeSnippet(output, file, pos, relatedInformation.Length(), foregroundColorEscapeCyan, formatOpts)
+					writeCodeSnippet(output, file, pos, relatedInformation.Len(), foregroundColorEscapeCyan, formatOpts)
 				}
 				output.WriteString(formatOpts.NewLine)
 				WriteFlattenedDiagnosticMessage(output, relatedInformation, formatOpts.NewLine)
