@@ -52,7 +52,11 @@ func main() {
 		if parseAndBindOnly {
 			diagnostics = program.GetBindDiagnostics(nil)
 		} else {
-			diagnostics = program.GetSemanticDiagnostics(nil)
+			if printTypes {
+				program.PrintTypeAliases()
+			} else {
+				diagnostics = program.GetSemanticDiagnostics(nil)
+			}
 		}
 	}
 	compileTime := time.Since(startTime)
@@ -92,12 +96,13 @@ func main() {
 			}
 		}
 	}
+
 	if printTypes {
 		program.PrintTypeAliases()
 	}
 
-	fmt.Println("")
 	fmt.Printf("Files:         %v\n", len(program.SourceFiles()))
+	fmt.Printf("Types:         %v\n", program.TypeCount())
 	fmt.Printf("Compile time:  %v\n", compileTime)
 	fmt.Printf("Memory used:   %vK\n", memStats.Alloc/1024)
 }
