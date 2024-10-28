@@ -160,7 +160,7 @@ func getPathFromPathComponents(pathComponents []string) string {
 	return root + strings.Join(pathComponents, "/")
 }
 
-func normalizeSlashes(path string) string {
+func NormalizeSlashes(path string) string {
 	return strings.ReplaceAll(path, "\\", "/")
 }
 
@@ -222,7 +222,7 @@ func normalizePath(path string) string {
 	return normalized
 }
 
-func toPath(fileName string, basePath string, getCanonicalFileName func(string) string) Path {
+func ToPath(fileName string, basePath string, getCanonicalFileName func(string) string) Path {
 	var nonCanonicalizedPath string
 	if isRootedDiskPath(fileName) {
 		nonCanonicalizedPath = normalizePath(fileName)
@@ -242,7 +242,7 @@ func (p Path) removeTrailingDirectorySeparator() Path {
 	return Path(removeTrailingDirectorySeparator(string(p)))
 }
 
-func ensureTrailingDirectorySeparator(path string) string {
+func EnsureTrailingDirectorySeparator(path string) string {
 	if !hasTrailingDirectorySeparator(path) {
 		return path + "/"
 	}
@@ -251,4 +251,14 @@ func ensureTrailingDirectorySeparator(path string) string {
 }
 func (p Path) ensureTrailingDirectorySeparator() Path {
 	return Path(ensureTrailingDirectorySeparator(string(p)))
+}
+
+func GetBaseFileName(path string, extensions []string, ignoreCase bool) string {
+	// !!!
+	return ""
+}
+
+func ComparePaths(a string, b string, currentyDirectory string, ignoreCase bool) Comparison {
+	// !!!
+	return ComparisonEqual
 }

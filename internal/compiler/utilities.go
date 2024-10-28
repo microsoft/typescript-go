@@ -474,7 +474,7 @@ func formatMessage(message *diagnostics.Message, args ...any) string {
 	return text
 }
 
-func filter[T any](slice []T, predicate func(T) bool) []T {
+func Filter[T any](slice []T, predicate func(T) bool) []T {
 	result, _ := sameFilter(slice, predicate)
 	return result
 }
@@ -497,7 +497,7 @@ func sameFilter[T any](slice []T, predicate func(T) bool) ([]T, bool) {
 	return slice, true
 }
 
-func mapf[T, U any](slice []T, f func(T) U) []U {
+func Mapf[T, U any](slice []T, f func(T) U) []U {
 	if len(slice) == 0 {
 		return nil
 	}
@@ -569,6 +569,12 @@ func every[T any](array []T, predicate func(T) bool) bool {
 	return true
 }
 
+func ForEach[T any](array []T, action func(T)) {
+	for _, value := range array {
+		action(value)
+	}
+}
+
 func insertSorted[T any](slice []T, element T, cmp func(T, T) int) []T {
 	i, _ := slices.BinarySearchFunc(slice, element, cmp)
 	return slices.Insert(slice, i, element)
@@ -636,7 +642,7 @@ func concatenate[T any](s1 []T, s2 []T) []T {
 	return slices.Concat(s1, s2)
 }
 
-func countWhere[T any](slice []T, predicate func(T) bool) int {
+func CountWhere[T any](slice []T, predicate func(T) bool) int {
 	count := 0
 	for _, value := range slice {
 		if predicate(value) {
@@ -2094,9 +2100,9 @@ func (c *DiagnosticsCollection) add(diagnostic *Diagnostic) {
 		if c.fileDiagnostics == nil {
 			c.fileDiagnostics = make(map[string][]*Diagnostic)
 		}
-		c.fileDiagnostics[fileName] = insertSorted(c.fileDiagnostics[fileName], diagnostic, compareDiagnostics)
+		c.fileDiagnostics[fileName] = insertSorted(c.fileDiagnostics[fileName], diagnostic, CompareDiagnostics)
 	} else {
-		c.nonFileDiagnostics = insertSorted(c.nonFileDiagnostics, diagnostic, compareDiagnostics)
+		c.nonFileDiagnostics = insertSorted(c.nonFileDiagnostics, diagnostic, CompareDiagnostics)
 	}
 }
 
@@ -2107,7 +2113,7 @@ func (c *DiagnosticsCollection) lookup(diagnostic *Diagnostic) *Diagnostic {
 	} else {
 		diagnostics = c.nonFileDiagnostics
 	}
-	if i, ok := slices.BinarySearchFunc(diagnostics, diagnostic, compareDiagnostics); ok {
+	if i, ok := slices.BinarySearchFunc(diagnostics, diagnostic, CompareDiagnostics); ok {
 		return diagnostics[i]
 	}
 	return nil
@@ -2133,7 +2139,7 @@ func (c *DiagnosticsCollection) GetDiagnostics() []*Diagnostic {
 
 func sortAndDeduplicateDiagnostics(diagnostics []*Diagnostic) []*Diagnostic {
 	result := slices.Clone(diagnostics)
-	slices.SortFunc(result, compareDiagnostics)
+	slices.SortFunc(result, CompareDiagnostics)
 	return slices.CompactFunc(result, equalDiagnostics)
 }
 
@@ -2152,7 +2158,7 @@ func equalMessageChain(c1, c2 *MessageChain) bool {
 		slices.EqualFunc(c1.messageChain, c2.messageChain, equalMessageChain)
 }
 
-func compareDiagnostics(d1, d2 *Diagnostic) int {
+func CompareDiagnostics(d1, d2 *Diagnostic) int {
 	c := strings.Compare(getDiagnosticPath(d1), getDiagnosticPath(d2))
 	if c != 0 {
 		return c
@@ -2220,7 +2226,7 @@ func compareRelatedInfo(r1, r2 []*Diagnostic) int {
 		return c
 	}
 	for i := range r1 {
-		c = compareDiagnostics(r1[i], r2[i])
+		c = CompareDiagnostics(r1[i], r2[i])
 		if c != 0 {
 			return c
 		}

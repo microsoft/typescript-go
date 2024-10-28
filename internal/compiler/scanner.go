@@ -1679,7 +1679,7 @@ func getRangeOfTokenAtPosition(sourceFile *SourceFile, pos int) TextRange {
 	return NewTextRange(s.tokenStart, s.pos)
 }
 
-func computeLineStarts(text string) []TextPos {
+func ComputeLineStarts(text string) []TextPos {
 	var result []TextPos
 	pos := 0
 	lineStart := 0

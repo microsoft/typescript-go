@@ -396,3 +396,66 @@ func (p *Program) collectModuleReferences(file *SourceFile, node *Statement, inA
 		}
 	}
 }
+
+// !!! Use what's implemented
+type FormatDiagnosticsHost struct {
+	GetCurrentDirectory  func() string
+	NewLine              string
+	GetCanonicalFileName func(fileName string) string
+}
+
+func FormatDiagnosticsWithColorAndContext(diagnostics []*Diagnostic, host FormatDiagnosticsHost) string {
+	// !!!
+	// Use what's already implemented once that's merged.
+	return ""
+}
+
+func convertToRelativePath(fileName string, basePath string, getCanonicalFileName func(string) string) string {
+	// !!!
+	// Use what's already implemented once that's merged.
+	return ""
+}
+
+func FlattenDiagnosticMessageText(diagnostic *Diagnostic, newLine string) string {
+	// !!!
+	// Use what's already implemented once that's merged.
+	return ""
+}
+
+func flattenDiagnosticMessageChain(messageChain *MessageChain, newLine string, indent int) string {
+	// !!!
+	// Use what's implemented once merged.
+	return ""
+}
+
+func WriteErrorSummaryText(output *strings.Builder, allDiagnostics []*Diagnostic, formatOpts *FormatDiagnosticsHost) {
+	// !!!
+	// Use what's implemented once merged.
+}
+
+func FormatLocation(file *SourceFile, start int, host FormatDiagnosticsHost, color func(string, string) string) string {
+	// !!!
+	return ""
+}
+
+func FormatDiagnostics(diagnostics []*Diagnostic, host FormatDiagnosticsHost) string {
+	result := ""
+	for _, diagnostic := range diagnostics {
+		result += FormatDiagnostic(diagnostic, host)
+	}
+	return result
+}
+
+func FormatDiagnostic(diagnostic *Diagnostic, host FormatDiagnosticsHost) string {
+	flattenedMessage := FlattenDiagnosticMessageText(diagnostic, host.NewLine)
+	errorMessage := fmt.Sprintf("%s TS%d: %s%s", diagnostic.Category().String(), diagnostic.Code(), flattenedMessage, host.GetNewLine())
+
+	if diagnostic.file != nil {
+		line, character := GetLineAndCharacterOfPosition(diagnostic.file, diagnostic.loc.Pos())
+		fileName := diagnostic.file.fileName
+		relativeFileName := convertToRelativePath(fileName, host.GetCurrentDirectory(), host.GetCanonicalFileName)
+		return fmt.Sprintf("%s(%d,%d): %s", relativeFileName, line+1, character+1, errorMessage)
+	}
+
+	return errorMessage
+}

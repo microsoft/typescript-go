@@ -5895,7 +5895,7 @@ func attachFileToDiagnostics(diagnostics []*Diagnostic, file *SourceFile) []*Dia
 	return diagnostics
 }
 
-func isDeclarationFileName(fileName string) bool {
+func IsDeclarationFileName(fileName string) bool {
 	return getDeclarationFileExtension(fileName) != ""
 }
 
