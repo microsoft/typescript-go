@@ -149,7 +149,7 @@ const inputDir = process.argv[2];
 const outputDir = process.argv[3];
 if (!inputDir || !outputDir) {
     console.error(
-        "node internal/harness/baselineAST.js _submodules/TypeScript tests/baselines/gold",
+        "node internal/harness/baselineAST.js _submodules/TypeScript testdata/baselines/gold",
     );
     process.exit(1);
 }
