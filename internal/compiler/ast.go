@@ -549,8 +549,9 @@ func (n *Node) AsJSDocSignature() *JSDocSignature {
     return n.data.(*JSDocSignature)
 }
 func (n *Node) AsJSDocNameReference() *JSDocNameReference {
-    return n.data.(*JSDocNameReference)
-} 
+	return n.data.(*JSDocNameReference)
+}
+
 // NodeData
 
 type NodeData interface {
@@ -4453,14 +4454,14 @@ type JSDocVariadicType struct {
 	typeNode *TypeNode
 }
 
-func (node *JSDocVariadicType) ForEachChild(v Visitor) bool {
-	return visit(v, node.typeNode)
-}
-
-func NewJSDocVariadicType(typeNode *TypeNode) *JSDocVariadicType {
+func (f *NodeFactory) NewJSDocVariadicType(typeNode *TypeNode) *Node {
 	result := &JSDocVariadicType{}
 	result.typeNode = typeNode
-	return result
+	return f.NewNode(SyntaxKindJSDocVariadicType, result)
+}
+
+func (node *JSDocVariadicType) ForEachChild(v Visitor) bool {
+	return visit(v, node.typeNode)
 }
 
 // JSDocOptionalType
