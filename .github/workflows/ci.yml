@@ -58,6 +58,8 @@ jobs:
 
       - run: npx hereby test --race
 
+      - run: git diff --exit-code
+
   lint:
     runs-on: ubuntu-latest
     steps:
