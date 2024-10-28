@@ -2,7 +2,6 @@ package testutil
 
 import (
 	"os"
-	"path/filepath"
 	"sync"
 	"testing"
 )
@@ -20,14 +19,13 @@ type fixtureFromFile struct {
 	contents func() (string, error)
 }
 
-func NewFileFixtureFromFile(name string, pathParts []string) FileFixture {
-	p := filepath.Clean(filepath.Join(pathParts...))
+func NewFileFixtureFromFile(name string, path string) FileFixture {
 	return &fixtureFromFile{
 		name: name,
-		path: p,
+		path: path,
 		// Cache the file contents and errors.
 		contents: sync.OnceValues(func() (string, error) {
-			b, err := os.ReadFile(p)
+			b, err := os.ReadFile(path)
 			return string(b), err
 		}),
 	}
