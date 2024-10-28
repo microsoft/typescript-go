@@ -5,13 +5,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
-func must[T any](v T, err error) T {
-	if err != nil {
-		panic(err)
-	}
-	return v
-}
-
 var benchFixtures = []testutil.FileFixture{
 	testutil.NewFileFixtureFromString("empty.ts", "empty.ts", ""),
 	testutil.NewFileFixtureFromFile("checker.ts", []string{repo.TypeScriptSubmodulePath, "src/compiler/checker.ts"}),
