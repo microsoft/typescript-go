@@ -32,7 +32,7 @@ func TestParseAndPrintNodes(t *testing.T) {
 		path := filepath.ToSlash(sourceFile.fileName)
 		path = path[len(repo.TypeScriptSubmodulePath)+1:]
 		path = strings.ReplaceAll(path, "/", "_")
-		outputFileName := path + ".ast.txt"
+		outputFileName := path + ".ast"
 		if outputFileName == "tests_cases_compiler_binderBinaryExpressionStressJs.ts.ast" ||
 			outputFileName == "tests_cases_compiler_binderBinaryExpressionStress.ts.ast" {
 			continue

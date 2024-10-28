@@ -138,7 +138,7 @@ function processDirectory(inputRoot, targetRoot) {
                 else {
                     console.error("Unexpected file path: " + fullPath);
                 }
-                const outputFileName = fullPath.replace(/[\/\\]/g, "_") + ".ast.txt";
+                const outputFileName = fullPath.replace(/[\/\\]/g, "_") + ".ast";
                 const outputFilePath = path.join(targetRoot, outputFileName);
                 fs.writeFileSync(outputFilePath, astContent);
             }
