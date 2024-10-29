@@ -38,6 +38,6 @@ func testExportsWithUnmarshal(t *testing.T, unmarshal func([]byte, any) error) {
 	assert.NilError(t, err)
 
 	assert.Assert(t, e.Exports.IsSubpaths())
-	assert.Equal(t, e.Exports.GetSubpaths().Size(), 2)
-	assert.Assert(t, e.Exports.GetSubpaths().GetOrZero(".").IsConditions())
+	assert.Equal(t, e.Exports.AsObject().Size(), 2)
+	assert.Assert(t, e.Exports.AsObject().GetOrZero(".").IsConditions())
 }

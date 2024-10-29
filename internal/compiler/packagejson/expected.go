@@ -1,17 +1,20 @@
 package packagejson
 
-import "encoding/json"
+import (
+	"encoding/json"
+)
 
 type Expected[T any] struct {
+	Null  bool
 	Valid bool
 	Value T
 }
 
 func (e *Expected[T]) UnmarshalJSON(data []byte) error {
-	if err := json.Unmarshal(data, &e.Value); err != nil {
-		e.Valid = false
-		return nil
+	if string(data) == "null" {
+		e.Null = true
+	} else if json.Unmarshal(data, &e.Value) == nil {
+		e.Valid = true
 	}
-	e.Valid = true
 	return nil
 }

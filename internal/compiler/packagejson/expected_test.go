@@ -1,9 +1,9 @@
 package packagejson_test
 
 import (
+	"encoding/json"
 	"testing"
 
-	"github.com/go-json-experiment/json"
 	"github.com/microsoft/typescript-go/internal/compiler/packagejson"
 	"gotest.tools/v3/assert"
 )
@@ -12,6 +12,8 @@ func TestExpected(t *testing.T) {
 	type packageJson struct {
 		Name    packagejson.Expected[string] `json:"name"`
 		Version packagejson.Expected[string] `json:"version"`
+		Exports packagejson.Expected[any]    `json:"exports"`
+		Main    packagejson.Expected[string] `json:"main"`
 	}
 
 	var p packageJson
@@ -30,4 +32,11 @@ func TestExpected(t *testing.T) {
 
 	assert.Equal(t, p.Version.Valid, false)
 	assert.Equal(t, p.Version.Value, "")
+
+	assert.Assert(t, p.Exports.Null)
+	assert.Equal(t, p.Exports.Valid, false)
+
+	assert.Equal(t, p.Main.Valid, false)
+	assert.Equal(t, p.Main.Null, false)
+	assert.Equal(t, p.Main.Value, "")
 }

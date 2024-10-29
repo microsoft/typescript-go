@@ -47,13 +47,6 @@ func (e *Exports) IsSubpaths() bool {
 	return e.objectKind == exportsObjectKindSubpaths
 }
 
-func (e *Exports) GetSubpaths() *collections.Map[string, *Exports] {
-	if e.IsSubpaths() {
-		return e.AsObject()
-	}
-	return nil
-}
-
 func (e *Exports) IsConditions() bool {
 	e.initObjectKind()
 	return e.objectKind == exportsObjectKindConditions
