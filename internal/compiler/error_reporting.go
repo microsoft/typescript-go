@@ -3,7 +3,6 @@ package compiler
 import (
 	"fmt"
 	"maps"
-	"path/filepath"
 	"slices"
 	"strconv"
 	"strings"
@@ -330,7 +329,7 @@ func writeTabularErrorsDisplay(output *strings.Builder, errorSummary *ErrorSumma
 func prettyPathForFileError(file *SourceFile, fileErrors []*Diagnostic, formatOpts *DiagnosticsFormattingOptions) string {
 	line, _ := GetLineAndCharacterOfPosition(file, fileErrors[0].loc.Pos())
 	fileName := file.fileName
-	if filepath.IsAbs(fileName) && filepath.IsAbs(formatOpts.CurrentDirectory) {
+	if pathIsAbsolute(fileName) && pathIsAbsolute(formatOpts.CurrentDirectory) {
 		fileName = ConvertToRelativePath(file.path, formatOpts.CurrentDirectory, formatOpts.GetCanonicalFileName)
 	}
 	return fmt.Sprintf("%s%s:%d%s",
