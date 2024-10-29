@@ -7,18 +7,93 @@ import (
 
 type Path string
 
+// Internally, we represent paths as strings with '/' as the directory separator.
+// When we make system calls (eg: LanguageServiceHost.getDirectory()),
+// we expect the host to correctly handle paths in our specified format.
 const directorySeparator = '/'
 
+//// Path Tests
+
+// Determines whether a byte corresponds to `/` or `\`.
 func isAnyDirectorySeparator(char byte) bool {
 	return char == '/' || char == '\\'
+}
+
+// Determines whether a path starts with a URL scheme (e.g. starts with `http://`, `ftp://`, `file://`, etc.).
+func isUrl(path string) bool {
+	return getEncodedRootLength(path) < 0
+}
+
+// Determines whether a path is an absolute disk path (e.g. starts with `/`, or a dos path
+// like `c:`, `c:\` or `c:/`).
+func isRootedDiskPath(path string) bool {
+	return getEncodedRootLength(path) > 0
+}
+
+// Determines whether a path consists only of a path root.
+func isDiskPathRoot(path string) bool {
+	rootLength := getEncodedRootLength(path)
+	return rootLength > 0 && rootLength == len(path)
+}
+
+// Determines whether a path starts with an absolute path component (i.e. `/`, `c:/`, `file://`, etc.).
+//
+//	```
+//	// POSIX
+//	pathIsAbsolute("/path/to/file.ext") === true
+//	// DOS
+//	pathIsAbsolute("c:/path/to/file.ext") === true
+//	// URL
+//	pathIsAbsolute("file:///path/to/file.ext") === true
+//	// Non-absolute
+//	pathIsAbsolute("path/to/file.ext") === false
+//	pathIsAbsolute("./path/to/file.ext") === false
+//	```
+func pathIsAbsolute(path string) bool {
+	return getEncodedRootLength(path) != 0
 }
 
 func hasTrailingDirectorySeparator(path string) bool {
 	return len(path) > 0 && isAnyDirectorySeparator(path[len(path)-1])
 }
 
-func combinePaths(paths ...string) string {
-	return path.Join(paths...)
+// Combines paths. If a path is absolute, it replaces any previous path. Relative paths are not simplified.
+//
+//	```
+//	// Non-rooted
+//	combinePaths("path", "to", "file.ext") === "path/to/file.ext"
+//	combinePaths("path", "dir", "..", "to", "file.ext") === "path/dir/../to/file.ext"
+//	// POSIX
+//	combinePaths("/path", "to", "file.ext") === "/path/to/file.ext"
+//	combinePaths("/path", "/to", "file.ext") === "/to/file.ext"
+//	// DOS
+//	combinePaths("c:/path", "to", "file.ext") === "c:/path/to/file.ext"
+//	combinePaths("c:/path", "c:/to", "file.ext") === "c:/to/file.ext"
+//	// URL
+//	combinePaths("file:///path", "to", "file.ext") === "file:///path/to/file.ext"
+//	combinePaths("file:///path", "file:///to", "file.ext") === "file:///to/file.ext"
+//	```
+func combinePaths(firstPath string, paths ...string) string {
+	// TODO (drosen): There is potential for a fast path here.
+	// In the case where we find the last absolute path and just path.Join from there.
+	result := normalizeSlashes(firstPath)
+
+	for _, trailingPath := range paths {
+		if trailingPath == "" {
+			continue
+		}
+		trailingPath = normalizeSlashes(trailingPath)
+		if result == "" || getRootLength(trailingPath) != 0 {
+			// `trailingPath` is absolute.
+			result = trailingPath
+		} else {
+			// !!!
+			// Used to be
+			// path = ensureTrailingDirectorySeparator(path) + relativePath;
+			result = path.Join(result, trailingPath)
+		}
+	}
+	return result
 }
 
 func getPathComponents(path string, currentDirectory string) []string {
@@ -145,10 +220,6 @@ func (p Path) getDirectoryPath() Path {
 	return Path(getDirectoryPath(string(p)))
 }
 
-func isRootedDiskPath(path string) bool {
-	return getEncodedRootLength(path) > 0
-}
-
 func getPathFromPathComponents(pathComponents []string) string {
 	if len(pathComponents) == 0 {
 		return ""
@@ -197,7 +268,7 @@ func reducePathComponents(components []string) []string {
 func resolvePath(path string, paths ...string) string {
 	var combinedPath string
 	if len(paths) > 0 {
-		combinedPath = combinePaths(append(paths, path)...)
+		combinedPath = combinePaths(path, paths...)
 	} else {
 		combinedPath = normalizeSlashes(path)
 	}
