@@ -9,7 +9,7 @@ import (
 	"reflect"
 	"slices"
 
-	jsonExp "github.com/go-json-experiment/json"
+	json2 "github.com/go-json-experiment/json"
 	"github.com/go-json-experiment/json/jsontext"
 )
 
@@ -186,7 +186,7 @@ func (m *Map[K, V]) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (m *Map[K, V]) UnmarshalJSONV2(dec *jsontext.Decoder, opts jsonExp.Options) error {
+func (m *Map[K, V]) UnmarshalJSONV2(dec *jsontext.Decoder, opts json2.Options) error {
 	token, err := dec.ReadToken()
 	if err != nil {
 		return err
@@ -200,10 +200,10 @@ func (m *Map[K, V]) UnmarshalJSONV2(dec *jsontext.Decoder, opts jsonExp.Options)
 	for dec.PeekKind() != jsontext.ObjectEnd.Kind() {
 		var key K
 		var value V
-		if err := jsonExp.UnmarshalDecode(dec, &key, opts); err != nil {
+		if err := json2.UnmarshalDecode(dec, &key, opts); err != nil {
 			return err
 		}
-		if err := jsonExp.UnmarshalDecode(dec, &value, opts); err != nil {
+		if err := json2.UnmarshalDecode(dec, &value, opts); err != nil {
 			return err
 		}
 		m.Set(key, value)

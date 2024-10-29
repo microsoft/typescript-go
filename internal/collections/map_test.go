@@ -6,7 +6,7 @@ import (
 	"slices"
 	"testing"
 
-	jsonExp "github.com/go-json-experiment/json"
+	json2 "github.com/go-json-experiment/json"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"gotest.tools/v3/assert"
 )
@@ -163,7 +163,7 @@ func TestMapUnmarshalJSON(t *testing.T) {
 	t.Parallel()
 
 	testMapUnmarshalJSON(t, json.Unmarshal)
-	testMapUnmarshalJSON(t, func(in []byte, out any) error { return jsonExp.Unmarshal(in, out) })
+	testMapUnmarshalJSON(t, func(in []byte, out any) error { return json2.Unmarshal(in, out) })
 }
 
 func testMapUnmarshalJSON(t *testing.T, unmarshal func([]byte, any) error) {

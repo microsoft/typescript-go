@@ -1,7 +1,7 @@
 package packagejson
 
 import (
-	jsonExp "github.com/go-json-experiment/json"
+	json2 "github.com/go-json-experiment/json"
 )
 
 type HeaderFields struct {
@@ -34,7 +34,7 @@ type Fields struct {
 
 func Parse(data []byte) (*Fields, error) {
 	var f Fields
-	if err := jsonExp.Unmarshal(data, &f); err != nil {
+	if err := json2.Unmarshal(data, &f); err != nil {
 		return nil, err
 	}
 	return &f, nil

@@ -4,14 +4,14 @@ import (
 	"encoding/json"
 	"testing"
 
-	jsonExp "github.com/go-json-experiment/json"
+	json2 "github.com/go-json-experiment/json"
 	"github.com/microsoft/typescript-go/internal/compiler/packagejson"
 	"gotest.tools/v3/assert"
 )
 
 func TestExports(t *testing.T) {
 	testExportsWithUnmarshal(t, json.Unmarshal)
-	testExportsWithUnmarshal(t, func(in []byte, out any) error { return jsonExp.Unmarshal(in, out) })
+	testExportsWithUnmarshal(t, func(in []byte, out any) error { return json2.Unmarshal(in, out) })
 }
 
 func testExportsWithUnmarshal(t *testing.T, unmarshal func([]byte, any) error) {

@@ -6,7 +6,7 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/collections"
 
-	jsonExp "github.com/go-json-experiment/json"
+	json2 "github.com/go-json-experiment/json"
 	"github.com/go-json-experiment/json/jsontext"
 )
 
@@ -44,7 +44,7 @@ func (v *JSONValue) UnmarshalJSON(data []byte) error {
 	return unmarshalJSONValue[JSONValue](v, data)
 }
 
-func (v *JSONValue) UnmarshalJSONV2(dec *jsontext.Decoder, opts jsonExp.Options) error {
+func (v *JSONValue) UnmarshalJSONV2(dec *jsontext.Decoder, opts json2.Options) error {
 	return unmarshalJSONValueV2[JSONValue](v, dec, opts)
 }
 
@@ -81,7 +81,7 @@ func unmarshalJSONValue[T any](v *JSONValue, data []byte) error {
 	return nil
 }
 
-func unmarshalJSONValueV2[T any](v *JSONValue, dec *jsontext.Decoder, opts jsonExp.Options) error {
+func unmarshalJSONValueV2[T any](v *JSONValue, dec *jsontext.Decoder, opts json2.Options) error {
 	switch dec.PeekKind() {
 	case jsontext.Null.Kind():
 		if _, err := dec.ReadToken(); err != nil {
@@ -91,7 +91,7 @@ func unmarshalJSONValueV2[T any](v *JSONValue, dec *jsontext.Decoder, opts jsonE
 		return nil
 	case '"':
 		v.Type = JSONValueTypeString
-		if err := jsonExp.UnmarshalDecode(dec, &v.Value, opts); err != nil {
+		if err := json2.UnmarshalDecode(dec, &v.Value, opts); err != nil {
 			return err
 		}
 	case '[':
@@ -101,7 +101,7 @@ func unmarshalJSONValueV2[T any](v *JSONValue, dec *jsontext.Decoder, opts jsonE
 		var elements []*T
 		for dec.PeekKind() != jsontext.ArrayEnd.Kind() {
 			var element *T
-			if err := jsonExp.UnmarshalDecode(dec, &element, opts); err != nil {
+			if err := json2.UnmarshalDecode(dec, &element, opts); err != nil {
 				return err
 			}
 			elements = append(elements, element)
@@ -113,19 +113,19 @@ func unmarshalJSONValueV2[T any](v *JSONValue, dec *jsontext.Decoder, opts jsonE
 		v.Value = elements
 	case '{':
 		var object collections.Map[string, *T]
-		if err := jsonExp.UnmarshalDecode(dec, &object, opts); err != nil {
+		if err := json2.UnmarshalDecode(dec, &object, opts); err != nil {
 			return err
 		}
 		v.Type = JSONValueTypeObject
 		v.Value = &object
 	case jsontext.True.Kind(), jsontext.False.Kind():
 		v.Type = JSONValueTypeBoolean
-		if err := jsonExp.UnmarshalDecode(dec, &v.Value, opts); err != nil {
+		if err := json2.UnmarshalDecode(dec, &v.Value, opts); err != nil {
 			return err
 		}
 	default:
 		v.Type = JSONValueTypeNumber
-		if err := jsonExp.UnmarshalDecode(dec, &v.Value, opts); err != nil {
+		if err := json2.UnmarshalDecode(dec, &v.Value, opts); err != nil {
 			return err
 		}
 	}

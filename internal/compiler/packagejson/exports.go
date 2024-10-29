@@ -1,7 +1,7 @@
 package packagejson
 
 import (
-	jsonExp "github.com/go-json-experiment/json"
+	json2 "github.com/go-json-experiment/json"
 	"github.com/go-json-experiment/json/jsontext"
 	"github.com/microsoft/typescript-go/internal/collections"
 )
@@ -24,7 +24,7 @@ func (e *Exports) UnmarshalJSON(data []byte) error {
 	return unmarshalJSONValue[Exports](&e.JSONValue, data)
 }
 
-func (e *Exports) UnmarshalJSONV2(dec *jsontext.Decoder, opts jsonExp.Options) error {
+func (e *Exports) UnmarshalJSONV2(dec *jsontext.Decoder, opts json2.Options) error {
 	return unmarshalJSONValueV2[Exports](&e.JSONValue, dec, opts)
 }
 
