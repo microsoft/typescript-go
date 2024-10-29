@@ -457,6 +457,12 @@ func (n *Node) AsTypeQueryNode() *TypeQueryNode {
 func (n *Node) AsIndexedAccessTypeNode() *IndexedAccessTypeNode {
 	return n.data.(*IndexedAccessTypeNode)
 }
+func (n *Node) AsGetAccessorDeclaration() *GetAccessorDeclaration {
+	return n.data.(*GetAccessorDeclaration)
+}
+func (n *Node) AsSetAccessorDeclaration() *SetAccessorDeclaration {
+	return n.data.(*SetAccessorDeclaration)
+}
 
 // NodeData
 
@@ -2240,6 +2246,10 @@ func (node *IndexSignatureDeclaration) ForEachChild(v Visitor) bool {
 	return visit(v, node.modifiers) || visitNodes(v, node.parameters) || visit(v, node.returnType)
 }
 
+func isIndexSignatureDeclaration(node *Node) bool {
+	return node.kind == SyntaxKindIndexSignature
+}
+
 // MethodSignatureDeclaration
 
 type MethodSignatureDeclaration struct {
@@ -3748,6 +3758,10 @@ func (f *NodeFactory) NewConstructorTypeNode(modifiers *Node, typeParameters *No
 	data.parameters = parameters
 	data.returnType = returnType
 	return f.NewNode(SyntaxKindConstructorType, data)
+}
+
+func isConstructorTypeNode(node *Node) bool {
+	return node.kind == SyntaxKindConstructorType
 }
 
 // TemplateLiteralLikeBase

@@ -550,17 +550,17 @@ const (
 	ModifierFlagsModifier           = ModifierFlagsAll & ^ModifierFlagsDecorator
 )
 
-// SignatureFlags
+// ParseFlags
 
-type SignatureFlags uint32
+type ParseFlags uint32
 
 const (
-	SignatureFlagsNone                   SignatureFlags = 0
-	SignatureFlagsYield                  SignatureFlags = 1 << 0
-	SignatureFlagsAwait                  SignatureFlags = 1 << 1
-	SignatureFlagsType                   SignatureFlags = 1 << 2
-	SignatureFlagsIgnoreMissingOpenBrace SignatureFlags = 1 << 4
-	SignatureFlagsJSDoc                  SignatureFlags = 1 << 5
+	ParseFlagsNone                   ParseFlags = 0
+	ParseFlagsYield                  ParseFlags = 1 << 0
+	ParseFlagsAwait                  ParseFlags = 1 << 1
+	ParseFlagsType                   ParseFlags = 1 << 2
+	ParseFlagsIgnoreMissingOpenBrace ParseFlags = 1 << 4
+	ParseFlagsJSDoc                  ParseFlags = 1 << 5
 )
 
 // SymbolFlags
@@ -1076,10 +1076,6 @@ const (
 type NodeLinks struct {
 	flags                          NodeCheckFlags // Set of flags specific to Node
 	declarationRequiresScopeChange Tristate
-}
-
-type IdentifierLinks struct {
-	resolvedSymbol *Symbol // Cached name resolution result
 }
 
 type TypeNodeLinks struct {
@@ -1684,18 +1680,43 @@ type ConditionalType struct {
 	combinedMapper                   *TypeMapper
 }
 
+// SignatureFlags
+
+type SignatureFlags uint32
+
+const (
+	SignatureFlagsNone SignatureFlags = 0
+	// Propagating flags
+	SignatureFlagsHasRestParameter SignatureFlags = 1 << 0 // Indicates last parameter is rest parameter
+	SignatureFlagsHasLiteralTypes  SignatureFlags = 1 << 1 // Indicates signature is specialized
+	SignatureFlagsAbstract         SignatureFlags = 1 << 2 // Indicates signature comes from an abstract class, abstract construct signature, or abstract constructor type
+	// Non-propagating flags
+	SignatureFlagsIsInnerCallChain                       SignatureFlags = 1 << 3 // Indicates signature comes from a CallChain nested in an outer OptionalChain
+	SignatureFlagsIsOuterCallChain                       SignatureFlags = 1 << 4 // Indicates signature comes from a CallChain that is the outermost chain of an optional expression
+	SignatureFlagsIsUntypedSignatureInJSFile             SignatureFlags = 1 << 5 // Indicates signature is from a js file and has no types
+	SignatureFlagsIsNonInferrable                        SignatureFlags = 1 << 6 // Indicates signature comes from a non-inferrable type
+	SignatureFlagsIsSignatureCandidateForOverloadFailure SignatureFlags = 1 << 7
+	// We do not propagate `IsInnerCallChain` or `IsOuterCallChain` to instantiated signatures, as that would result in us
+	// attempting to add `| undefined` on each recursive call to `getReturnTypeOfSignature` when
+	// instantiating the return type.
+	SignatureFlagsPropagatingFlags = SignatureFlagsHasRestParameter | SignatureFlagsHasLiteralTypes | SignatureFlagsAbstract | SignatureFlagsIsUntypedSignatureInJSFile | SignatureFlagsIsSignatureCandidateForOverloadFailure
+	SignatureFlagsCallChainFlags   = SignatureFlagsIsInnerCallChain | SignatureFlagsIsOuterCallChain
+)
+
 // Signature
 
 type Signature struct {
-	flags              SignatureFlags
-	declaration        *Node
-	typeParameters     []*Type
-	parameters         []*Symbol
-	thisParameter      *Symbol
-	resolvedReturnType *Type
-	target             *Signature
-	mapper             *TypeMapper
-	instantiations     map[string]*Signature
+	flags                 SignatureFlags
+	minArgumentCount      int32
+	declaration           *Node
+	typeParameters        []*Type
+	parameters            []*Symbol
+	thisParameter         *Symbol
+	resolvedReturnType    *Type
+	resolvedTypePredicate *Type
+	target                *Signature
+	mapper                *TypeMapper
+	instantiations        map[string]*Signature
 }
 
 // IndexInfo
@@ -1704,7 +1725,7 @@ type IndexInfo struct {
 	keyType     *Type
 	valueType   *Type
 	isReadonly  bool
-	declaration *IndexSignatureDeclaration
+	declaration *Node // IndexSignatureDeclaration
 }
 
 /**

@@ -1215,7 +1215,7 @@ func (p *Parser) parseFunctionDeclaration(pos int, hasJSDoc bool, modifiers *Nod
 	if modifierFlags&ModifierFlagsDefault == 0 || p.isBindingIdentifier() {
 		name = p.parseBindingIdentifier()
 	}
-	signatureFlags := ifElse(asteriskToken != nil, SignatureFlagsYield, SignatureFlagsNone) | ifElse(modifierFlags&ModifierFlagsAsync != 0, SignatureFlagsAwait, SignatureFlagsNone)
+	signatureFlags := ifElse(asteriskToken != nil, ParseFlagsYield, ParseFlagsNone) | ifElse(modifierFlags&ModifierFlagsAsync != 0, ParseFlagsAwait, ParseFlagsNone)
 	typeParameters := p.parseTypeParameters()
 	saveContextFlags := p.contextFlags
 	if modifierFlags&ModifierFlagsExport != 0 {
@@ -1337,10 +1337,10 @@ func (p *Parser) parseClassElement() *Node {
 		return p.parseClassStaticBlockDeclaration(pos, hasJSDoc, modifierList)
 	}
 	if p.parseContextualModifier(SyntaxKindGetKeyword) {
-		return p.parseAccessorDeclaration(pos, hasJSDoc, modifierList, SyntaxKindGetAccessor, SignatureFlagsNone)
+		return p.parseAccessorDeclaration(pos, hasJSDoc, modifierList, SyntaxKindGetAccessor, ParseFlagsNone)
 	}
 	if p.parseContextualModifier(SyntaxKindSetKeyword) {
-		return p.parseAccessorDeclaration(pos, hasJSDoc, modifierList, SyntaxKindSetAccessor, SignatureFlagsNone)
+		return p.parseAccessorDeclaration(pos, hasJSDoc, modifierList, SyntaxKindSetAccessor, ParseFlagsNone)
 	}
 	if p.token == SyntaxKindConstructorKeyword || p.token == SyntaxKindStringLiteral {
 		constructorDeclaration := p.tryParseConstructorDeclaration(pos, hasJSDoc, modifierList)
@@ -1401,9 +1401,9 @@ func (p *Parser) tryParseConstructorDeclaration(pos int, hasJSDoc bool, modifier
 	if p.token == SyntaxKindConstructorKeyword || p.token == SyntaxKindStringLiteral && p.scanner.tokenValue == "constructor" && p.lookAhead(p.nextTokenIsOpenParen) {
 		p.nextToken()
 		typeParameters := p.parseTypeParameters()
-		parameters := p.parseParameters(SignatureFlagsNone)
+		parameters := p.parseParameters(ParseFlagsNone)
 		returnType := p.parseReturnType(SyntaxKindColonToken, false /*isType*/)
-		body := p.parseFunctionBlockOrSemicolon(SignatureFlagsNone, diagnostics.X_or_expected)
+		body := p.parseFunctionBlockOrSemicolon(ParseFlagsNone, diagnostics.X_or_expected)
 		result := p.factory.NewConstructorDeclaration(modifiers, typeParameters, parameters, returnType, body)
 		p.finishNode(result, pos)
 		_ = hasJSDoc
@@ -1430,7 +1430,7 @@ func (p *Parser) parsePropertyOrMethodDeclaration(pos int, hasJSDoc bool, modifi
 }
 
 func (p *Parser) parseMethodDeclaration(pos int, hasJSDoc bool, modifiers *Node, asteriskToken *Node, name *Node, questionToken *Node, diagnosticMessage *diagnostics.Message) *Node {
-	signatureFlags := ifElse(asteriskToken != nil, SignatureFlagsYield, SignatureFlagsNone) | ifElse(hasAsyncModifier(modifiers), SignatureFlagsAwait, SignatureFlagsNone)
+	signatureFlags := ifElse(asteriskToken != nil, ParseFlagsYield, ParseFlagsNone) | ifElse(hasAsyncModifier(modifiers), ParseFlagsAwait, ParseFlagsNone)
 	typeParameters := p.parseTypeParameters()
 	parameters := p.parseParameters(signatureFlags)
 	typeNode := p.parseReturnType(SyntaxKindColonToken, false /*isType*/)
@@ -2607,10 +2607,10 @@ func (p *Parser) parseTypeMember() *Node {
 	hasJSDoc := p.hasPrecedingJSDocComment()
 	modifiers := p.parseModifiers()
 	if p.parseContextualModifier(SyntaxKindGetKeyword) {
-		return p.parseAccessorDeclaration(pos, hasJSDoc, modifiers, SyntaxKindGetAccessor, SignatureFlagsType)
+		return p.parseAccessorDeclaration(pos, hasJSDoc, modifiers, SyntaxKindGetAccessor, ParseFlagsType)
 	}
 	if p.parseContextualModifier(SyntaxKindSetKeyword) {
-		return p.parseAccessorDeclaration(pos, hasJSDoc, modifiers, SyntaxKindSetAccessor, SignatureFlagsType)
+		return p.parseAccessorDeclaration(pos, hasJSDoc, modifiers, SyntaxKindSetAccessor, ParseFlagsType)
 	}
 	if p.isIndexSignature() {
 		return p.parseIndexSignatureDeclaration(pos, hasJSDoc, modifiers)
@@ -2630,7 +2630,7 @@ func (p *Parser) parseSignatureMember(kind SyntaxKind) *Node {
 		p.parseExpected(SyntaxKindNewKeyword)
 	}
 	typeParameters := p.parseTypeParameters()
-	parameters := p.parseParameters(SignatureFlagsType)
+	parameters := p.parseParameters(ParseFlagsType)
 	typeNode := p.parseReturnType(SyntaxKindColonToken /*isType*/, true)
 	p.parseTypeMemberSemicolon()
 	var result *Node
@@ -2690,7 +2690,7 @@ func (p *Parser) parseTypeParameter() *Node {
 	return result
 }
 
-func (p *Parser) parseParameters(flags SignatureFlags) []*Node {
+func (p *Parser) parseParameters(flags ParseFlags) []*Node {
 	// FormalParameters [Yield,Await]: (modified)
 	//      [empty]
 	//      FormalParameterList[?Yield,Await]
@@ -2712,7 +2712,7 @@ func (p *Parser) parseParameters(flags SignatureFlags) []*Node {
 	return nil
 }
 
-func (p *Parser) parseParametersWorker(flags SignatureFlags, allowAmbiguity bool) []*Node {
+func (p *Parser) parseParametersWorker(flags ParseFlags, allowAmbiguity bool) []*Node {
 	// FormalParameters [Yield,Await]: (modified)
 	//      [empty]
 	//      FormalParameterList[?Yield,Await]
@@ -2728,8 +2728,8 @@ func (p *Parser) parseParametersWorker(flags SignatureFlags, allowAmbiguity bool
 	//      BindingIdentifier[?Yield,?Await]Initializer [In, ?Yield,?Await] opt
 	inAwaitContext := p.contextFlags&NodeFlagsAwaitContext != 0
 	saveContextFlags := p.contextFlags
-	p.setContextFlags(NodeFlagsYieldContext, flags&SignatureFlagsYield != 0)
-	p.setContextFlags(NodeFlagsAwaitContext, flags&SignatureFlagsAwait != 0)
+	p.setContextFlags(NodeFlagsYieldContext, flags&ParseFlagsYield != 0)
+	p.setContextFlags(NodeFlagsAwaitContext, flags&ParseFlagsAwait != 0)
 	// const parameters = flags & SignatureFlags.JSDoc ?
 	// 	parseDelimitedList(ParsingContext.JSDocParameters, parseJSDocParameter) :
 	parameters := p.parseDelimitedList(PCParameters, func(p *Parser) *Node {
@@ -2856,10 +2856,10 @@ func (p *Parser) parseTypeMemberSemicolon() {
 	p.parseSemicolon()
 }
 
-func (p *Parser) parseAccessorDeclaration(pos int, hasJSDoc bool, modifiers *Node, kind SyntaxKind, flags SignatureFlags) *Node {
+func (p *Parser) parseAccessorDeclaration(pos int, hasJSDoc bool, modifiers *Node, kind SyntaxKind, flags ParseFlags) *Node {
 	name := p.parsePropertyName()
 	typeParameters := p.parseTypeParameters()
-	parameters := p.parseParameters(SignatureFlagsNone)
+	parameters := p.parseParameters(ParseFlagsNone)
 	returnType := p.parseReturnType(SyntaxKindColonToken, false /*isType*/)
 	body := p.parseFunctionBlockOrSemicolon(flags, nil /*diagnosticMessage*/)
 	var result *Node
@@ -2909,9 +2909,9 @@ func (p *Parser) parseComputedPropertyName() *Node {
 	return result
 }
 
-func (p *Parser) parseFunctionBlockOrSemicolon(flags SignatureFlags, diagnosticMessage *diagnostics.Message) *Node {
+func (p *Parser) parseFunctionBlockOrSemicolon(flags ParseFlags, diagnosticMessage *diagnostics.Message) *Node {
 	if p.token != SyntaxKindOpenBraceToken {
-		if flags&SignatureFlagsType != 0 {
+		if flags&ParseFlagsType != 0 {
 			p.parseTypeMemberSemicolon()
 			return nil
 		}
@@ -2923,14 +2923,14 @@ func (p *Parser) parseFunctionBlockOrSemicolon(flags SignatureFlags, diagnosticM
 	return p.parseFunctionBlock(flags, diagnosticMessage)
 }
 
-func (p *Parser) parseFunctionBlock(flags SignatureFlags, diagnosticMessage *diagnostics.Message) *Node {
+func (p *Parser) parseFunctionBlock(flags ParseFlags, diagnosticMessage *diagnostics.Message) *Node {
 	saveContextFlags := p.contextFlags
-	p.setContextFlags(NodeFlagsYieldContext, flags&SignatureFlagsYield != 0)
-	p.setContextFlags(NodeFlagsAwaitContext, flags&SignatureFlagsAwait != 0)
+	p.setContextFlags(NodeFlagsYieldContext, flags&ParseFlagsYield != 0)
+	p.setContextFlags(NodeFlagsAwaitContext, flags&ParseFlagsAwait != 0)
 	// We may be in a [Decorator] context when parsing a function expression or
 	// arrow function. The body of the function is not in [Decorator] context.
 	p.setContextFlags(NodeFlagsDecoratorContext, false)
-	block := p.parseBlock(flags&SignatureFlagsIgnoreMissingOpenBrace != 0, diagnosticMessage)
+	block := p.parseBlock(flags&ParseFlagsIgnoreMissingOpenBrace != 0, diagnosticMessage)
 	p.contextFlags = saveContextFlags
 	return block
 }
@@ -3007,7 +3007,7 @@ func (p *Parser) parsePropertyOrMethodSignature(pos int, hasJSDoc bool, modifier
 		// Method signatures don't exist in expression contexts.  So they have neither
 		// [Yield] nor [Await]
 		typeParameters := p.parseTypeParameters()
-		parameters := p.parseParameters(SignatureFlagsType)
+		parameters := p.parseParameters(ParseFlagsType)
 		returnType := p.parseReturnType(SyntaxKindColonToken /*isType*/, true)
 		result = p.factory.NewMethodSignatureDeclaration(modifiers, name, questionToken, typeParameters, parameters, returnType)
 	} else {
@@ -3230,7 +3230,7 @@ func (p *Parser) parseFunctionOrConstructorType() *TypeNode {
 	isConstructorType := p.parseOptional(SyntaxKindNewKeyword)
 	// Debug.assert(!modifiers || isConstructorType, "Per isStartOfFunctionOrConstructorType, a function type cannot have modifiers.")
 	typeParameters := p.parseTypeParameters()
-	parameters := p.parseParameters(SignatureFlagsType)
+	parameters := p.parseParameters(ParseFlagsType)
 	returnType := p.parseReturnType(SyntaxKindEqualsGreaterThanToken, false /*isType*/)
 	var result *TypeNode
 	if isConstructorType {
@@ -3789,7 +3789,7 @@ func (p *Parser) parseParenthesizedArrowFunctionExpression(allowAmbiguity bool, 
 	// hasJSDoc := p.hasPrecedingJSDocComment()
 	modifiers := p.parseModifiersForArrowFunction()
 	isAsync := hasAsyncModifier(modifiers)
-	signatureFlags := ifElse(isAsync, SignatureFlagsAwait, SignatureFlagsNone)
+	signatureFlags := ifElse(isAsync, ParseFlagsAwait, ParseFlagsNone)
 	// Arrow functions are never generators.
 	//
 	// If we're speculatively parsing a signature for a parenthesized arrow function, then
@@ -3909,7 +3909,7 @@ func typeHasArrowFunctionBlockingParseError(node *TypeNode) bool {
 
 func (p *Parser) parseArrowFunctionExpressionBody(isAsync bool, allowReturnTypeInArrowFunction bool) *Node {
 	if p.token == SyntaxKindOpenBraceToken {
-		return p.parseFunctionBlock(ifElse(isAsync, SignatureFlagsAwait, SignatureFlagsNone), nil /*diagnosticMessage*/)
+		return p.parseFunctionBlock(ifElse(isAsync, ParseFlagsAwait, ParseFlagsNone), nil /*diagnosticMessage*/)
 	}
 	if p.token != SyntaxKindSemicolonToken && p.token != SyntaxKindFunctionKeyword && p.token != SyntaxKindClassKeyword && p.isStartOfStatement() && !p.isStartOfExpressionStatement() {
 		// Check if we got a plain statement (i.e. no expression-statements, no function/class expressions/declarations)
@@ -3926,7 +3926,7 @@ func (p *Parser) parseArrowFunctionExpressionBody(isAsync bool, allowReturnTypeI
 		// up preemptively closing the containing construct.
 		//
 		// Note: even when 'IgnoreMissingOpenBrace' is passed, parseBody will still error.
-		return p.parseFunctionBlock(SignatureFlagsIgnoreMissingOpenBrace|ifElse(isAsync, SignatureFlagsAwait, SignatureFlagsNone), nil /*diagnosticMessage*/)
+		return p.parseFunctionBlock(ParseFlagsIgnoreMissingOpenBrace|ifElse(isAsync, ParseFlagsAwait, ParseFlagsNone), nil /*diagnosticMessage*/)
 	}
 	saveContextFlags := p.contextFlags
 	p.setContextFlags(NodeFlagsAwaitContext, isAsync)
@@ -5115,10 +5115,10 @@ func (p *Parser) parseObjectLiteralElement() *Node {
 	}
 	modifiers := p.parseModifiersWithOptions(true /*allowDecorators*/, false /*permitConstAsModifier*/, false /*stopOnStartOfClassStaticBlock*/)
 	if p.parseContextualModifier(SyntaxKindGetKeyword) {
-		return p.parseAccessorDeclaration(pos, hasJSDoc, modifiers, SyntaxKindGetAccessor, SignatureFlagsNone)
+		return p.parseAccessorDeclaration(pos, hasJSDoc, modifiers, SyntaxKindGetAccessor, ParseFlagsNone)
 	}
 	if p.parseContextualModifier(SyntaxKindSetKeyword) {
-		return p.parseAccessorDeclaration(pos, hasJSDoc, modifiers, SyntaxKindSetAccessor, SignatureFlagsNone)
+		return p.parseAccessorDeclaration(pos, hasJSDoc, modifiers, SyntaxKindSetAccessor, ParseFlagsNone)
 	}
 	asteriskToken := p.parseOptionalToken(SyntaxKindAsteriskToken)
 	tokenIsIdentifier := p.isIdentifier()
@@ -5169,7 +5169,7 @@ func (p *Parser) parseFunctionExpression() *Expression {
 	asteriskToken := p.parseOptionalToken(SyntaxKindAsteriskToken)
 	isGenerator := asteriskToken != nil
 	isAsync := hasAsyncModifier(modifiers)
-	signatureFlags := ifElse(isGenerator, SignatureFlagsYield, SignatureFlagsNone) | ifElse(isAsync, SignatureFlagsAwait, SignatureFlagsNone)
+	signatureFlags := ifElse(isGenerator, ParseFlagsYield, ParseFlagsNone) | ifElse(isAsync, ParseFlagsAwait, ParseFlagsNone)
 	var name *Node
 	switch {
 	case isGenerator && isAsync:

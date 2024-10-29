@@ -3481,9 +3481,6 @@ func getInitializerFromNode(node *Node) *Node {
  * functions only the JSDoc case.
  */
 func getEffectiveTypeAnnotationNode(node *Node) *Node {
-	if isTypeAliasDeclaration(node) {
-		return nil
-	}
 	switch node.kind {
 	case SyntaxKindVariableDeclaration:
 		return node.AsVariableDeclaration().typeNode
@@ -3506,7 +3503,7 @@ func getEffectiveTypeAnnotationNode(node *Node) *Node {
 	case SyntaxKindAsExpression:
 		return node.AsAsExpression().typeNode
 	default:
-		if isFunctionLike(node) && !isFunctionDeclaration(node) {
+		if isFunctionLike(node) {
 			return node.FunctionLikeData().returnType
 		}
 	}
@@ -3527,12 +3524,20 @@ func isQuestionToken(node *Node) bool {
 
 func isOptionalDeclaration(declaration *Node) bool {
 	switch declaration.kind {
+	case SyntaxKindParameter:
+		return declaration.AsParameterDeclaration().questionToken != nil
 	case SyntaxKindPropertyDeclaration:
 		return isQuestionToken(declaration.AsPropertyDeclaration().postfixToken)
 	case SyntaxKindPropertySignature:
 		return isQuestionToken(declaration.AsPropertySignatureDeclaration().postfixToken)
-	case SyntaxKindParameter:
-		return declaration.AsParameterDeclaration().questionToken != nil
+	case SyntaxKindMethodDeclaration:
+		return isQuestionToken(declaration.AsMethodDeclaration().postfixToken)
+	case SyntaxKindMethodSignature:
+		return isQuestionToken(declaration.AsMethodSignatureDeclaration().postfixToken)
+	case SyntaxKindPropertyAssignment:
+		return isQuestionToken(declaration.AsPropertyAssignment().postfixToken)
+	case SyntaxKindShorthandPropertyAssignment:
+		return isQuestionToken(declaration.AsShorthandPropertyAssignment().postfixToken)
 	}
 	return false
 }
@@ -3988,4 +3993,19 @@ func getExports(symbol *Symbol) SymbolTable {
 
 func getLocals(container *Node) SymbolTable {
 	return getSymbolTable(&container.LocalsContainerData().locals)
+}
+
+func getThisParameter(signature *Node) *Node {
+	// callback tags do not currently support this parameters
+	if len(signature.FunctionLikeData().parameters) != 0 {
+		thisParameter := signature.FunctionLikeData().parameters[0]
+		if parameterIsThisKeyword(thisParameter) {
+			return thisParameter
+		}
+	}
+	return nil
+}
+
+func parameterIsThisKeyword(parameter *Node) bool {
+	return isThisIdentifier(parameter.Name())
 }
