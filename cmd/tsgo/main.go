@@ -77,7 +77,7 @@ func main() {
 
 			currentDirectory, err := os.Getwd()
 			if err != nil {
-				currentDirectory = ""
+				panic("no current directory")
 			}
 
 			output := strings.Builder{}
