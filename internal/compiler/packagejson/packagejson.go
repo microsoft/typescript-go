@@ -1,5 +1,9 @@
 package packagejson
 
+import (
+	jsonExp "github.com/go-json-experiment/json"
+)
+
 type HeaderFields struct {
 	Name    Expected[string] `json:"name"`
 	Version Expected[string] `json:"version"`
@@ -26,4 +30,12 @@ type Fields struct {
 	HeaderFields
 	PathFields
 	DependencyFields
+}
+
+func Parse(data []byte) (*Fields, error) {
+	var f Fields
+	if err := jsonExp.Unmarshal(data, &f); err != nil {
+		return nil, err
+	}
+	return &f, nil
 }
