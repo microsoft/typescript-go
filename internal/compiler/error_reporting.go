@@ -129,7 +129,12 @@ func writeCodeSnippet(writer *strings.Builder, sourceFile *SourceFile, start int
 		if i == firstLine {
 			// If we're on the last line, then limit it to the last character of the last line.
 			// Otherwise, we'll just squiggle the rest of the line, giving 'slice' no end position.
-			lastCharForLine := ifElse(i == lastLine, lastLineChar, len(lineContent))
+			var lastCharForLine int
+			if i == lastLine {
+				lastCharForLine = lastLineChar
+			} else {
+				lastCharForLine = len(lineContent)
+			}
 
 			// Fill with spaces until the first character,
 			// then squiggle the remainder of the line.
@@ -157,7 +162,7 @@ func WriteFlattenedDiagnosticMessage(writer *strings.Builder, diagnostic *Diagno
 
 func flattenDiagnosticMessageChain(writer *strings.Builder, chain *MessageChain, newLine string, level int) {
 	writer.WriteString(newLine)
-	for i := 0; i < level; i++ {
+	for range level {
 		writer.WriteString("  ")
 	}
 
