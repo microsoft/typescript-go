@@ -225,12 +225,17 @@ func getPathFromPathComponents(pathComponents []string) string {
 		return ""
 	}
 
+	// !!!
+	// TODO: This code and the original might have a
+	// fast path to just join the components if the
+	// first component doesn't have a directory separator.
+
 	root := pathComponents[0]
 	if root != "" {
 		root = ensureTrailingDirectorySeparator(root)
 	}
 
-	return root + strings.Join(pathComponents, "/")
+	return root + strings.Join(pathComponents[1:], "/")
 }
 
 func normalizeSlashes(path string) string {
