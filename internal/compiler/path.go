@@ -348,7 +348,8 @@ func getPathComponentsRelativeTo(from string, to string, stringEqualer func(a, b
 	toComponents := reducePathComponents(getPathComponents(to, "" /*currentDirectory*/))
 
 	start := 0
-	for start = range min(len(fromComponents), len(toComponents)) {
+	maxCommonComponents := min(len(fromComponents), len(toComponents))
+	for ; start < maxCommonComponents; start++ {
 		fromComponent := fromComponents[start]
 		toComponent := toComponents[start]
 		if start == 0 {
