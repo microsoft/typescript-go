@@ -80,7 +80,7 @@ func main() {
 				panic("no current directory")
 			}
 
-			output := strings.Builder{}
+			var output strings.Builder
 			formatOpts := ts.DiagnosticsFormattingOptions{
 				NewLine:              "\n",
 				CurrentDirectory:     currentDirectory,
