@@ -924,10 +924,6 @@ func isOuterExpression(node *Node, kinds OuterExpressionKinds) bool {
 	return false
 }
 
-func getSymbolFromNode(node *Node) *Symbol {
-	return node.Symbol()
-}
-
 func skipOuterExpressions(node *Node, kinds OuterExpressionKinds) *Node {
 	for isOuterExpression(node, kinds) {
 		node = node.Expression()
@@ -2380,7 +2376,7 @@ loop:
 					// at a higher level than type parameters would normally be
 					if meaning&result.flags&SymbolFlagsType != 0 && lastLocation.kind != SyntaxKindJSDoc {
 						useResult = result.flags&SymbolFlagsTypeParameter != 0 && (lastLocation.flags&NodeFlagsSynthesized != 0 ||
-							lastLocation == location.FunctionLikeData().returnType ||
+							lastLocation == location.ReturnType() ||
 							isParameterLikeOrReturnTag(lastLocation))
 					}
 					if meaning&result.flags&SymbolFlagsVariable != 0 {
@@ -2394,7 +2390,7 @@ loop:
 							// to make sure that they reference no variables declared after them.
 							useResult = lastLocation.kind == SyntaxKindParameter ||
 								lastLocation.flags&NodeFlagsSynthesized != 0 ||
-								lastLocation == location.FunctionLikeData().returnType && findAncestor(result.valueDeclaration, isParameter) != nil
+								lastLocation == location.ReturnType() && findAncestor(result.valueDeclaration, isParameter) != nil
 						}
 					}
 				} else if location.kind == SyntaxKindConditionalType {
@@ -2665,7 +2661,7 @@ func (r *NameResolver) useOuterVariableScopeInParameter(result *Symbol, location
 				functionLocation := location
 				declarationRequiresScopeChange := r.getRequiresScopeChangeCache(functionLocation)
 				if declarationRequiresScopeChange == TSUnknown {
-					declarationRequiresScopeChange = boolToTristate(some(functionLocation.FunctionLikeData().parameters, r.requiresScopeChange))
+					declarationRequiresScopeChange = boolToTristate(some(functionLocation.Parameters(), r.requiresScopeChange))
 					r.setRequiresScopeChangeCache(functionLocation, declarationRequiresScopeChange)
 				}
 				return declarationRequiresScopeChange == TSTrue
@@ -3014,7 +3010,7 @@ func isPartOfTypeNodeInParent(node *Node) bool {
 	case SyntaxKindFunctionDeclaration, SyntaxKindFunctionExpression, SyntaxKindArrowFunction, SyntaxKindConstructor, SyntaxKindMethodDeclaration,
 		SyntaxKindMethodSignature, SyntaxKindGetAccessor, SyntaxKindSetAccessor, SyntaxKindCallSignature, SyntaxKindConstructSignature,
 		SyntaxKindIndexSignature:
-		return node == parent.FunctionLikeData().returnType
+		return node == parent.ReturnType()
 	case SyntaxKindTypeAssertionExpression:
 		return node == parent.AsTypeAssertion().typeNode
 	case SyntaxKindCallExpression:
@@ -3381,7 +3377,7 @@ func getEffectiveTypeParameterDeclarations(node *Node) []*Node {
 	// 		}
 	// 	})
 	// }
-	typeParameters := getTypeParameterListFromNode(node)
+	typeParameters := node.TypeParameters()
 	if typeParameters != nil {
 		return typeParameters.AsTypeParameterList().parameters
 	}
@@ -3399,28 +3395,11 @@ func getEffectiveTypeParameterDeclarations(node *Node) []*Node {
 }
 
 func getTypeParameterNodesFromNode(node *Node) []*Node {
-	typeParameterList := getTypeParameterListFromNode(node)
+	typeParameterList := node.TypeParameters()
 	if typeParameterList != nil {
 		return typeParameterList.AsTypeParameterList().parameters
 	}
 	return nil
-}
-
-func getTypeParameterListFromNode(node *Node) *Node {
-	if isFunctionLike(node) {
-		return node.FunctionLikeData().typeParameters
-	}
-	switch node.kind {
-	case SyntaxKindClassDeclaration:
-		return node.AsClassDeclaration().typeParameters
-	case SyntaxKindClassExpression:
-		return node.AsClassExpression().typeParameters
-	case SyntaxKindInterfaceDeclaration:
-		return node.AsInterfaceDeclaration().typeParameters
-	case SyntaxKindTypeAliasDeclaration:
-		return node.AsTypeAliasDeclaration().typeParameters
-	}
-	panic("Unhandled case in getTypeParameterListFromNode")
 }
 
 func getTypeArgumentNodesFromNode(node *Node) []*Node {
@@ -3504,7 +3483,7 @@ func getEffectiveTypeAnnotationNode(node *Node) *Node {
 		return node.AsAsExpression().typeNode
 	default:
 		if isFunctionLike(node) {
-			return node.FunctionLikeData().returnType
+			return node.ReturnType()
 		}
 	}
 	return nil
@@ -3997,8 +3976,8 @@ func getLocals(container *Node) SymbolTable {
 
 func getThisParameter(signature *Node) *Node {
 	// callback tags do not currently support this parameters
-	if len(signature.FunctionLikeData().parameters) != 0 {
-		thisParameter := signature.FunctionLikeData().parameters[0]
+	if len(signature.Parameters()) != 0 {
+		thisParameter := signature.Parameters()[0]
 		if parameterIsThisKeyword(thisParameter) {
 			return thisParameter
 		}

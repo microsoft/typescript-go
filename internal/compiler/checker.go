@@ -2110,7 +2110,7 @@ func getModuleSpecifierFromNode(node *Node) *Node {
  */
 
 func (c *Checker) markSymbolOfAliasDeclarationIfTypeOnly(aliasDeclaration *Node, immediateTarget *Symbol, finalTarget *Symbol, overwriteEmpty bool, exportStarDeclaration *Node, exportStarName string) bool {
-	if aliasDeclaration == nil || isPropertyAccessExpression(aliasDeclaration) {
+	if aliasDeclaration == nil || !isDeclarationNode(aliasDeclaration) {
 		return false
 	}
 	// If the declaration itself is type-only, mark it and return. No need to check what it resolves to.
@@ -3378,9 +3378,9 @@ func (c *Checker) reportImplicitAny(declaration *Node, t *Type, wideningKind Wid
 			name := param.name.AsIdentifier()
 			originalKeywordKind := identifierToKeywordKind(name)
 			if (isCallSignatureDeclaration(declaration.parent) || isMethodSignatureDeclaration(declaration.parent) || isFunctionTypeNode(declaration.parent)) &&
-				slices.Contains(declaration.parent.FunctionLikeData().parameters, declaration) &&
+				slices.Contains(declaration.parent.Parameters(), declaration) &&
 				(isTypeNodeKind(originalKeywordKind) || c.resolveName(declaration, name.text, SymbolFlagsType, nil /*nameNotFoundMessage*/, true /*isUse*/, false /*excludeGlobals*/) != nil) {
-				newName := fmt.Sprintf("arg%v", slices.Index(declaration.parent.FunctionLikeData().parameters, declaration))
+				newName := fmt.Sprintf("arg%v", slices.Index(declaration.parent.Parameters(), declaration))
 				typeName := declarationNameToString(param.name) + ifElse(param.dotDotDotToken != nil, "[]", "")
 				c.errorOrSuggestion(c.noImplicitAny, declaration, diagnostics.Parameter_has_a_name_but_no_type_Did_you_mean_0_Colon_1, newName, typeName)
 				return
@@ -3913,8 +3913,8 @@ func (c *Checker) getIndexInfosOfIndexSymbol(indexSymbol *Symbol, siblingSymbols
 	var propertySymbols []*Symbol
 	for _, declaration := range indexSymbol.declarations {
 		if isIndexSignatureDeclaration(declaration) {
-			parameters := declaration.FunctionLikeData().parameters
-			returnTypeNode := declaration.FunctionLikeData().returnType
+			parameters := declaration.Parameters()
+			returnTypeNode := declaration.ReturnType()
 			if len(parameters) == 1 {
 				typeNode := parameters[0].AsParameterDeclaration().typeNode
 				if typeNode != nil {
@@ -4098,7 +4098,7 @@ func (c *Checker) getSignatureFromDeclaration(declaration *Node) *Signature {
 	minArgumentCount := 0
 	hasThisParameter := false
 	iife := getImmediatelyInvokedFunctionExpression(declaration)
-	for i, param := range declaration.FunctionLikeData().parameters {
+	for i, param := range declaration.Parameters() {
 		paramSymbol := param.Symbol()
 		typeNode := param.AsParameterDeclaration().typeNode
 		// Include parameter symbol instead of property symbol in the signature
@@ -4134,7 +4134,7 @@ func (c *Checker) getSignatureFromDeclaration(declaration *Node) *Signature {
 	}
 	var classType *Type
 	if isConstructorDeclaration(declaration) {
-		classType = c.getDeclaredTypeOfClassOrInterface(c.getMergedSymbol(declaration.parent.ClassLikeData().Symbol()))
+		classType = c.getDeclaredTypeOfClassOrInterface(c.getMergedSymbol(declaration.parent.Symbol()))
 	}
 	var typeParameters []*Type
 	if classType != nil {
@@ -4169,7 +4169,7 @@ func (c *Checker) getAnnotatedAccessorThisParameter(accessor *Node) *Symbol {
 }
 
 func (c *Checker) getAccessorThisParameter(accessor *Node) *Node {
-	if len(accessor.FunctionLikeData().parameters) == ifElse(isGetAccessorDeclaration(accessor), 1, 2) {
+	if len(accessor.Parameters()) == ifElse(isGetAccessorDeclaration(accessor), 1, 2) {
 		return getThisParameter(accessor)
 	}
 	return nil
@@ -4269,7 +4269,7 @@ func (c *Checker) getReturnTypeOfSignature(sig *Signature) *Type {
 	}
 	if !c.popTypeResolution() {
 		if sig.declaration != nil {
-			typeNode := sig.declaration.FunctionLikeData().returnType
+			typeNode := sig.declaration.ReturnType()
 			if typeNode != nil {
 				c.error(typeNode, diagnostics.Return_type_annotation_circularly_references_itself)
 			} else if c.noImplicitAny {
@@ -4332,10 +4332,10 @@ func getEffectiveSetAccessorTypeAnnotationNode(node *Node) *Node {
 }
 
 func getSetAccessorValueParameter(accessor *Node) *Node {
-	d := accessor.FunctionLikeData()
-	if accessor != nil && len(d.parameters) > 0 {
-		hasThis := len(d.parameters) == 2 && parameterIsThisKeyword(d.parameters[0])
-		return d.parameters[ifElse(hasThis, 1, 0)]
+	parameters := accessor.Parameters()
+	if len(parameters) > 0 {
+		hasThis := len(parameters) == 2 && parameterIsThisKeyword(parameters[0])
+		return parameters[ifElse(hasThis, 1, 0)]
 	}
 	return nil
 }
@@ -5357,11 +5357,11 @@ func (c *Checker) isTypeParameterPossiblyReferenced(tp *Type, node *Node) bool {
 			}
 			return true
 		case SyntaxKindMethodDeclaration, SyntaxKindMethodSignature:
-			d := node.FunctionLikeData()
-			return d.returnType == nil && getBodyOfNode(node) != nil ||
+			returnType := node.ReturnType()
+			return returnType == nil && getBodyOfNode(node) != nil ||
 				some(getTypeParameterNodesFromNode(node), containsReference) ||
-				some(d.parameters, containsReference) ||
-				d.returnType != nil && containsReference(d.returnType)
+				some(node.Parameters(), containsReference) ||
+				returnType != nil && containsReference(returnType)
 		}
 		return node.ForEachChild(containsReference)
 	}
@@ -8634,7 +8634,7 @@ func (c *Checker) getFlowTypeOfReferenceEx(reference *Node, declaredType *Type, 
 }
 
 func hasRestParameter(signature *Node) bool {
-	last := lastOrNil(signature.FunctionLikeData().parameters)
+	last := lastOrNil(signature.Parameters())
 	return last != nil && isRestParameter(last)
 }
 
@@ -8644,7 +8644,7 @@ func isRestParameter(param *Node) bool {
 
 func getNameFromIndexInfo(info *IndexInfo) string {
 	if info.declaration != nil {
-		return declarationNameToString(info.declaration.FunctionLikeData().parameters[0].Name())
+		return declarationNameToString(info.declaration.Parameters()[0].Name())
 	}
 	return "x"
 }

@@ -288,8 +288,7 @@ func (b *Binder) getDeclarationName(node *Node) string {
 				// we can get here in cases where there is already a parse error.
 				return InternalSymbolNameMissing
 			}
-			containingClassSymbol := getSymbolFromNode(containingClass)
-			return getSymbolNameForPrivateIdentifier(containingClassSymbol, name.Text())
+			return getSymbolNameForPrivateIdentifier(containingClass.Symbol(), name.Text())
 		}
 		if isPropertyNameLiteral(name) {
 			return name.Text()
@@ -1015,7 +1014,7 @@ func (b *Binder) bindFunctionExpression(node *Node) {
 }
 
 func (b *Binder) bindClassLikeDeclaration(node *Node) {
-	name := node.ClassLikeData().name
+	name := node.Name()
 	switch node.kind {
 	case SyntaxKindClassDeclaration:
 		b.bindBlockScopedDeclaration(node, SymbolFlagsClass, SymbolFlagsClassExcludes)
@@ -1148,7 +1147,7 @@ func (b *Binder) bindParameter(node *Node) {
 		b.checkStrictModeEvalOrArguments(node, decl.name)
 	}
 	if isBindingPattern(decl.name) {
-		index := slices.Index(node.parent.FunctionLikeData().parameters, node)
+		index := slices.Index(node.parent.Parameters(), node)
 		b.bindAnonymousDeclaration(node, SymbolFlagsFunctionScopedVariable, "__"+strconv.Itoa(index))
 	} else {
 		b.declareSymbolAndAddToSymbolTable(node, SymbolFlagsFunctionScopedVariable, SymbolFlagsParameterExcludes)
@@ -1234,9 +1233,9 @@ func (b *Binder) bindTypeParameter(node *Node) {
 }
 
 func (b *Binder) lookupName(name string, container *Node) *Symbol {
-	data := container.LocalsContainerData()
-	if data != nil {
-		local := data.locals[name]
+	localsContainer := container.LocalsContainerData()
+	if localsContainer != nil {
+		local := localsContainer.locals[name]
 		if local != nil {
 			return local
 		}
@@ -1247,9 +1246,12 @@ func (b *Binder) lookupName(name string, container *Node) *Symbol {
 			return local
 		}
 	}
-	symbol := container.Symbol()
-	if symbol != nil {
-		return symbol.exports[name]
+	declaration := container.DeclarationData()
+	if declaration != nil {
+		symbol := declaration.symbol
+		if symbol != nil {
+			return symbol.exports[name]
+		}
 	}
 	return nil
 }
