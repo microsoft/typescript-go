@@ -3762,7 +3762,7 @@ func (c *Checker) resolveObjectTypeMembers(t *Type, source *Type, typeParameters
 			} else {
 				inheritedIndexInfos = []*IndexInfo{{keyType: c.stringType, valueType: c.anyType}}
 			}
-			indexInfos = concatenate(indexInfos, filter(inheritedIndexInfos, func(info *IndexInfo) bool {
+			indexInfos = concatenate(indexInfos, Filter(inheritedIndexInfos, func(info *IndexInfo) bool {
 				return findIndexInfo(indexInfos, info.keyType) != nil
 			}))
 		}
@@ -4153,7 +4153,7 @@ func (c *Checker) getTypeArguments(t *Type) []*Type {
 			case SyntaxKindArrayType:
 				typeArguments = []*Type{c.getTypeFromTypeNode(node.AsArrayTypeNode().elementType)}
 			case SyntaxKindTupleType:
-				typeArguments = mapf(node.AsTupleTypeNode().elements, c.getTypeFromTypeNode)
+				typeArguments = Mapf(node.AsTupleTypeNode().elements, c.getTypeFromTypeNode)
 			default:
 				panic("Unhandled case in getTypeArguments")
 			}
@@ -4178,7 +4178,7 @@ func (c *Checker) getTypeArguments(t *Type) []*Type {
 }
 
 func (c *Checker) getEffectiveTypeArguments(node *Node, typeParameters []*Type) []*Type {
-	return c.fillMissingTypeArguments(mapf(node.AsTypeArgumentList().arguments, c.getTypeFromTypeNode), typeParameters, c.getMinTypeArgumentCount(typeParameters))
+	return c.fillMissingTypeArguments(Mapf(node.AsTypeArgumentList().arguments, c.getTypeFromTypeNode), typeParameters, c.getMinTypeArgumentCount(typeParameters))
 }
 
 /**
@@ -4435,11 +4435,11 @@ func (c *Checker) getObjectTypeInstantiation(t *Type, m *TypeMapper, alias *Type
 			typeParameters = c.getOuterTypeParameters(declaration, true /*includeThisTypes*/)
 			if len(target.alias.TypeArguments()) == 0 {
 				if t.objectFlags&(ObjectFlagsReference|ObjectFlagsInstantiationExpressionType) != 0 {
-					typeParameters = filter(typeParameters, func(tp *Type) bool {
+					typeParameters = Filter(typeParameters, func(tp *Type) bool {
 						return c.isTypeParameterPossiblyReferenced(tp, declaration)
 					})
 				} else if target.symbol.flags&(SymbolFlagsMethod|SymbolFlagsTypeLiteral) != 0 {
-					typeParameters = filter(typeParameters, func(tp *Type) bool {
+					typeParameters = Filter(typeParameters, func(tp *Type) bool {
 						return some(t.symbol.declarations, func(d *Node) bool {
 							return c.isTypeParameterPossiblyReferenced(tp, d)
 						})
@@ -4880,7 +4880,7 @@ func (c *Checker) getTypeFromClassOrInterfaceReference(node *Node, symbol *Symbo
 }
 
 func (c *Checker) getTypeArgumentsFromNode(node *Node) []*Type {
-	return mapf(getTypeArgumentNodesFromNode(node), c.getTypeFromTypeNode)
+	return Mapf(getTypeArgumentNodesFromNode(node), c.getTypeFromTypeNode)
 }
 
 func (c *Checker) checkNoTypeArguments(node *Node, symbol *Symbol) bool {
@@ -5103,7 +5103,7 @@ func (c *Checker) isMutableArrayLikeType(t *Type) bool {
 func (c *Checker) getTypeFromTypeAliasReference(node *Node, symbol *Symbol) *Type {
 	typeArguments := getTypeArgumentNodesFromNode(node)
 	if symbol.checkFlags&CheckFlagsUnresolved != 0 {
-		alias := &TypeAlias{symbol: symbol, typeArguments: mapf(typeArguments, c.getTypeFromTypeNode)}
+		alias := &TypeAlias{symbol: symbol, typeArguments: Mapf(typeArguments, c.getTypeFromTypeNode)}
 		key := getAliasId(alias)
 		errorType := c.errorTypes[key]
 		if errorType == nil {
@@ -5414,7 +5414,7 @@ func (c *Checker) getTypeFromArrayOrTupleTypeNode(node *Node) *Type {
 			if node.kind == SyntaxKindArrayType {
 				elementTypes = []*Type{c.getTypeFromTypeNode(node.AsArrayTypeNode().elementType)}
 			} else {
-				elementTypes = mapf(node.AsTupleTypeNode().elements, c.getTypeFromTypeNode)
+				elementTypes = Mapf(node.AsTupleTypeNode().elements, c.getTypeFromTypeNode)
 			}
 			links.resolvedType = c.createNormalizedTypeReference(target, elementTypes)
 		}
@@ -5435,7 +5435,7 @@ func (c *Checker) getArrayOrTupleTargetType(node *Node) *Type {
 		}
 		return c.globalArrayType
 	}
-	return c.getTupleTargetType(mapf(node.AsTupleTypeNode().elements, c.getTupleElementInfo), readonly)
+	return c.getTupleTargetType(Mapf(node.AsTupleTypeNode().elements, c.getTupleElementInfo), readonly)
 }
 
 func (c *Checker) isReadonlyTypeOperator(node *Node) bool {
@@ -5479,7 +5479,7 @@ func (c *Checker) getTypeFromUnionTypeNode(node *Node) *Type {
 	links := c.typeNodeLinks.get(node)
 	if links.resolvedType == nil {
 		alias := c.getAliasForTypeNode(node)
-		links.resolvedType = c.getUnionTypeEx(mapf(node.AsUnionTypeNode().types, c.getTypeFromTypeNode), UnionReductionLiteral, alias, nil /*origin*/)
+		links.resolvedType = c.getUnionTypeEx(Mapf(node.AsUnionTypeNode().types, c.getTypeFromTypeNode), UnionReductionLiteral, alias, nil /*origin*/)
 	}
 	return links.resolvedType
 }
@@ -5488,7 +5488,7 @@ func (c *Checker) getTypeFromIntersectionTypeNode(node *Node) *Type {
 	links := c.typeNodeLinks.get(node)
 	if links.resolvedType == nil {
 		alias := c.getAliasForTypeNode(node)
-		types := mapf(node.AsIntersectionTypeNode().types, c.getTypeFromTypeNode)
+		types := Mapf(node.AsIntersectionTypeNode().types, c.getTypeFromTypeNode)
 		// We perform no supertype reduction for X & {} or {} & X, where X is one of string, number, bigint,
 		// or a pattern literal template type. This enables union types like "a" | "b" | string & {} or
 		// "aa" | "ab" | `a${string}` which preserve the literal types for purposes of statement completion.
@@ -5629,7 +5629,7 @@ func (c *Checker) getTupleElementInfo(node *Node) TupleElementInfo {
 }
 
 func (c *Checker) createTupleType(elementTypes []*Type) *Type {
-	elementInfos := mapf(elementTypes, func(_ *Type) TupleElementInfo { return TupleElementInfo{flags: ElementFlagsRequired} })
+	elementInfos := Mapf(elementTypes, func(_ *Type) TupleElementInfo { return TupleElementInfo{flags: ElementFlagsRequired} })
 	return c.createTupleTypeEx(elementTypes, elementInfos, false /*readonly*/)
 }
 
@@ -5670,7 +5670,7 @@ func (c *Checker) getTupleTargetType(elementInfos []TupleElementInfo, readonly b
 // is true for each of the synthesized type parameters.
 func (c *Checker) createTupleTargetType(elementInfos []TupleElementInfo, readonly bool) *Type {
 	arity := len(elementInfos)
-	minLength := countWhere(elementInfos, func(e TupleElementInfo) bool {
+	minLength := CountWhere(elementInfos, func(e TupleElementInfo) bool {
 		return e.flags&(ElementFlagsRequired|ElementFlagsVariadic) != 0
 	})
 	var typeParameters []*Type
@@ -6935,7 +6935,7 @@ func (c *Checker) filterType(t *Type, f func(*Type) bool) *Type {
 			// Otherwise, if we have exactly one type left in the origin set, return that as the filtered type.
 			// Otherwise, construct a new filtered origin type.
 			originTypes := origin.AsUnionType().types
-			originFiltered := filter(originTypes, func(u *Type) bool {
+			originFiltered := Filter(originTypes, func(u *Type) bool {
 				return u.flags&TypeFlagsUnion != 0 || f(u)
 			})
 			if len(originTypes)-len(originFiltered) == len(types)-len(filtered) {
@@ -7206,7 +7206,7 @@ func (c *Checker) getPropertyTypeForIndexType(originalObjectType *Type, objectTy
 					c.diagnostics.add(createDiagnosticForNode(accessExpression, diagnostics.Property_0_does_not_exist_on_type_1, indexType.AsLiteralType().value, c.typeToString(objectType)))
 					return c.undefinedType
 				} else if indexType.flags&(TypeFlagsNumber|TypeFlagsString) != 0 {
-					types := mapf(objectType.AsObjectType().properties, func(prop *Symbol) *Type {
+					types := Mapf(objectType.AsObjectType().properties, func(prop *Symbol) *Type {
 						return c.getTypeOfSymbol(prop)
 					})
 					return c.getUnionType(append(types, c.undefinedType))

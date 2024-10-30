@@ -7,16 +7,93 @@ import (
 
 type Path string
 
+// Internally, we represent paths as strings with '/' as the directory separator.
+// When we make system calls (eg: LanguageServiceHost.getDirectory()),
+// we expect the host to correctly handle paths in our specified format.
+const directorySeparator = '/'
+
+//// Path Tests
+
+// Determines whether a byte corresponds to `/` or `\`.
 func isAnyDirectorySeparator(char byte) bool {
 	return char == '/' || char == '\\'
+}
+
+// Determines whether a path starts with a URL scheme (e.g. starts with `http://`, `ftp://`, `file://`, etc.).
+func isUrl(path string) bool {
+	return getEncodedRootLength(path) < 0
+}
+
+// Determines whether a path is an absolute disk path (e.g. starts with `/`, or a dos path
+// like `c:`, `c:\` or `c:/`).
+func isRootedDiskPath(path string) bool {
+	return getEncodedRootLength(path) > 0
+}
+
+// Determines whether a path consists only of a path root.
+func isDiskPathRoot(path string) bool {
+	rootLength := getEncodedRootLength(path)
+	return rootLength > 0 && rootLength == len(path)
+}
+
+// Determines whether a path starts with an absolute path component (i.e. `/`, `c:/`, `file://`, etc.).
+//
+//	```
+//	// POSIX
+//	pathIsAbsolute("/path/to/file.ext") === true
+//	// DOS
+//	pathIsAbsolute("c:/path/to/file.ext") === true
+//	// URL
+//	pathIsAbsolute("file:///path/to/file.ext") === true
+//	// Non-absolute
+//	pathIsAbsolute("path/to/file.ext") === false
+//	pathIsAbsolute("./path/to/file.ext") === false
+//	```
+func pathIsAbsolute(path string) bool {
+	return getEncodedRootLength(path) != 0
 }
 
 func hasTrailingDirectorySeparator(path string) bool {
 	return len(path) > 0 && isAnyDirectorySeparator(path[len(path)-1])
 }
 
-func combinePaths(paths ...string) string {
-	return path.Join(paths...)
+// Combines paths. If a path is absolute, it replaces any previous path. Relative paths are not simplified.
+//
+//	```
+//	// Non-rooted
+//	combinePaths("path", "to", "file.ext") === "path/to/file.ext"
+//	combinePaths("path", "dir", "..", "to", "file.ext") === "path/dir/../to/file.ext"
+//	// POSIX
+//	combinePaths("/path", "to", "file.ext") === "/path/to/file.ext"
+//	combinePaths("/path", "/to", "file.ext") === "/to/file.ext"
+//	// DOS
+//	combinePaths("c:/path", "to", "file.ext") === "c:/path/to/file.ext"
+//	combinePaths("c:/path", "c:/to", "file.ext") === "c:/to/file.ext"
+//	// URL
+//	combinePaths("file:///path", "to", "file.ext") === "file:///path/to/file.ext"
+//	combinePaths("file:///path", "file:///to", "file.ext") === "file:///to/file.ext"
+//	```
+func combinePaths(firstPath string, paths ...string) string {
+	// TODO (drosen): There is potential for a fast path here.
+	// In the case where we find the last absolute path and just path.Join from there.
+	result := NormalizeSlashes(firstPath)
+
+	for _, trailingPath := range paths {
+		if trailingPath == "" {
+			continue
+		}
+		trailingPath = NormalizeSlashes(trailingPath)
+		if result == "" || getRootLength(trailingPath) != 0 {
+			// `trailingPath` is absolute.
+			result = trailingPath
+		} else {
+			// !!!
+			// Used to be
+			// path = ensureTrailingDirectorySeparator(path) + relativePath;
+			result = path.Join(result, trailingPath)
+		}
+	}
+	return result
 }
 
 func getPathComponents(path string, currentDirectory string) []string {
@@ -126,7 +203,7 @@ func getRootLength(path string) int {
 }
 
 func getDirectoryPath(path string) string {
-	path = normalizeSlashes(path)
+	path = NormalizeSlashes(path)
 
 	// If the path provided is itself a root, then return it.
 	rootLength := getRootLength(path)
@@ -143,21 +220,22 @@ func (p Path) getDirectoryPath() Path {
 	return Path(getDirectoryPath(string(p)))
 }
 
-func isRootedDiskPath(path string) bool {
-	return getEncodedRootLength(path) > 0
-}
-
 func getPathFromPathComponents(pathComponents []string) string {
 	if len(pathComponents) == 0 {
 		return ""
 	}
 
+	// !!!
+	// TODO: This code and the original might have a
+	// fast path to just join the components if the
+	// first component doesn't have a directory separator.
+
 	root := pathComponents[0]
 	if root != "" {
-		root = ensureTrailingDirectorySeparator(root)
+		root = EnsureTrailingDirectorySeparator(root)
 	}
 
-	return root + strings.Join(pathComponents, "/")
+	return root + strings.Join(pathComponents[1:], "/")
 }
 
 func NormalizeSlashes(path string) string {
@@ -192,6 +270,16 @@ func reducePathComponents(components []string) []string {
 	return reduced
 }
 
+func resolvePath(path string, paths ...string) string {
+	var combinedPath string
+	if len(paths) > 0 {
+		combinedPath = combinePaths(path, paths...)
+	} else {
+		combinedPath = NormalizeSlashes(path)
+	}
+	return normalizePath(combinedPath)
+}
+
 func getNormalizedPathComponents(path string, currentDirectory string) []string {
 	return reducePathComponents(getPathComponents(path, currentDirectory))
 }
@@ -201,7 +289,7 @@ func getNormalizedAbsolutePath(fileName string, currentDirectory string) string 
 }
 
 func normalizePath(path string) string {
-	path = normalizeSlashes(path)
+	path = NormalizeSlashes(path)
 	// Most paths don't require normalization
 	relativePathSegmentRegExp := makeRegexp(`//(?:^|/)\.\.?(?:$|/)`)
 	if !relativePathSegmentRegExp.MatchString(path) {
@@ -217,7 +305,7 @@ func normalizePath(path string) string {
 	// Other paths require full normalization
 	normalized := getPathFromPathComponents(reducePathComponents(getPathComponents(path, "")))
 	if normalized != "" && hasTrailingDirectorySeparator(path) {
-		normalized = ensureTrailingDirectorySeparator(normalized)
+		normalized = EnsureTrailingDirectorySeparator(normalized)
 	}
 	return normalized
 }
@@ -250,7 +338,82 @@ func EnsureTrailingDirectorySeparator(path string) string {
 	return path
 }
 func (p Path) ensureTrailingDirectorySeparator() Path {
-	return Path(ensureTrailingDirectorySeparator(string(p)))
+	return Path(EnsureTrailingDirectorySeparator(string(p)))
+}
+
+//// Relative Paths
+
+func getPathComponentsRelativeTo(from string, to string, stringEqualer func(a, b string) bool, getCanonicalFileName func(fileName string) string) []string {
+	fromComponents := reducePathComponents(getPathComponents(from, "" /*currentDirectory*/))
+	toComponents := reducePathComponents(getPathComponents(to, "" /*currentDirectory*/))
+
+	start := 0
+	maxCommonComponents := min(len(fromComponents), len(toComponents))
+	for ; start < maxCommonComponents; start++ {
+		fromComponent := fromComponents[start]
+		toComponent := toComponents[start]
+		if start == 0 {
+			if !EquateStringsCaseInsensitive(fromComponent, toComponent) {
+				break
+			}
+		} else {
+			if !stringEqualer(fromComponent, toComponent) {
+				break
+			}
+		}
+	}
+
+	if start == 0 {
+		return toComponents
+	}
+
+	numDotDotSlashes := len(fromComponents) - start
+	result := make([]string, 1+numDotDotSlashes+len(toComponents)-start)
+
+	result[0] = ""
+	i := 1
+	// Add all the relative components until we hit a common directory.
+	for range numDotDotSlashes {
+		result[i] = ".."
+		i++
+	}
+	// Now add all the remaining components of the "to" path.
+	for _, component := range toComponents[start:] {
+		result[i] = component
+		i++
+	}
+
+	return result
+}
+
+func ConvertToRelativePath(absoluteOrRelativePath, basePath string, getCanonicalFileName func(fileName string) string) string {
+	if !isRootedDiskPath(absoluteOrRelativePath) {
+		return absoluteOrRelativePath
+	}
+
+	return getRelativePathToDirectoryOrUrl(basePath, absoluteOrRelativePath, basePath, getCanonicalFileName, false /*isAbsolutePathAnUrl*/)
+}
+
+func getRelativePathToDirectoryOrUrl(directoryPathOrUrl string, relativeOrAbsolutePath string, currentDirectory string, getCanonicalFileName func(fileName string) string, isAbsolutePathAnUrl bool) string {
+	pathComponents := getPathComponentsRelativeTo(
+		resolvePath(currentDirectory, directoryPathOrUrl),
+		resolvePath(currentDirectory, relativeOrAbsolutePath),
+		EquateStringsCaseSensitive,
+		getCanonicalFileName,
+	)
+
+	firstComponent := pathComponents[0]
+	if isAbsolutePathAnUrl && isRootedDiskPath(firstComponent) {
+		var prefix string
+		if firstComponent[0] == directorySeparator {
+			prefix = "file://"
+		} else {
+			prefix = "file:///"
+		}
+		pathComponents[0] = prefix + firstComponent
+	}
+
+	return getPathFromPathComponents(pathComponents)
 }
 
 func GetBaseFileName(path string, extensions []string, ignoreCase bool) string {

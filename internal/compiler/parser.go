@@ -154,7 +154,7 @@ func (p *Parser) hasPrecedingJSDocComment() bool {
 }
 
 func (p *Parser) parseSourceFileWorker() *SourceFile {
-	isDeclarationFile := isDeclarationFileName(p.fileName)
+	isDeclarationFile := IsDeclarationFileName(p.fileName)
 	if isDeclarationFile {
 		p.contextFlags |= NodeFlagsAmbient
 	}

@@ -40,7 +40,7 @@ func NewPackageJsonInfoCache(currentDirectory string, getCanonicalFileName func(
 }
 
 func (p *PackageJsonInfoCache) getPackageJsonInfo(packageJsonPath string) *PackageJsonInfoCacheEntry {
-	key := toPath(packageJsonPath, p.currentDirectory, p.getCanonicalFileName)
+	key := ToPath(packageJsonPath, p.currentDirectory, p.getCanonicalFileName)
 	if p.cache == nil {
 		p.cache = make(map[Path]PackageJsonInfoCacheEntry)
 		return nil
@@ -53,7 +53,7 @@ func (p *PackageJsonInfoCache) getPackageJsonInfo(packageJsonPath string) *Packa
 }
 
 func (p *PackageJsonInfoCache) setPackageJsonInfo(packageJsonPath string, info *PackageJsonInfoCacheEntry) {
-	key := toPath(packageJsonPath, p.currentDirectory, p.getCanonicalFileName)
+	key := ToPath(packageJsonPath, p.currentDirectory, p.getCanonicalFileName)
 	if p.cache == nil {
 		p.cache = make(map[Path]PackageJsonInfoCacheEntry)
 	}

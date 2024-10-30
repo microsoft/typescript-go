@@ -21,9 +21,9 @@ var lineDelimiter = regexp.MustCompile("\r?\n")
 var nonWhitespace = regexp.MustCompile(`\S`)
 var tsExtension = regexp.MustCompile(`\.tsx?$`)
 
-var formatDiagnosticsHost = compiler.FormatDiagnosticsHost{
+var formatOpts = &compiler.DiagnosticsFormattingOptions{
 	GetCanonicalFileName: getCanonicalFileName,
-	GetCurrentDirectory:  func() string { return "" },
+	CurrentDirectory:     "",
 	NewLine:              harnessNewLine,
 }
 
@@ -52,16 +52,13 @@ func getCanonicalFileName(fileName string) string {
 }
 
 func minimalDiagnosticsToString(diagnostics []*compiler.Diagnostic, pretty bool) string {
-	host := compiler.FormatDiagnosticsHost{
-		GetCanonicalFileName: getCanonicalFileName,
-		GetCurrentDirectory:  func() string { return "" },
-		NewLine:              harnessNewLine,
-	}
-
+	output := &strings.Builder{}
 	if pretty {
-		return compiler.FormatDiagnosticsWithColorAndContext(diagnostics, host)
+		compiler.FormatDiagnosticsWithColorAndContext(output, diagnostics, formatOpts)
+	} else {
+		compiler.WriteFormatDiagnostics(output, diagnostics, formatOpts)
 	}
-	return compiler.FormatDiagnostics(diagnostics, host)
+	return output.String()
 }
 
 func getErrorBaseline(t *testing.T, inputFiles []*TestFile, diagnostics []*compiler.Diagnostic, pretty bool) string {
@@ -73,7 +70,7 @@ func getErrorBaseline(t *testing.T, inputFiles []*TestFile, diagnostics []*compi
 		compiler.WriteErrorSummaryText(
 			&summaryBuilder,
 			diagnostics,
-			&formatDiagnosticsHost)
+			formatOpts)
 		summary := removeTestPathPrefixes(summaryBuilder.String(), false)
 		outputLines = append(outputLines, summary)
 	}
@@ -103,7 +100,7 @@ func iterateErrorBaseline(t *testing.T, inputFiles []*TestFile, inputDiagnostics
 	var result []string
 
 	outputErrorText := func(error *compiler.Diagnostic) {
-		message := compiler.FlattenDiagnosticMessageText(error, harnessNewLine)
+		message := flattenDiagnosticMessage(error, harnessNewLine)
 
 		errLines := strings.Split(removeTestPathPrefixes(message, false), "\n")
 		errLines = compiler.Mapf(errLines, func(s string) string {
@@ -121,13 +118,13 @@ func iterateErrorBaseline(t *testing.T, inputFiles []*TestFile, inputDiagnostics
 		for _, info := range error.RelatedInformation() {
 			var location string
 			if info.File() != nil {
-				location = " " + compiler.FormatLocation(info.File(), info.Loc().Pos(), formatDiagnosticsHost, func(text string, formatStyle string) string { return text })
+				location = " " + compiler.FormatLocation(info.File(), info.Loc().Pos(), formatOpts, func(text string, formatStyle string) string { return text })
 			}
 			location = removeTestPathPrefixes(location, false)
 			if len(location) > 0 && isDefaultLibraryFile(info.File().FileName()) {
 				location = diagnosticsLocationPattern.ReplaceAllString(location, "$1:--:--")
 			}
-			errLines = append(errLines, fmt.Sprintf("!!! related TS%d%s: %s", info.Code(), location, compiler.FlattenDiagnosticMessageText(info, harnessNewLine)))
+			errLines = append(errLines, fmt.Sprintf("!!! related TS%d%s: %s", info.Code(), location, flattenDiagnosticMessage(info, harnessNewLine)))
 		}
 
 		for _, e := range errLines {
@@ -268,4 +265,10 @@ func checkDuplicatedFileName(resultName string, dupeCase map[string]int) string 
 		dupeCase[resultName] = 0
 	}
 	return resultName
+}
+
+func flattenDiagnosticMessage(d *compiler.Diagnostic, newLine string) string {
+	output := &strings.Builder{}
+	compiler.WriteFlattenedDiagnosticMessage(output, d, newLine)
+	return output.String()
 }
