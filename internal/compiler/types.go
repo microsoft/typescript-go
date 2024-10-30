@@ -550,17 +550,17 @@ const (
 	ModifierFlagsModifier           = ModifierFlagsAll & ^ModifierFlagsDecorator
 )
 
-// SignatureFlags
+// ParseFlags
 
-type SignatureFlags uint32
+type ParseFlags uint32
 
 const (
-	SignatureFlagsNone                   SignatureFlags = 0
-	SignatureFlagsYield                  SignatureFlags = 1 << 0
-	SignatureFlagsAwait                  SignatureFlags = 1 << 1
-	SignatureFlagsType                   SignatureFlags = 1 << 2
-	SignatureFlagsIgnoreMissingOpenBrace SignatureFlags = 1 << 4
-	SignatureFlagsJSDoc                  SignatureFlags = 1 << 5
+	ParseFlagsNone                   ParseFlags = 0
+	ParseFlagsYield                  ParseFlags = 1 << 0
+	ParseFlagsAwait                  ParseFlags = 1 << 1
+	ParseFlagsType                   ParseFlags = 1 << 2
+	ParseFlagsIgnoreMissingOpenBrace ParseFlags = 1 << 4
+	ParseFlagsJSDoc                  ParseFlags = 1 << 5
 )
 
 // SymbolFlags
@@ -762,7 +762,12 @@ type SymbolTable map[string]*Symbol
 // Links for value symbols
 
 type ValueSymbolLinks struct {
-	resolvedType *Type // Type of value symbol
+	resolvedType   *Type // Type of value symbol
+	writeType      *Type
+	target         *Symbol
+	mapper         *TypeMapper
+	nameType       *Type
+	containingType *Type
 }
 
 // Links for alias symbols
@@ -903,6 +908,20 @@ const (
 
 type AccessFlags uint32
 
+const (
+	AccessFlagsNone                       AccessFlags = 0
+	AccessFlagsIncludeUndefined           AccessFlags = 1 << 0
+	AccessFlagsNoIndexSignatures          AccessFlags = 1 << 1
+	AccessFlagsWriting                    AccessFlags = 1 << 2
+	AccessFlagsCacheSymbol                AccessFlags = 1 << 3
+	AccessFlagsAllowMissing               AccessFlags = 1 << 4
+	AccessFlagsExpressionPosition         AccessFlags = 1 << 5
+	AccessFlagsReportDeprecated           AccessFlags = 1 << 6
+	AccessFlagsSuppressNoImplicitAnyError AccessFlags = 1 << 7
+	AccessFlagsContextual                 AccessFlags = 1 << 8
+	AccessFlagsPersistent                             = AccessFlagsIncludeUndefined
+)
+
 type AssignmentDeclarationKind = int32
 
 const (
@@ -971,6 +990,7 @@ type CompilerOptions struct {
 	ModuleResolution             ModuleResolutionKind
 	NoFallthroughCasesInSwitch   Tristate
 	NoImplicitAny                Tristate
+	NoUncheckedIndexedAccess     Tristate
 	PreserveConstEnums           Tristate
 	Strict                       Tristate
 	StrictBindCallApply          Tristate
@@ -1056,8 +1076,12 @@ const (
 type NodeLinks struct {
 	flags                          NodeCheckFlags // Set of flags specific to Node
 	declarationRequiresScopeChange Tristate
-	resolvedType                   *Type   // Cached type of type node
-	resolvedSymbol                 *Symbol // Cached name resolution result
+}
+
+type TypeNodeLinks struct {
+	resolvedType        *Type   // Cached type of type node
+	resolvedSymbol      *Symbol // Cached name resolution result
+	outerTypeParameters []*Type
 }
 
 // Signature specific links
@@ -1269,6 +1293,20 @@ type TypeAlias struct {
 	typeArguments []*Type
 }
 
+func (a *TypeAlias) Symbol() *Symbol {
+	if a == nil {
+		return nil
+	}
+	return a.symbol
+}
+
+func (a *TypeAlias) TypeArguments() []*Type {
+	if a == nil {
+		return nil
+	}
+	return a.typeArguments
+}
+
 // Type
 
 type Type struct {
@@ -1285,20 +1323,29 @@ type Type struct {
 func (t *Type) AsIntrinsicType() *IntrinsicType             { return t.data.(*IntrinsicType) }
 func (t *Type) AsLiteralType() *LiteralType                 { return t.data.(*LiteralType) }
 func (t *Type) AsUniqueESSymbolType() *UniqueESSymbolType   { return t.data.(*UniqueESSymbolType) }
-func (t *Type) AsInterfaceType() *InterfaceType             { return t.data.(*InterfaceType) }
-func (t *Type) AsTypeReference() *TypeReference             { return t.data.(*TypeReference) }
-func (t *Type) AsAnonymousType() *AnonymousType             { return t.data.(*AnonymousType) }
+func (t *Type) AsTupleType() *TupleType                     { return t.data.(*TupleType) }
+func (t *Type) AsSingleSignatureType() *SingleSignatureType { return t.data.(*SingleSignatureType) }
+func (t *Type) AsInstantiationExpressionType() *InstantiationExpressionType {
+	return t.data.(*InstantiationExpressionType)
+}
+func (t *Type) AsMappedType() *MappedType                   { return t.data.(*MappedType) }
+func (t *Type) AsReverseMappedType() *ReverseMappedType     { return t.data.(*ReverseMappedType) }
 func (t *Type) AsTypeParameter() *TypeParameter             { return t.data.(*TypeParameter) }
 func (t *Type) AsUnionType() *UnionType                     { return t.data.(*UnionType) }
 func (t *Type) AsIntersectionType() *IntersectionType       { return t.data.(*IntersectionType) }
+func (t *Type) AsIndexType() *IndexType                     { return t.data.(*IndexType) }
 func (t *Type) AsIndexedAccessType() *IndexedAccessType     { return t.data.(*IndexedAccessType) }
 func (t *Type) AsTemplateLiteralType() *TemplateLiteralType { return t.data.(*TemplateLiteralType) }
 func (t *Type) AsStringMappingType() *StringMappingType     { return t.data.(*StringMappingType) }
+func (t *Type) AsSubstitutionType() *SubstitutionType       { return t.data.(*SubstitutionType) }
+func (t *Type) AsConditionalType() *ConditionalType         { return t.data.(*ConditionalType) }
 
 // Casts for embedded struct types
 
-func (t *Type) AsObjectType() *ObjectType               { return t.data.AsObjectType() }
-func (t *Type) AsParameterizedType() *ParameterizedType { return t.data.AsParameterizedType() }
+func (t *Type) AsObjectType() *ObjectType       { return t.data.AsObjectType() }
+func (t *Type) AsAnonymousType() *AnonymousType { return t.data.AsAnonymousType() }
+func (t *Type) AsTypeReference() *TypeReference { return t.data.AsTypeReference() }
+func (t *Type) AsInterfaceType() *InterfaceType { return t.data.AsInterfaceType() }
 func (t *Type) AsUnionOrIntersectionType() *UnionOrIntersectionType {
 	return t.data.AsUnionOrIntersectionType()
 }
@@ -1309,8 +1356,8 @@ func (t *Type) TargetInterfaceType() *InterfaceType {
 	return t.AsTypeReference().target.AsInterfaceType()
 }
 
-func (t *Type) String() string {
-	return "*Type*"
+func (t *Type) TargetTupleType() *TupleType {
+	return t.AsTypeReference().target.AsTupleType()
 }
 
 // TypeData
@@ -1318,7 +1365,9 @@ func (t *Type) String() string {
 type TypeData interface {
 	AsType() *Type
 	AsObjectType() *ObjectType
-	AsParameterizedType() *ParameterizedType
+	AsAnonymousType() *AnonymousType
+	AsTypeReference() *TypeReference
+	AsInterfaceType() *InterfaceType
 	AsUnionOrIntersectionType() *UnionOrIntersectionType
 }
 
@@ -1328,9 +1377,10 @@ type TypeBase struct {
 	Type
 }
 
-func (t *TypeBase) AsType() *Type                           { return &t.Type }
-func (t *TypeBase) AsObjectType() *ObjectType               { return nil }
-func (t *TypeBase) AsParameterizedType() *ParameterizedType { return nil }
+func (t *TypeBase) AsType() *Type                   { return &t.Type }
+func (t *TypeBase) AsObjectType() *ObjectType       { return nil }
+func (t *TypeBase) AsAnonymousType() *AnonymousType { return nil }
+func (t *TypeBase) AsTypeReference() *TypeReference { return nil }
 
 // IntrinsicTypeData
 
@@ -1360,7 +1410,14 @@ type UniqueESSymbolType struct {
 	name string
 }
 
-// ObjectTypeBase
+// ObjectType (base of all types with members)
+// AnonymousType (ObjectFlagsAnonymous)
+//   TypeReference (ObjectFlagsReference)
+//     InterfaceType (ObjectFlagsReference | (ObjectFlagsClass|ObjectFlagsInterface|ObjectFlagsTuple))
+//   SingleSignatureType (ObjectFlagsAnonymous|ObjectFlagsSingleSignatureType)
+//   InstantiationExpressionType (ObjectFlagsAnonymous|ObjectFlagsInstantiationExpressionType)
+//   MappedType (ObjectFlagsAnonymous|ObjectFlagsMapped)
+// ReverseMapped (ObjectFlagsReverseMapped)
 
 type ObjectType struct {
 	TypeBase
@@ -1381,28 +1438,31 @@ func (t *ObjectType) ConstructSignatures() []*Signature {
 	return slices.Clip(t.signatures[t.callSignatureCount:])
 }
 
-// InstantiatedTypeData
+// AnonymousType (base of all instantiable object types)
 
-type InstantiatedType struct {
+type AnonymousType struct {
 	ObjectType
 	target         *Type            // Target of instantiated type
-	mapper         TypeMapper       // Type mapper for instantiated type
+	mapper         *TypeMapper      // Type mapper for instantiated type
 	instantiations map[string]*Type // Map of type instantiations
 }
 
-// ParameterizedTypeData
+func (t *AnonymousType) AsAnonymousType() *AnonymousType { return t }
 
-type ParameterizedType struct {
-	InstantiatedType
+// TypeReference (instantiation of an InterfaceType)
+
+type TypeReference struct {
+	AnonymousType
+	node                  *Node // TypeReferenceNode | ArrayTypeNode | TupleTypeNode when deferred, else nil
 	resolvedTypeArguments []*Type
 }
 
-func (t *ParameterizedType) AsParameterizedType() *ParameterizedType { return t }
+func (t *TypeReference) AsTypeReference() *TypeReference { return t }
 
 // InterfaceType (when generic, serves as reference to instantiation of itself)
 
 type InterfaceType struct {
-	ParameterizedType
+	TypeReference
 	allTypeParameters           []*Type // Type parameters (outer + local + thisType)
 	outerTypeParameterCount     int     // Count of outer type parameters
 	thisType                    *Type   // The "this" type (nil if none)
@@ -1415,8 +1475,9 @@ type InterfaceType struct {
 	declaredCallSignatures      []*Signature // Declared call signatures
 	declaredConstructSignatures []*Signature // Declared construct signatures
 	declaredIndexInfos          []*IndexInfo // Declared index signatures
-	tupleData                   *TupleData   // Additional data for tuple types
 }
+
+func (t *InterfaceType) AsInterfaceType() *InterfaceType { return t }
 
 func (t *InterfaceType) OuterTypeParameters() []*Type {
 	if len(t.allTypeParameters) == 0 {
@@ -1439,6 +1500,8 @@ func (t *InterfaceType) TypeParameters() []*Type {
 	return slices.Clip(t.allTypeParameters[:len(t.allTypeParameters)-1])
 }
 
+// TupleType
+
 type ElementFlags uint32
 
 const (
@@ -1458,7 +1521,8 @@ type TupleElementInfo struct {
 	labeledDeclaration *Node // NamedTupleMember | ParameterDeclaration | nil
 }
 
-type TupleData struct {
+type TupleType struct {
+	InterfaceType
 	elementInfos  []TupleElementInfo
 	minLength     int // Number of required or variadic elements
 	fixedLength   int // Number of initial required or optional elements
@@ -1466,23 +1530,24 @@ type TupleData struct {
 	readonly      bool
 }
 
-// TypeReference (instantiation of a generic type)
+// SingleSignatureType
 
-type TypeReference struct {
-	ParameterizedType
-	node *Node // TypeReferenceNode | ArrayTypeNode | TupleTypeNode | nil
+type SingleSignatureType struct {
+	AnonymousType
+	outerTypeParameters []*Type
 }
 
-// AnonymousType
+// InstantiationExpressionType
 
-type AnonymousType struct {
-	InstantiatedType
+type InstantiationExpressionType struct {
+	AnonymousType
+	node *Node
 }
 
 // MappedType
 
 type MappedType struct {
-	InstantiatedType
+	AnonymousType
 	declaration          MappedTypeNode
 	typeParameter        *Type
 	constraintType       *Type
@@ -1530,7 +1595,8 @@ type UnionType struct {
 
 type IntersectionType struct {
 	UnionOrIntersectionType
-	resolvedApparentType *Type
+	resolvedApparentType             *Type
+	uniqueLiteralFilledInstantiation *Type // Instantiation with type parameters mapped to never type
 }
 
 // TypeParameter
@@ -1539,9 +1605,28 @@ type TypeParameter struct {
 	TypeBase
 	constraint          *Type
 	target              *Type
-	mapper              TypeMapper
+	mapper              *TypeMapper
 	isThisType          bool
 	resolvedDefaultType *Type
+}
+
+// IndexFlags
+
+type IndexFlags uint32
+
+const (
+	IndexFlagsNone              IndexFlags = 0
+	IndexFlagsStringsOnly       IndexFlags = 1 << 0
+	IndexFlagsNoIndexSignatures IndexFlags = 1 << 1
+	IndexFlagsNoReducibleCheck  IndexFlags = 1 << 2
+)
+
+// IndexType
+
+type IndexType struct {
+	TypeBase
+	target     *Type
+	indexFlags IndexFlags
 }
 
 // IndexedAccessType
@@ -1564,24 +1649,74 @@ type StringMappingType struct {
 	target *Type
 }
 
-// TypeMapper
-
-type TypeMapper interface {
-	Map(t *Type) *Type
+type SubstitutionType struct {
+	TypeBase
+	baseType   *Type // Target type
+	constraint *Type // Constraint that target type is known to satisfy
 }
+
+type ConditionalRoot struct {
+	node                *Node // ConditionalTypeNode
+	checkType           *Type
+	extendsType         *Type
+	isDistributive      bool
+	inferTypeParameters []*Type
+	outerTypeParameters []*Type
+	instantiations      map[string]*Type
+	alias               *TypeAlias
+}
+
+type ConditionalType struct {
+	TypeBase
+	root                             *ConditionalRoot
+	checkType                        *Type
+	extendsType                      *Type
+	resolvedTrueType                 *Type
+	resolvedFalseType                *Type
+	resolvedInferredTrueType         *Type // The `trueType` instantiated with the `combinedMapper`, if present
+	resolvedDefaultConstraint        *Type
+	resolvedConstraintOfDistributive *Type
+	mapper                           *TypeMapper
+	combinedMapper                   *TypeMapper
+}
+
+// SignatureFlags
+
+type SignatureFlags uint32
+
+const (
+	SignatureFlagsNone SignatureFlags = 0
+	// Propagating flags
+	SignatureFlagsHasRestParameter SignatureFlags = 1 << 0 // Indicates last parameter is rest parameter
+	SignatureFlagsHasLiteralTypes  SignatureFlags = 1 << 1 // Indicates signature is specialized
+	SignatureFlagsAbstract         SignatureFlags = 1 << 2 // Indicates signature comes from an abstract class, abstract construct signature, or abstract constructor type
+	// Non-propagating flags
+	SignatureFlagsIsInnerCallChain                       SignatureFlags = 1 << 3 // Indicates signature comes from a CallChain nested in an outer OptionalChain
+	SignatureFlagsIsOuterCallChain                       SignatureFlags = 1 << 4 // Indicates signature comes from a CallChain that is the outermost chain of an optional expression
+	SignatureFlagsIsUntypedSignatureInJSFile             SignatureFlags = 1 << 5 // Indicates signature is from a js file and has no types
+	SignatureFlagsIsNonInferrable                        SignatureFlags = 1 << 6 // Indicates signature comes from a non-inferrable type
+	SignatureFlagsIsSignatureCandidateForOverloadFailure SignatureFlags = 1 << 7
+	// We do not propagate `IsInnerCallChain` or `IsOuterCallChain` to instantiated signatures, as that would result in us
+	// attempting to add `| undefined` on each recursive call to `getReturnTypeOfSignature` when
+	// instantiating the return type.
+	SignatureFlagsPropagatingFlags = SignatureFlagsHasRestParameter | SignatureFlagsHasLiteralTypes | SignatureFlagsAbstract | SignatureFlagsIsUntypedSignatureInJSFile | SignatureFlagsIsSignatureCandidateForOverloadFailure
+	SignatureFlagsCallChainFlags   = SignatureFlagsIsInnerCallChain | SignatureFlagsIsOuterCallChain
+)
 
 // Signature
 
 type Signature struct {
-	flags              SignatureFlags
-	declaration        *Node
-	typeParameters     []*Type
-	parameters         []*Symbol
-	thisParameter      *Symbol
-	resolvedReturnType *Type
-	target             *Signature
-	mapper             TypeMapper
-	instantiations     map[string]*Signature
+	flags                 SignatureFlags
+	minArgumentCount      int32
+	declaration           *Node
+	typeParameters        []*Type
+	parameters            []*Symbol
+	thisParameter         *Symbol
+	resolvedReturnType    *Type
+	resolvedTypePredicate *Type
+	target                *Signature
+	mapper                *TypeMapper
+	instantiations        map[string]*Signature
 }
 
 // IndexInfo
@@ -1590,5 +1725,22 @@ type IndexInfo struct {
 	keyType     *Type
 	valueType   *Type
 	isReadonly  bool
-	declaration *IndexSignatureDeclaration
+	declaration *Node // IndexSignatureDeclaration
 }
+
+/**
+ * Ternary values are defined such that
+ * x & y picks the lesser in the order False < Unknown < Maybe < True, and
+ * x | y picks the greater in the order False < Unknown < Maybe < True.
+ * Generally, Ternary.Maybe is used as the result of a relation that depends on itself, and
+ * Ternary.Unknown is used as the result of a variance check that depends on itself. We make
+ * a distinction because we don't want to cache circular variance check results.
+ */
+type Ternary int8
+
+const (
+	TernaryFalse   Ternary = 0
+	TernaryUnknown Ternary = 1
+	TernaryMaybe   Ternary = 3
+	TernaryTrue    Ternary = -1
+)
