@@ -1,7 +1,11 @@
 package compiler
 
 import (
+	"bytes"
 	"fmt"
+	"io/fs"
+	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 	"testing"
@@ -25,21 +29,76 @@ func BenchmarkParse(b *testing.B) {
 	}
 }
 
+// TODO: Need to be able to compare against local/reference *locally*
+// and against local/gold as part of a test.
+// this is two different test cases really, but running them both as part of a full test run is a bad idea
+
 func TestParseAndPrintNodes(t *testing.T) {
-	program := NewProgram(ProgramOptions{
-		RootPath: repo.TypeScriptSubmodulePath,
-		Options:  &CompilerOptions{Target: ScriptTargetESNext, ModuleKind: ModuleKindNodeNext}})
-	for _, sourceFile := range program.SourceFiles() {
-		path := filepath.ToSlash(sourceFile.fileName)
-		path = path[len(repo.TypeScriptSubmodulePath)+1:]
-		path = strings.ReplaceAll(path, "/", "_")
-		outputFileName := path + ".ast"
-		if outputFileName == "tests_cases_compiler_binderBinaryExpressionStressJs.ts.ast" ||
-			outputFileName == "tests_cases_compiler_binderBinaryExpressionStress.ts.ast" {
-			continue
-		}
-		baseline.Run(outputFileName, printAST(sourceFile), baseline.Options{})
+	t.Parallel()
+	err := filepath.WalkDir(repo.TypeScriptSubmodulePath, parseTestWorker(t, &baseline.Options{}))
+	if err != nil {
+		t.Fatalf("Error walking the path %q: %v", repo.TypeScriptSubmodulePath, err)
 	}
+}
+
+func TestParseAgainstTSC(t *testing.T) {
+	t.Parallel()
+	goldDir := "../../testdata/baselines/gold"
+	entries, err := os.ReadDir(goldDir)
+	if err != nil || len(entries) == 0 {
+		cmd := exec.Command("node", "testdata/baselineAST.js", "../../_submodules/TypeScript/", goldDir)
+		var stderr bytes.Buffer
+		cmd.Stderr = &stderr
+		err = cmd.Run()
+		if err != nil {
+			t.Fatalf("Error running the command %q: %v\nStderr: %s", cmd.String(), err, stderr.String())
+		}
+	}
+	err = filepath.WalkDir(repo.TypeScriptSubmodulePath, parseTestWorker(t, &baseline.Options{Gold: true}))
+	if err != nil {
+		t.Fatalf("Error walking the path %q: %v", repo.TypeScriptSubmodulePath, err)
+	}
+}
+
+func parseTestWorker(t *testing.T, options *baseline.Options) func(fileName string, d fs.DirEntry, err error) error {
+	return func(fileName string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+		if d.IsDir() {
+			return nil
+		}
+		ext := filepath.Ext(fileName)
+		if (ext == ".ts" || ext == ".js" || ext == ".tsx" || ext == ".jsx") &&
+			!(strings.HasSuffix(fileName, "binderBinaryExpressionStress.ts") ||
+				strings.HasSuffix(fileName, "binderBinaryExpressionStress.js") ||
+				strings.HasSuffix(fileName, "binderBinaryExpressionStressJs.ts") ||
+				strings.HasSuffix(fileName, "binderBinaryExpressionStressJs.js")) {
+			testName, _ := filepath.Rel(repo.TypeScriptSubmodulePath, fileName)
+			t.Run(testName, func(t *testing.T) {
+				t.Parallel()
+				sourceText, err := os.ReadFile(fileName)
+				if err != nil {
+					t.Errorf("Failed to read file %s: %v", fileName, err)
+					return
+				}
+				sourceFile := ParseSourceFile(fileName, string(sourceText), ScriptTargetESNext)
+				err = baseline.Run(generateOutputFileName(t, fileName), printAST(sourceFile), baseline.Options{Gold: true})
+				if err != nil {
+					t.Errorf("%v", err)
+				}
+			})
+		}
+		return nil
+	}
+}
+
+func generateOutputFileName(t *testing.T, fileName string) string {
+	path, err := filepath.Rel(repo.TypeScriptSubmodulePath, fileName)
+	if err != nil {
+		t.Errorf("%s is outside of the TypeScript submodule", fileName)
+	}
+	return strings.ReplaceAll(path, string(filepath.Separator), "_") + ".ast"
 }
 
 // prefix specifies the directory to write the baseline

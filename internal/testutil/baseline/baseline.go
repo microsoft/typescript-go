@@ -10,6 +10,7 @@ import (
 
 type Options struct {
 	Subfolder string
+	Gold      bool
 }
 
 const NoContent = "<no content>"
@@ -24,7 +25,12 @@ func Run(fileName string, actual string, opts Options) error {
 
 func writeComparison(actual string, relativeFileName string, opts Options) error {
 	localFileName := localPath(relativeFileName, opts.Subfolder)
-	referenceFileName := referencePath(relativeFileName, opts.Subfolder)
+	var referenceFileName string
+	if opts.Gold {
+		referenceFileName = goldPath(relativeFileName, opts.Subfolder)
+	} else {
+		referenceFileName = referencePath(relativeFileName, opts.Subfolder)
+	}
 	expected := getExpectedContent(relativeFileName, opts)
 	if _, err := os.Stat(localFileName); err == nil {
 		if err := os.Remove(localFileName); err != nil {
@@ -54,7 +60,12 @@ func writeComparison(actual string, relativeFileName string, opts Options) error
 }
 
 func getExpectedContent(relativeFileName string, opts Options) string {
-	refFileName := referencePath(relativeFileName, opts.Subfolder)
+	var refFileName string
+	if opts.Gold {
+		refFileName = goldPath(relativeFileName, opts.Subfolder)
+	} else {
+		refFileName = referencePath(relativeFileName, opts.Subfolder)
+	}
 	expected := NoContent
 	content, err := os.ReadFile(refFileName)
 	if err == nil {
@@ -69,4 +80,8 @@ func localPath(fileName string, subfolder string) string {
 
 func referencePath(fileName string, subfolder string) string {
 	return filepath.Join(repo.TestDataPath, "baselines", "reference", subfolder, fileName)
+}
+
+func goldPath(fileName string, subfolder string) string {
+	return filepath.Join(repo.TestDataPath, "baselines", "gold", subfolder, fileName)
 }

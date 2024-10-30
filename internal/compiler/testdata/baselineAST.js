@@ -118,18 +118,21 @@ function processDirectory(inputRoot, targetRoot) {
         if (!inputRoot.endsWith("/")) {
             inputRoot += "/";
         }
-        for (const dirent of fs.readdirSync(dir, { withFileTypes: true })) {
+       for (const dirent of fs.readdirSync(dir, { withFileTypes: true })) {
             let fullPath = path.join(dir, dirent.name);
+            const ext = path.extname(dirent.name)
             if (dirent.isDirectory()) {
                 worker(fullPath);
             }
-            else if (dirent.isFile() && (path.extname(dirent.name) === ".ts" || path.extname(dirent.name) === ".js")) {
+            else if (dirent.isFile() && (ext === '.ts' || ext === '.tsx' || ext === '.js' || ext === '.jsx')) {
                 // Too deep for a simple tree walker
                 if (
                     dirent.name.endsWith("binderBinaryExpressionStress.ts") ||
-                    dirent.name.endsWith("binderBinaryExpressionStressJs.ts")
+                    dirent.name.endsWith("binderBinaryExpressionStress.js") ||
+                    dirent.name.endsWith("binderBinaryExpressionStressJs.ts") ||
+                    dirent.name.endsWith("binderBinaryExpressionStressJs.js")
                 ) {
-                    return;
+                    continue;
                 }
                 const astContent = printAST(fullPath);
                 if (fullPath.startsWith(inputRoot)) {
@@ -138,7 +141,7 @@ function processDirectory(inputRoot, targetRoot) {
                 else {
                     console.error("Unexpected file path: " + fullPath);
                 }
-                const outputFileName = fullPath.replace(/[\/\\]/g, "_") + ".ast";
+                const outputFileName =  fullPath.replace(/[\/\\]/g, "_") + ".ast";
                 const outputFilePath = path.join(targetRoot, outputFileName);
                 fs.writeFileSync(outputFilePath, astContent);
             }
@@ -149,7 +152,7 @@ const inputDir = process.argv[2];
 const outputDir = process.argv[3];
 if (!inputDir || !outputDir) {
     console.error(
-        "node internal/compiler/testdata/baselineAST.js _submodules/TypeScript internal/compiler/testdata/baselines/gold",
+        "node internal/compiler/testdata/baselineAST.js _submodules/TypeScript testdata/baselines/gold",
     );
     process.exit(1);
 }
