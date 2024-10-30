@@ -139,7 +139,7 @@ func NewDiagnosticForNode(node *Node, message *diagnostics.Message, args ...any)
 	var loc TextRange
 	if node != nil {
 		file = getSourceFileOfNode(node)
-		loc = node.loc
+		loc = getErrorRangeForNode(file, node)
 	}
 	return NewDiagnostic(file, loc, message, args...)
 }
@@ -152,13 +152,17 @@ func (d *Diagnostic) Message() string                           { return d.messa
 func (d *Diagnostic) RelatedInformation() []*Diagnostic         { return d.relatedInformation }
 func (d *Diagnostic) SetCategory(category diagnostics.Category) { d.category = category }
 
-func (d *Diagnostic) addMessageChain(messageChain ...*MessageChain) *Diagnostic {
-	d.messageChain = append(d.messageChain, messageChain...)
+func (d *Diagnostic) addMessageChain(messageChain *MessageChain) *Diagnostic {
+	if messageChain != nil {
+		d.messageChain = append(d.messageChain, messageChain)
+	}
 	return d
 }
 
-func (d *Diagnostic) addRelatedInfo(relatedInformation ...*Diagnostic) *Diagnostic {
-	d.relatedInformation = append(d.relatedInformation, relatedInformation...)
+func (d *Diagnostic) addRelatedInfo(relatedInformation *Diagnostic) *Diagnostic {
+	if relatedInformation != nil {
+		d.relatedInformation = append(d.relatedInformation, relatedInformation)
+	}
 	return d
 }
 
@@ -171,21 +175,22 @@ type MessageChain struct {
 	messageChain []*MessageChain
 }
 
-func NewMessageChain(details []*MessageChain, message *diagnostics.Message, args ...any) *MessageChain {
+func NewMessageChain(message *diagnostics.Message, args ...any) *MessageChain {
 	text := message.Message()
 	if len(args) != 0 {
 		text = formatStringFromArgs(text, args)
 	}
 	return &MessageChain{
-		code:         message.Code(),
-		category:     message.Category(),
-		message:      text,
-		messageChain: details,
+		code:     message.Code(),
+		category: message.Category(),
+		message:  text,
 	}
 }
 
-func (m *MessageChain) addMessageChain(messageChain ...*MessageChain) *MessageChain {
-	m.messageChain = append(m.messageChain, messageChain...)
+func (m *MessageChain) addMessageChain(messageChain *MessageChain) *MessageChain {
+	if messageChain != nil {
+		m.messageChain = append(m.messageChain, messageChain)
+	}
 	return m
 }
 
@@ -519,7 +524,7 @@ func mapIndex[T, U any](slice []T, f func(T, int) U) []U {
 	return result
 }
 
-func sameMap[T comparable](slice []T, f func(T) T) ([]T, bool) {
+func sameMap[T comparable](slice []T, f func(T) T) []T {
 	for i, value := range slice {
 		mapped := f(value)
 		if mapped != value {
@@ -529,10 +534,10 @@ func sameMap[T comparable](slice []T, f func(T) T) ([]T, bool) {
 			for j := i + 1; j < len(slice); j++ {
 				result[j] = f(slice[j])
 			}
-			return result, false
+			return result
 		}
 	}
-	return slice, true
+	return slice
 }
 
 func sameMapIndex[T comparable](slice []T, f func(T, int) T) ([]T, bool) {
@@ -3987,4 +3992,29 @@ func getThisParameter(signature *Node) *Node {
 
 func parameterIsThisKeyword(parameter *Node) bool {
 	return isThisIdentifier(parameter.Name())
+}
+
+func getInterfaceBaseTypeNodes(node *Node) []*Node {
+	heritageClause := getHeritageClause(node.AsInterfaceDeclaration().heritageClauses, SyntaxKindExtendsKeyword)
+	if heritageClause != nil {
+		return heritageClause.AsHeritageClause().types
+	}
+	return nil
+}
+
+func getHeritageClause(clauses []*Node, kind SyntaxKind) *Node {
+	for _, clause := range clauses {
+		if clause.AsHeritageClause().token == kind {
+			return clause
+		}
+	}
+	return nil
+}
+
+func getClassExtendsHeritageElement(node *Node) *Node {
+	heritageClause := getHeritageClause(node.ClassLikeData().heritageClauses, SyntaxKindExtendsKeyword)
+	if heritageClause != nil && len(heritageClause.AsHeritageClause().types) > 0 {
+		return heritageClause.AsHeritageClause().types[0]
+	}
+	return nil
 }

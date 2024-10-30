@@ -3117,8 +3117,103 @@ func (c *Checker) getBaseTypeVariableOfClass(symbol *Symbol) *Type {
 	return nil
 }
 
+/**
+ * The base constructor of a class can resolve to
+ * * undefinedType if the class has no extends clause,
+ * * errorType if an error occurred during resolution of the extends expression,
+ * * nullType if the extends expression is the null value,
+ * * anyType if the extends expression has type any, or
+ * * an object type with at least one construct signature.
+ */
 func (c *Checker) getBaseConstructorTypeOfClass(t *Type) *Type {
-	return c.anyType // !!!
+	data := t.AsInterfaceType()
+	if data.resolvedBaseConstructorType != nil {
+		return data.resolvedBaseConstructorType
+	}
+	baseTypeNode := getBaseTypeNodeOfClass(t)
+	if baseTypeNode == nil {
+		data.resolvedBaseConstructorType = c.undefinedType
+		return data.resolvedBaseConstructorType
+	}
+	if !c.pushTypeResolution(t, TypeSystemPropertyNameResolvedBaseConstructorType) {
+		return c.errorType
+	}
+	baseConstructorType := c.checkExpression(baseTypeNode.Expression())
+	if baseConstructorType.flags&(TypeFlagsObject|TypeFlagsIntersection) != 0 {
+		// Resolving the members of a class requires us to resolve the base class of that class.
+		// We force resolution here such that we catch circularities now.
+		c.resolveStructuredTypeMembers(baseConstructorType)
+	}
+	if !c.popTypeResolution() {
+		c.error(t.symbol.valueDeclaration, diagnostics.X_0_is_referenced_directly_or_indirectly_in_its_own_base_expression, c.symbolToString(t.symbol))
+		if data.resolvedBaseConstructorType == nil {
+			data.resolvedBaseConstructorType = c.errorType
+		}
+		return data.resolvedBaseConstructorType
+	}
+	if baseConstructorType.flags&TypeFlagsAny == 0 && baseConstructorType != c.nullWideningType && !c.isConstructorType(baseConstructorType) {
+		err := c.error(baseTypeNode.Expression(), diagnostics.Type_0_is_not_a_constructor_function_type, c.typeToString(baseConstructorType))
+		if baseConstructorType.flags&TypeFlagsTypeParameter != 0 {
+			constraint := c.getConstraintFromTypeParameter(baseConstructorType)
+			var ctorReturn *Type = c.unknownType
+			if constraint != nil {
+				ctorSigs := c.getSignaturesOfType(constraint, SignatureKindConstruct)
+				if len(ctorSigs) != 0 {
+					ctorReturn = c.getReturnTypeOfSignature(ctorSigs[0])
+				}
+			}
+			if baseConstructorType.symbol.declarations != nil {
+				err.addRelatedInfo(createDiagnosticForNode(baseConstructorType.symbol.declarations[0], diagnostics.Did_you_mean_for_0_to_be_constrained_to_type_new_args_Colon_any_1, c.symbolToString(baseConstructorType.symbol), c.typeToString(ctorReturn)))
+			}
+		}
+		if data.resolvedBaseConstructorType == nil {
+			data.resolvedBaseConstructorType = c.errorType
+		}
+		return data.resolvedBaseConstructorType
+	}
+	if data.resolvedBaseConstructorType == nil {
+		data.resolvedBaseConstructorType = baseConstructorType
+	}
+	return data.resolvedBaseConstructorType
+}
+
+func (c *Checker) isConstructorType(t *Type) bool {
+	if len(c.getSignaturesOfType(t, SignatureKindConstruct)) > 0 {
+		return true
+	}
+	if t.flags&TypeFlagsTypeVariable != 0 {
+		constraint := c.getBaseConstraintOfType(t)
+		return constraint != nil && c.isMixinConstructorType(constraint)
+	}
+	return false
+}
+
+// A type is a mixin constructor if it has a single construct signature taking no type parameters and a single
+// rest parameter of type any[].
+func (c *Checker) isMixinConstructorType(t *Type) bool {
+	signatures := c.getSignaturesOfType(t, SignatureKindConstruct)
+	if len(signatures) == 1 {
+		s := signatures[0]
+		if len(s.typeParameters) == 0 && len(s.parameters) == 1 && signatureHasRestParameter(s) {
+			paramType := c.getTypeOfParameter(s.parameters[0])
+			return isTypeAny(paramType) || c.getElementTypeOfArrayType(paramType) == c.anyType
+		}
+	}
+	return false
+}
+
+func signatureHasRestParameter(sig *Signature) bool {
+	return sig.flags&SignatureFlagsHasRestParameter != 0
+}
+
+func (c *Checker) getTypeOfParameter(symbol *Symbol) *Type {
+	declaration := symbol.valueDeclaration
+	return c.addOptionalityEx(c.getTypeOfSymbol(symbol), false, declaration != nil && (getInitializerFromNode(declaration) != nil || isOptionalDeclaration(declaration)))
+}
+
+/** This is a worker function. Use getConstraintOfTypeParameter which guards against circular constraints. */
+func (c *Checker) getConstraintFromTypeParameter(tp *Type) *Type {
+	return nil // !!!
 }
 
 func (c *Checker) getDeclaredTypeOfClassOrInterface(symbol *Symbol) *Type {
@@ -3544,15 +3639,15 @@ func (c *Checker) typeResolutionHasProperty(r *TypeResolution) bool {
 		return c.typeAliasLinks.get(r.target.(*Symbol)).declaredType != nil
 	case TypeSystemPropertyNameResolvedTypeArguments:
 		return r.target.(*Type).AsTypeReference().resolvedTypeArguments != nil
+	case TypeSystemPropertyNameResolvedBaseTypes:
+		return r.target.(*Type).AsInterfaceType().baseTypesResolved
+	case TypeSystemPropertyNameResolvedBaseConstructorType:
+		return r.target.(*Type).AsInterfaceType().resolvedBaseConstructorType != nil
+	case TypeSystemPropertyNameResolvedReturnType:
+		return r.target.(*Signature).resolvedReturnType != nil
 		// !!!
-		// case TypeSystemPropertyNameResolvedBaseConstructorType:
-		// 	return !!(target.(InterfaceType)).resolvedBaseConstructorType
-		// case TypeSystemPropertyNameResolvedReturnType:
-		// 	return !!(target.(Signature)).resolvedReturnType
 		// case TypeSystemPropertyNameImmediateBaseConstraint:
 		// 	return !!(target.(*Type)).immediateBaseConstraint
-		// case TypeSystemPropertyNameResolvedBaseTypes:
-		// 	return !!(target.(InterfaceType)).baseTypesResolved
 		// case TypeSystemPropertyNameWriteType:
 		// 	return !!c.getSymbolLinks(target.(Symbol)).writeType
 		// case TypeSystemPropertyNameParameterInitializerContainsUndefined:
@@ -3844,7 +3939,319 @@ func findIndexInfo(indexInfos []*IndexInfo, keyType *Type) *IndexInfo {
 }
 
 func (c *Checker) getBaseTypes(t *Type) []*Type {
-	return nil // !!!
+	data := t.AsInterfaceType()
+	if !data.baseTypesResolved {
+		if !c.pushTypeResolution(t, TypeSystemPropertyNameResolvedBaseTypes) {
+			return data.resolvedBaseTypes
+		}
+		switch {
+		case t.objectFlags&ObjectFlagsTuple != 0:
+			data.resolvedBaseTypes = []*Type{c.getTupleBaseType(t)}
+		case t.symbol.flags&(SymbolFlagsClass|SymbolFlagsInterface) != 0:
+			if t.symbol.flags&SymbolFlagsClass != 0 {
+				c.resolveBaseTypesOfClass(t)
+			}
+			if t.symbol.flags&SymbolFlagsInterface != 0 {
+				c.resolveBaseTypesOfInterface(t)
+			}
+		default:
+			panic("Unhandled case in getBaseTypes")
+		}
+		if !c.popTypeResolution() && t.symbol.declarations != nil {
+			for _, declaration := range t.symbol.declarations {
+				if isClassDeclaration(declaration) || isInterfaceDeclaration(declaration) {
+					c.reportCircularBaseType(declaration, t)
+				}
+			}
+		}
+		data.baseTypesResolved = true
+	}
+	return data.resolvedBaseTypes
+}
+
+func (c *Checker) getTupleBaseType(t *Type) *Type {
+	typeParameters := t.AsTupleType().TypeParameters()
+	elementInfos := t.AsTupleType().elementInfos
+	elementTypes := make([]*Type, len(typeParameters))
+	for i, tp := range typeParameters {
+		if elementInfos[i].flags&ElementFlagsVariadic != 0 {
+			elementTypes[i] = c.getIndexedAccessType(tp, c.numberType)
+		} else {
+			elementTypes[i] = tp
+		}
+	}
+	return c.createArrayTypeEx(c.getUnionType(elementTypes), t.AsTupleType().readonly)
+}
+
+func (c *Checker) resolveBaseTypesOfClass(t *Type) {
+	baseConstructorType := c.getApparentType(c.getBaseConstructorTypeOfClass(t))
+	if baseConstructorType.flags&(TypeFlagsObject|TypeFlagsIntersection|TypeFlagsAny) == 0 {
+		return
+	}
+	baseTypeNode := getBaseTypeNodeOfClass(t)
+	var baseType *Type
+	var originalBaseType *Type
+	if baseConstructorType.symbol != nil {
+		originalBaseType = c.getDeclaredTypeOfSymbol(baseConstructorType.symbol)
+	}
+	if baseConstructorType.symbol != nil && baseConstructorType.symbol.flags&SymbolFlagsClass != 0 && c.areAllOuterTypeParametersApplied(originalBaseType) {
+		// When base constructor type is a class with no captured type arguments we know that the constructors all have the same type parameters as the
+		// class and all return the instance type of the class. There is no need for further checks and we can apply the
+		// type arguments in the same manner as a type reference to get the same error reporting experience.
+		baseType = c.getTypeFromClassOrInterfaceReference(baseTypeNode, baseConstructorType.symbol)
+	} else if baseConstructorType.flags&TypeFlagsAny != 0 {
+		baseType = baseConstructorType
+	} else {
+		// The class derives from a "class-like" constructor function, check that we have at least one construct signature
+		// with a matching number of type parameters and use the return type of the first instantiated signature. Elsewhere
+		// we check that all instantiated signatures return the same type.
+		constructors := c.getInstantiatedConstructorsForTypeArguments(baseConstructorType, getTypeArgumentNodesFromNode(baseTypeNode), baseTypeNode)
+		if len(constructors) == 0 {
+			c.error(baseTypeNode.Expression(), diagnostics.No_base_constructor_has_the_specified_number_of_type_arguments)
+			return
+		}
+		baseType = c.getReturnTypeOfSignature(constructors[0])
+	}
+	if c.isErrorType(baseType) {
+		return
+	}
+	reducedBaseType := c.getReducedType(baseType)
+	if !c.isValidBaseType(reducedBaseType) {
+		diagnostic := NewDiagnosticForNode(baseTypeNode.Expression(), diagnostics.Base_constructor_return_type_0_is_not_an_object_type_or_intersection_of_object_types_with_statically_known_members, c.typeToString(reducedBaseType))
+		diagnostic.addMessageChain(c.elaborateNeverIntersection(baseType))
+		c.diagnostics.add(diagnostic)
+		return
+	}
+	if t == reducedBaseType || c.hasBaseType(reducedBaseType, t) {
+		c.error(t.symbol.valueDeclaration, diagnostics.Type_0_recursively_references_itself_as_a_base_type, c.typeToString(t))
+		return
+	}
+	// !!! This logic is suspicious. We really shouldn't be un-resolving members after they've been resolved.
+	// if t.resolvedBaseTypes == resolvingEmptyArray {
+	// 	// Circular reference, likely through instantiation of default parameters
+	// 	// (otherwise there'd be an error from hasBaseType) - this is fine, but `.members` should be reset
+	// 	// as `getIndexedAccessType` via `instantiateType` via `getTypeFromClassOrInterfaceReference` forces a
+	// 	// partial instantiation of the members without the base types fully resolved
+	// 	t.members = nil
+	// }
+	t.AsInterfaceType().resolvedBaseTypes = []*Type{reducedBaseType}
+}
+
+func getBaseTypeNodeOfClass(t *Type) *Node {
+	decl := getClassLikeDeclarationOfSymbol(t.symbol)
+	if decl != nil {
+		return getClassExtendsHeritageElement(decl)
+	}
+	return nil
+}
+
+func (c *Checker) getInstantiatedConstructorsForTypeArguments(t *Type, typeArgumentNodes []*Node, location *Node) []*Signature {
+	signatures := c.getConstructorsForTypeArguments(t, typeArgumentNodes, location)
+	typeArguments := mapf(typeArgumentNodes, c.getTypeFromTypeNode)
+	return sameMap(signatures, func(sig *Signature) *Signature {
+		if len(sig.typeParameters) != 0 {
+			return c.getSignatureInstantiation(sig, typeArguments, nil)
+		}
+		return sig
+	})
+}
+
+func (c *Checker) getConstructorsForTypeArguments(t *Type, typeArgumentNodes []*Node, location *Node) []*Signature {
+	typeArgCount := len(typeArgumentNodes)
+	return filter(c.getSignaturesOfType(t, SignatureKindConstruct), func(sig *Signature) bool {
+		return typeArgCount >= c.getMinTypeArgumentCount(sig.typeParameters) && typeArgCount <= len(sig.typeParameters)
+	})
+}
+
+func (c *Checker) getSignatureInstantiation(sig *Signature, typeArguments []*Type, inferredTypeParameters []*Type) *Signature {
+	instantiatedSignature := c.getSignatureInstantiationWithoutFillingInTypeArguments(sig, c.fillMissingTypeArguments(typeArguments, sig.typeParameters, c.getMinTypeArgumentCount(sig.typeParameters)))
+	if len(inferredTypeParameters) != 0 {
+		returnSignature := c.getSingleCallOrConstructSignature(c.getReturnTypeOfSignature(instantiatedSignature))
+		if returnSignature != nil {
+			newReturnSignature := c.cloneSignature(returnSignature)
+			newReturnSignature.typeParameters = inferredTypeParameters
+			newInstantiatedSignature := c.cloneSignature(instantiatedSignature)
+			newInstantiatedSignature.resolvedReturnType = c.getOrCreateTypeFromSignature(newReturnSignature, nil)
+			return newInstantiatedSignature
+		}
+	}
+	return instantiatedSignature
+}
+
+func (c *Checker) cloneSignature(sig *Signature) *Signature {
+	result := c.newSignature(sig.flags&SignatureFlagsPropagatingFlags, sig.declaration, sig.typeParameters, sig.thisParameter, sig.parameters, nil, nil, int(sig.minArgumentCount))
+	result.target = sig.target
+	result.mapper = sig.mapper
+	// !!!
+	// result.compositeSignatures = sig.compositeSignatures
+	// result.compositeKind = sig.compositeKind
+	return result
+}
+
+func (c *Checker) getSignatureInstantiationWithoutFillingInTypeArguments(sig *Signature, typeArguments []*Type) *Signature {
+	if sig.instantiations == nil {
+		sig.instantiations = make(map[string]*Signature)
+	}
+	key := getTypeListId(typeArguments)
+	instantiation := sig.instantiations[key]
+	if instantiation == nil {
+		instantiation = c.createSignatureInstantiation(sig, typeArguments)
+		sig.instantiations[key] = instantiation
+	}
+	return instantiation
+}
+
+func (c *Checker) createSignatureInstantiation(sig *Signature, typeArguments []*Type) *Signature {
+	return c.instantiateSignatureEx(sig, c.createSignatureTypeMapper(sig, typeArguments), true /*eraseTypeParameters*/)
+}
+
+func (c *Checker) createSignatureTypeMapper(sig *Signature, typeArguments []*Type) *TypeMapper {
+	return newTypeMapper(c.getTypeParametersForMapper(sig), typeArguments)
+}
+
+func (c *Checker) getTypeParametersForMapper(sig *Signature) []*Type {
+	return sameMap(sig.typeParameters, func(tp *Type) *Type {
+		if tp.AsTypeParameter().mapper != nil {
+			return c.instantiateType(tp, tp.AsTypeParameter().mapper)
+		}
+		return tp
+	})
+}
+
+// If type has a single call signature and no other members, return that signature. Otherwise, return nil.
+func (c *Checker) getSingleCallSignature(t *Type) *Signature {
+	return c.getSingleSignature(t, SignatureKindCall, false /*allowMembers*/)
+}
+
+func (c *Checker) getSingleCallOrConstructSignature(t *Type) *Signature {
+	callSig := c.getSingleSignature(t, SignatureKindCall, false /*allowMembers*/)
+	if callSig != nil {
+		return callSig
+	}
+	return c.getSingleSignature(t, SignatureKindConstruct, false /*allowMembers*/)
+}
+
+func (c *Checker) getSingleSignature(t *Type, kind SignatureKind, allowMembers bool) *Signature {
+	if t.flags&TypeFlagsObject != 0 {
+		resolved := c.resolveStructuredTypeMembers(t)
+		if allowMembers || len(resolved.properties) == 0 && len(resolved.indexInfos) == 0 {
+			if kind == SignatureKindCall && len(resolved.CallSignatures()) == 1 && len(resolved.ConstructSignatures()) == 0 {
+				return resolved.CallSignatures()[0]
+			}
+			if kind == SignatureKindConstruct && len(resolved.ConstructSignatures()) == 1 && len(resolved.CallSignatures()) == 0 {
+				return resolved.ConstructSignatures()[0]
+			}
+		}
+	}
+	return nil
+}
+
+func (c *Checker) getOrCreateTypeFromSignature(sig *Signature, outerTypeParameters []*Type) *Type {
+	// There are two ways to declare a construct signature, one is by declaring a class constructor
+	// using the constructor keyword, and the other is declaring a bare construct signature in an
+	// object type literal or interface (using the new keyword). Each way of declaring a constructor
+	// will result in a different declaration kind.
+	if sig.isolatedSignatureType == nil {
+		var kind SyntaxKind
+		if sig.declaration != nil {
+			kind = sig.declaration.kind
+		}
+		// If declaration is undefined, it is likely to be the signature of the default constructor.
+		isConstructor := kind == SyntaxKindUnknown || kind == SyntaxKindConstructor || kind == SyntaxKindConstructSignature || kind == SyntaxKindConstructorType
+		// The type must have a symbol with a `Function` flag and a declaration in order to be correctly flagged as possibly containing
+		// type variables by `couldContainTypeVariables`
+		t := c.newObjectType(ObjectFlagsAnonymous|ObjectFlagsSingleSignatureType, c.newSymbol(SymbolFlagsFunction, InternalSymbolNameFunction))
+		if sig.declaration != nil && !nodeIsSynthesized(sig.declaration) {
+			t.symbol.declarations = []*Node{sig.declaration}
+			t.symbol.valueDeclaration = sig.declaration
+		}
+		if outerTypeParameters == nil && sig.declaration != nil {
+			outerTypeParameters = c.getOuterTypeParameters(sig.declaration, true /*includeThisTypes*/)
+		}
+		t.AsSingleSignatureType().outerTypeParameters = outerTypeParameters
+		if isConstructor {
+			c.setStructuredTypeMembers(t, nil, nil, []*Signature{sig}, nil)
+		} else {
+			c.setStructuredTypeMembers(t, nil, []*Signature{sig}, nil, nil)
+		}
+		sig.isolatedSignatureType = t
+	}
+	return sig.isolatedSignatureType
+}
+
+func (c *Checker) resolveBaseTypesOfInterface(t *Type) {
+	data := t.AsInterfaceType()
+	for _, declaration := range t.symbol.declarations {
+		if isInterfaceDeclaration(declaration) {
+			for _, node := range getInterfaceBaseTypeNodes(declaration) {
+				baseType := c.getReducedType(c.getTypeFromTypeNode(node))
+				if !c.isErrorType(baseType) {
+					if c.isValidBaseType(baseType) {
+						if t != baseType && !c.hasBaseType(baseType, t) {
+							data.resolvedBaseTypes = append(data.resolvedBaseTypes, baseType)
+						} else {
+							c.reportCircularBaseType(declaration, t)
+						}
+					} else {
+						c.error(node, diagnostics.An_interface_can_only_extend_an_object_type_or_intersection_of_object_types_with_statically_known_members)
+					}
+				}
+			}
+		}
+	}
+}
+
+func (c *Checker) areAllOuterTypeParametersApplied(t *Type) bool {
+	// An unapplied type parameter has its symbol still the same as the matching argument symbol.
+	// Since parameters are applied outer-to-inner, only the last outer parameter needs to be checked.
+	outerTypeParameters := t.AsInterfaceType().OuterTypeParameters()
+	if len(outerTypeParameters) != 0 {
+		last := len(outerTypeParameters) - 1
+		typeArguments := c.getTypeArguments(t)
+		return outerTypeParameters[last].symbol != typeArguments[last].symbol
+	}
+	return true
+}
+
+func (c *Checker) reportCircularBaseType(node *Node, t *Type) {
+	c.error(node, diagnostics.Type_0_recursively_references_itself_as_a_base_type, c.typeToStringEx(t, nil, TypeFormatFlagsWriteArrayAsGenericType))
+}
+
+// A valid base type is `any`, an object type or intersection of object types.
+func (c *Checker) isValidBaseType(t *Type) bool {
+	if t.flags&TypeFlagsTypeParameter != 0 {
+		constraint := c.getBaseConstraintOfType(t)
+		if constraint != nil {
+			return c.isValidBaseType(constraint)
+		}
+	}
+	// TODO: Given that we allow type parmeters here now, is this `!isGenericMappedType(type)` check really needed?
+	// There's no reason a `T` should be allowed while a `Readonly<T>` should not.
+	return t.flags&(TypeFlagsObject|TypeFlagsNonPrimitive|TypeFlagsAny) != 0 && !c.isGenericMappedType(t) ||
+		t.flags&TypeFlagsIntersection != 0 && every(t.AsIntersectionType().types, c.isValidBaseType)
+}
+
+// TODO: GH#18217 If `checkBase` is undefined, we should not call this because this will always return false.
+func (c *Checker) hasBaseType(t *Type, checkBase *Type) bool {
+	var check func(*Type) bool
+	check = func(t *Type) bool {
+		if t.objectFlags&(ObjectFlagsClassOrInterface|ObjectFlagsReference) != 0 {
+			target := getTargetType(t)
+			return target == checkBase || some(c.getBaseTypes(target), check)
+		}
+		if t.flags&TypeFlagsIntersection != 0 {
+			return some(t.AsIntersectionType().types, check)
+		}
+		return false
+	}
+	return check(t)
+}
+
+func getTargetType(t *Type) *Type {
+	if t.objectFlags&ObjectFlagsReference != 0 {
+		return t.AsTypeReference().target
+	}
+	return t
 }
 
 func (c *Checker) getTypeWithThisArgument(t *Type, thisArgument *Type, needApparentType bool) *Type {
@@ -3859,11 +4266,12 @@ func (c *Checker) getTypeWithThisArgument(t *Type, thisArgument *Type, needAppar
 		}
 		return t
 	} else if t.flags&TypeFlagsIntersection != 0 {
-		types, same := sameMap(t.AsIntersectionType().types, func(t *Type) *Type { return c.getTypeWithThisArgument(t, thisArgument, needApparentType) })
-		if same {
+		types := t.AsIntersectionType().types
+		newTypes := sameMap(types, func(t *Type) *Type { return c.getTypeWithThisArgument(t, thisArgument, needApparentType) })
+		if identical(newTypes, types) {
 			return t
 		}
-		return c.getIntersectionType(types)
+		return c.getIntersectionType(newTypes)
 	}
 	if needApparentType {
 		return c.getApparentType(t)
@@ -4546,40 +4954,39 @@ func (c *Checker) isThisless(symbol *Symbol) bool {
 }
 
 func (c *Checker) getDefaultConstructSignatures(classType *Type) []*Signature {
-	return nil // !!!
-	// baseConstructorType := c.getBaseConstructorTypeOfClass(classType)
-	// baseSignatures := c.getSignaturesOfType(baseConstructorType, SignatureKindConstruct)
-	// declaration := getClassLikeDeclarationOfSymbol(classType.symbol)
-	// isAbstract := declaration != nil && hasSyntacticModifier(declaration, ModifierFlagsAbstract)
-	// if len(baseSignatures) == 0 {
-	// 	return []*Signature{c.createSignature(nil, classType.localTypeParameters /*thisParameter*/, nil, emptyArray, classType /*resolvedTypePredicate*/, nil, 0, ifelse(isAbstract, SignatureFlagsAbstract, SignatureFlagsNone))}
-	// }
-	// baseTypeNode := c.getBaseTypeNodeOfClass(classType)
-	// isJavaScript := isInJSFile(baseTypeNode)
-	// typeArguments := c.typeArgumentsFromTypeReferenceNode(baseTypeNode)
-	// typeArgCount := length(typeArguments)
-	// var result []Signature = []never{}
-	// for _, baseSig := range baseSignatures {
-	// 	minTypeArgumentCount := c.getMinTypeArgumentCount(baseSig.typeParameters)
-	// 	typeParamCount := length(baseSig.typeParameters)
-	// 	if isJavaScript || typeArgCount >= minTypeArgumentCount && typeArgCount <= typeParamCount {
-	// 		var sig Signature
-	// 		if typeParamCount {
-	// 			sig = c.createSignatureInstantiation(baseSig, c.fillMissingTypeArguments(typeArguments, baseSig.typeParameters, minTypeArgumentCount, isJavaScript))
-	// 		} else {
-	// 			sig = c.cloneSignature(baseSig)
-	// 		}
-	// 		sig.typeParameters = classType.localTypeParameters
-	// 		sig.resolvedReturnType = classType
-	// 		if isAbstract {
-	// 			sig.flags = sig.flags | SignatureFlagsAbstract
-	// 		} else {
-	// 			sig.flags = sig.flags & ~SignatureFlagsAbstract
-	// 		}
-	// 		result.push(sig)
-	// 	}
-	// }
-	// return result
+	baseConstructorType := c.getBaseConstructorTypeOfClass(classType)
+	baseSignatures := c.getSignaturesOfType(baseConstructorType, SignatureKindConstruct)
+	declaration := getClassLikeDeclarationOfSymbol(classType.symbol)
+	isAbstract := declaration != nil && hasSyntacticModifier(declaration, ModifierFlagsAbstract)
+	if len(baseSignatures) == 0 {
+		flags := ifElse(isAbstract, SignatureFlagsAbstract, SignatureFlagsNone)
+		return []*Signature{c.newSignature(flags, nil, classType.AsInterfaceType().LocalTypeParameters(), nil, nil, classType, nil, 0)}
+	}
+	baseTypeNode := getBaseTypeNodeOfClass(classType)
+	typeArguments := c.getTypeArgumentsFromNode(baseTypeNode)
+	typeArgCount := len(typeArguments)
+	var result []*Signature
+	for _, baseSig := range baseSignatures {
+		minTypeArgumentCount := c.getMinTypeArgumentCount(baseSig.typeParameters)
+		typeParamCount := len(baseSig.typeParameters)
+		if typeArgCount >= minTypeArgumentCount && typeArgCount <= typeParamCount {
+			var sig *Signature
+			if typeParamCount != 0 {
+				sig = c.createSignatureInstantiation(baseSig, c.fillMissingTypeArguments(typeArguments, baseSig.typeParameters, minTypeArgumentCount))
+			} else {
+				sig = c.cloneSignature(baseSig)
+			}
+			sig.typeParameters = classType.AsInterfaceType().LocalTypeParameters()
+			sig.resolvedReturnType = classType
+			if isAbstract {
+				sig.flags |= SignatureFlagsAbstract
+			} else {
+				sig.flags &= ^SignatureFlagsAbstract
+			}
+			result = append(result, sig)
+		}
+	}
+	return result
 }
 
 func (c *Checker) resolveMappedTypeMembers(t *Type) {
@@ -4963,6 +5370,31 @@ func (c *Checker) getReducedApparentType(t *Type) *Type {
 	return c.getReducedType(c.getApparentType(c.getReducedType(t)))
 }
 
+func (c *Checker) elaborateNeverIntersection(t *Type) *MessageChain {
+	if t.flags&TypeFlagsIntersection != 0 && t.objectFlags&ObjectFlagsIsNeverIntersection != 0 {
+		neverProp := find(c.getPropertiesOfUnionOrIntersectionType(t), c.isDiscriminantWithNeverType)
+		if neverProp != nil {
+			return NewMessageChain(diagnostics.The_intersection_0_was_reduced_to_never_because_property_1_has_conflicting_types_in_some_constituents, c.typeToStringEx(t, nil, TypeFormatFlagsNoTypeReduction), c.symbolToString(neverProp))
+		}
+		privateProp := find(c.getPropertiesOfUnionOrIntersectionType(t), isConflictingPrivateProperty)
+		if privateProp != nil {
+			return NewMessageChain(diagnostics.The_intersection_0_was_reduced_to_never_because_property_1_exists_in_multiple_constituents_and_is_private_in_some, c.typeToStringEx(t, nil, TypeFormatFlagsNoTypeReduction), c.symbolToString(privateProp))
+		}
+	}
+	return nil
+}
+
+func (c *Checker) isDiscriminantWithNeverType(prop *Symbol) bool {
+	// Return true for a synthetic non-optional property with non-uniform types, where at least one is
+	// a literal type and none is never, that reduces to never.
+	return prop.flags&SymbolFlagsOptional == 0 && prop.checkFlags&(CheckFlagsDiscriminant|CheckFlagsHasNeverType) == CheckFlagsDiscriminant && c.getTypeOfSymbol(prop).flags&TypeFlagsNever != 0
+}
+
+func isConflictingPrivateProperty(prop *Symbol) bool {
+	// Return true for a synthetic property with multiple declarations, at least one of which is private.
+	return prop.valueDeclaration == nil && prop.checkFlags&CheckFlagsContainsPrivate != 0
+}
+
 func (c *Checker) getTypeArguments(t *Type) []*Type {
 	d := t.AsTypeReference()
 	if d.resolvedTypeArguments == nil {
@@ -5063,6 +5495,7 @@ func (c *Checker) getNamedMembers(members SymbolTable) []*Symbol {
 		if c.isNamedMember(symbol, id) {
 			result = append(result, symbol)
 		}
+		sortSymbols(result)
 	}
 	return result
 }
@@ -5520,7 +5953,7 @@ func (c *Checker) getTypeFromTypeNodeWorker(node *Node) *Type {
 		return c.getTypeFromThisTypeNode(node)
 	case SyntaxKindLiteralType:
 		return c.getTypeFromLiteralTypeNode(node)
-	case SyntaxKindTypeReference:
+	case SyntaxKindTypeReference, SyntaxKindExpressionWithTypeArguments:
 		return c.getTypeFromTypeReference(node)
 	// case SyntaxKindTypePredicate:
 	// 	if (node /* as TypePredicateNode */).assertsModifier {
@@ -5528,8 +5961,6 @@ func (c *Checker) getTypeFromTypeNodeWorker(node *Node) *Type {
 	// 	} else {
 	// 		return c.booleanType
 	// 	}
-	// case SyntaxKindExpressionWithTypeArguments:
-	// 	return c.getTypeFromTypeReference(node /* as ExpressionWithTypeArguments */)
 	// case SyntaxKindTypeQuery:
 	// 	return c.getTypeFromTypeQueryNode(node /* as TypeQueryNode */)
 	case SyntaxKindArrayType, SyntaxKindTupleType:

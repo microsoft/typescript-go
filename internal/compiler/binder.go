@@ -216,34 +216,9 @@ func (b *Binder) declareSymbolEx(symbolTable SymbolTable, parent *Symbol, node *
 						}
 					}
 				}
-				var relatedInformation []*Diagnostic
-				if isTypeAliasDeclaration(node) && nodeIsMissing(node.AsTypeAliasDeclaration().typeNode) && hasSyntacticModifier(node, ModifierFlagsExport) && symbol.flags&(SymbolFlagsAlias|SymbolFlagsType|SymbolFlagsNamespace) != 0 {
-					// export type T; - may have meant export type { T }?
-					relatedInformation = append(relatedInformation, b.createDiagnosticForNode(node, diagnostics.Did_you_mean_0,
-						"export type { "+node.AsTypeAliasDeclaration().name.AsIdentifier().text+" }"))
-				}
 				var declarationName *Node = getNameOfDeclaration(node)
 				if declarationName == nil {
 					declarationName = node
-				}
-				for index, declaration := range symbol.declarations {
-					var decl *Node = getNameOfDeclaration(declaration)
-					if decl == nil {
-						decl = declaration
-					}
-					var diag *Diagnostic
-					if messageNeedsName {
-						diag = b.createDiagnosticForNode(decl, message, b.getDisplayName(declaration))
-					} else {
-						diag = b.createDiagnosticForNode(decl, message)
-					}
-					if multipleDefaultExports {
-						diag.addRelatedInfo(b.createDiagnosticForNode(declarationName, ifElse(index == 0, diagnostics.Another_export_default_is_here, diagnostics.X_and_here)))
-					}
-					b.addDiagnostic(diag)
-					if multipleDefaultExports {
-						relatedInformation = append(relatedInformation, b.createDiagnosticForNode(decl, diagnostics.The_first_export_default_is_here))
-					}
 				}
 				var diag *Diagnostic
 				if messageNeedsName {
@@ -251,7 +226,29 @@ func (b *Binder) declareSymbolEx(symbolTable SymbolTable, parent *Symbol, node *
 				} else {
 					diag = b.createDiagnosticForNode(declarationName, message)
 				}
-				diag.addRelatedInfo(relatedInformation...)
+				if isTypeAliasDeclaration(node) && nodeIsMissing(node.AsTypeAliasDeclaration().typeNode) && hasSyntacticModifier(node, ModifierFlagsExport) && symbol.flags&(SymbolFlagsAlias|SymbolFlagsType|SymbolFlagsNamespace) != 0 {
+					// export type T; - may have meant export type { T }?
+					diag.addRelatedInfo(b.createDiagnosticForNode(node, diagnostics.Did_you_mean_0, "export type { "+node.AsTypeAliasDeclaration().name.AsIdentifier().text+" }"))
+				}
+				for index, declaration := range symbol.declarations {
+					var decl *Node = getNameOfDeclaration(declaration)
+					if decl == nil {
+						decl = declaration
+					}
+					var d *Diagnostic
+					if messageNeedsName {
+						d = b.createDiagnosticForNode(decl, message, b.getDisplayName(declaration))
+					} else {
+						d = b.createDiagnosticForNode(decl, message)
+					}
+					if multipleDefaultExports {
+						d.addRelatedInfo(b.createDiagnosticForNode(declarationName, ifElse(index == 0, diagnostics.Another_export_default_is_here, diagnostics.X_and_here)))
+					}
+					b.addDiagnostic(d)
+					if multipleDefaultExports {
+						diag.addRelatedInfo(b.createDiagnosticForNode(decl, diagnostics.The_first_export_default_is_here))
+					}
+				}
 				b.addDiagnostic(diag)
 				symbol = b.newSymbol(SymbolFlagsNone, name)
 			}
