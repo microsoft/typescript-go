@@ -8,10 +8,12 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
+	"sync"
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/repo"
 	"github.com/microsoft/typescript-go/internal/testutil/baseline"
+	"gotest.tools/v3/assert"
 )
 
 func BenchmarkParse(b *testing.B) {
@@ -68,29 +70,32 @@ func parseTestWorker(t *testing.T, options *baseline.Options) func(fileName stri
 		if d.IsDir() {
 			return nil
 		}
-		ext := filepath.Ext(fileName)
-		if (ext == ".ts" || ext == ".js" || ext == ".tsx" || ext == ".jsx") &&
-			!(strings.HasSuffix(fileName, "binderBinaryExpressionStress.ts") ||
-				strings.HasSuffix(fileName, "binderBinaryExpressionStress.js") ||
-				strings.HasSuffix(fileName, "binderBinaryExpressionStressJs.ts") ||
-				strings.HasSuffix(fileName, "binderBinaryExpressionStressJs.js")) {
-			testName, _ := filepath.Rel(repo.TypeScriptSubmodulePath, fileName)
-			t.Run(testName, func(t *testing.T) {
-				t.Parallel()
-				sourceText, err := os.ReadFile(fileName)
-				if err != nil {
-					t.Errorf("Failed to read file %s: %v", fileName, err)
-					return
-				}
-				sourceFile := ParseSourceFile(fileName, string(sourceText), ScriptTargetESNext)
-				err = baseline.Run(generateOutputFileName(t, fileName), printAST(sourceFile), baseline.Options{Gold: true})
-				if err != nil {
-					t.Errorf("%v", err)
-				}
-			})
+		if isIgnoredTestFile(fileName) {
+			return nil
 		}
+		testName, _ := filepath.Rel(repo.TypeScriptSubmodulePath, fileName)
+		t.Run(testName, func(t *testing.T) {
+			t.Parallel()
+			// if isIgnoredTestFile(fileName) {
+			// 	t.Skip()
+			// }
+			sourceText, err := os.ReadFile(fileName)
+			assert.NilError(t, err)
+			sourceFile := ParseSourceFile(fileName, string(sourceText), ScriptTargetESNext)
+			err = baseline.Run(generateOutputFileName(t, fileName), printAST(sourceFile), baseline.Options{Gold: true})
+			assert.NilError(t, err)
+		})
 		return nil
 	}
+}
+
+func isIgnoredTestFile(name string) bool {
+	ext := filepath.Ext(name)
+	return !(ext == ".ts" || ext == ".js" || ext == ".tsx" || ext == ".jsx") ||
+		(strings.HasSuffix(name, "binderBinaryExpressionStress.ts") ||
+			strings.HasSuffix(name, "binderBinaryExpressionStress.js") ||
+			strings.HasSuffix(name, "binderBinaryExpressionStressJs.ts") ||
+			strings.HasSuffix(name, "binderBinaryExpressionStressJs.js"))
 }
 
 func generateOutputFileName(t *testing.T, fileName string) string {
@@ -101,18 +106,34 @@ func generateOutputFileName(t *testing.T, fileName string) string {
 	return strings.ReplaceAll(path, string(filepath.Separator), "_") + ".ast"
 }
 
+var (
+	indentationCache map[int]string = make(map[int]string)
+	mutex            sync.Mutex
+)
+
+func getIndentation(level int) string {
+	mutex.Lock()
+	defer mutex.Unlock()
+	if indent, ok := indentationCache[level]; ok {
+		return indent
+	}
+	indent := strings.Repeat("  ", level)
+	indentationCache[level] = indent
+	return indent
+}
+
 // prefix specifies the directory to write the baseline
 func printAST(sourceFile *SourceFile) string {
-	sb := strings.Builder{}
+	var sb strings.Builder
 	var visit func(node *Node, indentation int) bool
 	visit = func(node *Node, indentation int) bool {
 		offset := 1
-		skind := node.kind.String()[len("SyntaxKind"):]
+		skind, _ := strings.CutPrefix(node.kind.String(), "SyntaxKind")
 		switch node.kind {
 		case SyntaxKindModifierList, SyntaxKindTypeParameterList, SyntaxKindTypeArgumentList, SyntaxKindSyntaxList:
 			offset = 0
 		case SyntaxKindIdentifier:
-			indent := strings.Repeat("  ", indentation)
+			indent := getIndentation(indentation)
 			sb.WriteString(fmt.Sprintf("%s%s: '%s'\n", indent, skind, sourceFile.text[node.loc.pos:node.loc.end]))
 		default:
 			if isOmittedExpression(node) {
@@ -121,7 +142,7 @@ func printAST(sourceFile *SourceFile) string {
 			indent := strings.Repeat("  ", indentation)
 			sb.WriteString(fmt.Sprintf("%s%s\n", indent, skind))
 		}
-		// TODO: Include trivia in a more structured way than GetFullText// Visit child nodes with increased indentation
+		// TODO: Include trivia in a more structured way than GetFullText
 		return node.ForEachChild(func(child *Node) bool {
 			if node.kind == SyntaxKindShorthandPropertyAssignment && node.AsShorthandPropertyAssignment().objectAssignmentInitializer == child {
 				indent := strings.Repeat("  ", indentation+offset)
