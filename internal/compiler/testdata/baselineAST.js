@@ -125,12 +125,17 @@ function processDirectory(inputRoot, targetRoot) {
                 worker(fullPath);
             }
             else if (dirent.isFile() && (ext === '.ts' || ext === '.tsx' || ext === '.js' || ext === '.jsx')) {
-                // Too deep for a simple tree walker
                 if (
+                    // Too deep for a simple tree walker
                     dirent.name.endsWith("binderBinaryExpressionStress.ts") ||
                     dirent.name.endsWith("binderBinaryExpressionStress.js") ||
                     dirent.name.endsWith("binderBinaryExpressionStressJs.ts") ||
-                    dirent.name.endsWith("binderBinaryExpressionStressJs.js")
+                    dirent.name.endsWith("binderBinaryExpressionStressJs.js") ||
+                    // Very large minified code
+                    dirent.name.includes("codeMirrorModule") ||
+                    // Not actually .js
+                    dirent.name.includes("reference/tsc") ||
+                    dirent.name.includes("reference/tsbuild")
                 ) {
                     continue;
                 }

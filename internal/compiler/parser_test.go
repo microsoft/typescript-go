@@ -92,10 +92,16 @@ func parseTestWorker(t *testing.T, options *baseline.Options) func(fileName stri
 func isIgnoredTestFile(name string) bool {
 	ext := filepath.Ext(name)
 	return !(ext == ".ts" || ext == ".js" || ext == ".tsx" || ext == ".jsx") ||
+		// Too deep for a simmple Javascript tree walker
 		(strings.HasSuffix(name, "binderBinaryExpressionStress.ts") ||
 			strings.HasSuffix(name, "binderBinaryExpressionStress.js") ||
 			strings.HasSuffix(name, "binderBinaryExpressionStressJs.ts") ||
-			strings.HasSuffix(name, "binderBinaryExpressionStressJs.js"))
+			strings.HasSuffix(name, "binderBinaryExpressionStressJs.js") ||
+			// very large minified code
+			strings.Contains(name, "codeMirrorModule") ||
+			// not actually .js
+			strings.Contains(name, "reference/tsc") ||
+			strings.Contains(name, "reference/tsbuild"))
 }
 
 func generateOutputFileName(t *testing.T, fileName string) string {
@@ -107,13 +113,13 @@ func generateOutputFileName(t *testing.T, fileName string) string {
 }
 
 var (
-	indentationCache map[int]string = make(map[int]string)
-	mutex            sync.Mutex
+	indentationCache   map[int]string = make(map[int]string)
+	indentationCacheMu sync.Mutex
 )
 
 func getIndentation(level int) string {
-	mutex.Lock()
-	defer mutex.Unlock()
+	indentationCacheMu.Lock()
+	defer indentationCacheMu.Unlock()
 	if indent, ok := indentationCache[level]; ok {
 		return indent
 	}
