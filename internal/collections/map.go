@@ -151,6 +151,9 @@ func (m *Map[K, V]) clone() Map[K, V] {
 
 func (m *Map[K, V]) UnmarshalJSON(data []byte) error {
 	if string(data) == "null" {
+		// By convention, to approximate the behavior of Unmarshal itself,
+		// Unmarshalers implement UnmarshalJSON([]byte("null")) as a no-op.
+		// https://pkg.go.dev/encoding/json#Unmarshaler
 		return nil
 	}
 	dec := json.NewDecoder(bytes.NewReader(data))
@@ -192,6 +195,9 @@ func (m *Map[K, V]) UnmarshalJSONV2(dec *jsontext.Decoder, opts json2.Options) e
 		return err
 	}
 	if token.Kind() == jsontext.Null.Kind() {
+		// By convention, to approximate the behavior of Unmarshal itself,
+		// Unmarshalers implement UnmarshalJSON([]byte("null")) as a no-op.
+		// https://pkg.go.dev/encoding/json#Unmarshaler
 		return nil
 	}
 	if token.Kind() != jsontext.ObjectStart.Kind() {

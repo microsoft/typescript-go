@@ -50,6 +50,7 @@ func (v *JSONValue) UnmarshalJSONV2(dec *jsontext.Decoder, opts json2.Options) e
 
 func unmarshalJSONValue[T any](v *JSONValue, data []byte) error {
 	if string(data) == "null" {
+		v.Value = nil
 		v.Type = JSONValueTypeNull
 	} else if data[0] == '"' {
 		v.Type = JSONValueTypeString
@@ -87,6 +88,7 @@ func unmarshalJSONValueV2[T any](v *JSONValue, dec *jsontext.Decoder, opts json2
 		if _, err := dec.ReadToken(); err != nil {
 			return err
 		}
+		v.Value = nil
 		v.Type = JSONValueTypeNull
 		return nil
 	case '"':
