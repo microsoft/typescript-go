@@ -12,7 +12,7 @@ const (
 	SyntaxKindConflictMarkerTrivia
 	SyntaxKindNonTextFileMarkerTrivia
 	SyntaxKindNumericLiteral
-	SyntaxKindBigintLiteral
+	SyntaxKindBigIntLiteral
 	SyntaxKindStringLiteral
 	SyntaxKindJsxText
 	SyntaxKindJsxTextAllWhiteSpaces
@@ -550,17 +550,17 @@ const (
 	ModifierFlagsModifier           = ModifierFlagsAll & ^ModifierFlagsDecorator
 )
 
-// SignatureFlags
+// ParseFlags
 
-type SignatureFlags uint32
+type ParseFlags uint32
 
 const (
-	SignatureFlagsNone                   SignatureFlags = 0
-	SignatureFlagsYield                  SignatureFlags = 1 << 0
-	SignatureFlagsAwait                  SignatureFlags = 1 << 1
-	SignatureFlagsType                   SignatureFlags = 1 << 2
-	SignatureFlagsIgnoreMissingOpenBrace SignatureFlags = 1 << 4
-	SignatureFlagsJSDoc                  SignatureFlags = 1 << 5
+	ParseFlagsNone                   ParseFlags = 0
+	ParseFlagsYield                  ParseFlags = 1 << 0
+	ParseFlagsAwait                  ParseFlags = 1 << 1
+	ParseFlagsType                   ParseFlags = 1 << 2
+	ParseFlagsIgnoreMissingOpenBrace ParseFlags = 1 << 4
+	ParseFlagsJSDoc                  ParseFlags = 1 << 5
 )
 
 // SymbolFlags
@@ -762,11 +762,12 @@ type SymbolTable map[string]*Symbol
 // Links for value symbols
 
 type ValueSymbolLinks struct {
-	resolvedType *Type // Type of value symbol
-	writeType    *Type
-	target       *Symbol
-	mapper       *TypeMapper
-	nameType     *Type
+	resolvedType   *Type // Type of value symbol
+	writeType      *Type
+	target         *Symbol
+	mapper         *TypeMapper
+	nameType       *Type
+	containingType *Type
 }
 
 // Links for alias symbols
@@ -1151,12 +1152,12 @@ const (
 	TypeFlagsNumber          TypeFlags = 1 << 3
 	TypeFlagsBoolean         TypeFlags = 1 << 4
 	TypeFlagsEnum            TypeFlags = 1 << 5 // Numeric computed enum member value
-	TypeFlagsBigint          TypeFlags = 1 << 6
+	TypeFlagsBigInt          TypeFlags = 1 << 6
 	TypeFlagsStringLiteral   TypeFlags = 1 << 7
 	TypeFlagsNumberLiteral   TypeFlags = 1 << 8
 	TypeFlagsBooleanLiteral  TypeFlags = 1 << 9
 	TypeFlagsEnumLiteral     TypeFlags = 1 << 10 // Always combined with StringLiteral, NumberLiteral, or Union
-	TypeFlagsBigintLiteral   TypeFlags = 1 << 11
+	TypeFlagsBigIntLiteral   TypeFlags = 1 << 11
 	TypeFlagsESSymbol        TypeFlags = 1 << 12 // Type of symbol primitive introduced in ES6
 	TypeFlagsUniqueESSymbol  TypeFlags = 1 << 13 // unique symbol
 	TypeFlagsVoid            TypeFlags = 1 << 14
@@ -1180,17 +1181,17 @@ const (
 
 	TypeFlagsAnyOrUnknown                  = TypeFlagsAny | TypeFlagsUnknown
 	TypeFlagsNullable                      = TypeFlagsUndefined | TypeFlagsNull
-	TypeFlagsLiteral                       = TypeFlagsStringLiteral | TypeFlagsNumberLiteral | TypeFlagsBigintLiteral | TypeFlagsBooleanLiteral
+	TypeFlagsLiteral                       = TypeFlagsStringLiteral | TypeFlagsNumberLiteral | TypeFlagsBigIntLiteral | TypeFlagsBooleanLiteral
 	TypeFlagsUnit                          = TypeFlagsEnum | TypeFlagsLiteral | TypeFlagsUniqueESSymbol | TypeFlagsNullable
 	TypeFlagsFreshable                     = TypeFlagsEnum | TypeFlagsLiteral
 	TypeFlagsStringOrNumberLiteral         = TypeFlagsStringLiteral | TypeFlagsNumberLiteral
 	TypeFlagsStringOrNumberLiteralOrUnique = TypeFlagsStringLiteral | TypeFlagsNumberLiteral | TypeFlagsUniqueESSymbol
-	TypeFlagsDefinitelyFalsy               = TypeFlagsStringLiteral | TypeFlagsNumberLiteral | TypeFlagsBigintLiteral | TypeFlagsBooleanLiteral | TypeFlagsVoid | TypeFlagsUndefined | TypeFlagsNull
-	TypeFlagsPossiblyFalsy                 = TypeFlagsDefinitelyFalsy | TypeFlagsString | TypeFlagsNumber | TypeFlagsBigint | TypeFlagsBoolean
-	TypeFlagsIntrinsic                     = TypeFlagsAny | TypeFlagsUnknown | TypeFlagsString | TypeFlagsNumber | TypeFlagsBigint | TypeFlagsESSymbol | TypeFlagsVoid | TypeFlagsUndefined | TypeFlagsNull | TypeFlagsNever | TypeFlagsNonPrimitive
+	TypeFlagsDefinitelyFalsy               = TypeFlagsStringLiteral | TypeFlagsNumberLiteral | TypeFlagsBigIntLiteral | TypeFlagsBooleanLiteral | TypeFlagsVoid | TypeFlagsUndefined | TypeFlagsNull
+	TypeFlagsPossiblyFalsy                 = TypeFlagsDefinitelyFalsy | TypeFlagsString | TypeFlagsNumber | TypeFlagsBigInt | TypeFlagsBoolean
+	TypeFlagsIntrinsic                     = TypeFlagsAny | TypeFlagsUnknown | TypeFlagsString | TypeFlagsNumber | TypeFlagsBigInt | TypeFlagsESSymbol | TypeFlagsVoid | TypeFlagsUndefined | TypeFlagsNull | TypeFlagsNever | TypeFlagsNonPrimitive
 	TypeFlagsStringLike                    = TypeFlagsString | TypeFlagsStringLiteral | TypeFlagsTemplateLiteral | TypeFlagsStringMapping
 	TypeFlagsNumberLike                    = TypeFlagsNumber | TypeFlagsNumberLiteral | TypeFlagsEnum
-	TypeFlagsBigIntLike                    = TypeFlagsBigint | TypeFlagsBigintLiteral
+	TypeFlagsBigIntLike                    = TypeFlagsBigInt | TypeFlagsBigIntLiteral
 	TypeFlagsBooleanLike                   = TypeFlagsBoolean | TypeFlagsBooleanLiteral
 	TypeFlagsEnumLike                      = TypeFlagsEnum | TypeFlagsEnumLiteral
 	TypeFlagsESSymbolLike                  = TypeFlagsESSymbol | TypeFlagsUniqueESSymbol
@@ -1207,7 +1208,7 @@ const (
 	TypeFlagsStructuredOrInstantiable      = TypeFlagsStructuredType | TypeFlagsInstantiable
 	TypeFlagsObjectFlagsType               = TypeFlagsAny | TypeFlagsNullable | TypeFlagsNever | TypeFlagsObject | TypeFlagsUnion | TypeFlagsIntersection
 	TypeFlagsSimplifiable                  = TypeFlagsIndexedAccess | TypeFlagsConditional
-	TypeFlagsSingleton                     = TypeFlagsAny | TypeFlagsUnknown | TypeFlagsString | TypeFlagsNumber | TypeFlagsBoolean | TypeFlagsBigint | TypeFlagsESSymbol | TypeFlagsVoid | TypeFlagsUndefined | TypeFlagsNull | TypeFlagsNever | TypeFlagsNonPrimitive
+	TypeFlagsSingleton                     = TypeFlagsAny | TypeFlagsUnknown | TypeFlagsString | TypeFlagsNumber | TypeFlagsBoolean | TypeFlagsBigInt | TypeFlagsESSymbol | TypeFlagsVoid | TypeFlagsUndefined | TypeFlagsNull | TypeFlagsNever | TypeFlagsNonPrimitive
 	// 'TypeFlagsNarrowable' types are types where narrowing actually narrows.
 	// This *should* be every type other than null, undefined, void, and never
 	TypeFlagsNarrowable = TypeFlagsAny | TypeFlagsUnknown | TypeFlagsStructuredOrInstantiable | TypeFlagsStringLike | TypeFlagsNumberLike | TypeFlagsBigIntLike | TypeFlagsBooleanLike | TypeFlagsESSymbol | TypeFlagsUniqueESSymbol | TypeFlagsNonPrimitive
@@ -1332,10 +1333,12 @@ func (t *Type) AsReverseMappedType() *ReverseMappedType     { return t.data.(*Re
 func (t *Type) AsTypeParameter() *TypeParameter             { return t.data.(*TypeParameter) }
 func (t *Type) AsUnionType() *UnionType                     { return t.data.(*UnionType) }
 func (t *Type) AsIntersectionType() *IntersectionType       { return t.data.(*IntersectionType) }
+func (t *Type) AsIndexType() *IndexType                     { return t.data.(*IndexType) }
 func (t *Type) AsIndexedAccessType() *IndexedAccessType     { return t.data.(*IndexedAccessType) }
 func (t *Type) AsTemplateLiteralType() *TemplateLiteralType { return t.data.(*TemplateLiteralType) }
 func (t *Type) AsStringMappingType() *StringMappingType     { return t.data.(*StringMappingType) }
 func (t *Type) AsSubstitutionType() *SubstitutionType       { return t.data.(*SubstitutionType) }
+func (t *Type) AsConditionalType() *ConditionalType         { return t.data.(*ConditionalType) }
 
 // Casts for embedded struct types
 
@@ -1395,7 +1398,7 @@ type LiteralType struct {
 	regularType *Type // Regular version of type
 }
 
-type PseudoBigint struct {
+type PseudoBigInt struct {
 	negative    bool
 	base10Value string
 }
@@ -1607,6 +1610,25 @@ type TypeParameter struct {
 	resolvedDefaultType *Type
 }
 
+// IndexFlags
+
+type IndexFlags uint32
+
+const (
+	IndexFlagsNone              IndexFlags = 0
+	IndexFlagsStringsOnly       IndexFlags = 1 << 0
+	IndexFlagsNoIndexSignatures IndexFlags = 1 << 1
+	IndexFlagsNoReducibleCheck  IndexFlags = 1 << 2
+)
+
+// IndexType
+
+type IndexType struct {
+	TypeBase
+	target     *Type
+	indexFlags IndexFlags
+}
+
 // IndexedAccessType
 
 type IndexedAccessType struct {
@@ -1633,18 +1655,68 @@ type SubstitutionType struct {
 	constraint *Type // Constraint that target type is known to satisfy
 }
 
+type ConditionalRoot struct {
+	node                *Node // ConditionalTypeNode
+	checkType           *Type
+	extendsType         *Type
+	isDistributive      bool
+	inferTypeParameters []*Type
+	outerTypeParameters []*Type
+	instantiations      map[string]*Type
+	alias               *TypeAlias
+}
+
+type ConditionalType struct {
+	TypeBase
+	root                             *ConditionalRoot
+	checkType                        *Type
+	extendsType                      *Type
+	resolvedTrueType                 *Type
+	resolvedFalseType                *Type
+	resolvedInferredTrueType         *Type // The `trueType` instantiated with the `combinedMapper`, if present
+	resolvedDefaultConstraint        *Type
+	resolvedConstraintOfDistributive *Type
+	mapper                           *TypeMapper
+	combinedMapper                   *TypeMapper
+}
+
+// SignatureFlags
+
+type SignatureFlags uint32
+
+const (
+	SignatureFlagsNone SignatureFlags = 0
+	// Propagating flags
+	SignatureFlagsHasRestParameter SignatureFlags = 1 << 0 // Indicates last parameter is rest parameter
+	SignatureFlagsHasLiteralTypes  SignatureFlags = 1 << 1 // Indicates signature is specialized
+	SignatureFlagsAbstract         SignatureFlags = 1 << 2 // Indicates signature comes from an abstract class, abstract construct signature, or abstract constructor type
+	// Non-propagating flags
+	SignatureFlagsIsInnerCallChain                       SignatureFlags = 1 << 3 // Indicates signature comes from a CallChain nested in an outer OptionalChain
+	SignatureFlagsIsOuterCallChain                       SignatureFlags = 1 << 4 // Indicates signature comes from a CallChain that is the outermost chain of an optional expression
+	SignatureFlagsIsUntypedSignatureInJSFile             SignatureFlags = 1 << 5 // Indicates signature is from a js file and has no types
+	SignatureFlagsIsNonInferrable                        SignatureFlags = 1 << 6 // Indicates signature comes from a non-inferrable type
+	SignatureFlagsIsSignatureCandidateForOverloadFailure SignatureFlags = 1 << 7
+	// We do not propagate `IsInnerCallChain` or `IsOuterCallChain` to instantiated signatures, as that would result in us
+	// attempting to add `| undefined` on each recursive call to `getReturnTypeOfSignature` when
+	// instantiating the return type.
+	SignatureFlagsPropagatingFlags = SignatureFlagsHasRestParameter | SignatureFlagsHasLiteralTypes | SignatureFlagsAbstract | SignatureFlagsIsUntypedSignatureInJSFile | SignatureFlagsIsSignatureCandidateForOverloadFailure
+	SignatureFlagsCallChainFlags   = SignatureFlagsIsInnerCallChain | SignatureFlagsIsOuterCallChain
+)
+
 // Signature
 
 type Signature struct {
-	flags              SignatureFlags
-	declaration        *Node
-	typeParameters     []*Type
-	parameters         []*Symbol
-	thisParameter      *Symbol
-	resolvedReturnType *Type
-	target             *Signature
-	mapper             *TypeMapper
-	instantiations     map[string]*Signature
+	flags                 SignatureFlags
+	minArgumentCount      int32
+	declaration           *Node
+	typeParameters        []*Type
+	parameters            []*Symbol
+	thisParameter         *Symbol
+	resolvedReturnType    *Type
+	resolvedTypePredicate *Type
+	target                *Signature
+	mapper                *TypeMapper
+	instantiations        map[string]*Signature
 }
 
 // IndexInfo
@@ -1653,5 +1725,22 @@ type IndexInfo struct {
 	keyType     *Type
 	valueType   *Type
 	isReadonly  bool
-	declaration *IndexSignatureDeclaration
+	declaration *Node // IndexSignatureDeclaration
 }
+
+/**
+ * Ternary values are defined such that
+ * x & y picks the lesser in the order False < Unknown < Maybe < True, and
+ * x | y picks the greater in the order False < Unknown < Maybe < True.
+ * Generally, Ternary.Maybe is used as the result of a relation that depends on itself, and
+ * Ternary.Unknown is used as the result of a variance check that depends on itself. We make
+ * a distinction because we don't want to cache circular variance check results.
+ */
+type Ternary int8
+
+const (
+	TernaryFalse   Ternary = 0
+	TernaryUnknown Ternary = 1
+	TernaryMaybe   Ternary = 3
+	TernaryTrue    Ternary = -1
+)
