@@ -194,16 +194,16 @@ func (m *Map[K, V]) UnmarshalJSONV2(dec *jsontext.Decoder, opts json2.Options) e
 	if err != nil {
 		return err
 	}
-	if token.Kind() == jsontext.Null.Kind() {
+	if token.Kind() == 'n' { // jsontext.Null.Kind()
 		// By convention, to approximate the behavior of Unmarshal itself,
 		// Unmarshalers implement UnmarshalJSON([]byte("null")) as a no-op.
 		// https://pkg.go.dev/encoding/json#Unmarshaler
 		return nil
 	}
-	if token.Kind() != jsontext.ObjectStart.Kind() {
+	if token.Kind() != '{' { // jsontext.ObjectStart.Kind()
 		return fmt.Errorf("cannot unmarshal non-object JSON value into Map")
 	}
-	for dec.PeekKind() != jsontext.ObjectEnd.Kind() {
+	for dec.PeekKind() != '}' { // jsontext.ObjectEnd.Kind()
 		var key K
 		var value V
 		if err := json2.UnmarshalDecode(dec, &key, opts); err != nil {

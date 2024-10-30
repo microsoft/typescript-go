@@ -21,6 +21,25 @@ const (
 	JSONValueTypeObject
 )
 
+func (t JSONValueType) String() string {
+	switch t {
+	case JSONValueTypeNull:
+		return "null"
+	case JSONValueTypeString:
+		return "string"
+	case JSONValueTypeNumber:
+		return "number"
+	case JSONValueTypeBoolean:
+		return "boolean"
+	case JSONValueTypeArray:
+		return "array"
+	case JSONValueTypeObject:
+		return "object"
+	default:
+		return fmt.Sprintf("unknown(%d)", t)
+	}
+}
+
 type JSONValue struct {
 	Type  JSONValueType
 	Value any
@@ -50,8 +69,7 @@ func (v *JSONValue) UnmarshalJSONV2(dec *jsontext.Decoder, opts json2.Options) e
 
 func unmarshalJSONValue[T any](v *JSONValue, data []byte) error {
 	if string(data) == "null" {
-		v.Value = nil
-		v.Type = JSONValueTypeNull
+		*v = JSONValue{Type: JSONValueTypeNull}
 	} else if data[0] == '"' {
 		v.Type = JSONValueTypeString
 		return json.Unmarshal(data, &v.Value)
@@ -84,7 +102,7 @@ func unmarshalJSONValue[T any](v *JSONValue, data []byte) error {
 
 func unmarshalJSONValueV2[T any](v *JSONValue, dec *jsontext.Decoder, opts json2.Options) error {
 	switch dec.PeekKind() {
-	case jsontext.Null.Kind():
+	case 'n': // jsontext.Null.Kind()
 		if _, err := dec.ReadToken(); err != nil {
 			return err
 		}
@@ -120,7 +138,7 @@ func unmarshalJSONValueV2[T any](v *JSONValue, dec *jsontext.Decoder, opts json2
 		}
 		v.Type = JSONValueTypeObject
 		v.Value = &object
-	case jsontext.True.Kind(), jsontext.False.Kind():
+	case 't', 'f': // jsontext.True.Kind(), jsontext.False.Kind()
 		v.Type = JSONValueTypeBoolean
 		if err := json2.UnmarshalDecode(dec, &v.Value, opts); err != nil {
 			return err
