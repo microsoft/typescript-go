@@ -1,5 +1,5 @@
 // @ts-check
-const ts = require("../../_submodules/TypeScript/built/local/typescript");
+const ts = require("../../../_submodules/TypeScript/built/local/typescript");
 const fs = require("fs");
 const path = require("path");
 /** @param node {ts.Node} */
@@ -118,12 +118,12 @@ function processDirectory(inputRoot, targetRoot) {
         if (!inputRoot.endsWith("/")) {
             inputRoot += "/";
         }
-        fs.readdirSync(dir, { withFileTypes: true }).forEach(dirent => {
+        for (const dirent of fs.readdirSync(dir, { withFileTypes: true })) {
             let fullPath = path.join(dir, dirent.name);
             if (dirent.isDirectory()) {
                 worker(fullPath);
             }
-            else if (dirent.isFile() && path.extname(dirent.name) === ".ts") {
+            else if (dirent.isFile() && (path.extname(dirent.name) === ".ts" || path.extname(dirent.name) === ".js")) {
                 // Too deep for a simple tree walker
                 if (
                     dirent.name.endsWith("binderBinaryExpressionStress.ts") ||
@@ -142,14 +142,14 @@ function processDirectory(inputRoot, targetRoot) {
                 const outputFilePath = path.join(targetRoot, outputFileName);
                 fs.writeFileSync(outputFilePath, astContent);
             }
-        });
+        }
     }
 }
 const inputDir = process.argv[2];
 const outputDir = process.argv[3];
 if (!inputDir || !outputDir) {
     console.error(
-        "node internal/harness/baselineAST.js _submodules/TypeScript testdata/baselines/gold",
+        "node internal/compiler/testdata/baselineAST.js _submodules/TypeScript internal/compiler/testdata/baselines/gold",
     );
     process.exit(1);
 }
