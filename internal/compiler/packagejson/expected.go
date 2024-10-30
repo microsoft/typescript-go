@@ -12,11 +12,10 @@ type Expected[T any] struct {
 
 func (e *Expected[T]) UnmarshalJSON(data []byte) error {
 	if string(data) == "null" {
-		var value T
-		e.Valid = false
-		e.Null = true
-		e.Value = value
-	} else if json.Unmarshal(data, &e.Value) == nil {
+		*e = Expected[T]{Null: true}
+		return nil
+	}
+	if json.Unmarshal(data, &e.Value) == nil {
 		e.Valid = true
 	}
 	return nil
