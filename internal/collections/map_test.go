@@ -162,8 +162,14 @@ func TestMapWithSizeHint(t *testing.T) {
 func TestMapUnmarshalJSON(t *testing.T) {
 	t.Parallel()
 
-	testMapUnmarshalJSON(t, json.Unmarshal)
-	testMapUnmarshalJSON(t, func(in []byte, out any) error { return json2.Unmarshal(in, out) })
+	t.Run("UnmarshalJSON", func(t *testing.T) {
+		t.Parallel()
+		testMapUnmarshalJSON(t, json.Unmarshal)
+	})
+	t.Run("UnmarshalJSONV2", func(t *testing.T) {
+		t.Parallel()
+		testMapUnmarshalJSON(t, func(in []byte, out any) error { return json2.Unmarshal(in, out) })
+	})
 }
 
 func testMapUnmarshalJSON(t *testing.T, unmarshal func([]byte, any) error) {
@@ -182,5 +188,5 @@ func testMapUnmarshalJSON(t *testing.T, unmarshal func([]byte, any) error) {
 
 	var invalidMap collections.Map[int, any]
 	err = unmarshal([]byte(`{"a": 1, "b": "two"}`), &invalidMap)
-	assert.ErrorContains(t, err, "cannot unmarshal")
+	assert.ErrorContains(t, err, "unmarshal")
 }

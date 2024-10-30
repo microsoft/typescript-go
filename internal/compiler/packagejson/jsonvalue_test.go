@@ -10,11 +10,19 @@ import (
 )
 
 func TestJSONValue(t *testing.T) {
-	testJSONValueWithUnmarshal(t, json.Unmarshal)
-	testJSONValueWithUnmarshal(t, func(in []byte, out any) error { return json2.Unmarshal(in, out) })
+	t.Parallel()
+
+	t.Run("UnmarshalJSON", func(t *testing.T) {
+		t.Parallel()
+		testJSONValue(t, json.Unmarshal)
+	})
+	t.Run("UnmarshalJSONV2", func(t *testing.T) {
+		t.Parallel()
+		testJSONValue(t, func(in []byte, out any) error { return json2.Unmarshal(in, out) })
+	})
 }
 
-func testJSONValueWithUnmarshal(t *testing.T, unmarshal func([]byte, any) error) {
+func testJSONValue(t *testing.T, unmarshal func([]byte, any) error) {
 	type packageJson struct {
 		Private packagejson.JSONValue `json:"private"`
 		False   packagejson.JSONValue `json:"false"`

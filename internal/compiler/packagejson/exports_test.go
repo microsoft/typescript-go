@@ -10,11 +10,19 @@ import (
 )
 
 func TestExports(t *testing.T) {
-	testExportsWithUnmarshal(t, json.Unmarshal)
-	testExportsWithUnmarshal(t, func(in []byte, out any) error { return json2.Unmarshal(in, out) })
+	t.Parallel()
+
+	t.Run("UnmarshalJSON", func(t *testing.T) {
+		t.Parallel()
+		testExports(t, json.Unmarshal)
+	})
+	t.Run("UnmarshalJSONV2", func(t *testing.T) {
+		t.Parallel()
+		testExports(t, func(in []byte, out any) error { return json2.Unmarshal(in, out) })
+	})
 }
 
-func testExportsWithUnmarshal(t *testing.T, unmarshal func([]byte, any) error) {
+func testExports(t *testing.T, unmarshal func([]byte, any) error) {
 	type Exports struct {
 		Exports packagejson.Exports `json:"exports"`
 	}
