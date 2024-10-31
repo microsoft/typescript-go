@@ -8,6 +8,7 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/compiler/diagnostics"
 	"github.com/microsoft/typescript-go/internal/compiler/stringutil"
+	"github.com/microsoft/typescript-go/internal/compiler/textpos"
 )
 
 type TokenFlags int32
@@ -1605,7 +1606,7 @@ func getRangeOfTokenAtPosition(sourceFile *SourceFile, pos int) TextRange {
 	return NewTextRange(s.tokenStart, s.pos)
 }
 
-func computeLineOfPosition(lineStarts []stringutil.TextPos, pos stringutil.TextPos) int {
+func computeLineOfPosition(lineStarts []textpos.TextPos, pos textpos.TextPos) int {
 	low := 0
 	high := len(lineStarts) - 1
 	for low <= high {
@@ -1622,7 +1623,7 @@ func computeLineOfPosition(lineStarts []stringutil.TextPos, pos stringutil.TextP
 	return low - 1
 }
 
-func getLineStarts(sourceFile *SourceFile) []stringutil.TextPos {
+func getLineStarts(sourceFile *SourceFile) []textpos.TextPos {
 	if sourceFile.lineMap == nil {
 		sourceFile.lineMap = stringutil.ComputeLineStarts(sourceFile.text)
 	}
@@ -1630,7 +1631,7 @@ func getLineStarts(sourceFile *SourceFile) []stringutil.TextPos {
 }
 
 func GetLineAndCharacterOfPosition(sourceFile *SourceFile, pos int) (line int, character int) {
-	line = computeLineOfPosition(getLineStarts(sourceFile), stringutil.TextPos(pos))
+	line = computeLineOfPosition(getLineStarts(sourceFile), textpos.TextPos(pos))
 	character = utf8.RuneCountInString(sourceFile.text[sourceFile.lineMap[line]:pos])
 	return
 }

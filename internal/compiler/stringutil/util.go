@@ -1,7 +1,11 @@
 // Package stringutil Exports common rune utilities for parsing and emitting javascript
 package stringutil
 
-import "unicode/utf8"
+import (
+	"unicode/utf8"
+
+	"github.com/microsoft/typescript-go/internal/compiler/textpos"
+)
 
 func IsWhiteSpaceLike(ch rune) bool {
 	return IsWhiteSpaceSingleLine(ch) || IsLineBreak(ch)
@@ -78,8 +82,8 @@ func IsASCIILetter(ch rune) bool {
 	return ch >= 'A' && ch <= 'Z' || ch >= 'a' && ch <= 'z'
 }
 
-func ComputeLineStarts(text string) []TextPos {
-	var result []TextPos
+func ComputeLineStarts(text string) []textpos.TextPos {
+	var result []textpos.TextPos
 	pos := 0
 	lineStart := 0
 	for pos < len(text) {
@@ -93,22 +97,18 @@ func ComputeLineStarts(text string) []TextPos {
 				}
 				fallthrough
 			case '\n':
-				result = append(result, TextPos(lineStart))
+				result = append(result, textpos.TextPos(lineStart))
 				lineStart = pos
 			}
 		} else {
 			ch, size := utf8.DecodeRuneInString(text[pos:])
 			pos += size
 			if IsLineBreak(ch) {
-				result = append(result, TextPos(lineStart))
+				result = append(result, textpos.TextPos(lineStart))
 				lineStart = pos
 			}
 		}
 	}
-	result = append(result, TextPos(lineStart))
+	result = append(result, textpos.TextPos(lineStart))
 	return result
 }
-
-// TextPos
-
-type TextPos int32

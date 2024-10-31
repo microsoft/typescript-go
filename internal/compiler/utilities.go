@@ -13,18 +13,18 @@ import (
 	"sync/atomic"
 
 	"github.com/microsoft/typescript-go/internal/compiler/diagnostics"
-	"github.com/microsoft/typescript-go/internal/compiler/stringutil"
+	"github.com/microsoft/typescript-go/internal/compiler/textpos"
 )
 
 // TextRange
 
 type TextRange struct {
-	pos stringutil.TextPos
-	end stringutil.TextPos
+	pos textpos.TextPos
+	end textpos.TextPos
 }
 
 func NewTextRange(pos int, end int) TextRange {
-	return TextRange{pos: stringutil.TextPos(pos), end: stringutil.TextPos(end)}
+	return TextRange{pos: textpos.TextPos(pos), end: textpos.TextPos(end)}
 }
 
 func (t TextRange) Pos() int {
