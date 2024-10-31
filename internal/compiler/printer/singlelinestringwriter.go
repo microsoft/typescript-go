@@ -1,6 +1,7 @@
 package printer
 
 import (
+	"strings"
 	"unicode/utf8"
 
 	"github.com/microsoft/typescript-go/internal/compiler"
@@ -10,11 +11,13 @@ import (
 var SingleLineStringWriter EmitTextWriter = &singleLineStringWriter{}
 
 type singleLineStringWriter struct {
-	str string
+	builder     strings.Builder
+	lastWritten string
 }
 
 func (w *singleLineStringWriter) clear() {
-	w.str = ""
+	w.lastWritten = ""
+	w.builder.Reset()
 }
 
 func (w singleLineStringWriter) decreaseIndent() {
@@ -34,11 +37,11 @@ func (w singleLineStringWriter) getLine() int {
 }
 
 func (w singleLineStringWriter) getText() string {
-	return w.str
+	return w.builder.String()
 }
 
 func (w singleLineStringWriter) getTextPos() int {
-	return len(w.str)
+	return w.builder.Len()
 }
 
 func (w singleLineStringWriter) hasTrailingComment() bool {
@@ -46,10 +49,10 @@ func (w singleLineStringWriter) hasTrailingComment() bool {
 }
 
 func (w singleLineStringWriter) hasTrailingWhitespace() bool {
-	if len(w.str) == 0 {
+	if w.builder.Len() == 0 {
 		return false
 	}
-	ch, _ := utf8.DecodeLastRuneInString(w.str)
+	ch, _ := utf8.DecodeLastRuneInString(w.lastWritten)
 	if ch == utf8.RuneError {
 		return false
 	}
@@ -65,57 +68,71 @@ func (w singleLineStringWriter) isAtStartOfLine() bool {
 }
 
 func (w *singleLineStringWriter) rawWrite(s string) {
-	w.str += s
+	w.lastWritten = s
+	w.builder.WriteString(s)
 }
 
 func (w *singleLineStringWriter) write(s string) {
-	w.str += s
+	w.lastWritten = s
+	w.builder.WriteString(s)
 }
 
 func (w *singleLineStringWriter) writeComment(text string) {
-	w.str += text
+	w.lastWritten = text
+	w.builder.WriteString(text)
 }
 
 func (w *singleLineStringWriter) writeKeyword(text string) {
-	w.str += text
+	w.lastWritten = text
+	w.builder.WriteString(text)
 }
 
 func (w *singleLineStringWriter) writeLine(force ...bool) {
-	w.str += " "
+	w.lastWritten = " "
+	w.builder.WriteString(" ")
 }
 
 func (w *singleLineStringWriter) writeLiteral(s string) {
-	w.str += s
+	w.lastWritten = s
+	w.builder.WriteString(s)
 }
 
 func (w *singleLineStringWriter) writeOperator(text string) {
-	w.str += text
+	w.lastWritten = text
+	w.builder.WriteString(text)
 }
 
 func (w *singleLineStringWriter) writeParameter(text string) {
-	w.str += text
+	w.lastWritten = text
+	w.builder.WriteString(text)
 }
 
 func (w *singleLineStringWriter) writeProperty(text string) {
-	w.str += text
+	w.lastWritten = text
+	w.builder.WriteString(text)
 }
 
 func (w *singleLineStringWriter) writePunctuation(text string) {
-	w.str += text
+	w.lastWritten = text
+	w.builder.WriteString(text)
 }
 
 func (w *singleLineStringWriter) writeSpace(text string) {
-	w.str += text
+	w.lastWritten = text
+	w.builder.WriteString(text)
 }
 
 func (w *singleLineStringWriter) writeStringLiteral(text string) {
-	w.str += text
+	w.lastWritten = text
+	w.builder.WriteString(text)
 }
 
 func (w *singleLineStringWriter) writeSymbol(text string, symbol compiler.Symbol) {
-	w.str += text
+	w.lastWritten = text
+	w.builder.WriteString(text)
 }
 
 func (w *singleLineStringWriter) writeTrailingSemicolon(text string) {
-	w.str += text
+	w.lastWritten = text
+	w.builder.WriteString(text)
 }
