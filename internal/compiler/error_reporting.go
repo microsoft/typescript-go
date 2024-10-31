@@ -255,8 +255,9 @@ func WriteErrorSummaryText(output *strings.Builder, allDiagnostics []*Diagnostic
 	output.WriteString(message)
 	output.WriteString(formatOpts.NewLine)
 	output.WriteString(formatOpts.NewLine)
-	if numErroringFiles > 0 {
+	if numErroringFiles > 1 {
 		writeTabularErrorsDisplay(output, errorSummary, formatOpts)
+		output.WriteString(formatOpts.NewLine)
 	}
 }
 
