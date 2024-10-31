@@ -1,4 +1,21 @@
 // Package printer exports a Printer for pretty-printing TS ASTs and writer interfaces and implementations for using them
+// Intended ultimate usage:
+//
+//		func nodeToInlineStr(node *Node) {
+//	   // Reuse singleton single-line writer (TODO: thread safety?)
+//		  printer := printer.New({ writer: printer.SingleLineTextWriter, stripComments: true })
+//		  printer.printNode(node)
+//		  return printer.getText()
+//		}
+//
+// // or
+//
+//		func nodeToStr(node *Node, options CompilerOptions) {
+//	   // create new writer shared for the entire printing operation
+//		  printer := printer.New({ writer: printer.NewTextWriter(options.newLine) })
+//		  printer.printNode(node)
+//		  return printer.getText()
+//		}
 package printer
 
 import "github.com/microsoft/typescript-go/internal/compiler"
