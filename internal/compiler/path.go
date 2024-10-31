@@ -224,12 +224,7 @@ func getPathFromPathComponents(pathComponents []string) string {
 	if len(pathComponents) == 0 {
 		return ""
 	}
-
-	// !!!
-	// TODO: This code and the original might have a
-	// fast path to just join the components if the
-	// first component doesn't have a directory separator.
-
+	
 	root := pathComponents[0]
 	if root != "" {
 		root = ensureTrailingDirectorySeparator(root)
