@@ -21,7 +21,6 @@ type textWriter struct {
 	hasTrailingCommentState bool
 }
 
-// clear implements EmitTextWriter.
 func (w *textWriter) clear() {
 	// Is it worth reusing the old string builder?
 	w.builder.Reset()
@@ -33,12 +32,10 @@ func (w *textWriter) clear() {
 	w.hasTrailingCommentState = false
 }
 
-// decreaseIndent implements EmitTextWriter.
 func (w *textWriter) decreaseIndent() {
 	w.indent--
 }
 
-// getColumn implements EmitTextWriter.
 func (w *textWriter) getColumn() int {
 	if w.lineStart {
 		return w.indent * 4
@@ -46,32 +43,26 @@ func (w *textWriter) getColumn() int {
 	return w.builder.Len() - w.linePos
 }
 
-// getIndent implements EmitTextWriter.
 func (w *textWriter) getIndent() int {
 	return w.indent
 }
 
-// getLine implements EmitTextWriter.
 func (w *textWriter) getLine() int {
 	return w.lineCount
 }
 
-// getText implements EmitTextWriter.
 func (w *textWriter) getText() string {
 	return w.builder.String()
 }
 
-// getTextPos implements EmitTextWriter.
 func (w *textWriter) getTextPos() int {
 	return w.builder.Len()
 }
 
-// hasTrailingComment implements EmitTextWriter.
 func (w textWriter) hasTrailingComment() bool {
 	return w.hasTrailingCommentState
 }
 
-// hasTrailingWhitespace implements EmitTextWriter.
 func (w *textWriter) hasTrailingWhitespace() bool {
 	if w.builder.Len() == 0 {
 		return false
@@ -83,17 +74,14 @@ func (w *textWriter) hasTrailingWhitespace() bool {
 	return stringutil.IsWhiteSpaceLike(ch)
 }
 
-// increaseIndent implements EmitTextWriter.
 func (w *textWriter) increaseIndent() {
 	w.indent++
 }
 
-// isAtStartOfLine implements EmitTextWriter.
 func (w *textWriter) isAtStartOfLine() bool {
 	return w.lineStart
 }
 
-// rawWrite implements EmitTextWriter.
 func (w *textWriter) rawWrite(s string) {
 	if s != "" {
 		w.builder.WriteString(s)
@@ -139,7 +127,6 @@ func (w *textWriter) writeText(s string) {
 	}
 }
 
-// write implements EmitTextWriter.
 func (w *textWriter) write(s string) {
 	if s != "" {
 		w.hasTrailingCommentState = false
@@ -147,7 +134,6 @@ func (w *textWriter) write(s string) {
 	w.writeText(s)
 }
 
-// writeComment implements EmitTextWriter.
 func (w *textWriter) writeComment(text string) {
 	if text != "" {
 		w.hasTrailingCommentState = true
@@ -155,12 +141,10 @@ func (w *textWriter) writeComment(text string) {
 	w.writeText(text)
 }
 
-// writeKeyword implements EmitTextWriter.
 func (w *textWriter) writeKeyword(text string) {
 	w.write(text)
 }
 
-// writeLine implements EmitTextWriter.
 func (w *textWriter) writeLine(force ...bool) {
 	if !w.lineStart || force[0] == true {
 		w.builder.WriteString(w.newLine)
@@ -172,47 +156,38 @@ func (w *textWriter) writeLine(force ...bool) {
 	}
 }
 
-// writeLiteral implements EmitTextWriter.
 func (w *textWriter) writeLiteral(s string) {
 	w.write(s)
 }
 
-// writeOperator implements EmitTextWriter.
 func (w *textWriter) writeOperator(text string) {
 	w.write(text)
 }
 
-// writeParameter implements EmitTextWriter.
 func (w *textWriter) writeParameter(text string) {
 	w.write(text)
 }
 
-// writeProperty implements EmitTextWriter.
 func (w *textWriter) writeProperty(text string) {
 	w.write(text)
 }
 
-// writePunctuation implements EmitTextWriter.
 func (w *textWriter) writePunctuation(text string) {
 	w.write(text)
 }
 
-// writeSpace implements EmitTextWriter.
 func (w *textWriter) writeSpace(text string) {
 	w.write(text)
 }
 
-// writeStringLiteral implements EmitTextWriter.
 func (w *textWriter) writeStringLiteral(text string) {
 	w.write(text)
 }
 
-// writeSymbol implements EmitTextWriter.
 func (w *textWriter) writeSymbol(text string, symbol compiler.Symbol) {
 	w.write(text)
 }
 
-// writeTrailingSemicolon implements EmitTextWriter.
 func (w *textWriter) writeTrailingSemicolon(text string) {
 	w.write(text)
 }
