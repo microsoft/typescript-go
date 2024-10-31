@@ -186,5 +186,7 @@ func (w *textWriter) writeTrailingSemicolon(text string) {
 }
 
 func NewTextWriter(newLine string) EmitTextWriter {
-	return &textWriter{newLine: newLine, lineStart: true}
+	var w textWriter
+	w.clear()
+	return &w
 }
