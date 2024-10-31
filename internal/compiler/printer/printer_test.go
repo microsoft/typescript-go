@@ -8,7 +8,7 @@ import (
 )
 
 func TestSanityCheckParsePrintRoundtrip(t *testing.T) {
-	samples := [](string){
+	samples := []string{
 		// "6",
 		// 		"interface A {}",
 		// 		"class A {}",
