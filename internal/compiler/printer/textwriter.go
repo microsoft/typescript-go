@@ -22,14 +22,7 @@ type textWriter struct {
 }
 
 func (w *textWriter) clear() {
-	// Is it worth reusing the old string builder?
-	w.builder.Reset()
-	w.lastWritten = ""
-	w.indent = 0
-	w.lineStart = true
-	w.lineCount = 0
-	w.linePos = 0
-	w.hasTrailingCommentState = false
+	*w = textWriter{newLine: w.newLine, lineStart: true}
 }
 
 func (w *textWriter) decreaseIndent() {
@@ -193,5 +186,5 @@ func (w *textWriter) writeTrailingSemicolon(text string) {
 }
 
 func NewTextWriter(newLine string) EmitTextWriter {
-	return &textWriter{newLine: newLine}
+	return &textWriter{newLine: newLine, lineStart: true}
 }
