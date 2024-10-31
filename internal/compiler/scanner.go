@@ -7,7 +7,7 @@ import (
 	"unicode/utf8"
 
 	"github.com/microsoft/typescript-go/internal/compiler/diagnostics"
-	"github.com/microsoft/typescript-go/internal/compiler/string_util"
+	"github.com/microsoft/typescript-go/internal/compiler/stringutil"
 )
 
 type TokenFlags int32
@@ -458,7 +458,7 @@ func (s *Scanner) Scan() SyntaxKind {
 				s.token = SyntaxKindMinusToken
 			}
 		case '.':
-			if string_util.IsDigit(s.charAt(1)) {
+			if stringutil.IsDigit(s.charAt(1)) {
 				s.token = s.scanNumber()
 			} else if s.charAt(1) == '.' && s.charAt(2) == '.' {
 				s.pos += 3
@@ -479,7 +479,7 @@ func (s *Scanner) Scan() SyntaxKind {
 						s.pos++
 					} else {
 						ch, size := s.charAndSize()
-						if string_util.IsLineBreak(ch) {
+						if stringutil.IsLineBreak(ch) {
 							break
 						}
 						s.pos += size
@@ -508,7 +508,7 @@ func (s *Scanner) Scan() SyntaxKind {
 						s.pos++
 					} else {
 						ch, size := s.charAndSize()
-						if string_util.IsLineBreak(ch) {
+						if stringutil.IsLineBreak(ch) {
 							break
 						}
 						s.pos += size
@@ -615,7 +615,7 @@ func (s *Scanner) Scan() SyntaxKind {
 			s.pos++
 			s.token = SyntaxKindGreaterThanToken
 		case '?':
-			if s.charAt(1) == '.' && !string_util.IsDigit(s.charAt(2)) {
+			if s.charAt(1) == '.' && !stringutil.IsDigit(s.charAt(2)) {
 				s.pos += 2
 				s.token = SyntaxKindQuestionDotToken
 			} else if s.charAt(1) == '?' {
@@ -727,11 +727,11 @@ func (s *Scanner) Scan() SyntaxKind {
 				s.token = SyntaxKindNonTextFileMarkerTrivia
 				break
 			}
-			if string_util.IsWhiteSpaceSingleLine(ch) {
+			if stringutil.IsWhiteSpaceSingleLine(ch) {
 				s.pos += size
 				continue
 			}
-			if string_util.IsLineBreak(ch) {
+			if stringutil.IsLineBreak(ch) {
 				s.tokenFlags |= TokenFlagsPrecedingLineBreak
 				s.pos += size
 				continue
@@ -795,7 +795,7 @@ func (s *Scanner) ReScanSlashToken() SyntaxKind {
 			// If we reach the end of a file, or hit a newline, then this is an unterminated
 			// regex.  Report error and return what we have so far.
 			switch {
-			case size == 0 || string_util.IsLineBreak(ch):
+			case size == 0 || stringutil.IsLineBreak(ch):
 				s.tokenFlags |= TokenFlagsUnterminated
 				s.error(diagnostics.Unterminated_regular_expression_literal)
 				break loop
@@ -888,13 +888,13 @@ func (s *Scanner) scanJsxTokenEx(allowMultilineJsxText bool) SyntaxKind {
 			//      </div> becomes <div></div>
 			//
 			//      <div>----</div> becomes <div>----</div>
-			if string_util.IsLineBreak(ch) && firstNonWhitespace == 0 {
+			if stringutil.IsLineBreak(ch) && firstNonWhitespace == 0 {
 				firstNonWhitespace = -1
-			} else if !allowMultilineJsxText && string_util.IsLineBreak(ch) && firstNonWhitespace > 0 {
+			} else if !allowMultilineJsxText && stringutil.IsLineBreak(ch) && firstNonWhitespace > 0 {
 				// Stop JsxText on each line during formatting. This allows the formatter to
 				// indent each line correctly.
 				break
-			} else if !string_util.IsWhiteSpaceLike(ch) {
+			} else if !stringutil.IsWhiteSpaceLike(ch) {
 				firstNonWhitespace = s.pos
 			}
 			s.pos += size
@@ -960,7 +960,7 @@ func (s *Scanner) scanIdentifier(prefixLength int) bool {
 	s.pos += prefixLength
 	ch := s.char()
 	// Fast path for simple ASCII identifiers
-	if string_util.IsASCIILetter(ch) || ch == '_' || ch == '$' {
+	if stringutil.IsASCIILetter(ch) || ch == '_' || ch == '$' {
 		for {
 			s.pos++
 			ch = s.char()
@@ -1113,21 +1113,21 @@ func (s *Scanner) scanEscapeSequence(flags EscapeSequenceScanningFlags) string {
 	case '0':
 		// Although '0' preceding any digit is treated as LegacyOctalEscapeSequence,
 		// '\08' should separately be interpreted as '\0' + '8'.
-		if !string_util.IsDigit(s.char()) {
+		if !stringutil.IsDigit(s.char()) {
 			return "\x00"
 		}
 		// '\01', '\011'
 		fallthrough
 	case '1', '2', '3':
 		// '\1', '\17', '\177'
-		if string_util.IsOctalDigit(s.char()) {
+		if stringutil.IsOctalDigit(s.char()) {
 			s.pos++
 		}
 		// '\17', '\177'
 		fallthrough
 	case '4', '5', '6', '7':
 		// '\4', '\47' but not '\477'
-		if string_util.IsOctalDigit(s.char()) {
+		if stringutil.IsOctalDigit(s.char()) {
 			s.pos++
 		}
 		// '\47'
@@ -1188,7 +1188,7 @@ func (s *Scanner) scanEscapeSequence(flags EscapeSequenceScanningFlags) string {
 	case 'x':
 		// '\xDD'
 		for ; s.pos < start+4; s.pos++ {
-			if !string_util.IsHexDigit(s.char()) {
+			if !stringutil.IsHexDigit(s.char()) {
 				s.tokenFlags |= TokenFlagsContainsInvalidEscape
 				if flags&EscapeSequenceScanningFlagsReportInvalidEscapeErrors != 0 {
 					s.error(diagnostics.Hexadecimal_digit_expected)
@@ -1386,7 +1386,7 @@ func (s *Scanner) scanNumberFragment() string {
 			start = s.pos
 			continue
 		}
-		if string_util.IsDigit(ch) {
+		if stringutil.IsDigit(ch) {
 			allowSeparator = true
 			isPreviousTokenSeparator = false
 			s.pos++
@@ -1404,8 +1404,8 @@ func (s *Scanner) scanNumberFragment() string {
 func (s *Scanner) scanDigits() (string, bool) {
 	start := s.pos
 	isOctal := true
-	for string_util.IsDigit(s.char()) {
-		if !string_util.IsOctalDigit(s.char()) {
+	for stringutil.IsDigit(s.char()) {
+		if !stringutil.IsOctalDigit(s.char()) {
 			isOctal = false
 		}
 		s.pos++
@@ -1419,7 +1419,7 @@ func (s *Scanner) scanHexDigits(minCount int, scanAsManyAsPossible bool, canHave
 	isPreviousTokenSeparator := false
 	for sb.Len() < minCount || scanAsManyAsPossible {
 		ch := s.char()
-		if string_util.IsHexDigit(ch) {
+		if stringutil.IsHexDigit(ch) {
 			if ch >= 'A' && ch <= 'F' {
 				ch += 'a' - 'A' // standardize hex literals to lowercase
 			}
@@ -1456,7 +1456,7 @@ func (s *Scanner) scanBinaryOrOctalDigits(base int32) string {
 	isPreviousTokenSeparator := false
 	for {
 		ch := s.char()
-		if string_util.IsDigit(ch) && ch-'0' < base {
+		if stringutil.IsDigit(ch) && ch-'0' < base {
 			sb.WriteByte(byte(ch))
 			allowSeparator = true
 			isPreviousTokenSeparator = false
@@ -1519,11 +1519,11 @@ func getIdentifierToken(str string) SyntaxKind {
 
 // Section 6.1.4
 func isWordCharacter(ch rune) bool {
-	return string_util.IsASCIILetter(ch) || string_util.IsDigit(ch) || ch == '_'
+	return stringutil.IsASCIILetter(ch) || stringutil.IsDigit(ch) || ch == '_'
 }
 
 func isIdentifierStart(ch rune, languageVersion ScriptTarget) bool {
-	return string_util.IsASCIILetter(ch) || ch == '_' || ch == '$' || ch > 0x7F && isUnicodeIdentifierStart(ch, languageVersion)
+	return stringutil.IsASCIILetter(ch) || ch == '_' || ch == '$' || ch > 0x7F && isUnicodeIdentifierStart(ch, languageVersion)
 }
 
 func isIdentifierPart(ch rune, languageVersion ScriptTarget, identifierVariant LanguageVariant) bool {
@@ -1605,7 +1605,7 @@ func getRangeOfTokenAtPosition(sourceFile *SourceFile, pos int) TextRange {
 	return NewTextRange(s.tokenStart, s.pos)
 }
 
-func computeLineOfPosition(lineStarts []string_util.TextPos, pos string_util.TextPos) int {
+func computeLineOfPosition(lineStarts []stringutil.TextPos, pos stringutil.TextPos) int {
 	low := 0
 	high := len(lineStarts) - 1
 	for low <= high {
@@ -1622,15 +1622,15 @@ func computeLineOfPosition(lineStarts []string_util.TextPos, pos string_util.Tex
 	return low - 1
 }
 
-func getLineStarts(sourceFile *SourceFile) []string_util.TextPos {
+func getLineStarts(sourceFile *SourceFile) []stringutil.TextPos {
 	if sourceFile.lineMap == nil {
-		sourceFile.lineMap = string_util.ComputeLineStarts(sourceFile.text)
+		sourceFile.lineMap = stringutil.ComputeLineStarts(sourceFile.text)
 	}
 	return sourceFile.lineMap
 }
 
 func GetLineAndCharacterOfPosition(sourceFile *SourceFile, pos int) (line int, character int) {
-	line = computeLineOfPosition(getLineStarts(sourceFile), string_util.TextPos(pos))
+	line = computeLineOfPosition(getLineStarts(sourceFile), stringutil.TextPos(pos))
 	character = utf8.RuneCountInString(sourceFile.text[sourceFile.lineMap[line]:pos])
 	return
 }
@@ -1639,7 +1639,7 @@ func getEndLinePosition(sourceFile *SourceFile, line int) int {
 	pos := int(getLineStarts(sourceFile)[line])
 	for {
 		ch, size := utf8.DecodeRuneInString(sourceFile.text[pos:])
-		if size == 0 || string_util.IsLineBreak(ch) {
+		if size == 0 || stringutil.IsLineBreak(ch) {
 			return pos
 		}
 		pos += size

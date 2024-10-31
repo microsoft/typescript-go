@@ -4,7 +4,7 @@ import (
 	"unicode/utf8"
 
 	"github.com/microsoft/typescript-go/internal/compiler"
-	"github.com/microsoft/typescript-go/internal/compiler/string_util"
+	"github.com/microsoft/typescript-go/internal/compiler/stringutil"
 )
 
 var SingleLineStringWriter EmitTextWriter = &singleLineStringWriter{}
@@ -62,7 +62,7 @@ func (w singleLineStringWriter) hasTrailingWhitespace() bool {
 	if ch == utf8.RuneError {
 		return false
 	}
-	return string_util.IsWhiteSpaceLike(ch)
+	return stringutil.IsWhiteSpaceLike(ch)
 }
 
 // increaseIndent implements EmitTextWriter.

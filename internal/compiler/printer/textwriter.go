@@ -5,7 +5,7 @@ import (
 	"unicode/utf8"
 
 	"github.com/microsoft/typescript-go/internal/compiler"
-	"github.com/microsoft/typescript-go/internal/compiler/string_util"
+	"github.com/microsoft/typescript-go/internal/compiler/stringutil"
 )
 
 var _ EmitTextWriter = &textWriter{}
@@ -80,7 +80,7 @@ func (w *textWriter) hasTrailingWhitespace() bool {
 	if ch == utf8.RuneError {
 		return false
 	}
-	return string_util.IsWhiteSpaceLike(ch)
+	return stringutil.IsWhiteSpaceLike(ch)
 }
 
 // increaseIndent implements EmitTextWriter.
@@ -104,7 +104,7 @@ func (w *textWriter) rawWrite(s string) {
 }
 
 func (w *textWriter) updateLineCountAndPosFor(s string) {
-	lineStartsOfS := string_util.ComputeLineStarts(s)
+	lineStartsOfS := stringutil.ComputeLineStarts(s)
 	if len(lineStartsOfS) > 1 {
 		w.lineCount += len(lineStartsOfS) - 1
 		curLen := w.builder.Len()

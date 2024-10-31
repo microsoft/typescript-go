@@ -1,4 +1,5 @@
-package string_util
+// Package stringutil Exports common rune utilities for parsing and emitting javascript
+package stringutil
 
 import "unicode/utf8"
 
