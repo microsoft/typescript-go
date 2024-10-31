@@ -426,12 +426,12 @@ func (s *Scanner) Scan() SyntaxKind {
 				s.token = SyntaxKindAsteriskEqualsToken
 			} else if s.charAt(1) == '*' {
 				if s.charAt(2) == '=' {
-                    s.pos += 3
-                    s.token = SyntaxKindAsteriskAsteriskEqualsToken
-                } else {
-                    s.pos += 2
-                    s.token = SyntaxKindAsteriskAsteriskToken
-                }
+					s.pos += 3
+					s.token = SyntaxKindAsteriskAsteriskEqualsToken
+				} else {
+					s.pos += 2
+					s.token = SyntaxKindAsteriskAsteriskToken
+				}
 			} else {
 				s.pos++
 				s.token = SyntaxKindAsteriskToken
