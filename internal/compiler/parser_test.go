@@ -133,15 +133,23 @@ func getIndentation(level int) string {
 func printAST(sourceFile *SourceFile) string {
 	var sb strings.Builder
 	var visit func(node *Node, indentation int) bool
+	var parent *Node
 	visit = func(node *Node, indentation int) bool {
 		offset := 1
 		skind, _ := strings.CutPrefix(node.kind.String(), "SyntaxKind")
+		if node.kind == SyntaxKindImportSpecifier {
+			parent = node
+		}
 		switch node.kind {
 		case SyntaxKindModifierList, SyntaxKindTypeParameterList, SyntaxKindTypeArgumentList, SyntaxKindSyntaxList:
 			offset = 0
 		case SyntaxKindIdentifier:
 			indent := getIndentation(indentation)
-			sb.WriteString(fmt.Sprintf("%s%s: '%s'\n", indent, skind, sourceFile.text[node.loc.pos:node.loc.end]))
+			if parent != nil && parent.AsImportSpecifier().name == node && node.AsIdentifier().text == "" && sourceFile.text[node.loc.pos:node.loc.end] != "" {
+				sb.WriteString(fmt.Sprintf("%s%s: '%s'\n", indent, skind, ""))
+			} else {
+				sb.WriteString(fmt.Sprintf("%s%s: '%s'\n", indent, skind, sourceFile.text[node.loc.pos:node.loc.end]))
+			}
 		default:
 			if isOmittedExpression(node) {
 				skind = "OmittedExpression"
