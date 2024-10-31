@@ -2,7 +2,7 @@ package printer
 
 import "github.com/microsoft/typescript-go/internal/compiler"
 
-// These methods are all local to this module, so outside this module an `EmitTextWriter` is basically opaque
+// Externally opaque interface for printing text
 type EmitTextWriter interface {
 	write(s string)
 	writeTrailingSemicolon(text string)
