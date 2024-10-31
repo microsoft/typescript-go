@@ -31,9 +31,12 @@ func BenchmarkParse(b *testing.B) {
 	}
 }
 
-// TODO: Need to be able to compare against local/reference *locally*
-// and against local/gold as part of a test.
-// this is two different test cases really, but running them both as part of a full test run is a bad idea
+func TestParseSingleFile(t *testing.T) {
+	fileName := "../../testdata/cases/parser/nonAsciiPropertyNames.js"
+	sourceText, err := os.ReadFile(fileName)
+	assert.NilError(t, err)
+	ParseSourceFile(fileName, string(sourceText), ScriptTargetESNext)
+}
 
 func TestParseAndPrintNodes(t *testing.T) {
 	t.Parallel()
@@ -70,15 +73,12 @@ func parseTestWorker(t *testing.T, options *baseline.Options) func(fileName stri
 		if d.IsDir() {
 			return nil
 		}
-		if isIgnoredTestFile(fileName) {
-			return nil
-		}
 		testName, _ := filepath.Rel(repo.TypeScriptSubmodulePath, fileName)
 		t.Run(testName, func(t *testing.T) {
 			t.Parallel()
-			// if isIgnoredTestFile(fileName) {
-			// 	t.Skip()
-			// }
+			if isIgnoredTestFile(fileName) {
+				t.Skip()
+			}
 			sourceText, err := os.ReadFile(fileName)
 			assert.NilError(t, err)
 			sourceFile := ParseSourceFile(fileName, string(sourceText), ScriptTargetESNext)
@@ -101,6 +101,7 @@ func isIgnoredTestFile(name string) bool {
 			strings.Contains(name, "codeMirrorModule") ||
 			// not actually .js
 			strings.Contains(name, "reference/tsc") ||
+			strings.Contains(name, "reference/tsserver") ||
 			strings.Contains(name, "reference/tsbuild"))
 }
 

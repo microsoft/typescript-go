@@ -135,6 +135,7 @@ function processDirectory(inputRoot, targetRoot) {
                     dirent.name.includes("codeMirrorModule") ||
                     // Not actually .js
                     dirent.name.includes("reference/tsc") ||
+                    dirent.name.includes("reference/tsserver") ||
                     dirent.name.includes("reference/tsbuild")
                 ) {
                     continue;
