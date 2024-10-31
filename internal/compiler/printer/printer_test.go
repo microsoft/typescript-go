@@ -1,6 +1,7 @@
 package printer
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/compiler"
@@ -31,8 +32,8 @@ func TestSanityCheckParsePrintRoundtrip(t *testing.T) {
 		// }`,
 	}
 
-	for _, sample := range samples {
-		t.Run(sample, func(t *testing.T) {
+	for i, sample := range samples {
+		t.Run(fmt.Sprintf("printer sanity check %d", i), func(t *testing.T) {
 			t.Parallel()
 			file := compiler.ParseSourceFile("file.ts", sample, compiler.ScriptTargetLatest)
 			emitted := PrintNode(&file.Node)

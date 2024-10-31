@@ -1,6 +1,8 @@
 package compiler
 
-import "github.com/microsoft/typescript-go/internal/compiler/stringutil"
+import (
+	"github.com/microsoft/typescript-go/internal/compiler/textpos"
+)
 
 // Visitor
 
@@ -4166,7 +4168,7 @@ type SourceFile struct {
 	diagnostics                 []*Diagnostic
 	bindDiagnostics             []*Diagnostic
 	bindSuggestionDiagnostics   []*Diagnostic
-	lineMap                     []stringutil.TextPos
+	lineMap                     []textpos.TextPos
 	languageVersion             ScriptTarget
 	languageVariant             LanguageVariant
 	scriptKind                  ScriptKind
