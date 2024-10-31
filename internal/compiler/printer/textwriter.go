@@ -138,14 +138,24 @@ func (w *textWriter) writeKeyword(text string) {
 	w.write(text)
 }
 
-func (w *textWriter) writeLine(force ...bool) {
-	if !w.lineStart || force[0] == true {
-		w.builder.WriteString(w.newLine)
-		w.lastWritten = w.newLine
-		w.lineCount++
-		w.linePos = w.builder.Len()
-		w.lineStart = true
-		w.hasTrailingCommentState = false
+func (w *textWriter) writeLineRaw() {
+	w.builder.WriteString(w.newLine)
+	w.lastWritten = w.newLine
+	w.lineCount++
+	w.linePos = w.builder.Len()
+	w.lineStart = true
+	w.hasTrailingCommentState = false
+}
+
+func (w *textWriter) writeLine() {
+	if !w.lineStart {
+		w.writeLineRaw()
+	}
+}
+
+func (w *textWriter) writeLineForce(force bool) {
+	if !w.lineStart || force {
+		w.writeLineRaw()
 	}
 }
 

@@ -87,7 +87,12 @@ func (w *singleLineStringWriter) writeKeyword(text string) {
 	w.builder.WriteString(text)
 }
 
-func (w *singleLineStringWriter) writeLine(force ...bool) {
+func (w *singleLineStringWriter) writeLine() {
+	w.lastWritten = " "
+	w.builder.WriteString(" ")
+}
+
+func (w *singleLineStringWriter) writeLineForce(force bool) {
 	w.lastWritten = " "
 	w.builder.WriteString(" ")
 }
