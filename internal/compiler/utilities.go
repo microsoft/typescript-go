@@ -144,6 +144,26 @@ func NewDiagnosticForNode(node *Node, message *diagnostics.Message, args ...any)
 	return NewDiagnostic(file, loc, message, args...)
 }
 
+func NewDiagnosticFromMessageChain(file *SourceFile, loc TextRange, messageChain *MessageChain) *Diagnostic {
+	return &Diagnostic{
+		file:     file,
+		loc:      loc,
+		code:     messageChain.code,
+		category: messageChain.category,
+		message:  messageChain.message,
+	}
+}
+
+func NewDiagnosticForNodeFromMessageChain(node *Node, messageChain *MessageChain) *Diagnostic {
+	var file *SourceFile
+	var loc TextRange
+	if node != nil {
+		file = getSourceFileOfNode(node)
+		loc = getErrorRangeForNode(file, node)
+	}
+	return NewDiagnosticFromMessageChain(file, loc, messageChain)
+}
+
 func (d *Diagnostic) File() *SourceFile                         { return d.file }
 func (d *Diagnostic) Loc() TextRange                            { return d.loc }
 func (d *Diagnostic) Code() int32                               { return d.code }
@@ -152,10 +172,20 @@ func (d *Diagnostic) Message() string                           { return d.messa
 func (d *Diagnostic) RelatedInformation() []*Diagnostic         { return d.relatedInformation }
 func (d *Diagnostic) SetCategory(category diagnostics.Category) { d.category = category }
 
+func (d *Diagnostic) setMessageChain(messageChain []*MessageChain) *Diagnostic {
+	d.messageChain = messageChain
+	return d
+}
+
 func (d *Diagnostic) addMessageChain(messageChain *MessageChain) *Diagnostic {
 	if messageChain != nil {
 		d.messageChain = append(d.messageChain, messageChain)
 	}
+	return d
+}
+
+func (d *Diagnostic) setRelatedInfo(relatedInformation []*Diagnostic) *Diagnostic {
+	d.relatedInformation = relatedInformation
 	return d
 }
 
@@ -4017,4 +4047,12 @@ func getClassExtendsHeritageElement(node *Node) *Node {
 		return heritageClause.AsHeritageClause().types[0]
 	}
 	return nil
+}
+
+func concatenateDiagnosticMessageChains(headChain *MessageChain, tailChain *MessageChain) {
+	lastChain := headChain
+	for len(lastChain.messageChain) != 0 {
+		lastChain = lastChain.messageChain[0]
+	}
+	lastChain.messageChain = []*MessageChain{tailChain}
 }

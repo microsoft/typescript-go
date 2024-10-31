@@ -2424,6 +2424,10 @@ func (node *TypeParameterList) ForEachChild(v Visitor) bool {
 	return visitNodes(v, node.parameters)
 }
 
+func isTypeParameterList(node *Node) bool {
+	return node.kind == SyntaxKindTypeParameterList
+}
+
 // ExpressionBase
 
 type ExpressionBase struct {
