@@ -1513,7 +1513,7 @@ func getIdentifierToken(str string) SyntaxKind {
 			return keyword
 		}
 	}
-	return SyntaxKindIdentifier
+	return SyntaxKindIdentifierName
 }
 
 func isWhiteSpaceLike(ch rune) bool {

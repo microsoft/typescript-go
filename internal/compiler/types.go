@@ -88,7 +88,10 @@ const (
 	SyntaxKindQuestionQuestionEqualsToken
 	SyntaxKindCaretEqualsToken
 	// Identifiers and PrivateIdentifier
-	SyntaxKindIdentifier
+	SyntaxKindIdentifierName      // IdentifierStart | IdentifierName IdentifierPart (lexical token, property names) https://tc39.es/ecma262/#prod-IdentifierName
+	SyntaxKindIdentifierReference // Identifier | `yield` | `await` (in expression context) https://tc39.es/ecma262/#prod-IdentifierReference
+	SyntaxKindBindingIdentifier   // Identifier | `yield` | `await` (in declaration context) https://tc39.es/ecma262/#prod-BindingIdentifier
+	SyntaxKindLabelIdentifier     // Identifier | `yield` | `await` (in statement context) https://tc39.es/ecma262/#prod-LabelIdentifier
 	SyntaxKindPrivateIdentifier
 	SyntaxKindJSDocCommentTextToken
 	// Reserved words
@@ -267,6 +270,7 @@ const (
 	SyntaxKindSemicolonClassElement
 	// Element
 	SyntaxKindBlock
+	SyntaxKindFunctionBody
 	SyntaxKindEmptyStatement
 	SyntaxKindVariableStatement
 	SyntaxKindExpressionStatement

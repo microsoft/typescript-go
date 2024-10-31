@@ -767,13 +767,16 @@ func (c *Checker) checkSourceElementWorker(node *Node) {
 		}
 	}
 	switch node.kind {
-	case SyntaxKindIdentifier:
-		if isExpressionNode(node) &&
+	case SyntaxKindIdentifierReference:
+		if !(isExpressionNode(node) &&
 			!(isPropertyAccessExpression(node.parent) && node.parent.AsPropertyAccessExpression().name == node) &&
-			!(isQualifiedName(node.parent) && node.parent.AsQualifiedName().right == node) {
-			_ = c.checkExpression(node)
+			!(isQualifiedName(node.parent) && node.parent.AsQualifiedName().right == node)) {
+			// TODO(rbuckton): Some case of IdentifierReference was incorrect
+			panic("IdentifierReference should be an expression")
 		}
+		c.checkExpression(node)
 	case SyntaxKindStringLiteral, SyntaxKindNumericLiteral, SyntaxKindBigIntLiteral:
+		// TODO(rbuckton): literals used as property names. What harm is there in passing them to checkExpression?
 		if isExpressionNode(node) {
 			c.checkExpression(node)
 		}
@@ -862,8 +865,8 @@ func (c *Checker) instantiateTypeWithSingleGenericCallSignature(node *Node, unin
 
 func (c *Checker) checkExpressionWorker(node *Node, checkMode CheckMode) *Type {
 	switch node.kind {
-	case SyntaxKindIdentifier:
-		return c.checkIdentifier(node)
+	case SyntaxKindIdentifierReference:
+		return c.checkIdentifierReference(node)
 	case SyntaxKindStringLiteral:
 		// !!! Handle blockedStringType
 		return c.getFreshTypeOfLiteralType(c.getStringLiteralType(node.AsStringLiteral().text))
@@ -889,7 +892,7 @@ func (c *Checker) checkExpressionWorker(node *Node, checkMode CheckMode) *Type {
 	return c.anyType // !!!
 }
 
-func (c *Checker) checkIdentifier(node *Node) *Type {
+func (c *Checker) checkIdentifierReference(node *Node) *Type {
 	if isThisInTypeQuery(node) {
 		return c.checkThisExpression(node)
 	}
@@ -987,12 +990,12 @@ func (c *Checker) isInPropertyInitializerOrClassStaticBlock(node *Node) bool {
 			SyntaxKindJsxSpreadAttribute, SyntaxKindJsxOpeningElement, SyntaxKindExpressionWithTypeArguments, SyntaxKindHeritageClause:
 			return FindAncestorFalse
 		case SyntaxKindArrowFunction, SyntaxKindExpressionStatement:
-			if isBlock(node.parent) && isClassStaticBlockDeclaration(node.parent.parent) {
+			if isFunctionBody(node.parent) && isClassStaticBlockDeclaration(node.parent.parent) {
 				return FindAncestorTrue
 			}
 			return FindAncestorQuit
 		default:
-			if isExpressionNode(node) {
+			if isExpressionNode(node) { // TODO(rbuckton): can we just use isExpression?
 				return FindAncestorFalse
 			}
 			return FindAncestorQuit
@@ -1495,7 +1498,7 @@ func (c *Checker) getTargetOfImportEqualsDeclaration(node *Node, dontResolveAlia
 	if commonJSPropertyAccess != nil {
 		access := commonJSPropertyAccess.AsPropertyAccessExpression()
 		name := getLeftmostAccessExpression(access.expression).AsCallExpression().arguments[0]
-		if isIdentifier(access.name) {
+		if isIdentifierName(access.name) {
 			return c.resolveSymbol(c.getPropertyOfType(c.resolveExternalModuleTypeByLiteral(name), access.name.Text()))
 		}
 		return nil
@@ -1544,11 +1547,11 @@ func (c *Checker) getSymbolOfPartOfRightHandSideOfImportEquals(entityName *Node,
 	//     import a = |b|; // Namespace
 	//     import a = |b.c|; // Value, type, namespace
 	//     import a = |b.c|.d; // Namespace
-	if entityName.kind == SyntaxKindIdentifier && isRightSideOfQualifiedNameOrPropertyAccess(entityName) {
+	if entityName.kind == SyntaxKindIdentifierReference && isRightSideOfQualifiedNameOrPropertyAccess(entityName) {
 		entityName = entityName.parent // QualifiedName
 	}
 	// Check for case 1 and 3 in the above example
-	if entityName.kind == SyntaxKindIdentifier || entityName.parent.kind == SyntaxKindQualifiedName {
+	if entityName.kind == SyntaxKindIdentifierReference || entityName.parent.kind == SyntaxKindQualifiedName {
 		return c.resolveEntityName(entityName, SymbolFlagsNamespace, false /*ignoreErrors*/, dontResolveAlias, nil /*location*/)
 	}
 	// Case 2 in above example
@@ -1697,7 +1700,7 @@ func (c *Checker) getExternalModuleMember(node *Node, specifier *Node, dontResol
 	if name == nil {
 		name = getNameFromSpecifier(specifier)
 	}
-	if !isIdentifier(name) && !isStringLiteral(name) {
+	if !isIdentifierName(name) && !isStringLiteral(name) {
 		return nil
 	}
 	nameText := name.Text()
@@ -1881,11 +1884,11 @@ func (c *Checker) getEmitSyntaxForModuleSpecifierExpression(usage *Node) Resolut
 	return ModuleKindNone
 }
 
-func (c *Checker) errorNoModuleMemberSymbol(moduleSymbol *Symbol, targetSymbol *Symbol, node *Node, name *Node) {
+func (c *Checker) errorNoModuleMemberSymbol(moduleSymbol *Symbol, targetSymbol *Symbol, node *Node, name *IdentifierNameNode) {
 	moduleName := c.getFullyQualifiedName(moduleSymbol, node)
 	declarationName := declarationNameToString(name)
 	var suggestion *Symbol
-	if isIdentifier(name) {
+	if isIdentifierName(name) {
 		suggestion = c.getSuggestedSymbolForNonexistentModule(name, targetSymbol)
 	}
 	if suggestion != nil {
@@ -2352,7 +2355,7 @@ func (c *Checker) resolveEntityName(name *Node, meaning SymbolFlags, ignoreError
 	}
 	var symbol *Symbol
 	switch name.kind {
-	case SyntaxKindIdentifier:
+	case SyntaxKindIdentifierReference:
 		var message *diagnostics.Message
 		if !ignoreErrors {
 			if meaning == SymbolFlagsNamespace || nodeIsSynthesized(name) {
@@ -3299,7 +3302,7 @@ func (c *Checker) isNullOrUndefined(node *Node) bool {
 	switch expr.kind {
 	case SyntaxKindNullKeyword:
 		return true
-	case SyntaxKindIdentifier:
+	case SyntaxKindIdentifierReference:
 		return c.getResolvedSymbol(expr) == c.undefinedSymbol
 	}
 	return false
@@ -3374,12 +3377,12 @@ func (c *Checker) reportImplicitAny(declaration *Node, t *Type, wideningKind Wid
 			diagnostics.Member_0_implicitly_has_an_1_type_but_a_better_type_may_be_inferred_from_usage)
 	case SyntaxKindParameter:
 		param := declaration.AsParameterDeclaration()
-		if isIdentifier(param.name) {
-			name := param.name.AsIdentifier()
+		if isBindingIdentifier(param.name) {
+			name := param.name
 			originalKeywordKind := identifierToKeywordKind(name)
 			if (isCallSignatureDeclaration(declaration.parent) || isMethodSignatureDeclaration(declaration.parent) || isFunctionTypeNode(declaration.parent)) &&
 				slices.Contains(declaration.parent.Parameters(), declaration) &&
-				(isTypeNodeKind(originalKeywordKind) || c.resolveName(declaration, name.text, SymbolFlagsType, nil /*nameNotFoundMessage*/, true /*isUse*/, false /*excludeGlobals*/) != nil) {
+				(isTypeNodeKind(originalKeywordKind) || c.resolveName(declaration, name.AsIdentifier().text, SymbolFlagsType, nil /*nameNotFoundMessage*/, true /*isUse*/, false /*excludeGlobals*/) != nil) {
 				newName := fmt.Sprintf("arg%v", slices.Index(declaration.parent.Parameters(), declaration))
 				typeName := declarationNameToString(param.name) + ifElse(param.dotDotDotToken != nil, "[]", "")
 				c.errorOrSuggestion(c.noImplicitAny, declaration, diagnostics.Parameter_has_a_name_but_no_type_Did_you_mean_0_Colon_1, newName, typeName)
@@ -4031,7 +4034,7 @@ func (c *Checker) isNumericName(name *Node) bool {
 	switch name.kind {
 	case SyntaxKindComputedPropertyName:
 		return c.isNumericComputedName(name)
-	case SyntaxKindIdentifier, SyntaxKindNumericLiteral, SyntaxKindStringLiteral:
+	case SyntaxKindIdentifierName, SyntaxKindNumericLiteral, SyntaxKindStringLiteral:
 		return isNumericLiteralName(name.Text())
 	}
 	return false
@@ -5334,7 +5337,7 @@ func (c *Checker) isTypeParameterPossiblyReferenced(tp *Type, node *Node) bool {
 		switch node.kind {
 		case SyntaxKindThisType:
 			return tp.AsTypeParameter().isThisType
-		case SyntaxKindIdentifier:
+		case SyntaxKindIdentifierReference, SyntaxKindBindingIdentifier:
 			return !tp.AsTypeParameter().isThisType && isPartOfTypeNode(node) && c.maybeTypeParameterReference(node) && c.getTypeFromTypeNodeWorker(node) == tp
 			// use worker because we're looking for === equality
 		case SyntaxKindTypeQuery:
@@ -5372,7 +5375,7 @@ func (c *Checker) isTypeParameterPossiblyReferenced(tp *Type, node *Node) bool {
 	if tp.symbol != nil && tp.symbol.declarations != nil && len(tp.symbol.declarations) == 1 {
 		container := tp.symbol.declarations[0].parent
 		for n := node; n != container; n = n.parent {
-			if n == nil || isBlock(n) || isConditionalTypeNode(n) && n.AsConditionalTypeNode().extendsType.ForEachChild(containsReference) {
+			if n == nil || isBlock(n) || isFunctionBody(n) || isConditionalTypeNode(n) && n.AsConditionalTypeNode().extendsType.ForEachChild(containsReference) {
 				return true
 			}
 		}
@@ -5858,6 +5861,7 @@ func (n *TupleNormalizer) normalize(c *Checker, elementTypes []*Type, elementInf
 			} else if c.isTupleType(t) {
 				spreadTypes := c.getElementTypes(t)
 				if len(spreadTypes)+len(n.types) >= 10_000 {
+					// TODO(rbuckton): Can we use `isTypeNode` here instead?
 					message := ifElse(isPartOfTypeNode(c.currentNode),
 						diagnostics.Type_produces_a_tuple_type_that_is_too_large_to_represent,
 						diagnostics.Expression_produces_a_tuple_type_that_is_too_large_to_represent)

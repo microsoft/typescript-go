@@ -603,7 +603,7 @@ func (b *Binder) bind(node *Node) bool {
 
 func (b *Binder) bindWorker(node *Node) {
 	switch node.kind {
-	case SyntaxKindIdentifier:
+	case SyntaxKindIdentifierName, SyntaxKindIdentifierReference, SyntaxKindBindingIdentifier, SyntaxKindLabelIdentifier:
 		node.AsIdentifier().flowNode = b.currentFlow
 		b.checkContextualIdentifier(node)
 	case SyntaxKindThisKeyword, SyntaxKindSuperKeyword:
@@ -701,10 +701,8 @@ func (b *Binder) bindWorker(node *Node) {
 	case SyntaxKindSourceFile:
 		b.updateStrictModeStatementList(node.AsSourceFile().statements)
 		b.bindSourceFileIfExternalModule()
-	case SyntaxKindBlock:
-		if isFunctionLikeOrClassStaticBlockDeclaration(node.parent) {
-			b.updateStrictModeStatementList(node.AsBlock().statements)
-		}
+	case SyntaxKindFunctionBody:
+		b.updateStrictModeStatementList(node.AsBlock().statements)
 	case SyntaxKindModuleBlock:
 		b.updateStrictModeStatementList(node.AsModuleBlock().statements)
 	case SyntaxKindJsxAttributes:
@@ -921,7 +919,7 @@ func getModuleInstanceStateWorker(node *Node, visited map[NodeId]ModuleInstanceS
 		return state
 	case SyntaxKindModuleDeclaration:
 		return getModuleInstanceState(node, visited)
-	case SyntaxKindIdentifier:
+	case SyntaxKindIdentifierReference, SyntaxKindBindingIdentifier, SyntaxKindIdentifierName:
 		if node.flags&NodeFlagsIdentifierIsInJSDocNamespace != 0 {
 			return ModuleInstanceStateNonInstantiated
 		}
@@ -935,12 +933,12 @@ func getModuleInstanceStateForAliasTarget(node *Node, visited map[NodeId]ModuleI
 	if name == nil {
 		name = spec.name
 	}
-	if name.kind != SyntaxKindIdentifier {
+	if name.kind != SyntaxKindIdentifierName {
 		// Skip for invalid syntax like this: export { "x" }
 		return ModuleInstanceStateInstantiated
 	}
 	for p := node.parent; p != nil; p = p.parent {
-		if isBlock(p) || isModuleBlock(p) || isSourceFile(p) {
+		if isBlock(p) || isFunctionBody(p) || isModuleBlock(p) || isSourceFile(p) {
 			statements := getStatementsOfBlock(p)
 			found := ModuleInstanceStateUnknown
 			for _, statement := range statements {
@@ -1264,7 +1262,7 @@ func (b *Binder) checkContextualIdentifier(node *Node) {
 	if len(b.file.diagnostics) == 0 && node.flags&NodeFlagsAmbient == 0 && node.flags&NodeFlagsJSDoc == 0 && !isIdentifierName(node) {
 		// strict mode identifiers
 		originalKeywordKind := getIdentifierToken(node.AsIdentifier().text)
-		if originalKeywordKind == SyntaxKindIdentifier {
+		if originalKeywordKind == SyntaxKindIdentifierName {
 			return
 		}
 		if b.inStrictMode && originalKeywordKind >= SyntaxKindFirstFutureReservedWord && originalKeywordKind <= SyntaxKindLastFutureReservedWord {
@@ -1374,7 +1372,7 @@ func (b *Binder) checkStrictModeCatchClause(node *Node) {
 func (b *Binder) checkStrictModeDeleteExpression(node *Node) {
 	// Grammar checking
 	expr := node.AsDeleteExpression()
-	if b.inStrictMode && expr.expression.kind == SyntaxKindIdentifier {
+	if b.inStrictMode && expr.expression.kind == SyntaxKindIdentifierReference {
 		// When a delete operator occurs within strict mode code, a SyntaxError is thrown if its
 		// UnaryExpression is a direct reference to a variable, function argument, or function name
 		b.errorOnNode(expr.expression, diagnostics.X_delete_cannot_be_called_on_an_identifier_in_strict_mode)
@@ -1419,7 +1417,7 @@ func (b *Binder) checkStrictModeLabeledStatement(node *Node) {
 }
 
 func isEvalOrArgumentsIdentifier(node *Node) bool {
-	if isIdentifier(node) {
+	if isIdentifierReference(node) {
 		text := node.AsIdentifier().text
 		return text == "eval" || text == "arguments"
 	}
@@ -1651,7 +1649,7 @@ func (b *Binder) bindChildren(node *Node) {
 	case SyntaxKindSourceFile:
 		b.bindEachStatementFunctionsFirst(node.AsSourceFile().statements)
 		//b.bind(node.endOfFileToken)
-	case SyntaxKindBlock:
+	case SyntaxKindBlock, SyntaxKindFunctionBody:
 		b.bindEachStatementFunctionsFirst(node.AsBlock().statements)
 	case SyntaxKindModuleBlock:
 		b.bindEachStatementFunctionsFirst(node.AsModuleBlock().statements)
@@ -1740,7 +1738,7 @@ func (b *Binder) shouldReportErrorOnModuleDeclaration(node *Node) bool {
 }
 
 func (b *Binder) errorOnEachUnreachableRange(node *Node, isError bool) {
-	if b.isExecutableStatement(node) && isBlock(node.parent) {
+	if b.isExecutableStatement(node) && (isBlock(node.parent) || isFunctionBody(node.parent)) {
 		statements := node.parent.AsBlock().statements
 		index := slices.Index(statements, node)
 		var first, last *Node
@@ -2437,7 +2435,7 @@ func (b *Binder) bindCallExpressionFlow(node *Node) {
 	}
 	if isPropertyAccessExpression(call.expression) {
 		access := call.expression.AsPropertyAccessExpression()
-		if isIdentifier(access.name) && isNarrowableOperand(access.expression) && isPushOrUnshiftIdentifier(access.name) {
+		if isIdentifierName(access.name) && isNarrowableOperand(access.expression) && isPushOrUnshiftIdentifier(access.name) {
 			b.currentFlow = b.createFlowMutation(FlowFlagsArrayMutation, b.currentFlow, node)
 		}
 	}
@@ -2591,19 +2589,17 @@ func getContainerFlags(node *Node) ContainerFlags {
 		}
 	case SyntaxKindCatchClause, SyntaxKindForStatement, SyntaxKindForInStatement, SyntaxKindForOfStatement, SyntaxKindCaseBlock:
 		return ContainerFlagsIsBlockScopedContainer | ContainerFlagsHasLocals
+	case SyntaxKindFunctionBody:
+		return ContainerFlagsNone
 	case SyntaxKindBlock:
-		if isFunctionLike(node.parent) || isClassStaticBlockDeclaration(node.parent) {
-			return ContainerFlagsNone
-		} else {
-			return ContainerFlagsIsBlockScopedContainer | ContainerFlagsHasLocals
-		}
+		return ContainerFlagsIsBlockScopedContainer | ContainerFlagsHasLocals
 	}
 	return ContainerFlagsNone
 }
 
 func isNarrowingExpression(expr *Node) bool {
 	switch expr.kind {
-	case SyntaxKindIdentifier, SyntaxKindThisKeyword:
+	case SyntaxKindIdentifierReference, SyntaxKindThisKeyword:
 		return true
 	case SyntaxKindPropertyAccessExpression, SyntaxKindElementAccessExpression:
 		return containsNarrowableReference(expr)
@@ -2647,7 +2643,7 @@ func containsNarrowableReference(expr *Node) bool {
 
 func isNarrowableReference(node *Node) bool {
 	switch node.kind {
-	case SyntaxKindIdentifier, SyntaxKindThisKeyword, SyntaxKindSuperKeyword, SyntaxKindMetaProperty:
+	case SyntaxKindIdentifierReference, SyntaxKindThisKeyword, SyntaxKindSuperKeyword, SyntaxKindMetaProperty:
 		return true
 	case SyntaxKindPropertyAccessExpression:
 		return isNarrowableReference(node.AsPropertyAccessExpression().expression)
