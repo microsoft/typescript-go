@@ -224,7 +224,7 @@ func getPathFromPathComponents(pathComponents []string) string {
 	if len(pathComponents) == 0 {
 		return ""
 	}
-	
+
 	root := pathComponents[0]
 	if root != "" {
 		root = ensureTrailingDirectorySeparator(root)
