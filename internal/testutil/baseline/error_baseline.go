@@ -84,7 +84,7 @@ func iterateErrorBaseline(t *testing.T, inputFiles []*TestFile, inputDiagnostics
 	diagnostics := slices.Clone(inputDiagnostics)
 	slices.SortFunc(diagnostics, compiler.CompareDiagnostics)
 
-	outputLines := strings.Builder{}
+	var outputLines strings.Builder
 	// Count up all errors that were found in files other than lib.d.ts so we don't miss any
 	totalErrorsReportedInNonLibraryNonTsconfigFiles := 0
 	errorsReported := 0
