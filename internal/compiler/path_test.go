@@ -223,32 +223,32 @@ func TestCombinePaths(t *testing.T) {
 }
 
 func TestResolvePath(t *testing.T) {
-	assert.Equal(t, resolvePath(""), "");
-	assert.Equal(t, resolvePath("."), "");
-	assert.Equal(t, resolvePath("./"), "");
-	assert.Equal(t, resolvePath(".."), "..");
-	assert.Equal(t, resolvePath("../"), "../");
-	assert.Equal(t, resolvePath("/"), "/");
-	assert.Equal(t, resolvePath("/."), "/");
-	assert.Equal(t, resolvePath("/./"), "/");
-	assert.Equal(t, resolvePath("/../"), "/");
-	assert.Equal(t, resolvePath("/a"), "/a");
-	assert.Equal(t, resolvePath("/a/"), "/a/");
-	assert.Equal(t, resolvePath("/a/."), "/a");
-	assert.Equal(t, resolvePath("/a/./"), "/a/");
-	assert.Equal(t, resolvePath("/a/./b"), "/a/b");
-	assert.Equal(t, resolvePath("/a/./b/"), "/a/b/");
-	assert.Equal(t, resolvePath("/a/.."), "/");
-	assert.Equal(t, resolvePath("/a/../"), "/");
-	assert.Equal(t, resolvePath("/a/../b"), "/b");
-	assert.Equal(t, resolvePath("/a/../b/"), "/b/");
-	assert.Equal(t, resolvePath("/a/..", "b"), "/b");
-	assert.Equal(t, resolvePath("/a/..", "/"), "/");
-	assert.Equal(t, resolvePath("/a/..", "b/"), "/b/");
-	assert.Equal(t, resolvePath("/a/..", "/b"), "/b");
-	assert.Equal(t, resolvePath("/a/.", "b"), "/a/b");
-	assert.Equal(t, resolvePath("/a/.", "."), "/a");
-	assert.Equal(t, resolvePath("a", "b", "c"), "a/b/c");
-	assert.Equal(t, resolvePath("a", "b", "/c"), "/c");
-	assert.Equal(t, resolvePath("a", "b", "../c"), "a/c");
+	assert.Equal(t, resolvePath(""), "")
+	assert.Equal(t, resolvePath("."), "")
+	assert.Equal(t, resolvePath("./"), "")
+	assert.Equal(t, resolvePath(".."), "..")
+	assert.Equal(t, resolvePath("../"), "../")
+	assert.Equal(t, resolvePath("/"), "/")
+	assert.Equal(t, resolvePath("/."), "/")
+	assert.Equal(t, resolvePath("/./"), "/")
+	assert.Equal(t, resolvePath("/../"), "/")
+	assert.Equal(t, resolvePath("/a"), "/a")
+	assert.Equal(t, resolvePath("/a/"), "/a/")
+	assert.Equal(t, resolvePath("/a/."), "/a")
+	assert.Equal(t, resolvePath("/a/./"), "/a/")
+	assert.Equal(t, resolvePath("/a/./b"), "/a/b")
+	assert.Equal(t, resolvePath("/a/./b/"), "/a/b/")
+	assert.Equal(t, resolvePath("/a/.."), "/")
+	assert.Equal(t, resolvePath("/a/../"), "/")
+	assert.Equal(t, resolvePath("/a/../b"), "/b")
+	assert.Equal(t, resolvePath("/a/../b/"), "/b/")
+	assert.Equal(t, resolvePath("/a/..", "b"), "/b")
+	assert.Equal(t, resolvePath("/a/..", "/"), "/")
+	assert.Equal(t, resolvePath("/a/..", "b/"), "/b/")
+	assert.Equal(t, resolvePath("/a/..", "/b"), "/b")
+	assert.Equal(t, resolvePath("/a/.", "b"), "/a/b")
+	assert.Equal(t, resolvePath("/a/.", "."), "/a")
+	assert.Equal(t, resolvePath("a", "b", "c"), "a/b/c")
+	assert.Equal(t, resolvePath("a", "b", "/c"), "/c")
+	assert.Equal(t, resolvePath("a", "b", "../c"), "a/c")
 }

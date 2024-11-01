@@ -295,7 +295,7 @@ func getNormalizedAbsolutePath(fileName string, currentDirectory string) string 
 func normalizePath(path string) string {
 	path = normalizeSlashes(path)
 	// Most paths don't require normalization
-	relativePathSegmentRegExp := makeRegexp(`//(?:^|/)\.\.?(?:$|/)`)
+	relativePathSegmentRegExp := makeRegexp(`//|(?:^|/)\.\.?(?:$|/)`)
 	if !relativePathSegmentRegExp.MatchString(path) {
 		return path
 	}
