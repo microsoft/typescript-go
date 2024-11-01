@@ -252,3 +252,32 @@ func TestResolvePath(t *testing.T) {
 	assert.Equal(t, resolvePath("a", "b", "/c"), "/c")
 	assert.Equal(t, resolvePath("a", "b", "../c"), "a/c")
 }
+
+func TestGetRelativePathToDirectoryOrUrl(t *testing.T) {
+	// !!!
+	// Based on tests for `getRelativePathFromDirectory`.
+	getCanonicalFileName := func(s string) string {
+		return s
+	}
+
+	assert.Equal(t, getRelativePathToDirectoryOrUrl("/", "/", "" /*currentDirectory*/, getCanonicalFileName, false /*isAbsolutePathAnUrl*/), "")
+	assert.Equal(t, getRelativePathToDirectoryOrUrl("/a", "/a", "" /*currentDirectory*/, getCanonicalFileName, false /*isAbsolutePathAnUrl*/), "")
+	assert.Equal(t, getRelativePathToDirectoryOrUrl("/a/", "/a", "" /*currentDirectory*/, getCanonicalFileName, false /*isAbsolutePathAnUrl*/), "")
+	assert.Equal(t, getRelativePathToDirectoryOrUrl("/a", "/", "" /*currentDirectory*/, getCanonicalFileName, false /*isAbsolutePathAnUrl*/), "..")
+	assert.Equal(t, getRelativePathToDirectoryOrUrl("/a", "/b", "" /*currentDirectory*/, getCanonicalFileName, false /*isAbsolutePathAnUrl*/), "../b")
+	assert.Equal(t, getRelativePathToDirectoryOrUrl("/a/b", "/b", "" /*currentDirectory*/, getCanonicalFileName, false /*isAbsolutePathAnUrl*/), "../../b")
+	assert.Equal(t, getRelativePathToDirectoryOrUrl("/a/b/c", "/b", "" /*currentDirectory*/, getCanonicalFileName, false /*isAbsolutePathAnUrl*/), "../../../b")
+	assert.Equal(t, getRelativePathToDirectoryOrUrl("/a/b/c", "/b/c", "" /*currentDirectory*/, getCanonicalFileName, false /*isAbsolutePathAnUrl*/), "../../../b/c")
+	assert.Equal(t, getRelativePathToDirectoryOrUrl("/a/b/c", "/a/b", "" /*currentDirectory*/, getCanonicalFileName, false /*isAbsolutePathAnUrl*/), "..")
+	assert.Equal(t, getRelativePathToDirectoryOrUrl("c:", "d:", "" /*currentDirectory*/, getCanonicalFileName, false /*isAbsolutePathAnUrl*/), "d:/")
+	assert.Equal(t, getRelativePathToDirectoryOrUrl("file:///", "file:///", "" /*currentDirectory*/, getCanonicalFileName, false /*isAbsolutePathAnUrl*/), "")
+	assert.Equal(t, getRelativePathToDirectoryOrUrl("file:///a", "file:///a", "" /*currentDirectory*/, getCanonicalFileName, false /*isAbsolutePathAnUrl*/), "")
+	assert.Equal(t, getRelativePathToDirectoryOrUrl("file:///a/", "file:///a", "" /*currentDirectory*/, getCanonicalFileName, false /*isAbsolutePathAnUrl*/), "")
+	assert.Equal(t, getRelativePathToDirectoryOrUrl("file:///a", "file:///", "" /*currentDirectory*/, getCanonicalFileName, false /*isAbsolutePathAnUrl*/), "..")
+	assert.Equal(t, getRelativePathToDirectoryOrUrl("file:///a", "file:///b", "" /*currentDirectory*/, getCanonicalFileName, false /*isAbsolutePathAnUrl*/), "../b")
+	assert.Equal(t, getRelativePathToDirectoryOrUrl("file:///a/b", "file:///b", "" /*currentDirectory*/, getCanonicalFileName, false /*isAbsolutePathAnUrl*/), "../../b")
+	assert.Equal(t, getRelativePathToDirectoryOrUrl("file:///a/b/c", "file:///b", "" /*currentDirectory*/, getCanonicalFileName, false /*isAbsolutePathAnUrl*/), "../../../b")
+	assert.Equal(t, getRelativePathToDirectoryOrUrl("file:///a/b/c", "file:///b/c", "" /*currentDirectory*/, getCanonicalFileName, false /*isAbsolutePathAnUrl*/), "../../../b/c")
+	assert.Equal(t, getRelativePathToDirectoryOrUrl("file:///a/b/c", "file:///a/b", "" /*currentDirectory*/, getCanonicalFileName, false /*isAbsolutePathAnUrl*/), "..")
+	assert.Equal(t, getRelativePathToDirectoryOrUrl("file:///c:", "file:///d:", "" /*currentDirectory*/, getCanonicalFileName, false /*isAbsolutePathAnUrl*/), "file:///d:/")
+}
