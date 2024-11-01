@@ -170,11 +170,12 @@ func iterateErrorBaseline(t *testing.T, inputFiles []*TestFile, inputDiagnostics
 		})
 
 		// Header
-		outputLines.WriteString(newLine())
-		outputLines.WriteString("==== ")
-		outputLines.WriteString(removeTestPathPrefixes(inputFile.unitName, false))
-		outputLines.WriteString(" (")
-		outputLines.WriteString(fmt.Sprintf("%d errors) ====", len(fileErrors)))
+		fmt.Fprintf(outputLines,
+			"%s==== %s (%d errors) ====,
+			newline(),
+			removeTestPathPrefixes(inputFile.unitName, false),
+			len(fileErrors),
+		)
 
 		// Make sure we emit something for every error
 		markedErrorCount := 0
