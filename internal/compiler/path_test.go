@@ -281,3 +281,6 @@ func TestGetRelativePathToDirectoryOrUrl(t *testing.T) {
 	assert.Equal(t, getRelativePathToDirectoryOrUrl("file:///a/b/c", "file:///a/b", "" /*currentDirectory*/, getCanonicalFileName, false /*isAbsolutePathAnUrl*/), "..")
 	assert.Equal(t, getRelativePathToDirectoryOrUrl("file:///c:", "file:///d:", "" /*currentDirectory*/, getCanonicalFileName, false /*isAbsolutePathAnUrl*/), "file:///d:/")
 }
+
+// !!!
+// toFileNameLowerCase
