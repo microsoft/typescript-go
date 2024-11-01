@@ -1,7 +1,6 @@
 package compiler
 
 import (
-	"path"
 	"strings"
 )
 
@@ -88,10 +87,13 @@ func combinePaths(firstPath string, paths ...string) string {
 			// `trailingPath` is absolute.
 			result = trailingPath
 		} else {
-			// !!!
-			// Used to be
-			// path = ensureTrailingDirectorySeparator(path) + relativePath;
-			result = path.Join(result, trailingPath)
+			// Could use
+			//  result = path.Join(result, trailingPath)
+			// but that collapses `..` and prior segments,
+			// which is not necessarily compatible with how combinePaths
+			// was originally implemented.
+
+			result = ensureTrailingDirectorySeparator(result) + trailingPath
 		}
 	}
 	return result
