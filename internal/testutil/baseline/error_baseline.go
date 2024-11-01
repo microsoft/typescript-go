@@ -118,7 +118,7 @@ func iterateErrorBaseline(t *testing.T, inputFiles []*TestFile, inputDiagnostics
 		for _, info := range error.RelatedInformation() {
 			var location string
 			if info.File() != nil {
-				location = " " + compiler.FormatLocation(info.File(), info.Loc().Pos(), formatOpts, func(text string, formatStyle string) string { return text })
+				location = " " + formatLocation(info.File(), info.Loc().Pos(), formatOpts, func(output *strings.Builder, text string, formatStyle string) { output.WriteString(text) })
 			}
 			location = removeTestPathPrefixes(location, false)
 			if len(location) > 0 && isDefaultLibraryFile(info.File().FileName()) {
@@ -270,5 +270,11 @@ func checkDuplicatedFileName(resultName string, dupeCase map[string]int) string 
 func flattenDiagnosticMessage(d *compiler.Diagnostic, newLine string) string {
 	output := &strings.Builder{}
 	compiler.WriteFlattenedDiagnosticMessage(output, d, newLine)
+	return output.String()
+}
+
+func formatLocation(file *compiler.SourceFile, pos int, formatOpts *compiler.DiagnosticsFormattingOptions, writeWithStyleAndReset compiler.FormattedWriter) string {
+	output := &strings.Builder{}
+	compiler.WriteLocation(output, file, pos, formatOpts, writeWithStyleAndReset)
 	return output.String()
 }

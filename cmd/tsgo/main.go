@@ -97,10 +97,6 @@ func main() {
 		}
 	}
 
-	if printTypes {
-		program.PrintTypeAliases()
-	}
-
 	fmt.Printf("Files:         %v\n", len(program.SourceFiles()))
 	fmt.Printf("Types:         %v\n", program.TypeCount())
 	fmt.Printf("Compile time:  %v\n", compileTime)

@@ -255,8 +255,9 @@ func WriteErrorSummaryText(output *strings.Builder, allDiagnostics []*Diagnostic
 	output.WriteString(message)
 	output.WriteString(formatOpts.NewLine)
 	output.WriteString(formatOpts.NewLine)
-	if numErroringFiles > 0 {
+	if numErroringFiles > 1 {
 		writeTabularErrorsDisplay(output, errorSummary, formatOpts)
+		output.WriteString(formatOpts.NewLine)
 	}
 }
 
@@ -338,11 +339,6 @@ func prettyPathForFileError(file *SourceFile, fileErrors []*Diagnostic, formatOp
 		line+1,
 		resetEscapeSequence,
 	)
-}
-
-func FormatLocation(file *SourceFile, start int, formatOpts *DiagnosticsFormattingOptions, color func(string, string) string) string {
-	// !!!
-	return ""
 }
 
 func WriteFormatDiagnostics(output *strings.Builder, diagnostics []*Diagnostic, formatOpts *DiagnosticsFormattingOptions) {
