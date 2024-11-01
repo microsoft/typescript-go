@@ -171,9 +171,9 @@ func getEncodedRootLength(path string) int {
 	schemeEnd := strings.Index(path, urlSchemeSeparator)
 	if schemeEnd != -1 {
 		authorityStart := schemeEnd + len(urlSchemeSeparator)
-		authorityEnd := strings.Index(path[authorityStart:], "/")
-		if authorityEnd != -1 { // URL: "file:///", "file://server/", "file://server/path"
-			authorityEnd += authorityStart
+		authorityLength := strings.Index(path[authorityStart:], "/")
+		if authorityLength != -1 { // URL: "file:///", "file://server/", "file://server/path"
+			authorityEnd := authorityStart + authorityLength
 
 			// For local "file" URLs, include the leading DOS volume (if present).
 			// Per https://www.ietf.org/rfc/rfc1738.txt, a host of "" or "localhost" is a
