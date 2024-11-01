@@ -172,9 +172,9 @@ func iterateErrorBaseline(t *testing.T, inputFiles []*TestFile, inputDiagnostics
 		})
 
 		// Header
-		fmt.Fprintf(outputLines,
-			"%s==== %s (%d errors) ====,
-			newline(),
+		fmt.Fprintf(&outputLines,
+			"%s==== %s (%d errors) ====",
+			newLine(),
 			removeTestPathPrefixes(inputFile.unitName, false),
 			len(fileErrors),
 		)
