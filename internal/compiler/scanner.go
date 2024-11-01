@@ -1854,14 +1854,6 @@ func isShebangTrivia(text string, pos int) bool {
 }
 
 func scanShebangTrivia(text string, pos int) int {
-	// scan #! to end of line, just copy the comment-reading code, this isn't rocket science
-	// shebang := shebangTriviaRegex.exec(text)[0]
-				// !!!
-				// if (isConflictMarkerTrivia(text, pos)) {
-				// 	pos = scanConflictMarkerTrivia(text, pos, error);
-				// 	return token = SyntaxKind.ConflictMarkerTrivia;
-				// }
-	// pos = pos + shebang.length
 	pos += 2
 	for pos < len(text) {
 		if isLineBreak(rune(text[pos])) {
