@@ -32,7 +32,7 @@ func BenchmarkParse(b *testing.B) {
 }
 
 func TestParseSingleFile(t *testing.T) {
-	fileName := "../../testdata/cases/parser/nonAsciiPropertyNames.js"
+	fileName := "../../testdata/cases/scanner/conflictMarkerTrivia1.ts"
 	sourceText, err := os.ReadFile(fileName)
 	assert.NilError(t, err)
 	ParseSourceFile(fileName, string(sourceText), ScriptTargetESNext)
@@ -100,6 +100,7 @@ func isIgnoredTestFile(name string) bool {
 			// very large minified code
 			strings.Contains(name, "codeMirrorModule") ||
 			// not actually .js
+			strings.Contains(name, "reference/config/") ||
 			strings.Contains(name, "reference/tsc") ||
 			strings.Contains(name, "reference/tsserver") ||
 			strings.Contains(name, "reference/tsbuild"))

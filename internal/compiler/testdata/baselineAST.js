@@ -134,6 +134,7 @@ function processDirectory(inputRoot, targetRoot) {
                     // Very large minified code
                     dirent.name.includes("codeMirrorModule") ||
                     // Not actually .js
+                    dirent.name.includes("reference/config/") ||
                     dirent.name.includes("reference/tsc") ||
                     dirent.name.includes("reference/tsserver") ||
                     dirent.name.includes("reference/tsbuild")
