@@ -221,3 +221,34 @@ func TestCombinePaths(t *testing.T) {
 	assert.Equal(t, combinePaths("file:///path", "to", "file.ext"), "file:///path/to/file.ext")
 	assert.Equal(t, combinePaths("file:///path", "file:///to", "file.ext"), "file:///to/file.ext")
 }
+
+func TestResolvePath(t *testing.T) {
+	assert.Equal(t, resolvePath(""), "");
+	assert.Equal(t, resolvePath("."), "");
+	assert.Equal(t, resolvePath("./"), "");
+	assert.Equal(t, resolvePath(".."), "..");
+	assert.Equal(t, resolvePath("../"), "../");
+	assert.Equal(t, resolvePath("/"), "/");
+	assert.Equal(t, resolvePath("/."), "/");
+	assert.Equal(t, resolvePath("/./"), "/");
+	assert.Equal(t, resolvePath("/../"), "/");
+	assert.Equal(t, resolvePath("/a"), "/a");
+	assert.Equal(t, resolvePath("/a/"), "/a/");
+	assert.Equal(t, resolvePath("/a/."), "/a");
+	assert.Equal(t, resolvePath("/a/./"), "/a/");
+	assert.Equal(t, resolvePath("/a/./b"), "/a/b");
+	assert.Equal(t, resolvePath("/a/./b/"), "/a/b/");
+	assert.Equal(t, resolvePath("/a/.."), "/");
+	assert.Equal(t, resolvePath("/a/../"), "/");
+	assert.Equal(t, resolvePath("/a/../b"), "/b");
+	assert.Equal(t, resolvePath("/a/../b/"), "/b/");
+	assert.Equal(t, resolvePath("/a/..", "b"), "/b");
+	assert.Equal(t, resolvePath("/a/..", "/"), "/");
+	assert.Equal(t, resolvePath("/a/..", "b/"), "/b/");
+	assert.Equal(t, resolvePath("/a/..", "/b"), "/b");
+	assert.Equal(t, resolvePath("/a/.", "b"), "/a/b");
+	assert.Equal(t, resolvePath("/a/.", "."), "/a");
+	assert.Equal(t, resolvePath("a", "b", "c"), "a/b/c");
+	assert.Equal(t, resolvePath("a", "b", "/c"), "/c");
+	assert.Equal(t, resolvePath("a", "b", "../c"), "a/c");
+}
