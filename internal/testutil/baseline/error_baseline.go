@@ -17,9 +17,11 @@ import (
 // IO
 const harnessNewLine = "\r\n"
 
-var lineDelimiter = regexp.MustCompile("\r?\n")
-var nonWhitespace = regexp.MustCompile(`\S`)
-var tsExtension = regexp.MustCompile(`\.tsx?$`)
+var (
+	lineDelimiter = regexp.MustCompile("\r?\n")
+	nonWhitespace = regexp.MustCompile(`\S`)
+	tsExtension   = regexp.MustCompile(`\.tsx?$`)
+)
 
 var formatOpts = &compiler.DiagnosticsFormattingOptions{
 	GetCanonicalFileName: getCanonicalFileName,
