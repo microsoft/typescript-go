@@ -54,11 +54,11 @@ func getCanonicalFileName(fileName string) string {
 }
 
 func minimalDiagnosticsToString(diagnostics []*compiler.Diagnostic, pretty bool) string {
-	output := &strings.Builder{}
+	var output strings.Builder
 	if pretty {
-		compiler.FormatDiagnosticsWithColorAndContext(output, diagnostics, formatOpts)
+		compiler.FormatDiagnosticsWithColorAndContext(&output, diagnostics, formatOpts)
 	} else {
-		compiler.WriteFormatDiagnostics(output, diagnostics, formatOpts)
+		compiler.WriteFormatDiagnostics(&output, diagnostics, formatOpts)
 	}
 	return output.String()
 }
@@ -271,13 +271,13 @@ func checkDuplicatedFileName(resultName string, dupeCase map[string]int) string 
 }
 
 func flattenDiagnosticMessage(d *compiler.Diagnostic, newLine string) string {
-	output := &strings.Builder{}
-	compiler.WriteFlattenedDiagnosticMessage(output, d, newLine)
+	var output strings.Builder
+	compiler.WriteFlattenedDiagnosticMessage(&output, d, newLine)
 	return output.String()
 }
 
 func formatLocation(file *compiler.SourceFile, pos int, formatOpts *compiler.DiagnosticsFormattingOptions, writeWithStyleAndReset compiler.FormattedWriter) string {
-	output := &strings.Builder{}
-	compiler.WriteLocation(output, file, pos, formatOpts, writeWithStyleAndReset)
+	var output strings.Builder
+	compiler.WriteLocation(&output, file, pos, formatOpts, writeWithStyleAndReset)
 	return output.String()
 }
