@@ -220,6 +220,13 @@ func TestCombinePaths(t *testing.T) {
 	// URL
 	assert.Equal(t, combinePaths("file:///path", "to", "file.ext"), "file:///path/to/file.ext")
 	assert.Equal(t, combinePaths("file:///path", "file:///to", "file.ext"), "file:///to/file.ext")
+
+	assert.Equal(t, combinePaths("/", "/node_modules/@types"), "/node_modules/@types")
+	assert.Equal(t, combinePaths("/a/..", ""), "/a/..")
+	assert.Equal(t, combinePaths("/a/..", "b"), "/a/../b")
+	assert.Equal(t, combinePaths("/a/..", "b/"), "/a/../b/")
+	assert.Equal(t, combinePaths("/a/..", "/"), "/")
+	assert.Equal(t, combinePaths("/a/..", "/b"), "/b")
 }
 
 func TestResolvePath(t *testing.T) {
