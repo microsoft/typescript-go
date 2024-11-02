@@ -13,7 +13,6 @@ linters:
     - canonicalheader
     - copyloopvar
     - durationcheck
-    - err113
     - errcheck
     - errchkjson
     - errname
@@ -58,7 +57,11 @@ linters:
     # - unparam
     # - unused
 
-# linters-settings:
+linters-settings:
+  wrapcheck:
+    ignorePackageGlobs:
+      - encoding/*
+      - github.com/go-json-experiment/*
 #   revive:
 #     enable-all-rules: true
 #     rules:
