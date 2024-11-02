@@ -18,6 +18,7 @@ const { values: options } = parseArgs({
     args: process.argv.slice(2),
     options: {
         race: { type: "boolean" },
+        fix: { type: "boolean" },
     },
     strict: false,
     allowPositionals: true,
@@ -66,7 +67,7 @@ export const lint = task({
     name: "lint",
     run: async () => {
         // TODO: Run `go tool golangci-lint` after https://github.com/golang/go/issues/48429
-        await $`go run github.com/golangci/golangci-lint/cmd/golangci-lint run`;
+        await $`go run github.com/golangci/golangci-lint/cmd/golangci-lint run ${options.fix ? ["--fix"] : []}`;
     },
 });
 
