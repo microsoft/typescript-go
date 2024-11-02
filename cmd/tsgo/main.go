@@ -4,9 +4,11 @@ package main
 import (
 	"flag"
 	"fmt"
+	"os"
 	"runtime"
 	"strings"
 	"time"
+	"unicode"
 
 	ts "github.com/microsoft/typescript-go/internal/compiler"
 )
@@ -14,6 +16,8 @@ import (
 var quiet = false
 var singleThreaded = false
 var parseAndBindOnly = false
+var printTypes = false
+var pretty = true
 
 func printDiagnostic(d *ts.Diagnostic, level int) {
 	file := d.File()
@@ -32,9 +36,15 @@ func main() {
 	flag.BoolVar(&quiet, "q", false, "Quiet output")
 	flag.BoolVar(&singleThreaded, "s", false, "Single threaded")
 	flag.BoolVar(&parseAndBindOnly, "p", false, "Parse and bind only")
+	flag.BoolVar(&printTypes, "t", false, "Print type aliases defined in main.ts")
+	flag.BoolVar(&pretty, "pretty", true, "Get prettier errors")
 	flag.Parse()
-	compilerOptions := &ts.CompilerOptions{Target: ts.ScriptTargetESNext, ModuleKind: ts.ModuleKindNodeNext}
-	programOptions := ts.ProgramOptions{RootPath: flag.Arg(0), Options: compilerOptions, SingleThreaded: singleThreaded}
+
+	rootPath := flag.Arg(0)
+	compilerOptions := &ts.CompilerOptions{Strict: ts.TSTrue, Target: ts.ScriptTargetESNext, ModuleKind: ts.ModuleKindNodeNext}
+	programOptions := ts.ProgramOptions{RootPath: rootPath, Options: compilerOptions, SingleThreaded: singleThreaded}
+	useCaseSensitiveFileNames := isFileSystemCaseSensitive()
+
 	startTime := time.Now()
 	program := ts.NewProgram(programOptions)
 	diagnostics := program.GetSyntacticDiagnostics(nil)
@@ -42,7 +52,11 @@ func main() {
 		if parseAndBindOnly {
 			diagnostics = program.GetBindDiagnostics(nil)
 		} else {
-			diagnostics = program.GetSemanticDiagnostics(nil)
+			if printTypes {
+				program.PrintTypeAliases()
+			} else {
+				diagnostics = program.GetSemanticDiagnostics(nil)
+			}
 		}
 	}
 	compileTime := time.Since(startTime)
@@ -51,11 +65,65 @@ func main() {
 	runtime.GC()
 	runtime.ReadMemStats(&memStats)
 	if !quiet {
-		for _, diagnostic := range diagnostics {
-			printDiagnostic(diagnostic, 0)
+		if pretty {
+			var getCanonicalFileName func(path string) string
+			if useCaseSensitiveFileNames {
+				getCanonicalFileName = func(path string) string {
+					return path
+				}
+			} else {
+				getCanonicalFileName = strings.ToLower
+			}
+
+			currentDirectory, err := os.Getwd()
+			if err != nil {
+				panic("no current directory")
+			}
+
+			var output strings.Builder
+			formatOpts := ts.DiagnosticsFormattingOptions{
+				NewLine:              "\n",
+				CurrentDirectory:     currentDirectory,
+				GetCanonicalFileName: getCanonicalFileName,
+			}
+			ts.FormatDiagnosticsWithColorAndContext(&output, diagnostics, &formatOpts)
+			output.WriteByte('\n')
+			ts.WriteErrorSummaryText(&output, diagnostics, &formatOpts)
+			fmt.Print(output.String())
+		} else {
+			for _, diagnostic := range diagnostics {
+				printDiagnostic(diagnostic, 0)
+			}
 		}
 	}
+
 	fmt.Printf("Files:         %v\n", len(program.SourceFiles()))
+	fmt.Printf("Types:         %v\n", program.TypeCount())
 	fmt.Printf("Compile time:  %v\n", compileTime)
 	fmt.Printf("Memory used:   %vK\n", memStats.Alloc/1024)
+}
+
+func isFileSystemCaseSensitive() bool {
+	// win32/win64 are case insensitive platforms
+	if runtime.GOOS == "windows" {
+		return false
+	}
+
+	// If the current executable exists under a different case, we must be case-insensitve.
+	if _, err := os.Stat(swapCase(os.Args[0])); os.IsNotExist(err) {
+		return false
+	}
+	return true
+}
+
+// Convert all lowercase chars to uppercase, and vice-versa
+func swapCase(str string) string {
+	return strings.Map(func(r rune) rune {
+		upper := unicode.ToUpper(r)
+		if upper == r {
+			return unicode.ToLower(r)
+		} else {
+			return upper
+		}
+	}, str)
 }
