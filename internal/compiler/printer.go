@@ -171,7 +171,7 @@ func (p *Printer) printParameterizedType(t *Type) {
 	switch {
 	case p.c.isArrayType(t) && p.flags&TypeFormatFlagsWriteArrayAsGenericType == 0:
 		p.printArrayType(t)
-	case p.c.isTupleType(t):
+	case isTupleType(t):
 		p.printTupleType(t)
 	default:
 		p.printTypeReference(t)
@@ -180,7 +180,7 @@ func (p *Printer) printParameterizedType(t *Type) {
 
 func (p *Printer) printTypeReference(t *Type) {
 	p.print(t.symbol.name)
-	p.printTypeArguments(p.c.getTypeArguments(t))
+	p.printTypeArguments(p.c.getTypeArguments(t)[:p.c.getTypeReferenceArity(t)])
 }
 
 func (p *Printer) printTypeArguments(typeArguments []*Type) {
@@ -302,7 +302,6 @@ func (p *Printer) printAnonymousTypeWorker(t *Type) {
 		p.print(" ")
 	}
 	p.print("}")
-	p.depth--
 }
 
 func (p *Printer) printSignature(sig *Signature, returnSeparator string) {

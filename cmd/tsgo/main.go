@@ -24,8 +24,16 @@ func printDiagnostic(d *ts.Diagnostic, level int) {
 	} else {
 		fmt.Printf("%verror TS%v: %v\n", strings.Repeat(" ", level*2), d.Code(), d.Message())
 	}
+	printMessageChain(d.MessageChain(), level+1)
 	for _, r := range d.RelatedInformation() {
 		printDiagnostic(r, level+1)
+	}
+}
+
+func printMessageChain(messageChain []*ts.MessageChain, level int) {
+	for _, c := range messageChain {
+		fmt.Printf("%v%v\n", strings.Repeat(" ", level*2), c.Message())
+		printMessageChain(c.MessageChain(), level+1)
 	}
 }
 

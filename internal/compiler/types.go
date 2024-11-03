@@ -1011,30 +1011,31 @@ const (
 // CompilerOptions
 
 type CompilerOptions struct {
-	AllowSyntheticDefaultImports Tristate
-	AllowUmdGlobalAccess         Tristate
-	AllowUnreachableCode         Tristate
-	AllowUnusedLabels            Tristate
-	CheckJs                      Tristate
-	CustomConditions             []string
-	ESModuleInterop              Tristate
-	ExactOptionalPropertyTypes   Tristate
-	IsolatedModules              Tristate
-	ModuleKind                   ModuleKind
-	ModuleResolution             ModuleResolutionKind
-	NoFallthroughCasesInSwitch   Tristate
-	NoImplicitAny                Tristate
-	NoUncheckedIndexedAccess     Tristate
-	PreserveConstEnums           Tristate
-	Strict                       Tristate
-	StrictBindCallApply          Tristate
-	StrictNullChecks             Tristate
-	Target                       ScriptTarget
-	TraceResolution              Tristate
-	Types                        []string
-	UseDefineForClassFields      Tristate
-	UseUnknownInCatchVariables   Tristate
-	VerbatimModuleSyntax         Tristate
+	AllowSyntheticDefaultImports       Tristate
+	AllowUmdGlobalAccess               Tristate
+	AllowUnreachableCode               Tristate
+	AllowUnusedLabels                  Tristate
+	CheckJs                            Tristate
+	CustomConditions                   []string
+	ESModuleInterop                    Tristate
+	ExactOptionalPropertyTypes         Tristate
+	IsolatedModules                    Tristate
+	ModuleKind                         ModuleKind
+	ModuleResolution                   ModuleResolutionKind
+	NoFallthroughCasesInSwitch         Tristate
+	NoImplicitAny                      Tristate
+	NoPropertyAccessFromIndexSignature Tristate
+	NoUncheckedIndexedAccess           Tristate
+	PreserveConstEnums                 Tristate
+	Strict                             Tristate
+	StrictBindCallApply                Tristate
+	StrictNullChecks                   Tristate
+	Target                             ScriptTarget
+	TraceResolution                    Tristate
+	Types                              []string
+	UseDefineForClassFields            Tristate
+	UseUnknownInCatchVariables         Tristate
+	VerbatimModuleSyntax               Tristate
 }
 
 type ModuleKind int32
@@ -1779,3 +1780,77 @@ const (
 	TernaryMaybe   Ternary = 3
 	TernaryTrue    Ternary = -1
 )
+
+type LanguageFeatureMinimumTargetMap struct {
+	Classes                           ScriptTarget
+	ForOf                             ScriptTarget
+	Generators                        ScriptTarget
+	Iteration                         ScriptTarget
+	SpreadElements                    ScriptTarget
+	RestElements                      ScriptTarget
+	TaggedTemplates                   ScriptTarget
+	DestructuringAssignment           ScriptTarget
+	BindingPatterns                   ScriptTarget
+	ArrowFunctions                    ScriptTarget
+	BlockScopedVariables              ScriptTarget
+	ObjectAssign                      ScriptTarget
+	RegularExpressionFlagsUnicode     ScriptTarget
+	RegularExpressionFlagsSticky      ScriptTarget
+	Exponentiation                    ScriptTarget
+	AsyncFunctions                    ScriptTarget
+	ForAwaitOf                        ScriptTarget
+	AsyncGenerators                   ScriptTarget
+	AsyncIteration                    ScriptTarget
+	ObjectSpreadRest                  ScriptTarget
+	RegularExpressionFlagsDotAll      ScriptTarget
+	BindinglessCatch                  ScriptTarget
+	BigInt                            ScriptTarget
+	NullishCoalesce                   ScriptTarget
+	OptionalChaining                  ScriptTarget
+	LogicalAssignment                 ScriptTarget
+	TopLevelAwait                     ScriptTarget
+	ClassFields                       ScriptTarget
+	PrivateNamesAndClassStaticBlocks  ScriptTarget
+	RegularExpressionFlagsHasIndices  ScriptTarget
+	ShebangComments                   ScriptTarget
+	UsingAndAwaitUsing                ScriptTarget
+	ClassAndClassElementDecorators    ScriptTarget
+	RegularExpressionFlagsUnicodeSets ScriptTarget
+}
+
+var LanguageFeatureMinimumTarget = LanguageFeatureMinimumTargetMap{
+	Classes:                           ScriptTargetES2015,
+	ForOf:                             ScriptTargetES2015,
+	Generators:                        ScriptTargetES2015,
+	Iteration:                         ScriptTargetES2015,
+	SpreadElements:                    ScriptTargetES2015,
+	RestElements:                      ScriptTargetES2015,
+	TaggedTemplates:                   ScriptTargetES2015,
+	DestructuringAssignment:           ScriptTargetES2015,
+	BindingPatterns:                   ScriptTargetES2015,
+	ArrowFunctions:                    ScriptTargetES2015,
+	BlockScopedVariables:              ScriptTargetES2015,
+	ObjectAssign:                      ScriptTargetES2015,
+	RegularExpressionFlagsUnicode:     ScriptTargetES2015,
+	RegularExpressionFlagsSticky:      ScriptTargetES2015,
+	Exponentiation:                    ScriptTargetES2016,
+	AsyncFunctions:                    ScriptTargetES2017,
+	ForAwaitOf:                        ScriptTargetES2018,
+	AsyncGenerators:                   ScriptTargetES2018,
+	AsyncIteration:                    ScriptTargetES2018,
+	ObjectSpreadRest:                  ScriptTargetES2018,
+	RegularExpressionFlagsDotAll:      ScriptTargetES2018,
+	BindinglessCatch:                  ScriptTargetES2019,
+	BigInt:                            ScriptTargetES2020,
+	NullishCoalesce:                   ScriptTargetES2020,
+	OptionalChaining:                  ScriptTargetES2020,
+	LogicalAssignment:                 ScriptTargetES2021,
+	TopLevelAwait:                     ScriptTargetES2022,
+	ClassFields:                       ScriptTargetES2022,
+	PrivateNamesAndClassStaticBlocks:  ScriptTargetES2022,
+	RegularExpressionFlagsHasIndices:  ScriptTargetES2022,
+	ShebangComments:                   ScriptTargetESNext,
+	UsingAndAwaitUsing:                ScriptTargetESNext,
+	ClassAndClassElementDecorators:    ScriptTargetESNext,
+	RegularExpressionFlagsUnicodeSets: ScriptTargetESNext,
+}
