@@ -1377,15 +1377,45 @@ func (t *Type) AsConditionalType() *ConditionalType         { return t.data.(*Co
 
 // Casts for embedded struct types
 
-func (t *Type) AsObjectType() *ObjectType       { return t.data.AsObjectType() }
-func (t *Type) AsAnonymousType() *AnonymousType { return t.data.AsAnonymousType() }
-func (t *Type) AsTypeReference() *TypeReference { return t.data.AsTypeReference() }
-func (t *Type) AsInterfaceType() *InterfaceType { return t.data.AsInterfaceType() }
+func (t *Type) AsStructuredType() *StructuredType { return t.data.AsStructuredType() }
+func (t *Type) AsObjectType() *ObjectType         { return t.data.AsObjectType() }
+func (t *Type) AsTypeReference() *TypeReference   { return t.data.AsTypeReference() }
+func (t *Type) AsInterfaceType() *InterfaceType   { return t.data.AsInterfaceType() }
 func (t *Type) AsUnionOrIntersectionType() *UnionOrIntersectionType {
 	return t.data.AsUnionOrIntersectionType()
 }
 
 // Common accessors
+
+func (t *Type) Target() *Type {
+	switch {
+	case t.flags&TypeFlagsObject != 0:
+		return t.AsObjectType().target
+	case t.flags&TypeFlagsTypeParameter != 0:
+		return t.AsTypeParameter().target
+	case t.flags&TypeFlagsIndex != 0:
+		return t.AsIndexType().target
+	case t.flags&TypeFlagsStringMapping != 0:
+		return t.AsStringMappingType().target
+	}
+	panic("Unhandled case in Type.Target")
+}
+
+func (t *Type) Mapper() *TypeMapper {
+	switch {
+	case t.flags&TypeFlagsObject != 0:
+		return t.AsObjectType().mapper
+	case t.flags&TypeFlagsTypeParameter != 0:
+		return t.AsTypeParameter().mapper
+	case t.flags&TypeFlagsConditional != 0:
+		return t.AsConditionalType().mapper
+	}
+	panic("Unhandled case in Type.Mapper")
+}
+
+func (t *Type) Types() []*Type {
+	return t.AsUnionOrIntersectionType().types
+}
 
 func (t *Type) TargetInterfaceType() *InterfaceType {
 	return t.AsTypeReference().target.AsInterfaceType()
@@ -1399,8 +1429,8 @@ func (t *Type) TargetTupleType() *TupleType {
 
 type TypeData interface {
 	AsType() *Type
+	AsStructuredType() *StructuredType
 	AsObjectType() *ObjectType
-	AsAnonymousType() *AnonymousType
 	AsTypeReference() *TypeReference
 	AsInterfaceType() *InterfaceType
 	AsUnionOrIntersectionType() *UnionOrIntersectionType
@@ -1412,10 +1442,10 @@ type TypeBase struct {
 	Type
 }
 
-func (t *TypeBase) AsType() *Type                   { return &t.Type }
-func (t *TypeBase) AsObjectType() *ObjectType       { return nil }
-func (t *TypeBase) AsAnonymousType() *AnonymousType { return nil }
-func (t *TypeBase) AsTypeReference() *TypeReference { return nil }
+func (t *TypeBase) AsType() *Type                     { return &t.Type }
+func (t *TypeBase) AsStructuredType() *StructuredType { return nil }
+func (t *TypeBase) AsObjectType() *ObjectType         { return nil }
+func (t *TypeBase) AsTypeReference() *TypeReference   { return nil }
 
 // IntrinsicTypeData
 
@@ -1445,7 +1475,7 @@ type UniqueESSymbolType struct {
 	name string
 }
 
-// ObjectType (base of all types with members)
+// StructuredType (base of all types with members)
 // AnonymousType (ObjectFlagsAnonymous)
 //   TypeReference (ObjectFlagsReference)
 //     InterfaceType (ObjectFlagsReference | (ObjectFlagsClass|ObjectFlagsInterface|ObjectFlagsTuple))
@@ -1454,7 +1484,7 @@ type UniqueESSymbolType struct {
 //   MappedType (ObjectFlagsAnonymous|ObjectFlagsMapped)
 // ReverseMapped (ObjectFlagsReverseMapped)
 
-type ObjectType struct {
+type StructuredType struct {
 	TypeBase
 	members            SymbolTable
 	properties         []*Symbol
@@ -1463,31 +1493,31 @@ type ObjectType struct {
 	indexInfos         []*IndexInfo
 }
 
-func (t *ObjectType) AsObjectType() *ObjectType { return t }
+func (t *StructuredType) AsStructuredType() *StructuredType { return t }
 
-func (t *ObjectType) CallSignatures() []*Signature {
+func (t *StructuredType) CallSignatures() []*Signature {
 	return slices.Clip(t.signatures[:t.callSignatureCount])
 }
 
-func (t *ObjectType) ConstructSignatures() []*Signature {
+func (t *StructuredType) ConstructSignatures() []*Signature {
 	return slices.Clip(t.signatures[t.callSignatureCount:])
 }
 
-// AnonymousType (base of all instantiable object types)
+// ObjectType (base of all instantiable object types)
 
-type AnonymousType struct {
-	ObjectType
+type ObjectType struct {
+	StructuredType
 	target         *Type            // Target of instantiated type
 	mapper         *TypeMapper      // Type mapper for instantiated type
 	instantiations map[string]*Type // Map of type instantiations
 }
 
-func (t *AnonymousType) AsAnonymousType() *AnonymousType { return t }
+func (t *ObjectType) AsObjectType() *ObjectType { return t }
 
 // TypeReference (instantiation of an InterfaceType)
 
 type TypeReference struct {
-	AnonymousType
+	ObjectType
 	node                  *Node // TypeReferenceNode | ArrayTypeNode | TupleTypeNode when deferred, else nil
 	resolvedTypeArguments []*Type
 }
@@ -1568,21 +1598,21 @@ type TupleType struct {
 // SingleSignatureType
 
 type SingleSignatureType struct {
-	AnonymousType
+	ObjectType
 	outerTypeParameters []*Type
 }
 
 // InstantiationExpressionType
 
 type InstantiationExpressionType struct {
-	AnonymousType
+	ObjectType
 	node *Node
 }
 
 // MappedType
 
 type MappedType struct {
-	AnonymousType
+	ObjectType
 	declaration          MappedTypeNode
 	typeParameter        *Type
 	constraintType       *Type
@@ -1605,7 +1635,7 @@ type ReverseMappedType struct {
 // UnionOrIntersectionTypeData
 
 type UnionOrIntersectionType struct {
-	ObjectType
+	StructuredType
 	types                                       []*Type
 	propertyCache                               SymbolTable
 	propertyCacheWithoutFunctionPropertyAugment SymbolTable

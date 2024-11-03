@@ -355,7 +355,7 @@ func NewChecker(program *Program) *Checker {
 	c.emptyObjectType = c.newAnonymousType(nil /*symbol*/, nil, nil, nil, nil)
 	c.emptyTypeLiteralType = c.newAnonymousType(c.newSymbol(SymbolFlagsTypeLiteral, InternalSymbolNameType), nil, nil, nil, nil)
 	c.emptyGenericType = c.newAnonymousType(nil /*symbol*/, nil, nil, nil, nil)
-	c.emptyGenericType.AsAnonymousType().instantiations = make(map[string]*Type)
+	c.emptyGenericType.AsObjectType().instantiations = make(map[string]*Type)
 	c.anyFunctionType = c.newAnonymousType(nil /*symbol*/, nil, nil, nil, nil)
 	c.anyFunctionType.objectFlags |= ObjectFlagsNonInferrableType
 	c.enumNumberIndexInfo = &IndexInfo{keyType: c.numberType, valueType: c.stringType, isReadonly: true}
@@ -4400,7 +4400,7 @@ func isNonDeferredTypeReference(t *Type) bool {
 
 // Return true if type parameter originates in an unconstrained declaration in a type parameter list
 func isUnconstrainedTypeParameter(tp *Type) bool {
-	target := tp.AsTypeParameter().target
+	target := tp.Target()
 	if target == nil {
 		target = tp
 	}
@@ -4908,7 +4908,7 @@ func (c *Checker) isApplicableIndexType(source *Type, target *Type) bool {
 		target == c.numberType && (source == c.numericStringType || source.flags&TypeFlagsStringLiteral != 0 && isNumericLiteralName(source.AsLiteralType().value.(string)))
 }
 
-func (c *Checker) resolveStructuredTypeMembers(t *Type) *ObjectType {
+func (c *Checker) resolveStructuredTypeMembers(t *Type) *StructuredType {
 	if t.objectFlags&ObjectFlagsMembersResolved == 0 {
 		switch {
 		case t.flags&TypeFlagsObject != 0:
@@ -4934,7 +4934,7 @@ func (c *Checker) resolveStructuredTypeMembers(t *Type) *ObjectType {
 			panic("Unhandled case in resolveStructuredTypeMembers")
 		}
 	}
-	return t.AsObjectType()
+	return t.AsStructuredType()
 }
 
 func (c *Checker) resolveClassOrInterfaceMembers(t *Type) {
@@ -4942,7 +4942,7 @@ func (c *Checker) resolveClassOrInterfaceMembers(t *Type) {
 }
 
 func (c *Checker) resolveTypeReferenceMembers(t *Type) {
-	source := t.AsTypeReference().target
+	source := t.Target()
 	typeParameters := source.AsInterfaceType().allTypeParameters
 	typeArguments := c.getTypeArguments(t)
 	paddedTypeArguments := typeArguments
@@ -5183,12 +5183,7 @@ func (c *Checker) createSignatureTypeMapper(sig *Signature, typeArguments []*Typ
 }
 
 func (c *Checker) getTypeParametersForMapper(sig *Signature) []*Type {
-	return sameMap(sig.typeParameters, func(tp *Type) *Type {
-		if tp.AsTypeParameter().mapper != nil {
-			return c.instantiateType(tp, tp.AsTypeParameter().mapper)
-		}
-		return tp
-	})
+	return sameMap(sig.typeParameters, func(tp *Type) *Type { return c.instantiateType(tp, tp.Mapper()) })
 }
 
 // If type has a single call signature and no other members, return that signature. Otherwise, return nil.
@@ -5322,14 +5317,14 @@ func (c *Checker) hasBaseType(t *Type, checkBase *Type) bool {
 
 func getTargetType(t *Type) *Type {
 	if t.objectFlags&ObjectFlagsReference != 0 {
-		return t.AsTypeReference().target
+		return t.Target()
 	}
 	return t
 }
 
 func (c *Checker) getTypeWithThisArgument(t *Type, thisArgument *Type, needApparentType bool) *Type {
 	if t.objectFlags&ObjectFlagsReference != 0 {
-		target := t.AsTypeReference().target
+		target := t.Target()
 		typeArguments := c.getTypeArguments(t)
 		if len(target.AsInterfaceType().TypeParameters()) == len(typeArguments) {
 			if thisArgument == nil {
@@ -5872,7 +5867,7 @@ func (c *Checker) instantiateIndexInfo(info *IndexInfo, m *TypeMapper) *IndexInf
 }
 
 func (c *Checker) resolveAnonymousTypeMembers(t *Type) {
-	d := t.AsAnonymousType()
+	d := t.AsObjectType()
 	if d.target != nil {
 		c.setStructuredTypeMembers(t, nil, nil, nil, nil)
 		members := c.createInstantiatedSymbolTable(c.getPropertiesOfObjectType(d.target), d.mapper)
@@ -6688,7 +6683,7 @@ func (c *Checker) instantiateTypeWorker(t *Type, m *TypeMapper, alias *TypeAlias
 				if identical(newTypeArguments, resolvedTypeArguments) {
 					return t
 				}
-				return c.createNormalizedTypeReference(t.AsTypeReference().target, newTypeArguments)
+				return c.createNormalizedTypeReference(t.Target(), newTypeArguments)
 			}
 			if objectFlags&ObjectFlagsReverseMapped != 0 {
 				return c.instantiateReverseMappedType(t, m)
@@ -6717,7 +6712,7 @@ func (c *Checker) instantiateTypeWorker(t *Type, m *TypeMapper, alias *TypeAlias
 		}
 		return c.getUnionTypeEx(newTypes, UnionReductionLiteral, alias, nil /*origin*/)
 	case flags&TypeFlagsIndex != 0:
-		return c.getIndexType(c.instantiateType(t.AsIndexType().target, m))
+		return c.getIndexType(c.instantiateType(t.Target(), m))
 	case flags&TypeFlagsIndexedAccess != 0:
 		if alias == nil {
 			alias = c.instantiateTypeAlias(t.alias, m)
@@ -6778,7 +6773,7 @@ func (c *Checker) getObjectTypeInstantiation(t *Type, m *TypeMapper, alias *Type
 	case t.objectFlags&ObjectFlagsReference != 0: // Deferred type reference
 		target = links.resolvedType
 	case t.objectFlags&ObjectFlagsInstantiated != 0:
-		target = t.AsAnonymousType().target
+		target = t.Target()
 	default:
 		target = t
 	}
@@ -6817,7 +6812,7 @@ func (c *Checker) getObjectTypeInstantiation(t *Type, m *TypeMapper, alias *Type
 	// We are instantiating an anonymous type that has one or more type parameters in scope. Apply the
 	// mapper to the type parameters to produce the effective list of type arguments, and compute the
 	// instantiation cache key from the type IDs of the type arguments.
-	combinedMapper := c.combineTypeMappers(t.AsAnonymousType().mapper, m)
+	combinedMapper := c.combineTypeMappers(t.Mapper(), m)
 	typeArguments := make([]*Type, len(typeParameters))
 	for i, tp := range typeParameters {
 		typeArguments[i] = combinedMapper.Map(tp)
@@ -6826,7 +6821,7 @@ func (c *Checker) getObjectTypeInstantiation(t *Type, m *TypeMapper, alias *Type
 	if newAlias == nil {
 		newAlias = c.instantiateTypeAlias(t.alias, m)
 	}
-	data := target.AsAnonymousType()
+	data := target.AsObjectType()
 	key := getTypeInstantiationKey(typeArguments, alias, t.objectFlags&ObjectFlagsSingleSignatureType != 0)
 	if data.instantiations == nil {
 		data.instantiations = make(map[string]*Type)
@@ -6842,7 +6837,7 @@ func (c *Checker) getObjectTypeInstantiation(t *Type, m *TypeMapper, alias *Type
 		newMapper := newTypeMapper(typeParameters, typeArguments)
 		switch {
 		case target.objectFlags&ObjectFlagsReference != 0:
-			result = c.createDeferredTypeReference(t.AsTypeReference().target, t.AsTypeReference().node, newMapper, newAlias)
+			result = c.createDeferredTypeReference(t.Target(), t.AsTypeReference().node, newMapper, newAlias)
 		case target.objectFlags&ObjectFlagsMapped != 0:
 			result = c.instantiateMappedType(target, newMapper, newAlias)
 		default:
@@ -6935,7 +6930,7 @@ func (c *Checker) instantiateAnonymousType(t *Type, m *TypeMapper, alias *TypeAl
 	if alias != nil && len(alias.typeArguments) != 0 {
 		result.objectFlags |= c.getPropagatingFlagsOfTypes(result.alias.typeArguments, TypeFlagsNone)
 	}
-	d := result.AsAnonymousType()
+	d := result.AsObjectType()
 	d.target = t
 	d.mapper = m
 	return result
@@ -7473,15 +7468,15 @@ func (c *Checker) getTypeReferenceArity(t *Type) int {
 }
 
 func (c *Checker) isArrayType(t *Type) bool {
-	return t.objectFlags&ObjectFlagsReference != 0 && (t.AsTypeReference().target == c.globalArrayType || t.AsTypeReference().target == c.globalReadonlyArrayType)
+	return t.objectFlags&ObjectFlagsReference != 0 && (t.Target() == c.globalArrayType || t.Target() == c.globalReadonlyArrayType)
 }
 
 func (c *Checker) isReadonlyArrayType(t *Type) bool {
-	return t.objectFlags&ObjectFlagsReference != 0 && t.AsTypeReference().target == c.globalReadonlyArrayType
+	return t.objectFlags&ObjectFlagsReference != 0 && t.Target() == c.globalReadonlyArrayType
 }
 
 func isTupleType(t *Type) bool {
-	return t.objectFlags&ObjectFlagsReference != 0 && t.AsTypeReference().target.objectFlags&ObjectFlagsTuple != 0
+	return t.objectFlags&ObjectFlagsReference != 0 && t.Target().objectFlags&ObjectFlagsTuple != 0
 }
 
 func (c *Checker) isArrayOrTupleType(t *Type) bool {
@@ -8190,7 +8185,7 @@ func (c *Checker) getTupleElementTypeOutOfStartCount(t *Type, index float64, und
 		if restType == nil {
 			return c.undefinedType
 		}
-		if c.undefinedOrMissingType != nil && index >= float64(getTotalFixedElementCount(t.AsTypeReference().target)) {
+		if c.undefinedOrMissingType != nil && index >= float64(getTotalFixedElementCount(t.Target())) {
 			return c.getUnionType([]*Type{restType, c.undefinedOrMissingType})
 		}
 		return restType
@@ -8355,7 +8350,7 @@ func (c *Checker) newObjectType(objectFlags ObjectFlags, symbol *Symbol) *Type {
 	case objectFlags&ObjectFlagsSingleSignatureType != 0:
 		data = &SingleSignatureType{}
 	case objectFlags&ObjectFlagsAnonymous != 0:
-		data = &AnonymousType{}
+		data = &ObjectType{}
 	default:
 		panic("Unhandled case in newObjectType")
 	}
@@ -8403,7 +8398,7 @@ func (c *Checker) createDeferredTypeReference(target *Type, node *Node, mapper *
 
 func (c *Checker) setStructuredTypeMembers(t *Type, members SymbolTable, callSignatures []*Signature, constructSignatures []*Signature, indexInfos []*IndexInfo) {
 	t.objectFlags |= ObjectFlagsMembersResolved
-	data := t.AsObjectType()
+	data := t.AsStructuredType()
 	data.members = members
 	data.properties = c.getNamedMembers(members)
 	if len(callSignatures) != 0 {
@@ -9359,11 +9354,11 @@ func (c *Checker) filterTypes(types []*Type, predicate func(*Type) bool) {
 }
 
 func (c *Checker) isEmptyAnonymousObjectType(t *Type) bool {
-	return t.objectFlags&ObjectFlagsAnonymous != 0 && t.objectFlags&ObjectFlagsMembersResolved != 0 && c.isEmptyResolvedType(t.AsObjectType()) ||
+	return t.objectFlags&ObjectFlagsAnonymous != 0 && t.objectFlags&ObjectFlagsMembersResolved != 0 && c.isEmptyResolvedType(t.AsStructuredType()) ||
 		t.symbol != nil && t.symbol.flags&SymbolFlagsTypeLiteral != 0 && len(c.getMembersOfSymbol(t.symbol)) == 0
 }
 
-func (c *Checker) isEmptyResolvedType(t *ObjectType) bool {
+func (c *Checker) isEmptyResolvedType(t *StructuredType) bool {
 	return t.AsType() != c.anyFunctionType && len(t.properties) == 0 && len(t.signatures) == 0 && len(t.indexInfos) == 0
 }
 
@@ -9388,7 +9383,7 @@ func (c *Checker) isPatternLiteralType(t *Type) bool {
 	// A pattern literal type is a template literal or a string mapping type that contains only
 	// non-generic pattern literal placeholders.
 	return t.flags&TypeFlagsTemplateLiteral != 0 && every(t.AsTemplateLiteralType().types, c.isPatternLiteralPlaceholderType) ||
-		t.flags&TypeFlagsStringMapping != 0 && c.isPatternLiteralPlaceholderType(t.AsStringMappingType().target)
+		t.flags&TypeFlagsStringMapping != 0 && c.isPatternLiteralPlaceholderType(t.Target())
 }
 
 func (c *Checker) isGenericStringLikeType(t *Type) bool {
@@ -9646,7 +9641,7 @@ func (c *Checker) hasDistributiveNameType(mappedType *Type) bool {
 		case t.flags&TypeFlagsSubstitution != 0:
 			return isDistributive(t.AsSubstitutionType().baseType) && isDistributive(t.AsSubstitutionType().constraint)
 		case t.flags&TypeFlagsStringMapping != 0:
-			return isDistributive(t.AsStringMappingType().target)
+			return isDistributive(t.Target())
 		default:
 			return false
 		}
@@ -9893,7 +9888,7 @@ func (c *Checker) getPropertyTypeForIndexType(originalObjectType *Type, objectTy
 					c.diagnostics.add(createDiagnosticForNode(accessExpression, diagnostics.Property_0_does_not_exist_on_type_1, indexType.AsLiteralType().value, c.typeToString(objectType)))
 					return c.undefinedType
 				} else if indexType.flags&(TypeFlagsNumber|TypeFlagsString) != 0 {
-					types := mapf(objectType.AsObjectType().properties, func(prop *Symbol) *Type {
+					types := mapf(objectType.AsStructuredType().properties, func(prop *Symbol) *Type {
 						return c.getTypeOfSymbol(prop)
 					})
 					return c.getUnionType(append(types, c.undefinedType))
@@ -10052,9 +10047,9 @@ func (c *Checker) shouldDeferIndexedAccessType(objectType *Type, indexType *Type
 		return true
 	}
 	if accessNode != nil && isIndexedAccessTypeNode(accessNode) {
-		return c.isGenericTupleType(objectType) && !indexTypeLessThan(indexType, getTotalFixedElementCount(objectType.AsTypeReference().target))
+		return c.isGenericTupleType(objectType) && !indexTypeLessThan(indexType, getTotalFixedElementCount(objectType.Target()))
 	}
-	return c.isGenericObjectType(objectType) && !(isTupleType(objectType) && indexTypeLessThan(indexType, getTotalFixedElementCount(objectType.AsTypeReference().target))) ||
+	return c.isGenericObjectType(objectType) && !(isTupleType(objectType) && indexTypeLessThan(indexType, getTotalFixedElementCount(objectType.Target()))) ||
 		c.isGenericReducibleType(objectType)
 }
 
@@ -10232,7 +10227,7 @@ func (c *Checker) getNormalizedType(t *Type, writing bool) *Type {
 			n = c.getNormalizedTupleType(t, writing)
 		case t.objectFlags&ObjectFlagsReference != 0:
 			if t.AsTypeReference().node != nil {
-				n = c.createTypeReference(t.AsTypeReference().target, c.getTypeArguments(t))
+				n = c.createTypeReference(t.Target(), c.getTypeArguments(t))
 			} else {
 				n = c.getSingleBaseForNonAugmentingSubtype(t)
 				if n == nil {
@@ -10306,13 +10301,13 @@ func (c *Checker) getNormalizedTupleType(t *Type, writing bool) *Type {
 		return t
 	})
 	if !identical(elements, normalizedElements) {
-		return c.createNormalizedTupleType(t.AsTypeReference().target, normalizedElements)
+		return c.createNormalizedTupleType(t.Target(), normalizedElements)
 	}
 	return t
 }
 
 func (c *Checker) getSingleBaseForNonAugmentingSubtype(t *Type) *Type {
-	if t.objectFlags&ObjectFlagsReference == 0 || t.AsTypeReference().target.objectFlags&ObjectFlagsClassOrInterface == 0 {
+	if t.objectFlags&ObjectFlagsReference == 0 || t.Target().objectFlags&ObjectFlagsClassOrInterface == 0 {
 		return nil
 	}
 	key := CachedTypeKey{kind: CachedTypeKindEquivalentBaseType, typeId: t.id}
@@ -10320,7 +10315,7 @@ func (c *Checker) getSingleBaseForNonAugmentingSubtype(t *Type) *Type {
 		return c.cachedTypes[key]
 	}
 	t.objectFlags |= ObjectFlagsIdenticalBaseTypeCalculated
-	target := t.AsTypeReference().target
+	target := t.Target()
 	if target.objectFlags&ObjectFlagsClass != 0 {
 		baseTypeNode := getBaseTypeNodeOfClass(target)
 		// A base type expression may circularly reference the class itself (e.g. as an argument to function call), so we only

@@ -421,7 +421,7 @@ func getRecursionIdentity(t *Type) RecursionId {
 			return RecursionId{kind: RecursionIdKindSymbol, id: uint32(getSymbolId(t.symbol))}
 		}
 		if isTupleType(t) {
-			return RecursionId{kind: RecursionIdKindType, id: uint32(t.AsTypeReference().target.id)}
+			return RecursionId{kind: RecursionIdKindType, id: uint32(t.Target().id)}
 		}
 	}
 	if t.flags&TypeFlagsTypeParameter != 0 {
@@ -1010,7 +1010,7 @@ func (r *Relater) structuredTypeRelatedToWorker(source *Type, target *Type, repo
 			}
 			return result
 		case source.flags&TypeFlagsIndex != 0:
-			return r.isRelatedTo(source.AsIndexType().target, target.AsIndexType().target, RecursionFlagsBoth, false /*reportErrors*/)
+			return r.isRelatedTo(source.Target(), target.Target(), RecursionFlagsBoth, false /*reportErrors*/)
 		case source.flags&TypeFlagsIndexedAccess != 0:
 			result = r.isRelatedTo(source.AsIndexedAccessType().objectType, target.AsIndexedAccessType().objectType, RecursionFlagsBoth, false /*reportErrors*/)
 			if result != TernaryFalse {
