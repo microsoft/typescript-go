@@ -5885,7 +5885,7 @@ func (n *TupleNormalizer) normalize(c *Checker, elementTypes []*Type, elementInf
 		}
 	}
 	// Turn optional elements preceding the last required element into required elements
-	for i := 0; i < n.lastRequiredIndex; i++ {
+	for i := range n.lastRequiredIndex {
 		if n.infos[i].flags&ElementFlagsOptional != 0 {
 			n.infos[i].flags = ElementFlagsRequired
 		}
@@ -6565,7 +6565,7 @@ func (c *Checker) createTupleTargetType(elementInfos []TupleElementInfo, readonl
 	combinedFlags := ElementFlagsNone
 	if arity != 0 {
 		typeParameters = make([]*Type, arity)
-		for i := 0; i < arity; i++ {
+		for i := range arity {
 			typeParameter := c.newTypeParameter(nil)
 			typeParameters[i] = typeParameter
 			flags := elementInfos[i].flags
@@ -7766,7 +7766,7 @@ func (c *Checker) eachUnionContains(unionTypes []*Type, t *Type) bool {
 func (c *Checker) getCrossProductIntersections(types []*Type, flags IntersectionFlags) []*Type {
 	count := c.getCrossProductUnionSize(types)
 	var intersections []*Type
-	for i := 0; i < count; i++ {
+	for i := range count {
 		constituents := slices.Clone(types)
 		n := i
 		for j := len(types) - 1; j >= 0; j-- {
