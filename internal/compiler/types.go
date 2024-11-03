@@ -1476,13 +1476,6 @@ type UniqueESSymbolType struct {
 }
 
 // StructuredType (base of all types with members)
-// AnonymousType (ObjectFlagsAnonymous)
-//   TypeReference (ObjectFlagsReference)
-//     InterfaceType (ObjectFlagsReference | (ObjectFlagsClass|ObjectFlagsInterface|ObjectFlagsTuple))
-//   SingleSignatureType (ObjectFlagsAnonymous|ObjectFlagsSingleSignatureType)
-//   InstantiationExpressionType (ObjectFlagsAnonymous|ObjectFlagsInstantiationExpressionType)
-//   MappedType (ObjectFlagsAnonymous|ObjectFlagsMapped)
-// ReverseMapped (ObjectFlagsReverseMapped)
 
 type StructuredType struct {
 	TypeBase
@@ -1504,6 +1497,15 @@ func (t *StructuredType) ConstructSignatures() []*Signature {
 }
 
 // ObjectType (base of all instantiable object types)
+// Instances of ObjectType or derived types have the following ObjectFlags:
+// ObjectType (ObjectFlagsAnonymous)
+//   TypeReference (ObjectFlagsReference)
+//     InterfaceType (ObjectFlagsReference | (ObjectFlagsClass|ObjectFlagsInterface))
+//       TupleType (ObjectFlagsReference | ObjectFlagsTuple)
+//   SingleSignatureType (ObjectFlagsAnonymous|ObjectFlagsSingleSignatureType)
+//   InstantiationExpressionType (ObjectFlagsAnonymous|ObjectFlagsInstantiationExpressionType)
+//   MappedType (ObjectFlagsAnonymous|ObjectFlagsMapped)
+//   ReverseMapped (ObjectFlagsReverseMapped)
 
 type ObjectType struct {
 	StructuredType
