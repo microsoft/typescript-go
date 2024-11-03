@@ -12,40 +12,43 @@ import (
 func TestExports(t *testing.T) {
 	t.Parallel()
 
-	t.Run("UnmarshalJSON", func(t *testing.T) {
-		t.Parallel()
-		testExports(t, json.Unmarshal)
-	})
-	t.Run("UnmarshalJSONV2", func(t *testing.T) {
-		t.Parallel()
-		testExports(t, func(in []byte, out any) error { return json2.Unmarshal(in, out) })
-	})
-}
-
-func testExports(t *testing.T, unmarshal func([]byte, any) error) {
-	type Exports struct {
-		Exports packagejson.Exports `json:"exports"`
+	tests := []struct {
+		name      string
+		unmarshal func([]byte, any) error
+	}{
+		{"UnmarshalJSON", json.Unmarshal},
+		{"UnmarshalJSONV2", func(in []byte, out any) error { return json2.Unmarshal(in, out) }},
 	}
 
-	var e Exports
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 
-	jsonString := `{
-		"exports": {
-			".": {
-				"import": "./test.ts",
-				"default": "./test.ts"
-			},
-			"./test": [
-				"./test1.ts",
-				"./test2.ts"
-			]
-		}
-	}`
+			type Exports struct {
+				Exports packagejson.Exports `json:"exports"`
+			}
 
-	err := unmarshal([]byte(jsonString), &e)
-	assert.NilError(t, err)
+			var e Exports
 
-	assert.Assert(t, e.Exports.IsSubpaths())
-	assert.Equal(t, e.Exports.AsObject().Size(), 2)
-	assert.Assert(t, e.Exports.AsObject().GetOrZero(".").IsConditions())
+			jsonString := `{
+				"exports": {
+					".": {
+						"import": "./test.ts",
+						"default": "./test.ts"
+					},
+					"./test": [
+						"./test1.ts",
+						"./test2.ts"
+					]
+				}
+			}`
+
+			err := tt.unmarshal([]byte(jsonString), &e)
+			assert.NilError(t, err)
+
+			assert.Assert(t, e.Exports.IsSubpaths())
+			assert.Equal(t, e.Exports.AsObject().Size(), 2)
+			assert.Assert(t, e.Exports.AsObject().GetOrZero(".").IsConditions())
+		})
+	}
 }

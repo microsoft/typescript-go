@@ -162,31 +162,34 @@ func TestMapWithSizeHint(t *testing.T) { //nolint:paralleltest
 func TestMapUnmarshalJSON(t *testing.T) {
 	t.Parallel()
 
-	t.Run("UnmarshalJSON", func(t *testing.T) {
-		t.Parallel()
-		testMapUnmarshalJSON(t, json.Unmarshal)
-	})
-	t.Run("UnmarshalJSONV2", func(t *testing.T) {
-		t.Parallel()
-		testMapUnmarshalJSON(t, func(in []byte, out any) error { return json2.Unmarshal(in, out) })
-	})
-}
+	tests := []struct {
+		name      string
+		unmarshal func([]byte, any) error
+	}{
+		{"UnmarshalJSON", json.Unmarshal},
+		{"UnmarshalJSONV2", func(in []byte, out any) error { return json2.Unmarshal(in, out) }},
+	}
 
-func testMapUnmarshalJSON(t *testing.T, unmarshal func([]byte, any) error) {
-	var m collections.Map[string, any]
-	err := unmarshal([]byte(`{"a": 1, "b": "two", "c": { "d": 4 } }`), &m)
-	assert.NilError(t, err)
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 
-	assert.Equal(t, m.Size(), 3)
-	assert.Equal(t, m.GetOrZero("a"), float64(1))
+			var m collections.Map[string, any]
+			err := tt.unmarshal([]byte(`{"a": 1, "b": "two", "c": { "d": 4 } }`), &m)
+			assert.NilError(t, err)
 
-	err = unmarshal([]byte(`null`), &m)
-	assert.NilError(t, err)
+			assert.Equal(t, m.Size(), 3)
+			assert.Equal(t, m.GetOrZero("a"), float64(1))
 
-	err = unmarshal([]byte(`"foo"`), &m)
-	assert.ErrorContains(t, err, "cannot unmarshal non-object JSON value into Map")
+			err = tt.unmarshal([]byte(`null`), &m)
+			assert.NilError(t, err)
 
-	var invalidMap collections.Map[int, any]
-	err = unmarshal([]byte(`{"a": 1, "b": "two"}`), &invalidMap)
-	assert.ErrorContains(t, err, "unmarshal")
+			err = tt.unmarshal([]byte(`"foo"`), &m)
+			assert.ErrorContains(t, err, "cannot unmarshal non-object JSON value into Map")
+
+			var invalidMap collections.Map[int, any]
+			err = tt.unmarshal([]byte(`{"a": 1, "b": "two"}`), &invalidMap)
+			assert.ErrorContains(t, err, "unmarshal")
+		})
+	}
 }
