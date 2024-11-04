@@ -14,7 +14,7 @@ const directorySeparator = '/'
 const urlSchemeSeparator = "://"
 
 // check path for these segments: ”, '.'. '..'
-var relativePathSegmentRegExp = makeRegexp(`//(?:^|/)\.\.?(?:$|/)`)
+var relativePathSegmentRegExp = makeRegexp(`//|(?:^|/)\.\.?(?:$|/)`)
 
 //// Path Tests
 
