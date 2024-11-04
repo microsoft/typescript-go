@@ -2,6 +2,7 @@ package compiler
 
 import (
 	"fmt"
+	"iter"
 	"maps"
 	"math"
 	"path/filepath"
@@ -623,6 +624,15 @@ func insertSorted[T any](slice []T, element T, cmp func(T, T) int) []T {
 func firstOrNil[T any](slice []T) T {
 	if len(slice) != 0 {
 		return slice[0]
+	}
+	return *new(T)
+}
+
+func firstOrNilSeq[T any](seq iter.Seq[T]) T {
+	if seq != nil {
+		for value := range seq {
+			return value
+		}
 	}
 	return *new(T)
 }

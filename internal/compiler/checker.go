@@ -119,6 +119,15 @@ var intrinsicTypeKinds = map[string]IntrinsicTypeKind{
 	"NoInfer":      IntrinsicTypeKindNoInfer,
 }
 
+type MappedTypeModifiers uint32
+
+const (
+	MappedTypeModifiersIncludeReadonly MappedTypeModifiers = 1 << 0
+	MappedTypeModifiersExcludeReadonly MappedTypeModifiers = 1 << 1
+	MappedTypeModifiersIncludeOptional MappedTypeModifiers = 1 << 2
+	MappedTypeModifiersExcludeOptional MappedTypeModifiers = 1 << 3
+)
+
 type MappedTypeNameTypeKind int32
 
 const (
@@ -171,6 +180,7 @@ type Checker struct {
 	indexedAccessTypes                 map[string]*Type
 	uniqueESSymbolTypes                map[*Symbol]*Type
 	cachedTypes                        map[CachedTypeKey]*Type
+	markerTypes                        set[*Type]
 	identifierSymbols                  map[*Node]*Symbol
 	undefinedSymbol                    *Symbol
 	argumentsSymbol                    *Symbol
@@ -227,6 +237,7 @@ type Checker struct {
 	voidType                           *Type
 	neverType                          *Type
 	silentNeverType                    *Type
+	implicitNeverType                  *Type
 	nonPrimitiveType                   *Type
 	stringOrNumberType                 *Type
 	stringNumberSymbolType             *Type
@@ -346,6 +357,7 @@ func NewChecker(program *Program) *Checker {
 	c.voidType = c.newIntrinsicType(TypeFlagsVoid, "void")
 	c.neverType = c.newIntrinsicType(TypeFlagsNever, "never")
 	c.silentNeverType = c.newIntrinsicTypeEx(TypeFlagsNever, "never", ObjectFlagsNonInferrableType)
+	c.implicitNeverType = c.newIntrinsicType(TypeFlagsNever, "never")
 	c.nonPrimitiveType = c.newIntrinsicType(TypeFlagsNonPrimitive, "object")
 	c.stringOrNumberType = c.getUnionType([]*Type{c.stringType, c.numberType})
 	c.stringNumberSymbolType = c.getUnionType([]*Type{c.stringType, c.numberType, c.esSymbolType})
@@ -1541,6 +1553,28 @@ func (c *Checker) getDeclaringClass(prop *Symbol) *Type {
 		return c.getDeclaredTypeOfSymbol(c.getParentOfSymbol(prop))
 	}
 	return nil
+}
+
+// Return true if source property is a valid override of protected parts of target property.
+func (c *Checker) isValidOverrideOf(sourceProp *Symbol, targetProp *Symbol) bool {
+	return !c.forEachProperty(targetProp, func(tp *Symbol) bool {
+		if getDeclarationModifierFlagsFromSymbol(tp)&ModifierFlagsProtected != 0 {
+			return c.isPropertyInClassDerivedFrom(sourceProp, c.getDeclaringClass(tp))
+		}
+		return false
+	})
+}
+
+// Return true if some underlying source property is declared in a class that derives
+// from the given base class.
+func (c *Checker) isPropertyInClassDerivedFrom(prop *Symbol, baseClass *Type) bool {
+	return c.forEachProperty(prop, func(sp *Symbol) bool {
+		sourceClass := c.getDeclaringClass(sp)
+		if sourceClass != nil {
+			return c.hasBaseType(sourceClass, baseClass)
+		}
+		return false
+	})
 }
 
 func (c *Checker) isNodeUsedDuringClassInitialization(node *Node) bool {
@@ -3679,6 +3713,10 @@ func (c *Checker) getTypeOfSymbol(symbol *Symbol) *Type {
 	return c.errorType
 }
 
+func (c *Checker) getNonMissingTypeOfSymbol(symbol *Symbol) *Type {
+	return c.removeMissingType(c.getTypeOfSymbol(symbol), symbol.flags&SymbolFlagsOptional != 0)
+}
+
 func (c *Checker) getTypeOfInstantiatedSymbol(symbol *Symbol) *Type {
 	links := c.valueSymbolLinks.get(symbol)
 	if links.resolvedType == nil {
@@ -4852,6 +4890,13 @@ func (c *Checker) getIndexTypeOfType(t *Type, keyType *Type) *Type {
 		return info.valueType
 	}
 	return nil
+}
+
+func (c *Checker) getIndexTypeOfTypeEx(t *Type, keyType *Type, defaultType *Type) *Type {
+	if result := c.getIndexTypeOfType(t, keyType); result != nil {
+		return result
+	}
+	return defaultType
 }
 
 func (c *Checker) getApplicableIndexInfo(t *Type, keyType *Type) *IndexInfo {
@@ -6386,6 +6431,15 @@ func (c *Checker) createSymbolWithType(source *Symbol, t *Type) *Symbol {
 	return symbol
 }
 
+func (c *Checker) isMappedTypeGenericIndexedAccess(t *Type) bool {
+	if t.flags&TypeFlagsIndexedAccess != 0 {
+		objectType := t.AsIndexedAccessType().objectType
+		return objectType.objectFlags&ObjectFlagsMapped != 0 && !c.isGenericMappedType(objectType) && c.isGenericIndexType(t.AsIndexedAccessType().indexType) &&
+			getMappedTypeModifiers(objectType)&MappedTypeModifiersExcludeOptional == 0 && objectType.AsMappedType().declaration.nameType == nil
+	}
+	return false
+}
+
 /**
  * For a type parameter, return the base constraint of the type parameter. For the string, number,
  * boolean, and symbol primitive types, return the corresponding object types. Otherwise return the
@@ -7445,13 +7499,28 @@ func (n *TupleNormalizer) add(t *Type, info TupleElementInfo) {
 	n.infos = append(n.infos, info)
 }
 
-func getFixedEndElementCount(t *Type) int {
-	d := t.AsTupleType()
-	return len(d.elementInfos) - findLastIndex(d.elementInfos, func(e TupleElementInfo) bool { return e.flags&ElementFlagsFixed == 0 }) - 1
+// Return count of starting consecutive tuple elements of the given kind(s)
+func getStartElementCount(t *TupleType, flags ElementFlags) int {
+	for i, info := range t.elementInfos {
+		if info.flags&flags == 0 {
+			return i
+		}
+	}
+	return len(t.elementInfos)
 }
 
-func getTotalFixedElementCount(t *Type) int {
-	return t.AsTupleType().fixedLength + getFixedEndElementCount(t)
+// Return count of ending consecutive tuple elements of the given kind(s)
+func getEndElementCount(t *TupleType, flags ElementFlags) int {
+	for i := len(t.elementInfos); i > 0; i-- {
+		if t.elementInfos[i-1].flags&flags == 0 {
+			return len(t.elementInfos) - i
+		}
+	}
+	return len(t.elementInfos)
+}
+
+func getTotalFixedElementCount(t *TupleType) int {
+	return t.fixedLength + getEndElementCount(t, ElementFlagsFixed)
 }
 
 func (c *Checker) getElementTypes(t *Type) []*Type {
@@ -7479,6 +7548,18 @@ func isTupleType(t *Type) bool {
 	return t.objectFlags&ObjectFlagsReference != 0 && t.Target().objectFlags&ObjectFlagsTuple != 0
 }
 
+func isMutableTupleType(t *Type) bool {
+	return isTupleType(t) && !t.TargetTupleType().readonly
+}
+
+func isGenericTupleType(t *Type) bool {
+	return isTupleType(t) && t.TargetTupleType().combinedFlags&ElementFlagsVariadic != 0
+}
+
+func isSingleElementGenericTupleType(t *Type) bool {
+	return isGenericTupleType(t) && len(t.TargetTupleType().elementInfos) == 1
+}
+
 func (c *Checker) isArrayOrTupleType(t *Type) bool {
 	return c.isArrayType(t) || isTupleType(t)
 }
@@ -7504,6 +7585,18 @@ func (c *Checker) isMutableArrayLikeType(t *Type) bool {
 	// A type is mutable-array-like if it is a reference to the global Array type, or if it is not the
 	// any, undefined or null type and if it is assignable to Array<any>
 	return c.isMutableArrayOrTuple(t) || t.flags&(TypeFlagsAny|TypeFlagsNullable) == 0 && c.isTypeAssignableTo(t, c.anyArrayType)
+}
+
+func (c *Checker) isEmptyArrayLiteralType(t *Type) bool {
+	elementType := c.getElementTypeOfArrayType(t)
+	return elementType != nil && c.isEmptyLiteralType(elementType)
+}
+
+func (c *Checker) isEmptyLiteralType(t *Type) bool {
+	if c.strictNullChecks {
+		return t == c.implicitNeverType
+	}
+	return t == c.undefinedWideningType
 }
 
 /**
@@ -8185,7 +8278,7 @@ func (c *Checker) getTupleElementTypeOutOfStartCount(t *Type, index float64, und
 		if restType == nil {
 			return c.undefinedType
 		}
-		if c.undefinedOrMissingType != nil && index >= float64(getTotalFixedElementCount(t.Target())) {
+		if c.undefinedOrMissingType != nil && index >= float64(getTotalFixedElementCount(t.TargetTupleType())) {
 			return c.getUnionType([]*Type{restType, c.undefinedOrMissingType})
 		}
 		return restType
@@ -9362,6 +9455,20 @@ func (c *Checker) isEmptyResolvedType(t *StructuredType) bool {
 	return t.AsType() != c.anyFunctionType && len(t.properties) == 0 && len(t.signatures) == 0 && len(t.indexInfos) == 0
 }
 
+func (c *Checker) isEmptyObjectType(t *Type) bool {
+	switch {
+	case t.flags&TypeFlagsObject != 0:
+		return !c.isGenericMappedType(t) && c.isEmptyResolvedType(c.resolveStructuredTypeMembers(t))
+	case t.flags&TypeFlagsNonPrimitive != 0:
+		return true
+	case t.flags&TypeFlagsUnion != 0:
+		return some(t.Types(), c.isEmptyObjectType)
+	case t.flags&TypeFlagsIntersection != 0:
+		return every(t.Types(), c.isEmptyObjectType)
+	}
+	return false
+}
+
 func (c *Checker) isPatternLiteralPlaceholderType(t *Type) bool {
 	if t.flags&TypeFlagsIntersection != 0 {
 		// Return true if the intersection consists of one or more placeholders and zero or
@@ -9448,6 +9555,10 @@ func (c *Checker) filterType(t *Type, f func(*Type) bool) *Type {
 		return t
 	}
 	return c.neverType
+}
+
+func (c *Checker) removeType(t *Type, targetType *Type) *Type {
+	return c.filterType(t, func(t *Type) bool { return t != targetType })
 }
 
 func containsType(types []*Type, t *Type) bool {
@@ -10047,9 +10158,9 @@ func (c *Checker) shouldDeferIndexedAccessType(objectType *Type, indexType *Type
 		return true
 	}
 	if accessNode != nil && isIndexedAccessTypeNode(accessNode) {
-		return c.isGenericTupleType(objectType) && !indexTypeLessThan(indexType, getTotalFixedElementCount(objectType.Target()))
+		return c.isGenericTupleType(objectType) && !indexTypeLessThan(indexType, getTotalFixedElementCount(objectType.TargetTupleType()))
 	}
-	return c.isGenericObjectType(objectType) && !(isTupleType(objectType) && indexTypeLessThan(indexType, getTotalFixedElementCount(objectType.Target()))) ||
+	return c.isGenericObjectType(objectType) && !(isTupleType(objectType) && indexTypeLessThan(indexType, getTotalFixedElementCount(objectType.TargetTupleType()))) ||
 		c.isGenericReducibleType(objectType)
 }
 
@@ -10080,6 +10191,14 @@ func (c *Checker) getBaseConstraintOfType(t *Type) *Type {
 		return t.AsTypeParameter().constraint
 	}
 	return nil
+}
+
+func (c *Checker) getBaseConstraintOrType(t *Type) *Type {
+	constraint := c.getBaseConstraintOfType(t)
+	if constraint != nil {
+		return constraint
+	}
+	return t
 }
 
 // Return true if type might be of the given kind. A union or intersection type might be of a given
@@ -10380,4 +10499,21 @@ func (c *Checker) markLinkedReferences(location *Node, hint ReferenceHint, propS
 
 func (c *Checker) getPromisedTypeOfPromise(t *Type) *Type {
 	return nil // !!!
+}
+
+func getMappedTypeModifiers(t *Type) MappedTypeModifiers {
+	declaration := t.AsMappedType().declaration
+	return ifElse(declaration.readonlyToken != nil, ifElse(declaration.readonlyToken.kind == SyntaxKindMinusToken, MappedTypeModifiersExcludeReadonly, MappedTypeModifiersIncludeReadonly), 0) |
+		ifElse(declaration.questionToken != nil, ifElse(declaration.questionToken.kind == SyntaxKindMinusToken, MappedTypeModifiersExcludeOptional, MappedTypeModifiersIncludeOptional), 0)
+}
+
+func isPartialMappedType(t *Type) bool {
+	return t.objectFlags&ObjectFlagsMapped != 0 && getMappedTypeModifiers(t)&MappedTypeModifiersIncludeOptional != 0
+}
+
+func (c *Checker) removeMissingType(t *Type, isOptional bool) *Type {
+	if c.exactOptionalPropertyTypes && isOptional {
+		return c.removeType(t, c.missingType)
+	}
+	return t
 }

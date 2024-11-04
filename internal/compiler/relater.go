@@ -1,7 +1,9 @@
 package compiler
 
 import (
+	"iter"
 	"slices"
+	"strconv"
 	"strings"
 
 	"github.com/microsoft/typescript-go/internal/compiler/diagnostics"
@@ -460,6 +462,80 @@ func (c *Checker) getMatchingUnionConstituentForType(unionType *Type, t *Type) *
 	// propType := keyPropertyName && c.getTypeOfPropertyOfType(t, keyPropertyName)
 	// return propType && c.getConstituentTypeForKeyType(unionType, propType)
 	return nil
+}
+
+func (c *Checker) shouldReportUnmatchedPropertyError(source *Type, target *Type) bool {
+	typeCallSignatures := c.getSignaturesOfType(source, SignatureKindCall)
+	typeConstructSignatures := c.getSignaturesOfType(source, SignatureKindConstruct)
+	typeProperties := c.getPropertiesOfObjectType(source)
+	if (len(typeCallSignatures) != 0 || len(typeConstructSignatures) != 0) && len(typeProperties) == 0 {
+		if (len(c.getSignaturesOfType(target, SignatureKindCall)) != 0 && len(typeCallSignatures) != 0) ||
+			len(c.getSignaturesOfType(target, SignatureKindConstruct)) != 0 && len(typeConstructSignatures) != 0 {
+			// target has similar signature kinds to source, still focus on the unmatched property
+			return true
+		}
+		return false
+	}
+	return true
+}
+
+func (c *Checker) getUnmatchedProperties(source *Type, target *Type, requireOptionalProperties bool, matchDiscriminantProperties bool) iter.Seq[*Symbol] {
+	return func(yield func(*Symbol) bool) {
+		properties := c.getPropertiesOfType(target)
+		for _, targetProp := range properties {
+			// TODO: remove this when we support static private identifier fields and find other solutions to get privateNamesAndStaticFields test to pass
+			if isStaticPrivateIdentifierProperty(targetProp) {
+				continue
+			}
+			if requireOptionalProperties || targetProp.flags&SymbolFlagsOptional == 0 && targetProp.checkFlags&CheckFlagsPartial == 0 {
+				sourceProp := c.getPropertyOfType(source, targetProp.name)
+				if sourceProp == nil {
+					if !yield(targetProp) {
+						return
+					}
+				} else if matchDiscriminantProperties {
+					targetType := c.getTypeOfSymbol(targetProp)
+					if targetType.flags&TypeFlagsUnit != 0 {
+						sourceType := c.getTypeOfSymbol(sourceProp)
+						if !(sourceType.flags&TypeFlagsAny != 0 || c.getRegularTypeOfLiteralType(sourceType) == c.getRegularTypeOfLiteralType(targetType)) {
+							if !yield(targetProp) {
+								return
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+func (c *Checker) getUnmatchedProperty(source *Type, target *Type, requireOptionalProperties bool, matchDiscriminantProperties bool) *Symbol {
+	return firstOrNilSeq(c.getUnmatchedProperties(source, target, requireOptionalProperties, matchDiscriminantProperties))
+}
+
+func (c *Checker) isMarkerType(t *Type) bool {
+	return c.markerTypes.has(t)
+}
+
+func excludeProperties(properties []*Symbol, excludedProperties set[string]) []*Symbol {
+	if excludedProperties.len() == 0 || len(properties) == 0 {
+		return properties
+	}
+	var reduced []*Symbol
+	var excluded bool
+	for i, prop := range properties {
+		if !excludedProperties.has(prop.name) {
+			if excluded {
+				reduced = append(reduced, prop)
+			}
+		} else if !excluded {
+			reduced = slices.Clip(properties[:i])
+		}
+	}
+	if excluded {
+		return reduced
+	}
+	return properties
 }
 
 type errorState struct {
@@ -999,6 +1075,8 @@ func (r *Relater) structuredTypeRelatedTo(source *Type, target *Type, reportErro
 
 func (r *Relater) structuredTypeRelatedToWorker(source *Type, target *Type, reportErrors bool, intersectionState IntersectionState, saveErrorState *errorState) Ternary {
 	var result Ternary
+	var varianceCheckFailed bool
+	var originalErrorInfo *MessageChain
 	switch {
 	case r.relation == r.c.identityRelation:
 		// We've already checked that source.flags and target.flags are identical
@@ -1064,7 +1142,493 @@ func (r *Relater) structuredTypeRelatedToWorker(source *Type, target *Type, repo
 			return TernaryFalse
 		}
 	}
+	// !!! Variance
+	// For a generic type T and a type U that is assignable to T, [...U] is assignable to T, U is assignable to readonly [...T],
+	// and U is assignable to [...T] when U is constrained to a mutable array or tuple type.
+	if isSingleElementGenericTupleType(source) && !source.TargetTupleType().readonly {
+		result = r.isRelatedTo(r.c.getTypeArguments(source)[0], target, RecursionFlagsSource, false /*reportErrors*/)
+		if result != TernaryFalse {
+			return result
+		}
+	}
+	if isSingleElementGenericTupleType(target) && target.TargetTupleType().readonly || r.c.isMutableArrayOrTuple(r.c.getBaseConstraintOrType(source)) {
+		result = r.isRelatedTo(source, r.c.getTypeArguments(target)[0], RecursionFlagsTarget, false /*reportErrors*/)
+		if result != TernaryFalse {
+			return result
+		}
+	}
+	switch {
+	case target.flags&TypeFlagsTypeParameter != 0:
+		// !!!
+		// // A source type { [P in Q]: X } is related to a target type T if keyof T is related to Q and X is related to T[Q].
+		// if getObjectFlags(source)&ObjectFlagsMapped && !(source.(MappedType)).declaration.nameType && isRelatedTo(c.getIndexType(target), c.getConstraintTypeFromMappedType(source.(MappedType)), RecursionFlagsBoth) {
+		// 	if !(c.getMappedTypeModifiers(source.(MappedType)) & MappedTypeModifiersIncludeOptional) {
+		// 		templateType := c.getTemplateTypeFromMappedType(source.(MappedType))
+		// 		indexedAccessType := c.getIndexedAccessType(target, c.getTypeParameterFromMappedType(source.(MappedType)))
+		// 		if /* TODO(TS-TO-GO) EqualsToken BinaryExpression: result = isRelatedTo(templateType, indexedAccessType, RecursionFlags.Both, reportErrors) */ TODO {
+		// 			return result
+		// 		}
+		// 	}
+		// }
+		if r.relation == r.c.comparableRelation && source.flags&TypeFlagsTypeParameter != 0 {
+			// This is a carve-out in comparability to essentially forbid comparing a type parameter with another type parameter
+			// unless one extends the other. (Remember: comparability is mostly bidirectional!)
+			constraint := r.c.getConstraintOfTypeParameter(source)
+			if constraint != nil {
+				for constraint != nil && someType(constraint, func(c *Type) bool { return c.flags&TypeFlagsTypeParameter != 0 }) {
+					result = r.isRelatedTo(constraint, target, RecursionFlagsSource, false /*reportErrors*/)
+					if result != TernaryFalse {
+						return result
+					}
+					constraint = r.c.getConstraintOfTypeParameter(constraint)
+				}
+			}
+			return TernaryFalse
+		}
+	case target.flags&TypeFlagsIndexedAccess != 0:
+	case target.flags&TypeFlagsIndex != 0:
+	case target.flags&TypeFlagsConditional != 0:
+	case target.flags&TypeFlagsTemplateLiteral != 0:
+	case target.flags&TypeFlagsStringMapping != 0:
+	case r.c.isGenericMappedType(target) && r.relation != r.c.identityRelation:
+	}
+	switch {
+	case source.flags&TypeFlagsTypeVariable != 0:
+		// IndexedAccess comparisons are handled above in the `target.flags&TypeFlagsIndexedAccess` branch
+		if source.flags&TypeFlagsIndexedAccess == 0 || target.flags&TypeFlagsIndexedAccess == 0 {
+			constraint := r.c.getConstraintOfType(source)
+			if constraint == nil {
+				constraint = r.c.unknownType
+			}
+			// hi-speed no-this-instantiation check (less accurate, but avoids costly `this`-instantiation when the constraint will suffice), see #28231 for report on why this is needed
+			result = r.isRelatedToEx(constraint, target, RecursionFlagsSource, false /*reportErrors*/, nil /*headMessage*/, intersectionState)
+			if result != TernaryFalse {
+				return result
+			}
+			constraintWithThis := r.c.getTypeWithThisArgument(constraint, source, false /*needApparentType*/)
+			result = r.isRelatedToEx(constraintWithThis, target, RecursionFlagsSource, reportErrors && constraint != r.c.unknownType && target.flags&source.flags&TypeFlagsTypeParameter == 0, nil /*headMessage*/, intersectionState)
+			if result != TernaryFalse {
+				return result
+			}
+			if r.c.isMappedTypeGenericIndexedAccess(source) {
+				// For an indexed access type { [P in K]: E}[X], above we have already explored an instantiation of E with X
+				// substituted for P. We also want to explore type { [P in K]: E }[C], where C is the constraint of X.
+				indexConstraint := r.c.getConstraintOfType(source.AsIndexedAccessType().indexType)
+				if indexConstraint != nil {
+					result = r.isRelatedTo(r.c.getIndexedAccessType(source.AsIndexedAccessType().objectType, indexConstraint), target, RecursionFlagsSource, reportErrors)
+					if result != TernaryFalse {
+						return result
+					}
+				}
+			}
+		}
+	case source.flags&TypeFlagsIndex != 0:
+	case source.flags&TypeFlagsConditional != 0:
+	case source.flags&TypeFlagsTemplateLiteral != 0 && target.flags&TypeFlagsObject == 0:
+	case source.flags&TypeFlagsStringMapping != 0:
+	default:
+		// An empty object type is related to any mapped type that includes a '?' modifier.
+		if r.relation != r.c.subtypeRelation && r.relation != r.c.strictSubtypeRelation && isPartialMappedType(target) && r.c.isEmptyObjectType(source) {
+			return TernaryTrue
+		}
+		if r.c.isGenericMappedType(target) {
+			if r.c.isGenericMappedType(source) {
+				result = r.mappedTypeRelatedTo(source, target, reportErrors)
+				if result != TernaryFalse {
+					return result
+				}
+			}
+			return TernaryFalse
+		}
+		sourceIsPrimitive := source.flags&TypeFlagsPrimitive != 0
+		if r.relation != r.c.identityRelation {
+			source = r.c.getApparentType(source)
+		} else if r.c.isGenericMappedType(source) {
+			return TernaryFalse
+		}
+		switch {
+		case source.objectFlags&ObjectFlagsReference != 0 && target.objectFlags&ObjectFlagsReference != 0 && source.Target() == target.Target() && !isTupleType(source) && !r.c.isMarkerType(source) && !r.c.isMarkerType(target):
+			// When strictNullChecks is disabled, the element type of the empty array literal is undefinedWideningType,
+			// and an empty array literal wouldn't be assignable to a `never[]` without this check.
+			if r.c.isEmptyArrayLiteralType(source) {
+				return TernaryTrue
+			}
+			// !!!
+			// // We have type references to the same generic type, and the type references are not marker
+			// // type references (which are intended by be compared structurally). Obtain the variance
+			// // information for the type parameters and relate the type arguments accordingly.
+			// variances := c.getVariances((source.(TypeReference)).target)
+			// // We return Ternary.Maybe for a recursive invocation of getVariances (signalled by emptyArray). This
+			// // effectively means we measure variance only from type parameter occurrences that aren't nested in
+			// // recursive instantiations of the generic type.
+			// if variances == emptyArray {
+			// 	return TernaryUnknown
+			// }
+			// varianceResult := relateVariances(c.getTypeArguments(source.(TypeReference)), c.getTypeArguments(target.(TypeReference)), variances, intersectionState)
+			// if varianceResult != nil {
+			// 	return varianceResult
+			// }
+		case r.c.isArrayType(target) && (r.c.isReadonlyArrayType(target) && everyType(source, r.c.isArrayOrTupleType) || everyType(source, isMutableTupleType)):
+			if r.relation != r.c.identityRelation {
+				return r.isRelatedTo(r.c.getIndexTypeOfTypeEx(source, r.c.numberType, r.c.anyType), r.c.getIndexTypeOfTypeEx(target, r.c.numberType, r.c.anyType), RecursionFlagsBoth, reportErrors)
+			}
+			// By flags alone, we know that the `target` is a readonly array while the source is a normal array or tuple
+			// or `target` is an array and source is a tuple - in both cases the types cannot be identical, by construction
+			return TernaryFalse
+		case r.c.isGenericTupleType(source) && isTupleType(target) && !r.c.isGenericTupleType(target):
+			constraint := r.c.getBaseConstraintOrType(source)
+			if constraint != source {
+				return r.isRelatedTo(constraint, target, RecursionFlagsSource, reportErrors)
+			}
+		case (r.relation == r.c.subtypeRelation || r.relation == r.c.strictSubtypeRelation) && r.c.isEmptyObjectType(target) && target.objectFlags&ObjectFlagsFreshLiteral != 0 && !r.c.isEmptyObjectType(source):
+			return TernaryFalse
+		}
+		// Even if relationship doesn't hold for unions, intersections, or generic type references,
+		// it may hold in a structural comparison.
+		// In a check of the form X = A & B, we will have previously checked if A relates to X or B relates
+		// to X. Failing both of those we want to check if the aggregation of A and B's members structurally
+		// relates to X. Thus, we include intersection types on the source side here.
+		if source.flags&(TypeFlagsObject|TypeFlagsIntersection) != 0 && target.flags&TypeFlagsObject != 0 {
+			// Report structural errors only if we haven't reported any errors yet
+			reportStructuralErrors := reportErrors && r.errorInfo == saveErrorState.errorInfo && !sourceIsPrimitive
+			result = r.propertiesRelatedTo(source, target, reportStructuralErrors, set[string]{} /*excludedProperties*/, false /*optionalsOnly*/, intersectionState)
+			if result != TernaryFalse {
+				result &= r.signaturesRelatedTo(source, target, SignatureKindCall, reportStructuralErrors, intersectionState)
+				if result != TernaryFalse {
+					result &= r.signaturesRelatedTo(source, target, SignatureKindConstruct, reportStructuralErrors, intersectionState)
+					if result != TernaryFalse {
+						result &= r.indexSignaturesRelatedTo(source, target, sourceIsPrimitive, reportStructuralErrors, intersectionState)
+					}
+				}
+			}
+			if result != TernaryFalse {
+				if !varianceCheckFailed {
+					return result
+				}
+				if originalErrorInfo != nil {
+					r.errorInfo = originalErrorInfo
+				} else if r.errorInfo == nil {
+					r.errorInfo = saveErrorState.errorInfo
+				}
+				// Use variance error (there is no structural one) and return false
+			}
+		}
+		// If S is an object type and T is a discriminated union, S may be related to T if
+		// there exists a constituent of T for every combination of the discriminants of S
+		// with respect to T. We do not report errors here, as we will use the existing
+		// error result from checking each constituent of the union.
+		if source.flags&(TypeFlagsObject|TypeFlagsIntersection) != 0 && target.flags&TypeFlagsUnion != 0 {
+			objectOnlyTarget := r.c.extractTypesOfKind(target, TypeFlagsObject|TypeFlagsIntersection|TypeFlagsSubstitution)
+			if objectOnlyTarget.flags&TypeFlagsUnion != 0 {
+				result := r.typeRelatedToDiscriminatedType(source, objectOnlyTarget)
+				if result != TernaryFalse {
+					return result
+				}
+			}
+		}
+	}
 	return TernaryFalse
+}
+
+// A type [P in S]: X is related to a type [Q in T]: Y if T is related to S and X' is
+// related to Y, where X' is an instantiation of X in which P is replaced with Q. Notice
+// that S and T are contra-variant whereas X and Y are co-variant.
+func (r *Relater) mappedTypeRelatedTo(source *Type, target *Type, reportErrors bool) Ternary {
+	// !!!
+	// modifiersRelated := relation == c.comparableRelation || (ifelse(relation == c.identityRelation, c.getMappedTypeModifiers(source) == c.getMappedTypeModifiers(target), c.getCombinedMappedTypeOptionality(source) <= c.getCombinedMappedTypeOptionality(target)))
+	// if modifiersRelated {
+	// 	var result Ternary
+	// 	targetConstraint := c.getConstraintTypeFromMappedType(target)
+	// 	sourceConstraint := c.instantiateType(c.getConstraintTypeFromMappedType(source), ifelse(c.getCombinedMappedTypeOptionality(source) < 0, c.reportUnmeasurableMapper, c.reportUnreliableMapper))
+	// 	if /* TODO(TS-TO-GO) EqualsToken BinaryExpression: result = isRelatedTo(targetConstraint, sourceConstraint, RecursionFlags.Both, reportErrors) */ TODO {
+	// 		mapper := c.createTypeMapper([]TypeParameter{c.getTypeParameterFromMappedType(source)}, []TypeParameter{c.getTypeParameterFromMappedType(target)})
+	// 		if c.instantiateType(c.getNameTypeFromMappedType(source), mapper) == c.instantiateType(c.getNameTypeFromMappedType(target), mapper) {
+	// 			return result & isRelatedTo(c.instantiateType(c.getTemplateTypeFromMappedType(source), mapper), c.getTemplateTypeFromMappedType(target), RecursionFlagsBoth, reportErrors)
+	// 		}
+	// 	}
+	// }
+	return TernaryFalse
+}
+
+func (r *Relater) typeRelatedToDiscriminatedType(source *Type, target *Type) Ternary {
+	return TernaryFalse // !!!
+}
+
+func (r *Relater) propertiesRelatedTo(source *Type, target *Type, reportErrors bool, excludedProperties set[string], optionalsOnly bool, intersectionState IntersectionState) Ternary {
+	if r.relation == r.c.identityRelation {
+		return r.propertiesIdenticalTo(source, target, excludedProperties)
+	}
+	result := TernaryTrue
+	if isTupleType(target) {
+		if r.c.isArrayOrTupleType(source) {
+			if !target.TargetTupleType().readonly && (r.c.isReadonlyArrayType(source) || isTupleType(source) && source.TargetTupleType().readonly) {
+				return TernaryFalse
+			}
+			sourceArity := r.c.getTypeReferenceArity(source)
+			targetArity := r.c.getTypeReferenceArity(target)
+			var sourceRest bool
+			if isTupleType(source) {
+				sourceRest = source.TargetTupleType().combinedFlags&ElementFlagsRest != 0
+			} else {
+				sourceRest = true
+			}
+			targetHasRestElement := target.TargetTupleType().combinedFlags&ElementFlagsVariable != 0
+			var sourceMinLength int
+			if isTupleType(source) {
+				sourceMinLength = source.TargetTupleType().minLength
+			} else {
+				sourceMinLength = 0
+			}
+			targetMinLength := target.TargetTupleType().minLength
+			if !sourceRest && sourceArity < targetMinLength {
+				if reportErrors {
+					r.reportError(diagnostics.Source_has_0_element_s_but_target_requires_1, sourceArity, targetMinLength)
+				}
+				return TernaryFalse
+			}
+			if !targetHasRestElement && targetArity < sourceMinLength {
+				if reportErrors {
+					r.reportError(diagnostics.Source_has_0_element_s_but_target_allows_only_1, sourceMinLength, targetArity)
+				}
+				return TernaryFalse
+			}
+			if !targetHasRestElement && (sourceRest || targetArity < sourceArity) {
+				if reportErrors {
+					if sourceMinLength < targetMinLength {
+						r.reportError(diagnostics.Target_requires_0_element_s_but_source_may_have_fewer, targetMinLength)
+					} else {
+						r.reportError(diagnostics.Target_allows_only_0_element_s_but_source_may_have_more, targetArity)
+					}
+				}
+				return TernaryFalse
+			}
+			sourceTypeArguments := r.c.getTypeArguments(source)
+			targetTypeArguments := r.c.getTypeArguments(target)
+			targetStartCount := getStartElementCount(target.TargetTupleType(), ElementFlagsNonRest)
+			targetEndCount := getEndElementCount(target.TargetTupleType(), ElementFlagsNonRest)
+			canExcludeDiscriminants := excludedProperties.len() != 0
+			for sourcePosition := 0; sourcePosition < sourceArity; sourcePosition++ {
+				var sourceFlags ElementFlags
+				if isTupleType(source) {
+					sourceFlags = source.TargetTupleType().elementInfos[sourcePosition].flags
+				} else {
+					sourceFlags = ElementFlagsRest
+				}
+				sourcePositionFromEnd := sourceArity - 1 - sourcePosition
+				var targetPosition int
+				if targetHasRestElement && sourcePosition >= targetStartCount {
+					targetPosition = targetArity - 1 - min(sourcePositionFromEnd, targetEndCount)
+				} else {
+					targetPosition = sourcePosition
+				}
+				targetFlags := target.TargetTupleType().elementInfos[targetPosition].flags
+				if targetFlags&ElementFlagsVariadic != 0 && sourceFlags&ElementFlagsVariadic == 0 {
+					if reportErrors {
+						r.reportError(diagnostics.Source_provides_no_match_for_variadic_element_at_position_0_in_target, targetPosition)
+					}
+					return TernaryFalse
+				}
+				if sourceFlags&ElementFlagsVariadic != 0 && targetFlags&ElementFlagsVariable == 0 {
+					if reportErrors {
+						r.reportError(diagnostics.Variadic_element_at_position_0_in_source_does_not_match_element_at_position_1_in_target, sourcePosition, targetPosition)
+					}
+					return TernaryFalse
+				}
+				if targetFlags&ElementFlagsRequired != 0 && sourceFlags&ElementFlagsRequired == 0 {
+					if reportErrors {
+						r.reportError(diagnostics.Source_provides_no_match_for_required_element_at_position_0_in_target, targetPosition)
+					}
+					return TernaryFalse
+				}
+				// We can only exclude discriminant properties if we have not yet encountered a variable-length element.
+				if canExcludeDiscriminants {
+					if sourceFlags&ElementFlagsVariable != 0 || targetFlags&ElementFlagsVariable != 0 {
+						canExcludeDiscriminants = false
+					}
+					if canExcludeDiscriminants && excludedProperties.has(strconv.Itoa(sourcePosition)) {
+						continue
+					}
+				}
+				sourceType := r.c.removeMissingType(sourceTypeArguments[sourcePosition], sourceFlags&targetFlags&ElementFlagsOptional != 0)
+				targetType := targetTypeArguments[targetPosition]
+				var targetCheckType *Type
+				if sourceFlags&ElementFlagsVariadic != 0 && targetFlags&ElementFlagsRest != 0 {
+					targetCheckType = r.c.createArrayType(targetType)
+				} else {
+					targetCheckType = r.c.removeMissingType(targetType, targetFlags&ElementFlagsOptional != 0)
+				}
+				related := r.isRelatedToEx(sourceType, targetCheckType, RecursionFlagsBoth, reportErrors, nil /*headMessage*/, intersectionState)
+				if related == TernaryFalse {
+					if reportErrors && (targetArity > 1 || sourceArity > 1) {
+						if targetHasRestElement && sourcePosition >= targetStartCount && sourcePositionFromEnd >= targetEndCount && targetStartCount != sourceArity-targetEndCount-1 {
+							r.reportIncompatibleError(diagnostics.Type_at_positions_0_through_1_in_source_is_not_compatible_with_type_at_position_2_in_target, targetStartCount, sourceArity-targetEndCount-1, targetPosition)
+						} else {
+							r.reportIncompatibleError(diagnostics.Type_at_position_0_in_source_is_not_compatible_with_type_at_position_1_in_target, sourcePosition, targetPosition)
+						}
+					}
+					return TernaryFalse
+				}
+				result &= related
+			}
+			return result
+		}
+		if target.TargetTupleType().combinedFlags&ElementFlagsVariable != 0 {
+			return TernaryFalse
+		}
+	}
+	requireOptionalProperties := (r.relation == r.c.subtypeRelation || r.relation == r.c.strictSubtypeRelation) && isObjectLiteralType(source) && !r.c.isEmptyArrayLiteralType(source) && !isTupleType(source)
+	unmatchedProperty := r.c.getUnmatchedProperty(source, target, requireOptionalProperties, false /*matchDiscriminantProperties*/)
+	if unmatchedProperty != nil {
+		if reportErrors && r.c.shouldReportUnmatchedPropertyError(source, target) {
+			r.reportUnmatchedProperty(source, target, unmatchedProperty, requireOptionalProperties)
+		}
+		return TernaryFalse
+	}
+	if isObjectLiteralType(target) {
+		for _, sourceProp := range excludeProperties(r.c.getPropertiesOfType(source), excludedProperties) {
+			if r.c.getPropertyOfObjectType(target, sourceProp.name) == nil {
+				sourceType := r.c.getTypeOfSymbol(sourceProp)
+				if sourceType.flags&TypeFlagsUndefined == 0 {
+					if reportErrors {
+						r.reportError(diagnostics.Property_0_does_not_exist_on_type_1, r.c.symbolToString(sourceProp), r.c.typeToString(target))
+					}
+					return TernaryFalse
+				}
+			}
+		}
+	}
+	// We only call this for union target types when we're attempting to do excess property checking - in those cases, we want to get _all possible props_
+	// from the target union, across all members
+	properties := r.c.getPropertiesOfType(target)
+	numericNamesOnly := isTupleType(source) && isTupleType(target)
+	for _, targetProp := range excludeProperties(properties, excludedProperties) {
+		name := targetProp.name
+		if targetProp.flags&SymbolFlagsPrototype == 0 && (!numericNamesOnly || isNumericLiteralName(name) || name == "length") && (!optionalsOnly || targetProp.flags&SymbolFlagsOptional != 0) {
+			sourceProp := r.c.getPropertyOfType(source, name)
+			if sourceProp != nil && sourceProp != targetProp {
+				related := r.propertyRelatedTo(source, target, sourceProp, targetProp, r.c.getNonMissingTypeOfSymbol, reportErrors, intersectionState, r.relation == r.c.comparableRelation)
+				if related == TernaryFalse {
+					return TernaryFalse
+				}
+				result &= related
+			}
+		}
+	}
+	return result
+}
+
+func (r *Relater) propertyRelatedTo(source *Type, target *Type, sourceProp *Symbol, targetProp *Symbol, getTypeOfSourceProperty func(sym *Symbol) *Type, reportErrors bool, intersectionState IntersectionState, skipOptional bool) Ternary {
+	sourcePropFlags := getDeclarationModifierFlagsFromSymbol(sourceProp)
+	targetPropFlags := getDeclarationModifierFlagsFromSymbol(targetProp)
+	switch {
+	case sourcePropFlags&ModifierFlagsPrivate != 0 || targetPropFlags&ModifierFlagsPrivate != 0:
+		if sourceProp.valueDeclaration != targetProp.valueDeclaration {
+			if reportErrors {
+				if sourcePropFlags&ModifierFlagsPrivate != 0 && targetPropFlags&ModifierFlagsPrivate != 0 {
+					r.reportError(diagnostics.Types_have_separate_declarations_of_a_private_property_0, r.c.symbolToString(targetProp))
+				} else {
+					r.reportError(diagnostics.Property_0_is_private_in_type_1_but_not_in_type_2, r.c.symbolToString(targetProp), r.c.typeToString(ifElse(sourcePropFlags&ModifierFlagsPrivate != 0, source, target)), r.c.typeToString(ifElse(sourcePropFlags&ModifierFlagsPrivate != 0, target, source)))
+				}
+			}
+			return TernaryFalse
+		}
+	case targetPropFlags&ModifierFlagsProtected != 0:
+		if !r.c.isValidOverrideOf(sourceProp, targetProp) {
+			if reportErrors {
+				sourceType := r.c.getDeclaringClass(sourceProp)
+				if sourceType == nil {
+					sourceType = source
+				}
+				targetType := r.c.getDeclaringClass(targetProp)
+				if targetType == nil {
+					targetType = target
+				}
+				r.reportError(diagnostics.Property_0_is_protected_but_type_1_is_not_a_class_derived_from_2, r.c.symbolToString(targetProp), r.c.typeToString(sourceType), r.c.typeToString(targetType))
+			}
+			return TernaryFalse
+		}
+	case sourcePropFlags&ModifierFlagsProtected != 0:
+		if reportErrors {
+			r.reportError(diagnostics.Property_0_is_protected_in_type_1_but_public_in_type_2, r.c.symbolToString(targetProp), r.c.typeToString(source), r.c.typeToString(target))
+		}
+		return TernaryFalse
+	}
+	// Ensure {readonly a: whatever} is not a subtype of {a: whatever},
+	// while {a: whatever} is a subtype of {readonly a: whatever}.
+	// This ensures the subtype relationship is ordered, and preventing declaration order
+	// from deciding which type "wins" in union subtype reduction.
+	// They're still assignable to one another, since `readonly` doesn't affect assignability.
+	// This is only applied during the strictSubtypeRelation -- currently used in subtype reduction
+	if r.relation == r.c.strictSubtypeRelation && r.c.isReadonlySymbol(sourceProp) && !r.c.isReadonlySymbol(targetProp) {
+		return TernaryFalse
+	}
+	// If the target comes from a partial union prop, allow `undefined` in the target type
+	related := r.isPropertySymbolTypeRelated(sourceProp, targetProp, getTypeOfSourceProperty, reportErrors, intersectionState)
+	if related == TernaryFalse {
+		if reportErrors {
+			r.reportIncompatibleError(diagnostics.Types_of_property_0_are_incompatible, r.c.symbolToString(targetProp))
+		}
+		return TernaryFalse
+	}
+	// When checking for comparability, be more lenient with optional properties.
+	if !skipOptional && sourceProp.flags&SymbolFlagsOptional != 0 && targetProp.flags&SymbolFlagsClassMember != 0 && targetProp.flags&SymbolFlagsOptional == 0 {
+		// TypeScript 1.0 spec (April 2014): 3.8.3
+		// S is a subtype of a type T, and T is a supertype of S if ...
+		// S' and T are object types and, for each member M in T..
+		// M is a property and S' contains a property N where
+		// if M is a required property, N is also a required property
+		// (M - property in T)
+		// (N - property in S)
+		if reportErrors {
+			r.reportError(diagnostics.Property_0_is_optional_in_type_1_but_required_in_type_2, r.c.symbolToString(targetProp), r.c.typeToString(source), r.c.typeToString(target))
+		}
+		return TernaryFalse
+	}
+	return related
+}
+
+func (r *Relater) isPropertySymbolTypeRelated(sourceProp *Symbol, targetProp *Symbol, getTypeOfSourceProperty func(sym *Symbol) *Type, reportErrors bool, intersectionState IntersectionState) Ternary {
+	targetIsOptional := r.c.strictNullChecks && targetProp.checkFlags&CheckFlagsPartial != 0
+	effectiveTarget := r.c.addOptionalityEx(r.c.getNonMissingTypeOfSymbol(targetProp), false /*isProperty*/, targetIsOptional)
+	effectiveSource := getTypeOfSourceProperty(sourceProp)
+	return r.isRelatedToEx(effectiveSource, effectiveTarget, RecursionFlagsBoth, reportErrors, nil /*headMessage*/, intersectionState)
+}
+
+func (r *Relater) reportUnmatchedProperty(source *Type, target *Type, unmatchedProperty *Symbol, requireOptionalProperties bool) {
+	// !!!
+	r.reportError(diagnostics.Property_0_is_missing_in_type_1_but_required_in_type_2, unmatchedProperty.name, r.c.typeToString(source), r.c.typeToString(target))
+}
+
+func (r *Relater) propertiesIdenticalTo(source *Type, target *Type, excludedProperties set[string]) Ternary {
+	if source.flags&TypeFlagsObject == 0 || target.flags&TypeFlagsObject == 0 {
+		return TernaryFalse
+	}
+	sourceProperties := excludeProperties(r.c.getPropertiesOfObjectType(source), excludedProperties)
+	targetProperties := excludeProperties(r.c.getPropertiesOfObjectType(target), excludedProperties)
+	if len(sourceProperties) != len(targetProperties) {
+		return TernaryFalse
+	}
+	result := TernaryTrue
+	for _, sourceProp := range sourceProperties {
+		targetProp := r.c.getPropertyOfObjectType(target, sourceProp.name)
+		if targetProp == nil {
+			return TernaryFalse
+		}
+		related := r.c.compareProperties(sourceProp, targetProp, r.isRelatedToSimple)
+		if related == TernaryFalse {
+			return TernaryFalse
+		}
+		result &= related
+	}
+	return result
+}
+
+func (r *Relater) signaturesRelatedTo(source *Type, target *Type, kind SignatureKind, reportErrors bool, intersectionState IntersectionState) Ternary {
+	return TernaryTrue // !!!
+}
+
+func (r *Relater) indexSignaturesRelatedTo(source *Type, target *Type, sourceIsPrimitive bool, reportErrors bool, intersectionState IntersectionState) Ternary {
+	return TernaryTrue // !!!
 }
 
 func (r *Relater) reportErrorResults(originalSource *Type, originalTarget *Type, source *Type, target *Type, headMessage *diagnostics.Message) {
@@ -1112,6 +1676,10 @@ func (r *Relater) reportError(message *diagnostics.Message, args ...any) {
 	} else {
 		r.skipParentCounter--
 	}
+}
+
+func (r *Relater) reportIncompatibleError(message *diagnostics.Message, args ...any) {
+	r.reportError(message, args...) // !!!
 }
 
 func (r *Relater) reportIncompatibleStack() {
