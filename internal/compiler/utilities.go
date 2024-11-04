@@ -573,12 +573,6 @@ func every[T any](array []T, predicate func(T) bool) bool {
 	return true
 }
 
-func ForEach[T any](array []T, action func(T)) {
-	for _, value := range array {
-		action(value)
-	}
-}
-
 func insertSorted[T any](slice []T, element T, cmp func(T, T) int) []T {
 	i, _ := slices.BinarySearchFunc(slice, element, cmp)
 	return slices.Insert(slice, i, element)

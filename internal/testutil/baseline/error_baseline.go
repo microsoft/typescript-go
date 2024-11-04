@@ -6,7 +6,6 @@ import (
 	"slices"
 	"strings"
 	"testing"
-	"unicode/utf8"
 
 	"gotest.tools/v3/assert"
 	"gotest.tools/v3/assert/cmp"
@@ -104,18 +103,15 @@ func iterateErrorBaseline(t *testing.T, inputFiles []*TestFile, inputDiagnostics
 	outputErrorText := func(error *compiler.Diagnostic) {
 		message := flattenDiagnosticMessage(error, harnessNewLine)
 
-		errLines := strings.Split(removeTestPathPrefixes(message, false), "\n")
-		errLines = compiler.Mapf(errLines, func(s string) string {
-			lastRune, _ := utf8.DecodeLastRuneInString(s)
-			if lastRune == '\r' {
-				return s[:len(s)-1]
+		var errLines []string
+		for _, line := range strings.Split(removeTestPathPrefixes(message, false), "\n") {
+			line = strings.TrimSuffix(line, "\r")
+			if len(line) < 0 {
+				continue
 			}
-			return s
-		})
-		errLines = compiler.Filter(errLines, func(s string) bool { return len(s) > 0 })
-		errLines = compiler.Mapf(errLines, func(s string) string {
-			return fmt.Sprintf("!!! %s TS%d: %s", error.Category().String(), error.Code(), s)
-		})
+			out := fmt.Sprintf("!!! %s TS%d: %s", error.Category().String(), error.Code(), line)
+			errLines = append(errLines, out)
+		}
 
 		for _, info := range error.RelatedInformation() {
 			var location string
@@ -154,8 +150,11 @@ func iterateErrorBaseline(t *testing.T, inputFiles []*TestFile, inputDiagnostics
 	result = append(result, topDiagnostics+harnessNewLine+harnessNewLine)
 
 	// Report global errors
-	globalErrors := compiler.Filter(diagnostics, func(d *compiler.Diagnostic) bool { return d.File() == nil })
-	compiler.ForEach(globalErrors, outputErrorText)
+	for _, error := range diagnostics {
+		if error.File() == nil {
+			outputErrorText(error)
+		}
+	}
 
 	result = append(result, outputLines.String())
 	outputLines.Reset()
