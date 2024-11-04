@@ -318,7 +318,7 @@ func (c *Checker) isWeakType(t *Type) bool {
 		return c.isWeakType(t.AsSubstitutionType().baseType)
 	}
 	if t.flags&TypeFlagsIntersection != 0 {
-		return every(t.AsIntersectionType().types, c.isWeakType)
+		return every(t.Types(), c.isWeakType)
 	}
 	return false
 }
@@ -344,7 +344,7 @@ func (c *Checker) isDeeplyNestedType(t *Type, stack []*Type, maxDepth int) bool 
 			t = c.getMappedTargetWithSymbol(t)
 		}
 		if t.flags&TypeFlagsIntersection != 0 {
-			for _, t := range t.AsIntersectionType().types {
+			for _, t := range t.Types() {
 				if c.isDeeplyNestedType(t, stack, maxDepth) {
 					return true
 				}
@@ -379,7 +379,7 @@ func (c *Checker) getMappedTargetWithSymbol(t *Type) *Type {
 		if t.objectFlags&ObjectFlagsInstantiatedMapped == ObjectFlagsInstantiatedMapped {
 			target := c.getModifiersTypeFromMappedType(t)
 			if target != nil && (target.symbol != nil || target.flags&TypeFlagsIntersection != 0 &&
-				some(target.AsIntersectionType().types, func(t *Type) bool { return t.symbol != nil })) {
+				some(target.Types(), func(t *Type) bool { return t.symbol != nil })) {
 				t = target
 				continue
 			}
@@ -393,7 +393,7 @@ func (c *Checker) hasMatchingRecursionIdentity(t *Type, identity RecursionId) bo
 		t = c.getMappedTargetWithSymbol(t)
 	}
 	if t.flags&TypeFlagsIntersection != 0 {
-		for _, t := range t.AsIntersectionType().types {
+		for _, t := range t.Types() {
 			if c.hasMatchingRecursionIdentity(t, identity) {
 				return true
 			}
@@ -622,7 +622,7 @@ func (r *Relater) isRelatedToEx(originalSource *Type, originalTarget *Type, recu
 	// See if we're relating a definitely non-nullable type to a union that includes null and/or undefined
 	// plus a single non-nullable type. If so, remove null and/or undefined from the target type.
 	if source.flags&TypeFlagsDefinitelyNonNullable != 0 && target.flags&TypeFlagsUnion != 0 {
-		types := target.AsUnionType().types
+		types := target.Types()
 		var candidate *Type
 		switch {
 		case len(types) == 2 && types[0].flags&TypeFlagsNullable != 0:
@@ -672,8 +672,8 @@ func (r *Relater) isRelatedToEx(originalSource *Type, originalTarget *Type, recu
 			return TernaryFalse
 		}
 		// !!! traceUnionsOrIntersectionsTooLarge(source, target)
-		skipCaching := source.flags&TypeFlagsUnion != 0 && len(source.AsUnionType().types) < 4 && target.flags&TypeFlagsUnion == 0 ||
-			target.flags&TypeFlagsUnion != 0 && len(target.AsUnionType().types) < 4 && source.flags&TypeFlagsStructuredOrInstantiable == 0
+		skipCaching := source.flags&TypeFlagsUnion != 0 && len(source.Types()) < 4 && target.flags&TypeFlagsUnion == 0 ||
+			target.flags&TypeFlagsUnion != 0 && len(target.Types()) < 4 && source.flags&TypeFlagsStructuredOrInstantiable == 0
 		var result Ternary
 		if skipCaching {
 			result = r.unionOrIntersectionRelatedTo(source, target, reportErrors, intersectionState)
@@ -705,13 +705,13 @@ func (r *Relater) unionOrIntersectionRelatedTo(source *Type, target *Type, repor
 			// originated in an intersection. If so, and if that intersection contains the target type, then we know
 			// the result to be true (for any two types A and B, A & B is related to both A and B).
 			sourceOrigin := source.AsUnionType().origin
-			if sourceOrigin != nil && sourceOrigin.flags&TypeFlagsIntersection != 0 && target.alias != nil && slices.Contains(sourceOrigin.AsIntersectionType().types, target) {
+			if sourceOrigin != nil && sourceOrigin.flags&TypeFlagsIntersection != 0 && target.alias != nil && slices.Contains(sourceOrigin.Types(), target) {
 				return TernaryTrue
 			}
 			// Similarly, in unions of unions the we preserve the original list of unions. This original list is often
 			// much shorter than the normalized result, so we scan it in the following fast path.
 			targetOrigin := target.AsUnionType().origin
-			if targetOrigin != nil && targetOrigin.flags&TypeFlagsUnion != 0 && source.alias != nil && slices.Contains(targetOrigin.AsUnionType().types, source) {
+			if targetOrigin != nil && targetOrigin.flags&TypeFlagsUnion != 0 && source.alias != nil && slices.Contains(targetOrigin.Types(), source) {
 				return TernaryTrue
 			}
 		}
@@ -732,7 +732,7 @@ func (r *Relater) unionOrIntersectionRelatedTo(source *Type, target *Type, repor
 	// parameter 'T extends 1 | 2', the intersection 'T & 1' should be reduced to '1' such that it doesn't
 	// appear to be comparable to '2'.
 	if r.relation == r.c.comparableRelation && target.flags&TypeFlagsPrimitive != 0 {
-		constraints := sameMap(source.AsIntersectionType().types, func(t *Type) *Type {
+		constraints := sameMap(source.Types(), func(t *Type) *Type {
 			if t.flags&TypeFlagsInstantiable != 0 {
 				constraint := r.c.getBaseConstraintOfType(t)
 				if constraint != nil {
@@ -742,7 +742,7 @@ func (r *Relater) unionOrIntersectionRelatedTo(source *Type, target *Type, repor
 			}
 			return t
 		})
-		if !identical(constraints, source.AsIntersectionType().types) {
+		if !identical(constraints, source.Types()) {
 			source = r.c.getIntersectionType(constraints)
 			if source.flags&TypeFlagsNever != 0 {
 				return TernaryFalse
@@ -764,7 +764,7 @@ func (r *Relater) unionOrIntersectionRelatedTo(source *Type, target *Type, repor
 }
 
 func (r *Relater) someTypeRelatedToType(source *Type, target *Type, reportErrors bool, intersectionState IntersectionState) Ternary {
-	sourceTypes := source.AsUnionOrIntersectionType().types
+	sourceTypes := source.Types()
 	if source.flags&TypeFlagsUnion != 0 && containsType(sourceTypes, target) {
 		return TernaryTrue
 	}
@@ -779,13 +779,13 @@ func (r *Relater) someTypeRelatedToType(source *Type, target *Type, reportErrors
 
 func (r *Relater) eachTypeRelatedToType(source *Type, target *Type, reportErrors bool, intersectionState IntersectionState) Ternary {
 	result := TernaryTrue
-	sourceTypes := source.AsUnionOrIntersectionType().types
+	sourceTypes := source.Types()
 	// We strip `undefined` from the target if the `source` trivially doesn't contain it for our correspondence-checking fastpath
 	// since `undefined` is frequently added by optionality and would otherwise spoil a potentially useful correspondence
 	strippedTarget := r.getUndefinedStrippedTargetIfNeeded(source, target)
 	var strippedTypes []*Type
 	if strippedTarget.flags&TypeFlagsUnion != 0 {
-		strippedTypes = strippedTarget.AsUnionType().types
+		strippedTypes = strippedTarget.Types()
 	}
 	for i, sourceType := range sourceTypes {
 		if strippedTarget.flags&TypeFlagsUnion != 0 && len(sourceTypes) >= len(strippedTypes) && len(sourceTypes)%len(strippedTypes) == 0 {
@@ -810,14 +810,14 @@ func (r *Relater) eachTypeRelatedToType(source *Type, target *Type, reportErrors
 }
 
 func (r *Relater) getUndefinedStrippedTargetIfNeeded(source *Type, target *Type) *Type {
-	if source.flags&TypeFlagsUnion != 0 && target.flags&TypeFlagsUnion != 0 && source.AsUnionType().types[0].flags&TypeFlagsUndefined == 0 && target.AsUnionType().types[0].flags&TypeFlagsUndefined != 0 {
+	if source.flags&TypeFlagsUnion != 0 && target.flags&TypeFlagsUnion != 0 && source.Types()[0].flags&TypeFlagsUndefined == 0 && target.Types()[0].flags&TypeFlagsUndefined != 0 {
 		return r.c.extractTypesOfKind(target, ^TypeFlagsUndefined)
 	}
 	return target
 }
 
 func (r *Relater) typeRelatedToSomeType(source *Type, target *Type, reportErrors bool, intersectionState IntersectionState) Ternary {
-	targetTypes := target.AsUnionOrIntersectionType().types
+	targetTypes := target.Types()
 	if target.flags&TypeFlagsUnion != 0 {
 		if containsType(targetTypes, source) {
 			return TernaryTrue
@@ -877,7 +877,7 @@ func (r *Relater) typeRelatedToSomeType(source *Type, target *Type, reportErrors
 
 func (r *Relater) typeRelatedToEachType(source *Type, target *Type, reportErrors bool, intersectionState IntersectionState) Ternary {
 	result := TernaryTrue
-	targetTypes := target.AsUnionOrIntersectionType().types
+	targetTypes := target.Types()
 	for _, targetType := range targetTypes {
 		related := r.isRelatedToEx(source, targetType, RecursionFlagsTarget, reportErrors /*headMessage*/, nil, intersectionState)
 		if related == TernaryFalse {
@@ -890,7 +890,7 @@ func (r *Relater) typeRelatedToEachType(source *Type, target *Type, reportErrors
 
 func (r *Relater) eachTypeRelatedToSomeType(source *Type, target *Type) Ternary {
 	result := TernaryTrue
-	sourceTypes := source.AsUnionOrIntersectionType().types
+	sourceTypes := source.Types()
 	for _, sourceType := range sourceTypes {
 		related := r.typeRelatedToSomeType(sourceType, target, false /*reportErrors*/, IntersectionStateNone)
 		if related == TernaryFalse {

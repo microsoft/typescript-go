@@ -801,7 +801,7 @@ type ValueSymbolLinks struct {
 	target         *Symbol
 	mapper         *TypeMapper
 	nameType       *Type
-	containingType *Type
+	containingType *Type // Containing union or intersection type for synthetic property
 }
 
 // Links for alias symbols

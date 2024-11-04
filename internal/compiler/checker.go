@@ -394,7 +394,7 @@ func (c *Checker) initializeClosures() {
 		return t.flags&(TypeFlagsPrimitive|TypeFlagsNonPrimitive) != 0 || c.isEmptyAnonymousObjectType(t)
 	}
 	c.containsMissingType = func(t *Type) bool {
-		return t == c.missingType || t.flags&TypeFlagsUnion != 0 && t.AsUnionType().types[0] == c.missingType
+		return t == c.missingType || t.flags&TypeFlagsUnion != 0 && t.Types()[0] == c.missingType
 	}
 	c.couldContainTypeVariables = c.couldContainTypeVariablesWorker
 	c.isStringIndexSignatureOnlyType = c.isStringIndexSignatureOnlyTypeWorker
@@ -1253,7 +1253,7 @@ func (c *Checker) reportNonexistentProperty(propNode *Node, containingType *Type
 	var errorInfo *MessageChain
 	var relatedInfo *Diagnostic
 	if !isPrivateIdentifier(propNode) && containingType.flags&TypeFlagsUnion != 0 && containingType.flags&TypeFlagsPrimitive == 0 {
-		for _, subtype := range containingType.AsUnionType().types {
+		for _, subtype := range containingType.Types() {
 			if c.getPropertyOfType(subtype, propNode.Text()) == nil && c.getApplicableIndexInfoForName(subtype, propNode.Text()) == nil {
 				errorInfo = chainDiagnosticMessages(errorInfo, diagnostics.Property_0_does_not_exist_on_type_1, declarationNameToString(propNode), c.typeToString(subtype))
 				break
@@ -1538,7 +1538,7 @@ func (c *Checker) forEachProperty(prop *Symbol, callback func(p *Symbol) bool) b
 	if prop.checkFlags&CheckFlagsSynthetic == 0 {
 		return callback(prop)
 	}
-	for _, t := range c.valueSymbolLinks.get(prop).containingType.AsUnionOrIntersectionType().types {
+	for _, t := range c.valueSymbolLinks.get(prop).containingType.Types() {
 		p := c.getPropertyOfType(t, prop.name)
 		if p != nil && c.forEachProperty(p, callback) {
 			return true
@@ -4038,7 +4038,7 @@ func (c *Checker) getBaseTypeVariableOfClass(symbol *Symbol) *Type {
 	case baseConstructorType.flags&TypeFlagsTypeVariable != 0:
 		return baseConstructorType
 	case baseConstructorType.flags&TypeFlagsIntersection != 0:
-		return find(baseConstructorType.AsIntersectionType().types, func(t *Type) bool {
+		return find(baseConstructorType.Types(), func(t *Type) bool {
 			return t.flags&TypeFlagsTypeVariable != 0
 		})
 	}
@@ -4323,10 +4323,10 @@ func getUnionKey(types []*Type, origin *Type, alias *TypeAlias) string {
 		b.WriteTypes(types)
 	case origin.flags&TypeFlagsUnion != 0:
 		b.WriteByte('|')
-		b.WriteTypes(origin.AsUnionType().types)
+		b.WriteTypes(origin.Types())
 	case origin.flags&TypeFlagsIntersection != 0:
 		b.WriteByte('&')
-		b.WriteTypes(origin.AsIntersectionType().types)
+		b.WriteTypes(origin.Types())
 	case origin.flags&TypeFlagsIndex != 0:
 		// origin type id alone is insufficient, as `keyof x` may resolve to multiple WIP values while `x` is still resolving
 		b.WriteByte('#')
@@ -4611,7 +4611,7 @@ func (c *Checker) addOptionalityEx(t *Type, isProperty bool, isOptional bool) *T
 func (c *Checker) getOptionalType(t *Type, isProperty bool) *Type {
 	// !!! Debug.assert(c.strictNullChecks)
 	missingOrUndefined := ifElse(isProperty, c.undefinedOrMissingType, c.undefinedType)
-	if t == missingOrUndefined || t.flags&TypeFlagsUnion != 0 && t.AsUnionType().types[0] == missingOrUndefined {
+	if t == missingOrUndefined || t.flags&TypeFlagsUnion != 0 && t.Types()[0] == missingOrUndefined {
 		return t
 	}
 	return c.getUnionType([]*Type{t, missingOrUndefined})
@@ -5341,7 +5341,7 @@ func (c *Checker) isValidBaseType(t *Type) bool {
 	// TODO: Given that we allow type parmeters here now, is this `!isGenericMappedType(type)` check really needed?
 	// There's no reason a `T` should be allowed while a `Readonly<T>` should not.
 	return t.flags&(TypeFlagsObject|TypeFlagsNonPrimitive|TypeFlagsAny) != 0 && !c.isGenericMappedType(t) ||
-		t.flags&TypeFlagsIntersection != 0 && every(t.AsIntersectionType().types, c.isValidBaseType)
+		t.flags&TypeFlagsIntersection != 0 && every(t.Types(), c.isValidBaseType)
 }
 
 // TODO: GH#18217 If `checkBase` is undefined, we should not call this because this will always return false.
@@ -5353,7 +5353,7 @@ func (c *Checker) hasBaseType(t *Type, checkBase *Type) bool {
 			return target == checkBase || some(c.getBaseTypes(target), check)
 		}
 		if t.flags&TypeFlagsIntersection != 0 {
-			return some(t.AsIntersectionType().types, check)
+			return some(t.Types(), check)
 		}
 		return false
 	}
@@ -5379,7 +5379,7 @@ func (c *Checker) getTypeWithThisArgument(t *Type, thisArgument *Type, needAppar
 		}
 		return t
 	} else if t.flags&TypeFlagsIntersection != 0 {
-		types := t.AsIntersectionType().types
+		types := t.Types()
 		newTypes := sameMap(types, func(t *Type) *Type { return c.getTypeWithThisArgument(t, thisArgument, needApparentType) })
 		if identical(newTypes, types) {
 			return t
@@ -5571,7 +5571,7 @@ func (c *Checker) isNumericComputedName(name *Node) bool {
 func (c *Checker) isValidIndexKeyType(t *Type) bool {
 	return t.flags&(TypeFlagsString|TypeFlagsNumber|TypeFlagsESSymbol) != 0 ||
 		c.isPatternLiteralType(t) ||
-		t.flags&TypeFlagsIntersection != 0 && !c.isGenericType(t) && some(t.AsIntersectionType().types, c.isValidIndexKeyType)
+		t.flags&TypeFlagsIntersection != 0 && !c.isGenericType(t) && some(t.Types(), c.isValidIndexKeyType)
 }
 
 func (c *Checker) findIndexInfo(indexInfos []*IndexInfo, keyType *Type) *IndexInfo {
@@ -6193,7 +6193,7 @@ func (c *Checker) createUnionOrIntersectionProperty(containingType *Type, name s
 	}
 	syntheticFlag := CheckFlagsSyntheticMethod
 	mergedInstantiations := false
-	for _, current := range containingType.AsUnionOrIntersectionType().types {
+	for _, current := range containingType.Types() {
 		t := c.getApparentType(current)
 		if !c.isErrorType(t) && t.flags&TypeFlagsNever == 0 {
 			prop := c.getPropertyOfTypeEx(t, name, skipObjectFunctionPropertyAugment, false)
@@ -6702,7 +6702,7 @@ func (c *Checker) couldContainTypeVariablesWorker(t *Type) bool {
 			objectFlags&ObjectFlagsSingleSignatureType != 0 && len(t.AsSingleSignatureType().outerTypeParameters) != 0 ||
 			objectFlags&ObjectFlagsAnonymous != 0 && t.symbol != nil && t.symbol.flags&(SymbolFlagsFunction|SymbolFlagsMethod|SymbolFlagsClass|SymbolFlagsTypeLiteral|SymbolFlagsObjectLiteral) != 0 && t.symbol.declarations != nil ||
 			objectFlags&(ObjectFlagsMapped|ObjectFlagsReverseMapped|ObjectFlagsObjectRestType|ObjectFlagsInstantiationExpressionType) != 0) ||
-		t.flags&TypeFlagsUnionOrIntersection != 0 && t.flags&TypeFlagsEnumLiteral == 0 && !c.isNonGenericTopLevelType(t) && some(t.AsUnionOrIntersectionType().types, c.couldContainTypeVariables)
+		t.flags&TypeFlagsUnionOrIntersection != 0 && t.flags&TypeFlagsEnumLiteral == 0 && !c.isNonGenericTopLevelType(t) && some(t.Types(), c.couldContainTypeVariables)
 	t.objectFlags |= ObjectFlagsCouldContainTypeVariablesComputed | ifElse(result, ObjectFlagsCouldContainTypeVariables, 0)
 	return result
 }
@@ -6753,7 +6753,7 @@ func (c *Checker) instantiateTypeWorker(t *Type, m *TypeMapper, alias *TypeAlias
 				source = origin
 			}
 		}
-		types := source.AsUnionOrIntersectionType().types
+		types := source.Types()
 		newTypes := c.instantiateTypes(types, m)
 		if identical(newTypes, types) && alias.Symbol() == t.alias.Symbol() {
 			return t
@@ -8302,7 +8302,7 @@ func (c *Checker) getGenericObjectFlags(t *Type) ObjectFlags {
 	if t.flags&(TypeFlagsUnionOrIntersection|TypeFlagsSubstitution) != 0 {
 		if t.objectFlags&ObjectFlagsIsGenericTypeComputed == 0 {
 			if t.flags&TypeFlagsUnionOrIntersection != 0 {
-				for _, u := range t.AsUnionOrIntersectionType().types {
+				for _, u := range t.Types() {
 					combinedFlags |= c.getGenericObjectFlags(u)
 				}
 			} else {
@@ -8351,7 +8351,7 @@ func (c *Checker) isGenericMappedType(t *Type) bool {
  * literal-typed properties are reducible).
  */
 func (c *Checker) isGenericReducibleType(t *Type) bool {
-	return t.flags&TypeFlagsUnion != 0 && t.objectFlags&ObjectFlagsContainsIntersections != 0 && some(t.AsUnionType().types, c.isGenericReducibleType) ||
+	return t.flags&TypeFlagsUnion != 0 && t.objectFlags&ObjectFlagsContainsIntersections != 0 && some(t.Types(), c.isGenericReducibleType) ||
 		t.flags&TypeFlagsIntersection != 0 && c.isReducibleIntersection(t)
 }
 
@@ -8667,7 +8667,7 @@ func isLiteralType(t *Type) bool {
 		if t.flags&TypeFlagsEnumLiteral != 0 {
 			return true
 		}
-		return every(t.AsUnionType().types, isUnitType)
+		return every(t.Types(), isUnitType)
 	}
 	return isUnitType(t)
 }
@@ -8753,7 +8753,7 @@ func (c *Checker) mapTypeEx(t *Type, f func(*Type) *Type, noReductions bool) *Ty
 	u := t.AsUnionType()
 	types := u.types
 	if u.origin != nil && u.origin.flags&TypeFlagsUnion != 0 {
-		types = u.origin.AsUnionType().types
+		types = u.origin.Types()
 	}
 	var mappedTypes []*Type
 	var changed bool
@@ -8882,7 +8882,7 @@ func (c *Checker) getUnionTypeWorker(types []*Type, unionReduction UnionReductio
 		namedUnions := c.addNamedUnions(nil, types)
 		var reducedTypes []*Type
 		for _, t := range typeSet {
-			if !some(namedUnions, func(u *Type) bool { return containsType(u.AsUnionType().types, t) }) {
+			if !some(namedUnions, func(u *Type) bool { return containsType(u.Types(), t) }) {
 				reducedTypes = append(reducedTypes, t)
 			}
 		}
@@ -8893,7 +8893,7 @@ func (c *Checker) getUnionTypeWorker(types []*Type, unionReduction UnionReductio
 		// (unions with alias symbols or origins) and when there is no overlap between those named unions.
 		namedTypesCount := 0
 		for _, u := range namedUnions {
-			namedTypesCount += len(u.AsUnionType().types)
+			namedTypesCount += len(u.Types())
 		}
 		if namedTypesCount+len(reducedTypes) == len(typeSet) {
 			for _, t := range namedUnions {
@@ -8992,7 +8992,7 @@ func (c *Checker) addNamedUnions(namedUnions []*Type, types []*Type) []*Type {
 			if t.alias != nil || u.origin != nil && u.origin.flags&TypeFlagsUnion == 0 {
 				namedUnions = appendIfUnique(namedUnions, t)
 			} else if u.origin != nil && u.origin.flags&TypeFlagsUnion != 0 {
-				namedUnions = c.addNamedUnions(namedUnions, u.origin.AsUnionType().types)
+				namedUnions = c.addNamedUnions(namedUnions, u.origin.Types())
 			}
 		}
 	}
@@ -9219,11 +9219,11 @@ func (c *Checker) getIntersectionTypeEx(types []*Type, flags IntersectionFlags, 
 }
 
 func isUnionWithUndefined(t *Type) bool {
-	return t.flags&TypeFlagsUnion != 0 && t.AsUnionType().types[0].flags&TypeFlagsUndefined != 0
+	return t.flags&TypeFlagsUnion != 0 && t.Types()[0].flags&TypeFlagsUndefined != 0
 }
 
 func isUnionWithNull(t *Type) bool {
-	return t.flags&TypeFlagsUnion != 0 && (t.AsUnionType().types[0].flags&TypeFlagsNull != 0 || t.AsUnionType().types[1].flags&TypeFlagsNull != 0)
+	return t.flags&TypeFlagsUnion != 0 && (t.Types()[0].flags&TypeFlagsNull != 0 || t.Types()[1].flags&TypeFlagsNull != 0)
 }
 
 func isIntersectionType(t *Type) bool {
@@ -9254,7 +9254,7 @@ func (c *Checker) addTypesToIntersection(typeSet *orderedMap[TypeId, *Type], inc
 func (c *Checker) addTypeToIntersection(typeSet *orderedMap[TypeId, *Type], includes TypeFlags, t *Type) TypeFlags {
 	flags := t.flags
 	if flags&TypeFlagsIntersection != 0 {
-		return c.addTypesToIntersection(typeSet, includes, t.AsIntersectionType().types)
+		return c.addTypesToIntersection(typeSet, includes, t.Types())
 	}
 	if c.isEmptyAnonymousObjectType(t) {
 		if includes&TypeFlagsIncludesEmptyObject == 0 {
@@ -9346,7 +9346,7 @@ func (c *Checker) intersectUnionsOfPrimitiveTypes(types []*Type) ([]*Type, bool)
 	var checked []*Type
 	var result []*Type
 	for _, u := range unionTypes {
-		for _, t := range u.AsUnionType().types {
+		for _, t := range u.Types() {
 			var inserted bool
 			if checked, inserted = insertType(checked, t); inserted {
 				if c.eachUnionContains(unionTypes, t) {
@@ -9373,7 +9373,7 @@ func (c *Checker) intersectUnionsOfPrimitiveTypes(types []*Type) ([]*Type, bool)
 // primitive type, and missingType is matched by undefinedType (and vice versa).
 func (c *Checker) eachUnionContains(unionTypes []*Type, t *Type) bool {
 	for _, u := range unionTypes {
-		types := u.AsUnionType().types
+		types := u.Types()
 		if !containsType(types, t) {
 			if t == c.missingType {
 				return containsType(types, c.undefinedType)
@@ -9408,7 +9408,7 @@ func (c *Checker) getCrossProductIntersections(types []*Type, flags Intersection
 		n := i
 		for j := len(types) - 1; j >= 0; j-- {
 			if types[j].flags&TypeFlagsUnion != 0 {
-				sourceTypes := types[j].AsUnionType().types
+				sourceTypes := types[j].Types()
 				length := len(sourceTypes)
 				constituents[j] = sourceTypes[n%length]
 				n = n / length
@@ -9429,7 +9429,7 @@ func getConstituentCount(t *Type) int {
 	case t.flags&TypeFlagsUnion != 0 && t.AsUnionType().origin != nil:
 		return getConstituentCount(t.AsUnionType().origin)
 	}
-	return getConstituentCountOfTypes(t.AsUnionOrIntersectionType().types)
+	return getConstituentCountOfTypes(t.Types())
 }
 
 func getConstituentCountOfTypes(types []*Type) int {
@@ -9474,7 +9474,7 @@ func (c *Checker) isPatternLiteralPlaceholderType(t *Type) bool {
 		// Return true if the intersection consists of one or more placeholders and zero or
 		// more object type tags.
 		seenPlaceholder := false
-		for _, s := range t.AsIntersectionType().types {
+		for _, s := range t.Types() {
 			if s.flags&(TypeFlagsLiteral|TypeFlagsNullable) != 0 || c.isPatternLiteralPlaceholderType(s) {
 				seenPlaceholder = true
 			} else if s.flags&TypeFlagsObject == 0 {
@@ -9499,7 +9499,7 @@ func (c *Checker) isGenericStringLikeType(t *Type) bool {
 
 func forEachType(t *Type, f func(t *Type)) {
 	if t.flags&TypeFlagsUnion != 0 {
-		for _, u := range t.AsUnionType().types {
+		for _, u := range t.Types() {
 			f(u)
 		}
 	} else {
@@ -9509,21 +9509,21 @@ func forEachType(t *Type, f func(t *Type)) {
 
 func someType(t *Type, f func(*Type) bool) bool {
 	if t.flags&TypeFlagsUnion != 0 {
-		return some(t.AsUnionType().types, f)
+		return some(t.Types(), f)
 	}
 	return f(t)
 }
 
 func everyType(t *Type, f func(*Type) bool) bool {
 	if t.flags&TypeFlagsUnion != 0 {
-		return every(t.AsUnionType().types, f)
+		return every(t.Types(), f)
 	}
 	return f(t)
 }
 
 func (c *Checker) filterType(t *Type, f func(*Type) bool) *Type {
 	if t.flags&TypeFlagsUnion != 0 {
-		types := t.AsUnionType().types
+		types := t.Types()
 		filtered, same := sameFilter(types, f)
 		if same {
 			return t
@@ -9536,7 +9536,7 @@ func (c *Checker) filterType(t *Type, f func(*Type) bool) *Type {
 			// filtered types are within nested unions in the origin), then we can't construct a new origin type.
 			// Otherwise, if we have exactly one type left in the origin set, return that as the filtered type.
 			// Otherwise, construct a new filtered origin type.
-			originTypes := origin.AsUnionType().types
+			originTypes := origin.Types()
 			originFiltered := filter(originTypes, func(u *Type) bool {
 				return u.flags&TypeFlagsUnion != 0 || f(u)
 			})
@@ -9597,7 +9597,7 @@ func (c *Checker) getCrossProductUnionSize(types []*Type) int {
 	for _, t := range types {
 		switch {
 		case t.flags&TypeFlagsUnion != 0:
-			size *= len(t.AsUnionType().types)
+			size *= len(t.Types())
 		case t.flags&TypeFlagsNever != 0:
 			return 0
 		}
@@ -9617,9 +9617,9 @@ func (c *Checker) getIndexTypeEx(t *Type, indexFlags IndexFlags) *Type {
 	case c.shouldDeferIndexType(t, indexFlags):
 		return c.getIndexTypeForGenericType(t, indexFlags)
 	case t.flags&TypeFlagsUnion != 0:
-		return c.getIntersectionType(mapf(t.AsUnionType().types, func(t *Type) *Type { return c.getIndexTypeEx(t, indexFlags) }))
+		return c.getIntersectionType(mapf(t.Types(), func(t *Type) *Type { return c.getIndexTypeEx(t, indexFlags) }))
 	case t.flags&TypeFlagsIntersection != 0:
-		return c.getUnionType(mapf(t.AsIntersectionType().types, func(t *Type) *Type { return c.getIndexTypeEx(t, indexFlags) }))
+		return c.getUnionType(mapf(t.Types(), func(t *Type) *Type { return c.getIndexTypeEx(t, indexFlags) }))
 	case t.objectFlags&ObjectFlagsMapped != 0:
 		return c.getIndexTypeForMappedType(t, indexFlags)
 	case t == c.wildcardType:
@@ -9700,7 +9700,7 @@ func (c *Checker) getLiteralTypeFromPropertyName(name *Node) *Type {
 
 func (c *Checker) isKeyTypeIncluded(keyType *Type, include TypeFlags) bool {
 	return keyType.flags&include != 0 ||
-		keyType.flags&TypeFlagsIntersection != 0 && some(keyType.AsIntersectionType().types, func(t *Type) bool {
+		keyType.flags&TypeFlagsIntersection != 0 && some(keyType.Types(), func(t *Type) bool {
 			return c.isKeyTypeIncluded(t, include)
 		})
 }
@@ -9726,7 +9726,7 @@ func (c *Checker) shouldDeferIndexType(t *Type, indexFlags IndexFlags) bool {
 		c.isGenericTupleType(t) ||
 		c.isGenericMappedType(t) && (!c.hasDistributiveNameType(t) || c.getMappedTypeNameTypeKind(t) == MappedTypeNameTypeKindRemapping) ||
 		t.flags&TypeFlagsUnion != 0 && indexFlags&IndexFlagsNoReducibleCheck == 0 && c.isGenericReducibleType(t) ||
-		t.flags&TypeFlagsIntersection != 0 && c.maybeTypeOfKind(t, TypeFlagsInstantiable) && some(t.AsIntersectionType().types, c.isEmptyAnonymousObjectType)
+		t.flags&TypeFlagsIntersection != 0 && c.maybeTypeOfKind(t, TypeFlagsInstantiable) && some(t.Types(), c.isEmptyAnonymousObjectType)
 }
 
 // Ordinarily we reduce a keyof M, where M is a mapped type { [P in K as N<P>]: X }, to simply N<K>. This however presumes
@@ -9744,7 +9744,7 @@ func (c *Checker) hasDistributiveNameType(mappedType *Type) bool {
 		case t.flags&TypeFlagsConditional != 0:
 			return t.AsConditionalType().root.isDistributive && t.AsConditionalType().checkType == typeVariable
 		case t.flags&TypeFlagsUnionOrIntersection != 0:
-			return every(t.AsUnionOrIntersectionType().types, isDistributive)
+			return every(t.Types(), isDistributive)
 		case t.flags&TypeFlagsTemplateLiteral != 0:
 			return every(t.AsTemplateLiteralType().types, isDistributive)
 		case t.flags&TypeFlagsIndexedAccess != 0:
@@ -9847,7 +9847,7 @@ func (c *Checker) getIndexedAccessTypeOrUndefined(objectType *Type, indexType *T
 	if indexType.flags&TypeFlagsUnion != 0 && indexType.flags&TypeFlagsBoolean == 0 {
 		var propTypes []*Type
 		wasMissingProp := false
-		for _, t := range indexType.AsUnionType().types {
+		for _, t := range indexType.Types() {
 			propType := c.getPropertyTypeForIndexType(objectType, apparentObjectType, t, indexType, accessNode, accessFlags|ifElse(wasMissingProp, AccessFlagsSuppressNoImplicitAnyError, 0))
 			if propType != nil {
 				propTypes = append(propTypes, propType)
@@ -10150,7 +10150,7 @@ func (c *Checker) getPropertyNameFromIndex(indexType *Type, accessNode *Node) st
 
 func (c *Checker) isStringIndexSignatureOnlyTypeWorker(t *Type) bool {
 	return t.flags&TypeFlagsObject != 0 && !c.isGenericMappedType(t) && len(c.getPropertiesOfType(t)) == 0 && len(c.getIndexInfosOfType(t)) == 1 && c.getIndexInfoOfType(t, c.stringType) != nil ||
-		t.flags&TypeFlagsUnionOrIntersection != 0 && every(t.AsUnionOrIntersectionType().types, c.isStringIndexSignatureOnlyType)
+		t.flags&TypeFlagsUnionOrIntersection != 0 && every(t.Types(), c.isStringIndexSignatureOnlyType)
 }
 
 func (c *Checker) shouldDeferIndexedAccessType(objectType *Type, indexType *Type, accessNode *Node) bool {
@@ -10208,7 +10208,7 @@ func (c *Checker) maybeTypeOfKind(t *Type, kind TypeFlags) bool {
 		return true
 	}
 	if t.flags&TypeFlagsUnionOrIntersection != 0 {
-		for _, t := range t.AsUnionOrIntersectionType().types {
+		for _, t := range t.Types() {
 			if c.maybeTypeOfKind(t, kind) {
 				return true
 			}
@@ -10318,7 +10318,7 @@ func (c *Checker) isUnknownLikeUnionType(t *Type) bool {
 	if c.strictNullChecks && t.flags&TypeFlagsUnion != 0 {
 		if t.objectFlags&ObjectFlagsIsUnknownLikeUnionComputed == 0 {
 			t.objectFlags |= ObjectFlagsIsUnknownLikeUnionComputed
-			types := t.AsUnionType().types
+			types := t.Types()
 			if len(types) >= 3 && types[0].flags&TypeFlagsUndefined != 0 && types[1].flags&TypeFlagsNull != 0 && some(types, c.isEmptyAnonymousObjectType) {
 				t.objectFlags |= ObjectFlagsIsUnknownLikeUnion
 			}
@@ -10389,7 +10389,7 @@ func (c *Checker) getNormalizedUnionOrIntersectionType(t *Type, writing bool) *T
 		// (T[K] | undefined) & {} | (T[K] | undefined) & null ==>
 		// T[K] & {} | undefined & {} | T[K] & null | undefined & null ==>
 		// T[K] & {} | T[K] & null
-		types := t.AsIntersectionType().types
+		types := t.Types()
 		normalizedTypes := sameMap(types, func(u *Type) *Type { return c.getNormalizedType(u, writing) })
 		if !identical(normalizedTypes, types) {
 			return c.getIntersectionType(normalizedTypes)
@@ -10401,7 +10401,7 @@ func (c *Checker) getNormalizedUnionOrIntersectionType(t *Type, writing bool) *T
 func (c *Checker) shouldNormalizeIntersection(t *Type) bool {
 	hasInstantiable := false
 	hasNullableOrEmpty := false
-	for _, t := range t.AsIntersectionType().types {
+	for _, t := range t.Types() {
 		hasInstantiable = hasInstantiable || t.flags&TypeFlagsInstantiable != 0
 		hasNullableOrEmpty = hasNullableOrEmpty || t.flags&TypeFlagsNullable != 0 || c.isEmptyAnonymousObjectType(t)
 		if hasInstantiable && hasNullableOrEmpty {
