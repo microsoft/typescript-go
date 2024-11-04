@@ -41,7 +41,6 @@ func (c *Checker) typeToString(t *Type) string {
 }
 
 func (c *Checker) typeToStringEx(t *Type, enclosingDeclaration *Node, flags TypeFormatFlags) string {
-	_ = enclosingDeclaration
 	p := c.newPrinter(flags)
 	p.printType(t)
 	return p.string()

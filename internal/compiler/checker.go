@@ -6098,7 +6098,7 @@ func (c *Checker) getDefaultConstructSignatures(classType *Type) []*Signature {
 			if isAbstract {
 				sig.flags |= SignatureFlagsAbstract
 			} else {
-				sig.flags &= ^SignatureFlagsAbstract
+				sig.flags &^= SignatureFlagsAbstract
 			}
 			result = append(result, sig)
 		}
@@ -6229,7 +6229,7 @@ func (c *Checker) createUnionOrIntersectionProperty(containingType *Type, name s
 				if isUnion && c.isReadonlySymbol(prop) {
 					checkFlags |= CheckFlagsReadonly
 				} else if !isUnion && !c.isReadonlySymbol(prop) {
-					checkFlags &= ^CheckFlagsReadonly
+					checkFlags &^= CheckFlagsReadonly
 				}
 				if modifiers&ModifierFlagsNonPublicAccessibilityModifier == 0 {
 					checkFlags |= CheckFlagsContainsPublic
