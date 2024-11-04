@@ -121,6 +121,19 @@ type Diagnostic struct {
 	relatedInformation []*Diagnostic
 }
 
+func (d *Diagnostic) File() *SourceFile                 { return d.file }
+func (d *Diagnostic) Pos() int                          { return d.loc.Pos() }
+func (d *Diagnostic) End() int                          { return d.loc.End() }
+func (d *Diagnostic) Len() int                          { return d.loc.Len() }
+func (d *Diagnostic) Loc() TextRange                    { return d.loc }
+func (d *Diagnostic) Code() int32                       { return d.code }
+func (d *Diagnostic) Category() diagnostics.Category    { return d.category }
+func (d *Diagnostic) Message() string                   { return d.message }
+func (d *Diagnostic) MessageChain() []*MessageChain     { return d.messageChain }
+func (d *Diagnostic) RelatedInformation() []*Diagnostic { return d.relatedInformation }
+
+func (d *Diagnostic) SetCategory(category diagnostics.Category) { d.category = category }
+
 func NewDiagnostic(file *SourceFile, loc TextRange, message *diagnostics.Message, args ...any) *Diagnostic {
 	text := message.Message()
 	if len(args) != 0 {
@@ -166,15 +179,6 @@ func NewDiagnosticForNodeFromMessageChain(node *Node, messageChain *MessageChain
 	return NewDiagnosticFromMessageChain(file, loc, messageChain)
 }
 
-func (d *Diagnostic) File() *SourceFile                         { return d.file }
-func (d *Diagnostic) Loc() TextRange                            { return d.loc }
-func (d *Diagnostic) Code() int32                               { return d.code }
-func (d *Diagnostic) Category() diagnostics.Category            { return d.category }
-func (d *Diagnostic) Message() string                           { return d.message }
-func (d *Diagnostic) MessageChain() []*MessageChain             { return d.messageChain }
-func (d *Diagnostic) RelatedInformation() []*Diagnostic         { return d.relatedInformation }
-func (d *Diagnostic) SetCategory(category diagnostics.Category) { d.category = category }
-
 func (d *Diagnostic) setMessageChain(messageChain []*MessageChain) *Diagnostic {
 	d.messageChain = messageChain
 	return d
@@ -199,7 +203,7 @@ func (d *Diagnostic) addRelatedInfo(relatedInformation *Diagnostic) *Diagnostic 
 	return d
 }
 
-// MessaheChain
+// MessageChain
 
 type MessageChain struct {
 	code         int32
