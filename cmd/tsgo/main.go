@@ -72,7 +72,7 @@ func main() {
 	runtime.GC()
 	runtime.GC()
 	runtime.ReadMemStats(&memStats)
-	if !quiet {
+	if !quiet && len(diagnostics) != 0 {
 		if pretty {
 			var getCanonicalFileName func(path string) string
 			if useCaseSensitiveFileNames {
