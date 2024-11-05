@@ -2,6 +2,7 @@ package semver
 
 import (
 	"cmp"
+	"fmt"
 	"math"
 	"regexp"
 	"slices"
@@ -143,6 +144,18 @@ func comparePreReleaseIdentifier(left, right string) int {
 	// https://semver.org/#spec-item-11
 	// > identifiers with letters or hyphens are compared lexically in ASCII sort order.
 	return strings.Compare(left, right)
+}
+
+func (v *Version) String() string {
+	var sb strings.Builder
+	fmt.Fprintf(&sb, "%d.%d.%d", v.major, v.minor, v.patch)
+	if len(v.prerelease) > 0 {
+		fmt.Fprintf(&sb, "-%s", strings.Join(v.prerelease, "."))
+	}
+	if len(v.build) > 0 {
+		fmt.Fprintf(&sb, "+%s", strings.Join(v.build, "."))
+	}
+	return sb.String()
 }
 
 type SemverParseError struct {

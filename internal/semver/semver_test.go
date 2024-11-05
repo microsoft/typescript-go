@@ -26,8 +26,25 @@ func TestTryParseSemver(t *testing.T) {
 	}
 }
 
-// !!!
-// ToString
+func TestVersionString(t *testing.T) {
+	var tests = []struct {
+		in  Version
+		out string
+	}{
+		{Version{major: 1, minor: 2, patch: 3, prerelease: []string{"pre", "4"}, build: []string{"build", "5"}}, "1.2.3-pre.4+build.5"},
+		{Version{major: 1, minor: 2, patch: 3, prerelease: []string{"pre", "4"}, build: []string{"build"}}, "1.2.3-pre.4+build"},
+		{Version{major: 1, minor: 2, patch: 3, build: []string{"build"}}, "1.2.3+build"},
+		{Version{major: 1, minor: 2, patch: 3, prerelease: []string{"pre", "4"}}, "1.2.3-pre.4"},
+		{Version{major: 1, minor: 2, patch: 3, build: []string{"build", "4"}}, "1.2.3+build.4"},
+		{Version{major: 1, minor: 2, patch: 3}, "1.2.3"},
+	}
+
+	for _, test := range tests {
+		t.Run(test.out, func(t *testing.T) {
+			assert.Equal(t, test.in.String(), test.out)
+		})
+	}
+}
 
 func TestCompare(t *testing.T) {
 	var tests = []struct {
