@@ -1692,8 +1692,7 @@ func TokenToString(token SyntaxKind) string {
 
 func couldStartTrivia(text string, pos int) bool {
 	// Keep in sync with skipTrivia
-	ch := text[pos]
-	switch ch {
+	switch ch := text[pos]; ch {
 	// Characters that could start normal trivia
 	case '\r', '\n', '\t', '\v', '\f', ' ', '/',
 		// Characters that could start conflict marker trivia
@@ -1707,13 +1706,13 @@ func couldStartTrivia(text string, pos int) bool {
 	}
 }
 
-type SkipTriviaOptions struct {
+type skipTriviaOptions struct {
 	stopAfterLineBreak bool
 	stopAtComments     bool
 	inJSDoc            bool
 }
 
-func skipTrivia(text string, pos int, options *SkipTriviaOptions) int {
+func skipTrivia(text string, pos int, options *skipTriviaOptions) int {
 	if positionIsSynthesized(pos) {
 		return pos
 	}
