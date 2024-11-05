@@ -166,7 +166,7 @@ func (e *SemverParseError) Error() string {
 	return "Could not parse version string from " + e.origInput
 }
 
-func parseSemver(text string) (Version, error) {
+func TryParseVersion(text string) (Version, error) {
 	var result Version
 
 	match := versionRegexp.FindStringSubmatch(text)

@@ -19,7 +19,7 @@ func TestTryParseSemver(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.in, func(t *testing.T) {
-			v, err := parseSemver(test.in)
+			v, err := TryParseVersion(test.in)
 			assert.NilError(t, err)
 			assertVersion(t, v, test.out)
 		})
@@ -118,9 +118,9 @@ func TestCompare(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.v1+" <=> "+test.v2, func(t *testing.T) {
-			v1, err1 := parseSemver(test.v1)
+			v1, err1 := TryParseVersion(test.v1)
 			assert.NilError(t, err1, test.v1)
-			v2, err2 := parseSemver(test.v2)
+			v2, err2 := TryParseVersion(test.v2)
 			assert.NilError(t, err2, test.v2)
 			assert.Equal(t, v1.Compare(&v2), test.want)
 		})
