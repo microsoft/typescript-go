@@ -1377,10 +1377,11 @@ func (t *Type) AsConditionalType() *ConditionalType         { return t.data.(*Co
 
 // Casts for embedded struct types
 
-func (t *Type) AsStructuredType() *StructuredType { return t.data.AsStructuredType() }
-func (t *Type) AsObjectType() *ObjectType         { return t.data.AsObjectType() }
-func (t *Type) AsTypeReference() *TypeReference   { return t.data.AsTypeReference() }
-func (t *Type) AsInterfaceType() *InterfaceType   { return t.data.AsInterfaceType() }
+func (t *Type) AsConstrainedType() *ConstrainedType { return t.data.AsConstrainedType() }
+func (t *Type) AsStructuredType() *StructuredType   { return t.data.AsStructuredType() }
+func (t *Type) AsObjectType() *ObjectType           { return t.data.AsObjectType() }
+func (t *Type) AsTypeReference() *TypeReference     { return t.data.AsTypeReference() }
+func (t *Type) AsInterfaceType() *InterfaceType     { return t.data.AsInterfaceType() }
 func (t *Type) AsUnionOrIntersectionType() *UnionOrIntersectionType {
 	return t.data.AsUnionOrIntersectionType()
 }
@@ -1414,7 +1415,13 @@ func (t *Type) Mapper() *TypeMapper {
 }
 
 func (t *Type) Types() []*Type {
-	return t.AsUnionOrIntersectionType().types
+	switch {
+	case t.flags&TypeFlagsUnionOrIntersection != 0:
+		return t.AsUnionOrIntersectionType().types
+	case t.flags&TypeFlagsTemplateLiteral != 0:
+		return t.AsTemplateLiteralType().types
+	}
+	panic("Unhandled case in Type.Types")
 }
 
 func (t *Type) TargetInterfaceType() *InterfaceType {
@@ -1429,6 +1436,7 @@ func (t *Type) TargetTupleType() *TupleType {
 
 type TypeData interface {
 	AsType() *Type
+	AsConstrainedType() *ConstrainedType
 	AsStructuredType() *StructuredType
 	AsObjectType() *ObjectType
 	AsTypeReference() *TypeReference
@@ -1442,10 +1450,13 @@ type TypeBase struct {
 	Type
 }
 
-func (t *TypeBase) AsType() *Type                     { return &t.Type }
-func (t *TypeBase) AsStructuredType() *StructuredType { return nil }
-func (t *TypeBase) AsObjectType() *ObjectType         { return nil }
-func (t *TypeBase) AsTypeReference() *TypeReference   { return nil }
+func (t *TypeBase) AsType() *Type                                       { return &t.Type }
+func (t *TypeBase) AsConstrainedType() *ConstrainedType                 { return nil }
+func (t *TypeBase) AsStructuredType() *StructuredType                   { return nil }
+func (t *TypeBase) AsObjectType() *ObjectType                           { return nil }
+func (t *TypeBase) AsTypeReference() *TypeReference                     { return nil }
+func (t *TypeBase) AsInterfaceType() *InterfaceType                     { return nil }
+func (t *TypeBase) AsUnionOrIntersectionType() *UnionOrIntersectionType { return nil }
 
 // IntrinsicTypeData
 
@@ -1475,10 +1486,19 @@ type UniqueESSymbolType struct {
 	name string
 }
 
+// ConstrainedType (type with computed base constraint)
+
+type ConstrainedType struct {
+	TypeBase
+	resolvedBaseConstraint *Type
+}
+
+func (t *ConstrainedType) AsConstrainedType() *ConstrainedType { return t }
+
 // StructuredType (base of all types with members)
 
 type StructuredType struct {
-	TypeBase
+	ConstrainedType
 	members            SymbolTable
 	properties         []*Symbol
 	signatures         []*Signature // Signatures (call + construct)
@@ -1669,7 +1689,7 @@ type IntersectionType struct {
 // TypeParameter
 
 type TypeParameter struct {
-	TypeBase
+	ConstrainedType
 	constraint          *Type
 	target              *Type
 	mapper              *TypeMapper
@@ -1691,7 +1711,7 @@ const (
 // IndexType
 
 type IndexType struct {
-	TypeBase
+	ConstrainedType
 	target     *Type
 	indexFlags IndexFlags
 }
@@ -1699,25 +1719,25 @@ type IndexType struct {
 // IndexedAccessType
 
 type IndexedAccessType struct {
-	TypeBase
+	ConstrainedType
 	objectType  *Type
 	indexType   *Type
 	accessFlags AccessFlags // Only includes AccessFlags.Persistent
 }
 
 type TemplateLiteralType struct {
-	TypeBase
+	ConstrainedType
 	texts []string // Always one element longer than types
 	types []*Type  // Always at least one element
 }
 
 type StringMappingType struct {
-	TypeBase
+	ConstrainedType
 	target *Type
 }
 
 type SubstitutionType struct {
-	TypeBase
+	ConstrainedType
 	baseType   *Type // Target type
 	constraint *Type // Constraint that target type is known to satisfy
 }
@@ -1734,7 +1754,7 @@ type ConditionalRoot struct {
 }
 
 type ConditionalType struct {
-	TypeBase
+	ConstrainedType
 	root                             *ConditionalRoot
 	checkType                        *Type
 	extendsType                      *Type

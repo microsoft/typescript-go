@@ -36,7 +36,7 @@ const (
 	TypeSystemPropertyNameResolvedBaseConstructorType
 	TypeSystemPropertyNameDeclaredType
 	TypeSystemPropertyNameResolvedReturnType
-	TypeSystemPropertyNameImmediateBaseConstraint
+	TypeSystemPropertyNameResolvedBaseConstraint
 	TypeSystemPropertyNameResolvedTypeArguments
 	TypeSystemPropertyNameResolvedBaseTypes
 	TypeSystemPropertyNameWriteType
@@ -248,6 +248,8 @@ type Checker struct {
 	emptyTypeLiteralType               *Type
 	emptyGenericType                   *Type
 	anyFunctionType                    *Type
+	noConstraintType                   *Type
+	circularConstraintType             *Type
 	enumNumberIndexInfo                *IndexInfo
 	patternAmbientModules              []PatternAmbientModule
 	patternAmbientModuleAugmentations  SymbolTable
@@ -370,6 +372,8 @@ func NewChecker(program *Program) *Checker {
 	c.emptyGenericType.AsObjectType().instantiations = make(map[string]*Type)
 	c.anyFunctionType = c.newAnonymousType(nil /*symbol*/, nil, nil, nil, nil)
 	c.anyFunctionType.objectFlags |= ObjectFlagsNonInferrableType
+	c.noConstraintType = c.newAnonymousType(nil /*symbol*/, nil, nil, nil, nil)
+	c.circularConstraintType = c.newAnonymousType(nil /*symbol*/, nil, nil, nil, nil)
 	c.enumNumberIndexInfo = &IndexInfo{keyType: c.numberType, valueType: c.stringType, isReadonly: true}
 	c.subtypeRelation = &Relation{}
 	c.strictSubtypeRelation = &Relation{}
@@ -4139,6 +4143,18 @@ func (c *Checker) getTypeOfParameter(symbol *Symbol) *Type {
 	return c.addOptionalityEx(c.getTypeOfSymbol(symbol), false, declaration != nil && (getInitializerFromNode(declaration) != nil || isOptionalDeclaration(declaration)))
 }
 
+func (c *Checker) getConstraintOfType(t *Type) *Type {
+	switch {
+	case t.flags&TypeFlagsTypeParameter != 0:
+		return c.getConstraintOfTypeParameter(t)
+	case t.flags&TypeFlagsIndexedAccess != 0:
+		return c.getConstraintOfIndexedAccess(t)
+	case t.flags&TypeFlagsConditional != 0:
+		return c.getConstraintOfConditionalType(t)
+	}
+	return c.getBaseConstraintOfType(t)
+}
+
 func (c *Checker) getConstraintOfTypeParameter(typeParameter *Type) *Type {
 	if c.hasNonCircularBaseConstraint(typeParameter) {
 		return c.getConstraintFromTypeParameter(typeParameter)
@@ -4147,14 +4163,68 @@ func (c *Checker) getConstraintOfTypeParameter(typeParameter *Type) *Type {
 }
 
 func (c *Checker) hasNonCircularBaseConstraint(t *Type) bool {
-	// !!!
-	return t.flags&TypeFlagsTypeParameter != 0 && t.AsTypeParameter().constraint != nil
+	return c.getResolvedBaseConstraint(t, nil) != c.circularConstraintType
 }
 
-/** This is a worker function. Use getConstraintOfTypeParameter which guards against circular constraints. */
-func (c *Checker) getConstraintFromTypeParameter(tp *Type) *Type {
-	// !!!
-	return tp.AsTypeParameter().constraint
+// This is a worker function. Use getConstraintOfTypeParameter which guards against circular constraints
+func (c *Checker) getConstraintFromTypeParameter(t *Type) *Type {
+	tp := t.AsTypeParameter()
+	if tp.constraint == nil {
+		var constraint *Type
+		if tp.target != nil {
+			constraint = c.instantiateType(c.getConstraintOfTypeParameter(tp.target), tp.mapper)
+		} else {
+			constraintDeclaration := c.getConstraintDeclaration(t)
+			if constraintDeclaration != nil {
+				constraint = c.getTypeFromTypeNode(constraintDeclaration)
+				if constraint.flags&TypeFlagsAny != 0 && !c.isErrorType(constraint) {
+					// use stringNumberSymbolType as the base constraint for mapped type key constraints (unknown isn;t assignable to that, but `any` was),
+					// use unknown otherwise
+					if isMappedTypeNode(constraintDeclaration.parent.parent) {
+						constraint = c.stringNumberSymbolType
+					} else {
+						constraint = c.unknownType
+					}
+				}
+			} else {
+				constraint = c.getInferredTypeParameterConstraint(t, false)
+			}
+		}
+		if constraint == nil {
+			constraint = c.noConstraintType
+		}
+		tp.constraint = constraint
+	}
+	if tp.constraint != c.noConstraintType {
+		return tp.constraint
+	}
+	return nil
+}
+
+func (c *Checker) getInferredTypeParameterConstraint(t *Type, omitTypeReferences bool) *Type {
+	return nil // !!!
+}
+
+func (c *Checker) getConstraintOfIndexedAccess(t *Type) *Type {
+	if c.hasNonCircularBaseConstraint(t) {
+		return c.getConstraintFromIndexedAccess(t)
+	}
+	return nil
+}
+
+func (c *Checker) getConstraintFromIndexedAccess(t *Type) *Type {
+	return nil // !!!
+}
+
+func (c *Checker) getConstraintOfConditionalType(t *Type) *Type {
+	if c.hasNonCircularBaseConstraint(t) {
+		return c.getConstraintFromConditionalType(t)
+	}
+	return nil
+}
+
+func (c *Checker) getConstraintFromConditionalType(t *Type) *Type {
+	return c.anyType // !!!
 }
 
 func (c *Checker) getDeclaredTypeOfClassOrInterface(symbol *Symbol) *Type {
@@ -4706,9 +4776,9 @@ func (c *Checker) typeResolutionHasProperty(r *TypeResolution) bool {
 		return r.target.(*Type).AsInterfaceType().resolvedBaseConstructorType != nil
 	case TypeSystemPropertyNameResolvedReturnType:
 		return r.target.(*Signature).resolvedReturnType != nil
+	case TypeSystemPropertyNameResolvedBaseConstraint:
+		return r.target.(*Type).AsConstrainedType().resolvedBaseConstraint != nil
 		// !!!
-		// case TypeSystemPropertyNameImmediateBaseConstraint:
-		// 	return !!(target.(*Type)).immediateBaseConstraint
 		// case TypeSystemPropertyNameWriteType:
 		// 	return !!c.getSymbolLinks(target.(Symbol)).writeType
 		// case TypeSystemPropertyNameParameterInitializerContainsUndefined:
@@ -10185,20 +10255,172 @@ func (c *Checker) getStringMappingType(symbol *Symbol, t *Type) *Type {
 	return c.anyType // !!!
 }
 
-func (c *Checker) getBaseConstraintOfType(t *Type) *Type {
-	// !!!
-	if t.flags&TypeFlagsTypeParameter != 0 && t.AsTypeParameter().constraint != nil {
-		return t.AsTypeParameter().constraint
-	}
-	return nil
-}
-
 func (c *Checker) getBaseConstraintOrType(t *Type) *Type {
 	constraint := c.getBaseConstraintOfType(t)
 	if constraint != nil {
 		return constraint
 	}
 	return t
+}
+
+func (c *Checker) getBaseConstraintOfType(t *Type) *Type {
+	if t.flags&(TypeFlagsInstantiableNonPrimitive|TypeFlagsUnionOrIntersection|TypeFlagsTemplateLiteral|TypeFlagsStringMapping) != 0 || c.isGenericTupleType(t) {
+		constraint := c.getResolvedBaseConstraint(t, nil)
+		if constraint != c.noConstraintType && constraint != c.circularConstraintType {
+			return constraint
+		}
+		return nil
+	}
+	if t.flags&TypeFlagsIndex != 0 {
+		return c.stringNumberSymbolType
+	}
+	return nil
+}
+
+func (c *Checker) getResolvedBaseConstraint(t *Type, stack []RecursionId) *Type {
+	constrained := t.AsConstrainedType()
+	if constrained == nil {
+		return t
+	}
+	if constrained.resolvedBaseConstraint != nil {
+		return constrained.resolvedBaseConstraint
+	}
+	if !c.pushTypeResolution(t, TypeSystemPropertyNameResolvedBaseConstraint) {
+		return c.circularConstraintType
+	}
+	var constraint *Type
+	// We always explore at least 10 levels of nested constraints. Thereafter, we continue to explore
+	// up to 50 levels of nested constraints provided there are no "deeply nested" types on the stack
+	// (i.e. no types for which five instantiations have been recorded on the stack). If we reach 50
+	// levels of nesting, we are presumably exploring a repeating pattern with a long cycle that hasn't
+	// yet triggered the deeply nested limiter. We have no test cases that actually get to 50 levels of
+	// nesting, so it is effectively just a safety stop.
+	identity := getRecursionIdentity(t)
+	if len(stack) < 10 || len(stack) < 50 && !slices.Contains(stack, identity) {
+		constraint = c.computeBaseConstraint(c.getSimplifiedType(t /*writing*/, false), append(stack, identity))
+	}
+	if !c.popTypeResolution() {
+		if t.flags&TypeFlagsTypeParameter != 0 {
+			errorNode := c.getConstraintDeclaration(t)
+			if errorNode != nil {
+				diagnostic := c.error(errorNode, diagnostics.Type_parameter_0_has_a_circular_constraint, c.typeToString(t))
+				if c.currentNode != nil && !isNodeDescendantOf(errorNode, c.currentNode) && !isNodeDescendantOf(c.currentNode, errorNode) {
+					diagnostic.addRelatedInfo(NewDiagnosticForNode(c.currentNode, diagnostics.Circularity_originates_in_type_at_this_location))
+				}
+			}
+		}
+		constraint = c.circularConstraintType
+	}
+	if constraint == nil {
+		constraint = c.noConstraintType
+	}
+	if constrained.resolvedBaseConstraint == nil {
+		constrained.resolvedBaseConstraint = constraint
+	}
+	return constraint
+}
+
+func (c *Checker) computeBaseConstraint(t *Type, stack []RecursionId) *Type {
+	switch {
+	case t.flags&TypeFlagsTypeParameter != 0:
+		constraint := c.getConstraintFromTypeParameter(t)
+		if t.AsTypeParameter().isThisType || constraint == nil {
+			return constraint
+		}
+		return c.getNextBaseConstraint(constraint, stack)
+	case t.flags&TypeFlagsUnionOrIntersection != 0:
+		types := t.Types()
+		constraints := make([]*Type, 0, len(types))
+		different := false
+		for _, s := range types {
+			constraint := c.getNextBaseConstraint(s, stack)
+			if constraint != nil {
+				if constraint != s {
+					different = true
+				}
+				constraints = append(constraints, constraint)
+			} else {
+				different = true
+			}
+		}
+		if !different {
+			return t
+		}
+		switch {
+		case t.flags&TypeFlagsUnion != 0 && len(constraints) == len(types):
+			return c.getUnionType(constraints)
+		case t.flags&TypeFlagsIntersection != 0 && len(constraints) != 0:
+			return c.getIntersectionType(constraints)
+		}
+		return nil
+	case t.flags&TypeFlagsIndex != 0:
+		return c.stringNumberSymbolType
+	case t.flags&TypeFlagsTemplateLiteral != 0:
+		types := t.Types()
+		constraints := make([]*Type, 0, len(types))
+		for _, s := range types {
+			constraint := c.getNextBaseConstraint(s, stack)
+			if constraint != nil {
+				constraints = append(constraints, constraint)
+			}
+		}
+		if len(constraints) == len(types) {
+			return c.getTemplateLiteralType(t.AsTemplateLiteralType().texts, constraints)
+		}
+		return c.stringType
+	case t.flags&TypeFlagsStringMapping != 0:
+		constraint := c.getNextBaseConstraint(t.Target(), stack)
+		if constraint != nil && constraint != t.Target() {
+			return c.getStringMappingType(t.symbol, constraint)
+		}
+		return c.stringType
+	case t.flags&TypeFlagsIndexedAccess != 0:
+		if c.isMappedTypeGenericIndexedAccess(t) {
+			// For indexed access types of the form { [P in K]: E }[X], where K is non-generic and X is generic,
+			// we substitute an instantiation of E where P is replaced with X.
+			return c.getNextBaseConstraint(c.substituteIndexedMappedType(t.AsIndexedAccessType().objectType, t.AsIndexedAccessType().indexType), stack)
+		}
+		baseObjectType := c.getNextBaseConstraint(t.AsIndexedAccessType().objectType, stack)
+		baseIndexType := c.getNextBaseConstraint(t.AsIndexedAccessType().indexType, stack)
+		if baseObjectType == nil || baseIndexType == nil {
+			return nil
+		}
+		c.getNextBaseConstraint(c.getIndexedAccessTypeOrUndefined(baseObjectType, baseIndexType, t.AsIndexedAccessType().accessFlags, nil, nil), stack)
+	case t.flags&TypeFlagsConditional != 0:
+		constraint := c.getConstraintFromConditionalType(t)
+		if constraint == nil {
+			return nil
+		}
+		return c.getNextBaseConstraint(constraint, stack)
+	case t.flags&TypeFlagsSubstitution != 0:
+		return c.getNextBaseConstraint(c.getSubstitutionIntersection(t), stack)
+	case c.isGenericTupleType(t):
+		// We substitute constraints for variadic elements only when the constraints are array types or
+		// non-variadic tuple types as we want to avoid further (possibly unbounded) recursion.
+		elementTypes := c.getElementTypes(t)
+		elementInfos := t.TargetTupleType().elementInfos
+		newElements := make([]*Type, 0, len(elementTypes))
+		for i, v := range elementTypes {
+			newElement := v
+			if v.flags&TypeFlagsTypeParameter != 0 && elementInfos[i].flags&ElementFlagsVariadic != 0 {
+				constraint := c.getNextBaseConstraint(v, stack)
+				if constraint != v && everyType(constraint, func(n *Type) bool { return c.isArrayOrTupleType(n) && !c.isGenericTupleType(n) }) {
+					newElement = constraint
+				}
+			}
+			newElements = append(newElements, newElement)
+		}
+		return c.createTupleTypeEx(newElements, elementInfos, t.TargetTupleType().readonly)
+	}
+	return t
+}
+
+func (c *Checker) getNextBaseConstraint(t *Type, stack []RecursionId) *Type {
+	constraint := c.getResolvedBaseConstraint(t, stack)
+	if constraint == c.noConstraintType || constraint == c.circularConstraintType {
+		return nil
+	}
+	return constraint
 }
 
 // Return true if type might be of the given kind. A union or intersection type might be of a given
@@ -10326,10 +10548,6 @@ func (c *Checker) isUnknownLikeUnionType(t *Type) bool {
 		return t.objectFlags&ObjectFlagsIsUnknownLikeUnion != 0
 	}
 	return false
-}
-
-func (c *Checker) getConstraintOfType(t *Type) *Type {
-	return nil // !!!
 }
 
 func (c *Checker) typeHasCallOrConstructSignatures(t *Type) bool {
@@ -10516,4 +10734,27 @@ func (c *Checker) removeMissingType(t *Type, isOptional bool) *Type {
 		return c.removeType(t, c.missingType)
 	}
 	return t
+}
+
+func (c *Checker) getConstraintDeclaration(t *Type) *Node {
+	if t.symbol != nil {
+		declaration := find(t.symbol.declarations, isTypeParameterDeclaration)
+		if declaration != nil {
+			return declaration.AsTypeParameter().constraint
+		}
+	}
+	return nil
+}
+
+func (c *Checker) getTemplateLiteralType(texts []string, types []*Type) *Type {
+	return c.stringType // !!!
+}
+
+// Given an indexed access on a mapped type of the form { [P in K]: E }[X], return an instantiation of E where P is
+// replaced with X. Since this simplification doesn't account for mapped type modifiers, add 'undefined' to the
+// resulting type if the mapped type includes a '?' modifier or if the modifiers type indicates that some properties
+// are optional. If the modifiers type is generic, conservatively estimate optionality by recursively looking for
+// mapped types that include '?' modifiers.
+func (c *Checker) substituteIndexedMappedType(objectType *Type, index *Type) *Type {
+	return c.anyType // !!!
 }

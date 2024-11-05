@@ -3625,6 +3625,10 @@ func (node *MappedTypeNode) ForEachChild(v Visitor) bool {
 		visit(v, node.questionToken) || visit(v, node.typeNode) || visitNodes(v, node.members)
 }
 
+func isMappedTypeNode(node *Node) bool {
+	return node.kind == SyntaxKindMappedType
+}
+
 // TypeLiteralNode
 
 type TypeLiteralNode struct {

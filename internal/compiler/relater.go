@@ -1672,7 +1672,7 @@ func (r *Relater) reportError(message *diagnostics.Message, args ...any) {
 		return
 	}
 	if r.skipParentCounter == 0 {
-		r.errorInfo = NewMessageChain(message, args...).addMessageChain(r.errorInfo)
+		r.errorInfo = chainDiagnosticMessages(r.errorInfo, message, args...)
 	} else {
 		r.skipParentCounter--
 	}
