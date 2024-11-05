@@ -122,7 +122,7 @@ func TestCompare(t *testing.T) {
 			assert.NilError(t, err1, test.v1)
 			v2, err2 := parseSemver(test.v2)
 			assert.NilError(t, err2, test.v2)
-			assert.Equal(t, compareSemverVersion(&v1, &v2), test.want)
+			assert.Equal(t, v1.Compare(&v2), test.want)
 		})
 	}
 }

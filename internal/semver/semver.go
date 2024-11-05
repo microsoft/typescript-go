@@ -51,7 +51,7 @@ const ComparisonLessThan = -1
 const ComparisonEqualTo = 0
 const ComparisonGreaterThan = 1
 
-func compareSemverVersion(a, b *Version) int {
+func (a *Version) Compare(b *Version) int {
 	// https://semver.org/#spec-item-11
 	// > Precedence is determined by the first difference when comparing each of these
 	// > identifiers from left to right as follows: Major, minor, and patch versions are
