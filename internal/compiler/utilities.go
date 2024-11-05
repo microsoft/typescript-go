@@ -835,7 +835,7 @@ func getTextOfNodeFromSourceText(sourceText string, node *Node) string {
 	if nodeIsMissing(node) {
 		return ""
 	}
-	text := sourceText[skipTrivia(sourceText, node.Pos(), false, false, false):node.End()]
+	text := sourceText[skipTrivia(sourceText, node.Pos(), nil):node.End()]
 	// if (isJSDocTypeExpressionOrChild(node)) {
 	//     // strip space + asterisk at line start
 	//     text = text.split(/\r\n|\n|\r/).map(line => line.replace(/^\s*\*/, "").trimStart()).join("\n");
@@ -993,7 +993,7 @@ func getErrorRangeForNode(sourceFile *SourceFile, node *Node) TextRange {
 	errorNode := node
 	switch node.kind {
 	case SyntaxKindSourceFile:
-		pos := skipTrivia(sourceFile.text, 0, false, false, false)
+		pos := skipTrivia(sourceFile.text, 0, nil)
 		if pos == len(sourceFile.text) {
 			return NewTextRange(0, 0)
 		}
@@ -1008,7 +1008,7 @@ func getErrorRangeForNode(sourceFile *SourceFile, node *Node) TextRange {
 		return getErrorRangeForArrowFunction(sourceFile, node)
 	case SyntaxKindCaseClause:
 	case SyntaxKindDefaultClause:
-		start := skipTrivia(sourceFile.text, node.Pos(), false, false, false)
+		start := skipTrivia(sourceFile.text, node.Pos(), nil)
 		end := node.End()
 		statements := node.data.(*CaseOrDefaultClause).statements
 		if len(statements) != 0 {
@@ -1016,10 +1016,10 @@ func getErrorRangeForNode(sourceFile *SourceFile, node *Node) TextRange {
 		}
 		return NewTextRange(start, end)
 	case SyntaxKindReturnStatement, SyntaxKindYieldExpression:
-		pos := skipTrivia(sourceFile.text, node.Pos(), false, false, false)
+		pos := skipTrivia(sourceFile.text, node.Pos(), nil)
 		return getRangeOfTokenAtPosition(sourceFile, pos)
 	case SyntaxKindSatisfiesExpression:
-		pos := skipTrivia(sourceFile.text, node.AsSatisfiesExpression().expression.End(), false, false, false)
+		pos := skipTrivia(sourceFile.text, node.AsSatisfiesExpression().expression.End(), nil)
 		return getRangeOfTokenAtPosition(sourceFile, pos)
 	case SyntaxKindConstructor:
 		scanner := getScannerForSourceFile(sourceFile, node.Pos())
@@ -1040,13 +1040,13 @@ func getErrorRangeForNode(sourceFile *SourceFile, node *Node) TextRange {
 	}
 	pos := errorNode.Pos()
 	if !nodeIsMissing(errorNode) {
-		pos = skipTrivia(sourceFile.text, pos, false, false, false)
+		pos = skipTrivia(sourceFile.text, pos, nil)
 	}
 	return NewTextRange(pos, errorNode.End())
 }
 
 func getErrorRangeForArrowFunction(sourceFile *SourceFile, node *Node) TextRange {
-	pos := skipTrivia(sourceFile.text, node.Pos(), false, false, false)
+	pos := skipTrivia(sourceFile.text, node.Pos(), nil)
 	body := node.AsArrowFunction().body
 	if body != nil && body.kind == SyntaxKindBlock {
 		startLine, _ := GetLineAndCharacterOfPosition(sourceFile, body.Pos())

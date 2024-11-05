@@ -1707,7 +1707,13 @@ func couldStartTrivia(text string, pos int) bool {
 	}
 }
 
-func skipTrivia(text string, pos int, stopAfterLineBreak bool, stopAtComments bool, inJSDoc bool) int {
+type SkipTriviaOptions struct {
+	stopAfterLineBreak bool
+	stopAtComments     bool
+	inJSDoc            bool
+}
+
+func skipTrivia(text string, pos int, options *SkipTriviaOptions) int {
 	if positionIsSynthesized(pos) {
 		return pos
 	}
@@ -1724,16 +1730,16 @@ func skipTrivia(text string, pos int, stopAfterLineBreak bool, stopAtComments bo
 			fallthrough
 		case '\n':
 			pos++
-			if stopAfterLineBreak {
+			if options.stopAfterLineBreak {
 				return pos
 			}
-			canConsumeStar = inJSDoc
+			canConsumeStar = options.inJSDoc
 			continue
 		case '\t', '\v', '\f', ' ':
 			pos++
 			continue
 		case '/':
-			if stopAtComments {
+			if options.stopAtComments {
 				break
 			}
 			if text[pos+1] == '/' {
