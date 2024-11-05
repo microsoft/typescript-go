@@ -3114,7 +3114,7 @@ func (p *Parser) parseTupleElementNameOrTupleElementType() *Node {
 		questionToken := p.parseOptionalToken(SyntaxKindQuestionToken)
 		p.parseExpected(SyntaxKindColonToken)
 		typeNode := p.parseTupleElementType()
-		result := p.factory.NewNamedTupleTypeMember(dotDotDotToken, name, questionToken, typeNode)
+		result := p.factory.NewNamedTupleMember(dotDotDotToken, name, questionToken, typeNode)
 		p.finishNode(result, pos)
 		return result
 	}
@@ -3304,7 +3304,8 @@ func (p *Parser) parseModifiersForConstructorType() *Node {
 		modifier := p.factory.NewModifier(p.token)
 		p.nextToken()
 		p.finishNode(modifier, pos)
-		result := p.factory.NewModifierList([]*Node{modifier}, ModifierFlagsAbstract)
+		result := p.factory.NewModifierList([]*Node{modifier})
+		result.AsModifierList().modifierFlags = ModifierFlagsAbstract | ModifierFlagsHasComputedFlags
 		p.finishNode(result, pos)
 		return result
 	}
@@ -3393,7 +3394,8 @@ func (p *Parser) parseModifiersWithOptions(allowDecorators bool, permitConstAsMo
 		}
 	}
 	if len(list) > 0 {
-		result := p.factory.NewModifierList(list, preModifierFlags|decoratorFlag|postModifierFlags)
+		result := p.factory.NewModifierList(list)
+		result.AsModifierList().modifierFlags = preModifierFlags | decoratorFlag | postModifierFlags | ModifierFlagsHasComputedFlags
 		p.finishNode(result, pos)
 		return result
 	}
@@ -3943,7 +3945,8 @@ func (p *Parser) parseModifiersForArrowFunction() *Node {
 		p.nextToken()
 		modifier := p.factory.NewModifier(SyntaxKindAsyncKeyword)
 		p.finishNode(modifier, pos)
-		result := p.factory.NewModifierList([]*Node{modifier}, ModifierFlagsAsync)
+		result := p.factory.NewModifierList([]*Node{modifier})
+		result.AsModifierList().modifierFlags = ModifierFlagsAsync | ModifierFlagsHasComputedFlags
 		p.finishNode(modifier, pos)
 		return result
 	}
