@@ -147,9 +147,6 @@ func parseAlternatives(text string) ([][]versionComparator, bool) {
 	text = strings.TrimSpace(text)
 	ranges := logicalOrRegExp.Split(text, -1)
 	for _, r := range ranges {
-		// !!!
-		// Slight deviation here.
-		// Original impementation doesn't split *before* dismissing empty space.
 		r = strings.TrimSpace(r)
 		if r == "" {
 			continue
