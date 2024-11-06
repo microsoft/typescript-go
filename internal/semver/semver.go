@@ -53,20 +53,20 @@ var versionZero = Version{
 	prerelease: _zeroPrerelease,
 }
 
-func incrementMajor(v Version) Version {
+func (v *Version) incrementMajor() Version {
 	return Version{
 		major: v.major + 1,
 	}
 }
 
-func incrementMinor(v Version) Version {
+func (v *Version) incrementMinor() Version {
 	return Version{
 		major: v.major,
 		minor: v.minor + 1,
 	}
 }
 
-func incrementPatch(v Version) Version {
+func (v *Version) incrementPatch() Version {
 	return Version{
 		major: v.major,
 		minor: v.minor,
@@ -435,11 +435,11 @@ func parseHyphen(left, right string) ([]versionComparator, bool) {
 		switch {
 		case isWildcard(rightResult.minorStr):
 			// `...-MAJOR.*.*` gives us `... <(MAJOR+1).0.0`
-			operand = incrementMajor(operand)
+			operand = operand.incrementMajor()
 			operator = rangeLessThan
 		case isWildcard(rightResult.patchStr):
 			// `...-MAJOR.MINOR.*` gives us `... <MAJOR.(MINOR+1).0`
-			operand = incrementMinor(operand)
+			operand = operand.incrementMinor()
 			operator = rangeLessThan
 		default:
 			// `...-MAJOR.MINOR.PATCH` gives us `... <=MAJOR.MINOR.PATCH`
@@ -547,9 +547,9 @@ func parseComparator(op string, text string) ([]versionComparator, bool) {
 
 			var secondVersion Version
 			if isWildcard(result.minorStr) {
-				secondVersion = incrementMajor(result.version)
+				secondVersion = result.version.incrementMajor()
 			} else {
-				secondVersion = incrementMinor(result.version)
+				secondVersion = result.version.incrementMinor()
 			}
 
 			second := versionComparator{rangeLessThan, secondVersion}
@@ -560,11 +560,11 @@ func parseComparator(op string, text string) ([]versionComparator, bool) {
 
 			var secondVersion Version
 			if result.version.major > 0 || isWildcard(result.minorStr) {
-				secondVersion = incrementMajor(result.version)
+				secondVersion = result.version.incrementMajor()
 			} else if result.version.minor > 0 || isWildcard(result.patchStr) {
-				secondVersion = incrementMinor(result.version)
+				secondVersion = result.version.incrementMinor()
 			} else {
-				secondVersion = incrementPatch(result.version)
+				secondVersion = result.version.incrementPatch()
 			}
 			second := versionComparator{rangeLessThan, secondVersion}
 			comparatorsResult = []versionComparator{first, second}
@@ -587,7 +587,7 @@ func parseComparator(op string, text string) ([]versionComparator, bool) {
 					operator = rangeGreaterThanEqual
 				}
 
-				version = incrementMajor(version)
+				version = version.incrementMajor()
 				version.prerelease = _zeroPrerelease
 			} else if isWildcard(result.patchStr) {
 				if operator == rangeLessThanEqual {
@@ -596,7 +596,7 @@ func parseComparator(op string, text string) ([]versionComparator, bool) {
 					operator = rangeGreaterThanEqual
 				}
 
-				version = incrementMinor(version)
+				version = version.incrementMinor()
 				version.prerelease = _zeroPrerelease
 			}
 
@@ -615,9 +615,9 @@ func parseComparator(op string, text string) ([]versionComparator, bool) {
 
 				var secondVersion Version
 				if isWildcard(result.minorStr) {
-					secondVersion = incrementMajor(originalVersion)
+					secondVersion = originalVersion.incrementMajor()
 				} else {
-					secondVersion = incrementMinor(originalVersion)
+					secondVersion = originalVersion.incrementMinor()
 				}
 				secondVersion.prerelease = _zeroPrerelease
 
