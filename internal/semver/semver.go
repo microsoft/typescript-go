@@ -47,6 +47,33 @@ type Version struct {
 	build      []string
 }
 
+var _zeroPrerelease = []string{"0"}
+
+var versionZero = Version{
+	prerelease: _zeroPrerelease,
+}
+
+func incrementMajor(v Version) Version {
+	return Version{
+		major: v.major + 1,
+	}
+}
+
+func incrementMinor(v Version) Version {
+	return Version{
+		major: v.major,
+		minor: v.minor + 1,
+	}
+}
+
+func incrementPatch(v Version) Version {
+	return Version{
+		major: v.major,
+		minor: v.minor,
+		patch: v.patch + 1,
+	}
+}
+
 const comparisonLessThan = -1
 const comparisonEqualTo = 0
 const comparisonGreaterThan = 1
@@ -173,19 +200,36 @@ func TryParseVersion(text string) (Version, error) {
 	if match == nil {
 		return result, &SemverParseError{origInput: text}
 	}
-	match = match[1:]
 
-	result.major = getUintComponent(match[0])
-	result.minor = getUintComponent(match[1])
-	result.patch = getUintComponent(match[2])
+	majorStr := match[1]
+	minorStr := match[2]
+	patchStr := match[3]
+	prereleaseStr := match[4]
+	buildStr := match[5]
 
-	prerelease := match[3]
-	if prerelease != "" {
-		result.prerelease = strings.Split(match[3], ".")
+	result.major = getUintComponent(majorStr)
+
+	if minorStr != "" {
+		result.minor = getUintComponent(minorStr)
 	}
-	build := match[4]
-	if build != "" {
-		result.build = strings.Split(build, ".")
+
+	if patchStr != "" {
+		result.patch = getUintComponent(patchStr)
+	}
+
+	if prereleaseStr != "" {
+		if !prereleaseRegexp.MatchString(prereleaseStr) {
+			return result, &SemverParseError{origInput: text}
+		}
+
+		result.prerelease = strings.Split(prereleaseStr, ".")
+	}
+	if buildStr != "" {
+		if !buildRegExp.MatchString(buildStr) {
+			return result, &SemverParseError{origInput: text}
+		}
+
+		result.build = strings.Split(buildStr, ".")
 	}
 
 	return result, nil
@@ -270,6 +314,52 @@ func (v *VersionRange) String() string {
 	return sb.String()
 }
 
+func (v *VersionRange) Test(version *Version) bool {
+	return testDisjunction(v.alternatives, version)
+}
+
+func testDisjunction(alternatives [][]versionComparator, version *Version) bool {
+	// an empty disjunction is treated as "*" (all versions)
+	if len(alternatives) == 0 {
+		return true
+	}
+
+	for _, alternative := range alternatives {
+		if testAlternative(alternative, version) {
+			return true
+		}
+	}
+
+	return false
+}
+
+func testAlternative(alternative []versionComparator, version *Version) bool {
+	for _, comparator := range alternative {
+		if !testComparator(comparator, version) {
+			return false
+		}
+	}
+	return true
+}
+
+func testComparator(comparator versionComparator, version *Version) bool {
+	cmp := version.Compare(&comparator.operand)
+	switch comparator.operator {
+	case rangeLessThan:
+		return cmp < 0
+	case rangeLessThanEqual:
+		return cmp <= 0
+	case rangeEqual:
+		return cmp == 0
+	case rangeGreaterThanEqual:
+		return cmp >= 0
+	case rangeGreaterThan:
+		return cmp > 0
+	default:
+		panic("Unexpected operator: " + comparator.operator)
+	}
+}
+
 func TryParseVersionRange(text string) (VersionRange, bool) {
 	alternatives, ok := parseAlternatives(text)
 	return VersionRange{alternatives: alternatives}, ok
@@ -345,11 +435,11 @@ func parseHyphen(left, right string) ([]versionComparator, bool) {
 		switch {
 		case isWildcard(rightResult.minorStr):
 			// `...-MAJOR.*.*` gives us `... <(MAJOR+1).0.0`
-			operand.major++
+			operand = incrementMajor(operand)
 			operator = rangeLessThan
 		case isWildcard(rightResult.patchStr):
 			// `...-MAJOR.MINOR.*` gives us `... <MAJOR.(MINOR+1).0`
-			operand.minor++
+			operand = incrementMinor(operand)
 			operator = rangeLessThan
 		default:
 			// `...-MAJOR.MINOR.PATCH` gives us `... <=MAJOR.MINOR.PATCH`
@@ -414,13 +504,23 @@ func parsePartial(text string) (partialVersion, bool) {
 		}
 	}
 
+	var prerelease []string
+	if prereleaseStr != "" {
+		prerelease = strings.Split(prereleaseStr, ".")
+	}
+
+	var build []string
+	if buildStr != "" {
+		build = strings.Split(buildStr, ".")
+	}
+
 	result := partialVersion{
 		version: Version{
 			major:      majorNumeric,
 			minor:      minorNumeric,
 			patch:      patchNumeric,
-			prerelease: strings.Split(prereleaseStr, "."),
-			build:      strings.Split(buildStr, "."),
+			prerelease: prerelease,
+			build:      build,
 		},
 		majorStr: majorStr,
 		minorStr: minorStr,
@@ -445,11 +545,11 @@ func parseComparator(op string, text string) ([]versionComparator, bool) {
 		case "~":
 			first := versionComparator{rangeGreaterThanEqual, result.version}
 
-			secondVersion := result.version
+			var secondVersion Version
 			if isWildcard(result.minorStr) {
-				secondVersion.major++
+				secondVersion = incrementMajor(result.version)
 			} else {
-				secondVersion.minor++
+				secondVersion = incrementMinor(result.version)
 			}
 
 			second := versionComparator{rangeLessThan, secondVersion}
@@ -458,13 +558,13 @@ func parseComparator(op string, text string) ([]versionComparator, bool) {
 		case "^":
 			first := versionComparator{rangeGreaterThanEqual, result.version}
 
-			secondVersion := result.version
-			if secondVersion.major > 0 || isWildcard(result.minorStr) {
-				secondVersion.major++
-			} else if secondVersion.minor > 0 || isWildcard(result.patchStr) {
-				secondVersion.minor++
+			var secondVersion Version
+			if result.version.major > 0 || isWildcard(result.minorStr) {
+				secondVersion = incrementMajor(result.version)
+			} else if result.version.minor > 0 || isWildcard(result.patchStr) {
+				secondVersion = incrementMinor(result.version)
 			} else {
-				secondVersion.patch++
+				secondVersion = incrementPatch(result.version)
 			}
 			second := versionComparator{rangeLessThan, secondVersion}
 			comparatorsResult = []versionComparator{first, second}
@@ -472,7 +572,7 @@ func parseComparator(op string, text string) ([]versionComparator, bool) {
 		case "<", ">=":
 			version := result.version
 			if isWildcard(result.minorStr) || isWildcard(result.patchStr) {
-				version.prerelease = []string{"0"}
+				version.prerelease = _zeroPrerelease
 			}
 			comparatorsResult = []versionComparator{
 				{operator, version},
@@ -483,34 +583,44 @@ func parseComparator(op string, text string) ([]versionComparator, bool) {
 			if isWildcard(result.minorStr) {
 				if operator == rangeLessThanEqual {
 					operator = rangeLessThan
+				} else {
+					operator = rangeGreaterThanEqual
 				}
 
-				version.major++
-				version.prerelease = []string{"0"}
+				version = incrementMajor(version)
+				version.prerelease = _zeroPrerelease
 			} else if isWildcard(result.patchStr) {
 				if operator == rangeLessThanEqual {
-					operator = rangeLessThanEqual
+					operator = rangeLessThan
+				} else {
+					operator = rangeGreaterThanEqual
 				}
 
-				version.minor++
-				version.prerelease = []string{"0"}
-			} else {
-				operator = rangeEqual
+				version = incrementMinor(version)
+				version.prerelease = _zeroPrerelease
 			}
 
 			comparatorsResult = []versionComparator{
 				{operator, version},
 			}
 		case "=", "":
+			// normalize empty string to `=`
+			operator = rangeEqual
+
 			if isWildcard(result.minorStr) || isWildcard(result.patchStr) {
-				firstVersion := result.version
-				firstVersion.prerelease = []string{"0"}
-				secondVersion := firstVersion
+				originalVersion := result.version
+
+				firstVersion := originalVersion
+				firstVersion.prerelease = _zeroPrerelease
+
+				var secondVersion Version
 				if isWildcard(result.minorStr) {
-					secondVersion.major++
+					secondVersion = incrementMajor(originalVersion)
 				} else {
-					secondVersion.minor++
+					secondVersion = incrementMinor(originalVersion)
 				}
+				secondVersion.prerelease = _zeroPrerelease
+
 				comparatorsResult = []versionComparator{
 					{rangeGreaterThanEqual, firstVersion},
 					{rangeLessThan, secondVersion},
@@ -526,8 +636,8 @@ func parseComparator(op string, text string) ([]versionComparator, bool) {
 	} else {
 		if operator == "<" || operator == ">" {
 			comparatorsResult = []versionComparator{
-				// < 0.0.0
-				{rangeLessThan, Version{}},
+				// < 0.0.0-0
+				{rangeLessThan, versionZero},
 			}
 		}
 	}
