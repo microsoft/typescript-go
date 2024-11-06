@@ -3148,9 +3148,9 @@ func (f *NodeFactory) NewPrefixUnaryExpression(operator SyntaxKind, operand *Nod
 	return f.NewNode(SyntaxKindPrefixUnaryExpression, data)
 }
 
-func (f *NodeFactory) UpdatePrefixUnaryExpression(node *Node, operator SyntaxKind, operand *Node) *Node {
+func (f *NodeFactory) UpdatePrefixUnaryExpression(node *Node, operand *Node) *Node {
 	if n := node.AsPrefixUnaryExpression(); operand != n.operand {
-		return f.UpdateNode(f.NewPrefixUnaryExpression(operator, operand), node)
+		return f.UpdateNode(f.NewPrefixUnaryExpression(n.operator, operand), node)
 	}
 	return node
 }
