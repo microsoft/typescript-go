@@ -35,7 +35,7 @@ func SameFilter[T any](slice []T, predicate func(T) bool) ([]T, bool) {
 	return slice, true
 }
 
-func Mapf[T, U any](slice []T, f func(T) U) []U {
+func Map[T, U any](slice []T, f func(T) U) []U {
 	if len(slice) == 0 {
 		return nil
 	}

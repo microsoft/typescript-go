@@ -5166,7 +5166,7 @@ func getBaseTypeNodeOfClass(t *Type) *Node {
 
 func (c *Checker) getInstantiatedConstructorsForTypeArguments(t *Type, typeArgumentNodes []*Node, location *Node) []*Signature {
 	signatures := c.getConstructorsForTypeArguments(t, typeArgumentNodes, location)
-	typeArguments := sliceutil.Mapf(typeArgumentNodes, c.getTypeFromTypeNode)
+	typeArguments := sliceutil.Map(typeArgumentNodes, c.getTypeFromTypeNode)
 	return sliceutil.SameMap(signatures, func(sig *Signature) *Signature {
 		if len(sig.typeParameters) != 0 {
 			return c.getSignatureInstantiation(sig, typeArguments, nil)
@@ -5887,7 +5887,7 @@ func (c *Checker) instantiateSignatureEx(sig *Signature, m *TypeMapper, eraseTyp
 		// First create a fresh set of type parameters, then include a mapping from the old to the
 		// new type parameters in the mapper function. Finally store this mapper in the new type
 		// parameters such that we can use it when instantiating constraints.
-		freshTypeParameters = sliceutil.Mapf(sig.typeParameters, c.cloneTypeParameter)
+		freshTypeParameters = sliceutil.Map(sig.typeParameters, c.cloneTypeParameter)
 		m = c.combineTypeMappers(newTypeMapper(sig.typeParameters, freshTypeParameters), m)
 		for _, tp := range freshTypeParameters {
 			tp.AsTypeParameter().mapper = m
@@ -6555,7 +6555,7 @@ func (c *Checker) getTypeArguments(t *Type) []*Type {
 			case SyntaxKindArrayType:
 				typeArguments = []*Type{c.getTypeFromTypeNode(node.AsArrayTypeNode().elementType)}
 			case SyntaxKindTupleType:
-				typeArguments = sliceutil.Mapf(node.AsTupleTypeNode().elements, c.getTypeFromTypeNode)
+				typeArguments = sliceutil.Map(node.AsTupleTypeNode().elements, c.getTypeFromTypeNode)
 			default:
 				panic("Unhandled case in getTypeArguments")
 			}
@@ -6580,7 +6580,7 @@ func (c *Checker) getTypeArguments(t *Type) []*Type {
 }
 
 func (c *Checker) getEffectiveTypeArguments(node *Node, typeParameters []*Type) []*Type {
-	return c.fillMissingTypeArguments(sliceutil.Mapf(node.AsTypeArgumentList().arguments, c.getTypeFromTypeNode), typeParameters, c.getMinTypeArgumentCount(typeParameters))
+	return c.fillMissingTypeArguments(sliceutil.Map(node.AsTypeArgumentList().arguments, c.getTypeFromTypeNode), typeParameters, c.getMinTypeArgumentCount(typeParameters))
 }
 
 /**
@@ -7346,7 +7346,7 @@ func (c *Checker) getTypeFromClassOrInterfaceReference(node *Node, symbol *Symbo
 }
 
 func (c *Checker) getTypeArgumentsFromNode(node *Node) []*Type {
-	return sliceutil.Mapf(getTypeArgumentNodesFromNode(node), c.getTypeFromTypeNode)
+	return sliceutil.Map(getTypeArgumentNodesFromNode(node), c.getTypeFromTypeNode)
 }
 
 func (c *Checker) checkNoTypeArguments(node *Node, symbol *Symbol) bool {
@@ -7608,7 +7608,7 @@ func (c *Checker) isEmptyLiteralType(t *Type) bool {
 func (c *Checker) getTypeFromTypeAliasReference(node *Node, symbol *Symbol) *Type {
 	typeArguments := getTypeArgumentNodesFromNode(node)
 	if symbol.checkFlags&CheckFlagsUnresolved != 0 {
-		alias := &TypeAlias{symbol: symbol, typeArguments: sliceutil.Mapf(typeArguments, c.getTypeFromTypeNode)}
+		alias := &TypeAlias{symbol: symbol, typeArguments: sliceutil.Map(typeArguments, c.getTypeFromTypeNode)}
 		key := getAliasKey(alias)
 		errorType := c.errorTypes[key]
 		if errorType == nil {
@@ -7919,7 +7919,7 @@ func (c *Checker) getTypeFromArrayOrTupleTypeNode(node *Node) *Type {
 			if node.kind == SyntaxKindArrayType {
 				elementTypes = []*Type{c.getTypeFromTypeNode(node.AsArrayTypeNode().elementType)}
 			} else {
-				elementTypes = sliceutil.Mapf(node.AsTupleTypeNode().elements, c.getTypeFromTypeNode)
+				elementTypes = sliceutil.Map(node.AsTupleTypeNode().elements, c.getTypeFromTypeNode)
 			}
 			links.resolvedType = c.createNormalizedTypeReference(target, elementTypes)
 		}
@@ -7940,7 +7940,7 @@ func (c *Checker) getArrayOrTupleTargetType(node *Node) *Type {
 		}
 		return c.globalArrayType
 	}
-	return c.getTupleTargetType(sliceutil.Mapf(node.AsTupleTypeNode().elements, c.getTupleElementInfo), readonly)
+	return c.getTupleTargetType(sliceutil.Map(node.AsTupleTypeNode().elements, c.getTupleElementInfo), readonly)
 }
 
 func (c *Checker) isReadonlyTypeOperator(node *Node) bool {
@@ -7984,7 +7984,7 @@ func (c *Checker) getTypeFromUnionTypeNode(node *Node) *Type {
 	links := c.typeNodeLinks.get(node)
 	if links.resolvedType == nil {
 		alias := c.getAliasForTypeNode(node)
-		links.resolvedType = c.getUnionTypeEx(sliceutil.Mapf(node.AsUnionTypeNode().types, c.getTypeFromTypeNode), UnionReductionLiteral, alias, nil /*origin*/)
+		links.resolvedType = c.getUnionTypeEx(sliceutil.Map(node.AsUnionTypeNode().types, c.getTypeFromTypeNode), UnionReductionLiteral, alias, nil /*origin*/)
 	}
 	return links.resolvedType
 }
@@ -7993,7 +7993,7 @@ func (c *Checker) getTypeFromIntersectionTypeNode(node *Node) *Type {
 	links := c.typeNodeLinks.get(node)
 	if links.resolvedType == nil {
 		alias := c.getAliasForTypeNode(node)
-		types := sliceutil.Mapf(node.AsIntersectionTypeNode().types, c.getTypeFromTypeNode)
+		types := sliceutil.Map(node.AsIntersectionTypeNode().types, c.getTypeFromTypeNode)
 		// We perform no supertype reduction for X & {} or {} & X, where X is one of string, number, bigint,
 		// or a pattern literal template type. This enables union types like "a" | "b" | string & {} or
 		// "aa" | "ab" | `a${string}` which preserve the literal types for purposes of statement completion.
@@ -8154,7 +8154,7 @@ func (c *Checker) getTupleElementInfo(node *Node) TupleElementInfo {
 }
 
 func (c *Checker) createTupleType(elementTypes []*Type) *Type {
-	elementInfos := sliceutil.Mapf(elementTypes, func(_ *Type) TupleElementInfo { return TupleElementInfo{flags: ElementFlagsRequired} })
+	elementInfos := sliceutil.Map(elementTypes, func(_ *Type) TupleElementInfo { return TupleElementInfo{flags: ElementFlagsRequired} })
 	return c.createTupleTypeEx(elementTypes, elementInfos, false /*readonly*/)
 }
 
@@ -9618,9 +9618,9 @@ func (c *Checker) getIndexTypeEx(t *Type, indexFlags IndexFlags) *Type {
 	case c.shouldDeferIndexType(t, indexFlags):
 		return c.getIndexTypeForGenericType(t, indexFlags)
 	case t.flags&TypeFlagsUnion != 0:
-		return c.getIntersectionType(sliceutil.Mapf(t.Types(), func(t *Type) *Type { return c.getIndexTypeEx(t, indexFlags) }))
+		return c.getIntersectionType(sliceutil.Map(t.Types(), func(t *Type) *Type { return c.getIndexTypeEx(t, indexFlags) }))
 	case t.flags&TypeFlagsIntersection != 0:
-		return c.getUnionType(sliceutil.Mapf(t.Types(), func(t *Type) *Type { return c.getIndexTypeEx(t, indexFlags) }))
+		return c.getUnionType(sliceutil.Map(t.Types(), func(t *Type) *Type { return c.getIndexTypeEx(t, indexFlags) }))
 	case t.objectFlags&ObjectFlagsMapped != 0:
 		return c.getIndexTypeForMappedType(t, indexFlags)
 	case t == c.wildcardType:
@@ -10000,7 +10000,7 @@ func (c *Checker) getPropertyTypeForIndexType(originalObjectType *Type, objectTy
 					c.diagnostics.add(createDiagnosticForNode(accessExpression, diagnostics.Property_0_does_not_exist_on_type_1, indexType.AsLiteralType().value, c.typeToString(objectType)))
 					return c.undefinedType
 				} else if indexType.flags&(TypeFlagsNumber|TypeFlagsString) != 0 {
-					types := sliceutil.Mapf(objectType.AsStructuredType().properties, func(prop *Symbol) *Type {
+					types := sliceutil.Map(objectType.AsStructuredType().properties, func(prop *Symbol) *Type {
 						return c.getTypeOfSymbol(prop)
 					})
 					return c.getUnionType(append(types, c.undefinedType))
