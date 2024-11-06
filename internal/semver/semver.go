@@ -47,9 +47,9 @@ type Version struct {
 	build      []string
 }
 
-const ComparisonLessThan = -1
-const ComparisonEqualTo = 0
-const ComparisonGreaterThan = 1
+const comparisonLessThan = -1
+const comparisonEqualTo = 0
+const comparisonGreaterThan = 1
 
 func (a *Version) Compare(b *Version) int {
 	// https://semver.org/#spec-item-11
@@ -66,11 +66,11 @@ func (a *Version) Compare(b *Version) int {
 	// > Build metadata does not figure into precedence
 	switch {
 	case a == b:
-		return ComparisonEqualTo
+		return comparisonEqualTo
 	case a == nil:
-		return ComparisonLessThan
+		return comparisonLessThan
 	case b == nil:
-		return ComparisonGreaterThan
+		return comparisonGreaterThan
 	}
 
 	r := cmp.Compare(a.major, b.major)
@@ -97,11 +97,11 @@ func comparePreReleaseIdentifiers(left, right []string) int {
 	// > than a normal version.
 	if len(left) == 0 {
 		if len(right) == 0 {
-			return ComparisonEqualTo
+			return comparisonEqualTo
 		}
-		return ComparisonGreaterThan
+		return comparisonGreaterThan
 	} else if len(right) == 0 {
-		return ComparisonLessThan
+		return comparisonLessThan
 	}
 
 	// https://semver.org/#spec-item-11
@@ -128,10 +128,10 @@ func comparePreReleaseIdentifier(left, right string) int {
 		// https://semver.org/#spec-item-11
 		// > Numeric identifiers always have lower precedence than non-numeric identifiers.
 		if !rightIsNumeric {
-			return ComparisonLessThan
+			return comparisonLessThan
 		}
 		if !leftIsNumeric {
-			return ComparisonGreaterThan
+			return comparisonGreaterThan
 		}
 
 		// https://semver.org/#spec-item-11

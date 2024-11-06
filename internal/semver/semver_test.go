@@ -1,6 +1,7 @@
 package semver
 
 import (
+	"fmt"
 	"testing"
 
 	"gotest.tools/v3/assert"
@@ -57,65 +58,65 @@ func TestVersionCompare(t *testing.T) {
 		// > Precedence is determined by the first difference when comparing each of these
 		// > identifiers from left to right as follows: Major, minor, and patch versions are
 		// > always compared numerically.
-		{"1.0.0", "2.0.0", ComparisonLessThan},
-		{"1.0.0", "1.1.0", ComparisonLessThan},
-		{"1.0.0", "1.0.1", ComparisonLessThan},
-		{"2.0.0", "1.0.0", ComparisonGreaterThan},
-		{"1.1.0", "1.0.0", ComparisonGreaterThan},
-		{"1.0.1", "1.0.0", ComparisonGreaterThan},
-		{"1.0.0", "1.0.0", ComparisonEqualTo},
+		{"1.0.0", "2.0.0", comparisonLessThan},
+		{"1.0.0", "1.1.0", comparisonLessThan},
+		{"1.0.0", "1.0.1", comparisonLessThan},
+		{"2.0.0", "1.0.0", comparisonGreaterThan},
+		{"1.1.0", "1.0.0", comparisonGreaterThan},
+		{"1.0.1", "1.0.0", comparisonGreaterThan},
+		{"1.0.0", "1.0.0", comparisonEqualTo},
 
 		// https://semver.org/#spec-item-11
 		// > When major, minor, and patch are equal, a pre-release version has lower
 		// > precedence than a normal version.
-		{"1.0.0", "1.0.0-pre", ComparisonGreaterThan},
-		{"1.0.1-pre", "1.0.0", ComparisonGreaterThan},
-		{"1.0.0-pre", "1.0.0", ComparisonLessThan},
+		{"1.0.0", "1.0.0-pre", comparisonGreaterThan},
+		{"1.0.1-pre", "1.0.0", comparisonGreaterThan},
+		{"1.0.0-pre", "1.0.0", comparisonLessThan},
 
 		// https://semver.org/#spec-item-11
 		// > identifiers consisting of only digits are compared numerically
-		{"1.0.0-0", "1.0.0-1", ComparisonLessThan},
-		{"1.0.0-1", "1.0.0-0", ComparisonGreaterThan},
-		{"1.0.0-2", "1.0.0-10", ComparisonLessThan},
-		{"1.0.0-10", "1.0.0-2", ComparisonGreaterThan},
-		{"1.0.0-0", "1.0.0-0", ComparisonEqualTo},
+		{"1.0.0-0", "1.0.0-1", comparisonLessThan},
+		{"1.0.0-1", "1.0.0-0", comparisonGreaterThan},
+		{"1.0.0-2", "1.0.0-10", comparisonLessThan},
+		{"1.0.0-10", "1.0.0-2", comparisonGreaterThan},
+		{"1.0.0-0", "1.0.0-0", comparisonEqualTo},
 
 		// https://semver.org/#spec-item-11
 		// > identifiers with letters or hyphens are compared lexically in ASCII sort order.
-		{"1.0.0-a", "1.0.0-b", ComparisonLessThan},
-		{"1.0.0-a-2", "1.0.0-a-10", ComparisonGreaterThan},
-		{"1.0.0-b", "1.0.0-a", ComparisonGreaterThan},
-		{"1.0.0-a", "1.0.0-a", ComparisonEqualTo},
-		{"1.0.0-A", "1.0.0-a", ComparisonLessThan},
+		{"1.0.0-a", "1.0.0-b", comparisonLessThan},
+		{"1.0.0-a-2", "1.0.0-a-10", comparisonGreaterThan},
+		{"1.0.0-b", "1.0.0-a", comparisonGreaterThan},
+		{"1.0.0-a", "1.0.0-a", comparisonEqualTo},
+		{"1.0.0-A", "1.0.0-a", comparisonLessThan},
 
 		// https://semver.org/#spec-item-11
 		// > Numeric identifiers always have lower precedence than non-numeric identifiers.
-		{"1.0.0-0", "1.0.0-alpha", ComparisonLessThan},
-		{"1.0.0-alpha", "1.0.0-0", ComparisonGreaterThan},
-		{"1.0.0-0", "1.0.0-0", ComparisonEqualTo},
-		{"1.0.0-alpha", "1.0.0-alpha", ComparisonEqualTo},
+		{"1.0.0-0", "1.0.0-alpha", comparisonLessThan},
+		{"1.0.0-alpha", "1.0.0-0", comparisonGreaterThan},
+		{"1.0.0-0", "1.0.0-0", comparisonEqualTo},
+		{"1.0.0-alpha", "1.0.0-alpha", comparisonEqualTo},
 
 		// https://semver.org/#spec-item-11
 		// > A larger set of pre-release fields has a higher precedence than a smaller set, if all
 		// > of the preceding identifiers are equal.
-		{"1.0.0-alpha", "1.0.0-alpha.0", ComparisonLessThan},
-		{"1.0.0-alpha.0", "1.0.0-alpha", ComparisonGreaterThan},
+		{"1.0.0-alpha", "1.0.0-alpha.0", comparisonLessThan},
+		{"1.0.0-alpha.0", "1.0.0-alpha", comparisonGreaterThan},
 
 		// https://semver.org/#spec-item-11
 		// > Precedence for two pre-release versions with the same major, minor, and patch version
 		// > MUST be determined by comparing each dot separated identifier from left to right until
 		// > a difference is found [...]
-		{"1.0.0-a.0.b.1", "1.0.0-a.0.b.2", ComparisonLessThan},
-		{"1.0.0-a.0.b.1", "1.0.0-b.0.a.1", ComparisonLessThan},
-		{"1.0.0-a.0.b.2", "1.0.0-a.0.b.1", ComparisonGreaterThan},
-		{"1.0.0-b.0.a.1", "1.0.0-a.0.b.1", ComparisonGreaterThan},
+		{"1.0.0-a.0.b.1", "1.0.0-a.0.b.2", comparisonLessThan},
+		{"1.0.0-a.0.b.1", "1.0.0-b.0.a.1", comparisonLessThan},
+		{"1.0.0-a.0.b.2", "1.0.0-a.0.b.1", comparisonGreaterThan},
+		{"1.0.0-b.0.a.1", "1.0.0-a.0.b.1", comparisonGreaterThan},
 
 		// https://semver.org/#spec-item-11
 		// > Build metadata does not figure into precedence
-		{"1.0.0+build", "1.0.0", ComparisonEqualTo},
-		{"1.0.0+build.stuff", "1.0.0", ComparisonEqualTo},
-		{"1.0.0", "1.0.0+build", ComparisonEqualTo},
-		{"1.0.0+build", "1.0.0+stuff", ComparisonEqualTo},
+		{"1.0.0+build", "1.0.0", comparisonEqualTo},
+		{"1.0.0+build.stuff", "1.0.0", comparisonEqualTo},
+		{"1.0.0", "1.0.0+build", comparisonEqualTo},
+		{"1.0.0+build", "1.0.0+stuff", comparisonEqualTo},
 	}
 
 	for _, test := range tests {
