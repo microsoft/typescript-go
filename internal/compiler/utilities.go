@@ -14,6 +14,7 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/compiler/diagnostics"
 	"github.com/microsoft/typescript-go/internal/sliceutil"
+	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
 // TextPos
@@ -3013,7 +3014,7 @@ func isExternalModuleNameRelative(moduleName string) bool {
 	// TypeScript 1.0 spec (April 2014): 11.2.1
 	// An external module name is "relative" if the first term is "." or "..".
 	// Update: We also consider a path like `C:\foo.ts` "relative" because we do not search for it in `node_modules` or treat it as an ambient module.
-	return pathIsRelative(moduleName) || isRootedDiskPath(moduleName)
+	return pathIsRelative(moduleName) || tspath.IsRootedDiskPath(moduleName)
 }
 
 func pathIsRelative(path string) bool {
