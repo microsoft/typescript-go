@@ -389,6 +389,7 @@ const (
 	SyntaxKindSyntaxList
 	// Transformation nodes
 	SyntaxKindNotEmittedStatement
+	SyntaxKindNotEmittedTypeElement
 	SyntaxKindPartiallyEmittedExpression
 	SyntaxKindCommaListExpression
 	SyntaxKindSyntheticReferenceExpression

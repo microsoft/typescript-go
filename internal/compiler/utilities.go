@@ -631,6 +631,23 @@ func isExpressionKind(kind SyntaxKind) bool {
 	return isUnaryExpressionKind(kind)
 }
 
+func isJsxAttributeValue(node *Node) bool {
+	switch node.kind {
+	case SyntaxKindStringLiteral,
+		SyntaxKindJsxExpression,
+		SyntaxKindJsxElement,
+		SyntaxKindJsxSelfClosingElement,
+		SyntaxKindJsxFragment:
+		return true
+	default:
+		return false
+	}
+}
+
+func isForInitializer(node *Node) bool {
+	return isExpression(node) || isVariableDeclarationList(node)
+}
+
 func isAssignmentOperator(token SyntaxKind) bool {
 	return token >= SyntaxKindFirstAssignment && token <= SyntaxKindLastAssignment
 }
@@ -659,6 +676,37 @@ func isSignedNumericLiteral(node *Node) bool {
 	if node.kind == SyntaxKindPrefixUnaryExpression {
 		node := node.AsPrefixUnaryExpression()
 		return (node.operator == SyntaxKindPlusToken || node.operator == SyntaxKindMinusToken) && isNumericLiteral(node.operand)
+	}
+	return false
+}
+
+func isModifier(node *Node) bool {
+	return isModifierKind(node.kind)
+}
+
+func isModifierLike(node *Node) bool {
+	return isModifier(node) || isDecorator(node)
+}
+
+func isModifierKind(token SyntaxKind) bool {
+	switch token {
+	case SyntaxKindAbstractKeyword,
+		SyntaxKindAccessorKeyword,
+		SyntaxKindAsyncKeyword,
+		SyntaxKindConstKeyword,
+		SyntaxKindDeclareKeyword,
+		SyntaxKindDefaultKeyword,
+		SyntaxKindExportKeyword,
+		SyntaxKindImmediateKeyword,
+		SyntaxKindInKeyword,
+		SyntaxKindPublicKeyword,
+		SyntaxKindPrivateKeyword,
+		SyntaxKindProtectedKeyword,
+		SyntaxKindReadonlyKeyword,
+		SyntaxKindStaticKeyword,
+		SyntaxKindOutKeyword,
+		SyntaxKindOverrideKeyword:
+		return true
 	}
 	return false
 }
@@ -1006,6 +1054,19 @@ func getThisContainer(node *Node, includeArrowFunctions bool, includeClassComput
 	}
 }
 
+func isObjectLiteralElement(node *Node) bool {
+	switch node.kind {
+	case SyntaxKindPropertyAssignment,
+		SyntaxKindShorthandPropertyAssignment,
+		SyntaxKindSpreadAssignment,
+		SyntaxKindMethodDeclaration,
+		SyntaxKindGetAccessor,
+		SyntaxKindSetAccessor:
+		return true
+	}
+	return false
+}
+
 func isClassElement(node *Node) bool {
 	switch node.kind {
 	case SyntaxKindConstructor, SyntaxKindPropertyDeclaration, SyntaxKindMethodDeclaration, SyntaxKindGetAccessor, SyntaxKindSetAccessor,
@@ -1013,6 +1074,56 @@ func isClassElement(node *Node) bool {
 		return true
 	}
 	return false
+}
+
+func isTypeElement(node *Node) bool {
+	switch node.kind {
+	case SyntaxKindConstructSignature,
+		SyntaxKindCallSignature,
+		SyntaxKindPropertySignature,
+		SyntaxKindMethodSignature,
+		SyntaxKindIndexSignature,
+		SyntaxKindGetAccessor,
+		SyntaxKindSetAccessor,
+		SyntaxKindNotEmittedTypeElement:
+		return true
+	default:
+		return false
+	}
+}
+
+func isModuleBody(node *Node) bool {
+	switch node.kind {
+	case SyntaxKindModuleBlock,
+		SyntaxKindModuleDeclaration,
+		SyntaxKindIdentifier:
+		return true
+	default:
+		return false
+	}
+}
+
+func isJsxChild(node *Node) bool {
+	switch node.kind {
+	case SyntaxKindJsxElement,
+		SyntaxKindJsxExpression,
+		SyntaxKindJsxSelfClosingElement,
+		SyntaxKindJsxText,
+		SyntaxKindJsxFragment:
+		return true
+	default:
+		return false
+	}
+}
+
+func isJsxAttributeLike(node *Node) bool {
+	switch node.kind {
+	case SyntaxKindJsxAttribute,
+		SyntaxKindJsxSpreadAttribute:
+		return true
+	default:
+		return false
+	}
 }
 
 func isPartOfTypeQuery(node *Node) bool {
@@ -1246,6 +1357,24 @@ func isMemberName(node *Node) bool {
 	return node.kind == SyntaxKindIdentifier || node.kind == SyntaxKindPrivateIdentifier
 }
 
+func isBindingName(node *Node) bool {
+	switch node.kind {
+	case SyntaxKindIdentifier, SyntaxKindObjectBindingPattern, SyntaxKindArrayBindingPattern:
+		return true
+	default:
+		return false
+	}
+}
+
+func isModuleExportName(node *Node) bool {
+	switch node.kind {
+	case SyntaxKindIdentifier, SyntaxKindStringLiteral:
+		return true
+	default:
+		return false
+	}
+}
+
 func setParent(child *Node, parent *Node) {
 	if child != nil {
 		child.parent = parent
@@ -1282,10 +1411,6 @@ func getCombinedModifierFlags(node *Node) ModifierFlags {
 
 func getCombinedNodeFlags(node *Node) NodeFlags {
 	return getCombinedFlags(node, getNodeFlags)
-}
-
-func isBindingPattern(node *Node) bool {
-	return node != nil && (node.kind == SyntaxKindArrayBindingPattern || node.kind == SyntaxKindObjectBindingPattern)
 }
 
 func isParameterPropertyDeclaration(node *Node, parent *Node) bool {
@@ -1703,8 +1828,24 @@ func isPushOrUnshiftIdentifier(node *Node) bool {
 	return text == "push" || text == "unshift"
 }
 
+func isThisExpression(node *Node) bool {
+	return node.kind == SyntaxKindTrueKeyword
+}
+
+func isNullLiteral(node *Node) bool {
+	return node.kind == SyntaxKindNullKeyword
+}
+
 func isBooleanLiteral(node *Node) bool {
 	return node.kind == SyntaxKindTrueKeyword || node.kind == SyntaxKindFalseKeyword
+}
+
+func isLiteralExpression(node *Node) bool {
+	return isLiteralKind(node.kind)
+}
+
+func isLiteralKind(kind SyntaxKind) bool {
+	return SyntaxKindFirstLiteralToken <= kind && kind <= SyntaxKindLastLiteralToken
 }
 
 func isOptionalChain(node *Node) bool {
@@ -3581,6 +3722,10 @@ func isAssignmentOperatorOrHigher(kind SyntaxKind) bool {
 	return kind == SyntaxKindQuestionQuestionToken || isLogicalOperatorOrHigher(kind) || isAssignmentOperator(kind)
 }
 
+func isBinaryOperatorToken(node *Node) bool {
+	return isBinaryOperator(node.kind)
+}
+
 func isBinaryOperator(kind SyntaxKind) bool {
 	return isAssignmentOperatorOrHigher(kind) || kind == SyntaxKindCommaToken
 }
@@ -3621,6 +3766,15 @@ func isLogicalExpression(node *Node) bool {
 		} else {
 			return isLogicalOrCoalescingBinaryExpression(node)
 		}
+	}
+}
+
+func isTemplateLiteral(node *Node) bool {
+	switch node.kind {
+	case SyntaxKindTemplateExpression, SyntaxKindNoSubstitutionTemplateLiteral:
+		return true
+	default:
+		return false
 	}
 }
 

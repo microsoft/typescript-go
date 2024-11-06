@@ -3295,6 +3295,11 @@ func (p *Parser) parseFunctionOrConstructorType() *TypeNode {
 	// Debug.assert(!modifiers || isConstructorType, "Per isStartOfFunctionOrConstructorType, a function type cannot have modifiers.")
 	typeParameters := p.parseTypeParameters()
 	parameters := p.parseParameters(ParseFlagsType)
+	if parameters == nil {
+		// If parameters is nil we may be attempting to parse a type argument list (tryParseTypeArgumentsInExpression),
+		// in which case we return nil to indicate parsing failed
+		return nil
+	}
 	returnType := p.parseReturnType(SyntaxKindEqualsGreaterThanToken, false /*isType*/)
 	var result *TypeNode
 	if isConstructorType {
@@ -5864,17 +5869,6 @@ func (p *Parser) inAwaitContext() bool {
 
 func (p *Parser) skipRangeTrivia(textRange TextRange) TextRange {
 	return NewTextRange(skipTrivia(p.sourceText, textRange.Pos()), textRange.End())
-}
-
-func isModifierKind(token SyntaxKind) bool {
-	switch token {
-	case SyntaxKindAbstractKeyword, SyntaxKindAccessorKeyword, SyntaxKindAsyncKeyword, SyntaxKindConstKeyword, SyntaxKindDeclareKeyword,
-		SyntaxKindDefaultKeyword, SyntaxKindExportKeyword, SyntaxKindImmediateKeyword, SyntaxKindInKeyword, SyntaxKindPublicKeyword,
-		SyntaxKindPrivateKeyword, SyntaxKindProtectedKeyword, SyntaxKindReadonlyKeyword, SyntaxKindStaticKeyword, SyntaxKindOutKeyword,
-		SyntaxKindOverrideKeyword:
-		return true
-	}
-	return false
 }
 
 func isClassMemberModifier(token SyntaxKind) bool {
