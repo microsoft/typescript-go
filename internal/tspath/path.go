@@ -361,7 +361,7 @@ func getPathComponentsRelativeTo(from string, to string, stringEqualer func(a, b
 		fromComponent := fromComponents[start]
 		toComponent := toComponents[start]
 		if start == 0 {
-			if !stringutil.EquateStringsCaseInsensitive(fromComponent, toComponent) {
+			if !stringutil.EquateCaseInsensitive(fromComponent, toComponent) {
 				break
 			}
 		} else {
@@ -406,7 +406,7 @@ func getRelativePathToDirectoryOrUrl(directoryPathOrUrl string, relativeOrAbsolu
 	pathComponents := getPathComponentsRelativeTo(
 		resolvePath(currentDirectory, directoryPathOrUrl),
 		resolvePath(currentDirectory, relativeOrAbsolutePath),
-		stringutil.EquateStringsCaseSensitive,
+		stringutil.EquateCaseSensitive,
 		getCanonicalFileName,
 	)
 
