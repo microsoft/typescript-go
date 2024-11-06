@@ -234,9 +234,6 @@ func (c *Checker) checkTypeRelatedToEx(
 	r.relation = relation
 	r.relationCount = (16_000_000 - relation.size()) / 8
 	result := r.isRelatedToEx(source, target, RecursionFlagsBoth, errorNode != nil /*reportErrors*/, headMessage, IntersectionStateNone)
-	if len(r.incompatibleStack) != 0 {
-		r.reportIncompatibleStack()
-	}
 	if r.overflow {
 		// Record this relation as having failed such that we don't attempt the overflowing operation again.
 		id := getRelationKey(source, target, IntersectionStateNone, relation == c.identityRelation, false /*ignoreConstraints*/)
@@ -249,12 +246,12 @@ func (c *Checker) checkTypeRelatedToEx(
 		if errorOutputContainer != nil {
 			errorOutputContainer.errors = append(errorOutputContainer.errors, diag)
 		}
-	} else if r.errorInfo != nil {
+	} else if r.errorChain != nil {
+		messageChain := createMessageChainFromErrorChain(r.errorChain)
 		if containingMessageChain != nil {
 			chain := containingMessageChain()
 			if chain != nil {
-				concatenateDiagnosticMessageChains(chain, r.errorInfo)
-				r.errorInfo = chain
+				concatenateDiagnosticMessageChains(chain, messageChain)
 			}
 		}
 		// !!!
@@ -272,7 +269,7 @@ func (c *Checker) checkTypeRelatedToEx(
 		// 		}
 		// 	}
 		// }
-		diag := NewDiagnosticForNodeFromMessageChain(errorNode, r.errorInfo).setRelatedInfo(r.relatedInfo)
+		diag := NewDiagnosticForNodeFromMessageChain(errorNode, messageChain).setRelatedInfo(r.relatedInfo)
 		if errorOutputContainer != nil {
 			errorOutputContainer.errors = append(errorOutputContainer.errors, diag)
 		}
@@ -285,6 +282,13 @@ func (c *Checker) checkTypeRelatedToEx(
 	// 	Debug.assert(!!errorOutputContainer.errors, "missed opportunity to interact with error.")
 	// }
 	return result != TernaryFalse
+}
+
+func createMessageChainFromErrorChain(chain *ErrorChain) *MessageChain {
+	if chain == nil {
+		return nil
+	}
+	return chainDiagnosticMessages(createMessageChainFromErrorChain(chain.next), chain.message, chain.args...)
 }
 
 func (c *Checker) checkTypeAssignableToAndOptionallyElaborate(source *Type, target *Type, errorNode *Node, expr *Node, headMessage *diagnostics.Message, containingMessageChain func() *MessageChain) bool {
@@ -324,7 +328,63 @@ func (c *Checker) isWeakType(t *Type) bool {
 }
 
 func (c *Checker) hasCommonProperties(source *Type, target *Type, isComparingJsxAttributes bool) bool {
-	return false // !!!
+	for _, prop := range c.getPropertiesOfType(source) {
+		if c.isKnownProperty(target, prop.name, isComparingJsxAttributes) {
+			return true
+		}
+	}
+	return false
+}
+
+/**
+ * Check if a property with the given name is known anywhere in the given type. In an object type, a property
+ * is considered known if
+ * 1. the object type is empty and the check is for assignability, or
+ * 2. if the object type has index signatures, or
+ * 3. if the property is actually declared in the object type
+ *    (this means that 'toString', for example, is not usually a known property).
+ * 4. In a union or intersection type,
+ *    a property is considered known if it is known in any constituent type.
+ * @param targetType a type to search a given name in
+ * @param name a property name to search
+ * @param isComparingJsxAttributes a boolean flag indicating whether we are searching in JsxAttributesType
+ */
+func (c *Checker) isKnownProperty(targetType *Type, name string, isComparingJsxAttributes bool) bool {
+	if targetType.flags&TypeFlagsObject != 0 {
+		// For backwards compatibility a symbol-named property is satisfied by a string index signature. This
+		// is incorrect and inconsistent with element access expressions, where it is an error, so eventually
+		// we should remove this exception.
+		if c.getPropertyOfObjectType(targetType, name) != nil ||
+			c.getApplicableIndexInfoForName(targetType, name) != nil ||
+			isLateBoundName(name) && c.getIndexInfoOfType(targetType, c.stringType) != nil ||
+			isComparingJsxAttributes && isHyphenatedJsxName(name) {
+			// For JSXAttributes, if the attribute has a hyphenated name, consider that the attribute to be known.
+			return true
+		}
+	}
+	if targetType.flags&TypeFlagsSubstitution != 0 {
+		return c.isKnownProperty(targetType.AsSubstitutionType().baseType, name, isComparingJsxAttributes)
+	}
+	if targetType.flags&TypeFlagsUnionOrIntersection != 0 && isExcessPropertyCheckTarget(targetType) {
+		for _, t := range targetType.Types() {
+			if c.isKnownProperty(t, name, isComparingJsxAttributes) {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+func isHyphenatedJsxName(name string) bool {
+	return strings.Contains(name, "-")
+}
+
+func isExcessPropertyCheckTarget(t *Type) bool {
+	return t.flags&TypeFlagsObject != 0 && t.objectFlags&ObjectFlagsObjectLiteralPatternWithComputedProperties == 0 ||
+		t.flags&TypeFlagsNonPrimitive != 0 ||
+		t.flags&TypeFlagsSubstitution != 0 && isExcessPropertyCheckTarget(t.AsSubstitutionType().baseType) ||
+		t.flags&TypeFlagsUnion != 0 && some(t.Types(), isExcessPropertyCheckTarget) ||
+		t.flags&TypeFlagsIntersection != 0 && every(t.Types(), isExcessPropertyCheckTarget)
 }
 
 // Return true if the given type is deeply nested. We consider this to be the case when the given stack contains
@@ -539,33 +599,31 @@ func excludeProperties(properties []*Symbol, excludedProperties set[string]) []*
 }
 
 type errorState struct {
-	errorInfo             *MessageChain
-	lastSkippedInfo       [2]*Type
-	incompatibleStack     []DiagnosticAndArguments
-	overrideNextErrorInfo int
-	skipParentCounter     int
-	relatedInfo           []*Diagnostic
+	errorChain  *ErrorChain
+	relatedInfo []*Diagnostic
+}
+
+type ErrorChain struct {
+	next    *ErrorChain
+	message *diagnostics.Message
+	args    []any
 }
 
 type Relater struct {
-	c                     *Checker
-	relation              *Relation
-	errorInfo             *MessageChain
-	relatedInfo           []*Diagnostic
-	maybeKeys             []string
-	maybeKeysSet          set[string]
-	sourceStack           []*Type
-	targetStack           []*Type
-	maybeCount            int
-	sourceDepth           int
-	targetDepth           int
-	expandingFlags        ExpandingFlags
-	overflow              bool
-	overrideNextErrorInfo int
-	skipParentCounter     int // How many `reportRelationError` calls should be skipped in the elaboration pyramid
-	lastSkippedInfo       [2]*Type
-	incompatibleStack     []DiagnosticAndArguments
-	relationCount         int
+	c              *Checker
+	relation       *Relation
+	errorChain     *ErrorChain
+	relatedInfo    []*Diagnostic
+	maybeKeys      []string
+	maybeKeysSet   set[string]
+	sourceStack    []*Type
+	targetStack    []*Type
+	maybeCount     int
+	sourceDepth    int
+	targetDepth    int
+	expandingFlags ExpandingFlags
+	overflow       bool
+	relationCount  int
 }
 
 func (r *Relater) isRelatedToSimple(source *Type, target *Type) Ternary {
@@ -933,7 +991,6 @@ func (r *Relater) recursiveTypeRelatedTo(source *Type, target *Type, reportError
 					diagnostics.Excessive_complexity_comparing_types_0_and_1,
 					diagnostics.Excessive_stack_depth_comparing_types_0_and_1)
 				r.reportError(message, r.c.typeToString(source), r.c.typeToString(target))
-				r.overrideNextErrorInfo++
 			}
 			if entry&RelationComparisonResultSucceeded != 0 {
 				return TernaryTrue
@@ -1045,21 +1102,13 @@ func (r *Relater) resetMaybeStack(maybeStart int, propagatingVarianceFlags Relat
 
 func (r *Relater) getErrorState() errorState {
 	return errorState{
-		errorInfo:             r.errorInfo,
-		lastSkippedInfo:       r.lastSkippedInfo,
-		incompatibleStack:     r.incompatibleStack,
-		overrideNextErrorInfo: r.overrideNextErrorInfo,
-		skipParentCounter:     r.skipParentCounter,
-		relatedInfo:           r.relatedInfo,
+		errorChain:  r.errorChain,
+		relatedInfo: r.relatedInfo,
 	}
 }
 
 func (r *Relater) restoreErrorState(e errorState) {
-	r.errorInfo = e.errorInfo
-	r.lastSkippedInfo = e.lastSkippedInfo
-	r.incompatibleStack = e.incompatibleStack
-	r.overrideNextErrorInfo = e.overrideNextErrorInfo
-	r.skipParentCounter = e.skipParentCounter
+	r.errorChain = e.errorChain
 	r.relatedInfo = e.relatedInfo
 }
 
@@ -1076,7 +1125,7 @@ func (r *Relater) structuredTypeRelatedTo(source *Type, target *Type, reportErro
 func (r *Relater) structuredTypeRelatedToWorker(source *Type, target *Type, reportErrors bool, intersectionState IntersectionState, saveErrorState *errorState) Ternary {
 	var result Ternary
 	var varianceCheckFailed bool
-	var originalErrorInfo *MessageChain
+	var originalErrorChain *ErrorChain
 	switch {
 	case r.relation == r.c.identityRelation:
 		// We've already checked that source.flags and target.flags are identical
@@ -1290,7 +1339,7 @@ func (r *Relater) structuredTypeRelatedToWorker(source *Type, target *Type, repo
 		// relates to X. Thus, we include intersection types on the source side here.
 		if source.flags&(TypeFlagsObject|TypeFlagsIntersection) != 0 && target.flags&TypeFlagsObject != 0 {
 			// Report structural errors only if we haven't reported any errors yet
-			reportStructuralErrors := reportErrors && r.errorInfo == saveErrorState.errorInfo && !sourceIsPrimitive
+			reportStructuralErrors := reportErrors && r.errorChain == saveErrorState.errorChain && !sourceIsPrimitive
 			result = r.propertiesRelatedTo(source, target, reportStructuralErrors, set[string]{} /*excludedProperties*/, false /*optionalsOnly*/, intersectionState)
 			if result != TernaryFalse {
 				result &= r.signaturesRelatedTo(source, target, SignatureKindCall, reportStructuralErrors, intersectionState)
@@ -1305,10 +1354,10 @@ func (r *Relater) structuredTypeRelatedToWorker(source *Type, target *Type, repo
 				if !varianceCheckFailed {
 					return result
 				}
-				if originalErrorInfo != nil {
-					r.errorInfo = originalErrorInfo
-				} else if r.errorInfo == nil {
-					r.errorInfo = saveErrorState.errorInfo
+				if originalErrorChain != nil {
+					r.errorChain = originalErrorChain
+				} else if r.errorChain == nil {
+					r.errorChain = saveErrorState.errorChain
 				}
 				// Use variance error (there is no structural one) and return false
 			}
@@ -1595,8 +1644,75 @@ func (r *Relater) isPropertySymbolTypeRelated(sourceProp *Symbol, targetProp *Sy
 }
 
 func (r *Relater) reportUnmatchedProperty(source *Type, target *Type, unmatchedProperty *Symbol, requireOptionalProperties bool) {
-	// !!!
-	r.reportError(diagnostics.Property_0_is_missing_in_type_1_but_required_in_type_2, unmatchedProperty.name, r.c.typeToString(source), r.c.typeToString(target))
+	// give specific error in case where private names have the same description
+	if unmatchedProperty.valueDeclaration != nil &&
+		unmatchedProperty.valueDeclaration.Name() != nil &&
+		isPrivateIdentifier(unmatchedProperty.valueDeclaration.Name()) &&
+		source.symbol != nil &&
+		source.symbol.flags&SymbolFlagsClass != 0 {
+		privateIdentifierDescription := unmatchedProperty.valueDeclaration.Name().Text()
+		symbolTableKey := getSymbolNameForPrivateIdentifier(source.symbol, privateIdentifierDescription)
+		if r.c.getPropertyOfType(source, symbolTableKey) != nil {
+			sourceName := declarationNameToString(getNameOfDeclaration(source.symbol.valueDeclaration))
+			targetName := declarationNameToString(getNameOfDeclaration(target.symbol.valueDeclaration))
+			r.reportError(diagnostics.Property_0_in_type_1_refers_to_a_different_member_that_cannot_be_accessed_from_within_type_2, privateIdentifierDescription, sourceName, targetName)
+			return
+		}
+	}
+	props := slices.Collect(r.c.getUnmatchedProperties(source, target, requireOptionalProperties, false /*matchDiscriminantProperties*/))
+	if len(props) == 1 {
+		propName := r.c.symbolToString(unmatchedProperty)
+		r.reportError(diagnostics.Property_0_is_missing_in_type_1_but_required_in_type_2, unmatchedProperty.name, r.c.typeToString(source), r.c.typeToString(target))
+		if len(unmatchedProperty.declarations) != 0 {
+			r.relatedInfo = append(r.relatedInfo, createDiagnosticForNode(unmatchedProperty.declarations[0], diagnostics.X_0_is_declared_here, propName))
+		}
+	} else if r.tryElaborateArrayLikeErrors(source, target, false /*reportErrors*/) {
+		if len(props) > 5 {
+			propNames := strings.Join(mapf(props[:4], r.c.symbolToString), ", ")
+			r.reportError(diagnostics.Type_0_is_missing_the_following_properties_from_type_1_Colon_2_and_3_more, r.c.typeToString(source), r.c.typeToString(target), propNames, len(props)-4)
+		} else {
+			propNames := strings.Join(mapf(props, r.c.symbolToString), ", ")
+			r.reportError(diagnostics.Type_0_is_missing_the_following_properties_from_type_1_Colon_2, r.c.typeToString(source), r.c.typeToString(target), propNames)
+		}
+	}
+}
+
+func (r *Relater) tryElaborateArrayLikeErrors(source *Type, target *Type, reportErrors bool) bool {
+	/**
+	 * The spec for elaboration is:
+	 * - If the source is a readonly tuple and the target is a mutable array or tuple, elaborate on mutability and skip property elaborations.
+	 * - If the source is a tuple then skip property elaborations if the target is an array or tuple.
+	 * - If the source is a readonly array and the target is a mutable array or tuple, elaborate on mutability and skip property elaborations.
+	 * - If the source an array then skip property elaborations if the target is a tuple.
+	 */
+	if isTupleType(source) {
+		if source.TargetTupleType().readonly && r.c.isMutableArrayOrTuple(target) {
+			if reportErrors {
+				r.reportError(diagnostics.The_type_0_is_readonly_and_cannot_be_assigned_to_the_mutable_type_1, r.c.typeToString(source), r.c.typeToString(target))
+			}
+			return false
+		}
+		return r.c.isArrayOrTupleType(target)
+	}
+	if r.c.isReadonlyArrayType(source) && r.c.isMutableArrayOrTuple(target) {
+		if reportErrors {
+			r.reportError(diagnostics.The_type_0_is_readonly_and_cannot_be_assigned_to_the_mutable_type_1, r.c.typeToString(source), r.c.typeToString(target))
+		}
+		return false
+	}
+	if isTupleType(target) {
+		return r.c.isArrayType(source)
+	}
+	return true
+}
+
+func (r *Relater) tryElaborateErrorsForPrimitivesAndObjects(source *Type, target *Type) {
+	if (source == r.c.globalStringType && target == r.c.stringType) ||
+		(source == r.c.globalNumberType && target == r.c.numberType) ||
+		(source == r.c.globalBooleanType && target == r.c.booleanType) ||
+		(source == r.c.getGlobalESSymbolType() && target == r.c.esSymbolType) {
+		r.reportError(diagnostics.X_0_is_a_primitive_but_1_is_a_wrapper_object_Prefer_using_0_when_possible, r.c.typeToString(target), r.c.typeToString(source))
+	}
 }
 
 func (r *Relater) propertiesIdenticalTo(source *Type, target *Type, excludedProperties set[string]) Ternary {
@@ -1640,15 +1756,46 @@ func (r *Relater) reportErrorResults(originalSource *Type, originalTarget *Type,
 	if originalTarget.alias != nil || targetHasBase {
 		target = originalTarget
 	}
-	// !!!
+	if source.flags&TypeFlagsObject != 0 && target.flags&TypeFlagsObject != 0 {
+		r.tryElaborateArrayLikeErrors(source, target, true /*reportErrors*/)
+	}
+	switch {
+	case source.flags&TypeFlagsObject != 0 && target.flags&TypeFlagsPrimitive != 0:
+		r.tryElaborateErrorsForPrimitivesAndObjects(source, target)
+	case source.symbol != nil && source.flags&TypeFlagsObject != 0 && r.c.globalObjectType == source:
+		r.reportError(diagnostics.The_Object_type_is_assignable_to_very_few_other_types_Did_you_mean_to_use_the_any_type_instead)
+	case source.objectFlags&ObjectFlagsJsxAttributes != 0 && target.flags&TypeFlagsIntersection != 0:
+		// !!!
+		// targetTypes := target.Types()
+		// intrinsicAttributes := c.getJsxType(JsxNames.IntrinsicAttributes, errorNode)
+		// intrinsicClassAttributes := c.getJsxType(JsxNames.IntrinsicClassAttributes, errorNode)
+		// if !c.isErrorType(intrinsicAttributes) && !c.isErrorType(intrinsicClassAttributes) && (contains(targetTypes, intrinsicAttributes) || contains(targetTypes, intrinsicClassAttributes)) {
+		// 	// do not report top error
+		// 	return
+		// }
+	case originalTarget.flags&TypeFlagsIntersection != 0 && originalTarget.objectFlags&ObjectFlagsIsNeverIntersection != 0:
+		message := diagnostics.The_intersection_0_was_reduced_to_never_because_property_1_has_conflicting_types_in_some_constituents
+		prop := find(r.c.getPropertiesOfUnionOrIntersectionType(originalTarget), r.c.isDiscriminantWithNeverType)
+		if prop == nil {
+			message = diagnostics.The_intersection_0_was_reduced_to_never_because_property_1_exists_in_multiple_constituents_and_is_private_in_some
+			prop = find(r.c.getPropertiesOfUnionOrIntersectionType(originalTarget), isConflictingPrivateProperty)
+		}
+		if prop != nil {
+			r.reportError(message, r.c.typeToStringEx(originalTarget, nil /*enclosingDeclaration*/, TypeFormatFlagsNoTypeReduction), r.c.symbolToString(prop))
+		}
+	}
 	r.reportRelationError(headMessage, source, target)
+	if source.flags&TypeFlagsTypeParameter != 0 && source.symbol != nil && len(source.symbol.declarations) != 0 && r.c.getConstraintOfType(source) == nil {
+		syntheticParam := r.c.cloneTypeParameter(source)
+		syntheticParam.AsTypeParameter().constraint = r.c.instantiateType(target, newSimpleTypeMapper(source, syntheticParam))
+		if r.c.hasNonCircularBaseConstraint(syntheticParam) {
+			targetConstraintString := r.c.typeToString(target)
+			r.relatedInfo = append(r.relatedInfo, NewDiagnosticForNode(source.symbol.declarations[0], diagnostics.This_type_parameter_might_need_an_extends_0_constraint, targetConstraintString))
+		}
+	}
 }
 
 func (r *Relater) reportRelationError(message *diagnostics.Message, source *Type, target *Type) {
-	if len(r.incompatibleStack) != 0 {
-		r.reportIncompatibleStack()
-	}
-	// !!!
 	sourceType := r.c.typeToString(source)
 	targetType := r.c.typeToString(target)
 	if message == nil {
@@ -1660,28 +1807,73 @@ func (r *Relater) reportRelationError(message *diagnostics.Message, source *Type
 			message = diagnostics.Type_0_is_not_assignable_to_type_1
 		}
 	}
+	// Suppress if next message is an excessive complexity/stack depth message for source and target or
+	// a readonly vs. mutable error for source and target
+	if r.chainMatches(0, diagnostics.Excessive_complexity_comparing_types_0_and_1, sourceType, targetType) ||
+		r.chainMatches(0, diagnostics.Excessive_stack_depth_comparing_types_0_and_1, sourceType, targetType) ||
+		r.chainMatches(0, diagnostics.The_type_0_is_readonly_and_cannot_be_assigned_to_the_mutable_type_1, sourceType, targetType) {
+		return
+	}
+	// Suppress if next message is a missing property message for source and target and we're not
+	// reporting on interface implementation
+	if message != diagnostics.Class_0_incorrectly_implements_interface_1 &&
+		message != diagnostics.Class_0_incorrectly_implements_class_1_Did_you_mean_to_extend_1_and_inherit_its_members_as_a_subclass &&
+		(r.chainMatches(0, diagnostics.Property_0_is_missing_in_type_1_but_required_in_type_2, nil, sourceType, targetType) ||
+			r.chainMatches(0, diagnostics.Type_0_is_missing_the_following_properties_from_type_1_Colon_2_and_3_more, sourceType, targetType) ||
+			r.chainMatches(0, diagnostics.Type_0_is_missing_the_following_properties_from_type_1_Colon_2, sourceType, targetType)) {
+		return
+	}
 	r.reportError(message, sourceType, targetType)
 }
 
-func (r *Relater) reportError(message *diagnostics.Message, args ...any) {
-	// !!! Debug.assert(!!errorNode)
-	if len(r.incompatibleStack) != 0 {
-		r.reportIncompatibleStack()
+func (r *Relater) reportIncompatibleError(message *diagnostics.Message, args ...any) {
+	if message == diagnostics.Types_of_property_0_are_incompatible {
+		// Transform a property incompatibility message for property 'x' followed by some elaboration message
+		// followed by a property incompatibility message for property 'y' into a single property incompatibility
+		// message for 'x.y'
+		if r.chainMatches(1, diagnostics.Types_of_property_0_are_incompatible) ||
+			r.chainMatches(1, diagnostics.The_types_of_0_are_incompatible_between_these_types) {
+			head := args[0].(string)
+			tail := r.errorChain.next.args[0].(string)
+			var arg string
+			switch {
+			case len(tail) >= 2 && (tail[0] == '"' || tail[0] == '\'' || tail[0] == '`'):
+				arg = head + "[" + tail + "]"
+			case len(tail) >= 2 && tail[0] == '[':
+				arg = head + tail
+			default:
+				arg = head + "." + tail
+			}
+			r.errorChain = r.errorChain.next.next
+			r.reportError(diagnostics.The_types_of_0_are_incompatible_between_these_types, arg)
+			return
+		}
 	}
+	r.reportError(message, args...)
+}
+
+func (r *Relater) reportError(message *diagnostics.Message, args ...any) {
 	if message.ElidedInCompatabilityPyramid() {
 		return
 	}
-	if r.skipParentCounter == 0 {
-		r.errorInfo = chainDiagnosticMessages(r.errorInfo, message, args...)
-	} else {
-		r.skipParentCounter--
+	r.errorChain = &ErrorChain{next: r.errorChain, message: message, args: args}
+}
+
+// Return true if the index-th message on the error chain matches the given message and the associated arguments
+// match the given arguments (where nil acts as a wildcard)
+func (r *Relater) chainMatches(index int, message *diagnostics.Message, args ...any) bool {
+	e := r.errorChain
+	for e != nil && index != 0 {
+		e = e.next
+		index--
 	}
-}
-
-func (r *Relater) reportIncompatibleError(message *diagnostics.Message, args ...any) {
-	r.reportError(message, args...) // !!!
-}
-
-func (r *Relater) reportIncompatibleStack() {
-	// !!!
+	if e == nil || e.message != message {
+		return false
+	}
+	for i, a := range args {
+		if a != nil && a != e.args[i] {
+			return false
+		}
+	}
+	return true
 }

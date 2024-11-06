@@ -1989,13 +1989,6 @@ func isImportMeta(node *Node) bool {
 	return false
 }
 
-func lastElement[T any](slice []T) T {
-	if len(slice) != 0 {
-		return slice[len(slice)-1]
-	}
-	return *new(T)
-}
-
 func ensureScriptKind(fileName string, scriptKind ScriptKind) ScriptKind {
 	// Using scriptKind as a condition handles both:
 	// - 'scriptKind' is unspecified and thus it is `undefined`

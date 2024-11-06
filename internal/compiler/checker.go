@@ -4949,7 +4949,7 @@ func (c *Checker) getIndexInfosOfStructuredType(t *Type) []*IndexInfo {
 // Return the indexing info of the given kind in the given type. Creates synthetic union index types when necessary and
 // maps primitive types and type parameters are to their apparent types.
 func (c *Checker) getIndexInfoOfType(t *Type, keyType *Type) *IndexInfo {
-	return nil // !!!
+	return findIndexInfo(c.getIndexInfosOfType(t), keyType)
 }
 
 // Return the index type of the given kind in the given type. Creates synthetic union index types when necessary and
@@ -6571,8 +6571,51 @@ func (c *Checker) getApparentTypeOfIntersectionType(t *Type, thisArgument *Type)
 	return result
 }
 
+/**
+ * Return the reduced form of the given type. For a union type, it is a union of the normalized constituent types.
+ * For an intersection of types containing one or more mututally exclusive discriminant properties, it is 'never'.
+ * For all other types, it is simply the type itself. Discriminant properties are considered mutually exclusive when
+ * no constituent property has type 'never', but the intersection of the constituent property types is 'never'.
+ */
 func (c *Checker) getReducedType(t *Type) *Type {
-	return t // !!!
+	switch {
+	case t.flags&TypeFlagsUnion != 0:
+		if t.objectFlags&ObjectFlagsContainsIntersections != 0 {
+			if reducedType := t.AsUnionType().resolvedReducedType; reducedType != nil {
+				return reducedType
+			}
+			reducedType := c.getReducedUnionType(t)
+			t.AsUnionType().resolvedReducedType = reducedType
+			return reducedType
+		}
+	case t.flags&TypeFlagsIntersection != 0:
+		if t.objectFlags&ObjectFlagsIsNeverIntersectionComputed == 0 {
+			t.objectFlags |= ObjectFlagsIsNeverIntersectionComputed
+			if some(c.getPropertiesOfUnionOrIntersectionType(t), c.isNeverReducedProperty) {
+				t.objectFlags |= ObjectFlagsIsNeverIntersection
+			}
+		}
+		if t.objectFlags&ObjectFlagsIsNeverIntersection != 0 {
+			return c.neverType
+		}
+	}
+	return t
+}
+
+func (c *Checker) getReducedUnionType(unionType *Type) *Type {
+	reducedTypes := sameMap(unionType.Types(), c.getReducedType)
+	if identical(reducedTypes, unionType.Types()) {
+		return unionType
+	}
+	reduced := c.getUnionType(reducedTypes)
+	if reduced.flags&TypeFlagsUnion != 0 {
+		reduced.AsUnionType().resolvedReducedType = reduced
+	}
+	return reduced
+}
+
+func (c *Checker) isNeverReducedProperty(prop *Symbol) bool {
+	return c.isDiscriminantWithNeverType(prop) || isConflictingPrivateProperty(prop)
 }
 
 func (c *Checker) getReducedApparentType(t *Type) *Type {
