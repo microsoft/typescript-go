@@ -2811,7 +2811,7 @@ func (c *Checker) reportNonExportedMember(node *Node, name *Node, declarationNam
 				c.error(name, diagnostics.Module_0_has_no_exported_member_1, moduleName, declarationName)
 			}
 		} else {
-			exportedSymbol := sliceutil.FindInMap(exports, func(symbol *Symbol) bool {
+			exportedSymbol := findInMap(exports, func(symbol *Symbol) bool {
 				return c.getSymbolIfSameReference(symbol, localSymbol) != nil
 			})
 			var diagnostic *Diagnostic

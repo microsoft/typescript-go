@@ -526,6 +526,15 @@ func formatMessage(message *diagnostics.Message, args ...any) string {
 	return text
 }
 
+func findInMap[K comparable, V any](m map[K]V, predicate func(V) bool) V {
+	for _, value := range m {
+		if predicate(value) {
+			return value
+		}
+	}
+	return *new(V)
+}
+
 func boolToTristate(b bool) Tristate {
 	if b {
 		return TSTrue

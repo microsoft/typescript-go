@@ -164,15 +164,6 @@ func FindLastIndex[T any](slice []T, predicate func(T) bool) int {
 	return -1
 }
 
-func FindInMap[K comparable, V any](m map[K]V, predicate func(V) bool) V {
-	for _, value := range m {
-		if predicate(value) {
-			return value
-		}
-	}
-	return *new(V)
-}
-
 func Concatenate[T any](s1 []T, s2 []T) []T {
 	if len(s2) == 0 {
 		return s1
