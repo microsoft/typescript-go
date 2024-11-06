@@ -4112,9 +4112,9 @@ func (f *NodeFactory) NewTypeOperatorNode(operator SyntaxKind, typeNode *Node) *
 	return f.NewNode(SyntaxKindTypeOperator, data)
 }
 
-func (f *NodeFactory) UpdateTypeOperatorNode(node *Node, operator SyntaxKind, typeNode *Node) *Node {
+func (f *NodeFactory) UpdateTypeOperatorNode(node *Node, typeNode *Node) *Node {
 	if n := node.AsTypeOperatorNode(); typeNode != n.typeNode {
-		return f.UpdateNode(f.NewTypeOperatorNode(operator, typeNode), node)
+		return f.UpdateNode(f.NewTypeOperatorNode(n.operator, typeNode), node)
 	}
 	return node
 }
