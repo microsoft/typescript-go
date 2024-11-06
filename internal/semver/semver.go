@@ -213,7 +213,7 @@ func getUintComponent(text string) uint32 {
 }
 
 type VersionRange struct {
-	alternatives []versionComparator
+	alternatives [][]versionComparator
 }
 
 type versionComparator struct {
@@ -221,14 +221,14 @@ type versionComparator struct {
 	operand  Version
 }
 
-type comparatorOperator int
+type comparatorOperator string
 
 const (
-	rangeLessThan comparatorOperator = iota
-	rangeLessThanEqual
-	rangeEqual
-	rangeGreaterThanEqual
-	rangeGreaterThan
+	rangeLessThan         comparatorOperator = "<"
+	rangeLessThanEqual    comparatorOperator = "<="
+	rangeEqual            comparatorOperator = "="
+	rangeGreaterThanEqual comparatorOperator = ">="
+	rangeGreaterThan      comparatorOperator = ">"
 )
 
 // https://github.com/npm/node-semver#range-grammar
@@ -249,7 +249,7 @@ var whitespaceRegExp = regexp.MustCompile("\\s+")
 // build        ::= parts
 // parts        ::= part ( '.' part ) *
 // part         ::= nr | [-0-9A-Za-z]+
-var partialRegExp = regexp.MustCompile("^([x*0]|[1-9]\\d*)(?:\\.([x*0]|[1-9]\\d*)(?:\\.([x*0]|[1-9]\\d*)(?:-([a-zA-Z0-9-.]+))?(?:\\+([a-zA-Z0-9-.]+))?)?)?$")
+var partialRegExp = regexp.MustCompile("^([xX*0]|[1-9]\\d*)(?:\\.([xX*0]|[1-9]\\d*)(?:\\.([xX*0]|[1-9]\\d*)(?:-([a-zA-Z0-9-.]+))?(?:\\+([a-zA-Z0-9-.]+))?)?)?$")
 
 // https://github.com/npm/node-semver#range-grammar
 //
@@ -263,3 +263,305 @@ var hyphenRegExp = regexp.MustCompile("^\\s*([a-zA-Z0-9-+.*]+)\\s+-\\s+([a-zA-Z0
 // tilde        ::= '~' partial
 // caret        ::= '^' partial
 var rangeRegExp = regexp.MustCompile("^([~^<>=]|<=|>=)?\\s*([a-zA-Z0-9-+.*]+)$")
+
+func (v *VersionRange) String() string {
+	var sb strings.Builder
+	formatDisjunction(&sb, v.alternatives)
+	return sb.String()
+}
+
+func TryParseVersionRange(text string) (VersionRange, bool) {
+	alternatives, ok := parseAlternatives(text)
+	return VersionRange{alternatives: alternatives}, ok
+}
+
+func parseAlternatives(text string) ([][]versionComparator, bool) {
+	var alternatives [][]versionComparator
+
+	text = strings.TrimSpace(text)
+	ranges := logicalOrRegExp.Split(text, -1)
+	for _, r := range ranges {
+		// !!!
+		// Slight deviation here.
+		// Original impementation doesn't split *before* dismissing empty space.
+		r = strings.TrimSpace(r)
+		if r == "" {
+			continue
+		}
+
+		var comparators []versionComparator
+
+		if hyphenMatch := hyphenRegExp.FindStringSubmatch(r); hyphenMatch != nil {
+			if parsedComparators, ok := parseHyphen(hyphenMatch[1], hyphenMatch[2]); ok {
+				comparators = append(comparators, parsedComparators...)
+			} else {
+				return nil, false
+			}
+		} else {
+			for _, simple := range whitespaceRegExp.Split(r, -1) {
+				match := rangeRegExp.FindStringSubmatch(strings.TrimSpace(simple))
+				if match == nil {
+					return nil, false
+				}
+
+				if parsedComparators, ok := parseComparator(match[1], match[2]); ok {
+					comparators = append(comparators, parsedComparators...)
+				} else {
+					return nil, false
+				}
+			}
+		}
+
+		alternatives = append(alternatives, comparators)
+	}
+
+	return alternatives, true
+}
+
+func parseHyphen(left, right string) ([]versionComparator, bool) {
+	leftResult, leftOk := parsePartial(left)
+	if !leftOk {
+		return nil, false
+	}
+
+	rightResult, rightOk := parsePartial(right)
+	if !rightOk {
+		return nil, false
+	}
+
+	var comparators []versionComparator
+	if !isWildcard(leftResult.majorStr) {
+		// `MAJOR.*.*-...` gives us `>=MAJOR.0.0 ...`
+		comparators = append(comparators, versionComparator{
+			operator: rangeGreaterThanEqual,
+			operand:  leftResult.version,
+		})
+	}
+
+	if !isWildcard(rightResult.majorStr) {
+		var operator comparatorOperator
+		operand := rightResult.version
+
+		switch {
+		case isWildcard(rightResult.minorStr):
+			// `...-MAJOR.*.*` gives us `... <(MAJOR+1).0.0`
+			operand.major++
+			operator = rangeLessThan
+		case isWildcard(rightResult.patchStr):
+			// `...-MAJOR.MINOR.*` gives us `... <MAJOR.(MINOR+1).0`
+			operand.minor++
+			operator = rangeLessThan
+		default:
+			// `...-MAJOR.MINOR.PATCH` gives us `... <=MAJOR.MINOR.PATCH`
+			operator = rangeLessThanEqual
+		}
+
+		comparators = append(comparators, versionComparator{
+			operator: operator,
+			operand:  operand,
+		})
+	}
+
+	return comparators, true
+}
+
+type partialVersion struct {
+	version  Version
+	majorStr string
+	minorStr string
+	patchStr string
+}
+
+func parsePartial(text string) (partialVersion, bool) {
+	match := partialRegExp.FindStringSubmatch(text)
+	if match == nil {
+		return partialVersion{}, false
+	}
+
+	majorStr := match[1]
+	minorStr := match[2]
+	patchStr := match[3]
+	prereleaseStr := match[4]
+	buildStr := match[5]
+
+	if minorStr == "" {
+		minorStr = "*"
+	}
+	if patchStr == "" {
+		patchStr = "*"
+	}
+
+	var majorNumeric, minorNumeric, patchNumeric uint32
+
+	if isWildcard(majorStr) {
+		majorNumeric = 0
+		minorNumeric = 0
+		patchNumeric = 0
+	} else {
+		majorNumeric = getUintComponent(majorStr)
+
+		if isWildcard(minorStr) {
+			minorNumeric = 0
+			patchNumeric = 0
+		} else {
+			minorNumeric = getUintComponent(minorStr)
+
+			if isWildcard(patchStr) {
+				patchNumeric = 0
+			} else {
+				patchNumeric = getUintComponent(patchStr)
+			}
+		}
+	}
+
+	result := partialVersion{
+		version: Version{
+			major:      majorNumeric,
+			minor:      minorNumeric,
+			patch:      patchNumeric,
+			prerelease: strings.Split(prereleaseStr, "."),
+			build:      strings.Split(buildStr, "."),
+		},
+		majorStr: majorStr,
+		minorStr: minorStr,
+		patchStr: patchStr,
+	}
+
+	return result, true
+}
+
+func parseComparator(op string, text string) ([]versionComparator, bool) {
+	operator := comparatorOperator(op)
+
+	result, ok := parsePartial(text)
+	if !ok {
+		return nil, false
+	}
+
+	var comparatorsResult []versionComparator
+
+	if !isWildcard(result.majorStr) {
+		switch operator {
+		case "~":
+			first := versionComparator{rangeGreaterThanEqual, result.version}
+
+			secondVersion := result.version
+			if isWildcard(result.minorStr) {
+				secondVersion.major++
+			} else {
+				secondVersion.minor++
+			}
+
+			second := versionComparator{rangeLessThan, secondVersion}
+			comparatorsResult = []versionComparator{first, second}
+
+		case "^":
+			first := versionComparator{rangeGreaterThanEqual, result.version}
+
+			secondVersion := result.version
+			if secondVersion.major > 0 || isWildcard(result.minorStr) {
+				secondVersion.major++
+			} else if secondVersion.minor > 0 || isWildcard(result.patchStr) {
+				secondVersion.minor++
+			} else {
+				secondVersion.patch++
+			}
+			second := versionComparator{rangeLessThan, secondVersion}
+			comparatorsResult = []versionComparator{first, second}
+
+		case "<", ">=":
+			version := result.version
+			if isWildcard(result.minorStr) || isWildcard(result.patchStr) {
+				version.prerelease = []string{"0"}
+			}
+			comparatorsResult = []versionComparator{
+				{operator, version},
+			}
+
+		case "<=", ">":
+			version := result.version
+			if isWildcard(result.minorStr) {
+				if operator == rangeLessThanEqual {
+					operator = rangeLessThan
+				}
+
+				version.major++
+				version.prerelease = []string{"0"}
+			} else if isWildcard(result.patchStr) {
+				if operator == rangeLessThanEqual {
+					operator = rangeLessThanEqual
+				}
+
+				version.minor++
+				version.prerelease = []string{"0"}
+			} else {
+				operator = rangeEqual
+			}
+
+			comparatorsResult = []versionComparator{
+				{operator, version},
+			}
+		case "=", "":
+			if isWildcard(result.minorStr) || isWildcard(result.patchStr) {
+				firstVersion := result.version
+				firstVersion.prerelease = []string{"0"}
+				secondVersion := firstVersion
+				if isWildcard(result.minorStr) {
+					secondVersion.major++
+				} else {
+					secondVersion.minor++
+				}
+				comparatorsResult = []versionComparator{
+					{rangeGreaterThanEqual, firstVersion},
+					{rangeLessThan, secondVersion},
+				}
+			} else {
+				comparatorsResult = []versionComparator{
+					{operator, result.version},
+				}
+			}
+		default:
+			panic("Unexpected operator: " + operator)
+		}
+	} else {
+		if operator == "<" || operator == ">" {
+			comparatorsResult = []versionComparator{
+				// < 0.0.0
+				{rangeLessThan, Version{}},
+			}
+		}
+	}
+
+	return comparatorsResult, true
+}
+
+func isWildcard(text string) bool {
+	return text == "*" || text == "x" || text == "X"
+}
+
+func formatDisjunction(sb *strings.Builder, alternatives [][]versionComparator) {
+	for i, alternative := range alternatives {
+		if i > 0 {
+			sb.WriteString(" || ")
+		}
+		formatAlternative(sb, alternative)
+	}
+
+	if sb.Len() == 0 {
+		sb.WriteByte('*')
+	}
+}
+
+func formatAlternative(sb *strings.Builder, comparators []versionComparator) {
+	for i, comparator := range comparators {
+		if i > 0 {
+			sb.WriteByte(' ')
+		}
+		formatComparator(sb, comparator)
+	}
+}
+
+func formatComparator(sb *strings.Builder, comparator versionComparator) {
+	sb.WriteString(string(comparator.operator))
+	sb.WriteString(comparator.operand.String())
+}

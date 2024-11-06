@@ -6,6 +6,8 @@ import (
 	"gotest.tools/v3/assert"
 )
 
+// Versions
+
 func TestTryParseSemver(t *testing.T) {
 	var tests = []struct {
 		in  string
@@ -46,7 +48,7 @@ func TestVersionString(t *testing.T) {
 	}
 }
 
-func TestCompare(t *testing.T) {
+func TestVersionCompare(t *testing.T) {
 	var tests = []struct {
 		v1, v2 string
 		want   int
@@ -133,4 +135,58 @@ func assertVersion(t *testing.T, a, b Version) {
 	assert.Equal(t, a.patch, b.patch)
 	assert.DeepEqual(t, a.prerelease, b.prerelease)
 	assert.DeepEqual(t, a.build, b.build)
+}
+
+// Version Ranges
+
+func TestWildcardsHaveSameString(t *testing.T) {
+	majorWildcardStrings := []string{
+		"",
+		"*",
+		"*.*",
+		"*.*.*",
+		"x",
+		"x.x",
+		"x.x.x",
+		"X",
+		"X.X",
+		"X.X.X",
+	}
+
+	minorWildcardStrings := []string{
+		"1",
+		"1.*",
+		"1.*.*",
+		"1.x",
+		"1.x.x",
+		"1.X",
+		"1.X.X",
+	}
+
+	patchWildcardStrings := []string{
+		"1.2",
+		"1.2.*",
+		"1.2.x",
+		"1.2.X",
+	}
+
+	testAllVersionRangesHaveIdenticalStrings(t, "majorWildcardStrings", majorWildcardStrings)
+	testAllVersionRangesHaveIdenticalStrings(t, "minorWildcardStrings", minorWildcardStrings)
+	testAllVersionRangesHaveIdenticalStrings(t, "patchWildcardStrings", patchWildcardStrings)
+}
+
+func testAllVersionRangesHaveIdenticalStrings(t *testing.T, name string, strs []string) {
+	t.Run(name, func(t *testing.T) {
+		for _, s1 := range strs {
+			for _, s2 := range strs {
+				t.Run(s1+" == "+s2, func(t *testing.T) {
+					v1, ok := TryParseVersionRange(s1)
+					assert.Assert(t, ok)
+					v2, ok := TryParseVersionRange(s2)
+					assert.Assert(t, ok)
+					assert.DeepEqual(t, v1.String(), v2.String())
+				})
+			}
+		}
+	})
 }
