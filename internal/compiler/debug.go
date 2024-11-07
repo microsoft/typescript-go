@@ -6,6 +6,8 @@ import (
 	"runtime"
 	"slices"
 	"strings"
+
+	"github.com/microsoft/typescript-go/internal/utils"
 )
 
 // TODO(rbuckton): If we want some of these assertions to only be part of a checked/debug build, we could
@@ -115,7 +117,7 @@ func assertNode(node *Node, fns ...NodeTest) {
 				return
 			}
 		}
-		assertFail("Node of %v did not pass the expected node tests: %v", node.kind, strings.Join(mapf(fns, getFunctionName), ", "))
+		assertFail("Node of %v did not pass the expected node tests: %v", node.kind, strings.Join(utils.Map(fns, getFunctionName), ", "))
 	}
 }
 
