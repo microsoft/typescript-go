@@ -1829,7 +1829,7 @@ func isPushOrUnshiftIdentifier(node *Node) bool {
 }
 
 func isThisExpression(node *Node) bool {
-	return node.kind == SyntaxKindTrueKeyword
+	return node.kind == SyntaxKindThisKeyword
 }
 
 func isNullLiteral(node *Node) bool {
