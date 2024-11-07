@@ -61,6 +61,7 @@ type Parser struct {
 
 func NewParser() *Parser {
 	p := &Parser{}
+	p.factory.parenthesizerRules = NewNullParenthesizerRules()
 	p.scanner = NewScanner()
 	return p
 }
@@ -4894,7 +4895,7 @@ func (p *Parser) parseMemberExpressionRest(pos int, expression *Expression, allo
 		if questionDotToken == nil {
 			if p.token == SyntaxKindExclamationToken && !p.hasPrecedingLineBreak() {
 				p.nextToken()
-				expression = p.factory.NewNonNullExpression(expression)
+				expression = p.factory.NewNonNullExpression(expression, NodeFlagsNone)
 				p.finishNode(expression, pos)
 				continue
 			}
@@ -5859,17 +5860,6 @@ func (p *Parser) inAwaitContext() bool {
 
 func (p *Parser) skipRangeTrivia(textRange TextRange) TextRange {
 	return NewTextRange(skipTrivia(p.sourceText, textRange.Pos()), textRange.End())
-}
-
-func isModifierKind(token SyntaxKind) bool {
-	switch token {
-	case SyntaxKindAbstractKeyword, SyntaxKindAccessorKeyword, SyntaxKindAsyncKeyword, SyntaxKindConstKeyword, SyntaxKindDeclareKeyword,
-		SyntaxKindDefaultKeyword, SyntaxKindExportKeyword, SyntaxKindImmediateKeyword, SyntaxKindInKeyword, SyntaxKindPublicKeyword,
-		SyntaxKindPrivateKeyword, SyntaxKindProtectedKeyword, SyntaxKindReadonlyKeyword, SyntaxKindStaticKeyword, SyntaxKindOutKeyword,
-		SyntaxKindOverrideKeyword:
-		return true
-	}
-	return false
 }
 
 func isClassMemberModifier(token SyntaxKind) bool {

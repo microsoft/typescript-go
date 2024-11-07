@@ -240,6 +240,80 @@ func chainDiagnosticMessages(details *MessageChain, message *diagnostics.Message
 	return NewMessageChain(message, args...).addMessageChain(details)
 }
 
+type Associativity int
+
+const (
+	AssociativityLeft Associativity = iota
+	AssociativityRight
+)
+
+func getExpressionAssociativity(expression *Expression) Associativity {
+	operator := getOperator(expression)
+	hasArguments := expression.kind == SyntaxKindNewExpression && expression.AsNewExpression().arguments != nil
+	return getOperatorAssociativity(expression.kind, operator, hasArguments)
+}
+
+func getOperatorAssociativity(kind SyntaxKind, operator SyntaxKind, hasArguments bool) Associativity {
+	switch kind {
+	case SyntaxKindNewExpression:
+		if hasArguments {
+			return AssociativityLeft
+		}
+		return AssociativityRight
+
+	case SyntaxKindPrefixUnaryExpression,
+		SyntaxKindTypeOfExpression,
+		SyntaxKindVoidExpression,
+		SyntaxKindDeleteExpression,
+		SyntaxKindAwaitExpression,
+		SyntaxKindConditionalExpression,
+		SyntaxKindYieldExpression:
+		return AssociativityRight
+
+	case SyntaxKindBinaryExpression:
+		switch operator {
+		case SyntaxKindAsteriskAsteriskToken,
+			SyntaxKindEqualsToken,
+			SyntaxKindPlusEqualsToken,
+			SyntaxKindMinusEqualsToken,
+			SyntaxKindAsteriskAsteriskEqualsToken,
+			SyntaxKindAsteriskEqualsToken,
+			SyntaxKindSlashEqualsToken,
+			SyntaxKindPercentEqualsToken,
+			SyntaxKindLessThanLessThanEqualsToken,
+			SyntaxKindGreaterThanGreaterThanEqualsToken,
+			SyntaxKindGreaterThanGreaterThanGreaterThanEqualsToken,
+			SyntaxKindAmpersandEqualsToken,
+			SyntaxKindCaretEqualsToken,
+			SyntaxKindBarEqualsToken,
+			SyntaxKindBarBarEqualsToken,
+			SyntaxKindAmpersandAmpersandEqualsToken,
+			SyntaxKindQuestionQuestionEqualsToken:
+			return AssociativityRight
+		}
+	}
+	return AssociativityLeft
+}
+
+func getExpressionPrecedence(expression *Expression) OperatorPrecedence {
+	operator := getOperator(expression)
+	hasArguments := expression.kind == SyntaxKindNewExpression && expression.AsNewExpression().arguments != nil
+	return getOperatorPrecedence(expression.kind, operator, hasArguments)
+}
+
+func getOperator(expression *Expression) SyntaxKind {
+	switch expression.kind {
+	case SyntaxKindBinaryExpression:
+		return expression.AsBinaryExpression().operatorToken.kind
+	case SyntaxKindPrefixUnaryExpression:
+		return expression.AsPrefixUnaryExpression().operator
+	case SyntaxKindPostfixUnaryExpression:
+		return expression.AsPostfixUnaryExpression().operator
+	default:
+		return expression.kind
+	}
+}
+
 type OperatorPrecedence int
 
 const (
@@ -415,49 +489,102 @@ func getOperatorPrecedence(nodeKind SyntaxKind, operatorKind SyntaxKind, hasArgu
 	switch nodeKind {
 	case SyntaxKindCommaListExpression:
 		return OperatorPrecedenceComma
+
 	case SyntaxKindSpreadElement:
 		return OperatorPrecedenceSpread
+
 	case SyntaxKindYieldExpression:
 		return OperatorPrecedenceYield
+
 	case SyntaxKindConditionalExpression:
 		return OperatorPrecedenceConditional
+
 	case SyntaxKindBinaryExpression:
 		switch operatorKind {
 		case SyntaxKindCommaToken:
 			return OperatorPrecedenceComma
-		case SyntaxKindEqualsToken, SyntaxKindPlusEqualsToken, SyntaxKindMinusEqualsToken, SyntaxKindAsteriskAsteriskEqualsToken,
-			SyntaxKindAsteriskEqualsToken, SyntaxKindSlashEqualsToken, SyntaxKindPercentEqualsToken, SyntaxKindLessThanLessThanEqualsToken,
-			SyntaxKindGreaterThanGreaterThanEqualsToken, SyntaxKindGreaterThanGreaterThanGreaterThanEqualsToken, SyntaxKindAmpersandEqualsToken,
-			SyntaxKindCaretEqualsToken, SyntaxKindBarEqualsToken, SyntaxKindBarBarEqualsToken, SyntaxKindAmpersandAmpersandEqualsToken,
+
+		case SyntaxKindEqualsToken,
+			SyntaxKindPlusEqualsToken,
+			SyntaxKindMinusEqualsToken,
+			SyntaxKindAsteriskAsteriskEqualsToken,
+			SyntaxKindAsteriskEqualsToken,
+			SyntaxKindSlashEqualsToken,
+			SyntaxKindPercentEqualsToken,
+			SyntaxKindLessThanLessThanEqualsToken,
+			SyntaxKindGreaterThanGreaterThanEqualsToken,
+			SyntaxKindGreaterThanGreaterThanGreaterThanEqualsToken,
+			SyntaxKindAmpersandEqualsToken,
+			SyntaxKindCaretEqualsToken,
+			SyntaxKindBarEqualsToken,
+			SyntaxKindBarBarEqualsToken,
+			SyntaxKindAmpersandAmpersandEqualsToken,
 			SyntaxKindQuestionQuestionEqualsToken:
 			return OperatorPrecedenceAssignment
+
+		default:
+			return getBinaryOperatorPrecedence(operatorKind)
 		}
-		return getBinaryOperatorPrecedence(operatorKind)
 	// TODO: Should prefix `++` and `--` be moved to the `Update` precedence?
-	case SyntaxKindTypeAssertionExpression, SyntaxKindNonNullExpression, SyntaxKindPrefixUnaryExpression, SyntaxKindTypeOfExpression,
-		SyntaxKindVoidExpression, SyntaxKindDeleteExpression, SyntaxKindAwaitExpression:
+	case SyntaxKindTypeAssertionExpression,
+		SyntaxKindNonNullExpression,
+		SyntaxKindPrefixUnaryExpression,
+		SyntaxKindTypeOfExpression,
+		SyntaxKindVoidExpression,
+		SyntaxKindDeleteExpression,
+		SyntaxKindAwaitExpression:
 		return OperatorPrecedenceUnary
+
 	case SyntaxKindPostfixUnaryExpression:
 		return OperatorPrecedenceUpdate
+
 	case SyntaxKindCallExpression:
 		return OperatorPrecedenceLeftHandSide
+
 	case SyntaxKindNewExpression:
 		if hasArguments {
 			return OperatorPrecedenceMember
 		}
 		return OperatorPrecedenceLeftHandSide
-	case SyntaxKindTaggedTemplateExpression, SyntaxKindPropertyAccessExpression, SyntaxKindElementAccessExpression, SyntaxKindMetaProperty:
+
+	case SyntaxKindTaggedTemplateExpression,
+		SyntaxKindPropertyAccessExpression,
+		SyntaxKindElementAccessExpression,
+		SyntaxKindMetaProperty:
 		return OperatorPrecedenceMember
-	case SyntaxKindAsExpression, SyntaxKindSatisfiesExpression:
+
+	case SyntaxKindAsExpression,
+		SyntaxKindSatisfiesExpression:
 		return OperatorPrecedenceRelational
-	case SyntaxKindThisKeyword, SyntaxKindSuperKeyword, SyntaxKindIdentifier, SyntaxKindPrivateIdentifier, SyntaxKindNullKeyword,
-		SyntaxKindTrueKeyword, SyntaxKindFalseKeyword, SyntaxKindNumericLiteral, SyntaxKindBigIntLiteral, SyntaxKindStringLiteral,
-		SyntaxKindArrayLiteralExpression, SyntaxKindObjectLiteralExpression, SyntaxKindFunctionExpression, SyntaxKindArrowFunction,
-		SyntaxKindClassExpression, SyntaxKindRegularExpressionLiteral, SyntaxKindNoSubstitutionTemplateLiteral, SyntaxKindTemplateExpression,
-		SyntaxKindParenthesizedExpression, SyntaxKindOmittedExpression, SyntaxKindJsxElement, SyntaxKindJsxSelfClosingElement, SyntaxKindJsxFragment:
+
+	case SyntaxKindThisKeyword,
+		SyntaxKindSuperKeyword,
+		SyntaxKindIdentifier,
+		SyntaxKindPrivateIdentifier,
+		SyntaxKindNullKeyword,
+		SyntaxKindTrueKeyword,
+		SyntaxKindFalseKeyword,
+		SyntaxKindNumericLiteral,
+		SyntaxKindBigIntLiteral,
+		SyntaxKindStringLiteral,
+		SyntaxKindArrayLiteralExpression,
+		SyntaxKindObjectLiteralExpression,
+		SyntaxKindFunctionExpression,
+		SyntaxKindArrowFunction,
+		SyntaxKindClassExpression,
+		SyntaxKindRegularExpressionLiteral,
+		SyntaxKindNoSubstitutionTemplateLiteral,
+		SyntaxKindTemplateExpression,
+		SyntaxKindParenthesizedExpression,
+		SyntaxKindOmittedExpression,
+		SyntaxKindJsxElement,
+		SyntaxKindJsxSelfClosingElement,
+		SyntaxKindJsxFragment:
 		return OperatorPrecedencePrimary
+
+	default:
+		return OperatorPrecedenceInvalid
 	}
-	return OperatorPrecedenceInvalid
 }
 
 func getBinaryOperatorPrecedence(kind SyntaxKind) OperatorPrecedence {
@@ -491,6 +618,39 @@ func getBinaryOperatorPrecedence(kind SyntaxKind) OperatorPrecedence {
 	// -1 is lower than all other precedences.  Returning it will cause binary expression
 	// parsing to stop.
 	return OperatorPrecedenceInvalid
+}
+
+func getLeftmostExpression(node *Expression, stopAtCallExpressions bool) *Expression {
+	for {
+		switch node.kind {
+		case SyntaxKindPostfixUnaryExpression:
+			node = node.AsPostfixUnaryExpression().operand
+			continue
+		case SyntaxKindBinaryExpression:
+			node = node.AsBinaryExpression().left
+			continue
+		case SyntaxKindConditionalExpression:
+			node = node.AsConditionalExpression().condition
+			continue
+		case SyntaxKindTaggedTemplateExpression:
+			node = node.AsTaggedTemplateExpression().tag
+			continue
+		case SyntaxKindCallExpression:
+			if stopAtCallExpressions {
+				return node
+			}
+			fallthrough
+		case SyntaxKindAsExpression,
+			SyntaxKindElementAccessExpression,
+			SyntaxKindPropertyAccessExpression,
+			SyntaxKindNonNullExpression,
+			SyntaxKindPartiallyEmittedExpression,
+			SyntaxKindSatisfiesExpression:
+			node = node.Expression()
+			continue
+		}
+		return node
+	}
 }
 
 var regexps = make(map[string]*regexp.Regexp)
@@ -864,6 +1024,37 @@ func isSignedNumericLiteral(node *Node) bool {
 	return false
 }
 
+func isModifier(node *Node) bool {
+	return isModifierKind(node.kind)
+}
+
+func isModifierLike(node *Node) bool {
+	return isModifier(node) || isDecorator(node)
+}
+
+func isModifierKind(token SyntaxKind) bool {
+	switch token {
+	case SyntaxKindAbstractKeyword,
+		SyntaxKindAccessorKeyword,
+		SyntaxKindAsyncKeyword,
+		SyntaxKindConstKeyword,
+		SyntaxKindDeclareKeyword,
+		SyntaxKindDefaultKeyword,
+		SyntaxKindExportKeyword,
+		SyntaxKindImmediateKeyword,
+		SyntaxKindInKeyword,
+		SyntaxKindPublicKeyword,
+		SyntaxKindPrivateKeyword,
+		SyntaxKindProtectedKeyword,
+		SyntaxKindReadonlyKeyword,
+		SyntaxKindStaticKeyword,
+		SyntaxKindOutKeyword,
+		SyntaxKindOverrideKeyword:
+		return true
+	}
+	return false
+}
+
 func ifElse[T any](b bool, whenTrue T, whenFalse T) T {
 	if b {
 		return whenTrue
@@ -958,16 +1149,26 @@ func isFunctionLikeDeclarationKind(kind SyntaxKind) bool {
 	return false
 }
 
+func isCommaExpression(node *Node) bool {
+	return isBinaryExpression(node) && node.AsBinaryExpression().operatorToken.kind == SyntaxKindCommaToken
+}
+
+func isCommaSequence(node *Node) bool {
+	// TODO(rbuckton): Add support for CommaListExpression
+	return isCommaExpression(node)
+}
+
 type OuterExpressionKinds int16
 
 const (
 	OEKParentheses                  OuterExpressionKinds = 1 << 0
 	OEKTypeAssertions               OuterExpressionKinds = 1 << 1
 	OEKNonNullAssertions            OuterExpressionKinds = 1 << 2
-	OEKExpressionsWithTypeArguments OuterExpressionKinds = 1 << 3
-	OEKExcludeJSDocTypeAssertion                         = 1 << 4
+	OEKPartiallyEmittedExpressions  OuterExpressionKinds = 1 << 3
+	OEKExpressionsWithTypeArguments OuterExpressionKinds = 1 << 4
+	OEKExcludeJSDocTypeAssertion                         = 1 << 5
 	OEKAssertions                                        = OEKTypeAssertions | OEKNonNullAssertions
-	OEKAll                                               = OEKParentheses | OEKAssertions | OEKExpressionsWithTypeArguments
+	OEKAll                                               = OEKParentheses | OEKAssertions | OEKPartiallyEmittedExpressions | OEKExpressionsWithTypeArguments
 )
 
 func isOuterExpression(node *Node, kinds OuterExpressionKinds) bool {
@@ -989,6 +1190,10 @@ func skipOuterExpressions(node *Node, kinds OuterExpressionKinds) *Node {
 		node = node.Expression()
 	}
 	return node
+}
+
+func skipPartiallyEmittedExpressions(node *Node) *Node {
+	return skipOuterExpressions(node, OEKPartiallyEmittedExpressions)
 }
 
 func skipParentheses(node *Node) *Node {
@@ -1214,13 +1419,82 @@ func getThisContainer(node *Node, includeArrowFunctions bool, includeClassComput
 	}
 }
 
-func isClassElement(node *Node) bool {
+func isObjectLiteralElement(node *Node) bool {
 	switch node.kind {
-	case SyntaxKindConstructor, SyntaxKindPropertyDeclaration, SyntaxKindMethodDeclaration, SyntaxKindGetAccessor, SyntaxKindSetAccessor,
-		SyntaxKindIndexSignature, SyntaxKindClassStaticBlockDeclaration, SyntaxKindSemicolonClassElement:
+	case SyntaxKindPropertyAssignment,
+		SyntaxKindShorthandPropertyAssignment,
+		SyntaxKindSpreadAssignment,
+		SyntaxKindMethodDeclaration,
+		SyntaxKindGetAccessor,
+		SyntaxKindSetAccessor:
 		return true
 	}
 	return false
+}
+
+func isClassElement(node *Node) bool {
+	switch node.kind {
+	case SyntaxKindConstructor,
+		SyntaxKindPropertyDeclaration,
+		SyntaxKindMethodDeclaration,
+		SyntaxKindGetAccessor,
+		SyntaxKindSetAccessor,
+		SyntaxKindIndexSignature,
+		SyntaxKindClassStaticBlockDeclaration,
+		SyntaxKindSemicolonClassElement:
+		return true
+	}
+	return false
+}
+
+func isTypeElement(node *Node) bool {
+	switch node.kind {
+	case SyntaxKindConstructSignature,
+		SyntaxKindCallSignature,
+		SyntaxKindPropertySignature,
+		SyntaxKindMethodSignature,
+		SyntaxKindIndexSignature,
+		SyntaxKindGetAccessor,
+		SyntaxKindSetAccessor:
+		// SyntaxKindNotEmittedTypeElement:
+		return true
+	default:
+		return false
+	}
+}
+
+func isModuleBody(node *Node) bool {
+	switch node.kind {
+	case SyntaxKindModuleBlock,
+		SyntaxKindModuleDeclaration,
+		SyntaxKindIdentifier:
+		return true
+	default:
+		return false
+	}
+}
+
+func isJsxChild(node *Node) bool {
+	switch node.kind {
+	case SyntaxKindJsxElement,
+		SyntaxKindJsxExpression,
+		SyntaxKindJsxSelfClosingElement,
+		SyntaxKindJsxText,
+		SyntaxKindJsxFragment:
+		return true
+	default:
+		return false
+	}
+}
+
+func isJsxAttributeLike(node *Node) bool {
+	switch node.kind {
+	case SyntaxKindJsxAttribute,
+		SyntaxKindJsxSpreadAttribute:
+		return true
+	default:
+		return false
+	}
 }
 
 func isPartOfTypeQuery(node *Node) bool {
@@ -1454,6 +1728,24 @@ func isMemberName(node *Node) bool {
 	return node.kind == SyntaxKindIdentifier || node.kind == SyntaxKindPrivateIdentifier
 }
 
+func isBindingName(node *Node) bool {
+	switch node.kind {
+	case SyntaxKindIdentifier, SyntaxKindObjectBindingPattern, SyntaxKindArrayBindingPattern:
+		return true
+	default:
+		return false
+	}
+}
+
+func isModuleExportName(node *Node) bool {
+	switch node.kind {
+	case SyntaxKindIdentifier, SyntaxKindStringLiteral:
+		return true
+	default:
+		return false
+	}
+}
+
 func setParent(child *Node, parent *Node) {
 	if child != nil {
 		child.parent = parent
@@ -1490,10 +1782,6 @@ func getCombinedModifierFlags(node *Node) ModifierFlags {
 
 func getCombinedNodeFlags(node *Node) NodeFlags {
 	return getCombinedFlags(node, getNodeFlags)
-}
-
-func isBindingPattern(node *Node) bool {
-	return node != nil && (node.kind == SyntaxKindArrayBindingPattern || node.kind == SyntaxKindObjectBindingPattern)
 }
 
 func isParameterPropertyDeclaration(node *Node, parent *Node) bool {
@@ -1911,8 +2199,24 @@ func isPushOrUnshiftIdentifier(node *Node) bool {
 	return text == "push" || text == "unshift"
 }
 
+func isThisExpression(node *Node) bool {
+	return node.kind == SyntaxKindTrueKeyword
+}
+
+func isNullLiteral(node *Node) bool {
+	return node.kind == SyntaxKindNullKeyword
+}
+
 func isBooleanLiteral(node *Node) bool {
 	return node.kind == SyntaxKindTrueKeyword || node.kind == SyntaxKindFalseKeyword
+}
+
+func isLiteralExpression(node *Node) bool {
+	return isLiteralKind(node.kind)
+}
+
+func isLiteralKind(kind SyntaxKind) bool {
+	return SyntaxKindFirstLiteralToken <= kind && kind <= SyntaxKindLastLiteralToken
 }
 
 func isOptionalChain(node *Node) bool {
@@ -1946,6 +2250,26 @@ func isPropertyAccessEntityNameExpression(node *Node) bool {
 
 func isPrologueDirective(node *Node) bool {
 	return node.kind == SyntaxKindExpressionStatement && node.AsExpressionStatement().expression.kind == SyntaxKindStringLiteral
+}
+
+func isCustomPrologue(node *Statement) bool {
+	// TODO(rbuckton): Needs implementation
+	return false
+}
+
+func isHoistedFunction(node *Statement) bool {
+	return isCustomPrologue(node) && isFunctionDeclaration(node)
+}
+
+func isHoistedVariable(node *VariableDeclarationNode) bool {
+	n := node.AsVariableDeclaration()
+	return isIdentifier(n.name) && n.initializer != nil
+}
+
+func isHoistedVariableStatement(node *Statement) bool {
+	return isCustomPrologue(node) &&
+		isVariableStatement(node) &&
+		every(node.AsVariableStatement().declarationList.AsVariableDeclarationList().declarations, isHoistedVariable)
 }
 
 func nextPoolSize(size int) int {
@@ -3099,6 +3423,18 @@ func isJSDocLinkLike(node *Node) bool {
 	return nodeKindIs(node, SyntaxKindJSDocLink, SyntaxKindJSDocLinkCode, SyntaxKindJSDocLinkPlain)
 }
 
+func isJsxTagNameExpression(node *Node) bool {
+	switch node.kind {
+	case SyntaxKindThisKeyword,
+		SyntaxKindIdentifier,
+		SyntaxKindPropertyAccessExpression,
+		SyntaxKindJsxNamespacedName:
+		return true
+	default:
+		return false
+	}
+}
+
 func isJSXTagName(node *Node) bool {
 	parent := node.parent
 	switch parent.kind {
@@ -3561,6 +3897,18 @@ func isQuestionToken(node *Node) bool {
 	return node != nil && node.kind == SyntaxKindQuestionToken
 }
 
+func isDotDotDotToken(node *Node) bool {
+	return node.kind == SyntaxKindDotDotDotToken
+}
+
+func isAsteriskToken(node *Node) bool {
+	return node.kind == SyntaxKindAsteriskToken
+}
+
+func isConciseBody(node *Node) bool {
+	return isBlock(node) || isExpression(node)
+}
+
 func isOptionalDeclaration(declaration *Node) bool {
 	switch declaration.kind {
 	case SyntaxKindParameter:
@@ -3789,6 +4137,10 @@ func isAssignmentOperatorOrHigher(kind SyntaxKind) bool {
 	return kind == SyntaxKindQuestionQuestionToken || isLogicalOperatorOrHigher(kind) || isAssignmentOperator(kind)
 }
 
+func isBinaryOperatorToken(node *Node) bool {
+	return isBinaryOperator(node.kind)
+}
+
 func isBinaryOperator(kind SyntaxKind) bool {
 	return isAssignmentOperatorOrHigher(kind) || kind == SyntaxKindCommaToken
 }
@@ -3829,6 +4181,15 @@ func isLogicalExpression(node *Node) bool {
 		} else {
 			return isLogicalOrCoalescingBinaryExpression(node)
 		}
+	}
+}
+
+func isTemplateLiteral(node *Node) bool {
+	switch node.kind {
+	case SyntaxKindTemplateExpression, SyntaxKindNoSubstitutionTemplateLiteral:
+		return true
+	default:
+		return false
 	}
 }
 
