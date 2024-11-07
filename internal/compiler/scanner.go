@@ -1713,6 +1713,9 @@ type skipTriviaOptions struct {
 }
 
 func skipTrivia(text string, pos int, options *skipTriviaOptions) int {
+	if options == nil {
+		options = &skipTriviaOptions{}
+	}
 	if positionIsSynthesized(pos) {
 		return pos
 	}
@@ -1729,16 +1732,16 @@ func skipTrivia(text string, pos int, options *skipTriviaOptions) int {
 			fallthrough
 		case '\n':
 			pos++
-			if options != nil && options.stopAfterLineBreak {
+			if options.stopAfterLineBreak {
 				return pos
 			}
-			canConsumeStar = options != nil && options.inJSDoc
+			canConsumeStar = options.inJSDoc
 			continue
 		case '\t', '\v', '\f', ' ':
 			pos++
 			continue
 		case '/':
-			if options != nil && options.stopAtComments {
+			if options.stopAtComments {
 				break
 			}
 			if text[pos+1] == '/' {
