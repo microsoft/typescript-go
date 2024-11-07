@@ -5172,9 +5172,9 @@ func (f *NodeFactory) NewJSDocNonNullableType(typeNode *Node, postfix bool) *Nod
 	return f.NewNode(SyntaxKindJSDocNonNullableType, data)
 }
 
-func (f *NodeFactory) UpdateJSDocNonNullableType(node *Node, typeNode *Node, postfix bool) *Node {
+func (f *NodeFactory) UpdateJSDocNonNullableType(node *Node, typeNode *Node) *Node {
 	if n := node.AsJSDocNonNullableType(); typeNode != n.typeNode {
-		return f.UpdateNode(f.NewJSDocNonNullableType(typeNode, postfix), node)
+		return f.UpdateNode(f.NewJSDocNonNullableType(typeNode, n.postfix), node)
 	}
 	return node
 }
@@ -5198,9 +5198,9 @@ func (f *NodeFactory) NewJSDocNullableType(typeNode *Node, postfix bool) *Node {
 	return f.NewNode(SyntaxKindJSDocNullableType, data)
 }
 
-func (f *NodeFactory) UpdateJSDocNullableType(node *Node, typeNode *Node, postfix bool) *Node {
+func (f *NodeFactory) UpdateJSDocNullableType(node *Node, typeNode *Node) *Node {
 	if n := node.AsJSDocNullableType(); typeNode != n.typeNode {
-		return f.UpdateNode(f.NewJSDocNullableType(typeNode, postfix), node)
+		return f.UpdateNode(f.NewJSDocNullableType(typeNode, n.postfix), node)
 	}
 	return node
 }
