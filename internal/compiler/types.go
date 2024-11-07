@@ -12,7 +12,7 @@ const (
 	SyntaxKindConflictMarkerTrivia
 	SyntaxKindNonTextFileMarkerTrivia
 	SyntaxKindNumericLiteral
-	SyntaxKindBigintLiteral
+	SyntaxKindBigIntLiteral
 	SyntaxKindStringLiteral
 	SyntaxKindJsxText
 	SyntaxKindJsxTextAllWhiteSpaces
@@ -553,17 +553,17 @@ const (
 	ModifierFlagsModifier           = ModifierFlagsAll & ^ModifierFlagsDecorator
 )
 
-// SignatureFlags
+// ParseFlags
 
-type SignatureFlags uint32
+type ParseFlags uint32
 
 const (
-	SignatureFlagsNone                   SignatureFlags = 0
-	SignatureFlagsYield                  SignatureFlags = 1 << 0
-	SignatureFlagsAwait                  SignatureFlags = 1 << 1
-	SignatureFlagsType                   SignatureFlags = 1 << 2
-	SignatureFlagsIgnoreMissingOpenBrace SignatureFlags = 1 << 4
-	SignatureFlagsJSDoc                  SignatureFlags = 1 << 5
+	ParseFlagsNone                   ParseFlags = 0
+	ParseFlagsYield                  ParseFlags = 1 << 0
+	ParseFlagsAwait                  ParseFlags = 1 << 1
+	ParseFlagsType                   ParseFlags = 1 << 2
+	ParseFlagsIgnoreMissingOpenBrace ParseFlags = 1 << 4
+	ParseFlagsJSDoc                  ParseFlags = 1 << 5
 )
 
 // SymbolFlags
@@ -731,6 +731,40 @@ const (
 	LanguageVariantJSX
 )
 
+type TypeFormatFlags uint32
+
+const (
+	TypeFormatFlagsNone                               TypeFormatFlags = 0
+	TypeFormatFlagsNoTruncation                       TypeFormatFlags = 1 << 0 // Don't truncate typeToString result
+	TypeFormatFlagsWriteArrayAsGenericType            TypeFormatFlags = 1 << 1 // Write Array<T> instead T[]
+	TypeFormatFlagsGenerateNamesForShadowedTypeParams TypeFormatFlags = 1 << 2 // When a type parameter T is shadowing another T, generate a name for it so it can still be referenced
+	TypeFormatFlagsUseStructuralFallback              TypeFormatFlags = 1 << 3 // When an alias cannot be named by its symbol, rather than report an error, fallback to a structural printout if possible
+	// hole because there's a hole in node builder flags
+	TypeFormatFlagsWriteTypeArgumentsOfSignature TypeFormatFlags = 1 << 5 // Write the type arguments instead of type parameters of the signature
+	TypeFormatFlagsUseFullyQualifiedType         TypeFormatFlags = 1 << 6 // Write out the fully qualified type name (eg. Module.Type, instead of Type)
+	// hole because `UseOnlyExternalAliasing` is here in node builder flags, but functions which take old flags use `SymbolFormatFlags` instead
+	TypeFormatFlagsSuppressAnyReturnType TypeFormatFlags = 1 << 8 // If the return type is any-like, don't offer a return type.
+	// hole because `WriteTypeParametersInQualifiedName` is here in node builder flags, but functions which take old flags use `SymbolFormatFlags` for this instead
+	TypeFormatFlagsMultilineObjectLiterals             TypeFormatFlags = 1 << 10 // Always print object literals across multiple lines (only used to map into node builder flags)
+	TypeFormatFlagsWriteClassExpressionAsTypeLiteral   TypeFormatFlags = 1 << 11 // Write a type literal instead of (Anonymous class)
+	TypeFormatFlagsUseTypeOfFunction                   TypeFormatFlags = 1 << 12 // Write typeof instead of function type literal
+	TypeFormatFlagsOmitParameterModifiers              TypeFormatFlags = 1 << 13 // Omit modifiers on parameters
+	TypeFormatFlagsUseAliasDefinedOutsideCurrentScope  TypeFormatFlags = 1 << 14 // For a `type T = ... ` defined in a different file, write `T` instead of its value, even though `T` can't be accessed in the current scope.
+	TypeFormatFlagsUseSingleQuotesForStringLiteralType TypeFormatFlags = 1 << 28 // Use single quotes for string literal type
+	TypeFormatFlagsNoTypeReduction                     TypeFormatFlags = 1 << 29 // Don't call getReducedType
+	TypeFormatFlagsOmitThisParameter                   TypeFormatFlags = 1 << 25
+	// Error Handling
+	TypeFormatFlagsAllowUniqueESSymbolType TypeFormatFlags = 1 << 20 // This is bit 20 to align with the same bit in `NodeBuilderFlags`
+	// TypeFormatFlags exclusive
+	TypeFormatFlagsAddUndefined             TypeFormatFlags = 1 << 17 // Add undefined to types of initialized, non-optional parameters
+	TypeFormatFlagsWriteArrowStyleSignature TypeFormatFlags = 1 << 18 // Write arrow style signature
+	// State
+	TypeFormatFlagsInArrayType         TypeFormatFlags = 1 << 19 // Writing an array element type
+	TypeFormatFlagsInElementType       TypeFormatFlags = 1 << 21 // Writing an array or union element type
+	TypeFormatFlagsInFirstTypeArgument TypeFormatFlags = 1 << 22 // Writing first type argument of the instantiated type
+	TypeFormatFlagsInTypeAlias         TypeFormatFlags = 1 << 23 // Writing type in type alias declaration
+)
+
 // Ids
 
 type NodeId uint32
@@ -765,11 +799,12 @@ type SymbolTable map[string]*Symbol
 // Links for value symbols
 
 type ValueSymbolLinks struct {
-	resolvedType *Type // Type of value symbol
-	writeType    *Type
-	target       *Symbol
-	mapper       *TypeMapper
-	nameType     *Type
+	resolvedType   *Type // Type of value symbol
+	writeType      *Type
+	target         *Symbol
+	mapper         *TypeMapper
+	nameType       *Type
+	containingType *Type // Containing union or intersection type for synthetic property
 }
 
 // Links for alias symbols
@@ -979,30 +1014,31 @@ const (
 // CompilerOptions
 
 type CompilerOptions struct {
-	AllowSyntheticDefaultImports Tristate
-	AllowUmdGlobalAccess         Tristate
-	AllowUnreachableCode         Tristate
-	AllowUnusedLabels            Tristate
-	CheckJs                      Tristate
-	CustomConditions             []string
-	ESModuleInterop              Tristate
-	ExactOptionalPropertyTypes   Tristate
-	IsolatedModules              Tristate
-	ModuleKind                   ModuleKind
-	ModuleResolution             ModuleResolutionKind
-	NoFallthroughCasesInSwitch   Tristate
-	NoImplicitAny                Tristate
-	NoUncheckedIndexedAccess     Tristate
-	PreserveConstEnums           Tristate
-	Strict                       Tristate
-	StrictBindCallApply          Tristate
-	StrictNullChecks             Tristate
-	Target                       ScriptTarget
-	TraceResolution              Tristate
-	Types                        []string
-	UseDefineForClassFields      Tristate
-	UseUnknownInCatchVariables   Tristate
-	VerbatimModuleSyntax         Tristate
+	AllowSyntheticDefaultImports       Tristate
+	AllowUmdGlobalAccess               Tristate
+	AllowUnreachableCode               Tristate
+	AllowUnusedLabels                  Tristate
+	CheckJs                            Tristate
+	CustomConditions                   []string
+	ESModuleInterop                    Tristate
+	ExactOptionalPropertyTypes         Tristate
+	IsolatedModules                    Tristate
+	ModuleKind                         ModuleKind
+	ModuleResolution                   ModuleResolutionKind
+	NoFallthroughCasesInSwitch         Tristate
+	NoImplicitAny                      Tristate
+	NoPropertyAccessFromIndexSignature Tristate
+	NoUncheckedIndexedAccess           Tristate
+	PreserveConstEnums                 Tristate
+	Strict                             Tristate
+	StrictBindCallApply                Tristate
+	StrictNullChecks                   Tristate
+	Target                             ScriptTarget
+	TraceResolution                    Tristate
+	Types                              []string
+	UseDefineForClassFields            Tristate
+	UseUnknownInCatchVariables         Tristate
+	VerbatimModuleSyntax               Tristate
 }
 
 type ModuleKind int32
@@ -1154,12 +1190,12 @@ const (
 	TypeFlagsNumber          TypeFlags = 1 << 3
 	TypeFlagsBoolean         TypeFlags = 1 << 4
 	TypeFlagsEnum            TypeFlags = 1 << 5 // Numeric computed enum member value
-	TypeFlagsBigint          TypeFlags = 1 << 6
+	TypeFlagsBigInt          TypeFlags = 1 << 6
 	TypeFlagsStringLiteral   TypeFlags = 1 << 7
 	TypeFlagsNumberLiteral   TypeFlags = 1 << 8
 	TypeFlagsBooleanLiteral  TypeFlags = 1 << 9
 	TypeFlagsEnumLiteral     TypeFlags = 1 << 10 // Always combined with StringLiteral, NumberLiteral, or Union
-	TypeFlagsBigintLiteral   TypeFlags = 1 << 11
+	TypeFlagsBigIntLiteral   TypeFlags = 1 << 11
 	TypeFlagsESSymbol        TypeFlags = 1 << 12 // Type of symbol primitive introduced in ES6
 	TypeFlagsUniqueESSymbol  TypeFlags = 1 << 13 // unique symbol
 	TypeFlagsVoid            TypeFlags = 1 << 14
@@ -1183,17 +1219,17 @@ const (
 
 	TypeFlagsAnyOrUnknown                  = TypeFlagsAny | TypeFlagsUnknown
 	TypeFlagsNullable                      = TypeFlagsUndefined | TypeFlagsNull
-	TypeFlagsLiteral                       = TypeFlagsStringLiteral | TypeFlagsNumberLiteral | TypeFlagsBigintLiteral | TypeFlagsBooleanLiteral
+	TypeFlagsLiteral                       = TypeFlagsStringLiteral | TypeFlagsNumberLiteral | TypeFlagsBigIntLiteral | TypeFlagsBooleanLiteral
 	TypeFlagsUnit                          = TypeFlagsEnum | TypeFlagsLiteral | TypeFlagsUniqueESSymbol | TypeFlagsNullable
 	TypeFlagsFreshable                     = TypeFlagsEnum | TypeFlagsLiteral
 	TypeFlagsStringOrNumberLiteral         = TypeFlagsStringLiteral | TypeFlagsNumberLiteral
 	TypeFlagsStringOrNumberLiteralOrUnique = TypeFlagsStringLiteral | TypeFlagsNumberLiteral | TypeFlagsUniqueESSymbol
-	TypeFlagsDefinitelyFalsy               = TypeFlagsStringLiteral | TypeFlagsNumberLiteral | TypeFlagsBigintLiteral | TypeFlagsBooleanLiteral | TypeFlagsVoid | TypeFlagsUndefined | TypeFlagsNull
-	TypeFlagsPossiblyFalsy                 = TypeFlagsDefinitelyFalsy | TypeFlagsString | TypeFlagsNumber | TypeFlagsBigint | TypeFlagsBoolean
-	TypeFlagsIntrinsic                     = TypeFlagsAny | TypeFlagsUnknown | TypeFlagsString | TypeFlagsNumber | TypeFlagsBigint | TypeFlagsESSymbol | TypeFlagsVoid | TypeFlagsUndefined | TypeFlagsNull | TypeFlagsNever | TypeFlagsNonPrimitive
+	TypeFlagsDefinitelyFalsy               = TypeFlagsStringLiteral | TypeFlagsNumberLiteral | TypeFlagsBigIntLiteral | TypeFlagsBooleanLiteral | TypeFlagsVoid | TypeFlagsUndefined | TypeFlagsNull
+	TypeFlagsPossiblyFalsy                 = TypeFlagsDefinitelyFalsy | TypeFlagsString | TypeFlagsNumber | TypeFlagsBigInt | TypeFlagsBoolean
+	TypeFlagsIntrinsic                     = TypeFlagsAny | TypeFlagsUnknown | TypeFlagsString | TypeFlagsNumber | TypeFlagsBigInt | TypeFlagsESSymbol | TypeFlagsVoid | TypeFlagsUndefined | TypeFlagsNull | TypeFlagsNever | TypeFlagsNonPrimitive
 	TypeFlagsStringLike                    = TypeFlagsString | TypeFlagsStringLiteral | TypeFlagsTemplateLiteral | TypeFlagsStringMapping
 	TypeFlagsNumberLike                    = TypeFlagsNumber | TypeFlagsNumberLiteral | TypeFlagsEnum
-	TypeFlagsBigIntLike                    = TypeFlagsBigint | TypeFlagsBigintLiteral
+	TypeFlagsBigIntLike                    = TypeFlagsBigInt | TypeFlagsBigIntLiteral
 	TypeFlagsBooleanLike                   = TypeFlagsBoolean | TypeFlagsBooleanLiteral
 	TypeFlagsEnumLike                      = TypeFlagsEnum | TypeFlagsEnumLiteral
 	TypeFlagsESSymbolLike                  = TypeFlagsESSymbol | TypeFlagsUniqueESSymbol
@@ -1210,7 +1246,7 @@ const (
 	TypeFlagsStructuredOrInstantiable      = TypeFlagsStructuredType | TypeFlagsInstantiable
 	TypeFlagsObjectFlagsType               = TypeFlagsAny | TypeFlagsNullable | TypeFlagsNever | TypeFlagsObject | TypeFlagsUnion | TypeFlagsIntersection
 	TypeFlagsSimplifiable                  = TypeFlagsIndexedAccess | TypeFlagsConditional
-	TypeFlagsSingleton                     = TypeFlagsAny | TypeFlagsUnknown | TypeFlagsString | TypeFlagsNumber | TypeFlagsBoolean | TypeFlagsBigint | TypeFlagsESSymbol | TypeFlagsVoid | TypeFlagsUndefined | TypeFlagsNull | TypeFlagsNever | TypeFlagsNonPrimitive
+	TypeFlagsSingleton                     = TypeFlagsAny | TypeFlagsUnknown | TypeFlagsString | TypeFlagsNumber | TypeFlagsBoolean | TypeFlagsBigInt | TypeFlagsESSymbol | TypeFlagsVoid | TypeFlagsUndefined | TypeFlagsNull | TypeFlagsNever | TypeFlagsNonPrimitive
 	// 'TypeFlagsNarrowable' types are types where narrowing actually narrows.
 	// This *should* be every type other than null, undefined, void, and never
 	TypeFlagsNarrowable = TypeFlagsAny | TypeFlagsUnknown | TypeFlagsStructuredOrInstantiable | TypeFlagsStringLike | TypeFlagsNumberLike | TypeFlagsBigIntLike | TypeFlagsBooleanLike | TypeFlagsESSymbol | TypeFlagsUniqueESSymbol | TypeFlagsNonPrimitive
@@ -1335,22 +1371,54 @@ func (t *Type) AsReverseMappedType() *ReverseMappedType     { return t.data.(*Re
 func (t *Type) AsTypeParameter() *TypeParameter             { return t.data.(*TypeParameter) }
 func (t *Type) AsUnionType() *UnionType                     { return t.data.(*UnionType) }
 func (t *Type) AsIntersectionType() *IntersectionType       { return t.data.(*IntersectionType) }
+func (t *Type) AsIndexType() *IndexType                     { return t.data.(*IndexType) }
 func (t *Type) AsIndexedAccessType() *IndexedAccessType     { return t.data.(*IndexedAccessType) }
 func (t *Type) AsTemplateLiteralType() *TemplateLiteralType { return t.data.(*TemplateLiteralType) }
 func (t *Type) AsStringMappingType() *StringMappingType     { return t.data.(*StringMappingType) }
 func (t *Type) AsSubstitutionType() *SubstitutionType       { return t.data.(*SubstitutionType) }
+func (t *Type) AsConditionalType() *ConditionalType         { return t.data.(*ConditionalType) }
 
 // Casts for embedded struct types
 
-func (t *Type) AsObjectType() *ObjectType       { return t.data.AsObjectType() }
-func (t *Type) AsAnonymousType() *AnonymousType { return t.data.AsAnonymousType() }
-func (t *Type) AsTypeReference() *TypeReference { return t.data.AsTypeReference() }
-func (t *Type) AsInterfaceType() *InterfaceType { return t.data.AsInterfaceType() }
+func (t *Type) AsStructuredType() *StructuredType { return t.data.AsStructuredType() }
+func (t *Type) AsObjectType() *ObjectType         { return t.data.AsObjectType() }
+func (t *Type) AsTypeReference() *TypeReference   { return t.data.AsTypeReference() }
+func (t *Type) AsInterfaceType() *InterfaceType   { return t.data.AsInterfaceType() }
 func (t *Type) AsUnionOrIntersectionType() *UnionOrIntersectionType {
 	return t.data.AsUnionOrIntersectionType()
 }
 
 // Common accessors
+
+func (t *Type) Target() *Type {
+	switch {
+	case t.flags&TypeFlagsObject != 0:
+		return t.AsObjectType().target
+	case t.flags&TypeFlagsTypeParameter != 0:
+		return t.AsTypeParameter().target
+	case t.flags&TypeFlagsIndex != 0:
+		return t.AsIndexType().target
+	case t.flags&TypeFlagsStringMapping != 0:
+		return t.AsStringMappingType().target
+	}
+	panic("Unhandled case in Type.Target")
+}
+
+func (t *Type) Mapper() *TypeMapper {
+	switch {
+	case t.flags&TypeFlagsObject != 0:
+		return t.AsObjectType().mapper
+	case t.flags&TypeFlagsTypeParameter != 0:
+		return t.AsTypeParameter().mapper
+	case t.flags&TypeFlagsConditional != 0:
+		return t.AsConditionalType().mapper
+	}
+	panic("Unhandled case in Type.Mapper")
+}
+
+func (t *Type) Types() []*Type {
+	return t.AsUnionOrIntersectionType().types
+}
 
 func (t *Type) TargetInterfaceType() *InterfaceType {
 	return t.AsTypeReference().target.AsInterfaceType()
@@ -1364,8 +1432,8 @@ func (t *Type) TargetTupleType() *TupleType {
 
 type TypeData interface {
 	AsType() *Type
+	AsStructuredType() *StructuredType
 	AsObjectType() *ObjectType
-	AsAnonymousType() *AnonymousType
 	AsTypeReference() *TypeReference
 	AsInterfaceType() *InterfaceType
 	AsUnionOrIntersectionType() *UnionOrIntersectionType
@@ -1377,10 +1445,10 @@ type TypeBase struct {
 	Type
 }
 
-func (t *TypeBase) AsType() *Type                   { return &t.Type }
-func (t *TypeBase) AsObjectType() *ObjectType       { return nil }
-func (t *TypeBase) AsAnonymousType() *AnonymousType { return nil }
-func (t *TypeBase) AsTypeReference() *TypeReference { return nil }
+func (t *TypeBase) AsType() *Type                     { return &t.Type }
+func (t *TypeBase) AsStructuredType() *StructuredType { return nil }
+func (t *TypeBase) AsObjectType() *ObjectType         { return nil }
+func (t *TypeBase) AsTypeReference() *TypeReference   { return nil }
 
 // IntrinsicTypeData
 
@@ -1398,7 +1466,7 @@ type LiteralType struct {
 	regularType *Type // Regular version of type
 }
 
-type PseudoBigint struct {
+type PseudoBigInt struct {
 	negative    bool
 	base10Value string
 }
@@ -1410,16 +1478,9 @@ type UniqueESSymbolType struct {
 	name string
 }
 
-// ObjectType (base of all types with members)
-// AnonymousType (ObjectFlagsAnonymous)
-//   TypeReference (ObjectFlagsReference)
-//     InterfaceType (ObjectFlagsReference | (ObjectFlagsClass|ObjectFlagsInterface|ObjectFlagsTuple))
-//   SingleSignatureType (ObjectFlagsAnonymous|ObjectFlagsSingleSignatureType)
-//   InstantiationExpressionType (ObjectFlagsAnonymous|ObjectFlagsInstantiationExpressionType)
-//   MappedType (ObjectFlagsAnonymous|ObjectFlagsMapped)
-// ReverseMapped (ObjectFlagsReverseMapped)
+// StructuredType (base of all types with members)
 
-type ObjectType struct {
+type StructuredType struct {
 	TypeBase
 	members            SymbolTable
 	properties         []*Symbol
@@ -1428,31 +1489,40 @@ type ObjectType struct {
 	indexInfos         []*IndexInfo
 }
 
-func (t *ObjectType) AsObjectType() *ObjectType { return t }
+func (t *StructuredType) AsStructuredType() *StructuredType { return t }
 
-func (t *ObjectType) CallSignatures() []*Signature {
+func (t *StructuredType) CallSignatures() []*Signature {
 	return slices.Clip(t.signatures[:t.callSignatureCount])
 }
 
-func (t *ObjectType) ConstructSignatures() []*Signature {
+func (t *StructuredType) ConstructSignatures() []*Signature {
 	return slices.Clip(t.signatures[t.callSignatureCount:])
 }
 
-// AnonymousType (base of all instantiable object types)
+// ObjectType (base of all instantiable object types)
+// Instances of ObjectType or derived types have the following ObjectFlags:
+// ObjectType (ObjectFlagsAnonymous)
+//   TypeReference (ObjectFlagsReference)
+//     InterfaceType (ObjectFlagsReference | (ObjectFlagsClass|ObjectFlagsInterface))
+//       TupleType (ObjectFlagsReference | ObjectFlagsTuple)
+//   SingleSignatureType (ObjectFlagsAnonymous|ObjectFlagsSingleSignatureType)
+//   InstantiationExpressionType (ObjectFlagsAnonymous|ObjectFlagsInstantiationExpressionType)
+//   MappedType (ObjectFlagsAnonymous|ObjectFlagsMapped)
+//   ReverseMapped (ObjectFlagsReverseMapped)
 
-type AnonymousType struct {
-	ObjectType
+type ObjectType struct {
+	StructuredType
 	target         *Type            // Target of instantiated type
 	mapper         *TypeMapper      // Type mapper for instantiated type
 	instantiations map[string]*Type // Map of type instantiations
 }
 
-func (t *AnonymousType) AsAnonymousType() *AnonymousType { return t }
+func (t *ObjectType) AsObjectType() *ObjectType { return t }
 
 // TypeReference (instantiation of an InterfaceType)
 
 type TypeReference struct {
-	AnonymousType
+	ObjectType
 	node                  *Node // TypeReferenceNode | ArrayTypeNode | TupleTypeNode when deferred, else nil
 	resolvedTypeArguments []*Type
 }
@@ -1533,21 +1603,21 @@ type TupleType struct {
 // SingleSignatureType
 
 type SingleSignatureType struct {
-	AnonymousType
+	ObjectType
 	outerTypeParameters []*Type
 }
 
 // InstantiationExpressionType
 
 type InstantiationExpressionType struct {
-	AnonymousType
+	ObjectType
 	node *Node
 }
 
 // MappedType
 
 type MappedType struct {
-	AnonymousType
+	ObjectType
 	declaration          MappedTypeNode
 	typeParameter        *Type
 	constraintType       *Type
@@ -1570,7 +1640,7 @@ type ReverseMappedType struct {
 // UnionOrIntersectionTypeData
 
 type UnionOrIntersectionType struct {
-	ObjectType
+	StructuredType
 	types                                       []*Type
 	propertyCache                               SymbolTable
 	propertyCacheWithoutFunctionPropertyAugment SymbolTable
@@ -1610,6 +1680,25 @@ type TypeParameter struct {
 	resolvedDefaultType *Type
 }
 
+// IndexFlags
+
+type IndexFlags uint32
+
+const (
+	IndexFlagsNone              IndexFlags = 0
+	IndexFlagsStringsOnly       IndexFlags = 1 << 0
+	IndexFlagsNoIndexSignatures IndexFlags = 1 << 1
+	IndexFlagsNoReducibleCheck  IndexFlags = 1 << 2
+)
+
+// IndexType
+
+type IndexType struct {
+	TypeBase
+	target     *Type
+	indexFlags IndexFlags
+}
+
 // IndexedAccessType
 
 type IndexedAccessType struct {
@@ -1636,18 +1725,69 @@ type SubstitutionType struct {
 	constraint *Type // Constraint that target type is known to satisfy
 }
 
+type ConditionalRoot struct {
+	node                *Node // ConditionalTypeNode
+	checkType           *Type
+	extendsType         *Type
+	isDistributive      bool
+	inferTypeParameters []*Type
+	outerTypeParameters []*Type
+	instantiations      map[string]*Type
+	alias               *TypeAlias
+}
+
+type ConditionalType struct {
+	TypeBase
+	root                             *ConditionalRoot
+	checkType                        *Type
+	extendsType                      *Type
+	resolvedTrueType                 *Type
+	resolvedFalseType                *Type
+	resolvedInferredTrueType         *Type // The `trueType` instantiated with the `combinedMapper`, if present
+	resolvedDefaultConstraint        *Type
+	resolvedConstraintOfDistributive *Type
+	mapper                           *TypeMapper
+	combinedMapper                   *TypeMapper
+}
+
+// SignatureFlags
+
+type SignatureFlags uint32
+
+const (
+	SignatureFlagsNone SignatureFlags = 0
+	// Propagating flags
+	SignatureFlagsHasRestParameter SignatureFlags = 1 << 0 // Indicates last parameter is rest parameter
+	SignatureFlagsHasLiteralTypes  SignatureFlags = 1 << 1 // Indicates signature is specialized
+	SignatureFlagsAbstract         SignatureFlags = 1 << 2 // Indicates signature comes from an abstract class, abstract construct signature, or abstract constructor type
+	// Non-propagating flags
+	SignatureFlagsIsInnerCallChain                       SignatureFlags = 1 << 3 // Indicates signature comes from a CallChain nested in an outer OptionalChain
+	SignatureFlagsIsOuterCallChain                       SignatureFlags = 1 << 4 // Indicates signature comes from a CallChain that is the outermost chain of an optional expression
+	SignatureFlagsIsUntypedSignatureInJSFile             SignatureFlags = 1 << 5 // Indicates signature is from a js file and has no types
+	SignatureFlagsIsNonInferrable                        SignatureFlags = 1 << 6 // Indicates signature comes from a non-inferrable type
+	SignatureFlagsIsSignatureCandidateForOverloadFailure SignatureFlags = 1 << 7
+	// We do not propagate `IsInnerCallChain` or `IsOuterCallChain` to instantiated signatures, as that would result in us
+	// attempting to add `| undefined` on each recursive call to `getReturnTypeOfSignature` when
+	// instantiating the return type.
+	SignatureFlagsPropagatingFlags = SignatureFlagsHasRestParameter | SignatureFlagsHasLiteralTypes | SignatureFlagsAbstract | SignatureFlagsIsUntypedSignatureInJSFile | SignatureFlagsIsSignatureCandidateForOverloadFailure
+	SignatureFlagsCallChainFlags   = SignatureFlagsIsInnerCallChain | SignatureFlagsIsOuterCallChain
+)
+
 // Signature
 
 type Signature struct {
-	flags              SignatureFlags
-	declaration        *Node
-	typeParameters     []*Type
-	parameters         []*Symbol
-	thisParameter      *Symbol
-	resolvedReturnType *Type
-	target             *Signature
-	mapper             *TypeMapper
-	instantiations     map[string]*Signature
+	flags                 SignatureFlags
+	minArgumentCount      int32
+	declaration           *Node
+	typeParameters        []*Type
+	parameters            []*Symbol
+	thisParameter         *Symbol
+	resolvedReturnType    *Type
+	resolvedTypePredicate *Type
+	target                *Signature
+	mapper                *TypeMapper
+	instantiations        map[string]*Signature
+	isolatedSignatureType *Type
 }
 
 // IndexInfo
@@ -1656,5 +1796,96 @@ type IndexInfo struct {
 	keyType     *Type
 	valueType   *Type
 	isReadonly  bool
-	declaration *IndexSignatureDeclaration
+	declaration *Node // IndexSignatureDeclaration
+}
+
+/**
+ * Ternary values are defined such that
+ * x & y picks the lesser in the order False < Unknown < Maybe < True, and
+ * x | y picks the greater in the order False < Unknown < Maybe < True.
+ * Generally, Ternary.Maybe is used as the result of a relation that depends on itself, and
+ * Ternary.Unknown is used as the result of a variance check that depends on itself. We make
+ * a distinction because we don't want to cache circular variance check results.
+ */
+type Ternary int8
+
+const (
+	TernaryFalse   Ternary = 0
+	TernaryUnknown Ternary = 1
+	TernaryMaybe   Ternary = 3
+	TernaryTrue    Ternary = -1
+)
+
+type LanguageFeatureMinimumTargetMap struct {
+	Classes                           ScriptTarget
+	ForOf                             ScriptTarget
+	Generators                        ScriptTarget
+	Iteration                         ScriptTarget
+	SpreadElements                    ScriptTarget
+	RestElements                      ScriptTarget
+	TaggedTemplates                   ScriptTarget
+	DestructuringAssignment           ScriptTarget
+	BindingPatterns                   ScriptTarget
+	ArrowFunctions                    ScriptTarget
+	BlockScopedVariables              ScriptTarget
+	ObjectAssign                      ScriptTarget
+	RegularExpressionFlagsUnicode     ScriptTarget
+	RegularExpressionFlagsSticky      ScriptTarget
+	Exponentiation                    ScriptTarget
+	AsyncFunctions                    ScriptTarget
+	ForAwaitOf                        ScriptTarget
+	AsyncGenerators                   ScriptTarget
+	AsyncIteration                    ScriptTarget
+	ObjectSpreadRest                  ScriptTarget
+	RegularExpressionFlagsDotAll      ScriptTarget
+	BindinglessCatch                  ScriptTarget
+	BigInt                            ScriptTarget
+	NullishCoalesce                   ScriptTarget
+	OptionalChaining                  ScriptTarget
+	LogicalAssignment                 ScriptTarget
+	TopLevelAwait                     ScriptTarget
+	ClassFields                       ScriptTarget
+	PrivateNamesAndClassStaticBlocks  ScriptTarget
+	RegularExpressionFlagsHasIndices  ScriptTarget
+	ShebangComments                   ScriptTarget
+	UsingAndAwaitUsing                ScriptTarget
+	ClassAndClassElementDecorators    ScriptTarget
+	RegularExpressionFlagsUnicodeSets ScriptTarget
+}
+
+var LanguageFeatureMinimumTarget = LanguageFeatureMinimumTargetMap{
+	Classes:                           ScriptTargetES2015,
+	ForOf:                             ScriptTargetES2015,
+	Generators:                        ScriptTargetES2015,
+	Iteration:                         ScriptTargetES2015,
+	SpreadElements:                    ScriptTargetES2015,
+	RestElements:                      ScriptTargetES2015,
+	TaggedTemplates:                   ScriptTargetES2015,
+	DestructuringAssignment:           ScriptTargetES2015,
+	BindingPatterns:                   ScriptTargetES2015,
+	ArrowFunctions:                    ScriptTargetES2015,
+	BlockScopedVariables:              ScriptTargetES2015,
+	ObjectAssign:                      ScriptTargetES2015,
+	RegularExpressionFlagsUnicode:     ScriptTargetES2015,
+	RegularExpressionFlagsSticky:      ScriptTargetES2015,
+	Exponentiation:                    ScriptTargetES2016,
+	AsyncFunctions:                    ScriptTargetES2017,
+	ForAwaitOf:                        ScriptTargetES2018,
+	AsyncGenerators:                   ScriptTargetES2018,
+	AsyncIteration:                    ScriptTargetES2018,
+	ObjectSpreadRest:                  ScriptTargetES2018,
+	RegularExpressionFlagsDotAll:      ScriptTargetES2018,
+	BindinglessCatch:                  ScriptTargetES2019,
+	BigInt:                            ScriptTargetES2020,
+	NullishCoalesce:                   ScriptTargetES2020,
+	OptionalChaining:                  ScriptTargetES2020,
+	LogicalAssignment:                 ScriptTargetES2021,
+	TopLevelAwait:                     ScriptTargetES2022,
+	ClassFields:                       ScriptTargetES2022,
+	PrivateNamesAndClassStaticBlocks:  ScriptTargetES2022,
+	RegularExpressionFlagsHasIndices:  ScriptTargetES2022,
+	ShebangComments:                   ScriptTargetESNext,
+	UsingAndAwaitUsing:                ScriptTargetESNext,
+	ClassAndClassElementDecorators:    ScriptTargetESNext,
+	RegularExpressionFlagsUnicodeSets: ScriptTargetESNext,
 }

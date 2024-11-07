@@ -425,8 +425,13 @@ func (s *Scanner) Scan() SyntaxKind {
 				s.pos += 2
 				s.token = SyntaxKindAsteriskEqualsToken
 			} else if s.charAt(1) == '*' {
-				s.pos += 2
-				s.token = SyntaxKindAsteriskAsteriskToken
+				if s.charAt(2) == '=' {
+					s.pos += 3
+					s.token = SyntaxKindAsteriskAsteriskEqualsToken
+				} else {
+					s.pos += 2
+					s.token = SyntaxKindAsteriskAsteriskToken
+				}
 			} else {
 				s.pos++
 				s.token = SyntaxKindAsteriskToken
@@ -818,7 +823,7 @@ func (s *Scanner) ReScanSlashToken() SyntaxKind {
 		}
 		for {
 			ch, size := s.charAndSize()
-			if size == 0 || !isIdentifierPart(ch, s.languageVersion, s.languageVariant) {
+			if size == 0 || !isIdentifierPart(ch, s.languageVersion) {
 				break
 			}
 			s.pos += size
@@ -978,7 +983,7 @@ func (s *Scanner) scanIdentifier(prefixLength int) bool {
 		for {
 			s.pos += size
 			ch, size = s.charAndSize()
-			if !isIdentifierPart(ch, s.languageVersion, s.languageVariant) {
+			if !isIdentifierPart(ch, s.languageVersion) {
 				break
 			}
 		}
@@ -996,13 +1001,13 @@ func (s *Scanner) scanIdentifierParts() string {
 	start := s.pos
 	for {
 		ch, size := s.charAndSize()
-		if isIdentifierPart(ch, s.languageVersion, s.languageVariant) {
+		if isIdentifierPart(ch, s.languageVersion) {
 			s.pos += size
 			continue
 		}
 		if ch == '\\' {
 			escaped := s.peekUnicodeEscape()
-			if escaped >= 0 && isIdentifierPart(escaped, s.languageVersion, s.languageVariant) {
+			if escaped >= 0 && isIdentifierPart(escaped, s.languageVersion) {
 				sb.WriteString(s.text[start:s.pos])
 				sb.WriteString(string(s.scanUnicodeEscape(true)))
 				start = s.pos
@@ -1210,7 +1215,7 @@ func (s *Scanner) scanEscapeSequence(flags EscapeSequenceScanningFlags) string {
 		// case CharacterCodes.paragraphSeparator !!!
 		return ""
 	default:
-		if flags&EscapeSequenceScanningFlagsAnyUnicodeMode != 0 || flags&EscapeSequenceScanningFlagsRegularExpression != 0 && flags&EscapeSequenceScanningFlagsAnnexB == 0 && isIdentifierPart(ch, s.languageVersion, LanguageVariantStandard) {
+		if flags&EscapeSequenceScanningFlagsAnyUnicodeMode != 0 || flags&EscapeSequenceScanningFlagsRegularExpression != 0 && flags&EscapeSequenceScanningFlagsAnnexB == 0 && isIdentifierPart(ch, s.languageVersion) {
 			s.errorAt(diagnostics.This_character_cannot_be_escaped_in_a_regular_expression, s.pos-2, 2)
 		}
 		return string(rune(ch))
@@ -1344,7 +1349,7 @@ func (s *Scanner) scanNumber() SyntaxKind {
 	if isIdentifierStart(ch, s.languageVersion) {
 		idStart := s.pos
 		id := s.scanIdentifierParts()
-		if result != SyntaxKindBigintLiteral && len(id) == 1 && s.text[idStart] == 'n' {
+		if result != SyntaxKindBigIntLiteral && len(id) == 1 && s.text[idStart] == 'n' {
 			if s.tokenFlags&TokenFlagsScientific != 0 {
 				s.errorAt(diagnostics.A_bigint_literal_cannot_use_exponential_notation, start, s.pos-start)
 				return result
@@ -1485,7 +1490,7 @@ func (s *Scanner) scanBigIntSuffix() SyntaxKind {
 		s.pos++
 		s.tokenValue += "n"
 		// !!! Convert all bigint tokens to their normalized decimal representation
-		return SyntaxKindBigintLiteral
+		return SyntaxKindBigIntLiteral
 	}
 	// !!! Once stringToNumber supports parsing of non-decimal values we should also convert non-decimal
 	// tokens to their normalized decimal representation
@@ -1600,11 +1605,8 @@ func isIdentifierStart(ch rune, languageVersion ScriptTarget) bool {
 	return isASCIILetter(ch) || ch == '_' || ch == '$' || ch > 0x7F && isUnicodeIdentifierStart(ch, languageVersion)
 }
 
-func isIdentifierPart(ch rune, languageVersion ScriptTarget, identifierVariant LanguageVariant) bool {
-	return isWordCharacter(ch) || ch == '$' ||
-		// "-" and ":" are valid in JSX Identifiers
-		identifierVariant == LanguageVariantJSX && (ch == '-' || ch == ':') ||
-		ch > 0x7F && isUnicodeIdentifierPart(ch, languageVersion)
+func isIdentifierPart(ch rune, languageVersion ScriptTarget) bool {
+	return isWordCharacter(ch) || ch == '$' || ch > 0x7F && isUnicodeIdentifierPart(ch, languageVersion)
 }
 
 func isUnicodeIdentifierStart(ch rune, languageVersion ScriptTarget) bool {
@@ -1749,4 +1751,37 @@ func getEndLinePosition(sourceFile *SourceFile, line int) int {
 		}
 		pos += size
 	}
+}
+
+func GetPositionOfLineAndCharacter(sourceFile *SourceFile, line int, character int) TextPos {
+	return ComputePositionOfLineAndCharacter(getLineStarts(sourceFile), line, character)
+}
+
+func ComputePositionOfLineAndCharacter(lineStarts []TextPos, line int, character int) TextPos {
+	/// !!! debugText, allowEdits
+	if line < 0 || line >= len(lineStarts) {
+		// if (allowEdits) {
+		//     // Clamp line to nearest allowable value
+		//     line = line < 0 ? 0 : line >= lineStarts.length ? lineStarts.length - 1 : line;
+		// }
+		panic(fmt.Sprintf("Bad line number. Line: %d, lineStarts.length: %d.", line, len(lineStarts)))
+	}
+
+	res := (lineStarts[line]) + TextPos(character)
+
+	// !!!
+	// if (allowEdits) {
+	//     // Clamp to nearest allowable values to allow the underlying to be edited without crashing (accuracy is lost, instead)
+	//     // TODO: Somehow track edits between file as it was during the creation of sourcemap we have and the current file and
+	//     // apply them to the computed position to improve accuracy
+	//     return res > lineStarts[line + 1] ? lineStarts[line + 1] : typeof debugText === "string" && res > debugText.length ? debugText.length : res;
+	// }
+	if line < len(lineStarts)-1 && res >= lineStarts[line+1] {
+		panic("Computed position is beyond that of the following line.")
+	}
+	// !!!
+	// else if (debugText !== undefined) {
+	//     Debug.assert(res <= debugText.length); // Allow single character overflow for trailing newline
+	// }
+	return res
 }

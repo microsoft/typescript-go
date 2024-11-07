@@ -37,6 +37,7 @@ type Binder struct {
 	file                   *SourceFile
 	options                *CompilerOptions
 	languageVersion        ScriptTarget
+	bind                   func(*Node) bool
 	parent                 *Node
 	container              *Node
 	thisParentContainer    *Node
@@ -58,7 +59,7 @@ type Binder struct {
 	inStrictMode           bool
 	inAssignmentPattern    bool
 	symbolCount            int
-	classifiableNames      map[string]bool
+	classifiableNames      set[string]
 	symbolPool             Pool[Symbol]
 	flowNodePool           Pool[FlowNode]
 	flowListPool           Pool[FlowList]
@@ -91,7 +92,7 @@ func bindSourceFile(file *SourceFile, options *CompilerOptions) {
 		b.file = file
 		b.options = options
 		b.languageVersion = getEmitScriptTarget(options)
-		b.classifiableNames = make(map[string]bool)
+		b.bind = b.bindWorker // Allocate closure once
 		b.bind(file.AsNode())
 		file.isBound = true
 		file.symbolCount = b.symbolCount
@@ -105,28 +106,6 @@ func (b *Binder) newSymbol(flags SymbolFlags, name string) *Symbol {
 	result.flags = flags
 	result.name = name
 	return result
-}
-
-func getMembers(symbol *Symbol) SymbolTable {
-	if symbol.members == nil {
-		symbol.members = make(SymbolTable)
-	}
-	return symbol.members
-}
-
-func getExports(symbol *Symbol) SymbolTable {
-	if symbol.exports == nil {
-		symbol.exports = make(SymbolTable)
-	}
-	return symbol.exports
-}
-
-func getLocals(container *Node) SymbolTable {
-	data := container.LocalsContainerData()
-	if data.locals == nil {
-		data.locals = make(SymbolTable)
-	}
-	return data.locals
 }
 
 /**
@@ -183,7 +162,7 @@ func (b *Binder) declareSymbolEx(symbolTable SymbolTable, parent *Symbol, node *
 		// just add this node into the declarations list of the symbol.
 		symbol = symbolTable[name]
 		if includes&SymbolFlagsClassifiable != 0 {
-			b.classifiableNames[name] = true
+			b.classifiableNames.add(name)
 		}
 		if symbol == nil {
 			symbol = b.newSymbol(SymbolFlagsNone, name)
@@ -239,34 +218,9 @@ func (b *Binder) declareSymbolEx(symbolTable SymbolTable, parent *Symbol, node *
 						}
 					}
 				}
-				var relatedInformation []*Diagnostic
-				if isTypeAliasDeclaration(node) && nodeIsMissing(node.AsTypeAliasDeclaration().typeNode) && hasSyntacticModifier(node, ModifierFlagsExport) && symbol.flags&(SymbolFlagsAlias|SymbolFlagsType|SymbolFlagsNamespace) != 0 {
-					// export type T; - may have meant export type { T }?
-					relatedInformation = append(relatedInformation, b.createDiagnosticForNode(node, diagnostics.Did_you_mean_0,
-						"export type { "+node.AsTypeAliasDeclaration().name.AsIdentifier().text+" }"))
-				}
 				var declarationName *Node = getNameOfDeclaration(node)
 				if declarationName == nil {
 					declarationName = node
-				}
-				for index, declaration := range symbol.declarations {
-					var decl *Node = getNameOfDeclaration(declaration)
-					if decl == nil {
-						decl = declaration
-					}
-					var diag *Diagnostic
-					if messageNeedsName {
-						diag = b.createDiagnosticForNode(decl, message, b.getDisplayName(declaration))
-					} else {
-						diag = b.createDiagnosticForNode(decl, message)
-					}
-					if multipleDefaultExports {
-						diag.addRelatedInfo(b.createDiagnosticForNode(declarationName, ifElse(index == 0, diagnostics.Another_export_default_is_here, diagnostics.X_and_here)))
-					}
-					b.addDiagnostic(diag)
-					if multipleDefaultExports {
-						relatedInformation = append(relatedInformation, b.createDiagnosticForNode(decl, diagnostics.The_first_export_default_is_here))
-					}
 				}
 				var diag *Diagnostic
 				if messageNeedsName {
@@ -274,7 +228,29 @@ func (b *Binder) declareSymbolEx(symbolTable SymbolTable, parent *Symbol, node *
 				} else {
 					diag = b.createDiagnosticForNode(declarationName, message)
 				}
-				diag.addRelatedInfo(relatedInformation...)
+				if isTypeAliasDeclaration(node) && nodeIsMissing(node.AsTypeAliasDeclaration().typeNode) && hasSyntacticModifier(node, ModifierFlagsExport) && symbol.flags&(SymbolFlagsAlias|SymbolFlagsType|SymbolFlagsNamespace) != 0 {
+					// export type T; - may have meant export type { T }?
+					diag.addRelatedInfo(b.createDiagnosticForNode(node, diagnostics.Did_you_mean_0, "export type { "+node.AsTypeAliasDeclaration().name.AsIdentifier().text+" }"))
+				}
+				for index, declaration := range symbol.declarations {
+					var decl *Node = getNameOfDeclaration(declaration)
+					if decl == nil {
+						decl = declaration
+					}
+					var d *Diagnostic
+					if messageNeedsName {
+						d = b.createDiagnosticForNode(decl, message, b.getDisplayName(declaration))
+					} else {
+						d = b.createDiagnosticForNode(decl, message)
+					}
+					if multipleDefaultExports {
+						d.addRelatedInfo(b.createDiagnosticForNode(declarationName, ifElse(index == 0, diagnostics.Another_export_default_is_here, diagnostics.X_and_here)))
+					}
+					b.addDiagnostic(d)
+					if multipleDefaultExports {
+						diag.addRelatedInfo(b.createDiagnosticForNode(decl, diagnostics.The_first_export_default_is_here))
+					}
+				}
 				b.addDiagnostic(diag)
 				symbol = b.newSymbol(SymbolFlagsNone, name)
 			}
@@ -298,7 +274,7 @@ func (b *Binder) getDeclarationName(node *Node) string {
 	name := getNameOfDeclaration(node)
 	if name != nil {
 		if isAmbientModule(node) {
-			moduleName := getTextOfIdentifierOrLiteral(name)
+			moduleName := name.Text()
 			if isGlobalScopeAugmentation(node) {
 				return InternalSymbolNameGlobal
 			}
@@ -311,21 +287,20 @@ func (b *Binder) getDeclarationName(node *Node) string {
 				// we can get here in cases where there is already a parse error.
 				return InternalSymbolNameMissing
 			}
-			containingClassSymbol := getSymbolFromNode(containingClass)
-			return getSymbolNameForPrivateIdentifier(containingClassSymbol, getTextOfIdentifierOrLiteral(name))
+			return getSymbolNameForPrivateIdentifier(containingClass.Symbol(), name.Text())
 		}
 		if isPropertyNameLiteral(name) {
-			return getTextOfIdentifierOrLiteral(name)
+			return name.Text()
 		}
 		if isComputedPropertyName(name) {
 			nameExpression := name.AsComputedPropertyName().expression
 			// treat computed property names where expression is string/numeric literal as just string/numeric literal
 			if isStringOrNumericLiteralLike(nameExpression) {
-				return getTextOfIdentifierOrLiteral(nameExpression)
+				return nameExpression.Text()
 			}
 			if isSignedNumericLiteral(nameExpression) {
 				unaryExpression := nameExpression.AsPrefixUnaryExpression()
-				return TokenToString(unaryExpression.operator) + getTextOfIdentifierOrLiteral(unaryExpression.operand)
+				return TokenToString(unaryExpression.operator) + unaryExpression.operand.Text()
 			}
 			panic("Only computed properties with literal names have declaration names")
 		}
@@ -364,7 +339,7 @@ func (b *Binder) getDisplayName(node *Node) string {
 }
 
 func moduleExportNameIsDefault(node *Node) bool {
-	return getTextOfIdentifierOrLiteral(node) == InternalSymbolNameDefault
+	return node.Text() == InternalSymbolNameDefault
 }
 
 func getSymbolNameForPrivateIdentifier(containingClassSymbol *Symbol, description string) string {
@@ -572,7 +547,7 @@ func finishFlowLabel(label *FlowLabel) *FlowNode {
 	return label
 }
 
-func (b *Binder) bind(node *Node) bool {
+func (b *Binder) bindWorker(node *Node) bool {
 	if node == nil {
 		return false
 	}
@@ -598,34 +573,6 @@ func (b *Binder) bind(node *Node) bool {
 	//
 	// However, not all symbols will end up in any of these tables. 'Anonymous' symbols
 	// (like TypeLiterals for example) will not be put in any table.
-	b.bindWorker(node)
-	// Then we recurse into the children of the node to bind them as well. For certain
-	// symbols we do specialized work when we recurse. For example, we'll keep track of
-	// the current 'container' node when it changes. This helps us know which symbol table
-	// a local should go into for example. Since terminal nodes are known not to have
-	// children, as an optimization we don't process those.
-	if node.kind > SyntaxKindLastToken {
-		saveParent := b.parent
-		b.parent = node
-		containerFlags := getContainerFlags(node)
-		if containerFlags == ContainerFlagsNone {
-			b.bindChildren(node)
-		} else {
-			b.bindContainer(node, containerFlags)
-		}
-		b.parent = saveParent
-	} else {
-		saveParent := b.parent
-		if node.kind == SyntaxKindEndOfFile {
-			b.parent = node
-		}
-		b.parent = saveParent
-	}
-	b.inStrictMode = saveInStrictMode
-	return false
-}
-
-func (b *Binder) bindWorker(node *Node) {
 	switch node.kind {
 	case SyntaxKindIdentifier:
 		node.AsIdentifier().flowNode = b.currentFlow
@@ -736,6 +683,30 @@ func (b *Binder) bindWorker(node *Node) {
 	case SyntaxKindJsxAttribute:
 		b.bindJsxAttribute(node, SymbolFlagsProperty, SymbolFlagsPropertyExcludes)
 	}
+	// Then we recurse into the children of the node to bind them as well. For certain
+	// symbols we do specialized work when we recurse. For example, we'll keep track of
+	// the current 'container' node when it changes. This helps us know which symbol table
+	// a local should go into for example. Since terminal nodes are known not to have
+	// children, as an optimization we don't process those.
+	if node.kind > SyntaxKindLastToken {
+		saveParent := b.parent
+		b.parent = node
+		containerFlags := getContainerFlags(node)
+		if containerFlags == ContainerFlagsNone {
+			b.bindChildren(node)
+		} else {
+			b.bindContainer(node, containerFlags)
+		}
+		b.parent = saveParent
+	} else {
+		saveParent := b.parent
+		if node.kind == SyntaxKindEndOfFile {
+			b.parent = node
+		}
+		b.parent = saveParent
+	}
+	b.inStrictMode = saveInStrictMode
+	return false
 }
 
 func (b *Binder) bindPropertyWorker(node *Node) {
@@ -814,10 +785,7 @@ func (b *Binder) bindNamespaceExportDeclaration(node *Node) {
 	case !node.parent.AsSourceFile().isDeclarationFile:
 		b.errorOnNode(node, diagnostics.Global_module_exports_may_only_appear_in_declaration_files)
 	default:
-		if b.file.symbol.globalExports == nil {
-			b.file.symbol.globalExports = make(SymbolTable)
-		}
-		b.declareSymbol(b.file.symbol.globalExports, b.file.symbol, node, SymbolFlagsAlias, SymbolFlagsAliasExcludes)
+		b.declareSymbol(getSymbolTable(&b.file.symbol.globalExports), b.file.symbol, node, SymbolFlagsAlias, SymbolFlagsAliasExcludes)
 	}
 }
 
@@ -1041,7 +1009,7 @@ func (b *Binder) bindFunctionExpression(node *Node) {
 }
 
 func (b *Binder) bindClassLikeDeclaration(node *Node) {
-	name := node.ClassLikeData().name
+	name := node.Name()
 	switch node.kind {
 	case SyntaxKindClassDeclaration:
 		b.bindBlockScopedDeclaration(node, SymbolFlagsClass, SymbolFlagsClassExcludes)
@@ -1049,7 +1017,7 @@ func (b *Binder) bindClassLikeDeclaration(node *Node) {
 		nameText := InternalSymbolNameClass
 		if name != nil {
 			nameText = name.AsIdentifier().text
-			b.classifiableNames[nameText] = true
+			b.classifiableNames.add(nameText)
 		}
 		b.bindAnonymousDeclaration(node, SymbolFlagsClass, nameText)
 	}
@@ -1111,7 +1079,7 @@ func addLateBoundAssignmentDeclarationToSymbol(node *Node, symbol *Symbol) {
 
 func (b *Binder) bindFunctionPropertyAssignment(node *Node) {
 	expr := node.AsBinaryExpression()
-	parentName := getAccessedExpression(expr.left).AsIdentifier().text
+	parentName := expr.left.Expression().AsIdentifier().text
 	parentSymbol := b.lookupName(parentName, b.blockScopeContainer)
 	if parentSymbol == nil {
 		parentSymbol = b.lookupName(parentName, b.container)
@@ -1174,7 +1142,7 @@ func (b *Binder) bindParameter(node *Node) {
 		b.checkStrictModeEvalOrArguments(node, decl.name)
 	}
 	if isBindingPattern(decl.name) {
-		index := slices.Index(node.parent.FunctionLikeData().parameters, node)
+		index := slices.Index(node.parent.Parameters(), node)
 		b.bindAnonymousDeclaration(node, SymbolFlagsFunctionScopedVariable, "__"+strconv.Itoa(index))
 	} else {
 		b.declareSymbolAndAddToSymbolTable(node, SymbolFlagsFunctionScopedVariable, SymbolFlagsParameterExcludes)
@@ -1260,9 +1228,9 @@ func (b *Binder) bindTypeParameter(node *Node) {
 }
 
 func (b *Binder) lookupName(name string, container *Node) *Symbol {
-	data := container.LocalsContainerData()
-	if data != nil {
-		local := data.locals[name]
+	localsContainer := container.LocalsContainerData()
+	if localsContainer != nil {
+		local := localsContainer.locals[name]
 		if local != nil {
 			return local
 		}
@@ -1273,9 +1241,12 @@ func (b *Binder) lookupName(name string, container *Node) *Symbol {
 			return local
 		}
 	}
-	symbol := container.Symbol()
-	if symbol != nil {
-		return symbol.exports[name]
+	declaration := container.DeclarationData()
+	if declaration != nil {
+		symbol := declaration.symbol
+		if symbol != nil {
+			return symbol.exports[name]
+		}
 	}
 	return nil
 }
@@ -2404,7 +2375,7 @@ func (b *Binder) bindOptionalChain(node *Node, trueTarget *FlowLabel, falseTarge
 	if isOptionalChainRoot(node) {
 		preChainLabel = b.createBranchLabel()
 	}
-	b.bindOptionalExpression(getAccessedExpression(node), ifElse(preChainLabel != nil, preChainLabel, trueTarget), falseTarget)
+	b.bindOptionalExpression(node.Expression(), ifElse(preChainLabel != nil, preChainLabel, trueTarget), falseTarget)
 	if preChainLabel != nil {
 		b.currentFlow = finishFlowLabel(preChainLabel)
 	}
