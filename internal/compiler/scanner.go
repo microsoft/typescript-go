@@ -1729,16 +1729,16 @@ func skipTrivia(text string, pos int, options *skipTriviaOptions) int {
 			fallthrough
 		case '\n':
 			pos++
-			if options.stopAfterLineBreak {
+			if options != nil && options.stopAfterLineBreak {
 				return pos
 			}
-			canConsumeStar = options.inJSDoc
+			canConsumeStar = options != nil && options.inJSDoc
 			continue
 		case '\t', '\v', '\f', ' ':
 			pos++
 			continue
 		case '/':
-			if options.stopAtComments {
+			if options != nil && options.stopAtComments {
 				break
 			}
 			if text[pos+1] == '/' {
