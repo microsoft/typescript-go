@@ -6592,7 +6592,7 @@ func (c *Checker) getReducedType(t *Type) *Type {
 	case t.flags&TypeFlagsIntersection != 0:
 		if t.objectFlags&ObjectFlagsIsNeverIntersectionComputed == 0 {
 			t.objectFlags |= ObjectFlagsIsNeverIntersectionComputed
-			if some(c.getPropertiesOfUnionOrIntersectionType(t), c.isNeverReducedProperty) {
+			if utils.Some(c.getPropertiesOfUnionOrIntersectionType(t), c.isNeverReducedProperty) {
 				t.objectFlags |= ObjectFlagsIsNeverIntersection
 			}
 		}
@@ -6604,8 +6604,8 @@ func (c *Checker) getReducedType(t *Type) *Type {
 }
 
 func (c *Checker) getReducedUnionType(unionType *Type) *Type {
-	reducedTypes := sameMap(unionType.Types(), c.getReducedType)
-	if identical(reducedTypes, unionType.Types()) {
+	reducedTypes := utils.SameMap(unionType.Types(), c.getReducedType)
+	if utils.Same(reducedTypes, unionType.Types()) {
 		return unionType
 	}
 	reduced := c.getUnionType(reducedTypes)
@@ -10782,7 +10782,7 @@ func (c *Checker) removeMissingType(t *Type, isOptional bool) *Type {
 
 func (c *Checker) getConstraintDeclaration(t *Type) *Node {
 	if t.symbol != nil {
-		declaration := find(t.symbol.declarations, isTypeParameterDeclaration)
+		declaration := utils.Find(t.symbol.declarations, isTypeParameterDeclaration)
 		if declaration != nil {
 			return declaration.AsTypeParameter().constraint
 		}

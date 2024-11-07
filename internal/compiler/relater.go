@@ -384,8 +384,8 @@ func isExcessPropertyCheckTarget(t *Type) bool {
 	return t.flags&TypeFlagsObject != 0 && t.objectFlags&ObjectFlagsObjectLiteralPatternWithComputedProperties == 0 ||
 		t.flags&TypeFlagsNonPrimitive != 0 ||
 		t.flags&TypeFlagsSubstitution != 0 && isExcessPropertyCheckTarget(t.AsSubstitutionType().baseType) ||
-		t.flags&TypeFlagsUnion != 0 && some(t.Types(), isExcessPropertyCheckTarget) ||
-		t.flags&TypeFlagsIntersection != 0 && every(t.Types(), isExcessPropertyCheckTarget)
+		t.flags&TypeFlagsUnion != 0 && utils.Some(t.Types(), isExcessPropertyCheckTarget) ||
+		t.flags&TypeFlagsIntersection != 0 && utils.Every(t.Types(), isExcessPropertyCheckTarget)
 }
 
 // Return true if the given type is deeply nested. We consider this to be the case when the given stack contains
@@ -1669,10 +1669,10 @@ func (r *Relater) reportUnmatchedProperty(source *Type, target *Type, unmatchedP
 		}
 	} else if r.tryElaborateArrayLikeErrors(source, target, false /*reportErrors*/) {
 		if len(props) > 5 {
-			propNames := strings.Join(mapf(props[:4], r.c.symbolToString), ", ")
+			propNames := strings.Join(utils.Map(props[:4], r.c.symbolToString), ", ")
 			r.reportError(diagnostics.Type_0_is_missing_the_following_properties_from_type_1_Colon_2_and_3_more, r.c.typeToString(source), r.c.typeToString(target), propNames, len(props)-4)
 		} else {
-			propNames := strings.Join(mapf(props, r.c.symbolToString), ", ")
+			propNames := strings.Join(utils.Map(props, r.c.symbolToString), ", ")
 			r.reportError(diagnostics.Type_0_is_missing_the_following_properties_from_type_1_Colon_2, r.c.typeToString(source), r.c.typeToString(target), propNames)
 		}
 	}
@@ -1776,10 +1776,10 @@ func (r *Relater) reportErrorResults(originalSource *Type, originalTarget *Type,
 		// }
 	case originalTarget.flags&TypeFlagsIntersection != 0 && originalTarget.objectFlags&ObjectFlagsIsNeverIntersection != 0:
 		message := diagnostics.The_intersection_0_was_reduced_to_never_because_property_1_has_conflicting_types_in_some_constituents
-		prop := find(r.c.getPropertiesOfUnionOrIntersectionType(originalTarget), r.c.isDiscriminantWithNeverType)
+		prop := utils.Find(r.c.getPropertiesOfUnionOrIntersectionType(originalTarget), r.c.isDiscriminantWithNeverType)
 		if prop == nil {
 			message = diagnostics.The_intersection_0_was_reduced_to_never_because_property_1_exists_in_multiple_constituents_and_is_private_in_some
-			prop = find(r.c.getPropertiesOfUnionOrIntersectionType(originalTarget), isConflictingPrivateProperty)
+			prop = utils.Find(r.c.getPropertiesOfUnionOrIntersectionType(originalTarget), isConflictingPrivateProperty)
 		}
 		if prop != nil {
 			r.reportError(message, r.c.typeToStringEx(originalTarget, nil /*enclosingDeclaration*/, TypeFormatFlagsNoTypeReduction), r.c.symbolToString(prop))
