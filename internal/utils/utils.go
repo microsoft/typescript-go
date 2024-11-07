@@ -1,5 +1,5 @@
 // Package funcs contains useful functions.
-package funcs
+package utils
 
 import (
 	"iter"
@@ -193,6 +193,13 @@ func ReplaceElement[T any](slice []T, i int, t T) []T {
 func InsertSorted[T any](slice []T, element T, cmp func(T, T) int) []T {
 	i, _ := slices.BinarySearchFunc(slice, element, cmp)
 	return slices.Insert(slice, i, element)
+}
+
+func AppendIfUnique[T comparable](slice []T, element T) []T {
+	if slices.Contains(slice, element) {
+		return slice
+	}
+	return append(slice, element)
 }
 
 var regexps = make(map[string]*regexp.Regexp)

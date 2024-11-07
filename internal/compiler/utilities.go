@@ -11,7 +11,7 @@ import (
 	"sync/atomic"
 
 	"github.com/microsoft/typescript-go/internal/compiler/diagnostics"
-	"github.com/microsoft/typescript-go/internal/funcs"
+	"github.com/microsoft/typescript-go/internal/utils"
 )
 
 // TextPos
@@ -492,7 +492,7 @@ func getBinaryOperatorPrecedence(kind SyntaxKind) OperatorPrecedence {
 }
 
 func formatStringFromArgs(text string, args []any) string {
-	return funcs.MakeRegexp(`{(\d+)}`).ReplaceAllStringFunc(text, func(match string) string {
+	return utils.MakeRegexp(`{(\d+)}`).ReplaceAllStringFunc(text, func(match string) string {
 		index, err := strconv.ParseInt(match[1:len(match)-1], 10, 0)
 		if err != nil || int(index) >= len(args) {
 			panic("Invalid formatting placeholder")
@@ -696,13 +696,6 @@ func getTextOfNodeFromSourceText(sourceText string, node *Node) string {
 	//     text = text.split(/\r\n|\n|\r/).map(line => line.replace(/^\s*\*/, "").trimStart()).join("\n");
 	// }
 	return text
-}
-
-func appendIfUnique[T comparable](array []T, element T) []T {
-	if slices.Contains(array, element) {
-		return array
-	}
-	return append(array, element)
 }
 
 func isAssignmentDeclaration(decl *Node) bool {
@@ -1776,7 +1769,7 @@ func nodeHasName(statement *Node, id *Node) bool {
 	}
 	if isVariableStatement(statement) {
 		declarations := statement.AsVariableStatement().declarationList.AsVariableDeclarationList().declarations
-		return funcs.Some(declarations, func(d *Node) bool { return nodeHasName(d, id) })
+		return utils.Some(declarations, func(d *Node) bool { return nodeHasName(d, id) })
 	}
 	return false
 }
@@ -1925,9 +1918,9 @@ func (c *DiagnosticsCollection) add(diagnostic *Diagnostic) {
 		if c.fileDiagnostics == nil {
 			c.fileDiagnostics = make(map[string][]*Diagnostic)
 		}
-		c.fileDiagnostics[fileName] = funcs.InsertSorted(c.fileDiagnostics[fileName], diagnostic, compareDiagnostics)
+		c.fileDiagnostics[fileName] = utils.InsertSorted(c.fileDiagnostics[fileName], diagnostic, compareDiagnostics)
 	} else {
-		c.nonFileDiagnostics = funcs.InsertSorted(c.nonFileDiagnostics, diagnostic, compareDiagnostics)
+		c.nonFileDiagnostics = utils.InsertSorted(c.nonFileDiagnostics, diagnostic, compareDiagnostics)
 	}
 }
 
@@ -2520,7 +2513,7 @@ func (r *NameResolver) useOuterVariableScopeInParameter(result *Symbol, location
 				functionLocation := location
 				declarationRequiresScopeChange := r.getRequiresScopeChangeCache(functionLocation)
 				if declarationRequiresScopeChange == TSUnknown {
-					declarationRequiresScopeChange = boolToTristate(funcs.Some(functionLocation.Parameters(), r.requiresScopeChange))
+					declarationRequiresScopeChange = boolToTristate(utils.Some(functionLocation.Parameters(), r.requiresScopeChange))
 					r.setRequiresScopeChangeCache(functionLocation, declarationRequiresScopeChange)
 				}
 				return declarationRequiresScopeChange == TSTrue
@@ -3017,7 +3010,7 @@ func isExternalModuleNameRelative(moduleName string) bool {
 }
 
 func pathIsRelative(path string) bool {
-	return funcs.MakeRegexp(`^\.\.?(?:$|[\\/])`).MatchString(path)
+	return utils.MakeRegexp(`^\.\.?(?:$|[\\/])`).MatchString(path)
 }
 
 func extensionIsTs(ext string) bool {
@@ -3163,7 +3156,7 @@ func getSourceFileOfModule(module *Symbol) *SourceFile {
 }
 
 func getNonAugmentationDeclaration(symbol *Symbol) *Node {
-	return funcs.Find(symbol.declarations, func(d *Node) bool {
+	return utils.Find(symbol.declarations, func(d *Node) bool {
 		return !isExternalModuleAugmentation(d) && !(isModuleDeclaration(d) && isGlobalScopeAugmentation(d))
 	})
 }
@@ -3455,7 +3448,7 @@ func compareSymbols(s1, s2 *Symbol) int {
 }
 
 func getClassLikeDeclarationOfSymbol(symbol *Symbol) *Node {
-	return funcs.Find(symbol.declarations, isClassLike)
+	return utils.Find(symbol.declarations, isClassLike)
 }
 
 func isThisInTypeQuery(node *Node) bool {
@@ -3484,10 +3477,10 @@ func getDeclarationModifierFlagsFromSymbolEx(s *Symbol, isWrite bool) ModifierFl
 	if s.valueDeclaration != nil {
 		var declaration *Node
 		if isWrite {
-			declaration = funcs.Find(s.declarations, isSetAccessorDeclaration)
+			declaration = utils.Find(s.declarations, isSetAccessorDeclaration)
 		}
 		if declaration == nil && s.flags&SymbolFlagsGetAccessor != 0 {
-			declaration = funcs.Find(s.declarations, isGetAccessorDeclaration)
+			declaration = utils.Find(s.declarations, isGetAccessorDeclaration)
 		}
 		if declaration == nil {
 			declaration = s.valueDeclaration

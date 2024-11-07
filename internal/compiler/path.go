@@ -3,7 +3,7 @@ package compiler
 import (
 	"strings"
 
-	"github.com/microsoft/typescript-go/internal/funcs"
+	"github.com/microsoft/typescript-go/internal/utils"
 )
 
 type Path string
@@ -297,7 +297,7 @@ func getNormalizedAbsolutePath(fileName string, currentDirectory string) string 
 func normalizePath(path string) string {
 	path = normalizeSlashes(path)
 	// Most paths don't require normalization
-	relativePathSegmentRegExp := funcs.MakeRegexp(`//|(?:^|/)\.\.?(?:$|/)`)
+	relativePathSegmentRegExp := utils.MakeRegexp(`//|(?:^|/)\.\.?(?:$|/)`)
 	if !relativePathSegmentRegExp.MatchString(path) {
 		return path
 	}
