@@ -1713,11 +1713,11 @@ type skipTriviaOptions struct {
 }
 
 func skipTrivia(text string, pos int, options *skipTriviaOptions) int {
-	if options == nil {
-		options = &skipTriviaOptions{}
-	}
 	if positionIsSynthesized(pos) {
 		return pos
+	}
+	if options == nil {
+		options = &skipTriviaOptions{}
 	}
 
 	canConsumeStar := false
