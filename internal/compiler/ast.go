@@ -1,5 +1,7 @@
 package compiler
 
+import "sync"
+
 // Visitor
 
 type Visitor func(*Node) bool
@@ -769,7 +771,6 @@ func isLocalsContainer(node *Node) bool {
 
 type FunctionLikeBase struct {
 	LocalsContainerBase
-	HasJSDocBase
 	typeParameters *TypeParameterListNode // Optional
 	parameters     []*ParameterDeclarationNode
 	returnType     *TypeNode // Optional
@@ -818,12 +819,39 @@ type FlowNodeBase struct {
 
 func (node *FlowNodeBase) FlowNodeData() *FlowNodeBase { return node }
 
-type HasJSDocBase struct {
-	jsDocs *JSDocListNode
+// if you provide nil for file, this code will walk to the root of the tree to find the file
+func (node *Node) JSDoc(file *SourceFile) *JSDocListNode {
+	if node.flags&NodeFlagsHasJSDoc == 0 {
+		return nil
+	}
+	if file == nil {
+		current := node
+		parent := node.parent
+		for parent != nil {
+			current = parent
+			parent = parent.parent
+		}
+		if current.kind == SyntaxKindSourceFile {
+			file = current.AsSourceFile()
+		} else {
+			return nil
+		}
+	}
+	file.jsdocCacheMu.Lock()
+	defer file.jsdocCacheMu.Unlock()
+	if jsdocs, ok := file.jsdocCache[node]; ok {
+		return jsdocs
+	}
+	return nil
 }
-
-func (node *HasJSDocBase) JSDoc() *JSDocListNode          { return node.jsDocs }
-func (node *HasJSDocBase) SetJSDoc(jsDocs *JSDocListNode) { node.jsDocs = jsDocs }
+func (node *Node) SetJSDoc(file *SourceFile, jsDocs *JSDocListNode) {
+	if node.flags&NodeFlagsHasJSDoc == 0 {
+		node.flags &= NodeFlagsHasJSDoc
+	}
+	file.jsdocCacheMu.Lock()
+	defer file.jsdocCacheMu.Unlock()
+	file.jsdocCache[node] = jsDocs
+}
 
 type JSDocList struct {
 	NodeBase
@@ -855,7 +883,6 @@ func (f *NodeFactory) NewToken(kind SyntaxKind) *Node {
 type Identifier struct {
 	ExpressionBase
 	FlowNodeBase
-	HasJSDocBase
 	text string
 }
 
@@ -916,7 +943,6 @@ type TypeParameterDeclaration struct {
 	NodeBase
 	DeclarationBase
 	ModifiersBase
-	HasJSDocBase
 	name        *IdentifierNode // Identifier
 	constraint  *TypeNode       // Optional
 	defaultType *TypeNode       // Optional
@@ -933,7 +959,7 @@ func (f *NodeFactory) NewTypeParameterDeclaration(modifiers *Node, name *Identif
 }
 
 func (node *TypeParameterDeclaration) ForEachChild(v Visitor) bool {
-	return visit(v, node.jsDocs) || visit(v, node.modifiers) || visit(v, node.name) || visit(v, node.constraint) || visit(v, node.defaultType)
+	return visit(v, node.modifiers) || visit(v, node.name) || visit(v, node.constraint) || visit(v, node.defaultType)
 }
 
 func (node *TypeParameterDeclaration) Name() *DeclarationName {
@@ -1016,7 +1042,6 @@ func (node *ModifierList) ForEachChild(v Visitor) bool {
 type StatementBase struct {
 	NodeBase
 	FlowNodeBase
-	HasJSDocBase
 }
 
 // EmptyStatement
@@ -1257,7 +1282,6 @@ func (node *CaseBlock) ForEachChild(v Visitor) bool {
 
 type CaseOrDefaultClause struct {
 	NodeBase
-	HasJSDocBase
 	expression          *Node // nil in default clause
 	statements          []*Statement
 	fallthroughFlowNode *FlowNode
@@ -1271,7 +1295,7 @@ func (f *NodeFactory) NewCaseOrDefaultClause(kind SyntaxKind, expression *Node, 
 }
 
 func (node *CaseOrDefaultClause) ForEachChild(v Visitor) bool {
-	return visit(v, node.jsDocs) || visit(v, node.expression) || visitNodes(v, node.statements)
+	return visit(v, node.expression) || visitNodes(v, node.statements)
 }
 
 // ThrowStatement
@@ -1435,7 +1459,6 @@ type VariableDeclaration struct {
 	NodeBase
 	DeclarationBase
 	ExportableBase
-	HasJSDocBase
 	name             *BindingName
 	exclamationToken *TokenNode // Optional
 	typeNode         *TypeNode  // Optional
@@ -1452,7 +1475,7 @@ func (f *NodeFactory) NewVariableDeclaration(name *BindingName, exclamationToken
 }
 
 func (node *VariableDeclaration) ForEachChild(v Visitor) bool {
-	return visit(v, node.jsDocs) || visit(v, node.name) || visit(v, node.exclamationToken) || visit(v, node.typeNode) || visit(v, node.initializer)
+	return visit(v, node.name) || visit(v, node.exclamationToken) || visit(v, node.typeNode) || visit(v, node.initializer)
 }
 
 func (node *VariableDeclaration) Name() *DeclarationName {
@@ -1517,7 +1540,6 @@ type ParameterDeclaration struct {
 	NodeBase
 	DeclarationBase
 	ModifiersBase
-	HasJSDocBase
 	dotDotDotToken *TokenNode   // Present on rest parameter
 	name           *BindingName // Declared parameter name
 	questionToken  *TokenNode   // Present on optional parameter
@@ -1537,7 +1559,7 @@ func (f *NodeFactory) NewParameterDeclaration(modifiers *ModifierListNode, dotDo
 }
 
 func (node *ParameterDeclaration) ForEachChild(v Visitor) bool {
-	return visit(v, node.jsDocs) || visit(v, node.modifiers) || visit(v, node.dotDotDotToken) || visit(v, node.name) ||
+	return visit(v, node.modifiers) || visit(v, node.dotDotDotToken) || visit(v, node.name) ||
 		visit(v, node.questionToken) || visit(v, node.typeNode) || visit(v, node.initializer)
 }
 
@@ -1626,7 +1648,7 @@ func (f *NodeFactory) NewFunctionDeclaration(modifiers *ModifierListNode, asteri
 }
 
 func (node *FunctionDeclaration) ForEachChild(v Visitor) bool {
-	return visit(v, node.jsDocs) || visit(v, node.modifiers) || visit(v, node.asteriskToken) || visit(v, node.name) || visit(v, node.typeParameters) ||
+	return visit(v, node.modifiers) || visit(v, node.asteriskToken) || visit(v, node.name) || visit(v, node.typeParameters) ||
 		visitNodes(v, node.parameters) || visit(v, node.returnType) || visit(v, node.body)
 }
 
@@ -1646,7 +1668,6 @@ type ClassLikeBase struct {
 	DeclarationBase
 	ExportableBase
 	ModifiersBase
-	HasJSDocBase
 	name            *IdentifierNode
 	typeParameters  *TypeParameterListNode
 	heritageClauses []*HeritageClauseNode
@@ -1654,7 +1675,7 @@ type ClassLikeBase struct {
 }
 
 func (node *ClassLikeBase) ForEachChild(v Visitor) bool {
-	return visit(v, node.jsDocs) || visit(v, node.modifiers) || visit(v, node.name) || visit(v, node.typeParameters) ||
+	return visit(v, node.modifiers) || visit(v, node.name) || visit(v, node.typeParameters) ||
 		visitNodes(v, node.heritageClauses) || visitNodes(v, node.members)
 }
 
@@ -1734,7 +1755,6 @@ type InterfaceDeclaration struct {
 	DeclarationBase
 	ExportableBase
 	ModifiersBase
-	HasJSDocBase
 	name            *IdentifierNode
 	typeParameters  *TypeParameterListNode
 	heritageClauses []*HeritageClauseNode
@@ -1752,7 +1772,7 @@ func (f *NodeFactory) NewInterfaceDeclaration(modifiers *ModifierListNode, name 
 }
 
 func (node *InterfaceDeclaration) ForEachChild(v Visitor) bool {
-	return visit(v, node.jsDocs) || visit(v, node.modifiers) || visit(v, node.name) || visit(v, node.typeParameters) ||
+	return visit(v, node.modifiers) || visit(v, node.name) || visit(v, node.typeParameters) ||
 		visitNodes(v, node.heritageClauses) || visitNodes(v, node.members)
 }
 
@@ -1771,7 +1791,6 @@ type TypeAliasDeclaration struct {
 	ExportableBase
 	ModifiersBase
 	LocalsContainerBase
-	HasJSDocBase
 	name           *IdentifierNode
 	typeParameters *TypeParameterListNode
 	typeNode       *TypeNode
@@ -1787,7 +1806,7 @@ func (f *NodeFactory) NewTypeAliasDeclaration(modifiers *ModifierListNode, name 
 }
 
 func (node *TypeAliasDeclaration) ForEachChild(v Visitor) bool {
-	return visit(v, node.jsDocs) || visit(v, node.modifiers) || visit(v, node.name) || visit(v, node.typeParameters) || visit(v, node.typeNode)
+	return visit(v, node.modifiers) || visit(v, node.name) || visit(v, node.typeParameters) || visit(v, node.typeNode)
 }
 
 func (node *TypeAliasDeclaration) Name() *DeclarationName                 { return node.name }
@@ -1802,7 +1821,6 @@ func isTypeAliasDeclaration(node *Node) bool {
 type EnumMember struct {
 	NodeBase
 	NamedMemberBase
-	HasJSDocBase
 	initializer *Node // Optional
 }
 
@@ -1814,7 +1832,7 @@ func (f *NodeFactory) NewEnumMember(name *PropertyName, initializer *Node) *Node
 }
 
 func (node *EnumMember) ForEachChild(v Visitor) bool {
-	return visit(v, node.jsDocs) || visit(v, node.name) || visit(v, node.initializer)
+	return visit(v, node.name) || visit(v, node.initializer)
 }
 
 func (node *EnumMember) Name() *DeclarationName {
@@ -1828,7 +1846,6 @@ type EnumDeclaration struct {
 	DeclarationBase
 	ExportableBase
 	ModifiersBase
-	HasJSDocBase
 	name    *IdentifierNode
 	members []*EnumMemberNode
 }
@@ -1842,7 +1859,7 @@ func (f *NodeFactory) NewEnumDeclaration(modifiers *ModifierListNode, name *Iden
 }
 
 func (node *EnumDeclaration) ForEachChild(v Visitor) bool {
-	return visit(v, node.jsDocs) || visit(v, node.modifiers) || visit(v, node.name) || visitNodes(v, node.members)
+	return visit(v, node.modifiers) || visit(v, node.name) || visitNodes(v, node.members)
 }
 
 func (node *EnumDeclaration) Name() *DeclarationName {
@@ -1915,7 +1932,6 @@ type ImportEqualsDeclaration struct {
 	DeclarationBase
 	ExportableBase
 	ModifiersBase
-	HasJSDocBase
 	modifiers  *ModifierListNode
 	isTypeOnly bool
 	name       *IdentifierNode
@@ -1934,7 +1950,7 @@ func (f *NodeFactory) NewImportEqualsDeclaration(modifiers *ModifierListNode, is
 }
 
 func (node *ImportEqualsDeclaration) ForEachChild(v Visitor) bool {
-	return visit(v, node.jsDocs) || visit(v, node.modifiers) || visit(v, node.name) || visit(v, node.moduleReference)
+	return visit(v, node.modifiers) || visit(v, node.name) || visit(v, node.moduleReference)
 }
 
 func (node *ImportEqualsDeclaration) Name() *DeclarationName {
@@ -2103,7 +2119,6 @@ type ExportAssignment struct {
 	StatementBase
 	DeclarationBase
 	ModifiersBase
-	HasJSDocBase
 	isExportEquals bool
 	expression     *Node
 }
@@ -2117,7 +2132,7 @@ func (f *NodeFactory) NewExportAssignment(modifiers *ModifierListNode, isExportE
 }
 
 func (node *ExportAssignment) ForEachChild(v Visitor) bool {
-	return visit(v, node.jsDocs) || visit(v, node.modifiers) || visit(v, node.expression)
+	return visit(v, node.modifiers) || visit(v, node.expression)
 }
 
 func isExportAssignment(node *Node) bool {
@@ -2130,7 +2145,6 @@ type NamespaceExportDeclaration struct {
 	StatementBase
 	DeclarationBase
 	ModifiersBase
-	HasJSDocBase
 	name *IdentifierNode
 }
 
@@ -2142,7 +2156,7 @@ func (f *NodeFactory) NewNamespaceExportDeclaration(modifiers *ModifierListNode,
 }
 
 func (node *NamespaceExportDeclaration) ForEachChild(v Visitor) bool {
-	return visit(v, node.jsDocs) || visit(v, node.modifiers) || visit(v, node.name)
+	return visit(v, node.modifiers) || visit(v, node.name)
 }
 
 func (node *NamespaceExportDeclaration) Name() *DeclarationName {
@@ -2159,7 +2173,6 @@ type ExportDeclaration struct {
 	StatementBase
 	DeclarationBase
 	ModifiersBase
-	HasJSDocBase
 	isTypeOnly      bool
 	exportClause    *NamedExportBindings  // Optional
 	moduleSpecifier *Node                 // Optional
@@ -2177,7 +2190,7 @@ func (f *NodeFactory) NewExportDeclaration(modifiers *ModifierListNode, isTypeOn
 }
 
 func (node *ExportDeclaration) ForEachChild(v Visitor) bool {
-	return visit(v, node.jsDocs) || visit(v, node.modifiers) || visit(v, node.exportClause) || visit(v, node.moduleSpecifier) || visit(v, node.attributes)
+	return visit(v, node.modifiers) || visit(v, node.exportClause) || visit(v, node.moduleSpecifier) || visit(v, node.attributes)
 }
 
 func isExportDeclaration(node *Node) bool {
@@ -2233,7 +2246,6 @@ type ExportSpecifier struct {
 	NodeBase
 	DeclarationBase
 	ExportableBase
-	HasJSDocBase
 	isTypeOnly   bool
 	propertyName *ModuleExportName // Optional, name preceding 'as' keyword
 	name         *ModuleExportName
@@ -2248,7 +2260,7 @@ func (f *NodeFactory) NewExportSpecifier(isTypeOnly bool, propertyName *ModuleEx
 }
 
 func (node *ExportSpecifier) ForEachChild(v Visitor) bool {
-	return visit(v, node.jsDocs) || visit(v, node.propertyName) || visit(v, node.name)
+	return visit(v, node.propertyName) || visit(v, node.name)
 }
 
 func (node *ExportSpecifier) Name() *DeclarationName {
@@ -2298,7 +2310,7 @@ func (f *NodeFactory) NewCallSignatureDeclaration(typeParameters *TypeParameterL
 }
 
 func (node *CallSignatureDeclaration) ForEachChild(v Visitor) bool {
-	return visit(v, node.jsDocs) || visit(v, node.typeParameters) || visitNodes(v, node.parameters) || visit(v, node.returnType)
+	return visit(v, node.typeParameters) || visitNodes(v, node.parameters) || visit(v, node.returnType)
 }
 
 func isCallSignatureDeclaration(node *Node) bool {
@@ -2323,7 +2335,7 @@ func (f *NodeFactory) NewConstructSignatureDeclaration(typeParameters *TypeParam
 }
 
 func (node *ConstructSignatureDeclaration) ForEachChild(v Visitor) bool {
-	return visit(v, node.jsDocs) || visit(v, node.typeParameters) || visitNodes(v, node.parameters) || visit(v, node.returnType)
+	return visit(v, node.typeParameters) || visitNodes(v, node.parameters) || visit(v, node.returnType)
 }
 
 // ConstructorDeclaration
@@ -2348,7 +2360,7 @@ func (f *NodeFactory) NewConstructorDeclaration(modifiers *ModifierListNode, typ
 }
 
 func (node *ConstructorDeclaration) ForEachChild(v Visitor) bool {
-	return visit(v, node.jsDocs) || visit(v, node.modifiers) || visit(v, node.typeParameters) || visitNodes(v, node.parameters) || visit(v, node.returnType) || visit(v, node.body)
+	return visit(v, node.modifiers) || visit(v, node.typeParameters) || visitNodes(v, node.parameters) || visit(v, node.returnType) || visit(v, node.body)
 }
 
 func isConstructorDeclaration(node *Node) bool {
@@ -2368,7 +2380,7 @@ type AccessorDeclarationBase struct {
 }
 
 func (node *AccessorDeclarationBase) ForEachChild(v Visitor) bool {
-	return visit(v, node.jsDocs) || visit(v, node.modifiers) || visit(v, node.name) || visit(v, node.typeParameters) || visitNodes(v, node.parameters) ||
+	return visit(v, node.modifiers) || visit(v, node.name) || visit(v, node.typeParameters) || visitNodes(v, node.parameters) ||
 		visit(v, node.returnType) || visit(v, node.body)
 }
 
@@ -2436,7 +2448,7 @@ func (f *NodeFactory) NewIndexSignatureDeclaration(modifiers *Node, parameters [
 }
 
 func (node *IndexSignatureDeclaration) ForEachChild(v Visitor) bool {
-	return visit(v, node.jsDocs) || visit(v, node.modifiers) || visitNodes(v, node.parameters) || visit(v, node.returnType)
+	return visit(v, node.modifiers) || visitNodes(v, node.parameters) || visit(v, node.returnType)
 }
 
 func isIndexSignatureDeclaration(node *Node) bool {
@@ -2464,7 +2476,7 @@ func (f *NodeFactory) NewMethodSignatureDeclaration(modifiers *Node, name *Node,
 }
 
 func (node *MethodSignatureDeclaration) ForEachChild(v Visitor) bool {
-	return visit(v, node.jsDocs) || visit(v, node.modifiers) || visit(v, node.name) || visit(v, node.postfixToken) || visit(v, node.typeParameters) ||
+	return visit(v, node.modifiers) || visit(v, node.name) || visit(v, node.postfixToken) || visit(v, node.typeParameters) ||
 		visitNodes(v, node.parameters) || visit(v, node.returnType)
 }
 
@@ -2497,7 +2509,7 @@ func (f *NodeFactory) NewMethodDeclaration(modifiers *Node, asteriskToken *Node,
 }
 
 func (node *MethodDeclaration) ForEachChild(v Visitor) bool {
-	return visit(v, node.jsDocs) || visit(v, node.modifiers) || visit(v, node.asteriskToken) || visit(v, node.name) || visit(v, node.postfixToken) ||
+	return visit(v, node.modifiers) || visit(v, node.asteriskToken) || visit(v, node.name) || visit(v, node.postfixToken) ||
 		visit(v, node.typeParameters) || visitNodes(v, node.parameters) || visit(v, node.returnType) || visit(v, node.body)
 }
 
@@ -2511,7 +2523,6 @@ type PropertySignatureDeclaration struct {
 	NodeBase
 	NamedMemberBase
 	TypeElementBase
-	HasJSDocBase
 	typeNode    *Node
 	initializer *Node // For error reporting purposes
 }
@@ -2527,7 +2538,7 @@ func (f *NodeFactory) NewPropertySignatureDeclaration(modifiers *Node, name *Nod
 }
 
 func (node *PropertySignatureDeclaration) ForEachChild(v Visitor) bool {
-	return visit(v, node.jsDocs) || visit(v, node.modifiers) || visit(v, node.name) || visit(v, node.postfixToken) || visit(v, node.typeNode) || visit(v, node.initializer)
+	return visit(v, node.modifiers) || visit(v, node.name) || visit(v, node.postfixToken) || visit(v, node.typeNode) || visit(v, node.initializer)
 }
 
 func isPropertySignatureDeclaration(node *Node) bool {
@@ -2540,7 +2551,6 @@ type PropertyDeclaration struct {
 	NodeBase
 	NamedMemberBase
 	ClassElementBase
-	HasJSDocBase
 	typeNode    *Node // Optional
 	initializer *Node // Optional
 }
@@ -2556,7 +2566,7 @@ func (f *NodeFactory) NewPropertyDeclaration(modifiers *Node, name *Node, postfi
 }
 
 func (node *PropertyDeclaration) ForEachChild(v Visitor) bool {
-	return visit(v, node.jsDocs) || visit(v, node.modifiers) || visit(v, node.name) || visit(v, node.postfixToken) || visit(v, node.typeNode) || visit(v, node.initializer)
+	return visit(v, node.modifiers) || visit(v, node.name) || visit(v, node.postfixToken) || visit(v, node.typeNode) || visit(v, node.initializer)
 }
 
 func isPropertyDeclaration(node *Node) bool {
@@ -2569,7 +2579,6 @@ type SemicolonClassElement struct {
 	NodeBase
 	DeclarationBase
 	ClassElementBase
-	HasJSDocBase
 }
 
 func (f *NodeFactory) NewSemicolonClassElement() *Node {
@@ -2730,7 +2739,6 @@ func (f *NodeFactory) NewNoSubstitutionTemplateLiteral(text string) *Node {
 type BinaryExpression struct {
 	ExpressionBase
 	DeclarationBase
-	HasJSDocBase
 	left          *Node
 	operatorToken *Node
 	right         *Node
@@ -2745,7 +2753,7 @@ func (f *NodeFactory) NewBinaryExpression(left *Node, operatorToken *Node, right
 }
 
 func (node *BinaryExpression) ForEachChild(v Visitor) bool {
-	return visit(v, node.jsDocs) || visit(v, node.left) || visit(v, node.operatorToken) || visit(v, node.right)
+	return visit(v, node.left) || visit(v, node.operatorToken) || visit(v, node.right)
 }
 
 // PrefixUnaryExpression
@@ -2832,7 +2840,7 @@ func (f *NodeFactory) NewArrowFunction(modifiers *Node, typeParameters *Node, pa
 }
 
 func (node *ArrowFunction) ForEachChild(v Visitor) bool {
-	return visit(v, node.jsDocs) || visit(v, node.modifiers) || visit(v, node.typeParameters) || visitNodes(v, node.parameters) ||
+	return visit(v, node.modifiers) || visit(v, node.typeParameters) || visitNodes(v, node.parameters) ||
 		visit(v, node.returnType) || visit(v, node.equalsGreaterThanToken) || visit(v, node.body)
 }
 
@@ -2869,7 +2877,7 @@ func (f *NodeFactory) NewFunctionExpression(modifiers *Node, asteriskToken *Node
 }
 
 func (node *FunctionExpression) ForEachChild(v Visitor) bool {
-	return visit(v, node.jsDocs) || visit(v, node.modifiers) || visit(v, node.asteriskToken) || visit(v, node.name) || visit(v, node.typeParameters) ||
+	return visit(v, node.modifiers) || visit(v, node.asteriskToken) || visit(v, node.name) || visit(v, node.typeParameters) ||
 		visitNodes(v, node.parameters) || visit(v, node.returnType) || visit(v, node.body)
 }
 
@@ -2950,7 +2958,6 @@ func (node *ConditionalExpression) ForEachChild(v Visitor) bool {
 type PropertyAccessExpression struct {
 	ExpressionBase
 	FlowNodeBase
-	HasJSDocBase
 	expression       *Node
 	questionDotToken *Node
 	name             *Node
@@ -2967,7 +2974,7 @@ func (f *NodeFactory) NewPropertyAccessExpression(expression *Node, questionDotT
 }
 
 func (node *PropertyAccessExpression) ForEachChild(v Visitor) bool {
-	return visit(v, node.jsDocs) || visit(v, node.expression) || visit(v, node.questionDotToken) || visit(v, node.name)
+	return visit(v, node.expression) || visit(v, node.questionDotToken) || visit(v, node.name)
 }
 
 func (node *PropertyAccessExpression) Name() *DeclarationName { return node.name }
@@ -2981,7 +2988,6 @@ func isPropertyAccessExpression(node *Node) bool {
 type ElementAccessExpression struct {
 	ExpressionBase
 	FlowNodeBase
-	HasJSDocBase
 	expression         *Node
 	questionDotToken   *Node
 	argumentExpression *Node
@@ -2998,7 +3004,7 @@ func (f *NodeFactory) NewElementAccessExpression(expression *Node, questionDotTo
 }
 
 func (node *ElementAccessExpression) ForEachChild(v Visitor) bool {
-	return visit(v, node.jsDocs) || visit(v, node.expression) || visit(v, node.questionDotToken) || visit(v, node.argumentExpression)
+	return visit(v, node.expression) || visit(v, node.questionDotToken) || visit(v, node.argumentExpression)
 }
 
 func isElementAccessExpression(node *Node) bool {
@@ -3184,7 +3190,6 @@ func (node *TaggedTemplateExpression) ForEachChild(v Visitor) bool {
 
 type ParenthesizedExpression struct {
 	ExpressionBase
-	HasJSDocBase
 	expression *Node
 }
 
@@ -3195,7 +3200,7 @@ func (f *NodeFactory) NewParenthesizedExpression(expression *Node) *Node {
 }
 
 func (node *ParenthesizedExpression) ForEachChild(v Visitor) bool {
-	return visit(v, node.jsDocs) || visit(v, node.expression)
+	return visit(v, node.expression)
 }
 
 func isParenthesizedExpression(node *Node) bool {
@@ -3226,7 +3231,6 @@ func (node *ArrayLiteralExpression) ForEachChild(v Visitor) bool {
 type ObjectLiteralExpression struct {
 	ExpressionBase
 	DeclarationBase
-	HasJSDocBase
 	properties []*Node
 	multiLine  bool
 }
@@ -3240,7 +3244,7 @@ func (f *NodeFactory) NewObjectLiteralExpression(properties []*Node, multiLine b
 }
 
 func (node *ObjectLiteralExpression) ForEachChild(v Visitor) bool {
-	return visit(v, node.jsDocs) || visitNodes(v, node.properties)
+	return visitNodes(v, node.properties)
 }
 
 func isObjectLiteralExpression(node *Node) bool {
@@ -3256,7 +3260,6 @@ type ObjectLiteralElementBase struct{}
 type SpreadAssignment struct {
 	NodeBase
 	ObjectLiteralElementBase
-	HasJSDocBase
 	expression *Node
 }
 
@@ -3267,7 +3270,7 @@ func (f *NodeFactory) NewSpreadAssignment(expression *Node) *Node {
 }
 
 func (node *SpreadAssignment) ForEachChild(v Visitor) bool {
-	return visit(v, node.jsDocs) || visit(v, node.expression)
+	return visit(v, node.expression)
 }
 
 // PropertyAssignment
@@ -3276,7 +3279,6 @@ type PropertyAssignment struct {
 	NodeBase
 	NamedMemberBase
 	ObjectLiteralElementBase
-	HasJSDocBase
 	initializer *Node
 }
 
@@ -3290,7 +3292,7 @@ func (f *NodeFactory) NewPropertyAssignment(modifiers *Node, name *Node, postfix
 }
 
 func (node *PropertyAssignment) ForEachChild(v Visitor) bool {
-	return visit(v, node.jsDocs) || visit(v, node.modifiers) || visit(v, node.name) || visit(v, node.postfixToken) || visit(v, node.initializer)
+	return visit(v, node.modifiers) || visit(v, node.name) || visit(v, node.postfixToken) || visit(v, node.initializer)
 }
 
 func isPropertyAssignment(node *Node) bool {
@@ -3303,7 +3305,6 @@ type ShorthandPropertyAssignment struct {
 	NodeBase
 	NamedMemberBase
 	ObjectLiteralElementBase
-	HasJSDocBase
 	objectAssignmentInitializer *Node // Optional
 }
 
@@ -3317,7 +3318,7 @@ func (f *NodeFactory) NewShorthandPropertyAssignment(modifiers *Node, name *Node
 }
 
 func (node *ShorthandPropertyAssignment) ForEachChild(v Visitor) bool {
-	return visit(v, node.jsDocs) || visit(v, node.modifiers) || visit(v, node.name) || visit(v, node.postfixToken) || visit(v, node.objectAssignmentInitializer)
+	return visit(v, node.modifiers) || visit(v, node.name) || visit(v, node.postfixToken) || visit(v, node.objectAssignmentInitializer)
 }
 
 func isShorthandPropertyAssignment(node *Node) bool {
@@ -3936,7 +3937,7 @@ type FunctionOrConstructorTypeNodeBase struct {
 }
 
 func (node *FunctionOrConstructorTypeNodeBase) ForEachChild(v Visitor) bool {
-	return visit(v, node.jsDocs) || visit(v, node.modifiers) || visit(v, node.typeParameters) || visitNodes(v, node.parameters) || visit(v, node.returnType)
+	return visit(v, node.modifiers) || visit(v, node.typeParameters) || visitNodes(v, node.parameters) || visit(v, node.returnType)
 }
 
 // FunctionTypeNode
@@ -4513,13 +4514,12 @@ func (f *NodeFactory) NewJSDocUnknownType() *Node {
 
 type JSDocFunctionType struct {
 	TypeNodeBase
-	HasJSDocBase
 	parameters []*ParameterDeclarationNode
 	typeNode   *TypeNode
 }
 
 func (node *JSDocFunctionType) ForEachChild(v Visitor) bool {
-	return visit(v, node.jsDocs) || visitNodes(v, node.parameters) || visit(v, node.typeNode)
+	return visitNodes(v, node.parameters) || visit(v, node.typeNode)
 }
 
 func (f *NodeFactory) NewJSDocFunctionType(parameters []*ParameterDeclarationNode, typeNode *TypeNode) *Node {
@@ -5110,6 +5110,8 @@ type SourceFile struct {
 	moduleAugmentations         []*ModuleName
 	patternAmbientModules       []PatternAmbientModule
 	ambientModuleNames          []string
+	jsdocCache                  map[*Node]*JSDocListNode
+	jsdocCacheMu                sync.Mutex
 }
 
 func (f *NodeFactory) NewSourceFile(text string, fileName string, statements []*Node) *Node {
