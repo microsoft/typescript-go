@@ -1811,8 +1811,11 @@ func isConflictMarkerTrivia(text string, pos int) bool {
 	}
 
 	// Conflict markers must be at the start of a line.
-	prev, _ := utf8.DecodeLastRuneInString(text[:pos-2])
-	if pos == 0 || isLineBreak(prev) || isLineBreak(rune(text[pos-1])) {
+	var prev rune
+	if pos >= 2 {
+		prev, _ = utf8.DecodeLastRuneInString(text[:pos-2])
+	}
+	if pos == 0 || isLineBreak(prev) || pos >= 1 && isLineBreak(rune(text[pos-1])) {
 		ch := text[pos]
 
 		if (pos + mergeConflictMarkerLength) < len(text) {
