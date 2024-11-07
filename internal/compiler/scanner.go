@@ -1726,7 +1726,7 @@ func skipTriviaEx(text string, pos int, options *skipTriviaOptions) int {
 	canConsumeStar := false
 	// Keep in sync with couldStartTrivia
 	for {
-		ch := text[pos]
+		ch, size := utf8.DecodeRuneInString(text[pos:])
 		switch ch {
 		case '\r':
 			if text[pos+1] == '\n' {
@@ -1750,10 +1750,11 @@ func skipTriviaEx(text string, pos int, options *skipTriviaOptions) int {
 			if text[pos+1] == '/' {
 				pos += 2
 				for pos < len(text) {
-					if isLineBreak(rune(text[pos])) {
+					ch, size := utf8.DecodeRuneInString(text[pos:])
+					if isLineBreak(ch) {
 						break
 					}
-					pos++
+					pos += size
 				}
 				canConsumeStar = false
 				continue
@@ -1765,7 +1766,8 @@ func skipTriviaEx(text string, pos int, options *skipTriviaOptions) int {
 						pos += 2
 						break
 					}
-					pos++
+					_, size := utf8.DecodeRuneInString(text[pos:])
+					pos += size
 				}
 				canConsumeStar = false
 				continue
@@ -1789,8 +1791,8 @@ func skipTriviaEx(text string, pos int, options *skipTriviaOptions) int {
 				continue
 			}
 		default:
-			if ch > maxAsciiCharacter && (isWhiteSpaceLike(rune(ch))) {
-				pos++
+			if ch > rune(maxAsciiCharacter) && isWhiteSpaceLike(ch) {
+				pos += size
 				continue
 			}
 		}
@@ -1809,7 +1811,8 @@ func isConflictMarkerTrivia(text string, pos int) bool {
 	}
 
 	// Conflict markers must be at the start of a line.
-	if pos == 0 || isLineBreak(rune(text[pos-1])) {
+	prev, _ := utf8.DecodeLastRuneInString(text[:pos-2])
+	if pos == 0 || isLineBreak(prev) || isLineBreak(rune(text[pos-1])) {
 		ch := text[pos]
 
 		if (pos + mergeConflictMarkerLength) < len(text) {
@@ -1826,17 +1829,17 @@ func isConflictMarkerTrivia(text string, pos int) bool {
 	return false
 }
 
-func scanConflictMarkerTrivia(text string, pos int, error func(diag *diagnostics.Message, pos int, len int, args ...any)) int {
+func scanConflictMarkerTrivia(text string, pos int, error func(diag *diagnostics.Message, pos int, length int, args ...any)) int {
 	if error != nil {
 		error(diagnostics.Merge_conflict_marker_encountered, pos, mergeConflictMarkerLength)
 	}
-
-	ch := text[pos]
-	len := len(text)
+	ch, size := utf8.DecodeRuneInString(text[pos:])
+	length := len(text)
 
 	if ch == '<' || ch == '>' {
-		for pos < len && !isLineBreak(rune(text[pos])) {
-			pos++
+		for pos < length && !isLineBreak(ch) {
+			pos += size
+			ch, size = utf8.DecodeRuneInString(text[pos:])
 		}
 	} else {
 		if ch != '|' && ch != '=' {
@@ -1844,9 +1847,9 @@ func scanConflictMarkerTrivia(text string, pos int, error func(diag *diagnostics
 		}
 		// Consume everything from the start of a ||||||| or ======= marker to the start
 		// of the next ======= or >>>>>>> marker.
-		for pos < len {
+		for pos < length {
 			currentChar := text[pos]
-			if (currentChar == '=' || currentChar == '>') && currentChar != ch && isConflictMarkerTrivia(text, pos) {
+			if (currentChar == '=' || currentChar == '>') && rune(currentChar) != ch && isConflictMarkerTrivia(text, pos) {
 				break
 			}
 
@@ -1867,10 +1870,11 @@ func isShebangTrivia(text string, pos int) bool {
 func scanShebangTrivia(text string, pos int) int {
 	pos += 2
 	for pos < len(text) {
-		if isLineBreak(rune(text[pos])) {
+		ch, size := utf8.DecodeRuneInString(text[pos:])
+		if isLineBreak(ch) {
 			break
 		}
-		pos++
+		pos += size
 	}
 	return pos
 }
