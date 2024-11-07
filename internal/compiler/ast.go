@@ -522,14 +522,8 @@ func (n *Node) AsJSDocNullableType() *JSDocNullableType {
 func (n *Node) AsJSDocAllType() *JSDocAllType {
 	return n.data.(*JSDocAllType)
 }
-func (n *Node) AsJSDocUnknownType() *JSDocUnknownType {
-	return n.data.(*JSDocUnknownType)
-}
 func (n *Node) AsJSDocFunctionType() *JSDocFunctionType {
 	return n.data.(*JSDocFunctionType)
-}
-func (n *Node) AsJSDocNamepathType() *JSDocNamepathType {
-	return n.data.(*JSDocNamepathType)
 }
 func (n *Node) AsJSDocVariadicType() *JSDocVariadicType {
 	return n.data.(*JSDocVariadicType)
@@ -555,9 +549,6 @@ func (n *Node) AsJSDocParameterTag() *JSDocParameterTag {
 func (n *Node) AsJSDocReturnTag() *JSDocReturnTag {
 	return n.data.(*JSDocReturnTag)
 }
-func (n *Node) AsJSDocClassTag() *JSDocClassTag {
-	return n.data.(*JSDocClassTag)
-}
 func (n *Node) AsJSDocPublicTag() *JSDocPublicTag {
 	return n.data.(*JSDocPublicTag)
 }
@@ -578,9 +569,6 @@ func (n *Node) AsJSDocDeprecatedTag() *JSDocDeprecatedTag {
 }
 func (n *Node) AsJSDocSeeTag() *JSDocSeeTag {
 	return n.data.(*JSDocSeeTag)
-}
-func (n *Node) AsJSDocThrowsTag() *JSDocThrowsTag {
-	return n.data.(*JSDocThrowsTag)
 }
 func (n *Node) AsJSDocAuthorTag() *JSDocAuthorTag {
 	return n.data.(*JSDocAuthorTag)
@@ -4455,13 +4443,11 @@ func (f *NodeFactory) NewJSDocTypeExpression(typeNode *TypeNode) *Node {
 type JSDocNonNullableType struct {
 	TypeNodeBase
 	typeNode *Node
-	postfix  bool
 }
 
-func (f *NodeFactory) NewJSDocNonNullableType(typeNode *Node, postfix bool) *Node {
+func (f *NodeFactory) NewJSDocNonNullableType(typeNode *Node) *Node {
 	data := &JSDocNonNullableType{}
 	data.typeNode = typeNode
-	data.postfix = postfix
 	return f.NewNode(SyntaxKindJSDocNonNullableType, data)
 }
 
@@ -4474,13 +4460,11 @@ func (node *JSDocNonNullableType) ForEachChild(v Visitor) bool {
 type JSDocNullableType struct {
 	TypeNodeBase
 	typeNode *Node
-	postfix  bool
 }
 
-func (f *NodeFactory) NewJSDocNullableType(typeNode *Node, postfix bool) *Node {
+func (f *NodeFactory) NewJSDocNullableType(typeNode *Node) *Node {
 	data := &JSDocNullableType{}
 	data.typeNode = typeNode
-	data.postfix = postfix
 	return f.NewNode(SyntaxKindJSDocNullableType, data)
 }
 
@@ -4497,17 +4481,6 @@ type JSDocAllType struct {
 func (f *NodeFactory) NewJSDocAllType() *Node {
 	result := &JSDocAllType{}
 	return f.NewNode(SyntaxKindJSDocAllType, result)
-}
-
-// JSDocUnknownType
-
-type JSDocUnknownType struct {
-	TypeNodeBase
-}
-
-func (f *NodeFactory) NewJSDocUnknownType() *Node {
-	result := &JSDocUnknownType{}
-	return f.NewNode(SyntaxKindJSDocUnknownType, result)
 }
 
 // JSDocFunctionType
@@ -4527,17 +4500,6 @@ func (f *NodeFactory) NewJSDocFunctionType(parameters []*ParameterDeclarationNod
 	result.parameters = parameters
 	result.typeNode = typeNode
 	return f.NewNode(SyntaxKindJSDocFunctionType, result)
-}
-
-// JSDocNamepathType
-
-type JSDocNamepathType struct {
-	TypeNodeBase
-}
-
-func (f *NodeFactory) NewJSDocNamepathType() *Node {
-	result := &JSDocNamepathType{}
-	return f.NewNode(SyntaxKindJSDocNamepathType, result)
 }
 
 // JSDocVariadicType
@@ -4686,21 +4648,6 @@ func (node *JSDocReturnTag) ForEachChild(v Visitor) bool {
 	return visit(v, node.tagName) || visit(v, node.typeExpression) || visit(v, node.comment)
 }
 
-// JSDocClassTag
-type JSDocClassTag struct {
-	JSDocTagBase
-}
-
-func NewJSDocClassTag(tagName *IdentifierNode, comment *JSDocCommentListNode) *JSDocClassTag {
-	result := &JSDocClassTag{}
-	result.tagName = tagName
-	result.comment = comment
-	return result
-}
-func (node *JSDocClassTag) ForEachChild(v Visitor) bool {
-	return visit(v, node.tagName) || visit(v, node.comment)
-}
-
 // JSDocPublicTag
 type JSDocPublicTag struct {
 	JSDocTagBase
@@ -4812,24 +4759,6 @@ func NewJSDocSeeTag(tagName *IdentifierNode, nameExpression *TypeNode, comment *
 
 func (node *JSDocSeeTag) ForEachChild(v Visitor) bool {
 	return visit(v, node.tagName) || visit(v, node.nameExpression) || visit(v, node.comment)
-}
-
-// JSDocThrowsTag
-type JSDocThrowsTag struct {
-	JSDocTagBase
-	typeExpression *TypeNode
-}
-
-func NewJSDocThrowsTag(tagName *IdentifierNode, typeExpression *TypeNode, comment *JSDocCommentListNode) *JSDocThrowsTag {
-	result := &JSDocThrowsTag{}
-	result.tagName = tagName
-	result.typeExpression = typeExpression
-	result.comment = comment
-	return result
-}
-
-func (node *JSDocThrowsTag) ForEachChild(v Visitor) bool {
-	return visit(v, node.tagName) || visit(v, node.typeExpression) || visit(v, node.comment)
 }
 
 // JSDocAuthorTag
