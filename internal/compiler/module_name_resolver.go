@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	"github.com/microsoft/typescript-go/internal/compiler/diagnostics"
-	"github.com/microsoft/typescript-go/internal/sliceutil"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
@@ -339,6 +338,6 @@ func getConditions(options *CompilerOptions, resolutionMode ResolutionMode) []st
 	if moduleResolution != ModuleResolutionKindBundler {
 		conditions = append(conditions, "node")
 	}
-	conditions = sliceutil.Concatenate(conditions, options.CustomConditions)
+	conditions = concatenate(conditions, options.CustomConditions)
 	return conditions
 }
