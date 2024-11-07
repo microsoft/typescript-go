@@ -1,10 +1,10 @@
 package tspath
 
 import (
-	"regexp"
 	"strings"
 
 	"github.com/microsoft/typescript-go/internal/stringutil"
+	"github.com/microsoft/typescript-go/internal/utils"
 )
 
 type Path string
@@ -14,8 +14,6 @@ type Path string
 // we expect the host to correctly handle paths in our specified format.
 const directorySeparator = '/'
 const urlSchemeSeparator = "://"
-
-var relativePathSegmentRegExp = regexp.MustCompile(`//|(?:^|/)\.\.?(?:$|/)`)
 
 //// Path Tests
 
@@ -300,6 +298,7 @@ func getNormalizedAbsolutePath(fileName string, currentDirectory string) string 
 func normalizePath(path string) string {
 	path = normalizeSlashes(path)
 	// Most paths don't require normalization
+	relativePathSegmentRegExp := utils.MakeRegexp(`//|(?:^|/)\.\.?(?:$|/)`)
 	if !relativePathSegmentRegExp.MatchString(path) {
 		return path
 	}

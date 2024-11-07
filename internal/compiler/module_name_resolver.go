@@ -7,6 +7,7 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/compiler/diagnostics"
 	"github.com/microsoft/typescript-go/internal/tspath"
+	"github.com/microsoft/typescript-go/internal/utils"
 )
 
 type ModuleResolutionHost interface {
@@ -338,6 +339,6 @@ func getConditions(options *CompilerOptions, resolutionMode ResolutionMode) []st
 	if moduleResolution != ModuleResolutionKindBundler {
 		conditions = append(conditions, "node")
 	}
-	conditions = concatenate(conditions, options.CustomConditions)
+	conditions = utils.Concatenate(conditions, options.CustomConditions)
 	return conditions
 }
