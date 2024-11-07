@@ -4430,9 +4430,9 @@ func (f *NodeFactory) NewImportAttributes(token SyntaxKind, attributes []*Node, 
 	return f.NewNode(SyntaxKindImportAttributes, data)
 }
 
-func (f *NodeFactory) UpdateImportAttributes(node *Node, attributes []*Node, multiLine bool) *Node {
+func (f *NodeFactory) UpdateImportAttributes(node *Node, attributes []*Node) *Node {
 	if n := node.AsImportAttributes(); !slices.Equal(attributes, n.attributes) {
-		return f.UpdateNode(f.NewImportAttributes(n.token, attributes, multiLine), node)
+		return f.UpdateNode(f.NewImportAttributes(n.token, attributes, n.multiLine), node)
 	}
 	return node
 }
