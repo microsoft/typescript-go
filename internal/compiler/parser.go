@@ -79,6 +79,7 @@ func ParseJSONText(fileName string, sourceText string) *SourceFile {
 	p.nextToken()
 	pos := p.nodePos()
 	var expressions []*Node
+
 	for p.token != SyntaxKindEndOfFile {
 		var expression *Node
 		switch p.token {
@@ -117,7 +118,9 @@ func ParseJSONText(fileName string, sourceText string) *SourceFile {
 		p.finishNode(arr, pos)
 		statement = p.factory.NewExpressionStatement(arr)
 	}
+
 	p.finishNode(statement, pos)
+	p.parseExpectedToken(SyntaxKindEndOfFile)
 	node := p.factory.NewSourceFile(p.sourceText, p.fileName, []*Node{statement})
 	p.finishNode(node, pos)
 	result := node.AsSourceFile()
@@ -216,6 +219,10 @@ func (p *Parser) parseSourceFileWorker() *SourceFile {
 	}
 	pos := p.nodePos()
 	statements := p.parseList(PCSourceElements, (*Parser).parseStatement)
+	eof := p.parseTokenNode()
+	if eof.kind != SyntaxKindEndOfFile {
+		panic("Expected end of file token from scanner.")
+	}
 	node := p.factory.NewSourceFile(p.sourceText, p.fileName, statements)
 	p.finishNode(node, pos)
 	result := node.AsSourceFile()
