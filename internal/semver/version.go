@@ -143,9 +143,9 @@ func comparePreReleaseIdentifier(left, right string) int {
 	// > Precedence for two pre-release versions with the same major, minor, and patch version
 	// > MUST be determined by comparing each dot separated identifier from left to right until
 	// > a difference is found [...]
-	r := strings.Compare(left, right)
-	if r == 0 {
-		return r
+	compareResult := strings.Compare(left, right)
+	if compareResult == 0 {
+		return compareResult
 	}
 
 	leftIsNumeric := numericIdentifierRegExp.MatchString(left)
@@ -170,7 +170,7 @@ func comparePreReleaseIdentifier(left, right string) int {
 
 	// https://semver.org/#spec-item-11
 	// > identifiers with letters or hyphens are compared lexically in ASCII sort order.
-	return strings.Compare(left, right)
+	return compareResult
 }
 
 func (v *Version) String() string {
