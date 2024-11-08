@@ -6,8 +6,6 @@ import (
 	"gotest.tools/v3/assert"
 )
 
-// Versions
-
 func TestTryParseSemver(t *testing.T) {
 	var tests = []struct {
 		in  string
