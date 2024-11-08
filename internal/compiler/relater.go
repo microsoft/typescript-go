@@ -233,6 +233,7 @@ func (c *Checker) checkTypeRelatedToEx(
 	r := Relater{}
 	r.c = c
 	r.relation = relation
+	r.errorNode = errorNode
 	r.relationCount = (16_000_000 - relation.size()) / 8
 	result := r.isRelatedToEx(source, target, RecursionFlagsBoth, errorNode != nil /*reportErrors*/, headMessage, IntersectionStateNone)
 	if r.overflow {
@@ -270,7 +271,7 @@ func (c *Checker) checkTypeRelatedToEx(
 		// 		}
 		// 	}
 		// }
-		diag := NewDiagnosticForNodeFromMessageChain(errorNode, messageChain).setRelatedInfo(r.relatedInfo)
+		diag := NewDiagnosticForNodeFromMessageChain(r.errorNode, messageChain).setRelatedInfo(r.relatedInfo)
 		if errorOutputContainer != nil {
 			errorOutputContainer.errors = append(errorOutputContainer.errors, diag)
 		}
@@ -508,20 +509,82 @@ func getRecursionIdentity(t *Type) RecursionId {
 }
 
 func (c *Checker) getBestMatchingType(source *Type, target *Type, isRelatedTo func(source *Type, target *Type) Ternary) *Type {
-	// !!!
-	// return c.findMatchingDiscriminantType(source, target, isRelatedTo) ||
-	// 	c.findMatchingTypeReferenceOrTypeAliasReference(source, target) ||
-	// 	c.findBestTypeForObjectLiteral(source, target) ||
-	// 	c.findBestTypeForInvokable(source, target) ||
-	// 	c.findMostOverlappyType(source, target)
+	if t := c.findMatchingDiscriminantType(source, target, isRelatedTo); t != nil {
+		return t
+	}
+	if t := c.findMatchingTypeReferenceOrTypeAliasReference(source, target); t != nil {
+		return t
+	}
+	if t := c.findBestTypeForObjectLiteral(source, target); t != nil {
+		return t
+	}
+	if t := c.findBestTypeForInvokable(source, target, SignatureKindCall); t != nil {
+		return t
+	}
+	if t := c.findBestTypeForInvokable(source, target, SignatureKindConstruct); t != nil {
+		return t
+	}
+	return c.findMostOverlappyType(source, target)
+}
+
+func (c *Checker) findMatchingTypeReferenceOrTypeAliasReference(source *Type, unionTarget *Type) *Type {
+	sourceObjectFlags := source.objectFlags
+	if sourceObjectFlags&(ObjectFlagsReference|ObjectFlagsAnonymous) != 0 && unionTarget.flags&TypeFlagsUnion != 0 {
+		for _, target := range unionTarget.Types() {
+			if target.flags&TypeFlagsObject != 0 {
+				overlapObjFlags := sourceObjectFlags & target.objectFlags
+				if overlapObjFlags&ObjectFlagsReference != 0 && source.Target() == target.Target() {
+					return target
+				}
+				if overlapObjFlags&ObjectFlagsAnonymous != 0 && source.alias != nil && target.alias != nil && source.alias.symbol == target.alias.symbol {
+					return target
+				}
+			}
+		}
+	}
 	return nil
 }
 
-func (c *Checker) getMatchingUnionConstituentForType(unionType *Type, t *Type) *Type {
-	// !!!
-	// keyPropertyName := c.getKeyPropertyName(unionType)
-	// propType := keyPropertyName && c.getTypeOfPropertyOfType(t, keyPropertyName)
-	// return propType && c.getConstituentTypeForKeyType(unionType, propType)
+func (c *Checker) findBestTypeForInvokable(source *Type, unionTarget *Type, kind SignatureKind) *Type {
+	if len(c.getSignaturesOfType(source, kind)) != 0 {
+		return utils.Find(unionTarget.Types(), func(t *Type) bool { return len(c.getSignaturesOfType(t, kind)) != 0 })
+	}
+	return nil
+}
+
+func (c *Checker) findMostOverlappyType(source *Type, unionTarget *Type) *Type {
+	var bestMatch *Type
+	if source.flags&(TypeFlagsPrimitive|TypeFlagsInstantiablePrimitive) == 0 {
+		matchingCount := 0
+		for _, target := range unionTarget.Types() {
+			if target.flags&(TypeFlagsPrimitive|TypeFlagsInstantiablePrimitive) == 0 {
+				overlap := c.getIntersectionType([]*Type{c.getIndexType(source), c.getIndexType(target)})
+				if overlap.flags&TypeFlagsIndex != 0 {
+					// perfect overlap of keys
+					return target
+				} else if isUnitType(overlap) || overlap.flags&TypeFlagsUnion != 0 {
+					// We only want to account for literal types otherwise.
+					// If we have a union of index types, it seems likely that we
+					// needed to elaborate between two generic mapped types anyway.
+					var len = 1
+					if overlap.flags&TypeFlagsUnion != 0 {
+						len = utils.CountWhere(overlap.Types(), isUnitType)
+					}
+					if len >= matchingCount {
+						bestMatch = target
+						matchingCount = len
+					}
+				}
+			}
+		}
+	}
+	return bestMatch
+}
+
+func (c *Checker) findBestTypeForObjectLiteral(source *Type, unionTarget *Type) *Type {
+	if source.objectFlags&ObjectFlagsObjectLiteral != 0 && someType(unionTarget, c.isArrayLikeType) {
+		return utils.Find(unionTarget.Types(), func(t *Type) bool { return !c.isArrayLikeType(t) })
+	}
 	return nil
 }
 
@@ -599,6 +662,293 @@ func excludeProperties(properties []*Symbol, excludedProperties set[string]) []*
 	return properties
 }
 
+type TypeDiscriminator struct {
+	c           *Checker
+	props       []*Symbol
+	isRelatedTo func(*Type, *Type) Ternary
+}
+
+func (d *TypeDiscriminator) len() int {
+	return len(d.props)
+}
+
+func (d *TypeDiscriminator) name(index int) string {
+	return d.props[index].name
+}
+
+func (d *TypeDiscriminator) matches(index int, t *Type) bool {
+	propType := d.c.getTypeOfSymbol(d.props[index])
+	for _, s := range propType.Distributed() {
+		if d.isRelatedTo(s, t) != TernaryFalse {
+			return true
+		}
+	}
+	return false
+}
+
+// Keep this up-to-date with the same logic within `getApparentTypeOfContextualType`, since they should behave similarly
+func (c *Checker) findMatchingDiscriminantType(source *Type, target *Type, isRelatedTo func(source *Type, target *Type) Ternary) *Type {
+	if target.flags&TypeFlagsUnion != 0 && source.flags&(TypeFlagsIntersection|TypeFlagsObject) != 0 {
+		if match := c.getMatchingUnionConstituentForType(target, source); match != nil {
+			return match
+		}
+		discriminantProperties := c.findDiscriminantProperties(c.getPropertiesOfType(source), target)
+		discriminator := &TypeDiscriminator{c: c, props: discriminantProperties, isRelatedTo: isRelatedTo}
+		discriminated := c.discriminateTypeByDiscriminableItems(target, discriminator)
+		if discriminated != target {
+			return discriminated
+		}
+	}
+	return nil
+}
+
+func (c *Checker) findDiscriminantProperties(sourceProperties []*Symbol, target *Type) []*Symbol {
+	var result []*Symbol
+	for _, sourceProperty := range sourceProperties {
+		if c.isDiscriminantProperty(target, sourceProperty.name) {
+			result = append(result, sourceProperty)
+		}
+	}
+	return result
+}
+
+func (c *Checker) isDiscriminantProperty(t *Type, name string) bool {
+	if t != nil && t.flags&TypeFlagsUnion != 0 {
+		prop := c.getUnionOrIntersectionProperty(t, name, false /*skipObjectFunctionPropertyAugment*/)
+		if prop != nil && prop.checkFlags&CheckFlagsSyntheticProperty != 0 {
+			if prop.checkFlags&CheckFlagsIsDiscriminantComputed == 0 {
+				prop.checkFlags |= CheckFlagsIsDiscriminantComputed
+				if prop.checkFlags&CheckFlagsNonUniformAndLiteral == CheckFlagsNonUniformAndLiteral && !c.isGenericType(c.getTypeOfSymbol(prop)) {
+					prop.checkFlags |= CheckFlagsIsDiscriminant
+				}
+			}
+			return prop.checkFlags&CheckFlagsIsDiscriminant != 0
+		}
+	}
+	return false
+}
+
+func (c *Checker) getMatchingUnionConstituentForType(unionType *Type, t *Type) *Type {
+	keyPropertyName := c.getKeyPropertyName(unionType)
+	if keyPropertyName == "" {
+		return nil
+	}
+	propType := c.getTypeOfPropertyOfType(t, keyPropertyName)
+	if propType == nil {
+		return nil
+	}
+	return c.getConstituentTypeForKeyType(unionType, propType)
+}
+
+// Return the name of a discriminant property for which it was possible and feasible to construct a map of
+// constituent types keyed by the literal types of the property by that name in each constituent type. Return
+// an empty string if no such discriminant property exists.
+func (c *Checker) getKeyPropertyName(t *Type) string {
+	u := t.AsUnionType()
+	if u.keyPropertyName == "" {
+		u.keyPropertyName, u.constituentMap = c.computeKeyPropertyNameAndMap(t)
+	}
+	if u.keyPropertyName == InternalSymbolNameMissing {
+		return ""
+	}
+	return u.keyPropertyName
+}
+
+// Given a union type for which getKeyPropertyName returned a non-empty string, return the constituent
+// that corresponds to the given key type for that property name.
+func (c *Checker) getConstituentTypeForKeyType(t *Type, keyType *Type) *Type {
+	result := t.AsUnionType().constituentMap[c.getRegularTypeOfLiteralType(keyType)]
+	if result != c.unknownType {
+		return result
+	}
+	return nil
+}
+
+func (c *Checker) computeKeyPropertyNameAndMap(t *Type) (string, map[*Type]*Type) {
+	types := t.Types()
+	if len(types) < 10 || t.objectFlags&ObjectFlagsPrimitiveUnion != 0 || utils.CountWhere(types, isObjectOrInstantiableNonPrimitive) < 10 {
+		return InternalSymbolNameMissing, nil
+	}
+	keyPropertyName := c.getKeyPropertyCandidateName(types)
+	if keyPropertyName == "" {
+		return InternalSymbolNameMissing, nil
+	}
+	mapByKeyProperty := c.mapTypesByKeyProperty(types, keyPropertyName)
+	if mapByKeyProperty == nil {
+		return InternalSymbolNameMissing, nil
+	}
+	return keyPropertyName, mapByKeyProperty
+}
+
+func isObjectOrInstantiableNonPrimitive(t *Type) bool {
+	return t.flags&(TypeFlagsObject|TypeFlagsInstantiableNonPrimitive) != 0
+}
+
+func (c *Checker) getKeyPropertyCandidateName(types []*Type) string {
+	for _, t := range types {
+		if t.flags&(TypeFlagsObject|TypeFlagsInstantiableNonPrimitive) != 0 {
+			for _, p := range c.getPropertiesOfType(t) {
+				if isUnitType(c.getTypeOfSymbol(p)) {
+					return p.name
+				}
+			}
+		}
+	}
+	return ""
+}
+
+// Given a set of constituent types and a property name, create and return a map keyed by the literal
+// types of the property by that name in each constituent type. No map is returned if some key property
+// has a non-literal type or if less than 10 or less than 50% of the constituents have a unique key.
+// Entries with duplicate keys have unknownType as the value.
+func (c *Checker) mapTypesByKeyProperty(types []*Type, keyPropertyName string) map[*Type]*Type {
+	typesByKey := make(map[*Type]*Type)
+	count := 0
+	for _, t := range types {
+		if t.flags&(TypeFlagsObject|TypeFlagsIntersection|TypeFlagsInstantiableNonPrimitive) != 0 {
+			discriminant := c.getTypeOfPropertyOfType(t, keyPropertyName)
+			if discriminant != nil {
+				if !isLiteralType(discriminant) {
+					return nil
+				}
+				duplicate := false
+				for _, d := range discriminant.Distributed() {
+					key := c.getRegularTypeOfLiteralType(d)
+					if existing := typesByKey[key]; existing == nil {
+						typesByKey[key] = t
+					} else if existing != c.unknownType {
+						typesByKey[key] = c.unknownType
+						duplicate = true
+					}
+				}
+				if !duplicate {
+					count++
+				}
+			}
+		}
+	}
+	if count >= 10 && count*2 >= len(types) {
+		return typesByKey
+	}
+	return nil
+}
+
+type Discriminator interface {
+	len() int                        // Number of discriminant properties
+	name(index int) string           // Property name of index-th discriminator
+	matches(index int, t *Type) bool // True if index-th discriminator matches the given type
+}
+
+func (c *Checker) discriminateTypeByDiscriminableItems(target *Type, discriminator Discriminator) *Type {
+	types := target.Types()
+	include := make([]Ternary, len(types))
+	for i, t := range types {
+		if t.flags&TypeFlagsPrimitive == 0 {
+			include[i] = TernaryTrue
+		}
+	}
+	for n := range discriminator.len() {
+		// If the remaining target types include at least one with a matching discriminant, eliminate those that
+		// have non-matching discriminants. This ensures that we ignore erroneous discriminators and gradually
+		// refine the target set without eliminating every constituent (which would lead to `never`).
+		matched := false
+		for i := range types {
+			if include[i] != TernaryFalse {
+				targetType := c.getTypeOfPropertyOrIndexSignatureOfType(types[i], discriminator.name(n))
+				if targetType != nil && discriminator.matches(n, targetType) {
+					matched = true
+				} else {
+					include[i] = TernaryMaybe
+				}
+			}
+		}
+		// Turn each Ternary.Maybe into Ternary.False if there was a match. Otherwise, revert to Ternary.True.
+		for i := range types {
+			if include[i] == TernaryMaybe {
+				if matched {
+					include[i] = TernaryFalse
+				} else {
+					include[i] = TernaryTrue
+				}
+			}
+		}
+	}
+	if slices.Contains(include, TernaryFalse) {
+		var filteredTypes []*Type
+		for i, t := range types {
+			if include[i] == TernaryTrue {
+				filteredTypes = append(filteredTypes, t)
+			}
+		}
+		filtered := c.getUnionTypeEx(filteredTypes, UnionReductionNone, nil, nil)
+		if filtered.flags&TypeFlagsNever == 0 {
+			return filtered
+		}
+	}
+	return target
+}
+
+func (c *Checker) filterPrimitivesIfContainsNonPrimitive(unionType *Type) *Type {
+	if c.maybeTypeOfKind(unionType, TypeFlagsNonPrimitive) {
+		result := c.filterType(unionType, isNonPrimitiveType)
+		if result.flags&TypeFlagsNever == 0 {
+			return result
+		}
+	}
+	return unionType
+}
+
+func isNonPrimitiveType(t *Type) bool {
+	return t.flags&TypeFlagsPrimitive == 0
+}
+
+func (c *Checker) getTypeNamesForErrorDisplay(left *Type, right *Type) (string, string) {
+	var leftStr string
+	if c.symbolValueDeclarationIsContextSensitive(left.symbol) {
+		leftStr = c.typeToStringEx(left, left.symbol.valueDeclaration, TypeFormatFlagsNone)
+	} else {
+		leftStr = c.typeToString(left)
+	}
+	var rightStr string
+	if c.symbolValueDeclarationIsContextSensitive(right.symbol) {
+		rightStr = c.typeToStringEx(right, right.symbol.valueDeclaration, TypeFormatFlagsNone)
+	} else {
+		rightStr = c.typeToString(right)
+	}
+	if leftStr == rightStr {
+		leftStr = c.getTypeNameForErrorDisplay(left)
+		rightStr = c.getTypeNameForErrorDisplay(right)
+	}
+	return leftStr, rightStr
+}
+
+func (c *Checker) getTypeNameForErrorDisplay(t *Type) string {
+	return c.typeToStringEx(t, nil /*enclosingDeclaration*/, TypeFormatFlagsUseFullyQualifiedType)
+}
+
+func (c *Checker) symbolValueDeclarationIsContextSensitive(symbol *Symbol) bool {
+	return symbol != nil && symbol.valueDeclaration != nil && isExpression(symbol.valueDeclaration) && !c.isContextSensitive(symbol.valueDeclaration)
+}
+
+func (c *Checker) typeCouldHaveTopLevelSingletonTypes(t *Type) bool {
+	// Okay, yes, 'boolean' is a union of 'true | false', but that's not useful
+	// in error reporting scenarios. If you need to use this function but that detail matters,
+	// feel free to add a flag.
+	if t.flags&TypeFlagsBoolean != 0 {
+		return false
+	}
+	if t.flags&TypeFlagsUnionOrIntersection != 0 {
+		return utils.Some(t.Types(), c.typeCouldHaveTopLevelSingletonTypes)
+	}
+	if t.flags&TypeFlagsInstantiable != 0 {
+		constraint := c.getConstraintOfType(t)
+		if constraint != nil && constraint != t {
+			return c.typeCouldHaveTopLevelSingletonTypes(constraint)
+		}
+	}
+	return isUnitType(t) || t.flags&TypeFlagsTemplateLiteral != 0 || t.flags&TypeFlagsStringMapping != 0
+}
+
 type errorState struct {
 	errorChain  *ErrorChain
 	relatedInfo []*Diagnostic
@@ -613,6 +963,7 @@ type ErrorChain struct {
 type Relater struct {
 	c              *Checker
 	relation       *Relation
+	errorNode      *Node
 	errorChain     *ErrorChain
 	relatedInfo    []*Diagnostic
 	maybeKeys      []string
@@ -632,7 +983,7 @@ func (r *Relater) isRelatedToSimple(source *Type, target *Type) Ternary {
 }
 
 func (r *Relater) isRelatedTo(source *Type, target *Type, recursionFlags RecursionFlags, reportErrors bool) Ternary {
-	return r.isRelatedToEx(target, source, recursionFlags, reportErrors, nil, IntersectionStateNone)
+	return r.isRelatedToEx(source, target, recursionFlags, reportErrors, nil, IntersectionStateNone)
 }
 
 func (r *Relater) isRelatedToEx(originalSource *Type, originalTarget *Type, recursionFlags RecursionFlags, reportErrors bool, headMessage *diagnostics.Message, intersectionState IntersectionState) Ternary {
@@ -750,7 +1101,145 @@ func (r *Relater) isRelatedToEx(originalSource *Type, originalTarget *Type, recu
 }
 
 func (r *Relater) hasExcessProperties(source *Type, target *Type, reportErrors bool) bool {
-	return false // !!!
+	if !isExcessPropertyCheckTarget(target) || !r.c.noImplicitAny && target.objectFlags&ObjectFlagsJSLiteral != 0 {
+		// Disable excess property checks on JS literals to simulate having an implicit "index signature" - but only outside of noImplicitAny
+		return false
+	}
+	isComparingJsxAttributes := source.objectFlags&ObjectFlagsJsxAttributes != 0
+	if (r.relation == r.c.assignableRelation || r.relation == r.c.comparableRelation) && (r.c.isTypeSubsetOf(r.c.globalObjectType, target) || (!isComparingJsxAttributes && r.c.isEmptyObjectType(target))) {
+		return false
+	}
+	reducedTarget := target
+	var checkTypes []*Type
+	if target.flags&TypeFlagsUnion != 0 {
+		reducedTarget = r.c.findMatchingDiscriminantType(source, target, r.isRelatedToSimple)
+		if reducedTarget == nil {
+			reducedTarget = r.c.filterPrimitivesIfContainsNonPrimitive(target)
+		}
+		checkTypes = reducedTarget.Distributed()
+	}
+	for _, prop := range r.c.getPropertiesOfType(source) {
+		if shouldCheckAsExcessProperty(prop, source.symbol) && !isIgnoredJsxProperty(source, prop) {
+			if !r.c.isKnownProperty(reducedTarget, prop.name, isComparingJsxAttributes) {
+				if reportErrors {
+					// Report error in terms of object types in the target as those are the only ones
+					// we check in isKnownProperty.
+					errorTarget := r.c.filterType(reducedTarget, isExcessPropertyCheckTarget)
+					// We know *exactly* where things went wrong when comparing the types.
+					// Use this property as the error node as this will be more helpful in
+					// reasoning about what went wrong.
+					if r.errorNode == nil {
+						panic("No errorNode in hasExcessProperties")
+					}
+					if isJsxAttributes(r.errorNode) || isJsxOpeningLikeElement(r.errorNode) || isJsxOpeningLikeElement(r.errorNode.parent) {
+						// !!!
+						// // JsxAttributes has an object-literal flag and undergo same type-assignablity check as normal object-literal.
+						// // However, using an object-literal error message will be very confusing to the users so we give different a message.
+						// if prop.valueDeclaration && isJsxAttribute(prop.valueDeclaration) && getSourceFileOfNode(errorNode) == getSourceFileOfNode(prop.valueDeclaration.name) {
+						// 	// Note that extraneous children (as in `<NoChild>extra</NoChild>`) don't pass this check,
+						// 	// since `children` is a SyntaxKind.PropertySignature instead of a SyntaxKind.JsxAttribute.
+						// 	errorNode = prop.valueDeclaration.name
+						// }
+						// propName := c.symbolToString(prop)
+						// suggestionSymbol := c.getSuggestedSymbolForNonexistentJSXAttribute(propName, errorTarget)
+						// var suggestion *string
+						// if suggestionSymbol {
+						// 	suggestion = c.symbolToString(suggestionSymbol)
+						// } else {
+						// 	suggestion = nil
+						// }
+						// if suggestion {
+						// 	reportError(Diagnostics.Property_0_does_not_exist_on_type_1_Did_you_mean_2, propName, c.typeToString(errorTarget), suggestion)
+						// } else {
+						// 	reportError(Diagnostics.Property_0_does_not_exist_on_type_1, propName, c.typeToString(errorTarget))
+						// }
+					} else {
+						// use the property's value declaration if the property is assigned inside the literal itself
+						var objectLiteralDeclaration *Node
+						if source.symbol != nil {
+							objectLiteralDeclaration = utils.FirstOrNil(source.symbol.declarations)
+						}
+						var suggestion string
+						if prop.valueDeclaration != nil && isObjectLiteralElementLike(prop.valueDeclaration) &&
+							findAncestor(prop.valueDeclaration, func(d *Node) bool { return d == objectLiteralDeclaration }) != nil &&
+							getSourceFileOfNode(objectLiteralDeclaration) == getSourceFileOfNode(r.errorNode) {
+							name := prop.valueDeclaration.Name()
+							r.errorNode = name
+							if isIdentifier(name) {
+								suggestion = r.c.getSuggestionForNonexistentProperty(name.Text(), errorTarget)
+							}
+						}
+						if suggestion != "" {
+							r.reportError(diagnostics.Object_literal_may_only_specify_known_properties_but_0_does_not_exist_in_type_1_Did_you_mean_to_write_2, r.c.symbolToString(prop), r.c.typeToString(errorTarget), suggestion)
+						} else {
+							r.reportError(diagnostics.Object_literal_may_only_specify_known_properties_and_0_does_not_exist_in_type_1, r.c.symbolToString(prop), r.c.typeToString(errorTarget))
+						}
+					}
+				}
+				return true
+			}
+			if checkTypes != nil && r.isRelatedTo(r.c.getTypeOfSymbol(prop), r.c.getTypeOfPropertyInTypes(checkTypes, prop.name), RecursionFlagsBoth, reportErrors) == TernaryFalse {
+				if reportErrors {
+					r.reportIncompatibleError(diagnostics.Types_of_property_0_are_incompatible, r.c.symbolToString(prop))
+				}
+				return true
+			}
+		}
+	}
+	return false
+}
+
+func (c *Checker) getTypeOfPropertyInTypes(types []*Type, name string) *Type {
+	var propTypes []*Type
+	for _, t := range types {
+		propTypes = append(propTypes, c.getTypeOfPropertyInType(t, name))
+	}
+	return c.getUnionType(propTypes)
+}
+
+func (c *Checker) getTypeOfPropertyInType(t *Type, name string) *Type {
+	t = c.getApparentType(t)
+	var prop *Symbol
+	if t.flags&TypeFlagsUnionOrIntersection != 0 {
+		prop = c.getPropertyOfUnionOrIntersectionType(t, name, false)
+	} else {
+		prop = c.getPropertyOfObjectType(t, name)
+	}
+	if prop != nil {
+		return c.getTypeOfSymbol(prop)
+	}
+	indexInfo := c.getApplicableIndexInfoForName(t, name)
+	if indexInfo != nil {
+		return indexInfo.valueType
+	}
+	return c.undefinedType
+}
+
+func shouldCheckAsExcessProperty(prop *Symbol, container *Symbol) bool {
+	return prop.valueDeclaration != nil && container.valueDeclaration != nil && prop.valueDeclaration.parent == container.valueDeclaration
+}
+
+func isIgnoredJsxProperty(source *Type, sourceProp *Symbol) bool {
+	return source.objectFlags&ObjectFlagsJsxAttributes != 0 && isHyphenatedJsxName(sourceProp.name)
+}
+
+func (c *Checker) isTypeSubsetOf(source *Type, target *Type) bool {
+	return source == target || source.flags&TypeFlagsNever != 0 || target.flags&TypeFlagsUnion != 0 && c.isTypeSubsetOfUnion(source, target)
+}
+
+func (c *Checker) isTypeSubsetOfUnion(source *Type, target *Type) bool {
+	if source.flags&TypeFlagsUnion != 0 {
+		for _, t := range source.AsUnionType().types {
+			if containsType(target.Types(), t) {
+				return false
+			}
+		}
+		return true
+	}
+	if source.flags&TypeFlagsEnumLike != 0 && c.getBaseTypeOfEnumLikeType(source) == target {
+		return true
+	}
+	return containsType(target.Types(), source)
 }
 
 func (r *Relater) unionOrIntersectionRelatedTo(source *Type, target *Type, reportErrors bool, intersectionState IntersectionState) Ternary {
@@ -1201,7 +1690,7 @@ func (r *Relater) structuredTypeRelatedToWorker(source *Type, target *Type, repo
 			return result
 		}
 	}
-	if isSingleElementGenericTupleType(target) && target.TargetTupleType().readonly || r.c.isMutableArrayOrTuple(r.c.getBaseConstraintOrType(source)) {
+	if isSingleElementGenericTupleType(target) && (target.TargetTupleType().readonly || r.c.isMutableArrayOrTuple(r.c.getBaseConstraintOrType(source))) {
 		result = r.isRelatedTo(source, r.c.getTypeArguments(target)[0], RecursionFlagsTarget, false /*reportErrors*/)
 		if result != TernaryFalse {
 			return result
@@ -1401,7 +1890,108 @@ func (r *Relater) mappedTypeRelatedTo(source *Type, target *Type, reportErrors b
 }
 
 func (r *Relater) typeRelatedToDiscriminatedType(source *Type, target *Type) Ternary {
-	return TernaryFalse // !!!
+	// 1. Generate the combinations of discriminant properties & types 'source' can satisfy.
+	//    a. If the number of combinations is above a set limit, the comparison is too complex.
+	// 2. Filter 'target' to the subset of types whose discriminants exist in the matrix.
+	//    a. If 'target' does not satisfy all discriminants in the matrix, 'source' is not related.
+	// 3. For each type in the filtered 'target', determine if all non-discriminant properties of
+	//    'target' are related to a property in 'source'.
+	//
+	// NOTE: See ~/tests/cases/conformance/types/typeRelationships/assignmentCompatibility/assignmentCompatWithDiscriminatedUnion.ts
+	//       for examples.
+	sourceProperties := r.c.getPropertiesOfType(source)
+	sourcePropertiesFiltered := r.c.findDiscriminantProperties(sourceProperties, target)
+	if len(sourcePropertiesFiltered) == 0 {
+		return TernaryFalse
+	}
+	// Though we could compute the number of combinations as we generate
+	// the matrix, this would incur additional memory overhead due to
+	// array allocations. To reduce this overhead, we first compute
+	// the number of combinations to ensure we will not surpass our
+	// fixed limit before incurring the cost of any allocations:
+	numCombinations := 1
+	for _, sourceProperty := range sourcePropertiesFiltered {
+		numCombinations *= countTypes(r.c.getNonMissingTypeOfSymbol(sourceProperty))
+		if numCombinations == 0 || numCombinations > 25 {
+			return TernaryFalse
+		}
+	}
+	// Compute the set of types for each discriminant property.
+	sourceDiscriminantTypes := make([][]*Type, len(sourcePropertiesFiltered))
+	var excludedProperties set[string]
+	for i, sourceProperty := range sourcePropertiesFiltered {
+		sourcePropertyType := r.c.getNonMissingTypeOfSymbol(sourceProperty)
+		sourceDiscriminantTypes[i] = sourcePropertyType.Distributed()
+		excludedProperties.add(sourceProperty.name)
+	}
+	// Build the cartesian product
+	discriminantCombinations := make([][]*Type, numCombinations)
+	for i := range numCombinations {
+		combination := make([]*Type, len(sourceDiscriminantTypes))
+		n := i
+		for j := len(sourceDiscriminantTypes) - 1; j >= 0; j-- {
+			sourceTypes := sourceDiscriminantTypes[j]
+			length := len(sourceTypes)
+			combination[j] = sourceTypes[n%length]
+			n = n / length
+		}
+		discriminantCombinations[i] = combination
+	}
+	// Match each combination of the cartesian product of discriminant properties to one or more
+	// constituents of 'target'. If any combination does not have a match then 'source' is not relatable.
+	var matchingTypes []*Type
+	for _, combination := range discriminantCombinations {
+		hasMatch := false
+	outer:
+		for _, t := range target.Types() {
+			for i := 0; i < len(sourcePropertiesFiltered); i++ {
+				sourceProperty := sourcePropertiesFiltered[i]
+				targetProperty := r.c.getPropertyOfType(t, sourceProperty.name)
+				if targetProperty == nil {
+					continue outer
+				}
+				if sourceProperty == targetProperty {
+					continue
+				}
+				// We compare the source property to the target in the context of a single discriminant type.
+				related := r.propertyRelatedTo(source, target, sourceProperty, targetProperty, func(*Symbol) *Type { return combination[i] },
+					false /*reportErrors*/, IntersectionStateNone, r.c.strictNullChecks || r.relation == r.c.comparableRelation /*skipOptional*/)
+				// If the target property could not be found, or if the properties were not related,
+				// then this constituent is not a match.
+				if related == TernaryFalse {
+					continue outer
+				}
+			}
+			matchingTypes = utils.AppendIfUnique(matchingTypes, t)
+			hasMatch = true
+		}
+		if !hasMatch {
+			// We failed to match any type for this combination.
+			return TernaryFalse
+		}
+	}
+	// Compare the remaining non-discriminant properties of each match.
+	result := TernaryTrue
+	for _, t := range matchingTypes {
+		result &= r.propertiesRelatedTo(source, t /*reportErrors*/, false, excludedProperties /*optionalsOnly*/, false, IntersectionStateNone)
+		if result != TernaryFalse {
+			result &= r.signaturesRelatedTo(source, t, SignatureKindCall /*reportErrors*/, false, IntersectionStateNone)
+			if result != TernaryFalse {
+				result &= r.signaturesRelatedTo(source, t, SignatureKindConstruct /*reportErrors*/, false, IntersectionStateNone)
+				if result != TernaryFalse && !(isTupleType(source) && isTupleType(t)) {
+					// Comparing numeric index types when both `source` and `type` are tuples is unnecessary as the
+					// element types should be sufficiently covered by `propertiesRelatedTo`. It also causes problems
+					// with index type assignability as the types for the excluded discriminants are still included
+					// in the index type.
+					result &= r.indexSignaturesRelatedTo(source, t /*sourceIsPrimitive*/, false /*reportErrors*/, false, IntersectionStateNone)
+				}
+			}
+		}
+		if result == TernaryFalse {
+			return result
+		}
+	}
+	return result
 }
 
 func (r *Relater) propertiesRelatedTo(source *Type, target *Type, reportErrors bool, excludedProperties set[string], optionalsOnly bool, intersectionState IntersectionState) Ternary {
@@ -1797,8 +2387,34 @@ func (r *Relater) reportErrorResults(originalSource *Type, originalTarget *Type,
 }
 
 func (r *Relater) reportRelationError(message *diagnostics.Message, source *Type, target *Type) {
-	sourceType := r.c.typeToString(source)
-	targetType := r.c.typeToString(target)
+	sourceType, targetType := r.c.getTypeNamesForErrorDisplay(source, target)
+	generalizedSource := source
+	generalizedSourceType := sourceType
+	// Don't generalize on 'never' - we really want the original type
+	// to be displayed for use-cases like 'assertNever'.
+	if target.flags&TypeFlagsNever == 0 && isLiteralType(source) && !r.c.typeCouldHaveTopLevelSingletonTypes(target) {
+		generalizedSource = r.c.getBaseTypeOfLiteralType(source)
+		// !!! Debug.assert(!c.isTypeAssignableTo(generalizedSource, target), "generalized source shouldn't be assignable")
+		generalizedSourceType = r.c.getTypeNameForErrorDisplay(generalizedSource)
+	}
+	// If `target` is of indexed access type (And `source` it is not), we use the object type of `target` for better error reporting
+	var targetFlags TypeFlags
+	if target.flags&TypeFlagsIndexedAccess != 0 && source.flags&TypeFlagsIndexedAccess == 0 {
+		targetFlags = target.AsIndexedAccessType().objectType.flags
+	} else {
+		targetFlags = target.flags
+	}
+	if targetFlags&TypeFlagsTypeParameter != 0 && target != r.c.markerSuperTypeForCheck && target != r.c.markerSubTypeForCheck {
+		constraint := r.c.getBaseConstraintOfType(target)
+		switch {
+		case constraint != nil && r.c.isTypeAssignableTo(generalizedSource, constraint):
+			r.reportError(diagnostics.X_0_is_assignable_to_the_constraint_of_type_1_but_1_could_be_instantiated_with_a_different_subtype_of_constraint_2, generalizedSourceType, targetType, r.c.typeToString(constraint))
+		case constraint != nil && r.c.isTypeAssignableTo(source, constraint):
+			r.reportError(diagnostics.X_0_is_assignable_to_the_constraint_of_type_1_but_1_could_be_instantiated_with_a_different_subtype_of_constraint_2, sourceType, targetType, r.c.typeToString(constraint))
+		default:
+			r.reportError(diagnostics.X_0_could_be_instantiated_with_an_arbitrary_type_which_could_be_unrelated_to_1, targetType, generalizedSourceType)
+		}
+	}
 	if message == nil {
 		if r.relation == r.c.comparableRelation {
 			message = diagnostics.Type_0_is_not_comparable_to_type_1
@@ -1808,11 +2424,13 @@ func (r *Relater) reportRelationError(message *diagnostics.Message, source *Type
 			message = diagnostics.Type_0_is_not_assignable_to_type_1
 		}
 	}
-	// Suppress if next message is an excessive complexity/stack depth message for source and target or
-	// a readonly vs. mutable error for source and target
+	// Suppress if next message is an excessive complexity/stack depth message for source and target, a readonly
+	// vs. mutable error for source and target, or an excess property error
 	if r.chainMatches(0, diagnostics.Excessive_complexity_comparing_types_0_and_1, sourceType, targetType) ||
 		r.chainMatches(0, diagnostics.Excessive_stack_depth_comparing_types_0_and_1, sourceType, targetType) ||
-		r.chainMatches(0, diagnostics.The_type_0_is_readonly_and_cannot_be_assigned_to_the_mutable_type_1, sourceType, targetType) {
+		r.chainMatches(0, diagnostics.The_type_0_is_readonly_and_cannot_be_assigned_to_the_mutable_type_1, sourceType, targetType) ||
+		r.chainMatches(0, diagnostics.Object_literal_may_only_specify_known_properties_and_0_does_not_exist_in_type_1) ||
+		r.chainMatches(0, diagnostics.Object_literal_may_only_specify_known_properties_but_0_does_not_exist_in_type_1_Did_you_mean_to_write_2) {
 		return
 	}
 	// Suppress if next message is a missing property message for source and target and we're not
@@ -1829,6 +2447,11 @@ func (r *Relater) reportRelationError(message *diagnostics.Message, source *Type
 
 func (r *Relater) reportIncompatibleError(message *diagnostics.Message, args ...any) {
 	if message == diagnostics.Types_of_property_0_are_incompatible {
+		// Suppress if next message is an excess property error
+		if r.chainMatches(0, diagnostics.Object_literal_may_only_specify_known_properties_and_0_does_not_exist_in_type_1) ||
+			r.chainMatches(0, diagnostics.Object_literal_may_only_specify_known_properties_but_0_does_not_exist_in_type_1_Did_you_mean_to_write_2) {
+			return
+		}
 		// Transform a property incompatibility message for property 'x' followed by some elaboration message
 		// followed by a property incompatibility message for property 'y' into a single property incompatibility
 		// message for 'x.y'
