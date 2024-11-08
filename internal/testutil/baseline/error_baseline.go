@@ -11,6 +11,8 @@ import (
 	"gotest.tools/v3/assert/cmp"
 
 	"github.com/microsoft/typescript-go/internal/compiler"
+	"github.com/microsoft/typescript-go/internal/tspath"
+	"github.com/microsoft/typescript-go/internal/utils"
 )
 
 // IO
@@ -162,12 +164,12 @@ func iterateErrorBaseline(t testing.TB, inputFiles []*TestFile, inputDiagnostics
 
 	// 'merge' the lines of each input file with any errors associated with it
 	dupeCase := map[string]int{}
-	nonEmptyFiles := compiler.Filter(inputFiles, func(f *TestFile) bool { return len(f.content) > 0 })
+	nonEmptyFiles := utils.Filter(inputFiles, func(f *TestFile) bool { return len(f.content) > 0 })
 	for _, inputFile := range nonEmptyFiles {
 		// Filter down to the errors in the file
-		fileErrors := compiler.Filter(diagnostics, func(e *compiler.Diagnostic) bool {
+		fileErrors := utils.Filter(diagnostics, func(e *compiler.Diagnostic) bool {
 			return e.File() != nil &&
-				compiler.ComparePaths(removeTestPathPrefixes(e.File().FileName(), false), removeTestPathPrefixes(inputFile.unitName, false), "", true) == compiler.ComparisonEqual
+				tspath.ComparePaths(removeTestPathPrefixes(e.File().FileName(), false), removeTestPathPrefixes(inputFile.unitName, false), "", true) == utils.ComparisonEqual
 		})
 
 		// Header
@@ -240,12 +242,12 @@ func iterateErrorBaseline(t testing.TB, inputFiles []*TestFile, inputDiagnostics
 		errorsReported = 0
 	}
 
-	numLibraryDiagnostics := compiler.CountWhere(
+	numLibraryDiagnostics := utils.CountWhere(
 		diagnostics,
 		func(d *compiler.Diagnostic) bool {
 			return d.File() != nil && (isDefaultLibraryFile(d.File().FileName()) || isBuiltFile(d.File().FileName()))
 		})
-	numTsconfigDiagnostics := compiler.CountWhere(
+	numTsconfigDiagnostics := utils.CountWhere(
 		diagnostics,
 		func(d *compiler.Diagnostic) bool {
 			return d.File() != nil && isTsConfigFile(d.File().FileName())

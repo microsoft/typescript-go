@@ -1,8 +1,10 @@
-package compiler
+package tspath
 
 import (
 	"cmp"
 	"strings"
+
+	"github.com/microsoft/typescript-go/internal/utils"
 )
 
 type Path string
@@ -14,7 +16,7 @@ const directorySeparator = '/'
 const urlSchemeSeparator = "://"
 
 // check path for these segments: ”, '.'. '..'
-var relativePathSegmentRegExp = makeRegexp(`//|(?:^|/)\.\.?(?:$|/)`)
+var relativePathSegmentRegExp = utils.MakeRegexp(`//|(?:^|/)\.\.?(?:$|/)`)
 
 //// Path Tests
 
@@ -30,7 +32,7 @@ func isUrl(path string) bool {
 
 // Determines whether a path is an absolute disk path (e.g. starts with `/`, or a dos path
 // like `c:`, `c:\` or `c:/`).
-func isRootedDiskPath(path string) bool {
+func IsRootedDiskPath(path string) bool {
 	return getEncodedRootLength(path) > 0
 }
 
@@ -44,16 +46,16 @@ func isDiskPathRoot(path string) bool {
 //
 //	```
 //	// POSIX
-//	pathIsAbsolute("/path/to/file.ext") === true
+//	PathIsAbsolute("/path/to/file.ext") === true
 //	// DOS
-//	pathIsAbsolute("c:/path/to/file.ext") === true
+//	PathIsAbsolute("c:/path/to/file.ext") === true
 //	// URL
-//	pathIsAbsolute("file:///path/to/file.ext") === true
+//	PathIsAbsolute("file:///path/to/file.ext") === true
 //	// Non-absolute
-//	pathIsAbsolute("path/to/file.ext") === false
-//	pathIsAbsolute("./path/to/file.ext") === false
+//	PathIsAbsolute("path/to/file.ext") === false
+//	PathIsAbsolute("./path/to/file.ext") === false
 //	```
-func pathIsAbsolute(path string) bool {
+func PathIsAbsolute(path string) bool {
 	return getEncodedRootLength(path) != 0
 }
 
@@ -215,7 +217,7 @@ func getRootLength(path string) int {
 	return rootLength
 }
 
-func getDirectoryPath(path string) string {
+func GetDirectoryPath(path string) string {
 	path = NormalizeSlashes(path)
 
 	// If the path provided is itself a root, then return it.
@@ -230,7 +232,7 @@ func getDirectoryPath(path string) string {
 	return path[:max(rootLength, strings.LastIndex(path, "/"))]
 }
 func (p Path) getDirectoryPath() Path {
-	return Path(getDirectoryPath(string(p)))
+	return Path(GetDirectoryPath(string(p)))
 }
 
 func getPathFromPathComponents(pathComponents []string) string {
@@ -319,7 +321,7 @@ func normalizePath(path string) string {
 
 func ToPath(fileName string, basePath string, getCanonicalFileName func(string) string) Path {
 	var nonCanonicalizedPath string
-	if isRootedDiskPath(fileName) {
+	if IsRootedDiskPath(fileName) {
 		nonCanonicalizedPath = normalizePath(fileName)
 	} else {
 		nonCanonicalizedPath = getNormalizedAbsolutePath(basePath, fileName)
@@ -360,7 +362,7 @@ func getPathComponentsRelativeTo(from string, to string, stringEqualer func(a, b
 		fromComponent := fromComponents[start]
 		toComponent := toComponents[start]
 		if start == 0 {
-			if !EquateStringsCaseInsensitive(fromComponent, toComponent) {
+			if !utils.EquateStringCaseInsensitive(fromComponent, toComponent) {
 				break
 			}
 		} else {
@@ -394,7 +396,7 @@ func getPathComponentsRelativeTo(from string, to string, stringEqualer func(a, b
 }
 
 func ConvertToRelativePath(absoluteOrRelativePath, basePath string, getCanonicalFileName func(fileName string) string) string {
-	if !isRootedDiskPath(absoluteOrRelativePath) {
+	if !IsRootedDiskPath(absoluteOrRelativePath) {
 		return absoluteOrRelativePath
 	}
 
@@ -405,12 +407,12 @@ func getRelativePathToDirectoryOrUrl(directoryPathOrUrl string, relativeOrAbsolu
 	pathComponents := getPathComponentsRelativeTo(
 		resolvePath(currentDirectory, directoryPathOrUrl),
 		resolvePath(currentDirectory, relativeOrAbsolutePath),
-		EquateStringsCaseSensitive,
+		utils.EquateStringCaseSensitive,
 		getCanonicalFileName,
 	)
 
 	firstComponent := pathComponents[0]
-	if isAbsolutePathAnUrl && isRootedDiskPath(firstComponent) {
+	if isAbsolutePathAnUrl && IsRootedDiskPath(firstComponent) {
 		var prefix string
 		if firstComponent[0] == directorySeparator {
 			prefix = "file://"
@@ -423,23 +425,23 @@ func getRelativePathToDirectoryOrUrl(directoryPathOrUrl string, relativeOrAbsolu
 	return getPathFromPathComponents(pathComponents)
 }
 
-func ComparePaths(a string, b string, currentDirectory string, ignoreCase bool) Comparison {
+func ComparePaths(a string, b string, currentDirectory string, ignoreCase bool) utils.Comparison {
 	a = combinePaths(currentDirectory, a)
 	b = combinePaths(currentDirectory, b)
-	return comparePathsWorker(a, b, GetStringComparer(ignoreCase))
+	return comparePathsWorker(a, b, utils.GetStringComparer(ignoreCase))
 }
 
-func comparePathsWorker(a string, b string, stringComparer func(a, b string) Comparison) Comparison {
+func comparePathsWorker(a string, b string, stringComparer func(a, b string) utils.Comparison) utils.Comparison {
 	if a == b {
-		return ComparisonEqual
+		return utils.ComparisonEqual
 	}
 
 	// NOTE: Performance optimization - shortcut if the root segments differ as there would be no
 	//       need to perform path reduction.
 	aRoot := a[:getRootLength(a)]
 	bRoot := b[:getRootLength(b)]
-	result := CompareStringsCaseInsensitive(aRoot, bRoot)
-	if result != ComparisonEqual {
+	result := utils.CompareStringsCaseInsensitive(aRoot, bRoot)
+	if result != utils.ComparisonEqual {
 		return result
 	}
 
@@ -458,7 +460,7 @@ func comparePathsWorker(a string, b string, stringComparer func(a, b string) Com
 	sharedLength := min(len(aComponents), len(bComponents))
 	for i := 1; i < sharedLength; i++ {
 		result := stringComparer(aComponents[i], bComponents[i])
-		if result != ComparisonEqual {
+		if result != utils.ComparisonEqual {
 			return result
 		}
 	}
@@ -538,7 +540,7 @@ func GetAnyExtensionFromPath(path string, extensions []string, ignoreCase bool) 
 	// Retrieves any string from the final "." onwards from a base file name.
 	// Unlike extensionFromPath, which throws an exception on unrecognized extensions.
 	if len(extensions) > 0 {
-		return getAnyExtensionFromPathWorker(removeTrailingDirectorySeparator(path), extensions, GetStringEqualityComparer(ignoreCase))
+		return getAnyExtensionFromPathWorker(removeTrailingDirectorySeparator(path), extensions, utils.GetStringEqualityComparer(ignoreCase))
 	}
 
 	baseFileName := GetBaseFileName(path, nil, ignoreCase)

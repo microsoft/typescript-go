@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/microsoft/typescript-go/internal/compiler"
+	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
 var testPathPrefix = regexp.MustCompile(`(?:(file:\/{3})|\/)\.(?:ts|lib|src)\/`)
@@ -31,12 +32,12 @@ func removeTestPathPrefixes(text string, retainTrailingDirectorySeparator bool) 
 }
 
 func isDefaultLibraryFile(filePath string) bool {
-	fileName := compiler.GetBaseFileName(filePath, nil, false)
+	fileName := tspath.GetBaseFileName(filePath, nil, false)
 	return strings.HasPrefix(fileName, "lib.") && strings.HasSuffix(fileName, compiler.ExtensionDts)
 }
 
 func isBuiltFile(filePath string) bool {
-	return strings.HasPrefix(filePath, libFolder) || strings.HasPrefix(filePath, compiler.EnsureTrailingDirectorySeparator(builtFolder))
+	return strings.HasPrefix(filePath, libFolder) || strings.HasPrefix(filePath, tspath.EnsureTrailingDirectorySeparator(builtFolder))
 }
 
 func isTsConfigFile(path string) bool {
@@ -45,9 +46,9 @@ func isTsConfigFile(path string) bool {
 
 func sanitizeTestFilePath(name string) string {
 	path := testPathCharacters.ReplaceAllString(name, "_")
-	path = compiler.NormalizeSlashes(path)
+	path = tspath.NormalizeSlashes(path)
 	path = testPathDotDot.ReplaceAllString(path, "__dotdot/")
-	path = string(compiler.ToPath(path, "", canonicalizeForHarness))
+	path = string(tspath.ToPath(path, "", canonicalizeForHarness))
 	if strings.HasPrefix(path, "/") {
 		return path[1:]
 	}

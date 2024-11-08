@@ -6,14 +6,14 @@ import (
 	"maps"
 	"math"
 	"path/filepath"
-	"regexp"
 	"slices"
 	"strconv"
 	"strings"
-	"sync"
 	"sync/atomic"
 
 	"github.com/microsoft/typescript-go/internal/compiler/diagnostics"
+	"github.com/microsoft/typescript-go/internal/tspath"
+	"github.com/microsoft/typescript-go/internal/utils"
 )
 
 // TextPos
@@ -493,22 +493,8 @@ func getBinaryOperatorPrecedence(kind SyntaxKind) OperatorPrecedence {
 	return OperatorPrecedenceInvalid
 }
 
-var regexps = make(map[string]*regexp.Regexp)
-var regexpMutex sync.Mutex
-
-func makeRegexp(s string) *regexp.Regexp {
-	regexpMutex.Lock()
-	rx, ok := regexps[s]
-	if !ok {
-		rx = regexp.MustCompile(s)
-		regexps[s] = rx
-	}
-	regexpMutex.Unlock()
-	return rx
-}
-
 func formatStringFromArgs(text string, args []any) string {
-	return makeRegexp(`{(\d+)}`).ReplaceAllStringFunc(text, func(match string) string {
+	return utils.MakeRegexp(`{(\d+)}`).ReplaceAllStringFunc(text, func(match string) string {
 		index, err := strconv.ParseInt(match[1:len(match)-1], 10, 0)
 		if err != nil || int(index) >= len(args) {
 			panic("Invalid formatting placeholder")
@@ -525,7 +511,7 @@ func formatMessage(message *diagnostics.Message, args ...any) string {
 	return text
 }
 
-func Filter[T any](slice []T, predicate func(T) bool) []T {
+func filter[T any](slice []T, predicate func(T) bool) []T {
 	result, _ := sameFilter(slice, predicate)
 	return result
 }
@@ -548,7 +534,7 @@ func sameFilter[T any](slice []T, predicate func(T) bool) ([]T, bool) {
 	return slice, true
 }
 
-func Mapf[T, U any](slice []T, f func(T) U) []U {
+func mapf[T, U any](slice []T, f func(T) U) []U {
 	if len(slice) == 0 {
 		return nil
 	}
@@ -696,7 +682,7 @@ func concatenate[T any](s1 []T, s2 []T) []T {
 	return slices.Concat(s1, s2)
 }
 
-func CountWhere[T any](slice []T, predicate func(T) bool) int {
+func countWhere[T any](slice []T, predicate func(T) bool) int {
 	count := 0
 	for _, value := range slice {
 		if predicate(value) {
@@ -897,13 +883,6 @@ func getTextOfNodeFromSourceText(sourceText string, node *Node) string {
 	//     text = text.split(/\r\n|\n|\r/).map(line => line.replace(/^\s*\*/, "").trimStart()).join("\n");
 	// }
 	return text
-}
-
-func appendIfUnique[T comparable](array []T, element T) []T {
-	if slices.Contains(array, element) {
-		return array
-	}
-	return append(array, element)
 }
 
 func isAssignmentDeclaration(decl *Node) bool {
@@ -1634,6 +1613,9 @@ func tryParsePattern(pattern string) Pattern {
 	return Pattern{}
 }
 
+func positionIsSynthesized(pos int) bool {
+	return pos < 0
+}
 func isDeclarationStatementKind(kind SyntaxKind) bool {
 	switch kind {
 	case SyntaxKindFunctionDeclaration, SyntaxKindMissingDeclaration, SyntaxKindClassDeclaration, SyntaxKindInterfaceDeclaration,
@@ -1977,7 +1959,7 @@ func nodeHasName(statement *Node, id *Node) bool {
 	}
 	if isVariableStatement(statement) {
 		declarations := statement.AsVariableStatement().declarationList.AsVariableDeclarationList().declarations
-		return some(declarations, func(d *Node) bool { return nodeHasName(d, id) })
+		return utils.Some(declarations, func(d *Node) bool { return nodeHasName(d, id) })
 	}
 	return false
 }
@@ -1987,13 +1969,6 @@ func isImportMeta(node *Node) bool {
 		return node.AsMetaProperty().keywordToken == SyntaxKindImportKeyword && node.AsMetaProperty().name.AsIdentifier().text == "meta"
 	}
 	return false
-}
-
-func lastElement[T any](slice []T) T {
-	if len(slice) != 0 {
-		return slice[len(slice)-1]
-	}
-	return *new(T)
 }
 
 func ensureScriptKind(fileName string, scriptKind ScriptKind) ScriptKind {
@@ -2126,9 +2101,9 @@ func (c *DiagnosticsCollection) add(diagnostic *Diagnostic) {
 		if c.fileDiagnostics == nil {
 			c.fileDiagnostics = make(map[string][]*Diagnostic)
 		}
-		c.fileDiagnostics[fileName] = insertSorted(c.fileDiagnostics[fileName], diagnostic, CompareDiagnostics)
+		c.fileDiagnostics[fileName] = utils.InsertSorted(c.fileDiagnostics[fileName], diagnostic, CompareDiagnostics)
 	} else {
-		c.nonFileDiagnostics = insertSorted(c.nonFileDiagnostics, diagnostic, CompareDiagnostics)
+		c.nonFileDiagnostics = utils.InsertSorted(c.nonFileDiagnostics, diagnostic, CompareDiagnostics)
 	}
 }
 
@@ -2721,7 +2696,7 @@ func (r *NameResolver) useOuterVariableScopeInParameter(result *Symbol, location
 				functionLocation := location
 				declarationRequiresScopeChange := r.getRequiresScopeChangeCache(functionLocation)
 				if declarationRequiresScopeChange == TSUnknown {
-					declarationRequiresScopeChange = boolToTristate(some(functionLocation.Parameters(), r.requiresScopeChange))
+					declarationRequiresScopeChange = boolToTristate(utils.Some(functionLocation.Parameters(), r.requiresScopeChange))
 					r.setRequiresScopeChangeCache(functionLocation, declarationRequiresScopeChange)
 				}
 				return declarationRequiresScopeChange == TSTrue
@@ -3214,11 +3189,11 @@ func isExternalModuleNameRelative(moduleName string) bool {
 	// TypeScript 1.0 spec (April 2014): 11.2.1
 	// An external module name is "relative" if the first term is "." or "..".
 	// Update: We also consider a path like `C:\foo.ts` "relative" because we do not search for it in `node_modules` or treat it as an ambient module.
-	return pathIsRelative(moduleName) || isRootedDiskPath(moduleName)
+	return pathIsRelative(moduleName) || tspath.IsRootedDiskPath(moduleName)
 }
 
 func pathIsRelative(path string) bool {
-	return makeRegexp(`^\.\.?(?:$|[\\/])`).MatchString(path)
+	return utils.MakeRegexp(`^\.\.?(?:$|[\\/])`).MatchString(path)
 }
 
 func extensionIsTs(ext string) bool {
@@ -3364,7 +3339,7 @@ func getSourceFileOfModule(module *Symbol) *SourceFile {
 }
 
 func getNonAugmentationDeclaration(symbol *Symbol) *Node {
-	return find(symbol.declarations, func(d *Node) bool {
+	return utils.Find(symbol.declarations, func(d *Node) bool {
 		return !isExternalModuleAugmentation(d) && !(isModuleDeclaration(d) && isGlobalScopeAugmentation(d))
 	})
 }
@@ -3607,6 +3582,10 @@ func isAssertionExpression(node *Node) bool {
 	return kind == SyntaxKindTypeAssertionExpression || kind == SyntaxKindAsExpression
 }
 
+func isTypeAssertion(node *Node) bool {
+	return isAssertionExpression(skipParentheses(node))
+}
+
 func createSymbolTable(symbols []*Symbol) SymbolTable {
 	if len(symbols) == 0 {
 		return nil
@@ -3656,7 +3635,7 @@ func compareSymbols(s1, s2 *Symbol) int {
 }
 
 func getClassLikeDeclarationOfSymbol(symbol *Symbol) *Node {
-	return find(symbol.declarations, isClassLike)
+	return utils.Find(symbol.declarations, isClassLike)
 }
 
 func isThisInTypeQuery(node *Node) bool {
@@ -3685,10 +3664,10 @@ func getDeclarationModifierFlagsFromSymbolEx(s *Symbol, isWrite bool) ModifierFl
 	if s.valueDeclaration != nil {
 		var declaration *Node
 		if isWrite {
-			declaration = find(s.declarations, isSetAccessorDeclaration)
+			declaration = utils.Find(s.declarations, isSetAccessorDeclaration)
 		}
 		if declaration == nil && s.flags&SymbolFlagsGetAccessor != 0 {
-			declaration = find(s.declarations, isGetAccessorDeclaration)
+			declaration = utils.Find(s.declarations, isGetAccessorDeclaration)
 		}
 		if declaration == nil {
 			declaration = s.valueDeclaration
@@ -4219,4 +4198,17 @@ func reverseAccessKind(a AccessKind) AccessKind {
 		return AccessKindReadWrite
 	}
 	panic("Unhandled case in reverseAccessKind")
+}
+
+func isJsxOpeningLikeElement(node *Node) bool {
+	return isJsxOpeningElement(node) || isJsxSelfClosingElement(node)
+}
+
+func isObjectLiteralElementLike(node *Node) bool {
+	switch node.kind {
+	case SyntaxKindPropertyAssignment, SyntaxKindShorthandPropertyAssignment, SyntaxKindSpreadAssignment,
+		SyntaxKindMethodDeclaration, SyntaxKindGetAccessor, SyntaxKindSetAccessor:
+		return true
+	}
+	return false
 }
