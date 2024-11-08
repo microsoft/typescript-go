@@ -358,7 +358,7 @@ func parseComparator(op string, text string) ([]versionComparator, bool) {
 		case "<", ">=":
 			version := result.version
 			if isWildcard(result.minorStr) || isWildcard(result.patchStr) {
-				version.prerelease = _zeroPrerelease
+				version.prerelease = []string{"0"}
 			}
 			comparatorsResult = []versionComparator{
 				{operator, version},
@@ -374,7 +374,7 @@ func parseComparator(op string, text string) ([]versionComparator, bool) {
 				}
 
 				version = version.incrementMajor()
-				version.prerelease = _zeroPrerelease
+				version.prerelease = []string{"0"}
 			} else if isWildcard(result.patchStr) {
 				if operator == rangeLessThanEqual {
 					operator = rangeLessThan
@@ -383,7 +383,7 @@ func parseComparator(op string, text string) ([]versionComparator, bool) {
 				}
 
 				version = version.incrementMinor()
-				version.prerelease = _zeroPrerelease
+				version.prerelease = []string{"0"}
 			}
 
 			comparatorsResult = []versionComparator{
@@ -397,7 +397,7 @@ func parseComparator(op string, text string) ([]versionComparator, bool) {
 				originalVersion := result.version
 
 				firstVersion := originalVersion
-				firstVersion.prerelease = _zeroPrerelease
+				firstVersion.prerelease = []string{"0"}
 
 				var secondVersion Version
 				if isWildcard(result.minorStr) {
@@ -405,7 +405,7 @@ func parseComparator(op string, text string) ([]versionComparator, bool) {
 				} else {
 					secondVersion = originalVersion.incrementMinor()
 				}
-				secondVersion.prerelease = _zeroPrerelease
+				secondVersion.prerelease = []string{"0"}
 
 				comparatorsResult = []versionComparator{
 					{rangeGreaterThanEqual, firstVersion},

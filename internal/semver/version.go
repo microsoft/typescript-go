@@ -47,10 +47,8 @@ type Version struct {
 	build      []string
 }
 
-var _zeroPrerelease = []string{"0"}
-
 var versionZero = Version{
-	prerelease: _zeroPrerelease,
+	prerelease: []string{"0"},
 }
 
 func (v *Version) incrementMajor() Version {
