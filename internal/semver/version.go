@@ -38,8 +38,6 @@ var buildPartRegExp = regexp.MustCompile(`(?i)^[a-z0-9-]+$`)
 var numericIdentifierRegExp = regexp.MustCompile(`^(?:0|[1-9]\d*)$`)
 
 type Version struct {
-	// !!!
-	// These should probably all be float64
 	major      uint32
 	minor      uint32
 	patch      uint32
