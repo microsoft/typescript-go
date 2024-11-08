@@ -49,8 +49,5 @@ func sanitizeTestFilePath(name string) string {
 	path = tspath.NormalizeSlashes(path)
 	path = testPathDotDot.ReplaceAllString(path, "__dotdot/")
 	path = string(tspath.ToPath(path, "", canonicalizeForHarness))
-	if strings.HasPrefix(path, "/") {
-		return path[1:]
-	}
-	return path
+	return strings.TrimPrefix(path, "/")
 }

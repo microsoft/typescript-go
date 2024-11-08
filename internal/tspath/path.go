@@ -15,7 +15,9 @@ type Path string
 const directorySeparator = '/'
 const urlSchemeSeparator = "://"
 
-// check path for these segments: ”, '.'. '..'
+// check path for these segments:
+//
+//	'', '.'. '..'
 var relativePathSegmentRegExp = utils.MakeRegexp(`//|(?:^|/)\.\.?(?:$|/)`)
 
 //// Path Tests
@@ -471,35 +473,30 @@ func comparePathsWorker(a string, b string, stringComparer func(a, b string) uti
 // Gets the portion of a path following the last (non-terminal) separator (`/`).
 // Semantics align with NodeJS's `path.basename` except that we support URL's as well.
 // If the base name has any one of the provided extensions, it is removed.
-// ```
-// // POSIX
-// getBaseFileName("/path/to/file.ext") == "file.ext"
-// getBaseFileName("/path/to/") == "to"
-// getBaseFileName("/") == ""
-// // DOS
-// getBaseFileName("c:/path/to/file.ext") == "file.ext"
-// getBaseFileName("c:/path/to/") == "to"
-// getBaseFileName("c:/") == ""
-// getBaseFileName("c:") == ""
-// // URL
-// getBaseFileName("http://typescriptlang.org/path/to/file.ext") == "file.ext"
-// getBaseFileName("http://typescriptlang.org/path/to/") == "to"
-// getBaseFileName("http://typescriptlang.org/") == ""
-// getBaseFileName("http://typescriptlang.org") == ""
-// getBaseFileName("file://server/path/to/file.ext") == "file.ext"
-// getBaseFileName("file://server/path/to/") == "to"
-// getBaseFileName("file://server/") == ""
-// getBaseFileName("file://server") == ""
-// getBaseFileName("file:///path/to/file.ext") == "file.ext"
-// getBaseFileName("file:///path/to/") == "to"
-// getBaseFileName("file:///") == ""
-// getBaseFileName("file://") == ""
-// getBaseFileName("/path/to/file.ext", ".ext", true) == "file"
-// getBaseFileName("/path/to/file.js", ".ext", true) == "file.js"
-// getBaseFileName("/path/to/file.js", [".ext", ".js"], true) == "file"
-// getBaseFileName("/path/to/file.ext", ".EXT", false) == "file.ext"
-// ```
-func GetBaseFileName(path string, extensions []string, ignoreCase bool) string {
+//
+//	// POSIX
+//	GetBaseFileName("/path/to/file.ext") == "file.ext"
+//	GetBaseFileName("/path/to/") == "to"
+//	GetBaseFileName("/") == ""
+//	// DOS
+//	GetBaseFileName("c:/path/to/file.ext") == "file.ext"
+//	GetBaseFileName("c:/path/to/") == "to"
+//	GetBaseFileName("c:/") == ""
+//	GetBaseFileName("c:") == ""
+//	// URL
+//	GetBaseFileName("http://typescriptlang.org/path/to/file.ext") == "file.ext"
+//	GetBaseFileName("http://typescriptlang.org/path/to/") == "to"
+//	GetBaseFileName("http://typescriptlang.org/") == ""
+//	GetBaseFileName("http://typescriptlang.org") == ""
+//	GetBaseFileName("file://server/path/to/file.ext") == "file.ext"
+//	GetBaseFileName("file://server/path/to/") == "to"
+//	GetBaseFileName("file://server/") == ""
+//	GetBaseFileName("file://server") == ""
+//	GetBaseFileName("file:///path/to/file.ext") == "file.ext"
+//	GetBaseFileName("file:///path/to/") == "to"
+//	GetBaseFileName("file:///") == ""
+//	GetBaseFileName("file://") == ""
+func GetBaseFileName(path string) string {
 	path = NormalizeSlashes(path)
 
 	// if the path provided is itself the root, then it has no file name.
@@ -511,31 +508,20 @@ func GetBaseFileName(path string, extensions []string, ignoreCase bool) string {
 	// return the trailing portion of the path starting after the last (non-terminal) directory
 	// separator but not including any trailing directory separator.
 	path = removeTrailingDirectorySeparator(path)
-	name := path[max(getRootLength(path), strings.LastIndex(path, string(directorySeparator))+1):]
-
-	extension := ""
-	if len(extensions) > 0 {
-		extension = GetAnyExtensionFromPath(name, extensions, ignoreCase)
-	}
-	if extension != "" {
-		return name[:len(name)-len(extension)]
-	}
-	return name
+	return path[max(getRootLength(path), strings.LastIndex(path, string(directorySeparator))+1):]
 }
 
 // Gets the file extension for a path.
 // If extensions are provided, gets the file extension for a path, provided it is one of the provided extensions.
 //
-// ```
-// getAnyExtensionFromPath("/path/to/file.ext") == ".ext"
-// getAnyExtensionFromPath("/path/to/file.ext/") == ".ext"
-// getAnyExtensionFromPath("/path/to/file") == ""
-// getAnyExtensionFromPath("/path/to.ext/file") == ""
-// getAnyExtensionFromPath("/path/to/file.ext", ".ext", true) === ".ext"
-// getAnyExtensionFromPath("/path/to/file.js", ".ext", true) === ""
-// getAnyExtensionFromPath("/path/to/file.js", [".ext", ".js"], true) === ".js"
-// getAnyExtensionFromPath("/path/to/file.ext", ".EXT", false) === ""
-// ```
+//	GetAnyExtensionFromPath("/path/to/file.ext", nil, false) == ".ext"
+//	GetAnyExtensionFromPath("/path/to/file.ext/", nil, false) == ".ext"
+//	GetAnyExtensionFromPath("/path/to/file", nil, false) == ""
+//	GetAnyExtensionFromPath("/path/to.ext/file", nil, false) == ""
+//	GetAnyExtensionFromPath("/path/to/file.ext", ".ext", true) === ".ext"
+//	GetAnyExtensionFromPath("/path/to/file.js", ".ext", true) === ""
+//	GetAnyExtensionFromPath("/path/to/file.js", [".ext", ".js"], true) === ".js"
+//	GetAnyExtensionFromPath("/path/to/file.ext", ".EXT", false) === ""
 func GetAnyExtensionFromPath(path string, extensions []string, ignoreCase bool) string {
 	// Retrieves any string from the final "." onwards from a base file name.
 	// Unlike extensionFromPath, which throws an exception on unrecognized extensions.
@@ -543,7 +529,7 @@ func GetAnyExtensionFromPath(path string, extensions []string, ignoreCase bool) 
 		return getAnyExtensionFromPathWorker(removeTrailingDirectorySeparator(path), extensions, utils.GetStringEqualityComparer(ignoreCase))
 	}
 
-	baseFileName := GetBaseFileName(path, nil, ignoreCase)
+	baseFileName := GetBaseFileName(path)
 	extensionIndex := strings.LastIndex(baseFileName, ".")
 	if extensionIndex >= 0 {
 		return baseFileName[extensionIndex:]
