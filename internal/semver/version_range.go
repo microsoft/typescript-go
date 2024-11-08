@@ -256,24 +256,34 @@ func parsePartial(text string) (partialVersion, bool) {
 	}
 
 	var majorNumeric, minorNumeric, patchNumeric uint32
+	var err error
 
 	if isWildcard(majorStr) {
 		majorNumeric = 0
 		minorNumeric = 0
 		patchNumeric = 0
 	} else {
-		majorNumeric = getUintComponent(majorStr)
+		majorNumeric, err = getUintComponent(majorStr)
+		if err != nil {
+			return partialVersion{}, false
+		}
 
 		if isWildcard(minorStr) {
 			minorNumeric = 0
 			patchNumeric = 0
 		} else {
-			minorNumeric = getUintComponent(minorStr)
+			minorNumeric, err = getUintComponent(minorStr)
+			if err != nil {
+				return partialVersion{}, false
+			}
 
 			if isWildcard(patchStr) {
 				patchNumeric = 0
 			} else {
-				patchNumeric = getUintComponent(patchStr)
+				patchNumeric, err = getUintComponent(patchStr)
+				if err != nil {
+					return partialVersion{}, false
+				}
 			}
 		}
 	}

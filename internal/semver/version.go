@@ -207,14 +207,25 @@ func TryParseVersion(text string) (Version, error) {
 	prereleaseStr := match[4]
 	buildStr := match[5]
 
-	result.major = getUintComponent(majorStr)
+	var err error
+
+	result.major, err = getUintComponent(majorStr)
+	if err != nil {
+		return result, err
+	}
 
 	if minorStr != "" {
-		result.minor = getUintComponent(minorStr)
+		result.minor, err = getUintComponent(minorStr)
+		if err != nil {
+			return result, err
+		}
 	}
 
 	if patchStr != "" {
-		result.patch = getUintComponent(patchStr)
+		result.patch, err = getUintComponent(patchStr)
+		if err != nil {
+			return result, err
+		}
 	}
 
 	if prereleaseStr != "" {
@@ -246,12 +257,7 @@ func stringToNumber(s string) float64 {
 	return value
 }
 
-func getUintComponent(text string) uint32 {
+func getUintComponent(text string) (uint32, error) {
 	r, err := strconv.ParseUint(text, 10, 32)
-	if err != nil {
-		// !!!
-		// Should we actually just panic here?
-		panic(err.Error())
-	}
-	return uint32(r)
+	return uint32(r), err
 }
