@@ -64,16 +64,17 @@ func (v *VersionRange) String() string {
 }
 
 func formatDisjunction(sb *strings.Builder, alternatives [][]versionComparator) {
-	if len(alternatives) == 0 {
-		sb.WriteByte('*')
-		return
-	}
+	origLen := sb.Len()
 
 	for i, alternative := range alternatives {
 		if i > 0 {
 			sb.WriteString(" || ")
 		}
 		formatAlternative(sb, alternative)
+	}
+
+	if sb.Len() == origLen {
+		sb.WriteString("*")
 	}
 }
 
