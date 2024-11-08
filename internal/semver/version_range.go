@@ -23,12 +23,12 @@ var whitespaceRegExp = regexp.MustCompile(`\s+`)
 // build        ::= parts
 // parts        ::= part ( '.' part ) *
 // part         ::= nr | [-0-9A-Za-z]+
-var partialRegExp = regexp.MustCompile(`^([xX*0]|[1-9]\d*)(?:\.([xX*0]|[1-9]\d*)(?:\.([xX*0]|[1-9]\d*)(?:-([a-zA-Z0-9-.]+))?(?:\+([a-zA-Z0-9-.]+))?)?)?$`)
+var partialRegExp = regexp.MustCompile(`(?i)^([x*0]|[1-9]\d*)(?:\.([x*0]|[1-9]\d*)(?:\.([x*0]|[1-9]\d*)(?:-([a-z0-9-.]+))?(?:\+([a-z0-9-.]+))?)?)?$`)
 
 // https://github.com/npm/node-semver#range-grammar
 //
 // hyphen       ::= partial ' - ' partial
-var hyphenRegExp = regexp.MustCompile(`^\s*([a-zA-Z0-9-+.*]+)\s+-\s+([a-zA-Z0-9-+.*]+)\s*$`)
+var hyphenRegExp = regexp.MustCompile(`(?i)^\s*([a-z0-9-+.*]+)\s+-\s+([a-z0-9-+.*]+)\s*$`)
 
 // https://github.com/npm/node-semver#range-grammar
 //
@@ -36,7 +36,7 @@ var hyphenRegExp = regexp.MustCompile(`^\s*([a-zA-Z0-9-+.*]+)\s+-\s+([a-zA-Z0-9-
 // primitive    ::= ( '<' | '>' | '>=' | '<=' | '=' ) partial
 // tilde        ::= '~' partial
 // caret        ::= '^' partial
-var rangeRegExp = regexp.MustCompile(`^([~^<>=]|<=|>=)?\s*([a-zA-Z0-9-+.*]+)$`)
+var rangeRegExp = regexp.MustCompile(`(?i)^([~^<>=]|<=|>=)?\s*([a-z0-9-+.*]+)$`)
 
 type VersionRange struct {
 	alternatives [][]versionComparator
