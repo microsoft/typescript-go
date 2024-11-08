@@ -32,7 +32,7 @@ func removeTestPathPrefixes(text string, retainTrailingDirectorySeparator bool) 
 }
 
 func isDefaultLibraryFile(filePath string) bool {
-	fileName := tspath.GetBaseFileName(filePath, nil, false)
+	fileName := tspath.GetBaseFileName(filePath)
 	return strings.HasPrefix(fileName, "lib.") && strings.HasSuffix(fileName, compiler.ExtensionDts)
 }
 
