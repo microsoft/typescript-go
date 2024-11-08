@@ -5,6 +5,7 @@ import (
 	"strconv"
 
 	"github.com/microsoft/typescript-go/internal/compiler/diagnostics"
+	"github.com/microsoft/typescript-go/internal/utils"
 )
 
 type ContainerFlags int32
@@ -37,6 +38,7 @@ type Binder struct {
 	file                   *SourceFile
 	options                *CompilerOptions
 	languageVersion        ScriptTarget
+	bind                   func(*Node) bool
 	parent                 *Node
 	container              *Node
 	thisParentContainer    *Node
@@ -91,6 +93,7 @@ func bindSourceFile(file *SourceFile, options *CompilerOptions) {
 		b.file = file
 		b.options = options
 		b.languageVersion = getEmitScriptTarget(options)
+		b.bind = b.bindWorker // Allocate closure once
 		b.bind(file.AsNode())
 		file.isBound = true
 		file.symbolCount = b.symbolCount
@@ -216,34 +219,9 @@ func (b *Binder) declareSymbolEx(symbolTable SymbolTable, parent *Symbol, node *
 						}
 					}
 				}
-				var relatedInformation []*Diagnostic
-				if isTypeAliasDeclaration(node) && nodeIsMissing(node.AsTypeAliasDeclaration().typeNode) && hasSyntacticModifier(node, ModifierFlagsExport) && symbol.flags&(SymbolFlagsAlias|SymbolFlagsType|SymbolFlagsNamespace) != 0 {
-					// export type T; - may have meant export type { T }?
-					relatedInformation = append(relatedInformation, b.createDiagnosticForNode(node, diagnostics.Did_you_mean_0,
-						"export type { "+node.AsTypeAliasDeclaration().name.AsIdentifier().text+" }"))
-				}
 				var declarationName *Node = getNameOfDeclaration(node)
 				if declarationName == nil {
 					declarationName = node
-				}
-				for index, declaration := range symbol.declarations {
-					var decl *Node = getNameOfDeclaration(declaration)
-					if decl == nil {
-						decl = declaration
-					}
-					var diag *Diagnostic
-					if messageNeedsName {
-						diag = b.createDiagnosticForNode(decl, message, b.getDisplayName(declaration))
-					} else {
-						diag = b.createDiagnosticForNode(decl, message)
-					}
-					if multipleDefaultExports {
-						diag.addRelatedInfo(b.createDiagnosticForNode(declarationName, ifElse(index == 0, diagnostics.Another_export_default_is_here, diagnostics.X_and_here)))
-					}
-					b.addDiagnostic(diag)
-					if multipleDefaultExports {
-						relatedInformation = append(relatedInformation, b.createDiagnosticForNode(decl, diagnostics.The_first_export_default_is_here))
-					}
 				}
 				var diag *Diagnostic
 				if messageNeedsName {
@@ -251,7 +229,29 @@ func (b *Binder) declareSymbolEx(symbolTable SymbolTable, parent *Symbol, node *
 				} else {
 					diag = b.createDiagnosticForNode(declarationName, message)
 				}
-				diag.addRelatedInfo(relatedInformation...)
+				if isTypeAliasDeclaration(node) && nodeIsMissing(node.AsTypeAliasDeclaration().typeNode) && hasSyntacticModifier(node, ModifierFlagsExport) && symbol.flags&(SymbolFlagsAlias|SymbolFlagsType|SymbolFlagsNamespace) != 0 {
+					// export type T; - may have meant export type { T }?
+					diag.addRelatedInfo(b.createDiagnosticForNode(node, diagnostics.Did_you_mean_0, "export type { "+node.AsTypeAliasDeclaration().name.AsIdentifier().text+" }"))
+				}
+				for index, declaration := range symbol.declarations {
+					var decl *Node = getNameOfDeclaration(declaration)
+					if decl == nil {
+						decl = declaration
+					}
+					var d *Diagnostic
+					if messageNeedsName {
+						d = b.createDiagnosticForNode(decl, message, b.getDisplayName(declaration))
+					} else {
+						d = b.createDiagnosticForNode(decl, message)
+					}
+					if multipleDefaultExports {
+						d.addRelatedInfo(b.createDiagnosticForNode(declarationName, ifElse(index == 0, diagnostics.Another_export_default_is_here, diagnostics.X_and_here)))
+					}
+					b.addDiagnostic(d)
+					if multipleDefaultExports {
+						diag.addRelatedInfo(b.createDiagnosticForNode(decl, diagnostics.The_first_export_default_is_here))
+					}
+				}
 				b.addDiagnostic(diag)
 				symbol = b.newSymbol(SymbolFlagsNone, name)
 			}
@@ -548,7 +548,7 @@ func finishFlowLabel(label *FlowLabel) *FlowNode {
 	return label
 }
 
-func (b *Binder) bind(node *Node) bool {
+func (b *Binder) bindWorker(node *Node) bool {
 	if node == nil {
 		return false
 	}
@@ -574,34 +574,6 @@ func (b *Binder) bind(node *Node) bool {
 	//
 	// However, not all symbols will end up in any of these tables. 'Anonymous' symbols
 	// (like TypeLiterals for example) will not be put in any table.
-	b.bindWorker(node)
-	// Then we recurse into the children of the node to bind them as well. For certain
-	// symbols we do specialized work when we recurse. For example, we'll keep track of
-	// the current 'container' node when it changes. This helps us know which symbol table
-	// a local should go into for example. Since terminal nodes are known not to have
-	// children, as an optimization we don't process those.
-	if node.kind > SyntaxKindLastToken {
-		saveParent := b.parent
-		b.parent = node
-		containerFlags := getContainerFlags(node)
-		if containerFlags == ContainerFlagsNone {
-			b.bindChildren(node)
-		} else {
-			b.bindContainer(node, containerFlags)
-		}
-		b.parent = saveParent
-	} else {
-		saveParent := b.parent
-		if node.kind == SyntaxKindEndOfFile {
-			b.parent = node
-		}
-		b.parent = saveParent
-	}
-	b.inStrictMode = saveInStrictMode
-	return false
-}
-
-func (b *Binder) bindWorker(node *Node) {
 	switch node.kind {
 	case SyntaxKindIdentifier:
 		node.AsIdentifier().flowNode = b.currentFlow
@@ -712,6 +684,30 @@ func (b *Binder) bindWorker(node *Node) {
 	case SyntaxKindJsxAttribute:
 		b.bindJsxAttribute(node, SymbolFlagsProperty, SymbolFlagsPropertyExcludes)
 	}
+	// Then we recurse into the children of the node to bind them as well. For certain
+	// symbols we do specialized work when we recurse. For example, we'll keep track of
+	// the current 'container' node when it changes. This helps us know which symbol table
+	// a local should go into for example. Since terminal nodes are known not to have
+	// children, as an optimization we don't process those.
+	if node.kind > SyntaxKindLastToken {
+		saveParent := b.parent
+		b.parent = node
+		containerFlags := getContainerFlags(node)
+		if containerFlags == ContainerFlagsNone {
+			b.bindChildren(node)
+		} else {
+			b.bindContainer(node, containerFlags)
+		}
+		b.parent = saveParent
+	} else {
+		saveParent := b.parent
+		if node.kind == SyntaxKindEndOfFile {
+			b.parent = node
+		}
+		b.parent = saveParent
+	}
+	b.inStrictMode = saveInStrictMode
+	return false
 }
 
 func (b *Binder) bindPropertyWorker(node *Node) {
@@ -995,7 +991,7 @@ func (b *Binder) hasExportDeclarations(node *Node) bool {
 			statements = body.AsModuleBlock().statements
 		}
 	}
-	return some(statements, func(s *Node) bool {
+	return utils.Some(statements, func(s *Node) bool {
 		return isExportDeclaration(s) || isExportAssignment(s)
 	})
 }
@@ -1724,7 +1720,7 @@ func (b *Binder) checkUnreachable(node *Node) bool {
 				//   On the other side we do want to report errors on non-initialized 'lets' because of TDZ
 				isError := unreachableCodeIsError(b.options) && node.flags&NodeFlagsAmbient == 0 && (!isVariableStatement(node) ||
 					getCombinedNodeFlags(node.AsVariableStatement().declarationList)&NodeFlagsBlockScoped != 0 ||
-					some(node.AsVariableStatement().declarationList.AsVariableDeclarationList().declarations, func(d *Node) bool {
+					utils.Some(node.AsVariableStatement().declarationList.AsVariableDeclarationList().declarations, func(d *Node) bool {
 						return d.AsVariableDeclaration().initializer != nil
 					}))
 				b.errorOnEachUnreachableRange(node, isError)
@@ -1767,7 +1763,7 @@ func (b *Binder) errorOnEachUnreachableRange(node *Node, isError bool) {
 func (b *Binder) isExecutableStatement(s *Node) bool {
 	// Don't remove statements that can validly be used before they appear.
 	return !isFunctionDeclaration(s) && !b.isPurelyTypeDeclaration(s) && !(isVariableStatement(s) && getCombinedNodeFlags(s)&NodeFlagsBlockScoped == 0 &&
-		some(s.AsVariableStatement().declarationList.AsVariableDeclarationList().declarations, func(d *Node) bool {
+		utils.Some(s.AsVariableStatement().declarationList.AsVariableDeclarationList().declarations, func(d *Node) bool {
 			return d.AsVariableDeclaration().initializer == nil
 		}))
 }
@@ -2087,7 +2083,7 @@ func (b *Binder) bindSwitchStatement(node *Node) {
 	b.preSwitchCaseFlow = b.currentFlow
 	b.bind(stmt.caseBlock)
 	b.addAntecedent(postSwitchLabel, b.currentFlow)
-	hasDefault := some(stmt.caseBlock.AsCaseBlock().clauses, func(c *Node) bool {
+	hasDefault := utils.Some(stmt.caseBlock.AsCaseBlock().clauses, func(c *Node) bool {
 		return c.kind == SyntaxKindDefaultClause
 	})
 	if !hasDefault {
@@ -2529,7 +2525,7 @@ func (b *Binder) addDeclarationToSymbol(symbol *Symbol, node *Node, symbolFlags 
 	if symbol.declarations == nil {
 		symbol.declarations = b.newSingleDeclaration(node)
 	} else {
-		symbol.declarations = appendIfUnique(symbol.declarations, node)
+		symbol.declarations = utils.AppendIfUnique(symbol.declarations, node)
 	}
 	// On merge of const enum module with class or function, reset const enum only flag (namespaces will already recalculate)
 	if symbol.constEnumOnlyModule && symbol.flags&(SymbolFlagsFunction|SymbolFlagsClass|SymbolFlagsRegularEnum) != 0 {
