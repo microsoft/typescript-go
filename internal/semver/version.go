@@ -3,7 +3,6 @@ package semver
 import (
 	"cmp"
 	"fmt"
-	"math"
 	"regexp"
 	"slices"
 	"strconv"
@@ -163,8 +162,20 @@ func comparePreReleaseIdentifier(left, right string) int {
 
 		// https://semver.org/#spec-item-11
 		// > identifiers consisting of only digits are compared numerically
-		leftAsNumber := stringToNumber(left)
-		rightAsNumber := stringToNumber(right)
+		leftAsNumber, leftErr := getUintComponent(left)
+		rightAsNumber, rightErr := getUintComponent(right)
+		if leftErr != nil || rightErr != nil {
+			// This should only happen in the event of an overflow.
+			// If so, use the lengths or fall back to string comparison.
+			leftLen := len(left)
+			rightLen := len(right)
+			lenCompare := cmp.Compare(leftLen, rightLen)
+			if lenCompare == 0 {
+				return compareResult
+			} else {
+				return lenCompare
+			}
+		}
 		return cmp.Compare(leftAsNumber, rightAsNumber)
 	}
 
@@ -244,17 +255,6 @@ func TryParseVersion(text string) (Version, error) {
 	}
 
 	return result, nil
-}
-
-func stringToNumber(s string) float64 {
-	// !!! Copied from the core compiler.
-	// !!! This function should behave identically to the expression `+s` in JS
-	// This includes parsing binary, octal, and hex numeric strings
-	value, err := strconv.ParseFloat(s, 64)
-	if err != nil {
-		return math.NaN()
-	}
-	return value
 }
 
 func getUintComponent(text string) (uint32, error) {

@@ -2,6 +2,7 @@ package semver
 
 import (
 	"fmt"
+	"strings"
 	"testing"
 
 	"gotest.tools/v3/assert"
@@ -110,6 +111,13 @@ func TestVersionRanges(t *testing.T) {
 	assertRangesGoodBad(t, "<=3.8.0-0", testGoodBad{
 		good: []string{"3.6", "3.7"},
 		bad:  []string{"3.8", "3.9", "4.0"},
+	})
+
+	// Big numbers in prerelease strings.
+	lotsaOnes := strings.Repeat("1", 320)
+	assertRangesGoodBad(t, ">=1.2.3-1"+lotsaOnes, testGoodBad{
+		good: []string{"1.2.3-1" + lotsaOnes, "1.2.3-11" + lotsaOnes + ".1", "1.2.3-1" + lotsaOnes + ".1+build"},
+		bad:  []string{"1.2.3-" + lotsaOnes + ".1+build", "1.2.3-" + lotsaOnes + ".1+build"},
 	})
 }
 
