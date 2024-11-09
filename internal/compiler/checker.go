@@ -164,7 +164,6 @@ type Checker struct {
 	instantiationCount                 uint32
 	instantiationDepth                 uint32
 	currentNode                        *Node
-	emptySymbols                       SymbolTable
 	languageVersion                    ScriptTarget
 	moduleKind                         ModuleKind
 	allowSyntheticDefaultImports       bool
@@ -173,6 +172,7 @@ type Checker struct {
 	noImplicitAny                      bool
 	useUnknownInCatchVariables         bool
 	exactOptionalPropertyTypes         bool
+	arrayVariances                     []VarianceFlags
 	globals                            SymbolTable
 	stringLiteralTypes                 map[string]*Type
 	numberLiteralTypes                 map[float64]*Type
@@ -213,6 +213,7 @@ type Checker struct {
 	interfaceTypeLinks                 LinkStore[*Symbol, InterfaceTypeLinks]
 	typeAliasLinks                     LinkStore[*Symbol, TypeAliasLinks]
 	spreadLinks                        LinkStore[*Symbol, SpreadLinks]
+	varianceLinks                      LinkStore[*Symbol, VarianceLinks]
 	patternForType                     map[*Type]*Node
 	anyType                            *Type
 	autoType                           *Type
@@ -247,6 +248,9 @@ type Checker struct {
 	numericStringType                  *Type
 	uniqueLiteralType                  *Type
 	uniqueLiteralMapper                *TypeMapper
+	outofbandVarianceMarkerHandler     func(onlyUnreliable bool)
+	reportUnreliableMapper             *TypeMapper
+	reportUnmeasurableMapper           *TypeMapper
 	emptyObjectType                    *Type
 	emptyTypeLiteralType               *Type
 	emptyGenericType                   *Type
@@ -280,6 +284,7 @@ type Checker struct {
 	contextualBindingPatterns          []*Node
 	typeResolutions                    []TypeResolution
 	resolutionStart                    int
+	inVarianceComputation              bool
 	lastGetCombinedNodeFlagsNode       *Node
 	lastGetCombinedNodeFlagsResult     NodeFlags
 	lastGetCombinedModifierFlagsNode   *Node
@@ -302,7 +307,6 @@ func NewChecker(program *Program) *Checker {
 	c.host = program.host
 	c.compilerOptions = program.options
 	c.files = program.files
-	c.emptySymbols = make(SymbolTable)
 	c.languageVersion = getEmitScriptTarget(c.compilerOptions)
 	c.moduleKind = getEmitModuleKind(c.compilerOptions)
 	c.allowSyntheticDefaultImports = getAllowSyntheticDefaultImports(c.compilerOptions)
@@ -311,6 +315,7 @@ func NewChecker(program *Program) *Checker {
 	c.noImplicitAny = c.getStrictOptionValue(c.compilerOptions.NoImplicitAny)
 	c.useUnknownInCatchVariables = c.getStrictOptionValue(c.compilerOptions.UseUnknownInCatchVariables)
 	c.exactOptionalPropertyTypes = c.compilerOptions.ExactOptionalPropertyTypes == TSTrue
+	c.arrayVariances = []VarianceFlags{VarianceFlagsCovariant}
 	c.globals = make(SymbolTable)
 	c.stringLiteralTypes = make(map[string]*Type)
 	c.numberLiteralTypes = make(map[float64]*Type)
@@ -375,6 +380,8 @@ func NewChecker(program *Program) *Checker {
 	c.numericStringType = c.numberType                                // !!!
 	c.uniqueLiteralType = c.newIntrinsicType(TypeFlagsNever, "never") // Special `never` flagged by union reduction to behave as a literal
 	c.uniqueLiteralMapper = newFunctionTypeMapper(c.getUniqueLiteralTypeForTypeParameter)
+	c.reportUnreliableMapper = newFunctionTypeMapper(c.reportUnreliableWorker)
+	c.reportUnmeasurableMapper = newFunctionTypeMapper(c.reportUnmeasurableWorker)
 	c.emptyObjectType = c.newAnonymousType(nil /*symbol*/, nil, nil, nil, nil)
 	c.emptyTypeLiteralType = c.newAnonymousType(c.newSymbol(SymbolFlagsTypeLiteral, InternalSymbolNameType), nil, nil, nil, nil)
 	c.emptyGenericType = c.newAnonymousType(nil /*symbol*/, nil, nil, nil, nil)
@@ -400,6 +407,20 @@ func NewChecker(program *Program) *Checker {
 	c.initializeClosures()
 	c.initializeChecker()
 	return c
+}
+
+func (c *Checker) reportUnreliableWorker(t *Type) *Type {
+	if c.outofbandVarianceMarkerHandler != nil && (t == c.markerSuperType || t == c.markerSubType || t == c.markerOtherType) {
+		c.outofbandVarianceMarkerHandler(true /*onlyUnreliable*/)
+	}
+	return t
+}
+
+func (c *Checker) reportUnmeasurableWorker(t *Type) *Type {
+	if c.outofbandVarianceMarkerHandler != nil && (t == c.markerSuperType || t == c.markerSubType || t == c.markerOtherType) {
+		c.outofbandVarianceMarkerHandler(false /*onlyUnreliable*/)
+	}
+	return t
 }
 
 func (c *Checker) getStrictOptionValue(value Tristate) bool {
@@ -993,6 +1014,9 @@ func (c *Checker) checkExpressionWorker(node *Node, checkMode CheckMode) *Type {
 		return c.checkPropertyAccessExpression(node, checkMode, false /*writeOnly*/)
 	case SyntaxKindBinaryExpression:
 		return c.checkBinaryExpression(node, checkMode)
+	case SyntaxKindTypeAssertionExpression:
+	case SyntaxKindAsExpression:
+		return c.checkAssertion(node, checkMode)
 	}
 	return c.anyType // !!!
 }
@@ -1815,6 +1839,22 @@ func (c *Checker) tryGetThisTypeAt(node *Node, includeGlobalThis bool, container
 
 func (c *Checker) checkThisBeforeSuper(node *Node, container *Node, diagnosticMessage *diagnostics.Message) {
 	// !!!
+}
+
+func (c *Checker) checkAssertion(node *Node, checkMode CheckMode) *Type {
+	typeNode := getEffectiveTypeAnnotationNode(node)
+	exprType := c.checkExpression(node.Expression())
+	if isConstTypeReference(typeNode) {
+		if !c.isValidConstAssertionArgument(node.Expression()) {
+			c.error(node.Expression(), diagnostics.A_const_assertions_can_only_be_applied_to_references_to_enum_members_or_string_number_boolean_array_or_object_literals)
+		}
+		return c.getRegularTypeOfLiteralType(exprType)
+	}
+	links := c.typeNodeLinks.get(node)
+	links.resolvedType = exprType
+	c.checkSourceElement(typeNode)
+	c.checkNodeDeferred(node)
+	return c.getTypeFromTypeNode(typeNode)
 }
 
 func (c *Checker) checkBinaryExpression(node *Node, checkMode CheckMode) *Type {
@@ -5083,8 +5123,11 @@ func isUnconstrainedTypeParameter(tp *Type) bool {
 	if target == nil {
 		target = tp
 	}
+	if target.symbol == nil {
+		return false
+	}
 	for _, d := range target.symbol.declarations {
-		if isTypeParameterDeclaration(d) && !(d.AsTypeParameter().constraint == nil || isTypeParameterList(d.parent)) {
+		if isTypeParameterDeclaration(d) && (!isTypeParameterList(d.parent) || d.AsTypeParameter().constraint != nil) {
 			return false
 		}
 	}

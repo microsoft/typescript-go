@@ -94,6 +94,13 @@ func (r *Relation) size() int {
 	return len(r.results)
 }
 
+func (c *Checker) compareTypesIdentical(source *Type, target *Type) Ternary {
+	if c.isTypeRelatedTo(source, target, c.identityRelation) {
+		return TernaryTrue
+	}
+	return TernaryFalse
+}
+
 func (c *Checker) isTypeAssignableTo(source *Type, target *Type) bool {
 	return c.isTypeRelatedTo(source, target, c.assignableRelation)
 }
@@ -488,7 +495,7 @@ func getRecursionIdentity(t *Type) RecursionId {
 			return RecursionId{kind: RecursionIdKindType, id: uint32(t.Target().id)}
 		}
 	}
-	if t.flags&TypeFlagsTypeParameter != 0 {
+	if t.flags&TypeFlagsTypeParameter != 0 && t.symbol != nil {
 		// We use the symbol of the type parameter such that all "fresh" instantiations of that type parameter
 		// have the same recursion identity.
 		return RecursionId{kind: RecursionIdKindSymbol, id: uint32(getSymbolId(t.symbol))}
@@ -635,10 +642,6 @@ func (c *Checker) getUnmatchedProperties(source *Type, target *Type, requireOpti
 
 func (c *Checker) getUnmatchedProperty(source *Type, target *Type, requireOptionalProperties bool, matchDiscriminantProperties bool) *Symbol {
 	return utils.FirstOrNilSeq(c.getUnmatchedProperties(source, target, requireOptionalProperties, matchDiscriminantProperties))
-}
-
-func (c *Checker) isMarkerType(t *Type) bool {
-	return c.markerTypes.has(t)
 }
 
 func excludeProperties(properties []*Symbol, excludedProperties set[string]) []*Symbol {
@@ -947,6 +950,133 @@ func (c *Checker) typeCouldHaveTopLevelSingletonTypes(t *Type) bool {
 		}
 	}
 	return isUnitType(t) || t.flags&TypeFlagsTemplateLiteral != 0 || t.flags&TypeFlagsStringMapping != 0
+}
+
+func (c *Checker) getVariances(t *Type) []VarianceFlags {
+	// Arrays and tuples are known to be covariant, no need to spend time computing this.
+	if t == c.globalArrayType || t == c.globalReadonlyArrayType || t.objectFlags&ObjectFlagsTuple != 0 {
+		return c.arrayVariances
+	}
+	return c.getVariancesWorker(t.symbol, t.AsInterfaceType().TypeParameters())
+}
+
+func (c *Checker) getAliasVariances(symbol *Symbol) []VarianceFlags {
+	return c.getVariancesWorker(symbol, c.typeAliasLinks.get(symbol).typeParameters)
+}
+
+// Return an array containing the variance of each type parameter. The variance is effectively
+// a digest of the type comparisons that occur for each type argument when instantiations of the
+// generic type are structurally compared. We infer the variance information by comparing
+// instantiations of the generic type for type arguments with known relations. The function
+// returns an empty slice when invoked recursively for the given generic type.
+func (c *Checker) getVariancesWorker(symbol *Symbol, typeParameters []*Type) []VarianceFlags {
+	links := c.varianceLinks.get(symbol)
+	if links.variances == nil {
+		oldVarianceComputation := c.inVarianceComputation
+		saveResolutionStart := c.resolutionStart
+		if !c.inVarianceComputation {
+			c.inVarianceComputation = true
+			c.resolutionStart = len(c.typeResolutions)
+		}
+		links.variances = []VarianceFlags{}
+		variances := make([]VarianceFlags, len(typeParameters))
+		for i, tp := range typeParameters {
+			modifiers := c.getTypeParameterModifiers(tp)
+			var variance VarianceFlags
+			switch {
+			case modifiers&ModifierFlagsOut != 0:
+				if modifiers&ModifierFlagsIn != 0 {
+					variance = VarianceFlagsInvariant
+				} else {
+					variance = VarianceFlagsCovariant
+				}
+			case modifiers&ModifierFlagsIn != 0:
+				variance = VarianceFlagsContravariant
+			default:
+				unmeasurable := false
+				unreliable := false
+				oldHandler := c.outofbandVarianceMarkerHandler
+				c.outofbandVarianceMarkerHandler = func(onlyUnreliable bool) {
+					if onlyUnreliable {
+						unreliable = true
+					} else {
+						unmeasurable = true
+					}
+				}
+				// We first compare instantiations where the type parameter is replaced with
+				// marker types that have a known subtype relationship. From this we can infer
+				// invariance, covariance, contravariance or bivariance.
+				typeWithSuper := c.createMarkerType(symbol, tp, c.markerSuperType)
+				typeWithSub := c.createMarkerType(symbol, tp, c.markerSubType)
+				variance = (ifElse(c.isTypeAssignableTo(typeWithSub, typeWithSuper), VarianceFlagsCovariant, 0)) |
+					(ifElse(c.isTypeAssignableTo(typeWithSuper, typeWithSub), VarianceFlagsContravariant, 0))
+				// If the instantiations appear to be related bivariantly it may be because the
+				// type parameter is independent (i.e. it isn't witnessed anywhere in the generic
+				// type). To determine this we compare instantiations where the type parameter is
+				// replaced with marker types that are known to be unrelated.
+				if variance == VarianceFlagsBivariant && c.isTypeAssignableTo(c.createMarkerType(symbol, tp, c.markerOtherType), typeWithSuper) {
+					variance = VarianceFlagsIndependent
+				}
+				c.outofbandVarianceMarkerHandler = oldHandler
+				if unmeasurable || unreliable {
+					if unmeasurable {
+						variance |= VarianceFlagsUnmeasurable
+					}
+					if unreliable {
+						variance |= VarianceFlagsUnreliable
+					}
+				}
+			}
+			variances[i] = variance
+		}
+		if !oldVarianceComputation {
+			c.inVarianceComputation = false
+			c.resolutionStart = saveResolutionStart
+		}
+		links.variances = variances
+	}
+	return links.variances
+}
+
+func (c *Checker) createMarkerType(symbol *Symbol, source *Type, target *Type) *Type {
+	mapper := newSimpleTypeMapper(source, target)
+	t := c.getDeclaredTypeOfSymbol(symbol)
+	if c.isErrorType(t) {
+		return t
+	}
+	var result *Type
+	if symbol.flags&SymbolFlagsTypeAlias != 0 {
+		result = c.getTypeAliasInstantiation(symbol, c.instantiateTypes(c.typeAliasLinks.get(symbol).typeParameters, mapper), nil)
+	} else {
+		result = c.createTypeReference(t, c.instantiateTypes(t.AsInterfaceType().TypeParameters(), mapper))
+	}
+	c.markerTypes.add(result)
+	return result
+}
+
+func (c *Checker) isMarkerType(t *Type) bool {
+	return c.markerTypes.has(t)
+}
+
+func (c *Checker) getTypeParameterModifiers(tp *Type) ModifierFlags {
+	var flags ModifierFlags
+	if tp.symbol != nil {
+		for _, d := range tp.symbol.declarations {
+			flags |= getEffectiveModifierFlags(d)
+		}
+	}
+	return flags & (ModifierFlagsIn | ModifierFlagsOut | ModifierFlagsConst)
+}
+
+// Return true if the given type reference has a 'void' type argument for a covariant type parameter.
+// See comment at call in recursiveTypeRelatedTo for when this case matters.
+func (c *Checker) hasCovariantVoidArgument(typeArguments []*Type, variances []VarianceFlags) bool {
+	for i, v := range variances {
+		if v&VarianceFlagsVarianceMask == VarianceFlagsCovariant && typeArguments[i].flags&TypeFlagsVoid != 0 {
+			return true
+		}
+	}
+	return false
 }
 
 type errorState struct {
@@ -1465,17 +1595,16 @@ func (r *Relater) recursiveTypeRelatedTo(source *Type, target *Type, reportError
 			// We are elaborating errors and the cached result is a failure not due to a comparison overflow,
 			// so we will do the comparison again to generate an error message.
 		} else {
-			// !!!
-			// if c.outofbandVarianceMarkerHandler {
-			// 	// We're in the middle of variance checking - integrate any unmeasurable/unreliable flags from this cached component
-			// 	saved := entry & RelationComparisonResultReportsMask
-			// 	if saved & RelationComparisonResultReportsUnmeasurable {
-			// 		c.instantiateType(source, c.reportUnmeasurableMapper)
-			// 	}
-			// 	if saved & RelationComparisonResultReportsUnreliable {
-			// 		c.instantiateType(source, c.reportUnreliableMapper)
-			// 	}
-			// }
+			if r.c.outofbandVarianceMarkerHandler != nil {
+				// We're in the middle of variance checking - integrate any unmeasurable/unreliable flags from this cached component
+				saved := entry & RelationComparisonResultReportsMask
+				if saved&RelationComparisonResultReportsUnmeasurable != 0 {
+					r.c.instantiateType(source, r.c.reportUnmeasurableMapper)
+				}
+				if saved&RelationComparisonResultReportsUnreliable != 0 {
+					r.c.instantiateType(source, r.c.reportUnreliableMapper)
+				}
+			}
 			if reportErrors && entry&RelationComparisonResultOverflow != 0 {
 				message := ifElse(entry&RelationComparisonResultComplexityOverflow != 0,
 					diagnostics.Excessive_complexity_comparing_types_0_and_1,
@@ -1526,29 +1655,27 @@ func (r *Relater) recursiveTypeRelatedTo(source *Type, target *Type, reportError
 		}
 	}
 	propagatingVarianceFlags := RelationComparisonResultNone
-	// !!!
-	// var originalHandler /* TODO(TS-TO-GO) TypeNode TypeQuery: typeof outofbandVarianceMarkerHandler */ any
-	// if c.outofbandVarianceMarkerHandler {
-	// 	originalHandler = c.outofbandVarianceMarkerHandler
-	// 	c.outofbandVarianceMarkerHandler = func(onlyUnreliable bool) {
-	// 		if onlyUnreliable {
-	// 			propagatingVarianceFlags |= RelationComparisonResultReportsUnreliable
-	// 		} else {
-	// 			propagatingVarianceFlags |= RelationComparisonResultReportsUnmeasurable
-	// 		}
-	// 		return originalHandler(onlyUnreliable)
-	// 	}
-	// }
+	var originalHandler func(bool)
+	if r.c.outofbandVarianceMarkerHandler != nil {
+		originalHandler = r.c.outofbandVarianceMarkerHandler
+		r.c.outofbandVarianceMarkerHandler = func(onlyUnreliable bool) {
+			if onlyUnreliable {
+				propagatingVarianceFlags |= RelationComparisonResultReportsUnreliable
+			} else {
+				propagatingVarianceFlags |= RelationComparisonResultReportsUnmeasurable
+			}
+			originalHandler(onlyUnreliable)
+		}
+	}
 	var result Ternary
 	if r.expandingFlags == ExpandingFlagsBoth {
 		result = TernaryMaybe
 	} else {
 		result = r.structuredTypeRelatedTo(source, target, reportErrors, intersectionState)
 	}
-	// !!!
-	// if c.outofbandVarianceMarkerHandler {
-	// 	c.outofbandVarianceMarkerHandler = originalHandler
-	// }
+	if r.c.outofbandVarianceMarkerHandler != nil {
+		r.c.outofbandVarianceMarkerHandler = originalHandler
+	}
 	if recursionFlags&RecursionFlagsSource != 0 {
 		r.sourceStack = r.sourceStack[:len(r.sourceStack)-1]
 	}
@@ -1604,7 +1731,7 @@ func (r *Relater) restoreErrorState(e errorState) {
 
 func (r *Relater) structuredTypeRelatedTo(source *Type, target *Type, reportErrors bool, intersectionState IntersectionState) Ternary {
 	saveErrorState := r.getErrorState()
-	result := r.structuredTypeRelatedToWorker(source, target, reportErrors, intersectionState, &saveErrorState)
+	result := r.structuredTypeRelatedToWorker(source, target, reportErrors, intersectionState)
 	// !!!
 	if result != TernaryFalse {
 		r.restoreErrorState(saveErrorState)
@@ -1612,10 +1739,53 @@ func (r *Relater) structuredTypeRelatedTo(source *Type, target *Type, reportErro
 	return result
 }
 
-func (r *Relater) structuredTypeRelatedToWorker(source *Type, target *Type, reportErrors bool, intersectionState IntersectionState, saveErrorState *errorState) Ternary {
+func (r *Relater) structuredTypeRelatedToWorker(source *Type, target *Type, reportErrors bool, intersectionState IntersectionState) Ternary {
 	var result Ternary
 	var varianceCheckFailed bool
 	var originalErrorChain *ErrorChain
+	saveErrorState := r.getErrorState()
+	relateVariances := func(sourceTypeArguments []*Type, targetTypeArguments []*Type, variances []VarianceFlags, intersectionState IntersectionState) (Ternary, bool) {
+		if result := r.typeArgumentsRelatedTo(sourceTypeArguments, targetTypeArguments, variances, reportErrors, intersectionState); result != TernaryFalse {
+			return result, true
+		}
+		if utils.Some(variances, func(v VarianceFlags) bool { return v&VarianceFlagsAllowsStructuralFallback != 0 }) {
+			// If some type parameter was `Unmeasurable` or `Unreliable`, and we couldn't pass by assuming it was identical, then we
+			// have to allow a structural fallback check
+			// We elide the variance-based error elaborations, since those might not be too helpful, since we'll potentially
+			// be assuming identity of the type parameter.
+			originalErrorChain = nil
+			r.restoreErrorState(saveErrorState)
+			return TernaryFalse, false
+		}
+		allowStructuralFallback := r.c.hasCovariantVoidArgument(targetTypeArguments, variances)
+		varianceCheckFailed = !allowStructuralFallback
+		// The type arguments did not relate appropriately, but it may be because we have no variance
+		// information (in which case typeArgumentsRelatedTo defaulted to covariance for all type
+		// arguments). It might also be the case that the target type has a 'void' type argument for
+		// a covariant type parameter that is only used in return positions within the generic type
+		// (in which case any type argument is permitted on the source side). In those cases we proceed
+		// with a structural comparison. Otherwise, we know for certain the instantiations aren't
+		// related and we can return here.
+		if len(variances) != 0 && !allowStructuralFallback {
+			// In some cases generic types that are covariant in regular type checking mode become
+			// invariant in --strictFunctionTypes mode because one or more type parameters are used in
+			// both co- and contravariant positions. In order to make it easier to diagnose *why* such
+			// types are invariant, if any of the type parameters are invariant we reset the reported
+			// errors and instead force a structural comparison (which will include elaborations that
+			// reveal the reason).
+			// We can switch on `reportErrors` here, since varianceCheckFailed guarantees we return `False`,
+			// we can return `False` early here to skip calculating the structural error message we don't need.
+			if varianceCheckFailed && !(reportErrors && utils.Some(variances, func(v VarianceFlags) bool { return (v & VarianceFlagsVarianceMask) == VarianceFlagsInvariant })) {
+				return TernaryFalse, true
+			}
+			// We remember the original error information so we can restore it in case the structural
+			// comparison unexpectedly succeeds. This can happen when the structural comparison result
+			// is a Ternary.Maybe for example caused by the recursion depth limiter.
+			originalErrorChain = r.errorChain
+			r.restoreErrorState(saveErrorState)
+		}
+		return TernaryFalse, false
+	}
 	switch {
 	case r.relation == r.c.identityRelation:
 		// We've already checked that source.flags and target.flags are identical
@@ -1681,7 +1851,24 @@ func (r *Relater) structuredTypeRelatedToWorker(source *Type, target *Type, repo
 			return TernaryFalse
 		}
 	}
-	// !!! Variance
+	// We limit alias variance probing to only object and conditional types since their alias behavior
+	// is more predictable than other, interned types, which may or may not have an alias depending on
+	// the order in which things were checked.
+	if source.flags&(TypeFlagsObject|TypeFlagsConditional) != 0 && source.alias != nil && len(source.alias.typeArguments) != 0 &&
+		target.alias != nil && source.alias.symbol == target.alias.symbol && !(r.c.isMarkerType(source) || r.c.isMarkerType(target)) {
+		variances := r.c.getAliasVariances(source.alias.symbol)
+		if len(variances) == 0 {
+			return TernaryUnknown
+		}
+		params := r.c.typeAliasLinks.get(source.alias.symbol).typeParameters
+		minParams := r.c.getMinTypeArgumentCount(params)
+		sourceTypes := r.c.fillMissingTypeArguments(source.alias.typeArguments, params, minParams)
+		targetTypes := r.c.fillMissingTypeArguments(target.alias.typeArguments, params, minParams)
+		varianceResult, ok := relateVariances(sourceTypes, targetTypes, variances, intersectionState)
+		if ok {
+			return varianceResult
+		}
+	}
 	// For a generic type T and a type U that is assignable to T, [...U] is assignable to T, U is assignable to readonly [...T],
 	// and U is assignable to [...T] when U is constrained to a mutable array or tuple type.
 	if isSingleElementGenericTupleType(source) && !source.TargetTupleType().readonly {
@@ -1792,21 +1979,20 @@ func (r *Relater) structuredTypeRelatedToWorker(source *Type, target *Type, repo
 			if r.c.isEmptyArrayLiteralType(source) {
 				return TernaryTrue
 			}
-			// !!!
-			// // We have type references to the same generic type, and the type references are not marker
-			// // type references (which are intended by be compared structurally). Obtain the variance
-			// // information for the type parameters and relate the type arguments accordingly.
-			// variances := c.getVariances((source.(TypeReference)).target)
-			// // We return Ternary.Maybe for a recursive invocation of getVariances (signalled by emptyArray). This
-			// // effectively means we measure variance only from type parameter occurrences that aren't nested in
-			// // recursive instantiations of the generic type.
-			// if variances == emptyArray {
-			// 	return TernaryUnknown
-			// }
-			// varianceResult := relateVariances(c.getTypeArguments(source.(TypeReference)), c.getTypeArguments(target.(TypeReference)), variances, intersectionState)
-			// if varianceResult != nil {
-			// 	return varianceResult
-			// }
+			// We have type references to the same generic type, and the type references are not marker
+			// type references (which are intended by be compared structurally). Obtain the variance
+			// information for the type parameters and relate the type arguments accordingly.
+			variances := r.c.getVariances(source.Target())
+			// We return Ternary.Maybe for a recursive invocation of getVariances (signalled by emptyArray). This
+			// effectively means we measure variance only from type parameter occurrences that aren't nested in
+			// recursive instantiations of the generic type.
+			if len(variances) == 0 {
+				return TernaryUnknown
+			}
+			varianceResult, ok := relateVariances(r.c.getTypeArguments(source), r.c.getTypeArguments(target), variances, intersectionState)
+			if ok {
+				return varianceResult
+			}
 		case r.c.isArrayType(target) && (r.c.isReadonlyArrayType(target) && everyType(source, r.c.isArrayOrTupleType) || everyType(source, isMutableTupleType)):
 			if r.relation != r.c.identityRelation {
 				return r.isRelatedTo(r.c.getIndexTypeOfTypeEx(source, r.c.numberType, r.c.anyType), r.c.getIndexTypeOfTypeEx(target, r.c.numberType, r.c.anyType), RecursionFlagsBoth, reportErrors)
@@ -1867,6 +2053,66 @@ func (r *Relater) structuredTypeRelatedToWorker(source *Type, target *Type, repo
 		}
 	}
 	return TernaryFalse
+}
+
+func (r *Relater) typeArgumentsRelatedTo(sources []*Type, targets []*Type, variances []VarianceFlags, reportErrors bool, intersectionState IntersectionState) Ternary {
+	if len(sources) != len(targets) && r.relation == r.c.identityRelation {
+		return TernaryFalse
+	}
+	length := min(len(sources), len(targets))
+	result := TernaryTrue
+	for i := range length {
+		// When variance information isn't available we default to covariance. This happens
+		// in the process of computing variance information for recursive types and when
+		// comparing 'this' type arguments.
+		varianceFlags := VarianceFlagsCovariant
+		if i < len(variances) {
+			varianceFlags = variances[i]
+		}
+		variance := varianceFlags & VarianceFlagsVarianceMask
+		// We ignore arguments for independent type parameters (because they're never witnessed).
+		if variance != VarianceFlagsIndependent {
+			s := sources[i]
+			t := targets[i]
+			related := TernaryTrue
+			if varianceFlags&VarianceFlagsUnmeasurable != 0 {
+				// Even an `Unmeasurable` variance works out without a structural check if the source and target are _identical_.
+				// We can't simply assume invariance, because `Unmeasurable` marks nonlinear relations, for example, a relation tained by
+				// the `-?` modifier in a mapped type (where, no matter how the inputs are related, the outputs still might not be)
+				if r.relation == r.c.identityRelation {
+					related = r.isRelatedTo(s, t, RecursionFlagsBoth, false /*reportErrors*/)
+				} else {
+					related = r.c.compareTypesIdentical(s, t)
+				}
+			} else if variance == VarianceFlagsCovariant {
+				related = r.isRelatedToEx(s, t, RecursionFlagsBoth, reportErrors, nil /*headMessage*/, intersectionState)
+			} else if variance == VarianceFlagsContravariant {
+				related = r.isRelatedToEx(t, s, RecursionFlagsBoth, reportErrors, nil /*headMessage*/, intersectionState)
+			} else if variance == VarianceFlagsBivariant {
+				// In the bivariant case we first compare contravariantly without reporting
+				// errors. Then, if that doesn't succeed, we compare covariantly with error
+				// reporting. Thus, error elaboration will be based on the the covariant check,
+				// which is generally easier to reason about.
+				related = r.isRelatedTo(t, s, RecursionFlagsBoth, false /*reportErrors*/)
+				if related == TernaryFalse {
+					related = r.isRelatedToEx(s, t, RecursionFlagsBoth, reportErrors, nil /*headMessage*/, intersectionState)
+				}
+			} else {
+				// In the invariant case we first compare covariantly, and only when that
+				// succeeds do we proceed to compare contravariantly. Thus, error elaboration
+				// will typically be based on the covariant check.
+				related = r.isRelatedToEx(s, t, RecursionFlagsBoth, reportErrors, nil /*headMessage*/, intersectionState)
+				if related != TernaryFalse {
+					related &= r.isRelatedToEx(t, s, RecursionFlagsBoth, reportErrors, nil /*headMessage*/, intersectionState)
+				}
+			}
+			if related == TernaryFalse {
+				return TernaryFalse
+			}
+			result &= related
+		}
+	}
+	return result
 }
 
 // A type [P in S]: X is related to a type [Q in T]: Y if T is related to S and X' is

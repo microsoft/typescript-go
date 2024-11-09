@@ -881,6 +881,12 @@ type SpreadLinks struct {
 	rightSpread *Symbol // Right source for synthetic spread property
 }
 
+// Links for variances of type aliases and interface types
+
+type VarianceLinks struct {
+	variances []VarianceFlags
+}
+
 // FlowFlags
 
 type FlowFlags uint32
@@ -1584,7 +1590,6 @@ type InterfaceType struct {
 	allTypeParameters           []*Type // Type parameters (outer + local + thisType)
 	outerTypeParameterCount     int     // Count of outer type parameters
 	thisType                    *Type   // The "this" type (nil if none)
-	variances                   []VarianceFlags
 	baseTypesResolved           bool
 	declaredMembersResolved     bool
 	resolvedBaseConstructorType *Type
