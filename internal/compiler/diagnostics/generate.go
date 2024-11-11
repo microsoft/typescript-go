@@ -7,6 +7,7 @@ import (
 	"cmp"
 	"encoding/json"
 	"flag"
+	"fmt"
 	"go/format"
 	"log"
 	"os"
@@ -80,23 +81,8 @@ func main() {
 	for _, m := range diagnosticMessages {
 		propName, key := convertPropertyName(m.key, m.Code)
 
-		buf.WriteString(`var `)
-		buf.WriteString(propName)
-		buf.WriteString(` = &Message{code: `)
-		buf.WriteString(strconv.Itoa(m.Code))
-		buf.WriteString(`, category: Category`)
-		buf.WriteString(m.Category)
-		buf.WriteString(`, key: "`)
-		buf.WriteString(key)
-		buf.WriteString(`", text: `)
-		buf.WriteString(toJSONString(m.key))
-		// buf.WriteString(`, reportsUnnecessary: `)
-		// buf.WriteString(strconv.FormatBool(m.ReportsUnnecessary))
-		// buf.WriteString(`, elidedInCompatabilityPyramid: `)
-		// buf.WriteString(strconv.FormatBool(m.ElidedInCompatabilityPyramid))
-		// buf.WriteString(`, reportsDeprecated: `)
-		// buf.WriteString(strconv.FormatBool(m.ReportsDeprecated))
-		buf.WriteString(``)
+		fmt.Fprintf(&buf, "var %s = &Message{code: %d, category: Category%s, key: %q, text: %q", propName, m.Code, m.Category, key, m.key)
+
 		if m.ReportsUnnecessary {
 			buf.WriteString(`, reportsUnnecessary: true`)
 		}
@@ -106,8 +92,8 @@ func main() {
 		if m.ReportsDeprecated {
 			buf.WriteString(`, reportsDeprecated: true`)
 		}
-		buf.WriteString(`}`)
-		buf.WriteString("\n")
+
+		buf.WriteString("}\n")
 	}
 
 	formatted, err := format.Source(buf.Bytes())
@@ -178,14 +164,4 @@ func convertPropertyName(origName string, code int) (propName string, key string
 	}
 
 	return propName, key
-}
-
-func toJSONString(s string) string {
-	var buf bytes.Buffer
-	var enc = json.NewEncoder(&buf)
-	enc.SetEscapeHTML(false)
-	if err := enc.Encode(s); err != nil {
-		log.Fatalf("failed to encode text: %v", err)
-	}
-	return strings.TrimSpace(buf.String())
 }
