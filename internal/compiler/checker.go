@@ -1027,8 +1027,7 @@ func (c *Checker) checkExpressionWorker(node *Node, checkMode CheckMode) *Type {
 		return c.checkPropertyAccessExpression(node, checkMode, false /*writeOnly*/)
 	case SyntaxKindBinaryExpression:
 		return c.checkBinaryExpression(node, checkMode)
-	case SyntaxKindTypeAssertionExpression:
-	case SyntaxKindAsExpression:
+	case SyntaxKindTypeAssertionExpression, SyntaxKindAsExpression:
 		return c.checkAssertion(node, checkMode)
 	}
 	return c.anyType // !!!

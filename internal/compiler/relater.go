@@ -1041,13 +1041,11 @@ func (c *Checker) getVariancesWorker(symbol *Symbol, typeParameters []*Type) []V
 					variance = VarianceFlagsIndependent
 				}
 				c.outofbandVarianceMarkerHandler = oldHandler
-				if unmeasurable || unreliable {
-					if unmeasurable {
-						variance |= VarianceFlagsUnmeasurable
-					}
-					if unreliable {
-						variance |= VarianceFlagsUnreliable
-					}
+				if unmeasurable {
+					variance |= VarianceFlagsUnmeasurable
+				}
+				if unreliable {
+					variance |= VarianceFlagsUnreliable
 				}
 			}
 			variances[i] = variance
