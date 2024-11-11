@@ -78,7 +78,7 @@ func (p *Program) parseSourceFiles(fileInfos []FileInfo) {
 
 func (p *Program) bindSourceFiles() {
 	for _, file := range p.files {
-		if !file.isBound {
+		if !file.IsBound {
 			p.host.RunTask(func() {
 				bindSourceFile(file, p.options)
 			})
@@ -201,17 +201,17 @@ func (p *Program) PrintTypeAliases() {
 }
 
 func (p *Program) printTypeAlias(node *Node) bool {
-	if isTypeAliasDeclaration(node) {
+	if IsTypeAliasDeclaration(node) {
 		fmt.Println(p.getTypeChecker().typeAliasToString(node.AsTypeAliasDeclaration()))
 	}
 	return node.ForEachChild(p.printTypeAlias)
 }
 
 func (p *Program) collectExternalModuleReferences(file *SourceFile) {
-	if file.moduleReferencesProcessed {
+	if file.ModuleReferencesProcessed {
 		return
 	}
-	file.moduleReferencesProcessed = true
+	file.ModuleReferencesProcessed = true
 	// !!!
 	// If we are importing helpers, we need to add a synthetic reference to resolve the
 	// helpers library. (A JavaScript file without `externalModuleIndicator` set might be
@@ -229,7 +229,7 @@ func (p *Program) collectExternalModuleReferences(file *SourceFile) {
 	// 		(imports ||= []).push(createSyntheticImport(jsxImport, file));
 	// 	}
 	// }
-	for _, node := range file.statements {
+	for _, node := range file.Statements {
 		p.collectModuleReferences(file, node, false /*inAmbientModule*/)
 	}
 	// if ((file.flags & NodeFlags.PossiblyContainsDynamicImport) || isJavaScriptFile) {
@@ -350,46 +350,46 @@ func (p *Program) collectModuleReferences(file *SourceFile, node *Statement, inA
 		// TypeScript 1.0 spec (April 2014): 12.1.6
 		// An ExternalImportDeclaration in an AmbientExternalModuleDeclaration may reference other external modules
 		// only through top - level external module names. Relative external module names are not permitted.
-		if moduleNameExpr != nil && isStringLiteral(moduleNameExpr) {
-			moduleName := moduleNameExpr.AsStringLiteral().text
+		if moduleNameExpr != nil && IsStringLiteral(moduleNameExpr) {
+			moduleName := moduleNameExpr.AsStringLiteral().Text
 			if moduleName != "" && (!inAmbientModule || !isExternalModuleNameRelative(moduleName)) {
 				setParentInChildren(node) // we need parent data on imports before the program is fully bound, so we ensure it's set here
-				file.imports = append(file.imports, moduleNameExpr)
-				if file.usesUriStyleNodeCoreModules != TSTrue && p.currentNodeModulesDepth == 0 && !file.isDeclarationFile {
+				file.Imports = append(file.Imports, moduleNameExpr)
+				if file.UsesUriStyleNodeCoreModules != TSTrue && p.currentNodeModulesDepth == 0 && !file.IsDeclarationFile {
 					if strings.HasPrefix(moduleName, "node:") && !exclusivelyPrefixedNodeCoreModules[moduleName] {
 						// Presence of `node:` prefix takes precedence over unprefixed node core modules
-						file.usesUriStyleNodeCoreModules = TSTrue
-					} else if file.usesUriStyleNodeCoreModules == TSUnknown && unprefixedNodeCoreModules[moduleName] {
+						file.UsesUriStyleNodeCoreModules = TSTrue
+					} else if file.UsesUriStyleNodeCoreModules == TSUnknown && unprefixedNodeCoreModules[moduleName] {
 						// Avoid `unprefixedNodeCoreModules.has` for every import
-						file.usesUriStyleNodeCoreModules = TSFalse
+						file.UsesUriStyleNodeCoreModules = TSFalse
 					}
 				}
 			}
 		}
 		return
 	}
-	if isModuleDeclaration(node) && isAmbientModule(node) && (inAmbientModule || hasSyntacticModifier(node, ModifierFlagsAmbient) || file.isDeclarationFile) {
+	if IsModuleDeclaration(node) && isAmbientModule(node) && (inAmbientModule || hasSyntacticModifier(node, ModifierFlagsAmbient) || file.IsDeclarationFile) {
 		setParentInChildren(node)
-		nameText := node.AsModuleDeclaration().name.Text()
+		nameText := node.AsModuleDeclaration().Name.Text()
 		// Ambient module declarations can be interpreted as augmentations for some existing external modules.
 		// This will happen in two cases:
 		// - if current file is external module then module augmentation is a ambient module declaration defined in the top level scope
 		// - if current file is not external module then module augmentation is an ambient module declaration with non-relative module name
 		//   immediately nested in top level ambient module declaration .
 		if isExternalModule(file) || (inAmbientModule && !isExternalModuleNameRelative(nameText)) {
-			file.moduleAugmentations = append(file.moduleAugmentations, node.AsModuleDeclaration().name)
+			file.ModuleAugmentations = append(file.ModuleAugmentations, node.AsModuleDeclaration().Name)
 		} else if !inAmbientModule {
-			if file.isDeclarationFile {
+			if file.IsDeclarationFile {
 				// for global .d.ts files record name of ambient module
-				file.ambientModuleNames = append(file.ambientModuleNames, nameText)
+				file.AmbientModuleNames = append(file.AmbientModuleNames, nameText)
 			}
 			// An AmbientExternalModuleDeclaration declares an external module.
 			// This type of declaration is permitted only in the global module.
 			// The StringLiteral must specify a top - level external module name.
 			// Relative external module names are not permitted
 			// NOTE: body of ambient module is always a module block, if it exists
-			if node.AsModuleDeclaration().body != nil {
-				for _, statement := range node.AsModuleDeclaration().body.AsModuleBlock().statements {
+			if node.AsModuleDeclaration().Body != nil {
+				for _, statement := range node.AsModuleDeclaration().Body.AsModuleBlock().Statements {
 					p.collectModuleReferences(file, statement, true /*inAmbientModule*/)
 				}
 			}

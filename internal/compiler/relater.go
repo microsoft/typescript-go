@@ -1131,7 +1131,7 @@ func (r *Relater) hasExcessProperties(source *Type, target *Type, reportErrors b
 					if r.errorNode == nil {
 						panic("No errorNode in hasExcessProperties")
 					}
-					if isJsxAttributes(r.errorNode) || isJsxOpeningLikeElement(r.errorNode) || isJsxOpeningLikeElement(r.errorNode.parent) {
+					if IsJsxAttributes(r.errorNode) || isJsxOpeningLikeElement(r.errorNode) || isJsxOpeningLikeElement(r.errorNode.Parent) {
 						// !!!
 						// // JsxAttributes has an object-literal flag and undergo same type-assignablity check as normal object-literal.
 						// // However, using an object-literal error message will be very confusing to the users so we give different a message.
@@ -1163,9 +1163,9 @@ func (r *Relater) hasExcessProperties(source *Type, target *Type, reportErrors b
 						if prop.valueDeclaration != nil && isObjectLiteralElementLike(prop.valueDeclaration) &&
 							findAncestor(prop.valueDeclaration, func(d *Node) bool { return d == objectLiteralDeclaration }) != nil &&
 							getSourceFileOfNode(objectLiteralDeclaration) == getSourceFileOfNode(r.errorNode) {
-							name := prop.valueDeclaration.Name()
+							name := prop.valueDeclaration.GetName()
 							r.errorNode = name
-							if isIdentifier(name) {
+							if IsIdentifier(name) {
 								suggestion = r.c.getSuggestionForNonexistentProperty(name.Text(), errorTarget)
 							}
 						}
@@ -1216,7 +1216,7 @@ func (c *Checker) getTypeOfPropertyInType(t *Type, name string) *Type {
 }
 
 func shouldCheckAsExcessProperty(prop *Symbol, container *Symbol) bool {
-	return prop.valueDeclaration != nil && container.valueDeclaration != nil && prop.valueDeclaration.parent == container.valueDeclaration
+	return prop.valueDeclaration != nil && container.valueDeclaration != nil && prop.valueDeclaration.Parent == container.valueDeclaration
 }
 
 func isIgnoredJsxProperty(source *Type, sourceProp *Symbol) bool {
@@ -2237,11 +2237,11 @@ func (r *Relater) isPropertySymbolTypeRelated(sourceProp *Symbol, targetProp *Sy
 func (r *Relater) reportUnmatchedProperty(source *Type, target *Type, unmatchedProperty *Symbol, requireOptionalProperties bool) {
 	// give specific error in case where private names have the same description
 	if unmatchedProperty.valueDeclaration != nil &&
-		unmatchedProperty.valueDeclaration.Name() != nil &&
-		isPrivateIdentifier(unmatchedProperty.valueDeclaration.Name()) &&
+		unmatchedProperty.valueDeclaration.GetName() != nil &&
+		IsPrivateIdentifier(unmatchedProperty.valueDeclaration.GetName()) &&
 		source.symbol != nil &&
 		source.symbol.flags&SymbolFlagsClass != 0 {
-		privateIdentifierDescription := unmatchedProperty.valueDeclaration.Name().Text()
+		privateIdentifierDescription := unmatchedProperty.valueDeclaration.GetName().Text()
 		symbolTableKey := getSymbolNameForPrivateIdentifier(source.symbol, privateIdentifierDescription)
 		if r.c.getPropertyOfType(source, symbolTableKey) != nil {
 			sourceName := declarationNameToString(getNameOfDeclaration(source.symbol.valueDeclaration))

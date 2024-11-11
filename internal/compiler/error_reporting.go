@@ -83,7 +83,7 @@ func writeCodeSnippet(writer *strings.Builder, sourceFile *SourceFile, start int
 	firstLine, firstLineChar := GetLineAndCharacterOfPosition(sourceFile, start)
 	lastLine, lastLineChar := GetLineAndCharacterOfPosition(sourceFile, start+length)
 
-	lastLineOfFile, _ := GetLineAndCharacterOfPosition(sourceFile, len(sourceFile.text))
+	lastLineOfFile, _ := GetLineAndCharacterOfPosition(sourceFile, len(sourceFile.Text))
 
 	hasMoreThanFiveLines := lastLine-firstLine >= 4
 	gutterWidth := len(strconv.Itoa(lastLineOfFile + 1))
@@ -107,10 +107,10 @@ func writeCodeSnippet(writer *strings.Builder, sourceFile *SourceFile, start int
 		if i < lastLineOfFile {
 			lineEnd = GetPositionOfLineAndCharacter(sourceFile, i+1, 0)
 		} else {
-			lineEnd = sourceFile.loc.end
+			lineEnd = sourceFile.Loc.end
 		}
 
-		lineContent := strings.TrimRightFunc(sourceFile.text[lineStart:lineEnd], unicode.IsSpace) // trim from end
+		lineContent := strings.TrimRightFunc(sourceFile.Text[lineStart:lineEnd], unicode.IsSpace) // trim from end
 		lineContent = strings.ReplaceAll(lineContent, "\t", " ")                                  // convert tabs to single spaces
 
 		// Output the gutter and the actual contents of the line.

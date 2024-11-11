@@ -1811,10 +1811,10 @@ func scanShebangTrivia(text string, pos int) int {
 
 func getScannerForSourceFile(sourceFile *SourceFile, pos int) *Scanner {
 	s := NewScanner()
-	s.text = sourceFile.text
+	s.text = sourceFile.Text
 	s.pos = pos
-	s.languageVersion = sourceFile.languageVersion
-	s.languageVariant = sourceFile.languageVariant
+	s.languageVersion = sourceFile.LanguageVersion
+	s.languageVariant = sourceFile.LanguageVariant
 	s.Scan()
 	return s
 }
@@ -1842,22 +1842,22 @@ func computeLineOfPosition(lineStarts []textpos.TextPos, pos textpos.TextPos) in
 }
 
 func getLineStarts(sourceFile *SourceFile) []textpos.TextPos {
-	if sourceFile.lineMap == nil {
-		sourceFile.lineMap = stringutil.ComputeLineStarts(sourceFile.text)
+	if sourceFile.LineMap == nil {
+		sourceFile.LineMap = stringutil.ComputeLineStarts(sourceFile.Text)
 	}
-	return sourceFile.lineMap
+	return sourceFile.LineMap
 }
 
 func GetLineAndCharacterOfPosition(sourceFile *SourceFile, pos int) (line int, character int) {
 	line = computeLineOfPosition(getLineStarts(sourceFile), textpos.TextPos(pos))
-	character = utf8.RuneCountInString(sourceFile.text[sourceFile.lineMap[line]:pos])
+	character = utf8.RuneCountInString(sourceFile.Text[sourceFile.LineMap[line]:pos])
 	return
 }
 
 func getEndLinePosition(sourceFile *SourceFile, line int) int {
 	pos := int(getLineStarts(sourceFile)[line])
 	for {
-		ch, size := utf8.DecodeRuneInString(sourceFile.text[pos:])
+		ch, size := utf8.DecodeRuneInString(sourceFile.Text[pos:])
 		if size == 0 || stringutil.IsLineBreak(ch) {
 			return pos
 		}
