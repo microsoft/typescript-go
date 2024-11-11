@@ -1,6 +1,7 @@
 package tspath
 
 import (
+	"regexp"
 	"strings"
 
 	"github.com/microsoft/typescript-go/internal/core"
@@ -294,10 +295,11 @@ func getNormalizedAbsolutePath(fileName string, currentDirectory string) string 
 	return getPathFromPathComponents(getNormalizedPathComponents(fileName, currentDirectory))
 }
 
+var relativePathSegmentRegExp = regexp.MustCompile(`//|(?:^|/)\.\.?(?:$|/)`)
+
 func normalizePath(path string) string {
 	path = normalizeSlashes(path)
 	// Most paths don't require normalization
-	relativePathSegmentRegExp := core.MakeRegexp(`//|(?:^|/)\.\.?(?:$|/)`)
 	if !relativePathSegmentRegExp.MatchString(path) {
 		return path
 	}

@@ -5,6 +5,7 @@ import (
 	"maps"
 	"math"
 	"path/filepath"
+	"regexp"
 	"slices"
 	"strconv"
 	"strings"
@@ -489,8 +490,10 @@ func getBinaryOperatorPrecedence(kind SyntaxKind) OperatorPrecedence {
 	return OperatorPrecedenceInvalid
 }
 
+var curlyNumberRegExp = regexp.MustCompile(`{(\d+)}`)
+
 func formatStringFromArgs(text string, args []any) string {
-	return core.MakeRegexp(`{(\d+)}`).ReplaceAllStringFunc(text, func(match string) string {
+	return curlyNumberRegExp.ReplaceAllStringFunc(text, func(match string) string {
 		index, err := strconv.ParseInt(match[1:len(match)-1], 10, 0)
 		if err != nil || int(index) >= len(args) {
 			panic("Invalid formatting placeholder")
@@ -3003,8 +3006,10 @@ func isExternalModuleNameRelative(moduleName string) bool {
 	return pathIsRelative(moduleName) || tspath.IsRootedDiskPath(moduleName)
 }
 
+var pathIsRelativeRegExp = regexp.MustCompile(`^\.\.?(?:$|[\\/])`)
+
 func pathIsRelative(path string) bool {
-	return core.MakeRegexp(`^\.\.?(?:$|[\\/])`).MatchString(path)
+	return pathIsRelativeRegExp.MatchString(path)
 }
 
 func extensionIsTs(ext string) bool {

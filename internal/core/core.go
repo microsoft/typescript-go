@@ -2,10 +2,8 @@ package core
 
 import (
 	"iter"
-	"regexp"
 	"slices"
 	"strings"
-	"sync"
 )
 
 func Filter[T any](slice []T, f func(T) bool) []T {
@@ -200,20 +198,6 @@ func AppendIfUnique[T comparable](slice []T, element T) []T {
 		return slice
 	}
 	return append(slice, element)
-}
-
-var regexps = make(map[string]*regexp.Regexp)
-var regexpMutex sync.Mutex
-
-func MakeRegexp(s string) *regexp.Regexp {
-	regexpMutex.Lock()
-	rx, ok := regexps[s]
-	if !ok {
-		rx = regexp.MustCompile(s)
-		regexps[s] = rx
-	}
-	regexpMutex.Unlock()
-	return rx
 }
 
 func EquateStringCaseInsensitive(a, b string) bool {
