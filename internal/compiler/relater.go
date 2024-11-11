@@ -10,6 +10,26 @@ import (
 	"github.com/microsoft/typescript-go/internal/utils"
 )
 
+type SignatureCheckMode uint32
+
+const (
+	SignatureCheckModeNone               SignatureCheckMode = 0
+	SignatureCheckModeBivariantCallback  SignatureCheckMode = 1 << 0
+	SignatureCheckModeStrictCallback     SignatureCheckMode = 1 << 1
+	SignatureCheckModeIgnoreReturnTypes  SignatureCheckMode = 1 << 2
+	SignatureCheckModeStrictArity        SignatureCheckMode = 1 << 3
+	SignatureCheckModeStrictTopSignature SignatureCheckMode = 1 << 4
+	SignatureCheckModeCallback           SignatureCheckMode = SignatureCheckModeBivariantCallback | SignatureCheckModeStrictCallback
+)
+
+type MinArgumentCountFlags uint32
+
+const (
+	MinArgumentCountFlagsNone                    MinArgumentCountFlags = 0
+	MinArgumentCountFlagsStrongArityForUntypedJS MinArgumentCountFlags = 1 << 0
+	MinArgumentCountFlagsVoidIsNonOptional       MinArgumentCountFlags = 1 << 1
+)
+
 type IntersectionState uint32
 
 const (
@@ -294,6 +314,9 @@ func (c *Checker) checkTypeRelatedToEx(
 }
 
 func createMessageChainFromErrorChain(chain *ErrorChain) *MessageChain {
+	for chain != nil && chain.message.ElidedInCompatabilityPyramid() {
+		chain = chain.next
+	}
 	if chain == nil {
 		return nil
 	}
@@ -1079,6 +1102,612 @@ func (c *Checker) hasCovariantVoidArgument(typeArguments []*Type, variances []Va
 	return false
 }
 
+func (c *Checker) compareSignaturesRelated(source *Signature, target *Signature, checkMode SignatureCheckMode, reportErrors bool, errorReporter ErrorReporter, compareTypes TypeComparer, reportUnreliableMarkers *TypeMapper) Ternary {
+	if source == target {
+		return TernaryTrue
+	}
+	if !(checkMode&SignatureCheckModeStrictTopSignature != 0 && c.isTopSignature(source)) && c.isTopSignature(target) {
+		return TernaryTrue
+	}
+	if checkMode&SignatureCheckModeStrictTopSignature != 0 && c.isTopSignature(source) && !c.isTopSignature(target) {
+		return TernaryFalse
+	}
+	targetCount := c.getParameterCount(target)
+	var sourceHasMoreParameters bool
+	if !c.hasEffectiveRestParameter(target) {
+		if checkMode&SignatureCheckModeStrictArity != 0 {
+			sourceHasMoreParameters = c.hasEffectiveRestParameter(source) || c.getParameterCount(source) > targetCount
+		} else {
+			sourceHasMoreParameters = c.getMinArgumentCount(source) > targetCount
+		}
+	}
+	if sourceHasMoreParameters {
+		if reportErrors && (checkMode&SignatureCheckModeStrictArity == 0) {
+			// the second condition should be redundant, because there is no error reporting when comparing signatures by strict arity
+			// since it is only done for subtype reduction
+			errorReporter(diagnostics.Target_signature_provides_too_few_arguments_Expected_0_or_more_but_got_1, c.getMinArgumentCount(source), targetCount)
+		}
+		return TernaryFalse
+	}
+	if source.typeParameters != nil && !utils.Same(source.typeParameters, target.typeParameters) {
+		target = c.getCanonicalSignature(target)
+		source = c.instantiateSignatureInContextOf(source, target /*inferenceContext*/, nil, compareTypes)
+	}
+	sourceCount := c.getParameterCount(source)
+	sourceRestType := c.getNonArrayRestType(source)
+	targetRestType := c.getNonArrayRestType(target)
+	if sourceRestType != nil || targetRestType != nil {
+		c.instantiateType(ifElse(sourceRestType != nil, sourceRestType, targetRestType), reportUnreliableMarkers)
+	}
+	kind := SyntaxKindUnknown
+	if target.declaration != nil {
+		kind = target.declaration.kind
+	}
+	strictVariance := checkMode&SignatureCheckModeCallback != 0 && c.strictFunctionTypes && kind != SyntaxKindMethodDeclaration && kind != SyntaxKindMethodSignature && kind != SyntaxKindConstructor
+	result := TernaryTrue
+	sourceThisType := c.getThisTypeOfSignature(source)
+	if sourceThisType != nil && sourceThisType != c.voidType {
+		targetThisType := c.getThisTypeOfSignature(target)
+		if targetThisType != nil {
+			// void sources are assignable to anything.
+			var related Ternary
+			if !strictVariance {
+				related = compareTypes(sourceThisType, targetThisType, false /*reportErrors*/)
+			}
+			if related == TernaryFalse {
+				related = compareTypes(targetThisType, sourceThisType, reportErrors)
+			}
+			if related == TernaryFalse {
+				if reportErrors {
+					errorReporter(diagnostics.The_this_types_of_each_signature_are_incompatible)
+				}
+				return TernaryFalse
+			}
+			result &= related
+		}
+	}
+	var paramCount int
+	if sourceRestType != nil || targetRestType != nil {
+		paramCount = min(sourceCount, targetCount)
+	} else {
+		paramCount = max(sourceCount, targetCount)
+	}
+	var restIndex int
+	if sourceRestType != nil || targetRestType != nil {
+		restIndex = paramCount - 1
+	} else {
+		restIndex = -1
+	}
+	for i := range paramCount {
+		var sourceType *Type
+		if i == restIndex {
+			sourceType = c.getRestOrAnyTypeAtPosition(source, i)
+		} else {
+			sourceType = c.tryGetTypeAtPosition(source, i)
+		}
+		var targetType *Type
+		if i == restIndex {
+			targetType = c.getRestOrAnyTypeAtPosition(target, i)
+		} else {
+			targetType = c.tryGetTypeAtPosition(target, i)
+		}
+		if sourceType != nil && targetType != nil && (sourceType != targetType || checkMode&SignatureCheckModeStrictArity != 0) {
+			// In order to ensure that any generic type Foo<T> is at least co-variant with respect to T no matter
+			// how Foo uses T, we need to relate parameters bi-variantly (given that parameters are input positions,
+			// they naturally relate only contra-variantly). However, if the source and target parameters both have
+			// function types with a single call signature, we know we are relating two callback parameters. In
+			// that case it is sufficient to only relate the parameters of the signatures co-variantly because,
+			// similar to return values, callback parameters are output positions. This means that a Promise<T>,
+			// where T is used only in callback parameter positions, will be co-variant (as opposed to bi-variant)
+			// with respect to T.
+			var sourceSig *Signature
+			var targetSig *Signature
+			if checkMode&SignatureCheckModeCallback == 0 && !c.isInstantiatedGenericParameter(source, i) {
+				sourceSig = c.getSingleCallSignature(c.getNonNullableType(sourceType))
+			}
+			if checkMode&SignatureCheckModeCallback == 0 && !c.isInstantiatedGenericParameter(target, i) {
+				targetSig = c.getSingleCallSignature(c.getNonNullableType(targetType))
+			}
+			callbacks := sourceSig != nil && targetSig != nil && c.getTypePredicateOfSignature(sourceSig) == nil && c.getTypePredicateOfSignature(targetSig) == nil &&
+				c.getTypeFacts(sourceType, TypeFactsIsUndefinedOrNull) == c.getTypeFacts(targetType, TypeFactsIsUndefinedOrNull)
+			var related Ternary
+			if callbacks {
+				related = c.compareSignaturesRelated(targetSig, sourceSig, checkMode&SignatureCheckModeStrictArity|ifElse(strictVariance, SignatureCheckModeStrictCallback, SignatureCheckModeBivariantCallback), reportErrors, errorReporter, compareTypes, reportUnreliableMarkers)
+			} else {
+				if checkMode&SignatureCheckModeCallback != 0 && !strictVariance {
+					related = compareTypes(sourceType, targetType, false /*reportErrors*/)
+				}
+				if related == TernaryFalse {
+					related = compareTypes(targetType, sourceType, reportErrors)
+				}
+			}
+			// With strict arity, (x: number | undefined) => void is a subtype of (x?: number | undefined) => void
+			if related != TernaryFalse && checkMode&SignatureCheckModeStrictArity != 0 && i >= c.getMinArgumentCount(source) && i < c.getMinArgumentCount(target) && compareTypes(sourceType, targetType, false /*reportErrors*/) != TernaryFalse {
+				related = TernaryFalse
+			}
+			if related == TernaryFalse {
+				if reportErrors {
+					errorReporter(diagnostics.Types_of_parameters_0_and_1_are_incompatible, c.getParameterNameAtPosition(source, i), c.getParameterNameAtPosition(target, i))
+				}
+				return TernaryFalse
+			}
+			result &= related
+		}
+	}
+	if checkMode&SignatureCheckModeIgnoreReturnTypes == 0 {
+		// If a signature resolution is already in-flight, skip issuing a circularity error
+		// here and just use the `any` type directly
+		targetReturnType := c.getNonCircularReturnTypeOfSignature(target)
+		if targetReturnType == c.voidType || targetReturnType == c.anyType {
+			return result
+		}
+		sourceReturnType := c.getNonCircularReturnTypeOfSignature(source)
+		// The following block preserves behavior forbidding boolean returning functions from being assignable to type guard returning functions
+		targetTypePredicate := c.getTypePredicateOfSignature(target)
+		if targetTypePredicate != nil {
+			sourceTypePredicate := c.getTypePredicateOfSignature(source)
+			if sourceTypePredicate != nil {
+				result &= c.compareTypePredicateRelatedTo(sourceTypePredicate, targetTypePredicate, reportErrors, errorReporter, compareTypes)
+			} else if targetTypePredicate.kind == TypePredicateKindIdentifier || targetTypePredicate.kind == TypePredicateKindThis {
+				if reportErrors {
+					errorReporter(diagnostics.Signature_0_must_be_a_type_predicate, c.signatureToString(source))
+				}
+				return TernaryFalse
+			}
+		} else {
+			// When relating callback signatures, we still need to relate return types bi-variantly as otherwise
+			// the containing type wouldn't be co-variant. For example, interface Foo<T> { add(cb: () => T): void }
+			// wouldn't be co-variant for T without this rule.
+			var related Ternary
+			if checkMode&SignatureCheckModeBivariantCallback != 0 {
+				related = compareTypes(targetReturnType, sourceReturnType, false /*reportErrors*/)
+			}
+			if related == TernaryFalse {
+				related = compareTypes(sourceReturnType, targetReturnType, reportErrors)
+			}
+			result &= related
+			if result == TernaryFalse && reportErrors {
+				// The errors reported here serve as markers that trigger error chain reduction in the (*Relater).reportError
+				// method. The markers are elided in the final diagnostic chain and never actually reported.
+				var message *diagnostics.Message
+				if len(source.parameters) == 0 && len(target.parameters) == 0 {
+					message = ifElse(source.flags&SignatureFlagsConstruct != 0,
+						diagnostics.Construct_signatures_with_no_arguments_have_incompatible_return_types_0_and_1,
+						diagnostics.Call_signatures_with_no_arguments_have_incompatible_return_types_0_and_1)
+				} else {
+					message = ifElse(source.flags&SignatureFlagsConstruct != 0,
+						diagnostics.Construct_signature_return_types_0_and_1_are_incompatible,
+						diagnostics.Call_signature_return_types_0_and_1_are_incompatible)
+				}
+				errorReporter(message, c.typeToString(sourceReturnType), c.typeToString(targetReturnType))
+			}
+		}
+	}
+	return result
+}
+
+func (c *Checker) compareTypePredicateRelatedTo(source *TypePredicate, target *TypePredicate, reportErrors bool, errorReporter ErrorReporter, compareTypes TypeComparer) Ternary {
+	if source.kind != target.kind {
+		if reportErrors {
+			errorReporter(diagnostics.A_this_based_type_guard_is_not_compatible_with_a_parameter_based_type_guard)
+			errorReporter(diagnostics.Type_predicate_0_is_not_assignable_to_1, c.typePredicateToString(source), c.typePredicateToString(target))
+		}
+		return TernaryFalse
+	}
+	if source.kind == TypePredicateKindIdentifier || source.kind == TypePredicateKindAssertsIdentifier {
+		if source.parameterIndex != target.parameterIndex {
+			if reportErrors {
+				errorReporter(diagnostics.Parameter_0_is_not_in_the_same_position_as_parameter_1, source.parameterName, target.parameterName)
+				errorReporter(diagnostics.Type_predicate_0_is_not_assignable_to_1, c.typePredicateToString(source), c.typePredicateToString(target))
+			}
+			return TernaryFalse
+		}
+	}
+	var related Ternary
+	switch {
+	case source.t == target.t:
+		related = TernaryTrue
+	case source.t != nil && target.t != nil:
+		related = compareTypes(source.t, target.t, reportErrors)
+	default:
+		related = TernaryFalse
+	}
+	if related == TernaryFalse && reportErrors {
+		errorReporter(diagnostics.Type_predicate_0_is_not_assignable_to_1, c.typePredicateToString(source), c.typePredicateToString(target))
+	}
+	return related
+}
+
+// Returns true if `s` is `(...args: A) => R` where `A` is `any`, `any[]`, `never`, or `never[]`, and `R` is `any` or `unknown`.
+func (c *Checker) isTopSignature(s *Signature) bool {
+	if s.typeParameters == nil && (s.thisParameter == nil || isTypeAny(c.getTypeOfParameter(s.thisParameter))) && len(s.parameters) == 1 && signatureHasRestParameter(s) {
+		paramType := c.getTypeOfParameter(s.parameters[0])
+		var restType *Type
+		if c.isArrayType(paramType) {
+			restType = c.getTypeArguments(paramType)[0]
+		} else {
+			restType = paramType
+		}
+		return restType.flags&(TypeFlagsAny|TypeFlagsNever) != 0 && c.getReturnTypeOfSignature(s).flags&TypeFlagsAnyOrUnknown != 0
+	}
+	return false
+}
+
+// Return the number of parameters in a signature. The rest parameter, if present, counts as one
+// parameter. For example, the parameter count of (x: number, y: number, ...z: string[]) is 3 and
+// the parameter count of (x: number, ...args: [number, ...string[], boolean])) is also 3. In the
+// latter example, the effective rest type is [...string[], boolean].
+func (c *Checker) getParameterCount(signature *Signature) int {
+	length := len(signature.parameters)
+	if signatureHasRestParameter(signature) {
+		restType := c.getTypeOfSymbol(signature.parameters[length-1])
+		if isTupleType(restType) {
+			return length + restType.TargetTupleType().fixedLength - ifElse(restType.TargetTupleType().combinedFlags&ElementFlagsVariable != 0, 0, 1)
+		}
+	}
+	return length
+}
+
+func (c *Checker) getMinArgumentCount(signature *Signature) int {
+	return c.getMinArgumentCountEx(signature, MinArgumentCountFlagsNone)
+}
+
+func (c *Checker) getMinArgumentCountEx(signature *Signature, flags MinArgumentCountFlags) int {
+	strongArityForUntypedJS := flags & MinArgumentCountFlagsStrongArityForUntypedJS
+	voidIsNonOptional := flags & MinArgumentCountFlagsVoidIsNonOptional
+	if voidIsNonOptional != 0 || signature.resolvedMinArgumentCount == -1 {
+		minArgumentCount := -1
+		if signatureHasRestParameter(signature) {
+			restType := c.getTypeOfSymbol(signature.parameters[len(signature.parameters)-1])
+			if isTupleType(restType) {
+				firstOptionalIndex := utils.FindIndex(restType.TargetTupleType().elementInfos, func(info TupleElementInfo) bool {
+					return info.flags&ElementFlagsRequired == 0
+				})
+				requiredCount := firstOptionalIndex
+				if firstOptionalIndex < 0 {
+					requiredCount = restType.TargetTupleType().fixedLength
+				}
+				if requiredCount > 0 {
+					minArgumentCount = len(signature.parameters) - 1 + requiredCount
+				}
+			}
+		}
+		if minArgumentCount == -1 {
+			if strongArityForUntypedJS == 0 && signature.flags&SignatureFlagsIsUntypedSignatureInJSFile != 0 {
+				return 0
+			}
+			minArgumentCount = int(signature.minArgumentCount)
+		}
+		if voidIsNonOptional != 0 {
+			return minArgumentCount
+		}
+		for i := minArgumentCount - 1; i >= 0; i-- {
+			t := c.getTypeAtPosition(signature, i)
+			if !someType(t, func(t *Type) bool { return t.flags&TypeFlagsVoid != 0 }) {
+				break
+			}
+			minArgumentCount = i
+		}
+		signature.resolvedMinArgumentCount = int32(minArgumentCount)
+	}
+	return int(signature.resolvedMinArgumentCount)
+}
+
+func (c *Checker) hasEffectiveRestParameter(signature *Signature) bool {
+	if signatureHasRestParameter(signature) {
+		restType := c.getTypeOfSymbol(signature.parameters[len(signature.parameters)-1])
+		return !isTupleType(restType) || restType.TargetTupleType().combinedFlags&ElementFlagsVariable != 0
+	}
+	return false
+}
+
+func (c *Checker) getTypeAtPosition(signature *Signature, pos int) *Type {
+	t := c.tryGetTypeAtPosition(signature, pos)
+	if t != nil {
+		return t
+	}
+	return c.anyType
+}
+
+func (c *Checker) tryGetTypeAtPosition(signature *Signature, pos int) *Type {
+	paramCount := len(signature.parameters) - ifElse(signatureHasRestParameter(signature), 1, 0)
+	if pos < paramCount {
+		return c.getTypeOfParameter(signature.parameters[pos])
+	}
+	if signatureHasRestParameter(signature) {
+		// We want to return the value undefined for an out of bounds parameter position,
+		// so we need to check bounds here before calling getIndexedAccessType (which
+		// otherwise would return the type 'undefined').
+		restType := c.getTypeOfSymbol(signature.parameters[paramCount])
+		index := pos - paramCount
+		if !isTupleType(restType) || restType.TargetTupleType().combinedFlags&ElementFlagsVariable != 0 || index < restType.TargetTupleType().fixedLength {
+			return c.getIndexedAccessType(restType, c.getNumberLiteralType(float64(index)))
+		}
+	}
+	return nil
+}
+
+// Return the rest type at the given position, transforming `any[]` into just `any`. We do this because
+// in signatures we want `any[]` in a rest position to be compatible with anything, but `any[]` isn't
+// assignable to tuple types with required elements.
+func (c *Checker) getRestOrAnyTypeAtPosition(source *Signature, pos int) *Type {
+	restType := c.getRestTypeAtPosition(source, pos, false)
+	if restType != nil {
+		if elementType := c.getElementTypeOfArrayType(restType); elementType != nil && isTypeAny(elementType) {
+			return c.anyType
+		}
+	}
+	return restType
+}
+
+func (c *Checker) getRestTypeAtPosition(source *Signature, pos int, readonly bool) *Type {
+	parameterCount := c.getParameterCount(source)
+	minArgumentCount := c.getMinArgumentCount(source)
+	restType := c.getEffectiveRestType(source)
+	if restType != nil && pos >= parameterCount-1 {
+		if pos == parameterCount-1 {
+			return restType
+		} else {
+			return c.createArrayType(c.getIndexedAccessType(restType, c.numberType))
+		}
+	}
+	types := make([]*Type, parameterCount)
+	infos := make([]TupleElementInfo, parameterCount)
+	for i := range parameterCount {
+		var flags ElementFlags
+		if restType == nil || i < parameterCount-1 {
+			types[i] = c.getTypeAtPosition(source, i)
+			flags = ifElse(i < minArgumentCount, ElementFlagsRequired, ElementFlagsOptional)
+		} else {
+			types[i] = restType
+			flags = ElementFlagsVariadic
+		}
+		infos[i] = TupleElementInfo{flags: flags, labeledDeclaration: c.getNameableDeclarationAtPosition(source, i)}
+	}
+	return c.createTupleTypeEx(types, infos, readonly)
+}
+
+func (c *Checker) getNameableDeclarationAtPosition(signature *Signature, pos int) *Node {
+	paramCount := len(signature.parameters) - ifElse(signatureHasRestParameter(signature), 1, 0)
+	if pos < paramCount {
+		decl := signature.parameters[pos].valueDeclaration
+		if decl != nil && c.isValidDeclarationForTupleLabel(decl) {
+			return decl
+		}
+		return nil
+	}
+	if signatureHasRestParameter(signature) {
+		restParameter := signature.parameters[paramCount]
+		restType := c.getTypeOfSymbol(restParameter)
+		if isTupleType(restType) {
+			elementInfos := restType.TargetTupleType().elementInfos
+			index := pos - paramCount
+			if index < len(elementInfos) {
+				return elementInfos[index].labeledDeclaration
+			}
+			return nil
+		}
+		if restParameter.valueDeclaration != nil && c.isValidDeclarationForTupleLabel(restParameter.valueDeclaration) {
+			return restParameter.valueDeclaration
+		}
+	}
+	return nil
+}
+
+func (c *Checker) isValidDeclarationForTupleLabel(d *Node) bool {
+	return isNamedTupleMember(d) || isParameter(d) && d.Name() != nil && isIdentifier(d.Name())
+}
+
+func (c *Checker) getNonArrayRestType(signature *Signature) *Type {
+	restType := c.getEffectiveRestType(signature)
+	if restType != nil && !c.isArrayType(restType) && isTypeAny(restType) {
+		return restType
+	}
+	return nil
+}
+
+func (c *Checker) getEffectiveRestType(signature *Signature) *Type {
+	if signatureHasRestParameter(signature) {
+		restType := c.getTypeOfSymbol(signature.parameters[len(signature.parameters)-1])
+		if !isTupleType(restType) {
+			if isTypeAny(restType) {
+				return c.anyArrayType
+			}
+			return restType
+		}
+		if restType.TargetTupleType().combinedFlags&ElementFlagsVariable != 0 {
+			return c.sliceTupleType(restType, restType.TargetTupleType().fixedLength, 0)
+		}
+	}
+	return nil
+}
+
+func (c *Checker) sliceTupleType(t *Type, index int, endSkipCount int) *Type {
+	target := t.TargetTupleType()
+	endIndex := c.getTypeReferenceArity(t) - endSkipCount
+	if index > target.fixedLength {
+		if restArrayType := c.getRestArrayTypeOfTupleType(t); restArrayType != nil {
+			return restArrayType
+		}
+		return c.createTupleType(nil)
+	}
+	return c.createTupleTypeEx(c.getTypeArguments(t)[index:endIndex], target.elementInfos[index:endIndex], false /*readonly*/)
+}
+
+func (c *Checker) getRestArrayTypeOfTupleType(t *Type) *Type {
+	if restType := c.getRestTypeOfTupleType(t); restType != nil {
+		return c.createArrayType(restType)
+	}
+	return nil
+}
+
+func (c *Checker) getThisTypeOfSignature(signature *Signature) *Type {
+	if signature.thisParameter != nil {
+		return c.getTypeOfSymbol(signature.thisParameter)
+	}
+	return nil
+}
+
+func (c *Checker) isInstantiatedGenericParameter(signature *Signature, pos int) bool {
+	if signature.target == nil {
+		return false
+	}
+	t := c.tryGetTypeAtPosition(signature.target, pos)
+	return t != nil && c.isGenericType(t)
+}
+
+func (c *Checker) getParameterNameAtPosition(signature *Signature, pos int) string {
+	paramCount := len(signature.parameters) - ifElse(signatureHasRestParameter(signature), 1, 0)
+	if pos < paramCount {
+		return signature.parameters[pos].name
+	}
+	restParameter := signature.parameters[paramCount]
+	restType := c.getTypeOfSymbol(restParameter)
+	if isTupleType(restType) {
+		index := pos - paramCount
+		c.getTupleElementLabel(restType.TargetTupleType().elementInfos[index], restParameter, index)
+	}
+	return restParameter.name
+}
+
+func (c *Checker) getTupleElementLabel(elementInfo TupleElementInfo, restSymbol *Symbol, index int) string {
+	if elementInfo.labeledDeclaration != nil {
+		return elementInfo.labeledDeclaration.Name().Text()
+	}
+	if restSymbol != nil && restSymbol.valueDeclaration != nil && isParameter(restSymbol.valueDeclaration) {
+		return c.getTupleElementLabelFromBindingElement(restSymbol.valueDeclaration, index, elementInfo.flags)
+	}
+	var rootName string
+	if restSymbol != nil {
+		rootName = restSymbol.name
+	} else {
+		rootName = "arg"
+	}
+	return rootName + "_" + strconv.Itoa(index)
+}
+
+func (c *Checker) getTupleElementLabelFromBindingElement(node *Node, index int, elementFlags ElementFlags) string {
+	// !!! Extract from parameter or binding element
+	return "arg_" + strconv.Itoa(index)
+}
+
+func (c *Checker) getTypePredicateOfSignature(sig *Signature) *TypePredicate {
+	if sig.resolvedTypePredicate == nil {
+		switch {
+		case sig.target != nil:
+			targetTypePredicate := c.getTypePredicateOfSignature(sig.target)
+			if targetTypePredicate != nil {
+				sig.resolvedTypePredicate = c.instantiateTypePredicate(targetTypePredicate, sig.mapper)
+			}
+		case sig.composite != nil:
+			sig.resolvedTypePredicate = c.getUnionOrIntersectionTypePredicate(sig.composite.signatures, sig.composite.flags)
+		default:
+			var typeNode *TypeNode
+			if sig.declaration != nil {
+				typeNode = getEffectiveTypeAnnotationNode(sig.declaration)
+				switch {
+				case typeNode != nil && isTypePredicateNode(typeNode):
+					sig.resolvedTypePredicate = c.createTypePredicateFromTypePredicateNode(typeNode, sig)
+				case isFunctionLikeDeclaration(sig.declaration) && (sig.resolvedReturnType == nil || sig.resolvedReturnType.flags&TypeFlagsBoolean != 0) && c.getParameterCount(sig) > 0:
+					sig.resolvedTypePredicate = c.noTypePredicate // avoid infinite loop
+					sig.resolvedTypePredicate = c.getTypePredicateFromBody(sig.declaration)
+				}
+			}
+		}
+		if sig.resolvedTypePredicate == nil {
+			sig.resolvedTypePredicate = c.noTypePredicate
+		}
+	}
+	if sig.resolvedTypePredicate == c.noTypePredicate {
+		return nil
+	}
+	return sig.resolvedTypePredicate
+}
+
+func (c *Checker) getUnionOrIntersectionTypePredicate(signatures []*Signature, flags TypeFlags) *TypePredicate {
+	var last *TypePredicate
+	var types []*Type
+	for _, sig := range signatures {
+		pred := c.getTypePredicateOfSignature(sig)
+		if pred != nil {
+			// Constituent type predicates must all have matching kinds. We don't create composite type predicates for assertions.
+			if pred.kind != TypePredicateKindThis && pred.kind != TypePredicateKindIdentifier || last != nil && !c.typePredicateKindsMatch(last, pred) {
+				return nil
+			}
+			last = pred
+			types = append(types, pred.t)
+		} else {
+			// In composite union signatures we permit and ignore signatures with a return type `false`.
+			var returnType *Type
+			if flags&TypeFlagsUnion != 0 {
+				returnType = c.getReturnTypeOfSignature(sig)
+			}
+			if returnType != c.falseType && returnType != c.regularFalseType {
+				return nil
+			}
+		}
+	}
+	if last == nil {
+		return nil
+	}
+	compositeType := c.getUnionOrIntersectionType(types, flags, UnionReductionLiteral)
+	return c.newTypePredicate(last.kind, last.parameterName, last.parameterIndex, compositeType)
+}
+
+func (c *Checker) typePredicateKindsMatch(a *TypePredicate, b *TypePredicate) bool {
+	return a.kind == b.kind && a.parameterIndex == b.parameterIndex
+}
+
+func (c *Checker) createTypePredicateFromTypePredicateNode(node *Node, signature *Signature) *TypePredicate {
+	predicateNode := node.AsTypePredicateNode()
+	var t *Type
+	if predicateNode.typeNode != nil {
+		t = c.getTypeFromTypeNode(predicateNode.typeNode)
+	}
+	if isThisTypeNode(predicateNode.parameterName) {
+		kind := ifElse(predicateNode.assertsModifier != nil, TypePredicateKindAssertsThis, TypePredicateKindThis)
+		return c.newTypePredicate(kind, "" /*parameterName*/, 0 /*parameterIndex*/, t)
+
+	}
+	kind := ifElse(predicateNode.assertsModifier != nil, TypePredicateKindAssertsIdentifier, TypePredicateKindIdentifier)
+	name := predicateNode.parameterName.Text()
+	index := utils.FindIndex(signature.parameters, func(p *Symbol) bool { return p.name == name })
+	return c.newTypePredicate(kind, name, int32(index), t)
+}
+
+func (c *Checker) instantiateTypePredicate(predicate *TypePredicate, mapper *TypeMapper) *TypePredicate {
+	t := c.instantiateType(predicate.t, mapper)
+	if t == predicate.t {
+		return predicate
+	}
+	return c.newTypePredicate(predicate.kind, predicate.parameterName, predicate.parameterIndex, t)
+}
+
+func (c *Checker) newTypePredicate(kind TypePredicateKind, parameterName string, parameterIndex int32, t *Type) *TypePredicate {
+	return &TypePredicate{kind: kind, parameterIndex: parameterIndex, parameterName: parameterName, t: t}
+}
+
+func (c *Checker) isResolvingReturnTypeOfSignature(signature *Signature) bool {
+	if signature.composite != nil && utils.Some(signature.composite.signatures, c.isResolvingReturnTypeOfSignature) {
+		return true
+	}
+	return signature.resolvedReturnType == nil && c.findResolutionCycleStartIndex(signature, TypeSystemPropertyNameResolvedReturnType) >= 0
+}
+
+func (c *Checker) compareSignaturesIdentical(source *Signature, target *Signature, partialMatch bool, ignoreThisTypes bool, ignoreReturnTypes bool, compareTypes func(s *Type, t *Type) Ternary) Ternary {
+	return TernaryFalse // !!!
+}
+
+func visibilityToString(flags ModifierFlags) string {
+	if flags == ModifierFlagsPrivate {
+		return "private"
+	}
+	if flags == ModifierFlagsProtected {
+		return "protected"
+	}
+	return "public"
+}
+
 type errorState struct {
 	errorChain  *ErrorChain
 	relatedInfo []*Diagnostic
@@ -1310,7 +1939,7 @@ func (r *Relater) hasExcessProperties(source *Type, target *Type, reportErrors b
 			}
 			if checkTypes != nil && r.isRelatedTo(r.c.getTypeOfSymbol(prop), r.c.getTypeOfPropertyInTypes(checkTypes, prop.name), RecursionFlagsBoth, reportErrors) == TernaryFalse {
 				if reportErrors {
-					r.reportIncompatibleError(diagnostics.Types_of_property_0_are_incompatible, r.c.symbolToString(prop))
+					r.reportError(diagnostics.Types_of_property_0_are_incompatible, r.c.symbolToString(prop))
 				}
 				return true
 			}
@@ -2347,9 +2976,9 @@ func (r *Relater) propertiesRelatedTo(source *Type, target *Type, reportErrors b
 				if related == TernaryFalse {
 					if reportErrors && (targetArity > 1 || sourceArity > 1) {
 						if targetHasRestElement && sourcePosition >= targetStartCount && sourcePositionFromEnd >= targetEndCount && targetStartCount != sourceArity-targetEndCount-1 {
-							r.reportIncompatibleError(diagnostics.Type_at_positions_0_through_1_in_source_is_not_compatible_with_type_at_position_2_in_target, targetStartCount, sourceArity-targetEndCount-1, targetPosition)
+							r.reportError(diagnostics.Type_at_positions_0_through_1_in_source_is_not_compatible_with_type_at_position_2_in_target, targetStartCount, sourceArity-targetEndCount-1, targetPosition)
 						} else {
-							r.reportIncompatibleError(diagnostics.Type_at_position_0_in_source_is_not_compatible_with_type_at_position_1_in_target, sourcePosition, targetPosition)
+							r.reportError(diagnostics.Type_at_position_0_in_source_is_not_compatible_with_type_at_position_1_in_target, sourcePosition, targetPosition)
 						}
 					}
 					return TernaryFalse
@@ -2452,7 +3081,7 @@ func (r *Relater) propertyRelatedTo(source *Type, target *Type, sourceProp *Symb
 	related := r.isPropertySymbolTypeRelated(sourceProp, targetProp, getTypeOfSourceProperty, reportErrors, intersectionState)
 	if related == TernaryFalse {
 		if reportErrors {
-			r.reportIncompatibleError(diagnostics.Types_of_property_0_are_incompatible, r.c.symbolToString(targetProp))
+			r.reportError(diagnostics.Types_of_property_0_are_incompatible, r.c.symbolToString(targetProp))
 		}
 		return TernaryFalse
 	}
@@ -2577,7 +3206,137 @@ func (r *Relater) propertiesIdenticalTo(source *Type, target *Type, excludedProp
 }
 
 func (r *Relater) signaturesRelatedTo(source *Type, target *Type, kind SignatureKind, reportErrors bool, intersectionState IntersectionState) Ternary {
-	return TernaryTrue // !!!
+	if r.relation == r.c.identityRelation {
+		return r.signaturesIdenticalTo(source, target, kind)
+	}
+	if target == r.c.anyFunctionType || source == r.c.anyFunctionType {
+		return TernaryTrue
+	}
+	sourceSignatures := r.c.getSignaturesOfType(source, kind)
+	targetSignatures := r.c.getSignaturesOfType(target, kind)
+	if kind == SignatureKindConstruct && len(sourceSignatures) != 0 && len(targetSignatures) != 0 {
+		sourceIsAbstract := sourceSignatures[0].flags&SignatureFlagsAbstract != 0
+		targetIsAbstract := targetSignatures[0].flags&SignatureFlagsAbstract != 0
+		if sourceIsAbstract && !targetIsAbstract {
+			// An abstract constructor type is not assignable to a non-abstract constructor type
+			// as it would otherwise be possible to new an abstract class. Note that the assignability
+			// check we perform for an extends clause excludes construct signatures from the target,
+			// so this check never proceeds.
+			if reportErrors {
+				r.reportError(diagnostics.Cannot_assign_an_abstract_constructor_type_to_a_non_abstract_constructor_type)
+			}
+			return TernaryFalse
+		}
+		if !r.constructorVisibilitiesAreCompatible(sourceSignatures[0], targetSignatures[0], reportErrors) {
+			return TernaryFalse
+		}
+	}
+	result := TernaryTrue
+	switch {
+	case source.objectFlags&ObjectFlagsInstantiated != 0 && target.objectFlags&ObjectFlagsInstantiated != 0 && source.symbol == target.symbol ||
+		source.objectFlags&ObjectFlagsReference != 0 && target.objectFlags&ObjectFlagsReference != 0 && source.Target() == target.Target():
+		// We have instantiations of the same anonymous type (which typically will be the type of a
+		// method). Simply do a pairwise comparison of the signatures in the two signature lists instead
+		// of the much more expensive N * M comparison matrix we explore below. We erase type parameters
+		// as they are known to always be the same.
+		// !!! Debug.assertEqual(sourceSignatures.length, targetSignatures.length)
+		for i := range len(targetSignatures) {
+			related := r.signatureRelatedTo(sourceSignatures[i], targetSignatures[i], true /*erase*/, reportErrors, intersectionState)
+			if related == TernaryFalse {
+				return TernaryFalse
+			}
+			result &= related
+		}
+	case len(sourceSignatures) == 1 && len(targetSignatures) == 1:
+		// For simple functions (functions with a single signature) we only erase type parameters for
+		// the comparable relation. Otherwise, if the source signature is generic, we instantiate it
+		// in the context of the target signature before checking the relationship. Ideally we'd do
+		// this regardless of the number of signatures, but the potential costs are prohibitive due
+		// to the quadratic nature of the logic below.
+		eraseGenerics := r.relation == r.c.comparableRelation
+		result = r.signatureRelatedTo(sourceSignatures[0], targetSignatures[0], eraseGenerics, reportErrors, intersectionState)
+	default:
+	outer:
+		for _, t := range targetSignatures {
+			saveErrorState := r.getErrorState()
+			// Only elaborate errors from the first failure
+			shouldElaborateErrors := reportErrors
+			for _, s := range sourceSignatures {
+				related := r.signatureRelatedTo(s, t, true /*erase*/, shouldElaborateErrors, intersectionState)
+				if related != TernaryFalse {
+					result &= related
+					r.restoreErrorState(saveErrorState)
+					continue outer
+				}
+				shouldElaborateErrors = false
+			}
+			if shouldElaborateErrors {
+				r.reportError(diagnostics.Type_0_provides_no_match_for_the_signature_1, r.c.typeToString(source), r.c.signatureToString(t))
+			}
+			return TernaryFalse
+		}
+	}
+	return result
+}
+
+func (r *Relater) constructorVisibilitiesAreCompatible(sourceSignature *Signature, targetSignature *Signature, reportErrors bool) bool {
+	if sourceSignature.declaration == nil || targetSignature.declaration == nil {
+		return true
+	}
+	sourceAccessibility := getEffectiveModifierFlags(sourceSignature.declaration) & ModifierFlagsNonPublicAccessibilityModifier
+	targetAccessibility := getEffectiveModifierFlags(targetSignature.declaration) & ModifierFlagsNonPublicAccessibilityModifier
+	// A public, protected and private signature is assignable to a private signature.
+	if targetAccessibility == ModifierFlagsPrivate {
+		return true
+	}
+	// A public and protected signature is assignable to a protected signature.
+	if targetAccessibility == ModifierFlagsProtected && sourceAccessibility != ModifierFlagsPrivate {
+		return true
+	}
+	// Only a public signature is assignable to public signature.
+	if targetAccessibility != ModifierFlagsProtected && sourceAccessibility == 0 {
+		return true
+	}
+	if reportErrors {
+		r.reportError(diagnostics.Cannot_assign_a_0_constructor_type_to_a_1_constructor_type, visibilityToString(sourceAccessibility), visibilityToString(targetAccessibility))
+	}
+	return false
+}
+
+// See signatureAssignableTo, compareSignaturesIdentical
+func (r *Relater) signatureRelatedTo(source *Signature, target *Signature, erase bool, reportErrors bool, intersectionState IntersectionState) Ternary {
+	checkMode := SignatureCheckModeNone
+	switch {
+	case r.relation == r.c.subtypeRelation:
+		checkMode = SignatureCheckModeStrictTopSignature
+	case r.relation == r.c.strictSubtypeRelation:
+		checkMode = SignatureCheckModeStrictTopSignature | SignatureCheckModeStrictArity
+	}
+	if erase {
+		source = r.c.getErasedSignature(source)
+		target = r.c.getErasedSignature(target)
+	}
+	isRelatedToWorker := func(source *Type, target *Type, reportErrors bool) Ternary {
+		return r.isRelatedToEx(source, target, RecursionFlagsBoth, reportErrors, nil /*headMessage*/, intersectionState)
+	}
+	return r.c.compareSignaturesRelated(source, target, checkMode, reportErrors, r.reportError, isRelatedToWorker, r.c.reportUnreliableMapper)
+}
+
+func (r *Relater) signaturesIdenticalTo(source *Type, target *Type, kind SignatureKind) Ternary {
+	sourceSignatures := r.c.getSignaturesOfType(source, kind)
+	targetSignatures := r.c.getSignaturesOfType(target, kind)
+	if len(sourceSignatures) != len(targetSignatures) {
+		return TernaryFalse
+	}
+	result := TernaryTrue
+	for i := range len(sourceSignatures) {
+		related := r.c.compareSignaturesIdentical(sourceSignatures[i], targetSignatures[i], false /*partialMatch*/, false /*ignoreThisTypes*/, false /*ignoreReturnTypes*/, r.isRelatedToSimple)
+		if related == 0 {
+			return TernaryFalse
+		}
+		result &= related
+	}
+	return result
 }
 
 func (r *Relater) indexSignaturesRelatedTo(source *Type, target *Type, sourceIsPrimitive bool, reportErrors bool, intersectionState IntersectionState) Ternary {
@@ -2621,6 +3380,7 @@ func (r *Relater) reportErrorResults(originalSource *Type, originalTarget *Type,
 			r.reportError(message, r.c.typeToStringEx(originalTarget, nil /*enclosingDeclaration*/, TypeFormatFlagsNoTypeReduction), r.c.symbolToString(prop))
 		}
 	}
+	// !!! Logic having to do with canonical diagnostics for deduplication purposes
 	r.reportRelationError(headMessage, source, target)
 	if source.flags&TypeFlagsTypeParameter != 0 && source.symbol != nil && len(source.symbol.declarations) != 0 && r.c.getConstraintOfType(source) == nil {
 		syntheticParam := r.c.cloneTypeParameter(source)
@@ -2643,7 +3403,7 @@ func (r *Relater) reportRelationError(message *diagnostics.Message, source *Type
 		// !!! Debug.assert(!c.isTypeAssignableTo(generalizedSource, target), "generalized source shouldn't be assignable")
 		generalizedSourceType = r.c.getTypeNameForErrorDisplay(generalizedSource)
 	}
-	// If `target` is of indexed access type (And `source` it is not), we use the object type of `target` for better error reporting
+	// If `target` is of indexed access type (and `source` it is not), we use the object type of `target` for better error reporting
 	var targetFlags TypeFlags
 	if target.flags&TypeFlagsIndexedAccess != 0 && source.flags&TypeFlagsIndexedAccess == 0 {
 		targetFlags = target.AsIndexedAccessType().objectType.flags
@@ -2670,78 +3430,121 @@ func (r *Relater) reportRelationError(message *diagnostics.Message, source *Type
 			message = diagnostics.Type_0_is_not_assignable_to_type_1
 		}
 	}
-	// Suppress if next message is an excessive complexity/stack depth message for source and target, a readonly
-	// vs. mutable error for source and target, or an excess property error
-	if r.chainMatches(0, diagnostics.Excessive_complexity_comparing_types_0_and_1, sourceType, targetType) ||
-		r.chainMatches(0, diagnostics.Excessive_stack_depth_comparing_types_0_and_1, sourceType, targetType) ||
-		r.chainMatches(0, diagnostics.The_type_0_is_readonly_and_cannot_be_assigned_to_the_mutable_type_1, sourceType, targetType) ||
-		r.chainMatches(0, diagnostics.Object_literal_may_only_specify_known_properties_and_0_does_not_exist_in_type_1) ||
-		r.chainMatches(0, diagnostics.Object_literal_may_only_specify_known_properties_but_0_does_not_exist_in_type_1_Did_you_mean_to_write_2) {
+	switch r.getChainMessage(0) {
+	// Suppress if next message is an excess property error
+	case diagnostics.Object_literal_may_only_specify_known_properties_and_0_does_not_exist_in_type_1,
+		diagnostics.Object_literal_may_only_specify_known_properties_but_0_does_not_exist_in_type_1_Did_you_mean_to_write_2:
 		return
-	}
+	// Suppress if next message is an excessive complexity/stack depth message for source and target or a readonly
+	// vs. mutable error for source and target
+	case diagnostics.Excessive_complexity_comparing_types_0_and_1,
+		diagnostics.Excessive_stack_depth_comparing_types_0_and_1,
+		diagnostics.The_type_0_is_readonly_and_cannot_be_assigned_to_the_mutable_type_1:
+		if r.chainArgsMatch(sourceType, targetType) {
+			return
+		}
 	// Suppress if next message is a missing property message for source and target and we're not
 	// reporting on interface implementation
-	if message != diagnostics.Class_0_incorrectly_implements_interface_1 &&
-		message != diagnostics.Class_0_incorrectly_implements_class_1_Did_you_mean_to_extend_1_and_inherit_its_members_as_a_subclass &&
-		(r.chainMatches(0, diagnostics.Property_0_is_missing_in_type_1_but_required_in_type_2, nil, sourceType, targetType) ||
-			r.chainMatches(0, diagnostics.Type_0_is_missing_the_following_properties_from_type_1_Colon_2_and_3_more, sourceType, targetType) ||
-			r.chainMatches(0, diagnostics.Type_0_is_missing_the_following_properties_from_type_1_Colon_2, sourceType, targetType)) {
-		return
+	case diagnostics.Property_0_is_missing_in_type_1_but_required_in_type_2:
+		if !isInterfaceImplementationMessage(message) && r.chainArgsMatch(nil, sourceType, targetType) {
+			return
+		}
+	// Suppress if next message is a missing property message for source and target and we're not
+	// reporting on interface implementation
+	case diagnostics.Type_0_is_missing_the_following_properties_from_type_1_Colon_2_and_3_more,
+		diagnostics.Type_0_is_missing_the_following_properties_from_type_1_Colon_2:
+		if !isInterfaceImplementationMessage(message) && r.chainArgsMatch(sourceType, targetType) {
+			return
+		}
 	}
 	r.reportError(message, sourceType, targetType)
 }
 
-func (r *Relater) reportIncompatibleError(message *diagnostics.Message, args ...any) {
+func (r *Relater) reportError(message *diagnostics.Message, args ...any) {
 	if message == diagnostics.Types_of_property_0_are_incompatible {
 		// Suppress if next message is an excess property error
-		if r.chainMatches(0, diagnostics.Object_literal_may_only_specify_known_properties_and_0_does_not_exist_in_type_1) ||
-			r.chainMatches(0, diagnostics.Object_literal_may_only_specify_known_properties_but_0_does_not_exist_in_type_1_Did_you_mean_to_write_2) {
+		switch r.getChainMessage(0) {
+		case diagnostics.Object_literal_may_only_specify_known_properties_and_0_does_not_exist_in_type_1,
+			diagnostics.Object_literal_may_only_specify_known_properties_but_0_does_not_exist_in_type_1_Did_you_mean_to_write_2:
 			return
+		}
+		// Transform a property incompatibility message for property 'x' followed by some elaboration message
+		// followed by a signature return type incompatibility message into a single return type incompatiblity
+		// message for 'x()' or 'x(...)'
+		var arg string
+		switch r.getChainMessage(1) {
+		case diagnostics.Call_signatures_with_no_arguments_have_incompatible_return_types_0_and_1:
+			arg = getPropertyNameArg(args[0]) + "()"
+		case diagnostics.Construct_signatures_with_no_arguments_have_incompatible_return_types_0_and_1:
+			arg = "new " + getPropertyNameArg(args[0]) + "()"
+		case diagnostics.Call_signature_return_types_0_and_1_are_incompatible:
+			arg = getPropertyNameArg(args[0]) + "(...)"
+		case diagnostics.Construct_signature_return_types_0_and_1_are_incompatible:
+			arg = "new " + getPropertyNameArg(args[0]) + "(...)"
+		}
+		if arg != "" {
+			message = diagnostics.The_types_returned_by_0_are_incompatible_between_these_types
+			args[0] = arg
+			r.errorChain = r.errorChain.next.next
 		}
 		// Transform a property incompatibility message for property 'x' followed by some elaboration message
 		// followed by a property incompatibility message for property 'y' into a single property incompatibility
 		// message for 'x.y'
-		if r.chainMatches(1, diagnostics.Types_of_property_0_are_incompatible) ||
-			r.chainMatches(1, diagnostics.The_types_of_0_are_incompatible_between_these_types) {
-			head := args[0].(string)
-			tail := r.errorChain.next.args[0].(string)
+		switch r.getChainMessage(1) {
+		case diagnostics.Types_of_property_0_are_incompatible,
+			diagnostics.The_types_of_0_are_incompatible_between_these_types,
+			diagnostics.The_types_returned_by_0_are_incompatible_between_these_types:
+			head := getPropertyNameArg(args[0])
+			tail := getPropertyNameArg(r.errorChain.next.args[0])
 			var arg string
-			switch {
-			case len(tail) >= 2 && (tail[0] == '"' || tail[0] == '\'' || tail[0] == '`'):
-				arg = head + "[" + tail + "]"
-			case len(tail) >= 2 && tail[0] == '[':
+			if len(tail) != 0 && tail[0] == '[' {
 				arg = head + tail
-			default:
+			} else {
 				arg = head + "." + tail
 			}
 			r.errorChain = r.errorChain.next.next
-			r.reportError(diagnostics.The_types_of_0_are_incompatible_between_these_types, arg)
+			if message == diagnostics.Types_of_property_0_are_incompatible {
+				message = diagnostics.The_types_of_0_are_incompatible_between_these_types
+			}
+			r.reportError(message, arg)
 			return
 		}
-	}
-	r.reportError(message, args...)
-}
-
-func (r *Relater) reportError(message *diagnostics.Message, args ...any) {
-	if message.ElidedInCompatabilityPyramid() {
-		return
 	}
 	r.errorChain = &ErrorChain{next: r.errorChain, message: message, args: args}
 }
 
-// Return true if the index-th message on the error chain matches the given message and the associated arguments
-// match the given arguments (where nil acts as a wildcard)
-func (r *Relater) chainMatches(index int, message *diagnostics.Message, args ...any) bool {
+func (r *Relater) getChainMessage(index int) *diagnostics.Message {
 	e := r.errorChain
-	for e != nil && index != 0 {
+	for {
+		if e == nil {
+			return nil
+		}
+		if index == 0 {
+			return e.message
+		}
 		e = e.next
 		index--
 	}
-	if e == nil || e.message != message {
-		return false
+}
+
+func getPropertyNameArg(arg any) string {
+	s := arg.(string)
+	if len(s) != 0 && (s[0] == '"' || s[0] == '\'' || s[0] == '`') {
+		return "[" + s + "]"
 	}
+	return s
+}
+
+func isInterfaceImplementationMessage(message *diagnostics.Message) bool {
+	return message == diagnostics.Class_0_incorrectly_implements_interface_1 ||
+		message == diagnostics.Class_0_incorrectly_implements_class_1_Did_you_mean_to_extend_1_and_inherit_its_members_as_a_subclass
+}
+
+// Return true if the arguments of the first entry on the error chain match the
+// given arguments (where nil acts as a wildcard).
+func (r *Relater) chainArgsMatch(args ...any) bool {
 	for i, a := range args {
-		if a != nil && a != e.args[i] {
+		if a != nil && a != r.errorChain.args[i] {
 			return false
 		}
 	}
