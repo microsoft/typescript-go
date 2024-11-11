@@ -9,6 +9,7 @@ import (
 	"flag"
 	"fmt"
 	"go/format"
+	"go/token"
 	"log"
 	"os"
 	"path/filepath"
@@ -17,7 +18,6 @@ import (
 	"strconv"
 	"strings"
 	"unicode"
-	"unicode/utf8"
 
 	"github.com/microsoft/typescript-go/internal/repo"
 )
@@ -149,18 +149,20 @@ func convertPropertyName(origName string, code int) (propName string, key string
 	}
 	key = key + "_" + strconv.Itoa(code)
 
-	// Ensure the first character is uppercase so the variable is exported.
-	first, _ := utf8.DecodeRuneInString(propName)
-	if !unicode.IsUpper(first) {
+	if !token.IsExported(propName) {
 		var b strings.Builder
 		b.Grow(len(propName) + 2)
-		if first == '_' {
+		if propName[0] == '_' {
 			b.WriteString("X")
 		} else {
 			b.WriteString("X_")
 		}
 		b.WriteString(propName)
 		propName = b.String()
+	}
+
+	if !token.IsIdentifier(propName) || !token.IsExported(propName) {
+		log.Fatalf("failed to convert property name to exported identifier: %q", origName)
 	}
 
 	return propName, key
