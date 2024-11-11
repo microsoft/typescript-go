@@ -734,7 +734,7 @@ func (b *Binder) bindSourceFileIfExternalModule() {
 
 func (b *Binder) bindSourceFileAsExternalModule() {
 	// !!! Remove file extension from module name
-	b.bindAnonymousDeclaration(b.file.AsNode(), SymbolFlagsValueModule, "\""+b.file.fileName+"\"")
+	b.bindAnonymousDeclaration(b.file.AsNode(), SymbolFlagsValueModule, "\""+b.file.FileName+"\"")
 }
 
 func (b *Binder) bindModuleDeclaration(node *Node) {
@@ -1257,7 +1257,7 @@ func (b *Binder) lookupName(name string, container *Node) *Symbol {
 // [Yield] or [Await] contexts, respectively.
 func (b *Binder) checkContextualIdentifier(node *Node) {
 	// Report error only if there are no parse errors in file
-	if len(b.file.diagnostics) == 0 && node.Flags&NodeFlagsAmbient == 0 && node.Flags&NodeFlagsJSDoc == 0 && !isIdentifierName(node) {
+	if len(b.file.Diagnostics) == 0 && node.Flags&NodeFlagsAmbient == 0 && node.Flags&NodeFlagsJSDoc == 0 && !isIdentifierName(node) {
 		// strict mode identifiers
 		originalKeywordKind := getIdentifierToken(node.AsIdentifier().Text)
 		if originalKeywordKind == SyntaxKindIdentifier {
@@ -1280,7 +1280,7 @@ func (b *Binder) checkContextualIdentifier(node *Node) {
 func (b *Binder) checkPrivateIdentifier(node *Node) {
 	if node.AsPrivateIdentifier().Text == "#constructor" {
 		// Report error only if there are no parse errors in file
-		if len(b.file.diagnostics) == 0 {
+		if len(b.file.Diagnostics) == 0 {
 			b.errorOnNode(node, diagnostics.X_constructor_is_a_reserved_word, declarationNameToString(node))
 		}
 	}
@@ -2748,7 +2748,7 @@ func (b *Binder) createDiagnosticForNode(node *Node, message *diagnostics.Messag
 }
 
 func (b *Binder) addDiagnostic(diagnostic *Diagnostic) {
-	b.file.bindDiagnostics = append(b.file.bindDiagnostics, diagnostic)
+	b.file.BindDiagnostics = append(b.file.BindDiagnostics, diagnostic)
 }
 
 func isEnumConst(node *Node) bool {

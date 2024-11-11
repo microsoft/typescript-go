@@ -2519,7 +2519,7 @@ func (c *Checker) isReachableFlowNode(flowNode *FlowNode) bool {
 func (c *Checker) GetDiagnostics(sourceFile *SourceFile) []*Diagnostic {
 	if sourceFile != nil {
 		c.checkSourceFile(sourceFile)
-		return c.diagnostics.GetDiagnosticsForFile(sourceFile.fileName)
+		return c.diagnostics.GetDiagnosticsForFile(sourceFile.FileName)
 	}
 	for _, file := range c.files {
 		c.checkSourceFile(file)
@@ -2598,7 +2598,7 @@ func (c *Checker) grammarErrorOnNode(node *Node, message *diagnostics.Message, a
 }
 
 func (c *Checker) hasParseDiagnostics(sourceFile *SourceFile) bool {
-	return len(sourceFile.diagnostics) > 0
+	return len(sourceFile.Diagnostics) > 0
 }
 
 func (c *Checker) newSymbol(flags SymbolFlags, name string) *Symbol {
@@ -3289,7 +3289,7 @@ func (c *Checker) isOnlyImportableAsDefault(usage *Node, resolvedModule *Symbol)
 			if resolvedModule != nil {
 				targetFile = getSourceFileOfModule(resolvedModule)
 			}
-			return targetFile != nil && (isJsonSourceFile(targetFile) || getDeclarationFileExtension(targetFile.fileName) == ".d.json.ts")
+			return targetFile != nil && (isJsonSourceFile(targetFile) || getDeclarationFileExtension(targetFile.FileName) == ".d.json.ts")
 		}
 	}
 	return false
@@ -3643,7 +3643,7 @@ func (c *Checker) resolveExternalModule(location *Node, moduleReference string, 
 			return c.getMergedSymbol(sourceFile.Symbol)
 		}
 		if errorNode != nil && moduleNotFoundError != nil && !isSideEffectImport(errorNode) {
-			c.error(errorNode, diagnostics.File_0_is_not_a_module, sourceFile.fileName)
+			c.error(errorNode, diagnostics.File_0_is_not_a_module, sourceFile.FileName)
 		}
 		return nil
 	}

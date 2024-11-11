@@ -4221,11 +4221,11 @@ type SourceFile struct {
 	DeclarationBase
 	LocalsContainerBase
 	Text                        string
-	fileName                    string
-	path                        string
+	FileName                    string
+	Path                        string
 	Statements                  []*Statement
-	diagnostics                 []*Diagnostic
-	bindDiagnostics             []*Diagnostic
+	Diagnostics                 []*Diagnostic
+	BindDiagnostics             []*Diagnostic
 	BindSuggestionDiagnostics   []*Diagnostic
 	LineMap                     []textpos.TextPos
 	LanguageVersion             ScriptTarget
@@ -4249,26 +4249,26 @@ type SourceFile struct {
 func (f *NodeFactory) NewSourceFile(text string, fileName string, statements []*Node) *Node {
 	data := &SourceFile{}
 	data.Text = text
-	data.fileName = fileName
+	data.FileName = fileName
 	data.Statements = statements
 	data.LanguageVersion = ScriptTargetLatest
 	return f.NewNode(SyntaxKindSourceFile, data)
 }
 
-func (node *SourceFile) FileName() string {
-	return node.fileName
+func (node *SourceFile) GetFileName() string {
+	return node.FileName
 }
 
-func (node *SourceFile) Path() string {
-	return node.path
+func (node *SourceFile) GetPath() string {
+	return node.Path
 }
 
-func (node *SourceFile) Diagnostics() []*Diagnostic {
-	return node.diagnostics
+func (node *SourceFile) GetDiagnostics() []*Diagnostic {
+	return node.Diagnostics
 }
 
-func (node *SourceFile) BindDiagnostics() []*Diagnostic {
-	return node.bindDiagnostics
+func (node *SourceFile) GetBindDiagnostics() []*Diagnostic {
+	return node.BindDiagnostics
 }
 
 func (node *SourceFile) ForEachChild(v Visitor) bool {

@@ -1908,7 +1908,7 @@ type DiagnosticsCollection struct {
 
 func (c *DiagnosticsCollection) add(diagnostic *Diagnostic) {
 	if diagnostic.file != nil {
-		fileName := diagnostic.file.fileName
+		fileName := diagnostic.file.FileName
 		if c.fileDiagnostics == nil {
 			c.fileDiagnostics = make(map[string][]*Diagnostic)
 		}
@@ -1921,7 +1921,7 @@ func (c *DiagnosticsCollection) add(diagnostic *Diagnostic) {
 func (c *DiagnosticsCollection) lookup(diagnostic *Diagnostic) *Diagnostic {
 	var diagnostics []*Diagnostic
 	if diagnostic.file != nil {
-		diagnostics = c.fileDiagnostics[diagnostic.file.fileName]
+		diagnostics = c.fileDiagnostics[diagnostic.file.FileName]
 	} else {
 		diagnostics = c.nonFileDiagnostics
 	}
@@ -2048,7 +2048,7 @@ func compareRelatedInfo(r1, r2 []*Diagnostic) int {
 
 func getDiagnosticPath(d *Diagnostic) string {
 	if d.file != nil {
-		return d.file.path
+		return d.file.Path
 	}
 	return ""
 }
@@ -3424,10 +3424,10 @@ func compareSymbols(s1, s2 *Symbol) int {
 				f2 := getSourceFileOfNode(s2.valueDeclaration)
 				if f1 != f2 {
 					// In different files, first compare base filename
-					r := strings.Compare(filepath.Base(f1.path), filepath.Base(f2.path))
+					r := strings.Compare(filepath.Base(f1.Path), filepath.Base(f2.Path))
 					if r == 0 {
 						// Same base filename, compare the full paths (no two files should have the same full path)
-						r = strings.Compare(f1.path, f2.path)
+						r = strings.Compare(f1.Path, f2.Path)
 					}
 					return r
 				}

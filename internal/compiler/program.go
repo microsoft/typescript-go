@@ -64,7 +64,7 @@ func (p *Program) parseSourceFiles(fileInfos []FileInfo) {
 			fileName := fileInfos[i].Name
 			text, _ := p.host.ReadFile(fileName)
 			sourceFile := ParseSourceFile(fileName, text, getEmitScriptTarget(p.options))
-			sourceFile.path, _ = filepath.Abs(fileName)
+			sourceFile.Path, _ = filepath.Abs(fileName)
 			p.collectExternalModuleReferences(sourceFile)
 			p.files[i] = sourceFile
 		})
@@ -72,7 +72,7 @@ func (p *Program) parseSourceFiles(fileInfos []FileInfo) {
 	p.host.WaitForTasks()
 	p.filesByPath = make(map[string]*SourceFile)
 	for _, file := range p.files {
-		p.filesByPath[file.path] = file
+		p.filesByPath[file.Path] = file
 	}
 }
 
@@ -88,7 +88,7 @@ func (p *Program) bindSourceFiles() {
 }
 
 func (p *Program) getResolvedModule(currentSourceFile *SourceFile, moduleReference string) *SourceFile {
-	directory := filepath.Dir(currentSourceFile.path)
+	directory := filepath.Dir(currentSourceFile.Path)
 	if isExternalModuleNameRelative(moduleReference) {
 		return p.findSourceFile(filepath.Join(directory, moduleReference))
 	}
@@ -170,11 +170,11 @@ func (p *Program) getTypeChecker() *Checker {
 }
 
 func (p *Program) getSyntaticDiagnosticsForFile(sourceFile *SourceFile) []*Diagnostic {
-	return sourceFile.diagnostics
+	return sourceFile.Diagnostics
 }
 
 func (p *Program) getBindDiagnosticsForFile(sourceFile *SourceFile) []*Diagnostic {
-	return sourceFile.bindDiagnostics
+	return sourceFile.BindDiagnostics
 }
 
 func (p *Program) getSemanticDiagnosticsForFile(sourceFile *SourceFile) []*Diagnostic {
@@ -194,7 +194,7 @@ func (p *Program) getDiagnosticsHelper(sourceFile *SourceFile, getDiagnostics fu
 
 func (p *Program) PrintTypeAliases() {
 	for _, file := range p.files {
-		if filepath.Base(file.fileName) == "main.ts" {
+		if filepath.Base(file.FileName) == "main.ts" {
 			file.AsNode().ForEachChild(p.printTypeAlias)
 		}
 	}

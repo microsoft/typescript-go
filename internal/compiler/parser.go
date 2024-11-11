@@ -124,7 +124,7 @@ func ParseJSONText(fileName string, sourceText string) *SourceFile {
 	node := p.factory.NewSourceFile(p.sourceText, p.fileName, []*Node{statement})
 	p.finishNode(node, pos)
 	result := node.AsSourceFile()
-	result.diagnostics = attachFileToDiagnostics(p.diagnostics, result)
+	result.Diagnostics = attachFileToDiagnostics(p.diagnostics, result)
 	return result
 }
 
@@ -226,7 +226,7 @@ func (p *Parser) parseSourceFileWorker() *SourceFile {
 	node := p.factory.NewSourceFile(p.sourceText, p.fileName, statements)
 	p.finishNode(node, pos)
 	result := node.AsSourceFile()
-	result.diagnostics = attachFileToDiagnostics(p.diagnostics, result)
+	result.Diagnostics = attachFileToDiagnostics(p.diagnostics, result)
 	result.ExternalModuleIndicator = isFileProbablyExternalModule(result)
 	result.IsDeclarationFile = isDeclarationFile
 	return result
