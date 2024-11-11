@@ -568,8 +568,8 @@ type UnionOrIntersectionTypeNode = Node // UnionTypeNode | IntersectionTypeNode
 type TemplateLiteralLikeNode = Node     // TemplateHead | TemplateMiddle | TemplateTail
 type TemplateMiddleOrTail = Node        // TemplateMiddle | TemplateTail
 type TemplateLiteral = Node             // TemplateExpression | NoSubstitutionTemplateLiteral
-type TypePredicateParameterName = Node  // IdentifierReferenceNode | ThisTypeNode
-type ImportAttributeName = Node         // IdentifierName | StringLiteral
+type TypePredicateParameterName = Node  // Identifier | ThisTypeNode
+type ImportAttributeName = Node         // Identifier | StringLiteral
 type LeftHandSideExpression = Node      // subset of Expression
 
 // Aliases for node singletons
@@ -1117,7 +1117,7 @@ func (node *CaseBlock) ForEachChild(v Visitor) bool {
 type CaseOrDefaultClause struct {
 	NodeBase
 	expression          *Expression  // Expression. nil in default clause
-	statements          []*Statement // Statement[]
+	statements          []*Statement // []Statement
 	fallthroughFlowNode *FlowNode
 }
 
@@ -1508,8 +1508,8 @@ type ClassLikeBase struct {
 	ModifiersBase
 	name            *IdentifierNode        // IdentifierNode
 	typeParameters  *TypeParameterListNode // TypeParameterListNode
-	heritageClauses []*HeritageClauseNode  // HeritageClauseNode[]
-	members         []*ClassElement        // ClassElement[]
+	heritageClauses []*HeritageClauseNode  // []HeritageClauseNode
+	members         []*ClassElement        // []ClassElement
 }
 
 func (node *ClassLikeBase) ForEachChild(v Visitor) bool {
@@ -1687,7 +1687,7 @@ type EnumDeclaration struct {
 	ExportableBase
 	ModifiersBase
 	name    *IdentifierNode   // IdentifierNode
-	members []*EnumMemberNode // EnumMemberNode[]
+	members []*EnumMemberNode // []EnumMemberNode
 }
 
 func (f *NodeFactory) NewEnumDeclaration(modifiers *ModifierListNode, name *IdentifierNode, members []*EnumMemberNode) *Node {
@@ -2071,7 +2071,7 @@ func isNamespaceExport(node *Node) bool {
 
 type NamedExports struct {
 	NodeBase
-	elements []*ExportSpecifierNode // ExportSpecifierNode[]
+	elements []*ExportSpecifierNode // []ExportSpecifierNode
 }
 
 func (f *NodeFactory) NewNamedExports(elements []*ExportSpecifierNode) *Node {
@@ -2459,7 +2459,7 @@ func isClassStaticBlockDeclaration(node *Node) bool {
 
 type TypeParameterList struct {
 	NodeBase
-	parameters []*TypeParameterDeclarationNode // TypeParameterDeclarationNode[]
+	parameters []*TypeParameterDeclarationNode // []TypeParameterDeclarationNode
 }
 
 func (f *NodeFactory) NewTypeParameterList(parameters []*TypeParameterDeclarationNode) *Node {
@@ -2862,7 +2862,7 @@ type CallExpression struct {
 	expression       *Expression           // Expression
 	questionDotToken *TokenNode            // TokenNode
 	typeArguments    *TypeArgumentListNode // TypeArgumentListNode
-	arguments        []*Expression         // Expression[]
+	arguments        []*Expression         // []Expression
 }
 
 func (f *NodeFactory) NewCallExpression(expression *Expression, questionDotToken *TokenNode, typeArguments *TypeArgumentListNode, arguments []*Expression, flags NodeFlags) *Node {
@@ -2890,7 +2890,7 @@ type NewExpression struct {
 	ExpressionBase
 	expression    *Expression           // Expression
 	typeArguments *TypeArgumentListNode // TypeArgumentListNode
-	arguments     []*Expression         // Expression[]
+	arguments     []*Expression         // []Expression
 }
 
 func (f *NodeFactory) NewNewExpression(expression *Expression, typeArguments *TypeArgumentListNode, arguments []*Expression) *Node {
@@ -2976,7 +2976,7 @@ func isSpreadElement(node *Node) bool {
 type TemplateExpression struct {
 	ExpressionBase
 	head          *TemplateHeadNode   // TemplateHeadNode
-	templateSpans []*TemplateSpanNode // TemplateSpanNode[]
+	templateSpans []*TemplateSpanNode // []TemplateSpanNode
 }
 
 func (f *NodeFactory) NewTemplateExpression(head *TemplateHeadNode, templateSpans []*TemplateSpanNode) *Node {
@@ -3063,7 +3063,7 @@ func isParenthesizedExpression(node *Node) bool {
 
 type ArrayLiteralExpression struct {
 	ExpressionBase
-	elements  []*Expression // Expression[]
+	elements  []*Expression // []Expression
 	multiLine bool
 }
 
@@ -3087,7 +3087,7 @@ func isArrayLiteralExpression(node *Node) bool {
 type ObjectLiteralExpression struct {
 	ExpressionBase
 	DeclarationBase
-	properties []*ObjectLiteralElement // ObjectLiteralElement[]
+	properties []*ObjectLiteralElement // []ObjectLiteralElement
 	multiLine  bool
 }
 
@@ -3294,7 +3294,7 @@ func (f *NodeFactory) NewKeywordTypeNode(kind SyntaxKind) *Node {
 
 type UnionOrIntersectionTypeNodeBase struct {
 	TypeNodeBase
-	types []*TypeNode // TypeNode[]
+	types []*TypeNode // []TypeNode
 }
 
 func (node *UnionOrIntersectionTypeNodeBase) ForEachChild(v Visitor) bool {
@@ -3437,7 +3437,7 @@ func isIndexedAccessTypeNode(node *Node) bool {
 
 type TypeArgumentList struct {
 	NodeBase
-	arguments []*TypeNode // TypeNode[]
+	arguments []*TypeNode // []TypeNode
 }
 
 func (f *NodeFactory) NewTypeArgumentList(arguments []*TypeNode) *Node {
@@ -3528,7 +3528,7 @@ func (f *NodeFactory) NewThisTypeNode() *Node {
 type TypePredicateNode struct {
 	TypeNodeBase
 	assertsModifier *TokenNode                  // TokenNode. Optional
-	parameterName   *TypePredicateParameterName // TypePredicateParameterName (IdentifierReferenceNode | ThisTypeNode)
+	parameterName   *TypePredicateParameterName // TypePredicateParameterName (Identifier | ThisTypeNode)
 	typeNode        *TypeNode                   // TypeNode. Optional
 }
 
@@ -3597,7 +3597,7 @@ func (node *ImportAttribute) ForEachChild(v Visitor) bool {
 type ImportAttributes struct {
 	NodeBase
 	token      SyntaxKind
-	attributes []*ImportAttributeNode // ImportAttributeNode[]
+	attributes []*ImportAttributeNode // []ImportAttributeNode
 	multiLine  bool
 }
 
@@ -3647,7 +3647,7 @@ type MappedTypeNode struct {
 	nameType      *TypeNode                     // TypeNode. Optional
 	questionToken *TokenNode                    // TokenNode. Optional
 	typeNode      *TypeNode                     // TypeNode. Optional (error if missing)
-	members       []*TypeElement                // TypeElement[]. Used only to produce grammar errors
+	members       []*TypeElement                // []TypeElement. Used only to produce grammar errors
 }
 
 func (f *NodeFactory) NewMappedTypeNode(readonlyToken *TokenNode, typeParameter *TypeParameterDeclarationNode, nameType *TypeNode, questionToken *TokenNode, typeNode *TypeNode, members []*TypeElement) *Node {
@@ -3675,7 +3675,7 @@ func isMappedTypeNode(node *Node) bool {
 type TypeLiteralNode struct {
 	TypeNodeBase
 	DeclarationBase
-	members []*TypeElement // TypeElement[]
+	members []*TypeElement // []TypeElement
 }
 
 func (f *NodeFactory) NewTypeLiteralNode(members []*TypeElement) *Node {
@@ -3692,7 +3692,7 @@ func (node *TypeLiteralNode) ForEachChild(v Visitor) bool {
 
 type TupleTypeNode struct {
 	TypeNodeBase
-	elements []*TypeNode // TypeNode[]
+	elements []*TypeNode // []TypeNode
 }
 
 func (f *NodeFactory) NewTupleTypeNode(elements []*TypeNode) *Node {
@@ -3900,7 +3900,7 @@ func (f *NodeFactory) NewTemplateTail(text string, rawText string, templateFlags
 type TemplateLiteralTypeNode struct {
 	TypeNodeBase
 	head          *TemplateHeadNode              // TemplateHeadNode
-	templateSpans []*TemplateLiteralTypeSpanNode // TemplateLiteralTypeSpanNode[]
+	templateSpans []*TemplateLiteralTypeSpanNode // []TemplateLiteralTypeSpanNode
 }
 
 func (f *NodeFactory) NewTemplateLiteralTypeNode(head *TemplateHeadNode, templateSpans []*TemplateLiteralTypeSpanNode) *Node {
@@ -3938,7 +3938,7 @@ func (node *TemplateLiteralTypeSpan) ForEachChild(v Visitor) bool {
 type JsxElement struct {
 	ExpressionBase
 	openingElement *JsxOpeningElementNode // JsxOpeningElementNode
-	children       []*JsxChild            // JsxChild[]
+	children       []*JsxChild            // []JsxChild
 	closingElement *JsxClosingElementNode // JsxClosingElementNode
 }
 
@@ -3958,7 +3958,7 @@ func (node *JsxElement) ForEachChild(v Visitor) bool {
 type JsxAttributes struct {
 	ExpressionBase
 	DeclarationBase
-	properties []*JsxAttributeLike // JsxAttributeLike[]
+	properties []*JsxAttributeLike // []JsxAttributeLike
 }
 
 func (f *NodeFactory) NewJsxAttributes(properties []*JsxAttributeLike) *Node {
@@ -4002,7 +4002,7 @@ func isJsxNamespacedName(node *Node) bool {
 
 type JsxOpeningElement struct {
 	ExpressionBase
-	tagName       *JsxTagNameExpression // JsxTagNameExpression (IdentifierName | KeywordExpression | JsxTagNamePropertyAccess | JsxNamespacedName)
+	tagName       *JsxTagNameExpression // JsxTagNameExpression (Identifier | KeywordExpression | JsxTagNamePropertyAccess | JsxNamespacedName)
 	typeArguments *TypeArgumentListNode // TypeArgumentListNode
 	attributes    *JsxAttributesNode    // JsxAttributesNode
 }
@@ -4053,7 +4053,7 @@ func isJsxSelfClosingElement(node *Node) bool {
 type JsxFragment struct {
 	ExpressionBase
 	openingFragment *JsxOpeningFragmentNode // JsxOpeningFragmentNode
-	children        []*JsxChild             // JsxChild[]
+	children        []*JsxChild             // []JsxChild
 	closingFragment *JsxClosingFragmentNode // JsxClosingFragmentNode
 }
 
@@ -4239,7 +4239,7 @@ type SourceFile struct {
 	text                        string
 	fileName                    string
 	path                        string
-	statements                  []*Statement // Statement[]
+	statements                  []*Statement // []Statement
 	diagnostics                 []*Diagnostic
 	bindDiagnostics             []*Diagnostic
 	bindSuggestionDiagnostics   []*Diagnostic
@@ -4256,8 +4256,8 @@ type SourceFile struct {
 	usesUriStyleNodeCoreModules Tristate
 	symbolCount                 int
 	classifiableNames           set[string]
-	imports                     []*LiteralLikeNode // LiteralLikeNode[]
-	moduleAugmentations         []*ModuleName      // ModuleName[]
+	imports                     []*LiteralLikeNode // []LiteralLikeNode
+	moduleAugmentations         []*ModuleName      // []ModuleName
 	patternAmbientModules       []PatternAmbientModule
 	ambientModuleNames          []string
 }
