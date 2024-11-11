@@ -79,9 +79,9 @@ func main() {
 	buf.WriteString("package diagnostics\n")
 
 	for _, m := range diagnosticMessages {
-		propName, key := convertPropertyName(m.key, m.Code)
+		varName, key := convertPropertyName(m.key, m.Code)
 
-		fmt.Fprintf(&buf, "var %s = &Message{code: %d, category: Category%s, key: %q, text: %q", propName, m.Code, m.Category, key, m.key)
+		fmt.Fprintf(&buf, "var %s = &Message{code: %d, category: Category%s, key: %q, text: %q", varName, m.Code, m.Category, key, m.key)
 
 		if m.ReportsUnnecessary {
 			buf.WriteString(`, reportsUnnecessary: true`)
@@ -114,7 +114,7 @@ var (
 	trailingUnderscoreRegexp           = regexp.MustCompile(`_$`)
 )
 
-func convertPropertyName(origName string, code int) (propName string, key string) {
+func convertPropertyName(origName string, code int) (varName string, key string) {
 	var b strings.Builder
 	b.Grow(len(origName))
 
@@ -135,35 +135,35 @@ func convertPropertyName(origName string, code int) (propName string, key string
 		}
 	}
 
-	propName = b.String()
+	varName = b.String()
 	// get rid of all multi-underscores
-	propName = multipleUnderscoreRegexp.ReplaceAllString(propName, "_")
+	varName = multipleUnderscoreRegexp.ReplaceAllString(varName, "_")
 	// remove any leading underscore, unless it is followed by a number.
-	propName = leadingUnderscoreUnlessDigitRegexp.ReplaceAllString(propName, "$1")
+	varName = leadingUnderscoreUnlessDigitRegexp.ReplaceAllString(varName, "$1")
 	// get rid of all trailing underscores.
-	propName = trailingUnderscoreRegexp.ReplaceAllString(propName, "")
+	varName = trailingUnderscoreRegexp.ReplaceAllString(varName, "")
 
-	key = propName
+	key = varName
 	if len(key) > 100 {
 		key = key[:100]
 	}
 	key = key + "_" + strconv.Itoa(code)
 
-	if !token.IsExported(propName) {
+	if !token.IsExported(varName) {
 		var b strings.Builder
-		b.Grow(len(propName) + 2)
-		if propName[0] == '_' {
+		b.Grow(len(varName) + 2)
+		if varName[0] == '_' {
 			b.WriteString("X")
 		} else {
 			b.WriteString("X_")
 		}
-		b.WriteString(propName)
-		propName = b.String()
+		b.WriteString(varName)
+		varName = b.String()
 	}
 
-	if !token.IsIdentifier(propName) || !token.IsExported(propName) {
+	if !token.IsIdentifier(varName) || !token.IsExported(varName) {
 		log.Fatalf("failed to convert property name to exported identifier: %q", origName)
 	}
 
-	return propName, key
+	return varName, key
 }
