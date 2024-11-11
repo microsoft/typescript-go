@@ -252,11 +252,12 @@ type Scanner struct {
 	languageVersion ScriptTarget
 	languageVariant LanguageVariant
 	onError         ErrorCallback
+	skipTrivia      bool
 	ScannerState
 }
 
 func NewScanner() *Scanner {
-	return &Scanner{languageVersion: ScriptTargetLatest}
+	return &Scanner{languageVersion: ScriptTargetLatest, skipTrivia: true}
 }
 
 func (s *Scanner) Text() string {
@@ -427,8 +428,13 @@ func (s *Scanner) Scan() SyntaxKind {
 				s.pos += 2
 				s.token = SyntaxKindAsteriskEqualsToken
 			} else if s.charAt(1) == '*' {
-				s.pos += 2
-				s.token = SyntaxKindAsteriskAsteriskToken
+				if s.charAt(2) == '=' {
+					s.pos += 3
+					s.token = SyntaxKindAsteriskAsteriskEqualsToken
+				} else {
+					s.pos += 2
+					s.token = SyntaxKindAsteriskAsteriskToken
+				}
 			} else {
 				s.pos++
 				s.token = SyntaxKindAsteriskToken
@@ -575,7 +581,15 @@ func (s *Scanner) Scan() SyntaxKind {
 			s.pos++
 			s.token = SyntaxKindSemicolonToken
 		case '<':
-			// Handle conflict marker trivia !!!
+			if isConflictMarkerTrivia(s.text, s.pos) {
+				s.pos = scanConflictMarkerTrivia(s.text, s.pos, s.errorAt)
+				if s.skipTrivia {
+					continue
+				} else {
+					s.token = SyntaxKindConflictMarkerTrivia
+					return s.token
+				}
+			}
 			if s.charAt(1) == '<' {
 				if s.charAt(2) == '=' {
 					s.pos += 3
@@ -595,7 +609,15 @@ func (s *Scanner) Scan() SyntaxKind {
 				s.token = SyntaxKindLessThanToken
 			}
 		case '=':
-			// Handle conflict marker trivia !!!
+			if isConflictMarkerTrivia(s.text, s.pos) {
+				s.pos = scanConflictMarkerTrivia(s.text, s.pos, s.errorAt)
+				if s.skipTrivia {
+					continue
+				} else {
+					s.token = SyntaxKindConflictMarkerTrivia
+					return s.token
+				}
+			}
 			if s.charAt(1) == '=' {
 				if s.charAt(2) == '=' {
 					s.pos += 3
@@ -612,7 +634,15 @@ func (s *Scanner) Scan() SyntaxKind {
 				s.token = SyntaxKindEqualsToken
 			}
 		case '>':
-			// Handle conflict marker trivia !!!
+			if isConflictMarkerTrivia(s.text, s.pos) {
+				s.pos = scanConflictMarkerTrivia(s.text, s.pos, s.errorAt)
+				if s.skipTrivia {
+					continue
+				} else {
+					s.token = SyntaxKindConflictMarkerTrivia
+					return s.token
+				}
+			}
 			s.pos++
 			s.token = SyntaxKindGreaterThanToken
 		case '?':
@@ -649,7 +679,15 @@ func (s *Scanner) Scan() SyntaxKind {
 			s.pos++
 			s.token = SyntaxKindOpenBraceToken
 		case '|':
-			// Handle conflict marker trivia !!!
+			if isConflictMarkerTrivia(s.text, s.pos) {
+				s.pos = scanConflictMarkerTrivia(s.text, s.pos, s.errorAt)
+				if s.skipTrivia {
+					continue
+				} else {
+					s.token = SyntaxKindConflictMarkerTrivia
+					return s.token
+				}
+			}
 			if s.charAt(1) == '|' {
 				if s.charAt(2) == '=' {
 					s.pos += 3
@@ -820,7 +858,7 @@ func (s *Scanner) ReScanSlashToken() SyntaxKind {
 		}
 		for {
 			ch, size := s.charAndSize()
-			if size == 0 || !isIdentifierPart(ch, s.languageVersion, s.languageVariant) {
+			if size == 0 || !isIdentifierPart(ch, s.languageVersion) {
 				break
 			}
 			s.pos += size
@@ -871,11 +909,11 @@ func (s *Scanner) scanJsxTokenEx(allowMultilineJsxText bool) SyntaxKind {
 				break
 			}
 			if ch == '<' {
-				// !!!
-				// if (isConflictMarkerTrivia(text, pos)) {
-				// 	pos = scanConflictMarkerTrivia(text, pos, error);
-				// 	return token = SyntaxKind.ConflictMarkerTrivia;
-				// }
+				if isConflictMarkerTrivia(s.text, s.pos) {
+					s.pos = scanConflictMarkerTrivia(s.text, s.pos, s.errorAt)
+					s.token = SyntaxKindConflictMarkerTrivia
+					return s.token
+				}
 				break
 			}
 			if ch == '>' {
@@ -980,7 +1018,7 @@ func (s *Scanner) scanIdentifier(prefixLength int) bool {
 		for {
 			s.pos += size
 			ch, size = s.charAndSize()
-			if !isIdentifierPart(ch, s.languageVersion, s.languageVariant) {
+			if !isIdentifierPart(ch, s.languageVersion) {
 				break
 			}
 		}
@@ -998,13 +1036,13 @@ func (s *Scanner) scanIdentifierParts() string {
 	start := s.pos
 	for {
 		ch, size := s.charAndSize()
-		if isIdentifierPart(ch, s.languageVersion, s.languageVariant) {
+		if isIdentifierPart(ch, s.languageVersion) {
 			s.pos += size
 			continue
 		}
 		if ch == '\\' {
 			escaped := s.peekUnicodeEscape()
-			if escaped >= 0 && isIdentifierPart(escaped, s.languageVersion, s.languageVariant) {
+			if escaped >= 0 && isIdentifierPart(escaped, s.languageVersion) {
 				sb.WriteString(s.text[start:s.pos])
 				sb.WriteString(string(s.scanUnicodeEscape(true)))
 				start = s.pos
@@ -1212,7 +1250,7 @@ func (s *Scanner) scanEscapeSequence(flags EscapeSequenceScanningFlags) string {
 		// case CharacterCodes.paragraphSeparator !!!
 		return ""
 	default:
-		if flags&EscapeSequenceScanningFlagsAnyUnicodeMode != 0 || flags&EscapeSequenceScanningFlagsRegularExpression != 0 && flags&EscapeSequenceScanningFlagsAnnexB == 0 && isIdentifierPart(ch, s.languageVersion, LanguageVariantStandard) {
+		if flags&EscapeSequenceScanningFlagsAnyUnicodeMode != 0 || flags&EscapeSequenceScanningFlagsRegularExpression != 0 && flags&EscapeSequenceScanningFlagsAnnexB == 0 && isIdentifierPart(ch, s.languageVersion) {
 			s.errorAt(diagnostics.This_character_cannot_be_escaped_in_a_regular_expression, s.pos-2, 2)
 		}
 		return string(rune(ch))
@@ -1527,11 +1565,8 @@ func isIdentifierStart(ch rune, languageVersion ScriptTarget) bool {
 	return stringutil.IsASCIILetter(ch) || ch == '_' || ch == '$' || ch > 0x7F && isUnicodeIdentifierStart(ch, languageVersion)
 }
 
-func isIdentifierPart(ch rune, languageVersion ScriptTarget, identifierVariant LanguageVariant) bool {
-	return isWordCharacter(ch) || ch == '$' ||
-		// "-" and ":" are valid in JSX Identifiers
-		identifierVariant == LanguageVariantJSX && (ch == '-' || ch == ':') ||
-		ch > 0x7F && isUnicodeIdentifierPart(ch, languageVersion)
+func isIdentifierPart(ch rune, languageVersion ScriptTarget) bool {
+	return isWordCharacter(ch) || ch == '$' || ch > 0x7F && isUnicodeIdentifierPart(ch, languageVersion)
 }
 
 func isUnicodeIdentifierStart(ch rune, languageVersion ScriptTarget) bool {
@@ -1582,13 +1617,196 @@ func TokenToString(token SyntaxKind) string {
 	return tokenToText[token]
 }
 
-// !!! Should just skip trivia
-func skipTrivia(sourceText string, pos int) int {
-	s := NewScanner()
-	s.text = sourceText
-	s.pos = pos
-	s.Scan()
-	return s.tokenStart
+func couldStartTrivia(text string, pos int) bool {
+	// Keep in sync with skipTrivia
+	switch ch := text[pos]; ch {
+	// Characters that could start normal trivia
+	case '\r', '\n', '\t', '\v', '\f', ' ', '/',
+		// Characters that could start conflict marker trivia
+		'<', '|', '=', '>':
+		return true
+	case '#':
+		// Only if its the beginning can we have #! trivia
+		return pos == 0
+	default:
+		return ch > maxAsciiCharacter
+	}
+}
+
+type skipTriviaOptions struct {
+	stopAfterLineBreak bool
+	stopAtComments     bool
+	inJSDoc            bool
+}
+
+func skipTrivia(text string, pos int) int {
+	return skipTriviaEx(text, pos, nil)
+}
+func skipTriviaEx(text string, pos int, options *skipTriviaOptions) int {
+	if positionIsSynthesized(pos) {
+		return pos
+	}
+	if options == nil {
+		options = &skipTriviaOptions{}
+	}
+
+	canConsumeStar := false
+	// Keep in sync with couldStartTrivia
+	for {
+		ch, size := utf8.DecodeRuneInString(text[pos:])
+		switch ch {
+		case '\r':
+			if text[pos+1] == '\n' {
+				pos++
+			}
+			fallthrough
+		case '\n':
+			pos++
+			if options.stopAfterLineBreak {
+				return pos
+			}
+			canConsumeStar = options.inJSDoc
+			continue
+		case '\t', '\v', '\f', ' ':
+			pos++
+			continue
+		case '/':
+			if options.stopAtComments {
+				break
+			}
+			if text[pos+1] == '/' {
+				pos += 2
+				for pos < len(text) {
+					ch, size := utf8.DecodeRuneInString(text[pos:])
+					if stringutil.IsLineBreak(ch) {
+						break
+					}
+					pos += size
+				}
+				canConsumeStar = false
+				continue
+			}
+			if text[pos+1] == '*' {
+				pos += 2
+				for pos < len(text) {
+					if text[pos] == '*' && text[pos+1] == '/' {
+						pos += 2
+						break
+					}
+					_, size := utf8.DecodeRuneInString(text[pos:])
+					pos += size
+				}
+				canConsumeStar = false
+				continue
+			}
+		case '<', '|', '=', '>':
+			if isConflictMarkerTrivia(text, pos) {
+				pos = scanConflictMarkerTrivia(text, pos, nil)
+				canConsumeStar = false
+				continue
+			}
+		case '#':
+			if pos == 0 && isShebangTrivia(text, pos) {
+				pos = scanShebangTrivia(text, pos)
+				canConsumeStar = false
+				continue
+			}
+		case '*':
+			if canConsumeStar {
+				pos++
+				canConsumeStar = false
+				continue
+			}
+		default:
+			if ch > rune(maxAsciiCharacter) && stringutil.IsWhiteSpaceLike(ch) {
+				pos += size
+				continue
+			}
+		}
+		return pos
+	}
+}
+
+// All conflict markers consist of the same character repeated seven times.  If it is
+// a <<<<<<< or >>>>>>> marker then it is also followed by a space.
+var mergeConflictMarkerLength = len("<<<<<<<")
+var maxAsciiCharacter byte = 127
+
+func isConflictMarkerTrivia(text string, pos int) bool {
+	if pos < 0 {
+		panic("pos < 0")
+	}
+
+	// Conflict markers must be at the start of a line.
+	var prev rune
+	if pos >= 2 {
+		prev, _ = utf8.DecodeLastRuneInString(text[:pos-2])
+	}
+	if pos == 0 || stringutil.IsLineBreak(prev) || pos >= 1 && stringutil.IsLineBreak(rune(text[pos-1])) {
+		ch := text[pos]
+
+		if (pos + mergeConflictMarkerLength) < len(text) {
+			for i := 0; i < mergeConflictMarkerLength; i++ {
+				if text[pos+i] != ch {
+					return false
+				}
+			}
+
+			return ch == '=' || text[pos+mergeConflictMarkerLength] == ' '
+		}
+	}
+
+	return false
+}
+
+func scanConflictMarkerTrivia(text string, pos int, error func(diag *diagnostics.Message, pos int, length int, args ...any)) int {
+	if error != nil {
+		error(diagnostics.Merge_conflict_marker_encountered, pos, mergeConflictMarkerLength)
+	}
+	ch, size := utf8.DecodeRuneInString(text[pos:])
+	length := len(text)
+
+	if ch == '<' || ch == '>' {
+		for pos < length && !stringutil.IsLineBreak(ch) {
+			pos += size
+			ch, size = utf8.DecodeRuneInString(text[pos:])
+		}
+	} else {
+		if ch != '|' && ch != '=' {
+			panic("Assertion failed: ch must be either '|' or '='")
+		}
+		// Consume everything from the start of a ||||||| or ======= marker to the start
+		// of the next ======= or >>>>>>> marker.
+		for pos < length {
+			currentChar := text[pos]
+			if (currentChar == '=' || currentChar == '>') && rune(currentChar) != ch && isConflictMarkerTrivia(text, pos) {
+				break
+			}
+
+			pos++
+		}
+	}
+
+	return pos
+}
+
+func isShebangTrivia(text string, pos int) bool {
+	if pos != 0 {
+		panic("Shebangs check must only be done at the start of the file")
+	}
+	return text[0] == '#' && text[1] == '!'
+}
+
+func scanShebangTrivia(text string, pos int) int {
+	pos += 2
+	for pos < len(text) {
+		ch, size := utf8.DecodeRuneInString(text[pos:])
+		if stringutil.IsLineBreak(ch) {
+			break
+		}
+		pos += size
+	}
+	return pos
 }
 
 func getScannerForSourceFile(sourceFile *SourceFile, pos int) *Scanner {
@@ -1645,4 +1863,37 @@ func getEndLinePosition(sourceFile *SourceFile, line int) int {
 		}
 		pos += size
 	}
+}
+
+func GetPositionOfLineAndCharacter(sourceFile *SourceFile, line int, character int) textpos.TextPos {
+	return ComputePositionOfLineAndCharacter(getLineStarts(sourceFile), line, character)
+}
+
+func ComputePositionOfLineAndCharacter(lineStarts []textpos.TextPos, line int, character int) textpos.TextPos {
+	/// !!! debugText, allowEdits
+	if line < 0 || line >= len(lineStarts) {
+		// if (allowEdits) {
+		//     // Clamp line to nearest allowable value
+		//     line = line < 0 ? 0 : line >= lineStarts.length ? lineStarts.length - 1 : line;
+		// }
+		panic(fmt.Sprintf("Bad line number. Line: %d, lineStarts.length: %d.", line, len(lineStarts)))
+	}
+
+	res := (lineStarts[line]) + textpos.TextPos(character)
+
+	// !!!
+	// if (allowEdits) {
+	//     // Clamp to nearest allowable values to allow the underlying to be edited without crashing (accuracy is lost, instead)
+	//     // TODO: Somehow track edits between file as it was during the creation of sourcemap we have and the current file and
+	//     // apply them to the computed position to improve accuracy
+	//     return res > lineStarts[line + 1] ? lineStarts[line + 1] : typeof debugText === "string" && res > debugText.length ? debugText.length : res;
+	// }
+	if line < len(lineStarts)-1 && res >= lineStarts[line+1] {
+		panic("Computed position is beyond that of the following line.")
+	}
+	// !!!
+	// else if (debugText !== undefined) {
+	//     Debug.assert(res <= debugText.length); // Allow single character overflow for trailing newline
+	// }
+	return res
 }

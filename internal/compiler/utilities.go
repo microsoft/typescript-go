@@ -5,15 +5,15 @@ import (
 	"maps"
 	"math"
 	"path/filepath"
-	"regexp"
 	"slices"
 	"strconv"
 	"strings"
-	"sync"
 	"sync/atomic"
 
 	"github.com/microsoft/typescript-go/internal/compiler/diagnostics"
 	"github.com/microsoft/typescript-go/internal/compiler/textpos"
+	"github.com/microsoft/typescript-go/internal/tspath"
+	"github.com/microsoft/typescript-go/internal/utils"
 )
 
 // TextRange
@@ -117,6 +117,19 @@ type Diagnostic struct {
 	relatedInformation []*Diagnostic
 }
 
+func (d *Diagnostic) File() *SourceFile                 { return d.file }
+func (d *Diagnostic) Pos() int                          { return d.loc.Pos() }
+func (d *Diagnostic) End() int                          { return d.loc.End() }
+func (d *Diagnostic) Len() int                          { return d.loc.Len() }
+func (d *Diagnostic) Loc() TextRange                    { return d.loc }
+func (d *Diagnostic) Code() int32                       { return d.code }
+func (d *Diagnostic) Category() diagnostics.Category    { return d.category }
+func (d *Diagnostic) Message() string                   { return d.message }
+func (d *Diagnostic) MessageChain() []*MessageChain     { return d.messageChain }
+func (d *Diagnostic) RelatedInformation() []*Diagnostic { return d.relatedInformation }
+
+func (d *Diagnostic) SetCategory(category diagnostics.Category) { d.category = category }
+
 func NewDiagnostic(file *SourceFile, loc TextRange, message *diagnostics.Message, args ...any) *Diagnostic {
 	text := message.Message()
 	if len(args) != 0 {
@@ -136,30 +149,57 @@ func NewDiagnosticForNode(node *Node, message *diagnostics.Message, args ...any)
 	var loc TextRange
 	if node != nil {
 		file = getSourceFileOfNode(node)
-		loc = node.loc
+		loc = getErrorRangeForNode(file, node)
 	}
 	return NewDiagnostic(file, loc, message, args...)
 }
 
-func (d *Diagnostic) File() *SourceFile                         { return d.file }
-func (d *Diagnostic) Loc() TextRange                            { return d.loc }
-func (d *Diagnostic) Code() int32                               { return d.code }
-func (d *Diagnostic) Category() diagnostics.Category            { return d.category }
-func (d *Diagnostic) Message() string                           { return d.message }
-func (d *Diagnostic) RelatedInformation() []*Diagnostic         { return d.relatedInformation }
-func (d *Diagnostic) SetCategory(category diagnostics.Category) { d.category = category }
+func NewDiagnosticFromMessageChain(file *SourceFile, loc TextRange, messageChain *MessageChain) *Diagnostic {
+	return &Diagnostic{
+		file:         file,
+		loc:          loc,
+		code:         messageChain.code,
+		category:     messageChain.category,
+		message:      messageChain.message,
+		messageChain: messageChain.messageChain,
+	}
+}
 
-func (d *Diagnostic) addMessageChain(messageChain ...*MessageChain) *Diagnostic {
-	d.messageChain = append(d.messageChain, messageChain...)
+func NewDiagnosticForNodeFromMessageChain(node *Node, messageChain *MessageChain) *Diagnostic {
+	var file *SourceFile
+	var loc TextRange
+	if node != nil {
+		file = getSourceFileOfNode(node)
+		loc = getErrorRangeForNode(file, node)
+	}
+	return NewDiagnosticFromMessageChain(file, loc, messageChain)
+}
+
+func (d *Diagnostic) setMessageChain(messageChain []*MessageChain) *Diagnostic {
+	d.messageChain = messageChain
 	return d
 }
 
-func (d *Diagnostic) addRelatedInfo(relatedInformation ...*Diagnostic) *Diagnostic {
-	d.relatedInformation = append(d.relatedInformation, relatedInformation...)
+func (d *Diagnostic) addMessageChain(messageChain *MessageChain) *Diagnostic {
+	if messageChain != nil {
+		d.messageChain = append(d.messageChain, messageChain)
+	}
 	return d
 }
 
-// MessaheChain
+func (d *Diagnostic) setRelatedInfo(relatedInformation []*Diagnostic) *Diagnostic {
+	d.relatedInformation = relatedInformation
+	return d
+}
+
+func (d *Diagnostic) addRelatedInfo(relatedInformation *Diagnostic) *Diagnostic {
+	if relatedInformation != nil {
+		d.relatedInformation = append(d.relatedInformation, relatedInformation)
+	}
+	return d
+}
+
+// MessageChain
 
 type MessageChain struct {
 	code         int32
@@ -168,22 +208,32 @@ type MessageChain struct {
 	messageChain []*MessageChain
 }
 
-func NewMessageChain(details []*MessageChain, message *diagnostics.Message, args ...any) *MessageChain {
+func NewMessageChain(message *diagnostics.Message, args ...any) *MessageChain {
 	text := message.Message()
 	if len(args) != 0 {
 		text = formatStringFromArgs(text, args)
 	}
 	return &MessageChain{
-		code:         message.Code(),
-		category:     message.Category(),
-		message:      text,
-		messageChain: details,
+		code:     message.Code(),
+		category: message.Category(),
+		message:  text,
 	}
 }
 
-func (m *MessageChain) addMessageChain(messageChain ...*MessageChain) *MessageChain {
-	m.messageChain = append(m.messageChain, messageChain...)
+func (m *MessageChain) Code() int32                    { return m.code }
+func (m *MessageChain) Category() diagnostics.Category { return m.category }
+func (m *MessageChain) Message() string                { return m.message }
+func (m *MessageChain) MessageChain() []*MessageChain  { return m.messageChain }
+
+func (m *MessageChain) addMessageChain(messageChain *MessageChain) *MessageChain {
+	if messageChain != nil {
+		m.messageChain = append(m.messageChain, messageChain)
+	}
 	return m
+}
+
+func chainDiagnosticMessages(details *MessageChain, message *diagnostics.Message, args ...any) *MessageChain {
+	return NewMessageChain(message, args...).addMessageChain(details)
 }
 
 type OperatorPrecedence int
@@ -439,22 +489,8 @@ func getBinaryOperatorPrecedence(kind SyntaxKind) OperatorPrecedence {
 	return OperatorPrecedenceInvalid
 }
 
-var regexps = make(map[string]*regexp.Regexp)
-var regexpMutex sync.Mutex
-
-func makeRegexp(s string) *regexp.Regexp {
-	regexpMutex.Lock()
-	rx, ok := regexps[s]
-	if !ok {
-		rx = regexp.MustCompile(s)
-		regexps[s] = rx
-	}
-	regexpMutex.Unlock()
-	return rx
-}
-
 func formatStringFromArgs(text string, args []any) string {
-	return makeRegexp(`{(\d+)}`).ReplaceAllStringFunc(text, func(match string) string {
+	return utils.MakeRegexp(`{(\d+)}`).ReplaceAllStringFunc(text, func(match string) string {
 		index, err := strconv.ParseInt(match[1:len(match)-1], 10, 0)
 		if err != nil || int(index) >= len(args) {
 			panic("Invalid formatting placeholder")
@@ -471,149 +507,6 @@ func formatMessage(message *diagnostics.Message, args ...any) string {
 	return text
 }
 
-func filter[T any](slice []T, predicate func(T) bool) []T {
-	result, _ := sameFilter(slice, predicate)
-	return result
-}
-
-func sameFilter[T any](slice []T, predicate func(T) bool) ([]T, bool) {
-	for i, value := range slice {
-		if !predicate(value) {
-			result := slice[0:i]
-			i++
-			for i < len(slice) {
-				value = slice[i]
-				if predicate(value) {
-					result = append(result, value)
-				}
-				i++
-			}
-			return result, false
-		}
-	}
-	return slice, true
-}
-
-func mapf[T, U any](slice []T, f func(T) U) []U {
-	if len(slice) == 0 {
-		return nil
-	}
-	result := make([]U, len(slice))
-	for i := range slice {
-		result[i] = f(slice[i])
-	}
-	return result
-}
-
-func mapIndex[T, U any](slice []T, f func(T, int) U) []U {
-	if len(slice) == 0 {
-		return nil
-	}
-	result := make([]U, len(slice))
-	for i := range slice {
-		result[i] = f(slice[i], i)
-	}
-	return result
-}
-
-func sameMap[T comparable](slice []T, f func(T) T) ([]T, bool) {
-	for i, value := range slice {
-		mapped := f(value)
-		if mapped != value {
-			result := make([]T, len(slice))
-			copy(result, slice[:i])
-			result[i] = mapped
-			for j := i + 1; j < len(slice); j++ {
-				result[j] = f(slice[j])
-			}
-			return result, false
-		}
-	}
-	return slice, true
-}
-
-func sameMapIndex[T comparable](slice []T, f func(T, int) T) ([]T, bool) {
-	for i, value := range slice {
-		mapped := f(value, i)
-		if mapped != value {
-			result := make([]T, len(slice))
-			copy(result, slice[:i])
-			result[i] = mapped
-			for i, value := range slice[i+1:] {
-				result[i] = f(value, i)
-			}
-			return result, false
-		}
-	}
-	return slice, true
-}
-
-func some[T any](array []T, predicate func(T) bool) bool {
-	for _, value := range array {
-		if predicate(value) {
-			return true
-		}
-	}
-	return false
-}
-
-func every[T any](array []T, predicate func(T) bool) bool {
-	for _, value := range array {
-		if !predicate(value) {
-			return false
-		}
-	}
-	return true
-}
-
-func insertSorted[T any](slice []T, element T, cmp func(T, T) int) []T {
-	i, _ := slices.BinarySearchFunc(slice, element, cmp)
-	return slices.Insert(slice, i, element)
-}
-
-func firstOrNil[T any](slice []T) T {
-	if len(slice) != 0 {
-		return slice[0]
-	}
-	return *new(T)
-}
-
-func lastOrNil[T any](slice []T) T {
-	if len(slice) != 0 {
-		return slice[len(slice)-1]
-	}
-	return *new(T)
-}
-
-func find[T any](slice []T, predicate func(T) bool) T {
-	for _, value := range slice {
-		if predicate(value) {
-			return value
-		}
-	}
-	return *new(T)
-}
-
-func findLast[T any](slice []T, predicate func(T) bool) T {
-	for i := len(slice) - 1; i >= 0; i-- {
-		value := slice[i]
-		if predicate(value) {
-			return value
-		}
-	}
-	return *new(T)
-}
-
-func findLastIndex[T any](slice []T, predicate func(T) bool) int {
-	for i := len(slice) - 1; i >= 0; i-- {
-		value := slice[i]
-		if predicate(value) {
-			return i
-		}
-	}
-	return -1
-}
-
 func findInMap[K comparable, V any](m map[K]V, predicate func(V) bool) V {
 	for _, value := range m {
 		if predicate(value) {
@@ -621,39 +514,6 @@ func findInMap[K comparable, V any](m map[K]V, predicate func(V) bool) V {
 		}
 	}
 	return *new(V)
-}
-
-func concatenate[T any](s1 []T, s2 []T) []T {
-	if len(s2) == 0 {
-		return s1
-	}
-	if len(s1) == 0 {
-		return s2
-	}
-	return slices.Concat(s1, s2)
-}
-
-func countWhere[T any](slice []T, predicate func(T) bool) int {
-	count := 0
-	for _, value := range slice {
-		if predicate(value) {
-			count++
-		}
-	}
-	return count
-}
-
-func replaceElement[T any](slice []T, i int, t T) []T {
-	result := slices.Clone(slice)
-	result[i] = t
-	return result
-}
-
-func identical[T any](s1 []T, s2 []T) bool {
-	if len(s1) == len(s2) {
-		return len(s1) == 0 || &s1[0] == &s2[0]
-	}
-	return false
 }
 
 func boolToTristate(b bool) Tristate {
@@ -834,13 +694,6 @@ func getTextOfNodeFromSourceText(sourceText string, node *Node) string {
 	//     text = text.split(/\r\n|\n|\r/).map(line => line.replace(/^\s*\*/, "").trimStart()).join("\n");
 	// }
 	return text
-}
-
-func appendIfUnique[T comparable](array []T, element T) []T {
-	if slices.Contains(array, element) {
-		return array
-	}
-	return append(array, element)
 }
 
 func isAssignmentDeclaration(decl *Node) bool {
@@ -1571,6 +1424,9 @@ func tryParsePattern(pattern string) Pattern {
 	return Pattern{}
 }
 
+func positionIsSynthesized(pos int) bool {
+	return pos < 0
+}
 func isDeclarationStatementKind(kind SyntaxKind) bool {
 	switch kind {
 	case SyntaxKindFunctionDeclaration, SyntaxKindMissingDeclaration, SyntaxKindClassDeclaration, SyntaxKindInterfaceDeclaration,
@@ -1914,7 +1770,7 @@ func nodeHasName(statement *Node, id *Node) bool {
 	}
 	if isVariableStatement(statement) {
 		declarations := statement.AsVariableStatement().declarationList.AsVariableDeclarationList().declarations
-		return some(declarations, func(d *Node) bool { return nodeHasName(d, id) })
+		return utils.Some(declarations, func(d *Node) bool { return nodeHasName(d, id) })
 	}
 	return false
 }
@@ -1924,13 +1780,6 @@ func isImportMeta(node *Node) bool {
 		return node.AsMetaProperty().keywordToken == SyntaxKindImportKeyword && node.AsMetaProperty().name.AsIdentifier().text == "meta"
 	}
 	return false
-}
-
-func lastElement[T any](slice []T) T {
-	if len(slice) != 0 {
-		return slice[len(slice)-1]
-	}
-	return *new(T)
 }
 
 func ensureScriptKind(fileName string, scriptKind ScriptKind) ScriptKind {
@@ -2063,9 +1912,9 @@ func (c *DiagnosticsCollection) add(diagnostic *Diagnostic) {
 		if c.fileDiagnostics == nil {
 			c.fileDiagnostics = make(map[string][]*Diagnostic)
 		}
-		c.fileDiagnostics[fileName] = insertSorted(c.fileDiagnostics[fileName], diagnostic, compareDiagnostics)
+		c.fileDiagnostics[fileName] = utils.InsertSorted(c.fileDiagnostics[fileName], diagnostic, compareDiagnostics)
 	} else {
-		c.nonFileDiagnostics = insertSorted(c.nonFileDiagnostics, diagnostic, compareDiagnostics)
+		c.nonFileDiagnostics = utils.InsertSorted(c.nonFileDiagnostics, diagnostic, compareDiagnostics)
 	}
 }
 
@@ -2658,7 +2507,7 @@ func (r *NameResolver) useOuterVariableScopeInParameter(result *Symbol, location
 				functionLocation := location
 				declarationRequiresScopeChange := r.getRequiresScopeChangeCache(functionLocation)
 				if declarationRequiresScopeChange == TSUnknown {
-					declarationRequiresScopeChange = boolToTristate(some(functionLocation.Parameters(), r.requiresScopeChange))
+					declarationRequiresScopeChange = boolToTristate(utils.Some(functionLocation.Parameters(), r.requiresScopeChange))
 					r.setRequiresScopeChangeCache(functionLocation, declarationRequiresScopeChange)
 				}
 				return declarationRequiresScopeChange == TSTrue
@@ -3151,11 +3000,11 @@ func isExternalModuleNameRelative(moduleName string) bool {
 	// TypeScript 1.0 spec (April 2014): 11.2.1
 	// An external module name is "relative" if the first term is "." or "..".
 	// Update: We also consider a path like `C:\foo.ts` "relative" because we do not search for it in `node_modules` or treat it as an ambient module.
-	return pathIsRelative(moduleName) || isRootedDiskPath(moduleName)
+	return pathIsRelative(moduleName) || tspath.IsRootedDiskPath(moduleName)
 }
 
 func pathIsRelative(path string) bool {
-	return makeRegexp(`^\.\.?(?:$|[\\/])`).MatchString(path)
+	return utils.MakeRegexp(`^\.\.?(?:$|[\\/])`).MatchString(path)
 }
 
 func extensionIsTs(ext string) bool {
@@ -3301,7 +3150,7 @@ func getSourceFileOfModule(module *Symbol) *SourceFile {
 }
 
 func getNonAugmentationDeclaration(symbol *Symbol) *Node {
-	return find(symbol.declarations, func(d *Node) bool {
+	return utils.Find(symbol.declarations, func(d *Node) bool {
 		return !isExternalModuleAugmentation(d) && !(isModuleDeclaration(d) && isGlobalScopeAugmentation(d))
 	})
 }
@@ -3544,6 +3393,10 @@ func isAssertionExpression(node *Node) bool {
 	return kind == SyntaxKindTypeAssertionExpression || kind == SyntaxKindAsExpression
 }
 
+func isTypeAssertion(node *Node) bool {
+	return isAssertionExpression(skipParentheses(node))
+}
+
 func createSymbolTable(symbols []*Symbol) SymbolTable {
 	if len(symbols) == 0 {
 		return nil
@@ -3593,7 +3446,7 @@ func compareSymbols(s1, s2 *Symbol) int {
 }
 
 func getClassLikeDeclarationOfSymbol(symbol *Symbol) *Node {
-	return find(symbol.declarations, isClassLike)
+	return utils.Find(symbol.declarations, isClassLike)
 }
 
 func isThisInTypeQuery(node *Node) bool {
@@ -3622,10 +3475,10 @@ func getDeclarationModifierFlagsFromSymbolEx(s *Symbol, isWrite bool) ModifierFl
 	if s.valueDeclaration != nil {
 		var declaration *Node
 		if isWrite {
-			declaration = find(s.declarations, isSetAccessorDeclaration)
+			declaration = utils.Find(s.declarations, isSetAccessorDeclaration)
 		}
 		if declaration == nil && s.flags&SymbolFlagsGetAccessor != 0 {
-			declaration = find(s.declarations, isGetAccessorDeclaration)
+			declaration = utils.Find(s.declarations, isGetAccessorDeclaration)
 		}
 		if declaration == nil {
 			declaration = s.valueDeclaration
@@ -3984,4 +3837,189 @@ func getThisParameter(signature *Node) *Node {
 
 func parameterIsThisKeyword(parameter *Node) bool {
 	return isThisIdentifier(parameter.Name())
+}
+
+func getInterfaceBaseTypeNodes(node *Node) []*Node {
+	heritageClause := getHeritageClause(node.AsInterfaceDeclaration().heritageClauses, SyntaxKindExtendsKeyword)
+	if heritageClause != nil {
+		return heritageClause.AsHeritageClause().types
+	}
+	return nil
+}
+
+func getHeritageClause(clauses []*Node, kind SyntaxKind) *Node {
+	for _, clause := range clauses {
+		if clause.AsHeritageClause().token == kind {
+			return clause
+		}
+	}
+	return nil
+}
+
+func getClassExtendsHeritageElement(node *Node) *Node {
+	heritageClause := getHeritageClause(node.ClassLikeData().heritageClauses, SyntaxKindExtendsKeyword)
+	if heritageClause != nil && len(heritageClause.AsHeritageClause().types) > 0 {
+		return heritageClause.AsHeritageClause().types[0]
+	}
+	return nil
+}
+
+func concatenateDiagnosticMessageChains(headChain *MessageChain, tailChain *MessageChain) {
+	lastChain := headChain
+	for len(lastChain.messageChain) != 0 {
+		lastChain = lastChain.messageChain[0]
+	}
+	lastChain.messageChain = []*MessageChain{tailChain}
+}
+
+func isObjectOrArrayLiteralType(t *Type) bool {
+	return t.objectFlags&(ObjectFlagsObjectLiteral|ObjectFlagsArrayLiteral) != 0
+}
+
+func getContainingClassExcludingClassDecorators(node *Node) *ClassLikeDeclaration {
+	decorator := findAncestorOrQuit(node.parent, func(n *Node) FindAncestorResult {
+		if isClassLike(n) {
+			return FindAncestorQuit
+		}
+		if isDecorator(n) {
+			return FindAncestorTrue
+		}
+		return FindAncestorFalse
+	})
+	if decorator != nil && isClassLike(decorator.parent) {
+		return getContainingClass(decorator.parent)
+	}
+	if decorator != nil {
+		return getContainingClass(decorator)
+	}
+	return getContainingClass(node)
+}
+
+func isThisTypeParameter(t *Type) bool {
+	return t.flags&TypeFlagsTypeParameter != 0 && t.AsTypeParameter().isThisType
+}
+
+func isCallLikeExpression(node *Node) bool {
+	switch node.kind {
+	case SyntaxKindJsxOpeningElement, SyntaxKindJsxSelfClosingElement, SyntaxKindCallExpression, SyntaxKindNewExpression,
+		SyntaxKindTaggedTemplateExpression, SyntaxKindDecorator:
+		return true
+	}
+	return false
+}
+
+func isCallOrNewExpression(node *Node) bool {
+	return isCallExpression(node) || isNewExpression(node)
+}
+
+func isClassInstanceProperty(node *Node) bool {
+	return node.parent != nil && isClassLike(node.parent) && isPropertyDeclaration(node) && !hasAccessorModifier(node)
+}
+
+func isThisInitializedObjectBindingExpression(node *Node) bool {
+	return node != nil && (isShorthandPropertyAssignment(node) || isPropertyAssignment(node)) && isBinaryExpression(node.parent.parent) &&
+		node.parent.parent.AsBinaryExpression().operatorToken.kind == SyntaxKindEqualsToken &&
+		node.parent.parent.AsBinaryExpression().right.kind == SyntaxKindThisKeyword
+}
+
+func isThisInitializedDeclaration(node *Node) bool {
+	return node != nil && isVariableDeclaration(node) && node.AsVariableDeclaration().initializer != nil && node.AsVariableDeclaration().initializer.kind == SyntaxKindThisKeyword
+}
+
+func isWriteOnlyAccess(node *Node) bool {
+	return accessKind(node) == AccessKindWrite
+}
+
+func isWriteAccess(node *Node) bool {
+	return accessKind(node) != AccessKindRead
+}
+
+type AccessKind int32
+
+const (
+	AccessKindRead      AccessKind = iota // Only reads from a variable
+	AccessKindWrite                       // Only writes to a variable without ever reading it. E.g.: `x=1;`.
+	AccessKindReadWrite                   // Reads from and writes to a variable. E.g.: `f(x++);`, `x/=1`.
+)
+
+func accessKind(node *Node) AccessKind {
+	parent := node.parent
+	switch parent.kind {
+	case SyntaxKindParenthesizedExpression:
+		return accessKind(parent)
+	case SyntaxKindPrefixUnaryExpression:
+		operator := parent.AsPrefixUnaryExpression().operator
+		if operator == SyntaxKindPlusPlusToken || operator == SyntaxKindMinusMinusToken {
+			return AccessKindReadWrite
+		}
+		return AccessKindRead
+	case SyntaxKindPostfixUnaryExpression:
+		operator := parent.AsPostfixUnaryExpression().operator
+		if operator == SyntaxKindPlusPlusToken || operator == SyntaxKindMinusMinusToken {
+			return AccessKindReadWrite
+		}
+		return AccessKindRead
+	case SyntaxKindBinaryExpression:
+		if parent.AsBinaryExpression().left == node {
+			operator := parent.AsBinaryExpression().operatorToken
+			if isAssignmentOperator(operator.kind) {
+				if operator.kind == SyntaxKindEqualsToken {
+					return AccessKindWrite
+				}
+				return AccessKindReadWrite
+			}
+		}
+		return AccessKindRead
+	case SyntaxKindPropertyAccessExpression:
+		if parent.AsPropertyAccessExpression().name != node {
+			return AccessKindRead
+		}
+		return accessKind(parent)
+	case SyntaxKindPropertyAssignment:
+		parentAccess := accessKind(parent.parent)
+		// In `({ x: varname }) = { x: 1 }`, the left `x` is a read, the right `x` is a write.
+		if node == parent.AsPropertyAssignment().name {
+			return reverseAccessKind(parentAccess)
+		}
+		return parentAccess
+	case SyntaxKindShorthandPropertyAssignment:
+		// Assume it's the local variable being accessed, since we don't check public properties for --noUnusedLocals.
+		if node == parent.AsShorthandPropertyAssignment().objectAssignmentInitializer {
+			return AccessKindRead
+		}
+		return accessKind(parent.parent)
+	case SyntaxKindArrayLiteralExpression:
+		return accessKind(parent)
+	case SyntaxKindForInStatement, SyntaxKindForOfStatement:
+		if node == parent.AsForInOrOfStatement().initializer {
+			return AccessKindWrite
+		}
+		return AccessKindRead
+	}
+	return AccessKindRead
+}
+
+func reverseAccessKind(a AccessKind) AccessKind {
+	switch a {
+	case AccessKindRead:
+		return AccessKindWrite
+	case AccessKindWrite:
+		return AccessKindRead
+	case AccessKindReadWrite:
+		return AccessKindReadWrite
+	}
+	panic("Unhandled case in reverseAccessKind")
+}
+
+func isJsxOpeningLikeElement(node *Node) bool {
+	return isJsxOpeningElement(node) || isJsxSelfClosingElement(node)
+}
+
+func isObjectLiteralElementLike(node *Node) bool {
+	switch node.kind {
+	case SyntaxKindPropertyAssignment, SyntaxKindShorthandPropertyAssignment, SyntaxKindSpreadAssignment,
+		SyntaxKindMethodDeclaration, SyntaxKindGetAccessor, SyntaxKindSetAccessor:
+		return true
+	}
+	return false
 }
