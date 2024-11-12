@@ -761,7 +761,7 @@ func (b *Binder) bindModuleDeclaration(node *Node) {
 	} else {
 		state := b.declareModuleSymbol(node)
 		if state != ModuleInstanceStateNonInstantiated {
-			symbol := node.AsModuleDeclaration().symbol
+			symbol := node.AsModuleDeclaration().Symbol
 			// if module was already merged with some function, class or non-const enum, treat it as non-const-enum-only
 			symbol.ConstEnumOnlyModule = symbol.ConstEnumOnlyModule && (symbol.Flags&(ast.SymbolFlagsFunction|ast.SymbolFlagsClass|ast.SymbolFlagsRegularEnum) == 0) && state == ModuleInstanceStateConstEnumOnly
 		}
@@ -787,7 +787,7 @@ func (b *Binder) bindNamespaceExportDeclaration(node *Node) {
 	case !node.Parent.AsSourceFile().IsDeclarationFile:
 		b.errorOnNode(node, diagnostics.Global_module_exports_may_only_appear_in_declaration_files)
 	default:
-		b.declareSymbol(getSymbolTable(&b.file.symbol.GlobalExports), b.file.symbol, node, ast.SymbolFlagsAlias, ast.SymbolFlagsAliasExcludes)
+		b.declareSymbol(getSymbolTable(&b.file.Symbol.GlobalExports), b.file.Symbol, node, ast.SymbolFlagsAlias, ast.SymbolFlagsAliasExcludes)
 	}
 }
 
@@ -1245,7 +1245,7 @@ func (b *Binder) lookupName(name string, container *Node) *Symbol {
 	}
 	declaration := container.DeclarationData()
 	if declaration != nil {
-		symbol := declaration.symbol
+		symbol := declaration.Symbol
 		if symbol != nil {
 			return symbol.Exports[name]
 		}
@@ -2522,7 +2522,7 @@ func (b *Binder) addToContainerChain(next *Node) {
 
 func (b *Binder) addDeclarationToSymbol(symbol *Symbol, node *Node, symbolFlags ast.SymbolFlags) {
 	symbol.Flags |= symbolFlags
-	node.DeclarationData().symbol = symbol
+	node.DeclarationData().Symbol = symbol
 	if symbol.Declarations == nil {
 		symbol.Declarations = b.newSingleDeclaration(node)
 	} else {

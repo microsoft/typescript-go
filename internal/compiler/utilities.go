@@ -2310,7 +2310,7 @@ loop:
 			if IsClassExpression(location) && meaning&ast.SymbolFlagsClass != 0 {
 				className := location.AsClassExpression().Name_
 				if className != nil && name == className.AsIdentifier().Text {
-					result = location.AsClassExpression().symbol
+					result = location.AsClassExpression().Symbol
 					break loop
 				}
 			}
@@ -2366,7 +2366,7 @@ loop:
 			if meaning&ast.SymbolFlagsFunction != 0 {
 				functionName := location.AsFunctionExpression().Name_
 				if functionName != nil && name == functionName.AsIdentifier().Text {
-					result = location.AsFunctionExpression().symbol
+					result = location.AsFunctionExpression().Symbol
 					break loop
 				}
 			}
@@ -2416,7 +2416,7 @@ loop:
 			if meaning&ast.SymbolFlagsTypeParameter != 0 {
 				parameterName := location.AsInferTypeNode().TypeParameter.AsTypeParameter().Name_
 				if parameterName != nil && name == parameterName.AsIdentifier().Text {
-					result = location.AsInferTypeNode().TypeParameter.AsTypeParameter().symbol
+					result = location.AsInferTypeNode().TypeParameter.AsTypeParameter().Symbol
 					break loop
 				}
 			}

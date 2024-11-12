@@ -465,9 +465,9 @@ func (c *Checker) initializeChecker() {
 		}
 		c.patternAmbientModules = append(c.patternAmbientModules, file.PatternAmbientModules...)
 		augmentations = append(augmentations, file.ModuleAugmentations)
-		if file.symbol != nil {
+		if file.Symbol != nil {
 			// Merge in UMD exports with first-in-wins semantics (see #9771)
-			for name, symbol := range file.symbol.GlobalExports {
+			for name, symbol := range file.Symbol.GlobalExports {
 				if _, ok := c.globals[name]; !ok {
 					c.globals[name] = symbol
 				}
@@ -530,14 +530,14 @@ func (c *Checker) initializeChecker() {
 func (c *Checker) mergeModuleAugmentation(moduleName *Node) {
 	moduleNode := moduleName.Parent
 	moduleAugmentation := moduleNode.AsModuleDeclaration()
-	if moduleAugmentation.symbol.Declarations[0] != moduleNode {
+	if moduleAugmentation.Symbol.Declarations[0] != moduleNode {
 		// this is a combined symbol for multiple augmentations within the same file.
 		// its symbol already has accumulated information for all declarations
 		// so we need to add it just once - do the work only for first declaration
 		return
 	}
 	if isGlobalScopeAugmentation(moduleNode) {
-		c.mergeSymbolTable(c.globals, moduleAugmentation.symbol.Exports, false /*unidirectional*/, nil /*parent*/)
+		c.mergeSymbolTable(c.globals, moduleAugmentation.Symbol.Exports, false /*unidirectional*/, nil /*parent*/)
 	} else {
 		// find a module that about to be augmented
 		// do not validate names of augmentations that are defined in ambient context
@@ -560,20 +560,20 @@ func (c *Checker) mergeModuleAugmentation(moduleName *Node) {
 			if core.Some(c.patternAmbientModules, func(module PatternAmbientModule) bool {
 				return mainModule == module.Symbol
 			}) {
-				merged := c.mergeSymbol(moduleAugmentation.symbol, mainModule, true /*unidirectional*/)
+				merged := c.mergeSymbol(moduleAugmentation.Symbol, mainModule, true /*unidirectional*/)
 				// moduleName will be a StringLiteral since this is not `declare global`.
 				getSymbolTable(&c.patternAmbientModuleAugmentations)[moduleName.Text()] = merged
 			} else {
-				if mainModule.Exports[InternalSymbolNameExportStar] != nil && len(moduleAugmentation.symbol.Exports) != 0 {
+				if mainModule.Exports[InternalSymbolNameExportStar] != nil && len(moduleAugmentation.Symbol.Exports) != 0 {
 					// We may need to merge the module augmentation's exports into the target symbols of the resolved exports
 					resolvedExports := c.getResolvedMembersOrExportsOfSymbol(mainModule, MembersOrExportsResolutionKindResolvedExports)
-					for key, value := range moduleAugmentation.symbol.Exports {
+					for key, value := range moduleAugmentation.Symbol.Exports {
 						if resolvedExports[key] != nil && mainModule.Exports[key] == nil {
 							c.mergeSymbol(resolvedExports[key], value, false /*unidirectional*/)
 						}
 					}
 				}
-				c.mergeSymbol(mainModule, moduleAugmentation.symbol, false /*unidirectional*/)
+				c.mergeSymbol(mainModule, moduleAugmentation.Symbol, false /*unidirectional*/)
 			}
 		} else {
 			// moduleName will be a StringLiteral since this is not `declare global`.
@@ -3692,8 +3692,8 @@ func (c *Checker) resolveExternalModule(location *Node, moduleReference string, 
 	// !!! The following only implements simple module resoltion
 	sourceFile := c.program.getResolvedModule(getSourceFileOfNode(location), moduleReference)
 	if sourceFile != nil {
-		if sourceFile.symbol != nil {
-			return c.getMergedSymbol(sourceFile.symbol)
+		if sourceFile.Symbol != nil {
+			return c.getMergedSymbol(sourceFile.Symbol)
 		}
 		if errorNode != nil && moduleNotFoundError != nil && !isSideEffectImport(errorNode) {
 			c.error(errorNode, diagnostics.File_0_is_not_a_module, sourceFile.FileName_)

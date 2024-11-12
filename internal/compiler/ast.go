@@ -64,7 +64,7 @@ func (n *Node) Modifiers() *ModifierListNode              { return n.Data.Modifi
 func (n *Node) TypeParameters() *TypeParameterListNode    { return n.Data.TypeParameters() }
 func (n *Node) FlowNodeData() *FlowNodeBase               { return n.Data.FlowNodeData() }
 func (n *Node) DeclarationData() *DeclarationBase         { return n.Data.DeclarationData() }
-func (n *Node) Symbol() *Symbol                           { return n.Data.DeclarationData().symbol }
+func (n *Node) Symbol() *Symbol                           { return n.Data.DeclarationData().Symbol }
 func (n *Node) ExportableData() *ExportableBase           { return n.Data.ExportableData() }
 func (n *Node) LocalSymbol() *Symbol                      { return n.Data.ExportableData().LocalSymbol }
 func (n *Node) LocalsContainerData() *LocalsContainerBase { return n.Data.LocalsContainerData() }
@@ -612,7 +612,7 @@ type JsxClosingFragmentNode = Node
 // DeclarationBase
 
 type DeclarationBase struct {
-	symbol *Symbol // Symbol declared by node (initialized by binding)
+	Symbol *Symbol // Symbol declared by node (initialized by binding)
 }
 
 func (node *DeclarationBase) DeclarationData() *DeclarationBase { return node }
