@@ -67,7 +67,20 @@ export const lint = task({
     name: "lint",
     run: async () => {
         // TODO: Run `go tool golangci-lint` after https://github.com/golang/go/issues/48429
-        await $`go run github.com/golangci/golangci-lint/cmd/golangci-lint run ${options.fix ? ["--fix"] : []}`;
+        await $`golangci-lint run ${options.fix ? ["--fix"] : []}`;
+    },
+});
+
+const tools = new Map([
+    ["github.com/golangci/golangci-lint/cmd/golangci-lint", "v1.62.0"],
+]);
+
+export const installTools = task({
+    name: "install-tools",
+    run: async () => {
+        for (const [tool, version] of tools) {
+            await $`go install ${tool}@${version}`
+        }
     },
 });
 
