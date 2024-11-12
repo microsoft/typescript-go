@@ -44,26 +44,11 @@ func (t TextRange) ContainsInclusive(pos int) bool {
 	return pos >= int(t.pos) && pos <= int(t.end)
 }
 
-// Pool allocator
-
-type Pool[T any] struct {
-	data []T
-}
-
-func (p *Pool[T]) New() *T {
-	if len(p.data) == cap(p.data) {
-		p.data = make([]T, 0, nextPoolSize(len(p.data)))
-	}
-	index := len(p.data)
-	p.data = p.data[:index+1]
-	return &p.data[index]
-}
-
 // Links store
 
 type LinkStore[K comparable, V any] struct {
 	entries map[K]*V
-	pool    Pool[V]
+	pool    core.Pool[V]
 }
 
 func (s *LinkStore[K, V]) get(key K) *V {
@@ -1740,16 +1725,6 @@ func isPropertyAccessEntityNameExpression(node *Node) bool {
 
 func isPrologueDirective(node *Node) bool {
 	return node.kind == ast.KindExpressionStatement && node.AsExpressionStatement().expression.kind == ast.KindStringLiteral
-}
-
-func nextPoolSize(size int) int {
-	switch {
-	case size < 16:
-		return 16
-	case size < 256:
-		return size * 2
-	}
-	return size
 }
 
 func getStatementsOfBlock(block *Node) []*Statement {

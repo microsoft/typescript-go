@@ -29,7 +29,7 @@ func visitNodes(v Visitor, nodes []*Node) bool {
 // NodeFactory
 
 type NodeFactory struct {
-	identifierPool Pool[Identifier]
+	identifierPool core.Pool[Identifier]
 }
 
 func (f *NodeFactory) NewNode(kind ast.Kind, data NodeData) *Node {

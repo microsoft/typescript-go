@@ -62,9 +62,9 @@ type Binder struct {
 	inAssignmentPattern    bool
 	symbolCount            int
 	classifiableNames      set[string]
-	symbolPool             Pool[Symbol]
-	flowNodePool           Pool[FlowNode]
-	flowListPool           Pool[FlowList]
+	symbolPool             core.Pool[Symbol]
+	flowNodePool           core.Pool[FlowNode]
+	flowListPool           core.Pool[FlowList]
 	singleDeclarations     []*Node
 }
 
@@ -505,7 +505,7 @@ func (b *Binder) combineFlowLists(head *FlowList, tail *FlowList) *FlowList {
 
 func (b *Binder) newSingleDeclaration(declaration *Node) []*Node {
 	if len(b.singleDeclarations) == cap(b.singleDeclarations) {
-		b.singleDeclarations = make([]*Node, 0, nextPoolSize(len(b.singleDeclarations)))
+		b.singleDeclarations = make([]*Node, 0, core.NextPoolSize(len(b.singleDeclarations)))
 	}
 	index := len(b.singleDeclarations)
 	b.singleDeclarations = b.singleDeclarations[:index+1]

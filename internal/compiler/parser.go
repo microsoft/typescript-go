@@ -58,7 +58,7 @@ type Parser struct {
 	identifiers           set[string]
 	sourceFlags           ast.NodeFlags
 	notParenthesizedArrow set[int]
-	identifierPool        Pool[Identifier]
+	identifierPool        core.Pool[Identifier]
 }
 
 func NewParser() *Parser {

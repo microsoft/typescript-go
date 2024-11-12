@@ -207,9 +207,9 @@ type Checker struct {
 	intersectionTypes                  map[string]*Type
 	diagnostics                        DiagnosticsCollection
 	suggestionDiagnostics              DiagnosticsCollection
-	symbolPool                         Pool[Symbol]
-	signaturePool                      Pool[Signature]
-	indexInfoPool                      Pool[IndexInfo]
+	symbolPool                         core.Pool[Symbol]
+	signaturePool                      core.Pool[Signature]
+	indexInfoPool                      core.Pool[IndexInfo]
 	mergedSymbols                      map[MergeId]*Symbol
 	nodeLinks                          LinkStore[*Node, NodeLinks]
 	signatureLinks                     LinkStore[*Node, SignatureLinks]
