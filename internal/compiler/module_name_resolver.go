@@ -241,7 +241,7 @@ func NewModuleResolver(host ModuleResolutionHost, cache ModuleResolutionCache, o
 }
 
 func (r *ModuleResolver) resolveModuleName(moduleName string, containingFile string, resolutionMode ResolutionMode, redirectedReference *ResolvedProjectReference) *ResolvedModuleWithFailedLookupLocations {
-	traceEnabled := r.compilerOptions.TraceResolution == TSTrue
+	traceEnabled := r.compilerOptions.TraceResolution == core.TSTrue
 	if redirectedReference != nil {
 		r.compilerOptions = redirectedReference.commandLine.options
 	}

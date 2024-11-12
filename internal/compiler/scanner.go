@@ -6,9 +6,11 @@ import (
 	"strings"
 	"unicode/utf8"
 
+	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/compiler/diagnostics"
 	"github.com/microsoft/typescript-go/internal/compiler/stringutil"
 	"github.com/microsoft/typescript-go/internal/compiler/textpos"
+	"github.com/microsoft/typescript-go/internal/core"
 )
 
 type TokenFlags int32
@@ -54,155 +56,155 @@ const (
 
 type ErrorCallback func(diagnostic *diagnostics.Message, start, length int, args ...any)
 
-var textToKeyword = map[string]SyntaxKind{
-	"abstract":    SyntaxKindAbstractKeyword,
-	"accessor":    SyntaxKindAccessorKeyword,
-	"any":         SyntaxKindAnyKeyword,
-	"as":          SyntaxKindAsKeyword,
-	"asserts":     SyntaxKindAssertsKeyword,
-	"assert":      SyntaxKindAssertKeyword,
-	"bigint":      SyntaxKindBigIntKeyword,
-	"boolean":     SyntaxKindBooleanKeyword,
-	"break":       SyntaxKindBreakKeyword,
-	"case":        SyntaxKindCaseKeyword,
-	"catch":       SyntaxKindCatchKeyword,
-	"class":       SyntaxKindClassKeyword,
-	"continue":    SyntaxKindContinueKeyword,
-	"const":       SyntaxKindConstKeyword,
-	"constructor": SyntaxKindConstructorKeyword,
-	"debugger":    SyntaxKindDebuggerKeyword,
-	"declare":     SyntaxKindDeclareKeyword,
-	"default":     SyntaxKindDefaultKeyword,
-	"delete":      SyntaxKindDeleteKeyword,
-	"do":          SyntaxKindDoKeyword,
-	"else":        SyntaxKindElseKeyword,
-	"enum":        SyntaxKindEnumKeyword,
-	"export":      SyntaxKindExportKeyword,
-	"extends":     SyntaxKindExtendsKeyword,
-	"false":       SyntaxKindFalseKeyword,
-	"finally":     SyntaxKindFinallyKeyword,
-	"for":         SyntaxKindForKeyword,
-	"from":        SyntaxKindFromKeyword,
-	"function":    SyntaxKindFunctionKeyword,
-	"get":         SyntaxKindGetKeyword,
-	"if":          SyntaxKindIfKeyword,
-	"immediate":   SyntaxKindImmediateKeyword,
-	"implements":  SyntaxKindImplementsKeyword,
-	"import":      SyntaxKindImportKeyword,
-	"in":          SyntaxKindInKeyword,
-	"infer":       SyntaxKindInferKeyword,
-	"instanceof":  SyntaxKindInstanceOfKeyword,
-	"interface":   SyntaxKindInterfaceKeyword,
-	"intrinsic":   SyntaxKindIntrinsicKeyword,
-	"is":          SyntaxKindIsKeyword,
-	"keyof":       SyntaxKindKeyOfKeyword,
-	"let":         SyntaxKindLetKeyword,
-	"module":      SyntaxKindModuleKeyword,
-	"namespace":   SyntaxKindNamespaceKeyword,
-	"never":       SyntaxKindNeverKeyword,
-	"new":         SyntaxKindNewKeyword,
-	"null":        SyntaxKindNullKeyword,
-	"number":      SyntaxKindNumberKeyword,
-	"object":      SyntaxKindObjectKeyword,
-	"package":     SyntaxKindPackageKeyword,
-	"private":     SyntaxKindPrivateKeyword,
-	"protected":   SyntaxKindProtectedKeyword,
-	"public":      SyntaxKindPublicKeyword,
-	"override":    SyntaxKindOverrideKeyword,
-	"out":         SyntaxKindOutKeyword,
-	"readonly":    SyntaxKindReadonlyKeyword,
-	"require":     SyntaxKindRequireKeyword,
-	"global":      SyntaxKindGlobalKeyword,
-	"return":      SyntaxKindReturnKeyword,
-	"satisfies":   SyntaxKindSatisfiesKeyword,
-	"set":         SyntaxKindSetKeyword,
-	"static":      SyntaxKindStaticKeyword,
-	"string":      SyntaxKindStringKeyword,
-	"super":       SyntaxKindSuperKeyword,
-	"switch":      SyntaxKindSwitchKeyword,
-	"symbol":      SyntaxKindSymbolKeyword,
-	"this":        SyntaxKindThisKeyword,
-	"throw":       SyntaxKindThrowKeyword,
-	"true":        SyntaxKindTrueKeyword,
-	"try":         SyntaxKindTryKeyword,
-	"type":        SyntaxKindTypeKeyword,
-	"typeof":      SyntaxKindTypeOfKeyword,
-	"undefined":   SyntaxKindUndefinedKeyword,
-	"unique":      SyntaxKindUniqueKeyword,
-	"unknown":     SyntaxKindUnknownKeyword,
-	"using":       SyntaxKindUsingKeyword,
-	"var":         SyntaxKindVarKeyword,
-	"void":        SyntaxKindVoidKeyword,
-	"while":       SyntaxKindWhileKeyword,
-	"with":        SyntaxKindWithKeyword,
-	"yield":       SyntaxKindYieldKeyword,
-	"async":       SyntaxKindAsyncKeyword,
-	"await":       SyntaxKindAwaitKeyword,
-	"of":          SyntaxKindOfKeyword,
+var textToKeyword = map[string]ast.Kind{
+	"abstract":    ast.KindAbstractKeyword,
+	"accessor":    ast.KindAccessorKeyword,
+	"any":         ast.KindAnyKeyword,
+	"as":          ast.KindAsKeyword,
+	"asserts":     ast.KindAssertsKeyword,
+	"assert":      ast.KindAssertKeyword,
+	"bigint":      ast.KindBigIntKeyword,
+	"boolean":     ast.KindBooleanKeyword,
+	"break":       ast.KindBreakKeyword,
+	"case":        ast.KindCaseKeyword,
+	"catch":       ast.KindCatchKeyword,
+	"class":       ast.KindClassKeyword,
+	"continue":    ast.KindContinueKeyword,
+	"const":       ast.KindConstKeyword,
+	"constructor": ast.KindConstructorKeyword,
+	"debugger":    ast.KindDebuggerKeyword,
+	"declare":     ast.KindDeclareKeyword,
+	"default":     ast.KindDefaultKeyword,
+	"delete":      ast.KindDeleteKeyword,
+	"do":          ast.KindDoKeyword,
+	"else":        ast.KindElseKeyword,
+	"enum":        ast.KindEnumKeyword,
+	"export":      ast.KindExportKeyword,
+	"extends":     ast.KindExtendsKeyword,
+	"false":       ast.KindFalseKeyword,
+	"finally":     ast.KindFinallyKeyword,
+	"for":         ast.KindForKeyword,
+	"from":        ast.KindFromKeyword,
+	"function":    ast.KindFunctionKeyword,
+	"get":         ast.KindGetKeyword,
+	"if":          ast.KindIfKeyword,
+	"immediate":   ast.KindImmediateKeyword,
+	"implements":  ast.KindImplementsKeyword,
+	"import":      ast.KindImportKeyword,
+	"in":          ast.KindInKeyword,
+	"infer":       ast.KindInferKeyword,
+	"instanceof":  ast.KindInstanceOfKeyword,
+	"interface":   ast.KindInterfaceKeyword,
+	"intrinsic":   ast.KindIntrinsicKeyword,
+	"is":          ast.KindIsKeyword,
+	"keyof":       ast.KindKeyOfKeyword,
+	"let":         ast.KindLetKeyword,
+	"module":      ast.KindModuleKeyword,
+	"namespace":   ast.KindNamespaceKeyword,
+	"never":       ast.KindNeverKeyword,
+	"new":         ast.KindNewKeyword,
+	"null":        ast.KindNullKeyword,
+	"number":      ast.KindNumberKeyword,
+	"object":      ast.KindObjectKeyword,
+	"package":     ast.KindPackageKeyword,
+	"private":     ast.KindPrivateKeyword,
+	"protected":   ast.KindProtectedKeyword,
+	"public":      ast.KindPublicKeyword,
+	"override":    ast.KindOverrideKeyword,
+	"out":         ast.KindOutKeyword,
+	"readonly":    ast.KindReadonlyKeyword,
+	"require":     ast.KindRequireKeyword,
+	"global":      ast.KindGlobalKeyword,
+	"return":      ast.KindReturnKeyword,
+	"satisfies":   ast.KindSatisfiesKeyword,
+	"set":         ast.KindSetKeyword,
+	"static":      ast.KindStaticKeyword,
+	"string":      ast.KindStringKeyword,
+	"super":       ast.KindSuperKeyword,
+	"switch":      ast.KindSwitchKeyword,
+	"symbol":      ast.KindSymbolKeyword,
+	"this":        ast.KindThisKeyword,
+	"throw":       ast.KindThrowKeyword,
+	"true":        ast.KindTrueKeyword,
+	"try":         ast.KindTryKeyword,
+	"type":        ast.KindTypeKeyword,
+	"typeof":      ast.KindTypeOfKeyword,
+	"undefined":   ast.KindUndefinedKeyword,
+	"unique":      ast.KindUniqueKeyword,
+	"unknown":     ast.KindUnknownKeyword,
+	"using":       ast.KindUsingKeyword,
+	"var":         ast.KindVarKeyword,
+	"void":        ast.KindVoidKeyword,
+	"while":       ast.KindWhileKeyword,
+	"with":        ast.KindWithKeyword,
+	"yield":       ast.KindYieldKeyword,
+	"async":       ast.KindAsyncKeyword,
+	"await":       ast.KindAwaitKeyword,
+	"of":          ast.KindOfKeyword,
 }
 
-var textToToken = map[string]SyntaxKind{
-	"{":    SyntaxKindOpenBraceToken,
-	"}":    SyntaxKindCloseBraceToken,
-	"(":    SyntaxKindOpenParenToken,
-	")":    SyntaxKindCloseParenToken,
-	"[":    SyntaxKindOpenBracketToken,
-	"]":    SyntaxKindCloseBracketToken,
-	".":    SyntaxKindDotToken,
-	"...":  SyntaxKindDotDotDotToken,
-	";":    SyntaxKindSemicolonToken,
-	",":    SyntaxKindCommaToken,
-	"<":    SyntaxKindLessThanToken,
-	">":    SyntaxKindGreaterThanToken,
-	"<=":   SyntaxKindLessThanEqualsToken,
-	">=":   SyntaxKindGreaterThanEqualsToken,
-	"==":   SyntaxKindEqualsEqualsToken,
-	"!=":   SyntaxKindExclamationEqualsToken,
-	"===":  SyntaxKindEqualsEqualsEqualsToken,
-	"!==":  SyntaxKindExclamationEqualsEqualsToken,
-	"=>":   SyntaxKindEqualsGreaterThanToken,
-	"+":    SyntaxKindPlusToken,
-	"-":    SyntaxKindMinusToken,
-	"**":   SyntaxKindAsteriskAsteriskToken,
-	"*":    SyntaxKindAsteriskToken,
-	"/":    SyntaxKindSlashToken,
-	"%":    SyntaxKindPercentToken,
-	"++":   SyntaxKindPlusPlusToken,
-	"--":   SyntaxKindMinusMinusToken,
-	"<<":   SyntaxKindLessThanLessThanToken,
-	"</":   SyntaxKindLessThanSlashToken,
-	">>":   SyntaxKindGreaterThanGreaterThanToken,
-	">>>":  SyntaxKindGreaterThanGreaterThanGreaterThanToken,
-	"&":    SyntaxKindAmpersandToken,
-	"|":    SyntaxKindBarToken,
-	"^":    SyntaxKindCaretToken,
-	"!":    SyntaxKindExclamationToken,
-	"~":    SyntaxKindTildeToken,
-	"&&":   SyntaxKindAmpersandAmpersandToken,
-	"||":   SyntaxKindBarBarToken,
-	"?":    SyntaxKindQuestionToken,
-	"??":   SyntaxKindQuestionQuestionToken,
-	"?.":   SyntaxKindQuestionDotToken,
-	":":    SyntaxKindColonToken,
-	"=":    SyntaxKindEqualsToken,
-	"+=":   SyntaxKindPlusEqualsToken,
-	"-=":   SyntaxKindMinusEqualsToken,
-	"*=":   SyntaxKindAsteriskEqualsToken,
-	"**=":  SyntaxKindAsteriskAsteriskEqualsToken,
-	"/=":   SyntaxKindSlashEqualsToken,
-	"%=":   SyntaxKindPercentEqualsToken,
-	"<<=":  SyntaxKindLessThanLessThanEqualsToken,
-	">>=":  SyntaxKindGreaterThanGreaterThanEqualsToken,
-	">>>=": SyntaxKindGreaterThanGreaterThanGreaterThanEqualsToken,
-	"&=":   SyntaxKindAmpersandEqualsToken,
-	"|=":   SyntaxKindBarEqualsToken,
-	"^=":   SyntaxKindCaretEqualsToken,
-	"||=":  SyntaxKindBarBarEqualsToken,
-	"&&=":  SyntaxKindAmpersandAmpersandEqualsToken,
-	"??=":  SyntaxKindQuestionQuestionEqualsToken,
-	"@":    SyntaxKindAtToken,
-	"#":    SyntaxKindHashToken,
-	"`":    SyntaxKindBacktickToken,
+var textToToken = map[string]ast.Kind{
+	"{":    ast.KindOpenBraceToken,
+	"}":    ast.KindCloseBraceToken,
+	"(":    ast.KindOpenParenToken,
+	")":    ast.KindCloseParenToken,
+	"[":    ast.KindOpenBracketToken,
+	"]":    ast.KindCloseBracketToken,
+	".":    ast.KindDotToken,
+	"...":  ast.KindDotDotDotToken,
+	";":    ast.KindSemicolonToken,
+	",":    ast.KindCommaToken,
+	"<":    ast.KindLessThanToken,
+	">":    ast.KindGreaterThanToken,
+	"<=":   ast.KindLessThanEqualsToken,
+	">=":   ast.KindGreaterThanEqualsToken,
+	"==":   ast.KindEqualsEqualsToken,
+	"!=":   ast.KindExclamationEqualsToken,
+	"===":  ast.KindEqualsEqualsEqualsToken,
+	"!==":  ast.KindExclamationEqualsEqualsToken,
+	"=>":   ast.KindEqualsGreaterThanToken,
+	"+":    ast.KindPlusToken,
+	"-":    ast.KindMinusToken,
+	"**":   ast.KindAsteriskAsteriskToken,
+	"*":    ast.KindAsteriskToken,
+	"/":    ast.KindSlashToken,
+	"%":    ast.KindPercentToken,
+	"++":   ast.KindPlusPlusToken,
+	"--":   ast.KindMinusMinusToken,
+	"<<":   ast.KindLessThanLessThanToken,
+	"</":   ast.KindLessThanSlashToken,
+	">>":   ast.KindGreaterThanGreaterThanToken,
+	">>>":  ast.KindGreaterThanGreaterThanGreaterThanToken,
+	"&":    ast.KindAmpersandToken,
+	"|":    ast.KindBarToken,
+	"^":    ast.KindCaretToken,
+	"!":    ast.KindExclamationToken,
+	"~":    ast.KindTildeToken,
+	"&&":   ast.KindAmpersandAmpersandToken,
+	"||":   ast.KindBarBarToken,
+	"?":    ast.KindQuestionToken,
+	"??":   ast.KindQuestionQuestionToken,
+	"?.":   ast.KindQuestionDotToken,
+	":":    ast.KindColonToken,
+	"=":    ast.KindEqualsToken,
+	"+=":   ast.KindPlusEqualsToken,
+	"-=":   ast.KindMinusEqualsToken,
+	"*=":   ast.KindAsteriskEqualsToken,
+	"**=":  ast.KindAsteriskAsteriskEqualsToken,
+	"/=":   ast.KindSlashEqualsToken,
+	"%=":   ast.KindPercentEqualsToken,
+	"<<=":  ast.KindLessThanLessThanEqualsToken,
+	">>=":  ast.KindGreaterThanGreaterThanEqualsToken,
+	">>>=": ast.KindGreaterThanGreaterThanGreaterThanEqualsToken,
+	"&=":   ast.KindAmpersandEqualsToken,
+	"|=":   ast.KindBarEqualsToken,
+	"^=":   ast.KindCaretEqualsToken,
+	"||=":  ast.KindBarBarEqualsToken,
+	"&&=":  ast.KindAmpersandAmpersandEqualsToken,
+	"??=":  ast.KindQuestionQuestionEqualsToken,
+	"@":    ast.KindAtToken,
+	"#":    ast.KindHashToken,
+	"`":    ast.KindBacktickToken,
 }
 
 // As per ECMAScript Language Specification 5th Edition, Section 7.6: ISyntaxToken Names and Identifiers
@@ -242,29 +244,29 @@ type ScannerState struct {
 	pos          int        // Current position in text (and ending position of current token)
 	fullStartPos int        // Starting position of current token including preceding whitespace
 	tokenStart   int        // Starting position of non-whitespace part of current token
-	token        SyntaxKind // SyntaxKind of current token
+	token        ast.Kind // ast.Kind of current token
 	tokenValue   string     // Parsed value of current token
 	tokenFlags   TokenFlags // Flags for current token
 }
 
 type Scanner struct {
 	text            string
-	languageVersion ScriptTarget
-	languageVariant LanguageVariant
+	languageVersion core.ScriptTarget
+	languageVariant core.LanguageVariant
 	onError         ErrorCallback
 	skipTrivia      bool
 	ScannerState
 }
 
 func NewScanner() *Scanner {
-	return &Scanner{languageVersion: ScriptTargetLatest, skipTrivia: true}
+	return &Scanner{languageVersion: core.ScriptTargetLatest, skipTrivia: true}
 }
 
 func (s *Scanner) Text() string {
 	return s.text
 }
 
-func (s *Scanner) Token() SyntaxKind {
+func (s *Scanner) Token() ast.Kind {
 	return s.token
 }
 
@@ -321,11 +323,11 @@ func (s *Scanner) SetOnError(errorCallback ErrorCallback) {
 	s.onError = errorCallback
 }
 
-func (s *Scanner) SetScriptTarget(scriptTarget ScriptTarget) {
+func (s *Scanner) SetScriptTarget(scriptTarget core.ScriptTarget) {
 	s.languageVersion = scriptTarget
 }
 
-func (s *Scanner) SetLanguageVariant(languageVariant LanguageVariant) {
+func (s *Scanner) SetLanguageVariant(languageVariant core.LanguageVariant) {
 	s.languageVariant = languageVariant
 }
 
@@ -361,7 +363,7 @@ func (s *Scanner) shouldParseJSDoc() bool {
 	return false
 }
 
-func (s *Scanner) Scan() SyntaxKind {
+func (s *Scanner) Scan() ast.Kind {
 	s.fullStartPos = s.pos
 	s.tokenFlags = TokenFlagsNone
 	for {
@@ -379,100 +381,100 @@ func (s *Scanner) Scan() SyntaxKind {
 			if s.charAt(1) == '=' {
 				if s.charAt(2) == '=' {
 					s.pos += 3
-					s.token = SyntaxKindExclamationEqualsEqualsToken
+					s.token = ast.KindExclamationEqualsEqualsToken
 				} else {
 					s.pos += 2
-					s.token = SyntaxKindExclamationEqualsToken
+					s.token = ast.KindExclamationEqualsToken
 				}
 			} else {
 				s.pos++
-				s.token = SyntaxKindExclamationToken
+				s.token = ast.KindExclamationToken
 			}
 		case '"', '\'':
 			s.tokenValue = s.scanString(false /*jsxAttributeString*/)
-			s.token = SyntaxKindStringLiteral
+			s.token = ast.KindStringLiteral
 		case '`':
 			s.token = s.scanTemplateAndSetTokenValue(false /*shouldEmitInvalidEscapeError*/)
 		case '%':
 			if s.charAt(1) == '=' {
 				s.pos += 2
-				s.token = SyntaxKindPercentEqualsToken
+				s.token = ast.KindPercentEqualsToken
 			} else {
 				s.pos++
-				s.token = SyntaxKindPercentToken
+				s.token = ast.KindPercentToken
 			}
 		case '&':
 			if s.charAt(1) == '&' {
 				if s.charAt(2) == '=' {
 					s.pos += 3
-					s.token = SyntaxKindAmpersandAmpersandEqualsToken
+					s.token = ast.KindAmpersandAmpersandEqualsToken
 				} else {
 					s.pos += 2
-					s.token = SyntaxKindAmpersandAmpersandToken
+					s.token = ast.KindAmpersandAmpersandToken
 				}
 			} else if s.charAt(1) == '=' {
 				s.pos += 2
-				s.token = SyntaxKindAmpersandEqualsToken
+				s.token = ast.KindAmpersandEqualsToken
 			} else {
 				s.pos++
-				s.token = SyntaxKindAmpersandToken
+				s.token = ast.KindAmpersandToken
 			}
 		case '(':
 			s.pos++
-			s.token = SyntaxKindOpenParenToken
+			s.token = ast.KindOpenParenToken
 		case ')':
 			s.pos++
-			s.token = SyntaxKindCloseParenToken
+			s.token = ast.KindCloseParenToken
 		case '*':
 			if s.charAt(1) == '=' {
 				s.pos += 2
-				s.token = SyntaxKindAsteriskEqualsToken
+				s.token = ast.KindAsteriskEqualsToken
 			} else if s.charAt(1) == '*' {
 				if s.charAt(2) == '=' {
 					s.pos += 3
-					s.token = SyntaxKindAsteriskAsteriskEqualsToken
+					s.token = ast.KindAsteriskAsteriskEqualsToken
 				} else {
 					s.pos += 2
-					s.token = SyntaxKindAsteriskAsteriskToken
+					s.token = ast.KindAsteriskAsteriskToken
 				}
 			} else {
 				s.pos++
-				s.token = SyntaxKindAsteriskToken
+				s.token = ast.KindAsteriskToken
 			}
 		case '+':
 			if s.charAt(1) == '=' {
 				s.pos += 2
-				s.token = SyntaxKindPlusEqualsToken
+				s.token = ast.KindPlusEqualsToken
 			} else if s.charAt(1) == '+' {
 				s.pos += 2
-				s.token = SyntaxKindPlusPlusToken
+				s.token = ast.KindPlusPlusToken
 			} else {
 				s.pos++
-				s.token = SyntaxKindPlusToken
+				s.token = ast.KindPlusToken
 			}
 		case ',':
 			s.pos++
-			s.token = SyntaxKindCommaToken
+			s.token = ast.KindCommaToken
 		case '-':
 			if s.charAt(1) == '=' {
 				s.pos += 2
-				s.token = SyntaxKindMinusEqualsToken
+				s.token = ast.KindMinusEqualsToken
 			} else if s.charAt(1) == '-' {
 				s.pos += 2
-				s.token = SyntaxKindMinusMinusToken
+				s.token = ast.KindMinusMinusToken
 			} else {
 				s.pos++
-				s.token = SyntaxKindMinusToken
+				s.token = ast.KindMinusToken
 			}
 		case '.':
 			if stringutil.IsDigit(s.charAt(1)) {
 				s.token = s.scanNumber()
 			} else if s.charAt(1) == '.' && s.charAt(2) == '.' {
 				s.pos += 3
-				s.token = SyntaxKindDotDotDotToken
+				s.token = ast.KindDotDotDotToken
 			} else {
 				s.pos++
-				s.token = SyntaxKindDotToken
+				s.token = ast.KindDotToken
 			}
 		case '/':
 			if s.charAt(1) == '/' {
@@ -529,10 +531,10 @@ func (s *Scanner) Scan() SyntaxKind {
 			}
 			if s.charAt(1) == '=' {
 				s.pos += 2
-				s.token = SyntaxKindSlashEqualsToken
+				s.token = ast.KindSlashEqualsToken
 			} else {
 				s.pos++
-				s.token = SyntaxKindSlashToken
+				s.token = ast.KindSlashToken
 			}
 		case '0':
 			if s.charAt(1) == 'X' || s.charAt(1) == 'x' {
@@ -576,37 +578,37 @@ func (s *Scanner) Scan() SyntaxKind {
 			s.token = s.scanNumber()
 		case ':':
 			s.pos++
-			s.token = SyntaxKindColonToken
+			s.token = ast.KindColonToken
 		case ';':
 			s.pos++
-			s.token = SyntaxKindSemicolonToken
+			s.token = ast.KindSemicolonToken
 		case '<':
 			if isConflictMarkerTrivia(s.text, s.pos) {
 				s.pos = scanConflictMarkerTrivia(s.text, s.pos, s.errorAt)
 				if s.skipTrivia {
 					continue
 				} else {
-					s.token = SyntaxKindConflictMarkerTrivia
+					s.token = ast.KindConflictMarkerTrivia
 					return s.token
 				}
 			}
 			if s.charAt(1) == '<' {
 				if s.charAt(2) == '=' {
 					s.pos += 3
-					s.token = SyntaxKindLessThanLessThanEqualsToken
+					s.token = ast.KindLessThanLessThanEqualsToken
 				} else {
 					s.pos += 2
-					s.token = SyntaxKindLessThanLessThanToken
+					s.token = ast.KindLessThanLessThanToken
 				}
 			} else if s.charAt(1) == '=' {
 				s.pos += 2
-				s.token = SyntaxKindLessThanEqualsToken
-			} else if s.languageVariant == LanguageVariantJSX && s.charAt(1) == '/' && s.charAt(2) != '*' {
+				s.token = ast.KindLessThanEqualsToken
+			} else if s.languageVariant == core.LanguageVariantJSX && s.charAt(1) == '/' && s.charAt(2) != '*' {
 				s.pos += 2
-				s.token = SyntaxKindLessThanSlashToken
+				s.token = ast.KindLessThanSlashToken
 			} else {
 				s.pos++
-				s.token = SyntaxKindLessThanToken
+				s.token = ast.KindLessThanToken
 			}
 		case '=':
 			if isConflictMarkerTrivia(s.text, s.pos) {
@@ -614,24 +616,24 @@ func (s *Scanner) Scan() SyntaxKind {
 				if s.skipTrivia {
 					continue
 				} else {
-					s.token = SyntaxKindConflictMarkerTrivia
+					s.token = ast.KindConflictMarkerTrivia
 					return s.token
 				}
 			}
 			if s.charAt(1) == '=' {
 				if s.charAt(2) == '=' {
 					s.pos += 3
-					s.token = SyntaxKindEqualsEqualsEqualsToken
+					s.token = ast.KindEqualsEqualsEqualsToken
 				} else {
 					s.pos += 2
-					s.token = SyntaxKindEqualsEqualsToken
+					s.token = ast.KindEqualsEqualsToken
 				}
 			} else if s.charAt(1) == '>' {
 				s.pos += 2
-				s.token = SyntaxKindEqualsGreaterThanToken
+				s.token = ast.KindEqualsGreaterThanToken
 			} else {
 				s.pos++
-				s.token = SyntaxKindEqualsToken
+				s.token = ast.KindEqualsToken
 			}
 		case '>':
 			if isConflictMarkerTrivia(s.text, s.pos) {
@@ -639,79 +641,79 @@ func (s *Scanner) Scan() SyntaxKind {
 				if s.skipTrivia {
 					continue
 				} else {
-					s.token = SyntaxKindConflictMarkerTrivia
+					s.token = ast.KindConflictMarkerTrivia
 					return s.token
 				}
 			}
 			s.pos++
-			s.token = SyntaxKindGreaterThanToken
+			s.token = ast.KindGreaterThanToken
 		case '?':
 			if s.charAt(1) == '.' && !stringutil.IsDigit(s.charAt(2)) {
 				s.pos += 2
-				s.token = SyntaxKindQuestionDotToken
+				s.token = ast.KindQuestionDotToken
 			} else if s.charAt(1) == '?' {
 				if s.charAt(2) == '=' {
 					s.pos += 3
-					s.token = SyntaxKindQuestionQuestionEqualsToken
+					s.token = ast.KindQuestionQuestionEqualsToken
 				} else {
 					s.pos += 2
-					s.token = SyntaxKindQuestionQuestionToken
+					s.token = ast.KindQuestionQuestionToken
 				}
 			} else {
 				s.pos++
-				s.token = SyntaxKindQuestionToken
+				s.token = ast.KindQuestionToken
 			}
 		case '[':
 			s.pos++
-			s.token = SyntaxKindOpenBracketToken
+			s.token = ast.KindOpenBracketToken
 		case ']':
 			s.pos++
-			s.token = SyntaxKindCloseBracketToken
+			s.token = ast.KindCloseBracketToken
 		case '^':
 			if s.charAt(1) == '=' {
 				s.pos += 2
-				s.token = SyntaxKindCaretEqualsToken
+				s.token = ast.KindCaretEqualsToken
 			} else {
 				s.pos++
-				s.token = SyntaxKindCaretToken
+				s.token = ast.KindCaretToken
 			}
 		case '{':
 			s.pos++
-			s.token = SyntaxKindOpenBraceToken
+			s.token = ast.KindOpenBraceToken
 		case '|':
 			if isConflictMarkerTrivia(s.text, s.pos) {
 				s.pos = scanConflictMarkerTrivia(s.text, s.pos, s.errorAt)
 				if s.skipTrivia {
 					continue
 				} else {
-					s.token = SyntaxKindConflictMarkerTrivia
+					s.token = ast.KindConflictMarkerTrivia
 					return s.token
 				}
 			}
 			if s.charAt(1) == '|' {
 				if s.charAt(2) == '=' {
 					s.pos += 3
-					s.token = SyntaxKindBarBarEqualsToken
+					s.token = ast.KindBarBarEqualsToken
 				} else {
 					s.pos += 2
-					s.token = SyntaxKindBarBarToken
+					s.token = ast.KindBarBarToken
 				}
 			} else if s.charAt(1) == '=' {
 				s.pos += 2
-				s.token = SyntaxKindBarEqualsToken
+				s.token = ast.KindBarEqualsToken
 			} else {
 				s.pos++
-				s.token = SyntaxKindBarToken
+				s.token = ast.KindBarToken
 			}
 		case '}':
 			s.pos++
-			s.token = SyntaxKindCloseBraceToken
+			s.token = ast.KindCloseBraceToken
 		case '~':
 			s.pos++
-			s.token = SyntaxKindTildeToken
+			s.token = ast.KindTildeToken
 		case '@':
 			s.pos++
-			s.token = SyntaxKindAtToken
+			s.token = ast.KindAtToken
 		case '\\':
 			cp := s.peekUnicodeEscape()
 			if cp >= 0 && isIdentifierStart(cp, s.languageVersion) {
@@ -731,7 +733,7 @@ func (s *Scanner) Scan() SyntaxKind {
 				}
 				s.errorAt(diagnostics.X_can_only_be_used_at_the_start_of_a_file, s.pos, 2)
 				s.pos += 2
-				s.token = SyntaxKindUnknown
+				s.token = ast.KindUnknown
 				break
 			}
 			if s.charAt(1) == '\\' {
@@ -739,20 +741,20 @@ func (s *Scanner) Scan() SyntaxKind {
 				cp := s.peekUnicodeEscape()
 				if cp >= 0 && isIdentifierStart(cp, s.languageVersion) {
 					s.tokenValue = "#" + string(s.scanUnicodeEscape(true)) + s.scanIdentifierParts()
-					s.token = SyntaxKindPrivateIdentifier
+					s.token = ast.KindPrivateIdentifier
 					break
 				}
 				s.pos--
 			}
 			if s.scanIdentifier(1) {
-				s.token = SyntaxKindPrivateIdentifier
+				s.token = ast.KindPrivateIdentifier
 			} else {
 				s.errorAt(diagnostics.Invalid_character, s.pos-1, 1)
-				s.token = SyntaxKindUnknown
+				s.token = ast.KindUnknown
 			}
 		default:
 			if ch < 0 {
-				s.token = SyntaxKindEndOfFile
+				s.token = ast.KindEndOfFile
 				break
 			}
 			if s.scanIdentifier(0) {
@@ -763,7 +765,7 @@ func (s *Scanner) Scan() SyntaxKind {
 			if ch == utf8.RuneError && size == 1 {
 				s.errorAt(diagnostics.File_appears_to_be_binary, 0, 0)
 				s.pos = len(s.text)
-				s.token = SyntaxKindNonTextFileMarkerTrivia
+				s.token = ast.KindNonTextFileMarkerTrivia
 				break
 			}
 			if stringutil.IsWhiteSpaceSingleLine(ch) {
@@ -781,50 +783,50 @@ func (s *Scanner) Scan() SyntaxKind {
 	}
 }
 
-func (s *Scanner) ReScanLessThanToken() SyntaxKind {
-	if s.token == SyntaxKindLessThanLessThanToken {
+func (s *Scanner) ReScanLessThanToken() ast.Kind {
+	if s.token == ast.KindLessThanLessThanToken {
 		s.pos = s.tokenStart + 1
-		s.token = SyntaxKindLessThanToken
+		s.token = ast.KindLessThanToken
 	}
 	return s.token
 }
 
-func (s *Scanner) ReScanGreaterThanToken() SyntaxKind {
-	if s.token == SyntaxKindGreaterThanToken {
+func (s *Scanner) ReScanGreaterThanToken() ast.Kind {
+	if s.token == ast.KindGreaterThanToken {
 		s.pos = s.tokenStart + 1
 		if s.char() == '>' {
 			if s.charAt(1) == '>' {
 				if s.charAt(2) == '=' {
 					s.pos += 3
-					s.token = SyntaxKindGreaterThanGreaterThanGreaterThanEqualsToken
+					s.token = ast.KindGreaterThanGreaterThanGreaterThanEqualsToken
 				} else {
 					s.pos += 2
-					s.token = SyntaxKindGreaterThanGreaterThanGreaterThanToken
+					s.token = ast.KindGreaterThanGreaterThanGreaterThanToken
 				}
 			} else if s.charAt(1) == '=' {
 				s.pos += 2
-				s.token = SyntaxKindGreaterThanGreaterThanEqualsToken
+				s.token = ast.KindGreaterThanGreaterThanEqualsToken
 			} else {
 				s.pos++
-				s.token = SyntaxKindGreaterThanGreaterThanToken
+				s.token = ast.KindGreaterThanGreaterThanToken
 			}
 		} else if s.char() == '=' {
 			s.pos++
-			s.token = SyntaxKindGreaterThanEqualsToken
+			s.token = ast.KindGreaterThanEqualsToken
 		}
 	}
 	return s.token
 }
 
-func (s *Scanner) ReScanTemplateToken(isTaggedTemplate bool) SyntaxKind {
+func (s *Scanner) ReScanTemplateToken(isTaggedTemplate bool) ast.Kind {
 	s.pos = s.tokenStart
 	s.token = s.scanTemplateAndSetTokenValue(!isTaggedTemplate)
 	return s.token
 }
 
 // !!! https://github.com/microsoft/TypeScript/pull/55600
-func (s *Scanner) ReScanSlashToken() SyntaxKind {
-	if s.token == SyntaxKindSlashToken || s.token == SyntaxKindSlashEqualsToken {
+func (s *Scanner) ReScanSlashToken() ast.Kind {
+	if s.token == ast.KindSlashToken || s.token == ast.KindSlashEqualsToken {
 		s.pos = s.tokenStart + 1
 		inEscape := false
 		inCharacterClass := false
@@ -864,40 +866,40 @@ func (s *Scanner) ReScanSlashToken() SyntaxKind {
 			s.pos += size
 		}
 		s.tokenValue = s.text[s.tokenStart:s.pos]
-		s.token = SyntaxKindRegularExpressionLiteral
+		s.token = ast.KindRegularExpressionLiteral
 	}
 	return s.token
 }
 
-func (s *Scanner) reScanJsxToken(allowMultilineJsxText bool) SyntaxKind {
+func (s *Scanner) reScanJsxToken(allowMultilineJsxText bool) ast.Kind {
 	s.pos = s.fullStartPos
 	s.tokenStart = s.fullStartPos
 	s.token = s.scanJsxTokenEx(allowMultilineJsxText)
 	return s.token
 }
 
-func (s *Scanner) scanJsxToken() SyntaxKind {
+func (s *Scanner) scanJsxToken() ast.Kind {
 	return s.scanJsxTokenEx(true /*allowMultilineJsxText*/)
 }
 
-func (s *Scanner) scanJsxTokenEx(allowMultilineJsxText bool) SyntaxKind {
+func (s *Scanner) scanJsxTokenEx(allowMultilineJsxText bool) ast.Kind {
 	s.fullStartPos = s.pos
 	s.tokenStart = s.pos
 	ch := s.char()
 	switch {
 	case ch < 0:
-		s.token = SyntaxKindEndOfFile
+		s.token = ast.KindEndOfFile
 	case ch == '<':
 		if s.charAt(1) == '/' {
 			s.pos += 2
-			s.token = SyntaxKindLessThanSlashToken
+			s.token = ast.KindLessThanSlashToken
 		} else {
 			s.pos++
-			s.token = SyntaxKindLessThanToken
+			s.token = ast.KindLessThanToken
 		}
 	case ch == '{':
 		s.pos++
-		s.token = SyntaxKindOpenBraceToken
+		s.token = ast.KindOpenBraceToken
 	default:
 		// First non-whitespace character on this line.
 		firstNonWhitespace := 0
@@ -911,7 +913,7 @@ func (s *Scanner) scanJsxTokenEx(allowMultilineJsxText bool) SyntaxKind {
 			if ch == '<' {
 				if isConflictMarkerTrivia(s.text, s.pos) {
 					s.pos = scanConflictMarkerTrivia(s.text, s.pos, s.errorAt)
-					s.token = SyntaxKindConflictMarkerTrivia
+					s.token = ast.KindConflictMarkerTrivia
 					return s.token
 				}
 				break
@@ -939,16 +941,16 @@ func (s *Scanner) scanJsxTokenEx(allowMultilineJsxText bool) SyntaxKind {
 			s.pos += size
 		}
 		s.tokenValue = s.text[s.fullStartPos:s.pos]
-		s.token = SyntaxKindJsxText
+		s.token = ast.KindJsxText
 		if firstNonWhitespace == -1 {
-			s.token = SyntaxKindJsxTextAllWhiteSpaces
+			s.token = ast.KindJsxTextAllWhiteSpaces
 		}
 	}
 	return s.token
 }
 
 // Scans a JSX identifier; these differ from normal identifiers in that they allow dashes
-func (s *Scanner) scanJsxIdentifier() SyntaxKind {
+func (s *Scanner) scanJsxIdentifier() ast.Kind {
 	if tokenIsIdentifierOrKeyword(s.token) {
 		// An identifier or keyword has already been parsed - check for a `-` or a single instance of `:` and then append it and
 		// everything after it to the token
@@ -975,12 +977,12 @@ func (s *Scanner) scanJsxIdentifier() SyntaxKind {
 	return s.token
 }
 
-func (s *Scanner) scanJsxAttributeValue() SyntaxKind {
+func (s *Scanner) scanJsxAttributeValue() ast.Kind {
 	s.fullStartPos = s.pos
 	switch s.char() {
 	case '"', '\'':
 		s.tokenValue = s.scanString(true /*jsxAttributeString*/)
-		s.token = SyntaxKindStringLiteral
+		s.token = ast.KindStringLiteral
 		return s.token
 	default:
 		// If this scans anything other than `{`, it's a parse error.
@@ -988,7 +990,7 @@ func (s *Scanner) scanJsxAttributeValue() SyntaxKind {
 	}
 }
 
-func (s *Scanner) reScanJsxAttributeValue() SyntaxKind {
+func (s *Scanner) reScanJsxAttributeValue() ast.Kind {
 	s.pos = s.fullStartPos
 	s.tokenStart = s.fullStartPos
 	return s.scanJsxAttributeValue()
@@ -1090,12 +1092,12 @@ func (s *Scanner) scanString(jsxAttributeString bool) string {
 	return sb.String()
 }
 
-func (s *Scanner) scanTemplateAndSetTokenValue(shouldEmitInvalidEscapeError bool) SyntaxKind {
+func (s *Scanner) scanTemplateAndSetTokenValue(shouldEmitInvalidEscapeError bool) ast.Kind {
 	startedWithBacktick := s.char() == '`'
 	start := s.pos
 	s.pos++
 	contents := ""
-	var token SyntaxKind
+	var token ast.Kind
 	for {
 		ch := s.char()
 		if ch < 0 || ch == '`' {
@@ -1106,13 +1108,13 @@ func (s *Scanner) scanTemplateAndSetTokenValue(shouldEmitInvalidEscapeError bool
 				s.tokenFlags |= TokenFlagsUnterminated
 				s.error(diagnostics.Unterminated_template_literal)
 			}
-			token = ifElse(startedWithBacktick, SyntaxKindNoSubstitutionTemplateLiteral, SyntaxKindTemplateTail)
+			token = ifElse(startedWithBacktick, ast.KindNoSubstitutionTemplateLiteral, ast.KindTemplateTail)
 			break
 		}
 		if ch == '$' && s.charAt(1) == '{' {
 			contents += s.text[start:s.pos]
 			s.pos += 2
-			token = ifElse(startedWithBacktick, SyntaxKindTemplateHead, SyntaxKindTemplateMiddle)
+			token = ifElse(startedWithBacktick, ast.KindTemplateHead, ast.KindTemplateMiddle)
 			break
 		}
 		if ch == '\\' {
@@ -1306,7 +1308,7 @@ func (s *Scanner) peekUnicodeEscape() rune {
 	return -1
 }
 
-func (s *Scanner) scanNumber() SyntaxKind {
+func (s *Scanner) scanNumber() ast.Kind {
 	start := s.pos
 	var fixedPart string
 	if s.char() == '0' {
@@ -1327,7 +1329,7 @@ func (s *Scanner) scanNumber() SyntaxKind {
 				s.tokenFlags |= TokenFlagsOctal
 				s.tokenValue = "0o" + digits
 				s.errorAt(diagnostics.Octal_literals_are_not_allowed_Use_the_syntax_0, start, s.pos-start, digits)
-				return SyntaxKindNumericLiteral
+				return ast.KindNumericLiteral
 			}
 		}
 	} else {
@@ -1371,20 +1373,20 @@ func (s *Scanner) scanNumber() SyntaxKind {
 	if s.tokenFlags&TokenFlagsContainsLeadingZero != 0 {
 		s.errorAt(diagnostics.Decimals_with_leading_zeros_are_not_allowed, start, s.pos-start)
 		s.tokenValue = numberToString(stringToNumber(s.tokenValue))
-		return SyntaxKindNumericLiteral
+		return ast.KindNumericLiteral
 	}
-	var result SyntaxKind
+	var result ast.Kind
 	if fixedPartEnd == s.pos {
 		result = s.scanBigIntSuffix()
 	} else {
 		s.tokenValue = numberToString(stringToNumber(s.tokenValue))
-		result = SyntaxKindNumericLiteral
+		result = ast.KindNumericLiteral
 	}
 	ch, _ := s.charAndSize()
 	if isIdentifierStart(ch, s.languageVersion) {
 		idStart := s.pos
 		id := s.scanIdentifierParts()
-		if result != SyntaxKindBigIntLiteral && len(id) == 1 && s.text[idStart] == 'n' {
+		if result != ast.KindBigIntLiteral && len(id) == 1 && s.text[idStart] == 'n' {
 			if s.tokenFlags&TokenFlagsScientific != 0 {
 				s.errorAt(diagnostics.A_bigint_literal_cannot_use_exponential_notation, start, s.pos-start)
 				return result
@@ -1520,40 +1522,40 @@ func (s *Scanner) scanBinaryOrOctalDigits(base int32) string {
 	return sb.String()
 }
 
-func (s *Scanner) scanBigIntSuffix() SyntaxKind {
+func (s *Scanner) scanBigIntSuffix() ast.Kind {
 	if s.char() == 'n' {
 		s.pos++
 		s.tokenValue += "n"
 		// !!! Convert all bigint tokens to their normalized decimal representation
-		return SyntaxKindBigIntLiteral
+		return ast.KindBigIntLiteral
 	}
 	// !!! Once stringToNumber supports parsing of non-decimal values we should also convert non-decimal
 	// tokens to their normalized decimal representation
 	if len(s.tokenValue) >= 2 {
 		firstTwo := s.tokenValue[:2]
 		if firstTwo == "0x" || firstTwo == "0o" || firstTwo == "0b" {
-			return SyntaxKindNumericLiteral
+			return ast.KindNumericLiteral
 		}
 	}
 	s.tokenValue = numberToString(stringToNumber(s.tokenValue))
-	return SyntaxKindNumericLiteral
+	return ast.KindNumericLiteral
 }
 
 func (s *Scanner) scanInvalidCharacter() {
 	_, size := s.charAndSize()
 	s.errorAt(diagnostics.Invalid_character, s.pos, size)
 	s.pos += size
-	s.token = SyntaxKindUnknown
+	s.token = ast.KindUnknown
 }
 
-func getIdentifierToken(str string) SyntaxKind {
+func getIdentifierToken(str string) ast.Kind {
 	if len(str) >= 2 && len(str) <= 12 && str[0] >= 'a' && str[0] <= 'z' {
 		keyword := textToKeyword[str]
-		if keyword != SyntaxKindUnknown {
+		if keyword != ast.KindUnknown {
 			return keyword
 		}
 	}
-	return SyntaxKindIdentifier
+	return ast.KindIdentifier
 }
 
 // Section 6.1.4
@@ -1561,20 +1563,20 @@ func isWordCharacter(ch rune) bool {
 	return stringutil.IsASCIILetter(ch) || stringutil.IsDigit(ch) || ch == '_'
 }
 
-func isIdentifierStart(ch rune, languageVersion ScriptTarget) bool {
+func isIdentifierStart(ch rune, languageVersion core.ScriptTarget) bool {
 	return stringutil.IsASCIILetter(ch) || ch == '_' || ch == '$' || ch > 0x7F && isUnicodeIdentifierStart(ch, languageVersion)
 }
 
-func isIdentifierPart(ch rune, languageVersion ScriptTarget) bool {
+func isIdentifierPart(ch rune, languageVersion core.ScriptTarget) bool {
 	return isWordCharacter(ch) || ch == '$' || ch > 0x7F && isUnicodeIdentifierPart(ch, languageVersion)
 }
 
-func isUnicodeIdentifierStart(ch rune, languageVersion ScriptTarget) bool {
-	return isInUnicodeRanges(ch, ifElse(languageVersion >= ScriptTargetES2015, unicodeESNextIdentifierStart, unicodeES5IdentifierStart))
+func isUnicodeIdentifierStart(ch rune, languageVersion core.ScriptTarget) bool {
+	return isInUnicodeRanges(ch, ifElse(languageVersion >= core.ScriptTargetES2015, unicodeESNextIdentifierStart, unicodeES5IdentifierStart))
 }
 
-func isUnicodeIdentifierPart(ch rune, languageVersion ScriptTarget) bool {
-	return isInUnicodeRanges(ch, ifElse(languageVersion >= ScriptTargetES2015, unicodeESNextIdentifierPart, unicodeES5IdentifierPart))
+func isUnicodeIdentifierPart(ch rune, languageVersion core.ScriptTarget) bool {
+	return isInUnicodeRanges(ch, ifElse(languageVersion >= core.ScriptTargetES2015, unicodeESNextIdentifierPart, unicodeES5IdentifierPart))
 }
 
 func isInUnicodeRanges(cp rune, ranges []rune) bool {
@@ -1601,10 +1603,10 @@ func isInUnicodeRanges(cp rune, ranges []rune) bool {
 	return false
 }
 
-var tokenToText map[SyntaxKind]string
+var tokenToText map[ast.Kind]string
 
 func init() {
-	tokenToText = make(map[SyntaxKind]string, len(textToKeyword)+len(textToToken))
+	tokenToText = make(map[ast.Kind]string, len(textToKeyword)+len(textToToken))
 	for text, key := range textToKeyword {
 		tokenToText[key] = text
 	}
@@ -1613,7 +1615,7 @@ func init() {
 	}
 }
 
-func TokenToString(token SyntaxKind) string {
+func TokenToString(token ast.Kind) string {
 	return tokenToText[token]
 }
 

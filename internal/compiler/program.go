@@ -6,6 +6,8 @@ import (
 	"path/filepath"
 	"slices"
 	"strings"
+
+	"github.com/microsoft/typescript-go/internal/core"
 )
 
 type ProgramOptions struct {
@@ -23,7 +25,7 @@ type Program struct {
 	filesByPath                 map[string]*SourceFile
 	nodeModules                 map[string]*SourceFile
 	checker                     *Checker
-	usesUriStyleNodeCoreModules Tristate
+	usesUriStyleNodeCoreModules core.Tristate
 	currentNodeModulesDepth     int
 }
 
@@ -232,7 +234,7 @@ func (p *Program) collectExternalModuleReferences(file *SourceFile) {
 	for _, node := range file.statements {
 		p.collectModuleReferences(file, node, false /*inAmbientModule*/)
 	}
-	// if ((file.flags & NodeFlags.PossiblyContainsDynamicImport) || isJavaScriptFile) {
+	// if ((file.flags & ast.NodeFlags.PossiblyContainsDynamicImport) || isJavaScriptFile) {
 	// 	collectDynamicImportOrRequireOrJsDocImportCalls(file);
 	// }
 	// function collectDynamicImportOrRequireOrJsDocImportCalls(file: SourceFile) {
@@ -265,7 +267,7 @@ func (p *Program) collectExternalModuleReferences(file *SourceFile) {
 	// function getNodeAtPosition(sourceFile: SourceFile, position: number): Node {
 	// 	let current: Node = sourceFile;
 	// 	const getContainingChild = (child: Node) => {
-	// 		if (child.pos <= position && (position < child.end || (position === child.end && (child.kind === SyntaxKind.EndOfFileToken)))) {
+	// 		if (child.pos <= position && (position < child.end || (position === child.end && (child.kind === ast.Kind.EndOfFileToken)))) {
 	// 			return child;
 	// 		}
 	// 	};
@@ -355,13 +357,13 @@ func (p *Program) collectModuleReferences(file *SourceFile, node *Statement, inA
 			if moduleName != "" && (!inAmbientModule || !isExternalModuleNameRelative(moduleName)) {
 				setParentInChildren(node) // we need parent data on imports before the program is fully bound, so we ensure it's set here
 				file.imports = append(file.imports, moduleNameExpr)
-				if file.usesUriStyleNodeCoreModules != TSTrue && p.currentNodeModulesDepth == 0 && !file.isDeclarationFile {
+				if file.usesUriStyleNodeCoreModules != core.TSTrue && p.currentNodeModulesDepth == 0 && !file.isDeclarationFile {
 					if strings.HasPrefix(moduleName, "node:") && !exclusivelyPrefixedNodeCoreModules[moduleName] {
 						// Presence of `node:` prefix takes precedence over unprefixed node core modules
-						file.usesUriStyleNodeCoreModules = TSTrue
-					} else if file.usesUriStyleNodeCoreModules == TSUnknown && unprefixedNodeCoreModules[moduleName] {
+						file.usesUriStyleNodeCoreModules = core.TSTrue
+					} else if file.usesUriStyleNodeCoreModules == core.TSUnknown && unprefixedNodeCoreModules[moduleName] {
 						// Avoid `unprefixedNodeCoreModules.has` for every import
-						file.usesUriStyleNodeCoreModules = TSFalse
+						file.usesUriStyleNodeCoreModules = core.TSFalse
 					}
 				}
 			}
