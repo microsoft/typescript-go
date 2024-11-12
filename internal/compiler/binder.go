@@ -6,6 +6,7 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/compiler/diagnostics"
+	"github.com/microsoft/typescript-go/internal/compiler/textpos"
 	"github.com/microsoft/typescript-go/internal/core"
 )
 
@@ -2731,7 +2732,7 @@ func (b *Binder) errorOrSuggestionOnNode(isError bool, node *Node, message *diag
 }
 
 func (b *Binder) errorOrSuggestionOnRange(isError bool, startNode *Node, endNode *Node, message *diagnostics.Message) {
-	textRange := NewTextRange(getRangeOfTokenAtPosition(b.file, startNode.Pos()).Pos(), endNode.End())
+	textRange := textpos.NewTextRange(getRangeOfTokenAtPosition(b.file, startNode.Pos()).Pos(), endNode.End())
 	diagnostic := NewDiagnostic(b.file, textRange, message)
 	if isError {
 		b.addDiagnostic(diagnostic)

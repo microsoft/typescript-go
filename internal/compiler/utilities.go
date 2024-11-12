@@ -17,33 +17,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
-// TextRange
-
-type TextRange struct {
-	pos textpos.TextPos
-	end textpos.TextPos
-}
-
-func NewTextRange(pos int, end int) TextRange {
-	return TextRange{pos: textpos.TextPos(pos), end: textpos.TextPos(end)}
-}
-
-func (t TextRange) Pos() int {
-	return int(t.pos)
-}
-
-func (t TextRange) End() int {
-	return int(t.end)
-}
-
-func (t TextRange) Len() int {
-	return int(t.end - t.pos)
-}
-
-func (t TextRange) ContainsInclusive(pos int) bool {
-	return pos >= int(t.pos) && pos <= int(t.end)
-}
-
 // Links store
 
 type LinkStore[K comparable, V any] struct {
@@ -95,7 +68,7 @@ func getMergeId(symbol *Symbol) MergeId {
 
 type Diagnostic struct {
 	file               *SourceFile
-	loc                TextRange
+	loc                textpos.TextRange
 	code               int32
 	category           diagnostics.Category
 	message            string
@@ -107,7 +80,7 @@ func (d *Diagnostic) File() *SourceFile                 { return d.file }
 func (d *Diagnostic) Pos() int                          { return d.loc.Pos() }
 func (d *Diagnostic) End() int                          { return d.loc.End() }
 func (d *Diagnostic) Len() int                          { return d.loc.Len() }
-func (d *Diagnostic) Loc() TextRange                    { return d.loc }
+func (d *Diagnostic) Loc() textpos.TextRange                    { return d.loc }
 func (d *Diagnostic) Code() int32                       { return d.code }
 func (d *Diagnostic) Category() diagnostics.Category    { return d.category }
 func (d *Diagnostic) Message() string                   { return d.message }
@@ -116,7 +89,7 @@ func (d *Diagnostic) RelatedInformation() []*Diagnostic { return d.relatedInform
 
 func (d *Diagnostic) SetCategory(category diagnostics.Category) { d.category = category }
 
-func NewDiagnostic(file *SourceFile, loc TextRange, message *diagnostics.Message, args ...any) *Diagnostic {
+func NewDiagnostic(file *SourceFile, loc textpos.TextRange, message *diagnostics.Message, args ...any) *Diagnostic {
 	text := message.Message()
 	if len(args) != 0 {
 		text = formatStringFromArgs(text, args)
@@ -132,7 +105,7 @@ func NewDiagnostic(file *SourceFile, loc TextRange, message *diagnostics.Message
 
 func NewDiagnosticForNode(node *Node, message *diagnostics.Message, args ...any) *Diagnostic {
 	var file *SourceFile
-	var loc TextRange
+	var loc textpos.TextRange
 	if node != nil {
 		file = getSourceFileOfNode(node)
 		loc = getErrorRangeForNode(file, node)
@@ -140,7 +113,7 @@ func NewDiagnosticForNode(node *Node, message *diagnostics.Message, args ...any)
 	return NewDiagnostic(file, loc, message, args...)
 }
 
-func NewDiagnosticFromMessageChain(file *SourceFile, loc TextRange, messageChain *MessageChain) *Diagnostic {
+func NewDiagnosticFromMessageChain(file *SourceFile, loc textpos.TextRange, messageChain *MessageChain) *Diagnostic {
 	return &Diagnostic{
 		file:         file,
 		loc:          loc,
@@ -153,7 +126,7 @@ func NewDiagnosticFromMessageChain(file *SourceFile, loc TextRange, messageChain
 
 func NewDiagnosticForNodeFromMessageChain(node *Node, messageChain *MessageChain) *Diagnostic {
 	var file *SourceFile
-	var loc TextRange
+	var loc textpos.TextRange
 	if node != nil {
 		file = getSourceFileOfNode(node)
 		loc = getErrorRangeForNode(file, node)
@@ -560,7 +533,7 @@ func modifiersToFlags(modifierList *Node) ast.ModifierFlags {
 }
 
 func nodeIsMissing(node *Node) bool {
-	return node == nil || node.Loc.pos == node.Loc.end && node.Loc.pos >= 0 && node.Kind != ast.KindEndOfFile
+	return node == nil || node.Loc.Pos_ == node.Loc.End_ && node.Loc.Pos_ >= 0 && node.Kind != ast.KindEndOfFile
 }
 
 func nodeIsPresent(node *Node) bool {
@@ -821,13 +794,13 @@ func getSourceFileOfNode(node *Node) *SourceFile {
 }
 
 /** @internal */
-func getErrorRangeForNode(sourceFile *SourceFile, node *Node) TextRange {
+func getErrorRangeForNode(sourceFile *SourceFile, node *Node) textpos.TextRange {
 	errorNode := node
 	switch node.Kind {
 	case ast.KindSourceFile:
 		pos := skipTrivia(sourceFile.Text, 0)
 		if pos == len(sourceFile.Text) {
-			return NewTextRange(0, 0)
+			return textpos.NewTextRange(0, 0)
 		}
 		return getRangeOfTokenAtPosition(sourceFile, pos)
 	// This list is a work in progress. Add missing node kinds to improve their error spans
@@ -846,7 +819,7 @@ func getErrorRangeForNode(sourceFile *SourceFile, node *Node) TextRange {
 		if len(statements) != 0 {
 			end = statements[0].Pos()
 		}
-		return NewTextRange(start, end)
+		return textpos.NewTextRange(start, end)
 	case ast.KindReturnStatement, ast.KindYieldExpression:
 		pos := skipTrivia(sourceFile.Text, node.Pos())
 		return getRangeOfTokenAtPosition(sourceFile, pos)
@@ -859,7 +832,7 @@ func getErrorRangeForNode(sourceFile *SourceFile, node *Node) TextRange {
 		for scanner.token != ast.KindConstructorKeyword && scanner.token != ast.KindStringLiteral && scanner.token != ast.KindEndOfFile {
 			scanner.Scan()
 		}
-		return NewTextRange(start, scanner.pos)
+		return textpos.NewTextRange(start, scanner.pos)
 		// !!!
 		// case ast.KindJSDocSatisfiesTag:
 		// 	pos := skipTrivia(sourceFile.text, node.tagName.pos)
@@ -874,10 +847,10 @@ func getErrorRangeForNode(sourceFile *SourceFile, node *Node) TextRange {
 	if !nodeIsMissing(errorNode) {
 		pos = skipTrivia(sourceFile.Text, pos)
 	}
-	return NewTextRange(pos, errorNode.End())
+	return textpos.NewTextRange(pos, errorNode.End())
 }
 
-func getErrorRangeForArrowFunction(sourceFile *SourceFile, node *Node) TextRange {
+func getErrorRangeForArrowFunction(sourceFile *SourceFile, node *Node) textpos.TextRange {
 	pos := skipTrivia(sourceFile.Text, node.Pos())
 	body := node.AsArrowFunction().Body
 	if body != nil && body.Kind == ast.KindBlock {
@@ -886,10 +859,10 @@ func getErrorRangeForArrowFunction(sourceFile *SourceFile, node *Node) TextRange
 		if startLine < endLine {
 			// The arrow function spans multiple lines,
 			// make the error span be the first line, inclusive.
-			return NewTextRange(pos, getEndLinePosition(sourceFile, startLine))
+			return textpos.NewTextRange(pos, getEndLinePosition(sourceFile, startLine))
 		}
 	}
-	return NewTextRange(pos, node.End())
+	return textpos.NewTextRange(pos, node.End())
 }
 
 func getContainingClass(node *Node) *Node {
@@ -1951,11 +1924,11 @@ func compareDiagnostics(d1, d2 *Diagnostic) int {
 	if c != 0 {
 		return c
 	}
-	c = int(d1.loc.pos) - int(d2.loc.pos)
+	c = int(d1.loc.Pos_) - int(d2.loc.Pos_)
 	if c != 0 {
 		return c
 	}
-	c = int(d1.loc.end) - int(d2.loc.end)
+	c = int(d1.loc.End_) - int(d2.loc.End_)
 	if c != 0 {
 		return c
 	}
@@ -3001,7 +2974,7 @@ func isEntityName(node *Node) bool {
 }
 
 func nodeIsSynthesized(node *Node) bool {
-	return node.Loc.pos < 0 || node.Loc.end < 0
+	return node.Loc.Pos_ < 0 || node.Loc.End_ < 0
 }
 
 func getFirstIdentifier(node *Node) *Node {

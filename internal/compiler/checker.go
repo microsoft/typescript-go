@@ -9,6 +9,7 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/compiler/diagnostics"
+	"github.com/microsoft/typescript-go/internal/compiler/textpos"
 	"github.com/microsoft/typescript-go/internal/core"
 )
 
@@ -2855,7 +2856,7 @@ func getAdjustedNodeForError(node *Node) *Node {
 
 func (c *Checker) lookupOrIssueError(location *Node, message *diagnostics.Message, args ...any) *Diagnostic {
 	var file *SourceFile
-	var loc TextRange
+	var loc textpos.TextRange
 	if location != nil {
 		file = getSourceFileOfNode(location)
 		loc = location.Loc

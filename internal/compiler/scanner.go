@@ -262,8 +262,8 @@ func (s *Scanner) TokenValue() string {
 	return s.tokenValue
 }
 
-func (s *Scanner) TokenRange() TextRange {
-	return NewTextRange(s.tokenStart, s.pos)
+func (s *Scanner) TokenRange() textpos.TextRange {
+	return textpos.NewTextRange(s.tokenStart, s.pos)
 }
 
 func (s *Scanner) Mark() ScannerState {
@@ -1793,9 +1793,9 @@ func getScannerForSourceFile(sourceFile *SourceFile, pos int) *Scanner {
 	return s
 }
 
-func getRangeOfTokenAtPosition(sourceFile *SourceFile, pos int) TextRange {
+func getRangeOfTokenAtPosition(sourceFile *SourceFile, pos int) textpos.TextRange {
 	s := getScannerForSourceFile(sourceFile, pos)
-	return NewTextRange(s.tokenStart, s.pos)
+	return textpos.NewTextRange(s.tokenStart, s.pos)
 }
 
 func computeLineOfPosition(lineStarts []textpos.TextPos, pos textpos.TextPos) int {

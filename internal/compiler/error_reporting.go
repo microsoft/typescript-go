@@ -107,7 +107,7 @@ func writeCodeSnippet(writer *strings.Builder, sourceFile *SourceFile, start int
 		if i < lastLineOfFile {
 			lineEnd = GetPositionOfLineAndCharacter(sourceFile, i+1, 0)
 		} else {
-			lineEnd = sourceFile.Loc.end
+			lineEnd = sourceFile.Loc.End_
 		}
 
 		lineContent := strings.TrimRightFunc(sourceFile.Text[lineStart:lineEnd], unicode.IsSpace) // trim from end

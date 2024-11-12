@@ -46,7 +46,7 @@ func (f *NodeFactory) NewNode(kind ast.Kind, data NodeData) *Node {
 type Node struct {
 	Kind   ast.Kind
 	Flags  ast.NodeFlags
-	Loc    TextRange
+	Loc    textpos.TextRange
 	Id     NodeId
 	Parent *Node
 	Data   NodeData
