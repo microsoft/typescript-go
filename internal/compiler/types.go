@@ -209,35 +209,35 @@ const (
 // FlowNode
 
 type FlowNode struct {
-	flags       FlowFlags
-	node        any
-	antecedent  *FlowNode // Antecedent for all but FlowLabel
-	antecedents *FlowList // Linked list of antecedents for FlowLabel
+	Flags       FlowFlags
+	Node        any
+	Antecedent  *FlowNode // Antecedent for all but FlowLabel
+	Antecedents *FlowList // Linked list of antecedents for FlowLabel
 }
 
 type FlowList struct {
-	node *FlowNode
-	next *FlowList
+	Node *FlowNode
+	Next *FlowList
 }
 
 type FlowLabel = FlowNode
 
-var unreachableFlow = &FlowNode{flags: FlowFlagsUnreachable}
-var reportedUnreachableFlow = &FlowNode{flags: FlowFlagsUnreachable}
+var UnreachableFlow = &FlowNode{Flags: FlowFlagsUnreachable}
+var ReportedUnreachableFlow = &FlowNode{Flags: FlowFlagsUnreachable}
 
 // FlowSwitchClauseData
 
 type FlowSwitchClauseData struct {
-	switchStatement *SwitchStatement
-	clauseStart     int32 // Start index of case/default clause range
-	clauseEnd       int32 // End index of case/default clause range
+	SwitchStatement *SwitchStatement
+	ClauseStart     int32 // Start index of case/default clause range
+	ClauseEnd       int32 // End index of case/default clause range
 }
 
 // FlowReduceLabelData
 
 type FlowReduceLabelData struct {
-	target      *FlowLabel // Target label
-	antecedents *FlowList  // Temporary antecedent list
+	Target      *FlowLabel // Target label
+	Antecedents *FlowList  // Temporary antecedent list
 }
 
 type VarianceFlags uint32
