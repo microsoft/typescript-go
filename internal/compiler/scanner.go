@@ -1819,7 +1819,7 @@ func isConflictMarkerTrivia(text string, pos int) bool {
 		ch := text[pos]
 
 		if (pos + mergeConflictMarkerLength) < len(text) {
-			for i := 0; i < mergeConflictMarkerLength; i++ {
+			for i := range mergeConflictMarkerLength {
 				if text[pos+i] != ch {
 					return false
 				}

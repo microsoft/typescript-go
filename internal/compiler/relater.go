@@ -1944,7 +1944,7 @@ func (r *Relater) typeRelatedToDiscriminatedType(source *Type, target *Type) Ter
 		hasMatch := false
 	outer:
 		for _, t := range target.Types() {
-			for i := 0; i < len(sourcePropertiesFiltered); i++ {
+			for i := range sourcePropertiesFiltered {
 				sourceProperty := sourcePropertiesFiltered[i]
 				targetProperty := r.c.getPropertyOfType(t, sourceProperty.name)
 				if targetProperty == nil {
@@ -2047,7 +2047,7 @@ func (r *Relater) propertiesRelatedTo(source *Type, target *Type, reportErrors b
 			targetStartCount := getStartElementCount(target.TargetTupleType(), ElementFlagsNonRest)
 			targetEndCount := getEndElementCount(target.TargetTupleType(), ElementFlagsNonRest)
 			canExcludeDiscriminants := excludedProperties.len() != 0
-			for sourcePosition := 0; sourcePosition < sourceArity; sourcePosition++ {
+			for sourcePosition := range sourceArity {
 				var sourceFlags ElementFlags
 				if isTupleType(source) {
 					sourceFlags = source.TargetTupleType().elementInfos[sourcePosition].flags
