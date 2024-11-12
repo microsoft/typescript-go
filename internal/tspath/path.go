@@ -28,19 +28,19 @@ func isAnyDirectorySeparator(char byte) bool {
 }
 
 // Determines whether a path starts with a URL scheme (e.g. starts with `http://`, `ftp://`, `file://`, etc.).
-func isUrl(path string) bool {
-	return getEncodedRootLength(path) < 0
+func IsUrl(path string) bool {
+	return GetEncodedRootLength(path) < 0
 }
 
 // Determines whether a path is an absolute disk path (e.g. starts with `/`, or a dos path
 // like `c:`, `c:\` or `c:/`).
 func IsRootedDiskPath(path string) bool {
-	return getEncodedRootLength(path) > 0
+	return GetEncodedRootLength(path) > 0
 }
 
 // Determines whether a path consists only of a path root.
-func isDiskPathRoot(path string) bool {
-	rootLength := getEncodedRootLength(path)
+func IsDiskPathRoot(path string) bool {
+	rootLength := GetEncodedRootLength(path)
 	return rootLength > 0 && rootLength == len(path)
 }
 
@@ -58,10 +58,10 @@ func isDiskPathRoot(path string) bool {
 //	PathIsAbsolute("./path/to/file.ext") === false
 //	```
 func PathIsAbsolute(path string) bool {
-	return getEncodedRootLength(path) != 0
+	return GetEncodedRootLength(path) != 0
 }
 
-func hasTrailingDirectorySeparator(path string) bool {
+func HasTrailingDirectorySeparator(path string) bool {
 	return len(path) > 0 && isAnyDirectorySeparator(path[len(path)-1])
 }
 
@@ -69,19 +69,19 @@ func hasTrailingDirectorySeparator(path string) bool {
 //
 //	```
 //	// Non-rooted
-//	combinePaths("path", "to", "file.ext") === "path/to/file.ext"
-//	combinePaths("path", "dir", "..", "to", "file.ext") === "path/dir/../to/file.ext"
+//	CombinePaths("path", "to", "file.ext") === "path/to/file.ext"
+//	CombinePaths("path", "dir", "..", "to", "file.ext") === "path/dir/../to/file.ext"
 //	// POSIX
-//	combinePaths("/path", "to", "file.ext") === "/path/to/file.ext"
-//	combinePaths("/path", "/to", "file.ext") === "/to/file.ext"
+//	CombinePaths("/path", "to", "file.ext") === "/path/to/file.ext"
+//	CombinePaths("/path", "/to", "file.ext") === "/to/file.ext"
 //	// DOS
-//	combinePaths("c:/path", "to", "file.ext") === "c:/path/to/file.ext"
-//	combinePaths("c:/path", "c:/to", "file.ext") === "c:/to/file.ext"
+//	CombinePaths("c:/path", "to", "file.ext") === "c:/path/to/file.ext"
+//	CombinePaths("c:/path", "c:/to", "file.ext") === "c:/to/file.ext"
 //	// URL
-//	combinePaths("file:///path", "to", "file.ext") === "file:///path/to/file.ext"
-//	combinePaths("file:///path", "file:///to", "file.ext") === "file:///to/file.ext"
+//	CombinePaths("file:///path", "to", "file.ext") === "file:///path/to/file.ext"
+//	CombinePaths("file:///path", "file:///to", "file.ext") === "file:///to/file.ext"
 //	```
-func combinePaths(firstPath string, paths ...string) string {
+func CombinePaths(firstPath string, paths ...string) string {
 	// TODO (drosen): There is potential for a fast path here.
 	// In the case where we find the last absolute path and just path.Join from there.
 	result := NormalizeSlashes(firstPath)
@@ -91,7 +91,7 @@ func combinePaths(firstPath string, paths ...string) string {
 			continue
 		}
 		trailingPath = NormalizeSlashes(trailingPath)
-		if result == "" || getRootLength(trailingPath) != 0 {
+		if result == "" || GetRootLength(trailingPath) != 0 {
 			// `trailingPath` is absolute.
 			result = trailingPath
 		} else {
@@ -107,9 +107,9 @@ func combinePaths(firstPath string, paths ...string) string {
 	return result
 }
 
-func getPathComponents(path string, currentDirectory string) []string {
-	path = combinePaths(currentDirectory, path)
-	return pathComponents(path, getRootLength(path))
+func GetPathComponents(path string, currentDirectory string) []string {
+	path = CombinePaths(currentDirectory, path)
+	return pathComponents(path, GetRootLength(path))
 }
 
 func pathComponents(path string, rootLength int) []string {
@@ -142,7 +142,7 @@ func getFileUrlVolumeSeparatorEnd(url string, start int) int {
 	return -1
 }
 
-func getEncodedRootLength(path string) int {
+func GetEncodedRootLength(path string) int {
 	ln := len(path)
 	if ln == 0 {
 		return 0
@@ -211,8 +211,8 @@ func getEncodedRootLength(path string) int {
 	return 0
 }
 
-func getRootLength(path string) int {
-	rootLength := getEncodedRootLength(path)
+func GetRootLength(path string) int {
+	rootLength := GetEncodedRootLength(path)
 	if rootLength < 0 {
 		return ^rootLength
 	}
@@ -223,17 +223,17 @@ func GetDirectoryPath(path string) string {
 	path = NormalizeSlashes(path)
 
 	// If the path provided is itself a root, then return it.
-	rootLength := getRootLength(path)
+	rootLength := GetRootLength(path)
 	if rootLength == len(path) {
 		return path
 	}
 
 	// return the leading portion of the path up to the last (non-terminal) directory separator
 	// but not including any trailing directory separator.
-	path = removeTrailingDirectorySeparator(path)
+	path = RemoveTrailingDirectorySeparator(path)
 	return path[:max(rootLength, strings.LastIndex(path, "/"))]
 }
-func (p Path) getDirectoryPath() Path {
+func (p Path) GetDirectoryPath() Path {
 	return Path(GetDirectoryPath(string(p)))
 }
 
@@ -282,25 +282,33 @@ func reducePathComponents(components []string) []string {
 	return reduced
 }
 
-func resolvePath(path string, paths ...string) string {
+// Combines and resolves paths. If a path is absolute, it replaces any previous path. Any
+// `.` and `..` path components are resolved. Trailing directory separators are preserved.
+//
+// ```go
+// resolvePath("/path", "to", "file.ext") == "path/to/file.ext"
+// resolvePath("/path", "to", "file.ext/") == "path/to/file.ext/"
+// resolvePath("/path", "dir", "..", "to", "file.ext") == "path/to/file.ext"
+// ```
+func ResolvePath(path string, paths ...string) string {
 	var combinedPath string
 	if len(paths) > 0 {
-		combinedPath = combinePaths(path, paths...)
+		combinedPath = CombinePaths(path, paths...)
 	} else {
 		combinedPath = NormalizeSlashes(path)
 	}
-	return normalizePath(combinedPath)
+	return NormalizePath(combinedPath)
 }
 
 func getNormalizedPathComponents(path string, currentDirectory string) []string {
-	return reducePathComponents(getPathComponents(path, currentDirectory))
+	return reducePathComponents(GetPathComponents(path, currentDirectory))
 }
 
-func getNormalizedAbsolutePath(fileName string, currentDirectory string) string {
+func GetNormalizedAbsolutePath(fileName string, currentDirectory string) string {
 	return getPathFromPathComponents(getNormalizedPathComponents(fileName, currentDirectory))
 }
 
-func normalizePath(path string) string {
+func NormalizePath(path string) string {
 	path = NormalizeSlashes(path)
 	// Most paths don't require normalization
 	if !relativePathSegmentRegExp.MatchString(path) {
@@ -314,8 +322,8 @@ func normalizePath(path string) string {
 		return path
 	}
 	// Other paths require full normalization
-	normalized := getPathFromPathComponents(reducePathComponents(getPathComponents(path, "")))
-	if normalized != "" && hasTrailingDirectorySeparator(path) {
+	normalized := getPathFromPathComponents(reducePathComponents(GetPathComponents(path, "")))
+	if normalized != "" && HasTrailingDirectorySeparator(path) {
 		normalized = EnsureTrailingDirectorySeparator(normalized)
 	}
 	return normalized
@@ -324,42 +332,43 @@ func normalizePath(path string) string {
 func ToPath(fileName string, basePath string, getCanonicalFileName func(string) string) Path {
 	var nonCanonicalizedPath string
 	if IsRootedDiskPath(fileName) {
-		nonCanonicalizedPath = normalizePath(fileName)
+		nonCanonicalizedPath = NormalizePath(fileName)
 	} else {
-		nonCanonicalizedPath = getNormalizedAbsolutePath(basePath, fileName)
+		nonCanonicalizedPath = GetNormalizedAbsolutePath(basePath, fileName)
 	}
 	return Path(getCanonicalFileName(nonCanonicalizedPath))
 }
 
-func removeTrailingDirectorySeparator(path string) string {
-	if hasTrailingDirectorySeparator(path) {
+func RemoveTrailingDirectorySeparator(path string) string {
+	if HasTrailingDirectorySeparator(path) {
 		return path[:len(path)-1]
 	}
 	return path
 }
-func (p Path) removeTrailingDirectorySeparator() Path {
-	return Path(removeTrailingDirectorySeparator(string(p)))
+func (p Path) RemoveTrailingDirectorySeparator() Path {
+	return Path(RemoveTrailingDirectorySeparator(string(p)))
 }
 
 func EnsureTrailingDirectorySeparator(path string) string {
-	if !hasTrailingDirectorySeparator(path) {
+	if !HasTrailingDirectorySeparator(path) {
 		return path + "/"
 	}
 
 	return path
 }
-func (p Path) ensureTrailingDirectorySeparator() Path {
+func (p Path) EnsureTrailingDirectorySeparator() Path {
 	return Path(EnsureTrailingDirectorySeparator(string(p)))
 }
 
 //// Relative Paths
 
-func getPathComponentsRelativeTo(from string, to string, stringEqualer func(a, b string) bool, getCanonicalFileName func(fileName string) string) []string {
-	fromComponents := reducePathComponents(getPathComponents(from, "" /*currentDirectory*/))
-	toComponents := reducePathComponents(getPathComponents(to, "" /*currentDirectory*/))
+func GetPathComponentsRelativeTo(from string, to string, options ComparePathsOptions) []string {
+	fromComponents := reducePathComponents(GetPathComponents(from, options.CurrentDirectory))
+	toComponents := reducePathComponents(GetPathComponents(to, options.CurrentDirectory))
 
 	start := 0
 	maxCommonComponents := min(len(fromComponents), len(toComponents))
+	stringEqualer := options.getEqualityComparer()
 	for ; start < maxCommonComponents; start++ {
 		fromComponent := fromComponents[start]
 		toComponent := toComponents[start]
@@ -397,20 +406,27 @@ func getPathComponentsRelativeTo(from string, to string, stringEqualer func(a, b
 	return result
 }
 
-func ConvertToRelativePath(absoluteOrRelativePath, basePath string, getCanonicalFileName func(fileName string) string) string {
+func GetRelativePathFromDirectory(fromDirectory string, to string, options ComparePathsOptions) string {
+	if (GetRootLength(fromDirectory) > 0) != (GetRootLength(to) > 0) {
+		panic("paths must either both be absolute or both be relative")
+	}
+	pathComponents := GetPathComponentsRelativeTo(fromDirectory, to, options)
+	return getPathFromPathComponents(pathComponents)
+}
+
+func ConvertToRelativePath(absoluteOrRelativePath string, options ComparePathsOptions) string {
 	if !IsRootedDiskPath(absoluteOrRelativePath) {
 		return absoluteOrRelativePath
 	}
 
-	return getRelativePathToDirectoryOrUrl(basePath, absoluteOrRelativePath, basePath, getCanonicalFileName, false /*isAbsolutePathAnUrl*/)
+	return getRelativePathToDirectoryOrUrl(options.CurrentDirectory, absoluteOrRelativePath, false /*isAbsolutePathAnUrl*/, options)
 }
 
-func getRelativePathToDirectoryOrUrl(directoryPathOrUrl string, relativeOrAbsolutePath string, currentDirectory string, getCanonicalFileName func(fileName string) string, isAbsolutePathAnUrl bool) string {
-	pathComponents := getPathComponentsRelativeTo(
-		resolvePath(currentDirectory, directoryPathOrUrl),
-		resolvePath(currentDirectory, relativeOrAbsolutePath),
-		core.EquateStringCaseSensitive,
-		getCanonicalFileName,
+func getRelativePathToDirectoryOrUrl(directoryPathOrUrl string, relativeOrAbsolutePath string, isAbsolutePathAnUrl bool, options ComparePathsOptions) string {
+	pathComponents := GetPathComponentsRelativeTo(
+		directoryPathOrUrl,
+		relativeOrAbsolutePath,
+		options,
 	)
 
 	firstComponent := pathComponents[0]
@@ -425,49 +441,6 @@ func getRelativePathToDirectoryOrUrl(directoryPathOrUrl string, relativeOrAbsolu
 	}
 
 	return getPathFromPathComponents(pathComponents)
-}
-
-func ComparePaths(a string, b string, currentDirectory string, ignoreCase bool) core.Comparison {
-	a = combinePaths(currentDirectory, a)
-	b = combinePaths(currentDirectory, b)
-	return comparePathsWorker(a, b, core.GetStringComparer(ignoreCase))
-}
-
-func comparePathsWorker(a string, b string, stringComparer func(a, b string) core.Comparison) core.Comparison {
-	if a == b {
-		return core.ComparisonEqual
-	}
-
-	// NOTE: Performance optimization - shortcut if the root segments differ as there would be no
-	//       need to perform path reduction.
-	aRoot := a[:getRootLength(a)]
-	bRoot := b[:getRootLength(b)]
-	result := core.CompareStringsCaseInsensitive(aRoot, bRoot)
-	if result != core.ComparisonEqual {
-		return result
-	}
-
-	// NOTE: Performance optimization - shortcut if there are no relative path segments in
-	//       the non-root portion of the path
-	aRest := a[len(aRoot):]
-	bRest := b[len(bRoot):]
-	if !relativePathSegmentRegExp.MatchString(aRest) && !relativePathSegmentRegExp.MatchString(bRest) {
-		return stringComparer(aRest, bRest)
-	}
-
-	// The path contains a relative path segment. Normalize the paths and perform a slower component
-	// by component comparison.
-	aComponents := reducePathComponents(getPathComponents(a, ""))
-	bComponents := reducePathComponents(getPathComponents(b, ""))
-	sharedLength := min(len(aComponents), len(bComponents))
-	for i := 1; i < sharedLength; i++ {
-		result := stringComparer(aComponents[i], bComponents[i])
-		if result != core.ComparisonEqual {
-			return result
-		}
-	}
-
-	return cmp.Compare(len(aComponents), len(bComponents))
 }
 
 // Gets the portion of a path following the last (non-terminal) separator (`/`).
@@ -500,15 +473,15 @@ func GetBaseFileName(path string) string {
 	path = NormalizeSlashes(path)
 
 	// if the path provided is itself the root, then it has no file name.
-	rootLength := getRootLength(path)
+	rootLength := GetRootLength(path)
 	if rootLength == len(path) {
 		return ""
 	}
 
 	// return the trailing portion of the path starting after the last (non-terminal) directory
 	// separator but not including any trailing directory separator.
-	path = removeTrailingDirectorySeparator(path)
-	return path[max(getRootLength(path), strings.LastIndex(path, string(directorySeparator))+1):]
+	path = RemoveTrailingDirectorySeparator(path)
+	return path[max(GetRootLength(path), strings.LastIndex(path, string(directorySeparator))+1):]
 }
 
 // Gets the file extension for a path.
@@ -526,7 +499,7 @@ func GetAnyExtensionFromPath(path string, extensions []string, ignoreCase bool) 
 	// Retrieves any string from the final "." onwards from a base file name.
 	// Unlike extensionFromPath, which throws an exception on unrecognized extensions.
 	if len(extensions) > 0 {
-		return getAnyExtensionFromPathWorker(removeTrailingDirectorySeparator(path), extensions, core.GetStringEqualityComparer(ignoreCase))
+		return getAnyExtensionFromPathWorker(RemoveTrailingDirectorySeparator(path), extensions, core.GetStringEqualityComparer(ignoreCase))
 	}
 
 	baseFileName := GetBaseFileName(path)
@@ -558,4 +531,132 @@ func tryGetExtensionFromPath(path string, extension string, stringEqualityCompar
 		}
 	}
 	return ""
+}
+
+func PathIsRelative(path string) bool {
+	return core.MakeRegexp(`^\.\.?(?:$|[\\/])`).MatchString(path)
+}
+
+type ComparePathsOptions struct {
+	IgnoreCase       bool
+	CurrentDirectory string
+}
+
+func (o ComparePathsOptions) GetComparer() func(a, b string) int {
+	return core.GetStringComparer(o.IgnoreCase)
+}
+
+func (o ComparePathsOptions) getEqualityComparer() func(a, b string) bool {
+	return core.GetStringEqualityComparer(o.IgnoreCase)
+}
+
+func ComparePaths(a string, b string, options ComparePathsOptions) int {
+	a = CombinePaths(options.CurrentDirectory, a)
+	b = CombinePaths(options.CurrentDirectory, b)
+
+	if a == b {
+		return 0
+	}
+	if a == "" {
+		return -1
+	}
+	if b == "" {
+		return 1
+	}
+
+	// NOTE: Performance optimization - shortcut if the root segments differ as there would be no
+	//       need to perform path reduction.
+	aRoot := a[:GetRootLength(a)]
+	bRoot := b[:GetRootLength(b)]
+	result := core.CompareStringsCaseInsensitive(aRoot, bRoot)
+	if result != 0 {
+		return result
+	}
+
+	// NOTE: Performance optimization - shortcut if there are no relative path segments in
+	//       the non-root portion of the path
+	aRest := a[len(aRoot):]
+	bRest := b[len(bRoot):]
+	if !relativePathSegmentRegExp.MatchString(aRest) && !relativePathSegmentRegExp.MatchString(bRest) {
+		return options.GetComparer()(aRest, bRest)
+	}
+
+	// The path contains a relative path segment. Normalize the paths and perform a slower component
+	// by component comparison.
+	aComponents := reducePathComponents(GetPathComponents(a, ""))
+	bComponents := reducePathComponents(GetPathComponents(b, ""))
+	sharedLength := min(len(aComponents), len(bComponents))
+	for i := 1; i < sharedLength; i++ {
+		result := options.GetComparer()(aComponents[i], bComponents[i])
+		if result != 0 {
+			return result
+		}
+	}
+	return cmp.Compare(len(aComponents), len(bComponents))
+}
+
+func ComparePathsCaseSensitive(a string, b string, currentDirectory string) int {
+	return ComparePaths(a, b, ComparePathsOptions{IgnoreCase: false, CurrentDirectory: currentDirectory})
+}
+
+func ComparePathsCaseInsensitive(a string, b string, currentDirectory string) int {
+	return ComparePaths(a, b, ComparePathsOptions{IgnoreCase: true, CurrentDirectory: currentDirectory})
+}
+
+func ContainsPath(parent string, child string, options ComparePathsOptions) bool {
+	parent = CombinePaths(options.CurrentDirectory, parent)
+	child = CombinePaths(options.CurrentDirectory, child)
+	if parent == "" || child == "" {
+		return false
+	}
+	if parent == child {
+		return true
+	}
+	parentComponents := reducePathComponents(GetPathComponents(parent, ""))
+	childComponents := reducePathComponents(GetPathComponents(child, ""))
+	if len(childComponents) < len(parentComponents) {
+		return false
+	}
+
+	componentComparer := options.getEqualityComparer()
+	for i, parentComponent := range parentComponents {
+		var comparer func(a, b string) bool
+		if i == 0 {
+			comparer = core.EquateStringCaseInsensitive
+		} else {
+			comparer = componentComparer
+		}
+		if !comparer(parentComponent, childComponents[i]) {
+			return false
+		}
+	}
+
+	return true
+}
+
+func FileExtensionIs(path string, extension string) bool {
+	return len(path) > len(extension) && strings.HasSuffix(path, extension)
+}
+
+func ForEachAncestorDirectory[T any](directory string, callback func(directory string) (result T, stop bool)) (result T, ok bool) {
+	for {
+		result, stop := callback(directory)
+		if stop {
+			return result, true
+		}
+
+		parentPath := GetDirectoryPath(directory)
+		if parentPath == directory {
+			var zero T
+			return zero, false
+		}
+
+		directory = parentPath
+	}
+}
+
+func ForEachAncestorDirectoryPath[T any](directory Path, callback func(directory Path) (result T, stop bool)) (result T, ok bool) {
+	return ForEachAncestorDirectory(string(directory), func(directory string) (T, bool) {
+		return callback(Path(directory))
+	})
 }

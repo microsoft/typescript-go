@@ -14,9 +14,9 @@ import (
 )
 
 type DiagnosticsFormattingOptions struct {
-	CurrentDirectory     string
-	NewLine              string
-	GetCanonicalFileName func(fileName string) string
+	CurrentDirectory          string
+	NewLine                   string
+	UseCaseSensitiveFileNames bool
 }
 
 const (
@@ -199,7 +199,7 @@ func WriteLocation(output *strings.Builder, file *SourceFile, pos int, formatOpt
 	firstLine, firstChar := GetLineAndCharacterOfPosition(file, pos)
 	var relativeFileName string
 	if formatOpts != nil {
-		relativeFileName = tspath.ConvertToRelativePath(file.path, formatOpts.CurrentDirectory, formatOpts.GetCanonicalFileName)
+		relativeFileName = tspath.ConvertToRelativePath(file.path, tspath.ComparePathsOptions{IgnoreCase: !formatOpts.UseCaseSensitiveFileNames, CurrentDirectory: formatOpts.CurrentDirectory})
 	} else {
 		relativeFileName = file.path
 	}
@@ -333,7 +333,7 @@ func prettyPathForFileError(file *SourceFile, fileErrors []*Diagnostic, formatOp
 	line, _ := GetLineAndCharacterOfPosition(file, fileErrors[0].loc.Pos())
 	fileName := file.fileName
 	if tspath.PathIsAbsolute(fileName) && tspath.PathIsAbsolute(formatOpts.CurrentDirectory) {
-		fileName = tspath.ConvertToRelativePath(file.path, formatOpts.CurrentDirectory, formatOpts.GetCanonicalFileName)
+		fileName = tspath.ConvertToRelativePath(file.path, tspath.ComparePathsOptions{CurrentDirectory: formatOpts.CurrentDirectory, IgnoreCase: !formatOpts.UseCaseSensitiveFileNames})
 	}
 	return fmt.Sprintf("%s%s:%d%s",
 		fileName,
