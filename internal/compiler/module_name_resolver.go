@@ -248,7 +248,7 @@ func (r *ModuleResolver) resolveModuleName(moduleName string, containingFile str
 	if traceEnabled {
 		r.host.Trace(formatMessage(diagnostics.Resolving_module_0_from_1, moduleName, containingFile))
 		if redirectedReference != nil {
-			r.host.Trace(formatMessage(diagnostics.Using_compiler_options_of_project_reference_redirect_0, redirectedReference.sourceFile.fileName))
+			r.host.Trace(formatMessage(diagnostics.Using_compiler_options_of_project_reference_redirect_0, redirectedReference.sourceFile.FileName_))
 		}
 	}
 	containingDirectory := tspath.GetDirectoryPath(containingFile)

@@ -36,7 +36,7 @@ func (c *Checker) symbolToString(s *Symbol) string {
 	if s.ValueDeclaration != nil {
 		name := getNameOfDeclaration(s.ValueDeclaration)
 		if name != nil {
-			if isIdentifier(name) {
+			if IsIdentifier(name) {
 				return getTextOfNode(name)
 			}
 			return "[" + getTextOfNode(name) + "]"

@@ -83,7 +83,7 @@ func writeCodeSnippet(writer *strings.Builder, sourceFile *SourceFile, start int
 	firstLine, firstLineChar := GetLineAndCharacterOfPosition(sourceFile, start)
 	lastLine, lastLineChar := GetLineAndCharacterOfPosition(sourceFile, start+length)
 
-	lastLineOfFile, _ := GetLineAndCharacterOfPosition(sourceFile, len(sourceFile.text))
+	lastLineOfFile, _ := GetLineAndCharacterOfPosition(sourceFile, len(sourceFile.Text))
 
 	hasMoreThanFiveLines := lastLine-firstLine >= 4
 	gutterWidth := len(strconv.Itoa(lastLineOfFile + 1))
@@ -107,10 +107,10 @@ func writeCodeSnippet(writer *strings.Builder, sourceFile *SourceFile, start int
 		if i < lastLineOfFile {
 			lineEnd = GetPositionOfLineAndCharacter(sourceFile, i+1, 0)
 		} else {
-			lineEnd = sourceFile.loc.end
+			lineEnd = sourceFile.Loc.end
 		}
 
-		lineContent := strings.TrimRightFunc(sourceFile.text[lineStart:lineEnd], unicode.IsSpace) // trim from end
+		lineContent := strings.TrimRightFunc(sourceFile.Text[lineStart:lineEnd], unicode.IsSpace) // trim from end
 		lineContent = strings.ReplaceAll(lineContent, "\t", " ")                                  // convert tabs to single spaces
 
 		// Output the gutter and the actual contents of the line.
@@ -199,9 +199,9 @@ func WriteLocation(output *strings.Builder, file *SourceFile, pos int, formatOpt
 	firstLine, firstChar := GetLineAndCharacterOfPosition(file, pos)
 	var relativeFileName string
 	if formatOpts != nil {
-		relativeFileName = tspath.ConvertToRelativePath(file.path, formatOpts.CurrentDirectory, formatOpts.GetCanonicalFileName)
+		relativeFileName = tspath.ConvertToRelativePath(file.Path_, formatOpts.CurrentDirectory, formatOpts.GetCanonicalFileName)
 	} else {
-		relativeFileName = file.path
+		relativeFileName = file.Path_
 	}
 
 	writeWithStyleAndReset(output, relativeFileName, foregroundColorEscapeCyan)
@@ -287,7 +287,7 @@ func getErrorSummary(diags []*Diagnostic) *ErrorSummary {
 	// !!!
 	// Need an ordered map here, but sorting for consistency.
 	sortedFileList := slices.SortedFunc(maps.Keys(errorsByFiles), func(a, b *SourceFile) int {
-		return strings.Compare(a.fileName, b.fileName)
+		return strings.Compare(a.FileName_, b.FileName_)
 	})
 
 	return &ErrorSummary{
@@ -331,9 +331,9 @@ func writeTabularErrorsDisplay(output *strings.Builder, errorSummary *ErrorSumma
 
 func prettyPathForFileError(file *SourceFile, fileErrors []*Diagnostic, formatOpts *DiagnosticsFormattingOptions) string {
 	line, _ := GetLineAndCharacterOfPosition(file, fileErrors[0].loc.Pos())
-	fileName := file.fileName
+	fileName := file.FileName_
 	if tspath.PathIsAbsolute(fileName) && tspath.PathIsAbsolute(formatOpts.CurrentDirectory) {
-		fileName = tspath.ConvertToRelativePath(file.path, formatOpts.CurrentDirectory, formatOpts.GetCanonicalFileName)
+		fileName = tspath.ConvertToRelativePath(file.Path_, formatOpts.CurrentDirectory, formatOpts.GetCanonicalFileName)
 	}
 	return fmt.Sprintf("%s%s:%d%s",
 		fileName,

@@ -1140,7 +1140,7 @@ func (c *Checker) compareSignaturesRelated(source *Signature, target *Signature,
 	}
 	kind := ast.KindUnknown
 	if target.declaration != nil {
-		kind = target.declaration.kind
+		kind = target.declaration.Kind
 	}
 	strictVariance := checkMode&SignatureCheckModeCallback != 0 && c.strictFunctionTypes && kind != ast.KindMethodDeclaration && kind != ast.KindMethodSignature && kind != ast.KindConstructor
 	result := TernaryTrue
@@ -1494,7 +1494,7 @@ func (c *Checker) getNameableDeclarationAtPosition(signature *Signature, pos int
 }
 
 func (c *Checker) isValidDeclarationForTupleLabel(d *Node) bool {
-	return isNamedTupleMember(d) || isParameter(d) && d.Name() != nil && isIdentifier(d.Name())
+	return IsNamedTupleMember(d) || IsParameter(d) && d.Name() != nil && IsIdentifier(d.Name())
 }
 
 func (c *Checker) getNonArrayRestType(signature *Signature) *Type {
@@ -1573,7 +1573,7 @@ func (c *Checker) getTupleElementLabel(elementInfo TupleElementInfo, restSymbol 
 	if elementInfo.labeledDeclaration != nil {
 		return elementInfo.labeledDeclaration.Name().Text()
 	}
-	if restSymbol != nil && restSymbol.ValueDeclaration != nil && isParameter(restSymbol.ValueDeclaration) {
+	if restSymbol != nil && restSymbol.ValueDeclaration != nil && IsParameter(restSymbol.ValueDeclaration) {
 		return c.getTupleElementLabelFromBindingElement(restSymbol.ValueDeclaration, index, elementInfo.flags)
 	}
 	var rootName string
@@ -1605,7 +1605,7 @@ func (c *Checker) getTypePredicateOfSignature(sig *Signature) *TypePredicate {
 			if sig.declaration != nil {
 				typeNode = getEffectiveTypeAnnotationNode(sig.declaration)
 				switch {
-				case typeNode != nil && isTypePredicateNode(typeNode):
+				case typeNode != nil && IsTypePredicateNode(typeNode):
 					sig.resolvedTypePredicate = c.createTypePredicateFromTypePredicateNode(typeNode, sig)
 				case isFunctionLikeDeclaration(sig.declaration) && (sig.resolvedReturnType == nil || sig.resolvedReturnType.flags&TypeFlagsBoolean != 0) && c.getParameterCount(sig) > 0:
 					sig.resolvedTypePredicate = c.noTypePredicate // avoid infinite loop
@@ -1660,16 +1660,16 @@ func (c *Checker) typePredicateKindsMatch(a *TypePredicate, b *TypePredicate) bo
 func (c *Checker) createTypePredicateFromTypePredicateNode(node *Node, signature *Signature) *TypePredicate {
 	predicateNode := node.AsTypePredicateNode()
 	var t *Type
-	if predicateNode.typeNode != nil {
-		t = c.getTypeFromTypeNode(predicateNode.typeNode)
+	if predicateNode.TypeNode != nil {
+		t = c.getTypeFromTypeNode(predicateNode.TypeNode)
 	}
-	if isThisTypeNode(predicateNode.parameterName) {
-		kind := ifElse(predicateNode.assertsModifier != nil, TypePredicateKindAssertsThis, TypePredicateKindThis)
+	if IsThisTypeNode(predicateNode.ParameterName) {
+		kind := ifElse(predicateNode.AssertsModifier != nil, TypePredicateKindAssertsThis, TypePredicateKindThis)
 		return c.newTypePredicate(kind, "" /*parameterName*/, 0 /*parameterIndex*/, t)
 
 	}
-	kind := ifElse(predicateNode.assertsModifier != nil, TypePredicateKindAssertsIdentifier, TypePredicateKindIdentifier)
-	name := predicateNode.parameterName.Text()
+	kind := ifElse(predicateNode.AssertsModifier != nil, TypePredicateKindAssertsIdentifier, TypePredicateKindIdentifier)
+	name := predicateNode.ParameterName.Text()
 	index := core.FindIndex(signature.parameters, func(p *Symbol) bool { return p.Name == name })
 	return c.newTypePredicate(kind, name, int32(index), t)
 }
@@ -1889,7 +1889,7 @@ func (r *Relater) hasExcessProperties(source *Type, target *Type, reportErrors b
 					if r.errorNode == nil {
 						panic("No errorNode in hasExcessProperties")
 					}
-					if isJsxAttributes(r.errorNode) || isJsxOpeningLikeElement(r.errorNode) || isJsxOpeningLikeElement(r.errorNode.parent) {
+					if IsJsxAttributes(r.errorNode) || isJsxOpeningLikeElement(r.errorNode) || isJsxOpeningLikeElement(r.errorNode.Parent) {
 						// !!!
 						// // JsxAttributes has an object-literal flag and undergo same type-assignablity check as normal object-literal.
 						// // However, using an object-literal error message will be very confusing to the users so we give different a message.
@@ -1923,7 +1923,7 @@ func (r *Relater) hasExcessProperties(source *Type, target *Type, reportErrors b
 							getSourceFileOfNode(objectLiteralDeclaration) == getSourceFileOfNode(r.errorNode) {
 							name := prop.ValueDeclaration.Name()
 							r.errorNode = name
-							if isIdentifier(name) {
+							if IsIdentifier(name) {
 								suggestion = r.c.getSuggestionForNonexistentProperty(name.Text(), errorTarget)
 							}
 						}
@@ -1974,7 +1974,7 @@ func (c *Checker) getTypeOfPropertyInType(t *Type, name string) *Type {
 }
 
 func shouldCheckAsExcessProperty(prop *Symbol, container *Symbol) bool {
-	return prop.ValueDeclaration != nil && container.ValueDeclaration != nil && prop.ValueDeclaration.parent == container.ValueDeclaration
+	return prop.ValueDeclaration != nil && container.ValueDeclaration != nil && prop.ValueDeclaration.Parent == container.ValueDeclaration
 }
 
 func isIgnoredJsxProperty(source *Type, sourceProp *Symbol) bool {
@@ -3112,7 +3112,7 @@ func (r *Relater) reportUnmatchedProperty(source *Type, target *Type, unmatchedP
 	// give specific error in case where private names have the same description
 	if unmatchedProperty.ValueDeclaration != nil &&
 		unmatchedProperty.ValueDeclaration.Name() != nil &&
-		isPrivateIdentifier(unmatchedProperty.ValueDeclaration.Name()) &&
+		IsPrivateIdentifier(unmatchedProperty.ValueDeclaration.Name()) &&
 		source.symbol != nil &&
 		source.symbol.Flags&ast.SymbolFlagsClass != 0 {
 		privateIdentifierDescription := unmatchedProperty.ValueDeclaration.Name().Text()
