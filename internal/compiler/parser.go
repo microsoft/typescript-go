@@ -3197,11 +3197,11 @@ func (p *Parser) parseTemplateType() *Node {
 }
 
 func (p *Parser) parseTemplateHead(isTaggedTemplate bool) *Node {
-	if !isTaggedTemplate && p.scanner.tokenFlags&TokenFlagsIsInvalid != 0 {
+	if !isTaggedTemplate && p.scanner.tokenFlags&ast.TokenFlagsIsInvalid != 0 {
 		p.reScanTemplateToken(false /*isTaggedTemplate*/)
 	}
 	pos := p.nodePos()
-	result := p.factory.NewTemplateHead(p.scanner.tokenValue, p.getTemplateLiteralRawText(2 /*endLength*/), p.scanner.tokenFlags&TokenFlagsTemplateLiteralLikeFlags)
+	result := p.factory.NewTemplateHead(p.scanner.tokenValue, p.getTemplateLiteralRawText(2 /*endLength*/), p.scanner.tokenFlags&ast.TokenFlagsTemplateLiteralLikeFlags)
 	p.nextToken()
 	p.finishNode(result, pos)
 	return result
@@ -3209,7 +3209,7 @@ func (p *Parser) parseTemplateHead(isTaggedTemplate bool) *Node {
 
 func (p *Parser) getTemplateLiteralRawText(endLength int) string {
 	tokenText := p.scanner.TokenText()
-	if p.scanner.tokenFlags&TokenFlagsUnterminated != 0 {
+	if p.scanner.tokenFlags&ast.TokenFlagsUnterminated != 0 {
 		endLength = 0
 	}
 	return tokenText[1 : len(tokenText)-endLength]
@@ -3241,7 +3241,7 @@ func (p *Parser) parseLiteralOfTemplateSpan(isTaggedTemplate bool) *Node {
 		return p.parseTemplateMiddleOrTail()
 	}
 	p.parseErrorAtCurrentToken(diagnostics.X_0_expected, TokenToString(ast.KindCloseBraceToken))
-	result := p.factory.NewTemplateTail("", "", TokenFlagsNone)
+	result := p.factory.NewTemplateTail("", "", ast.TokenFlagsNone)
 	p.finishNode(result, p.nodePos())
 	return result
 }
@@ -3250,9 +3250,9 @@ func (p *Parser) parseTemplateMiddleOrTail() *Node {
 	pos := p.nodePos()
 	var result *Node
 	if p.token == ast.KindTemplateMiddle {
-		result = p.factory.NewTemplateMiddle(p.scanner.tokenValue, p.getTemplateLiteralRawText(2 /*endLength*/), p.scanner.tokenFlags&TokenFlagsTemplateLiteralLikeFlags)
+		result = p.factory.NewTemplateMiddle(p.scanner.tokenValue, p.getTemplateLiteralRawText(2 /*endLength*/), p.scanner.tokenFlags&ast.TokenFlagsTemplateLiteralLikeFlags)
 	} else {
-		result = p.factory.NewTemplateTail(p.scanner.tokenValue, p.getTemplateLiteralRawText(1 /*endLength*/), p.scanner.tokenFlags&TokenFlagsTemplateLiteralLikeFlags)
+		result = p.factory.NewTemplateTail(p.scanner.tokenValue, p.getTemplateLiteralRawText(1 /*endLength*/), p.scanner.tokenFlags&ast.TokenFlagsTemplateLiteralLikeFlags)
 	}
 	p.nextToken()
 	p.finishNode(result, pos)
@@ -5092,7 +5092,7 @@ func (p *Parser) parseTemplateSpan(isTaggedTemplate bool) *Node {
 func (p *Parser) parsePrimaryExpression() *Expression {
 	switch p.token {
 	case ast.KindNoSubstitutionTemplateLiteral:
-		if p.scanner.tokenFlags&TokenFlagsIsInvalid != 0 {
+		if p.scanner.tokenFlags&ast.TokenFlagsIsInvalid != 0 {
 			p.reScanTemplateToken(false /*isTaggedTemplate*/)
 		}
 		fallthrough

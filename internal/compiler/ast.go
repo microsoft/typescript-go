@@ -3861,7 +3861,7 @@ func IsConstructorTypeNode(node *Node) bool {
 type TemplateLiteralLikeBase struct {
 	LiteralLikeBase
 	RawText       string
-	TemplateFlags TokenFlags
+	TemplateFlags ast.TokenFlags
 }
 
 // TemplateHead
@@ -3871,7 +3871,7 @@ type TemplateHead struct {
 	TemplateLiteralLikeBase
 }
 
-func (f *NodeFactory) NewTemplateHead(text string, rawText string, templateFlags TokenFlags) *Node {
+func (f *NodeFactory) NewTemplateHead(text string, rawText string, templateFlags ast.TokenFlags) *Node {
 	data := &TemplateHead{}
 	data.Text = text
 	data.RawText = rawText
@@ -3886,7 +3886,7 @@ type TemplateMiddle struct {
 	TemplateLiteralLikeBase
 }
 
-func (f *NodeFactory) NewTemplateMiddle(text string, rawText string, templateFlags TokenFlags) *Node {
+func (f *NodeFactory) NewTemplateMiddle(text string, rawText string, templateFlags ast.TokenFlags) *Node {
 	data := &TemplateMiddle{}
 	data.Text = text
 	data.RawText = rawText
@@ -3901,7 +3901,7 @@ type TemplateTail struct {
 	TemplateLiteralLikeBase
 }
 
-func (f *NodeFactory) NewTemplateTail(text string, rawText string, templateFlags TokenFlags) *Node {
+func (f *NodeFactory) NewTemplateTail(text string, rawText string, templateFlags ast.TokenFlags) *Node {
 	data := &TemplateTail{}
 	data.Text = text
 	data.RawText = rawText

@@ -13,34 +13,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 )
 
-type TokenFlags int32
-
-const (
-	TokenFlagsNone                           TokenFlags = 0
-	TokenFlagsPrecedingLineBreak             TokenFlags = 1 << 0
-	TokenFlagsPrecedingJSDocComment          TokenFlags = 1 << 1
-	TokenFlagsUnterminated                   TokenFlags = 1 << 2
-	TokenFlagsExtendedUnicodeEscape          TokenFlags = 1 << 3  // e.g. `\u{10ffff}`
-	TokenFlagsScientific                     TokenFlags = 1 << 4  // e.g. `10e2`
-	TokenFlagsOctal                          TokenFlags = 1 << 5  // e.g. `0777`
-	TokenFlagsHexSpecifier                   TokenFlags = 1 << 6  // e.g. `0x00000000`
-	TokenFlagsBinarySpecifier                TokenFlags = 1 << 7  // e.g. `0b0110010000000000`
-	TokenFlagsOctalSpecifier                 TokenFlags = 1 << 8  // e.g. `0o777`
-	TokenFlagsContainsSeparator              TokenFlags = 1 << 9  // e.g. `0b1100_0101`
-	TokenFlagsUnicodeEscape                  TokenFlags = 1 << 10 // e.g. `\u00a0`
-	TokenFlagsContainsInvalidEscape          TokenFlags = 1 << 11 // e.g. `\uhello`
-	TokenFlagsHexEscape                      TokenFlags = 1 << 12 // e.g. `\xa0`
-	TokenFlagsContainsLeadingZero            TokenFlags = 1 << 13 // e.g. `0888`
-	TokenFlagsContainsInvalidSeparator       TokenFlags = 1 << 14 // e.g. `0_1`
-	TokenFlagsPrecedingJSDocLeadingAsterisks TokenFlags = 1 << 15
-	TokenFlagsBinaryOrOctalSpecifier         TokenFlags = TokenFlagsBinarySpecifier | TokenFlagsOctalSpecifier
-	TokenFlagsWithSpecifier                  TokenFlags = TokenFlagsHexSpecifier | TokenFlagsBinaryOrOctalSpecifier
-	TokenFlagsStringLiteralFlags             TokenFlags = TokenFlagsHexEscape | TokenFlagsUnicodeEscape | TokenFlagsExtendedUnicodeEscape | TokenFlagsContainsInvalidEscape
-	TokenFlagsNumericLiteralFlags            TokenFlags = TokenFlagsScientific | TokenFlagsOctal | TokenFlagsContainsLeadingZero | TokenFlagsWithSpecifier | TokenFlagsContainsSeparator | TokenFlagsContainsInvalidSeparator
-	TokenFlagsTemplateLiteralLikeFlags       TokenFlags = TokenFlagsHexEscape | TokenFlagsUnicodeEscape | TokenFlagsExtendedUnicodeEscape | TokenFlagsContainsInvalidEscape
-	TokenFlagsIsInvalid                      TokenFlags = TokenFlagsOctal | TokenFlagsContainsLeadingZero | TokenFlagsContainsInvalidSeparator | TokenFlagsContainsInvalidEscape
-)
-
 type EscapeSequenceScanningFlags int32
 
 const (
@@ -246,7 +218,7 @@ type ScannerState struct {
 	tokenStart   int        // Starting position of non-whitespace part of current token
 	token        ast.Kind // ast.Kind of current token
 	tokenValue   string     // Parsed value of current token
-	tokenFlags   TokenFlags // Flags for current token
+	tokenFlags   ast.TokenFlags // Flags for current token
 }
 
 type Scanner struct {
@@ -303,15 +275,15 @@ func (s *Scanner) Rewind(state ScannerState) {
 }
 
 func (s *Scanner) HasUnicodeEscape() bool {
-	return s.tokenFlags&TokenFlagsUnicodeEscape != 0
+	return s.tokenFlags&ast.TokenFlagsUnicodeEscape != 0
 }
 
 func (s *Scanner) HasExtendedUnicodeEscape() bool {
-	return s.tokenFlags&TokenFlagsExtendedUnicodeEscape != 0
+	return s.tokenFlags&ast.TokenFlagsExtendedUnicodeEscape != 0
 }
 
 func (s *Scanner) HasPrecedingLineBreak() bool {
-	return s.tokenFlags&TokenFlagsPrecedingLineBreak != 0
+	return s.tokenFlags&ast.TokenFlagsPrecedingLineBreak != 0
 }
 
 func (s *Scanner) SetText(text string) {
@@ -365,7 +337,7 @@ func (s *Scanner) shouldParseJSDoc() bool {
 
 func (s *Scanner) Scan() ast.Kind {
 	s.fullStartPos = s.pos
-	s.tokenFlags = TokenFlagsNone
+	s.tokenFlags = ast.TokenFlagsNone
 	for {
 		s.tokenStart = s.pos
 		ch := s.char()
@@ -374,7 +346,7 @@ func (s *Scanner) Scan() ast.Kind {
 			s.pos++
 			continue
 		case '\n', '\r':
-			s.tokenFlags |= TokenFlagsPrecedingLineBreak
+			s.tokenFlags |= ast.TokenFlagsPrecedingLineBreak
 			s.pos++
 			continue
 		case '!':
@@ -512,7 +484,7 @@ func (s *Scanner) Scan() ast.Kind {
 							break
 						}
 						if ch == '\r' || ch == '\n' {
-							s.tokenFlags |= TokenFlagsPrecedingLineBreak
+							s.tokenFlags |= ast.TokenFlagsPrecedingLineBreak
 						}
 						s.pos++
 					} else {
@@ -524,7 +496,7 @@ func (s *Scanner) Scan() ast.Kind {
 					}
 				}
 				if isJSDoc && s.shouldParseJSDoc() {
-					s.tokenFlags |= TokenFlagsPrecedingJSDocComment
+					s.tokenFlags |= ast.TokenFlagsPrecedingJSDocComment
 				}
 				// commentDirectives = appendIfCommentDirective(commentDirectives, text.slice(lastLineStart, pos), commentDirectiveRegExMultiLine, lastLineStart);
 				continue
@@ -545,7 +517,7 @@ func (s *Scanner) Scan() ast.Kind {
 					digits = "0"
 				}
 				s.tokenValue = "0x" + digits
-				s.tokenFlags |= TokenFlagsHexSpecifier
+				s.tokenFlags |= ast.TokenFlagsHexSpecifier
 				s.token = s.scanBigIntSuffix()
 				break
 			}
@@ -557,7 +529,7 @@ func (s *Scanner) Scan() ast.Kind {
 					digits = "0"
 				}
 				s.tokenValue = "0b" + digits
-				s.tokenFlags |= TokenFlagsBinarySpecifier
+				s.tokenFlags |= ast.TokenFlagsBinarySpecifier
 				s.token = s.scanBigIntSuffix()
 				break
 			}
@@ -569,7 +541,7 @@ func (s *Scanner) Scan() ast.Kind {
 					digits = "0"
 				}
 				s.tokenValue = "0o" + digits
-				s.tokenFlags |= TokenFlagsOctalSpecifier
+				s.tokenFlags |= ast.TokenFlagsOctalSpecifier
 				s.token = s.scanBigIntSuffix()
 				break
 			}
@@ -773,7 +745,7 @@ func (s *Scanner) Scan() ast.Kind {
 				continue
 			}
 			if stringutil.IsLineBreak(ch) {
-				s.tokenFlags |= TokenFlagsPrecedingLineBreak
+				s.tokenFlags |= ast.TokenFlagsPrecedingLineBreak
 				s.pos += size
 				continue
 			}
@@ -837,7 +809,7 @@ func (s *Scanner) ReScanSlashToken() ast.Kind {
 			// regex.  Report error and return what we have so far.
 			switch {
 			case size == 0 || stringutil.IsLineBreak(ch):
-				s.tokenFlags |= TokenFlagsUnterminated
+				s.tokenFlags |= ast.TokenFlagsUnterminated
 				s.error(diagnostics.Unterminated_regular_expression_literal)
 				break loop
 			case inEscape:
@@ -1066,7 +1038,7 @@ func (s *Scanner) scanString(jsxAttributeString bool) string {
 		ch := s.char()
 		if ch < 0 {
 			sb.WriteString(s.text[start:s.pos])
-			s.tokenFlags |= TokenFlagsUnterminated
+			s.tokenFlags |= ast.TokenFlagsUnterminated
 			s.error(diagnostics.Unterminated_string_literal)
 			break
 		}
@@ -1083,7 +1055,7 @@ func (s *Scanner) scanString(jsxAttributeString bool) string {
 		}
 		if ch == '\n' || ch == '\r' && !jsxAttributeString {
 			sb.WriteString(s.text[start:s.pos])
-			s.tokenFlags |= TokenFlagsUnterminated
+			s.tokenFlags |= ast.TokenFlagsUnterminated
 			s.error(diagnostics.Unterminated_string_literal)
 			break
 		}
@@ -1105,7 +1077,7 @@ func (s *Scanner) scanTemplateAndSetTokenValue(shouldEmitInvalidEscapeError bool
 			if ch == '`' {
 				s.pos++
 			} else {
-				s.tokenFlags |= TokenFlagsUnterminated
+				s.tokenFlags |= ast.TokenFlagsUnterminated
 				s.error(diagnostics.Unterminated_template_literal)
 			}
 			token = ifElse(startedWithBacktick, ast.KindNoSubstitutionTemplateLiteral, ast.KindTemplateTail)
@@ -1172,7 +1144,7 @@ func (s *Scanner) scanEscapeSequence(flags EscapeSequenceScanningFlags) string {
 			s.pos++
 		}
 		// '\47'
-		s.tokenFlags |= TokenFlagsContainsInvalidEscape
+		s.tokenFlags |= ast.TokenFlagsContainsInvalidEscape
 		if flags&EscapeSequenceScanningFlagsReportInvalidEscapeErrors != 0 {
 			code, _ := strconv.ParseInt(s.text[start+1:s.pos], 8, 32)
 			if flags&EscapeSequenceScanningFlagsRegularExpression != 0 && flags&EscapeSequenceScanningFlagsAtomEscape == 0 && ch != '0' {
@@ -1185,7 +1157,7 @@ func (s *Scanner) scanEscapeSequence(flags EscapeSequenceScanningFlags) string {
 		return s.text[start:s.pos]
 	case '8', '9':
 		// the invalid '\8' and '\9'
-		s.tokenFlags |= TokenFlagsContainsInvalidEscape
+		s.tokenFlags |= ast.TokenFlagsContainsInvalidEscape
 		if flags&EscapeSequenceScanningFlagsReportInvalidEscapeErrors != 0 {
 			if flags&EscapeSequenceScanningFlagsRegularExpression != 0 && flags&EscapeSequenceScanningFlagsAtomEscape == 0 {
 				s.errorAt(diagnostics.Decimal_escape_sequences_and_backreferences_are_not_allowed_in_a_character_class, start, s.pos-start)
@@ -1217,27 +1189,27 @@ func (s *Scanner) scanEscapeSequence(flags EscapeSequenceScanningFlags) string {
 		s.pos -= 2
 		codePoint := s.scanUnicodeEscape(flags&EscapeSequenceScanningFlagsReportInvalidEscapeErrors != 0)
 		if codePoint < 0 {
-			s.tokenFlags |= TokenFlagsContainsInvalidEscape
+			s.tokenFlags |= ast.TokenFlagsContainsInvalidEscape
 			return s.text[start:s.pos]
 		}
 		if extended {
-			s.tokenFlags |= TokenFlagsExtendedUnicodeEscape
+			s.tokenFlags |= ast.TokenFlagsExtendedUnicodeEscape
 		} else {
-			s.tokenFlags |= TokenFlagsUnicodeEscape
+			s.tokenFlags |= ast.TokenFlagsUnicodeEscape
 		}
 		return string(codePoint)
 	case 'x':
 		// '\xDD'
 		for ; s.pos < start+4; s.pos++ {
 			if !stringutil.IsHexDigit(s.char()) {
-				s.tokenFlags |= TokenFlagsContainsInvalidEscape
+				s.tokenFlags |= ast.TokenFlagsContainsInvalidEscape
 				if flags&EscapeSequenceScanningFlagsReportInvalidEscapeErrors != 0 {
 					s.error(diagnostics.Hexadecimal_digit_expected)
 				}
 				return s.text[start:s.pos]
 			}
 		}
-		s.tokenFlags |= TokenFlagsHexEscape
+		s.tokenFlags |= ast.TokenFlagsHexEscape
 		escapedValue, _ := strconv.ParseInt(s.text[start+2:s.pos], 16, 32)
 		return string(rune(escapedValue))
 	case '\r':
@@ -1314,7 +1286,7 @@ func (s *Scanner) scanNumber() ast.Kind {
 	if s.char() == '0' {
 		s.pos++
 		if s.char() == '_' {
-			s.tokenFlags |= TokenFlagsContainsSeparator | TokenFlagsContainsInvalidSeparator
+			s.tokenFlags |= ast.TokenFlagsContainsSeparator | ast.TokenFlagsContainsInvalidSeparator
 			s.errorAt(diagnostics.Numeric_separators_are_not_allowed_here, s.pos, 1)
 			s.pos = start
 			fixedPart = s.scanNumberFragment()
@@ -1323,10 +1295,10 @@ func (s *Scanner) scanNumber() ast.Kind {
 			if digits == "" {
 				fixedPart = "0"
 			} else if !isOctal {
-				s.tokenFlags |= TokenFlagsContainsLeadingZero
+				s.tokenFlags |= ast.TokenFlagsContainsLeadingZero
 				fixedPart = digits
 			} else {
-				s.tokenFlags |= TokenFlagsOctal
+				s.tokenFlags |= ast.TokenFlagsOctal
 				s.tokenValue = "0o" + digits
 				s.errorAt(diagnostics.Octal_literals_are_not_allowed_Use_the_syntax_0, start, s.pos-start, digits)
 				return ast.KindNumericLiteral
@@ -1346,7 +1318,7 @@ func (s *Scanner) scanNumber() ast.Kind {
 	end := s.pos
 	if s.char() == 'E' || s.char() == 'e' {
 		s.pos++
-		s.tokenFlags |= TokenFlagsScientific
+		s.tokenFlags |= ast.TokenFlagsScientific
 		if s.char() == '+' || s.char() == '-' {
 			s.pos++
 		}
@@ -1359,7 +1331,7 @@ func (s *Scanner) scanNumber() ast.Kind {
 			end = s.pos
 		}
 	}
-	if s.tokenFlags&TokenFlagsContainsSeparator != 0 {
+	if s.tokenFlags&ast.TokenFlagsContainsSeparator != 0 {
 		s.tokenValue = fixedPart
 		if fractionalPart != "" {
 			s.tokenValue += "." + fractionalPart
@@ -1370,7 +1342,7 @@ func (s *Scanner) scanNumber() ast.Kind {
 	} else {
 		s.tokenValue = s.text[start:end]
 	}
-	if s.tokenFlags&TokenFlagsContainsLeadingZero != 0 {
+	if s.tokenFlags&ast.TokenFlagsContainsLeadingZero != 0 {
 		s.errorAt(diagnostics.Decimals_with_leading_zeros_are_not_allowed, start, s.pos-start)
 		s.tokenValue = numberToString(stringToNumber(s.tokenValue))
 		return ast.KindNumericLiteral
@@ -1387,7 +1359,7 @@ func (s *Scanner) scanNumber() ast.Kind {
 		idStart := s.pos
 		id := s.scanIdentifierParts()
 		if result != ast.KindBigIntLiteral && len(id) == 1 && s.text[idStart] == 'n' {
-			if s.tokenFlags&TokenFlagsScientific != 0 {
+			if s.tokenFlags&ast.TokenFlagsScientific != 0 {
 				s.errorAt(diagnostics.A_bigint_literal_cannot_use_exponential_notation, start, s.pos-start)
 				return result
 			}
@@ -1410,13 +1382,13 @@ func (s *Scanner) scanNumberFragment() string {
 	for {
 		ch := s.char()
 		if ch == '_' {
-			s.tokenFlags |= TokenFlagsContainsSeparator
+			s.tokenFlags |= ast.TokenFlagsContainsSeparator
 			if allowSeparator {
 				allowSeparator = false
 				isPreviousTokenSeparator = true
 				result += s.text[start:s.pos]
 			} else {
-				s.tokenFlags |= TokenFlagsContainsInvalidSeparator
+				s.tokenFlags |= ast.TokenFlagsContainsInvalidSeparator
 				if isPreviousTokenSeparator {
 					s.errorAt(diagnostics.Multiple_consecutive_numeric_separators_are_not_permitted, s.pos, 1)
 				} else {
@@ -1436,7 +1408,7 @@ func (s *Scanner) scanNumberFragment() string {
 		break
 	}
 	if isPreviousTokenSeparator {
-		s.tokenFlags |= TokenFlagsContainsInvalidSeparator
+		s.tokenFlags |= ast.TokenFlagsContainsInvalidSeparator
 		s.errorAt(diagnostics.Numeric_separators_are_not_allowed_here, s.pos-1, 1)
 	}
 	return result + s.text[start:s.pos]
@@ -1468,7 +1440,7 @@ func (s *Scanner) scanHexDigits(minCount int, scanAsManyAsPossible bool, canHave
 			allowSeparator = canHaveSeparators
 			isPreviousTokenSeparator = false
 		} else if canHaveSeparators && ch == '_' {
-			s.tokenFlags |= TokenFlagsContainsSeparator
+			s.tokenFlags |= ast.TokenFlagsContainsSeparator
 			if allowSeparator {
 				allowSeparator = false
 				isPreviousTokenSeparator = true
@@ -1502,7 +1474,7 @@ func (s *Scanner) scanBinaryOrOctalDigits(base int32) string {
 			allowSeparator = true
 			isPreviousTokenSeparator = false
 		} else if ch == '_' {
-			s.tokenFlags |= TokenFlagsContainsSeparator
+			s.tokenFlags |= ast.TokenFlagsContainsSeparator
 			if allowSeparator {
 				allowSeparator = false
 				isPreviousTokenSeparator = true
