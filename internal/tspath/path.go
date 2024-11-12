@@ -4,7 +4,7 @@ import (
 	"cmp"
 	"strings"
 
-	"github.com/microsoft/typescript-go/internal/utils"
+	"github.com/microsoft/typescript-go/internal/core"
 )
 
 type Path string
@@ -18,7 +18,7 @@ const urlSchemeSeparator = "://"
 // check path for these segments:
 //
 //	'', '.'. '..'
-var relativePathSegmentRegExp = utils.MakeRegexp(`//|(?:^|/)\.\.?(?:$|/)`)
+var relativePathSegmentRegExp = core.MakeRegexp(`//|(?:^|/)\.\.?(?:$|/)`)
 
 //// Path Tests
 
@@ -364,7 +364,7 @@ func getPathComponentsRelativeTo(from string, to string, stringEqualer func(a, b
 		fromComponent := fromComponents[start]
 		toComponent := toComponents[start]
 		if start == 0 {
-			if !utils.EquateStringCaseInsensitive(fromComponent, toComponent) {
+			if !core.EquateStringCaseInsensitive(fromComponent, toComponent) {
 				break
 			}
 		} else {
@@ -409,7 +409,7 @@ func getRelativePathToDirectoryOrUrl(directoryPathOrUrl string, relativeOrAbsolu
 	pathComponents := getPathComponentsRelativeTo(
 		resolvePath(currentDirectory, directoryPathOrUrl),
 		resolvePath(currentDirectory, relativeOrAbsolutePath),
-		utils.EquateStringCaseSensitive,
+		core.EquateStringCaseSensitive,
 		getCanonicalFileName,
 	)
 
@@ -427,23 +427,23 @@ func getRelativePathToDirectoryOrUrl(directoryPathOrUrl string, relativeOrAbsolu
 	return getPathFromPathComponents(pathComponents)
 }
 
-func ComparePaths(a string, b string, currentDirectory string, ignoreCase bool) utils.Comparison {
+func ComparePaths(a string, b string, currentDirectory string, ignoreCase bool) core.Comparison {
 	a = combinePaths(currentDirectory, a)
 	b = combinePaths(currentDirectory, b)
-	return comparePathsWorker(a, b, utils.GetStringComparer(ignoreCase))
+	return comparePathsWorker(a, b, core.GetStringComparer(ignoreCase))
 }
 
-func comparePathsWorker(a string, b string, stringComparer func(a, b string) utils.Comparison) utils.Comparison {
+func comparePathsWorker(a string, b string, stringComparer func(a, b string) core.Comparison) core.Comparison {
 	if a == b {
-		return utils.ComparisonEqual
+		return core.ComparisonEqual
 	}
 
 	// NOTE: Performance optimization - shortcut if the root segments differ as there would be no
 	//       need to perform path reduction.
 	aRoot := a[:getRootLength(a)]
 	bRoot := b[:getRootLength(b)]
-	result := utils.CompareStringsCaseInsensitive(aRoot, bRoot)
-	if result != utils.ComparisonEqual {
+	result := core.CompareStringsCaseInsensitive(aRoot, bRoot)
+	if result != core.ComparisonEqual {
 		return result
 	}
 
@@ -462,7 +462,7 @@ func comparePathsWorker(a string, b string, stringComparer func(a, b string) uti
 	sharedLength := min(len(aComponents), len(bComponents))
 	for i := 1; i < sharedLength; i++ {
 		result := stringComparer(aComponents[i], bComponents[i])
-		if result != utils.ComparisonEqual {
+		if result != core.ComparisonEqual {
 			return result
 		}
 	}
@@ -526,7 +526,7 @@ func GetAnyExtensionFromPath(path string, extensions []string, ignoreCase bool) 
 	// Retrieves any string from the final "." onwards from a base file name.
 	// Unlike extensionFromPath, which throws an exception on unrecognized extensions.
 	if len(extensions) > 0 {
-		return getAnyExtensionFromPathWorker(removeTrailingDirectorySeparator(path), extensions, utils.GetStringEqualityComparer(ignoreCase))
+		return getAnyExtensionFromPathWorker(removeTrailingDirectorySeparator(path), extensions, core.GetStringEqualityComparer(ignoreCase))
 	}
 
 	baseFileName := GetBaseFileName(path)
