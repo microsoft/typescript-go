@@ -9008,10 +9008,10 @@ func (c *Checker) createTupleTargetType(elementInfos []TupleElementInfo, readonl
 	members := make(SymbolTable)
 	combinedFlags := ElementFlagsNone
 	if arity != 0 {
-		typeParameters = make([]*Type, arity)
+		typeParameters = make([]*Type, 0, arity)
 		for i := range arity {
 			typeParameter := c.newTypeParameter(nil)
-			typeParameters[i] = typeParameter
+			typeParameters = append(typeParameters, typeParameter)
 			flags := elementInfos[i].flags
 			combinedFlags |= flags
 			if combinedFlags&ElementFlagsVariable == 0 {

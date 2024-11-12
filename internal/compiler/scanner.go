@@ -1759,9 +1759,9 @@ func isConflictMarkerTrivia(text string, pos int) bool {
 	return false
 }
 
-func scanConflictMarkerTrivia(text string, pos int, error func(diag *diagnostics.Message, pos int, length int, args ...any)) int {
-	if error != nil {
-		error(diagnostics.Merge_conflict_marker_encountered, pos, mergeConflictMarkerLength)
+func scanConflictMarkerTrivia(text string, pos int, reportError func(diag *diagnostics.Message, pos int, length int, args ...any)) int {
+	if reportError != nil {
+		reportError(diagnostics.Merge_conflict_marker_encountered, pos, mergeConflictMarkerLength)
 	}
 	ch, size := utf8.DecodeRuneInString(text[pos:])
 	length := len(text)
