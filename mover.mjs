@@ -3,9 +3,29 @@ import * as path from "node:path";
 
 const compilerFolder = "./internal/compiler";
 
-/** @type {Record<string, {package: string, rename?: string}>} */
+/** @type {Record<string, {package: string, members?: boolean, rename?: string}>} */
 const refactorMapping = {
-    "ScriptTarget": {
+    "NodeId": {
+        package: "ast",
+        members: false,
+    },
+    "MergeId": {
+        package: "ast",
+        members: false,
+    },
+    "SymbolId": {
+        package: "ast",
+        members: false,
+    },
+    "Symbol": {
+        package: "ast",
+        members: false,
+    },
+    "SymbolTable": {
+        package: "ast",
+        members: false,
+    },
+    /*"ScriptTarget": {
         package: "core",
     },
     "LanguageVariant": {
@@ -26,10 +46,15 @@ const refactorMapping = {
     },
     "CheckFlags": {
         package: "ast",
-    },
+    },*/
     // "Tristate": {
     //     package: "tristate",
     // } // wasn't ported following the same pattern
+}
+
+const astNames = []
+for (const n of astNames) {
+    refactorMapping[n] = { package: "ast", members: false };
 }
 
 const enums = Object.keys(refactorMapping);
@@ -48,9 +73,11 @@ outer: for (const entry of entries) {
         // replace bare references to the type with `package.type`
         file = file.replaceAll(new RegExp(`(\\W)${e}(\\W)`, "g"), (_, prefix, postfix) => `${prefix}${refactorMapping[e].package}.${newRootName}${postfix}`);
         // Replace all member references with `package.member`
-        file = file.replaceAll(new RegExp(`(\\W)${e}(\\w+)`, "g"), (_, prefix, postfix) => `${prefix}${refactorMapping[e].package}.${newRootName}${postfix}`);
+        if (refactorMapping[e].members !== false) { 
+            file = file.replaceAll(new RegExp(`(\\W)${e}(\\w+)`, "g"), (_, prefix, postfix) => `${prefix}${refactorMapping[e].package}.${newRootName}${postfix}`);
+        }
     }
-
+/*
     // Do tristate bespoke like
 
     // replace bare references to Tristate with `Tristate.Type`
@@ -59,6 +86,6 @@ outer: for (const entry of entries) {
     for (const member of ["TSUnknown", "TSTrue", "TSFalse"]) {
         file = file.replaceAll(new RegExp(`(\\W)${member}(\\W)`, "g"), (_, prefix, postfix) => `${prefix}core.${member}${postfix}`);
     }
-
+*/
     fs.writeFileSync(localPath, file);
 }

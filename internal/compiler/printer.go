@@ -33,8 +33,8 @@ func (c *Checker) getTypePrecedence(t *Type) TypePrecedence {
 }
 
 func (c *Checker) symbolToString(s *Symbol) string {
-	if s.valueDeclaration != nil {
-		name := getNameOfDeclaration(s.valueDeclaration)
+	if s.ValueDeclaration != nil {
+		name := getNameOfDeclaration(s.ValueDeclaration)
 		if name != nil {
 			if isIdentifier(name) {
 				return getTextOfNode(name)
@@ -42,7 +42,7 @@ func (c *Checker) symbolToString(s *Symbol) string {
 			return "[" + getTextOfNode(name) + "]"
 		}
 	}
-	return s.name
+	return s.Name
 }
 
 func (c *Checker) typeToString(t *Type) string {
@@ -108,7 +108,7 @@ func (p *Printer) printTypeEx(t *Type, precedence TypePrecedence) {
 
 func (p *Printer) printType(t *Type) {
 	if t.alias != nil && (p.flags&TypeFormatFlagsInTypeAlias == 0 || p.depth > 0) {
-		p.print(t.alias.symbol.name)
+		p.print(t.alias.symbol.Name)
 		p.printTypeArguments(t.alias.typeArguments)
 	} else {
 		p.printTypeNoAlias(t)
@@ -186,9 +186,9 @@ func (p *Printer) printBigIntLiteral(b PseudoBigInt) {
 }
 
 func (p *Printer) printEnumLiteral(t *Type) {
-	p.print(p.c.getParentOfSymbol(t.symbol).name)
+	p.print(p.c.getParentOfSymbol(t.symbol).Name)
 	p.print(".")
-	p.print(t.symbol.name)
+	p.print(t.symbol.Name)
 }
 
 func (p *Printer) printObjectType(t *Type) {
@@ -196,7 +196,7 @@ func (p *Printer) printObjectType(t *Type) {
 	case t.objectFlags&ObjectFlagsReference != 0:
 		p.printParameterizedType(t)
 	case t.objectFlags&ObjectFlagsClassOrInterface != 0:
-		p.print(t.symbol.name)
+		p.print(t.symbol.Name)
 	default:
 		p.printAnonymousType(t)
 	}
@@ -214,7 +214,7 @@ func (p *Printer) printParameterizedType(t *Type) {
 }
 
 func (p *Printer) printTypeReference(t *Type) {
-	p.print(t.symbol.name)
+	p.print(t.symbol.Name)
 	p.printTypeArguments(p.c.getTypeArguments(t)[:p.c.getTypeReferenceArity(t)])
 }
 
@@ -318,7 +318,7 @@ func (p *Printer) printAnonymousType(t *Type) {
 			p.print(",")
 		}
 		p.print(" ")
-		p.print(prop.name)
+		p.print(prop.Name)
 		p.print(": ")
 		p.printType(p.c.getTypeOfSymbol(prop))
 		tail = true
@@ -337,7 +337,7 @@ func (p *Printer) printSignature(sig *Signature, returnSeparator string) {
 			if tail {
 				p.print(", ")
 			}
-			p.print(tp.symbol.name)
+			p.print(tp.symbol.Name)
 			tail = true
 		}
 		p.print(">")
@@ -350,9 +350,9 @@ func (p *Printer) printSignature(sig *Signature, returnSeparator string) {
 		}
 		if sig.flags&SignatureFlagsHasRestParameter != 0 && i == len(sig.parameters)-1 {
 			p.print("...")
-			p.print(param.name)
+			p.print(param.Name)
 		} else {
-			p.print(param.name)
+			p.print(param.Name)
 			if i >= int(sig.minArgumentCount) {
 				p.print("?")
 			}
@@ -389,7 +389,7 @@ func (p *Printer) printTypeParameter(t *Type) {
 	if t.AsTypeParameter().isThisType {
 		p.print("this")
 	} else {
-		p.print(t.symbol.name)
+		p.print(t.symbol.Name)
 	}
 }
 
@@ -398,7 +398,7 @@ func (p *Printer) printUnionType(t *Type) {
 	case t.flags&TypeFlagsBoolean != 0:
 		p.print("boolean")
 	case t.flags&TypeFlagsEnumLiteral != 0:
-		p.print(t.symbol.name)
+		p.print(t.symbol.Name)
 	default:
 		u := t.AsUnionType()
 		if u.origin != nil {
@@ -444,7 +444,7 @@ func (p *Printer) printTypeAlias(d *TypeAliasDeclaration) {
 	symbol := d.AsNode().Symbol()
 	t := p.c.getDeclaredTypeOfSymbol(symbol)
 	typeParameters := p.c.typeAliasLinks.get(symbol).typeParameters
-	p.print(symbol.name)
+	p.print(symbol.Name)
 	if len(typeParameters) != 0 {
 		p.print("<")
 		tail := false
@@ -452,7 +452,7 @@ func (p *Printer) printTypeAlias(d *TypeAliasDeclaration) {
 			if tail {
 				p.print(", ")
 			}
-			p.print(t.symbol.name)
+			p.print(t.symbol.Name)
 			tail = true
 		}
 		p.print(">")

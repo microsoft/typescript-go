@@ -105,8 +105,8 @@ func bindSourceFile(file *SourceFile, options *CompilerOptions) {
 func (b *Binder) newSymbol(flags ast.SymbolFlags, name string) *Symbol {
 	b.symbolCount++
 	result := b.symbolPool.New()
-	result.flags = flags
-	result.name = name
+	result.Flags = flags
+	result.Name = name
 	return result
 }
 
@@ -170,18 +170,18 @@ func (b *Binder) declareSymbolEx(symbolTable SymbolTable, parent *Symbol, node *
 			symbol = b.newSymbol(ast.SymbolFlagsNone, name)
 			symbolTable[name] = symbol
 			if isReplaceableByMethod {
-				symbol.isReplaceableByMethod = true
+				symbol.IsReplaceableByMethod = true
 			}
-		} else if isReplaceableByMethod && !symbol.isReplaceableByMethod {
+		} else if isReplaceableByMethod && !symbol.IsReplaceableByMethod {
 			// A symbol already exists, so don't add this as a declaration.
 			return symbol
-		} else if symbol.flags&excludes != 0 {
-			if symbol.isReplaceableByMethod {
+		} else if symbol.Flags&excludes != 0 {
+			if symbol.IsReplaceableByMethod {
 				// Javascript constructor-declared symbols can be discarded in favor of
 				// prototype symbols like methods.
 				symbol = b.newSymbol(ast.SymbolFlagsNone, name)
 				symbolTable[name] = symbol
-			} else if includes&ast.SymbolFlagsVariable == 0 || symbol.flags&ast.SymbolFlagsAssignment == 0 {
+			} else if includes&ast.SymbolFlagsVariable == 0 || symbol.Flags&ast.SymbolFlagsAssignment == 0 {
 				// Assignment declarations are allowed to merge with variables, no matter what other flags they have.
 				if node.Name() != nil {
 					setParent(node.Name(), node)
@@ -189,18 +189,18 @@ func (b *Binder) declareSymbolEx(symbolTable SymbolTable, parent *Symbol, node *
 				// Report errors every position with duplicate declaration
 				// Report errors on previous encountered declarations
 				var message *diagnostics.Message
-				if symbol.flags&ast.SymbolFlagsBlockScopedVariable != 0 {
+				if symbol.Flags&ast.SymbolFlagsBlockScopedVariable != 0 {
 					message = diagnostics.Cannot_redeclare_block_scoped_variable_0
 				} else {
 					message = diagnostics.Duplicate_identifier_0
 				}
 				messageNeedsName := true
-				if symbol.flags&ast.SymbolFlagsEnum != 0 || includes&ast.SymbolFlagsEnum != 0 {
+				if symbol.Flags&ast.SymbolFlagsEnum != 0 || includes&ast.SymbolFlagsEnum != 0 {
 					message = diagnostics.Enum_declarations_can_only_merge_with_namespace_or_other_enum_declarations
 					messageNeedsName = false
 				}
 				multipleDefaultExports := false
-				if len(symbol.declarations) != 0 {
+				if len(symbol.Declarations) != 0 {
 					// If the current node is a default export of some sort, then check if
 					// there are any other default exports that we need to error on.
 					// We'll know whether we have other default exports depending on if `symbol` already has a declaration list set.
@@ -213,7 +213,7 @@ func (b *Binder) declareSymbolEx(symbolTable SymbolTable, parent *Symbol, node *
 						// Error on multiple export default in the following case:
 						// 1. multiple export default of class declaration or function declaration by checking ast.NodeFlags.Default
 						// 2. multiple export default of export assignment. This one doesn't have ast.NodeFlags.Default on (as export default doesn't considered as modifiers)
-						if len(symbol.declarations) != 0 && isExportAssignment(node) && !node.AsExportAssignment().isExportEquals {
+						if len(symbol.Declarations) != 0 && isExportAssignment(node) && !node.AsExportAssignment().isExportEquals {
 							message = diagnostics.A_module_cannot_have_multiple_default_exports
 							messageNeedsName = false
 							multipleDefaultExports = true
@@ -230,11 +230,11 @@ func (b *Binder) declareSymbolEx(symbolTable SymbolTable, parent *Symbol, node *
 				} else {
 					diag = b.createDiagnosticForNode(declarationName, message)
 				}
-				if isTypeAliasDeclaration(node) && nodeIsMissing(node.AsTypeAliasDeclaration().typeNode) && hasSyntacticModifier(node, ModifierFlagsExport) && symbol.flags&(ast.SymbolFlagsAlias|ast.SymbolFlagsType|ast.SymbolFlagsNamespace) != 0 {
+				if isTypeAliasDeclaration(node) && nodeIsMissing(node.AsTypeAliasDeclaration().typeNode) && hasSyntacticModifier(node, ModifierFlagsExport) && symbol.Flags&(ast.SymbolFlagsAlias|ast.SymbolFlagsType|ast.SymbolFlagsNamespace) != 0 {
 					// export type T; - may have meant export type { T }?
 					diag.addRelatedInfo(b.createDiagnosticForNode(node, diagnostics.Did_you_mean_0, "export type { "+node.AsTypeAliasDeclaration().name.AsIdentifier().text+" }"))
 				}
-				for index, declaration := range symbol.declarations {
+				for index, declaration := range symbol.Declarations {
 					var decl *Node = getNameOfDeclaration(declaration)
 					if decl == nil {
 						decl = declaration
@@ -259,9 +259,9 @@ func (b *Binder) declareSymbolEx(symbolTable SymbolTable, parent *Symbol, node *
 		}
 	}
 	b.addDeclarationToSymbol(symbol, node, includes)
-	if symbol.parent == nil {
-		symbol.parent = parent
-	} else if symbol.parent != parent {
+	if symbol.Parent == nil {
+		symbol.Parent = parent
+	} else if symbol.Parent != parent {
 		panic("Existing symbol parent should match new one")
 	}
 	return symbol
@@ -381,7 +381,7 @@ func (b *Binder) declareModuleMember(node *Node, symbolFlags ast.SymbolFlags, sy
 			exportKind = ast.SymbolFlagsExportValue
 		}
 		local := b.declareSymbol(getLocals(b.container), nil /*parent*/, node, exportKind, symbolExcludes)
-		local.exportSymbol = b.declareSymbol(getExports(b.container.Symbol()), b.container.Symbol(), node, symbolFlags, symbolExcludes)
+		local.ExportSymbol = b.declareSymbol(getExports(b.container.Symbol()), b.container.Symbol(), node, symbolFlags, symbolExcludes)
 		node.ExportableData().localSymbol = local
 		return local
 	}
@@ -763,7 +763,7 @@ func (b *Binder) bindModuleDeclaration(node *Node) {
 		if state != ModuleInstanceStateNonInstantiated {
 			symbol := node.AsModuleDeclaration().symbol
 			// if module was already merged with some function, class or non-const enum, treat it as non-const-enum-only
-			symbol.constEnumOnlyModule = symbol.constEnumOnlyModule && (symbol.flags&(ast.SymbolFlagsFunction|ast.SymbolFlagsClass|ast.SymbolFlagsRegularEnum) == 0) && state == ModuleInstanceStateConstEnumOnly
+			symbol.ConstEnumOnlyModule = symbol.ConstEnumOnlyModule && (symbol.Flags&(ast.SymbolFlagsFunction|ast.SymbolFlagsClass|ast.SymbolFlagsRegularEnum) == 0) && state == ModuleInstanceStateConstEnumOnly
 		}
 	}
 }
@@ -787,7 +787,7 @@ func (b *Binder) bindNamespaceExportDeclaration(node *Node) {
 	case !node.parent.AsSourceFile().isDeclarationFile:
 		b.errorOnNode(node, diagnostics.Global_module_exports_may_only_appear_in_declaration_files)
 	default:
-		b.declareSymbol(getSymbolTable(&b.file.symbol.globalExports), b.file.symbol, node, ast.SymbolFlagsAlias, ast.SymbolFlagsAliasExcludes)
+		b.declareSymbol(getSymbolTable(&b.file.symbol.GlobalExports), b.file.symbol, node, ast.SymbolFlagsAlias, ast.SymbolFlagsAliasExcludes)
 	}
 }
 
@@ -1034,13 +1034,13 @@ func (b *Binder) bindClassLikeDeclaration(node *Node) {
 	// module might have an exported variable called 'prototype'.  We can't allow that as
 	// that would clash with the built-in 'prototype' for the class.
 	prototypeSymbol := b.newSymbol(ast.SymbolFlagsProperty|ast.SymbolFlagsPrototype, "prototype")
-	symbolExport := getExports(symbol)[prototypeSymbol.name]
+	symbolExport := getExports(symbol)[prototypeSymbol.Name]
 	if symbolExport != nil {
 		setParent(name, node)
-		b.errorOnNode(symbolExport.declarations[0], diagnostics.Duplicate_identifier_0, symbolName(prototypeSymbol))
+		b.errorOnNode(symbolExport.Declarations[0], diagnostics.Duplicate_identifier_0, symbolName(prototypeSymbol))
 	}
-	getExports(symbol)[prototypeSymbol.name] = prototypeSymbol
-	prototypeSymbol.parent = symbol
+	getExports(symbol)[prototypeSymbol.Name] = prototypeSymbol
+	prototypeSymbol.Parent = symbol
 }
 
 func (b *Binder) bindPropertyOrMethodOrAccessor(node *Node, symbolFlags ast.SymbolFlags, symbolExcludes ast.SymbolFlags) {
@@ -1068,15 +1068,15 @@ func (b *Binder) bindFunctionOrConstructorType(node *Node) {
 	b.addDeclarationToSymbol(symbol, node, ast.SymbolFlagsSignature)
 	typeLiteralSymbol := b.newSymbol(ast.SymbolFlagsTypeLiteral, InternalSymbolNameType)
 	b.addDeclarationToSymbol(typeLiteralSymbol, node, ast.SymbolFlagsTypeLiteral)
-	typeLiteralSymbol.members = make(SymbolTable)
-	typeLiteralSymbol.members[symbol.name] = symbol
+	typeLiteralSymbol.Members = make(SymbolTable)
+	typeLiteralSymbol.Members[symbol.Name] = symbol
 }
 
 func addLateBoundAssignmentDeclarationToSymbol(node *Node, symbol *Symbol) {
-	if symbol.assignmentDeclarationMembers == nil {
-		symbol.assignmentDeclarationMembers = make(map[NodeId]*Node)
+	if symbol.AssignmentDeclarationMembers == nil {
+		symbol.AssignmentDeclarationMembers = make(map[NodeId]*Node)
 	}
-	symbol.assignmentDeclarationMembers[getNodeId(node)] = node
+	symbol.AssignmentDeclarationMembers[getNodeId(node)] = node
 }
 
 func (b *Binder) bindFunctionPropertyAssignment(node *Node) {
@@ -1185,7 +1185,7 @@ func (b *Binder) getInferTypeContainer(node *Node) *Node {
 func (b *Binder) bindAnonymousDeclaration(node *Node, symbolFlags ast.SymbolFlags, name string) {
 	symbol := b.newSymbol(symbolFlags, name)
 	if symbolFlags&(ast.SymbolFlagsEnumMember|ast.SymbolFlagsClassMember) != 0 {
-		symbol.parent = b.container.Symbol()
+		symbol.Parent = b.container.Symbol()
 	}
 	b.addDeclarationToSymbol(symbol, node, symbolFlags)
 }
@@ -1247,7 +1247,7 @@ func (b *Binder) lookupName(name string, container *Node) *Symbol {
 	if declaration != nil {
 		symbol := declaration.symbol
 		if symbol != nil {
-			return symbol.exports[name]
+			return symbol.Exports[name]
 		}
 	}
 	return nil
@@ -2521,16 +2521,16 @@ func (b *Binder) addToContainerChain(next *Node) {
 }
 
 func (b *Binder) addDeclarationToSymbol(symbol *Symbol, node *Node, symbolFlags ast.SymbolFlags) {
-	symbol.flags |= symbolFlags
+	symbol.Flags |= symbolFlags
 	node.DeclarationData().symbol = symbol
-	if symbol.declarations == nil {
-		symbol.declarations = b.newSingleDeclaration(node)
+	if symbol.Declarations == nil {
+		symbol.Declarations = b.newSingleDeclaration(node)
 	} else {
-		symbol.declarations = core.AppendIfUnique(symbol.declarations, node)
+		symbol.Declarations = core.AppendIfUnique(symbol.Declarations, node)
 	}
 	// On merge of const enum module with class or function, reset const enum only flag (namespaces will already recalculate)
-	if symbol.constEnumOnlyModule && symbol.flags&(ast.SymbolFlagsFunction|ast.SymbolFlagsClass|ast.SymbolFlagsRegularEnum) != 0 {
-		symbol.constEnumOnlyModule = false
+	if symbol.ConstEnumOnlyModule && symbol.Flags&(ast.SymbolFlagsFunction|ast.SymbolFlagsClass|ast.SymbolFlagsRegularEnum) != 0 {
+		symbol.ConstEnumOnlyModule = false
 	}
 	if symbolFlags&ast.SymbolFlagsValue != 0 {
 		setValueDeclaration(symbol, node)
@@ -2538,13 +2538,13 @@ func (b *Binder) addDeclarationToSymbol(symbol *Symbol, node *Node, symbolFlags 
 }
 
 func setValueDeclaration(symbol *Symbol, node *Node) {
-	valueDeclaration := symbol.valueDeclaration
+	valueDeclaration := symbol.ValueDeclaration
 	if valueDeclaration == nil ||
 		!(node.flags&ast.NodeFlagsAmbient != 0 && valueDeclaration.flags&ast.NodeFlagsAmbient == 0) &&
 			(isAssignmentDeclaration(valueDeclaration) && !isAssignmentDeclaration(node)) ||
 		(valueDeclaration.kind != node.kind && isEffectiveModuleDeclaration(valueDeclaration)) {
 		// other kinds of value declarations take precedence over modules and assignment declarations
-		symbol.valueDeclaration = node
+		symbol.ValueDeclaration = node
 	}
 }
 

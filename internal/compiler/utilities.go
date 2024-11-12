@@ -78,17 +78,17 @@ func getNodeId(node *Node) NodeId {
 }
 
 func getSymbolId(symbol *Symbol) SymbolId {
-	if symbol.id == 0 {
-		symbol.id = SymbolId(nextSymbolId.Add(1))
+	if symbol.Id == 0 {
+		symbol.Id = SymbolId(nextSymbolId.Add(1))
 	}
-	return symbol.id
+	return symbol.Id
 }
 
 func getMergeId(symbol *Symbol) MergeId {
-	if symbol.mergeId == 0 {
-		symbol.mergeId = MergeId(nextMergeId.Add(1))
+	if symbol.MergeId == 0 {
+		symbol.MergeId = MergeId(nextMergeId.Add(1))
 	}
-	return symbol.mergeId
+	return symbol.MergeId
 }
 
 // Diagnostic
@@ -1353,14 +1353,14 @@ func isObjectLiteralMethod(node *Node) bool {
 }
 
 func symbolName(symbol *Symbol) string {
-	if symbol.valueDeclaration != nil && isPrivateIdentifierClassElementDeclaration(symbol.valueDeclaration) {
-		return symbol.valueDeclaration.Name().AsPrivateIdentifier().text
+	if symbol.ValueDeclaration != nil && isPrivateIdentifierClassElementDeclaration(symbol.ValueDeclaration) {
+		return symbol.ValueDeclaration.Name().AsPrivateIdentifier().text
 	}
-	return symbol.name
+	return symbol.Name
 }
 
 func isStaticPrivateIdentifierProperty(s *Symbol) bool {
-	return s.valueDeclaration != nil && isPrivateIdentifierClassElementDeclaration(s.valueDeclaration) && isStatic(s.valueDeclaration)
+	return s.ValueDeclaration != nil && isPrivateIdentifierClassElementDeclaration(s.ValueDeclaration) && isStatic(s.ValueDeclaration)
 }
 
 func isPrivateIdentifierClassElementDeclaration(node *Node) bool {
@@ -1488,7 +1488,7 @@ func isEmptyObjectLiteral(expression *Node) bool {
 }
 
 func isFunctionSymbol(symbol *Symbol) bool {
-	d := symbol.valueDeclaration
+	d := symbol.ValueDeclaration
 	return d != nil && (isFunctionDeclaration(d) || isVariableDeclaration(d) && isFunctionLike(d.AsVariableDeclaration().initializer))
 }
 
@@ -2107,10 +2107,10 @@ func isTypeNode(node *Node) bool {
 }
 
 func getLocalSymbolForExportDefault(symbol *Symbol) *Symbol {
-	if !isExportDefaultSymbol(symbol) || len(symbol.declarations) == 0 {
+	if !isExportDefaultSymbol(symbol) || len(symbol.Declarations) == 0 {
 		return nil
 	}
-	for _, decl := range symbol.declarations {
+	for _, decl := range symbol.Declarations {
 		localSymbol := decl.LocalSymbol()
 		if localSymbol != nil {
 			return localSymbol
@@ -2120,11 +2120,11 @@ func getLocalSymbolForExportDefault(symbol *Symbol) *Symbol {
 }
 
 func isExportDefaultSymbol(symbol *Symbol) bool {
-	return symbol != nil && len(symbol.declarations) > 0 && hasSyntacticModifier(symbol.declarations[0], ModifierFlagsDefault)
+	return symbol != nil && len(symbol.Declarations) > 0 && hasSyntacticModifier(symbol.Declarations[0], ModifierFlagsDefault)
 }
 
 func getDeclarationOfKind(symbol *Symbol, kind ast.Kind) *Node {
-	for _, declaration := range symbol.declarations {
+	for _, declaration := range symbol.Declarations {
 		if declaration.kind == kind {
 			return declaration
 		}
@@ -2196,23 +2196,23 @@ loop:
 					// - parameters are only in the scope of function body
 					// This restriction does not apply to JSDoc comment types because they are parented
 					// at a higher level than type parameters would normally be
-					if meaning&result.flags&ast.SymbolFlagsType != 0 && lastLocation.kind != ast.KindJSDoc {
-						useResult = result.flags&ast.SymbolFlagsTypeParameter != 0 && (lastLocation.flags&ast.NodeFlagsSynthesized != 0 ||
+					if meaning&result.Flags&ast.SymbolFlagsType != 0 && lastLocation.kind != ast.KindJSDoc {
+						useResult = result.Flags&ast.SymbolFlagsTypeParameter != 0 && (lastLocation.flags&ast.NodeFlagsSynthesized != 0 ||
 							lastLocation == location.ReturnType() ||
 							isParameterLikeOrReturnTag(lastLocation))
 					}
-					if meaning&result.flags&ast.SymbolFlagsVariable != 0 {
+					if meaning&result.Flags&ast.SymbolFlagsVariable != 0 {
 						// expression inside parameter will lookup as normal variable scope when targeting es2015+
 						if r.useOuterVariableScopeInParameter(result, location, lastLocation) {
 							useResult = false
-						} else if result.flags&ast.SymbolFlagsFunctionScopedVariable != 0 {
+						} else if result.Flags&ast.SymbolFlagsFunctionScopedVariable != 0 {
 							// parameters are visible only inside function body, parameter list and return type
 							// technically for parameter list case here we might mix parameters and variables declared in function,
 							// however it is detected separately when checking initializers of parameters
 							// to make sure that they reference no variables declared after them.
 							useResult = lastLocation.kind == ast.KindParameter ||
 								lastLocation.flags&ast.NodeFlagsSynthesized != 0 ||
-								lastLocation == location.ReturnType() && findAncestor(result.valueDeclaration, isParameter) != nil
+								lastLocation == location.ReturnType() && findAncestor(result.ValueDeclaration, isParameter) != nil
 						}
 					}
 				} else if location.kind == ast.KindConditionalType {
@@ -2234,14 +2234,14 @@ loop:
 			}
 			fallthrough
 		case ast.KindModuleDeclaration:
-			moduleExports := r.getSymbolOfDeclaration(location).exports
+			moduleExports := r.getSymbolOfDeclaration(location).Exports
 			if isSourceFile(location) || (isModuleDeclaration(location) && location.flags&ast.NodeFlagsAmbient != 0 && !isGlobalScopeAugmentation(location)) {
 				// It's an external module. First see if the module has an export default and if the local
 				// name of that export default matches.
 				result = moduleExports[InternalSymbolNameDefault]
 				if result != nil {
 					localSymbol := getLocalSymbolForExportDefault(result)
-					if localSymbol != nil && result.flags&meaning != 0 && localSymbol.name == name {
+					if localSymbol != nil && result.Flags&meaning != 0 && localSymbol.Name == name {
 						break loop
 					}
 					result = nil
@@ -2258,7 +2258,7 @@ loop:
 				//        an alias. If we used &, we'd be throwing out symbols that have non alias aspects,
 				//        which is not the desired behavior.
 				moduleExport := moduleExports[name]
-				if moduleExport != nil && moduleExport.flags == ast.SymbolFlagsAlias && (getDeclarationOfKind(moduleExport, ast.KindExportSpecifier) != nil || getDeclarationOfKind(moduleExport, ast.KindNamespaceExport) != nil) {
+				if moduleExport != nil && moduleExport.Flags == ast.SymbolFlagsAlias && (getDeclarationOfKind(moduleExport, ast.KindExportSpecifier) != nil || getDeclarationOfKind(moduleExport, ast.KindNamespaceExport) != nil) {
 					break
 				}
 			}
@@ -2269,12 +2269,12 @@ loop:
 				}
 			}
 		case ast.KindEnumDeclaration:
-			result = r.lookup(r.getSymbolOfDeclaration(location).exports, name, meaning&ast.SymbolFlagsEnumMember)
+			result = r.lookup(r.getSymbolOfDeclaration(location).Exports, name, meaning&ast.SymbolFlagsEnumMember)
 			if result != nil {
-				if nameNotFoundMessage != nil && getIsolatedModules(r.compilerOptions) && location.flags&ast.NodeFlagsAmbient == 0 && getSourceFileOfNode(location) != getSourceFileOfNode(result.valueDeclaration) {
+				if nameNotFoundMessage != nil && getIsolatedModules(r.compilerOptions) && location.flags&ast.NodeFlagsAmbient == 0 && getSourceFileOfNode(location) != getSourceFileOfNode(result.ValueDeclaration) {
 					isolatedModulesLikeFlagName := ifElse(r.compilerOptions.VerbatimModuleSyntax == core.TSTrue, "verbatimModuleSyntax", "isolatedModules")
 					r.error(originalLocation, diagnostics.Cannot_access_0_from_another_file_without_qualification_when_1_is_enabled_Use_2_instead,
-						name, isolatedModulesLikeFlagName, r.getSymbolOfDeclaration(location).name+"."+name)
+						name, isolatedModulesLikeFlagName, r.getSymbolOfDeclaration(location).Name+"."+name)
 				}
 				break loop
 			}
@@ -2289,7 +2289,7 @@ loop:
 				}
 			}
 		case ast.KindClassDeclaration, ast.KindClassExpression, ast.KindInterfaceDeclaration:
-			result = r.lookup(r.getSymbolOfDeclaration(location).members, name, meaning&ast.SymbolFlagsType)
+			result = r.lookup(r.getSymbolOfDeclaration(location).Members, name, meaning&ast.SymbolFlagsType)
 			if result != nil {
 				if !isTypeParameterSymbolDeclaredInContainer(result, location) {
 					// ignore type parameters not declared in this container
@@ -2318,7 +2318,7 @@ loop:
 			if lastLocation == location.AsExpressionWithTypeArguments().expression && isHeritageClause(location.parent) && location.parent.AsHeritageClause().token == ast.KindExtendsKeyword {
 				container := location.parent.parent
 				if isClassLike(container) {
-					result = r.lookup(r.getSymbolOfDeclaration(container).members, name, meaning&ast.SymbolFlagsType)
+					result = r.lookup(r.getSymbolOfDeclaration(container).Members, name, meaning&ast.SymbolFlagsType)
 					if result != nil {
 						if nameNotFoundMessage != nil {
 							r.error(originalLocation, diagnostics.Base_class_expressions_cannot_reference_class_type_parameters)
@@ -2338,7 +2338,7 @@ loop:
 			grandparent = location.parent.parent
 			if isClassLike(grandparent) || isInterfaceDeclaration(grandparent) {
 				// A reference to this grandparent's type parameters would be an error
-				result = r.lookup(r.getSymbolOfDeclaration(grandparent).members, name, meaning&ast.SymbolFlagsType)
+				result = r.lookup(r.getSymbolOfDeclaration(grandparent).Members, name, meaning&ast.SymbolFlagsType)
 				if result != nil {
 					if nameNotFoundMessage != nil {
 						r.error(originalLocation, diagnostics.A_computed_property_name_cannot_reference_a_type_parameter_from_its_containing_type)
@@ -2472,7 +2472,7 @@ loop:
 func (r *NameResolver) useOuterVariableScopeInParameter(result *Symbol, location *Node, lastLocation *Node) bool {
 	if isParameter(lastLocation) {
 		body := getBodyOfNode(location)
-		if body != nil && result.valueDeclaration != nil && result.valueDeclaration.Pos() >= body.Pos() && result.valueDeclaration.End() <= body.End() {
+		if body != nil && result.ValueDeclaration != nil && result.ValueDeclaration.Pos() >= body.Pos() && result.ValueDeclaration.End() <= body.End() {
 			// check for several cases where we introduce temporaries that require moving the name/initializer of the parameter to the body
 			// - static field in a class expression
 			// - optional chaining pre-es2020
@@ -2542,7 +2542,7 @@ func getIsDeferredContext(location *Node, lastLocation *Node) bool {
 }
 
 func isTypeParameterSymbolDeclaredInContainer(symbol *Symbol, container *Node) bool {
-	for _, decl := range symbol.declarations {
+	for _, decl := range symbol.Declarations {
 		if decl.kind == ast.KindTypeParameter {
 			parent := decl.parent.parent
 			if parent == container {
@@ -2988,7 +2988,7 @@ func extensionIsTs(ext string) bool {
 }
 
 func isShorthandAmbientModuleSymbol(moduleSymbol *Symbol) bool {
-	return isShorthandAmbientModule(moduleSymbol.valueDeclaration)
+	return isShorthandAmbientModule(moduleSymbol.ValueDeclaration)
 }
 
 func isShorthandAmbientModule(node *Node) bool {
@@ -3118,7 +3118,7 @@ func isImportCall(node *Node) bool {
 }
 
 func getSourceFileOfModule(module *Symbol) *SourceFile {
-	declaration := module.valueDeclaration
+	declaration := module.ValueDeclaration
 	if declaration == nil {
 		declaration = getNonAugmentationDeclaration(module)
 	}
@@ -3126,7 +3126,7 @@ func getSourceFileOfModule(module *Symbol) *SourceFile {
 }
 
 func getNonAugmentationDeclaration(symbol *Symbol) *Node {
-	return core.Find(symbol.declarations, func(d *Node) bool {
+	return core.Find(symbol.Declarations, func(d *Node) bool {
 		return !isExternalModuleAugmentation(d) && !(isModuleDeclaration(d) && isGlobalScopeAugmentation(d))
 	})
 }
@@ -3147,7 +3147,7 @@ func isSyntacticDefault(node *Node) bool {
 }
 
 func hasExportAssignmentSymbol(moduleSymbol *Symbol) bool {
-	return moduleSymbol.exports[InternalSymbolNameExportEquals] != nil
+	return moduleSymbol.Exports[InternalSymbolNameExportEquals] != nil
 }
 
 func isImportOrExportSpecifier(node *Node) bool {
@@ -3379,7 +3379,7 @@ func createSymbolTable(symbols []*Symbol) SymbolTable {
 	}
 	result := make(SymbolTable)
 	for _, symbol := range symbols {
-		result[symbol.name] = symbol
+		result[symbol.Name] = symbol
 	}
 	return result
 }
@@ -3392,12 +3392,12 @@ func compareSymbols(s1, s2 *Symbol) int {
 	if s1 == s2 {
 		return 0
 	}
-	if s1.valueDeclaration != nil && s2.valueDeclaration != nil {
-		if s1.parent != nil && s2.parent != nil {
+	if s1.ValueDeclaration != nil && s2.ValueDeclaration != nil {
+		if s1.Parent != nil && s2.Parent != nil {
 			// Symbols with the same unmerged parent are always in the same file
-			if s1.parent != s2.parent {
-				f1 := getSourceFileOfNode(s1.valueDeclaration)
-				f2 := getSourceFileOfNode(s2.valueDeclaration)
+			if s1.Parent != s2.Parent {
+				f1 := getSourceFileOfNode(s1.ValueDeclaration)
+				f2 := getSourceFileOfNode(s2.ValueDeclaration)
 				if f1 != f2 {
 					// In different files, first compare base filename
 					r := strings.Compare(filepath.Base(f1.path), filepath.Base(f2.path))
@@ -3409,11 +3409,11 @@ func compareSymbols(s1, s2 *Symbol) int {
 				}
 			}
 			// In the same file, compare source positions
-			return s1.valueDeclaration.Pos() - s2.valueDeclaration.Pos()
+			return s1.ValueDeclaration.Pos() - s2.ValueDeclaration.Pos()
 		}
 	}
 	// Sort by name
-	r := strings.Compare(s1.name, s2.name)
+	r := strings.Compare(s1.Name, s2.Name)
 	if r == 0 {
 		// Same name, sort by symbol id
 		r = int(getSymbolId(s1)) - int(getSymbolId(s2))
@@ -3422,7 +3422,7 @@ func compareSymbols(s1, s2 *Symbol) int {
 }
 
 func getClassLikeDeclarationOfSymbol(symbol *Symbol) *Node {
-	return core.Find(symbol.declarations, isClassLike)
+	return core.Find(symbol.Declarations, isClassLike)
 }
 
 func isThisInTypeQuery(node *Node) bool {
@@ -3448,40 +3448,40 @@ func getDeclarationModifierFlagsFromSymbol(s *Symbol) ModifierFlags {
 }
 
 func getDeclarationModifierFlagsFromSymbolEx(s *Symbol, isWrite bool) ModifierFlags {
-	if s.valueDeclaration != nil {
+	if s.ValueDeclaration != nil {
 		var declaration *Node
 		if isWrite {
-			declaration = core.Find(s.declarations, isSetAccessorDeclaration)
+			declaration = core.Find(s.Declarations, isSetAccessorDeclaration)
 		}
-		if declaration == nil && s.flags&ast.SymbolFlagsGetAccessor != 0 {
-			declaration = core.Find(s.declarations, isGetAccessorDeclaration)
+		if declaration == nil && s.Flags&ast.SymbolFlagsGetAccessor != 0 {
+			declaration = core.Find(s.Declarations, isGetAccessorDeclaration)
 		}
 		if declaration == nil {
-			declaration = s.valueDeclaration
+			declaration = s.ValueDeclaration
 		}
 		flags := getCombinedModifierFlags(declaration)
-		if s.parent != nil && s.parent.flags&ast.SymbolFlagsClass != 0 {
+		if s.Parent != nil && s.Parent.Flags&ast.SymbolFlagsClass != 0 {
 			return flags
 		}
 		return flags & ^ModifierFlagsAccessibilityModifier
 	}
-	if s.checkFlags&ast.CheckFlagsSynthetic != 0 {
+	if s.CheckFlags&ast.CheckFlagsSynthetic != 0 {
 		var accessModifier ModifierFlags
 		switch {
-		case s.checkFlags&ast.CheckFlagsContainsPrivate != 0:
+		case s.CheckFlags&ast.CheckFlagsContainsPrivate != 0:
 			accessModifier = ModifierFlagsPrivate
-		case s.checkFlags&ast.CheckFlagsContainsPublic != 0:
+		case s.CheckFlags&ast.CheckFlagsContainsPublic != 0:
 			accessModifier = ModifierFlagsPublic
 		default:
 			accessModifier = ModifierFlagsProtected
 		}
 		var staticModifier ModifierFlags
-		if s.checkFlags&ast.CheckFlagsContainsStatic != 0 {
+		if s.CheckFlags&ast.CheckFlagsContainsStatic != 0 {
 			staticModifier = ModifierFlagsStatic
 		}
 		return accessModifier | staticModifier
 	}
-	if s.flags&ast.SymbolFlagsPrototype != 0 {
+	if s.Flags&ast.SymbolFlagsPrototype != 0 {
 		return ModifierFlagsPublic | ModifierFlagsStatic
 	}
 	return ModifierFlagsNone
@@ -3774,7 +3774,7 @@ func isVariableDeclarationInVariableStatement(node *Node) bool {
 }
 
 func isKnownSymbol(symbol *Symbol) bool {
-	return isLateBoundName(symbol.name)
+	return isLateBoundName(symbol.Name)
 }
 
 func isLateBoundName(name string) bool {
@@ -3789,11 +3789,11 @@ func getSymbolTable(data *SymbolTable) SymbolTable {
 }
 
 func getMembers(symbol *Symbol) SymbolTable {
-	return getSymbolTable(&symbol.members)
+	return getSymbolTable(&symbol.Members)
 }
 
 func getExports(symbol *Symbol) SymbolTable {
-	return getSymbolTable(&symbol.exports)
+	return getSymbolTable(&symbol.Exports)
 }
 
 func getLocals(container *Node) SymbolTable {

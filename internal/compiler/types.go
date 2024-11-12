@@ -137,21 +137,21 @@ type TypeId uint32
 // Symbol
 
 type Symbol struct {
-	flags                        ast.SymbolFlags
-	checkFlags                   ast.CheckFlags // Non-zero only in transient symbols created by Checker
-	constEnumOnlyModule          bool       // True if module contains only const enums or other modules with only const enums
-	isReplaceableByMethod        bool
-	name                         string
-	declarations                 []*Node
-	valueDeclaration             *Node
-	members                      SymbolTable
-	exports                      SymbolTable
-	id                           SymbolId
-	mergeId                      MergeId // Assigned once symbol is merged somewhere
-	parent                       *Symbol
-	exportSymbol                 *Symbol
-	assignmentDeclarationMembers map[NodeId]*Node // Set of detected assignment declarations
-	globalExports                SymbolTable      // Conditional global UMD exports
+	Flags                        ast.SymbolFlags
+	CheckFlags                   ast.CheckFlags // Non-zero only in transient symbols created by Checker
+	ConstEnumOnlyModule          bool       // True if module contains only const enums or other modules with only const enums
+	IsReplaceableByMethod        bool
+	Name                         string
+	Declarations                 []*Node
+	ValueDeclaration             *Node
+	Members                      SymbolTable
+	Exports                      SymbolTable
+	Id                           SymbolId
+	MergeId                      MergeId // Assigned once symbol is merged somewhere
+	Parent                       *Symbol
+	ExportSymbol                 *Symbol
+	AssignmentDeclarationMembers map[NodeId]*Node // Set of detected assignment declarations
+	GlobalExports                SymbolTable      // Conditional global UMD exports
 }
 
 // SymbolTable
