@@ -79,7 +79,7 @@ export const installTools = task({
     name: "install-tools",
     run: async () => {
         for (const [tool, version] of tools) {
-            await $`go install ${tool}@${version}`
+            await $`go install ${tool}@${version}`;
         }
     },
 });
