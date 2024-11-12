@@ -31,7 +31,6 @@ linters:
     - nolintlint
     - paralleltest
     - perfsprint
-    - prealloc
     - predeclared
     - reassign
     - tenv
