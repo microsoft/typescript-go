@@ -5,25 +5,8 @@ const compilerFolder = "./internal/compiler";
 
 /** @type {Record<string, {package: string, members?: boolean, rename?: string}>} */
 const refactorMapping = {
-    "NodeId": {
-        package: "ast",
-        members: false,
-    },
-    "MergeId": {
-        package: "ast",
-        members: false,
-    },
-    "SymbolId": {
-        package: "ast",
-        members: false,
-    },
-    "Symbol": {
-        package: "ast",
-        members: false,
-    },
-    "SymbolTable": {
-        package: "ast",
-        members: false,
+    "ModifierFlags": {
+        package: "ast"
     },
     /*"ScriptTarget": {
         package: "core",
@@ -54,6 +37,8 @@ const refactorMapping = {
 
 // A list of every type or public value defined in ast.go
 const astNames = [
+    "NodeId", "MergeId", "SymbolId",
+    "Symbol", "SymbolTable",
     "Node", "NodeData",
     "Statement", "Declaration", "Expression", "TypeNode", "TypeElement", "ClassElement", "NamedMember", "ObjectLiteralElement", "BlockOrExpression", "AccessExpression", "DeclarationName", "ModuleName", "ModuleExportName", "PropertyName", "ModuleBody", "ForInitializer", "ModuleReference", "NamedImportBindings", "NamedExportBindings", "MemberName", "EntityName", "BindingName", "ModifierLike", "JsxChild", "JsxAttributeLike", "JsxAttributeValue", "JsxTagNameExpression", "ClassLikeDeclaration", "AccessorDeclaration", "LiteralLikeNode", "LiteralExpression", "UnionOrIntersectionTypeNode", "TemplateLiteralLikeNode", "TemplateMiddleOrTail", "TemplateLiteral", "TypePredicateParameterName", "ImportAttributeName", "LeftHandSideExpression", "IdentifierNode", "ModifierListNode", "TokenNode", "TemplateHeadNode", "TemplateMiddleNode", "TemplateTailNode", "TemplateSpanNode", "TemplateLiteralTypeSpanNode", "BlockNode", "CatchClauseNode", "CaseBlockNode", "CaseOrDefaultClauseNode", "VariableDeclarationNode", "VariableDeclarationListNode", "BindingElementNode", "TypeParameterListNode", "TypeArgumentListNode", "TypeParameterDeclarationNode", "ParameterDeclarationNode", "HeritageClauseNode", "ExpressionWithTypeArgumentsNode", "EnumMemberNode", "ImportClauseNode", "ImportAttributesNode", "ImportAttributeNode", "ImportSpecifierNode", "ExportSpecifierNode", "JsxAttributesNode", "JsxOpeningElementNode", "JsxClosingElementNode", "JsxOpeningFragmentNode", "JsxClosingFragmentNode",
     "DeclarationBase", "IsDeclarationNode",
@@ -325,7 +310,7 @@ const astNames = [
     "IsSourceFile",
 ]
 for (const n of astNames) {
-    refactorMapping[n] = { package: "ast", members: false };
+    // refactorMapping[n] = { package: "ast", members: false };
 }
 
 const enums = Object.keys(refactorMapping);

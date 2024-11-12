@@ -509,48 +509,48 @@ func boolToTristate(b bool) core.Tristate {
 	return core.TSFalse
 }
 
-func modifierToFlag(token ast.Kind) ModifierFlags {
+func modifierToFlag(token ast.Kind) ast.ModifierFlags {
 	switch token {
 	case ast.KindStaticKeyword:
-		return ModifierFlagsStatic
+		return ast.ModifierFlagsStatic
 	case ast.KindPublicKeyword:
-		return ModifierFlagsPublic
+		return ast.ModifierFlagsPublic
 	case ast.KindProtectedKeyword:
-		return ModifierFlagsProtected
+		return ast.ModifierFlagsProtected
 	case ast.KindPrivateKeyword:
-		return ModifierFlagsPrivate
+		return ast.ModifierFlagsPrivate
 	case ast.KindAbstractKeyword:
-		return ModifierFlagsAbstract
+		return ast.ModifierFlagsAbstract
 	case ast.KindAccessorKeyword:
-		return ModifierFlagsAccessor
+		return ast.ModifierFlagsAccessor
 	case ast.KindExportKeyword:
-		return ModifierFlagsExport
+		return ast.ModifierFlagsExport
 	case ast.KindDeclareKeyword:
-		return ModifierFlagsAmbient
+		return ast.ModifierFlagsAmbient
 	case ast.KindConstKeyword:
-		return ModifierFlagsConst
+		return ast.ModifierFlagsConst
 	case ast.KindDefaultKeyword:
-		return ModifierFlagsDefault
+		return ast.ModifierFlagsDefault
 	case ast.KindAsyncKeyword:
-		return ModifierFlagsAsync
+		return ast.ModifierFlagsAsync
 	case ast.KindReadonlyKeyword:
-		return ModifierFlagsReadonly
+		return ast.ModifierFlagsReadonly
 	case ast.KindOverrideKeyword:
-		return ModifierFlagsOverride
+		return ast.ModifierFlagsOverride
 	case ast.KindInKeyword:
-		return ModifierFlagsIn
+		return ast.ModifierFlagsIn
 	case ast.KindOutKeyword:
-		return ModifierFlagsOut
+		return ast.ModifierFlagsOut
 	case ast.KindImmediateKeyword:
-		return ModifierFlagsImmediate
+		return ast.ModifierFlagsImmediate
 	case ast.KindDecorator:
-		return ModifierFlagsDecorator
+		return ast.ModifierFlagsDecorator
 	}
-	return ModifierFlagsNone
+	return ast.ModifierFlagsNone
 }
 
-func modifiersToFlags(modifierList *Node) ModifierFlags {
-	flags := ModifierFlagsNone
+func modifiersToFlags(modifierList *Node) ast.ModifierFlags {
+	flags := ast.ModifierFlagsNone
 	if modifierList != nil {
 		for _, modifier := range modifierList.AsModifierList().Modifiers_ {
 			flags |= modifierToFlag(modifier.Kind)
@@ -1006,40 +1006,40 @@ func isPartOfTypeQuery(node *Node) bool {
 	return node.Kind == ast.KindTypeQuery
 }
 
-func getModifierFlags(node *Node) ModifierFlags {
+func getModifierFlags(node *Node) ast.ModifierFlags {
 	modifiers := node.Modifiers()
 	if modifiers != nil {
 		return modifiers.AsModifierList().ModifierFlags
 	}
-	return ModifierFlagsNone
+	return ast.ModifierFlagsNone
 }
 
 func getNodeFlags(node *Node) ast.NodeFlags {
 	return node.Flags
 }
 
-func hasSyntacticModifier(node *Node, flags ModifierFlags) bool {
+func hasSyntacticModifier(node *Node, flags ast.ModifierFlags) bool {
 	return getModifierFlags(node)&flags != 0
 }
 
 func hasAccessorModifier(node *Node) bool {
-	return hasSyntacticModifier(node, ModifierFlagsAccessor)
+	return hasSyntacticModifier(node, ast.ModifierFlagsAccessor)
 }
 
 func hasStaticModifier(node *Node) bool {
-	return hasSyntacticModifier(node, ModifierFlagsStatic)
+	return hasSyntacticModifier(node, ast.ModifierFlagsStatic)
 }
 
-func getEffectiveModifierFlags(node *Node) ModifierFlags {
+func getEffectiveModifierFlags(node *Node) ast.ModifierFlags {
 	return getModifierFlags(node) // !!! Handle JSDoc
 }
 
-func hasEffectiveModifier(node *Node, flags ModifierFlags) bool {
+func hasEffectiveModifier(node *Node, flags ast.ModifierFlags) bool {
 	return getEffectiveModifierFlags(node)&flags != 0
 }
 
 func hasEffectiveReadonlyModifier(node *Node) bool {
-	return hasEffectiveModifier(node, ModifierFlagsReadonly)
+	return hasEffectiveModifier(node, ast.ModifierFlagsReadonly)
 }
 
 func getImmediatelyInvokedFunctionExpression(fn *Node) *Node {
@@ -1260,7 +1260,7 @@ func getCombinedFlags[T ~uint32](node *Node, getFlags func(*Node) T) T {
 	return flags
 }
 
-func getCombinedModifierFlags(node *Node) ModifierFlags {
+func getCombinedModifierFlags(node *Node) ast.ModifierFlags {
 	return getCombinedFlags(node, getModifierFlags)
 }
 
@@ -1273,7 +1273,7 @@ func isBindingPattern(node *Node) bool {
 }
 
 func isParameterPropertyDeclaration(node *Node, parent *Node) bool {
-	return IsParameter(node) && hasSyntacticModifier(node, ModifierFlagsParameterPropertyModifier) && parent.Kind == ast.KindConstructor
+	return IsParameter(node) && hasSyntacticModifier(node, ast.ModifierFlagsParameterPropertyModifier) && parent.Kind == ast.KindConstructor
 }
 
 /**
@@ -1343,7 +1343,7 @@ func isAsyncFunction(node *Node) bool {
 	switch node.Kind {
 	case ast.KindFunctionDeclaration, ast.KindFunctionExpression, ast.KindArrowFunction, ast.KindMethodDeclaration:
 		data := node.BodyData()
-		return data.Body != nil && data.AsteriskToken == nil && hasSyntacticModifier(node, ModifierFlagsAsync)
+		return data.Body != nil && data.AsteriskToken == nil && hasSyntacticModifier(node, ast.ModifierFlagsAsync)
 	}
 	return false
 }
@@ -2120,7 +2120,7 @@ func getLocalSymbolForExportDefault(symbol *Symbol) *Symbol {
 }
 
 func isExportDefaultSymbol(symbol *Symbol) bool {
-	return symbol != nil && len(symbol.Declarations) > 0 && hasSyntacticModifier(symbol.Declarations[0], ModifierFlagsDefault)
+	return symbol != nil && len(symbol.Declarations) > 0 && hasSyntacticModifier(symbol.Declarations[0], ast.ModifierFlagsDefault)
 }
 
 func getDeclarationOfKind(symbol *Symbol, kind ast.Kind) *Node {
@@ -2535,7 +2535,7 @@ func getIsDeferredContext(location *Node, lastLocation *Node) bool {
 		return false
 	}
 	// generator functions and async functions are not inlined in control flow when immediately invoked
-	if location.BodyData().AsteriskToken != nil || hasSyntacticModifier(location, ModifierFlagsAsync) {
+	if location.BodyData().AsteriskToken != nil || hasSyntacticModifier(location, ast.ModifierFlagsAsync) {
 		return true
 	}
 	return getImmediatelyInvokedFunctionExpression(location) == nil
@@ -2670,7 +2670,7 @@ func isPartOfPossiblyValidTypeOrAbstractComputedPropertyName(node *Node) bool {
 	if node.Kind != ast.KindComputedPropertyName {
 		return false
 	}
-	if hasSyntacticModifier(node.Parent, ModifierFlagsAbstract) {
+	if hasSyntacticModifier(node.Parent, ast.ModifierFlagsAbstract) {
 		return true
 	}
 	return nodeKindIs(node.Parent.Parent, ast.KindInterfaceDeclaration, ast.KindTypeLiteral)
@@ -3141,7 +3141,7 @@ func isJsonSourceFile(file *SourceFile) bool {
 
 func isSyntacticDefault(node *Node) bool {
 	return (IsExportAssignment(node) && !node.AsExportAssignment().IsExportEquals) ||
-		hasSyntacticModifier(node, ModifierFlagsDefault) ||
+		hasSyntacticModifier(node, ast.ModifierFlagsDefault) ||
 		IsExportSpecifier(node) ||
 		IsNamespaceExport(node)
 }
@@ -3357,7 +3357,7 @@ func declarationBelongsToPrivateAmbientMember(declaration *Node) bool {
 }
 
 func isPrivateWithinAmbient(node *Node) bool {
-	return (hasEffectiveModifier(node, ModifierFlagsPrivate) || isPrivateIdentifierClassElementDeclaration(node)) && node.Flags&ast.NodeFlagsAmbient != 0
+	return (hasEffectiveModifier(node, ast.ModifierFlagsPrivate) || isPrivateIdentifierClassElementDeclaration(node)) && node.Flags&ast.NodeFlagsAmbient != 0
 }
 
 func identifierToKeywordKind(node *Identifier) ast.Kind {
@@ -3443,11 +3443,11 @@ func identifierIsThisKeyword(id *Node) bool {
 	return id.AsIdentifier().Text == "this"
 }
 
-func getDeclarationModifierFlagsFromSymbol(s *Symbol) ModifierFlags {
+func getDeclarationModifierFlagsFromSymbol(s *Symbol) ast.ModifierFlags {
 	return getDeclarationModifierFlagsFromSymbolEx(s, false /*isWrite*/)
 }
 
-func getDeclarationModifierFlagsFromSymbolEx(s *Symbol, isWrite bool) ModifierFlags {
+func getDeclarationModifierFlagsFromSymbolEx(s *Symbol, isWrite bool) ast.ModifierFlags {
 	if s.ValueDeclaration != nil {
 		var declaration *Node
 		if isWrite {
@@ -3463,28 +3463,28 @@ func getDeclarationModifierFlagsFromSymbolEx(s *Symbol, isWrite bool) ModifierFl
 		if s.Parent != nil && s.Parent.Flags&ast.SymbolFlagsClass != 0 {
 			return flags
 		}
-		return flags & ^ModifierFlagsAccessibilityModifier
+		return flags & ^ast.ModifierFlagsAccessibilityModifier
 	}
 	if s.CheckFlags&ast.CheckFlagsSynthetic != 0 {
-		var accessModifier ModifierFlags
+		var accessModifier ast.ModifierFlags
 		switch {
 		case s.CheckFlags&ast.CheckFlagsContainsPrivate != 0:
-			accessModifier = ModifierFlagsPrivate
+			accessModifier = ast.ModifierFlagsPrivate
 		case s.CheckFlags&ast.CheckFlagsContainsPublic != 0:
-			accessModifier = ModifierFlagsPublic
+			accessModifier = ast.ModifierFlagsPublic
 		default:
-			accessModifier = ModifierFlagsProtected
+			accessModifier = ast.ModifierFlagsProtected
 		}
-		var staticModifier ModifierFlags
+		var staticModifier ast.ModifierFlags
 		if s.CheckFlags&ast.CheckFlagsContainsStatic != 0 {
-			staticModifier = ModifierFlagsStatic
+			staticModifier = ast.ModifierFlagsStatic
 		}
 		return accessModifier | staticModifier
 	}
 	if s.Flags&ast.SymbolFlagsPrototype != 0 {
-		return ModifierFlagsPublic | ModifierFlagsStatic
+		return ast.ModifierFlagsPublic | ast.ModifierFlagsStatic
 	}
-	return ModifierFlagsNone
+	return ast.ModifierFlagsNone
 }
 
 func isExponentiationOperator(kind ast.Kind) bool {
@@ -3564,7 +3564,7 @@ func isObjectLiteralType(t *Type) bool {
 }
 
 func isDeclarationReadonly(declaration *Node) bool {
-	return getCombinedModifierFlags(declaration)&ModifierFlagsReadonly != 0 && !isParameterPropertyDeclaration(declaration, declaration.Parent)
+	return getCombinedModifierFlags(declaration)&ast.ModifierFlagsReadonly != 0 && !isParameterPropertyDeclaration(declaration, declaration.Parent)
 }
 
 func getPostfixTokenFromNode(node *Node) *Node {

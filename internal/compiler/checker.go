@@ -299,7 +299,7 @@ type Checker struct {
 	lastGetCombinedNodeFlagsNode       *Node
 	lastGetCombinedNodeFlagsResult     ast.NodeFlags
 	lastGetCombinedModifierFlagsNode   *Node
-	lastGetCombinedModifierFlagsResult ModifierFlags
+	lastGetCombinedModifierFlagsResult ast.ModifierFlags
 	subtypeRelation                    *Relation
 	strictSubtypeRelation              *Relation
 	assignableRelation                 *Relation
@@ -1506,7 +1506,7 @@ func (c *Checker) checkPropertyAccessibilityAtLocation(location *Node, isSuper b
 				return false
 			}
 		}
-		if flags&ModifierFlagsAbstract != 0 {
+		if flags&ast.ModifierFlagsAbstract != 0 {
 			// A method cannot be accessed in a super property access if the method is abstract.
 			// This error could mask a private property access error. But, a member
 			// cannot simultaneously be private and abstract, so this will trigger an
@@ -1518,7 +1518,7 @@ func (c *Checker) checkPropertyAccessibilityAtLocation(location *Node, isSuper b
 		}
 		// A class field cannot be accessed via super.* from a derived class.
 		// This is true for both [[Set]] (old) and [[Define]] (ES spec) semantics.
-		if flags&ModifierFlagsStatic == 0 && core.Some(prop.Declarations, isClassInstanceProperty) {
+		if flags&ast.ModifierFlagsStatic == 0 && core.Some(prop.Declarations, isClassInstanceProperty) {
 			if errorNode != nil {
 				c.error(errorNode, diagnostics.Class_field_0_defined_by_the_parent_class_is_not_accessible_in_the_child_class_via_super, c.symbolToString(prop))
 			}
@@ -1526,7 +1526,7 @@ func (c *Checker) checkPropertyAccessibilityAtLocation(location *Node, isSuper b
 		}
 	}
 	// Referencing abstract properties within their own constructors is not allowed
-	if flags&ModifierFlagsAbstract != 0 && c.symbolHasNonMethodDeclaration(prop) && (isThisProperty(location) ||
+	if flags&ast.ModifierFlagsAbstract != 0 && c.symbolHasNonMethodDeclaration(prop) && (isThisProperty(location) ||
 		isThisInitializedObjectBindingExpression(location) ||
 		IsObjectBindingPattern(location.Parent) && isThisInitializedDeclaration(location.Parent.Parent)) {
 		declaringClassDeclaration := getClassLikeDeclarationOfSymbol(c.getParentOfSymbol(prop))
@@ -1538,12 +1538,12 @@ func (c *Checker) checkPropertyAccessibilityAtLocation(location *Node, isSuper b
 		}
 	}
 	// Public properties are otherwise accessible.
-	if flags&ModifierFlagsNonPublicAccessibilityModifier == 0 {
+	if flags&ast.ModifierFlagsNonPublicAccessibilityModifier == 0 {
 		return true
 	}
 	// Property is known to be private or protected at this point
 	// Private property is accessible if the property is within the declaring class
-	if flags&ModifierFlagsPrivate != 0 {
+	if flags&ast.ModifierFlagsPrivate != 0 {
 		declaringClassDeclaration := getClassLikeDeclarationOfSymbol(c.getParentOfSymbol(prop))
 		if !c.isNodeWithinClass(location, declaringClassDeclaration) {
 			if errorNode != nil {
@@ -1578,7 +1578,7 @@ func (c *Checker) checkPropertyAccessibilityAtLocation(location *Node, isSuper b
 		if class != nil && c.isClassDerivedFromDeclaringClasses(class, prop, writing) {
 			enclosingClass = class
 		}
-		if flags&ModifierFlagsStatic != 0 || enclosingClass == nil {
+		if flags&ast.ModifierFlagsStatic != 0 || enclosingClass == nil {
 			if errorNode != nil {
 				class := c.getDeclaringClass(prop)
 				if class == nil {
@@ -1590,7 +1590,7 @@ func (c *Checker) checkPropertyAccessibilityAtLocation(location *Node, isSuper b
 		}
 	}
 	// No further restrictions for static properties
-	if flags&ModifierFlagsStatic != 0 {
+	if flags&ast.ModifierFlagsStatic != 0 {
 		return true
 	}
 	if containingType.flags&TypeFlagsTypeParameter != 0 {
@@ -1640,7 +1640,7 @@ func (c *Checker) getDeclaringClass(prop *Symbol) *Type {
 // Return true if source property is a valid override of protected parts of target property.
 func (c *Checker) isValidOverrideOf(sourceProp *Symbol, targetProp *Symbol) bool {
 	return !c.forEachProperty(targetProp, func(tp *Symbol) bool {
-		if getDeclarationModifierFlagsFromSymbol(tp)&ModifierFlagsProtected != 0 {
+		if getDeclarationModifierFlagsFromSymbol(tp)&ast.ModifierFlagsProtected != 0 {
 			return c.isPropertyInClassDerivedFrom(sourceProp, c.getDeclaringClass(tp))
 		}
 		return false
@@ -1690,7 +1690,7 @@ func (c *Checker) forEachEnclosingClass(node *Node, callback func(node *Node) bo
 // constituents of the given property.
 func (c *Checker) isClassDerivedFromDeclaringClasses(checkClass *Type, prop *Symbol, writing bool) bool {
 	return !c.forEachProperty(prop, func(p *Symbol) bool {
-		if getDeclarationModifierFlagsFromSymbolEx(p, writing)&ModifierFlagsProtected != 0 {
+		if getDeclarationModifierFlagsFromSymbolEx(p, writing)&ast.ModifierFlagsProtected != 0 {
 			return !c.hasBaseType(checkClass, c.getDeclaringClass(p))
 		}
 		return false
@@ -2213,7 +2213,7 @@ func (c *Checker) getSpreadType(left *Type, right *Type, symbol *Symbol, objectF
 		indexInfos = c.getUnionIndexInfos([]*Type{left, right})
 	}
 	for _, rightProp := range c.getPropertiesOfType(right) {
-		if getDeclarationModifierFlagsFromSymbol(rightProp)&(ModifierFlagsPrivate|ModifierFlagsProtected) != 0 {
+		if getDeclarationModifierFlagsFromSymbol(rightProp)&(ast.ModifierFlagsPrivate|ast.ModifierFlagsProtected) != 0 {
 			skippedPrivateMembers.add(rightProp.Name)
 		} else if c.isSpreadableProperty(rightProp) {
 			members[rightProp.Name] = c.getSpreadSymbol(rightProp, readonly)
@@ -2321,7 +2321,7 @@ func (c *Checker) tryMergeUnionOfObjectTypeAndEmptyObject(t *Type, readonly bool
 	// gets the type as if it had been spread, but where everything in the spread is made optional
 	members := make(SymbolTable)
 	for _, prop := range c.getPropertiesOfType(firstType) {
-		if getDeclarationModifierFlagsFromSymbol(prop)&(ModifierFlagsPrivate|ModifierFlagsProtected) != 0 {
+		if getDeclarationModifierFlagsFromSymbol(prop)&(ast.ModifierFlagsPrivate|ast.ModifierFlagsProtected) != 0 {
 			// do nothing, skip privates
 		} else if c.isSpreadableProperty(prop) {
 			isSetonlyAccessor := prop.Flags&ast.SymbolFlagsSetAccessor != 0 && prop.Flags&ast.SymbolFlagsGetAccessor == 0
@@ -2418,7 +2418,7 @@ func (c *Checker) isConstTypeVariable(t *Type, depth int) bool {
 	}
 	switch {
 	case t.flags&TypeFlagsTypeParameter != 0:
-		return t.symbol != nil && core.Some(t.symbol.Declarations, func(d *Node) bool { return hasSyntacticModifier(d, ModifierFlagsConst) })
+		return t.symbol != nil && core.Some(t.symbol.Declarations, func(d *Node) bool { return hasSyntacticModifier(d, ast.ModifierFlagsConst) })
 	case t.flags&TypeFlagsUnionOrIntersection != 0:
 		return core.Some(t.Types(), func(s *Type) bool { return c.isConstTypeVariable(s, depth) })
 	case t.flags&TypeFlagsIndexedAccess != 0:
@@ -2487,7 +2487,7 @@ func (c *Checker) isReadonlySymbol(symbol *Symbol) bool {
 	// Object.defineProperty assignments with writable false or no setter
 	// Unions and intersections of the above (unions and intersections eagerly set isReadonly on creation)
 	return symbol.CheckFlags&ast.CheckFlagsReadonly != 0 ||
-		symbol.Flags&ast.SymbolFlagsProperty != 0 && getDeclarationModifierFlagsFromSymbol(symbol)&ModifierFlagsReadonly != 0 ||
+		symbol.Flags&ast.SymbolFlagsProperty != 0 && getDeclarationModifierFlagsFromSymbol(symbol)&ast.ModifierFlagsReadonly != 0 ||
 		symbol.Flags&ast.SymbolFlagsVariable != 0 && c.getDeclarationNodeFlagsFromSymbol(symbol)&ast.NodeFlagsConstant != 0 ||
 		symbol.Flags&ast.SymbolFlagsAccessor != 0 && symbol.Flags&ast.SymbolFlagsSetAccessor == 0 ||
 		symbol.Flags&ast.SymbolFlagsEnumMember != 0
@@ -4484,7 +4484,7 @@ func (c *Checker) getTypeForVariableLikeDeclaration(declaration *Node, includeOp
 		return c.addOptionalityEx(declaredType, isProperty, isOptional)
 	}
 	if c.noImplicitAny && IsVariableDeclaration(declaration) && !isBindingPattern(declaration.Name()) &&
-		c.getCombinedModifierFlagsCached(declaration)&ModifierFlagsExport == 0 && declaration.Flags&ast.NodeFlagsAmbient == 0 {
+		c.getCombinedModifierFlagsCached(declaration)&ast.ModifierFlagsExport == 0 && declaration.Flags&ast.NodeFlagsAmbient == 0 {
 		// If --noImplicitAny is on or the declaration is in a Javascript file,
 		// use control flow tracked 'any' type for non-ambient, non-exported var or let variables with no
 		// initializer or a 'null' or 'undefined' initializer.
@@ -4551,7 +4551,7 @@ func (c *Checker) getTypeForVariableLikeDeclaration(declaration *Node, includeOp
 			// switch {
 			// case constructor != nil:
 			// 	t = c.getFlowTypeInConstructor(declaration.symbol, constructor)
-			// case getEffectiveModifierFlags(declaration)&ModifierFlagsAmbient != 0:
+			// case getEffectiveModifierFlags(declaration)&ast.ModifierFlagsAmbient != 0:
 			// 	t = c.getTypeOfPropertyInBaseClass(declaration.symbol)
 			// }
 			// if t != nil {
@@ -4566,7 +4566,7 @@ func (c *Checker) getTypeForVariableLikeDeclaration(declaration *Node, includeOp
 			// switch {
 			// case len(staticBlocks) != 0:
 			// 	t = c.getFlowTypeInStaticBlocks(declaration.symbol, staticBlocks)
-			// case getEffectiveModifierFlags(declaration)&ModifierFlagsAmbient != 0:
+			// case getEffectiveModifierFlags(declaration)&ast.ModifierFlagsAmbient != 0:
 			// 	t = c.getTypeOfPropertyInBaseClass(declaration.symbol)
 			// }
 			// if t != nil {
@@ -5341,7 +5341,7 @@ func (c *Checker) getCombinedNodeFlagsCached(node *Node) ast.NodeFlags {
 	return c.lastGetCombinedNodeFlagsResult
 }
 
-func (c *Checker) getCombinedModifierFlagsCached(node *Node) ModifierFlags {
+func (c *Checker) getCombinedModifierFlagsCached(node *Node) ast.ModifierFlags {
 	// we hold onto the last node and result to speed up repeated lookups against the same node.
 	if c.lastGetCombinedModifierFlagsNode == node {
 		return c.lastGetCombinedModifierFlagsResult
@@ -6197,7 +6197,7 @@ func (c *Checker) getIndexInfosOfIndexSymbol(indexSymbol *Symbol, siblingSymbols
 					}
 					forEachType(c.getTypeFromTypeNode(typeNode), func(keyType *Type) {
 						if c.isValidIndexKeyType(keyType) && findIndexInfo(indexInfos, keyType) == nil {
-							indexInfo := c.newIndexInfo(keyType, valueType, hasEffectiveModifier(declaration, ModifierFlagsReadonly), declaration)
+							indexInfo := c.newIndexInfo(keyType, valueType, hasEffectiveModifier(declaration, ast.ModifierFlagsReadonly), declaration)
 							indexInfos = append(indexInfos, indexInfo)
 						}
 					})
@@ -6421,7 +6421,7 @@ func (c *Checker) getSignatureFromDeclaration(declaration *Node) *Signature {
 	if IsConstructorTypeNode(declaration) || IsConstructorDeclaration(declaration) || IsConstructSignatureDeclaration(declaration) {
 		flags |= SignatureFlagsConstruct
 	}
-	if IsConstructorTypeNode(declaration) && hasSyntacticModifier(declaration, ModifierFlagsAbstract) || IsConstructorDeclaration(declaration) && hasSyntacticModifier(declaration.Parent, ModifierFlagsAbstract) {
+	if IsConstructorTypeNode(declaration) && hasSyntacticModifier(declaration, ast.ModifierFlagsAbstract) || IsConstructorDeclaration(declaration) && hasSyntacticModifier(declaration.Parent, ast.ModifierFlagsAbstract) {
 		flags |= SignatureFlagsAbstract
 	}
 	links.resolvedSignature = c.newSignature(flags, declaration, typeParameters, thisParameter, parameters, nil /*resolvedReturnType*/, nil /*resolvedTypePredicate*/, minArgumentCount)
@@ -6836,7 +6836,7 @@ func (c *Checker) getDefaultConstructSignatures(classType *Type) []*Signature {
 	baseConstructorType := c.getBaseConstructorTypeOfClass(classType)
 	baseSignatures := c.getSignaturesOfType(baseConstructorType, SignatureKindConstruct)
 	declaration := getClassLikeDeclarationOfSymbol(classType.symbol)
-	isAbstract := declaration != nil && hasSyntacticModifier(declaration, ModifierFlagsAbstract)
+	isAbstract := declaration != nil && hasSyntacticModifier(declaration, ast.ModifierFlagsAbstract)
 	if len(baseSignatures) == 0 {
 		flags := ifElse(isAbstract, SignatureFlagsConstruct|SignatureFlagsAbstract, SignatureFlagsConstruct)
 		return []*Signature{c.newSignature(flags, nil, classType.AsInterfaceType().LocalTypeParameters(), nil, nil, classType, nil, 0)}
@@ -6959,7 +6959,7 @@ func (c *Checker) createUnionOrIntersectionProperty(containingType *Type, name s
 		t := c.getApparentType(current)
 		if !c.isErrorType(t) && t.flags&TypeFlagsNever == 0 {
 			prop := c.getPropertyOfTypeEx(t, name, skipObjectFunctionPropertyAugment, false)
-			var modifiers ModifierFlags
+			var modifiers ast.ModifierFlags
 			if prop != nil {
 				modifiers = getDeclarationModifierFlagsFromSymbol(prop)
 				if prop.Flags&ast.SymbolFlagsClassMember != 0 {
@@ -6993,16 +6993,16 @@ func (c *Checker) createUnionOrIntersectionProperty(containingType *Type, name s
 				} else if !isUnion && !c.isReadonlySymbol(prop) {
 					checkFlags &^= ast.CheckFlagsReadonly
 				}
-				if modifiers&ModifierFlagsNonPublicAccessibilityModifier == 0 {
+				if modifiers&ast.ModifierFlagsNonPublicAccessibilityModifier == 0 {
 					checkFlags |= ast.CheckFlagsContainsPublic
 				}
-				if modifiers&ModifierFlagsProtected != 0 {
+				if modifiers&ast.ModifierFlagsProtected != 0 {
 					checkFlags |= ast.CheckFlagsContainsProtected
 				}
-				if modifiers&ModifierFlagsPrivate != 0 {
+				if modifiers&ast.ModifierFlagsPrivate != 0 {
 					checkFlags |= ast.CheckFlagsContainsPrivate
 				}
-				if modifiers&ModifierFlagsStatic != 0 {
+				if modifiers&ast.ModifierFlagsStatic != 0 {
 					checkFlags |= ast.CheckFlagsContainsStatic
 				}
 				if !isPrototypeProperty(prop) {
@@ -10518,7 +10518,7 @@ func (c *Checker) getLiteralTypeFromProperties(t *Type, include TypeFlags, inclu
 }
 
 func (c *Checker) getLiteralTypeFromProperty(prop *Symbol, include TypeFlags, includeNonPublic bool) *Type {
-	if includeNonPublic || getDeclarationModifierFlagsFromSymbol(prop)&ModifierFlagsNonPublicAccessibilityModifier == 0 {
+	if includeNonPublic || getDeclarationModifierFlagsFromSymbol(prop)&ast.ModifierFlagsNonPublicAccessibilityModifier == 0 {
 		t := c.valueSymbolLinks.get(c.getLateBoundSymbol(prop)).nameType
 		if t == nil {
 			if prop.Name == InternalSymbolNameDefault {
@@ -11269,12 +11269,12 @@ func (c *Checker) compareProperties(sourceProp *Symbol, targetProp *Symbol, comp
 	if sourceProp == targetProp {
 		return TernaryTrue
 	}
-	sourcePropAccessibility := getDeclarationModifierFlagsFromSymbol(sourceProp) & ModifierFlagsNonPublicAccessibilityModifier
-	targetPropAccessibility := getDeclarationModifierFlagsFromSymbol(targetProp) & ModifierFlagsNonPublicAccessibilityModifier
+	sourcePropAccessibility := getDeclarationModifierFlagsFromSymbol(sourceProp) & ast.ModifierFlagsNonPublicAccessibilityModifier
+	targetPropAccessibility := getDeclarationModifierFlagsFromSymbol(targetProp) & ast.ModifierFlagsNonPublicAccessibilityModifier
 	if sourcePropAccessibility != targetPropAccessibility {
 		return TernaryFalse
 	}
-	if sourcePropAccessibility != ModifierFlagsNone {
+	if sourcePropAccessibility != ast.ModifierFlagsNone {
 		if c.getTargetSymbol(sourceProp) != c.getTargetSymbol(targetProp) {
 			return TernaryFalse
 		}

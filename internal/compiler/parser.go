@@ -1277,13 +1277,13 @@ func (p *Parser) parseFunctionDeclaration(pos int, hasJSDoc bool, modifiers *Nod
 	asteriskToken := p.parseOptionalToken(ast.KindAsteriskToken)
 	// We don't parse the name here in await context, instead we will report a grammar error in the checker.
 	var name *Node
-	if modifierFlags&ModifierFlagsDefault == 0 || p.isBindingIdentifier() {
+	if modifierFlags&ast.ModifierFlagsDefault == 0 || p.isBindingIdentifier() {
 		name = p.parseBindingIdentifier()
 	}
-	signatureFlags := ifElse(asteriskToken != nil, ParseFlagsYield, ParseFlagsNone) | ifElse(modifierFlags&ModifierFlagsAsync != 0, ParseFlagsAwait, ParseFlagsNone)
+	signatureFlags := ifElse(asteriskToken != nil, ParseFlagsYield, ParseFlagsNone) | ifElse(modifierFlags&ast.ModifierFlagsAsync != 0, ParseFlagsAwait, ParseFlagsNone)
 	typeParameters := p.parseTypeParameters()
 	saveContextFlags := p.contextFlags
-	if modifierFlags&ModifierFlagsExport != 0 {
+	if modifierFlags&ast.ModifierFlagsExport != 0 {
 		p.setContextFlags(ast.NodeFlagsAwaitContext, true)
 	}
 	parameters := p.parseParameters(signatureFlags)
@@ -3313,7 +3313,7 @@ func (p *Parser) parseModifiersForConstructorType() *Node {
 		modifier := p.factory.NewModifier(p.token)
 		p.nextToken()
 		p.finishNode(modifier, pos)
-		result := p.factory.NewModifierList([]*Node{modifier}, ModifierFlagsAbstract)
+		result := p.factory.NewModifierList([]*Node{modifier}, ast.ModifierFlagsAbstract)
 		p.finishNode(result, pos)
 		return result
 	}
@@ -3375,26 +3375,26 @@ func (p *Parser) parseModifiers() *Node {
 func (p *Parser) parseModifiersWithOptions(allowDecorators bool, permitConstAsModifier bool, stopOnStartOfClassStaticBlock bool) *Node {
 	pos := p.nodePos()
 	list := []*Node{}
-	preModifierFlags := ModifierFlagsNone
-	decoratorFlag := ModifierFlagsNone
-	postModifierFlags := ModifierFlagsNone
+	preModifierFlags := ast.ModifierFlagsNone
+	decoratorFlag := ast.ModifierFlagsNone
+	postModifierFlags := ast.ModifierFlagsNone
 	// Decorators should be contiguous in a list of modifiers but can potentially appear in two places (i.e., `[...leadingDecorators, ...leadingModifiers, ...trailingDecorators, ...trailingModifiers]`).
 	// The leading modifiers *should* only contain `export` and `default` when trailingDecorators are present, but we'll handle errors for any other leading modifiers in the checker.
 	// It is illegal to have both leadingDecorators and trailingDecorators, but we will report that as a grammar check in the checker.
 	// parse leading decorators
 	for {
-		if allowDecorators && p.token == ast.KindAtToken && postModifierFlags == ModifierFlagsNone {
+		if allowDecorators && p.token == ast.KindAtToken && postModifierFlags == ast.ModifierFlagsNone {
 			decorator := p.parseDecorator()
 			list = append(list, decorator)
-			decoratorFlag |= ModifierFlagsDecorator
+			decoratorFlag |= ast.ModifierFlagsDecorator
 		} else {
-			modifier := p.tryParseModifier((preModifierFlags|postModifierFlags)&ModifierFlagsStatic != 0, permitConstAsModifier, stopOnStartOfClassStaticBlock)
+			modifier := p.tryParseModifier((preModifierFlags|postModifierFlags)&ast.ModifierFlagsStatic != 0, permitConstAsModifier, stopOnStartOfClassStaticBlock)
 			if modifier == nil {
 				break
 			}
 			list = append(list, modifier)
 			flag := modifierToFlag(modifier.Kind)
-			if decoratorFlag == ModifierFlagsNone {
+			if decoratorFlag == ast.ModifierFlagsNone {
 				preModifierFlags |= flag
 			} else {
 				postModifierFlags |= flag
@@ -3952,7 +3952,7 @@ func (p *Parser) parseModifiersForArrowFunction() *Node {
 		p.nextToken()
 		modifier := p.factory.NewModifier(ast.KindAsyncKeyword)
 		p.finishNode(modifier, pos)
-		result := p.factory.NewModifierList([]*Node{modifier}, ModifierFlagsAsync)
+		result := p.factory.NewModifierList([]*Node{modifier}, ast.ModifierFlagsAsync)
 		p.finishNode(modifier, pos)
 		return result
 	}
@@ -5883,7 +5883,7 @@ func isClassMemberModifier(token ast.Kind) bool {
 }
 
 func isParameterPropertyModifier(kind ast.Kind) bool {
-	return modifierToFlag(kind)&ModifierFlagsParameterPropertyModifier != 0
+	return modifierToFlag(kind)&ast.ModifierFlagsParameterPropertyModifier != 0
 }
 
 func isKeyword(token ast.Kind) bool {
@@ -5904,7 +5904,7 @@ func isFileProbablyExternalModule(sourceFile *SourceFile) *Node {
 }
 
 func isAnExternalModuleIndicatorNode(node *Statement) bool {
-	return hasSyntacticModifier(node, ModifierFlagsExport) ||
+	return hasSyntacticModifier(node, ast.ModifierFlagsExport) ||
 		IsImportEqualsDeclaration(node) && IsExternalModuleReference(node.AsImportEqualsDeclaration().ModuleReference) ||
 		IsImportDeclaration(node) || IsExportAssignment(node) || IsExportDeclaration(node)
 }

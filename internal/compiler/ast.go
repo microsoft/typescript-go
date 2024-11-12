@@ -861,10 +861,10 @@ func IsDecorator(node *Node) bool {
 type ModifierList struct {
 	NodeBase
 	Modifiers_     []*ModifierLike
-	ModifierFlags ModifierFlags
+	ModifierFlags ast.ModifierFlags
 }
 
-func (f *NodeFactory) NewModifierList(modifiers []*ModifierLike, modifierFlags ModifierFlags) *Node {
+func (f *NodeFactory) NewModifierList(modifiers []*ModifierLike, modifierFlags ast.ModifierFlags) *Node {
 	data := &ModifierList{}
 	data.Modifiers_ = modifiers
 	data.ModifierFlags = modifierFlags

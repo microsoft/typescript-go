@@ -124,7 +124,7 @@ func (b *Binder) declareSymbol(symbolTable SymbolTable, parent *Symbol, node *No
 
 func (b *Binder) declareSymbolEx(symbolTable SymbolTable, parent *Symbol, node *Node, includes ast.SymbolFlags, excludes ast.SymbolFlags, isReplaceableByMethod bool, isComputedName bool) *Symbol {
 	//Debug.assert(isComputedName || !hasDynamicName(node))
-	isDefaultExport := hasSyntacticModifier(node, ModifierFlagsDefault) || IsExportSpecifier(node) && moduleExportNameIsDefault(node.AsExportSpecifier().Name_)
+	isDefaultExport := hasSyntacticModifier(node, ast.ModifierFlagsDefault) || IsExportSpecifier(node) && moduleExportNameIsDefault(node.AsExportSpecifier().Name_)
 	// The exported symbol for an export default function/class node is always named "default"
 	var name string
 	switch {
@@ -230,7 +230,7 @@ func (b *Binder) declareSymbolEx(symbolTable SymbolTable, parent *Symbol, node *
 				} else {
 					diag = b.createDiagnosticForNode(declarationName, message)
 				}
-				if IsTypeAliasDeclaration(node) && nodeIsMissing(node.AsTypeAliasDeclaration().TypeNode) && hasSyntacticModifier(node, ModifierFlagsExport) && symbol.Flags&(ast.SymbolFlagsAlias|ast.SymbolFlagsType|ast.SymbolFlagsNamespace) != 0 {
+				if IsTypeAliasDeclaration(node) && nodeIsMissing(node.AsTypeAliasDeclaration().TypeNode) && hasSyntacticModifier(node, ast.ModifierFlagsExport) && symbol.Flags&(ast.SymbolFlagsAlias|ast.SymbolFlagsType|ast.SymbolFlagsNamespace) != 0 {
 					// export type T; - may have meant export type { T }?
 					diag.addRelatedInfo(b.createDiagnosticForNode(node, diagnostics.Did_you_mean_0, "export type { "+node.AsTypeAliasDeclaration().Name_.AsIdentifier().Text+" }"))
 				}
@@ -349,7 +349,7 @@ func getSymbolNameForPrivateIdentifier(containingClassSymbol *Symbol, descriptio
 }
 
 func (b *Binder) declareModuleMember(node *Node, symbolFlags ast.SymbolFlags, symbolExcludes ast.SymbolFlags) *Symbol {
-	hasExportModifier := getCombinedModifierFlags(node)&ModifierFlagsExport != 0
+	hasExportModifier := getCombinedModifierFlags(node)&ast.ModifierFlagsExport != 0
 	if symbolFlags&ast.SymbolFlagsAlias != 0 {
 		if node.Kind == ast.KindExportSpecifier || (node.Kind == ast.KindImportEqualsDeclaration && hasExportModifier) {
 			return b.declareSymbol(getExports(b.container.Symbol()), b.container.Symbol(), node, symbolFlags, symbolExcludes)
@@ -372,7 +372,7 @@ func (b *Binder) declareModuleMember(node *Node, symbolFlags ast.SymbolFlags, sy
 	//       and this case is specially handled. Module augmentations should only be merged with original module definition
 	//       and should never be merged directly with other augmentation, and the latter case would be possible if automatic merge is allowed.
 	if !isAmbientModule(node) && (hasExportModifier || b.container.Flags&ast.NodeFlagsExportContext != 0) {
-		if !IsLocalsContainer(b.container) || (hasSyntacticModifier(node, ModifierFlagsDefault) && b.getDeclarationName(node) == InternalSymbolNameMissing) {
+		if !IsLocalsContainer(b.container) || (hasSyntacticModifier(node, ast.ModifierFlagsDefault) && b.getDeclarationName(node) == InternalSymbolNameMissing) {
 			return b.declareSymbol(getExports(b.container.Symbol()), b.container.Symbol(), node, symbolFlags, symbolExcludes)
 			// No local symbol for an unnamed default!
 		}
@@ -741,7 +741,7 @@ func (b *Binder) bindSourceFileAsExternalModule() {
 func (b *Binder) bindModuleDeclaration(node *Node) {
 	b.setExportContextFlag(node)
 	if isAmbientModule(node) {
-		if hasSyntacticModifier(node, ModifierFlagsExport) {
+		if hasSyntacticModifier(node, ast.ModifierFlagsExport) {
 			b.errorOnFirstToken(node, diagnostics.X_export_modifier_cannot_be_applied_to_ambient_modules_and_module_augmentations_since_they_are_always_visible)
 		}
 		if isModuleAugmentationExternal(node) {
@@ -881,7 +881,7 @@ func getModuleInstanceStateWorker(node *Node, visited map[NodeId]ModuleInstanceS
 			return ModuleInstanceStateConstEnumOnly
 		}
 	case ast.KindImportDeclaration, ast.KindImportEqualsDeclaration:
-		if !hasSyntacticModifier(node, ModifierFlagsExport) {
+		if !hasSyntacticModifier(node, ast.ModifierFlagsExport) {
 			return ModuleInstanceStateNonInstantiated
 		}
 	case ast.KindExportDeclaration:
@@ -1493,7 +1493,7 @@ func (b *Binder) bindContainer(node *Node, containerFlags ContainerFlags) {
 		saveActiveLabelList := b.activeLabelList
 		saveHasExplicitReturn := b.hasExplicitReturn
 		isImmediatelyInvoked := (containerFlags&ContainerFlagsIsFunctionExpression != 0 &&
-			!hasSyntacticModifier(node, ModifierFlagsAsync) &&
+			!hasSyntacticModifier(node, ast.ModifierFlagsAsync) &&
 			!isGeneratorFunctionExpression(node) &&
 			getImmediatelyInvokedFunctionExpression(node) != nil) || node.Kind == ast.KindClassStaticBlockDeclaration
 		// A non-async, non-generator IIFE is considered part of the containing control flow. Return statements behave
@@ -2753,5 +2753,5 @@ func (b *Binder) addDiagnostic(diagnostic *Diagnostic) {
 }
 
 func isEnumConst(node *Node) bool {
-	return getCombinedModifierFlags(node)&ModifierFlagsConst != 0
+	return getCombinedModifierFlags(node)&ast.ModifierFlagsConst != 0
 }

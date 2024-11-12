@@ -1008,13 +1008,13 @@ func (c *Checker) getVariancesWorker(symbol *Symbol, typeParameters []*Type) []V
 			modifiers := c.getTypeParameterModifiers(tp)
 			var variance VarianceFlags
 			switch {
-			case modifiers&ModifierFlagsOut != 0:
-				if modifiers&ModifierFlagsIn != 0 {
+			case modifiers&ast.ModifierFlagsOut != 0:
+				if modifiers&ast.ModifierFlagsIn != 0 {
 					variance = VarianceFlagsInvariant
 				} else {
 					variance = VarianceFlagsCovariant
 				}
-			case modifiers&ModifierFlagsIn != 0:
+			case modifiers&ast.ModifierFlagsIn != 0:
 				variance = VarianceFlagsContravariant
 			default:
 				unmeasurable := false
@@ -1080,14 +1080,14 @@ func (c *Checker) isMarkerType(t *Type) bool {
 	return c.markerTypes.has(t)
 }
 
-func (c *Checker) getTypeParameterModifiers(tp *Type) ModifierFlags {
-	var flags ModifierFlags
+func (c *Checker) getTypeParameterModifiers(tp *Type) ast.ModifierFlags {
+	var flags ast.ModifierFlags
 	if tp.symbol != nil {
 		for _, d := range tp.symbol.Declarations {
 			flags |= getEffectiveModifierFlags(d)
 		}
 	}
-	return flags & (ModifierFlagsIn | ModifierFlagsOut | ModifierFlagsConst)
+	return flags & (ast.ModifierFlagsIn | ast.ModifierFlagsOut | ast.ModifierFlagsConst)
 }
 
 // Return true if the given type reference has a 'void' type argument for a covariant type parameter.
@@ -1697,11 +1697,11 @@ func (c *Checker) compareSignaturesIdentical(source *Signature, target *Signatur
 	return TernaryFalse // !!!
 }
 
-func visibilityToString(flags ModifierFlags) string {
-	if flags == ModifierFlagsPrivate {
+func visibilityToString(flags ast.ModifierFlags) string {
+	if flags == ast.ModifierFlagsPrivate {
 		return "private"
 	}
-	if flags == ModifierFlagsProtected {
+	if flags == ast.ModifierFlagsProtected {
 		return "protected"
 	}
 	return "public"
@@ -3035,18 +3035,18 @@ func (r *Relater) propertyRelatedTo(source *Type, target *Type, sourceProp *Symb
 	sourcePropFlags := getDeclarationModifierFlagsFromSymbol(sourceProp)
 	targetPropFlags := getDeclarationModifierFlagsFromSymbol(targetProp)
 	switch {
-	case sourcePropFlags&ModifierFlagsPrivate != 0 || targetPropFlags&ModifierFlagsPrivate != 0:
+	case sourcePropFlags&ast.ModifierFlagsPrivate != 0 || targetPropFlags&ast.ModifierFlagsPrivate != 0:
 		if sourceProp.ValueDeclaration != targetProp.ValueDeclaration {
 			if reportErrors {
-				if sourcePropFlags&ModifierFlagsPrivate != 0 && targetPropFlags&ModifierFlagsPrivate != 0 {
+				if sourcePropFlags&ast.ModifierFlagsPrivate != 0 && targetPropFlags&ast.ModifierFlagsPrivate != 0 {
 					r.reportError(diagnostics.Types_have_separate_declarations_of_a_private_property_0, r.c.symbolToString(targetProp))
 				} else {
-					r.reportError(diagnostics.Property_0_is_private_in_type_1_but_not_in_type_2, r.c.symbolToString(targetProp), r.c.typeToString(ifElse(sourcePropFlags&ModifierFlagsPrivate != 0, source, target)), r.c.typeToString(ifElse(sourcePropFlags&ModifierFlagsPrivate != 0, target, source)))
+					r.reportError(diagnostics.Property_0_is_private_in_type_1_but_not_in_type_2, r.c.symbolToString(targetProp), r.c.typeToString(ifElse(sourcePropFlags&ast.ModifierFlagsPrivate != 0, source, target)), r.c.typeToString(ifElse(sourcePropFlags&ast.ModifierFlagsPrivate != 0, target, source)))
 				}
 			}
 			return TernaryFalse
 		}
-	case targetPropFlags&ModifierFlagsProtected != 0:
+	case targetPropFlags&ast.ModifierFlagsProtected != 0:
 		if !r.c.isValidOverrideOf(sourceProp, targetProp) {
 			if reportErrors {
 				sourceType := r.c.getDeclaringClass(sourceProp)
@@ -3061,7 +3061,7 @@ func (r *Relater) propertyRelatedTo(source *Type, target *Type, sourceProp *Symb
 			}
 			return TernaryFalse
 		}
-	case sourcePropFlags&ModifierFlagsProtected != 0:
+	case sourcePropFlags&ast.ModifierFlagsProtected != 0:
 		if reportErrors {
 			r.reportError(diagnostics.Property_0_is_protected_in_type_1_but_public_in_type_2, r.c.symbolToString(targetProp), r.c.typeToString(source), r.c.typeToString(target))
 		}
@@ -3282,18 +3282,18 @@ func (r *Relater) constructorVisibilitiesAreCompatible(sourceSignature *Signatur
 	if sourceSignature.declaration == nil || targetSignature.declaration == nil {
 		return true
 	}
-	sourceAccessibility := getEffectiveModifierFlags(sourceSignature.declaration) & ModifierFlagsNonPublicAccessibilityModifier
-	targetAccessibility := getEffectiveModifierFlags(targetSignature.declaration) & ModifierFlagsNonPublicAccessibilityModifier
+	sourceAccessibility := getEffectiveModifierFlags(sourceSignature.declaration) & ast.ModifierFlagsNonPublicAccessibilityModifier
+	targetAccessibility := getEffectiveModifierFlags(targetSignature.declaration) & ast.ModifierFlagsNonPublicAccessibilityModifier
 	// A public, protected and private signature is assignable to a private signature.
-	if targetAccessibility == ModifierFlagsPrivate {
+	if targetAccessibility == ast.ModifierFlagsPrivate {
 		return true
 	}
 	// A public and protected signature is assignable to a protected signature.
-	if targetAccessibility == ModifierFlagsProtected && sourceAccessibility != ModifierFlagsPrivate {
+	if targetAccessibility == ast.ModifierFlagsProtected && sourceAccessibility != ast.ModifierFlagsPrivate {
 		return true
 	}
 	// Only a public signature is assignable to public signature.
-	if targetAccessibility != ModifierFlagsProtected && sourceAccessibility == 0 {
+	if targetAccessibility != ast.ModifierFlagsProtected && sourceAccessibility == 0 {
 		return true
 	}
 	if reportErrors {

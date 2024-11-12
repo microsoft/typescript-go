@@ -7,6 +7,7 @@ import (
 	"slices"
 	"strings"
 
+	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
 )
 
@@ -370,7 +371,7 @@ func (p *Program) collectModuleReferences(file *SourceFile, node *Statement, inA
 		}
 		return
 	}
-	if IsModuleDeclaration(node) && isAmbientModule(node) && (inAmbientModule || hasSyntacticModifier(node, ModifierFlagsAmbient) || file.IsDeclarationFile) {
+	if IsModuleDeclaration(node) && isAmbientModule(node) && (inAmbientModule || hasSyntacticModifier(node, ast.ModifierFlagsAmbient) || file.IsDeclarationFile) {
 		setParentInChildren(node)
 		nameText := node.AsModuleDeclaration().Name_.Text()
 		// Ambient module declarations can be interpreted as augmentations for some existing external modules.
