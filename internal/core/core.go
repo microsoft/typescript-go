@@ -233,7 +233,7 @@ func GetStringEqualityComparer(ignoreCase bool) func(a, b string) bool {
 	return EquateStringCaseSensitive
 }
 
-type Comparison = int32
+type Comparison = int
 
 const (
 	ComparisonLessThan    Comparison = -1
@@ -245,11 +245,11 @@ func CompareStringsCaseInsensitive(a string, b string) Comparison {
 	if a == b {
 		return ComparisonEqual
 	}
-	return int32(strings.Compare(strings.ToUpper(a), strings.ToUpper(b)))
+	return strings.Compare(strings.ToUpper(a), strings.ToUpper(b))
 }
 
 func CompareStringsCaseSensitive(a string, b string) Comparison {
-	return int32(strings.Compare(a, b))
+	return strings.Compare(a, b)
 }
 
 func GetStringComparer(ignoreCase bool) func(a, b string) Comparison {

@@ -467,7 +467,7 @@ func comparePathsWorker(a string, b string, stringComparer func(a, b string) cor
 		}
 	}
 
-	return int32(cmp.Compare(len(aComponents), len(bComponents)))
+	return cmp.Compare(len(aComponents), len(bComponents))
 }
 
 // Gets the portion of a path following the last (non-terminal) separator (`/`).
