@@ -3,6 +3,7 @@ package compiler
 import (
 	"slices"
 
+	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
 )
 
@@ -81,7 +82,7 @@ type TypeId uint32
 type ValueSymbolLinks struct {
 	resolvedType   *Type // Type of value symbol
 	writeType      *Type
-	target         *Symbol
+	target         *ast.Symbol
 	mapper         *TypeMapper
 	nameType       *Type
 	containingType *Type // Containing union or intersection type for synthetic property
@@ -90,26 +91,26 @@ type ValueSymbolLinks struct {
 // Links for alias symbols
 
 type AliasSymbolLinks struct {
-	immediateTarget             *Symbol // Immediate target of an alias. May be another alias. Do not access directly, use `checker.getImmediateAliasedSymbol` instead.
-	aliasTarget                 *Symbol // Resolved (non-alias) target of an alias
-	typeOnlyDeclarationResolved bool    // True when typeOnlyDeclaration resolution in process
-	typeOnlyDeclaration         *Node   // First resolved alias declaration that makes the symbol only usable in type constructs
-	typeOnlyExportStarName      string  // Set to the name of the symbol re-exported by an 'export type *' declaration, when different from the symbol name
+	immediateTarget             *ast.Symbol // Immediate target of an alias. May be another alias. Do not access directly, use `checker.getImmediateAliasedSymbol` instead.
+	aliasTarget                 *ast.Symbol // Resolved (non-alias) target of an alias
+	typeOnlyDeclarationResolved bool        // True when typeOnlyDeclaration resolution in process
+	typeOnlyDeclaration         *ast.Node   // First resolved alias declaration that makes the symbol only usable in type constructs
+	typeOnlyExportStarName      string      // Set to the name of the symbol re-exported by an 'export type *' declaration, when different from the symbol name
 }
 
 // Links for module symbols
 
 type ModuleSymbolLinks struct {
-	resolvedExports       SymbolTable      // Resolved exports of module or combined early- and late-bound static members of a class.
-	cjsExportMerged       *Symbol          // Version of the symbol with all non export= exports merged with the export= target
-	typeOnlyExportStarMap map[string]*Node // Set on a module symbol when some of its exports were resolved through a 'export type * from "mod"' declaration
+	resolvedExports       ast.SymbolTable      // Resolved exports of module or combined early- and late-bound static members of a class.
+	cjsExportMerged       *ast.Symbol          // Version of the symbol with all non export= exports merged with the export= target
+	typeOnlyExportStarMap map[string]*ast.Node // Set on a module symbol when some of its exports were resolved through a 'export type * from "mod"' declaration
 }
 
 // Links for export type symbols
 
 type ExportTypeLinks struct {
-	target            *Symbol // Target symbol
-	originatingImport *Node   // Import declaration which produced the symbol, present if the symbol is marked as uncallable but had call signatures in `resolveESModuleSymbol`
+	target            *ast.Symbol // Target symbol
+	originatingImport *ast.Node   // Import declaration which produced the symbol, present if the symbol is marked as uncallable but had call signatures in `resolveESModuleSymbol`
 }
 
 // Links for type aliases
@@ -129,7 +130,7 @@ const (
 	MembersOrExportsResolutionKindresolvedMembers MembersOrExportsResolutionKind = 1
 )
 
-type MembersAndExportsLinks [2]SymbolTable // Indexed by MembersOrExportsResolutionKind
+type MembersAndExportsLinks [2]ast.SymbolTable // Indexed by MembersOrExportsResolutionKind
 
 // Links for type parameters
 
@@ -146,8 +147,8 @@ type InterfaceTypeLinks struct {
 // Links for syntheric spread properties
 
 type SpreadLinks struct {
-	leftSpread  *Symbol // Left source for synthetic spread property
-	rightSpread *Symbol // Right source for synthetic spread property
+	leftSpread  *ast.Symbol // Left source for synthetic spread property
+	rightSpread *ast.Symbol // Right source for synthetic spread property
 }
 
 // Links for variances of type aliases and interface types
@@ -299,8 +300,8 @@ const (
 	ModuleResolutionKindUnknown ModuleResolutionKind = 0
 	// Starting with node16, node's module resolver has significant departures from traditional cjs resolution
 	// to better support ECMAScript modules and their use within node - however more features are still being added.
-	// TypeScript's Node ESM support was introduced after Node 12 went end-of-life, and Node 14 is the earliest stable
-	// version that supports both pattern trailers - *but*, Node 16 is the first version that also supports ECMAScript 2022.
+	// TypeScript's ast.Node ESM support was introduced after ast.Node 12 went end-of-life, and ast.Node 14 is the earliest stable
+	// version that supports both pattern trailers - *but*, ast.Node 16 is the first version that also supports ECMAScript 2022.
 	// In turn, we offer both a `NodeNext` moving resolution target, and a `Node16` version-anchored resolution target
 	ModuleResolutionKindNode16   ModuleResolutionKind = 3
 	ModuleResolutionKindNodeNext ModuleResolutionKind = 99 // Not simply `Node16` so that compiled code linked against TS can use the `Next` value reliably (same as with `ModuleKind`)
@@ -311,7 +312,7 @@ type NodeCheckFlags uint32
 
 const (
 	NodeCheckFlagsNone                                     NodeCheckFlags = 0
-	NodeCheckFlagsTypeChecked                              NodeCheckFlags = 1 << 0  // Node has been type checked
+	NodeCheckFlagsTypeChecked                              NodeCheckFlags = 1 << 0  // ast.Node has been type checked
 	NodeCheckFlagsLexicalThis                              NodeCheckFlags = 1 << 1  // Lexical 'this' reference
 	NodeCheckFlagsCaptureThis                              NodeCheckFlags = 1 << 2  // Lexical 'this' used in body
 	NodeCheckFlagsCaptureNewTarget                         NodeCheckFlags = 1 << 3  // Lexical 'new.target' used in body
@@ -325,28 +326,28 @@ const (
 	NodeCheckFlagsLexicalModuleMergesWithClass             NodeCheckFlags = 1 << 11 // Instantiated lexical module declaration is merged with a previous class declaration.
 	NodeCheckFlagsLoopWithCapturedBlockScopedBinding       NodeCheckFlags = 1 << 12 // Loop that contains block scoped variable captured in closure
 	NodeCheckFlagsContainsCapturedBlockScopeBinding        NodeCheckFlags = 1 << 13 // Part of a loop that contains block scoped variable captured in closure
-	NodeCheckFlagsCapturedBlockScopedBinding               NodeCheckFlags = 1 << 14 // Block-scoped binding that is captured in some function
-	NodeCheckFlagsBlockScopedBindingInLoop                 NodeCheckFlags = 1 << 15 // Block-scoped binding with declaration nested inside iteration statement
-	NodeCheckFlagsNeedsLoopOutParameter                    NodeCheckFlags = 1 << 16 // Block scoped binding whose value should be explicitly copied outside of the converted loop
+	NodeCheckFlagsCapturedBlockScopedBinding               NodeCheckFlags = 1 << 14 // ast.Block-scoped binding that is captured in some function
+	NodeCheckFlagsBlockScopedBindingInLoop                 NodeCheckFlags = 1 << 15 // ast.Block-scoped binding with declaration nested inside iteration statement
+	NodeCheckFlagsNeedsLoopOutParameter                    NodeCheckFlags = 1 << 16 // ast.Block scoped binding whose value should be explicitly copied outside of the converted loop
 	NodeCheckFlagsAssignmentsMarked                        NodeCheckFlags = 1 << 17 // Parameter assignments have been marked
 	NodeCheckFlagsContainsConstructorReference             NodeCheckFlags = 1 << 18 // Class or class element that contains a binding that references the class constructor.
 	NodeCheckFlagsConstructorReference                     NodeCheckFlags = 1 << 29 // Binding to a class constructor inside of the class's body.
 	NodeCheckFlagsContainsClassWithPrivateIdentifiers      NodeCheckFlags = 1 << 20 // Marked on all block-scoped containers containing a class with private identifiers.
 	NodeCheckFlagsContainsSuperPropertyInStaticInitializer NodeCheckFlags = 1 << 21 // Marked on all block-scoped containers containing a static initializer with 'super.x' or 'super[x]'.
 	NodeCheckFlagsInCheckIdentifier                        NodeCheckFlags = 1 << 22
-	NodeCheckFlagsPartiallyTypeChecked                     NodeCheckFlags = 1 << 23 // Node has been partially type checked
+	NodeCheckFlagsPartiallyTypeChecked                     NodeCheckFlags = 1 << 23 // ast.Node has been partially type checked
 )
 
 // Common links
 
 type NodeLinks struct {
-	flags                          NodeCheckFlags // Set of flags specific to Node
+	flags                          NodeCheckFlags // Set of flags specific to ast.Node
 	declarationRequiresScopeChange core.Tristate
 }
 
 type TypeNodeLinks struct {
-	resolvedType        *Type   // Cached type of type node
-	resolvedSymbol      *Symbol // Cached name resolution result
+	resolvedType        *Type       // Cached type of type node
+	resolvedSymbol      *ast.Symbol // Cached name resolution result
 	outerTypeParameters []*Type
 }
 
@@ -357,22 +358,22 @@ type SignatureLinks struct {
 	effectsSignature  *Signature
 }
 
-// jsxFlag: JsxOpeningElement | JsxClosingElement
-// resolvedJsxElementAttributesType: JsxOpeningElement | JsxClosingElement
-// resolvedJsxElementAllAttributesType: JsxOpeningElement | JsxClosingElement
+// jsxFlag: ast.JsxOpeningElement | ast.JsxClosingElement
+// resolvedJsxElementAttributesType: ast.JsxOpeningElement | ast.JsxClosingElement
+// resolvedJsxElementAllAttributesType: ast.JsxOpeningElement | ast.JsxClosingElement
 // jsxNamespace: Jsx*
 // jsxImplicitImportContainer: Jsx*
 
 // resolvedJSDocType: JSDoc TypeReference | ImportType
 
-// switchTypes: SwitchStatement
+// switchTypes: ast.SwitchStatement
 
-// contectFreeType: Expression | FunctionExpression | ArrowFunction | MethodDeclaration
+// contectFreeType: ast.Expression | ast.FunctionExpression | ast.ArrowFunction | ast.MethodDeclaration
 
 // outerTypeParameters: AnonymousType | MappedType | DeferredTypeReference
 
-// Only on SourceFile
-// deferredNodes []Node          // Set of nodes whose checking has been deferred
+// Only on ast.SourceFile
+// deferredNodes []ast.Node          // Set of nodes whose checking has been deferred
 
 // resolvedSignature Signature;      // Cached signature of signature node or call expression
 // effectsSignature Signature;       // Signature with possible control flow effects
@@ -385,11 +386,11 @@ type SignatureLinks struct {
 // resolvedJsxElementAllAttributesType Type; // resolved all element attributes type of a JSX openinglike element
 // resolvedJSDocType Type;           // Resolved type of a JSDoc type reference
 // switchTypes []Type;               // Cached array of switch case expression types
-// jsxNamespace *Symbol;      // Resolved jsx namespace symbol for this node
-// jsxImplicitImportContainer *Symbol; // Resolved module symbol the implicit jsx import of this file should refer to
+// jsxNamespace *ast.Symbol;      // Resolved jsx namespace symbol for this node
+// jsxImplicitImportContainer *ast.Symbol; // Resolved module symbol the implicit jsx import of this file should refer to
 // contextFreeType Type;             // Cached context-free type used by the first pass of inference; used when a function's return is partially contextually sensitive
-// deferredNodes []Node          // Set of nodes whose checking has been deferred
-// capturedBlockScopeBindings []*Symbol; // Block-scoped bindings captured beneath this part of an IterationStatement
+// deferredNodes []ast.Node          // Set of nodes whose checking has been deferred
+// capturedBlockScopeBindings []*ast.Symbol; // ast.Block-scoped bindings captured beneath this part of an IterationStatement
 // outerTypeParameters []*TypeParameter; // Outer type parameters of anonymous object type
 // isExhaustive boolean;         // Is node an exhaustive switch statement (0 indicates in-process resolution)
 // skipDirectInference true;         // Flag set by the API `getContextualType` call on a node when `Completions` is passed to force the checker to skip making inferences to a node's type
@@ -400,12 +401,12 @@ type SignatureLinks struct {
 // parameterInitializerContainsUndefined boolean; // True if this is a parameter declaration whose type annotation contains "undefined".
 // fakeScopeForSignatureDeclaration "params" | "typeParams"; // If present, this is a fake scope injected into an enclosing declaration chain.
 // assertionExpressionType Type;     // Cached type of the expression of a type assertion
-// potentialThisCollisions Node[];
-// potentialNewTargetCollisions Node[];
-// potentialWeakMapSetCollisions Node[];
-// potentialReflectCollisions Node[];
-// potentialUnusedRenamedBindingElementsInTypes BindingElement[];
-// externalHelpersModule Symbol;     // Resolved symbol for the external helpers module
+// potentialThisCollisions ast.Node[];
+// potentialNewTargetCollisions ast.Node[];
+// potentialWeakMapSetCollisions ast.Node[];
+// potentialReflectCollisions ast.Node[];
+// potentialUnusedRenamedBindingElementsInTypes ast.BindingElement[];
+// externalHelpersModule ast.Symbol;     // Resolved symbol for the external helpers module
 // instantiationExpressionTypes Map<number, Type>; // Cache of instantiation expression types for the node
 
 type TypeFlags uint32
@@ -422,7 +423,7 @@ const (
 	TypeFlagsStringLiteral   TypeFlags = 1 << 7
 	TypeFlagsNumberLiteral   TypeFlags = 1 << 8
 	TypeFlagsBooleanLiteral  TypeFlags = 1 << 9
-	TypeFlagsEnumLiteral     TypeFlags = 1 << 10 // Always combined with StringLiteral, NumberLiteral, or Union
+	TypeFlagsEnumLiteral     TypeFlags = 1 << 10 // Always combined with ast.StringLiteral, NumberLiteral, or Union
 	TypeFlagsBigIntLiteral   TypeFlags = 1 << 11
 	TypeFlagsESSymbol        TypeFlags = 1 << 12 // Type of symbol primitive introduced in ES6
 	TypeFlagsUniqueESSymbol  TypeFlags = 1 << 13 // unique symbol
@@ -555,11 +556,11 @@ const (
 // TypeAlias
 
 type TypeAlias struct {
-	symbol        *Symbol
+	symbol        *ast.Symbol
 	typeArguments []*Type
 }
 
-func (a *TypeAlias) Symbol() *Symbol {
+func (a *TypeAlias) Symbol() *ast.Symbol {
 	if a == nil {
 		return nil
 	}
@@ -579,7 +580,7 @@ type Type struct {
 	flags       TypeFlags
 	objectFlags ObjectFlags
 	id          TypeId
-	symbol      *Symbol
+	symbol      *ast.Symbol
 	alias       *TypeAlias
 	data        TypeData // Type specific data
 }
@@ -740,8 +741,8 @@ func (t *ConstrainedType) AsConstrainedType() *ConstrainedType { return t }
 
 type StructuredType struct {
 	ConstrainedType
-	members            SymbolTable
-	properties         []*Symbol
+	members            ast.SymbolTable
+	properties         []*ast.Symbol
 	signatures         []*Signature // Signatures (call + construct)
 	callSignatureCount int          // Count of call signatures
 	indexInfos         []*IndexInfo
@@ -781,7 +782,7 @@ func (t *ObjectType) AsObjectType() *ObjectType { return t }
 
 type TypeReference struct {
 	ObjectType
-	node                  *Node // TypeReferenceNode | ArrayTypeNode | TupleTypeNode when deferred, else nil
+	node                  *ast.Node // ast.TypeReferenceNode | ast.ArrayTypeNode | ast.TupleTypeNode when deferred, else nil
 	resolvedTypeArguments []*Type
 }
 
@@ -798,10 +799,10 @@ type InterfaceType struct {
 	declaredMembersResolved     bool
 	resolvedBaseConstructorType *Type
 	resolvedBaseTypes           []*Type
-	declaredMembers             SymbolTable  // Declared members
-	declaredCallSignatures      []*Signature // Declared call signatures
-	declaredConstructSignatures []*Signature // Declared construct signatures
-	declaredIndexInfos          []*IndexInfo // Declared index signatures
+	declaredMembers             ast.SymbolTable // Declared members
+	declaredCallSignatures      []*Signature    // Declared call signatures
+	declaredConstructSignatures []*Signature    // Declared construct signatures
+	declaredIndexInfos          []*IndexInfo    // Declared index signatures
 }
 
 func (t *InterfaceType) AsInterfaceType() *InterfaceType { return t }
@@ -845,7 +846,7 @@ const (
 
 type TupleElementInfo struct {
 	flags              ElementFlags
-	labeledDeclaration *Node // NamedTupleMember | ParameterDeclaration | nil
+	labeledDeclaration *ast.Node // ast.NamedTupleMember | ast.ParameterDeclaration | nil
 }
 
 type TupleType struct {
@@ -868,14 +869,14 @@ type SingleSignatureType struct {
 
 type InstantiationExpressionType struct {
 	ObjectType
-	node *Node
+	node *ast.Node
 }
 
 // MappedType
 
 type MappedType struct {
 	ObjectType
-	declaration          MappedTypeNode
+	declaration          ast.MappedTypeNode
 	typeParameter        *Type
 	constraintType       *Type
 	nameType             *Type
@@ -899,9 +900,9 @@ type ReverseMappedType struct {
 type UnionOrIntersectionType struct {
 	StructuredType
 	types                                       []*Type
-	propertyCache                               SymbolTable
-	propertyCacheWithoutFunctionPropertyAugment SymbolTable
-	resolvedProperties                          []*Symbol
+	propertyCache                               ast.SymbolTable
+	propertyCacheWithoutFunctionPropertyAugment ast.SymbolTable
+	resolvedProperties                          []*ast.Symbol
 	resolvedBaseConstraint                      *Type
 }
 
@@ -983,7 +984,7 @@ type SubstitutionType struct {
 }
 
 type ConditionalRoot struct {
-	node                *Node // ConditionalTypeNode
+	node                *ast.Node // ast.ConditionalTypeNode
 	checkType           *Type
 	extendsType         *Type
 	isDistributive      bool
@@ -1037,10 +1038,10 @@ type Signature struct {
 	flags                    SignatureFlags
 	minArgumentCount         int32
 	resolvedMinArgumentCount int32
-	declaration              *Node
+	declaration              *ast.Node
 	typeParameters           []*Type
-	parameters               []*Symbol
-	thisParameter            *Symbol
+	parameters               []*ast.Symbol
+	thisParameter            *ast.Symbol
 	resolvedReturnType       *Type
 	resolvedTypePredicate    *TypePredicate
 	target                   *Signature
@@ -1076,7 +1077,7 @@ type IndexInfo struct {
 	keyType     *Type
 	valueType   *Type
 	isReadonly  bool
-	declaration *Node // IndexSignatureDeclaration
+	declaration *ast.Node // ast.IndexSignatureDeclaration
 }
 
 /**

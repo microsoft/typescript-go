@@ -1,7 +1,7 @@
 // Package printer exports a Printer for pretty-printing TS ASTs and writer interfaces and implementations for using them
 // Intended ultimate usage:
 //
-//		func nodeToInlineStr(node *Node) {
+//		func nodeToInlineStr(node *ast.Node) {
 //	   // Reuse singleton single-line writer (TODO: thread safety?)
 //		  printer := printer.New({ writer: printer.SingleLineTextWriter, stripComments: true })
 //		  printer.printNode(node)
@@ -10,7 +10,7 @@
 //
 // // or
 //
-//		func nodeToStr(node *Node, options CompilerOptions) {
+//		func nodeToStr(node *ast.Node, options CompilerOptions) {
 //	   // create new writer shared for the entire printing operation
 //		  printer := printer.New({ writer: printer.NewTextWriter(options.newLine) })
 //		  printer.printNode(node)
@@ -18,10 +18,10 @@
 //		}
 package printer
 
-import "github.com/microsoft/typescript-go/internal/compiler"
+import "github.com/microsoft/typescript-go/internal/ast"
 
 // Prints a node into a string - creates its' own text writer to facilitate this - prefer emitter.PrintNode where an emitter is available
-func PrintNode(node *compiler.Node) string {
+func PrintNode(node *ast.Node) string {
 	writer := NewTextWriter("\n")
 	// printNode(node, writer)
 	return writer.getText()
@@ -85,9 +85,9 @@ func PrintNode(node *compiler.Node) string {
 // 	case compiler.ast.KindColonToken:
 // 	case compiler.ast.KindAtToken:
 // 	case compiler.ast.KindQuestionQuestionToken:
-// 	/** Only the JSDoc scanner produces BacktickToken. The normal scanner produces NoSubstitutionTemplateLiteral and related kinds. */
+// 	/** Only the JSDoc scanner produces BacktickToken. The normal scanner produces ast.NoSubstitutionTemplateLiteral and related kinds. */
 // 	case compiler.ast.KindBacktickToken:
-// 	/** Only the JSDoc scanner produces HashToken. The normal scanner produces PrivateIdentifier. */
+// 	/** Only the JSDoc scanner produces HashToken. The normal scanner produces ast.PrivateIdentifier. */
 // 	case compiler.ast.KindHashToken:
 // 	// Assignments
 // 	case compiler.ast.KindEqualsToken:
@@ -106,7 +106,7 @@ func PrintNode(node *compiler.Node) string {
 // 	case compiler.ast.KindAmpersandAmpersandEqualsToken:
 // 	case compiler.ast.KindQuestionQuestionEqualsToken:
 // 	case compiler.ast.KindCaretEqualsToken:
-// 	// Identifiers and PrivateIdentifier
+// 	// Identifiers and ast.PrivateIdentifier
 // 	case compiler.ast.KindIdentifier:
 // 	case compiler.ast.KindPrivateIdentifier:
 // 	case compiler.ast.KindJSDocCommentTextToken:
@@ -396,6 +396,6 @@ func PrintNode(node *compiler.Node) string {
 // 	case compiler.ast.KindCommaListExpression:
 // 	case compiler.ast.KindSyntheticReferenceExpression:
 // 	default:
-// 		panic("Node kind not implemented in printer")
+// 		panic("ast.Node kind not implemented in printer")
 // 	}
 // }

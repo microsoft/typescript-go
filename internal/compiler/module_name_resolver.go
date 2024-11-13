@@ -5,6 +5,7 @@ import (
 	"math/bits"
 	"strings"
 
+	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/compiler/diagnostics"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -40,7 +41,7 @@ type ParsedCommandLine struct {
 
 type ResolvedProjectReference struct {
 	commandLine ParsedCommandLine
-	sourceFile  *SourceFile
+	sourceFile  *ast.SourceFile
 	references  []*ResolvedProjectReference
 }
 
@@ -113,7 +114,7 @@ type ResolvedModuleFull struct {
 type WithFailedLookupLocations struct {
 	failedLookupLocations []string
 	affectingLocations    []string
-	resolutionDiagnostics []Diagnostic
+	resolutionDiagnostics []ast.Diagnostic
 }
 
 type ResolvedModuleWithFailedLookupLocations struct {
@@ -176,7 +177,7 @@ func (e Extensions) String() string {
 		result = append(result, "JavaScript")
 	}
 	if e&ExtensionsDeclaration != 0 {
-		result = append(result, "Declaration")
+		result = append(result, "ast.Declaration")
 	}
 	if e&ExtensionsJson != 0 {
 		result = append(result, "JSON")

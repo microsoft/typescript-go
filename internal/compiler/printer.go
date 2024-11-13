@@ -3,6 +3,7 @@ package compiler
 import (
 	"strings"
 
+	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
 )
 
@@ -34,11 +35,11 @@ func (c *Checker) getTypePrecedence(t *Type) TypePrecedence {
 	}
 }
 
-func (c *Checker) symbolToString(s *Symbol) string {
+func (c *Checker) symbolToString(s *ast.Symbol) string {
 	if s.ValueDeclaration != nil {
 		name := getNameOfDeclaration(s.ValueDeclaration)
 		if name != nil {
-			if IsIdentifier(name) {
+			if ast.IsIdentifier(name) {
 				return getTextOfNode(name)
 			}
 			return "[" + getTextOfNode(name) + "]"
@@ -51,13 +52,13 @@ func (c *Checker) typeToString(t *Type) string {
 	return c.typeToStringEx(t, nil, TypeFormatFlagsNone)
 }
 
-func (c *Checker) typeToStringEx(t *Type, enclosingDeclaration *Node, flags TypeFormatFlags) string {
+func (c *Checker) typeToStringEx(t *Type, enclosingDeclaration *ast.Node, flags TypeFormatFlags) string {
 	p := c.newPrinter(flags)
 	p.printType(t)
 	return p.string()
 }
 
-func (c *Checker) typeAliasToString(d *TypeAliasDeclaration) string {
+func (c *Checker) typeAliasToString(d *ast.TypeAliasDeclaration) string {
 	p := c.newPrinter(TypeFormatFlagsInTypeAlias)
 	p.printTypeAlias(d)
 	return p.string()
@@ -441,7 +442,7 @@ func (p *Printer) printIndexedAccessType(t *Type) {
 	p.print("]")
 }
 
-func (p *Printer) printTypeAlias(d *TypeAliasDeclaration) {
+func (p *Printer) printTypeAlias(d *ast.TypeAliasDeclaration) {
 	p.print("type ")
 	symbol := d.AsNode().Symbol()
 	t := p.c.getDeclaredTypeOfSymbol(symbol)

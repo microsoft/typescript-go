@@ -8,6 +8,7 @@ import (
 	"strings"
 	"unicode"
 
+	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/compiler/diagnostics"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -34,7 +35,7 @@ const (
 	ellipsis            = "..."
 )
 
-func FormatDiagnosticsWithColorAndContext(output *strings.Builder, diags []*Diagnostic, formatOpts *DiagnosticsFormattingOptions) {
+func FormatDiagnosticsWithColorAndContext(output *strings.Builder, diags []*ast.Diagnostic, formatOpts *DiagnosticsFormattingOptions) {
 	if len(diags) == 0 {
 		return
 	}
@@ -79,7 +80,7 @@ func FormatDiagnosticsWithColorAndContext(output *strings.Builder, diags []*Diag
 	}
 }
 
-func writeCodeSnippet(writer *strings.Builder, sourceFile *SourceFile, start int, length int, squiggleColor string, formatOpts *DiagnosticsFormattingOptions) {
+func writeCodeSnippet(writer *strings.Builder, sourceFile *ast.SourceFile, start int, length int, squiggleColor string, formatOpts *DiagnosticsFormattingOptions) {
 	firstLine, firstLineChar := GetLineAndCharacterOfPosition(sourceFile, start)
 	lastLine, lastLineChar := GetLineAndCharacterOfPosition(sourceFile, start+length)
 
@@ -153,7 +154,7 @@ func writeCodeSnippet(writer *strings.Builder, sourceFile *SourceFile, start int
 	}
 }
 
-func WriteFlattenedDiagnosticMessage(writer *strings.Builder, diagnostic *Diagnostic, newline string) {
+func WriteFlattenedDiagnosticMessage(writer *strings.Builder, diagnostic *ast.Diagnostic, newline string) {
 	writer.WriteString(diagnostic.Message())
 
 	for _, chain := range diagnostic.MessageChain_ {
@@ -161,7 +162,7 @@ func WriteFlattenedDiagnosticMessage(writer *strings.Builder, diagnostic *Diagno
 	}
 }
 
-func flattenDiagnosticMessageChain(writer *strings.Builder, chain *MessageChain, newLine string, level int) {
+func flattenDiagnosticMessageChain(writer *strings.Builder, chain *ast.MessageChain, newLine string, level int) {
 	writer.WriteString(newLine)
 	for range level {
 		writer.WriteString("  ")
@@ -195,7 +196,7 @@ func writeWithStyleAndReset(output *strings.Builder, text string, formatStyle st
 	output.WriteString(resetEscapeSequence)
 }
 
-func WriteLocation(output *strings.Builder, file *SourceFile, pos int, formatOpts *DiagnosticsFormattingOptions, writeWithStyleAndReset FormattedWriter) {
+func WriteLocation(output *strings.Builder, file *ast.SourceFile, pos int, formatOpts *DiagnosticsFormattingOptions, writeWithStyleAndReset FormattedWriter) {
 	firstLine, firstChar := GetLineAndCharacterOfPosition(file, pos)
 	var relativeFileName string
 	if formatOpts != nil {
@@ -215,12 +216,12 @@ func WriteLocation(output *strings.Builder, file *SourceFile, pos int, formatOpt
 
 type ErrorSummary struct {
 	TotalErrorCount int
-	GlobalErrors    []*Diagnostic
-	ErrorsByFiles   map[*SourceFile][]*Diagnostic
-	SortedFileList  []*SourceFile
+	GlobalErrors    []*ast.Diagnostic
+	ErrorsByFiles   map[*ast.SourceFile][]*ast.Diagnostic
+	SortedFileList  []*ast.SourceFile
 }
 
-func WriteErrorSummaryText(output *strings.Builder, allDiagnostics []*Diagnostic, formatOpts *DiagnosticsFormattingOptions) {
+func WriteErrorSummaryText(output *strings.Builder, allDiagnostics []*ast.Diagnostic, formatOpts *DiagnosticsFormattingOptions) {
 	// Roughly corresponds to 'getErrorSummaryText' from watch.ts
 
 	errorSummary := getErrorSummary(allDiagnostics)
@@ -263,10 +264,10 @@ func WriteErrorSummaryText(output *strings.Builder, allDiagnostics []*Diagnostic
 	}
 }
 
-func getErrorSummary(diags []*Diagnostic) *ErrorSummary {
+func getErrorSummary(diags []*ast.Diagnostic) *ErrorSummary {
 	var totalErrorCount int
-	var globalErrors []*Diagnostic
-	var errorsByFiles map[*SourceFile][]*Diagnostic
+	var globalErrors []*ast.Diagnostic
+	var errorsByFiles map[*ast.SourceFile][]*ast.Diagnostic
 
 	for _, diagnostic := range diags {
 		if diagnostic.Category() != diagnostics.CategoryError {
@@ -278,7 +279,7 @@ func getErrorSummary(diags []*Diagnostic) *ErrorSummary {
 			globalErrors = append(globalErrors, diagnostic)
 		} else {
 			if errorsByFiles == nil {
-				errorsByFiles = make(map[*SourceFile][]*Diagnostic)
+				errorsByFiles = make(map[*ast.SourceFile][]*ast.Diagnostic)
 			}
 			errorsByFiles[diagnostic.File_] = append(errorsByFiles[diagnostic.File_], diagnostic)
 		}
@@ -286,7 +287,7 @@ func getErrorSummary(diags []*Diagnostic) *ErrorSummary {
 
 	// !!!
 	// Need an ordered map here, but sorting for consistency.
-	sortedFileList := slices.SortedFunc(maps.Keys(errorsByFiles), func(a, b *SourceFile) int {
+	sortedFileList := slices.SortedFunc(maps.Keys(errorsByFiles), func(a, b *ast.SourceFile) int {
 		return strings.Compare(a.FileName_, b.FileName_)
 	})
 
@@ -329,7 +330,7 @@ func writeTabularErrorsDisplay(output *strings.Builder, errorSummary *ErrorSumma
 	}
 }
 
-func prettyPathForFileError(file *SourceFile, fileErrors []*Diagnostic, formatOpts *DiagnosticsFormattingOptions) string {
+func prettyPathForFileError(file *ast.SourceFile, fileErrors []*ast.Diagnostic, formatOpts *DiagnosticsFormattingOptions) string {
 	line, _ := GetLineAndCharacterOfPosition(file, fileErrors[0].Loc_.Pos())
 	fileName := file.FileName_
 	if tspath.PathIsAbsolute(fileName) && tspath.PathIsAbsolute(formatOpts.CurrentDirectory) {

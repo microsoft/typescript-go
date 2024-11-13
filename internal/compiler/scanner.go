@@ -903,7 +903,7 @@ func (s *Scanner) scanJsxTokenEx(allowMultilineJsxText bool) ast.Kind {
 			if stringutil.IsLineBreak(ch) && firstNonWhitespace == 0 {
 				firstNonWhitespace = -1
 			} else if !allowMultilineJsxText && stringutil.IsLineBreak(ch) && firstNonWhitespace > 0 {
-				// Stop JsxText on each line during formatting. This allows the formatter to
+				// Stop ast.JsxText on each line during formatting. This allows the formatter to
 				// indent each line correctly.
 				break
 			} else if !stringutil.IsWhiteSpaceLike(ch) {
@@ -1782,7 +1782,7 @@ func scanShebangTrivia(text string, pos int) int {
 	return pos
 }
 
-func getScannerForSourceFile(sourceFile *SourceFile, pos int) *Scanner {
+func getScannerForSourceFile(sourceFile *ast.SourceFile, pos int) *Scanner {
 	s := NewScanner()
 	s.text = sourceFile.Text
 	s.pos = pos
@@ -1792,7 +1792,7 @@ func getScannerForSourceFile(sourceFile *SourceFile, pos int) *Scanner {
 	return s
 }
 
-func getRangeOfTokenAtPosition(sourceFile *SourceFile, pos int) core.TextRange {
+func getRangeOfTokenAtPosition(sourceFile *ast.SourceFile, pos int) core.TextRange {
 	s := getScannerForSourceFile(sourceFile, pos)
 	return core.NewTextRange(s.tokenStart, s.pos)
 }
@@ -1814,20 +1814,20 @@ func computeLineOfPosition(lineStarts []core.TextPos, pos core.TextPos) int {
 	return low - 1
 }
 
-func getLineStarts(sourceFile *SourceFile) []core.TextPos {
+func getLineStarts(sourceFile *ast.SourceFile) []core.TextPos {
 	if sourceFile.LineMap == nil {
 		sourceFile.LineMap = stringutil.ComputeLineStarts(sourceFile.Text)
 	}
 	return sourceFile.LineMap
 }
 
-func GetLineAndCharacterOfPosition(sourceFile *SourceFile, pos int) (line int, character int) {
+func GetLineAndCharacterOfPosition(sourceFile *ast.SourceFile, pos int) (line int, character int) {
 	line = computeLineOfPosition(getLineStarts(sourceFile), core.TextPos(pos))
 	character = utf8.RuneCountInString(sourceFile.Text[sourceFile.LineMap[line]:pos])
 	return
 }
 
-func getEndLinePosition(sourceFile *SourceFile, line int) int {
+func getEndLinePosition(sourceFile *ast.SourceFile, line int) int {
 	pos := int(getLineStarts(sourceFile)[line])
 	for {
 		ch, size := utf8.DecodeRuneInString(sourceFile.Text[pos:])
@@ -1838,7 +1838,7 @@ func getEndLinePosition(sourceFile *SourceFile, line int) int {
 	}
 }
 
-func GetPositionOfLineAndCharacter(sourceFile *SourceFile, line int, character int) core.TextPos {
+func GetPositionOfLineAndCharacter(sourceFile *ast.SourceFile, line int, character int) core.TextPos {
 	return ComputePositionOfLineAndCharacter(getLineStarts(sourceFile), line, character)
 }
 
