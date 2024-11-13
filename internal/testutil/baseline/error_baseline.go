@@ -25,8 +25,7 @@ var (
 )
 
 var formatOpts = &compiler.DiagnosticsFormattingOptions{
-	CurrentDirectory: "",
-	NewLine:          harnessNewLine,
+	NewLine: harnessNewLine,
 }
 
 type TestFile struct {
@@ -164,7 +163,7 @@ func iterateErrorBaseline(t testing.TB, inputFiles []*TestFile, inputDiagnostics
 		// Filter down to the errors in the file
 		fileErrors := core.Filter(diagnostics, func(e *compiler.Diagnostic) bool {
 			return e.File() != nil &&
-				tspath.ComparePaths(removeTestPathPrefixes(e.File().FileName(), false), removeTestPathPrefixes(inputFile.unitName, false), tspath.ComparePathsOptions{IgnoreCase: !useCaseSensitiveFileNames}) == core.ComparisonEqual
+				tspath.ComparePaths(removeTestPathPrefixes(e.File().FileName(), false), removeTestPathPrefixes(inputFile.unitName, false), tspath.ComparePathsOptions{}) == core.ComparisonEqual
 		})
 
 		// Header

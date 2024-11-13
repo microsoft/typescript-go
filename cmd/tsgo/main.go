@@ -11,6 +11,7 @@ import (
 	"unicode"
 
 	ts "github.com/microsoft/typescript-go/internal/compiler"
+	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
 var quiet = false
@@ -81,9 +82,11 @@ func main() {
 
 			var output strings.Builder
 			formatOpts := ts.DiagnosticsFormattingOptions{
-				NewLine:                   "\n",
-				CurrentDirectory:          currentDirectory,
-				UseCaseSensitiveFileNames: useCaseSensitiveFileNames,
+				NewLine: "\n",
+				ComparePathsOptions: tspath.ComparePathsOptions{
+					CurrentDirectory:          currentDirectory,
+					UseCaseSensitiveFileNames: useCaseSensitiveFileNames,
+				},
 			}
 			ts.FormatDiagnosticsWithColorAndContext(&output, diagnostics, &formatOpts)
 			output.WriteByte('\n')
