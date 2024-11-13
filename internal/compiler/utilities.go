@@ -3162,7 +3162,7 @@ func tryExtractTSExtension(fileName string) string {
 }
 
 func hasImplementationTSFileExtension(path string) bool {
-	return fileExtensionIsOneOf(path, supportedTSImplementationExtensions) && !isDeclarationFileName(path)
+	return fileExtensionIsOneOf(path, supportedTSImplementationExtensions) && !IsDeclarationFileName(path)
 }
 
 func isSideEffectImport(node *Node) bool {

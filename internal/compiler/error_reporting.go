@@ -353,7 +353,7 @@ func WriteFormatDiagnostic(output *strings.Builder, diagnostic *Diagnostic, form
 	if diagnostic.file != nil {
 		line, character := GetLineAndCharacterOfPosition(diagnostic.file, diagnostic.loc.Pos())
 		fileName := diagnostic.file.fileName
-		relativeFileName := tspath.ConvertToRelativePath(fileName, formatOpts.CurrentDirectory, formatOpts.GetCanonicalFileName)
+		relativeFileName := tspath.ConvertToRelativePath(fileName, tspath.ComparePathsOptions{CurrentDirectory: formatOpts.CurrentDirectory, IgnoreCase: !formatOpts.UseCaseSensitiveFileNames})
 		fmt.Fprintf(output, "%s(%d,%d): ", relativeFileName, line+1, character+1)
 	}
 
