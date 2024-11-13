@@ -298,6 +298,7 @@ func TestGetRelativePathToDirectoryOrUrl(t *testing.T) {
 }
 
 func TestToFileNameLowerCase(t *testing.T) {
+	t.Parallel()
 	assert.Equal(t, toFileNameLowerCase("/user/UserName/projects/Project/file.ts"), "/user/username/projects/project/file.ts")
 	assert.Equal(t, toFileNameLowerCase("/user/UserName/projects/projectß/file.ts"), "/user/username/projects/projectß/file.ts")
 	assert.Equal(t, toFileNameLowerCase("/user/UserName/projects/İproject/file.ts"), "/user/username/projects/İproject/file.ts")
