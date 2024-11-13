@@ -86,10 +86,17 @@ const (
 	ModuleResolutionKindBundler  ModuleResolutionKind = 100
 )
 
+// We don't use stringer on this for now, because these values
+// are user-facing in --traceResolution, and stringer currently
+// lacks the ability to remove the "ModuleResolutionKind" prefix
+// when generating code for multiple types into the same output
+// file. Additionally, since there's no TS equivalent of
+// `ModuleResolutionKindUnknown`, we want to panic on that case,
+// as it probably represents a mistake when porting TS to Go.
 func (m ModuleResolutionKind) String() string {
 	switch m {
 	case ModuleResolutionKindUnknown:
-		return "Unknown"
+		panic("should not use zero value of ModuleResolutionKind")
 	case ModuleResolutionKindNode16:
 		return "Node16"
 	case ModuleResolutionKindNodeNext:
@@ -97,7 +104,7 @@ func (m ModuleResolutionKind) String() string {
 	case ModuleResolutionKindBundler:
 		return "Bundler"
 	default:
-		return "Unknown"
+		panic("unhandled case in ModuleResolutionKind.String")
 	}
 }
 
