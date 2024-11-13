@@ -211,8 +211,8 @@ func (b *Binder) declareSymbolEx(symbolTable ast.SymbolTable, parent *ast.Symbol
 					} else {
 						// This is to properly report an error in the case "export default { }" is after export default of class declaration or function declaration.
 						// Error on multiple export default in the following case:
-						// 1. multiple export default of class declaration or function declaration by checking ast.NodeFlags.Default
-						// 2. multiple export default of export assignment. This one doesn't have ast.NodeFlags.Default on (as export default doesn't considered as modifiers)
+						// 1. multiple export default of class declaration or function declaration by checking NodeFlags.Default
+						// 2. multiple export default of export assignment. This one doesn't have NodeFlags.Default on (as export default doesn't considered as modifiers)
 						if len(symbol.Declarations) != 0 && ast.IsExportAssignment(node) && !node.AsExportAssignment().IsExportEquals {
 							message = diagnostics.A_module_cannot_have_multiple_default_exports
 							messageNeedsName = false
@@ -268,7 +268,7 @@ func (b *Binder) declareSymbolEx(symbolTable ast.SymbolTable, parent *ast.Symbol
 }
 
 // Should not be called on a declaration with a computed property name,
-// unless it is a well known ast.Symbol.
+// unless it is a well known Symbol.
 func (b *Binder) getDeclarationName(node *ast.Node) string {
 	if ast.IsExportAssignment(node) {
 		return ifElse(node.AsExportAssignment().IsExportEquals, InternalSymbolNameExportEquals, InternalSymbolNameDefault)
@@ -360,7 +360,7 @@ func (b *Binder) declareModuleMember(node *ast.Node, symbolFlags ast.SymbolFlags
 	// and an associated export symbol with all the correct flags set on it. There are 2 main reasons:
 	//
 	//   1. We treat locals and exports of the same name as mutually exclusive within a container.
-	//      That means the binder will issue a Duplicate ast.Identifier error if you mix locals and exports
+	//      That means the binder will issue a Duplicate Identifier error if you mix locals and exports
 	//      with the same name in the same container.
 	//      TODO: Make this a more specific error and decouple it from the exclusion logic.
 	//   2. When we checkIdentifier in the checker, we set its resolved symbol to the local symbol,
@@ -640,11 +640,11 @@ func (b *Binder) bindWorker(node *ast.Node) bool {
 	case ast.KindSetAccessor:
 		b.bindPropertyOrMethodOrAccessor(node, ast.SymbolFlagsSetAccessor, ast.SymbolFlagsSetAccessorExcludes)
 	case ast.KindFunctionType, ast.KindConstructorType:
-		// !!! ast.KindJSDocFunctionType
-		// !!! ast.KindJSDocSignature
+		// !!! KindJSDocFunctionType
+		// !!! KindJSDocSignature
 		b.bindFunctionOrConstructorType(node)
 	case ast.KindTypeLiteral, ast.KindMappedType:
-		// !!! ast.KindJSDocTypeLiteral
+		// !!! KindJSDocTypeLiteral
 		b.bindAnonymousDeclaration(node, ast.SymbolFlagsTypeLiteral, InternalSymbolNameType)
 	case ast.KindObjectLiteralExpression:
 		b.bindAnonymousDeclaration(node, ast.SymbolFlagsObjectLiteral, InternalSymbolNameObject)
@@ -728,7 +728,7 @@ func (b *Binder) bindSourceFileIfExternalModule() {
 	// 	b.bindSourceFileAsExternalModule()
 	// 	// Create symbol equivalent for the module.exports = {}
 	// 	originalSymbol := b.file.symbol
-	// 	b.declareSymbol(b.file.symbol.exports, b.file.symbol, b.file, ast.SymbolFlagsProperty, ast.SymbolFlagsAll)
+	// 	b.declareSymbol(b.file.symbol.exports, b.file.symbol, b.file, SymbolFlagsProperty, SymbolFlagsAll)
 	// 	b.file.symbol = originalSymbol
 	// }
 }
@@ -1120,10 +1120,10 @@ func (b *Binder) bindVariableDeclarationOrBindingElement(node *ast.Node) {
 			// because its parent chain has already been set up, since parents are set before descending into children.
 			//
 			// If node is a binding element in parameter declaration, we need to use ParameterExcludes.
-			// Using ParameterExcludes flag allows the compiler to report an error on duplicate identifiers in Parameter ast.Declaration
+			// Using ParameterExcludes flag allows the compiler to report an error on duplicate identifiers in Parameter Declaration
 			// For example:
-			//      function foo([a,a]) {} // Duplicate ast.Identifier error
-			//      function bar(a,a) {}   // Duplicate ast.Identifier error, parameter declaration in this case is handled in bindParameter
+			//      function foo([a,a]) {} // Duplicate Identifier error
+			//      function bar(a,a) {}   // Duplicate Identifier error, parameter declaration in this case is handled in bindParameter
 			//                             // which correctly set excluded symbols
 			b.declareSymbolAndAddToSymbolTable(node, ast.SymbolFlagsFunctionScopedVariable, ast.SymbolFlagsParameterExcludes)
 		default:
@@ -1134,13 +1134,13 @@ func (b *Binder) bindVariableDeclarationOrBindingElement(node *ast.Node) {
 
 func (b *Binder) bindParameter(node *ast.Node) {
 	// !!!
-	// if node.kind == ast.KindJSDocParameterTag && b.container.kind != ast.KindJSDocSignature {
+	// if node.kind == KindJSDocParameterTag && b.container.kind != KindJSDocSignature {
 	// 	return
 	// }
 	decl := node.AsParameterDeclaration()
 	if b.inStrictMode && node.Flags&ast.NodeFlagsAmbient == 9 {
 		// It is a SyntaxError if the identifier eval or arguments appears within a FormalParameterList of a
-		// strict mode FunctionLikeDeclaration or ast.FunctionExpression(13.1)
+		// strict mode FunctionLikeDeclaration or FunctionExpression(13.1)
 		b.checkStrictModeEvalOrArguments(node, decl.Name_)
 	}
 	if isBindingPattern(decl.Name_) {
@@ -1211,10 +1211,10 @@ func (b *Binder) bindTypeParameter(node *ast.Node) {
 	// 	var container *HasLocals = getEffectiveContainerForJSDocTemplateTag(node.parent)
 	// 	if container {
 	// 		Debug.assertNode(container, canHaveLocals)
-	// 		/* TODO(TS-TO-GO) QuestionQuestionEqualsToken ast.BinaryExpression: container.locals ??= createSymbolTable() */ TODO
-	// 		b.declareSymbol(container.locals /*parent*/, nil, node, ast.SymbolFlagsTypeParameter, ast.SymbolFlagsTypeParameterExcludes)
+	// 		/* TODO(TS-TO-GO) QuestionQuestionEqualsToken BinaryExpression: container.locals ??= createSymbolTable() */ TODO
+	// 		b.declareSymbol(container.locals /*parent*/, nil, node, SymbolFlagsTypeParameter, SymbolFlagsTypeParameterExcludes)
 	// 	} else {
-	// 		b.declareSymbolAndAddToSymbolTable(node, ast.SymbolFlagsTypeParameter, ast.SymbolFlagsTypeParameterExcludes)
+	// 		b.declareSymbolAndAddToSymbolTable(node, SymbolFlagsTypeParameter, SymbolFlagsTypeParameterExcludes)
 	// 	}
 	// }
 	if node.Parent.Kind == ast.KindInferType {
@@ -1323,7 +1323,7 @@ func (b *Binder) isUseStrictPrologueDirective(node *ast.Node) bool {
 
 func (b *Binder) checkStrictModeFunctionName(node *ast.Node) {
 	if b.inStrictMode && node.Flags&ast.NodeFlagsAmbient == 0 {
-		// It is a SyntaxError if the identifier eval or arguments appears within a FormalParameterList of a strict mode ast.FunctionDeclaration or ast.FunctionExpression (13.1))
+		// It is a SyntaxError if the identifier eval or arguments appears within a FormalParameterList of a strict mode FunctionDeclaration or FunctionExpression (13.1))
 		b.checkStrictModeEvalOrArguments(node, node.Name())
 	}
 }
@@ -1353,14 +1353,14 @@ func (b *Binder) getStrictModeBlockScopeFunctionDeclarationMessage(node *ast.Nod
 func (b *Binder) checkStrictModeBinaryExpression(node *ast.Node) {
 	expr := node.AsBinaryExpression()
 	if b.inStrictMode && isLeftHandSideExpression(expr.Left) && isAssignmentOperator(expr.OperatorToken.Kind) {
-		// ECMA 262 (Annex C) The identifier eval or arguments may not appear as the ast.LeftHandSideExpression of an
+		// ECMA 262 (Annex C) The identifier eval or arguments may not appear as the LeftHandSideExpression of an
 		// Assignment operator(11.13) or of a PostfixExpression(11.3)
 		b.checkStrictModeEvalOrArguments(node, expr.Left)
 	}
 }
 
 func (b *Binder) checkStrictModeCatchClause(node *ast.Node) {
-	// It is a SyntaxError if a ast.TryStatement with a Catch occurs within strict code and the ast.Identifier of the
+	// It is a SyntaxError if a TryStatement with a Catch occurs within strict code and the Identifier of the
 	// Catch production is eval or arguments
 	clause := node.AsCatchClause()
 	if b.inStrictMode && clause.VariableDeclaration != nil {
@@ -1380,7 +1380,7 @@ func (b *Binder) checkStrictModeDeleteExpression(node *ast.Node) {
 
 func (b *Binder) checkStrictModePostfixUnaryExpression(node *ast.Node) {
 	// Grammar checking
-	// The identifier eval or arguments may not appear as the ast.LeftHandSideExpression of an
+	// The identifier eval or arguments may not appear as the LeftHandSideExpression of an
 	// Assignment operator(11.13) or of a PostfixExpression(11.3) or as the UnaryExpression
 	// operated upon by a Prefix Increment(11.4.4) or a Prefix Decrement(11.4.5) operator.
 	if b.inStrictMode {
@@ -1477,7 +1477,7 @@ func (b *Binder) bindContainer(node *ast.Node, containerFlags ContainerFlags) {
 		b.blockScopeContainer = node
 		if containerFlags&ContainerFlagsHasLocals != 0 {
 			// localsContainer := node
-			// localsContainer.LocalsContainerData().locals = make(ast.SymbolTable)
+			// localsContainer.LocalsContainerData().locals = make(SymbolTable)
 			b.addToContainerChain(node)
 		}
 	} else if containerFlags&ContainerFlagsIsBlockScopedContainer != 0 {
@@ -1554,7 +1554,7 @@ func (b *Binder) bindContainer(node *ast.Node, containerFlags ContainerFlags) {
 	} else if containerFlags&ContainerFlagsIsInterface != 0 {
 		b.seenThisKeyword = false
 		b.bindChildren(node)
-		// ContainsThis cannot overlap with HasExtendedUnicodeEscape on ast.Identifier
+		// ContainsThis cannot overlap with HasExtendedUnicodeEscape on Identifier
 		if b.seenThisKeyword {
 			node.Flags |= ast.NodeFlagsContainsThis
 		} else {
@@ -2451,9 +2451,9 @@ func (b *Binder) bindNonNullExpressionFlow(node *ast.Node) {
 func (b *Binder) bindBindingElementFlow(node *ast.Node) {
 	// When evaluating a binding pattern, the initializer is evaluated before the binding pattern, per:
 	// - https://tc39.es/ecma262/#sec-destructuring-binding-patterns-runtime-semantics-iteratorbindinginitialization
-	//   - `ast.BindingElement: ast.BindingPattern Initializer?`
+	//   - `BindingElement: BindingPattern Initializer?`
 	// - https://tc39.es/ecma262/#sec-runtime-semantics-keyedbindinginitialization
-	//   - `ast.BindingElement: ast.BindingPattern Initializer?`
+	//   - `BindingElement: BindingPattern Initializer?`
 	elem := node.AsBindingElement()
 	b.bind(elem.DotDotDotToken)
 	b.bind(elem.PropertyName)
@@ -2471,7 +2471,7 @@ func (b *Binder) bindParameterFlow(node *ast.Node) {
 	b.bind(param.Name_)
 }
 
-// a ast.BindingElement/Parameter does not have side effects if initializers are not evaluated and used. (see GH#49759)
+// a BindingElement/Parameter does not have side effects if initializers are not evaluated and used. (see GH#49759)
 func (b *Binder) bindInitializer(node *ast.Node) {
 	if node == nil {
 		return

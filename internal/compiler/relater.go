@@ -285,7 +285,7 @@ func (c *Checker) checkTypeRelatedToEx(
 			}
 		}
 		// !!!
-		// var relatedInformation []*ast.Diagnostic
+		// var relatedInformation []*Diagnostic
 		// // Check if we should issue an extra diagnostic to produce a quickfix for a slightly incorrect import statement
 		// if headMessage != nil && errorNode != nil && result == TernaryFalse && source.symbol != nil {
 		// 	links := c.getSymbolLinks(source.symbol)
@@ -1891,11 +1891,11 @@ func (r *Relater) hasExcessProperties(source *Type, target *Type, reportErrors b
 					}
 					if ast.IsJsxAttributes(r.errorNode) || isJsxOpeningLikeElement(r.errorNode) || isJsxOpeningLikeElement(r.errorNode.Parent) {
 						// !!!
-						// // ast.JsxAttributes has an object-literal flag and undergo same type-assignablity check as normal object-literal.
+						// // JsxAttributes has an object-literal flag and undergo same type-assignablity check as normal object-literal.
 						// // However, using an object-literal error message will be very confusing to the users so we give different a message.
 						// if prop.valueDeclaration && isJsxAttribute(prop.valueDeclaration) && getSourceFileOfNode(errorNode) == getSourceFileOfNode(prop.valueDeclaration.name) {
 						// 	// Note that extraneous children (as in `<NoChild>extra</NoChild>`) don't pass this check,
-						// 	// since `children` is a ast.Kind.PropertySignature instead of a ast.Kind.JsxAttribute.
+						// 	// since `children` is a Kind.PropertySignature instead of a Kind.JsxAttribute.
 						// 	errorNode = prop.valueDeclaration.name
 						// }
 						// propName := c.symbolToString(prop)
@@ -2519,7 +2519,7 @@ func (r *Relater) structuredTypeRelatedToWorker(source *Type, target *Type, repo
 		// 	if !(c.getMappedTypeModifiers(source.(MappedType)) & MappedTypeModifiersIncludeOptional) {
 		// 		templateType := c.getTemplateTypeFromMappedType(source.(MappedType))
 		// 		indexedAccessType := c.getIndexedAccessType(target, c.getTypeParameterFromMappedType(source.(MappedType)))
-		// 		if /* TODO(TS-TO-GO) EqualsToken ast.BinaryExpression: result = isRelatedTo(templateType, indexedAccessType, RecursionFlags.Both, reportErrors) */ TODO {
+		// 		if /* TODO(TS-TO-GO) EqualsToken BinaryExpression: result = isRelatedTo(templateType, indexedAccessType, RecursionFlags.Both, reportErrors) */ TODO {
 		// 			return result
 		// 		}
 		// 	}
@@ -2753,7 +2753,7 @@ func (r *Relater) mappedTypeRelatedTo(source *Type, target *Type, reportErrors b
 	// 	var result Ternary
 	// 	targetConstraint := c.getConstraintTypeFromMappedType(target)
 	// 	sourceConstraint := c.instantiateType(c.getConstraintTypeFromMappedType(source), ifelse(c.getCombinedMappedTypeOptionality(source) < 0, c.reportUnmeasurableMapper, c.reportUnreliableMapper))
-	// 	if /* TODO(TS-TO-GO) EqualsToken ast.BinaryExpression: result = isRelatedTo(targetConstraint, sourceConstraint, RecursionFlags.Both, reportErrors) */ TODO {
+	// 	if /* TODO(TS-TO-GO) EqualsToken BinaryExpression: result = isRelatedTo(targetConstraint, sourceConstraint, RecursionFlags.Both, reportErrors) */ TODO {
 	// 		mapper := c.createTypeMapper([]TypeParameter{c.getTypeParameterFromMappedType(source)}, []TypeParameter{c.getTypeParameterFromMappedType(target)})
 	// 		if c.instantiateType(c.getNameTypeFromMappedType(source), mapper) == c.instantiateType(c.getNameTypeFromMappedType(target), mapper) {
 	// 			return result & isRelatedTo(c.instantiateType(c.getTemplateTypeFromMappedType(source), mapper), c.getTemplateTypeFromMappedType(target), RecursionFlagsBoth, reportErrors)

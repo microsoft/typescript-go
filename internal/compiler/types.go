@@ -300,8 +300,8 @@ const (
 	ModuleResolutionKindUnknown ModuleResolutionKind = 0
 	// Starting with node16, node's module resolver has significant departures from traditional cjs resolution
 	// to better support ECMAScript modules and their use within node - however more features are still being added.
-	// TypeScript's ast.Node ESM support was introduced after ast.Node 12 went end-of-life, and ast.Node 14 is the earliest stable
-	// version that supports both pattern trailers - *but*, ast.Node 16 is the first version that also supports ECMAScript 2022.
+	// TypeScript's Node ESM support was introduced after Node 12 went end-of-life, and Node 14 is the earliest stable
+	// version that supports both pattern trailers - *but*, Node 16 is the first version that also supports ECMAScript 2022.
 	// In turn, we offer both a `NodeNext` moving resolution target, and a `Node16` version-anchored resolution target
 	ModuleResolutionKindNode16   ModuleResolutionKind = 3
 	ModuleResolutionKindNodeNext ModuleResolutionKind = 99 // Not simply `Node16` so that compiled code linked against TS can use the `Next` value reliably (same as with `ModuleKind`)
@@ -312,7 +312,7 @@ type NodeCheckFlags uint32
 
 const (
 	NodeCheckFlagsNone                                     NodeCheckFlags = 0
-	NodeCheckFlagsTypeChecked                              NodeCheckFlags = 1 << 0  // ast.Node has been type checked
+	NodeCheckFlagsTypeChecked                              NodeCheckFlags = 1 << 0  // Node has been type checked
 	NodeCheckFlagsLexicalThis                              NodeCheckFlags = 1 << 1  // Lexical 'this' reference
 	NodeCheckFlagsCaptureThis                              NodeCheckFlags = 1 << 2  // Lexical 'this' used in body
 	NodeCheckFlagsCaptureNewTarget                         NodeCheckFlags = 1 << 3  // Lexical 'new.target' used in body
@@ -326,22 +326,22 @@ const (
 	NodeCheckFlagsLexicalModuleMergesWithClass             NodeCheckFlags = 1 << 11 // Instantiated lexical module declaration is merged with a previous class declaration.
 	NodeCheckFlagsLoopWithCapturedBlockScopedBinding       NodeCheckFlags = 1 << 12 // Loop that contains block scoped variable captured in closure
 	NodeCheckFlagsContainsCapturedBlockScopeBinding        NodeCheckFlags = 1 << 13 // Part of a loop that contains block scoped variable captured in closure
-	NodeCheckFlagsCapturedBlockScopedBinding               NodeCheckFlags = 1 << 14 // ast.Block-scoped binding that is captured in some function
-	NodeCheckFlagsBlockScopedBindingInLoop                 NodeCheckFlags = 1 << 15 // ast.Block-scoped binding with declaration nested inside iteration statement
-	NodeCheckFlagsNeedsLoopOutParameter                    NodeCheckFlags = 1 << 16 // ast.Block scoped binding whose value should be explicitly copied outside of the converted loop
+	NodeCheckFlagsCapturedBlockScopedBinding               NodeCheckFlags = 1 << 14 // Block-scoped binding that is captured in some function
+	NodeCheckFlagsBlockScopedBindingInLoop                 NodeCheckFlags = 1 << 15 // Block-scoped binding with declaration nested inside iteration statement
+	NodeCheckFlagsNeedsLoopOutParameter                    NodeCheckFlags = 1 << 16 // Block scoped binding whose value should be explicitly copied outside of the converted loop
 	NodeCheckFlagsAssignmentsMarked                        NodeCheckFlags = 1 << 17 // Parameter assignments have been marked
 	NodeCheckFlagsContainsConstructorReference             NodeCheckFlags = 1 << 18 // Class or class element that contains a binding that references the class constructor.
 	NodeCheckFlagsConstructorReference                     NodeCheckFlags = 1 << 29 // Binding to a class constructor inside of the class's body.
 	NodeCheckFlagsContainsClassWithPrivateIdentifiers      NodeCheckFlags = 1 << 20 // Marked on all block-scoped containers containing a class with private identifiers.
 	NodeCheckFlagsContainsSuperPropertyInStaticInitializer NodeCheckFlags = 1 << 21 // Marked on all block-scoped containers containing a static initializer with 'super.x' or 'super[x]'.
 	NodeCheckFlagsInCheckIdentifier                        NodeCheckFlags = 1 << 22
-	NodeCheckFlagsPartiallyTypeChecked                     NodeCheckFlags = 1 << 23 // ast.Node has been partially type checked
+	NodeCheckFlagsPartiallyTypeChecked                     NodeCheckFlags = 1 << 23 // Node has been partially type checked
 )
 
 // Common links
 
 type NodeLinks struct {
-	flags                          NodeCheckFlags // Set of flags specific to ast.Node
+	flags                          NodeCheckFlags // Set of flags specific to Node
 	declarationRequiresScopeChange core.Tristate
 }
 
@@ -358,22 +358,22 @@ type SignatureLinks struct {
 	effectsSignature  *Signature
 }
 
-// jsxFlag: ast.JsxOpeningElement | ast.JsxClosingElement
-// resolvedJsxElementAttributesType: ast.JsxOpeningElement | ast.JsxClosingElement
-// resolvedJsxElementAllAttributesType: ast.JsxOpeningElement | ast.JsxClosingElement
+// jsxFlag: JsxOpeningElement | JsxClosingElement
+// resolvedJsxElementAttributesType: JsxOpeningElement | JsxClosingElement
+// resolvedJsxElementAllAttributesType: JsxOpeningElement | JsxClosingElement
 // jsxNamespace: Jsx*
 // jsxImplicitImportContainer: Jsx*
 
 // resolvedJSDocType: JSDoc TypeReference | ImportType
 
-// switchTypes: ast.SwitchStatement
+// switchTypes: SwitchStatement
 
-// contectFreeType: ast.Expression | ast.FunctionExpression | ast.ArrowFunction | ast.MethodDeclaration
+// contectFreeType: Expression | FunctionExpression | ArrowFunction | MethodDeclaration
 
 // outerTypeParameters: AnonymousType | MappedType | DeferredTypeReference
 
-// Only on ast.SourceFile
-// deferredNodes []ast.Node          // Set of nodes whose checking has been deferred
+// Only on SourceFile
+// deferredNodes []Node          // Set of nodes whose checking has been deferred
 
 // resolvedSignature Signature;      // Cached signature of signature node or call expression
 // effectsSignature Signature;       // Signature with possible control flow effects
@@ -386,11 +386,11 @@ type SignatureLinks struct {
 // resolvedJsxElementAllAttributesType Type; // resolved all element attributes type of a JSX openinglike element
 // resolvedJSDocType Type;           // Resolved type of a JSDoc type reference
 // switchTypes []Type;               // Cached array of switch case expression types
-// jsxNamespace *ast.Symbol;      // Resolved jsx namespace symbol for this node
-// jsxImplicitImportContainer *ast.Symbol; // Resolved module symbol the implicit jsx import of this file should refer to
+// jsxNamespace *Symbol;      // Resolved jsx namespace symbol for this node
+// jsxImplicitImportContainer *Symbol; // Resolved module symbol the implicit jsx import of this file should refer to
 // contextFreeType Type;             // Cached context-free type used by the first pass of inference; used when a function's return is partially contextually sensitive
-// deferredNodes []ast.Node          // Set of nodes whose checking has been deferred
-// capturedBlockScopeBindings []*ast.Symbol; // ast.Block-scoped bindings captured beneath this part of an IterationStatement
+// deferredNodes []Node          // Set of nodes whose checking has been deferred
+// capturedBlockScopeBindings []*Symbol; // Block-scoped bindings captured beneath this part of an IterationStatement
 // outerTypeParameters []*TypeParameter; // Outer type parameters of anonymous object type
 // isExhaustive boolean;         // Is node an exhaustive switch statement (0 indicates in-process resolution)
 // skipDirectInference true;         // Flag set by the API `getContextualType` call on a node when `Completions` is passed to force the checker to skip making inferences to a node's type
@@ -401,12 +401,12 @@ type SignatureLinks struct {
 // parameterInitializerContainsUndefined boolean; // True if this is a parameter declaration whose type annotation contains "undefined".
 // fakeScopeForSignatureDeclaration "params" | "typeParams"; // If present, this is a fake scope injected into an enclosing declaration chain.
 // assertionExpressionType Type;     // Cached type of the expression of a type assertion
-// potentialThisCollisions ast.Node[];
-// potentialNewTargetCollisions ast.Node[];
-// potentialWeakMapSetCollisions ast.Node[];
-// potentialReflectCollisions ast.Node[];
-// potentialUnusedRenamedBindingElementsInTypes ast.BindingElement[];
-// externalHelpersModule ast.Symbol;     // Resolved symbol for the external helpers module
+// potentialThisCollisions Node[];
+// potentialNewTargetCollisions Node[];
+// potentialWeakMapSetCollisions Node[];
+// potentialReflectCollisions Node[];
+// potentialUnusedRenamedBindingElementsInTypes BindingElement[];
+// externalHelpersModule Symbol;     // Resolved symbol for the external helpers module
 // instantiationExpressionTypes Map<number, Type>; // Cache of instantiation expression types for the node
 
 type TypeFlags uint32
@@ -423,7 +423,7 @@ const (
 	TypeFlagsStringLiteral   TypeFlags = 1 << 7
 	TypeFlagsNumberLiteral   TypeFlags = 1 << 8
 	TypeFlagsBooleanLiteral  TypeFlags = 1 << 9
-	TypeFlagsEnumLiteral     TypeFlags = 1 << 10 // Always combined with ast.StringLiteral, NumberLiteral, or Union
+	TypeFlagsEnumLiteral     TypeFlags = 1 << 10 // Always combined with StringLiteral, NumberLiteral, or Union
 	TypeFlagsBigIntLiteral   TypeFlags = 1 << 11
 	TypeFlagsESSymbol        TypeFlags = 1 << 12 // Type of symbol primitive introduced in ES6
 	TypeFlagsUniqueESSymbol  TypeFlags = 1 << 13 // unique symbol
@@ -782,7 +782,7 @@ func (t *ObjectType) AsObjectType() *ObjectType { return t }
 
 type TypeReference struct {
 	ObjectType
-	node                  *ast.Node // ast.TypeReferenceNode | ast.ArrayTypeNode | ast.TupleTypeNode when deferred, else nil
+	node                  *ast.Node // TypeReferenceNode | ArrayTypeNode | TupleTypeNode when deferred, else nil
 	resolvedTypeArguments []*Type
 }
 
@@ -846,7 +846,7 @@ const (
 
 type TupleElementInfo struct {
 	flags              ElementFlags
-	labeledDeclaration *ast.Node // ast.NamedTupleMember | ast.ParameterDeclaration | nil
+	labeledDeclaration *ast.Node // NamedTupleMember | ParameterDeclaration | nil
 }
 
 type TupleType struct {
@@ -984,7 +984,7 @@ type SubstitutionType struct {
 }
 
 type ConditionalRoot struct {
-	node                *ast.Node // ast.ConditionalTypeNode
+	node                *ast.Node // ConditionalTypeNode
 	checkType           *Type
 	extendsType         *Type
 	isDistributive      bool
@@ -1077,7 +1077,7 @@ type IndexInfo struct {
 	keyType     *Type
 	valueType   *Type
 	isReadonly  bool
-	declaration *ast.Node // ast.IndexSignatureDeclaration
+	declaration *ast.Node // IndexSignatureDeclaration
 }
 
 /**

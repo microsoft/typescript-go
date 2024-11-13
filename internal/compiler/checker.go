@@ -561,7 +561,7 @@ func (c *Checker) mergeModuleAugmentation(moduleName *ast.Node) {
 				return mainModule == module.Symbol
 			}) {
 				merged := c.mergeSymbol(moduleAugmentation.Symbol, mainModule, true /*unidirectional*/)
-				// moduleName will be a ast.StringLiteral since this is not `declare global`.
+				// moduleName will be a StringLiteral since this is not `declare global`.
 				getSymbolTable(&c.patternAmbientModuleAugmentations)[moduleName.Text()] = merged
 			} else {
 				if mainModule.Exports[InternalSymbolNameExportStar] != nil && len(moduleAugmentation.Symbol.Exports) != 0 {
@@ -576,7 +576,7 @@ func (c *Checker) mergeModuleAugmentation(moduleName *ast.Node) {
 				c.mergeSymbol(mainModule, moduleAugmentation.Symbol, false /*unidirectional*/)
 			}
 		} else {
-			// moduleName will be a ast.StringLiteral since this is not `declare global`.
+			// moduleName will be a StringLiteral since this is not `declare global`.
 			c.error(moduleName, diagnostics.Cannot_augment_module_0_because_it_resolves_to_a_non_module_entity, moduleName.Text())
 		}
 	}
@@ -721,7 +721,7 @@ func (c *Checker) checkResolvedBlockScopedVariable(result *ast.Symbol, errorLoca
 		// constructor functions aren't block scoped
 		return
 	}
-	// ast.Block-scoped variables cannot be used before their definition
+	// Block-scoped variables cannot be used before their definition
 	declaration := core.Find(result.Declarations, func(d *ast.Node) bool {
 		return isBlockOrCatchScoped(d) || isClassLike(d) || ast.IsEnumDeclaration(d)
 	})
@@ -799,7 +799,7 @@ func (c *Checker) getTypeOnlyAliasDeclarationEx(symbol *ast.Symbol, include ast.
 }
 
 func (c *Checker) getImmediateAliasedSymbol(symbol *ast.Symbol) *ast.Symbol {
-	// Debug.assert((symbol.flags&ast.SymbolFlagsAlias) != 0, "Should only get Alias here.")
+	// Debug.assert((symbol.flags&SymbolFlagsAlias) != 0, "Should only get Alias here.")
 	links := c.aliasSymbolLinks.get(symbol)
 	if links.immediateTarget == nil {
 		node := c.getDeclarationOfAliasSymbol(symbol)
@@ -825,7 +825,7 @@ func (c *Checker) getSymbol(symbols ast.SymbolTable, name string, meaning ast.Sy
 			}
 			if symbol.Flags&ast.SymbolFlagsAlias != 0 {
 				targetFlags := c.getSymbolFlags(symbol)
-				// `targetFlags` will be `ast.SymbolFlags.All` if an error occurred in alias resolution; this avoids cascading errors
+				// `targetFlags` will be `SymbolFlags.All` if an error occurred in alias resolution; this avoids cascading errors
 				if targetFlags&meaning != 0 {
 					return symbol
 				}
@@ -926,7 +926,7 @@ func (c *Checker) getTypeOfExpression(node *ast.Node) *Type {
 	// 	return quickType
 	// }
 	// // If a type has been cached for the node, return it.
-	// if node.flags&ast.NodeFlagsTypeCached != 0 {
+	// if node.flags&NodeFlagsTypeCached != 0 {
 	// 	cachedType := c.flowTypeCache[getNodeId(node)]
 	// 	if cachedType {
 	// 		return cachedType
@@ -936,9 +936,9 @@ func (c *Checker) getTypeOfExpression(node *ast.Node) *Type {
 	// t := c.checkExpressionEx(node, CheckModeTypeOnly)
 	// // If control flow analysis was required to determine the type, it is worth caching.
 	// if c.flowInvocationCount != startInvocationCount {
-	// 	cache := c.flowTypeCache || ( /* TODO(TS-TO-GO) EqualsToken ast.BinaryExpression: flowTypeCache = [] */ TODO)
+	// 	cache := c.flowTypeCache || ( /* TODO(TS-TO-GO) EqualsToken BinaryExpression: flowTypeCache = [] */ TODO)
 	// 	cache[getNodeId(node)] = t
-	// 	setNodeFlags(node, node.flags|ast.NodeFlagsTypeCached)
+	// 	setNodeFlags(node, node.flags|NodeFlagsTypeCached)
 	// }
 	t := c.checkExpressionEx(node, CheckModeTypeOnly)
 	return t
@@ -1009,11 +1009,11 @@ func (c *Checker) checkExpressionWorker(node *ast.Node, checkMode CheckMode) *Ty
 		// !!! Handle blockedStringType
 		return c.getFreshTypeOfLiteralType(c.getStringLiteralType(node.Text()))
 	case ast.KindNumericLiteral:
-		// !!! checkGrammarNumericLiteral(node as ast.NumericLiteral)
+		// !!! checkGrammarNumericLiteral(node as NumericLiteral)
 		// !!! Revise this to handle NaN, Infinity, etc. in the same manner as JS
 		return c.getFreshTypeOfLiteralType(c.getNumberLiteralType(stringToNumber(node.Text())))
 	case ast.KindBigIntLiteral:
-		// !!! checkGrammarBigIntLiteral(node as ast.BigIntLiteral);
+		// !!! checkGrammarBigIntLiteral(node as BigIntLiteral);
 		return c.getFreshTypeOfLiteralType(c.getBigIntLiteralType(PseudoBigInt{
 			negative:    false,
 			base10Value: parsePseudoBigInt(node.AsBigIntLiteral().Text),
@@ -1116,7 +1116,7 @@ func (c *Checker) checkIdentifier(node *ast.Node) *Type {
 	// !!!
 	flowType := t
 	if assignmentKind != AssignmentKindNone {
-		// ast.Identifier is target of a compound assignment
+		// Identifier is target of a compound assignment
 		return c.getBaseTypeOfLiteralType(flowType)
 	}
 	return flowType
@@ -1765,10 +1765,10 @@ func (c *Checker) checkThisExpression(node *ast.Node) *Type {
 	// 	c.error(node, Diagnostics.this_cannot_be_referenced_in_a_computed_property_name)
 	// } else {
 	// 	switch container.kind {
-	// 	case ast.KindModuleDeclaration:
+	// 	case KindModuleDeclaration:
 	// 		c.error(node, Diagnostics.this_cannot_be_referenced_in_a_module_or_namespace_body)
 	// 		// do not return here so in case if lexical this is captured - it will be reflected in flags on NodeLinks
-	// 	case ast.KindEnumDeclaration:
+	// 	case KindEnumDeclaration:
 	// 		c.error(node, Diagnostics.this_cannot_be_referenced_in_current_location)
 	// 		// do not return here so in case if lexical this is captured - it will be reflected in flags on NodeLinks
 	// 	}
@@ -1811,7 +1811,7 @@ func (c *Checker) tryGetThisTypeAt(node *ast.Node, includeGlobalThis bool, conta
 	// 		className := c.getClassNameFromPrototypeMethod(container)
 	// 		if isInJS && className {
 	// 			classSymbol := c.checkExpression(className).symbol
-	// 			if classSymbol && classSymbol.members && (classSymbol.flags & ast.SymbolFlagsFunction) {
+	// 			if classSymbol && classSymbol.members && (classSymbol.flags & SymbolFlagsFunction) {
 	// 				thisType = (c.getDeclaredTypeOfSymbol(classSymbol).(InterfaceType)).thisType
 	// 			}
 	// 		} else if c.isJSConstructor(container) {
@@ -1891,8 +1891,8 @@ func (c *Checker) checkAssignmentOperator(left *ast.Node, right *ast.Node, leftT
 	// !!!
 	// assigneeType := leftType
 	// // getters can be a subtype of setters, so to check for assignability we use the setter's type instead
-	// if isCompoundAssignment(operatorToken.kind) && left.kind == ast.KindPropertyAccessExpression {
-	// 	assigneeType = c.checkPropertyAccessExpression(left.(ast.PropertyAccessExpression) /*checkMode*/, nil /*writeOnly*/, true)
+	// if isCompoundAssignment(operatorToken.kind) && left.kind == KindPropertyAccessExpression {
+	// 	assigneeType = c.checkPropertyAccessExpression(left.(PropertyAccessExpression) /*checkMode*/, nil /*writeOnly*/, true)
 	// }
 	if c.checkReferenceExpression(left, diagnostics.The_left_hand_side_of_an_assignment_expression_must_be_a_variable_or_a_property_access, diagnostics.The_left_hand_side_of_an_assignment_expression_may_not_be_an_optional_property_access) {
 		var headMessage *diagnostics.Message
@@ -2052,8 +2052,8 @@ func (c *Checker) checkObjectLiteral(node *ast.Node, checkMode CheckMode) *Type 
 				// inferenceContext := c.getInferenceContext(node)
 				// Debug.assert(inferenceContext)
 				// // In CheckMode.Inferential we should always have an inference context
-				// var inferenceNode /* TODO(TS-TO-GO) inferred type ast.Expression | ast.MethodDeclaration */ any
-				// if memberDecl.kind == ast.KindPropertyAssignment {
+				// var inferenceNode /* TODO(TS-TO-GO) inferred type Expression | MethodDeclaration */ any
+				// if memberDecl.kind == KindPropertyAssignment {
 				// 	inferenceNode = memberDecl.initializer
 				// } else {
 				// 	inferenceNode = memberDecl
@@ -2092,7 +2092,7 @@ func (c *Checker) checkObjectLiteral(node *ast.Node, checkMode CheckMode) *Type 
 			// A set accessor declaration is processed in the same manner
 			// as an ordinary function declaration with a single parameter and a Void return type.
 			// !!!
-			// Debug.assert(memberDecl.kind == ast.KindGetAccessor || memberDecl.kind == ast.KindSetAccessor)
+			// Debug.assert(memberDecl.kind == KindGetAccessor || memberDecl.kind == KindSetAccessor)
 			c.checkNodeDeferred(memberDecl)
 		}
 		if computedNameType != nil && computedNameType.flags&TypeFlagsStringOrNumberLiteralOrUnique == 0 {
@@ -2445,7 +2445,7 @@ func (c *Checker) checkPropertyAssignment(node *ast.Node, checkMode CheckMode) *
 	// We want to perform checkComputedPropertyName for all computed properties, including
 	// well known symbols.
 	// !!!
-	// if node.name.kind == ast.KindComputedPropertyName {
+	// if node.name.kind == KindComputedPropertyName {
 	// 	c.checkComputedPropertyName(node.name)
 	// }
 	return c.checkExpressionForMutableLocation(node.AsPropertyAssignment().Initializer, checkMode)
@@ -2743,7 +2743,7 @@ func (c *Checker) mergeSymbol(target *ast.Symbol, source *ast.Symbol, unidirecti
 		}
 	} else if target.Flags&ast.SymbolFlagsNamespaceModule != 0 {
 		// Do not report an error when merging `var globalThis` with the built-in `globalThis`,
-		// as we will already report a "ast.Declaration name conflicts..." error, and this error
+		// as we will already report a "Declaration name conflicts..." error, and this error
 		// won't make much sense.
 		if target != c.globalThisSymbol {
 			c.error(getNameOfDeclaration(getFirstDeclaration(source)), diagnostics.Cannot_augment_module_0_with_value_exports_because_it_resolves_to_a_non_module_entity, c.symbolToString(target))
@@ -2772,13 +2772,13 @@ func (c *Checker) reportMergeSymbolError(target *ast.Symbol, source *ast.Symbol)
 	// !!!
 	// Collect top-level duplicate identifier errors into one mapping, so we can then merge their diagnostics if there are a bunch
 	// if sourceSymbolFile != nil && targetSymbolFile != nil && c.amalgamatedDuplicates && !isEitherEnum && sourceSymbolFile != targetSymbolFile {
-	// 	var firstFile ast.SourceFile
+	// 	var firstFile SourceFile
 	// 	if comparePaths(sourceSymbolFile.path, targetSymbolFile.path) == ComparisonLessThan {
 	// 		firstFile = sourceSymbolFile
 	// 	} else {
 	// 		firstFile = targetSymbolFile
 	// 	}
-	// 	var secondFile ast.SourceFile
+	// 	var secondFile SourceFile
 	// 	if firstFile == sourceSymbolFile {
 	// 		secondFile = targetSymbolFile
 	// 	} else {
@@ -3010,7 +3010,7 @@ func (c *Checker) resolveSymbolEx(symbol *ast.Symbol, dontResolveAlias bool) *as
 }
 
 func (c *Checker) getTargetOfImportEqualsDeclaration(node *ast.Node, dontResolveAlias bool) *ast.Symbol {
-	// ast.Node is ast.ImportEqualsDeclaration | ast.VariableDeclaration
+	// Node is ImportEqualsDeclaration | VariableDeclaration
 	commonJSPropertyAccess := c.getCommonJSPropertyAccess(node)
 	if commonJSPropertyAccess != nil {
 		access := commonJSPropertyAccess.AsPropertyAccessExpression()
@@ -3065,14 +3065,14 @@ func (c *Checker) getSymbolOfPartOfRightHandSideOfImportEquals(entityName *ast.N
 	//     import a = |b.c|; // Value, type, namespace
 	//     import a = |b.c|.d; // Namespace
 	if entityName.Kind == ast.KindIdentifier && isRightSideOfQualifiedNameOrPropertyAccess(entityName) {
-		entityName = entityName.Parent // ast.QualifiedName
+		entityName = entityName.Parent // QualifiedName
 	}
 	// Check for case 1 and 3 in the above example
 	if entityName.Kind == ast.KindIdentifier || entityName.Parent.Kind == ast.KindQualifiedName {
 		return c.resolveEntityName(entityName, ast.SymbolFlagsNamespace, false /*ignoreErrors*/, dontResolveAlias, nil /*location*/)
 	}
 	// Case 2 in above example
-	// entityName.kind could be a ast.QualifiedName or a Missing identifier
+	// entityName.kind could be a QualifiedName or a Missing identifier
 	//Debug.assert(entityName.parent.kind == ast.KindImportEqualsDeclaration)
 	return c.resolveEntityName(entityName, ast.SymbolFlagsValue|ast.SymbolFlagsType|ast.SymbolFlagsNamespace, false /*ignoreErrors*/, dontResolveAlias, nil /*location*/)
 }
@@ -3196,15 +3196,15 @@ func (c *Checker) getTargetOfImportSpecifier(node *ast.Node, dontResolveAlias bo
 			}
 		}
 	}
-	root := node.Parent.Parent.Parent // ast.ImportDeclaration
+	root := node.Parent.Parent.Parent // ImportDeclaration
 	resolved := c.getExternalModuleMember(root, node, dontResolveAlias)
 	c.markSymbolOfAliasDeclarationIfTypeOnly(node, nil /*immediateTarget*/, resolved, false /*overwriteEmpty*/, nil, "")
 	return resolved
 }
 
 func (c *Checker) getExternalModuleMember(node *ast.Node, specifier *ast.Node, dontResolveAlias bool) *ast.Symbol {
-	// node is ast.ImportDeclaration | ast.ExportDeclaration | ast.VariableDeclaration
-	// specifier is ast.ImportSpecifier | ast.ExportSpecifier | ast.BindingElement | ast.PropertyAccessExpression
+	// node is ImportDeclaration | ExportDeclaration | VariableDeclaration
+	// specifier is ImportSpecifier | ExportSpecifier | BindingElement | PropertyAccessExpression
 	moduleSpecifier := getExternalModuleRequireArgument(node)
 	if moduleSpecifier == nil {
 		moduleSpecifier = getExternalModuleName(node)
@@ -3331,7 +3331,7 @@ func (c *Checker) getExportOfModule(symbol *ast.Symbol, nameText string, specifi
 }
 
 func (c *Checker) isOnlyImportableAsDefault(usage *ast.Node, resolvedModule *ast.Symbol) bool {
-	// In ast.Node.js, JSON modules don't get named exports
+	// In Node.js, JSON modules don't get named exports
 	if ModuleKindNode16 <= c.moduleKind && c.moduleKind <= ModuleKindNodeNext {
 		usageMode := c.getEmitSyntaxForModuleSpecifierExpression(usage)
 		if usageMode == ModuleKindESNext {
@@ -3357,7 +3357,7 @@ func (c *Checker) canHaveSyntheticDefault(file *ast.SourceFile, moduleSymbol *as
 	// if file != nil && usageMode != ModuleKindNone {
 	// 	targetMode := host.getImpliedNodeFormatForEmit(file)
 	// 	if usageMode == ModuleKindESNext && targetMode == ModuleKindCommonJS && ModuleKindNode16 <= c.moduleKind && c.moduleKind <= ModuleKindNodeNext {
-	// 		// In ast.Node.js, CommonJS modules always have a synthetic default when imported into ESM
+	// 		// In Node.js, CommonJS modules always have a synthetic default when imported into ESM
 	// 		return true
 	// 	}
 	// 	if usageMode == ModuleKindESNext && targetMode == ModuleKindESNext {
@@ -3369,7 +3369,7 @@ func (c *Checker) canHaveSyntheticDefault(file *ast.SourceFile, moduleSymbol *as
 	if !c.allowSyntheticDefaultImports {
 		return false
 	}
-	// ast.Declaration files (and ambient modules)
+	// Declaration files (and ambient modules)
 	if file == nil || file.IsDeclarationFile {
 		// Definitely cannot have a synthetic default if they have a syntactic default member specified
 		defaultExportSymbol := c.resolveExportByName(moduleSymbol, InternalSymbolNameDefault /*sourceNode*/, nil /*dontResolveAlias*/, true)
@@ -4311,16 +4311,16 @@ func (c *Checker) getWriteTypeOfSymbol(symbol *ast.Symbol) *Type {
 func (c *Checker) getTypeOfSymbol(symbol *ast.Symbol) *Type {
 	// !!!
 	// checkFlags := symbol.checkFlags
-	// if checkFlags&ast.CheckFlagsDeferredType != 0 {
+	// if checkFlags&CheckFlagsDeferredType != 0 {
 	// 	return c.getTypeOfSymbolWithDeferredType(symbol)
 	// }
 	if symbol.CheckFlags&ast.CheckFlagsInstantiated != 0 {
 		return c.getTypeOfInstantiatedSymbol(symbol)
 	}
-	// if checkFlags&ast.CheckFlagsMapped != 0 {
+	// if checkFlags&CheckFlagsMapped != 0 {
 	// 	return c.getTypeOfMappedSymbol(symbol.(MappedSymbol))
 	// }
-	// if checkFlags&ast.CheckFlagsReverseMapped != 0 {
+	// if checkFlags&CheckFlagsReverseMapped != 0 {
 	// 	return c.getTypeOfReverseMappedSymbol(symbol.(ReverseMappedSymbol))
 	// }
 	if symbol.Flags&(ast.SymbolFlagsVariable|ast.SymbolFlagsProperty) != 0 {
@@ -4329,13 +4329,13 @@ func (c *Checker) getTypeOfSymbol(symbol *ast.Symbol) *Type {
 	if symbol.Flags&(ast.SymbolFlagsFunction|ast.SymbolFlagsMethod|ast.SymbolFlagsClass|ast.SymbolFlagsEnum|ast.SymbolFlagsValueModule) != 0 {
 		return c.getTypeOfFuncClassEnumModule(symbol)
 	}
-	// if symbol.flags&ast.SymbolFlagsEnumMember != 0 {
+	// if symbol.flags&SymbolFlagsEnumMember != 0 {
 	// 	return c.getTypeOfEnumMember(symbol)
 	// }
-	// if symbol.flags&ast.SymbolFlagsAccessor != 0 {
+	// if symbol.flags&SymbolFlagsAccessor != 0 {
 	// 	return c.getTypeOfAccessors(symbol)
 	// }
-	// if symbol.flags&ast.SymbolFlagsAlias != 0 {
+	// if symbol.flags&SymbolFlagsAlias != 0 {
 	// 	return c.getTypeOfAlias(symbol)
 	// }
 	return c.errorType
@@ -4453,7 +4453,7 @@ func (c *Checker) getTypeForVariableLikeDeclaration(declaration *ast.Node, inclu
 		case ast.KindForOfStatement:
 			// checkRightHandSideOfForOf will return undefined if the for-of expression type was
 			// missing properties/signatures required to get its iteratedType (like
-			// [ast.Symbol.iterator] or next). This may be because we accessed properties from anyType,
+			// [Symbol.iterator] or next). This may be because we accessed properties from anyType,
 			// or it may have led to an error inside getElementTypeOfIterable.
 			return c.checkRightHandSideOfForOf(grandParent)
 		}
@@ -4506,11 +4506,11 @@ func (c *Checker) getTypeForVariableLikeDeclaration(declaration *ast.Node, inclu
 		// }
 		// fn := declaration.parent.(FunctionLikeDeclaration)
 		// // For a parameter of a set accessor, use the type of the get accessor if one is present
-		// if fn.kind == ast.KindSetAccessor && c.hasBindableName(fn) {
-		// 	getter := getDeclarationOfKind(c.getSymbolOfDeclaration(declaration.parent), ast.KindGetAccessor)
+		// if fn.kind == KindSetAccessor && c.hasBindableName(fn) {
+		// 	getter := getDeclarationOfKind(c.getSymbolOfDeclaration(declaration.parent), KindGetAccessor)
 		// 	if getter != nil {
 		// 		getterSignature := c.getSignatureFromDeclaration(getter)
-		// 		thisParameter := c.getAccessorThisParameter(fn.(ast.AccessorDeclaration))
+		// 		thisParameter := c.getAccessorThisParameter(fn.(AccessorDeclaration))
 		// 		if thisParameter && declaration == thisParameter {
 		// 			// Use the type from the *getter*
 		// 			Debug.assert(!thisParameter.type_)
@@ -4546,12 +4546,12 @@ func (c *Checker) getTypeForVariableLikeDeclaration(declaration *ast.Node, inclu
 		if !hasStaticModifier(declaration) {
 			return nil
 			// !!!
-			// constructor := findConstructorDeclaration(declaration.parent.(ast.ClassLikeDeclaration))
+			// constructor := findConstructorDeclaration(declaration.parent.(ClassLikeDeclaration))
 			// var t *Type
 			// switch {
 			// case constructor != nil:
 			// 	t = c.getFlowTypeInConstructor(declaration.symbol, constructor)
-			// case getEffectiveModifierFlags(declaration)&ast.ModifierFlagsAmbient != 0:
+			// case getEffectiveModifierFlags(declaration)&ModifierFlagsAmbient != 0:
 			// 	t = c.getTypeOfPropertyInBaseClass(declaration.symbol)
 			// }
 			// if t != nil {
@@ -4561,12 +4561,12 @@ func (c *Checker) getTypeForVariableLikeDeclaration(declaration *ast.Node, inclu
 		} else {
 			return nil
 			// !!!
-			// staticBlocks := filter(declaration.parent.(ast.ClassLikeDeclaration).Members(), isClassStaticBlockDeclaration)
+			// staticBlocks := filter(declaration.parent.(ClassLikeDeclaration).Members(), isClassStaticBlockDeclaration)
 			// var t *Type
 			// switch {
 			// case len(staticBlocks) != 0:
 			// 	t = c.getFlowTypeInStaticBlocks(declaration.symbol, staticBlocks)
-			// case getEffectiveModifierFlags(declaration)&ast.ModifierFlagsAmbient != 0:
+			// case getEffectiveModifierFlags(declaration)&ModifierFlagsAmbient != 0:
 			// 	t = c.getTypeOfPropertyInBaseClass(declaration.symbol)
 			// }
 			// if t != nil {
@@ -5417,9 +5417,9 @@ func (c *Checker) typeResolutionHasProperty(r *TypeResolution) bool {
 		return r.target.(*Type).AsConstrainedType().resolvedBaseConstraint != nil
 		// !!!
 		// case TypeSystemPropertyNameWriteType:
-		// 	return !!c.getSymbolLinks(target.(ast.Symbol)).writeType
+		// 	return !!c.getSymbolLinks(target.(Symbol)).writeType
 		// case TypeSystemPropertyNameParameterInitializerContainsUndefined:
-		// 	return c.getNodeLinks(target.(ast.ParameterDeclaration)).parameterInitializerContainsUndefined != nil
+		// 	return c.getNodeLinks(target.(ParameterDeclaration)).parameterInitializerContainsUndefined != nil
 	}
 	panic("Unhandled case in typeResolutionHasProperty")
 }
@@ -7119,7 +7119,7 @@ func (c *Checker) createUnionOrIntersectionProperty(containingType *Type, name s
 	// !!! Need new DeferredSymbolLinks or some such
 	// if propTypes.length > 2 {
 	// 	// When `propTypes` has the potential to explode in size when normalized, defer normalization until absolutely needed
-	// 	result.links.checkFlags |= ast.CheckFlagsDeferredType
+	// 	result.links.checkFlags |= CheckFlagsDeferredType
 	// 	result.links.deferralParent = containingType
 	// 	result.links.deferralConstituents = propTypes
 	// 	result.links.deferralWriteConstituents = writeTypes
@@ -7142,7 +7142,7 @@ func (c *Checker) createUnionOrIntersectionProperty(containingType *Type, name s
 func (c *Checker) getTargetSymbol(s *ast.Symbol) *ast.Symbol {
 	// if symbol is instantiated its flags are not copied from the 'target'
 	// so we'll need to get back original 'target' symbol to work with correct set of flags
-	// NOTE: cast to TransientSymbol should be safe because only TransientSymbols have ast.CheckFlags.Instantiated
+	// NOTE: cast to TransientSymbol should be safe because only TransientSymbols have CheckFlags.Instantiated
 	if s.CheckFlags&ast.CheckFlagsInstantiated != 0 {
 		return c.valueSymbolLinks.get(s).target
 	}
@@ -7454,7 +7454,7 @@ func (c *Checker) isNamedMember(symbol *ast.Symbol, id string) bool {
 
 // A reserved member name consists of the byte 0xFE (which is an invalid UTF-8 encoding) followed by one or more
 // characters where the first character is not '@' or '#'. The '@' character indicates that the name is denoted by
-// a well known ES ast.Symbol instance and the '#' character indicates that the name is a ast.PrivateIdentifier.
+// a well known ES Symbol instance and the '#' character indicates that the name is a PrivateIdentifier.
 func isReservedMemberName(name string) bool {
 	return len(name) >= 2 && name[0] == '\xFE' && name[1] != '@' && name[1] != '#'
 }
@@ -7910,14 +7910,14 @@ func (c *Checker) getTypeFromTypeNodeWorker(node *ast.Node) *Type {
 		return c.getTypeFromLiteralTypeNode(node)
 	case ast.KindTypeReference, ast.KindExpressionWithTypeArguments:
 		return c.getTypeFromTypeReference(node)
-	// case ast.KindTypePredicate:
-	// 	if (node /* as ast.TypePredicateNode */).assertsModifier {
+	// case KindTypePredicate:
+	// 	if (node /* as TypePredicateNode */).assertsModifier {
 	// 		return c.voidType
 	// 	} else {
 	// 		return c.booleanType
 	// 	}
-	// case ast.KindTypeQuery:
-	// 	return c.getTypeFromTypeQueryNode(node /* as ast.TypeQueryNode */)
+	// case KindTypeQuery:
+	// 	return c.getTypeFromTypeQueryNode(node /* as TypeQueryNode */)
 	case ast.KindArrayType, ast.KindTupleType:
 		return c.getTypeFromArrayOrTupleTypeNode(node)
 	case ast.KindOptionalType:
@@ -7926,8 +7926,8 @@ func (c *Checker) getTypeFromTypeNodeWorker(node *ast.Node) *Type {
 		return c.getTypeFromUnionTypeNode(node)
 	case ast.KindIntersectionType:
 		return c.getTypeFromIntersectionTypeNode(node)
-	// case ast.KindNamedTupleMember:
-	// 	return c.getTypeFromNamedTupleTypeNode(node /* as ast.NamedTupleMember */)
+	// case KindNamedTupleMember:
+	// 	return c.getTypeFromNamedTupleTypeNode(node /* as NamedTupleMember */)
 	case ast.KindParenthesizedType:
 		return c.getTypeFromTypeNode(node.AsParenthesizedTypeNode().TypeNode)
 	case ast.KindRestType:
@@ -7938,19 +7938,19 @@ func (c *Checker) getTypeFromTypeNodeWorker(node *ast.Node) *Type {
 		return c.getTypeFromTypeOperatorNode(node)
 	case ast.KindIndexedAccessType:
 		return c.getTypeFromIndexedAccessTypeNode(node)
-	// case ast.KindMappedType:
-	// 	return c.getTypeFromMappedTypeNode(node /* as ast.MappedTypeNode */)
-	// case ast.KindConditionalType:
-	// 	return c.getTypeFromConditionalTypeNode(node /* as ast.ConditionalTypeNode */)
-	// case ast.KindInferType:
-	// 	return c.getTypeFromInferTypeNode(node /* as ast.InferTypeNode */)
-	// case ast.KindTemplateLiteralType:
-	// 	return c.getTypeFromTemplateTypeNode(node /* as ast.TemplateLiteralTypeNode */)
-	// case ast.KindImportType:
-	// 	return c.getTypeFromImportTypeNode(node /* as ast.ImportTypeNode */)
-	// case ast.KindIdentifier, /* as TypeNodeSyntaxKind */
-	// 	ast.KindQualifiedName, /* as TypeNodeSyntaxKind */
-	// 	ast.KindPropertyAccessExpression /* as TypeNodeSyntaxKind */ :
+	// case KindMappedType:
+	// 	return c.getTypeFromMappedTypeNode(node /* as MappedTypeNode */)
+	// case KindConditionalType:
+	// 	return c.getTypeFromConditionalTypeNode(node /* as ConditionalTypeNode */)
+	// case KindInferType:
+	// 	return c.getTypeFromInferTypeNode(node /* as InferTypeNode */)
+	// case KindTemplateLiteralType:
+	// 	return c.getTypeFromTemplateTypeNode(node /* as TemplateLiteralTypeNode */)
+	// case KindImportType:
+	// 	return c.getTypeFromImportTypeNode(node /* as ImportTypeNode */)
+	// case KindIdentifier, /* as TypeNodeSyntaxKind */
+	// 	KindQualifiedName, /* as TypeNodeSyntaxKind */
+	// 	KindPropertyAccessExpression /* as TypeNodeSyntaxKind */ :
 	// 	symbol := c.getSymbolAtLocation(node)
 	// 	if symbol {
 	// 		return c.getDeclaredTypeOfSymbol(symbol)
@@ -8520,11 +8520,11 @@ func (c *Checker) tryGetDeclaredTypeOfSymbol(symbol *ast.Symbol) *Type {
 	case symbol.Flags&ast.SymbolFlagsTypeAlias != 0:
 		return c.getDeclaredTypeOfTypeAlias(symbol)
 		// !!!
-		// case symbol.flags&ast.SymbolFlagsEnum != 0:
+		// case symbol.flags&SymbolFlagsEnum != 0:
 		// 	return c.getDeclaredTypeOfEnum(symbol)
-		// case symbol.flags&ast.SymbolFlagsEnumMember != 0:
+		// case symbol.flags&SymbolFlagsEnumMember != 0:
 		// 	return c.getDeclaredTypeOfEnumMember(symbol)
-		// case symbol.flags&ast.SymbolFlagsAlias != 0:
+		// case symbol.flags&SymbolFlagsAlias != 0:
 		// 	return c.getDeclaredTypeOfAlias(symbol)
 	}
 	return nil
@@ -10755,7 +10755,7 @@ func (c *Checker) getPropertyTypeForIndexType(originalObjectType *Type, objectTy
 		if prop != nil {
 			// !!!
 			// if accessFlags&AccessFlagsReportDeprecated != 0 && accessNode != nil && len(prop.declarations) != 0 && c.isDeprecatedSymbol(prop) && c.isUncalledFunctionReference(accessNode, prop) {
-			// 	deprecatedNode := /* TODO(TS-TO-GO) QuestionQuestionToken ast.BinaryExpression: accessExpression?.argumentExpression ?? (isIndexedAccessTypeNode(accessNode) ? accessNode.indexType : accessNode) */ TODO
+			// 	deprecatedNode := /* TODO(TS-TO-GO) QuestionQuestionToken BinaryExpression: accessExpression?.argumentExpression ?? (isIndexedAccessTypeNode(accessNode) ? accessNode.indexType : accessNode) */ TODO
 			// 	c.addDeprecatedSuggestion(deprecatedNode, prop.declarations, propName /* as string */)
 			// }
 			if accessExpression != nil {

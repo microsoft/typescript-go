@@ -127,39 +127,39 @@ func chainDiagnosticMessages(details *ast.MessageChain, message *diagnostics.Mes
 type OperatorPrecedence int
 
 const (
-	// ast.Expression:
+	// Expression:
 	//     AssignmentExpression
-	//     ast.Expression `,` AssignmentExpression
+	//     Expression `,` AssignmentExpression
 	OperatorPrecedenceComma OperatorPrecedence = iota
 	// NOTE: `Spread` is higher than `Comma` due to how it is parsed in |ElementList|
-	// ast.SpreadElement:
+	// SpreadElement:
 	//     `...` AssignmentExpression
 	OperatorPrecedenceSpread
 	// AssignmentExpression:
-	//     ast.ConditionalExpression
-	//     ast.YieldExpression
-	//     ast.ArrowFunction
+	//     ConditionalExpression
+	//     YieldExpression
+	//     ArrowFunction
 	//     AsyncArrowFunction
-	//     ast.LeftHandSideExpression `=` AssignmentExpression
-	//     ast.LeftHandSideExpression AssignmentOperator AssignmentExpression
+	//     LeftHandSideExpression `=` AssignmentExpression
+	//     LeftHandSideExpression AssignmentOperator AssignmentExpression
 	//
 	// NOTE: AssignmentExpression is broken down into several precedences due to the requirements
 	//       of the parenthesizer rules.
-	// AssignmentExpression: ast.YieldExpression
-	// ast.YieldExpression:
+	// AssignmentExpression: YieldExpression
+	// YieldExpression:
 	//     `yield`
 	//     `yield` AssignmentExpression
 	//     `yield` `*` AssignmentExpression
 	OperatorPrecedenceYield
-	// AssignmentExpression: ast.LeftHandSideExpression `=` AssignmentExpression
-	// AssignmentExpression: ast.LeftHandSideExpression AssignmentOperator AssignmentExpression
+	// AssignmentExpression: LeftHandSideExpression `=` AssignmentExpression
+	// AssignmentExpression: LeftHandSideExpression AssignmentOperator AssignmentExpression
 	// AssignmentOperator: one of
 	//     `*=` `/=` `%=` `+=` `-=` `<<=` `>>=` `>>>=` `&=` `^=` `|=` `**=`
 	OperatorPrecedenceAssignment
 	// NOTE: `Conditional` is considered higher than `Assignment` here, but in reality they have
 	//       the same precedence.
-	// AssignmentExpression: ast.ConditionalExpression
-	// ast.ConditionalExpression:
+	// AssignmentExpression: ConditionalExpression
+	// ConditionalExpression:
 	//     ShortCircuitExpression
 	//     ShortCircuitExpression `?` AssignmentExpression `:` AssignmentExpression
 	// ShortCircuitExpression:
@@ -232,38 +232,38 @@ const (
 	//     `-` UnaryExpression
 	//     `~` UnaryExpression
 	//     `!` UnaryExpression
-	//     ast.AwaitExpression
+	//     AwaitExpression
 	// UpdateExpression:            // TODO: Do we need to investigate the precedence here?
 	//     `++` UnaryExpression
 	//     `--` UnaryExpression
 	OperatorPrecedenceUnary
 	// UpdateExpression:
-	//     ast.LeftHandSideExpression
-	//     ast.LeftHandSideExpression `++`
-	//     ast.LeftHandSideExpression `--`
+	//     LeftHandSideExpression
+	//     LeftHandSideExpression `++`
+	//     LeftHandSideExpression `--`
 	OperatorPrecedenceUpdate
-	// ast.LeftHandSideExpression:
-	//     ast.NewExpression
-	//     ast.CallExpression
-	// ast.NewExpression:
+	// LeftHandSideExpression:
+	//     NewExpression
+	//     CallExpression
+	// NewExpression:
 	//     MemberExpression
-	//     `new` ast.NewExpression
+	//     `new` NewExpression
 	OperatorPrecedenceLeftHandSide
-	// ast.CallExpression:
+	// CallExpression:
 	//     CoverCallExpressionAndAsyncArrowHead
 	//     SuperCall
 	//     ImportCall
-	//     ast.CallExpression Arguments
-	//     ast.CallExpression `[` ast.Expression `]`
-	//     ast.CallExpression `.` IdentifierName
-	//     ast.CallExpression ast.TemplateLiteral
+	//     CallExpression Arguments
+	//     CallExpression `[` Expression `]`
+	//     CallExpression `.` IdentifierName
+	//     CallExpression TemplateLiteral
 	// MemberExpression:
 	//     PrimaryExpression
-	//     MemberExpression `[` ast.Expression `]`
+	//     MemberExpression `[` Expression `]`
 	//     MemberExpression `.` IdentifierName
-	//     MemberExpression ast.TemplateLiteral
+	//     MemberExpression TemplateLiteral
 	//     SuperProperty
-	//     ast.MetaProperty
+	//     MetaProperty
 	//     `new` MemberExpression Arguments
 	OperatorPrecedenceMember
 	// TODO: JSXElement?
@@ -273,13 +273,13 @@ const (
 	//     Literal
 	//     ArrayLiteral
 	//     ObjectLiteral
-	//     ast.FunctionExpression
-	//     ast.ClassExpression
+	//     FunctionExpression
+	//     ClassExpression
 	//     GeneratorExpression
 	//     AsyncFunctionExpression
 	//     AsyncGeneratorExpression
-	//     ast.RegularExpressionLiteral
-	//     ast.TemplateLiteral
+	//     RegularExpressionLiteral
+	//     TemplateLiteral
 	//     CoverParenthesizedExpressionAndArrowParameterList
 	OperatorPrecedencePrimary
 	// CoalesceExpression:
@@ -763,7 +763,7 @@ func getErrorRangeForNode(sourceFile *ast.SourceFile, node *ast.Node) core.TextR
 		}
 		return core.NewTextRange(start, scanner.pos)
 		// !!!
-		// case ast.KindJSDocSatisfiesTag:
+		// case KindJSDocSatisfiesTag:
 		// 	pos := skipTrivia(sourceFile.text, node.tagName.pos)
 		// 	return getRangeOfTokenAtPosition(sourceFile, pos)
 	}
@@ -1488,7 +1488,7 @@ const (
 	AssignmentKindCompound
 )
 
-type AssignmentTarget = ast.Node // ast.BinaryExpression | ast.PrefixUnaryExpression | ast.PostfixUnaryExpression | ast.ForInOrOfStatement
+type AssignmentTarget = ast.Node // BinaryExpression | PrefixUnaryExpression | PostfixUnaryExpression | ForInOrOfStatement
 
 func getAssignmentTargetKind(node *ast.Node) AssignmentKind {
 	target := getAssignmentTarget(node)
@@ -1518,7 +1518,7 @@ func isAssignmentTarget(node *ast.Node) bool {
 	return getAssignmentTarget(node) != nil
 }
 
-// Returns the ast.BinaryExpression, ast.PrefixUnaryExpression, ast.PostfixUnaryExpression, or ast.ForInOrOfStatement that references
+// Returns the BinaryExpression, PrefixUnaryExpression, PostfixUnaryExpression, or ForInOrOfStatement that references
 // the given node as an assignment target
 func getAssignmentTarget(node *ast.Node) *ast.Node {
 	for {
@@ -2151,7 +2151,7 @@ loop:
 				//        on an export specifier is that it might find the export specifier itself, and try to
 				//        resolve it as an alias. This will cause the checker to consider the export specifier
 				//        a circular alias reference when it might not be.
-				//     2. We check === ast.SymbolFlags.Alias in order to check that the symbol is *purely*
+				//     2. We check === SymbolFlags.Alias in order to check that the symbol is *purely*
 				//        an alias. If we used &, we'd be throwing out symbols that have non alias aspects,
 				//        which is not the desired behavior.
 				moduleExport := moduleExports[name]
@@ -3075,7 +3075,7 @@ func getEffectiveTypeParameterDeclarations(node *ast.Node) []*ast.Node {
 	// 	if isJSDocOverloadTag(node.parent) {
 	// 		jsDoc := getJSDocRoot(node.parent)
 	// 		if jsDoc && length(jsDoc.tags) {
-	// 			return flatMap(jsDoc.tags, func(tag JSDocTag) *NodeArray[ast.TypeParameterDeclaration] {
+	// 			return flatMap(jsDoc.tags, func(tag JSDocTag) *NodeArray[TypeParameterDeclaration] {
 	// 				if isJSDocTemplateTag(tag) {
 	// 					return tag.typeParameters
 	// 				} else {
@@ -3087,8 +3087,8 @@ func getEffectiveTypeParameterDeclarations(node *ast.Node) []*ast.Node {
 	// 	return emptyArray
 	// }
 	// if isJSDocTypeAlias(node) {
-	// 	Debug.assert(node.parent.kind == ast.KindJSDoc)
-	// 	return flatMap(node.parent.tags, func(tag JSDocTag) *NodeArray[ast.TypeParameterDeclaration] {
+	// 	Debug.assert(node.parent.kind == KindJSDoc)
+	// 	return flatMap(node.parent.tags, func(tag JSDocTag) *NodeArray[TypeParameterDeclaration] {
 	// 		if isJSDocTemplateTag(tag) {
 	// 			return tag.typeParameters
 	// 		} else {

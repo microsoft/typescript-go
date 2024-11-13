@@ -235,10 +235,10 @@ func (p *Program) collectExternalModuleReferences(file *ast.SourceFile) {
 	for _, node := range file.Statements {
 		p.collectModuleReferences(file, node, false /*inAmbientModule*/)
 	}
-	// if ((file.flags & ast.NodeFlags.PossiblyContainsDynamicImport) || isJavaScriptFile) {
+	// if ((file.flags & NodeFlags.PossiblyContainsDynamicImport) || isJavaScriptFile) {
 	// 	collectDynamicImportOrRequireOrJsDocImportCalls(file);
 	// }
-	// function collectDynamicImportOrRequireOrJsDocImportCalls(file: ast.SourceFile) {
+	// function collectDynamicImportOrRequireOrJsDocImportCalls(file: SourceFile) {
 	// 	const r = /import|require/g;
 	// 	while (r.exec(file.text) !== null) { // eslint-disable-line no-restricted-syntax
 	// 		const node = getNodeAtPosition(file, r.lastIndex);
@@ -265,10 +265,10 @@ func (p *Program) collectExternalModuleReferences(file *ast.SourceFile) {
 	// 	}
 	// }
 	// /** Returns a token if position is in [start-of-leading-trivia, end), includes JSDoc only in JS files */
-	// function getNodeAtPosition(sourceFile: ast.SourceFile, position: number): ast.Node {
-	// 	let current: ast.Node = sourceFile;
-	// 	const getContainingChild = (child: ast.Node) => {
-	// 		if (child.pos <= position && (position < child.end || (position === child.end && (child.kind === ast.Kind.EndOfFileToken)))) {
+	// function getNodeAtPosition(sourceFile: SourceFile, position: number): Node {
+	// 	let current: Node = sourceFile;
+	// 	const getContainingChild = (child: Node) => {
+	// 		if (child.pos <= position && (position < child.end || (position === child.end && (child.kind === Kind.EndOfFileToken)))) {
 	// 			return child;
 	// 		}
 	// 	};
@@ -388,7 +388,7 @@ func (p *Program) collectModuleReferences(file *ast.SourceFile, node *ast.Statem
 			}
 			// An AmbientExternalModuleDeclaration declares an external module.
 			// This type of declaration is permitted only in the global module.
-			// The ast.StringLiteral must specify a top - level external module name.
+			// The StringLiteral must specify a top - level external module name.
 			// Relative external module names are not permitted
 			// NOTE: body of ambient module is always a module block, if it exists
 			if node.AsModuleDeclaration().Body != nil {

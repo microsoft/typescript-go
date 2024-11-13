@@ -215,7 +215,7 @@ type ScannerState struct {
 	pos          int            // Current position in text (and ending position of current token)
 	fullStartPos int            // Starting position of current token including preceding whitespace
 	tokenStart   int            // Starting position of non-whitespace part of current token
-	token        ast.Kind       // ast.Kind of current token
+	token        ast.Kind       // Kind of current token
 	tokenValue   string         // Parsed value of current token
 	tokenFlags   ast.TokenFlags // Flags for current token
 }
@@ -903,7 +903,7 @@ func (s *Scanner) scanJsxTokenEx(allowMultilineJsxText bool) ast.Kind {
 			if stringutil.IsLineBreak(ch) && firstNonWhitespace == 0 {
 				firstNonWhitespace = -1
 			} else if !allowMultilineJsxText && stringutil.IsLineBreak(ch) && firstNonWhitespace > 0 {
-				// Stop ast.JsxText on each line during formatting. This allows the formatter to
+				// Stop JsxText on each line during formatting. This allows the formatter to
 				// indent each line correctly.
 				break
 			} else if !stringutil.IsWhiteSpaceLike(ch) {
