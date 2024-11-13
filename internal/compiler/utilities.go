@@ -1763,8 +1763,8 @@ func getESModuleInterop(options *CompilerOptions) bool {
 		return true
 	}
 	return false
-
 }
+
 func getAllowSyntheticDefaultImports(options *CompilerOptions) bool {
 	if options.AllowSyntheticDefaultImports != core.TSUnknown {
 		return options.AllowSyntheticDefaultImports == core.TSTrue

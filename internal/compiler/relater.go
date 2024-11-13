@@ -597,13 +597,13 @@ func (c *Checker) findMostOverlappyType(source *Type, unionTarget *Type) *Type {
 					// We only want to account for literal types otherwise.
 					// If we have a union of index types, it seems likely that we
 					// needed to elaborate between two generic mapped types anyway.
-					var len = 1
+					var length = 1
 					if overlap.flags&TypeFlagsUnion != 0 {
-						len = core.CountWhere(overlap.Types(), isUnitType)
+						length = core.CountWhere(overlap.Types(), isUnitType)
 					}
-					if len >= matchingCount {
+					if length >= matchingCount {
 						bestMatch = target
-						matchingCount = len
+						matchingCount = length
 					}
 				}
 			}
@@ -1666,7 +1666,6 @@ func (c *Checker) createTypePredicateFromTypePredicateNode(node *ast.Node, signa
 	if ast.IsThisTypeNode(predicateNode.ParameterName) {
 		kind := ifElse(predicateNode.AssertsModifier != nil, TypePredicateKindAssertsThis, TypePredicateKindThis)
 		return c.newTypePredicate(kind, "" /*parameterName*/, 0 /*parameterIndex*/, t)
-
 	}
 	kind := ifElse(predicateNode.AssertsModifier != nil, TypePredicateKindAssertsIdentifier, TypePredicateKindIdentifier)
 	name := predicateNode.ParameterName.Text()
@@ -2702,7 +2701,7 @@ func (r *Relater) typeArgumentsRelatedTo(sources []*Type, targets []*Type, varia
 		if variance != VarianceFlagsIndependent {
 			s := sources[i]
 			t := targets[i]
-			related := TernaryTrue
+			var related Ternary
 			if varianceFlags&VarianceFlagsUnmeasurable != 0 {
 				// Even an `Unmeasurable` variance works out without a structural check if the source and target are _identical_.
 				// We can't simply assume invariance, because `Unmeasurable` marks nonlinear relations, for example, a relation tained by
@@ -2818,7 +2817,7 @@ func (r *Relater) typeRelatedToDiscriminatedType(source *Type, target *Type) Ter
 		hasMatch := false
 	outer:
 		for _, t := range target.Types() {
-			for i := 0; i < len(sourcePropertiesFiltered); i++ {
+			for i := range sourcePropertiesFiltered {
 				sourceProperty := sourcePropertiesFiltered[i]
 				targetProperty := r.c.getPropertyOfType(t, sourceProperty.Name)
 				if targetProperty == nil {
@@ -2921,7 +2920,7 @@ func (r *Relater) propertiesRelatedTo(source *Type, target *Type, reportErrors b
 			targetStartCount := getStartElementCount(target.TargetTupleType(), ElementFlagsNonRest)
 			targetEndCount := getEndElementCount(target.TargetTupleType(), ElementFlagsNonRest)
 			canExcludeDiscriminants := excludedProperties.Len() != 0
-			for sourcePosition := 0; sourcePosition < sourceArity; sourcePosition++ {
+			for sourcePosition := range sourceArity {
 				var sourceFlags ElementFlags
 				if isTupleType(source) {
 					sourceFlags = source.TargetTupleType().elementInfos[sourcePosition].flags
@@ -3239,7 +3238,7 @@ func (r *Relater) signaturesRelatedTo(source *Type, target *Type, kind Signature
 		// of the much more expensive N * M comparison matrix we explore below. We erase type parameters
 		// as they are known to always be the same.
 		// !!! Debug.assertEqual(sourceSignatures.length, targetSignatures.length)
-		for i := range len(targetSignatures) {
+		for i := range targetSignatures {
 			related := r.signatureRelatedTo(sourceSignatures[i], targetSignatures[i], true /*erase*/, reportErrors, intersectionState)
 			if related == TernaryFalse {
 				return TernaryFalse
@@ -3328,7 +3327,7 @@ func (r *Relater) signaturesIdenticalTo(source *Type, target *Type, kind Signatu
 		return TernaryFalse
 	}
 	result := TernaryTrue
-	for i := range len(sourceSignatures) {
+	for i := range sourceSignatures {
 		related := r.c.compareSignaturesIdentical(sourceSignatures[i], targetSignatures[i], false /*partialMatch*/, false /*ignoreThisTypes*/, false /*ignoreReturnTypes*/, r.isRelatedToSimple)
 		if related == 0 {
 			return TernaryFalse

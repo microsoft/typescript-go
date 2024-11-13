@@ -150,8 +150,8 @@ func (p *Parser) initializeState(fileName string, sourceText string, languageVer
 	p.scanner.SetLanguageVariant(p.languageVariant)
 }
 
-func (p *Parser) scanError(message *diagnostics.Message, pos int, len int, args ...any) {
-	p.parseErrorAtRange(core.NewTextRange(pos, pos+len), message, args...)
+func (p *Parser) scanError(message *diagnostics.Message, pos int, length int, args ...any) {
+	p.parseErrorAtRange(core.NewTextRange(pos, pos+length), message, args...)
 }
 
 func (p *Parser) parseErrorAt(pos int, end int, message *diagnostics.Message, args ...any) *ast.Diagnostic {
@@ -309,10 +309,10 @@ func (p *Parser) parseDelimitedList(kind ParsingContext, parseElement func(p *Pa
 
 // Return a non-nil (but possibly empty) slice if parsing was successful, or nil if opening token wasn't found
 // or parseElement returned nil
-func (p *Parser) parseBracketedList(kind ParsingContext, parseElement func(p *Parser) *ast.Node, open ast.Kind, close ast.Kind) []*ast.Node {
-	if p.parseExpected(open) {
+func (p *Parser) parseBracketedList(kind ParsingContext, parseElement func(p *Parser) *ast.Node, opening ast.Kind, closing ast.Kind) []*ast.Node {
+	if p.parseExpected(opening) {
 		result := p.parseDelimitedList(kind, parseElement)
-		p.parseExpected(close)
+		p.parseExpected(closing)
 		return result
 	}
 	return nil
@@ -1980,7 +1980,7 @@ func (p *Parser) parseImportOrExportSpecifier(kind ast.Kind) (isTypeOnly bool, p
 		p.parseExpected(ast.KindAsKeyword)
 		name = p.parseModuleExportName(kind == ast.KindImportSpecifier /*disallowKeywords*/)
 	}
-	return
+	return isTypeOnly, propertyName, name
 }
 
 func (p *Parser) canParseModuleExportName() bool {
@@ -2802,7 +2802,6 @@ func (p *Parser) parseParametersWorker(flags ParseFlags, allowAmbiguity bool) []
 	})
 	p.contextFlags = saveContextFlags
 	return parameters
-
 }
 
 func (p *Parser) parseParameter() *ast.Node {
@@ -3213,7 +3212,6 @@ func (p *Parser) getTemplateLiteralRawText(endLength int) string {
 		endLength = 0
 	}
 	return tokenText[1 : len(tokenText)-endLength]
-
 }
 
 func (p *Parser) parseTemplateTypeSpans() []*ast.Node {

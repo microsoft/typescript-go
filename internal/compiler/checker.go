@@ -458,7 +458,7 @@ func (c *Checker) initializeClosures() {
 func (c *Checker) initializeChecker() {
 	c.program.bindSourceFiles()
 	// Initialize global symbol table
-	var augmentations [][]*ast.Node
+	augmentations := make([][]*ast.Node, 0, len(c.files))
 	for _, file := range c.files {
 		if !isExternalOrCommonJsModule(file) {
 			c.mergeSymbolTable(c.globals, file.Locals_, false, nil)
@@ -3417,7 +3417,6 @@ func (c *Checker) errorNoModuleMemberSymbol(moduleSymbol *ast.Symbol, targetSymb
 	} else {
 		if moduleSymbol.Exports[InternalSymbolNameDefault] != nil {
 			c.error(name, diagnostics.Module_0_has_no_exported_member_1_Did_you_mean_to_use_import_1_from_0_instead, moduleName, declarationName)
-
 		} else {
 			c.reportNonExportedMember(node, name, declarationName, moduleSymbol, moduleName)
 		}
@@ -4098,7 +4097,7 @@ func (c *Checker) getExportsOfModuleWorker(moduleSymbol *ast.Symbol) (exports as
 	for name := range nonTypeOnlyNames.Keys() {
 		delete(typeOnlyExportStarMap, name)
 	}
-	return
+	return exports, typeOnlyExportStarMap
 }
 
 /**
@@ -8272,7 +8271,7 @@ func (n *TupleNormalizer) normalize(c *Checker, elementTypes []*Type, elementInf
 		}
 	}
 	// Turn optional elements preceding the last required element into required elements
-	for i := 0; i < n.lastRequiredIndex; i++ {
+	for i := range n.lastRequiredIndex {
 		if n.infos[i].flags&ElementFlagsOptional != 0 {
 			n.infos[i].flags = ElementFlagsRequired
 		}
@@ -9010,10 +9009,10 @@ func (c *Checker) createTupleTargetType(elementInfos []TupleElementInfo, readonl
 	members := make(ast.SymbolTable)
 	combinedFlags := ElementFlagsNone
 	if arity != 0 {
-		typeParameters = make([]*Type, arity)
-		for i := 0; i < arity; i++ {
+		typeParameters = make([]*Type, 0, arity)
+		for i := range arity {
 			typeParameter := c.newTypeParameter(nil)
-			typeParameters[i] = typeParameter
+			typeParameters = append(typeParameters, typeParameter)
 			flags := elementInfos[i].flags
 			combinedFlags |= flags
 			if combinedFlags&ElementFlagsVariable == 0 {
@@ -10255,7 +10254,7 @@ func (c *Checker) eachUnionContains(unionTypes []*Type, t *Type) bool {
 func (c *Checker) getCrossProductIntersections(types []*Type, flags IntersectionFlags) []*Type {
 	count := c.getCrossProductUnionSize(types)
 	var intersections []*Type
-	for i := 0; i < count; i++ {
+	for i := range count {
 		constituents := slices.Clone(types)
 		n := i
 		for j := len(types) - 1; j >= 0; j-- {

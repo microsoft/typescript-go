@@ -3104,7 +3104,6 @@ func (f *NodeFactory) NewObjectLiteralExpression(properties []*ObjectLiteralElem
 	data.Properties = properties
 	data.MultiLine = multiLine
 	return f.NewNode(KindObjectLiteralExpression, data)
-
 }
 
 func (node *ObjectLiteralExpression) ForEachChild(v Visitor) bool {
@@ -3201,7 +3200,6 @@ func (f *NodeFactory) NewDeleteExpression(expression *Expression) *Node {
 	data := &DeleteExpression{}
 	data.Expression = expression
 	return f.NewNode(KindDeleteExpression, data)
-
 }
 
 func (node *DeleteExpression) ForEachChild(v Visitor) bool {
