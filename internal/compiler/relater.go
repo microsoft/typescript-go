@@ -2566,7 +2566,7 @@ func (r *Relater) structuredTypeRelatedTo(source *Type, target *Type, reportErro
 
 func (r *Relater) isSourceIntersectionNeedingExtraCheck(source *Type, target *Type) bool {
 	return source.flags&TypeFlagsIntersection != 0 && r.c.getApparentType(source).flags&TypeFlagsStructuredType != 0 &&
-		!utils.Some(source.Types(), func(t *Type) bool {
+		!core.Some(source.Types(), func(t *Type) bool {
 			return t == target || t.objectFlags&ObjectFlagsNonInferrableType != 0
 		})
 }
@@ -3682,7 +3682,7 @@ func (r *Relater) indexSignaturesRelatedTo(source *Type, target *Type, sourceIsP
 		return r.indexSignaturesIdenticalTo(source, target)
 	}
 	indexInfos := r.c.getIndexInfosOfType(target)
-	targetHasStringIndex := utils.Some(indexInfos, func(info *IndexInfo) bool { return info.keyType == r.c.stringType })
+	targetHasStringIndex := core.Some(indexInfos, func(info *IndexInfo) bool { return info.keyType == r.c.stringType })
 	result := TernaryTrue
 	for _, targetInfo := range indexInfos {
 		var related Ternary
@@ -3725,7 +3725,7 @@ func (r *Relater) typeRelatedToIndexInfo(source *Type, targetInfo *IndexInfo, re
  */
 func (c *Checker) isObjectTypeWithInferableIndex(t *Type) bool {
 	if t.flags&TypeFlagsIntersection != 0 {
-		return utils.Every(t.Types(), c.isObjectTypeWithInferableIndex)
+		return core.Every(t.Types(), c.isObjectTypeWithInferableIndex)
 	}
 	return t.symbol != nil && t.symbol.flags&(SymbolFlagsObjectLiteral|SymbolFlagsTypeLiteral|SymbolFlagsEnum|SymbolFlagsValueModule) != 0 &&
 		t.symbol.flags&SymbolFlagsClass == 0 && !c.typeHasCallOrConstructSignatures(t) ||

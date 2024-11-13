@@ -510,7 +510,7 @@ func NewChecker(program *Program) *Checker {
 	c.comparableRelation = &Relation{}
 	c.identityRelation = &Relation{}
 	c.enumRelation = &Relation{}
-	c.getGlobalNonNullableTypeAlias = utils.Memoize(func() *Symbol { return c.getGlobalSymbol("NonNullable", SymbolFlagsTypeAlias, nil /*diagnostic*/) })
+	c.getGlobalNonNullableTypeAlias = core.Memoize(func() *Symbol { return c.getGlobalSymbol("NonNullable", SymbolFlagsTypeAlias, nil /*diagnostic*/) })
 	c.initializeClosures()
 	c.initializeChecker()
 	return c
