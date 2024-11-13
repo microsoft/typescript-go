@@ -36,8 +36,8 @@ const (
 
 type Binder struct {
 	file                   *SourceFile
-	options                *CompilerOptions
-	languageVersion        ScriptTarget
+	options                *core.CompilerOptions
+	languageVersion        core.ScriptTarget
 	bind                   func(*Node) bool
 	parent                 *Node
 	container              *Node
@@ -87,7 +87,7 @@ type ActiveLabel struct {
 func (label *ActiveLabel) BreakTarget() *FlowNode    { return label.breakTarget }
 func (label *ActiveLabel) ContinueTarget() *FlowNode { return label.continueTarget }
 
-func bindSourceFile(file *SourceFile, options *CompilerOptions) {
+func bindSourceFile(file *SourceFile, options *core.CompilerOptions) {
 	if !file.isBound {
 		b := &Binder{}
 		b.file = file
@@ -1328,7 +1328,7 @@ func (b *Binder) checkStrictModeFunctionName(node *Node) {
 }
 
 func (b *Binder) checkStrictModeFunctionDeclaration(node *Node) {
-	if b.languageVersion < ScriptTargetES2015 {
+	if b.languageVersion < core.ScriptTargetES2015 {
 		// Report error if function is not top level function declaration
 		if b.blockScopeContainer.kind != SyntaxKindSourceFile && b.blockScopeContainer.kind != SyntaxKindModuleDeclaration && !isFunctionLikeOrClassStaticBlockDeclaration(b.blockScopeContainer) {
 			// We check first if the name is inside class declaration or class expression; if so give explicit message
@@ -1406,7 +1406,7 @@ func (b *Binder) checkStrictModeWithStatement(node *Node) {
 
 func (b *Binder) checkStrictModeLabeledStatement(node *Node) {
 	// Grammar checking for labeledStatement
-	if b.inStrictMode && b.options.Target >= ScriptTargetES2015 {
+	if b.inStrictMode && b.options.Target >= core.ScriptTargetES2015 {
 		data := node.AsLabeledStatement()
 		if isDeclarationStatement(data.statement) || isVariableStatement(data.statement) {
 			b.errorOnFirstToken(data.label, diagnostics.A_label_is_not_allowed_here)
@@ -1578,7 +1578,7 @@ func (b *Binder) bindChildren(node *Node) {
 		return
 	}
 	kind := node.kind
-	if kind >= SyntaxKindFirstStatement && kind <= SyntaxKindLastStatement && (b.options.AllowUnreachableCode != TSTrue || kind == SyntaxKindReturnStatement) {
+	if kind >= SyntaxKindFirstStatement && kind <= SyntaxKindLastStatement && (b.options.AllowUnreachableCode != core.TSTrue || kind == SyntaxKindReturnStatement) {
 		hasFlowNodeData := node.FlowNodeData()
 		if hasFlowNodeData != nil {
 			hasFlowNodeData.flowNode = b.currentFlow
@@ -1708,7 +1708,7 @@ func (b *Binder) checkUnreachable(node *Node) bool {
 			isModuleDeclaration(node) && b.shouldReportErrorOnModuleDeclaration(node)
 		if reportError {
 			b.currentFlow = reportedUnreachableFlow
-			if b.options.AllowUnreachableCode != TSTrue {
+			if b.options.AllowUnreachableCode != core.TSTrue {
 				// unreachable code is reported if
 				// - user has explicitly asked about it AND
 				// - statement is in not ambient context (statements in ambient context is already an error
@@ -2119,7 +2119,7 @@ func (b *Binder) bindCaseBlock(node *Node) {
 		clause := clauses[i]
 		b.bind(clause)
 		fallthroughFlow = b.currentFlow
-		if b.currentFlow.flags&FlowFlagsUnreachable == 0 && i != len(clauses)-1 && b.options.NoFallthroughCasesInSwitch == TSTrue {
+		if b.currentFlow.flags&FlowFlagsUnreachable == 0 && i != len(clauses)-1 && b.options.NoFallthroughCasesInSwitch == core.TSTrue {
 			clause.AsCaseOrDefaultClause().fallthroughFlowNode = b.currentFlow
 		}
 	}
@@ -2165,7 +2165,7 @@ func (b *Binder) bindLabeledStatement(node *Node) {
 	}
 	b.bind(stmt.label)
 	b.bind(stmt.statement)
-	if !b.activeLabelList.referenced && b.options.AllowUnusedLabels != TSTrue {
+	if !b.activeLabelList.referenced && b.options.AllowUnusedLabels != core.TSTrue {
 		b.errorOrSuggestionOnNode(unusedLabelIsError(b.options), stmt.label, diagnostics.Unused_label)
 	}
 	b.activeLabelList = b.activeLabelList.next
@@ -2486,7 +2486,7 @@ func (b *Binder) bindInitializer(node *Node) {
 	b.currentFlow = finishFlowLabel(exitFlow)
 }
 
-func isEnumDeclarationWithPreservedEmit(node *Node, options *CompilerOptions) bool {
+func isEnumDeclarationWithPreservedEmit(node *Node, options *core.CompilerOptions) bool {
 	return node.kind == SyntaxKindEnumDeclaration && (!isEnumConst(node) || shouldPreserveConstEnums(options))
 }
 

@@ -9,6 +9,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/compiler/diagnostics"
 	"github.com/microsoft/typescript-go/internal/compiler/stringutil"
 	"github.com/microsoft/typescript-go/internal/compiler/textpos"
+	"github.com/microsoft/typescript-go/internal/core"
 )
 
 type TokenFlags int32
@@ -249,7 +250,7 @@ type ScannerState struct {
 
 type Scanner struct {
 	text            string
-	languageVersion ScriptTarget
+	languageVersion core.ScriptTarget
 	languageVariant LanguageVariant
 	onError         ErrorCallback
 	skipTrivia      bool
@@ -257,7 +258,7 @@ type Scanner struct {
 }
 
 func NewScanner() *Scanner {
-	return &Scanner{languageVersion: ScriptTargetLatest, skipTrivia: true}
+	return &Scanner{languageVersion: core.ScriptTargetLatest, skipTrivia: true}
 }
 
 func (s *Scanner) Text() string {
@@ -321,7 +322,7 @@ func (s *Scanner) SetOnError(errorCallback ErrorCallback) {
 	s.onError = errorCallback
 }
 
-func (s *Scanner) SetScriptTarget(scriptTarget ScriptTarget) {
+func (s *Scanner) SetScriptTarget(scriptTarget core.ScriptTarget) {
 	s.languageVersion = scriptTarget
 }
 
@@ -1561,20 +1562,20 @@ func isWordCharacter(ch rune) bool {
 	return stringutil.IsASCIILetter(ch) || stringutil.IsDigit(ch) || ch == '_'
 }
 
-func isIdentifierStart(ch rune, languageVersion ScriptTarget) bool {
+func isIdentifierStart(ch rune, languageVersion core.ScriptTarget) bool {
 	return stringutil.IsASCIILetter(ch) || ch == '_' || ch == '$' || ch > 0x7F && isUnicodeIdentifierStart(ch, languageVersion)
 }
 
-func isIdentifierPart(ch rune, languageVersion ScriptTarget) bool {
+func isIdentifierPart(ch rune, languageVersion core.ScriptTarget) bool {
 	return isWordCharacter(ch) || ch == '$' || ch > 0x7F && isUnicodeIdentifierPart(ch, languageVersion)
 }
 
-func isUnicodeIdentifierStart(ch rune, languageVersion ScriptTarget) bool {
-	return isInUnicodeRanges(ch, ifElse(languageVersion >= ScriptTargetES2015, unicodeESNextIdentifierStart, unicodeES5IdentifierStart))
+func isUnicodeIdentifierStart(ch rune, languageVersion core.ScriptTarget) bool {
+	return isInUnicodeRanges(ch, ifElse(languageVersion >= core.ScriptTargetES2015, unicodeESNextIdentifierStart, unicodeES5IdentifierStart))
 }
 
-func isUnicodeIdentifierPart(ch rune, languageVersion ScriptTarget) bool {
-	return isInUnicodeRanges(ch, ifElse(languageVersion >= ScriptTargetES2015, unicodeESNextIdentifierPart, unicodeES5IdentifierPart))
+func isUnicodeIdentifierPart(ch rune, languageVersion core.ScriptTarget) bool {
+	return isInUnicodeRanges(ch, ifElse(languageVersion >= core.ScriptTargetES2015, unicodeESNextIdentifierPart, unicodeES5IdentifierPart))
 }
 
 func isInUnicodeRanges(cp rune, ranges []rune) bool {

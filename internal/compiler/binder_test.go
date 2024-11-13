@@ -3,6 +3,8 @@ package compiler
 import (
 	"runtime"
 	"testing"
+
+	"github.com/microsoft/typescript-go/internal/core"
 )
 
 func BenchmarkBind(b *testing.B) {
@@ -15,10 +17,10 @@ func BenchmarkBind(b *testing.B) {
 
 			sourceFiles := make([]*SourceFile, b.N)
 			for i := 0; i < b.N; i++ {
-				sourceFiles[i] = ParseSourceFile(fileName, sourceText, ScriptTargetESNext)
+				sourceFiles[i] = ParseSourceFile(fileName, sourceText, core.ScriptTargetESNext)
 			}
 
-			compilerOptions := &CompilerOptions{Target: ScriptTargetESNext, ModuleKind: ModuleKindNodeNext}
+			compilerOptions := &core.CompilerOptions{Target: core.ScriptTargetESNext, ModuleKind: core.ModuleKindNodeNext}
 
 			// The above parses do a lot of work; ensure GC is settled before we start collecting pefrormance data.
 			runtime.GC()

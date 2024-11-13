@@ -2,9 +2,11 @@ package compiler
 
 import (
 	"slices"
+
+	"github.com/microsoft/typescript-go/internal/core"
 )
 
-//go:generate go run golang.org/x/tools/cmd/stringer -type=LanguageVariant,ModuleResolutionKind,ScriptKind,ScriptTarget,SignatureKind,SyntaxKind,Tristate -output=stringer_generated.go
+//go:generate go run golang.org/x/tools/cmd/stringer -type=LanguageVariant,ScriptKind,SignatureKind,SyntaxKind -output=stringer_generated.go
 
 type SyntaxKind int16
 
@@ -705,26 +707,6 @@ const (
 	ScriptKindDeferred
 )
 
-type ScriptTarget int32
-
-const (
-	ScriptTargetNone   ScriptTarget = 0
-	ScriptTargetES3    ScriptTarget = 0 // Deprecated
-	ScriptTargetES5    ScriptTarget = 1
-	ScriptTargetES2015 ScriptTarget = 2
-	ScriptTargetES2016 ScriptTarget = 3
-	ScriptTargetES2017 ScriptTarget = 4
-	ScriptTargetES2018 ScriptTarget = 5
-	ScriptTargetES2019 ScriptTarget = 6
-	ScriptTargetES2020 ScriptTarget = 7
-	ScriptTargetES2021 ScriptTarget = 8
-	ScriptTargetES2022 ScriptTarget = 9
-	ScriptTargetES2023 ScriptTarget = 10
-	ScriptTargetESNext ScriptTarget = 99
-	ScriptTargetJSON   ScriptTarget = 100
-	ScriptTargetLatest ScriptTarget = ScriptTargetESNext
-)
-
 type LanguageVariant int32
 
 const (
@@ -943,28 +925,6 @@ type FlowReduceLabelData struct {
 	antecedents *FlowList  // Temporary antecedent list
 }
 
-// Tristate
-
-type Tristate byte
-
-const (
-	TSUnknown Tristate = iota
-	TSFalse
-	TSTrue
-)
-
-func (t *Tristate) UnmarshalJSON(data []byte) error {
-	switch string(data) {
-	case "true":
-		*t = TSTrue
-	case "false":
-		*t = TSFalse
-	default:
-		*t = TSUnknown
-	}
-	return nil
-}
-
 type VarianceFlags uint32
 
 const (
@@ -1047,87 +1007,6 @@ const (
 	InternalSymbolNameThis                    = "this"
 )
 
-// CompilerOptions
-
-type CompilerOptions struct {
-	AllowJs                            Tristate
-	AllowSyntheticDefaultImports       Tristate
-	AllowUmdGlobalAccess               Tristate
-	AllowUnreachableCode               Tristate
-	AllowUnusedLabels                  Tristate
-	CheckJs                            Tristate
-	CustomConditions                   []string
-	ESModuleInterop                    Tristate
-	ExactOptionalPropertyTypes         Tristate
-	IsolatedModules                    Tristate
-	ModuleKind                         ModuleKind
-	ModuleResolution                   ModuleResolutionKind
-	ModuleSuffixes                     []string
-	NoFallthroughCasesInSwitch         Tristate
-	NoImplicitAny                      Tristate
-	NoPropertyAccessFromIndexSignature Tristate
-	NoUncheckedIndexedAccess           Tristate
-	Paths                              map[string][]string
-	PreserveConstEnums                 Tristate
-	PreserveSymlinks                   Tristate
-	ResolveJsonModule                  Tristate
-	ResolvePackageJsonExports          Tristate
-	ResolvePackageJsonImports          Tristate
-	Strict                             Tristate
-	StrictBindCallApply                Tristate
-	StrictNullChecks                   Tristate
-	StrictFunctionTypes                Tristate
-	Target                             ScriptTarget
-	TraceResolution                    Tristate
-	TypeRoots                          []string
-	Types                              []string
-	UseDefineForClassFields            Tristate
-	UseUnknownInCatchVariables         Tristate
-	VerbatimModuleSyntax               Tristate
-
-	configFilePath  string
-	noDtsResolution Tristate
-	pathsBasePath   string
-}
-
-type ModuleKind int32
-
-const (
-	ModuleKindNone     ModuleKind = 0
-	ModuleKindCommonJS ModuleKind = 1
-	ModuleKindAMD      ModuleKind = 2
-	ModuleKindUMD      ModuleKind = 3
-	ModuleKindSystem   ModuleKind = 4
-	// NOTE: ES module kinds should be contiguous to more easily check whether a module kind is *any* ES module kind.
-	//       Non-ES module kinds should not come between ES2015 (the earliest ES module kind) and ESNext (the last ES
-	//       module kind).
-	ModuleKindES2015 ModuleKind = 5
-	ModuleKindES2020 ModuleKind = 6
-	ModuleKindES2022 ModuleKind = 7
-	ModuleKindESNext ModuleKind = 99
-	// Node16+ is an amalgam of commonjs (albeit updated) and es2022+, and represents a distinct module system from es2020/esnext
-	ModuleKindNode16   ModuleKind = 100
-	ModuleKindNodeNext ModuleKind = 199
-	// Emit as written
-	ModuleKindPreserve ModuleKind = 200
-)
-
-type ResolutionMode = ModuleKind // ModuleKindNone | ModuleKindCommonJS | ModuleKindESNext
-
-type ModuleResolutionKind int32
-
-const (
-	ModuleResolutionKindUnknown ModuleResolutionKind = 0
-	// Starting with node16, node's module resolver has significant departures from traditional cjs resolution
-	// to better support ECMAScript modules and their use within node - however more features are still being added.
-	// TypeScript's Node ESM support was introduced after Node 12 went end-of-life, and Node 14 is the earliest stable
-	// version that supports both pattern trailers - *but*, Node 16 is the first version that also supports ECMAScript 2022.
-	// In turn, we offer both a `NodeNext` moving resolution target, and a `Node16` version-anchored resolution target
-	ModuleResolutionKindNode16   ModuleResolutionKind = 3
-	ModuleResolutionKindNodeNext ModuleResolutionKind = 99 // Not simply `Node16` so that compiled code linked against TS can use the `Next` value reliably (same as with `ModuleKind`)
-	ModuleResolutionKindBundler  ModuleResolutionKind = 100
-)
-
 type NodeCheckFlags uint32
 
 const (
@@ -1162,7 +1041,7 @@ const (
 
 type NodeLinks struct {
 	flags                          NodeCheckFlags // Set of flags specific to Node
-	declarationRequiresScopeChange Tristate
+	declarationRequiresScopeChange core.Tristate
 }
 
 type TypeNodeLinks struct {
@@ -1920,75 +1799,75 @@ const (
 type TypeComparer func(s *Type, t *Type, reportErrors bool) Ternary
 
 type LanguageFeatureMinimumTargetMap struct {
-	Classes                           ScriptTarget
-	ForOf                             ScriptTarget
-	Generators                        ScriptTarget
-	Iteration                         ScriptTarget
-	SpreadElements                    ScriptTarget
-	RestElements                      ScriptTarget
-	TaggedTemplates                   ScriptTarget
-	DestructuringAssignment           ScriptTarget
-	BindingPatterns                   ScriptTarget
-	ArrowFunctions                    ScriptTarget
-	BlockScopedVariables              ScriptTarget
-	ObjectAssign                      ScriptTarget
-	RegularExpressionFlagsUnicode     ScriptTarget
-	RegularExpressionFlagsSticky      ScriptTarget
-	Exponentiation                    ScriptTarget
-	AsyncFunctions                    ScriptTarget
-	ForAwaitOf                        ScriptTarget
-	AsyncGenerators                   ScriptTarget
-	AsyncIteration                    ScriptTarget
-	ObjectSpreadRest                  ScriptTarget
-	RegularExpressionFlagsDotAll      ScriptTarget
-	BindinglessCatch                  ScriptTarget
-	BigInt                            ScriptTarget
-	NullishCoalesce                   ScriptTarget
-	OptionalChaining                  ScriptTarget
-	LogicalAssignment                 ScriptTarget
-	TopLevelAwait                     ScriptTarget
-	ClassFields                       ScriptTarget
-	PrivateNamesAndClassStaticBlocks  ScriptTarget
-	RegularExpressionFlagsHasIndices  ScriptTarget
-	ShebangComments                   ScriptTarget
-	UsingAndAwaitUsing                ScriptTarget
-	ClassAndClassElementDecorators    ScriptTarget
-	RegularExpressionFlagsUnicodeSets ScriptTarget
+	Classes                           core.ScriptTarget
+	ForOf                             core.ScriptTarget
+	Generators                        core.ScriptTarget
+	Iteration                         core.ScriptTarget
+	SpreadElements                    core.ScriptTarget
+	RestElements                      core.ScriptTarget
+	TaggedTemplates                   core.ScriptTarget
+	DestructuringAssignment           core.ScriptTarget
+	BindingPatterns                   core.ScriptTarget
+	ArrowFunctions                    core.ScriptTarget
+	BlockScopedVariables              core.ScriptTarget
+	ObjectAssign                      core.ScriptTarget
+	RegularExpressionFlagsUnicode     core.ScriptTarget
+	RegularExpressionFlagsSticky      core.ScriptTarget
+	Exponentiation                    core.ScriptTarget
+	AsyncFunctions                    core.ScriptTarget
+	ForAwaitOf                        core.ScriptTarget
+	AsyncGenerators                   core.ScriptTarget
+	AsyncIteration                    core.ScriptTarget
+	ObjectSpreadRest                  core.ScriptTarget
+	RegularExpressionFlagsDotAll      core.ScriptTarget
+	BindinglessCatch                  core.ScriptTarget
+	BigInt                            core.ScriptTarget
+	NullishCoalesce                   core.ScriptTarget
+	OptionalChaining                  core.ScriptTarget
+	LogicalAssignment                 core.ScriptTarget
+	TopLevelAwait                     core.ScriptTarget
+	ClassFields                       core.ScriptTarget
+	PrivateNamesAndClassStaticBlocks  core.ScriptTarget
+	RegularExpressionFlagsHasIndices  core.ScriptTarget
+	ShebangComments                   core.ScriptTarget
+	UsingAndAwaitUsing                core.ScriptTarget
+	ClassAndClassElementDecorators    core.ScriptTarget
+	RegularExpressionFlagsUnicodeSets core.ScriptTarget
 }
 
 var LanguageFeatureMinimumTarget = LanguageFeatureMinimumTargetMap{
-	Classes:                           ScriptTargetES2015,
-	ForOf:                             ScriptTargetES2015,
-	Generators:                        ScriptTargetES2015,
-	Iteration:                         ScriptTargetES2015,
-	SpreadElements:                    ScriptTargetES2015,
-	RestElements:                      ScriptTargetES2015,
-	TaggedTemplates:                   ScriptTargetES2015,
-	DestructuringAssignment:           ScriptTargetES2015,
-	BindingPatterns:                   ScriptTargetES2015,
-	ArrowFunctions:                    ScriptTargetES2015,
-	BlockScopedVariables:              ScriptTargetES2015,
-	ObjectAssign:                      ScriptTargetES2015,
-	RegularExpressionFlagsUnicode:     ScriptTargetES2015,
-	RegularExpressionFlagsSticky:      ScriptTargetES2015,
-	Exponentiation:                    ScriptTargetES2016,
-	AsyncFunctions:                    ScriptTargetES2017,
-	ForAwaitOf:                        ScriptTargetES2018,
-	AsyncGenerators:                   ScriptTargetES2018,
-	AsyncIteration:                    ScriptTargetES2018,
-	ObjectSpreadRest:                  ScriptTargetES2018,
-	RegularExpressionFlagsDotAll:      ScriptTargetES2018,
-	BindinglessCatch:                  ScriptTargetES2019,
-	BigInt:                            ScriptTargetES2020,
-	NullishCoalesce:                   ScriptTargetES2020,
-	OptionalChaining:                  ScriptTargetES2020,
-	LogicalAssignment:                 ScriptTargetES2021,
-	TopLevelAwait:                     ScriptTargetES2022,
-	ClassFields:                       ScriptTargetES2022,
-	PrivateNamesAndClassStaticBlocks:  ScriptTargetES2022,
-	RegularExpressionFlagsHasIndices:  ScriptTargetES2022,
-	ShebangComments:                   ScriptTargetESNext,
-	UsingAndAwaitUsing:                ScriptTargetESNext,
-	ClassAndClassElementDecorators:    ScriptTargetESNext,
-	RegularExpressionFlagsUnicodeSets: ScriptTargetESNext,
+	Classes:                           core.ScriptTargetES2015,
+	ForOf:                             core.ScriptTargetES2015,
+	Generators:                        core.ScriptTargetES2015,
+	Iteration:                         core.ScriptTargetES2015,
+	SpreadElements:                    core.ScriptTargetES2015,
+	RestElements:                      core.ScriptTargetES2015,
+	TaggedTemplates:                   core.ScriptTargetES2015,
+	DestructuringAssignment:           core.ScriptTargetES2015,
+	BindingPatterns:                   core.ScriptTargetES2015,
+	ArrowFunctions:                    core.ScriptTargetES2015,
+	BlockScopedVariables:              core.ScriptTargetES2015,
+	ObjectAssign:                      core.ScriptTargetES2015,
+	RegularExpressionFlagsUnicode:     core.ScriptTargetES2015,
+	RegularExpressionFlagsSticky:      core.ScriptTargetES2015,
+	Exponentiation:                    core.ScriptTargetES2016,
+	AsyncFunctions:                    core.ScriptTargetES2017,
+	ForAwaitOf:                        core.ScriptTargetES2018,
+	AsyncGenerators:                   core.ScriptTargetES2018,
+	AsyncIteration:                    core.ScriptTargetES2018,
+	ObjectSpreadRest:                  core.ScriptTargetES2018,
+	RegularExpressionFlagsDotAll:      core.ScriptTargetES2018,
+	BindinglessCatch:                  core.ScriptTargetES2019,
+	BigInt:                            core.ScriptTargetES2020,
+	NullishCoalesce:                   core.ScriptTargetES2020,
+	OptionalChaining:                  core.ScriptTargetES2020,
+	LogicalAssignment:                 core.ScriptTargetES2021,
+	TopLevelAwait:                     core.ScriptTargetES2022,
+	ClassFields:                       core.ScriptTargetES2022,
+	PrivateNamesAndClassStaticBlocks:  core.ScriptTargetES2022,
+	RegularExpressionFlagsHasIndices:  core.ScriptTargetES2022,
+	ShebangComments:                   core.ScriptTargetESNext,
+	UsingAndAwaitUsing:                core.ScriptTargetESNext,
+	ClassAndClassElementDecorators:    core.ScriptTargetESNext,
+	RegularExpressionFlagsUnicodeSets: core.ScriptTargetESNext,
 }

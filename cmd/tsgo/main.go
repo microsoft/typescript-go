@@ -11,6 +11,7 @@ import (
 	"unicode"
 
 	ts "github.com/microsoft/typescript-go/internal/compiler"
+	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
@@ -50,7 +51,7 @@ func main() {
 	flag.Parse()
 
 	rootPath := flag.Arg(0)
-	compilerOptions := &ts.CompilerOptions{Strict: ts.TSTrue, Target: ts.ScriptTargetESNext, ModuleKind: ts.ModuleKindNodeNext}
+	compilerOptions := &core.CompilerOptions{Strict: core.TSTrue, Target: core.ScriptTargetESNext, ModuleKind: core.ModuleKindNodeNext}
 	programOptions := ts.ProgramOptions{RootPath: rootPath, Options: compilerOptions, SingleThreaded: singleThreaded}
 	useCaseSensitiveFileNames := isFileSystemCaseSensitive()
 

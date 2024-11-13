@@ -47,7 +47,7 @@ type Parser struct {
 	factory               NodeFactory
 	fileName              string
 	sourceText            string
-	languageVersion       ScriptTarget
+	languageVersion       core.ScriptTarget
 	scriptKind            ScriptKind
 	languageVariant       LanguageVariant
 	contextFlags          NodeFlags
@@ -66,7 +66,7 @@ func NewParser() *Parser {
 	return p
 }
 
-func ParseSourceFile(fileName string, sourceText string, languageVersion ScriptTarget) *SourceFile {
+func ParseSourceFile(fileName string, sourceText string, languageVersion core.ScriptTarget) *SourceFile {
 	var p Parser
 	p.initializeState(fileName, sourceText, languageVersion, ScriptKindUnknown)
 	p.nextToken()
@@ -75,7 +75,7 @@ func ParseSourceFile(fileName string, sourceText string, languageVersion ScriptT
 
 func ParseJSONText(fileName string, sourceText string) *SourceFile {
 	var p Parser
-	p.initializeState(fileName, sourceText, ScriptTargetES2015, ScriptKindJSON)
+	p.initializeState(fileName, sourceText, core.ScriptTargetES2015, ScriptKindJSON)
 	p.nextToken()
 	pos := p.nodePos()
 	var expressions []*Node
@@ -128,7 +128,7 @@ func ParseJSONText(fileName string, sourceText string) *SourceFile {
 	return result
 }
 
-func (p *Parser) initializeState(fileName string, sourceText string, languageVersion ScriptTarget, scriptKind ScriptKind) {
+func (p *Parser) initializeState(fileName string, sourceText string, languageVersion core.ScriptTarget, scriptKind ScriptKind) {
 	p.scanner = NewScanner()
 	p.fileName = path.Clean(fileName)
 	p.sourceText = sourceText
@@ -3700,7 +3700,7 @@ func (p *Parser) parseYieldExpression() *Node {
 	return result
 }
 
-func (p *Parser) isParenthesizedArrowFunctionExpression() Tristate {
+func (p *Parser) isParenthesizedArrowFunctionExpression() core.Tristate {
 	if p.token == SyntaxKindOpenParenToken || p.token == SyntaxKindLessThanToken || p.token == SyntaxKindAsyncKeyword {
 		state := p.mark()
 		result := p.nextIsParenthesizedArrowFunctionExpression()
@@ -3711,20 +3711,20 @@ func (p *Parser) isParenthesizedArrowFunctionExpression() Tristate {
 		// ERROR RECOVERY TWEAK:
 		// If we see a standalone => try to parse it as an arrow function expression as that's
 		// likely what the user intended to write.
-		return TSTrue
+		return core.TSTrue
 	}
 	// Definitely not a parenthesized arrow function.
-	return TSFalse
+	return core.TSFalse
 }
 
-func (p *Parser) nextIsParenthesizedArrowFunctionExpression() Tristate {
+func (p *Parser) nextIsParenthesizedArrowFunctionExpression() core.Tristate {
 	if p.token == SyntaxKindAsyncKeyword {
 		p.nextToken()
 		if p.hasPrecedingLineBreak() {
-			return TSFalse
+			return core.TSFalse
 		}
 		if p.token != SyntaxKindOpenParenToken && p.token != SyntaxKindLessThanToken {
-			return TSFalse
+			return core.TSFalse
 		}
 	}
 	first := p.token
@@ -3738,9 +3738,9 @@ func (p *Parser) nextIsParenthesizedArrowFunctionExpression() Tristate {
 			third := p.nextToken()
 			switch third {
 			case SyntaxKindEqualsGreaterThanToken, SyntaxKindColonToken, SyntaxKindOpenBraceToken:
-				return TSTrue
+				return core.TSTrue
 			}
-			return TSFalse
+			return core.TSFalse
 		}
 		// If encounter "([" or "({", this could be the start of a binding pattern.
 		// Examples:
@@ -3749,12 +3749,12 @@ func (p *Parser) nextIsParenthesizedArrowFunctionExpression() Tristate {
 		//      ([ x ])
 		//      ({ x })
 		if second == SyntaxKindOpenBracketToken || second == SyntaxKindOpenBraceToken {
-			return TSUnknown
+			return core.TSUnknown
 		}
 		// Simple case: "(..."
 		// This is an arrow function with a rest parameter.
 		if second == SyntaxKindDotDotDotToken {
-			return TSTrue
+			return core.TSTrue
 		}
 		// Check for "(xxx yyy", where xxx is a modifier and yyy is an identifier. This
 		// isn't actually allowed, but we want to treat it as a lambda so we can provide
@@ -3762,41 +3762,41 @@ func (p *Parser) nextIsParenthesizedArrowFunctionExpression() Tristate {
 		if isModifierKind(second) && second != SyntaxKindAsyncKeyword && p.lookAhead(p.nextTokenIsIdentifier) {
 			if p.nextToken() == SyntaxKindAsKeyword {
 				// https://github.com/microsoft/TypeScript/issues/44466
-				return TSFalse
+				return core.TSFalse
 			}
-			return TSTrue
+			return core.TSTrue
 		}
 		// If we had "(" followed by something that's not an identifier,
 		// then this definitely doesn't look like a lambda.  "this" is not
 		// valid, but we want to parse it and then give a semantic error.
 		if !p.isIdentifier() && second != SyntaxKindThisKeyword {
-			return TSFalse
+			return core.TSFalse
 		}
 		switch p.nextToken() {
 		case SyntaxKindColonToken:
 			// If we have something like "(a:", then we must have a
 			// type-annotated parameter in an arrow function expression.
-			return TSTrue
+			return core.TSTrue
 		case SyntaxKindQuestionToken:
 			p.nextToken()
 			// If we have "(a?:" or "(a?," or "(a?=" or "(a?)" then it is definitely a lambda.
 			if p.token == SyntaxKindColonToken || p.token == SyntaxKindCommaToken || p.token == SyntaxKindEqualsToken || p.token == SyntaxKindCloseParenToken {
-				return TSTrue
+				return core.TSTrue
 			}
 			// Otherwise it is definitely not a lambda.
-			return TSFalse
+			return core.TSFalse
 		case SyntaxKindCommaToken, SyntaxKindEqualsToken, SyntaxKindCloseParenToken:
 			// If we have "(a," or "(a=" or "(a)" this *could* be an arrow function
-			return TSUnknown
+			return core.TSUnknown
 		}
 		// It is definitely not an arrow function
-		return TSFalse
+		return core.TSFalse
 	} else {
 		// !!! Debug.assert(first == SyntaxKindLessThanToken)
 		// If we have "<" not followed by an identifier,
 		// then this definitely is not an arrow function.
 		if !p.isIdentifier() && p.token != SyntaxKindConstKeyword {
-			return TSFalse
+			return core.TSFalse
 		}
 		// JSX overrides
 		if p.languageVariant == LanguageVariantJSX {
@@ -3816,18 +3816,18 @@ func (p *Parser) nextIsParenthesizedArrowFunctionExpression() Tristate {
 				return false
 			})
 			if isArrowFunctionInJsx {
-				return TSTrue
+				return core.TSTrue
 			}
-			return TSFalse
+			return core.TSFalse
 		}
 		// This *could* be a parenthesized arrow function.
-		return TSUnknown
+		return core.TSUnknown
 	}
 }
 
 func (p *Parser) tryParseParenthesizedArrowFunctionExpression(allowReturnTypeInArrowFunction bool) *Node {
 	tristate := p.isParenthesizedArrowFunctionExpression()
-	if tristate == TSFalse {
+	if tristate == core.TSFalse {
 		// It's definitely not a parenthesized arrow function expression.
 		return nil
 	}
@@ -3835,7 +3835,7 @@ func (p *Parser) tryParseParenthesizedArrowFunctionExpression(allowReturnTypeInA
 	// following => or { token. Otherwise, we *might* have an arrow function.  Try to parse
 	// it out, but don't allow any ambiguity, and return 'undefined' if this could be an
 	// expression instead.
-	if tristate == TSTrue {
+	if tristate == core.TSTrue {
 		return p.parseParenthesizedArrowFunctionExpression(true /*allowAmbiguity*/, true /*allowReturnTypeInArrowFunction*/)
 	}
 	state := p.mark()

@@ -163,7 +163,7 @@ const (
 type Checker struct {
 	program                            *Program
 	host                               CompilerHost
-	compilerOptions                    *CompilerOptions
+	compilerOptions                    *core.CompilerOptions
 	files                              []*SourceFile
 	typeCount                          uint32
 	symbolCount                        uint32
@@ -171,8 +171,8 @@ type Checker struct {
 	instantiationCount                 uint32
 	instantiationDepth                 uint32
 	currentNode                        *Node
-	languageVersion                    ScriptTarget
-	moduleKind                         ModuleKind
+	languageVersion                    core.ScriptTarget
+	moduleKind                         core.ModuleKind
 	allowSyntheticDefaultImports       bool
 	strictNullChecks                   bool
 	strictFunctionTypes                bool
@@ -325,7 +325,7 @@ func NewChecker(program *Program) *Checker {
 	c.strictBindCallApply = c.getStrictOptionValue(c.compilerOptions.StrictBindCallApply)
 	c.noImplicitAny = c.getStrictOptionValue(c.compilerOptions.NoImplicitAny)
 	c.useUnknownInCatchVariables = c.getStrictOptionValue(c.compilerOptions.UseUnknownInCatchVariables)
-	c.exactOptionalPropertyTypes = c.compilerOptions.ExactOptionalPropertyTypes == TSTrue
+	c.exactOptionalPropertyTypes = c.compilerOptions.ExactOptionalPropertyTypes == core.TSTrue
 	c.arrayVariances = []VarianceFlags{VarianceFlagsCovariant}
 	c.globals = make(SymbolTable)
 	c.stringLiteralTypes = make(map[string]*Type)
@@ -436,11 +436,11 @@ func (c *Checker) reportUnmeasurableWorker(t *Type) *Type {
 	return t
 }
 
-func (c *Checker) getStrictOptionValue(value Tristate) bool {
-	if value != TSUnknown {
-		return value == TSTrue
+func (c *Checker) getStrictOptionValue(value core.Tristate) bool {
+	if value != core.TSUnknown {
+		return value == core.TSTrue
 	}
-	return c.compilerOptions.Strict == TSTrue
+	return c.compilerOptions.Strict == core.TSTrue
 }
 
 func (c *Checker) initializeClosures() {
@@ -612,11 +612,11 @@ func (c *Checker) createNameResolver() *NameResolver {
 	}
 }
 
-func (c *Checker) getRequiresScopeChangeCache(node *Node) Tristate {
+func (c *Checker) getRequiresScopeChangeCache(node *Node) core.Tristate {
 	return c.nodeLinks.get(node).declarationRequiresScopeChange
 }
 
-func (c *Checker) setRequiresScopeChangeCache(node *Node, value Tristate) {
+func (c *Checker) setRequiresScopeChangeCache(node *Node, value core.Tristate) {
 	c.nodeLinks.get(node).declarationRequiresScopeChange = value
 }
 
@@ -672,7 +672,7 @@ func (c *Checker) onSuccessfullyResolvedSymbol(errorLocation *Node, result *Symb
 		if len(merged.declarations) != 0 && core.Every(merged.declarations, func(d *Node) bool {
 			return isNamespaceExportDeclaration(d) || isSourceFile(d) && d.Symbol().globalExports != nil
 		}) {
-			c.errorOrSuggestion(c.compilerOptions.AllowUmdGlobalAccess != TSTrue, errorLocation, diagnostics.X_0_refers_to_a_UMD_global_but_the_current_file_is_a_module_Consider_adding_an_import_instead, name)
+			c.errorOrSuggestion(c.compilerOptions.AllowUmdGlobalAccess != core.TSTrue, errorLocation, diagnostics.X_0_refers_to_a_UMD_global_but_the_current_file_is_a_module_Consider_adding_an_import_instead, name)
 		}
 	}
 	// If we're in a parameter initializer or binding name, we can't reference the values of the parameter whose initializer we're within or parameters to the right
@@ -697,7 +697,7 @@ func (c *Checker) onSuccessfullyResolvedSymbol(errorLocation *Node, result *Symb
 	}
 	// Look at 'compilerOptions.isolatedModules' and not 'getIsolatedModules(...)' (which considers 'verbatimModuleSyntax')
 	// here because 'verbatimModuleSyntax' will already have an error for importing a type without 'import type'.
-	if c.compilerOptions.IsolatedModules == TSTrue && result != nil && isInExternalModule && (meaning&SymbolFlagsValue) == SymbolFlagsValue {
+	if c.compilerOptions.IsolatedModules == core.TSTrue && result != nil && isInExternalModule && (meaning&SymbolFlagsValue) == SymbolFlagsValue {
 		isGlobal := c.getSymbol(c.globals, name, meaning) == result
 		var nonValueSymbol *Symbol
 		if isGlobal && isSourceFile(lastLocation) {
@@ -861,7 +861,7 @@ func (c *Checker) checkSourceElementWorker(node *Node) {
 	if kind >= SyntaxKindFirstStatement && kind <= SyntaxKindLastStatement {
 		flowNode := node.FlowNodeData().flowNode
 		if flowNode != nil && !c.isReachableFlowNode(flowNode) {
-			c.errorOrSuggestion(c.compilerOptions.AllowUnreachableCode == TSFalse, node, diagnostics.Unreachable_code_detected)
+			c.errorOrSuggestion(c.compilerOptions.AllowUnreachableCode == core.TSFalse, node, diagnostics.Unreachable_code_detected)
 		}
 	}
 	switch node.kind {
@@ -1228,10 +1228,10 @@ func (c *Checker) checkPropertyAccessExpressionOrQualifiedName(node *Node, left 
 			c.error(node, diagnostics.Index_signature_in_type_0_only_permits_reading, c.typeToString(apparentType))
 		}
 		propType = indexInfo.valueType
-		if c.compilerOptions.NoUncheckedIndexedAccess == TSTrue && getAssignmentTargetKind(node) != AssignmentKindDefinite {
+		if c.compilerOptions.NoUncheckedIndexedAccess == core.TSTrue && getAssignmentTargetKind(node) != AssignmentKindDefinite {
 			propType = c.getUnionType([]*Type{propType, c.missingType})
 		}
-		if c.compilerOptions.NoPropertyAccessFromIndexSignature == TSTrue && isPropertyAccessExpression(node) {
+		if c.compilerOptions.NoPropertyAccessFromIndexSignature == core.TSTrue && isPropertyAccessExpression(node) {
 			c.error(right, diagnostics.Property_0_comes_from_an_index_signature_so_it_must_be_accessed_with_0, right.Text())
 		}
 		if indexInfo.declaration != nil && c.isDeprecatedDeclaration(indexInfo.declaration) {
@@ -1497,7 +1497,7 @@ func (c *Checker) checkPropertyAccessibilityAtLocation(location *Node, isSuper b
 		// - In a static member function or static member accessor
 		//   where this references the constructor function object of a derived class,
 		//   a super property access is permitted and must specify a public static member function of the base class.
-		if c.languageVersion < ScriptTargetES2015 {
+		if c.languageVersion < core.ScriptTargetES2015 {
 			if c.symbolHasNonMethodDeclaration(prop) {
 				if errorNode != nil {
 					c.error(errorNode, diagnostics.Only_public_and_protected_methods_of_the_base_class_are_accessible_via_the_super_keyword)
@@ -1773,7 +1773,7 @@ func (c *Checker) checkThisExpression(node *Node) *Type {
 	// 	}
 	// }
 	// // When targeting es6, mark that we'll need to capture `this` in its lexically bound scope.
-	// if !isNodeInTypeQuery && capturedByArrowFunction && c.languageVersion < ScriptTargetES2015 {
+	// if !isNodeInTypeQuery && capturedByArrowFunction && c.languageVersion < core.ScriptTargetES2015 {
 	// 	c.captureLexicalThis(node, container)
 	// }
 	t := c.tryGetThisTypeAt(node /*includeGlobalThis*/, true, container)
@@ -3122,7 +3122,7 @@ func (c *Checker) getTargetOfModuleDefault(moduleSymbol *Symbol, node *Node, don
 	// if !exportDefaultSymbol && !hasSyntheticDefault && !hasDefaultOnly {
 	// 	if c.hasExportAssignmentSymbol(moduleSymbol) && !c.allowSyntheticDefaultImports {
 	// 		var compilerOptionName /* TODO(TS-TO-GO) inferred type "allowSyntheticDefaultImports" | "esModuleInterop" */ any
-	// 		if c.moduleKind >= ModuleKindES2015 {
+	// 		if c.moduleKind >= core.ModuleKindES2015 {
 	// 			compilerOptionName = "allowSyntheticDefaultImports"
 	// 		} else {
 	// 			compilerOptionName = "esModuleInterop"
@@ -3260,7 +3260,7 @@ func (c *Checker) getExternalModuleMember(node *Node, specifier *Node, dontResol
 			}
 			if isImportOrExportSpecifier(specifier) && c.isOnlyImportableAsDefault(moduleSpecifier, moduleSymbol) && nameText != InternalSymbolNameDefault {
 				// !!!
-				// c.error(name, Diagnostics.Named_imports_from_a_JSON_file_into_an_ECMAScript_module_are_not_allowed_when_module_is_set_to_0, ModuleKind[c.moduleKind])
+				// c.error(name, Diagnostics.Named_imports_from_a_JSON_file_into_an_ECMAScript_module_are_not_allowed_when_module_is_set_to_0, core.ModuleKind[c.moduleKind])
 			} else if symbol == nil {
 				c.errorNoModuleMemberSymbol(moduleSymbol, targetSymbol, node, name)
 			}
@@ -3331,9 +3331,9 @@ func (c *Checker) getExportOfModule(symbol *Symbol, nameText string, specifier *
 
 func (c *Checker) isOnlyImportableAsDefault(usage *Node, resolvedModule *Symbol) bool {
 	// In Node.js, JSON modules don't get named exports
-	if ModuleKindNode16 <= c.moduleKind && c.moduleKind <= ModuleKindNodeNext {
+	if core.ModuleKindNode16 <= c.moduleKind && c.moduleKind <= core.ModuleKindNodeNext {
 		usageMode := c.getEmitSyntaxForModuleSpecifierExpression(usage)
-		if usageMode == ModuleKindESNext {
+		if usageMode == core.ModuleKindESNext {
 			if resolvedModule == nil {
 				resolvedModule = c.resolveExternalModuleName(usage, usage, true /*ignoreErrors*/)
 			}
@@ -3353,13 +3353,13 @@ func (c *Checker) canHaveSyntheticDefault(file *SourceFile, moduleSymbol *Symbol
 	// if file != nil {
 	// 	usageMode = c.getEmitSyntaxForModuleSpecifierExpression(usage)
 	// }
-	// if file != nil && usageMode != ModuleKindNone {
+	// if file != nil && usageMode != core.ModuleKindNone {
 	// 	targetMode := host.getImpliedNodeFormatForEmit(file)
-	// 	if usageMode == ModuleKindESNext && targetMode == ModuleKindCommonJS && ModuleKindNode16 <= c.moduleKind && c.moduleKind <= ModuleKindNodeNext {
+	// 	if usageMode == core.ModuleKindESNext && targetMode == core.ModuleKindCommonJS && core.ModuleKindNode16 <= c.moduleKind && c.moduleKind <= core.ModuleKindNodeNext {
 	// 		// In Node.js, CommonJS modules always have a synthetic default when imported into ESM
 	// 		return true
 	// 	}
-	// 	if usageMode == ModuleKindESNext && targetMode == ModuleKindESNext {
+	// 	if usageMode == core.ModuleKindESNext && targetMode == core.ModuleKindESNext {
 	// 		// No matter what the `module` setting is, if we're confident that both files
 	// 		// are ESM, there cannot be a synthetic default.
 	// 		return false
@@ -3392,12 +3392,12 @@ func (c *Checker) canHaveSyntheticDefault(file *SourceFile, moduleSymbol *Symbol
 	return hasExportAssignmentSymbol(moduleSymbol)
 }
 
-func (c *Checker) getEmitSyntaxForModuleSpecifierExpression(usage *Node) ResolutionMode {
+func (c *Checker) getEmitSyntaxForModuleSpecifierExpression(usage *Node) core.ResolutionMode {
 	// !!!
 	// if isStringLiteralLike(usage) {
 	// 	return host.getEmitSyntaxForUsageLocation(getSourceFileOfNode(usage), usage)
 	// }
-	return ModuleKindNone
+	return core.ModuleKindNone
 }
 
 func (c *Checker) errorNoModuleMemberSymbol(moduleSymbol *Symbol, targetSymbol *Symbol, node *Node, name *Node) {
@@ -3455,7 +3455,7 @@ func (c *Checker) reportNonExportedMember(node *Node, name *Node, declarationNam
 }
 
 func (c *Checker) reportInvalidImportEqualsExportMember(node *Node, name *Node, declarationName string, moduleName string) {
-	if c.moduleKind >= ModuleKindES2015 {
+	if c.moduleKind >= core.ModuleKindES2015 {
 		message := ifElse(getESModuleInterop(c.compilerOptions),
 			diagnostics.X_0_can_only_be_imported_by_using_a_default_import,
 			diagnostics.X_0_can_only_be_imported_by_turning_on_the_esModuleInterop_flag_and_using_a_default_import)
@@ -3769,7 +3769,7 @@ func (c *Checker) resolveESModuleSymbol(moduleSymbol *Symbol, referencingLocatio
 	symbol := c.resolveExternalModuleSymbol(moduleSymbol, dontResolveAlias)
 	if !dontResolveAlias && symbol != nil {
 		if !suppressInteropError && symbol.flags&(SymbolFlagsModule|SymbolFlagsVariable) == 0 && getDeclarationOfKind(symbol, SyntaxKindSourceFile) == nil {
-			compilerOptionName := ifElse(c.moduleKind >= ModuleKindES2015, "allowSyntheticDefaultImports", "esModuleInterop")
+			compilerOptionName := ifElse(c.moduleKind >= core.ModuleKindES2015, "allowSyntheticDefaultImports", "esModuleInterop")
 			c.error(referencingLocation, diagnostics.This_module_can_only_be_referenced_with_ECMAScript_imports_Slashexports_by_turning_on_the_0_flag_and_referencing_its_default_export, compilerOptionName)
 			return symbol
 		}
@@ -10676,7 +10676,7 @@ func (c *Checker) getIndexedAccessTypeOrUndefined(objectType *Type, indexType *T
 	}
 	// In noUncheckedIndexedAccess mode, indexed access operations that occur in an expression in a read position and resolve to
 	// an index signature have 'undefined' included in their type.
-	if c.compilerOptions.NoUncheckedIndexedAccess == TSTrue && accessFlags&AccessFlagsExpressionPosition != 0 {
+	if c.compilerOptions.NoUncheckedIndexedAccess == core.TSTrue && accessFlags&AccessFlagsExpressionPosition != 0 {
 		accessFlags |= AccessFlagsIncludeUndefined
 	}
 	// If the index type is generic, or if the object type is generic and doesn't originate in an expression and

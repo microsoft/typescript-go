@@ -516,11 +516,11 @@ func findInMap[K comparable, V any](m map[K]V, predicate func(V) bool) V {
 	return *new(V)
 }
 
-func boolToTristate(b bool) Tristate {
+func boolToTristate(b bool) core.Tristate {
 	if b {
-		return TSTrue
+		return core.TSTrue
 	}
-	return TSFalse
+	return core.TSFalse
 }
 
 func modifierToFlag(token SyntaxKind) ModifierFlags {
@@ -1506,8 +1506,8 @@ func isFunctionBlock(node *Node) bool {
 	return node != nil && node.kind == SyntaxKindBlock && isFunctionLike(node.parent)
 }
 
-func shouldPreserveConstEnums(options *CompilerOptions) bool {
-	return options.PreserveConstEnums == TSTrue || options.IsolatedModules == TSTrue
+func shouldPreserveConstEnums(options *core.CompilerOptions) bool {
+	return options.PreserveConstEnums == core.TSTrue || options.IsolatedModules == core.TSTrue
 }
 
 func exportAssignmentIsAlias(node *Node) bool {
@@ -1589,12 +1589,12 @@ func isDottedName(node *Node) bool {
 	return false
 }
 
-func unusedLabelIsError(options *CompilerOptions) bool {
-	return options.AllowUnusedLabels == TSFalse
+func unusedLabelIsError(options *core.CompilerOptions) bool {
+	return options.AllowUnusedLabels == core.TSFalse
 }
 
-func unreachableCodeIsError(options *CompilerOptions) bool {
-	return options.AllowUnreachableCode == TSFalse
+func unreachableCodeIsError(options *core.CompilerOptions) bool {
+	return options.AllowUnreachableCode == core.TSFalse
 }
 
 func isDestructuringAssignment(node *Node) bool {
@@ -1819,7 +1819,7 @@ func ensureScriptKind(fileName string, scriptKind ScriptKind) ScriptKind {
 	// - 'scriptKind' is set and it is `Unknown` (0)
 	// If the 'scriptKind' is 'undefined' or 'Unknown' then we attempt
 	// to get the ScriptKind from the file name. If it cannot be resolved
-	// from the file name then the default 'TS' script kind is returned.
+	// from the file name then the default 'core.TS' script kind is returned.
 	if scriptKind == ScriptKindUnknown {
 		scriptKind = getScriptKindFromFileName(fileName)
 	}
@@ -1877,75 +1877,74 @@ func getLanguageVariant(scriptKind ScriptKind) LanguageVariant {
 	return LanguageVariantStandard
 }
 
-func getEmitScriptTarget(options *CompilerOptions) ScriptTarget {
-	if options.Target != ScriptTargetNone {
+func getEmitScriptTarget(options *core.CompilerOptions) core.ScriptTarget {
+	if options.Target != core.ScriptTargetNone {
 		return options.Target
 	}
-	return ScriptTargetES5
+	return core.ScriptTargetES5
 }
 
-func getEmitModuleKind(options *CompilerOptions) ModuleKind {
-	if options.ModuleKind != ModuleKindNone {
+func getEmitModuleKind(options *core.CompilerOptions) core.ModuleKind {
+	if options.ModuleKind != core.ModuleKindNone {
 		return options.ModuleKind
 	}
-	if options.Target >= ScriptTargetES2015 {
-		return ModuleKindES2015
+	if options.Target >= core.ScriptTargetES2015 {
+		return core.ModuleKindES2015
 	}
-	return ModuleKindCommonJS
+	return core.ModuleKindCommonJS
 }
 
-func getEmitModuleResolutionKind(options *CompilerOptions) ModuleResolutionKind {
-	if options.ModuleResolution != ModuleResolutionKindUnknown {
+func getEmitModuleResolutionKind(options *core.CompilerOptions) core.ModuleResolutionKind {
+	if options.ModuleResolution != core.ModuleResolutionKindUnknown {
 		return options.ModuleResolution
 	}
 	switch getEmitModuleKind(options) {
-	case ModuleKindCommonJS:
-		return ModuleResolutionKindBundler
-	case ModuleKindNode16:
-		return ModuleResolutionKindNode16
-	case ModuleKindNodeNext:
-		return ModuleResolutionKindNodeNext
-	case ModuleKindPreserve:
-		return ModuleResolutionKindBundler
+	case core.ModuleKindCommonJS:
+		return core.ModuleResolutionKindBundler
+	case core.ModuleKindNode16:
+		return core.ModuleResolutionKindNode16
+	case core.ModuleKindNodeNext:
+		return core.ModuleResolutionKindNodeNext
+	case core.ModuleKindPreserve:
+		return core.ModuleResolutionKindBundler
 	default:
 		panic("Unhandled case in getEmitModuleResolutionKind")
 	}
 }
 
-func getESModuleInterop(options *CompilerOptions) bool {
-	if options.ESModuleInterop != TSUnknown {
-		return options.ESModuleInterop == TSTrue
+func getESModuleInterop(options *core.CompilerOptions) bool {
+	if options.ESModuleInterop != core.TSUnknown {
+		return options.ESModuleInterop == core.TSTrue
 	}
 	switch getEmitModuleKind(options) {
-	case ModuleKindNode16:
-	case ModuleKindNodeNext:
-	case ModuleKindPreserve:
+	case core.ModuleKindNode16:
+	case core.ModuleKindNodeNext:
+	case core.ModuleKindPreserve:
 		return true
 	}
 	return false
 }
-
-func getAllowSyntheticDefaultImports(options *CompilerOptions) bool {
-	if options.AllowSyntheticDefaultImports != TSUnknown {
-		return options.AllowSyntheticDefaultImports == TSTrue
+func getAllowSyntheticDefaultImports(options *core.CompilerOptions) bool {
+	if options.AllowSyntheticDefaultImports != core.TSUnknown {
+		return options.AllowSyntheticDefaultImports == core.TSTrue
 	}
 	return getESModuleInterop(options) ||
-		getEmitModuleKind(options) == ModuleKindSystem ||
-		getEmitModuleResolutionKind(options) == ModuleResolutionKindBundler
+		getEmitModuleKind(options) == core.ModuleKindSystem ||
+		getEmitModuleResolutionKind(options) == core.ModuleResolutionKindBundler
 }
 
-func getResolveJsonModule(options *CompilerOptions) bool {
-	if options.ResolveJsonModule != TSUnknown {
-		return options.ResolveJsonModule == TSTrue
+func getResolveJsonModule(options *core.CompilerOptions) bool {
+	if options.ResolveJsonModule != core.TSUnknown {
+		return options.ResolveJsonModule == core.TSTrue
 	}
-	return getEmitModuleResolutionKind(options) == ModuleResolutionKindBundler
+	return getEmitModuleResolutionKind(options) == core.ModuleResolutionKindBundler
 }
 
-func getAllowJs(options *CompilerOptions) bool {
-	if options.AllowJs != TSUnknown {
-		return options.AllowJs == TSTrue
+func getAllowJs(options *core.CompilerOptions) bool {
+	if options.AllowJs != core.TSUnknown {
+		return options.AllowJs == core.TSTrue
 	}
-	return options.CheckJs == TSTrue
+	return options.CheckJs == core.TSTrue
 }
 
 type DiagnosticsCollection struct {
@@ -2158,8 +2157,8 @@ func isParameterLikeOrReturnTag(node *Node) bool {
 	return false
 }
 
-func getEmitStandardClassFields(options *CompilerOptions) bool {
-	return options.UseDefineForClassFields != TSFalse && getEmitScriptTarget(options) >= ScriptTargetES2022
+func getEmitStandardClassFields(options *core.CompilerOptions) bool {
+	return options.UseDefineForClassFields != core.TSFalse && getEmitScriptTarget(options) >= core.ScriptTargetES2022
 }
 
 func isTypeNodeKind(kind SyntaxKind) bool {
@@ -2203,8 +2202,8 @@ func getDeclarationOfKind(symbol *Symbol, kind SyntaxKind) *Node {
 	return nil
 }
 
-func getIsolatedModules(options *CompilerOptions) bool {
-	return options.IsolatedModules == TSTrue || options.VerbatimModuleSyntax == TSTrue
+func getIsolatedModules(options *core.CompilerOptions) bool {
+	return options.IsolatedModules == core.TSTrue || options.VerbatimModuleSyntax == core.TSTrue
 }
 
 func findConstructorDeclaration(node *Node) *Node {
@@ -2217,15 +2216,15 @@ func findConstructorDeclaration(node *Node) *Node {
 }
 
 type NameResolver struct {
-	compilerOptions                  *CompilerOptions
+	compilerOptions                  *core.CompilerOptions
 	getSymbolOfDeclaration           func(node *Node) *Symbol
 	error                            func(location *Node, message *diagnostics.Message, args ...any) *Diagnostic
 	globals                          SymbolTable
 	argumentsSymbol                  *Symbol
 	requireSymbol                    *Symbol
 	lookup                           func(symbols SymbolTable, name string, meaning SymbolFlags) *Symbol
-	setRequiresScopeChangeCache      func(node *Node, value Tristate)
-	getRequiresScopeChangeCache      func(node *Node) Tristate
+	setRequiresScopeChangeCache      func(node *Node, value core.Tristate)
+	getRequiresScopeChangeCache      func(node *Node) core.Tristate
 	onPropertyWithInvalidInitializer func(location *Node, name string, declaration *Node, result *Symbol) bool
 	onFailedToResolveSymbol          func(location *Node, name string, meaning SymbolFlags, nameNotFoundMessage *diagnostics.Message)
 	onSuccessfullyResolvedSymbol     func(location *Node, result *Symbol, meaning SymbolFlags, lastLocation *Node, associatedDeclarationForContainingInitializerOrBindingName *Node, withinDeferredContext bool)
@@ -2343,7 +2342,7 @@ loop:
 			result = r.lookup(r.getSymbolOfDeclaration(location).exports, name, meaning&SymbolFlagsEnumMember)
 			if result != nil {
 				if nameNotFoundMessage != nil && getIsolatedModules(r.compilerOptions) && location.flags&NodeFlagsAmbient == 0 && getSourceFileOfNode(location) != getSourceFileOfNode(result.valueDeclaration) {
-					isolatedModulesLikeFlagName := ifElse(r.compilerOptions.VerbatimModuleSyntax == TSTrue, "verbatimModuleSyntax", "isolatedModules")
+					isolatedModulesLikeFlagName := ifElse(r.compilerOptions.VerbatimModuleSyntax == core.TSTrue, "verbatimModuleSyntax", "isolatedModules")
 					r.error(originalLocation, diagnostics.Cannot_access_0_from_another_file_without_qualification_when_1_is_enabled_Use_2_instead,
 						name, isolatedModulesLikeFlagName, r.getSymbolOfDeclaration(location).name+"."+name)
 				}
@@ -2420,7 +2419,7 @@ loop:
 		case SyntaxKindArrowFunction:
 			// when targeting ES6 or higher there is no 'arguments' in an arrow function
 			// for lower compile targets the resolved symbol is used to emit an error
-			if getEmitScriptTarget(r.compilerOptions) >= ScriptTargetES2015 {
+			if getEmitScriptTarget(r.compilerOptions) >= core.ScriptTargetES2015 {
 				break
 			}
 			fallthrough
@@ -2550,14 +2549,14 @@ func (r *NameResolver) useOuterVariableScopeInParameter(result *Symbol, location
 			// - nullish coalesce pre-es2020
 			// - spread assignment in binding pattern pre-es2017
 			target := getEmitScriptTarget(r.compilerOptions)
-			if target >= ScriptTargetES2015 {
+			if target >= core.ScriptTargetES2015 {
 				functionLocation := location
 				declarationRequiresScopeChange := r.getRequiresScopeChangeCache(functionLocation)
-				if declarationRequiresScopeChange == TSUnknown {
+				if declarationRequiresScopeChange == core.TSUnknown {
 					declarationRequiresScopeChange = boolToTristate(core.Some(functionLocation.Parameters(), r.requiresScopeChange))
 					r.setRequiresScopeChangeCache(functionLocation, declarationRequiresScopeChange)
 				}
-				return declarationRequiresScopeChange == TSTrue
+				return declarationRequiresScopeChange == core.TSTrue
 			}
 		}
 	}
@@ -2582,10 +2581,10 @@ func (r *NameResolver) requiresScopeChangeWorker(node *Node) bool {
 		return r.requiresScopeChangeWorker(node.AsPropertyDeclaration().name)
 	default:
 		if isNullishCoalesce(node) || isOptionalChain(node) {
-			return getEmitScriptTarget(r.compilerOptions) < ScriptTargetES2020
+			return getEmitScriptTarget(r.compilerOptions) < core.ScriptTargetES2020
 		}
 		if isBindingElement(node) && node.AsBindingElement().dotDotDotToken != nil && isObjectBindingPattern(node.parent) {
-			return getEmitScriptTarget(r.compilerOptions) < ScriptTargetES2017
+			return getEmitScriptTarget(r.compilerOptions) < core.ScriptTargetES2017
 		}
 		if isTypeNode(node) {
 			return false

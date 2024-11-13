@@ -2,6 +2,7 @@ package compiler
 
 import (
 	"github.com/microsoft/typescript-go/internal/compiler/textpos"
+	"github.com/microsoft/typescript-go/internal/core"
 )
 
 // Visitor
@@ -4254,7 +4255,7 @@ type SourceFile struct {
 	bindDiagnostics             []*Diagnostic
 	bindSuggestionDiagnostics   []*Diagnostic
 	lineMap                     []textpos.TextPos
-	languageVersion             ScriptTarget
+	languageVersion             core.ScriptTarget
 	languageVariant             LanguageVariant
 	scriptKind                  ScriptKind
 	externalModuleIndicator     *Node
@@ -4263,7 +4264,7 @@ type SourceFile struct {
 	isDeclarationFile           bool
 	isBound                     bool
 	moduleReferencesProcessed   bool
-	usesUriStyleNodeCoreModules Tristate
+	usesUriStyleNodeCoreModules core.Tristate
 	symbolCount                 int
 	classifiableNames           set[string]
 	imports                     []*LiteralLikeNode // []LiteralLikeNode
@@ -4277,7 +4278,7 @@ func (f *NodeFactory) NewSourceFile(text string, fileName string, statements []*
 	data.text = text
 	data.fileName = fileName
 	data.statements = statements
-	data.languageVersion = ScriptTargetLatest
+	data.languageVersion = core.ScriptTargetLatest
 	return f.NewNode(SyntaxKindSourceFile, data)
 }
 
