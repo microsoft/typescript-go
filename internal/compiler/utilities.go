@@ -1295,19 +1295,14 @@ func isModuleAugmentationExternal(node *Node) bool {
 	return false
 }
 
-type Pattern struct {
-	text      string
-	starIndex int // -1 for exact match
-}
-
 func isValidPattern(pattern Pattern) bool {
-	return pattern.starIndex == -1 || pattern.starIndex < len(pattern.text)
+	return pattern.StarIndex == -1 || pattern.StarIndex < len(pattern.Text)
 }
 
 func tryParsePattern(pattern string) Pattern {
 	starIndex := strings.Index(pattern, "*")
 	if starIndex == -1 || !strings.Contains(pattern[starIndex+1:], "*") {
-		return Pattern{text: pattern, starIndex: starIndex}
+		return Pattern{Text: pattern, StarIndex: starIndex}
 	}
 	return Pattern{}
 }
