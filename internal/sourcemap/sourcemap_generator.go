@@ -11,18 +11,18 @@ type SourceIndex int
 type NameIndex int
 
 type SourceMapGenerator struct {
-	pathOptions tspath.ComparePathsOptions
-	file string
-	sourceRoot string
+	pathOptions          tspath.ComparePathsOptions
+	file                 string
+	sourceRoot           string
 	sourcesDirectoryPath string
 
-	rawSources []string
-	sources []string
+	rawSources             []string
+	sources                []string
 	sourceToSourceIndexMap map[string]SourceIndex
-	sourcesContent []*string
-	names []string
-	nameToNameIndexMap map[string]NameIndex
-	mappings strings.Builder
+	sourcesContent         []*string
+	names                  []string
+	nameToNameIndexMap     map[string]NameIndex
+	mappings               strings.Builder
 
 	lastGeneratedLine      int
 	lastGeneratedCharacter int
@@ -44,22 +44,22 @@ type SourceMapGenerator struct {
 }
 
 type RawSourceMap struct {
-	Version        int        `json:"version"`
-	File           string     `json:"file"`
-	SourceRoot     string     `json:"sourceRoot,omitempty"`
-	Sources        []string   `json:"sources"`
-	Names          []string   `json:"names,omitempty"`
-	Mappings       string     `json:"mappings"`
-	SourcesContent []*string  `json:"sourcesContent,omitempty"`
+	Version        int       `json:"version"`
+	File           string    `json:"file"`
+	SourceRoot     string    `json:"sourceRoot,omitempty"`
+	Sources        []string  `json:"sources"`
+	Names          []string  `json:"names,omitempty"`
+	Mappings       string    `json:"mappings"`
+	SourcesContent []*string `json:"sourcesContent,omitempty"`
 }
 
 func NewSourceMapGenerator(file string, sourceRoot string, sourcesDirectoryPath string, options tspath.ComparePathsOptions) *SourceMapGenerator {
-	gen := &SourceMapGenerator{}
-	gen.file = file
-	gen.sourceRoot = sourceRoot
-	gen.sourcesDirectoryPath = sourcesDirectoryPath
-	gen.pathOptions = options
-	return gen
+	return &SourceMapGenerator{
+		file:                 file,
+		sourceRoot:           sourceRoot,
+		sourcesDirectoryPath: sourcesDirectoryPath,
+		pathOptions:          options,
+	}
 }
 
 func (gen *SourceMapGenerator) Sources() []string { return gen.rawSources }
@@ -69,7 +69,7 @@ func (gen *SourceMapGenerator) AddSource(fileName string) SourceIndex {
 	source := tspath.GetRelativePathToDirectoryOrUrl(
 		gen.sourcesDirectoryPath,
 		fileName,
-		true /*isAbsolutePathAnUrl*/,
+		true, /*isAbsolutePathAnUrl*/
 		gen.pathOptions,
 	)
 
@@ -144,21 +144,21 @@ func (gen *SourceMapGenerator) appendBase64VLQ(inValue int) {
 	// else least significant bit value that gets added is 0
 	// eg. -1 changes to binary : 01 [1] => 3
 	//     +1 changes to binary : 01 [0] => 2
-	if (inValue < 0) {
-		inValue = ((-inValue) << 1) + 1;
+	if inValue < 0 {
+		inValue = ((-inValue) << 1) + 1
 	} else {
-		inValue = inValue << 1;
+		inValue = inValue << 1
 	}
 
 	// Encode 5 bits at a time starting from least significant bits
 	for {
-		currentDigit := inValue & 31; // 11111
-		inValue = inValue >> 5;
-		if (inValue > 0) {
+		currentDigit := inValue & 31 // 11111
+		inValue = inValue >> 5
+		if inValue > 0 {
 			// There are still more digits to decode, set the msb (6th bit)
-			currentDigit = currentDigit | 32;
+			currentDigit = currentDigit | 32
 		}
-		gen.appendMappingCharCode(base64FormatEncode(currentDigit));
+		gen.appendMappingCharCode(base64FormatEncode(currentDigit))
 		if inValue <= 0 {
 			break
 		}
@@ -174,49 +174,49 @@ func (gen *SourceMapGenerator) commitPendingMapping() {
 	if gen.lastGeneratedLine < gen.pendingGeneratedLine {
 		// Emit line delimiters
 		for {
-			gen.appendMappingCharCode(';');
-			gen.lastGeneratedLine++;
+			gen.appendMappingCharCode(';')
+			gen.lastGeneratedLine++
 			if gen.lastGeneratedLine >= gen.pendingGeneratedLine {
 				break
 			}
 		}
 		// Only need to set this once
-		gen.lastGeneratedCharacter = 0;
+		gen.lastGeneratedCharacter = 0
 	} else {
 		if gen.lastGeneratedLine != gen.pendingGeneratedLine {
 			panic("generatedLine cannot backtrack")
 		}
 		// Emit comma to separate the entry
 		if gen.hasLast {
-			gen.appendMappingCharCode(',');
+			gen.appendMappingCharCode(',')
 		}
 	}
 
 	// 1. Relative generated character
-	gen.appendBase64VLQ(gen.pendingGeneratedCharacter - gen.lastGeneratedCharacter);
-	gen.lastGeneratedCharacter = gen.pendingGeneratedCharacter;
+	gen.appendBase64VLQ(gen.pendingGeneratedCharacter - gen.lastGeneratedCharacter)
+	gen.lastGeneratedCharacter = gen.pendingGeneratedCharacter
 
 	if gen.hasPendingSource {
 		// 2. Relative sourceIndex
-		gen.appendBase64VLQ(int(gen.pendingSourceIndex - gen.lastSourceIndex));
-		gen.lastSourceIndex = gen.pendingSourceIndex;
+		gen.appendBase64VLQ(int(gen.pendingSourceIndex - gen.lastSourceIndex))
+		gen.lastSourceIndex = gen.pendingSourceIndex
 
 		// 3. Relative source line
-		gen.appendBase64VLQ(gen.pendingSourceLine - gen.lastSourceLine);
-		gen.lastSourceLine = gen.pendingSourceLine;
+		gen.appendBase64VLQ(gen.pendingSourceLine - gen.lastSourceLine)
+		gen.lastSourceLine = gen.pendingSourceLine
 
 		// 4. Relative source character
-		gen.appendBase64VLQ(gen.pendingSourceCharacter - gen.lastSourceCharacter);
-		gen.lastSourceCharacter = gen.pendingSourceCharacter;
+		gen.appendBase64VLQ(gen.pendingSourceCharacter - gen.lastSourceCharacter)
+		gen.lastSourceCharacter = gen.pendingSourceCharacter
 
 		if gen.hasPendingName {
 			// 5. Relative nameIndex
-			gen.appendBase64VLQ(int(gen.pendingNameIndex - gen.lastNameIndex));
-			gen.lastNameIndex = gen.pendingNameIndex;
+			gen.appendBase64VLQ(int(gen.pendingNameIndex - gen.lastNameIndex))
+			gen.lastNameIndex = gen.pendingNameIndex
 		}
 	}
 
-	gen.hasLast = true;
+	gen.hasLast = true
 }
 
 func (gen *SourceMapGenerator) addMapping(generatedLine int, generatedCharacter int, sourceIndex SourceIndex, sourceLine int, sourceCharacter int, nameIndex NameIndex) {
@@ -316,12 +316,12 @@ func (gen *SourceMapGenerator) RawSourceMap() *RawSourceMap {
 	}
 
 	return &RawSourceMap{
-		Version: 3,
-		File: gen.file,
-		SourceRoot: gen.sourceRoot,
-		Sources: sources,
-		Names: names,
-		Mappings: gen.mappings.String(),
+		Version:        3,
+		File:           gen.file,
+		SourceRoot:     gen.sourceRoot,
+		Sources:        sources,
+		Names:          names,
+		Mappings:       gen.mappings.String(),
 		SourcesContent: sourcesContent,
 	}
 }
@@ -348,6 +348,6 @@ func base64FormatEncode(value int) rune {
 	case value == 63:
 		return '/'
 	default:
-		panic("not a base64 value");
+		panic("not a base64 value")
 	}
 }

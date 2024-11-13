@@ -12,12 +12,12 @@ func TestSourceMapGeneratorEmpty(t *testing.T) {
 	gen := NewSourceMapGenerator("main.js", "/", "/", tspath.ComparePathsOptions{})
 	sourceMap := gen.RawSourceMap()
 	assert.DeepEqual(t, sourceMap, &RawSourceMap{
-		Version: 3,
-		File: "main.js",
-		SourceRoot: "/",
-		Sources: []string{},
-		Mappings: "",
-		Names: nil,
+		Version:        3,
+		File:           "main.js",
+		SourceRoot:     "/",
+		Sources:        []string{},
+		Mappings:       "",
+		Names:          nil,
 		SourcesContent: nil,
 	})
 }
@@ -37,12 +37,12 @@ func TestSourceMapGeneratorAddSource(t *testing.T) {
 	sourceMap := gen.RawSourceMap()
 	assert.Equal(t, int(sourceIndex), 0)
 	assert.DeepEqual(t, sourceMap, &RawSourceMap{
-		Version: 3,
-		File: "main.js",
-		SourceRoot: "/",
-		Sources: []string{"main.ts"},
-		Mappings: "",
-		Names: nil,
+		Version:        3,
+		File:           "main.js",
+		SourceRoot:     "/",
+		Sources:        []string{"main.ts"},
+		Mappings:       "",
+		Names:          nil,
 		SourcesContent: nil,
 	})
 }
@@ -56,12 +56,12 @@ func TestSourceMapGeneratorSetSourceContent(t *testing.T) {
 	sourceMap := gen.RawSourceMap()
 	assert.Equal(t, int(sourceIndex), 0)
 	assert.DeepEqual(t, sourceMap, &RawSourceMap{
-		Version: 3,
-		File: "main.js",
-		SourceRoot: "/",
-		Sources: []string{"main.ts"},
-		Mappings: "",
-		Names: nil,
+		Version:        3,
+		File:           "main.js",
+		SourceRoot:     "/",
+		Sources:        []string{"main.ts"},
+		Mappings:       "",
+		Names:          nil,
 		SourcesContent: []*string{&sourceContent},
 	})
 }
@@ -76,12 +76,12 @@ func TestSourceMapGeneratorSetSourceContentForSecondSourceOnly(t *testing.T) {
 	sourceMap := gen.RawSourceMap()
 	assert.Equal(t, int(sourceIndex), 1)
 	assert.DeepEqual(t, sourceMap, &RawSourceMap{
-		Version: 3,
-		File: "main.js",
-		SourceRoot: "/",
-		Sources: []string{"skipped.ts", "main.ts"},
-		Mappings: "",
-		Names: nil,
+		Version:        3,
+		File:           "main.js",
+		SourceRoot:     "/",
+		Sources:        []string{"skipped.ts", "main.ts"},
+		Mappings:       "",
+		Names:          nil,
 		SourcesContent: []*string{nil, &sourceContent},
 	})
 }
@@ -105,12 +105,12 @@ func TestSourceMapGeneratorAddName(t *testing.T) {
 	sourceMap := gen.RawSourceMap()
 	assert.Equal(t, int(nameIndex), 0)
 	assert.DeepEqual(t, sourceMap, &RawSourceMap{
-		Version: 3,
-		File: "main.js",
-		SourceRoot: "/",
-		Sources: []string{},
-		Mappings: "",
-		Names: []string{"foo"},
+		Version:        3,
+		File:           "main.js",
+		SourceRoot:     "/",
+		Sources:        []string{},
+		Mappings:       "",
+		Names:          []string{"foo"},
 		SourcesContent: nil,
 	})
 }
@@ -121,12 +121,12 @@ func TestSourceMapGeneratorAddMapping(t *testing.T) {
 	gen.AddMapping(0, 0)
 	sourceMap := gen.RawSourceMap()
 	assert.DeepEqual(t, sourceMap, &RawSourceMap{
-		Version: 3,
-		File: "main.js",
-		SourceRoot: "/",
-		Sources: []string{},
-		Mappings: "A",
-		Names: nil,
+		Version:        3,
+		File:           "main.js",
+		SourceRoot:     "/",
+		Sources:        []string{},
+		Mappings:       "A",
+		Names:          nil,
 		SourcesContent: nil,
 	})
 }
@@ -137,12 +137,12 @@ func TestSourceMapGeneratorAddMappingOnSecondLineOnly(t *testing.T) {
 	gen.AddMapping(1, 0)
 	sourceMap := gen.RawSourceMap()
 	assert.DeepEqual(t, sourceMap, &RawSourceMap{
-		Version: 3,
-		File: "main.js",
-		SourceRoot: "/",
-		Sources: []string{},
-		Mappings: ";A",
-		Names: nil,
+		Version:        3,
+		File:           "main.js",
+		SourceRoot:     "/",
+		Sources:        []string{},
+		Mappings:       ";A",
+		Names:          nil,
 		SourcesContent: nil,
 	})
 }
@@ -154,12 +154,12 @@ func TestSourceMapGeneratorAddMappingToSource(t *testing.T) {
 	gen.AddMappingSource(0, 0, sourceIndex, 0, 0)
 	sourceMap := gen.RawSourceMap()
 	assert.DeepEqual(t, sourceMap, &RawSourceMap{
-		Version: 3,
-		File: "main.js",
-		SourceRoot: "/",
-		Sources: []string{"main.ts"},
-		Mappings: "AAAA",
-		Names: nil,
+		Version:        3,
+		File:           "main.js",
+		SourceRoot:     "/",
+		Sources:        []string{"main.ts"},
+		Mappings:       "AAAA",
+		Names:          nil,
 		SourcesContent: nil,
 	})
 }
@@ -172,12 +172,12 @@ func TestSourceMapGeneratorAddMappingToSourceNextGeneratedCharacter(t *testing.T
 	gen.AddMappingSource(0, 1, sourceIndex, 0, 0)
 	sourceMap := gen.RawSourceMap()
 	assert.DeepEqual(t, sourceMap, &RawSourceMap{
-		Version: 3,
-		File: "main.js",
-		SourceRoot: "/",
-		Sources: []string{"main.ts"},
-		Mappings: "AAAA,CAAA",
-		Names: nil,
+		Version:        3,
+		File:           "main.js",
+		SourceRoot:     "/",
+		Sources:        []string{"main.ts"},
+		Mappings:       "AAAA,CAAA",
+		Names:          nil,
 		SourcesContent: nil,
 	})
 }
@@ -190,12 +190,12 @@ func TestSourceMapGeneratorAddMappingToSourceNextGeneratedAndSourceCharacter(t *
 	gen.AddMappingSource(0, 1, sourceIndex, 0, 1)
 	sourceMap := gen.RawSourceMap()
 	assert.DeepEqual(t, sourceMap, &RawSourceMap{
-		Version: 3,
-		File: "main.js",
-		SourceRoot: "/",
-		Sources: []string{"main.ts"},
-		Mappings: "AAAA,CAAC",
-		Names: nil,
+		Version:        3,
+		File:           "main.js",
+		SourceRoot:     "/",
+		Sources:        []string{"main.ts"},
+		Mappings:       "AAAA,CAAC",
+		Names:          nil,
 		SourcesContent: nil,
 	})
 }
@@ -208,12 +208,12 @@ func TestSourceMapGeneratorAddMappingToSourceNextGeneratedLine(t *testing.T) {
 	gen.AddMappingSource(1, 0, sourceIndex, 0, 0)
 	sourceMap := gen.RawSourceMap()
 	assert.DeepEqual(t, sourceMap, &RawSourceMap{
-		Version: 3,
-		File: "main.js",
-		SourceRoot: "/",
-		Sources: []string{"main.ts"},
-		Mappings: "AAAA;AAAA",
-		Names: nil,
+		Version:        3,
+		File:           "main.js",
+		SourceRoot:     "/",
+		Sources:        []string{"main.ts"},
+		Mappings:       "AAAA;AAAA",
+		Names:          nil,
 		SourcesContent: nil,
 	})
 }
@@ -226,12 +226,12 @@ func TestSourceMapGeneratorAddMappingToSourcePreviousSourceCharacter(t *testing.
 	gen.AddMappingSource(0, 1, sourceIndex, 0, 0)
 	sourceMap := gen.RawSourceMap()
 	assert.DeepEqual(t, sourceMap, &RawSourceMap{
-		Version: 3,
-		File: "main.js",
-		SourceRoot: "/",
-		Sources: []string{"main.ts"},
-		Mappings: "AAAC,CAAD",
-		Names: nil,
+		Version:        3,
+		File:           "main.js",
+		SourceRoot:     "/",
+		Sources:        []string{"main.ts"},
+		Mappings:       "AAAC,CAAD",
+		Names:          nil,
 		SourcesContent: nil,
 	})
 }
@@ -244,12 +244,12 @@ func TestSourceMapGeneratorAddMappingToSourceWithName(t *testing.T) {
 	gen.AddMappingSourceName(0, 0, sourceIndex, 0, 0, nameIndex)
 	sourceMap := gen.RawSourceMap()
 	assert.DeepEqual(t, sourceMap, &RawSourceMap{
-		Version: 3,
-		File: "main.js",
-		SourceRoot: "/",
-		Sources: []string{"main.ts"},
-		Mappings: "AAAAA",
-		Names: []string{"foo"},
+		Version:        3,
+		File:           "main.js",
+		SourceRoot:     "/",
+		Sources:        []string{"main.ts"},
+		Mappings:       "AAAAA",
+		Names:          []string{"foo"},
 		SourcesContent: nil,
 	})
 }
@@ -264,12 +264,12 @@ func TestSourceMapGeneratorAddMappingToSourceWithPreviousName(t *testing.T) {
 	gen.AddMappingSourceName(0, 1, sourceIndex, 0, 0, nameIndex1)
 	sourceMap := gen.RawSourceMap()
 	assert.DeepEqual(t, sourceMap, &RawSourceMap{
-		Version: 3,
-		File: "main.js",
-		SourceRoot: "/",
-		Sources: []string{"main.ts"},
-		Mappings: "AAAAC,CAAAD",
-		Names: []string{"foo","bar"},
+		Version:        3,
+		File:           "main.js",
+		SourceRoot:     "/",
+		Sources:        []string{"main.ts"},
+		Mappings:       "AAAAC,CAAAD",
+		Names:          []string{"foo", "bar"},
 		SourcesContent: nil,
 	})
 }
