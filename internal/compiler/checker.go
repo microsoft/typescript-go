@@ -2829,7 +2829,7 @@ func (c *Checker) addDuplicateDeclarationError(node *ast.Node, message *diagnost
 		leadingMessage := createDiagnosticForNode(adjustedNode, diagnostics.X_0_was_also_declared_here, symbolName)
 		followOnMessage := createDiagnosticForNode(adjustedNode, diagnostics.X_and_here)
 		if len(err.RelatedInformation_) >= 5 || core.Some(err.RelatedInformation_, func(d *ast.Diagnostic) bool {
-			return compareDiagnostics(d, followOnMessage) == 0 || compareDiagnostics(d, leadingMessage) == 0
+			return CompareDiagnostics(d, followOnMessage) == 0 || CompareDiagnostics(d, leadingMessage) == 0
 		}) {
 			continue
 		}

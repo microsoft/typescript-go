@@ -1785,9 +1785,9 @@ func (c *DiagnosticsCollection) add(diagnostic *ast.Diagnostic) {
 		if c.fileDiagnostics == nil {
 			c.fileDiagnostics = make(map[string][]*ast.Diagnostic)
 		}
-		c.fileDiagnostics[fileName] = core.InsertSorted(c.fileDiagnostics[fileName], diagnostic, compareDiagnostics)
+		c.fileDiagnostics[fileName] = core.InsertSorted(c.fileDiagnostics[fileName], diagnostic, CompareDiagnostics)
 	} else {
-		c.nonFileDiagnostics = core.InsertSorted(c.nonFileDiagnostics, diagnostic, compareDiagnostics)
+		c.nonFileDiagnostics = core.InsertSorted(c.nonFileDiagnostics, diagnostic, CompareDiagnostics)
 	}
 }
 
@@ -1798,7 +1798,7 @@ func (c *DiagnosticsCollection) lookup(diagnostic *ast.Diagnostic) *ast.Diagnost
 	} else {
 		diagnostics = c.nonFileDiagnostics
 	}
-	if i, ok := slices.BinarySearchFunc(diagnostics, diagnostic, compareDiagnostics); ok {
+	if i, ok := slices.BinarySearchFunc(diagnostics, diagnostic, CompareDiagnostics); ok {
 		return diagnostics[i]
 	}
 	return nil
@@ -1824,7 +1824,7 @@ func (c *DiagnosticsCollection) GetDiagnostics() []*ast.Diagnostic {
 
 func sortAndDeduplicateDiagnostics(diagnostics []*ast.Diagnostic) []*ast.Diagnostic {
 	result := slices.Clone(diagnostics)
-	slices.SortFunc(result, compareDiagnostics)
+	slices.SortFunc(result, CompareDiagnostics)
 	return slices.CompactFunc(result, equalDiagnostics)
 }
 
@@ -1843,7 +1843,7 @@ func equalMessageChain(c1, c2 *ast.MessageChain) bool {
 		slices.EqualFunc(c1.MessageChain_, c2.MessageChain_, equalMessageChain)
 }
 
-func compareDiagnostics(d1, d2 *ast.Diagnostic) int {
+func CompareDiagnostics(d1, d2 *ast.Diagnostic) int {
 	c := strings.Compare(getDiagnosticPath(d1), getDiagnosticPath(d2))
 	if c != 0 {
 		return c
@@ -1911,7 +1911,7 @@ func compareRelatedInfo(r1, r2 []*ast.Diagnostic) int {
 		return c
 	}
 	for i := range r1 {
-		c = compareDiagnostics(r1[i], r2[i])
+		c = CompareDiagnostics(r1[i], r2[i])
 		if c != 0 {
 			return c
 		}

@@ -343,3 +343,22 @@ func prettyPathForFileError(file *ast.SourceFile, fileErrors []*ast.Diagnostic, 
 		resetEscapeSequence,
 	)
 }
+
+func WriteFormatDiagnostics(output *strings.Builder, diagnostics []*ast.Diagnostic, formatOpts *DiagnosticsFormattingOptions) {
+	for _, diagnostic := range diagnostics {
+		WriteFormatDiagnostic(output, diagnostic, formatOpts)
+	}
+}
+
+func WriteFormatDiagnostic(output *strings.Builder, diagnostic *ast.Diagnostic, formatOpts *DiagnosticsFormattingOptions) {
+	if diagnostic.File() != nil {
+		line, character := GetLineAndCharacterOfPosition(diagnostic.File(), diagnostic.Loc().Pos())
+		fileName := diagnostic.File().FileName()
+		relativeFileName := tspath.ConvertToRelativePath(fileName, formatOpts.CurrentDirectory, formatOpts.GetCanonicalFileName)
+		fmt.Fprintf(output, "%s(%d,%d): ", relativeFileName, line+1, character+1)
+	}
+
+	fmt.Fprintf(output, "%s TS%d: ", diagnostic.Category().String(), diagnostic.Code())
+	WriteFlattenedDiagnosticMessage(output, diagnostic, formatOpts.NewLine)
+	output.WriteString(formatOpts.NewLine)
+}
