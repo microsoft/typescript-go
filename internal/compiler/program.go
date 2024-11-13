@@ -57,8 +57,8 @@ func NewProgram(options ProgramOptions) *Program {
 }
 
 func (p *Program) SourceFiles() []*ast.SourceFile { return p.files }
-func (p *Program) Options() *CompilerOptions  { return p.options }
-func (p *Program) Host() CompilerHost         { return p.host }
+func (p *Program) Options() *CompilerOptions      { return p.options }
+func (p *Program) Host() CompilerHost             { return p.host }
 
 func (p *Program) parseSourceFiles(fileInfos []FileInfo) {
 	p.files = make([]*ast.SourceFile, len(fileInfos))[:len(fileInfos)]

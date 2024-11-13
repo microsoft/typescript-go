@@ -2,7 +2,6 @@ package core
 
 //go:generate go run golang.org/x/tools/cmd/stringer -type=ScriptKind -output=scriptkind_stringer_generated.go
 
-
 type ScriptKind int32
 
 const (
