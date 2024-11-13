@@ -331,7 +331,7 @@ func (p *Parser) abortParsingListOrMoveToNextToken(kind ParsingContext) bool {
 // True if positioned at element or terminator of the current list or any enclosing list
 func (p *Parser) isInSomeParsingContext() bool {
 	// We should be in at least one parsing context, be it SourceElements while parsing
-	// a ast.SourceFile, or JSDocComment when lazily parsing JSDoc.
+	// a SourceFile, or JSDocComment when lazily parsing JSDoc.
 	// Debug.assert(parsingContext, "Missing parsing context")
 	for kind := ParsingContext(0); kind < PCCount; kind++ {
 		if p.parsingContexts&(1<<kind) != 0 {
@@ -485,7 +485,7 @@ func (p *Parser) isListElement(parsingContext ParsingContext, inErrorRecovery bo
 	case PCHeritageClauses:
 		return p.isHeritageClause()
 	case PCImportOrExportSpecifiers:
-		// bail out if the next token is [FromKeyword ast.StringLiteral].
+		// bail out if the next token is [FromKeyword StringLiteral].
 		// That means we're in something like `import { from "mod"`. Stop here can give better error message.
 		if p.token == ast.KindFromKeyword && p.lookAhead(p.nextTokenIsTokenStringLiteral) {
 			return false
@@ -978,8 +978,8 @@ func (p *Parser) parseSwitchStatement() *ast.Node {
 }
 
 func (p *Parser) parseThrowStatement() *ast.Node {
-	// ast.ThrowStatement[Yield] :
-	//      throw [no LineTerminator here]ast.Expression[In, ?Yield];
+	// ThrowStatement[Yield] :
+	//      throw [no LineTerminator here]Expression[In, ?Yield];
 	pos := p.nodePos()
 	//const hasJSDoc = hasPrecedingJSDocComment();
 	p.parseExpected(ast.KindThrowKeyword)
@@ -1797,7 +1797,7 @@ func (p *Parser) tokenAfterImportDefinitelyProducesImportDeclaration() bool {
 
 func (p *Parser) tokenAfterImportedIdentifierDefinitelyProducesImportDeclaration() bool {
 	// In `import id ___`, the current token decides whether to produce
-	// an ast.ImportDeclaration or ast.ImportEqualsDeclaration.
+	// an ImportDeclaration or ImportEqualsDeclaration.
 	return p.token == ast.KindCommaToken || p.token == ast.KindFromKeyword
 }
 
@@ -1842,8 +1842,8 @@ func (p *Parser) parseModuleSpecifier() *ast.Expression {
 }
 
 func (p *Parser) tryParseImportClause(identifier *ast.Node, pos int, isTypeOnly bool, skipJsDocLeadingAsterisks bool) *ast.Node {
-	// ast.ImportDeclaration:
-	//  import ast.ImportClause from ModuleSpecifier ;
+	// ImportDeclaration:
+	//  import ImportClause from ModuleSpecifier ;
 	//  import ModuleSpecifier;
 	if identifier != nil || p.token == ast.KindAsteriskToken || p.token == ast.KindOpenBraceToken {
 		importClause := p.parseImportClause(identifier, pos, isTypeOnly, skipJsDocLeadingAsterisks)
@@ -1854,12 +1854,12 @@ func (p *Parser) tryParseImportClause(identifier *ast.Node, pos int, isTypeOnly 
 }
 
 func (p *Parser) parseImportClause(identifier *ast.Node, pos int, isTypeOnly bool, skipJsDocLeadingAsterisks bool) *ast.Node {
-	// ast.ImportClause:
+	// ImportClause:
 	//  ImportedDefaultBinding
 	//  NameSpaceImport
-	//  ast.NamedImports
+	//  NamedImports
 	//  ImportedDefaultBinding, NameSpaceImport
-	//  ImportedDefaultBinding, ast.NamedImports
+	//  ImportedDefaultBinding, NamedImports
 	// If there was no default import or if there is comma token after default import
 	// parse namespace or named imports
 	var namedBindings *ast.Node
@@ -1892,7 +1892,7 @@ func (p *Parser) parseNamespaceImport() *ast.Node {
 
 func (p *Parser) parseNamedImports() *ast.Node {
 	pos := p.nodePos()
-	// ast.NamedImports:
+	// NamedImports:
 	//  { }
 	//  { ImportsList }
 	//  { ImportsList, }
@@ -1919,12 +1919,12 @@ func (p *Parser) parseImportSpecifier() *ast.Node {
 }
 
 func (p *Parser) parseImportOrExportSpecifier(kind ast.Kind) (isTypeOnly bool, propertyName *ast.Node, name *ast.Node) {
-	// ast.ImportSpecifier:
+	// ImportSpecifier:
 	//   BindingIdentifier
-	//   ast.ModuleExportName as BindingIdentifier
-	// ast.ExportSpecifier:
-	//   ast.ModuleExportName
-	//   ast.ModuleExportName as ast.ModuleExportName
+	//   ModuleExportName as BindingIdentifier
+	// ExportSpecifier:
+	//   ModuleExportName
+	//   ModuleExportName as ModuleExportName
 	// let checkIdentifierIsKeyword = isKeyword(token()) && !isIdentifier();
 	// let checkIdentifierStart = scanner.getTokenStart();
 	// let checkIdentifierEnd = scanner.getTokenEnd();
@@ -2027,7 +2027,7 @@ func (p *Parser) parseNamespaceExportDeclaration(pos int, hasJSDoc bool, modifie
 	p.parseExpected(ast.KindNamespaceKeyword)
 	name := p.parseIdentifier()
 	p.parseSemicolon()
-	// ast.NamespaceExportDeclaration nodes cannot have decorators or modifiers, we attach them here so we can report them in the grammar checker
+	// NamespaceExportDeclaration nodes cannot have decorators or modifiers, we attach them here so we can report them in the grammar checker
 	result := p.factory.NewNamespaceExportDeclaration(modifiers, name)
 	p.finishNode(result, pos)
 	_ = hasJSDoc
@@ -2077,7 +2077,7 @@ func (p *Parser) parseNamespaceExport(pos int) *ast.Node {
 
 func (p *Parser) parseNamedExports() *ast.Node {
 	pos := p.nodePos()
-	// ast.NamedImports:
+	// NamedImports:
 	//  { }
 	//  { ImportsList }
 	//  { ImportsList, }
@@ -2264,21 +2264,21 @@ func (p *Parser) parseNonArrayType() *ast.Node {
 		p.rewind(state)
 		return p.parseTypeReference()
 		// !!!
-		// case ast.KindAsteriskEqualsToken:
+		// case KindAsteriskEqualsToken:
 		// 	// If there is '*=', treat it as * followed by postfix =
 		// 	p.scanner.reScanAsteriskEqualsToken()
 		// 	fallthrough
-		// case ast.KindAsteriskToken:
+		// case KindAsteriskToken:
 		// 	return p.parseJSDocAllType()
-		// case ast.KindQuestionQuestionToken:
+		// case KindQuestionQuestionToken:
 		// 	// If there is '??', treat it as prefix-'?' in JSDoc type.
 		// 	p.scanner.reScanQuestionToken()
 		// 	fallthrough
-		// case ast.KindQuestionToken:
+		// case KindQuestionToken:
 		// 	return p.parseJSDocUnknownOrNullableType()
-		// case ast.KindFunctionKeyword:
+		// case KindFunctionKeyword:
 		// 	return p.parseJSDocFunctionType()
-		// case ast.KindExclamationToken:
+		// case KindExclamationToken:
 		// 	return p.parseJSDocNonNullableType()
 	case ast.KindNoSubstitutionTemplateLiteral, ast.KindStringLiteral, ast.KindNumericLiteral, ast.KindBigIntLiteral, ast.KindTrueKeyword,
 		ast.KindFalseKeyword, ast.KindNullKeyword:
@@ -2761,11 +2761,11 @@ func (p *Parser) parseParameters(flags ParseFlags) []*ast.Node {
 	//      FormalParameterList[?Yield,Await]
 	//
 	// FormalParameter[Yield,Await]: (modified)
-	//      ast.BindingElement[?Yield,Await]
+	//      BindingElement[?Yield,Await]
 	//
-	// ast.BindingElement [Yield,Await]: (modified)
+	// BindingElement [Yield,Await]: (modified)
 	//      SingleNameBinding[?Yield,?Await]
-	//      ast.BindingPattern[?Yield,?Await]Initializer [In, ?Yield,?Await] opt
+	//      BindingPattern[?Yield,?Await]Initializer [In, ?Yield,?Await] opt
 	//
 	// SingleNameBinding [Yield,Await]:
 	//      BindingIdentifier[?Yield,?Await]Initializer [In, ?Yield,?Await] opt
@@ -2783,11 +2783,11 @@ func (p *Parser) parseParametersWorker(flags ParseFlags, allowAmbiguity bool) []
 	//      FormalParameterList[?Yield,Await]
 	//
 	// FormalParameter[Yield,Await]: (modified)
-	//      ast.BindingElement[?Yield,Await]
+	//      BindingElement[?Yield,Await]
 	//
-	// ast.BindingElement [Yield,Await]: (modified)
+	// BindingElement [Yield,Await]: (modified)
 	//      SingleNameBinding[?Yield,?Await]
-	//      ast.BindingPattern[?Yield,?Await]Initializer [In, ?Yield,?Await] opt
+	//      BindingPattern[?Yield,?Await]Initializer [In, ?Yield,?Await] opt
 	//
 	// SingleNameBinding [Yield,Await]:
 	//      BindingIdentifier[?Yield,?Await]Initializer [In, ?Yield,?Await] opt
@@ -2813,7 +2813,7 @@ func (p *Parser) parseParameterWithOptions(inOuterAwaitContext bool, allowAmbigu
 	pos := p.nodePos()
 	// hasJSDoc := p.hasPrecedingJSDocComment()
 	// FormalParameter [Yield,Await]:
-	//      ast.BindingElement[?Yield,?Await]
+	//      BindingElement[?Yield,?Await]
 	// Decorators are parsed in the outer [Await] context, the rest of the parameter is parsed in the function's [Await] context.
 	saveContextFlags := p.contextFlags
 	p.setContextFlags(ast.NodeFlagsAwaitContext, inOuterAwaitContext)
@@ -2857,7 +2857,7 @@ func (p *Parser) isParameterNameStart() bool {
 
 func (p *Parser) parseNameOfParameter(modifiers *ast.Node) *ast.Node {
 	// FormalParameter [Yield,Await]:
-	//      ast.BindingElement[?Yield,?Await]
+	//      BindingElement[?Yield,?Await]
 	name := p.parseIdentifierOrPatternWithDiagnostic(diagnostics.Private_identifiers_cannot_be_used_as_parameters)
 	if name.Loc.Len() == 0 && modifiers == nil && isModifierKind(p.token) {
 		// in cases like
@@ -2865,7 +2865,7 @@ func (p *Parser) parseNameOfParameter(modifiers *ast.Node) *ast.Node {
 		// function foo(static)
 		// isParameter('static') == true, because of isModifier('static')
 		// however 'static' is not a legal identifier in a strict mode.
-		// so result of this function will be ast.ParameterDeclaration (flags = 0, name = missing, type = undefined, initializer = undefined)
+		// so result of this function will be ParameterDeclaration (flags = 0, name = missing, type = undefined, initializer = undefined)
 		// and current token will not change => parsing of the enclosing parameter list will last till the end of time (or OOM)
 		// to avoid this we'll advance cursor to the next token.
 		p.nextToken()
@@ -2959,9 +2959,9 @@ func (p *Parser) parsePropertyNameWorker(allowComputedPropertyNames bool) *ast.N
 }
 
 func (p *Parser) parseComputedPropertyName() *ast.Node {
-	// ast.PropertyName [Yield]:
+	// PropertyName [Yield]:
 	//      LiteralPropertyName
-	//      ast.ComputedPropertyName[?Yield]
+	//      ComputedPropertyName[?Yield]
 	pos := p.nodePos()
 	p.parseExpected(ast.KindOpenBracketToken)
 	// We parse any expression (including a comma expression). But the grammar
@@ -2992,8 +2992,8 @@ func (p *Parser) parseFunctionBlock(flags ParseFlags, diagnosticMessage *diagnos
 	saveContextFlags := p.contextFlags
 	p.setContextFlags(ast.NodeFlagsYieldContext, flags&ParseFlagsYield != 0)
 	p.setContextFlags(ast.NodeFlagsAwaitContext, flags&ParseFlagsAwait != 0)
-	// We may be in a [ast.Decorator] context when parsing a function expression or
-	// arrow function. The body of the function is not in [ast.Decorator] context.
+	// We may be in a [Decorator] context when parsing a function expression or
+	// arrow function. The body of the function is not in [Decorator] context.
 	p.setContextFlags(ast.NodeFlagsDecoratorContext, false)
 	block := p.parseBlock(flags&ParseFlagsIgnoreMissingOpenBrace != 0, diagnosticMessage)
 	p.contextFlags = saveContextFlags
@@ -3560,11 +3560,11 @@ func (p *Parser) nextTokenIsOpenBrace() bool {
 }
 
 func (p *Parser) parseExpression() *ast.Expression {
-	// ast.Expression[in]:
+	// Expression[in]:
 	//      AssignmentExpression[in]
-	//      ast.Expression[in] , AssignmentExpression[in]
+	//      Expression[in] , AssignmentExpression[in]
 
-	// clear the decorator context when parsing ast.Expression, as it should be unambiguous when parsing a decorator
+	// clear the decorator context when parsing Expression, as it should be unambiguous when parsing a decorator
 	saveContextFlags := p.contextFlags
 	p.contextFlags &= ^ast.NodeFlagsDecoratorContext
 	pos := p.nodePos()
@@ -3590,16 +3590,16 @@ func (p *Parser) parseAssignmentExpressionOrHigher() *ast.Expression {
 
 func (p *Parser) parseAssignmentExpressionOrHigherWorker(allowReturnTypeInArrowFunction bool) *ast.Expression {
 	//  AssignmentExpression[in,yield]:
-	//      1) ast.ConditionalExpression[?in,?yield]
-	//      2) ast.LeftHandSideExpression = AssignmentExpression[?in,?yield]
-	//      3) ast.LeftHandSideExpression AssignmentOperator AssignmentExpression[?in,?yield]
+	//      1) ConditionalExpression[?in,?yield]
+	//      2) LeftHandSideExpression = AssignmentExpression[?in,?yield]
+	//      3) LeftHandSideExpression AssignmentOperator AssignmentExpression[?in,?yield]
 	//      4) ArrowFunctionExpression[?in,?yield]
 	//      5) AsyncArrowFunctionExpression[in,yield,await]
-	//      6) [+Yield] ast.YieldExpression[?In]
+	//      6) [+Yield] YieldExpression[?In]
 	//
 	// Note: for ease of implementation we treat productions '2' and '3' as the same thing.
 	// (i.e. they're both BinaryExpressions with an assignment operator in it).
-	// First, do the simple check if we have a ast.YieldExpression (production '6').
+	// First, do the simple check if we have a YieldExpression (production '6').
 	if p.isYieldExpression() {
 		return p.parseYieldExpression()
 	}
@@ -3611,8 +3611,8 @@ func (p *Parser) parseAssignmentExpressionOrHigherWorker(allowReturnTypeInArrowF
 	// Production (1) of AsyncArrowFunctionExpression is parsed in "tryParseAsyncSimpleArrowFunctionExpression".
 	// And production (2) is parsed in "tryParseParenthesizedArrowFunctionExpression".
 	//
-	// If we do successfully parse arrow-function, we must *not* recurse for productions 1, 2 or 3. An ast.ArrowFunction is
-	// not a ast.LeftHandSideExpression, nor does it start a ast.ConditionalExpression.  So we are done
+	// If we do successfully parse arrow-function, we must *not* recurse for productions 1, 2 or 3. An ArrowFunction is
+	// not a LeftHandSideExpression, nor does it start a ConditionalExpression.  So we are done
 	// with AssignmentExpression if we see one.
 	arrowExpression := p.tryParseParenthesizedArrowFunctionExpression(allowReturnTypeInArrowFunction)
 	if arrowExpression != nil {
@@ -3630,7 +3630,7 @@ func (p *Parser) parseAssignmentExpressionOrHigherWorker(allowReturnTypeInArrowF
 	// start with a LogicalOrExpression, while the assignment productions can only start with
 	// LeftHandSideExpressions.
 	//
-	// So, first, we try to just parse out a ast.BinaryExpression.  If we get something that is a
+	// So, first, we try to just parse out a BinaryExpression.  If we get something that is a
 	// LeftHandSide or higher, then we can try to parse out the assignment expression part.
 	// Otherwise, we try to parse out the conditional expression bit.  We want to allow any
 	// binary expression here, so we pass in the 'lowest' precedence here so that it matches
@@ -3686,7 +3686,7 @@ func (p *Parser) isYieldExpression() bool {
 
 func (p *Parser) parseYieldExpression() *ast.Node {
 	pos := p.nodePos()
-	// ast.YieldExpression[In] :
+	// YieldExpression[In] :
 	//      yield
 	//      yield [no LineTerminator here] [Lexical goal InputElementRegExp]AssignmentExpression[?In, Yield]
 	//      yield [no LineTerminator here] * [Lexical goal InputElementRegExp]AssignmentExpression[?In, Yield]
@@ -3795,7 +3795,7 @@ func (p *Parser) nextIsParenthesizedArrowFunctionExpression() core.Tristate {
 		// It is definitely not an arrow function
 		return core.TSFalse
 	} else {
-		// !!! Debug.assert(first == ast.KindLessThanToken)
+		// !!! Debug.assert(first == KindLessThanToken)
 		// If we have "<" not followed by an identifier,
 		// then this definitely is not an arrow function.
 		if !p.isIdentifier() && p.token != ast.KindConstKeyword {
@@ -4176,9 +4176,9 @@ func (p *Parser) makeBinaryExpression(left *ast.Expression, operatorToken *ast.N
 
 func (p *Parser) parseUnaryExpressionOrHigher() *ast.Expression {
 	// ES7 UpdateExpression:
-	//      1) ast.LeftHandSideExpression[?Yield]
-	//      2) ast.LeftHandSideExpression[?Yield][no LineTerminator here]++
-	//      3) ast.LeftHandSideExpression[?Yield][no LineTerminator here]--
+	//      1) LeftHandSideExpression[?Yield]
+	//      2) LeftHandSideExpression[?Yield][no LineTerminator here]++
+	//      3) LeftHandSideExpression[?Yield][no LineTerminator here]--
 	//      4) ++UnaryExpression[?Yield]
 	//      5) --UnaryExpression[?Yield]
 	if p.isUpdateExpression() {
@@ -4258,7 +4258,7 @@ func (p *Parser) parseJsxElementOrSelfClosingElementOrFragment(inExpressionConte
 		if lastChild != nil && lastChild.Kind == ast.KindJsxElement &&
 			!tagNamesAreEquivalent(lastChild.AsJsxElement().OpeningElement.AsJsxOpeningElement().TagName, lastChild.AsJsxElement().ClosingElement.AsJsxClosingElement().TagName) &&
 			tagNamesAreEquivalent(opening.AsJsxOpeningElement().TagName, lastChild.AsJsxElement().ClosingElement.AsJsxClosingElement().TagName) {
-			// when an unclosed ast.JsxOpeningElement incorrectly parses its parent's ast.JsxClosingElement,
+			// when an unclosed JsxOpeningElement incorrectly parses its parent's JsxClosingElement,
 			// restructure (<div>(...<span>...</div>)) --> (<div>(...<span>...</>)</div>)
 			// (no need to error; the parent will error)
 			newClosingElement := p.factory.NewJsxClosingElement(p.createMissingIdentifier())
@@ -4470,7 +4470,7 @@ func (p *Parser) parseJsxOpeningOrSelfClosingElementOrOpeningFragment(inExpressi
 
 func (p *Parser) parseJsxElementName() *ast.Expression {
 	pos := p.nodePos()
-	// ast.JsxElement can have name in the form of
+	// JsxElement can have name in the form of
 	//      propertyAccessExpression
 	//      primaryExpression in the form of an identifier and "this" keyword
 	// We can't just simply use parseLeftHandSideExpressionOrHigher because then we will start consider class,function etc as a keyword
@@ -4676,36 +4676,36 @@ func (p *Parser) parseTypeAssertion() *ast.Node {
 
 func (p *Parser) parseLeftHandSideExpressionOrHigher() *ast.Expression {
 	// Original Ecma:
-	// ast.LeftHandSideExpression: See 11.2
-	//      ast.NewExpression
-	//      ast.CallExpression
+	// LeftHandSideExpression: See 11.2
+	//      NewExpression
+	//      CallExpression
 	//
 	// Our simplification:
 	//
-	// ast.LeftHandSideExpression: See 11.2
+	// LeftHandSideExpression: See 11.2
 	//      MemberExpression
-	//      ast.CallExpression
+	//      CallExpression
 	//
-	// See comment in parseMemberExpressionOrHigher on how we replaced ast.NewExpression with
+	// See comment in parseMemberExpressionOrHigher on how we replaced NewExpression with
 	// MemberExpression to make our lives easier.
 	//
-	// to best understand the below code, it's important to see how ast.CallExpression expands
+	// to best understand the below code, it's important to see how CallExpression expands
 	// out into its own productions:
 	//
-	// ast.CallExpression:
+	// CallExpression:
 	//      MemberExpression Arguments
-	//      ast.CallExpression Arguments
-	//      ast.CallExpression[ast.Expression]
-	//      ast.CallExpression.IdentifierName
+	//      CallExpression Arguments
+	//      CallExpression[Expression]
+	//      CallExpression.IdentifierName
 	//      import (AssignmentExpression)
 	//      super Arguments
 	//      super.IdentifierName
 	//
 	// Because of the recursion in these calls, we need to bottom out first. There are three
 	// bottom out states we can run into: 1) We see 'super' which must start either of
-	// the last two ast.CallExpression productions. 2) We see 'import' which must start import call.
-	// 3)we have a MemberExpression which either completes the ast.LeftHandSideExpression,
-	// or starts the beginning of the first four ast.CallExpression productions.
+	// the last two CallExpression productions. 2) We see 'import' which must start import call.
+	// 3)we have a MemberExpression which either completes the LeftHandSideExpression,
+	// or starts the beginning of the first four CallExpression productions.
 	pos := p.nodePos()
 	var expression *ast.Expression
 	if p.token == ast.KindImportKeyword {
@@ -4733,7 +4733,7 @@ func (p *Parser) parseLeftHandSideExpressionOrHigher() *ast.Expression {
 		expression = p.parseMemberExpressionOrHigher()
 	}
 	// Now, we *may* be complete.  However, we might have consumed the start of a
-	// ast.CallExpression or OptionalExpression.  As such, we need to consume the rest
+	// CallExpression or OptionalExpression.  As such, we need to consume the rest
 	// of it here to be complete.
 	return p.parseCallExpressionRest(pos, expression)
 }
@@ -4817,35 +4817,35 @@ func (p *Parser) canFollowTypeArgumentsInExpression() bool {
 }
 
 func (p *Parser) parseMemberExpressionOrHigher() *ast.Node {
-	// Note: to make our lives simpler, we decompose the ast.NewExpression productions and
-	// place ObjectCreationExpression and ast.FunctionExpression into PrimaryExpression.
+	// Note: to make our lives simpler, we decompose the NewExpression productions and
+	// place ObjectCreationExpression and FunctionExpression into PrimaryExpression.
 	// like so:
 	//
 	//   PrimaryExpression : See 11.1
 	//      this
-	//      ast.Identifier
+	//      Identifier
 	//      Literal
 	//      ArrayLiteral
 	//      ObjectLiteral
-	//      (ast.Expression)
-	//      ast.FunctionExpression
+	//      (Expression)
+	//      FunctionExpression
 	//      new MemberExpression Arguments?
 	//
 	//   MemberExpression : See 11.2
 	//      PrimaryExpression
-	//      MemberExpression[ast.Expression]
+	//      MemberExpression[Expression]
 	//      MemberExpression.IdentifierName
 	//
-	//   ast.CallExpression : See 11.2
+	//   CallExpression : See 11.2
 	//      MemberExpression
-	//      ast.CallExpression Arguments
-	//      ast.CallExpression[ast.Expression]
-	//      ast.CallExpression.IdentifierName
+	//      CallExpression Arguments
+	//      CallExpression[Expression]
+	//      CallExpression.IdentifierName
 	//
-	// Technically this is ambiguous.  i.e. ast.CallExpression defines:
+	// Technically this is ambiguous.  i.e. CallExpression defines:
 	//
-	//   ast.CallExpression:
-	//      ast.CallExpression Arguments
+	//   CallExpression:
+	//      CallExpression Arguments
 	//
 	// If you see: "new Foo()"
 	//
@@ -4858,11 +4858,11 @@ func (p *Parser) parseMemberExpressionOrHigher() *ast.Node {
 	// it is there as part of the *associated* object creation node.  Any additional
 	// argument lists we see, will become invocation expressions.
 	//
-	// Because there are no other places in the grammar now that refer to ast.FunctionExpression
+	// Because there are no other places in the grammar now that refer to FunctionExpression
 	// or ObjectCreationExpression, it is safe to push down into the PrimaryExpression
 	// production.
 	//
-	// Because ast.CallExpression and MemberExpression are left recursive, we need to bottom out
+	// Because CallExpression and MemberExpression are left recursive, we need to bottom out
 	// of the recursion immediately.  So we parse out a primary expression to start with.
 	pos := p.nodePos()
 	expression := p.parsePrimaryExpression()
@@ -4883,13 +4883,13 @@ func (p *Parser) parseMemberExpressionRest(pos int, expression *ast.Expression, 
 			expression = p.parsePropertyAccessExpressionRest(pos, expression, questionDotToken)
 			continue
 		}
-		// when in the [ast.Decorator] context, we do not parse ElementAccess as it could be part of a ast.ComputedPropertyName
+		// when in the [Decorator] context, we do not parse ElementAccess as it could be part of a ComputedPropertyName
 		if (questionDotToken != nil || !p.inDecoratorContext()) && p.parseOptional(ast.KindOpenBracketToken) {
 			expression = p.parseElementAccessExpressionRest(pos, expression, questionDotToken)
 			continue
 		}
 		if p.isTemplateStartOfTaggedTemplate() {
-			// Absorb type arguments into ast.TemplateExpression when preceding expression is ast.ExpressionWithTypeArguments
+			// Absorb type arguments into TemplateExpression when preceding expression is ExpressionWithTypeArguments
 			if questionDotToken == nil && isExpressionWithTypeArguments(expression) {
 				expression = p.parseTaggedTemplateRest(pos, expression.AsExpressionWithTypeArguments().Expression, questionDotToken, expression.AsExpressionWithTypeArguments().TypeArguments)
 			} else {
@@ -4993,7 +4993,7 @@ func (p *Parser) parseCallExpressionRest(pos int, expression *ast.Expression) *a
 			}
 		}
 		if typeArguments != nil || p.token == ast.KindOpenParenToken {
-			// Absorb type arguments into ast.CallExpression when preceding expression is ast.ExpressionWithTypeArguments
+			// Absorb type arguments into CallExpression when preceding expression is ExpressionWithTypeArguments
 			if questionDotToken == nil && expression.Kind == ast.KindExpressionWithTypeArguments {
 				typeArguments = expression.AsExpressionWithTypeArguments().TypeArguments
 				expression = expression.AsExpressionWithTypeArguments().Expression
@@ -5223,7 +5223,7 @@ func (p *Parser) parseFunctionExpression() *ast.Expression {
 	// GeneratorExpression:
 	//      function* BindingIdentifier [Yield][opt](FormalParameters[Yield]){ GeneratorBody }
 	//
-	// ast.FunctionExpression:
+	// FunctionExpression:
 	//      function BindingIdentifier[opt](FormalParameters){ FunctionBody }
 	saveContexFlags := p.contextFlags
 	p.setContextFlags(ast.NodeFlagsDecoratorContext, false)
@@ -5288,7 +5288,7 @@ func (p *Parser) parseNewExpressionOrNewDotTarget() *ast.Node {
 	expressionPos := p.nodePos()
 	expression := p.parseMemberExpressionRest(expressionPos, p.parsePrimaryExpression(), false /*allowOptionalChain*/)
 	var typeArguments *ast.Node
-	// Absorb type arguments into ast.NewExpression when preceding expression is ast.ExpressionWithTypeArguments
+	// Absorb type arguments into NewExpression when preceding expression is ExpressionWithTypeArguments
 	if expression.Kind == ast.KindExpressionWithTypeArguments {
 		typeArguments = expression.AsExpressionWithTypeArguments().TypeArguments
 		expression = expression.AsExpressionWithTypeArguments().Expression
