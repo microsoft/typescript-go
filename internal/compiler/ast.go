@@ -2,7 +2,6 @@ package compiler
 
 import (
 	"github.com/microsoft/typescript-go/internal/ast"
-	"github.com/microsoft/typescript-go/internal/compiler/textpos"
 	"github.com/microsoft/typescript-go/internal/core"
 )
 
@@ -46,7 +45,7 @@ func (f *NodeFactory) NewNode(kind ast.Kind, data NodeData) *Node {
 type Node struct {
 	Kind   ast.Kind
 	Flags  ast.NodeFlags
-	Loc    textpos.TextRange
+	Loc    core.TextRange
 	Id     NodeId
 	Parent *Node
 	Data   NodeData
@@ -640,7 +639,7 @@ func (node *ModifiersBase) Modifiers() *ModifierListNode { return node.Modifiers
 // LocalsContainerBase
 
 type LocalsContainerBase struct {
-	Locals_        SymbolTable // Locals associated with node (initialized by binding)
+	Locals_       SymbolTable // Locals associated with node (initialized by binding)
 	NextContainer *Node       // Next container in declaration order (initialized by binding)
 }
 
@@ -655,8 +654,8 @@ func IsLocalsContainer(node *Node) bool {
 type FunctionLikeBase struct {
 	LocalsContainerBase
 	TypeParameters_ *TypeParameterListNode // Optional
-	Parameters     []*ParameterDeclarationNode
-	ReturnType     *TypeNode // Optional
+	Parameters      []*ParameterDeclarationNode
+	ReturnType      *TypeNode // Optional
 }
 
 func (node *FunctionLikeBase) TypeParameters() *TypeParameterListNode { return node.TypeParameters_ }
@@ -777,7 +776,7 @@ type TypeParameterDeclaration struct {
 	NodeBase
 	DeclarationBase
 	ModifiersBase
-	Name_        *IdentifierNode // IdentifierNode
+	Name_       *IdentifierNode // IdentifierNode
 	Constraint  *TypeNode       // TypeNode. Optional
 	DefaultType *TypeNode       // TypeNode. Optional
 	Expression  *Expression     // Expression. Optional, For error recovery purposes
@@ -860,7 +859,7 @@ func IsDecorator(node *Node) bool {
 
 type ModifierList struct {
 	NodeBase
-	Modifiers_     []*ModifierLike
+	Modifiers_    []*ModifierLike
 	ModifierFlags ast.ModifierFlags
 }
 
@@ -1299,7 +1298,7 @@ type VariableDeclaration struct {
 	NodeBase
 	DeclarationBase
 	ExportableBase
-	Name_             *BindingName // BindingName
+	Name_            *BindingName // BindingName
 	ExclamationToken *TokenNode   // TokenNode. Optional
 	TypeNode         *TypeNode    // TypeNode. Optional
 	Initializer      *Expression  // Expression. Optional
@@ -1381,7 +1380,7 @@ type ParameterDeclaration struct {
 	DeclarationBase
 	ModifiersBase
 	DotDotDotToken *TokenNode   // TokenNode. Present on rest parameter
-	Name_           *BindingName // BindingName. Declared parameter name
+	Name_          *BindingName // BindingName. Declared parameter name
 	QuestionToken  *TokenNode   // TokenNode. Present on optional parameter
 	TypeNode       *TypeNode    // TypeNode. Optional
 	Initializer    *Expression  // Expression. Optional
@@ -1420,7 +1419,7 @@ type BindingElement struct {
 	FlowNodeBase
 	DotDotDotToken *TokenNode    // TokenNode. Present on rest element (in object binding pattern)
 	PropertyName   *PropertyName // PropertyName. Optional binding property name in object binding pattern
-	Name_           *BindingName  // BindingName. Optional (nil for missing element)
+	Name_          *BindingName  // BindingName. Optional (nil for missing element)
 	Initializer    *Expression   // Expression. Optional
 }
 
@@ -1471,7 +1470,7 @@ type FunctionDeclaration struct {
 	ExportableBase
 	ModifiersBase
 	FunctionLikeWithBodyBase
-	Name_           *IdentifierNode // IdentifierNode
+	Name_          *IdentifierNode // IdentifierNode
 	ReturnFlowNode *FlowNode
 }
 
@@ -1508,8 +1507,8 @@ type ClassLikeBase struct {
 	DeclarationBase
 	ExportableBase
 	ModifiersBase
-	Name_            *IdentifierNode        // IdentifierNode
-	TypeParameters_  *TypeParameterListNode // TypeParameterListNode
+	Name_           *IdentifierNode        // IdentifierNode
+	TypeParameters_ *TypeParameterListNode // TypeParameterListNode
 	HeritageClauses []*HeritageClauseNode  // []HeritageClauseNode
 	Members         []*ClassElement        // []ClassElement
 }
@@ -1597,8 +1596,8 @@ type InterfaceDeclaration struct {
 	DeclarationBase
 	ExportableBase
 	ModifiersBase
-	Name_            *IdentifierNode
-	TypeParameters_  *TypeParameterListNode
+	Name_           *IdentifierNode
+	TypeParameters_ *TypeParameterListNode
 	HeritageClauses []*HeritageClauseNode
 	Members         []*TypeElement
 }
@@ -1618,8 +1617,10 @@ func (node *InterfaceDeclaration) ForEachChild(v Visitor) bool {
 		visitNodes(v, node.HeritageClauses) || visitNodes(v, node.Members)
 }
 
-func (node *InterfaceDeclaration) Name() *DeclarationName                 { return node.Name_ }
-func (node *InterfaceDeclaration) TypeParameters() *TypeParameterListNode { return node.TypeParameters_ }
+func (node *InterfaceDeclaration) Name() *DeclarationName { return node.Name_ }
+func (node *InterfaceDeclaration) TypeParameters() *TypeParameterListNode {
+	return node.TypeParameters_
+}
 
 func IsInterfaceDeclaration(node *Node) bool {
 	return node.Kind == ast.KindInterfaceDeclaration
@@ -1635,7 +1636,7 @@ type TypeAliasDeclaration struct {
 	LocalsContainerBase
 	Name_           *IdentifierNode        // IdentifierNode
 	TypeParameters_ *TypeParameterListNode // TypeParameterListNode. Optional
-	TypeNode       *TypeNode              // TypeNode
+	TypeNode        *TypeNode              // TypeNode
 }
 
 func (f *NodeFactory) NewTypeAliasDeclaration(modifiers *ModifierListNode, name *IdentifierNode, typeParameters *TypeParameterListNode, typeNode *TypeNode) *Node {
@@ -1651,8 +1652,10 @@ func (node *TypeAliasDeclaration) ForEachChild(v Visitor) bool {
 	return visit(v, node.Modifiers_) || visit(v, node.Name_) || visit(v, node.TypeParameters_) || visit(v, node.TypeNode)
 }
 
-func (node *TypeAliasDeclaration) Name() *DeclarationName                 { return node.Name_ }
-func (node *TypeAliasDeclaration) TypeParameters() *TypeParameterListNode { return node.TypeParameters_ }
+func (node *TypeAliasDeclaration) Name() *DeclarationName { return node.Name_ }
+func (node *TypeAliasDeclaration) TypeParameters() *TypeParameterListNode {
+	return node.TypeParameters_
+}
 
 func IsTypeAliasDeclaration(node *Node) bool {
 	return node.Kind == ast.KindTypeAliasDeclaration
@@ -1688,7 +1691,7 @@ type EnumDeclaration struct {
 	DeclarationBase
 	ExportableBase
 	ModifiersBase
-	Name_    *IdentifierNode   // IdentifierNode
+	Name_   *IdentifierNode   // IdentifierNode
 	Members []*EnumMemberNode // []EnumMemberNode
 }
 
@@ -1742,7 +1745,7 @@ type ModuleDeclaration struct {
 	ModifiersBase
 	LocalsContainerBase
 	Name_ *ModuleName // ModuleName
-	Body *ModuleBody // ModuleBody. Optional (may be nil in ambient module declaration)
+	Body  *ModuleBody // ModuleBody. Optional (may be nil in ambient module declaration)
 }
 
 func (f *NodeFactory) NewModuleDeclaration(modifiers *ModifierListNode, name *ModuleName, body *ModuleBody, flags ast.NodeFlags) *Node {
@@ -1774,9 +1777,9 @@ type ImportEqualsDeclaration struct {
 	DeclarationBase
 	ExportableBase
 	ModifiersBase
-	Modifiers_  *ModifierListNode // ModifierListNode
+	Modifiers_ *ModifierListNode // ModifierListNode
 	IsTypeOnly bool
-	Name_       *IdentifierNode // IdentifierNode
+	Name_      *IdentifierNode // IdentifierNode
 	// 'EntityName' for an internal module reference, 'ExternalModuleReference' for an external
 	// module reference.
 	ModuleReference *ModuleReference // ModuleReference
@@ -1838,7 +1841,7 @@ type ImportSpecifier struct {
 	ExportableBase
 	IsTypeOnly   bool
 	PropertyName *ModuleExportName // ModuleExportName. Optional
-	Name_         *IdentifierNode   // IdentifierNode
+	Name_        *IdentifierNode   // IdentifierNode
 }
 
 func (f *NodeFactory) NewImportSpecifier(isTypeOnly bool, propertyName *ModuleExportName, name *IdentifierNode) *Node {
@@ -1890,7 +1893,7 @@ type ImportClause struct {
 	ExportableBase
 	IsTypeOnly    bool
 	NamedBindings *NamedImportBindings // NamedImportBindings. Optional, named bindings
-	Name_          *IdentifierNode      // IdentifierNode. Optional, default binding
+	Name_         *IdentifierNode      // IdentifierNode. Optional, default binding
 }
 
 func (f *NodeFactory) NewImportClause(isTypeOnly bool, name *IdentifierNode, namedBindings *NamedImportBindings) *Node {
@@ -2094,7 +2097,7 @@ type ExportSpecifier struct {
 	ExportableBase
 	IsTypeOnly   bool
 	PropertyName *ModuleExportName // ModuleExportName. Optional, name preceding 'as' keyword
-	Name_         *ModuleExportName // ModuleExportName
+	Name_        *ModuleExportName // ModuleExportName
 }
 
 func (f *NodeFactory) NewExportSpecifier(isTypeOnly bool, propertyName *ModuleExportName, name *ModuleExportName) *Node {
@@ -2130,7 +2133,7 @@ type ClassElementBase struct{}
 type NamedMemberBase struct {
 	DeclarationBase
 	ModifiersBase
-	Name_         *PropertyName // PropertyName
+	Name_        *PropertyName // PropertyName
 	PostfixToken *TokenNode    // TokenNode. Optional
 }
 
@@ -2710,7 +2713,7 @@ type FunctionExpression struct {
 	ModifiersBase
 	FunctionLikeWithBodyBase
 	FlowNodeBase
-	Name_           *IdentifierNode // IdentifierNode. Optional
+	Name_          *IdentifierNode // IdentifierNode. Optional
 	ReturnFlowNode *FlowNode
 }
 
@@ -2810,7 +2813,7 @@ type PropertyAccessExpression struct {
 	FlowNodeBase
 	Expression       *Expression // Expression
 	QuestionDotToken *TokenNode  // TokenNode
-	Name_             *MemberName // MemberName
+	Name_            *MemberName // MemberName
 }
 
 func (f *NodeFactory) NewPropertyAccessExpression(expression *Expression, questionDotToken *TokenNode, name *MemberName, flags ast.NodeFlags) *Node {
@@ -2920,8 +2923,8 @@ func IsNewExpression(node *Node) bool {
 type MetaProperty struct {
 	ExpressionBase
 	FlowNodeBase
-	KeywordToken ast.Kind      // NewKeyword | ImportKeyword
-	Name_         *IdentifierNode // IdentifierNode
+	KeywordToken ast.Kind        // NewKeyword | ImportKeyword
+	Name_        *IdentifierNode // IdentifierNode
 }
 
 func (f *NodeFactory) NewMetaProperty(keywordToken ast.Kind, name *IdentifierNode) *Node {
@@ -3363,8 +3366,8 @@ func IsConditionalTypeNode(node *Node) bool {
 
 type TypeOperatorNode struct {
 	TypeNodeBase
-	Operator ast.Kind // ast.KindKeyOfKeyword | ast.KindUniqueKeyword | ast.KindReadonlyKeyword
-	TypeNode *TypeNode  // TypeNode
+	Operator ast.Kind  // ast.KindKeyOfKeyword | ast.KindUniqueKeyword | ast.KindReadonlyKeyword
+	TypeNode *TypeNode // TypeNode
 }
 
 func (f *NodeFactory) NewTypeOperatorNode(operator ast.Kind, typeNode *TypeNode) *Node {
@@ -3591,7 +3594,7 @@ func IsImportTypeNode(node *Node) bool {
 
 type ImportAttribute struct {
 	NodeBase
-	Name_  *ImportAttributeName // ImportAttributeName
+	Name_ *ImportAttributeName // ImportAttributeName
 	Value *Expression          // Expression
 }
 
@@ -3729,7 +3732,7 @@ type NamedTupleMember struct {
 	TypeNodeBase
 	DeclarationBase
 	DotDotDotToken *TokenNode      // TokenNode
-	Name_           *IdentifierNode // IdentifierNode
+	Name_          *IdentifierNode // IdentifierNode
 	QuestionToken  *TokenNode      // TokenNode
 	TypeNode       *TypeNode       // TypeNode
 }
@@ -3993,7 +3996,7 @@ func IsJsxAttributes(node *Node) bool {
 
 type JsxNamespacedName struct {
 	ExpressionBase
-	Name_      *IdentifierNode // IdentifierNode
+	Name_     *IdentifierNode // IdentifierNode
 	Namespace *IdentifierNode // IdentifierNode
 }
 
@@ -4112,7 +4115,7 @@ func (f *NodeFactory) NewJsxClosingFragment() *Node {
 type JsxAttribute struct {
 	NodeBase
 	DeclarationBase
-	Name_        *JsxAttributeName  // JsxAttributeName
+	Name_       *JsxAttributeName  // JsxAttributeName
 	Initializer *JsxAttributeValue // JsxAttributeValue. Optional, <X y /> is sugar for <X y={true} />
 }
 
@@ -4251,13 +4254,13 @@ type SourceFile struct {
 	DeclarationBase
 	LocalsContainerBase
 	Text                        string
-	FileName_                    string
-	Path_                        string
+	FileName_                   string
+	Path_                       string
 	Statements                  []*Statement // []Statement
-	Diagnostics_                 []*Diagnostic
-	BindDiagnostics_             []*Diagnostic
+	Diagnostics_                []*Diagnostic
+	BindDiagnostics_            []*Diagnostic
 	BindSuggestionDiagnostics   []*Diagnostic
-	LineMap                     []textpos.TextPos
+	LineMap                     []core.TextPos
 	LanguageVersion             core.ScriptTarget
 	LanguageVariant             core.LanguageVariant
 	ScriptKind                  core.ScriptKind

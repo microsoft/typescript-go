@@ -12,7 +12,6 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/compiler/diagnostics"
-	"github.com/microsoft/typescript-go/internal/compiler/textpos"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
@@ -68,7 +67,7 @@ func getMergeId(symbol *Symbol) MergeId {
 
 type Diagnostic struct {
 	file               *SourceFile
-	loc                textpos.TextRange
+	loc                core.TextRange
 	code               int32
 	category           diagnostics.Category
 	message            string
@@ -80,7 +79,7 @@ func (d *Diagnostic) File() *SourceFile                 { return d.file }
 func (d *Diagnostic) Pos() int                          { return d.loc.Pos() }
 func (d *Diagnostic) End() int                          { return d.loc.End() }
 func (d *Diagnostic) Len() int                          { return d.loc.Len() }
-func (d *Diagnostic) Loc() textpos.TextRange                    { return d.loc }
+func (d *Diagnostic) Loc() core.TextRange               { return d.loc }
 func (d *Diagnostic) Code() int32                       { return d.code }
 func (d *Diagnostic) Category() diagnostics.Category    { return d.category }
 func (d *Diagnostic) Message() string                   { return d.message }
@@ -89,7 +88,7 @@ func (d *Diagnostic) RelatedInformation() []*Diagnostic { return d.relatedInform
 
 func (d *Diagnostic) SetCategory(category diagnostics.Category) { d.category = category }
 
-func NewDiagnostic(file *SourceFile, loc textpos.TextRange, message *diagnostics.Message, args ...any) *Diagnostic {
+func NewDiagnostic(file *SourceFile, loc core.TextRange, message *diagnostics.Message, args ...any) *Diagnostic {
 	text := message.Message()
 	if len(args) != 0 {
 		text = formatStringFromArgs(text, args)
@@ -105,7 +104,7 @@ func NewDiagnostic(file *SourceFile, loc textpos.TextRange, message *diagnostics
 
 func NewDiagnosticForNode(node *Node, message *diagnostics.Message, args ...any) *Diagnostic {
 	var file *SourceFile
-	var loc textpos.TextRange
+	var loc core.TextRange
 	if node != nil {
 		file = getSourceFileOfNode(node)
 		loc = getErrorRangeForNode(file, node)
@@ -113,7 +112,7 @@ func NewDiagnosticForNode(node *Node, message *diagnostics.Message, args ...any)
 	return NewDiagnostic(file, loc, message, args...)
 }
 
-func NewDiagnosticFromMessageChain(file *SourceFile, loc textpos.TextRange, messageChain *MessageChain) *Diagnostic {
+func NewDiagnosticFromMessageChain(file *SourceFile, loc core.TextRange, messageChain *MessageChain) *Diagnostic {
 	return &Diagnostic{
 		file:         file,
 		loc:          loc,
@@ -126,7 +125,7 @@ func NewDiagnosticFromMessageChain(file *SourceFile, loc textpos.TextRange, mess
 
 func NewDiagnosticForNodeFromMessageChain(node *Node, messageChain *MessageChain) *Diagnostic {
 	var file *SourceFile
-	var loc textpos.TextRange
+	var loc core.TextRange
 	if node != nil {
 		file = getSourceFileOfNode(node)
 		loc = getErrorRangeForNode(file, node)
@@ -794,13 +793,13 @@ func getSourceFileOfNode(node *Node) *SourceFile {
 }
 
 /** @internal */
-func getErrorRangeForNode(sourceFile *SourceFile, node *Node) textpos.TextRange {
+func getErrorRangeForNode(sourceFile *SourceFile, node *Node) core.TextRange {
 	errorNode := node
 	switch node.Kind {
 	case ast.KindSourceFile:
 		pos := skipTrivia(sourceFile.Text, 0)
 		if pos == len(sourceFile.Text) {
-			return textpos.NewTextRange(0, 0)
+			return core.NewTextRange(0, 0)
 		}
 		return getRangeOfTokenAtPosition(sourceFile, pos)
 	// This list is a work in progress. Add missing node kinds to improve their error spans
@@ -819,7 +818,7 @@ func getErrorRangeForNode(sourceFile *SourceFile, node *Node) textpos.TextRange 
 		if len(statements) != 0 {
 			end = statements[0].Pos()
 		}
-		return textpos.NewTextRange(start, end)
+		return core.NewTextRange(start, end)
 	case ast.KindReturnStatement, ast.KindYieldExpression:
 		pos := skipTrivia(sourceFile.Text, node.Pos())
 		return getRangeOfTokenAtPosition(sourceFile, pos)
@@ -832,7 +831,7 @@ func getErrorRangeForNode(sourceFile *SourceFile, node *Node) textpos.TextRange 
 		for scanner.token != ast.KindConstructorKeyword && scanner.token != ast.KindStringLiteral && scanner.token != ast.KindEndOfFile {
 			scanner.Scan()
 		}
-		return textpos.NewTextRange(start, scanner.pos)
+		return core.NewTextRange(start, scanner.pos)
 		// !!!
 		// case ast.KindJSDocSatisfiesTag:
 		// 	pos := skipTrivia(sourceFile.text, node.tagName.pos)
@@ -847,10 +846,10 @@ func getErrorRangeForNode(sourceFile *SourceFile, node *Node) textpos.TextRange 
 	if !nodeIsMissing(errorNode) {
 		pos = skipTrivia(sourceFile.Text, pos)
 	}
-	return textpos.NewTextRange(pos, errorNode.End())
+	return core.NewTextRange(pos, errorNode.End())
 }
 
-func getErrorRangeForArrowFunction(sourceFile *SourceFile, node *Node) textpos.TextRange {
+func getErrorRangeForArrowFunction(sourceFile *SourceFile, node *Node) core.TextRange {
 	pos := skipTrivia(sourceFile.Text, node.Pos())
 	body := node.AsArrowFunction().Body
 	if body != nil && body.Kind == ast.KindBlock {
@@ -859,10 +858,10 @@ func getErrorRangeForArrowFunction(sourceFile *SourceFile, node *Node) textpos.T
 		if startLine < endLine {
 			// The arrow function spans multiple lines,
 			// make the error span be the first line, inclusive.
-			return textpos.NewTextRange(pos, getEndLinePosition(sourceFile, startLine))
+			return core.NewTextRange(pos, getEndLinePosition(sourceFile, startLine))
 		}
 	}
-	return textpos.NewTextRange(pos, node.End())
+	return core.NewTextRange(pos, node.End())
 }
 
 func getContainingClass(node *Node) *Node {

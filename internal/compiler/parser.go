@@ -6,7 +6,6 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/compiler/diagnostics"
-	"github.com/microsoft/typescript-go/internal/compiler/textpos"
 	"github.com/microsoft/typescript-go/internal/core"
 )
 
@@ -152,18 +151,18 @@ func (p *Parser) initializeState(fileName string, sourceText string, languageVer
 }
 
 func (p *Parser) scanError(message *diagnostics.Message, pos int, len int, args ...any) {
-	p.parseErrorAtRange(textpos.NewTextRange(pos, pos+len), message, args...)
+	p.parseErrorAtRange(core.NewTextRange(pos, pos+len), message, args...)
 }
 
 func (p *Parser) parseErrorAt(pos int, end int, message *diagnostics.Message, args ...any) *Diagnostic {
-	return p.parseErrorAtRange(textpos.NewTextRange(pos, end), message, args...)
+	return p.parseErrorAtRange(core.NewTextRange(pos, end), message, args...)
 }
 
 func (p *Parser) parseErrorAtCurrentToken(message *diagnostics.Message, args ...any) *Diagnostic {
 	return p.parseErrorAtRange(p.scanner.TokenRange(), message, args...)
 }
 
-func (p *Parser) parseErrorAtRange(loc textpos.TextRange, message *diagnostics.Message, args ...any) *Diagnostic {
+func (p *Parser) parseErrorAtRange(loc core.TextRange, message *diagnostics.Message, args ...any) *Diagnostic {
 	// Don't report another error if it would just be at the same location as the last error
 	if len(p.diagnostics) == 0 || p.diagnostics[len(p.diagnostics)-1].Loc() != loc {
 		result := NewDiagnostic(nil, loc, message, args...)
@@ -561,7 +560,7 @@ func (p *Parser) parseExpectedMatchingBrackets(openKind ast.Kind, closeKind ast.
 		return
 	}
 	if lastError != nil {
-		related := NewDiagnostic(nil, textpos.NewTextRange(openPosition, openPosition+1), diagnostics.The_parser_expected_to_find_a_1_to_match_the_0_token_here, TokenToString(openKind), TokenToString(closeKind))
+		related := NewDiagnostic(nil, core.NewTextRange(openPosition, openPosition+1), diagnostics.The_parser_expected_to_find_a_1_to_match_the_0_token_here, TokenToString(openKind), TokenToString(closeKind))
 		lastError.addRelatedInfo(related)
 	}
 }
@@ -2532,7 +2531,7 @@ func (p *Parser) parseImportType() *Node {
 			if len(p.diagnostics) != 0 {
 				lastDiagnostic := p.diagnostics[len(p.diagnostics)-1]
 				if lastDiagnostic.Code() == diagnostics.X_0_expected.Code() {
-					related := NewDiagnostic(nil, textpos.NewTextRange(openBracePosition, openBracePosition+1), diagnostics.The_parser_expected_to_find_a_1_to_match_the_0_token_here, "{", "}")
+					related := NewDiagnostic(nil, core.NewTextRange(openBracePosition, openBracePosition+1), diagnostics.The_parser_expected_to_find_a_1_to_match_the_0_token_here, "{", "}")
 					lastDiagnostic.addRelatedInfo(related)
 				}
 			}
@@ -2583,7 +2582,7 @@ func (p *Parser) parseImportAttributes(token ast.Kind, skipKeyword bool) *Node {
 			if len(p.diagnostics) != 0 {
 				lastDiagnostic := p.diagnostics[len(p.diagnostics)-1]
 				if lastDiagnostic.Code() == diagnostics.X_0_expected.Code() {
-					related := NewDiagnostic(nil, textpos.NewTextRange(openBracePosition, openBracePosition+1), diagnostics.The_parser_expected_to_find_a_1_to_match_the_0_token_here, "{", "}")
+					related := NewDiagnostic(nil, core.NewTextRange(openBracePosition, openBracePosition+1), diagnostics.The_parser_expected_to_find_a_1_to_match_the_0_token_here, "{", "}")
 					lastDiagnostic.addRelatedInfo(related)
 				}
 			}
@@ -4307,7 +4306,7 @@ func (p *Parser) parseJsxElementOrSelfClosingElementOrFragment(inExpressionConte
 		}
 		invalidElement := p.parseJsxElementOrSelfClosingElementOrFragment( /*inExpressionContext*/ true, topBadPos, nil, false)
 		operatorToken := p.factory.NewToken(ast.KindCommaToken)
-		operatorToken.Loc = textpos.NewTextRange(invalidElement.Pos(), invalidElement.Pos())
+		operatorToken.Loc = core.NewTextRange(invalidElement.Pos(), invalidElement.Pos())
 		p.parseErrorAt(skipTrivia(p.sourceText, topBadPos), invalidElement.End(), diagnostics.JSX_expressions_must_have_one_parent_element)
 		result = p.factory.NewBinaryExpression(result, operatorToken, invalidElement)
 		p.finishNode(result, pos)
@@ -5407,7 +5406,7 @@ func (p *Parser) internIdentifier(text string) {
 }
 
 func (p *Parser) finishNode(node *Node, pos int) {
-	node.Loc = textpos.NewTextRange(pos, p.nodePos())
+	node.Loc = core.NewTextRange(pos, p.nodePos())
 	node.Flags |= p.contextFlags
 }
 
@@ -5864,8 +5863,8 @@ func (p *Parser) inAwaitContext() bool {
 	return p.contextFlags&ast.NodeFlagsAwaitContext != 0
 }
 
-func (p *Parser) skipRangeTrivia(textRange textpos.TextRange) textpos.TextRange {
-	return textpos.NewTextRange(skipTrivia(p.sourceText, textRange.Pos()), textRange.End())
+func (p *Parser) skipRangeTrivia(textRange core.TextRange) core.TextRange {
+	return core.NewTextRange(skipTrivia(p.sourceText, textRange.Pos()), textRange.End())
 }
 
 func isModifierKind(token ast.Kind) bool {
