@@ -445,7 +445,7 @@ func (b *Binder) createBranchLabel() *ast.FlowLabel {
 }
 
 func (b *Binder) createReduceLabel(target *ast.FlowLabel, antecedents *ast.FlowList, antecedent *ast.FlowNode) *ast.FlowNode {
-	return b.newFlowNodeEx(ast.FlowFlagsReduceLabel, &ast.FlowReduceLabelData{target, antecedents}, antecedent)
+	return b.newFlowNodeEx(ast.FlowFlagsReduceLabel, &ast.FlowReduceLabelData{Target: target, Antecedents: antecedents}, antecedent)
 }
 
 func (b *Binder) createFlowCondition(flags ast.FlowFlags, antecedent *ast.FlowNode, expression *ast.Node) *ast.FlowNode {
@@ -480,7 +480,7 @@ func (b *Binder) createFlowMutation(flags ast.FlowFlags, antecedent *ast.FlowNod
 
 func (b *Binder) createFlowSwitchClause(antecedent *ast.FlowNode, switchStatement *ast.SwitchStatement, clauseStart int32, clauseEnd int32) *ast.FlowNode {
 	setFlowNodeReferenced(antecedent)
-	return b.newFlowNodeEx(ast.FlowFlagsSwitchClause, &ast.FlowSwitchClauseData{switchStatement, clauseStart, clauseEnd}, antecedent)
+	return b.newFlowNodeEx(ast.FlowFlagsSwitchClause, &ast.FlowSwitchClauseData{SwitchStatement: switchStatement, ClauseStart: clauseStart, ClauseEnd: clauseEnd}, antecedent)
 }
 
 func (b *Binder) createFlowCall(antecedent *ast.FlowNode, node *ast.CallExpression) *ast.FlowNode {
@@ -756,7 +756,7 @@ func (b *Binder) bindModuleDeclaration(node *ast.Node) {
 				}
 			}
 			symbol := b.declareSymbolAndAddToSymbolTable(node, ast.SymbolFlagsValueModule, ast.SymbolFlagsValueModuleExcludes)
-			b.file.PatternAmbientModules = append(b.file.PatternAmbientModules, ast.PatternAmbientModule{pattern, symbol})
+			b.file.PatternAmbientModules = append(b.file.PatternAmbientModules, ast.PatternAmbientModule{Pattern: pattern, Symbol: symbol})
 		}
 	} else {
 		state := b.declareModuleSymbol(node)
