@@ -55,9 +55,9 @@ type Parser struct {
 	token                 ast.Kind
 	parsingContexts       ParsingContexts
 	diagnostics           []*Diagnostic
-	identifiers           set[string]
+	identifiers           Set[string]
 	sourceFlags           ast.NodeFlags
-	notParenthesizedArrow set[int]
+	notParenthesizedArrow Set[int]
 	identifierPool        core.Pool[Identifier]
 }
 
@@ -4007,12 +4007,12 @@ func (p *Parser) isStartOfExpressionStatement() bool {
 
 func (p *Parser) parsePossibleParenthesizedArrowFunctionExpression(allowReturnTypeInArrowFunction bool) *Node {
 	tokenPos := p.scanner.TokenStart()
-	if p.notParenthesizedArrow.has(tokenPos) {
+	if p.notParenthesizedArrow.Has(tokenPos) {
 		return nil
 	}
 	result := p.parseParenthesizedArrowFunctionExpression(false /*allowAmbiguity*/, allowReturnTypeInArrowFunction)
 	if result == nil {
-		p.notParenthesizedArrow.add(tokenPos)
+		p.notParenthesizedArrow.Add(tokenPos)
 	}
 	return result
 }
@@ -5402,7 +5402,7 @@ func (p *Parser) createIdentifierWithDiagnostic(isIdentifier bool, diagnosticMes
 }
 
 func (p *Parser) internIdentifier(text string) {
-	p.identifiers.add(text)
+	p.identifiers.Add(text)
 }
 
 func (p *Parser) finishNode(node *Node, pos int) {

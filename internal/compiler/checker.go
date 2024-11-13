@@ -191,7 +191,7 @@ type Checker struct {
 	uniqueESSymbolTypes                map[*Symbol]*Type
 	cachedTypes                        map[CachedTypeKey]*Type
 	cachedSignatures                   map[CachedSignatureKey]*Signature
-	markerTypes                        set[*Type]
+	markerTypes                        Set[*Type]
 	identifierSymbols                  map[*Node]*Symbol
 	undefinedSymbol                    *Symbol
 	argumentsSymbol                    *Symbol
@@ -2205,7 +2205,7 @@ func (c *Checker) getSpreadType(left *Type, right *Type, symbol *Symbol, objectF
 		return c.getIntersectionType([]*Type{left, right})
 	}
 	members := make(SymbolTable)
-	var skippedPrivateMembers set[string]
+	var skippedPrivateMembers Set[string]
 	var indexInfos []*IndexInfo
 	if left == c.emptyObjectType {
 		indexInfos = c.getIndexInfosOfType(right)
@@ -2214,14 +2214,14 @@ func (c *Checker) getSpreadType(left *Type, right *Type, symbol *Symbol, objectF
 	}
 	for _, rightProp := range c.getPropertiesOfType(right) {
 		if getDeclarationModifierFlagsFromSymbol(rightProp)&(ast.ModifierFlagsPrivate|ast.ModifierFlagsProtected) != 0 {
-			skippedPrivateMembers.add(rightProp.Name)
+			skippedPrivateMembers.Add(rightProp.Name)
 		} else if c.isSpreadableProperty(rightProp) {
 			members[rightProp.Name] = c.getSpreadSymbol(rightProp, readonly)
 		}
 	}
 
 	for _, leftProp := range c.getPropertiesOfType(left) {
-		if skippedPrivateMembers.has(leftProp.Name) || !c.isSpreadableProperty(leftProp) {
+		if skippedPrivateMembers.Has(leftProp.Name) || !c.isSpreadableProperty(leftProp) {
 			continue
 		}
 		if members[leftProp.Name] != nil {
@@ -4041,7 +4041,7 @@ type ExportCollisionTable = map[string]*ExportCollision
 
 func (c *Checker) getExportsOfModuleWorker(moduleSymbol *Symbol) (exports SymbolTable, typeOnlyExportStarMap map[string]*Node) {
 	var visitedSymbols []*Symbol
-	var nonTypeOnlyNames set[string]
+	var nonTypeOnlyNames Set[string]
 	// The ES6 spec permits export * declarations in a module to circularly reference the module itself. For example,
 	// module 'a' can 'export * from "b"' and 'b' can 'export * from "a"' without error.
 	var visit func(*Symbol, *Node, bool) SymbolTable
@@ -4051,7 +4051,7 @@ func (c *Checker) getExportsOfModuleWorker(moduleSymbol *Symbol) (exports Symbol
 			// because we might have visited it via an 'export type *', and visiting
 			// again with 'export *' will override the type-onlyness of its exports.
 			for name := range symbol.Exports {
-				nonTypeOnlyNames.add(name)
+				nonTypeOnlyNames.Add(name)
 			}
 		}
 		if symbol == nil || symbol.Exports == nil || slices.Contains(visitedSymbols, symbol) {
@@ -4095,7 +4095,7 @@ func (c *Checker) getExportsOfModuleWorker(moduleSymbol *Symbol) (exports Symbol
 	if exports == nil {
 		exports = make(SymbolTable)
 	}
-	for name := range nonTypeOnlyNames.keys() {
+	for name := range nonTypeOnlyNames.Keys() {
 		delete(typeOnlyExportStarMap, name)
 	}
 	return
@@ -4245,7 +4245,7 @@ func (c *Checker) getSymbolFlagsEx(symbol *Symbol, excludeTypeOnlyMeanings bool,
 	if !excludeLocalMeanings {
 		flags = symbol.Flags
 	}
-	var seenSymbols set[*Symbol]
+	var seenSymbols Set[*Symbol]
 	for symbol.Flags&ast.SymbolFlagsAlias != 0 {
 		target := c.getExportSymbolOfValueSymbolIfExported(c.resolveAlias(symbol))
 		if !typeOnlyDeclarationIsExportStar && target == typeOnlyResolution || typeOnlyExportStarTargets[target.Name] == target {
@@ -4256,14 +4256,14 @@ func (c *Checker) getSymbolFlagsEx(symbol *Symbol, excludeTypeOnlyMeanings bool,
 		}
 		// Optimizations - try to avoid creating or adding to
 		// `seenSymbols` if possible
-		if target == symbol || seenSymbols.has(target) {
+		if target == symbol || seenSymbols.Has(target) {
 			break
 		}
 		if target.Flags&ast.SymbolFlagsAlias != 0 {
-			if seenSymbols.len() == 0 {
-				seenSymbols.add(symbol)
+			if seenSymbols.Len() == 0 {
+				seenSymbols.Add(symbol)
 			}
-			seenSymbols.add(target)
+			seenSymbols.Add(target)
 		}
 		flags |= target.Flags
 		symbol = target
@@ -5466,12 +5466,12 @@ func (c *Checker) getPropertiesOfObjectType(t *Type) []*Symbol {
 func (c *Checker) getPropertiesOfUnionOrIntersectionType(t *Type) []*Symbol {
 	d := t.AsUnionOrIntersectionType()
 	if d.resolvedProperties == nil {
-		var checked set[string]
+		var checked Set[string]
 		props := []*Symbol{}
 		for _, current := range d.types {
 			for _, prop := range c.getPropertiesOfType(current) {
-				if !checked.has(prop.Name) {
-					checked.add(prop.Name)
+				if !checked.Has(prop.Name) {
+					checked.Add(prop.Name)
 					combinedProp := c.getPropertyOfUnionOrIntersectionType(t, prop.Name, t.flags&TypeFlagsIntersection != 0 /*skipObjectFunctionPropertyAugment*/)
 					if combinedProp != nil {
 						props = append(props, combinedProp)
@@ -6943,7 +6943,7 @@ func (c *Checker) getUnionOrIntersectionProperty(t *Type, name string, skipObjec
 
 func (c *Checker) createUnionOrIntersectionProperty(containingType *Type, name string, skipObjectFunctionPropertyAugment bool) *Symbol {
 	var singleProp *Symbol
-	var propSet set[*Symbol]
+	var propSet Set[*Symbol]
 	var indexTypes []*Type
 	isUnion := containingType.flags&TypeFlagsUnion != 0
 	// Flags we want to propagate to the result if they exist in all source symbols
@@ -6982,10 +6982,10 @@ func (c *Checker) createUnionOrIntersectionProperty(containingType *Type, name s
 						// back and not `Array<string>.length` when we're looking at a `.length` access on a `string[] | number[]`
 						mergedInstantiations = singleProp.Parent != nil && len(c.getLocalTypeParametersOfClassOrInterfaceOrTypeAlias(singleProp.Parent)) != 0
 					} else {
-						if propSet.len() == 0 {
-							propSet.add(singleProp)
+						if propSet.Len() == 0 {
+							propSet.Add(singleProp)
 						}
-						propSet.add(prop)
+						propSet.Add(prop)
 					}
 				}
 				if isUnion && c.isReadonlySymbol(prop) {
@@ -7034,14 +7034,14 @@ func (c *Checker) createUnionOrIntersectionProperty(containingType *Type, name s
 		}
 	}
 	if singleProp == nil || isUnion &&
-		(propSet.len() == 0 || checkFlags&ast.CheckFlagsPartial != 0) &&
+		(propSet.Len() == 0 || checkFlags&ast.CheckFlagsPartial != 0) &&
 		checkFlags&(ast.CheckFlagsContainsPrivate|ast.CheckFlagsContainsProtected) != 0 &&
-		!(propSet.len() != 0 && c.hasCommonDeclaration(propSet)) {
+		!(propSet.Len() != 0 && c.hasCommonDeclaration(propSet)) {
 		// No property was found, or, in a union, a property has a private or protected declaration in one
 		// constituent, but is missing or has a different declaration in another constituent.
 		return nil
 	}
-	if propSet.len() == 0 && checkFlags&ast.CheckFlagsReadPartial == 0 && len(indexTypes) == 0 {
+	if propSet.Len() == 0 && checkFlags&ast.CheckFlagsReadPartial == 0 && len(indexTypes) == 0 {
 		if !mergedInstantiations {
 			return singleProp
 		}
@@ -7065,8 +7065,8 @@ func (c *Checker) createUnionOrIntersectionProperty(containingType *Type, name s
 		links.writeType = c.getWriteTypeOfSymbol(singleProp)
 		return clone
 	}
-	if propSet.len() == 0 {
-		propSet.add(singleProp)
+	if propSet.Len() == 0 {
+		propSet.Add(singleProp)
 	}
 	var declarations []*Node
 	var firstType *Type
@@ -7075,7 +7075,7 @@ func (c *Checker) createUnionOrIntersectionProperty(containingType *Type, name s
 	var writeTypes []*Type
 	var firstValueDeclaration *Node
 	var hasNonUniformValueDeclaration bool
-	for prop := range propSet.keys() {
+	for prop := range propSet.Keys() {
 		if firstValueDeclaration == nil {
 			firstValueDeclaration = prop.ValueDeclaration
 		} else if prop.ValueDeclaration != nil && prop.ValueDeclaration != firstValueDeclaration {
@@ -7157,28 +7157,28 @@ func isPrototypeProperty(symbol *Symbol) bool {
 	return symbol.Flags&ast.SymbolFlagsMethod != 0 || symbol.CheckFlags&ast.CheckFlagsSyntheticMethod != 0
 }
 
-func (c *Checker) hasCommonDeclaration(symbols set[*Symbol]) bool {
-	var commonDeclarations set[*Node]
-	for symbol := range symbols.keys() {
+func (c *Checker) hasCommonDeclaration(symbols Set[*Symbol]) bool {
+	var commonDeclarations Set[*Node]
+	for symbol := range symbols.Keys() {
 		if len(symbol.Declarations) == 0 {
 			return false
 		}
-		if commonDeclarations.len() == 0 {
+		if commonDeclarations.Len() == 0 {
 			for _, d := range symbol.Declarations {
-				commonDeclarations.add(d)
+				commonDeclarations.Add(d)
 			}
 			continue
 		}
-		for d := range commonDeclarations.keys() {
+		for d := range commonDeclarations.Keys() {
 			if !slices.Contains(symbol.Declarations, d) {
-				commonDeclarations.delete(d)
+				commonDeclarations.Delete(d)
 			}
 		}
-		if commonDeclarations.len() == 0 {
+		if commonDeclarations.Len() == 0 {
 			return false
 		}
 	}
-	return commonDeclarations.len() != 0
+	return commonDeclarations.Len() != 0
 }
 
 func (c *Checker) createSymbolWithType(source *Symbol, t *Type) *Symbol {

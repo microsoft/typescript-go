@@ -668,14 +668,14 @@ func (c *Checker) getUnmatchedProperty(source *Type, target *Type, requireOption
 	return core.FirstOrNilSeq(c.getUnmatchedProperties(source, target, requireOptionalProperties, matchDiscriminantProperties))
 }
 
-func excludeProperties(properties []*Symbol, excludedProperties set[string]) []*Symbol {
-	if excludedProperties.len() == 0 || len(properties) == 0 {
+func excludeProperties(properties []*Symbol, excludedProperties Set[string]) []*Symbol {
+	if excludedProperties.Len() == 0 || len(properties) == 0 {
 		return properties
 	}
 	var reduced []*Symbol
 	var excluded bool
 	for i, prop := range properties {
-		if !excludedProperties.has(prop.Name) {
+		if !excludedProperties.Has(prop.Name) {
 			if excluded {
 				reduced = append(reduced, prop)
 			}
@@ -1072,12 +1072,12 @@ func (c *Checker) createMarkerType(symbol *Symbol, source *Type, target *Type) *
 	} else {
 		result = c.createTypeReference(t, c.instantiateTypes(t.AsInterfaceType().TypeParameters(), mapper))
 	}
-	c.markerTypes.add(result)
+	c.markerTypes.Add(result)
 	return result
 }
 
 func (c *Checker) isMarkerType(t *Type) bool {
-	return c.markerTypes.has(t)
+	return c.markerTypes.Has(t)
 }
 
 func (c *Checker) getTypeParameterModifiers(tp *Type) ast.ModifierFlags {
@@ -1725,7 +1725,7 @@ type Relater struct {
 	errorChain     *ErrorChain
 	relatedInfo    []*Diagnostic
 	maybeKeys      []string
-	maybeKeysSet   set[string]
+	maybeKeysSet   Set[string]
 	sourceStack    []*Type
 	targetStack    []*Type
 	maybeCount     int
@@ -2250,7 +2250,7 @@ func (r *Relater) recursiveTypeRelatedTo(source *Type, target *Type, reportError
 		return TernaryFalse
 	}
 	// If source and target are already being compared, consider them related with assumptions
-	if r.maybeKeysSet.has(id) {
+	if r.maybeKeysSet.Has(id) {
 		return TernaryMaybe
 	}
 	// A key that ends with "*" is an indication that we have type references that reference constrained
@@ -2258,7 +2258,7 @@ func (r *Relater) recursiveTypeRelatedTo(source *Type, target *Type, reportError
 	// were unconstrained.
 	if strings.HasSuffix(id, "*") {
 		broadestEquivalentId := getRelationKey(source, target, intersectionState, r.relation == r.c.identityRelation, true /*ignoreConstraints*/)
-		if r.maybeKeysSet.has(broadestEquivalentId) {
+		if r.maybeKeysSet.Has(broadestEquivalentId) {
 			return TernaryMaybe
 		}
 	}
@@ -2268,7 +2268,7 @@ func (r *Relater) recursiveTypeRelatedTo(source *Type, target *Type, reportError
 	}
 	maybeStart := len(r.maybeKeys)
 	r.maybeKeys = append(r.maybeKeys, id)
-	r.maybeKeysSet.add(id)
+	r.maybeKeysSet.Add(id)
 	saveExpandingFlags := r.expandingFlags
 	if recursionFlags&RecursionFlagsSource != 0 {
 		r.sourceStack = append(r.sourceStack, source)
@@ -2336,7 +2336,7 @@ func (r *Relater) recursiveTypeRelatedTo(source *Type, target *Type, reportError
 
 func (r *Relater) resetMaybeStack(maybeStart int, propagatingVarianceFlags RelationComparisonResult, markAllAsSucceeded bool) {
 	for i := maybeStart; i < len(r.maybeKeys); i++ {
-		r.maybeKeysSet.delete(r.maybeKeys[i])
+		r.maybeKeysSet.Delete(r.maybeKeys[i])
 		if markAllAsSucceeded {
 			r.relation.set(r.maybeKeys[i], RelationComparisonResultSucceeded|propagatingVarianceFlags)
 			r.relationCount--
@@ -2644,7 +2644,7 @@ func (r *Relater) structuredTypeRelatedToWorker(source *Type, target *Type, repo
 		if source.flags&(TypeFlagsObject|TypeFlagsIntersection) != 0 && target.flags&TypeFlagsObject != 0 {
 			// Report structural errors only if we haven't reported any errors yet
 			reportStructuralErrors := reportErrors && r.errorChain == saveErrorState.errorChain && !sourceIsPrimitive
-			result = r.propertiesRelatedTo(source, target, reportStructuralErrors, set[string]{} /*excludedProperties*/, false /*optionalsOnly*/, intersectionState)
+			result = r.propertiesRelatedTo(source, target, reportStructuralErrors, Set[string]{} /*excludedProperties*/, false /*optionalsOnly*/, intersectionState)
 			if result != TernaryFalse {
 				result &= r.signaturesRelatedTo(source, target, SignatureKindCall, reportStructuralErrors, intersectionState)
 				if result != TernaryFalse {
@@ -2792,11 +2792,11 @@ func (r *Relater) typeRelatedToDiscriminatedType(source *Type, target *Type) Ter
 	}
 	// Compute the set of types for each discriminant property.
 	sourceDiscriminantTypes := make([][]*Type, len(sourcePropertiesFiltered))
-	var excludedProperties set[string]
+	var excludedProperties Set[string]
 	for i, sourceProperty := range sourcePropertiesFiltered {
 		sourcePropertyType := r.c.getNonMissingTypeOfSymbol(sourceProperty)
 		sourceDiscriminantTypes[i] = sourcePropertyType.Distributed()
-		excludedProperties.add(sourceProperty.Name)
+		excludedProperties.Add(sourceProperty.Name)
 	}
 	// Build the cartesian product
 	discriminantCombinations := make([][]*Type, numCombinations)
@@ -2868,7 +2868,7 @@ func (r *Relater) typeRelatedToDiscriminatedType(source *Type, target *Type) Ter
 	return result
 }
 
-func (r *Relater) propertiesRelatedTo(source *Type, target *Type, reportErrors bool, excludedProperties set[string], optionalsOnly bool, intersectionState IntersectionState) Ternary {
+func (r *Relater) propertiesRelatedTo(source *Type, target *Type, reportErrors bool, excludedProperties Set[string], optionalsOnly bool, intersectionState IntersectionState) Ternary {
 	if r.relation == r.c.identityRelation {
 		return r.propertiesIdenticalTo(source, target, excludedProperties)
 	}
@@ -2920,7 +2920,7 @@ func (r *Relater) propertiesRelatedTo(source *Type, target *Type, reportErrors b
 			targetTypeArguments := r.c.getTypeArguments(target)
 			targetStartCount := getStartElementCount(target.TargetTupleType(), ElementFlagsNonRest)
 			targetEndCount := getEndElementCount(target.TargetTupleType(), ElementFlagsNonRest)
-			canExcludeDiscriminants := excludedProperties.len() != 0
+			canExcludeDiscriminants := excludedProperties.Len() != 0
 			for sourcePosition := 0; sourcePosition < sourceArity; sourcePosition++ {
 				var sourceFlags ElementFlags
 				if isTupleType(source) {
@@ -2959,7 +2959,7 @@ func (r *Relater) propertiesRelatedTo(source *Type, target *Type, reportErrors b
 					if sourceFlags&ElementFlagsVariable != 0 || targetFlags&ElementFlagsVariable != 0 {
 						canExcludeDiscriminants = false
 					}
-					if canExcludeDiscriminants && excludedProperties.has(strconv.Itoa(sourcePosition)) {
+					if canExcludeDiscriminants && excludedProperties.Has(strconv.Itoa(sourcePosition)) {
 						continue
 					}
 				}
@@ -3180,7 +3180,7 @@ func (r *Relater) tryElaborateErrorsForPrimitivesAndObjects(source *Type, target
 	}
 }
 
-func (r *Relater) propertiesIdenticalTo(source *Type, target *Type, excludedProperties set[string]) Ternary {
+func (r *Relater) propertiesIdenticalTo(source *Type, target *Type, excludedProperties Set[string]) Ternary {
 	if source.flags&TypeFlagsObject == 0 || target.flags&TypeFlagsObject == 0 {
 		return TernaryFalse
 	}

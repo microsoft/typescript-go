@@ -80,7 +80,7 @@ type Printer struct {
 	c       *Checker
 	flags   TypeFormatFlags
 	sb      strings.Builder
-	visited set[*Type]
+	visited Set[*Type]
 	depth   int
 }
 
@@ -137,8 +137,8 @@ func (p *Printer) printTypeNoAlias(t *Type) {
 }
 
 func (p *Printer) printRecursive(t *Type, f func(*Printer, *Type)) {
-	if !p.visited.has(t) && p.depth < 10 {
-		p.visited.add(t)
+	if !p.visited.Has(t) && p.depth < 10 {
+		p.visited.Add(t)
 		p.depth++
 		f(p, t)
 		p.depth--

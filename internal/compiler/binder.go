@@ -61,7 +61,7 @@ type Binder struct {
 	inStrictMode           bool
 	inAssignmentPattern    bool
 	symbolCount            int
-	classifiableNames      set[string]
+	classifiableNames      Set[string]
 	symbolPool             core.Pool[Symbol]
 	flowNodePool           core.Pool[FlowNode]
 	flowListPool           core.Pool[FlowList]
@@ -164,7 +164,7 @@ func (b *Binder) declareSymbolEx(symbolTable SymbolTable, parent *Symbol, node *
 		// just add this node into the declarations list of the symbol.
 		symbol = symbolTable[name]
 		if includes&ast.SymbolFlagsClassifiable != 0 {
-			b.classifiableNames.add(name)
+			b.classifiableNames.Add(name)
 		}
 		if symbol == nil {
 			symbol = b.newSymbol(ast.SymbolFlagsNone, name)
@@ -1019,7 +1019,7 @@ func (b *Binder) bindClassLikeDeclaration(node *Node) {
 		nameText := InternalSymbolNameClass
 		if name != nil {
 			nameText = name.AsIdentifier().Text
-			b.classifiableNames.add(nameText)
+			b.classifiableNames.Add(nameText)
 		}
 		b.bindAnonymousDeclaration(node, ast.SymbolFlagsClass, nameText)
 	}
