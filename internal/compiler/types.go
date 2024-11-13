@@ -3,7 +3,6 @@ package compiler
 import (
 	"slices"
 
-	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
 )
 
@@ -75,34 +74,7 @@ const (
 
 // Ids
 
-type NodeId uint32
-type SymbolId uint32
-type MergeId uint32
 type TypeId uint32
-
-// Symbol
-
-type Symbol struct {
-	Flags                        ast.SymbolFlags
-	CheckFlags                   ast.CheckFlags // Non-zero only in transient symbols created by Checker
-	ConstEnumOnlyModule          bool       // True if module contains only const enums or other modules with only const enums
-	IsReplaceableByMethod        bool
-	Name                         string
-	Declarations                 []*Node
-	ValueDeclaration             *Node
-	Members                      SymbolTable
-	Exports                      SymbolTable
-	Id                           SymbolId
-	MergeId                      MergeId // Assigned once symbol is merged somewhere
-	Parent                       *Symbol
-	ExportSymbol                 *Symbol
-	AssignmentDeclarationMembers map[NodeId]*Node // Set of detected assignment declarations
-	GlobalExports                SymbolTable      // Conditional global UMD exports
-}
-
-// SymbolTable
-
-type SymbolTable map[string]*Symbol
 
 // Links for value symbols
 
@@ -182,62 +154,6 @@ type SpreadLinks struct {
 
 type VarianceLinks struct {
 	variances []VarianceFlags
-}
-
-// FlowFlags
-
-type FlowFlags uint32
-
-const (
-	FlowFlagsUnreachable    FlowFlags = 1 << 0  // Unreachable code
-	FlowFlagsStart          FlowFlags = 1 << 1  // Start of flow graph
-	FlowFlagsBranchLabel    FlowFlags = 1 << 2  // Non-looping junction
-	FlowFlagsLoopLabel      FlowFlags = 1 << 3  // Looping junction
-	FlowFlagsAssignment     FlowFlags = 1 << 4  // Assignment
-	FlowFlagsTrueCondition  FlowFlags = 1 << 5  // Condition known to be true
-	FlowFlagsFalseCondition FlowFlags = 1 << 6  // Condition known to be false
-	FlowFlagsSwitchClause   FlowFlags = 1 << 7  // Switch statement clause
-	FlowFlagsArrayMutation  FlowFlags = 1 << 8  // Potential array mutation
-	FlowFlagsCall           FlowFlags = 1 << 9  // Potential assertion call
-	FlowFlagsReduceLabel    FlowFlags = 1 << 10 // Temporarily reduce antecedents of label
-	FlowFlagsReferenced     FlowFlags = 1 << 11 // Referenced as antecedent once
-	FlowFlagsShared         FlowFlags = 1 << 12 // Referenced as antecedent more than once
-	FlowFlagsLabel                    = FlowFlagsBranchLabel | FlowFlagsLoopLabel
-	FlowFlagsCondition                = FlowFlagsTrueCondition | FlowFlagsFalseCondition
-)
-
-// FlowNode
-
-type FlowNode struct {
-	Flags       FlowFlags
-	Node        any
-	Antecedent  *FlowNode // Antecedent for all but FlowLabel
-	Antecedents *FlowList // Linked list of antecedents for FlowLabel
-}
-
-type FlowList struct {
-	Node *FlowNode
-	Next *FlowList
-}
-
-type FlowLabel = FlowNode
-
-var UnreachableFlow = &FlowNode{Flags: FlowFlagsUnreachable}
-var ReportedUnreachableFlow = &FlowNode{Flags: FlowFlagsUnreachable}
-
-// FlowSwitchClauseData
-
-type FlowSwitchClauseData struct {
-	SwitchStatement *SwitchStatement
-	ClauseStart     int32 // Start index of case/default clause range
-	ClauseEnd       int32 // End index of case/default clause range
-}
-
-// FlowReduceLabelData
-
-type FlowReduceLabelData struct {
-	Target      *FlowLabel // Target label
-	Antecedents *FlowList  // Temporary antecedent list
 }
 
 type VarianceFlags uint32

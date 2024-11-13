@@ -2,6 +2,7 @@ package compiler
 
 import (
 	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/compiler/diagnostics"
 	"github.com/microsoft/typescript-go/internal/core"
 )
 
@@ -4310,4 +4311,160 @@ func (node *SourceFile) ForEachChild(v Visitor) bool {
 
 func IsSourceFile(node *Node) bool {
 	return node.Kind == ast.KindSourceFile
+}
+
+//// Holding area for AST-attached types that need to move with the AST
+
+type NodeId uint32
+type SymbolId uint32
+type MergeId uint32
+
+// Symbol
+
+type Symbol struct {
+	Flags                        ast.SymbolFlags
+	CheckFlags                   ast.CheckFlags // Non-zero only in transient symbols created by Checker
+	ConstEnumOnlyModule          bool           // True if module contains only const enums or other modules with only const enums
+	IsReplaceableByMethod        bool
+	Name                         string
+	Declarations                 []*Node
+	ValueDeclaration             *Node
+	Members                      SymbolTable
+	Exports                      SymbolTable
+	Id                           SymbolId
+	MergeId                      MergeId // Assigned once symbol is merged somewhere
+	Parent                       *Symbol
+	ExportSymbol                 *Symbol
+	AssignmentDeclarationMembers map[NodeId]*Node // Set of detected assignment declarations
+	GlobalExports                SymbolTable      // Conditional global UMD exports
+}
+
+// SymbolTable
+
+type SymbolTable map[string]*Symbol
+
+// FlowFlags
+
+type FlowFlags uint32
+
+const (
+	FlowFlagsUnreachable    FlowFlags = 1 << 0  // Unreachable code
+	FlowFlagsStart          FlowFlags = 1 << 1  // Start of flow graph
+	FlowFlagsBranchLabel    FlowFlags = 1 << 2  // Non-looping junction
+	FlowFlagsLoopLabel      FlowFlags = 1 << 3  // Looping junction
+	FlowFlagsAssignment     FlowFlags = 1 << 4  // Assignment
+	FlowFlagsTrueCondition  FlowFlags = 1 << 5  // Condition known to be true
+	FlowFlagsFalseCondition FlowFlags = 1 << 6  // Condition known to be false
+	FlowFlagsSwitchClause   FlowFlags = 1 << 7  // Switch statement clause
+	FlowFlagsArrayMutation  FlowFlags = 1 << 8  // Potential array mutation
+	FlowFlagsCall           FlowFlags = 1 << 9  // Potential assertion call
+	FlowFlagsReduceLabel    FlowFlags = 1 << 10 // Temporarily reduce antecedents of label
+	FlowFlagsReferenced     FlowFlags = 1 << 11 // Referenced as antecedent once
+	FlowFlagsShared         FlowFlags = 1 << 12 // Referenced as antecedent more than once
+	FlowFlagsLabel                    = FlowFlagsBranchLabel | FlowFlagsLoopLabel
+	FlowFlagsCondition                = FlowFlagsTrueCondition | FlowFlagsFalseCondition
+)
+
+// FlowNode
+
+type FlowNode struct {
+	Flags       FlowFlags
+	Node        any
+	Antecedent  *FlowNode // Antecedent for all but FlowLabel
+	Antecedents *FlowList // Linked list of antecedents for FlowLabel
+}
+
+type FlowList struct {
+	Node *FlowNode
+	Next *FlowList
+}
+
+type FlowLabel = FlowNode
+
+var UnreachableFlow = &FlowNode{Flags: FlowFlagsUnreachable}
+var ReportedUnreachableFlow = &FlowNode{Flags: FlowFlagsUnreachable}
+
+// FlowSwitchClauseData
+
+type FlowSwitchClauseData struct {
+	SwitchStatement *SwitchStatement
+	ClauseStart     int32 // Start index of case/default clause range
+	ClauseEnd       int32 // End index of case/default clause range
+}
+
+// FlowReduceLabelData
+
+type FlowReduceLabelData struct {
+	Target      *FlowLabel // Target label
+	Antecedents *FlowList  // Temporary antecedent list
+}
+
+// Diagnostic
+
+type Diagnostic struct {
+	file               *SourceFile
+	loc                core.TextRange
+	code               int32
+	category           diagnostics.Category
+	message            string
+	messageChain       []*MessageChain
+	relatedInformation []*Diagnostic
+}
+
+func (d *Diagnostic) File() *SourceFile                 { return d.file }
+func (d *Diagnostic) Pos() int                          { return d.loc.Pos() }
+func (d *Diagnostic) End() int                          { return d.loc.End() }
+func (d *Diagnostic) Len() int                          { return d.loc.Len() }
+func (d *Diagnostic) Loc() core.TextRange               { return d.loc }
+func (d *Diagnostic) Code() int32                       { return d.code }
+func (d *Diagnostic) Category() diagnostics.Category    { return d.category }
+func (d *Diagnostic) Message() string                   { return d.message }
+func (d *Diagnostic) MessageChain() []*MessageChain     { return d.messageChain }
+func (d *Diagnostic) RelatedInformation() []*Diagnostic { return d.relatedInformation }
+
+func (d *Diagnostic) SetCategory(category diagnostics.Category) { d.category = category }
+
+func (d *Diagnostic) setMessageChain(messageChain []*MessageChain) *Diagnostic {
+	d.messageChain = messageChain
+	return d
+}
+
+func (d *Diagnostic) addMessageChain(messageChain *MessageChain) *Diagnostic {
+	if messageChain != nil {
+		d.messageChain = append(d.messageChain, messageChain)
+	}
+	return d
+}
+
+func (d *Diagnostic) setRelatedInfo(relatedInformation []*Diagnostic) *Diagnostic {
+	d.relatedInformation = relatedInformation
+	return d
+}
+
+func (d *Diagnostic) addRelatedInfo(relatedInformation *Diagnostic) *Diagnostic {
+	if relatedInformation != nil {
+		d.relatedInformation = append(d.relatedInformation, relatedInformation)
+	}
+	return d
+}
+
+// MessageChain
+
+type MessageChain struct {
+	code         int32
+	category     diagnostics.Category
+	message      string
+	messageChain []*MessageChain
+}
+
+func (m *MessageChain) Code() int32                    { return m.code }
+func (m *MessageChain) Category() diagnostics.Category { return m.category }
+func (m *MessageChain) Message() string                { return m.message }
+func (m *MessageChain) MessageChain() []*MessageChain  { return m.messageChain }
+
+func (m *MessageChain) addMessageChain(messageChain *MessageChain) *MessageChain {
+	if messageChain != nil {
+		m.messageChain = append(m.messageChain, messageChain)
+	}
+	return m
 }
