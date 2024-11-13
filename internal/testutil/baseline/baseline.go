@@ -34,22 +34,18 @@ func writeComparison(t testing.TB, actual string, relativeFileName string, opts 
 	if _, err := os.Stat(localFileName); err == nil {
 		if err := os.Remove(localFileName); err != nil {
 			t.Fatal(fmt.Errorf("failed to remove the local baseline file %s: %w", localFileName, err))
-			return
 		}
 	}
 	if actual != expected {
 		if err := os.MkdirAll(filepath.Dir(localFileName), 0755); err != nil {
 			t.Fatal(fmt.Errorf("failed to create directories for the local baseline file %s: %w", localFileName, err))
-			return
 		}
 		if actual == NoContent {
 			if err := os.WriteFile(localFileName+".delete", []byte{}, 0644); err != nil {
 				t.Fatal(fmt.Errorf("failed to write the local baseline file %s: %w", localFileName+".delete", err))
-				return
 			}
 		} else if err := os.WriteFile(localFileName, []byte(actual), 0644); err != nil {
 			t.Fatal(fmt.Errorf("failed to write the local baseline file %s: %w", localFileName, err))
-			return
 		}
 
 		if _, err := os.Stat(referenceFileName); err != nil {
