@@ -8,10 +8,10 @@ import (
 
 func TestNormalizeSlashes(t *testing.T) {
 	t.Parallel()
-	assert.Equal(t, normalizeSlashes("a"), "a")
-	assert.Equal(t, normalizeSlashes("a/b"), "a/b")
-	assert.Equal(t, normalizeSlashes("a\\b"), "a/b")
-	assert.Equal(t, normalizeSlashes("\\\\server\\path"), "//server/path")
+	assert.Equal(t, NormalizeSlashes("a"), "a")
+	assert.Equal(t, NormalizeSlashes("a/b"), "a/b")
+	assert.Equal(t, NormalizeSlashes("a\\b"), "a/b")
+	assert.Equal(t, NormalizeSlashes("\\\\server\\path"), "//server/path")
 }
 
 func TestGetRootLength(t *testing.T) {
