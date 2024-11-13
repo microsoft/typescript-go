@@ -242,6 +242,7 @@ const (
 // CompilerOptions
 
 type CompilerOptions struct {
+	AllowJs                            core.Tristate
 	AllowSyntheticDefaultImports       core.Tristate
 	AllowUmdGlobalAccess               core.Tristate
 	AllowUnreachableCode               core.Tristate
@@ -253,21 +254,32 @@ type CompilerOptions struct {
 	IsolatedModules                    core.Tristate
 	ModuleKind                         ModuleKind
 	ModuleResolution                   ModuleResolutionKind
+	ModuleSuffixes                     []string
 	NoFallthroughCasesInSwitch         core.Tristate
 	NoImplicitAny                      core.Tristate
 	NoPropertyAccessFromIndexSignature core.Tristate
 	NoUncheckedIndexedAccess           core.Tristate
+	Paths                              map[string][]string
 	PreserveConstEnums                 core.Tristate
+	PreserveSymlinks                   core.Tristate
+	ResolveJsonModule                  core.Tristate
+	ResolvePackageJsonExports          core.Tristate
+	ResolvePackageJsonImports          core.Tristate
 	Strict                             core.Tristate
 	StrictBindCallApply                core.Tristate
 	StrictNullChecks                   core.Tristate
 	StrictFunctionTypes                core.Tristate
 	Target                             core.ScriptTarget
 	TraceResolution                    core.Tristate
+	TypeRoots                          []string
 	Types                              []string
 	UseDefineForClassFields            core.Tristate
 	UseUnknownInCatchVariables         core.Tristate
 	VerbatimModuleSyntax               core.Tristate
+
+	configFilePath  string
+	noDtsResolution core.Tristate
+	pathsBasePath   string
 }
 
 type ModuleKind int32

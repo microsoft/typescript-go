@@ -1307,6 +1307,37 @@ func tryParsePattern(pattern string) ast.Pattern {
 	return ast.Pattern{}
 }
 
+func findBestPatternMatch(patterns []ast.Pattern, candidate string) ast.Pattern {
+	var bestPattern ast.Pattern
+	longestMatchPrefixLength := -1
+	for _, pattern := range patterns {
+		if (pattern.StarIndex == -1 || pattern.StarIndex > longestMatchPrefixLength) && isPatternMatch(pattern, candidate) {
+			bestPattern = pattern
+			longestMatchPrefixLength = pattern.StarIndex
+		}
+	}
+	return bestPattern
+}
+
+func isPatternMatch(pattern ast.Pattern, candidate string) bool {
+	if pattern.StarIndex == -1 {
+		return pattern.Text == candidate
+	}
+	return len(candidate) >= pattern.StarIndex &&
+		strings.HasPrefix(candidate, pattern.Text[:pattern.StarIndex]) &&
+		strings.HasSuffix(candidate, pattern.Text[pattern.StarIndex+1:])
+}
+
+func matchedText(pattern ast.Pattern, candidate string) string {
+	if !isPatternMatch(pattern, candidate) {
+		panic("candidate does not match pattern")
+	}
+	if pattern.StarIndex == -1 {
+		return ""
+	}
+	return candidate[pattern.StarIndex : len(candidate)-len(pattern.Text)+pattern.StarIndex+1]
+}
+
 func positionIsSynthesized(pos int) bool {
 	return pos < 0
 }
@@ -1688,6 +1719,8 @@ const (
 )
 
 var supportedDeclarationExtensions = []string{ExtensionDts, ExtensionDcts, ExtensionDmts}
+var supportedTSImplementationExtensions = []string{ExtensionTs, ExtensionTsx, ExtensionMts, ExtensionCts}
+var supportedTSExtensionsForExtractExtension = []string{ExtensionDts, ExtensionDcts, ExtensionDmts, ExtensionTs, ExtensionTsx, ExtensionMts, ExtensionCts}
 
 func getScriptKindFromFileName(fileName string) core.ScriptKind {
 	dotPos := strings.LastIndex(fileName, ".")
@@ -1772,6 +1805,20 @@ func getAllowSyntheticDefaultImports(options *CompilerOptions) bool {
 	return getESModuleInterop(options) ||
 		getEmitModuleKind(options) == ModuleKindSystem ||
 		getEmitModuleResolutionKind(options) == ModuleResolutionKindBundler
+}
+
+func getResolveJsonModule(options *CompilerOptions) bool {
+	if options.ResolveJsonModule != core.TSUnknown {
+		return options.ResolveJsonModule == core.TSTrue
+	}
+	return getEmitModuleResolutionKind(options) == ModuleResolutionKindBundler
+}
+
+func getAllowJs(options *CompilerOptions) bool {
+	if options.AllowJs != core.TSUnknown {
+		return options.AllowJs == core.TSTrue
+	}
+	return options.CheckJs == core.TSTrue
 }
 
 type DiagnosticsCollection struct {
@@ -2873,11 +2920,7 @@ func isExternalModuleNameRelative(moduleName string) bool {
 	// TypeScript 1.0 spec (April 2014): 11.2.1
 	// An external module name is "relative" if the first term is "." or "..".
 	// Update: We also consider a path like `C:\foo.ts` "relative" because we do not search for it in `node_modules` or treat it as an ambient module.
-	return pathIsRelative(moduleName) || tspath.IsRootedDiskPath(moduleName)
-}
-
-func pathIsRelative(path string) bool {
-	return core.MakeRegexp(`^\.\.?(?:$|[\\/])`).MatchString(path)
+	return tspath.PathIsRelative(moduleName) || tspath.IsRootedDiskPath(moduleName)
 }
 
 func extensionIsTs(ext string) bool {
@@ -2958,6 +3001,41 @@ func removeFileExtension(path string) string {
 	}
 	// Otherwise just remove single dot extension, if any
 	return path[:len(path)-len(filepath.Ext(path))]
+}
+
+func tryGetExtensionFromPath(p string) string {
+	for _, ext := range extensionsToRemove {
+		if tspath.FileExtensionIs(p, ext) {
+			return ext
+		}
+	}
+	return ""
+}
+
+func removeExtension(path string, extension string) string {
+	return path[:len(path)-len(extension)]
+}
+
+func fileExtensionIsOneOf(path string, extensions []string) bool {
+	for _, ext := range extensions {
+		if tspath.FileExtensionIs(path, ext) {
+			return true
+		}
+	}
+	return false
+}
+
+func tryExtractTSExtension(fileName string) string {
+	for _, ext := range supportedTSExtensionsForExtractExtension {
+		if tspath.FileExtensionIs(fileName, ext) {
+			return ext
+		}
+	}
+	return ""
+}
+
+func hasImplementationTSFileExtension(path string) bool {
+	return fileExtensionIsOneOf(path, supportedTSImplementationExtensions) && !IsDeclarationFileName(path)
 }
 
 func isSideEffectImport(node *ast.Node) bool {

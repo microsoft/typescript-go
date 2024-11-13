@@ -13,6 +13,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	ts "github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
 var quiet = false
@@ -76,15 +77,6 @@ func main() {
 	runtime.ReadMemStats(&memStats)
 	if !quiet && len(diagnostics) != 0 {
 		if pretty {
-			var getCanonicalFileName func(path string) string
-			if useCaseSensitiveFileNames {
-				getCanonicalFileName = func(path string) string {
-					return path
-				}
-			} else {
-				getCanonicalFileName = strings.ToLower
-			}
-
 			currentDirectory, err := os.Getwd()
 			if err != nil {
 				panic("no current directory")
@@ -92,9 +84,11 @@ func main() {
 
 			var output strings.Builder
 			formatOpts := ts.DiagnosticsFormattingOptions{
-				NewLine:              "\n",
-				CurrentDirectory:     currentDirectory,
-				GetCanonicalFileName: getCanonicalFileName,
+				NewLine: "\n",
+				ComparePathsOptions: tspath.ComparePathsOptions{
+					CurrentDirectory:          currentDirectory,
+					UseCaseSensitiveFileNames: useCaseSensitiveFileNames,
+				},
 			}
 			ts.FormatDiagnosticsWithColorAndContext(&output, diagnostics, &formatOpts)
 			output.WriteByte('\n')

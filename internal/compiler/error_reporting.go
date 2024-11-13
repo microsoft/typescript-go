@@ -15,9 +15,8 @@ import (
 )
 
 type DiagnosticsFormattingOptions struct {
-	CurrentDirectory     string
-	NewLine              string
-	GetCanonicalFileName func(fileName string) string
+	tspath.ComparePathsOptions
+	NewLine string
 }
 
 const (
@@ -200,7 +199,7 @@ func WriteLocation(output *strings.Builder, file *ast.SourceFile, pos int, forma
 	firstLine, firstChar := GetLineAndCharacterOfPosition(file, pos)
 	var relativeFileName string
 	if formatOpts != nil {
-		relativeFileName = tspath.ConvertToRelativePath(file.Path_, formatOpts.CurrentDirectory, formatOpts.GetCanonicalFileName)
+		relativeFileName = tspath.ConvertToRelativePath(file.Path_, formatOpts.ComparePathsOptions)
 	} else {
 		relativeFileName = file.Path_
 	}
@@ -334,7 +333,7 @@ func prettyPathForFileError(file *ast.SourceFile, fileErrors []*ast.Diagnostic, 
 	line, _ := GetLineAndCharacterOfPosition(file, fileErrors[0].Loc_.Pos())
 	fileName := file.FileName_
 	if tspath.PathIsAbsolute(fileName) && tspath.PathIsAbsolute(formatOpts.CurrentDirectory) {
-		fileName = tspath.ConvertToRelativePath(file.Path_, formatOpts.CurrentDirectory, formatOpts.GetCanonicalFileName)
+		fileName = tspath.ConvertToRelativePath(file.Path_, formatOpts.ComparePathsOptions)
 	}
 	return fmt.Sprintf("%s%s:%d%s",
 		fileName,
@@ -351,10 +350,10 @@ func WriteFormatDiagnostics(output *strings.Builder, diagnostics []*ast.Diagnost
 }
 
 func WriteFormatDiagnostic(output *strings.Builder, diagnostic *ast.Diagnostic, formatOpts *DiagnosticsFormattingOptions) {
-	if diagnostic.File() != nil {
-		line, character := GetLineAndCharacterOfPosition(diagnostic.File(), diagnostic.Loc().Pos())
-		fileName := diagnostic.File().FileName()
-		relativeFileName := tspath.ConvertToRelativePath(fileName, formatOpts.CurrentDirectory, formatOpts.GetCanonicalFileName)
+	if diagnostic.File_ != nil {
+		line, character := GetLineAndCharacterOfPosition(diagnostic.File_, diagnostic.Loc_.Pos())
+		fileName := diagnostic.File_.FileName_
+		relativeFileName := tspath.ConvertToRelativePath(fileName, formatOpts.ComparePathsOptions)
 		fmt.Fprintf(output, "%s(%d,%d): ", relativeFileName, line+1, character+1)
 	}
 
