@@ -561,7 +561,7 @@ func (p *Parser) parseExpectedMatchingBrackets(openKind ast.Kind, closeKind ast.
 	}
 	if lastError != nil {
 		related := NewDiagnostic(nil, core.NewTextRange(openPosition, openPosition+1), diagnostics.The_parser_expected_to_find_a_1_to_match_the_0_token_here, TokenToString(openKind), TokenToString(closeKind))
-		lastError.addRelatedInfo(related)
+		lastError.AddRelatedInfo(related)
 	}
 }
 
@@ -2532,7 +2532,7 @@ func (p *Parser) parseImportType() *Node {
 				lastDiagnostic := p.diagnostics[len(p.diagnostics)-1]
 				if lastDiagnostic.Code() == diagnostics.X_0_expected.Code() {
 					related := NewDiagnostic(nil, core.NewTextRange(openBracePosition, openBracePosition+1), diagnostics.The_parser_expected_to_find_a_1_to_match_the_0_token_here, "{", "}")
-					lastDiagnostic.addRelatedInfo(related)
+					lastDiagnostic.AddRelatedInfo(related)
 				}
 			}
 		}
@@ -2583,7 +2583,7 @@ func (p *Parser) parseImportAttributes(token ast.Kind, skipKeyword bool) *Node {
 				lastDiagnostic := p.diagnostics[len(p.diagnostics)-1]
 				if lastDiagnostic.Code() == diagnostics.X_0_expected.Code() {
 					related := NewDiagnostic(nil, core.NewTextRange(openBracePosition, openBracePosition+1), diagnostics.The_parser_expected_to_find_a_1_to_match_the_0_token_here, "{", "}")
-					lastDiagnostic.addRelatedInfo(related)
+					lastDiagnostic.AddRelatedInfo(related)
 				}
 			}
 		}
@@ -5951,7 +5951,7 @@ func tagNamesAreEquivalent(lhs *Expression, rhs *Expression) bool {
 
 func attachFileToDiagnostics(diagnostics []*Diagnostic, file *SourceFile) []*Diagnostic {
 	for _, d := range diagnostics {
-		d.file = file
+		d.File_ = file
 	}
 	return diagnostics
 }

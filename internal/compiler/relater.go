@@ -299,7 +299,7 @@ func (c *Checker) checkTypeRelatedToEx(
 		// 		}
 		// 	}
 		// }
-		diag := NewDiagnosticForNodeFromMessageChain(r.errorNode, messageChain).setRelatedInfo(r.relatedInfo)
+		diag := NewDiagnosticForNodeFromMessageChain(r.errorNode, messageChain).SetRelatedInfo(r.relatedInfo)
 		if errorOutputContainer != nil {
 			errorOutputContainer.errors = append(errorOutputContainer.errors, diag)
 		}

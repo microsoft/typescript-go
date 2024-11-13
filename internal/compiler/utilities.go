@@ -69,11 +69,11 @@ func NewDiagnostic(file *SourceFile, loc core.TextRange, message *diagnostics.Me
 		text = formatStringFromArgs(text, args)
 	}
 	return &Diagnostic{
-		file:     file,
-		loc:      loc,
-		code:     message.Code(),
-		category: message.Category(),
-		message:  text,
+		File_:     file,
+		Loc_:      loc,
+		Code_:     message.Code(),
+		Category_: message.Category(),
+		Message_:  text,
 	}
 }
 
@@ -89,12 +89,12 @@ func NewDiagnosticForNode(node *Node, message *diagnostics.Message, args ...any)
 
 func NewDiagnosticFromMessageChain(file *SourceFile, loc core.TextRange, messageChain *MessageChain) *Diagnostic {
 	return &Diagnostic{
-		file:         file,
-		loc:          loc,
-		code:         messageChain.code,
-		category:     messageChain.category,
-		message:      messageChain.message,
-		messageChain: messageChain.messageChain,
+		File_:         file,
+		Loc_:          loc,
+		Code_:         messageChain.Code_,
+		Category_:     messageChain.Category_,
+		Message_:      messageChain.Message_,
+		MessageChain_: messageChain.MessageChain_,
 	}
 }
 
@@ -114,14 +114,14 @@ func NewMessageChain(message *diagnostics.Message, args ...any) *MessageChain {
 		text = formatStringFromArgs(text, args)
 	}
 	return &MessageChain{
-		code:     message.Code(),
-		category: message.Category(),
-		message:  text,
+		Code_:     message.Code(),
+		Category_: message.Category(),
+		Message_:  text,
 	}
 }
 
 func chainDiagnosticMessages(details *MessageChain, message *diagnostics.Message, args ...any) *MessageChain {
-	return NewMessageChain(message, args...).addMessageChain(details)
+	return NewMessageChain(message, args...).AddMessageChain(details)
 }
 
 type OperatorPrecedence int
@@ -1785,8 +1785,8 @@ type DiagnosticsCollection struct {
 }
 
 func (c *DiagnosticsCollection) add(diagnostic *Diagnostic) {
-	if diagnostic.file != nil {
-		fileName := diagnostic.file.FileName_
+	if diagnostic.File_ != nil {
+		fileName := diagnostic.File_.FileName_
 		if c.fileDiagnostics == nil {
 			c.fileDiagnostics = make(map[string][]*Diagnostic)
 		}
@@ -1798,8 +1798,8 @@ func (c *DiagnosticsCollection) add(diagnostic *Diagnostic) {
 
 func (c *DiagnosticsCollection) lookup(diagnostic *Diagnostic) *Diagnostic {
 	var diagnostics []*Diagnostic
-	if diagnostic.file != nil {
-		diagnostics = c.fileDiagnostics[diagnostic.file.FileName_]
+	if diagnostic.File_ != nil {
+		diagnostics = c.fileDiagnostics[diagnostic.File_.FileName_]
 	} else {
 		diagnostics = c.nonFileDiagnostics
 	}
@@ -1835,17 +1835,17 @@ func sortAndDeduplicateDiagnostics(diagnostics []*Diagnostic) []*Diagnostic {
 
 func equalDiagnostics(d1, d2 *Diagnostic) bool {
 	return getDiagnosticPath(d1) == getDiagnosticPath(d2) &&
-		d1.loc == d2.loc &&
-		d1.code == d2.code &&
-		d1.message == d2.message &&
-		slices.EqualFunc(d1.messageChain, d2.messageChain, equalMessageChain) &&
-		slices.EqualFunc(d1.relatedInformation, d2.relatedInformation, equalDiagnostics)
+		d1.Loc_ == d2.Loc_ &&
+		d1.Code_ == d2.Code_ &&
+		d1.Message_ == d2.Message_ &&
+		slices.EqualFunc(d1.MessageChain_, d2.MessageChain_, equalMessageChain) &&
+		slices.EqualFunc(d1.RelatedInformation_, d2.RelatedInformation_, equalDiagnostics)
 }
 
 func equalMessageChain(c1, c2 *MessageChain) bool {
-	return c1.code == c2.code &&
-		c1.message == c2.message &&
-		slices.EqualFunc(c1.messageChain, c2.messageChain, equalMessageChain)
+	return c1.Code_ == c2.Code_ &&
+		c1.Message_ == c2.Message_ &&
+		slices.EqualFunc(c1.MessageChain_, c2.MessageChain_, equalMessageChain)
 }
 
 func compareDiagnostics(d1, d2 *Diagnostic) int {
@@ -1853,31 +1853,31 @@ func compareDiagnostics(d1, d2 *Diagnostic) int {
 	if c != 0 {
 		return c
 	}
-	c = int(d1.loc.Pos_) - int(d2.loc.Pos_)
+	c = int(d1.Loc_.Pos_) - int(d2.Loc_.Pos_)
 	if c != 0 {
 		return c
 	}
-	c = int(d1.loc.End_) - int(d2.loc.End_)
+	c = int(d1.Loc_.End_) - int(d2.Loc_.End_)
 	if c != 0 {
 		return c
 	}
-	c = int(d1.code) - int(d2.code)
+	c = int(d1.Code_) - int(d2.Code_)
 	if c != 0 {
 		return c
 	}
-	c = strings.Compare(d1.message, d2.message)
+	c = strings.Compare(d1.Message_, d2.Message_)
 	if c != 0 {
 		return c
 	}
-	c = compareMessageChainSize(d1.messageChain, d2.messageChain)
+	c = compareMessageChainSize(d1.MessageChain_, d2.MessageChain_)
 	if c != 0 {
 		return c
 	}
-	c = compareMessageChainContent(d1.messageChain, d2.messageChain)
+	c = compareMessageChainContent(d1.MessageChain_, d2.MessageChain_)
 	if c != 0 {
 		return c
 	}
-	return compareRelatedInfo(d1.relatedInformation, d2.relatedInformation)
+	return compareRelatedInfo(d1.RelatedInformation_, d2.RelatedInformation_)
 }
 
 func compareMessageChainSize(c1, c2 []*MessageChain) int {
@@ -1886,7 +1886,7 @@ func compareMessageChainSize(c1, c2 []*MessageChain) int {
 		return c
 	}
 	for i := range c1 {
-		c = compareMessageChainSize(c1[i].messageChain, c2[i].messageChain)
+		c = compareMessageChainSize(c1[i].MessageChain_, c2[i].MessageChain_)
 		if c != 0 {
 			return c
 		}
@@ -1896,12 +1896,12 @@ func compareMessageChainSize(c1, c2 []*MessageChain) int {
 
 func compareMessageChainContent(c1, c2 []*MessageChain) int {
 	for i := range c1 {
-		c := strings.Compare(c1[i].message, c2[i].message)
+		c := strings.Compare(c1[i].Message_, c2[i].Message_)
 		if c != 0 {
 			return c
 		}
-		if c1[i].messageChain != nil {
-			c = compareMessageChainContent(c1[i].messageChain, c2[i].messageChain)
+		if c1[i].MessageChain_ != nil {
+			c = compareMessageChainContent(c1[i].MessageChain_, c2[i].MessageChain_)
 			if c != 0 {
 				return c
 			}
@@ -1925,8 +1925,8 @@ func compareRelatedInfo(r1, r2 []*Diagnostic) int {
 }
 
 func getDiagnosticPath(d *Diagnostic) string {
-	if d.file != nil {
-		return d.file.Path_
+	if d.File_ != nil {
+		return d.File_.Path_
 	}
 	return ""
 }
@@ -3744,10 +3744,10 @@ func getClassExtendsHeritageElement(node *Node) *Node {
 
 func concatenateDiagnosticMessageChains(headChain *MessageChain, tailChain *MessageChain) {
 	lastChain := headChain
-	for len(lastChain.messageChain) != 0 {
-		lastChain = lastChain.messageChain[0]
+	for len(lastChain.MessageChain_) != 0 {
+		lastChain = lastChain.MessageChain_[0]
 	}
-	lastChain.messageChain = []*MessageChain{tailChain}
+	lastChain.MessageChain_ = []*MessageChain{tailChain}
 }
 
 func isObjectOrArrayLiteralType(t *Type) bool {

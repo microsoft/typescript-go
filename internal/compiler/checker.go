@@ -744,7 +744,7 @@ func (c *Checker) checkResolvedBlockScopedVariable(result *Symbol, errorLocation
 			}
 		}
 		if diagnostic != nil {
-			diagnostic.addRelatedInfo(createDiagnosticForNode(declaration, diagnostics.X_0_is_declared_here, declarationName))
+			diagnostic.AddRelatedInfo(createDiagnosticForNode(declaration, diagnostics.X_0_is_declared_here, declarationName))
 		}
 	}
 }
@@ -1320,8 +1320,8 @@ func (c *Checker) checkPrivateIdentifierPropertyAccess(leftType *Type, right *No
 			lexicalClass := getContainingClass(lexicalValueDecl)
 			if findAncestor(lexicalClass, func(n *Node) bool { return typeClass == n }) != nil {
 				diagnostic := c.error(right, diagnostics.The_property_0_cannot_be_accessed_on_type_1_within_this_class_because_it_is_shadowed_by_another_private_identifier_with_the_same_spelling, diagName, c.typeToString(leftType))
-				diagnostic.addRelatedInfo(createDiagnosticForNode(lexicalValueDecl, diagnostics.The_shadowing_declaration_of_0_is_defined_here, diagName))
-				diagnostic.addRelatedInfo(createDiagnosticForNode(typeValueDecl, diagnostics.The_declaration_of_0_that_you_probably_intended_to_use_is_defined_here, diagName))
+				diagnostic.AddRelatedInfo(createDiagnosticForNode(lexicalValueDecl, diagnostics.The_shadowing_declaration_of_0_is_defined_here, diagName))
+				diagnostic.AddRelatedInfo(createDiagnosticForNode(typeValueDecl, diagnostics.The_declaration_of_0_that_you_probably_intended_to_use_is_defined_here, diagName))
 				return true
 			}
 		}
@@ -1377,7 +1377,7 @@ func (c *Checker) reportNonexistentProperty(propNode *Node, containingType *Type
 			}
 		}
 	}
-	resultDiagnostic := NewDiagnosticForNodeFromMessageChain(propNode, errorInfo).addRelatedInfo(relatedInfo)
+	resultDiagnostic := NewDiagnosticForNodeFromMessageChain(propNode, errorInfo).AddRelatedInfo(relatedInfo)
 	c.diagnostics.add(resultDiagnostic)
 }
 
@@ -2141,7 +2141,7 @@ func (c *Checker) checkSpreadPropOverrides(t *Type, props SymbolTable, spread *N
 		if right.Flags&ast.SymbolFlagsOptional == 0 {
 			if left := props[right.Name]; left != nil {
 				diagnostic := c.error(left.ValueDeclaration, diagnostics.X_0_is_specified_more_than_once_so_this_usage_will_be_overwritten, left.Name)
-				diagnostic.addRelatedInfo(NewDiagnosticForNode(spread, diagnostics.This_spread_always_overwrites_this_property))
+				diagnostic.AddRelatedInfo(NewDiagnosticForNode(spread, diagnostics.This_spread_always_overwrites_this_property))
 			}
 		}
 	}
@@ -2599,7 +2599,7 @@ func (c *Checker) addErrorOrSuggestion(isError bool, diagnostic *Diagnostic) {
 		c.diagnostics.add(diagnostic)
 	} else {
 		suggestion := *diagnostic
-		suggestion.category = diagnostics.CategorySuggestion
+		suggestion.Category_ = diagnostics.CategorySuggestion
 		c.suggestionDiagnostics.add(&suggestion)
 	}
 }
@@ -2828,15 +2828,15 @@ func (c *Checker) addDuplicateDeclarationError(node *Node, message *diagnostics.
 		}
 		leadingMessage := createDiagnosticForNode(adjustedNode, diagnostics.X_0_was_also_declared_here, symbolName)
 		followOnMessage := createDiagnosticForNode(adjustedNode, diagnostics.X_and_here)
-		if len(err.relatedInformation) >= 5 || core.Some(err.relatedInformation, func(d *Diagnostic) bool {
+		if len(err.RelatedInformation_) >= 5 || core.Some(err.RelatedInformation_, func(d *Diagnostic) bool {
 			return compareDiagnostics(d, followOnMessage) == 0 || compareDiagnostics(d, leadingMessage) == 0
 		}) {
 			continue
 		}
-		if len(err.relatedInformation) == 0 {
-			err.addRelatedInfo(leadingMessage)
+		if len(err.RelatedInformation_) == 0 {
+			err.AddRelatedInfo(leadingMessage)
 		} else {
-			err.addRelatedInfo(followOnMessage)
+			err.AddRelatedInfo(followOnMessage)
 		}
 	}
 }
@@ -3093,7 +3093,7 @@ func (c *Checker) checkAndReportErrorForResolvingImportAliasToTypeOnlySymbol(nod
 		if typeOnlyDeclaration.Kind == ast.KindImportDeclaration {
 			name = getNameFromImportDeclaration(typeOnlyDeclaration).AsIdentifier().Text
 		}
-		c.error(decl.ModuleReference, message).addRelatedInfo(createDiagnosticForNode(typeOnlyDeclaration, relatedMessage, name))
+		c.error(decl.ModuleReference, message).AddRelatedInfo(createDiagnosticForNode(typeOnlyDeclaration, relatedMessage, name))
 	}
 }
 
@@ -3412,7 +3412,7 @@ func (c *Checker) errorNoModuleMemberSymbol(moduleSymbol *Symbol, targetSymbol *
 		suggestionName := c.symbolToString(suggestion)
 		diagnostic := c.error(name, diagnostics.X_0_has_no_exported_member_named_1_Did_you_mean_2, moduleName, declarationName, suggestionName)
 		if suggestion.ValueDeclaration != nil {
-			diagnostic.addRelatedInfo(createDiagnosticForNode(suggestion.ValueDeclaration, diagnostics.X_0_is_declared_here, suggestionName))
+			diagnostic.AddRelatedInfo(createDiagnosticForNode(suggestion.ValueDeclaration, diagnostics.X_0_is_declared_here, suggestionName))
 		}
 	} else {
 		if moduleSymbol.Exports[InternalSymbolNameDefault] != nil {
@@ -3448,7 +3448,7 @@ func (c *Checker) reportNonExportedMember(node *Node, name *Node, declarationNam
 				diagnostic = c.error(name, diagnostics.Module_0_declares_1_locally_but_it_is_not_exported, moduleName, declarationName)
 			}
 			for i, decl := range localSymbol.Declarations {
-				diagnostic.addRelatedInfo(createDiagnosticForNode(decl, ifElse(i == 0, diagnostics.X_0_is_declared_here, diagnostics.X_and_here), declarationName))
+				diagnostic.AddRelatedInfo(createDiagnosticForNode(decl, ifElse(i == 0, diagnostics.X_0_is_declared_here, diagnostics.X_and_here), declarationName))
 			}
 		}
 	} else {
@@ -4719,7 +4719,7 @@ func (c *Checker) getBaseConstructorTypeOfClass(t *Type) *Type {
 				}
 			}
 			if baseConstructorType.symbol.Declarations != nil {
-				err.addRelatedInfo(createDiagnosticForNode(baseConstructorType.symbol.Declarations[0], diagnostics.Did_you_mean_for_0_to_be_constrained_to_type_new_args_Colon_any_1, c.symbolToString(baseConstructorType.symbol), c.typeToString(ctorReturn)))
+				err.AddRelatedInfo(createDiagnosticForNode(baseConstructorType.symbol.Declarations[0], diagnostics.Did_you_mean_for_0_to_be_constrained_to_type_new_args_Colon_any_1, c.symbolToString(baseConstructorType.symbol), c.typeToString(ctorReturn)))
 			}
 		}
 		if data.resolvedBaseConstructorType == nil {
@@ -5843,7 +5843,7 @@ func (c *Checker) resolveBaseTypesOfClass(t *Type) {
 	reducedBaseType := c.getReducedType(baseType)
 	if !c.isValidBaseType(reducedBaseType) {
 		diagnostic := NewDiagnosticForNode(baseTypeNode.Expression(), diagnostics.Base_constructor_return_type_0_is_not_an_object_type_or_intersection_of_object_types_with_statically_known_members, c.typeToString(reducedBaseType))
-		diagnostic.addMessageChain(c.elaborateNeverIntersection(nil, baseType))
+		diagnostic.AddMessageChain(c.elaborateNeverIntersection(nil, baseType))
 		c.diagnostics.add(diagnostic)
 		return
 	}
@@ -10903,7 +10903,7 @@ func (c *Checker) getPropertyTypeForIndexType(originalObjectType *Type, objectTy
 							}
 							diagnostic := c.error(accessExpression, diagnostics.Element_implicitly_has_an_any_type_because_expression_of_type_0_can_t_be_used_to_index_type_1, c.typeToString(fullIndexType), c.typeToString(objectType))
 							if errorInfo != nil {
-								diagnostic.addMessageChain(errorInfo)
+								diagnostic.AddMessageChain(errorInfo)
 							}
 						}
 					}
@@ -11097,7 +11097,7 @@ func (c *Checker) getResolvedBaseConstraint(t *Type, stack []RecursionId) *Type 
 			if errorNode != nil {
 				diagnostic := c.error(errorNode, diagnostics.Type_parameter_0_has_a_circular_constraint, c.typeToString(t))
 				if c.currentNode != nil && !isNodeDescendantOf(errorNode, c.currentNode) && !isNodeDescendantOf(c.currentNode, errorNode) {
-					diagnostic.addRelatedInfo(NewDiagnosticForNode(c.currentNode, diagnostics.Circularity_originates_in_type_at_this_location))
+					diagnostic.AddRelatedInfo(NewDiagnosticForNode(c.currentNode, diagnostics.Circularity_originates_in_type_at_this_location))
 				}
 			}
 		}

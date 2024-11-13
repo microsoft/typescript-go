@@ -44,9 +44,9 @@ func FormatDiagnosticsWithColorAndContext(output *strings.Builder, diags []*Diag
 			output.WriteString(formatOpts.NewLine)
 		}
 
-		if diagnostic.file != nil {
-			file := diagnostic.file
-			pos := diagnostic.loc.Pos()
+		if diagnostic.File_ != nil {
+			file := diagnostic.File_
+			pos := diagnostic.Loc_.Pos()
 			WriteLocation(output, file, pos, formatOpts, writeWithStyleAndReset)
 			output.WriteString(" - ")
 		}
@@ -156,7 +156,7 @@ func writeCodeSnippet(writer *strings.Builder, sourceFile *SourceFile, start int
 func WriteFlattenedDiagnosticMessage(writer *strings.Builder, diagnostic *Diagnostic, newline string) {
 	writer.WriteString(diagnostic.Message())
 
-	for _, chain := range diagnostic.messageChain {
+	for _, chain := range diagnostic.MessageChain_ {
 		flattenDiagnosticMessageChain(writer, chain, newline, 1 /*level*/)
 	}
 }
@@ -167,8 +167,8 @@ func flattenDiagnosticMessageChain(writer *strings.Builder, chain *MessageChain,
 		writer.WriteString("  ")
 	}
 
-	writer.WriteString(chain.message)
-	for _, child := range chain.messageChain {
+	writer.WriteString(chain.Message_)
+	for _, child := range chain.MessageChain_ {
 		flattenDiagnosticMessageChain(writer, child, newLine, level+1)
 	}
 }
@@ -274,13 +274,13 @@ func getErrorSummary(diags []*Diagnostic) *ErrorSummary {
 		}
 
 		totalErrorCount++
-		if diagnostic.file == nil {
+		if diagnostic.File_ == nil {
 			globalErrors = append(globalErrors, diagnostic)
 		} else {
 			if errorsByFiles == nil {
 				errorsByFiles = make(map[*SourceFile][]*Diagnostic)
 			}
-			errorsByFiles[diagnostic.file] = append(errorsByFiles[diagnostic.file], diagnostic)
+			errorsByFiles[diagnostic.File_] = append(errorsByFiles[diagnostic.File_], diagnostic)
 		}
 	}
 
@@ -330,7 +330,7 @@ func writeTabularErrorsDisplay(output *strings.Builder, errorSummary *ErrorSumma
 }
 
 func prettyPathForFileError(file *SourceFile, fileErrors []*Diagnostic, formatOpts *DiagnosticsFormattingOptions) string {
-	line, _ := GetLineAndCharacterOfPosition(file, fileErrors[0].loc.Pos())
+	line, _ := GetLineAndCharacterOfPosition(file, fileErrors[0].Loc_.Pos())
 	fileName := file.FileName_
 	if tspath.PathIsAbsolute(fileName) && tspath.PathIsAbsolute(formatOpts.CurrentDirectory) {
 		fileName = tspath.ConvertToRelativePath(file.Path_, formatOpts.CurrentDirectory, formatOpts.GetCanonicalFileName)
