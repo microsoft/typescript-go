@@ -2840,7 +2840,7 @@ func getExternalModuleName(node *Node) *Node {
 		return node.AsExportDeclaration().ModuleSpecifier
 	case ast.KindImportEqualsDeclaration:
 		if node.AsImportEqualsDeclaration().ModuleReference.Kind == ast.KindExternalModuleReference {
-			return node.AsImportEqualsDeclaration().ModuleReference.AsExternalModuleReference().expression
+			return node.AsImportEqualsDeclaration().ModuleReference.AsExternalModuleReference().Expression_
 		}
 		return nil
 	case ast.KindImportType:
@@ -2974,7 +2974,7 @@ func getExternalModuleRequireArgument(node *Node) *Node {
 
 func getExternalModuleImportEqualsDeclarationExpression(node *Node) *Node {
 	//Debug.assert(isExternalModuleImportEqualsDeclaration(node))
-	return node.AsImportEqualsDeclaration().ModuleReference.AsExternalModuleReference().expression
+	return node.AsImportEqualsDeclaration().ModuleReference.AsExternalModuleReference().Expression_
 }
 
 func isRightSideOfQualifiedNameOrPropertyAccess(node *Node) bool {

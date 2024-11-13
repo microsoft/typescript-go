@@ -3582,7 +3582,7 @@ func (c *Checker) getModuleSpecifierForImportOrExport(node *Node) *Node {
 		return getModuleSpecifierFromNode(node.Parent)
 	case ast.KindImportEqualsDeclaration:
 		if IsExternalModuleReference(node.AsImportEqualsDeclaration().ModuleReference) {
-			return node.AsImportEqualsDeclaration().ModuleReference.AsExternalModuleReference().expression
+			return node.AsImportEqualsDeclaration().ModuleReference.AsExternalModuleReference().Expression_
 		} else {
 			return nil
 		}

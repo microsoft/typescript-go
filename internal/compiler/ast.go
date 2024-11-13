@@ -1869,17 +1869,17 @@ func IsImportSpecifier(node *Node) bool {
 
 type ExternalModuleReference struct {
 	NodeBase
-	expression *Expression // Expression
+	Expression_ *Expression // Expression
 }
 
 func (f *NodeFactory) NewExternalModuleReference(expression *Expression) *Node {
 	data := &ExternalModuleReference{}
-	data.expression = expression
+	data.Expression_ = expression
 	return f.NewNode(ast.KindExternalModuleReference, data)
 }
 
 func (node *ExternalModuleReference) ForEachChild(v Visitor) bool {
-	return visit(v, node.expression)
+	return visit(v, node.Expression_)
 }
 
 func IsExternalModuleReference(node *Node) bool {

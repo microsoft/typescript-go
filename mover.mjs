@@ -5,9 +5,12 @@ const compilerFolder = "./internal/compiler";
 
 /** @type {Record<string, {package: string, members?: boolean, rename?: string}>} */
 const refactorMapping = {
-    "ModifierFlags": {
+    "FlowFlags": {
         package: "ast"
     },
+    /*"ModifierFlags": {
+        package: "ast"
+    },*/
     /*"ScriptTarget": {
         package: "core",
     },
@@ -37,6 +40,9 @@ const refactorMapping = {
 
 // A list of every type or public value defined in ast.go
 const astNames = [
+    "MessageChain", "Diagnostic",
+    "FlowReduceLabelData", "FlowSwitchClauseData", "ReportedUnreachableFlow", "UnreachableFlow",
+    "FlowLabel", "FlowList", "FlowNode",
     "NodeId", "MergeId", "SymbolId",
     "Symbol", "SymbolTable",
     "Node", "NodeData",
@@ -308,9 +314,11 @@ const astNames = [
     "PatternAmbientModule",
     "SourceFile",
     "IsSourceFile",
+    "NodeFactory",
+    "Pattern"
 ]
 for (const n of astNames) {
-    // refactorMapping[n] = { package: "ast", members: false };
+    refactorMapping[n] = { package: "ast", members: false };
 }
 
 const enums = Object.keys(refactorMapping);
@@ -327,10 +335,10 @@ outer: for (const entry of entries) {
     for (const e of enums) {
         const newRootName = refactorMapping[e].rename || e;
         // replace bare references to the type with `package.type`
-        file = file.replaceAll(new RegExp(`(\\W)${e}(\\W)`, "g"), (_, prefix, postfix) => `${prefix}${refactorMapping[e].package}.${newRootName}${postfix}`);
+        file = file.replaceAll(new RegExp(`(\\W)${e}(\\W)`, "g"), (_, prefix, postfix) => prefix === "." ? _ : `${prefix}${refactorMapping[e].package}.${newRootName}${postfix}`);
         // Replace all member references with `package.member`
         if (refactorMapping[e].members !== false) { 
-            file = file.replaceAll(new RegExp(`(\\W)${e}(\\w+)`, "g"), (_, prefix, postfix) => `${prefix}${refactorMapping[e].package}.${newRootName}${postfix}`);
+            file = file.replaceAll(new RegExp(`(\\W)${e}(\\w+)`, "g"), (_, prefix, postfix) => prefix === "." ? _ : `${prefix}${refactorMapping[e].package}.${newRootName}${postfix}`);
         }
     }
 /*
