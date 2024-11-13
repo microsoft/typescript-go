@@ -198,7 +198,7 @@ type SemverParseError struct {
 }
 
 func (e *SemverParseError) Error() string {
-	return "Could not parse version string from " + e.origInput
+	return fmt.Sprintf("Could not parse version string from %q", e.origInput)
 }
 
 func TryParseVersion(text string) (Version, error) {
