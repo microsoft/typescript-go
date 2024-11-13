@@ -66,7 +66,6 @@ export const test = task({
 export const lint = task({
     name: "lint",
     run: async () => {
-        // TODO: Run `go tool golangci-lint` after https://github.com/golang/go/issues/48429
         await $`golangci-lint run ${options.fix ? ["--fix"] : []}`;
     },
 });
