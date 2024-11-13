@@ -226,3 +226,14 @@ func EquateStringCaseInsensitive(a, b string) bool {
 func EquateStringCaseSensitive(a, b string) bool {
 	return a == b
 }
+
+func Memoize[T any](create func() T) func() T {
+	var value T
+	return func() T {
+		if create != nil {
+			value = create()
+			create = nil
+		}
+		return value
+	}
+}
