@@ -2,10 +2,13 @@ package core
 
 import (
 	"iter"
+	"os"
 	"regexp"
+	"runtime"
 	"slices"
 	"strings"
 	"sync"
+	"unicode"
 )
 
 func Filter[T any](slice []T, f func(T) bool) []T {
@@ -257,4 +260,29 @@ func GetStringComparer(ignoreCase bool) func(a, b string) Comparison {
 		return CompareStringsCaseInsensitive
 	}
 	return CompareStringsCaseSensitive
+}
+
+func IsFileSystemCaseSensitive() bool {
+	// win32/win64 are case insensitive platforms
+	if runtime.GOOS == "windows" {
+		return false
+	}
+
+	// If the current executable exists under a different case, we must be case-insensitve.
+	if _, err := os.Stat(swapCase(os.Args[0])); os.IsNotExist(err) {
+		return false
+	}
+	return true
+}
+
+// Convert all lowercase chars to uppercase, and vice-versa
+func swapCase(str string) string {
+	return strings.Map(func(r rune) rune {
+		upper := unicode.ToUpper(r)
+		if upper == r {
+			return unicode.ToLower(r)
+		} else {
+			return upper
+		}
+	}, str)
 }

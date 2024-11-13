@@ -25,10 +25,12 @@ var (
 	tsExtension   = regexp.MustCompile(`\.tsx?$`)
 )
 
+var useCaseSensitiveFileNames = core.IsFileSystemCaseSensitive()
+
 var formatOpts = &compiler.DiagnosticsFormattingOptions{
-	GetCanonicalFileName: getCanonicalFileName,
-	CurrentDirectory:     "",
-	NewLine:              harnessNewLine,
+	UseCaseSensitiveFileNames: useCaseSensitiveFileNames,
+	CurrentDirectory:          "",
+	NewLine:                   harnessNewLine,
 }
 
 type TestFile struct {
@@ -48,11 +50,7 @@ func DoErrorBaseline(t testing.TB, baselinePath string, inputFiles []*TestFile, 
 	} else {
 		errorBaseline = NoContent
 	}
-	Run(baselinePath, errorBaseline, Options{})
-}
-
-func getCanonicalFileName(fileName string) string {
-	return fileName
+	Run(t, baselinePath, errorBaseline, Options{})
 }
 
 func minimalDiagnosticsToString(diagnostics []*compiler.Diagnostic, pretty bool) string {
@@ -170,7 +168,7 @@ func iterateErrorBaseline(t testing.TB, inputFiles []*TestFile, inputDiagnostics
 		// Filter down to the errors in the file
 		fileErrors := core.Filter(diagnostics, func(e *compiler.Diagnostic) bool {
 			return e.File() != nil &&
-				tspath.ComparePaths(removeTestPathPrefixes(e.File().FileName(), false), removeTestPathPrefixes(inputFile.unitName, false), "", true) == core.ComparisonEqual
+				tspath.ComparePaths(removeTestPathPrefixes(e.File().FileName(), false), removeTestPathPrefixes(inputFile.unitName, false), tspath.ComparePathsOptions{IgnoreCase: !useCaseSensitiveFileNames}) == core.ComparisonEqual
 		})
 
 		// Header
