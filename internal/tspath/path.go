@@ -573,16 +573,16 @@ func PathIsRelative(path string) bool {
 }
 
 type ComparePathsOptions struct {
-	IgnoreCase       bool
-	CurrentDirectory string
+	UseCaseSensitiveFileNames bool
+	CurrentDirectory          string
 }
 
 func (o ComparePathsOptions) GetComparer() func(a, b string) int {
-	return core.GetStringComparer(o.IgnoreCase)
+	return core.GetStringComparer(!o.UseCaseSensitiveFileNames)
 }
 
 func (o ComparePathsOptions) getEqualityComparer() func(a, b string) bool {
-	return core.GetStringEqualityComparer(o.IgnoreCase)
+	return core.GetStringEqualityComparer(!o.UseCaseSensitiveFileNames)
 }
 
 func ComparePaths(a string, b string, options ComparePathsOptions) int {
@@ -631,11 +631,11 @@ func ComparePaths(a string, b string, options ComparePathsOptions) int {
 }
 
 func ComparePathsCaseSensitive(a string, b string, currentDirectory string) int {
-	return ComparePaths(a, b, ComparePathsOptions{IgnoreCase: false, CurrentDirectory: currentDirectory})
+	return ComparePaths(a, b, ComparePathsOptions{UseCaseSensitiveFileNames: true, CurrentDirectory: currentDirectory})
 }
 
 func ComparePathsCaseInsensitive(a string, b string, currentDirectory string) int {
-	return ComparePaths(a, b, ComparePathsOptions{IgnoreCase: true, CurrentDirectory: currentDirectory})
+	return ComparePaths(a, b, ComparePathsOptions{UseCaseSensitiveFileNames: false, CurrentDirectory: currentDirectory})
 }
 
 func ContainsPath(parent string, child string, options ComparePathsOptions) bool {
