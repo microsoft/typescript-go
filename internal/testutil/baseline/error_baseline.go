@@ -7,13 +7,12 @@ import (
 	"strings"
 	"testing"
 
-	"gotest.tools/v3/assert"
-	"gotest.tools/v3/assert/cmp"
-
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/compiler/stringutil"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/tspath"
+	"gotest.tools/v3/assert"
+	"gotest.tools/v3/assert/cmp"
 )
 
 // IO
@@ -26,9 +25,7 @@ var (
 )
 
 var formatOpts = &compiler.DiagnosticsFormattingOptions{
-	GetCanonicalFileName: getCanonicalFileName,
-	CurrentDirectory:     "",
-	NewLine:              harnessNewLine,
+	NewLine: harnessNewLine,
 }
 
 type TestFile struct {
@@ -48,11 +45,7 @@ func DoErrorBaseline(t testing.TB, baselinePath string, inputFiles []*TestFile, 
 	} else {
 		errorBaseline = NoContent
 	}
-	Run(baselinePath, errorBaseline, Options{})
-}
-
-func getCanonicalFileName(fileName string) string {
-	return fileName
+	Run(t, baselinePath, errorBaseline, Options{})
 }
 
 func minimalDiagnosticsToString(diagnostics []*compiler.Diagnostic, pretty bool) string {
@@ -103,8 +96,8 @@ func iterateErrorBaseline(t testing.TB, inputFiles []*TestFile, inputDiagnostics
 
 	var result []string
 
-	outputErrorText := func(error *compiler.Diagnostic) {
-		message := flattenDiagnosticMessage(error, harnessNewLine)
+	outputErrorText := func(diag *compiler.Diagnostic) {
+		message := flattenDiagnosticMessage(diag, harnessNewLine)
 
 		var errLines []string
 		for _, line := range strings.Split(removeTestPathPrefixes(message, false), "\n") {
@@ -112,11 +105,11 @@ func iterateErrorBaseline(t testing.TB, inputFiles []*TestFile, inputDiagnostics
 			if len(line) < 0 {
 				continue
 			}
-			out := fmt.Sprintf("!!! %s TS%d: %s", error.Category().String(), error.Code(), line)
+			out := fmt.Sprintf("!!! %s TS%d: %s", diag.Category().String(), diag.Code(), line)
 			errLines = append(errLines, out)
 		}
 
-		for _, info := range error.RelatedInformation() {
+		for _, info := range diag.RelatedInformation() {
 			var location string
 			if info.File() != nil {
 				location = " " + formatLocation(info.File(), info.Loc().Pos(), formatOpts, func(output *strings.Builder, text string, formatStyle string) { output.WriteString(text) })
@@ -141,7 +134,7 @@ func iterateErrorBaseline(t testing.TB, inputFiles []*TestFile, inputDiagnostics
 		// Similarly for tsconfig, which may be in the input files and contain errors.
 		// 'totalErrorsReportedInNonLibraryNonTsconfigFiles + numLibraryDiagnostics + numTsconfigDiagnostics, diagnostics.length
 
-		if error.File() == nil || !isDefaultLibraryFile(error.File().FileName()) && !isTsConfigFile(error.File().FileName()) {
+		if diag.File() == nil || !isDefaultLibraryFile(diag.File().FileName()) && !isTsConfigFile(diag.File().FileName()) {
 			totalErrorsReportedInNonLibraryNonTsconfigFiles++
 		}
 	}
@@ -170,7 +163,7 @@ func iterateErrorBaseline(t testing.TB, inputFiles []*TestFile, inputDiagnostics
 		// Filter down to the errors in the file
 		fileErrors := core.Filter(diagnostics, func(e *compiler.Diagnostic) bool {
 			return e.File() != nil &&
-				tspath.ComparePaths(removeTestPathPrefixes(e.File().FileName(), false), removeTestPathPrefixes(inputFile.unitName, false), "", true) == core.ComparisonEqual
+				tspath.ComparePaths(removeTestPathPrefixes(e.File().FileName(), false), removeTestPathPrefixes(inputFile.unitName, false), tspath.ComparePathsOptions{}) == core.ComparisonEqual
 		})
 
 		// Header
@@ -189,7 +182,6 @@ func iterateErrorBaseline(t testing.TB, inputFiles []*TestFile, inputDiagnostics
 		lines := lineDelimiter.Split(inputFile.content, -1)
 
 		for lineIndex, line := range lines {
-
 			thisLineStart := int(lineStarts[lineIndex])
 			var nextLineStart int
 			// On the last line of the file, fake the next line start number so that we handle errors on the last character of the file correctly
@@ -205,7 +197,7 @@ func iterateErrorBaseline(t testing.TB, inputFiles []*TestFile, inputDiagnostics
 			for _, errDiagnostic := range fileErrors {
 				// Does any error start or continue on to this line? Emit squiggles
 				end := errDiagnostic.Loc().End()
-				if end >= int(thisLineStart) && (errDiagnostic.Loc().Pos() < nextLineStart || lineIndex == len(lines)-1) {
+				if end >= thisLineStart && (errDiagnostic.Loc().Pos() < nextLineStart || lineIndex == len(lines)-1) {
 					// How many characters from the start of this line the error starts at (could be positive or negative)
 					relativeOffset := errDiagnostic.Loc().Pos() - thisLineStart
 					// How many characters of the error are on this line (might be longer than this line in reality)
@@ -220,7 +212,6 @@ func iterateErrorBaseline(t testing.TB, inputFiles []*TestFile, inputDiagnostics
 
 					// If the error ended here, or we're at the end of the file, emit its message
 					if lineIndex == len(lines)-1 || nextLineStart > end {
-
 						outputErrorText(errDiagnostic)
 						markedErrorCount++
 					}

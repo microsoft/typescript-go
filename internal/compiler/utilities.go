@@ -1424,6 +1424,37 @@ func tryParsePattern(pattern string) Pattern {
 	return Pattern{}
 }
 
+func findBestPatternMatch(patterns []Pattern, candidate string) Pattern {
+	var bestPattern Pattern
+	longestMatchPrefixLength := -1
+	for _, pattern := range patterns {
+		if (pattern.starIndex == -1 || pattern.starIndex > longestMatchPrefixLength) && isPatternMatch(pattern, candidate) {
+			bestPattern = pattern
+			longestMatchPrefixLength = pattern.starIndex
+		}
+	}
+	return bestPattern
+}
+
+func isPatternMatch(pattern Pattern, candidate string) bool {
+	if pattern.starIndex == -1 {
+		return pattern.text == candidate
+	}
+	return len(candidate) >= pattern.starIndex &&
+		strings.HasPrefix(candidate, pattern.text[:pattern.starIndex]) &&
+		strings.HasSuffix(candidate, pattern.text[pattern.starIndex+1:])
+}
+
+func matchedText(pattern Pattern, candidate string) string {
+	if !isPatternMatch(pattern, candidate) {
+		panic("candidate does not match pattern")
+	}
+	if pattern.starIndex == -1 {
+		return ""
+	}
+	return candidate[pattern.starIndex : len(candidate)-len(pattern.text)+pattern.starIndex+1]
+}
+
 func positionIsSynthesized(pos int) bool {
 	return pos < 0
 }
@@ -1815,6 +1846,8 @@ const (
 )
 
 var supportedDeclarationExtensions = []string{ExtensionDts, ExtensionDcts, ExtensionDmts}
+var supportedTSImplementationExtensions = []string{ExtensionTs, ExtensionTsx, ExtensionMts, ExtensionCts}
+var supportedTSExtensionsForExtractExtension = []string{ExtensionDts, ExtensionDcts, ExtensionDmts, ExtensionTs, ExtensionTsx, ExtensionMts, ExtensionCts}
 
 func getScriptKindFromFileName(fileName string) ScriptKind {
 	dotPos := strings.LastIndex(fileName, ".")
@@ -1890,8 +1923,8 @@ func getESModuleInterop(options *CompilerOptions) bool {
 		return true
 	}
 	return false
-
 }
+
 func getAllowSyntheticDefaultImports(options *CompilerOptions) bool {
 	if options.AllowSyntheticDefaultImports != TSUnknown {
 		return options.AllowSyntheticDefaultImports == TSTrue
@@ -1899,6 +1932,20 @@ func getAllowSyntheticDefaultImports(options *CompilerOptions) bool {
 	return getESModuleInterop(options) ||
 		getEmitModuleKind(options) == ModuleKindSystem ||
 		getEmitModuleResolutionKind(options) == ModuleResolutionKindBundler
+}
+
+func getResolveJsonModule(options *CompilerOptions) bool {
+	if options.ResolveJsonModule != TSUnknown {
+		return options.ResolveJsonModule == TSTrue
+	}
+	return getEmitModuleResolutionKind(options) == ModuleResolutionKindBundler
+}
+
+func getAllowJs(options *CompilerOptions) bool {
+	if options.AllowJs != TSUnknown {
+		return options.AllowJs == TSTrue
+	}
+	return options.CheckJs == TSTrue
 }
 
 type DiagnosticsCollection struct {
@@ -3000,11 +3047,7 @@ func isExternalModuleNameRelative(moduleName string) bool {
 	// TypeScript 1.0 spec (April 2014): 11.2.1
 	// An external module name is "relative" if the first term is "." or "..".
 	// Update: We also consider a path like `C:\foo.ts` "relative" because we do not search for it in `node_modules` or treat it as an ambient module.
-	return pathIsRelative(moduleName) || tspath.IsRootedDiskPath(moduleName)
-}
-
-func pathIsRelative(path string) bool {
-	return core.MakeRegexp(`^\.\.?(?:$|[\\/])`).MatchString(path)
+	return tspath.PathIsRelative(moduleName) || tspath.IsRootedDiskPath(moduleName)
 }
 
 func extensionIsTs(ext string) bool {
@@ -3085,6 +3128,41 @@ func removeFileExtension(path string) string {
 	}
 	// Otherwise just remove single dot extension, if any
 	return path[:len(path)-len(filepath.Ext(path))]
+}
+
+func tryGetExtensionFromPath(p string) string {
+	for _, ext := range extensionsToRemove {
+		if tspath.FileExtensionIs(p, ext) {
+			return ext
+		}
+	}
+	return ""
+}
+
+func removeExtension(path string, extension string) string {
+	return path[:len(path)-len(extension)]
+}
+
+func fileExtensionIsOneOf(path string, extensions []string) bool {
+	for _, ext := range extensions {
+		if tspath.FileExtensionIs(path, ext) {
+			return true
+		}
+	}
+	return false
+}
+
+func tryExtractTSExtension(fileName string) string {
+	for _, ext := range supportedTSExtensionsForExtractExtension {
+		if tspath.FileExtensionIs(fileName, ext) {
+			return ext
+		}
+	}
+	return ""
+}
+
+func hasImplementationTSFileExtension(path string) bool {
+	return fileExtensionIsOneOf(path, supportedTSImplementationExtensions) && !IsDeclarationFileName(path)
 }
 
 func isSideEffectImport(node *Node) bool {
@@ -4055,7 +4133,8 @@ type Evaluator func(expr *Node, location *Node) EvaluatorResult
 func createEvaluator(evaluateEntity Evaluator) Evaluator {
 	var evaluate Evaluator
 	evaluateTemplateExpression := func(expr *Node, location *Node) EvaluatorResult {
-		result := expr.AsTemplateExpression().head.Text()
+		var sb strings.Builder
+		sb.WriteString(expr.AsTemplateExpression().head.Text())
 		resolvedOtherFiles := false
 		hasExternalReferences := false
 		for _, span := range expr.AsTemplateExpression().templateSpans {
@@ -4063,12 +4142,12 @@ func createEvaluator(evaluateEntity Evaluator) Evaluator {
 			if spanResult.value == nil {
 				return evaluatorResult(nil, true /*isSyntacticallyString*/, false, false)
 			}
-			result += anyToString(spanResult.value)
-			result += span.AsTemplateSpan().literal.Text()
+			sb.WriteString(anyToString(spanResult.value))
+			sb.WriteString(span.AsTemplateSpan().literal.Text())
 			resolvedOtherFiles = resolvedOtherFiles || spanResult.resolvedOtherFiles
 			hasExternalReferences = hasExternalReferences || spanResult.hasExternalReferences
 		}
-		return evaluatorResult(result, true, resolvedOtherFiles, hasExternalReferences)
+		return evaluatorResult(sb.String(), true, resolvedOtherFiles, hasExternalReferences)
 	}
 	evaluate = func(expr *Node, location *Node) EvaluatorResult {
 		isSyntacticallyString := false
