@@ -69,6 +69,6 @@ func FromString(name string, path string, contents string) Fixture {
 func (f *fromString) Name() string { return f.name }
 func (f *fromString) Path() string { return f.path }
 
-func (f *fromString) SkipIfNotExist(tb testing.TB) {} //nolint:thelper
+func (f *fromString) SkipIfNotExist(tb testing.TB) {}
 
-func (f *fromString) ReadFile(tb testing.TB) string { return f.contents } //nolint:thelper
+func (f *fromString) ReadFile(tb testing.TB) string { return f.contents }
