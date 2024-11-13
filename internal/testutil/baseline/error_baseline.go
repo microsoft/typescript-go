@@ -25,7 +25,8 @@ var (
 	tsExtension   = regexp.MustCompile(`\.tsx?$`)
 )
 
-var useCaseSensitiveFileNames = core.IsFileSystemCaseSensitive()
+// Ensure tests work on windows and linux
+var useCaseSensitiveFileNames = false
 
 var formatOpts = &compiler.DiagnosticsFormattingOptions{
 	UseCaseSensitiveFileNames: useCaseSensitiveFileNames,

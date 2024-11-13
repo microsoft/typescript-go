@@ -8,9 +8,9 @@ import (
 	"runtime"
 	"strings"
 	"time"
+	"unicode"
 
 	ts "github.com/microsoft/typescript-go/internal/compiler"
-	"github.com/microsoft/typescript-go/internal/core"
 )
 
 var quiet = false
@@ -51,7 +51,7 @@ func main() {
 	rootPath := flag.Arg(0)
 	compilerOptions := &ts.CompilerOptions{Strict: ts.TSTrue, Target: ts.ScriptTargetESNext, ModuleKind: ts.ModuleKindNodeNext}
 	programOptions := ts.ProgramOptions{RootPath: rootPath, Options: compilerOptions, SingleThreaded: singleThreaded}
-	useCaseSensitiveFileNames := core.IsFileSystemCaseSensitive()
+	useCaseSensitiveFileNames := isFileSystemCaseSensitive()
 
 	startTime := time.Now()
 	program := ts.NewProgram(programOptions)
@@ -100,4 +100,29 @@ func main() {
 	fmt.Printf("Types:         %v\n", program.TypeCount())
 	fmt.Printf("Compile time:  %v\n", compileTime)
 	fmt.Printf("Memory used:   %vK\n", memStats.Alloc/1024)
+}
+
+func isFileSystemCaseSensitive() bool {
+	// win32/win64 are case insensitive platforms
+	if runtime.GOOS == "windows" {
+		return false
+	}
+
+	// If the current executable exists under a different case, we must be case-insensitve.
+	if _, err := os.Stat(swapCase(os.Args[0])); os.IsNotExist(err) {
+		return false
+	}
+	return true
+}
+
+// Convert all lowercase chars to uppercase, and vice-versa
+func swapCase(str string) string {
+	return strings.Map(func(r rune) rune {
+		upper := unicode.ToUpper(r)
+		if upper == r {
+			return unicode.ToLower(r)
+		} else {
+			return upper
+		}
+	}, str)
 }
