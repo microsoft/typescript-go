@@ -1542,11 +1542,12 @@ func (c *Checker) sliceTupleType(t *Type, index int, endSkipCount int) *Type {
 
 func (c *Checker) getKnownKeysOfTupleType(t *Type) *Type {
 	fixedLength := t.TargetTupleType().fixedLength
-	keys := make([]*Type, fixedLength)
+	keys := make([]*Type, fixedLength+1)
 	for i := range fixedLength {
 		keys[i] = c.getStringLiteralType(strconv.Itoa(i))
 	}
-	return c.getUnionType(append(keys, c.getIndexType(ifElse(t.TargetTupleType().readonly, c.globalReadonlyArrayType, c.globalArrayType))))
+	keys[fixedLength] = c.getIndexType(ifElse(t.TargetTupleType().readonly, c.globalReadonlyArrayType, c.globalArrayType))
+	return c.getUnionType(keys)
 }
 
 func (c *Checker) getRestArrayTypeOfTupleType(t *Type) *Type {
@@ -1750,8 +1751,7 @@ func (c *Checker) compareSignaturesIdentical(source *Signature, target *Signatur
 			}
 		}
 	}
-	targetLen := c.getParameterCount(target)
-	for i := 0; i < targetLen; i++ {
+	for i := range c.getParameterCount(target) {
 		s := c.getTypeAtPosition(source, i)
 		t := c.getTypeAtPosition(target, i)
 		related := compareTypes(t, s)
