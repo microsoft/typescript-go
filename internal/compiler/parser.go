@@ -55,9 +55,9 @@ type Parser struct {
 	token                 ast.Kind
 	parsingContexts       ParsingContexts
 	diagnostics           []*Diagnostic
-	identifiers           Set[string]
+	identifiers           core.Set[string]
 	sourceFlags           ast.NodeFlags
-	notParenthesizedArrow Set[int]
+	notParenthesizedArrow core.Set[int]
 	identifierPool        core.Pool[Identifier]
 }
 

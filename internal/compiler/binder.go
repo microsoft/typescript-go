@@ -61,7 +61,7 @@ type Binder struct {
 	inStrictMode           bool
 	inAssignmentPattern    bool
 	symbolCount            int
-	classifiableNames      Set[string]
+	classifiableNames      core.Set[string]
 	symbolPool             core.Pool[Symbol]
 	flowNodePool           core.Pool[FlowNode]
 	flowListPool           core.Pool[FlowList]

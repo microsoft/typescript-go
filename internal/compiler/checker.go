@@ -191,7 +191,7 @@ type Checker struct {
 	uniqueESSymbolTypes                map[*Symbol]*Type
 	cachedTypes                        map[CachedTypeKey]*Type
 	cachedSignatures                   map[CachedSignatureKey]*Signature
-	markerTypes                        Set[*Type]
+	markerTypes                        core.Set[*Type]
 	identifierSymbols                  map[*Node]*Symbol
 	undefinedSymbol                    *Symbol
 	argumentsSymbol                    *Symbol
@@ -2205,7 +2205,7 @@ func (c *Checker) getSpreadType(left *Type, right *Type, symbol *Symbol, objectF
 		return c.getIntersectionType([]*Type{left, right})
 	}
 	members := make(SymbolTable)
-	var skippedPrivateMembers Set[string]
+	var skippedPrivateMembers core.Set[string]
 	var indexInfos []*IndexInfo
 	if left == c.emptyObjectType {
 		indexInfos = c.getIndexInfosOfType(right)
@@ -4041,7 +4041,7 @@ type ExportCollisionTable = map[string]*ExportCollision
 
 func (c *Checker) getExportsOfModuleWorker(moduleSymbol *Symbol) (exports SymbolTable, typeOnlyExportStarMap map[string]*Node) {
 	var visitedSymbols []*Symbol
-	var nonTypeOnlyNames Set[string]
+	var nonTypeOnlyNames core.Set[string]
 	// The ES6 spec permits export * declarations in a module to circularly reference the module itself. For example,
 	// module 'a' can 'export * from "b"' and 'b' can 'export * from "a"' without error.
 	var visit func(*Symbol, *Node, bool) SymbolTable
@@ -4245,7 +4245,7 @@ func (c *Checker) getSymbolFlagsEx(symbol *Symbol, excludeTypeOnlyMeanings bool,
 	if !excludeLocalMeanings {
 		flags = symbol.Flags
 	}
-	var seenSymbols Set[*Symbol]
+	var seenSymbols core.Set[*Symbol]
 	for symbol.Flags&ast.SymbolFlagsAlias != 0 {
 		target := c.getExportSymbolOfValueSymbolIfExported(c.resolveAlias(symbol))
 		if !typeOnlyDeclarationIsExportStar && target == typeOnlyResolution || typeOnlyExportStarTargets[target.Name] == target {
@@ -5466,7 +5466,7 @@ func (c *Checker) getPropertiesOfObjectType(t *Type) []*Symbol {
 func (c *Checker) getPropertiesOfUnionOrIntersectionType(t *Type) []*Symbol {
 	d := t.AsUnionOrIntersectionType()
 	if d.resolvedProperties == nil {
-		var checked Set[string]
+		var checked core.Set[string]
 		props := []*Symbol{}
 		for _, current := range d.types {
 			for _, prop := range c.getPropertiesOfType(current) {
@@ -6943,7 +6943,7 @@ func (c *Checker) getUnionOrIntersectionProperty(t *Type, name string, skipObjec
 
 func (c *Checker) createUnionOrIntersectionProperty(containingType *Type, name string, skipObjectFunctionPropertyAugment bool) *Symbol {
 	var singleProp *Symbol
-	var propSet Set[*Symbol]
+	var propSet core.Set[*Symbol]
 	var indexTypes []*Type
 	isUnion := containingType.flags&TypeFlagsUnion != 0
 	// Flags we want to propagate to the result if they exist in all source symbols
@@ -7157,8 +7157,8 @@ func isPrototypeProperty(symbol *Symbol) bool {
 	return symbol.Flags&ast.SymbolFlagsMethod != 0 || symbol.CheckFlags&ast.CheckFlagsSyntheticMethod != 0
 }
 
-func (c *Checker) hasCommonDeclaration(symbols Set[*Symbol]) bool {
-	var commonDeclarations Set[*Node]
+func (c *Checker) hasCommonDeclaration(symbols core.Set[*Symbol]) bool {
+	var commonDeclarations core.Set[*Node]
 	for symbol := range symbols.Keys() {
 		if len(symbol.Declarations) == 0 {
 			return false

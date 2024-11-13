@@ -2,6 +2,8 @@ package compiler
 
 import (
 	"strings"
+
+	"github.com/microsoft/typescript-go/internal/core"
 )
 
 type TypePrecedence int32
@@ -80,7 +82,7 @@ type Printer struct {
 	c       *Checker
 	flags   TypeFormatFlags
 	sb      strings.Builder
-	visited Set[*Type]
+	visited core.Set[*Type]
 	depth   int
 }
 
