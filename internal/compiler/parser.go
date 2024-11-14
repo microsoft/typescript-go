@@ -665,14 +665,14 @@ func (p *Parser) parseDeclaration() *ast.Statement {
 	pos := p.nodePos()
 	hasJSDoc := p.hasPrecedingJSDocComment()
 	modifierList := p.parseModifiersWithOptions( /*allowDecorators*/ true, false /*permitConstAsModifier*/, false /*stopOnStartOfClassStaticBlock*/)
-	isAmbient := modifierList != nil && core.Some(modifierList.AsModifierList().Modifiers_, isDeclareModifier)
+	isAmbient := modifierList != nil && core.Some(modifierList.AsModifierList().Elements(), isDeclareModifier)
 	if isAmbient {
 		// !!! incremental parsing
 		// node := p.tryReuseAmbientDeclaration(pos)
 		// if node {
 		// 	return node
 		// }
-		for _, m := range modifierList.AsModifierList().Modifiers_ {
+		for _, m := range modifierList.AsModifierList().Elements() {
 			m.Flags |= ast.NodeFlagsAmbient
 		}
 		saveContextFlags := p.contextFlags
@@ -1310,7 +1310,7 @@ func (p *Parser) parseClassDeclarationOrExpression(pos int, hasJSDoc bool, modif
 	// We don't parse the name here in await context, instead we will report a grammar error in the checker.
 	name := p.parseNameOfClassDeclarationOrExpression()
 	typeParameters := p.parseTypeParameters()
-	if modifiers != nil && core.Some(modifiers.AsModifierList().Modifiers_, isExportModifier) {
+	if modifiers != nil && core.Some(modifiers.AsModifierList().Elements(), isExportModifier) {
 		p.setContextFlags(ast.NodeFlagsAwaitContext, true /*value*/)
 	}
 	heritageClauses := p.parseHeritageClauses()
@@ -1419,9 +1419,9 @@ func (p *Parser) parseClassElement() *ast.Node {
 	// It is very important that we check this *after* checking indexers because
 	// the [ token can start an index signature or a computed property name
 	if tokenIsIdentifierOrKeyword(p.token) || p.token == ast.KindStringLiteral || p.token == ast.KindNumericLiteral || p.token == ast.KindBigIntLiteral || p.token == ast.KindAsteriskToken || p.token == ast.KindOpenBracketToken {
-		isAmbient := modifierList != nil && core.Some(modifierList.AsModifierList().Modifiers_, isDeclareModifier)
+		isAmbient := modifierList != nil && core.Some(modifierList.AsModifierList().Elements(), isDeclareModifier)
 		if isAmbient {
-			for _, m := range modifierList.AsModifierList().Modifiers_ {
+			for _, m := range modifierList.AsModifierList().Elements() {
 				m.Flags |= ast.NodeFlagsAmbient
 			}
 			saveContextFlags := p.contextFlags
@@ -1507,7 +1507,7 @@ func (p *Parser) parseMethodDeclaration(pos int, hasJSDoc bool, modifiers *ast.N
 }
 
 func hasAsyncModifier(modifiers *ast.Node) bool {
-	return modifiers != nil && core.Some(modifiers.AsModifierList().Modifiers_, isAsyncModifier)
+	return modifiers != nil && core.Some(modifiers.AsModifierList().Elements(), isAsyncModifier)
 }
 
 func (p *Parser) parsePropertyDeclaration(pos int, hasJSDoc bool, modifiers *ast.Node, name *ast.Node, questionToken *ast.Node) *ast.Node {
@@ -5939,9 +5939,9 @@ func tagNamesAreEquivalent(lhs *ast.Expression, rhs *ast.Expression) bool {
 		return true
 	case ast.KindJsxNamespacedName:
 		return lhs.AsJsxNamespacedName().Namespace.AsIdentifier().Text == rhs.AsJsxNamespacedName().Namespace.AsIdentifier().Text &&
-			lhs.AsJsxNamespacedName().Name_.AsIdentifier().Text == rhs.AsJsxNamespacedName().Name_.AsIdentifier().Text
+			lhs.AsJsxNamespacedName().Name().AsIdentifier().Text == rhs.AsJsxNamespacedName().Name().AsIdentifier().Text
 	case ast.KindPropertyAccessExpression:
-		return lhs.AsPropertyAccessExpression().Name_.Text() == rhs.AsPropertyAccessExpression().Name_.Text() &&
+		return lhs.AsPropertyAccessExpression().Name().Text() == rhs.AsPropertyAccessExpression().Name().Text() &&
 			tagNamesAreEquivalent(lhs.AsPropertyAccessExpression().Expression, rhs.AsPropertyAccessExpression().Expression)
 	}
 	panic("Unhandled case in tagNamesAreEquivalent")

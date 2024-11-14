@@ -732,7 +732,7 @@ func (c *Checker) checkAndReportErrorForInvalidInitializer(errorLocation *ast.No
 		message := ifElse(errorLocation != nil && prop.TypeNode != nil && prop.TypeNode.Loc.ContainsInclusive(errorLocation.Pos()),
 			diagnostics.Type_of_instance_member_variable_0_cannot_reference_identifier_1_declared_in_the_constructor,
 			diagnostics.Initializer_of_instance_member_variable_0_cannot_reference_identifier_1_declared_in_the_constructor)
-		c.error(errorLocation, message, declarationNameToString(prop.Name_), name)
+		c.error(errorLocation, message, declarationNameToString(prop.Name()), name)
 		return true
 	}
 	return false
@@ -964,7 +964,7 @@ func (c *Checker) checkSourceElementWorker(node *ast.Node) {
 	switch node.Kind {
 	case ast.KindIdentifier:
 		if isExpressionNode(node) &&
-			!(ast.IsPropertyAccessExpression(node.Parent) && node.Parent.AsPropertyAccessExpression().Name_ == node) &&
+			!(ast.IsPropertyAccessExpression(node.Parent) && node.Parent.AsPropertyAccessExpression().Name() == node) &&
 			!(ast.IsQualifiedName(node.Parent) && node.Parent.AsQualifiedName().Right == node) {
 			_ = c.checkExpression(node)
 		}
@@ -1223,7 +1223,7 @@ func (c *Checker) checkPropertyAccessExpression(node *ast.Node, checkMode CheckM
 		return c.checkPropertyAccessChain(node, checkMode)
 	}
 	expr := node.Expression()
-	return c.checkPropertyAccessExpressionOrQualifiedName(node, expr, c.checkNonNullExpression(expr), node.AsPropertyAccessExpression().Name_, checkMode, writeOnly)
+	return c.checkPropertyAccessExpressionOrQualifiedName(node, expr, c.checkNonNullExpression(expr), node.AsPropertyAccessExpression().Name(), checkMode, writeOnly)
 }
 
 func (c *Checker) checkPropertyAccessChain(node *ast.Node, checkMode CheckMode) *Type {
@@ -1557,7 +1557,7 @@ func (c *Checker) checkPropertyAccessibilityEx(node *ast.Node, isSuper bool, wri
 	if reportError {
 		switch node.Kind {
 		case ast.KindPropertyAccessExpression:
-			errorNode = node.AsPropertyAccessExpression().Name_
+			errorNode = node.AsPropertyAccessExpression().Name()
 		case ast.KindQualifiedName:
 			errorNode = node.AsQualifiedName().Right
 		case ast.KindImportType:
@@ -2668,7 +2668,7 @@ func (c *Checker) isReachableFlowNode(flowNode *ast.FlowNode) bool {
 func (c *Checker) GetDiagnostics(sourceFile *ast.SourceFile) []*ast.Diagnostic {
 	if sourceFile != nil {
 		c.checkSourceFile(sourceFile)
-		return c.diagnostics.GetDiagnosticsForFile(sourceFile.FileName_)
+		return c.diagnostics.GetDiagnosticsForFile(sourceFile.FileName())
 	}
 	for _, file := range c.files {
 		c.checkSourceFile(file)
@@ -3111,8 +3111,8 @@ func (c *Checker) getTargetOfImportEqualsDeclaration(node *ast.Node, dontResolve
 	if commonJSPropertyAccess != nil {
 		access := commonJSPropertyAccess.AsPropertyAccessExpression()
 		name := getLeftmostAccessExpression(access.Expression).AsCallExpression().Arguments[0]
-		if ast.IsIdentifier(access.Name_) {
-			return c.resolveSymbol(c.getPropertyOfType(c.resolveExternalModuleTypeByLiteral(name), access.Name_.Text()))
+		if ast.IsIdentifier(access.Name()) {
+			return c.resolveSymbol(c.getPropertyOfType(c.resolveExternalModuleTypeByLiteral(name), access.Name().Text()))
 		}
 		return nil
 	}
@@ -3281,7 +3281,7 @@ func (c *Checker) getTargetOfNamespaceExport(node *ast.Node, dontResolveAlias bo
 func (c *Checker) getTargetOfImportSpecifier(node *ast.Node, dontResolveAlias bool) *ast.Symbol {
 	name := node.AsImportSpecifier().PropertyName
 	if name == nil {
-		name = node.AsImportSpecifier().Name_
+		name = node.AsImportSpecifier().Name()
 	}
 	if moduleExportNameIsDefault(name) {
 		specifier := c.getModuleSpecifierForImportOrExport(node)
@@ -3438,7 +3438,7 @@ func (c *Checker) isOnlyImportableAsDefault(usage *ast.Node, resolvedModule *ast
 			if resolvedModule != nil {
 				targetFile = getSourceFileOfModule(resolvedModule)
 			}
-			return targetFile != nil && (isJsonSourceFile(targetFile) || getDeclarationFileExtension(targetFile.FileName_) == ".d.json.ts")
+			return targetFile != nil && (isJsonSourceFile(targetFile) || getDeclarationFileExtension(targetFile.FileName()) == ".d.json.ts")
 		}
 	}
 	return false
@@ -3580,13 +3580,13 @@ func getPropertyNameFromSpecifier(node *ast.Node) *ast.Node {
 func getNameFromSpecifier(node *ast.Node) *ast.Node {
 	switch node.Kind {
 	case ast.KindImportSpecifier:
-		return node.AsImportSpecifier().Name_
+		return node.AsImportSpecifier().Name()
 	case ast.KindExportSpecifier:
-		return node.AsExportSpecifier().Name_
+		return node.AsExportSpecifier().Name()
 	case ast.KindBindingElement:
-		return node.AsBindingElement().Name_
+		return node.AsBindingElement().Name()
 	case ast.KindPropertyAccessExpression:
-		return node.AsPropertyAccessExpression().Name_
+		return node.AsPropertyAccessExpression().Name()
 	}
 	panic("Unhandled case in getSpecifierPropertyName")
 }
@@ -3598,7 +3598,7 @@ func (c *Checker) getTargetOfBindingElement(node *ast.Node, dontResolveAlias boo
 func (c *Checker) getTargetOfExportSpecifier(node *ast.Node, meaning ast.SymbolFlags, dontResolveAlias bool) *ast.Symbol {
 	name := node.AsExportSpecifier().PropertyName
 	if name == nil {
-		name = node.AsExportSpecifier().Name_
+		name = node.AsExportSpecifier().Name()
 	}
 	if moduleExportNameIsDefault(name) {
 		specifier := c.getModuleSpecifierForImportOrExport(node)
@@ -3791,7 +3791,7 @@ func (c *Checker) resolveExternalModule(location *ast.Node, moduleReference stri
 			return c.getMergedSymbol(sourceFile.Symbol)
 		}
 		if errorNode != nil && moduleNotFoundError != nil && !isSideEffectImport(errorNode) {
-			c.error(errorNode, diagnostics.File_0_is_not_a_module, sourceFile.FileName_)
+			c.error(errorNode, diagnostics.File_0_is_not_a_module, sourceFile.FileName())
 		}
 		return nil
 	}
@@ -3949,7 +3949,7 @@ func (c *Checker) getTargetOfAliasDeclaration(node *ast.Node, dontRecursivelyRes
 	case ast.KindNamespaceExportDeclaration:
 		return c.getTargetOfNamespaceExportDeclaration(node, dontRecursivelyResolve)
 	case ast.KindShorthandPropertyAssignment:
-		return c.resolveEntityName(node.AsShorthandPropertyAssignment().Name_, ast.SymbolFlagsValue|ast.SymbolFlagsType|ast.SymbolFlagsNamespace, true /*ignoreErrors*/, dontRecursivelyResolve, nil /*location*/)
+		return c.resolveEntityName(node.AsShorthandPropertyAssignment().Name(), ast.SymbolFlagsValue|ast.SymbolFlagsType|ast.SymbolFlagsNamespace, true /*ignoreErrors*/, dontRecursivelyResolve, nil /*location*/)
 	case ast.KindPropertyAssignment:
 		return c.getTargetOfAliasLikeExpression(node.AsPropertyAssignment().Initializer, dontRecursivelyResolve)
 	case ast.KindElementAccessExpression, ast.KindPropertyAccessExpression:
@@ -3986,7 +3986,7 @@ func (c *Checker) resolveEntityName(name *ast.Node, meaning ast.SymbolFlags, ign
 		symbol = c.resolveQualifiedName(name, qualified.Left, qualified.Right, meaning, ignoreErrors, dontResolveAlias, location)
 	case ast.KindPropertyAccessExpression:
 		access := name.AsPropertyAccessExpression()
-		symbol = c.resolveQualifiedName(name, access.Expression, access.Name_, meaning, ignoreErrors, dontResolveAlias, location)
+		symbol = c.resolveQualifiedName(name, access.Expression, access.Name(), meaning, ignoreErrors, dontResolveAlias, location)
 	default:
 		panic("Unknown entity name kind")
 	}
@@ -4387,7 +4387,7 @@ func (c *Checker) isAliasSymbolDeclaration(node *ast.Node) bool {
 		ast.KindImportSpecifier, ast.KindExportSpecifier:
 		return true
 	case ast.KindImportClause:
-		return node.AsImportClause().Name_ != nil
+		return node.AsImportClause().Name() != nil
 	case ast.KindExportAssignment:
 		return exportAssignmentIsAlias(node)
 	}
@@ -5327,14 +5327,14 @@ func (c *Checker) reportImplicitAny(declaration *ast.Node, t *Type, wideningKind
 			diagnostics.Member_0_implicitly_has_an_1_type_but_a_better_type_may_be_inferred_from_usage)
 	case ast.KindParameter:
 		param := declaration.AsParameterDeclaration()
-		if ast.IsIdentifier(param.Name_) {
-			name := param.Name_.AsIdentifier()
+		if ast.IsIdentifier(param.Name()) {
+			name := param.Name().AsIdentifier()
 			originalKeywordKind := identifierToKeywordKind(name)
 			if (ast.IsCallSignatureDeclaration(declaration.Parent) || ast.IsMethodSignatureDeclaration(declaration.Parent) || ast.IsFunctionTypeNode(declaration.Parent)) &&
 				slices.Contains(declaration.Parent.Parameters(), declaration) &&
 				(isTypeNodeKind(originalKeywordKind) || c.resolveName(declaration, name.Text, ast.SymbolFlagsType, nil /*nameNotFoundMessage*/, true /*isUse*/, false /*excludeGlobals*/) != nil) {
 				newName := fmt.Sprintf("arg%v", slices.Index(declaration.Parent.Parameters(), declaration))
-				typeName := declarationNameToString(param.Name_) + ifElse(param.DotDotDotToken != nil, "[]", "")
+				typeName := declarationNameToString(param.Name()) + ifElse(param.DotDotDotToken != nil, "[]", "")
 				c.errorOrSuggestion(c.noImplicitAny, declaration, diagnostics.Parameter_has_a_name_but_no_type_Did_you_mean_0_Colon_1, newName, typeName)
 				return
 			}

@@ -406,7 +406,7 @@ func modifierToFlag(token ast.Kind) ast.ModifierFlags {
 func modifiersToFlags(modifierList *ast.Node) ast.ModifierFlags {
 	flags := ast.ModifierFlagsNone
 	if modifierList != nil {
-		for _, modifier := range modifierList.AsModifierList().Modifiers_ {
+		for _, modifier := range modifierList.AsModifierList().Elements() {
 			flags |= modifierToFlag(modifier.Kind)
 		}
 	}
@@ -916,7 +916,7 @@ func getImmediatelyInvokedFunctionExpression(fn *ast.Node) *ast.Node {
 func getElementOrPropertyAccessArgumentExpressionOrName(node *ast.Node) *ast.Node {
 	switch node.Kind {
 	case ast.KindPropertyAccessExpression:
-		return node.AsPropertyAccessExpression().Name_
+		return node.AsPropertyAccessExpression().Name()
 	case ast.KindElementAccessExpression:
 		arg := skipParentheses(node.AsElementAccessExpression().ArgumentExpression)
 		if isStringOrNumericLiteralLike(arg) {
@@ -1001,9 +1001,9 @@ func getAssignedName(node *ast.Node) *ast.Node {
 	if parent != nil {
 		switch parent.Kind {
 		case ast.KindPropertyAssignment:
-			return parent.AsPropertyAssignment().Name_
+			return parent.AsPropertyAssignment().Name()
 		case ast.KindBindingElement:
-			return parent.AsBindingElement().Name_
+			return parent.AsBindingElement().Name()
 		case ast.KindBinaryExpression:
 			if node == parent.AsBinaryExpression().Right {
 				left := parent.AsBinaryExpression().Left
@@ -1011,7 +1011,7 @@ func getAssignedName(node *ast.Node) *ast.Node {
 				case ast.KindIdentifier:
 					return left
 				case ast.KindPropertyAccessExpression:
-					return left.AsPropertyAccessExpression().Name_
+					return left.AsPropertyAccessExpression().Name()
 				case ast.KindElementAccessExpression:
 					arg := skipParentheses(left.AsElementAccessExpression().ArgumentExpression)
 					if isStringOrNumericLiteralLike(arg) {
@@ -1020,7 +1020,7 @@ func getAssignedName(node *ast.Node) *ast.Node {
 				}
 			}
 		case ast.KindVariableDeclaration:
-			name := parent.AsVariableDeclaration().Name_
+			name := parent.AsVariableDeclaration().Name()
 			if ast.IsIdentifier(name) {
 				return name
 			}
@@ -1036,7 +1036,7 @@ func isFunctionPropertyAssignment(node *ast.Node) bool {
 			switch expr.Left.Kind {
 			case ast.KindPropertyAccessExpression:
 				// F.id = expr
-				return ast.IsIdentifier(expr.Left.AsPropertyAccessExpression().Expression) && ast.IsIdentifier(expr.Left.AsPropertyAccessExpression().Name_)
+				return ast.IsIdentifier(expr.Left.AsPropertyAccessExpression().Expression) && ast.IsIdentifier(expr.Left.AsPropertyAccessExpression().Name())
 			case ast.KindElementAccessExpression:
 				// F[xxx] = expr
 				return ast.IsIdentifier(expr.Left.AsElementAccessExpression().Expression)
@@ -1065,7 +1065,7 @@ func isCatchClauseVariableDeclarationOrBindingElement(declaration *ast.Node) boo
 }
 
 func isAmbientModule(node *ast.Node) bool {
-	return ast.IsModuleDeclaration(node) && (node.AsModuleDeclaration().Name_.Kind == ast.KindStringLiteral || isGlobalScopeAugmentation(node))
+	return ast.IsModuleDeclaration(node) && (node.AsModuleDeclaration().Name().Kind == ast.KindStringLiteral || isGlobalScopeAugmentation(node))
 }
 
 func isGlobalScopeAugmentation(node *ast.Node) bool {
@@ -1532,12 +1532,12 @@ func getAssignmentTarget(node *ast.Node) *ast.Node {
 		case ast.KindSpreadAssignment:
 			node = parent.Parent
 		case ast.KindShorthandPropertyAssignment:
-			if parent.AsShorthandPropertyAssignment().Name_ != node {
+			if parent.AsShorthandPropertyAssignment().Name() != node {
 				return nil
 			}
 			node = parent.Parent
 		case ast.KindPropertyAssignment:
-			if parent.AsPropertyAssignment().Name_ == node {
+			if parent.AsPropertyAssignment().Name() == node {
 				return nil
 			}
 			node = parent.Parent
@@ -1598,7 +1598,7 @@ func isEntityNameExpression(node *ast.Node) bool {
 func isPropertyAccessEntityNameExpression(node *ast.Node) bool {
 	if node.Kind == ast.KindPropertyAccessExpression {
 		expr := node.AsPropertyAccessExpression()
-		return expr.Name_.Kind == ast.KindIdentifier && isEntityNameExpression(expr.Expression)
+		return expr.Name().Kind == ast.KindIdentifier && isEntityNameExpression(expr.Expression)
 	}
 	return false
 }
@@ -1633,7 +1633,7 @@ func nodeHasName(statement *ast.Node, id *ast.Node) bool {
 
 func isImportMeta(node *ast.Node) bool {
 	if node.Kind == ast.KindMetaProperty {
-		return node.AsMetaProperty().KeywordToken == ast.KindImportKeyword && node.AsMetaProperty().Name_.AsIdentifier().Text == "meta"
+		return node.AsMetaProperty().KeywordToken == ast.KindImportKeyword && node.AsMetaProperty().Name().AsIdentifier().Text == "meta"
 	}
 	return false
 }
@@ -1780,7 +1780,7 @@ type DiagnosticsCollection struct {
 
 func (c *DiagnosticsCollection) add(diagnostic *ast.Diagnostic) {
 	if diagnostic.File() != nil {
-		fileName := diagnostic.File().FileName_
+		fileName := diagnostic.File().FileName()
 		if c.fileDiagnostics == nil {
 			c.fileDiagnostics = make(map[string][]*ast.Diagnostic)
 		}
@@ -1793,7 +1793,7 @@ func (c *DiagnosticsCollection) add(diagnostic *ast.Diagnostic) {
 func (c *DiagnosticsCollection) lookup(diagnostic *ast.Diagnostic) *ast.Diagnostic {
 	var diagnostics []*ast.Diagnostic
 	if diagnostic.File() != nil {
-		diagnostics = c.fileDiagnostics[diagnostic.File().FileName_]
+		diagnostics = c.fileDiagnostics[diagnostic.File().FileName()]
 	} else {
 		diagnostics = c.nonFileDiagnostics
 	}
@@ -1920,7 +1920,7 @@ func compareRelatedInfo(r1, r2 []*ast.Diagnostic) int {
 
 func getDiagnosticPath(d *ast.Diagnostic) string {
 	if d.File() != nil {
-		return d.File().Path_
+		return d.File().Path()
 	}
 	return ""
 }
@@ -2204,7 +2204,7 @@ loop:
 				break loop
 			}
 			if ast.IsClassExpression(location) && meaning&ast.SymbolFlagsClass != 0 {
-				className := location.AsClassExpression().Name_
+				className := location.AsClassExpression().Name()
 				if className != nil && name == className.AsIdentifier().Text {
 					result = location.AsClassExpression().Symbol
 					break loop
@@ -2260,7 +2260,7 @@ loop:
 				break loop
 			}
 			if meaning&ast.SymbolFlagsFunction != 0 {
-				functionName := location.AsFunctionExpression().Name_
+				functionName := location.AsFunctionExpression().Name()
 				if functionName != nil && name == functionName.AsIdentifier().Text {
 					result = location.AsFunctionExpression().Symbol
 					break loop
@@ -2295,7 +2295,7 @@ loop:
 		case ast.KindParameter:
 			parameterDeclaration := location.AsParameterDeclaration()
 			if lastLocation != nil && (lastLocation == parameterDeclaration.Initializer ||
-				lastLocation == parameterDeclaration.Name_ && isBindingPattern(lastLocation)) {
+				lastLocation == parameterDeclaration.Name() && isBindingPattern(lastLocation)) {
 				if associatedDeclarationForContainingInitializerOrBindingName == nil {
 					associatedDeclarationForContainingInitializerOrBindingName = location
 				}
@@ -2303,14 +2303,14 @@ loop:
 		case ast.KindBindingElement:
 			bindingElement := location.AsBindingElement()
 			if lastLocation != nil && (lastLocation == bindingElement.Initializer ||
-				lastLocation == bindingElement.Name_ && isBindingPattern(lastLocation)) {
+				lastLocation == bindingElement.Name() && isBindingPattern(lastLocation)) {
 				if isPartOfParameterDeclaration(location) && associatedDeclarationForContainingInitializerOrBindingName == nil {
 					associatedDeclarationForContainingInitializerOrBindingName = location
 				}
 			}
 		case ast.KindInferType:
 			if meaning&ast.SymbolFlagsTypeParameter != 0 {
-				parameterName := location.AsInferTypeNode().TypeParameter.AsTypeParameter().Name_
+				parameterName := location.AsInferTypeNode().TypeParameter.AsTypeParameter().Name()
 				if parameterName != nil && name == parameterName.AsIdentifier().Text {
 					result = location.AsInferTypeNode().TypeParameter.AsTypeParameter().Symbol
 					break loop
@@ -2391,7 +2391,7 @@ func (r *NameResolver) useOuterVariableScopeInParameter(result *ast.Symbol, loca
 
 func (r *NameResolver) requiresScopeChange(node *ast.Node) bool {
 	d := node.AsParameterDeclaration()
-	return r.requiresScopeChangeWorker(d.Name_) || d.Initializer != nil && r.requiresScopeChangeWorker(d.Initializer)
+	return r.requiresScopeChangeWorker(d.Name()) || d.Initializer != nil && r.requiresScopeChangeWorker(d.Initializer)
 }
 
 func (r *NameResolver) requiresScopeChangeWorker(node *ast.Node) bool {
@@ -2404,7 +2404,7 @@ func (r *NameResolver) requiresScopeChangeWorker(node *ast.Node) bool {
 		if hasStaticModifier(node) {
 			return !getEmitStandardClassFields(r.compilerOptions)
 		}
-		return r.requiresScopeChangeWorker(node.AsPropertyDeclaration().Name_)
+		return r.requiresScopeChangeWorker(node.AsPropertyDeclaration().Name())
 	default:
 		if isNullishCoalesce(node) || isOptionalChain(node) {
 			return getEmitScriptTarget(r.compilerOptions) < core.ScriptTargetES2020
@@ -2452,7 +2452,7 @@ func isTypeParameterSymbolDeclaredInContainer(symbol *ast.Symbol, container *ast
 func isSelfReferenceLocation(node *ast.Node, lastLocation *ast.Node) bool {
 	switch node.Kind {
 	case ast.KindParameter:
-		return lastLocation != nil && lastLocation == node.AsParameterDeclaration().Name_
+		return lastLocation != nil && lastLocation == node.AsParameterDeclaration().Name()
 	case ast.KindFunctionDeclaration, ast.KindClassDeclaration, ast.KindInterfaceDeclaration, ast.KindEnumDeclaration,
 		ast.KindTypeAliasDeclaration, ast.KindModuleDeclaration: // For `namespace N { N; }`
 		return true
@@ -2520,13 +2520,13 @@ func isTypeOnlyImportOrExportDeclaration(node *ast.Node) bool {
 func getNameFromImportDeclaration(node *ast.Node) *ast.Node {
 	switch node.Kind {
 	case ast.KindImportSpecifier:
-		return node.AsImportSpecifier().Name_
+		return node.AsImportSpecifier().Name()
 	case ast.KindNamespaceImport:
-		return node.AsNamespaceImport().Name_
+		return node.AsNamespaceImport().Name()
 	case ast.KindImportClause:
-		return node.AsImportClause().Name_
+		return node.AsImportClause().Name()
 	case ast.KindImportEqualsDeclaration:
-		return node.AsImportEqualsDeclaration().Name_
+		return node.AsImportEqualsDeclaration().Name()
 	}
 	return nil
 }
@@ -2687,7 +2687,7 @@ func isPartOfTypeNode(node *ast.Node) bool {
 		if ast.IsQualifiedName(parent) && parent.AsQualifiedName().Right == node {
 			return isPartOfTypeNodeInParent(parent)
 		}
-		if ast.IsPropertyAccessExpression(parent) && parent.AsPropertyAccessExpression().Name_ == node {
+		if ast.IsPropertyAccessExpression(parent) && parent.AsPropertyAccessExpression().Name() == node {
 			return isPartOfTypeNodeInParent(parent)
 		}
 		return isPartOfTypeNodeInParent(node)
@@ -2771,7 +2771,7 @@ func isJSXTagName(node *ast.Node) bool {
 }
 
 func isShorthandPropertyNameUseSite(useSite *ast.Node) bool {
-	return ast.IsIdentifier(useSite) && ast.IsShorthandPropertyAssignment(useSite.Parent) && useSite.Parent.AsShorthandPropertyAssignment().Name_ == useSite
+	return ast.IsIdentifier(useSite) && ast.IsShorthandPropertyAssignment(useSite.Parent) && useSite.Parent.AsShorthandPropertyAssignment().Name() == useSite
 }
 
 func isTypeDeclaration(node *ast.Node) bool {
@@ -2847,8 +2847,8 @@ func getExternalModuleName(node *ast.Node) *ast.Node {
 	case ast.KindCallExpression:
 		return node.AsCallExpression().Arguments[0]
 	case ast.KindModuleDeclaration:
-		if ast.IsStringLiteral(node.AsModuleDeclaration().Name_) {
-			return node.AsModuleDeclaration().Name_
+		if ast.IsStringLiteral(node.AsModuleDeclaration().Name()) {
+			return node.AsModuleDeclaration().Name()
 		}
 		return nil
 	}
@@ -2928,9 +2928,9 @@ func entityNameToString(name *ast.Node) string {
 	case ast.KindQualifiedName:
 		return entityNameToString(name.AsQualifiedName().Left) + "." + entityNameToString(name.AsQualifiedName().Right)
 	case ast.KindPropertyAccessExpression:
-		return entityNameToString(name.AsPropertyAccessExpression().Expression) + "." + entityNameToString(name.AsPropertyAccessExpression().Name_)
+		return entityNameToString(name.AsPropertyAccessExpression().Expression) + "." + entityNameToString(name.AsPropertyAccessExpression().Name())
 	case ast.KindJsxNamespacedName:
-		return entityNameToString(name.AsJsxNamespacedName().Namespace) + ":" + entityNameToString(name.AsJsxNamespacedName().Name_)
+		return entityNameToString(name.AsJsxNamespacedName().Namespace) + ":" + entityNameToString(name.AsJsxNamespacedName().Name())
 	}
 	panic("Unhandled case in entityNameToString")
 }
@@ -3013,9 +3013,9 @@ func isRightSideOfQualifiedNameOrPropertyAccess(node *ast.Node) bool {
 	case ast.KindQualifiedName:
 		return parent.AsQualifiedName().Right == node
 	case ast.KindPropertyAccessExpression:
-		return parent.AsPropertyAccessExpression().Name_ == node
+		return parent.AsPropertyAccessExpression().Name() == node
 	case ast.KindMetaProperty:
-		return parent.AsMetaProperty().Name_ == node
+		return parent.AsMetaProperty().Name() == node
 	}
 	return false
 }
@@ -3327,10 +3327,10 @@ func compareSymbols(s1, s2 *ast.Symbol) int {
 				f2 := getSourceFileOfNode(s2.ValueDeclaration)
 				if f1 != f2 {
 					// In different files, first compare base filename
-					r := strings.Compare(filepath.Base(f1.Path_), filepath.Base(f2.Path_))
+					r := strings.Compare(filepath.Base(f1.Path()), filepath.Base(f2.Path()))
 					if r == 0 {
 						// Same base filename, compare the full paths (no two files should have the same full path)
-						r = strings.Compare(f1.Path_, f2.Path_)
+						r = strings.Compare(f1.Path(), f2.Path())
 					}
 					return r
 				}
@@ -3671,7 +3671,7 @@ func stringToNumber(s string) float64 {
 
 func isValidESSymbolDeclaration(node *ast.Node) bool {
 	if ast.IsVariableDeclaration(node) {
-		return isVarConst(node) && ast.IsIdentifier(node.AsVariableDeclaration().Name_) && isVariableDeclarationInVariableStatement(node)
+		return isVarConst(node) && ast.IsIdentifier(node.AsVariableDeclaration().Name()) && isVariableDeclarationInVariableStatement(node)
 	}
 	if ast.IsPropertyDeclaration(node) {
 		return hasEffectiveReadonlyModifier(node) && hasStaticModifier(node)
@@ -3861,14 +3861,14 @@ func accessKind(node *ast.Node) AccessKind {
 		}
 		return AccessKindRead
 	case ast.KindPropertyAccessExpression:
-		if parent.AsPropertyAccessExpression().Name_ != node {
+		if parent.AsPropertyAccessExpression().Name() != node {
 			return AccessKindRead
 		}
 		return accessKind(parent)
 	case ast.KindPropertyAssignment:
 		parentAccess := accessKind(parent.Parent)
 		// In `({ x: varname }) = { x: 1 }`, the left `x` is a read, the right `x` is a write.
-		if node == parent.AsPropertyAssignment().Name_ {
+		if node == parent.AsPropertyAssignment().Name() {
 			return reverseAccessKind(parentAccess)
 		}
 		return parentAccess

@@ -199,9 +199,9 @@ func WriteLocation(output *strings.Builder, file *ast.SourceFile, pos int, forma
 	firstLine, firstChar := GetLineAndCharacterOfPosition(file, pos)
 	var relativeFileName string
 	if formatOpts != nil {
-		relativeFileName = tspath.ConvertToRelativePath(file.Path_, formatOpts.ComparePathsOptions)
+		relativeFileName = tspath.ConvertToRelativePath(file.Path(), formatOpts.ComparePathsOptions)
 	} else {
-		relativeFileName = file.Path_
+		relativeFileName = file.Path()
 	}
 
 	writeWithStyleAndReset(output, relativeFileName, foregroundColorEscapeCyan)
@@ -287,7 +287,7 @@ func getErrorSummary(diags []*ast.Diagnostic) *ErrorSummary {
 	// !!!
 	// Need an ordered map here, but sorting for consistency.
 	sortedFileList := slices.SortedFunc(maps.Keys(errorsByFiles), func(a, b *ast.SourceFile) int {
-		return strings.Compare(a.FileName_, b.FileName_)
+		return strings.Compare(a.FileName(), b.FileName())
 	})
 
 	return &ErrorSummary{
@@ -331,9 +331,9 @@ func writeTabularErrorsDisplay(output *strings.Builder, errorSummary *ErrorSumma
 
 func prettyPathForFileError(file *ast.SourceFile, fileErrors []*ast.Diagnostic, formatOpts *DiagnosticsFormattingOptions) string {
 	line, _ := GetLineAndCharacterOfPosition(file, fileErrors[0].Loc().Pos())
-	fileName := file.FileName_
+	fileName := file.FileName()
 	if tspath.PathIsAbsolute(fileName) && tspath.PathIsAbsolute(formatOpts.CurrentDirectory) {
-		fileName = tspath.ConvertToRelativePath(file.Path_, formatOpts.ComparePathsOptions)
+		fileName = tspath.ConvertToRelativePath(file.Path(), formatOpts.ComparePathsOptions)
 	}
 	return fmt.Sprintf("%s%s:%d%s",
 		fileName,
@@ -352,7 +352,7 @@ func WriteFormatDiagnostics(output *strings.Builder, diagnostics []*ast.Diagnost
 func WriteFormatDiagnostic(output *strings.Builder, diagnostic *ast.Diagnostic, formatOpts *DiagnosticsFormattingOptions) {
 	if diagnostic.File() != nil {
 		line, character := GetLineAndCharacterOfPosition(diagnostic.File(), diagnostic.Loc().Pos())
-		fileName := diagnostic.File().FileName_
+		fileName := diagnostic.File().FileName()
 		relativeFileName := tspath.ConvertToRelativePath(fileName, formatOpts.ComparePathsOptions)
 		fmt.Fprintf(output, "%s(%d,%d): ", relativeFileName, line+1, character+1)
 	}

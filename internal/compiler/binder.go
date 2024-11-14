@@ -124,7 +124,7 @@ func (b *Binder) declareSymbol(symbolTable ast.SymbolTable, parent *ast.Symbol, 
 
 func (b *Binder) declareSymbolEx(symbolTable ast.SymbolTable, parent *ast.Symbol, node *ast.Node, includes ast.SymbolFlags, excludes ast.SymbolFlags, isReplaceableByMethod bool, isComputedName bool) *ast.Symbol {
 	//Debug.assert(isComputedName || !hasDynamicName(node))
-	isDefaultExport := hasSyntacticModifier(node, ast.ModifierFlagsDefault) || ast.IsExportSpecifier(node) && moduleExportNameIsDefault(node.AsExportSpecifier().Name_)
+	isDefaultExport := hasSyntacticModifier(node, ast.ModifierFlagsDefault) || ast.IsExportSpecifier(node) && moduleExportNameIsDefault(node.AsExportSpecifier().Name())
 	// The exported symbol for an export default function/class node is always named "default"
 	var name string
 	switch {
@@ -232,7 +232,7 @@ func (b *Binder) declareSymbolEx(symbolTable ast.SymbolTable, parent *ast.Symbol
 				}
 				if ast.IsTypeAliasDeclaration(node) && nodeIsMissing(node.AsTypeAliasDeclaration().TypeNode) && hasSyntacticModifier(node, ast.ModifierFlagsExport) && symbol.Flags&(ast.SymbolFlagsAlias|ast.SymbolFlagsType|ast.SymbolFlagsNamespace) != 0 {
 					// export type T; - may have meant export type { T }?
-					diag.AddRelatedInfo(b.createDiagnosticForNode(node, diagnostics.Did_you_mean_0, "export type { "+node.AsTypeAliasDeclaration().Name_.AsIdentifier().Text+" }"))
+					diag.AddRelatedInfo(b.createDiagnosticForNode(node, diagnostics.Did_you_mean_0, "export type { "+node.AsTypeAliasDeclaration().Name().AsIdentifier().Text+" }"))
 				}
 				for index, declaration := range symbol.Declarations {
 					var decl *ast.Node = getNameOfDeclaration(declaration)
@@ -735,7 +735,7 @@ func (b *Binder) bindSourceFileIfExternalModule() {
 
 func (b *Binder) bindSourceFileAsExternalModule() {
 	// !!! Remove file extension from module name
-	b.bindAnonymousDeclaration(b.file.AsNode(), ast.SymbolFlagsValueModule, "\""+b.file.FileName_+"\"")
+	b.bindAnonymousDeclaration(b.file.AsNode(), ast.SymbolFlagsValueModule, "\""+b.file.FileName()+"\"")
 }
 
 func (b *Binder) bindModuleDeclaration(node *ast.Node) {
@@ -748,7 +748,7 @@ func (b *Binder) bindModuleDeclaration(node *ast.Node) {
 			b.declareModuleSymbol(node)
 		} else {
 			var pattern ast.Pattern
-			name := node.AsModuleDeclaration().Name_
+			name := node.AsModuleDeclaration().Name()
 			if ast.IsStringLiteral(name) {
 				pattern = tryParsePattern(name.AsStringLiteral().Text)
 				if !isValidPattern(pattern) {
@@ -776,7 +776,7 @@ func (b *Binder) declareModuleSymbol(node *ast.Node) ModuleInstanceState {
 }
 
 func (b *Binder) bindNamespaceExportDeclaration(node *ast.Node) {
-	if node.AsNamespaceExportDeclaration().Modifiers_ != nil {
+	if node.AsNamespaceExportDeclaration().Modifiers() != nil {
 		b.errorOnNode(node, diagnostics.Modifiers_cannot_appear_here)
 	}
 	switch {
@@ -792,7 +792,7 @@ func (b *Binder) bindNamespaceExportDeclaration(node *ast.Node) {
 }
 
 func (b *Binder) bindImportClause(node *ast.Node) {
-	if node.AsImportClause().Name_ != nil {
+	if node.AsImportClause().Name() != nil {
 		b.declareSymbolAndAddToSymbolTable(node, ast.SymbolFlagsAlias, ast.SymbolFlagsAliasExcludes)
 	}
 }
@@ -930,7 +930,7 @@ func getModuleInstanceStateForAliasTarget(node *ast.Node, visited map[ast.NodeId
 	spec := node.AsExportSpecifier()
 	name := spec.PropertyName
 	if name == nil {
-		name = spec.Name_
+		name = spec.Name()
 	}
 	if name.Kind != ast.KindIdentifier {
 		// Skip for invalid syntax like this: export { "x" }
@@ -1003,9 +1003,9 @@ func (b *Binder) bindFunctionExpression(node *ast.Node) {
 	}
 	setFlowNode(node, b.currentFlow)
 	bindingName := InternalSymbolNameFunction
-	if ast.IsFunctionExpression(node) && node.AsFunctionExpression().Name_ != nil {
+	if ast.IsFunctionExpression(node) && node.AsFunctionExpression().Name() != nil {
 		b.checkStrictModeFunctionName(node)
-		bindingName = node.AsFunctionExpression().Name_.AsIdentifier().Text
+		bindingName = node.AsFunctionExpression().Name().AsIdentifier().Text
 	}
 	b.bindAnonymousDeclaration(node, ast.SymbolFlagsFunction, bindingName)
 }
@@ -1141,9 +1141,9 @@ func (b *Binder) bindParameter(node *ast.Node) {
 	if b.inStrictMode && node.Flags&ast.NodeFlagsAmbient == 9 {
 		// It is a SyntaxError if the identifier eval or arguments appears within a FormalParameterList of a
 		// strict mode FunctionLikeDeclaration or FunctionExpression(13.1)
-		b.checkStrictModeEvalOrArguments(node, decl.Name_)
+		b.checkStrictModeEvalOrArguments(node, decl.Name())
 	}
-	if isBindingPattern(decl.Name_) {
+	if isBindingPattern(decl.Name()) {
 		index := slices.Index(node.Parent.Parameters(), node)
 		b.bindAnonymousDeclaration(node, ast.SymbolFlagsFunctionScopedVariable, "__"+strconv.Itoa(index))
 	} else {
@@ -1364,7 +1364,7 @@ func (b *Binder) checkStrictModeCatchClause(node *ast.Node) {
 	// Catch production is eval or arguments
 	clause := node.AsCatchClause()
 	if b.inStrictMode && clause.VariableDeclaration != nil {
-		b.checkStrictModeEvalOrArguments(node, clause.VariableDeclaration.AsVariableDeclaration().Name_)
+		b.checkStrictModeEvalOrArguments(node, clause.VariableDeclaration.AsVariableDeclaration().Name())
 	}
 }
 
@@ -1840,7 +1840,7 @@ func (b *Binder) bindAssignmentTargetFlow(node *ast.Node) {
 			case ast.KindPropertyAssignment:
 				b.bindDestructuringTargetFlow(p.AsPropertyAssignment().Initializer)
 			case ast.KindShorthandPropertyAssignment:
-				b.bindAssignmentTargetFlow(p.AsShorthandPropertyAssignment().Name_)
+				b.bindAssignmentTargetFlow(p.AsShorthandPropertyAssignment().Name())
 			case ast.KindSpreadAssignment:
 				b.bindAssignmentTargetFlow(p.AsSpreadAssignment().Expression)
 			}
@@ -2323,9 +2323,9 @@ func (b *Binder) bindInitializedVariableFlow(node *ast.Node) {
 	var name *ast.Node
 	switch node.Kind {
 	case ast.KindVariableDeclaration:
-		name = node.AsVariableDeclaration().Name_
+		name = node.AsVariableDeclaration().Name()
 	case ast.KindBindingElement:
-		name = node.AsBindingElement().Name_
+		name = node.AsBindingElement().Name()
 	}
 	if isBindingPattern(name) {
 		for _, child := range name.AsBindingPattern().Elements {
@@ -2400,7 +2400,7 @@ func (b *Binder) bindOptionalChainRest(node *ast.Node) bool {
 	switch node.Kind {
 	case ast.KindPropertyAccessExpression:
 		b.bind(node.AsPropertyAccessExpression().QuestionDotToken)
-		b.bind(node.AsPropertyAccessExpression().Name_)
+		b.bind(node.AsPropertyAccessExpression().Name())
 	case ast.KindElementAccessExpression:
 		b.bind(node.AsElementAccessExpression().QuestionDotToken)
 		b.bind(node.AsElementAccessExpression().ArgumentExpression)
@@ -2434,7 +2434,7 @@ func (b *Binder) bindCallExpressionFlow(node *ast.Node) {
 	}
 	if ast.IsPropertyAccessExpression(call.Expression) {
 		access := call.Expression.AsPropertyAccessExpression()
-		if ast.IsIdentifier(access.Name_) && isNarrowableOperand(access.Expression) && isPushOrUnshiftIdentifier(access.Name_) {
+		if ast.IsIdentifier(access.Name()) && isNarrowableOperand(access.Expression) && isPushOrUnshiftIdentifier(access.Name()) {
 			b.currentFlow = b.createFlowMutation(ast.FlowFlagsArrayMutation, b.currentFlow, node)
 		}
 	}
@@ -2458,17 +2458,17 @@ func (b *Binder) bindBindingElementFlow(node *ast.Node) {
 	b.bind(elem.DotDotDotToken)
 	b.bind(elem.PropertyName)
 	b.bindInitializer(elem.Initializer)
-	b.bind(elem.Name_)
+	b.bind(elem.Name())
 }
 
 func (b *Binder) bindParameterFlow(node *ast.Node) {
 	param := node.AsParameterDeclaration()
-	b.bind(param.Modifiers_)
+	b.bind(param.Modifiers())
 	b.bind(param.DotDotDotToken)
 	b.bind(param.QuestionToken)
 	b.bind(param.TypeNode)
 	b.bindInitializer(param.Initializer)
-	b.bind(param.Name_)
+	b.bind(param.Name())
 }
 
 // a BindingElement/Parameter does not have side effects if initializers are not evaluated and used. (see GH#49759)

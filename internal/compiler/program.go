@@ -67,7 +67,8 @@ func (p *Program) parseSourceFiles(fileInfos []FileInfo) {
 			fileName := fileInfos[i].Name
 			text, _ := p.host.ReadFile(fileName)
 			sourceFile := ParseSourceFile(fileName, text, getEmitScriptTarget(p.options))
-			sourceFile.Path_, _ = filepath.Abs(fileName)
+			path, _ := filepath.Abs(fileName)
+			sourceFile.SetPath(path)
 			p.collectExternalModuleReferences(sourceFile)
 			p.files[i] = sourceFile
 		})
@@ -75,7 +76,7 @@ func (p *Program) parseSourceFiles(fileInfos []FileInfo) {
 	p.host.WaitForTasks()
 	p.filesByPath = make(map[string]*ast.SourceFile)
 	for _, file := range p.files {
-		p.filesByPath[file.Path_] = file
+		p.filesByPath[file.Path()] = file
 	}
 }
 
@@ -91,7 +92,7 @@ func (p *Program) bindSourceFiles() {
 }
 
 func (p *Program) getResolvedModule(currentSourceFile *ast.SourceFile, moduleReference string) *ast.SourceFile {
-	directory := filepath.Dir(currentSourceFile.Path_)
+	directory := filepath.Dir(currentSourceFile.Path())
 	if isExternalModuleNameRelative(moduleReference) {
 		return p.findSourceFile(filepath.Join(directory, moduleReference))
 	}
@@ -197,7 +198,7 @@ func (p *Program) getDiagnosticsHelper(sourceFile *ast.SourceFile, getDiagnostic
 
 func (p *Program) PrintTypeAliases() {
 	for _, file := range p.files {
-		if filepath.Base(file.FileName_) == "main.ts" {
+		if filepath.Base(file.FileName()) == "main.ts" {
 			file.AsNode().ForEachChild(p.printTypeAlias)
 		}
 	}
@@ -373,14 +374,14 @@ func (p *Program) collectModuleReferences(file *ast.SourceFile, node *ast.Statem
 	}
 	if ast.IsModuleDeclaration(node) && isAmbientModule(node) && (inAmbientModule || hasSyntacticModifier(node, ast.ModifierFlagsAmbient) || file.IsDeclarationFile) {
 		setParentInChildren(node)
-		nameText := node.AsModuleDeclaration().Name_.Text()
+		nameText := node.AsModuleDeclaration().Name().Text()
 		// Ambient module declarations can be interpreted as augmentations for some existing external modules.
 		// This will happen in two cases:
 		// - if current file is external module then module augmentation is a ambient module declaration defined in the top level scope
 		// - if current file is not external module then module augmentation is an ambient module declaration with non-relative module name
 		//   immediately nested in top level ambient module declaration .
 		if isExternalModule(file) || (inAmbientModule && !isExternalModuleNameRelative(nameText)) {
-			file.ModuleAugmentations = append(file.ModuleAugmentations, node.AsModuleDeclaration().Name_)
+			file.ModuleAugmentations = append(file.ModuleAugmentations, node.AsModuleDeclaration().Name())
 		} else if !inAmbientModule {
 			if file.IsDeclarationFile {
 				// for global .d.ts files record name of ambient module
