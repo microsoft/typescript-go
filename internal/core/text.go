@@ -7,26 +7,26 @@ type TextPos int32
 // TextRange
 
 type TextRange struct {
-	Pos_ TextPos
-	End_ TextPos
+	pos TextPos
+	end TextPos
 }
 
 func NewTextRange(pos int, end int) TextRange {
-	return TextRange{Pos_: TextPos(pos), End_: TextPos(end)}
+	return TextRange{pos: TextPos(pos), end: TextPos(end)}
 }
 
-func (t TextRange) Pos() int {
-	return int(t.Pos_)
+func (t TextRange) Pos() TextPos {
+	return t.pos
 }
 
-func (t TextRange) End() int {
-	return int(t.End_)
+func (t TextRange) End() TextPos {
+	return t.end
 }
 
 func (t TextRange) Len() int {
-	return int(t.End_ - t.Pos_)
+	return int(t.end - t.pos)
 }
 
 func (t TextRange) ContainsInclusive(pos int) bool {
-	return pos >= int(t.Pos_) && pos <= int(t.End_)
+	return pos >= int(t.pos) && pos <= int(t.end)
 }

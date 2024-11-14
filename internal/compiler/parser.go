@@ -3150,7 +3150,7 @@ func (p *Parser) parseTupleElementType() *ast.TypeNode {
 	typeNode := p.parseType()
 	if typeNode.Kind == ast.KindJSDocNullableType {
 		nullableType := typeNode.Data.(*ast.JSDocNullableType)
-		if typeNode.Loc.Pos_ == nullableType.TypeNode.Loc.Pos_ {
+		if typeNode.Loc.Pos() == nullableType.TypeNode.Loc.Pos() {
 			result := p.factory.NewOptionalTypeNode(nullableType.TypeNode)
 			result.Loc = typeNode.Loc
 			result.Flags = typeNode.Flags
@@ -5862,7 +5862,7 @@ func (p *Parser) inAwaitContext() bool {
 }
 
 func (p *Parser) skipRangeTrivia(textRange core.TextRange) core.TextRange {
-	return core.NewTextRange(skipTrivia(p.sourceText, textRange.Pos()), textRange.End())
+	return core.NewTextRange(skipTrivia(p.sourceText, int(textRange.Pos())), int(textRange.End()))
 }
 
 func isModifierKind(token ast.Kind) bool {

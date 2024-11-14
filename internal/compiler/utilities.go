@@ -414,7 +414,7 @@ func modifiersToFlags(modifierList *ast.Node) ast.ModifierFlags {
 }
 
 func nodeIsMissing(node *ast.Node) bool {
-	return node == nil || node.Loc.Pos_ == node.Loc.End_ && node.Loc.Pos_ >= 0 && node.Kind != ast.KindEndOfFile
+	return node == nil || node.Loc.Pos() == node.Loc.End() && node.Loc.Pos() >= 0 && node.Kind != ast.KindEndOfFile
 }
 
 func nodeIsPresent(node *ast.Node) bool {
@@ -1847,11 +1847,11 @@ func CompareDiagnostics(d1, d2 *ast.Diagnostic) int {
 	if c != 0 {
 		return c
 	}
-	c = int(d1.Loc().Pos_) - int(d2.Loc().Pos_)
+	c = int(d1.Loc().Pos()) - int(d2.Loc().Pos())
 	if c != 0 {
 		return c
 	}
-	c = int(d1.Loc().End_) - int(d2.Loc().End_)
+	c = int(d1.Loc().End()) - int(d2.Loc().End())
 	if c != 0 {
 		return c
 	}
@@ -2893,7 +2893,7 @@ func isEntityName(node *ast.Node) bool {
 }
 
 func nodeIsSynthesized(node *ast.Node) bool {
-	return node.Loc.Pos_ < 0 || node.Loc.End_ < 0
+	return node.Loc.Pos() < 0 || node.Loc.End() < 0
 }
 
 func getFirstIdentifier(node *ast.Node) *ast.Node {
