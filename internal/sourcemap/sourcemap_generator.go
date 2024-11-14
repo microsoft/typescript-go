@@ -2,6 +2,7 @@ package sourcemap
 
 import (
 	"encoding/json"
+	"errors"
 	"slices"
 	"strings"
 
@@ -11,28 +12,31 @@ import (
 type SourceIndex int
 type NameIndex int
 
+const (
+	sourceIndexNotSet SourceIndex = -1
+	nameIndexNotSet   NameIndex   = -1
+	notSet            int         = -1
+)
+
 type SourceMapGenerator struct {
-	pathOptions          tspath.ComparePathsOptions
-	file                 string
-	sourceRoot           string
-	sourcesDirectoryPath string
-
-	rawSources             []string
-	sources                []string
-	sourceToSourceIndexMap map[string]SourceIndex
-	sourcesContent         []*string
-	names                  []string
-	nameToNameIndexMap     map[string]NameIndex
-	mappings               strings.Builder
-
-	lastGeneratedLine      int
-	lastGeneratedCharacter int
-	lastSourceIndex        SourceIndex
-	lastSourceLine         int
-	lastSourceCharacter    int
-	lastNameIndex          NameIndex
-	hasLast                bool
-
+	pathOptions               tspath.ComparePathsOptions
+	file                      string
+	sourceRoot                string
+	sourcesDirectoryPath      string
+	rawSources                []string
+	sources                   []string
+	sourceToSourceIndexMap    map[string]SourceIndex
+	sourcesContent            []*string
+	names                     []string
+	nameToNameIndexMap        map[string]NameIndex
+	mappings                  strings.Builder
+	lastGeneratedLine         int
+	lastGeneratedCharacter    int
+	lastSourceIndex           SourceIndex
+	lastSourceLine            int
+	lastSourceCharacter       int
+	lastNameIndex             NameIndex
+	hasLast                   bool
 	pendingGeneratedLine      int
 	pendingGeneratedCharacter int
 	pendingSourceIndex        SourceIndex
@@ -89,11 +93,15 @@ func (gen *SourceMapGenerator) AddSource(fileName string) SourceIndex {
 }
 
 // Sets the content for a source
-func (gen *SourceMapGenerator) SetSourceContent(sourceIndex SourceIndex, content string) {
+func (gen *SourceMapGenerator) SetSourceContent(sourceIndex SourceIndex, content string) error {
+	if sourceIndex < 0 || int(sourceIndex) >= len(gen.sources) {
+		return errors.New("sourceIndex is out of range")
+	}
 	for len(gen.sourcesContent) <= int(sourceIndex) {
 		gen.sourcesContent = append(gen.sourcesContent, nil)
 	}
 	gen.sourcesContent[sourceIndex] = &content
+	return nil
 }
 
 // Declares a name in the source map, returning the index of the name
@@ -117,21 +125,22 @@ func (gen *SourceMapGenerator) isNewGeneratedPosition(generatedLine int, generat
 }
 
 func (gen *SourceMapGenerator) isBacktrackingSourcePosition(sourceIndex SourceIndex, sourceLine int, sourceCharacter int) bool {
-	return sourceIndex != -1 &&
-		sourceLine != -1 &&
-		sourceCharacter != -1 &&
+	return sourceIndex != sourceIndexNotSet &&
+		sourceLine != notSet &&
+		sourceCharacter != notSet &&
 		gen.pendingSourceIndex == sourceIndex &&
-		(gen.pendingSourceLine > sourceLine || gen.pendingSourceLine == sourceLine && gen.pendingSourceCharacter > sourceCharacter)
+		(gen.pendingSourceLine > sourceLine ||
+			gen.pendingSourceLine == sourceLine && gen.pendingSourceCharacter > sourceCharacter)
 }
 
 func (gen *SourceMapGenerator) shouldCommitMapping() bool {
-	return !gen.hasLast ||
+	return gen.hasPending && (!gen.hasLast ||
 		gen.lastGeneratedLine != gen.pendingGeneratedLine ||
 		gen.lastGeneratedCharacter != gen.pendingGeneratedCharacter ||
 		gen.lastSourceIndex != gen.pendingSourceIndex ||
 		gen.lastSourceLine != gen.pendingSourceLine ||
 		gen.lastSourceCharacter != gen.pendingSourceCharacter ||
-		gen.lastNameIndex != gen.pendingNameIndex
+		gen.lastNameIndex != gen.pendingNameIndex)
 }
 
 func (gen *SourceMapGenerator) appendMappingCharCode(charCode rune) {
@@ -166,7 +175,7 @@ func (gen *SourceMapGenerator) appendBase64VLQ(inValue int) {
 }
 
 func (gen *SourceMapGenerator) commitPendingMapping() {
-	if !gen.hasPending || !gen.shouldCommitMapping() {
+	if !gen.shouldCommitMapping() {
 		return
 	}
 
@@ -184,6 +193,7 @@ func (gen *SourceMapGenerator) commitPendingMapping() {
 		gen.lastGeneratedCharacter = 0
 	} else {
 		if gen.lastGeneratedLine != gen.pendingGeneratedLine {
+			// panic rather than error as an invariant has been violated
 			panic("generatedLine cannot backtrack")
 		}
 		// Emit comma to separate the entry
@@ -230,12 +240,12 @@ func (gen *SourceMapGenerator) addMapping(generatedLine int, generatedCharacter 
 		gen.hasPending = true
 	}
 
-	if sourceIndex != -1 && sourceLine != -1 && sourceCharacter != -1 {
+	if sourceIndex != sourceIndexNotSet && sourceLine != notSet && sourceCharacter != notSet {
 		gen.pendingSourceIndex = sourceIndex
 		gen.pendingSourceLine = sourceLine
 		gen.pendingSourceCharacter = sourceCharacter
 		gen.hasPendingSource = true
-		if nameIndex != -1 {
+		if nameIndex != nameIndexNotSet {
 			gen.pendingNameIndex = nameIndex
 			gen.hasPendingName = true
 		}
@@ -243,57 +253,60 @@ func (gen *SourceMapGenerator) addMapping(generatedLine int, generatedCharacter 
 }
 
 // Adds a mapping without source information
-func (gen *SourceMapGenerator) AddMapping(generatedLine int, generatedCharacter int) {
+func (gen *SourceMapGenerator) AddGeneratedMapping(generatedLine int, generatedCharacter int) error {
 	if generatedLine < gen.pendingGeneratedLine {
-		panic("generatedLine cannot backtrack")
+		return errors.New("generatedLine cannot backtrack")
 	}
 	if generatedCharacter < 0 {
-		panic("generatedCharcter cannot be negative")
+		return errors.New("generatedCharacter cannot be negative")
 	}
-	gen.addMapping(generatedLine, generatedCharacter, -1 /*sourceIndex*/, -1 /*sourceLine*/, -1 /*sourceCharacter*/, -1 /*nameIndex*/)
+	gen.addMapping(generatedLine, generatedCharacter, sourceIndexNotSet, notSet /*sourceLine*/, notSet /*sourceCharacter*/, nameIndexNotSet)
+	return nil
 }
 
 // Adds a mapping with source information
-func (gen *SourceMapGenerator) AddMappingSource(generatedLine int, generatedCharacter int, sourceIndex SourceIndex, sourceLine int, sourceCharacter int) {
+func (gen *SourceMapGenerator) AddSourceMapping(generatedLine int, generatedCharacter int, sourceIndex SourceIndex, sourceLine int, sourceCharacter int) error {
 	if generatedLine < gen.pendingGeneratedLine {
-		panic("generatedLine cannot backtrack")
+		return errors.New("generatedLine cannot backtrack")
 	}
 	if generatedCharacter < 0 {
-		panic("generatedCharcter cannot be negative")
+		return errors.New("generatedCharacter cannot be negative")
 	}
-	if sourceIndex < 0 {
-		panic("sourceIndex cannot be negative")
+	if sourceIndex < 0 || int(sourceIndex) >= len(gen.sources) {
+		return errors.New("sourceIndex is out of range")
 	}
 	if sourceLine < 0 {
-		panic("sourceLine cannot be negative")
+		return errors.New("sourceLine cannot be negative")
 	}
 	if sourceCharacter < 0 {
-		panic("sourceCharacter cannot be negative")
+		return errors.New("sourceCharacter cannot be negative")
 	}
-	gen.addMapping(generatedLine, generatedCharacter, sourceIndex, sourceLine, sourceCharacter, -1 /*nameIndex*/)
+	gen.addMapping(generatedLine, generatedCharacter, sourceIndex, sourceLine, sourceCharacter, nameIndexNotSet)
+	return nil
 }
 
 // Adds a mapping with source and name information
-func (gen *SourceMapGenerator) AddMappingSourceName(generatedLine int, generatedCharacter int, sourceIndex SourceIndex, sourceLine int, sourceCharacter int, nameIndex NameIndex) {
+func (gen *SourceMapGenerator) AddNamedSourceMapping(generatedLine int, generatedCharacter int, sourceIndex SourceIndex, sourceLine int, sourceCharacter int, nameIndex NameIndex) error {
 	if generatedLine < gen.pendingGeneratedLine {
-		panic("generatedLine cannot backtrack")
+		return errors.New("generatedLine cannot backtrack")
 	}
 	if generatedCharacter < 0 {
-		panic("generatedCharcter cannot be negative")
+		return errors.New("generatedCharacter cannot be negative")
 	}
-	if sourceIndex < 0 {
-		panic("sourceIndex cannot be negative")
+	if sourceIndex < 0 || int(sourceIndex) >= len(gen.sources) {
+		return errors.New("sourceIndex is out of range")
 	}
 	if sourceLine < 0 {
-		panic("sourceLine cannot be negative")
+		return errors.New("sourceLine cannot be negative")
 	}
 	if sourceCharacter < 0 {
-		panic("sourceCharacter cannot be negative")
+		return errors.New("sourceCharacter cannot be negative")
 	}
-	if nameIndex < 0 {
-		panic("nameIndex cannot be negative")
+	if nameIndex < 0 || int(nameIndex) >= len(gen.names) {
+		return errors.New("nameIndex is out of range")
 	}
 	gen.addMapping(generatedLine, generatedCharacter, sourceIndex, sourceLine, sourceCharacter, nameIndex)
+	return nil
 }
 
 // Gets the source map as a `RawSourceMap` object
