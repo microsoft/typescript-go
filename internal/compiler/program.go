@@ -174,11 +174,11 @@ func (p *Program) getTypeChecker() *Checker {
 }
 
 func (p *Program) getSyntaticDiagnosticsForFile(sourceFile *ast.SourceFile) []*ast.Diagnostic {
-	return sourceFile.Diagnostics_
+	return sourceFile.Diagnostics()
 }
 
 func (p *Program) getBindDiagnosticsForFile(sourceFile *ast.SourceFile) []*ast.Diagnostic {
-	return sourceFile.BindDiagnostics_
+	return sourceFile.BindDiagnostics()
 }
 
 func (p *Program) getSemanticDiagnosticsForFile(sourceFile *ast.SourceFile) []*ast.Diagnostic {

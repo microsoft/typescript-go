@@ -2747,7 +2747,7 @@ func (c *Checker) grammarErrorOnNode(node *ast.Node, message *diagnostics.Messag
 }
 
 func (c *Checker) hasParseDiagnostics(sourceFile *ast.SourceFile) bool {
-	return len(sourceFile.Diagnostics_) > 0
+	return len(sourceFile.Diagnostics()) > 0
 }
 
 func (c *Checker) newSymbol(flags ast.SymbolFlags, name string) *ast.Symbol {

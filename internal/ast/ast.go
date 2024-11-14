@@ -4288,8 +4288,8 @@ type SourceFile struct {
 	fileName                    string
 	path                        string
 	Statements                  []*Statement // []Statement
-	Diagnostics_                []*Diagnostic
-	BindDiagnostics_            []*Diagnostic
+	diagnostics                 []*Diagnostic
+	bindDiagnostics             []*Diagnostic
 	BindSuggestionDiagnostics   []*Diagnostic
 	LineMap                     []core.TextPos
 	LanguageVersion             core.ScriptTarget
@@ -4332,11 +4332,19 @@ func (node *SourceFile) SetPath(p string) {
 }
 
 func (node *SourceFile) Diagnostics() []*Diagnostic {
-	return node.Diagnostics_
+	return node.diagnostics
+}
+
+func (node *SourceFile) SetDiagnostics(diags []*Diagnostic) {
+	node.diagnostics = diags
 }
 
 func (node *SourceFile) BindDiagnostics() []*Diagnostic {
-	return node.BindDiagnostics_
+	return node.bindDiagnostics
+}
+
+func (node *SourceFile) SetBindDiagnostics(diags []*Diagnostic) {
+	node.bindDiagnostics = diags
 }
 
 func (node *SourceFile) ForEachChild(v Visitor) bool {

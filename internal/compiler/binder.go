@@ -1258,7 +1258,7 @@ func (b *Binder) lookupName(name string, container *ast.Node) *ast.Symbol {
 // [Yield] or [Await] contexts, respectively.
 func (b *Binder) checkContextualIdentifier(node *ast.Node) {
 	// Report error only if there are no parse errors in file
-	if len(b.file.Diagnostics_) == 0 && node.Flags&ast.NodeFlagsAmbient == 0 && node.Flags&ast.NodeFlagsJSDoc == 0 && !isIdentifierName(node) {
+	if len(b.file.Diagnostics()) == 0 && node.Flags&ast.NodeFlagsAmbient == 0 && node.Flags&ast.NodeFlagsJSDoc == 0 && !isIdentifierName(node) {
 		// strict mode identifiers
 		originalKeywordKind := getIdentifierToken(node.AsIdentifier().Text)
 		if originalKeywordKind == ast.KindIdentifier {
@@ -1281,7 +1281,7 @@ func (b *Binder) checkContextualIdentifier(node *ast.Node) {
 func (b *Binder) checkPrivateIdentifier(node *ast.Node) {
 	if node.AsPrivateIdentifier().Text == "#constructor" {
 		// Report error only if there are no parse errors in file
-		if len(b.file.Diagnostics_) == 0 {
+		if len(b.file.Diagnostics()) == 0 {
 			b.errorOnNode(node, diagnostics.X_constructor_is_a_reserved_word, declarationNameToString(node))
 		}
 	}
@@ -2749,7 +2749,7 @@ func (b *Binder) createDiagnosticForNode(node *ast.Node, message *diagnostics.Me
 }
 
 func (b *Binder) addDiagnostic(diagnostic *ast.Diagnostic) {
-	b.file.BindDiagnostics_ = append(b.file.BindDiagnostics_, diagnostic)
+	b.file.SetBindDiagnostics(append(b.file.BindDiagnostics(), diagnostic))
 }
 
 func isEnumConst(node *ast.Node) bool {
