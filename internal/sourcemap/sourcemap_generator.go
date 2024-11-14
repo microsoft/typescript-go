@@ -312,11 +312,15 @@ func (gen *SourceMapGenerator) AddNamedSourceMapping(generatedLine int, generate
 // Gets the source map as a `RawSourceMap` object
 func (gen *SourceMapGenerator) RawSourceMap() *RawSourceMap {
 	gen.commitPendingMapping()
+	sources := slices.Clone(gen.sources)
+	if sources == nil {
+		sources = []string{}
+	}
 	return &RawSourceMap{
 		Version:        3,
 		File:           gen.file,
 		SourceRoot:     gen.sourceRoot,
-		Sources:        append([]string{}, gen.sources...),
+		Sources:        sources,
 		Names:          slices.Clone(gen.names),
 		Mappings:       gen.mappings.String(),
 		SourcesContent: slices.Clone(gen.sourcesContent),
