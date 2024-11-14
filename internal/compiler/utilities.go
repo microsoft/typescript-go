@@ -1950,7 +1950,7 @@ func isModuleOrEnumDeclaration(node *ast.Node) bool {
 func getLocalsOfNode(node *ast.Node) ast.SymbolTable {
 	data := node.LocalsContainerData()
 	if data != nil {
-		return data.Locals_
+		return node.Locals()
 	}
 	return nil
 }
@@ -2177,8 +2177,8 @@ loop:
 		case ast.KindPropertyDeclaration:
 			if !isStatic(location) {
 				ctor := findConstructorDeclaration(location.Parent)
-				if ctor != nil && ctor.AsConstructorDeclaration().Locals_ != nil {
-					if r.lookup(ctor.AsConstructorDeclaration().Locals_, name, meaning&ast.SymbolFlagsValue) != nil {
+				if ctor != nil && ctor.AsConstructorDeclaration().Locals() != nil {
+					if r.lookup(ctor.AsConstructorDeclaration().Locals(), name, meaning&ast.SymbolFlagsValue) != nil {
 						// Remember the property node, it will be used later to report appropriate error
 						propertyWithInvalidInitializer = location
 					}
@@ -3711,7 +3711,7 @@ func getExports(symbol *ast.Symbol) ast.SymbolTable {
 }
 
 func getLocals(container *ast.Node) ast.SymbolTable {
-	return getSymbolTable(&container.LocalsContainerData().Locals_)
+	return container.Locals()
 }
 
 func getThisParameter(signature *ast.Node) *ast.Node {
