@@ -63,7 +63,7 @@ jobs:
 
       - run: npm ci
 
-      - run: npx hereby test --race
+      - run: npx hereby test:all --race
 
       - run: git add .
       - run: git diff --staged --exit-code --stat
