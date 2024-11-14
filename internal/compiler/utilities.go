@@ -1,7 +1,6 @@
 package compiler
 
 import (
-	"fmt"
 	"maps"
 	"math"
 	"path/filepath"
@@ -66,7 +65,7 @@ func getMergeId(symbol *ast.Symbol) ast.MergeId {
 func NewDiagnostic(file *ast.SourceFile, loc core.TextRange, message *diagnostics.Message, args ...any) *ast.Diagnostic {
 	text := message.Message()
 	if len(args) != 0 {
-		text = formatStringFromArgs(text, args)
+		text = core.FormatStringFromArgs(text, args)
 	}
 	return &ast.Diagnostic{
 		File_:     file,
@@ -111,7 +110,7 @@ func NewDiagnosticForNodeFromMessageChain(node *ast.Node, messageChain *ast.Mess
 func NewMessageChain(message *diagnostics.Message, args ...any) *ast.MessageChain {
 	text := message.Message()
 	if len(args) != 0 {
-		text = formatStringFromArgs(text, args)
+		text = core.FormatStringFromArgs(text, args)
 	}
 	return &ast.MessageChain{
 		Code_:     message.Code(),
@@ -377,20 +376,10 @@ func getBinaryOperatorPrecedence(kind ast.Kind) OperatorPrecedence {
 	return OperatorPrecedenceInvalid
 }
 
-func formatStringFromArgs(text string, args []any) string {
-	return core.MakeRegexp(`{(\d+)}`).ReplaceAllStringFunc(text, func(match string) string {
-		index, err := strconv.ParseInt(match[1:len(match)-1], 10, 0)
-		if err != nil || int(index) >= len(args) {
-			panic("Invalid formatting placeholder")
-		}
-		return fmt.Sprintf("%v", args[int(index)])
-	})
-}
-
 func formatMessage(message *diagnostics.Message, args ...any) string {
 	text := message.Message()
 	if len(args) != 0 {
-		text = formatStringFromArgs(text, args)
+		text = core.FormatStringFromArgs(text, args)
 	}
 	return text
 }
