@@ -3713,8 +3713,8 @@ func getExports(symbol *ast.Symbol) ast.SymbolTable {
 func getLocals(container *ast.Node) ast.SymbolTable {
 	data := container.LocalsContainerData().Locals()
 	if data == nil {
-		container.LocalsContainerData().SetLocals(make(ast.SymbolTable))
-		return container.LocalsContainerData().Locals()
+		data = make(ast.SymbolTable)
+		container.LocalsContainerData().SetLocals(data)
 	}
 	return data
 }
