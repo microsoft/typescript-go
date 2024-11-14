@@ -111,11 +111,11 @@ func (b *Binder) newSymbol(flags ast.SymbolFlags, name string) *ast.Symbol {
 }
 
 /**
- * Declares a ast.Symbol for the node and adds it to symbols. Reports errors for conflicting identifier names.
+ * Declares a Symbol for the node and adds it to symbols. Reports errors for conflicting identifier names.
  * @param symbolTable - The symbol table which node will be added to.
  * @param parent - node's parent declaration.
  * @param node - The declaration to be added to the symbol table
- * @param includes - The ast.SymbolFlags that node has in addition to its declaration type (eg: export, ambient, etc.)
+ * @param includes - The SymbolFlags that node has in addition to its declaration type (eg: export, ambient, etc.)
  * @param excludes - The flags which node cannot be declared alongside in a symbol table. Used to report forbidden declarations.
  */
 func (b *Binder) declareSymbol(symbolTable ast.SymbolTable, parent *ast.Symbol, node *ast.Node, includes ast.SymbolFlags, excludes ast.SymbolFlags) *ast.Symbol {
@@ -2549,11 +2549,11 @@ func setValueDeclaration(symbol *ast.Symbol, node *ast.Node) {
 }
 
 /**
- * Declares a ast.Symbol for the node and adds it to symbols. Reports errors for conflicting identifier names.
+ * Declares a Symbol for the node and adds it to symbols. Reports errors for conflicting identifier names.
  * @param symbolTable - The symbol table which node will be added to.
  * @param parent - node's parent declaration.
  * @param node - The declaration to be added to the symbol table
- * @param includes - The ast.SymbolFlags that node has in addition to its declaration type (eg: export, ambient, etc.)
+ * @param includes - The SymbolFlags that node has in addition to its declaration type (eg: export, ambient, etc.)
  * @param excludes - The flags which node cannot be declared alongside in a symbol table. Used to report forbidden declarations.
  */
 

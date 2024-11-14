@@ -1499,7 +1499,7 @@ func (c *Checker) checkAndReportErrorForExtendingInterface(errorLocation *ast.No
 }
 
 /**
- * Climbs up parents to an ast.ExpressionWithTypeArguments, and returns its expression,
+ * Climbs up parents to an ExpressionWithTypeArguments, and returns its expression,
  * but returns undefined if that expression is not an EntityNameExpression.
  */
 func (c *Checker) getEntityNameForExtendingInterface(node *ast.Node) *ast.Node {
@@ -3083,7 +3083,7 @@ func (c *Checker) getSymbolOfDeclaration(node *ast.Node) *ast.Symbol {
 }
 
 /**
- * Get the merged symbol for a node. If you know the node is a `ast.Declaration`, it is faster and more type safe to
+ * Get the merged symbol for a node. If you know the node is a `Declaration`, it is faster and more type safe to
  * use use `getSymbolOfDeclaration` instead.
  */
 func (c *Checker) getSymbolOfNode(node *ast.Node) *ast.Symbol {
@@ -4106,7 +4106,7 @@ func (c *Checker) getResolvedMembersOrExportsOfSymbol(symbol *ast.Symbol, resolu
 }
 
 /**
- * Gets a ast.SymbolTable containing both the early- and late-bound members of a symbol.
+ * Gets a SymbolTable containing both the early- and late-bound members of a symbol.
  *
  * For a description of late-binding, see `lateBindMember`.
  */
@@ -4310,7 +4310,7 @@ func (c *Checker) resolveAliasWithDeprecationCheck(symbol *ast.Symbol, location 
  * from b.ts, even though there is still more alias to resolve. Consequently, if we were
  * trying to determine if the `a` in c.ts has a value meaning, looking at the flags on
  * the local symbol and on the symbol returned by `resolveAlias` is not enough.
- * @returns ast.SymbolFlags.All if `symbol` is an alias that ultimately resolves to `unknown`;
+ * @returns SymbolFlags.All if `symbol` is an alias that ultimately resolves to `unknown`;
  * combined flags of all alias targets otherwise.
  */
 func (c *Checker) getSymbolFlags(symbol *ast.Symbol) ast.SymbolFlags {
@@ -6570,9 +6570,9 @@ func (c *Checker) hasLateBindableName(node *ast.Node) bool {
 /**
  * Indicates whether a declaration name is definitely late-bindable.
  * A declaration name is only late-bindable if:
- * - It is a `ast.ComputedPropertyName`.
- * - Its expression is an `ast.Identifier` or either a `ast.PropertyAccessExpression` an
- * `ast.ElementAccessExpression` consisting only of these same three types of nodes.
+ * - It is a `ComputedPropertyName`.
+ * - Its expression is an `Identifier` or either a `PropertyAccessExpression` an
+ * `ElementAccessExpression` consisting only of these same three types of nodes.
  * - The type of its expression is a string or numeric literal type, or is a `unique symbol` type.
  */
 func (c *Checker) isLateBindableName(node *ast.Node) bool {

@@ -942,10 +942,10 @@ func getQuestionDotToken(node *ast.Node) *ast.Node {
 /**
  * A declaration has a dynamic name if all of the following are true:
  *   1. The declaration has a computed property name.
- *   2. The computed name is *not* expressed as a ast.StringLiteral.
- *   3. The computed name is *not* expressed as a ast.NumericLiteral.
+ *   2. The computed name is *not* expressed as a StringLiteral.
+ *   3. The computed name is *not* expressed as a NumericLiteral.
  *   4. The computed name is *not* expressed as a PlusToken or MinusToken
- *      immediately followed by a ast.NumericLiteral.
+ *      immediately followed by a NumericLiteral.
  */
 func hasDynamicName(declaration *ast.Node) bool {
 	name := getNameOfDeclaration(declaration)
@@ -1169,10 +1169,10 @@ func isRequireCall(node *ast.Node, requireStringLiteralLikeArgument bool) bool {
 
 /**
  * This function returns true if the this node's root declaration is a parameter.
- * For example, passing a `ast.ParameterDeclaration` will return true, as will passing a
- * binding element that is a child of a `ast.ParameterDeclaration`.
+ * For example, passing a `ParameterDeclaration` will return true, as will passing a
+ * binding element that is a child of a `ParameterDeclaration`.
  *
- * If you are looking to test that a `ast.Node` is a `ast.ParameterDeclaration`, use `isParameter`.
+ * If you are looking to test that a `Node` is a `ParameterDeclaration`, use `isParameter`.
  */
 func isPartOfParameterDeclaration(node *ast.Node) bool {
 	return getRootDeclaration(node).Kind == ast.KindParameter
