@@ -557,7 +557,7 @@ func (c *Checker) initializeChecker() {
 	augmentations := make([][]*ast.Node, 0, len(c.files))
 	for _, file := range c.files {
 		if !isExternalOrCommonJsModule(file) {
-			c.mergeSymbolTable(c.globals, file.Locals_, false, nil)
+			c.mergeSymbolTable(c.globals, file.Locals(), false, nil)
 		}
 		c.patternAmbientModules = append(c.patternAmbientModules, file.PatternAmbientModules...)
 		augmentations = append(augmentations, file.ModuleAugmentations)
@@ -779,7 +779,7 @@ func (c *Checker) onSuccessfullyResolvedSymbol(errorLocation *ast.Node, result *
 		// A parameter initializer or binding pattern initializer within a parameter cannot refer to itself
 		if candidate == c.getSymbolOfDeclaration(associatedDeclarationForContainingInitializerOrBindingName) {
 			c.error(errorLocation, diagnostics.Parameter_0_cannot_reference_itself, declarationNameToString(associatedDeclarationForContainingInitializerOrBindingName.Name()))
-		} else if candidate.ValueDeclaration != nil && candidate.ValueDeclaration.Pos() > associatedDeclarationForContainingInitializerOrBindingName.Pos() && root.Parent.LocalsContainerData().Locals_ != nil && c.getSymbol(root.Parent.LocalsContainerData().Locals_, candidate.Name, meaning) == candidate {
+		} else if candidate.ValueDeclaration != nil && candidate.ValueDeclaration.Pos() > associatedDeclarationForContainingInitializerOrBindingName.Pos() && root.Parent.LocalsContainerData().Locals() != nil && c.getSymbol(root.Parent.LocalsContainerData().Locals(), candidate.Name, meaning) == candidate {
 			c.error(errorLocation, diagnostics.Parameter_0_cannot_reference_identifier_1_declared_after_it, declarationNameToString(associatedDeclarationForContainingInitializerOrBindingName.Name()), declarationNameToString(errorLocation))
 		}
 	}
@@ -798,7 +798,7 @@ func (c *Checker) onSuccessfullyResolvedSymbol(errorLocation *ast.Node, result *
 		isGlobal := c.getSymbol(c.globals, name, meaning) == result
 		var nonValueSymbol *ast.Symbol
 		if isGlobal && ast.IsSourceFile(lastLocation) {
-			nonValueSymbol = c.getSymbol(lastLocation.AsSourceFile().Locals_, name, ^ast.SymbolFlagsValue)
+			nonValueSymbol = c.getSymbol(lastLocation.AsSourceFile().Locals(), name, ^ast.SymbolFlagsValue)
 		}
 		if nonValueSymbol != nil {
 			importDecl := core.Find(nonValueSymbol.Declarations, func(d *ast.Node) bool {
@@ -8777,7 +8777,7 @@ func (c *Checker) getOuterTypeParameters(node *ast.Node, includeThisTypes bool) 
 
 func (c *Checker) getInferTypeParameters(node *ast.Node) []*Type {
 	var result []*Type
-	for _, symbol := range node.AsConditionalTypeNode().Locals_ {
+	for _, symbol := range node.AsConditionalTypeNode().Locals() {
 		if symbol.Flags&ast.SymbolFlagsTypeParameter != 0 {
 			result = append(result, c.getDeclaredTypeOfSymbol(symbol))
 		}

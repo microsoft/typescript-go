@@ -66,7 +66,7 @@ func (n *Node) Symbol() *Symbol                           { return n.Data.Declar
 func (n *Node) ExportableData() *ExportableBase           { return n.Data.ExportableData() }
 func (n *Node) LocalSymbol() *Symbol                      { return n.Data.ExportableData().LocalSymbol }
 func (n *Node) LocalsContainerData() *LocalsContainerBase { return n.Data.LocalsContainerData() }
-func (n *Node) Locals() SymbolTable                       { return n.Data.LocalsContainerData().Locals_ }
+func (n *Node) Locals() SymbolTable                       { return n.Data.LocalsContainerData().locals }
 func (n *Node) FunctionLikeData() *FunctionLikeBase       { return n.Data.FunctionLikeData() }
 func (n *Node) Parameters() []*ParameterDeclarationNode   { return n.Data.FunctionLikeData().Parameters }
 func (n *Node) ReturnType() *TypeNode                     { return n.Data.FunctionLikeData().ReturnType }
@@ -661,11 +661,13 @@ func (node *ModifiersBase) Modifiers() *ModifierListNode { return node.modifiers
 // LocalsContainerBase
 
 type LocalsContainerBase struct {
-	Locals_       SymbolTable // Locals associated with node (initialized by binding)
+	locals        SymbolTable // Locals associated with node (initialized by binding)
 	NextContainer *Node       // Next container in declaration order (initialized by binding)
 }
 
 func (node *LocalsContainerBase) LocalsContainerData() *LocalsContainerBase { return node }
+func (node *LocalsContainerBase) Locals() SymbolTable                       { return node.locals }
+func (node *LocalsContainerBase) SetLocals(locals SymbolTable)              { node.locals = locals }
 
 func IsLocalsContainer(node *Node) bool {
 	return node.LocalsContainerData() != nil
