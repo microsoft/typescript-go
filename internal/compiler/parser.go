@@ -165,7 +165,7 @@ func (p *Parser) parseErrorAtCurrentToken(message *diagnostics.Message, args ...
 func (p *Parser) parseErrorAtRange(loc core.TextRange, message *diagnostics.Message, args ...any) *ast.Diagnostic {
 	// Don't report another error if it would just be at the same location as the last error
 	if len(p.diagnostics) == 0 || p.diagnostics[len(p.diagnostics)-1].Loc() != loc {
-		result := NewDiagnostic(nil, loc, message, args...)
+		result := ast.NewDiagnostic(nil, loc, message, args...)
 		p.diagnostics = append(p.diagnostics, result)
 		return result
 	}
@@ -560,7 +560,7 @@ func (p *Parser) parseExpectedMatchingBrackets(openKind ast.Kind, closeKind ast.
 		return
 	}
 	if lastError != nil {
-		related := NewDiagnostic(nil, core.NewTextRange(openPosition, openPosition+1), diagnostics.The_parser_expected_to_find_a_1_to_match_the_0_token_here, TokenToString(openKind), TokenToString(closeKind))
+		related := ast.NewDiagnostic(nil, core.NewTextRange(openPosition, openPosition+1), diagnostics.The_parser_expected_to_find_a_1_to_match_the_0_token_here, TokenToString(openKind), TokenToString(closeKind))
 		lastError.AddRelatedInfo(related)
 	}
 }
@@ -2531,7 +2531,7 @@ func (p *Parser) parseImportType() *ast.Node {
 			if len(p.diagnostics) != 0 {
 				lastDiagnostic := p.diagnostics[len(p.diagnostics)-1]
 				if lastDiagnostic.Code() == diagnostics.X_0_expected.Code() {
-					related := NewDiagnostic(nil, core.NewTextRange(openBracePosition, openBracePosition+1), diagnostics.The_parser_expected_to_find_a_1_to_match_the_0_token_here, "{", "}")
+					related := ast.NewDiagnostic(nil, core.NewTextRange(openBracePosition, openBracePosition+1), diagnostics.The_parser_expected_to_find_a_1_to_match_the_0_token_here, "{", "}")
 					lastDiagnostic.AddRelatedInfo(related)
 				}
 			}
@@ -2582,7 +2582,7 @@ func (p *Parser) parseImportAttributes(token ast.Kind, skipKeyword bool) *ast.No
 			if len(p.diagnostics) != 0 {
 				lastDiagnostic := p.diagnostics[len(p.diagnostics)-1]
 				if lastDiagnostic.Code() == diagnostics.X_0_expected.Code() {
-					related := NewDiagnostic(nil, core.NewTextRange(openBracePosition, openBracePosition+1), diagnostics.The_parser_expected_to_find_a_1_to_match_the_0_token_here, "{", "}")
+					related := ast.NewDiagnostic(nil, core.NewTextRange(openBracePosition, openBracePosition+1), diagnostics.The_parser_expected_to_find_a_1_to_match_the_0_token_here, "{", "}")
 					lastDiagnostic.AddRelatedInfo(related)
 				}
 			}

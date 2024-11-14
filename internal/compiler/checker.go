@@ -2956,7 +2956,7 @@ func (c *Checker) lookupOrIssueError(location *ast.Node, message *diagnostics.Me
 		file = getSourceFileOfNode(location)
 		loc = location.Loc
 	}
-	diagnostic := NewDiagnostic(file, loc, message, args...)
+	diagnostic := ast.NewDiagnostic(file, loc, message, args...)
 	existing := c.diagnostics.lookup(diagnostic)
 	if existing != nil {
 		return existing
@@ -7423,7 +7423,7 @@ func (c *Checker) elaborateNeverIntersection(errorInfo *ast.MessageChain, t *Typ
 	if t.flags&TypeFlagsIntersection != 0 && t.objectFlags&ObjectFlagsIsNeverIntersection != 0 {
 		neverProp := core.Find(c.getPropertiesOfUnionOrIntersectionType(t), c.isDiscriminantWithNeverType)
 		if neverProp != nil {
-			return NewMessageChain(diagnostics.The_intersection_0_was_reduced_to_never_because_property_1_has_conflicting_types_in_some_constituents, c.typeToStringEx(t, nil, TypeFormatFlagsNoTypeReduction), c.symbolToString(neverProp))
+			return ast.NewMessageChain(diagnostics.The_intersection_0_was_reduced_to_never_because_property_1_has_conflicting_types_in_some_constituents, c.typeToStringEx(t, nil, TypeFormatFlagsNoTypeReduction), c.symbolToString(neverProp))
 		}
 		privateProp := core.Find(c.getPropertiesOfUnionOrIntersectionType(t), isConflictingPrivateProperty)
 		if privateProp != nil {
@@ -11261,16 +11261,16 @@ func (c *Checker) getPropertyTypeForIndexType(originalObjectType *Type, objectTy
 							var errorInfo *ast.MessageChain
 							switch {
 							case indexType.flags&TypeFlagsEnumLiteral != 0:
-								errorInfo = NewMessageChain(nil, diagnostics.Property_0_does_not_exist_on_type_1, "["+c.typeToString(indexType)+"]", c.typeToString(objectType))
+								errorInfo = ast.NewMessageChain(nil, diagnostics.Property_0_does_not_exist_on_type_1, "["+c.typeToString(indexType)+"]", c.typeToString(objectType))
 							case indexType.flags&TypeFlagsUniqueESSymbol != 0:
 								symbolName := c.getFullyQualifiedName(indexType.symbol, accessExpression)
-								errorInfo = NewMessageChain(nil, diagnostics.Property_0_does_not_exist_on_type_1, "["+symbolName+"]", c.typeToString(objectType))
+								errorInfo = ast.NewMessageChain(nil, diagnostics.Property_0_does_not_exist_on_type_1, "["+symbolName+"]", c.typeToString(objectType))
 							case indexType.flags&TypeFlagsStringLiteral != 0:
-								errorInfo = NewMessageChain(nil, diagnostics.Property_0_does_not_exist_on_type_1, indexType.AsLiteralType().value, c.typeToString(objectType))
+								errorInfo = ast.NewMessageChain(nil, diagnostics.Property_0_does_not_exist_on_type_1, indexType.AsLiteralType().value, c.typeToString(objectType))
 							case indexType.flags&TypeFlagsNumberLiteral != 0:
-								errorInfo = NewMessageChain(nil, diagnostics.Property_0_does_not_exist_on_type_1, indexType.AsLiteralType().value, c.typeToString(objectType))
+								errorInfo = ast.NewMessageChain(nil, diagnostics.Property_0_does_not_exist_on_type_1, indexType.AsLiteralType().value, c.typeToString(objectType))
 							case indexType.flags&(TypeFlagsNumber|TypeFlagsString) != 0:
-								errorInfo = NewMessageChain(nil, diagnostics.No_index_signature_with_a_parameter_of_type_0_was_found_on_type_1, c.typeToString(indexType), c.typeToString(objectType))
+								errorInfo = ast.NewMessageChain(nil, diagnostics.No_index_signature_with_a_parameter_of_type_0_was_found_on_type_1, c.typeToString(indexType), c.typeToString(objectType))
 							}
 							diagnostic := c.error(accessExpression, diagnostics.Element_implicitly_has_an_any_type_because_expression_of_type_0_can_t_be_used_to_index_type_1, c.typeToString(fullIndexType), c.typeToString(objectType))
 							if errorInfo != nil {

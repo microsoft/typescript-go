@@ -54,6 +54,20 @@ func (d *Diagnostic) AddRelatedInfo(relatedInformation *Diagnostic) *Diagnostic 
 	return d
 }
 
+func NewDiagnostic(file *SourceFile, loc core.TextRange, message *diagnostics.Message, args ...any) *Diagnostic {
+	text := message.Message()
+	if len(args) != 0 {
+		text = core.FormatStringFromArgs(text, args)
+	}
+	return &Diagnostic{
+		File_:     file,
+		Loc_:      loc,
+		Code_:     message.Code(),
+		Category_: message.Category(),
+		Message_:  text,
+	}
+}
+
 // MessageChain
 
 type MessageChain struct {
@@ -73,4 +87,16 @@ func (m *MessageChain) AddMessageChain(messageChain *MessageChain) *MessageChain
 		m.MessageChain_ = append(m.MessageChain_, messageChain)
 	}
 	return m
+}
+
+func NewMessageChain(message *diagnostics.Message, args ...any) *MessageChain {
+	text := message.Message()
+	if len(args) != 0 {
+		text = core.FormatStringFromArgs(text, args)
+	}
+	return &MessageChain{
+		Code_:     message.Code(),
+		Category_: message.Category(),
+		Message_:  text,
+	}
 }

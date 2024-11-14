@@ -2723,7 +2723,7 @@ func (b *Binder) errorOnNode(node *ast.Node, message *diagnostics.Message, args 
 
 func (b *Binder) errorOnFirstToken(node *ast.Node, message *diagnostics.Message, args ...any) {
 	span := getRangeOfTokenAtPosition(b.file, node.Pos())
-	b.addDiagnostic(NewDiagnostic(b.file, span, message, args...))
+	b.addDiagnostic(ast.NewDiagnostic(b.file, span, message, args...))
 }
 
 func (b *Binder) errorOrSuggestionOnNode(isError bool, node *ast.Node, message *diagnostics.Message) {
@@ -2732,7 +2732,7 @@ func (b *Binder) errorOrSuggestionOnNode(isError bool, node *ast.Node, message *
 
 func (b *Binder) errorOrSuggestionOnRange(isError bool, startNode *ast.Node, endNode *ast.Node, message *diagnostics.Message) {
 	textRange := core.NewTextRange(getRangeOfTokenAtPosition(b.file, startNode.Pos()).Pos(), endNode.End())
-	diagnostic := NewDiagnostic(b.file, textRange, message)
+	diagnostic := ast.NewDiagnostic(b.file, textRange, message)
 	if isError {
 		b.addDiagnostic(diagnostic)
 	} else {
@@ -2745,7 +2745,7 @@ func (b *Binder) errorOrSuggestionOnRange(isError bool, startNode *ast.Node, end
 // If so, the node _must_ be in the current file (as that's the only way anything could have traversed to it to yield it as the error node)
 // This version of `createDiagnosticForNode` uses the binder's context to account for this, and always yields correct diagnostics even in these situations.
 func (b *Binder) createDiagnosticForNode(node *ast.Node, message *diagnostics.Message, args ...any) *ast.Diagnostic {
-	return NewDiagnostic(b.file, getErrorRangeForNode(b.file, node), message, args...)
+	return ast.NewDiagnostic(b.file, getErrorRangeForNode(b.file, node), message, args...)
 }
 
 func (b *Binder) addDiagnostic(diagnostic *ast.Diagnostic) {
