@@ -1232,7 +1232,7 @@ func (b *Binder) bindTypeParameter(node *ast.Node) {
 func (b *Binder) lookupName(name string, container *ast.Node) *ast.Symbol {
 	localsContainer := container.LocalsContainerData()
 	if localsContainer != nil {
-		local := container.Locals()[name]
+		local := localsContainer.Locals_[name]
 		if local != nil {
 			return local
 		}
