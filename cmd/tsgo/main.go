@@ -47,7 +47,7 @@ func main() {
 	flag.BoolVar(&quiet, "q", false, "Quiet output")
 	flag.BoolVar(&singleThreaded, "s", false, "Single threaded")
 	flag.BoolVar(&parseAndBindOnly, "p", false, "Parse and bind only")
-	flag.BoolVar(&printTypes, "t", false, "Print type aliases defined in main.ts")
+	flag.BoolVar(&printTypes, "t", false, "Print types defined in main.ts")
 	flag.BoolVar(&pretty, "pretty", true, "Get prettier errors")
 	flag.Parse()
 
@@ -64,7 +64,7 @@ func main() {
 			diagnostics = program.GetBindDiagnostics(nil)
 		} else {
 			if printTypes {
-				program.PrintTypeAliases()
+				program.PrintSourceFileWithTypes()
 			} else {
 				diagnostics = program.GetSemanticDiagnostics(nil)
 			}

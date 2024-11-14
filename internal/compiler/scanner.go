@@ -1065,8 +1065,8 @@ func (s *Scanner) scanString(jsxAttributeString bool) string {
 
 func (s *Scanner) scanTemplateAndSetTokenValue(shouldEmitInvalidEscapeError bool) ast.Kind {
 	startedWithBacktick := s.char() == '`'
-	start := s.pos
 	s.pos++
+	start := s.pos
 	contents := ""
 	var token ast.Kind
 	for {
