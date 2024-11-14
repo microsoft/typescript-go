@@ -1,6 +1,6 @@
 package core
 
-//go:generate go run golang.org/x/tools/cmd/stringer -type=ModuleKind,ScriptTarget -output=compiler_options_stringer_generated.go
+//go:generate go run golang.org/x/tools/cmd/stringer -type=ModuleKind,ScriptTarget -output=compileroptions_stringer_generated.go
 
 type CompilerOptions struct {
 	AllowJs                            Tristate             `json:"allowJs"`
