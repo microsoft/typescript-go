@@ -121,6 +121,12 @@ type TypeAliasLinks struct {
 	instantiations map[string]*Type // Instantiations of generic type alias (undefined if non-generic)
 }
 
+// Links for declared types (type parameters, class types, interface types, enums)
+
+type DeclaredTypeLinks struct {
+	declaredType *Type
+}
+
 // Links for late-binding containers
 
 type MembersOrExportsResolutionKind int
@@ -131,18 +137,6 @@ const (
 )
 
 type MembersAndExportsLinks [2]ast.SymbolTable // Indexed by MembersOrExportsResolutionKind
-
-// Links for type parameters
-
-type TypeParameterLinks struct {
-	declaredType *Type
-}
-
-// Links for interface types
-
-type InterfaceTypeLinks struct {
-	declaredType *Type
-}
 
 // Links for syntheric spread properties
 
@@ -361,6 +355,12 @@ type TypeNodeLinks struct {
 	resolvedType        *Type       // Cached type of type node
 	resolvedSymbol      *ast.Symbol // Cached name resolution result
 	outerTypeParameters []*Type
+}
+
+// Links for enum members
+
+type EnumMemberLinks struct {
+	value EvaluatorResult
 }
 
 // Signature specific links
