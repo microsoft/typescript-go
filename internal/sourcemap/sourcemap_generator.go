@@ -2,6 +2,7 @@ package sourcemap
 
 import (
 	"encoding/json"
+	"slices"
 	"strings"
 
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -134,7 +135,6 @@ func (gen *SourceMapGenerator) shouldCommitMapping() bool {
 }
 
 func (gen *SourceMapGenerator) appendMappingCharCode(charCode rune) {
-	gen.mappings.Grow(1)
 	gen.mappings.WriteRune(charCode)
 }
 
@@ -299,30 +299,14 @@ func (gen *SourceMapGenerator) AddMappingSourceName(generatedLine int, generated
 // Gets the source map as a `RawSourceMap` object
 func (gen *SourceMapGenerator) RawSourceMap() *RawSourceMap {
 	gen.commitPendingMapping()
-
-	sources := []string{}
-	if gen.sources != nil {
-		sources = append(sources, gen.sources...)
-	}
-
-	var sourcesContent []*string
-	if gen.sourcesContent != nil {
-		sourcesContent = append([]*string{}, gen.sourcesContent...)
-	}
-
-	var names []string
-	if gen.names != nil {
-		names = append([]string{}, gen.names...)
-	}
-
 	return &RawSourceMap{
 		Version:        3,
 		File:           gen.file,
 		SourceRoot:     gen.sourceRoot,
-		Sources:        sources,
-		Names:          names,
+		Sources:        append([]string{}, gen.sources...),
+		Names:          slices.Clone(gen.names),
 		Mappings:       gen.mappings.String(),
-		SourcesContent: sourcesContent,
+		SourcesContent: slices.Clone(gen.sourcesContent),
 	}
 }
 
