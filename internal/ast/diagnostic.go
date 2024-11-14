@@ -18,6 +18,7 @@ type Diagnostic struct {
 }
 
 func (d *Diagnostic) File() *SourceFile                 { return d.File_ }
+func (d *Diagnostic) SetFile(file *SourceFile)          { d.File_ = file }
 func (d *Diagnostic) Pos() int                          { return d.Loc_.Pos() }
 func (d *Diagnostic) End() int                          { return d.Loc_.End() }
 func (d *Diagnostic) Len() int                          { return d.Loc_.Len() }
@@ -65,6 +66,17 @@ func NewDiagnostic(file *SourceFile, loc core.TextRange, message *diagnostics.Me
 		Code_:     message.Code(),
 		Category_: message.Category(),
 		Message_:  text,
+	}
+}
+
+func NewDiagnosticFromMessageChain(file *SourceFile, loc core.TextRange, messageChain *MessageChain) *Diagnostic {
+	return &Diagnostic{
+		File_:         file,
+		Loc_:          loc,
+		Code_:         messageChain.Code_,
+		Category_:     messageChain.Category_,
+		Message_:      messageChain.Message_,
+		MessageChain_: messageChain.MessageChain_,
 	}
 }
 

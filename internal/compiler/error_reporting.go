@@ -44,8 +44,8 @@ func FormatDiagnosticsWithColorAndContext(output *strings.Builder, diags []*ast.
 			output.WriteString(formatOpts.NewLine)
 		}
 
-		if diagnostic.File_ != nil {
-			file := diagnostic.File_
+		if diagnostic.File() != nil {
+			file := diagnostic.File()
 			pos := diagnostic.Loc_.Pos()
 			WriteLocation(output, file, pos, formatOpts, writeWithStyleAndReset)
 			output.WriteString(" - ")
@@ -274,13 +274,13 @@ func getErrorSummary(diags []*ast.Diagnostic) *ErrorSummary {
 		}
 
 		totalErrorCount++
-		if diagnostic.File_ == nil {
+		if diagnostic.File() == nil {
 			globalErrors = append(globalErrors, diagnostic)
 		} else {
 			if errorsByFiles == nil {
 				errorsByFiles = make(map[*ast.SourceFile][]*ast.Diagnostic)
 			}
-			errorsByFiles[diagnostic.File_] = append(errorsByFiles[diagnostic.File_], diagnostic)
+			errorsByFiles[diagnostic.File()] = append(errorsByFiles[diagnostic.File()], diagnostic)
 		}
 	}
 
@@ -350,9 +350,9 @@ func WriteFormatDiagnostics(output *strings.Builder, diagnostics []*ast.Diagnost
 }
 
 func WriteFormatDiagnostic(output *strings.Builder, diagnostic *ast.Diagnostic, formatOpts *DiagnosticsFormattingOptions) {
-	if diagnostic.File_ != nil {
-		line, character := GetLineAndCharacterOfPosition(diagnostic.File_, diagnostic.Loc_.Pos())
-		fileName := diagnostic.File_.FileName_
+	if diagnostic.File() != nil {
+		line, character := GetLineAndCharacterOfPosition(diagnostic.File(), diagnostic.Loc_.Pos())
+		fileName := diagnostic.File().FileName_
 		relativeFileName := tspath.ConvertToRelativePath(fileName, formatOpts.ComparePathsOptions)
 		fmt.Fprintf(output, "%s(%d,%d): ", relativeFileName, line+1, character+1)
 	}

@@ -62,20 +62,6 @@ func getMergeId(symbol *ast.Symbol) ast.MergeId {
 	return symbol.MergeId
 }
 
-func NewDiagnostic(file *ast.SourceFile, loc core.TextRange, message *diagnostics.Message, args ...any) *ast.Diagnostic {
-	text := message.Message()
-	if len(args) != 0 {
-		text = core.FormatStringFromArgs(text, args)
-	}
-	return &ast.Diagnostic{
-		File_:     file,
-		Loc_:      loc,
-		Code_:     message.Code(),
-		Category_: message.Category(),
-		Message_:  text,
-	}
-}
-
 func NewDiagnosticForNode(node *ast.Node, message *diagnostics.Message, args ...any) *ast.Diagnostic {
 	var file *ast.SourceFile
 	var loc core.TextRange
@@ -83,18 +69,7 @@ func NewDiagnosticForNode(node *ast.Node, message *diagnostics.Message, args ...
 		file = getSourceFileOfNode(node)
 		loc = getErrorRangeForNode(file, node)
 	}
-	return NewDiagnostic(file, loc, message, args...)
-}
-
-func NewDiagnosticFromMessageChain(file *ast.SourceFile, loc core.TextRange, messageChain *ast.MessageChain) *ast.Diagnostic {
-	return &ast.Diagnostic{
-		File_:         file,
-		Loc_:          loc,
-		Code_:         messageChain.Code_,
-		Category_:     messageChain.Category_,
-		Message_:      messageChain.Message_,
-		MessageChain_: messageChain.MessageChain_,
-	}
+	return ast.NewDiagnostic(file, loc, message, args...)
 }
 
 func NewDiagnosticForNodeFromMessageChain(node *ast.Node, messageChain *ast.MessageChain) *ast.Diagnostic {
@@ -104,23 +79,11 @@ func NewDiagnosticForNodeFromMessageChain(node *ast.Node, messageChain *ast.Mess
 		file = getSourceFileOfNode(node)
 		loc = getErrorRangeForNode(file, node)
 	}
-	return NewDiagnosticFromMessageChain(file, loc, messageChain)
-}
-
-func NewMessageChain(message *diagnostics.Message, args ...any) *ast.MessageChain {
-	text := message.Message()
-	if len(args) != 0 {
-		text = core.FormatStringFromArgs(text, args)
-	}
-	return &ast.MessageChain{
-		Code_:     message.Code(),
-		Category_: message.Category(),
-		Message_:  text,
-	}
+	return ast.NewDiagnosticFromMessageChain(file, loc, messageChain)
 }
 
 func chainDiagnosticMessages(details *ast.MessageChain, message *diagnostics.Message, args ...any) *ast.MessageChain {
-	return NewMessageChain(message, args...).AddMessageChain(details)
+	return ast.NewMessageChain(message, args...).AddMessageChain(details)
 }
 
 type OperatorPrecedence int
@@ -1816,8 +1779,8 @@ type DiagnosticsCollection struct {
 }
 
 func (c *DiagnosticsCollection) add(diagnostic *ast.Diagnostic) {
-	if diagnostic.File_ != nil {
-		fileName := diagnostic.File_.FileName_
+	if diagnostic.File() != nil {
+		fileName := diagnostic.File().FileName_
 		if c.fileDiagnostics == nil {
 			c.fileDiagnostics = make(map[string][]*ast.Diagnostic)
 		}
@@ -1829,8 +1792,8 @@ func (c *DiagnosticsCollection) add(diagnostic *ast.Diagnostic) {
 
 func (c *DiagnosticsCollection) lookup(diagnostic *ast.Diagnostic) *ast.Diagnostic {
 	var diagnostics []*ast.Diagnostic
-	if diagnostic.File_ != nil {
-		diagnostics = c.fileDiagnostics[diagnostic.File_.FileName_]
+	if diagnostic.File() != nil {
+		diagnostics = c.fileDiagnostics[diagnostic.File().FileName_]
 	} else {
 		diagnostics = c.nonFileDiagnostics
 	}
@@ -1956,8 +1919,8 @@ func compareRelatedInfo(r1, r2 []*ast.Diagnostic) int {
 }
 
 func getDiagnosticPath(d *ast.Diagnostic) string {
-	if d.File_ != nil {
-		return d.File_.Path_
+	if d.File() != nil {
+		return d.File().Path_
 	}
 	return ""
 }
