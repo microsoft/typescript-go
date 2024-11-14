@@ -63,7 +63,7 @@ jobs:
 
       - run: npm ci
 
-      - run: npx hereby install-tools
+      - run: go install gotest.tools/gotestsum@latest
       - run: npx hereby test:all --race
 
       - run: git add .
