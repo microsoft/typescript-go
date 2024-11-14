@@ -447,15 +447,15 @@ func (p *Printer) printIndexedAccessType(t *Type) {
 }
 
 func (p *Printer) printSourceFileWithTypes(sourceFile *ast.SourceFile) {
-	var pos core.TextPos
+	var pos int
 	var visit func(*ast.Node) bool
 	var typesPrinted bool
 	lineStarts := getLineStarts(sourceFile)
 	printLinesBefore := func(node *ast.Node) {
-		line := computeLineOfPosition(lineStarts, core.TextPos(skipTrivia(sourceFile.Text, node.Pos())))
-		var nextLineStart core.TextPos
+		line := computeLineOfPosition(lineStarts, skipTrivia(sourceFile.Text, node.Pos()))
+		var nextLineStart int
 		if line+1 < len(lineStarts) {
-			nextLineStart = lineStarts[line+1]
+			nextLineStart = int(lineStarts[line+1])
 		} else {
 			nextLineStart = sourceFile.Loc.End()
 		}
@@ -470,7 +470,7 @@ func (p *Printer) printSourceFileWithTypes(sourceFile *ast.SourceFile) {
 	}
 	visit = func(node *ast.Node) bool {
 		text, t, isDeclaration := p.c.getTextAndTypeOfNode(node)
-		if text != "" {
+		if text != "" && !strings.Contains(text, "\n") {
 			printLinesBefore(node)
 			p.print(">")
 			p.print(text)

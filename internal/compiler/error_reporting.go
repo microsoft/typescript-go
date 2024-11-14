@@ -10,7 +10,6 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/compiler/diagnostics"
-	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
@@ -103,7 +102,7 @@ func writeCodeSnippet(writer *strings.Builder, sourceFile *ast.SourceFile, start
 		}
 
 		lineStart := GetPositionOfLineAndCharacter(sourceFile, i, 0)
-		var lineEnd core.TextPos
+		var lineEnd int
 		if i < lastLineOfFile {
 			lineEnd = GetPositionOfLineAndCharacter(sourceFile, i+1, 0)
 		} else {
