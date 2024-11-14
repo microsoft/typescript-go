@@ -90,7 +90,7 @@ async function runTestBenchmarks() {
 
 export const testBenchmarks = task({
     name: "test:benchmarks",
-    run: runTestBenchmarks
+    run: runTestBenchmarks,
 });
 
 export const testAll = task({
