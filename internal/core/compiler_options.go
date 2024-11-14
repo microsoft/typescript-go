@@ -1,5 +1,7 @@
 package core
 
+//go:generate go run golang.org/x/tools/cmd/stringer -type=ModuleKind,ScriptTarget -output=compiler_options_stringer_generated.go
+
 type CompilerOptions struct {
 	AllowJs                            Tristate             `json:"allowJs"`
 	AllowSyntheticDefaultImports       Tristate             `json:"allowSyntheticDefaultImports"`

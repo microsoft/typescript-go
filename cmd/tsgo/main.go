@@ -10,6 +10,7 @@ import (
 	"time"
 	"unicode"
 
+	"github.com/microsoft/typescript-go/internal/ast"
 	ts "github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -21,10 +22,10 @@ var parseAndBindOnly = false
 var printTypes = false
 var pretty = true
 
-func printDiagnostic(d *ts.Diagnostic, level int) {
+func printDiagnostic(d *ast.Diagnostic, level int) {
 	file := d.File()
 	if file != nil {
-		line, character := ts.GetLineAndCharacterOfPosition(file, d.Loc().Pos())
+		line, character := ts.GetLineAndCharacterOfPosition(file, int(d.Loc().Pos()))
 		fmt.Printf("%v%v(%v,%v): error TS%v: %v\n", strings.Repeat(" ", level*2), file.FileName(), line+1, character+1, d.Code(), d.Message())
 	} else {
 		fmt.Printf("%verror TS%v: %v\n", strings.Repeat(" ", level*2), d.Code(), d.Message())
@@ -35,7 +36,7 @@ func printDiagnostic(d *ts.Diagnostic, level int) {
 	}
 }
 
-func printMessageChain(messageChain []*ts.MessageChain, level int) {
+func printMessageChain(messageChain []*ast.MessageChain, level int) {
 	for _, c := range messageChain {
 		fmt.Printf("%v%v\n", strings.Repeat(" ", level*2), c.Message())
 		printMessageChain(c.MessageChain(), level+1)

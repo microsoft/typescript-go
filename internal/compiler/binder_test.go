@@ -4,6 +4,7 @@ import (
 	"runtime"
 	"testing"
 
+	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
 )
 
@@ -15,7 +16,7 @@ func BenchmarkBind(b *testing.B) {
 			fileName := f.Path()
 			sourceText := f.ReadFile(b)
 
-			sourceFiles := make([]*SourceFile, b.N)
+			sourceFiles := make([]*ast.SourceFile, b.N)
 			for i := 0; i < b.N; i++ {
 				sourceFiles[i] = ParseSourceFile(fileName, sourceText, core.ScriptTargetESNext)
 			}
