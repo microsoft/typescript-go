@@ -1829,17 +1829,17 @@ func sortAndDeduplicateDiagnostics(diagnostics []*ast.Diagnostic) []*ast.Diagnos
 
 func equalDiagnostics(d1, d2 *ast.Diagnostic) bool {
 	return getDiagnosticPath(d1) == getDiagnosticPath(d2) &&
-		d1.Loc_ == d2.Loc_ &&
-		d1.Code_ == d2.Code_ &&
-		d1.Message_ == d2.Message_ &&
-		slices.EqualFunc(d1.MessageChain_, d2.MessageChain_, equalMessageChain) &&
-		slices.EqualFunc(d1.RelatedInformation_, d2.RelatedInformation_, equalDiagnostics)
+		d1.Loc() == d2.Loc() &&
+		d1.Code() == d2.Code() &&
+		d1.Message() == d2.Message() &&
+		slices.EqualFunc(d1.MessageChain(), d2.MessageChain(), equalMessageChain) &&
+		slices.EqualFunc(d1.RelatedInformation(), d2.RelatedInformation(), equalDiagnostics)
 }
 
 func equalMessageChain(c1, c2 *ast.MessageChain) bool {
-	return c1.Code_ == c2.Code_ &&
-		c1.Message_ == c2.Message_ &&
-		slices.EqualFunc(c1.MessageChain_, c2.MessageChain_, equalMessageChain)
+	return c1.Code() == c2.Code() &&
+		c1.Message() == c2.Message() &&
+		slices.EqualFunc(c1.MessageChain(), c2.MessageChain(), equalMessageChain)
 }
 
 func CompareDiagnostics(d1, d2 *ast.Diagnostic) int {
@@ -1847,31 +1847,31 @@ func CompareDiagnostics(d1, d2 *ast.Diagnostic) int {
 	if c != 0 {
 		return c
 	}
-	c = int(d1.Loc_.Pos_) - int(d2.Loc_.Pos_)
+	c = int(d1.Loc().Pos_) - int(d2.Loc().Pos_)
 	if c != 0 {
 		return c
 	}
-	c = int(d1.Loc_.End_) - int(d2.Loc_.End_)
+	c = int(d1.Loc().End_) - int(d2.Loc().End_)
 	if c != 0 {
 		return c
 	}
-	c = int(d1.Code_) - int(d2.Code_)
+	c = int(d1.Code()) - int(d2.Code())
 	if c != 0 {
 		return c
 	}
-	c = strings.Compare(d1.Message_, d2.Message_)
+	c = strings.Compare(d1.Message(), d2.Message())
 	if c != 0 {
 		return c
 	}
-	c = compareMessageChainSize(d1.MessageChain_, d2.MessageChain_)
+	c = compareMessageChainSize(d1.MessageChain(), d2.MessageChain())
 	if c != 0 {
 		return c
 	}
-	c = compareMessageChainContent(d1.MessageChain_, d2.MessageChain_)
+	c = compareMessageChainContent(d1.MessageChain(), d2.MessageChain())
 	if c != 0 {
 		return c
 	}
-	return compareRelatedInfo(d1.RelatedInformation_, d2.RelatedInformation_)
+	return compareRelatedInfo(d1.RelatedInformation(), d2.RelatedInformation())
 }
 
 func compareMessageChainSize(c1, c2 []*ast.MessageChain) int {
@@ -1880,7 +1880,7 @@ func compareMessageChainSize(c1, c2 []*ast.MessageChain) int {
 		return c
 	}
 	for i := range c1 {
-		c = compareMessageChainSize(c1[i].MessageChain_, c2[i].MessageChain_)
+		c = compareMessageChainSize(c1[i].MessageChain(), c2[i].MessageChain())
 		if c != 0 {
 			return c
 		}
@@ -1890,12 +1890,12 @@ func compareMessageChainSize(c1, c2 []*ast.MessageChain) int {
 
 func compareMessageChainContent(c1, c2 []*ast.MessageChain) int {
 	for i := range c1 {
-		c := strings.Compare(c1[i].Message_, c2[i].Message_)
+		c := strings.Compare(c1[i].Message(), c2[i].Message())
 		if c != 0 {
 			return c
 		}
-		if c1[i].MessageChain_ != nil {
-			c = compareMessageChainContent(c1[i].MessageChain_, c2[i].MessageChain_)
+		if c1[i].MessageChain() != nil {
+			c = compareMessageChainContent(c1[i].MessageChain(), c2[i].MessageChain())
 			if c != 0 {
 				return c
 			}
@@ -3756,10 +3756,10 @@ func getClassExtendsHeritageElement(node *ast.Node) *ast.Node {
 
 func concatenateDiagnosticMessageChains(headChain *ast.MessageChain, tailChain *ast.MessageChain) {
 	lastChain := headChain
-	for len(lastChain.MessageChain_) != 0 {
-		lastChain = lastChain.MessageChain_[0]
+	for len(lastChain.MessageChain()) != 0 {
+		lastChain = lastChain.MessageChain()[0]
 	}
-	lastChain.MessageChain_ = []*ast.MessageChain{tailChain}
+	lastChain.SetMessageChain([]*ast.MessageChain{tailChain})
 }
 
 func isObjectOrArrayLiteralType(t *Type) bool {

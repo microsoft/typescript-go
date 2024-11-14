@@ -2695,7 +2695,7 @@ func (c *Checker) addErrorOrSuggestion(isError bool, diagnostic *ast.Diagnostic)
 		c.diagnostics.add(diagnostic)
 	} else {
 		suggestion := *diagnostic
-		suggestion.Category_ = diagnostics.CategorySuggestion
+		suggestion.SetCategory(diagnostics.CategorySuggestion)
 		c.suggestionDiagnostics.add(&suggestion)
 	}
 }
@@ -2924,12 +2924,12 @@ func (c *Checker) addDuplicateDeclarationError(node *ast.Node, message *diagnost
 		}
 		leadingMessage := createDiagnosticForNode(adjustedNode, diagnostics.X_0_was_also_declared_here, symbolName)
 		followOnMessage := createDiagnosticForNode(adjustedNode, diagnostics.X_and_here)
-		if len(err.RelatedInformation_) >= 5 || core.Some(err.RelatedInformation_, func(d *ast.Diagnostic) bool {
+		if len(err.RelatedInformation()) >= 5 || core.Some(err.RelatedInformation(), func(d *ast.Diagnostic) bool {
 			return CompareDiagnostics(d, followOnMessage) == 0 || CompareDiagnostics(d, leadingMessage) == 0
 		}) {
 			continue
 		}
-		if len(err.RelatedInformation_) == 0 {
+		if len(err.RelatedInformation()) == 0 {
 			err.AddRelatedInfo(leadingMessage)
 		} else {
 			err.AddRelatedInfo(followOnMessage)
