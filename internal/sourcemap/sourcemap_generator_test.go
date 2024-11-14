@@ -52,7 +52,7 @@ func TestSourceMapGenerator_SetSourceContent(t *testing.T) {
 	gen := NewSourceMapGenerator("main.js", "/", "/", tspath.ComparePathsOptions{})
 	sourceIndex := gen.AddSource("/main.ts")
 	sourceContent := "foo"
-	gen.SetSourceContent(sourceIndex, sourceContent)
+	assert.NilError(t, gen.SetSourceContent(sourceIndex, sourceContent))
 	sourceMap := gen.RawSourceMap()
 	assert.Equal(t, int(sourceIndex), 0)
 	assert.DeepEqual(t, sourceMap, &RawSourceMap{
@@ -125,7 +125,7 @@ func TestSourceMapGenerator_AddName(t *testing.T) {
 func TestSourceMapGenerator_AddGeneratedMapping(t *testing.T) {
 	t.Parallel()
 	gen := NewSourceMapGenerator("main.js", "/", "/", tspath.ComparePathsOptions{})
-	gen.AddGeneratedMapping(0, 0)
+	assert.NilError(t, gen.AddGeneratedMapping(0, 0))
 	sourceMap := gen.RawSourceMap()
 	assert.DeepEqual(t, sourceMap, &RawSourceMap{
 		Version:        3,
@@ -141,7 +141,7 @@ func TestSourceMapGenerator_AddGeneratedMapping(t *testing.T) {
 func TestSourceMapGenerator_AddGeneratedMapping_OnSecondLineOnly(t *testing.T) {
 	t.Parallel()
 	gen := NewSourceMapGenerator("main.js", "/", "/", tspath.ComparePathsOptions{})
-	gen.AddGeneratedMapping(1, 0)
+	assert.NilError(t, gen.AddGeneratedMapping(1, 0))
 	sourceMap := gen.RawSourceMap()
 	assert.DeepEqual(t, sourceMap, &RawSourceMap{
 		Version:        3,
@@ -158,7 +158,7 @@ func TestSourceMapGenerator_AddSourceMapping(t *testing.T) {
 	t.Parallel()
 	gen := NewSourceMapGenerator("main.js", "/", "/", tspath.ComparePathsOptions{})
 	sourceIndex := gen.AddSource("/main.ts")
-	gen.AddSourceMapping(0, 0, sourceIndex, 0, 0)
+	assert.NilError(t, gen.AddSourceMapping(0, 0, sourceIndex, 0, 0))
 	sourceMap := gen.RawSourceMap()
 	assert.DeepEqual(t, sourceMap, &RawSourceMap{
 		Version:        3,
@@ -175,8 +175,8 @@ func TestSourceMapGenerator_AddSourceMapping_NextGeneratedCharacter(t *testing.T
 	t.Parallel()
 	gen := NewSourceMapGenerator("main.js", "/", "/", tspath.ComparePathsOptions{})
 	sourceIndex := gen.AddSource("/main.ts")
-	gen.AddSourceMapping(0, 0, sourceIndex, 0, 0)
-	gen.AddSourceMapping(0, 1, sourceIndex, 0, 0)
+	assert.NilError(t, gen.AddSourceMapping(0, 0, sourceIndex, 0, 0))
+	assert.NilError(t, gen.AddSourceMapping(0, 1, sourceIndex, 0, 0))
 	sourceMap := gen.RawSourceMap()
 	assert.DeepEqual(t, sourceMap, &RawSourceMap{
 		Version:        3,
@@ -193,8 +193,8 @@ func TestSourceMapGenerator_AddSourceMapping_NextGeneratedAndSourceCharacter(t *
 	t.Parallel()
 	gen := NewSourceMapGenerator("main.js", "/", "/", tspath.ComparePathsOptions{})
 	sourceIndex := gen.AddSource("/main.ts")
-	gen.AddSourceMapping(0, 0, sourceIndex, 0, 0)
-	gen.AddSourceMapping(0, 1, sourceIndex, 0, 1)
+	assert.NilError(t, gen.AddSourceMapping(0, 0, sourceIndex, 0, 0))
+	assert.NilError(t, gen.AddSourceMapping(0, 1, sourceIndex, 0, 1))
 	sourceMap := gen.RawSourceMap()
 	assert.DeepEqual(t, sourceMap, &RawSourceMap{
 		Version:        3,
@@ -211,8 +211,8 @@ func TestSourceMapGenerator_AddSourceMapping_NextGeneratedLine(t *testing.T) {
 	t.Parallel()
 	gen := NewSourceMapGenerator("main.js", "/", "/", tspath.ComparePathsOptions{})
 	sourceIndex := gen.AddSource("/main.ts")
-	gen.AddSourceMapping(0, 0, sourceIndex, 0, 0)
-	gen.AddSourceMapping(1, 0, sourceIndex, 0, 0)
+	assert.NilError(t, gen.AddSourceMapping(0, 0, sourceIndex, 0, 0))
+	assert.NilError(t, gen.AddSourceMapping(1, 0, sourceIndex, 0, 0))
 	sourceMap := gen.RawSourceMap()
 	assert.DeepEqual(t, sourceMap, &RawSourceMap{
 		Version:        3,
@@ -229,8 +229,8 @@ func TestSourceMapGenerator_AddSourceMapping_PreviousSourceCharacter(t *testing.
 	t.Parallel()
 	gen := NewSourceMapGenerator("main.js", "/", "/", tspath.ComparePathsOptions{})
 	sourceIndex := gen.AddSource("/main.ts")
-	gen.AddSourceMapping(0, 0, sourceIndex, 0, 1)
-	gen.AddSourceMapping(0, 1, sourceIndex, 0, 0)
+	assert.NilError(t, gen.AddSourceMapping(0, 0, sourceIndex, 0, 1))
+	assert.NilError(t, gen.AddSourceMapping(0, 1, sourceIndex, 0, 0))
 	sourceMap := gen.RawSourceMap()
 	assert.DeepEqual(t, sourceMap, &RawSourceMap{
 		Version:        3,
@@ -248,7 +248,7 @@ func TestSourceMapGenerator_AddNamedSourceMapping(t *testing.T) {
 	gen := NewSourceMapGenerator("main.js", "/", "/", tspath.ComparePathsOptions{})
 	sourceIndex := gen.AddSource("/main.ts")
 	nameIndex := gen.AddName("foo")
-	gen.AddNamedSourceMapping(0, 0, sourceIndex, 0, 0, nameIndex)
+	assert.NilError(t, gen.AddNamedSourceMapping(0, 0, sourceIndex, 0, 0, nameIndex))
 	sourceMap := gen.RawSourceMap()
 	assert.DeepEqual(t, sourceMap, &RawSourceMap{
 		Version:        3,
@@ -267,8 +267,8 @@ func TestSourceMapGenerator_AddNamedSourceMapping_WithPreviousName(t *testing.T)
 	sourceIndex := gen.AddSource("/main.ts")
 	nameIndex1 := gen.AddName("foo")
 	nameIndex2 := gen.AddName("bar")
-	gen.AddNamedSourceMapping(0, 0, sourceIndex, 0, 0, nameIndex2)
-	gen.AddNamedSourceMapping(0, 1, sourceIndex, 0, 0, nameIndex1)
+	assert.NilError(t, gen.AddNamedSourceMapping(0, 0, sourceIndex, 0, 0, nameIndex2))
+	assert.NilError(t, gen.AddNamedSourceMapping(0, 1, sourceIndex, 0, 0, nameIndex1))
 	sourceMap := gen.RawSourceMap()
 	assert.DeepEqual(t, sourceMap, &RawSourceMap{
 		Version:        3,
