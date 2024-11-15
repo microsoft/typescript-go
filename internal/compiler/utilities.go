@@ -1080,7 +1080,18 @@ func isEmptyObjectLiteral(expression *ast.Node) bool {
 
 func isFunctionSymbol(symbol *ast.Symbol) bool {
 	d := symbol.ValueDeclaration
-	return d != nil && (ast.IsFunctionDeclaration(d) || ast.IsVariableDeclaration(d) && ast.IsFunctionLike(d.AsVariableDeclaration().Initializer))
+	if d != nil {
+		if ast.IsFunctionDeclaration(d) {
+			return true
+		}
+		if ast.IsVariableDeclaration(d) {
+			varDecl := d.AsVariableDeclaration()
+			if varDecl.Initializer != nil {
+				return ast.IsFunctionLike(varDecl.Initializer)
+			}
+		}
+	}
+	return false
 }
 
 func isLogicalOrCoalescingAssignmentOperator(token ast.Kind) bool {
