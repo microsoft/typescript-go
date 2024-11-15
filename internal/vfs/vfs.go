@@ -74,13 +74,14 @@ func FromOS(cwd string) FS {
 }
 
 // FromIOFS creates a new FS from an [fs.FS].
-// For paths like `c:/foo/bar`, fsys will be used as though the path is `/c:/foo/bar`.
+// For paths like `c:/foo/bar`, fsys will be used as though it's rooted at `/` and the path is `/c:/foo/bar`.
 func FromIOFS(cwd string, useCaseSensitiveFileNames bool, fsys fs.FS) FS {
 	if cwd == "" {
 		panic("cwd must be provided")
 	}
 
 	return &adapter{
+		readSema:                  osReadSema,
 		cwd:                       tspath.ToPath(cwd, "", useCaseSensitiveFileNames),
 		useCaseSensitiveFileNames: useCaseSensitiveFileNames,
 		rootFor: func(root string) fs.FS {
@@ -88,7 +89,8 @@ func FromIOFS(cwd string, useCaseSensitiveFileNames bool, fsys fs.FS) FS {
 				return fsys
 			}
 
-			sub, err := fs.Sub(fsys, tspath.RemoveTrailingDirectorySeparator(root))
+			p := tspath.RemoveTrailingDirectorySeparator(root)
+			sub, err := fs.Sub(fsys, p)
 			if err != nil {
 				panic(err)
 			}
@@ -96,6 +98,8 @@ func FromIOFS(cwd string, useCaseSensitiveFileNames bool, fsys fs.FS) FS {
 		},
 	}
 }
+
+var osReadSema = make(chan struct{}, 128)
 
 var isFileSystemCaseSensitive = sync.OnceValue(func() bool {
 	// win32/win64 are case insensitive platforms
@@ -123,6 +127,8 @@ func swapCase(str string) string {
 }
 
 type adapter struct {
+	readSema chan struct{}
+
 	cwd                       tspath.Path
 	useCaseSensitiveFileNames bool
 
@@ -172,6 +178,11 @@ func (a *adapter) FileExists(path tspath.Path) bool {
 }
 
 func (a *adapter) ReadFile(path tspath.Path) (contents string, ok bool) {
+	if a.readSema != nil {
+		a.readSema <- struct{}{}
+		defer func() { <-a.readSema }()
+	}
+
 	fsys, rest := a.rootAndPath(path)
 	if fsys == nil {
 		return "", false
