@@ -22,9 +22,7 @@ func TestFS(t *testing.T) {
 	t.Run("ReadFile", func(t *testing.T) {
 		t.Parallel()
 
-		p := fs.ToPath("/foo")
-
-		content, ok := fs.ReadFile(p)
+		content, ok := fs.ReadFile("/foo")
 		assert.Assert(t, ok)
 		assert.Equal(t, content, "hello, world")
 	})

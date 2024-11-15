@@ -14,40 +14,37 @@ import (
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
-// FS is a file system abstraction. All paths are handled as [tspath.Path].
+// FS is a file system abstraction.
 type FS interface {
 	// UseCaseSensitiveFileNames returns true if the file system is case-sensitive.
 	UseCaseSensitiveFileNames() bool
 
 	// GetCurrentDirectory returns the current directory.
-	GetCurrentDirectory() tspath.Path
-
-	// ToPath converts a string to a path. If the path is relative, it is resolved against the current directory.
-	ToPath(p string) tspath.Path
+	GetCurrentDirectory() string
 
 	// FileExists returns true if the file exists.
-	FileExists(path tspath.Path) bool
+	FileExists(path string) bool
 
 	// ReadFile reads the file specified by path and returns the content.
 	// If the file fails to be read, ok will be false.
-	ReadFile(path tspath.Path) (contents string, ok bool)
+	ReadFile(path string) (contents string, ok bool)
 
 	// DirectoryExists returns true if the path is a directory.
-	DirectoryExists(path tspath.Path) bool
+	DirectoryExists(path string) bool
 
 	// GetDirectories returns the names of the directories in the specified directory.
-	GetDirectories(path tspath.Path) []string
+	GetDirectories(path string) []string
 
 	// WalkDir walks the file tree rooted at root, calling walkFn for each file or directory in the tree.
-	// It is has the same behavior as [fs.WalkDir], but with paths as [tspath.Path].
-	WalkDir(root tspath.Path, walkFn WalkDirFunc) error
+	// It is has the same behavior as [fs.WalkDir], but with paths as [string].
+	WalkDir(root string, walkFn WalkDirFunc) error
 }
 
 // DirEntry is [fs.DirEntry].
 type DirEntry = fs.DirEntry
 
-// WalkDirFunc is [fs.WalkDirFunc] but with paths as [tspath.Path].
-type WalkDirFunc func(path tspath.Path, d DirEntry, err error) error
+// WalkDirFunc is [fs.WalkDirFunc].
+type WalkDirFunc = fs.WalkDirFunc
 
 var (
 	// SkipAll is [fs.SkipAll].
@@ -67,7 +64,7 @@ func FromOS(cwd string) FS {
 
 	useCaseSensitiveFileNames := isFileSystemCaseSensitive()
 	return &adapter{
-		cwd:                       tspath.ToPath(cwd, "", useCaseSensitiveFileNames),
+		cwd:                       cwd,
 		useCaseSensitiveFileNames: useCaseSensitiveFileNames,
 		rootFor:                   os.DirFS,
 	}
@@ -82,7 +79,7 @@ func FromIOFS(cwd string, useCaseSensitiveFileNames bool, fsys fs.FS) FS {
 
 	return &adapter{
 		readSema:                  osReadSema,
-		cwd:                       tspath.ToPath(cwd, "", useCaseSensitiveFileNames),
+		cwd:                       cwd,
 		useCaseSensitiveFileNames: useCaseSensitiveFileNames,
 		rootFor: func(root string) fs.FS {
 			if root == "/" {
@@ -129,7 +126,7 @@ func swapCase(str string) string {
 type adapter struct {
 	readSema chan struct{}
 
-	cwd                       tspath.Path
+	cwd                       string
 	useCaseSensitiveFileNames bool
 
 	rootFor func(root string) fs.FS
@@ -139,15 +136,11 @@ func (a *adapter) UseCaseSensitiveFileNames() bool {
 	return a.useCaseSensitiveFileNames
 }
 
-func (a *adapter) GetCurrentDirectory() tspath.Path {
+func (a *adapter) GetCurrentDirectory() string {
 	return a.cwd
 }
 
-func (a *adapter) ToPath(p string) tspath.Path {
-	return tspath.ToPath(p, string(a.cwd), a.useCaseSensitiveFileNames)
-}
-
-func splitPath(p tspath.Path) (rootName, rest string) {
+func splitPath(p string) (rootName, rest string) {
 	l := tspath.GetEncodedRootLength(string(p))
 	if l < 0 {
 		panic("FS does not support URLs")
@@ -155,12 +148,12 @@ func splitPath(p tspath.Path) (rootName, rest string) {
 	return string(p[:l]), string(p[l:])
 }
 
-func (a *adapter) rootAndPath(path tspath.Path) (fs.FS, string) {
+func (a *adapter) rootAndPath(path string) (fs.FS, string) {
 	rootName, rest := splitPath(path)
 	return a.rootFor(rootName), rest
 }
 
-func (a *adapter) stat(path tspath.Path) fs.FileInfo {
+func (a *adapter) stat(path string) fs.FileInfo {
 	fsys, rest := a.rootAndPath(path)
 	if fsys == nil {
 		return nil
@@ -172,12 +165,12 @@ func (a *adapter) stat(path tspath.Path) fs.FileInfo {
 	return stat
 }
 
-func (a *adapter) FileExists(path tspath.Path) bool {
+func (a *adapter) FileExists(path string) bool {
 	stat := a.stat(path)
 	return stat != nil && !stat.IsDir()
 }
 
-func (a *adapter) ReadFile(path tspath.Path) (contents string, ok bool) {
+func (a *adapter) ReadFile(path string) (contents string, ok bool) {
 	if a.readSema != nil {
 		a.readSema <- struct{}{}
 		defer func() { <-a.readSema }()
@@ -218,12 +211,12 @@ func decodeUtf16(b []byte, order binary.ByteOrder) string {
 	return string(utf16.Decode(ints))
 }
 
-func (a *adapter) DirectoryExists(path tspath.Path) bool {
+func (a *adapter) DirectoryExists(path string) bool {
 	stat := a.stat(path)
 	return stat != nil && stat.IsDir()
 }
 
-func (a *adapter) GetDirectories(path tspath.Path) []string {
+func (a *adapter) GetDirectories(path string) []string {
 	fsys, rest := a.rootAndPath(path)
 	if fsys == nil {
 		return nil
@@ -244,14 +237,10 @@ func (a *adapter) GetDirectories(path tspath.Path) []string {
 	return dirs
 }
 
-func (a *adapter) WalkDir(root tspath.Path, walkFn WalkDirFunc) error {
+func (a *adapter) WalkDir(root string, walkFn WalkDirFunc) error {
 	fsys, rest := a.rootAndPath(root)
 	if fsys == nil {
 		return nil
 	}
-
-	toPath := a.ToPath
-	return fs.WalkDir(fsys, rest, func(path string, d fs.DirEntry, err error) error {
-		return walkFn(toPath(path), d, err)
-	})
+	return fs.WalkDir(fsys, rest, walkFn)
 }
