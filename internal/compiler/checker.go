@@ -396,6 +396,7 @@ type Checker struct {
 	identityRelation                   *Relation
 	enumRelation                       *Relation
 	getGlobalNonNullableTypeAlias      func() *ast.Symbol
+	getGlobalExtractSymbol             func() *ast.Symbol
 	isPrimitiveOrObjectOrEmptyType     func(*Type) bool
 	containsMissingType                func(*Type) bool
 	couldContainTypeVariables          func(*Type) bool
@@ -511,9 +512,6 @@ func NewChecker(program *Program) *Checker {
 	c.comparableRelation = &Relation{}
 	c.identityRelation = &Relation{}
 	c.enumRelation = &Relation{}
-	c.getGlobalNonNullableTypeAlias = core.Memoize(func() *ast.Symbol {
-		return c.getGlobalSymbol("NonNullable", ast.SymbolFlagsTypeAlias, nil /*diagnostic*/)
-	})
 	c.initializeClosures()
 	c.initializeChecker()
 	return c
@@ -541,6 +539,12 @@ func (c *Checker) getStrictOptionValue(value core.Tristate) bool {
 }
 
 func (c *Checker) initializeClosures() {
+	c.getGlobalNonNullableTypeAlias = core.Memoize(func() *ast.Symbol {
+		return c.getGlobalSymbol("NonNullable", ast.SymbolFlagsTypeAlias, nil /*diagnostic*/)
+	})
+	c.getGlobalExtractSymbol = core.Memoize(func() *ast.Symbol {
+		return c.getGlobalTypeAliasSymbol("Extract", 2 /*arity*/, true /*reportErrors*/)
+	})
 	c.isPrimitiveOrObjectOrEmptyType = func(t *Type) bool {
 		return t.flags&(TypeFlagsPrimitive|TypeFlagsNonPrimitive) != 0 || c.isEmptyAnonymousObjectType(t)
 	}
@@ -1054,7 +1058,58 @@ func (c *Checker) checkNonNullExpression(node *ast.Node) *Type {
 }
 
 func (c *Checker) checkNonNullType(t *Type, node *ast.Node) *Type {
-	return t // !!!
+	return c.checkNonNullTypeWithReporter(t, node, (*Checker).reportObjectPossiblyNullOrUndefinedError)
+}
+
+func (c *Checker) checkNonNullTypeWithReporter(t *Type, node *ast.Node, reportError func(c *Checker, node *ast.Node, facts TypeFacts)) *Type {
+	if c.strictNullChecks && t.flags&TypeFlagsUnknown != 0 {
+		if isEntityNameExpression(node) {
+			nodeText := entityNameToString(node)
+			if len(nodeText) < 100 {
+				c.error(node, diagnostics.X_0_is_of_type_unknown, nodeText)
+				return c.errorType
+			}
+		}
+		c.error(node, diagnostics.Object_is_of_type_unknown)
+		return c.errorType
+	}
+	facts := c.getTypeFacts(t, TypeFactsIsUndefinedOrNull)
+	if facts&TypeFactsIsUndefinedOrNull != 0 {
+		reportError(c, node, facts)
+		t := c.getNonNullableType(t)
+		if t.flags&(TypeFlagsNullable|TypeFlagsNever) != 0 {
+			return c.errorType
+		}
+	}
+	return t
+}
+
+func (c *Checker) reportObjectPossiblyNullOrUndefinedError(node *ast.Node, facts TypeFacts) {
+	var nodeText string
+	if isEntityNameExpression(node) {
+		nodeText = entityNameToString(node)
+	}
+	if node.Kind == ast.KindNullKeyword {
+		c.error(node, diagnostics.The_value_0_cannot_be_used_here, "null")
+		return
+	}
+	if nodeText != "" && len(nodeText) < 100 {
+		if ast.IsIdentifier(node) && nodeText == "undefined" {
+			c.error(node, diagnostics.The_value_0_cannot_be_used_here, "undefined")
+			return
+		}
+		c.error(node, ifElse(facts&TypeFactsIsUndefined != 0,
+			ifElse(facts&TypeFactsIsNull != 0,
+				diagnostics.X_0_is_possibly_null_or_undefined,
+				diagnostics.X_0_is_possibly_undefined),
+			diagnostics.X_0_is_possibly_null), nodeText)
+	} else {
+		c.error(node, ifElse(facts&TypeFactsIsUndefined != 0,
+			ifElse(facts&TypeFactsIsNull != 0,
+				diagnostics.Object_is_possibly_null_or_undefined,
+				diagnostics.Object_is_possibly_undefined),
+			diagnostics.Object_is_possibly_null))
+	}
 }
 
 func (c *Checker) checkExpressionWithContextualType(node *ast.Node, contextualType *Type, inferenceContext *InferenceContext, checkMode CheckMode) *Type {
@@ -1227,7 +1282,9 @@ func (c *Checker) checkPropertyAccessExpression(node *ast.Node, checkMode CheckM
 }
 
 func (c *Checker) checkPropertyAccessChain(node *ast.Node, checkMode CheckMode) *Type {
-	return c.anyType // !!!
+	leftType := c.checkExpression(node.Expression())
+	nonOptionalType := c.getOptionalExpressionType(leftType, node.Expression())
+	return c.propagateOptionalTypeMarker(c.checkPropertyAccessExpressionOrQualifiedName(node, node.Expression(), c.checkNonNullType(nonOptionalType, node.Expression()), node.Name(), checkMode, false), node, nonOptionalType != leftType)
 }
 
 func (c *Checker) checkPropertyAccessExpressionOrQualifiedName(node *ast.Node, left *ast.Node, leftType *Type, right *ast.Node, checkMode CheckMode, writeOnly bool) *Type {
@@ -1828,6 +1885,11 @@ func getThisParameterFromNodeContext(node *ast.Node) *ast.Node {
 }
 
 func (c *Checker) getContextualThisParameterType(fn *ast.Node) *Type {
+	return nil // !!!
+}
+
+// Return contextual type of parameter or undefined if no contextual type is available
+func (c *Checker) getContextuallyTypedParameterType(parameter *ast.Node) *Type {
 	return nil // !!!
 }
 
@@ -4481,6 +4543,7 @@ func (c *Checker) getTypeOfVariableOrParameterOrPropertyWorker(symbol *ast.Symbo
 	if symbol == c.requireSymbol {
 		return c.anyType
 	}
+	// !!! Handle SymbolFlagsModuleExports
 	// !!! Debug.assertIsDefined(symbol.valueDeclaration)
 	declaration := symbol.ValueDeclaration
 	// !!! Handle export default expressions
@@ -4499,6 +4562,12 @@ func (c *Checker) getTypeOfVariableOrParameterOrPropertyWorker(symbol *ast.Symbo
 	case ast.KindParameter, ast.KindPropertyDeclaration, ast.KindPropertySignature, ast.KindVariableDeclaration,
 		ast.KindBindingElement:
 		result = c.getWidenedTypeForVariableLikeDeclaration(declaration, true /*reportErrors*/)
+	case ast.KindPropertyAssignment:
+		result = c.checkPropertyAssignment(declaration, CheckModeNormal)
+	case ast.KindShorthandPropertyAssignment:
+		result = c.checkExpressionForMutableLocation(declaration, CheckModeNormal)
+	case ast.KindMethodDeclaration:
+		result = c.checkObjectLiteralMethod(declaration, CheckModeNormal)
 	case ast.KindExportAssignment:
 		result = c.widenTypeForVariableLikeDeclaration(c.checkExpressionCached(declaration.AsExportAssignment().Expression), declaration, false /*reportErrors*/)
 	case ast.KindBinaryExpression:
@@ -4537,13 +4606,10 @@ func (c *Checker) getTypeForVariableLikeDeclaration(declaration *ast.Node, inclu
 		grandParent := declaration.Parent.Parent
 		switch grandParent.Kind {
 		case ast.KindForInStatement:
-			// !!!
-			// indexType := c.getIndexType(c.getNonNullableTypeIfNeeded(c.checkExpression(declaration.parent.parent.expression /*checkMode*/, checkMode)))
-			// if indexType.flags & (TypeFlagsTypeParameter | TypeFlagsIndex) {
-			// 	return c.getExtractStringType(indexType)
-			// } else {
-			// 	return c.stringType
-			// }
+			indexType := c.getIndexType(c.getNonNullableTypeIfNeeded(c.checkExpressionEx(grandParent.Expression(), checkMode /*checkMode*/)))
+			if indexType.flags&(TypeFlagsTypeParameter|TypeFlagsIndex) != 0 {
+				return c.getExtractStringType(indexType)
+			}
 			return c.stringType
 		case ast.KindForOfStatement:
 			// checkRightHandSideOfForOf will return undefined if the for-of expression type was
@@ -4594,40 +4660,31 @@ func (c *Checker) getTypeForVariableLikeDeclaration(declaration *ast.Node, inclu
 		}
 	}
 	if ast.IsParameter(declaration) {
-		// !!!
-		// if declaration.Symbol() == nil {
-		// 	// parameters of function types defined in JSDoc in TS files don't have symbols
-		// 	return nil
-		// }
-		// fn := declaration.parent.(FunctionLikeDeclaration)
-		// // For a parameter of a set accessor, use the type of the get accessor if one is present
-		// if fn.kind == KindSetAccessor && c.hasBindableName(fn) {
-		// 	getter := getDeclarationOfKind(c.getSymbolOfDeclaration(declaration.parent), KindGetAccessor)
-		// 	if getter != nil {
-		// 		getterSignature := c.getSignatureFromDeclaration(getter)
-		// 		thisParameter := c.getAccessorThisParameter(fn.(AccessorDeclaration))
-		// 		if thisParameter && declaration == thisParameter {
-		// 			// Use the type from the *getter*
-		// 			Debug.assert(!thisParameter.type_)
-		// 			return c.getTypeOfSymbol(getterSignature.thisParameter)
-		// 		}
-		// 		return c.getReturnTypeOfSignature(getterSignature)
-		// 	}
-		// }
-		// parameterTypeOfTypeTag := c.getParameterTypeOfTypeTag(fn, declaration)
-		// if parameterTypeOfTypeTag {
-		// 	return parameterTypeOfTypeTag
-		// }
-		// // Use contextual parameter type if one is available
-		// var type_ *Type
-		// if declaration.symbol.escapedName == InternalSymbolNameThis {
-		// 	type_ = c.getContextualThisParameterType(fn)
-		// } else {
-		// 	type_ = c.getContextuallyTypedParameterType(declaration)
-		// }
-		// if type_ {
-		// 	return c.addOptionality(type_ /*isProperty*/, false, isOptional)
-		// }
+		fn := declaration.Parent
+		// For a parameter of a set accessor, use the type of the get accessor if one is present
+		if ast.IsSetAccessorDeclaration(fn) && c.hasBindableName(fn) {
+			getter := getDeclarationOfKind(c.getSymbolOfDeclaration(declaration.Parent), ast.KindGetAccessor)
+			if getter != nil {
+				getterSignature := c.getSignatureFromDeclaration(getter)
+				thisParameter := c.getAccessorThisParameter(fn)
+				if thisParameter != nil && declaration == thisParameter {
+					// Use the type from the *getter*
+					// Debug.assert(thisParameter.Type_ == nil)
+					return c.getTypeOfSymbol(getterSignature.thisParameter)
+				}
+				return c.getReturnTypeOfSignature(getterSignature)
+			}
+		}
+		// Use contextual parameter type if one is available
+		var t *Type
+		if declaration.Symbol().Name == InternalSymbolNameThis {
+			t = c.getContextualThisParameterType(fn)
+		} else {
+			t = c.getContextuallyTypedParameterType(declaration)
+		}
+		if t != nil {
+			return c.addOptionalityEx(t, false /*isProperty*/, isOptional)
+		}
 	}
 	// Use the type of the initializer expression if one is present and the declaration is
 	// not a parameter of a contextually typed function
@@ -4711,11 +4768,11 @@ func (c *Checker) checkDeclarationInitializer(declaration *ast.Node, checkMode C
 }
 
 func (c *Checker) padObjectLiteralType(t *Type, pattern *ast.Node) *Type {
-	return t
+	return t // !!!
 }
 
 func (c *Checker) padTupleType(t *Type, pattern *ast.Node) *Type {
-	return t
+	return t // !!!
 }
 
 func (c *Checker) getEffectiveInitializer(declaration *ast.Node) *ast.Node {
@@ -5421,6 +5478,17 @@ func (c *Checker) getOptionalType(t *Type, isProperty bool) *Type {
 func (c *Checker) getNonNullableType(t *Type) *Type {
 	if c.strictNullChecks {
 		return c.getAdjustedTypeWithFacts(t, TypeFactsNEUndefinedOrNull)
+	}
+	return t
+}
+
+func (c *Checker) isNullableType(t *Type) bool {
+	return c.hasTypeFacts(t, TypeFactsIsUndefinedOrNull)
+}
+
+func (c *Checker) getNonNullableTypeIfNeeded(t *Type) *Type {
+	if c.isNullableType(t) {
+		return c.getNonNullableType(t)
 	}
 	return t
 }
@@ -8057,12 +8125,11 @@ func (c *Checker) getTypeFromTypeNodeWorker(node *ast.Node) *Type {
 		return c.getTypeFromLiteralTypeNode(node)
 	case ast.KindTypeReference, ast.KindExpressionWithTypeArguments:
 		return c.getTypeFromTypeReference(node)
-	// case KindTypePredicate:
-	// 	if (node /* as TypePredicateNode */).assertsModifier {
-	// 		return c.voidType
-	// 	} else {
-	// 		return c.booleanType
-	// 	}
+	case ast.KindTypePredicate:
+		if node.AsTypePredicateNode().AssertsModifier != nil {
+			return c.voidType
+		}
+		return c.booleanType
 	// case KindTypeQuery:
 	// 	return c.getTypeFromTypeQueryNode(node /* as TypeQueryNode */)
 	case ast.KindArrayType, ast.KindTupleType:
@@ -8085,14 +8152,15 @@ func (c *Checker) getTypeFromTypeNodeWorker(node *ast.Node) *Type {
 		return c.getTypeFromTypeOperatorNode(node)
 	case ast.KindIndexedAccessType:
 		return c.getTypeFromIndexedAccessTypeNode(node)
+	// !!!
+	// case KindTemplateLiteralType:
+	// 	return c.getTypeFromTemplateTypeNode(node /* as TemplateLiteralTypeNode */)
 	// case KindMappedType:
 	// 	return c.getTypeFromMappedTypeNode(node /* as MappedTypeNode */)
 	// case KindConditionalType:
 	// 	return c.getTypeFromConditionalTypeNode(node /* as ConditionalTypeNode */)
 	// case KindInferType:
 	// 	return c.getTypeFromInferTypeNode(node /* as InferTypeNode */)
-	// case KindTemplateLiteralType:
-	// 	return c.getTypeFromTemplateTypeNode(node /* as TemplateLiteralTypeNode */)
 	// case KindImportType:
 	// 	return c.getTypeFromImportTypeNode(node /* as ImportTypeNode */)
 	// case KindIdentifier, /* as TypeNodeast.Kind */
@@ -8312,8 +8380,70 @@ func (c *Checker) checkNoTypeArguments(node *ast.Node, symbol *ast.Symbol) bool 
 	return true
 }
 
+// Return true if the given type reference node is directly aliased or if it needs to be deferred
+// because it is possibly contained in a circular chain of eagerly resolved types.
 func (c *Checker) isDeferredTypeReferenceNode(node *ast.Node, hasDefaultTypeArguments bool) bool {
-	return false // !!!
+	if c.getAliasSymbolForTypeNode(node) != nil {
+		return true
+	}
+	if c.isResolvedByTypeAlias(node) {
+		switch node.Kind {
+		case ast.KindArrayType:
+			return c.mayResolveTypeAlias(node.AsArrayTypeNode().ElementType)
+		case ast.KindTupleType:
+			return core.Some(node.AsTupleTypeNode().Elements, c.mayResolveTypeAlias)
+		case ast.KindTypeReference:
+			return hasDefaultTypeArguments || core.Some(getTypeArgumentNodesFromNode(node), c.mayResolveTypeAlias)
+		}
+		panic("Unhandled case in isDeferredTypeReferenceNode")
+	}
+	return false
+}
+
+// Return true when the given node is transitively contained in type constructs that eagerly
+// resolve their constituent types. We include SyntaxKind.TypeReference because type arguments
+// of type aliases are eagerly resolved.
+func (c *Checker) isResolvedByTypeAlias(node *ast.Node) bool {
+	parent := node.Parent
+	switch parent.Kind {
+	case ast.KindParenthesizedType, ast.KindNamedTupleMember, ast.KindTypeReference, ast.KindUnionType, ast.KindIntersectionType,
+		ast.KindIndexedAccessType, ast.KindConditionalType, ast.KindTypeOperator, ast.KindArrayType, ast.KindTupleType:
+		return c.isResolvedByTypeAlias(parent)
+	case ast.KindTypeAliasDeclaration:
+		return true
+	}
+	return false
+}
+
+// Return true if resolving the given node (i.e. getTypeFromTypeNode) possibly causes resolution
+// of a type alias.
+func (c *Checker) mayResolveTypeAlias(node *ast.Node) bool {
+	switch node.Kind {
+	case ast.KindTypeReference:
+		return c.resolveTypeReferenceName(node, ast.SymbolFlagsType, false).Flags&ast.SymbolFlagsTypeAlias != 0
+	case ast.KindTypeQuery:
+		return true
+	case ast.KindTypeOperator:
+		return node.AsTypeOperatorNode().Operator != ast.KindUniqueKeyword && c.mayResolveTypeAlias(node.AsTypeOperatorNode().TypeNode)
+	case ast.KindParenthesizedType:
+		return c.mayResolveTypeAlias(node.AsParenthesizedTypeNode().TypeNode)
+	case ast.KindOptionalType:
+		return c.mayResolveTypeAlias(node.AsOptionalTypeNode().TypeNode)
+	case ast.KindNamedTupleMember:
+		return c.mayResolveTypeAlias(node.AsNamedTupleMember().TypeNode)
+	case ast.KindRestType:
+		return node.AsRestTypeNode().TypeNode.Kind != ast.KindArrayType || c.mayResolveTypeAlias(node.AsRestTypeNode().TypeNode.AsArrayTypeNode().ElementType)
+	case ast.KindUnionType:
+		return core.Some(node.AsUnionTypeNode().Types, c.mayResolveTypeAlias)
+	case ast.KindIntersectionType:
+		return core.Some(node.AsIntersectionTypeNode().Types, c.mayResolveTypeAlias)
+	case ast.KindIndexedAccessType:
+		return c.mayResolveTypeAlias(node.AsIndexedAccessTypeNode().ObjectType) || c.mayResolveTypeAlias(node.AsIndexedAccessTypeNode().IndexType)
+	case ast.KindConditionalType:
+		return c.mayResolveTypeAlias(node.AsConditionalTypeNode().CheckType) || c.mayResolveTypeAlias(node.AsConditionalTypeNode().ExtendsType) ||
+			c.mayResolveTypeAlias(node.AsConditionalTypeNode().TrueType) || c.mayResolveTypeAlias(node.AsConditionalTypeNode().FalseType)
+	}
+	return false
 }
 
 func (c *Checker) createNormalizedTypeReference(target *Type, typeArguments []*Type) *Type {
@@ -9080,7 +9210,7 @@ func (c *Checker) getTypeFromArrayOrTupleTypeNode(node *ast.Node) *Type {
 		if target == c.emptyGenericType {
 			links.resolvedType = c.emptyObjectType
 		} else if !(node.Kind == ast.KindTupleType && core.Some(node.AsTupleTypeNode().Elements, c.isVariadicTupleElement)) && c.isDeferredTypeReferenceNode(node, false) {
-			if node.Kind == ast.KindTupleType && len(node.AsTupleTypeNode().Elements) != 0 {
+			if node.Kind == ast.KindTupleType && len(node.AsTupleTypeNode().Elements) == 0 {
 				links.resolvedType = target
 			} else {
 				links.resolvedType = c.createDeferredTypeReference(target, node, nil /*mapper*/, nil /*alias*/)
@@ -10867,6 +10997,14 @@ func (c *Checker) getIndexTypeEx(t *Type, indexFlags IndexFlags) *Type {
 	return c.getLiteralTypeFromProperties(t, include, indexFlags == IndexFlagsNone)
 }
 
+func (c *Checker) getExtractStringType(t *Type) *Type {
+	extractTypeAlias := c.getGlobalExtractSymbol()
+	if extractTypeAlias != nil {
+		return c.getTypeAliasInstantiation(extractTypeAlias, []*Type{t, c.stringType}, nil)
+	}
+	return c.stringType
+}
+
 func (c *Checker) getLiteralTypeFromProperties(t *Type, include TypeFlags, includeOrigin bool) *Type {
 	var origin *Type
 	if includeOrigin && t.objectFlags&(ObjectFlagsClassOrInterface|ObjectFlagsReference) != 0 || t.alias != nil {
@@ -11896,6 +12034,34 @@ func getMappedTypeModifiers(t *Type) MappedTypeModifiers {
 
 func isPartialMappedType(t *Type) bool {
 	return t.objectFlags&ObjectFlagsMapped != 0 && getMappedTypeModifiers(t)&MappedTypeModifiersIncludeOptional != 0
+}
+
+func (c *Checker) getOptionalExpressionType(exprType *Type, expression *ast.Node) *Type {
+	switch {
+	case ast.IsExpressionOfOptionalChainRoot(expression):
+		return c.getNonNullableType(exprType)
+	case ast.IsOptionalChain(expression):
+		return c.removeOptionalTypeMarker(exprType)
+	default:
+		return exprType
+	}
+}
+
+func (c *Checker) removeOptionalTypeMarker(t *Type) *Type {
+	if c.strictNullChecks {
+		return c.removeType(t, c.optionalType)
+	}
+	return t
+}
+
+func (c *Checker) propagateOptionalTypeMarker(t *Type, node *ast.Node, wasOptional bool) *Type {
+	if wasOptional {
+		if ast.IsOutermostOptionalChain(node) {
+			return c.getOptionalType(t, false)
+		}
+		return c.addOptionalTypeMarker(t)
+	}
+	return t
 }
 
 func (c *Checker) removeMissingType(t *Type, isOptional bool) *Type {

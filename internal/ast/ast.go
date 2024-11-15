@@ -125,6 +125,8 @@ func (node *Node) Expression() *Node {
 		return node.AsSpreadAssignment().Expression
 	case KindTemplateSpan:
 		return node.AsTemplateSpan().Expression
+	case KindForInStatement, KindForOfStatement:
+		return node.AsForInOrOfStatement().Expression
 	}
 	panic("Unhandled case in Node.Expression")
 }

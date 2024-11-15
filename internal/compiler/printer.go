@@ -19,20 +19,21 @@ const (
 )
 
 func (c *Checker) getTypePrecedence(t *Type) TypePrecedence {
-	switch {
-	case t.flags&TypeFlagsConditional != 0:
-		return TypePrecedenceConditional
-	case t.flags&TypeFlagsIntersection != 0:
-		return TypePrecedenceIntersection
-	case t.flags&TypeFlagsUnion != 0:
-		return TypePrecedenceUnion
-	case t.flags&TypeFlagsIndex != 0:
-		return TypePrecedenceTypeOperator
-	case c.isArrayType(t):
-		return TypePrecedencePostfix
-	default:
-		return TypePrecedenceNonArray
+	if t.alias == nil {
+		switch {
+		case t.flags&TypeFlagsConditional != 0:
+			return TypePrecedenceConditional
+		case t.flags&TypeFlagsIntersection != 0:
+			return TypePrecedenceIntersection
+		case t.flags&TypeFlagsUnion != 0 && t.flags&TypeFlagsBoolean == 0:
+			return TypePrecedenceUnion
+		case t.flags&TypeFlagsIndex != 0:
+			return TypePrecedenceTypeOperator
+		case c.isArrayType(t):
+			return TypePrecedencePostfix
+		}
 	}
+	return TypePrecedenceNonArray
 }
 
 func (c *Checker) symbolToString(s *ast.Symbol) string {
@@ -492,12 +493,12 @@ func (p *Printer) printSourceFileWithTypes(sourceFile *ast.SourceFile) {
 func (c *Checker) getTextAndTypeOfNode(node *ast.Node) (string, *Type, bool) {
 	if ast.IsDeclarationNode(node) {
 		symbol := node.Symbol()
-		if symbol != nil {
+		if symbol != nil && !isReservedMemberName(symbol.Name) {
 			if symbol.Flags&ast.SymbolFlagsValue != 0 {
-				return declarationNameToString(getNameOfDeclaration(node)), c.getTypeOfSymbol(symbol), true
+				return symbol.Name, c.getTypeOfSymbol(symbol), true
 			}
 			if symbol.Flags&ast.SymbolFlagsTypeAlias != 0 {
-				return declarationNameToString(getNameOfDeclaration(node)), c.getDeclaredTypeOfTypeAlias(symbol), true
+				return symbol.Name, c.getDeclaredTypeOfTypeAlias(symbol), true
 			}
 		}
 	}
