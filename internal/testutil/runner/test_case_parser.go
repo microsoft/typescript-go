@@ -1,4 +1,4 @@
-package baseline
+package runner
 
 import (
 	"regexp"
@@ -7,6 +7,8 @@ import (
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
+
+var lineDelimiter = regexp.MustCompile("\r?\n")
 
 // all the necessary information to set the right compiler settings
 type compilerSettings map[string]string
