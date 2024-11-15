@@ -521,14 +521,14 @@ func runTraceBaseline(t *testing.T, test traceTestCase) {
 				t,
 				tspath.RemoveFileExtension(test.name)+".trace.json",
 				sanitizeTraceOutput(buf.String()),
-				baseline.Options{Subfolder: "module_name_resolver"},
+				baseline.Options{Subfolder: "module/resolver"},
 			)
 		})
 	}
 }
 
 func TestModuleResolver(t *testing.T) {
-	testsFilePath := filepath.Join(repo.TestDataPath, "fixtures", "module_name_resolver", "tests.json")
+	testsFilePath := filepath.Join(repo.TestDataPath, "fixtures", "module", "resolvertests.json")
 	// Read file one line at a time
 	file, err := os.Open(testsFilePath)
 	if err != nil {
