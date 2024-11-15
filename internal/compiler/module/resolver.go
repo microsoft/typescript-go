@@ -1135,11 +1135,11 @@ func (r *resolutionState) readPackageJsonPeerDependencies(packageJsonInfo *packa
 }
 
 func (r *resolutionState) realPath(path string) string {
-	real := tspath.NormalizePath(r.resolver.host.Realpath(path))
+	rp := tspath.NormalizePath(r.resolver.host.Realpath(path))
 	if r.resolver.traceEnabled() {
-		r.resolver.host.Trace(diagnostics.Format(diagnostics.Resolving_real_path_for_0_result_1, path, real))
+		r.resolver.host.Trace(diagnostics.Format(diagnostics.Resolving_real_path_for_0_result_1, path, rp))
 	}
-	return real
+	return rp
 }
 
 func (r *resolutionState) validatePackageJSONField(fieldName string, field packagejson.TypeValidatedField) bool {

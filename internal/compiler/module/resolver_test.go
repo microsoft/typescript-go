@@ -391,9 +391,9 @@ func (v *vfsModuleResolutionHost) GetDirectories(path string) []string {
 
 // ReadFile implements ModuleResolutionHost.
 func (v *vfsModuleResolutionHost) ReadFile(fileName string) string {
-	bytes, error := v.fs.ReadFile(fixRoot(fileName))
-	if error != nil {
-		panic(error)
+	bytes, err := v.fs.ReadFile(fixRoot(fileName))
+	if err != nil {
+		panic(err)
 	}
 	return string(bytes)
 }
@@ -528,6 +528,7 @@ func runTraceBaseline(t *testing.T, test traceTestCase) {
 }
 
 func TestModuleResolver(t *testing.T) {
+	t.Parallel()
 	testsFilePath := filepath.Join(repo.TestDataPath, "fixtures", "module", "resolvertests.json")
 	// Read file one line at a time
 	file, err := os.Open(testsFilePath)
