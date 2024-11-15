@@ -59,7 +59,11 @@ var _ FS = (*adapter)(nil)
 // FromOS creates a new FS from the OS file system.
 func FromOS(cwd string) FS {
 	if cwd == "" {
-		panic("cwd must be provided")
+		var err error
+		cwd, err = os.Getwd() // TODO(jakebailey): !!!
+		if err != nil {
+			panic(err)
+		}
 	}
 
 	useCaseSensitiveFileNames := isFileSystemCaseSensitive()

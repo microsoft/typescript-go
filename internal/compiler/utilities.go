@@ -1602,7 +1602,7 @@ func compareRelatedInfo(r1, r2 []*ast.Diagnostic) int {
 
 func getDiagnosticPath(d *ast.Diagnostic) string {
 	if d.File() != nil {
-		return d.File().Path()
+		return string(d.File().Path()) // TODO(jakebailey): !!!
 	}
 	return ""
 }
@@ -2607,7 +2607,7 @@ func removeFileExtension(path string) string {
 		}
 	}
 	// Otherwise just remove single dot extension, if any
-	return path[:len(path)-len(filepath.Ext(path))]
+	return path[:len(path)-len(filepath.Ext(path))] // TODO(jakebailey): do not use filepath here
 }
 
 func tryGetExtensionFromPath(p string) string {
@@ -2976,11 +2976,14 @@ func compareSymbols(s1, s2 *ast.Symbol) int {
 				f1 := ast.GetSourceFileOfNode(s1.ValueDeclaration)
 				f2 := ast.GetSourceFileOfNode(s2.ValueDeclaration)
 				if f1 != f2 {
+					f1Path := string(f1.Path())
+					f2Path := string(f2.Path())
+
 					// In different files, first compare base filename
-					r := strings.Compare(filepath.Base(f1.Path()), filepath.Base(f2.Path()))
+					r := strings.Compare(tspath.GetDirectoryPath(f1Path), tspath.GetDirectoryPath(f2Path))
 					if r == 0 {
 						// Same base filename, compare the full paths (no two files should have the same full path)
-						r = strings.Compare(f1.Path(), f2.Path())
+						r = strings.Compare(f1Path, f2Path)
 					}
 					return r
 				}
