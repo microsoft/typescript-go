@@ -33,7 +33,7 @@ type NodeFactory struct {
 func (f *NodeFactory) NewNode(kind Kind, data NodeData) *Node {
 	n := data.AsNode()
 	n.Kind = kind
-	n.Data = data
+	n.data = data
 	return n
 }
 
@@ -47,7 +47,7 @@ type Node struct {
 	Loc    core.TextRange
 	Id     NodeId
 	Parent *Node
-	Data   NodeData
+	data   NodeData
 }
 
 // Node accessors. Some accessors are implemented as methods on NodeData, others are implemented though
@@ -56,22 +56,22 @@ type Node struct {
 
 func (n *Node) Pos() int                                  { return n.Loc.Pos() }
 func (n *Node) End() int                                  { return n.Loc.End() }
-func (n *Node) ForEachChild(v Visitor) bool               { return n.Data.ForEachChild(v) }
-func (n *Node) Name() *DeclarationName                    { return n.Data.Name() }
-func (n *Node) Modifiers() *ModifierListNode              { return n.Data.Modifiers() }
-func (n *Node) TypeParameters() *TypeParameterListNode    { return n.Data.TypeParameters() }
-func (n *Node) FlowNodeData() *FlowNodeBase               { return n.Data.FlowNodeData() }
-func (n *Node) DeclarationData() *DeclarationBase         { return n.Data.DeclarationData() }
-func (n *Node) Symbol() *Symbol                           { return n.Data.DeclarationData().Symbol }
-func (n *Node) ExportableData() *ExportableBase           { return n.Data.ExportableData() }
-func (n *Node) LocalSymbol() *Symbol                      { return n.Data.ExportableData().LocalSymbol }
-func (n *Node) LocalsContainerData() *LocalsContainerBase { return n.Data.LocalsContainerData() }
-func (n *Node) Locals() SymbolTable                       { return n.Data.LocalsContainerData().locals }
-func (n *Node) FunctionLikeData() *FunctionLikeBase       { return n.Data.FunctionLikeData() }
-func (n *Node) Parameters() []*ParameterDeclarationNode   { return n.Data.FunctionLikeData().Parameters }
-func (n *Node) ReturnType() *TypeNode                     { return n.Data.FunctionLikeData().ReturnType }
-func (n *Node) ClassLikeData() *ClassLikeBase             { return n.Data.ClassLikeData() }
-func (n *Node) BodyData() *BodyBase                       { return n.Data.BodyData() }
+func (n *Node) ForEachChild(v Visitor) bool               { return n.data.ForEachChild(v) }
+func (n *Node) Name() *DeclarationName                    { return n.data.Name() }
+func (n *Node) Modifiers() *ModifierListNode              { return n.data.Modifiers() }
+func (n *Node) TypeParameters() *TypeParameterListNode    { return n.data.TypeParameters() }
+func (n *Node) FlowNodeData() *FlowNodeBase               { return n.data.FlowNodeData() }
+func (n *Node) DeclarationData() *DeclarationBase         { return n.data.DeclarationData() }
+func (n *Node) Symbol() *Symbol                           { return n.data.DeclarationData().Symbol }
+func (n *Node) ExportableData() *ExportableBase           { return n.data.ExportableData() }
+func (n *Node) LocalSymbol() *Symbol                      { return n.data.ExportableData().LocalSymbol }
+func (n *Node) LocalsContainerData() *LocalsContainerBase { return n.data.LocalsContainerData() }
+func (n *Node) Locals() SymbolTable                       { return n.data.LocalsContainerData().locals }
+func (n *Node) FunctionLikeData() *FunctionLikeBase       { return n.data.FunctionLikeData() }
+func (n *Node) Parameters() []*ParameterDeclarationNode   { return n.data.FunctionLikeData().Parameters }
+func (n *Node) ReturnType() *TypeNode                     { return n.data.FunctionLikeData().ReturnType }
+func (n *Node) ClassLikeData() *ClassLikeBase             { return n.data.ClassLikeData() }
+func (n *Node) BodyData() *BodyBase                       { return n.data.BodyData() }
 
 func (n *Node) Text() string {
 	switch n.Kind {
@@ -142,373 +142,376 @@ func (node *Node) Arguments() []*Node {
 // Node casts
 
 func (n *Node) AsIdentifier() *Identifier {
-	return n.Data.(*Identifier)
+	return n.data.(*Identifier)
 }
 func (n *Node) AsPrivateIdentifier() *PrivateIdentifier {
-	return n.Data.(*PrivateIdentifier)
+	return n.data.(*PrivateIdentifier)
 }
 func (n *Node) AsQualifiedName() *QualifiedName {
-	return n.Data.(*QualifiedName)
+	return n.data.(*QualifiedName)
 }
 func (n *Node) AsModifierList() *ModifierList {
-	return n.Data.(*ModifierList)
+	return n.data.(*ModifierList)
 }
 func (n *Node) AsSourceFile() *SourceFile {
-	return n.Data.(*SourceFile)
+	return n.data.(*SourceFile)
 }
 func (n *Node) AsPrefixUnaryExpression() *PrefixUnaryExpression {
-	return n.Data.(*PrefixUnaryExpression)
+	return n.data.(*PrefixUnaryExpression)
 }
 func (n *Node) AsPostfixUnaryExpression() *PostfixUnaryExpression {
-	return n.Data.(*PostfixUnaryExpression)
+	return n.data.(*PostfixUnaryExpression)
 }
 func (n *Node) AsParenthesizedExpression() *ParenthesizedExpression {
-	return n.Data.(*ParenthesizedExpression)
+	return n.data.(*ParenthesizedExpression)
 }
 func (n *Node) AsTypeAssertion() *TypeAssertion {
-	return n.Data.(*TypeAssertion)
+	return n.data.(*TypeAssertion)
 }
 func (n *Node) AsAsExpression() *AsExpression {
-	return n.Data.(*AsExpression)
+	return n.data.(*AsExpression)
 }
 func (n *Node) AsSatisfiesExpression() *SatisfiesExpression {
-	return n.Data.(*SatisfiesExpression)
+	return n.data.(*SatisfiesExpression)
 }
 func (n *Node) AsExpressionWithTypeArguments() *ExpressionWithTypeArguments {
-	return n.Data.(*ExpressionWithTypeArguments)
+	return n.data.(*ExpressionWithTypeArguments)
 }
 func (n *Node) AsNonNullExpression() *NonNullExpression {
-	return n.Data.(*NonNullExpression)
+	return n.data.(*NonNullExpression)
 }
 func (n *Node) AsBindingElement() *BindingElement {
-	return n.Data.(*BindingElement)
+	return n.data.(*BindingElement)
 }
 func (n *Node) AsImportSpecifier() *ImportSpecifier {
-	return n.Data.(*ImportSpecifier)
+	return n.data.(*ImportSpecifier)
 }
 func (n *Node) AsArrowFunction() *ArrowFunction {
-	return n.Data.(*ArrowFunction)
+	return n.data.(*ArrowFunction)
 }
 func (n *Node) AsCallExpression() *CallExpression {
-	return n.Data.(*CallExpression)
+	return n.data.(*CallExpression)
 }
 func (n *Node) AsPropertyAccessExpression() *PropertyAccessExpression {
-	return n.Data.(*PropertyAccessExpression)
+	return n.data.(*PropertyAccessExpression)
 }
 func (n *Node) AsElementAccessExpression() *ElementAccessExpression {
-	return n.Data.(*ElementAccessExpression)
+	return n.data.(*ElementAccessExpression)
 }
 func (n *Node) AsComputedPropertyName() *ComputedPropertyName {
-	return n.Data.(*ComputedPropertyName)
+	return n.data.(*ComputedPropertyName)
 }
 func (n *Node) AsBinaryExpression() *BinaryExpression {
-	return n.Data.(*BinaryExpression)
+	return n.data.(*BinaryExpression)
 }
 func (n *Node) AsModuleDeclaration() *ModuleDeclaration {
-	return n.Data.(*ModuleDeclaration)
+	return n.data.(*ModuleDeclaration)
 }
 func (n *Node) AsStringLiteral() *StringLiteral {
-	return n.Data.(*StringLiteral)
+	return n.data.(*StringLiteral)
 }
 func (n *Node) AsNumericLiteral() *NumericLiteral {
-	return n.Data.(*NumericLiteral)
+	return n.data.(*NumericLiteral)
 }
 func (n *Node) AsBigIntLiteral() *BigIntLiteral {
-	return n.Data.(*BigIntLiteral)
+	return n.data.(*BigIntLiteral)
 }
 func (n *Node) AsNoSubstitutionTemplateLiteral() *NoSubstitutionTemplateLiteral {
-	return n.Data.(*NoSubstitutionTemplateLiteral)
+	return n.data.(*NoSubstitutionTemplateLiteral)
 }
 func (n *Node) AsVariableDeclaration() *VariableDeclaration {
-	return n.Data.(*VariableDeclaration)
+	return n.data.(*VariableDeclaration)
 }
 func (n *Node) AsExportAssignment() *ExportAssignment {
-	return n.Data.(*ExportAssignment)
+	return n.data.(*ExportAssignment)
 }
 func (n *Node) AsObjectLiteralExpression() *ObjectLiteralExpression {
-	return n.Data.(*ObjectLiteralExpression)
+	return n.data.(*ObjectLiteralExpression)
 }
 func (n *Node) AsIfStatement() *IfStatement {
-	return n.Data.(*IfStatement)
+	return n.data.(*IfStatement)
 }
 func (n *Node) AsWhileStatement() *WhileStatement {
-	return n.Data.(*WhileStatement)
+	return n.data.(*WhileStatement)
 }
 func (n *Node) AsDoStatement() *DoStatement {
-	return n.Data.(*DoStatement)
+	return n.data.(*DoStatement)
 }
 func (n *Node) AsForStatement() *ForStatement {
-	return n.Data.(*ForStatement)
+	return n.data.(*ForStatement)
 }
 func (n *Node) AsConditionalExpression() *ConditionalExpression {
-	return n.Data.(*ConditionalExpression)
+	return n.data.(*ConditionalExpression)
 }
 func (n *Node) AsForInOrOfStatement() *ForInOrOfStatement {
-	return n.Data.(*ForInOrOfStatement)
+	return n.data.(*ForInOrOfStatement)
 }
 func (n *Node) AsShorthandPropertyAssignment() *ShorthandPropertyAssignment {
-	return n.Data.(*ShorthandPropertyAssignment)
+	return n.data.(*ShorthandPropertyAssignment)
 }
 func (n *Node) AsPropertyAssignment() *PropertyAssignment {
-	return n.Data.(*PropertyAssignment)
+	return n.data.(*PropertyAssignment)
 }
 func (n *Node) AsExpressionStatement() *ExpressionStatement {
-	return n.Data.(*ExpressionStatement)
+	return n.data.(*ExpressionStatement)
 }
 func (n *Node) AsBlock() *Block {
-	return n.Data.(*Block)
+	return n.data.(*Block)
 }
 func (n *Node) AsModuleBlock() *ModuleBlock {
-	return n.Data.(*ModuleBlock)
+	return n.data.(*ModuleBlock)
 }
 func (n *Node) AsVariableStatement() *VariableStatement {
-	return n.Data.(*VariableStatement)
+	return n.data.(*VariableStatement)
 }
 func (n *Node) AsVariableDeclarationList() *VariableDeclarationList {
-	return n.Data.(*VariableDeclarationList)
+	return n.data.(*VariableDeclarationList)
 }
 func (n *Node) AsMetaProperty() *MetaProperty {
-	return n.Data.(*MetaProperty)
+	return n.data.(*MetaProperty)
 }
 func (n *Node) AsTypeReference() *TypeReferenceNode {
-	return n.Data.(*TypeReferenceNode)
+	return n.data.(*TypeReferenceNode)
 }
 func (n *Node) AsConstructorDeclaration() *ConstructorDeclaration {
-	return n.Data.(*ConstructorDeclaration)
+	return n.data.(*ConstructorDeclaration)
 }
 func (n *Node) AsConditionalTypeNode() *ConditionalTypeNode {
-	return n.Data.(*ConditionalTypeNode)
+	return n.data.(*ConditionalTypeNode)
 }
 func (n *Node) AsClassExpression() *ClassExpression {
-	return n.Data.(*ClassExpression)
+	return n.data.(*ClassExpression)
 }
 func (n *Node) AsHeritageClause() *HeritageClause {
-	return n.Data.(*HeritageClause)
+	return n.data.(*HeritageClause)
 }
 func (n *Node) AsFunctionExpression() *FunctionExpression {
-	return n.Data.(*FunctionExpression)
+	return n.data.(*FunctionExpression)
 }
 func (n *Node) AsParameterDeclaration() *ParameterDeclaration {
-	return n.Data.(*ParameterDeclaration)
+	return n.data.(*ParameterDeclaration)
 }
 func (n *Node) AsInferTypeNode() *InferTypeNode {
-	return n.Data.(*InferTypeNode)
+	return n.data.(*InferTypeNode)
 }
 func (n *Node) AsTypeParameter() *TypeParameterDeclaration {
-	return n.Data.(*TypeParameterDeclaration)
+	return n.data.(*TypeParameterDeclaration)
 }
 func (n *Node) AsExportSpecifier() *ExportSpecifier {
-	return n.Data.(*ExportSpecifier)
+	return n.data.(*ExportSpecifier)
 }
 func (n *Node) AsExportDeclaration() *ExportDeclaration {
-	return n.Data.(*ExportDeclaration)
+	return n.data.(*ExportDeclaration)
 }
 func (n *Node) AsPropertyDeclaration() *PropertyDeclaration {
-	return n.Data.(*PropertyDeclaration)
+	return n.data.(*PropertyDeclaration)
 }
 func (n *Node) AsImportClause() *ImportClause {
-	return n.Data.(*ImportClause)
+	return n.data.(*ImportClause)
 }
 func (n *Node) AsImportEqualsDeclaration() *ImportEqualsDeclaration {
-	return n.Data.(*ImportEqualsDeclaration)
+	return n.data.(*ImportEqualsDeclaration)
 }
 func (n *Node) AsNamespaceImport() *NamespaceImport {
-	return n.Data.(*NamespaceImport)
+	return n.data.(*NamespaceImport)
 }
 func (n *Node) AsPropertySignatureDeclaration() *PropertySignatureDeclaration {
-	return n.Data.(*PropertySignatureDeclaration)
+	return n.data.(*PropertySignatureDeclaration)
 }
 func (n *Node) AsEnumMember() *EnumMember {
-	return n.Data.(*EnumMember)
+	return n.data.(*EnumMember)
 }
 func (n *Node) AsReturnStatement() *ReturnStatement {
-	return n.Data.(*ReturnStatement)
+	return n.data.(*ReturnStatement)
 }
 func (n *Node) AsWithStatement() *WithStatement {
-	return n.Data.(*WithStatement)
+	return n.data.(*WithStatement)
 }
 func (n *Node) AsSwitchStatement() *SwitchStatement {
-	return n.Data.(*SwitchStatement)
+	return n.data.(*SwitchStatement)
 }
 func (n *Node) AsCaseOrDefaultClause() *CaseOrDefaultClause {
-	return n.Data.(*CaseOrDefaultClause)
+	return n.data.(*CaseOrDefaultClause)
 }
 func (n *Node) AsThrowStatement() *ThrowStatement {
-	return n.Data.(*ThrowStatement)
+	return n.data.(*ThrowStatement)
 }
 func (n *Node) AsTemplateSpan() *TemplateSpan {
-	return n.Data.(*TemplateSpan)
+	return n.data.(*TemplateSpan)
 }
 func (n *Node) AsImportTypeNode() *ImportTypeNode {
-	return n.Data.(*ImportTypeNode)
+	return n.data.(*ImportTypeNode)
 }
 func (n *Node) AsNewExpression() *NewExpression {
-	return n.Data.(*NewExpression)
+	return n.data.(*NewExpression)
 }
 func (n *Node) AsTaggedTemplateExpression() *TaggedTemplateExpression {
-	return n.Data.(*TaggedTemplateExpression)
+	return n.data.(*TaggedTemplateExpression)
 }
 func (n *Node) AsTypeArgumentList() *TypeArgumentList {
-	return n.Data.(*TypeArgumentList)
+	return n.data.(*TypeArgumentList)
 }
 func (n *Node) AsJsxOpeningElement() *JsxOpeningElement {
-	return n.Data.(*JsxOpeningElement)
+	return n.data.(*JsxOpeningElement)
 }
 func (n *Node) AsJsxSelfClosingElement() *JsxSelfClosingElement {
-	return n.Data.(*JsxSelfClosingElement)
+	return n.data.(*JsxSelfClosingElement)
 }
 func (n *Node) AsJsxClosingElement() *JsxClosingElement {
-	return n.Data.(*JsxClosingElement)
+	return n.data.(*JsxClosingElement)
 }
 func (n *Node) AsImportDeclaration() *ImportDeclaration {
-	return n.Data.(*ImportDeclaration)
+	return n.data.(*ImportDeclaration)
 }
 func (n *Node) AsExternalModuleReference() *ExternalModuleReference {
-	return n.Data.(*ExternalModuleReference)
+	return n.data.(*ExternalModuleReference)
 }
 func (n *Node) AsLiteralTypeNode() *LiteralTypeNode {
-	return n.Data.(*LiteralTypeNode)
+	return n.data.(*LiteralTypeNode)
 }
 func (n *Node) AsJsxNamespacedName() *JsxNamespacedName {
-	return n.Data.(*JsxNamespacedName)
+	return n.data.(*JsxNamespacedName)
 }
 func (n *Node) AsTypeParameterList() *TypeParameterList {
-	return n.Data.(*TypeParameterList)
+	return n.data.(*TypeParameterList)
 }
 func (n *Node) AsClassDeclaration() *ClassDeclaration {
-	return n.Data.(*ClassDeclaration)
+	return n.data.(*ClassDeclaration)
 }
 func (n *Node) AsInterfaceDeclaration() *InterfaceDeclaration {
-	return n.Data.(*InterfaceDeclaration)
+	return n.data.(*InterfaceDeclaration)
 }
 func (n *Node) AsTypeAliasDeclaration() *TypeAliasDeclaration {
-	return n.Data.(*TypeAliasDeclaration)
+	return n.data.(*TypeAliasDeclaration)
 }
 func (n *Node) AsJsxAttribute() *JsxAttribute {
-	return n.Data.(*JsxAttribute)
+	return n.data.(*JsxAttribute)
 }
 func (n *Node) AsParenthesizedTypeNode() *ParenthesizedTypeNode {
-	return n.Data.(*ParenthesizedTypeNode)
+	return n.data.(*ParenthesizedTypeNode)
 }
 func (n *Node) AsTypePredicateNode() *TypePredicateNode {
-	return n.Data.(*TypePredicateNode)
+	return n.data.(*TypePredicateNode)
 }
 func (n *Node) AsTypeOperatorNode() *TypeOperatorNode {
-	return n.Data.(*TypeOperatorNode)
+	return n.data.(*TypeOperatorNode)
 }
 func (n *Node) AsMappedTypeNode() *MappedTypeNode {
-	return n.Data.(*MappedTypeNode)
+	return n.data.(*MappedTypeNode)
 }
 func (n *Node) AsArrayLiteralExpression() *ArrayLiteralExpression {
-	return n.Data.(*ArrayLiteralExpression)
+	return n.data.(*ArrayLiteralExpression)
 }
 func (n *Node) AsMethodDeclaration() *MethodDeclaration {
-	return n.Data.(*MethodDeclaration)
+	return n.data.(*MethodDeclaration)
 }
 func (n *Node) AsMethodSignatureDeclaration() *MethodSignatureDeclaration {
-	return n.Data.(*MethodSignatureDeclaration)
+	return n.data.(*MethodSignatureDeclaration)
 }
 func (n *Node) AsTemplateLiteralTypeSpan() *TemplateLiteralTypeSpan {
-	return n.Data.(*TemplateLiteralTypeSpan)
+	return n.data.(*TemplateLiteralTypeSpan)
 }
 func (n *Node) AsJsxElement() *JsxElement {
-	return n.Data.(*JsxElement)
+	return n.data.(*JsxElement)
 }
 func (n *Node) AsKeywordExpression() *KeywordExpression {
-	return n.Data.(*KeywordExpression)
+	return n.data.(*KeywordExpression)
 }
 func (n *Node) AsCatchClause() *CatchClause {
-	return n.Data.(*CatchClause)
+	return n.data.(*CatchClause)
 }
 func (n *Node) AsDeleteExpression() *DeleteExpression {
-	return n.Data.(*DeleteExpression)
+	return n.data.(*DeleteExpression)
 }
 func (n *Node) AsLabeledStatement() *LabeledStatement {
-	return n.Data.(*LabeledStatement)
+	return n.data.(*LabeledStatement)
 }
 func (n *Node) AsNamespaceExportDeclaration() *NamespaceExportDeclaration {
-	return n.Data.(*NamespaceExportDeclaration)
+	return n.data.(*NamespaceExportDeclaration)
 }
 func (n *Node) AsNamedExports() *NamedExports {
-	return n.Data.(*NamedExports)
+	return n.data.(*NamedExports)
 }
 func (n *Node) AsBreakStatement() *BreakStatement {
-	return n.Data.(*BreakStatement)
+	return n.data.(*BreakStatement)
 }
 func (n *Node) AsContinueStatement() *ContinueStatement {
-	return n.Data.(*ContinueStatement)
+	return n.data.(*ContinueStatement)
 }
 func (n *Node) AsCaseBlock() *CaseBlock {
-	return n.Data.(*CaseBlock)
+	return n.data.(*CaseBlock)
 }
 func (n *Node) AsTryStatement() *TryStatement {
-	return n.Data.(*TryStatement)
+	return n.data.(*TryStatement)
 }
 func (n *Node) AsBindingPattern() *BindingPattern {
-	return n.Data.(*BindingPattern)
+	return n.data.(*BindingPattern)
 }
 func (n *Node) AsFunctionDeclaration() *FunctionDeclaration {
-	return n.Data.(*FunctionDeclaration)
+	return n.data.(*FunctionDeclaration)
 }
 func (n *Node) AsTypeOfExpression() *TypeOfExpression {
-	return n.Data.(*TypeOfExpression)
+	return n.data.(*TypeOfExpression)
 }
 func (n *Node) AsSpreadElement() *SpreadElement {
-	return n.Data.(*SpreadElement)
+	return n.data.(*SpreadElement)
 }
 func (n *Node) AsSpreadAssignment() *SpreadAssignment {
-	return n.Data.(*SpreadAssignment)
+	return n.data.(*SpreadAssignment)
 }
 func (n *Node) AsArrayTypeNode() *ArrayTypeNode {
-	return n.Data.(*ArrayTypeNode)
+	return n.data.(*ArrayTypeNode)
 }
 func (n *Node) AsTupleTypeNode() *TupleTypeNode {
-	return n.Data.(*TupleTypeNode)
+	return n.data.(*TupleTypeNode)
 }
 func (n *Node) AsUnionTypeNode() *UnionTypeNode {
-	return n.Data.(*UnionTypeNode)
+	return n.data.(*UnionTypeNode)
 }
 func (n *Node) AsIntersectionTypeNode() *IntersectionTypeNode {
-	return n.Data.(*IntersectionTypeNode)
+	return n.data.(*IntersectionTypeNode)
 }
 func (n *Node) AsRestTypeNode() *RestTypeNode {
-	return n.Data.(*RestTypeNode)
+	return n.data.(*RestTypeNode)
 }
 func (n *Node) AsNamedTupleMember() *NamedTupleMember {
-	return n.Data.(*NamedTupleMember)
+	return n.data.(*NamedTupleMember)
 }
 func (n *Node) AsOptionalTypeNode() *OptionalTypeNode {
-	return n.Data.(*OptionalTypeNode)
+	return n.data.(*OptionalTypeNode)
 }
 func (n *Node) AsTypeReferenceNode() *TypeReferenceNode {
-	return n.Data.(*TypeReferenceNode)
+	return n.data.(*TypeReferenceNode)
 }
 func (n *Node) AsTypeQueryNode() *TypeQueryNode {
-	return n.Data.(*TypeQueryNode)
+	return n.data.(*TypeQueryNode)
 }
 func (n *Node) AsIndexedAccessTypeNode() *IndexedAccessTypeNode {
-	return n.Data.(*IndexedAccessTypeNode)
+	return n.data.(*IndexedAccessTypeNode)
 }
 func (n *Node) AsGetAccessorDeclaration() *GetAccessorDeclaration {
-	return n.Data.(*GetAccessorDeclaration)
+	return n.data.(*GetAccessorDeclaration)
 }
 func (n *Node) AsSetAccessorDeclaration() *SetAccessorDeclaration {
-	return n.Data.(*SetAccessorDeclaration)
+	return n.data.(*SetAccessorDeclaration)
 }
 func (n *Node) AsTemplateExpression() *TemplateExpression {
-	return n.Data.(*TemplateExpression)
+	return n.data.(*TemplateExpression)
 }
 func (n *Node) AsTemplateHead() *TemplateHead {
-	return n.Data.(*TemplateHead)
+	return n.data.(*TemplateHead)
 }
 func (n *Node) AsTemplateMiddle() *TemplateMiddle {
-	return n.Data.(*TemplateMiddle)
+	return n.data.(*TemplateMiddle)
 }
 func (n *Node) AsTemplateTail() *TemplateTail {
-	return n.Data.(*TemplateTail)
+	return n.data.(*TemplateTail)
 }
 func (n *Node) AsEnumDeclaration() *EnumDeclaration {
-	return n.Data.(*EnumDeclaration)
+	return n.data.(*EnumDeclaration)
+}
+func (n *Node) AsJSDocNullableType() *JSDocNullableType {
+	return n.data.(*JSDocNullableType)
 }
 
 // NodeData
