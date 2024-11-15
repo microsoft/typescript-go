@@ -340,3 +340,14 @@ func getConditions(options *CompilerOptions, resolutionMode ResolutionMode) []st
 	conditions = concatenate(conditions, options.CustomConditions)
 	return conditions
 }
+
+type ProjectReference struct {
+	/** A normalized path on disk */
+	path string
+	/** The path as the user originally wrote it */
+	originalPath *string
+	/** @deprecated */
+	prepend *bool
+	/** True if it is intended that this reference form a circularity */
+	circular *bool
+}

@@ -648,7 +648,7 @@ func lastOrNil[T any](slice []T) T {
 	return *new(T)
 }
 
-func find[T any](slice []T, predicate func(T) bool) T {
+func Find[T any](slice []T, predicate func(T) bool) T {
 	for _, value := range slice {
 		if predicate(value) {
 			return value

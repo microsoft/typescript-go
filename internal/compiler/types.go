@@ -1036,6 +1036,10 @@ type CompilerOptions struct {
 	UseDefineForClassFields            Tristate
 	UseUnknownInCatchVariables         Tristate
 	VerbatimModuleSyntax               Tristate
+	AllowJS                            Tristate
+	MaxNodeModuleJsDepth               int32
+	SkipLibCheck                       Tristate
+	NoEmit                             Tristate
 }
 
 type ModuleKind int32
@@ -1885,4 +1889,76 @@ var LanguageFeatureMinimumTarget = LanguageFeatureMinimumTargetMap{
 	UsingAndAwaitUsing:                ScriptTargetESNext,
 	ClassAndClassElementDecorators:    ScriptTargetESNext,
 	RegularExpressionFlagsUnicodeSets: ScriptTargetESNext,
+}
+
+type ConfigFileSpecs struct {
+	filesSpecs []string
+	/**
+	 * Present to report errors (user specified specs), validatedIncludeSpecs are used for file name matching
+	 */
+	includeSpecs []string
+	/**
+	 * Present to report errors (user specified specs), validatedExcludeSpecs are used for file name matching
+	 */
+	excludeSpecs                            []string
+	validatedFilesSpec                      []string
+	validatedIncludeSpecs                   []string
+	validatedExcludeSpecs                   []string
+	validatedFilesSpecBeforeSubstitution    []string
+	validatedIncludeSpecsBeforeSubstitution []string
+	validatedExcludeSpecsBeforeSubstitution []string
+	isDefaultIncludeSpec                    bool
+}
+type TsConfigSourceFile struct {
+	SourceFile
+	extendedSourceFiles []string
+	configFileSpecs     ConfigFileSpecs
+}
+
+type WatchFileKind int32
+
+const (
+	WatchFileKindFixedPollingInterval WatchFileKind = iota
+	WatchFileKindPriorityPollingInterval
+	WatchFileKindDynamicPriorityPolling
+	WatchFileKindFixedChunkSizePolling
+	WatchFileKindUseFsEvents
+	WatchFileKindUseFsEventsOnParentDirectory
+)
+
+type WatchDirectoryKind int32
+
+const (
+	WatchDirectoryKindUseFsEvents WatchDirectoryKind = iota
+	WatchDirectoryKindFixedPollingInterval
+	WatchDirectoryKindDynamicPriorityPolling
+	WatchDirectoryKindFixedChunkSizePolling
+)
+
+type PollingWatchKind int32
+
+const (
+	PollingWatchKindFixedInterval = iota
+	PollingWatchKindPriorityInterval
+	PollingWatchKindDynamicPriority
+	PollingWatchKindFixedChunkSize
+)
+
+type WatchOptions struct {
+	watchFile                 *WatchFileKind
+	watchDirectory            *WatchDirectoryKind
+	fallbackPolling           *PollingWatchKind
+	synchronousWatchDirectory *bool
+	excludeDirectories        *[]string
+	excludeFiles              *[]string
+
+	//[option string]: CompilerOptionsValue | undefined; todo
+}
+
+type TypeAcquisition struct {
+	Enable                              *bool
+	Include                             *[]string
+	Exclude                             *[]string
+	DisableFilenameBasedTypeAcquisition *bool
+	//[option string] CompilerOptionsValue
 }

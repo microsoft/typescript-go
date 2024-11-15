@@ -9,7 +9,7 @@ type Path string
 // Internally, we represent paths as strings with '/' as the directory separator.
 // When we make system calls (eg: LanguageServiceHost.getDirectory()),
 // we expect the host to correctly handle paths in our specified format.
-const directorySeparator = '/'
+const DirectorySeparator = '/'
 const urlSchemeSeparator = "://"
 
 //// Path Tests
@@ -26,7 +26,7 @@ func isUrl(path string) bool {
 
 // Determines whether a path is an absolute disk path (e.g. starts with `/`, or a dos path
 // like `c:`, `c:\` or `c:/`).
-func isRootedDiskPath(path string) bool {
+func IsRootedDiskPath(path string) bool {
 	return getEncodedRootLength(path) > 0
 }
 
@@ -203,7 +203,7 @@ func getEncodedRootLength(path string) int {
 	return 0
 }
 
-func getRootLength(path string) int {
+func GetRootLength(path string) int {
 	rootLength := getEncodedRootLength(path)
 	if rootLength < 0 {
 		return ^rootLength
@@ -211,7 +211,7 @@ func getRootLength(path string) int {
 	return rootLength
 }
 
-func getDirectoryPath(path string) string {
+func GetDirectoryPath(path string) string {
 	path = normalizeSlashes(path)
 
 	// If the path provided is itself a root, then return it.
@@ -242,7 +242,7 @@ func getPathFromPathComponents(pathComponents []string) string {
 	return root + strings.Join(pathComponents[1:], "/")
 }
 
-func normalizeSlashes(path string) string {
+func NormalizeSlashes(path string) string {
 	return strings.ReplaceAll(path, "\\", "/")
 }
 
@@ -288,11 +288,11 @@ func getNormalizedPathComponents(path string, currentDirectory string) []string 
 	return reducePathComponents(getPathComponents(path, currentDirectory))
 }
 
-func getNormalizedAbsolutePath(fileName string, currentDirectory string) string {
+func GetNormalizedAbsolutePath(fileName string, currentDirectory string) string {
 	return getPathFromPathComponents(getNormalizedPathComponents(fileName, currentDirectory))
 }
 
-func normalizePath(path string) string {
+func NormalizePath(path string) string {
 	path = normalizeSlashes(path)
 	// Most paths don't require normalization
 	relativePathSegmentRegExp := makeRegexp(`//|(?:^|/)\.\.?(?:$|/)`)
@@ -324,7 +324,7 @@ func toPath(fileName string, basePath string, getCanonicalFileName func(string) 
 	return Path(getCanonicalFileName(nonCanonicalizedPath))
 }
 
-func removeTrailingDirectorySeparator(path string) string {
+func RemoveTrailingDirectorySeparator(path string) string {
 	if hasTrailingDirectorySeparator(path) {
 		return path[:len(path)-1]
 	}
@@ -418,4 +418,8 @@ func getRelativePathToDirectoryOrUrl(directoryPathOrUrl string, relativeOrAbsolu
 	}
 
 	return getPathFromPathComponents(pathComponents)
+}
+
+func FileExtensionIs(path string, extension string) bool {
+	return len(path) > len(extension) // && endsWith(path, extension); endwith in core.go
 }
