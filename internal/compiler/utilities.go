@@ -2046,7 +2046,7 @@ func (r *NameResolver) useOuterVariableScopeInParameter(result *ast.Symbol, loca
 				functionLocation := location
 				declarationRequiresScopeChange := r.getRequiresScopeChangeCache(functionLocation)
 				if declarationRequiresScopeChange == core.TSUnknown {
-					declarationRequiresScopeChange = boolToTristate(core.Some(functionLocation.Parameters(), r.requiresScopeChange))
+					declarationRequiresScopeChange = boolToTristate(core.Some(functionLocation.Parameters().AsParameterList().Parameters, r.requiresScopeChange))
 					r.setRequiresScopeChangeCache(functionLocation, declarationRequiresScopeChange)
 				}
 				return declarationRequiresScopeChange == core.TSTrue
@@ -3363,8 +3363,8 @@ func getLocals(container *ast.Node) ast.SymbolTable {
 
 func getThisParameter(signature *ast.Node) *ast.Node {
 	// callback tags do not currently support this parameters
-	if len(signature.Parameters()) != 0 {
-		thisParameter := signature.Parameters()[0]
+	if parameters := signature.Parameters().AsParameterList().Parameters; len(parameters) != 0 {
+		thisParameter := parameters[0]
 		if parameterIsThisKeyword(thisParameter) {
 			return thisParameter
 		}

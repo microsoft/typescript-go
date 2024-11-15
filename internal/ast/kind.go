@@ -184,6 +184,7 @@ const (
 	KindModifierList
 	KindTypeParameterList
 	KindTypeArgumentList
+	KindParameterList
 	// Signature elements
 	KindTypeParameter
 	KindParameter

@@ -2755,7 +2755,7 @@ func (p *Parser) parseTypeParameter() *ast.Node {
 	return result
 }
 
-func (p *Parser) parseParameters(flags ParseFlags) []*ast.Node {
+func (p *Parser) parseParameters(flags ParseFlags) *ast.ParameterListNode {
 	// FormalParameters [Yield,Await]: (modified)
 	//      [empty]
 	//      FormalParameterList[?Yield,Await]
@@ -2770,9 +2770,12 @@ func (p *Parser) parseParameters(flags ParseFlags) []*ast.Node {
 	// SingleNameBinding [Yield,Await]:
 	//      BindingIdentifier[?Yield,?Await]Initializer [In, ?Yield,?Await] opt
 	if p.parseExpected(ast.KindOpenParenToken) {
+		pos := p.nodePos()
 		parameters := p.parseParametersWorker(flags, true /*allowAmbiguity*/)
 		p.parseExpected(ast.KindCloseParenToken)
-		return parameters
+		result := p.factory.NewParameterList(parameters)
+		p.finishNode(result, pos)
+		return result
 	}
 	return nil
 }
@@ -3053,10 +3056,13 @@ func (p *Parser) nextIsUnambiguouslyIndexSignature() bool {
 }
 
 func (p *Parser) parseIndexSignatureDeclaration(pos int, hasJSDoc bool, modifiers *ast.Node) *ast.Node {
+	parametersPos := p.nodePos()
 	parameters := p.parseBracketedList(PCParameters, (*Parser).parseParameter, ast.KindOpenBracketToken, ast.KindCloseBracketToken)
+	parameterList := p.factory.NewParameterList(parameters)
+	p.finishNode(parameterList, parametersPos)
 	typeNode := p.parseTypeAnnotation()
 	p.parseTypeMemberSemicolon()
-	result := p.factory.NewIndexSignatureDeclaration(modifiers, parameters, typeNode)
+	result := p.factory.NewIndexSignatureDeclaration(modifiers, parameterList, typeNode)
 	p.finishNode(result, pos)
 	_ = hasJSDoc
 	return result
@@ -3861,12 +3867,14 @@ func (p *Parser) parseParenthesizedArrowFunctionExpression(allowAmbiguity bool, 
 	// And think that "(b =>" was actually a parenthesized arrow function with a missing
 	// close paren.
 	typeParameters := p.parseTypeParameters()
-	var parameters []*ast.Node
+	var parameterList *ast.ParameterListNode
+	parametersPos := p.nodePos()
 	if !p.parseExpected(ast.KindOpenParenToken) {
 		if !allowAmbiguity {
 			return nil
 		}
 	} else {
+		var parameters []*ast.Node
 		if !allowAmbiguity {
 			maybeParameters := p.parseParametersWorker(signatureFlags, allowAmbiguity)
 			if maybeParameters == nil {
@@ -3879,6 +3887,8 @@ func (p *Parser) parseParenthesizedArrowFunctionExpression(allowAmbiguity bool, 
 		if !p.parseExpected(ast.KindCloseParenToken) && !allowAmbiguity {
 			return nil
 		}
+		parameterList = p.factory.NewParameterList(parameters)
+		p.finishNode(parameterList, parametersPos)
 	}
 	hasReturnColon := p.token == ast.KindColonToken
 	returnType := p.parseReturnType(ast.KindColonToken /*isType*/, false)
@@ -3939,7 +3949,7 @@ func (p *Parser) parseParenthesizedArrowFunctionExpression(allowAmbiguity bool, 
 			return nil
 		}
 	}
-	result := p.factory.NewArrowFunction(modifiers, typeParameters, parameters, returnType, equalsGreaterThanToken, body)
+	result := p.factory.NewArrowFunction(modifiers, typeParameters, parameterList, returnType, equalsGreaterThanToken, body)
 	p.finishNode(result, pos)
 	return result
 }
@@ -3963,7 +3973,7 @@ func typeHasArrowFunctionBlockingParseError(node *ast.TypeNode) bool {
 	case ast.KindTypeReference:
 		return ast.NodeIsMissing(node.AsTypeReference().TypeName)
 	case ast.KindFunctionType, ast.KindConstructorType:
-		return len(node.Parameters()) == 0 || typeHasArrowFunctionBlockingParseError(node.ReturnType())
+		return len(node.Parameters().AsParameterList().Parameters) == 0 || typeHasArrowFunctionBlockingParseError(node.ReturnType())
 	case ast.KindParenthesizedType:
 		return typeHasArrowFunctionBlockingParseError(node.AsParenthesizedTypeNode().TypeNode)
 	}
@@ -4051,7 +4061,8 @@ func (p *Parser) parseSimpleArrowFunctionExpression(pos int, identifier *ast.Nod
 	//Debug.assert(token() == ast.KindEqualsGreaterThanToken, "parseSimpleArrowFunctionExpression should only have been called if we had a =>");
 	parameter := p.factory.NewParameterDeclaration(nil /*modifiers*/, nil /*dotDotDotToken*/, identifier, nil /*questionToken*/, nil /*typeNode*/, nil /*initializer*/)
 	p.finishNode(parameter, identifier.Pos())
-	parameters := []*ast.Node{parameter}
+	parameters := p.factory.NewParameterList([]*ast.Node{parameter})
+	p.finishNode(parameters, identifier.Pos())
 	equalsGreaterThanToken := p.parseExpectedToken(ast.KindEqualsGreaterThanToken)
 	body := p.parseArrowFunctionExpressionBody(asyncModifier != nil /*isAsync*/, allowReturnTypeInArrowFunction)
 	result := p.factory.NewArrowFunction(asyncModifier, nil /*typeParameters*/, parameters, nil /*returnType*/, equalsGreaterThanToken, body)

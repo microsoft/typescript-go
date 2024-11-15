@@ -5331,9 +5331,9 @@ func (c *Checker) reportImplicitAny(declaration *ast.Node, t *Type, wideningKind
 			name := param.Name().AsIdentifier()
 			originalKeywordKind := identifierToKeywordKind(name)
 			if (ast.IsCallSignatureDeclaration(declaration.Parent) || ast.IsMethodSignatureDeclaration(declaration.Parent) || ast.IsFunctionTypeNode(declaration.Parent)) &&
-				slices.Contains(declaration.Parent.Parameters(), declaration) &&
+				slices.Contains(declaration.Parent.Parameters().AsParameterList().Parameters, declaration) &&
 				(ast.IsTypeNodeKind(originalKeywordKind) || c.resolveName(declaration, name.Text, ast.SymbolFlagsType, nil /*nameNotFoundMessage*/, true /*isUse*/, false /*excludeGlobals*/) != nil) {
-				newName := fmt.Sprintf("arg%v", slices.Index(declaration.Parent.Parameters(), declaration))
+				newName := fmt.Sprintf("arg%v", slices.Index(declaration.Parent.Parameters().AsParameterList().Parameters, declaration))
 				typeName := declarationNameToString(param.Name()) + ifElse(param.DotDotDotToken != nil, "[]", "")
 				c.errorOrSuggestion(c.noImplicitAny, declaration, diagnostics.Parameter_has_a_name_but_no_type_Did_you_mean_0_Colon_1, newName, typeName)
 				return
@@ -6287,7 +6287,7 @@ func (c *Checker) getIndexInfosOfIndexSymbol(indexSymbol *ast.Symbol, siblingSym
 	var propertySymbols []*ast.Symbol
 	for _, declaration := range indexSymbol.Declarations {
 		if ast.IsIndexSignatureDeclaration(declaration) {
-			parameters := declaration.Parameters()
+			parameters := declaration.Parameters().AsParameterList().Parameters
 			returnTypeNode := declaration.ReturnType()
 			if len(parameters) == 1 {
 				typeNode := parameters[0].AsParameterDeclaration().TypeNode
@@ -6472,7 +6472,7 @@ func (c *Checker) getSignatureFromDeclaration(declaration *ast.Node) *Signature 
 	minArgumentCount := 0
 	hasThisParameter := false
 	iife := getImmediatelyInvokedFunctionExpression(declaration)
-	for i, param := range declaration.Parameters() {
+	for i, param := range declaration.Parameters().AsParameterList().Parameters {
 		paramSymbol := param.Symbol()
 		typeNode := param.AsParameterDeclaration().TypeNode
 		// Include parameter symbol instead of property symbol in the signature
@@ -6546,7 +6546,7 @@ func (c *Checker) getAnnotatedAccessorThisParameter(accessor *ast.Node) *ast.Sym
 }
 
 func (c *Checker) getAccessorThisParameter(accessor *ast.Node) *ast.Node {
-	if len(accessor.Parameters()) == ifElse(ast.IsGetAccessorDeclaration(accessor), 1, 2) {
+	if len(accessor.Parameters().AsParameterList().Parameters) == ifElse(ast.IsGetAccessorDeclaration(accessor), 1, 2) {
 		return getThisParameter(accessor)
 	}
 	return nil
@@ -6716,7 +6716,7 @@ func getEffectiveSetAccessorTypeAnnotationNode(node *ast.Node) *ast.Node {
 }
 
 func getSetAccessorValueParameter(accessor *ast.Node) *ast.Node {
-	parameters := accessor.Parameters()
+	parameters := accessor.Parameters().AsParameterList().Parameters
 	if len(parameters) > 0 {
 		hasThis := len(parameters) == 2 && parameterIsThisKeyword(parameters[0])
 		return parameters[ifElse(hasThis, 1, 0)]
@@ -7850,7 +7850,7 @@ func (c *Checker) isTypeParameterPossiblyReferenced(tp *Type, node *ast.Node) bo
 			returnType := node.ReturnType()
 			return returnType == nil && getBodyOfNode(node) != nil ||
 				core.Some(getTypeParameterNodesFromNode(node), containsReference) ||
-				core.Some(node.Parameters(), containsReference) ||
+				core.Some(node.Parameters().AsParameterList().Parameters, containsReference) ||
 				returnType != nil && containsReference(returnType)
 		}
 		return node.ForEachChild(containsReference)
@@ -11684,7 +11684,7 @@ func (c *Checker) getFlowTypeOfReferenceEx(reference *ast.Node, declaredType *Ty
 }
 
 func hasRestParameter(signature *ast.Node) bool {
-	last := core.LastOrNil(signature.Parameters())
+	last := core.LastOrNil(signature.Parameters().AsParameterList().Parameters)
 	return last != nil && isRestParameter(last)
 }
 
@@ -11694,7 +11694,7 @@ func isRestParameter(param *ast.Node) bool {
 
 func getNameFromIndexInfo(info *IndexInfo) string {
 	if info.declaration != nil {
-		return declarationNameToString(info.declaration.Parameters()[0].Name())
+		return declarationNameToString(info.declaration.Parameters().AsParameterList().Parameters[0].Name())
 	}
 	return "x"
 }

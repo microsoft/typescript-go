@@ -1144,7 +1144,7 @@ func (b *Binder) bindParameter(node *ast.Node) {
 		b.checkStrictModeEvalOrArguments(node, decl.Name())
 	}
 	if ast.IsBindingPattern(decl.Name()) {
-		index := slices.Index(node.Parent.Parameters(), node)
+		index := slices.Index(node.Parent.AsParameterList().Parameters, node)
 		b.bindAnonymousDeclaration(node, ast.SymbolFlagsFunctionScopedVariable, "__"+strconv.Itoa(index))
 	} else {
 		b.declareSymbolAndAddToSymbolTable(node, ast.SymbolFlagsFunctionScopedVariable, ast.SymbolFlagsParameterExcludes)
