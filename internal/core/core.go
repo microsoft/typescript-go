@@ -1,9 +1,11 @@
 package core
 
 import (
+	"fmt"
 	"iter"
 	"regexp"
 	"slices"
+	"strconv"
 	"strings"
 	"sync"
 )
@@ -226,6 +228,17 @@ func EquateStringCaseSensitive(a, b string) bool {
 	return a == b
 }
 
+func Memoize[T any](create func() T) func() T {
+	var value T
+	return func() T {
+		if create != nil {
+			value = create()
+			create = nil
+		}
+		return value
+	}
+}
+
 func GetStringEqualityComparer(ignoreCase bool) func(a, b string) bool {
 	if ignoreCase {
 		return EquateStringCaseInsensitive
@@ -257,4 +270,14 @@ func GetStringComparer(ignoreCase bool) func(a, b string) Comparison {
 		return CompareStringsCaseInsensitive
 	}
 	return CompareStringsCaseSensitive
+}
+
+func FormatStringFromArgs(text string, args []any) string {
+	return MakeRegexp(`{(\d+)}`).ReplaceAllStringFunc(text, func(match string) string {
+		index, err := strconv.ParseInt(match[1:len(match)-1], 10, 0)
+		if err != nil || int(index) >= len(args) {
+			panic("Invalid formatting placeholder")
+		}
+		return fmt.Sprintf("%v", args[int(index)])
+	})
 }

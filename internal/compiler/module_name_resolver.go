@@ -5,6 +5,7 @@ import (
 	"math/bits"
 	"strings"
 
+	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/compiler/diagnostics"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -21,26 +22,20 @@ type ModuleResolutionHost interface {
 	UseCaseSensitiveFileNames() bool
 }
 
-const (
-	ResolutionModeNone     ResolutionMode = ResolutionMode(int32(ModuleKindNone))
-	ResolutionModeCommonJS ResolutionMode = ResolutionMode(int32(ModuleKindCommonJS))
-	ResolutionModeESM      ResolutionMode = ResolutionMode(int32(ModuleKindES2015))
-)
-
 type ModeAwareCacheKey struct {
 	name string
-	mode ResolutionMode
+	mode core.ResolutionMode
 }
 
 type ModeAwareCache[T any] map[ModeAwareCacheKey]T
 
 type ParsedCommandLine struct {
-	options *CompilerOptions
+	options *core.CompilerOptions
 }
 
 type ResolvedProjectReference struct {
 	commandLine ParsedCommandLine
-	sourceFile  *SourceFile
+	sourceFile  *ast.SourceFile
 	references  []*ResolvedProjectReference
 }
 
@@ -113,7 +108,7 @@ type ResolvedModuleFull struct {
 type WithFailedLookupLocations struct {
 	failedLookupLocations []string
 	affectingLocations    []string
-	resolutionDiagnostics []Diagnostic
+	resolutionDiagnostics []ast.Diagnostic
 }
 
 type ResolvedModuleWithFailedLookupLocations struct {
@@ -176,7 +171,7 @@ func (e Extensions) String() string {
 		result = append(result, "JavaScript")
 	}
 	if e&ExtensionsDeclaration != 0 {
-		result = append(result, "Declaration")
+		result = append(result, "ast.Declaration")
 	}
 	if e&ExtensionsJson != 0 {
 		result = append(result, "JSON")
@@ -217,7 +212,7 @@ func resolvedTypeScriptOnly(resolved *Resolved) *PathAndPackageId {
 type ModuleResolver struct {
 	host                       ModuleResolutionHost
 	cache                      ModuleResolutionCache
-	compilerOptions            *CompilerOptions
+	compilerOptions            *core.CompilerOptions
 	failedLookupLocations      []string
 	affectingLocations         []string
 	resultFromCache            *ResolvedModuleWithFailedLookupLocations
@@ -232,7 +227,7 @@ type ModuleResolver struct {
 	esmMode                         bool
 }
 
-func NewModuleResolver(host ModuleResolutionHost, cache ModuleResolutionCache, options *CompilerOptions) *ModuleResolver {
+func NewModuleResolver(host ModuleResolutionHost, cache ModuleResolutionCache, options *core.CompilerOptions) *ModuleResolver {
 	return &ModuleResolver{
 		host:            host,
 		cache:           cache,
@@ -240,15 +235,15 @@ func NewModuleResolver(host ModuleResolutionHost, cache ModuleResolutionCache, o
 	}
 }
 
-func (r *ModuleResolver) resolveModuleName(moduleName string, containingFile string, resolutionMode ResolutionMode, redirectedReference *ResolvedProjectReference) *ResolvedModuleWithFailedLookupLocations {
-	traceEnabled := r.compilerOptions.TraceResolution == TSTrue
+func (r *ModuleResolver) resolveModuleName(moduleName string, containingFile string, resolutionMode core.ResolutionMode, redirectedReference *ResolvedProjectReference) *ResolvedModuleWithFailedLookupLocations {
+	traceEnabled := r.compilerOptions.TraceResolution == core.TSTrue
 	if redirectedReference != nil {
 		r.compilerOptions = redirectedReference.commandLine.options
 	}
 	if traceEnabled {
 		r.host.Trace(formatMessage(diagnostics.Resolving_module_0_from_1, moduleName, containingFile))
 		if redirectedReference != nil {
-			r.host.Trace(formatMessage(diagnostics.Using_compiler_options_of_project_reference_redirect_0, redirectedReference.sourceFile.fileName))
+			r.host.Trace(formatMessage(diagnostics.Using_compiler_options_of_project_reference_redirect_0, redirectedReference.sourceFile.FileName()))
 		}
 	}
 	containingDirectory := tspath.GetDirectoryPath(containingFile)
@@ -263,7 +258,7 @@ func (r *ModuleResolver) resolveModuleName(moduleName string, containingFile str
 		}
 	} else {
 		moduleResolution := r.compilerOptions.ModuleResolution
-		if moduleResolution == ModuleResolutionKindUnknown {
+		if moduleResolution == core.ModuleResolutionKindUnknown {
 			moduleResolution = getEmitModuleResolutionKind(r.compilerOptions)
 			if traceEnabled {
 				r.host.Trace(formatMessage(diagnostics.Module_resolution_kind_is_not_specified_using_0, moduleResolution.String()))
@@ -275,13 +270,13 @@ func (r *ModuleResolver) resolveModuleName(moduleName string, containingFile str
 		}
 
 		switch moduleResolution {
-		case ModuleResolutionKindNode16:
+		case core.ModuleResolutionKindNode16:
 			result = r.resolveNode16(moduleName, containingFile, resolutionMode, redirectedReference)
-		case ModuleResolutionKindNodeNext:
+		case core.ModuleResolutionKindNodeNext:
 			result = r.resolveNodeNext(moduleName, containingFile, resolutionMode, redirectedReference)
-		case ModuleResolutionKindBundler:
+		case core.ModuleResolutionKindBundler:
 			var conditions []string
-			if resolutionMode != ModuleKindNone {
+			if resolutionMode != core.ModuleKindNone {
 				conditions = getConditions(r.compilerOptions, resolutionMode)
 			}
 			result = r.resolveBundler(moduleName, containingFile, resolutionMode, redirectedReference, conditions)
@@ -313,30 +308,30 @@ func (r *ModuleResolver) resolveModuleName(moduleName string, containingFile str
 	return result
 }
 
-func (r *ModuleResolver) resolveNode16(moduleName string, containingFile string, resolutionMode ResolutionMode, redirectedReference *ResolvedProjectReference) *ResolvedModuleWithFailedLookupLocations {
+func (r *ModuleResolver) resolveNode16(moduleName string, containingFile string, resolutionMode core.ResolutionMode, redirectedReference *ResolvedProjectReference) *ResolvedModuleWithFailedLookupLocations {
 	return nil
 }
 
-func (r *ModuleResolver) resolveNodeNext(moduleName string, containingFile string, resolutionMode ResolutionMode, redirectedReference *ResolvedProjectReference) *ResolvedModuleWithFailedLookupLocations {
+func (r *ModuleResolver) resolveNodeNext(moduleName string, containingFile string, resolutionMode core.ResolutionMode, redirectedReference *ResolvedProjectReference) *ResolvedModuleWithFailedLookupLocations {
 	return nil
 }
 
-func (r *ModuleResolver) resolveBundler(moduleName string, containingFile string, resolutionMode ResolutionMode, redirectedReference *ResolvedProjectReference, conditions []string) *ResolvedModuleWithFailedLookupLocations {
+func (r *ModuleResolver) resolveBundler(moduleName string, containingFile string, resolutionMode core.ResolutionMode, redirectedReference *ResolvedProjectReference, conditions []string) *ResolvedModuleWithFailedLookupLocations {
 	return nil
 }
 
-func getConditions(options *CompilerOptions, resolutionMode ResolutionMode) []string {
+func getConditions(options *core.CompilerOptions, resolutionMode core.ResolutionMode) []string {
 	moduleResolution := getEmitModuleResolutionKind(options)
-	if resolutionMode == ModuleKindNone && moduleResolution == ModuleResolutionKindBundler {
-		resolutionMode = ModuleKindESNext
+	if resolutionMode == core.ModuleKindNone && moduleResolution == core.ModuleResolutionKindBundler {
+		resolutionMode = core.ModuleKindESNext
 	}
 	conditions := make([]string, 0, 3+len(options.CustomConditions))
-	if resolutionMode == ModuleKindESNext {
+	if resolutionMode == core.ModuleKindESNext {
 		conditions = append(conditions, "import")
 	} else {
 		conditions = append(conditions, "require")
 	}
-	if moduleResolution != ModuleResolutionKindBundler {
+	if moduleResolution != core.ModuleResolutionKindBundler {
 		conditions = append(conditions, "node")
 	}
 	conditions = core.Concatenate(conditions, options.CustomConditions)

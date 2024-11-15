@@ -2,6 +2,9 @@ package compiler
 
 import (
 	"strings"
+
+	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/core"
 )
 
 type TypePrecedence int32
@@ -32,32 +35,32 @@ func (c *Checker) getTypePrecedence(t *Type) TypePrecedence {
 	}
 }
 
-func (c *Checker) symbolToString(s *Symbol) string {
-	if s.valueDeclaration != nil {
-		name := getNameOfDeclaration(s.valueDeclaration)
+func (c *Checker) symbolToString(s *ast.Symbol) string {
+	if s.ValueDeclaration != nil {
+		name := getNameOfDeclaration(s.ValueDeclaration)
 		if name != nil {
-			if isIdentifier(name) {
+			if ast.IsIdentifier(name) {
 				return getTextOfNode(name)
 			}
 			return "[" + getTextOfNode(name) + "]"
 		}
 	}
-	return s.name
+	return s.Name
 }
 
 func (c *Checker) typeToString(t *Type) string {
 	return c.typeToStringEx(t, nil, TypeFormatFlagsNone)
 }
 
-func (c *Checker) typeToStringEx(t *Type, enclosingDeclaration *Node, flags TypeFormatFlags) string {
+func (c *Checker) typeToStringEx(t *Type, enclosingDeclaration *ast.Node, flags TypeFormatFlags) string {
 	p := c.newPrinter(flags)
 	p.printType(t)
 	return p.string()
 }
 
-func (c *Checker) typeAliasToString(d *TypeAliasDeclaration) string {
+func (c *Checker) sourceFileWithTypes(sourceFile *ast.SourceFile) string {
 	p := c.newPrinter(TypeFormatFlagsInTypeAlias)
-	p.printTypeAlias(d)
+	p.printSourceFileWithTypes(sourceFile)
 	return p.string()
 }
 
@@ -77,11 +80,11 @@ func (c *Checker) typePredicateToString(t *TypePredicate) string {
 }
 
 type Printer struct {
-	c       *Checker
-	flags   TypeFormatFlags
-	sb      strings.Builder
-	visited set[*Type]
-	depth   int
+	c        *Checker
+	flags    TypeFormatFlags
+	sb       strings.Builder
+	printing core.Set[*Type]
+	depth    int
 }
 
 func (c *Checker) newPrinter(flags TypeFormatFlags) *Printer {
@@ -108,7 +111,7 @@ func (p *Printer) printTypeEx(t *Type, precedence TypePrecedence) {
 
 func (p *Printer) printType(t *Type) {
 	if t.alias != nil && (p.flags&TypeFormatFlagsInTypeAlias == 0 || p.depth > 0) {
-		p.print(t.alias.symbol.name)
+		p.print(t.alias.symbol.Name)
 		p.printTypeArguments(t.alias.typeArguments)
 	} else {
 		p.printTypeNoAlias(t)
@@ -137,11 +140,12 @@ func (p *Printer) printTypeNoAlias(t *Type) {
 }
 
 func (p *Printer) printRecursive(t *Type, f func(*Printer, *Type)) {
-	if !p.visited.has(t) && p.depth < 10 {
-		p.visited.add(t)
+	if !p.printing.Has(t) && p.depth < 10 {
+		p.printing.Add(t)
 		p.depth++
 		f(p, t)
 		p.depth--
+		p.printing.Delete(t)
 	} else {
 		p.print("???")
 	}
@@ -151,16 +155,20 @@ func (p *Printer) printLiteralType(t *Type) {
 	if t.flags&TypeFlagsEnumLiteral != 0 {
 		p.printEnumLiteral(t)
 	} else {
-		switch value := t.AsLiteralType().value.(type) {
-		case string:
-			p.printStringLiteral(value)
-		case float64:
-			p.printNumberLiteral(value)
-		case bool:
-			p.printBooleanLiteral(value)
-		case PseudoBigInt:
-			p.printBigIntLiteral(value)
-		}
+		p.printLiteralTypeValue(t)
+	}
+}
+
+func (p *Printer) printLiteralTypeValue(t *Type) {
+	switch value := t.AsLiteralType().value.(type) {
+	case string:
+		p.printStringLiteral(value)
+	case float64:
+		p.printNumberLiteral(value)
+	case bool:
+		p.printBooleanLiteral(value)
+	case PseudoBigInt:
+		p.printBigIntLiteral(value)
 	}
 }
 
@@ -186,9 +194,9 @@ func (p *Printer) printBigIntLiteral(b PseudoBigInt) {
 }
 
 func (p *Printer) printEnumLiteral(t *Type) {
-	p.print(p.c.getParentOfSymbol(t.symbol).name)
+	p.print(p.c.getParentOfSymbol(t.symbol).Name)
 	p.print(".")
-	p.print(t.symbol.name)
+	p.print(t.symbol.Name)
 }
 
 func (p *Printer) printObjectType(t *Type) {
@@ -196,7 +204,7 @@ func (p *Printer) printObjectType(t *Type) {
 	case t.objectFlags&ObjectFlagsReference != 0:
 		p.printParameterizedType(t)
 	case t.objectFlags&ObjectFlagsClassOrInterface != 0:
-		p.print(t.symbol.name)
+		p.print(t.symbol.Name)
 	default:
 		p.printAnonymousType(t)
 	}
@@ -214,7 +222,7 @@ func (p *Printer) printParameterizedType(t *Type) {
 }
 
 func (p *Printer) printTypeReference(t *Type) {
-	p.print(t.symbol.name)
+	p.print(t.symbol.Name)
 	p.printTypeArguments(p.c.getTypeArguments(t)[:p.c.getTypeReferenceArity(t)])
 }
 
@@ -317,7 +325,7 @@ func (p *Printer) printAnonymousType(t *Type) {
 			p.print(",")
 		}
 		p.print(" ")
-		p.print(prop.name)
+		p.print(prop.Name)
 		p.print(": ")
 		p.printType(p.c.getTypeOfSymbol(prop))
 		tail = true
@@ -336,7 +344,7 @@ func (p *Printer) printSignature(sig *Signature, returnSeparator string) {
 			if tail {
 				p.print(", ")
 			}
-			p.print(tp.symbol.name)
+			p.print(tp.symbol.Name)
 			tail = true
 		}
 		p.print(">")
@@ -349,9 +357,9 @@ func (p *Printer) printSignature(sig *Signature, returnSeparator string) {
 		}
 		if sig.flags&SignatureFlagsHasRestParameter != 0 && i == len(sig.parameters)-1 {
 			p.print("...")
-			p.print(param.name)
+			p.print(param.Name)
 		} else {
-			p.print(param.name)
+			p.print(param.Name)
 			if i >= int(sig.minArgumentCount) {
 				p.print("?")
 			}
@@ -388,7 +396,7 @@ func (p *Printer) printTypeParameter(t *Type) {
 	if t.AsTypeParameter().isThisType {
 		p.print("this")
 	} else {
-		p.print(t.symbol.name)
+		p.print(t.symbol.Name)
 	}
 }
 
@@ -397,7 +405,7 @@ func (p *Printer) printUnionType(t *Type) {
 	case t.flags&TypeFlagsBoolean != 0:
 		p.print("boolean")
 	case t.flags&TypeFlagsEnumLiteral != 0:
-		p.print(t.symbol.name)
+		p.print(t.symbol.Name)
 	default:
 		u := t.AsUnionType()
 		if u.origin != nil {
@@ -438,26 +446,65 @@ func (p *Printer) printIndexedAccessType(t *Type) {
 	p.print("]")
 }
 
-func (p *Printer) printTypeAlias(d *TypeAliasDeclaration) {
-	p.print("type ")
-	symbol := d.AsNode().Symbol()
-	t := p.c.getDeclaredTypeOfSymbol(symbol)
-	typeParameters := p.c.typeAliasLinks.get(symbol).typeParameters
-	p.print(symbol.name)
-	if len(typeParameters) != 0 {
-		p.print("<")
-		tail := false
-		for _, t := range typeParameters {
-			if tail {
-				p.print(", ")
-			}
-			p.print(t.symbol.name)
-			tail = true
+func (p *Printer) printSourceFileWithTypes(sourceFile *ast.SourceFile) {
+	var pos int
+	var visit func(*ast.Node) bool
+	var typesPrinted bool
+	lineStarts := getLineStarts(sourceFile)
+	printLinesBefore := func(node *ast.Node) {
+		line := computeLineOfPosition(lineStarts, SkipTrivia(sourceFile.Text, node.Pos()))
+		var nextLineStart int
+		if line+1 < len(lineStarts) {
+			nextLineStart = int(lineStarts[line+1])
+		} else {
+			nextLineStart = sourceFile.Loc.End()
 		}
-		p.print(">")
+		if pos < nextLineStart {
+			if typesPrinted {
+				p.print("\n")
+			}
+			p.print(sourceFile.Text[pos:nextLineStart])
+			pos = nextLineStart
+			typesPrinted = false
+		}
 	}
-	p.print(" = ")
-	p.printTypeNoAlias(t)
+	visit = func(node *ast.Node) bool {
+		text, t, isDeclaration := p.c.getTextAndTypeOfNode(node)
+		if text != "" && !strings.Contains(text, "\n") {
+			printLinesBefore(node)
+			p.print(">")
+			p.print(text)
+			p.print(" : ")
+			p.printType(t)
+			if isDeclaration && t.flags&TypeFlagsEnumLiteral != 0 && t.flags&(TypeFlagsStringLiteral|TypeFlagsNumberLiteral) != 0 {
+				p.print(" = ")
+				p.printLiteralTypeValue(t)
+			}
+			p.print("\n")
+			typesPrinted = true
+		}
+		return node.ForEachChild(visit)
+	}
+	visit(sourceFile.AsNode())
+	p.print(sourceFile.Text[pos:sourceFile.End()])
+}
+
+func (c *Checker) getTextAndTypeOfNode(node *ast.Node) (string, *Type, bool) {
+	if ast.IsDeclarationNode(node) {
+		symbol := node.Symbol()
+		if symbol != nil {
+			if symbol.Flags&ast.SymbolFlagsValue != 0 {
+				return declarationNameToString(getNameOfDeclaration(node)), c.getTypeOfSymbol(symbol), true
+			}
+			if symbol.Flags&ast.SymbolFlagsTypeAlias != 0 {
+				return declarationNameToString(getNameOfDeclaration(node)), c.getDeclaredTypeOfTypeAlias(symbol), true
+			}
+		}
+	}
+	if isExpressionNode(node) && !isRightSideOfQualifiedNameOrPropertyAccess(node) {
+		return getTextOfNode(node), c.getTypeOfExpression(node), false
+	}
+	return "", nil, false
 }
 
 func (c *Checker) formatUnionTypes(types []*Type) []*Type {

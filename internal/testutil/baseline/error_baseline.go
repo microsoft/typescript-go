@@ -7,6 +7,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/compiler/stringutil"
 	"github.com/microsoft/typescript-go/internal/core"
@@ -37,7 +38,7 @@ type TestFile struct {
 var diagnosticsLocationPrefix = regexp.MustCompile(`(?im)^(lib.*\.d\.ts)\(\d+,\d+\)`)
 var diagnosticsLocationPattern = regexp.MustCompile(`(?i)(lib.*\.d\.ts):\d+:\d+`)
 
-func DoErrorBaseline(t testing.TB, baselinePath string, inputFiles []*TestFile, errors []*compiler.Diagnostic, pretty bool) {
+func DoErrorBaseline(t testing.TB, baselinePath string, inputFiles []*TestFile, errors []*ast.Diagnostic, pretty bool) {
 	baselinePath = tsExtension.ReplaceAllString(baselinePath, ".errors.txt")
 	var errorBaseline string
 	if len(errors) > 0 {
@@ -48,7 +49,7 @@ func DoErrorBaseline(t testing.TB, baselinePath string, inputFiles []*TestFile, 
 	Run(t, baselinePath, errorBaseline, Options{})
 }
 
-func minimalDiagnosticsToString(diagnostics []*compiler.Diagnostic, pretty bool) string {
+func minimalDiagnosticsToString(diagnostics []*ast.Diagnostic, pretty bool) string {
 	var output strings.Builder
 	if pretty {
 		compiler.FormatDiagnosticsWithColorAndContext(&output, diagnostics, formatOpts)
@@ -58,7 +59,7 @@ func minimalDiagnosticsToString(diagnostics []*compiler.Diagnostic, pretty bool)
 	return output.String()
 }
 
-func getErrorBaseline(t testing.TB, inputFiles []*TestFile, diagnostics []*compiler.Diagnostic, pretty bool) string {
+func getErrorBaseline(t testing.TB, inputFiles []*TestFile, diagnostics []*ast.Diagnostic, pretty bool) string {
 	t.Helper()
 	outputLines := iterateErrorBaseline(t, inputFiles, diagnostics, pretty)
 
@@ -74,7 +75,7 @@ func getErrorBaseline(t testing.TB, inputFiles []*TestFile, diagnostics []*compi
 	return strings.Join(outputLines, "")
 }
 
-func iterateErrorBaseline(t testing.TB, inputFiles []*TestFile, inputDiagnostics []*compiler.Diagnostic, pretty bool) []string {
+func iterateErrorBaseline(t testing.TB, inputFiles []*TestFile, inputDiagnostics []*ast.Diagnostic, pretty bool) []string {
 	t.Helper()
 	diagnostics := slices.Clone(inputDiagnostics)
 	slices.SortFunc(diagnostics, compiler.CompareDiagnostics)
@@ -96,7 +97,7 @@ func iterateErrorBaseline(t testing.TB, inputFiles []*TestFile, inputDiagnostics
 
 	var result []string
 
-	outputErrorText := func(diag *compiler.Diagnostic) {
+	outputErrorText := func(diag *ast.Diagnostic) {
 		message := flattenDiagnosticMessage(diag, harnessNewLine)
 
 		var errLines []string
@@ -161,7 +162,7 @@ func iterateErrorBaseline(t testing.TB, inputFiles []*TestFile, inputDiagnostics
 	nonEmptyFiles := core.Filter(inputFiles, func(f *TestFile) bool { return len(f.content) > 0 })
 	for _, inputFile := range nonEmptyFiles {
 		// Filter down to the errors in the file
-		fileErrors := core.Filter(diagnostics, func(e *compiler.Diagnostic) bool {
+		fileErrors := core.Filter(diagnostics, func(e *ast.Diagnostic) bool {
 			return e.File() != nil &&
 				tspath.ComparePaths(removeTestPathPrefixes(e.File().FileName(), false), removeTestPathPrefixes(inputFile.unitName, false), tspath.ComparePathsOptions{}) == core.ComparisonEqual
 		})
@@ -236,12 +237,12 @@ func iterateErrorBaseline(t testing.TB, inputFiles []*TestFile, inputDiagnostics
 
 	numLibraryDiagnostics := core.CountWhere(
 		diagnostics,
-		func(d *compiler.Diagnostic) bool {
+		func(d *ast.Diagnostic) bool {
 			return d.File() != nil && (isDefaultLibraryFile(d.File().FileName()) || isBuiltFile(d.File().FileName()))
 		})
 	numTsconfigDiagnostics := core.CountWhere(
 		diagnostics,
-		func(d *compiler.Diagnostic) bool {
+		func(d *ast.Diagnostic) bool {
 			return d.File() != nil && isTsConfigFile(d.File().FileName())
 		})
 
@@ -263,13 +264,13 @@ func checkDuplicatedFileName(resultName string, dupeCase map[string]int) string 
 	return resultName
 }
 
-func flattenDiagnosticMessage(d *compiler.Diagnostic, newLine string) string {
+func flattenDiagnosticMessage(d *ast.Diagnostic, newLine string) string {
 	var output strings.Builder
 	compiler.WriteFlattenedDiagnosticMessage(&output, d, newLine)
 	return output.String()
 }
 
-func formatLocation(file *compiler.SourceFile, pos int, formatOpts *compiler.DiagnosticsFormattingOptions, writeWithStyleAndReset compiler.FormattedWriter) string {
+func formatLocation(file *ast.SourceFile, pos int, formatOpts *compiler.DiagnosticsFormattingOptions, writeWithStyleAndReset compiler.FormattedWriter) string {
 	var output strings.Builder
 	compiler.WriteLocation(&output, file, pos, formatOpts, writeWithStyleAndReset)
 	return output.String()

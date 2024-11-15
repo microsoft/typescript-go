@@ -10,7 +10,9 @@ import (
 	"time"
 	"unicode"
 
+	"github.com/microsoft/typescript-go/internal/ast"
 	ts "github.com/microsoft/typescript-go/internal/compiler"
+	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
@@ -20,7 +22,7 @@ var parseAndBindOnly = false
 var printTypes = false
 var pretty = true
 
-func printDiagnostic(d *ts.Diagnostic, level int) {
+func printDiagnostic(d *ast.Diagnostic, level int) {
 	file := d.File()
 	if file != nil {
 		line, character := ts.GetLineAndCharacterOfPosition(file, d.Loc().Pos())
@@ -34,7 +36,7 @@ func printDiagnostic(d *ts.Diagnostic, level int) {
 	}
 }
 
-func printMessageChain(messageChain []*ts.MessageChain, level int) {
+func printMessageChain(messageChain []*ast.MessageChain, level int) {
 	for _, c := range messageChain {
 		fmt.Printf("%v%v\n", strings.Repeat(" ", level*2), c.Message())
 		printMessageChain(c.MessageChain(), level+1)
@@ -45,12 +47,12 @@ func main() {
 	flag.BoolVar(&quiet, "q", false, "Quiet output")
 	flag.BoolVar(&singleThreaded, "s", false, "Single threaded")
 	flag.BoolVar(&parseAndBindOnly, "p", false, "Parse and bind only")
-	flag.BoolVar(&printTypes, "t", false, "Print type aliases defined in main.ts")
+	flag.BoolVar(&printTypes, "t", false, "Print types defined in main.ts")
 	flag.BoolVar(&pretty, "pretty", true, "Get prettier errors")
 	flag.Parse()
 
 	rootPath := flag.Arg(0)
-	compilerOptions := &ts.CompilerOptions{Strict: ts.TSTrue, Target: ts.ScriptTargetESNext, ModuleKind: ts.ModuleKindNodeNext}
+	compilerOptions := &core.CompilerOptions{Strict: core.TSTrue, Target: core.ScriptTargetESNext, ModuleKind: core.ModuleKindNodeNext}
 	programOptions := ts.ProgramOptions{RootPath: rootPath, Options: compilerOptions, SingleThreaded: singleThreaded}
 	useCaseSensitiveFileNames := isFileSystemCaseSensitive()
 
@@ -62,7 +64,7 @@ func main() {
 			diagnostics = program.GetBindDiagnostics(nil)
 		} else {
 			if printTypes {
-				program.PrintTypeAliases()
+				program.PrintSourceFileWithTypes()
 			} else {
 				diagnostics = program.GetSemanticDiagnostics(nil)
 			}
