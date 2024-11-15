@@ -30,7 +30,7 @@ type NodeFactory struct {
 	identifierPool core.Pool[Identifier]
 }
 
-func (f *NodeFactory) NewNode(kind Kind, data NodeData) *Node {
+func (f *NodeFactory) newNode(kind Kind, data nodeData) *Node {
 	n := data.AsNode()
 	n.Kind = kind
 	n.data = data
@@ -47,7 +47,7 @@ type Node struct {
 	Loc    core.TextRange
 	Id     NodeId
 	Parent *Node
-	data   NodeData
+	data   nodeData
 }
 
 // Node accessors. Some accessors are implemented as methods on NodeData, others are implemented though
@@ -516,7 +516,7 @@ func (n *Node) AsJSDocNullableType() *JSDocNullableType {
 
 // NodeData
 
-type NodeData interface {
+type nodeData interface {
 	AsNode() *Node
 	ForEachChild(v Visitor) bool
 	Name() *DeclarationName
@@ -735,7 +735,7 @@ type Token struct {
 }
 
 func (f *NodeFactory) NewToken(kind Kind) *Node {
-	return f.NewNode(kind, &Token{})
+	return f.newNode(kind, &Token{})
 }
 
 // Identifier
@@ -749,7 +749,7 @@ type Identifier struct {
 func (f *NodeFactory) NewIdentifier(text string) *Node {
 	data := f.identifierPool.New()
 	data.Text = text
-	return f.NewNode(KindIdentifier, data)
+	return f.newNode(KindIdentifier, data)
 }
 
 func IsIdentifier(node *Node) bool {
@@ -766,7 +766,7 @@ type PrivateIdentifier struct {
 func (f *NodeFactory) NewPrivateIdentifier(text string) *Node {
 	data := &PrivateIdentifier{}
 	data.Text = text
-	return f.NewNode(KindPrivateIdentifier, data)
+	return f.newNode(KindPrivateIdentifier, data)
 }
 
 func IsPrivateIdentifier(node *Node) bool {
@@ -786,7 +786,7 @@ func (f *NodeFactory) NewQualifiedName(left *EntityName, right *IdentifierNode) 
 	data := &QualifiedName{}
 	data.Left = left
 	data.Right = right
-	return f.NewNode(KindQualifiedName, data)
+	return f.newNode(KindQualifiedName, data)
 }
 
 func (node *QualifiedName) ForEachChild(v Visitor) bool {
@@ -815,7 +815,7 @@ func (f *NodeFactory) NewTypeParameterDeclaration(modifiers *ModifierListNode, n
 	data.name = name
 	data.Constraint = constraint
 	data.DefaultType = defaultType
-	return f.NewNode(KindTypeParameter, data)
+	return f.newNode(KindTypeParameter, data)
 }
 
 func (node *TypeParameterDeclaration) Kind() Kind {
@@ -844,7 +844,7 @@ type ComputedPropertyName struct {
 func (f *NodeFactory) NewComputedPropertyName(expression *Expression) *Node {
 	data := &ComputedPropertyName{}
 	data.Expression = expression
-	return f.NewNode(KindComputedPropertyName, data)
+	return f.newNode(KindComputedPropertyName, data)
 }
 
 func (node *ComputedPropertyName) ForEachChild(v Visitor) bool {
@@ -871,7 +871,7 @@ type Decorator struct {
 func (f *NodeFactory) NewDecorator(expression *LeftHandSideExpression) *Node {
 	data := &Decorator{}
 	data.Expression = expression
-	return f.NewNode(KindDecorator, data)
+	return f.newNode(KindDecorator, data)
 }
 
 func (node *Decorator) ForEachChild(v Visitor) bool {
@@ -896,7 +896,7 @@ func (f *NodeFactory) NewModifierList(modifiers []*ModifierLike, modifierFlags M
 	data := &ModifierList{}
 	data.modifiers = modifiers
 	data.ModifierFlags = modifierFlags
-	return f.NewNode(KindModifierList, data)
+	return f.newNode(KindModifierList, data)
 }
 
 func (node *ModifierList) ForEachChild(v Visitor) bool {
@@ -917,7 +917,7 @@ type EmptyStatement struct {
 }
 
 func (f *NodeFactory) NewEmptyStatement() *Node {
-	return f.NewNode(KindEmptyStatement, &EmptyStatement{})
+	return f.newNode(KindEmptyStatement, &EmptyStatement{})
 }
 
 func IsEmptyStatement(node *Node) bool {
@@ -938,7 +938,7 @@ func (f *NodeFactory) NewIfStatement(expression *Expression, thenStatement *Stat
 	data.Expression = expression
 	data.ThenStatement = thenStatement
 	data.ElseStatement = elseStatement
-	return f.NewNode(KindIfStatement, data)
+	return f.newNode(KindIfStatement, data)
 }
 
 func (node *IfStatement) ForEachChild(v Visitor) bool {
@@ -957,7 +957,7 @@ func (f *NodeFactory) NewDoStatement(statement *Statement, expression *Expressio
 	data := &DoStatement{}
 	data.Statement = statement
 	data.Expression = expression
-	return f.NewNode(KindDoStatement, data)
+	return f.newNode(KindDoStatement, data)
 }
 
 func (node *DoStatement) ForEachChild(v Visitor) bool {
@@ -976,7 +976,7 @@ func (f *NodeFactory) NewWhileStatement(expression *Expression, statement *State
 	data := &WhileStatement{}
 	data.Expression = expression
 	data.Statement = statement
-	return f.NewNode(KindWhileStatement, data)
+	return f.newNode(KindWhileStatement, data)
 }
 
 func (node *WhileStatement) ForEachChild(v Visitor) bool {
@@ -1000,7 +1000,7 @@ func (f *NodeFactory) NewForStatement(initializer *ForInitializer, condition *Ex
 	data.Condition = condition
 	data.Incrementor = incrementor
 	data.Statement = statement
-	return f.NewNode(KindForStatement, data)
+	return f.newNode(KindForStatement, data)
 }
 
 func (node *ForStatement) ForEachChild(v Visitor) bool {
@@ -1024,7 +1024,7 @@ func (f *NodeFactory) NewForInOrOfStatement(kind Kind, awaitModifier *TokenNode,
 	data.Initializer = initializer
 	data.Expression = expression
 	data.Statement = statement
-	return f.NewNode(kind, data)
+	return f.newNode(kind, data)
 }
 
 func (node *ForInOrOfStatement) ForEachChild(v Visitor) bool {
@@ -1045,7 +1045,7 @@ type BreakStatement struct {
 func (f *NodeFactory) NewBreakStatement(label *IdentifierNode) *Node {
 	data := &BreakStatement{}
 	data.Label = label
-	return f.NewNode(KindBreakStatement, data)
+	return f.newNode(KindBreakStatement, data)
 }
 
 func (node *BreakStatement) ForEachChild(v Visitor) bool {
@@ -1062,7 +1062,7 @@ type ContinueStatement struct {
 func (f *NodeFactory) NewContinueStatement(label *IdentifierNode) *Node {
 	data := &ContinueStatement{}
 	data.Label = label
-	return f.NewNode(KindContinueStatement, data)
+	return f.newNode(KindContinueStatement, data)
 }
 
 func (node *ContinueStatement) ForEachChild(v Visitor) bool {
@@ -1079,7 +1079,7 @@ type ReturnStatement struct {
 func (f *NodeFactory) NewReturnStatement(expression *Expression) *Node {
 	data := &ReturnStatement{}
 	data.Expression = expression
-	return f.NewNode(KindReturnStatement, data)
+	return f.newNode(KindReturnStatement, data)
 }
 
 func (node *ReturnStatement) ForEachChild(v Visitor) bool {
@@ -1098,7 +1098,7 @@ func (f *NodeFactory) NewWithStatement(expression *Expression, statement *Statem
 	data := &WithStatement{}
 	data.Expression = expression
 	data.Statement = statement
-	return f.NewNode(KindWithStatement, data)
+	return f.newNode(KindWithStatement, data)
 }
 
 func (node *WithStatement) ForEachChild(v Visitor) bool {
@@ -1117,7 +1117,7 @@ func (f *NodeFactory) NewSwitchStatement(expression *Expression, caseBlock *Case
 	data := &SwitchStatement{}
 	data.Expression = expression
 	data.CaseBlock = caseBlock
-	return f.NewNode(KindSwitchStatement, data)
+	return f.newNode(KindSwitchStatement, data)
 }
 
 func (node *SwitchStatement) ForEachChild(v Visitor) bool {
@@ -1135,7 +1135,7 @@ type CaseBlock struct {
 func (f *NodeFactory) NewCaseBlock(clauses []*CaseOrDefaultClauseNode) *Node {
 	data := &CaseBlock{}
 	data.Clauses = clauses
-	return f.NewNode(KindCaseBlock, data)
+	return f.newNode(KindCaseBlock, data)
 }
 
 func (node *CaseBlock) ForEachChild(v Visitor) bool {
@@ -1155,7 +1155,7 @@ func (f *NodeFactory) NewCaseOrDefaultClause(kind Kind, expression *Expression, 
 	data := &CaseOrDefaultClause{}
 	data.Expression = expression
 	data.Statements = statements
-	return f.NewNode(kind, data)
+	return f.newNode(kind, data)
 }
 
 func (node *CaseOrDefaultClause) ForEachChild(v Visitor) bool {
@@ -1172,7 +1172,7 @@ type ThrowStatement struct {
 func (f *NodeFactory) NewThrowStatement(expression *Expression) *Node {
 	data := &ThrowStatement{}
 	data.Expression = expression
-	return f.NewNode(KindThrowStatement, data)
+	return f.newNode(KindThrowStatement, data)
 }
 
 func (node *ThrowStatement) ForEachChild(v Visitor) bool {
@@ -1193,7 +1193,7 @@ func (f *NodeFactory) NewTryStatement(tryBlock *BlockNode, catchClause *CatchCla
 	data.TryBlock = tryBlock
 	data.CatchClause = catchClause
 	data.FinallyBlock = finallyBlock
-	return f.NewNode(KindTryStatement, data)
+	return f.newNode(KindTryStatement, data)
 }
 
 func (node *TryStatement) Kind() Kind {
@@ -1217,7 +1217,7 @@ func (f *NodeFactory) NewCatchClause(variableDeclaration *VariableDeclarationNod
 	data := &CatchClause{}
 	data.VariableDeclaration = variableDeclaration
 	data.Block = block
-	return f.NewNode(KindCatchClause, data)
+	return f.newNode(KindCatchClause, data)
 }
 
 func (node *CatchClause) ForEachChild(v Visitor) bool {
@@ -1231,7 +1231,7 @@ type DebuggerStatement struct {
 }
 
 func (f *NodeFactory) NewDebuggerStatement() *Node {
-	return f.NewNode(KindDebuggerStatement, &DebuggerStatement{})
+	return f.newNode(KindDebuggerStatement, &DebuggerStatement{})
 }
 
 // LabeledStatement
@@ -1246,7 +1246,7 @@ func (f *NodeFactory) NewLabeledStatement(label *IdentifierNode, statement *Stat
 	data := &LabeledStatement{}
 	data.Label = label
 	data.Statement = statement
-	return f.NewNode(KindLabeledStatement, data)
+	return f.newNode(KindLabeledStatement, data)
 }
 
 func (node *LabeledStatement) ForEachChild(v Visitor) bool {
@@ -1263,7 +1263,7 @@ type ExpressionStatement struct {
 func (f *NodeFactory) NewExpressionStatement(expression *Expression) *Node {
 	data := &ExpressionStatement{}
 	data.Expression = expression
-	return f.NewNode(KindExpressionStatement, data)
+	return f.newNode(KindExpressionStatement, data)
 }
 
 func (node *ExpressionStatement) ForEachChild(v Visitor) bool {
@@ -1287,7 +1287,7 @@ func (f *NodeFactory) NewBlock(statements []*Statement, multiline bool) *Node {
 	data := &Block{}
 	data.Statements = statements
 	data.Multiline = multiline
-	return f.NewNode(KindBlock, data)
+	return f.newNode(KindBlock, data)
 }
 
 func (node *Block) ForEachChild(v Visitor) bool {
@@ -1310,7 +1310,7 @@ func (f *NodeFactory) NewVariableStatement(modifiers *ModifierListNode, declarat
 	data := &VariableStatement{}
 	data.modifiers = modifiers
 	data.DeclarationList = declarationList
-	return f.NewNode(KindVariableStatement, data)
+	return f.newNode(KindVariableStatement, data)
 }
 
 func (node *VariableStatement) ForEachChild(v Visitor) bool {
@@ -1339,7 +1339,7 @@ func (f *NodeFactory) NewVariableDeclaration(name *BindingName, exclamationToken
 	data.ExclamationToken = exclamationToken
 	data.TypeNode = typeNode
 	data.Initializer = initializer
-	return f.NewNode(KindVariableDeclaration, data)
+	return f.newNode(KindVariableDeclaration, data)
 }
 
 func (node *VariableDeclaration) ForEachChild(v Visitor) bool {
@@ -1364,7 +1364,7 @@ type VariableDeclarationList struct {
 func (f *NodeFactory) NewVariableDeclarationList(flags NodeFlags, declarations []*VariableDeclarationNode) *Node {
 	data := &VariableDeclarationList{}
 	data.Declarations = declarations
-	node := f.NewNode(KindVariableDeclarationList, data)
+	node := f.newNode(KindVariableDeclarationList, data)
 	node.Flags = flags
 	return node
 }
@@ -1387,7 +1387,7 @@ type BindingPattern struct {
 func (f *NodeFactory) NewBindingPattern(kind Kind, elements []*BindingElementNode) *Node {
 	data := &BindingPattern{}
 	data.Elements = elements
-	return f.NewNode(kind, data)
+	return f.newNode(kind, data)
 }
 
 func (node *BindingPattern) ForEachChild(v Visitor) bool {
@@ -1427,7 +1427,7 @@ func (f *NodeFactory) NewParameterDeclaration(modifiers *ModifierListNode, dotDo
 	data.QuestionToken = questionToken
 	data.TypeNode = typeNode
 	data.Initializer = initializer
-	return f.NewNode(KindParameter, data)
+	return f.newNode(KindParameter, data)
 }
 
 func (node *ParameterDeclaration) ForEachChild(v Visitor) bool {
@@ -1462,7 +1462,7 @@ func (f *NodeFactory) NewBindingElement(dotDotDotToken *TokenNode, propertyName 
 	data.PropertyName = propertyName
 	data.name = name
 	data.Initializer = initializer
-	return f.NewNode(KindBindingElement, data)
+	return f.newNode(KindBindingElement, data)
 }
 
 func (node *BindingElement) ForEachChild(v Visitor) bool {
@@ -1488,7 +1488,7 @@ type MissingDeclaration struct {
 func (f *NodeFactory) NewMissingDeclaration(modifiers *ModifierListNode) *Node {
 	data := &MissingDeclaration{}
 	data.modifiers = modifiers
-	return f.NewNode(KindMissingDeclaration, data)
+	return f.newNode(KindMissingDeclaration, data)
 }
 
 func (node *MissingDeclaration) ForEachChild(v Visitor) bool {
@@ -1516,7 +1516,7 @@ func (f *NodeFactory) NewFunctionDeclaration(modifiers *ModifierListNode, asteri
 	data.Parameters = parameters
 	data.ReturnType = returnType
 	data.Body = body
-	return f.NewNode(KindFunctionDeclaration, data)
+	return f.newNode(KindFunctionDeclaration, data)
 }
 
 func (node *FunctionDeclaration) ForEachChild(v Visitor) bool {
@@ -1569,7 +1569,7 @@ func (f *NodeFactory) NewClassDeclaration(modifiers *ModifierListNode, name *Ide
 	data.typeParameters = typeParameters
 	data.HeritageClauses = heritageClauses
 	data.Members = members
-	return f.NewNode(KindClassDeclaration, data)
+	return f.newNode(KindClassDeclaration, data)
 }
 
 func IsClassDeclaration(node *Node) bool {
@@ -1590,7 +1590,7 @@ func (f *NodeFactory) NewClassExpression(modifiers *ModifierListNode, name *Iden
 	data.typeParameters = typeParameters
 	data.HeritageClauses = heritageClauses
 	data.Members = members
-	return f.NewNode(KindClassExpression, data)
+	return f.newNode(KindClassExpression, data)
 }
 
 func (node *ClassExpression) Kind() Kind { return KindClassExpression }
@@ -1611,7 +1611,7 @@ func (f *NodeFactory) NewHeritageClause(token Kind, types []*ExpressionWithTypeA
 	data := &HeritageClause{}
 	data.Token = token
 	data.Types = types
-	return f.NewNode(KindHeritageClause, data)
+	return f.newNode(KindHeritageClause, data)
 }
 
 func (node *HeritageClause) ForEachChild(v Visitor) bool {
@@ -1642,7 +1642,7 @@ func (f *NodeFactory) NewInterfaceDeclaration(modifiers *ModifierListNode, name 
 	data.typeParameters = typeParameters
 	data.HeritageClauses = heritageClauses
 	data.Members = members
-	return f.NewNode(KindInterfaceDeclaration, data)
+	return f.newNode(KindInterfaceDeclaration, data)
 }
 
 func (node *InterfaceDeclaration) ForEachChild(v Visitor) bool {
@@ -1678,7 +1678,7 @@ func (f *NodeFactory) NewTypeAliasDeclaration(modifiers *ModifierListNode, name 
 	data.name = name
 	data.typeParameters = typeParameters
 	data.TypeNode = typeNode
-	return f.NewNode(KindTypeAliasDeclaration, data)
+	return f.newNode(KindTypeAliasDeclaration, data)
 }
 
 func (node *TypeAliasDeclaration) ForEachChild(v Visitor) bool {
@@ -1706,7 +1706,7 @@ func (f *NodeFactory) NewEnumMember(name *PropertyName, initializer *Expression)
 	data := &EnumMember{}
 	data.name = name
 	data.Initializer = initializer
-	return f.NewNode(KindEnumMember, data)
+	return f.newNode(KindEnumMember, data)
 }
 
 func (node *EnumMember) ForEachChild(v Visitor) bool {
@@ -1733,7 +1733,7 @@ func (f *NodeFactory) NewEnumDeclaration(modifiers *ModifierListNode, name *Iden
 	data.modifiers = modifiers
 	data.name = name
 	data.Members = members
-	return f.NewNode(KindEnumDeclaration, data)
+	return f.newNode(KindEnumDeclaration, data)
 }
 
 func (node *EnumDeclaration) ForEachChild(v Visitor) bool {
@@ -1758,7 +1758,7 @@ type ModuleBlock struct {
 func (f *NodeFactory) NewModuleBlock(statements []*Statement) *Node {
 	data := &ModuleBlock{}
 	data.Statements = statements
-	return f.NewNode(KindModuleBlock, data)
+	return f.newNode(KindModuleBlock, data)
 }
 
 func (node *ModuleBlock) ForEachChild(v Visitor) bool {
@@ -1786,7 +1786,7 @@ func (f *NodeFactory) NewModuleDeclaration(modifiers *ModifierListNode, name *Mo
 	data.modifiers = modifiers
 	data.name = name
 	data.Body = body
-	node := f.NewNode(KindModuleDeclaration, data)
+	node := f.newNode(KindModuleDeclaration, data)
 	node.Flags |= flags & (NodeFlagsNamespace | NodeFlagsNestedNamespace | NodeFlagsGlobalAugmentation)
 	return node
 }
@@ -1824,7 +1824,7 @@ func (f *NodeFactory) NewImportEqualsDeclaration(modifiers *ModifierListNode, is
 	data.IsTypeOnly = isTypeOnly
 	data.name = name
 	data.ModuleReference = moduleReference
-	return f.NewNode(KindImportEqualsDeclaration, data)
+	return f.newNode(KindImportEqualsDeclaration, data)
 }
 
 func (node *ImportEqualsDeclaration) ForEachChild(v Visitor) bool {
@@ -1855,7 +1855,7 @@ func (f *NodeFactory) NewImportDeclaration(modifiers *ModifierListNode, importCl
 	data.ImportClause = importClause
 	data.ModuleSpecifier = moduleSpecifier
 	data.Attributes = attributes
-	return f.NewNode(KindImportDeclaration, data)
+	return f.newNode(KindImportDeclaration, data)
 }
 
 func (node *ImportDeclaration) ForEachChild(v Visitor) bool {
@@ -1882,7 +1882,7 @@ func (f *NodeFactory) NewImportSpecifier(isTypeOnly bool, propertyName *ModuleEx
 	data.IsTypeOnly = isTypeOnly
 	data.PropertyName = propertyName
 	data.name = name
-	return f.NewNode(KindImportSpecifier, data)
+	return f.newNode(KindImportSpecifier, data)
 }
 
 func (node *ImportSpecifier) ForEachChild(v Visitor) bool {
@@ -1907,7 +1907,7 @@ type ExternalModuleReference struct {
 func (f *NodeFactory) NewExternalModuleReference(expression *Expression) *Node {
 	data := &ExternalModuleReference{}
 	data.Expression_ = expression
-	return f.NewNode(KindExternalModuleReference, data)
+	return f.newNode(KindExternalModuleReference, data)
 }
 
 func (node *ExternalModuleReference) ForEachChild(v Visitor) bool {
@@ -1934,7 +1934,7 @@ func (f *NodeFactory) NewImportClause(isTypeOnly bool, name *IdentifierNode, nam
 	data.IsTypeOnly = isTypeOnly
 	data.name = name
 	data.NamedBindings = namedBindings
-	return f.NewNode(KindImportClause, data)
+	return f.newNode(KindImportClause, data)
 }
 
 func (node *ImportClause) ForEachChild(v Visitor) bool {
@@ -1957,7 +1957,7 @@ type NamespaceImport struct {
 func (f *NodeFactory) NewNamespaceImport(name *IdentifierNode) *Node {
 	data := &NamespaceImport{}
 	data.name = name
-	return f.NewNode(KindNamespaceImport, data)
+	return f.newNode(KindNamespaceImport, data)
 }
 
 func (node *NamespaceImport) ForEachChild(v Visitor) bool {
@@ -1982,7 +1982,7 @@ type NamedImports struct {
 func (f *NodeFactory) NewNamedImports(elements []*ImportSpecifierNode) *Node {
 	data := &NamedImports{}
 	data.Elements = elements
-	return f.NewNode(KindNamedImports, data)
+	return f.newNode(KindNamedImports, data)
 }
 
 func (node *NamedImports) ForEachChild(v Visitor) bool {
@@ -2010,7 +2010,7 @@ func (f *NodeFactory) NewExportAssignment(modifiers *ModifierListNode, isExportE
 	data.modifiers = modifiers
 	data.IsExportEquals = isExportEquals
 	data.Expression = expression
-	return f.NewNode(KindExportAssignment, data)
+	return f.newNode(KindExportAssignment, data)
 }
 
 func (node *ExportAssignment) ForEachChild(v Visitor) bool {
@@ -2034,7 +2034,7 @@ func (f *NodeFactory) NewNamespaceExportDeclaration(modifiers *ModifierListNode,
 	data := &NamespaceExportDeclaration{}
 	data.modifiers = modifiers
 	data.name = name
-	return f.NewNode(KindNamespaceExportDeclaration, data)
+	return f.newNode(KindNamespaceExportDeclaration, data)
 }
 
 func (node *NamespaceExportDeclaration) ForEachChild(v Visitor) bool {
@@ -2068,7 +2068,7 @@ func (f *NodeFactory) NewExportDeclaration(modifiers *ModifierListNode, isTypeOn
 	data.ExportClause = exportClause
 	data.ModuleSpecifier = moduleSpecifier
 	data.Attributes = attributes
-	return f.NewNode(KindExportDeclaration, data)
+	return f.newNode(KindExportDeclaration, data)
 }
 
 func (node *ExportDeclaration) ForEachChild(v Visitor) bool {
@@ -2090,7 +2090,7 @@ type NamespaceExport struct {
 func (f *NodeFactory) NewNamespaceExport(name *ModuleExportName) *Node {
 	data := &NamespaceExport{}
 	data.name = name
-	return f.NewNode(KindNamespaceExport, data)
+	return f.newNode(KindNamespaceExport, data)
 }
 
 func (node *NamespaceExport) ForEachChild(v Visitor) bool {
@@ -2115,7 +2115,7 @@ type NamedExports struct {
 func (f *NodeFactory) NewNamedExports(elements []*ExportSpecifierNode) *Node {
 	data := &NamedExports{}
 	data.Elements = elements
-	return f.NewNode(KindNamedExports, data)
+	return f.newNode(KindNamedExports, data)
 }
 
 func (node *NamedExports) ForEachChild(v Visitor) bool {
@@ -2138,7 +2138,7 @@ func (f *NodeFactory) NewExportSpecifier(isTypeOnly bool, propertyName *ModuleEx
 	data.IsTypeOnly = isTypeOnly
 	data.PropertyName = propertyName
 	data.name = name
-	return f.NewNode(KindExportSpecifier, data)
+	return f.newNode(KindExportSpecifier, data)
 }
 
 func (node *ExportSpecifier) ForEachChild(v Visitor) bool {
@@ -2188,7 +2188,7 @@ func (f *NodeFactory) NewCallSignatureDeclaration(typeParameters *TypeParameterL
 	data.typeParameters = typeParameters
 	data.Parameters = parameters
 	data.ReturnType = returnType
-	return f.NewNode(KindCallSignature, data)
+	return f.newNode(KindCallSignature, data)
 }
 
 func (node *CallSignatureDeclaration) ForEachChild(v Visitor) bool {
@@ -2213,7 +2213,7 @@ func (f *NodeFactory) NewConstructSignatureDeclaration(typeParameters *TypeParam
 	data.typeParameters = typeParameters
 	data.Parameters = parameters
 	data.ReturnType = returnType
-	return f.NewNode(KindConstructSignature, data)
+	return f.newNode(KindConstructSignature, data)
 }
 
 func (node *ConstructSignatureDeclaration) ForEachChild(v Visitor) bool {
@@ -2242,7 +2242,7 @@ func (f *NodeFactory) NewConstructorDeclaration(modifiers *ModifierListNode, typ
 	data.Parameters = parameters
 	data.ReturnType = returnType
 	data.Body = body
-	return f.NewNode(KindConstructor, data)
+	return f.newNode(KindConstructor, data)
 }
 
 func (node *ConstructorDeclaration) ForEachChild(v Visitor) bool {
@@ -2286,7 +2286,7 @@ func (f *NodeFactory) NewGetAccessorDeclaration(modifiers *ModifierListNode, nam
 	data.Parameters = parameters
 	data.ReturnType = returnType
 	data.Body = body
-	return f.NewNode(KindGetAccessor, data)
+	return f.newNode(KindGetAccessor, data)
 }
 
 func IsGetAccessorDeclaration(node *Node) bool {
@@ -2307,7 +2307,7 @@ func (f *NodeFactory) NewSetAccessorDeclaration(modifiers *ModifierListNode, nam
 	data.Parameters = parameters
 	data.ReturnType = returnType
 	data.Body = body
-	return f.NewNode(KindSetAccessor, data)
+	return f.newNode(KindSetAccessor, data)
 }
 
 func IsSetAccessorDeclaration(node *Node) bool {
@@ -2330,7 +2330,7 @@ func (f *NodeFactory) NewIndexSignatureDeclaration(modifiers *ModifierListNode, 
 	data.modifiers = modifiers
 	data.Parameters = parameters
 	data.ReturnType = returnType
-	return f.NewNode(KindIndexSignature, data)
+	return f.newNode(KindIndexSignature, data)
 }
 
 func (node *IndexSignatureDeclaration) ForEachChild(v Visitor) bool {
@@ -2358,7 +2358,7 @@ func (f *NodeFactory) NewMethodSignatureDeclaration(modifiers *ModifierListNode,
 	data.typeParameters = typeParameters
 	data.Parameters = parameters
 	data.ReturnType = returnType
-	return f.NewNode(KindMethodSignature, data)
+	return f.newNode(KindMethodSignature, data)
 }
 
 func (node *MethodSignatureDeclaration) ForEachChild(v Visitor) bool {
@@ -2391,7 +2391,7 @@ func (f *NodeFactory) NewMethodDeclaration(modifiers *ModifierListNode, asterisk
 	data.Parameters = parameters
 	data.ReturnType = returnType
 	data.Body = body
-	return f.NewNode(KindMethodDeclaration, data)
+	return f.newNode(KindMethodDeclaration, data)
 }
 
 func (node *MethodDeclaration) ForEachChild(v Visitor) bool {
@@ -2420,7 +2420,7 @@ func (f *NodeFactory) NewPropertySignatureDeclaration(modifiers *ModifierListNod
 	data.PostfixToken = postfixToken
 	data.TypeNode = typeNode
 	data.Initializer = initializer
-	return f.NewNode(KindPropertySignature, data)
+	return f.newNode(KindPropertySignature, data)
 }
 
 func (node *PropertySignatureDeclaration) ForEachChild(v Visitor) bool {
@@ -2448,7 +2448,7 @@ func (f *NodeFactory) NewPropertyDeclaration(modifiers *ModifierListNode, name *
 	data.PostfixToken = postfixToken
 	data.TypeNode = typeNode
 	data.Initializer = initializer
-	return f.NewNode(KindPropertyDeclaration, data)
+	return f.newNode(KindPropertyDeclaration, data)
 }
 
 func (node *PropertyDeclaration) ForEachChild(v Visitor) bool {
@@ -2468,7 +2468,7 @@ type SemicolonClassElement struct {
 }
 
 func (f *NodeFactory) NewSemicolonClassElement() *Node {
-	return f.NewNode(KindSemicolonClassElement, &SemicolonClassElement{})
+	return f.newNode(KindSemicolonClassElement, &SemicolonClassElement{})
 }
 
 // ClassStaticBlockDeclaration
@@ -2486,7 +2486,7 @@ func (f *NodeFactory) NewClassStaticBlockDeclaration(modifiers *ModifierListNode
 	data := &ClassStaticBlockDeclaration{}
 	data.modifiers = modifiers
 	data.Body = body
-	return f.NewNode(KindClassStaticBlockDeclaration, data)
+	return f.newNode(KindClassStaticBlockDeclaration, data)
 }
 
 func (node *ClassStaticBlockDeclaration) ForEachChild(v Visitor) bool {
@@ -2507,7 +2507,7 @@ type TypeParameterList struct {
 func (f *NodeFactory) NewTypeParameterList(parameters []*TypeParameterDeclarationNode) *Node {
 	data := &TypeParameterList{}
 	data.Parameters = parameters
-	return f.NewNode(KindTypeParameterList, data)
+	return f.newNode(KindTypeParameterList, data)
 }
 
 func (node *TypeParameterList) ForEachChild(v Visitor) bool {
@@ -2531,7 +2531,7 @@ type OmittedExpression struct {
 }
 
 func (f *NodeFactory) NewOmittedExpression() *Node {
-	return f.NewNode(KindOmittedExpression, &OmittedExpression{})
+	return f.newNode(KindOmittedExpression, &OmittedExpression{})
 }
 
 // KeywordExpression
@@ -2542,7 +2542,7 @@ type KeywordExpression struct {
 }
 
 func (f *NodeFactory) NewKeywordExpression(kind Kind) *Node {
-	return f.NewNode(kind, &KeywordExpression{})
+	return f.newNode(kind, &KeywordExpression{})
 }
 
 // LiteralLikeBase
@@ -2561,7 +2561,7 @@ type StringLiteral struct {
 func (f *NodeFactory) NewStringLiteral(text string) *Node {
 	data := &StringLiteral{}
 	data.Text = text
-	return f.NewNode(KindStringLiteral, data)
+	return f.newNode(KindStringLiteral, data)
 }
 
 func IsStringLiteral(node *Node) bool {
@@ -2578,7 +2578,7 @@ type NumericLiteral struct {
 func (f *NodeFactory) NewNumericLiteral(text string) *Node {
 	data := &NumericLiteral{}
 	data.Text = text
-	return f.NewNode(KindNumericLiteral, data)
+	return f.newNode(KindNumericLiteral, data)
 }
 
 func IsNumericLiteral(node *Node) bool {
@@ -2595,7 +2595,7 @@ type BigIntLiteral struct {
 func (f *NodeFactory) NewBigIntLiteral(text string) *Node {
 	data := &BigIntLiteral{}
 	data.Text = text
-	return f.NewNode(KindBigIntLiteral, data)
+	return f.newNode(KindBigIntLiteral, data)
 }
 
 func IsBigIntLiteral(node *Node) bool {
@@ -2612,7 +2612,7 @@ type RegularExpressionLiteral struct {
 func (f *NodeFactory) NewRegularExpressionLiteral(text string) *Node {
 	data := &RegularExpressionLiteral{}
 	data.Text = text
-	return f.NewNode(KindRegularExpressionLiteral, data)
+	return f.newNode(KindRegularExpressionLiteral, data)
 }
 
 // NoSubstitutionTemplateLiteral
@@ -2625,7 +2625,7 @@ type NoSubstitutionTemplateLiteral struct {
 func (f *NodeFactory) NewNoSubstitutionTemplateLiteral(text string) *Node {
 	data := &NoSubstitutionTemplateLiteral{}
 	data.Text = text
-	return f.NewNode(KindNoSubstitutionTemplateLiteral, data)
+	return f.newNode(KindNoSubstitutionTemplateLiteral, data)
 }
 
 // BinaryExpression
@@ -2643,7 +2643,7 @@ func (f *NodeFactory) NewBinaryExpression(left *Expression, operatorToken *Token
 	data.Left = left
 	data.OperatorToken = operatorToken
 	data.Right = right
-	return f.NewNode(KindBinaryExpression, data)
+	return f.newNode(KindBinaryExpression, data)
 }
 
 func (node *BinaryExpression) ForEachChild(v Visitor) bool {
@@ -2666,7 +2666,7 @@ func (f *NodeFactory) NewPrefixUnaryExpression(operator Kind, operand *Expressio
 	data := &PrefixUnaryExpression{}
 	data.Operator = operator
 	data.Operand = operand
-	return f.NewNode(KindPrefixUnaryExpression, data)
+	return f.newNode(KindPrefixUnaryExpression, data)
 }
 
 func (node *PrefixUnaryExpression) ForEachChild(v Visitor) bool {
@@ -2689,7 +2689,7 @@ func (f *NodeFactory) NewPostfixUnaryExpression(operand *Expression, operator Ki
 	data := &PostfixUnaryExpression{}
 	data.Operand = operand
 	data.Operator = operator
-	return f.NewNode(KindPostfixUnaryExpression, data)
+	return f.newNode(KindPostfixUnaryExpression, data)
 }
 
 func (node *PostfixUnaryExpression) ForEachChild(v Visitor) bool {
@@ -2708,7 +2708,7 @@ func (f *NodeFactory) NewYieldExpression(asteriskToken *TokenNode, expression *E
 	data := &YieldExpression{}
 	data.AsteriskToken = asteriskToken
 	data.Expression = expression
-	return f.NewNode(KindYieldExpression, data)
+	return f.newNode(KindYieldExpression, data)
 }
 
 func (node *YieldExpression) ForEachChild(v Visitor) bool {
@@ -2734,7 +2734,7 @@ func (f *NodeFactory) NewArrowFunction(modifiers *ModifierListNode, typeParamete
 	data.ReturnType = returnType
 	data.EqualsGreaterThanToken = equalsGreaterThanToken
 	data.Body = body
-	return f.NewNode(KindArrowFunction, data)
+	return f.newNode(KindArrowFunction, data)
 }
 
 func (node *ArrowFunction) ForEachChild(v Visitor) bool {
@@ -2771,7 +2771,7 @@ func (f *NodeFactory) NewFunctionExpression(modifiers *ModifierListNode, asteris
 	data.Parameters = parameters
 	data.ReturnType = returnType
 	data.Body = body
-	return f.NewNode(KindFunctionExpression, data)
+	return f.newNode(KindFunctionExpression, data)
 }
 
 func (node *FunctionExpression) ForEachChild(v Visitor) bool {
@@ -2799,7 +2799,7 @@ func (f *NodeFactory) NewAsExpression(expression *Expression, typeNode *TypeNode
 	data := &AsExpression{}
 	data.Expression = expression
 	data.TypeNode = typeNode
-	return f.NewNode(KindAsExpression, data)
+	return f.newNode(KindAsExpression, data)
 }
 
 func (node *AsExpression) ForEachChild(v Visitor) bool {
@@ -2818,7 +2818,7 @@ func (f *NodeFactory) NewSatisfiesExpression(expression *Expression, typeNode *T
 	data := &SatisfiesExpression{}
 	data.Expression = expression
 	data.TypeNode = typeNode
-	return f.NewNode(KindSatisfiesExpression, data)
+	return f.newNode(KindSatisfiesExpression, data)
 }
 
 func (node *SatisfiesExpression) ForEachChild(v Visitor) bool {
@@ -2843,7 +2843,7 @@ func (f *NodeFactory) NewConditionalExpression(condition *Expression, questionTo
 	data.WhenTrue = whenTrue
 	data.ColonToken = colonToken
 	data.WhenFalse = whenFalse
-	return f.NewNode(KindConditionalExpression, data)
+	return f.newNode(KindConditionalExpression, data)
 }
 
 func (node *ConditionalExpression) ForEachChild(v Visitor) bool {
@@ -2866,7 +2866,7 @@ func (f *NodeFactory) NewPropertyAccessExpression(expression *Expression, questi
 	data.Expression = expression
 	data.QuestionDotToken = questionDotToken
 	data.name = name
-	node := f.NewNode(KindPropertyAccessExpression, data)
+	node := f.newNode(KindPropertyAccessExpression, data)
 	node.Flags |= flags & NodeFlagsOptionalChain
 	return node
 }
@@ -2896,7 +2896,7 @@ func (f *NodeFactory) NewElementAccessExpression(expression *Expression, questio
 	data.Expression = expression
 	data.QuestionDotToken = questionDotToken
 	data.ArgumentExpression = argumentExpression
-	node := f.NewNode(KindElementAccessExpression, data)
+	node := f.newNode(KindElementAccessExpression, data)
 	node.Flags |= flags & NodeFlagsOptionalChain
 	return node
 }
@@ -2925,7 +2925,7 @@ func (f *NodeFactory) NewCallExpression(expression *Expression, questionDotToken
 	data.QuestionDotToken = questionDotToken
 	data.TypeArguments = typeArguments
 	data.Arguments = arguments
-	node := f.NewNode(KindCallExpression, data)
+	node := f.newNode(KindCallExpression, data)
 	node.Flags |= flags & NodeFlagsOptionalChain
 	return node
 }
@@ -2952,7 +2952,7 @@ func (f *NodeFactory) NewNewExpression(expression *Expression, typeArguments *Ty
 	data.Expression = expression
 	data.TypeArguments = typeArguments
 	data.Arguments = arguments
-	return f.NewNode(KindNewExpression, data)
+	return f.newNode(KindNewExpression, data)
 }
 
 func (node *NewExpression) ForEachChild(v Visitor) bool {
@@ -2976,7 +2976,7 @@ func (f *NodeFactory) NewMetaProperty(keywordToken Kind, name *IdentifierNode) *
 	data := &MetaProperty{}
 	data.KeywordToken = keywordToken
 	data.name = name
-	return f.NewNode(KindMetaProperty, data)
+	return f.newNode(KindMetaProperty, data)
 }
 
 func (node *MetaProperty) ForEachChild(v Visitor) bool {
@@ -2997,7 +2997,7 @@ type NonNullExpression struct {
 func (f *NodeFactory) NewNonNullExpression(expression *Expression) *Node {
 	data := &NonNullExpression{}
 	data.Expression = expression
-	return f.NewNode(KindNonNullExpression, data)
+	return f.newNode(KindNonNullExpression, data)
 }
 
 func (node *NonNullExpression) ForEachChild(v Visitor) bool {
@@ -3018,7 +3018,7 @@ type SpreadElement struct {
 func (f *NodeFactory) NewSpreadElement(expression *Expression) *Node {
 	data := &SpreadElement{}
 	data.Expression = expression
-	return f.NewNode(KindSpreadElement, data)
+	return f.newNode(KindSpreadElement, data)
 }
 
 func (node *SpreadElement) ForEachChild(v Visitor) bool {
@@ -3041,7 +3041,7 @@ func (f *NodeFactory) NewTemplateExpression(head *TemplateHeadNode, templateSpan
 	data := &TemplateExpression{}
 	data.Head = head
 	data.TemplateSpans = templateSpans
-	return f.NewNode(KindTemplateExpression, data)
+	return f.newNode(KindTemplateExpression, data)
 }
 
 func (node *TemplateExpression) ForEachChild(v Visitor) bool {
@@ -3064,7 +3064,7 @@ func (f *NodeFactory) NewTemplateSpan(expression *Expression, literal *TemplateM
 	data := &TemplateSpan{}
 	data.Expression = expression
 	data.Literal = literal
-	return f.NewNode(KindTemplateSpan, data)
+	return f.newNode(KindTemplateSpan, data)
 }
 
 func (node *TemplateSpan) ForEachChild(v Visitor) bool {
@@ -3091,7 +3091,7 @@ func (f *NodeFactory) NewTaggedTemplateExpression(tag *Expression, questionDotTo
 	data.QuestionDotToken = questionDotToken
 	data.TypeArguments = typeArguments
 	data.Template = template
-	node := f.NewNode(KindTaggedTemplateExpression, data)
+	node := f.newNode(KindTaggedTemplateExpression, data)
 	node.Flags |= flags & NodeFlagsOptionalChain
 	return node
 }
@@ -3110,7 +3110,7 @@ type ParenthesizedExpression struct {
 func (f *NodeFactory) NewParenthesizedExpression(expression *Expression) *Node {
 	data := &ParenthesizedExpression{}
 	data.Expression = expression
-	return f.NewNode(KindParenthesizedExpression, data)
+	return f.newNode(KindParenthesizedExpression, data)
 }
 
 func (node *ParenthesizedExpression) ForEachChild(v Visitor) bool {
@@ -3133,7 +3133,7 @@ func (f *NodeFactory) NewArrayLiteralExpression(elements []*Expression, multiLin
 	data := &ArrayLiteralExpression{}
 	data.Elements = elements
 	data.MultiLine = multiLine
-	return f.NewNode(KindArrayLiteralExpression, data)
+	return f.newNode(KindArrayLiteralExpression, data)
 }
 
 func (node *ArrayLiteralExpression) ForEachChild(v Visitor) bool {
@@ -3157,7 +3157,7 @@ func (f *NodeFactory) NewObjectLiteralExpression(properties []*ObjectLiteralElem
 	data := &ObjectLiteralExpression{}
 	data.Properties = properties
 	data.MultiLine = multiLine
-	return f.NewNode(KindObjectLiteralExpression, data)
+	return f.newNode(KindObjectLiteralExpression, data)
 }
 
 func (node *ObjectLiteralExpression) ForEachChild(v Visitor) bool {
@@ -3184,7 +3184,7 @@ type SpreadAssignment struct {
 func (f *NodeFactory) NewSpreadAssignment(expression *Expression) *Node {
 	data := &SpreadAssignment{}
 	data.Expression = expression
-	return f.NewNode(KindSpreadAssignment, data)
+	return f.newNode(KindSpreadAssignment, data)
 }
 
 func (node *SpreadAssignment) ForEachChild(v Visitor) bool {
@@ -3206,7 +3206,7 @@ func (f *NodeFactory) NewPropertyAssignment(modifiers *ModifierListNode, name *P
 	data.name = name
 	data.PostfixToken = postfixToken
 	data.Initializer = initializer
-	return f.NewNode(KindPropertyAssignment, data)
+	return f.newNode(KindPropertyAssignment, data)
 }
 
 func (node *PropertyAssignment) ForEachChild(v Visitor) bool {
@@ -3232,7 +3232,7 @@ func (f *NodeFactory) NewShorthandPropertyAssignment(modifiers *ModifierListNode
 	data.name = name
 	data.PostfixToken = postfixToken
 	data.ObjectAssignmentInitializer = objectAssignmentInitializer
-	return f.NewNode(KindShorthandPropertyAssignment, data)
+	return f.newNode(KindShorthandPropertyAssignment, data)
 }
 
 func (node *ShorthandPropertyAssignment) ForEachChild(v Visitor) bool {
@@ -3253,7 +3253,7 @@ type DeleteExpression struct {
 func (f *NodeFactory) NewDeleteExpression(expression *Expression) *Node {
 	data := &DeleteExpression{}
 	data.Expression = expression
-	return f.NewNode(KindDeleteExpression, data)
+	return f.newNode(KindDeleteExpression, data)
 }
 
 func (node *DeleteExpression) ForEachChild(v Visitor) bool {
@@ -3270,7 +3270,7 @@ type TypeOfExpression struct {
 func (f *NodeFactory) NewTypeOfExpression(expression *Expression) *Node {
 	data := &TypeOfExpression{}
 	data.Expression = expression
-	return f.NewNode(KindTypeOfExpression, data)
+	return f.newNode(KindTypeOfExpression, data)
 }
 
 func (node *TypeOfExpression) ForEachChild(v Visitor) bool {
@@ -3291,7 +3291,7 @@ type VoidExpression struct {
 func (f *NodeFactory) NewVoidExpression(expression *Expression) *Node {
 	data := &VoidExpression{}
 	data.Expression = expression
-	return f.NewNode(KindVoidExpression, data)
+	return f.newNode(KindVoidExpression, data)
 }
 
 func (node *VoidExpression) ForEachChild(v Visitor) bool {
@@ -3308,7 +3308,7 @@ type AwaitExpression struct {
 func (f *NodeFactory) NewAwaitExpression(expression *Expression) *Node {
 	data := &AwaitExpression{}
 	data.Expression = expression
-	return f.NewNode(KindAwaitExpression, data)
+	return f.newNode(KindAwaitExpression, data)
 }
 
 func (node *AwaitExpression) ForEachChild(v Visitor) bool {
@@ -3327,7 +3327,7 @@ func (f *NodeFactory) NewTypeAssertion(typeNode *TypeNode, expression *Expressio
 	data := &TypeAssertion{}
 	data.TypeNode = typeNode
 	data.Expression = expression
-	return f.NewNode(KindTypeAssertionExpression, data)
+	return f.newNode(KindTypeAssertionExpression, data)
 }
 
 func (node *TypeAssertion) ForEachChild(v Visitor) bool {
@@ -3347,7 +3347,7 @@ type KeywordTypeNode struct {
 }
 
 func (f *NodeFactory) NewKeywordTypeNode(kind Kind) *Node {
-	return f.NewNode(kind, &KeywordTypeNode{})
+	return f.newNode(kind, &KeywordTypeNode{})
 }
 
 // UnionOrIntersectionTypeBase
@@ -3370,7 +3370,7 @@ type UnionTypeNode struct {
 func (f *NodeFactory) NewUnionTypeNode(types []*TypeNode) *Node {
 	data := &UnionTypeNode{}
 	data.Types = types
-	return f.NewNode(KindUnionType, data)
+	return f.newNode(KindUnionType, data)
 }
 
 // IntersectionTypeNode
@@ -3382,7 +3382,7 @@ type IntersectionTypeNode struct {
 func (f *NodeFactory) NewIntersectionTypeNode(types []*TypeNode) *Node {
 	data := &IntersectionTypeNode{}
 	data.Types = types
-	return f.NewNode(KindIntersectionType, data)
+	return f.newNode(KindIntersectionType, data)
 }
 
 // ConditionalTypeNode
@@ -3402,7 +3402,7 @@ func (f *NodeFactory) NewConditionalTypeNode(checkType *TypeNode, extendsType *T
 	data.ExtendsType = extendsType
 	data.TrueType = trueType
 	data.FalseType = falseType
-	return f.NewNode(KindConditionalType, data)
+	return f.newNode(KindConditionalType, data)
 }
 
 func (node *ConditionalTypeNode) ForEachChild(v Visitor) bool {
@@ -3425,7 +3425,7 @@ func (f *NodeFactory) NewTypeOperatorNode(operator Kind, typeNode *TypeNode) *No
 	data := &TypeOperatorNode{}
 	data.Operator = operator
 	data.TypeNode = typeNode
-	return f.NewNode(KindTypeOperator, data)
+	return f.newNode(KindTypeOperator, data)
 }
 
 func (node *TypeOperatorNode) ForEachChild(v Visitor) bool {
@@ -3446,7 +3446,7 @@ type InferTypeNode struct {
 func (f *NodeFactory) NewInferTypeNode(typeParameter *TypeParameterDeclarationNode) *Node {
 	data := &InferTypeNode{}
 	data.TypeParameter = typeParameter
-	return f.NewNode(KindInferType, data)
+	return f.newNode(KindInferType, data)
 }
 
 func (node *InferTypeNode) ForEachChild(v Visitor) bool {
@@ -3463,7 +3463,7 @@ type ArrayTypeNode struct {
 func (f *NodeFactory) NewArrayTypeNode(elementType *TypeNode) *Node {
 	data := &ArrayTypeNode{}
 	data.ElementType = elementType
-	return f.NewNode(KindArrayType, data)
+	return f.newNode(KindArrayType, data)
 }
 
 func (node *ArrayTypeNode) ForEachChild(v Visitor) bool {
@@ -3482,7 +3482,7 @@ func (f *NodeFactory) NewIndexedAccessTypeNode(objectType *TypeNode, indexType *
 	data := &IndexedAccessTypeNode{}
 	data.ObjectType = objectType
 	data.IndexType = indexType
-	return f.NewNode(KindIndexedAccessType, data)
+	return f.newNode(KindIndexedAccessType, data)
 }
 
 func (node *IndexedAccessTypeNode) ForEachChild(v Visitor) bool {
@@ -3503,7 +3503,7 @@ type TypeArgumentList struct {
 func (f *NodeFactory) NewTypeArgumentList(arguments []*TypeNode) *Node {
 	data := &TypeArgumentList{}
 	data.Arguments = arguments
-	return f.NewNode(KindTypeArgumentList, data)
+	return f.newNode(KindTypeArgumentList, data)
 }
 
 func (node *TypeArgumentList) ForEachChild(v Visitor) bool {
@@ -3522,7 +3522,7 @@ func (f *NodeFactory) NewTypeReferenceNode(typeName *EntityName, typeArguments *
 	data := &TypeReferenceNode{}
 	data.TypeName = typeName
 	data.TypeArguments = typeArguments
-	return f.NewNode(KindTypeReference, data)
+	return f.newNode(KindTypeReference, data)
 }
 
 func (node *TypeReferenceNode) ForEachChild(v Visitor) bool {
@@ -3545,7 +3545,7 @@ func (f *NodeFactory) NewExpressionWithTypeArguments(expression *Expression, typ
 	data := &ExpressionWithTypeArguments{}
 	data.Expression = expression
 	data.TypeArguments = typeArguments
-	return f.NewNode(KindExpressionWithTypeArguments, data)
+	return f.newNode(KindExpressionWithTypeArguments, data)
 }
 
 func (node *ExpressionWithTypeArguments) ForEachChild(v Visitor) bool {
@@ -3566,7 +3566,7 @@ type LiteralTypeNode struct {
 func (f *NodeFactory) NewLiteralTypeNode(literal *Node) *Node {
 	data := &LiteralTypeNode{}
 	data.Literal = literal
-	return f.NewNode(KindLiteralType, data)
+	return f.newNode(KindLiteralType, data)
 }
 
 func (node *LiteralTypeNode) ForEachChild(v Visitor) bool {
@@ -3584,7 +3584,7 @@ type ThisTypeNode struct {
 }
 
 func (f *NodeFactory) NewThisTypeNode() *Node {
-	return f.NewNode(KindThisType, &ThisTypeNode{})
+	return f.newNode(KindThisType, &ThisTypeNode{})
 }
 
 func IsThisTypeNode(node *Node) bool {
@@ -3605,7 +3605,7 @@ func (f *NodeFactory) NewTypePredicateNode(assertsModifier *TokenNode, parameter
 	data.AssertsModifier = assertsModifier
 	data.ParameterName = parameterName
 	data.TypeNode = typeNode
-	return f.NewNode(KindTypePredicate, data)
+	return f.newNode(KindTypePredicate, data)
 }
 
 func (node *TypePredicateNode) ForEachChild(v Visitor) bool {
@@ -3634,7 +3634,7 @@ func (f *NodeFactory) NewImportTypeNode(isTypeOf bool, argument *TypeNode, attri
 	data.Attributes = attributes
 	data.Qualifier = qualifier
 	data.TypeArguments = typeArguments
-	return f.NewNode(KindImportType, data)
+	return f.newNode(KindImportType, data)
 }
 
 func (node *ImportTypeNode) ForEachChild(v Visitor) bool {
@@ -3657,7 +3657,7 @@ func (f *NodeFactory) NewImportAttribute(name *ImportAttributeName, value *Expre
 	data := &ImportAttribute{}
 	data.name = name
 	data.Value = value
-	return f.NewNode(KindImportAttribute, data)
+	return f.newNode(KindImportAttribute, data)
 }
 
 func (node *ImportAttribute) ForEachChild(v Visitor) bool {
@@ -3678,7 +3678,7 @@ func (f *NodeFactory) NewImportAttributes(token Kind, attributes []*ImportAttrib
 	data.Token = token
 	data.Attributes = attributes
 	data.MultiLine = multiLine
-	return f.NewNode(KindImportAttributes, data)
+	return f.newNode(KindImportAttributes, data)
 }
 
 func (node *ImportAttributes) ForEachChild(v Visitor) bool {
@@ -3697,7 +3697,7 @@ func (f *NodeFactory) NewTypeQueryNode(exprName *EntityName, typeArguments *Type
 	data := &TypeQueryNode{}
 	data.ExprName = exprName
 	data.TypeArguments = typeArguments
-	return f.NewNode(KindTypeQuery, data)
+	return f.newNode(KindTypeQuery, data)
 }
 
 func (node *TypeQueryNode) ForEachChild(v Visitor) bool {
@@ -3730,7 +3730,7 @@ func (f *NodeFactory) NewMappedTypeNode(readonlyToken *TokenNode, typeParameter 
 	data.QuestionToken = questionToken
 	data.TypeNode = typeNode
 	data.Members = members
-	return f.NewNode(KindMappedType, data)
+	return f.newNode(KindMappedType, data)
 }
 
 func (node *MappedTypeNode) ForEachChild(v Visitor) bool {
@@ -3753,7 +3753,7 @@ type TypeLiteralNode struct {
 func (f *NodeFactory) NewTypeLiteralNode(members []*TypeElement) *Node {
 	data := &TypeLiteralNode{}
 	data.Members = members
-	return f.NewNode(KindTypeLiteral, data)
+	return f.newNode(KindTypeLiteral, data)
 }
 
 func (node *TypeLiteralNode) ForEachChild(v Visitor) bool {
@@ -3770,7 +3770,7 @@ type TupleTypeNode struct {
 func (f *NodeFactory) NewTupleTypeNode(elements []*TypeNode) *Node {
 	data := &TupleTypeNode{}
 	data.Elements = elements
-	return f.NewNode(KindTupleType, data)
+	return f.newNode(KindTupleType, data)
 }
 
 func (node *TupleTypeNode) Kind() Kind {
@@ -3798,7 +3798,7 @@ func (f *NodeFactory) NewNamedTupleTypeMember(dotDotDotToken *TokenNode, name *I
 	data.name = name
 	data.QuestionToken = questionToken
 	data.TypeNode = typeNode
-	return f.NewNode(KindNamedTupleMember, data)
+	return f.newNode(KindNamedTupleMember, data)
 }
 
 func (node *NamedTupleMember) ForEachChild(v Visitor) bool {
@@ -3819,7 +3819,7 @@ type OptionalTypeNode struct {
 func (f *NodeFactory) NewOptionalTypeNode(typeNode *TypeNode) *Node {
 	data := &OptionalTypeNode{}
 	data.TypeNode = typeNode
-	return f.NewNode(KindOptionalType, data)
+	return f.newNode(KindOptionalType, data)
 }
 
 func (node *OptionalTypeNode) ForEachChild(v Visitor) bool {
@@ -3836,7 +3836,7 @@ type RestTypeNode struct {
 func (f *NodeFactory) NewRestTypeNode(typeNode *TypeNode) *Node {
 	data := &RestTypeNode{}
 	data.TypeNode = typeNode
-	return f.NewNode(KindRestType, data)
+	return f.newNode(KindRestType, data)
 }
 
 func (node *RestTypeNode) ForEachChild(v Visitor) bool {
@@ -3853,7 +3853,7 @@ type ParenthesizedTypeNode struct {
 func (f *NodeFactory) NewParenthesizedTypeNode(typeNode *TypeNode) *Node {
 	data := &ParenthesizedTypeNode{}
 	data.TypeNode = typeNode
-	return f.NewNode(KindParenthesizedType, data)
+	return f.newNode(KindParenthesizedType, data)
 }
 
 func (node *ParenthesizedTypeNode) ForEachChild(v Visitor) bool {
@@ -3888,7 +3888,7 @@ func (f *NodeFactory) NewFunctionTypeNode(typeParameters *TypeParameterListNode,
 	data.typeParameters = typeParameters
 	data.Parameters = parameters
 	data.ReturnType = returnType
-	return f.NewNode(KindFunctionType, data)
+	return f.newNode(KindFunctionType, data)
 }
 
 func IsFunctionTypeNode(node *Node) bool {
@@ -3907,7 +3907,7 @@ func (f *NodeFactory) NewConstructorTypeNode(modifiers *ModifierListNode, typePa
 	data.typeParameters = typeParameters
 	data.Parameters = parameters
 	data.ReturnType = returnType
-	return f.NewNode(KindConstructorType, data)
+	return f.newNode(KindConstructorType, data)
 }
 
 func IsConstructorTypeNode(node *Node) bool {
@@ -3934,7 +3934,7 @@ func (f *NodeFactory) NewTemplateHead(text string, rawText string, templateFlags
 	data.Text = text
 	data.RawText = rawText
 	data.TemplateFlags = templateFlags
-	return f.NewNode(KindTemplateHead, data)
+	return f.newNode(KindTemplateHead, data)
 }
 
 // TemplateMiddle
@@ -3949,7 +3949,7 @@ func (f *NodeFactory) NewTemplateMiddle(text string, rawText string, templateFla
 	data.Text = text
 	data.RawText = rawText
 	data.TemplateFlags = templateFlags
-	return f.NewNode(KindTemplateMiddle, data)
+	return f.newNode(KindTemplateMiddle, data)
 }
 
 // TemplateTail
@@ -3964,7 +3964,7 @@ func (f *NodeFactory) NewTemplateTail(text string, rawText string, templateFlags
 	data.Text = text
 	data.RawText = rawText
 	data.TemplateFlags = templateFlags
-	return f.NewNode(KindTemplateTail, data)
+	return f.newNode(KindTemplateTail, data)
 }
 
 // TemplateLiteralTypeNode
@@ -3979,7 +3979,7 @@ func (f *NodeFactory) NewTemplateLiteralTypeNode(head *TemplateHeadNode, templat
 	data := &TemplateLiteralTypeNode{}
 	data.Head = head
 	data.TemplateSpans = templateSpans
-	return f.NewNode(KindTemplateLiteralType, data)
+	return f.newNode(KindTemplateLiteralType, data)
 }
 
 func (node *TemplateLiteralTypeNode) ForEachChild(v Visitor) bool {
@@ -3998,7 +3998,7 @@ func (f *NodeFactory) NewTemplateLiteralTypeSpan(typeNode *TypeNode, literal *Te
 	data := &TemplateLiteralTypeSpan{}
 	data.TypeNode = typeNode
 	data.Literal = literal
-	return f.NewNode(KindTemplateLiteralTypeSpan, data)
+	return f.newNode(KindTemplateLiteralTypeSpan, data)
 }
 
 func (node *TemplateLiteralTypeSpan) ForEachChild(v Visitor) bool {
@@ -4019,7 +4019,7 @@ func (f *NodeFactory) NewJsxElement(openingElement *JsxOpeningElementNode, child
 	data.OpeningElement = openingElement
 	data.Children = children
 	data.ClosingElement = closingElement
-	return f.NewNode(KindJsxElement, data)
+	return f.newNode(KindJsxElement, data)
 }
 
 func (node *JsxElement) ForEachChild(v Visitor) bool {
@@ -4036,7 +4036,7 @@ type JsxAttributes struct {
 func (f *NodeFactory) NewJsxAttributes(properties []*JsxAttributeLike) *Node {
 	data := &JsxAttributes{}
 	data.Properties = properties
-	return f.NewNode(KindJsxAttributes, data)
+	return f.newNode(KindJsxAttributes, data)
 }
 
 func (node *JsxAttributes) ForEachChild(v Visitor) bool {
@@ -4059,7 +4059,7 @@ func (f *NodeFactory) NewJsxNamespacedName(name *IdentifierNode, namespace *Iden
 	data := &JsxNamespacedName{}
 	data.name = name
 	data.Namespace = namespace
-	return f.NewNode(KindJsxNamespacedName, data)
+	return f.newNode(KindJsxNamespacedName, data)
 }
 
 func (node *JsxNamespacedName) ForEachChild(v Visitor) bool {
@@ -4084,7 +4084,7 @@ func (f *NodeFactory) NewJsxOpeningElement(tagName *JsxTagNameExpression, typeAr
 	data.TagName = tagName
 	data.TypeArguments = typeArguments
 	data.Attributes = attributes
-	return f.NewNode(KindJsxOpeningElement, data)
+	return f.newNode(KindJsxOpeningElement, data)
 }
 
 func (node *JsxOpeningElement) ForEachChild(v Visitor) bool {
@@ -4109,7 +4109,7 @@ func (f *NodeFactory) NewJsxSelfClosingElement(tagName *JsxTagNameExpression, ty
 	data.TagName = tagName
 	data.TypeArguments = typeArguments
 	data.Attributes = attributes
-	return f.NewNode(KindJsxSelfClosingElement, data)
+	return f.newNode(KindJsxSelfClosingElement, data)
 }
 
 func (node *JsxSelfClosingElement) ForEachChild(v Visitor) bool {
@@ -4134,7 +4134,7 @@ func (f *NodeFactory) NewJsxFragment(openingFragment *JsxOpeningFragmentNode, ch
 	data.OpeningFragment = openingFragment
 	data.Children = children
 	data.ClosingFragment = closingFragment
-	return f.NewNode(KindJsxFragment, data)
+	return f.newNode(KindJsxFragment, data)
 }
 
 func (node *JsxFragment) ForEachChild(v Visitor) bool {
@@ -4148,7 +4148,7 @@ type JsxOpeningFragment struct {
 }
 
 func (f *NodeFactory) NewJsxOpeningFragment() *Node {
-	return f.NewNode(KindJsxOpeningFragment, &JsxOpeningFragment{})
+	return f.newNode(KindJsxOpeningFragment, &JsxOpeningFragment{})
 }
 
 func IsJsxOpeningFragment(node *Node) bool {
@@ -4162,7 +4162,7 @@ type JsxClosingFragment struct {
 }
 
 func (f *NodeFactory) NewJsxClosingFragment() *Node {
-	return f.NewNode(KindJsxClosingFragment, &JsxClosingFragment{})
+	return f.newNode(KindJsxClosingFragment, &JsxClosingFragment{})
 }
 
 // JsxAttribute
@@ -4178,7 +4178,7 @@ func (f *NodeFactory) NewJsxAttribute(name *JsxAttributeName, initializer *JsxAt
 	data := &JsxAttribute{}
 	data.name = name
 	data.Initializer = initializer
-	return f.NewNode(KindJsxAttribute, data)
+	return f.newNode(KindJsxAttribute, data)
 }
 
 func (node *JsxAttribute) ForEachChild(v Visitor) bool {
@@ -4199,7 +4199,7 @@ type JsxSpreadAttribute struct {
 func (f *NodeFactory) NewJsxSpreadAttribute(expression *Expression) *Node {
 	data := &JsxSpreadAttribute{}
 	data.Expression = expression
-	return f.NewNode(KindJsxSpreadAttribute, data)
+	return f.newNode(KindJsxSpreadAttribute, data)
 }
 
 func (node *JsxSpreadAttribute) ForEachChild(v Visitor) bool {
@@ -4216,7 +4216,7 @@ type JsxClosingElement struct {
 func (f *NodeFactory) NewJsxClosingElement(tagName *JsxTagNameExpression) *Node {
 	data := &JsxClosingElement{}
 	data.TagName = tagName
-	return f.NewNode(KindJsxClosingElement, data)
+	return f.newNode(KindJsxClosingElement, data)
 }
 
 func (node *JsxClosingElement) ForEachChild(v Visitor) bool {
@@ -4235,7 +4235,7 @@ func (f *NodeFactory) NewJsxExpression(dotDotDotToken *TokenNode, expression *Ex
 	data := &JsxExpression{}
 	data.DotDotDotToken = dotDotDotToken
 	data.Expression = expression
-	return f.NewNode(KindJsxExpression, data)
+	return f.newNode(KindJsxExpression, data)
 }
 
 func (node *JsxExpression) ForEachChild(v Visitor) bool {
@@ -4254,7 +4254,7 @@ func (f *NodeFactory) NewJsxText(text string, containsOnlyTriviaWhiteSpace bool)
 	data := &JsxText{}
 	data.Text = text
 	data.ContainsOnlyTriviaWhiteSpaces = containsOnlyTriviaWhiteSpace
-	return f.NewNode(KindJsxText, data)
+	return f.newNode(KindJsxText, data)
 }
 
 // JSDocNonNullableType
@@ -4269,7 +4269,7 @@ func (f *NodeFactory) NewJSDocNonNullableType(typeNode *TypeNode, postfix bool) 
 	data := &JSDocNonNullableType{}
 	data.TypeNode = typeNode
 	data.Postfix = postfix
-	return f.NewNode(KindJSDocNonNullableType, data)
+	return f.newNode(KindJSDocNonNullableType, data)
 }
 
 func (node *JSDocNonNullableType) ForEachChild(v Visitor) bool {
@@ -4288,7 +4288,7 @@ func (f *NodeFactory) NewJSDocNullableType(typeNode *TypeNode, postfix bool) *No
 	data := &JSDocNullableType{}
 	data.TypeNode = typeNode
 	data.Postfix = postfix
-	return f.NewNode(KindJSDocNullableType, data)
+	return f.newNode(KindJSDocNullableType, data)
 }
 
 func (node *JSDocNullableType) ForEachChild(v Visitor) bool {
@@ -4345,7 +4345,7 @@ func (f *NodeFactory) NewSourceFile(text string, fileName string, statements []*
 	data.fileName = fileName
 	data.Statements = statements
 	data.LanguageVersion = core.ScriptTargetLatest
-	return f.NewNode(KindSourceFile, data)
+	return f.newNode(KindSourceFile, data)
 }
 
 func (node *SourceFile) FileName() string {
