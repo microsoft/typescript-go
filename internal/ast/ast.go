@@ -28,6 +28,7 @@ func visitNodes(v Visitor, nodes []*Node) bool {
 
 type NodeFactory struct {
 	identifierPool core.Pool[Identifier]
+	tokenPool      core.Pool[Token]
 }
 
 func (f *NodeFactory) NewNode(kind Kind, data NodeData) *Node {
@@ -744,7 +745,7 @@ type Token struct {
 }
 
 func (f *NodeFactory) NewToken(kind Kind) *Node {
-	return f.NewNode(kind, &Token{})
+	return f.NewNode(kind, f.tokenPool.New())
 }
 
 // Identifier
