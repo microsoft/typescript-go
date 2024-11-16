@@ -3,7 +3,6 @@ package compiler
 import (
 	"encoding/json"
 	"fmt"
-	"path/filepath"
 	"slices"
 	"strings"
 
@@ -119,7 +118,7 @@ func (p *Program) bindSourceFiles() {
 func (p *Program) getResolvedModule(currentSourceFile *ast.SourceFile, moduleReference string) *ast.SourceFile {
 	directory := tspath.GetDirectoryPath(string(currentSourceFile.Path())) // TODO(jakebailey): !!!
 	if isExternalModuleNameRelative(moduleReference) {
-		return p.findSourceFile(filepath.Join(directory, moduleReference))
+		return p.findSourceFile(tspath.CombinePaths(directory, moduleReference))
 	}
 	return p.findNodeModule(moduleReference)
 }
