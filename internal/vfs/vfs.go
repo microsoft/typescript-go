@@ -152,13 +152,13 @@ func splitPath(p string) (rootName, rest string) {
 	return string(p[:l]), string(p[l:])
 }
 
-func (a *adapter) rootAndPath(path string) (fs.FS, string) {
-	rootName, rest := splitPath(path)
-	return a.rootFor(rootName), rest
+func (a *adapter) rootAndPath(path string) (fsys fs.FS, rootName string, rest string) {
+	rootName, rest = splitPath(path)
+	return a.rootFor(rootName), rootName, rest
 }
 
 func (a *adapter) stat(path string) fs.FileInfo {
-	fsys, rest := a.rootAndPath(path)
+	fsys, _, rest := a.rootAndPath(path)
 	if fsys == nil {
 		return nil
 	}
@@ -180,7 +180,7 @@ func (a *adapter) ReadFile(path string) (contents string, ok bool) {
 		defer func() { <-a.readSema }()
 	}
 
-	fsys, rest := a.rootAndPath(path)
+	fsys, _, rest := a.rootAndPath(path)
 	if fsys == nil {
 		return "", false
 	}
@@ -221,7 +221,7 @@ func (a *adapter) DirectoryExists(path string) bool {
 }
 
 func (a *adapter) GetDirectories(path string) []string {
-	fsys, rest := a.rootAndPath(path)
+	fsys, _, rest := a.rootAndPath(path)
 	if fsys == nil {
 		return nil
 	}
@@ -242,9 +242,11 @@ func (a *adapter) GetDirectories(path string) []string {
 }
 
 func (a *adapter) WalkDir(root string, walkFn WalkDirFunc) error {
-	fsys, rest := a.rootAndPath(root)
+	fsys, rootName, rest := a.rootAndPath(root)
 	if fsys == nil {
 		return nil
 	}
-	return fs.WalkDir(fsys, rest, walkFn)
+	return fs.WalkDir(fsys, rest, func(path string, d fs.DirEntry, err error) error {
+		return walkFn(rootName + path, d, err)
+	})
 }
