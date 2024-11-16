@@ -48,10 +48,10 @@ type WalkDirFunc = fs.WalkDirFunc
 
 var (
 	// SkipAll is [fs.SkipAll].
-	SkipAll = fs.SkipAll
+	SkipAll = fs.SkipAll //nolint:errname
 
 	// SkipDir is [fs.SkipDir].
-	SkipDir = fs.SkipDir
+	SkipDir = fs.SkipDir //nolint:errname
 )
 
 var _ FS = (*adapter)(nil)
@@ -145,11 +145,11 @@ func (a *adapter) GetCurrentDirectory() string {
 }
 
 func splitPath(p string) (rootName, rest string) {
-	l := tspath.GetEncodedRootLength(string(p))
+	l := tspath.GetEncodedRootLength(p)
 	if l < 0 {
 		panic("FS does not support URLs")
 	}
-	return string(p[:l]), string(p[l:])
+	return p[:l], p[l:]
 }
 
 func (a *adapter) rootAndPath(path string) (fsys fs.FS, rootName string, rest string) {
@@ -246,7 +246,7 @@ func (a *adapter) WalkDir(root string, walkFn WalkDirFunc) error {
 	if fsys == nil {
 		return nil
 	}
-	return fs.WalkDir(fsys, rest, func(path string, d fs.DirEntry, err error) error {
-		return walkFn(rootName + path, d, err)
+	return fs.WalkDir(fsys, rest, func(path string, d fs.DirEntry, err error) error { //nolint:wrapcheck
+		return walkFn(rootName+path, d, err)
 	})
 }

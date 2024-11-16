@@ -65,10 +65,10 @@ func readFileInfos(fs vfs.FS, rootPath string, extensions []string) []FileInfo {
 		if err != nil {
 			return err
 		}
-		if !d.IsDir() && slices.ContainsFunc(extensions, func(ext string) bool { return tspath.FileExtensionIs(string(path), ext) }) {
+		if !d.IsDir() && slices.ContainsFunc(extensions, func(ext string) bool { return tspath.FileExtensionIs(path, ext) }) {
 			info, err := d.Info()
 			if err != nil {
-				return err
+				return err //nolint:wrapcheck
 			}
 			fileInfos = append(fileInfos, FileInfo{Name: path, Size: info.Size()})
 		}
