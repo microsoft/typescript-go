@@ -1,6 +1,8 @@
 package packagejson
 
 import (
+	"sync"
+
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler/diagnostics"
 	"github.com/microsoft/typescript-go/internal/core"
@@ -13,23 +15,24 @@ var typeScriptVersion = semver.MustParse(core.Version)
 type PackageJson struct {
 	Fields
 	versionPaths *VersionPaths
+	once         sync.Once
 }
 
 func (p *PackageJson) GetVersionPaths(collectTraces bool) (value *VersionPaths, traces []string) {
-	if p.versionPaths == nil {
+	p.once.Do(func() {
 		if p.Fields.TypesVersions.Type == JSONValueTypeNotPresent {
 			p.versionPaths = &VersionPaths{}
 			if collectTraces {
 				traces = append(traces, diagnostics.Format(diagnostics.X_package_json_does_not_have_a_0_field, "typesVersions"))
 			}
-			return nil, traces
+			return
 		}
 		if p.Fields.TypesVersions.Type != JSONValueTypeObject {
 			p.versionPaths = &VersionPaths{}
 			if collectTraces {
 				traces = append(traces, diagnostics.Format(diagnostics.Expected_type_of_0_field_in_package_json_to_be_1_got_2, "typesVersions", "object", p.Fields.TypesVersions.Type.String()))
 			}
-			return nil, traces
+			return
 		}
 
 		if collectTraces {
@@ -50,26 +53,21 @@ func (p *PackageJson) GetVersionPaths(collectTraces bool) (value *VersionPaths, 
 						traces = append(traces, diagnostics.Format(diagnostics.Expected_type_of_0_field_in_package_json_to_be_1_got_2, "typesVersions['"+key+"']", "object", value.Type.String()))
 					}
 					p.versionPaths = &VersionPaths{}
-					return nil, traces
+					return
 				}
 				p.versionPaths = &VersionPaths{
 					Version:   key,
 					pathsJSON: value.AsObject(),
 				}
-				return p.versionPaths, traces
+				return
 			}
 		}
 
-		p.versionPaths = &VersionPaths{}
 		if collectTraces {
 			traces = append(traces, diagnostics.Format(diagnostics.X_package_json_does_not_have_a_typesVersions_entry_that_matches_version_0, core.VersionMajorMinor))
 		}
-		return nil, traces
-	}
-	if p.versionPaths.IsValid() {
-		return p.versionPaths, traces
-	}
-	return nil, traces
+	})
+	return p.versionPaths, traces
 }
 
 type VersionPaths struct {
