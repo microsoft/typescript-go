@@ -776,7 +776,7 @@ func (b *Binder) declareModuleSymbol(node *ast.Node) ModuleInstanceState {
 }
 
 func (b *Binder) bindNamespaceExportDeclaration(node *ast.Node) {
-	if node.AsNamespaceExportDeclaration().Modifiers() != nil {
+	if len(node.AsNamespaceExportDeclaration().Modifiers) != 0 {
 		b.errorOnNode(node, diagnostics.Modifiers_cannot_appear_here)
 	}
 	switch {
@@ -1669,13 +1669,7 @@ func (b *Binder) bindEachChild(node *ast.Node) {
 	node.ForEachChild(b.bind)
 }
 
-func (b *Binder) bindEachExpression(nodes []*ast.Node) {
-	for _, node := range nodes {
-		b.bind(node)
-	}
-}
-
-func (b *Binder) bindEachStatement(nodes []*ast.Node) {
+func (b *Binder) bindEach(nodes []*ast.Node) {
 	for _, node := range nodes {
 		b.bind(node)
 	}
@@ -2134,7 +2128,7 @@ func (b *Binder) bindCaseOrDefaultClause(node *ast.Node) {
 		b.bind(clause.Expression)
 		b.currentFlow = saveCurrentFlow
 	}
-	b.bindEachStatement(clause.Statements)
+	b.bindEach(clause.Statements)
 }
 
 func (b *Binder) bindExpressionStatement(node *ast.Node) {
@@ -2407,7 +2401,7 @@ func (b *Binder) bindOptionalChainRest(node *ast.Node) bool {
 	case ast.KindCallExpression:
 		b.bind(node.AsCallExpression().QuestionDotToken)
 		b.bind(node.AsCallExpression().TypeArguments)
-		b.bindEachExpression(node.AsCallExpression().Arguments.Nodes)
+		b.bindEach(node.AsCallExpression().Arguments.Nodes)
 	}
 	return false
 }
@@ -2423,7 +2417,7 @@ func (b *Binder) bindCallExpressionFlow(node *ast.Node) {
 		expr := ast.SkipParentheses(call.Expression)
 		if expr.Kind == ast.KindFunctionExpression || expr.Kind == ast.KindArrowFunction {
 			b.bind(call.TypeArguments)
-			b.bindEachExpression(call.Arguments.Nodes)
+			b.bindEach(call.Arguments.Nodes)
 			b.bind(call.Expression)
 		} else {
 			b.bindEachChild(node)
@@ -2463,7 +2457,7 @@ func (b *Binder) bindBindingElementFlow(node *ast.Node) {
 
 func (b *Binder) bindParameterFlow(node *ast.Node) {
 	param := node.AsParameterDeclaration()
-	b.bind(param.Modifiers())
+	b.bindEach(param.Modifiers)
 	b.bind(param.DotDotDotToken)
 	b.bind(param.QuestionToken)
 	b.bind(param.TypeNode)

@@ -363,56 +363,6 @@ func boolToTristate(b bool) core.Tristate {
 	return core.TSFalse
 }
 
-func modifierToFlag(token ast.Kind) ast.ModifierFlags {
-	switch token {
-	case ast.KindStaticKeyword:
-		return ast.ModifierFlagsStatic
-	case ast.KindPublicKeyword:
-		return ast.ModifierFlagsPublic
-	case ast.KindProtectedKeyword:
-		return ast.ModifierFlagsProtected
-	case ast.KindPrivateKeyword:
-		return ast.ModifierFlagsPrivate
-	case ast.KindAbstractKeyword:
-		return ast.ModifierFlagsAbstract
-	case ast.KindAccessorKeyword:
-		return ast.ModifierFlagsAccessor
-	case ast.KindExportKeyword:
-		return ast.ModifierFlagsExport
-	case ast.KindDeclareKeyword:
-		return ast.ModifierFlagsAmbient
-	case ast.KindConstKeyword:
-		return ast.ModifierFlagsConst
-	case ast.KindDefaultKeyword:
-		return ast.ModifierFlagsDefault
-	case ast.KindAsyncKeyword:
-		return ast.ModifierFlagsAsync
-	case ast.KindReadonlyKeyword:
-		return ast.ModifierFlagsReadonly
-	case ast.KindOverrideKeyword:
-		return ast.ModifierFlagsOverride
-	case ast.KindInKeyword:
-		return ast.ModifierFlagsIn
-	case ast.KindOutKeyword:
-		return ast.ModifierFlagsOut
-	case ast.KindImmediateKeyword:
-		return ast.ModifierFlagsImmediate
-	case ast.KindDecorator:
-		return ast.ModifierFlagsDecorator
-	}
-	return ast.ModifierFlagsNone
-}
-
-func modifiersToFlags(modifierList *ast.Node) ast.ModifierFlags {
-	flags := ast.ModifierFlagsNone
-	if modifierList != nil {
-		for _, modifier := range modifierList.AsModifierList().Elements() {
-			flags |= modifierToFlag(modifier.Kind)
-		}
-	}
-	return flags
-}
-
 func isAssignmentOperator(token ast.Kind) bool {
 	return token >= ast.KindFirstAssignment && token <= ast.KindLastAssignment
 }
@@ -647,11 +597,7 @@ func isPartOfTypeQuery(node *ast.Node) bool {
 }
 
 func getModifierFlags(node *ast.Node) ast.ModifierFlags {
-	modifiers := node.Modifiers()
-	if modifiers != nil {
-		return modifiers.AsModifierList().ModifierFlags
-	}
-	return ast.ModifierFlagsNone
+	return ast.GetModifierFlags(node)
 }
 
 func getNodeFlags(node *ast.Node) ast.NodeFlags {

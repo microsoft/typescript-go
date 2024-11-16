@@ -475,3 +475,63 @@ func FindAncestorOrQuit(node *Node, callback func(*Node) FindAncestorResult) *No
 	}
 	return nil
 }
+
+func ModifierToFlag(token Kind) ModifierFlags {
+	switch token {
+	case KindStaticKeyword:
+		return ModifierFlagsStatic
+	case KindPublicKeyword:
+		return ModifierFlagsPublic
+	case KindProtectedKeyword:
+		return ModifierFlagsProtected
+	case KindPrivateKeyword:
+		return ModifierFlagsPrivate
+	case KindAbstractKeyword:
+		return ModifierFlagsAbstract
+	case KindAccessorKeyword:
+		return ModifierFlagsAccessor
+	case KindExportKeyword:
+		return ModifierFlagsExport
+	case KindDeclareKeyword:
+		return ModifierFlagsAmbient
+	case KindConstKeyword:
+		return ModifierFlagsConst
+	case KindDefaultKeyword:
+		return ModifierFlagsDefault
+	case KindAsyncKeyword:
+		return ModifierFlagsAsync
+	case KindReadonlyKeyword:
+		return ModifierFlagsReadonly
+	case KindOverrideKeyword:
+		return ModifierFlagsOverride
+	case KindInKeyword:
+		return ModifierFlagsIn
+	case KindOutKeyword:
+		return ModifierFlagsOut
+	case KindImmediateKeyword:
+		return ModifierFlagsImmediate
+	case KindDecorator:
+		return ModifierFlagsDecorator
+	}
+	return ModifierFlagsNone
+}
+
+func ModifiersToFlags(modifierList []*Node) ModifierFlags {
+	var flags ModifierFlags
+	for _, modifier := range modifierList {
+		flags |= ModifierToFlag(modifier.Kind)
+	}
+	return flags
+}
+
+func GetModifierFlags(node *Node) ModifierFlags {
+	if node.modifierFlags&ModifierFlagsHasComputedFlags == 0 {
+		var modifierFlags ModifierFlags
+		data := node.ModifiersData()
+		if data != nil {
+			modifierFlags = ModifiersToFlags(data.Modifiers)
+		}
+		node.modifierFlags = modifierFlags | ModifierFlagsHasComputedFlags
+	}
+	return node.modifierFlags
+}

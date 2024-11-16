@@ -668,61 +668,61 @@ func (p *Parser) parseDeclaration() *ast.Statement {
 	// not reusable in that context.
 	pos := p.nodePos()
 	hasJSDoc := p.hasPrecedingJSDocComment()
-	modifierList := p.parseModifiersWithOptions( /*allowDecorators*/ true, false /*permitConstAsModifier*/, false /*stopOnStartOfClassStaticBlock*/)
-	isAmbient := modifierList != nil && core.Some(modifierList.AsModifierList().Elements(), isDeclareModifier)
+	modifiers := p.parseModifiersEx( /*allowDecorators*/ true, false /*permitConstAsModifier*/, false /*stopOnStartOfClassStaticBlock*/)
+	isAmbient := core.Some(modifiers, isDeclareModifier)
 	if isAmbient {
 		// !!! incremental parsing
 		// node := p.tryReuseAmbientDeclaration(pos)
 		// if node {
 		// 	return node
 		// }
-		for _, m := range modifierList.AsModifierList().Elements() {
+		for _, m := range modifiers {
 			m.Flags |= ast.NodeFlagsAmbient
 		}
 		saveContextFlags := p.contextFlags
 		p.setContextFlags(ast.NodeFlagsAmbient, true)
-		result := p.parseDeclarationWorker(pos, hasJSDoc, modifierList)
+		result := p.parseDeclarationWorker(pos, hasJSDoc, modifiers)
 		p.contextFlags = saveContextFlags
 		return result
 	} else {
-		return p.parseDeclarationWorker(pos, hasJSDoc, modifierList)
+		return p.parseDeclarationWorker(pos, hasJSDoc, modifiers)
 	}
 }
 
-func (p *Parser) parseDeclarationWorker(pos int, hasJSDoc bool, modifierList *ast.Node) *ast.Statement {
+func (p *Parser) parseDeclarationWorker(pos int, hasJSDoc bool, modifiers []*ast.Node) *ast.Statement {
 	switch p.token {
 	case ast.KindVarKeyword, ast.KindLetKeyword, ast.KindConstKeyword, ast.KindUsingKeyword, ast.KindAwaitKeyword:
-		return p.parseVariableStatement(pos, hasJSDoc, modifierList)
+		return p.parseVariableStatement(pos, hasJSDoc, modifiers)
 	case ast.KindFunctionKeyword:
-		return p.parseFunctionDeclaration(pos, hasJSDoc, modifierList)
+		return p.parseFunctionDeclaration(pos, hasJSDoc, modifiers)
 	case ast.KindClassKeyword:
-		return p.parseClassDeclaration(pos, hasJSDoc, modifierList)
+		return p.parseClassDeclaration(pos, hasJSDoc, modifiers)
 	case ast.KindInterfaceKeyword:
-		return p.parseInterfaceDeclaration(pos, hasJSDoc, modifierList)
+		return p.parseInterfaceDeclaration(pos, hasJSDoc, modifiers)
 	case ast.KindTypeKeyword:
-		return p.parseTypeAliasDeclaration(pos, hasJSDoc, modifierList)
+		return p.parseTypeAliasDeclaration(pos, hasJSDoc, modifiers)
 	case ast.KindEnumKeyword:
-		return p.parseEnumDeclaration(pos, hasJSDoc, modifierList)
+		return p.parseEnumDeclaration(pos, hasJSDoc, modifiers)
 	case ast.KindGlobalKeyword, ast.KindModuleKeyword, ast.KindNamespaceKeyword:
-		return p.parseModuleDeclaration(pos, hasJSDoc, modifierList)
+		return p.parseModuleDeclaration(pos, hasJSDoc, modifiers)
 	case ast.KindImportKeyword:
-		return p.parseImportDeclarationOrImportEqualsDeclaration(pos, hasJSDoc, modifierList)
+		return p.parseImportDeclarationOrImportEqualsDeclaration(pos, hasJSDoc, modifiers)
 	case ast.KindExportKeyword:
 		p.nextToken()
 		switch p.token {
 		case ast.KindDefaultKeyword, ast.KindEqualsToken:
-			return p.parseExportAssignment(pos, hasJSDoc, modifierList)
+			return p.parseExportAssignment(pos, hasJSDoc, modifiers)
 		case ast.KindAsKeyword:
-			return p.parseNamespaceExportDeclaration(pos, hasJSDoc, modifierList)
+			return p.parseNamespaceExportDeclaration(pos, hasJSDoc, modifiers)
 		default:
-			return p.parseExportDeclaration(pos, hasJSDoc, modifierList)
+			return p.parseExportDeclaration(pos, hasJSDoc, modifiers)
 		}
 	}
-	if modifierList != nil {
+	if len(modifiers) != 0 {
 		// We reached this point because we encountered decorators and/or modifiers and assumed a declaration
 		// would follow. For recovery and error reporting purposes, return an incomplete declaration.
 		p.parseErrorAt(p.nodePos(), p.nodePos(), diagnostics.Declaration_expected)
-		result := p.factory.NewMissingDeclaration(modifierList)
+		result := p.factory.NewMissingDeclaration(modifiers)
 		p.finishNode(result, pos)
 		return result
 	}
@@ -1073,7 +1073,7 @@ func (p *Parser) parseExpressionOrLabeledStatement() *ast.Statement {
 	return result
 }
 
-func (p *Parser) parseVariableStatement(pos int, hasJSDoc bool, modifiers *ast.Node) *ast.Node {
+func (p *Parser) parseVariableStatement(pos int, hasJSDoc bool, modifiers []*ast.Node) *ast.Node {
 	declarationList := p.parseVariableDeclarationList(false /*inForStatementInitializer*/)
 	p.parseSemicolon()
 	result := p.factory.NewVariableStatement(modifiers, declarationList)
@@ -1275,8 +1275,8 @@ func (p *Parser) parseTypeAnnotation() *ast.TypeNode {
 	return nil
 }
 
-func (p *Parser) parseFunctionDeclaration(pos int, hasJSDoc bool, modifiers *ast.Node) *ast.Node {
-	modifierFlags := modifiersToFlags(modifiers)
+func (p *Parser) parseFunctionDeclaration(pos int, hasJSDoc bool, modifiers []*ast.Node) *ast.Node {
+	modifierFlags := ast.ModifiersToFlags(modifiers)
 	p.parseExpected(ast.KindFunctionKeyword)
 	asteriskToken := p.parseOptionalToken(ast.KindAsteriskToken)
 	// We don't parse the name here in await context, instead we will report a grammar error in the checker.
@@ -1300,7 +1300,7 @@ func (p *Parser) parseFunctionDeclaration(pos int, hasJSDoc bool, modifiers *ast
 	return result
 }
 
-func (p *Parser) parseClassDeclaration(pos int, hasJSDoc bool, modifiers *ast.Node) *ast.Node {
+func (p *Parser) parseClassDeclaration(pos int, hasJSDoc bool, modifiers []*ast.Node) *ast.Node {
 	return p.parseClassDeclarationOrExpression(pos, hasJSDoc, modifiers, ast.KindClassDeclaration)
 }
 
@@ -1308,13 +1308,13 @@ func (p *Parser) parseClassExpression() *ast.Node {
 	return p.parseClassDeclarationOrExpression(p.nodePos(), p.hasPrecedingJSDocComment(), nil /*modifiers*/, ast.KindClassExpression)
 }
 
-func (p *Parser) parseClassDeclarationOrExpression(pos int, hasJSDoc bool, modifiers *ast.Node, kind ast.Kind) *ast.Node {
+func (p *Parser) parseClassDeclarationOrExpression(pos int, hasJSDoc bool, modifiers []*ast.Node, kind ast.Kind) *ast.Node {
 	saveContextFlags := p.contextFlags
 	p.parseExpected(ast.KindClassKeyword)
 	// We don't parse the name here in await context, instead we will report a grammar error in the checker.
 	name := p.parseNameOfClassDeclarationOrExpression()
 	typeParameters := p.parseTypeParameters()
-	if modifiers != nil && core.Some(modifiers.AsModifierList().Elements(), isExportModifier) {
+	if core.Some(modifiers, isExportModifier) {
 		p.setContextFlags(ast.NodeFlagsAwaitContext, true /*value*/)
 	}
 	heritageClauses := p.parseHeritageClauses()
@@ -1401,53 +1401,53 @@ func (p *Parser) parseClassElement() *ast.Node {
 		p.finishNode(result, pos)
 		return result
 	}
-	modifierList := p.parseModifiersWithOptions(true /*allowDecorators*/, true /*permitConstAsModifier*/, true /*stopOnStartOfClassStaticBlock*/)
+	modifiers := p.parseModifiersEx(true /*allowDecorators*/, true /*permitConstAsModifier*/, true /*stopOnStartOfClassStaticBlock*/)
 	if p.token == ast.KindStaticKeyword && p.lookAhead(p.nextTokenIsOpenBrace) {
-		return p.parseClassStaticBlockDeclaration(pos, hasJSDoc, modifierList)
+		return p.parseClassStaticBlockDeclaration(pos, hasJSDoc, modifiers)
 	}
 	if p.parseContextualModifier(ast.KindGetKeyword) {
-		return p.parseAccessorDeclaration(pos, hasJSDoc, modifierList, ast.KindGetAccessor, ParseFlagsNone)
+		return p.parseAccessorDeclaration(pos, hasJSDoc, modifiers, ast.KindGetAccessor, ParseFlagsNone)
 	}
 	if p.parseContextualModifier(ast.KindSetKeyword) {
-		return p.parseAccessorDeclaration(pos, hasJSDoc, modifierList, ast.KindSetAccessor, ParseFlagsNone)
+		return p.parseAccessorDeclaration(pos, hasJSDoc, modifiers, ast.KindSetAccessor, ParseFlagsNone)
 	}
 	if p.token == ast.KindConstructorKeyword || p.token == ast.KindStringLiteral {
-		constructorDeclaration := p.tryParseConstructorDeclaration(pos, hasJSDoc, modifierList)
+		constructorDeclaration := p.tryParseConstructorDeclaration(pos, hasJSDoc, modifiers)
 		if constructorDeclaration != nil {
 			return constructorDeclaration
 		}
 	}
 	if p.isIndexSignature() {
-		return p.parseIndexSignatureDeclaration(pos, hasJSDoc, modifierList)
+		return p.parseIndexSignatureDeclaration(pos, hasJSDoc, modifiers)
 	}
 	// It is very important that we check this *after* checking indexers because
 	// the [ token can start an index signature or a computed property name
 	if tokenIsIdentifierOrKeyword(p.token) || p.token == ast.KindStringLiteral || p.token == ast.KindNumericLiteral || p.token == ast.KindBigIntLiteral || p.token == ast.KindAsteriskToken || p.token == ast.KindOpenBracketToken {
-		isAmbient := modifierList != nil && core.Some(modifierList.AsModifierList().Elements(), isDeclareModifier)
+		isAmbient := core.Some(modifiers, isDeclareModifier)
 		if isAmbient {
-			for _, m := range modifierList.AsModifierList().Elements() {
+			for _, m := range modifiers {
 				m.Flags |= ast.NodeFlagsAmbient
 			}
 			saveContextFlags := p.contextFlags
 			p.setContextFlags(ast.NodeFlagsAmbient, true)
-			result := p.parsePropertyOrMethodDeclaration(pos, hasJSDoc, modifierList)
+			result := p.parsePropertyOrMethodDeclaration(pos, hasJSDoc, modifiers)
 			p.contextFlags = saveContextFlags
 			return result
 		} else {
-			return p.parsePropertyOrMethodDeclaration(pos, hasJSDoc, modifierList)
+			return p.parsePropertyOrMethodDeclaration(pos, hasJSDoc, modifiers)
 		}
 	}
-	if modifierList != nil {
+	if modifiers != nil {
 		// treat this as a property declaration with a missing name.
 		p.parseErrorAt(p.nodePos(), p.nodePos(), diagnostics.Declaration_expected)
 		name := p.newIdentifier("")
-		return p.parsePropertyDeclaration(pos, hasJSDoc, modifierList, name, nil /*questionToken*/)
+		return p.parsePropertyDeclaration(pos, hasJSDoc, modifiers, name, nil /*questionToken*/)
 	}
 	// 'isClassMemberStart' should have hinted not to attempt parsing.
 	panic("Should not have attempted to parse class member declaration.")
 }
 
-func (p *Parser) parseClassStaticBlockDeclaration(pos int, hasJSDoc bool, modifiers *ast.Node) *ast.Node {
+func (p *Parser) parseClassStaticBlockDeclaration(pos int, hasJSDoc bool, modifiers []*ast.Node) *ast.Node {
 	p.parseExpectedToken(ast.KindStaticKeyword)
 	body := p.parseClassStaticBlockBody()
 	result := p.factory.NewClassStaticBlockDeclaration(modifiers, body)
@@ -1465,7 +1465,7 @@ func (p *Parser) parseClassStaticBlockBody() *ast.Node {
 	return body
 }
 
-func (p *Parser) tryParseConstructorDeclaration(pos int, hasJSDoc bool, modifiers *ast.Node) *ast.Node {
+func (p *Parser) tryParseConstructorDeclaration(pos int, hasJSDoc bool, modifiers []*ast.Node) *ast.Node {
 	state := p.mark()
 	if p.token == ast.KindConstructorKeyword || p.token == ast.KindStringLiteral && p.scanner.tokenValue == "constructor" && p.lookAhead(p.nextTokenIsOpenParen) {
 		p.nextToken()
@@ -1486,7 +1486,7 @@ func (p *Parser) nextTokenIsOpenParen() bool {
 	return p.nextToken() == ast.KindOpenParenToken
 }
 
-func (p *Parser) parsePropertyOrMethodDeclaration(pos int, hasJSDoc bool, modifiers *ast.Node) *ast.Node {
+func (p *Parser) parsePropertyOrMethodDeclaration(pos int, hasJSDoc bool, modifiers []*ast.Node) *ast.Node {
 	asteriskToken := p.parseOptionalToken(ast.KindAsteriskToken)
 	name := p.parsePropertyName()
 	// Note: this is not legal as per the grammar.  But we allow it in the parser and
@@ -1498,7 +1498,7 @@ func (p *Parser) parsePropertyOrMethodDeclaration(pos int, hasJSDoc bool, modifi
 	return p.parsePropertyDeclaration(pos, hasJSDoc, modifiers, name, questionToken)
 }
 
-func (p *Parser) parseMethodDeclaration(pos int, hasJSDoc bool, modifiers *ast.Node, asteriskToken *ast.Node, name *ast.Node, questionToken *ast.Node, diagnosticMessage *diagnostics.Message) *ast.Node {
+func (p *Parser) parseMethodDeclaration(pos int, hasJSDoc bool, modifiers []*ast.Node, asteriskToken *ast.Node, name *ast.Node, questionToken *ast.Node, diagnosticMessage *diagnostics.Message) *ast.Node {
 	signatureFlags := ifElse(asteriskToken != nil, ParseFlagsYield, ParseFlagsNone) | ifElse(hasAsyncModifier(modifiers), ParseFlagsAwait, ParseFlagsNone)
 	typeParameters := p.parseTypeParameters()
 	parameters := p.parseParameters(signatureFlags)
@@ -1510,11 +1510,11 @@ func (p *Parser) parseMethodDeclaration(pos int, hasJSDoc bool, modifiers *ast.N
 	return result
 }
 
-func hasAsyncModifier(modifiers *ast.Node) bool {
-	return modifiers != nil && core.Some(modifiers.AsModifierList().Elements(), isAsyncModifier)
+func hasAsyncModifier(modifiers []*ast.Node) bool {
+	return core.Some(modifiers, isAsyncModifier)
 }
 
-func (p *Parser) parsePropertyDeclaration(pos int, hasJSDoc bool, modifiers *ast.Node, name *ast.Node, questionToken *ast.Node) *ast.Node {
+func (p *Parser) parsePropertyDeclaration(pos int, hasJSDoc bool, modifiers []*ast.Node, name *ast.Node, questionToken *ast.Node) *ast.Node {
 	postfixToken := questionToken
 	if postfixToken == nil && !p.hasPrecedingLineBreak() {
 		postfixToken = p.parseOptionalToken(ast.KindExclamationToken)
@@ -1618,7 +1618,7 @@ func (p *Parser) parseErrorForInvalidName(nameDiagnostic *diagnostics.Message, b
 	}
 }
 
-func (p *Parser) parseInterfaceDeclaration(pos int, hasJSDoc bool, modifiers *ast.Node) *ast.Node {
+func (p *Parser) parseInterfaceDeclaration(pos int, hasJSDoc bool, modifiers []*ast.Node) *ast.Node {
 	p.parseExpected(ast.KindInterfaceKeyword)
 	name := p.parseIdentifier()
 	typeParameters := p.parseTypeParameters()
@@ -1630,7 +1630,7 @@ func (p *Parser) parseInterfaceDeclaration(pos int, hasJSDoc bool, modifiers *as
 	return result
 }
 
-func (p *Parser) parseTypeAliasDeclaration(pos int, hasJSDoc bool, modifiers *ast.Node) *ast.Node {
+func (p *Parser) parseTypeAliasDeclaration(pos int, hasJSDoc bool, modifiers []*ast.Node) *ast.Node {
 	p.parseExpected(ast.KindTypeKeyword)
 	if p.hasPrecedingLineBreak() {
 		p.parseErrorAtCurrentToken(diagnostics.Line_break_not_permitted_here)
@@ -1669,7 +1669,7 @@ func (p *Parser) parseEnumMember() *ast.Node {
 	return result
 }
 
-func (p *Parser) parseEnumDeclaration(pos int, hasJSDoc bool, modifiers *ast.Node) *ast.Node {
+func (p *Parser) parseEnumDeclaration(pos int, hasJSDoc bool, modifiers []*ast.Node) *ast.Node {
 	p.parseExpected(ast.KindEnumKeyword)
 	name := p.parseIdentifier()
 	var members ast.NodeList
@@ -1686,7 +1686,7 @@ func (p *Parser) parseEnumDeclaration(pos int, hasJSDoc bool, modifiers *ast.Nod
 	return result
 }
 
-func (p *Parser) parseModuleDeclaration(pos int, hasJSDoc bool, modifiers *ast.Node) *ast.Statement {
+func (p *Parser) parseModuleDeclaration(pos int, hasJSDoc bool, modifiers []*ast.Node) *ast.Statement {
 	var flags ast.NodeFlags
 	if p.token == ast.KindGlobalKeyword {
 		// global augmentation
@@ -1702,7 +1702,7 @@ func (p *Parser) parseModuleDeclaration(pos int, hasJSDoc bool, modifiers *ast.N
 	return p.parseModuleOrNamespaceDeclaration(pos, hasJSDoc, modifiers, flags)
 }
 
-func (p *Parser) parseAmbientExternalModuleDeclaration(pos int, hasJSDoc bool, modifiers *ast.Node) *ast.Node {
+func (p *Parser) parseAmbientExternalModuleDeclaration(pos int, hasJSDoc bool, modifiers []*ast.Node) *ast.Node {
 	var flags ast.NodeFlags
 	var name *ast.Node
 	if p.token == ast.KindGlobalKeyword {
@@ -1738,7 +1738,7 @@ func (p *Parser) parseModuleBlock() *ast.Node {
 	return result
 }
 
-func (p *Parser) parseModuleOrNamespaceDeclaration(pos int, hasJSDoc bool, modifiers *ast.Node, flags ast.NodeFlags) *ast.Node {
+func (p *Parser) parseModuleOrNamespaceDeclaration(pos int, hasJSDoc bool, modifiers []*ast.Node, flags ast.NodeFlags) *ast.Node {
 	// If we are parsing a dotted namespace name, we want to
 	// propagate the 'Namespace' flag across the names if set.
 	namespaceFlag := flags & ast.NodeFlagsNamespace
@@ -1760,7 +1760,7 @@ func (p *Parser) parseModuleOrNamespaceDeclaration(pos int, hasJSDoc bool, modif
 	return result
 }
 
-func (p *Parser) parseImportDeclarationOrImportEqualsDeclaration(pos int, hasJSDoc bool, modifiers *ast.Node) *ast.Statement {
+func (p *Parser) parseImportDeclarationOrImportEqualsDeclaration(pos int, hasJSDoc bool, modifiers []*ast.Node) *ast.Statement {
 	p.parseExpected(ast.KindImportKeyword)
 	afterImportPos := p.nodePos()
 	// We don't parse the identifier here in await context, instead we will report a grammar error in the checker.
@@ -1805,7 +1805,7 @@ func (p *Parser) tokenAfterImportedIdentifierDefinitelyProducesImportDeclaration
 	return p.token == ast.KindCommaToken || p.token == ast.KindFromKeyword
 }
 
-func (p *Parser) parseImportEqualsDeclaration(pos int, hasJSDoc bool, modifiers *ast.Node, identifier *ast.Node, isTypeOnly bool) *ast.Node {
+func (p *Parser) parseImportEqualsDeclaration(pos int, hasJSDoc bool, modifiers []*ast.Node, identifier *ast.Node, isTypeOnly bool) *ast.Node {
 	p.parseExpected(ast.KindEqualsToken)
 	moduleReference := p.parseModuleReference()
 	p.parseSemicolon()
@@ -2008,7 +2008,7 @@ func (p *Parser) tryParseImportAttributes() *ast.Node {
 	return nil
 }
 
-func (p *Parser) parseExportAssignment(pos int, hasJSDoc bool, modifiers *ast.Node) *ast.Node {
+func (p *Parser) parseExportAssignment(pos int, hasJSDoc bool, modifiers []*ast.Node) *ast.Node {
 	saveContextFlags := p.contextFlags
 	p.setContextFlags(ast.NodeFlagsAwaitContext, true)
 	isExportEquals := false
@@ -2026,7 +2026,7 @@ func (p *Parser) parseExportAssignment(pos int, hasJSDoc bool, modifiers *ast.No
 	return result
 }
 
-func (p *Parser) parseNamespaceExportDeclaration(pos int, hasJSDoc bool, modifiers *ast.Node) *ast.Node {
+func (p *Parser) parseNamespaceExportDeclaration(pos int, hasJSDoc bool, modifiers []*ast.Node) *ast.Node {
 	p.parseExpected(ast.KindAsKeyword)
 	p.parseExpected(ast.KindNamespaceKeyword)
 	name := p.parseIdentifier()
@@ -2038,7 +2038,7 @@ func (p *Parser) parseNamespaceExportDeclaration(pos int, hasJSDoc bool, modifie
 	return result
 }
 
-func (p *Parser) parseExportDeclaration(pos int, hasJSDoc bool, modifiers *ast.Node) *ast.Node {
+func (p *Parser) parseExportDeclaration(pos int, hasJSDoc bool, modifiers []*ast.Node) *ast.Node {
 	saveContextFlags := p.contextFlags
 	p.setContextFlags(ast.NodeFlagsAwaitContext, true)
 	var exportClause *ast.Node
@@ -2727,7 +2727,7 @@ func (p *Parser) parseTypeParameters() *ast.Node {
 
 func (p *Parser) parseTypeParameter() *ast.Node {
 	pos := p.nodePos()
-	modifiers := p.parseModifiersWithOptions(false /*allowDecorators*/, true /*permitConstAsModifier*/, false /*stopOnStartOfClassStaticBlock*/)
+	modifiers := p.parseModifiersEx(false /*allowDecorators*/, true /*permitConstAsModifier*/, false /*stopOnStartOfClassStaticBlock*/)
 	name := p.parseIdentifier()
 	var constraint *ast.TypeNode
 	var expression *ast.Expression
@@ -2820,7 +2820,7 @@ func (p *Parser) parseParameterWithOptions(inOuterAwaitContext bool, allowAmbigu
 	// Decorators are parsed in the outer [Await] context, the rest of the parameter is parsed in the function's [Await] context.
 	saveContextFlags := p.contextFlags
 	p.setContextFlags(ast.NodeFlagsAwaitContext, inOuterAwaitContext)
-	modifiers := p.parseModifiersWithOptions(true /*allowDecorators*/, false /*permitConstAsModifier*/, false /*stopOnStartOfClassStaticBlock*/)
+	modifiers := p.parseModifiersEx(true /*allowDecorators*/, false /*permitConstAsModifier*/, false /*stopOnStartOfClassStaticBlock*/)
 	p.contextFlags = saveContextFlags
 	if p.token == ast.KindThisKeyword {
 		result := p.factory.NewParameterDeclaration(
@@ -2830,8 +2830,8 @@ func (p *Parser) parseParameterWithOptions(inOuterAwaitContext bool, allowAmbigu
 			nil, /*questionToken*/
 			p.parseTypeAnnotation(),
 			nil /*initializer*/)
-		if modifiers != nil {
-			p.parseErrorAtRange(modifiers.Loc, diagnostics.Neither_decorators_nor_modifiers_may_be_applied_to_this_parameters)
+		if len(modifiers) != 0 {
+			p.parseErrorAtRange(modifiers[0].Loc, diagnostics.Neither_decorators_nor_modifiers_may_be_applied_to_this_parameters)
 		}
 		p.finishNode(result, pos)
 		return result
@@ -2858,7 +2858,7 @@ func (p *Parser) isParameterNameStart() bool {
 	return p.isBindingIdentifier() || p.token == ast.KindOpenBracketToken || p.token == ast.KindOpenBraceToken
 }
 
-func (p *Parser) parseNameOfParameter(modifiers *ast.Node) *ast.Node {
+func (p *Parser) parseNameOfParameter(modifiers []*ast.Node) *ast.Node {
 	// FormalParameter [Yield,Await]:
 	//      BindingElement[?Yield,?Await]
 	name := p.parseIdentifierOrPatternWithDiagnostic(diagnostics.Private_identifiers_cannot_be_used_as_parameters)
@@ -2924,7 +2924,7 @@ func (p *Parser) parseTypeMemberSemicolon() {
 	p.parseSemicolon()
 }
 
-func (p *Parser) parseAccessorDeclaration(pos int, hasJSDoc bool, modifiers *ast.Node, kind ast.Kind, flags ParseFlags) *ast.Node {
+func (p *Parser) parseAccessorDeclaration(pos int, hasJSDoc bool, modifiers []*ast.Node, kind ast.Kind, flags ParseFlags) *ast.Node {
 	name := p.parsePropertyName()
 	typeParameters := p.parseTypeParameters()
 	parameters := p.parseParameters(ParseFlagsNone)
@@ -3056,7 +3056,7 @@ func (p *Parser) nextIsUnambiguouslyIndexSignature() bool {
 	return p.token == ast.KindColonToken || p.token == ast.KindCommaToken || p.token == ast.KindCloseBracketToken
 }
 
-func (p *Parser) parseIndexSignatureDeclaration(pos int, hasJSDoc bool, modifiers *ast.Node) *ast.Node {
+func (p *Parser) parseIndexSignatureDeclaration(pos int, hasJSDoc bool, modifiers []*ast.Node) *ast.Node {
 	parameters := p.parseBracketedList(PCParameters, (*Parser).parseParameter, ast.KindOpenBracketToken, ast.KindCloseBracketToken)
 	typeNode := p.parseTypeAnnotation()
 	p.parseTypeMemberSemicolon()
@@ -3066,7 +3066,7 @@ func (p *Parser) parseIndexSignatureDeclaration(pos int, hasJSDoc bool, modifier
 	return result
 }
 
-func (p *Parser) parsePropertyOrMethodSignature(pos int, hasJSDoc bool, modifiers *ast.Node) *ast.Node {
+func (p *Parser) parsePropertyOrMethodSignature(pos int, hasJSDoc bool, modifiers []*ast.Node) *ast.Node {
 	_ = hasJSDoc
 	name := p.parsePropertyName()
 	questionToken := p.parseOptionalToken(ast.KindQuestionToken)
@@ -3309,15 +3309,13 @@ func (p *Parser) parseFunctionOrConstructorType() *ast.TypeNode {
 	return result
 }
 
-func (p *Parser) parseModifiersForConstructorType() *ast.Node {
+func (p *Parser) parseModifiersForConstructorType() []*ast.Node {
 	if p.token == ast.KindAbstractKeyword {
 		pos := p.nodePos()
 		modifier := p.factory.NewModifier(p.token)
 		p.nextToken()
 		p.finishNode(modifier, pos)
-		result := p.factory.NewModifierList([]*ast.Node{modifier}, ast.ModifierFlagsAbstract)
-		p.finishNode(result, pos)
-		return result
+		return []*ast.Node{modifier}
 	}
 	return nil
 }
@@ -3370,45 +3368,44 @@ func (p *Parser) skipParameterStart() bool {
 	return false
 }
 
-func (p *Parser) parseModifiers() *ast.Node {
-	return p.parseModifiersWithOptions(false, false, false)
+func (p *Parser) parseModifiers() []*ast.Node {
+	return p.parseModifiersEx(false, false, false)
 }
 
-func (p *Parser) parseModifiersWithOptions(allowDecorators bool, permitConstAsModifier bool, stopOnStartOfClassStaticBlock bool) *ast.Node {
-	pos := p.nodePos()
-	list := []*ast.Node{}
-	preModifierFlags := ast.ModifierFlagsNone
-	decoratorFlag := ast.ModifierFlagsNone
-	postModifierFlags := ast.ModifierFlagsNone
+func (p *Parser) parseModifiersEx(allowDecorators bool, permitConstAsModifier bool, stopOnStartOfClassStaticBlock bool) []*ast.Node {
+	var list []*ast.Node
+	var hasLeadingModifier bool
+	var hasTrailingDecorator bool
+	var hasTrailingModifier bool
+	var hasStaticModifier bool
 	// Decorators should be contiguous in a list of modifiers but can potentially appear in two places (i.e., `[...leadingDecorators, ...leadingModifiers, ...trailingDecorators, ...trailingModifiers]`).
 	// The leading modifiers *should* only contain `export` and `default` when trailingDecorators are present, but we'll handle errors for any other leading modifiers in the checker.
 	// It is illegal to have both leadingDecorators and trailingDecorators, but we will report that as a grammar check in the checker.
 	// parse leading decorators
 	for {
-		if allowDecorators && p.token == ast.KindAtToken && postModifierFlags == ast.ModifierFlagsNone {
+		if allowDecorators && p.token == ast.KindAtToken && !hasTrailingModifier {
 			decorator := p.parseDecorator()
 			list = append(list, decorator)
-			decoratorFlag |= ast.ModifierFlagsDecorator
+			if hasLeadingModifier {
+				hasTrailingDecorator = true
+			}
 		} else {
-			modifier := p.tryParseModifier((preModifierFlags|postModifierFlags)&ast.ModifierFlagsStatic != 0, permitConstAsModifier, stopOnStartOfClassStaticBlock)
+			modifier := p.tryParseModifier(hasStaticModifier, permitConstAsModifier, stopOnStartOfClassStaticBlock)
 			if modifier == nil {
 				break
 			}
+			if modifier.Kind == ast.KindStaticKeyword {
+				hasStaticModifier = true
+			}
 			list = append(list, modifier)
-			flag := modifierToFlag(modifier.Kind)
-			if decoratorFlag == ast.ModifierFlagsNone {
-				preModifierFlags |= flag
+			if hasTrailingDecorator {
+				hasTrailingModifier = true
 			} else {
-				postModifierFlags |= flag
+				hasLeadingModifier = true
 			}
 		}
 	}
-	if len(list) > 0 {
-		result := p.factory.NewModifierList(list, preModifierFlags|decoratorFlag|postModifierFlags)
-		p.finishNode(result, pos)
-		return result
-	}
-	return nil
+	return list
 }
 
 func (p *Parser) parseDecorator() *ast.Node {
@@ -3948,15 +3945,13 @@ func (p *Parser) parseParenthesizedArrowFunctionExpression(allowAmbiguity bool, 
 	return result
 }
 
-func (p *Parser) parseModifiersForArrowFunction() *ast.Node {
+func (p *Parser) parseModifiersForArrowFunction() []*ast.Node {
 	if p.token == ast.KindAsyncKeyword {
 		pos := p.nodePos()
 		p.nextToken()
 		modifier := p.factory.NewModifier(ast.KindAsyncKeyword)
 		p.finishNode(modifier, pos)
-		result := p.factory.NewModifierList([]*ast.Node{modifier}, ast.ModifierFlagsAsync)
-		p.finishNode(modifier, pos)
-		return result
+		return []*ast.Node{modifier}
 	}
 	return nil
 }
@@ -4051,7 +4046,7 @@ func (p *Parser) nextIsUnParenthesizedAsyncArrowFunction() bool {
 	return false
 }
 
-func (p *Parser) parseSimpleArrowFunctionExpression(pos int, identifier *ast.Node, allowReturnTypeInArrowFunction bool, hasJSDoc bool, asyncModifier *ast.Node) *ast.Node {
+func (p *Parser) parseSimpleArrowFunctionExpression(pos int, identifier *ast.Node, allowReturnTypeInArrowFunction bool, hasJSDoc bool, asyncModifier []*ast.Node) *ast.Node {
 	//Debug.assert(token() == ast.KindEqualsGreaterThanToken, "parseSimpleArrowFunctionExpression should only have been called if we had a =>");
 	parameter := p.factory.NewParameterDeclaration(nil /*modifiers*/, nil /*dotDotDotToken*/, identifier, nil /*questionToken*/, nil /*typeNode*/, nil /*initializer*/)
 	p.finishNode(parameter, identifier.Pos())
@@ -5180,7 +5175,7 @@ func (p *Parser) parseObjectLiteralElement() *ast.Node {
 		p.finishNode(result, pos)
 		return result
 	}
-	modifiers := p.parseModifiersWithOptions(true /*allowDecorators*/, false /*permitConstAsModifier*/, false /*stopOnStartOfClassStaticBlock*/)
+	modifiers := p.parseModifiersEx(true /*allowDecorators*/, false /*permitConstAsModifier*/, false /*stopOnStartOfClassStaticBlock*/)
 	if p.parseContextualModifier(ast.KindGetKeyword) {
 		return p.parseAccessorDeclaration(pos, hasJSDoc, modifiers, ast.KindGetAccessor, ParseFlagsNone)
 	}
@@ -5268,7 +5263,7 @@ func (p *Parser) parseOptionalBindingIdentifier() *ast.Node {
 func (p *Parser) parseDecoratedExpression() *ast.Expression {
 	pos := p.nodePos()
 	hasJSDoc := p.hasPrecedingJSDocComment()
-	modifiers := p.parseModifiersWithOptions(true /*allowDecorators*/, false /*permitConstAsModifier*/, false /*stopOnStartOfClassStaticBlock*/)
+	modifiers := p.parseModifiersEx(true /*allowDecorators*/, false /*permitConstAsModifier*/, false /*stopOnStartOfClassStaticBlock*/)
 	if p.token == ast.KindClassKeyword {
 		return p.parseClassDeclarationOrExpression(pos, hasJSDoc, modifiers, ast.KindClassExpression)
 	}
@@ -5885,7 +5880,7 @@ func isClassMemberModifier(token ast.Kind) bool {
 }
 
 func isParameterPropertyModifier(kind ast.Kind) bool {
-	return modifierToFlag(kind)&ast.ModifierFlagsParameterPropertyModifier != 0
+	return ast.ModifierToFlag(kind)&ast.ModifierFlagsParameterPropertyModifier != 0
 }
 
 func isKeyword(token ast.Kind) bool {
