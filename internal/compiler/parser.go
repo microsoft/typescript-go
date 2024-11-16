@@ -115,7 +115,7 @@ func ParseJSONText(fileName string, sourceText string) *ast.SourceFile {
 	if len(expressions) == 1 {
 		statement = p.factory.NewExpressionStatement(expressions[0])
 	} else {
-		arr := p.factory.NewArrayLiteralExpression(expressions, false)
+		arr := p.factory.NewArrayLiteralExpression(ast.NewNodeList(core.NewTextRange(pos, p.nodePos()), expressions, false), false)
 		p.finishNode(arr, pos)
 		statement = p.factory.NewExpressionStatement(arr)
 	}
@@ -251,24 +251,28 @@ func (p *Parser) parseList(kind ParsingContext, parseElement func(p *Parser) *as
 }
 
 // Return a non-nil (but possibly empty) slice if parsing was successful, or nil if parseElement returned nil
-func (p *Parser) parseDelimitedList(kind ParsingContext, parseElement func(p *Parser) *ast.Node) []*ast.Node {
+func (p *Parser) parseDelimitedList(kind ParsingContext, parseElement func(p *Parser) *ast.Node) ast.NodeList {
 	saveParsingContexts := p.parsingContexts
 	p.parsingContexts |= 1 << kind
-	list := []*ast.Node{}
+	pos := p.nodePos()
+	var list []*ast.Node
+	var commaParsed bool
 	for {
 		if p.isListElement(kind, false /*inErrorRecovery*/) {
 			startPos := p.nodePos()
 			element := parseElement(p)
 			if element == nil {
 				p.parsingContexts = saveParsingContexts
-				// Return nil list to indicate parseElement failed
-				return nil
+				// Return zero list indicate parseElement failed
+				return ast.NodeList{}
 			}
 			list = append(list, element)
 			if p.parseOptional(ast.KindCommaToken) {
 				// No need to check for a zero length node since we know we parsed a comma
+				commaParsed = true
 				continue
 			}
+			commaParsed = false
 			if p.isListTerminator(kind) {
 				break
 			}
@@ -304,18 +308,18 @@ func (p *Parser) parseDelimitedList(kind ParsingContext, parseElement func(p *Pa
 		}
 	}
 	p.parsingContexts = saveParsingContexts
-	return list
+	return ast.NewNodeList(core.NewTextRange(pos, p.nodePos()), list, commaParsed)
 }
 
 // Return a non-nil (but possibly empty) slice if parsing was successful, or nil if opening token wasn't found
 // or parseElement returned nil
-func (p *Parser) parseBracketedList(kind ParsingContext, parseElement func(p *Parser) *ast.Node, opening ast.Kind, closing ast.Kind) []*ast.Node {
+func (p *Parser) parseBracketedList(kind ParsingContext, parseElement func(p *Parser) *ast.Node, opening ast.Kind, closing ast.Kind) ast.NodeList {
 	if p.parseExpected(opening) {
 		result := p.parseDelimitedList(kind, parseElement)
 		p.parseExpected(closing)
 		return result
 	}
-	return nil
+	return ast.NodeList{}
 }
 
 // Returns true if we should abort parsing.
@@ -1107,9 +1111,9 @@ func (p *Parser) parseVariableDeclarationList(inForStatementInitializer bool) *a
 	// So we need to look ahead to determine if 'of' should be treated as a keyword in
 	// this context.
 	// The checker will then give an error that there is an empty declaration list.
-	var declarations []*ast.Node
+	var declarations ast.NodeList
 	if p.token == ast.KindOfKeyword && p.lookAhead(p.nextIsIdentifierAndCloseParen) {
-		declarations = []*ast.Node{}
+		declarations = ast.NewNodeList(core.NewTextRange(p.nodePos(), p.nodePos()), nil, false)
 	} else {
 		saveContextFlags := p.contextFlags
 		p.setContextFlags(ast.NodeFlagsDisallowInContext, inForStatementInitializer)
@@ -1668,7 +1672,7 @@ func (p *Parser) parseEnumMember() *ast.Node {
 func (p *Parser) parseEnumDeclaration(pos int, hasJSDoc bool, modifiers *ast.Node) *ast.Node {
 	p.parseExpected(ast.KindEnumKeyword)
 	name := p.parseIdentifier()
-	var members []*ast.Node
+	var members ast.NodeList
 	if p.parseExpected(ast.KindOpenBraceToken) {
 		saveContextFlags := p.contextFlags
 		p.setContextFlags(ast.NodeFlagsYieldContext|ast.NodeFlagsAwaitContext, false)
@@ -2494,7 +2498,7 @@ func (p *Parser) parseTypeArguments() *ast.Node {
 	if p.token == ast.KindLessThanToken {
 		pos := p.nodePos()
 		typeArguments := p.parseBracketedList(PCTypeArguments, (*Parser).parseType, ast.KindLessThanToken, ast.KindGreaterThanToken)
-		if typeArguments != nil {
+		if typeArguments.IsPresent {
 			result := p.factory.NewTypeArgumentList(typeArguments)
 			p.finishNode(result, pos)
 			return result
@@ -2572,7 +2576,7 @@ func (p *Parser) parseImportAttributes(token ast.Kind, skipKeyword bool) *ast.No
 	if !skipKeyword {
 		p.parseExpected(token)
 	}
-	var elements []*ast.Node
+	var elements ast.NodeList
 	var multiLine bool
 	openBracePosition := p.scanner.TokenStart()
 	if p.parseExpected(ast.KindOpenBraceToken) {
@@ -2712,7 +2716,7 @@ func (p *Parser) parseTypeParameters() *ast.Node {
 	if p.token == ast.KindLessThanToken {
 		pos := p.nodePos()
 		typeParameters := p.parseBracketedList(PCTypeParameters, (*Parser).parseTypeParameter, ast.KindLessThanToken, ast.KindGreaterThanToken)
-		if typeParameters != nil {
+		if typeParameters.IsPresent {
 			result := p.factory.NewTypeParameterList(typeParameters)
 			p.finishNode(result, pos)
 			return result
@@ -2755,7 +2759,7 @@ func (p *Parser) parseTypeParameter() *ast.Node {
 	return result
 }
 
-func (p *Parser) parseParameters(flags ParseFlags) []*ast.Node {
+func (p *Parser) parseParameters(flags ParseFlags) ast.NodeList {
 	// FormalParameters [Yield,Await]: (modified)
 	//      [empty]
 	//      FormalParameterList[?Yield,Await]
@@ -2774,10 +2778,10 @@ func (p *Parser) parseParameters(flags ParseFlags) []*ast.Node {
 		p.parseExpected(ast.KindCloseParenToken)
 		return parameters
 	}
-	return nil
+	return ast.NodeList{}
 }
 
-func (p *Parser) parseParametersWorker(flags ParseFlags, allowAmbiguity bool) []*ast.Node {
+func (p *Parser) parseParametersWorker(flags ParseFlags, allowAmbiguity bool) ast.NodeList {
 	// FormalParameters [Yield,Await]: (modified)
 	//      [empty]
 	//      FormalParameterList[?Yield,Await]
@@ -3861,7 +3865,7 @@ func (p *Parser) parseParenthesizedArrowFunctionExpression(allowAmbiguity bool, 
 	// And think that "(b =>" was actually a parenthesized arrow function with a missing
 	// close paren.
 	typeParameters := p.parseTypeParameters()
-	var parameters []*ast.Node
+	var parameters ast.NodeList
 	if !p.parseExpected(ast.KindOpenParenToken) {
 		if !allowAmbiguity {
 			return nil
@@ -3869,7 +3873,7 @@ func (p *Parser) parseParenthesizedArrowFunctionExpression(allowAmbiguity bool, 
 	} else {
 		if !allowAmbiguity {
 			maybeParameters := p.parseParametersWorker(signatureFlags, allowAmbiguity)
-			if maybeParameters == nil {
+			if !maybeParameters.IsPresent {
 				return nil
 			}
 			parameters = maybeParameters
@@ -4051,7 +4055,7 @@ func (p *Parser) parseSimpleArrowFunctionExpression(pos int, identifier *ast.Nod
 	//Debug.assert(token() == ast.KindEqualsGreaterThanToken, "parseSimpleArrowFunctionExpression should only have been called if we had a =>");
 	parameter := p.factory.NewParameterDeclaration(nil /*modifiers*/, nil /*dotDotDotToken*/, identifier, nil /*questionToken*/, nil /*typeNode*/, nil /*initializer*/)
 	p.finishNode(parameter, identifier.Pos())
-	parameters := []*ast.Node{parameter}
+	parameters := ast.NewNodeList(parameter.Loc, []*ast.Node{parameter}, false)
 	equalsGreaterThanToken := p.parseExpectedToken(ast.KindEqualsGreaterThanToken)
 	body := p.parseArrowFunctionExpressionBody(asyncModifier != nil /*isAsync*/, allowReturnTypeInArrowFunction)
 	result := p.factory.NewArrowFunction(asyncModifier, nil /*typeParameters*/, parameters, nil /*returnType*/, equalsGreaterThanToken, body)
@@ -5013,7 +5017,7 @@ func (p *Parser) parseCallExpressionRest(pos int, expression *ast.Expression) *a
 	return expression
 }
 
-func (p *Parser) parseArgumentList() []*ast.Expression {
+func (p *Parser) parseArgumentList() ast.NodeList {
 	p.parseExpected(ast.KindOpenParenToken)
 	result := p.parseDelimitedList(PCArgumentExpressions, (*Parser).parseArgumentExpression)
 	p.parseExpected(ast.KindCloseParenToken)
@@ -5294,7 +5298,7 @@ func (p *Parser) parseNewExpressionOrNewDotTarget() *ast.Node {
 	if p.token == ast.KindQuestionDotToken {
 		p.parseErrorAtCurrentToken(diagnostics.Invalid_optional_chain_from_new_expression_Did_you_mean_to_call_0, getTextOfNodeFromSourceText(p.sourceText, expression))
 	}
-	var argumentList []*ast.Expression
+	var argumentList ast.NodeList
 	if p.token == ast.KindOpenParenToken {
 		argumentList = p.parseArgumentList()
 	}

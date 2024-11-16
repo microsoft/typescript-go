@@ -888,7 +888,7 @@ func getModuleInstanceStateWorker(node *ast.Node, visited map[ast.NodeId]ModuleI
 		decl := node.AsExportDeclaration()
 		if decl.ModuleSpecifier == nil && decl.ExportClause != nil && decl.ExportClause.Kind == ast.KindNamedExports {
 			state := ModuleInstanceStateNonInstantiated
-			for _, specifier := range decl.ExportClause.AsNamedExports().Elements {
+			for _, specifier := range decl.ExportClause.AsNamedExports().Elements.Nodes {
 				specifierState := getModuleInstanceStateForAliasTarget(specifier, visited)
 				if specifierState > state {
 					state = specifierState
@@ -1721,7 +1721,7 @@ func (b *Binder) checkUnreachable(node *ast.Node) bool {
 				//   On the other side we do want to report errors on non-initialized 'lets' because of TDZ
 				isError := unreachableCodeIsError(b.options) && node.Flags&ast.NodeFlagsAmbient == 0 && (!ast.IsVariableStatement(node) ||
 					getCombinedNodeFlags(node.AsVariableStatement().DeclarationList)&ast.NodeFlagsBlockScoped != 0 ||
-					core.Some(node.AsVariableStatement().DeclarationList.AsVariableDeclarationList().Declarations, func(d *ast.Node) bool {
+					core.Some(node.AsVariableStatement().DeclarationList.AsVariableDeclarationList().Declarations.Nodes, func(d *ast.Node) bool {
 						return d.AsVariableDeclaration().Initializer != nil
 					}))
 				b.errorOnEachUnreachableRange(node, isError)
@@ -1764,7 +1764,7 @@ func (b *Binder) errorOnEachUnreachableRange(node *ast.Node, isError bool) {
 func (b *Binder) isExecutableStatement(s *ast.Node) bool {
 	// Don't remove statements that can validly be used before they appear.
 	return !ast.IsFunctionDeclaration(s) && !b.isPurelyTypeDeclaration(s) && !(ast.IsVariableStatement(s) && getCombinedNodeFlags(s)&ast.NodeFlagsBlockScoped == 0 &&
-		core.Some(s.AsVariableStatement().DeclarationList.AsVariableDeclarationList().Declarations, func(d *ast.Node) bool {
+		core.Some(s.AsVariableStatement().DeclarationList.AsVariableDeclarationList().Declarations.Nodes, func(d *ast.Node) bool {
 			return d.AsVariableDeclaration().Initializer == nil
 		}))
 }
@@ -1827,7 +1827,7 @@ func isLogicalAssignmentExpression(node *ast.Node) bool {
 func (b *Binder) bindAssignmentTargetFlow(node *ast.Node) {
 	switch node.Kind {
 	case ast.KindArrayLiteralExpression:
-		for _, e := range node.AsArrayLiteralExpression().Elements {
+		for _, e := range node.AsArrayLiteralExpression().Elements.Nodes {
 			if e.Kind == ast.KindSpreadElement {
 				b.bindAssignmentTargetFlow(e.AsSpreadElement().Expression)
 			} else {
@@ -1835,7 +1835,7 @@ func (b *Binder) bindAssignmentTargetFlow(node *ast.Node) {
 			}
 		}
 	case ast.KindObjectLiteralExpression:
-		for _, p := range node.AsObjectLiteralExpression().Properties {
+		for _, p := range node.AsObjectLiteralExpression().Properties.Nodes {
 			switch p.Kind {
 			case ast.KindPropertyAssignment:
 				b.bindDestructuringTargetFlow(p.AsPropertyAssignment().Initializer)
@@ -2328,7 +2328,7 @@ func (b *Binder) bindInitializedVariableFlow(node *ast.Node) {
 		name = node.AsBindingElement().Name()
 	}
 	if name != nil && ast.IsBindingPattern(name) {
-		for _, child := range name.AsBindingPattern().Elements {
+		for _, child := range name.AsBindingPattern().Elements.Nodes {
 			b.bindInitializedVariableFlow(child)
 		}
 	} else {
@@ -2407,7 +2407,7 @@ func (b *Binder) bindOptionalChainRest(node *ast.Node) bool {
 	case ast.KindCallExpression:
 		b.bind(node.AsCallExpression().QuestionDotToken)
 		b.bind(node.AsCallExpression().TypeArguments)
-		b.bindEachExpression(node.AsCallExpression().Arguments)
+		b.bindEachExpression(node.AsCallExpression().Arguments.Nodes)
 	}
 	return false
 }
@@ -2423,7 +2423,7 @@ func (b *Binder) bindCallExpressionFlow(node *ast.Node) {
 		expr := ast.SkipParentheses(call.Expression)
 		if expr.Kind == ast.KindFunctionExpression || expr.Kind == ast.KindArrowFunction {
 			b.bind(call.TypeArguments)
-			b.bindEachExpression(call.Arguments)
+			b.bindEachExpression(call.Arguments.Nodes)
 			b.bind(call.Expression)
 		} else {
 			b.bindEachChild(node)
@@ -2666,7 +2666,7 @@ func isNarrowableReference(node *ast.Node) bool {
 
 func hasNarrowableArgument(expr *ast.Node) bool {
 	call := expr.AsCallExpression()
-	for _, argument := range call.Arguments {
+	for _, argument := range call.Arguments.Nodes {
 		if containsNarrowableReference(argument) {
 			return true
 		}

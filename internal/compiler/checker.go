@@ -2054,7 +2054,7 @@ func (c *Checker) checkObjectLiteral(node *ast.Node, checkMode CheckMode) *Type 
 	// Spreads may cause an early bail; ensure computed names are always checked (this is cached)
 	// As otherwise they may not be checked until exports for the type at this position are retrieved,
 	// which may never occur.
-	for _, elem := range node.AsObjectLiteralExpression().Properties {
+	for _, elem := range node.AsObjectLiteralExpression().Properties.Nodes {
 		if elem.Name() != nil && ast.IsComputedPropertyName(elem.Name()) {
 			c.checkComputedPropertyName(elem.Name())
 		}
@@ -2082,7 +2082,7 @@ func (c *Checker) checkObjectLiteral(node *ast.Node, checkMode CheckMode) *Type 
 		}
 		return result
 	}
-	for _, memberDecl := range node.AsObjectLiteralExpression().Properties {
+	for _, memberDecl := range node.AsObjectLiteralExpression().Properties.Nodes {
 		member := c.getSymbolOfDeclaration(memberDecl)
 		var computedNameType *Type
 		if memberDecl.Name() != nil && memberDecl.Name().Kind == ast.KindComputedPropertyName {
@@ -3110,7 +3110,7 @@ func (c *Checker) getTargetOfImportEqualsDeclaration(node *ast.Node, dontResolve
 	commonJSPropertyAccess := c.getCommonJSPropertyAccess(node)
 	if commonJSPropertyAccess != nil {
 		access := commonJSPropertyAccess.AsPropertyAccessExpression()
-		name := getLeftmostAccessExpression(access.Expression).AsCallExpression().Arguments[0]
+		name := getLeftmostAccessExpression(access.Expression).AsCallExpression().Arguments.Nodes[0]
 		if ast.IsIdentifier(access.Name()) {
 			return c.resolveSymbol(c.getPropertyOfType(c.resolveExternalModuleTypeByLiteral(name), access.Name().Text()))
 		}
@@ -3874,7 +3874,7 @@ func (c *Checker) resolveESModuleSymbol(moduleSymbol *ast.Symbol, referencingLoc
 		if ast.IsImportDeclaration(referenceParent) && getNamespaceDeclarationNode(referenceParent) != nil || isImportCall(referenceParent) {
 			var reference *ast.Node
 			if isImportCall(referenceParent) {
-				reference = referenceParent.AsCallExpression().Arguments[0]
+				reference = referenceParent.AsCallExpression().Arguments.Nodes[0]
 			} else {
 				reference = referenceParent.AsImportDeclaration().ModuleSpecifier
 			}
@@ -6493,7 +6493,7 @@ func (c *Checker) getSignatureFromDeclaration(declaration *ast.Node) *Signature 
 		isOptionalParameter := isOptionalDeclaration(param) ||
 			param.AsParameterDeclaration().Initializer != nil ||
 			isRestParameter(param) ||
-			iife != nil && len(parameters) > len(iife.AsCallExpression().Arguments) && typeNode == nil
+			iife != nil && len(parameters) > len(iife.AsCallExpression().Arguments.Nodes) && typeNode == nil
 		if !isOptionalParameter {
 			minArgumentCount = len(parameters)
 		}
@@ -7460,7 +7460,7 @@ func (c *Checker) getTypeArguments(t *Type) []*Type {
 			case ast.KindArrayType:
 				typeArguments = []*Type{c.getTypeFromTypeNode(node.AsArrayTypeNode().ElementType)}
 			case ast.KindTupleType:
-				typeArguments = core.Map(node.AsTupleTypeNode().Elements, c.getTypeFromTypeNode)
+				typeArguments = core.Map(node.AsTupleTypeNode().Elements.Nodes, c.getTypeFromTypeNode)
 			default:
 				panic("Unhandled case in getTypeArguments")
 			}
@@ -7485,7 +7485,7 @@ func (c *Checker) getTypeArguments(t *Type) []*Type {
 }
 
 func (c *Checker) getEffectiveTypeArguments(node *ast.Node, typeParameters []*Type) []*Type {
-	return c.fillMissingTypeArguments(core.Map(node.AsTypeArgumentList().Arguments, c.getTypeFromTypeNode), typeParameters, c.getMinTypeArgumentCount(typeParameters))
+	return c.fillMissingTypeArguments(core.Map(node.AsTypeArgumentList().Arguments.Nodes, c.getTypeFromTypeNode), typeParameters, c.getMinTypeArgumentCount(typeParameters))
 }
 
 /**
@@ -8863,7 +8863,7 @@ func (c *Checker) getDeclaredTypeOfEnum(symbol *ast.Symbol) *Type {
 		var memberTypeList []*Type
 		for _, declaration := range symbol.Declarations {
 			if declaration.Kind == ast.KindEnumDeclaration {
-				for _, member := range declaration.AsEnumDeclaration().Members {
+				for _, member := range declaration.AsEnumDeclaration().Members.Nodes {
 					if c.hasBindableName(member) {
 						memberSymbol := c.getSymbolOfDeclaration(member)
 						value := c.getEnumMemberValue(member).value
@@ -8925,7 +8925,7 @@ func (c *Checker) computeEnumMemberValues(node *ast.Node) {
 		nodeLinks.flags |= NodeCheckFlagsEnumValuesComputed
 		var autoValue = 0.0
 		var previous *ast.Node
-		for _, member := range node.AsEnumDeclaration().Members {
+		for _, member := range node.AsEnumDeclaration().Members.Nodes {
 			result := c.computeEnumMemberValue(member, autoValue, previous)
 			c.enumMemberLinks.get(member).value = result
 			if value, isNumber := result.value.(float64); isNumber {
@@ -9079,8 +9079,8 @@ func (c *Checker) getTypeFromArrayOrTupleTypeNode(node *ast.Node) *Type {
 		target := c.getArrayOrTupleTargetType(node)
 		if target == c.emptyGenericType {
 			links.resolvedType = c.emptyObjectType
-		} else if !(node.Kind == ast.KindTupleType && core.Some(node.AsTupleTypeNode().Elements, c.isVariadicTupleElement)) && c.isDeferredTypeReferenceNode(node, false) {
-			if node.Kind == ast.KindTupleType && len(node.AsTupleTypeNode().Elements) != 0 {
+		} else if !(node.Kind == ast.KindTupleType && core.Some(node.AsTupleTypeNode().Elements.Nodes, c.isVariadicTupleElement)) && c.isDeferredTypeReferenceNode(node, false) {
+			if node.Kind == ast.KindTupleType && len(node.AsTupleTypeNode().Elements.Nodes) != 0 {
 				links.resolvedType = target
 			} else {
 				links.resolvedType = c.createDeferredTypeReference(target, node, nil /*mapper*/, nil /*alias*/)
@@ -9090,7 +9090,7 @@ func (c *Checker) getTypeFromArrayOrTupleTypeNode(node *ast.Node) *Type {
 			if node.Kind == ast.KindArrayType {
 				elementTypes = []*Type{c.getTypeFromTypeNode(node.AsArrayTypeNode().ElementType)}
 			} else {
-				elementTypes = core.Map(node.AsTupleTypeNode().Elements, c.getTypeFromTypeNode)
+				elementTypes = core.Map(node.AsTupleTypeNode().Elements.Nodes, c.getTypeFromTypeNode)
 			}
 			links.resolvedType = c.createNormalizedTypeReference(target, elementTypes)
 		}
@@ -9111,7 +9111,7 @@ func (c *Checker) getArrayOrTupleTargetType(node *ast.Node) *Type {
 		}
 		return c.globalArrayType
 	}
-	return c.getTupleTargetType(core.Map(node.AsTupleTypeNode().Elements, c.getTupleElementInfo), readonly)
+	return c.getTupleTargetType(core.Map(node.AsTupleTypeNode().Elements.Nodes, c.getTupleElementInfo), readonly)
 }
 
 func (c *Checker) isReadonlyTypeOperator(node *ast.Node) bool {
@@ -9132,8 +9132,8 @@ func (c *Checker) getArrayElementTypeNode(node *ast.Node) *ast.Node {
 	case ast.KindParenthesizedType:
 		return c.getArrayElementTypeNode(node.AsParenthesizedTypeNode().TypeNode)
 	case ast.KindTupleType:
-		if len(node.AsTupleTypeNode().Elements) == 1 {
-			node = node.AsTupleTypeNode().Elements[0]
+		if len(node.AsTupleTypeNode().Elements.Nodes) == 1 {
+			node = node.AsTupleTypeNode().Elements.Nodes[0]
 			if node.Kind == ast.KindRestType {
 				return c.getArrayElementTypeNode(node.AsRestTypeNode().TypeNode)
 			}

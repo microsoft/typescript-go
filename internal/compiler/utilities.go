@@ -916,9 +916,9 @@ func getLeftmostAccessExpression(expr *ast.Node) *ast.Node {
 func isRequireCall(node *ast.Node, requireStringLiteralLikeArgument bool) bool {
 	if ast.IsCallExpression(node) {
 		callExpression := node.AsCallExpression()
-		if len(callExpression.Arguments) == 1 {
+		if len(callExpression.Arguments.Nodes) == 1 {
 			if ast.IsIdentifier(callExpression.Expression) && callExpression.Expression.AsIdentifier().Text == "require" {
-				return !requireStringLiteralLikeArgument || isStringLiteralLike(callExpression.Arguments[0])
+				return !requireStringLiteralLikeArgument || isStringLiteralLike(callExpression.Arguments.Nodes[0])
 			}
 		}
 	}
@@ -1075,7 +1075,7 @@ func isAliasableExpression(e *ast.Node) bool {
 }
 
 func isEmptyObjectLiteral(expression *ast.Node) bool {
-	return expression.Kind == ast.KindObjectLiteralExpression && len(expression.AsObjectLiteralExpression().Properties) == 0
+	return expression.Kind == ast.KindObjectLiteralExpression && len(expression.AsObjectLiteralExpression().Properties.Nodes) == 0
 }
 
 func isFunctionSymbol(symbol *ast.Symbol) bool {
@@ -1308,7 +1308,7 @@ func nodeHasName(statement *ast.Node, id *ast.Node) bool {
 		return ast.IsIdentifier(name) && name.AsIdentifier().Text == id.AsIdentifier().Text
 	}
 	if ast.IsVariableStatement(statement) {
-		declarations := statement.AsVariableStatement().DeclarationList.AsVariableDeclarationList().Declarations
+		declarations := statement.AsVariableStatement().DeclarationList.AsVariableDeclarationList().Declarations.Nodes
 		return core.Some(declarations, func(d *ast.Node) bool { return nodeHasName(d, id) })
 	}
 	return false
@@ -2411,7 +2411,7 @@ func isPartOfTypeExpressionWithTypeArguments(node *ast.Node) bool {
 
 func typeArgumentListContains(list *ast.Node, node *ast.Node) bool {
 	if list != nil {
-		return slices.Contains(list.AsTypeArgumentList().Arguments, node)
+		return slices.Contains(list.AsTypeArgumentList().Arguments.Nodes, node)
 	}
 	return false
 }
@@ -2508,7 +2508,7 @@ func getExternalModuleName(node *ast.Node) *ast.Node {
 	case ast.KindImportType:
 		return getImportTypeNodeLiteral(node)
 	case ast.KindCallExpression:
-		return node.AsCallExpression().Arguments[0]
+		return node.AsCallExpression().Arguments.Nodes[0]
 	case ast.KindModuleDeclaration:
 		if ast.IsStringLiteral(node.AsModuleDeclaration().Name()) {
 			return node.AsModuleDeclaration().Name()
@@ -2652,7 +2652,7 @@ func isSideEffectImport(node *ast.Node) bool {
 
 func getExternalModuleRequireArgument(node *ast.Node) *ast.Node {
 	if isVariableDeclarationInitializedToBareOrAccessedRequire(node) {
-		return getLeftmostAccessExpression(node.AsVariableDeclaration().Initializer).AsCallExpression().Arguments[0]
+		return getLeftmostAccessExpression(node.AsVariableDeclaration().Initializer).AsCallExpression().Arguments.Nodes[0]
 	}
 	return nil
 }
@@ -2783,7 +2783,7 @@ func getEffectiveTypeParameterDeclarations(node *ast.Node) []*ast.Node {
 	// }
 	typeParameters := node.TypeParameters()
 	if typeParameters != nil {
-		return typeParameters.AsTypeParameterList().Parameters
+		return typeParameters.AsTypeParameterList().Parameters.Nodes
 	}
 	// if isInJSFile(node) {
 	// 	decls := getJSDocTypeParameterDeclarations(node)
@@ -2801,7 +2801,7 @@ func getEffectiveTypeParameterDeclarations(node *ast.Node) []*ast.Node {
 func getTypeParameterNodesFromNode(node *ast.Node) []*ast.Node {
 	typeParameterList := node.TypeParameters()
 	if typeParameterList != nil {
-		return typeParameterList.AsTypeParameterList().Parameters
+		return typeParameterList.AsTypeParameterList().Parameters.Nodes
 	}
 	return nil
 }
@@ -2809,7 +2809,7 @@ func getTypeParameterNodesFromNode(node *ast.Node) []*ast.Node {
 func getTypeArgumentNodesFromNode(node *ast.Node) []*ast.Node {
 	typeArgumentList := getTypeArgumentListFromNode(node)
 	if typeArgumentList != nil {
-		return typeArgumentList.AsTypeArgumentList().Arguments
+		return typeArgumentList.AsTypeArgumentList().Arguments.Nodes
 	}
 	return nil
 }
@@ -2926,7 +2926,7 @@ func isOptionalDeclaration(declaration *ast.Node) bool {
 }
 
 func isEmptyArrayLiteral(expression *ast.Node) bool {
-	return expression.Kind == ast.KindArrayLiteralExpression && len(expression.AsArrayLiteralExpression().Elements) == 0
+	return expression.Kind == ast.KindArrayLiteralExpression && len(expression.AsArrayLiteralExpression().Elements.Nodes) == 0
 }
 
 func declarationBelongsToPrivateAmbientMember(declaration *ast.Node) bool {
@@ -3379,7 +3379,7 @@ func parameterIsThisKeyword(parameter *ast.Node) bool {
 func getInterfaceBaseTypeNodes(node *ast.Node) []*ast.Node {
 	heritageClause := getHeritageClause(node.AsInterfaceDeclaration().HeritageClauses, ast.KindExtendsKeyword)
 	if heritageClause != nil {
-		return heritageClause.AsHeritageClause().Types
+		return heritageClause.AsHeritageClause().Types.Nodes
 	}
 	return nil
 }
@@ -3395,8 +3395,8 @@ func getHeritageClause(clauses []*ast.Node, kind ast.Kind) *ast.Node {
 
 func getClassExtendsHeritageElement(node *ast.Node) *ast.Node {
 	heritageClause := getHeritageClause(node.ClassLikeData().HeritageClauses, ast.KindExtendsKeyword)
-	if heritageClause != nil && len(heritageClause.AsHeritageClause().Types) > 0 {
-		return heritageClause.AsHeritageClause().Types[0]
+	if heritageClause != nil && len(heritageClause.AsHeritageClause().Types.Nodes) > 0 {
+		return heritageClause.AsHeritageClause().Types.Nodes[0]
 	}
 	return nil
 }
