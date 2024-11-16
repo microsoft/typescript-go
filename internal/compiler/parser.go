@@ -58,6 +58,7 @@ type Parser struct {
 	identifiers           core.Set[string]
 	sourceFlags           ast.NodeFlags
 	notParenthesizedArrow core.Set[int]
+	nodeListPool          core.Pool[*ast.Node]
 }
 
 func NewParser() *Parser {
@@ -235,7 +236,7 @@ func (p *Parser) parseSourceFileWorker() *ast.SourceFile {
 func (p *Parser) parseList(kind ParsingContext, parseElement func(p *Parser) *ast.Node) []*ast.Node {
 	saveParsingContexts := p.parsingContexts
 	p.parsingContexts |= 1 << kind
-	list := []*ast.Node{}
+	list := make([]*ast.Node, 0, 16)
 	for !p.isListTerminator(kind) {
 		if p.isListElement(kind, false /*inErrorRecovery*/) {
 			list = append(list, parseElement(p))
@@ -246,7 +247,9 @@ func (p *Parser) parseList(kind ParsingContext, parseElement func(p *Parser) *as
 		}
 	}
 	p.parsingContexts = saveParsingContexts
-	return list
+	result := p.nodeListPool.NewSlice(len(list))
+	copy(result, list)
+	return result
 }
 
 // Return a non-nil (but possibly empty) slice if parsing was successful, or nil if parseElement returned nil
@@ -254,7 +257,7 @@ func (p *Parser) parseDelimitedList(kind ParsingContext, parseElement func(p *Pa
 	saveParsingContexts := p.parsingContexts
 	p.parsingContexts |= 1 << kind
 	pos := p.nodePos()
-	var list []*ast.Node
+	list := make([]*ast.Node, 0, 16)
 	var commaParsed bool
 	for {
 		if p.isListElement(kind, false /*inErrorRecovery*/) {
@@ -307,7 +310,9 @@ func (p *Parser) parseDelimitedList(kind ParsingContext, parseElement func(p *Pa
 		}
 	}
 	p.parsingContexts = saveParsingContexts
-	return ast.NewNodeList(core.NewTextRange(pos, p.nodePos()), list, commaParsed)
+	slice := p.nodeListPool.NewSlice(len(list))
+	copy(slice, list)
+	return ast.NewNodeList(core.NewTextRange(pos, p.nodePos()), slice, commaParsed)
 }
 
 // Return a non-nil (but possibly empty) slice if parsing was successful, or nil if opening token wasn't found
@@ -3372,7 +3377,6 @@ func (p *Parser) parseModifiers() []*ast.Node {
 }
 
 func (p *Parser) parseModifiersEx(allowDecorators bool, permitConstAsModifier bool, stopOnStartOfClassStaticBlock bool) []*ast.Node {
-	var list []*ast.Node
 	var hasLeadingModifier bool
 	var hasTrailingDecorator bool
 	var hasTrailingModifier bool
@@ -3381,6 +3385,7 @@ func (p *Parser) parseModifiersEx(allowDecorators bool, permitConstAsModifier bo
 	// The leading modifiers *should* only contain `export` and `default` when trailingDecorators are present, but we'll handle errors for any other leading modifiers in the checker.
 	// It is illegal to have both leadingDecorators and trailingDecorators, but we will report that as a grammar check in the checker.
 	// parse leading decorators
+	list := make([]*ast.Node, 0, 16)
 	for {
 		if allowDecorators && p.token == ast.KindAtToken && !hasTrailingModifier {
 			decorator := p.parseDecorator()
@@ -3404,7 +3409,9 @@ func (p *Parser) parseModifiersEx(allowDecorators bool, permitConstAsModifier bo
 			}
 		}
 	}
-	return list
+	result := p.nodeListPool.NewSlice(len(list))
+	copy(result, list)
+	return result
 }
 
 func (p *Parser) parseDecorator() *ast.Node {

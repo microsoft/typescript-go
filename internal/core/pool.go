@@ -15,6 +15,26 @@ func (p *Pool[T]) New() *T {
 	return &p.data[index]
 }
 
+// Allocate a slice of the given size in the pool. If the requested size is beyond the capacity of the pool
+// and a pool of the next size up still wouldn't fit the slice, make a separate memory allocation for the slice.
+// Otherwise, grow the pool if necessary and allocate a slice out of it.
+func (p *Pool[T]) NewSlice(size int) []T {
+	if size == 0 {
+		return nil
+	}
+	if len(p.data)+size > cap(p.data) {
+		nextSize := NextPoolSize(len(p.data))
+		if size > nextSize {
+			return make([]T, size)
+		}
+		p.data = make([]T, 0, nextSize)
+	}
+	newLen := len(p.data) + size
+	slice := p.data[len(p.data):newLen:newLen]
+	p.data = p.data[:newLen]
+	return slice
+}
+
 func NextPoolSize(size int) int {
 	switch {
 	case size < 16:
