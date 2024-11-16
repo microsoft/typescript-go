@@ -2400,7 +2400,7 @@ func (b *Binder) bindOptionalChainRest(node *ast.Node) bool {
 		b.bind(node.AsElementAccessExpression().ArgumentExpression)
 	case ast.KindCallExpression:
 		b.bind(node.AsCallExpression().QuestionDotToken)
-		b.bind(node.AsCallExpression().TypeArguments)
+		b.bindEach(node.AsCallExpression().TypeArguments.Nodes)
 		b.bindEach(node.AsCallExpression().Arguments.Nodes)
 	}
 	return false
@@ -2416,7 +2416,7 @@ func (b *Binder) bindCallExpressionFlow(node *ast.Node) {
 		// the current control flow (which includes evaluation of the IIFE arguments).
 		expr := ast.SkipParentheses(call.Expression)
 		if expr.Kind == ast.KindFunctionExpression || expr.Kind == ast.KindArrowFunction {
-			b.bind(call.TypeArguments)
+			b.bindEach(call.TypeArguments.Nodes)
 			b.bindEach(call.Arguments.Nodes)
 			b.bind(call.Expression)
 		} else {

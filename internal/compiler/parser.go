@@ -2491,24 +2491,18 @@ func (p *Parser) reScanTemplateToken(isTaggedTemplate bool) ast.Kind {
 	return p.token
 }
 
-func (p *Parser) parseTypeArgumentsOfTypeReference() *ast.Node {
+func (p *Parser) parseTypeArgumentsOfTypeReference() ast.NodeList {
 	if !p.hasPrecedingLineBreak() && p.reScanLessThanToken() == ast.KindLessThanToken {
 		return p.parseTypeArguments()
 	}
-	return nil
+	return ast.NodeList{}
 }
 
-func (p *Parser) parseTypeArguments() *ast.Node {
+func (p *Parser) parseTypeArguments() ast.NodeList {
 	if p.token == ast.KindLessThanToken {
-		pos := p.nodePos()
-		typeArguments := p.parseBracketedList(PCTypeArguments, (*Parser).parseType, ast.KindLessThanToken, ast.KindGreaterThanToken)
-		if typeArguments.IsPresent {
-			result := p.factory.NewTypeArgumentList(typeArguments)
-			p.finishNode(result, pos)
-			return result
-		}
+		return p.parseBracketedList(PCTypeArguments, (*Parser).parseType, ast.KindLessThanToken, ast.KindGreaterThanToken)
 	}
-	return nil
+	return ast.NodeList{}
 }
 
 func (p *Parser) nextIsStartOfTypeOfImportType() bool {
@@ -2606,7 +2600,7 @@ func (p *Parser) parseTypeQuery() *ast.Node {
 	p.parseExpected(ast.KindTypeOfKeyword)
 	entityName := p.parseEntityName(true /*allowReservedWords*/, nil)
 	// Make sure we perform ASI to prevent parsing the next line's type arguments as part of an instantiation expression
-	var typeArguments *ast.Node
+	var typeArguments ast.NodeList
 	if !p.hasPrecedingLineBreak() {
 		typeArguments = p.parseTypeArguments()
 	}
@@ -2716,17 +2710,11 @@ func (p *Parser) parseSignatureMember(kind ast.Kind) *ast.Node {
 	return result
 }
 
-func (p *Parser) parseTypeParameters() *ast.Node {
+func (p *Parser) parseTypeParameters() ast.NodeList {
 	if p.token == ast.KindLessThanToken {
-		pos := p.nodePos()
-		typeParameters := p.parseBracketedList(PCTypeParameters, (*Parser).parseTypeParameter, ast.KindLessThanToken, ast.KindGreaterThanToken)
-		if typeParameters.IsPresent {
-			result := p.factory.NewTypeParameterList(typeParameters)
-			p.finishNode(result, pos)
-			return result
-		}
+		return p.parseBracketedList(PCTypeParameters, (*Parser).parseTypeParameter, ast.KindLessThanToken, ast.KindGreaterThanToken)
 	}
-	return nil
+	return ast.NodeList{}
 }
 
 func (p *Parser) parseTypeParameter() *ast.Node {
@@ -4059,7 +4047,7 @@ func (p *Parser) parseSimpleArrowFunctionExpression(pos int, identifier *ast.Nod
 	parameters := ast.NewNodeList(parameter.Loc, []*ast.Node{parameter}, false)
 	equalsGreaterThanToken := p.parseExpectedToken(ast.KindEqualsGreaterThanToken)
 	body := p.parseArrowFunctionExpressionBody(asyncModifier != nil /*isAsync*/, allowReturnTypeInArrowFunction)
-	result := p.factory.NewArrowFunction(asyncModifier, nil /*typeParameters*/, parameters, nil /*returnType*/, equalsGreaterThanToken, body)
+	result := p.factory.NewArrowFunction(asyncModifier, ast.NodeList{} /*typeParameters*/, parameters, nil /*returnType*/, equalsGreaterThanToken, body)
 	p.finishNode(result, pos)
 	_ = hasJSDoc
 	return result
@@ -4444,7 +4432,7 @@ func (p *Parser) parseJsxOpeningOrSelfClosingElementOrOpeningFragment(inExpressi
 		return result
 	}
 	tagName := p.parseJsxElementName()
-	var typeArguments *ast.Node
+	var typeArguments ast.NodeList
 	if p.contextFlags&ast.NodeFlagsJavaScriptFile == 0 {
 		typeArguments = p.parseTypeArguments()
 	}
@@ -4751,7 +4739,7 @@ func (p *Parser) parseSuperExpression() *ast.Expression {
 	if p.token == ast.KindLessThanToken {
 		startPos := p.nodePos()
 		typeArguments := p.tryParseTypeArgumentsInExpression()
-		if typeArguments != nil {
+		if typeArguments.IsPresent {
 			p.parseErrorAt(startPos, p.nodePos(), diagnostics.X_super_may_not_use_type_arguments)
 			if !p.isTemplateStartOfTaggedTemplate() {
 				expression := p.factory.NewExpressionWithTypeArguments(expression, typeArguments)
@@ -4775,11 +4763,10 @@ func (p *Parser) isTemplateStartOfTaggedTemplate() bool {
 	return p.token == ast.KindNoSubstitutionTemplateLiteral || p.token == ast.KindTemplateHead
 }
 
-func (p *Parser) tryParseTypeArgumentsInExpression() *ast.Node {
+func (p *Parser) tryParseTypeArgumentsInExpression() ast.NodeList {
 	// TypeArguments must not be parsed in JavaScript files to avoid ambiguity with binary operators.
 	state := p.mark()
 	if p.contextFlags&ast.NodeFlagsJavaScriptFile == 0 && p.reScanLessThanToken() == ast.KindLessThanToken {
-		pos := p.nodePos()
 		p.nextToken()
 		typeArguments := p.parseDelimitedList(PCTypeArguments, (*Parser).parseType)
 		// If it doesn't have the closing `>` then it's definitely not an type argument list.
@@ -4790,14 +4777,12 @@ func (p *Parser) tryParseTypeArgumentsInExpression() *ast.Node {
 			// `f<number>(42)`, we favor the type argument interpretation even though JavaScript would view
 			// it as a relational expression.
 			if p.canFollowTypeArgumentsInExpression() {
-				result := p.factory.NewTypeArgumentList(typeArguments)
-				p.finishNode(result, pos)
-				return result
+				return typeArguments
 			}
 		}
 	}
 	p.rewind(state)
-	return nil
+	return ast.NodeList{}
 }
 
 func (p *Parser) canFollowTypeArgumentsInExpression() bool {
@@ -4896,7 +4881,7 @@ func (p *Parser) parseMemberExpressionRest(pos int, expression *ast.Expression, 
 			if questionDotToken == nil && ast.IsExpressionWithTypeArguments(expression) {
 				expression = p.parseTaggedTemplateRest(pos, expression.AsExpressionWithTypeArguments().Expression, questionDotToken, expression.AsExpressionWithTypeArguments().TypeArguments)
 			} else {
-				expression = p.parseTaggedTemplateRest(pos, expression, questionDotToken, nil /*typeArguments*/)
+				expression = p.parseTaggedTemplateRest(pos, expression, questionDotToken, ast.NodeList{} /*typeArguments*/)
 			}
 			continue
 		}
@@ -4908,7 +4893,7 @@ func (p *Parser) parseMemberExpressionRest(pos int, expression *ast.Expression, 
 				continue
 			}
 			typeArguments := p.tryParseTypeArgumentsInExpression()
-			if typeArguments != nil {
+			if typeArguments.IsPresent {
 				expression = p.factory.NewExpressionWithTypeArguments(expression, typeArguments)
 				p.finishNode(expression, pos)
 				continue
@@ -4934,7 +4919,7 @@ func (p *Parser) parsePropertyAccessExpressionRest(pos int, expression *ast.Expr
 	if isOptionalChain && ast.IsPrivateIdentifier(name) {
 		p.parseErrorAtRange(p.skipRangeTrivia(name.Loc), diagnostics.An_optional_chain_cannot_contain_private_identifiers)
 	}
-	if ast.IsExpressionWithTypeArguments(expression) && expression.AsExpressionWithTypeArguments().TypeArguments != nil {
+	if ast.IsExpressionWithTypeArguments(expression) && expression.AsExpressionWithTypeArguments().TypeArguments.IsPresent {
 		loc := p.skipRangeTrivia(expression.AsExpressionWithTypeArguments().TypeArguments.Loc)
 		p.parseErrorAtRange(loc, diagnostics.An_instantiation_expression_cannot_be_followed_by_a_property_access)
 	}
@@ -4986,7 +4971,7 @@ func (p *Parser) parseElementAccessExpressionRest(pos int, expression *ast.Expre
 func (p *Parser) parseCallExpressionRest(pos int, expression *ast.Expression) *ast.Expression {
 	for {
 		expression = p.parseMemberExpressionRest(pos, expression /*allowOptionalChain*/, true)
-		var typeArguments *ast.Node
+		var typeArguments ast.NodeList
 		questionDotToken := p.parseOptionalToken(ast.KindQuestionDotToken)
 		if questionDotToken != nil {
 			typeArguments = p.tryParseTypeArgumentsInExpression()
@@ -4995,7 +4980,7 @@ func (p *Parser) parseCallExpressionRest(pos int, expression *ast.Expression) *a
 				continue
 			}
 		}
-		if typeArguments != nil || p.token == ast.KindOpenParenToken {
+		if typeArguments.IsPresent || p.token == ast.KindOpenParenToken {
 			// Absorb type arguments into CallExpression when preceding expression is ExpressionWithTypeArguments
 			if questionDotToken == nil && expression.Kind == ast.KindExpressionWithTypeArguments {
 				typeArguments = expression.AsExpressionWithTypeArguments().TypeArguments
@@ -5050,7 +5035,7 @@ func (p *Parser) parseSpreadElement() *ast.Node {
 	return result
 }
 
-func (p *Parser) parseTaggedTemplateRest(pos int, tag *ast.Expression, questionDotToken *ast.Node, typeArguments *ast.Node) *ast.Node {
+func (p *Parser) parseTaggedTemplateRest(pos int, tag *ast.Expression, questionDotToken *ast.Node, typeArguments ast.NodeList) *ast.Node {
 	var template *ast.Expression
 	if p.token == ast.KindNoSubstitutionTemplateLiteral {
 		p.reScanTemplateToken(true /*isTaggedTemplate*/)
@@ -5290,7 +5275,7 @@ func (p *Parser) parseNewExpressionOrNewDotTarget() *ast.Node {
 	}
 	expressionPos := p.nodePos()
 	expression := p.parseMemberExpressionRest(expressionPos, p.parsePrimaryExpression(), false /*allowOptionalChain*/)
-	var typeArguments *ast.Node
+	var typeArguments ast.NodeList
 	// Absorb type arguments into NewExpression when preceding expression is ExpressionWithTypeArguments
 	if expression.Kind == ast.KindExpressionWithTypeArguments {
 		typeArguments = expression.AsExpressionWithTypeArguments().TypeArguments

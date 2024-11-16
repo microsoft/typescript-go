@@ -1566,7 +1566,7 @@ func isConstAssertion(location *ast.Node) bool {
 func isConstTypeReference(node *ast.Node) bool {
 	if node.Kind == ast.KindTypeReference {
 		ref := node.AsTypeReference()
-		return ref.TypeArguments == nil && ast.IsIdentifier(ref.TypeName) && ref.TypeName.AsIdentifier().Text == "const"
+		return ref.TypeArguments.IsPresent && ast.IsIdentifier(ref.TypeName) && ref.TypeName.AsIdentifier().Text == "const"
 	}
 	return false
 }
@@ -2341,11 +2341,11 @@ func isPartOfTypeNodeInParent(node *ast.Node) bool {
 	case ast.KindTypeAssertionExpression:
 		return node == parent.AsTypeAssertion().TypeNode
 	case ast.KindCallExpression:
-		return typeArgumentListContains(parent.AsCallExpression().TypeArguments, node)
+		return slices.Contains(parent.AsCallExpression().TypeArguments.Nodes, node)
 	case ast.KindNewExpression:
-		return typeArgumentListContains(parent.AsNewExpression().TypeArguments, node)
+		return slices.Contains(parent.AsNewExpression().TypeArguments.Nodes, node)
 	case ast.KindTaggedTemplateExpression:
-		return typeArgumentListContains(parent.AsTaggedTemplateExpression().TypeArguments, node)
+		return slices.Contains(parent.AsTaggedTemplateExpression().TypeArguments.Nodes, node)
 	}
 	return false
 }
@@ -2353,13 +2353,6 @@ func isPartOfTypeNodeInParent(node *ast.Node) bool {
 func isPartOfTypeExpressionWithTypeArguments(node *ast.Node) bool {
 	parent := node.Parent
 	return ast.IsHeritageClause(parent) && (!ast.IsClassLike(parent.Parent) || parent.AsHeritageClause().Token == ast.KindImplementsKeyword)
-}
-
-func typeArgumentListContains(list *ast.Node, node *ast.Node) bool {
-	if list != nil {
-		return slices.Contains(list.AsTypeArgumentList().Arguments.Nodes, node)
-	}
-	return false
 }
 
 func isJSDocLinkLike(node *ast.Node) bool {
@@ -2702,65 +2695,33 @@ func isTypeAlias(node *ast.Node) bool {
  */
 
 func getEffectiveTypeParameterDeclarations(node *ast.Node) []*ast.Node {
-	// if isJSDocSignature(node) {
-	// 	if isJSDocOverloadTag(node.parent) {
-	// 		jsDoc := getJSDocRoot(node.parent)
-	// 		if jsDoc && length(jsDoc.tags) {
-	// 			return flatMap(jsDoc.tags, func(tag JSDocTag) *NodeArray[TypeParameterDeclaration] {
-	// 				if isJSDocTemplateTag(tag) {
-	// 					return tag.typeParameters
-	// 				} else {
-	// 					return nil
-	// 				}
-	// 			})
-	// 		}
-	// 	}
-	// 	return emptyArray
-	// }
-	// if isJSDocTypeAlias(node) {
-	// 	Debug.assert(node.parent.kind == KindJSDoc)
-	// 	return flatMap(node.parent.tags, func(tag JSDocTag) *NodeArray[TypeParameterDeclaration] {
-	// 		if isJSDocTemplateTag(tag) {
-	// 			return tag.typeParameters
-	// 		} else {
-	// 			return nil
-	// 		}
-	// 	})
-	// }
-	typeParameters := node.TypeParameters()
-	if typeParameters != nil {
-		return typeParameters.AsTypeParameterList().Parameters.Nodes
-	}
-	// if isInJSFile(node) {
-	// 	decls := getJSDocTypeParameterDeclarations(node)
-	// 	if decls.length {
-	// 		return decls
-	// 	}
-	// 	typeTag := getJSDocType(node)
-	// 	if typeTag && isFunctionTypeNode(typeTag) && typeTag.typeParameters {
-	// 		return typeTag.typeParameters
-	// 	}
-	// }
-	return nil
+	return getTypeParameterNodesFromNode(node)
 }
 
 func getTypeParameterNodesFromNode(node *ast.Node) []*ast.Node {
-	typeParameterList := node.TypeParameters()
-	if typeParameterList != nil {
-		return typeParameterList.AsTypeParameterList().Parameters.Nodes
+	return getTypeParameterListFromNode(node).Nodes
+}
+
+func getTypeParameterListFromNode(node *ast.Node) ast.NodeList {
+	switch node.Kind {
+	case ast.KindClassDeclaration:
+		return node.AsClassDeclaration().TypeParameters
+	case ast.KindClassExpression:
+		return node.AsClassExpression().TypeParameters
+	case ast.KindInterfaceDeclaration:
+		return node.AsInterfaceDeclaration().TypeParameters
+	case ast.KindTypeAliasDeclaration:
+		return node.AsTypeAliasDeclaration().TypeParameters
+	default:
+		return node.FunctionLikeData().TypeParameters
 	}
-	return nil
 }
 
 func getTypeArgumentNodesFromNode(node *ast.Node) []*ast.Node {
-	typeArgumentList := getTypeArgumentListFromNode(node)
-	if typeArgumentList != nil {
-		return typeArgumentList.AsTypeArgumentList().Arguments.Nodes
-	}
-	return nil
+	return getTypeArgumentListFromNode(node).Nodes
 }
 
-func getTypeArgumentListFromNode(node *ast.Node) *ast.Node {
+func getTypeArgumentListFromNode(node *ast.Node) ast.NodeList {
 	switch node.Kind {
 	case ast.KindCallExpression:
 		return node.AsCallExpression().TypeArguments
