@@ -776,7 +776,7 @@ func (b *Binder) declareModuleSymbol(node *ast.Node) ModuleInstanceState {
 }
 
 func (b *Binder) bindNamespaceExportDeclaration(node *ast.Node) {
-	if node.AsNamespaceExportDeclaration().Modifiers != nil {
+	if node.AsNamespaceExportDeclaration().Modifiers() != nil {
 		b.errorOnNode(node, diagnostics.Modifiers_cannot_appear_here)
 	}
 	switch {
@@ -985,11 +985,11 @@ func (b *Binder) hasExportDeclarations(node *ast.Node) bool {
 	var statements []*ast.Node
 	switch node.Kind {
 	case ast.KindSourceFile:
-		statements = node.AsSourceFile().Statements
+		statements = node.AsSourceFile().Statements.Nodes
 	case ast.KindModuleDeclaration:
 		body := node.AsModuleDeclaration().Body
 		if body != nil && ast.IsModuleBlock(body) {
-			statements = body.AsModuleBlock().Statements
+			statements = body.AsModuleBlock().Statements.Nodes
 		}
 	}
 	return core.Some(statements, func(s *ast.Node) bool {
@@ -1232,7 +1232,7 @@ func (b *Binder) bindTypeParameter(node *ast.Node) {
 func (b *Binder) lookupName(name string, container *ast.Node) *ast.Symbol {
 	localsContainer := container.LocalsContainerData()
 	if localsContainer != nil {
-		local := localsContainer.Locals()[name]
+		local := localsContainer.Locals[name]
 		if local != nil {
 			return local
 		}
@@ -1299,9 +1299,9 @@ func (b *Binder) getStrictModeIdentifierMessage(node *ast.Node) *diagnostics.Mes
 	return diagnostics.Identifier_expected_0_is_a_reserved_word_in_strict_mode
 }
 
-func (b *Binder) updateStrictModeStatementList(statements []*ast.Node) {
+func (b *Binder) updateStrictModeStatementList(statements ast.NodeList) {
 	if !b.inStrictMode {
-		for _, statement := range statements {
+		for _, statement := range statements.Nodes {
 			if !isPrologueDirective(statement) {
 				return
 			}
@@ -1687,13 +1687,13 @@ func (b *Binder) bindModifiers(modifiers *ast.ModifierList) {
 	}
 }
 
-func (b *Binder) bindEachStatementFunctionsFirst(statements []*ast.Node) {
-	for _, node := range statements {
+func (b *Binder) bindEachStatementFunctionsFirst(statements ast.NodeList) {
+	for _, node := range statements.Nodes {
 		if node.Kind == ast.KindFunctionDeclaration {
 			b.bind(node)
 		}
 	}
-	for _, node := range statements {
+	for _, node := range statements.Nodes {
 		if node.Kind != ast.KindFunctionDeclaration {
 			b.bind(node)
 		}
@@ -1744,7 +1744,7 @@ func (b *Binder) shouldReportErrorOnModuleDeclaration(node *ast.Node) bool {
 
 func (b *Binder) errorOnEachUnreachableRange(node *ast.Node, isError bool) {
 	if b.isExecutableStatement(node) && ast.IsBlock(node.Parent) {
-		statements := node.Parent.AsBlock().Statements
+		statements := node.Parent.AsBlock().Statements.Nodes
 		index := slices.Index(statements, node)
 		var first, last *ast.Node
 		for _, s := range statements[index:] {
@@ -2090,7 +2090,7 @@ func (b *Binder) bindSwitchStatement(node *ast.Node) {
 	b.preSwitchCaseFlow = b.currentFlow
 	b.bind(stmt.CaseBlock)
 	b.addAntecedent(postSwitchLabel, b.currentFlow)
-	hasDefault := core.Some(stmt.CaseBlock.AsCaseBlock().Clauses, func(c *ast.Node) bool {
+	hasDefault := core.Some(stmt.CaseBlock.AsCaseBlock().Clauses.Nodes, func(c *ast.Node) bool {
 		return c.Kind == ast.KindDefaultClause
 	})
 	if !hasDefault {
@@ -2103,12 +2103,12 @@ func (b *Binder) bindSwitchStatement(node *ast.Node) {
 
 func (b *Binder) bindCaseBlock(node *ast.Node) {
 	switchStatement := node.Parent.AsSwitchStatement()
-	clauses := node.AsCaseBlock().Clauses
+	clauses := node.AsCaseBlock().Clauses.Nodes
 	isNarrowingSwitch := switchStatement.Expression.Kind == ast.KindTrueKeyword || isNarrowingExpression(switchStatement.Expression)
 	var fallthroughFlow *ast.FlowNode = ast.UnreachableFlow
 	for i := 0; i < len(clauses); i++ {
 		clauseStart := i
-		for len(clauses[i].AsCaseOrDefaultClause().Statements) == 0 && i+1 < len(clauses) {
+		for len(clauses[i].AsCaseOrDefaultClause().Statements.Nodes) == 0 && i+1 < len(clauses) {
 			if fallthroughFlow == ast.UnreachableFlow {
 				b.currentFlow = b.preSwitchCaseFlow
 			}
@@ -2140,7 +2140,7 @@ func (b *Binder) bindCaseOrDefaultClause(node *ast.Node) {
 		b.bind(clause.Expression)
 		b.currentFlow = saveCurrentFlow
 	}
-	b.bindEach(clause.Statements)
+	b.bindEach(clause.Statements.Nodes)
 }
 
 func (b *Binder) bindExpressionStatement(node *ast.Node) {
@@ -2469,7 +2469,7 @@ func (b *Binder) bindBindingElementFlow(node *ast.Node) {
 
 func (b *Binder) bindParameterFlow(node *ast.Node) {
 	param := node.AsParameterDeclaration()
-	b.bindModifiers(param.Modifiers)
+	b.bindModifiers(param.Modifiers())
 	b.bind(param.DotDotDotToken)
 	b.bind(param.QuestionToken)
 	b.bind(param.TypeNode)

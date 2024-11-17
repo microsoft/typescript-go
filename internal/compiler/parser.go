@@ -122,7 +122,7 @@ func ParseJSONText(fileName string, sourceText string) *ast.SourceFile {
 
 	p.finishNode(statement, pos)
 	p.parseExpectedToken(ast.KindEndOfFile)
-	node := p.factory.NewSourceFile(p.sourceText, p.fileName, []*ast.Node{statement})
+	node := p.factory.NewSourceFile(p.sourceText, p.fileName, ast.NewNodeList(statement.Loc, []*ast.Node{statement}))
 	p.finishNode(node, pos)
 	result := node.AsSourceFile()
 	result.SetDiagnostics(attachFileToDiagnostics(p.diagnostics, result))
@@ -233,7 +233,8 @@ func (p *Parser) parseSourceFileWorker() *ast.SourceFile {
 	return result
 }
 
-func (p *Parser) parseList(kind ParsingContext, parseElement func(p *Parser) *ast.Node) []*ast.Node {
+func (p *Parser) parseList(kind ParsingContext, parseElement func(p *Parser) *ast.Node) ast.NodeList {
+	pos := p.nodePos()
 	saveParsingContexts := p.parsingContexts
 	p.parsingContexts |= 1 << kind
 	list := make([]*ast.Node, 0, 16)
@@ -247,16 +248,24 @@ func (p *Parser) parseList(kind ParsingContext, parseElement func(p *Parser) *as
 		}
 	}
 	p.parsingContexts = saveParsingContexts
-	result := p.nodeListPool.NewSlice(len(list))
-	copy(result, list)
-	return result
+	slice := p.nodeListPool.NewSlice(len(list))
+	copy(slice, list)
+	return ast.NewNodeList(core.NewTextRange(pos, p.nodePos()), slice)
+}
+
+func (p *Parser) parseListOrNil(kind ParsingContext, parseElement func(p *Parser) *ast.Node) *ast.NodeList {
+	list := p.parseList(kind, parseElement)
+	if len(list.Nodes) != 0 {
+		return &list
+	}
+	return nil
 }
 
 // Return a non-nil (but possibly empty) slice if parsing was successful, or nil if parseElement returned nil
 func (p *Parser) parseDelimitedList(kind ParsingContext, parseElement func(p *Parser) *ast.Node) ast.NodeList {
+	pos := p.nodePos()
 	saveParsingContexts := p.parsingContexts
 	p.parsingContexts |= 1 << kind
-	pos := p.nodePos()
 	list := make([]*ast.Node, 0, 16)
 	for {
 		if p.isListElement(kind, false /*inErrorRecovery*/) {
@@ -320,7 +329,11 @@ func (p *Parser) parseBracketedList(kind ParsingContext, parseElement func(p *Pa
 		p.parseExpected(closing)
 		return result
 	}
-	return ast.NodeList{}
+	return p.parseEmptyNodeList()
+}
+
+func (p *Parser) parseEmptyNodeList() ast.NodeList {
+	return ast.NewNodeList(core.NewTextRange(p.nodePos(), p.nodePos()), nil)
 }
 
 // Returns true if we should abort parsing.
@@ -751,7 +764,7 @@ func (p *Parser) parseBlock(ignoreMissingOpenBrace bool, diagnosticMessage *diag
 	openBracePosition := p.scanner.TokenStart()
 	openBraceParsed := p.parseExpectedWithDiagnostic(ast.KindOpenBraceToken, diagnosticMessage, true /*shouldAdvance*/)
 	multiline := false
-	var statements []*ast.Statement
+	var statements ast.NodeList
 	if openBraceParsed || ignoreMissingOpenBrace {
 		multiline = p.hasPrecedingLineBreak()
 		statements = p.parseList(PCBlockStatements, (*Parser).parseStatement)
@@ -1318,7 +1331,7 @@ func (p *Parser) parseClassDeclarationOrExpression(pos int, hasJSDoc bool, modif
 		p.setContextFlags(ast.NodeFlagsAwaitContext, true /*value*/)
 	}
 	heritageClauses := p.parseHeritageClauses()
-	var members []*ast.Node
+	var members ast.NodeList
 	if p.parseExpected(ast.KindOpenBraceToken) {
 		// ClassTail[Yield,Await] : (Modified) See 14.5
 		//      ClassHeritage[?Yield,?Await]opt { ClassBody[?Yield,?Await]opt }
@@ -1361,13 +1374,13 @@ func isAsyncModifier(modifier *ast.Node) bool {
 	return modifier.Kind == ast.KindAsyncKeyword
 }
 
-func (p *Parser) parseHeritageClauses() []*ast.Node {
+func (p *Parser) parseHeritageClauses() *ast.NodeList {
 	// ClassTail[Yield,Await] : (Modified) See 14.5
 	//      ClassHeritage[?Yield,?Await]opt { ClassBody[?Yield,?Await]opt }
 	if p.isHeritageClause() {
-		return p.parseList(PCHeritageClauses, (*Parser).parseHeritageClause)
+		return p.parseListOrNil(PCHeritageClauses, (*Parser).parseHeritageClause)
 	}
-	return []*ast.Node{}
+	return nil
 }
 
 func (p *Parser) parseHeritageClause() *ast.Node {
@@ -1728,10 +1741,12 @@ func (p *Parser) parseAmbientExternalModuleDeclaration(pos int, hasJSDoc bool, m
 
 func (p *Parser) parseModuleBlock() *ast.Node {
 	pos := p.nodePos()
-	var statements []*ast.Statement
+	var statements ast.NodeList
 	if p.parseExpected(ast.KindOpenBraceToken) {
 		statements = p.parseList(PCBlockStatements, (*Parser).parseStatement)
 		p.parseExpected(ast.KindCloseBraceToken)
+	} else {
+		statements = p.parseEmptyNodeList()
 	}
 	result := p.factory.NewModuleBlock(statements)
 	p.finishNode(result, pos)
@@ -2149,13 +2164,13 @@ func (p *Parser) parseUnionOrIntersectionType(operator ast.Kind, parseConstituen
 		for p.parseOptional(operator) {
 			types = append(types, p.parseFunctionOrConstructorTypeToError(isUnionType, parseConstituentType))
 		}
-		typeNode = p.createUnionOrIntersectionTypeNode(operator, types)
+		typeNode = p.createUnionOrIntersectionTypeNode(operator, ast.NewNodeList(core.NewTextRange(pos, p.nodePos()), types))
 		p.finishNode(typeNode, pos)
 	}
 	return typeNode
 }
 
-func (p *Parser) createUnionOrIntersectionTypeNode(operator ast.Kind, types []*ast.TypeNode) *ast.Node {
+func (p *Parser) createUnionOrIntersectionTypeNode(operator ast.Kind, types ast.NodeList) *ast.Node {
 	switch operator {
 	case ast.KindBarToken:
 		return p.factory.NewUnionTypeNode(types)
@@ -2643,7 +2658,7 @@ func (p *Parser) parseMappedType() *ast.Node {
 	}
 	typeNode := p.parseTypeAnnotation()
 	p.parseSemicolon()
-	members := p.parseList(PCTypeMembers, (*Parser).parseTypeMember)
+	members := p.parseListOrNil(PCTypeMembers, (*Parser).parseTypeMember)
 	p.parseExpected(ast.KindCloseBraceToken)
 	result := p.factory.NewMappedTypeNode(readonlyToken, typeParameter, nameType, questionToken, typeNode, members)
 	p.finishNode(result, pos)
@@ -3091,13 +3106,13 @@ func (p *Parser) parseTypeLiteral() *ast.Node {
 	return result
 }
 
-func (p *Parser) parseObjectTypeMembers() []*ast.Node {
-	var members []*ast.Node
+func (p *Parser) parseObjectTypeMembers() ast.NodeList {
 	if p.parseExpected(ast.KindOpenBraceToken) {
-		members = p.parseList(PCTypeMembers, (*Parser).parseTypeMember)
+		members := p.parseList(PCTypeMembers, (*Parser).parseTypeMember)
 		p.parseExpected(ast.KindCloseBraceToken)
+		return members
 	}
-	return members
+	return p.parseEmptyNodeList()
 }
 
 func (p *Parser) parseTupleType() *ast.Node {
@@ -3208,8 +3223,9 @@ func (p *Parser) getTemplateLiteralRawText(endLength int) string {
 	return tokenText[1 : len(tokenText)-endLength]
 }
 
-func (p *Parser) parseTemplateTypeSpans() []*ast.Node {
-	list := []*ast.Node{}
+func (p *Parser) parseTemplateTypeSpans() ast.NodeList {
+	pos := p.nodePos()
+	var list []*ast.Node
 	for {
 		span := p.parseTemplateTypeSpan()
 		list = append(list, span)
@@ -3217,7 +3233,7 @@ func (p *Parser) parseTemplateTypeSpans() []*ast.Node {
 			break
 		}
 	}
-	return list
+	return ast.NewNodeList(core.NewTextRange(pos, p.nodePos()), list)
 }
 
 func (p *Parser) parseTemplateTypeSpan() *ast.Node {
@@ -4251,7 +4267,7 @@ func (p *Parser) parseJsxElementOrSelfClosingElementOrFragment(inExpressionConte
 	case ast.KindJsxOpeningElement:
 		children := p.parseJsxChildren(opening)
 		var closingElement *ast.Node
-		lastChild := core.LastOrNil(children)
+		lastChild := core.LastOrNil(children.Nodes)
 		if lastChild != nil && lastChild.Kind == ast.KindJsxElement &&
 			!tagNamesAreEquivalent(lastChild.AsJsxElement().OpeningElement.AsJsxOpeningElement().TagName, lastChild.AsJsxElement().ClosingElement.AsJsxClosingElement().TagName) &&
 			tagNamesAreEquivalent(opening.AsJsxOpeningElement().TagName, lastChild.AsJsxElement().ClosingElement.AsJsxClosingElement().TagName) {
@@ -4262,7 +4278,7 @@ func (p *Parser) parseJsxElementOrSelfClosingElementOrFragment(inExpressionConte
 			p.finishNode(newClosingElement, p.nodePos())
 			newLast := p.factory.NewJsxElement(lastChild.AsJsxElement().OpeningElement, lastChild.AsJsxElement().Children, newClosingElement)
 			p.finishNode(newLast, lastChild.AsJsxElement().OpeningElement.Pos())
-			children = append(children[0:len(children)-1], newLast)
+			children = ast.NewNodeList(core.NewTextRange(children.Pos(), newLast.End()), append(children.Nodes[0:len(children.Nodes)-1], newLast))
 			closingElement = lastChild.AsJsxElement().ClosingElement
 		} else {
 			closingElement = p.parseJsxClosingElement(opening, inExpressionContext)
@@ -4311,10 +4327,11 @@ func (p *Parser) parseJsxElementOrSelfClosingElementOrFragment(inExpressionConte
 	return result
 }
 
-func (p *Parser) parseJsxChildren(openingTag *ast.Expression) []*ast.Expression {
+func (p *Parser) parseJsxChildren(openingTag *ast.Expression) ast.NodeList {
+	pos := p.nodePos()
 	saveParsingContexts := p.parsingContexts
 	p.parsingContexts |= 1 << PCJsxChildren
-	list := []*ast.Expression{}
+	var list []*ast.Node
 	for {
 		currentToken := p.scanner.reScanJsxToken(true /*allowMultilineJsxText*/)
 		child := p.parseJsxChild(openingTag, currentToken)
@@ -4330,7 +4347,7 @@ func (p *Parser) parseJsxChildren(openingTag *ast.Expression) []*ast.Expression 
 		}
 	}
 	p.parsingContexts = saveParsingContexts
-	return list
+	return ast.NewNodeList(core.NewTextRange(pos, p.nodePos()), list)
 }
 
 func (p *Parser) parseJsxChild(openingTag *ast.Node, token ast.Kind) *ast.Expression {
@@ -5062,8 +5079,9 @@ func (p *Parser) parseTemplateExpression(isTaggedTemplate bool) *ast.Expression 
 	return result
 }
 
-func (p *Parser) parseTemplateSpans(isTaggedTemplate bool) []*ast.Node {
-	list := []*ast.Node{}
+func (p *Parser) parseTemplateSpans(isTaggedTemplate bool) ast.NodeList {
+	pos := p.nodePos()
+	var list []*ast.Node
 	for {
 		span := p.parseTemplateSpan(isTaggedTemplate)
 		list = append(list, span)
@@ -5071,7 +5089,7 @@ func (p *Parser) parseTemplateSpans(isTaggedTemplate bool) []*ast.Node {
 			break
 		}
 	}
-	return list
+	return ast.NewNodeList(core.NewTextRange(pos, p.nodePos()), list)
 }
 
 func (p *Parser) parseTemplateSpan(isTaggedTemplate bool) *ast.Node {
@@ -5889,7 +5907,7 @@ func isReservedWord(token ast.Kind) bool {
 }
 
 func isFileProbablyExternalModule(sourceFile *ast.SourceFile) *ast.Node {
-	for _, statement := range sourceFile.Statements {
+	for _, statement := range sourceFile.Statements.Nodes {
 		if isAnExternalModuleIndicatorNode(statement) {
 			return statement
 		}

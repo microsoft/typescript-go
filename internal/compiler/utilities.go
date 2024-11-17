@@ -477,7 +477,7 @@ func getErrorRangeForNode(sourceFile *ast.SourceFile, node *ast.Node) core.TextR
 	case ast.KindDefaultClause:
 		start := skipTrivia(sourceFile.Text, node.Pos())
 		end := node.End()
-		statements := node.Data.(*ast.CaseOrDefaultClause).Statements
+		statements := node.Data.(*ast.CaseOrDefaultClause).Statements.Nodes
 		if len(statements) != 0 {
 			end = statements[0].Pos()
 		}
@@ -1239,11 +1239,11 @@ func isPrologueDirective(node *ast.Node) bool {
 func getStatementsOfBlock(block *ast.Node) []*ast.Statement {
 	switch block.Kind {
 	case ast.KindBlock:
-		return block.AsBlock().Statements
+		return block.AsBlock().Statements.Nodes
 	case ast.KindModuleBlock:
-		return block.AsModuleBlock().Statements
+		return block.AsModuleBlock().Statements.Nodes
 	case ast.KindSourceFile:
-		return block.AsSourceFile().Statements
+		return block.AsSourceFile().Statements.Nodes
 	}
 	panic("Unhandled case in getStatementsOfBlock")
 }
@@ -1578,7 +1578,7 @@ func isModuleOrEnumDeclaration(node *ast.Node) bool {
 func getLocalsOfNode(node *ast.Node) ast.SymbolTable {
 	data := node.LocalsContainerData()
 	if data != nil {
-		return data.Locals()
+		return data.Locals
 	}
 	return nil
 }
@@ -1646,7 +1646,7 @@ func getIsolatedModules(options *core.CompilerOptions) bool {
 }
 
 func findConstructorDeclaration(node *ast.Node) *ast.Node {
-	for _, member := range node.ClassLikeData().Members {
+	for _, member := range node.ClassLikeData().Members.Nodes {
 		if ast.IsConstructorDeclaration(member) && ast.NodeIsPresent(member.AsConstructorDeclaration().Body) {
 			return member
 		}
@@ -1790,8 +1790,8 @@ loop:
 		case ast.KindPropertyDeclaration:
 			if !isStatic(location) {
 				ctor := findConstructorDeclaration(location.Parent)
-				if ctor != nil && ctor.AsConstructorDeclaration().LocalsContainerData().Locals() != nil {
-					if r.lookup(ctor.AsConstructorDeclaration().LocalsContainerData().Locals(), name, meaning&ast.SymbolFlagsValue) != nil {
+				if ctor != nil && ctor.Locals() != nil {
+					if r.lookup(ctor.Locals(), name, meaning&ast.SymbolFlagsValue) != nil {
 						// Remember the property node, it will be used later to report appropriate error
 						propertyWithInvalidInitializer = location
 					}
@@ -3264,12 +3264,11 @@ func getExports(symbol *ast.Symbol) ast.SymbolTable {
 }
 
 func getLocals(container *ast.Node) ast.SymbolTable {
-	data := container.LocalsContainerData().Locals()
-	if data == nil {
-		data = make(ast.SymbolTable)
-		container.LocalsContainerData().SetLocals(data)
+	data := container.LocalsContainerData()
+	if data.Locals == nil {
+		data.Locals = make(ast.SymbolTable)
 	}
-	return data
+	return data.Locals
 }
 
 func getThisParameter(signature *ast.Node) *ast.Node {
@@ -3295,10 +3294,12 @@ func getInterfaceBaseTypeNodes(node *ast.Node) []*ast.Node {
 	return nil
 }
 
-func getHeritageClause(clauses []*ast.Node, kind ast.Kind) *ast.Node {
-	for _, clause := range clauses {
-		if clause.AsHeritageClause().Token == kind {
-			return clause
+func getHeritageClause(clauses *ast.NodeList, kind ast.Kind) *ast.Node {
+	if clauses != nil {
+		for _, clause := range clauses.Nodes {
+			if clause.AsHeritageClause().Token == kind {
+				return clause
+			}
 		}
 	}
 	return nil
@@ -3488,7 +3489,7 @@ func createEvaluator(evaluateEntity Evaluator) Evaluator {
 		sb.WriteString(expr.AsTemplateExpression().Head.Text())
 		resolvedOtherFiles := false
 		hasExternalReferences := false
-		for _, span := range expr.AsTemplateExpression().TemplateSpans {
+		for _, span := range expr.AsTemplateExpression().TemplateSpans.Nodes {
 			spanResult := evaluate(span.Expression(), location)
 			if spanResult.value == nil {
 				return evaluatorResult(nil, true /*isSyntacticallyString*/, false, false)

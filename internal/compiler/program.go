@@ -253,7 +253,7 @@ func (p *Program) collectExternalModuleReferences(file *ast.SourceFile) {
 	// 		(imports ||= []).push(createSyntheticImport(jsxImport, file));
 	// 	}
 	// }
-	for _, node := range file.Statements {
+	for _, node := range file.Statements.Nodes {
 		p.collectModuleReferences(file, node, false /*inAmbientModule*/)
 	}
 	// if ((file.flags & NodeFlags.PossiblyContainsDynamicImport) || isJavaScriptFile) {
@@ -413,7 +413,7 @@ func (p *Program) collectModuleReferences(file *ast.SourceFile, node *ast.Statem
 			// Relative external module names are not permitted
 			// NOTE: body of ambient module is always a module block, if it exists
 			if node.AsModuleDeclaration().Body != nil {
-				for _, statement := range node.AsModuleDeclaration().Body.AsModuleBlock().Statements {
+				for _, statement := range node.AsModuleDeclaration().Body.AsModuleBlock().Statements.Nodes {
 					p.collectModuleReferences(file, statement, true /*inAmbientModule*/)
 				}
 			}

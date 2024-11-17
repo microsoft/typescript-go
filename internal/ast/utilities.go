@@ -525,9 +525,9 @@ func ModifiersToFlags(modifiers []*Node) ModifierFlags {
 }
 
 func GetModifierFlags(node *Node) ModifierFlags {
-	data := node.ModifiersData()
-	if data != nil && data.Modifiers != nil {
-		return data.Modifiers.ModifierFlags
+	modifiers := node.Modifiers()
+	if modifiers != nil {
+		return modifiers.ModifierFlags
 	}
 	return ModifierFlagsNone
 }
