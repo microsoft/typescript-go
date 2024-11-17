@@ -196,11 +196,38 @@ func (p *Program) getDiagnosticsHelper(sourceFile *ast.SourceFile, getDiagnostic
 	return sortAndDeduplicateDiagnostics(result)
 }
 
+type NodeCount struct {
+	kind  ast.Kind
+	count int
+}
+
 func (p *Program) PrintSourceFileWithTypes() {
-	for _, file := range p.files {
-		if filepath.Base(file.FileName()) == "main.ts" {
-			fmt.Print(p.getTypeChecker().sourceFileWithTypes(file))
+	// for _, file := range p.files {
+	// 	if filepath.Base(file.FileName()) == "main.ts" {
+	// 		fmt.Print(p.getTypeChecker().sourceFileWithTypes(file))
+	// 	}
+	// }
+	nodeKindCounts := make([]NodeCount, ast.KindCount)
+	for i := range ast.KindCount {
+		nodeKindCounts[i].kind = i
+	}
+	var visit func(*ast.Node) bool
+	visit = func(node *ast.Node) bool {
+		kind := node.Kind
+		if kind >= ast.KindFirstToken && kind <= ast.KindLastToken && kind != ast.KindIdentifier && kind != ast.KindPrivateIdentifier {
+			kind = ast.KindUnknown
 		}
+		nodeKindCounts[kind].count++
+		return node.ForEachChild(visit)
+	}
+	for _, file := range p.files {
+		file.AsNode().ForEachChild(visit)
+	}
+	slices.SortFunc(nodeKindCounts, func(a, b NodeCount) int {
+		return b.count - a.count
+	})
+	for i := range 10 {
+		fmt.Printf("%v: %v\n", nodeKindCounts[i].kind, nodeKindCounts[i].count)
 	}
 }
 

@@ -1566,7 +1566,7 @@ func isConstAssertion(location *ast.Node) bool {
 func isConstTypeReference(node *ast.Node) bool {
 	if node.Kind == ast.KindTypeReference {
 		ref := node.AsTypeReference()
-		return ref.TypeArguments.IsPresent && ast.IsIdentifier(ref.TypeName) && ref.TypeName.AsIdentifier().Text == "const"
+		return ref.TypeArguments != nil && ast.IsIdentifier(ref.TypeName) && ref.TypeName.AsIdentifier().Text == "const"
 	}
 	return false
 }
@@ -2340,12 +2340,8 @@ func isPartOfTypeNodeInParent(node *ast.Node) bool {
 		return node == parent.ReturnType()
 	case ast.KindTypeAssertionExpression:
 		return node == parent.AsTypeAssertion().TypeNode
-	case ast.KindCallExpression:
-		return slices.Contains(parent.AsCallExpression().TypeArguments.Nodes, node)
-	case ast.KindNewExpression:
-		return slices.Contains(parent.AsNewExpression().TypeArguments.Nodes, node)
-	case ast.KindTaggedTemplateExpression:
-		return slices.Contains(parent.AsTaggedTemplateExpression().TypeArguments.Nodes, node)
+	case ast.KindCallExpression, ast.KindNewExpression, ast.KindTaggedTemplateExpression:
+		return slices.Contains(getTypeArgumentNodesFromNode(parent), node)
 	}
 	return false
 }
@@ -2699,10 +2695,14 @@ func getEffectiveTypeParameterDeclarations(node *ast.Node) []*ast.Node {
 }
 
 func getTypeParameterNodesFromNode(node *ast.Node) []*ast.Node {
-	return getTypeParameterListFromNode(node).Nodes
+	typeParameterList := getTypeParameterListFromNode(node)
+	if typeParameterList != nil {
+		return typeParameterList.Nodes
+	}
+	return nil
 }
 
-func getTypeParameterListFromNode(node *ast.Node) ast.NodeList {
+func getTypeParameterListFromNode(node *ast.Node) *ast.NodeList {
 	switch node.Kind {
 	case ast.KindClassDeclaration:
 		return node.AsClassDeclaration().TypeParameters
@@ -2718,10 +2718,14 @@ func getTypeParameterListFromNode(node *ast.Node) ast.NodeList {
 }
 
 func getTypeArgumentNodesFromNode(node *ast.Node) []*ast.Node {
-	return getTypeArgumentListFromNode(node).Nodes
+	typeArgumentList := getTypeArgumentListFromNode(node)
+	if typeArgumentList != nil {
+		return typeArgumentList.Nodes
+	}
+	return nil
 }
 
-func getTypeArgumentListFromNode(node *ast.Node) ast.NodeList {
+func getTypeArgumentListFromNode(node *ast.Node) *ast.NodeList {
 	switch node.Kind {
 	case ast.KindCallExpression:
 		return node.AsCallExpression().TypeArguments

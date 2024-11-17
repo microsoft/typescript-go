@@ -1675,6 +1675,12 @@ func (b *Binder) bindEach(nodes []*ast.Node) {
 	}
 }
 
+func (b *Binder) bindNodeList(nodeList *ast.NodeList) {
+	if nodeList != nil {
+		b.bindEach(nodeList.Nodes)
+	}
+}
+
 func (b *Binder) bindEachStatementFunctionsFirst(statements []*ast.Node) {
 	for _, node := range statements {
 		if node.Kind == ast.KindFunctionDeclaration {
@@ -2400,7 +2406,7 @@ func (b *Binder) bindOptionalChainRest(node *ast.Node) bool {
 		b.bind(node.AsElementAccessExpression().ArgumentExpression)
 	case ast.KindCallExpression:
 		b.bind(node.AsCallExpression().QuestionDotToken)
-		b.bindEach(node.AsCallExpression().TypeArguments.Nodes)
+		b.bindNodeList(node.AsCallExpression().TypeArguments)
 		b.bindEach(node.AsCallExpression().Arguments.Nodes)
 	}
 	return false
@@ -2416,7 +2422,7 @@ func (b *Binder) bindCallExpressionFlow(node *ast.Node) {
 		// the current control flow (which includes evaluation of the IIFE arguments).
 		expr := ast.SkipParentheses(call.Expression)
 		if expr.Kind == ast.KindFunctionExpression || expr.Kind == ast.KindArrowFunction {
-			b.bindEach(call.TypeArguments.Nodes)
+			b.bindNodeList(call.TypeArguments)
 			b.bindEach(call.Arguments.Nodes)
 			b.bind(call.Expression)
 		} else {
