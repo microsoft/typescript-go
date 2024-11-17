@@ -776,7 +776,7 @@ func (b *Binder) declareModuleSymbol(node *ast.Node) ModuleInstanceState {
 }
 
 func (b *Binder) bindNamespaceExportDeclaration(node *ast.Node) {
-	if len(node.AsNamespaceExportDeclaration().Modifiers) != 0 {
+	if node.AsNamespaceExportDeclaration().Modifiers != nil {
 		b.errorOnNode(node, diagnostics.Modifiers_cannot_appear_here)
 	}
 	switch {
@@ -1681,6 +1681,12 @@ func (b *Binder) bindNodeList(nodeList *ast.NodeList) {
 	}
 }
 
+func (b *Binder) bindModifiers(modifiers *ast.ModifierList) {
+	if modifiers != nil {
+		b.bindEach(modifiers.Nodes)
+	}
+}
+
 func (b *Binder) bindEachStatementFunctionsFirst(statements []*ast.Node) {
 	for _, node := range statements {
 		if node.Kind == ast.KindFunctionDeclaration {
@@ -2463,7 +2469,7 @@ func (b *Binder) bindBindingElementFlow(node *ast.Node) {
 
 func (b *Binder) bindParameterFlow(node *ast.Node) {
 	param := node.AsParameterDeclaration()
-	b.bindEach(param.Modifiers)
+	b.bindModifiers(param.Modifiers)
 	b.bind(param.DotDotDotToken)
 	b.bind(param.QuestionToken)
 	b.bind(param.TypeNode)

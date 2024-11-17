@@ -516,22 +516,18 @@ func ModifierToFlag(token Kind) ModifierFlags {
 	return ModifierFlagsNone
 }
 
-func ModifiersToFlags(modifierList []*Node) ModifierFlags {
+func ModifiersToFlags(modifiers []*Node) ModifierFlags {
 	var flags ModifierFlags
-	for _, modifier := range modifierList {
+	for _, modifier := range modifiers {
 		flags |= ModifierToFlag(modifier.Kind)
 	}
 	return flags
 }
 
 func GetModifierFlags(node *Node) ModifierFlags {
-	if node.modifierFlags&ModifierFlagsHasComputedFlags == 0 {
-		var modifierFlags ModifierFlags
-		data := node.ModifiersData()
-		if data != nil {
-			modifierFlags = ModifiersToFlags(data.Modifiers)
-		}
-		node.modifierFlags = modifierFlags | ModifierFlagsHasComputedFlags
+	data := node.ModifiersData()
+	if data != nil && data.Modifiers != nil {
+		return data.Modifiers.ModifierFlags
 	}
-	return node.modifierFlags
+	return ModifierFlagsNone
 }
