@@ -275,6 +275,7 @@ type Checker struct {
 	bigintLiteralTypes                 map[PseudoBigInt]*Type
 	enumLiteralTypes                   map[EnumLiteralKey]*Type
 	indexedAccessTypes                 map[string]*Type
+	templateLiteralTypes               map[string]*Type
 	uniqueESSymbolTypes                map[*ast.Symbol]*Type
 	cachedTypes                        map[CachedTypeKey]*Type
 	cachedSignatures                   map[CachedSignatureKey]*Signature
@@ -426,6 +427,7 @@ func NewChecker(program *Program) *Checker {
 	c.bigintLiteralTypes = make(map[PseudoBigInt]*Type)
 	c.enumLiteralTypes = make(map[EnumLiteralKey]*Type)
 	c.indexedAccessTypes = make(map[string]*Type)
+	c.templateLiteralTypes = make(map[string]*Type)
 	c.uniqueESSymbolTypes = make(map[*ast.Symbol]*Type)
 	c.cachedTypes = make(map[CachedTypeKey]*Type)
 	c.cachedSignatures = make(map[CachedSignatureKey]*Signature)
@@ -5250,6 +5252,23 @@ func getIndexedAccessKey(objectType *Type, indexType *Type, accessFlags AccessFl
 	return b.String()
 }
 
+func getTemplateTypeKey(texts []string, types []*Type) string {
+	var b KeyBuilder
+	b.WriteTypes(types)
+	b.WriteByte('|')
+	for i, s := range texts {
+		if i != 0 {
+			b.WriteByte(',')
+		}
+		b.WriteInt(len(s))
+	}
+	b.WriteByte('|')
+	for _, s := range texts {
+		b.WriteString(s)
+	}
+	return b.String()
+}
+
 func getRelationKey(source *Type, target *Type, intersectionState IntersectionState, isIdentity bool, ignoreConstraints bool) string {
 	if isIdentity && source.id > target.id {
 		source, target = target, source
@@ -8152,9 +8171,9 @@ func (c *Checker) getTypeFromTypeNodeWorker(node *ast.Node) *Type {
 		return c.getTypeFromTypeOperatorNode(node)
 	case ast.KindIndexedAccessType:
 		return c.getTypeFromIndexedAccessTypeNode(node)
+	case ast.KindTemplateLiteralType:
+		return c.getTypeFromTemplateTypeNode(node)
 	// !!!
-	// case KindTemplateLiteralType:
-	// 	return c.getTypeFromTemplateTypeNode(node /* as TemplateLiteralTypeNode */)
 	// case KindMappedType:
 	// 	return c.getTypeFromMappedTypeNode(node /* as MappedTypeNode */)
 	// case KindConditionalType:
@@ -9311,6 +9330,22 @@ func (c *Checker) getTypeFromIntersectionTypeNode(node *ast.Node) *Type {
 	return links.resolvedType
 }
 
+func (c *Checker) getTypeFromTemplateTypeNode(node *ast.Node) *Type {
+	links := c.typeNodeLinks.get(node)
+	if links.resolvedType == nil {
+		spans := node.AsTemplateLiteralTypeNode().TemplateSpans
+		texts := make([]string, len(spans)+1)
+		types := make([]*Type, len(spans))
+		texts[0] = node.AsTemplateLiteralTypeNode().Head.Text()
+		for i, span := range spans {
+			texts[i+1] = span.AsTemplateLiteralTypeSpan().Literal.Text()
+			types[i] = c.getTypeFromTypeNode(span.AsTemplateLiteralTypeSpan().TypeNode)
+		}
+		links.resolvedType = c.getTemplateLiteralType(texts, types)
+	}
+	return links.resolvedType
+}
+
 func (c *Checker) getTypeOfGlobalSymbol(symbol *ast.Symbol, arity int) *Type {
 	if symbol != nil {
 		t := c.getDeclaredTypeOfSymbol(symbol)
@@ -9785,7 +9820,7 @@ func (c *Checker) createTypeReference(target *Type, typeArguments []*Type) *Type
 func (c *Checker) createDeferredTypeReference(target *Type, node *ast.Node, mapper *TypeMapper, alias *TypeAlias) *Type {
 	if alias == nil {
 		alias := c.getAliasForTypeNode(node)
-		if mapper != nil {
+		if alias != nil && mapper != nil {
 			alias.typeArguments = c.instantiateTypes(alias.typeArguments, mapper)
 		}
 	}
@@ -9866,6 +9901,13 @@ func (c *Checker) newIndexType(target *Type, indexFlags IndexFlags) *Type {
 	data.target = target
 	data.indexFlags = indexFlags
 	return c.newType(TypeFlagsIndex, ObjectFlagsNone, data)
+}
+
+func (c *Checker) newTemplateLiteralType(texts []string, types []*Type) *Type {
+	data := &TemplateLiteralType{}
+	data.texts = texts
+	data.types = types
+	return c.newType(TypeFlagsTemplateLiteral, ObjectFlagsNone, data)
 }
 
 func (c *Checker) newSignature(flags SignatureFlags, declaration *ast.Node, typeParameters []*Type, thisParameter *ast.Symbol, parameters []*ast.Symbol, resolvedReturnType *Type, resolvedTypePredicate *TypePredicate, minArgumentCount int) *Signature {
@@ -12099,7 +12141,81 @@ func (c *Checker) getConstraintDeclaration(t *Type) *ast.Node {
 }
 
 func (c *Checker) getTemplateLiteralType(texts []string, types []*Type) *Type {
-	return c.stringType // !!!
+	unionIndex := core.FindIndex(types, func(t *Type) bool {
+		return t.flags&(TypeFlagsNever|TypeFlagsUnion) != 0
+	})
+	if unionIndex >= 0 {
+		if !c.checkCrossProductUnion(types) {
+			return c.errorType
+		}
+		return c.mapType(types[unionIndex], func(t *Type) *Type {
+			return c.getTemplateLiteralType(texts, core.ReplaceElement(types, unionIndex, t))
+		})
+	}
+	if slices.Contains(types, c.wildcardType) {
+		return c.wildcardType
+	}
+	var newTypes []*Type
+	var newTexts []string
+	var sb strings.Builder
+	sb.WriteString(texts[0])
+	var addSpans func([]string, []*Type) bool
+	addSpans = func(texts []string, types []*Type) bool {
+		for i, t := range types {
+			switch {
+			case t.flags&(TypeFlagsLiteral|TypeFlagsNull|TypeFlagsUndefined) != 0:
+				sb.WriteString(c.getTemplateStringForType(t))
+				sb.WriteString(texts[i+1])
+			case t.flags&TypeFlagsTemplateLiteral != 0:
+				sb.WriteString(t.AsTemplateLiteralType().texts[0])
+				if !addSpans(t.AsTemplateLiteralType().texts, t.AsTemplateLiteralType().types) {
+					return false
+				}
+				sb.WriteString(texts[i+1])
+			case c.isGenericIndexType(t) || c.isPatternLiteralPlaceholderType(t):
+				newTypes = append(newTypes, t)
+				newTexts = append(newTexts, sb.String())
+				sb.Reset()
+				sb.WriteString(texts[i+1])
+			default:
+				return false
+			}
+		}
+		return true
+	}
+	if !addSpans(texts, types) {
+		return c.stringType
+	}
+	if len(newTypes) == 0 {
+		return c.getStringLiteralType(sb.String())
+	}
+	newTexts = append(newTexts, sb.String())
+	if core.Every(newTexts, func(t string) bool { return t == "" }) {
+		if core.Every(newTypes, func(t *Type) bool { return t.flags&TypeFlagsString != 0 }) {
+			return c.stringType
+		}
+		// Normalize `${Mapping<xxx>}` into Mapping<xxx>
+		if len(newTypes) == 1 && c.isPatternLiteralType(newTypes[0]) {
+			return newTypes[0]
+		}
+	}
+	key := getTemplateTypeKey(newTexts, newTypes)
+	t := c.templateLiteralTypes[key]
+	if t == nil {
+		t = c.newTemplateLiteralType(newTexts, newTypes)
+		c.templateLiteralTypes[key] = t
+	}
+	return t
+}
+
+func (c *Checker) getTemplateStringForType(t *Type) string {
+	switch {
+	case t.flags&(TypeFlagsStringLiteral|TypeFlagsNumberLiteral|TypeFlagsBooleanLiteral|TypeFlagsBigIntLiteral) != 0:
+		return anyToString(t.AsLiteralType().value)
+	case t.flags&TypeFlagsNullable != 0:
+		return t.AsIntrinsicType().intrinsicName
+	}
+	return ""
 }
 
 // Given an indexed access on a mapped type of the form { [P in K]: E }[X], return an instantiation of E where P is

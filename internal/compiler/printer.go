@@ -137,6 +137,8 @@ func (p *Printer) printTypeNoAlias(t *Type) {
 		p.printRecursive(t, (*Printer).printIndexType)
 	case t.flags&TypeFlagsIndexedAccess != 0:
 		p.printRecursive(t, (*Printer).printIndexedAccessType)
+	case t.flags&TypeFlagsTemplateLiteral != 0:
+		p.printTemplateLiteralType(t)
 	}
 }
 
@@ -192,6 +194,20 @@ func (p *Printer) printBigIntLiteral(b PseudoBigInt) {
 		p.print("-")
 	}
 	p.print(b.base10Value)
+}
+
+func (p *Printer) printTemplateLiteralType(t *Type) {
+	texts := t.AsTemplateLiteralType().texts
+	types := t.AsTemplateLiteralType().types
+	p.print("`")
+	p.print(texts[0])
+	for i, t := range types {
+		p.print("${")
+		p.printType(t)
+		p.print("}")
+		p.print(texts[i+1])
+	}
+	p.print("`")
 }
 
 func (p *Printer) printEnumLiteral(t *Type) {

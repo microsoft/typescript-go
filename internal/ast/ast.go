@@ -512,6 +512,9 @@ func (n *Node) AsTemplateTail() *TemplateTail {
 func (n *Node) AsEnumDeclaration() *EnumDeclaration {
 	return n.Data.(*EnumDeclaration)
 }
+func (n *Node) AsTemplateLiteralTypeNode() *TemplateLiteralTypeNode {
+	return n.Data.(*TemplateLiteralTypeNode)
+}
 
 // NodeData
 
