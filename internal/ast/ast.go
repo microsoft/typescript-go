@@ -70,6 +70,10 @@ func (f *NodeFactory) NewNodeList(loc core.TextRange, nodes []*Node) *NodeList {
 func (list *NodeList) Pos() int { return list.Loc.Pos() }
 func (list *NodeList) End() int { return list.Loc.End() }
 
+func (list *NodeList) HasTrailingComma() bool {
+	return len(list.Nodes) > 0 && list.Nodes[len(list.Nodes)-1].End() < list.End()
+}
+
 // ModifierList
 
 type ModifierList struct {
