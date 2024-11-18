@@ -1299,7 +1299,7 @@ func (b *Binder) getStrictModeIdentifierMessage(node *ast.Node) *diagnostics.Mes
 	return diagnostics.Identifier_expected_0_is_a_reserved_word_in_strict_mode
 }
 
-func (b *Binder) updateStrictModeStatementList(statements ast.NodeList) {
+func (b *Binder) updateStrictModeStatementList(statements *ast.NodeList) {
 	if !b.inStrictMode {
 		for _, statement := range statements.Nodes {
 			if !isPrologueDirective(statement) {
@@ -1687,7 +1687,7 @@ func (b *Binder) bindModifiers(modifiers *ast.ModifierList) {
 	}
 }
 
-func (b *Binder) bindEachStatementFunctionsFirst(statements ast.NodeList) {
+func (b *Binder) bindEachStatementFunctionsFirst(statements *ast.NodeList) {
 	for _, node := range statements.Nodes {
 		if node.Kind == ast.KindFunctionDeclaration {
 			b.bind(node)
