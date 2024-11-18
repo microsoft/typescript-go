@@ -184,6 +184,14 @@ func (node *Node) Arguments() []*Node {
 	panic("Unhandled case in Node.Arguments")
 }
 
+func (node *Node) ModifierFlags() ModifierFlags {
+	modifiers := node.Modifiers()
+	if modifiers != nil {
+		return modifiers.ModifierFlags
+	}
+	return ModifierFlagsNone
+}
+
 // Node casts
 
 func (n *Node) AsIdentifier() *Identifier {

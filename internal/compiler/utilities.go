@@ -596,16 +596,8 @@ func isPartOfTypeQuery(node *ast.Node) bool {
 	return node.Kind == ast.KindTypeQuery
 }
 
-func getModifierFlags(node *ast.Node) ast.ModifierFlags {
-	return ast.GetModifierFlags(node)
-}
-
-func getNodeFlags(node *ast.Node) ast.NodeFlags {
-	return node.Flags
-}
-
 func hasSyntacticModifier(node *ast.Node, flags ast.ModifierFlags) bool {
-	return getModifierFlags(node)&flags != 0
+	return node.ModifierFlags()&flags != 0
 }
 
 func hasAccessorModifier(node *ast.Node) bool {
@@ -617,7 +609,7 @@ func hasStaticModifier(node *ast.Node) bool {
 }
 
 func getEffectiveModifierFlags(node *ast.Node) ast.ModifierFlags {
-	return getModifierFlags(node) // !!! Handle JSDoc
+	return node.ModifierFlags() // !!! Handle JSDoc
 }
 
 func hasEffectiveModifier(node *ast.Node, flags ast.ModifierFlags) bool {
@@ -823,11 +815,15 @@ func getCombinedFlags[T ~uint32](node *ast.Node, getFlags func(*ast.Node) T) T {
 }
 
 func getCombinedModifierFlags(node *ast.Node) ast.ModifierFlags {
-	return getCombinedFlags(node, getModifierFlags)
+	return getCombinedFlags(node, (*ast.Node).ModifierFlags)
 }
 
 func getCombinedNodeFlags(node *ast.Node) ast.NodeFlags {
 	return getCombinedFlags(node, getNodeFlags)
+}
+
+func getNodeFlags(node *ast.Node) ast.NodeFlags {
+	return node.Flags
 }
 
 func isParameterPropertyDeclaration(node *ast.Node, parent *ast.Node) bool {

@@ -523,11 +523,3 @@ func ModifiersToFlags(modifiers []*Node) ModifierFlags {
 	}
 	return flags
 }
-
-func GetModifierFlags(node *Node) ModifierFlags {
-	modifiers := node.Modifiers()
-	if modifiers != nil {
-		return modifiers.ModifierFlags
-	}
-	return ModifierFlagsNone
-}
