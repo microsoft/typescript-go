@@ -5088,38 +5088,38 @@ func (node *JSDocTypeLiteral) ForEachChild(v Visitor) bool {
 // JSDocSignature
 type JSDocSignature struct {
 	TypeNodeBase
-	TypeParameters *TypeParameterListNode
+	typeParameters *TypeParameterListNode
 	Parameters     []*JSDocTag
 	TypeNode       *JSDocTag
 }
 
 func NewJSDocSignature(typeParameters *TypeParameterListNode, parameters []*JSDocTag, typeNode *JSDocTag) *JSDocSignature {
 	data := &JSDocSignature{}
-	data.TypeParameters = typeParameters
+	data.typeParameters = typeParameters
 	data.Parameters = parameters
 	data.TypeNode = typeNode
 	return data
 }
 
 func (node *JSDocSignature) ForEachChild(v Visitor) bool {
-	return visit(v, node.TypeParameters) || visitNodes(v, node.Parameters) || visit(v, node.TypeNode)
+	return visit(v, node.typeParameters) || visitNodes(v, node.Parameters) || visit(v, node.TypeNode)
 }
 
 // JSDocNameReference
 type JSDocNameReference struct {
 	TypeNodeBase
-	Name *EntityName
+	name *EntityName
 }
 
 // JSDocMemberName
 func NewJSDocNameReference(name *EntityName) *JSDocNameReference {
 	data := &JSDocNameReference{}
-	data.Name = name
+	data.name = name
 	return data
 }
 
 func (node *JSDocNameReference) ForEachChild(v Visitor) bool {
-	return visit(v, node.Name)
+	return visit(v, node.name)
 }
 
 // PatternAmbientModule
