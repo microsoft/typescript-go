@@ -535,7 +535,9 @@ func TestModuleResolver(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer file.Close()
+	t.Cleanup(func() {
+		file.Close()
+	})
 	decoder := json.NewDecoder(file)
 	var currentTestCase traceTestCase
 	for {
