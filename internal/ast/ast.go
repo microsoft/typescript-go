@@ -1,8 +1,6 @@
 package ast
 
 import (
-	"sync"
-
 	"github.com/microsoft/typescript-go/internal/core"
 )
 
@@ -858,20 +856,11 @@ func (node *Node) JSDoc(file *SourceFile) *JSDocListNode {
 		return nil
 	}
 	if file == nil {
-		current := node
-		parent := node.Parent
-		for parent != nil {
-			current = parent
-			parent = parent.Parent
-		}
-		if current.Kind == KindSourceFile {
-			file = current.AsSourceFile()
-		} else {
+		file = GetSourceFileOfNode(node)
+		if file == nil {
 			return nil
 		}
 	}
-	file.jsdocCacheMu.Lock()
-	defer file.jsdocCacheMu.Unlock()
 	if jsdocs, ok := file.jsdocCache[node]; ok {
 		return jsdocs
 	}
@@ -881,8 +870,6 @@ func (node *Node) SetJSDoc(file *SourceFile, jsDocs *JSDocListNode) {
 	if node.Flags&NodeFlagsHasJSDoc == 0 {
 		node.Flags &= NodeFlagsHasJSDoc
 	}
-	file.jsdocCacheMu.Lock()
-	defer file.jsdocCacheMu.Unlock()
 	file.jsdocCache[node] = jsDocs
 }
 
@@ -5125,7 +5112,6 @@ type SourceFile struct {
 	PatternAmbientModules       []PatternAmbientModule
 	AmbientModuleNames          []string
 	jsdocCache                  map[*Node]*JSDocListNode
-	jsdocCacheMu                sync.Mutex
 }
 
 func (f *NodeFactory) NewSourceFile(text string, fileName string, statements []*Statement) *Node {
