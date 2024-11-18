@@ -720,7 +720,7 @@ func IsLocalsContainer(node *Node) bool {
 
 type FunctionLikeBase struct {
 	LocalsContainerBase
-	TypeParameters *NodeList // NodeList[*TypeParameterDeclarationNode]
+	TypeParameters *NodeList // NodeList[*TypeParameterDeclarationNode]. Optional
 	Parameters     *NodeList // NodeList[*ParameterDeclarationNode]
 	ReturnType     *TypeNode // Optional
 }
@@ -1556,8 +1556,8 @@ type ClassLikeBase struct {
 	ExportableBase
 	ModifiersBase
 	name            *IdentifierNode // IdentifierNode
-	TypeParameters  *NodeList       // NodeList[*TypeParameterDeclarationNode]
-	HeritageClauses *NodeList       // NodeList[*HeritageClauseNode]
+	TypeParameters  *NodeList       // NodeList[*TypeParameterDeclarationNode]. Optional
+	HeritageClauses *NodeList       // NodeList[*HeritageClauseNode]. Optional
 	Members         *NodeList       // NodeList[*ClassElement]
 }
 
@@ -1644,8 +1644,8 @@ type InterfaceDeclaration struct {
 	ExportableBase
 	ModifiersBase
 	name            *IdentifierNode
-	TypeParameters  *NodeList
-	HeritageClauses *NodeList // NodeList[*HeritageClauseNode]
+	TypeParameters  *NodeList // NodeList[*TypeParameterDeclarationNode]. Optional
+	HeritageClauses *NodeList // NodeList[*HeritageClauseNode]. Optional
 	Members         *NodeList // NodeList[*TypeElement]
 }
 
@@ -1679,7 +1679,7 @@ type TypeAliasDeclaration struct {
 	ModifiersBase
 	LocalsContainerBase
 	name           *IdentifierNode // IdentifierNode
-	TypeParameters *NodeList       // TypeParameterListNode. Optional
+	TypeParameters *NodeList       // NodeList[*TypeParameterDeclarationNode]. Optional
 	TypeNode       *TypeNode       // TypeNode
 }
 
@@ -2901,7 +2901,7 @@ type CallExpression struct {
 	ExpressionBase
 	Expression       *Expression // Expression
 	QuestionDotToken *TokenNode  // TokenNode
-	TypeArguments    *NodeList   // NodeList[*TypeNode]
+	TypeArguments    *NodeList   // NodeList[*TypeNode]. Optional
 	Arguments        *NodeList   // NodeList[*Expression]
 }
 
@@ -2929,8 +2929,8 @@ func IsCallExpression(node *Node) bool {
 type NewExpression struct {
 	ExpressionBase
 	Expression    *Expression // Expression
-	TypeArguments *NodeList   // NodeList[*TypeNode]. Possibly nil
-	Arguments     *NodeList   // NodeList[*Expression]. Possibly nil
+	TypeArguments *NodeList   // NodeList[*TypeNode]. Optional
+	Arguments     *NodeList   // NodeList[*Expression]. Optional
 }
 
 func (f *NodeFactory) NewNewExpression(expression *Expression, typeArguments *NodeList, arguments *NodeList) *Node {
@@ -3067,7 +3067,7 @@ type TaggedTemplateExpression struct {
 	ExpressionBase
 	Tag              *Expression      // Expression
 	QuestionDotToken *TokenNode       // TokenNode. For error reporting purposes only
-	TypeArguments    *NodeList        // NodeList[*TypeNode]
+	TypeArguments    *NodeList        // NodeList[*TypeNode]. Optional
 	Template         *TemplateLiteral // TemplateLiteral
 }
 
@@ -3488,7 +3488,7 @@ func IsIndexedAccessTypeNode(node *Node) bool {
 type TypeReferenceNode struct {
 	TypeNodeBase
 	TypeName      *EntityName // EntityName
-	TypeArguments *NodeList   // NodeList[*TypeNode]
+	TypeArguments *NodeList   // NodeList[*TypeNode]. Optional
 }
 
 func (f *NodeFactory) NewTypeReferenceNode(typeName *EntityName, typeArguments *NodeList) *Node {
@@ -3663,7 +3663,7 @@ func (node *ImportAttributes) ForEachChild(v Visitor) bool {
 type TypeQueryNode struct {
 	TypeNodeBase
 	ExprName      *EntityName // EntityName
-	TypeArguments *NodeList   // NodeList[*TypeNode]
+	TypeArguments *NodeList   // NodeList[*TypeNode]. Optional
 }
 
 func (f *NodeFactory) NewTypeQueryNode(exprName *EntityName, typeArguments *NodeList) *Node {
@@ -4048,7 +4048,7 @@ func IsJsxNamespacedName(node *Node) bool {
 type JsxOpeningElement struct {
 	ExpressionBase
 	TagName       *JsxTagNameExpression // JsxTagNameExpression (Identifier | KeywordExpression | JsxTagNamePropertyAccess | JsxNamespacedName)
-	TypeArguments *NodeList             // NodeList[*TypeNode]
+	TypeArguments *NodeList             // NodeList[*TypeNode]. Optional
 	Attributes    *JsxAttributesNode    // JsxAttributesNode
 }
 
@@ -4073,7 +4073,7 @@ func IsJsxOpeningElement(node *Node) bool {
 type JsxSelfClosingElement struct {
 	ExpressionBase
 	TagName       *JsxTagNameExpression // JsxTagNameExpression (IdentifierReference | KeywordExpression | JsxTagNamePropertyAccess | JsxNamespacedName)
-	TypeArguments *NodeList             // NodeList[*TypeNode]
+	TypeArguments *NodeList             // NodeList[*TypeNode]. Optional
 	Attributes    *JsxAttributesNode    // JsxAttributesNode
 }
 
