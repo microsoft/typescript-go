@@ -599,9 +599,6 @@ func (n *Node) AsJSDocDeprecatedTag() *JSDocDeprecatedTag {
 func (n *Node) AsJSDocSeeTag() *JSDocSeeTag {
 	return n.Data.(*JSDocSeeTag)
 }
-func (n *Node) AsJSDocAuthorTag() *JSDocAuthorTag {
-	return n.Data.(*JSDocAuthorTag)
-}
 func (n *Node) AsJSDocImplementsTag() *JSDocImplementsTag {
 	return n.Data.(*JSDocImplementsTag)
 }
@@ -613,9 +610,6 @@ func (n *Node) AsJSDocSatisfiesTag() *JSDocSatisfiesTag {
 }
 func (n *Node) AsJSDocThisTag() *JSDocThisTag {
 	return n.Data.(*JSDocThisTag)
-}
-func (n *Node) AsJSDocEnumTag() *JSDocEnumTag {
-	return n.Data.(*JSDocEnumTag)
 }
 func (n *Node) AsJSDocImportTag() *JSDocImportTag {
 	return n.Data.(*JSDocImportTag)
@@ -4881,22 +4875,6 @@ func (node *JSDocSeeTag) ForEachChild(v Visitor) bool {
 	return visit(v, node.TagName) || visit(v, node.NameExpression) || visit(v, node.Comment)
 }
 
-// JSDocAuthorTag
-type JSDocAuthorTag struct {
-	JSDocTagBase
-}
-
-func NewJSDocAuthorTag(tagName *IdentifierNode, comment *JSDocCommentListNode) *JSDocAuthorTag {
-	data := &JSDocAuthorTag{}
-	data.TagName = tagName
-	data.Comment = comment
-	return data
-}
-
-func (node *JSDocAuthorTag) ForEachChild(v Visitor) bool {
-	return visit(v, node.TagName) || visit(v, node.Comment)
-}
-
 // JSDocImplementsTag
 type JSDocImplementsTag struct {
 	JSDocTagBase
@@ -4965,24 +4943,6 @@ func NewJSDocThisTag(tagName *IdentifierNode, typeExpression *TypeNode, comment 
 }
 
 func (node *JSDocThisTag) ForEachChild(v Visitor) bool {
-	return visit(v, node.TagName) || visit(v, node.TypeExpression) || visit(v, node.Comment)
-}
-
-// JSDocEnumTag
-type JSDocEnumTag struct {
-	JSDocTagBase
-	TypeExpression *TypeNode
-}
-
-func NewJSDocEnumTag(tagName *IdentifierNode, typeExpression *TypeNode, comment *JSDocCommentListNode) *JSDocEnumTag {
-	data := &JSDocEnumTag{}
-	data.TagName = tagName
-	data.TypeExpression = typeExpression
-	data.Comment = comment
-	return data
-}
-
-func (node *JSDocEnumTag) ForEachChild(v Visitor) bool {
 	return visit(v, node.TagName) || visit(v, node.TypeExpression) || visit(v, node.Comment)
 }
 
