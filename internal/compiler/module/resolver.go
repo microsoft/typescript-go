@@ -525,18 +525,17 @@ func (r *resolutionState) createResolvedModuleWithFailedLookupLocationsHandlingS
 
 func (r *resolutionState) createResolvedModuleWithFailedLookupLocations(resolved *resolved, isExternalLibraryImport bool) *ResolvedModuleWithFailedLookupLocations {
 	if r.resultFromCache != nil {
+		var result *ResolvedModuleWithFailedLookupLocations
 		if !r.resolver.cache.isReadonly() {
-			r.resultFromCache.FailedLookupLocations = updateResolutionField(r.resultFromCache.FailedLookupLocations, r.failedLookupLocations)
-			r.resultFromCache.AffectingLocations = updateResolutionField(r.resultFromCache.AffectingLocations, r.affectingLocations)
-			r.resultFromCache.ResolutionDiagnostics = updateResolutionField(r.resultFromCache.ResolutionDiagnostics, r.resultFromCache.ResolutionDiagnostics)
-			return r.resultFromCache
+			result = r.resultFromCache
 		} else {
-			result := *r.resultFromCache
-			result.FailedLookupLocations = initializeResolutionFieldForReadonlyCache(result.FailedLookupLocations, r.failedLookupLocations)
-			result.AffectingLocations = initializeResolutionFieldForReadonlyCache(result.AffectingLocations, r.affectingLocations)
-			result.ResolutionDiagnostics = initializeResolutionFieldForReadonlyCache(result.ResolutionDiagnostics, r.resultFromCache.ResolutionDiagnostics)
-			return &result
+			cloned := *r.resultFromCache
+			result = &cloned
 		}
+		result.FailedLookupLocations = slices.Concat(result.FailedLookupLocations, r.failedLookupLocations)
+		result.AffectingLocations = slices.Concat(result.AffectingLocations, r.affectingLocations)
+		result.ResolutionDiagnostics = slices.Concat(result.ResolutionDiagnostics, r.resultFromCache.ResolutionDiagnostics)
+		return result
 	}
 	var resolvedModule ResolvedModule
 	if resolved != nil {
@@ -939,7 +938,7 @@ func (r *resolutionState) loadNodeModuleFromDirectoryWorker(ext extensions, cand
 		pathPatterns := tryParsePatterns(versionPaths.GetPaths())
 		if result := r.tryLoadModuleUsingPaths(ext, moduleName, candidate, versionPaths.GetPaths(), pathPatterns, loader, onlyRecordFailuresForPackageFile); result.stop {
 			if result.value.packageId.Name != "" {
-				// TODO: are these asserts really necessary?
+				// !!! are these asserts really necessary?
 				panic("expected packageId to be empty")
 			}
 			return result.value
@@ -949,7 +948,7 @@ func (r *resolutionState) loadNodeModuleFromDirectoryWorker(ext extensions, cand
 	if packageFile != "" {
 		if packageFileResult := loader(ext, candidate, onlyRecordFailuresForPackageFile); packageFileResult != nil {
 			if packageFileResult.packageId.Name != "" {
-				// TODO: are these asserts really necessary?
+				// !!! are these asserts really necessary?
 				panic("expected packageId to be empty")
 			}
 			return packageFileResult
@@ -966,8 +965,6 @@ func (r *resolutionState) loadNodeModuleFromDirectoryWorker(ext extensions, cand
 // This function is only ever called with paths written in package.json files - never
 // module specifiers written in source files - and so it always allows the
 // candidate to end with a TS extension (but will also try substituting a JS extension for a TS extension).
-//
-// TODO: Should callers of this function not use `loadNodeModuleFromPackageJSONField` instead?
 func (r *resolutionState) loadFileNameFromPackageJSONField(extensions extensions, candidate string, packageJSONValue string, onlyRecordFailures bool) *resolved {
 	if extensions&ExtensionsTypeScript != 0 && tspath.HasImplementationTSFileExtension(candidate) || extensions&ExtensionsDeclaration != 0 && tspath.IsDeclarationFileName(candidate) {
 		if path, ok := r.tryFile(candidate, onlyRecordFailures); ok {
@@ -1148,7 +1145,7 @@ func (r *resolutionState) validatePackageJSONField(fieldName string, field packa
 			return true
 		}
 		if r.resolver.traceEnabled() {
-			r.resolver.host.Trace(diagnostics.Expected_type_of_0_field_in_package_json_to_be_1_got_2.Format(fieldName, field.ExpectedJSONType(), field.ActualJSONType())) // TODO
+			r.resolver.host.Trace(diagnostics.Expected_type_of_0_field_in_package_json_to_be_1_got_2.Format(fieldName, field.ExpectedJSONType(), field.ActualJSONType()))
 		}
 	}
 	if r.resolver.traceEnabled() {
@@ -1210,12 +1207,12 @@ func getNodeResolutionFeatures(options *core.CompilerOptions) NodeResolutionFeat
 	if options.ResolvePackageJsonExports == core.TSTrue {
 		features |= NodeResolutionFeaturesExports
 	} else if options.ResolvePackageJsonExports == core.TSFalse {
-		features &= ^NodeResolutionFeaturesExports
+		features &^= NodeResolutionFeaturesExports
 	}
 	if options.ResolvePackageJsonImports == core.TSTrue {
 		features |= NodeResolutionFeaturesImports
 	} else if options.ResolvePackageJsonImports == core.TSFalse {
-		features &= ^NodeResolutionFeaturesImports
+		features &^= NodeResolutionFeaturesImports
 	}
 	return features
 }
@@ -1247,7 +1244,8 @@ type parsedPatterns struct {
 }
 
 func tryParsePatterns(paths map[string][]string) parsedPatterns {
-	// TODO?: TS has a weakmap cache
+	// !!! TS has a weakmap cache
+	// We could store a cache on Resolver, but maybe we can wait and profile
 	matchableStringSet := collections.OrderedSet[string]{}
 	patterns := make([]core.Pattern, 0, len(paths))
 	for path := range paths {
@@ -1276,25 +1274,6 @@ func matchPatternOrExact(patterns parsedPatterns, candidate string) core.Pattern
 		return core.Pattern{}
 	}
 	return core.FindBestPatternMatch(patterns.patterns, candidate)
-}
-
-func updateResolutionField[T any](to []T, value []T) []T {
-	if len(value) == 0 {
-		return to
-	}
-	if len(to) == 0 {
-		return value
-	}
-	return append(to, value...)
-}
-
-func initializeResolutionFieldForReadonlyCache[T any](fromCache []T, value []T) []T {
-	if len(fromCache) == 0 {
-		return value
-	}
-	var result []T
-	copy(result, fromCache)
-	return append(result, value...)
 }
 
 // If you import from "." inside a containing directory "/foo", the result of `tspath.NormalizePath`
