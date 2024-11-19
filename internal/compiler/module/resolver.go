@@ -134,9 +134,9 @@ func (r *Resolver) ResolveModuleName(moduleName string, containingFile string, r
 	}
 
 	if traceEnabled {
-		r.host.Trace(diagnostics.Format(diagnostics.Resolving_module_0_from_1, moduleName, containingFile))
+		r.host.Trace(diagnostics.Resolving_module_0_from_1.Format(moduleName, containingFile))
 		if redirectedReference != nil {
-			r.host.Trace(diagnostics.Format(diagnostics.Using_compiler_options_of_project_reference_redirect_0, redirectedReference.SourceFile.FileName()))
+			r.host.Trace(diagnostics.Using_compiler_options_of_project_reference_redirect_0.Format(redirectedReference.SourceFile.FileName()))
 		}
 	}
 	containingDirectory := tspath.GetDirectoryPath(containingFile)
@@ -147,18 +147,18 @@ func (r *Resolver) ResolveModuleName(moduleName string, containingFile string, r
 
 	if result != nil {
 		if traceEnabled {
-			r.host.Trace(diagnostics.Format(diagnostics.Resolution_for_module_0_was_found_in_cache_from_location_1, moduleName, containingDirectory))
+			r.host.Trace(diagnostics.Resolution_for_module_0_was_found_in_cache_from_location_1.Format(moduleName, containingDirectory))
 		}
 	} else {
 		moduleResolution := compilerOptions.ModuleResolution
 		if moduleResolution == core.ModuleResolutionKindUnknown {
 			moduleResolution = compilerOptions.GetModuleResolutionKind()
 			if traceEnabled {
-				r.host.Trace(diagnostics.Format(diagnostics.Module_resolution_kind_is_not_specified_using_0, moduleResolution.String()))
+				r.host.Trace(diagnostics.Module_resolution_kind_is_not_specified_using_0.Format(moduleResolution.String()))
 			}
 		} else {
 			if traceEnabled {
-				r.host.Trace(diagnostics.Format(diagnostics.Explicitly_specified_module_resolution_kind_Colon_0, moduleResolution.String()))
+				r.host.Trace(diagnostics.Explicitly_specified_module_resolution_kind_Colon_0.Format(moduleResolution.String()))
 			}
 		}
 
@@ -182,12 +182,12 @@ func (r *Resolver) ResolveModuleName(moduleName string, containingFile string, r
 	if traceEnabled {
 		if result.IsResolved() {
 			if result.PackageId.Name != "" {
-				r.host.Trace(diagnostics.Format(diagnostics.Module_name_0_was_successfully_resolved_to_1_with_Package_ID_2, moduleName, result.ResolvedModule.ResolvedFileName, result.ResolvedModule.PackageId.String()))
+				r.host.Trace(diagnostics.Module_name_0_was_successfully_resolved_to_1_with_Package_ID_2.Format(moduleName, result.ResolvedModule.ResolvedFileName, result.ResolvedModule.PackageId.String()))
 			} else {
-				r.host.Trace(diagnostics.Format(diagnostics.Module_name_0_was_successfully_resolved_to_1, moduleName, result.ResolvedFileName))
+				r.host.Trace(diagnostics.Module_name_0_was_successfully_resolved_to_1.Format(moduleName, result.ResolvedFileName))
 			}
 		} else {
-			r.host.Trace(diagnostics.Format(diagnostics.Module_name_0_was_not_resolved, moduleName))
+			r.host.Trace(diagnostics.Module_name_0_was_not_resolved.Format(moduleName))
 		}
 	}
 
@@ -212,9 +212,9 @@ func (r *resolutionState) resolveNodeLike() *ResolvedModuleWithFailedLookupLocat
 	if r.resolver.traceEnabled() {
 		conditions := strings.Join(core.Map(r.conditions, func(c string) string { return `'` + c + `'` }), ", ")
 		if r.esmMode {
-			r.resolver.host.Trace(diagnostics.Format(diagnostics.Resolving_in_0_mode_with_conditions_1, "ESM", conditions))
+			r.resolver.host.Trace(diagnostics.Resolving_in_0_mode_with_conditions_1.Format("ESM", conditions))
 		} else {
-			r.resolver.host.Trace(diagnostics.Format(diagnostics.Resolving_in_0_mode_with_conditions_1, "CJS", conditions))
+			r.resolver.host.Trace(diagnostics.Resolving_in_0_mode_with_conditions_1.Format("CJS", conditions))
 		}
 	}
 
@@ -234,11 +234,11 @@ func (r *resolutionState) resolveNodeLike() *ResolvedModuleWithFailedLookupLocat
 		}
 		if strings.Contains(r.moduleName, ":") {
 			if r.resolver.traceEnabled() {
-				r.resolver.host.Trace(diagnostics.Format(diagnostics.Skipping_module_0_that_looks_like_an_absolute_URI_target_file_types_Colon_1, r.moduleName, r.extensions.String()))
+				r.resolver.host.Trace(diagnostics.Skipping_module_0_that_looks_like_an_absolute_URI_target_file_types_Colon_1.Format(r.moduleName, r.extensions.String()))
 			}
 		}
 		if r.resolver.traceEnabled() {
-			r.resolver.host.Trace(diagnostics.Format(diagnostics.Loading_module_0_from_node_modules_folder_target_file_types_Colon_1, r.moduleName, r.extensions.String()))
+			r.resolver.host.Trace(diagnostics.Loading_module_0_from_node_modules_folder_target_file_types_Colon_1.Format(r.moduleName, r.extensions.String()))
 		}
 		if resolved := r.loadModuleFromNearestNodeModulesDirectory(false /*typesScopeOnly*/); resolved.stop {
 			return r.createResolvedModuleWithFailedLookupLocationsHandlingSymlink(resolved.value)
@@ -321,7 +321,7 @@ func (r *resolutionState) loadModuleFromNearestNodeModulesDirectory(typesScopeOn
 	// (1)
 	if priorityExtensions != 0 {
 		if r.resolver.traceEnabled() {
-			r.resolver.host.Trace(diagnostics.Format(diagnostics.Searching_all_ancestor_node_modules_directories_for_preferred_extensions_Colon_0, priorityExtensions.String()))
+			r.resolver.host.Trace(diagnostics.Searching_all_ancestor_node_modules_directories_for_preferred_extensions_Colon_0.Format(priorityExtensions.String()))
 		}
 		if result := r.loadModuleFromNearestNodeModulesDirectoryWorker(priorityExtensions, mode, typesScopeOnly); result.stop {
 			return result
@@ -330,7 +330,7 @@ func (r *resolutionState) loadModuleFromNearestNodeModulesDirectory(typesScopeOn
 	// (2)
 	if secondaryExtensions != 0 && !typesScopeOnly {
 		if r.resolver.traceEnabled() {
-			r.resolver.host.Trace(diagnostics.Format(diagnostics.Searching_all_ancestor_node_modules_directories_for_fallback_extensions_Colon_0, secondaryExtensions.String()))
+			r.resolver.host.Trace(diagnostics.Searching_all_ancestor_node_modules_directories_for_fallback_extensions_Colon_0.Format(secondaryExtensions.String()))
 		}
 		return r.loadModuleFromNearestNodeModulesDirectoryWorker(secondaryExtensions, mode, typesScopeOnly)
 	}
@@ -359,7 +359,7 @@ func (r *resolutionState) loadModuleFromImmediateNodeModulesDirectory(extensions
 	nodeModulesFolder := tspath.CombinePaths(directory, "node_modules")
 	nodeModulesFolderExists := r.resolver.host.DirectoryExists(nodeModulesFolder)
 	if !nodeModulesFolderExists && r.resolver.traceEnabled() {
-		r.resolver.host.Trace(diagnostics.Format(diagnostics.Directory_0_does_not_exist_skipping_all_lookups_in_it, nodeModulesFolder))
+		r.resolver.host.Trace(diagnostics.Directory_0_does_not_exist_skipping_all_lookups_in_it.Format(nodeModulesFolder))
 	}
 
 	if !typesScopeOnly {
@@ -372,7 +372,7 @@ func (r *resolutionState) loadModuleFromImmediateNodeModulesDirectory(extensions
 		nodeModulesAtTypes := tspath.CombinePaths(nodeModulesFolder, "@types")
 		nodeModulesAtTypesExists := nodeModulesFolderExists && r.resolver.host.DirectoryExists(nodeModulesAtTypes)
 		if !nodeModulesAtTypesExists && r.resolver.traceEnabled() {
-			r.resolver.host.Trace(diagnostics.Format(diagnostics.Directory_0_does_not_exist_skipping_all_lookups_in_it, nodeModulesAtTypes))
+			r.resolver.host.Trace(diagnostics.Directory_0_does_not_exist_skipping_all_lookups_in_it.Format(nodeModulesAtTypes))
 		}
 		return r.loadModuleFromSpecificNodeModulesDirectory(extensions, nodeModulesAtTypes, nodeModulesAtTypesExists)
 	}
@@ -470,7 +470,7 @@ func (r *resolutionState) loadModuleFromSpecificNodeModulesDirectory(ext extensi
 			}
 			if versionPaths != nil {
 				if r.resolver.traceEnabled() {
-					r.resolver.host.Trace(diagnostics.Format(diagnostics.X_package_json_has_a_typesVersions_entry_0_that_matches_compiler_version_1_looking_for_a_pattern_to_match_module_name_2, versionPaths.Version, core.Version, rest))
+					r.resolver.host.Trace(diagnostics.X_package_json_has_a_typesVersions_entry_0_that_matches_compiler_version_1_looking_for_a_pattern_to_match_module_name_2.Format(versionPaths.Version, core.Version, rest))
 				}
 				packageDirectoryExists := nodeModulesDirectoryExists && r.resolver.host.DirectoryExists(packageDirectory)
 				pathPatterns := tryParsePatterns(versionPaths.GetPaths())
@@ -487,7 +487,7 @@ func (r *resolutionState) tryFindNonRelativeModuleNameInCache(nameAndMode ModeAw
 	if r.resolver.cache != nil {
 		if result, ok := r.resolver.cache.getFromNonRelativeNameCache(nameAndMode, directory, r.compilerOptions); ok {
 			if r.resolver.traceEnabled() {
-				r.resolver.host.Trace(diagnostics.Format(diagnostics.Resolution_for_module_0_was_found_in_cache_from_location_1, nameAndMode.name, directory))
+				r.resolver.host.Trace(diagnostics.Resolution_for_module_0_was_found_in_cache_from_location_1.Format(nameAndMode.name, directory))
 			}
 			r.resultFromCache = result
 			if result.IsResolved() {
@@ -580,7 +580,7 @@ func (r *resolutionState) tryLoadModuleUsingOptionalResolutionSettings() *resolv
 func (r *resolutionState) tryLoadModuleUsingPathsIfEligible() searchResult[resolved] {
 	if len(r.compilerOptions.Paths) > 0 && !tspath.PathIsRelative(r.moduleName) {
 		if r.resolver.traceEnabled() {
-			r.resolver.host.Trace(diagnostics.Format(diagnostics.X_paths_option_is_specified_looking_for_a_pattern_to_match_module_name_0, r.moduleName))
+			r.resolver.host.Trace(diagnostics.X_paths_option_is_specified_looking_for_a_pattern_to_match_module_name_0.Format(r.moduleName))
 		}
 	}
 	baseDirectory := getPathsBasePath(r.compilerOptions, r.resolver.host.GetCurrentDirectory())
@@ -602,13 +602,13 @@ func (r *resolutionState) tryLoadModuleUsingPaths(extensions extensions, moduleN
 	if matchedPattern := matchPatternOrExact(pathPatterns, moduleName); matchedPattern.IsValid() {
 		matchedStar := matchedPattern.MatchedText(moduleName)
 		if r.resolver.traceEnabled() {
-			r.resolver.host.Trace(diagnostics.Format(diagnostics.Module_name_0_matched_pattern_1, moduleName, matchedPattern.Text))
+			r.resolver.host.Trace(diagnostics.Module_name_0_matched_pattern_1.Format(moduleName, matchedPattern.Text))
 		}
 		for _, subst := range paths[matchedPattern.Text] {
 			path := strings.Replace(subst, "*", matchedStar, 1)
 			candidate := tspath.NormalizePath(tspath.CombinePaths(containingDirectory, path))
 			if r.resolver.traceEnabled() {
-				r.resolver.host.Trace(diagnostics.Format(diagnostics.Trying_substitution_0_candidate_module_location_Colon_1, subst, path))
+				r.resolver.host.Trace(diagnostics.Trying_substitution_0_candidate_module_location_Colon_1.Format(subst, path))
 			}
 			// A path mapping may have an extension
 			if extension := tspath.TryGetExtensionFromPath(subst); extension != "" {
@@ -629,14 +629,14 @@ func (r *resolutionState) tryLoadModuleUsingPaths(extensions extensions, moduleN
 
 func (r *resolutionState) nodeLoadModuleByRelativeName(extensions extensions, candidate string, onlyRecordFailures bool, considerPackageJson bool) *resolved {
 	if r.resolver.traceEnabled() {
-		r.resolver.host.Trace(diagnostics.Format(diagnostics.Loading_module_as_file_Slash_folder_candidate_module_location_0_target_file_types_Colon_1, candidate, extensions.String()))
+		r.resolver.host.Trace(diagnostics.Loading_module_as_file_Slash_folder_candidate_module_location_0_target_file_types_Colon_1.Format(candidate, extensions.String()))
 	}
 	if !tspath.HasTrailingDirectorySeparator(candidate) {
 		if !onlyRecordFailures {
 			parentOfCandidate := tspath.GetDirectoryPath(candidate)
 			if !r.resolver.host.DirectoryExists(parentOfCandidate) {
 				if r.resolver.traceEnabled() {
-					r.resolver.host.Trace(diagnostics.Format(diagnostics.Directory_0_does_not_exist_skipping_all_lookups_in_it, parentOfCandidate))
+					r.resolver.host.Trace(diagnostics.Directory_0_does_not_exist_skipping_all_lookups_in_it.Format(parentOfCandidate))
 				}
 				onlyRecordFailures = true
 			}
@@ -655,7 +655,7 @@ func (r *resolutionState) nodeLoadModuleByRelativeName(extensions extensions, ca
 		candidateExists := r.resolver.host.DirectoryExists(candidate)
 		if !candidateExists {
 			if r.resolver.traceEnabled() {
-				r.resolver.host.Trace(diagnostics.Format(diagnostics.Directory_0_does_not_exist_skipping_all_lookups_in_it, candidate))
+				r.resolver.host.Trace(diagnostics.Directory_0_does_not_exist_skipping_all_lookups_in_it.Format(candidate))
 			}
 			onlyRecordFailures = true
 		}
@@ -697,7 +697,7 @@ func (r *resolutionState) loadModuleFromFileNoImplicitExtensions(extensions exte
 
 	extension := candidate[len(extensionless):]
 	if r.resolver.traceEnabled() {
-		r.resolver.host.Trace(diagnostics.Format(diagnostics.File_name_0_has_a_1_extension_stripping_it, candidate, extension))
+		r.resolver.host.Trace(diagnostics.File_name_0_has_a_1_extension_stripping_it.Format(candidate, extension))
 	}
 	return r.tryAddingExtensions(extensionless, extensions, extension, onlyRecordFailures)
 }
@@ -851,11 +851,11 @@ func (r *resolutionState) tryFileLookup(fileName string, onlyRecordFailures bool
 	if !onlyRecordFailures {
 		if r.resolver.host.FileExists(fileName) {
 			if r.resolver.traceEnabled() {
-				r.resolver.host.Trace(diagnostics.Format(diagnostics.File_0_exists_use_it_as_a_name_resolution_result, fileName))
+				r.resolver.host.Trace(diagnostics.File_0_exists_use_it_as_a_name_resolution_result.Format(fileName))
 			}
 			return true
 		} else if r.resolver.traceEnabled() {
-			r.resolver.host.Trace(diagnostics.Format(diagnostics.File_0_does_not_exist, fileName))
+			r.resolver.host.Trace(diagnostics.File_0_does_not_exist.Format(fileName))
 		}
 	}
 	r.failedLookupLocations = append(r.failedLookupLocations, fileName)
@@ -934,7 +934,7 @@ func (r *resolutionState) loadNodeModuleFromDirectoryWorker(ext extensions, cand
 			moduleName = tspath.GetRelativePathFromDirectory(candidate, indexPath, tspath.ComparePathsOptions{})
 		}
 		if r.resolver.traceEnabled() {
-			r.resolver.host.Trace(diagnostics.Format(diagnostics.X_package_json_has_a_typesVersions_entry_0_that_matches_compiler_version_1_looking_for_a_pattern_to_match_module_name_2, versionPaths.Version, core.Version, moduleName))
+			r.resolver.host.Trace(diagnostics.X_package_json_has_a_typesVersions_entry_0_that_matches_compiler_version_1_looking_for_a_pattern_to_match_module_name_2.Format(versionPaths.Version, core.Version, moduleName))
 		}
 		pathPatterns := tryParsePatterns(versionPaths.GetPaths())
 		if result := r.tryLoadModuleUsingPaths(ext, moduleName, candidate, versionPaths.GetPaths(), pathPatterns, loader, onlyRecordFailuresForPackageFile); result.stop {
@@ -1026,7 +1026,7 @@ func (r *resolutionState) getPackageJsonInfo(packageDirectory string, onlyRecord
 			if existing := packageJsonInfoCache.Get(packageJsonPath); existing != nil {
 				if existing.Contents != nil {
 					if r.resolver.traceEnabled() {
-						r.resolver.host.Trace(diagnostics.Format(diagnostics.File_0_exists_according_to_earlier_cached_lookups, packageJsonPath))
+						r.resolver.host.Trace(diagnostics.File_0_exists_according_to_earlier_cached_lookups.Format(packageJsonPath))
 					}
 					r.affectingLocations = append(r.affectingLocations, packageJsonPath)
 					if existing.PackageDirectory == packageDirectory {
@@ -1040,7 +1040,7 @@ func (r *resolutionState) getPackageJsonInfo(packageDirectory string, onlyRecord
 					}
 				} else {
 					if existing.DirectoryExists && r.resolver.traceEnabled() {
-						r.resolver.host.Trace(diagnostics.Format(diagnostics.File_0_does_not_exist_according_to_earlier_cached_lookups, packageJsonPath))
+						r.resolver.host.Trace(diagnostics.File_0_does_not_exist_according_to_earlier_cached_lookups.Format(packageJsonPath))
 					}
 					r.failedLookupLocations = append(r.failedLookupLocations, packageJsonPath)
 					return nil
@@ -1054,7 +1054,7 @@ func (r *resolutionState) getPackageJsonInfo(packageDirectory string, onlyRecord
 		// Ignore error
 		packageJsonContent, _ := packagejson.Parse([]byte(r.resolver.host.ReadFile(packageJsonPath)))
 		if r.resolver.traceEnabled() {
-			r.resolver.host.Trace(diagnostics.Format(diagnostics.Found_package_json_at_0, packageJsonPath))
+			r.resolver.host.Trace(diagnostics.Found_package_json_at_0.Format(packageJsonPath))
 		}
 		result := &packagejson.InfoCacheEntry{
 			PackageDirectory: packageDirectory,
@@ -1070,7 +1070,7 @@ func (r *resolutionState) getPackageJsonInfo(packageDirectory string, onlyRecord
 		return result
 	} else {
 		if directoryExists && r.resolver.traceEnabled() {
-			r.resolver.host.Trace(diagnostics.Format(diagnostics.File_0_does_not_exist, packageJsonPath))
+			r.resolver.host.Trace(diagnostics.File_0_does_not_exist.Format(packageJsonPath))
 		}
 		if packageJsonInfoCache != nil && !packageJsonInfoCache.IsReadonly {
 			packageJsonInfoCache.Set(packageJsonPath, &packagejson.InfoCacheEntry{
@@ -1125,10 +1125,10 @@ func (r *resolutionState) readPackageJsonPeerDependencies(packageJsonInfo *packa
 			builder.WriteString("@")
 			builder.WriteString(version)
 			if r.resolver.traceEnabled() {
-				r.resolver.host.Trace(diagnostics.Format(diagnostics.Found_peerDependency_0_with_1_version, name, version))
+				r.resolver.host.Trace(diagnostics.Found_peerDependency_0_with_1_version.Format(name, version))
 			}
 		} else if r.resolver.traceEnabled() {
-			r.resolver.host.Trace(diagnostics.Format(diagnostics.Failed_to_find_peerDependency_0, name))
+			r.resolver.host.Trace(diagnostics.Failed_to_find_peerDependency_0.Format(name))
 		}
 	}
 	return builder.String()
@@ -1137,7 +1137,7 @@ func (r *resolutionState) readPackageJsonPeerDependencies(packageJsonInfo *packa
 func (r *resolutionState) realPath(path string) string {
 	rp := tspath.NormalizePath(r.resolver.host.Realpath(path))
 	if r.resolver.traceEnabled() {
-		r.resolver.host.Trace(diagnostics.Format(diagnostics.Resolving_real_path_for_0_result_1, path, rp))
+		r.resolver.host.Trace(diagnostics.Resolving_real_path_for_0_result_1.Format(path, rp))
 	}
 	return rp
 }
@@ -1148,11 +1148,11 @@ func (r *resolutionState) validatePackageJSONField(fieldName string, field packa
 			return true
 		}
 		if r.resolver.traceEnabled() {
-			r.resolver.host.Trace(diagnostics.Format(diagnostics.Expected_type_of_0_field_in_package_json_to_be_1_got_2, fieldName, field.ExpectedJSONType(), field.ActualJSONType())) // TODO
+			r.resolver.host.Trace(diagnostics.Expected_type_of_0_field_in_package_json_to_be_1_got_2.Format(fieldName, field.ExpectedJSONType(), field.ActualJSONType())) // TODO
 		}
 	}
 	if r.resolver.traceEnabled() {
-		r.resolver.host.Trace(diagnostics.Format(diagnostics.X_package_json_does_not_have_a_0_field, fieldName))
+		r.resolver.host.Trace(diagnostics.X_package_json_does_not_have_a_0_field.Format(fieldName))
 	}
 	return false
 }
@@ -1163,13 +1163,13 @@ func (r *resolutionState) getPackageJSONPathField(fieldName string, field *packa
 	}
 	if field.Value == "" {
 		if r.resolver.traceEnabled() {
-			r.resolver.host.Trace(diagnostics.Format(diagnostics.X_package_json_had_a_falsy_0_field, fieldName))
+			r.resolver.host.Trace(diagnostics.X_package_json_had_a_falsy_0_field.Format(fieldName))
 		}
 		return "", false
 	}
 	path := tspath.NormalizePath(tspath.CombinePaths(directory, field.Value))
 	if r.resolver.traceEnabled() {
-		r.resolver.host.Trace(diagnostics.Format(diagnostics.X_package_json_has_0_field_1_that_references_2, fieldName, field.Value, path))
+		r.resolver.host.Trace(diagnostics.X_package_json_has_0_field_1_that_references_2.Format(fieldName, field.Value, path))
 	}
 	return path, true
 }

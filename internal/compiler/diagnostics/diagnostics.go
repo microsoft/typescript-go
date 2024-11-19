@@ -47,8 +47,8 @@ func (m *Message) ReportsUnnecessary() bool           { return m.reportsUnnecess
 func (m *Message) ElidedInCompatabilityPyramid() bool { return m.elidedInCompatabilityPyramid }
 func (m *Message) ReportsDeprecated() bool            { return m.reportsDeprecated }
 
-func Format(message *Message, args ...any) string {
-	text := message.Message()
+func (m *Message) Format(args ...any) string {
+	text := m.Message()
 	if len(args) != 0 {
 		text = core.FormatStringFromArgs(text, args)
 	}
