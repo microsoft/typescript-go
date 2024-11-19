@@ -84,7 +84,7 @@ func (p *Program) bindSourceFiles() {
 	for _, file := range p.files {
 		if !file.IsBound {
 			p.host.RunTask(func() {
-				bindSourceFile(file, p.options)
+				BindSourceFile(file, p.options)
 			})
 		}
 	}

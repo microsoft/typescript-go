@@ -1,4 +1,4 @@
-package compiler
+package compiler_test
 
 import (
 	"path/filepath"

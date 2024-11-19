@@ -1,10 +1,11 @@
-package compiler
+package compiler_test
 
 import (
 	"runtime"
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 )
 
@@ -18,7 +19,7 @@ func BenchmarkBind(b *testing.B) {
 
 			sourceFiles := make([]*ast.SourceFile, b.N)
 			for i := 0; i < b.N; i++ {
-				sourceFiles[i] = ParseSourceFile(fileName, sourceText, core.ScriptTargetESNext)
+				sourceFiles[i] = compiler.ParseSourceFile(fileName, sourceText, core.ScriptTargetESNext)
 			}
 
 			compilerOptions := &core.CompilerOptions{Target: core.ScriptTargetESNext, ModuleKind: core.ModuleKindNodeNext}
@@ -29,7 +30,7 @@ func BenchmarkBind(b *testing.B) {
 
 			b.ResetTimer()
 			for i := 0; i < b.N; i++ {
-				bindSourceFile(sourceFiles[i], compilerOptions)
+				compiler.BindSourceFile(sourceFiles[i], compilerOptions)
 			}
 		})
 	}

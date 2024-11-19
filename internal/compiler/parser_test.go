@@ -1,5 +1,4 @@
-package compiler
-
+package compiler_test
 import (
 	"bytes"
 	"fmt"
@@ -13,6 +12,8 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/repo"
 	"github.com/microsoft/typescript-go/internal/testutil/baseline"
+	"github.com/microsoft/typescript-go/internal/compiler"
+	"github.com/microsoft/typescript-go/internal/ast"
 	"gotest.tools/v3/assert"
 
 	"github.com/microsoft/typescript-go/internal/core"
@@ -27,7 +28,7 @@ func BenchmarkParse(b *testing.B) {
 			sourceText := f.ReadFile(b)
 
 			for i := 0; i < b.N; i++ {
-				ParseSourceFile(fileName, sourceText, core.ScriptTargetESNext)
+				compiler.ParseSourceFile(fileName, sourceText, core.ScriptTargetESNext)
 			}
 		})
 	}
@@ -37,7 +38,7 @@ func TestParseSingleFile(t *testing.T) {
 	fileName := "../../testdata/cases/scanner/conflictMarkerTrivia1.ts"
 	sourceText, err := os.ReadFile(fileName)
 	assert.NilError(t, err)
-	ParseSourceFile(fileName, string(sourceText), core.ScriptTargetESNext)
+	compiler.ParseSourceFile(fileName, string(sourceText), core.ScriptTargetESNext)
 }
 
 func TestParseAndPrintNodes(t *testing.T) {
@@ -83,7 +84,7 @@ func parseTestWorker(t *testing.T, options *baseline.Options) func(fileName stri
 			}
 			sourceText, err := os.ReadFile(fileName)
 			assert.NilError(t, err)
-			sourceFile := ParseSourceFile(fileName, string(sourceText), core.ScriptTargetESNext)
+			sourceFile := compiler.ParseSourceFile(fileName, string(sourceText), core.ScriptTargetESNext)
 			baseline.Run(t, generateOutputFileName(t, fileName), printAST(sourceFile), baseline.Options{Gold: true})
 		})
 		return nil
@@ -132,25 +133,25 @@ func getIndentation(level int) string {
 }
 
 // prefix specifies the directory to write the baseline
-func printAST(sourceFile *SourceFile) string {
+func printAST(sourceFile *ast.SourceFile) string {
 	var sb strings.Builder
-	var visit func(node *Node, indentation int) bool
-	var parent *Node
-	visit = func(node *Node, indentation int) bool {
+	var visit func(node *ast.Node, indentation int) bool
+	var parent *ast.Node
+	visit = func(node *ast.Node, indentation int) bool {
 		offset := 1
-		skind, _ := strings.CutPrefix(node.kind.String(), "SyntaxKind")
-		if node.kind == SyntaxKindImportSpecifier {
+		skind, _ := strings.CutPrefix(node.Kind.String(), "SyntaxKind")
+		if node.Kind == ast.KindImportSpecifier {
 			parent = node
 		}
-		switch node.kind {
-		case SyntaxKindModifierList, SyntaxKindTypeParameterList, SyntaxKindTypeArgumentList, SyntaxKindSyntaxList:
+		switch node.Kind {
+		case ast.KindModifierList, ast.KindTypeParameterList, ast.KindTypeArgumentList, ast.KindSyntaxList:
 			offset = 0
-		case SyntaxKindIdentifier:
+		case ast.KindIdentifier:
 			indent := getIndentation(indentation)
-			if parent != nil && parent.AsImportSpecifier().name == node && node.AsIdentifier().text == "" && sourceFile.text[node.loc.pos:node.loc.end] != "" {
+			if parent != nil && parent.AsImportSpecifier().Name() == node && node.AsIdentifier().Text == "" && sourceFile.Text[node.Loc.Pos():node.Loc.End()] != "" {
 				sb.WriteString(fmt.Sprintf("%s%s: '%s'\n", indent, skind, ""))
 			} else {
-				sb.WriteString(fmt.Sprintf("%s%s: '%s'\n", indent, skind, sourceFile.text[node.loc.pos:node.loc.end]))
+				sb.WriteString(fmt.Sprintf("%s%s: '%s'\n", indent, skind, sourceFile.Text[node.Loc.Pos():node.Loc.End()]))
 			}
 		default:
 			if isOmittedExpression(node) {
@@ -160,8 +161,8 @@ func printAST(sourceFile *SourceFile) string {
 			sb.WriteString(fmt.Sprintf("%s%s\n", indent, skind))
 		}
 		// TODO: Include trivia in a more structured way than GetFullText
-		return node.ForEachChild(func(child *Node) bool {
-			if node.kind == SyntaxKindShorthandPropertyAssignment && node.AsShorthandPropertyAssignment().objectAssignmentInitializer == child {
+		return node.ForEachChild(func(child *ast.Node) bool {
+			if node.Kind == ast.KindShorthandPropertyAssignment && node.AsShorthandPropertyAssignment().ObjectAssignmentInitializer == child {
 				indent := strings.Repeat("  ", indentation+offset)
 				sb.WriteString(fmt.Sprintf("%sEqualsToken\n", indent)) // print an extra line for the EqualsToken
 			}
@@ -173,10 +174,10 @@ func printAST(sourceFile *SourceFile) string {
 	return sb.String()
 }
 
-func isOmittedExpression(node *Node) bool {
-	if node.kind == SyntaxKindBindingElement {
+func isOmittedExpression(node *ast.Node) bool {
+	if node.Kind == ast.KindBindingElement {
 		b := node.AsBindingElement()
-		if b.initializer == nil && b.name == nil && b.dotDotDotToken == nil {
+		if b.Initializer == nil && b.Name() == nil && b.DotDotDotToken == nil {
 			return true
 		}
 	} else {
