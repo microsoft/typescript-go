@@ -7,6 +7,7 @@ import (
 	"slices"
 	"strconv"
 	"strings"
+	"unicode/utf8"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/compiler/diagnostics"
@@ -105,6 +106,13 @@ type CachedSignatureKey struct {
 	key string
 }
 
+// StringMappingKey
+
+type StringMappingKey struct {
+	s *ast.Symbol
+	t *Type
+}
+
 // InferenceContext
 
 type InferenceContext struct{}
@@ -114,7 +122,8 @@ type InferenceContext struct{}
 type IntrinsicTypeKind int32
 
 const (
-	IntrinsicTypeKindUppercase IntrinsicTypeKind = iota
+	IntrinsicTypeKindUnknown IntrinsicTypeKind = iota
+	IntrinsicTypeKindUppercase
 	IntrinsicTypeKindLowercase
 	IntrinsicTypeKindCapitalize
 	IntrinsicTypeKindUncapitalize
@@ -276,6 +285,7 @@ type Checker struct {
 	enumLiteralTypes                   map[EnumLiteralKey]*Type
 	indexedAccessTypes                 map[string]*Type
 	templateLiteralTypes               map[string]*Type
+	stringMappingTypes                 map[StringMappingKey]*Type
 	uniqueESSymbolTypes                map[*ast.Symbol]*Type
 	cachedTypes                        map[CachedTypeKey]*Type
 	cachedSignatures                   map[CachedSignatureKey]*Signature
@@ -428,6 +438,7 @@ func NewChecker(program *Program) *Checker {
 	c.enumLiteralTypes = make(map[EnumLiteralKey]*Type)
 	c.indexedAccessTypes = make(map[string]*Type)
 	c.templateLiteralTypes = make(map[string]*Type)
+	c.stringMappingTypes = make(map[StringMappingKey]*Type)
 	c.uniqueESSymbolTypes = make(map[*ast.Symbol]*Type)
 	c.cachedTypes = make(map[CachedTypeKey]*Type)
 	c.cachedSignatures = make(map[CachedSignatureKey]*Signature)
@@ -7771,11 +7782,11 @@ func (c *Checker) instantiateTypeWorker(t *Type, m *TypeMapper, alias *TypeAlias
 		}
 		d := t.AsIndexedAccessType()
 		return c.getIndexedAccessTypeEx(c.instantiateType(d.objectType, m), c.instantiateType(d.indexType, m), d.accessFlags, nil /*accessNode*/, alias)
+	case flags&TypeFlagsTemplateLiteral != 0:
+		return c.getTemplateLiteralType(t.AsTemplateLiteralType().texts, c.instantiateTypes(t.AsTemplateLiteralType().types, m))
+	case flags&TypeFlagsStringMapping != 0:
+		return c.getStringMappingType(t.symbol, c.instantiateType(t.AsStringMappingType().target, m))
 		// !!!
-		// case flags&TypeFlagsTemplateLiteral != 0:
-		// 	return c.getTemplateLiteralType((t.(TemplateLiteralType)).texts, c.instantiateTypes((t.(TemplateLiteralType)).types, m))
-		// case flags&TypeFlagsStringMapping != 0:
-		// 	return c.getStringMappingType((t.(StringMappingType)).symbol, c.instantiateType((t.(StringMappingType)).type_, m))
 		// case flags&TypeFlagsConditional != 0:
 		// 	return c.getConditionalTypeInstantiation(t.(ConditionalType), c.combineTypeMappers((t.(ConditionalType)).mapper, m) /*forConstraint*/, false, aliasSymbol, aliasTypeArguments)
 		// case flags&TypeFlagsSubstitution != 0:
@@ -9910,6 +9921,14 @@ func (c *Checker) newTemplateLiteralType(texts []string, types []*Type) *Type {
 	return c.newType(TypeFlagsTemplateLiteral, ObjectFlagsNone, data)
 }
 
+func (c *Checker) newStringMappingType(symbol *ast.Symbol, target *Type) *Type {
+	data := &StringMappingType{}
+	data.target = target
+	t := c.newType(TypeFlagsStringMapping, ObjectFlagsNone, data)
+	t.symbol = symbol
+	return t
+}
+
 func (c *Checker) newSignature(flags SignatureFlags, declaration *ast.Node, typeParameters []*Type, thisParameter *ast.Symbol, parameters []*ast.Symbol, resolvedReturnType *Type, resolvedTypePredicate *TypePredicate, minArgumentCount int) *Signature {
 	sig := c.signaturePool.New()
 	sig.flags = flags
@@ -9990,6 +10009,18 @@ func (c *Checker) getBigIntLiteralType(value PseudoBigInt) *Type {
 		c.bigintLiteralTypes[value] = t
 	}
 	return t
+}
+
+func getStringLiteralValue(t *Type) string {
+	return t.AsLiteralType().value.(string)
+}
+
+func getNumberLiteralValue(t *Type) float64 {
+	return t.AsLiteralType().value.(float64)
+}
+
+func getBigIntLiteralValue(t *Type) PseudoBigInt {
+	return t.AsLiteralType().value.(PseudoBigInt)
 }
 
 func (c *Checker) getEnumLiteralType(value any, enumSymbol *ast.Symbol, symbol *ast.Symbol) *Type {
@@ -11594,10 +11625,6 @@ func (c *Checker) getNoInferType(t *Type) *Type {
 	return c.anyType // !!!
 }
 
-func (c *Checker) getStringMappingType(symbol *ast.Symbol, t *Type) *Type {
-	return c.anyType // !!!
-}
-
 func (c *Checker) getBaseConstraintOrType(t *Type) *Type {
 	constraint := c.getBaseConstraintOfType(t)
 	if constraint != nil {
@@ -12216,6 +12243,69 @@ func (c *Checker) getTemplateStringForType(t *Type) string {
 		return t.AsIntrinsicType().intrinsicName
 	}
 	return ""
+}
+
+func (c *Checker) getStringMappingType(symbol *ast.Symbol, t *Type) *Type {
+	switch {
+	case t.flags&(TypeFlagsUnion|TypeFlagsNever) != 0:
+		return c.mapType(t, func(t *Type) *Type { return c.getStringMappingType(symbol, t) })
+	case t.flags&TypeFlagsStringLiteral != 0:
+		return c.getStringLiteralType(applyStringMapping(symbol, getStringLiteralValue(t)))
+	case t.flags&TypeFlagsTemplateLiteral != 0:
+		return c.getTemplateLiteralType(c.applyTemplateStringMapping(symbol, t.AsTemplateLiteralType().texts, t.AsTemplateLiteralType().types))
+	case t.flags&TypeFlagsStringMapping != 0 && symbol == t.symbol:
+		return t
+	case t.flags&(TypeFlagsAny|TypeFlagsString|TypeFlagsStringMapping) != 0 || c.isGenericIndexType(t):
+		return c.getStringMappingTypeForGenericType(symbol, t)
+	case c.isPatternLiteralPlaceholderType(t):
+		return c.getStringMappingTypeForGenericType(symbol, c.getTemplateLiteralType([]string{"", ""}, []*Type{t}))
+	default:
+		return t
+	}
+}
+
+func applyStringMapping(symbol *ast.Symbol, str string) string {
+	switch intrinsicTypeKinds[symbol.Name] {
+	case IntrinsicTypeKindUppercase:
+		return strings.ToUpper(str)
+	case IntrinsicTypeKindLowercase:
+		return strings.ToLower(str)
+	case IntrinsicTypeKindCapitalize:
+		_, size := utf8.DecodeRuneInString(str)
+		return strings.ToUpper(str[:size]) + str[size:]
+	case IntrinsicTypeKindUncapitalize:
+		_, size := utf8.DecodeRuneInString(str)
+		return strings.ToLower(str[:size]) + str[size:]
+	}
+	return str
+}
+
+func (c *Checker) applyTemplateStringMapping(symbol *ast.Symbol, texts []string, types []*Type) ([]string, []*Type) {
+	switch intrinsicTypeKinds[symbol.Name] {
+	case IntrinsicTypeKindUppercase, IntrinsicTypeKindLowercase:
+		return core.Map(texts, func(t string) string { return applyStringMapping(symbol, t) }),
+			core.Map(types, func(t *Type) *Type { return c.getStringMappingType(symbol, t) })
+	case IntrinsicTypeKindCapitalize, IntrinsicTypeKindUncapitalize:
+		if texts[0] != "" {
+			newTexts := slices.Clone(texts)
+			newTexts[0] = applyStringMapping(symbol, newTexts[0])
+			return newTexts, types
+		}
+		newTypes := slices.Clone(types)
+		newTypes[0] = c.getStringMappingType(symbol, newTypes[0])
+		return texts, newTypes
+	}
+	return texts, types
+}
+
+func (c *Checker) getStringMappingTypeForGenericType(symbol *ast.Symbol, t *Type) *Type {
+	key := StringMappingKey{s: symbol, t: t}
+	result := c.stringMappingTypes[key]
+	if result == nil {
+		result = c.newStringMappingType(symbol, t)
+		c.stringMappingTypes[key] = result
+	}
+	return result
 }
 
 // Given an indexed access on a mapped type of the form { [P in K]: E }[X], return an instantiation of E where P is

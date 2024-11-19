@@ -139,6 +139,8 @@ func (p *Printer) printTypeNoAlias(t *Type) {
 		p.printRecursive(t, (*Printer).printIndexedAccessType)
 	case t.flags&TypeFlagsTemplateLiteral != 0:
 		p.printTemplateLiteralType(t)
+	case t.flags&TypeFlagsStringMapping != 0:
+		p.printStringMappingType(t)
 	}
 }
 
@@ -208,6 +210,13 @@ func (p *Printer) printTemplateLiteralType(t *Type) {
 		p.print(texts[i+1])
 	}
 	p.print("`")
+}
+
+func (p *Printer) printStringMappingType(t *Type) {
+	p.print(t.symbol.Name)
+	p.print("<")
+	p.printType(t.AsStringMappingType().target)
+	p.print(">")
 }
 
 func (p *Printer) printEnumLiteral(t *Type) {
