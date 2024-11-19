@@ -34,13 +34,6 @@ func BenchmarkParse(b *testing.B) {
 	}
 }
 
-func TestParseSingleFile(t *testing.T) {
-	fileName := "../../testdata/cases/scanner/conflictMarkerTrivia1.ts"
-	sourceText, err := os.ReadFile(fileName)
-	assert.NilError(t, err)
-	compiler.ParseSourceFile(fileName, string(sourceText), core.ScriptTargetESNext)
-}
-
 func TestParseAndPrintNodes(t *testing.T) {
 	t.Parallel()
 	err := filepath.WalkDir(repo.TypeScriptSubmodulePath, parseTestWorker(t, &baseline.Options{}))
