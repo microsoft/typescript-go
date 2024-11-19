@@ -266,6 +266,7 @@ func (p *Printer) printArrayType(t *Type) {
 	p.printTypeEx(p.c.getTypeArguments(t)[0], TypePrecedencePostfix)
 	p.print("[]")
 }
+
 func (p *Printer) printTupleType(t *Type) {
 	tail := false
 	p.print("[")
@@ -413,7 +414,11 @@ func (p *Printer) printTypeParameter(t *Type) {
 	if t.AsTypeParameter().isThisType {
 		p.print("this")
 	} else {
-		p.print(t.symbol.Name)
+		if t.symbol == nil {
+			p.print("!#!")
+		} else {
+			p.print(t.symbol.Name)
+		}
 	}
 }
 
@@ -469,7 +474,7 @@ func (p *Printer) printSourceFileWithTypes(sourceFile *ast.SourceFile) {
 	var typesPrinted bool
 	lineStarts := getLineStarts(sourceFile)
 	printLinesBefore := func(node *ast.Node) {
-		line := computeLineOfPosition(lineStarts, skipTrivia(sourceFile.Text, node.Pos()))
+		line := computeLineOfPosition(lineStarts, SkipTrivia(sourceFile.Text, node.Pos()))
 		var nextLineStart int
 		if line+1 < len(lineStarts) {
 			nextLineStart = int(lineStarts[line+1])
