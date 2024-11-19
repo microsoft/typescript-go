@@ -8939,7 +8939,7 @@ func (c *Checker) computeEnumMemberValues(node *ast.Node) {
 }
 
 func (c *Checker) computeEnumMemberValue(member *ast.Node, autoValue float64, previous *ast.Node) EvaluatorResult {
-	if isComputedNonLiteralName(member.Name()) {
+	if IsComputedNonLiteralName(member.Name()) {
 		c.error(member.Name(), diagnostics.Computed_property_names_are_not_allowed_in_enums)
 	} else {
 		text := member.Name().Text()

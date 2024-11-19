@@ -3687,7 +3687,7 @@ func createEvaluator(evaluateEntity Evaluator) Evaluator {
 	return evaluate
 }
 
-func isComputedNonLiteralName(name *ast.Node) bool {
+func IsComputedNonLiteralName(name *ast.Node) bool {
 	return ast.IsComputedPropertyName(name) && !isStringOrNumericLiteralLike(name.Expression())
 }
 
