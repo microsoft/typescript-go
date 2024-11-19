@@ -803,12 +803,12 @@ func (s *Scanner) ReScanTemplateToken(isTaggedTemplate bool) ast.Kind {
 	s.token = s.scanTemplateAndSetTokenValue(!isTaggedTemplate)
 	return s.token
 }
-func (scanner *Scanner) ReScanAsteriskEqualsToken() SyntaxKind {
-	if scanner.token != SyntaxKindAsteriskEqualsToken {
+func (scanner *Scanner) ReScanAsteriskEqualsToken() ast.Kind {
+	if scanner.token != ast.KindAsteriskEqualsToken {
 		panic("'ReScanAsteriskEqualsToken' should only be called on a '*='")
 	}
 	scanner.pos = scanner.tokenStart + 1
-	scanner.token = SyntaxKindEqualsToken
+	scanner.token = ast.KindEqualsToken
 	return scanner.token
 }
 
@@ -999,11 +999,11 @@ func (s *Scanner) reScanJsxAttributeValue() ast.Kind {
 	return s.scanJsxAttributeValue()
 }
 
-func (scanner *Scanner) ScanJSDocToken() SyntaxKind {
+func (scanner *Scanner) ScanJSDocToken() ast.Kind {
 	scanner.fullStartPos = scanner.pos
-	scanner.tokenFlags = TokenFlagsNone
+	scanner.tokenFlags = ast.TokenFlagsNone
 	if scanner.pos >= len(scanner.text) {
-		scanner.token = SyntaxKindEndOfFile
+		scanner.token = ast.KindEndOfFile
 		return scanner.token
 	}
 
@@ -1012,13 +1012,13 @@ func (scanner *Scanner) ScanJSDocToken() SyntaxKind {
 	switch ch {
 	case '\t', '\v', '\f', ' ':
 		ch2 := scanner.char()
-		for ch2 > -1 && isWhiteSpaceSingleLine(ch2) {
+		for ch2 > -1 && stringutil.IsWhiteSpaceSingleLine(ch2) {
 			scanner.pos++
 		}
-		scanner.token = SyntaxKindWhitespaceTrivia
+		scanner.token = ast.KindWhitespaceTrivia
 		return scanner.token
 	case '@':
-		scanner.token = SyntaxKindAtToken
+		scanner.token = ast.KindAtToken
 		return scanner.token
 	case '\r':
 		if scanner.char() == '\n' {
@@ -1026,50 +1026,50 @@ func (scanner *Scanner) ScanJSDocToken() SyntaxKind {
 		}
 		fallthrough
 	case '\n':
-		scanner.tokenFlags |= TokenFlagsPrecedingLineBreak
-		scanner.token = SyntaxKindNewLineTrivia
+		scanner.tokenFlags |= ast.TokenFlagsPrecedingLineBreak
+		scanner.token = ast.KindNewLineTrivia
 		return scanner.token
 	case '*':
-		scanner.token = SyntaxKindAsteriskToken
+		scanner.token = ast.KindAsteriskToken
 		return scanner.token
 	case '{':
-		scanner.token = SyntaxKindOpenBraceToken
+		scanner.token = ast.KindOpenBraceToken
 		return scanner.token
 	case '}':
-		scanner.token = SyntaxKindCloseBraceToken
+		scanner.token = ast.KindCloseBraceToken
 		return scanner.token
 	case '[':
-		scanner.token = SyntaxKindOpenBracketToken
+		scanner.token = ast.KindOpenBracketToken
 		return scanner.token
 	case ']':
-		scanner.token = SyntaxKindCloseBracketToken
+		scanner.token = ast.KindCloseBracketToken
 		return scanner.token
 	case '(':
-		scanner.token = SyntaxKindOpenParenToken
+		scanner.token = ast.KindOpenParenToken
 		return scanner.token
 	case ')':
-		scanner.token = SyntaxKindCloseParenToken
+		scanner.token = ast.KindCloseParenToken
 		return scanner.token
 	case '<':
-		scanner.token = SyntaxKindLessThanToken
+		scanner.token = ast.KindLessThanToken
 		return scanner.token
 	case '>':
-		scanner.token = SyntaxKindGreaterThanToken
+		scanner.token = ast.KindGreaterThanToken
 		return scanner.token
 	case '=':
-		scanner.token = SyntaxKindEqualsToken
+		scanner.token = ast.KindEqualsToken
 		return scanner.token
 	case ',':
-		scanner.token = SyntaxKindCommaToken
+		scanner.token = ast.KindCommaToken
 		return scanner.token
 	case '.':
-		scanner.token = SyntaxKindDotToken
+		scanner.token = ast.KindDotToken
 		return scanner.token
 	case '`':
-		scanner.token = SyntaxKindBacktickToken
+		scanner.token = ast.KindBacktickToken
 		return scanner.token
 	case '#':
-		scanner.token = SyntaxKindHashToken
+		scanner.token = ast.KindHashToken
 		return scanner.token
 	case '\\':
 		scanner.pos--
@@ -1090,7 +1090,7 @@ func (scanner *Scanner) ScanJSDocToken() SyntaxKind {
 				break
 			}
 			char, size = scanner.charAndSize()
-			if !isIdentifierPart(char, scanner.languageVersion, scanner.languageVariant) && char != '-' {
+			if !isIdentifierPart(char, scanner.languageVersion) && char != '-' {
 				break
 			}
 			scanner.pos += size
@@ -1102,7 +1102,7 @@ func (scanner *Scanner) ScanJSDocToken() SyntaxKind {
 		scanner.token = getIdentifierToken(scanner.tokenValue)
 		return scanner.token
 	} else {
-		scanner.token = SyntaxKindUnknown
+		scanner.token = ast.KindUnknown
 		return scanner.token
 	}
 }

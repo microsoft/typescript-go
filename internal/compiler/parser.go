@@ -201,7 +201,7 @@ func (p *Parser) nextToken() ast.Kind {
 	return p.token
 }
 
-func (p *Parser) nextTokenJSDoc() SyntaxKind {
+func (p *Parser) nextTokenJSDoc() ast.Kind {
 	p.token = p.scanner.ScanJSDocToken()
 	return p.token
 }
@@ -2262,7 +2262,7 @@ func (p *Parser) parseNonArrayType() *ast.Node {
 		p.scanner.ReScanQuestionToken()
 		fallthrough
 	case ast.KindQuestionToken:
-		return p.parseJSDocUnknownOrNullableType()
+		return p.parseJSDocNullableType()
 	case ast.KindFunctionKeyword:
 		return p.parseJSDocFunctionType()
 	case ast.KindExclamationToken:
@@ -2350,7 +2350,7 @@ func (p *Parser) parseJSDocNonNullableType() *ast.TypeNode {
 	return result
 }
 
-func (p *Parser) parseJSDocUnknownOrNullableType() *ast.Node {
+func (p *Parser) parseJSDocNullableType() *ast.Node {
 	pos := p.nodePos()
 	p.nextToken()
 	result := p.factory.NewJSDocNullableType(p.parseType())
