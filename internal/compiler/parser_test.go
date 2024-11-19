@@ -37,7 +37,7 @@ func TestParseSingleFile(t *testing.T) {
 	fileName := "../../testdata/cases/scanner/conflictMarkerTrivia1.ts"
 	sourceText, err := os.ReadFile(fileName)
 	assert.NilError(t, err)
-	ParseSourceFile(fileName, string(sourceText), ScriptTargetESNext)
+	ParseSourceFile(fileName, string(sourceText), core.ScriptTargetESNext)
 }
 
 func TestParseAndPrintNodes(t *testing.T) {
@@ -83,9 +83,8 @@ func parseTestWorker(t *testing.T, options *baseline.Options) func(fileName stri
 			}
 			sourceText, err := os.ReadFile(fileName)
 			assert.NilError(t, err)
-			sourceFile := ParseSourceFile(fileName, string(sourceText), ScriptTargetESNext)
-			err = baseline.Run(generateOutputFileName(t, fileName), printAST(sourceFile), baseline.Options{Gold: true})
-			assert.NilError(t, err)
+			sourceFile := ParseSourceFile(fileName, string(sourceText), core.ScriptTargetESNext)
+			baseline.Run(t, generateOutputFileName(t, fileName), printAST(sourceFile), baseline.Options{Gold: true})
 		})
 		return nil
 	}
