@@ -11,13 +11,15 @@ import (
 	"strings"
 	"sync"
 	"unicode/utf16"
+
+	"github.com/microsoft/typescript-go/internal/core"
 )
 
 type CompilerHost interface {
 	ReadFile(fileName string) (text string, ok bool)
 	ReadDirectory(rootPath string, extensions []string) []FileInfo
 	AbsFileName(fileName string) string
-	RunTask(func())
+	RunTask(fn func())
 	WaitForTasks()
 }
 
@@ -27,13 +29,13 @@ type FileInfo struct {
 }
 
 type compilerHost struct {
-	options        *CompilerOptions
+	options        *core.CompilerOptions
 	singleThreaded bool
 	wg             sync.WaitGroup
 	readSema       chan struct{}
 }
 
-func NewCompilerHost(options *CompilerOptions, singleThreaded bool) CompilerHost {
+func NewCompilerHost(options *core.CompilerOptions, singleThreaded bool) CompilerHost {
 	h := &compilerHost{}
 	h.options = options
 	h.singleThreaded = singleThreaded
@@ -74,7 +76,7 @@ func decodeUtf16(b []byte, order binary.ByteOrder) string {
 
 func (h *compilerHost) ReadDirectory(rootDir string, extensions []string) []FileInfo {
 	var fileInfos []FileInfo
-	filepath.Walk(rootDir, func(path string, info fs.FileInfo, err error) error {
+	_ = filepath.Walk(rootDir, func(path string, info fs.FileInfo, err error) error {
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(1)

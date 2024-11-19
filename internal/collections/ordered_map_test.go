@@ -1,18 +1,20 @@
 package collections_test
 
 import (
+	"encoding/json"
 	"fmt"
 	"slices"
 	"testing"
 
+	json2 "github.com/go-json-experiment/json"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"gotest.tools/v3/assert"
 )
 
-func TestMap(t *testing.T) {
+func TestOrderedMap(t *testing.T) {
 	t.Parallel()
 
-	var m collections.Map[int, string]
+	var m collections.OrderedMap[int, string]
 
 	assert.Assert(t, !m.Has(1))
 
@@ -102,10 +104,10 @@ func TestMap(t *testing.T) {
 	assert.Equal(t, m.Size(), 0)
 }
 
-func TestMapClone(t *testing.T) {
+func TestOrderedMapClone(t *testing.T) {
 	t.Parallel()
 
-	m := &collections.Map[int, string]{}
+	m := &collections.OrderedMap[int, string]{}
 	m.Set(1, "one")
 	m.Set(2, "two")
 
@@ -128,10 +130,10 @@ func TestMapClone(t *testing.T) {
 	assert.DeepEqual(t, slices.Collect(clone.Values()), []string{"one", "two"})
 }
 
-func TestMapClear(t *testing.T) {
+func TestOrderedMapClear(t *testing.T) {
 	t.Parallel()
 
-	var m collections.Map[int, string]
+	var m collections.OrderedMap[int, string]
 	m.Set(1, "one")
 	m.Set(2, "two")
 
@@ -144,15 +146,47 @@ func padInt(n int) string {
 	return fmt.Sprintf("%10d", n)
 }
 
-func TestMapWithSizeHint(t *testing.T) {
+func TestOrderedMapWithSizeHint(t *testing.T) { //nolint:paralleltest
 	const N = 1024
 
 	allocs := testing.AllocsPerRun(10, func() {
-		m := collections.NewMapWithSizeHint[int, int](N)
+		m := collections.NewOrderedMapWithSizeHint[int, int](N)
 		for i := range N {
 			m.Set(i, i)
 		}
 	})
 
 	assert.Assert(t, allocs < 10, "allocs = %v", allocs)
+}
+
+func TestOrderedMapUnmarshalJSON(t *testing.T) {
+	t.Parallel()
+
+	t.Run("UnmarshalJSON", func(t *testing.T) {
+		t.Parallel()
+		testOrderedMapUnmarshalJSON(t, json.Unmarshal)
+	})
+	t.Run("UnmarshalJSONV2", func(t *testing.T) {
+		t.Parallel()
+		testOrderedMapUnmarshalJSON(t, func(in []byte, out any) error { return json2.Unmarshal(in, out) })
+	})
+}
+
+func testOrderedMapUnmarshalJSON(t *testing.T, unmarshal func([]byte, any) error) {
+	var m collections.OrderedMap[string, any]
+	err := unmarshal([]byte(`{"a": 1, "b": "two", "c": { "d": 4 } }`), &m)
+	assert.NilError(t, err)
+
+	assert.Equal(t, m.Size(), 3)
+	assert.Equal(t, m.GetOrZero("a"), float64(1))
+
+	err = unmarshal([]byte(`null`), &m)
+	assert.NilError(t, err)
+
+	err = unmarshal([]byte(`"foo"`), &m)
+	assert.ErrorContains(t, err, "cannot unmarshal non-object JSON value into Map")
+
+	var invalidMap collections.OrderedMap[int, any]
+	err = unmarshal([]byte(`{"a": 1, "b": "two"}`), &invalidMap)
+	assert.ErrorContains(t, err, "unmarshal")
 }
