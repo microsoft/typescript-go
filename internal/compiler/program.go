@@ -9,6 +9,7 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
 type ProgramOptions struct {
@@ -66,7 +67,7 @@ func (p *Program) parseSourceFiles(fileInfos []FileInfo) {
 		p.host.RunTask(func() {
 			fileName := fileInfos[i].Name
 			text, _ := p.host.ReadFile(fileName)
-			sourceFile := ParseSourceFile(fileName, text, getEmitScriptTarget(p.options))
+			sourceFile := ParseSourceFile(fileName, text, p.options.GetEmitScriptTarget())
 			path, _ := filepath.Abs(fileName)
 			sourceFile.SetPath(path)
 			p.collectExternalModuleReferences(sourceFile)
@@ -93,15 +94,15 @@ func (p *Program) bindSourceFiles() {
 
 func (p *Program) getResolvedModule(currentSourceFile *ast.SourceFile, moduleReference string) *ast.SourceFile {
 	directory := filepath.Dir(currentSourceFile.Path())
-	if isExternalModuleNameRelative(moduleReference) {
+	if tspath.IsExternalModuleNameRelative(moduleReference) {
 		return p.findSourceFile(filepath.Join(directory, moduleReference))
 	}
 	return p.findNodeModule(moduleReference)
 }
 
 func (p *Program) findSourceFile(candidate string) *ast.SourceFile {
-	extensionless := removeFileExtension(candidate)
-	for _, ext := range []string{ExtensionTs, ExtensionTsx, ExtensionDts} {
+	extensionless := tspath.RemoveFileExtension(candidate)
+	for _, ext := range []string{tspath.ExtensionTs, tspath.ExtensionTsx, tspath.ExtensionDts} {
 		path := extensionless + ext
 		if result, ok := p.filesByPath[path]; ok {
 			return result
@@ -196,6 +197,11 @@ func (p *Program) getDiagnosticsHelper(sourceFile *ast.SourceFile, getDiagnostic
 	return sortAndDeduplicateDiagnostics(result)
 }
 
+type NodeCount struct {
+	kind  ast.Kind
+	count int
+}
+
 func (p *Program) PrintSourceFileWithTypes() {
 	for _, file := range p.files {
 		if filepath.Base(file.FileName()) == "main.ts" {
@@ -226,7 +232,7 @@ func (p *Program) collectExternalModuleReferences(file *ast.SourceFile) {
 	// 		(imports ||= []).push(createSyntheticImport(jsxImport, file));
 	// 	}
 	// }
-	for _, node := range file.Statements {
+	for _, node := range file.Statements.Nodes {
 		p.collectModuleReferences(file, node, false /*inAmbientModule*/)
 	}
 	// if ((file.flags & NodeFlags.PossiblyContainsDynamicImport) || isJavaScriptFile) {
@@ -349,7 +355,7 @@ func (p *Program) collectModuleReferences(file *ast.SourceFile, node *ast.Statem
 		// only through top - level external module names. Relative external module names are not permitted.
 		if moduleNameExpr != nil && ast.IsStringLiteral(moduleNameExpr) {
 			moduleName := moduleNameExpr.AsStringLiteral().Text
-			if moduleName != "" && (!inAmbientModule || !isExternalModuleNameRelative(moduleName)) {
+			if moduleName != "" && (!inAmbientModule || !tspath.IsExternalModuleNameRelative(moduleName)) {
 				setParentInChildren(node) // we need parent data on imports before the program is fully bound, so we ensure it's set here
 				file.Imports = append(file.Imports, moduleNameExpr)
 				if file.UsesUriStyleNodeCoreModules != core.TSTrue && p.currentNodeModulesDepth == 0 && !file.IsDeclarationFile {
@@ -373,7 +379,7 @@ func (p *Program) collectModuleReferences(file *ast.SourceFile, node *ast.Statem
 		// - if current file is external module then module augmentation is a ambient module declaration defined in the top level scope
 		// - if current file is not external module then module augmentation is an ambient module declaration with non-relative module name
 		//   immediately nested in top level ambient module declaration .
-		if isExternalModule(file) || (inAmbientModule && !isExternalModuleNameRelative(nameText)) {
+		if isExternalModule(file) || (inAmbientModule && !tspath.IsExternalModuleNameRelative(nameText)) {
 			file.ModuleAugmentations = append(file.ModuleAugmentations, node.AsModuleDeclaration().Name())
 		} else if !inAmbientModule {
 			if file.IsDeclarationFile {
@@ -386,7 +392,7 @@ func (p *Program) collectModuleReferences(file *ast.SourceFile, node *ast.Statem
 			// Relative external module names are not permitted
 			// NOTE: body of ambient module is always a module block, if it exists
 			if node.AsModuleDeclaration().Body != nil {
-				for _, statement := range node.AsModuleDeclaration().Body.AsModuleBlock().Statements {
+				for _, statement := range node.AsModuleDeclaration().Body.AsModuleBlock().Statements.Nodes {
 					p.collectModuleReferences(file, statement, true /*inAmbientModule*/)
 				}
 			}
