@@ -4564,15 +4564,15 @@ func (f *NodeFactory) NewJSDocAllType() *Node {
 
 type JSDocFunctionType struct {
 	TypeNodeBase
-	Parameters []*ParameterDeclarationNode
+	Parameters *NodeList // NodeList[*ParameterDeclarationNode]
 	TypeNode   *TypeNode
 }
 
 func (node *JSDocFunctionType) ForEachChild(v Visitor) bool {
-	return visitNodes(v, node.Parameters) || visit(v, node.TypeNode)
+	return visitNodeList(v, node.Parameters) || visit(v, node.TypeNode)
 }
 
-func (f *NodeFactory) NewJSDocFunctionType(parameters []*ParameterDeclarationNode, typeNode *TypeNode) *Node {
+func (f *NodeFactory) NewJSDocFunctionType(parameters *NodeList, typeNode *TypeNode) *Node {
 	data := &JSDocFunctionType{}
 	data.Parameters = parameters
 	data.TypeNode = typeNode
