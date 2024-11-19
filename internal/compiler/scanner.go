@@ -1085,7 +1085,7 @@ func (scanner *Scanner) ScanJSDocToken() ast.Kind {
 
 	if isIdentifierStart(ch, scanner.languageVersion) {
 		char := ch
-		for true {
+		for {
 			if scanner.pos >= len(scanner.text) {
 				break
 			}
