@@ -4379,13 +4379,6 @@ func NewCommentRange(kind Kind, pos int, end int, hasTrailingNewLine bool) Comme
 	}
 }
 
-type ResolutionMode = uint8
-
-const (
-	RsolutionModeESNext ResolutionMode = iota
-	ResolutionModeCommonJS
-)
-
 type FileReference struct {
 	core.TextRange
 	FileName       string
