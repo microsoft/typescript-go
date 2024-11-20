@@ -2018,17 +2018,18 @@ func (c *Checker) isMemberOfStringMapping(source *Type, target *Type) bool {
 		// The intuition here is that if same mappings don't affect the source at all,
 		// and the source is compatible with the unmapped target, then they must
 		// still reside in the same domain.
-		mappedSource := c.applyTargetStringMappingToSource(source, target)
-		return mappedSource == source && c.isMemberOfStringMapping(source, target)
+		mapped, inner := c.applyTargetStringMappingToSource(source, target)
+		return mapped == source && c.isMemberOfStringMapping(source, inner)
 	}
 	return false
 }
 
-func (c *Checker) applyTargetStringMappingToSource(source *Type, target *Type) *Type {
-	if target.flags&TypeFlagsStringMapping != 0 {
-		source = c.applyTargetStringMappingToSource(source, target.AsStringMappingType().target)
+func (c *Checker) applyTargetStringMappingToSource(source *Type, target *Type) (*Type, *Type) {
+	inner := target.AsStringMappingType().target
+	if inner.flags&TypeFlagsStringMapping != 0 {
+		source, inner = c.applyTargetStringMappingToSource(source, inner)
 	}
-	return c.getStringMappingType(target.symbol, source)
+	return c.getStringMappingType(target.symbol, source), inner
 }
 
 func visibilityToString(flags ast.ModifierFlags) string {
