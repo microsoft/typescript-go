@@ -1949,7 +1949,7 @@ func (c *Checker) inferFromLiteralPartsToTemplateLiteral(sourceTexts []string, s
 		if len(delim) > 0 {
 			s := seg
 			p := pos
-			for true {
+			for {
 				d := strings.Index(getSourceText(s)[p:], delim)
 				if d >= 0 {
 					p += d
