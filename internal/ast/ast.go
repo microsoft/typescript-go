@@ -174,6 +174,8 @@ func (node *Node) Expression() *Node {
 		return node.AsSpreadAssignment().Expression
 	case KindTemplateSpan:
 		return node.AsTemplateSpan().Expression
+	case KindForInStatement, KindForOfStatement:
+		return node.AsForInOrOfStatement().Expression
 	}
 	panic("Unhandled case in Node.Expression")
 }
@@ -677,6 +679,9 @@ func (n *Node) AsJSDocSignature() *JSDocSignature {
 }
 func (n *Node) AsJSDocNameReference() *JSDocNameReference {
 	return n.data.(*JSDocNameReference)
+}
+func (n *Node) AsTemplateLiteralTypeNode() *TemplateLiteralTypeNode {
+	return n.data.(*TemplateLiteralTypeNode)
 }
 
 // NodeData
@@ -5069,13 +5074,8 @@ func (node *JSDocNameReference) Name() *EntityName { return node.name }
 
 // PatternAmbientModule
 
-type Pattern struct {
-	Text      string
-	StarIndex int // -1 for exact match
-}
-
 type PatternAmbientModule struct {
-	Pattern Pattern
+	Pattern core.Pattern
 	Symbol  *Symbol
 }
 

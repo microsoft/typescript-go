@@ -180,13 +180,6 @@ const (
 	// Names
 	KindQualifiedName
 	KindComputedPropertyName
-	// Lists
-	KindModifierList
-	KindTypeParameterList
-	KindTypeArgumentList
-	KindJSDocList
-	KindJSDocCommentList
-	KindJSDocTagList
 	// Signature elements
 	KindTypeParameter
 	KindParameter
