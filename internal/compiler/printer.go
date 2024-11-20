@@ -423,11 +423,7 @@ func (p *Printer) printTypeParameter(t *Type) {
 	if t.AsTypeParameter().isThisType {
 		p.print("this")
 	} else {
-		if t.symbol == nil {
-			p.print("!#!")
-		} else {
-			p.print(t.symbol.Name)
-		}
+		p.print(t.symbol.Name)
 	}
 }
 
