@@ -564,7 +564,7 @@ func (n *Node) AsJSDocNullableType() *JSDocNullableType {
 	return n.data.(*JSDocNullableType)
 }
 func (n *Node) AsTemplateLiteralTypeNode() *TemplateLiteralTypeNode {
-	return n.Data.(*TemplateLiteralTypeNode)
+	return n.data.(*TemplateLiteralTypeNode)
 }
 
 // NodeData
