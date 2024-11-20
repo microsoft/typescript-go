@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"path/filepath"
+	"slices"
 	"strings"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -150,9 +151,7 @@ func (p *Program) getResolvedModule(currentSourceFile *ast.SourceFile, moduleRef
 }
 
 func getModuleNames(file *ast.SourceFile) []*ast.Node {
-	res := make([]*ast.Node, len(file.Imports))
-	copy(res, file.Imports)
-
+	res := slices.Clone(file.Imports)
 	for _, imp := range file.ModuleAugmentations {
 		if imp.Kind == ast.KindStringLiteral {
 			res = append(res, imp)
