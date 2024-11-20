@@ -4466,6 +4466,10 @@ func (node *JSDocLink) ForEachChild(v Visitor) bool {
 	return visit(v, node.name)
 }
 
+func (node *JSDocLink) Name() *DeclarationName {
+	return node.name
+}
+
 type JSDocLinkPlain struct {
 	JSDocCommentBase
 	name *Node // optional (should only be EntityName | JSDocMemberName)
@@ -4482,6 +4486,10 @@ func (node *JSDocLinkPlain) ForEachChild(v Visitor) bool {
 	return visit(v, node.name)
 }
 
+func (node *JSDocLinkPlain) Name() *DeclarationName {
+	return node.name
+}
+
 type JSDocLinkCode struct {
 	JSDocCommentBase
 	name *Node // optional (should only be EntityName | JSDocMemberName)
@@ -4496,6 +4504,10 @@ func (f *NodeFactory) NewJSDocLinkCode(name *Node, text string) *Node {
 
 func (node *JSDocLinkCode) ForEachChild(v Visitor) bool {
 	return visit(v, node.name)
+}
+
+func (node *JSDocLinkCode) Name() *DeclarationName {
+	return node.name
 }
 
 // JSDocTypeExpression
@@ -4662,6 +4674,8 @@ func (node *JSDocTemplateTag) ForEachChild(v Visitor) bool {
 	return visit(v, node.TagName) || visit(v, node.Constraint) || visit(v, node.typeParameters) || visit(v, node.Comment)
 }
 
+func (node *JSDocTemplateTag) TypeParameters() *TypeParameterListNode { return node.typeParameters }
+
 // JSDocParameterTag
 
 type JSDocPropertyTag struct {
@@ -4686,6 +4700,8 @@ func (node *JSDocPropertyTag) ForEachChild(v Visitor) bool {
 	return visit(v, node.TagName) || visit(v, node.name) || visit(v, node.TypeExpression) || visit(v, node.Comment)
 }
 
+func (node *JSDocPropertyTag) Name() *EntityName { return node.name }
+
 type JSDocParameterTag struct {
 	JSDocTagBase
 	name           *EntityName
@@ -4707,6 +4723,8 @@ func NewJSDocParameterTag(tagName *IdentifierNode, name *EntityName, isBracketed
 func (node *JSDocParameterTag) ForEachChild(v Visitor) bool {
 	return visit(v, node.TagName) || visit(v, node.name) || visit(v, node.TypeExpression) || visit(v, node.Comment)
 }
+
+func (node *JSDocParameterTag) Name() *EntityName { return node.name }
 
 // JSDocReturnTag
 type JSDocReturnTag struct {
@@ -5028,6 +5046,8 @@ func (node *JSDocSignature) ForEachChild(v Visitor) bool {
 	return visit(v, node.typeParameters) || visitNodes(v, node.Parameters) || visit(v, node.TypeNode)
 }
 
+func (node *JSDocSignature) TypeParameters() *TypeParameterListNode { return node.typeParameters }
+
 // JSDocNameReference
 type JSDocNameReference struct {
 	TypeNodeBase
@@ -5044,6 +5064,8 @@ func NewJSDocNameReference(name *EntityName) *JSDocNameReference {
 func (node *JSDocNameReference) ForEachChild(v Visitor) bool {
 	return visit(v, node.name)
 }
+
+func (node *JSDocNameReference) Name() *EntityName { return node.name }
 
 // PatternAmbientModule
 
