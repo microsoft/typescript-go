@@ -56,7 +56,7 @@ var (
 	SkipDir = fs.SkipDir //nolint:errname
 )
 
-var _ FS = (*adapter)(nil)
+var _ FS = (*vfs)(nil)
 
 // FromOS creates a new FS from the OS file system.
 func FromOS(cwd string) FS {
@@ -69,7 +69,7 @@ func FromOS(cwd string) FS {
 	}
 
 	useCaseSensitiveFileNames := isFileSystemCaseSensitive()
-	return &adapter{
+	return &vfs{
 		cwd:                       cwd,
 		useCaseSensitiveFileNames: useCaseSensitiveFileNames,
 		rootFor:                   os.DirFS,
@@ -83,7 +83,7 @@ func FromIOFS(cwd string, useCaseSensitiveFileNames bool, fsys fs.FS) FS {
 		panic("cwd must be provided")
 	}
 
-	return &adapter{
+	return &vfs{
 		readSema:                  osReadSema,
 		cwd:                       cwd,
 		useCaseSensitiveFileNames: useCaseSensitiveFileNames,
@@ -129,7 +129,7 @@ func swapCase(str string) string {
 	}, str)
 }
 
-type adapter struct {
+type vfs struct {
 	readSema chan struct{}
 
 	cwd                       string
@@ -138,12 +138,12 @@ type adapter struct {
 	rootFor func(root string) fs.FS
 }
 
-func (a *adapter) UseCaseSensitiveFileNames() bool {
-	return a.useCaseSensitiveFileNames
+func (v *vfs) UseCaseSensitiveFileNames() bool {
+	return v.useCaseSensitiveFileNames
 }
 
-func (a *adapter) GetCurrentDirectory() string {
-	return a.cwd
+func (v *vfs) GetCurrentDirectory() string {
+	return v.cwd
 }
 
 func splitPath(p string) (rootName, rest string) {
@@ -154,13 +154,13 @@ func splitPath(p string) (rootName, rest string) {
 	return p[:l], p[l:]
 }
 
-func (a *adapter) rootAndPath(path string) (fsys fs.FS, rootName string, rest string) {
+func (v *vfs) rootAndPath(path string) (fsys fs.FS, rootName string, rest string) {
 	rootName, rest = splitPath(path)
-	return a.rootFor(rootName), rootName, rest
+	return v.rootFor(rootName), rootName, rest
 }
 
-func (a *adapter) stat(path string) fs.FileInfo {
-	fsys, _, rest := a.rootAndPath(path)
+func (v *vfs) stat(path string) fs.FileInfo {
+	fsys, _, rest := v.rootAndPath(path)
 	if fsys == nil {
 		return nil
 	}
@@ -171,18 +171,18 @@ func (a *adapter) stat(path string) fs.FileInfo {
 	return stat
 }
 
-func (a *adapter) FileExists(path string) bool {
-	stat := a.stat(path)
+func (v *vfs) FileExists(path string) bool {
+	stat := v.stat(path)
 	return stat != nil && !stat.IsDir()
 }
 
-func (a *adapter) ReadFile(path string) (contents string, ok bool) {
-	if a.readSema != nil {
-		a.readSema <- struct{}{}
-		defer func() { <-a.readSema }()
+func (v *vfs) ReadFile(path string) (contents string, ok bool) {
+	if v.readSema != nil {
+		v.readSema <- struct{}{}
+		defer func() { <-v.readSema }()
 	}
 
-	fsys, _, rest := a.rootAndPath(path)
+	fsys, _, rest := v.rootAndPath(path)
 	if fsys == nil {
 		return "", false
 	}
@@ -217,13 +217,13 @@ func decodeUtf16(b []byte, order binary.ByteOrder) string {
 	return string(utf16.Decode(ints))
 }
 
-func (a *adapter) DirectoryExists(path string) bool {
-	stat := a.stat(path)
+func (v *vfs) DirectoryExists(path string) bool {
+	stat := v.stat(path)
 	return stat != nil && stat.IsDir()
 }
 
-func (a *adapter) GetDirectories(path string) []string {
-	fsys, _, rest := a.rootAndPath(path)
+func (v *vfs) GetDirectories(path string) []string {
+	fsys, _, rest := v.rootAndPath(path)
 	if fsys == nil {
 		return nil
 	}
@@ -243,8 +243,8 @@ func (a *adapter) GetDirectories(path string) []string {
 	return dirs
 }
 
-func (a *adapter) WalkDir(root string, walkFn WalkDirFunc) error {
-	fsys, rootName, rest := a.rootAndPath(root)
+func (v *vfs) WalkDir(root string, walkFn WalkDirFunc) error {
+	fsys, rootName, rest := v.rootAndPath(root)
 	if fsys == nil {
 		return nil
 	}
@@ -253,6 +253,6 @@ func (a *adapter) WalkDir(root string, walkFn WalkDirFunc) error {
 	})
 }
 
-func (a *adapter) Realpath(path string) string {
+func (v *vfs) Realpath(path string) string {
 	return path // TODO(jakebailey): !!! https://go.dev/cl/385534
 }
