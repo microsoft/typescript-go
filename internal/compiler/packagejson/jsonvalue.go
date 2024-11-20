@@ -12,7 +12,8 @@ import (
 type JSONValueType int8
 
 const (
-	JSONValueTypeNull JSONValueType = iota
+	JSONValueTypeNotPresent JSONValueType = iota
+	JSONValueTypeNull
 	JSONValueTypeString
 	JSONValueTypeNumber
 	JSONValueTypeBoolean
@@ -44,11 +45,26 @@ type JSONValue struct {
 	Value any
 }
 
-func (v *JSONValue) AsObject() *collections.Map[string, *JSONValue] {
+func (v *JSONValue) IsFalsy() bool {
+	switch v.Type {
+	case JSONValueTypeNotPresent, JSONValueTypeNull:
+		return true
+	case JSONValueTypeString:
+		return v.Value == ""
+	case JSONValueTypeNumber:
+		return v.Value == 0
+	case JSONValueTypeBoolean:
+		return !v.Value.(bool)
+	default:
+		return false
+	}
+}
+
+func (v *JSONValue) AsObject() *collections.OrderedMap[string, *JSONValue] {
 	if v.Type != JSONValueTypeObject {
 		panic(fmt.Sprintf("expected object, got %v", v.Type))
 	}
-	return v.Value.(*collections.Map[string, *JSONValue])
+	return v.Value.(*collections.OrderedMap[string, *JSONValue])
 }
 
 func (v *JSONValue) AsArray() []*JSONValue {
@@ -80,7 +96,7 @@ func unmarshalJSONValue[T any](v *JSONValue, data []byte) error {
 		v.Type = JSONValueTypeArray
 		v.Value = elements
 	} else if data[0] == '{' {
-		var object collections.Map[string, *T]
+		var object collections.OrderedMap[string, *T]
 		if err := json.Unmarshal(data, &object); err != nil {
 			return err
 		}
@@ -131,7 +147,7 @@ func unmarshalJSONValueV2[T any](v *JSONValue, dec *jsontext.Decoder, opts json2
 		v.Type = JSONValueTypeArray
 		v.Value = elements
 	case '{':
-		var object collections.Map[string, *T]
+		var object collections.OrderedMap[string, *T]
 		if err := json2.UnmarshalDecode(dec, &object, opts); err != nil {
 			return err
 		}
