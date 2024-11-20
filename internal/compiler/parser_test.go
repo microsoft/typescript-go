@@ -35,20 +35,64 @@ func BenchmarkParse(b *testing.B) {
 	}
 }
 
-func TestParseAndPrintNodes(t *testing.T) {
+// compare current code's tsgo AST with tsgo AST (in baselines/reference/)
+func DontTestParseAndPrintNodes(t *testing.T) {
 	t.Parallel()
-	err := filepath.WalkDir(repo.TypeScriptSubmodulePath, parseTestWorker(t, &baseline.Options{}))
+	err := filepath.WalkDir(repo.TypeScriptSubmodulePath, parseTestWorker(t, baseline.Options{}))
 	if err != nil {
 		t.Fatalf("Error walking the path %q: %v", repo.TypeScriptSubmodulePath, err)
 	}
 }
 
+// compare current code's tsgo AST with tsc's AST, but only write local baselines for tsgo's AST.
 func TestParseAgainstTSC(t *testing.T) {
+	t.Parallel()
+	err := filepath.WalkDir(repo.TypeScriptSubmodulePath, parseTestComparisonWorker(t))
+	if err != nil {
+		t.Fatalf("Error walking the path %q: %v", repo.TypeScriptSubmodulePath, err)
+	}
+}
+
+func parseTestComparisonWorker(t *testing.T) func(fileName string, d fs.DirEntry, err error) error {
+	return func(fileName string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+		if d.IsDir() {
+			return nil
+		}
+		testName, _ := filepath.Rel(repo.TypeScriptSubmodulePath, fileName)
+		t.Run(testName, func(t *testing.T) {
+			t.Parallel()
+			if isIgnoredTestFile(fileName) {
+				t.Skip()
+			}
+			sourceText, err := os.ReadFile(fileName)
+			assert.NilError(t, err)
+			cmd := exec.Command("node", "testdata/baselineAST.js", fileName)
+			var stderr bytes.Buffer
+			var stdout bytes.Buffer
+			cmd.Stderr = &stderr
+			cmd.Stdout = &stdout
+			err = cmd.Run()
+			if err != nil {
+				t.Fatalf("Error running the command %q: %v\nStderr: %s", cmd.String(), err, stderr.String())
+			}
+			expected := stdout.String()
+			actual := printAST(compiler.ParseSourceFile(fileName, string(sourceText), core.ScriptTargetESNext))
+			baseline.RunFromText(t, generateOutputFileName(t, fileName), expected, actual, baseline.Options{})
+		})
+		return nil
+	}
+}
+
+// compare current code's tsgo AST with tsc AST (in baselines/gold/)
+func DontTestParseAgainstTSCGold(t *testing.T) {
 	t.Parallel()
 	goldDir := "../../testdata/baselines/gold"
 	entries, err := os.ReadDir(goldDir)
 	if err != nil || len(entries) == 0 {
-		cmd := exec.Command("node", "testdata/baselineAST.js", "../../_submodules/TypeScript/", goldDir)
+		cmd := exec.Command("node", "testdata/baselineAST.js", "-r", "../../_submodules/TypeScript/", goldDir)
 		var stderr bytes.Buffer
 		cmd.Stderr = &stderr
 		err = cmd.Run()
@@ -56,13 +100,13 @@ func TestParseAgainstTSC(t *testing.T) {
 			t.Fatalf("Error running the command %q: %v\nStderr: %s", cmd.String(), err, stderr.String())
 		}
 	}
-	err = filepath.WalkDir(repo.TypeScriptSubmodulePath, parseTestWorker(t, &baseline.Options{Gold: true}))
+	err = filepath.WalkDir(repo.TypeScriptSubmodulePath, parseTestWorker(t, baseline.Options{Gold: true}))
 	if err != nil {
 		t.Fatalf("Error walking the path %q: %v", repo.TypeScriptSubmodulePath, err)
 	}
 }
 
-func parseTestWorker(t *testing.T, options *baseline.Options) func(fileName string, d fs.DirEntry, err error) error {
+func parseTestWorker(t *testing.T, options baseline.Options) func(fileName string, d fs.DirEntry, err error) error {
 	return func(fileName string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err
@@ -79,7 +123,7 @@ func parseTestWorker(t *testing.T, options *baseline.Options) func(fileName stri
 			sourceText, err := os.ReadFile(fileName)
 			assert.NilError(t, err)
 			sourceFile := compiler.ParseSourceFile(fileName, string(sourceText), core.ScriptTargetESNext)
-			baseline.Run(t, generateOutputFileName(t, fileName), printAST(sourceFile), baseline.Options{Gold: true})
+			baseline.Run(t, generateOutputFileName(t, fileName), printAST(sourceFile), options)
 		})
 		return nil
 	}

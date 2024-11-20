@@ -155,15 +155,27 @@ function processDirectory(inputRoot, targetRoot) {
         }
     }
 }
-const inputDir = process.argv[2];
-const outputDir = process.argv[3];
-if (!inputDir || !outputDir) {
-    console.error(
-        "node internal/compiler/testdata/baselineAST.js _submodules/TypeScript testdata/baselines/gold",
-    );
-    process.exit(1);
+const outputFlagOrFile = process.argv[2];
+if (outputFlagOrFile === "-r") {
+    const inputDir = process.argv[3];
+    const outputDir = process.argv[4];
+    if (process.argv.length !== 5 || !inputDir || !outputDir) {
+        console.error(
+            "node internal/compiler/testdata/baselineAST.js -r _submodules/TypeScript testdata/baselines/gold",
+        );
+        process.exit(1);
+    }
+    if (!fs.existsSync(outputDir)) {
+        fs.mkdirSync(outputDir, { recursive: true });
+    }
+    processDirectory(inputDir, outputDir);
+} else {
+    const inputFile = process.argv[2];
+    if (process.argv.length !== 3) {
+        console.error(
+            "node internal/compiler/testdata/baselineAST.js _submodules/TypeScript/src/compiler/checker.ts",
+        );
+        process.exit(1);
+    }
+    console.log(printAST(inputFile))
 }
-if (!fs.existsSync(outputDir)) {
-    fs.mkdirSync(outputDir, { recursive: true });
-}
-processDirectory(inputDir, outputDir);
