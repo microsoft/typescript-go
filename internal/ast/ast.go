@@ -4313,6 +4313,11 @@ type SourceFile struct {
 	ModuleAugmentations         []*ModuleName      // []ModuleName
 	PatternAmbientModules       []PatternAmbientModule
 	AmbientModuleNames          []string
+	Pragmas                     map[string][]Pragma
+	ReferencedFiles             []FileReference
+	TypeReferenceDirectives     []FileReference
+	LibReferenceDirectives      []FileReference
+	HasNoDefaultLib             bool
 }
 
 func (f *NodeFactory) NewSourceFile(text string, fileName string, statements *NodeList) *Node {
@@ -4358,4 +4363,70 @@ func (node *SourceFile) ForEachChild(v Visitor) bool {
 
 func IsSourceFile(node *Node) bool {
 	return node.Kind == KindSourceFile
+}
+
+type CommentRange struct {
+	core.TextRange
+	HasTrailingNewLine bool
+	Kind               Kind
+}
+
+func NewCommentRange(kind Kind, pos int, end int, hasTrailingNewLine bool) CommentRange {
+	return CommentRange{
+		TextRange:          core.NewTextRange(pos, end),
+		HasTrailingNewLine: hasTrailingNewLine,
+		Kind:               kind,
+	}
+}
+
+type ResolutionMode = uint8
+
+const (
+	RsolutionModeESNext ResolutionMode = iota
+	ResolutionModeCommonJS
+)
+
+type FileReference struct {
+	core.TextRange
+	FileName       string
+	ResolutionMode core.ResolutionMode
+	Preserve       bool
+}
+
+type PragmaArgument struct {
+	Name  string
+	Value string
+	Pos   int
+	End   int
+}
+
+type Pragma struct {
+	Name      string
+	Args      map[string]PragmaArgument
+	ArgsRange CommentRange
+}
+
+type PragmaKindFlags = uint8
+
+const (
+	PragmaKindFlagsNone PragmaKindFlags = iota
+	PragmaKindTripleSlashXML
+	PragmaKindSingleLine
+	PragmaKindMultiLine
+	PragmaKindAll     = PragmaKindTripleSlashXML | PragmaKindSingleLine | PragmaKindMultiLine
+	PragmaKindDefault = PragmaKindAll
+)
+
+type PragmaArgumentSpecification struct {
+	Name        string
+	Optional    bool
+	CaptureSpan bool
+}
+type PragmaSpecification struct {
+	Args []PragmaArgumentSpecification
+	Kind PragmaKindFlags
+}
+
+func (spec *PragmaSpecification) IsTripleSlash() bool {
+	return (spec.Kind & PragmaKindTripleSlashXML) > 0
 }

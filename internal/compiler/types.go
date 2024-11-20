@@ -1103,3 +1103,46 @@ var LanguageFeatureMinimumTarget = LanguageFeatureMinimumTargetMap{
 	ClassAndClassElementDecorators:    core.ScriptTargetESNext,
 	RegularExpressionFlagsUnicodeSets: core.ScriptTargetESNext,
 }
+
+type Extension = string
+
+const (
+	Ts          Extension = ".ts"
+	Tsx                   = ".tsx"
+	Dts                   = ".d.ts"
+	Js                    = ".js"
+	Jsx                   = ".jsx"
+	Json                  = ".json"
+	TsBuildInfo           = ".tsbuildinfo"
+	Mjs                   = ".mjs"
+	Mts                   = ".mts"
+	Dmts                  = ".d.mts"
+	Cjs                   = ".cjs"
+	Cts                   = ".cts"
+	Dcts                  = ".d.cts"
+)
+
+type ProjectReference struct {
+	path         string
+	originalPath string
+	circular     bool
+}
+
+type FileIncludeKind int
+
+const (
+	RootFile = iota
+	SourceFromProjectReference
+	OutputFromProjectReference
+	Import
+	ReferenceFile
+	TypeReferenceDirective
+	LibFile
+	LibReferenceDirective
+	AutomaticTypeDirectiveFile
+)
+
+type FileIncludeReason struct {
+	Kind  FileIncludeKind
+	Index int
+}
