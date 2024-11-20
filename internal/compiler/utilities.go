@@ -3,7 +3,6 @@ package compiler
 import (
 	"maps"
 	"math"
-	"path/filepath"
 	"slices"
 	"strconv"
 	"strings"
@@ -339,14 +338,6 @@ func getBinaryOperatorPrecedence(kind ast.Kind) OperatorPrecedence {
 	return OperatorPrecedenceInvalid
 }
 
-func formatMessage(message *diagnostics.Message, args ...any) string {
-	text := message.Message()
-	if len(args) != 0 {
-		text = core.FormatStringFromArgs(text, args)
-	}
-	return text
-}
-
 func findInMap[K comparable, V any](m map[K]V, predicate func(V) bool) V {
 	for _, value := range m {
 		if predicate(value) {
@@ -361,56 +352,6 @@ func boolToTristate(b bool) core.Tristate {
 		return core.TSTrue
 	}
 	return core.TSFalse
-}
-
-func modifierToFlag(token ast.Kind) ast.ModifierFlags {
-	switch token {
-	case ast.KindStaticKeyword:
-		return ast.ModifierFlagsStatic
-	case ast.KindPublicKeyword:
-		return ast.ModifierFlagsPublic
-	case ast.KindProtectedKeyword:
-		return ast.ModifierFlagsProtected
-	case ast.KindPrivateKeyword:
-		return ast.ModifierFlagsPrivate
-	case ast.KindAbstractKeyword:
-		return ast.ModifierFlagsAbstract
-	case ast.KindAccessorKeyword:
-		return ast.ModifierFlagsAccessor
-	case ast.KindExportKeyword:
-		return ast.ModifierFlagsExport
-	case ast.KindDeclareKeyword:
-		return ast.ModifierFlagsAmbient
-	case ast.KindConstKeyword:
-		return ast.ModifierFlagsConst
-	case ast.KindDefaultKeyword:
-		return ast.ModifierFlagsDefault
-	case ast.KindAsyncKeyword:
-		return ast.ModifierFlagsAsync
-	case ast.KindReadonlyKeyword:
-		return ast.ModifierFlagsReadonly
-	case ast.KindOverrideKeyword:
-		return ast.ModifierFlagsOverride
-	case ast.KindInKeyword:
-		return ast.ModifierFlagsIn
-	case ast.KindOutKeyword:
-		return ast.ModifierFlagsOut
-	case ast.KindImmediateKeyword:
-		return ast.ModifierFlagsImmediate
-	case ast.KindDecorator:
-		return ast.ModifierFlagsDecorator
-	}
-	return ast.ModifierFlagsNone
-}
-
-func modifiersToFlags(modifierList *ast.Node) ast.ModifierFlags {
-	flags := ast.ModifierFlagsNone
-	if modifierList != nil {
-		for _, modifier := range modifierList.AsModifierList().Elements() {
-			flags |= modifierToFlag(modifier.Kind)
-		}
-	}
-	return flags
 }
 
 func isAssignmentOperator(token ast.Kind) bool {
@@ -460,7 +401,7 @@ func getTextOfNodeFromSourceText(sourceText string, node *ast.Node) string {
 	if ast.NodeIsMissing(node) {
 		return ""
 	}
-	text := sourceText[skipTrivia(sourceText, node.Pos()):node.End()]
+	text := sourceText[SkipTrivia(sourceText, node.Pos()):node.End()]
 	// if (isJSDocTypeExpressionOrChild(node)) {
 	//     // strip space + asterisk at line start
 	//     text = text.split(/\r\n|\n|\r/).map(line => line.replace(/^\s*\*/, "").trimStart()).join("\n");
@@ -510,7 +451,7 @@ func getErrorRangeForNode(sourceFile *ast.SourceFile, node *ast.Node) core.TextR
 	errorNode := node
 	switch node.Kind {
 	case ast.KindSourceFile:
-		pos := skipTrivia(sourceFile.Text, 0)
+		pos := SkipTrivia(sourceFile.Text, 0)
 		if pos == len(sourceFile.Text) {
 			return core.NewTextRange(0, 0)
 		}
@@ -525,18 +466,18 @@ func getErrorRangeForNode(sourceFile *ast.SourceFile, node *ast.Node) core.TextR
 		return getErrorRangeForArrowFunction(sourceFile, node)
 	case ast.KindCaseClause:
 	case ast.KindDefaultClause:
-		start := skipTrivia(sourceFile.Text, node.Pos())
+		start := SkipTrivia(sourceFile.Text, node.Pos())
 		end := node.End()
-		statements := node.Data.(*ast.CaseOrDefaultClause).Statements
+		statements := node.AsCaseOrDefaultClause().Statements.Nodes
 		if len(statements) != 0 {
 			end = statements[0].Pos()
 		}
 		return core.NewTextRange(start, end)
 	case ast.KindReturnStatement, ast.KindYieldExpression:
-		pos := skipTrivia(sourceFile.Text, node.Pos())
+		pos := SkipTrivia(sourceFile.Text, node.Pos())
 		return getRangeOfTokenAtPosition(sourceFile, pos)
 	case ast.KindSatisfiesExpression:
-		pos := skipTrivia(sourceFile.Text, node.AsSatisfiesExpression().Expression.End())
+		pos := SkipTrivia(sourceFile.Text, node.AsSatisfiesExpression().Expression.End())
 		return getRangeOfTokenAtPosition(sourceFile, pos)
 	case ast.KindConstructor:
 		scanner := getScannerForSourceFile(sourceFile, node.Pos())
@@ -547,7 +488,7 @@ func getErrorRangeForNode(sourceFile *ast.SourceFile, node *ast.Node) core.TextR
 		return core.NewTextRange(start, scanner.pos)
 		// !!!
 		// case KindJSDocSatisfiesTag:
-		// 	pos := skipTrivia(sourceFile.text, node.tagName.pos)
+		// 	pos := SkipTrivia(sourceFile.text, node.tagName.pos)
 		// 	return getRangeOfTokenAtPosition(sourceFile, pos)
 	}
 	if errorNode == nil {
@@ -557,13 +498,13 @@ func getErrorRangeForNode(sourceFile *ast.SourceFile, node *ast.Node) core.TextR
 	}
 	pos := errorNode.Pos()
 	if !ast.NodeIsMissing(errorNode) {
-		pos = skipTrivia(sourceFile.Text, pos)
+		pos = SkipTrivia(sourceFile.Text, pos)
 	}
 	return core.NewTextRange(pos, errorNode.End())
 }
 
 func getErrorRangeForArrowFunction(sourceFile *ast.SourceFile, node *ast.Node) core.TextRange {
-	pos := skipTrivia(sourceFile.Text, node.Pos())
+	pos := SkipTrivia(sourceFile.Text, node.Pos())
 	body := node.AsArrowFunction().Body
 	if body != nil && body.Kind == ast.KindBlock {
 		startLine, _ := GetLineAndCharacterOfPosition(sourceFile, body.Pos())
@@ -646,20 +587,8 @@ func isPartOfTypeQuery(node *ast.Node) bool {
 	return node.Kind == ast.KindTypeQuery
 }
 
-func getModifierFlags(node *ast.Node) ast.ModifierFlags {
-	modifiers := node.Modifiers()
-	if modifiers != nil {
-		return modifiers.AsModifierList().ModifierFlags
-	}
-	return ast.ModifierFlagsNone
-}
-
-func getNodeFlags(node *ast.Node) ast.NodeFlags {
-	return node.Flags
-}
-
 func hasSyntacticModifier(node *ast.Node, flags ast.ModifierFlags) bool {
-	return getModifierFlags(node)&flags != 0
+	return node.ModifierFlags()&flags != 0
 }
 
 func hasAccessorModifier(node *ast.Node) bool {
@@ -671,7 +600,7 @@ func hasStaticModifier(node *ast.Node) bool {
 }
 
 func getEffectiveModifierFlags(node *ast.Node) ast.ModifierFlags {
-	return getModifierFlags(node) // !!! Handle JSDoc
+	return node.ModifierFlags() // !!! Handle JSDoc
 }
 
 func hasEffectiveModifier(node *ast.Node, flags ast.ModifierFlags) bool {
@@ -877,11 +806,15 @@ func getCombinedFlags[T ~uint32](node *ast.Node, getFlags func(*ast.Node) T) T {
 }
 
 func getCombinedModifierFlags(node *ast.Node) ast.ModifierFlags {
-	return getCombinedFlags(node, getModifierFlags)
+	return getCombinedFlags(node, (*ast.Node).ModifierFlags)
 }
 
 func getCombinedNodeFlags(node *ast.Node) ast.NodeFlags {
 	return getCombinedFlags(node, getNodeFlags)
+}
+
+func getNodeFlags(node *ast.Node) ast.NodeFlags {
+	return node.Flags
 }
 
 func isParameterPropertyDeclaration(node *ast.Node, parent *ast.Node) bool {
@@ -916,9 +849,9 @@ func getLeftmostAccessExpression(expr *ast.Node) *ast.Node {
 func isRequireCall(node *ast.Node, requireStringLiteralLikeArgument bool) bool {
 	if ast.IsCallExpression(node) {
 		callExpression := node.AsCallExpression()
-		if len(callExpression.Arguments) == 1 {
+		if len(callExpression.Arguments.Nodes) == 1 {
 			if ast.IsIdentifier(callExpression.Expression) && callExpression.Expression.AsIdentifier().Text == "require" {
-				return !requireStringLiteralLikeArgument || isStringLiteralLike(callExpression.Arguments[0])
+				return !requireStringLiteralLikeArgument || isStringLiteralLike(callExpression.Arguments.Nodes[0])
 			}
 		}
 	}
@@ -1005,49 +938,6 @@ func isModuleAugmentationExternal(node *ast.Node) bool {
 	return false
 }
 
-func isValidPattern(pattern ast.Pattern) bool {
-	return pattern.StarIndex == -1 || pattern.StarIndex < len(pattern.Text)
-}
-
-func tryParsePattern(pattern string) ast.Pattern {
-	starIndex := strings.Index(pattern, "*")
-	if starIndex == -1 || !strings.Contains(pattern[starIndex+1:], "*") {
-		return ast.Pattern{Text: pattern, StarIndex: starIndex}
-	}
-	return ast.Pattern{}
-}
-
-func findBestPatternMatch(patterns []ast.Pattern, candidate string) ast.Pattern {
-	var bestPattern ast.Pattern
-	longestMatchPrefixLength := -1
-	for _, pattern := range patterns {
-		if (pattern.StarIndex == -1 || pattern.StarIndex > longestMatchPrefixLength) && isPatternMatch(pattern, candidate) {
-			bestPattern = pattern
-			longestMatchPrefixLength = pattern.StarIndex
-		}
-	}
-	return bestPattern
-}
-
-func isPatternMatch(pattern ast.Pattern, candidate string) bool {
-	if pattern.StarIndex == -1 {
-		return pattern.Text == candidate
-	}
-	return len(candidate) >= pattern.StarIndex &&
-		strings.HasPrefix(candidate, pattern.Text[:pattern.StarIndex]) &&
-		strings.HasSuffix(candidate, pattern.Text[pattern.StarIndex+1:])
-}
-
-func matchedText(pattern ast.Pattern, candidate string) string {
-	if !isPatternMatch(pattern, candidate) {
-		panic("candidate does not match pattern")
-	}
-	if pattern.StarIndex == -1 {
-		return ""
-	}
-	return candidate[pattern.StarIndex : len(candidate)-len(pattern.Text)+pattern.StarIndex+1]
-}
-
 func positionIsSynthesized(pos int) bool {
 	return pos < 0
 }
@@ -1075,7 +965,7 @@ func isAliasableExpression(e *ast.Node) bool {
 }
 
 func isEmptyObjectLiteral(expression *ast.Node) bool {
-	return expression.Kind == ast.KindObjectLiteralExpression && len(expression.AsObjectLiteralExpression().Properties) == 0
+	return expression.Kind == ast.KindObjectLiteralExpression && len(expression.AsObjectLiteralExpression().Properties.Nodes) == 0
 }
 
 func isFunctionSymbol(symbol *ast.Symbol) bool {
@@ -1293,11 +1183,11 @@ func isPrologueDirective(node *ast.Node) bool {
 func getStatementsOfBlock(block *ast.Node) []*ast.Statement {
 	switch block.Kind {
 	case ast.KindBlock:
-		return block.AsBlock().Statements
+		return block.AsBlock().Statements.Nodes
 	case ast.KindModuleBlock:
-		return block.AsModuleBlock().Statements
+		return block.AsModuleBlock().Statements.Nodes
 	case ast.KindSourceFile:
-		return block.AsSourceFile().Statements
+		return block.AsSourceFile().Statements.Nodes
 	}
 	panic("Unhandled case in getStatementsOfBlock")
 }
@@ -1308,7 +1198,7 @@ func nodeHasName(statement *ast.Node, id *ast.Node) bool {
 		return ast.IsIdentifier(name) && name.AsIdentifier().Text == id.AsIdentifier().Text
 	}
 	if ast.IsVariableStatement(statement) {
-		declarations := statement.AsVariableStatement().DeclarationList.AsVariableDeclarationList().Declarations
+		declarations := statement.AsVariableStatement().DeclarationList.AsVariableDeclarationList().Declarations.Nodes
 		return core.Some(declarations, func(d *ast.Node) bool { return nodeHasName(d, id) })
 	}
 	return false
@@ -1337,39 +1227,19 @@ func ensureScriptKind(fileName string, scriptKind core.ScriptKind) core.ScriptKi
 	return scriptKind
 }
 
-const (
-	ExtensionTs          = ".ts"
-	ExtensionTsx         = ".tsx"
-	ExtensionDts         = ".d.ts"
-	ExtensionJs          = ".js"
-	ExtensionJsx         = ".jsx"
-	ExtensionJson        = ".json"
-	ExtensionTsBuildInfo = ".tsbuildinfo"
-	ExtensionMjs         = ".mjs"
-	ExtensionMts         = ".mts"
-	ExtensionDmts        = ".d.mts"
-	ExtensionCjs         = ".cjs"
-	ExtensionCts         = ".cts"
-	ExtensionDcts        = ".d.cts"
-)
-
-var supportedDeclarationExtensions = []string{ExtensionDts, ExtensionDcts, ExtensionDmts}
-var supportedTSImplementationExtensions = []string{ExtensionTs, ExtensionTsx, ExtensionMts, ExtensionCts}
-var supportedTSExtensionsForExtractExtension = []string{ExtensionDts, ExtensionDcts, ExtensionDmts, ExtensionTs, ExtensionTsx, ExtensionMts, ExtensionCts}
-
 func getScriptKindFromFileName(fileName string) core.ScriptKind {
 	dotPos := strings.LastIndex(fileName, ".")
 	if dotPos >= 0 {
 		switch strings.ToLower(fileName[dotPos:]) {
-		case ExtensionJs, ExtensionCjs, ExtensionMjs:
+		case tspath.ExtensionJs, tspath.ExtensionCjs, tspath.ExtensionMjs:
 			return core.ScriptKindJS
-		case ExtensionJsx:
+		case tspath.ExtensionJsx:
 			return core.ScriptKindJSX
-		case ExtensionTs, ExtensionCts, ExtensionMts:
+		case tspath.ExtensionTs, tspath.ExtensionCts, tspath.ExtensionMts:
 			return core.ScriptKindTS
-		case ExtensionTsx:
+		case tspath.ExtensionTsx:
 			return core.ScriptKindTSX
-		case ExtensionJson:
+		case tspath.ExtensionJson:
 			return core.ScriptKindJSON
 		}
 	}
@@ -1383,76 +1253,6 @@ func getLanguageVariant(scriptKind core.ScriptKind) core.LanguageVariant {
 		return core.LanguageVariantJSX
 	}
 	return core.LanguageVariantStandard
-}
-
-func getEmitScriptTarget(options *core.CompilerOptions) core.ScriptTarget {
-	if options.Target != core.ScriptTargetNone {
-		return options.Target
-	}
-	return core.ScriptTargetES5
-}
-
-func getEmitModuleKind(options *core.CompilerOptions) core.ModuleKind {
-	if options.ModuleKind != core.ModuleKindNone {
-		return options.ModuleKind
-	}
-	if options.Target >= core.ScriptTargetES2015 {
-		return core.ModuleKindES2015
-	}
-	return core.ModuleKindCommonJS
-}
-
-func getEmitModuleResolutionKind(options *core.CompilerOptions) core.ModuleResolutionKind {
-	if options.ModuleResolution != core.ModuleResolutionKindUnknown {
-		return options.ModuleResolution
-	}
-	switch getEmitModuleKind(options) {
-	case core.ModuleKindCommonJS:
-		return core.ModuleResolutionKindBundler
-	case core.ModuleKindNode16:
-		return core.ModuleResolutionKindNode16
-	case core.ModuleKindNodeNext:
-		return core.ModuleResolutionKindNodeNext
-	case core.ModuleKindPreserve:
-		return core.ModuleResolutionKindBundler
-	default:
-		panic("Unhandled case in getEmitModuleResolutionKind")
-	}
-}
-
-func getESModuleInterop(options *core.CompilerOptions) bool {
-	if options.ESModuleInterop != core.TSUnknown {
-		return options.ESModuleInterop == core.TSTrue
-	}
-	switch getEmitModuleKind(options) {
-	case core.ModuleKindNode16:
-	case core.ModuleKindNodeNext:
-	case core.ModuleKindPreserve:
-		return true
-	}
-	return false
-}
-func getAllowSyntheticDefaultImports(options *core.CompilerOptions) bool {
-	if options.AllowSyntheticDefaultImports != core.TSUnknown {
-		return options.AllowSyntheticDefaultImports == core.TSTrue
-	}
-	return getESModuleInterop(options) ||
-		getEmitModuleKind(options) == core.ModuleKindSystem ||
-		getEmitModuleResolutionKind(options) == core.ModuleResolutionKindBundler
-}
-
-func getResolveJsonModule(options *core.CompilerOptions) bool {
-	if options.ResolveJsonModule != core.TSUnknown {
-		return options.ResolveJsonModule == core.TSTrue
-	}
-	return getEmitModuleResolutionKind(options) == core.ModuleResolutionKindBundler
-}
-
-func getAllowJs(options *core.CompilerOptions) bool {
-	if options.AllowJs != core.TSUnknown {
-		return options.AllowJs == core.TSTrue
-	}
-	return options.CheckJs == core.TSTrue
 }
 
 type DiagnosticsCollection struct {
@@ -1620,7 +1420,7 @@ func isConstAssertion(location *ast.Node) bool {
 func isConstTypeReference(node *ast.Node) bool {
 	if node.Kind == ast.KindTypeReference {
 		ref := node.AsTypeReference()
-		return ref.TypeArguments == nil && ast.IsIdentifier(ref.TypeName) && ref.TypeName.AsIdentifier().Text == "const"
+		return ref.TypeArguments != nil && ast.IsIdentifier(ref.TypeName) && ref.TypeName.AsIdentifier().Text == "const"
 	}
 	return false
 }
@@ -1632,7 +1432,7 @@ func isModuleOrEnumDeclaration(node *ast.Node) bool {
 func getLocalsOfNode(node *ast.Node) ast.SymbolTable {
 	data := node.LocalsContainerData()
 	if data != nil {
-		return data.Locals()
+		return data.Locals
 	}
 	return nil
 }
@@ -1666,7 +1466,7 @@ func isParameterLikeOrReturnTag(node *ast.Node) bool {
 }
 
 func getEmitStandardClassFields(options *core.CompilerOptions) bool {
-	return options.UseDefineForClassFields != core.TSFalse && getEmitScriptTarget(options) >= core.ScriptTargetES2022
+	return options.UseDefineForClassFields != core.TSFalse && options.GetEmitScriptTarget() >= core.ScriptTargetES2022
 }
 
 func getLocalSymbolForExportDefault(symbol *ast.Symbol) *ast.Symbol {
@@ -1700,7 +1500,7 @@ func getIsolatedModules(options *core.CompilerOptions) bool {
 }
 
 func findConstructorDeclaration(node *ast.Node) *ast.Node {
-	for _, member := range node.ClassLikeData().Members {
+	for _, member := range node.ClassLikeData().Members.Nodes {
 		if ast.IsConstructorDeclaration(member) && ast.NodeIsPresent(member.AsConstructorDeclaration().Body) {
 			return member
 		}
@@ -1844,8 +1644,8 @@ loop:
 		case ast.KindPropertyDeclaration:
 			if !isStatic(location) {
 				ctor := findConstructorDeclaration(location.Parent)
-				if ctor != nil && ctor.AsConstructorDeclaration().LocalsContainerData().Locals() != nil {
-					if r.lookup(ctor.AsConstructorDeclaration().LocalsContainerData().Locals(), name, meaning&ast.SymbolFlagsValue) != nil {
+				if ctor != nil && ctor.Locals() != nil {
+					if r.lookup(ctor.Locals(), name, meaning&ast.SymbolFlagsValue) != nil {
 						// Remember the property node, it will be used later to report appropriate error
 						propertyWithInvalidInitializer = location
 					}
@@ -1912,7 +1712,7 @@ loop:
 		case ast.KindArrowFunction:
 			// when targeting ES6 or higher there is no 'arguments' in an arrow function
 			// for lower compile targets the resolved symbol is used to emit an error
-			if getEmitScriptTarget(r.compilerOptions) >= core.ScriptTargetES2015 {
+			if r.compilerOptions.GetEmitScriptTarget() >= core.ScriptTargetES2015 {
 				break
 			}
 			fallthrough
@@ -2041,7 +1841,7 @@ func (r *NameResolver) useOuterVariableScopeInParameter(result *ast.Symbol, loca
 			// - optional chaining pre-es2020
 			// - nullish coalesce pre-es2020
 			// - spread assignment in binding pattern pre-es2017
-			target := getEmitScriptTarget(r.compilerOptions)
+			target := r.compilerOptions.GetEmitScriptTarget()
 			if target >= core.ScriptTargetES2015 {
 				functionLocation := location
 				declarationRequiresScopeChange := r.getRequiresScopeChangeCache(functionLocation)
@@ -2074,10 +1874,10 @@ func (r *NameResolver) requiresScopeChangeWorker(node *ast.Node) bool {
 		return r.requiresScopeChangeWorker(node.AsPropertyDeclaration().Name())
 	default:
 		if isNullishCoalesce(node) || ast.IsOptionalChain(node) {
-			return getEmitScriptTarget(r.compilerOptions) < core.ScriptTargetES2020
+			return r.compilerOptions.GetEmitScriptTarget() < core.ScriptTargetES2020
 		}
 		if ast.IsBindingElement(node) && node.AsBindingElement().DotDotDotToken != nil && ast.IsObjectBindingPattern(node.Parent) {
-			return getEmitScriptTarget(r.compilerOptions) < core.ScriptTargetES2017
+			return r.compilerOptions.GetEmitScriptTarget() < core.ScriptTargetES2017
 		}
 		if ast.IsTypeNode(node) {
 			return false
@@ -2394,12 +2194,8 @@ func isPartOfTypeNodeInParent(node *ast.Node) bool {
 		return node == parent.ReturnType()
 	case ast.KindTypeAssertionExpression:
 		return node == parent.AsTypeAssertion().TypeNode
-	case ast.KindCallExpression:
-		return typeArgumentListContains(parent.AsCallExpression().TypeArguments, node)
-	case ast.KindNewExpression:
-		return typeArgumentListContains(parent.AsNewExpression().TypeArguments, node)
-	case ast.KindTaggedTemplateExpression:
-		return typeArgumentListContains(parent.AsTaggedTemplateExpression().TypeArguments, node)
+	case ast.KindCallExpression, ast.KindNewExpression, ast.KindTaggedTemplateExpression:
+		return slices.Contains(getTypeArgumentNodesFromNode(parent), node)
 	}
 	return false
 }
@@ -2407,13 +2203,6 @@ func isPartOfTypeNodeInParent(node *ast.Node) bool {
 func isPartOfTypeExpressionWithTypeArguments(node *ast.Node) bool {
 	parent := node.Parent
 	return ast.IsHeritageClause(parent) && (!ast.IsClassLike(parent.Parent) || parent.AsHeritageClause().Token == ast.KindImplementsKeyword)
-}
-
-func typeArgumentListContains(list *ast.Node, node *ast.Node) bool {
-	if list != nil {
-		return slices.Contains(list.AsTypeArgumentList().Arguments, node)
-	}
-	return false
 }
 
 func isJSDocLinkLike(node *ast.Node) bool {
@@ -2508,7 +2297,7 @@ func getExternalModuleName(node *ast.Node) *ast.Node {
 	case ast.KindImportType:
 		return getImportTypeNodeLiteral(node)
 	case ast.KindCallExpression:
-		return node.AsCallExpression().Arguments[0]
+		return node.AsCallExpression().Arguments.Nodes[0]
 	case ast.KindModuleDeclaration:
 		if ast.IsStringLiteral(node.AsModuleDeclaration().Name()) {
 			return node.AsModuleDeclaration().Name()
@@ -2529,17 +2318,6 @@ func getImportTypeNodeLiteral(node *ast.Node) *ast.Node {
 		}
 	}
 	return nil
-}
-
-func isExternalModuleNameRelative(moduleName string) bool {
-	// TypeScript 1.0 spec (April 2014): 11.2.1
-	// An external module name is "relative" if the first term is "." or "..".
-	// Update: We also consider a path like `C:\foo.ts` "relative" because we do not search for it in `node_modules` or treat it as an ambient module.
-	return tspath.PathIsRelative(moduleName) || tspath.IsRootedDiskPath(moduleName)
-}
-
-func extensionIsTs(ext string) bool {
-	return ext == ExtensionTs || ext == ExtensionTsx || ext == ExtensionDts || ext == ExtensionMts || ext == ExtensionDmts || ext == ExtensionCts || ext == ExtensionDcts || len(ext) >= 7 && ext[:3] == ".d." && ext[len(ext)-3:] == ".ts"
 }
 
 func isShorthandAmbientModuleSymbol(moduleSymbol *ast.Symbol) bool {
@@ -2597,54 +2375,6 @@ func getContainingQualifiedNameNode(node *ast.Node) *ast.Node {
 	return node
 }
 
-var extensionsToRemove = []string{ExtensionDts, ExtensionDmts, ExtensionDcts, ExtensionMjs, ExtensionMts, ExtensionCjs, ExtensionCts, ExtensionTs, ExtensionJs, ExtensionTsx, ExtensionJsx, ExtensionJson}
-
-func removeFileExtension(path string) string {
-	// Remove any known extension even if it has more than one dot
-	for _, ext := range extensionsToRemove {
-		if strings.HasSuffix(path, ext) {
-			return path[:len(path)-len(ext)]
-		}
-	}
-	// Otherwise just remove single dot extension, if any
-	return path[:len(path)-len(filepath.Ext(path))] // TODO(jakebailey): do not use filepath here
-}
-
-func tryGetExtensionFromPath(p string) string {
-	for _, ext := range extensionsToRemove {
-		if tspath.FileExtensionIs(p, ext) {
-			return ext
-		}
-	}
-	return ""
-}
-
-func removeExtension(path string, extension string) string {
-	return path[:len(path)-len(extension)]
-}
-
-func fileExtensionIsOneOf(path string, extensions []string) bool {
-	for _, ext := range extensions {
-		if tspath.FileExtensionIs(path, ext) {
-			return true
-		}
-	}
-	return false
-}
-
-func tryExtractTSExtension(fileName string) string {
-	for _, ext := range supportedTSExtensionsForExtractExtension {
-		if tspath.FileExtensionIs(fileName, ext) {
-			return ext
-		}
-	}
-	return ""
-}
-
-func hasImplementationTSFileExtension(path string) bool {
-	return fileExtensionIsOneOf(path, supportedTSImplementationExtensions) && !IsDeclarationFileName(path)
-}
-
 func isSideEffectImport(node *ast.Node) bool {
 	ancestor := ast.FindAncestor(node, ast.IsImportDeclaration)
 	return ancestor != nil && ancestor.AsImportDeclaration().ImportClause == nil
@@ -2652,7 +2382,7 @@ func isSideEffectImport(node *ast.Node) bool {
 
 func getExternalModuleRequireArgument(node *ast.Node) *ast.Node {
 	if isVariableDeclarationInitializedToBareOrAccessedRequire(node) {
-		return getLeftmostAccessExpression(node.AsVariableDeclaration().Initializer).AsCallExpression().Arguments[0]
+		return getLeftmostAccessExpression(node.AsVariableDeclaration().Initializer).AsCallExpression().Arguments.Nodes[0]
 	}
 	return nil
 }
@@ -2756,65 +2486,41 @@ func isTypeAlias(node *ast.Node) bool {
  */
 
 func getEffectiveTypeParameterDeclarations(node *ast.Node) []*ast.Node {
-	// if isJSDocSignature(node) {
-	// 	if isJSDocOverloadTag(node.parent) {
-	// 		jsDoc := getJSDocRoot(node.parent)
-	// 		if jsDoc && length(jsDoc.tags) {
-	// 			return flatMap(jsDoc.tags, func(tag JSDocTag) *NodeArray[TypeParameterDeclaration] {
-	// 				if isJSDocTemplateTag(tag) {
-	// 					return tag.typeParameters
-	// 				} else {
-	// 					return nil
-	// 				}
-	// 			})
-	// 		}
-	// 	}
-	// 	return emptyArray
-	// }
-	// if isJSDocTypeAlias(node) {
-	// 	Debug.assert(node.parent.kind == KindJSDoc)
-	// 	return flatMap(node.parent.tags, func(tag JSDocTag) *NodeArray[TypeParameterDeclaration] {
-	// 		if isJSDocTemplateTag(tag) {
-	// 			return tag.typeParameters
-	// 		} else {
-	// 			return nil
-	// 		}
-	// 	})
-	// }
-	typeParameters := node.TypeParameters()
-	if typeParameters != nil {
-		return typeParameters.AsTypeParameterList().Parameters
-	}
-	// if isInJSFile(node) {
-	// 	decls := getJSDocTypeParameterDeclarations(node)
-	// 	if decls.length {
-	// 		return decls
-	// 	}
-	// 	typeTag := getJSDocType(node)
-	// 	if typeTag && isFunctionTypeNode(typeTag) && typeTag.typeParameters {
-	// 		return typeTag.typeParameters
-	// 	}
-	// }
-	return nil
+	return getTypeParameterNodesFromNode(node)
 }
 
 func getTypeParameterNodesFromNode(node *ast.Node) []*ast.Node {
-	typeParameterList := node.TypeParameters()
+	typeParameterList := getTypeParameterListFromNode(node)
 	if typeParameterList != nil {
-		return typeParameterList.AsTypeParameterList().Parameters
+		return typeParameterList.Nodes
 	}
 	return nil
+}
+
+func getTypeParameterListFromNode(node *ast.Node) *ast.NodeList {
+	switch node.Kind {
+	case ast.KindClassDeclaration:
+		return node.AsClassDeclaration().TypeParameters
+	case ast.KindClassExpression:
+		return node.AsClassExpression().TypeParameters
+	case ast.KindInterfaceDeclaration:
+		return node.AsInterfaceDeclaration().TypeParameters
+	case ast.KindTypeAliasDeclaration:
+		return node.AsTypeAliasDeclaration().TypeParameters
+	default:
+		return node.FunctionLikeData().TypeParameters
+	}
 }
 
 func getTypeArgumentNodesFromNode(node *ast.Node) []*ast.Node {
 	typeArgumentList := getTypeArgumentListFromNode(node)
 	if typeArgumentList != nil {
-		return typeArgumentList.AsTypeArgumentList().Arguments
+		return typeArgumentList.Nodes
 	}
 	return nil
 }
 
-func getTypeArgumentListFromNode(node *ast.Node) *ast.Node {
+func getTypeArgumentListFromNode(node *ast.Node) *ast.NodeList {
 	switch node.Kind {
 	case ast.KindCallExpression:
 		return node.AsCallExpression().TypeArguments
@@ -2926,7 +2632,7 @@ func isOptionalDeclaration(declaration *ast.Node) bool {
 }
 
 func isEmptyArrayLiteral(expression *ast.Node) bool {
-	return expression.Kind == ast.KindArrayLiteralExpression && len(expression.AsArrayLiteralExpression().Elements) == 0
+	return expression.Kind == ast.KindArrayLiteralExpression && len(expression.AsArrayLiteralExpression().Elements.Nodes) == 0
 }
 
 func declarationBelongsToPrivateAmbientMember(declaration *ast.Node) bool {
@@ -3356,12 +3062,11 @@ func getExports(symbol *ast.Symbol) ast.SymbolTable {
 }
 
 func getLocals(container *ast.Node) ast.SymbolTable {
-	data := container.LocalsContainerData().Locals()
-	if data == nil {
-		data = make(ast.SymbolTable)
-		container.LocalsContainerData().SetLocals(data)
+	data := container.LocalsContainerData()
+	if data.Locals == nil {
+		data.Locals = make(ast.SymbolTable)
 	}
-	return data
+	return data.Locals
 }
 
 func getThisParameter(signature *ast.Node) *ast.Node {
@@ -3382,15 +3087,17 @@ func parameterIsThisKeyword(parameter *ast.Node) bool {
 func getInterfaceBaseTypeNodes(node *ast.Node) []*ast.Node {
 	heritageClause := getHeritageClause(node.AsInterfaceDeclaration().HeritageClauses, ast.KindExtendsKeyword)
 	if heritageClause != nil {
-		return heritageClause.AsHeritageClause().Types
+		return heritageClause.AsHeritageClause().Types.Nodes
 	}
 	return nil
 }
 
-func getHeritageClause(clauses []*ast.Node, kind ast.Kind) *ast.Node {
-	for _, clause := range clauses {
-		if clause.AsHeritageClause().Token == kind {
-			return clause
+func getHeritageClause(clauses *ast.NodeList, kind ast.Kind) *ast.Node {
+	if clauses != nil {
+		for _, clause := range clauses.Nodes {
+			if clause.AsHeritageClause().Token == kind {
+				return clause
+			}
 		}
 	}
 	return nil
@@ -3398,8 +3105,8 @@ func getHeritageClause(clauses []*ast.Node, kind ast.Kind) *ast.Node {
 
 func getClassExtendsHeritageElement(node *ast.Node) *ast.Node {
 	heritageClause := getHeritageClause(node.ClassLikeData().HeritageClauses, ast.KindExtendsKeyword)
-	if heritageClause != nil && len(heritageClause.AsHeritageClause().Types) > 0 {
-		return heritageClause.AsHeritageClause().Types[0]
+	if heritageClause != nil && len(heritageClause.AsHeritageClause().Types.Nodes) > 0 {
+		return heritageClause.AsHeritageClause().Types.Nodes[0]
 	}
 	return nil
 }
@@ -3580,7 +3287,7 @@ func createEvaluator(evaluateEntity Evaluator) Evaluator {
 		sb.WriteString(expr.AsTemplateExpression().Head.Text())
 		resolvedOtherFiles := false
 		hasExternalReferences := false
-		for _, span := range expr.AsTemplateExpression().TemplateSpans {
+		for _, span := range expr.AsTemplateExpression().TemplateSpans.Nodes {
 			spanResult := evaluate(span.Expression(), location)
 			if spanResult.value == nil {
 				return evaluatorResult(nil, true /*isSyntacticallyString*/, false, false)
