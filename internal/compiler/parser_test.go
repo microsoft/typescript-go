@@ -1,4 +1,5 @@
 package compiler_test
+
 import (
 	"bytes"
 	"fmt"
@@ -10,17 +11,17 @@ import (
 	"sync"
 	"testing"
 
+	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/repo"
 	"github.com/microsoft/typescript-go/internal/testutil/baseline"
-	"github.com/microsoft/typescript-go/internal/compiler"
-	"github.com/microsoft/typescript-go/internal/ast"
 	"gotest.tools/v3/assert"
 
 	"github.com/microsoft/typescript-go/internal/core"
 )
 
 func BenchmarkParse(b *testing.B) {
-	for _, f := range benchFixtures {
+	for _, f := range compiler.BenchFixtures {
 		b.Run(f.Name(), func(b *testing.B) {
 			f.SkipIfNotExist(b)
 
@@ -157,7 +158,7 @@ func printAST(sourceFile *ast.SourceFile) string {
 		return node.ForEachChild(func(child *ast.Node) bool {
 			if node.Kind == ast.KindShorthandPropertyAssignment && node.AsShorthandPropertyAssignment().ObjectAssignmentInitializer == child {
 				indent := strings.Repeat("  ", indentation+offset)
-				sb.WriteString(fmt.Sprintf("%sEqualsToken\n", indent)) // print an extra line for the EqualsToken
+				sb.WriteString(indent + "EqualsToken\n") // print an extra line for the EqualsToken
 			}
 			visit(child, indentation+offset)
 			return false

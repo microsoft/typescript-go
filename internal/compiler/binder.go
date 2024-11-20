@@ -88,7 +88,7 @@ type ActiveLabel struct {
 func (label *ActiveLabel) BreakTarget() *ast.FlowNode    { return label.breakTarget }
 func (label *ActiveLabel) ContinueTarget() *ast.FlowNode { return label.continueTarget }
 
-func BindSourceFile(file *ast.SourceFile, options *core.CompilerOptions) {
+func bindSourceFile(file *ast.SourceFile, options *core.CompilerOptions) {
 	if !file.IsBound {
 		b := &Binder{}
 		b.file = file
