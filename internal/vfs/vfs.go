@@ -254,5 +254,5 @@ func (a *adapter) WalkDir(root string, walkFn WalkDirFunc) error {
 }
 
 func (a *adapter) Realpath(path string) string {
-	return path // TODO(jakebailey): !!!
+	return path // TODO(jakebailey): !!! https://go.dev/cl/385534
 }
