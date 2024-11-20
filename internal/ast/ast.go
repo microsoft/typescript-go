@@ -4387,10 +4387,9 @@ type FileReference struct {
 }
 
 type PragmaArgument struct {
+	core.TextRange
 	Name  string
 	Value string
-	Pos   int
-	End   int
 }
 
 type Pragma struct {

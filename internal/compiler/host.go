@@ -48,12 +48,11 @@ func (d *compilerHost) Realpath(path string) string {
 }
 
 func (d *compilerHost) GetCurrentDirectory() string {
-	ex, err := os.Executable()
+	cwd, err := os.Getwd()
 	if err != nil {
 		panic(err)
 	}
-	exPath := filepath.Dir(ex)
-	return exPath
+	return cwd
 }
 
 func (d *compilerHost) GetDirectories(path string) []string {

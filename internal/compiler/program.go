@@ -54,12 +54,12 @@ func NewProgram(options ProgramOptions) *Program {
 	if p.options == nil {
 		p.options = &core.CompilerOptions{}
 	}
-	p.filesByPath = make(map[string]*ast.SourceFile)
+	p.filesByPath = make(map[string]*ast.SourceFile, len(options.RootNames))
 
 	p.resolvedModules = make(map[string]*module.ResolvedModuleWithFailedLookupLocations)
 	//p.maxNodeModuleJsDepth = p.options.MaxNodeModuleJsDepth
 
-	// TODO: tracing?
+	// TODO(ercornel): !!! tracing?
 	// tracing?.push(tracing.Phase.Program, "createProgram", { configFilePath: options.configFilePath, rootDir: options.rootDir }, /*separateBeginAndEnd*/ true);
 	// performance.mark("beforeProgram");
 
@@ -68,13 +68,13 @@ func NewProgram(options ProgramOptions) *Program {
 		p.host = NewCompilerHost(p.options, options.SingleThreaded)
 	}
 
-	// TODO: SKIPPING FOR NOW :: default lib
+	// TODO(ercornel): !!!: SKIPPING FOR NOW :: default lib
 
 	p.currentDirectory = p.host.GetCurrentDirectory()
 	p.resolver = module.NewResolver(p.host, nil, p.options)
 
 	if len(options.ProjectReferences) > 0 {
-		// TODO: project references
+		// TODO(ercornel): !!!: project references
 	}
 
 	for i, rootName := range options.RootNames {
@@ -117,7 +117,7 @@ func (p *Program) findSourceFile(candidate string, reason FileIncludeReason) *as
 		}
 	}
 
-	// TODO: how to make this async
+	// TODO(ercornel): !!!: how to make this async
 	file := p.parseSourceFile(candidate)
 	if file != nil {
 		p.filesByPath[candidate] = file
@@ -130,7 +130,7 @@ func (p *Program) findSourceFile(candidate string, reason FileIncludeReason) *as
 func (p *Program) parseSourceFile(fileName string) *ast.SourceFile {
 	text, _ := p.host.ReadFile(fileName)
 	sourceFile := ParseSourceFile(fileName, text, p.options.GetEmitScriptTarget())
-	path, _ := filepath.Abs(fileName)
+	path := tspath.GetNormalizedAbsolutePath(fileName, p.currentDirectory)
 	sourceFile.SetPath(path)
 	p.files = append(p.files, sourceFile)
 	return sourceFile
@@ -143,9 +143,9 @@ func (p *Program) processReferencedFiles(file *ast.SourceFile) {
 }
 
 func (p *Program) getResolvedModule(currentSourceFile *ast.SourceFile, moduleReference string) *ast.SourceFile {
-	directory := filepath.Dir(currentSourceFile.Path())
+	directory := tspath.GetDirectoryPath(currentSourceFile.Path())
 	if tspath.IsExternalModuleNameRelative(moduleReference) {
-		return p.findSourceFile(filepath.Join(directory, moduleReference), FileIncludeReason{Import, 0})
+		return p.findSourceFile(tspath.CombinePaths(directory, moduleReference), FileIncludeReason{Import, 0})
 	}
 	return p.findNodeModule(moduleReference)
 }
@@ -192,7 +192,7 @@ func (p *Program) processImportedModules(file *ast.SourceFile) {
 			p.resolvedModules[moduleName] = resolution
 
 			resolvedFileName := resolution.ResolvedFileName
-			// TODO: check if from node modules
+			// TODO(ercornel): !!!: check if from node modules
 
 			// add file to program only if:
 			// - resolution was successful
@@ -205,8 +205,8 @@ func (p *Program) processImportedModules(file *ast.SourceFile) {
 			// Don't add the file if it has a bad extension (e.g. 'tsx' if we don't have '--allowJs')
 			// This may still end up being an untyped module -- the file won't be included but imports will be allowed.
 
-			shouldAddFile := resolvedFileName != ""
-			// TODO: other checks on whether or not to add the file
+			shouldAddFile := resolution.IsResolved()
+			// TODO(ercornel): !!!: other checks on whether or not to add the file
 
 			if shouldAddFile {
 				p.findSourceFile(resolvedFileName, FileIncludeReason{Import, 0})

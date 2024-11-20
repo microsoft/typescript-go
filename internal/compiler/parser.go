@@ -6061,10 +6061,9 @@ func extractPragmas(commentRange ast.CommentRange, text string) ([]ast.Pragma, b
 								startPos := commentRange.Pos() + argMatchIndicies[0] + len(argMatches[1]) + 1
 
 								newArg := ast.PragmaArgument{
-									Name:  argSpec.Name,
-									Value: value,
-									Pos:   startPos,
-									End:   startPos + len(value),
+									Name:      argSpec.Name,
+									Value:     value,
+									TextRange: core.NewTextRange(startPos, startPos+len(value)),
 								}
 
 								pragma.Args[argSpec.Name] = newArg
@@ -6121,23 +6120,23 @@ func processPragmasIntoFields(context *ast.SourceFile /* reportDiagnostic func(*
 				} else if typesOk {
 					var parsed core.ResolutionMode
 					if resolutionModeOk {
-						parsed = parseResolutionMode(resolutionMode.Value, types.Pos, types.End /*, reportDiagnostic*/)
+						parsed = parseResolutionMode(resolutionMode.Value, types.Pos(), types.End() /*, reportDiagnostic*/)
 					}
 					context.TypeReferenceDirectives = append(context.TypeReferenceDirectives, ast.FileReference{
-						TextRange:      core.NewTextRange(types.Pos, types.End),
+						TextRange:      types.TextRange,
 						FileName:       types.Value,
 						ResolutionMode: parsed,
 						Preserve:       preserveOk && preserve.Value == "true",
 					})
 				} else if libOk {
 					context.LibReferenceDirectives = append(context.LibReferenceDirectives, ast.FileReference{
-						TextRange: core.NewTextRange(lib.Pos, lib.End),
+						TextRange: types.TextRange,
 						FileName:  lib.Value,
 						Preserve:  preserveOk && preserve.Value == "true",
 					})
 				} else if pathOk {
 					context.ReferencedFiles = append(context.ReferencedFiles, ast.FileReference{
-						TextRange: core.NewTextRange(path.Pos, path.End),
+						TextRange: types.TextRange,
 						FileName:  path.Value,
 						Preserve:  preserveOk && preserve.Value == "true",
 					})
