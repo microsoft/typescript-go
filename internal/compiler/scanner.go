@@ -1888,7 +1888,6 @@ asterisk-slash characters.
 */
 func iterateCommentRanges(text string, pos int, trailing bool) iter.Seq[ast.CommentRange] {
 	return func(yield func(ast.CommentRange) bool) {
-
 		var pendingPos int
 		var pendingEnd int
 		var pendingKind ast.Kind
@@ -1991,7 +1990,5 @@ func iterateCommentRanges(text string, pos int, trailing bool) iter.Seq[ast.Comm
 		if hasPendingCommentRange {
 			yield(ast.NewCommentRange(pendingKind, pendingPos, pendingEnd, pendingHasTrailingNewLine))
 		}
-
-		return
 	}
 }

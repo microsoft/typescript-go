@@ -6034,7 +6034,6 @@ var tripleSlashXMLCommentStartRegEx = regexp.MustCompile(`(?m)^\/\/\/\s*<(\S+)\s
 var singleLinePragmaRegEx = regexp.MustCompile(`(?m)^\/\/\/?\s*@([^\s:]+)((?:[^\S\r\n]|:).*)?$`)
 
 func extractPragmas(commentRange ast.CommentRange, text string) ([]ast.Pragma, bool) {
-
 	if commentRange.Kind == ast.KindSingleLineCommentTrivia {
 		matches := tripleSlashXMLCommentStartRegEx.FindStringSubmatch(text)
 		if len(matches) > 1 {
@@ -6069,9 +6068,7 @@ func extractPragmas(commentRange ast.CommentRange, text string) ([]ast.Pragma, b
 								}
 
 								pragma.Args[argSpec.Name] = newArg
-
 							} else {
-
 								newArg := ast.PragmaArgument{
 									Value: value,
 								}
@@ -6079,7 +6076,6 @@ func extractPragmas(commentRange ast.CommentRange, text string) ([]ast.Pragma, b
 								pragma.Args[argSpec.Name] = newArg
 							}
 						}
-
 					}
 				}
 				return []ast.Pragma{pragma}, true
@@ -6156,7 +6152,6 @@ func processPragmasIntoFields(context *ast.SourceFile /* reportDiagnostic func(*
 }
 
 func parseResolutionMode(mode string, pos int, end int /*reportDiagnostic: PragmaDiagnosticReporter*/) (resolutionKind core.ResolutionMode) {
-
 	if mode == "import" {
 		resolutionKind = core.ModuleKindESNext
 	}
