@@ -38,6 +38,8 @@ type FS interface {
 	// WalkDir walks the file tree rooted at root, calling walkFn for each file or directory in the tree.
 	// It is has the same behavior as [fs.WalkDir], but with paths as [string].
 	WalkDir(root string, walkFn WalkDirFunc) error
+
+	Realpath(path string) string
 }
 
 // DirEntry is [fs.DirEntry].
@@ -249,4 +251,8 @@ func (a *adapter) WalkDir(root string, walkFn WalkDirFunc) error {
 	return fs.WalkDir(fsys, rest, func(path string, d fs.DirEntry, err error) error { //nolint:wrapcheck
 		return walkFn(rootName+path, d, err)
 	})
+}
+
+func (a *adapter) Realpath(path string) string {
+	return path // TODO(jakebailey): !!!
 }

@@ -9,17 +9,12 @@ import (
 	"github.com/microsoft/typescript-go/internal/compiler/packagejson"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/tspath"
+	"github.com/microsoft/typescript-go/internal/vfs"
 )
 
 type ResolutionHost interface {
-	FileExists(fileName string) bool
-	ReadFile(fileName string) string
+	FS() vfs.FS
 	Trace(msg string)
-	DirectoryExists(directoryName string) bool
-	Realpath(path string) string
-	GetCurrentDirectory() string
-	GetDirectories(path string) []string
-	UseCaseSensitiveFileNames() bool
 }
 
 type ModeAwareCacheKey struct {
