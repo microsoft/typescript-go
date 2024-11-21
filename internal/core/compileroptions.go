@@ -199,3 +199,14 @@ const (
 	ScriptTargetJSON   ScriptTarget = 100
 	ScriptTargetLatest ScriptTarget = ScriptTargetESNext
 )
+
+type JsxEmit int32
+
+const (
+	JsxEmitNone        JsxEmit = 0
+	JsxEmitPreserve    JsxEmit = 1
+	JsxEmitReactNative JsxEmit = 2
+	JsxEmitReact       JsxEmit = 3
+	JsxEmitReactJSX    JsxEmit = 4
+	JsxEmitReactJSXDev JsxEmit = 5
+)
