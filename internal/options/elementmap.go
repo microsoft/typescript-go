@@ -173,19 +173,6 @@ var moduleDetectionOptionMap = NewOrderedMapFromList([]mapEntry[string, string]{
 	{"force", string(ModuleDetectionKindForce)},
 })
 
-// todo: remove? mark deprecated??
-// type ImportsNotUsedAsValues int32
-// const (
-// 	ImportsNotUsedAsValuesRemove   ImportsNotUsedAsValues = 0
-// 	ImportsNotUsedAsValuesPreserve ImportsNotUsedAsValues = 1
-// 	ImportsNotUsedAsValuesError    ImportsNotUsedAsValues = 2
-// )
-// var importsNotUsedAsValuesMap = NewOrderedMapFromList[string, ImportsNotUsedAsValues]([]mapEntry[string, string]{
-// 	{"remove", string(ImportsNotUsedAsValuesRemove)},
-// 	{"preserve", string(ImportsNotUsedAsValuesPreserve)},
-// 	{"error", string(ImportsNotUsedAsValuesError)},
-// })
-
 var jsxOptionMap = NewOrderedMapFromList([]mapEntry[string, string]{
 	{"preserve", string(core.JsxEmitPreserve)},
 	{"react-native", string(core.JsxEmitReactNative)},

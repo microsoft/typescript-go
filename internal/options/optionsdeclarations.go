@@ -420,21 +420,6 @@ var optionsDeclarations = []CommandLineOption{
 		defaultValueDescription: false,
 	},
 	{
-		name: "importsNotUsedAsValues",
-		kind: "string",
-		// Map(Object.entries({
-		//     remove: ImportsNotUsedAsValues.Remove,
-		//     preserve: ImportsNotUsedAsValues.Preserve,
-		//     error: ImportsNotUsedAsValues.Error,
-		// })),
-		affectsEmit:                true,
-		affectsSemanticDiagnostics: true,
-		affectsBuildInfo:           true,
-		category:                   diagnostics.Backwards_Compatibility,
-		description:                diagnostics.Specify_emit_Slashchecking_behavior_for_imports_that_are_only_used_for_types,
-		defaultValueDescription:    "Remove", //ImportsNotUsedAsValues.Remove
-	},
-	{
 		name:                    "downlevelIteration",
 		kind:                    "boolean",
 		affectsEmit:             true,
