@@ -5,6 +5,7 @@ import (
 	"encoding/binary"
 	"io/fs"
 	"os"
+	"path/filepath"
 	"runtime"
 	"strings"
 	"sync"
@@ -81,6 +82,15 @@ func FromOS(cwd string) FS {
 		cwd:                       cwd,
 		useCaseSensitiveFileNames: useCaseSensitiveFileNames,
 		rootFor:                   os.DirFS,
+		realpath: func(path string) (string, error) {
+			// TODO(jakebailey): !!!
+			path = filepath.FromSlash(path)
+			path, err := filepath.EvalSymlinks(path)
+			if err != nil {
+				return "", err //nolint:wrapcheck
+			}
+			return filepath.Abs(path)
+		},
 	}
 }
 
@@ -106,6 +116,9 @@ func FromIOFS(cwd string, useCaseSensitiveFileNames bool, fsys fs.FS) FS {
 				panic(err)
 			}
 			return sub
+		},
+		realpath: func(path string) (string, error) {
+			return path, nil
 		},
 	}
 }
@@ -143,7 +156,8 @@ type vfs struct {
 	cwd                       string
 	useCaseSensitiveFileNames bool
 
-	rootFor func(root string) fs.FS
+	rootFor  func(root string) fs.FS
+	realpath func(path string) (string, error)
 }
 
 func (v *vfs) UseCaseSensitiveFileNames() bool {
@@ -262,5 +276,7 @@ func (v *vfs) WalkDir(root string, walkFn WalkDirFunc) error {
 }
 
 func (v *vfs) Realpath(path string) string {
-	return path // TODO(jakebailey): !!! https://go.dev/cl/385534
+	// TODO(jakebailey): !!! https://go.dev/cl/385534
+	path, _ = v.realpath(path)
+	return path
 }
