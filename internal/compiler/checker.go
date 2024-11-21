@@ -1673,7 +1673,7 @@ func (c *Checker) checkVariableLikeDeclaration(node *ast.Node) {
 
 func (c *Checker) errorNextVariableOrPropertyDeclarationMustHaveSameType(firstDeclaration *ast.Declaration, firstType *Type, nextDeclaration *ast.Declaration, nextType *Type) {
 	nextDeclarationName := getNameOfDeclaration(nextDeclaration)
-	message := ifElse(ast.IsPropertyDeclaration(nextDeclaration) || ast.IsPropertySignatureDeclaration(nextDeclaration),
+	message := core.IfElse(ast.IsPropertyDeclaration(nextDeclaration) || ast.IsPropertySignatureDeclaration(nextDeclaration),
 		diagnostics.Subsequent_property_declarations_must_have_the_same_type_Property_0_must_be_of_type_1_but_here_has_type_2,
 		diagnostics.Subsequent_variable_declarations_must_have_the_same_type_Variable_0_must_be_of_type_1_but_here_has_type_2)
 	declName := declarationNameToString(nextDeclarationName)
@@ -3150,7 +3150,7 @@ func (c *Checker) checkBinaryLikeExpression(left *ast.Node, operatorToken *ast.N
 		if leftType.flags&TypeFlagsBooleanLike != 0 && rightType.flags&TypeFlagsBooleanLike != 0 {
 			suggestedOperator := c.getSuggestedBooleanOperator(operator)
 			if suggestedOperator != ast.KindUnknown {
-				c.error(operatorToken, diagnostics.The_0_operator_is_not_allowed_for_boolean_types_Consider_using_1_instead, TokenToString(operatorToken.Kind), TokenToString(suggestedOperator))
+				c.error(operatorToken, diagnostics.The_0_operator_is_not_allowed_for_boolean_types_Consider_using_1_instead, scanner.TokenToString(operatorToken.Kind), scanner.TokenToString(suggestedOperator))
 				return c.numberType
 			}
 		}
@@ -3183,7 +3183,7 @@ func (c *Checker) checkBinaryLikeExpression(left *ast.Node, operatorToken *ast.N
 				ast.KindGreaterThanGreaterThanGreaterThanEqualsToken:
 				rhsEval := c.evaluate(right, right)
 				if numValue, ok := rhsEval.value.(float64); ok && math.Abs(numValue) >= 32 {
-					c.errorOrSuggestion(ast.IsEnumMember(ast.WalkUpParenthesizedExpressions(right.Parent.Parent)), errorNode, diagnostics.This_operation_can_be_simplified_This_shift_is_identical_to_0_1_2, getTextOfNode(left), TokenToString(operator), math.Floor(numValue/32))
+					c.errorOrSuggestion(ast.IsEnumMember(ast.WalkUpParenthesizedExpressions(right.Parent.Parent)), errorNode, diagnostics.This_operation_can_be_simplified_This_shift_is_identical_to_0_1_2, getTextOfNode(left), scanner.TokenToString(operator), math.Floor(numValue/32))
 				}
 			}
 		}
@@ -3256,7 +3256,7 @@ func (c *Checker) checkBinaryLikeExpression(left *ast.Node, operatorToken *ast.N
 		if checkMode&CheckModeTypeOnly == 0 {
 			if isLiteralExpressionOfObject(left) || isLiteralExpressionOfObject(right) {
 				eqType := operator == ast.KindEqualsEqualsToken || operator == ast.KindEqualsEqualsEqualsToken
-				c.error(errorNode, diagnostics.This_condition_will_always_return_0_since_JavaScript_compares_objects_by_reference_not_value, ifElse(eqType, "false", "true"))
+				c.error(errorNode, diagnostics.This_condition_will_always_return_0_since_JavaScript_compares_objects_by_reference_not_value, core.IfElse(eqType, "false", "true"))
 			}
 			c.checkNaNEquality(errorNode, operator, left, right)
 			c.reportOperatorErrorUnless(leftType, operator, rightType, errorNode, func(left *Type, right *Type) bool {
@@ -3306,7 +3306,7 @@ func (c *Checker) checkBinaryLikeExpression(left *ast.Node, operatorToken *ast.N
 	case ast.KindCommaToken:
 		if c.compilerOptions.AllowUnreachableCode == core.TSFalse && c.isSideEffectFree(left) && !c.isIndirectCall(left.Parent) {
 			sf := ast.GetSourceFileOfNode(left)
-			start := SkipTrivia(sf.Text, left.Pos())
+			start := scanner.SkipTrivia(sf.Text, left.Pos())
 			isInDiag2657 := core.Some(sf.Diagnostics(), func(d *ast.Diagnostic) bool {
 				if d.Code() != diagnostics.JSX_expressions_must_have_one_parent_element.Code() {
 					return false
@@ -3339,7 +3339,7 @@ func (c *Checker) reportOperatorError(leftType *Type, operator ast.Kind, rightTy
 	case ast.KindEqualsEqualsEqualsToken, ast.KindEqualsEqualsToken, ast.KindExclamationEqualsEqualsToken, ast.KindExclamationEqualsToken:
 		c.errorAndMaybeSuggestAwait(errorNode, wouldWorkWithAwait, diagnostics.This_comparison_appears_to_be_unintentional_because_the_types_0_and_1_have_no_overlap, leftStr, rightStr)
 	default:
-		c.errorAndMaybeSuggestAwait(errorNode, wouldWorkWithAwait, diagnostics.Operator_0_cannot_be_applied_to_types_1_and_2, TokenToString(operator), leftStr, rightStr)
+		c.errorAndMaybeSuggestAwait(errorNode, wouldWorkWithAwait, diagnostics.Operator_0_cannot_be_applied_to_types_1_and_2, scanner.TokenToString(operator), leftStr, rightStr)
 	}
 }
 
@@ -3419,7 +3419,7 @@ func (c *Checker) checkForDisallowedESSymbolOperand(left *ast.Node, right *ast.N
 		offendingSymbolOperand = right
 	}
 	if offendingSymbolOperand != nil {
-		c.error(offendingSymbolOperand, diagnostics.The_0_operator_cannot_be_applied_to_type_symbol, TokenToString(operator))
+		c.error(offendingSymbolOperand, diagnostics.The_0_operator_cannot_be_applied_to_type_symbol, scanner.TokenToString(operator))
 		return false
 	}
 	return true
@@ -3429,13 +3429,13 @@ func (c *Checker) checkNaNEquality(errorNode *ast.Node, operator ast.Kind, left 
 	isLeftNaN := c.isGlobalNaN(ast.SkipParentheses(left))
 	isRightNaN := c.isGlobalNaN(ast.SkipParentheses(right))
 	if isLeftNaN || isRightNaN {
-		err := c.error(errorNode, diagnostics.This_condition_will_always_return_0, TokenToString(ifElse(operator == ast.KindEqualsEqualsEqualsToken || operator == ast.KindEqualsEqualsToken, ast.KindFalseKeyword, ast.KindTrueKeyword)))
+		err := c.error(errorNode, diagnostics.This_condition_will_always_return_0, scanner.TokenToString(core.IfElse(operator == ast.KindEqualsEqualsEqualsToken || operator == ast.KindEqualsEqualsToken, ast.KindFalseKeyword, ast.KindTrueKeyword)))
 		if isLeftNaN && isRightNaN {
 			return
 		}
 		var operatorString string
 		if operator == ast.KindExclamationEqualsEqualsToken || operator == ast.KindExclamationEqualsToken {
-			operatorString = TokenToString(ast.KindExclamationToken)
+			operatorString = scanner.TokenToString(ast.KindExclamationToken)
 		}
 		location := left
 		if isLeftNaN {
@@ -3470,7 +3470,7 @@ func (c *Checker) checkTruthinessOfType(t *Type, node *ast.Node) *Type {
 	}
 	semantics := c.getSyntacticTruthySemantics(node)
 	if semantics != PredicateSemanticsSometimes {
-		c.error(node, ifElse(semantics == PredicateSemanticsAlways, diagnostics.This_kind_of_expression_is_always_truthy, diagnostics.This_kind_of_expression_is_always_falsy))
+		c.error(node, core.IfElse(semantics == PredicateSemanticsAlways, diagnostics.This_kind_of_expression_is_always_truthy, diagnostics.This_kind_of_expression_is_always_falsy))
 	}
 	return t
 }
