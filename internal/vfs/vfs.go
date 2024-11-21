@@ -168,7 +168,7 @@ func (v *vfs) GetCurrentDirectory() string {
 	return v.cwd
 }
 
-func splitPath(p string) (rootName, rest string) {
+func splitRoot(p string) (rootName, rest string) {
 	l := tspath.GetEncodedRootLength(p)
 	if l < 0 {
 		panic("FS does not support URLs")
@@ -177,7 +177,7 @@ func splitPath(p string) (rootName, rest string) {
 }
 
 func (v *vfs) rootAndPath(path string) (fsys fs.FS, rootName string, rest string) {
-	rootName, rest = splitPath(path)
+	rootName, rest = splitRoot(path)
 	return v.rootFor(rootName), rootName, rest
 }
 
