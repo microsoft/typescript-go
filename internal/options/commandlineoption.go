@@ -18,32 +18,32 @@ const (
 	CommandLineOptionTypeCustom        CommandLineOptionKind = "custom" //map
 )
 
+// type CommandLineOption = CommandLineOptionOfCustomType | CommandLineOptionOfStringType | CommandLineOptionOfNumberType | CommandLineOptionOfBooleanType | TsConfigOnlyOption | CommandLineOptionOfListType;
+// temprorrary so no errors
 type CommandLineOption struct {
-	kind                     CommandLineOptionKind // string number boolean object list listOrElement
-	name, shortName          string                // make this into a generated type
+	kind            CommandLineOptionKind
+	name, shortName string
 
 	// used in parsing
-	isFilePath               bool
+	isFilePath        bool
+	isTSConfigOnly    bool
+	isCommandLineOnly bool
 
-	isTSConfigOnly           bool
-	isCommandLineOnly        bool
-
-	
 	// used in output
 	description              *diagnostics.Message
 	defaultValueDescription  any
 	showInSimplifiedHelpView bool
 
 	// used in output in serializing and generate tsconfig
-	category                 *diagnostics.Message
+	category *diagnostics.Message
 
 	// defined once
-	extraValidation          *func(value CompilerOptionsValue) (d *diagnostics.Message, args []string)
+	extraValidation *func(value CompilerOptionsValue) (d *diagnostics.Message, args []string)
 
 	// true
 	// used for configDirTemplateSubstitutionOptions
 	allowConfigDirTemplateSubstitution,
-	
+
 	// used for filter in compilerrunner
 	affectsDeclarationPath,
 	affectsProgramStructure,
@@ -53,79 +53,91 @@ type CommandLineOption struct {
 	affectsSourceFile,
 	affectsModuleResolution,
 	affectsEmit,
-	
+
 	allowJsFlag,
-	strictFlag     bool
+	strictFlag bool
 
 	// this is only used defined/used once in the compiler, true if option.name === extends
 	// disallowNullOrUndefined
 
 	// transpileoptions worker
 	transpileOptionValue core.Tristate // i think this can be reduced to boolean
-	        // options[option.name] = option.transpileOptionValue;
+	// options[option.name] = option.transpileOptionValue;
 
- 	// used in listtype
+	// used in listtype
 	listPreserveFalsyValues bool
 }
 
-func (option *CommandLineOption) deprecatedKeys() *map[string]bool {
+func (option *CommandLineOption) DeprecatedKeys() *map[string]bool {
+	if option.kind != CommandLineOptionTypeCustom {
+		return nil
+	}
 	return CommandLineOptionDeprecated[option.name]
 }
 func (option *CommandLineOption) TypeMap() *collections.OrderedMap[string, string] {
+	if option.kind != CommandLineOptionTypeCustom {
+		return nil
+	}
 	return CommandLineOptionCustomType[option.name]
 }
 func (option *CommandLineOption) Elements() *CommandLineOption {
+	if option.kind != CommandLineOptionTypeList && option.kind != CommandLineOptionTypeListOrElement {
+		return nil
+	}
 	return CommandLineOptionElements[option.name]
 }
-
-
 
 // elements                  *CommandLineOption
 var CommandLineOptionElements = map[string]*CommandLineOption{
 	"lib": {
-			name:                    "lib",
-			kind:                   "custom", //libMap,
-			defaultValueDescription: core.TSUnknown,
+		name:                    "lib",
+		kind:                    "custom", //libMap,
+		defaultValueDescription: core.TSUnknown,
 	},
 	"rootDirs": {
 		name:       "rootDirs",
-		kind:      "string",
+		kind:       "string",
 		isFilePath: true,
 	},
 	"typeRoots": {
 		name:       "typeRoots",
-		kind:      "string",
+		kind:       "string",
 		isFilePath: true,
 	},
 	"types": {
-		name:  "types",
+		name: "types",
 		kind: "string",
 	},
 	"moduleSuffixes": {
-		name:  "suffix",
+		name: "suffix",
 		kind: "string",
 	},
 	"customConditions": {
-		name:  "condition",
+		name: "condition",
 		kind: "string",
 	},
 	"plugins": {
-		name:  "plugin",
+		name: "plugin",
 		kind: "object",
 	},
 }
 
-
-
 // typeMap                  *map[string]string
-var CommandLineOptionCustomType = map[string]*(collections.OrderedMap[string,string]){
-	"lib": &libMap,
-	"moduleResolution": &moduleResolutionMap,
+var CommandLineOptionCustomType = map[string]*(collections.OrderedMap[string, string]){
+	"lib":              libMap,
+	"moduleResolution": moduleResolutionOptionMap,
+	"module":           moduleOptionMap,
+	"target":           targetOptionMap,
+	"moduleDetection":  moduleDetectionOptionMap,
+	"jsx":              jsxOptionMap,
+	"newLine":          newLineOptionMap,
 }
 
-
-// custom type
 // deprecatedKeys map[string]bool
 var CommandLineOptionDeprecated = map[string]*(map[string]bool){
 	"moduleResolution": &map[string]bool{"node": true},
+	"target":           &map[string]bool{"es3": true},
 }
+
+type CompilerOptionsValue any
+type CustomValueType string
