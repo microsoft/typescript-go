@@ -174,6 +174,8 @@ func (node *Node) Expression() *Node {
 		return node.AsSpreadAssignment().Expression
 	case KindTemplateSpan:
 		return node.AsTemplateSpan().Expression
+	case KindForInStatement, KindForOfStatement:
+		return node.AsForInOrOfStatement().Expression
 	}
 	panic("Unhandled case in Node.Expression")
 }
@@ -560,6 +562,9 @@ func (n *Node) AsEnumDeclaration() *EnumDeclaration {
 }
 func (n *Node) AsJSDocNullableType() *JSDocNullableType {
 	return n.data.(*JSDocNullableType)
+}
+func (n *Node) AsTemplateLiteralTypeNode() *TemplateLiteralTypeNode {
+	return n.data.(*TemplateLiteralTypeNode)
 }
 
 // NodeData
@@ -2972,6 +2977,9 @@ func (node *MetaProperty) ForEachChild(v Visitor) bool {
 	return visit(v, node.name)
 }
 
+func (node *MetaProperty) Name() *DeclarationName {
+	return node.name
+}
 func IsMetaProperty(node *Node) bool {
 	return node.Kind == KindMetaProperty
 }
@@ -3781,6 +3789,9 @@ func (node *NamedTupleMember) ForEachChild(v Visitor) bool {
 	return visit(v, node.DotDotDotToken) || visit(v, node.name) || visit(v, node.QuestionToken) || visit(v, node.TypeNode)
 }
 
+func (node *NamedTupleMember) Name() *DeclarationName {
+	return node.name
+}
 func IsNamedTupleMember(node *Node) bool {
 	return node.Kind == KindNamedTupleMember
 }
@@ -4042,6 +4053,10 @@ func (node *JsxNamespacedName) ForEachChild(v Visitor) bool {
 	return visit(v, node.name) || visit(v, node.Namespace)
 }
 
+func (node *JsxNamespacedName) Name() *DeclarationName {
+	return node.name
+}
+
 func IsJsxNamespacedName(node *Node) bool {
 	return node.Kind == KindJsxNamespacedName
 }
@@ -4273,13 +4288,8 @@ func (node *JSDocNullableType) ForEachChild(v Visitor) bool {
 
 // PatternAmbientModule
 
-type Pattern struct {
-	Text      string
-	StarIndex int // -1 for exact match
-}
-
 type PatternAmbientModule struct {
-	Pattern Pattern
+	Pattern core.Pattern
 	Symbol  *Symbol
 }
 
@@ -4313,6 +4323,11 @@ type SourceFile struct {
 	ModuleAugmentations         []*ModuleName      // []ModuleName
 	PatternAmbientModules       []PatternAmbientModule
 	AmbientModuleNames          []string
+	Pragmas                     map[string][]Pragma
+	ReferencedFiles             []FileReference
+	TypeReferenceDirectives     []FileReference
+	LibReferenceDirectives      []FileReference
+	HasNoDefaultLib             bool
 }
 
 func (f *NodeFactory) NewSourceFile(text string, fileName string, statements *NodeList) *Node {
@@ -4358,4 +4373,62 @@ func (node *SourceFile) ForEachChild(v Visitor) bool {
 
 func IsSourceFile(node *Node) bool {
 	return node.Kind == KindSourceFile
+}
+
+type CommentRange struct {
+	core.TextRange
+	HasTrailingNewLine bool
+	Kind               Kind
+}
+
+func NewCommentRange(kind Kind, pos int, end int, hasTrailingNewLine bool) CommentRange {
+	return CommentRange{
+		TextRange:          core.NewTextRange(pos, end),
+		HasTrailingNewLine: hasTrailingNewLine,
+		Kind:               kind,
+	}
+}
+
+type FileReference struct {
+	core.TextRange
+	FileName       string
+	ResolutionMode core.ResolutionMode
+	Preserve       bool
+}
+
+type PragmaArgument struct {
+	core.TextRange
+	Name  string
+	Value string
+}
+
+type Pragma struct {
+	Name      string
+	Args      map[string]PragmaArgument
+	ArgsRange CommentRange
+}
+
+type PragmaKindFlags = uint8
+
+const (
+	PragmaKindFlagsNone PragmaKindFlags = iota
+	PragmaKindTripleSlashXML
+	PragmaKindSingleLine
+	PragmaKindMultiLine
+	PragmaKindAll     = PragmaKindTripleSlashXML | PragmaKindSingleLine | PragmaKindMultiLine
+	PragmaKindDefault = PragmaKindAll
+)
+
+type PragmaArgumentSpecification struct {
+	Name        string
+	Optional    bool
+	CaptureSpan bool
+}
+type PragmaSpecification struct {
+	Args []PragmaArgumentSpecification
+	Kind PragmaKindFlags
+}
+
+func (spec *PragmaSpecification) IsTripleSlash() bool {
+	return (spec.Kind & PragmaKindTripleSlashXML) > 0
 }
