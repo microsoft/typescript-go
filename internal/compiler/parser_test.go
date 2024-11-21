@@ -41,11 +41,7 @@ func TestParseTypeScriptSrc(t *testing.T) {
 			return err
 		}
 
-		if d.IsDir() {
-			return nil
-		}
-
-		if ext := tspath.TryExtractTSExtension(path); ext == "" {
+		if d.IsDir() || tspath.TryExtractTSExtension(path) == "" {
 			return nil
 		}
 
