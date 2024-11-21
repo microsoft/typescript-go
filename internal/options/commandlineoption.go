@@ -18,8 +18,6 @@ const (
 	CommandLineOptionTypeCustom        CommandLineOptionKind = "custom" //map
 )
 
-// type CommandLineOption = CommandLineOptionOfCustomType | CommandLineOptionOfStringType | CommandLineOptionOfNumberType | CommandLineOptionOfBooleanType | TsConfigOnlyOption | CommandLineOptionOfListType;
-// temprorrary so no errors
 type CommandLineOption struct {
 	kind            CommandLineOptionKind
 	name, shortName string
@@ -87,7 +85,7 @@ func (option *CommandLineOption) Elements() *CommandLineOption {
 	return CommandLineOptionElements[option.name]
 }
 
-// elements                  *CommandLineOption
+// elements *CommandLineOption
 var CommandLineOptionElements = map[string]*CommandLineOption{
 	"lib": {
 		name:                    "lib",
@@ -122,7 +120,7 @@ var CommandLineOptionElements = map[string]*CommandLineOption{
 	},
 }
 
-// typeMap                  *map[string]string
+// typeMap *map[string]string
 var CommandLineOptionCustomType = map[string]*(collections.OrderedMap[string, string]){
 	"lib":              libMap,
 	"moduleResolution": moduleResolutionOptionMap,
