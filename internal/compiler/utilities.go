@@ -2385,7 +2385,7 @@ func getExternalModuleRequireArgument(node *ast.Node) *ast.Node {
 	if isVariableDeclarationInitializedToBareOrAccessedRequire(node) {
 		return getLeftmostAccessExpression(node.AsVariableDeclaration().Initializer).AsCallExpression().Arguments.Nodes[0]
 	}
-	return ""
+	return nil
 }
 
 func getExternalModuleImportEqualsDeclarationExpression(node *ast.Node) *ast.Node {
