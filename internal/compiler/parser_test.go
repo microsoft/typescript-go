@@ -32,6 +32,10 @@ func TestParseTypeScriptSrc(t *testing.T) {
 
 	srcDir := filepath.Join(repo.TypeScriptSubmodulePath, "src")
 
+	if _, err := os.Stat(srcDir); os.IsNotExist(err) {
+		t.Skipf("TypeScript submodule not found at %s", srcDir)
+	}
+
 	err := filepath.WalkDir(srcDir, func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err
