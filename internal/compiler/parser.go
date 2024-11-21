@@ -2241,6 +2241,11 @@ func (p *Parser) parsePostfixTypeOrHigher() *ast.Node {
 	typeNode := p.parseNonArrayType()
 	for !p.hasPrecedingLineBreak() {
 		switch p.token {
+		case ast.KindQuestionToken:
+			// If next token is start of a type we have a conditional type
+			if p.lookAhead(p.nextIsStartOfType) {
+				return typeNode
+			}
 		case ast.KindOpenBracketToken:
 			p.parseExpected(ast.KindOpenBracketToken)
 			if p.isStartOfType(false /*isStartOfParameter*/) {
@@ -2258,6 +2263,11 @@ func (p *Parser) parsePostfixTypeOrHigher() *ast.Node {
 		}
 	}
 	return typeNode
+}
+
+func (p *Parser) nextIsStartOfType() bool {
+	p.nextToken()
+	return p.isStartOfType(false /*inStartOfParameter*/)
 }
 
 func (p *Parser) parseNonArrayType() *ast.Node {
