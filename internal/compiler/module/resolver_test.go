@@ -322,8 +322,9 @@ var skip = []string{
 }
 
 type vfsModuleResolutionHost struct {
-	fs     vfs.FS
-	traces []string
+	fs               vfs.FS
+	currentDirectory string
+	traces           []string
 }
 
 func fixRoot(path string) string {
@@ -345,13 +346,18 @@ func newVFSModuleResolutionHost(files map[string]string) *vfsModuleResolutionHos
 		}
 	}
 	return &vfsModuleResolutionHost{
-		fs:     vfs.FromIOFS("/", false, fs),
+		fs:     vfs.FromIOFS(false, fs),
 		traces: nil,
 	}
 }
 
 func (v *vfsModuleResolutionHost) FS() vfs.FS {
 	return v.fs
+}
+
+// GetCurrentDirectory implements ModuleResolutionHost.
+func (v *vfsModuleResolutionHost) GetCurrentDirectory() string {
+	return v.currentDirectory
 }
 
 // Trace implements ModuleResolutionHost.

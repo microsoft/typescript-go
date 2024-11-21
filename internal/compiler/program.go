@@ -3,6 +3,7 @@ package compiler
 import (
 	"encoding/json"
 	"fmt"
+	"os"
 	"slices"
 	"strings"
 
@@ -41,7 +42,12 @@ func NewProgram(options ProgramOptions) *Program {
 	}
 	p.host = options.Host
 	if p.host == nil {
-		p.host = NewCompilerHost(p.options, options.SingleThreaded, vfs.FromOS(""))
+		cwd, err := os.Getwd()
+		if err != nil {
+			panic(err) // !!!
+		}
+
+		p.host = NewCompilerHost(p.options, options.SingleThreaded, cwd, vfs.FromOS())
 	}
 	rootPath := options.RootPath
 	if rootPath == "" {
@@ -91,7 +97,7 @@ func (p *Program) parseSourceFiles(fileInfos []FileInfo) {
 			fileName := fileInfos[i].Name
 			text, _ := p.host.FS().ReadFile(fileName)
 			sourceFile := ParseSourceFile(fileName, text, p.options.GetEmitScriptTarget())
-			path := tspath.ToPath(fileName, p.host.FS().GetCurrentDirectory(), p.host.FS().UseCaseSensitiveFileNames())
+			path := tspath.ToPath(fileName, p.host.GetCurrentDirectory(), p.host.FS().UseCaseSensitiveFileNames())
 			sourceFile.SetPath(path)
 			p.collectExternalModuleReferences(sourceFile)
 			p.files[i] = sourceFile
@@ -159,7 +165,7 @@ func (p *Program) tryLoadNodeModule(modulePath string) *ast.SourceFile {
 			}
 			if fileName, ok := typesValue.(string); ok {
 				path := tspath.CombinePaths(modulePath, fileName)
-				return p.filesByPath[tspath.ToPath(path, p.host.FS().GetCurrentDirectory(), p.host.FS().UseCaseSensitiveFileNames())]
+				return p.filesByPath[tspath.ToPath(path, p.host.GetCurrentDirectory(), p.host.FS().UseCaseSensitiveFileNames())]
 			}
 		}
 	}

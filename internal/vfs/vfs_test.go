@@ -17,7 +17,7 @@ func TestFS(t *testing.T) {
 		},
 	}
 
-	fs := vfs.FromIOFS("/", true, testfs)
+	fs := vfs.FromIOFS(true, testfs)
 
 	t.Run("ReadFile", func(t *testing.T) {
 		t.Parallel()

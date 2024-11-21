@@ -261,7 +261,7 @@ func (r *resolutionState) resolveNodeLike() *ResolvedModuleWithFailedLookupLocat
 }
 
 func (r *resolutionState) loadModuleFromSelfNameReference() *resolved {
-	directoryPath := tspath.GetNormalizedAbsolutePath(r.containingDirectory, r.resolver.host.FS().GetCurrentDirectory())
+	directoryPath := tspath.GetNormalizedAbsolutePath(r.containingDirectory, r.resolver.host.GetCurrentDirectory())
 	scope := r.getPackageScopeForPath(directoryPath)
 	if !scope.Exists() || scope.Contents.Exports.IsFalsy() {
 		return nil
@@ -562,7 +562,7 @@ func (r *resolutionState) getOriginalAndResolvedFileName(fileName string) (strin
 	resolvedFileName := r.realPath(fileName)
 	comparePathsOptions := tspath.ComparePathsOptions{
 		UseCaseSensitiveFileNames: r.resolver.host.FS().UseCaseSensitiveFileNames(),
-		CurrentDirectory:          r.resolver.host.FS().GetCurrentDirectory(),
+		CurrentDirectory:          r.resolver.host.GetCurrentDirectory(),
 	}
 	if tspath.ComparePaths(fileName, resolvedFileName, comparePathsOptions) == 0 {
 		// If the fileName and realpath are differing only in casing, prefer fileName
@@ -582,7 +582,7 @@ func (r *resolutionState) tryLoadModuleUsingPathsIfEligible() searchResult[resol
 			r.resolver.host.Trace(diagnostics.X_paths_option_is_specified_looking_for_a_pattern_to_match_module_name_0.Format(r.moduleName))
 		}
 	}
-	baseDirectory := getPathsBasePath(r.compilerOptions, r.resolver.host.FS().GetCurrentDirectory())
+	baseDirectory := getPathsBasePath(r.compilerOptions, r.resolver.host.GetCurrentDirectory())
 	pathPatterns := tryParsePatterns(r.compilerOptions.Paths)
 	return r.tryLoadModuleUsingPaths(
 		r.extensions,

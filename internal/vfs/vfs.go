@@ -20,9 +20,6 @@ type FS interface {
 	// UseCaseSensitiveFileNames returns true if the file system is case-sensitive.
 	UseCaseSensitiveFileNames() bool
 
-	// GetCurrentDirectory returns the current directory.
-	GetCurrentDirectory() string
-
 	// FileExists returns true if the file exists.
 	FileExists(path string) bool
 
@@ -68,18 +65,9 @@ var (
 var _ FS = (*vfs)(nil)
 
 // FromOS creates a new FS from the OS file system.
-func FromOS(cwd string) FS {
-	if cwd == "" {
-		var err error
-		cwd, err = os.Getwd() // TODO(jakebailey): !!!
-		if err != nil {
-			panic(err)
-		}
-	}
-
+func FromOS() FS {
 	useCaseSensitiveFileNames := isFileSystemCaseSensitive()
 	return &vfs{
-		cwd:                       cwd,
 		useCaseSensitiveFileNames: useCaseSensitiveFileNames,
 		rootFor:                   os.DirFS,
 		realpath: func(path string) (string, error) {
@@ -96,14 +84,9 @@ func FromOS(cwd string) FS {
 
 // FromIOFS creates a new FS from an [fs.FS].
 // For paths like `c:/foo/bar`, fsys will be used as though it's rooted at `/` and the path is `/c:/foo/bar`.
-func FromIOFS(cwd string, useCaseSensitiveFileNames bool, fsys fs.FS) FS {
-	if cwd == "" {
-		panic("cwd must be provided")
-	}
-
+func FromIOFS(useCaseSensitiveFileNames bool, fsys fs.FS) FS {
 	return &vfs{
 		readSema:                  osReadSema,
-		cwd:                       cwd,
 		useCaseSensitiveFileNames: useCaseSensitiveFileNames,
 		rootFor: func(root string) fs.FS {
 			if root == "/" {
@@ -153,7 +136,6 @@ func swapCase(str string) string {
 type vfs struct {
 	readSema chan struct{}
 
-	cwd                       string
 	useCaseSensitiveFileNames bool
 
 	rootFor  func(root string) fs.FS
@@ -162,10 +144,6 @@ type vfs struct {
 
 func (v *vfs) UseCaseSensitiveFileNames() bool {
 	return v.useCaseSensitiveFileNames
-}
-
-func (v *vfs) GetCurrentDirectory() string {
-	return v.cwd
 }
 
 func splitRoot(p string) (rootName, rest string) {

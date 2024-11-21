@@ -12,6 +12,7 @@ import (
 
 type CompilerHost interface {
 	FS() vfs.FS
+	GetCurrentDirectory() string
 	AbsFileName(fileName string) string
 	RunTask(fn func())
 	WaitForTasks()
@@ -23,13 +24,14 @@ type FileInfo struct {
 }
 
 type compilerHost struct {
-	options        *core.CompilerOptions
-	singleThreaded bool
-	wg             sync.WaitGroup
-	fs             vfs.FS
+	options          *core.CompilerOptions
+	singleThreaded   bool
+	wg               sync.WaitGroup
+	currentDirectory string
+	fs               vfs.FS
 }
 
-func NewCompilerHost(options *core.CompilerOptions, singleThreaded bool, fs vfs.FS) CompilerHost {
+func NewCompilerHost(options *core.CompilerOptions, singleThreaded bool, currentDirectory string, fs vfs.FS) CompilerHost {
 	h := &compilerHost{}
 	h.options = options
 	h.singleThreaded = singleThreaded
@@ -39,6 +41,10 @@ func NewCompilerHost(options *core.CompilerOptions, singleThreaded bool, fs vfs.
 
 func (h *compilerHost) FS() vfs.FS {
 	return h.fs
+}
+
+func (h *compilerHost) GetCurrentDirectory() string {
+	return h.currentDirectory
 }
 
 func (h *compilerHost) AbsFileName(fileName string) string {
