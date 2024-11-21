@@ -13,11 +13,10 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/compiler"
+	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/repo"
 	"github.com/microsoft/typescript-go/internal/testutil/baseline"
 	"gotest.tools/v3/assert"
-
-	"github.com/microsoft/typescript-go/internal/core"
 )
 
 func BenchmarkParse(b *testing.B) {
@@ -32,15 +31,6 @@ func BenchmarkParse(b *testing.B) {
 				compiler.ParseSourceFile(fileName, sourceText, core.ScriptTargetESNext)
 			}
 		})
-	}
-}
-
-// compare current code's tsgo AST with tsgo AST (in baselines/reference/)
-func DontTestParseAndPrintNodes(t *testing.T) {
-	t.Parallel()
-	err := filepath.WalkDir(repo.TypeScriptSubmodulePath, parseTestWorker(t, baseline.Options{}))
-	if err != nil {
-		t.Fatalf("Error walking the path %q: %v", repo.TypeScriptSubmodulePath, err)
 	}
 }
 
@@ -81,49 +71,6 @@ func parseTestComparisonWorker(t *testing.T) func(fileName string, d fs.DirEntry
 			expected := stdout.String()
 			actual := printAST(compiler.ParseSourceFile(fileName, string(sourceText), core.ScriptTargetESNext))
 			baseline.RunFromText(t, generateOutputFileName(t, fileName), expected, actual, baseline.Options{})
-		})
-		return nil
-	}
-}
-
-// compare current code's tsgo AST with tsc AST (in baselines/gold/)
-func DontTestParseAgainstTSCGold(t *testing.T) {
-	t.Parallel()
-	goldDir := "../../testdata/baselines/gold"
-	entries, err := os.ReadDir(goldDir)
-	if err != nil || len(entries) == 0 {
-		cmd := exec.Command("node", "testdata/baselineAST.js", "-r", "../../_submodules/TypeScript/", goldDir)
-		var stderr bytes.Buffer
-		cmd.Stderr = &stderr
-		err = cmd.Run()
-		if err != nil {
-			t.Fatalf("Error running the command %q: %v\nStderr: %s", cmd.String(), err, stderr.String())
-		}
-	}
-	err = filepath.WalkDir(repo.TypeScriptSubmodulePath, parseTestWorker(t, baseline.Options{Gold: true}))
-	if err != nil {
-		t.Fatalf("Error walking the path %q: %v", repo.TypeScriptSubmodulePath, err)
-	}
-}
-
-func parseTestWorker(t *testing.T, options baseline.Options) func(fileName string, d fs.DirEntry, err error) error {
-	return func(fileName string, d fs.DirEntry, err error) error {
-		if err != nil {
-			return err
-		}
-		if d.IsDir() {
-			return nil
-		}
-		testName, _ := filepath.Rel(repo.TypeScriptSubmodulePath, fileName)
-		t.Run(testName, func(t *testing.T) {
-			t.Parallel()
-			if isIgnoredTestFile(fileName) {
-				t.Skip()
-			}
-			sourceText, err := os.ReadFile(fileName)
-			assert.NilError(t, err)
-			sourceFile := compiler.ParseSourceFile(fileName, string(sourceText), core.ScriptTargetESNext)
-			baseline.Run(t, generateOutputFileName(t, fileName), printAST(sourceFile), options)
 		})
 		return nil
 	}
@@ -182,7 +129,7 @@ func printAST(sourceFile *ast.SourceFile) string {
 			parent = node
 		}
 		switch node.Kind {
-		case ast.KindModifierList, ast.KindTypeParameterList, ast.KindTypeArgumentList, ast.KindSyntaxList:
+		case ast.KindSyntaxList:
 			offset = 0
 		case ast.KindIdentifier:
 			indent := getIndentation(indentation)
