@@ -175,6 +175,8 @@ func (node *Node) Expression() *Node {
 		return node.AsSpreadAssignment().Expression
 	case KindTemplateSpan:
 		return node.AsTemplateSpan().Expression
+	case KindForInStatement, KindForOfStatement:
+		return node.AsForInOrOfStatement().Expression
 	}
 	panic("Unhandled case in Node.Expression")
 }
@@ -561,6 +563,9 @@ func (n *Node) AsEnumDeclaration() *EnumDeclaration {
 }
 func (n *Node) AsJSDocNullableType() *JSDocNullableType {
 	return n.data.(*JSDocNullableType)
+}
+func (n *Node) AsTemplateLiteralTypeNode() *TemplateLiteralTypeNode {
+	return n.data.(*TemplateLiteralTypeNode)
 }
 
 // NodeData
@@ -2973,6 +2978,9 @@ func (node *MetaProperty) ForEachChild(v Visitor) bool {
 	return visit(v, node.name)
 }
 
+func (node *MetaProperty) Name() *DeclarationName {
+	return node.name
+}
 func IsMetaProperty(node *Node) bool {
 	return node.Kind == KindMetaProperty
 }
@@ -3782,6 +3790,9 @@ func (node *NamedTupleMember) ForEachChild(v Visitor) bool {
 	return visit(v, node.DotDotDotToken) || visit(v, node.name) || visit(v, node.QuestionToken) || visit(v, node.TypeNode)
 }
 
+func (node *NamedTupleMember) Name() *DeclarationName {
+	return node.name
+}
 func IsNamedTupleMember(node *Node) bool {
 	return node.Kind == KindNamedTupleMember
 }
@@ -4041,6 +4052,10 @@ func (f *NodeFactory) NewJsxNamespacedName(name *IdentifierNode, namespace *Iden
 
 func (node *JsxNamespacedName) ForEachChild(v Visitor) bool {
 	return visit(v, node.name) || visit(v, node.Namespace)
+}
+
+func (node *JsxNamespacedName) Name() *DeclarationName {
+	return node.name
 }
 
 func IsJsxNamespacedName(node *Node) bool {
