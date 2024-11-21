@@ -45,6 +45,14 @@ type FS interface {
 // DirEntry is [fs.DirEntry].
 type DirEntry = fs.DirEntry
 
+var (
+	ErrInvalid    = fs.ErrInvalid    // "invalid argument"
+	ErrPermission = fs.ErrPermission // "permission denied"
+	ErrExist      = fs.ErrExist      // "file already exists"
+	ErrNotExist   = fs.ErrNotExist   // "file does not exist"
+	ErrClosed     = fs.ErrClosed     // "file already closed"
+)
+
 // WalkDirFunc is [fs.WalkDirFunc].
 type WalkDirFunc = fs.WalkDirFunc
 
