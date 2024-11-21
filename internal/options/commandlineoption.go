@@ -38,10 +38,9 @@ type CommandLineOption struct {
 	// defined once
 	extraValidation *func(value CompilerOptionsValue) (d *diagnostics.Message, args []string)
 
-	// true
+	// true or undefined
 	// used for configDirTemplateSubstitutionOptions
 	allowConfigDirTemplateSubstitution,
-
 	// used for filter in compilerrunner
 	affectsDeclarationPath,
 	affectsProgramStructure,
@@ -54,9 +53,6 @@ type CommandLineOption struct {
 
 	allowJsFlag,
 	strictFlag bool
-
-	// this is only used defined/used once in the compiler, true if option.name === extends
-	// disallowNullOrUndefined
 
 	// transpileoptions worker
 	transpileOptionValue core.Tristate // i think this can be reduced to boolean
@@ -83,6 +79,10 @@ func (option *CommandLineOption) Elements() *CommandLineOption {
 		return nil
 	}
 	return CommandLineOptionElements[option.name]
+}
+
+func (option *CommandLineOption) DisallowNullOrUndefined() bool {
+	return option.name == "extends"
 }
 
 // elements *CommandLineOption
