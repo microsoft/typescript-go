@@ -243,7 +243,7 @@ func TestBOM(t *testing.T) {
 
 		testfs := fstest.MapFS{
 			"foo.ts": &fstest.MapFile{
-				Data: []byte("\xEF\xBB\xBFhello, world"),
+				Data: []byte("\xEF\xBB\xBF" + expected),
 			},
 		}
 
