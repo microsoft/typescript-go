@@ -3,7 +3,6 @@ package compiler
 import (
 	"encoding/json"
 	"fmt"
-	"os"
 	"slices"
 	"strings"
 
@@ -42,12 +41,7 @@ func NewProgram(options ProgramOptions) *Program {
 	}
 	p.host = options.Host
 	if p.host == nil {
-		cwd, err := os.Getwd()
-		if err != nil {
-			panic(err) // TODO(jakebailey): make host required, plumb from above
-		}
-
-		p.host = NewCompilerHost(p.options, options.SingleThreaded, cwd, vfs.FromOS())
+		panic("host required")
 	}
 	rootPath := options.RootPath
 	if rootPath == "" {
