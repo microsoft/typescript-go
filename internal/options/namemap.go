@@ -23,6 +23,21 @@ func (parser *CommandLineParser) GetOptionsNameMap() *NameMap {
 	return parser.workerDiagnostics.optionsNameMap
 }
 
+func GetNameMapFromList(optDecls []*CommandLineOption) *NameMap {
+	optionsNames := map[string]*CommandLineOption{}
+	shortOptionNames := map[string]string{}
+	for _, option := range optDecls {
+		optionsNames[strings.ToLower(option.name)] = option
+		if option.shortName != "" {
+			shortOptionNames[option.shortName] = option.name
+		}
+	}
+	return &NameMap{
+		optionsNames:     optionsNames,
+		shortOptionNames: shortOptionNames,
+	}
+}
+
 type NameMap struct {
 	optionsNames     map[string]*CommandLineOption
 	shortOptionNames map[string]string
