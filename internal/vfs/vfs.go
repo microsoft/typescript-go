@@ -77,7 +77,11 @@ func FromOS() FS {
 			if err != nil {
 				return "", err //nolint:wrapcheck
 			}
-			return filepath.Abs(path)
+			path, err = filepath.Abs(path)
+			if err != nil {
+				return "", err //nolint:wrapcheck
+			}
+			return tspath.NormalizeSlashes(path), nil
 		},
 	}
 }
