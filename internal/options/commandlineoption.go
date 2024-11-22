@@ -72,7 +72,7 @@ func (option *CommandLineOption) TypeMap() *collections.OrderedMap[string, any] 
 	if option.kind != CommandLineOptionTypeEnum {
 		return nil
 	}
-	return CommandLineOptionCustomType[option.name]
+	return CommandLineOptionEnumMap[option.name]
 }
 func (option *CommandLineOption) Elements() *CommandLineOption {
 	if option.kind != CommandLineOptionTypeList && option.kind != CommandLineOptionTypeListOrElement {
@@ -121,7 +121,7 @@ var CommandLineOptionElements = map[string]*CommandLineOption{
 }
 
 // typeMap *map[string]string
-var CommandLineOptionCustomType = map[string]*(collections.OrderedMap[string, any]){
+var CommandLineOptionEnumMap = map[string]*(collections.OrderedMap[string, any]){
 	"lib":              libMap,
 	"moduleResolution": moduleResolutionOptionMap,
 	"module":           moduleOptionMap,
