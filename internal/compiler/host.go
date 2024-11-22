@@ -31,6 +31,7 @@ func NewCompilerHost(options *core.CompilerOptions, singleThreaded bool, current
 	h := &compilerHost{}
 	h.options = options
 	h.singleThreaded = singleThreaded
+	h.currentDirectory = currentDirectory
 	h.fs = fs
 	return h
 }
