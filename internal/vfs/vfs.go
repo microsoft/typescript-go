@@ -3,6 +3,7 @@ package vfs
 import (
 	"bytes"
 	"encoding/binary"
+	"fmt"
 	"io/fs"
 	"os"
 	"path/filepath"
@@ -78,7 +79,7 @@ func FromIOFS(useCaseSensitiveFileNames bool, fsys fs.FS) FS {
 			p := tspath.RemoveTrailingDirectorySeparator(root)
 			sub, err := fs.Sub(fsys, p)
 			if err != nil {
-				panic(err)
+				panic(fmt.Sprintf("vfs: failed to create sub file system for %q: %v", p, err))
 			}
 			return sub
 		},
@@ -154,7 +155,7 @@ func (v *vfs) UseCaseSensitiveFileNames() bool {
 func rootLength(p string) int {
 	l := tspath.GetEncodedRootLength(p)
 	if l <= 0 {
-		panic("expected absolute path, got: " + p)
+		panic(fmt.Sprintf("vfs: path %q is not absolute", p))
 	}
 	return l
 }
@@ -166,6 +167,9 @@ func splitRoot(p string) (rootName, rest string) {
 
 func (v *vfs) rootAndPath(path string) (fsys fs.FS, rootName string, rest string) {
 	rootName, rest = splitRoot(path)
+	if rest == "" {
+		rest = "."
+	}
 	return v.rootFor(rootName), rootName, rest
 }
 
@@ -259,6 +263,9 @@ func (v *vfs) WalkDir(root string, walkFn WalkDirFunc) error {
 		return nil
 	}
 	return fs.WalkDir(fsys, rest, func(path string, d fs.DirEntry, err error) error { //nolint:wrapcheck
+		if path == "." {
+			path = ""
+		}
 		return walkFn(rootName+path, d, err)
 	})
 }
