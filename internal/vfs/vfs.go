@@ -64,28 +64,6 @@ var (
 
 var _ FS = (*vfs)(nil)
 
-// FromOS creates a new FS from the OS file system.
-func FromOS() FS {
-	useCaseSensitiveFileNames := isFileSystemCaseSensitive()
-	return &vfs{
-		useCaseSensitiveFileNames: useCaseSensitiveFileNames,
-		rootFor:                   os.DirFS,
-		realpath: func(path string) (string, error) {
-			// TODO: replace once https://go.dev/cl/385534 is available
-			path = filepath.FromSlash(path)
-			path, err := filepath.EvalSymlinks(path)
-			if err != nil {
-				return "", err //nolint:wrapcheck
-			}
-			path, err = filepath.Abs(path)
-			if err != nil {
-				return "", err //nolint:wrapcheck
-			}
-			return tspath.NormalizeSlashes(path), nil
-		},
-	}
-}
-
 // FromIOFS creates a new FS from an [fs.FS].
 // For paths like `c:/foo/bar`, fsys will be used as though it's rooted at `/` and the path is `/c:/foo/bar`.
 func FromIOFS(useCaseSensitiveFileNames bool, fsys fs.FS) FS {
@@ -107,6 +85,28 @@ func FromIOFS(useCaseSensitiveFileNames bool, fsys fs.FS) FS {
 		realpath: func(path string) (string, error) {
 			// TODO: replace once https://go.dev/cl/385534 is available
 			return path, nil
+		},
+	}
+}
+
+// FromOS creates a new FS from the OS file system.
+func FromOS() FS {
+	useCaseSensitiveFileNames := isFileSystemCaseSensitive()
+	return &vfs{
+		useCaseSensitiveFileNames: useCaseSensitiveFileNames,
+		rootFor:                   os.DirFS,
+		realpath: func(path string) (string, error) {
+			// TODO: replace once https://go.dev/cl/385534 is available
+			path = filepath.FromSlash(path)
+			path, err := filepath.EvalSymlinks(path)
+			if err != nil {
+				return "", err //nolint:wrapcheck
+			}
+			path, err = filepath.Abs(path)
+			if err != nil {
+				return "", err //nolint:wrapcheck
+			}
+			return tspath.NormalizeSlashes(path), nil
 		},
 	}
 }
