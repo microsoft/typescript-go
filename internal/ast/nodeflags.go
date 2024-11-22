@@ -21,11 +21,12 @@ const (
 	NodeFlagsYieldContext                    NodeFlags = 1 << 14 // If node was parsed in the 'yield' context created when parsing a generator
 	NodeFlagsDecoratorContext                NodeFlags = 1 << 15 // If node was parsed as part of a decorator
 	NodeFlagsAwaitContext                    NodeFlags = 1 << 16 // If node was parsed in the 'await' context created when parsing an async function
-	NodeFlagsDisallowConditionalTypesContext NodeFlags = 1 << 17 // If node was parsed in a context where conditional types are not allowed
-	NodeFlagsThisNodeHasError                NodeFlags = 1 << 18 // If the parser encountered an error when parsing the code that created this node
-	NodeFlagsJavaScriptFile                  NodeFlags = 1 << 19 // If node was parsed in a JavaScript
-	NodeFlagsThisNodeOrAnySubNodesHasError   NodeFlags = 1 << 20 // If this node or any of its children had an error
-	NodeFlagsHasAggregatedChildData          NodeFlags = 1 << 21 // If we've computed data from children and cached it in this node
+	NodeFlagsTupleContext                    NodeFlags = 1 << 17 // If node was parsed in the 'tuple' context created when parsing a tuple type
+	NodeFlagsDisallowConditionalTypesContext NodeFlags = 1 << 18 // If node was parsed in a context where conditional types are not allowed
+	NodeFlagsThisNodeHasError                NodeFlags = 1 << 19 // If the parser encountered an error when parsing the code that created this node
+	NodeFlagsJavaScriptFile                  NodeFlags = 1 << 20 // If node was parsed in a JavaScript
+	NodeFlagsThisNodeOrAnySubNodesHasError   NodeFlags = 1 << 21 // If this node or any of its children had an error
+	NodeFlagsHasAggregatedChildData          NodeFlags = 1 << 22 // If we've computed data from children and cached it in this node
 
 	// These flags will be set when the parser encounters a dynamic import expression or 'import.meta' to avoid
 	// walking the tree if the flags are not set. However, these flags are just a approximation
@@ -36,16 +37,16 @@ const (
 	// removal, it is likely that users will add the import anyway.
 	// The advantage of this approach is its simplicity. For the case of batch compilation,
 	// we guarantee that users won't have to pay the price of walking the tree if a dynamic import isn't used.
-	NodeFlagsPossiblyContainsDynamicImport NodeFlags = 1 << 22
-	NodeFlagsPossiblyContainsImportMeta    NodeFlags = 1 << 23
+	NodeFlagsPossiblyContainsDynamicImport NodeFlags = 1 << 23
+	NodeFlagsPossiblyContainsImportMeta    NodeFlags = 1 << 24
 
-	NodeFlagsHasJSDoc        NodeFlags = 1 << 24 // If node has preceding JSDoc comment(s)
-	NodeFlagsJSDoc           NodeFlags = 1 << 25 // If node was parsed inside jsdoc
-	NodeFlagsAmbient         NodeFlags = 1 << 26 // If node was inside an ambient context -- a declaration file, or inside something with the `declare` modifier.
-	NodeFlagsInWithStatement NodeFlags = 1 << 27 // If any ancestor of node was the `statement` of a WithStatement (not the `expression`)
-	NodeFlagsJsonFile        NodeFlags = 1 << 28 // If node was parsed in a Json
-	NodeFlagsTypeCached      NodeFlags = 1 << 29 // If a type was cached for node at any point
-	NodeFlagsDeprecated      NodeFlags = 1 << 30 // If has '@deprecated' JSDoc tag
+	NodeFlagsHasJSDoc        NodeFlags = 1 << 25 // If node has preceding JSDoc comment(s)
+	NodeFlagsJSDoc           NodeFlags = 1 << 26 // If node was parsed inside jsdoc
+	NodeFlagsAmbient         NodeFlags = 1 << 27 // If node was inside an ambient context -- a declaration file, or inside something with the `declare` modifier.
+	NodeFlagsInWithStatement NodeFlags = 1 << 28 // If any ancestor of node was the `statement` of a WithStatement (not the `expression`)
+	NodeFlagsJsonFile        NodeFlags = 1 << 29 // If node was parsed in a Json
+	NodeFlagsTypeCached      NodeFlags = 1 << 30 // If a type was cached for node at any point
+	NodeFlagsDeprecated      NodeFlags = 1 << 31 // If has '@deprecated' JSDoc tag
 
 	NodeFlagsBlockScoped = NodeFlagsLet | NodeFlagsConst | NodeFlagsUsing
 	NodeFlagsConstant    = NodeFlagsConst | NodeFlagsUsing

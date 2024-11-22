@@ -174,8 +174,9 @@ func (p *Parser) parseErrorAtRange(loc core.TextRange, message *diagnostics.Mess
 }
 
 type ParserState struct {
-	scannerState   scanner.ScannerState
-	contextFlags   ast.NodeFlags
+	scannerState scanner.ScannerState
+	contextFlags ast.NodeFlags
+	// TODO: Put parser-only flags on a separate field here. eg TupleElementParsingContext doesn't need to be saved after parsing
 	diagnosticsLen int
 }
 
@@ -2235,7 +2236,7 @@ func (p *Parser) parsePostfixTypeOrHigher() *ast.Node {
 		switch p.token {
 		case ast.KindQuestionToken:
 			// If next token is start of a type we are in the middle of a conditional type
-			if p.lookAhead(p.nextIsStartOfType) {
+			if !p.inTupleContext() || p.lookAhead(p.nextIsStartOfType) {
 				return typeNode
 			}
 			p.nextToken()
@@ -3151,7 +3152,7 @@ func (p *Parser) parseTupleElementType() *ast.TypeNode {
 		p.finishNode(result, pos)
 		return result
 	}
-	return p.parseType()
+	return doInContext(p, ast.NodeFlagsTupleContext, true, (*Parser).parseType)
 }
 
 func (p *Parser) parseParenthesizedType() *ast.Node {
@@ -5842,6 +5843,10 @@ func doInContext[T any](p *Parser, flags ast.NodeFlags, value bool, f func(p *Pa
 
 func (p *Parser) inYieldContext() bool {
 	return p.contextFlags&ast.NodeFlagsYieldContext != 0
+}
+
+func (p *Parser) inTupleContext() bool {
+	return p.contextFlags&ast.NodeFlagsTupleContext != 0
 }
 
 func (p *Parser) inDisallowInContext() bool {
