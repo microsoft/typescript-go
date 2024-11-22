@@ -15,7 +15,7 @@ const (
 	CommandLineOptionTypeObject        CommandLineOptionKind = "object"
 	CommandLineOptionTypeList          CommandLineOptionKind = "list"
 	CommandLineOptionTypeListOrElement CommandLineOptionKind = "listOrElement"
-	CommandLineOptionTypeCustom        CommandLineOptionKind = "custom" //map
+	CommandLineOptionTypeEnum          CommandLineOptionKind = "enum" //map
 )
 
 type CommandLineOption struct {
@@ -62,14 +62,14 @@ type CommandLineOption struct {
 	listPreserveFalsyValues bool
 }
 
-func (option *CommandLineOption) DeprecatedKeys() *map[string]bool {
-	if option.kind != CommandLineOptionTypeCustom {
+func (option *CommandLineOption) DeprecatedKeys() map[string]bool {
+	if option.kind != CommandLineOptionTypeEnum {
 		return nil
 	}
 	return CommandLineOptionDeprecated[option.name]
 }
-func (option *CommandLineOption) TypeMap() *collections.OrderedMap[string, string] {
-	if option.kind != CommandLineOptionTypeCustom {
+func (option *CommandLineOption) TypeMap() *collections.OrderedMap[string, int32] {
+	if option.kind != CommandLineOptionTypeEnum {
 		return nil
 	}
 	return CommandLineOptionCustomType[option.name]
@@ -132,9 +132,9 @@ var CommandLineOptionCustomType = map[string]*(collections.OrderedMap[string, st
 }
 
 // deprecatedKeys map[string]bool
-var CommandLineOptionDeprecated = map[string]*(map[string]bool){
-	"moduleResolution": &map[string]bool{"node": true},
-	"target":           &map[string]bool{"es3": true},
+var CommandLineOptionDeprecated = map[string](map[string]bool){
+	"moduleResolution": map[string]bool{"node": true},
+	"target":           map[string]bool{"es3": true},
 }
 
 type CompilerOptionsValue any

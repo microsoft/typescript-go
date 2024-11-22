@@ -114,6 +114,14 @@ func (options *CompilerOptions) GetAllowJs() bool {
 	return options.CheckJs == TSTrue
 }
 
+type ModuleDetectionKind int32
+
+const (
+	ModuleDetectionKindAuto   ModuleDetectionKind = 0
+	ModuleDetectionKindLegacy ModuleDetectionKind = 1
+	ModuleDetectionKindForce  ModuleDetectionKind = 2
+)
+
 type ModuleKind int32
 
 const (
@@ -179,6 +187,13 @@ func (m ModuleResolutionKind) String() string {
 		panic("unhandled case in ModuleResolutionKind.String")
 	}
 }
+
+type NewLineKind int32
+
+const (
+	NewLineKindCRLF = 0
+	NewLineKindLF   = 1
+)
 
 type ScriptTarget int32
 

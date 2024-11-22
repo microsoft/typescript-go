@@ -13,8 +13,8 @@ import (
 func createDiagnosticForInvalidCustomType(opt *CommandLineOption, loc core.TextRange) *ast.Diagnostic {
 	namesOfType := slices.Collect(opt.TypeMap().Keys())
 	stringNames := ""
-	if opt.deprecatedKeys() != nil {
-		stringNames = formatCustomTypeKeys(core.Filter(namesOfType, func(k string) bool { return (*opt.deprecatedKeys())[k] }))
+	if opt.DeprecatedKeys() != nil {
+		stringNames = formatCustomTypeKeys(core.Filter(namesOfType, func(k string) bool { return (*opt.DeprecatedKeys())[k] }))
 	} else {
 		stringNames = formatCustomTypeKeys(namesOfType)
 	}
@@ -54,9 +54,9 @@ func (parser *CommandLineParser) createUnknownOptionError(
 	if node != nil {
 		errorLoc = node.Loc
 	}
-	alternateMode := parser.alternateMode()
+	alternateMode := parser.AlternateMode()
 
-	if alternateMode != nil {
+	if alternateMode != nil && alternateMode.getOptionsNameMap() != nil {
 		otherOption := alternateMode.getOptionsNameMap().Get(strings.ToLower(unknownOption))
 		if otherOption != nil {
 			// tscbuildoption

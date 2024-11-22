@@ -5,20 +5,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 )
 
-type mapEntry[K comparable, V any] struct {
-	key   K
-	value V
-}
-
-func NewOrderedMapFromList[K comparable, V any](items []mapEntry[K, V]) *collections.OrderedMap[K, V] {
-	mp := collections.NewOrderedMapWithSizeHint[K, V](len(items))
-	for _, item := range items {
-		mp.Set(item.key, item.value)
-	}
-	return mp
-}
-
-var libMap = NewOrderedMapFromList([]mapEntry[string, string]{
+var libMap = collections.NewOrderedMapFromList([]collections.MapEntry[string, string]{
 	// JavaScript only
 	{"es5", "lib.es5.d.ts"},
 	{"es6", "lib.es2015.d.ts"},
@@ -44,7 +31,7 @@ var libMap = NewOrderedMapFromList([]mapEntry[string, string]{
 	{"webworker.asynciterable", "lib.webworker.asynciterable.d.ts"},
 	{"scripthost", "lib.scripthost.d.ts"},
 	// ES2015 Or ESNext By-feature options
-	{"es2015.string(core", "lib.es2015.string(core.d.ts"},
+	{"es2015.core", "lib.es2015.core.d.ts"},
 	{"es2015.collection", "lib.es2015.collection.d.ts"},
 	{"es2015.generator", "lib.es2015.generator.d.ts"},
 	{"es2015.iterable", "lib.es2015.iterable.d.ts"},
@@ -119,73 +106,60 @@ var libMap = NewOrderedMapFromList([]mapEntry[string, string]{
 	{"decorators.legacy", "lib.decorators.legacy.d.ts"},
 })
 
-var moduleResolutionOptionMap = NewOrderedMapFromList([]mapEntry[string, string]{
-	{"node16", core.ModuleResolutionKindNode16.String()},
-	{"nodenext", core.ModuleResolutionKindNodeNext.String()},
-	{"bundler", core.ModuleResolutionKindBundler.String()},
+var moduleResolutionOptionMap = collections.NewOrderedMapFromList([]collections.MapEntry[string, core.ModuleResolutionKind]{
+	{"node16", core.ModuleResolutionKindNode16},
+	{"nodenext", core.ModuleResolutionKindNodeNext},
+	{"bundler", core.ModuleResolutionKindBundler},
 })
 
-var targetOptionMap = NewOrderedMapFromList([]mapEntry[string, string]{
-	{"es3", string(core.ScriptTargetES3)},
-	{"es5", string(core.ScriptTargetES5)},
-	{"es6", string(core.ScriptTargetES2015)},
-	{"es2015", string(core.ScriptTargetES2015)},
-	{"es2016", string(core.ScriptTargetES2016)},
-	{"es2017", string(core.ScriptTargetES2017)},
-	{"es2018", string(core.ScriptTargetES2018)},
-	{"es2019", string(core.ScriptTargetES2019)},
-	{"es2020", string(core.ScriptTargetES2020)},
-	{"es2021", string(core.ScriptTargetES2021)},
-	{"es2022", string(core.ScriptTargetES2022)},
-	{"es2023", string(core.ScriptTargetES2023)},
-	// {"es2024", string(core.ScriptTargetES2024)},
-	{"esnext", string(core.ScriptTargetESNext)},
+var targetOptionMap = collections.NewOrderedMapFromList([]collections.MapEntry[string, core.ScriptTarget]{
+	{"es3", core.ScriptTargetES3},
+	{"es5", core.ScriptTargetES5},
+	{"es6", core.ScriptTargetES2015},
+	{"es2015", core.ScriptTargetES2015},
+	{"es2016", core.ScriptTargetES2016},
+	{"es2017", core.ScriptTargetES2017},
+	{"es2018", core.ScriptTargetES2018},
+	{"es2019", core.ScriptTargetES2019},
+	{"es2020", core.ScriptTargetES2020},
+	{"es2021", core.ScriptTargetES2021},
+	{"es2022", core.ScriptTargetES2022},
+	{"es2023", core.ScriptTargetES2023},
+	// {"es2024", string(core.ScriptTargetES2024},
+	{"esnext", core.ScriptTargetESNext},
 })
 
-var moduleOptionMap = NewOrderedMapFromList([]mapEntry[string, string]{
-	{"none", string(core.ModuleKindNone)},
-	{"commonjs", string(core.ModuleKindCommonJS)},
-	{"amd", string(core.ModuleKindAMD)},
-	{"system", string(core.ModuleKindSystem)},
-	{"umd", string(core.ModuleKindUMD)},
-	{"es6", string(core.ModuleKindES2015)},
-	{"es2015", string(core.ModuleKindES2015)},
-	{"es2020", string(core.ModuleKindES2020)},
-	{"es2022", string(core.ModuleKindES2022)},
-	{"esnext", string(core.ModuleKindESNext)},
-	{"node16", string(core.ModuleKindNode16)},
-	{"nodenext", string(core.ModuleKindNodeNext)},
-	{"preserve", string(core.ModuleKindPreserve)},
+var moduleOptionMap = collections.NewOrderedMapFromList([]collections.MapEntry[string, core.ModuleKind]{
+	{"none", core.ModuleKindNone},
+	{"commonjs", core.ModuleKindCommonJS},
+	{"amd", core.ModuleKindAMD},
+	{"system", core.ModuleKindSystem},
+	{"umd", core.ModuleKindUMD},
+	{"es6", core.ModuleKindES2015},
+	{"es2015", core.ModuleKindES2015},
+	{"es2020", core.ModuleKindES2020},
+	{"es2022", core.ModuleKindES2022},
+	{"esnext", core.ModuleKindESNext},
+	{"node16", core.ModuleKindNode16},
+	{"nodenext", core.ModuleKindNodeNext},
+	{"preserve", core.ModuleKindPreserve},
 })
 
-// TODO: cleanup??
-type ModuleDetectionKind int32
-
-const (
-	ModuleDetectionKindAuto   ModuleDetectionKind = 0
-	ModuleDetectionKindLegacy ModuleDetectionKind = 1
-	ModuleDetectionKindForce  ModuleDetectionKind = 2
-)
-
-var moduleDetectionOptionMap = NewOrderedMapFromList([]mapEntry[string, string]{
-	{"auto", string(ModuleDetectionKindAuto)},
-	{"legacy", string(ModuleDetectionKindLegacy)},
-	{"force", string(ModuleDetectionKindForce)},
+var moduleDetectionOptionMap = collections.NewOrderedMapFromList([]collections.MapEntry[string, core.ModuleDetectionKind]{
+	{"auto", core.ModuleDetectionKindAuto},
+	{"legacy", core.ModuleDetectionKindLegacy},
+	{"force", core.ModuleDetectionKindForce},
 })
 
-var jsxOptionMap = NewOrderedMapFromList([]mapEntry[string, string]{
-	{"preserve", string(core.JsxEmitPreserve)},
-	{"react-native", string(core.JsxEmitReactNative)},
-	{"react", string(core.JsxEmitReact)},
-	{"react-jsx", string(core.JsxEmitReactJSX)},
-	{"react-jsxdev", string(core.JsxEmitReactJSXDev)},
+var jsxOptionMap = collections.NewOrderedMapFromList([]collections.MapEntry[string, core.JsxEmit]{
+	{"preserve", core.JsxEmitPreserve},
+	{"react-native", core.JsxEmitReactNative},
+	{"react", core.JsxEmitReact},
+	{"react-jsx", core.JsxEmitReactJSX},
+	{"react-jsxdev", core.JsxEmitReactJSXDev},
 })
 
-var newLineOptionMap = NewOrderedMapFromList([]mapEntry[string, string]{
-	{"crlf", string(rune(0))},
-	{"lf", string(rune(1))},
+var newLineOptionMap = collections.NewOrderedMapFromList([]collections.MapEntry[string, core.NewLineKind]{
+	{"crlf", core.NewLineKindCRLF},
+	{"lf", core.NewLineKindLF},
 })
-
-// TODO: figure out where these definitions should be, or if they're still needed
-// crlf: NewLineKind.CarriageReturnLineFeed,
-// lf: NewLineKind.LineFeed,
