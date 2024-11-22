@@ -2025,7 +2025,7 @@ func (p *Parser) parseModuleExportName(disallowKeywords bool) *ast.Node {
 
 func (p *Parser) tryParseImportAttributes() *ast.Node {
 	if (p.token == ast.KindWithKeyword || p.token == ast.KindAssertKeyword) && !p.hasPrecedingLineBreak() {
-		return p.parseImportAttributes(p.token, true /*skipKeyword*/)
+		return p.parseImportAttributes(p.token, false /*skipKeyword*/)
 	}
 	return nil
 }
@@ -2085,7 +2085,7 @@ func (p *Parser) parseExportDeclaration(pos int, hasJSDoc bool, modifiers *ast.M
 		}
 	}
 	if moduleSpecifier != nil && (p.token == ast.KindWithKeyword || p.token == ast.KindAssertKeyword) && !p.hasPrecedingLineBreak() {
-		attributes = p.parseImportAttributes(p.token, true /*skipKeyword*/)
+		attributes = p.parseImportAttributes(p.token, false /*skipKeyword*/)
 	}
 	p.parseSemicolon()
 	p.contextFlags = saveContextFlags
@@ -3139,6 +3139,11 @@ func (p *Parser) nextTokenIsColonOrQuestionColon() bool {
 	return p.nextToken() == ast.KindColonToken || p.token == ast.KindQuestionToken && p.nextToken() == ast.KindColonToken
 }
 
+func (p *Parser) nextIsStartOfType() bool {
+	p.nextToken()
+	return p.isStartOfType(false /*inStartOfParameter*/)
+}
+
 func (p *Parser) parseTupleElementType() *ast.TypeNode {
 	if p.parseOptional(ast.KindDotDotDotToken) {
 		pos := p.nodePos()
@@ -3147,14 +3152,13 @@ func (p *Parser) parseTupleElementType() *ast.TypeNode {
 		return result
 	}
 	typeNode := p.parseType()
-	if typeNode.Kind == ast.KindJSDocNullableType {
-		nullableType := typeNode.AsJSDocNullableType()
-		if typeNode.Loc.Pos() == nullableType.TypeNode.Loc.Pos() {
-			result := p.factory.NewOptionalTypeNode(nullableType.TypeNode)
-			result.Loc = typeNode.Loc
-			result.Flags = typeNode.Flags
-			return result
-		}
+
+	// If next token is start of a type we have a conditional type
+	if p.token == ast.KindQuestionToken && !p.lookAhead(p.nextIsStartOfType) {
+		pos := p.nodePos()
+		p.nextToken()
+		typeNode = p.factory.NewOptionalTypeNode(typeNode)
+		p.finishNode(typeNode, pos)
 	}
 	return typeNode
 }
@@ -5318,18 +5322,23 @@ func (p *Parser) parseKeywordExpression() *ast.Node {
 func (p *Parser) parseLiteralExpression() *ast.Node {
 	pos := p.nodePos()
 	text := p.scanner.TokenValue()
+	tokenFlags := p.scanner.TokenFlags()
 	var result *ast.Node
 	switch p.token {
 	case ast.KindStringLiteral:
 		result = p.factory.NewStringLiteral(text)
+		result.AsStringLiteral().TokenFlags |= tokenFlags & ast.TokenFlagsStringLiteralFlags
 	case ast.KindNumericLiteral:
 		result = p.factory.NewNumericLiteral(text)
+		result.AsNumericLiteral().TokenFlags |= tokenFlags & ast.TokenFlagsNumericLiteralFlags
 	case ast.KindBigIntLiteral:
 		result = p.factory.NewBigIntLiteral(text)
+		result.AsBigIntLiteral().TokenFlags |= tokenFlags & ast.TokenFlagsNumericLiteralFlags
 	case ast.KindRegularExpressionLiteral:
 		result = p.factory.NewRegularExpressionLiteral(text)
 	case ast.KindNoSubstitutionTemplateLiteral:
 		result = p.factory.NewNoSubstitutionTemplateLiteral(text)
+		result.AsNoSubstitutionTemplateLiteral().TokenFlags |= tokenFlags & ast.TokenFlagsTemplateLiteralLikeFlags
 	default:
 		panic("Unhandled case in parseLiteralExpression")
 	}

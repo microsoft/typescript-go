@@ -5,7 +5,6 @@ import (
 	"math"
 	"path/filepath"
 	"slices"
-	"strconv"
 	"strings"
 	"sync/atomic"
 
@@ -738,11 +737,11 @@ func isAssignmentExpression(node *ast.Node, excludeCompoundAssignment bool) bool
 }
 
 func isBlockOrCatchScoped(declaration *ast.Node) bool {
-	return getCombinedNodeFlags(declaration)&ast.NodeFlagsBlockScoped != 0 || isCatchClauseVariableDeclarationOrBindingElement(declaration)
+	return ast.GetCombinedNodeFlags(declaration)&ast.NodeFlagsBlockScoped != 0 || isCatchClauseVariableDeclarationOrBindingElement(declaration)
 }
 
 func isCatchClauseVariableDeclarationOrBindingElement(declaration *ast.Node) bool {
-	node := getRootDeclaration(declaration)
+	node := ast.GetRootDeclaration(declaration)
 	return node.Kind == ast.KindVariableDeclaration && node.Parent.Kind == ast.KindCatchClause
 }
 
@@ -766,34 +765,6 @@ func setParentInChildren(node *ast.Node) {
 		setParentInChildren(child)
 		return false
 	})
-}
-
-func getCombinedFlags[T ~uint32](node *ast.Node, getFlags func(*ast.Node) T) T {
-	node = getRootDeclaration(node)
-	flags := getFlags(node)
-	if node.Kind == ast.KindVariableDeclaration {
-		node = node.Parent
-	}
-	if node != nil && node.Kind == ast.KindVariableDeclarationList {
-		flags |= getFlags(node)
-		node = node.Parent
-	}
-	if node != nil && node.Kind == ast.KindVariableStatement {
-		flags |= getFlags(node)
-	}
-	return flags
-}
-
-func getCombinedModifierFlags(node *ast.Node) ast.ModifierFlags {
-	return getCombinedFlags(node, (*ast.Node).ModifierFlags)
-}
-
-func getCombinedNodeFlags(node *ast.Node) ast.NodeFlags {
-	return getCombinedFlags(node, getNodeFlags)
-}
-
-func getNodeFlags(node *ast.Node) ast.NodeFlags {
-	return node.Flags
 }
 
 func isParameterPropertyDeclaration(node *ast.Node, parent *ast.Node) bool {
@@ -845,14 +816,7 @@ func isRequireCall(node *ast.Node, requireStringLiteralLikeArgument bool) bool {
  * If you are looking to test that a `Node` is a `ParameterDeclaration`, use `isParameter`.
  */
 func isPartOfParameterDeclaration(node *ast.Node) bool {
-	return getRootDeclaration(node).Kind == ast.KindParameter
-}
-
-func getRootDeclaration(node *ast.Node) *ast.Node {
-	for node.Kind == ast.KindBindingElement {
-		node = node.Parent.Parent
-	}
-	return node
+	return ast.GetRootDeclaration(node).Kind == ast.KindParameter
 }
 
 func isExternalOrCommonJsModule(file *ast.SourceFile) bool {
@@ -2611,7 +2575,7 @@ func isEmptyArrayLiteral(expression *ast.Node) bool {
 }
 
 func declarationBelongsToPrivateAmbientMember(declaration *ast.Node) bool {
-	root := getRootDeclaration(declaration)
+	root := ast.GetRootDeclaration(declaration)
 	memberDeclaration := root
 	if root.Kind == ast.KindParameter {
 		memberDeclaration = root.Parent
@@ -2713,7 +2677,7 @@ func getDeclarationModifierFlagsFromSymbolEx(s *ast.Symbol, isWrite bool) ast.Mo
 		if declaration == nil {
 			declaration = s.ValueDeclaration
 		}
-		flags := getCombinedModifierFlags(declaration)
+		flags := ast.GetCombinedModifierFlags(declaration)
 		if s.Parent != nil && s.Parent.Flags&ast.SymbolFlagsClass != 0 {
 			return flags
 		}
@@ -2818,7 +2782,7 @@ func isObjectLiteralType(t *Type) bool {
 }
 
 func isDeclarationReadonly(declaration *ast.Node) bool {
-	return getCombinedModifierFlags(declaration)&ast.ModifierFlagsReadonly != 0 && !isParameterPropertyDeclaration(declaration, declaration.Parent)
+	return ast.GetCombinedModifierFlags(declaration)&ast.ModifierFlagsReadonly != 0 && !isParameterPropertyDeclaration(declaration, declaration.Parent)
 }
 
 func getPostfixTokenFromNode(node *ast.Node) *ast.Node {
@@ -2900,7 +2864,7 @@ func getPropertyNameFromType(t *Type) string {
 	case t.flags&TypeFlagsStringLiteral != 0:
 		return t.AsLiteralType().value.(string)
 	case t.flags&TypeFlagsNumberLiteral != 0:
-		return numberToString(t.AsLiteralType().value.(float64))
+		return core.NumberToString(t.AsLiteralType().value.(float64))
 	case t.flags&TypeFlagsUniqueESSymbol != 0:
 		return t.AsUniqueESSymbolType().name
 	}
@@ -2929,7 +2893,7 @@ func isNumericLiteralName(name string) bool {
 	// Note that this accepts the values 'Infinity', '-Infinity', and 'NaN', and that this is intentional.
 	// This is desired behavior, because when indexing with them as numeric entities, you are indexing
 	// with the strings '"Infinity"', '"-Infinity"', and '"NaN"' respectively.
-	return numberToString(stringToNumber(name)) == name
+	return core.NumberToString(core.StringToNumber(name)) == name
 }
 
 func getPropertyNameForPropertyNameNode(name *ast.Node) string {
@@ -2964,7 +2928,7 @@ func anyToString(v any) string {
 	case string:
 		return v
 	case float64:
-		return numberToString(v)
+		return core.NumberToString(v)
 	case bool:
 		return core.IfElse(v, "true", "false")
 	case PseudoBigInt:
@@ -2973,27 +2937,12 @@ func anyToString(v any) string {
 	panic("Unhandled case in anyToString")
 }
 
-func numberToString(f float64) string {
-	// !!! This function should behave identically to the expression `"" + f` in JS
-	return strconv.FormatFloat(f, 'g', -1, 64)
-}
-
-func stringToNumber(s string) float64 {
-	// !!! This function should behave identically to the expression `+s` in JS
-	// This includes parsing binary, octal, and hex numeric strings
-	value, err := strconv.ParseFloat(s, 64)
-	if err != nil {
-		return math.NaN()
-	}
-	return value
-}
-
 func isValidNumberString(s string, roundTripOnly bool) bool {
 	if s == "" {
 		return false
 	}
-	n := stringToNumber(s)
-	return !math.IsNaN(n) && !math.IsInf(n, 0) && (!roundTripOnly || numberToString(n) == s)
+	n := core.StringToNumber(s)
+	return !math.IsNaN(n) && !math.IsInf(n, 0) && (!roundTripOnly || core.NumberToString(n) == s)
 }
 
 func isValidBigIntString(s string, roundTripOnly bool) bool {
@@ -3002,16 +2951,12 @@ func isValidBigIntString(s string, roundTripOnly bool) bool {
 
 func isValidESSymbolDeclaration(node *ast.Node) bool {
 	if ast.IsVariableDeclaration(node) {
-		return isVarConst(node) && ast.IsIdentifier(node.AsVariableDeclaration().Name()) && isVariableDeclarationInVariableStatement(node)
+		return ast.IsVarConst(node) && ast.IsIdentifier(node.AsVariableDeclaration().Name()) && isVariableDeclarationInVariableStatement(node)
 	}
 	if ast.IsPropertyDeclaration(node) {
 		return hasEffectiveReadonlyModifier(node) && hasStaticModifier(node)
 	}
 	return ast.IsPropertySignatureDeclaration(node) && hasEffectiveReadonlyModifier(node)
-}
-
-func isVarConst(node *ast.Node) bool {
-	return getCombinedNodeFlags(node)&ast.NodeFlagsBlockScoped == ast.NodeFlagsConst
 }
 
 func isVariableDeclarationInVariableStatement(node *ast.Node) bool {
@@ -3352,10 +3297,10 @@ func createEvaluator(evaluateEntity Evaluator) Evaluator {
 			rightStr, rightIsStr := right.value.(string)
 			if (leftIsStr || leftIsNum) && (rightIsStr || rightIsNum) && operator == ast.KindPlusToken {
 				if leftIsNum {
-					leftStr = numberToString(leftNum)
+					leftStr = core.NumberToString(leftNum)
 				}
 				if rightIsNum {
-					rightStr = numberToString(rightNum)
+					rightStr = core.NumberToString(rightNum)
 				}
 				return evaluatorResult(leftStr+rightStr, isSyntacticallyString, resolvedOtherFiles, hasExternalReferences)
 			}
@@ -3364,7 +3309,7 @@ func createEvaluator(evaluateEntity Evaluator) Evaluator {
 		case ast.KindTemplateExpression:
 			return evaluateTemplateExpression(expr, location)
 		case ast.KindNumericLiteral:
-			return evaluatorResult(stringToNumber(expr.Text()), false, false, false)
+			return evaluatorResult(core.StringToNumber(expr.Text()), false, false, false)
 		case ast.KindIdentifier, ast.KindElementAccessExpression:
 			return evaluateEntity(expr, location)
 		case ast.KindPropertyAccessExpression:

@@ -794,7 +794,7 @@ func (c *Checker) onSuccessfullyResolvedSymbol(errorLocation *ast.Node, result *
 	// If we're in a parameter initializer or binding name, we can't reference the values of the parameter whose initializer we're within or parameters to the right
 	if associatedDeclarationForContainingInitializerOrBindingName != nil && !withinDeferredContext && (meaning&ast.SymbolFlagsValue) == ast.SymbolFlagsValue {
 		candidate := c.getMergedSymbol(c.getLateBoundSymbol(result))
-		root := getRootDeclaration(associatedDeclarationForContainingInitializerOrBindingName)
+		root := ast.GetRootDeclaration(associatedDeclarationForContainingInitializerOrBindingName)
 		// A parameter initializer or binding pattern initializer within a parameter cannot refer to itself
 		if candidate == c.getSymbolOfDeclaration(associatedDeclarationForContainingInitializerOrBindingName) {
 			c.error(errorLocation, diagnostics.Parameter_0_cannot_reference_itself, declarationNameToString(associatedDeclarationForContainingInitializerOrBindingName.Name()))
@@ -1177,7 +1177,7 @@ func (c *Checker) checkExpressionWorker(node *ast.Node, checkMode CheckMode) *Ty
 	case ast.KindNumericLiteral:
 		// !!! checkGrammarNumericLiteral(node as NumericLiteral)
 		// !!! Revise this to handle NaN, Infinity, etc. in the same manner as JS
-		return c.getFreshTypeOfLiteralType(c.getNumberLiteralType(stringToNumber(node.Text())))
+		return c.getFreshTypeOfLiteralType(c.getNumberLiteralType(core.StringToNumber(node.Text())))
 	case ast.KindBigIntLiteral:
 		// !!! checkGrammarBigIntLiteral(node as BigIntLiteral);
 		return c.getFreshTypeOfLiteralType(c.getBigIntLiteralType(PseudoBigInt{
@@ -4766,7 +4766,7 @@ func (c *Checker) checkDeclarationInitializer(declaration *ast.Node, checkMode C
 			t = c.checkExpressionCachedEx(initializer, checkMode)
 		}
 	}
-	if ast.IsParameter(getRootDeclaration(declaration)) {
+	if ast.IsParameter(ast.GetRootDeclaration(declaration)) {
 		name := declaration.Name()
 		switch name.Kind {
 		case ast.KindObjectBindingPattern:
@@ -5538,7 +5538,7 @@ func (c *Checker) getCombinedNodeFlagsCached(node *ast.Node) ast.NodeFlags {
 		return c.lastGetCombinedNodeFlagsResult
 	}
 	c.lastGetCombinedNodeFlagsNode = node
-	c.lastGetCombinedNodeFlagsResult = getCombinedNodeFlags(node)
+	c.lastGetCombinedNodeFlagsResult = ast.GetCombinedNodeFlags(node)
 	return c.lastGetCombinedNodeFlagsResult
 }
 
@@ -5548,7 +5548,7 @@ func (c *Checker) getCombinedModifierFlagsCached(node *ast.Node) ast.ModifierFla
 		return c.lastGetCombinedModifierFlagsResult
 	}
 	c.lastGetCombinedModifierFlagsNode = node
-	c.lastGetCombinedModifierFlagsResult = getCombinedModifierFlags(node)
+	c.lastGetCombinedModifierFlagsResult = ast.GetCombinedModifierFlags(node)
 	return c.lastGetCombinedModifierFlagsResult
 }
 
@@ -9176,7 +9176,7 @@ func (c *Checker) evaluateEntity(expr *ast.Node, location *ast.Node) EvaluatorRe
 				// Technically we resolved a global lib file here, but the decision to treat this as numeric
 				// is more predicated on the fact that the single-file resolution *didn't* resolve to a
 				// different meaning of `Infinity` or `NaN`. Transpilers handle this no problem.
-				return evaluatorResult(+stringToNumber(expr.Text()), false, false, false)
+				return evaluatorResult(+core.StringToNumber(expr.Text()), false, false, false)
 			}
 		}
 		if symbol.Flags&ast.SymbolFlagsEnumMember != 0 {
@@ -11371,7 +11371,7 @@ func (c *Checker) getPropertyTypeForIndexType(originalObjectType *Type, objectTy
 			}
 		}
 		if everyType(objectType, isTupleType) && isNumericLiteralName(propName) {
-			index := stringToNumber(propName)
+			index := core.StringToNumber(propName)
 			if accessNode != nil && everyType(objectType, func(t *Type) bool {
 				return t.TargetTupleType().combinedFlags&ElementFlagsVariable == 0
 			}) && accessFlags&AccessFlagsAllowMissing == 0 {
@@ -11615,7 +11615,7 @@ func indexTypeLessThan(indexType *Type, limit int) bool {
 		if t.flags&TypeFlagsStringOrNumberLiteral != 0 {
 			propName := getPropertyNameFromType(t)
 			if isNumericLiteralName(propName) {
-				index := stringToNumber(propName)
+				index := core.StringToNumber(propName)
 				return index >= 0 && index < float64(limit)
 			}
 		}

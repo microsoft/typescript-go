@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"iter"
 	"math"
+	"reflect"
 	"regexp"
 	"slices"
 	"strconv"
@@ -290,6 +291,25 @@ func IfElse[T any](b bool, whenTrue T, whenFalse T) T {
 		return whenTrue
 	}
 	return whenFalse
+}
+
+func IsNil[T any](value T) bool {
+	v := reflect.ValueOf(value)
+	switch v.Kind() {
+	case reflect.Chan, reflect.Func, reflect.Interface, reflect.Map, reflect.Slice, reflect.Pointer:
+		return v.IsValid() && v.IsNil()
+	}
+	return false
+}
+
+// Returns `a` if `a` is not `nil`; Otherwise, returns `b`. Coalesce is roughly analogous to `??` in JS, except that it
+// non-shortcutting, so it is advised to only use a constant or precomputed value for `b`
+func Coalesce[T any](a T, b T) T {
+	if IsNil(a) {
+		return b
+	} else {
+		return a
+	}
 }
 
 // This function should behave identically to the expression `"" + f` in JS
