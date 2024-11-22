@@ -35,6 +35,13 @@ func BenchmarkParse(b *testing.B) {
 }
 
 // compare current code's tsgo AST with tsc's AST, but only write local baselines for tsgo's AST.
+// How to use:
+// 1. Run this test manually. It will take a long time.
+// 2. If all tests pass, you're done! If not, you can look at the local output to see if it looks wrong.
+// 3. If there are lots of failures, or the failure isn't obvious, run
+//    node internal/compiler/testdata/baselineAST.js -r _submodules/TypeScript testdata/baselines/gold
+//    This writes the tsc output to disk.
+// 4. Now diff gold/ and local/
 func TestParseAgainstTSC(t *testing.T) {
 	t.Skip()
 	t.Parallel()
