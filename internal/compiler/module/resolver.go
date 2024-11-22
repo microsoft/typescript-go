@@ -127,7 +127,7 @@ func (r *Resolver) traceEnabled() bool {
 }
 
 func (r *Resolver) GetPackageScopeForPath(directory string) *packagejson.InfoCacheEntry {
-	return (&resolutionState{compilerOptions: r.compilerOptions}).getPackageScopeForPath(directory)
+	return (&resolutionState{compilerOptions: r.compilerOptions, resolver: r}).getPackageScopeForPath(directory)
 }
 
 func (r *Resolver) ResolveTypeReferenceDirective(typeReferenceDirectiveName string, containingFile string, resolutionMode core.ResolutionMode, redirectedReference *ResolvedProjectReference) *ResolvedTypeReferenceDirectiveWithFailedLookupLocations {
@@ -363,7 +363,7 @@ func (r *resolutionState) resolveNodeLike() *ResolvedModuleWithFailedLookupLocat
 	if !tspath.IsExternalModuleNameRelative(r.name) {
 		if r.features&NodeResolutionFeaturesImports != 0 && strings.HasPrefix(r.name, "#") {
 			// !!!
-			panic("not implemented")
+			return r.createResolvedModuleWithFailedLookupLocations(nil, false)
 		}
 		if r.features&NodeResolutionFeaturesSelfName != 0 {
 			if resolved := r.loadModuleFromSelfNameReference(); resolved != nil {

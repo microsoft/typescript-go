@@ -66,16 +66,12 @@ func (options *CompilerOptions) GetModuleResolutionKind() ModuleResolutionKind {
 		return options.ModuleResolution
 	}
 	switch options.GetEmitModuleKind() {
-	case ModuleKindCommonJS:
-		return ModuleResolutionKindBundler
 	case ModuleKindNode16:
 		return ModuleResolutionKindNode16
 	case ModuleKindNodeNext:
 		return ModuleResolutionKindNodeNext
-	case ModuleKindPreserve:
-		return ModuleResolutionKindBundler
 	default:
-		panic("Unhandled case in getEmitModuleResolutionKind")
+		return ModuleResolutionKindBundler
 	}
 }
 

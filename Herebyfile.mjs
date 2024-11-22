@@ -16,131 +16,148 @@ const $pipe = _$({ verbose: "short" });
 const $ = _$({ verbose: "short", stdio: "inherit" });
 
 const { values: options } = parseArgs({
-    args: process.argv.slice(2),
-    options: {
-        race: { type: "boolean" },
-        fix: { type: "boolean" },
-    },
-    strict: false,
-    allowPositionals: true,
-    allowNegative: true,
+  args: process.argv.slice(2),
+  options: {
+    race: { type: "boolean" },
+    fix: { type: "boolean" },
+  },
+  strict: false,
+  allowPositionals: true,
+  allowNegative: true,
 });
 
-const typeScriptSubmodulePath = path.join(__dirname, "_submodules", "TypeScript");
+const typeScriptSubmodulePath = path.join(
+  __dirname,
+  "_submodules",
+  "TypeScript"
+);
 
 function assertTypeScriptCloned() {
-    try {
-        const stat = fs.statSync(path.join(typeScriptSubmodulePath, "package.json"));
-        if (stat.isFile()) {
-            return;
-        }
+  try {
+    const stat = fs.statSync(
+      path.join(typeScriptSubmodulePath, "package.json")
+    );
+    if (stat.isFile()) {
+      return;
     }
-    catch {}
+  } catch {}
 
-    throw new Error("_submodules/TypeScript does not exist; try running `git submodule update --init --recursive`");
+  throw new Error(
+    "_submodules/TypeScript does not exist; try running `git submodule update --init --recursive`"
+  );
 }
 
 const tools = new Map([
-    ["github.com/golangci/golangci-lint/cmd/golangci-lint", "v1.62.0"],
-    ["gotest.tools/gotestsum", "latest"],
+  ["github.com/golangci/golangci-lint/cmd/golangci-lint", "v1.62.0"],
+  ["gotest.tools/gotestsum", "latest"],
 ]);
 
 /**
  * @param {string} tool
  */
 function isInstalled(tool) {
-    try {
-        which.sync(tool);
-        return true;
-    }
-    catch {
-        return false;
-    }
+  try {
+    which.sync(tool);
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 export const build = task({
-    name: "build",
-    run: async () => {
-        await $`go build -o ./bin/ ./cmd/...`;
-    },
+  name: "build",
+  run: async () => {
+    await $`go build -o ./bin/ ./cmd/...`;
+  },
 });
 
 export const generate = task({
-    name: "generate",
-    run: async () => {
-        assertTypeScriptCloned();
-        await $`go generate ./...`;
-    },
+  name: "generate",
+  run: async () => {
+    assertTypeScriptCloned();
+    await $`go generate ./...`;
+  },
 });
 
 async function runTests() {
-    const goTest = isInstalled("gotestsum") ? ["gotestsum", "--format-hide-empty-pkg", "--"] : ["go", "test"];
-    await $`${goTest} ${options.race ? ["-race"] : []} ./...`;
+  const goTest = isInstalled("gotestsum")
+    ? ["gotestsum", "--format-hide-empty-pkg", "--"]
+    : ["go", "test"];
+  await $`${goTest} ${options.race ? ["-race"] : []} ./...`;
 }
 
 export const test = task({
-    name: "test",
-    run: runTests,
+  name: "test",
+  run: runTests,
 });
 
 async function runTestBenchmarks() {
-    // Run the benchmarks once to ensure they compile and run without errors.
-    await $`go test ${options.race ? ["-race"] : []} -run=- -bench=. -benchtime=1x ./...`;
+  // Run the benchmarks once to ensure they compile and run without errors.
+  await $`go test ${
+    options.race ? ["-race"] : []
+  } -run=- -bench=. -benchtime=1x ./...`;
 }
 
 export const testBenchmarks = task({
-    name: "test:benchmarks",
-    run: runTestBenchmarks,
+  name: "test:benchmarks",
+  run: runTestBenchmarks,
 });
 
 export const testAll = task({
-    name: "test:all",
-    run: async () => {
-        // Prevent interleaving by running these directly instead of in parallel.
-        await runTests();
-        await runTestBenchmarks();
-    },
+  name: "test:all",
+  run: async () => {
+    // Prevent interleaving by running these directly instead of in parallel.
+    await runTests();
+    await runTestBenchmarks();
+  },
 });
 
 export const lint = task({
-    name: "lint",
-    run: async () => {
-        if (!isInstalled("golangci-lint")) {
-            throw new Error("golangci-lint is not installed; run `hereby install-tools`");
-        }
-        await $`golangci-lint run ${options.fix ? ["--fix"] : []}`;
-    },
+  name: "lint",
+  run: async () => {
+    if (!isInstalled("golangci-lint")) {
+      throw new Error(
+        "golangci-lint is not installed; run `hereby install-tools`"
+      );
+    }
+    await $`golangci-lint run ${options.fix ? ["--fix"] : []}`;
+  },
 });
 
 export const installTools = task({
-    name: "install-tools",
-    run: async () => {
-        await Promise.all([...tools].map(([tool, version]) => $`go install ${tool}@${version}`));
-    },
+  name: "install-tools",
+  run: async () => {
+    await Promise.all(
+      [...tools].map(([tool, version]) => $`go install ${tool}@${version}`)
+    );
+  },
 });
 
 export const format = task({
-    name: "format",
-    run: async () => {
-        await $`dprint fmt`;
-    },
+  name: "format",
+  run: async () => {
+    await $`dprint fmt`;
+  },
 });
 
 export const checkFormat = task({
-    name: "check:format",
-    run: async () => {
-        await $`dprint check`;
-    },
+  name: "check:format",
+  run: async () => {
+    await $`dprint check`;
+  },
 });
 
 export const postinstall = task({
-    name: "postinstall",
-    hiddenFromTaskList: true,
-    run: () => {
-        // Ensure the go command doesn't waste time looking into node_modules.
-        // Remove once https://github.com/golang/go/issues/42965 is fixed.
-        fs.writeFileSync(path.join(__dirname, "node_modules", "go.mod"), `module example.org/ignoreme\n`);
-    },
+  name: "postinstall",
+  hiddenFromTaskList: true,
+  run: () => {
+    // Ensure the go command doesn't waste time looking into node_modules.
+    // Remove once https://github.com/golang/go/issues/42965 is fixed.
+    fs.writeFileSync(
+      path.join(__dirname, "node_modules", "go.mod"),
+      `module example.org/ignoreme\n`
+    );
+  },
 });
 
 /**
@@ -148,39 +165,52 @@ export const postinstall = task({
  * @param {string} refBaseline Path to the reference copy of the baselines
  */
 function baselineAcceptTask(localBaseline, refBaseline) {
-    /**
-     * @param {string} p
-     */
-    function localPathToRefPath(p) {
-        const relative = path.relative(localBaseline, p);
-        return path.join(refBaseline, relative);
-    }
+  /**
+   * @param {string} p
+   */
+  function localPathToRefPath(p) {
+    const relative = path.relative(localBaseline, p);
+    return path.join(refBaseline, relative);
+  }
 
-    return async () => {
-        const toCopy = await glob(`${localBaseline}/**`, { nodir: true, ignore: `${localBaseline}/**/*.delete` });
-        for (const p of toCopy) {
-            const out = localPathToRefPath(p);
-            await fs.promises.mkdir(path.dirname(out), { recursive: true });
-            await fs.promises.copyFile(p, out);
-        }
-        const toDelete = await glob(`${localBaseline}/**/*.delete`, { nodir: true });
-        for (const p of toDelete) {
-            const out = localPathToRefPath(p).replace(/\.delete$/, "");
-            await rimraf(out);
-        }
-    };
+  return async () => {
+    const toCopy = await glob(`${localBaseline}/**`, {
+      nodir: true,
+      ignore: `${localBaseline}/**/*.delete`,
+    });
+    for (const p of toCopy) {
+      const out = localPathToRefPath(p);
+      await fs.promises.mkdir(path.dirname(out), { recursive: true });
+      await fs.promises.copyFile(p, out);
+    }
+    const toDelete = await glob(`${localBaseline}/**/*.delete`, {
+      nodir: true,
+    });
+    for (const p of toDelete) {
+      const out = localPathToRefPath(p).replace(/\.delete$/, "");
+      await rimraf(out);
+    }
+  };
 }
 
 export const baselineAccept = task({
-    name: "baseline-accept",
-    description: "Makes the most recent test results the new baseline, overwriting the old baseline",
-    run: baselineAcceptTask("testdata/baselines/local/", "testdata/baselines/reference/"),
+  name: "baseline-accept",
+  description:
+    "Makes the most recent test results the new baseline, overwriting the old baseline",
+  run: baselineAcceptTask(
+    "testdata/baselines/local/",
+    "testdata/baselines/reference/"
+  ),
 });
 
 /**
  * @param {fs.PathLike} p
  */
 function rimraf(p) {
-    // The rimraf package uses maxRetries=10 on Windows, but Node's fs.rm does not have that special case.
-    return fs.promises.rm(p, { recursive: true, force: true, maxRetries: process.platform === "win32" ? 10 : 0 });
+  // The rimraf package uses maxRetries=10 on Windows, but Node's fs.rm does not have that special case.
+  return fs.promises.rm(p, {
+    recursive: true,
+    force: true,
+    maxRetries: process.platform === "win32" ? 10 : 0,
+  });
 }
