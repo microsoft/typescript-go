@@ -151,11 +151,16 @@ func (v *vfs) UseCaseSensitiveFileNames() bool {
 	return v.useCaseSensitiveFileNames
 }
 
-func splitRoot(p string) (rootName, rest string) {
+func rootLength(p string) int {
 	l := tspath.GetEncodedRootLength(p)
-	if l < 0 {
-		panic("FS does not support URLs")
+	if l <= 0 {
+		panic("expected absolute path, got: " + p)
 	}
+	return l
+}
+
+func splitRoot(p string) (rootName, rest string) {
+	l := rootLength(p)
 	return p[:l], p[l:]
 }
 
@@ -259,6 +264,7 @@ func (v *vfs) WalkDir(root string, walkFn WalkDirFunc) error {
 }
 
 func (v *vfs) Realpath(path string) string {
+	_ = rootLength(path) // panic if not absolute
 	path, _ = v.realpath(path)
 	return path
 }
