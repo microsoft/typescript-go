@@ -71,7 +71,7 @@ func FromOS() FS {
 		useCaseSensitiveFileNames: useCaseSensitiveFileNames,
 		rootFor:                   os.DirFS,
 		realpath: func(path string) (string, error) {
-			// TODO(jakebailey): !!!
+			// TODO: replace once https://go.dev/cl/385534 is available
 			path = filepath.FromSlash(path)
 			path, err := filepath.EvalSymlinks(path)
 			if err != nil {
@@ -105,6 +105,7 @@ func FromIOFS(useCaseSensitiveFileNames bool, fsys fs.FS) FS {
 			return sub
 		},
 		realpath: func(path string) (string, error) {
+			// TODO: replace once https://go.dev/cl/385534 is available
 			return path, nil
 		},
 	}
@@ -258,7 +259,6 @@ func (v *vfs) WalkDir(root string, walkFn WalkDirFunc) error {
 }
 
 func (v *vfs) Realpath(path string) string {
-	// TODO(jakebailey): !!! https://go.dev/cl/385534
 	path, _ = v.realpath(path)
 	return path
 }
