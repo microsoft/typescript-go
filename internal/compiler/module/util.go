@@ -7,7 +7,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
-var InferredTypesContainingFile = "__inferred type names__.ts"
+const InferredTypesContainingFile = "__inferred type names__.ts"
 
 func ParseNodeModuleFromPath(resolved string, isFolder bool) string {
 	path := tspath.NormalizePath(resolved)
