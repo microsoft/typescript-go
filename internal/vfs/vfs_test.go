@@ -1,11 +1,13 @@
 package vfs_test
 
 import (
+	"encoding/binary"
 	"os"
 	"path/filepath"
 	"slices"
 	"testing"
 	"testing/fstest"
+	"unicode/utf16"
 
 	"github.com/microsoft/typescript-go/internal/repo"
 	"github.com/microsoft/typescript-go/internal/testutil"
@@ -187,5 +189,68 @@ func TestOS(t *testing.T) {
 
 		realpath := fs.Realpath(goModPath)
 		assert.Equal(t, realpath, goModPath)
+	})
+}
+
+func TestBOM(t *testing.T) {
+	t.Parallel()
+
+	const expected = "hello, world"
+
+	tests := []struct {
+		name  string
+		order binary.ByteOrder
+		bom   [2]byte
+	}{
+		{"BigEndian", binary.BigEndian, [2]byte{0xFE, 0xFF}},
+		{"LittleEndian", binary.LittleEndian, [2]byte{0xFF, 0xFE}},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			var codePoints []uint16
+
+			for _, r := range expected {
+				codePoints = utf16.AppendRune(codePoints, r)
+			}
+
+			buf := tt.bom[:]
+
+			for _, r := range codePoints {
+				var err error
+				buf, err = binary.Append(buf, tt.order, r)
+				assert.NilError(t, err)
+			}
+
+			testfs := fstest.MapFS{
+				"foo.ts": &fstest.MapFile{
+					Data: buf,
+				},
+			}
+
+			fs := vfs.FromIOFS(true, testfs)
+
+			content, ok := fs.ReadFile("/foo.ts")
+			assert.Assert(t, ok)
+			assert.Equal(t, content, expected)
+		})
+	}
+
+	t.Run("UTF8", func(t *testing.T) {
+		t.Parallel()
+
+		testfs := fstest.MapFS{
+			"foo.ts": &fstest.MapFile{
+				Data: []byte("\xEF\xBB\xBFhello, world"),
+			},
+		}
+
+		fs := vfs.FromIOFS(true, testfs)
+
+		content, ok := fs.ReadFile("/foo.ts")
+		assert.Assert(t, ok)
+		assert.Equal(t, content, expected)
 	})
 }
