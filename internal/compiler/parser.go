@@ -2262,7 +2262,7 @@ func (p *Parser) parsePostfixTypeOrHigher() *ast.Node {
 
 func (p *Parser) nextIsStartOfType() bool {
 	p.nextToken()
-	return p.isStartOfType(false /*inStartOfParameters*/)
+	return p.isStartOfType(false /*inStartOfParameter*/)
 }
 
 func (p *Parser) parseNonArrayType() *ast.Node {
