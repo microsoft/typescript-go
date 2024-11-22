@@ -1383,7 +1383,7 @@ func compareRelatedInfo(r1, r2 []*ast.Diagnostic) int {
 
 func getDiagnosticPath(d *ast.Diagnostic) string {
 	if d.File() != nil {
-		return string(d.File().Path()) // TODO(jakebailey): !!!
+		return d.File().FileName()
 	}
 	return ""
 }
