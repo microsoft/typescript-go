@@ -10,7 +10,7 @@ var optionsDeclarations = []CommandLineOption{
 	{
 		name:                     "help",
 		shortName:                "h",
-		kind:                     "boolean",
+		kind:                     CommandLineOptionTypeBoolean,
 		showInSimplifiedHelpView: true,
 		isCommandLineOnly:        true,
 		category:                 diagnostics.Command_line_Options,
@@ -20,7 +20,7 @@ var optionsDeclarations = []CommandLineOption{
 	{
 		name:                    "help",
 		shortName:               "?",
-		kind:                    "boolean",
+		kind:                    CommandLineOptionTypeBoolean,
 		isCommandLineOnly:       true,
 		category:                diagnostics.Command_line_Options,
 		defaultValueDescription: false,
@@ -28,7 +28,7 @@ var optionsDeclarations = []CommandLineOption{
 	{
 		name:                     "watch",
 		shortName:                "w",
-		kind:                     "boolean",
+		kind:                     CommandLineOptionTypeBoolean,
 		showInSimplifiedHelpView: true,
 		isCommandLineOnly:        true,
 		category:                 diagnostics.Command_line_Options,
@@ -37,7 +37,7 @@ var optionsDeclarations = []CommandLineOption{
 	},
 	{
 		name:                     "preserveWatchOutput",
-		kind:                     "boolean",
+		kind:                     CommandLineOptionTypeBoolean,
 		showInSimplifiedHelpView: false,
 		category:                 diagnostics.Output_Formatting,
 		description:              diagnostics.Disable_wiping_the_console_in_watch_mode,
@@ -45,28 +45,28 @@ var optionsDeclarations = []CommandLineOption{
 	},
 	{
 		name:                    "listFiles",
-		kind:                    "boolean",
+		kind:                    CommandLineOptionTypeBoolean,
 		category:                diagnostics.Compiler_Diagnostics,
 		description:             diagnostics.Print_all_of_the_files_read_during_the_compilation,
 		defaultValueDescription: false,
 	},
 	{
 		name:                    "explainFiles",
-		kind:                    "boolean",
+		kind:                    CommandLineOptionTypeBoolean,
 		category:                diagnostics.Compiler_Diagnostics,
 		description:             diagnostics.Print_files_read_during_the_compilation_including_why_it_was_included,
 		defaultValueDescription: false,
 	},
 	{
 		name:                    "listEmittedFiles",
-		kind:                    "boolean",
+		kind:                    CommandLineOptionTypeBoolean,
 		category:                diagnostics.Compiler_Diagnostics,
 		description:             diagnostics.Print_the_names_of_emitted_files_after_a_compilation,
 		defaultValueDescription: false,
 	},
 	{
 		name:                     "pretty",
-		kind:                     "boolean",
+		kind:                     CommandLineOptionTypeBoolean,
 		showInSimplifiedHelpView: true,
 		category:                 diagnostics.Output_Formatting,
 		description:              diagnostics.Enable_color_and_formatting_in_TypeScript_s_output_to_make_compiler_errors_easier_to_read,
@@ -74,28 +74,28 @@ var optionsDeclarations = []CommandLineOption{
 	},
 	{
 		name:                    "traceResolution",
-		kind:                    "boolean",
+		kind:                    CommandLineOptionTypeBoolean,
 		category:                diagnostics.Compiler_Diagnostics,
 		description:             diagnostics.Log_paths_used_during_the_moduleResolution_process,
 		defaultValueDescription: false,
 	},
 	{
 		name:                    "diagnostics",
-		kind:                    "boolean",
+		kind:                    CommandLineOptionTypeBoolean,
 		category:                diagnostics.Compiler_Diagnostics,
 		description:             diagnostics.Output_compiler_performance_information_after_building,
 		defaultValueDescription: false,
 	},
 	{
 		name:                    "extendedDiagnostics",
-		kind:                    "boolean",
+		kind:                    CommandLineOptionTypeBoolean,
 		category:                diagnostics.Compiler_Diagnostics,
 		description:             diagnostics.Output_more_detailed_compiler_performance_information_after_building,
 		defaultValueDescription: false,
 	},
 	{
 		name:                    "generateCpuProfile",
-		kind:                    "string",
+		kind:                    CommandLineOptionTypeString,
 		isFilePath:              true,
 		category:                diagnostics.Compiler_Diagnostics,
 		description:             diagnostics.Emit_a_v8_CPU_profile_of_the_compiler_run_for_debugging,
@@ -103,7 +103,7 @@ var optionsDeclarations = []CommandLineOption{
 	},
 	{
 		name:        "generateTrace",
-		kind:        "string",
+		kind:        CommandLineOptionTypeString,
 		isFilePath:  true,
 		category:    diagnostics.Compiler_Diagnostics,
 		description: diagnostics.Generates_an_event_trace_and_a_list_of_types,
@@ -111,7 +111,7 @@ var optionsDeclarations = []CommandLineOption{
 	{
 		name:                    "incremental",
 		shortName:               "i",
-		kind:                    "boolean",
+		kind:                    CommandLineOptionTypeBoolean,
 		category:                diagnostics.Projects,
 		description:             diagnostics.Save_tsbuildinfo_files_to_allow_for_incremental_compilation_of_projects,
 		transpileOptionValue:    core.TSUnknown,
@@ -120,7 +120,7 @@ var optionsDeclarations = []CommandLineOption{
 	{
 		name:      "declaration",
 		shortName: "d",
-		kind:      "boolean",
+		kind:      CommandLineOptionTypeBoolean,
 		// Not setting affectsEmit because we calculate this flag might not affect full emit
 		affectsBuildInfo:         true,
 		showInSimplifiedHelpView: true,
@@ -131,7 +131,7 @@ var optionsDeclarations = []CommandLineOption{
 	},
 	{
 		name: "declarationMap",
-		kind: "boolean",
+		kind: CommandLineOptionTypeBoolean,
 		// Not setting affectsEmit because we calculate this flag might not affect full emit
 		affectsBuildInfo:         true,
 		showInSimplifiedHelpView: true,
@@ -141,7 +141,7 @@ var optionsDeclarations = []CommandLineOption{
 	},
 	{
 		name: "emitDeclarationOnly",
-		kind: "boolean",
+		kind: CommandLineOptionTypeBoolean,
 		// Not setting affectsEmit because we calculate this flag might not affect full emit
 		affectsBuildInfo:         true,
 		showInSimplifiedHelpView: true,
@@ -152,7 +152,7 @@ var optionsDeclarations = []CommandLineOption{
 	},
 	{
 		name: "sourceMap",
-		kind: "boolean",
+		kind: CommandLineOptionTypeBoolean,
 		// Not setting affectsEmit because we calculate this flag might not affect full emit
 		affectsBuildInfo:         true,
 		showInSimplifiedHelpView: true,
@@ -162,7 +162,7 @@ var optionsDeclarations = []CommandLineOption{
 	},
 	{
 		name: "inlineSourceMap",
-		kind: "boolean",
+		kind: CommandLineOptionTypeBoolean,
 		// Not setting affectsEmit because we calculate this flag might not affect full emit
 		affectsBuildInfo:        true,
 		category:                diagnostics.Emit,
@@ -171,7 +171,7 @@ var optionsDeclarations = []CommandLineOption{
 	},
 	{
 		name:                     "noCheck",
-		kind:                     "boolean",
+		kind:                     CommandLineOptionTypeBoolean,
 		showInSimplifiedHelpView: false,
 		category:                 diagnostics.Compiler_Diagnostics,
 		description:              diagnostics.Disable_full_type_checking_only_critical_parse_and_emit_errors_will_be_reported,
@@ -181,7 +181,7 @@ var optionsDeclarations = []CommandLineOption{
 	},
 	{
 		name:                     "noEmit",
-		kind:                     "boolean",
+		kind:                     CommandLineOptionTypeBoolean,
 		showInSimplifiedHelpView: true,
 		category:                 diagnostics.Emit,
 		description:              diagnostics.Disable_emitting_files_from_a_compilation,
@@ -190,7 +190,7 @@ var optionsDeclarations = []CommandLineOption{
 	},
 	{
 		name:                       "assumeChangesOnlyAffectDirectDependencies",
-		kind:                       "boolean",
+		kind:                       CommandLineOptionTypeBoolean,
 		affectsSemanticDiagnostics: true,
 		affectsEmit:                true,
 		affectsBuildInfo:           true,
@@ -200,7 +200,7 @@ var optionsDeclarations = []CommandLineOption{
 	},
 	{
 		name:                    "locale",
-		kind:                    "string",
+		kind:                    CommandLineOptionTypeString,
 		category:                diagnostics.Command_line_Options,
 		isCommandLineOnly:       true,
 		description:             diagnostics.Set_the_language_of_the_messaging_from_TypeScript_This_does_not_affect_emit,
@@ -212,7 +212,7 @@ var optionsDeclarations = []CommandLineOption{
 	// CommandLine only options
 	{
 		name:                     "all",
-		kind:                     "boolean",
+		kind:                     CommandLineOptionTypeBoolean,
 		showInSimplifiedHelpView: true,
 		category:                 diagnostics.Command_line_Options,
 		description:              diagnostics.Show_all_compiler_options,
@@ -221,7 +221,7 @@ var optionsDeclarations = []CommandLineOption{
 	{
 		name:                     "version",
 		shortName:                "v",
-		kind:                     "boolean",
+		kind:                     CommandLineOptionTypeBoolean,
 		showInSimplifiedHelpView: true,
 		category:                 diagnostics.Command_line_Options,
 		description:              diagnostics.Print_the_compiler_s_version,
@@ -229,7 +229,7 @@ var optionsDeclarations = []CommandLineOption{
 	},
 	{
 		name:                     "init",
-		kind:                     "boolean",
+		kind:                     CommandLineOptionTypeBoolean,
 		showInSimplifiedHelpView: true,
 		category:                 diagnostics.Command_line_Options,
 		description:              diagnostics.Initializes_a_TypeScript_project_and_creates_a_tsconfig_json_file,
@@ -238,7 +238,7 @@ var optionsDeclarations = []CommandLineOption{
 	{
 		name:                     "project",
 		shortName:                "p",
-		kind:                     "string",
+		kind:                     CommandLineOptionTypeString,
 		isFilePath:               true,
 		showInSimplifiedHelpView: true,
 		category:                 diagnostics.Command_line_Options,
@@ -246,7 +246,7 @@ var optionsDeclarations = []CommandLineOption{
 	},
 	{
 		name:                     "showConfig",
-		kind:                     "boolean",
+		kind:                     CommandLineOptionTypeBoolean,
 		showInSimplifiedHelpView: true,
 		category:                 diagnostics.Command_line_Options,
 		isCommandLineOnly:        true,
@@ -255,7 +255,7 @@ var optionsDeclarations = []CommandLineOption{
 	},
 	{
 		name:                    "listFilesOnly",
-		kind:                    "boolean",
+		kind:                    CommandLineOptionTypeBoolean,
 		category:                diagnostics.Command_line_Options,
 		isCommandLineOnly:       true,
 		description:             diagnostics.Print_names_of_files_that_are_part_of_the_compilation_and_then_stop_processing,
@@ -267,7 +267,7 @@ var optionsDeclarations = []CommandLineOption{
 	{
 		name:                     "target",
 		shortName:                "t",
-		kind:                     "custom", //targetOptionMap
+		kind:                     CommandLineOptionTypeEnum, //targetOptionMap
 		affectsSourceFile:        true,
 		affectsModuleResolution:  true,
 		affectsEmit:              true,
@@ -282,7 +282,7 @@ var optionsDeclarations = []CommandLineOption{
 	{
 		name:                     "module",
 		shortName:                "m",
-		kind:                     "custom", //moduleOptionMap
+		kind:                     CommandLineOptionTypeEnum, //moduleOptionMap
 		affectsSourceFile:        true,
 		affectsModuleResolution:  true,
 		affectsEmit:              true,
@@ -294,10 +294,10 @@ var optionsDeclarations = []CommandLineOption{
 	},
 	{
 		name: "lib",
-		kind: "list",
+		kind: CommandLineOptionTypeList,
 		// elements: &CommandLineOption{
 		// 	name:                    "lib",
-		// 	kind:                   "custom", //libMap,
+		// 	kind:                   CommandLineOptionTypeEnum, //libMap,
 		// 	defaultValueDescription: core.TSUnknown,
 		// },
 		affectsProgramStructure:  true,
@@ -308,7 +308,7 @@ var optionsDeclarations = []CommandLineOption{
 	},
 	{
 		name:                     "allowJs",
-		kind:                     "boolean",
+		kind:                     CommandLineOptionTypeBoolean,
 		allowJsFlag:              true,
 		affectsBuildInfo:         true,
 		showInSimplifiedHelpView: true,
@@ -318,7 +318,7 @@ var optionsDeclarations = []CommandLineOption{
 	},
 	{
 		name:                       "checkJs",
-		kind:                       "boolean",
+		kind:                       CommandLineOptionTypeBoolean,
 		affectsModuleResolution:    true,
 		affectsSemanticDiagnostics: true,
 		affectsBuildInfo:           true,
@@ -329,7 +329,7 @@ var optionsDeclarations = []CommandLineOption{
 	},
 	{
 		name:                    "jsx",
-		kind:                    "custom", //jsxOptionMap,
+		kind:                    CommandLineOptionTypeEnum, //jsxOptionMap,
 		affectsSourceFile:       true,
 		affectsEmit:             true,
 		affectsBuildInfo:        true,
@@ -345,7 +345,7 @@ var optionsDeclarations = []CommandLineOption{
 	},
 	{
 		name:                     "outFile",
-		kind:                     "string",
+		kind:                     CommandLineOptionTypeString,
 		affectsEmit:              true,
 		affectsBuildInfo:         true,
 		affectsDeclarationPath:   true,
@@ -357,7 +357,7 @@ var optionsDeclarations = []CommandLineOption{
 	},
 	{
 		name:                     "outDir",
-		kind:                     "string",
+		kind:                     CommandLineOptionTypeString,
 		affectsEmit:              true,
 		affectsBuildInfo:         true,
 		affectsDeclarationPath:   true,
@@ -368,7 +368,7 @@ var optionsDeclarations = []CommandLineOption{
 	},
 	{
 		name:                    "rootDir",
-		kind:                    "string",
+		kind:                    CommandLineOptionTypeString,
 		affectsEmit:             true,
 		affectsBuildInfo:        true,
 		affectsDeclarationPath:  true,
@@ -379,7 +379,7 @@ var optionsDeclarations = []CommandLineOption{
 	},
 	{
 		name: "composite",
-		kind: "boolean",
+		kind: CommandLineOptionTypeBoolean,
 		// Not setting affectsEmit because we calculate this flag might not affect full emit
 		affectsBuildInfo:        true,
 		isTSConfigOnly:          true,
@@ -390,7 +390,7 @@ var optionsDeclarations = []CommandLineOption{
 	},
 	{
 		name:                    "tsBuildInfoFile",
-		kind:                    "string",
+		kind:                    CommandLineOptionTypeString,
 		affectsEmit:             true,
 		affectsBuildInfo:        true,
 		isFilePath:              true,
@@ -401,7 +401,7 @@ var optionsDeclarations = []CommandLineOption{
 	},
 	{
 		name:                     "removeComments",
-		kind:                     "boolean",
+		kind:                     CommandLineOptionTypeBoolean,
 		affectsEmit:              true,
 		affectsBuildInfo:         true,
 		showInSimplifiedHelpView: true,
@@ -411,7 +411,7 @@ var optionsDeclarations = []CommandLineOption{
 	},
 	{
 		name:                    "importHelpers",
-		kind:                    "boolean",
+		kind:                    CommandLineOptionTypeBoolean,
 		affectsEmit:             true,
 		affectsBuildInfo:        true,
 		affectsSourceFile:       true,
@@ -421,7 +421,7 @@ var optionsDeclarations = []CommandLineOption{
 	},
 	{
 		name:                    "downlevelIteration",
-		kind:                    "boolean",
+		kind:                    CommandLineOptionTypeBoolean,
 		affectsEmit:             true,
 		affectsBuildInfo:        true,
 		category:                diagnostics.Emit,
@@ -430,7 +430,7 @@ var optionsDeclarations = []CommandLineOption{
 	},
 	{
 		name:                    "isolatedModules",
-		kind:                    "boolean",
+		kind:                    CommandLineOptionTypeBoolean,
 		category:                diagnostics.Interop_Constraints,
 		description:             diagnostics.Ensure_that_each_file_can_be_safely_transpiled_without_relying_on_other_imports,
 		transpileOptionValue:    core.TSTrue,
@@ -438,7 +438,7 @@ var optionsDeclarations = []CommandLineOption{
 	},
 	{
 		name:                       "verbatimModuleSyntax",
-		kind:                       "boolean",
+		kind:                       CommandLineOptionTypeBoolean,
 		affectsEmit:                true,
 		affectsSemanticDiagnostics: true,
 		affectsBuildInfo:           true,
@@ -448,7 +448,7 @@ var optionsDeclarations = []CommandLineOption{
 	},
 	{
 		name:                       "isolatedDeclarations",
-		kind:                       "boolean",
+		kind:                       CommandLineOptionTypeBoolean,
 		category:                   diagnostics.Interop_Constraints,
 		description:                diagnostics.Require_sufficient_annotation_on_exports_so_other_tools_can_trivially_generate_declaration_files,
 		defaultValueDescription:    false,
@@ -459,7 +459,7 @@ var optionsDeclarations = []CommandLineOption{
 	// Strict Type Checks
 	{
 		name: "strict",
-		kind: "boolean",
+		kind: CommandLineOptionTypeBoolean,
 		// Though this affects semantic diagnostics, affectsSemanticDiagnostics is not set here
 		// The value of each strictFlag depends on own strictFlag value or this and never accessed directly.
 		// But we need to store `strict` in builf info, even though it won't be examined directly, so that the
@@ -472,7 +472,7 @@ var optionsDeclarations = []CommandLineOption{
 	},
 	{
 		name:                       "noImplicitAny",
-		kind:                       "boolean",
+		kind:                       CommandLineOptionTypeBoolean,
 		affectsSemanticDiagnostics: true,
 		affectsBuildInfo:           true,
 		strictFlag:                 true,
@@ -482,7 +482,7 @@ var optionsDeclarations = []CommandLineOption{
 	},
 	{
 		name:                       "strictNullChecks",
-		kind:                       "boolean",
+		kind:                       CommandLineOptionTypeBoolean,
 		affectsSemanticDiagnostics: true,
 		affectsBuildInfo:           true,
 		strictFlag:                 true,
@@ -492,7 +492,7 @@ var optionsDeclarations = []CommandLineOption{
 	},
 	{
 		name:                       "strictFunctionTypes",
-		kind:                       "boolean",
+		kind:                       CommandLineOptionTypeBoolean,
 		affectsSemanticDiagnostics: true,
 		affectsBuildInfo:           true,
 		strictFlag:                 true,
@@ -502,7 +502,7 @@ var optionsDeclarations = []CommandLineOption{
 	},
 	{
 		name:                       "strictBindCallApply",
-		kind:                       "boolean",
+		kind:                       CommandLineOptionTypeBoolean,
 		affectsSemanticDiagnostics: true,
 		affectsBuildInfo:           true,
 		strictFlag:                 true,
@@ -512,7 +512,7 @@ var optionsDeclarations = []CommandLineOption{
 	},
 	{
 		name:                       "strictPropertyInitialization",
-		kind:                       "boolean",
+		kind:                       CommandLineOptionTypeBoolean,
 		affectsSemanticDiagnostics: true,
 		affectsBuildInfo:           true,
 		strictFlag:                 true,
@@ -522,7 +522,7 @@ var optionsDeclarations = []CommandLineOption{
 	},
 	{
 		name:                       "strictBuiltinIteratorReturn",
-		kind:                       "boolean",
+		kind:                       CommandLineOptionTypeBoolean,
 		affectsSemanticDiagnostics: true,
 		affectsBuildInfo:           true,
 		strictFlag:                 true,
@@ -532,7 +532,7 @@ var optionsDeclarations = []CommandLineOption{
 	},
 	{
 		name:                       "noImplicitThis",
-		kind:                       "boolean",
+		kind:                       CommandLineOptionTypeBoolean,
 		affectsSemanticDiagnostics: true,
 		affectsBuildInfo:           true,
 		strictFlag:                 true,
@@ -542,7 +542,7 @@ var optionsDeclarations = []CommandLineOption{
 	},
 	{
 		name:                       "useUnknownInCatchVariables",
-		kind:                       "boolean",
+		kind:                       CommandLineOptionTypeBoolean,
 		affectsSemanticDiagnostics: true,
 		affectsBuildInfo:           true,
 		strictFlag:                 true,
@@ -552,7 +552,7 @@ var optionsDeclarations = []CommandLineOption{
 	},
 	{
 		name:                    "alwaysStrict",
-		kind:                    "boolean",
+		kind:                    CommandLineOptionTypeBoolean,
 		affectsSourceFile:       true,
 		affectsEmit:             true,
 		affectsBuildInfo:        true,
@@ -565,7 +565,7 @@ var optionsDeclarations = []CommandLineOption{
 	// Additional Checks
 	{
 		name:                       "noUnusedLocals",
-		kind:                       "boolean",
+		kind:                       CommandLineOptionTypeBoolean,
 		affectsSemanticDiagnostics: true,
 		affectsBuildInfo:           true,
 		category:                   diagnostics.Type_Checking,
@@ -574,7 +574,7 @@ var optionsDeclarations = []CommandLineOption{
 	},
 	{
 		name:                       "noUnusedParameters",
-		kind:                       "boolean",
+		kind:                       CommandLineOptionTypeBoolean,
 		affectsSemanticDiagnostics: true,
 		affectsBuildInfo:           true,
 		category:                   diagnostics.Type_Checking,
@@ -583,7 +583,7 @@ var optionsDeclarations = []CommandLineOption{
 	},
 	{
 		name:                       "exactOptionalPropertyTypes",
-		kind:                       "boolean",
+		kind:                       CommandLineOptionTypeBoolean,
 		affectsSemanticDiagnostics: true,
 		affectsBuildInfo:           true,
 		category:                   diagnostics.Type_Checking,
@@ -592,7 +592,7 @@ var optionsDeclarations = []CommandLineOption{
 	},
 	{
 		name:                       "noImplicitReturns",
-		kind:                       "boolean",
+		kind:                       CommandLineOptionTypeBoolean,
 		affectsSemanticDiagnostics: true,
 		affectsBuildInfo:           true,
 		category:                   diagnostics.Type_Checking,
@@ -601,7 +601,7 @@ var optionsDeclarations = []CommandLineOption{
 	},
 	{
 		name:                       "noFallthroughCasesInSwitch",
-		kind:                       "boolean",
+		kind:                       CommandLineOptionTypeBoolean,
 		affectsBindDiagnostics:     true,
 		affectsSemanticDiagnostics: true,
 		affectsBuildInfo:           true,
@@ -611,7 +611,7 @@ var optionsDeclarations = []CommandLineOption{
 	},
 	{
 		name:                       "noUncheckedIndexedAccess",
-		kind:                       "boolean",
+		kind:                       CommandLineOptionTypeBoolean,
 		affectsSemanticDiagnostics: true,
 		affectsBuildInfo:           true,
 		category:                   diagnostics.Type_Checking,
@@ -620,7 +620,7 @@ var optionsDeclarations = []CommandLineOption{
 	},
 	{
 		name:                       "noImplicitOverride",
-		kind:                       "boolean",
+		kind:                       CommandLineOptionTypeBoolean,
 		affectsSemanticDiagnostics: true,
 		affectsBuildInfo:           true,
 		category:                   diagnostics.Type_Checking,
@@ -629,7 +629,7 @@ var optionsDeclarations = []CommandLineOption{
 	},
 	{
 		name:                       "noPropertyAccessFromIndexSignature",
-		kind:                       "boolean",
+		kind:                       CommandLineOptionTypeBoolean,
 		affectsSemanticDiagnostics: true,
 		affectsBuildInfo:           true,
 		showInSimplifiedHelpView:   false,
@@ -641,7 +641,7 @@ var optionsDeclarations = []CommandLineOption{
 	// Module Resolution
 	{
 		name: "moduleResolution",
-		kind: "custom",
+		kind: CommandLineOptionTypeEnum,
 		//    new Map(Object.entries({
 		//         // N.B. The first entry specifies the value shown in `tsc --init`
 		//         node10: ModuleResolutionKind.Node10,
@@ -659,7 +659,7 @@ var optionsDeclarations = []CommandLineOption{
 	},
 	{
 		name:                    "baseUrl",
-		kind:                    "string",
+		kind:                    CommandLineOptionTypeString,
 		affectsModuleResolution: true,
 		isFilePath:              true,
 		category:                diagnostics.Modules,
@@ -669,7 +669,7 @@ var optionsDeclarations = []CommandLineOption{
 		// this option can only be specified in tsconfig.json
 		// use type = object to copy the value as-is
 		name:                               "paths",
-		kind:                               "object",
+		kind:                               CommandLineOptionTypeObject,
 		affectsModuleResolution:            true,
 		allowConfigDirTemplateSubstitution: true,
 		isTSConfigOnly:                     true,
@@ -681,7 +681,7 @@ var optionsDeclarations = []CommandLineOption{
 		// this option can only be specified in tsconfig.json
 		// use type = object to copy the value as-is
 		name:                               "rootDirs",
-		kind:                               "list",
+		kind:                               CommandLineOptionTypeList,
 		isTSConfigOnly:                     true,
 		affectsModuleResolution:            true,
 		allowConfigDirTemplateSubstitution: true,
@@ -692,7 +692,7 @@ var optionsDeclarations = []CommandLineOption{
 	},
 	{
 		name:                               "typeRoots",
-		kind:                               "list",
+		kind:                               CommandLineOptionTypeList,
 		affectsModuleResolution:            true,
 		allowConfigDirTemplateSubstitution: true,
 		category:                           diagnostics.Modules,
@@ -700,7 +700,7 @@ var optionsDeclarations = []CommandLineOption{
 	},
 	{
 		name:                     "types",
-		kind:                     "list",
+		kind:                     CommandLineOptionTypeList,
 		affectsProgramStructure:  true,
 		showInSimplifiedHelpView: true,
 		category:                 diagnostics.Modules,
@@ -709,7 +709,7 @@ var optionsDeclarations = []CommandLineOption{
 	},
 	{
 		name:                       "allowSyntheticDefaultImports",
-		kind:                       "boolean",
+		kind:                       CommandLineOptionTypeBoolean,
 		affectsSemanticDiagnostics: true,
 		affectsBuildInfo:           true,
 		category:                   diagnostics.Interop_Constraints,
@@ -718,7 +718,7 @@ var optionsDeclarations = []CommandLineOption{
 	},
 	{
 		name:                       "esModuleInterop",
-		kind:                       "boolean",
+		kind:                       CommandLineOptionTypeBoolean,
 		affectsSemanticDiagnostics: true,
 		affectsEmit:                true,
 		affectsBuildInfo:           true,
@@ -729,14 +729,14 @@ var optionsDeclarations = []CommandLineOption{
 	},
 	{
 		name:                    "preserveSymlinks",
-		kind:                    "boolean",
+		kind:                    CommandLineOptionTypeBoolean,
 		category:                diagnostics.Interop_Constraints,
 		description:             diagnostics.Disable_resolving_symlinks_to_their_realpath_This_correlates_to_the_same_flag_in_node,
 		defaultValueDescription: false,
 	},
 	{
 		name:                       "allowUmdGlobalAccess",
-		kind:                       "boolean",
+		kind:                       CommandLineOptionTypeBoolean,
 		affectsSemanticDiagnostics: true,
 		affectsBuildInfo:           true,
 		category:                   diagnostics.Modules,
@@ -745,7 +745,7 @@ var optionsDeclarations = []CommandLineOption{
 	},
 	{
 		name:                    "moduleSuffixes",
-		kind:                    "list",
+		kind:                    CommandLineOptionTypeList,
 		listPreserveFalsyValues: true,
 		affectsModuleResolution: true,
 		category:                diagnostics.Modules,
@@ -753,7 +753,7 @@ var optionsDeclarations = []CommandLineOption{
 	},
 	{
 		name:                       "allowImportingTsExtensions",
-		kind:                       "boolean",
+		kind:                       CommandLineOptionTypeBoolean,
 		affectsSemanticDiagnostics: true,
 		affectsBuildInfo:           true,
 		category:                   diagnostics.Modules,
@@ -763,7 +763,7 @@ var optionsDeclarations = []CommandLineOption{
 	},
 	{
 		name:                       "rewriteRelativeImportExtensions",
-		kind:                       "boolean",
+		kind:                       CommandLineOptionTypeBoolean,
 		affectsSemanticDiagnostics: true,
 		affectsBuildInfo:           true,
 		category:                   diagnostics.Modules,
@@ -772,7 +772,7 @@ var optionsDeclarations = []CommandLineOption{
 	},
 	{
 		name:                    "resolvePackageJsonExports",
-		kind:                    "boolean",
+		kind:                    CommandLineOptionTypeBoolean,
 		affectsModuleResolution: true,
 		category:                diagnostics.Modules,
 		description:             diagnostics.Use_the_package_json_exports_field_when_resolving_package_imports,
@@ -780,7 +780,7 @@ var optionsDeclarations = []CommandLineOption{
 	},
 	{
 		name:                    "resolvePackageJsonImports",
-		kind:                    "boolean",
+		kind:                    CommandLineOptionTypeBoolean,
 		affectsModuleResolution: true,
 		category:                diagnostics.Modules,
 		description:             diagnostics.Use_the_package_json_imports_field_when_resolving_imports,
@@ -788,14 +788,14 @@ var optionsDeclarations = []CommandLineOption{
 	},
 	{
 		name:                    "customConditions",
-		kind:                    "list",
+		kind:                    CommandLineOptionTypeList,
 		affectsModuleResolution: true,
 		category:                diagnostics.Modules,
 		description:             diagnostics.Conditions_to_set_in_addition_to_the_resolver_specific_defaults_when_resolving_imports,
 	},
 	{
 		name:                       "noUncheckedSideEffectImports",
-		kind:                       "boolean",
+		kind:                       CommandLineOptionTypeBoolean,
 		affectsSemanticDiagnostics: true,
 		affectsBuildInfo:           true,
 		category:                   diagnostics.Modules,
@@ -806,7 +806,7 @@ var optionsDeclarations = []CommandLineOption{
 	// Source Maps
 	{
 		name:             "sourceRoot",
-		kind:             "string",
+		kind:             CommandLineOptionTypeString,
 		affectsEmit:      true,
 		affectsBuildInfo: true,
 		category:         diagnostics.Emit,
@@ -814,7 +814,7 @@ var optionsDeclarations = []CommandLineOption{
 	},
 	{
 		name:             "mapRoot",
-		kind:             "string",
+		kind:             CommandLineOptionTypeString,
 		affectsEmit:      true,
 		affectsBuildInfo: true,
 		category:         diagnostics.Emit,
@@ -822,7 +822,7 @@ var optionsDeclarations = []CommandLineOption{
 	},
 	{
 		name:                    "inlineSources",
-		kind:                    "boolean",
+		kind:                    CommandLineOptionTypeBoolean,
 		affectsEmit:             true,
 		affectsBuildInfo:        true,
 		category:                diagnostics.Emit,
@@ -833,7 +833,7 @@ var optionsDeclarations = []CommandLineOption{
 	// Experimental
 	{
 		name:                       "experimentalDecorators",
-		kind:                       "boolean",
+		kind:                       CommandLineOptionTypeBoolean,
 		affectsEmit:                true,
 		affectsSemanticDiagnostics: true,
 		affectsBuildInfo:           true,
@@ -843,7 +843,7 @@ var optionsDeclarations = []CommandLineOption{
 	},
 	{
 		name:                       "emitDecoratorMetadata",
-		kind:                       "boolean",
+		kind:                       CommandLineOptionTypeBoolean,
 		affectsSemanticDiagnostics: true,
 		affectsEmit:                true,
 		affectsBuildInfo:           true,
@@ -855,21 +855,21 @@ var optionsDeclarations = []CommandLineOption{
 	// Advanced
 	{
 		name:                    "jsxFactory",
-		kind:                    "string",
+		kind:                    CommandLineOptionTypeString,
 		category:                diagnostics.Language_and_Environment,
 		description:             diagnostics.Specify_the_JSX_factory_function_used_when_targeting_React_JSX_emit_e_g_React_createElement_or_h,
 		defaultValueDescription: "`React.createElement`",
 	},
 	{
 		name:                    "jsxFragmentFactory",
-		kind:                    "string",
+		kind:                    CommandLineOptionTypeString,
 		category:                diagnostics.Language_and_Environment,
 		description:             diagnostics.Specify_the_JSX_Fragment_reference_used_for_fragments_when_targeting_React_JSX_emit_e_g_React_Fragment_or_Fragment,
 		defaultValueDescription: "React.Fragment",
 	},
 	{
 		name:                       "jsxImportSource",
-		kind:                       "string",
+		kind:                       CommandLineOptionTypeString,
 		affectsSemanticDiagnostics: true,
 		affectsEmit:                true,
 		affectsBuildInfo:           true,
@@ -881,7 +881,7 @@ var optionsDeclarations = []CommandLineOption{
 	},
 	{
 		name:                    "resolveJsonModule",
-		kind:                    "boolean",
+		kind:                    CommandLineOptionTypeBoolean,
 		affectsModuleResolution: true,
 		category:                diagnostics.Modules,
 		description:             diagnostics.Enable_importing_json_files,
@@ -889,7 +889,7 @@ var optionsDeclarations = []CommandLineOption{
 	},
 	{
 		name:                    "allowArbitraryExtensions",
-		kind:                    "boolean",
+		kind:                    CommandLineOptionTypeBoolean,
 		affectsProgramStructure: true,
 		category:                diagnostics.Modules,
 		description:             diagnostics.Enable_importing_files_with_any_extension_provided_a_declaration_file_is_present,
@@ -898,7 +898,7 @@ var optionsDeclarations = []CommandLineOption{
 
 	{
 		name:                   "out",
-		kind:                   "string",
+		kind:                   CommandLineOptionTypeString,
 		affectsEmit:            true,
 		affectsBuildInfo:       true,
 		affectsDeclarationPath: true,
@@ -910,7 +910,7 @@ var optionsDeclarations = []CommandLineOption{
 	},
 	{
 		name:                    "reactNamespace",
-		kind:                    "string",
+		kind:                    CommandLineOptionTypeString,
 		affectsEmit:             true,
 		affectsBuildInfo:        true,
 		category:                diagnostics.Language_and_Environment,
@@ -919,7 +919,7 @@ var optionsDeclarations = []CommandLineOption{
 	},
 	{
 		name: "skipDefaultLibCheck",
-		kind: "boolean",
+		kind: CommandLineOptionTypeBoolean,
 		// We need to store these to determine whether `lib` files need to be rechecked
 		affectsBuildInfo:        true,
 		category:                diagnostics.Completeness,
@@ -928,14 +928,14 @@ var optionsDeclarations = []CommandLineOption{
 	},
 	{
 		name:                    "charset",
-		kind:                    "string",
+		kind:                    CommandLineOptionTypeString,
 		category:                diagnostics.Backwards_Compatibility,
 		description:             diagnostics.No_longer_supported_In_early_versions_manually_set_the_text_encoding_for_reading_files,
 		defaultValueDescription: "utf8",
 	},
 	{
 		name:                    "emitBOM",
-		kind:                    "boolean",
+		kind:                    CommandLineOptionTypeBoolean,
 		affectsEmit:             true,
 		affectsBuildInfo:        true,
 		category:                diagnostics.Emit,
@@ -944,7 +944,7 @@ var optionsDeclarations = []CommandLineOption{
 	},
 	{
 		name:                    "newLine",
-		kind:                    "custom", //newLineOptionMap,
+		kind:                    CommandLineOptionTypeEnum, //newLineOptionMap,
 		affectsEmit:             true,
 		affectsBuildInfo:        true,
 		category:                diagnostics.Emit,
@@ -953,7 +953,7 @@ var optionsDeclarations = []CommandLineOption{
 	},
 	{
 		name:                       "noErrorTruncation",
-		kind:                       "boolean",
+		kind:                       CommandLineOptionTypeBoolean,
 		affectsSemanticDiagnostics: true,
 		affectsBuildInfo:           true,
 		category:                   diagnostics.Output_Formatting,
@@ -962,7 +962,7 @@ var optionsDeclarations = []CommandLineOption{
 	},
 	{
 		name:                    "noLib",
-		kind:                    "boolean",
+		kind:                    CommandLineOptionTypeBoolean,
 		category:                diagnostics.Language_and_Environment,
 		affectsProgramStructure: true,
 		description:             diagnostics.Disable_including_any_library_files_including_the_default_lib_d_ts,
@@ -973,7 +973,7 @@ var optionsDeclarations = []CommandLineOption{
 	},
 	{
 		name:                    "noResolve",
-		kind:                    "boolean",
+		kind:                    CommandLineOptionTypeBoolean,
 		affectsModuleResolution: true,
 		category:                diagnostics.Modules,
 		description:             diagnostics.Disallow_import_s_require_s_or_reference_s_from_expanding_the_number_of_files_TypeScript_should_add_to_a_project,
@@ -984,7 +984,7 @@ var optionsDeclarations = []CommandLineOption{
 	},
 	{
 		name:                    "stripInternal",
-		kind:                    "boolean",
+		kind:                    CommandLineOptionTypeBoolean,
 		affectsEmit:             true,
 		affectsBuildInfo:        true,
 		category:                diagnostics.Emit,
@@ -993,7 +993,7 @@ var optionsDeclarations = []CommandLineOption{
 	},
 	{
 		name:                    "disableSizeLimit",
-		kind:                    "boolean",
+		kind:                    CommandLineOptionTypeBoolean,
 		affectsProgramStructure: true,
 		category:                diagnostics.Editor_Support,
 		description:             diagnostics.Remove_the_20mb_cap_on_total_source_code_size_for_JavaScript_files_in_the_TypeScript_language_server,
@@ -1001,7 +1001,7 @@ var optionsDeclarations = []CommandLineOption{
 	},
 	{
 		name:                    "disableSourceOfProjectReferenceRedirect",
-		kind:                    "boolean",
+		kind:                    CommandLineOptionTypeBoolean,
 		isTSConfigOnly:          true,
 		category:                diagnostics.Projects,
 		description:             diagnostics.Disable_preferring_source_files_instead_of_declaration_files_when_referencing_composite_projects,
@@ -1009,7 +1009,7 @@ var optionsDeclarations = []CommandLineOption{
 	},
 	{
 		name:                    "disableSolutionSearching",
-		kind:                    "boolean",
+		kind:                    CommandLineOptionTypeBoolean,
 		isTSConfigOnly:          true,
 		category:                diagnostics.Projects,
 		description:             diagnostics.Opt_a_project_out_of_multi_project_reference_checking_when_editing,
@@ -1017,7 +1017,7 @@ var optionsDeclarations = []CommandLineOption{
 	},
 	{
 		name:                    "disableReferencedProjectLoad",
-		kind:                    "boolean",
+		kind:                    CommandLineOptionTypeBoolean,
 		isTSConfigOnly:          true,
 		category:                diagnostics.Projects,
 		description:             diagnostics.Reduce_the_number_of_projects_loaded_automatically_by_TypeScript,
@@ -1025,7 +1025,7 @@ var optionsDeclarations = []CommandLineOption{
 	},
 	{
 		name:                       "noImplicitUseStrict",
-		kind:                       "boolean",
+		kind:                       CommandLineOptionTypeBoolean,
 		affectsSemanticDiagnostics: true,
 		affectsBuildInfo:           true,
 		category:                   diagnostics.Backwards_Compatibility,
@@ -1034,7 +1034,7 @@ var optionsDeclarations = []CommandLineOption{
 	},
 	{
 		name:                    "noEmitHelpers",
-		kind:                    "boolean",
+		kind:                    CommandLineOptionTypeBoolean,
 		affectsEmit:             true,
 		affectsBuildInfo:        true,
 		category:                diagnostics.Emit,
@@ -1043,7 +1043,7 @@ var optionsDeclarations = []CommandLineOption{
 	},
 	{
 		name:                    "noEmitOnError",
-		kind:                    "boolean",
+		kind:                    CommandLineOptionTypeBoolean,
 		affectsEmit:             true,
 		affectsBuildInfo:        true,
 		category:                diagnostics.Emit,
@@ -1053,7 +1053,7 @@ var optionsDeclarations = []CommandLineOption{
 	},
 	{
 		name:                    "preserveConstEnums",
-		kind:                    "boolean",
+		kind:                    CommandLineOptionTypeBoolean,
 		affectsEmit:             true,
 		affectsBuildInfo:        true,
 		category:                diagnostics.Emit,
@@ -1062,7 +1062,7 @@ var optionsDeclarations = []CommandLineOption{
 	},
 	{
 		name:                   "declarationDir",
-		kind:                   "string",
+		kind:                   CommandLineOptionTypeString,
 		affectsEmit:            true,
 		affectsBuildInfo:       true,
 		affectsDeclarationPath: true,
@@ -1073,7 +1073,7 @@ var optionsDeclarations = []CommandLineOption{
 	},
 	{
 		name: "skipLibCheck",
-		kind: "boolean",
+		kind: CommandLineOptionTypeBoolean,
 		// We need to store these to determine whether `lib` files need to be rechecked
 		affectsBuildInfo:        true,
 		category:                diagnostics.Completeness,
@@ -1082,7 +1082,7 @@ var optionsDeclarations = []CommandLineOption{
 	},
 	{
 		name:                       "allowUnusedLabels",
-		kind:                       "boolean",
+		kind:                       CommandLineOptionTypeBoolean,
 		affectsBindDiagnostics:     true,
 		affectsSemanticDiagnostics: true,
 		affectsBuildInfo:           true,
@@ -1092,7 +1092,7 @@ var optionsDeclarations = []CommandLineOption{
 	},
 	{
 		name:                       "allowUnreachableCode",
-		kind:                       "boolean",
+		kind:                       CommandLineOptionTypeBoolean,
 		affectsBindDiagnostics:     true,
 		affectsSemanticDiagnostics: true,
 		affectsBuildInfo:           true,
@@ -1102,7 +1102,7 @@ var optionsDeclarations = []CommandLineOption{
 	},
 	{
 		name:                       "suppressExcessPropertyErrors",
-		kind:                       "boolean",
+		kind:                       CommandLineOptionTypeBoolean,
 		affectsSemanticDiagnostics: true,
 		affectsBuildInfo:           true,
 		category:                   diagnostics.Backwards_Compatibility,
@@ -1111,7 +1111,7 @@ var optionsDeclarations = []CommandLineOption{
 	},
 	{
 		name:                       "suppressImplicitAnyIndexErrors",
-		kind:                       "boolean",
+		kind:                       CommandLineOptionTypeBoolean,
 		affectsSemanticDiagnostics: true,
 		affectsBuildInfo:           true,
 		category:                   diagnostics.Backwards_Compatibility,
@@ -1120,7 +1120,7 @@ var optionsDeclarations = []CommandLineOption{
 	},
 	{
 		name:                    "forceConsistentCasingInFileNames",
-		kind:                    "boolean",
+		kind:                    CommandLineOptionTypeBoolean,
 		affectsModuleResolution: true,
 		category:                diagnostics.Interop_Constraints,
 		description:             diagnostics.Ensure_that_casing_is_correct_in_imports,
@@ -1128,7 +1128,7 @@ var optionsDeclarations = []CommandLineOption{
 	},
 	{
 		name:                    "maxNodeModuleJsDepth",
-		kind:                    "number",
+		kind:                    CommandLineOptionTypeNumber,
 		affectsModuleResolution: true,
 		category:                diagnostics.JavaScript_Support,
 		description:             diagnostics.Specify_the_maximum_folder_depth_used_for_checking_JavaScript_files_from_node_modules_Only_applicable_with_allowJs,
@@ -1136,7 +1136,7 @@ var optionsDeclarations = []CommandLineOption{
 	},
 	{
 		name:                       "noStrictGenericChecks",
-		kind:                       "boolean",
+		kind:                       CommandLineOptionTypeBoolean,
 		affectsSemanticDiagnostics: true,
 		affectsBuildInfo:           true,
 		category:                   diagnostics.Backwards_Compatibility,
@@ -1145,7 +1145,7 @@ var optionsDeclarations = []CommandLineOption{
 	},
 	{
 		name:                       "useDefineForClassFields",
-		kind:                       "boolean",
+		kind:                       CommandLineOptionTypeBoolean,
 		affectsSemanticDiagnostics: true,
 		affectsEmit:                true,
 		affectsBuildInfo:           true,
@@ -1155,7 +1155,7 @@ var optionsDeclarations = []CommandLineOption{
 	},
 	{
 		name:                    "preserveValueImports",
-		kind:                    "boolean",
+		kind:                    CommandLineOptionTypeBoolean,
 		affectsEmit:             true,
 		affectsBuildInfo:        true,
 		category:                diagnostics.Backwards_Compatibility,
@@ -1165,7 +1165,7 @@ var optionsDeclarations = []CommandLineOption{
 
 	{
 		name:                    "keyofStringsOnly",
-		kind:                    "boolean",
+		kind:                    CommandLineOptionTypeBoolean,
 		category:                diagnostics.Backwards_Compatibility,
 		description:             diagnostics.Make_keyof_only_return_strings_instead_of_string_numbers_or_symbols_Legacy_option,
 		defaultValueDescription: false,
@@ -1173,14 +1173,14 @@ var optionsDeclarations = []CommandLineOption{
 	{
 		// A list of plugins to load in the language service
 		name:           "plugins",
-		kind:           "list",
+		kind:           CommandLineOptionTypeList,
 		isTSConfigOnly: true,
 		description:    diagnostics.Specify_a_list_of_language_service_plugins_to_include,
 		category:       diagnostics.Editor_Support,
 	},
 	{
 		name:                    "moduleDetection",
-		kind:                    "custom",
+		kind:                    CommandLineOptionTypeEnum,
 		affectsSourceFile:       true,
 		affectsModuleResolution: true,
 		description:             diagnostics.Control_what_method_is_used_to_detect_module_format_JS_files,
@@ -1189,7 +1189,7 @@ var optionsDeclarations = []CommandLineOption{
 	},
 	{
 		name:                    "ignoreDeprecations",
-		kind:                    "string",
+		kind:                    CommandLineOptionTypeString,
 		defaultValueDescription: core.TSUnknown,
 	},
 }

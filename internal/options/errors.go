@@ -10,19 +10,19 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 )
 
-func createDiagnosticForInvalidCustomType(opt *CommandLineOption, loc core.TextRange) *ast.Diagnostic {
+func createDiagnosticForInvalidEnumType(opt *CommandLineOption, loc core.TextRange) *ast.Diagnostic {
 	namesOfType := slices.Collect(opt.TypeMap().Keys())
 	stringNames := ""
 	if opt.DeprecatedKeys() != nil {
-		stringNames = formatCustomTypeKeys(core.Filter(namesOfType, func(k string) bool { return (*opt.DeprecatedKeys())[k] }))
+		stringNames = formatEnumTypeKeys(core.Filter(namesOfType, func(k string) bool { return (opt.DeprecatedKeys())[k] }))
 	} else {
-		stringNames = formatCustomTypeKeys(namesOfType)
+		stringNames = formatEnumTypeKeys(namesOfType)
 	}
 	optName := fmt.Sprintf(`--%v`, opt.name)
 	return ast.NewDiagnostic(nil, loc, diagnostics.Argument_for_0_option_must_be_Colon_1, optName, stringNames)
 }
 
-func formatCustomTypeKeys(keys []string) string {
+func formatEnumTypeKeys(keys []string) string {
 	var output strings.Builder
 
 	fmt.Fprintf(&output, "Invalid custom type: '%v'", keys[0])

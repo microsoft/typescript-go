@@ -68,7 +68,7 @@ func (option *CommandLineOption) DeprecatedKeys() map[string]bool {
 	}
 	return CommandLineOptionDeprecated[option.name]
 }
-func (option *CommandLineOption) TypeMap() *collections.OrderedMap[string, int32] {
+func (option *CommandLineOption) TypeMap() *collections.OrderedMap[string, any] {
 	if option.kind != CommandLineOptionTypeEnum {
 		return nil
 	}
@@ -89,39 +89,39 @@ func (option *CommandLineOption) DisallowNullOrUndefined() bool {
 var CommandLineOptionElements = map[string]*CommandLineOption{
 	"lib": {
 		name:                    "lib",
-		kind:                    "custom", //libMap,
+		kind:                    CommandLineOptionTypeEnum, // libMap,
 		defaultValueDescription: core.TSUnknown,
 	},
 	"rootDirs": {
 		name:       "rootDirs",
-		kind:       "string",
+		kind:       CommandLineOptionTypeString,
 		isFilePath: true,
 	},
 	"typeRoots": {
 		name:       "typeRoots",
-		kind:       "string",
+		kind:       CommandLineOptionTypeString,
 		isFilePath: true,
 	},
 	"types": {
 		name: "types",
-		kind: "string",
+		kind: CommandLineOptionTypeString,
 	},
 	"moduleSuffixes": {
 		name: "suffix",
-		kind: "string",
+		kind: CommandLineOptionTypeString,
 	},
 	"customConditions": {
 		name: "condition",
-		kind: "string",
+		kind: CommandLineOptionTypeString,
 	},
 	"plugins": {
 		name: "plugin",
-		kind: "object",
+		kind: CommandLineOptionTypeObject,
 	},
 }
 
 // typeMap *map[string]string
-var CommandLineOptionCustomType = map[string]*(collections.OrderedMap[string, string]){
+var CommandLineOptionCustomType = map[string]*(collections.OrderedMap[string, any]){
 	"lib":              libMap,
 	"moduleResolution": moduleResolutionOptionMap,
 	"module":           moduleOptionMap,
