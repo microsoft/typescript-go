@@ -124,7 +124,7 @@ func (p *Program) bindSourceFiles() {
 func (p *Program) getResolvedModule(currentSourceFile *ast.SourceFile, moduleReference string) *ast.SourceFile {
 	directory := currentSourceFile.Path().GetDirectoryPath()
 	if tspath.IsExternalModuleNameRelative(moduleReference) {
-		return p.findSourceFile(tspath.CombinePaths(string(directory), moduleReference)) // TODO(jakebailey): !!!
+		return p.findSourceFile(tspath.CombinePaths(string(directory), moduleReference))
 	}
 	return p.findNodeModule(moduleReference)
 }
@@ -132,7 +132,7 @@ func (p *Program) getResolvedModule(currentSourceFile *ast.SourceFile, moduleRef
 func (p *Program) findSourceFile(candidate string) *ast.SourceFile {
 	extensionless := tspath.RemoveFileExtension(candidate)
 	for _, ext := range []string{tspath.ExtensionTs, tspath.ExtensionTsx, tspath.ExtensionDts} {
-		path := tspath.Path(extensionless + ext) // TODO(jakebailey): !!!
+		path := tspath.Path(extensionless + ext)
 		if result, ok := p.filesByPath[path]; ok {
 			return result
 		}
