@@ -43,11 +43,10 @@ func NewProgram(options ProgramOptions) *Program {
 	if p.host == nil {
 		panic("host required")
 	}
-	rootPath := options.RootPath
-	if rootPath == "" {
-		rootPath = "."
+	p.rootPath = options.RootPath
+	if p.rootPath == "" {
+		panic("root path required")
 	}
-	p.rootPath = p.host.AbsFileName(rootPath)
 	fileInfos := readFileInfos(p.host.FS(), p.rootPath, extensions)
 	// Sort files by descending file size
 	slices.SortFunc(fileInfos, func(a FileInfo, b FileInfo) int {

@@ -56,13 +56,20 @@ func main() {
 	compilerOptions := &core.CompilerOptions{Strict: core.TSTrue, Target: core.ScriptTargetESNext, ModuleKind: core.ModuleKindNodeNext}
 	currentDirectory, err := os.Getwd()
 	if err != nil {
-		panic("no current directory")
+		fmt.Fprintf(os.Stderr, "Error getting current directory: %v\n", err)
+		os.Exit(1)
 	}
 	fs := vfs.FromOS()
 	useCaseSensitiveFileNames := fs.UseCaseSensitiveFileNames()
 	host := ts.NewCompilerHost(compilerOptions, singleThreaded, currentDirectory, fs)
 
-	programOptions := ts.ProgramOptions{RootPath: rootPath, Options: compilerOptions, SingleThreaded: singleThreaded, Host: host}
+	normalizedRootPath := tspath.ResolvePath(currentDirectory, rootPath)
+	if !fs.DirectoryExists(normalizedRootPath) {
+		fmt.Fprintf(os.Stderr, "Error: The directory %v does not exist.\n", normalizedRootPath)
+		os.Exit(1)
+	}
+
+	programOptions := ts.ProgramOptions{RootPath: normalizedRootPath, Options: compilerOptions, SingleThreaded: singleThreaded, Host: host}
 
 	startTime := time.Now()
 	program := ts.NewProgram(programOptions)
@@ -85,11 +92,6 @@ func main() {
 	runtime.ReadMemStats(&memStats)
 	if !quiet && len(diagnostics) != 0 {
 		if pretty {
-			currentDirectory, err := os.Getwd()
-			if err != nil {
-				panic("no current directory")
-			}
-
 			var output strings.Builder
 			formatOpts := ts.DiagnosticsFormattingOptions{
 				NewLine: "\n",
