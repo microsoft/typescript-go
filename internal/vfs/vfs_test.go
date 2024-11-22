@@ -1,7 +1,6 @@
 package vfs_test
 
 import (
-	"fmt"
 	"os"
 	"path/filepath"
 	"slices"
@@ -102,7 +101,6 @@ func TestIOFS(t *testing.T) {
 
 		var files []string
 		err := fs.WalkDir("/", func(path string, d vfs.DirEntry, err error) error {
-			fmt.Println(path)
 			if err != nil {
 				return err
 			}
