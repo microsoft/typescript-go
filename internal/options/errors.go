@@ -11,36 +11,36 @@ import (
 )
 
 func createDiagnosticForInvalidEnumType(opt *CommandLineOption, loc core.TextRange) *ast.Diagnostic {
-	namesOfType := slices.Collect(opt.TypeMap().Keys())
+	namesOfType := slices.Collect(opt.EnumMap().Keys())
 	stringNames := ""
 	if opt.DeprecatedKeys() != nil {
 		stringNames = formatEnumTypeKeys(core.Filter(namesOfType, func(k string) bool { return (opt.DeprecatedKeys())[k] }))
 	} else {
 		stringNames = formatEnumTypeKeys(namesOfType)
 	}
-	optName := fmt.Sprintf(`--%v`, opt.name)
+	optName := fmt.Sprintf(`--%s`, opt.Name)
 	return ast.NewDiagnostic(nil, loc, diagnostics.Argument_for_0_option_must_be_Colon_1, optName, stringNames)
 }
 
 func formatEnumTypeKeys(keys []string) string {
 	var output strings.Builder
 
-	fmt.Fprintf(&output, "Invalid custom type: '%v'", keys[0])
+	fmt.Fprintf(&output, "Invalid custom type: '%s'", keys[0])
 	for _, key := range keys[1:] {
-		fmt.Fprintf(&output, ", '%v'", key)
+		fmt.Fprintf(&output, ", '%s'", key)
 	}
 
 	return output.String()
 }
 
 func getCompilerOptionValueTypeString(option *CommandLineOption) string {
-	switch option.kind {
+	switch option.Kind {
 	case CommandLineOptionTypeListOrElement:
 		return fmt.Sprintf("%v or Array", getCompilerOptionValueTypeString(option.Elements()))
 	case CommandLineOptionTypeList:
 		return "Array"
 	default:
-		return string(option.kind)
+		return string(option.Kind)
 	}
 }
 
@@ -60,7 +60,7 @@ func (parser *CommandLineParser) createUnknownOptionError(
 		otherOption := alternateMode.getOptionsNameMap().Get(strings.ToLower(unknownOption))
 		if otherOption != nil {
 			// tscbuildoption
-			if otherOption.name == "build" {
+			if otherOption.Name == "build" {
 				return ast.NewDiagnostic(
 					sourceFile,
 					errorLoc,
