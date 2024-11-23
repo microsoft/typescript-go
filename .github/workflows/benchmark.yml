@@ -19,10 +19,11 @@ defaults:
 
 jobs:
   benchmark:
-    runs-on:
-      - 'self-hosted'
-      - '1ES.Pool=TypeScript-1ES-GitHub-Large'
-      - '1ES.ImageOverride=mariner-2.0'
+    runs-on: ubuntu-latest
+    # runs-on:
+    # - 'self-hosted'
+    # - '1ES.Pool=TypeScript-1ES-GitHub-Large'
+    # - '1ES.ImageOverride=mariner-2.0'
 
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
