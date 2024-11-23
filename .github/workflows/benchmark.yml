@@ -37,7 +37,7 @@ jobs:
       - run: npm ci
 
       - name: Run benchmark
-        run: go test -run='^$' -bench=. -benchmem -count=10 ./... > new.txt
+        run: go test -run='^$' -bench=. -benchmem -count=10 ./... | tee new.txt
 
       - name: Switch to parent commit
         run: git switch --detach HEAD^1
@@ -47,7 +47,7 @@ jobs:
       - run: git submodule update --init --recursive
 
       - name: Run benchmark
-        run: go test -run='^$' -bench=. -benchmem -count=10 ./... > old.txt
+        run: go test -run='^$' -bench=. -benchmem -count=10 ./... | tee old.txt
 
       - run: go install golang.org/x/perf/cmd/benchstat@latest
 
