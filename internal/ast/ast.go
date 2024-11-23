@@ -705,6 +705,12 @@ func (n *Node) AsAwaitExpression() *AwaitExpression {
 func (n *Node) AsYieldExpression() *YieldExpression {
 	return n.data.(*YieldExpression)
 }
+func (n *Node) AsFlowSwitchClauseData() *FlowSwitchClauseData {
+	return n.data.(*FlowSwitchClauseData)
+}
+func (n *Node) AsFlowReduceLabelData() *FlowReduceLabelData {
+	return n.data.(*FlowReduceLabelData)
+}
 
 // NodeData
 
