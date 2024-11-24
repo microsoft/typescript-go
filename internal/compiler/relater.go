@@ -4284,7 +4284,7 @@ func (c *Checker) isTypeDerivedFrom(source *Type, target *Type) bool {
 		})
 	case source.flags&TypeFlagsInstantiableNonPrimitive != 0:
 		constraint := c.getBaseConstraintOfType(source)
-		if constraint != nil {
+		if constraint == nil {
 			constraint = c.unknownType
 		}
 		return c.isTypeDerivedFrom(constraint, target)
