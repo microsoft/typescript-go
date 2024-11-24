@@ -93,6 +93,15 @@ type CachedTypeKey struct {
 	typeId TypeId
 }
 
+// NarrowedTypeKey
+
+type NarrowedTypeKey struct {
+	t            *Type
+	candidate    *Type
+	assumeTrue   bool
+	checkDerived bool
+}
+
 // UnionOfUnionKey
 
 type UnionOfUnionKey struct {
@@ -292,6 +301,7 @@ type Checker struct {
 	totalInstantiationCount            uint32
 	instantiationCount                 uint32
 	instantiationDepth                 uint32
+	inlineLevel                        int
 	currentNode                        *ast.Node
 	languageVersion                    core.ScriptTarget
 	moduleKind                         core.ModuleKind
@@ -317,6 +327,7 @@ type Checker struct {
 	uniqueESSymbolTypes                map[*ast.Symbol]*Type
 	cachedTypes                        map[CachedTypeKey]*Type
 	cachedSignatures                   map[CachedSignatureKey]*Signature
+	narrowedTypes                      map[NarrowedTypeKey]*Type
 	markerTypes                        core.Set[*Type]
 	identifierSymbols                  map[*ast.Node]*ast.Symbol
 	undefinedSymbol                    *ast.Symbol
@@ -379,6 +390,7 @@ type Checker struct {
 	neverType                          *Type
 	silentNeverType                    *Type
 	implicitNeverType                  *Type
+	unreachableNeverType               *Type
 	nonPrimitiveType                   *Type
 	stringOrNumberType                 *Type
 	stringNumberSymbolType             *Type
@@ -437,6 +449,9 @@ type Checker struct {
 	lastGetCombinedNodeFlagsResult     ast.NodeFlags
 	lastGetCombinedModifierFlagsNode   *ast.Node
 	lastGetCombinedModifierFlagsResult ast.ModifierFlags
+	sharedFlows                        []SharedFlow
+	flowAnalysisDisabled               bool
+	flowInvocationCount                int
 	flowNodePostSuper                  map[*ast.FlowNode]bool
 	awaitedTypeStack                   []*Type
 	subtypeRelation                    *Relation
@@ -488,6 +503,7 @@ func NewChecker(program *Program) *Checker {
 	c.uniqueESSymbolTypes = make(map[*ast.Symbol]*Type)
 	c.cachedTypes = make(map[CachedTypeKey]*Type)
 	c.cachedSignatures = make(map[CachedSignatureKey]*Signature)
+	c.narrowedTypes = make(map[NarrowedTypeKey]*Type)
 	c.identifierSymbols = make(map[*ast.Node]*ast.Symbol)
 	c.undefinedSymbol = c.newSymbol(ast.SymbolFlagsProperty, "undefined")
 	c.argumentsSymbol = c.newSymbol(ast.SymbolFlagsProperty, "arguments")
@@ -538,6 +554,7 @@ func NewChecker(program *Program) *Checker {
 	c.neverType = c.newIntrinsicType(TypeFlagsNever, "never")
 	c.silentNeverType = c.newIntrinsicTypeEx(TypeFlagsNever, "never", ObjectFlagsNonInferrableType)
 	c.implicitNeverType = c.newIntrinsicType(TypeFlagsNever, "never")
+	c.unreachableNeverType = c.newIntrinsicType(TypeFlagsNever, "never")
 	c.nonPrimitiveType = c.newIntrinsicType(TypeFlagsNonPrimitive, "object")
 	c.stringOrNumberType = c.getUnionType([]*Type{c.stringType, c.numberType})
 	c.stringNumberSymbolType = c.getUnionType([]*Type{c.stringType, c.numberType, c.esSymbolType})
@@ -2443,7 +2460,7 @@ func (c *Checker) checkIdentifier(node *ast.Node) *Type {
 		return t
 	}
 	// !!!
-	flowType := t
+	flowType := c.getFlowTypeOfReference(node, t)
 	if assignmentKind != AssignmentKindNone {
 		// Identifier is target of a compound assignment
 		return c.getBaseTypeOfLiteralType(flowType)
@@ -6617,6 +6634,10 @@ func (c *Checker) getBaseConstructorTypeOfClass(t *Type) *Type {
 		data.resolvedBaseConstructorType = baseConstructorType
 	}
 	return data.resolvedBaseConstructorType
+}
+
+func (c *Checker) isFunctionType(t *Type) bool {
+	return t.flags&TypeFlagsObject != 0 && len(c.getSignaturesOfType(t, SignatureKindCall)) > 0
 }
 
 func (c *Checker) isConstructorType(t *Type) bool {
@@ -11706,6 +11727,16 @@ func isUnitType(t *Type) bool {
 	return t.flags&TypeFlagsUnit != 0
 }
 
+func (c *Checker) isUnitLikeType(t *Type) bool {
+	// Intersections that reduce to 'never' (e.g. 'T & null' where 'T extends {}') are not unit types.
+	t = c.getBaseConstraintOrType(t)
+	// Scan intersections such that tagged literal types are considered unit types.
+	if t.flags&TypeFlagsIntersection != 0 {
+		return core.Some(t.AsIntersectionType().types, isUnitType)
+	}
+	return isUnitType(t)
+}
+
 func (c *Checker) getBaseTypeOfLiteralType(t *Type) *Type {
 	switch {
 	case t.flags&TypeFlagsEnumLike != 0:
@@ -13567,14 +13598,6 @@ func (c *Checker) markPropertyAsReferenced(prop *ast.Symbol, nodeForCheckWriteOn
 	// !!!
 }
 
-func (c *Checker) getFlowTypeOfReference(reference *ast.Node, declaredType *Type) *Type {
-	return c.getFlowTypeOfReferenceEx(reference, declaredType, declaredType, nil /*flowContainer*/, getFlowNodeOfNode(reference))
-}
-
-func (c *Checker) getFlowTypeOfReferenceEx(reference *ast.Node, declaredType *Type, initialType *Type, flowContainer *ast.Node, flowNode *ast.FlowNode) *Type {
-	return declaredType // !!!
-}
-
 func hasRestParameter(signature *ast.Node) bool {
 	last := core.LastOrNil(signature.Parameters())
 	return last != nil && isRestParameter(last)
@@ -14573,4 +14596,30 @@ func (c *Checker) getAwaitedTypeOfPromiseEx(t *Type, errorNode *ast.Node, diagno
 		return c.getAwaitedTypeEx(promisedType, errorNode, diagnosticMessage, args...)
 	}
 	return nil
+}
+
+// Check if a parameter or catch variable (or their bindings elements) is assigned anywhere
+func (c *Checker) isSomeSymbolAssigned(rootDeclaration *ast.Node) bool {
+	return c.isSomeSymbolAssignedWorker(rootDeclaration.Name())
+}
+
+func (c *Checker) isSomeSymbolAssignedWorker(node *ast.Node) bool {
+	if node.Kind == ast.KindIdentifier {
+		return c.isSymbolAssigned(c.getSymbolOfDeclaration(node.Parent))
+	}
+	return core.Some(node.AsBindingPattern().Elements.Nodes, func(e *ast.Node) bool {
+		return e.Kind != ast.KindOmittedExpression && c.isSomeSymbolAssignedWorker(e.Name())
+	})
+}
+
+// Check if a parameter, catch variable, or mutable local variable is assigned anywhere
+func (c *Checker) isSymbolAssigned(symbol *ast.Symbol) bool {
+	return true // !!!
+}
+
+func (c *Checker) getTargetType(t *Type) *Type {
+	if t.objectFlags&ObjectFlagsReference != 0 {
+		return t.AsTypeReference().target
+	}
+	return t
 }

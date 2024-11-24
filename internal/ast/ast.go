@@ -711,6 +711,9 @@ func (n *Node) AsFlowSwitchClauseData() *FlowSwitchClauseData {
 func (n *Node) AsFlowReduceLabelData() *FlowReduceLabelData {
 	return n.data.(*FlowReduceLabelData)
 }
+func (n *Node) AsJsxExpression() *JsxExpression {
+	return n.data.(*JsxExpression)
+}
 
 // NodeData
 
@@ -1414,6 +1417,10 @@ func (f *NodeFactory) NewCatchClause(variableDeclaration *VariableDeclarationNod
 
 func (node *CatchClause) ForEachChild(v Visitor) bool {
 	return visit(v, node.VariableDeclaration) || visit(v, node.Block)
+}
+
+func IsCatchClause(node *Node) bool {
+	return node.Kind == KindCatchClause
 }
 
 // DebuggerStatement

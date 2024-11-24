@@ -59,6 +59,10 @@ func NewFlowSwitchClauseData(switchStatement *SwitchStatement, clauseStart int, 
 	return node.AsNode()
 }
 
+func (node *FlowSwitchClauseData) IsEmpty() bool {
+	return node.ClauseStart == node.ClauseEnd
+}
+
 // FlowReduceLabelData (synthetic AST node for FlowFlagsReduceLabel)
 
 type FlowReduceLabelData struct {

@@ -1169,14 +1169,14 @@ func isPrologueDirective(node *ast.Node) bool {
 	return node.Kind == ast.KindExpressionStatement && node.AsExpressionStatement().Expression.Kind == ast.KindStringLiteral
 }
 
-func getStatementsOfBlock(block *ast.Node) []*ast.Statement {
+func getStatementsOfBlock(block *ast.Node) *ast.NodeList {
 	switch block.Kind {
 	case ast.KindBlock:
-		return block.AsBlock().Statements.Nodes
+		return block.AsBlock().Statements
 	case ast.KindModuleBlock:
-		return block.AsModuleBlock().Statements.Nodes
+		return block.AsModuleBlock().Statements
 	case ast.KindSourceFile:
-		return block.AsSourceFile().Statements.Nodes
+		return block.AsSourceFile().Statements
 	}
 	panic("Unhandled case in getStatementsOfBlock")
 }
@@ -1430,14 +1430,6 @@ func getBodyOfNode(node *ast.Node) *ast.Node {
 	bodyData := node.BodyData()
 	if bodyData != nil {
 		return bodyData.Body
-	}
-	return nil
-}
-
-func getFlowNodeOfNode(node *ast.Node) *ast.FlowNode {
-	flowNodeData := node.FlowNodeData()
-	if flowNodeData != nil {
-		return flowNodeData.FlowNode
 	}
 	return nil
 }
@@ -2529,6 +2521,14 @@ func getTypeArgumentListFromNode(node *ast.Node) *ast.NodeList {
 	panic("Unhandled case in getTypeArgumentListFromNode")
 }
 
+func hasOnlyExpressionInitializer(node *ast.Node) bool {
+	switch node.Kind {
+	case ast.KindVariableDeclaration, ast.KindParameter, ast.KindBindingElement, ast.KindPropertyDeclaration, ast.KindPropertyAssignment, ast.KindEnumMember:
+		return true
+	}
+	return false
+}
+
 func getInitializerFromNode(node *ast.Node) *ast.Node {
 	switch node.Kind {
 	case ast.KindVariableDeclaration:
@@ -2551,6 +2551,20 @@ func getInitializerFromNode(node *ast.Node) *ast.Node {
 		return node.AsJsxAttribute().Initializer
 	}
 	return nil
+}
+
+func hasDotDotDotToken(node *ast.Node) bool {
+	switch node.Kind {
+	case ast.KindParameter:
+		return node.AsParameterDeclaration().DotDotDotToken != nil
+	case ast.KindBindingElement:
+		return node.AsBindingElement().DotDotDotToken != nil
+	case ast.KindNamedTupleMember:
+		return node.AsNamedTupleMember().DotDotDotToken != nil
+	case ast.KindJsxExpression:
+		return node.AsJsxExpression().DotDotDotToken != nil
+	}
+	return false
 }
 
 /**
@@ -3391,6 +3405,20 @@ func (c *Checker) isConstantVariable(symbol *ast.Symbol) bool {
 	return symbol.Flags&ast.SymbolFlagsVariable != 0 && (c.getDeclarationNodeFlagsFromSymbol(symbol)&ast.NodeFlagsConstant) != 0
 }
 
+func (c *Checker) isParameterOrMutableLocalVariable(symbol *ast.Symbol) bool {
+	// Return true if symbol is a parameter, a catch clause variable, or a mutable local variable
+	if symbol.ValueDeclaration != nil {
+		declaration := getRootDeclaration(symbol.ValueDeclaration)
+		return declaration != nil && (ast.IsParameter(declaration) || ast.IsVariableDeclaration(declaration) && (ast.IsCatchClause(declaration.Parent) || c.isMutableLocalVariableDeclaration(declaration)))
+	}
+	return false
+}
+
+func (c *Checker) isMutableLocalVariableDeclaration(declaration *ast.Node) bool {
+	// Return true if symbol is a non-exported and non-global `let` variable
+	return declaration.Parent.Flags&ast.NodeFlagsLet != 0 && !(getCombinedModifierFlags(declaration)&ast.ModifierFlagsExport != 0 || declaration.Parent.Parent.Kind == ast.KindVariableStatement && isGlobalSourceFile(declaration.Parent.Parent.Parent))
+}
+
 func isInAmbientOrTypeNode(node *ast.Node) bool {
 	return node.Flags&ast.NodeFlagsAmbient != 0 || ast.FindAncestor(node, func(n *ast.Node) bool {
 		return ast.IsInterfaceDeclaration(n) || ast.IsTypeAliasDeclaration(n) || ast.IsTypeLiteralNode(n)
@@ -3427,4 +3455,13 @@ func isLiteralExpressionOfObject(node *ast.Node) bool {
 
 func canHaveFlowNode(node *ast.Node) bool {
 	return node.FlowNodeData() != nil
+}
+
+func (c *Checker) isVarConstLike(node *ast.Node) bool {
+	blockScopeKind := c.getCombinedNodeFlagsCached(node) & ast.NodeFlagsBlockScoped
+	return blockScopeKind == ast.NodeFlagsConst || blockScopeKind == ast.NodeFlagsUsing || blockScopeKind == ast.NodeFlagsAwaitUsing
+}
+
+func isNonNullAccess(node *ast.Node) bool {
+	return ast.IsAccessExpression(node) && ast.IsNonNullExpression(node.Expression())
 }

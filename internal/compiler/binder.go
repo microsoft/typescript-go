@@ -941,7 +941,7 @@ func getModuleInstanceStateForAliasTarget(node *ast.Node, visited map[ast.NodeId
 		if ast.IsBlock(p) || ast.IsModuleBlock(p) || ast.IsSourceFile(p) {
 			statements := getStatementsOfBlock(p)
 			found := ModuleInstanceStateUnknown
-			for _, statement := range statements {
+			for _, statement := range statements.Nodes {
 				if nodeHasName(statement, name) {
 					if statement.Parent == nil {
 						setParent(statement, p)
