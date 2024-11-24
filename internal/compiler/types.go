@@ -4,6 +4,7 @@ import (
 	"slices"
 
 	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 )
 
@@ -280,6 +281,13 @@ type TypeNodeLinks struct {
 
 type EnumMemberLinks struct {
 	value EvaluatorResult
+}
+
+// SourceFile links
+
+type SourceFileLinks struct {
+	typeChecked   bool
+	deferredNodes collections.OrderedSet[*ast.Node]
 }
 
 // Signature specific links
@@ -1102,29 +1110,4 @@ var LanguageFeatureMinimumTarget = LanguageFeatureMinimumTargetMap{
 	UsingAndAwaitUsing:                core.ScriptTargetESNext,
 	ClassAndClassElementDecorators:    core.ScriptTargetESNext,
 	RegularExpressionFlagsUnicodeSets: core.ScriptTargetESNext,
-}
-
-type ProjectReference struct {
-	path         string
-	originalPath string
-	circular     bool
-}
-
-type FileIncludeKind int
-
-const (
-	RootFile = iota
-	SourceFromProjectReference
-	OutputFromProjectReference
-	Import
-	ReferenceFile
-	TypeReferenceDirective
-	LibFile
-	LibReferenceDirective
-	AutomaticTypeDirectiveFile
-)
-
-type FileIncludeReason struct {
-	Kind  FileIncludeKind
-	Index int
 }

@@ -3,7 +3,6 @@ package compiler
 import (
 	"maps"
 	"math"
-	"path/filepath"
 	"slices"
 	"strings"
 	"sync/atomic"
@@ -359,6 +358,10 @@ func isAssignmentOperator(token ast.Kind) bool {
 	return token >= ast.KindFirstAssignment && token <= ast.KindLastAssignment
 }
 
+func isCompoundAssignment(token ast.Kind) bool {
+	return token >= ast.KindFirstCompoundAssignment && token <= ast.KindLastCompoundAssignment
+}
+
 func isStringLiteralLike(node *ast.Node) bool {
 	return node.Kind == ast.KindStringLiteral || node.Kind == ast.KindNoSubstitutionTemplateLiteral
 }
@@ -577,8 +580,16 @@ func hasStaticModifier(node *ast.Node) bool {
 	return hasSyntacticModifier(node, ast.ModifierFlagsStatic)
 }
 
+func hasDecorators(node *ast.Node) bool {
+	return hasSyntacticModifier(node, ast.ModifierFlagsDecorator)
+}
+
 func getEffectiveModifierFlags(node *ast.Node) ast.ModifierFlags {
 	return node.ModifierFlags() // !!! Handle JSDoc
+}
+
+func getSelectedEffectiveModifierFlags(node *ast.Node, flags ast.ModifierFlags) ast.ModifierFlags {
+	return getEffectiveModifierFlags(node) & flags
 }
 
 func hasEffectiveModifier(node *ast.Node, flags ast.ModifierFlags) bool {
@@ -769,6 +780,10 @@ func setParentInChildren(node *ast.Node) {
 
 func isParameterPropertyDeclaration(node *ast.Node, parent *ast.Node) bool {
 	return ast.IsParameter(node) && hasSyntacticModifier(node, ast.ModifierFlagsParameterPropertyModifier) && parent.Kind == ast.KindConstructor
+}
+
+func isBindingElementOfBareOrAccessedRequire(node *ast.Node) bool {
+	return ast.IsBindingElement(node) && isVariableDeclarationInitializedToBareOrAccessedRequire(node.Parent.Parent)
 }
 
 /**
@@ -1341,7 +1356,7 @@ func compareRelatedInfo(r1, r2 []*ast.Diagnostic) int {
 
 func getDiagnosticPath(d *ast.Diagnostic) string {
 	if d.File() != nil {
-		return d.File().Path()
+		return d.File().FileName()
 	}
 	return ""
 }
@@ -2617,11 +2632,14 @@ func compareSymbols(s1, s2 *ast.Symbol) int {
 				f1 := ast.GetSourceFileOfNode(s1.ValueDeclaration)
 				f2 := ast.GetSourceFileOfNode(s2.ValueDeclaration)
 				if f1 != f2 {
+					f1Path := string(f1.Path())
+					f2Path := string(f2.Path())
+
 					// In different files, first compare base filename
-					r := strings.Compare(filepath.Base(f1.Path()), filepath.Base(f2.Path()))
+					r := strings.Compare(tspath.GetDirectoryPath(f1Path), tspath.GetDirectoryPath(f2Path))
 					if r == 0 {
 						// Same base filename, compare the full paths (no two files should have the same full path)
-						r = strings.Compare(f1.Path(), f2.Path())
+						r = strings.Compare(f1Path, f2Path)
 					}
 					return r
 				}
@@ -3332,4 +3350,42 @@ func isInfinityOrNaNString(name string) bool {
 
 func (c *Checker) isConstantVariable(symbol *ast.Symbol) bool {
 	return symbol.Flags&ast.SymbolFlagsVariable != 0 && (c.getDeclarationNodeFlagsFromSymbol(symbol)&ast.NodeFlagsConstant) != 0
+}
+
+func isInAmbientOrTypeNode(node *ast.Node) bool {
+	return node.Flags&ast.NodeFlagsAmbient != 0 || ast.FindAncestor(node, func(n *ast.Node) bool {
+		return ast.IsInterfaceDeclaration(n) || ast.IsTypeAliasDeclaration(n) || ast.IsTypeLiteralNode(n)
+	}) != nil
+}
+
+func isVariableLike(node *ast.Node) bool {
+	switch node.Kind {
+	case ast.KindBindingElement, ast.KindEnumMember, ast.KindParameter, ast.KindPropertyAssignment, ast.KindPropertyDeclaration,
+		ast.KindPropertySignature, ast.KindShorthandPropertyAssignment, ast.KindVariableDeclaration:
+		return true
+	}
+	return false
+}
+
+func getAncestor(node *ast.Node, kind ast.Kind) *ast.Node {
+	for node != nil {
+		if node.Kind == kind {
+			return node
+		}
+		node = node.Parent
+	}
+	return nil
+}
+
+func isLiteralExpressionOfObject(node *ast.Node) bool {
+	switch node.Kind {
+	case ast.KindObjectLiteralExpression, ast.KindArrayLiteralExpression, ast.KindRegularExpressionLiteral,
+		ast.KindFunctionExpression, ast.KindClassExpression:
+		return true
+	}
+	return false
+}
+
+func canHaveFlowNode(node *ast.Node) bool {
+	return node.FlowNodeData() != nil
 }

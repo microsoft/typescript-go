@@ -115,6 +115,10 @@ func (r *Relation) size() int {
 	return len(r.results)
 }
 
+func (c *Checker) isTypeIdenticalTo(source *Type, target *Type) bool {
+	return c.isTypeRelatedTo(source, target, c.identityRelation)
+}
+
 func (c *Checker) compareTypesIdentical(source *Type, target *Type) Ternary {
 	if c.isTypeRelatedTo(source, target, c.identityRelation) {
 		return TernaryTrue
@@ -132,6 +136,14 @@ func (c *Checker) isTypeSubtypeOf(source *Type, target *Type) bool {
 
 func (c *Checker) isTypeStrictSubtypeOf(source *Type, target *Type) bool {
 	return c.isTypeRelatedTo(source, target, c.strictSubtypeRelation)
+}
+
+func (c *Checker) isTypeComparableTo(source *Type, target *Type) bool {
+	return c.isTypeRelatedTo(source, target, c.comparableRelation)
+}
+
+func (c *Checker) areTypesComparable(type1 *Type, type2 *Type) bool {
+	return c.isTypeComparableTo(type1, type2) || c.isTypeComparableTo(type2, type1)
 }
 
 func (c *Checker) isTypeRelatedTo(source *Type, target *Type, relation *Relation) bool {
@@ -249,7 +261,11 @@ func (c *Checker) isEnumTypeRelatedTo(source *ast.Symbol, target *ast.Symbol, er
 	return source == target // !!!
 }
 
-func (c *Checker) checkTypeAssignableTo(source *Type, target *Type, errorNode *ast.Node, headMessage *diagnostics.Message, containingMessageChain func() *ast.MessageChain, errorOutputObject *ErrorOutputContainer) bool {
+func (c *Checker) checkTypeAssignableTo(source *Type, target *Type, errorNode *ast.Node, headMessage *diagnostics.Message) bool {
+	return c.checkTypeRelatedToEx(source, target, c.assignableRelation, errorNode, headMessage, nil, nil)
+}
+
+func (c *Checker) checkTypeAssignableToEx(source *Type, target *Type, errorNode *ast.Node, headMessage *diagnostics.Message, containingMessageChain func() *ast.MessageChain, errorOutputObject *ErrorOutputContainer) bool {
 	return c.checkTypeRelatedToEx(source, target, c.assignableRelation, errorNode, headMessage, containingMessageChain, errorOutputObject)
 }
 
