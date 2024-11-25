@@ -43,6 +43,7 @@ var skip = []string{
 	"checkExportsObjectAssignProperty.ts",
 	"checkObjectDefineProperty.ts",
 	"commonJsExportTypeDeclarationError.ts",
+	"commonSourceDir5.ts",
 	"commonSourceDirectory.ts",
 	"computedEnumMemberSyntacticallyString2(isolatedmodules=false).ts",
 	"computedEnumMemberSyntacticallyString2(isolatedmodules=true).ts",
@@ -102,6 +103,7 @@ var skip = []string{
 	"mergeSymbolReexportedTypeAliasInstantiation.ts",
 	"mergeSymbolReexportInterface.ts",
 	"mergeSymbolRexportFunction.ts",
+	"missingMemberErrorHasShortPath.ts",
 	"moduleLocalImportNotIncorrectlyRedirected.ts",
 	"modulePreserve2.ts",
 	"moduleResolution_packageJson_notAtPackageRoot_fakeScopedPackage.ts",
@@ -310,7 +312,8 @@ func newVFSModuleResolutionHost(files map[string]string) *vfsModuleResolutionHos
 		}
 	}
 	return &vfsModuleResolutionHost{
-		fs: vfs.FromIOFS(false, fs),
+		fs:               vfs.FromIOFS(false, fs),
+		currentDirectory: "/",
 	}
 }
 

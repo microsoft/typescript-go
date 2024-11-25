@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/compiler/stringutil"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/scanner"
 )
@@ -185,7 +186,7 @@ func (p *Printer) printStringLiteral(s string) {
 }
 
 func (p *Printer) printNumberLiteral(f float64) {
-	p.print(core.NumberToString(f))
+	p.print(stringutil.FromNumber(f))
 }
 
 func (p *Printer) printBooleanLiteral(b bool) {
