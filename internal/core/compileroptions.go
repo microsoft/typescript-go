@@ -13,6 +13,8 @@ type CompilerOptions struct {
 	ESModuleInterop                    Tristate             `json:"esModuleInterop"`
 	ExactOptionalPropertyTypes         Tristate             `json:"exactOptionalPropertyTypes"`
 	IsolatedModules                    Tristate             `json:"isolatedModules"`
+	Jsx                                JsxEmit              `json:"jsx"`
+	Lib                                []string             `json:"lib"`
 	ModuleKind                         ModuleKind           `json:"module"`
 	ModuleResolution                   ModuleResolutionKind `json:"moduleResolution"`
 	ModuleSuffixes                     []string             `json:"moduleSuffixes"`
@@ -191,8 +193,8 @@ func (m ModuleResolutionKind) String() string {
 type NewLineKind int32
 
 const (
-	NewLineKindCRLF = 0
-	NewLineKindLF   = 1
+	NewLineKindCRLF NewLineKind = 0
+	NewLineKindLF   NewLineKind = 1
 )
 
 type ScriptTarget int32
