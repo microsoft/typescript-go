@@ -66,6 +66,7 @@ func TestIOFS(t *testing.T) {
 
 		assert.Assert(t, fs.DirectoryExists("/"))
 		assert.Assert(t, fs.DirectoryExists("/dir1"))
+		assert.Assert(t, fs.DirectoryExists("/dir1/"))
 		assert.Assert(t, !fs.DirectoryExists("/bar"))
 	})
 

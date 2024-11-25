@@ -163,7 +163,9 @@ func rootLength(p string) int {
 
 func splitRoot(p string) (rootName, rest string) {
 	l := rootLength(p)
-	return p[:l], p[l:]
+	rootName, rest = p[:l], p[l:]
+	rest = tspath.RemoveTrailingDirectorySeparator(rest)
+	return rootName, rest
 }
 
 func (v *vfs) rootAndPath(path string) (fsys fs.FS, rootName string, rest string) {
