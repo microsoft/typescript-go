@@ -276,7 +276,7 @@ func (r *resolutionState) resolveTypeReferenceDirective(typeRoots []string, from
 		}
 		for _, typeRoot := range typeRoots {
 			candidate := r.getCandidateFromTypeRoot(typeRoot)
-			directoryExists := r.resolver.host.DirectoryExists(candidate)
+			directoryExists := r.resolver.host.FS().DirectoryExists(candidate)
 			if !directoryExists && r.resolver.traceEnabled() {
 				r.resolver.host.Trace(diagnostics.Directory_0_does_not_exist_skipping_all_lookups_in_it.Format(typeRoot))
 			}
