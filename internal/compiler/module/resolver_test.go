@@ -16,6 +16,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/repo"
 	"github.com/microsoft/typescript-go/internal/testutil/baseline"
 	"github.com/microsoft/typescript-go/internal/tspath"
+	"github.com/microsoft/typescript-go/internal/vfs"
 	"gotest.tools/v3/assert"
 )
 
@@ -285,7 +286,7 @@ var skip = []string{
 }
 
 type vfsModuleResolutionHost struct {
-	fs               fstest.MapFS
+	fs               vfs.FS
 	currentDirectory string
 	traces           []string
 }
@@ -309,62 +310,17 @@ func newVFSModuleResolutionHost(files map[string]string) *vfsModuleResolutionHos
 		}
 	}
 	return &vfsModuleResolutionHost{
-		fs:               fs,
-		currentDirectory: "/",
+		fs: vfs.FromIOFS(false, fs),
 	}
 }
 
-// DirectoryExists implements ModuleResolutionHost.
-func (v *vfsModuleResolutionHost) DirectoryExists(directoryName string) bool {
-	info, err := v.fs.Stat(fixRoot(directoryName))
-	if err != nil {
-		return false
-	}
-	return info.IsDir()
-}
-
-// FileExists implements ModuleResolutionHost.
-func (v *vfsModuleResolutionHost) FileExists(fileName string) bool {
-	info, err := v.fs.Stat(fixRoot(fileName))
-	if err != nil {
-		return false
-	}
-	return !info.IsDir()
+func (v *vfsModuleResolutionHost) FS() vfs.FS {
+	return v.fs
 }
 
 // GetCurrentDirectory implements ModuleResolutionHost.
 func (v *vfsModuleResolutionHost) GetCurrentDirectory() string {
 	return v.currentDirectory
-}
-
-// GetDirectories implements ModuleResolutionHost.
-func (v *vfsModuleResolutionHost) GetDirectories(path string) []string {
-	infos, err := v.fs.ReadDir(fixRoot(path))
-	if err != nil {
-		panic(err)
-	}
-	var dirs []string
-	for _, info := range infos {
-		if info.IsDir() {
-			dirs = append(dirs, info.Name())
-		}
-	}
-	return dirs
-}
-
-// ReadFile implements ModuleResolutionHost.
-func (v *vfsModuleResolutionHost) ReadFile(fileName string) string {
-	bytes, err := v.fs.ReadFile(fixRoot(fileName))
-	if err != nil {
-		panic(err)
-	}
-	return string(bytes)
-}
-
-// Realpath implements ModuleResolutionHost.
-func (v *vfsModuleResolutionHost) Realpath(path string) string {
-	// Link support in MapFS is in-progress: https://go-review.googlesource.com/c/go/+/385534
-	return path
 }
 
 // Trace implements ModuleResolutionHost.

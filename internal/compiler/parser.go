@@ -2233,17 +2233,13 @@ func (p *Parser) parsePostfixTypeOrHigher() *ast.Node {
 	typeNode := p.parseNonArrayType()
 	for !p.hasPrecedingLineBreak() {
 		switch p.token {
-		case ast.KindExclamationToken:
-			p.nextToken()
-			typeNode = p.factory.NewJSDocNonNullableType(typeNode)
-			p.finishNode(typeNode, pos)
 		case ast.KindQuestionToken:
-			// If next token is start of a type we have a conditional type
+			// If next token is start of a type we are in the middle of a conditional type
 			if p.lookAhead(p.nextIsStartOfType) {
 				return typeNode
 			}
 			p.nextToken()
-			typeNode = p.factory.NewJSDocNullableType(typeNode)
+			typeNode = p.factory.NewOptionalTypeNode(typeNode)
 			p.finishNode(typeNode, pos)
 		case ast.KindOpenBracketToken:
 			p.parseExpected(ast.KindOpenBracketToken)
@@ -3155,17 +3151,7 @@ func (p *Parser) parseTupleElementType() *ast.TypeNode {
 		p.finishNode(result, pos)
 		return result
 	}
-	typeNode := p.parseType()
-	if typeNode.Kind == ast.KindJSDocNullableType {
-		nullableType := typeNode.AsJSDocNullableType()
-		if typeNode.Loc.Pos() == nullableType.TypeNode.Loc.Pos() {
-			result := p.factory.NewOptionalTypeNode(nullableType.TypeNode)
-			result.Loc = typeNode.Loc
-			result.Flags = typeNode.Flags
-			return result
-		}
-	}
-	return typeNode
+	return p.parseType()
 }
 
 func (p *Parser) parseParenthesizedType() *ast.Node {
@@ -3911,7 +3897,7 @@ func (p *Parser) parseParenthesizedArrowFunctionExpression(allowAmbiguity bool, 
 	// So we need just a bit of lookahead to ensure that it can only be a signature.
 	unwrappedType := returnType
 	for unwrappedType != nil && unwrappedType.Kind == ast.KindParenthesizedType {
-		unwrappedType = unwrappedType.AsParenthesizedTypeNode().TypeNode // Skip parens if need be
+		unwrappedType = unwrappedType.AsParenthesizedTypeNode().Type // Skip parens if need be
 	}
 	hasJSDocFunctionType := unwrappedType != nil && unwrappedType.Kind == ast.KindJSDocFunctionType
 	if !allowAmbiguity && p.token != ast.KindEqualsGreaterThanToken && (hasJSDocFunctionType || p.token != ast.KindOpenBraceToken) {
@@ -3977,9 +3963,9 @@ func typeHasArrowFunctionBlockingParseError(node *ast.TypeNode) bool {
 	case ast.KindTypeReference:
 		return ast.NodeIsMissing(node.AsTypeReference().TypeName)
 	case ast.KindFunctionType, ast.KindConstructorType:
-		return len(node.Parameters()) == 0 || typeHasArrowFunctionBlockingParseError(node.ReturnType())
+		return len(node.Parameters()) == 0 || typeHasArrowFunctionBlockingParseError(node.Type())
 	case ast.KindParenthesizedType:
-		return typeHasArrowFunctionBlockingParseError(node.AsParenthesizedTypeNode().TypeNode)
+		return typeHasArrowFunctionBlockingParseError(node.AsParenthesizedTypeNode().Type)
 	}
 	return false
 }
