@@ -84,6 +84,7 @@ const (
 	CachedTypeKindEquivalentBaseType
 	CachedTypeKindApparentType
 	CachedTypeKindAwaitedType
+	CachedTypeKindEvolvingArrayType
 )
 
 // CachedTypeKey
@@ -123,6 +124,13 @@ type CachedSignatureKey struct {
 type StringMappingKey struct {
 	s *ast.Symbol
 	t *Type
+}
+
+// AssignmentReducedKey
+
+type AssignmentReducedKey struct {
+	id1 TypeId
+	id2 TypeId
 }
 
 // InferenceContext
@@ -328,6 +336,7 @@ type Checker struct {
 	cachedTypes                        map[CachedTypeKey]*Type
 	cachedSignatures                   map[CachedSignatureKey]*Signature
 	narrowedTypes                      map[NarrowedTypeKey]*Type
+	assignmentReducedTypes             map[AssignmentReducedKey]*Type
 	markerTypes                        core.Set[*Type]
 	identifierSymbols                  map[*ast.Node]*ast.Symbol
 	undefinedSymbol                    *ast.Symbol
@@ -504,6 +513,7 @@ func NewChecker(program *Program) *Checker {
 	c.cachedTypes = make(map[CachedTypeKey]*Type)
 	c.cachedSignatures = make(map[CachedSignatureKey]*Signature)
 	c.narrowedTypes = make(map[NarrowedTypeKey]*Type)
+	c.assignmentReducedTypes = make(map[AssignmentReducedKey]*Type)
 	c.identifierSymbols = make(map[*ast.Node]*ast.Symbol)
 	c.undefinedSymbol = c.newSymbol(ast.SymbolFlagsProperty, "undefined")
 	c.argumentsSymbol = c.newSymbol(ast.SymbolFlagsProperty, "arguments")
@@ -11460,6 +11470,8 @@ func (c *Checker) newObjectType(objectFlags ObjectFlags, symbol *ast.Symbol) *Ty
 		data = &MappedType{}
 	case objectFlags&ObjectFlagsReverseMapped != 0:
 		data = &ReverseMappedType{}
+	case objectFlags&ObjectFlagsEvolvingArray != 0:
+		data = &EvolvingArrayType{}
 	case objectFlags&ObjectFlagsInstantiationExpressionType != 0:
 		data = &InstantiationExpressionType{}
 	case objectFlags&ObjectFlagsSingleSignatureType != 0:
@@ -14622,4 +14634,84 @@ func (c *Checker) getTargetType(t *Type) *Type {
 		return t.AsTypeReference().target
 	}
 	return t
+}
+
+func (c *Checker) getNarrowableTypeForReference(t *Type, reference *ast.Node, checkMode CheckMode) *Type {
+	if c.isNoInferType(t) {
+		t = t.AsSubstitutionType().baseType
+	}
+	// When the type of a reference is or contains an instantiable type with a union type constraint, and
+	// when the reference is in a constraint position (where it is known we'll obtain the apparent type) or
+	// has a contextual type containing no top-level instantiables (meaning constraints will determine
+	// assignability), we substitute constraints for all instantiables in the type of the reference to give
+	// control flow analysis an opportunity to narrow it further. For example, for a reference of a type
+	// parameter type 'T extends string | undefined' with a contextual type 'string', we substitute
+	// 'string | undefined' to give control flow analysis the opportunity to narrow to type 'string'.
+	substituteConstraints := checkMode&CheckModeInferential == 0 && someType(t, c.isGenericTypeWithUnionConstraint) && (c.isConstraintPosition(t, reference) || c.hasContextualTypeWithNoGenericTypes(reference, checkMode))
+	if substituteConstraints {
+		return c.mapType(t, c.getBaseConstraintOrType)
+	}
+	return t
+}
+
+func (c *Checker) isConstraintPosition(t *Type, node *ast.Node) bool {
+	parent := node.Parent
+	// In an element access obj[x], we consider obj to be in a constraint position, except when obj is of
+	// a generic type without a nullable constraint and x is a generic type. This is because when both obj
+	// and x are of generic types T and K, we want the resulting type to be T[K].
+	return ast.IsPropertyAccessExpression(parent) || ast.IsQualifiedName(parent) ||
+		(ast.IsCallExpression(parent) || ast.IsNewExpression(parent)) && parent.Expression() == node ||
+		ast.IsElementAccessExpression(parent) && parent.Expression() == node && !(someType(t, c.isGenericTypeWithoutNullableConstraint) && c.isGenericIndexType(c.getTypeOfExpression(parent.AsElementAccessExpression().ArgumentExpression)))
+}
+
+func (c *Checker) isGenericTypeWithUnionConstraint(t *Type) bool {
+	if t.flags&TypeFlagsIntersection != 0 {
+		return core.Some(t.AsIntersectionType().types, c.isGenericTypeWithUnionConstraint)
+	}
+	return t.flags&TypeFlagsInstantiable != 0 && c.getBaseConstraintOrType(t).flags&(TypeFlagsNullable|TypeFlagsUnion) != 0
+}
+
+func (c *Checker) isGenericTypeWithoutNullableConstraint(t *Type) bool {
+	if t.flags&TypeFlagsIntersection != 0 {
+		return core.Some(t.AsIntersectionType().types, c.isGenericTypeWithoutNullableConstraint)
+	}
+	return t.flags&TypeFlagsInstantiable != 0 && !c.maybeTypeOfKind(c.getBaseConstraintOrType(t), TypeFlagsNullable)
+}
+
+func (c *Checker) hasContextualTypeWithNoGenericTypes(node *ast.Node, checkMode CheckMode) bool {
+	// Computing the contextual type for a child of a JSX element involves resolving the type of the
+	// element's tag name, so we exclude that here to avoid circularities.
+	// If check mode has `CheckMode.RestBindingElement`, we skip binding pattern contextual types,
+	// as we want the type of a rest element to be generic when possible.
+	if (ast.IsIdentifier(node) || ast.IsPropertyAccessExpression(node) || ast.IsElementAccessExpression(node)) &&
+		!((ast.IsJsxOpeningElement(node.Parent) || ast.IsJsxSelfClosingElement(node.Parent)) && getTagNameOfNode(node.Parent) == node) {
+		contextualType := c.getContextualType(node, core.IfElse(checkMode&CheckModeRestBindingElement != 0, ContextFlagsSkipBindingPatterns, ContextFlagsNone))
+		if contextualType != nil {
+			return !c.isGenericType(contextualType)
+		}
+	}
+	return false
+}
+
+func (c *Checker) getNonUndefinedType(t *Type) *Type {
+	typeOrConstraint := t
+	if someType(t, c.isGenericTypeWithUndefinedConstraint) {
+		typeOrConstraint = c.mapType(t, func(t *Type) *Type {
+			if t.flags&TypeFlagsInstantiable != 0 {
+				return c.getBaseConstraintOrType(t)
+			}
+			return t
+		})
+	}
+	return c.getTypeWithFacts(typeOrConstraint, TypeFactsNEUndefined)
+}
+
+func (c *Checker) isGenericTypeWithUndefinedConstraint(t *Type) bool {
+	if t.flags&TypeFlagsInstantiable != 0 {
+		constraint := c.getBaseConstraintOfType(t)
+		if constraint != nil {
+			return c.maybeTypeOfKind(constraint, TypeFlagsUndefined)
+		}
+	}
+	return false
 }

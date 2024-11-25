@@ -166,7 +166,64 @@ func (c *Checker) getTypeAtFlowNode(f *FlowState, flow *ast.FlowNode) FlowType {
 }
 
 func (c *Checker) getTypeAtFlowAssignment(f *FlowState, flow *ast.FlowNode) FlowType {
-	return FlowType{} // !!!
+	node := flow.Node
+	// Assignments only narrow the computed type if the declared type is a union type. Thus, we
+	// only need to evaluate the assigned type if the declared type is a union type.
+	if c.isMatchingReference(f.reference, node) {
+		if !c.isReachableFlowNode(flow) {
+			return FlowType{t: c.unreachableNeverType}
+		}
+		if getAssignmentTargetKind(node) == AssignmentKindCompound {
+			flowType := c.getTypeAtFlowNode(f, flow.Antecedent)
+			return FlowType{t: c.getBaseTypeOfLiteralType(flowType.t), incomplete: flowType.incomplete}
+		}
+		if f.declaredType == c.autoType || f.declaredType == c.autoArrayType {
+			if c.isEmptyArrayAssignment(node) {
+				return FlowType{t: c.getEvolvingArrayType(c.neverType)}
+			}
+			assignedType := c.getWidenedLiteralType(c.getInitialOrAssignedType(f, flow))
+			if c.isTypeAssignableTo(assignedType, f.declaredType) {
+				return FlowType{t: assignedType}
+			}
+			return FlowType{t: c.anyArrayType}
+		}
+		t := f.declaredType
+		if isInCompoundLikeAssignment(node) {
+			t = c.getBaseTypeOfLiteralType(t)
+		}
+		if t.flags&TypeFlagsUnion != 0 {
+			return FlowType{t: c.getAssignmentReducedType(t, c.getInitialOrAssignedType(f, flow))}
+		}
+		return FlowType{t: t}
+	}
+	// We didn't have a direct match. However, if the reference is a dotted name, this
+	// may be an assignment to a left hand part of the reference. For example, for a
+	// reference 'x.y.z', we may be at an assignment to 'x.y' or 'x'. In that case,
+	// return the declared type.
+	if c.containsMatchingReference(f.reference, node) {
+		if !c.isReachableFlowNode(flow) {
+			return FlowType{t: c.unreachableNeverType}
+		}
+		return FlowType{t: f.declaredType}
+	}
+	// for (const _ in ref) acts as a nonnull on ref
+	if ast.IsVariableDeclaration(node) && ast.IsForInStatement(node.Parent.Parent) && (c.isMatchingReference(f.reference, node.Parent.Parent.Expression()) || c.optionalChainContainsReference(node.Parent.Parent.Expression(), f.reference)) {
+		return FlowType{t: c.getNonNullableTypeIfNeeded(c.finalizeEvolvingArrayType(c.getTypeAtFlowNode(f, flow.Antecedent).t))}
+	}
+	// Assignment doesn't affect reference
+	return FlowType{}
+}
+
+func (c *Checker) getInitialOrAssignedType(f *FlowState, flow *ast.FlowNode) *Type {
+	if ast.IsVariableDeclaration(flow.Node) || ast.IsBindingElement(flow.Node) {
+		return c.getNarrowableTypeForReference(c.getInitialType(flow.Node), f.reference, CheckModeNormal)
+	}
+	return c.getNarrowableTypeForReference(c.getAssignedType(flow.Node), f.reference, CheckModeNormal)
+}
+
+func (c *Checker) isEmptyArrayAssignment(node *ast.Node) bool {
+	return ast.IsVariableDeclaration(node) && node.Initializer() != nil && isEmptyArrayLiteral(node.Initializer()) ||
+		ast.IsBindingElement(node) && ast.IsBinaryExpression(node.Parent) && isEmptyArrayLiteral(node.Parent.AsBinaryExpression().Right)
 }
 
 func (c *Checker) getTypeAtFlowCall(f *FlowState, flow *ast.FlowNode) FlowType {
@@ -894,6 +951,21 @@ func (c *Checker) getCandidateDiscriminantPropertyAccess(f *FlowState, expr *ast
 	return nil
 }
 
+// An evolving array type tracks the element types that have so far been seen in an
+// 'x.push(value)' or 'x[n] = value' operation along the control flow graph. Evolving
+// array types are ultimately converted into manifest array types (using getFinalArrayType)
+// and never escape the getFlowTypeOfReference function.
+func (c *Checker) getEvolvingArrayType(elementType *Type) *Type {
+	key := CachedTypeKey{kind: CachedTypeKindEvolvingArrayType, typeId: elementType.id}
+	result := c.cachedTypes[key]
+	if result == nil {
+		result := c.newObjectType(ObjectFlagsEvolvingArray, nil)
+		result.AsEvolvingArrayType().elementType = elementType
+		c.cachedTypes[key] = result
+	}
+	return result
+}
+
 func isEvolvingArrayTypeList(types []*Type) bool {
 	hasEvolvingArrayType := false
 	for _, t := range types {
@@ -919,7 +991,27 @@ func (c *Checker) isEvolvingArrayOperationTarget(node *ast.Node) bool {
 }
 
 func (c *Checker) finalizeEvolvingArrayType(t *Type) *Type {
-	return t // !!!
+	if t.objectFlags&ObjectFlagsEvolvingArray != 0 {
+		return c.getFinalArrayType(t.AsEvolvingArrayType())
+	}
+	return t
+}
+
+func (c *Checker) getFinalArrayType(t *EvolvingArrayType) *Type {
+	if t.finalArrayType == nil {
+		t.finalArrayType = c.createFinalArrayType(t.elementType)
+	}
+	return t.finalArrayType
+}
+
+func (c *Checker) createFinalArrayType(elementType *Type) *Type {
+	switch {
+	case elementType.flags&TypeFlagsNever != 0:
+		return c.autoArrayType
+	case elementType.flags&TypeFlagsUnion != 0:
+		return c.createArrayType(c.getUnionTypeEx(elementType.Types(), UnionReductionSubtype, nil, nil))
+	}
+	return c.createArrayType(elementType)
 }
 
 func (c *Checker) reportFlowControlError(node *ast.Node) {
@@ -1265,6 +1357,147 @@ func (c *Checker) isExhaustiveSwitchStatement(node *ast.SwitchStatement) bool {
 
 func (c *Checker) getEffectsSignature(node *ast.Node) *Signature {
 	return nil // !!!
+}
+
+func (c *Checker) getInitialType(node *ast.Node) *Type {
+	switch node.Kind {
+	case ast.KindVariableDeclaration:
+		return c.getInitialTypeOfVariableDeclaration(node)
+	case ast.KindBindingElement:
+		return c.getInitialTypeOfBindingElement(node)
+	}
+	panic("Unhandled case in getInitialType")
+}
+
+func (c *Checker) getInitialTypeOfVariableDeclaration(node *ast.Node) *Type {
+	if node.Initializer() != nil {
+		return c.getTypeOfInitializer(node.Initializer())
+	}
+	if ast.IsForInStatement(node.Parent.Parent) {
+		return c.stringType
+	}
+	if ast.IsForOfStatement(node.Parent.Parent) {
+		t := c.checkRightHandSideOfForOf(node.Parent.Parent)
+		if t != nil {
+			return t
+		}
+	}
+	return c.errorType
+}
+
+func (c *Checker) getTypeOfInitializer(node *ast.Node) *Type {
+	// Return the cached type if one is available. If the type of the variable was inferred
+	// from its initializer, we'll already have cached the type. Otherwise we compute it now
+	// without caching such that transient types are reflected.
+	if c.typeNodeLinks.has(node) {
+		t := c.typeNodeLinks.get(node).resolvedType
+		if t != nil {
+			return t
+		}
+	}
+	return c.getTypeOfExpression(node)
+}
+
+func (c *Checker) getInitialTypeOfBindingElement(node *ast.Node) *Type {
+	return c.errorType // !!!
+}
+
+func (c *Checker) getAssignedType(node *ast.Node) *Type {
+	parent := node.Parent
+	switch parent.Kind {
+	case ast.KindForInStatement:
+		return c.stringType
+	case ast.KindForOfStatement:
+		t := c.checkRightHandSideOfForOf(parent)
+		if t != nil {
+			return t
+		}
+	case ast.KindBinaryExpression:
+		return c.getAssignedTypeOfBinaryExpression(parent)
+	case ast.KindDeleteExpression:
+		return c.undefinedType
+		// !!!
+		// case ast.KindArrayLiteralExpression:
+		// 	return c.getAssignedTypeOfArrayLiteralElement(parent.AsArrayLiteralExpression(), node)
+		// case ast.KindSpreadElement:
+		// 	return c.getAssignedTypeOfSpreadExpression(parent.AsSpreadElement())
+		// case ast.KindPropertyAssignment:
+		// 	return c.getAssignedTypeOfPropertyAssignment(parent.AsPropertyAssignment())
+		// case ast.KindShorthandPropertyAssignment:
+		// 	return c.getAssignedTypeOfShorthandPropertyAssignment(parent.AsShorthandPropertyAssignment())
+	}
+	return c.errorType
+}
+
+func (c *Checker) getAssignedTypeOfBinaryExpression(node *ast.Node) *Type {
+	isDestructuringDefaultAssignment := ast.IsArrayLiteralExpression(node.Parent) && c.isDestructuringAssignmentTarget(node.Parent) ||
+		ast.IsPropertyAssignment(node.Parent) && c.isDestructuringAssignmentTarget(node.Parent.Parent)
+	if isDestructuringDefaultAssignment {
+		return c.getTypeWithDefault(c.getAssignedType(node), node.AsBinaryExpression().Right)
+	}
+	return c.getTypeOfExpression(node.AsBinaryExpression().Right)
+}
+
+func (c *Checker) isDestructuringAssignmentTarget(parent *ast.Node) bool {
+	return ast.IsBinaryExpression(parent.Parent) && parent.Parent.AsBinaryExpression().Left == parent ||
+		ast.IsForOfStatement(parent.Parent) && parent.Parent.Initializer() == parent
+}
+
+func (c *Checker) getTypeWithDefault(t *Type, defaultExpression *ast.Node) *Type {
+	if defaultExpression != nil {
+		return c.getUnionType([]*Type{c.getNonUndefinedType(t), c.getTypeOfExpression(defaultExpression)})
+	}
+	return t
+}
+
+// Remove those constituent types of declaredType to which no constituent type of assignedType is assignable.
+// For example, when a variable of type number | string | boolean is assigned a value of type number | boolean,
+// we remove type string.
+func (c *Checker) getAssignmentReducedType(declaredType *Type, assignedType *Type) *Type {
+	if declaredType == assignedType {
+		return declaredType
+	}
+	if assignedType.flags&TypeFlagsNever != 0 {
+		return assignedType
+	}
+	key := AssignmentReducedKey{id1: declaredType.id, id2: assignedType.id}
+	result := c.assignmentReducedTypes[key]
+	if result == nil {
+		result = c.getAssignmentReducedTypeWorker(declaredType, assignedType)
+		c.assignmentReducedTypes[key] = result
+	}
+	return result
+}
+
+func (c *Checker) getAssignmentReducedTypeWorker(declaredType *Type, assignedType *Type) *Type {
+	filteredType := c.filterType(declaredType, func(t *Type) bool {
+		return c.typeMaybeAssignableTo(assignedType, t)
+	})
+	// Ensure that we narrow to fresh types if the assignment is a fresh boolean literal type.
+	reducedType := filteredType
+	if assignedType.flags&TypeFlagsBooleanLiteral != 0 && isFreshLiteralType(assignedType) {
+		reducedType = c.mapType(filteredType, c.getFreshTypeOfLiteralType)
+	}
+	// Our crude heuristic produces an invalid result in some cases: see GH#26130.
+	// For now, when that happens, we give up and don't narrow at all.  (This also
+	// means we'll never narrow for erroneous assignments where the assigned type
+	// is not assignable to the declared type.)
+	if c.isTypeAssignableTo(assignedType, reducedType) {
+		return reducedType
+	}
+	return declaredType
+}
+
+func (c *Checker) typeMaybeAssignableTo(source *Type, target *Type) bool {
+	if source.flags&TypeFlagsUnion == 0 {
+		return c.isTypeAssignableTo(source, target)
+	}
+	for _, t := range source.AsUnionType().types {
+		if c.isTypeAssignableTo(t, target) {
+			return true
+		}
+	}
+	return false
 }
 
 // Return true if the given flow node is preceded by a 'super(...)' call in every possible code path

@@ -34,6 +34,11 @@ func (s *LinkStore[K, V]) get(key K) *V {
 	return value
 }
 
+func (s *LinkStore[K, V]) has(key K) bool {
+	_, ok := s.entries[key]
+	return ok
+}
+
 // Atomic ids
 
 var nextNodeId atomic.Uint32
@@ -620,7 +625,7 @@ func getImmediatelyInvokedFunctionExpression(fn *ast.Node) *ast.Node {
 func getElementOrPropertyAccessArgumentExpressionOrName(node *ast.Node) *ast.Node {
 	switch node.Kind {
 	case ast.KindPropertyAccessExpression:
-		return node.AsPropertyAccessExpression().Name()
+		return node.Name()
 	case ast.KindElementAccessExpression:
 		arg := ast.SkipParentheses(node.AsElementAccessExpression().ArgumentExpression)
 		if isStringOrNumericLiteralLike(arg) {
@@ -728,10 +733,10 @@ func isFunctionPropertyAssignment(node *ast.Node) bool {
 			switch expr.Left.Kind {
 			case ast.KindPropertyAccessExpression:
 				// F.id = expr
-				return ast.IsIdentifier(expr.Left.AsPropertyAccessExpression().Expression) && ast.IsIdentifier(expr.Left.AsPropertyAccessExpression().Name())
+				return ast.IsIdentifier(expr.Left.Expression()) && ast.IsIdentifier(expr.Left.Name())
 			case ast.KindElementAccessExpression:
 				// F[xxx] = expr
-				return ast.IsIdentifier(expr.Left.AsElementAccessExpression().Expression)
+				return ast.IsIdentifier(expr.Left.Expression())
 			}
 		}
 	}
@@ -2501,7 +2506,7 @@ func isOptionalDeclaration(declaration *ast.Node) bool {
 }
 
 func isEmptyArrayLiteral(expression *ast.Node) bool {
-	return expression.Kind == ast.KindArrayLiteralExpression && len(expression.AsArrayLiteralExpression().Elements.Nodes) == 0
+	return ast.IsArrayLiteralExpression(expression) && len(expression.AsArrayLiteralExpression().Elements.Nodes) == 0
 }
 
 func declarationBelongsToPrivateAmbientMember(declaration *ast.Node) bool {
@@ -3330,4 +3335,16 @@ func (c *Checker) isVarConstLike(node *ast.Node) bool {
 
 func isNonNullAccess(node *ast.Node) bool {
 	return ast.IsAccessExpression(node) && ast.IsNonNullExpression(node.Expression())
+}
+
+func getTagNameOfNode(node *ast.Node) *ast.Node {
+	switch node.Kind {
+	case ast.KindJsxOpeningElement:
+		return node.AsJsxOpeningElement().TagName
+	case ast.KindJsxClosingElement:
+		return node.AsJsxClosingElement().TagName
+	case ast.KindJsxSelfClosingElement:
+		return node.AsJsxSelfClosingElement().TagName
+	}
+	panic("Unhandled case in getTagNameOfNode")
 }
