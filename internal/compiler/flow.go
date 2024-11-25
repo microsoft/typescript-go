@@ -206,9 +206,9 @@ func (c *Checker) narrowType(f *FlowState, t *Type, expr *ast.Node, assumeTrue b
 			symbol := c.getResolvedSymbol(expr)
 			if c.isConstantVariable(symbol) {
 				declaration := symbol.ValueDeclaration
-				if declaration != nil && ast.IsVariableDeclaration(declaration) && getEffectiveTypeAnnotationNode(declaration) == nil && getInitializerFromNode(declaration) != nil && c.isConstantReference(f.reference) {
+				if declaration != nil && ast.IsVariableDeclaration(declaration) && declaration.Type() == nil && declaration.Initializer() != nil && c.isConstantReference(f.reference) {
 					c.inlineLevel++
-					result := c.narrowType(f, t, getInitializerFromNode(declaration), assumeTrue)
+					result := c.narrowType(f, t, declaration.Initializer(), assumeTrue)
 					c.inlineLevel--
 					return result
 				}
@@ -861,7 +861,7 @@ func (c *Checker) getCandidateDiscriminantPropertyAccess(f *FlowState, expr *ast
 		if ast.IsIdentifier(expr) {
 			symbol := c.getResolvedSymbol(expr)
 			declaration := symbol.ValueDeclaration
-			if declaration != nil && (ast.IsBindingElement(declaration) || ast.IsParameter(declaration)) && f.reference == declaration.Parent && getInitializerFromNode(declaration) == nil && !hasDotDotDotToken(declaration) {
+			if declaration != nil && (ast.IsBindingElement(declaration) || ast.IsParameter(declaration)) && f.reference == declaration.Parent && declaration.Initializer() == nil && !hasDotDotDotToken(declaration) {
 				return declaration
 			}
 		}
@@ -875,16 +875,16 @@ func (c *Checker) getCandidateDiscriminantPropertyAccess(f *FlowState, expr *ast
 		if c.isConstantVariable(symbol) {
 			declaration := symbol.ValueDeclaration
 			// Given 'const x = obj.kind', allow 'x' as an alias for 'obj.kind'
-			if ast.IsVariableDeclaration(declaration) && getEffectiveTypeAnnotationNode(declaration) == nil {
-				if initializer := getInitializerFromNode(declaration); initializer != nil && ast.IsAccessExpression(initializer) && c.isMatchingReference(f.reference, initializer.Expression()) {
+			if ast.IsVariableDeclaration(declaration) && declaration.Type() == nil {
+				if initializer := declaration.Initializer(); initializer != nil && ast.IsAccessExpression(initializer) && c.isMatchingReference(f.reference, initializer.Expression()) {
 					return initializer
 				}
 			}
 			// Given 'const { kind: x } = obj', allow 'x' as an alias for 'obj.kind'
-			if ast.IsBindingElement(declaration) && getInitializerFromNode(declaration) == nil {
+			if ast.IsBindingElement(declaration) && declaration.Initializer() == nil {
 				parent := declaration.Parent.Parent
-				if ast.IsVariableDeclaration(parent) && getEffectiveTypeAnnotationNode(parent) == nil {
-					if initializer := getInitializerFromNode(parent); initializer != nil && (ast.IsIdentifier(initializer) || ast.IsAccessExpression(initializer)) && c.isMatchingReference(f.reference, initializer) {
+				if ast.IsVariableDeclaration(parent) && parent.Type() == nil {
+					if initializer := parent.Initializer(); initializer != nil && (ast.IsIdentifier(initializer) || ast.IsAccessExpression(initializer)) && c.isMatchingReference(f.reference, initializer) {
 						return declaration
 					}
 				}

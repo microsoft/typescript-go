@@ -1399,9 +1399,9 @@ func getDiagnosticPath(d *ast.Diagnostic) string {
 func isConstAssertion(location *ast.Node) bool {
 	switch location.Kind {
 	case ast.KindAsExpression:
-		return isConstTypeReference(location.AsAsExpression().TypeNode)
+		return isConstTypeReference(location.AsAsExpression().Type)
 	case ast.KindTypeAssertionExpression:
-		return isConstTypeReference(location.AsTypeAssertion().TypeNode)
+		return isConstTypeReference(location.AsTypeAssertion().Type)
 	}
 	return false
 }
@@ -1542,7 +1542,7 @@ loop:
 					// at a higher level than type parameters would normally be
 					if meaning&result.Flags&ast.SymbolFlagsType != 0 && lastLocation.Kind != ast.KindJSDoc {
 						useResult = result.Flags&ast.SymbolFlagsTypeParameter != 0 && (lastLocation.Flags&ast.NodeFlagsSynthesized != 0 ||
-							lastLocation == location.ReturnType() ||
+							lastLocation == location.Type() ||
 							isParameterLikeOrReturnTag(lastLocation))
 					}
 					if meaning&result.Flags&ast.SymbolFlagsVariable != 0 {
@@ -1556,7 +1556,7 @@ loop:
 							// to make sure that they reference no variables declared after them.
 							useResult = lastLocation.Kind == ast.KindParameter ||
 								lastLocation.Flags&ast.NodeFlagsSynthesized != 0 ||
-								lastLocation == location.ReturnType() && ast.FindAncestor(result.ValueDeclaration, ast.IsParameter) != nil
+								lastLocation == location.Type() && ast.FindAncestor(result.ValueDeclaration, ast.IsParameter) != nil
 						}
 					}
 				} else if location.Kind == ast.KindConditionalType {
@@ -2161,22 +2161,13 @@ func isPartOfTypeNodeInParent(node *ast.Node) bool {
 		return isPartOfTypeExpressionWithTypeArguments(parent)
 	case ast.KindTypeParameter:
 		return node == parent.AsTypeParameter().Constraint
-	case ast.KindPropertyDeclaration:
-		return node == parent.AsPropertyDeclaration().TypeNode
-	case ast.KindPropertySignature:
-		return node == parent.AsPropertySignatureDeclaration().TypeNode
-	case ast.KindParameter:
-		return node == parent.AsParameterDeclaration().TypeNode
-	case ast.KindVariableDeclaration:
-		return node == parent.AsVariableDeclaration().TypeNode
-	case ast.KindFunctionDeclaration, ast.KindFunctionExpression, ast.KindArrowFunction, ast.KindConstructor, ast.KindMethodDeclaration,
-		ast.KindMethodSignature, ast.KindGetAccessor, ast.KindSetAccessor, ast.KindCallSignature, ast.KindConstructSignature,
-		ast.KindIndexSignature:
-		return node == parent.ReturnType()
-	case ast.KindTypeAssertionExpression:
-		return node == parent.AsTypeAssertion().TypeNode
+	case ast.KindVariableDeclaration, ast.KindParameter, ast.KindPropertyDeclaration, ast.KindPropertySignature, ast.KindFunctionDeclaration,
+		ast.KindFunctionExpression, ast.KindArrowFunction, ast.KindConstructor, ast.KindMethodDeclaration, ast.KindMethodSignature,
+		ast.KindGetAccessor, ast.KindSetAccessor, ast.KindCallSignature, ast.KindConstructSignature, ast.KindIndexSignature,
+		ast.KindTypeAssertionExpression:
+		return node == parent.Type()
 	case ast.KindCallExpression, ast.KindNewExpression, ast.KindTaggedTemplateExpression:
-		return slices.Contains(getTypeArgumentNodesFromNode(parent), node)
+		return slices.Contains(parent.TypeArguments(), node)
 	}
 	return false
 }
@@ -2455,102 +2446,12 @@ func isTypeAlias(node *ast.Node) bool {
 	return ast.IsTypeAliasDeclaration(node)
 }
 
-/**
- * Gets the effective type parameters. If the node was parsed in a
- * JavaScript file, gets the type parameters from the `@template` tag from JSDoc.
- *
- * This does *not* return type parameters from a jsdoc reference to a generic type, eg
- *
- * type Id = <T>(x: T) => T
- * /** @type {Id} /
- * function id(x) { return x }
- */
-
-func getEffectiveTypeParameterDeclarations(node *ast.Node) []*ast.Node {
-	return getTypeParameterNodesFromNode(node)
-}
-
-func getTypeParameterNodesFromNode(node *ast.Node) []*ast.Node {
-	typeParameterList := getTypeParameterListFromNode(node)
-	if typeParameterList != nil {
-		return typeParameterList.Nodes
-	}
-	return nil
-}
-
-func getTypeParameterListFromNode(node *ast.Node) *ast.NodeList {
-	switch node.Kind {
-	case ast.KindClassDeclaration:
-		return node.AsClassDeclaration().TypeParameters
-	case ast.KindClassExpression:
-		return node.AsClassExpression().TypeParameters
-	case ast.KindInterfaceDeclaration:
-		return node.AsInterfaceDeclaration().TypeParameters
-	case ast.KindTypeAliasDeclaration:
-		return node.AsTypeAliasDeclaration().TypeParameters
-	default:
-		return node.FunctionLikeData().TypeParameters
-	}
-}
-
-func getTypeArgumentNodesFromNode(node *ast.Node) []*ast.Node {
-	typeArgumentList := getTypeArgumentListFromNode(node)
-	if typeArgumentList != nil {
-		return typeArgumentList.Nodes
-	}
-	return nil
-}
-
-func getTypeArgumentListFromNode(node *ast.Node) *ast.NodeList {
-	switch node.Kind {
-	case ast.KindCallExpression:
-		return node.AsCallExpression().TypeArguments
-	case ast.KindNewExpression:
-		return node.AsNewExpression().TypeArguments
-	case ast.KindTaggedTemplateExpression:
-		return node.AsTaggedTemplateExpression().TypeArguments
-	case ast.KindTypeReference:
-		return node.AsTypeReference().TypeArguments
-	case ast.KindExpressionWithTypeArguments:
-		return node.AsExpressionWithTypeArguments().TypeArguments
-	case ast.KindImportType:
-		return node.AsImportTypeNode().TypeArguments
-	case ast.KindTypeQuery:
-		return node.AsTypeQueryNode().TypeArguments
-	}
-	panic("Unhandled case in getTypeArgumentListFromNode")
-}
-
 func hasOnlyExpressionInitializer(node *ast.Node) bool {
 	switch node.Kind {
 	case ast.KindVariableDeclaration, ast.KindParameter, ast.KindBindingElement, ast.KindPropertyDeclaration, ast.KindPropertyAssignment, ast.KindEnumMember:
 		return true
 	}
 	return false
-}
-
-func getInitializerFromNode(node *ast.Node) *ast.Node {
-	switch node.Kind {
-	case ast.KindVariableDeclaration:
-		return node.AsVariableDeclaration().Initializer
-	case ast.KindParameter:
-		return node.AsParameterDeclaration().Initializer
-	case ast.KindBindingElement:
-		return node.AsBindingElement().Initializer
-	case ast.KindPropertyDeclaration:
-		return node.AsPropertyDeclaration().Initializer
-	case ast.KindPropertyAssignment:
-		return node.AsPropertyAssignment().Initializer
-	case ast.KindEnumMember:
-		return node.AsEnumMember().Initializer
-	case ast.KindForStatement:
-		return node.AsForStatement().Initializer
-	case ast.KindForInStatement, ast.KindForOfStatement:
-		return node.AsForInOrOfStatement().Initializer
-	case ast.KindJsxAttribute:
-		return node.AsJsxAttribute().Initializer
-	}
-	return nil
 }
 
 func hasDotDotDotToken(node *ast.Node) bool {
@@ -2565,41 +2466,6 @@ func hasDotDotDotToken(node *ast.Node) bool {
 		return node.AsJsxExpression().DotDotDotToken != nil
 	}
 	return false
-}
-
-/**
- * Gets the effective type annotation of a variable, parameter, or property. If the node was
- * parsed in a JavaScript file, gets the type annotation from JSDoc.  Also gets the type of
- * functions only the JSDoc case.
- */
-func getEffectiveTypeAnnotationNode(node *ast.Node) *ast.Node {
-	switch node.Kind {
-	case ast.KindVariableDeclaration:
-		return node.AsVariableDeclaration().TypeNode
-	case ast.KindParameter:
-		return node.AsParameterDeclaration().TypeNode
-	case ast.KindPropertySignature:
-		return node.AsPropertySignatureDeclaration().TypeNode
-	case ast.KindPropertyDeclaration:
-		return node.AsPropertyDeclaration().TypeNode
-	case ast.KindTypePredicate:
-		return node.AsTypePredicateNode().TypeNode
-	case ast.KindParenthesizedType:
-		return node.AsParenthesizedTypeNode().TypeNode
-	case ast.KindTypeOperator:
-		return node.AsTypeOperatorNode().TypeNode
-	case ast.KindMappedType:
-		return node.AsMappedTypeNode().TypeNode
-	case ast.KindTypeAssertionExpression:
-		return node.AsTypeAssertion().TypeNode
-	case ast.KindAsExpression:
-		return node.AsAsExpression().TypeNode
-	default:
-		if ast.IsFunctionLike(node) {
-			return node.ReturnType()
-		}
-	}
-	return nil
 }
 
 func isTypeAny(t *Type) bool {

@@ -231,7 +231,7 @@ func (b *Binder) declareSymbolEx(symbolTable ast.SymbolTable, parent *ast.Symbol
 				} else {
 					diag = b.createDiagnosticForNode(declarationName, message)
 				}
-				if ast.IsTypeAliasDeclaration(node) && ast.NodeIsMissing(node.AsTypeAliasDeclaration().TypeNode) && hasSyntacticModifier(node, ast.ModifierFlagsExport) && symbol.Flags&(ast.SymbolFlagsAlias|ast.SymbolFlagsType|ast.SymbolFlagsNamespace) != 0 {
+				if ast.IsTypeAliasDeclaration(node) && ast.NodeIsMissing(node.AsTypeAliasDeclaration().Type) && hasSyntacticModifier(node, ast.ModifierFlagsExport) && symbol.Flags&(ast.SymbolFlagsAlias|ast.SymbolFlagsType|ast.SymbolFlagsNamespace) != 0 {
 					// export type T; - may have meant export type { T }?
 					diag.AddRelatedInfo(b.createDiagnosticForNode(node, diagnostics.Did_you_mean_0, "export type { "+node.AsTypeAliasDeclaration().Name().AsIdentifier().Text+" }"))
 				}
@@ -777,7 +777,7 @@ func (b *Binder) declareModuleSymbol(node *ast.Node) ModuleInstanceState {
 }
 
 func (b *Binder) bindNamespaceExportDeclaration(node *ast.Node) {
-	if node.AsNamespaceExportDeclaration().Modifiers() != nil {
+	if node.Modifiers() != nil {
 		b.errorOnNode(node, diagnostics.Modifiers_cannot_appear_here)
 	}
 	switch {
@@ -2476,7 +2476,7 @@ func (b *Binder) bindParameterFlow(node *ast.Node) {
 	b.bindModifiers(param.Modifiers())
 	b.bind(param.DotDotDotToken)
 	b.bind(param.QuestionToken)
-	b.bind(param.TypeNode)
+	b.bind(param.Type)
 	b.bindInitializer(param.Initializer)
 	b.bind(param.Name())
 }

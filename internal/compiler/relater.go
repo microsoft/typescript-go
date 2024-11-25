@@ -1637,7 +1637,7 @@ func (c *Checker) getTypePredicateOfSignature(sig *Signature) *TypePredicate {
 		default:
 			var typeNode *ast.TypeNode
 			if sig.declaration != nil {
-				typeNode = getEffectiveTypeAnnotationNode(sig.declaration)
+				typeNode = sig.declaration.Type()
 				switch {
 				case typeNode != nil && ast.IsTypePredicateNode(typeNode):
 					sig.resolvedTypePredicate = c.createTypePredicateFromTypePredicateNode(typeNode, sig)
@@ -1694,8 +1694,8 @@ func (c *Checker) typePredicateKindsMatch(a *TypePredicate, b *TypePredicate) bo
 func (c *Checker) createTypePredicateFromTypePredicateNode(node *ast.Node, signature *Signature) *TypePredicate {
 	predicateNode := node.AsTypePredicateNode()
 	var t *Type
-	if predicateNode.TypeNode != nil {
-		t = c.getTypeFromTypeNode(predicateNode.TypeNode)
+	if predicateNode.Type != nil {
+		t = c.getTypeFromTypeNode(predicateNode.Type)
 	}
 	if ast.IsThisTypeNode(predicateNode.ParameterName) {
 		kind := core.IfElse(predicateNode.AssertsModifier != nil, TypePredicateKindAssertsThis, TypePredicateKindThis)
