@@ -67,7 +67,7 @@ var _ FS = (*vfs)(nil)
 
 // FromIOFS creates a new FS from an [fs.FS].
 // For paths like `c:/foo/bar`, fsys will be used as though it's rooted at `/` and the path is `/c:/foo/bar`.
-func FromIOFS(useCaseSensitiveFileNames bool, fsys fs.FS) FS {
+func FromIOFS(fsys fs.FS, useCaseSensitiveFileNames bool) FS {
 	return &vfs{
 		readSema: osReadSema,
 		// !!! The passed in FS may not actually respect case insensitive file names.
