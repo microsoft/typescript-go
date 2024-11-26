@@ -1371,14 +1371,14 @@ func (c *Checker) checkParameter(node *ast.Node) {
 }
 
 func (c *Checker) checkPropertyDeclaration(node *ast.Node) {
-	// // Grammar checking
+	// Grammar checking
 	if !c.checkGrammarModifiers(node) && !c.checkGrammarProperty(node) {
 		c.checkGrammarComputedPropertyName(node.Name())
 	}
 	c.checkVariableLikeDeclaration(node)
 
-	// // !!!
-	// // c.setNodeLinksForPrivateIdentifierScope(node)
+	// !!!
+	// c.setNodeLinksForPrivateIdentifierScope(node)
 
 	// property signatures already report "initializer not allowed in ambient context" elsewhere
 	if hasSyntacticModifier(node, ast.ModifierFlagsAbstract) && ast.IsPropertyDeclaration(node) {

@@ -1184,7 +1184,7 @@ func (c *Checker) checkGrammarJsxElement(node *ast.Node, jsxCommon struct {
 }) bool {
 	c.checkGrammarJsxName(jsxCommon.tagName)
 	c.checkGrammarTypeArguments(node, jsxCommon.typeArguments)
-	seen := make(map[string]bool)
+	var seen core.Set[string]
 
 	for _, attrNode := range jsxCommon.attributes.AsJsxAttributes().Properties.Nodes {
 		if attrNode.Kind == ast.KindJsxSpreadAttribute {
@@ -1195,8 +1195,8 @@ func (c *Checker) checkGrammarJsxElement(node *ast.Node, jsxCommon struct {
 		name := attr.Name()
 		initializer := attr.Initializer
 		textOfName := name.Text()
-		if !seen[textOfName] {
-			seen[textOfName] = true
+		if !seen.Has(textOfName) {
+			seen.Add(textOfName)
 		} else {
 			return c.grammarErrorOnNode(name, diagnostics.JSX_elements_cannot_have_multiple_attributes_with_the_same_name)
 		}
