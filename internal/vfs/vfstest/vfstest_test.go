@@ -5,6 +5,7 @@ import (
 	"testing"
 	"testing/fstest"
 
+	"github.com/microsoft/typescript-go/internal/testutil"
 	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
 	"gotest.tools/v3/assert"
 )
@@ -14,21 +15,59 @@ func TestInsensitive(t *testing.T) {
 
 	contents := []byte("bar")
 
-	vfs := vfstest.ToMapFS(fstest.MapFS{
+	vfs := vfstest.WithSensitivity(fstest.MapFS{
 		"foo/bar/baz": &fstest.MapFile{
 			Data: contents,
+			Sys:  1234,
 		},
 	}, false /*useCaseSensitiveFileNames*/)
 
 	sensitive, err := fs.ReadFile(vfs, "foo/bar/baz")
 	assert.NilError(t, err)
 	assert.DeepEqual(t, sensitive, contents)
+	sensitiveInfo, err := fs.Stat(vfs, "foo/bar/baz")
+	assert.NilError(t, err)
+	assert.Equal(t, sensitiveInfo.Sys(), 1234)
 
 	assert.NilError(t, fstest.TestFS(vfs, "foo/bar/baz"))
 
 	insensitive, err := fs.ReadFile(vfs, "Foo/Bar/Baz")
 	assert.NilError(t, err)
 	assert.DeepEqual(t, insensitive, contents)
+	insensitiveInfo, err := fs.Stat(vfs, "Foo/Bar/Baz")
+	assert.NilError(t, err)
+	assert.Equal(t, insensitiveInfo.Sys(), 1234)
+
+	// assert.NilError(t, fstest.TestFS(vfs, "Foo/Bar/Baz"))
+}
+
+func TestInsensitiveUpper(t *testing.T) {
+	t.Parallel()
+
+	contents := []byte("bar")
+
+	vfs := vfstest.WithSensitivity(fstest.MapFS{
+		"Foo/Bar/Baz": &fstest.MapFile{
+			Data: contents,
+			Sys:  1234,
+		},
+	}, false /*useCaseSensitiveFileNames*/)
+
+	sensitive, err := fs.ReadFile(vfs, "foo/bar/baz")
+	assert.NilError(t, err)
+	assert.DeepEqual(t, sensitive, contents)
+	sensitiveInfo, err := fs.Stat(vfs, "foo/bar/baz")
+	assert.NilError(t, err)
+	assert.Equal(t, sensitiveInfo.Sys(), 1234)
+
+	// assert.NilError(t, fstest.TestFS(vfs, "foo/bar/baz"))
+
+	insensitive, err := fs.ReadFile(vfs, "Foo/Bar/Baz")
+	assert.NilError(t, err)
+	assert.DeepEqual(t, insensitive, contents)
+	insensitiveInfo, err := fs.Stat(vfs, "Foo/Bar/Baz")
+	assert.NilError(t, err)
+	assert.Equal(t, insensitiveInfo.Sys(), 1234)
 
 	assert.NilError(t, fstest.TestFS(vfs, "Foo/Bar/Baz"))
 }
@@ -38,16 +77,54 @@ func TestSensitive(t *testing.T) {
 
 	contents := []byte("bar")
 
-	vfs := vfstest.ToMapFS(fstest.MapFS{
+	vfs := vfstest.WithSensitivity(fstest.MapFS{
 		"foo/bar/baz": &fstest.MapFile{
 			Data: contents,
+			Sys:  1234,
 		},
 	}, true /*useCaseSensitiveFileNames*/)
 
 	sensitive, err := fs.ReadFile(vfs, "foo/bar/baz")
 	assert.NilError(t, err)
 	assert.DeepEqual(t, sensitive, contents)
+	sensitiveInfo, err := fs.Stat(vfs, "foo/bar/baz")
+	assert.NilError(t, err)
+	assert.Equal(t, sensitiveInfo.Sys(), 1234)
+
+	assert.NilError(t, fstest.TestFS(vfs, "foo/bar/baz"))
 
 	_, err = fs.ReadFile(vfs, "Foo/Bar/Baz")
 	assert.ErrorContains(t, err, "file does not exist")
+}
+
+func TestSensitiveDuplicatePath(t *testing.T) {
+	t.Parallel()
+
+	testfs := fstest.MapFS{
+		"foo": &fstest.MapFile{
+			Data: []byte("bar"),
+		},
+		"Foo": &fstest.MapFile{
+			Data: []byte("baz"),
+		},
+	}
+
+	testutil.AssertPanics(t, func() {
+		vfstest.WithSensitivity(testfs, false /*useCaseSensitiveFileNames*/)
+	}, `duplicate path: "Foo" and "foo" have the same canonical path`)
+}
+
+func TestInsensitiveDuplicatePath(t *testing.T) {
+	t.Parallel()
+
+	testfs := fstest.MapFS{
+		"foo": &fstest.MapFile{
+			Data: []byte("bar"),
+		},
+		"Foo": &fstest.MapFile{
+			Data: []byte("baz"),
+		},
+	}
+
+	vfstest.WithSensitivity(testfs, true /*useCaseSensitiveFileNames*/)
 }

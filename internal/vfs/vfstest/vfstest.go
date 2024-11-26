@@ -1,8 +1,10 @@
 package vfstest
 
 import (
+	"fmt"
 	"io/fs"
 	"path"
+	"strings"
 	"testing/fstest"
 
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -18,10 +20,53 @@ type sys struct {
 	realPath string
 }
 
-func ToMapFS(m fstest.MapFS, useCaseSensitiveFileNames bool) fs.FS {
-	mp := make(fstest.MapFS, len(m))
-	for path, file := range m {
+// WithSensitivity converts a [fstest.MapFS] to one with the specified case sensitivity.
+// The paths given in the map are treated as the "real paths".
+//
+// If useCaseSensitiveFileNames is true, the map is returned as-is.
+func WithSensitivity(m fstest.MapFS, useCaseSensitiveFileNames bool) fs.FS {
+	if useCaseSensitiveFileNames {
+		return m
+	}
+
+	// Create all missing intermediate directories so we can attach the real path to each of them.
+	newFiles := make(fstest.MapFS)
+	for p := range m {
+		curr := ""
+		remaining := p
+
+		for remaining != "" {
+			before, after, _ := strings.Cut(remaining, "/")
+			if curr == "" {
+				curr = before
+			} else {
+				curr = curr + "/" + before
+			}
+			remaining = after
+
+			if _, ok := m[curr]; !ok {
+				newFiles[curr] = &fstest.MapFile{
+					Mode: fs.ModeDir | 0555,
+				}
+			}
+		}
+	}
+
+	newM := make(fstest.MapFS, len(m)+len(newFiles))
+	for k, v := range m {
+		newM[k] = v
+	}
+	for k, v := range newFiles {
+		newM[k] = v
+	}
+
+	mp := make(fstest.MapFS, len(newM))
+	for path, file := range newM {
 		canonical := tspath.GetCanonicalFileName(path, useCaseSensitiveFileNames)
+		if other, ok := mp[canonical]; ok {
+			otherPath := other.Sys.(*sys).realPath
+			panic(fmt.Sprintf("duplicate path: %q and %q have the same canonical path", path, otherPath))
+		}
 		fileCopy := *file
 		fileCopy.Sys = &sys{
 			original: fileCopy.Sys,
@@ -61,11 +106,12 @@ func (f *readDirFile) ReadDir(n int) ([]fs.DirEntry, error) {
 
 	entries := make([]fs.DirEntry, len(list))
 	for i, entry := range list {
-		info, err := entry.Info()
-		if err != nil {
-			return nil, err
+		info := must(entry.Info())
+		newInfo, ok := convertInfo(info)
+		if !ok {
+			panic(fmt.Sprintf("unexpected synthesized dir: %q", info.Name()))
 		}
-		newInfo := convertInfo(info)
+
 		entries[i] = &dirEntry{
 			DirEntry: entry,
 			fileInfo: newInfo,
@@ -108,12 +154,26 @@ func (m *mapFS) Open(name string) (fs.File, error) {
 		return nil, err
 	}
 
-	info, err := f.Stat()
-	if err != nil {
-		return nil, err
-	}
+	info := must(f.Stat())
 
-	newInfo := convertInfo(info)
+	newInfo, ok := convertInfo(info)
+	if !ok {
+		// This is a synthesized dir.
+		if name != "." {
+			panic(fmt.Sprintf("unexpected synthesized dir: %q", name))
+		}
+
+		f := f.(fs.ReadDirFile)
+
+		return &readDirFile{
+			ReadDirFile: f,
+			fileInfo: &fileInfo{
+				FileInfo: info,
+				sys:      info.Sys(),
+				realPath: ".",
+			},
+		}, nil
+	}
 
 	if f, ok := f.(fs.ReadDirFile); ok {
 		return &readDirFile{
@@ -128,11 +188,21 @@ func (m *mapFS) Open(name string) (fs.File, error) {
 	}, nil
 }
 
-func convertInfo(info fs.FileInfo) *fileInfo {
-	sys := info.Sys().(*sys)
+func convertInfo(info fs.FileInfo) (*fileInfo, bool) {
+	sys, ok := info.Sys().(*sys)
+	if !ok {
+		return nil, false
+	}
 	return &fileInfo{
 		FileInfo: info,
 		sys:      sys.original,
 		realPath: sys.realPath,
+	}, true
+}
+
+func must[T any](v T, err error) T {
+	if err != nil {
+		panic(err)
 	}
+	return v
 }
