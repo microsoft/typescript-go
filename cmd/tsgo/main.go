@@ -140,7 +140,9 @@ type profileSession struct {
 }
 
 func beginProfiling(profileDir string) *profileSession {
-	os.MkdirAll(profileDir, 0755)
+	if err := os.MkdirAll(profileDir, 0755); err != nil {
+		panic(err)
+	}
 
 	cpuProfilePath := tspath.ResolvePath(profileDir, fmt.Sprintf("cpu-%d.prof", os.Getpid()))
 	memProfilePath := tspath.ResolvePath(profileDir, fmt.Sprintf("mem-%d.prof", os.Getpid()))
@@ -153,7 +155,9 @@ func beginProfiling(profileDir string) *profileSession {
 		panic(err)
 	}
 
-	pprof.StartCPUProfile(cpuFile)
+	if err := pprof.StartCPUProfile(cpuFile); err != nil {
+		panic(err)
+	}
 
 	return &profileSession{
 		cpuFilePath: cpuProfilePath,
@@ -165,7 +169,10 @@ func beginProfiling(profileDir string) *profileSession {
 
 func (p *profileSession) stop() {
 	pprof.StopCPUProfile()
-	pprof.WriteHeapProfile(p.memFile)
+	err := pprof.WriteHeapProfile(p.memFile)
+	if err != nil {
+		panic(err)
+	}
 	fmt.Printf("CPU profile: %v\n", p.cpuFilePath)
 	fmt.Printf("Memory profile: %v\n", p.memFilePath)
 }
