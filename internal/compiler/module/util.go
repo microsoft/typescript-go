@@ -3,7 +3,6 @@ package module
 import (
 	"strings"
 
-	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
@@ -33,30 +32,6 @@ func ParsePackageName(moduleName string) (packageName, rest string) {
 		return moduleName, ""
 	}
 	return moduleName[:idx], moduleName[idx+1:]
-}
-
-func GetEffectiveTypeRoots(options *core.CompilerOptions, currentDirectory string) (result []string, fromConfig bool) {
-	if options.TypeRoots != nil {
-		return options.TypeRoots, true
-	}
-	var baseDir string
-	if options.ConfigFilePath != "" {
-		baseDir = tspath.GetDirectoryPath(options.ConfigFilePath)
-	} else {
-		baseDir = currentDirectory
-		if baseDir == "" {
-			// This was accounted for in the TS codebase, but only for third-party API usage
-			// where the module resolution host does not provide a getCurrentDirectory().
-			panic("cannot get effective type roots without a config file path or current directory")
-		}
-	}
-
-	typeRoots := make([]string, 0, strings.Count(baseDir, "/"))
-	tspath.ForEachAncestorDirectory(baseDir, func(dir string) (any, bool) {
-		typeRoots = append(typeRoots, tspath.CombinePaths(dir, "node_modules", "@types"))
-		return nil, false
-	})
-	return typeRoots, false
 }
 
 func MangleScopedPackageName(packageName string) string {

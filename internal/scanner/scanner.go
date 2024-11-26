@@ -8,8 +8,8 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/compiler/diagnostics"
-	"github.com/microsoft/typescript-go/internal/compiler/stringutil"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/stringutil"
 )
 
 type EscapeSequenceScanningFlags int32
@@ -1820,7 +1820,7 @@ func ComputeLineOfPosition(lineStarts []core.TextPos, pos int) int {
 
 func GetLineStarts(sourceFile *ast.SourceFile) []core.TextPos {
 	if sourceFile.LineMap == nil {
-		sourceFile.LineMap = stringutil.ComputeLineStarts(sourceFile.Text)
+		sourceFile.LineMap = core.ComputeLineStarts(sourceFile.Text)
 	}
 	return sourceFile.LineMap
 }

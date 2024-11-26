@@ -156,7 +156,7 @@ func (r *Resolver) ResolveTypeReferenceDirective(typeReferenceDirectiveName stri
 		return result
 	}
 
-	typeRoots, fromConfig := GetEffectiveTypeRoots(compilerOptions, r.host.GetCurrentDirectory())
+	typeRoots, fromConfig := compilerOptions.GetEffectiveTypeRoots(r.host.GetCurrentDirectory())
 	if traceEnabled {
 		r.host.Trace(diagnostics.Resolving_type_reference_directive_0_containing_file_1_root_directory_2.Format(typeReferenceDirectiveName, containingFile, strings.Join(typeRoots, ",")))
 		if redirectedReference != nil {

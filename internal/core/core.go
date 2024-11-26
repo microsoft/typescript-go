@@ -3,6 +3,9 @@ package core
 import (
 	"iter"
 	"slices"
+	"unicode/utf8"
+
+	"github.com/microsoft/typescript-go/internal/stringutil"
 )
 
 func Filter[T any](slice []T, f func(T) bool) []T {
@@ -217,4 +220,35 @@ func IfElse[T any](b bool, whenTrue T, whenFalse T) T {
 		return whenTrue
 	}
 	return whenFalse
+}
+
+func ComputeLineStarts(text string) []TextPos {
+	var result []TextPos
+	pos := 0
+	lineStart := 0
+	for pos < len(text) {
+		b := text[pos]
+		if b < 0x7F {
+			pos++
+			switch b {
+			case '\r':
+				if pos < len(text) && text[pos] == '\n' {
+					pos++
+				}
+				fallthrough
+			case '\n':
+				result = append(result, TextPos(lineStart))
+				lineStart = pos
+			}
+		} else {
+			ch, size := utf8.DecodeRuneInString(text[pos:])
+			pos += size
+			if stringutil.IsLineBreak(ch) {
+				result = append(result, TextPos(lineStart))
+				lineStart = pos
+			}
+		}
+	}
+	result = append(result, TextPos(lineStart))
+	return result
 }
