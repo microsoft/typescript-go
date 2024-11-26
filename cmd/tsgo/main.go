@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"runtime"
+	"runtime/pprof"
 	"strings"
 	"time"
 
@@ -22,6 +23,7 @@ var singleThreaded = false
 var parseAndBindOnly = false
 var printTypes = false
 var pretty = true
+var profileDir = ""
 
 func printDiagnostic(d *ast.Diagnostic, level int) {
 	file := d.File()
@@ -50,6 +52,7 @@ func main() {
 	flag.BoolVar(&parseAndBindOnly, "p", false, "Parse and bind only")
 	flag.BoolVar(&printTypes, "t", false, "Print types defined in main.ts")
 	flag.BoolVar(&pretty, "pretty", true, "Get prettier errors")
+	flag.StringVar(&profileDir, "pprof", "", "Generate pprof CPU/memory profiles to the given directory")
 	flag.Parse()
 
 	rootPath := flag.Arg(0)
@@ -71,6 +74,12 @@ func main() {
 
 	programOptions := ts.ProgramOptions{RootPath: normalizedRootPath, Options: compilerOptions, SingleThreaded: singleThreaded, Host: host}
 
+	var profileSession *profileSession
+	if profileDir != "" {
+		profileDir = tspath.ResolvePath(currentDirectory, profileDir)
+		profileSession = beginProfiling(profileDir)
+	}
+
 	startTime := time.Now()
 	program := ts.NewProgram(programOptions)
 	diagnostics := program.GetSyntacticDiagnostics(nil)
@@ -86,10 +95,16 @@ func main() {
 		}
 	}
 	compileTime := time.Since(startTime)
+
+	if profileSession != nil {
+		profileSession.stop()
+	}
+
 	var memStats runtime.MemStats
 	runtime.GC()
 	runtime.GC()
 	runtime.ReadMemStats(&memStats)
+
 	if !quiet && len(diagnostics) != 0 {
 		if pretty {
 			var output strings.Builder
@@ -115,4 +130,42 @@ func main() {
 	fmt.Printf("Types:         %v\n", program.TypeCount())
 	fmt.Printf("Compile time:  %v\n", compileTime)
 	fmt.Printf("Memory used:   %vK\n", memStats.Alloc/1024)
+}
+
+type profileSession struct {
+	cpuFilePath string
+	memFilePath string
+	cpuFile     *os.File
+	memFile     *os.File
+}
+
+func beginProfiling(profileDir string) *profileSession {
+	os.MkdirAll(profileDir, 0755)
+
+	cpuProfilePath := tspath.ResolvePath(profileDir, fmt.Sprintf("cpu-%d.prof", os.Getpid()))
+	memProfilePath := tspath.ResolvePath(profileDir, fmt.Sprintf("mem-%d.prof", os.Getpid()))
+	cpuFile, err := os.Create(cpuProfilePath)
+	if err != nil {
+		panic(err)
+	}
+	memFile, err := os.Create(memProfilePath)
+	if err != nil {
+		panic(err)
+	}
+
+	pprof.StartCPUProfile(cpuFile)
+
+	return &profileSession{
+		cpuFilePath: cpuProfilePath,
+		memFilePath: memProfilePath,
+		cpuFile:     cpuFile,
+		memFile:     memFile,
+	}
+}
+
+func (p *profileSession) stop() {
+	pprof.StopCPUProfile()
+	pprof.WriteHeapProfile(p.memFile)
+	fmt.Printf("CPU profile: %v\n", p.cpuFilePath)
+	fmt.Printf("Memory profile: %v\n", p.memFilePath)
 }
