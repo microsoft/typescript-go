@@ -134,6 +134,18 @@ type AssignmentReducedKey struct {
 	id2 TypeId
 }
 
+// FlowLoopKey
+
+type FlowLoopKey struct {
+	flowNode *ast.FlowNode
+	refKey   string
+}
+
+type FlowLoopInfo struct {
+	key   FlowLoopKey
+	types []*Type
+}
+
 // InferenceContext
 
 type InferenceContext struct{}
@@ -346,6 +358,7 @@ type Checker struct {
 	templateLiteralTypes               map[string]*Type
 	stringMappingTypes                 map[StringMappingKey]*Type
 	uniqueESSymbolTypes                map[*ast.Symbol]*Type
+	subtypeReductionCache              map[string][]*Type
 	cachedTypes                        map[CachedTypeKey]*Type
 	cachedSignatures                   map[CachedSignatureKey]*Signature
 	narrowedTypes                      map[NarrowedTypeKey]*Type
@@ -471,6 +484,8 @@ type Checker struct {
 	lastGetCombinedNodeFlagsResult     ast.NodeFlags
 	lastGetCombinedModifierFlagsNode   *ast.Node
 	lastGetCombinedModifierFlagsResult ast.ModifierFlags
+	flowLoopCache                      map[FlowLoopKey]*Type
+	flowLoopStack                      []FlowLoopInfo
 	sharedFlows                        []SharedFlow
 	flowAnalysisDisabled               bool
 	flowInvocationCount                int
@@ -489,6 +504,7 @@ type Checker struct {
 	getGlobalAwaitedSymbol             func() *ast.Symbol
 	getGlobalAwaitedSymbolOrNil        func() *ast.Symbol
 	getGlobalNaNSymbol                 func() *ast.Symbol
+	getGlobalRecordSymbol              func() *ast.Symbol
 	isPrimitiveOrObjectOrEmptyType     func(*Type) bool
 	containsMissingType                func(*Type) bool
 	couldContainTypeVariables          func(*Type) bool
@@ -523,6 +539,7 @@ func NewChecker(program *Program) *Checker {
 	c.templateLiteralTypes = make(map[string]*Type)
 	c.stringMappingTypes = make(map[StringMappingKey]*Type)
 	c.uniqueESSymbolTypes = make(map[*ast.Symbol]*Type)
+	c.subtypeReductionCache = make(map[string][]*Type)
 	c.cachedTypes = make(map[CachedTypeKey]*Type)
 	c.cachedSignatures = make(map[CachedSignatureKey]*Signature)
 	c.narrowedTypes = make(map[NarrowedTypeKey]*Type)
@@ -613,6 +630,7 @@ func NewChecker(program *Program) *Checker {
 	c.emptyStringType = c.getStringLiteralType("")
 	c.zeroType = c.getNumberLiteralType(0)
 	c.zeroBigIntType = c.getBigIntLiteralType(PseudoBigInt{negative: false, base10Value: "0"})
+	c.flowLoopCache = make(map[FlowLoopKey]*Type)
 	c.flowNodePostSuper = make(map[*ast.FlowNode]bool)
 	c.subtypeRelation = &Relation{}
 	c.strictSubtypeRelation = &Relation{}
@@ -627,6 +645,7 @@ func NewChecker(program *Program) *Checker {
 	c.getGlobalAwaitedSymbol = c.getGlobalTypeAliasResolver("Awaited", 1 /*arity*/, true /*reportErrors*/)
 	c.getGlobalAwaitedSymbolOrNil = c.getGlobalTypeAliasResolver("Awaited", 1 /*arity*/, false /*reportErrors*/)
 	c.getGlobalNaNSymbol = c.getGlobalValueSymbolResolver("NaN", false /*reportErrors*/)
+	c.getGlobalRecordSymbol = c.getGlobalTypeAliasResolver("Record", 2 /*arity*/, true /*reportErrors*/)
 	c.initializeClosures()
 	c.initializeChecker()
 	return c
@@ -2375,6 +2394,27 @@ func (c *Checker) checkExpressionCached(node *ast.Node) *Type {
 func (c *Checker) checkExpressionCachedEx(node *ast.Node, checkMode CheckMode) *Type {
 	// !!!
 	return c.checkExpressionEx(node, checkMode)
+}
+
+/**
+ * Returns the type of an expression. Unlike checkExpression, this function is simply concerned
+ * with computing the type and may not fully check all contained sub-expressions for errors.
+ * It is intended for uses where you know there is no contextual type,
+ * and requesting the contextual type might cause a circularity or other bad behaviour.
+ * It sets the contextual type of the node to any before calling getTypeOfExpression.
+ */
+
+func (c *Checker) getContextFreeTypeOfExpression(node *ast.Node) *Type {
+	return c.checkExpressionEx(node, CheckModeSkipContextSensitive)
+	// !!!
+	// links := c.getNodeLinks(node)
+	// if links.contextFreeType != nil {
+	// 	return links.contextFreeType
+	// }
+	// c.pushContextualType(node, c.anyType, false /*isCache*/)
+	// t := /* TODO(TS-TO-GO) EqualsToken BinaryExpression: links.contextFreeType = checkExpression(node, CheckMode.SkipContextSensitive) */ TODO
+	// c.popContextualType()
+	// return t
 }
 
 func (c *Checker) checkExpression(node *ast.Node) *Type {
@@ -10887,6 +10927,33 @@ func (c *Checker) isEmptyLiteralType(t *Type) bool {
 	return t == c.undefinedWideningType
 }
 
+func (c *Checker) isTupleLikeType(t *Type) bool {
+	if isTupleType(t) || c.getPropertyOfType(t, "0") != nil {
+		return true
+	}
+	if c.isArrayLikeType(t) {
+		if lengthType := c.getTypeOfPropertyOfType(t, "length"); lengthType != nil {
+			return everyType(lengthType, func(t *Type) bool { return t.flags&TypeFlagsNumberLiteral != 0 })
+		}
+	}
+	return false
+}
+
+func (c *Checker) isArrayOrTupleLikeType(t *Type) bool {
+	return c.isArrayLikeType(t) || c.isTupleLikeType(t)
+}
+
+func (c *Checker) getTupleElementType(t *Type, index int) *Type {
+	propType := c.getTypeOfPropertyOfType(t, strconv.Itoa(index))
+	if propType != nil {
+		return propType
+	}
+	if everyType(t, isTupleType) {
+		return c.getTupleElementTypeOutOfStartCount(t, float64(index), core.IfElse(c.compilerOptions.NoUncheckedIndexedAccess == core.TSTrue, c.undefinedType, nil))
+	}
+	return nil
+}
+
 /**
  * Get type from reference to type alias. When a type alias is generic, the declared type of the type alias may include
  * references to the type parameters of the alias. We replace those with the actual type arguments by instantiating the
@@ -12572,17 +12639,163 @@ func (c *Checker) removeRedundantLiteralTypes(types []*Type, includes TypeFlags,
 }
 
 func (c *Checker) removeStringLiteralsMatchedByTemplateLiterals(types []*Type) []*Type {
-	// !!!
+	templates := core.Filter(types, c.isPatternLiteralType)
+	if len(templates) != 0 {
+		i := len(types)
+		for i > 0 {
+			i--
+			t := types[i]
+			if t.flags&TypeFlagsStringLiteral != 0 && core.Some(templates, func(template *Type) bool {
+				return c.isTypeMatchedByTemplateLiteralOrStringMapping(t, template)
+			}) {
+				types = slices.Delete(types, i, i+1)
+			}
+		}
+	}
 	return types
 }
 
+func (c *Checker) isTypeMatchedByTemplateLiteralOrStringMapping(t *Type, template *Type) bool {
+	if template.flags&TypeFlagsTemplateLiteral != 0 {
+		return c.isTypeMatchedByTemplateLiteralType(t, template.AsTemplateLiteralType())
+	}
+	return c.isMemberOfStringMapping(t, template)
+}
+
 func (c *Checker) removeConstrainedTypeVariables(types []*Type) []*Type {
-	// !!!
+	var typeVariables []*Type
+	// First collect a list of the type variables occurring in constraining intersections.
+	for _, t := range types {
+		if t.flags&TypeFlagsIntersection != 0 && t.objectFlags&ObjectFlagsIsConstrainedTypeVariable != 0 {
+			index := 0
+			if t.AsIntersectionType().types[0].flags&TypeFlagsTypeVariable == 0 {
+				index = 1
+			}
+			typeVariables = core.AppendIfUnique(typeVariables, t.AsIntersectionType().types[index])
+		}
+	}
+	// For each type variable, check if the constraining intersections for that type variable fully
+	// cover the constraint of the type variable; if so, remove the constraining intersections and
+	// substitute the type variable.
+	for _, typeVariable := range typeVariables {
+		var primitives []*Type
+		// First collect the primitive types from the constraining intersections.
+		for _, t := range types {
+			if t.flags&TypeFlagsIntersection != 0 && t.objectFlags&ObjectFlagsIsConstrainedTypeVariable != 0 {
+				index := 0
+				if t.AsIntersectionType().types[0].flags&TypeFlagsTypeVariable == 0 {
+					index = 1
+				}
+				if t.AsIntersectionType().types[index] == typeVariable {
+					primitives, _ = insertType(primitives, t.AsIntersectionType().types[1-index])
+				}
+			}
+		}
+		// If every constituent in the type variable's constraint is covered by an intersection of the type
+		// variable and that constituent, remove those intersections and substitute the type variable.
+		constraint := c.getBaseConstraintOfType(typeVariable)
+		if everyType(constraint, func(t *Type) bool { return containsType(primitives, t) }) {
+			i := len(types)
+			for i > 0 {
+				i--
+				t := types[i]
+				if t.flags&TypeFlagsIntersection != 0 && t.objectFlags&ObjectFlagsIsConstrainedTypeVariable != 0 {
+					index := 0
+					if t.AsIntersectionType().types[0].flags&TypeFlagsTypeVariable == 0 {
+						index = 1
+					}
+					if t.AsIntersectionType().types[index] == typeVariable && containsType(primitives, t.AsIntersectionType().types[1-index]) {
+						types = slices.Delete(types, i, i+1)
+					}
+				}
+			}
+			types, _ = insertType(types, typeVariable)
+		}
+	}
 	return types
 }
 
 func (c *Checker) removeSubtypes(types []*Type, hasObjectTypes bool) []*Type {
-	// !!!
+	// [] and [T] immediately reduce to [] and [T] respectively
+	if len(types) < 2 {
+		return types
+	}
+	key := getTypeListKey(types)
+	if cached := c.subtypeReductionCache[key]; cached != nil {
+		return cached
+	}
+	// We assume that redundant primitive types have already been removed from the types array and that there
+	// are no any and unknown types in the array. Thus, the only possible supertypes for primitive types are empty
+	// object types, and if none of those are present we can exclude primitive types from the subtype check.
+	hasEmptyObject := hasObjectTypes && core.Some(types, func(t *Type) bool {
+		return t.flags&TypeFlagsObject != 0 && !c.isGenericMappedType(t) && c.isEmptyResolvedType(c.resolveStructuredTypeMembers(t))
+	})
+	len := len(types)
+	i := len
+	count := 0
+	for i > 0 {
+		i--
+		source := types[i]
+		if hasEmptyObject || source.flags&TypeFlagsStructuredOrInstantiable != 0 {
+			// A type parameter with a union constraint may be a subtype of some union, but not a subtype of the
+			// individual constituents of that union. For example, `T extends A | B` is a subtype of `A | B`, but not
+			// a subtype of just `A` or just `B`. When we encounter such a type parameter, we therefore check if the
+			// type parameter is a subtype of a union of all the other types.
+			if source.flags&TypeFlagsTypeParameter != 0 && c.getBaseConstraintOrType(source).flags&TypeFlagsUnion != 0 {
+				if c.isTypeRelatedTo(source, c.getUnionType(core.Map(types, func(t *Type) *Type {
+					if t == source {
+						return c.neverType
+					}
+					return t
+				})), c.strictSubtypeRelation) {
+					types = slices.Delete(types, i, i+1)
+				}
+				continue
+			}
+			// Find the first property with a unit type, if any. When constituents have a property by the same name
+			// but of a different unit type, we can quickly disqualify them from subtype checks. This helps subtype
+			// reduction of large discriminated union types.
+			var keyProperty *ast.Symbol
+			var keyPropertyType *Type
+			if source.flags&(TypeFlagsObject|TypeFlagsIntersection|TypeFlagsInstantiableNonPrimitive) != 0 {
+				keyProperty = core.Find(c.getPropertiesOfType(source), func(p *ast.Symbol) bool {
+					return isUnitType(c.getTypeOfSymbol(p))
+				})
+			}
+			if keyProperty != nil {
+				keyPropertyType = c.getRegularTypeOfLiteralType(c.getTypeOfSymbol(keyProperty))
+			}
+			for _, target := range types {
+				if source != target {
+					if count == 100000 {
+						// After 100000 subtype checks we estimate the remaining amount of work by assuming the
+						// same ratio of checks per element. If the estimated number of remaining type checks is
+						// greater than 1M we deem the union type too complex to represent. This for example
+						// caps union types at 1000 unique object types.
+						estimatedCount := (count / (len - i)) * len
+						if estimatedCount > 1000000 {
+							c.error(c.currentNode, diagnostics.Expression_produces_a_union_type_that_is_too_complex_to_represent)
+							return nil
+						}
+					}
+					count++
+					if keyProperty != nil && target.flags&(TypeFlagsObject|TypeFlagsIntersection|TypeFlagsInstantiableNonPrimitive) != 0 {
+						t := c.getTypeOfPropertyOfType(target, keyProperty.Name)
+						if t != nil && isUnitType(t) && c.getRegularTypeOfLiteralType(t) != keyPropertyType {
+							continue
+						}
+					}
+					if c.isTypeRelatedTo(source, target, c.strictSubtypeRelation) && (c.getTargetType(source).objectFlags&ObjectFlagsClass == 0 ||
+						c.getTargetType(target).objectFlags&ObjectFlagsClass == 0 ||
+						c.isTypeDerivedFrom(source, target)) {
+						types = slices.Delete(types, i, i+1)
+						break
+					}
+				}
+			}
+		}
+	}
+	c.subtypeReductionCache[key] = types
 	return types
 }
 

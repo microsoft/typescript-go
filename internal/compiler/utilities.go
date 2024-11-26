@@ -1186,7 +1186,7 @@ func isCompoundLikeAssignment(assignment *ast.Node) bool {
 }
 
 func isPushOrUnshiftIdentifier(node *ast.Node) bool {
-	text := node.AsIdentifier().Text
+	text := node.Text()
 	return text == "push" || text == "unshift"
 }
 

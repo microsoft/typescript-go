@@ -29,7 +29,7 @@ type FlowState struct {
 	declaredType    *Type
 	initialType     *Type
 	flowContainer   *ast.Node
-	key             string
+	refKey          string
 	depth           int
 	sharedFlowStart int
 }
@@ -289,11 +289,32 @@ func (c *Checker) narrowType(f *FlowState, t *Type, expr *ast.Node, assumeTrue b
 }
 
 func (c *Checker) narrowTypeByOptionality(f *FlowState, t *Type, expr *ast.Node, assumePresent bool) *Type {
-	return t // !!!
+	if c.isMatchingReference(f.reference, expr) {
+		return c.getAdjustedTypeWithFacts(t, core.IfElse(assumePresent, TypeFactsNEUndefinedOrNull, TypeFactsEQUndefinedOrNull))
+	}
+	access := c.getDiscriminantPropertyAccess(f, expr, t)
+	if access != nil {
+		return c.narrowTypeByDiscriminant(t, access, func(t *Type) *Type {
+			return c.getTypeWithFacts(t, core.IfElse(assumePresent, TypeFactsNEUndefinedOrNull, TypeFactsEQUndefinedOrNull))
+		})
+	}
+	return t
 }
 
 func (c *Checker) narrowTypeByTruthiness(f *FlowState, t *Type, expr *ast.Node, assumeTrue bool) *Type {
-	return t // !!!
+	if c.isMatchingReference(f.reference, expr) {
+		return c.getAdjustedTypeWithFacts(t, core.IfElse(assumeTrue, TypeFactsTruthy, TypeFactsFalsy))
+	}
+	if c.strictNullChecks && assumeTrue && c.optionalChainContainsReference(expr, f.reference) {
+		t = c.getAdjustedTypeWithFacts(t, TypeFactsNEUndefinedOrNull)
+	}
+	access := c.getDiscriminantPropertyAccess(f, expr, t)
+	if access != nil {
+		return c.narrowTypeByDiscriminant(t, access, func(t *Type) *Type {
+			return c.getTypeWithFacts(t, core.IfElse(assumeTrue, TypeFactsTruthy, TypeFactsFalsy))
+		})
+	}
+	return t
 }
 
 func (c *Checker) narrowTypeByCallExpression(f *FlowState, t *Type, callExpression *ast.CallExpression, assumeTrue bool) *Type {
@@ -797,15 +818,80 @@ func (c *Checker) getInstanceType(constructorType *Type) *Type {
 }
 
 func (c *Checker) narrowTypeByPrivateIdentifierInInExpression(f *FlowState, t *Type, expr *ast.BinaryExpression, assumeTrue bool) *Type {
-	return t // !!!
+	target := c.getReferenceCandidate(expr.Right)
+	if !c.isMatchingReference(f.reference, target) {
+		return t
+	}
+	symbol := c.getSymbolForPrivateIdentifierExpression(expr.Left)
+	if symbol == nil {
+		return t
+	}
+	classSymbol := symbol.Parent
+	var targetType *Type
+	if hasStaticModifier(symbol.ValueDeclaration) {
+		targetType = c.getTypeOfSymbol(classSymbol)
+	} else {
+		targetType = c.getDeclaredTypeOfSymbol(classSymbol)
+	}
+	return c.getNarrowedType(t, targetType, assumeTrue, true /*checkDerived*/)
 }
 
 func (c *Checker) narrowTypeByInKeyword(f *FlowState, t *Type, nameType *Type, assumeTrue bool) *Type {
-	return t // !!!
+	name := getPropertyNameFromType(nameType)
+	isKnownProperty := someType(t, func(t *Type) bool {
+		return c.isTypePresencePossible(t, name, true /*assumeTrue*/)
+	})
+	if isKnownProperty {
+		// If the check is for a known property (i.e. a property declared in some constituent of
+		// the target type), we filter the target type by presence of absence of the property.
+		return c.filterType(t, func(t *Type) bool {
+			return c.isTypePresencePossible(t, name, assumeTrue)
+		})
+	}
+	if assumeTrue {
+		// If the check is for an unknown property, we intersect the target type with `Record<X, unknown>`,
+		// where X is the name of the property.
+		recordSymbol := c.getGlobalRecordSymbol()
+		if recordSymbol != nil {
+			return c.getIntersectionType([]*Type{t, c.getTypeAliasInstantiation(recordSymbol, []*Type{nameType, c.unknownType}, nil)})
+		}
+	}
+	return t
+}
+
+func (c *Checker) isTypePresencePossible(t *Type, propName string, assumeTrue bool) bool {
+	prop := c.getPropertyOfType(t, propName)
+	if prop != nil {
+		return prop.Flags&ast.SymbolFlagsOptional != 0 || prop.CheckFlags&ast.CheckFlagsPartial != 0 || assumeTrue
+	}
+	return c.getApplicableIndexInfoForName(t, propName) != nil || !assumeTrue
 }
 
 func (c *Checker) narrowTypeByOptionalChainContainment(f *FlowState, t *Type, operator ast.Kind, value *ast.Node, assumeTrue bool) *Type {
-	return t // !!!
+	// We are in a branch of obj?.foo === value (or any one of the other equality operators). We narrow obj as follows:
+	// When operator is === and type of value excludes undefined, null and undefined is removed from type of obj in true branch.
+	// When operator is !== and type of value excludes undefined, null and undefined is removed from type of obj in false branch.
+	// When operator is == and type of value excludes null and undefined, null and undefined is removed from type of obj in true branch.
+	// When operator is != and type of value excludes null and undefined, null and undefined is removed from type of obj in false branch.
+	// When operator is === and type of value is undefined, null and undefined is removed from type of obj in false branch.
+	// When operator is !== and type of value is undefined, null and undefined is removed from type of obj in true branch.
+	// When operator is == and type of value is null or undefined, null and undefined is removed from type of obj in false branch.
+	// When operator is != and type of value is null or undefined, null and undefined is removed from type of obj in true branch.
+	equalsOperator := operator == ast.KindEqualsEqualsToken || operator == ast.KindEqualsEqualsEqualsToken
+	var nullableFlags TypeFlags
+	if operator == ast.KindEqualsEqualsToken || operator == ast.KindExclamationEqualsToken {
+		nullableFlags = TypeFlagsNullable
+	} else {
+		nullableFlags = TypeFlagsUndefined
+	}
+	valueType := c.getTypeOfExpression(value)
+	// Note that we include any and unknown in the exclusion test because their domain includes null and undefined.
+	removeNullable := equalsOperator != assumeTrue && everyType(valueType, func(t *Type) bool { return t.flags&nullableFlags != 0 }) ||
+		equalsOperator == assumeTrue && everyType(valueType, func(t *Type) bool { return t.flags&(TypeFlagsAnyOrUnknown|nullableFlags) == 0 })
+	if removeNullable {
+		return c.getAdjustedTypeWithFacts(t, TypeFactsNEUndefinedOrNull)
+	}
+	return t
 }
 
 func (c *Checker) getTypeAtSwitchClause(f *FlowState, flow *ast.FlowNode) FlowType {
@@ -869,9 +955,7 @@ func (c *Checker) getTypeAtFlowBranchLabel(f *FlowState, flow *ast.FlowNode) Flo
 // finalize all evolving array types.
 func (c *Checker) getUnionOrEvolvingArrayType(f *FlowState, types []*Type, subtypeReduction UnionReduction) *Type {
 	if isEvolvingArrayTypeList(types) {
-		// !!!
-		// return c.getEvolvingArrayType(c.getUnionType(core.Map(types, c.getElementTypeOfEvolvingArrayType)))
-		return c.errorType
+		return c.getEvolvingArrayType(c.getUnionType(core.Map(types, c.getElementTypeOfEvolvingArrayType)))
 	}
 	result := c.recombineUnknownType(c.getUnionTypeEx(core.SameMap(types, c.finalizeEvolvingArrayType), subtypeReduction, nil, nil))
 	if result != f.declaredType && result.flags&f.declaredType.flags&TypeFlagsUnion != 0 && slices.Equal(result.AsUnionType().types, f.declaredType.AsUnionType().types) {
@@ -881,11 +965,116 @@ func (c *Checker) getUnionOrEvolvingArrayType(f *FlowState, types []*Type, subty
 }
 
 func (c *Checker) getTypeAtFlowLoopLabel(f *FlowState, flow *ast.FlowNode) FlowType {
-	return c.getTypeAtFlowNode(f, flow.Antecedents.Flow)
+	if f.refKey == "" {
+		f.refKey = c.getFlowReferenceKey(f)
+	}
+	if f.refKey == "?" {
+		// No cache key is generated when binding patterns are in unnarrowable situations
+		return FlowType{t: f.declaredType}
+	}
+	key := FlowLoopKey{flowNode: flow, refKey: f.refKey}
+	// If we have previously computed the control flow type for the reference at
+	// this flow loop junction, return the cached type.
+	if cached := c.flowLoopCache[key]; cached != nil {
+		return FlowType{t: cached}
+	}
+	// If this flow loop junction and reference are already being processed, return
+	// the union of the types computed for each branch so far, marked as incomplete.
+	// It is possible to see an empty array in cases where loops are nested and the
+	// back edge of the outer loop reaches an inner loop that is already being analyzed.
+	// In such cases we restart the analysis of the inner loop, which will then see
+	// a non-empty in-process array for the outer loop and eventually terminate because
+	// the first antecedent of a loop junction is always the non-looping control flow
+	// path that leads to the top.
+	for _, loopInfo := range c.flowLoopStack {
+		if loopInfo.key == key && len(loopInfo.types) != 0 {
+			return FlowType{t: c.getUnionOrEvolvingArrayType(f, loopInfo.types, UnionReductionLiteral), incomplete: true}
+		}
+	}
+	// Add the flow loop junction and reference to the in-process stack and analyze
+	// each antecedent code path.
+	var antecedentTypes []*Type
+	subtypeReduction := false
+	var firstAntecedentType FlowType
+	for list := flow.Antecedents; list != nil; list = list.Next {
+		var flowType FlowType
+		if firstAntecedentType.isNil() {
+			// The first antecedent of a loop junction is always the non-looping control
+			// flow path that leads to the top.
+			firstAntecedentType = c.getTypeAtFlowNode(f, list.Flow)
+			flowType = firstAntecedentType
+		} else {
+			// All but the first antecedent are the looping control flow paths that lead
+			// back to the loop junction. We track these on the flow loop stack.
+			c.flowLoopStack = append(c.flowLoopStack, FlowLoopInfo{key: key, types: antecedentTypes})
+			flowType = c.getTypeAtFlowNode(f, list.Flow)
+			// !!!
+			// saveFlowTypeCache := c.flowTypeCache
+			// c.flowTypeCache = nil
+			// flowType = getTypeAtFlowNode(antecedent)
+			// c.flowTypeCache = saveFlowTypeCache
+			c.flowLoopStack = c.flowLoopStack[:len(c.flowLoopStack)-1]
+			// If we see a value appear in the cache it is a sign that control flow analysis
+			// was restarted and completed by checkExpressionCached. We can simply pick up
+			// the resulting type and bail out.
+			if cached := c.flowLoopCache[key]; cached != nil {
+				return FlowType{t: cached}
+			}
+		}
+		antecedentTypes = core.AppendIfUnique(antecedentTypes, flowType.t)
+		// If an antecedent type is not a subset of the declared type, we need to perform
+		// subtype reduction. This happens when a "foreign" type is injected into the control
+		// flow using the instanceof operator or a user defined type predicate.
+		if !c.isTypeSubsetOf(flowType.t, f.initialType) {
+			subtypeReduction = true
+		}
+		// If the type at a particular antecedent path is the declared type there is no
+		// reason to process more antecedents since the only possible outcome is subtypes
+		// that will be removed in the final union type anyway.
+		if flowType.t == f.declaredType {
+			break
+		}
+	}
+	// The result is incomplete if the first antecedent (the non-looping control flow path)
+	// is incomplete.
+	result := c.getUnionOrEvolvingArrayType(f, antecedentTypes, core.IfElse(subtypeReduction, UnionReductionSubtype, UnionReductionLiteral))
+	if firstAntecedentType.incomplete {
+		return FlowType{t: result, incomplete: true}
+	}
+	c.flowLoopCache[key] = result
+	return FlowType{t: result}
 }
 
 func (c *Checker) getTypeAtFlowArrayMutation(f *FlowState, flow *ast.FlowNode) FlowType {
-	return FlowType{} // !!!
+	if f.declaredType != c.autoType || f.declaredType == c.autoArrayType {
+		node := flow.Node
+		var expr *ast.Node
+		if ast.IsCallExpression(node) {
+			expr = node.Expression().Expression()
+		} else {
+			expr = node.AsBinaryExpression().Left.Expression()
+		}
+		if c.isMatchingReference(f.reference, c.getReferenceCandidate(expr)) {
+			flowType := c.getTypeAtFlowNode(f, flow.Antecedent)
+			if flowType.t.objectFlags&ObjectFlagsEvolvingArray != 0 {
+				evolvedType := flowType.t
+				if ast.IsCallExpression(node) {
+					for _, arg := range node.Arguments() {
+						evolvedType = c.addEvolvingArrayElementType(evolvedType, arg)
+					}
+				} else {
+					// We must get the context free expression type so as to not recur in an uncached fashion on the LHS (which causes exponential blowup in compile time)
+					indexType := c.getContextFreeTypeOfExpression(node.AsBinaryExpression().Left.AsElementAccessExpression().ArgumentExpression)
+					if c.isTypeAssignableToKind(indexType, TypeFlagsNumberLike) {
+						evolvedType = c.addEvolvingArrayElementType(evolvedType, node.AsBinaryExpression().Right)
+					}
+				}
+				return FlowType{t: evolvedType, incomplete: flowType.incomplete}
+			}
+			return flowType
+		}
+	}
+	return FlowType{}
 }
 
 func (c *Checker) getDiscriminantPropertyAccess(f *FlowState, expr *ast.Node, computedType *Type) *ast.Node {
@@ -959,11 +1148,18 @@ func (c *Checker) getEvolvingArrayType(elementType *Type) *Type {
 	key := CachedTypeKey{kind: CachedTypeKindEvolvingArrayType, typeId: elementType.id}
 	result := c.cachedTypes[key]
 	if result == nil {
-		result := c.newObjectType(ObjectFlagsEvolvingArray, nil)
+		result = c.newObjectType(ObjectFlagsEvolvingArray, nil)
 		result.AsEvolvingArrayType().elementType = elementType
 		c.cachedTypes[key] = result
 	}
 	return result
+}
+
+func (c *Checker) getElementTypeOfEvolvingArrayType(t *Type) *Type {
+	if t.objectFlags&ObjectFlagsEvolvingArray != 0 {
+		return t.AsEvolvingArrayType().elementType
+	}
+	return c.neverType
 }
 
 func isEvolvingArrayTypeList(types []*Type) bool {
@@ -982,12 +1178,27 @@ func isEvolvingArrayTypeList(types []*Type) bool {
 // Return true if the given node is 'x' in an 'x.length', x.push(value)', 'x.unshift(value)' or
 // 'x[n] = value' operation, where 'n' is an expression of type any, undefined, or a number-like type.
 func (c *Checker) isEvolvingArrayOperationTarget(node *ast.Node) bool {
-	return false // !!!
-	// root := c.getReferenceRoot(node)
-	// parent := root.Parent
-	// isLengthPushOrUnshift := isPropertyAccessExpression(parent) && (parent.Name.EscapedText == "length" || parent.Parent.Kind == ast.KindCallExpression && isIdentifier(parent.Name) && isPushOrUnshiftIdentifier(parent.Name))
-	// isElementAssignment := parent.Kind == ast.KindElementAccessExpression && parent.AsElementAccessExpression().Expression == root && parent.Parent.Kind == ast.KindBinaryExpression && parent.Parent.AsBinaryExpression().OperatorToken.Kind == ast.KindEqualsToken && parent.Parent.AsBinaryExpression().Left == parent && !isAssignmentTarget(parent.Parent) && c.isTypeAssignableToKind(c.getTypeOfExpression(parent.AsElementAccessExpression().ArgumentExpression), TypeFlagsNumberLike)
-	// return isLengthPushOrUnshift || isElementAssignment
+	root := c.getReferenceRoot(node)
+	parent := root.Parent
+	isLengthPushOrUnshift := ast.IsPropertyAccessExpression(parent) && (parent.Name().Text() == "length" ||
+		ast.IsCallExpression(parent.Parent) && ast.IsIdentifier(parent.Name()) && isPushOrUnshiftIdentifier(parent.Name()))
+	isElementAssignment := ast.IsElementAccessExpression(parent) && parent.Expression() == root &&
+		ast.IsBinaryExpression(parent.Parent) && parent.Parent.AsBinaryExpression().OperatorToken.Kind == ast.KindEqualsToken &&
+		parent.Parent.AsBinaryExpression().Left == parent && !isAssignmentTarget(parent.Parent) &&
+		c.isTypeAssignableToKind(c.getTypeOfExpression(parent.AsElementAccessExpression().ArgumentExpression), TypeFlagsNumberLike)
+	return isLengthPushOrUnshift || isElementAssignment
+}
+
+// When adding evolving array element types we do not perform subtype reduction. Instead,
+// we defer subtype reduction until the evolving array type is finalized into a manifest
+// array type.
+func (c *Checker) addEvolvingArrayElementType(evolvingArrayType *Type, node *ast.Node) *Type {
+	newElementType := c.getRegularTypeOfObjectLiteral(c.getBaseTypeOfLiteralType(c.getContextFreeTypeOfExpression(node)))
+	elementType := evolvingArrayType.AsEvolvingArrayType().elementType
+	if c.isTypeSubsetOf(newElementType, elementType) {
+		return evolvingArrayType
+	}
+	return c.getEvolvingArrayType(c.getUnionType([]*Type{elementType, newElementType}))
 }
 
 func (c *Checker) finalizeEvolvingArrayType(t *Type) *Type {
@@ -1075,12 +1286,12 @@ func (c *Checker) isMatchingReference(source *ast.Node, target *ast.Node) bool {
 // separated by dots). The key consists of the id of the symbol referenced by the
 // leftmost identifier followed by zero or more property names separated by dots.
 // The result is an empty string if the reference isn't a dotted name.
-func (c *Checker) getFlowCacheKey(node *ast.Node, declaredType *Type, initialType *Type, flowContainer *ast.Node) string {
+func (c *Checker) getFlowReferenceKey(f *FlowState) string {
 	var b KeyBuilder
-	if c.writeFlowCacheKey(&b, node, declaredType, initialType, flowContainer) {
+	if c.writeFlowCacheKey(&b, f.reference, f.declaredType, f.initialType, f.flowContainer) {
 		return b.String()
 	}
-	return ""
+	return "?" // Reference isn't a dotted name
 }
 
 func (c *Checker) writeFlowCacheKey(b *KeyBuilder, node *ast.Node, declaredType *Type, initialType *Type, flowContainer *ast.Node) bool {
@@ -1320,6 +1531,16 @@ func (c *Checker) getReferenceCandidate(node *ast.Node) *ast.Node {
 	return node
 }
 
+func (c *Checker) getReferenceRoot(node *ast.Node) *ast.Node {
+	parent := node.Parent
+	if ast.IsParenthesizedExpression(parent) ||
+		ast.IsBinaryExpression(parent) && parent.AsBinaryExpression().OperatorToken.Kind == ast.KindEqualsToken && parent.AsBinaryExpression().Left == node ||
+		ast.IsBinaryExpression(parent) && parent.AsBinaryExpression().OperatorToken.Kind == ast.KindCommaToken && parent.AsBinaryExpression().Right == node {
+		return c.getReferenceRoot(parent)
+	}
+	return node
+}
+
 // Return a new type in which occurrences of the string, number and bigint primitives and placeholder template
 // literal types in typeWithPrimitives have been replaced with occurrences of compatible and more specific types
 // from typeWithLiterals. This is essentially a limited form of intersection between the two types. We avoid a
@@ -1416,15 +1637,14 @@ func (c *Checker) getAssignedType(node *ast.Node) *Type {
 		return c.getAssignedTypeOfBinaryExpression(parent)
 	case ast.KindDeleteExpression:
 		return c.undefinedType
-		// !!!
-		// case ast.KindArrayLiteralExpression:
-		// 	return c.getAssignedTypeOfArrayLiteralElement(parent.AsArrayLiteralExpression(), node)
-		// case ast.KindSpreadElement:
-		// 	return c.getAssignedTypeOfSpreadExpression(parent.AsSpreadElement())
-		// case ast.KindPropertyAssignment:
-		// 	return c.getAssignedTypeOfPropertyAssignment(parent.AsPropertyAssignment())
-		// case ast.KindShorthandPropertyAssignment:
-		// 	return c.getAssignedTypeOfShorthandPropertyAssignment(parent.AsShorthandPropertyAssignment())
+	case ast.KindArrayLiteralExpression:
+		return c.getAssignedTypeOfArrayLiteralElement(parent, node)
+	case ast.KindSpreadElement:
+		return c.getAssignedTypeOfSpreadExpression(parent)
+	case ast.KindPropertyAssignment:
+		return c.getAssignedTypeOfPropertyAssignment(parent)
+	case ast.KindShorthandPropertyAssignment:
+		return c.getAssignedTypeOfShorthandPropertyAssignment(parent)
 	}
 	return c.errorType
 }
@@ -1436,6 +1656,64 @@ func (c *Checker) getAssignedTypeOfBinaryExpression(node *ast.Node) *Type {
 		return c.getTypeWithDefault(c.getAssignedType(node), node.AsBinaryExpression().Right)
 	}
 	return c.getTypeOfExpression(node.AsBinaryExpression().Right)
+}
+
+func (c *Checker) getAssignedTypeOfArrayLiteralElement(node *ast.Node, element *ast.Node) *Type {
+	return c.getTypeOfDestructuredArrayElement(c.getAssignedType(node), slices.Index(node.AsArrayLiteralExpression().Elements.Nodes, element))
+}
+
+func (c *Checker) getTypeOfDestructuredArrayElement(t *Type, index int) *Type {
+	if everyType(t, c.isTupleLikeType) {
+		if elementType := c.getTupleElementType(t, index); elementType != nil {
+			return elementType
+		}
+	}
+	if elementType := c.checkIteratedTypeOrElementType(IterationUseDestructuring, t, c.undefinedType, nil /*errorNode*/); elementType != nil {
+		return c.includeUndefinedInIndexSignature(elementType)
+	}
+	return c.errorType
+}
+
+func (c *Checker) includeUndefinedInIndexSignature(t *Type) *Type {
+	if c.compilerOptions.NoUncheckedIndexedAccess == core.TSTrue {
+		return c.getUnionType([]*Type{t, c.missingType})
+	}
+	return t
+}
+
+func (c *Checker) getAssignedTypeOfSpreadExpression(node *ast.Node) *Type {
+	return c.getTypeOfDestructuredSpreadExpression(c.getAssignedType(node.Parent))
+}
+
+func (c *Checker) getTypeOfDestructuredSpreadExpression(t *Type) *Type {
+	elementType := c.checkIteratedTypeOrElementType(IterationUseDestructuring, t, c.undefinedType, nil /*errorNode*/)
+	if elementType == nil {
+		elementType = c.errorType
+	}
+	return c.createArrayType(elementType)
+}
+
+func (c *Checker) getAssignedTypeOfPropertyAssignment(node *ast.Node) *Type {
+	return c.getTypeOfDestructuredProperty(c.getAssignedType(node.Parent), node.Name())
+}
+
+func (c *Checker) getTypeOfDestructuredProperty(t *Type, name *ast.Node) *Type {
+	nameType := c.getLiteralTypeFromPropertyName(name)
+	if !isTypeUsableAsPropertyName(nameType) {
+		return c.errorType
+	}
+	text := getPropertyNameFromType(nameType)
+	if propType := c.getTypeOfPropertyOfType(t, text); propType != nil {
+		return propType
+	}
+	if indexInfo := c.getApplicableIndexInfoForName(t, text); indexInfo != nil {
+		return c.includeUndefinedInIndexSignature(indexInfo.valueType)
+	}
+	return c.errorType
+}
+
+func (c *Checker) getAssignedTypeOfShorthandPropertyAssignment(node *ast.Node) *Type {
+	return c.getTypeWithDefault(c.getAssignedTypeOfPropertyAssignment(node), node.AsShorthandPropertyAssignment().ObjectAssignmentInitializer)
 }
 
 func (c *Checker) isDestructuringAssignmentTarget(parent *ast.Node) bool {
