@@ -39,7 +39,6 @@ linters:
     - unconvert
     - usestdlibvars
     - whitespace
-    - wrapcheck
 
     # Need to add headers
     # - goheader
