@@ -65,12 +65,7 @@ func (f *readDirFile) ReadDir(n int) ([]fs.DirEntry, error) {
 		if err != nil {
 			return nil, err
 		}
-		newInfo, ok := convertInfo(info)
-		if !ok {
-			entries[i] = entry
-			continue
-		}
-
+		newInfo := convertInfo(info)
 		entries[i] = &dirEntry{
 			DirEntry: entry,
 			fileInfo: newInfo,
@@ -118,10 +113,7 @@ func (m *mapFS) Open(name string) (fs.File, error) {
 		return nil, err
 	}
 
-	newInfo, ok := convertInfo(info)
-	if !ok {
-		return f, nil
-	}
+	newInfo := convertInfo(info)
 
 	if f, ok := f.(fs.ReadDirFile); ok {
 		return &readDirFile{
@@ -136,15 +128,11 @@ func (m *mapFS) Open(name string) (fs.File, error) {
 	}, nil
 }
 
-func convertInfo(info fs.FileInfo) (*fileInfo, bool) {
-	sys, ok := info.Sys().(*sys)
-	if !ok {
-		return nil, false
-	}
-
+func convertInfo(info fs.FileInfo) *fileInfo {
+	sys := info.Sys().(*sys)
 	return &fileInfo{
 		FileInfo: info,
 		sys:      sys.original,
 		realPath: sys.realPath,
-	}, true
+	}
 }
