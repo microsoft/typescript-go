@@ -390,12 +390,7 @@ func runTraceBaseline(t *testing.T, test traceTestCase) {
 		t.Parallel()
 
 		host := newVFSModuleResolutionHost(test.files)
-		resolver := module.NewResolver(
-			host,
-			nil,
-			nil,
-			test.compilerOptions,
-		)
+		resolver := module.NewResolver(host, test.compilerOptions)
 
 		for _, call := range test.calls {
 			switch call.call {
@@ -419,6 +414,11 @@ func runTraceBaseline(t *testing.T, test traceTestCase) {
 						assert.Equal(t, resolved.ResolvedModule.Extension, expectedResolvedModule["extension"].(string))
 						assert.Equal(t, resolved.ResolvedModule.ResolvedUsingTsExtension, expectedResolvedModule["resolvedUsingTsExtension"].(bool))
 						assert.Equal(t, resolved.ResolvedModule.IsExternalLibraryImport, expectedResolvedModule["isExternalLibraryImport"].(bool))
+						if expectedFailedLookupLocations, ok := call.returnValue["failedLookupLocations"].([]interface{}); ok {
+							assert.Assert(t, slices.EqualFunc(resolved.FailedLookupLocations, expectedFailedLookupLocations, func(a string, b interface{}) bool { return a == b.(string) }))
+						} else {
+							assert.Equal(t, len(resolved.FailedLookupLocations), 0)
+						}
 					} else {
 						assert.Assert(t, !resolved.IsResolved())
 					}
