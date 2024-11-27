@@ -570,11 +570,6 @@ func isJSDocTypedefTag(_ *ast.Node) bool {
 	return false
 }
 
-/**
- * TSTrue | TSFalse: Early return this value from checkGrammarModifiers.
- * Unknown: Need to do full checking on the modifiers.
- */
-
 func (c *Checker) reportObviousModifierErrors(node *ast.Node) bool {
 	modifier := c.findFirstIllegalModifier(node)
 	if modifier == nil {
