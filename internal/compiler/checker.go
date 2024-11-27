@@ -10,6 +10,7 @@ import (
 	"unicode/utf8"
 
 	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler/diagnostics"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/scanner"
@@ -9301,7 +9302,7 @@ func (c *Checker) getUnionOrIntersectionProperty(t *Type, name string, skipObjec
 
 func (c *Checker) createUnionOrIntersectionProperty(containingType *Type, name string, skipObjectFunctionPropertyAugment bool) *ast.Symbol {
 	var singleProp *ast.Symbol
-	var propSet core.Set[*ast.Symbol]
+	var propSet collections.OrderedSet[*ast.Symbol]
 	var indexTypes []*Type
 	isUnion := containingType.flags&TypeFlagsUnion != 0
 	// Flags we want to propagate to the result if they exist in all source symbols
@@ -9340,7 +9341,7 @@ func (c *Checker) createUnionOrIntersectionProperty(containingType *Type, name s
 						// back and not `Array<string>.length` when we're looking at a `.length` access on a `string[] | number[]`
 						mergedInstantiations = singleProp.Parent != nil && len(c.getLocalTypeParametersOfClassOrInterfaceOrTypeAlias(singleProp.Parent)) != 0
 					} else {
-						if propSet.Len() == 0 {
+						if propSet.Size() == 0 {
 							propSet.Add(singleProp)
 						}
 						propSet.Add(prop)
@@ -9392,14 +9393,14 @@ func (c *Checker) createUnionOrIntersectionProperty(containingType *Type, name s
 		}
 	}
 	if singleProp == nil || isUnion &&
-		(propSet.Len() == 0 || checkFlags&ast.CheckFlagsPartial != 0) &&
+		(propSet.Size() == 0 || checkFlags&ast.CheckFlagsPartial != 0) &&
 		checkFlags&(ast.CheckFlagsContainsPrivate|ast.CheckFlagsContainsProtected) != 0 &&
-		!(propSet.Len() != 0 && c.hasCommonDeclaration(propSet)) {
+		!(propSet.Size() != 0 && c.hasCommonDeclaration(propSet)) {
 		// No property was found, or, in a union, a property has a private or protected declaration in one
 		// constituent, but is missing or has a different declaration in another constituent.
 		return nil
 	}
-	if propSet.Len() == 0 && checkFlags&ast.CheckFlagsReadPartial == 0 && len(indexTypes) == 0 {
+	if propSet.Size() == 0 && checkFlags&ast.CheckFlagsReadPartial == 0 && len(indexTypes) == 0 {
 		if !mergedInstantiations {
 			return singleProp
 		}
@@ -9423,7 +9424,7 @@ func (c *Checker) createUnionOrIntersectionProperty(containingType *Type, name s
 		links.writeType = c.getWriteTypeOfSymbol(singleProp)
 		return clone
 	}
-	if propSet.Len() == 0 {
+	if propSet.Size() == 0 {
 		propSet.Add(singleProp)
 	}
 	var declarations []*ast.Node
@@ -9433,7 +9434,7 @@ func (c *Checker) createUnionOrIntersectionProperty(containingType *Type, name s
 	var writeTypes []*Type
 	var firstValueDeclaration *ast.Node
 	var hasNonUniformValueDeclaration bool
-	for prop := range propSet.Keys() {
+	for prop := range propSet.Values() {
 		if firstValueDeclaration == nil {
 			firstValueDeclaration = prop.ValueDeclaration
 		} else if prop.ValueDeclaration != nil && prop.ValueDeclaration != firstValueDeclaration {
@@ -9515,9 +9516,9 @@ func isPrototypeProperty(symbol *ast.Symbol) bool {
 	return symbol.Flags&ast.SymbolFlagsMethod != 0 || symbol.CheckFlags&ast.CheckFlagsSyntheticMethod != 0
 }
 
-func (c *Checker) hasCommonDeclaration(symbols core.Set[*ast.Symbol]) bool {
+func (c *Checker) hasCommonDeclaration(symbols collections.OrderedSet[*ast.Symbol]) bool {
 	var commonDeclarations core.Set[*ast.Node]
-	for symbol := range symbols.Keys() {
+	for symbol := range symbols.Values() {
 		if len(symbol.Declarations) == 0 {
 			return false
 		}
@@ -9859,8 +9860,8 @@ func (c *Checker) getNamedMembers(members ast.SymbolTable) []*ast.Symbol {
 		if c.isNamedMember(symbol, id) {
 			result = append(result, symbol)
 		}
-		sortSymbols(result)
 	}
+	sortSymbols(result)
 	return result
 }
 
