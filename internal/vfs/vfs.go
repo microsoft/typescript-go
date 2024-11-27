@@ -135,11 +135,11 @@ func FromOS() FS {
 			path = filepath.FromSlash(path)
 			path, err := filepath.EvalSymlinks(path)
 			if err != nil {
-				return "", err //nolint:wrapcheck
+				return "", err
 			}
 			path, err = filepath.Abs(path)
 			if err != nil {
-				return "", err //nolint:wrapcheck
+				return "", err
 			}
 			return tspath.NormalizeSlashes(path), nil
 		},
@@ -299,7 +299,7 @@ func (v *vfs) WalkDir(root string, walkFn WalkDirFunc) error {
 	if fsys == nil {
 		return nil
 	}
-	return fs.WalkDir(fsys, rest, func(path string, d fs.DirEntry, err error) error { //nolint:wrapcheck
+	return fs.WalkDir(fsys, rest, func(path string, d fs.DirEntry, err error) error {
 		if path == "." {
 			path = ""
 		}
