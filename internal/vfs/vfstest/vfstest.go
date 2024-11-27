@@ -18,7 +18,7 @@ type mapFS struct {
 
 type sys struct {
 	original any
-	realPath string
+	realpath string
 }
 
 // FromTestMapFS creates a new [vfs.FS] from a [fstest.MapFS]. The provided FS will be augmented
@@ -30,7 +30,9 @@ func FromMapFS(m fstest.MapFS, useCaseSensitiveFileNames bool) vfs.FS {
 }
 
 func convertMapFS(m fstest.MapFS, useCaseSensitiveFileNames bool) *mapFS {
-	// Create all missing intermediate directories so we can attach the real path to each of them.
+	// Create all missing intermediate directories so we can attach the realpath to each of them.
+	// fstest.MapFS doesn't require this as it synthesizes directories on the fly, but it's a lot
+	// harder to reapply a realpath onto those when we're deep in some FileInfo method.
 	newM := make(fstest.MapFS)
 	for p, f := range m {
 		newM[p] = f
@@ -59,7 +61,7 @@ func convertMapFS(m fstest.MapFS, useCaseSensitiveFileNames bool) *mapFS {
 	for path, file := range newM {
 		canonical := tspath.GetCanonicalFileName(path, useCaseSensitiveFileNames)
 		if other, ok := mp[canonical]; ok {
-			path2 := other.Sys.(*sys).realPath
+			path2 := other.Sys.(*sys).realpath
 			// Ensure consistent panic messages
 			path, path2 = min(path, path2), max(path, path2)
 			panic(fmt.Sprintf("duplicate path: %q and %q have the same canonical path", path, path2))
@@ -67,7 +69,7 @@ func convertMapFS(m fstest.MapFS, useCaseSensitiveFileNames bool) *mapFS {
 		fileCopy := *file
 		fileCopy.Sys = &sys{
 			original: fileCopy.Sys,
-			realPath: path,
+			realpath: path,
 		}
 		mp[canonical] = &fileCopy
 	}
@@ -80,11 +82,11 @@ func convertMapFS(m fstest.MapFS, useCaseSensitiveFileNames bool) *mapFS {
 type fileInfo struct {
 	fs.FileInfo
 	sys      any
-	realPath string
+	realpath string
 }
 
 func (fi *fileInfo) Name() string {
-	return path.Base(fi.realPath)
+	return path.Base(fi.realpath)
 }
 
 func (fi *fileInfo) Sys() any {
@@ -106,7 +108,7 @@ type dirEntry struct {
 }
 
 func (e *dirEntry) Name() string {
-	return path.Base(e.fileInfo.realPath)
+	return path.Base(e.fileInfo.realpath)
 }
 
 func (e *dirEntry) Info() (fs.FileInfo, error) {
@@ -165,7 +167,7 @@ func (m *mapFS) Open(name string) (fs.File, error) {
 			fileInfo: &fileInfo{
 				FileInfo: info,
 				sys:      info.Sys(),
-				realPath: ".",
+				realpath: ".",
 			},
 		}, nil
 	}
@@ -191,7 +193,7 @@ func (m *mapFS) Realpath(name string) (string, error) {
 	if !ok {
 		return "", fs.ErrNotExist
 	}
-	return file.Sys.(*sys).realPath, nil
+	return file.Sys.(*sys).realpath, nil
 }
 
 func convertInfo(info fs.FileInfo) (*fileInfo, bool) {
@@ -202,7 +204,7 @@ func convertInfo(info fs.FileInfo) (*fileInfo, bool) {
 	return &fileInfo{
 		FileInfo: info,
 		sys:      sys.original,
-		realPath: sys.realPath,
+		realpath: sys.realpath,
 	}, true
 }
 
