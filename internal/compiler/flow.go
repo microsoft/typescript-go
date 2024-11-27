@@ -1778,6 +1778,98 @@ func (c *Checker) typeMaybeAssignableTo(source *Type, target *Type) bool {
 	return false
 }
 
+func (c *Checker) isReachableFlowNode(flow *ast.FlowNode) bool {
+	result := c.isReachableFlowNodeWorker(flow, false /*noCacheCheck*/)
+	c.lastFlowNode = flow
+	c.lastFlowNodeReachable = result
+	return result
+}
+
+func (c *Checker) isReachableFlowNodeWorker(flow *ast.FlowNode, noCacheCheck bool) bool {
+	for {
+		if flow == c.lastFlowNode {
+			return c.lastFlowNodeReachable
+		}
+		flags := flow.Flags
+		if flags&ast.FlowFlagsShared != 0 {
+			if !noCacheCheck {
+				if reachable, ok := c.flowNodeReachable[flow]; ok {
+					return reachable
+				}
+				reachable := c.isReachableFlowNodeWorker(flow, true /*noCacheCheck*/)
+				c.flowNodeReachable[flow] = reachable
+				return reachable
+			}
+			noCacheCheck = false
+		}
+		switch {
+		case flags&(ast.FlowFlagsAssignment|ast.FlowFlagsCondition|ast.FlowFlagsArrayMutation) != 0:
+			flow = flow.Antecedent
+		case flags&ast.FlowFlagsCall != 0:
+			signature := c.getEffectsSignature(flow.Node)
+			if signature != nil {
+				predicate := c.getTypePredicateOfSignature(signature)
+				if predicate != nil && predicate.kind == TypePredicateKindAssertsIdentifier && predicate.t == nil {
+					predicateArgument := flow.Node.Arguments()[predicate.parameterIndex]
+					if predicateArgument != nil && c.isFalseExpression(predicateArgument) {
+						return false
+					}
+				}
+				if c.getReturnTypeOfSignature(signature).flags&TypeFlagsNever != 0 {
+					return false
+				}
+			}
+			flow = flow.Antecedent
+		case flags&ast.FlowFlagsBranchLabel != 0:
+			// A branching point is reachable if any branch is reachable.
+			for list := flow.Antecedents; list != nil; list = list.Next {
+				if c.isReachableFlowNodeWorker(list.Flow, false /*noCacheCheck*/) {
+					return true
+				}
+			}
+			return false
+		case flags&ast.FlowFlagsLoopLabel != 0:
+			if flow.Antecedents == nil {
+				return false
+			}
+			// A loop is reachable if the control flow path that leads to the top is reachable.
+			flow = flow.Antecedents.Flow
+		case flags&ast.FlowFlagsSwitchClause != 0:
+			// The control flow path representing an unmatched value in a switch statement with
+			// no default clause is unreachable if the switch statement is exhaustive.
+			data := flow.Node.AsFlowSwitchClauseData()
+			if data.ClauseStart == data.ClauseEnd && c.isExhaustiveSwitchStatement(data.SwitchStatement) {
+				return false
+			}
+			flow = flow.Antecedent
+		case flags&ast.FlowFlagsReduceLabel != 0:
+			// Cache is unreliable once we start adjusting labels
+			c.lastFlowNode = nil
+			data := flow.Node.AsFlowReduceLabelData()
+			saveAntecedents := data.Target.Antecedents
+			data.Target.Antecedents = data.Antecedents
+			result := c.isReachableFlowNodeWorker(flow.Antecedent, false /*noCacheCheck*/)
+			data.Target.Antecedents = saveAntecedents
+			return result
+		default:
+			return flags&ast.FlowFlagsUnreachable == 0
+		}
+	}
+}
+
+func (c *Checker) isFalseExpression(expr *ast.Node) bool {
+	node := ast.SkipParentheses(expr)
+	if node.Kind == ast.KindFalseKeyword {
+		return true
+	}
+	if ast.IsBinaryExpression(node) {
+		binary := node.AsBinaryExpression()
+		return binary.OperatorToken.Kind == ast.KindAmpersandAmpersandToken && (c.isFalseExpression(binary.Left) || c.isFalseExpression(binary.Right)) ||
+			binary.OperatorToken.Kind == ast.KindBarBarToken && c.isFalseExpression(binary.Left) && c.isFalseExpression(binary.Right)
+	}
+	return false
+}
+
 // Return true if the given flow node is preceded by a 'super(...)' call in every possible code path
 // leading to the node.
 func (c *Checker) isPostSuperFlowNode(flow *ast.FlowNode, noCacheCheck bool) bool {

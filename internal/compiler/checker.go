@@ -490,6 +490,9 @@ type Checker struct {
 	sharedFlows                        []SharedFlow
 	flowAnalysisDisabled               bool
 	flowInvocationCount                int
+	lastFlowNode                       *ast.FlowNode
+	lastFlowNodeReachable              bool
+	flowNodeReachable                  map[*ast.FlowNode]bool
 	flowNodePostSuper                  map[*ast.FlowNode]bool
 	awaitedTypeStack                   []*Type
 	subtypeRelation                    *Relation
@@ -632,6 +635,7 @@ func NewChecker(program *Program) *Checker {
 	c.zeroType = c.getNumberLiteralType(0)
 	c.zeroBigIntType = c.getBigIntLiteralType(PseudoBigInt{negative: false, base10Value: "0"})
 	c.flowLoopCache = make(map[FlowLoopKey]*Type)
+	c.flowNodeReachable = make(map[*ast.FlowNode]bool)
 	c.flowNodePostSuper = make(map[*ast.FlowNode]bool)
 	c.subtypeRelation = &Relation{}
 	c.strictSubtypeRelation = &Relation{}
@@ -4854,10 +4858,6 @@ func (c *Checker) getCannotFindNameDiagnosticForName(node *ast.Node) *diagnostic
 		}
 		return diagnostics.Cannot_find_name_0
 	}
-}
-
-func (c *Checker) isReachableFlowNode(flowNode *ast.FlowNode) bool {
-	return true // !!!
 }
 
 func (c *Checker) GetDiagnostics(sourceFile *ast.SourceFile) []*ast.Diagnostic {
