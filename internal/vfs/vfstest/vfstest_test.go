@@ -1,4 +1,4 @@
-package vfstest_test
+package vfstest
 
 import (
 	"io/fs"
@@ -6,7 +6,6 @@ import (
 	"testing/fstest"
 
 	"github.com/microsoft/typescript-go/internal/testutil"
-	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
 	"gotest.tools/v3/assert"
 )
 
@@ -15,7 +14,7 @@ func TestInsensitive(t *testing.T) {
 
 	contents := []byte("bar")
 
-	vfs := vfstest.WithSensitivity(fstest.MapFS{
+	vfs := convertMapFS(fstest.MapFS{
 		"foo/bar/baz": &fstest.MapFile{
 			Data: contents,
 			Sys:  1234,
@@ -52,7 +51,7 @@ func TestInsensitiveUpper(t *testing.T) {
 
 	contents := []byte("bar")
 
-	vfs := vfstest.WithSensitivity(fstest.MapFS{
+	vfs := convertMapFS(fstest.MapFS{
 		"Foo/Bar/Baz": &fstest.MapFile{
 			Data: contents,
 			Sys:  1234,
@@ -83,7 +82,7 @@ func TestSensitive(t *testing.T) {
 
 	contents := []byte("bar")
 
-	vfs := vfstest.WithSensitivity(fstest.MapFS{
+	vfs := convertMapFS(fstest.MapFS{
 		"foo/bar/baz": &fstest.MapFile{
 			Data: contents,
 			Sys:  1234,
@@ -116,7 +115,7 @@ func TestSensitiveDuplicatePath(t *testing.T) {
 	}
 
 	testutil.AssertPanics(t, func() {
-		vfstest.WithSensitivity(testfs, false /*useCaseSensitiveFileNames*/)
+		convertMapFS(testfs, false /*useCaseSensitiveFileNames*/)
 	}, `duplicate path: "Foo" and "foo" have the same canonical path`)
 }
 
@@ -132,5 +131,29 @@ func TestInsensitiveDuplicatePath(t *testing.T) {
 		},
 	}
 
-	vfstest.WithSensitivity(testfs, true /*useCaseSensitiveFileNames*/)
+	convertMapFS(testfs, true /*useCaseSensitiveFileNames*/)
+}
+
+func TestFromMapFS(t *testing.T) {
+	t.Parallel()
+
+	testfs := fstest.MapFS{
+		"foo/bar/baz": &fstest.MapFile{
+			Data: []byte("hello, world"),
+		},
+	}
+
+	fs := FromMapFS(testfs, false)
+
+	content, ok := fs.ReadFile("/foo/bar/baz")
+	assert.Assert(t, ok)
+	assert.Equal(t, content, "hello, world")
+
+	content, ok = fs.ReadFile("/FOO/bar/baZ")
+	assert.Assert(t, ok)
+	assert.Equal(t, content, "hello, world")
+
+	content, ok = fs.ReadFile("/does/not/exist")
+	assert.Assert(t, !ok)
+	assert.Equal(t, content, "")
 }

@@ -17,6 +17,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/testutil/baseline"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
+	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
 	"gotest.tools/v3/assert"
 )
 
@@ -316,7 +317,7 @@ func newVFSModuleResolutionHost(files map[string]string) *vfsModuleResolutionHos
 	const useCaseSensitiveFileNames = true
 
 	return &vfsModuleResolutionHost{
-		fs:                        vfs.FromTestMapFS(fs, useCaseSensitiveFileNames),
+		fs:                        vfstest.FromMapFS(fs, useCaseSensitiveFileNames),
 		useCaseSensitiveFileNames: useCaseSensitiveFileNames,
 		currentDirectory:          "/",
 	}

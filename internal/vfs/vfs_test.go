@@ -13,13 +13,14 @@ import (
 	"github.com/microsoft/typescript-go/internal/testutil"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
+	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
 	"gotest.tools/v3/assert"
 )
 
-func TestFromTestMapFS(t *testing.T) {
+func TestIOFS(t *testing.T) {
 	t.Parallel()
 
-	fs := vfs.FromTestMapFS(fstest.MapFS{
+	testfs := fstest.MapFS{
 		"foo.ts": &fstest.MapFile{
 			Data: []byte("hello, world"),
 		},
@@ -32,7 +33,9 @@ func TestFromTestMapFS(t *testing.T) {
 		"dir2/file1.ts": &fstest.MapFile{
 			Data: []byte("export const foo = 42;"),
 		},
-	}, true)
+	}
+
+	fs := vfs.FromIOFS(testfs, true)
 
 	t.Run("ReadFile", func(t *testing.T) {
 		t.Parallel()
@@ -128,29 +131,57 @@ func TestFromTestMapFS(t *testing.T) {
 
 		realpath := fs.Realpath("/foo.ts")
 		assert.Equal(t, realpath, "/foo.ts")
+	})
+}
+
+func TestVFSTestMapFS(t *testing.T) {
+	t.Parallel()
+
+	fs := vfstest.FromMapFS(fstest.MapFS{
+		"foo.ts": &fstest.MapFile{
+			Data: []byte("hello, world"),
+		},
+		"dir1/file1.ts": &fstest.MapFile{
+			Data: []byte("export const foo = 42;"),
+		},
+		"dir1/file2.ts": &fstest.MapFile{
+			Data: []byte("export const foo = 42;"),
+		},
+		"dir2/file1.ts": &fstest.MapFile{
+			Data: []byte("export const foo = 42;"),
+		},
+	}, false /*useCaseSensitiveFileNames*/)
+
+	t.Run("ReadFile", func(t *testing.T) {
+		t.Parallel()
+
+		content, ok := fs.ReadFile("/foo.ts")
+		assert.Assert(t, ok)
+		assert.Equal(t, content, "hello, world")
+
+		content, ok = fs.ReadFile("/does/not/exist.ts")
+		assert.Assert(t, !ok)
+		assert.Equal(t, content, "")
+	})
+
+	t.Run("Realpath", func(t *testing.T) {
+		t.Parallel()
+
+		realpath := fs.Realpath("/foo.ts")
+		assert.Equal(t, realpath, "/foo.ts")
+
+		realpath = fs.Realpath("/Foo.ts")
+		assert.Equal(t, realpath, "/foo.ts")
 
 		realpath = fs.Realpath("/does/not/exist.ts")
 		assert.Equal(t, realpath, "/does/not/exist.ts")
 	})
 }
 
-func TestFromIOFS(t *testing.T) {
-	t.Parallel()
-
-	fs := vfs.FromIOFS(fstest.MapFS{
-		"foo.ts": &fstest.MapFile{
-			Data: []byte("hello, world"),
-		},
-	}, true)
-
-	realpath := fs.Realpath("/foo.ts")
-	assert.Equal(t, realpath, "/foo.ts")
-}
-
 func TestIOFSWindows(t *testing.T) {
 	t.Parallel()
 
-	fs := vfs.FromTestMapFS(fstest.MapFS{
+	testfs := fstest.MapFS{
 		"c:/foo.ts": &fstest.MapFile{
 			Data: []byte("hello, world"),
 		},
@@ -163,7 +194,9 @@ func TestIOFSWindows(t *testing.T) {
 		"c:/dir2/file1.ts": &fstest.MapFile{
 			Data: []byte("export const foo = 42;"),
 		},
-	}, false)
+	}
+
+	fs := vfs.FromIOFS(testfs, true)
 
 	t.Run("ReadFile", func(t *testing.T) {
 		t.Parallel()
@@ -238,11 +271,13 @@ func TestBOM(t *testing.T) {
 				assert.NilError(t, err)
 			}
 
-			fs := vfs.FromTestMapFS(fstest.MapFS{
+			testfs := fstest.MapFS{
 				"foo.ts": &fstest.MapFile{
 					Data: buf,
 				},
-			}, true)
+			}
+
+			fs := vfs.FromIOFS(testfs, true)
 
 			content, ok := fs.ReadFile("/foo.ts")
 			assert.Assert(t, ok)
@@ -253,11 +288,13 @@ func TestBOM(t *testing.T) {
 	t.Run("UTF8", func(t *testing.T) {
 		t.Parallel()
 
-		fs := vfs.FromTestMapFS(fstest.MapFS{
+		testfs := fstest.MapFS{
 			"foo.ts": &fstest.MapFile{
 				Data: []byte("\xEF\xBB\xBF" + expected),
 			},
-		}, true)
+		}
+
+		fs := vfs.FromIOFS(testfs, true)
 
 		content, ok := fs.ReadFile("/foo.ts")
 		assert.Assert(t, ok)

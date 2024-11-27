@@ -8,9 +8,10 @@ import (
 	"testing/fstest"
 
 	"github.com/microsoft/typescript-go/internal/tspath"
+	"github.com/microsoft/typescript-go/internal/vfs"
 )
 
-type TestFS struct {
+type mapFS struct {
 	m                         fstest.MapFS
 	useCaseSensitiveFileNames bool
 }
@@ -20,11 +21,15 @@ type sys struct {
 	realPath string
 }
 
-// WithSensitivity converts a [fstest.MapFS] to one with the specified case sensitivity.
-// The paths given in the map are treated as the "real paths".
+// FromTestMapFS creates a new [vfs.FS] from a [fstest.MapFS]. The provided FS will be augmented
+// to properly handle case-insensitive queries.
 //
-// If useCaseSensitiveFileNames is true, the map is returned as-is.
-func WithSensitivity(m fstest.MapFS, useCaseSensitiveFileNames bool) *TestFS {
+// For paths like `c:/foo/bar`, fsys will be used as though it's rooted at `/` and the path is `/c:/foo/bar`.
+func FromMapFS(m fstest.MapFS, useCaseSensitiveFileNames bool) vfs.FS {
+	return vfs.FromIOFS(convertMapFS(m, useCaseSensitiveFileNames), useCaseSensitiveFileNames)
+}
+
+func convertMapFS(m fstest.MapFS, useCaseSensitiveFileNames bool) *mapFS {
 	// Create all missing intermediate directories so we can attach the real path to each of them.
 	newM := make(fstest.MapFS)
 	for p, f := range m {
@@ -66,7 +71,7 @@ func WithSensitivity(m fstest.MapFS, useCaseSensitiveFileNames bool) *TestFS {
 		}
 		mp[canonical] = &fileCopy
 	}
-	return &TestFS{
+	return &mapFS{
 		m:                         mp,
 		useCaseSensitiveFileNames: useCaseSensitiveFileNames,
 	}
@@ -140,8 +145,8 @@ func (f *readDirFile) ReadDir(n int) ([]fs.DirEntry, error) {
 	return entries, nil
 }
 
-func (tfs *TestFS) Open(name string) (fs.File, error) {
-	f, err := tfs.m.Open(tspath.GetCanonicalFileName(name, tfs.useCaseSensitiveFileNames))
+func (m *mapFS) Open(name string) (fs.File, error) {
+	f, err := m.m.Open(tspath.GetCanonicalFileName(name, m.useCaseSensitiveFileNames))
 	if err != nil {
 		return nil, err
 	}
@@ -178,11 +183,11 @@ func (tfs *TestFS) Open(name string) (fs.File, error) {
 	}, nil
 }
 
-func (tfs *TestFS) Realpath(name string) (string, error) {
+func (m *mapFS) Realpath(name string) (string, error) {
 	// TODO: handle symlinks after https://go.dev/cl/385534 is available
 	// Don't bother going through fs.Stat.
-	canonical := tspath.GetCanonicalFileName(name, tfs.useCaseSensitiveFileNames)
-	file, ok := tfs.m[canonical]
+	canonical := tspath.GetCanonicalFileName(name, m.useCaseSensitiveFileNames)
+	file, ok := m.m[canonical]
 	if !ok {
 		return "", fs.ErrNotExist
 	}

@@ -10,12 +10,10 @@ import (
 	"runtime"
 	"strings"
 	"sync"
-	"testing/fstest"
 	"unicode"
 	"unicode/utf16"
 
 	"github.com/microsoft/typescript-go/internal/tspath"
-	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
 )
 
 // FS is a file system abstraction.
@@ -79,7 +77,7 @@ type RealpathFS interface {
 // If the provided [fs.FS] implements [RealpathFS], it will be used to implement the Realpath method.
 //
 // Deprecated: FromIOFS does not actually handle case-insensitivity; ensure the passed in [fs.FS]
-// respects case-insensitive file names if needed. Consider using [FromTestMapFS] for testing.
+// respects case-insensitive file names if needed. Consider using [vfstest.FromMapFS] for testing.
 func FromIOFS(fsys fs.FS, useCaseSensitiveFileNames bool) FS {
 	var realpath func(path string) (string, error)
 	if fsys, ok := fsys.(RealpathFS); ok {
@@ -113,14 +111,6 @@ func FromIOFS(fsys fs.FS, useCaseSensitiveFileNames bool) FS {
 		},
 		realpath: realpath,
 	}
-}
-
-// FromTestMapFS creates a new FS from a [fstest.MapFS]. The provided FS will be augmented
-// to properly handle case-insensitive queries.
-//
-// For paths like `c:/foo/bar`, fsys will be used as though it's rooted at `/` and the path is `/c:/foo/bar`.
-func FromTestMapFS(fsys fstest.MapFS, useCaseSensitiveFileNames bool) FS {
-	return FromIOFS(vfstest.WithSensitivity(fsys, useCaseSensitiveFileNames), useCaseSensitiveFileNames)
 }
 
 // FromOS creates a new FS from the OS file system.
