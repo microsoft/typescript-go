@@ -141,6 +141,7 @@ func beginProfiling(profileDir string) *profileSession {
 	}
 
 	pid := os.Getpid()
+
 	cpuProfilePath := tspath.ResolvePath(profileDir, fmt.Sprintf("cpuprofile-%d.pb.gz", pid))
 	memProfilePath := tspath.ResolvePath(profileDir, fmt.Sprintf("memprofile-%d.pb.gz", pid))
 	cpuFile, err := os.Create(cpuProfilePath)
@@ -166,7 +167,7 @@ func beginProfiling(profileDir string) *profileSession {
 
 func (p *profileSession) stop() {
 	pprof.StopCPUProfile()
-	err := pprof.WriteHeapProfile(p.memFile)
+	err := pprof.Lookup("allocs").WriteTo(p.memFile, 0)
 	if err != nil {
 		panic(err)
 	}
