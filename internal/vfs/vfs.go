@@ -78,7 +78,7 @@ type RealpathFS interface {
 //
 // If the provided [fs.FS] implements [RealpathFS], it will be used to implement the Realpath method.
 //
-// FromIOFS does not actually handle case-insensitivity; ensure the passed in [fs.FS]
+// Deprecated: FromIOFS does not actually handle case-insensitivity; ensure the passed in [fs.FS]
 // respects case-insensitive file names if needed. Consider using [FromTestMapFS] for testing.
 func FromIOFS(fsys fs.FS, useCaseSensitiveFileNames bool) FS {
 	var realpath func(path string) (string, error)
