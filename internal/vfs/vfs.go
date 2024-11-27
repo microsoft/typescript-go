@@ -67,11 +67,37 @@ var (
 
 var _ FS = (*vfs)(nil)
 
+type RealpathFS interface {
+	fs.FS
+	Realpath(path string) (string, error)
+}
+
 // FromIOFS creates a new FS from an [fs.FS].
+//
 // For paths like `c:/foo/bar`, fsys will be used as though it's rooted at `/` and the path is `/c:/foo/bar`.
+//
+// If the provided [fs.FS] implements [RealpathFS], it will be used to implement the Realpath method.
+//
+// FromIOFS does not actually handle case-insensitivity; ensure the passed in [fs.FS]
+// respects case-insensitive file names if needed. Consider using [FromTestMapFS] for testing.
 func FromIOFS(fsys fs.FS, useCaseSensitiveFileNames bool) FS {
+	var realpath func(path string) (string, error)
+	if fsys, ok := fsys.(RealpathFS); ok {
+		fsysRealpath := fsys.Realpath
+		realpath = func(path string) (string, error) {
+			rp, err := fsysRealpath(strings.TrimPrefix(path, "/"))
+			if err != nil {
+				return "", err
+			}
+			return "/" + rp, nil
+		}
+	} else {
+		realpath = func(path string) (string, error) {
+			return path, nil
+		}
+	}
+
 	return &vfs{
-		// !!! The passed in FS may not actually respect case insensitive file names.
 		useCaseSensitiveFileNames: useCaseSensitiveFileNames,
 		rootFor: func(root string) fs.FS {
 			if root == "/" {
@@ -85,13 +111,14 @@ func FromIOFS(fsys fs.FS, useCaseSensitiveFileNames bool) FS {
 			}
 			return sub
 		},
-		realpath: func(path string) (string, error) {
-			// TODO: replace once https://go.dev/cl/385534 is available
-			return path, nil
-		},
+		realpath: realpath,
 	}
 }
 
+// FromTestMapFS creates a new FS from a [fstest.MapFS]. The provided FS will be augmented
+// to properly handle case-insensitive queries.
+//
+// For paths like `c:/foo/bar`, fsys will be used as though it's rooted at `/` and the path is `/c:/foo/bar`.
 func FromTestMapFS(fsys fstest.MapFS, useCaseSensitiveFileNames bool) FS {
 	return FromIOFS(vfstest.WithSensitivity(fsys, useCaseSensitiveFileNames), useCaseSensitiveFileNames)
 }
@@ -281,7 +308,10 @@ func (v *vfs) WalkDir(root string, walkFn WalkDirFunc) error {
 }
 
 func (v *vfs) Realpath(path string) string {
-	_ = rootLength(path) // panic if not absolute
-	path, _ = v.realpath(path)
-	return path
+	root, rest := splitPath(path)
+	realpath, err := v.realpath(root + rest)
+	if err != nil {
+		return path
+	}
+	return realpath
 }

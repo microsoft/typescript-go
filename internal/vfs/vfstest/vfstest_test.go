@@ -28,6 +28,9 @@ func TestInsensitive(t *testing.T) {
 	sensitiveInfo, err := fs.Stat(vfs, "foo/bar/baz")
 	assert.NilError(t, err)
 	assert.Equal(t, sensitiveInfo.Sys(), 1234)
+	sensitiveRealPath, err := vfs.Realpath("foo/bar/baz")
+	assert.NilError(t, err)
+	assert.Equal(t, sensitiveRealPath, "foo/bar/baz")
 
 	assert.NilError(t, fstest.TestFS(vfs, "foo/bar/baz"))
 
@@ -37,6 +40,9 @@ func TestInsensitive(t *testing.T) {
 	insensitiveInfo, err := fs.Stat(vfs, "Foo/Bar/Baz")
 	assert.NilError(t, err)
 	assert.Equal(t, insensitiveInfo.Sys(), 1234)
+	insensitiveRealPath, err := vfs.Realpath("Foo/Bar/Baz")
+	assert.NilError(t, err)
+	assert.Equal(t, insensitiveRealPath, "foo/bar/baz")
 
 	// assert.NilError(t, fstest.TestFS(vfs, "Foo/Bar/Baz"))
 }

@@ -16,10 +16,10 @@ import (
 	"gotest.tools/v3/assert"
 )
 
-func TestIOFS(t *testing.T) {
+func TestFromTestMapFS(t *testing.T) {
 	t.Parallel()
 
-	testfs := fstest.MapFS{
+	fs := vfs.FromTestMapFS(fstest.MapFS{
 		"foo.ts": &fstest.MapFile{
 			Data: []byte("hello, world"),
 		},
@@ -32,9 +32,7 @@ func TestIOFS(t *testing.T) {
 		"dir2/file1.ts": &fstest.MapFile{
 			Data: []byte("export const foo = 42;"),
 		},
-	}
-
-	fs := vfs.FromIOFS(testfs, true)
+	}, true)
 
 	t.Run("ReadFile", func(t *testing.T) {
 		t.Parallel()
@@ -130,13 +128,29 @@ func TestIOFS(t *testing.T) {
 
 		realpath := fs.Realpath("/foo.ts")
 		assert.Equal(t, realpath, "/foo.ts")
+
+		realpath = fs.Realpath("/does/not/exist.ts")
+		assert.Equal(t, realpath, "/does/not/exist.ts")
 	})
+}
+
+func TestFromIOFS(t *testing.T) {
+	t.Parallel()
+
+	fs := vfs.FromIOFS(fstest.MapFS{
+		"foo.ts": &fstest.MapFile{
+			Data: []byte("hello, world"),
+		},
+	}, true)
+
+	realpath := fs.Realpath("/foo.ts")
+	assert.Equal(t, realpath, "/foo.ts")
 }
 
 func TestIOFSWindows(t *testing.T) {
 	t.Parallel()
 
-	testfs := fstest.MapFS{
+	fs := vfs.FromTestMapFS(fstest.MapFS{
 		"c:/foo.ts": &fstest.MapFile{
 			Data: []byte("hello, world"),
 		},
@@ -149,9 +163,7 @@ func TestIOFSWindows(t *testing.T) {
 		"c:/dir2/file1.ts": &fstest.MapFile{
 			Data: []byte("export const foo = 42;"),
 		},
-	}
-
-	fs := vfs.FromIOFS(testfs, true)
+	}, false)
 
 	t.Run("ReadFile", func(t *testing.T) {
 		t.Parallel()
@@ -226,13 +238,11 @@ func TestBOM(t *testing.T) {
 				assert.NilError(t, err)
 			}
 
-			testfs := fstest.MapFS{
+			fs := vfs.FromTestMapFS(fstest.MapFS{
 				"foo.ts": &fstest.MapFile{
 					Data: buf,
 				},
-			}
-
-			fs := vfs.FromIOFS(testfs, true)
+			}, true)
 
 			content, ok := fs.ReadFile("/foo.ts")
 			assert.Assert(t, ok)
@@ -243,13 +253,11 @@ func TestBOM(t *testing.T) {
 	t.Run("UTF8", func(t *testing.T) {
 		t.Parallel()
 
-		testfs := fstest.MapFS{
+		fs := vfs.FromTestMapFS(fstest.MapFS{
 			"foo.ts": &fstest.MapFile{
 				Data: []byte("\xEF\xBB\xBF" + expected),
 			},
-		}
-
-		fs := vfs.FromIOFS(testfs, true)
+		}, true)
 
 		content, ok := fs.ReadFile("/foo.ts")
 		assert.Assert(t, ok)

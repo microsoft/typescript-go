@@ -288,9 +288,10 @@ var skip = []string{
 }
 
 type vfsModuleResolutionHost struct {
-	fs               vfs.FS
-	currentDirectory string
-	traces           []string
+	fs                        vfs.FS
+	useCaseSensitiveFileNames bool
+	currentDirectory          string
+	traces                    []string
 }
 
 func fixRoot(path string) string {
@@ -311,9 +312,13 @@ func newVFSModuleResolutionHost(files map[string]string) *vfsModuleResolutionHos
 			Data: []byte(content),
 		}
 	}
+
+	const useCaseSensitiveFileNames = true
+
 	return &vfsModuleResolutionHost{
-		fs:               vfs.FromTestMapFS(fs, false),
-		currentDirectory: "/",
+		fs:                        vfs.FromTestMapFS(fs, useCaseSensitiveFileNames),
+		useCaseSensitiveFileNames: useCaseSensitiveFileNames,
+		currentDirectory:          "/",
 	}
 }
 
@@ -333,7 +338,7 @@ func (v *vfsModuleResolutionHost) Trace(msg string) {
 
 // UseCaseSensitiveFileNames implements ModuleResolutionHost.
 func (v *vfsModuleResolutionHost) UseCaseSensitiveFileNames() bool {
-	return false
+	return v.useCaseSensitiveFileNames
 }
 
 type functionCall struct {

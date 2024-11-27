@@ -10,7 +10,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
-type mapFS struct {
+type TestFS struct {
 	m                         fstest.MapFS
 	useCaseSensitiveFileNames bool
 }
@@ -24,14 +24,12 @@ type sys struct {
 // The paths given in the map are treated as the "real paths".
 //
 // If useCaseSensitiveFileNames is true, the map is returned as-is.
-func WithSensitivity(m fstest.MapFS, useCaseSensitiveFileNames bool) fs.FS {
-	if useCaseSensitiveFileNames {
-		return m
-	}
-
+func WithSensitivity(m fstest.MapFS, useCaseSensitiveFileNames bool) *TestFS {
 	// Create all missing intermediate directories so we can attach the real path to each of them.
-	newFiles := make(fstest.MapFS)
-	for p := range m {
+	newM := make(fstest.MapFS)
+	for p, f := range m {
+		newM[p] = f
+
 		curr := ""
 		remaining := p
 
@@ -45,27 +43,21 @@ func WithSensitivity(m fstest.MapFS, useCaseSensitiveFileNames bool) fs.FS {
 			remaining = after
 
 			if _, ok := m[curr]; !ok {
-				newFiles[curr] = &fstest.MapFile{
+				newM[curr] = &fstest.MapFile{
 					Mode: fs.ModeDir | 0555,
 				}
 			}
 		}
 	}
 
-	newM := make(fstest.MapFS, len(m)+len(newFiles))
-	for k, v := range m {
-		newM[k] = v
-	}
-	for k, v := range newFiles {
-		newM[k] = v
-	}
-
 	mp := make(fstest.MapFS, len(newM))
 	for path, file := range newM {
 		canonical := tspath.GetCanonicalFileName(path, useCaseSensitiveFileNames)
 		if other, ok := mp[canonical]; ok {
-			otherPath := other.Sys.(*sys).realPath
-			panic(fmt.Sprintf("duplicate path: %q and %q have the same canonical path", path, otherPath))
+			path2 := other.Sys.(*sys).realPath
+			// Ensure consistent panic messages
+			path, path2 = min(path, path2), max(path, path2)
+			panic(fmt.Sprintf("duplicate path: %q and %q have the same canonical path", path, path2))
 		}
 		fileCopy := *file
 		fileCopy.Sys = &sys{
@@ -74,10 +66,24 @@ func WithSensitivity(m fstest.MapFS, useCaseSensitiveFileNames bool) fs.FS {
 		}
 		mp[canonical] = &fileCopy
 	}
-	return &mapFS{
+	return &TestFS{
 		m:                         mp,
 		useCaseSensitiveFileNames: useCaseSensitiveFileNames,
 	}
+}
+
+type fileInfo struct {
+	fs.FileInfo
+	sys      any
+	realPath string
+}
+
+func (fi *fileInfo) Name() string {
+	return path.Base(fi.realPath)
+}
+
+func (fi *fileInfo) Sys() any {
+	return fi.sys
 }
 
 type file struct {
@@ -87,6 +93,19 @@ type file struct {
 
 func (f *file) Stat() (fs.FileInfo, error) {
 	return f.fileInfo, nil
+}
+
+type dirEntry struct {
+	fs.DirEntry
+	fileInfo *fileInfo
+}
+
+func (e *dirEntry) Name() string {
+	return path.Base(e.fileInfo.realPath)
+}
+
+func (e *dirEntry) Info() (fs.FileInfo, error) {
+	return e.fileInfo, nil
 }
 
 type readDirFile struct {
@@ -121,35 +140,8 @@ func (f *readDirFile) ReadDir(n int) ([]fs.DirEntry, error) {
 	return entries, nil
 }
 
-type dirEntry struct {
-	fs.DirEntry
-	fileInfo *fileInfo
-}
-
-func (e *dirEntry) Name() string {
-	return path.Base(e.fileInfo.realPath)
-}
-
-func (e *dirEntry) Info() (fs.FileInfo, error) {
-	return e.fileInfo, nil
-}
-
-type fileInfo struct {
-	fs.FileInfo
-	sys      any
-	realPath string
-}
-
-func (fi *fileInfo) Name() string {
-	return path.Base(fi.realPath)
-}
-
-func (fi *fileInfo) Sys() any {
-	return fi.sys
-}
-
-func (m *mapFS) Open(name string) (fs.File, error) {
-	f, err := m.m.Open(tspath.GetCanonicalFileName(name, m.useCaseSensitiveFileNames))
+func (tfs *TestFS) Open(name string) (fs.File, error) {
+	f, err := tfs.m.Open(tspath.GetCanonicalFileName(name, tfs.useCaseSensitiveFileNames))
 	if err != nil {
 		return nil, err
 	}
@@ -163,10 +155,8 @@ func (m *mapFS) Open(name string) (fs.File, error) {
 			panic(fmt.Sprintf("unexpected synthesized dir: %q", name))
 		}
 
-		f := f.(fs.ReadDirFile)
-
 		return &readDirFile{
-			ReadDirFile: f,
+			ReadDirFile: f.(fs.ReadDirFile),
 			fileInfo: &fileInfo{
 				FileInfo: info,
 				sys:      info.Sys(),
@@ -186,6 +176,17 @@ func (m *mapFS) Open(name string) (fs.File, error) {
 		File:     f,
 		fileInfo: newInfo,
 	}, nil
+}
+
+func (tfs *TestFS) Realpath(name string) (string, error) {
+	// TODO: handle symlinks after https://go.dev/cl/385534 is available
+	// Don't bother going through fs.Stat.
+	canonical := tspath.GetCanonicalFileName(name, tfs.useCaseSensitiveFileNames)
+	file, ok := tfs.m[canonical]
+	if !ok {
+		return "", fs.ErrNotExist
+	}
+	return file.Sys.(*sys).realPath, nil
 }
 
 func convertInfo(info fs.FileInfo) (*fileInfo, bool) {
