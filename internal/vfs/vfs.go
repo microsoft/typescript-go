@@ -100,6 +100,7 @@ func FromTestMapFS(fsys fstest.MapFS, useCaseSensitiveFileNames bool) FS {
 func FromOS() FS {
 	useCaseSensitiveFileNames := isFileSystemCaseSensitive()
 	return &vfs{
+		readSema:                  osReadSema,
 		useCaseSensitiveFileNames: useCaseSensitiveFileNames,
 		rootFor:                   os.DirFS,
 		realpath: func(path string) (string, error) {
