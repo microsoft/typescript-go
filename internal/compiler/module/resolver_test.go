@@ -312,7 +312,7 @@ func newVFSModuleResolutionHost(files map[string]string) *vfsModuleResolutionHos
 		}
 	}
 	return &vfsModuleResolutionHost{
-		fs:               vfs.FromIOFS(fs, false),
+		fs:               vfs.FromTestMapFS(fs, false),
 		currentDirectory: "/",
 	}
 }

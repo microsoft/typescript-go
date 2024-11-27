@@ -10,10 +10,12 @@ import (
 	"runtime"
 	"strings"
 	"sync"
+	"testing/fstest"
 	"unicode"
 	"unicode/utf16"
 
 	"github.com/microsoft/typescript-go/internal/tspath"
+	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
 )
 
 // FS is a file system abstraction.
@@ -69,7 +71,6 @@ var _ FS = (*vfs)(nil)
 // For paths like `c:/foo/bar`, fsys will be used as though it's rooted at `/` and the path is `/c:/foo/bar`.
 func FromIOFS(fsys fs.FS, useCaseSensitiveFileNames bool) FS {
 	return &vfs{
-		readSema: osReadSema,
 		// !!! The passed in FS may not actually respect case insensitive file names.
 		useCaseSensitiveFileNames: useCaseSensitiveFileNames,
 		rootFor: func(root string) fs.FS {
@@ -89,6 +90,10 @@ func FromIOFS(fsys fs.FS, useCaseSensitiveFileNames bool) FS {
 			return path, nil
 		},
 	}
+}
+
+func FromTestMapFS(fsys fstest.MapFS, useCaseSensitiveFileNames bool) FS {
+	return FromIOFS(vfstest.WithSensitivity(fsys, useCaseSensitiveFileNames), useCaseSensitiveFileNames)
 }
 
 // FromOS creates a new FS from the OS file system.
