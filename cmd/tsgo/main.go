@@ -74,10 +74,10 @@ func main() {
 
 	programOptions := ts.ProgramOptions{RootPath: normalizedRootPath, Options: compilerOptions, SingleThreaded: singleThreaded, Host: host}
 
-	var profileSession *profileSession
 	if profileDir != "" {
 		profileDir = tspath.ResolvePath(currentDirectory, profileDir)
-		profileSession = beginProfiling(profileDir)
+		profileSession := beginProfiling(profileDir)
+		defer profileSession.stop()
 	}
 
 	startTime := time.Now()
@@ -95,10 +95,6 @@ func main() {
 		}
 	}
 	compileTime := time.Since(startTime)
-
-	if profileSession != nil {
-		profileSession.stop()
-	}
 
 	var memStats runtime.MemStats
 	runtime.GC()
@@ -144,8 +140,9 @@ func beginProfiling(profileDir string) *profileSession {
 		panic(err)
 	}
 
-	cpuProfilePath := tspath.ResolvePath(profileDir, fmt.Sprintf("cpu-%d.prof", os.Getpid()))
-	memProfilePath := tspath.ResolvePath(profileDir, fmt.Sprintf("mem-%d.prof", os.Getpid()))
+	pid := os.Getpid()
+	cpuProfilePath := tspath.ResolvePath(profileDir, fmt.Sprintf("cpuprofile-%d.pb.gz", pid))
+	memProfilePath := tspath.ResolvePath(profileDir, fmt.Sprintf("memprofile-%d.pb.gz", pid))
 	cpuFile, err := os.Create(cpuProfilePath)
 	if err != nil {
 		panic(err)
@@ -173,6 +170,10 @@ func (p *profileSession) stop() {
 	if err != nil {
 		panic(err)
 	}
+
+	p.cpuFile.Close()
+	p.memFile.Close()
+
 	fmt.Printf("CPU profile: %v\n", p.cpuFilePath)
 	fmt.Printf("Memory profile: %v\n", p.memFilePath)
 }
