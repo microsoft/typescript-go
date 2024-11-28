@@ -26,7 +26,7 @@ jobs:
       - uses: actions/setup-go@41dfa10bad2bb2ae585af6ee5bb4d7d973ad74ed # v5.1.0
         with:
           go-version: '>=1.23.0'
-          cache-dependency-path: "**/*.sum"
+          cache-dependency-path: '**/*.sum'
 
       - run: npm ci
 
@@ -61,7 +61,7 @@ jobs:
       - uses: actions/setup-go@41dfa10bad2bb2ae585af6ee5bb4d7d973ad74ed # v5.1.0
         with:
           go-version: '>=1.23.0'
-          cache-dependency-path: "**/*.sum"
+          cache-dependency-path: '**/*.sum'
 
       - run: npm ci
 
@@ -79,7 +79,7 @@ jobs:
       - uses: actions/setup-go@41dfa10bad2bb2ae585af6ee5bb4d7d973ad74ed # v5.1.0
         with:
           go-version: '>=1.23.0'
-          cache-dependency-path: "**/*.sum"
+          cache-dependency-path: '**/*.sum'
 
       - run: npm ci
 
@@ -94,7 +94,7 @@ jobs:
       - uses: actions/setup-go@41dfa10bad2bb2ae585af6ee5bb4d7d973ad74ed # v5.1.0
         with:
           go-version: '>=1.23.0'
-          cache-dependency-path: "**/*.sum"
+          cache-dependency-path: '**/*.sum'
 
       - run: npm ci
 
@@ -110,7 +110,7 @@ jobs:
       - uses: actions/setup-go@41dfa10bad2bb2ae585af6ee5bb4d7d973ad74ed # v5.1.0
         with:
           go-version: '>=1.23.0'
-          cache-dependency-path: "**/*.sum"
+          cache-dependency-path: '**/*.sum'
 
       - run: npm ci
 
@@ -126,7 +126,7 @@ jobs:
       - uses: actions/setup-go@41dfa10bad2bb2ae585af6ee5bb4d7d973ad74ed # v5.1.0
         with:
           go-version: '>=1.23.0'
-          cache-dependency-path: "**/*.sum"
+          cache-dependency-path: '**/*.sum'
 
       - run: go mod tidy
       - run: cd _tools; go mod tidy
