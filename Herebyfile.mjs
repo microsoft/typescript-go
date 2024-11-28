@@ -41,7 +41,7 @@ function assertTypeScriptCloned() {
 }
 
 const tools = new Map([
-    ["github.com/golangci/golangci-lint/cmd/golangci-lint", "v1.62.2"],
+    ["github.com/golangci/golangci-lint/cmd/golangci-lint", "v1.62.2"], // NOTE: this must match the version in .custom-gcl.yml
     ["gotest.tools/gotestsum", "latest"],
 ]);
 
@@ -49,13 +49,7 @@ const tools = new Map([
  * @param {string} tool
  */
 function isInstalled(tool) {
-    try {
-        which.sync(tool);
-        return true;
-    }
-    catch {
-        return false;
-    }
+    return !!which.sync(tool, { nothrow: true });
 }
 
 export const build = task({
@@ -105,11 +99,10 @@ export const testAll = task({
 export const lint = task({
     name: "lint",
     run: async () => {
-        if (!isInstalled("golangci-lint")) {
-            throw new Error("golangci-lint is not installed; run `hereby install-tools`");
+        if (!isInstalled("./_tools/custom-gcl")) {
+            throw new Error("./_tools/custom-gcl is not installed; run `hereby install-tools`");
         }
-        // TODO: use custom-gci
-        await $`golangci-lint run ${options.fix ? ["--fix"] : []}`;
+        await $`./_tools/custom-gcl run ${options.fix ? ["--fix"] : []}`;
     },
 });
 
@@ -117,7 +110,7 @@ export const installTools = task({
     name: "install-tools",
     run: async () => {
         await Promise.all([...tools].map(([tool, version]) => $`go install ${tool}@${version}`));
-        await $`golangci-lint custom -v`;
+        await $`golangci-lint custom`;
         await $`golangci-lint cache clean`;
     },
 });
