@@ -23,7 +23,7 @@ var singleThreaded = false
 var parseAndBindOnly = false
 var printTypes = false
 var pretty = true
-var profileDir = ""
+var pprofDir = ""
 
 func printDiagnostic(d *ast.Diagnostic, level int) {
 	file := d.File()
@@ -52,7 +52,7 @@ func main() {
 	flag.BoolVar(&parseAndBindOnly, "p", false, "Parse and bind only")
 	flag.BoolVar(&printTypes, "t", false, "Print types defined in main.ts")
 	flag.BoolVar(&pretty, "pretty", true, "Get prettier errors")
-	flag.StringVar(&profileDir, "pprof", "", "Generate pprof CPU/memory profiles to the given directory")
+	flag.StringVar(&pprofDir, "pprofdir", "", "Generate pprof CPU/memory profiles to the given directory")
 	flag.Parse()
 
 	rootPath := flag.Arg(0)
@@ -74,9 +74,9 @@ func main() {
 
 	programOptions := ts.ProgramOptions{RootPath: normalizedRootPath, Options: compilerOptions, SingleThreaded: singleThreaded, Host: host}
 
-	if profileDir != "" {
-		profileDir = tspath.ResolvePath(currentDirectory, profileDir)
-		profileSession := beginProfiling(profileDir)
+	if pprofDir != "" {
+		pprofDir = tspath.ResolvePath(currentDirectory, pprofDir)
+		profileSession := beginProfiling(pprofDir)
 		defer profileSession.stop()
 	}
 
