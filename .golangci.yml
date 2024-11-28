@@ -41,6 +41,8 @@ linters:
     - whitespace
     - wrapcheck
 
+    - emptycase
+
     # Need to add headers
     # - goheader
 
@@ -56,6 +58,10 @@ linters:
     # - unused
 
 linters-settings:
+  custom:
+    emptycase:
+      type: module
+
   wrapcheck:
     ignorePackageGlobs:
       - encoding/*

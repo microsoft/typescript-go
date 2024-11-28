@@ -1,0 +1,96 @@
+package gcilint
+
+import (
+	"go/ast"
+	"go/token"
+
+	"github.com/golangci/plugin-module-register/register"
+	"golang.org/x/tools/go/analysis"
+)
+
+func init() {
+	register.Plugin("emptycase", New)
+}
+
+type emptyCasePlugin struct{}
+
+func New(settings any) (register.LinterPlugin, error) {
+	return &emptyCasePlugin{}, nil
+}
+
+func (f *emptyCasePlugin) BuildAnalyzers() ([]*analysis.Analyzer, error) {
+	return []*analysis.Analyzer{
+		{
+			Name: "emptycase",
+			Doc:  "finds empty switch/select cases",
+			Run:  f.run,
+		},
+	}, nil
+}
+
+func (f *emptyCasePlugin) GetLoadMode() string {
+	return register.LoadModeSyntax
+}
+
+func (f *emptyCasePlugin) run(pass *analysis.Pass) (interface{}, error) {
+	for _, file := range pass.Files {
+		ast.Inspect(file, func(n ast.Node) bool {
+			switch n := n.(type) {
+			case *ast.SwitchStmt:
+				checkCases(pass, file, n.Body)
+			case *ast.SelectStmt:
+				checkCases(pass, file, n.Body)
+			}
+			return true
+		})
+	}
+
+	return nil, nil
+}
+
+func checkCases(pass *analysis.Pass, file *ast.File, clause *ast.BlockStmt) {
+	for i, stmt := range clause.List {
+		if i+1 == len(clause.List) {
+			continue
+		}
+		checkCaseStatement(pass, file, stmt, clause.List[i+1].Pos())
+	}
+}
+
+func checkCaseStatement(pass *analysis.Pass, file *ast.File, stmt ast.Stmt, nextCasePos token.Pos) {
+	var body []ast.Stmt
+	colon := token.NoPos
+
+	switch stmt := stmt.(type) {
+	case *ast.CaseClause:
+		body = stmt.Body
+		colon = stmt.Colon
+	case *ast.CommClause:
+		body = stmt.Body
+		colon = stmt.Colon
+	default:
+		return
+	}
+
+	if len(body) == 1 {
+		block, ok := body[0].(*ast.BlockStmt)
+		if !ok || len(block.List) != 0 {
+			return
+		}
+		// Also error on a case statement containing a single empty block.
+	} else if len(body) != 0 {
+		return
+	}
+
+	for _, comment := range file.Comments {
+		if comment.Pos() > colon && comment.End() < nextCasePos {
+			return
+		}
+	}
+
+	pass.Report(analysis.Diagnostic{
+		Pos:     stmt.Pos(),
+		End:     colon,
+		Message: "this case block is empty and will not fall through",
+	})
+}
