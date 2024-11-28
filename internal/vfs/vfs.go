@@ -298,6 +298,8 @@ func (v *vfs) WalkDir(root string, walkFn WalkDirFunc) error {
 
 func (v *vfs) Realpath(path string) string {
 	root, rest := splitPath(path)
+	// splitPath normalizes the path into parts (e.g. "c:/foo/bar" -> "c:/", "foo/bar")
+	// Put them back together to call realpath.
 	realpath, err := v.realpath(root + rest)
 	if err != nil {
 		return path
