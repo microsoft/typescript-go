@@ -49,11 +49,14 @@ func (f *emptyCasePlugin) run(pass *analysis.Pass) (interface{}, error) {
 }
 
 func checkCases(pass *analysis.Pass, file *ast.File, clause *ast.BlockStmt) {
+	endOfBlock := clause.End()
+
 	for i, stmt := range clause.List {
-		if i+1 == len(clause.List) {
-			continue
+		nextCasePos := endOfBlock
+		if j := i + 1; j < len(clause.List) {
+			nextCasePos = clause.List[j].Pos()
 		}
-		checkCaseStatement(pass, file, stmt, clause.List[i+1].Pos())
+		checkCaseStatement(pass, file, stmt, nextCasePos)
 	}
 }
 
@@ -91,6 +94,6 @@ func checkCaseStatement(pass *analysis.Pass, file *ast.File, stmt ast.Stmt, next
 	pass.Report(analysis.Diagnostic{
 		Pos:     stmt.Pos(),
 		End:     colon,
-		Message: "this case block is empty and will not fall through",
+		Message: "this case block is empty and will do nothing",
 	})
 }

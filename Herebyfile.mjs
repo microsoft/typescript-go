@@ -41,7 +41,7 @@ function assertTypeScriptCloned() {
 }
 
 const tools = new Map([
-    ["github.com/golangci/golangci-lint/cmd/golangci-lint", "v1.62.0"],
+    ["github.com/golangci/golangci-lint/cmd/golangci-lint", "v1.62.2"],
     ["gotest.tools/gotestsum", "latest"],
 ]);
 
@@ -108,6 +108,7 @@ export const lint = task({
         if (!isInstalled("golangci-lint")) {
             throw new Error("golangci-lint is not installed; run `hereby install-tools`");
         }
+        // TODO: use custom-gci
         await $`golangci-lint run ${options.fix ? ["--fix"] : []}`;
     },
 });
@@ -116,6 +117,8 @@ export const installTools = task({
     name: "install-tools",
     run: async () => {
         await Promise.all([...tools].map(([tool, version]) => $`go install ${tool}@${version}`));
+        await $`golangci-lint custom -v`;
+        await $`golangci-lint cache clean`;
     },
 });
 
