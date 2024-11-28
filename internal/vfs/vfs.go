@@ -81,9 +81,8 @@ type RealpathFS interface {
 func FromIOFS(fsys fs.FS, useCaseSensitiveFileNames bool) FS {
 	var realpath func(path string) (string, error)
 	if fsys, ok := fsys.(RealpathFS); ok {
-		fsysRealpath := fsys.Realpath
 		realpath = func(path string) (string, error) {
-			rp, err := fsysRealpath(strings.TrimPrefix(path, "/"))
+			rp, err := fsys.Realpath(strings.TrimPrefix(path, "/"))
 			if err != nil {
 				return "", err
 			}
