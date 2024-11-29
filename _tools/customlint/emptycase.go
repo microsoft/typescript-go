@@ -76,11 +76,11 @@ func checkCaseStatement(pass *analysis.Pass, file *ast.File, stmt ast.Stmt, next
 	}
 
 	if len(body) == 1 {
+		// Also error on a case statement containing a single empty block.
 		block, ok := body[0].(*ast.BlockStmt)
 		if !ok || len(block.List) != 0 {
 			return
 		}
-		// Also error on a case statement containing a single empty block.
 	} else if len(body) != 0 {
 		return
 	}
