@@ -1,39 +1,20 @@
-package gcilint
+package customlint
 
 import (
 	"go/ast"
 	"go/token"
 	"slices"
 
-	"github.com/golangci/plugin-module-register/register"
 	"golang.org/x/tools/go/analysis"
 )
 
-func init() {
-	register.Plugin("emptycase", New)
+var emptyCaseAnalyzer = &analysis.Analyzer{
+	Name: "emptycase",
+	Doc:  "finds empty switch/select cases",
+	Run:  runEmptyCase,
 }
 
-type emptyCasePlugin struct{}
-
-func New(settings any) (register.LinterPlugin, error) {
-	return &emptyCasePlugin{}, nil
-}
-
-func (f *emptyCasePlugin) BuildAnalyzers() ([]*analysis.Analyzer, error) {
-	return []*analysis.Analyzer{
-		{
-			Name: "emptycase",
-			Doc:  "finds empty switch/select cases",
-			Run:  f.run,
-		},
-	}, nil
-}
-
-func (f *emptyCasePlugin) GetLoadMode() string {
-	return register.LoadModeSyntax
-}
-
-func (f *emptyCasePlugin) run(pass *analysis.Pass) (interface{}, error) {
+func runEmptyCase(pass *analysis.Pass) (interface{}, error) {
 	for _, file := range pass.Files {
 		ast.Inspect(file, func(n ast.Node) bool {
 			switch n := n.(type) {

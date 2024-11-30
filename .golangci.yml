@@ -41,7 +41,7 @@ linters:
     - whitespace
     - wrapcheck
 
-    - emptycase
+    - customlint
 
     # Need to add headers
     # - goheader
@@ -59,7 +59,7 @@ linters:
 
 linters-settings:
   custom:
-    emptycase:
+    customlint:
       type: module
 
   wrapcheck:
