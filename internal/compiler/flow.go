@@ -1,6 +1,7 @@
 package compiler
 
 import (
+	"math"
 	"slices"
 	"strconv"
 
@@ -43,7 +44,7 @@ func getFlowNodeOfNode(node *ast.Node) *ast.FlowNode {
 }
 
 func (c *Checker) getFlowTypeOfReference(reference *ast.Node, declaredType *Type) *Type {
-	return c.getFlowTypeOfReferenceEx(reference, declaredType, declaredType, nil /*flowContainer*/, getFlowNodeOfNode(reference))
+	return c.getFlowTypeOfReferenceEx(reference, declaredType, declaredType, nil, nil)
 }
 
 func (c *Checker) getFlowTypeOfReferenceEx(reference *ast.Node, declaredType *Type, initialType *Type, flowContainer *ast.Node, flowNode *ast.FlowNode) *Type {
@@ -51,7 +52,10 @@ func (c *Checker) getFlowTypeOfReferenceEx(reference *ast.Node, declaredType *Ty
 		return c.errorType
 	}
 	if flowNode == nil {
-		return declaredType
+		flowNode = getFlowNodeOfNode(reference)
+		if flowNode == nil {
+			return declaredType
+		}
 	}
 	var f FlowState
 	f.reference = reference
@@ -729,9 +733,10 @@ func (c *Checker) getNarrowedTypeWorker(t *Type, candidate *Type, assumeTrue boo
 		// If a discriminant property is available, use that to reduce the type.
 		matching := t
 		if keyPropertyName != "" {
-			discriminant := c.getTypeOfPropertyOfType(n, keyPropertyName)
-			if discriminant != nil {
-				matching = c.getConstituentTypeForKeyType(t, discriminant)
+			if discriminant := c.getTypeOfPropertyOfType(n, keyPropertyName); discriminant != nil {
+				if constituent := c.getConstituentTypeForKeyType(t, discriminant); constituent != nil {
+					matching = constituent
+				}
 			}
 		}
 		// For each constituent t in the current type, if t and and c are directly related, pick the most
@@ -895,7 +900,187 @@ func (c *Checker) narrowTypeByOptionalChainContainment(f *FlowState, t *Type, op
 }
 
 func (c *Checker) getTypeAtSwitchClause(f *FlowState, flow *ast.FlowNode) FlowType {
-	return c.getTypeAtFlowNode(f, flow.Antecedent)
+	data := flow.Node.AsFlowSwitchClauseData()
+	expr := ast.SkipParentheses(data.SwitchStatement.Expression())
+	flowType := c.getTypeAtFlowNode(f, flow.Antecedent)
+	t := flowType.t
+	switch {
+	case c.isMatchingReference(f.reference, expr):
+		t = c.narrowTypeBySwitchOnDiscriminant(t, data)
+	case expr.Kind == ast.KindTypeOfExpression && c.isMatchingReference(f.reference, expr.Expression()):
+		t = c.narrowTypeBySwitchOnTypeOf(t, data)
+	case expr.Kind == ast.KindTrueKeyword:
+		t = c.narrowTypeBySwitchOnTrue(f, t, data)
+	default:
+		if c.strictNullChecks {
+			if c.optionalChainContainsReference(expr, f.reference) {
+				t = c.narrowTypeBySwitchOptionalChainContainment(t, data, func(t *Type) bool {
+					return t.flags&(TypeFlagsUndefined|TypeFlagsNever) == 0
+				})
+			} else if ast.IsTypeOfExpression(expr) && c.optionalChainContainsReference(expr.Expression(), f.reference) {
+				t = c.narrowTypeBySwitchOptionalChainContainment(t, data, func(t *Type) bool {
+					return !(t.flags&TypeFlagsNever != 0 || t.flags&TypeFlagsStringLiteral != 0 && getStringLiteralValue(t) == "undefined")
+				})
+			}
+		}
+		access := c.getDiscriminantPropertyAccess(f, expr, t)
+		if access != nil {
+			t = c.narrowTypeBySwitchOnDiscriminantProperty(t, access, data)
+		}
+	}
+	return FlowType{t: t, incomplete: flowType.incomplete}
+}
+
+func (c *Checker) narrowTypeBySwitchOnDiscriminant(t *Type, data *ast.FlowSwitchClauseData) *Type {
+	// We only narrow if all case expressions specify
+	// values with unit types, except for the case where
+	// `type` is unknown. In this instance we map object
+	// types to the nonPrimitive type and narrow with that.
+	switchTypes := c.getSwitchClauseTypes(data.SwitchStatement)
+	if len(switchTypes) == 0 {
+		return t
+	}
+	clauseTypes := switchTypes[data.ClauseStart:data.ClauseEnd]
+	hasDefaultClause := data.ClauseStart == data.ClauseEnd || slices.Contains(clauseTypes, c.neverType)
+	if (t.flags&TypeFlagsUnknown != 0) && !hasDefaultClause {
+		var groundClauseTypes []*Type
+		for i, s := range clauseTypes {
+			if s.flags&(TypeFlagsPrimitive|TypeFlagsNonPrimitive) != 0 {
+				if groundClauseTypes != nil {
+					groundClauseTypes = append(groundClauseTypes, s)
+				}
+			} else if s.flags&TypeFlagsObject != 0 {
+				if groundClauseTypes == nil {
+					groundClauseTypes = clauseTypes[:i:i]
+				}
+				groundClauseTypes = append(groundClauseTypes, c.nonPrimitiveType)
+			} else {
+				return t
+			}
+		}
+		return c.getUnionType(core.IfElse(groundClauseTypes == nil, clauseTypes, groundClauseTypes))
+	}
+	discriminantType := c.getUnionType(clauseTypes)
+	var caseType *Type
+	if discriminantType.flags&TypeFlagsNever != 0 {
+		caseType = c.neverType
+	} else {
+		filtered := c.filterType(t, func(t *Type) bool { return c.areTypesComparable(discriminantType, t) })
+		caseType = c.replacePrimitivesWithLiterals(filtered, discriminantType)
+	}
+	if !hasDefaultClause {
+		return caseType
+	}
+	defaultType := c.filterType(t, func(t *Type) bool {
+		if !c.isUnitLikeType(t) {
+			return true
+		}
+		u := c.undefinedType
+		if t.flags&TypeFlagsUndefined == 0 {
+			u = c.getRegularTypeOfLiteralType(c.extractUnitType(t))
+		}
+		return !slices.Contains(switchTypes, u)
+	})
+	if caseType.flags&TypeFlagsNever != 0 {
+		return defaultType
+	}
+	return c.getUnionType([]*Type{caseType, defaultType})
+}
+
+func (c *Checker) narrowTypeBySwitchOnTypeOf(t *Type, data *ast.FlowSwitchClauseData) *Type {
+	witnesses := c.getSwitchClauseTypeOfWitnesses(data.SwitchStatement)
+	if witnesses == nil {
+		return t
+	}
+	clauses := data.SwitchStatement.AsSwitchStatement().CaseBlock.AsCaseBlock().Clauses.Nodes
+	// Equal start and end denotes implicit fallthrough; undefined marks explicit default clause.
+	defaultIndex := core.FindIndex(clauses, func(clause *ast.Node) bool {
+		return clause.Kind == ast.KindDefaultClause
+	})
+	clauseStart := int(data.ClauseStart)
+	clauseEnd := int(data.ClauseEnd)
+	hasDefaultClause := clauseStart == clauseEnd || (defaultIndex >= clauseStart && defaultIndex < clauseEnd)
+	if hasDefaultClause {
+		// In the default clause we filter constituents down to those that are not-equal to all handled cases.
+		notEqualFacts := c.getNotEqualFactsFromTypeofSwitch(clauseStart, clauseEnd, witnesses)
+		return c.filterType(t, func(t *Type) bool {
+			return c.getTypeFacts(t, notEqualFacts) == notEqualFacts
+		})
+	}
+	// In the non-default cause we create a union of the type narrowed by each of the listed cases.
+	clauseWitnesses := witnesses[clauseStart:clauseEnd]
+	return c.getUnionType(core.Map(clauseWitnesses, func(text string) *Type {
+		if text != "" {
+			return c.narrowTypeByTypeName(t, text)
+		}
+		return c.neverType
+	}))
+}
+
+func (c *Checker) narrowTypeBySwitchOnTrue(f *FlowState, t *Type, data *ast.FlowSwitchClauseData) *Type {
+	clauses := data.SwitchStatement.AsSwitchStatement().CaseBlock.AsCaseBlock().Clauses.Nodes
+	defaultIndex := core.FindIndex(clauses, func(clause *ast.Node) bool {
+		return clause.Kind == ast.KindDefaultClause
+	})
+	clauseStart := int(data.ClauseStart)
+	clauseEnd := int(data.ClauseEnd)
+	hasDefaultClause := clauseStart == clauseEnd || (defaultIndex >= clauseStart && defaultIndex < clauseEnd)
+	// First, narrow away all of the cases that preceded this set of cases.
+	for i := range clauseStart {
+		clause := clauses[i]
+		if clause.Kind == ast.KindCaseClause {
+			t = c.narrowType(f, t, clause.Expression(), false /*assumeTrue*/)
+		}
+	}
+	// If our current set has a default, then none the other cases were hit either.
+	// There's no point in narrowing by the the other cases in the set, since we can
+	// get here through other paths.
+	if hasDefaultClause {
+		for i := clauseEnd; i < len(clauses); i++ {
+			clause := clauses[i]
+			if clause.Kind == ast.KindCaseClause {
+				t = c.narrowType(f, t, clause.Expression(), false /*assumeTrue*/)
+			}
+		}
+		return t
+	}
+	// Now, narrow based on the cases in this set.
+	return c.getUnionType(core.Map(clauses[clauseStart:clauseEnd], func(clause *ast.Node) *Type {
+		if clause.Kind == ast.KindCaseClause {
+			return c.narrowType(f, t, clause.Expression(), true /*assumeTrue*/)
+		}
+		return c.neverType
+	}))
+}
+
+func (c *Checker) narrowTypeBySwitchOptionalChainContainment(t *Type, data *ast.FlowSwitchClauseData, clauseCheck func(t *Type) bool) *Type {
+	everyClauseChecks := data.ClauseStart != data.ClauseEnd && core.Every(c.getSwitchClauseTypes(data.SwitchStatement)[data.ClauseStart:data.ClauseEnd], clauseCheck)
+	if everyClauseChecks {
+		return c.getTypeWithFacts(t, TypeFactsNEUndefinedOrNull)
+	}
+	return t
+}
+
+func (c *Checker) narrowTypeBySwitchOnDiscriminantProperty(t *Type, access *ast.Node, data *ast.FlowSwitchClauseData) *Type {
+	if data.ClauseStart < data.ClauseEnd && t.flags&TypeFlagsUnion != 0 {
+		accessedName, _ := c.getAccessedPropertyName(access)
+		if accessedName != "" && c.getKeyPropertyName(t) == accessedName {
+			clauseTypes := c.getSwitchClauseTypes(data.SwitchStatement)[data.ClauseStart:data.ClauseEnd]
+			candidate := c.getUnionType(core.Map(clauseTypes, func(s *Type) *Type {
+				result := c.getConstituentTypeForKeyType(t, s)
+				if result != nil {
+					return result
+				}
+				return c.unknownType
+			}))
+			if candidate != c.unknownType {
+				return candidate
+			}
+		}
+	}
+	return c.narrowTypeByDiscriminant(t, access, func(t *Type) *Type {
+		return c.narrowTypeBySwitchOnDiscriminant(t, data)
+	})
 }
 
 func (c *Checker) getTypeAtFlowBranchLabel(f *FlowState, flow *ast.FlowNode) FlowType {
@@ -1444,10 +1629,7 @@ func tryGetTextOfPropertyName(name *ast.Node) (string, bool) {
 func (c *Checker) getDestructuringPropertyName(node *ast.Node) (string, bool) {
 	parent := node.Parent
 	if ast.IsBindingElement(node) && ast.IsObjectBindingPattern(parent) {
-		if name := node.AsBindingElement().PropertyName; name != nil {
-			return c.getLiteralPropertyNameText(name)
-		}
-		return c.getLiteralPropertyNameText(node.Name())
+		return c.getLiteralPropertyNameText(getBindingElementPropertyName(node))
 	}
 	if ast.IsPropertyAssignment(node) || ast.IsShorthandPropertyAssignment(node) {
 		return c.getLiteralPropertyNameText(node.Name())
@@ -1572,8 +1754,122 @@ func isCoercibleUnderDoubleEquals(source *Type, target *Type) bool {
 		target.flags&(TypeFlagsNumber|TypeFlagsString|TypeFlagsBoolean) != 0
 }
 
-func (c *Checker) isExhaustiveSwitchStatement(node *ast.SwitchStatement) bool {
-	return false // !!!
+func (c *Checker) isExhaustiveSwitchStatement(node *ast.Node) bool {
+	links := c.switchStatementLinks.get(node)
+	if links.exhaustiveState == ExhaustiveStateUnknown {
+		// Indicate resolution is in process
+		links.exhaustiveState = ExhaustiveStateComputing
+		isExhaustive := c.computeExhaustiveSwitchStatement(node)
+		if links.exhaustiveState == ExhaustiveStateComputing {
+			links.exhaustiveState = core.IfElse(isExhaustive, ExhaustiveStateTrue, ExhaustiveStateFalse)
+		}
+	} else if links.exhaustiveState == ExhaustiveStateComputing {
+		// Resolve circularity to false
+		links.exhaustiveState = ExhaustiveStateFalse
+	}
+	return links.exhaustiveState == ExhaustiveStateTrue
+}
+
+func (c *Checker) computeExhaustiveSwitchStatement(node *ast.Node) bool {
+	if ast.IsTypeOfExpression(node.Expression()) {
+		witnesses := c.getSwitchClauseTypeOfWitnesses(node)
+		if witnesses == nil {
+			return false
+		}
+		operandConstraint := c.getBaseConstraintOrType(c.checkExpressionCached(node.Expression().Expression()))
+		// Get the not-equal flags for all handled cases.
+		notEqualFacts := c.getNotEqualFactsFromTypeofSwitch(0, 0, witnesses)
+		if operandConstraint.flags&TypeFlagsAnyOrUnknown != 0 {
+			// We special case the top types to be exhaustive when all cases are handled.
+			return TypeFactsAllTypeofNE&notEqualFacts == TypeFactsAllTypeofNE
+		}
+		// A missing not-equal flag indicates that the type wasn't handled by some case.
+		return !someType(operandConstraint, func(t *Type) bool {
+			return c.getTypeFacts(t, notEqualFacts) == notEqualFacts
+		})
+	}
+	t := c.checkExpressionCached(node.Expression())
+	if !isLiteralType(t) {
+		return false
+	}
+	switchTypes := c.getSwitchClauseTypes(node)
+	if len(switchTypes) == 0 || core.Some(switchTypes, isNeitherUnitTypeNorNever) {
+		return false
+	}
+	return c.eachTypeContainedIn(c.mapType(t, c.getRegularTypeOfLiteralType), switchTypes)
+}
+
+func (c *Checker) eachTypeContainedIn(source *Type, types []*Type) bool {
+	if source.flags&TypeFlagsUnion != 0 {
+		return !core.Some(source.AsUnionType().types, func(t *Type) bool {
+			return !slices.Contains(types, t)
+		})
+	}
+	return slices.Contains(types, source)
+}
+
+// Get the type names from all cases in a switch on `typeof`. The default clause and/or duplicate type names are
+// represented as empty strings. Return nil if one or more case clause expressions are not string literals.
+func (c *Checker) getSwitchClauseTypeOfWitnesses(node *ast.Node) []string {
+	links := c.switchStatementLinks.get(node)
+	if !links.witnessesComputed {
+		clauses := node.AsSwitchStatement().CaseBlock.AsCaseBlock().Clauses.Nodes
+		witnesses := make([]string, len(clauses))
+		for i, clause := range clauses {
+			if clause.Kind == ast.KindCaseClause {
+				var text string
+				if isStringLiteralLike(clause.Expression()) {
+					text = clause.Expression().Text()
+				}
+				if text == "" {
+					witnesses = nil
+					break
+				}
+				if !slices.Contains(witnesses, text) {
+					witnesses[i] = text
+				}
+			}
+		}
+		links.witnesses = witnesses
+		links.witnessesComputed = true
+	}
+	return links.witnesses
+}
+
+// Return the combined not-equal type facts for all cases except those between the start and end indices.
+func (c *Checker) getNotEqualFactsFromTypeofSwitch(start int, end int, witnesses []string) TypeFacts {
+	var facts TypeFacts = TypeFactsNone
+	for i, witness := range witnesses {
+		if (i < start || i >= end) && witness != "" {
+			f, ok := typeofNEFacts[witness]
+			if !ok {
+				f = TypeFactsTypeofNEHostObject
+			}
+			facts |= f
+		}
+	}
+	return facts
+}
+
+func (c *Checker) getSwitchClauseTypes(node *ast.Node) []*Type {
+	links := c.switchStatementLinks.get(node)
+	if !links.switchTypesComputed {
+		clauses := node.AsSwitchStatement().CaseBlock.AsCaseBlock().Clauses.Nodes
+		types := make([]*Type, len(clauses))
+		for i, clause := range clauses {
+			types[i] = c.getTypeOfSwitchClause(clause)
+		}
+		links.switchTypes = types
+		links.switchTypesComputed = true
+	}
+	return links.switchTypes
+}
+
+func (c *Checker) getTypeOfSwitchClause(clause *ast.Node) *Type {
+	if clause.Kind == ast.KindCaseClause {
+		return c.getRegularTypeOfLiteralType(c.getTypeOfExpression(clause.Expression()))
+	}
+	return c.neverType
 }
 
 func (c *Checker) getEffectsSignature(node *ast.Node) *Signature {
@@ -1620,7 +1916,18 @@ func (c *Checker) getTypeOfInitializer(node *ast.Node) *Type {
 }
 
 func (c *Checker) getInitialTypeOfBindingElement(node *ast.Node) *Type {
-	return c.errorType // !!!
+	pattern := node.Parent
+	parentType := c.getInitialType(pattern.Parent)
+	var t *Type
+	switch {
+	case ast.IsObjectBindingPattern(pattern):
+		t = c.getTypeOfDestructuredProperty(parentType, getBindingElementPropertyName(node))
+	case !hasDotDotDotToken(node):
+		t = c.getTypeOfDestructuredArrayElement(parentType, slices.Index(pattern.AsBindingPattern().Elements.Nodes, node))
+	default:
+		t = c.getTypeOfDestructuredSpreadExpression(parentType)
+	}
+	return c.getTypeWithDefault(t, node.Initializer())
 }
 
 func (c *Checker) getAssignedType(node *ast.Node) *Type {
@@ -1915,4 +2222,115 @@ func (c *Checker) isPostSuperFlowNode(flow *ast.FlowNode, noCacheCheck bool) boo
 			return flags&ast.FlowFlagsUnreachable != 0
 		}
 	}
+}
+
+// Check if a parameter, catch variable, or mutable local variable is definitely assigned anywhere
+func (c *Checker) isSymbolAssignedDefinitely(symbol *ast.Symbol) bool {
+	c.ensureAssignmentsMarked(symbol)
+	return symbol.HasDefiniteAssignment
+}
+
+// Check if a parameter, catch variable, or mutable local variable is assigned anywhere
+func (c *Checker) isSymbolAssigned(symbol *ast.Symbol) bool {
+	c.ensureAssignmentsMarked(symbol)
+	return symbol.LastAssignmentPos != 0
+}
+
+// Return true if there are no assignments to the given symbol or if the given location
+// is past the last assignment to the symbol.
+func (c *Checker) isPastLastAssignment(symbol *ast.Symbol, location *ast.Node) bool {
+	c.ensureAssignmentsMarked(symbol)
+	return symbol.LastAssignmentPos == 0 || location != nil && int(symbol.LastAssignmentPos) < location.Pos()
+}
+
+func (c *Checker) ensureAssignmentsMarked(symbol *ast.Symbol) {
+	if symbol.LastAssignmentPos != 0 {
+		return
+	}
+	parent := ast.FindAncestor(symbol.ValueDeclaration, ast.IsFunctionOrSourceFile)
+	if parent == nil {
+		return
+	}
+	links := c.nodeLinks.get(parent)
+	if links.flags&NodeCheckFlagsAssignmentsMarked == 0 {
+		links.flags |= NodeCheckFlagsAssignmentsMarked
+		if !c.hasParentWithAssignmentsMarked(parent) {
+			c.markNodeAssignments(parent)
+		}
+	}
+}
+
+func (c *Checker) hasParentWithAssignmentsMarked(node *ast.Node) bool {
+	return ast.FindAncestor(node.Parent, func(node *ast.Node) bool {
+		return ast.IsFunctionOrSourceFile(node) && c.nodeLinks.get(node).flags&NodeCheckFlagsAssignmentsMarked != 0
+	}) != nil
+}
+
+// For all assignments within the given root node, record the last assignment source position for all
+// referenced parameters and mutable local variables. When assignments occur in nested functions  or
+// references occur in export specifiers, record math.MaxInt32 as the assignment position. When
+// assignments occur in compound statements, record the ending source position of the compound statement
+// as the assignment position (this is more conservative than full control flow analysis, but requires
+// only a single walk over the AST).
+func (c *Checker) markNodeAssignments(node *ast.Node) bool {
+	switch node.Kind {
+	case ast.KindIdentifier:
+		assignmentKind := getAssignmentTargetKind(node)
+		if assignmentKind != AssignmentKindNone {
+			symbol := c.getResolvedSymbol(node)
+			if c.isParameterOrMutableLocalVariable(symbol) {
+				if symbol.LastAssignmentPos == 0 || symbol.LastAssignmentPos != math.MaxInt32 {
+					referencingFunction := ast.FindAncestor(node, ast.IsFunctionOrSourceFile)
+					declaringFunction := ast.FindAncestor(symbol.ValueDeclaration, ast.IsFunctionOrSourceFile)
+					if referencingFunction == declaringFunction {
+						symbol.LastAssignmentPos = int32(c.extendAssignmentPosition(node, symbol.ValueDeclaration))
+					} else {
+						symbol.LastAssignmentPos = math.MaxInt32
+					}
+				}
+				if assignmentKind == AssignmentKindDefinite {
+					symbol.HasDefiniteAssignment = true
+				}
+			}
+		}
+		return false
+	case ast.KindExportSpecifier:
+		exportDeclaration := node.AsExportSpecifier().Parent.Parent.AsExportDeclaration()
+		name := node.AsExportSpecifier().PropertyName
+		if name == nil {
+			name = node.Name()
+		}
+		if !node.AsExportSpecifier().IsTypeOnly && !exportDeclaration.IsTypeOnly && exportDeclaration.ModuleSpecifier == nil && !ast.IsStringLiteral(name) {
+			symbol := c.resolveEntityName(name, ast.SymbolFlagsValue, true /*ignoreErrors*/, true /*dontResolveAlias*/, nil)
+			if symbol != nil && c.isParameterOrMutableLocalVariable(symbol) {
+				symbol.LastAssignmentPos = math.MaxInt32
+			}
+		}
+		return false
+	case ast.KindInterfaceDeclaration,
+		ast.KindTypeAliasDeclaration,
+		ast.KindEnumDeclaration:
+		return false
+	}
+	if ast.IsTypeNode(node) {
+		return false
+	}
+	return node.ForEachChild(c.markNodeAssignments)
+}
+
+// Extend the position of the given assignment target node to the end of any intervening variable statement,
+// expression statement, compound statement, or class declaration occurring between the node and the given
+// declaration node.
+func (c *Checker) extendAssignmentPosition(node *ast.Node, declaration *ast.Node) int {
+	pos := node.Pos()
+	for node != nil && node.Pos() > declaration.Pos() {
+		switch node.Kind {
+		case ast.KindVariableStatement, ast.KindExpressionStatement, ast.KindIfStatement, ast.KindDoStatement, ast.KindWhileStatement,
+			ast.KindForStatement, ast.KindForInStatement, ast.KindForOfStatement, ast.KindWithStatement, ast.KindSwitchStatement,
+			ast.KindTryStatement, ast.KindClassDeclaration:
+			pos = node.End()
+		}
+		node = node.Parent
+	}
+	return pos
 }

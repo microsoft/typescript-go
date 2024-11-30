@@ -1932,7 +1932,7 @@ func getIsDeferredContext(location *ast.Node, lastLocation *ast.Node) bool {
 func isTypeParameterSymbolDeclaredInContainer(symbol *ast.Symbol, container *ast.Node) bool {
 	for _, decl := range symbol.Declarations {
 		if decl.Kind == ast.KindTypeParameter {
-			parent := decl.Parent.Parent
+			parent := decl.Parent
 			if parent == container {
 				return true
 			}
@@ -2554,6 +2554,10 @@ func isJSDocOptionalParameter(node *ast.ParameterDeclaration) bool {
 }
 
 func isQuestionToken(node *ast.Node) bool {
+	return node != nil && node.Kind == ast.KindQuestionToken
+}
+
+func isExclamationToken(node *ast.Node) bool {
 	return node != nil && node.Kind == ast.KindQuestionToken
 }
 
@@ -3421,4 +3425,12 @@ func getTagNameOfNode(node *ast.Node) *ast.Node {
 		return node.AsJsxSelfClosingElement().TagName
 	}
 	panic("Unhandled case in getTagNameOfNode")
+}
+
+func getBindingElementPropertyName(node *ast.Node) *ast.Node {
+	name := node.AsBindingElement().PropertyName
+	if name != nil {
+		return name
+	}
+	return node.Name()
 }

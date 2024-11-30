@@ -48,7 +48,7 @@ const (
 	TypeSystemPropertyNameResolvedTypeArguments
 	TypeSystemPropertyNameResolvedBaseTypes
 	TypeSystemPropertyNameWriteType
-	TypeSystemPropertyNameParameterInitializerContainsUndefined
+	TypeSystemPropertyNameInitializerIsUndefined
 )
 
 type TypeResolution struct {
@@ -344,6 +344,7 @@ type Checker struct {
 	strictNullChecks                   bool
 	strictFunctionTypes                bool
 	strictBindCallApply                bool
+	strictPropertyInitialization       bool
 	noImplicitAny                      bool
 	noImplicitThis                     bool
 	useUnknownInCatchVariables         bool
@@ -388,6 +389,7 @@ type Checker struct {
 	signatureLinks                     LinkStore[*ast.Node, SignatureLinks]
 	typeNodeLinks                      LinkStore[*ast.Node, TypeNodeLinks]
 	enumMemberLinks                    LinkStore[*ast.Node, EnumMemberLinks]
+	switchStatementLinks               LinkStore[*ast.Node, SwitchStatementLinks]
 	valueSymbolLinks                   LinkStore[*ast.Symbol, ValueSymbolLinks]
 	aliasSymbolLinks                   LinkStore[*ast.Symbol, AliasSymbolLinks]
 	moduleSymbolLinks                  LinkStore[*ast.Symbol, ModuleSymbolLinks]
@@ -528,6 +530,7 @@ func NewChecker(program *Program) *Checker {
 	c.strictNullChecks = c.getStrictOptionValue(c.compilerOptions.StrictNullChecks)
 	c.strictFunctionTypes = c.getStrictOptionValue(c.compilerOptions.StrictFunctionTypes)
 	c.strictBindCallApply = c.getStrictOptionValue(c.compilerOptions.StrictBindCallApply)
+	c.strictPropertyInitialization = c.getStrictOptionValue(c.compilerOptions.StrictPropertyInitialization)
 	c.noImplicitAny = c.getStrictOptionValue(c.compilerOptions.NoImplicitAny)
 	c.noImplicitThis = c.getStrictOptionValue(c.compilerOptions.NoImplicitThis)
 	c.useUnknownInCatchVariables = c.getStrictOptionValue(c.compilerOptions.UseUnknownInCatchVariables)
@@ -2447,7 +2450,7 @@ func (c *Checker) instantiateTypeWithSingleGenericCallSignature(node *ast.Node, 
 func (c *Checker) checkExpressionWorker(node *ast.Node, checkMode CheckMode) *Type {
 	switch node.Kind {
 	case ast.KindIdentifier:
-		return c.checkIdentifier(node)
+		return c.checkIdentifier(node, checkMode)
 	case ast.KindPrivateIdentifier:
 		return c.checkPrivateIdentifierExpression(node)
 	case ast.KindThisKeyword:
@@ -2767,7 +2770,7 @@ func (c *Checker) checkJsxAttributes(node *ast.Node, checkMode CheckMode) *Type 
 	return c.errorType
 }
 
-func (c *Checker) checkIdentifier(node *ast.Node) *Type {
+func (c *Checker) checkIdentifier(node *ast.Node, checkMode CheckMode) *Type {
 	if isThisInTypeQuery(node) {
 		return c.checkThisExpression(node)
 	}
@@ -2788,8 +2791,7 @@ func (c *Checker) checkIdentifier(node *ast.Node) *Type {
 	// }
 	localOrExportSymbol := c.getExportSymbolOfValueSymbolIfExported(symbol)
 	declaration := localOrExportSymbol.ValueDeclaration
-	// !!!
-	// immediateDeclaration := declaration
+	immediateDeclaration := declaration
 	// If the identifier is declared in a binding pattern for which we're currently computing the implied type and the
 	// reference occurs with the same binding pattern, return the non-inferrable any type. This for example occurs in
 	// 'const [a, b = a + 1] = [2]' when we're computing the contextual type for the array literal '[2]'.
@@ -2846,13 +2848,125 @@ func (c *Checker) checkIdentifier(node *ast.Node) *Type {
 	if declaration == nil {
 		return t
 	}
-	// !!!
-	flowType := c.getFlowTypeOfReference(node, t)
+	t = c.getNarrowableTypeForReference(t, node, checkMode)
+	// The declaration container is the innermost function that encloses the declaration of the variable
+	// or parameter. The flow container is the innermost function starting with which we analyze the control
+	// flow graph to determine the control flow based type.
+	isParameter := getRootDeclaration(declaration).Kind == ast.KindParameter
+	declarationContainer := c.getControlFlowContainer(declaration)
+	flowContainer := c.getControlFlowContainer(node)
+	isOuterVariable := flowContainer != declarationContainer
+	isSpreadDestructuringAssignmentTarget := node.Parent != nil && node.Parent.Parent != nil && ast.IsSpreadAssignment(node.Parent) && c.isDestructuringAssignmentTarget(node.Parent.Parent)
+	isModuleExports := symbol.Flags&ast.SymbolFlagsModuleExports != 0
+	typeIsAutomatic := t == c.autoType || t == c.autoArrayType
+	isAutomaticTypeInNonNull := typeIsAutomatic && node.Parent.Kind == ast.KindNonNullExpression
+	// When the control flow originates in a function expression, arrow function, method, or accessor, and
+	// we are referencing a closed-over const variable or parameter or mutable local variable past its last
+	// assignment, we extend the origin of the control flow analysis to include the immediately enclosing
+	// control flow container.
+	for flowContainer != declarationContainer &&
+		(ast.IsFunctionExpressionOrArrowFunction(flowContainer) || isObjectLiteralOrClassExpressionMethodOrAccessor(flowContainer)) &&
+		(c.isConstantVariable(localOrExportSymbol) && t != c.autoArrayType || c.isParameterOrMutableLocalVariable(localOrExportSymbol) && c.isPastLastAssignment(localOrExportSymbol, node)) {
+		flowContainer = c.getControlFlowContainer(flowContainer)
+	}
+	// We only look for uninitialized variables in strict null checking mode, and only when we can analyze
+	// the entire control flow graph from the variable's declaration (i.e. when the flow container and
+	// declaration container are the same).
+	isNeverInitialized := immediateDeclaration != nil && ast.IsVariableDeclaration(immediateDeclaration) && immediateDeclaration.Initializer() == nil &&
+		immediateDeclaration.AsVariableDeclaration().ExclamationToken == nil && c.isMutableLocalVariableDeclaration(immediateDeclaration) &&
+		!c.isSymbolAssignedDefinitely(symbol)
+	assumeInitialized := isParameter ||
+		isAlias ||
+		(isOuterVariable && !isNeverInitialized) ||
+		isSpreadDestructuringAssignmentTarget ||
+		isModuleExports ||
+		c.isSameScopedBindingElement(node, declaration) ||
+		t != c.autoType && t != c.autoArrayType && (!c.strictNullChecks || t.flags&(TypeFlagsAnyOrUnknown|TypeFlagsVoid) != 0 || isInTypeQuery(node) || c.isInAmbientOrTypeNode(node) || node.Parent.Kind == ast.KindExportSpecifier) ||
+		ast.IsNonNullExpression(node.Parent) ||
+		ast.IsVariableDeclaration(declaration) && declaration.AsVariableDeclaration().ExclamationToken != nil ||
+		declaration.Flags&ast.NodeFlagsAmbient != 0
+	var initialType *Type
+	switch {
+	case isAutomaticTypeInNonNull:
+		initialType = c.undefinedType
+	case assumeInitialized && isParameter:
+		initialType = c.removeOptionalityFromDeclaredType(t, declaration)
+	case assumeInitialized:
+		initialType = t
+	case typeIsAutomatic:
+		initialType = c.undefinedType
+	default:
+		initialType = c.getOptionalType(t, false /*isProperty*/)
+	}
+	var flowType *Type
+	if isAutomaticTypeInNonNull {
+		flowType = c.getNonNullableType(c.getFlowTypeOfReferenceEx(node, t, initialType, flowContainer, nil))
+	} else {
+		flowType = c.getFlowTypeOfReferenceEx(node, t, initialType, flowContainer, nil)
+	}
+	// A variable is considered uninitialized when it is possible to analyze the entire control flow graph
+	// from declaration to use, and when the variable's declared type doesn't include undefined but the
+	// control flow based type does include undefined.
+	if !c.isEvolvingArrayOperationTarget(node) && (t == c.autoType || t == c.autoArrayType) {
+		if flowType == c.autoType || flowType == c.autoArrayType {
+			if c.noImplicitAny {
+				c.error(getNameOfDeclaration(declaration), diagnostics.Variable_0_implicitly_has_type_1_in_some_locations_where_its_type_cannot_be_determined, c.symbolToString(symbol), c.typeToString(flowType))
+				c.error(node, diagnostics.Variable_0_implicitly_has_an_1_type, c.symbolToString(symbol), c.typeToString(flowType))
+			}
+			return c.convertAutoToAny(flowType)
+		}
+	} else if !assumeInitialized && !c.containsUndefinedType(t) && c.containsUndefinedType(flowType) {
+		c.error(node, diagnostics.Variable_0_is_used_before_being_assigned, c.symbolToString(symbol))
+		// Return the declared type to reduce follow-on errors
+		return t
+	}
 	if assignmentKind != AssignmentKindNone {
 		// Identifier is target of a compound assignment
 		return c.getBaseTypeOfLiteralType(flowType)
 	}
 	return flowType
+}
+
+func (c *Checker) isSameScopedBindingElement(node *ast.Node, declaration *ast.Node) bool {
+	if ast.IsBindingElement(declaration) {
+		bindingElement := ast.FindAncestor(node, ast.IsBindingElement)
+		return bindingElement != nil && getRootDeclaration(bindingElement) == getRootDeclaration(declaration)
+	}
+	return false
+}
+
+// Remove undefined from the annotated type of a parameter when there is an initializer (that doesn't include undefined)
+func (c *Checker) removeOptionalityFromDeclaredType(declaredType *Type, declaration *ast.Node) *Type {
+	removeUndefined := c.strictNullChecks && ast.IsParameter(declaration) && declaration.Initializer() != nil && c.hasTypeFacts(declaredType, TypeFactsIsUndefined) && !c.parameterInitializerContainsUndefined(declaration)
+	if removeUndefined {
+		return c.getTypeWithFacts(declaredType, TypeFactsNEUndefined)
+	}
+	return declaredType
+}
+
+func (c *Checker) parameterInitializerContainsUndefined(declaration *ast.Node) bool {
+	links := c.nodeLinks.get(declaration)
+	if links.flags&NodeCheckFlagsInitializerIsUndefinedComputed == 0 {
+		if !c.pushTypeResolution(declaration, TypeSystemPropertyNameInitializerIsUndefined) {
+			c.reportCircularityError(declaration.Symbol())
+			return true
+		}
+		containsUndefined := c.hasTypeFacts(c.checkDeclarationInitializer(declaration, CheckModeNormal, nil), TypeFactsIsUndefined)
+		if !c.popTypeResolution() {
+			c.reportCircularityError(declaration.Symbol())
+			return true
+		}
+		if links.flags&NodeCheckFlagsInitializerIsUndefinedComputed == 0 {
+			links.flags |= NodeCheckFlagsInitializerIsUndefinedComputed | core.IfElse(containsUndefined, NodeCheckFlagsInitializerIsUndefined, 0)
+		}
+	}
+	return links.flags&NodeCheckFlagsInitializerIsUndefined != 0
+}
+
+func (c *Checker) isInAmbientOrTypeNode(node *ast.Node) bool {
+	return node.Flags&ast.NodeFlagsAmbient != 0 || ast.FindAncestor(node, func(n *ast.Node) bool {
+		return ast.IsInterfaceDeclaration(n) || ast.IsTypeAliasDeclaration(n) || ast.IsTypeLiteralNode(n)
+	}) != nil
 }
 
 func (c *Checker) checkPropertyAccessExpression(node *ast.Node, checkMode CheckMode, writeOnly bool) *Type {
@@ -2999,7 +3113,76 @@ func (c *Checker) checkPropertyAccessExpressionOrQualifiedName(node *ast.Node, l
 }
 
 func (c *Checker) getFlowTypeOfAccessExpression(node *ast.Node, prop *ast.Symbol, propType *Type, errorNode *ast.Node, checkMode CheckMode) *Type {
-	return propType // !!!
+	// Only compute control flow type if this is a property access expression that isn't an
+	// assignment target, and the referenced property was declared as a variable, property,
+	// accessor, or optional method.
+	assignmentKind := getAssignmentTargetKind(node)
+	if assignmentKind == AssignmentKindDefinite {
+		return c.removeMissingType(propType, prop != nil && prop.Flags&ast.SymbolFlagsOptional != 0)
+	}
+	if prop != nil && prop.Flags&(ast.SymbolFlagsVariable|ast.SymbolFlagsProperty|ast.SymbolFlagsAccessor) == 0 && !(prop.Flags&ast.SymbolFlagsMethod != 0 && propType.flags&TypeFlagsUnion != 0) {
+		return propType
+	}
+	if propType == c.autoType {
+		return c.getFlowTypeOfProperty(node, prop)
+	}
+	propType = c.getNarrowableTypeForReference(propType, node, checkMode)
+	// If strict null checks and strict property initialization checks are enabled, if we have
+	// a this.xxx property access, if the property is an instance property without an initializer,
+	// and if we are in a constructor of the same class as the property declaration, assume that
+	// the property is uninitialized at the top of the control flow.
+	assumeUninitialized := false
+	initialType := propType
+	if c.strictNullChecks && prop != nil {
+		declaration := prop.ValueDeclaration
+		if declaration != nil && c.strictPropertyInitialization && ast.IsAccessExpression(node) && node.Expression().Kind == ast.KindThisKeyword && c.isPropertyWithoutInitializer(declaration) && !isStatic(declaration) {
+			flowContainer := c.getControlFlowContainer(node)
+			if ast.IsConstructorDeclaration(flowContainer) && flowContainer.Parent == declaration.Parent && declaration.Flags&ast.NodeFlagsAmbient == 0 {
+				assumeUninitialized = true
+				initialType = c.getOptionalType(propType, false /*isProperty*/)
+			}
+		}
+	}
+	flowType := c.getFlowTypeOfReferenceEx(node, propType, initialType, nil, nil)
+	if assumeUninitialized && !c.containsUndefinedType(propType) && c.containsUndefinedType(flowType) {
+		c.error(errorNode, diagnostics.Property_0_is_used_before_being_assigned, c.symbolToString(prop))
+		// Return the declared type to reduce follow-on errors
+		return propType
+	}
+	if assignmentKind != AssignmentKindNone {
+		return c.getBaseTypeOfLiteralType(flowType)
+	}
+	return flowType
+}
+
+func (c *Checker) getControlFlowContainer(node *ast.Node) *ast.Node {
+	return ast.FindAncestor(node.Parent, func(node *ast.Node) bool {
+		return ast.IsFunctionLike(node) && getImmediatelyInvokedFunctionExpression(node) == nil || ast.IsModuleBlock(node) || ast.IsSourceFile(node) || ast.IsPropertyDeclaration(node)
+	})
+}
+
+func (c *Checker) getFlowTypeOfProperty(reference *ast.Node, prop *ast.Symbol) *Type {
+	initialType := c.undefinedType
+	if prop != nil && prop.ValueDeclaration != nil && (!c.isAutoTypedProperty(prop) || getEffectiveModifierFlags(prop.ValueDeclaration)&ast.ModifierFlagsAmbient != 0) {
+		initialType = c.getTypeOfPropertyInBaseClass(prop)
+	}
+	return c.getFlowTypeOfReferenceEx(reference, c.autoType, initialType, nil, nil)
+}
+
+// Return the inherited type of the given property or undefined if property doesn't exist in a base class.
+func (c *Checker) getTypeOfPropertyInBaseClass(property *ast.Symbol) *Type {
+	classType := c.getDeclaringClass(property)
+	if classType != nil {
+		baseClassType := c.getBaseTypes(classType)[0]
+		if baseClassType != nil {
+			return c.getTypeOfPropertyOfType(baseClassType, property.Name)
+		}
+	}
+	return nil
+}
+
+func (c *Checker) isPropertyWithoutInitializer(node *ast.Node) bool {
+	return ast.IsPropertyDeclaration(node) && !hasAbstractModifier(node) && !isExclamationToken(node.AsPropertyDeclaration().PostfixToken) && node.Initializer() == nil
 }
 
 func (c *Checker) isMethodAccessForCall(node *ast.Node) bool {
@@ -3202,10 +3385,7 @@ func (c *Checker) checkPropertyAccessibilityEx(node *ast.Node, isSuper bool, wri
 		case ast.KindImportType:
 			errorNode = node
 		case ast.KindBindingElement:
-			errorNode = node.AsBindingElement().PropertyName
-			if errorNode == nil {
-				errorNode = node.Name()
-			}
+			errorNode = getBindingElementPropertyName(node)
 		default:
 			errorNode = node.Name()
 		}
@@ -4109,7 +4289,7 @@ func (c *Checker) isSideEffectFree(node *ast.Node) bool {
 			return false
 		}
 		return c.isSideEffectFree(node.AsBinaryExpression().Left) && c.isSideEffectFree(node.AsBinaryExpression().Right)
-	case ast.KindPrefixUnaryExpression, ast.KindPostfixUnaryExpression:
+	case ast.KindPrefixUnaryExpression:
 		// Unary operators ~, !, +, and - have no side effects.
 		// The rest do.
 		switch node.AsPrefixUnaryExpression().Operator {
@@ -7773,11 +7953,11 @@ func (c *Checker) typeResolutionHasProperty(r *TypeResolution) bool {
 		return r.target.(*Signature).resolvedReturnType != nil
 	case TypeSystemPropertyNameResolvedBaseConstraint:
 		return r.target.(*Type).AsConstrainedType().resolvedBaseConstraint != nil
+	case TypeSystemPropertyNameInitializerIsUndefined:
+		return c.nodeLinks.get(r.target.(*ast.Node)).flags&NodeCheckFlagsInitializerIsUndefinedComputed != 0
 		// !!!
 		// case TypeSystemPropertyNameWriteType:
 		// 	return !!c.getSymbolLinks(target.(Symbol)).writeType
-		// case TypeSystemPropertyNameParameterInitializerContainsUndefined:
-		// 	return c.getNodeLinks(target.(ParameterDeclaration)).parameterInitializerContainsUndefined != nil
 	}
 	panic("Unhandled case in typeResolutionHasProperty")
 }
@@ -9392,7 +9572,7 @@ func (c *Checker) createUnionOrIntersectionProperty(containingType *Type, name s
 		}
 	}
 	if singleProp == nil || isUnion &&
-		(propSet.Size() == 0 || checkFlags&ast.CheckFlagsPartial != 0) &&
+		(propSet.Size() != 0 || checkFlags&ast.CheckFlagsPartial != 0) &&
 		checkFlags&(ast.CheckFlagsContainsPrivate|ast.CheckFlagsContainsProtected) != 0 &&
 		!(propSet.Size() != 0 && c.hasCommonDeclaration(propSet)) {
 		// No property was found, or, in a union, a property has a private or protected declaration in one
@@ -11379,7 +11559,7 @@ func (c *Checker) computeConstantEnumMemberValue(member *ast.Node) EvaluatorResu
 	switch {
 	case result.value != nil:
 		if isConstEnum {
-			if numValue, isNumber := result.value.(float64); isNumber && (math.IsInf(numValue, 0) || !math.IsNaN(numValue)) {
+			if numValue, isNumber := result.value.(float64); isNumber && (math.IsInf(numValue, 0) || math.IsNaN(numValue)) {
 				c.error(initializer, core.IfElse(math.IsNaN(numValue),
 					diagnostics.X_const_enum_member_initializer_was_evaluated_to_disallowed_value_NaN,
 					diagnostics.X_const_enum_member_initializer_was_evaluated_to_a_non_finite_value))
@@ -12222,6 +12402,10 @@ func isLiteralType(t *Type) bool {
 	return isUnitType(t)
 }
 
+func isNeitherUnitTypeNorNever(t *Type) bool {
+	return t.flags&(TypeFlagsUnit|TypeFlagsNever) == 0
+}
+
 func isUnitType(t *Type) bool {
 	return t.flags&TypeFlagsUnit != 0
 }
@@ -12234,6 +12418,16 @@ func (c *Checker) isUnitLikeType(t *Type) bool {
 		return core.Some(t.AsIntersectionType().types, isUnitType)
 	}
 	return isUnitType(t)
+}
+
+func (c *Checker) extractUnitType(t *Type) *Type {
+	if t.flags&TypeFlagsIntersection != 0 {
+		u := core.Find(t.AsIntersectionType().types, isUnitType)
+		if u != nil {
+			return u
+		}
+	}
+	return t
 }
 
 func (c *Checker) getBaseTypeOfLiteralType(t *Type) *Type {
@@ -13490,7 +13684,24 @@ func (c *Checker) isKeyTypeIncluded(keyType *Type, include TypeFlags) bool {
 }
 
 func (c *Checker) checkComputedPropertyName(node *ast.Node) *Type {
-	return c.neverType // !!!
+	links := c.typeNodeLinks.get(node.Expression())
+	if links.resolvedType == nil {
+		if (ast.IsTypeLiteralNode(node.Parent.Parent) || ast.IsClassLike(node.Parent.Parent) || ast.IsInterfaceDeclaration(node.Parent.Parent)) &&
+			ast.IsBinaryExpression(node.Expression()) && node.Expression().AsBinaryExpression().OperatorToken.Kind == ast.KindInKeyword &&
+			!ast.IsAccessor(node.Parent) {
+			links.resolvedType = c.errorType
+			return links.resolvedType
+		}
+		links.resolvedType = c.checkExpression(node.Expression())
+		// This will allow types number, string, symbol or any. It will also allow enums, the unknown
+		// type, and any union of these types (like string | number).
+		if links.resolvedType.flags&TypeFlagsNullable != 0 ||
+			!c.isTypeAssignableToKind(links.resolvedType, TypeFlagsStringLike|TypeFlagsNumberLike|TypeFlagsESSymbolLike) &&
+				!c.isTypeAssignableTo(links.resolvedType, c.stringNumberSymbolType) {
+			c.error(node, diagnostics.A_computed_property_name_must_be_of_type_string_number_symbol_or_any)
+		}
+	}
+	return links.resolvedType
 }
 
 func (c *Checker) isNoInferType(t *Type) bool {
@@ -14034,7 +14245,7 @@ func (c *Checker) computeBaseConstraint(t *Type, stack []RecursionId) *Type {
 	switch {
 	case t.flags&TypeFlagsTypeParameter != 0:
 		constraint := c.getConstraintFromTypeParameter(t)
-		if t.AsTypeParameter().isThisType || constraint == nil {
+		if t.AsTypeParameter().isThisType {
 			return constraint
 		}
 		return c.getNextBaseConstraint(constraint, stack)
@@ -14097,11 +14308,7 @@ func (c *Checker) computeBaseConstraint(t *Type, stack []RecursionId) *Type {
 		}
 		c.getNextBaseConstraint(c.getIndexedAccessTypeOrUndefined(baseObjectType, baseIndexType, t.AsIndexedAccessType().accessFlags, nil, nil), stack)
 	case t.flags&TypeFlagsConditional != 0:
-		constraint := c.getConstraintFromConditionalType(t)
-		if constraint == nil {
-			return nil
-		}
-		return c.getNextBaseConstraint(constraint, stack)
+		return c.getNextBaseConstraint(c.getConstraintFromConditionalType(t), stack)
 	case t.flags&TypeFlagsSubstitution != 0:
 		return c.getNextBaseConstraint(c.getSubstitutionIntersection(t), stack)
 	case c.isGenericTupleType(t):
@@ -14126,6 +14333,9 @@ func (c *Checker) computeBaseConstraint(t *Type, stack []RecursionId) *Type {
 }
 
 func (c *Checker) getNextBaseConstraint(t *Type, stack []RecursionId) *Type {
+	if t == nil {
+		return nil
+	}
 	constraint := c.getResolvedBaseConstraint(t, stack)
 	if constraint == c.noConstraintType || constraint == c.circularConstraintType {
 		return nil
@@ -14271,6 +14481,13 @@ func (c *Checker) isUnknownLikeUnionType(t *Type) bool {
 		return t.objectFlags&ObjectFlagsIsUnknownLikeUnion != 0
 	}
 	return false
+}
+
+func (c *Checker) containsUndefinedType(t *Type) bool {
+	if t.flags&TypeFlagsUnion != 0 {
+		t = t.Types()[0]
+	}
+	return t.flags&TypeFlagsUndefined != 0
 }
 
 func (c *Checker) typeHasCallOrConstructSignatures(t *Type) bool {
@@ -15255,11 +15472,6 @@ func (c *Checker) isSomeSymbolAssignedWorker(node *ast.Node) bool {
 	return core.Some(node.AsBindingPattern().Elements.Nodes, func(e *ast.Node) bool {
 		return e.Kind != ast.KindOmittedExpression && c.isSomeSymbolAssignedWorker(e.Name())
 	})
-}
-
-// Check if a parameter, catch variable, or mutable local variable is assigned anywhere
-func (c *Checker) isSymbolAssigned(symbol *ast.Symbol) bool {
-	return true // !!!
 }
 
 func (c *Checker) getTargetType(t *Type) *Type {
