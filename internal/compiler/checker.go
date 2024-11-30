@@ -12924,8 +12924,8 @@ func (c *Checker) removeSubtypes(types []*Type, hasObjectTypes bool) []*Type {
 	hasEmptyObject := hasObjectTypes && core.Some(types, func(t *Type) bool {
 		return t.flags&TypeFlagsObject != 0 && !c.isGenericMappedType(t) && c.isEmptyResolvedType(c.resolveStructuredTypeMembers(t))
 	})
-	len := len(types)
-	i := len
+	length := len(types)
+	i := length
 	count := 0
 	for i > 0 {
 		i--
@@ -12966,7 +12966,7 @@ func (c *Checker) removeSubtypes(types []*Type, hasObjectTypes bool) []*Type {
 						// same ratio of checks per element. If the estimated number of remaining type checks is
 						// greater than 1M we deem the union type too complex to represent. This for example
 						// caps union types at 1000 unique object types.
-						estimatedCount := (count / (len - i)) * len
+						estimatedCount := (count / (length - i)) * length
 						if estimatedCount > 1000000 {
 							c.error(c.currentNode, diagnostics.Expression_produces_a_union_type_that_is_too_complex_to_represent)
 							return nil
