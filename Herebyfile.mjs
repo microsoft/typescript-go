@@ -26,6 +26,20 @@ const { values: options } = parseArgs({
     allowNegative: true,
 });
 
+/**
+ * @type {<T>(fn: () => T) => (() => T)}
+*/
+function memoize(fn) {
+    let value;
+    return () => {
+        if (fn !== undefined) {
+            value = fn();
+            fn = /** @type {any} */ (undefined);
+        }
+        return value;
+    };
+}
+
 const typeScriptSubmodulePath = path.join(__dirname, "_submodules", "TypeScript");
 
 function assertTypeScriptCloned() {
@@ -67,9 +81,10 @@ export const generate = task({
     },
 });
 
+const goTest = memoize(() => isInstalled("gotestsum") ? ["gotestsum", "--format-hide-empty-pkg", "--"] : ["go", "test"])
+
 async function runTests() {
-    const goTest = isInstalled("gotestsum") ? ["gotestsum", "--format-hide-empty-pkg", "--"] : ["go", "test"];
-    await $`${goTest} ${options.race ? ["-race"] : []} ./...`;
+    await $`${goTest()} ${options.race ? ["-race"] : []} ./...`;
 }
 
 export const test = task({
@@ -87,12 +102,22 @@ export const testBenchmarks = task({
     run: runTestBenchmarks,
 });
 
+async function runTestTools() {
+    await $({ cwd: path.join(__dirname, "_tools") })`${goTest()} ${options.race ? ["-race"] : []} ./...`;
+}
+
+export const testTools = task({
+    name: "test:tools",
+    run: runTestTools,
+});
+
 export const testAll = task({
     name: "test:all",
     run: async () => {
         // Prevent interleaving by running these directly instead of in parallel.
         await runTests();
         await runTestBenchmarks();
+        await runTestTools();
     },
 });
 
