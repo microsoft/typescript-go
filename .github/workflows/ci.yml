@@ -129,7 +129,7 @@ jobs:
           cache-dependency-path: '**/*.sum'
 
       - run: go mod tidy
-      - run: cd _tools; go mod tidy
+      - run: go -C ./_tools mod tidy
 
       - run: git add .
       - run: git diff --staged --exit-code --stat
