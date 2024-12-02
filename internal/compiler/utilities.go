@@ -1433,12 +1433,22 @@ func getDiagnosticPath(d *ast.Diagnostic) string {
 	return ""
 }
 
-func isConstAssertion(location *ast.Node) bool {
-	switch location.Kind {
+func getAssertedTypeNode(node *ast.Node) *ast.Node {
+	switch node.Kind {
 	case ast.KindAsExpression:
-		return isConstTypeReference(location.AsAsExpression().Type)
+		return node.AsAsExpression().Type
+	case ast.KindSatisfiesExpression:
+		return node.AsSatisfiesExpression().Type
 	case ast.KindTypeAssertionExpression:
-		return isConstTypeReference(location.AsTypeAssertion().Type)
+		return node.AsTypeAssertion().Type
+	}
+	panic("Unhandled case in getAssertedTypeNode")
+}
+
+func isConstAssertion(node *ast.Node) bool {
+	switch node.Kind {
+	case ast.KindAsExpression, ast.KindTypeAssertionExpression:
+		return isConstTypeReference(getAssertedTypeNode(node))
 	}
 	return false
 }
@@ -3433,4 +3443,16 @@ func getBindingElementPropertyName(node *ast.Node) *ast.Node {
 		return name
 	}
 	return node.Name()
+}
+
+func indexOfNode(nodes []*ast.Node, node *ast.Node) int {
+	index, ok := slices.BinarySearchFunc(nodes, node, compareNodePositions)
+	if ok {
+		return index
+	}
+	return -1
+}
+
+func compareNodePositions(n1, n2 *ast.Node) int {
+	return n1.Pos() - n2.Pos()
 }

@@ -57,6 +57,14 @@ type TypeResolution struct {
 	result       bool
 }
 
+// ContextualInfo
+
+type ContextualInfo struct {
+	node    *ast.Node
+	t       *Type
+	isCache bool
+}
+
 // WideningKind
 
 type WideningKind int32
@@ -385,10 +393,12 @@ type Checker struct {
 	signaturePool                      core.Pool[Signature]
 	indexInfoPool                      core.Pool[IndexInfo]
 	mergedSymbols                      map[ast.MergeId]*ast.Symbol
+	factory                            ast.NodeFactory
 	nodeLinks                          LinkStore[*ast.Node, NodeLinks]
 	signatureLinks                     LinkStore[*ast.Node, SignatureLinks]
 	typeNodeLinks                      LinkStore[*ast.Node, TypeNodeLinks]
 	enumMemberLinks                    LinkStore[*ast.Node, EnumMemberLinks]
+	arrayLiteralLinks                  LinkStore[*ast.Node, ArrayLiteralLinks]
 	switchStatementLinks               LinkStore[*ast.Node, SwitchStatementLinks]
 	valueSymbolLinks                   LinkStore[*ast.Symbol, ValueSymbolLinks]
 	aliasSymbolLinks                   LinkStore[*ast.Symbol, AliasSymbolLinks]
@@ -496,6 +506,7 @@ type Checker struct {
 	lastFlowNodeReachable              bool
 	flowNodeReachable                  map[*ast.FlowNode]bool
 	flowNodePostSuper                  map[*ast.FlowNode]bool
+	contextualInfos                    []ContextualInfo
 	awaitedTypeStack                   []*Type
 	subtypeRelation                    *Relation
 	strictSubtypeRelation              *Relation
@@ -511,6 +522,7 @@ type Checker struct {
 	getGlobalAwaitedSymbolOrNil        func() *ast.Symbol
 	getGlobalNaNSymbol                 func() *ast.Symbol
 	getGlobalRecordSymbol              func() *ast.Symbol
+	getGlobalTemplateStringsArrayType  func() *Type
 	isPrimitiveOrObjectOrEmptyType     func(*Type) bool
 	containsMissingType                func(*Type) bool
 	couldContainTypeVariables          func(*Type) bool
@@ -654,6 +666,7 @@ func NewChecker(program *Program) *Checker {
 	c.getGlobalAwaitedSymbolOrNil = c.getGlobalTypeAliasResolver("Awaited", 1 /*arity*/, false /*reportErrors*/)
 	c.getGlobalNaNSymbol = c.getGlobalValueSymbolResolver("NaN", false /*reportErrors*/)
 	c.getGlobalRecordSymbol = c.getGlobalTypeAliasResolver("Record", 2 /*arity*/, true /*reportErrors*/)
+	c.getGlobalTemplateStringsArrayType = c.getGlobalTypeResolver("TemplateStringsArray", 0 /*arity*/, true /*reportErrors*/)
 	c.initializeClosures()
 	c.initializeChecker()
 	return c
@@ -1409,9 +1422,8 @@ func (c *Checker) checkPropertyDeclaration(node *ast.Node) {
 
 	// property signatures already report "initializer not allowed in ambient context" elsewhere
 	if hasSyntacticModifier(node, ast.ModifierFlagsAbstract) && ast.IsPropertyDeclaration(node) {
-		propDecl := node.AsPropertyDeclaration()
-		if propDecl.Initializer != nil {
-			c.error(node, diagnostics.Property_0_cannot_have_an_initializer_because_it_is_marked_abstract, declarationNameToString(propDecl.Name()))
+		if node.Initializer() != nil {
+			c.error(node, diagnostics.Property_0_cannot_have_an_initializer_because_it_is_marked_abstract, declarationNameToString(node.Name()))
 		}
 	}
 	node.ForEachChild(c.checkSourceElement)
@@ -3650,11 +3662,6 @@ func (c *Checker) getContextualThisParameterType(fn *ast.Node) *Type {
 	return nil // !!!
 }
 
-// Return contextual type of parameter or undefined if no contextual type is available
-func (c *Checker) getContextuallyTypedParameterType(parameter *ast.Node) *Type {
-	return nil // !!!
-}
-
 func (c *Checker) checkThisExpression(node *ast.Node) *Type {
 	// Stop at the first arrow function so that we can
 	// tell whether 'this' needs to be captured.
@@ -3802,12 +3809,12 @@ func (c *Checker) isInParameterInitializerBeforeContainingFunction(node *ast.Nod
 	inBindingInitializer := false
 	for node.Parent != nil && !ast.IsFunctionLike(node.Parent) {
 		if ast.IsParameter(node.Parent) {
-			if inBindingInitializer || node.Parent.AsParameterDeclaration().Initializer == node {
+			if inBindingInitializer || node.Parent.Initializer() == node {
 				return true
 			}
 		}
 
-		if ast.IsBindingElement(node.Parent) && node.Parent.AsBindingElement().Initializer == node {
+		if ast.IsBindingElement(node.Parent) && node.Parent.Initializer() == node {
 			inBindingInitializer = true
 		}
 
@@ -4851,8 +4858,8 @@ func (c *Checker) isEmptyObjectTypeOrSpreadsIntoEmptyObject(t *Type) bool {
 }
 
 func (c *Checker) hasDefaultValue(node *ast.Node) bool {
-	return ast.IsBindingElement(node) && node.AsBindingElement().Initializer != nil ||
-		ast.IsPropertyAssignment(node) && c.hasDefaultValue(node.AsPropertyAssignment().Initializer) ||
+	return ast.IsBindingElement(node) && node.Initializer() != nil ||
+		ast.IsPropertyAssignment(node) && c.hasDefaultValue(node.Initializer()) ||
 		ast.IsShorthandPropertyAssignment(node) && node.AsShorthandPropertyAssignment().ObjectAssignmentInitializer != nil ||
 		ast.IsBinaryExpression(node) && node.AsBinaryExpression().OperatorToken.Kind == ast.KindEqualsToken
 }
@@ -4923,7 +4930,7 @@ func (c *Checker) checkPropertyAssignment(node *ast.Node, checkMode CheckMode) *
 	// if node.name.kind == KindComputedPropertyName {
 	// 	c.checkComputedPropertyName(node.name)
 	// }
-	return c.checkExpressionForMutableLocation(node.AsPropertyAssignment().Initializer, checkMode)
+	return c.checkExpressionForMutableLocation(node.Initializer(), checkMode)
 }
 
 func (c *Checker) isInPropertyInitializerOrClassStaticBlock(node *ast.Node) bool {
@@ -5512,9 +5519,9 @@ func (c *Checker) getTargetOfImportEqualsDeclaration(node *ast.Node, dontResolve
 
 func (c *Checker) getCommonJSPropertyAccess(node *ast.Node) *ast.Node {
 	if ast.IsVariableDeclaration(node) {
-		decl := node.AsVariableDeclaration()
-		if decl.Initializer != nil && ast.IsPropertyAccessExpression(decl.Initializer) {
-			return decl.Initializer
+		initializer := node.Initializer()
+		if initializer != nil && ast.IsPropertyAccessExpression(initializer) {
+			return initializer
 		}
 	}
 	return nil
@@ -6330,7 +6337,7 @@ func (c *Checker) getTargetOfAliasDeclaration(node *ast.Node, dontRecursivelyRes
 	case ast.KindShorthandPropertyAssignment:
 		return c.resolveEntityName(node.AsShorthandPropertyAssignment().Name(), ast.SymbolFlagsValue|ast.SymbolFlagsType|ast.SymbolFlagsNamespace, true /*ignoreErrors*/, dontRecursivelyResolve, nil /*location*/)
 	case ast.KindPropertyAssignment:
-		return c.getTargetOfAliasLikeExpression(node.AsPropertyAssignment().Initializer, dontRecursivelyResolve)
+		return c.getTargetOfAliasLikeExpression(node.Initializer(), dontRecursivelyResolve)
 	case ast.KindElementAccessExpression, ast.KindPropertyAccessExpression:
 		return c.getTargetOfAccessExpression(node, dontRecursivelyResolve)
 	}
@@ -6966,13 +6973,13 @@ func (c *Checker) getTypeForVariableLikeDeclaration(declaration *ast.Node, inclu
 		// If --noImplicitAny is on or the declaration is in a Javascript file,
 		// use control flow tracked 'any' type for non-ambient, non-exported var or let variables with no
 		// initializer or a 'null' or 'undefined' initializer.
-		variableDeclaration := declaration.AsVariableDeclaration()
-		if c.getCombinedNodeFlagsCached(declaration)&ast.NodeFlagsConstant == 0 && (variableDeclaration.Initializer == nil || c.isNullOrUndefined(variableDeclaration.Initializer)) {
+		initializer := declaration.Initializer()
+		if c.getCombinedNodeFlagsCached(declaration)&ast.NodeFlagsConstant == 0 && (initializer == nil || c.isNullOrUndefined(initializer)) {
 			return c.autoType
 		}
 		// Use control flow tracked 'any[]' type for non-ambient, non-exported variables with an empty array
 		// literal initializer.
-		if variableDeclaration.Initializer != nil && isEmptyArrayLiteral(variableDeclaration.Initializer) {
+		if initializer != nil && isEmptyArrayLiteral(initializer) {
 			return c.autoArrayType
 		}
 	}
@@ -7013,35 +7020,31 @@ func (c *Checker) getTypeForVariableLikeDeclaration(declaration *ast.Node, inclu
 		// We have a property declaration with no type annotation or initializer, in noImplicitAny mode or a .js file.
 		// Use control flow analysis of this.xxx assignments in the constructor or static block to determine the type of the property.
 		if !hasStaticModifier(declaration) {
-			return nil
-			// !!!
-			// constructor := findConstructorDeclaration(declaration.parent.(ClassLikeDeclaration))
-			// var t *Type
-			// switch {
-			// case constructor != nil:
-			// 	t = c.getFlowTypeInConstructor(declaration.symbol, constructor)
-			// case getEffectiveModifierFlags(declaration)&ModifierFlagsAmbient != 0:
-			// 	t = c.getTypeOfPropertyInBaseClass(declaration.symbol)
-			// }
-			// if t != nil {
-			// 	t = c.addOptionalityEx(t, true /*isProperty*/, isOptional)
-			// }
-			// return t
+			constructor := findConstructorDeclaration(declaration.Parent)
+			var t *Type
+			switch {
+			case constructor != nil:
+				t = c.getFlowTypeInConstructor(declaration.Symbol(), constructor)
+			case declaration.ModifierFlags()&ast.ModifierFlagsAmbient != 0:
+				t = c.getTypeOfPropertyInBaseClass(declaration.Symbol())
+			}
+			if t == nil {
+				return nil
+			}
+			return c.addOptionalityEx(t, true /*isProperty*/, isOptional)
 		} else {
-			return nil
-			// !!!
-			// staticBlocks := filter(declaration.parent.(ClassLikeDeclaration).Members(), isClassStaticBlockDeclaration)
-			// var t *Type
-			// switch {
-			// case len(staticBlocks) != 0:
-			// 	t = c.getFlowTypeInStaticBlocks(declaration.symbol, staticBlocks)
-			// case getEffectiveModifierFlags(declaration)&ModifierFlagsAmbient != 0:
-			// 	t = c.getTypeOfPropertyInBaseClass(declaration.symbol)
-			// }
-			// if t != nil {
-			// 	t = c.addOptionalityEx(t, true /*isProperty*/, isOptional)
-			// }
-			// return t
+			staticBlocks := core.Filter(declaration.Parent.ClassLikeData().Members.Nodes, ast.IsClassStaticBlockDeclaration)
+			var t *Type
+			switch {
+			case len(staticBlocks) != 0:
+				t = c.getFlowTypeInStaticBlocks(declaration.Symbol(), staticBlocks)
+			case declaration.ModifierFlags()&ast.ModifierFlagsAmbient != 0:
+				t = c.getTypeOfPropertyInBaseClass(declaration.Symbol())
+			}
+			if t == nil {
+				return nil
+			}
+			return c.addOptionalityEx(t, true /*isProperty*/, isOptional)
 		}
 	}
 	if ast.IsJsxAttribute(declaration) {
@@ -7059,7 +7062,7 @@ func (c *Checker) getTypeForVariableLikeDeclaration(declaration *ast.Node, inclu
 }
 
 func (c *Checker) checkDeclarationInitializer(declaration *ast.Node, checkMode CheckMode, contextualType *Type) *Type {
-	initializer := c.getEffectiveInitializer(declaration)
+	initializer := declaration.Initializer()
 	t := c.getQuickTypeOfExpression(initializer)
 	if t == nil {
 		if contextualType != nil {
@@ -7090,10 +7093,6 @@ func (c *Checker) padObjectLiteralType(t *Type, pattern *ast.Node) *Type {
 
 func (c *Checker) padTupleType(t *Type, pattern *ast.Node) *Type {
 	return t // !!!
-}
-
-func (c *Checker) getEffectiveInitializer(declaration *ast.Node) *ast.Node {
-	return declaration.Initializer()
 }
 
 func (c *Checker) widenTypeInferredFromInitializer(declaration *ast.Node, t *Type) *Type {
@@ -7971,7 +7970,7 @@ func (c *Checker) reportCircularityError(symbol *ast.Symbol) *Type {
 			return c.errorType
 		}
 		// Check if variable has initializer that circularly references the variable itself
-		if c.noImplicitAny && (declaration.Kind != ast.KindParameter || declaration.AsParameterDeclaration().Initializer != nil) {
+		if c.noImplicitAny && (!ast.IsParameter(declaration) || declaration.Initializer() != nil) {
 			c.error(symbol.ValueDeclaration, diagnostics.X_0_implicitly_has_type_any_because_it_does_not_have_a_type_annotation_and_is_referenced_directly_or_indirectly_in_its_own_initializer, c.symbolToString(symbol))
 		}
 	} else if symbol.Flags&ast.SymbolFlagsAlias != 0 {
@@ -8911,7 +8910,7 @@ func (c *Checker) getSignatureFromDeclaration(declaration *ast.Node) *Signature 
 	iife := getImmediatelyInvokedFunctionExpression(declaration)
 	for i, param := range declaration.Parameters() {
 		paramSymbol := param.Symbol()
-		typeNode := param.AsParameterDeclaration().Type
+		typeNode := param.Type()
 		// Include parameter symbol instead of property symbol in the signature
 		if paramSymbol != nil && paramSymbol.Flags&ast.SymbolFlagsProperty != 0 && !ast.IsBindingPattern(param.Name()) {
 			resolvedSymbol := c.resolveName(param, paramSymbol.Name, ast.SymbolFlagsValue, nil /*nameNotFoundMessage*/, false /*isUse*/, false /*excludeGlobals*/)
@@ -8928,7 +8927,7 @@ func (c *Checker) getSignatureFromDeclaration(declaration *ast.Node) *Signature 
 		}
 		// Record a new minimum argument count if this is not an optional parameter
 		isOptionalParameter := isOptionalDeclaration(param) ||
-			param.AsParameterDeclaration().Initializer != nil ||
+			param.Initializer() != nil ||
 			isRestParameter(param) ||
 			iife != nil && len(parameters) > len(iife.AsCallExpression().Arguments.Nodes) && typeNode == nil
 		if !isOptionalParameter {
@@ -11301,14 +11300,14 @@ func (c *Checker) getOuterTypeParametersOfClassOrInterface(symbol *ast.Symbol) [
 	declaration := symbol.ValueDeclaration
 	if symbol.Flags&(ast.SymbolFlagsClass|ast.SymbolFlagsFunction) == 0 {
 		declaration = core.Find(symbol.Declarations, func(d *ast.Node) bool {
-			if d.Kind == ast.KindInterfaceDeclaration {
+			if ast.IsInterfaceDeclaration(d) {
 				return true
 			}
-			if d.Kind != ast.KindVariableDeclaration {
+			if !ast.IsVariableDeclaration(d) {
 				return false
 			}
-			initializer := d.AsVariableDeclaration().Initializer
-			return initializer != nil && (initializer.Kind == ast.KindFunctionExpression || initializer.Kind == ast.KindArrowFunction)
+			initializer := d.Initializer()
+			return initializer != nil && ast.IsFunctionExpressionOrArrowFunction(initializer)
 		})
 	}
 	// !!! Debug.assert(!!declaration, "Class was missing valueDeclaration -OR- non-class had no interface declarations")
@@ -11526,7 +11525,7 @@ func (c *Checker) computeEnumMemberValue(member *ast.Node, autoValue float64, pr
 			c.error(member.Name(), diagnostics.An_enum_member_cannot_have_a_numeric_name)
 		}
 	}
-	if member.AsEnumMember().Initializer != nil {
+	if member.Initializer() != nil {
 		return c.computeConstantEnumMemberValue(member)
 	}
 	// In ambient non-const numeric enum declarations, enum members without initializers are
@@ -11554,7 +11553,7 @@ func (c *Checker) computeEnumMemberValue(member *ast.Node, autoValue float64, pr
 
 func (c *Checker) computeConstantEnumMemberValue(member *ast.Node) EvaluatorResult {
 	isConstEnum := isEnumConst(member.Parent)
-	initializer := member.AsEnumMember().Initializer
+	initializer := member.Initializer()
 	result := c.evaluate(initializer, member)
 	switch {
 	case result.value != nil:
@@ -12579,11 +12578,7 @@ func (c *Checker) mapTypeEx(t *Type, f func(*Type) *Type, noReductions bool) *Ty
 		}
 	}
 	if changed {
-		unionReduction := UnionReductionLiteral
-		if noReductions {
-			unionReduction = UnionReductionNone
-		}
-		return c.getUnionTypeEx(mappedTypes, unionReduction, nil /*alias*/, nil /*origin*/)
+		return c.getUnionTypeEx(mappedTypes, core.IfElse(noReductions, UnionReductionNone, UnionReductionLiteral), nil /*alias*/, nil /*origin*/)
 	}
 	return t
 }
@@ -14120,7 +14115,7 @@ func (c *Checker) isAutoTypedProperty(symbol *ast.Symbol) bool {
 	// A property is auto-typed when its declaration has no type annotation or initializer and we're in
 	// noImplicitAny mode or a .js file.
 	declaration := symbol.ValueDeclaration
-	return declaration != nil && ast.IsPropertyDeclaration(declaration) && declaration.Type() == nil && declaration.AsPropertyDeclaration().Initializer == nil && c.noImplicitAny
+	return declaration != nil && ast.IsPropertyDeclaration(declaration) && declaration.Type() == nil && declaration.Initializer() == nil && c.noImplicitAny
 }
 
 func (c *Checker) getDeclaringConstructor(symbol *ast.Symbol) *ast.Node {
@@ -14443,10 +14438,6 @@ func compareTypesEqual(s *Type, t *Type) Ternary {
 		return TernaryTrue
 	}
 	return TernaryFalse
-}
-
-func (c *Checker) getTypeOfPropertyOfContextualType(t *Type, name string) *Type {
-	return nil // !!!
 }
 
 func (c *Checker) markPropertyAsReferenced(prop *ast.Symbol, nodeForCheckWriteOnly *ast.Node, isSelfTypeAccess bool) {
@@ -14919,14 +14910,506 @@ func (c *Checker) getTypeOfPropertyOrIndexSignatureOfType(t *Type, name string) 
 	return nil
 }
 
+/**
+ * Whoa! Do you really want to use this function?
+ *
+ * Unless you're trying to get the *non-apparent* type for a
+ * value-literal type or you're authoring relevant portions of this algorithm,
+ * you probably meant to use 'getApparentTypeOfContextualType'.
+ * Otherwise this may not be very useful.
+ *
+ * In cases where you *are* working on this function, you should understand
+ * when it is appropriate to use 'getContextualType' and 'getApparentTypeOfContextualType'.
+ *
+ *   - Use 'getContextualType' when you are simply going to propagate the result to the expression.
+ *   - Use 'getApparentTypeOfContextualType' when you're going to need the members of the type.
+ *
+ * @param node the expression whose contextual type will be returned.
+ * @returns the contextual type of an expression.
+ */
 func (c *Checker) getContextualType(node *ast.Node, contextFlags ContextFlags) *Type {
+	if node.Flags&ast.NodeFlagsInWithStatement != 0 {
+		// We cannot answer semantic questions within a with block, do not proceed any further
+		return nil
+	}
+	// Cached contextual types are obtained with no ContextFlags, so we can only consult them for
+	// requests with no ContextFlags.
+	index := c.findContextualNode(node, contextFlags == ContextFlagsNone /*includeCaches*/)
+	if index >= 0 {
+		return c.contextualInfos[index].t
+	}
+	parent := node.Parent
+	switch parent.Kind {
+	case ast.KindVariableDeclaration, ast.KindParameter, ast.KindPropertyDeclaration, ast.KindPropertySignature, ast.KindBindingElement:
+		return c.getContextualTypeForInitializerExpression(node, contextFlags)
+	case ast.KindArrowFunction, ast.KindReturnStatement:
+		return c.getContextualTypeForReturnExpression(node, contextFlags)
+	case ast.KindYieldExpression:
+		return c.getContextualTypeForYieldOperand(parent, contextFlags)
+	case ast.KindAwaitExpression:
+		return c.getContextualTypeForAwaitOperand(parent, contextFlags)
+	case ast.KindCallExpression, ast.KindNewExpression:
+		return c.getContextualTypeForArgument(parent, node)
+	case ast.KindDecorator:
+		return c.getContextualTypeForDecorator(parent)
+	case ast.KindTypeAssertionExpression, ast.KindAsExpression:
+		if isConstAssertion(parent) {
+			return c.getContextualType(parent, contextFlags)
+		}
+		return c.getTypeFromTypeNode(getAssertedTypeNode(parent))
+	case ast.KindBinaryExpression:
+		return c.getContextualTypeForBinaryOperand(node, contextFlags)
+	case ast.KindPropertyAssignment,
+		ast.KindShorthandPropertyAssignment:
+		return c.getContextualTypeForObjectLiteralElement(parent, contextFlags)
+	case ast.KindSpreadAssignment:
+		return c.getContextualType(parent.Parent, contextFlags)
+	case ast.KindArrayLiteralExpression:
+		t := c.getApparentTypeOfContextualType(parent, contextFlags)
+		elementIndex := indexOfNode(parent.AsArrayLiteralExpression().Elements.Nodes, node)
+		firstSpreadIndex, lastSpreadIndex := c.getSpreadIndices(parent)
+		return c.getContextualTypeForElementExpression(t, elementIndex, len(parent.AsArrayLiteralExpression().Elements.Nodes), firstSpreadIndex, lastSpreadIndex)
+	case ast.KindConditionalExpression:
+		return c.getContextualTypeForConditionalOperand(node, contextFlags)
+	case ast.KindTemplateSpan:
+		return c.getContextualTypeForSubstitutionExpression(parent.Parent, node)
+	case ast.KindParenthesizedExpression:
+		return c.getContextualType(parent, contextFlags)
+	case ast.KindNonNullExpression:
+		return c.getContextualType(parent, contextFlags)
+	case ast.KindSatisfiesExpression:
+		return c.getTypeFromTypeNode(parent.AsSatisfiesExpression().Type)
+	case ast.KindExportAssignment:
+		return c.tryGetTypeFromEffectiveTypeNode(parent)
+	case ast.KindJsxExpression:
+		return c.getContextualTypeForJsxExpression(parent, contextFlags)
+	case ast.KindJsxAttribute, ast.KindJsxSpreadAttribute:
+		return c.getContextualTypeForJsxAttribute(parent, contextFlags)
+	case ast.KindJsxOpeningElement, ast.KindJsxSelfClosingElement:
+		return c.getContextualJsxElementAttributesType(parent, contextFlags)
+	case ast.KindImportAttribute:
+		return c.getContextualImportAttributeType(parent)
+	}
+	return nil
+}
+
+// In a variable, parameter or property declaration with a type annotation,
+// the contextual type of an initializer expression is the type of the variable, parameter or property.
+//
+// Otherwise, in a parameter declaration of a contextually typed function expression,
+// the contextual type of an initializer expression is the contextual type of the parameter.
+//
+// Otherwise, in a variable or parameter declaration with a binding pattern name,
+// the contextual type of an initializer expression is the type implied by the binding pattern.
+//
+// Otherwise, in a binding pattern inside a variable or parameter declaration,
+// the contextual type of an initializer expression is the type annotation of the containing declaration, if present.
+func (c *Checker) getContextualTypeForInitializerExpression(node *ast.Node, contextFlags ContextFlags) *Type {
+	declaration := node.Parent
+	initializer := declaration.Initializer()
+	if node == initializer {
+		result := c.getContextualTypeForVariableLikeDeclaration(declaration, contextFlags)
+		if result != nil {
+			return result
+		}
+		if contextFlags&ContextFlagsSkipBindingPatterns == 0 && ast.IsBindingPattern(declaration.Name()) && len(declaration.Name().AsBindingPattern().Elements.Nodes) > 0 {
+			return c.getTypeFromBindingPattern(declaration.Name(), true /*includePatternInType*/, false /*reportErrors*/)
+		}
+	}
+	return nil
+}
+
+func (c *Checker) getContextualTypeForVariableLikeDeclaration(declaration *ast.Node, contextFlags ContextFlags) *Type {
+	typeNode := declaration.Type()
+	if typeNode != nil {
+		return c.getTypeFromTypeNode(typeNode)
+	}
+	switch declaration.Kind {
+	case ast.KindParameter:
+		return c.getContextuallyTypedParameterType(declaration)
+	case ast.KindBindingElement:
+		return c.getContextualTypeForBindingElement(declaration, contextFlags)
+	case ast.KindPropertyDeclaration:
+		if isStatic(declaration) {
+			return c.getContextualTypeForStaticPropertyDeclaration(declaration, contextFlags)
+		}
+	}
+	// By default, do nothing and return nil - only the above cases have context implied by a parent
+	return nil
+}
+
+// Return contextual type of parameter or undefined if no contextual type is available
+func (c *Checker) getContextuallyTypedParameterType(parameter *ast.Node) *Type {
 	return nil // !!!
+}
+
+func (c *Checker) getContextualTypeForBindingElement(declaration *ast.Node, contextFlags ContextFlags) *Type {
+	return nil // !!!
+}
+
+func (c *Checker) getContextualTypeForStaticPropertyDeclaration(declaration *ast.Node, contextFlags ContextFlags) *Type {
+	return nil // !!!
+}
+
+func (c *Checker) getContextualTypeForReturnExpression(node *ast.Node, contextFlags ContextFlags) *Type {
+	return nil // !!!
+}
+
+func (c *Checker) getContextualTypeForYieldOperand(node *ast.Node, contextFlags ContextFlags) *Type {
+	return nil // !!!
+}
+
+func (c *Checker) getContextualTypeForAwaitOperand(node *ast.Node, contextFlags ContextFlags) *Type {
+	return nil // !!!
+}
+
+func (c *Checker) getContextualTypeForArgument(callTarget *ast.Node, arg *ast.Node) *Type {
+	return nil // !!!
+}
+
+func (c *Checker) getContextualTypeForDecorator(decorator *ast.Node) *Type {
+	return nil // !!!
+}
+
+func (c *Checker) getContextualTypeForBinaryOperand(node *ast.Node, contextFlags ContextFlags) *Type {
+	binary := node.Parent.AsBinaryExpression()
+	switch binary.OperatorToken.Kind {
+	case ast.KindEqualsToken, ast.KindAmpersandAmpersandEqualsToken, ast.KindBarBarEqualsToken, ast.KindQuestionQuestionEqualsToken:
+		// In an assignment expression, the right operand is contextually typed by the type of the left operand.
+		return c.getTypeOfExpression(binary.Left)
+	case ast.KindBarBarToken, ast.KindQuestionQuestionToken:
+		// When an || expression has a contextual type, the operands are contextually typed by that type, except
+		// when that type originates in a binding pattern, the right operand is contextually typed by the type of
+		// the left operand. When an || expression has no contextual type, the right operand is contextually typed
+		// by the type of the left operand, except for the special case of Javascript declarations of the form
+		// `namespace.prop = namespace.prop || {}`.
+		t := c.getContextualType(binary.AsNode(), contextFlags)
+		if t != nil && node == binary.Right {
+			if pattern := c.patternForType[t]; pattern != nil {
+				return c.getTypeOfExpression(binary.Left)
+			}
+		}
+		return t
+	case ast.KindAmpersandAmpersandToken, ast.KindCommaToken:
+		if node == binary.Right {
+			return c.getContextualType(binary.AsNode(), contextFlags)
+		}
+	}
+	return nil
+}
+
+func (c *Checker) getContextualTypeForObjectLiteralElement(element *ast.Node, contextFlags ContextFlags) *Type {
+	objectLiteral := element.Parent
+	t := c.getApparentTypeOfContextualType(objectLiteral, contextFlags)
+	if t != nil {
+		if c.hasBindableName(element) {
+			// For a (non-symbol) computed property, there is no reason to look up the name
+			// in the type. It will just be "__computed", which does not appear in any
+			// SymbolTable.
+			symbol := c.getSymbolOfDeclaration(element)
+			return c.getTypeOfPropertyOfContextualTypeEx(t, symbol.Name, c.valueSymbolLinks.get(symbol).nameType)
+		}
+		if hasDynamicName(element) {
+			name := getNameOfDeclaration(element)
+			if name != nil && ast.IsComputedPropertyName(name) {
+				exprType := c.checkExpression(name.Expression())
+				if isTypeUsableAsPropertyName(exprType) {
+					propType := c.getTypeOfPropertyOfContextualType(t, getPropertyNameFromType(exprType))
+					if propType != nil {
+						return propType
+					}
+				}
+			}
+		}
+		if element.Name() != nil {
+			nameType := c.getLiteralTypeFromPropertyName(element.Name())
+			// We avoid calling getApplicableIndexInfo here because it performs potentially expensive intersection reduction.
+			return c.mapTypeEx(t, func(t *Type) *Type {
+				indexInfo := c.findApplicableIndexInfo(c.getIndexInfosOfStructuredType(t), nameType)
+				if indexInfo == nil {
+					return nil
+				}
+				return indexInfo.valueType
+			}, true /*noReductions*/)
+		}
+	}
+	return nil
+}
+
+// In an object literal contextually typed by a type T, the contextual type of a property assignment is the type of
+// the matching property in T, if one exists. Otherwise, it is the type of the numeric index signature in T, if one
+// exists. Otherwise, it is the type of the string index signature in T, if one exists.
+func (c *Checker) getContextualTypeForObjectLiteralMethod(node *ast.Node, contextFlags ContextFlags) *Type {
+	if node.Flags&ast.NodeFlagsInWithStatement != 0 {
+		// We cannot answer semantic questions within a with block, do not proceed any further
+		return nil
+	}
+	return c.getContextualTypeForObjectLiteralElement(node, contextFlags)
+}
+
+func (c *Checker) getContextualTypeForElementExpression(t *Type, index int, length int, firstSpreadIndex int, lastSpreadIndex int) *Type {
+	return nil // !!!
+}
+
+func (c *Checker) getContextualTypeForConditionalOperand(node *ast.Node, contextFlags ContextFlags) *Type {
+	return nil // !!!
+}
+
+func (c *Checker) getContextualTypeForSubstitutionExpression(template *ast.Node, substitutionExpression *ast.Node) *Type {
+	return nil // !!!
+}
+
+func (c *Checker) getContextualTypeForJsxExpression(node *ast.Node, contextFlags ContextFlags) *Type {
+	return nil // !!!
+}
+
+func (c *Checker) getContextualTypeForJsxAttribute(attribute *ast.Node, contextFlags ContextFlags) *Type {
+	return nil // !!!
+}
+
+func (c *Checker) getContextualJsxElementAttributesType(attribute *ast.Node, contextFlags ContextFlags) *Type {
+	return nil // !!!
+}
+
+func (c *Checker) getContextualImportAttributeType(node *ast.Node) *Type {
+	return nil // !!!
+}
+
+/**
+ * Returns the effective arguments for an expression that works like a function invocation.
+ */
+func (c *Checker) getEffectiveCallArguments(node *ast.Node) []*ast.Node {
+	switch {
+	case ast.IsTaggedTemplateExpression(node):
+		template := node.AsTaggedTemplateExpression().Template
+		firstArg := c.createSyntheticExpression(template, c.getGlobalTemplateStringsArrayType(), false, nil)
+		if !ast.IsTemplateExpression(template) {
+			return []*ast.Node{firstArg}
+		}
+		spans := template.AsTemplateExpression().TemplateSpans.Nodes
+		args := make([]*ast.Node, len(spans)+1)
+		args[0] = firstArg
+		for i, span := range spans {
+			args[i+1] = span.Expression()
+		}
+		return args
+	case ast.IsDecorator(node):
+		// !!!
+		// return c.getEffectiveDecoratorArguments(node)
+		return nil
+	case isJsxOpeningLikeElement(node):
+		// !!!
+		// if node.Attributes.Properties.length > 0 || (isJsxOpeningElement(node) && node.Parent.Children.length > 0) {
+		// 	return []JsxAttributes{node.Attributes}
+		// }
+		return nil
+	default:
+		args := node.Arguments()
+		spreadIndex := c.getSpreadArgumentIndex(args)
+		if spreadIndex >= 0 {
+			// Create synthetic arguments from spreads of tuple types.
+			effectiveArgs := slices.Clip(args[:spreadIndex])
+			for i := spreadIndex; i < len(args); i++ {
+				arg := args[i]
+				var spreadType *Type
+				// We can call checkExpressionCached because spread expressions never have a contextual type.
+				if ast.IsSpreadElement(arg) {
+					if len(c.flowLoopStack) != 0 {
+						spreadType = c.checkExpression(arg.Expression())
+					} else {
+						spreadType = c.checkExpressionCached(arg.Expression())
+					}
+				}
+				if spreadType != nil && isTupleType(spreadType) {
+					for i, t := range c.getElementTypes(spreadType) {
+						elementInfos := spreadType.TargetTupleType().elementInfos
+						flags := elementInfos[i].flags
+						syntheticType := t
+						if flags&ElementFlagsRest != 0 {
+							syntheticType = c.createArrayType(t)
+						}
+						syntheticArg := c.createSyntheticExpression(arg, syntheticType, flags&ElementFlagsVariable != 0, elementInfos[i].labeledDeclaration)
+						effectiveArgs = append(effectiveArgs, syntheticArg)
+					}
+				} else {
+					effectiveArgs = append(effectiveArgs, arg)
+				}
+			}
+			return effectiveArgs
+		}
+		return args
+	}
+}
+
+func (c *Checker) getSpreadArgumentIndex(args []*ast.Node) int {
+	return core.FindIndex(args, isSpreadArgument)
+}
+
+func isSpreadArgument(arg *ast.Node) bool {
+	return ast.IsSpreadElement(arg) || ast.IsSyntheticExpression(arg) && arg.AsSyntheticExpression().IsSpread
+}
+
+func (c *Checker) createSyntheticExpression(parent *ast.Node, t *Type, isSpread bool, tupleNameSource *ast.Node) *ast.Node {
+	result := c.factory.NewSyntheticExpression(t, isSpread, tupleNameSource)
+	result.Loc = parent.Loc
+	result.Parent = parent
+	return result
+}
+
+func (c *Checker) getSpreadIndices(node *ast.Node) (int, int) {
+	links := c.arrayLiteralLinks.get(node)
+	if !links.indicesComputed {
+		first, last := -1, -1
+		for i, element := range node.AsArrayLiteralExpression().Elements.Nodes {
+			if ast.IsSpreadElement(element) {
+				if first < 0 {
+					first = i
+				}
+				last = i
+			}
+		}
+		links.firstSpreadIndex, links.lastSpreadIndex = first, last
+	}
+	return links.firstSpreadIndex, links.lastSpreadIndex
+}
+
+func (c *Checker) getTypeOfPropertyOfContextualType(t *Type, name string) *Type {
+	return c.getTypeOfPropertyOfContextualTypeEx(t, name, nil)
+}
+
+func (c *Checker) getTypeOfPropertyOfContextualTypeEx(t *Type, name string, nameType *Type) *Type {
+	return c.mapTypeEx(t, func(t *Type) *Type {
+		if t.flags&TypeFlagsIntersection != 0 {
+			var types []*Type
+			var indexInfoCandidates []*Type
+			ignoreIndexInfos := false
+			for _, constituentType := range t.Types() {
+				if constituentType.flags&TypeFlagsObject == 0 {
+					continue
+				}
+				// !!!
+				// if c.isGenericMappedType(constituentType) && c.getMappedTypeNameTypeKind(constituentType) != MappedTypeNameTypeKindRemapping {
+				// 	substitutedType := c.getIndexedMappedTypeSubstitutedTypeOfContextualType(constituentType, name, nameType)
+				// 	types = c.appendContextualPropertyTypeConstituent(types, substitutedType)
+				// 	continue
+				// }
+				propertyType := c.getTypeOfConcretePropertyOfContextualType(constituentType, name)
+				if propertyType == nil {
+					if !ignoreIndexInfos {
+						indexInfoCandidates = append(indexInfoCandidates, constituentType)
+					}
+					continue
+				}
+				ignoreIndexInfos = true
+				indexInfoCandidates = nil
+				types = c.appendContextualPropertyTypeConstituent(types, propertyType)
+			}
+			if indexInfoCandidates != nil {
+				for _, candidate := range indexInfoCandidates {
+					indexInfoType := c.getTypeFromIndexInfosOfContextualType(candidate, name, nameType)
+					types = c.appendContextualPropertyTypeConstituent(types, indexInfoType)
+				}
+			}
+			if len(types) == 0 {
+				return nil
+			}
+			if len(types) == 1 {
+				return types[0]
+			}
+			return c.getIntersectionType(types)
+		}
+		if t.flags&TypeFlagsObject == 0 {
+			return nil
+		}
+		// !!!
+		// if c.isGenericMappedType(t) && c.getMappedTypeNameTypeKind(t) != MappedTypeNameTypeKindRemapping {
+		// 	return c.getIndexedMappedTypeSubstitutedTypeOfContextualType(t, name, nameType)
+		// }
+		result := c.getTypeOfConcretePropertyOfContextualType(t, name)
+		if result != nil {
+			return result
+		}
+		return c.getTypeFromIndexInfosOfContextualType(t, name, nameType)
+	}, true /*noReductions*/)
+}
+
+func (c *Checker) getTypeOfConcretePropertyOfContextualType(t *Type, name string) *Type {
+	prop := c.getPropertyOfType(t, name)
+	if prop == nil || c.isCircularMappedProperty(prop) {
+		return nil
+	}
+	return c.removeMissingType(c.getTypeOfSymbol(prop), prop.Flags&ast.SymbolFlagsOptional != 0)
+}
+
+func (c *Checker) getTypeFromIndexInfosOfContextualType(t *Type, name string, nameType *Type) *Type {
+	if isTupleType(t) && isNumericLiteralName(name) && stringutil.ToNumber(name) >= 0 {
+		restType := c.getElementTypeOfSliceOfTupleType(t, t.TargetTupleType().fixedLength, 0 /*endSkipCount*/, false /*writing*/, true /*noReductions*/)
+		if restType != nil {
+			return restType
+		}
+	}
+	if nameType == nil {
+		nameType = c.getStringLiteralType(name)
+	}
+	indexInfo := c.findApplicableIndexInfo(c.getIndexInfosOfStructuredType(t), nameType)
+	if indexInfo == nil {
+		return nil
+	}
+	return indexInfo.valueType
+}
+
+func (c *Checker) isCircularMappedProperty(symbol *ast.Symbol) bool {
+	return false // !!!
+}
+
+func (c *Checker) appendContextualPropertyTypeConstituent(types []*Type, t *Type) []*Type {
+	// any doesn't provide any contextual information but could spoil the overall result by nullifying contextual information
+	// provided by other intersection constituents so it gets replaced with `unknown` as `T & unknown` is just `T` and all
+	// types computed based on the contextual information provided by other constituens are still assignable to any
+	if t == nil {
+		return types
+	}
+	if t.flags&TypeFlagsAny != 0 {
+		return append(types, c.unknownType)
+	}
+	return append(types, t)
 }
 
 // Return the contextual type for a given expression node. During overload resolution, a contextual type may temporarily
 // be "pushed" onto a node using the contextualType property.
 func (c *Checker) getApparentTypeOfContextualType(node *ast.Node, contextFlags ContextFlags) *Type {
-	return nil // !!!
+	var contextualType *Type
+	if isObjectLiteralMethod(node) {
+		contextualType = c.getContextualTypeForObjectLiteralMethod(node, contextFlags)
+	} else {
+		contextualType = c.getContextualType(node, contextFlags)
+	}
+	instantiatedType := c.instantiateContextualType(contextualType, node, contextFlags)
+	if instantiatedType != nil && !(contextFlags&ContextFlagsNoConstraints != 0 && instantiatedType.flags&TypeFlagsTypeVariable != 0) {
+		apparentType := c.mapTypeEx(instantiatedType, func(t *Type) *Type {
+			if t.objectFlags&ObjectFlagsMapped != 0 {
+				return t
+			}
+			return c.getApparentType(t)
+		}, true)
+		switch {
+		case apparentType.flags&TypeFlagsUnion != 0 && ast.IsObjectLiteralExpression(node):
+			return c.discriminateContextualTypeByObjectMembers(node, apparentType)
+		case apparentType.flags&TypeFlagsUnion != 0 && ast.IsJsxAttributes(node):
+			return c.discriminateContextualTypeByJSXAttributes(node, apparentType)
+		default:
+			return apparentType
+		}
+	}
+	return nil
+}
+
+func (c *Checker) discriminateContextualTypeByObjectMembers(node *ast.Node, contextualType *Type) *Type {
+	return contextualType // !!!
+}
+
+func (c *Checker) discriminateContextualTypeByJSXAttributes(node *ast.Node, contextualType *Type) *Type {
+	return contextualType // !!!
 }
 
 // If the given contextual type contains instantiable types and if a mapper representing
@@ -14940,16 +15423,20 @@ func (c *Checker) pushCachedContextualType(node *ast.Node) {
 }
 
 func (c *Checker) pushContextualType(node *ast.Node, t *Type, isCache bool) {
-	// !!!
-	// c.contextualTypeNodes[c.contextualTypeCount] = node
-	// c.contextualTypes[c.contextualTypeCount] = t
-	// c.contextualIsCache[c.contextualTypeCount] = isCache
-	// c.contextualTypeCount++
+	c.contextualInfos = append(c.contextualInfos, ContextualInfo{node, t, isCache})
 }
 
 func (c *Checker) popContextualType() {
-	// !!!
-	// c.contextualTypeCount--
+	c.contextualInfos = c.contextualInfos[:len(c.contextualInfos)-1]
+}
+
+func (c *Checker) findContextualNode(node *ast.Node, includeCaches bool) int {
+	for i, info := range c.contextualInfos {
+		if node == info.node && (includeCaches || !info.isCache) {
+			return i
+		}
+	}
+	return -1
 }
 
 func (c *Checker) pushInferenceContext(node *ast.Node, inferenceContext *InferenceContext) {

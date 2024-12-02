@@ -862,6 +862,12 @@ func (n *Node) AsFlowReduceLabelData() *FlowReduceLabelData {
 func (n *Node) AsJsxExpression() *JsxExpression {
 	return n.data.(*JsxExpression)
 }
+func (n *Node) AsClassStaticBlockDeclaration() *ClassStaticBlockDeclaration {
+	return n.data.(*ClassStaticBlockDeclaration)
+}
+func (n *Node) AsSyntheticExpression() *SyntheticExpression {
+	return n.data.(*SyntheticExpression)
+}
 
 // NodeData
 
@@ -2821,7 +2827,8 @@ type ClassStaticBlockDeclaration struct {
 	ModifiersBase
 	LocalsContainerBase
 	ClassElementBase
-	Body *BlockNode // BlockNode
+	Body           *BlockNode // BlockNode
+	ReturnFlowNode *FlowNode
 }
 
 func (f *NodeFactory) NewClassStaticBlockDeclaration(modifiers *ModifierList, body *BlockNode) *Node {
@@ -4333,6 +4340,27 @@ func (f *NodeFactory) NewTemplateLiteralTypeSpan(typeNode *TypeNode, literal *Te
 
 func (node *TemplateLiteralTypeSpan) ForEachChild(v Visitor) bool {
 	return visit(v, node.Type) || visit(v, node.Literal)
+}
+
+// SyntheticExpression
+
+type SyntheticExpression struct {
+	ExpressionBase
+	Type            any
+	IsSpread        bool
+	TupleNameSource *Node
+}
+
+func (f *NodeFactory) NewSyntheticExpression(t any, isSpread bool, tupleNameSource *Node) *Node {
+	data := &SyntheticExpression{}
+	data.Type = t
+	data.IsSpread = isSpread
+	data.TupleNameSource = tupleNameSource
+	return newNode(KindSyntheticExpression, data)
+}
+
+func IsSyntheticExpression(node *Node) bool {
+	return node.Kind == KindSyntheticExpression
 }
 
 /// A JSX expression of the form <TagName attrs>...</TagName>
