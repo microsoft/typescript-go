@@ -122,7 +122,7 @@ var commandLineOptionElements = map[string]*CommandLineOption{
 }
 
 // CommandLineOption.EnumMap()
-var commandLineOptionEnumMap = map[string]*(collections.OrderedMap[string, any]){
+var commandLineOptionEnumMap = map[string]*collections.OrderedMap[string, any]{
 	"lib":              libMap,
 	"moduleResolution": moduleResolutionOptionMap,
 	"module":           moduleOptionMap,
