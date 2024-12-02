@@ -37,16 +37,16 @@ func BenchmarkParse(b *testing.B) {
 
 // compare current code's tsgo AST with tsc's AST, but only write local baselines for tsgo's AST.
 // How to use:
-// 1. In _submodules/TypeScript, run `npm install` and `npx hereby services --no-typecheck`
-// 2. Run this test manually (you might not need 50 minutes, or you might need more on Windows)
-//    TEST_TSC=TSC go test ./... -run TestParseAgainstTSC -timeout 50m
-// 3. If all tests pass, you're done! If not, you can look at the local output to see if it looks wrong.
-// 4. If there are lots of failures, or the failure isn't obvious, run
-//    node internal/compiler/testdata/baselineAST.js -r _submodules/TypeScript testdata/baselines/gold
-//    This writes the tsc output to disk.
-// 5. Now diff gold/ and local/
-// 6. To run a single file, 
-//    TEST_TSC=TSC go test ./... -run TestParseSingleAgainstTSC -args -filename=tests/baselines/reference/parserVariableDeclaration1.js
+//  1. In _submodules/TypeScript, run `npm install` and `npx hereby services --no-typecheck`
+//  2. Run this test manually (you might not need 50 minutes, or you might need more on Windows)
+//     TEST_TSC=TSC go test ./... -run TestParseAgainstTSC -timeout 50m
+//  3. If all tests pass, you're done! If not, you can look at the local output to see if it looks wrong.
+//  4. If there are lots of failures, or the failure isn't obvious, run
+//     node internal/compiler/testdata/baselineAST.js -r _submodules/TypeScript testdata/baselines/gold
+//     This writes the tsc output to disk.
+//  5. Now diff gold/ and local/
+//  6. TODO: To run a single file,
+//     TEST_TSC=TSC go test ./... -run TestParseSingleAgainstTSC -args -filename=tests/baselines/reference/parserVariableDeclaration1.js
 func TestParseAgainstTSC(t *testing.T) {
 	if os.Getenv("TEST_TSC") == "" {
 		t.Skip()
@@ -64,7 +64,7 @@ func TestParseSingleAgainstTSC(t *testing.T) {
 		t.Skip()
 	}
 	t.Parallel()
-	parseTestComparisonWorker(t)(filepath.Join(repo.TypeScriptSubmodulePath, "tests/cases/conformance/parser/ecmascript5/VariableDeclarations/parserVariableDeclaration1.ts"), nil, nil)
+	parseTestComparisonWorker(t)(filepath.Join(repo.TypeScriptSubmodulePath, "tests/cases/compiler/constructorWithIncompleteTypeAnnotation.ts"), nil, nil)
 }
 
 func parseTestComparisonWorker(t *testing.T) func(fileName string, d fs.DirEntry, err error) error {
@@ -82,19 +82,26 @@ func parseTestComparisonWorker(t *testing.T) func(fileName string, d fs.DirEntry
 				t.Skip()
 			}
 			sourceText, err := os.ReadFile(fileName)
+			outputFilename := generateOutputFileName(t, fileName)
 			assert.NilError(t, err)
-			cmd := exec.Command("node", "testdata/baselineAST.js", fileName)
-			var stderr bytes.Buffer
-			var stdout bytes.Buffer
-			cmd.Stderr = &stderr
-			cmd.Stdout = &stdout
-			err = cmd.Run()
-			if err != nil {
-				t.Fatalf("Error running the command %q: %v\nStderr: %s", cmd.String(), err, stderr.String())
+			var expected string
+			cachetext, err := os.ReadFile(filepath.Join(repo.TestDataPath, "baselines", "gold", outputFilename))
+			if err == nil {
+				expected = string(cachetext)
+			} else {
+				cmd := exec.Command("node", "testdata/baselineAST.js", fileName)
+				var stderr bytes.Buffer
+				var stdout bytes.Buffer
+				cmd.Stderr = &stderr
+				cmd.Stdout = &stdout
+				err = cmd.Run()
+				if err != nil {
+					t.Fatalf("Error running the command %q: %v\nStderr: %s", cmd.String(), err, stderr.String())
+				}
+				expected = stdout.String()
 			}
-			expected := stdout.String()
 			actual := printAST(compiler.ParseSourceFile(fileName, string(sourceText), core.ScriptTargetESNext))
-			baseline.RunFromText(t, generateOutputFileName(t, fileName), expected, actual, baseline.Options{})
+			baseline.RunFromText(t, outputFilename, expected, actual, baseline.Options{})
 		})
 		return nil
 	}
