@@ -141,11 +141,10 @@ export const lint = task({
 export const installTools = task({
     name: "install-tools",
     run: async () => {
-        const promises = [
+        await Promise.all([
             ...[...tools].map(([tool, version]) => $`go install ${tool}@${version}`),
             buildCustomLinter(),
-        ]
-        await Promise.all(promises);
+        ]);
     },
 });
 
