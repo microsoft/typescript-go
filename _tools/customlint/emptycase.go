@@ -6,26 +6,43 @@ import (
 	"slices"
 
 	"golang.org/x/tools/go/analysis"
+	"golang.org/x/tools/go/analysis/passes/inspect"
+	"golang.org/x/tools/go/ast/inspector"
 )
 
 var emptyCaseAnalyzer = &analysis.Analyzer{
 	Name: "emptycase",
 	Doc:  "finds empty switch/select cases",
 	Run:  runEmptyCase,
+	Requires: []*analysis.Analyzer{
+		inspect.Analyzer,
+	},
 }
 
 func runEmptyCase(pass *analysis.Pass) (interface{}, error) {
-	for _, file := range pass.Files {
-		ast.Inspect(file, func(n ast.Node) bool {
-			switch n := n.(type) {
-			case *ast.SwitchStmt:
-				checkCases(pass, file, n.Body)
-			case *ast.SelectStmt:
-				checkCases(pass, file, n.Body)
-			}
-			return true
-		})
+	inspect := pass.ResultOf[inspect.Analyzer].(*inspector.Inspector)
+
+	nodeFilter := []ast.Node{
+		(*ast.File)(nil),
+		(*ast.SwitchStmt)(nil),
+		(*ast.SelectStmt)(nil),
 	}
+
+	// The inspect package doesn't tell us up front which file is being used,
+	// so keep track of it as part of the traversal. The file is the first node
+	// so will be set before any other nodes are visited.
+	var file *ast.File
+
+	inspect.Preorder(nodeFilter, func(n ast.Node) {
+		switch n := n.(type) {
+		case *ast.File:
+			file = n
+		case *ast.SwitchStmt:
+			checkCases(pass, file, n.Body)
+		case *ast.SelectStmt:
+			checkCases(pass, file, n.Body)
+		}
+	})
 
 	return nil, nil
 }
