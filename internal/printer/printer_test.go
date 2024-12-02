@@ -13,7 +13,7 @@ import (
 )
 
 func TestEmit(t *testing.T) {
-	// t.Parallel()
+	t.Parallel()
 	data := []struct {
 		title  string
 		input  string
@@ -532,7 +532,7 @@ func TestEmit(t *testing.T) {
 
 	for _, rec := range data {
 		t.Run(rec.title, func(t *testing.T) {
-			// t.Parallel()
+			t.Parallel()
 			file := parseJavaScript(rec.input)
 			if len(file.Diagnostics()) > 0 {
 				t.Error(formatDiagnostics(file.Diagnostics()))

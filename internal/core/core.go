@@ -304,8 +304,8 @@ func IsNil[T any](value T) bool {
 
 // Returns `a` if `a` is not `nil`; Otherwise, returns `b`. Coalesce is roughly analogous to `??` in JS, except that it
 // non-shortcutting, so it is advised to only use a constant or precomputed value for `b`
-func Coalesce[T any](a T, b T) T {
-	if IsNil(a) {
+func Coalesce[T *U, U any](a T, b T) T {
+	if a == nil {
 		return b
 	} else {
 		return a

@@ -13,30 +13,30 @@ import (
 	"github.com/microsoft/typescript-go/internal/scanner"
 )
 
-type GetLiteralTextFlags int
+type getLiteralTextFlags int
 
 const (
-	GetLiteralTextFlagsNone                          GetLiteralTextFlags = 0
-	GetLiteralTextFlagsNeverAsciiEscape              GetLiteralTextFlags = 1 << 0
-	GetLiteralTextFlagsJsxAttributeEscape            GetLiteralTextFlags = 1 << 1
-	GetLiteralTextFlagsTerminateUnterminatedLiterals GetLiteralTextFlags = 1 << 2
-	GetLiteralTextFlagsAllowNumericSeparator         GetLiteralTextFlags = 1 << 3
+	getLiteralTextFlagsNone                          getLiteralTextFlags = 0
+	getLiteralTextFlagsNeverAsciiEscape              getLiteralTextFlags = 1 << 0
+	getLiteralTextFlagsJsxAttributeEscape            getLiteralTextFlags = 1 << 1
+	getLiteralTextFlagsTerminateUnterminatedLiterals getLiteralTextFlags = 1 << 2
+	getLiteralTextFlagsAllowNumericSeparator         getLiteralTextFlags = 1 << 3
 )
 
-type EscapeFormat int
+type escapeFormat int
 
 const (
-	EscapeFormatUnicodeString   EscapeFormat = iota // Escapes a String literal, leaving non-ASCII characters as-is
-	EscapeFormatAsciiOnlyString                     // Escapes a String literal, escaping non-ASCII characters
-	EscapeFormatJsxAttribute                        // Escapes a JSX Attribute
+	escapeFormatUnicodeString   escapeFormat = iota // Escapes a String literal, leaving non-ASCII characters as-is
+	escapeFormatAsciiOnlyString                     // Escapes a String literal, escaping non-ASCII characters
+	escapeFormatJsxAttribute                        // Escapes a JSX Attribute
 )
 
-type QuoteChar rune
+type quoteChar rune
 
 const (
-	QuoteCharSingleQuote QuoteChar = '\''
-	QuoteCharDoubleQuote QuoteChar = '"'
-	QuoteCharBacktick    QuoteChar = '`'
+	quoteCharSingleQuote quoteChar = '\''
+	quoteCharDoubleQuote quoteChar = '"'
+	quoteCharBacktick    quoteChar = '`'
 )
 
 var jsxEscapedCharsMap = map[rune]string{
@@ -82,7 +82,7 @@ func encodeUtf16EscapeSequence(b *strings.Builder, charCode rune) {
 // Based heavily on the abstract 'Quote'/'QuoteJSONString' operation from ECMA-262 (24.3.2.2),
 // but augmented for a few select characters (e.g. lineSeparator, paragraphSeparator, nextLine)
 // Note that this doesn't actually wrap the input in double quotes.
-func escapeStringWorker(s string, quoteChar QuoteChar, flags GetLiteralTextFlags, b *strings.Builder) {
+func escapeStringWorker(s string, quoteChar quoteChar, flags getLiteralTextFlags, b *strings.Builder) {
 	pos := 0
 	i := 0
 	for i < len(s) {
@@ -97,22 +97,22 @@ func escapeStringWorker(s string, quoteChar QuoteChar, flags GetLiteralTextFlags
 		// character. There is no reason for this other than that JSON.stringify does not handle it either.
 		switch ch {
 		case '\\':
-			if flags&GetLiteralTextFlagsJsxAttributeEscape == 0 {
+			if flags&getLiteralTextFlagsJsxAttributeEscape == 0 {
 				escape = true
 			}
 		case '$':
-			if quoteChar == QuoteCharBacktick && i+1 < len(s) && s[i+1] == '{' {
+			if quoteChar == quoteCharBacktick && i+1 < len(s) && s[i+1] == '{' {
 				escape = true
 			}
 		case rune(quoteChar), '\u2028', '\u2029', '\u0085', '\r':
 			escape = true
 		case '\n':
 			// Template strings preserve simple LF newlines, still encode CRLF (or CR)
-			if quoteChar != QuoteCharBacktick {
+			if quoteChar != quoteCharBacktick {
 				escape = true
 			}
 		default:
-			if ch < '\u001f' || flags&GetLiteralTextFlagsNeverAsciiEscape == 0 && ch > '\u007f' {
+			if ch < '\u001f' || flags&getLiteralTextFlagsNeverAsciiEscape == 0 && ch > '\u007f' {
 				escape = true
 			}
 		}
@@ -125,7 +125,7 @@ func escapeStringWorker(s string, quoteChar QuoteChar, flags GetLiteralTextFlags
 			}
 
 			switch {
-			case flags&GetLiteralTextFlagsJsxAttributeEscape != 0:
+			case flags&getLiteralTextFlagsJsxAttributeEscape != 0:
 				if ch == 0 {
 					b.Grow(4)
 					b.WriteString("&#0;")
@@ -138,7 +138,7 @@ func escapeStringWorker(s string, quoteChar QuoteChar, flags GetLiteralTextFlags
 
 			default:
 				// Template strings preserve simple LF newlines, still encode CRLF (or CR)
-				if ch == '\r' && quoteChar == QuoteCharBacktick && i+1 < len(s) && s[i+1] == '\n' {
+				if ch == '\r' && quoteChar == quoteCharBacktick && i+1 < len(s) && s[i+1] == '\n' {
 					size++
 					b.Grow(4)
 					b.WriteString(`\r\n`)
@@ -179,30 +179,30 @@ func escapeStringWorker(s string, quoteChar QuoteChar, flags GetLiteralTextFlags
 	}
 }
 
-func escapeString(s string, quoteChar QuoteChar) string {
+func escapeString(s string, quoteChar quoteChar) string {
 	var b strings.Builder
-	escapeStringWorker(s, quoteChar, GetLiteralTextFlagsNeverAsciiEscape, &b)
+	escapeStringWorker(s, quoteChar, getLiteralTextFlagsNeverAsciiEscape, &b)
 	return b.String()
 }
 
-func escapeNonAsciiString(s string, quoteChar QuoteChar) string {
+func escapeNonAsciiString(s string, quoteChar quoteChar) string {
 	var b strings.Builder
-	escapeStringWorker(s, quoteChar, GetLiteralTextFlagsNone, &b)
+	escapeStringWorker(s, quoteChar, getLiteralTextFlagsNone, &b)
 	return b.String()
 }
 
-func escapeJsxAttributeString(s string, quoteChar QuoteChar) string {
+func escapeJsxAttributeString(s string, quoteChar quoteChar) string {
 	var b strings.Builder
-	escapeStringWorker(s, quoteChar, GetLiteralTextFlagsJsxAttributeEscape, &b)
+	escapeStringWorker(s, quoteChar, getLiteralTextFlagsJsxAttributeEscape|getLiteralTextFlagsNeverAsciiEscape, &b)
 	return b.String()
 }
 
-func canUseOriginalText(node *ast.LiteralLikeNode, flags GetLiteralTextFlags) bool {
+func canUseOriginalText(node *ast.LiteralLikeNode, flags getLiteralTextFlags) bool {
 	// A synthetic node has no original text, nor does a node without a parent as we would be unable to find the
 	// containing SourceFile. We also cannot use the original text if the literal was unterminated and the caller has
 	// requested proper termination of unterminated literals
 	if ast.NodeIsSynthesized(node) || node.Parent == nil ||
-		flags&GetLiteralTextFlagsTerminateUnterminatedLiterals != 0 &&
+		flags&getLiteralTextFlagsTerminateUnterminatedLiterals != 0 &&
 			node.LiteralLikeData().TokenFlags&ast.TokenFlagsUnterminated != 0 {
 		return false
 	}
@@ -216,7 +216,7 @@ func canUseOriginalText(node *ast.LiteralLikeNode, flags GetLiteralTextFlags) bo
 		// We also cannot use the original text if the literal contains numeric separators, but numeric separators
 		// are not permitted
 		if tokenFlags&ast.TokenFlagsContainsSeparator != 0 {
-			return flags&GetLiteralTextFlagsAllowNumericSeparator != 0
+			return flags&getLiteralTextFlagsAllowNumericSeparator != 0
 		}
 	}
 
@@ -227,7 +227,7 @@ func canUseOriginalText(node *ast.LiteralLikeNode, flags GetLiteralTextFlags) bo
 	return node.Kind != ast.KindBigIntLiteral
 }
 
-func getLiteralText(node *ast.LiteralLikeNode, sourceFile *ast.SourceFile, flags GetLiteralTextFlags) string {
+func getLiteralText(node *ast.LiteralLikeNode, sourceFile *ast.SourceFile, flags getLiteralTextFlags) string {
 	// If we don't need to downlevel and we can reach the original source text using
 	// the node's parent reference, then simply get the text as it was originally written.
 	if sourceFile != nil && canUseOriginalText(node, flags) {
@@ -239,11 +239,11 @@ func getLiteralText(node *ast.LiteralLikeNode, sourceFile *ast.SourceFile, flags
 	switch node.Kind {
 	case ast.KindStringLiteral:
 		var b strings.Builder
-		var quoteChar QuoteChar
+		var quoteChar quoteChar
 		if node.AsStringLiteral().TokenFlags&ast.TokenFlagsSingleQuote != 0 {
-			quoteChar = QuoteCharSingleQuote
+			quoteChar = quoteCharSingleQuote
 		} else {
-			quoteChar = QuoteCharDoubleQuote
+			quoteChar = quoteCharDoubleQuote
 		}
 
 		// Write leading quote character
@@ -297,7 +297,7 @@ func getLiteralText(node *ast.LiteralLikeNode, sourceFile *ast.SourceFile, flags
 			// TODO(rbuckton): This differs from the TS compiler in that a node might have `EmitFlags.NoAsciiEscaping`,
 			// which would essentially set `GetLiteralTextFlagsNeverAsciiEscape`. We've yet to determine whether we will
 			// need something like `EmitFlags.NoAsciiEscaping`, so this function may need to be revisited
-			escapeStringWorker(node.Text(), QuoteCharBacktick, flags, &b)
+			escapeStringWorker(node.Text(), quoteCharBacktick, flags, &b)
 		}
 
 		// Write trailing quote character
@@ -317,7 +317,7 @@ func getLiteralText(node *ast.LiteralLikeNode, sourceFile *ast.SourceFile, flags
 		return node.Text()
 
 	case ast.KindRegularExpressionLiteral:
-		if flags&GetLiteralTextFlagsTerminateUnterminatedLiterals != 0 &&
+		if flags&getLiteralTextFlagsTerminateUnterminatedLiterals != 0 &&
 			node.LiteralLikeData().TokenFlags&ast.TokenFlagsUnterminated != 0 {
 			var b strings.Builder
 			text := node.Text()
@@ -616,11 +616,39 @@ func originalNodesHaveSameParent(nodeA *ast.Node, nodeB *ast.Node) bool {
 	return false
 }
 
+func tryGetEnd(node interface{ End() int }) (int, bool) {
+	// avoid using reflect (via core.IsNil) for common cases
+	switch v := node.(type) {
+	case (*ast.Node):
+		if v != nil {
+			return v.End(), true
+		}
+	case (*ast.NodeList):
+		if v != nil {
+			return v.End(), true
+		}
+	case (*ast.ModifierList):
+		if v != nil {
+			return v.End(), true
+		}
+	case (*core.TextRange):
+		if v != nil {
+			return v.End(), true
+		}
+	default:
+		// worst case, use reflection
+		if !core.IsNil(node) {
+			return node.End(), true
+		}
+	}
+	return 0, false
+}
+
 func greatestEnd(end int, nodes ...interface{ End() int }) int {
 	for i := len(nodes) - 1; i >= 0; i-- {
 		node := nodes[i]
-		if !core.IsNil(node) && node.End() > end {
-			end = node.End()
+		if nodeEnd, ok := tryGetEnd(node); ok && end < nodeEnd {
+			end = nodeEnd
 		}
 	}
 	return end

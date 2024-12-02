@@ -125,7 +125,7 @@ func NewPrinter(options PrinterOptions, handlers PrintHandlers) *Printer {
 	}
 }
 
-func (p *Printer) getLiteralTextOfNode(node *ast.LiteralLikeNode, sourceFile *ast.SourceFile, flags GetLiteralTextFlags) string {
+func (p *Printer) getLiteralTextOfNode(node *ast.LiteralLikeNode, sourceFile *ast.SourceFile, flags getLiteralTextFlags) string {
 	// !!! Escape strings from a textSourceNode. We will need this if we opt to downlevel decorators
 	// !!! Printer option to control whether to terminate unterminated literals
 	// !!! If necessary, printer option to control whether to preserve numeric seperators
@@ -151,7 +151,7 @@ func (p *Printer) getTextOfNode(node *ast.Node, includeTrivia bool) string {
 		ast.KindTemplateHead,
 		ast.KindTemplateMiddle,
 		ast.KindTemplateTail:
-		return p.getLiteralTextOfNode(node, nil /*sourceFile*/, GetLiteralTextFlagsNone)
+		return p.getLiteralTextOfNode(node, nil /*sourceFile*/, getLiteralTextFlagsNone)
 	default:
 		panic(fmt.Sprintf("unexpected node: %v", node.Kind))
 	}
@@ -256,7 +256,7 @@ func (p *Printer) writeLine() {
 }
 
 func (p *Printer) writeLineRepeat(count int) {
-	for i := 0; i < count; i++ {
+	for range count {
 		p.writeLine()
 	}
 }
@@ -745,7 +745,7 @@ func (p *Printer) emitTokenNode(node *ast.TokenNode) {
 //	SyntaxKindTemplateHead
 //	SyntaxKindTemplateMiddle
 //	SyntaxKindTemplateTail
-func (p *Printer) emitLiteral(node *ast.LiteralLikeNode, flags GetLiteralTextFlags) {
+func (p *Printer) emitLiteral(node *ast.LiteralLikeNode, flags getLiteralTextFlags) {
 	// !!! Printer option to control whether to escape non-ASCII characters
 	text := p.getLiteralTextOfNode(node, nil /*sourceFile*/, flags)
 
@@ -768,31 +768,31 @@ func (p *Printer) emitLiteral(node *ast.LiteralLikeNode, flags GetLiteralTextFla
 
 func (p *Printer) emitNumericLiteral(node *ast.NumericLiteral) {
 	p.enterNode(node.AsNode())
-	p.emitLiteral(node.AsNode(), GetLiteralTextFlagsNone)
+	p.emitLiteral(node.AsNode(), getLiteralTextFlagsNone)
 	p.exitNode(node.AsNode())
 }
 
 func (p *Printer) emitBigIntLiteral(node *ast.BigIntLiteral) {
 	p.enterNode(node.AsNode())
-	p.emitLiteral(node.AsNode(), GetLiteralTextFlagsNone)
+	p.emitLiteral(node.AsNode(), getLiteralTextFlagsNone)
 	p.exitNode(node.AsNode())
 }
 
 func (p *Printer) emitStringLiteral(node *ast.StringLiteral) {
 	p.enterNode(node.AsNode())
-	p.emitLiteral(node.AsNode(), GetLiteralTextFlagsNone)
+	p.emitLiteral(node.AsNode(), getLiteralTextFlagsNone)
 	p.exitNode(node.AsNode())
 }
 
 func (p *Printer) emitNoSubstitutionTemplateLiteral(node *ast.NoSubstitutionTemplateLiteral) {
 	p.enterNode(node.AsNode())
-	p.emitLiteral(node.AsNode(), GetLiteralTextFlagsNone)
+	p.emitLiteral(node.AsNode(), getLiteralTextFlagsNone)
 	p.exitNode(node.AsNode())
 }
 
 func (p *Printer) emitRegularExpressionLiteral(node *ast.RegularExpressionLiteral) {
 	p.enterNode(node.AsNode())
-	p.emitLiteral(node.AsNode(), GetLiteralTextFlagsNone)
+	p.emitLiteral(node.AsNode(), getLiteralTextFlagsNone)
 	p.exitNode(node.AsNode())
 }
 
@@ -802,19 +802,19 @@ func (p *Printer) emitRegularExpressionLiteral(node *ast.RegularExpressionLitera
 
 func (p *Printer) emitTemplateHead(node *ast.TemplateHead) {
 	p.enterNode(node.AsNode())
-	p.emitLiteral(node.AsNode(), GetLiteralTextFlagsNone)
+	p.emitLiteral(node.AsNode(), getLiteralTextFlagsNone)
 	p.exitNode(node.AsNode())
 }
 
 func (p *Printer) emitTemplateMiddle(node *ast.TemplateMiddle) {
 	p.enterNode(node.AsNode())
-	p.emitLiteral(node.AsNode(), GetLiteralTextFlagsNone)
+	p.emitLiteral(node.AsNode(), getLiteralTextFlagsNone)
 	p.exitNode(node.AsNode())
 }
 
 func (p *Printer) emitTemplateTail(node *ast.TemplateTail) {
 	p.enterNode(node.AsNode())
-	p.emitLiteral(node.AsNode(), GetLiteralTextFlagsNone)
+	p.emitLiteral(node.AsNode(), getLiteralTextFlagsNone)
 	p.exitNode(node.AsNode())
 }
 
@@ -2013,7 +2013,7 @@ func (p *Printer) mayNeedDotDotForPropertyAccess(expression *ast.Expression) boo
 	expression = ast.SkipPartiallyEmittedExpressions(expression)
 	if ast.IsNumericLiteral(expression) {
 		// check if numeric literal is a decimal literal that was originally written with a dot
-		text := p.getLiteralTextOfNode(expression /*sourceFile*/, nil, GetLiteralTextFlagsNeverAsciiEscape)
+		text := p.getLiteralTextOfNode(expression /*sourceFile*/, nil, getLiteralTextFlagsNeverAsciiEscape)
 		// If the number will be printed verbatim and it doesn't already contain a dot or an exponent indicator, add one
 		// if the expression doesn't have any comments that will be emitted.
 		return expression.AsNumericLiteral().TokenFlags&ast.TokenFlagsWithSpecifier == 0 &&
@@ -2419,7 +2419,6 @@ func (p *Printer) emitMetaProperty(node *ast.MetaProperty) {
 
 func (p *Printer) emitExpression(node *ast.Node) {
 	switch node.Kind {
-
 	// Keywords
 	case ast.KindTrueKeyword, ast.KindFalseKeyword, ast.KindNullKeyword:
 		p.emitTokenNode(node)
@@ -3277,7 +3276,6 @@ func (p *Printer) emitEmbeddedStatement(parentNode *ast.Node, node *ast.Statemen
 
 func (p *Printer) emitStatement(node *ast.Statement) {
 	switch node.Kind {
-
 	// Statements
 	case ast.KindBlock:
 		p.emitBlock(node.AsBlock())
@@ -3745,7 +3743,7 @@ func (p *Printer) emitListItems(
 		leadingLineTerminatorCount = p.getLeadingLineTerminatorCount(parentNode, children[0], format)
 	}
 	if leadingLineTerminatorCount > 0 {
-		for i := 0; i < leadingLineTerminatorCount; i++ {
+		for range leadingLineTerminatorCount {
 			p.writeLine()
 		}
 		shouldEmitInterveningComments = false
@@ -3763,9 +3761,7 @@ func (p *Printer) emitListItems(
 	// Emit each child.
 	var previousSibling *ast.Node
 	shouldDecreaseIndentAfterEmit := false
-	for i := 0; i < len(children); i++ {
-		child := children[i]
-
+	for _, child := range children {
 		// Write the delimiter if this is not the first node.
 		if format&LFAsteriskDelimited != 0 {
 			// always write JSDoc in the format "\n *"
@@ -3801,7 +3797,7 @@ func (p *Printer) emitListItems(
 					p.emitTrailingCommentsOfPosition(commentRange.Pos(), format&LFSpaceBetweenSiblings != 0 /*prefixSpace*/, true /*forceNoNewline*/)
 				}
 
-				for i := 0; i < separatingLineTerminatorCount; i++ {
+				for range separatingLineTerminatorCount {
 					p.writeLine()
 				}
 
@@ -3859,7 +3855,7 @@ func (p *Printer) emitListItems(
 	// Write the closing line terminator or closing whitespace.
 	closingLineTerminatorCount := p.getClosingLineTerminatorCount(parentNode, core.LastOrNil(children), format, childrenTextRange)
 	if closingLineTerminatorCount > 0 {
-		for i := 0; i < closingLineTerminatorCount; i++ {
+		for range closingLineTerminatorCount {
 			p.writeLine()
 		}
 	} else if format&(LFSpaceAfterList|LFSpaceBetweenBraces) != 0 {
@@ -4277,20 +4273,35 @@ const (
 	LFSingleArrowParameter              ListFormat = LFCommaDelimited | LFSpaceBetweenSiblings | LFSingleLine
 	LFIndexSignatureParameters          ListFormat = LFCommaDelimited | LFSpaceBetweenSiblings | LFSingleLine | LFIndented | LFSquareBrackets
 	LFJSDocComment                      ListFormat = LFMultiLine | LFAsteriskDelimited
-	/** @deprecated */ LFImportClauseEntries ListFormat = LFImportAttributes
+	LFImportClauseEntries               ListFormat = LFImportAttributes // Deprecated: Use LFImportAttributes
 )
 
-var brackets = map[ListFormat][2]string{
-	LFBraces:         {"{", "}"},
-	LFParenthesis:    {"(", ")"},
-	LFAngleBrackets:  {"<", ">"},
-	LFSquareBrackets: {"[", "]"},
-}
-
 func getOpeningBracket(format ListFormat) string {
-	return brackets[format&LFBracketsMask][0]
+	switch format & LFBracketsMask {
+	case LFBraces:
+		return "{"
+	case LFParenthesis:
+		return "("
+	case LFAngleBrackets:
+		return "<"
+	case LFSquareBrackets:
+		return "["
+	default:
+		panic(fmt.Sprintf("Unexpected bracket: %v", format&LFBracketsMask))
+	}
 }
 
 func getClosingBracket(format ListFormat) string {
-	return brackets[format&LFBracketsMask][1]
+	switch format & LFBracketsMask {
+	case LFBraces:
+		return "}"
+	case LFParenthesis:
+		return ")"
+	case LFAngleBrackets:
+		return ">"
+	case LFSquareBrackets:
+		return "]"
+	default:
+		panic(fmt.Sprintf("Unexpected bracket: %v", format&LFBracketsMask))
+	}
 }
