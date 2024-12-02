@@ -26,6 +26,7 @@ type CompilerOptions struct {
 	ModuleKind                         ModuleKind           `json:"module"`
 	ModuleResolution                   ModuleResolutionKind `json:"moduleResolution"`
 	ModuleSuffixes                     []string             `json:"moduleSuffixes"`
+	ModuleDetection                    ModuleDetectionKind  `json:"moduleDetectionKind"`
 	NoFallthroughCasesInSwitch         Tristate             `json:"noFallthroughCasesInSwitch"`
 	NoImplicitAny                      Tristate             `json:"noImplicitAny"`
 	NoImplicitThis                     Tristate             `json:"noImplicitThis"`
@@ -55,17 +56,6 @@ type CompilerOptions struct {
 	NoDtsResolution Tristate `json:"noDtsResolution"`
 	PathsBasePath   string   `json:"pathsBasePath"`
 }
-
-type JsxEmit int32
-
-const (
-	JsxEmitNone        JsxEmit = 0
-	JsxEmitPreserve    JsxEmit = 1
-	JsxEmitReact       JsxEmit = 2
-	JsxEmitReactNative JsxEmit = 3
-	JsxEmitReactJSX    JsxEmit = 4
-	JsxEmitReactJSXDev JsxEmit = 5
-)
 
 func (options *CompilerOptions) GetEmitScriptTarget() ScriptTarget {
 	if options.Target != ScriptTargetNone {
@@ -165,9 +155,10 @@ func (options *CompilerOptions) GetEffectiveTypeRoots(currentDirectory string) (
 type ModuleDetectionKind int32
 
 const (
-	ModuleDetectionKindAuto   ModuleDetectionKind = 0
-	ModuleDetectionKindLegacy ModuleDetectionKind = 1
-	ModuleDetectionKindForce  ModuleDetectionKind = 2
+	ModuleDetectionKindNone   ModuleDetectionKind = 0
+	ModuleDetectionKindAuto   ModuleDetectionKind = 1
+	ModuleDetectionKindLegacy ModuleDetectionKind = 2
+	ModuleDetectionKindForce  ModuleDetectionKind = 3
 )
 
 type ModuleKind int32
