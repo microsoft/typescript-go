@@ -267,7 +267,7 @@ var optionsDeclarations = []CommandLineOption{
 	{
 		Name:                     "target",
 		shortName:                "t",
-		Kind:                     CommandLineOptionTypeEnum, //targetOptionMap
+		Kind:                     CommandLineOptionTypeEnum, // targetOptionMap
 		affectsSourceFile:        true,
 		affectsModuleResolution:  true,
 		affectsEmit:              true,
@@ -282,7 +282,7 @@ var optionsDeclarations = []CommandLineOption{
 	{
 		Name:                     "module",
 		shortName:                "m",
-		Kind:                     CommandLineOptionTypeEnum, //moduleOptionMap
+		Kind:                     CommandLineOptionTypeEnum, // moduleOptionMap
 		affectsSourceFile:        true,
 		affectsModuleResolution:  true,
 		affectsEmit:              true,
@@ -297,7 +297,7 @@ var optionsDeclarations = []CommandLineOption{
 		Kind: CommandLineOptionTypeList,
 		// elements: &CommandLineOption{
 		// 	name:                    "lib",
-		// 	kind:                   CommandLineOptionTypeEnum, //libMap,
+		// 	kind:                   CommandLineOptionTypeEnum, // libMap,
 		// 	defaultValueDescription: core.TSUnknown,
 		// },
 		affectsProgramStructure:  true,
@@ -329,7 +329,7 @@ var optionsDeclarations = []CommandLineOption{
 	},
 	{
 		Name:                    "jsx",
-		Kind:                    CommandLineOptionTypeEnum, //jsxOptionMap,
+		Kind:                    CommandLineOptionTypeEnum, // jsxOptionMap,
 		affectsSourceFile:       true,
 		affectsEmit:             true,
 		affectsBuildInfo:        true,
@@ -944,7 +944,7 @@ var optionsDeclarations = []CommandLineOption{
 	},
 	{
 		Name:                    "newLine",
-		Kind:                    CommandLineOptionTypeEnum, //newLineOptionMap,
+		Kind:                    CommandLineOptionTypeEnum, // newLineOptionMap,
 		affectsEmit:             true,
 		affectsBuildInfo:        true,
 		category:                diagnostics.Emit,
