@@ -2,9 +2,10 @@ package tspath
 
 import (
 	"cmp"
+	"regexp"
 	"strings"
 
-	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/stringutil"
 )
 
 type Path string
@@ -18,7 +19,7 @@ const urlSchemeSeparator = "://"
 // check path for these segments:
 //
 //	'', '.'. '..'
-var relativePathSegmentRegExp = core.MakeRegexp(`//|(?:^|/)\.\.?(?:$|/)`)
+var relativePathSegmentRegExp = regexp.MustCompile(`//|(?:^|/)\.\.?(?:$|/)`)
 
 // We convert the file names to lower case as key for file name on case insensitive file system
 // While doing so we need to handle special characters (eg \u0130) to ensure that we dont convert
@@ -42,7 +43,7 @@ var relativePathSegmentRegExp = core.MakeRegexp(`//|(?:^|/)\.\.?(?:$|/)`)
 //
 // But to avoid having to do string building for most common cases, also ignore
 // a-z, 0-9, \u0131, \u00DF, \, /, ., : and space
-var fileNameLowerCaseRegExp = core.MakeRegexp(`[^\x{0130}\x{0131}\x{00DF}a-z0-9\\/:\-_. ]+`)
+var fileNameLowerCaseRegExp = regexp.MustCompile(`[^\x{0130}\x{0131}\x{00DF}a-z0-9\\/:\-_. ]+`)
 
 //// Path Tests
 
@@ -369,7 +370,7 @@ func ToPath(fileName string, basePath string, useCaseSensitiveFileNames bool) Pa
 	if IsRootedDiskPath(fileName) {
 		nonCanonicalizedPath = NormalizePath(fileName)
 	} else {
-		nonCanonicalizedPath = GetNormalizedAbsolutePath(basePath, fileName)
+		nonCanonicalizedPath = GetNormalizedAbsolutePath(fileName, basePath)
 	}
 	return Path(getCanonicalFileName(nonCanonicalizedPath, useCaseSensitiveFileNames))
 }
@@ -408,7 +409,7 @@ func GetPathComponentsRelativeTo(from string, to string, options ComparePathsOpt
 		fromComponent := fromComponents[start]
 		toComponent := toComponents[start]
 		if start == 0 {
-			if !core.EquateStringCaseInsensitive(fromComponent, toComponent) {
+			if !stringutil.EquateStringCaseInsensitive(fromComponent, toComponent) {
 				break
 			}
 		} else {
@@ -534,7 +535,7 @@ func GetAnyExtensionFromPath(path string, extensions []string, ignoreCase bool) 
 	// Retrieves any string from the final "." onwards from a base file name.
 	// Unlike extensionFromPath, which throws an exception on unrecognized extensions.
 	if len(extensions) > 0 {
-		return getAnyExtensionFromPathWorker(RemoveTrailingDirectorySeparator(path), extensions, core.GetStringEqualityComparer(ignoreCase))
+		return getAnyExtensionFromPathWorker(RemoveTrailingDirectorySeparator(path), extensions, stringutil.GetStringEqualityComparer(ignoreCase))
 	}
 
 	baseFileName := GetBaseFileName(path)
@@ -568,8 +569,10 @@ func tryGetExtensionFromPath(path string, extension string, stringEqualityCompar
 	return ""
 }
 
+var pathIsRelativeRegexp = regexp.MustCompile(`^\.\.?(?:$|[\\/])`)
+
 func PathIsRelative(path string) bool {
-	return core.MakeRegexp(`^\.\.?(?:$|[\\/])`).MatchString(path)
+	return pathIsRelativeRegexp.MatchString(path)
 }
 
 func IsExternalModuleNameRelative(moduleName string) bool {
@@ -585,11 +588,11 @@ type ComparePathsOptions struct {
 }
 
 func (o ComparePathsOptions) GetComparer() func(a, b string) int {
-	return core.GetStringComparer(!o.UseCaseSensitiveFileNames)
+	return stringutil.GetStringComparer(!o.UseCaseSensitiveFileNames)
 }
 
 func (o ComparePathsOptions) getEqualityComparer() func(a, b string) bool {
-	return core.GetStringEqualityComparer(!o.UseCaseSensitiveFileNames)
+	return stringutil.GetStringEqualityComparer(!o.UseCaseSensitiveFileNames)
 }
 
 func ComparePaths(a string, b string, options ComparePathsOptions) int {
@@ -610,7 +613,7 @@ func ComparePaths(a string, b string, options ComparePathsOptions) int {
 	//       need to perform path reduction.
 	aRoot := a[:GetRootLength(a)]
 	bRoot := b[:GetRootLength(b)]
-	result := core.CompareStringsCaseInsensitive(aRoot, bRoot)
+	result := stringutil.CompareStringsCaseInsensitive(aRoot, bRoot)
 	if result != 0 {
 		return result
 	}
@@ -664,7 +667,7 @@ func ContainsPath(parent string, child string, options ComparePathsOptions) bool
 	for i, parentComponent := range parentComponents {
 		var comparer func(a, b string) bool
 		if i == 0 {
-			comparer = core.EquateStringCaseInsensitive
+			comparer = stringutil.EquateStringCaseInsensitive
 		} else {
 			comparer = componentComparer
 		}
