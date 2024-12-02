@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"path/filepath"
 	"runtime"
 	"runtime/pprof"
 	"strings"
@@ -75,7 +76,6 @@ func main() {
 	programOptions := ts.ProgramOptions{RootPath: normalizedRootPath, Options: compilerOptions, SingleThreaded: singleThreaded, Host: host}
 
 	if pprofDir != "" {
-		pprofDir = tspath.ResolvePath(currentDirectory, pprofDir)
 		profileSession := beginProfiling(pprofDir)
 		defer profileSession.stop()
 	}
@@ -142,8 +142,8 @@ func beginProfiling(profileDir string) *profileSession {
 
 	pid := os.Getpid()
 
-	cpuProfilePath := tspath.ResolvePath(profileDir, fmt.Sprintf("cpuprofile-%d.pb.gz", pid))
-	memProfilePath := tspath.ResolvePath(profileDir, fmt.Sprintf("memprofile-%d.pb.gz", pid))
+	cpuProfilePath := filepath.Join(profileDir, fmt.Sprintf("cpuprofile-%d.pb.gz", pid))
+	memProfilePath := filepath.Join(profileDir, fmt.Sprintf("memprofile-%d.pb.gz", pid))
 	cpuFile, err := os.Create(cpuProfilePath)
 	if err != nil {
 		panic(err)
