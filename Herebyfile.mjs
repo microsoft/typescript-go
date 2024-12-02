@@ -28,7 +28,7 @@ const { values: options } = parseArgs({
 
 /**
  * @type {<T>(fn: () => T) => (() => T)}
-*/
+ */
 function memoize(fn) {
     let value;
     return () => {
@@ -81,7 +81,7 @@ export const generate = task({
     },
 });
 
-const goTest = memoize(() => isInstalled("gotestsum") ? ["gotestsum", "--format-hide-empty-pkg", "--"] : ["go", "test"])
+const goTest = memoize(() => isInstalled("gotestsum") ? ["gotestsum", "--format-hide-empty-pkg", "--"] : ["go", "test"]);
 
 async function runTests() {
     await $`${goTest()} ${options.race ? ["-race"] : []} ./...`;
