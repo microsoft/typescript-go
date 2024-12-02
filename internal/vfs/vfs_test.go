@@ -178,10 +178,10 @@ func TestVFSTestMapFS(t *testing.T) {
 	})
 }
 
-func TestIOFSWindows(t *testing.T) {
+func TestVFSTestMapFSWindows(t *testing.T) {
 	t.Parallel()
 
-	testfs := fstest.MapFS{
+	fs := vfstest.FromMapFS(fstest.MapFS{
 		"c:/foo.ts": &fstest.MapFile{
 			Data: []byte("hello, world"),
 		},
@@ -194,9 +194,7 @@ func TestIOFSWindows(t *testing.T) {
 		"c:/dir2/file1.ts": &fstest.MapFile{
 			Data: []byte("export const foo = 42;"),
 		},
-	}
-
-	fs := vfs.FromIOFS(testfs, true)
+	}, false)
 
 	t.Run("ReadFile", func(t *testing.T) {
 		t.Parallel()
@@ -208,6 +206,19 @@ func TestIOFSWindows(t *testing.T) {
 		content, ok = fs.ReadFile("c:/does/not/exist.ts")
 		assert.Assert(t, !ok)
 		assert.Equal(t, content, "")
+	})
+
+	t.Run("Realpath", func(t *testing.T) {
+		t.Parallel()
+
+		realpath := fs.Realpath("c:/foo.ts")
+		assert.Equal(t, realpath, "c:/foo.ts")
+
+		realpath = fs.Realpath("c:/Foo.ts")
+		assert.Equal(t, realpath, "c:/foo.ts")
+
+		realpath = fs.Realpath("c:/does/not/exist.ts")
+		assert.Equal(t, realpath, "c:/does/not/exist.ts")
 	})
 }
 
