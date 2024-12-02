@@ -1,4 +1,4 @@
-package options
+package tsoptions
 
 import (
 	"github.com/microsoft/typescript-go/internal/collections"
