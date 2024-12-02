@@ -36,7 +36,7 @@ type CommandLineOption struct {
 	category *diagnostics.Message
 
 	// defined once
-	extraValidation *func(value CompilerOptionsValue) (d *diagnostics.Message, args []string)
+	extraValidation func(value CompilerOptionsValue) (d *diagnostics.Message, args []string)
 
 	// true or undefined
 	// used for configDirTemplateSubstitutionOptions
@@ -63,7 +63,7 @@ type CommandLineOption struct {
 	listPreserveFalsyValues bool
 }
 
-func (o *CommandLineOption) DeprecatedKeys() map[string]bool {
+func (o *CommandLineOption) DeprecatedKeys() *core.Set[string] {
 	if o.Kind != CommandLineOptionTypeEnum {
 		return nil
 	}
@@ -133,9 +133,9 @@ var commandLineOptionEnumMap = map[string]*collections.OrderedMap[string, any]{
 }
 
 // CommandLineOption.DeprecatedKeys()
-var commandLineOptionDeprecated = map[string]map[string]bool{
-	"moduleResolution": map[string]bool{"node": true},
-	"target":           map[string]bool{"es3": true},
+var commandLineOptionDeprecated = map[string]*core.Set[string]{
+	"moduleResolution": core.NewSetFromItems[string]("node"),
+	"target":           core.NewSetFromItems[string]("es3"),
 }
 
 // todo: revisit to see if this can be improved
