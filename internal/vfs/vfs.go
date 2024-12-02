@@ -82,12 +82,12 @@ func FromIOFS(fsys fs.FS, useCaseSensitiveFileNames bool) FS {
 	var realpath func(path string) (string, error)
 	if fsys, ok := fsys.(RealpathFS); ok {
 		realpath = func(path string) (string, error) {
-			rest, ok := strings.CutPrefix(path, "/")
+			rest, hadSlash := strings.CutPrefix(path, "/")
 			rp, err := fsys.Realpath(rest)
 			if err != nil {
 				return "", err
 			}
-			if ok {
+			if hadSlash {
 				return "/" + rp, nil
 			}
 			return rp, nil
