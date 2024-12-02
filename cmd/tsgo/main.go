@@ -142,8 +142,8 @@ func beginProfiling(profileDir string) *profileSession {
 
 	pid := os.Getpid()
 
-	cpuProfilePath := filepath.Join(profileDir, fmt.Sprintf("cpuprofile-%d.pb.gz", pid))
-	memProfilePath := filepath.Join(profileDir, fmt.Sprintf("memprofile-%d.pb.gz", pid))
+	cpuProfilePath := filepath.Join(profileDir, fmt.Sprintf("%d-cpuprofile.pb.gz", pid))
+	memProfilePath := filepath.Join(profileDir, fmt.Sprintf("%d-memprofile.pb.gz", pid))
 	cpuFile, err := os.Create(cpuProfilePath)
 	if err != nil {
 		panic(err)
