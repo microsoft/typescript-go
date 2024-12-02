@@ -63,27 +63,27 @@ type CommandLineOption struct {
 	listPreserveFalsyValues bool
 }
 
-func (option *CommandLineOption) DeprecatedKeys() map[string]bool {
-	if option.Kind != CommandLineOptionTypeEnum {
+func (o *CommandLineOption) DeprecatedKeys() map[string]bool {
+	if o.Kind != CommandLineOptionTypeEnum {
 		return nil
 	}
-	return commandLineOptionDeprecated[option.Name]
+	return commandLineOptionDeprecated[o.Name]
 }
-func (option *CommandLineOption) EnumMap() *collections.OrderedMap[string, any] {
-	if option.Kind != CommandLineOptionTypeEnum {
+func (o *CommandLineOption) EnumMap() *collections.OrderedMap[string, any] {
+	if o.Kind != CommandLineOptionTypeEnum {
 		return nil
 	}
-	return commandLineOptionEnumMap[option.Name]
+	return commandLineOptionEnumMap[o.Name]
 }
-func (option *CommandLineOption) Elements() *CommandLineOption {
-	if option.Kind != CommandLineOptionTypeList && option.Kind != CommandLineOptionTypeListOrElement {
+func (o *CommandLineOption) Elements() *CommandLineOption {
+	if o.Kind != CommandLineOptionTypeList && o.Kind != CommandLineOptionTypeListOrElement {
 		return nil
 	}
-	return commandLineOptionElements[option.Name]
+	return commandLineOptionElements[o.Name]
 }
 
-func (option *CommandLineOption) DisallowNullOrUndefined() bool {
-	return option.Name == "extends"
+func (o *CommandLineOption) DisallowNullOrUndefined() bool {
+	return o.Name == "extends"
 }
 
 // CommandLineOption.Elements()
