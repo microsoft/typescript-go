@@ -133,7 +133,7 @@ var commandLineOptionEnumMap = map[string]*collections.OrderedMap[string, any]{
 }
 
 // CommandLineOption.DeprecatedKeys()
-var commandLineOptionDeprecated = map[string](map[string]bool){
+var commandLineOptionDeprecated = map[string]map[string]bool{
 	"moduleResolution": map[string]bool{"node": true},
 	"target":           map[string]bool{"es3": true},
 }
