@@ -141,7 +141,7 @@ type diagnostic struct {
 }
 
 func toGolden(fileContents []byte, diags []*diagnostic) string {
-	// Similar to https://github.com/microsoft/DefinitelyTyped-tools/blob/main/packages/eslint-plugin/test/eslint.test.ts
+	// Similar to https://github.com/microsoft/DefinitelyTyped-tools/blob/b6d59be5f3235825ff2e3a3ef564c4091c9daa55/packages/eslint-plugin/test/eslint.test.ts#L63
 
 	var buf bytes.Buffer
 	lines := bytes.Split(fileContents, []byte("\n"))
