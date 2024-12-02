@@ -55,7 +55,6 @@ function assertTypeScriptCloned() {
 }
 
 const tools = new Map([
-    ["github.com/golangci/golangci-lint/cmd/golangci-lint", "v1.62.2"], // NOTE: this must match the version in .custom-gcl.yml
     ["gotest.tools/gotestsum", "latest"],
 ]);
 
@@ -121,22 +120,32 @@ export const testAll = task({
     },
 });
 
+const customLinterPath = "./_tools/custom-gcl";
+const golangciLintVersion = "v1.62.2"; // NOTE: this must match the version in .custom-gcl.yml
+
+async function buildCustomLinter() {
+    await $`go run github.com/golangci/golangci-lint/cmd/golangci-lint@${golangciLintVersion} custom`;
+    await $`${customLinterPath} cache clean`;
+}
+
 export const lint = task({
     name: "lint",
     run: async () => {
-        if (!isInstalled("./_tools/custom-gcl")) {
-            throw new Error("./_tools/custom-gcl is not installed; run `hereby install-tools`");
+        if (!isInstalled(customLinterPath)) {
+            await buildCustomLinter();
         }
-        await $`./_tools/custom-gcl run ${options.fix ? ["--fix"] : []}`;
+        await $`${customLinterPath} run ${options.fix ? ["--fix"] : []}`;
     },
 });
 
 export const installTools = task({
     name: "install-tools",
     run: async () => {
-        await Promise.all([...tools].map(([tool, version]) => $`go install ${tool}@${version}`));
-        await $`golangci-lint custom`;
-        await $`golangci-lint cache clean`;
+        const promises = [
+            ...[...tools].map(([tool, version]) => $`go install ${tool}@${version}`),
+            buildCustomLinter(),
+        ]
+        await Promise.all(promises);
     },
 });
 
