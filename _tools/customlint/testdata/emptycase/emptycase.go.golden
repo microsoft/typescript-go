@@ -5,13 +5,13 @@
 	func Switch() {
 		switch X {
 		case 1:
-		~~~~~~
+		~~~~~~~
 !!! emptycase: this case block is empty and will do nothing
 		case 2:
-		~~~~~~
+		~~~~~~~
 !!! emptycase: this case block is empty and will do nothing
 		case 3:
-		~~~~~~
+		~~~~~~~
 !!! emptycase: this case block is empty and will do nothing
 		case 4:
 			println(`oops`)
@@ -23,10 +23,10 @@
 		case 1:
 			// do nothing
 		case 2:
-		~~~~~~
+		~~~~~~~
 !!! emptycase: this case block is empty and will do nothing
 		case 3:
-		~~~~~~
+		~~~~~~~
 !!! emptycase: this case block is empty and will do nothing
 		case 4:
 			println(`oops`)
@@ -36,7 +36,7 @@
 	func SwitchSingleCase() {
 		switch X {
 		case 1:
-		~~~~~~
+		~~~~~~~
 !!! emptycase: this case block is empty and will do nothing
 		}
 	}
@@ -44,10 +44,10 @@
 	func SwitchDefaultCase() {
 		switch X {
 		case 1:
-		~~~~~~
+		~~~~~~~
 !!! emptycase: this case block is empty and will do nothing
 		default:
-		~~~~~~~
+		~~~~~~~~
 !!! emptycase: this case block is empty and will do nothing
 		}
 	}
@@ -62,13 +62,13 @@
 	func Select() {
 		select {
 		case <-ch:
-		~~~~~~~~~
+		~~~~~~~~~~
 !!! emptycase: this case block is empty and will do nothing
 		case <-ch2:
-		~~~~~~~~~~
+		~~~~~~~~~~~
 !!! emptycase: this case block is empty and will do nothing
 		case <-ch3:
-		~~~~~~~~~~
+		~~~~~~~~~~~
 !!! emptycase: this case block is empty and will do nothing
 		case <-ch4:
 			println(`oops`)
@@ -85,7 +85,7 @@
 	func SelectSingleCase() {
 		select {
 		case <-ch:
-		~~~~~~~~~
+		~~~~~~~~~~
 !!! emptycase: this case block is empty and will do nothing
 		}
 	}
@@ -95,7 +95,7 @@
 		case x := <-ch:
 			println(x)
 		default:
-		~~~~~~~
+		~~~~~~~~
 !!! emptycase: this case block is empty and will do nothing
 		}
 	}

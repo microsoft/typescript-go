@@ -147,7 +147,6 @@ func toGolden(fileContents []byte, diags []*diagnostic) string {
 	lines := bytes.Split(fileContents, []byte("\n"))
 
 	for i, line := range lines {
-
 		fmt.Fprintf(&buf, "\t%s\n", line)
 
 		for _, d := range diags {
