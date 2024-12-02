@@ -180,14 +180,15 @@ func toGolden(fileContents []byte, diags []*diagnostic) string {
 	return buf.String()
 }
 
-func toWhitespace(b []byte) string {
-	var buf bytes.Buffer
-	for _, c := range b {
+func toWhitespace(linePrefix []byte) string {
+	var b strings.Builder
+	b.Grow(len(linePrefix))
+	for _, c := range linePrefix {
 		if c == '\t' {
-			buf.WriteByte('\t')
+			b.WriteByte('\t')
 		} else {
-			buf.WriteByte(' ')
+			b.WriteByte(' ')
 		}
 	}
-	return buf.String()
+	return b.String()
 }
