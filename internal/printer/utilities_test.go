@@ -8,6 +8,7 @@ import (
 )
 
 func TestEscapeString(t *testing.T) {
+	t.Parallel()
 	data := []struct {
 		s         string
 		quoteChar quoteChar
@@ -33,6 +34,7 @@ func TestEscapeString(t *testing.T) {
 }
 
 func TestEscapeNonAsciiString(t *testing.T) {
+	t.Parallel()
 	data := []struct {
 		s         string
 		quoteChar quoteChar
@@ -60,6 +62,7 @@ func TestEscapeNonAsciiString(t *testing.T) {
 }
 
 func TestEscapeJsxAttributeString(t *testing.T) {
+	t.Parallel()
 	data := []struct {
 		s         string
 		quoteChar quoteChar
