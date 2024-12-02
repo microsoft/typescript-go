@@ -5,15 +5,18 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"path/filepath"
 	"runtime"
+	"runtime/pprof"
 	"strings"
 	"time"
-	"unicode"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	ts "github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/tspath"
+	"github.com/microsoft/typescript-go/internal/vfs"
 )
 
 var quiet = false
@@ -21,11 +24,12 @@ var singleThreaded = false
 var parseAndBindOnly = false
 var printTypes = false
 var pretty = true
+var pprofDir = ""
 
 func printDiagnostic(d *ast.Diagnostic, level int) {
 	file := d.File()
 	if file != nil {
-		line, character := ts.GetLineAndCharacterOfPosition(file, d.Loc().Pos())
+		line, character := scanner.GetLineAndCharacterOfPosition(file, d.Loc().Pos())
 		fmt.Printf("%v%v(%v,%v): error TS%v: %v\n", strings.Repeat(" ", level*2), file.FileName(), line+1, character+1, d.Code(), d.Message())
 	} else {
 		fmt.Printf("%verror TS%v: %v\n", strings.Repeat(" ", level*2), d.Code(), d.Message())
@@ -49,12 +53,32 @@ func main() {
 	flag.BoolVar(&parseAndBindOnly, "p", false, "Parse and bind only")
 	flag.BoolVar(&printTypes, "t", false, "Print types defined in main.ts")
 	flag.BoolVar(&pretty, "pretty", true, "Get prettier errors")
+	flag.StringVar(&pprofDir, "pprofdir", "", "Generate pprof CPU/memory profiles to the given directory")
 	flag.Parse()
 
 	rootPath := flag.Arg(0)
 	compilerOptions := &core.CompilerOptions{Strict: core.TSTrue, Target: core.ScriptTargetESNext, ModuleKind: core.ModuleKindNodeNext}
-	programOptions := ts.ProgramOptions{RootPath: rootPath, Options: compilerOptions, SingleThreaded: singleThreaded}
-	useCaseSensitiveFileNames := isFileSystemCaseSensitive()
+	currentDirectory, err := os.Getwd()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error getting current directory: %v\n", err)
+		os.Exit(1)
+	}
+	fs := vfs.FromOS()
+	useCaseSensitiveFileNames := fs.UseCaseSensitiveFileNames()
+	host := ts.NewCompilerHost(compilerOptions, singleThreaded, currentDirectory, fs)
+
+	normalizedRootPath := tspath.ResolvePath(currentDirectory, rootPath)
+	if !fs.DirectoryExists(normalizedRootPath) {
+		fmt.Fprintf(os.Stderr, "Error: The directory %v does not exist.\n", normalizedRootPath)
+		os.Exit(1)
+	}
+
+	programOptions := ts.ProgramOptions{RootPath: normalizedRootPath, Options: compilerOptions, SingleThreaded: singleThreaded, Host: host}
+
+	if pprofDir != "" {
+		profileSession := beginProfiling(pprofDir)
+		defer profileSession.stop()
+	}
 
 	startTime := time.Now()
 	program := ts.NewProgram(programOptions)
@@ -71,17 +95,14 @@ func main() {
 		}
 	}
 	compileTime := time.Since(startTime)
+
 	var memStats runtime.MemStats
 	runtime.GC()
 	runtime.GC()
 	runtime.ReadMemStats(&memStats)
+
 	if !quiet && len(diagnostics) != 0 {
 		if pretty {
-			currentDirectory, err := os.Getwd()
-			if err != nil {
-				panic("no current directory")
-			}
-
 			var output strings.Builder
 			formatOpts := ts.DiagnosticsFormattingOptions{
 				NewLine: "\n",
@@ -107,27 +128,53 @@ func main() {
 	fmt.Printf("Memory used:   %vK\n", memStats.Alloc/1024)
 }
 
-func isFileSystemCaseSensitive() bool {
-	// win32/win64 are case insensitive platforms
-	if runtime.GOOS == "windows" {
-		return false
-	}
-
-	// If the current executable exists under a different case, we must be case-insensitve.
-	if _, err := os.Stat(swapCase(os.Args[0])); os.IsNotExist(err) {
-		return false
-	}
-	return true
+type profileSession struct {
+	cpuFilePath string
+	memFilePath string
+	cpuFile     *os.File
+	memFile     *os.File
 }
 
-// Convert all lowercase chars to uppercase, and vice-versa
-func swapCase(str string) string {
-	return strings.Map(func(r rune) rune {
-		upper := unicode.ToUpper(r)
-		if upper == r {
-			return unicode.ToLower(r)
-		} else {
-			return upper
-		}
-	}, str)
+func beginProfiling(profileDir string) *profileSession {
+	if err := os.MkdirAll(profileDir, 0755); err != nil {
+		panic(err)
+	}
+
+	pid := os.Getpid()
+
+	cpuProfilePath := filepath.Join(profileDir, fmt.Sprintf("%d-cpuprofile.pb.gz", pid))
+	memProfilePath := filepath.Join(profileDir, fmt.Sprintf("%d-memprofile.pb.gz", pid))
+	cpuFile, err := os.Create(cpuProfilePath)
+	if err != nil {
+		panic(err)
+	}
+	memFile, err := os.Create(memProfilePath)
+	if err != nil {
+		panic(err)
+	}
+
+	if err := pprof.StartCPUProfile(cpuFile); err != nil {
+		panic(err)
+	}
+
+	return &profileSession{
+		cpuFilePath: cpuProfilePath,
+		memFilePath: memProfilePath,
+		cpuFile:     cpuFile,
+		memFile:     memFile,
+	}
+}
+
+func (p *profileSession) stop() {
+	pprof.StopCPUProfile()
+	err := pprof.Lookup("allocs").WriteTo(p.memFile, 0)
+	if err != nil {
+		panic(err)
+	}
+
+	p.cpuFile.Close()
+	p.memFile.Close()
+
+	fmt.Printf("CPU profile: %v\n", p.cpuFilePath)
+	fmt.Printf("Memory profile: %v\n", p.memFilePath)
 }

@@ -1,5 +1,11 @@
 package core
 
+import (
+	"strings"
+
+	"github.com/microsoft/typescript-go/internal/tspath"
+)
+
 //go:generate go run golang.org/x/tools/cmd/stringer -type=ModuleKind,ScriptTarget -output=compileroptions_stringer_generated.go
 
 type CompilerOptions struct {
@@ -12,14 +18,17 @@ type CompilerOptions struct {
 	CustomConditions                   []string             `json:"customConditions"`
 	ESModuleInterop                    Tristate             `json:"esModuleInterop"`
 	ExactOptionalPropertyTypes         Tristate             `json:"exactOptionalPropertyTypes"`
+	ExperimentalDecorators             Tristate             `json:"experimentalDecorators"`
 	IsolatedModules                    Tristate             `json:"isolatedModules"`
 	Jsx                                JsxEmit              `json:"jsx"`
 	Lib                                []string             `json:"lib"`
+	LegacyDecorators                   Tristate             `json:"legacyDecorators"`
 	ModuleKind                         ModuleKind           `json:"module"`
 	ModuleResolution                   ModuleResolutionKind `json:"moduleResolution"`
 	ModuleSuffixes                     []string             `json:"moduleSuffixes"`
 	NoFallthroughCasesInSwitch         Tristate             `json:"noFallthroughCasesInSwitch"`
 	NoImplicitAny                      Tristate             `json:"noImplicitAny"`
+	NoImplicitThis                     Tristate             `json:"noImplicitThis"`
 	NoPropertyAccessFromIndexSignature Tristate             `json:"noPropertyAccessFromIndexSignature"`
 	NoUncheckedIndexedAccess           Tristate             `json:"noUncheckedIndexedAccess"`
 	Paths                              map[string][]string  `json:"paths"`
@@ -30,8 +39,9 @@ type CompilerOptions struct {
 	ResolvePackageJsonImports          Tristate             `json:"resolvePackageJsonImports"`
 	Strict                             Tristate             `json:"strict"`
 	StrictBindCallApply                Tristate             `json:"strictBindCallApply"`
-	StrictNullChecks                   Tristate             `json:"strictNullChecks"`
 	StrictFunctionTypes                Tristate             `json:"strictFunctionTypes"`
+	StrictNullChecks                   Tristate             `json:"strictNullChecks"`
+	StrictPropertyInitialization       Tristate             `json:"strictPropertyInitialization"`
 	Target                             ScriptTarget         `json:"target"`
 	TraceResolution                    Tristate             `json:"traceResolution"`
 	TypeRoots                          []string             `json:"typeRoots"`
@@ -45,6 +55,17 @@ type CompilerOptions struct {
 	NoDtsResolution Tristate `json:"noDtsResolution"`
 	PathsBasePath   string   `json:"pathsBasePath"`
 }
+
+type JsxEmit int32
+
+const (
+	JsxEmitNone        JsxEmit = 0
+	JsxEmitPreserve    JsxEmit = 1
+	JsxEmitReact       JsxEmit = 2
+	JsxEmitReactNative JsxEmit = 3
+	JsxEmitReactJSX    JsxEmit = 4
+	JsxEmitReactJSXDev JsxEmit = 5
+)
 
 func (options *CompilerOptions) GetEmitScriptTarget() ScriptTarget {
 	if options.Target != ScriptTargetNone {
@@ -68,16 +89,12 @@ func (options *CompilerOptions) GetModuleResolutionKind() ModuleResolutionKind {
 		return options.ModuleResolution
 	}
 	switch options.GetEmitModuleKind() {
-	case ModuleKindCommonJS:
-		return ModuleResolutionKindBundler
 	case ModuleKindNode16:
 		return ModuleResolutionKindNode16
 	case ModuleKindNodeNext:
 		return ModuleResolutionKindNodeNext
-	case ModuleKindPreserve:
-		return ModuleResolutionKindBundler
 	default:
-		panic("Unhandled case in getEmitModuleResolutionKind")
+		return ModuleResolutionKindBundler
 	}
 }
 
@@ -114,6 +131,35 @@ func (options *CompilerOptions) GetAllowJs() bool {
 		return options.AllowJs == TSTrue
 	}
 	return options.CheckJs == TSTrue
+}
+
+func (options *CompilerOptions) GetJSXTransformEnabled() bool {
+	jsx := options.Jsx
+	return jsx == JsxEmitReact || jsx == JsxEmitReactJSX || jsx == JsxEmitReactJSXDev
+}
+
+func (options *CompilerOptions) GetEffectiveTypeRoots(currentDirectory string) (result []string, fromConfig bool) {
+	if options.TypeRoots != nil {
+		return options.TypeRoots, true
+	}
+	var baseDir string
+	if options.ConfigFilePath != "" {
+		baseDir = tspath.GetDirectoryPath(options.ConfigFilePath)
+	} else {
+		baseDir = currentDirectory
+		if baseDir == "" {
+			// This was accounted for in the TS codebase, but only for third-party API usage
+			// where the module resolution host does not provide a getCurrentDirectory().
+			panic("cannot get effective type roots without a config file path or current directory")
+		}
+	}
+
+	typeRoots := make([]string, 0, strings.Count(baseDir, "/"))
+	tspath.ForEachAncestorDirectory(baseDir, func(dir string) (any, bool) {
+		typeRoots = append(typeRoots, tspath.CombinePaths(dir, "node_modules", "@types"))
+		return nil, false
+	})
+	return typeRoots, false
 }
 
 type ModuleDetectionKind int32
