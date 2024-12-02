@@ -8,9 +8,9 @@ import (
 	"unicode/utf8"
 
 	"github.com/microsoft/typescript-go/internal/ast"
-	"github.com/microsoft/typescript-go/internal/compiler/stringutil"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/scanner"
+	"github.com/microsoft/typescript-go/internal/stringutil"
 )
 
 type getLiteralTextFlags int
@@ -21,14 +21,6 @@ const (
 	getLiteralTextFlagsJsxAttributeEscape            getLiteralTextFlags = 1 << 1
 	getLiteralTextFlagsTerminateUnterminatedLiterals getLiteralTextFlags = 1 << 2
 	getLiteralTextFlagsAllowNumericSeparator         getLiteralTextFlags = 1 << 3
-)
-
-type escapeFormat int
-
-const (
-	escapeFormatUnicodeString   escapeFormat = iota // Escapes a String literal, leaving non-ASCII characters as-is
-	escapeFormatAsciiOnlyString                     // Escapes a String literal, escaping non-ASCII characters
-	escapeFormatJsxAttribute                        // Escapes a JSX Attribute
 )
 
 type quoteChar rune

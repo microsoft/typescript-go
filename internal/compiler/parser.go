@@ -1509,7 +1509,7 @@ func (p *Parser) parsePropertyOrMethodDeclaration(pos int, hasJSDoc bool, modifi
 }
 
 func (p *Parser) parseMethodDeclaration(pos int, hasJSDoc bool, modifiers *ast.ModifierList, asteriskToken *ast.Node, name *ast.Node, questionToken *ast.Node, diagnosticMessage *diagnostics.Message) *ast.Node {
-	signatureFlags := core.IfElse(asteriskToken != nil, ParseFlagsYield, ParseFlagsNone) | core.IfElse(hasAsyncModifier(modifiers), ParseFlagsAwait, ParseFlagsNone)
+	signatureFlags := core.IfElse(asteriskToken != nil, ParseFlagsYield, ParseFlagsNone) | core.IfElse(modifierListHasAsync(modifiers), ParseFlagsAwait, ParseFlagsNone)
 	typeParameters := p.parseTypeParameters()
 	parameters := p.parseParameters(signatureFlags)
 	typeNode := p.parseReturnType(ast.KindColonToken, false /*isType*/)
@@ -1520,7 +1520,7 @@ func (p *Parser) parseMethodDeclaration(pos int, hasJSDoc bool, modifiers *ast.M
 	return result
 }
 
-func hasAsyncModifier(modifiers *ast.ModifierList) bool {
+func modifierListHasAsync(modifiers *ast.ModifierList) bool {
 	return modifiers != nil && core.Some(modifiers.Nodes, isAsyncModifier)
 }
 
@@ -2233,14 +2233,6 @@ func (p *Parser) parsePostfixTypeOrHigher() *ast.Node {
 	typeNode := p.parseNonArrayType()
 	for !p.hasPrecedingLineBreak() {
 		switch p.token {
-		case ast.KindQuestionToken:
-			// If next token is start of a type we are in the middle of a conditional type
-			if p.lookAhead(p.nextIsStartOfType) {
-				return typeNode
-			}
-			p.nextToken()
-			typeNode = p.factory.NewOptionalTypeNode(typeNode)
-			p.finishNode(typeNode, pos)
 		case ast.KindOpenBracketToken:
 			p.parseExpected(ast.KindOpenBracketToken)
 			if p.isStartOfType(false /*isStartOfParameter*/) {
@@ -3151,7 +3143,15 @@ func (p *Parser) parseTupleElementType() *ast.TypeNode {
 		p.finishNode(result, pos)
 		return result
 	}
-	return p.parseType()
+	typeNode := p.parseType()
+	// If next token is start of a type we have a conditional type and not an optional type
+	if p.token == ast.KindQuestionToken && !p.lookAhead(p.nextIsStartOfType) {
+		pos := p.nodePos()
+		p.nextToken()
+		typeNode = p.factory.NewOptionalTypeNode(typeNode)
+		p.finishNode(typeNode, pos)
+	}
+	return typeNode
 }
 
 func (p *Parser) parseParenthesizedType() *ast.Node {
@@ -3851,7 +3851,7 @@ func (p *Parser) parseParenthesizedArrowFunctionExpression(allowAmbiguity bool, 
 	pos := p.nodePos()
 	// hasJSDoc := p.hasPrecedingJSDocComment()
 	modifiers := p.parseModifiersForArrowFunction()
-	isAsync := hasAsyncModifier(modifiers)
+	isAsync := modifierListHasAsync(modifiers)
 	signatureFlags := core.IfElse(isAsync, ParseFlagsAwait, ParseFlagsNone)
 	// Arrow functions are never generators.
 	//
@@ -3897,7 +3897,7 @@ func (p *Parser) parseParenthesizedArrowFunctionExpression(allowAmbiguity bool, 
 	// So we need just a bit of lookahead to ensure that it can only be a signature.
 	unwrappedType := returnType
 	for unwrappedType != nil && unwrappedType.Kind == ast.KindParenthesizedType {
-		unwrappedType = unwrappedType.AsParenthesizedTypeNode().TypeNode // Skip parens if need be
+		unwrappedType = unwrappedType.AsParenthesizedTypeNode().Type // Skip parens if need be
 	}
 	hasJSDocFunctionType := unwrappedType != nil && unwrappedType.Kind == ast.KindJSDocFunctionType
 	if !allowAmbiguity && p.token != ast.KindEqualsGreaterThanToken && (hasJSDocFunctionType || p.token != ast.KindOpenBraceToken) {
@@ -3963,9 +3963,9 @@ func typeHasArrowFunctionBlockingParseError(node *ast.TypeNode) bool {
 	case ast.KindTypeReference:
 		return ast.NodeIsMissing(node.AsTypeReference().TypeName)
 	case ast.KindFunctionType, ast.KindConstructorType:
-		return len(node.Parameters()) == 0 || typeHasArrowFunctionBlockingParseError(node.ReturnType())
+		return len(node.Parameters()) == 0 || typeHasArrowFunctionBlockingParseError(node.Type())
 	case ast.KindParenthesizedType:
-		return typeHasArrowFunctionBlockingParseError(node.AsParenthesizedTypeNode().TypeNode)
+		return typeHasArrowFunctionBlockingParseError(node.AsParenthesizedTypeNode().Type)
 	}
 	return false
 }
@@ -5230,7 +5230,7 @@ func (p *Parser) parseFunctionExpression() *ast.Expression {
 	p.parseExpected(ast.KindFunctionKeyword)
 	asteriskToken := p.parseOptionalToken(ast.KindAsteriskToken)
 	isGenerator := asteriskToken != nil
-	isAsync := hasAsyncModifier(modifiers)
+	isAsync := modifierListHasAsync(modifiers)
 	signatureFlags := core.IfElse(isGenerator, ParseFlagsYield, ParseFlagsNone) | core.IfElse(isAsync, ParseFlagsAwait, ParseFlagsNone)
 	var name *ast.Node
 	switch {

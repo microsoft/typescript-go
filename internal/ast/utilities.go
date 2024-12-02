@@ -1,6 +1,8 @@
 package ast
 
-import "slices"
+import (
+	"slices"
+)
 
 // Determines if a node is missing (either `nil` or empty)
 func NodeIsMissing(node *Node) bool {
@@ -62,6 +64,10 @@ func IsPunctuationKind(token Kind) bool {
 
 func IsTokenKind(token Kind) bool {
 	return KindFirstToken <= token && token <= KindLastToken
+}
+
+func IsAccessor(node *Node) bool {
+	return node.Kind == KindGetAccessor || node.Kind == KindSetAccessor
 }
 
 func IsPropertyNameLiteral(node *Node) bool {
@@ -216,6 +222,32 @@ func IsExpression(node *Node) bool {
 	return isExpressionKind(node.Kind)
 }
 
+func IsCommaExpression(node *Node) bool {
+	return node.Kind == KindBinaryExpression && node.AsBinaryExpression().OperatorToken.Kind == KindCommaToken
+}
+
+func IsCommaSequence(node *Node) bool {
+	// !!!
+	// New compiler just has binary expressinons.
+	// Maybe this should consider KindCommaListExpression even though we don't generate them.
+	return IsCommaExpression(node)
+}
+
+func IsIterationStatement(node *Node, lookInLabeledStatements bool) bool {
+	switch node.Kind {
+	case KindForStatement,
+		KindForInStatement,
+		KindForOfStatement,
+		KindDoStatement,
+		KindWhileStatement:
+		return true
+	case KindLabeledStatement:
+		return lookInLabeledStatements && IsIterationStatement((node.AsLabeledStatement()).Statement, lookInLabeledStatements)
+	}
+
+	return false
+}
+
 // Determines if a node is a property or element access expression
 func IsAccessExpression(node *Node) bool {
 	return node.Kind == KindPropertyAccessExpression || node.Kind == KindElementAccessExpression
@@ -260,6 +292,10 @@ func isFunctionLikeKind(kind Kind) bool {
 func IsFunctionLike(node *Node) bool {
 	// TODO(rbuckton): Move `node != nil` test to call sites
 	return node != nil && isFunctionLikeKind(node.Kind)
+}
+
+func IsFunctionOrSourceFile(node *Node) bool {
+	return IsFunctionLike(node) || IsSourceFile(node)
 }
 
 func IsClassLike(node *Node) bool {
@@ -443,7 +479,7 @@ func IsJSDocKind(kind Kind) bool {
 	return KindFirstJSDocNode <= kind && kind <= KindLastJSDocNode
 }
 
-func isJSDocTypeAssertion(node *Node) bool {
+func isJSDocTypeAssertion(_ *Node) bool {
 	return false // !!!
 }
 
@@ -606,6 +642,88 @@ func ModifiersToFlags(modifiers []*Node) ModifierFlags {
 		flags |= ModifierToFlag(modifier.Kind)
 	}
 	return flags
+}
+
+func CanHaveIllegalDecorators(node *Node) bool {
+	switch node.Kind {
+	case KindPropertyAssignment, KindShorthandPropertyAssignment,
+		KindFunctionDeclaration, KindConstructor,
+		KindIndexSignature, KindClassStaticBlockDeclaration,
+		KindMissingDeclaration, KindVariableStatement,
+		KindInterfaceDeclaration, KindTypeAliasDeclaration,
+		KindEnumDeclaration, KindModuleDeclaration,
+		KindImportEqualsDeclaration, KindImportDeclaration,
+		KindNamespaceExportDeclaration, KindExportDeclaration,
+		KindExportAssignment:
+		return true
+	}
+	return false
+}
+
+func CanHaveIllegalModifiers(node *Node) bool {
+	switch node.Kind {
+	case KindClassStaticBlockDeclaration,
+		KindPropertyAssignment,
+		KindShorthandPropertyAssignment,
+		KindMissingDeclaration,
+		KindNamespaceExportDeclaration:
+		return true
+	}
+	return false
+}
+
+func CanHaveModifiers(node *Node) bool {
+	switch node.Kind {
+	case KindTypeParameter,
+		KindParameter,
+		KindPropertySignature,
+		KindPropertyDeclaration,
+		KindMethodSignature,
+		KindMethodDeclaration,
+		KindConstructor,
+		KindGetAccessor,
+		KindSetAccessor,
+		KindIndexSignature,
+		KindConstructorType,
+		KindFunctionExpression,
+		KindArrowFunction,
+		KindClassExpression,
+		KindVariableStatement,
+		KindFunctionDeclaration,
+		KindClassDeclaration,
+		KindInterfaceDeclaration,
+		KindTypeAliasDeclaration,
+		KindEnumDeclaration,
+		KindModuleDeclaration,
+		KindImportEqualsDeclaration,
+		KindImportDeclaration,
+		KindExportAssignment,
+		KindExportDeclaration:
+		return true
+	}
+	return false
+}
+
+func CanHaveDecorators(node *Node) bool {
+	switch node.Kind {
+	case KindParameter,
+		KindPropertyDeclaration,
+		KindMethodDeclaration,
+		KindGetAccessor,
+		KindSetAccessor,
+		KindClassExpression,
+		KindClassDeclaration:
+		return true
+	}
+	return false
+}
+
+func IsFunctionOrModuleBlock(node *Node) bool {
+	return IsSourceFile(node) || IsModuleBlock(node) || IsBlock(node) && IsFunctionLike(node.Parent)
+}
+
+func IsFunctionExpressionOrArrowFunction(node *Node) bool {
+	return IsFunctionExpression(node) || IsArrowFunction(node)
 }
 
 func GetRootDeclaration(node *Node) *Node {

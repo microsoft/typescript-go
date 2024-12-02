@@ -1153,14 +1153,14 @@ func (p *Printer) emitParameter(node *ast.ParameterDeclaration) {
 	p.emitTokenNode(node.QuestionToken)
 
 	if node.Parent != nil && node.Parent.Kind == ast.KindJSDocFunctionType && node.Name() == nil {
-		p.emitTypeNode(node.TypeNode)
+		p.emitTypeNode(node.Type)
 	} else {
-		p.emitTypeAnnotation(node.TypeNode)
+		p.emitTypeAnnotation(node.Type)
 	}
 
 	// The comment position has to fallback to any present node within the parameter declaration because as it turns
 	// out, the parser can make parameter declarations with _just_ an initializer.
-	p.emitInitializer(node.Initializer, greatestEnd(node.Pos(), node.TypeNode, node.QuestionToken, node.Name(), node.Modifiers()), node.AsNode() /*, parenthesizer.parenthesizeExpressionForDisallowedComma*/) // !!!
+	p.emitInitializer(node.Initializer, greatestEnd(node.Pos(), node.Type, node.QuestionToken, node.Name(), node.Modifiers()), node.AsNode() /*, parenthesizer.parenthesizeExpressionForDisallowedComma*/) // !!!
 	p.exitNode(node.AsNode())
 }
 
@@ -1231,12 +1231,12 @@ func canEmitSimpleArrowHead(parentNode *ast.Node, parameters *ast.ParameterList)
 
 	return parameter.Pos() == greatestEnd(parent.Pos(), parent.Modifiers()) && // may not have parsed tokens between modifiers/start of parent and parameter
 		parent.TypeParameters == nil && // parent may not have type parameters
-		parent.ReturnType == nil && // parent may not have return type annotation
+		parent.Type == nil && // parent may not have return type annotation
 		!parameters.HasTrailingComma() && // parameters may not have a trailing comma
 		parameter.Modifiers() == nil && // parameter may not have decorators or modifiers
 		parameter.DotDotDotToken == nil && // parameter may not be rest
 		parameter.QuestionToken == nil && // parameter may not be optional
-		parameter.TypeNode == nil && // parameter may not have a type annotation
+		parameter.Type == nil && // parameter may not have a type annotation
 		parameter.Initializer == nil && // parameter may not have an initializer
 		ast.IsIdentifier(parameter.Name()) // parameter name must be identifier
 }
@@ -1266,7 +1266,7 @@ func (p *Printer) emitSignature(node *ast.Node) {
 	////}
 
 	p.emitParameters(node, n.Parameters)
-	p.emitTypeAnnotation(n.ReturnType)
+	p.emitTypeAnnotation(n.Type)
 }
 
 func (p *Printer) emitFunctionBody(body *ast.Block) {
@@ -1313,7 +1313,7 @@ func (p *Printer) emitPropertySignature(node *ast.PropertySignatureDeclaration) 
 	p.emitModifierList(node.AsNode(), node.Modifiers(), false /*allowDecorators*/)
 	p.emitPropertyName(node.Name())
 	p.emitTokenNode(node.PostfixToken)
-	p.emitTypeAnnotation(node.TypeNode)
+	p.emitTypeAnnotation(node.Type)
 	p.writeTrailingSemicolon()
 	p.exitNode(node.AsNode())
 }
@@ -1323,8 +1323,8 @@ func (p *Printer) emitPropertyDeclaration(node *ast.PropertyDeclaration) {
 	p.emitModifierList(node.AsNode(), node.Modifiers(), true /*allowDecorators*/)
 	p.emitPropertyName(node.Name())
 	p.emitTokenNode(node.PostfixToken)
-	p.emitTypeAnnotation(node.TypeNode)
-	p.emitInitializer(node.Initializer, greatestEnd(node.Name().End(), node.TypeNode, node.PostfixToken), node.AsNode())
+	p.emitTypeAnnotation(node.Type)
+	p.emitInitializer(node.Initializer, greatestEnd(node.Name().End(), node.Type, node.PostfixToken), node.AsNode())
 	p.writeTrailingSemicolon()
 	p.exitNode(node.AsNode())
 }
@@ -1440,7 +1440,7 @@ func (p *Printer) emitIndexSignature(node *ast.IndexSignatureDeclaration) {
 	p.increaseIndentIf(indented)
 	p.pushNameGenerationScope(node.AsNode())
 	p.emitParametersForIndexSignature(node.AsNode(), node.Parameters)
-	p.emitTypeAnnotation(node.ReturnType)
+	p.emitTypeAnnotation(node.Type)
 	p.writeTrailingSemicolon()
 	p.popNameGenerationScope(node.AsNode())
 	p.decreaseIndentIf(indented)
@@ -1536,11 +1536,11 @@ func (p *Printer) emitTypePredicate(node *ast.TypePredicateNode) {
 		p.writeSpace()
 	}
 	p.emitTypePredicateParameterName(node.ParameterName)
-	if node.TypeNode != nil {
+	if node.Type != nil {
 		p.writeSpace()
 		p.writeKeyword("is")
 		p.writeSpace()
-		p.emitTypeNode(node.TypeNode)
+		p.emitTypeNode(node.Type)
 	}
 	p.exitNode(node.AsNode())
 }
@@ -1571,7 +1571,7 @@ func (p *Printer) emitFunctionType(node *ast.FunctionTypeNode) {
 	p.writeSpace()
 	p.writePunctuation("=>")
 	p.writeSpace()
-	p.emitTypeNode(node.ReturnType)
+	p.emitTypeNode(node.Type)
 	p.popNameGenerationScope(node.AsNode())
 	p.decreaseIndentIf(indented)
 	p.exitNode(node.AsNode())
@@ -1591,7 +1591,7 @@ func (p *Printer) emitConstructorType(node *ast.ConstructorTypeNode) {
 	p.writeSpace()
 	p.writePunctuation("=>")
 	p.writeSpace()
-	p.emitTypeNode(node.ReturnType)
+	p.emitTypeNode(node.Type)
 	p.popNameGenerationScope(node.AsNode())
 	p.decreaseIndentIf(indented)
 	p.exitNode(node.AsNode())
@@ -1638,13 +1638,13 @@ func (p *Printer) emitTupleType(node *ast.TupleTypeNode) {
 func (p *Printer) emitRestType(node *ast.RestTypeNode) {
 	p.enterNode(node.AsNode())
 	p.writePunctuation("...")
-	p.emitTypeNode(node.TypeNode)
+	p.emitTypeNode(node.Type)
 	p.exitNode(node.AsNode())
 }
 
 func (p *Printer) emitOptionalType(node *ast.OptionalTypeNode) {
 	p.enterNode(node.AsNode())
-	p.emitTypeNode(node.TypeNode /*, parenthesizer.parenthesizeTypeOfOptionalType*/) // !!!
+	p.emitTypeNode(node.Type /*, parenthesizer.parenthesizeTypeOfOptionalType*/) // !!!
 	p.writePunctuation("?")
 	p.exitNode(node.AsNode())
 }
@@ -1656,7 +1656,7 @@ func (p *Printer) emitNamedTupleMember(node *ast.NamedTupleMember) {
 	p.emitPunctuationNode(node.QuestionToken)
 	p.emitTokenWithComment(ast.KindColonToken, greatestEnd(node.Name().End(), node.QuestionToken), WriteKindPunctuation, node.AsNode())
 	p.writeSpace()
-	p.emitTypeNode(node.TypeNode)
+	p.emitTypeNode(node.Type)
 	p.exitNode(node.AsNode())
 }
 
@@ -1701,7 +1701,7 @@ func (p *Printer) emitInferType(node *ast.InferTypeNode) {
 func (p *Printer) emitParenthesizedType(node *ast.ParenthesizedTypeNode) {
 	p.enterNode(node.AsNode())
 	p.writePunctuation("(")
-	p.emitTypeNode(node.TypeNode)
+	p.emitTypeNode(node.Type)
 	p.writePunctuation(")")
 	p.exitNode(node.AsNode())
 }
@@ -1716,7 +1716,7 @@ func (p *Printer) emitTypeOperator(node *ast.TypeOperatorNode) {
 	p.enterNode(node.AsNode())
 	p.emitTokenWithComment(node.Operator, node.Pos(), WriteKindKeyword, node.AsNode())
 	p.writeSpace()
-	p.emitTypeNode(node.TypeNode /*, core.IfElse(node.Operator == ast.KindReadonlyKeyword, parenthesizer.parenthesizeOperandOfReadonlyTypeOperator, parenthesizer.parenthesizeOperandOfTypeOperator)*/) // !!!
+	p.emitTypeNode(node.Type /*, core.IfElse(node.Operator == ast.KindReadonlyKeyword, parenthesizer.parenthesizeOperandOfReadonlyTypeOperator, parenthesizer.parenthesizeOperandOfTypeOperator)*/) // !!!
 	p.exitNode(node.AsNode())
 }
 
@@ -1773,7 +1773,7 @@ func (p *Printer) emitMappedType(node *ast.MappedTypeNode) {
 	}
 	p.writePunctuation(":")
 	p.writeSpace()
-	p.emitTypeNode(node.TypeNode)
+	p.emitTypeNode(node.Type)
 	p.writeTrailingSemicolon()
 	if node.Members != nil {
 		if singleLine {
@@ -1801,7 +1801,7 @@ func (p *Printer) emitLiteralType(node *ast.LiteralTypeNode) {
 
 func (p *Printer) emitTemplateTypeSpan(node *ast.TemplateLiteralTypeSpan) {
 	p.enterNode(node.AsNode())
-	p.emitTypeNode(node.TypeNode)
+	p.emitTypeNode(node.Type)
 	p.emitTemplateMiddleTail(node.Literal)
 	p.exitNode(node.AsNode())
 }
@@ -2122,7 +2122,7 @@ func (p *Printer) emitTaggedTemplateExpression(node *ast.TaggedTemplateExpressio
 func (p *Printer) emitTypeAssertionExpression(node *ast.TypeAssertion) {
 	p.enterNode(node.AsNode())
 	p.writePunctuation("<")
-	p.emitTypeNode(node.TypeNode)
+	p.emitTypeNode(node.Type)
 	p.writePunctuation(">")
 	p.emitExpression(node.Expression /*, parenthesizer.parenthesizeOperandOfPrefixUnary*/) // !!!
 	p.exitNode(node.AsNode())
@@ -2185,7 +2185,7 @@ func (p *Printer) emitArrowFunction(node *ast.ArrowFunction) {
 	p.pushNameGenerationScope(node.AsNode())
 	p.emitTypeParameters(node.AsNode(), node.TypeParameters)
 	p.emitParametersForArrow(node.AsNode(), node.Parameters)
-	p.emitTypeAnnotation(node.ReturnType)
+	p.emitTypeAnnotation(node.Type)
 	p.writeSpace()
 	p.emitTokenNode(node.EqualsGreaterThanToken)
 	p.writeSpace()
@@ -2381,11 +2381,11 @@ func (p *Printer) emitExpressionWithTypeArgumentsNode(node *ast.ExpressionWithTy
 func (p *Printer) emitAsExpression(node *ast.AsExpression) {
 	p.enterNode(node.AsNode())
 	p.emitExpression(node.Expression)
-	if node.TypeNode != nil {
+	if node.Type != nil {
 		p.writeSpace()
 		p.writeKeyword("as")
 		p.writeSpace()
-		p.emitTypeNode(node.TypeNode)
+		p.emitTypeNode(node.Type)
 	}
 	p.exitNode(node.AsNode())
 }
@@ -2393,11 +2393,11 @@ func (p *Printer) emitAsExpression(node *ast.AsExpression) {
 func (p *Printer) emitSatisfiesExpression(node *ast.SatisfiesExpression) {
 	p.enterNode(node.AsNode())
 	p.emitExpression(node.Expression)
-	if node.TypeNode != nil {
+	if node.Type != nil {
 		p.writeSpace()
 		p.writeKeyword("satisfies")
 		p.writeSpace()
-		p.emitTypeNode(node.TypeNode)
+		p.emitTypeNode(node.Type)
 	}
 	p.exitNode(node.AsNode())
 }
@@ -2842,9 +2842,9 @@ func (p *Printer) emitVariableDeclaration(node *ast.VariableDeclaration) {
 	p.enterNode(node.AsNode())
 	p.emitBindingName(node.Name())
 	p.emitPunctuationNode(node.ExclamationToken)
-	p.emitTypeAnnotation(node.TypeNode)
+	p.emitTypeAnnotation(node.Type)
 	// !!! old compiler can set a type node purely for emit. Is this necessary?
-	p.emitInitializer(node.Initializer, greatestEnd(node.Name().End(), node.TypeNode /*, node.Name().emitNode?.typeNode*/), node.AsNode() /*, parenthesizer.parenthesizeExpressionForDisallowedComma */) // !!!
+	p.emitInitializer(node.Initializer, greatestEnd(node.Name().End(), node.Type /*, node.Name().emitNode?.typeNode*/), node.AsNode() /*, parenthesizer.parenthesizeExpressionForDisallowedComma */) // !!!
 	p.exitNode(node.AsNode())
 }
 
@@ -2945,7 +2945,7 @@ func (p *Printer) emitTypeAliasDeclaration(node *ast.TypeAliasDeclaration) {
 	p.writeSpace()
 	p.writePunctuation("=")
 	p.writeSpace()
-	p.emitTypeNode(node.TypeNode)
+	p.emitTypeNode(node.Type)
 	p.writeTrailingSemicolon()
 	p.exitNode(node.AsNode())
 }
