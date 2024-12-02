@@ -2,26 +2,27 @@ package options
 
 import "strings"
 
-func (parser *CommandLineParser) GetOptionsNameMap() *NameMap {
-	if parser.workerDiagnostics.optionsNameMap != nil {
-		return parser.workerDiagnostics.optionsNameMap
-	}
+// todo: uncomment when CommandLineParser is implemented
+// func (parser *CommandLineParser) GetOptionsNameMap() *NameMap {
+// 	if parser.workerDiagnostics.optionsNameMap != nil {
+// 		return parser.workerDiagnostics.optionsNameMap
+// 	}
 
-	optionsNames := map[string]*CommandLineOption{}
-	shortOptionNames := map[string]string{}
-	for _, option := range parser.workerDiagnostics.didYouMean.OptionDeclarations {
-		optionsNames[strings.ToLower(option.Name)] = &option
-		if option.shortName != "" {
-			shortOptionNames[option.shortName] = option.Name
-		}
-	}
-	parser.workerDiagnostics.optionsNameMap = &NameMap{
-		optionsNames:     optionsNames,
-		shortOptionNames: shortOptionNames,
-	}
+// 	optionsNames := map[string]*CommandLineOption{}
+// 	shortOptionNames := map[string]string{}
+// 	for _, option := range parser.workerDiagnostics.didYouMean.OptionDeclarations {
+// 		optionsNames[strings.ToLower(option.Name)] = &option
+// 		if option.shortName != "" {
+// 			shortOptionNames[option.shortName] = option.Name
+// 		}
+// 	}
+// 	parser.workerDiagnostics.optionsNameMap = &NameMap{
+// 		optionsNames:     optionsNames,
+// 		shortOptionNames: shortOptionNames,
+// 	}
 
-	return parser.workerDiagnostics.optionsNameMap
-}
+// 	return parser.workerDiagnostics.optionsNameMap
+// }
 
 func GetNameMapFromList(optDecls []*CommandLineOption) *NameMap {
 	optionsNames := map[string]*CommandLineOption{}
