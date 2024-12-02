@@ -15,7 +15,7 @@ const (
 	CommandLineOptionTypeObject        CommandLineOptionKind = "object"
 	CommandLineOptionTypeList          CommandLineOptionKind = "list"
 	CommandLineOptionTypeListOrElement CommandLineOptionKind = "listOrElement"
-	CommandLineOptionTypeEnum          CommandLineOptionKind = "enum" //map
+	CommandLineOptionTypeEnum          CommandLineOptionKind = "enum" // map
 )
 
 type CommandLineOption struct {
@@ -59,7 +59,7 @@ type CommandLineOption struct {
 	// todo: revisit to see if this can be reduced to boolean
 	transpileOptionValue core.Tristate
 
-	// used in listtype
+	// used for CommandLineOptionTypeList
 	listPreserveFalsyValues bool
 }
 
