@@ -633,7 +633,7 @@ func tryGetEnd(node interface{ End() int }) (int, bool) {
 	case (core.TextRange):
 		return v.End(), true
 	default:
-		panic(fmt.Sprintf("unhandled type: %s", reflect.TypeOf(node).Name()))
+		panic("unhandled type: " + reflect.TypeOf(node).Name())
 	}
 	return 0, false
 }
