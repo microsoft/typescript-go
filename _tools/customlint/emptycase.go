@@ -74,8 +74,6 @@ func checkCaseStatement(pass *analysis.Pass, file *ast.File, stmt ast.Stmt, next
 		return
 	}
 
-	afterColon := colon + 1
-
 	if len(body) == 1 {
 		// Also error on a case statement containing a single empty block.
 		block, ok := body[0].(*ast.BlockStmt)
@@ -86,6 +84,7 @@ func checkCaseStatement(pass *analysis.Pass, file *ast.File, stmt ast.Stmt, next
 		return
 	}
 
+	afterColon := colon + 1
 	if _, found := slices.BinarySearchFunc(file.Comments, posRange{afterColon, nextCasePos}, posRangeCmp); found {
 		return
 	}
