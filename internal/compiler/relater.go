@@ -115,6 +115,10 @@ func (r *Relation) size() int {
 	return len(r.results)
 }
 
+func (c *Checker) isTypeIdenticalTo(source *Type, target *Type) bool {
+	return c.isTypeRelatedTo(source, target, c.identityRelation)
+}
+
 func (c *Checker) compareTypesIdentical(source *Type, target *Type) Ternary {
 	if c.isTypeRelatedTo(source, target, c.identityRelation) {
 		return TernaryTrue
@@ -132,6 +136,14 @@ func (c *Checker) isTypeSubtypeOf(source *Type, target *Type) bool {
 
 func (c *Checker) isTypeStrictSubtypeOf(source *Type, target *Type) bool {
 	return c.isTypeRelatedTo(source, target, c.strictSubtypeRelation)
+}
+
+func (c *Checker) isTypeComparableTo(source *Type, target *Type) bool {
+	return c.isTypeRelatedTo(source, target, c.comparableRelation)
+}
+
+func (c *Checker) areTypesComparable(type1 *Type, type2 *Type) bool {
+	return c.isTypeComparableTo(type1, type2) || c.isTypeComparableTo(type2, type1)
 }
 
 func (c *Checker) isTypeRelatedTo(source *Type, target *Type, relation *Relation) bool {
@@ -249,7 +261,11 @@ func (c *Checker) isEnumTypeRelatedTo(source *ast.Symbol, target *ast.Symbol, er
 	return source == target // !!!
 }
 
-func (c *Checker) checkTypeAssignableTo(source *Type, target *Type, errorNode *ast.Node, headMessage *diagnostics.Message, containingMessageChain func() *ast.MessageChain, errorOutputObject *ErrorOutputContainer) bool {
+func (c *Checker) checkTypeAssignableTo(source *Type, target *Type, errorNode *ast.Node, headMessage *diagnostics.Message) bool {
+	return c.checkTypeRelatedToEx(source, target, c.assignableRelation, errorNode, headMessage, nil, nil)
+}
+
+func (c *Checker) checkTypeAssignableToEx(source *Type, target *Type, errorNode *ast.Node, headMessage *diagnostics.Message, containingMessageChain func() *ast.MessageChain, errorOutputObject *ErrorOutputContainer) bool {
 	return c.checkTypeRelatedToEx(source, target, c.assignableRelation, errorNode, headMessage, containingMessageChain, errorOutputObject)
 }
 
@@ -275,8 +291,8 @@ func (c *Checker) checkTypeRelatedToEx(
 	if r.overflow {
 		// Record this relation as having failed such that we don't attempt the overflowing operation again.
 		id := getRelationKey(source, target, IntersectionStateNone, relation == c.identityRelation, false /*ignoreConstraints*/)
-		relation.set(id, RelationComparisonResultFailed|ifElse(r.relationCount <= 0, RelationComparisonResultComplexityOverflow, RelationComparisonResultStackDepthOverflow))
-		message := ifElse(r.relationCount <= 0, diagnostics.Excessive_complexity_comparing_types_0_and_1, diagnostics.Excessive_stack_depth_comparing_types_0_and_1)
+		relation.set(id, RelationComparisonResultFailed|core.IfElse(r.relationCount <= 0, RelationComparisonResultComplexityOverflow, RelationComparisonResultStackDepthOverflow))
+		message := core.IfElse(r.relationCount <= 0, diagnostics.Excessive_complexity_comparing_types_0_and_1, diagnostics.Excessive_stack_depth_comparing_types_0_and_1)
 		if errorNode == nil {
 			errorNode = c.currentNode
 		}
@@ -1040,8 +1056,8 @@ func (c *Checker) getVariancesWorker(symbol *ast.Symbol, typeParameters []*Type)
 				// invariance, covariance, contravariance or bivariance.
 				typeWithSuper := c.createMarkerType(symbol, tp, c.markerSuperType)
 				typeWithSub := c.createMarkerType(symbol, tp, c.markerSubType)
-				variance = (ifElse(c.isTypeAssignableTo(typeWithSub, typeWithSuper), VarianceFlagsCovariant, 0)) |
-					(ifElse(c.isTypeAssignableTo(typeWithSuper, typeWithSub), VarianceFlagsContravariant, 0))
+				variance = (core.IfElse(c.isTypeAssignableTo(typeWithSub, typeWithSuper), VarianceFlagsCovariant, 0)) |
+					(core.IfElse(c.isTypeAssignableTo(typeWithSuper, typeWithSub), VarianceFlagsContravariant, 0))
 				// If the instantiations appear to be related bivariantly it may be because the
 				// type parameter is independent (i.e. it isn't witnessed anywhere in the generic
 				// type). To determine this we compare instantiations where the type parameter is
@@ -1144,7 +1160,7 @@ func (c *Checker) compareSignaturesRelated(source *Signature, target *Signature,
 	sourceRestType := c.getNonArrayRestType(source)
 	targetRestType := c.getNonArrayRestType(target)
 	if sourceRestType != nil || targetRestType != nil {
-		c.instantiateType(ifElse(sourceRestType != nil, sourceRestType, targetRestType), reportUnreliableMarkers)
+		c.instantiateType(core.IfElse(sourceRestType != nil, sourceRestType, targetRestType), reportUnreliableMarkers)
 	}
 	kind := ast.KindUnknown
 	if target.declaration != nil {
@@ -1219,7 +1235,7 @@ func (c *Checker) compareSignaturesRelated(source *Signature, target *Signature,
 				c.getTypeFacts(sourceType, TypeFactsIsUndefinedOrNull) == c.getTypeFacts(targetType, TypeFactsIsUndefinedOrNull)
 			var related Ternary
 			if callbacks {
-				related = c.compareSignaturesRelated(targetSig, sourceSig, checkMode&SignatureCheckModeStrictArity|ifElse(strictVariance, SignatureCheckModeStrictCallback, SignatureCheckModeBivariantCallback), reportErrors, errorReporter, compareTypes, reportUnreliableMarkers)
+				related = c.compareSignaturesRelated(targetSig, sourceSig, checkMode&SignatureCheckModeStrictArity|core.IfElse(strictVariance, SignatureCheckModeStrictCallback, SignatureCheckModeBivariantCallback), reportErrors, errorReporter, compareTypes, reportUnreliableMarkers)
 			} else {
 				if checkMode&SignatureCheckModeCallback != 0 && !strictVariance {
 					related = compareTypes(sourceType, targetType, false /*reportErrors*/)
@@ -1278,11 +1294,11 @@ func (c *Checker) compareSignaturesRelated(source *Signature, target *Signature,
 				// method. The markers are elided in the final diagnostic chain and never actually reported.
 				var message *diagnostics.Message
 				if len(source.parameters) == 0 && len(target.parameters) == 0 {
-					message = ifElse(source.flags&SignatureFlagsConstruct != 0,
+					message = core.IfElse(source.flags&SignatureFlagsConstruct != 0,
 						diagnostics.Construct_signatures_with_no_arguments_have_incompatible_return_types_0_and_1,
 						diagnostics.Call_signatures_with_no_arguments_have_incompatible_return_types_0_and_1)
 				} else {
-					message = ifElse(source.flags&SignatureFlagsConstruct != 0,
+					message = core.IfElse(source.flags&SignatureFlagsConstruct != 0,
 						diagnostics.Construct_signature_return_types_0_and_1_are_incompatible,
 						diagnostics.Call_signature_return_types_0_and_1_are_incompatible)
 				}
@@ -1349,7 +1365,7 @@ func (c *Checker) getParameterCount(signature *Signature) int {
 	if signatureHasRestParameter(signature) {
 		restType := c.getTypeOfSymbol(signature.parameters[length-1])
 		if isTupleType(restType) {
-			return length + restType.TargetTupleType().fixedLength - ifElse(restType.TargetTupleType().combinedFlags&ElementFlagsVariable != 0, 0, 1)
+			return length + restType.TargetTupleType().fixedLength - core.IfElse(restType.TargetTupleType().combinedFlags&ElementFlagsVariable != 0, 0, 1)
 		}
 	}
 	return length
@@ -1417,7 +1433,7 @@ func (c *Checker) getTypeAtPosition(signature *Signature, pos int) *Type {
 }
 
 func (c *Checker) tryGetTypeAtPosition(signature *Signature, pos int) *Type {
-	paramCount := len(signature.parameters) - ifElse(signatureHasRestParameter(signature), 1, 0)
+	paramCount := len(signature.parameters) - core.IfElse(signatureHasRestParameter(signature), 1, 0)
 	if pos < paramCount {
 		return c.getTypeOfParameter(signature.parameters[pos])
 	}
@@ -1464,7 +1480,7 @@ func (c *Checker) getRestTypeAtPosition(source *Signature, pos int, readonly boo
 		var flags ElementFlags
 		if restType == nil || i < parameterCount-1 {
 			types[i] = c.getTypeAtPosition(source, i)
-			flags = ifElse(i < minArgumentCount, ElementFlagsRequired, ElementFlagsOptional)
+			flags = core.IfElse(i < minArgumentCount, ElementFlagsRequired, ElementFlagsOptional)
 		} else {
 			types[i] = restType
 			flags = ElementFlagsVariadic
@@ -1475,7 +1491,7 @@ func (c *Checker) getRestTypeAtPosition(source *Signature, pos int, readonly boo
 }
 
 func (c *Checker) getNameableDeclarationAtPosition(signature *Signature, pos int) *ast.Node {
-	paramCount := len(signature.parameters) - ifElse(signatureHasRestParameter(signature), 1, 0)
+	paramCount := len(signature.parameters) - core.IfElse(signatureHasRestParameter(signature), 1, 0)
 	if pos < paramCount {
 		decl := signature.parameters[pos].ValueDeclaration
 		if decl != nil && c.isValidDeclarationForTupleLabel(decl) {
@@ -1547,7 +1563,7 @@ func (c *Checker) getKnownKeysOfTupleType(t *Type) *Type {
 	for i := range fixedLength {
 		keys[i] = c.getStringLiteralType(strconv.Itoa(i))
 	}
-	keys[fixedLength] = c.getIndexType(ifElse(t.TargetTupleType().readonly, c.globalReadonlyArrayType, c.globalArrayType))
+	keys[fixedLength] = c.getIndexType(core.IfElse(t.TargetTupleType().readonly, c.globalReadonlyArrayType, c.globalArrayType))
 	return c.getUnionType(keys)
 }
 
@@ -1574,7 +1590,7 @@ func (c *Checker) isInstantiatedGenericParameter(signature *Signature, pos int) 
 }
 
 func (c *Checker) getParameterNameAtPosition(signature *Signature, pos int) string {
-	paramCount := len(signature.parameters) - ifElse(signatureHasRestParameter(signature), 1, 0)
+	paramCount := len(signature.parameters) - core.IfElse(signatureHasRestParameter(signature), 1, 0)
 	if pos < paramCount {
 		return signature.parameters[pos].Name
 	}
@@ -1621,7 +1637,7 @@ func (c *Checker) getTypePredicateOfSignature(sig *Signature) *TypePredicate {
 		default:
 			var typeNode *ast.TypeNode
 			if sig.declaration != nil {
-				typeNode = getEffectiveTypeAnnotationNode(sig.declaration)
+				typeNode = sig.declaration.Type()
 				switch {
 				case typeNode != nil && ast.IsTypePredicateNode(typeNode):
 					sig.resolvedTypePredicate = c.createTypePredicateFromTypePredicateNode(typeNode, sig)
@@ -1678,14 +1694,14 @@ func (c *Checker) typePredicateKindsMatch(a *TypePredicate, b *TypePredicate) bo
 func (c *Checker) createTypePredicateFromTypePredicateNode(node *ast.Node, signature *Signature) *TypePredicate {
 	predicateNode := node.AsTypePredicateNode()
 	var t *Type
-	if predicateNode.TypeNode != nil {
-		t = c.getTypeFromTypeNode(predicateNode.TypeNode)
+	if predicateNode.Type != nil {
+		t = c.getTypeFromTypeNode(predicateNode.Type)
 	}
 	if ast.IsThisTypeNode(predicateNode.ParameterName) {
-		kind := ifElse(predicateNode.AssertsModifier != nil, TypePredicateKindAssertsThis, TypePredicateKindThis)
+		kind := core.IfElse(predicateNode.AssertsModifier != nil, TypePredicateKindAssertsThis, TypePredicateKindThis)
 		return c.newTypePredicate(kind, "" /*parameterName*/, 0 /*parameterIndex*/, t)
 	}
-	kind := ifElse(predicateNode.AssertsModifier != nil, TypePredicateKindAssertsIdentifier, TypePredicateKindIdentifier)
+	kind := core.IfElse(predicateNode.AssertsModifier != nil, TypePredicateKindAssertsIdentifier, TypePredicateKindIdentifier)
 	name := predicateNode.ParameterName.Text()
 	index := core.FindIndex(signature.parameters, func(p *ast.Symbol) bool { return p.Name == name })
 	return c.newTypePredicate(kind, name, int32(index), t)
@@ -1844,6 +1860,194 @@ func (c *Checker) getEffectiveConstraintOfIntersection(types []*Type, targetIsUn
 	return nil
 }
 
+func (c *Checker) templateLiteralTypesDefinitelyUnrelated(source *TemplateLiteralType, target *TemplateLiteralType) bool {
+	// Two template literal types with diffences in their starting or ending text spans are definitely unrelated.
+	sourceStart := source.texts[0]
+	targetStart := target.texts[0]
+	sourceEnd := source.texts[len(source.texts)-1]
+	targetEnd := target.texts[len(target.texts)-1]
+	startLen := min(len(sourceStart), len(targetStart))
+	endLen := min(len(sourceEnd), len(targetEnd))
+	return sourceStart[:startLen] != targetStart[:startLen] || sourceEnd[len(sourceEnd)-endLen:] != targetEnd[len(targetEnd)-endLen:]
+}
+
+func (c *Checker) isTypeMatchedByTemplateLiteralType(source *Type, target *TemplateLiteralType) bool {
+	inferences := c.inferTypesFromTemplateLiteralType(source, target)
+	if inferences != nil {
+		for i, inference := range inferences {
+			if !c.isValidTypeForTemplateLiteralPlaceholder(inference, target.types[i]) {
+				return false
+			}
+		}
+		return true
+	}
+	return false
+}
+
+func (c *Checker) inferTypesFromTemplateLiteralType(source *Type, target *TemplateLiteralType) []*Type {
+	switch {
+	case source.flags&TypeFlagsStringLiteral != 0:
+		return c.inferFromLiteralPartsToTemplateLiteral([]string{getStringLiteralValue(source)}, nil, target)
+	case source.flags&TypeFlagsTemplateLiteral != 0:
+		if slices.Equal(source.AsTemplateLiteralType().texts, target.texts) {
+			return core.MapIndex(source.AsTemplateLiteralType().types, func(s *Type, i int) *Type {
+				if c.isTypeAssignableTo(c.getBaseConstraintOrType(s), c.getBaseConstraintOrType(target.types[i])) {
+					return s
+				}
+				return c.getStringLikeTypeForType(s)
+			})
+		}
+		return c.inferFromLiteralPartsToTemplateLiteral(source.AsTemplateLiteralType().texts, source.AsTemplateLiteralType().types, target)
+	default:
+		return nil
+	}
+}
+
+// This function infers from the text parts and type parts of a source literal to a target template literal. The number
+// of text parts is always one more than the number of type parts, and a source string literal is treated as a source
+// with one text part and zero type parts. The function returns an array of inferred string or template literal types
+// corresponding to the placeholders in the target template literal, or undefined if the source doesn't match the target.
+//
+// We first check that the starting source text part matches the starting target text part, and that the ending source
+// text part ends matches the ending target text part. We then iterate through the remaining target text parts, finding
+// a match for each in the source and inferring string or template literal types created from the segments of the source
+// that occur between the matches. During this iteration, seg holds the index of the current text part in the sourceTexts
+// array and pos holds the current character position in the current text part.
+//
+// Consider inference from type `<<${string}>.<${number}-${number}>>` to type `<${string}.${string}>`, i.e.
+//
+//	sourceTexts = ['<<', '>.<', '-', '>>']
+//	sourceTypes = [string, number, number]
+//	target.texts = ['<', '.', '>']
+//
+// We first match '<' in the target to the start of '<<' in the source and '>' in the target to the end of '>>' in
+// the source. The first match for the '.' in target occurs at character 1 in the source text part at index 1, and thus
+// the first inference is the template literal type `<${string}>`. The remainder of the source makes up the second
+// inference, the template literal type `<${number}-${number}>`.
+func (c *Checker) inferFromLiteralPartsToTemplateLiteral(sourceTexts []string, sourceTypes []*Type, target *TemplateLiteralType) []*Type {
+	lastSourceIndex := len(sourceTexts) - 1
+	sourceStartText := sourceTexts[0]
+	sourceEndText := sourceTexts[lastSourceIndex]
+	targetTexts := target.texts
+	lastTargetIndex := len(targetTexts) - 1
+	targetStartText := targetTexts[0]
+	targetEndText := targetTexts[lastTargetIndex]
+	if lastSourceIndex == 0 && len(sourceStartText) < len(targetStartText)+len(targetEndText) || !strings.HasPrefix(sourceStartText, targetStartText) || !strings.HasSuffix(sourceEndText, targetEndText) {
+		return nil
+	}
+	remainingEndText := sourceEndText[:len(sourceEndText)-len(targetEndText)]
+	seg := 0
+	pos := len(targetStartText)
+	var matches []*Type
+	getSourceText := func(index int) string {
+		if index < lastSourceIndex {
+			return sourceTexts[index]
+		}
+		return remainingEndText
+	}
+	addMatch := func(s int, p int) {
+		var matchType *Type
+		if s == seg {
+			matchType = c.getStringLiteralType(getSourceText(s)[pos:p])
+		} else {
+			matchTexts := make([]string, s-seg+1)
+			matchTexts[0] = sourceTexts[seg][pos:]
+			copy(matchTexts[1:], sourceTexts[seg+1:s])
+			matchTexts[s-seg] = getSourceText(s)[:p]
+			matchType = c.getTemplateLiteralType(matchTexts, sourceTypes[seg:s])
+		}
+		matches = append(matches, matchType)
+		seg = s
+		pos = p
+	}
+	for i := 1; i < lastTargetIndex; i++ {
+		delim := targetTexts[i]
+		if len(delim) > 0 {
+			s := seg
+			p := pos
+			for {
+				d := strings.Index(getSourceText(s)[p:], delim)
+				if d >= 0 {
+					p += d
+					break
+				}
+				s++
+				if s == len(sourceTexts) {
+					return nil
+				}
+				p = 0
+			}
+			addMatch(s, p)
+			pos += len(delim)
+		} else if pos < len(getSourceText(seg)) {
+			addMatch(seg, pos+1)
+		} else if seg < lastSourceIndex {
+			addMatch(seg+1, 0)
+		} else {
+			return nil
+		}
+	}
+	addMatch(lastSourceIndex, len(getSourceText(lastSourceIndex)))
+	return matches
+}
+
+func (c *Checker) getStringLikeTypeForType(t *Type) *Type {
+	if t.flags&(TypeFlagsAny|TypeFlagsStringLike) != 0 {
+		return t
+	}
+	return c.getTemplateLiteralType([]string{"", ""}, []*Type{t})
+}
+
+func (c *Checker) isValidTypeForTemplateLiteralPlaceholder(source *Type, target *Type) bool {
+	switch {
+	case target.flags&TypeFlagsIntersection != 0:
+		return core.Every(target.Types(), func(t *Type) bool {
+			return t == c.emptyTypeLiteralType || c.isValidTypeForTemplateLiteralPlaceholder(source, t)
+		})
+	case target.flags&TypeFlagsString != 0 || c.isTypeAssignableTo(source, target):
+		return true
+	case source.flags&TypeFlagsStringLiteral != 0:
+		value := getStringLiteralValue(source)
+		return target.flags&TypeFlagsNumber != 0 && isValidNumberString(value, false /*roundTripOnly*/) ||
+			target.flags&TypeFlagsBigInt != 0 && isValidBigIntString(value, false /*roundTripOnly*/) ||
+			target.flags&(TypeFlagsBooleanLiteral|TypeFlagsNullable) != 0 && value == target.AsIntrinsicType().intrinsicName ||
+			target.flags&TypeFlagsStringMapping != 0 && c.isMemberOfStringMapping(c.getStringLiteralType(value), target) ||
+			target.flags&TypeFlagsTemplateLiteral != 0 && c.isTypeMatchedByTemplateLiteralType(source, target.AsTemplateLiteralType())
+	case source.flags&TypeFlagsTemplateLiteral != 0:
+		texts := source.AsTemplateLiteralType().texts
+		return len(texts) == 2 && texts[0] == "" && texts[1] == "" && c.isTypeAssignableTo(source.AsTemplateLiteralType().types[0], target)
+	}
+	return false
+}
+
+func (c *Checker) isMemberOfStringMapping(source *Type, target *Type) bool {
+	switch {
+	case target.flags&TypeFlagsAny != 0:
+		return true
+	case target.flags&(TypeFlagsString|TypeFlagsTemplateLiteral) != 0:
+		return c.isTypeAssignableTo(source, target)
+	case target.flags&TypeFlagsStringMapping != 0:
+		// We need to see whether applying the same mappings of the target
+		// onto the source would produce an identical type *and* that
+		// it's compatible with the inner-most non-string-mapped type.
+		//
+		// The intuition here is that if same mappings don't affect the source at all,
+		// and the source is compatible with the unmapped target, then they must
+		// still reside in the same domain.
+		mapped, inner := c.applyTargetStringMappingToSource(source, target)
+		return mapped == source && c.isMemberOfStringMapping(source, inner)
+	}
+	return false
+}
+
+func (c *Checker) applyTargetStringMappingToSource(source *Type, target *Type) (*Type, *Type) {
+	inner := target.AsStringMappingType().target
+	if inner.flags&TypeFlagsStringMapping != 0 {
+		source, inner = c.applyTargetStringMappingToSource(source, inner)
+	}
+	return c.getStringMappingType(target.symbol, source), inner
+}
+
 func visibilityToString(flags ast.ModifierFlags) string {
 	if flags == ast.ModifierFlagsPrivate {
 		return "private"
@@ -1899,7 +2103,7 @@ func (r *Relater) isRelatedToEx(originalSource *Type, originalTarget *Type, recu
 	// skip all the checks we don't need and just return `isSimpleTypeRelatedTo` result
 	if originalSource.flags&TypeFlagsObject != 0 && originalTarget.flags&TypeFlagsPrimitive != 0 {
 		if r.relation == r.c.comparableRelation && originalTarget.flags&TypeFlagsNever == 0 && r.c.isSimpleTypeRelatedTo(originalTarget, originalSource, r.relation, nil) ||
-			r.c.isSimpleTypeRelatedTo(originalSource, originalTarget, r.relation, ifElse(reportErrors, r.reportError, nil)) {
+			r.c.isSimpleTypeRelatedTo(originalSource, originalTarget, r.relation, core.IfElse(reportErrors, r.reportError, nil)) {
 			return TernaryTrue
 		}
 		if reportErrors {
@@ -1952,7 +2156,7 @@ func (r *Relater) isRelatedToEx(originalSource *Type, originalTarget *Type, recu
 		}
 	}
 	if r.relation == r.c.comparableRelation && target.flags&TypeFlagsNever == 0 && r.c.isSimpleTypeRelatedTo(target, source, r.relation, nil) ||
-		r.c.isSimpleTypeRelatedTo(source, target, r.relation, ifElse(reportErrors, r.reportError, nil)) {
+		r.c.isSimpleTypeRelatedTo(source, target, r.relation, core.IfElse(reportErrors, r.reportError, nil)) {
 		return TernaryTrue
 	}
 	if source.flags&TypeFlagsStructuredOrInstantiable != 0 || target.flags&TypeFlagsStructuredOrInstantiable != 0 {
@@ -1960,7 +2164,7 @@ func (r *Relater) isRelatedToEx(originalSource *Type, originalTarget *Type, recu
 		if isPerformingExcessPropertyChecks {
 			if r.hasExcessProperties(source, target, reportErrors) {
 				if reportErrors {
-					r.reportRelationError(headMessage, source, ifElse(originalTarget.alias != nil, originalTarget, target))
+					r.reportRelationError(headMessage, source, core.IfElse(originalTarget.alias != nil, originalTarget, target))
 				}
 				return TernaryFalse
 			}
@@ -1972,8 +2176,8 @@ func (r *Relater) isRelatedToEx(originalSource *Type, originalTarget *Type, recu
 		isComparingJsxAttributes := source.objectFlags&ObjectFlagsJsxAttributes != 0
 		if isPerformingCommonPropertyChecks && !r.c.hasCommonProperties(source, target, isComparingJsxAttributes) {
 			if reportErrors {
-				sourceString := r.c.typeToString(ifElse(originalSource.alias != nil, originalSource, source))
-				targetString := r.c.typeToString(ifElse(originalTarget.alias != nil, originalTarget, target))
+				sourceString := r.c.typeToString(core.IfElse(originalSource.alias != nil, originalSource, source))
+				targetString := r.c.typeToString(core.IfElse(originalTarget.alias != nil, originalTarget, target))
 				calls := r.c.getSignaturesOfType(source, SignatureKindCall)
 				constructs := r.c.getSignaturesOfType(source, SignatureKindConstruct)
 				if len(calls) > 0 && r.isRelatedTo(r.c.getReturnTypeOfSignature(calls[0]), target, RecursionFlagsSource, false /*reportErrors*/) != TernaryFalse ||
@@ -2132,7 +2336,7 @@ func (c *Checker) isTypeSubsetOf(source *Type, target *Type) bool {
 
 func (c *Checker) isTypeSubsetOfUnion(source *Type, target *Type) bool {
 	if source.flags&TypeFlagsUnion != 0 {
-		for _, t := range source.AsUnionType().types {
+		for _, t := range source.Types() {
 			if containsType(target.Types(), t) {
 				return false
 			}
@@ -2379,7 +2583,7 @@ func (r *Relater) recursiveTypeRelatedTo(source *Type, target *Type, reportError
 				}
 			}
 			if reportErrors && entry&RelationComparisonResultOverflow != 0 {
-				message := ifElse(entry&RelationComparisonResultComplexityOverflow != 0,
+				message := core.IfElse(entry&RelationComparisonResultComplexityOverflow != 0,
 					diagnostics.Excessive_complexity_comparing_types_0_and_1,
 					diagnostics.Excessive_stack_depth_comparing_types_0_and_1)
 				r.reportError(message, r.c.typeToString(source), r.c.typeToString(target))
@@ -2766,7 +2970,7 @@ func (r *Relater) structuredTypeRelatedToWorker(source *Type, target *Type, repo
 			baseObjectType := r.c.getBaseConstraintOrType(objectType)
 			baseIndexType := r.c.getBaseConstraintOrType(indexType)
 			if !r.c.isGenericObjectType(baseObjectType) && !r.c.isGenericIndexType(baseIndexType) {
-				accessFlags := AccessFlagsWriting | (ifElse(baseObjectType != objectType, AccessFlagsNoIndexSignatures, 0))
+				accessFlags := AccessFlagsWriting | (core.IfElse(baseObjectType != objectType, AccessFlagsNoIndexSignatures, 0))
 				constraint := r.c.getIndexedAccessTypeOrUndefined(baseObjectType, baseIndexType, accessFlags, nil, nil)
 				if constraint != nil {
 					if reportErrors && originalErrorChain != nil {
@@ -2843,9 +3047,26 @@ func (r *Relater) structuredTypeRelatedToWorker(source *Type, target *Type, repo
 	case target.flags&TypeFlagsConditional != 0:
 		// !!!
 	case target.flags&TypeFlagsTemplateLiteral != 0:
-		// !!!
+		if source.flags&TypeFlagsTemplateLiteral != 0 {
+			if r.relation == r.c.comparableRelation {
+				if r.c.templateLiteralTypesDefinitelyUnrelated(source.AsTemplateLiteralType(), target.AsTemplateLiteralType()) {
+					return TernaryFalse
+				}
+				return TernaryTrue
+			}
+			// Report unreliable variance for type variables referenced in template literal type placeholders.
+			// For example, `foo-${number}` is related to `foo-${string}` even though number isn't related to string.
+			r.c.instantiateType(source, r.c.reportUnreliableMapper)
+		}
+		if r.c.isTypeMatchedByTemplateLiteralType(source, target.AsTemplateLiteralType()) {
+			return TernaryTrue
+		}
 	case target.flags&TypeFlagsStringMapping != 0:
-		// !!!
+		if source.flags&TypeFlagsStringMapping == 0 {
+			if r.c.isMemberOfStringMapping(source, target) {
+				return TernaryTrue
+			}
+		}
 	case r.c.isGenericMappedType(target) && r.relation != r.c.identityRelation:
 		// !!!
 	}
@@ -2919,7 +3140,23 @@ func (r *Relater) structuredTypeRelatedToWorker(source *Type, target *Type, repo
 			}
 		}
 	case source.flags&TypeFlagsStringMapping != 0:
-		// !!!
+		if target.flags&TypeFlagsStringMapping != 0 {
+			if source.AsStringMappingType().symbol != target.AsStringMappingType().symbol {
+				return TernaryFalse
+			}
+			result = r.isRelatedTo(source.AsStringMappingType().target, target.AsStringMappingType().target, RecursionFlagsBoth, reportErrors)
+			if result != TernaryFalse {
+				return result
+			}
+		} else {
+			constraint := r.c.getBaseConstraintOfType(source)
+			if constraint != nil {
+				result = r.isRelatedTo(constraint, target, RecursionFlagsSource, reportErrors)
+				if result != TernaryFalse {
+					return result
+				}
+			}
+		}
 	default:
 		// An empty object type is related to any mapped type that includes a '?' modifier.
 		if r.relation != r.c.subtypeRelation && r.relation != r.c.strictSubtypeRelation && isPartialMappedType(target) && r.c.isEmptyObjectType(source) {
@@ -3088,11 +3325,11 @@ func (r *Relater) typeArgumentsRelatedTo(sources []*Type, targets []*Type, varia
 // that S and T are contra-variant whereas X and Y are co-variant.
 func (r *Relater) mappedTypeRelatedTo(source *Type, target *Type, reportErrors bool) Ternary {
 	// !!!
-	// modifiersRelated := relation == c.comparableRelation || (ifelse(relation == c.identityRelation, c.getMappedTypeModifiers(source) == c.getMappedTypeModifiers(target), c.getCombinedMappedTypeOptionality(source) <= c.getCombinedMappedTypeOptionality(target)))
+	// modifiersRelated := relation == c.comparableRelation || (core.Ifelse(relation == c.identityRelation, c.getMappedTypeModifiers(source) == c.getMappedTypeModifiers(target), c.getCombinedMappedTypeOptionality(source) <= c.getCombinedMappedTypeOptionality(target)))
 	// if modifiersRelated {
 	// 	var result Ternary
 	// 	targetConstraint := c.getConstraintTypeFromMappedType(target)
-	// 	sourceConstraint := c.instantiateType(c.getConstraintTypeFromMappedType(source), ifelse(c.getCombinedMappedTypeOptionality(source) < 0, c.reportUnmeasurableMapper, c.reportUnreliableMapper))
+	// 	sourceConstraint := c.instantiateType(c.getConstraintTypeFromMappedType(source), core.Ifelse(c.getCombinedMappedTypeOptionality(source) < 0, c.reportUnmeasurableMapper, c.reportUnreliableMapper))
 	// 	if /* TODO(TS-TO-GO) EqualsToken BinaryExpression: result = isRelatedTo(targetConstraint, sourceConstraint, RecursionFlags.Both, reportErrors) */ TODO {
 	// 		mapper := c.createTypeMapper([]TypeParameter{c.getTypeParameterFromMappedType(source)}, []TypeParameter{c.getTypeParameterFromMappedType(target)})
 	// 		if c.instantiateType(c.getNameTypeFromMappedType(source), mapper) == c.instantiateType(c.getNameTypeFromMappedType(target), mapper) {
@@ -3381,7 +3618,7 @@ func (r *Relater) propertyRelatedTo(source *Type, target *Type, sourceProp *ast.
 				if sourcePropFlags&ast.ModifierFlagsPrivate != 0 && targetPropFlags&ast.ModifierFlagsPrivate != 0 {
 					r.reportError(diagnostics.Types_have_separate_declarations_of_a_private_property_0, r.c.symbolToString(targetProp))
 				} else {
-					r.reportError(diagnostics.Property_0_is_private_in_type_1_but_not_in_type_2, r.c.symbolToString(targetProp), r.c.typeToString(ifElse(sourcePropFlags&ast.ModifierFlagsPrivate != 0, source, target)), r.c.typeToString(ifElse(sourcePropFlags&ast.ModifierFlagsPrivate != 0, target, source)))
+					r.reportError(diagnostics.Property_0_is_private_in_type_1_but_not_in_type_2, r.c.symbolToString(targetProp), r.c.typeToString(core.IfElse(sourcePropFlags&ast.ModifierFlagsPrivate != 0, source, target)), r.c.typeToString(core.IfElse(sourcePropFlags&ast.ModifierFlagsPrivate != 0, target, source)))
 				}
 			}
 			return TernaryFalse
@@ -4019,4 +4256,45 @@ func chainDepth(chain *ErrorChain) int {
 		chain = chain.next
 	}
 	return depth
+}
+
+// An object type S is considered to be derived from an object type T if
+// S is a union type and every constituent of S is derived from T,
+// T is a union type and S is derived from at least one constituent of T, or
+// S is an intersection type and some constituent of S is derived from T, or
+// S is a type variable with a base constraint that is derived from T, or
+// T is {} and S is an object-like type (ensuring {} is less derived than Object), or
+// T is one of the global types Object and Function and S is a subtype of T, or
+// T occurs directly or indirectly in an 'extends' clause of S.
+// Note that this check ignores type parameters and only considers the
+// inheritance hierarchy.
+func (c *Checker) isTypeDerivedFrom(source *Type, target *Type) bool {
+	switch {
+	case source.flags&TypeFlagsUnion != 0:
+		return core.Every(source.AsUnionType().types, func(t *Type) bool {
+			return c.isTypeDerivedFrom(t, target)
+		})
+	case target.flags&TypeFlagsUnion != 0:
+		return core.Some(target.AsUnionType().types, func(t *Type) bool {
+			return c.isTypeDerivedFrom(source, t)
+		})
+	case source.flags&TypeFlagsIntersection != 0:
+		return core.Some(source.AsIntersectionType().types, func(t *Type) bool {
+			return c.isTypeDerivedFrom(t, target)
+		})
+	case source.flags&TypeFlagsInstantiableNonPrimitive != 0:
+		constraint := c.getBaseConstraintOfType(source)
+		if constraint == nil {
+			constraint = c.unknownType
+		}
+		return c.isTypeDerivedFrom(constraint, target)
+	case c.isEmptyAnonymousObjectType(target):
+		return source.flags&(TypeFlagsObject|TypeFlagsNonPrimitive) != 0
+	case target == c.globalObjectType:
+		return source.flags&(TypeFlagsObject|TypeFlagsNonPrimitive) != 0 && !c.isEmptyAnonymousObjectType(source)
+	case target == c.globalFunctionType:
+		return source.flags&TypeFlagsObject != 0 && c.isFunctionObjectType(source)
+	default:
+		return c.hasBaseType(source, c.getTargetType(target)) || (c.isArrayType(target) && !c.isReadonlyArrayType(target) && c.isTypeDerivedFrom(source, c.globalReadonlyArrayType))
+	}
 }

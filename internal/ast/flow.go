@@ -26,13 +26,13 @@ const (
 
 type FlowNode struct {
 	Flags       FlowFlags
-	Node        any
+	Node        *Node     // Associated AST node
 	Antecedent  *FlowNode // Antecedent for all but FlowLabel
 	Antecedents *FlowList // Linked list of antecedents for FlowLabel
 }
 
 type FlowList struct {
-	Node *FlowNode
+	Flow *FlowNode
 	Next *FlowList
 }
 
@@ -41,17 +41,38 @@ type FlowLabel = FlowNode
 var UnreachableFlow = &FlowNode{Flags: FlowFlagsUnreachable}
 var ReportedUnreachableFlow = &FlowNode{Flags: FlowFlagsUnreachable}
 
-// FlowSwitchClauseData
+// FlowSwitchClauseData (synthetic AST node for FlowFlagsSwitchClause)
 
 type FlowSwitchClauseData struct {
-	SwitchStatement *SwitchStatement
+	NodeBase
+	SwitchStatement *Node
 	ClauseStart     int32 // Start index of case/default clause range
 	ClauseEnd       int32 // End index of case/default clause range
 }
 
-// FlowReduceLabelData
+func NewFlowSwitchClauseData(switchStatement *Node, clauseStart int, clauseEnd int) *Node {
+	node := &FlowSwitchClauseData{}
+	node.SwitchStatement = switchStatement
+	node.ClauseStart = int32(clauseStart)
+	node.ClauseEnd = int32(clauseEnd)
+	return newNode(KindUnknown, node)
+}
+
+func (node *FlowSwitchClauseData) IsEmpty() bool {
+	return node.ClauseStart == node.ClauseEnd
+}
+
+// FlowReduceLabelData (synthetic AST node for FlowFlagsReduceLabel)
 
 type FlowReduceLabelData struct {
+	NodeBase
 	Target      *FlowLabel // Target label
 	Antecedents *FlowList  // Temporary antecedent list
+}
+
+func NewFlowReduceLabelData(target *FlowLabel, antecedents *FlowList) *Node {
+	node := &FlowReduceLabelData{}
+	node.Target = target
+	node.Antecedents = antecedents
+	return newNode(KindUnknown, node)
 }

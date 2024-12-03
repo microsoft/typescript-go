@@ -1,4 +1,4 @@
-package compiler
+package scanner
 
 import (
 	"fmt"
@@ -8,8 +8,8 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/compiler/diagnostics"
-	"github.com/microsoft/typescript-go/internal/compiler/stringutil"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/stringutil"
 )
 
 type EscapeSequenceScanningFlags int32
@@ -239,6 +239,10 @@ func (s *Scanner) Text() string {
 
 func (s *Scanner) Token() ast.Kind {
 	return s.token
+}
+
+func (s *Scanner) TokenFlags() ast.TokenFlags {
+	return s.tokenFlags
 }
 
 func (s *Scanner) TokenFullStart() int {
@@ -689,7 +693,7 @@ func (s *Scanner) Scan() ast.Kind {
 			cp := s.peekUnicodeEscape()
 			if cp >= 0 && isIdentifierStart(cp, s.languageVersion) {
 				s.tokenValue = string(s.scanUnicodeEscape(true)) + s.scanIdentifierParts()
-				s.token = getIdentifierToken(s.tokenValue)
+				s.token = GetIdentifierToken(s.tokenValue)
 			} else {
 				s.scanInvalidCharacter()
 			}
@@ -729,7 +733,7 @@ func (s *Scanner) Scan() ast.Kind {
 				break
 			}
 			if s.scanIdentifier(0) {
-				s.token = getIdentifierToken(s.tokenValue)
+				s.token = GetIdentifierToken(s.tokenValue)
 				break
 			}
 			ch, size := s.charAndSize()
@@ -842,18 +846,18 @@ func (s *Scanner) ReScanSlashToken() ast.Kind {
 	return s.token
 }
 
-func (s *Scanner) reScanJsxToken(allowMultilineJsxText bool) ast.Kind {
+func (s *Scanner) ReScanJsxToken(allowMultilineJsxText bool) ast.Kind {
 	s.pos = s.fullStartPos
 	s.tokenStart = s.fullStartPos
-	s.token = s.scanJsxTokenEx(allowMultilineJsxText)
+	s.token = s.ScanJsxTokenEx(allowMultilineJsxText)
 	return s.token
 }
 
-func (s *Scanner) scanJsxToken() ast.Kind {
-	return s.scanJsxTokenEx(true /*allowMultilineJsxText*/)
+func (s *Scanner) ScanJsxToken() ast.Kind {
+	return s.ScanJsxTokenEx(true /*allowMultilineJsxText*/)
 }
 
-func (s *Scanner) scanJsxTokenEx(allowMultilineJsxText bool) ast.Kind {
+func (s *Scanner) ScanJsxTokenEx(allowMultilineJsxText bool) ast.Kind {
 	s.fullStartPos = s.pos
 	s.tokenStart = s.pos
 	ch := s.char()
@@ -921,7 +925,7 @@ func (s *Scanner) scanJsxTokenEx(allowMultilineJsxText bool) ast.Kind {
 }
 
 // Scans a JSX identifier; these differ from normal identifiers in that they allow dashes
-func (s *Scanner) scanJsxIdentifier() ast.Kind {
+func (s *Scanner) ScanJsxIdentifier() ast.Kind {
 	if tokenIsIdentifierOrKeyword(s.token) {
 		// An identifier or keyword has already been parsed - check for a `-` or a single instance of `:` and then append it and
 		// everything after it to the token
@@ -943,12 +947,12 @@ func (s *Scanner) scanJsxIdentifier() ast.Kind {
 				break
 			}
 		}
-		s.token = getIdentifierToken(s.tokenValue)
+		s.token = GetIdentifierToken(s.tokenValue)
 	}
 	return s.token
 }
 
-func (s *Scanner) scanJsxAttributeValue() ast.Kind {
+func (s *Scanner) ScanJsxAttributeValue() ast.Kind {
 	s.fullStartPos = s.pos
 	switch s.char() {
 	case '"', '\'':
@@ -961,10 +965,10 @@ func (s *Scanner) scanJsxAttributeValue() ast.Kind {
 	}
 }
 
-func (s *Scanner) reScanJsxAttributeValue() ast.Kind {
+func (s *Scanner) ReScanJsxAttributeValue() ast.Kind {
 	s.pos = s.fullStartPos
 	s.tokenStart = s.fullStartPos
-	return s.scanJsxAttributeValue()
+	return s.ScanJsxAttributeValue()
 }
 
 func (s *Scanner) scanIdentifier(prefixLength int) bool {
@@ -980,7 +984,7 @@ func (s *Scanner) scanIdentifier(prefixLength int) bool {
 				break
 			}
 		}
-		if ch <= 0x7F || ch != '\\' {
+		if ch <= 0x7F && ch != '\\' {
 			s.tokenValue = s.text[start:s.pos]
 			return true
 		}
@@ -1079,18 +1083,18 @@ func (s *Scanner) scanTemplateAndSetTokenValue(shouldEmitInvalidEscapeError bool
 				s.tokenFlags |= ast.TokenFlagsUnterminated
 				s.error(diagnostics.Unterminated_template_literal)
 			}
-			token = ifElse(startedWithBacktick, ast.KindNoSubstitutionTemplateLiteral, ast.KindTemplateTail)
+			token = core.IfElse(startedWithBacktick, ast.KindNoSubstitutionTemplateLiteral, ast.KindTemplateTail)
 			break
 		}
 		if ch == '$' && s.charAt(1) == '{' {
 			contents += s.text[start:s.pos]
 			s.pos += 2
-			token = ifElse(startedWithBacktick, ast.KindTemplateHead, ast.KindTemplateMiddle)
+			token = core.IfElse(startedWithBacktick, ast.KindTemplateHead, ast.KindTemplateMiddle)
 			break
 		}
 		if ch == '\\' {
 			contents += s.text[start:s.pos]
-			contents += s.scanEscapeSequence(EscapeSequenceScanningFlagsString | ifElse(shouldEmitInvalidEscapeError, EscapeSequenceScanningFlagsReportErrors, 0))
+			contents += s.scanEscapeSequence(EscapeSequenceScanningFlagsString | core.IfElse(shouldEmitInvalidEscapeError, EscapeSequenceScanningFlagsReportErrors, 0))
 			start = s.pos
 			continue
 		}
@@ -1343,14 +1347,14 @@ func (s *Scanner) scanNumber() ast.Kind {
 	}
 	if s.tokenFlags&ast.TokenFlagsContainsLeadingZero != 0 {
 		s.errorAt(diagnostics.Decimals_with_leading_zeros_are_not_allowed, start, s.pos-start)
-		s.tokenValue = numberToString(stringToNumber(s.tokenValue))
+		s.tokenValue = stringutil.FromNumber(stringutil.ToNumber(s.tokenValue))
 		return ast.KindNumericLiteral
 	}
 	var result ast.Kind
 	if fixedPartEnd == s.pos {
 		result = s.scanBigIntSuffix()
 	} else {
-		s.tokenValue = numberToString(stringToNumber(s.tokenValue))
+		s.tokenValue = stringutil.FromNumber(stringutil.ToNumber(s.tokenValue))
 		result = ast.KindNumericLiteral
 	}
 	ch, _ := s.charAndSize()
@@ -1508,7 +1512,7 @@ func (s *Scanner) scanBigIntSuffix() ast.Kind {
 			return ast.KindNumericLiteral
 		}
 	}
-	s.tokenValue = numberToString(stringToNumber(s.tokenValue))
+	s.tokenValue = stringutil.FromNumber(stringutil.ToNumber(s.tokenValue))
 	return ast.KindNumericLiteral
 }
 
@@ -1519,7 +1523,7 @@ func (s *Scanner) scanInvalidCharacter() {
 	s.token = ast.KindUnknown
 }
 
-func getIdentifierToken(str string) ast.Kind {
+func GetIdentifierToken(str string) ast.Kind {
 	if len(str) >= 2 && len(str) <= 12 && str[0] >= 'a' && str[0] <= 'z' {
 		keyword := textToKeyword[str]
 		if keyword != ast.KindUnknown {
@@ -1543,11 +1547,11 @@ func isIdentifierPart(ch rune, languageVersion core.ScriptTarget) bool {
 }
 
 func isUnicodeIdentifierStart(ch rune, languageVersion core.ScriptTarget) bool {
-	return isInUnicodeRanges(ch, ifElse(languageVersion >= core.ScriptTargetES2015, unicodeESNextIdentifierStart, unicodeES5IdentifierStart))
+	return isInUnicodeRanges(ch, core.IfElse(languageVersion >= core.ScriptTargetES2015, unicodeESNextIdentifierStart, unicodeES5IdentifierStart))
 }
 
 func isUnicodeIdentifierPart(ch rune, languageVersion core.ScriptTarget) bool {
-	return isInUnicodeRanges(ch, ifElse(languageVersion >= core.ScriptTargetES2015, unicodeESNextIdentifierPart, unicodeES5IdentifierPart))
+	return isInUnicodeRanges(ch, core.IfElse(languageVersion >= core.ScriptTargetES2015, unicodeESNextIdentifierPart, unicodeES5IdentifierPart))
 }
 
 func isInUnicodeRanges(cp rune, ranges []rune) bool {
@@ -1616,7 +1620,7 @@ func SkipTrivia(text string, pos int) int {
 	return skipTriviaEx(text, pos, nil)
 }
 func skipTriviaEx(text string, pos int, options *skipTriviaOptions) int {
-	if positionIsSynthesized(pos) {
+	if ast.PositionIsSynthesized(pos) {
 		return pos
 	}
 	if options == nil {
@@ -1782,7 +1786,7 @@ func scanShebangTrivia(text string, pos int) int {
 	return pos
 }
 
-func getScannerForSourceFile(sourceFile *ast.SourceFile, pos int) *Scanner {
+func GetScannerForSourceFile(sourceFile *ast.SourceFile, pos int) *Scanner {
 	s := NewScanner()
 	s.text = sourceFile.Text
 	s.pos = pos
@@ -1792,12 +1796,12 @@ func getScannerForSourceFile(sourceFile *ast.SourceFile, pos int) *Scanner {
 	return s
 }
 
-func getRangeOfTokenAtPosition(sourceFile *ast.SourceFile, pos int) core.TextRange {
-	s := getScannerForSourceFile(sourceFile, pos)
+func GetRangeOfTokenAtPosition(sourceFile *ast.SourceFile, pos int) core.TextRange {
+	s := GetScannerForSourceFile(sourceFile, pos)
 	return core.NewTextRange(s.tokenStart, s.pos)
 }
 
-func computeLineOfPosition(lineStarts []core.TextPos, pos int) int {
+func ComputeLineOfPosition(lineStarts []core.TextPos, pos int) int {
 	low := 0
 	high := len(lineStarts) - 1
 	for low <= high {
@@ -1814,21 +1818,21 @@ func computeLineOfPosition(lineStarts []core.TextPos, pos int) int {
 	return low - 1
 }
 
-func getLineStarts(sourceFile *ast.SourceFile) []core.TextPos {
+func GetLineStarts(sourceFile *ast.SourceFile) []core.TextPos {
 	if sourceFile.LineMap == nil {
-		sourceFile.LineMap = stringutil.ComputeLineStarts(sourceFile.Text)
+		sourceFile.LineMap = core.ComputeLineStarts(sourceFile.Text)
 	}
 	return sourceFile.LineMap
 }
 
 func GetLineAndCharacterOfPosition(sourceFile *ast.SourceFile, pos int) (line int, character int) {
-	line = computeLineOfPosition(getLineStarts(sourceFile), pos)
+	line = ComputeLineOfPosition(GetLineStarts(sourceFile), pos)
 	character = utf8.RuneCountInString(sourceFile.Text[sourceFile.LineMap[line]:pos])
 	return
 }
 
-func getEndLinePosition(sourceFile *ast.SourceFile, line int) int {
-	pos := int(getLineStarts(sourceFile)[line])
+func GetEndLinePosition(sourceFile *ast.SourceFile, line int) int {
+	pos := int(GetLineStarts(sourceFile)[line])
 	for {
 		ch, size := utf8.DecodeRuneInString(sourceFile.Text[pos:])
 		if size == 0 || stringutil.IsLineBreak(ch) {
@@ -1839,7 +1843,7 @@ func getEndLinePosition(sourceFile *ast.SourceFile, line int) int {
 }
 
 func GetPositionOfLineAndCharacter(sourceFile *ast.SourceFile, line int, character int) int {
-	return ComputePositionOfLineAndCharacter(getLineStarts(sourceFile), line, character)
+	return ComputePositionOfLineAndCharacter(GetLineStarts(sourceFile), line, character)
 }
 
 func ComputePositionOfLineAndCharacter(lineStarts []core.TextPos, line int, character int) int {
