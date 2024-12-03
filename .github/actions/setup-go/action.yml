@@ -3,7 +3,7 @@ description: Setup Go
 
 inputs:
   go-version:
-    default: ">=1.23.0"
+    default: '>=1.23.0'
 
 runs:
   using: composite
@@ -17,6 +17,7 @@ runs:
 
     - name: debug
       run: echo $JOBS
+      shell: bash
       env:
         JOBS: ${{ toJson(github.jobs) }}
 
