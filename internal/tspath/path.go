@@ -357,10 +357,10 @@ func getCanonicalFileName(fileName string, useCaseSensitiveFileNames bool) strin
 	if useCaseSensitiveFileNames {
 		return fileName
 	}
-	return toFileNameLowerCase(fileName)
+	return ToFileNameLowerCase(fileName)
 }
 
-func toFileNameLowerCase(fileName string) string {
+func ToFileNameLowerCase(fileName string) string {
 	return fileNameLowerCaseRegExp.ReplaceAllStringFunc(fileName, strings.ToLower)
 }
 

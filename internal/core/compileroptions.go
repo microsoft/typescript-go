@@ -2,6 +2,20 @@ package core
 
 //go:generate go run golang.org/x/tools/cmd/stringer -type=ModuleKind,ScriptTarget -output=compileroptions_stringer_generated.go
 
+type CompilerOptionsValue struct {
+	StringValue      string
+	NumberValue      float64 //number
+	BooleanValue     bool
+	StringArrayValue []string
+	NumberArrayValue []float64 //number
+	MapLikeValue     *map[string][]string
+	//PluginImportArray         *[]pluginImport
+	//ProjectReferenceArray     *[]module.ResolvedProjectReference //*[]compiler.ProjectReference
+	NullValue                 bool
+	UndefinedValue            bool
+	CompilerOptionsValueSlice []CompilerOptionsValue //maybe not needed
+	//(string | number)[]
+}
 type CompilerOptions struct {
 	AllowJs                            Tristate             `json:"allowJs"`
 	AllowSyntheticDefaultImports       Tristate             `json:"allowSyntheticDefaultImports"`
@@ -37,11 +51,16 @@ type CompilerOptions struct {
 	UseDefineForClassFields            Tristate             `json:"useDefineForClassFields"`
 	UseUnknownInCatchVariables         Tristate             `json:"useUnknownInCatchVariables"`
 	VerbatimModuleSyntax               Tristate             `json:"verbatimModuleSyntax"`
+	MaxNodeModuleJsDepth               Tristate             `json:"maxNodeModuleJsDepth"`
+	SkipLibCheck                       Tristate             `json:"skipLibCheck"`
+	NoEmit                             Tristate             `json:"noEmit"`
+	Lib                                []string             `json:"lib"`
 
 	// Internal fields
 	ConfigFilePath  string   `json:"configFilePath"`
 	NoDtsResolution Tristate `json:"noDtsResolution"`
 	PathsBasePath   string   `json:"pathsBasePath"`
+	Option          map[string]CompilerOptionsValue
 }
 
 func (options *CompilerOptions) GetEmitScriptTarget() ScriptTarget {

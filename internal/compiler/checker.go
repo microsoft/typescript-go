@@ -4585,7 +4585,7 @@ func (c *Checker) getTypeForVariableLikeDeclaration(declaration *ast.Node, inclu
 		// use control flow tracked 'any' type for non-ambient, non-exported var or let variables with no
 		// initializer or a 'null' or 'undefined' initializer.
 		variableDeclaration := declaration.AsVariableDeclaration()
-		if c.getCombinedNodeFlagsCached(declaration)&ast.NodeFlagsConstant == 0 && (variableDeclaration.Initializer == nil || c.isNullOrUndefined(variableDeclaration.Initializer)) {
+		if c.getCombinedNodeFlagsCached(declaration)&ast.NodeFlagsConstant == 0 && (variableDeclaration.Initializer == nil || c.IsNullOrUndefined(variableDeclaration.Initializer)) {
 			return c.autoType
 		}
 		// Use control flow tracked 'any[]' type for non-ambient, non-exported variables with an empty array
@@ -5248,7 +5248,7 @@ func isUnconstrainedTypeParameter(tp *Type) bool {
 	return true
 }
 
-func (c *Checker) isNullOrUndefined(node *ast.Node) bool {
+func (c *Checker) IsNullOrUndefined(node *ast.Node) bool {
 	expr := ast.SkipParentheses(node)
 	switch expr.Kind {
 	case ast.KindNullKeyword:
