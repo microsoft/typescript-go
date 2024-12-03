@@ -52,8 +52,8 @@ func checkCases(pass *analysis.Pass, file *ast.File, clause *ast.BlockStmt) {
 
 	for i, stmt := range clause.List {
 		nextCasePos := endOfBlock
-		if j := i + 1; j < len(clause.List) {
-			nextCasePos = clause.List[j].Pos()
+		if next := i + 1; next < len(clause.List) {
+			nextCasePos = clause.List[next].Pos()
 		}
 		checkCaseStatement(pass, file, stmt, nextCasePos)
 	}
