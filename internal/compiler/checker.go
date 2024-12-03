@@ -157,7 +157,10 @@ type FlowLoopInfo struct {
 
 // InferenceContext
 
-type InferenceContext struct{}
+type InferenceContext struct {
+	mapper          *TypeMapper // Mapper that fixes inferences
+	nonFixingMapper *TypeMapper // Mapper that doesn't fix inferences
+}
 
 type DeclarationMeaning uint32
 
@@ -411,6 +414,7 @@ type Checker struct {
 	varianceLinks                      LinkStore[*ast.Symbol, VarianceLinks]
 	sourceFileLinks                    LinkStore[*ast.SourceFile, SourceFileLinks]
 	patternForType                     map[*Type]*ast.Node
+	contextFreeTypes                   map[*ast.Node]*Type
 	anyType                            *Type
 	autoType                           *Type
 	wildcardType                       *Type
@@ -582,6 +586,7 @@ func NewChecker(program *Program) *Checker {
 	c.suggestionDiagnostics = DiagnosticsCollection{}
 	c.mergedSymbols = make(map[ast.MergeId]*ast.Symbol)
 	c.patternForType = make(map[*Type]*ast.Node)
+	c.contextFreeTypes = make(map[*ast.Node]*Type)
 	c.anyType = c.newIntrinsicType(TypeFlagsAny, "any")
 	c.autoType = c.newIntrinsicTypeEx(TypeFlagsAny, "any", ObjectFlagsNonInferrableType)
 	c.wildcardType = c.newIntrinsicType(TypeFlagsAny, "any")
@@ -2668,9 +2673,273 @@ func (c *Checker) checkClassExpression(node *ast.Node) *Type {
 }
 
 func (c *Checker) checkFunctionExpressionOrObjectLiteralMethod(node *ast.Node, checkMode CheckMode) *Type {
+	c.checkNodeDeferred(node)
+	if ast.IsFunctionExpression(node) {
+		c.checkCollisionsForDeclarationName(node, node.Name())
+	}
+	if checkMode&CheckModeSkipContextSensitive != 0 && c.isContextSensitive(node) {
+		// Skip parameters, return signature with return type that retains noncontextual parts so inferences can still be drawn in an early stage
+		if node.Type() == nil && !hasContextSensitiveParameters(node) {
+			// Return plain anyFunctionType if there is no possibility we'll make inferences from the return type
+			contextualSignature := c.getContextualSignature(node)
+			if contextualSignature != nil && c.couldContainTypeVariables(c.getReturnTypeOfSignature(contextualSignature)) {
+				if cached, ok := c.contextFreeTypes[node]; ok {
+					return cached
+				}
+				returnType := c.getReturnTypeFromBody(node, checkMode)
+				returnOnlySignature := c.newSignature(SignatureFlagsIsNonInferrable, nil, nil /*typeParameters*/, nil /*thisParameter*/, nil, returnType, nil /*resolvedTypePredicate*/, 0)
+				returnOnlyType := c.newAnonymousType(node.Symbol(), nil, []*Signature{returnOnlySignature}, nil, nil)
+				returnOnlyType.objectFlags |= ObjectFlagsNonInferrableType
+				c.contextFreeTypes[node] = returnOnlyType
+				return returnOnlyType
+			}
+		}
+		return c.anyFunctionType
+	}
+	// Grammar checking
+	hasGrammarError := c.checkGrammarFunctionLikeDeclaration(node)
+	if !hasGrammarError && ast.IsFunctionExpression(node) {
+		c.checkGrammarForGenerator(node)
+	}
+	c.contextuallyCheckFunctionExpressionOrObjectLiteralMethod(node, checkMode)
+	return c.getTypeOfSymbol(c.getSymbolOfDeclaration(node))
+}
+
+func (c *Checker) contextuallyCheckFunctionExpressionOrObjectLiteralMethod(node *ast.Node, checkMode CheckMode) {
+	links := c.nodeLinks.get(node)
+	// Check if function expression is contextually typed and assign parameter types if so.
+	if links.flags&NodeCheckFlagsContextChecked == 0 {
+		contextualSignature := c.getContextualSignature(node)
+		// If a type check is started at a function expression that is an argument of a function call, obtaining the
+		// contextual type may recursively get back to here during overload resolution of the call. If so, we will have
+		// already assigned contextual types.
+		if links.flags&NodeCheckFlagsContextChecked == 0 {
+			links.flags |= NodeCheckFlagsContextChecked
+			signature := core.FirstOrNil(c.getSignaturesOfType(c.getTypeOfSymbol(c.getSymbolOfDeclaration(node)), SignatureKindCall))
+			if signature == nil {
+				return
+			}
+			if c.isContextSensitive(node) {
+				if contextualSignature != nil {
+					inferenceContext := c.getInferenceContext(node)
+					var instantiatedContextualSignature *Signature
+					if checkMode&CheckModeInferential != 0 {
+						c.inferFromAnnotatedParameters(signature, contextualSignature, inferenceContext)
+						restType := c.getEffectiveRestType(contextualSignature)
+						if restType != nil && restType.flags&TypeFlagsTypeParameter != 0 {
+							instantiatedContextualSignature = c.instantiateSignature(contextualSignature, inferenceContext.nonFixingMapper)
+						}
+					}
+					if instantiatedContextualSignature == nil {
+						if inferenceContext != nil {
+							instantiatedContextualSignature = c.instantiateSignature(contextualSignature, inferenceContext.mapper)
+						} else {
+							instantiatedContextualSignature = contextualSignature
+						}
+					}
+					c.assignContextualParameterTypes(signature, instantiatedContextualSignature)
+				} else {
+					// Force resolution of all parameter types such that the absence of a contextual type is consistently reflected.
+					c.assignNonContextualParameterTypes(signature)
+				}
+			} else if contextualSignature != nil && node.TypeParameters() == nil && len(contextualSignature.parameters) > len(node.Parameters()) {
+				inferenceContext := c.getInferenceContext(node)
+				if checkMode&CheckModeInferential != 0 {
+					c.inferFromAnnotatedParameters(signature, contextualSignature, inferenceContext)
+				}
+			}
+			if contextualSignature != nil && c.getReturnTypeFromAnnotation(node) == nil && signature.resolvedReturnType == nil {
+				returnType := c.getReturnTypeFromBody(node, checkMode)
+				if signature.resolvedReturnType == nil {
+					signature.resolvedReturnType = returnType
+				}
+			}
+			c.checkSignatureDeclaration(node)
+		}
+	}
+}
+
+func (c *Checker) checkFunctionExpressionOrObjectLiteralMethodDeferred(node *ast.Node) {
 	// !!!
-	node.ForEachChild(c.checkSourceElement)
-	return c.errorType
+}
+
+func (c *Checker) inferFromAnnotatedParameters(sig *Signature, context *Signature, inferenceContext *InferenceContext) {
+	// !!!
+}
+
+// Return the contextual signature for a given expression node. A contextual type provides a
+// contextual signature if it has a single call signature and if that call signature is non-generic.
+// If the contextual type is a union type, get the signature from each type possible and if they are
+// all identical ignoring their return type, the result is same signature but with return type as
+// union type of return types from these signatures
+func (c *Checker) getContextualSignature(node *ast.Node) *Signature {
+	t := c.getApparentTypeOfContextualType(node, ContextFlagsSignature)
+	if t == nil {
+		return nil
+	}
+	if t.flags&TypeFlagsUnion == 0 {
+		return c.getContextualCallSignature(t, node)
+	}
+	var signatureList []*Signature
+	types := t.Types()
+	for _, current := range types {
+		signature := c.getContextualCallSignature(current, node)
+		if signature != nil {
+			if len(signatureList) != 0 && c.compareSignaturesIdentical(signatureList[0], signature, false /*partialMatch*/, true /*ignoreThisTypes*/, true /*ignoreReturnTypes*/, c.compareTypesIdentical) == TernaryFalse {
+				// Signatures aren't identical, do not use
+				return nil
+			}
+			// Use this signature for contextual union signature
+			signatureList = append(signatureList, signature)
+		}
+	}
+	switch len(signatureList) {
+	case 0:
+		return nil
+	case 1:
+		return signatureList[0]
+	}
+	// Result is union of signatures collected (return type is union of return types of this signature set)
+	return c.createUnionSignature(signatureList[0], signatureList)
+}
+
+func (c *Checker) createUnionSignature(sig *Signature, unionSignatures []*Signature) *Signature {
+	return sig // !!!
+}
+
+// If the given type is an object or union type with a single signature, and if that signature has at
+// least as many parameters as the given function, return the signature. Otherwise return undefined.
+func (c *Checker) getContextualCallSignature(t *Type, node *ast.Node) *Signature {
+	signatures := c.getSignaturesOfType(t, SignatureKindCall)
+	applicableByArity := core.Filter(signatures, func(s *Signature) bool { return !c.isAritySmaller(s, node) })
+	if len(applicableByArity) == 1 {
+		return applicableByArity[0]
+	}
+	return c.getIntersectedSignatures(applicableByArity)
+}
+
+func (c *Checker) getIntersectedSignatures(signatures []*Signature) *Signature {
+	return nil // !!!
+}
+
+/** If the contextual signature has fewer parameters than the function expression, do not use it */
+func (c *Checker) isAritySmaller(signature *Signature, target *ast.Node) bool {
+	parameters := target.Parameters()
+	targetParameterCount := 0
+	for targetParameterCount < len(parameters) {
+		param := parameters[targetParameterCount]
+		if param.Initializer() != nil || param.AsParameterDeclaration().QuestionToken != nil || hasDotDotDotToken(param) {
+			break
+		}
+		targetParameterCount++
+	}
+	if len(parameters) != 0 && parameterIsThisKeyword(parameters[0]) {
+		targetParameterCount--
+	}
+	return !c.hasEffectiveRestParameter(signature) && c.getParameterCount(signature) < targetParameterCount
+}
+
+func (c *Checker) assignContextualParameterTypes(sig *Signature, context *Signature) {
+	if context.typeParameters != nil {
+		if sig.typeParameters != nil {
+			// This signature has already has a contextual inference performed and cached on it
+			return
+		}
+		sig.typeParameters = context.typeParameters
+	}
+	if context.thisParameter != nil {
+		parameter := sig.thisParameter
+		if parameter == nil || parameter.ValueDeclaration != nil && parameter.ValueDeclaration.Type() == nil {
+			if parameter == nil {
+				sig.thisParameter = c.createSymbolWithType(context.thisParameter, nil /*type*/)
+			}
+			c.assignParameterType(sig.thisParameter, c.getTypeOfSymbol(context.thisParameter))
+		}
+	}
+	length := len(sig.parameters) - core.IfElse(signatureHasRestParameter(sig), 1, 0)
+	for i := range length {
+		parameter := sig.parameters[i]
+		declaration := parameter.ValueDeclaration
+		if declaration.Type() == nil {
+			t := c.tryGetTypeAtPosition(context, i)
+			if t != nil && declaration.Initializer() != nil {
+				initializerType := c.checkDeclarationInitializer(declaration, CheckModeNormal, nil)
+				if !c.isTypeAssignableTo(initializerType, t) {
+					initializerType = c.widenTypeInferredFromInitializer(declaration, initializerType)
+					if c.isTypeAssignableTo(t, initializerType) {
+						t = initializerType
+					}
+				}
+			}
+			c.assignParameterType(parameter, t)
+		}
+	}
+	if signatureHasRestParameter(sig) {
+		// parameter might be a transient symbol generated by use of `arguments` in the function body.
+		parameter := core.LastOrNil(sig.parameters)
+		if parameter.ValueDeclaration != nil && parameter.ValueDeclaration.Type() == nil ||
+			parameter.ValueDeclaration == nil && parameter.CheckFlags&ast.CheckFlagsDeferredType != 0 {
+			contextualParameterType := c.getRestTypeAtPosition(context, length, false)
+			c.assignParameterType(parameter, contextualParameterType)
+		}
+	}
+}
+
+func (c *Checker) assignNonContextualParameterTypes(signature *Signature) {
+	if signature.thisParameter != nil {
+		c.assignParameterType(signature.thisParameter, nil)
+	}
+	for _, parameter := range signature.parameters {
+		c.assignParameterType(parameter, nil)
+	}
+}
+
+func (c *Checker) assignParameterType(parameter *ast.Symbol, contextualType *Type) {
+	links := c.valueSymbolLinks.get(parameter)
+	if links.resolvedType != nil {
+		return
+	}
+	declaration := parameter.ValueDeclaration
+	t := contextualType
+	if t == nil {
+		if declaration != nil {
+			t = c.getWidenedTypeForVariableLikeDeclaration(declaration, true /*reportErrors*/)
+		} else {
+			t = c.getTypeOfSymbol(parameter)
+		}
+	}
+	links.resolvedType = c.addOptionalityEx(t, false, declaration != nil && declaration.Initializer() == nil && isOptionalDeclaration(declaration))
+	if declaration != nil && !ast.IsIdentifier(declaration.Name()) {
+		// if inference didn't come up with anything but unknown, fall back to the binding pattern if present.
+		if links.resolvedType == c.unknownType {
+			links.resolvedType = c.getTypeFromBindingPattern(declaration.Name(), false, false)
+		}
+		c.assignBindingElementTypes(declaration.Name(), links.resolvedType)
+	}
+}
+
+// When contextual typing assigns a type to a parameter that contains a binding pattern, we also need to push
+// the destructured type into the contained binding elements.
+func (c *Checker) assignBindingElementTypes(pattern *ast.Node, parentType *Type) {
+	for _, element := range pattern.AsBindingPattern().Elements.Nodes {
+		name := element.Name()
+		if name != nil {
+			t := c.getBindingElementTypeFromParentType(element, parentType, false /*noTupleBoundsCheck*/)
+			if ast.IsIdentifier(name) {
+				c.valueSymbolLinks.get(c.getSymbolOfDeclaration(element)).resolvedType = t
+			} else {
+				c.assignBindingElementTypes(name, t)
+			}
+		}
+	}
+}
+
+func (c *Checker) getBindingElementTypeFromParentType(declaration *ast.Node, parentType *Type, noTupleBoundsCheck bool) *Type {
+	return c.errorType // !!!
+}
+
+func (c *Checker) checkCollisionsForDeclarationName(node *ast.Node, name *ast.Node) {
+	// !!!
 }
 
 func (c *Checker) checkTypeOfExpression(node *ast.Node) *Type {
@@ -2753,8 +3022,11 @@ func (c *Checker) checkYieldExpression(node *ast.Node) *Type {
 }
 
 func (c *Checker) checkSyntheticExpression(node *ast.Node) *Type {
-	// !!!
-	return c.errorType
+	t := node.AsSyntheticExpression().Type.(*Type)
+	if node.AsSyntheticExpression().IsSpread {
+		return c.getIndexedAccessType(t, c.numberType)
+	}
+	return t
 }
 
 func (c *Checker) checkJsxExpression(node *ast.Node, checkMode CheckMode) *Type {
@@ -4976,7 +5248,16 @@ func (c *Checker) isReadonlySymbol(symbol *ast.Symbol) bool {
 }
 
 func (c *Checker) checkObjectLiteralMethod(node *ast.Node, checkMode CheckMode) *Type {
-	return c.anyType // !!!
+	// Grammar checking
+	c.checkGrammarMethod(node)
+	// Do not use hasDynamicName here, because that returns false for well known symbols.
+	// We want to perform checkComputedPropertyName for all computed properties, including
+	// well known symbols.
+	if ast.IsComputedPropertyName(node.Name()) {
+		c.checkComputedPropertyName(node.Name())
+	}
+	uninstantiatedType := c.checkFunctionExpressionOrObjectLiteralMethod(node, checkMode)
+	return c.instantiateTypeWithSingleGenericCallSignature(node, uninstantiatedType, checkMode)
 }
 
 func (c *Checker) checkJsxAttribute(node *ast.JsxAttribute, checkMode CheckMode) *Type {
@@ -9069,7 +9350,7 @@ func (c *Checker) getReturnTypeOfSignature(sig *Signature) *Type {
 		t = c.getReturnTypeFromAnnotation(sig.declaration)
 		if t == nil {
 			if !ast.NodeIsMissing(getBodyOfNode(sig.declaration)) {
-				t = c.getReturnTypeFromBody(sig.declaration)
+				t = c.getReturnTypeFromBody(sig.declaration, CheckModeNormal)
 			} else {
 				t = c.anyType
 			}
@@ -9160,7 +9441,7 @@ func getSetAccessorValueParameter(accessor *ast.Node) *ast.Node {
 	return nil
 }
 
-func (c *Checker) getReturnTypeFromBody(sig *ast.Node) *Type {
+func (c *Checker) getReturnTypeFromBody(sig *ast.Node, checkMode CheckMode) *Type {
 	return c.anyType // !!!
 }
 
@@ -12059,10 +12340,6 @@ func (c *Checker) getUniqueLiteralTypeForTypeParameter(t *Type) *Type {
 		return c.uniqueLiteralType
 	}
 	return t
-}
-
-func (c *Checker) isContextSensitive(node *ast.Node) bool {
-	return false // !!!
 }
 
 func (c *Checker) getConditionalFlowTypeOfType(typ *Type, node *ast.Node) *Type {
@@ -15040,7 +15317,128 @@ func (c *Checker) getContextualTypeForVariableLikeDeclaration(declaration *ast.N
 
 // Return contextual type of parameter or undefined if no contextual type is available
 func (c *Checker) getContextuallyTypedParameterType(parameter *ast.Node) *Type {
-	return nil // !!!
+	fn := parameter.Parent
+	if !c.isContextSensitiveFunctionOrObjectLiteralMethod(fn) {
+		return nil
+	}
+	iife := getImmediatelyInvokedFunctionExpression(fn)
+	if iife != nil && len(iife.Arguments()) != 0 {
+		args := c.getEffectiveCallArguments(iife)
+		indexOfParameter := slices.Index(fn.Parameters(), parameter)
+		if hasDotDotDotToken(parameter) {
+			return c.getSpreadArgumentType(args, indexOfParameter, len(args), c.anyType, nil /*context*/, CheckModeNormal)
+		}
+		links := c.signatureLinks.get(iife)
+		cached := links.resolvedSignature
+		links.resolvedSignature = c.anySignature
+		var t *Type
+		switch {
+		case indexOfParameter < len(args):
+			t = c.getWidenedLiteralType(c.checkExpression(args[indexOfParameter]))
+		case parameter.Initializer() != nil:
+			t = nil
+		default:
+			t = c.undefinedWideningType
+		}
+		links.resolvedSignature = cached
+		return t
+	}
+	contextualSignature := c.getContextualSignature(fn)
+	if contextualSignature != nil {
+		index := slices.Index(fn.Parameters(), parameter) - core.IfElse(getThisParameter(fn) != nil, 1, 0)
+		if hasDotDotDotToken(parameter) && core.LastOrNil(fn.Parameters()) == parameter {
+			return c.getRestTypeAtPosition(contextualSignature, index, false)
+		}
+		return c.tryGetTypeAtPosition(contextualSignature, index)
+	}
+	return nil
+}
+
+func (c *Checker) isContextSensitiveFunctionOrObjectLiteralMethod(fn *ast.Node) bool {
+	return (ast.IsFunctionExpressionOrArrowFunction(fn) || isObjectLiteralMethod(fn)) && c.isContextSensitiveFunctionLikeDeclaration(fn)
+}
+
+func (c *Checker) getSpreadArgumentType(args []*ast.Node, index int, argCount int, restType *Type, context *InferenceContext, checkMode CheckMode) *Type {
+	inConstContext := c.isConstTypeVariable(restType, 0)
+	if index >= argCount-1 {
+		arg := args[argCount-1]
+		if isSpreadArgument(arg) {
+			// We are inferring from a spread expression in the last argument position, i.e. both the parameter
+			// and the argument are ...x forms.
+			var spreadType *Type
+			if ast.IsSyntheticExpression(arg) {
+				spreadType = arg.AsSyntheticExpression().Type.(*Type)
+			} else {
+				spreadType = c.checkExpressionWithContextualType(arg.Expression(), restType, context, checkMode)
+			}
+			if c.isArrayLikeType(spreadType) {
+				return c.getMutableArrayOrTupleType(spreadType)
+			}
+			if ast.IsSpreadElement(arg) {
+				arg = arg.Expression()
+			}
+			return c.createArrayTypeEx(c.checkIteratedTypeOrElementType(IterationUseSpread, spreadType, c.undefinedType, arg), inConstContext)
+		}
+	}
+	var types []*Type
+	var infos []TupleElementInfo
+	for i := index; i < argCount; i++ {
+		arg := args[i]
+		var t *Type
+		var info TupleElementInfo
+		if isSpreadArgument(arg) {
+			var spreadType *Type
+			if ast.IsSyntheticExpression(arg) {
+				spreadType = arg.AsSyntheticExpression().Type.(*Type)
+			} else {
+				spreadType = c.checkExpression(arg.Expression())
+			}
+			if c.isArrayLikeType(spreadType) {
+				t = spreadType
+				info.flags = ElementFlagsVariadic
+			} else {
+				if ast.IsSpreadElement(arg) {
+					t = c.checkIteratedTypeOrElementType(IterationUseSpread, spreadType, c.undefinedType, arg.Expression())
+				} else {
+					t = c.checkIteratedTypeOrElementType(IterationUseSpread, spreadType, c.undefinedType, arg)
+				}
+				info.flags = ElementFlagsRest
+			}
+		} else {
+			var contextualType *Type
+			if isTupleType(restType) {
+				contextualType = core.OrElse(c.getContextualTypeForElementExpression(restType, i-index, argCount-index, -1, -1), c.unknownType)
+			} else {
+				contextualType = c.getIndexedAccessTypeEx(restType, c.getNumberLiteralType(float64(i-index)), AccessFlagsContextual, nil, nil)
+			}
+			argType := c.checkExpressionWithContextualType(arg, contextualType, context, checkMode)
+			hasPrimitiveContextualType := inConstContext || c.maybeTypeOfKind(contextualType, TypeFlagsPrimitive|TypeFlagsIndex|TypeFlagsTemplateLiteral|TypeFlagsStringMapping)
+			if hasPrimitiveContextualType {
+				t = c.getRegularTypeOfLiteralType(argType)
+			} else {
+				t = c.getWidenedLiteralType(argType)
+			}
+			info.flags = ElementFlagsRequired
+		}
+		if ast.IsSyntheticExpression(arg) && arg.AsSyntheticExpression().TupleNameSource != nil {
+			info.labeledDeclaration = arg.AsSyntheticExpression().TupleNameSource
+		}
+		types = append(types, t)
+		infos = append(infos, info)
+	}
+	return c.createTupleTypeEx(types, infos, inConstContext && !someType(restType, c.isMutableArrayLikeType))
+}
+
+func (c *Checker) getMutableArrayOrTupleType(t *Type) *Type {
+	switch {
+	case t.flags&TypeFlagsUnion != 0:
+		return c.mapType(t, c.getMutableArrayOrTupleType)
+	case t.flags&TypeFlagsAny != 0 || c.isMutableArrayOrTuple(c.getBaseConstraintOrType(t)):
+		return t
+	case isTupleType(t):
+		return c.createTupleTypeEx(c.getElementTypes(t), t.TargetTupleType().elementInfos, false /*readonly*/)
+	}
+	return c.createTupleTypeEx([]*Type{t}, []TupleElementInfo{{flags: ElementFlagsVariadic}}, false)
 }
 
 func (c *Checker) getContextualTypeForBindingElement(declaration *ast.Node, contextFlags ContextFlags) *Type {
@@ -15437,6 +15835,60 @@ func (c *Checker) findContextualNode(node *ast.Node, includeCaches bool) int {
 		}
 	}
 	return -1
+}
+
+// Returns true if the given expression contains (at any level of nesting) a function or arrow expression
+// that is subject to contextual typing.
+func (c *Checker) isContextSensitive(node *ast.Node) bool {
+	switch node.Kind {
+	case ast.KindFunctionExpression, ast.KindArrowFunction, ast.KindMethodDeclaration, ast.KindFunctionDeclaration:
+		return c.isContextSensitiveFunctionLikeDeclaration(node)
+	case ast.KindObjectLiteralExpression:
+		return core.Some(node.AsObjectLiteralExpression().Properties.Nodes, c.isContextSensitive)
+	case ast.KindArrayLiteralExpression:
+		return core.Some(node.AsArrayLiteralExpression().Elements.Nodes, c.isContextSensitive)
+	case ast.KindConditionalExpression:
+		return c.isContextSensitive(node.AsConditionalExpression().WhenTrue) || c.isContextSensitive(node.AsConditionalExpression().WhenFalse)
+	case ast.KindBinaryExpression:
+		binary := node.AsBinaryExpression()
+		return ast.NodeKindIs(binary.OperatorToken, ast.KindBarBarToken, ast.KindQuestionQuestionToken) && (c.isContextSensitive(binary.Left) || c.isContextSensitive(binary.Right))
+	case ast.KindPropertyAssignment:
+		return c.isContextSensitive(node.Initializer())
+	case ast.KindParenthesizedExpression:
+		return c.isContextSensitive(node.Expression())
+		// !!!
+		// case ast.KindJsxAttributes:
+		// 	return core.Some(node.AsJsxAttributes().Properties, c.isContextSensitive) || isJsxOpeningElement(node.Parent) && core.Some(node.Parent.Parent.Children, c.isContextSensitive)
+		// case ast.KindJsxAttribute:
+		// 	// If there is no initializer, JSX attribute has a boolean value of true which is not context sensitive.
+		// 	TODO_IDENTIFIER := node.AsJsxAttribute()
+		// 	return initializer != nil && c.isContextSensitive(initializer)
+		// case ast.KindJsxExpression:
+		// 	// It is possible to that node.expression is undefined (e.g <div x={} />)
+		// 	TODO_IDENTIFIER := node.AsJsxExpression()
+		// 	return expression != nil && c.isContextSensitive(expression)
+	}
+	return false
+}
+
+func (c *Checker) isContextSensitiveFunctionLikeDeclaration(node *ast.Node) bool {
+	return hasContextSensitiveParameters(node) || c.hasContextSensitiveReturnExpression(node)
+}
+
+func (c *Checker) hasContextSensitiveReturnExpression(node *ast.Node) bool {
+	if node.TypeParameters() != nil || node.Type() != nil {
+		return false
+	}
+	body := getBodyOfNode(node)
+	if body == nil {
+		return false
+	}
+	if !ast.IsBlock(body) {
+		return c.isContextSensitive(body)
+	}
+	return ast.ForEachReturnStatement(body, func(statement *ast.Node) bool {
+		return statement.Expression() != nil && c.isContextSensitive(statement.Expression())
+	})
 }
 
 func (c *Checker) pushInferenceContext(node *ast.Node, inferenceContext *InferenceContext) {

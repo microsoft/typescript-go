@@ -634,14 +634,14 @@ func hasEffectiveReadonlyModifier(node *ast.Node) bool {
 }
 
 func getImmediatelyInvokedFunctionExpression(fn *ast.Node) *ast.Node {
-	if fn.Kind == ast.KindFunctionExpression || fn.Kind == ast.KindArrowFunction {
+	if ast.IsFunctionExpressionOrArrowFunction(fn) {
 		prev := fn
 		parent := fn.Parent
-		for parent.Kind == ast.KindParenthesizedExpression {
+		for ast.IsParenthesizedExpression(parent) {
 			prev = parent
 			parent = parent.Parent
 		}
-		if parent.Kind == ast.KindCallExpression && parent.AsCallExpression().Expression == prev {
+		if ast.IsCallExpression(parent) && parent.AsCallExpression().Expression == prev {
 			return parent
 		}
 	}
@@ -3455,4 +3455,23 @@ func indexOfNode(nodes []*ast.Node, node *ast.Node) int {
 
 func compareNodePositions(n1, n2 *ast.Node) int {
 	return n1.Pos() - n2.Pos()
+}
+
+func hasContextSensitiveParameters(node *ast.Node) bool {
+	// Functions with type parameters are not context sensitive.
+	if node.TypeParameters() == nil {
+		// Functions with any parameters that lack type annotations are context sensitive.
+		if core.Some(node.Parameters(), func(p *ast.Node) bool { return p.Type() == nil }) {
+			return true
+		}
+		if !ast.IsArrowFunction(node) {
+			// If the first parameter is not an explicit 'this' parameter, then the function has
+			// an implicit 'this' parameter which is subject to contextual typing.
+			parameter := core.FirstOrNil(node.Parameters())
+			if parameter == nil || !parameterIsThisKeyword(parameter) {
+				return true
+			}
+		}
+	}
+	return false
 }

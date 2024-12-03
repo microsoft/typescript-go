@@ -194,6 +194,10 @@ func (n *Node) Expression() *Node {
 		return n.AsSwitchStatement().Expression
 	case KindCaseClause:
 		return n.AsCaseOrDefaultClause().Expression
+	case KindExpressionStatement:
+		return n.AsExpressionStatement().Expression
+	case KindReturnStatement:
+		return n.AsReturnStatement().Expression
 	}
 	panic("Unhandled case in Node.Expression")
 }
@@ -316,7 +320,7 @@ func (n *Node) Type() *Node {
 		return n.AsJSDocFunctionType().Type
 	case KindJSDocOptionalType:
 		return n.AsJSDocOptionalType().Type
-	case KindEnumMember, KindBindingElement:
+	case KindEnumMember, KindBindingElement, KindExportAssignment:
 		return nil
 	default:
 		funcLike := n.FunctionLikeData()
