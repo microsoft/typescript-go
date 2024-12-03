@@ -1948,7 +1948,7 @@ func (p *Parser) parseImportOrExportSpecifier(kind ast.Kind) (isTypeOnly bool, p
 	// let checkIdentifierEnd = scanner.getTokenEnd();
 	canParseAsKeyword := true
 	disallowKeywords := kind == ast.KindImportSpecifier
-	nameOk := true
+	var nameOk bool
 	name, nameOk = p.parseModuleExportName(disallowKeywords)
 	if name.Kind == ast.KindIdentifier && name.AsIdentifier().Text == "type" {
 		// If the first token of an import specifier is 'type', there are a lot of possibilities,
