@@ -24,6 +24,8 @@ jobs:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4.1.0
       - uses: ./.github/actions/setup-go
+        with:
+          cache-name: build
 
       - run: npm ci
 
@@ -56,6 +58,8 @@ jobs:
           submodules: ${{ matrix.submodules }}
       - uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4.1.0
       - uses: ./.github/actions/setup-go
+        with:
+          cache-name: test
 
       - run: npm ci
 
@@ -71,6 +75,8 @@ jobs:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4.1.0
       - uses: ./.github/actions/setup-go
+        with:
+          cache-name: lint
 
       - run: npm ci
 
@@ -83,6 +89,8 @@ jobs:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4.1.0
       - uses: ./.github/actions/setup-go
+        with:
+          cache-name: format
 
       - run: npm ci
 
@@ -96,6 +104,8 @@ jobs:
           submodules: true
       - uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4.1.0
       - uses: ./.github/actions/setup-go
+        with:
+          cache-name: generate
 
       - run: npm ci
 
@@ -109,6 +119,8 @@ jobs:
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - uses: ./.github/actions/setup-go
+        with:
+          cache-name: tidy
 
       - run: go mod tidy
       - run: go -C ./_tools mod tidy

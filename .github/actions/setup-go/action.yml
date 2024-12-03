@@ -4,6 +4,8 @@ description: Setup Go
 inputs:
   go-version:
     default: '>=1.23.0'
+  cache-name:
+    default: "cache"
 
 runs:
   using: composite
@@ -27,7 +29,7 @@ runs:
         # There is more code downloaded and built than is covered by '**/go.sum',
         # so give each job its own cache to try and not end up sharing the wrong
         # cache between jobs.
-        key: ts-setup-go-${{ runner.os }}-${{ steps.install-go.outputs.go-version }}-${{ github.workflow }}-${{ github.jobs[github.job].name }}-${{ hashFiles('**/go.sum', '**/Herebyfile.mjs') }}
+        key: ts-setup-go-${{ runner.os }}-${{ steps.install-go.outputs.go-version }}-${{ github.workflow }}-${{ inputs.cache-name }}-${{ hashFiles('**/go.sum', '**/Herebyfile.mjs') }}
         path: |
           ~/go/pkg/mod
           ~/.cache/go-build
