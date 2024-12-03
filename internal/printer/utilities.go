@@ -2,7 +2,6 @@ package printer
 
 import (
 	"fmt"
-	"reflect"
 	"slices"
 	"strconv"
 	"strings"
@@ -633,7 +632,7 @@ func tryGetEnd(node interface{ End() int }) (int, bool) {
 	case (core.TextRange):
 		return v.End(), true
 	default:
-		panic("unhandled type: " + reflect.TypeOf(node).Name())
+		panic(fmt.Sprintf("unhandled type: %T", node))
 	}
 	return 0, false
 }
