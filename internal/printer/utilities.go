@@ -2,6 +2,7 @@ package printer
 
 import (
 	"fmt"
+	"reflect"
 	"slices"
 	"strconv"
 	"strings"
@@ -55,7 +56,6 @@ var escapedCharsMap = map[rune]string{
 
 func encodeJsxCharacterEntity(b *strings.Builder, charCode rune) {
 	hexCharCode := strings.ToUpper(strconv.FormatUint(uint64(charCode), 16))
-	b.Grow(4 + len(hexCharCode))
 	b.WriteString("&#x")
 	b.WriteString(hexCharCode)
 	b.WriteString(";")
@@ -63,7 +63,6 @@ func encodeJsxCharacterEntity(b *strings.Builder, charCode rune) {
 
 func encodeUtf16EscapeSequence(b *strings.Builder, charCode rune) {
 	hexCharCode := strings.ToUpper(strconv.FormatUint(uint64(charCode), 16))
-	b.Grow(6)
 	b.WriteString(`\u`)
 	for i := len(hexCharCode); i < 4; i++ {
 		b.WriteRune('0')
@@ -112,17 +111,14 @@ func escapeStringWorker(s string, quoteChar quoteChar, flags getLiteralTextFlags
 		if escape {
 			if pos < i {
 				// Write string up to this point
-				b.Grow(i - pos)
 				b.WriteString(s[pos:i])
 			}
 
 			switch {
 			case flags&getLiteralTextFlagsJsxAttributeEscape != 0:
 				if ch == 0 {
-					b.Grow(4)
 					b.WriteString("&#0;")
 				} else if match, ok := jsxEscapedCharsMap[ch]; ok {
-					b.Grow(len(match))
 					b.WriteString(match)
 				} else {
 					encodeJsxCharacterEntity(b, ch)
@@ -132,7 +128,6 @@ func escapeStringWorker(s string, quoteChar quoteChar, flags getLiteralTextFlags
 				// Template strings preserve simple LF newlines, still encode CRLF (or CR)
 				if ch == '\r' && quoteChar == quoteCharBacktick && i+1 < len(s) && s[i+1] == '\n' {
 					size++
-					b.Grow(4)
 					b.WriteString(`\r\n`)
 				} else if ch > 0xffff {
 					// encode as surrogate pair
@@ -143,16 +138,13 @@ func escapeStringWorker(s string, quoteChar quoteChar, flags getLiteralTextFlags
 					if i+1 < len(s) && stringutil.IsDigit(rune(s[i+1])) {
 						// If the null character is followed by digits, print as a hex escape to prevent the result from
 						// parsing as an octal (which is forbidden in strict mode)
-						b.Grow(4)
 						b.WriteString(`\x00`)
 					} else {
 						// Otherwise, keep printing a literal \0 for the null character
-						b.Grow(2)
 						b.WriteString(`\0`)
 					}
 				} else {
 					if match, ok := escapedCharsMap[ch]; ok {
-						b.Grow(len(match))
 						b.WriteString(match)
 					} else {
 						encodeUtf16EscapeSequence(b, ch)
@@ -166,25 +158,27 @@ func escapeStringWorker(s string, quoteChar quoteChar, flags getLiteralTextFlags
 	}
 
 	if pos < i {
-		b.Grow(i - pos)
 		b.WriteString(s[pos:])
 	}
 }
 
 func escapeString(s string, quoteChar quoteChar) string {
 	var b strings.Builder
+	b.Grow(len(s) + 2)
 	escapeStringWorker(s, quoteChar, getLiteralTextFlagsNeverAsciiEscape, &b)
 	return b.String()
 }
 
 func escapeNonAsciiString(s string, quoteChar quoteChar) string {
 	var b strings.Builder
+	b.Grow(len(s) + 2)
 	escapeStringWorker(s, quoteChar, getLiteralTextFlagsNone, &b)
 	return b.String()
 }
 
 func escapeJsxAttributeString(s string, quoteChar quoteChar) string {
 	var b strings.Builder
+	b.Grow(len(s) + 2)
 	escapeStringWorker(s, quoteChar, getLiteralTextFlagsJsxAttributeEscape|getLiteralTextFlagsNeverAsciiEscape, &b)
 	return b.String()
 }
@@ -238,15 +232,17 @@ func getLiteralText(node *ast.LiteralLikeNode, sourceFile *ast.SourceFile, flags
 			quoteChar = quoteCharDoubleQuote
 		}
 
+		text := node.Text()
+
 		// Write leading quote character
-		b.Grow(2)
+		b.Grow(len(text) + 2)
 		b.WriteRune(rune(quoteChar))
 
 		// Write text
 		// TODO(rbuckton): This differs from the TS compiler in that a node might have `EmitFlags.NoAsciiEscaping`,
 		// which would essentially set `GetLiteralTextFlagsNeverAsciiEscape`. We've yet to determine whether we will
 		// need something like `EmitFlags.NoAsciiEscaping`, so this function may need to be revisited
-		escapeStringWorker(node.Text(), quoteChar, flags, &b)
+		escapeStringWorker(text, quoteChar, flags, &b)
 
 		// Write trailing quote character
 		b.WriteRune(rune(quoteChar))
@@ -262,20 +258,28 @@ func getLiteralText(node *ast.LiteralLikeNode, sourceFile *ast.SourceFile, flags
 		var b strings.Builder
 		text := node.TemplateLiteralLikeData().Text
 		rawText := node.TemplateLiteralLikeData().RawText
+		raw := len(rawText) > 0 || len(text) == 0
+
+		var textLen int
+		if raw {
+			textLen = len(rawText)
+		} else {
+			textLen = len(text)
+		}
 
 		// Write leading quote character
 		switch node.Kind {
 		case ast.KindNoSubstitutionTemplateLiteral:
-			b.Grow(2)
+			b.Grow(2 + textLen)
 			b.WriteRune('`')
 		case ast.KindTemplateHead:
-			b.Grow(3)
+			b.Grow(3 + textLen)
 			b.WriteRune('`')
 		case ast.KindTemplateMiddle:
-			b.Grow(3)
+			b.Grow(3 + textLen)
 			b.WriteRune('}')
 		case ast.KindTemplateTail:
-			b.Grow(2)
+			b.Grow(2 + textLen)
 			b.WriteRune('}')
 		}
 
@@ -283,13 +287,12 @@ func getLiteralText(node *ast.LiteralLikeNode, sourceFile *ast.SourceFile, flags
 		switch {
 		case len(rawText) > 0 || len(text) == 0:
 			// If rawText is set, it is expected to be valid.
-			b.Grow(len(rawText))
 			b.WriteString(rawText)
 		default:
 			// TODO(rbuckton): This differs from the TS compiler in that a node might have `EmitFlags.NoAsciiEscaping`,
 			// which would essentially set `GetLiteralTextFlagsNeverAsciiEscape`. We've yet to determine whether we will
 			// need something like `EmitFlags.NoAsciiEscaping`, so this function may need to be revisited
-			escapeStringWorker(node.Text(), quoteCharBacktick, flags, &b)
+			escapeStringWorker(text, quoteCharBacktick, flags, &b)
 		}
 
 		// Write trailing quote character
@@ -313,13 +316,13 @@ func getLiteralText(node *ast.LiteralLikeNode, sourceFile *ast.SourceFile, flags
 			node.LiteralLikeData().TokenFlags&ast.TokenFlagsUnterminated != 0 {
 			var b strings.Builder
 			text := node.Text()
-			b.Grow(len(text))
-			b.WriteString(text)
-			if len(text) > 0 && text[len(text)-1] == '/' {
-				b.Grow(2)
+			if len(text) > 0 && text[len(text)-1] == '\\' {
+				b.Grow(2 + len(text))
+				b.WriteString(text)
 				b.WriteString(" /")
 			} else {
-				b.Grow(1)
+				b.Grow(1 + len(text))
+				b.WriteString(text)
 				b.WriteString("/")
 			}
 			return b.String()
@@ -628,10 +631,7 @@ func tryGetEnd(node interface{ End() int }) (int, bool) {
 			return v.End(), true
 		}
 	default:
-		// worst case, use reflection
-		if !core.IsNil(node) {
-			return node.End(), true
-		}
+		panic(fmt.Sprintf("unhandled type: %s", reflect.TypeOf(node).Name()))
 	}
 	return 0, false
 }

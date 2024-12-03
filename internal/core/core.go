@@ -2,7 +2,6 @@ package core
 
 import (
 	"iter"
-	"reflect"
 	"slices"
 	"unicode/utf8"
 
@@ -221,15 +220,6 @@ func IfElse[T any](b bool, whenTrue T, whenFalse T) T {
 		return whenTrue
 	}
 	return whenFalse
-}
-
-func IsNil[T any](value T) bool {
-	v := reflect.ValueOf(value)
-	switch v.Kind() {
-	case reflect.Chan, reflect.Func, reflect.Interface, reflect.Map, reflect.Slice, reflect.Pointer:
-		return v.IsValid() && v.IsNil()
-	}
-	return false
 }
 
 // Returns `a` if `a` is not `nil`; Otherwise, returns `b`. Coalesce is roughly analogous to `??` in JS, except that it
