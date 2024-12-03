@@ -56,6 +56,7 @@ func TestParseTypeScriptRepo(t *testing.T) {
 				t.Run(f.name, func(t *testing.T) {
 					t.Parallel()
 
+					// !!! TODO: Fix this bug
 					if f.name == "compiler/unicodeEscapesInNames01.ts" {
 						t.Skip("times out")
 					}
@@ -76,7 +77,6 @@ func TestParseTypeScriptRepo(t *testing.T) {
 					}
 				})
 			}
-
 		})
 	}
 }
