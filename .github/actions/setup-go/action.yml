@@ -5,7 +5,7 @@ inputs:
   go-version:
     default: '>=1.23.0'
   cache-name:
-    default: "cache"
+    default: 'cache'
 
 runs:
   using: composite
