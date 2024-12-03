@@ -17,6 +17,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/testutil/baseline"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
+	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
 	"gotest.tools/v3/assert"
 )
 
@@ -40,8 +41,6 @@ var skip = []string{
 	"bundlerNodeModules1(module=preserve).ts",
 	"bundlerRelative1(module=esnext).ts",
 	"bundlerRelative1(module=preserve).ts",
-	"checkExportsObjectAssignProperty.ts",
-	"checkObjectDefineProperty.ts",
 	"commonJsExportTypeDeclarationError.ts",
 	"commonSourceDir5.ts",
 	"commonSourceDirectory.ts",
@@ -73,14 +72,11 @@ var skip = []string{
 	"enumNoInitializerFollowsNonLiteralInitializer.ts",
 	"enumWithNonLiteralStringInitializer.ts",
 	"es6ImportWithJsDocTags.ts",
-	"exportStarNotElided.ts",
 	"importAttributes9.ts",
-	"importFromDot.ts",
 	"importNonExportedMember12.ts",
 	"importSpecifiers_js.ts",
 	"importTag17.ts",
 	"importTag21.ts",
-	"importWithTrailingSlash.ts",
 	"isolatedModulesShadowGlobalTypeNotValue(isolatedmodules=false,verbatimmodulesyntax=false).ts",
 	"isolatedModulesShadowGlobalTypeNotValue(isolatedmodules=false,verbatimmodulesyntax=true).ts",
 	"isolatedModulesShadowGlobalTypeNotValue(isolatedmodules=true,verbatimmodulesyntax=false).ts",
@@ -91,9 +87,6 @@ var skip = []string{
 	"jsDeclarationsTypeReferences4.ts",
 	"jsDocDeclarationEmitDoesNotUseNodeModulesPathWithoutError.ts",
 	"jsxClassAttributeResolution.tsx",
-	"jsxNamespaceGlobalReexport.tsx",
-	"jsxNamespaceGlobalReexportMissingAliasTarget.tsx",
-	"jsxNamespaceImplicitImportJSXNamespace.tsx",
 	"legacyNodeModulesExportsSpecifierGenerationConditions.ts",
 	"library-reference-10.ts",
 	"library-reference-11.ts",
@@ -133,10 +126,6 @@ var skip = []string{
 	"nodeAllowJsPackageSelfName(module=node16).ts",
 	"nodeAllowJsPackageSelfName(module=nodenext).ts",
 	"nodeAllowJsPackageSelfName2.ts",
-	"nodeModules1(module=node16).ts",
-	"nodeModules1(module=nodenext).ts",
-	"nodeModulesAllowJs1(module=node16).ts",
-	"nodeModulesAllowJs1(module=nodenext).ts",
 	"nodeModulesAllowJsConditionalPackageExports(module=node16).ts",
 	"nodeModulesAllowJsConditionalPackageExports(module=nodenext).ts",
 	"nodeModulesAllowJsPackageExports(module=node16).ts",
@@ -288,9 +277,10 @@ var skip = []string{
 }
 
 type vfsModuleResolutionHost struct {
-	fs               vfs.FS
-	currentDirectory string
-	traces           []string
+	fs                        vfs.FS
+	useCaseSensitiveFileNames bool
+	currentDirectory          string
+	traces                    []string
 }
 
 func fixRoot(path string) string {
@@ -311,9 +301,13 @@ func newVFSModuleResolutionHost(files map[string]string) *vfsModuleResolutionHos
 			Data: []byte(content),
 		}
 	}
+
+	const useCaseSensitiveFileNames = true
+
 	return &vfsModuleResolutionHost{
-		fs:               vfs.FromIOFS(false, fs),
-		currentDirectory: "/",
+		fs:                        vfstest.FromMapFS(fs, useCaseSensitiveFileNames),
+		useCaseSensitiveFileNames: useCaseSensitiveFileNames,
+		currentDirectory:          "/",
 	}
 }
 
@@ -333,7 +327,7 @@ func (v *vfsModuleResolutionHost) Trace(msg string) {
 
 // UseCaseSensitiveFileNames implements ModuleResolutionHost.
 func (v *vfsModuleResolutionHost) UseCaseSensitiveFileNames() bool {
-	return false
+	return v.useCaseSensitiveFileNames
 }
 
 type functionCall struct {
