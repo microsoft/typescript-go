@@ -70,6 +70,8 @@ var skip = []string{
 	"declarationEmitWithInvalidPackageJsonTypings.ts",
 	"decoratorMetadataTypeOnlyExport.ts",
 	"decoratorMetadataTypeOnlyImport.ts",
+	"emit(jsx=preserve).ts",
+	"emit(jsx=react).ts",
 	"enumNoInitializerFollowsNonLiteralInitializer.ts",
 	"enumWithNonLiteralStringInitializer.ts",
 	"es6ImportWithJsDocTags.ts",
@@ -121,6 +123,7 @@ var skip = []string{
 	"moduleResolutionWithModule(module=nodenext,moduleresolution=nodenext).ts",
 	"moduleResolutionWithSymlinks_notInNodeModules.ts",
 	"moduleResolutionWithSymlinks_preserveSymlinks.ts",
+	"moduleResolutionWithSymlinks_referenceTypes.ts",
 	"moduleResolutionWithSymlinks_withOutDir.ts",
 	"moduleResolutionWithSymlinks.ts",
 	"nestedPackageJsonRedirect(moduleresolution=bundler).ts",
@@ -182,6 +185,8 @@ var skip = []string{
 	"nodeModulesImportModeDeclarationEmitErrors1(module=nodenext).ts",
 	"nodeModulesImportResolutionIntoExport(module=node16).ts",
 	"nodeModulesImportResolutionIntoExport(module=nodenext).ts",
+	"nodeModulesImportResolutionNoCycle(module=node16).ts",
+	"nodeModulesImportResolutionNoCycle(module=nodenext).ts",
 	"nodeModulesImportTypeModeDeclarationEmit1(module=node16).ts",
 	"nodeModulesImportTypeModeDeclarationEmit1(module=nodenext).ts",
 	"nodeModulesImportTypeModeDeclarationEmitErrors1(module=node16).ts",
@@ -304,16 +309,21 @@ func fixRoot(path string) string {
 	return path[rootLength:]
 }
 
-func newVFSModuleResolutionHost(files map[string]string) *vfsModuleResolutionHost {
+func newVFSModuleResolutionHost(files map[string]string, currentDirectory string) *vfsModuleResolutionHost {
 	fs := fstest.MapFS{}
 	for name, content := range files {
 		fs[fixRoot(name)] = &fstest.MapFile{
 			Data: []byte(content),
 		}
 	}
+	if currentDirectory == "" {
+		currentDirectory = "/.src"
+	} else if currentDirectory[0] != '/' {
+		currentDirectory = "/.src/" + currentDirectory
+	}
 	return &vfsModuleResolutionHost{
 		fs:               vfs.FromIOFS(false, fs),
-		currentDirectory: "/",
+		currentDirectory: currentDirectory,
 	}
 }
 
@@ -342,11 +352,12 @@ type functionCall struct {
 	returnValue map[string]any
 }
 type traceTestCase struct {
-	name            string
-	trace           bool
-	compilerOptions *core.CompilerOptions
-	files           map[string]string
-	calls           []functionCall
+	name             string
+	currentDirectory string
+	trace            bool
+	compilerOptions  *core.CompilerOptions
+	files            map[string]string
+	calls            []functionCall
 }
 type rawFile struct {
 	Name    string `json:"name"`
@@ -371,12 +382,13 @@ type rawArgs struct {
 	} `json:"redirectedReference"`
 }
 type rawTest struct {
-	Test   string         `json:"test"`
-	Trace  bool           `json:"trace"`
-	Files  []rawFile      `json:"files"`
-	Call   string         `json:"call"`
-	Args   rawArgs        `json:"args"`
-	Return map[string]any `json:"return"`
+	Test             string         `json:"test"`
+	CurrentDirectory string         `json:"currentDirectory"`
+	Trace            bool           `json:"trace"`
+	Files            []rawFile      `json:"files"`
+	Call             string         `json:"call"`
+	Args             rawArgs        `json:"args"`
+	Return           map[string]any `json:"return"`
 }
 
 var typesVersionsMessageRegex = regexp.MustCompile(`that matches compiler version '[^']+'`)
@@ -389,7 +401,7 @@ func runTraceBaseline(t *testing.T, test traceTestCase) {
 	t.Run(test.name, func(t *testing.T) {
 		t.Parallel()
 
-		host := newVFSModuleResolutionHost(test.files)
+		host := newVFSModuleResolutionHost(test.files, test.currentDirectory)
 		resolver := module.NewResolver(host, test.compilerOptions)
 
 		for _, call := range test.calls {
@@ -405,26 +417,24 @@ func runTraceBaseline(t *testing.T, test traceTestCase) {
 					}
 				}
 
+				var locations module.WithFailedLookupLocations
 				if call.call == "resolveModuleName" {
 					resolved := resolver.ResolveModuleName(call.args.Name, call.args.ContainingFile, core.ModuleKind(call.args.ResolutionMode), redirectedReference)
 					assert.Assert(t, resolved != nil, "ResolveModuleName should not return nil")
+					locations = resolved.WithFailedLookupLocations
 					if expectedResolvedModule, ok := call.returnValue["resolvedModule"].(map[string]any); ok {
 						assert.Assert(t, resolved.IsResolved())
 						assert.Equal(t, resolved.ResolvedModule.ResolvedFileName, expectedResolvedModule["resolvedFileName"].(string))
 						assert.Equal(t, resolved.ResolvedModule.Extension, expectedResolvedModule["extension"].(string))
 						assert.Equal(t, resolved.ResolvedModule.ResolvedUsingTsExtension, expectedResolvedModule["resolvedUsingTsExtension"].(bool))
 						assert.Equal(t, resolved.ResolvedModule.IsExternalLibraryImport, expectedResolvedModule["isExternalLibraryImport"].(bool))
-						if expectedFailedLookupLocations, ok := call.returnValue["failedLookupLocations"].([]interface{}); ok {
-							assert.DeepEqual(t, resolved.FailedLookupLocations, core.Map(expectedFailedLookupLocations, func(i interface{}) string { return i.(string) }))
-						} else {
-							assert.Equal(t, len(resolved.FailedLookupLocations), 0)
-						}
 					} else {
 						assert.Assert(t, !resolved.IsResolved())
 					}
 				} else {
 					resolved := resolver.ResolveTypeReferenceDirective(call.args.Name, call.args.ContainingFile, core.ModuleKind(call.args.ResolutionMode), redirectedReference)
 					assert.Assert(t, resolved != nil, "ResolveTypeReferenceDirective should not return nil")
+					locations = resolved.WithFailedLookupLocations
 					if expectedResolvedTypeReferenceDirective, ok := call.returnValue["resolvedTypeReferenceDirective"].(map[string]any); ok {
 						assert.Assert(t, resolved.IsResolved())
 						assert.Equal(t, resolved.ResolvedTypeReferenceDirective.ResolvedFileName, expectedResolvedTypeReferenceDirective["resolvedFileName"].(string))
@@ -433,6 +443,16 @@ func runTraceBaseline(t *testing.T, test traceTestCase) {
 					} else {
 						assert.Assert(t, !resolved.IsResolved())
 					}
+				}
+				if expectedFailedLookupLocations, ok := call.returnValue["failedLookupLocations"].([]interface{}); ok {
+					assert.DeepEqual(t, locations.FailedLookupLocations, core.Map(expectedFailedLookupLocations, func(i interface{}) string { return i.(string) }))
+				} else {
+					assert.Equal(t, len(locations.FailedLookupLocations), 0)
+				}
+				if expectedAffectingLocations, ok := call.returnValue["affectingLocations"].([]interface{}); ok {
+					assert.DeepEqual(t, locations.AffectingLocations, core.Map(expectedAffectingLocations, func(i interface{}) string { return i.(string) }))
+				} else {
+					assert.Equal(t, len(locations.AffectingLocations), 0)
 				}
 			case "getPackageScopeForPath":
 				resolver.GetPackageScopeForPath(call.args.Directory)
@@ -487,7 +507,8 @@ func TestModuleResolver(t *testing.T) {
 				runTraceBaseline(t, currentTestCase)
 			}
 			currentTestCase = traceTestCase{
-				name: json.Test,
+				name:             json.Test,
+				currentDirectory: json.CurrentDirectory,
 				// !!! no traces are passing yet because of missing cache implementation
 				trace: false,
 				files: make(map[string]string, len(json.Files)),

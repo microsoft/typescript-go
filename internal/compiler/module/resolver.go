@@ -88,7 +88,7 @@ func newResolutionState(
 		state.extensions = extensionsTypeScript | extensionsJavaScript | extensionsDeclaration
 	}
 
-	if compilerOptions.GetResolveJsonModule() {
+	if !isTypeReferenceDirective && compilerOptions.GetResolveJsonModule() {
 		state.extensions |= extensionsJson
 	}
 
@@ -373,6 +373,7 @@ func (r *resolutionState) resolveNodeLike() *ResolvedModuleWithFailedLookupLocat
 			if r.resolver.traceEnabled() {
 				r.resolver.host.Trace(diagnostics.Skipping_module_0_that_looks_like_an_absolute_URI_target_file_types_Colon_1.Format(r.name, r.extensions.String()))
 			}
+			return r.createResolvedModuleWithFailedLookupLocations(nil, false)
 		}
 		if r.resolver.traceEnabled() {
 			r.resolver.host.Trace(diagnostics.Loading_module_0_from_node_modules_folder_target_file_types_Colon_1.Format(r.name, r.extensions.String()))
@@ -638,6 +639,7 @@ func (r *resolutionState) tryFindNonRelativeModuleNameInCache(nameAndMode ModeAw
 				resolvedUsingTsExtension: result.ResolvedUsingTsExtension,
 			})
 		}
+		return searchResult[resolved]{value: nil, stop: true}
 	}
 
 	return newSearchResult[resolved](nil)
@@ -746,6 +748,8 @@ func (r *resolutionState) tryLoadModuleUsingPathsIfEligible() searchResult[resol
 		if r.resolver.traceEnabled() {
 			r.resolver.host.Trace(diagnostics.X_paths_option_is_specified_looking_for_a_pattern_to_match_module_name_0.Format(r.name))
 		}
+	} else {
+		return newSearchResult[resolved](nil)
 	}
 	baseDirectory := getPathsBasePath(r.compilerOptions, r.resolver.host.GetCurrentDirectory())
 	pathPatterns := tryParsePatterns(r.compilerOptions.Paths)
