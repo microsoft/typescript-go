@@ -37,18 +37,18 @@ func BenchmarkParse(b *testing.B) {
 
 // compare current code's tsgo AST with tsc's AST, but only write local baselines for tsgo's AST.
 // How to use:
-//  1. In _submodules/TypeScript, run `npm install` and `npx hereby services --no-typecheck`
-//  2. Run this test manually (you might not need 50 minutes, or you might need more on Windows)
-//     TEST_TSC=TSC go test ./... -run TestParseAgainstTSC -timeout 50m
-//  3. If all tests pass, you're done! If not, you can look at the local output to see if it looks wrong.
-//  4. If there are lots of failures, or the failure isn't obvious, run
-//     node internal/compiler/testdata/baselineAST.js -r _submodules/TypeScript testdata/baselines/gold
-//     This writes the tsc output to disk.
-//  5. Now diff gold/ and local/
-//  6. TODO: To run a single file,
-//     TEST_TSC=TSC go test ./... -run TestParseSingleAgainstTSC -args -filename=tests/baselines/reference/parserVariableDeclaration1.js
+// 1. In _submodules/TypeScript, run `npm install` and `npx hereby services --no-typecheck`
+// 2. Run this test manually (you might not need 50 minutes, or you might need more on Windows)
+//    TEST_ALL=ALL go test ./... -run TestParseAgainstTSC -timeout 50m
+// 3. If all tests pass, you're done! If not, you can look at the local output to see if it looks wrong.
+// 4. If there are lots of failures, or the failure isn't obvious, run
+//    node internal/compiler/testdata/baselineAST.js -r _submodules/TypeScript testdata/baselines/gold
+//    This writes the tsc output to disk.
+// 5. Now diff gold/ and local/
+// 6. To run a single file, 
+//    TEST_ALL=ALL go test ./... -run TestParseSingleAgainstTSC -args -filename=tests/baselines/reference/parserVariableDeclaration1.js
 func TestParseAgainstTSC(t *testing.T) {
-	if os.Getenv("TEST_TSC") == "" {
+	if os.Getenv("TEST_ALL") == "" {
 		t.Skip()
 	}
 	t.Parallel()
@@ -60,11 +60,11 @@ func TestParseAgainstTSC(t *testing.T) {
 }
 
 func TestParseSingleAgainstTSC(t *testing.T) {
-	if os.Getenv("TEST_TSC") == "" {
+	if os.Getenv("TEST_ALL") == "" {
 		t.Skip()
 	}
 	t.Parallel()
-	parseTestComparisonWorker(t)(filepath.Join(repo.TypeScriptSubmodulePath, "tests/cases/compiler/constructorWithIncompleteTypeAnnotation.ts"), nil, nil)
+	parseTestComparisonWorker(t)(filepath.Join(repo.TypeScriptSubmodulePath, "tests/baselines/reference/dynamicImportsDeclaration.js"), nil, nil)
 }
 
 func parseTestComparisonWorker(t *testing.T) func(fileName string, d fs.DirEntry, err error) error {
