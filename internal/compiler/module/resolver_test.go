@@ -37,8 +37,6 @@ var skip = []string{
 	"bundlerConditionsExcludesNode(module=preserve).ts",
 	"bundlerNodeModules1(module=esnext).ts",
 	"bundlerNodeModules1(module=preserve).ts",
-	"checkExportsObjectAssignProperty.ts",
-	"checkObjectDefineProperty.ts",
 	"commonJsExportTypeDeclarationError.ts",
 	"commonSourceDir5.ts",
 	"commonSourceDirectory.ts",
@@ -67,23 +65,18 @@ var skip = []string{
 	"enumNoInitializerFollowsNonLiteralInitializer.ts",
 	"enumWithNonLiteralStringInitializer.ts",
 	"es6ImportWithJsDocTags.ts",
-	"exportStarNotElided.ts",
 	"importAttributes9.ts",
-	"importFromDot.ts",
 	"importSpecifiers_js.ts",
 	"importTag17.ts",
 	"importTag21.ts",
-	"importWithTrailingSlash.ts",
 	"isolatedModulesShadowGlobalTypeNotValue(isolatedmodules=false,verbatimmodulesyntax=false).ts",
 	"isolatedModulesShadowGlobalTypeNotValue(isolatedmodules=false,verbatimmodulesyntax=true).ts",
 	"isolatedModulesShadowGlobalTypeNotValue(isolatedmodules=true,verbatimmodulesyntax=false).ts",
 	"isolatedModulesShadowGlobalTypeNotValue(isolatedmodules=true,verbatimmodulesyntax=true).ts",
 	"jsDeclarationEmitExportedClassWithExtends.ts",
 	"jsDocDeclarationEmitDoesNotUseNodeModulesPathWithoutError.ts",
-	"jsxClassAttributeResolution.tsx",
 	"jsxNamespaceGlobalReexport.tsx",
 	"jsxNamespaceGlobalReexportMissingAliasTarget.tsx",
-	"jsxNamespaceImplicitImportJSXNamespace.tsx",
 	"legacyNodeModulesExportsSpecifierGenerationConditions.ts",
 	"mergeSymbolReexportedTypeAliasInstantiation.ts",
 	"mergeSymbolReexportInterface.ts",
@@ -111,10 +104,6 @@ var skip = []string{
 	"nodeAllowJsPackageSelfName(module=node16).ts",
 	"nodeAllowJsPackageSelfName(module=nodenext).ts",
 	"nodeAllowJsPackageSelfName2.ts",
-	"nodeModules1(module=node16).ts",
-	"nodeModules1(module=nodenext).ts",
-	"nodeModulesAllowJs1(module=node16).ts",
-	"nodeModulesAllowJs1(module=nodenext).ts",
 	"nodeModulesAllowJsConditionalPackageExports(module=node16).ts",
 	"nodeModulesAllowJsConditionalPackageExports(module=nodenext).ts",
 	"nodeModulesAllowJsPackageExports(module=node16).ts",
@@ -224,7 +213,6 @@ var skip = []string{
 	"packageJsonImportsErrors.ts",
 	"parseAssertEntriesError.ts",
 	"parseImportAttributesError.ts",
-	"reactJsxReactResolvedNodeNext.tsx",
 	"reactJsxReactResolvedNodeNextEsm.tsx",
 	"resolutionModeImportType1(moduleresolution=bundler).ts",
 	"resolutionModeImportType1(moduleresolution=node10).ts",
@@ -253,7 +241,6 @@ var skip = []string{
 	"typesVersionsDeclarationEmit.multiFile.ts",
 	"typesVersionsDeclarationEmit.multiFileBackReferenceToSelf.ts",
 	"typesVersionsDeclarationEmit.multiFileBackReferenceToUnmapped.ts",
-	"typingsLookup3.ts",
 }
 
 type vfsModuleResolutionHost struct {
@@ -286,7 +273,7 @@ func newVFSModuleResolutionHost(files map[string]string, currentDirectory string
 		currentDirectory = "/.src/" + currentDirectory
 	}
 	return &vfsModuleResolutionHost{
-		fs:               vfstest.FromMapFS(fs, false),
+		fs:               vfstest.FromMapFS(fs, true /*useCaseSensitiveFileNames*/),
 		currentDirectory: currentDirectory,
 	}
 }
@@ -303,11 +290,6 @@ func (v *vfsModuleResolutionHost) GetCurrentDirectory() string {
 // Trace implements ModuleResolutionHost.
 func (v *vfsModuleResolutionHost) Trace(msg string) {
 	v.traces = append(v.traces, msg)
-}
-
-// UseCaseSensitiveFileNames implements ModuleResolutionHost.
-func (v *vfsModuleResolutionHost) UseCaseSensitiveFileNames() bool {
-	return false
 }
 
 type functionCall struct {
