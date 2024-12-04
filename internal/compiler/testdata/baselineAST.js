@@ -22,6 +22,9 @@ function printNode(node, indentLevel = 0) {
 }
 function unaliasKind(kind) {
     switch (kind) {
+        // Special case (T? now parses as an optional type), not an alias
+        case ts.SyntaxKind.JSDocNullableType:
+            return "OptionalType";
         case ts.SyntaxKind.FirstAssignment:
             return "EqualsToken";
         case ts.SyntaxKind.LastAssignment:
