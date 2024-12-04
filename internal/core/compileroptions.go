@@ -21,10 +21,12 @@ type CompilerOptions struct {
 	ExperimentalDecorators             Tristate             `json:"experimentalDecorators"`
 	IsolatedModules                    Tristate             `json:"isolatedModules"`
 	Jsx                                JsxEmit              `json:"jsx"`
+	Lib                                []string             `json:"lib"`
 	LegacyDecorators                   Tristate             `json:"legacyDecorators"`
 	ModuleKind                         ModuleKind           `json:"module"`
 	ModuleResolution                   ModuleResolutionKind `json:"moduleResolution"`
 	ModuleSuffixes                     []string             `json:"moduleSuffixes"`
+	ModuleDetection                    ModuleDetectionKind  `json:"moduleDetectionKind"`
 	NoFallthroughCasesInSwitch         Tristate             `json:"noFallthroughCasesInSwitch"`
 	NoImplicitAny                      Tristate             `json:"noImplicitAny"`
 	NoImplicitThis                     Tristate             `json:"noImplicitThis"`
@@ -38,8 +40,9 @@ type CompilerOptions struct {
 	ResolvePackageJsonImports          Tristate             `json:"resolvePackageJsonImports"`
 	Strict                             Tristate             `json:"strict"`
 	StrictBindCallApply                Tristate             `json:"strictBindCallApply"`
-	StrictNullChecks                   Tristate             `json:"strictNullChecks"`
 	StrictFunctionTypes                Tristate             `json:"strictFunctionTypes"`
+	StrictNullChecks                   Tristate             `json:"strictNullChecks"`
+	StrictPropertyInitialization       Tristate             `json:"strictPropertyInitialization"`
 	Target                             ScriptTarget         `json:"target"`
 	TraceResolution                    Tristate             `json:"traceResolution"`
 	TypeRoots                          []string             `json:"typeRoots"`
@@ -53,17 +56,6 @@ type CompilerOptions struct {
 	NoDtsResolution Tristate `json:"noDtsResolution"`
 	PathsBasePath   string   `json:"pathsBasePath"`
 }
-
-type JsxEmit int32
-
-const (
-	JsxEmitNone        JsxEmit = 0
-	JsxEmitPreserve    JsxEmit = 1
-	JsxEmitReact       JsxEmit = 2
-	JsxEmitReactNative JsxEmit = 3
-	JsxEmitReactJSX    JsxEmit = 4
-	JsxEmitReactJSXDev JsxEmit = 5
-)
 
 func (options *CompilerOptions) GetEmitScriptTarget() ScriptTarget {
 	if options.Target != ScriptTargetNone {
@@ -101,9 +93,7 @@ func (options *CompilerOptions) GetESModuleInterop() bool {
 		return options.ESModuleInterop == TSTrue
 	}
 	switch options.GetEmitModuleKind() {
-	case ModuleKindNode16:
-	case ModuleKindNodeNext:
-	case ModuleKindPreserve:
+	case ModuleKindNode16, ModuleKindNodeNext, ModuleKindPreserve:
 		return true
 	}
 	return false
@@ -159,6 +149,15 @@ func (options *CompilerOptions) GetEffectiveTypeRoots(currentDirectory string) (
 	})
 	return typeRoots, false
 }
+
+type ModuleDetectionKind int32
+
+const (
+	ModuleDetectionKindNone   ModuleDetectionKind = 0
+	ModuleDetectionKindAuto   ModuleDetectionKind = 1
+	ModuleDetectionKindLegacy ModuleDetectionKind = 2
+	ModuleDetectionKindForce  ModuleDetectionKind = 3
+)
 
 type ModuleKind int32
 
@@ -226,6 +225,13 @@ func (m ModuleResolutionKind) String() string {
 	}
 }
 
+type NewLineKind int32
+
+const (
+	NewLineKindCRLF NewLineKind = 0
+	NewLineKindLF   NewLineKind = 1
+)
+
 type ScriptTarget int32
 
 const (
@@ -244,4 +250,15 @@ const (
 	ScriptTargetESNext ScriptTarget = 99
 	ScriptTargetJSON   ScriptTarget = 100
 	ScriptTargetLatest ScriptTarget = ScriptTargetESNext
+)
+
+type JsxEmit int32
+
+const (
+	JsxEmitNone        JsxEmit = 0
+	JsxEmitPreserve    JsxEmit = 1
+	JsxEmitReactNative JsxEmit = 2
+	JsxEmitReact       JsxEmit = 3
+	JsxEmitReactJSX    JsxEmit = 4
+	JsxEmitReactJSXDev JsxEmit = 5
 )

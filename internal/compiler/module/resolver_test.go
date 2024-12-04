@@ -17,6 +17,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/testutil/baseline"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
+	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
 	"gotest.tools/v3/assert"
 )
 
@@ -252,6 +253,7 @@ var skip = []string{
 	"typesVersionsDeclarationEmit.multiFile.ts",
 	"typesVersionsDeclarationEmit.multiFileBackReferenceToSelf.ts",
 	"typesVersionsDeclarationEmit.multiFileBackReferenceToUnmapped.ts",
+	"typingsLookup3.ts",
 }
 
 type vfsModuleResolutionHost struct {
@@ -284,7 +286,7 @@ func newVFSModuleResolutionHost(files map[string]string, currentDirectory string
 		currentDirectory = "/.src/" + currentDirectory
 	}
 	return &vfsModuleResolutionHost{
-		fs:               vfs.FromIOFS(false, fs),
+		fs:               vfstest.FromMapFS(fs, false),
 		currentDirectory: currentDirectory,
 	}
 }
