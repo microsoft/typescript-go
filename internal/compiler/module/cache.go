@@ -188,6 +188,7 @@ func (c *perNonRelativeNameCache[T]) set(directory tspath.Path, value T, getReso
 	if c.directoryPathMap == nil {
 		c.directoryPathMap = make(map[tspath.Path]T)
 	}
+	c.directoryPathMap[directory] = value
 	resolvedFileName := getResolvedFileName(value)
 	// find common prefix between directory and resolved file name
 	// this common prefix should be the shortest path that has the same resolution
@@ -307,10 +308,9 @@ func getCommonPrefix(directory tspath.Path, resolution tspath.Path) tspath.Path 
 	if i < rootLength {
 		return tspath.Path("")
 	}
-	offset := i - 1
-	sep := strings.LastIndexByte(string(directory[offset:]), '/')
+	sep := strings.LastIndexByte(string(directory[:i]), '/')
 	if sep == -1 {
 		return tspath.Path("")
 	}
-	return directory[:max(sep+offset, rootLength)]
+	return directory[:max(sep, rootLength)]
 }

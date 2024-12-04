@@ -14,21 +14,19 @@ var typeScriptVersion = semver.MustParse(core.Version)
 
 type PackageJson struct {
 	Fields
-	versionPaths *VersionPaths
+	versionPaths VersionPaths
 	once         sync.Once
 }
 
-func (p *PackageJson) GetVersionPaths(collectTraces bool) (value *VersionPaths, traces []string) {
+func (p *PackageJson) GetVersionPaths(collectTraces bool) (value VersionPaths, traces []string) {
 	p.once.Do(func() {
 		if p.Fields.TypesVersions.Type == JSONValueTypeNotPresent {
-			p.versionPaths = &VersionPaths{}
 			if collectTraces {
 				traces = append(traces, diagnostics.X_package_json_does_not_have_a_0_field.Format("typesVersions"))
 			}
 			return
 		}
 		if p.Fields.TypesVersions.Type != JSONValueTypeObject {
-			p.versionPaths = &VersionPaths{}
 			if collectTraces {
 				traces = append(traces, diagnostics.Expected_type_of_0_field_in_package_json_to_be_1_got_2.Format("typesVersions", "object", p.Fields.TypesVersions.Type.String()))
 			}
@@ -52,10 +50,9 @@ func (p *PackageJson) GetVersionPaths(collectTraces bool) (value *VersionPaths, 
 					if collectTraces {
 						traces = append(traces, diagnostics.Expected_type_of_0_field_in_package_json_to_be_1_got_2.Format("typesVersions['"+key+"']", "object", value.Type.String()))
 					}
-					p.versionPaths = &VersionPaths{}
 					return
 				}
-				p.versionPaths = &VersionPaths{
+				p.versionPaths = VersionPaths{
 					Version:   key,
 					pathsJSON: value.AsObject(),
 				}
@@ -76,12 +73,12 @@ type VersionPaths struct {
 	paths     map[string][]string
 }
 
-func (v *VersionPaths) IsValid() bool {
-	return v.pathsJSON != nil
+func (v *VersionPaths) Exists() bool {
+	return v != nil && v.Version != "" && v.pathsJSON != nil
 }
 
 func (v *VersionPaths) GetPaths() map[string][]string {
-	if !v.IsValid() {
+	if !v.Exists() {
 		return nil
 	}
 	if v.paths != nil {

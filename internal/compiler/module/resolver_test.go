@@ -415,7 +415,7 @@ func runTraceBaseline(t *testing.T, test traceTestCase) {
 						assert.Equal(t, resolved.ResolvedModule.ResolvedUsingTsExtension, expectedResolvedModule["resolvedUsingTsExtension"].(bool))
 						assert.Equal(t, resolved.ResolvedModule.IsExternalLibraryImport, expectedResolvedModule["isExternalLibraryImport"].(bool))
 						if expectedFailedLookupLocations, ok := call.returnValue["failedLookupLocations"].([]interface{}); ok {
-							assert.Assert(t, slices.EqualFunc(resolved.FailedLookupLocations, expectedFailedLookupLocations, func(a string, b interface{}) bool { return a == b.(string) }))
+							assert.DeepEqual(t, resolved.FailedLookupLocations, core.Map(expectedFailedLookupLocations, func(i interface{}) string { return i.(string) }))
 						} else {
 							assert.Equal(t, len(resolved.FailedLookupLocations), 0)
 						}

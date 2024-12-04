@@ -500,7 +500,7 @@ func (r *resolutionState) loadModuleFromImmediateNodeModulesDirectory(extensions
 	}
 
 	if !typesScopeOnly {
-		if packageResult := r.loadModuleFromSpecificNodeModulesDirectory(extensions, nodeModulesFolder, nodeModulesFolderExists); packageResult != nil {
+		if packageResult := r.loadModuleFromSpecificNodeModulesDirectory(extensions, r.name, nodeModulesFolder, nodeModulesFolderExists); packageResult != nil {
 			return packageResult
 		}
 	}
@@ -511,20 +511,20 @@ func (r *resolutionState) loadModuleFromImmediateNodeModulesDirectory(extensions
 		if !nodeModulesAtTypesExists && r.resolver.traceEnabled() {
 			r.resolver.host.Trace(diagnostics.Directory_0_does_not_exist_skipping_all_lookups_in_it.Format(nodeModulesAtTypes))
 		}
-		return r.loadModuleFromSpecificNodeModulesDirectory(extensions, nodeModulesAtTypes, nodeModulesAtTypesExists)
+		return r.loadModuleFromSpecificNodeModulesDirectory(extensionsDeclaration, r.mangleScopedPackageName(r.name), nodeModulesAtTypes, nodeModulesAtTypesExists)
 	}
 
 	return nil
 }
 
-func (r *resolutionState) loadModuleFromSpecificNodeModulesDirectory(ext extensions, nodeModulesDirectory string, nodeModulesDirectoryExists bool) *resolved {
-	candidate := tspath.NormalizePath(tspath.CombinePaths(nodeModulesDirectory, r.name))
-	packageName, rest := ParsePackageName(r.name)
+func (r *resolutionState) loadModuleFromSpecificNodeModulesDirectory(ext extensions, moduleName string, nodeModulesDirectory string, nodeModulesDirectoryExists bool) *resolved {
+	candidate := tspath.NormalizePath(tspath.CombinePaths(nodeModulesDirectory, moduleName))
+	packageName, rest := ParsePackageName(moduleName)
 	packageDirectory := tspath.CombinePaths(nodeModulesDirectory, packageName)
 
 	var rootPackageInfo *packagejson.InfoCacheEntry
 	// First look for a nested package.json, as in `node_modules/foo/bar/package.json`
-	packageInfo := r.getPackageJsonInfo(packageDirectory, !nodeModulesDirectoryExists)
+	packageInfo := r.getPackageJsonInfo(candidate, !nodeModulesDirectoryExists)
 	// But only if we're not respecting export maps (if we are, we might redirect around this location)
 	if rest != "" && packageInfo.Exists() {
 		if r.features&NodeResolutionFeaturesExports != 0 {
@@ -536,7 +536,7 @@ func (r *resolutionState) loadModuleFromSpecificNodeModulesDirectory(ext extensi
 			}
 
 			var (
-				versionPaths *packagejson.VersionPaths
+				versionPaths packagejson.VersionPaths
 				traces       []string
 			)
 			if packageInfo.Exists() {
@@ -560,7 +560,7 @@ func (r *resolutionState) loadModuleFromSpecificNodeModulesDirectory(ext extensi
 			}
 		}
 		var (
-			versionPaths *packagejson.VersionPaths
+			versionPaths packagejson.VersionPaths
 			traces       []string
 		)
 		if packageInfo.Exists() {
@@ -576,7 +576,9 @@ func (r *resolutionState) loadModuleFromSpecificNodeModulesDirectory(ext extensi
 		// !!! this is ported exactly, but checking for null seems wrong?
 		if packageInfo.Exists() &&
 			(packageInfo.Contents.Exports.Type == packagejson.JSONValueTypeNotPresent || packageInfo.Contents.Exports.Type == packagejson.JSONValueTypeNull) &&
-			!r.esmMode {
+			r.esmMode {
+			// EsmMode disables index lookup in `loadNodeModuleFromDirectoryWorker` generally, however non-relative package resolutions still assume
+			// a default `index.js` entrypoint if no `main` or `exports` are present
 			if indexResult := r.loadModuleFromFile(extensions, tspath.CombinePaths(candidate, "index"), onlyRecordFailures); indexResult != nil {
 				indexResult.packageId = r.getPackageId(packageDirectory, packageInfo)
 				return indexResult
@@ -605,7 +607,7 @@ func (r *resolutionState) loadModuleFromSpecificNodeModulesDirectory(ext extensi
 			for _, trace := range traces {
 				r.resolver.host.Trace(trace)
 			}
-			if versionPaths != nil {
+			if versionPaths.Exists() {
 				if r.resolver.traceEnabled() {
 					r.resolver.host.Trace(diagnostics.X_package_json_has_a_typesVersions_entry_0_that_matches_compiler_version_1_looking_for_a_pattern_to_match_module_name_2.Format(versionPaths.Version, core.Version, rest))
 				}
@@ -1027,7 +1029,7 @@ func (r *resolutionState) tryFileLookup(fileName string, onlyRecordFailures bool
 func (r *resolutionState) loadNodeModuleFromDirectory(extensions extensions, candidate string, onlyRecordFailures bool, considerPackageJson bool) *resolved {
 	var (
 		packageInfo  *packagejson.InfoCacheEntry
-		versionPaths *packagejson.VersionPaths
+		versionPaths packagejson.VersionPaths
 	)
 
 	if considerPackageJson {
@@ -1044,7 +1046,7 @@ func (r *resolutionState) loadNodeModuleFromDirectory(extensions extensions, can
 	return r.loadNodeModuleFromDirectoryWorker(extensions, candidate, onlyRecordFailures, packageInfo, versionPaths)
 }
 
-func (r *resolutionState) loadNodeModuleFromDirectoryWorker(ext extensions, candidate string, onlyRecordFailures bool, packageInfo *packagejson.InfoCacheEntry, versionPaths *packagejson.VersionPaths) *resolved {
+func (r *resolutionState) loadNodeModuleFromDirectoryWorker(ext extensions, candidate string, onlyRecordFailures bool, packageInfo *packagejson.InfoCacheEntry, versionPaths packagejson.VersionPaths) *resolved {
 	var (
 		packageFile                      string
 		onlyRecordFailuresForPackageFile bool
@@ -1088,7 +1090,7 @@ func (r *resolutionState) loadNodeModuleFromDirectoryWorker(ext extensions, cand
 		indexPath = tspath.CombinePaths(candidate, "index")
 	}
 
-	if versionPaths != nil && (packageFile == "" || tspath.ContainsPath(candidate, packageFile, tspath.ComparePathsOptions{})) {
+	if versionPaths.Exists() && (packageFile == "" || tspath.ContainsPath(candidate, packageFile, tspath.ComparePathsOptions{})) {
 		var moduleName string
 		if packageFile != "" {
 			moduleName = tspath.GetRelativePathFromDirectory(candidate, packageFile, tspath.ComparePathsOptions{})
@@ -1109,7 +1111,7 @@ func (r *resolutionState) loadNodeModuleFromDirectoryWorker(ext extensions, cand
 	}
 
 	if packageFile != "" {
-		if packageFileResult := loader(ext, candidate, onlyRecordFailuresForPackageFile); packageFileResult != nil {
+		if packageFileResult := loader(ext, packageFile, onlyRecordFailuresForPackageFile); packageFileResult != nil {
 			if packageFileResult.packageId.Name != "" {
 				// !!! are these asserts really necessary?
 				panic("expected packageId to be empty")
@@ -1135,9 +1137,10 @@ func (r *resolutionState) loadFileNameFromPackageJSONField(extensions extensions
 			return &resolved{
 				path:                     path,
 				extension:                extension,
-				resolvedUsingTsExtension: strings.HasSuffix(packageJSONValue, extension),
+				resolvedUsingTsExtension: !strings.HasSuffix(packageJSONValue, extension),
 			}
 		}
+		return nil
 	}
 
 	if r.isConfigLookup && extensions&extensionsJson != 0 && tspath.FileExtensionIs(candidate, tspath.ExtensionJson) {
@@ -1377,14 +1380,15 @@ func getNodeResolutionFeatures(options *core.CompilerOptions) NodeResolutionFeat
 }
 
 func moveToNextDirectorySeparatorIfAvailable(path string, prevSeparatorIndex int, isFolder bool) int {
-	nextSeparatorIndex := strings.Index(path[prevSeparatorIndex+1:], "/")
+	offset := prevSeparatorIndex + 1
+	nextSeparatorIndex := strings.Index(path[offset:], "/")
 	if nextSeparatorIndex == -1 {
 		if isFolder {
 			return len(path)
 		}
 		return prevSeparatorIndex
 	}
-	return nextSeparatorIndex
+	return nextSeparatorIndex + offset
 }
 
 func getPathsBasePath(options *core.CompilerOptions, currentDirectory string) string {
