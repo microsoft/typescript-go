@@ -3475,3 +3475,24 @@ func hasContextSensitiveParameters(node *ast.Node) bool {
 	}
 	return false
 }
+
+func isCallChain(node *ast.Node) bool {
+	return ast.IsCallExpression(node) && node.Flags&ast.NodeFlagsOptionalChain != 0
+}
+
+func (c *Checker) callLikeExpressionMayHaveTypeArguments(node *ast.Node) bool {
+	return isCallOrNewExpression(node) || ast.IsTaggedTemplateExpression(node) || isJsxOpeningLikeElement(node)
+}
+
+func isSuperCall(n *ast.Node) bool {
+	return ast.IsCallExpression(n) && n.Expression().Kind == ast.KindSuperKeyword
+}
+
+/**
+ * Determines whether a node is a property or element access expression for `super`.
+ *
+ * @internal
+ */
+func isSuperProperty(node *ast.Node) bool {
+	return ast.IsAccessExpression(node) && node.Expression().Kind == ast.KindSuperKeyword
+}

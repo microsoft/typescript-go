@@ -202,66 +202,77 @@ func (n *Node) Expression() *Node {
 	panic("Unhandled case in Node.Expression")
 }
 
-func (n *Node) Arguments() []*Node {
-	var list *NodeList
+func (n *Node) ArgumentList() *NodeList {
 	switch n.Kind {
 	case KindCallExpression:
-		list = n.AsCallExpression().Arguments
+		return n.AsCallExpression().Arguments
 	case KindNewExpression:
-		list = n.AsNewExpression().Arguments
-	default:
-		panic("Unhandled case in Node.Arguments")
+		return n.AsNewExpression().Arguments
 	}
+	panic("Unhandled case in Node.Arguments")
+}
+
+func (n *Node) Arguments() []*Node {
+	list := n.ArgumentList()
 	if list != nil {
 		return list.Nodes
 	}
 	return nil
+}
+
+func (n *Node) TypeArgumentList() *NodeList {
+	switch n.Kind {
+	case KindCallExpression:
+		return n.AsCallExpression().TypeArguments
+	case KindNewExpression:
+		return n.AsNewExpression().TypeArguments
+	case KindTaggedTemplateExpression:
+		return n.AsTaggedTemplateExpression().TypeArguments
+	case KindTypeReference:
+		return n.AsTypeReference().TypeArguments
+	case KindExpressionWithTypeArguments:
+		return n.AsExpressionWithTypeArguments().TypeArguments
+	case KindImportType:
+		return n.AsImportTypeNode().TypeArguments
+	case KindTypeQuery:
+		return n.AsTypeQueryNode().TypeArguments
+	case KindJsxOpeningElement:
+		return n.AsJsxOpeningElement().TypeArguments
+	case KindJsxSelfClosingElement:
+		return n.AsJsxSelfClosingElement().TypeArguments
+	}
+	panic("Unhandled case in Node.TypeArguments")
 }
 
 func (n *Node) TypeArguments() []*Node {
-	var list *NodeList
-	switch n.Kind {
-	case KindCallExpression:
-		list = n.AsCallExpression().TypeArguments
-	case KindNewExpression:
-		list = n.AsNewExpression().TypeArguments
-	case KindTaggedTemplateExpression:
-		list = n.AsTaggedTemplateExpression().TypeArguments
-	case KindTypeReference:
-		list = n.AsTypeReference().TypeArguments
-	case KindExpressionWithTypeArguments:
-		list = n.AsExpressionWithTypeArguments().TypeArguments
-	case KindImportType:
-		list = n.AsImportTypeNode().TypeArguments
-	case KindTypeQuery:
-		list = n.AsTypeQueryNode().TypeArguments
-	default:
-		panic("Unhandled case in Node.TypeArguments")
-	}
+	list := n.TypeArgumentList()
 	if list != nil {
 		return list.Nodes
 	}
 	return nil
 }
 
-func (n *Node) TypeParameters() []*Node {
-	var list *NodeList
+func (n *Node) TypeParameterList() *NodeList {
 	switch n.Kind {
 	case KindClassDeclaration:
-		list = n.AsClassDeclaration().TypeParameters
+		return n.AsClassDeclaration().TypeParameters
 	case KindClassExpression:
-		list = n.AsClassExpression().TypeParameters
+		return n.AsClassExpression().TypeParameters
 	case KindInterfaceDeclaration:
-		list = n.AsInterfaceDeclaration().TypeParameters
+		return n.AsInterfaceDeclaration().TypeParameters
 	case KindTypeAliasDeclaration:
-		list = n.AsTypeAliasDeclaration().TypeParameters
+		return n.AsTypeAliasDeclaration().TypeParameters
 	default:
 		funcLike := n.FunctionLikeData()
-		if funcLike == nil {
-			panic("Unhandled case in Node.TypeParameters")
+		if funcLike != nil {
+			return funcLike.TypeParameters
 		}
-		list = funcLike.TypeParameters
 	}
+	panic("Unhandled case in Node.TypeParameters")
+}
+
+func (n *Node) TypeParameters() []*Node {
+	list := n.TypeParameterList()
 	if list != nil {
 		return list.Nodes
 	}
@@ -3159,6 +3170,10 @@ func (f *NodeFactory) NewSatisfiesExpression(expression *Expression, typeNode *T
 
 func (node *SatisfiesExpression) ForEachChild(v Visitor) bool {
 	return visit(v, node.Expression) || visit(v, node.Type)
+}
+
+func IsSatisfiesExpression(node *Node) bool {
+	return node.Kind == KindSatisfiesExpression
 }
 
 // ConditionalExpression

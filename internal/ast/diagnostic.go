@@ -115,3 +115,12 @@ func NewMessageChain(message *diagnostics.Message, args ...any) *MessageChain {
 		message:  text,
 	}
 }
+
+func NewMessageChainFromDiagnostic(diagnostic *Diagnostic) *MessageChain {
+	return &MessageChain{
+		code:         diagnostic.code,
+		category:     diagnostic.category,
+		message:      diagnostic.message,
+		messageChain: diagnostic.messageChain,
+	}
+}
