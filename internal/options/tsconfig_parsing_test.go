@@ -1,4 +1,4 @@
-package parsingoptions
+package tsoptions
 
 import (
 	// "runtime"
@@ -115,7 +115,12 @@ func TestGetParsedCommandJson(t *testing.T) {
 			/*extraFileExtensions*/ nil,
 			/*extendedConfigCache*/ nil,
 		)
-		fmt.Println(parseConfigFileContent)
+		configJson, err := json.Marshal(parseConfigFileContent)
+		if err != nil {
+			t.Errorf("Failed to marshal parseConfigFileContent: %v", err)
+		}
+		fmt.Println("****************************************************")
+		fmt.Println(string(configJson))
 	}
 }
 
@@ -129,6 +134,12 @@ var parseCommandJson = []verifyConfig{
 		configFileName: "tsconfig.json",
 		basePath:       "/apath",
 		allFileList:    []string{"/apath/test.ts", "/apath/foge.ts"},
+	},
+	{
+		jsonText:       `{}`,
+		configFileName: "tsconfig.json",
+		basePath:       "/apath",
+		allFileList:    []string{"/apath/test.ts", "/apath/.git/a.ts", "/apath/.b.ts", "/apath/..c.ts"},
 	},
 }
 

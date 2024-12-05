@@ -36,7 +36,7 @@ type CommandLineOption struct {
 	category *diagnostics.Message
 
 	// defined once
-	extraValidation func(value CompilerOptionsValue) (d *diagnostics.Message, args []string)
+	extraValidation func(value core.CompilerOptionsValue) (d *diagnostics.Message, args []string)
 
 	// true or undefined
 	// used for configDirTemplateSubstitutionOptions
@@ -139,4 +139,4 @@ var commandLineOptionDeprecated = map[string]*core.Set[string]{
 }
 
 // todo: revisit to see if this can be improved
-type CompilerOptionsValue any
+// type CompilerOptionsValue any

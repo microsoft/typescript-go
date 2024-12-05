@@ -8,6 +8,18 @@ import (
 
 //go:generate go run golang.org/x/tools/cmd/stringer -type=ModuleKind,ScriptTarget -output=compileroptions_stringer_generated.go
 
+// Probably not needed
+func (cov CompilerOptionsValue) HasValue() bool {
+	return cov.StringValue != "" ||
+		cov.NumberValue != 0 ||
+		cov.BooleanValue != false ||
+		cov.StringArrayValue != nil ||
+		cov.NumberArrayValue != nil ||
+		cov.MapLikeValue != nil ||
+		cov.NullValue != false ||
+		cov.UndefinedValue != false
+}
+
 type CompilerOptionsValue struct {
 	StringValue      string
 	NumberValue      float64 //number
@@ -20,6 +32,8 @@ type CompilerOptionsValue struct {
 	NullValue                 bool
 	UndefinedValue            bool
 	CompilerOptionsValueSlice []CompilerOptionsValue //maybe not needed
+	EnumMaps                  any                    //nay not be needed
+	JsonOption                []any
 	//(string | number)[]
 }
 type CompilerOptions struct {
@@ -67,7 +81,6 @@ type CompilerOptions struct {
 	MaxNodeModuleJsDepth               Tristate             `json:"maxNodeModuleJsDepth"`
 	SkipLibCheck                       Tristate             `json:"skipLibCheck"`
 	NoEmit                             Tristate             `json:"noEmit"`
-	Lib                                []string             `json:"lib"`
 
 	// Internal fields
 	ConfigFilePath  string   `json:"configFilePath"`
