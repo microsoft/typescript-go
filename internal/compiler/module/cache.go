@@ -178,9 +178,6 @@ func (c *perNonRelativeNameCache[T]) get(directory tspath.Path) (result T, ok bo
 //
 // this means that request for module resolution from file in any of these folder will be immediately found in cache.
 func (c *perNonRelativeNameCache[T]) set(directory tspath.Path, value T, getResolvedFileName func(result T) tspath.Path) {
-	if c == nil {
-		c = &perNonRelativeNameCache[T]{}
-	}
 	// if entry is already in cache do nothing
 	if _, ok := c.directoryPathMap[directory]; ok {
 		return
