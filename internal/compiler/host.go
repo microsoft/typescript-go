@@ -12,12 +12,15 @@ type CompilerHost interface {
 	GetCurrentDirectory() string
 	RunTask(fn func())
 	WaitForTasks()
+	Trace(msg string)
 }
 
 type FileInfo struct {
 	Name string
 	Size int64
 }
+
+var _ CompilerHost = (*compilerHost)(nil)
 
 type compilerHost struct {
 	options          *core.CompilerOptions
@@ -61,4 +64,8 @@ func (h *compilerHost) WaitForTasks() {
 		return
 	}
 	h.wg.Wait()
+}
+
+func (d *compilerHost) Trace(msg string) {
+	//!!! TODO: implement
 }

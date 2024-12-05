@@ -24,6 +24,7 @@ var singleThreaded = false
 var parseAndBindOnly = false
 var printTypes = false
 var pretty = true
+var listFiles = false
 var pprofDir = ""
 
 func printDiagnostic(d *ast.Diagnostic, level int) {
@@ -53,6 +54,7 @@ func main() {
 	flag.BoolVar(&parseAndBindOnly, "p", false, "Parse and bind only")
 	flag.BoolVar(&printTypes, "t", false, "Print types defined in main.ts")
 	flag.BoolVar(&pretty, "pretty", true, "Get prettier errors")
+	flag.BoolVar(&listFiles, "listfiles", false, "List files in the program")
 	flag.StringVar(&pprofDir, "pprofdir", "", "Generate pprof CPU/memory profiles to the given directory")
 	flag.Parse()
 
@@ -117,6 +119,12 @@ func main() {
 			for _, diagnostic := range diagnostics {
 				printDiagnostic(diagnostic, 0)
 			}
+		}
+	}
+
+	if listFiles {
+		for _, file := range program.SourceFiles() {
+			fmt.Println(file.FileName())
 		}
 	}
 
