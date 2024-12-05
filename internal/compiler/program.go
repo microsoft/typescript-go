@@ -35,9 +35,6 @@ type Program struct {
 	currentDirectory   string
 	mutex              sync.Mutex
 
-	resolvedModules                     map[string]*module.ResolvedModuleWithFailedLookupLocations
-	resolvedTypeReferenceDirectiveNames map[string]*module.ResolvedTypeReferenceDirectiveWithFailedLookupLocations
-
 	// The below settings are to track if a .js file should be add to the program if loaded via searching under node_modules.
 	// This works as imported modules are discovered recursively in a depth first manner, specifically:
 	// - For each root file, findSourceFile is called.
@@ -60,7 +57,6 @@ func NewProgram(options ProgramOptions) *Program {
 		p.options = &core.CompilerOptions{}
 	}
 	p.filesByPath = make(map[tspath.Path]*ast.SourceFile)
-	p.resolvedModules = make(map[string]*module.ResolvedModuleWithFailedLookupLocations)
 
 	//p.maxNodeModuleJsDepth = p.options.MaxNodeModuleJsDepth
 
@@ -118,26 +114,6 @@ func (p *Program) SourceFiles() []*ast.SourceFile { return p.files }
 func (p *Program) Options() *core.CompilerOptions { return p.options }
 func (p *Program) Host() CompilerHost             { return p.host }
 
-func (p *Program) parseSourceFiles(fileInfos []FileInfo) {
-	p.files = make([]*ast.SourceFile, len(fileInfos))[:len(fileInfos)]
-	for i := range fileInfos {
-		p.host.RunTask(func() {
-			fileName := fileInfos[i].Name
-			text, _ := p.host.FS().ReadFile(fileName)
-			sourceFile := ParseSourceFile(fileName, text, p.options.GetEmitScriptTarget())
-			path := tspath.ToPath(fileName, p.host.GetCurrentDirectory(), p.host.FS().UseCaseSensitiveFileNames())
-			sourceFile.SetPath(path)
-			p.collectExternalModuleReferences(sourceFile)
-			p.files[i] = sourceFile
-		})
-	}
-	p.host.WaitForTasks()
-	p.filesByPath = make(map[tspath.Path]*ast.SourceFile)
-	for _, file := range p.files {
-		p.filesByPath[file.Path()] = file
-	}
-}
-
 func (p *Program) bindSourceFiles() {
 	for _, file := range p.files {
 		if !file.IsBound {
@@ -174,11 +150,6 @@ func (p *Program) startParseTask(fileName string, wg *sync.WaitGroup) {
 		file := p.parseSourceFile(normalizedPath)
 		p.collectExternalModuleReferences(file)
 
-		p.mutex.Lock()
-		defer p.mutex.Unlock()
-		p.files = append(p.files, file)
-		p.filesByPath[file.Path()] = file
-
 		bindSourceFile(file, p.options)
 
 		filesToParse := make([]string, 0, len(file.ReferencedFiles)+len(file.Imports)+len(file.ModuleAugmentations))
@@ -198,6 +169,11 @@ func (p *Program) startParseTask(fileName string, wg *sync.WaitGroup) {
 			}
 		}
 
+		p.mutex.Lock()
+		defer p.mutex.Unlock()
+		p.files = append(p.files, file)
+		p.filesByPath[file.Path()] = file
+
 		if len(filesToParse) > 0 {
 			for _, fileName := range filesToParse {
 				p.processedFileNames.Add(fileName)
@@ -207,24 +183,15 @@ func (p *Program) startParseTask(fileName string, wg *sync.WaitGroup) {
 	}()
 }
 
-func (p *Program) processRootFileSync(fileName string, reason FileIncludeReason /*, isDefaultLib bool, ignoreNoDefaultLib bool, */) {
-	normalizedPath := tspath.NormalizePath(fileName)
-	p.processSourceFileSync(normalizedPath, reason)
-}
-
-func (p *Program) processSourceFileSync(fileName string, reason FileIncludeReason) *ast.SourceFile {
-	return p.findSourceFileSync(fileName, reason)
-}
-
 func (p *Program) getResolvedModule(currentSourceFile *ast.SourceFile, moduleReference string) *ast.SourceFile {
 	directory := tspath.GetDirectoryPath(currentSourceFile.FileName())
 	if tspath.IsExternalModuleNameRelative(moduleReference) {
-		return p.findSourceFileSync(tspath.CombinePaths(directory, moduleReference), FileIncludeReason{FileIncludeKindImport, 0})
+		return p.findSourceFile(tspath.CombinePaths(directory, moduleReference), FileIncludeReason{FileIncludeKindImport, 0})
 	}
 	return p.findNodeModule(moduleReference)
 }
 
-func (p *Program) findSourceFileSync(candidate string, reason FileIncludeReason) *ast.SourceFile {
+func (p *Program) findSourceFile(candidate string, reason FileIncludeReason) *ast.SourceFile {
 	extensionless := tspath.RemoveFileExtension(candidate)
 	for _, ext := range []string{tspath.ExtensionTs, tspath.ExtensionTsx, tspath.ExtensionDts} {
 		path := tspath.ToPath(extensionless+ext, p.host.GetCurrentDirectory(), p.host.FS().UseCaseSensitiveFileNames())
@@ -233,14 +200,7 @@ func (p *Program) findSourceFileSync(candidate string, reason FileIncludeReason)
 		}
 	}
 
-	file := p.parseSourceFile(candidate)
-	if file != nil {
-		path := tspath.ToPath(candidate, p.host.GetCurrentDirectory(), p.host.FS().UseCaseSensitiveFileNames())
-		p.filesByPath[path] = file
-		p.processReferencedFiles(file)
-		p.processImportedModules(file)
-	}
-	return file
+	return nil;
 }
 
 func (p *Program) parseSourceFile(fileName string) *ast.SourceFile {
@@ -251,11 +211,6 @@ func (p *Program) parseSourceFile(fileName string) *ast.SourceFile {
 	return sourceFile
 }
 
-func (p *Program) processReferencedFiles(file *ast.SourceFile) {
-	for _, ref := range file.ReferencedFiles {
-		p.processSourceFileSync(ref.FileName, FileIncludeReason{FileIncludeKindReferenceFile, 0})
-	}
-}
 
 func getModuleNames(file *ast.SourceFile) []*ast.Node {
 	res := slices.Clone(file.Imports)
@@ -293,10 +248,7 @@ func (p *Program) getImportsToParse(file *ast.SourceFile) []string {
 		moduleNames := getModuleNames(file)
 		resolutions := p.resolveModuleNames(moduleNames, file)
 
-		for i, resolution := range resolutions {
-			moduleName := moduleNames[i].Text()
-			p.resolvedModules[moduleName] = resolution
-
+		for _, resolution := range resolutions {
 			resolvedFileName := resolution.ResolvedFileName
 			// TODO(ercornel): !!!: check if from node modules
 
@@ -321,41 +273,6 @@ func (p *Program) getImportsToParse(file *ast.SourceFile) []string {
 		}
 	}
 	return toParse
-}
-
-func (p *Program) processImportedModules(file *ast.SourceFile) {
-	p.collectExternalModuleReferences(file)
-
-	if len(file.Imports) > 0 || len(file.ModuleAugmentations) > 0 {
-		moduleNames := getModuleNames(file)
-		resolutions := p.resolveModuleNames(moduleNames, file)
-
-		for i, resolution := range resolutions {
-			moduleName := moduleNames[i].Text()
-			p.resolvedModules[moduleName] = resolution
-
-			resolvedFileName := resolution.ResolvedFileName
-			// TODO(ercornel): !!!: check if from node modules
-
-			// add file to program only if:
-			// - resolution was successful
-			// - noResolve is falsy
-			// - module name comes from the list of imports
-			// - it's not a top level JavaScript module that exceeded the search max
-
-			//const elideImport = isJsFileFromNodeModules && currentNodeModulesDepth > maxNodeModuleJsDepth;
-
-			// Don't add the file if it has a bad extension (e.g. 'tsx' if we don't have '--allowJs')
-			// This may still end up being an untyped module -- the file won't be included but imports will be allowed.
-
-			shouldAddFile := resolution.IsResolved()
-			// TODO(ercornel): !!!: other checks on whether or not to add the file
-
-			if shouldAddFile {
-				p.findSourceFileSync(resolvedFileName, FileIncludeReason{FileIncludeKindImport, 0})
-			}
-		}
-	}
 }
 
 func (p *Program) findNodeModule(moduleReference string) *ast.SourceFile {
