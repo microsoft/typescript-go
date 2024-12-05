@@ -536,17 +536,7 @@ func (r *resolutionState) loadModuleFromSpecificNodeModulesDirectory(ext extensi
 				return fromFile
 			}
 
-			var (
-				versionPaths packagejson.VersionPaths
-				traces       []string
-			)
-			if packageInfo.Exists() {
-				versionPaths, traces = packageInfo.Contents.GetVersionPaths(r.resolver.traceEnabled())
-				for _, trace := range traces {
-					r.resolver.host.Trace(trace)
-				}
-			}
-			if fromDirectory := r.loadNodeModuleFromDirectoryWorker(ext, candidate, !nodeModulesDirectoryExists, packageInfo, versionPaths); fromDirectory != nil {
+			if fromDirectory := r.loadNodeModuleFromDirectoryWorker(ext, candidate, !nodeModulesDirectoryExists, packageInfo); fromDirectory != nil {
 				fromDirectory.packageId = r.getPackageId(packageDirectory, packageInfo)
 				return fromDirectory
 			}
@@ -560,17 +550,7 @@ func (r *resolutionState) loadModuleFromSpecificNodeModulesDirectory(ext extensi
 				return fromFile
 			}
 		}
-		var (
-			versionPaths packagejson.VersionPaths
-			traces       []string
-		)
-		if packageInfo.Exists() {
-			versionPaths, traces = packageInfo.Contents.GetVersionPaths(r.resolver.traceEnabled())
-			for _, trace := range traces {
-				r.resolver.host.Trace(trace)
-			}
-		}
-		if fromDirectory := r.loadNodeModuleFromDirectoryWorker(extensions, candidate, onlyRecordFailures, packageInfo, versionPaths); fromDirectory != nil {
+		if fromDirectory := r.loadNodeModuleFromDirectoryWorker(extensions, candidate, onlyRecordFailures, packageInfo); fromDirectory != nil {
 			fromDirectory.packageId = r.getPackageId(packageDirectory, packageInfo)
 			return fromDirectory
 		}
@@ -604,10 +584,7 @@ func (r *resolutionState) loadModuleFromSpecificNodeModulesDirectory(ext extensi
 			return nil
 		}
 		if rest != "" {
-			versionPaths, traces := packageInfo.Contents.GetVersionPaths(r.resolver.traceEnabled())
-			for _, trace := range traces {
-				r.resolver.host.Trace(trace)
-			}
+			versionPaths := packageInfo.Contents.GetVersionPaths(r.getTraceFunc())
 			if versionPaths.Exists() {
 				if r.resolver.traceEnabled() {
 					r.resolver.host.Trace(diagnostics.X_package_json_has_a_typesVersions_entry_0_that_matches_compiler_version_1_looking_for_a_pattern_to_match_module_name_2.Format(versionPaths.Version, core.Version, rest))
@@ -1031,31 +1008,21 @@ func (r *resolutionState) tryFileLookup(fileName string, onlyRecordFailures bool
 }
 
 func (r *resolutionState) loadNodeModuleFromDirectory(extensions extensions, candidate string, onlyRecordFailures bool, considerPackageJson bool) *resolved {
-	var (
-		packageInfo  *packagejson.InfoCacheEntry
-		versionPaths packagejson.VersionPaths
-	)
-
+	var packageInfo *packagejson.InfoCacheEntry
 	if considerPackageJson {
 		packageInfo = r.getPackageJsonInfo(candidate, onlyRecordFailures)
-		if packageInfo.Exists() {
-			var traces []string
-			versionPaths, traces = packageInfo.Contents.GetVersionPaths(r.resolver.traceEnabled())
-			for _, trace := range traces {
-				r.resolver.host.Trace(trace)
-			}
-		}
 	}
 
-	return r.loadNodeModuleFromDirectoryWorker(extensions, candidate, onlyRecordFailures, packageInfo, versionPaths)
+	return r.loadNodeModuleFromDirectoryWorker(extensions, candidate, onlyRecordFailures, packageInfo)
 }
 
-func (r *resolutionState) loadNodeModuleFromDirectoryWorker(ext extensions, candidate string, onlyRecordFailures bool, packageInfo *packagejson.InfoCacheEntry, versionPaths packagejson.VersionPaths) *resolved {
+func (r *resolutionState) loadNodeModuleFromDirectoryWorker(ext extensions, candidate string, onlyRecordFailures bool, packageInfo *packagejson.InfoCacheEntry) *resolved {
 	var (
 		packageFile                      string
 		onlyRecordFailuresForPackageFile bool
+		versionPaths                     packagejson.VersionPaths
 	)
-	if packageInfo != nil {
+	if packageInfo.Exists() && tspath.ComparePaths(candidate, packageInfo.PackageDirectory, tspath.ComparePathsOptions{UseCaseSensitiveFileNames: r.resolver.host.FS().UseCaseSensitiveFileNames()}) == 0 {
 		if file, ok := r.getPackageFile(ext, packageInfo); ok {
 			packageFile = file
 			onlyRecordFailuresForPackageFile = !r.resolver.host.FS().DirectoryExists(tspath.GetDirectoryPath(file))
@@ -1335,6 +1302,13 @@ func (r *resolutionState) getPackageJSONPathField(fieldName string, field *packa
 		r.resolver.host.Trace(diagnostics.X_package_json_has_0_field_1_that_references_2.Format(fieldName, field.Value, path))
 	}
 	return path, true
+}
+
+func (r *resolutionState) getTraceFunc() func(string) {
+	if r.resolver.traceEnabled() {
+		return r.resolver.host.Trace
+	}
+	return nil
 }
 
 func getConditions(options *core.CompilerOptions, resolutionMode core.ResolutionMode) []string {
