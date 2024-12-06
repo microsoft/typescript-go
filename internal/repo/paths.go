@@ -4,6 +4,7 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"sync"
 )
 
 var RootPath string
@@ -30,4 +31,14 @@ func findGoMod(dir string) string {
 		dir = filepath.Dir(dir)
 	}
 	panic("could not find go.mod")
+}
+
+var typeScriptSubmoduleExists = sync.OnceValue(func() bool {
+	p := filepath.Join(TypeScriptSubmodulePath, "package.json")
+	_, err := os.Stat(p)
+	return err == nil
+})
+
+func TypeScriptSubmoduleExists() bool {
+	return typeScriptSubmoduleExists()
 }
