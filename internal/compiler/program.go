@@ -211,7 +211,6 @@ func (p *Program) parseSourceFile(fileName string) *ast.SourceFile {
 	return sourceFile
 }
 
-
 func getModuleNames(file *ast.SourceFile) []*ast.Node {
 	res := slices.Clone(file.Imports)
 	for _, imp := range file.ModuleAugmentations {
