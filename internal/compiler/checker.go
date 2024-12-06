@@ -3142,7 +3142,6 @@ func (c *Checker) chooseOverload(s *CallState, relation *Relation) *Signature {
 					continue
 				}
 			} else {
-				typeArgumentTypes = core.Map(candidate.typeParameters, func(*Type) *Type { return c.anyType })
 				inferenceContext = c.createInferenceContext(candidate.typeParameters, candidate, InferenceFlagsNone /*flags*/)
 				// The resulting type arguments are instantiated with the inference context mapper, as the inferred types may still contain references to the inference context's
 				//  type variables via contextual projection. These are kept generic until all inferences are locked in, so the dependencies expressed can pass constraint checks.
@@ -3657,20 +3656,20 @@ func (c *Checker) getArgumentArityError(node *ast.Node, signatures []*Signature,
 		parameterRange = strconv.Itoa(minCount)
 	}
 	isVoidPromiseError := !hasRestParameter && parameterRange == "1" && len(args) == 0 && c.isPromiseResolveArityError(node)
-	var error *diagnostics.Message
+	var message *diagnostics.Message
 	switch {
 	case ast.IsDecorator(node):
 		if hasRestParameter {
-			error = diagnostics.The_runtime_will_invoke_the_decorator_with_1_arguments_but_the_decorator_expects_at_least_0
+			message = diagnostics.The_runtime_will_invoke_the_decorator_with_1_arguments_but_the_decorator_expects_at_least_0
 		} else {
-			error = diagnostics.The_runtime_will_invoke_the_decorator_with_1_arguments_but_the_decorator_expects_0
+			message = diagnostics.The_runtime_will_invoke_the_decorator_with_1_arguments_but_the_decorator_expects_0
 		}
 	case hasRestParameter:
-		error = diagnostics.Expected_at_least_0_arguments_but_got_1
+		message = diagnostics.Expected_at_least_0_arguments_but_got_1
 	case isVoidPromiseError:
-		error = diagnostics.Expected_0_arguments_but_got_1_Did_you_forget_to_include_void_in_your_type_argument_to_Promise
+		message = diagnostics.Expected_0_arguments_but_got_1_Did_you_forget_to_include_void_in_your_type_argument_to_Promise
 	default:
-		error = diagnostics.Expected_0_arguments_but_got_1
+		message = diagnostics.Expected_0_arguments_but_got_1
 	}
 	errorNode := getErrorNodeForCallNode(node)
 	switch {
@@ -3683,7 +3682,7 @@ func (c *Checker) getArgumentArityError(node *ast.Node, signatures []*Signature,
 		return diagnostic
 	case len(args) < minCount:
 		// too short: put the error span on the call expression, not any of the args
-		diagnostic := NewDiagnosticForNode(errorNode, error, parameterRange, len(args))
+		diagnostic := NewDiagnosticForNode(errorNode, message, parameterRange, len(args))
 		if headMessage != nil {
 			diagnostic = ast.NewDiagnosticChain(diagnostic, headMessage)
 		}
@@ -3711,7 +3710,7 @@ func (c *Checker) getArgumentArityError(node *ast.Node, signatures []*Signature,
 		if end == pos {
 			end++
 		}
-		diagnostic := ast.NewDiagnostic(sourceFile, core.NewTextRange(pos, end), error, parameterRange, len(args))
+		diagnostic := ast.NewDiagnostic(sourceFile, core.NewTextRange(pos, end), message, parameterRange, len(args))
 		if headMessage != nil {
 			diagnostic = ast.NewDiagnosticChain(diagnostic, headMessage)
 		}
@@ -16905,11 +16904,9 @@ func (c *Checker) getTypeOfPropertyOfContextualTypeEx(t *Type, name string, name
 				indexInfoCandidates = nil
 				types = c.appendContextualPropertyTypeConstituent(types, propertyType)
 			}
-			if indexInfoCandidates != nil {
-				for _, candidate := range indexInfoCandidates {
-					indexInfoType := c.getTypeFromIndexInfosOfContextualType(candidate, name, nameType)
-					types = c.appendContextualPropertyTypeConstituent(types, indexInfoType)
-				}
+			for _, candidate := range indexInfoCandidates {
+				indexInfoType := c.getTypeFromIndexInfosOfContextualType(candidate, name, nameType)
+				types = c.appendContextualPropertyTypeConstituent(types, indexInfoType)
 			}
 			if len(types) == 0 {
 				return nil
