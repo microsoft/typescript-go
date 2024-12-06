@@ -4,16 +4,16 @@ I propose dropping some features in order to simplify and speed up the compiler 
 
 When we added Javascript support to the Typescript compiler 7-8 years ago, we tried to support 4 kinds of users:
 
-1. JS-only -- people opening a random JS file in VS/VSCode, often by somebody who's never heard of TS.
-2. TS-early-adopter -- somebody who's adding `// @ts-check` to an existing code base in order to convince their team of the benefits of Typescript.
-3. Closure -- an entire team writing for Google's Closure compiler. At the time, Closure was the source most of JSDoc type syntax, and the bulk of typechecked JSDoc code in the world.
+1. JS-only -- people opening a random JS file in VSCode, often by somebody who's never heard of TS.
+2. TS-early-adopter -- somebody who's adding `// @ts-check` to a JSDoc-but-unchecked code base in order to convince their team of the benefits of Typescript.
+3. Closure/other JSDoc processors -- an entire team writing for Google's Closure compiler, which used JSDoc type syntax, or perhaps the original JSDoc documentation generator.
 4. TS-via-JSDoc -- people who wanted to use Typescript but
 	- didn't want a build step.
 	- didn't want to rely on a non-standard JS variant with a relatively short history.
 	- didn't want to restrict their contributor pool to people who knew Typescript.
 	- didn't want to rely on a Microsoft-provided compiler.
 
-That is a wide variety of users, from people who don't even know they're using Typescript to those who are writing complete Typescript-first code, just in a different syntax. Today, however, only the two users on the extremes are left. People don't need to kick the tires on Typescript -- they already love it or hate it. And all the Closure codebases that I know of have migrated to Typescript (although it's still used as an optimiser). Even TS-via-JSDoc projects are getting rarer as Typescript syntax is supported everywhere in the JS ecosystem.
+That is a wide variety of users, from people who don't even know they're using Typescript to those who are writing complete Typescript-first code, just in a different syntax. Today, however, only the two users on the extremes are left. The wild variation in JSDoc is long gone, in part because JS files are now mostly written in an editor running tsserver. And all the Closure codebases that I know of have migrated to Typescript (although it's still used as an optimiser). Even TS-via-JSDoc projects are getting rarer as Typescript syntax is supported everywhere in the JS ecosystem.
 
 Also, Javascript itself has changed a lot since 2017. `class` has replaced constructor functions. ES modules are finally replacing CommonJS, and the syntax for both has long since been replaced for people with a build. In a word, Typescript's JS support needs cuts. Patterns with no Typescript equivalent are less important than in 2017, and there are many fewer to support. Those that remain are easier to analyse statically because of ES standards and because of Typescript's own place as the de facto interpreter of JSDoc semantics.
 
@@ -61,7 +61,7 @@ In addition, most JSDoc-specific type syntax stays:
 ```
 
 ### CommonJS 
-CommonJS keeps `module.exports` and `require` support; most handwritten code no longer uses it, but it's still useful so Typescript can understand semantics of a JS file inside node_modules:
+CommonJS keeps `module.exports` and `require` support; most new handwritten code no longer uses it, but it's still useful so Typescript can understand semantics of a JS file inside node_modules:
  ```js
 const fs = require('fs')
 function f() { }
@@ -164,15 +164,21 @@ function mathematical() { }
 
 ### Types
 
-#### `?`
-`?` is a synonym of `any` - Barely used, trivial semantics.
+#### Standalone `?`
+`?` is a synonym of `any` -- but it's barely used:
+
+```js
+/** @type {?} */
+var unknown
+```
+
 #### Namepaths
 `module:path~Type` - Barely used, no semantics. Displaced entirely by `import("path").Type`
 #### Postfix types
 `T!` and `T?`, but keep `!T` and `?T` - The postfix variants came from Closure. See below. Prefix `?T` is used in Flow, which is useful for TS to understand.
 
 #### `String`, `Number` etc synonyms
-Using `String` for `string` is rare in modern code, so I decided that I'd rather have more `any` in random JS files, but less confusion among people who write TS-via-JSDoc.
+Using `String` for `string` is rare in modern code, so I decided that I'd rather have slightly wrong types in a few JS files, but less confusion among people who write TS-via-JSDoc.
 
 ```ts
 /** @type {Number} */
@@ -214,7 +220,9 @@ This is Closure syntax. See below.
 
 ### Constructor functions
 #### Multiple assignments to the same `C.prototype.property` 
-Currently the types are unioned, but will instead take the type of the first declaration. This code is quite rare.
+Currently the types are unioned, but this code is quite rare.
+The main use of this pattern is to provide polyfills or platform-specific shims, which all have the same type, so instead typescript-go will take the type of the first declaration.
+
 ```js
 function C() { }
 if (isWindows) {
@@ -250,7 +258,9 @@ global {
 }
 ```
 #### Multiple assignments to the same export
-Currently the types are determined using control flow, but will instead take the type of the first declaration. This code is quite rare, and is used for platform selection, not mutation, so control flow is overkill.
+Currently the type is determined using control flow.
+The main use of this pattern is to provide polyfills or platform-specific shims, which all have the same type, so instead typescript-go will take the type of the first declaration.
+
 ```js
 if (isWindows) {
   module.exports.normalise = function(path) {
@@ -262,7 +272,8 @@ if (isWindows) {
   }
 }
 ```
-Currently, this also applies to single-object exports, which aren't used this way in the first place:
+
+The same applies to single-object exports, but I didn't observe any usage like this:
 ```js
 if (isWindows) {
   module.exports = { ... }
@@ -270,6 +281,7 @@ if (isWindows) {
   module.exports = { ... }
 }
 ```
+
 #### single-property access `require`
 ```js
 var readFileSync = require('fs').readFileSync
@@ -289,8 +301,6 @@ module.exports.f = function() { ... }
 ```
 Modern code assumes that `module.exports` is always defined.
 
-
-**NOTE**: I would like to drop CommonJS entirely, since it is rare to write code in CommonJS these days. But lots of emitted code is CommonJS, so it will be a few years before people stop running into it occasionally in node_modules.
 ### Global code
 #### expando assignments skip  *x* `||` in assignments of the form *x* `=` *x* `||` *expression*
 This was intended to allow TS to understand global polyfills, but nobody uses this form these days.
