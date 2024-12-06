@@ -32,6 +32,7 @@ func BenchmarkParse(b *testing.B) {
 
 func TestParseTypeScriptRepo(t *testing.T) {
 	t.Parallel()
+	repo.SkipIfNoTypeScriptSubmodule(t)
 
 	tests := []struct {
 		name         string
