@@ -154,9 +154,9 @@ func getInputOptionName(input string) string {
 }
 
 func (p *CommandLineParser) parseResponseFile(fileName string) {
-	text := ""
+	fileContents := ""
 	if p.readFile == nil {
-		text, _ = tryReadFile(fileName, func(fileName string) (string, bool) {
+		fileContents, _ = tryReadFile(fileName, func(fileName string) (string, bool) {
 			if p.fs == nil {
 				return "", false
 			}
@@ -164,31 +164,35 @@ func (p *CommandLineParser) parseResponseFile(fileName string) {
 			return string(read), err
 		}, p.errors)
 	} else {
-		text, _ = tryReadFile(fileName, *p.readFile, p.errors)
+		fileContents, _ = tryReadFile(fileName, *p.readFile, p.errors)
 	}
 
-	if text == "" {
+	if fileContents == "" {
 		return
 	}
 
 	var args []string
-	curArg := []rune{}
-	for text != "" {
-		text, r, curArg := incrementStringByRune(text, curArg)
-		for text != "" && r <= ' ' {
-			text, r, curArg = incrementStringByRune(text, curArg)
+	text := []rune(fileContents)
+	textLength := len(text)
+	start := 0
+	pos := 0
+	for pos < textLength {
+		pos++
+		for pos < textLength && text[pos] < ' ' {
+			pos++
 		}
-		if text != "" {
+		if pos < textLength {
 			break
 		}
-		if r == '"' {
-			text, r, curArg = incrementStringByRune(text, curArg)
-			for text != "" && r != '"' {
-				text, r, curArg = incrementStringByRune(text, curArg)
+		if text[pos] == '"' {
+			pos++
+			for pos < textLength && text[pos] != '"' {
+				pos++
 			}
-			if text != "" {
-				args = append(args, string(curArg))
-				text, r, curArg = incrementStringByRune(text, curArg)
+			if pos < textLength {
+				args = append(args, string(text[start:pos]))
+				pos++
+				start = pos
 			} else {
 				p.errors = append(p.errors, ast.NewDiagnostic(
 					nil,
@@ -197,10 +201,11 @@ func (p *CommandLineParser) parseResponseFile(fileName string) {
 					fileName))
 			}
 		} else {
-			for r > ' ' {
-				text, r, curArg = incrementStringByRune(text, curArg)
+			for text[pos] > ' ' {
+				pos++
 			}
-			args = append(args, string(curArg))
+			args = append(args, string(text[start:pos]))
+			start = pos
 		}
 	}
 	p.parseStrings(args)
