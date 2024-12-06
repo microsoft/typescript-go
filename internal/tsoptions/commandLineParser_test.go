@@ -15,7 +15,6 @@ import (
 	"gotest.tools/v3/assert"
 )
 
-// optional worker diagnostic
 func TestCommandLineParseResult(t *testing.T) {
 	// subScenario string, commandLine []string
 	var parseCommandLineSubSecnarios = []*commandLineSubScenario{
@@ -144,8 +143,8 @@ func TestParseCommandLineVerifyNull(t *testing.T) {
 	}
 }
 
-func TestParseCOmmandLineVerifyNonNullIncludedOption(t *testing.T) {
-
+func TestParseCommandLineVerifyNonNullIncludedOption(t *testing.T) {
+	// todo: non null included options
 }
 
 func (f commandLineSubScenario) assertParseResult(t *testing.T) {
