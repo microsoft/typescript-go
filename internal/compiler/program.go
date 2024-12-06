@@ -69,7 +69,7 @@ func NewProgram(options ProgramOptions) *Program {
 		panic("host required")
 	}
 
-	p.resolver = module.NewResolver(p.host, nil, nil, p.options)
+	p.resolver = module.NewResolver(p.host, p.options)
 
 	// TODO(ercornel): !!!: SKIPPING FOR NOW :: default lib
 	p.rootPath = options.RootPath
