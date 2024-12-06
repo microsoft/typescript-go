@@ -159,10 +159,7 @@ func (p *Program) startParseTask(fileName string, wg *sync.WaitGroup) {
 			filesToParse = append(filesToParse, resolvedPath)
 		}
 
-		importsToParse := p.getImportsToParse(file)
-		for _, importFilePath := range importsToParse {
-			filesToParse = append(filesToParse, importFilePath)
-		}
+		filesToParse = append(filesToParse, p.getImportsToParse(file)...)
 
 		p.mutex.Lock()
 		defer p.mutex.Unlock()
