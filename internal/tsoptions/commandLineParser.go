@@ -129,7 +129,7 @@ func (p *CommandLineParser) parseStrings(args []string) {
 		case '@':
 			p.parseResponseFile(s[1:])
 		case '-':
-			inputOptionName := getInputOptionName(s[1:])
+			inputOptionName := getInputOptionName(s)
 			opt := p.GetOptionsNameMap().GetOptionDeclarationFromName(inputOptionName, true /*allowShort*/)
 			if opt != nil {
 				i = p.parseOptionValue(args, i, opt)
@@ -148,13 +148,9 @@ func (p *CommandLineParser) parseStrings(args []string) {
 	}
 }
 
-// removes one '-' from the input string
+// removes leading '-' from the input string
 func getInputOptionName(input string) string {
-	char, _ := utf8.DecodeRuneInString(input)
-	if char == '-' {
-		return strings.ToLower(input[1:])
-	}
-	return strings.ToLower(input)
+	return strings.ToLower(strings.TrimLeft(input, "-"))
 }
 
 func (p *CommandLineParser) parseResponseFile(fileName string) {
@@ -252,7 +248,7 @@ func (p *CommandLineParser) parseOptionValue(
 			}
 		} else {
 			p.errors = append(p.errors, ast.NewDiagnostic(nil, p.errorLoc, diagnostics.Option_0_can_only_be_specified_in_tsconfig_json_file_or_set_to_null_on_command_line, opt.Name))
-			if len(optValue) != 0 && !stringutil.StartsWith(optValue, '-') {
+			if len(optValue) != 0 && !strings.HasPrefix(optValue, "=") {
 				i++
 			}
 		}
@@ -317,7 +313,7 @@ func (p *CommandLineParser) parseOptionValue(
 
 func (p *CommandLineParser) parseListTypeOption(opt *CommandLineOption, value string) []string {
 	value = strings.TrimFunc(value, stringutil.IsWhiteSpaceLike)
-	if stringutil.StartsWith(value, '-') {
+	if strings.HasPrefix(value, "-") {
 		return []string{}
 	}
 	if opt.Kind == "listOrElement" && !strings.ContainsRune(value, ',') {

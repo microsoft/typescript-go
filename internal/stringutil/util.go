@@ -1,8 +1,6 @@
 // Package stringutil Exports common rune utilities for parsing and emitting javascript
 package stringutil
 
-import "unicode/utf8"
-
 func IsWhiteSpaceLike(ch rune) bool {
 	return IsWhiteSpaceSingleLine(ch) || IsLineBreak(ch)
 }
@@ -76,9 +74,4 @@ func IsHexDigit(ch rune) bool {
 
 func IsASCIILetter(ch rune) bool {
 	return ch >= 'A' && ch <= 'Z' || ch >= 'a' && ch <= 'z'
-}
-
-func StartsWith(text string, ch rune) bool {
-	r, _ := utf8.DecodeRuneInString(text)
-	return r == ch
 }
