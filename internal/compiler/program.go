@@ -156,17 +156,12 @@ func (p *Program) startParseTask(fileName string, wg *sync.WaitGroup) {
 
 		for _, ref := range file.ReferencedFiles {
 			resolvedPath := p.resolveTripleslashReference(ref.FileName, file.FileName())
-
-			if !p.processedFileNames.Has(resolvedPath) {
-				filesToParse = append(filesToParse, resolvedPath)
-			}
+			filesToParse = append(filesToParse, resolvedPath)
 		}
 
 		importsToParse := p.getImportsToParse(file)
 		for _, importFilePath := range importsToParse {
-			if !p.processedFileNames.Has(importFilePath) {
-				filesToParse = append(filesToParse, importFilePath)
-			}
+			filesToParse = append(filesToParse, importFilePath)
 		}
 
 		p.mutex.Lock()
@@ -176,8 +171,10 @@ func (p *Program) startParseTask(fileName string, wg *sync.WaitGroup) {
 
 		if len(filesToParse) > 0 {
 			for _, fileName := range filesToParse {
-				p.processedFileNames.Add(fileName)
-				p.startParseTask(fileName, wg)
+				if !p.processedFileNames.Has(fileName) {
+					p.processedFileNames.Add(fileName)
+					p.startParseTask(fileName, wg)
+				}
 			}
 		}
 	}()
