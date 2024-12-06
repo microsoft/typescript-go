@@ -200,7 +200,7 @@ func (p *Program) findSourceFile(candidate string, reason FileIncludeReason) *as
 		}
 	}
 
-	return nil;
+	return nil
 }
 
 func (p *Program) parseSourceFile(fileName string) *ast.SourceFile {
