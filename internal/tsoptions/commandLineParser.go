@@ -173,26 +173,23 @@ func (p *CommandLineParser) parseResponseFile(fileName string) {
 	}
 
 	var args []string
-	textLength := len(text)
-	start := 0
-	pos := 0
-	for pos <= textLength {
-		for pos < textLength && rune(text[pos]) <= ' ' {
-			pos++
+	curArg := []rune{}
+	for text != "" {
+		text, r, curArg := incrementStringByRune(text, curArg)
+		for text != "" && r <= ' ' {
+			text, r, curArg = incrementStringByRune(text, curArg)
 		}
-		if pos >= textLength {
+		if text != "" {
 			break
 		}
-		char := rune(text[pos])
-		start = pos
-		if char == '"' {
-			pos++
-			for pos < textLength && rune(text[pos]) != '"' {
-				pos++
+		if r == '"' {
+			text, r, curArg = incrementStringByRune(text, curArg)
+			for text != "" && r != '"' {
+				text, r, curArg = incrementStringByRune(text, curArg)
 			}
-			if pos < textLength {
-				args = append(args, text[start:pos])
-				pos++
+			if text != "" {
+				args = append(args, string(curArg))
+				text, r, curArg = incrementStringByRune(text, curArg)
 			} else {
 				p.errors = append(p.errors, ast.NewDiagnostic(
 					nil,
@@ -201,13 +198,19 @@ func (p *CommandLineParser) parseResponseFile(fileName string) {
 					fileName))
 			}
 		} else {
-			for rune(text[pos]) > ' ' {
-				pos++
+			for r > ' ' {
+				text, r, curArg = incrementStringByRune(text, curArg)
 			}
-			args = append(args, text[start:pos])
+			args = append(args, string(curArg))
 		}
 	}
 	p.parseStrings(args)
+}
+
+func incrementStringByRune(text string, argSoFar []rune) (rest string, r rune, curArg []rune) {
+	r, size := utf8.DecodeRuneInString(text)
+	text = text[size:]
+	return text, r, append(argSoFar, r)
 }
 
 func tryReadFile(fileName string, readFile func(string) (string, error), errors []*ast.Diagnostic) (string, []*ast.Diagnostic) {
