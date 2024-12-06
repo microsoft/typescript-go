@@ -1,7 +1,6 @@
 package tsoptions
 
 import (
-	"os"
 	"strconv"
 	"strings"
 	"unicode/utf8"
@@ -10,6 +9,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/compiler/diagnostics"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/stringutil"
+	"github.com/microsoft/typescript-go/internal/vfs"
 )
 
 type DidYouMeanOptionsDiagnostics struct {
@@ -67,10 +67,10 @@ func (p *CommandLineParser) GetOptionsNameMap() *NameMap {
 
 type CommandLineParser struct {
 	workerDiagnostics *ParseCommandLineWorkerDiagnostics
+	fs                vfs.FS
 	options           OptionsBase
-	// todo
-	// watchOptions   OptionsBase
-	readFile  *func(string) (string, error)
+	// todo: watchOptions   OptionsBase
+	readFile  *func(string) (string, bool)
 	fileNames []string
 	errorLoc  core.TextRange
 	errors    []*ast.Diagnostic
@@ -102,7 +102,7 @@ func ParseCommandLine(
 func parseCommandLineWorker(
 	parseCommandLineWithDiagnostics *ParseCommandLineWorkerDiagnostics,
 	commandLine []string,
-	readFile *func(string) (string, error),
+	readFile *func(string) (string, bool),
 ) *CommandLineParser {
 	var parser = &CommandLineParser{
 		readFile:          readFile,
@@ -156,8 +156,11 @@ func getInputOptionName(input string) string {
 func (p *CommandLineParser) parseResponseFile(fileName string) {
 	text := ""
 	if p.readFile == nil {
-		text, _ = tryReadFile(fileName, func(fileName string) (string, error) {
-			read, err := os.ReadFile(fileName)
+		text, _ = tryReadFile(fileName, func(fileName string) (string, bool) {
+			if p.fs == nil {
+				return "", false
+			}
+			read, err := p.fs.ReadFile(fileName)
 			return string(read), err
 		}, p.errors)
 	} else {
@@ -209,10 +212,10 @@ func incrementStringByRune(text string, argSoFar []rune) (rest string, r rune, c
 	return text, r, append(argSoFar, r)
 }
 
-func tryReadFile(fileName string, readFile func(string) (string, error), errors []*ast.Diagnostic) (string, []*ast.Diagnostic) {
+func tryReadFile(fileName string, readFile func(string) (string, bool), errors []*ast.Diagnostic) (string, []*ast.Diagnostic) {
 	text, e := readFile(fileName)
 
-	if e != nil {
+	if !e {
 		// no errror message from the standard error
 		// errors = append(errors, ast.NewDiagnostic(nil, core.NewTextRange(-1,-1), diagnostics.Cannot_read_file_0_Colon_1, *e));
 		errors = append(errors, ast.NewDiagnostic(nil, core.NewTextRange(-1, -1), diagnostics.Cannot_read_file_0, fileName))
