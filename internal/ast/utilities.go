@@ -2,6 +2,7 @@ package ast
 
 import (
 	"slices"
+	"strings"
 )
 
 // Determines if a node is missing (either `nil` or empty)
@@ -645,4 +646,166 @@ func IsFunctionOrModuleBlock(node *Node) bool {
 
 func IsFunctionExpressionOrArrowFunction(node *Node) bool {
 	return IsFunctionExpression(node) || IsArrowFunction(node)
+}
+
+func IsInJSFile(node *Node) bool {
+	return node != nil && node.Flags&NodeFlagsJavaScriptFile != 0
+}
+
+func isDeclaration(node *Node) bool {
+	if node.Kind == KindTypeParameter {
+		return (node.Parent != nil && node.Parent.Kind != KindJSDocTemplateTag) || IsInJSFile(node)
+	}
+	return IsDeclarationNode(node)
+}
+
+// True if `name` is the name of a declaration node
+func IsDeclarationName(name *Node) bool {
+	return !IsSourceFile(name) && !IsBindingPattern(name) && isDeclaration(name.Parent)
+}
+
+// Like 'isDeclarationName', but returns true for LHS of `import { x as y }` or `export { x as y }`.
+func IsDeclarationNameOrImportPropertyName(name *Node) bool {
+	switch name.Parent.Kind {
+	case KindImportSpecifier, KindExportSpecifier:
+		return IsIdentifier(name) || name.Kind == KindStringLiteral
+	default:
+		return IsDeclarationName(name)
+	}
+}
+
+func isStringLiteralLike(node *Node) bool {
+	return node.Kind == KindStringLiteral || node.Kind == KindNoSubstitutionTemplateLiteral
+}
+
+func isStringOrNumericLiteralLike(node *Node) bool {
+	return isStringLiteralLike(node) || IsNumericLiteral(node)
+}
+
+func IsLiteralComputedPropertyDeclarationName(node *Node) bool {
+	return isStringOrNumericLiteralLike(node) &&
+		node.Parent.Kind == KindComputedPropertyName &&
+		isDeclaration(node.Parent.Parent)
+}
+
+func IsExternalModuleImportEqualsDeclaration(node *Node) bool {
+	return node.Kind == KindImportEqualsDeclaration && node.AsImportEqualsDeclaration().ModuleReference.Kind == KindExternalModuleReference
+}
+
+func IsJSDocImportTag(node *Node) bool {
+	return node.Kind == KindJSDocImportTag
+}
+
+func IsLiteralImportTypeNode(node *Node) bool {
+	return IsImportTypeNode(node) && IsLiteralTypeNode(node.AsImportTypeNode().Argument) && IsStringLiteral(node.AsImportTypeNode().Argument.AsLiteralTypeNode().Literal)
+}
+
+// Add an extra underscore to identifiers that start with two underscores to avoid issues with magic names like '__proto__'
+func EscapeLeadingUnderscores(identifier string) string { // !!! Use a new type instead of `string`
+	if strings.HasPrefix(identifier, "__") {
+		return "_" + identifier
+	}
+	return identifier
+}
+
+// Remove extra underscore from escaped identifier text content.
+func UnescapeLeadingUnderscores(identifier string) string {
+	if strings.HasPrefix(identifier, "___") {
+		return identifier[1:]
+	}
+	return identifier
+}
+
+func IdText(identifierOrPrivateName *Node) string {
+	var escapedText string
+	switch identifierOrPrivateName.Kind {
+	case KindIdentifier:
+		escapedText = identifierOrPrivateName.AsIdentifier().Text
+	case KindPrivateIdentifier:
+		escapedText = identifierOrPrivateName.AsPrivateIdentifier().Text
+	default:
+		panic("Unhandled case in IdText: " + identifierOrPrivateName.Kind.String())
+	}
+	return UnescapeLeadingUnderscores(escapedText)
+}
+
+func IsBindableObjectDefinePropertyCall(expr *CallExpression) bool {
+	return len(expr.AsNode().Arguments()) == 3 &&
+		IsPropertyAccessExpression(expr.Expression) &&
+		IsIdentifier(expr.Expression.AsPropertyAccessExpression().Expression) &&
+		IdText(expr.Expression.AsPropertyAccessExpression().Expression) == "Object" &&
+		IdText(expr.Expression.AsPropertyAccessExpression().Name()) == "defineProperty" &&
+		isStringOrNumericLiteralLike(expr.Arguments.Nodes[1]) &&
+		isBindableStaticNameExpression(expr.Arguments.Nodes[0], true /*excludeThisKeyword*/)
+}
+
+func isBindableStaticNameExpression(node *Node, excludeThisKeyword bool) bool {
+	return IsEntityNameExpression(node) || isBindableStaticAccessExpression(node, excludeThisKeyword)
+}
+
+func IsEntityNameExpression(node *Node) bool {
+	return node.Kind == KindIdentifier || isPropertyAccessEntityNameExpression(node)
+}
+
+func isPropertyAccessEntityNameExpression(node *Node) bool {
+	if node.Kind == KindPropertyAccessExpression {
+		expr := node.AsPropertyAccessExpression()
+		return expr.Name().Kind == KindIdentifier && IsEntityNameExpression(expr.Expression)
+	}
+	return false
+}
+
+// Any series of property and element accesses.
+func isBindableStaticAccessExpression(node *Node, excludeThisKeyword bool) bool {
+	return IsPropertyAccessExpression(node) &&
+		(!excludeThisKeyword && node.Expression().Kind == KindThisKeyword ||
+			IsIdentifier(node.Name()) && isBindableStaticNameExpression(node.Expression(), excludeThisKeyword)) ||
+		isBindableStaticElementAccessExpression(node, excludeThisKeyword)
+}
+
+func isBindableStaticElementAccessExpression(node *Node, excludeThisKeyword bool) bool {
+	return isLiteralLikeElementAccess(node) &&
+		((!excludeThisKeyword && node.Expression().Kind == KindThisKeyword) ||
+			IsEntityNameExpression(node.Expression()) ||
+			isBindableStaticAccessExpression(node.Expression(), true /*excludeThisKeyword*/))
+}
+
+// x[0] OR x['a'] OR x[Symbol.y]
+func isLiteralLikeElementAccess(node *Node) bool {
+	return IsElementAccessExpression(node) && isStringOrNumericLiteralLike(node.AsElementAccessExpression().ArgumentExpression)
+}
+
+func IsJsxTagName(node *Node) bool {
+	parent := node.Parent
+	switch parent.Kind {
+	case KindJsxOpeningElement, KindJsxClosingElement, KindJsxSelfClosingElement:
+		return getJsxTagName(parent) == node
+	}
+	return false
+}
+
+func getJsxTagName(node *Node) *JsxTagNameExpression {
+	switch node.Kind {
+	case KindJsxOpeningElement:
+		return node.AsJsxOpeningElement().TagName
+	case KindJsxClosingElement:
+		return node.AsJsxClosingElement().TagName
+	case KindJsxSelfClosingElement:
+		return node.AsJsxSelfClosingElement().TagName
+	}
+	panic("Unhandled case in getJsxTagName: " + node.Kind.String())
+}
+
+func IsImportOrExportSpecifier(node *Node) bool {
+	return IsImportSpecifier(node) || IsExportSpecifier(node)
+}
+
+func GetImportOrExportSpecifierPropertyName(node *Node) *ModuleExportName {
+	switch node.Kind {
+	case KindImportSpecifier:
+		return node.AsImportSpecifier().PropertyName
+	case KindExportSpecifier:
+		return node.AsExportSpecifier().PropertyName
+	}
+	panic("Unhandled case in GetImportOrExportSpecifierPropertyName: " + node.Kind.String())
 }

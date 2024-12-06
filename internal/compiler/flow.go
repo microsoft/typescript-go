@@ -1561,7 +1561,7 @@ func (c *Checker) tryGetElementAccessExpressionName(node *ast.ElementAccessExpre
 	switch {
 	case isStringOrNumericLiteralLike(node.ArgumentExpression):
 		return node.ArgumentExpression.Text(), true
-	case isEntityNameExpression(node.ArgumentExpression):
+	case ast.IsEntityNameExpression(node.ArgumentExpression):
 		return c.tryGetNameFromEntityNameExpression(node.ArgumentExpression)
 	}
 	return "", false

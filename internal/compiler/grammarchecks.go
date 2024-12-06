@@ -1387,7 +1387,7 @@ func (c *Checker) checkGrammarTypeOperatorNode(node *ast.TypeOperatorNode) bool 
 		}
 		parent := ast.WalkUpParenthesizedTypes(node.Parent)
 		// !!!
-		// if isInJSFile(parent) && isJSDocTypeExpression(parent) {
+		// if ast.IsInJSFile(parent) && isJSDocTypeExpression(parent) {
 		// 	host := getJSDocHost(parent)
 		// 	if host != nil {
 		// 		parent = getSingleVariableOfVariableStatement(host) || host
@@ -1848,7 +1848,7 @@ func (c *Checker) checkGrammarMetaProperty(node *ast.MetaProperty) bool {
 func (c *Checker) checkGrammarConstructorTypeParameters(node *ast.ConstructorDeclaration) bool {
 	// !!!
 	// var jsdocTypeParameters []*ast.TypeParameterDeclaration
-	// if isInJSFile(node.AsNode()) {
+	// if ast.IsInJSFile(node.AsNode()) {
 	// 	jsdocTypeParameters = getJSDocTypeParameterDeclarations(node)
 	// } else {
 	// 	jsdocTypeParameters = nil
@@ -2011,7 +2011,7 @@ func (c *Checker) isInitializerSimpleLiteralEnumReference(expr *ast.Expression) 
 		elementAccess := expr.AsElementAccessExpression()
 
 		return isInitializerStringOrNumberLiteralExpression(elementAccess.ArgumentExpression) &&
-			isEntityNameExpression(elementAccess.Expression) &&
+			ast.IsEntityNameExpression(elementAccess.Expression) &&
 			c.checkExpressionCached(expr).flags&TypeFlagsEnumLike != 0
 	}
 

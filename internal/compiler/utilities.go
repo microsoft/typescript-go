@@ -409,10 +409,6 @@ func isAssignmentDeclaration(decl *ast.Node) bool {
 	return ast.IsBinaryExpression(decl) || ast.IsAccessExpression(decl) || ast.IsIdentifier(decl) || ast.IsCallExpression(decl)
 }
 
-func isInJSFile(node *ast.Node) bool {
-	return node != nil && node.Flags&ast.NodeFlagsJavaScriptFile != 0
-}
-
 func isEffectiveModuleDeclaration(node *ast.Node) bool {
 	return ast.IsModuleDeclaration(node) || ast.IsIdentifier(node)
 }
@@ -986,7 +982,7 @@ func getExportAssignmentExpression(node *ast.Node) *ast.Node {
 }
 
 func isAliasableExpression(e *ast.Node) bool {
-	return isEntityNameExpression(e) || ast.IsClassExpression(e)
+	return ast.IsEntityNameExpression(e) || ast.IsClassExpression(e)
 }
 
 func isEmptyObjectLiteral(expression *ast.Node) bool {
@@ -1187,18 +1183,6 @@ func isCompoundLikeAssignment(assignment *ast.Node) bool {
 func isPushOrUnshiftIdentifier(node *ast.Node) bool {
 	text := node.Text()
 	return text == "push" || text == "unshift"
-}
-
-func isEntityNameExpression(node *ast.Node) bool {
-	return node.Kind == ast.KindIdentifier || isPropertyAccessEntityNameExpression(node)
-}
-
-func isPropertyAccessEntityNameExpression(node *ast.Node) bool {
-	if node.Kind == ast.KindPropertyAccessExpression {
-		expr := node.AsPropertyAccessExpression()
-		return expr.Name().Kind == ast.KindIdentifier && isEntityNameExpression(expr.Expression)
-	}
-	return false
 }
 
 func isPrologueDirective(node *ast.Node) bool {
@@ -2510,10 +2494,6 @@ func hasExportAssignmentSymbol(moduleSymbol *ast.Symbol) bool {
 	return moduleSymbol.Exports[InternalSymbolNameExportEquals] != nil
 }
 
-func isImportOrExportSpecifier(node *ast.Node) bool {
-	return ast.IsImportSpecifier(node) || ast.IsExportSpecifier(node)
-}
-
 func parsePseudoBigInt(stringValue string) string {
 	return stringValue // !!!
 }
@@ -3337,7 +3317,7 @@ func createEvaluator(evaluateEntity Evaluator) Evaluator {
 		case ast.KindIdentifier, ast.KindElementAccessExpression:
 			return evaluateEntity(expr, location)
 		case ast.KindPropertyAccessExpression:
-			if isEntityNameExpression(expr) {
+			if ast.IsEntityNameExpression(expr) {
 				return evaluateEntity(expr, location)
 			}
 		}
@@ -3432,4 +3412,33 @@ func getBindingElementPropertyName(node *ast.Node) *ast.Node {
 		return name
 	}
 	return node.Name()
+}
+
+func getLeftSideOfImportEqualsOrExportAssignment(nodeOnRightSide *ast.EntityName) *ast.Node {
+	for ; nodeOnRightSide.Parent.Kind == ast.KindQualifiedName; nodeOnRightSide = nodeOnRightSide.Parent {
+	}
+
+	if nodeOnRightSide.Parent.Kind == ast.KindImportEqualsDeclaration {
+		if nodeOnRightSide.Parent.AsImportEqualsDeclaration().ModuleReference == nodeOnRightSide {
+			return nodeOnRightSide.Parent
+		}
+		return nil
+	}
+
+	if nodeOnRightSide.Parent.Kind == ast.KindExportAssignment {
+		if nodeOnRightSide.Parent.AsExportAssignment().Expression == nodeOnRightSide {
+			return nodeOnRightSide.Parent
+		}
+		return nil
+	}
+
+	return nil
+}
+
+func isInRightSideOfImportOrExportAssignment(node *ast.EntityName) bool {
+	return getLeftSideOfImportEqualsOrExportAssignment(node) != nil
+}
+
+func isJsxIntrinsicTagName(tagName *ast.Node) bool {
+	return ast.IsIdentifier(tagName) && isIntrinsicJsxName(tagName.Text()) || ast.IsJsxNamespacedName(tagName)
 }

@@ -2674,7 +2674,7 @@ func isNarrowableReference(node *ast.Node) bool {
 	case ast.KindElementAccessExpression:
 		expr := node.AsElementAccessExpression()
 		return isStringOrNumericLiteralLike(expr.ArgumentExpression) ||
-			isEntityNameExpression(expr.ArgumentExpression) && isNarrowableReference(expr.Expression)
+			ast.IsEntityNameExpression(expr.ArgumentExpression) && isNarrowableReference(expr.Expression)
 	case ast.KindBinaryExpression:
 		expr := node.AsBinaryExpression()
 		return expr.OperatorToken.Kind == ast.KindCommaToken && isNarrowableReference(expr.Right) ||
