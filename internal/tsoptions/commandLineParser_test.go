@@ -1,0 +1,280 @@
+package tsoptions
+
+import (
+	"path/filepath"
+	"strings"
+	"testing"
+
+	json2 "github.com/go-json-experiment/json"
+
+	"github.com/microsoft/typescript-go/internal/compiler/diagnostics"
+	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/repo"
+	// "github.com/microsoft/typescript-go/internal/testutil/baseline"
+	"github.com/microsoft/typescript-go/internal/testutil/filefixture"
+	"gotest.tools/v3/assert"
+)
+
+// optional worker diagnostic
+func TestCommandLineParseResult(t *testing.T) {
+	// subScenario string, commandLine []string
+	var parseCommandLineSubSecnarios = []*commandLineSubScenario{
+		// --lib es6 0.ts
+		createSubScenario("Parse single option of library flag", []string{"--lib", "es6", "0.ts"}),
+		createSubScenario("Handles may only be used with --build flags", []string{"--build", "--clean", "--dry", "--force", "--verbose"}),
+		// --declarations --allowTS
+		createSubScenario("Handles did you mean for misspelt flags", []string{"--declarations", "--allowTS"}),
+		// --lib es5,es2015.symbol.wellknown 0.ts
+		createSubScenario("Parse multiple options of library flags", []string{"--lib", "es5,es2015.symbol.wellknown", "0.ts"}),
+		// --lib es5,invalidOption 0.ts
+		createSubScenario("Parse invalid option of library flags", []string{"--lib", "es5,invalidOption", "0.ts"}),
+		// 0.ts --jsx
+		createSubScenario("Parse empty options of --jsx", []string{"0.ts", "--jsx"}),
+		// 0.ts --
+		createSubScenario("Parse empty options of --module", []string{"0.ts", "--module"}),
+		// 0.ts --newLine
+		createSubScenario("Parse empty options of --newLine", []string{"0.ts", "--newLine"}),
+		// 0.ts --target
+		createSubScenario("Parse empty options of --target", []string{"0.ts", "--target"}),
+		// 0.ts --moduleResolution
+		createSubScenario("Parse empty options of --moduleResolution", []string{"0.ts", "--moduleResolution"}),
+		// 0.ts --lib
+		createSubScenario("Parse empty options of --lib", []string{"0.ts", "--lib"}),
+		// 0.ts --lib
+		// This test is an error because the empty string is falsey
+		createSubScenario("Parse empty string of --lib", []string{"0.ts", "--lib", ""}),
+		// 0.ts --lib
+		createSubScenario("Parse immediately following command line argument of --lib", []string{"0.ts", "--lib", "--sourcemap"}),
+		// --lib es5, es7 0.ts
+		createSubScenario("Parse --lib option with extra comma", []string{"--lib", "es5,", "es7", "0.ts"}),
+		// --lib es5, es7 0.ts
+		createSubScenario("Parse --lib option with trailing white-space", []string{"--lib", "es5, ", "es7", "0.ts"}),
+		// --lib es5,es2015.symbol.wellknown --target es5 0.ts
+		createSubScenario("Parse multiple compiler flags with input files at the end", []string{"--lib", "es5,es2015.symbol.wellknown", "--target", "es5", "0.ts"}),
+		// --module commonjs --target es5 0.ts --lib es5,es2015.symbol.wellknown
+		createSubScenario("Parse multiple compiler flags with input files in the middle", []string{"--module", "commonjs", "--target", "es5", "0.ts", "--lib", "es5,es2015.symbol.wellknown"}),
+		// --module commonjs --target es5 --lib es5 0.ts --library es2015.array,es2015.symbol.wellknown
+		createSubScenario("Parse multiple library compiler flags ", []string{"--module", "commonjs", "--target", "es5", "--lib", "es5", "0.ts", "--lib", "es2015.core, es2015.symbol.wellknown "}),
+		createSubScenario("Parse explicit boolean flag value", []string{"--strictNullChecks", "false", "0.ts"}),
+		createSubScenario("Parse non boolean argument after boolean flag", []string{"--noImplicitAny", "t", "0.ts"}),
+		createSubScenario("Parse implicit boolean flag value", []string{"--strictNullChecks"}),
+		createSubScenario("parse --incremental", []string{"--incremental", "0.ts"}),
+		createSubScenario("parse --tsBuildInfoFile", []string{"--tsBuildInfoFile", "build.tsbuildinfo", "0.ts"}),
+
+		createSubScenario("allows tsconfig only option to be set to null", []string{"--composite", "null", "-tsBuildInfoFile", "null", "0.ts"}),
+
+		// ****** Watch Options ******
+		// assertParseResult("parse --watchFile", ["--watchFile", "UseFsEvents", "0.ts"]);
+		// assertParseResult("parse --watchDirectory", ["--watchDirectory", "FixedPollingInterval", "0.ts"]);
+		// assertParseResult("parse --fallbackPolling", ["--fallbackPolling", "PriorityInterval", "0.ts"]);
+		// assertParseResult("parse --synchronousWatchDirectory", ["--synchronousWatchDirectory", "0.ts"]);
+		// assertParseResult("errors on missing argument to --fallbackPolling", ["0.ts", "--fallbackPolling"]);
+		// assertParseResult("parse --excludeDirectories", ["--excludeDirectories", "**/temp", "0.ts"]);
+		// assertParseResult("errors on invalid excludeDirectories", ["--excludeDirectories", "**/../*", "0.ts"]);
+		// assertParseResult("parse --excludeFiles", ["--excludeFiles", "**/temp/*.ts", "0.ts"]);
+		// assertParseResult("errors on invalid excludeFiles", ["--excludeFiles", "**/../*", "0.ts"]);
+	}
+
+	for _, f := range parseCommandLineSubSecnarios {
+		t.Run(f.subScenario, f.assertParseResult)
+	}
+}
+
+func TestParseCommandLineVerifyNull(t *testing.T) {
+	f := createSubScenario("allows setting option type boolean to false", []string{"--composite", "false", "0.ts"})
+	t.Run(f.subScenario, f.assertParseResult)
+
+	type VerifyNull struct {
+		subScenario      string
+		optionName       string
+		nonNullValue     string
+		workerDiagnostic func() ParseCommandLineWorkerDiagnostics
+	}
+	// workerDiagnostic := *GetCompilerOptionsDidYouMeanDiagnostics()
+	verifyNullSubScenarios := []VerifyNull{
+		{
+			subScenario:  "option of type boolean",
+			optionName:   "composite",
+			nonNullValue: "true",
+		},
+		{
+			subScenario: "option of type object",
+			optionName:  "paths",
+		},
+		{
+			subScenario:  "option of type list",
+			optionName:   "rootDirs",
+			nonNullValue: "abc,xyz",
+		},
+		// todo: non null included options
+	}
+
+	for _, subScenario := range verifyNullSubScenarios {
+		t.Run(
+			subScenario.subScenario,
+			createSubScenario(
+				subScenario.subScenario+" allows setting it to null",
+				[]string{"--" + subScenario.optionName, "null", "0.ts"},
+			).assertParseResult,
+		)
+		if subScenario.nonNullValue != "" {
+			t.Run(
+				subScenario.subScenario,
+				createSubScenario(
+					subScenario.subScenario+" errors if non null value is passed",
+					[]string{"--" + subScenario.optionName, subScenario.nonNullValue, "0.ts"},
+				).assertParseResult,
+			)
+		}
+
+		t.Run(
+			subScenario.subScenario,
+			createSubScenario(
+				subScenario.subScenario+" errors if its followed by another option",
+				[]string{"0.ts", "--strictNullChecks", "--" + subScenario.optionName},
+			).assertParseResult,
+		)
+		t.Run(
+			subScenario.subScenario,
+			createSubScenario(
+				subScenario.subScenario+" errors if its last option",
+				[]string{"0.ts", "--" + subScenario.optionName},
+			).assertParseResult,
+		)
+	}
+}
+
+func TestParseCOmmandLineVerifyNonNullIncludedOption(t *testing.T) {
+
+}
+
+func (f commandLineSubScenario) assertParseResult(t *testing.T) {
+	originalBaseline := f.baseline.ReadFile(t)
+	existing := parseExistingCompilerBaseline(originalBaseline)
+
+	// todo: workerDiagnostic?.()
+	parsed := parseCommandLineWorker(compilerOptionsDidYouMeanDiagnostics, f.commandLine, nil)
+
+	assert.Equal(t, strings.Join(parsed.fileNames, ","), existing.fileNames)
+
+	o, _ := json2.Marshal(parsed.options)
+	parsedCompilerOptions := core.CompilerOptions{}
+	json2.Unmarshal(o, &parsedCompilerOptions)
+	assert.DeepEqual(t, parsedCompilerOptions, existing.options)
+
+	// todo: baselines not useful ATM
+	// baseline.Run(
+	// 	t,
+	// 	f.subScenario + ".js",
+	// 	formatNewCommandLineParse(parsed, o),
+	// 	baseline.Options{Subfolder: "tsoptions/commandLineParsing"},
+	// )
+	// todo: check parsed watch options
+
+	// currently, Errors aren't checked for identical-ness because undefined/nil/error handling will be different
+	// var formattedErrors strings.Builder
+	// var formatOpts = &compiler.DiagnosticsFormattingOptions{
+	// 	NewLine: "\r\n",
+	// }
+	// compiler.WriteFormatDiagnostics(&formattedErrors, parsed.errors, formatOpts)
+	// assert.Equal(t, formattedErrors.String(), existing.errors)
+}
+
+func parseExistingCompilerBaseline(baseline string) *TestCommandLineParser {
+	_, rest, _ := strings.Cut(baseline, "CompilerOptions::\n")
+	compilerOptions, rest, _ := strings.Cut(rest, "\nWatchOptions::\n")
+	_, rest, _ = strings.Cut(rest, "\nFileNames::\n")
+	fileNames, errors, _ := strings.Cut(rest, "\nErrors::\n")
+
+	baselineOptions := &core.CompilerOptions{}
+	json2.Unmarshal([]byte(compilerOptions), &baselineOptions)
+
+	var parser = TestCommandLineParser{
+		options:   *baselineOptions,
+		fileNames: fileNames,
+		errors:    errors,
+	}
+	return &parser
+}
+
+func formatNewCommandLineParse(p *CommandLineParser, opts []byte) string {
+	var formatted strings.Builder
+	formatted.WriteString("CompilerOptions::\n")
+	formatted.Write(opts)
+	formatted.WriteString("WatchOptions::\n")
+	// todo: watch options not implemented
+	formatted.WriteString("FileNames::\n")
+	formatted.WriteString(strings.Join(p.fileNames, ","))
+	formatted.WriteString("Errors::\n")
+	// todo: using these will give circular dependicies
+	// compiler.WriteFormatDiagnostics(&formattedOptions, p.errors, formatOpts)
+	return formatted.String()
+}
+
+// todo: --build not implemented
+// func parseExistingBuildBaseline(baseline string) *TestCommandLineParser {
+// 	_, rest, _ := strings.Cut(baseline, "BuildOptions::\n")
+// 	buildOptions, rest, _ := strings.Cut(rest, "\nWatchOptions::\n")
+// 	_, rest, _ = strings.Cut(rest, "\nProjects::\n")
+// 	fileNames, errors, _ := strings.Cut(rest, "\nErrors::\n")
+
+// 	// todo: change CompilerOptions to buildoptions
+// 	baselineOptions := &core.CompilerOptions{}
+// 	json2.Unmarshal([]byte(buildOptions), &baselineOptions)
+
+// 	var parser = TestCommandLineParser{
+// 		options:   *baselineOptions,
+// 		fileNames: fileNames,
+// 		errors:    errors,
+// 	}
+// 	return &parser
+// }
+
+var compilerOptionsDidYouMeanDiagnostics = GetCompilerOptionsDidYouMeanDiagnostics()
+
+func GetCompilerOptionsDidYouMeanDiagnostics() *ParseCommandLineWorkerDiagnostics {
+	return &ParseCommandLineWorkerDiagnostics{
+		didYouMean: DidYouMeanOptionsDiagnostics{
+			alternateMode: &AlternateModeDiagnostics{
+				diagnostic:     diagnostics.Compiler_option_0_may_only_be_used_with_build,
+				optionsNameMap: GetNameMapFromList(optionsForBuild),
+			},
+			OptionDeclarations:          optionsDeclarations,
+			UnknownOptionDiagnostic:     diagnostics.Unknown_compiler_option_0,
+			UnknownDidYouMeanDiagnostic: diagnostics.Unknown_compiler_option_0_Did_you_mean_1,
+		},
+		optionsNameMap:               nil,
+		OptionTypeMismatchDiagnostic: diagnostics.Compiler_option_0_expects_an_argument,
+	}
+}
+
+func createSubScenario(subScenario string, commandline []string) *commandLineSubScenario {
+	baselineFileName := "tests/baselines/reference/config/commandLineParsing/parseCommandLine/" + subScenario + ".js"
+	return &commandLineSubScenario{
+		filefixture.FromFile(subScenario, filepath.Join(repo.TypeScriptSubmodulePath, baselineFileName)),
+		subScenario,
+		commandline,
+	}
+}
+
+type commandLineSubScenario struct {
+	baseline    filefixture.Fixture
+	subScenario string
+	commandLine []string
+}
+
+type TestCommandLineParser struct {
+	options           core.CompilerOptions
+	fileNames, errors string
+}
+
+func TestAffectsBuildInfo(t *testing.T) {
+	t.Run("should have affectsBuildInfo true for every option with affectsSemanticDiagnostics", func(t *testing.T) {
+		for _, option := range optionsDeclarations {
+			if option.affectsSemanticDiagnostics {
+				// semantic diagnostics affect the build info, so ensure they're included
+				assert.Assert(t, option.affectsBuildInfo)
+			}
+		}
+	})
+}
