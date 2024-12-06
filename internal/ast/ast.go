@@ -946,6 +946,7 @@ type ImportAttributeName = Node         // Identifier | StringLiteral
 type LeftHandSideExpression = Node      // subset of Expression
 type JSDocComment = Node                // JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain;
 type JSDocTag = Node                    // Node with JSDocTagBase
+type SignatureDeclaration = Node        // CallSignatureDeclaration | ConstructSignatureDeclaration | MethodSignature | IndexSignatureDeclaration | FunctionTypeNode | ConstructorTypeNode | JSDocFunctionType | FunctionDeclaration | MethodDeclaration | ConstructorDeclaration | AccessorDeclaration | FunctionExpression | ArrowFunction;
 
 // Aliases for node singletons
 

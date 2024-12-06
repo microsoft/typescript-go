@@ -3648,7 +3648,7 @@ func (p *Parser) parseAssignmentExpressionOrHigherWorker(allowReturnTypeInArrowF
 	//
 	// Note: we call reScanGreaterToken so that we get an appropriately merged token
 	// for cases like `> > =` becoming `>>=`
-	if ast.IsLeftHandSideExpression(expr) && isAssignmentOperator(p.reScanGreaterThanToken()) {
+	if ast.IsLeftHandSideExpression(expr) && ast.IsAssignmentOperator(p.reScanGreaterThanToken()) {
 		return p.makeBinaryExpression(expr, p.parseTokenNode(), p.parseAssignmentExpressionOrHigherWorker(allowReturnTypeInArrowFunction), pos)
 	}
 	// It wasn't an assignment or a lambda.  This is a conditional expression:

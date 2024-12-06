@@ -1362,7 +1362,7 @@ func (b *Binder) getStrictModeBlockScopeFunctionDeclarationMessage(node *ast.Nod
 
 func (b *Binder) checkStrictModeBinaryExpression(node *ast.Node) {
 	expr := node.AsBinaryExpression()
-	if b.inStrictMode && ast.IsLeftHandSideExpression(expr.Left) && isAssignmentOperator(expr.OperatorToken.Kind) {
+	if b.inStrictMode && ast.IsLeftHandSideExpression(expr.Left) && ast.IsAssignmentOperator(expr.OperatorToken.Kind) {
 		// ECMA 262 (Annex C) The identifier eval or arguments may not appear as the LeftHandSideExpression of an
 		// Assignment operator(11.13) or of a PostfixExpression(11.3)
 		b.checkStrictModeEvalOrArguments(node, expr.Left)
@@ -2266,7 +2266,7 @@ func (b *Binder) bindBinaryExpressionFlow(node *ast.Node) {
 		if operator == ast.KindCommaToken {
 			b.maybeBindExpressionFlowIfCall(node)
 		}
-		if isAssignmentOperator(operator) && !isAssignmentTarget(node) {
+		if ast.IsAssignmentOperator(operator) && !isAssignmentTarget(node) {
 			b.bindAssignmentTargetFlow(expr.Left)
 			if operator == ast.KindEqualsToken && expr.Left.Kind == ast.KindElementAccessExpression {
 				elementAccess := expr.Left.AsElementAccessExpression()
@@ -2678,7 +2678,7 @@ func isNarrowableReference(node *ast.Node) bool {
 	case ast.KindBinaryExpression:
 		expr := node.AsBinaryExpression()
 		return expr.OperatorToken.Kind == ast.KindCommaToken && isNarrowableReference(expr.Right) ||
-			isAssignmentOperator(expr.OperatorToken.Kind) && ast.IsLeftHandSideExpression(expr.Left)
+			ast.IsAssignmentOperator(expr.OperatorToken.Kind) && ast.IsLeftHandSideExpression(expr.Left)
 	}
 	return false
 }

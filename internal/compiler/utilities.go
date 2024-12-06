@@ -369,10 +369,6 @@ func boolToTristate(b bool) core.Tristate {
 	return core.TSFalse
 }
 
-func isAssignmentOperator(token ast.Kind) bool {
-	return token >= ast.KindFirstAssignment && token <= ast.KindLastAssignment
-}
-
 func isCompoundAssignment(token ast.Kind) bool {
 	return token >= ast.KindFirstCompoundAssignment && token <= ast.KindLastCompoundAssignment
 }
@@ -643,22 +639,6 @@ func getImmediatelyInvokedFunctionExpression(fn *ast.Node) *ast.Node {
 	return nil
 }
 
-// Does not handle signed numeric names like `a[+0]` - handling those would require handling prefix unary expressions
-// throughout late binding handling as well, which is awkward (but ultimately probably doable if there is demand)
-func getElementOrPropertyAccessArgumentExpressionOrName(node *ast.Node) *ast.Node {
-	switch node.Kind {
-	case ast.KindPropertyAccessExpression:
-		return node.Name()
-	case ast.KindElementAccessExpression:
-		arg := ast.SkipParentheses(node.AsElementAccessExpression().ArgumentExpression)
-		if isStringOrNumericLiteralLike(arg) {
-			return arg
-		}
-		return node
-	}
-	panic("Unhandled case in getElementOrPropertyAccessArgumentExpressionOrName")
-}
-
 /**
  * A declaration has a dynamic name if all of the following are true:
  *   1. The declaration has a computed property name.
@@ -703,7 +683,7 @@ func getNonAssignedNameOfDeclaration(declaration *ast.Node) *ast.Node {
 	switch declaration.Kind {
 	case ast.KindBinaryExpression:
 		if isFunctionPropertyAssignment(declaration) {
-			return getElementOrPropertyAccessArgumentExpressionOrName(declaration.AsBinaryExpression().Left)
+			return ast.GetElementOrPropertyAccessArgumentExpressionOrName(declaration.AsBinaryExpression().Left)
 		}
 		return nil
 	case ast.KindExportAssignment:
@@ -762,15 +742,6 @@ func isFunctionPropertyAssignment(node *ast.Node) bool {
 				return ast.IsIdentifier(expr.Left.Expression())
 			}
 		}
-	}
-	return false
-}
-
-func isAssignmentExpression(node *ast.Node, excludeCompoundAssignment bool) bool {
-	if node.Kind == ast.KindBinaryExpression {
-		expr := node.AsBinaryExpression()
-		return (expr.OperatorToken.Kind == ast.KindEqualsToken || !excludeCompoundAssignment && isAssignmentOperator(expr.OperatorToken.Kind)) &&
-			ast.IsLeftHandSideExpression(expr.Left)
 	}
 	return false
 }
@@ -1048,7 +1019,7 @@ func unreachableCodeIsError(options *core.CompilerOptions) bool {
 }
 
 func isDestructuringAssignment(node *ast.Node) bool {
-	if isAssignmentExpression(node, true /*excludeCompoundAssignment*/) {
+	if ast.IsAssignmentExpression(node, true /*excludeCompoundAssignment*/) {
 		kind := node.AsBinaryExpression().Left.Kind
 		return kind == ast.KindObjectLiteralExpression || kind == ast.KindArrayLiteralExpression
 	}
@@ -1123,7 +1094,7 @@ func getAssignmentTarget(node *ast.Node) *ast.Node {
 		parent := node.Parent
 		switch parent.Kind {
 		case ast.KindBinaryExpression:
-			if isAssignmentOperator(parent.AsBinaryExpression().OperatorToken.Kind) && parent.AsBinaryExpression().Left == node {
+			if ast.IsAssignmentOperator(parent.AsBinaryExpression().OperatorToken.Kind) && parent.AsBinaryExpression().Left == node {
 				return parent
 			}
 			return nil
@@ -1172,7 +1143,7 @@ func isDeleteTarget(node *ast.Node) bool {
 
 func isInCompoundLikeAssignment(node *ast.Node) bool {
 	target := getAssignmentTarget(node)
-	return target != nil && isAssignmentExpression(target /*excludeCompoundAssignment*/, true) && isCompoundLikeAssignment(target)
+	return target != nil && ast.IsAssignmentExpression(target /*excludeCompoundAssignment*/, true) && isCompoundLikeAssignment(target)
 }
 
 func isCompoundLikeAssignment(assignment *ast.Node) bool {
@@ -2762,7 +2733,7 @@ func isLogicalOperatorOrHigher(kind ast.Kind) bool {
 }
 
 func isAssignmentOperatorOrHigher(kind ast.Kind) bool {
-	return kind == ast.KindQuestionQuestionToken || isLogicalOperatorOrHigher(kind) || isAssignmentOperator(kind)
+	return kind == ast.KindQuestionQuestionToken || isLogicalOperatorOrHigher(kind) || ast.IsAssignmentOperator(kind)
 }
 
 func isBinaryOperator(kind ast.Kind) bool {
@@ -3138,7 +3109,7 @@ func accessKind(node *ast.Node) AccessKind {
 	case ast.KindBinaryExpression:
 		if parent.AsBinaryExpression().Left == node {
 			operator := parent.AsBinaryExpression().OperatorToken
-			if isAssignmentOperator(operator.Kind) {
+			if ast.IsAssignmentOperator(operator.Kind) {
 				if operator.Kind == ast.KindEqualsToken {
 					return AccessKindWrite
 				}
@@ -3441,4 +3412,15 @@ func isInRightSideOfImportOrExportAssignment(node *ast.EntityName) bool {
 
 func isJsxIntrinsicTagName(tagName *ast.Node) bool {
 	return ast.IsIdentifier(tagName) && isIntrinsicJsxName(tagName.Text()) || ast.IsJsxNamespacedName(tagName)
+}
+
+func getContainingObjectLiteral(f *ast.SignatureDeclaration) *ast.Node {
+	if (f.Kind == ast.KindMethodDeclaration ||
+		f.Kind == ast.KindGetAccessor ||
+		f.Kind == ast.KindSetAccessor) && f.Parent.Kind == ast.KindObjectLiteralExpression {
+		return f.Parent
+	} else if f.Kind == ast.KindFunctionExpression && f.Parent.Kind == ast.KindPropertyAssignment {
+		return f.Parent.Parent
+	}
+	return nil
 }

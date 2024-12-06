@@ -809,3 +809,156 @@ func GetImportOrExportSpecifierPropertyName(node *Node) *ModuleExportName {
 	}
 	panic("Unhandled case in GetImportOrExportSpecifierPropertyName: " + node.Kind.String())
 }
+
+func IsJSDocMemberName(node *Node) bool {
+	return node.Kind == KindJSDocMemberName
+}
+
+type AssignmentDeclarationKind int32
+
+const (
+	AssignmentDeclarationKindNone AssignmentDeclarationKind = iota
+	// exports.name = expr
+	// module.exports.name = expr
+	AssignmentDeclarationKindExportsProperty
+	// module.exports = expr
+	AssignmentDeclarationKindModuleExports
+	// className.prototype.name = expr
+	AssignmentDeclarationKindPrototypeProperty
+	// this.name = expr
+	AssignmentDeclarationKindThisProperty
+	// F.name = expr
+	AssignmentDeclarationKindProperty
+	// F.prototype = { ... }
+	AssignmentDeclarationKindPrototype
+	// Object.defineProperty(x, 'name', { value: any, writable?: boolean (false by default) });
+	// Object.defineProperty(x, 'name', { get: Function, set: Function });
+	// Object.defineProperty(x, 'name', { get: Function });
+	// Object.defineProperty(x, 'name', { set: Function });
+	AssignmentDeclarationKindObjectDefinePropertyValue
+	// Object.defineProperty(exports || module.exports, 'name', ...);
+	AssignmentDeclarationKindObjectDefinePropertyExports
+	// Object.defineProperty(Foo.prototype, 'name', ...);
+	AssignmentDeclarationKindObjectDefinePrototypeProperty
+)
+
+// Given a BinaryExpression, returns SpecialPropertyAssignmentKind for the various kinds of property
+// assignments we treat as special in the binder
+func GetAssignmentDeclarationKind(expr *Node) AssignmentDeclarationKind {
+	special := getAssignmentDeclarationKindWorker(expr)
+	if special == AssignmentDeclarationKindProperty || IsInJSFile(expr) {
+		return special
+	}
+	return AssignmentDeclarationKindNone
+}
+
+func getAssignmentDeclarationKindWorker(expr *Node) AssignmentDeclarationKind {
+	if IsCallExpression(expr) {
+		if !IsBindableObjectDefinePropertyCall(expr.AsCallExpression()) {
+			return AssignmentDeclarationKindNone
+		}
+		entityName := expr.AsCallExpression().Arguments.Nodes[0]
+		if IsExportsIdentifier(entityName) || IsModuleExportsAccessExpression(entityName) {
+			return AssignmentDeclarationKindObjectDefinePropertyExports
+		}
+		if isBindableStaticAccessExpression(entityName, false /*excludeThisKeyword*/) && GetElementOrPropertyAccessName(entityName) == "prototype" {
+			return AssignmentDeclarationKindObjectDefinePrototypeProperty
+		}
+		return AssignmentDeclarationKindObjectDefinePropertyValue
+	}
+	if expr.AsBinaryExpression().OperatorToken.Kind != KindEqualsToken ||
+		!IsAccessExpression(expr.AsBinaryExpression().Left) ||
+		isVoidZero(GetRightMostAssignedExpression(expr)) {
+		return AssignmentDeclarationKindNone
+	}
+	if isBindableStaticNameExpression(expr.AsBinaryExpression().Left.Expression(), true /*excludeThisKeyword*/) &&
+		GetElementOrPropertyAccessName(expr.AsBinaryExpression().Left) == "prototype" &&
+		IsObjectLiteralExpression(GetInitializerOfBinaryExpression(expr)) {
+		// F.prototype = { ... }
+		return AssignmentDeclarationKindPrototype
+	}
+
+	return GetAssignmentDeclarationPropertyAccessKind(expr.AsBinaryExpression().Left)
+}
+
+func GetAssignmentDeclarationPropertyAccessKind(lhs *Node) AssignmentDeclarationKind {
+	// !!!
+	return AssignmentDeclarationKindNone
+}
+
+func GetInitializerOfBinaryExpression(expr *Node) *Node {
+	for IsBinaryExpression(expr.AsBinaryExpression().Right) {
+		expr = expr.AsBinaryExpression().Right
+	}
+	return expr.AsBinaryExpression().Right
+}
+
+func IsAssignmentExpression(node *Node, excludeCompoundAssignment bool) bool {
+	if node.Kind == KindBinaryExpression {
+		expr := node.AsBinaryExpression()
+		return (expr.OperatorToken.Kind == KindEqualsToken || !excludeCompoundAssignment && IsAssignmentOperator(expr.OperatorToken.Kind)) &&
+			IsLeftHandSideExpression(expr.Left)
+	}
+	return false
+}
+
+func IsAssignmentOperator(token Kind) bool {
+	return token >= KindFirstAssignment && token <= KindLastAssignment
+}
+
+func GetRightMostAssignedExpression(node *Node) *Node {
+	for IsAssignmentExpression(node, true /*excludeCompoundAssignment*/) {
+		node = node.AsBinaryExpression().Right
+	}
+}
+
+func isVoidZero(node *Node) bool {
+	return IsVoidExpression(node) && IsNumericLiteral(node.Expression()) && node.Expression().Text() == "0"
+}
+
+func IsVoidExpression(node *Node) bool {
+	return node.Kind == KindVoidExpression
+}
+
+func IsExportsIdentifier(node *Node) bool {
+	return IsIdentifier(node) && node.Text() == "exports"
+}
+
+func IsModuleIdentifier(node *Node) bool {
+	return IsIdentifier(node) && node.Text() == "module"
+}
+
+func IsModuleExportsAccessExpression(node *Node) bool {
+	return (IsPropertyAccessExpression(node) || isLiteralLikeElementAccess(node)) &&
+		IsModuleIdentifier(node.Expression()) &&
+		GetElementOrPropertyAccessName(node) == "exports"
+}
+
+func GetElementOrPropertyAccessName(node *Node) string {
+	name := GetElementOrPropertyAccessArgumentExpressionOrName(node)
+	if name != nil {
+		if IsIdentifier(name) {
+			return name.Text()
+		}
+		if isStringLiteralLike(name) || IsNumericLiteral(name) {
+			return EscapeLeadingUnderscores(name.Text())
+		}
+	}
+	return ""
+}
+
+// Does not handle signed numeric names like `a[+0]` - handling those would require handling prefix unary expressions
+// throughout late binding handling as well, which is awkward (but ultimately probably doable if there is demand)
+func GetElementOrPropertyAccessArgumentExpressionOrName(node *Node) *Node {
+	switch node.Kind {
+	case KindPropertyAccessExpression:
+		return node.Name()
+	case KindElementAccessExpression:
+		arg := SkipParentheses(node.AsElementAccessExpression().ArgumentExpression)
+		if isStringOrNumericLiteralLike(arg) {
+			return arg
+		}
+		return node
+	}
+	panic("Unhandled case in GetElementOrPropertyAccessArgumentExpressionOrName")
+}

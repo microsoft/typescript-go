@@ -4121,7 +4121,7 @@ func (c *Checker) getBaseTypesIfUnrelated(leftType *Type, rightType *Type, isRel
 }
 
 func (c *Checker) checkAssignmentOperator(left *ast.Node, operator ast.Kind, right *ast.Node, leftType *Type, rightType *Type) {
-	if isAssignmentOperator(operator) {
+	if ast.IsAssignmentOperator(operator) {
 		// getters can be a subtype of setters, so to check for assignability we use the setter's type instead
 		if isCompoundAssignment(operator) && ast.IsPropertyAccessExpression(left) {
 			leftType = c.checkPropertyAccessExpression(left, CheckModeNormal, true /*writeOnly*/)
@@ -4292,7 +4292,7 @@ func (c *Checker) isSideEffectFree(node *ast.Node) bool {
 	case ast.KindConditionalExpression:
 		return c.isSideEffectFree(node.AsConditionalExpression().WhenTrue) && c.isSideEffectFree(node.AsConditionalExpression().WhenFalse)
 	case ast.KindBinaryExpression:
-		if isAssignmentOperator(node.AsBinaryExpression().OperatorToken.Kind) {
+		if ast.IsAssignmentOperator(node.AsBinaryExpression().OperatorToken.Kind) {
 			return false
 		}
 		return c.isSideEffectFree(node.AsBinaryExpression().Left) && c.isSideEffectFree(node.AsBinaryExpression().Right)
@@ -15777,12 +15777,118 @@ func (c *Checker) getSymbolHasInstanceMethodOfObjectType(t *Type) *Type {
 	return nil
 }
 
-func (c *Checker) getSymbolOfNameOrPropertyAccessExpression(node *ast.Node) *ast.Symbol {
+func (c *Checker) getSymbolOfNameOrPropertyAccessExpression(name *ast.Node) *ast.Symbol {
+	if ast.IsDeclarationName(name) {
+		return c.getSymbolOfNode(name.Parent)
+	}
+
+	if ast.IsInJSFile(name) &&
+		name.Parent.Kind == ast.KindPropertyAccessExpression &&
+		name.Parent.Parent.Kind == ast.KindBinaryExpression &&
+		name.Parent == name.Parent.Parent.AsBinaryExpression().Left {
+		// Check if this is a special property assignment
+		if !ast.IsPrivateIdentifier(name) && !ast.IsJSDocMemberName(name) && !c.isThisPropertyAndThisTyped(name.Parent) {
+			specialPropertyAssignmentSymbol := c.getSpecialPropertyAssignmentSymbolFromEntityName(name)
+			if specialPropertyAssignmentSymbol != nil {
+				return specialPropertyAssignmentSymbol
+			}
+		}
+	}
+
+	if name.Parent.Kind == ast.KindExportAssignment && ast.IsEntityNameExpression(name) {
+		// Even an entity name expression that doesn't resolve as an entityname may still typecheck as a property access expression
+		success := c.resolveEntityName(
+			name,
+			/*all meanings*/ ast.SymbolFlagsValue|ast.SymbolFlagsType|ast.SymbolFlagsNamespace|ast.SymbolFlagsAlias,
+			true /*ignoreErrors*/, false /*dontResolveAlias*/, nil /*location*/)
+		if success != nil && success != c.unknownSymbol {
+			return success
+		}
+	} else if ast.IsEntityName(name) && isInRightSideOfImportOrExportAssignment(name) {
+		// Since we already checked for ExportAssignment, this really could only be an Import
+		importEqualsDeclaration := getAncestor(name, ast.KindImportEqualsDeclaration)
+		if importEqualsDeclaration == nil {
+			panic("ImportEqualsDeclaration should be defined")
+		}
+		return c.getSymbolOfPartOfRightHandSideOfImportEquals(name, true /*dontResolveAlias*/)
+	}
+
 	// !!!
 	return nil
 }
 
+func (c *Checker) getSpecialPropertyAssignmentSymbolFromEntityName(entityName *ast.Node) *ast.Symbol {
+	specialPropertyAssignmentKind := ast.GetAssignmentDeclarationKind(entityName)
+	switch specialPropertyAssignmentKind {
+	case ast.AssignmentDeclarationKindExportsProperty, ast.AssignmentDeclarationKindPrototypeProperty:
+		return c.getSymbolOfNode(entityName.Parent)
+	case ast.AssignmentDeclarationKindProperty:
+		if ast.IsPropertyAccessExpression(entityName.Parent) && getLeftmostAccessExpression(entityName.Parent) == entityName {
+			return nil
+		}
+		fallthrough
+	case ast.AssignmentDeclarationKindThisProperty, ast.AssignmentDeclarationKindModuleExports:
+		return c.getSymbolOfDeclaration(entityName.Parent.Parent)
+	}
+	return nil
+}
+
+func (c *Checker) isThisPropertyAndThisTyped(node *ast.Node) bool {
+	if node.AsPropertyAccessExpression().Expression.Kind == ast.KindThisKeyword {
+		container := c.getThisContainer(node, false /*includeArrowFunctions*/, false /*includeClassComputedPropertyName*/)
+		if ast.IsFunctionLike(container) {
+			containingLiteral := getContainingObjectLiteral(container)
+			if containingLiteral != nil {
+				contextualType := c.getApparentTypeOfContextualType(containingLiteral, ContextFlagsNone)
+				t := c.getThisTypeOfObjectLiteralFromContextualType(containingLiteral, contextualType)
+				return t != nil && !isTypeAny(t)
+			}
+		}
+	}
+	return false
+}
+
 func (c *Checker) getTypeOfNode(node *ast.Node) *Type {
 	// !!!
+	return nil
+}
+
+func (c *Checker) getThisTypeOfObjectLiteralFromContextualType(containingLiteral *ast.Node, contextualType *Type) *Type {
+	literal := containingLiteral
+	t := contextualType
+	for t != nil {
+		thisType := c.getThisTypeFromContextualType(t)
+		if thisType != nil {
+			return thisType
+		}
+		if literal.Parent.Kind != ast.KindPropertyAssignment {
+			break
+		}
+		literal = literal.Parent.Parent
+		t = c.getApparentTypeOfContextualType(literal, ContextFlagsNone)
+	}
+	return nil
+}
+
+func (c *Checker) getThisTypeFromContextualType(t *Type) *Type {
+	return c.mapType(t, func(t *Type) *Type {
+		if t.flags&TypeFlagsIntersection != 0 {
+			for _, t := range t.AsIntersectionType().types {
+				typeArg := c.getThisTypeArgument(t)
+				if typeArg != nil {
+					return typeArg
+				}
+			}
+			return nil
+		} else {
+			return c.getThisTypeArgument(t)
+		}
+	})
+}
+
+func (c *Checker) getThisTypeArgument(t *Type) *Type {
+	if t.objectFlags&ObjectFlagsReference != 0 && t.AsTypeReference().target == c.globalThisType {
+		return c.getTypeArguments(t)[0]
+	}
 	return nil
 }
