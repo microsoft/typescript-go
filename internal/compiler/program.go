@@ -192,12 +192,9 @@ func (p *Program) getResolvedModule(currentSourceFile *ast.SourceFile, moduleRef
 }
 
 func (p *Program) findSourceFile(candidate string, reason FileIncludeReason) *ast.SourceFile {
-	extensionless := tspath.RemoveFileExtension(candidate)
-	for _, ext := range []string{tspath.ExtensionTs, tspath.ExtensionTsx, tspath.ExtensionDts} {
-		path := tspath.ToPath(extensionless+ext, p.host.GetCurrentDirectory(), p.host.FS().UseCaseSensitiveFileNames())
-		if result, ok := p.filesByPath[path]; ok {
-			return result
-		}
+	path := tspath.ToPath(candidate, p.host.GetCurrentDirectory(), p.host.FS().UseCaseSensitiveFileNames())
+	if result, ok := p.filesByPath[path]; ok {
+		return result
 	}
 
 	return nil
