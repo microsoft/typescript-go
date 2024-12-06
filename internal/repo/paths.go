@@ -35,8 +35,13 @@ func findGoMod(dir string) string {
 
 var typeScriptSubmoduleExists = sync.OnceValue(func() bool {
 	p := filepath.Join(TypeScriptSubmodulePath, "package.json")
-	_, err := os.Stat(p)
-	return err == nil
+	if _, err := os.Stat(p); err != nil {
+		if os.IsNotExist(err) {
+			return false
+		}
+		panic(err)
+	}
+	return true
 })
 
 type skippable interface {
