@@ -3111,7 +3111,7 @@ func (c *Checker) chooseOverload(s *CallState, relation *Relation) *Signature {
 		if len(s.typeArguments) != 0 || !c.hasCorrectArity(s.node, s.args, candidate, s.signatureHelpTrailingComma) {
 			return nil
 		}
-		if ok, _ := c.isSignatureApplicable(s.node, s.args, candidate, relation, CheckModeNormal, false /*reportErrors*/, nil /*containingMessageChain*/, nil /*inferenceContext*/); !ok {
+		if !c.isSignatureApplicable(s.node, s.args, candidate, relation, CheckModeNormal, false /*reportErrors*/, nil /*inferenceContext*/, nil /*diagnosticOutput*/) {
 			s.candidatesForArgumentError = []*Signature{candidate}
 			return nil
 		}
@@ -3167,7 +3167,7 @@ func (c *Checker) chooseOverload(s *CallState, relation *Relation) *Signature {
 		} else {
 			checkCandidate = candidate
 		}
-		if ok, _ := c.isSignatureApplicable(s.node, s.args, checkCandidate, relation, s.argCheckMode, false /*reportErrors*/, nil /*containingMessageChain*/, inferenceContext); !ok {
+		if !c.isSignatureApplicable(s.node, s.args, checkCandidate, relation, s.argCheckMode, false /*reportErrors*/, inferenceContext, nil /*diagnosticOutput*/) {
 			// Give preference to error candidates that have no rest parameters (as they are more specific)
 			s.candidatesForArgumentError = append(s.candidatesForArgumentError, checkCandidate)
 			continue
@@ -3187,7 +3187,7 @@ func (c *Checker) chooseOverload(s *CallState, relation *Relation) *Signature {
 					continue
 				}
 			}
-			if ok, _ := c.isSignatureApplicable(s.node, s.args, checkCandidate, relation, s.argCheckMode, false /*reportErrors*/, nil /*containingMessageChain*/, inferenceContext); !ok {
+			if !c.isSignatureApplicable(s.node, s.args, checkCandidate, relation, s.argCheckMode, false /*reportErrors*/, inferenceContext, nil /*diagnosticOutput*/) {
 				// Give preference to error candidates that have no rest parameters (as they are more specific)
 				s.candidatesForArgumentError = append(s.candidatesForArgumentError, checkCandidate)
 				continue
@@ -3332,12 +3332,6 @@ func (c *Checker) checkTypeArguments(signature *Signature, typeArgumentNodes []*
 		// Debug.assert(typeParameters[i] != nil, "Should not call checkTypeArguments with too many type arguments")
 		constraint := c.getConstraintOfTypeParameter(typeParameters[i])
 		if constraint != nil {
-			var errorInfo func() *ast.MessageChain
-			if reportErrors && headMessage != nil {
-				errorInfo = func() *ast.MessageChain {
-					return chainDiagnosticMessages(nil, diagnostics.Type_0_does_not_satisfy_the_constraint_1)
-				}
-			}
 			typeArgumentHeadMessage := core.OrElse(headMessage, diagnostics.Type_0_does_not_satisfy_the_constraint_1)
 			if mapper == nil {
 				mapper = newTypeMapper(typeParameters, typeArgumentTypes)
@@ -3347,7 +3341,14 @@ func (c *Checker) checkTypeArguments(signature *Signature, typeArgumentNodes []*
 			if reportErrors {
 				errorNode = typeArgumentNodes[i]
 			}
-			if !c.checkTypeAssignableToEx(typeArgument, c.getTypeWithThisArgument(c.instantiateType(constraint, mapper), typeArgument, false), errorNode, typeArgumentHeadMessage, errorInfo, nil) {
+			var diagnostic *ast.Diagnostic
+			if !c.checkTypeAssignableToEx(typeArgument, c.getTypeWithThisArgument(c.instantiateType(constraint, mapper), typeArgument, false), errorNode, typeArgumentHeadMessage, &diagnostic) {
+				if diagnostic != nil {
+					if headMessage != nil {
+						diagnostic = ast.NewDiagnosticChain(diagnostic, diagnostics.Type_0_does_not_satisfy_the_constraint_1)
+					}
+					c.diagnostics.add(diagnostic)
+				}
 				return nil
 			}
 		}
@@ -3355,15 +3356,14 @@ func (c *Checker) checkTypeArguments(signature *Signature, typeArgumentNodes []*
 	return typeArgumentTypes
 }
 
-func (c *Checker) isSignatureApplicable(node *ast.Node, args []*ast.Node, signature *Signature, relation *Relation, checkMode CheckMode, reportErrors bool, containingMessageChain func() *ast.MessageChain, inferenceContext *InferenceContext) (bool, []*ast.Diagnostic) {
-	var errorOutputContainer ErrorOutputContainer
+func (c *Checker) isSignatureApplicable(node *ast.Node, args []*ast.Node, signature *Signature, relation *Relation, checkMode CheckMode, reportErrors bool, inferenceContext *InferenceContext, diagnosticOutput **ast.Diagnostic) bool {
 	if isJsxOpeningLikeElement(node) {
 		// !!!
 		// if !c.checkApplicableSignatureForJsxOpeningLikeElement(node, signature, relation, checkMode, reportErrors, containingMessageChain, errorOutputContainer) {
 		// 	Debug.assert(!reportErrors || errorOutputContainer.errors != nil, "jsx should have errors when reporting errors")
 		// 	return errorOutputContainer.errors || emptyArray
 		// }
-		return true, nil
+		return true
 	}
 	thisType := c.getThisTypeOfSignature(signature)
 	if thisType != nil && thisType != c.voidType && !(ast.IsNewExpression(node) || ast.IsCallExpression(node) && isSuperProperty(node.Expression())) {
@@ -3380,8 +3380,8 @@ func (c *Checker) isSignatureApplicable(node *ast.Node, args []*ast.Node, signat
 			}
 		}
 		headMessage := diagnostics.The_this_context_of_type_0_is_not_assignable_to_method_s_this_of_type_1
-		if !c.checkTypeRelatedToEx(thisArgumentType, thisType, relation, errorNode, headMessage, containingMessageChain, &errorOutputContainer) {
-			return false, errorOutputContainer.errors
+		if !c.checkTypeRelatedToEx(thisArgumentType, thisType, relation, errorNode, headMessage, diagnosticOutput) {
+			return false
 		}
 	}
 	headMessage := diagnostics.Argument_of_type_0_is_not_assignable_to_parameter_of_type_1
@@ -3414,9 +3414,9 @@ func (c *Checker) isSignatureApplicable(node *ast.Node, args []*ast.Node, signat
 				checkArgType = regularArgType
 			}
 			effectiveCheckArgumentNode := c.getEffectiveCheckNode(arg)
-			if !c.checkTypeRelatedToAndOptionallyElaborate(checkArgType, paramType, relation, core.IfElse(reportErrors, effectiveCheckArgumentNode, nil), effectiveCheckArgumentNode, headMessage, containingMessageChain, &errorOutputContainer) {
+			if !c.checkTypeRelatedToAndOptionallyElaborate(checkArgType, paramType, relation, core.IfElse(reportErrors, effectiveCheckArgumentNode, nil), effectiveCheckArgumentNode, headMessage, diagnosticOutput) {
 				// !!! maybeAddMissingAwaitInfo(arg, checkArgType, paramType)
-				return false, errorOutputContainer.errors
+				return false
 			}
 		}
 	}
@@ -3435,12 +3435,12 @@ func (c *Checker) isSignatureApplicable(node *ast.Node, args []*ast.Node, signat
 				errorNode.Loc = core.NewTextRange(args[argCount].Pos(), args[len(args)-1].End())
 			}
 		}
-		if !c.checkTypeRelatedToEx(spreadType, restType, relation, errorNode, headMessage, nil /*containingMessageChain*/, &errorOutputContainer) {
+		if !c.checkTypeRelatedToEx(spreadType, restType, relation, errorNode, headMessage, diagnosticOutput) {
 			// !!! maybeAddMissingAwaitInfo(errorNode, spreadType, restType)
-			return false, errorOutputContainer.errors
+			return false
 		}
 	}
-	return true, nil
+	return true
 	// !!!
 	// maybeAddMissingAwaitInfo := func(errorNode *ast.Node, source *Type, target *Type) {
 	// 	if errorNode != nil && reportErrors && errorOutputContainer.errors != nil && errorOutputContainer.errors.length != 0 {
@@ -3589,26 +3589,20 @@ func (c *Checker) reportCallResolutionErrors(s *CallState, signatures []*Signatu
 	case len(s.candidatesForArgumentError) != 0:
 		// !!! Port logic that lists all diagnostics up to 3
 		last := s.candidatesForArgumentError[len(s.candidatesForArgumentError)-1]
-		var chain *ast.MessageChain
+		var diagnostic *ast.Diagnostic
+		c.isSignatureApplicable(s.node, s.args, last, c.assignableRelation, CheckModeNormal, true /*reportErrors*/, nil /*inferenceContext*/, &diagnostic)
 		if len(s.candidatesForArgumentError) > 1 {
-			chain = chainDiagnosticMessages(chain, diagnostics.The_last_overload_gave_the_following_error)
-			chain = chainDiagnosticMessages(chain, diagnostics.No_overload_matches_this_call)
+			diagnostic = ast.NewDiagnosticChain(diagnostic, diagnostics.The_last_overload_gave_the_following_error)
+			diagnostic = ast.NewDiagnosticChain(diagnostic, diagnostics.No_overload_matches_this_call)
 		}
 		if headMessage != nil {
-			chain = chainDiagnosticMessages(chain, headMessage)
+			diagnostic = ast.NewDiagnosticChain(diagnostic, headMessage)
 		}
-		chainFunc := func() *ast.MessageChain { return chain }
-		_, diags := c.isSignatureApplicable(s.node, s.args, last, c.assignableRelation, CheckModeNormal, true /*reportErrors*/, chainFunc, nil /*inferenceContext*/)
-		if len(diags) == 0 {
-			panic("No error for last overload signature")
+		if last.declaration != nil && len(s.candidatesForArgumentError) > 3 {
+			diagnostic.AddRelatedInfo(NewDiagnosticForNode(last.declaration, diagnostics.The_last_overload_is_declared_here))
 		}
-		for _, d := range diags {
-			if last.declaration != nil && len(s.candidatesForArgumentError) > 3 {
-				d.AddRelatedInfo(createDiagnosticForNode(last.declaration, diagnostics.The_last_overload_is_declared_here))
-			}
-			// !!! addImplementationSuccessElaboration(last, d)
-			c.diagnostics.add(d)
-		}
+		// !!! addImplementationSuccessElaboration(last, d)
+		c.diagnostics.add(diagnostic)
 	case s.candidateForArgumentArityError != nil:
 		c.diagnostics.add(c.getArgumentArityError(s.node, []*Signature{s.candidateForArgumentArityError}, s.args, headMessage))
 	case s.candidateForTypeArgumentError != nil:
@@ -3628,7 +3622,7 @@ func (c *Checker) reportCallResolutionErrors(s *CallState, signatures []*Signatu
 func (c *Checker) getArgumentArityError(node *ast.Node, signatures []*Signature, args []*ast.Node, headMessage *diagnostics.Message) *ast.Diagnostic {
 	spreadIndex := c.getSpreadArgumentIndex(args)
 	if spreadIndex > -1 {
-		return createDiagnosticForNode(args[spreadIndex], diagnostics.A_spread_argument_must_either_have_a_tuple_type_or_be_passed_to_a_rest_parameter)
+		return NewDiagnosticForNode(args[spreadIndex], diagnostics.A_spread_argument_must_either_have_a_tuple_type_or_be_passed_to_a_rest_parameter)
 	}
 	minCount := math.MaxInt64 // smallest parameter count
 	maxCount := math.MinInt64 // largest parameter count
@@ -3678,21 +3672,21 @@ func (c *Checker) getArgumentArityError(node *ast.Node, signatures []*Signature,
 	default:
 		error = diagnostics.Expected_0_arguments_but_got_1
 	}
+	errorNode := getErrorNodeForCallNode(node)
 	switch {
 	case minCount < len(args) && len(args) < maxCount:
 		// between min and max, but with no matching overload
-		chain := chainDiagnosticMessages(nil, diagnostics.No_overload_expects_0_arguments_but_overloads_do_exist_that_expect_either_1_or_2_arguments, len(args), maxBelow, minAbove)
+		diagnostic := NewDiagnosticForNode(errorNode, diagnostics.No_overload_expects_0_arguments_but_overloads_do_exist_that_expect_either_1_or_2_arguments, len(args), maxBelow, minAbove)
 		if headMessage != nil {
-			chain = chainDiagnosticMessages(chain, headMessage)
+			diagnostic = ast.NewDiagnosticChain(diagnostic, headMessage)
 		}
-		return c.getDiagnosticForCallNode(node, chain)
+		return diagnostic
 	case len(args) < minCount:
 		// too short: put the error span on the call expression, not any of the args
-		chain := chainDiagnosticMessages(nil, error, parameterRange, len(args))
+		diagnostic := NewDiagnosticForNode(errorNode, error, parameterRange, len(args))
 		if headMessage != nil {
-			chain = chainDiagnosticMessages(chain, headMessage)
+			diagnostic = ast.NewDiagnosticChain(diagnostic, headMessage)
 		}
-		diagnostic := c.getDiagnosticForCallNode(node, chain)
 		var parameter *ast.Node
 		if closestSignature != nil && closestSignature.declaration != nil {
 			parameter = closestSignature.declaration.Parameters()[len(args)+core.IfElse(closestSignature.thisParameter != nil, 1, 0)]
@@ -3701,11 +3695,11 @@ func (c *Checker) getArgumentArityError(node *ast.Node, signatures []*Signature,
 			var related *ast.Diagnostic
 			switch {
 			case ast.IsBindingPattern(parameter.Name()):
-				related = createDiagnosticForNode(parameter, diagnostics.An_argument_matching_this_binding_pattern_was_not_provided)
+				related = NewDiagnosticForNode(parameter, diagnostics.An_argument_matching_this_binding_pattern_was_not_provided)
 			case isRestParameter(parameter):
-				related = createDiagnosticForNode(parameter, diagnostics.Arguments_for_the_rest_parameter_0_were_not_provided, parameter.Name().Text())
+				related = NewDiagnosticForNode(parameter, diagnostics.Arguments_for_the_rest_parameter_0_were_not_provided, parameter.Name().Text())
 			default:
-				related = createDiagnosticForNode(parameter, diagnostics.An_argument_for_0_was_not_provided, parameter.Name().Text())
+				related = NewDiagnosticForNode(parameter, diagnostics.An_argument_for_0_was_not_provided, parameter.Name().Text())
 			}
 			diagnostic.AddRelatedInfo(related)
 		}
@@ -3717,11 +3711,11 @@ func (c *Checker) getArgumentArityError(node *ast.Node, signatures []*Signature,
 		if end == pos {
 			end++
 		}
-		chain := chainDiagnosticMessages(nil, error, parameterRange, len(args))
+		diagnostic := ast.NewDiagnostic(sourceFile, core.NewTextRange(pos, end), error, parameterRange, len(args))
 		if headMessage != nil {
-			chain = chainDiagnosticMessages(chain, headMessage)
+			diagnostic = ast.NewDiagnosticChain(diagnostic, headMessage)
 		}
-		return ast.NewDiagnosticFromMessageChain(sourceFile, core.NewTextRange(pos, end), chain)
+		return diagnostic
 	}
 }
 
@@ -3729,14 +3723,14 @@ func (c *Checker) isPromiseResolveArityError(node *ast.Node) bool {
 	return false // !!!
 }
 
-func (c *Checker) getDiagnosticForCallNode(node *ast.Node, chain *ast.MessageChain) *ast.Diagnostic {
+func getErrorNodeForCallNode(node *ast.Node) *ast.Node {
 	if ast.IsCallExpression(node) {
 		node := node.Expression()
 		if ast.IsPropertyAccessExpression(node) {
 			node = node.Name()
 		}
 	}
-	return NewDiagnosticForNodeFromMessageChain(node, chain)
+	return node
 }
 
 func (c *Checker) getTypeArgumentArityError(node *ast.Node, signatures []*Signature, typeArguments []*ast.Node, headMessage *diagnostics.Message) *ast.Diagnostic {
@@ -3792,11 +3786,15 @@ func (c *Checker) isUntypedFunctionCall(funcType *Type, apparentFuncType *Type, 
 			c.getReducedType(apparentFuncType).flags&TypeFlagsNever == 0 && c.isTypeAssignableTo(funcType, c.globalFunctionType)
 }
 
-func (c *Checker) invocationErrorDetails(errorTarget *ast.Node, apparentType *Type, kind SignatureKind) (*ast.MessageChain, *diagnostics.Message) {
-	var errorInfo *ast.MessageChain
+func (c *Checker) invocationErrorDetails(errorTarget *ast.Node, apparentType *Type, kind SignatureKind) *ast.Diagnostic {
+	var diagnostic *ast.Diagnostic
 	isCall := kind == SignatureKindCall
 	awaitedType := c.getAwaitedType(apparentType)
 	maybeMissingAwait := awaitedType != nil && len(c.getSignaturesOfType(awaitedType, kind)) > 0
+	target := errorTarget
+	if ast.IsPropertyAccessExpression(errorTarget) && ast.IsCallExpression(errorTarget.Parent) {
+		target = errorTarget.Name()
+	}
 	if apparentType.flags&TypeFlagsUnion != 0 {
 		types := apparentType.Types()
 		hasSignatures := false
@@ -3804,15 +3802,15 @@ func (c *Checker) invocationErrorDetails(errorTarget *ast.Node, apparentType *Ty
 			signatures := c.getSignaturesOfType(constituent, kind)
 			if len(signatures) != 0 {
 				hasSignatures = true
-				if errorInfo != nil {
+				if diagnostic != nil {
 					// Bail early if we already have an error, no chance of "No constituent of type is callable"
 					break
 				}
 			} else {
 				// Error on the first non callable constituent only
-				if errorInfo == nil {
-					errorInfo = chainDiagnosticMessages(errorInfo, core.IfElse(isCall, diagnostics.Type_0_has_no_call_signatures, diagnostics.Type_0_has_no_construct_signatures), c.typeToString(constituent))
-					errorInfo = chainDiagnosticMessages(errorInfo, core.IfElse(isCall, diagnostics.Not_all_constituents_of_type_0_are_callable, diagnostics.Not_all_constituents_of_type_0_are_constructable), c.typeToString(apparentType))
+				if diagnostic == nil {
+					diagnostic = NewDiagnosticForNode(target, core.IfElse(isCall, diagnostics.Type_0_has_no_call_signatures, diagnostics.Type_0_has_no_construct_signatures), c.typeToString(constituent))
+					diagnostic = ast.NewDiagnosticChain(diagnostic, core.IfElse(isCall, diagnostics.Not_all_constituents_of_type_0_are_callable, diagnostics.Not_all_constituents_of_type_0_are_constructable), c.typeToString(apparentType))
 				}
 				if hasSignatures {
 					// Bail early if we already found a siganture, no chance of "No constituent of type is callable"
@@ -3821,13 +3819,13 @@ func (c *Checker) invocationErrorDetails(errorTarget *ast.Node, apparentType *Ty
 			}
 		}
 		if !hasSignatures {
-			errorInfo = chainDiagnosticMessages(nil, core.IfElse(isCall, diagnostics.No_constituent_of_type_0_is_callable, diagnostics.No_constituent_of_type_0_is_constructable), c.typeToString(apparentType))
+			diagnostic = NewDiagnosticForNode(target, core.IfElse(isCall, diagnostics.No_constituent_of_type_0_is_callable, diagnostics.No_constituent_of_type_0_is_constructable), c.typeToString(apparentType))
 		}
-		if errorInfo == nil {
-			errorInfo = chainDiagnosticMessages(errorInfo, core.IfElse(isCall, diagnostics.Each_member_of_the_union_type_0_has_signatures_but_none_of_those_signatures_are_compatible_with_each_other, diagnostics.Each_member_of_the_union_type_0_has_construct_signatures_but_none_of_those_signatures_are_compatible_with_each_other), c.typeToString(apparentType))
+		if diagnostic == nil {
+			diagnostic = NewDiagnosticForNode(target, core.IfElse(isCall, diagnostics.Each_member_of_the_union_type_0_has_signatures_but_none_of_those_signatures_are_compatible_with_each_other, diagnostics.Each_member_of_the_union_type_0_has_construct_signatures_but_none_of_those_signatures_are_compatible_with_each_other), c.typeToString(apparentType))
 		}
 	} else {
-		errorInfo = chainDiagnosticMessages(errorInfo, core.IfElse(isCall, diagnostics.Type_0_has_no_call_signatures, diagnostics.Type_0_has_no_construct_signatures), c.typeToString(apparentType))
+		diagnostic = ast.NewDiagnosticChain(diagnostic, core.IfElse(isCall, diagnostics.Type_0_has_no_call_signatures, diagnostics.Type_0_has_no_construct_signatures), c.typeToString(apparentType))
 	}
 	headMessage := core.IfElse(isCall, diagnostics.This_expression_is_not_callable, diagnostics.This_expression_is_not_constructable)
 	// Diagnose get accessors incorrectly called as functions
@@ -3837,19 +3835,15 @@ func (c *Checker) invocationErrorDetails(errorTarget *ast.Node, apparentType *Ty
 			headMessage = diagnostics.This_expression_is_not_callable_because_it_is_a_get_accessor_Did_you_mean_to_use_it_without
 		}
 	}
-	return chainDiagnosticMessages(errorInfo, headMessage), core.IfElse(maybeMissingAwait, diagnostics.Did_you_forget_to_use_await, nil)
+	diagnostic = ast.NewDiagnosticChain(diagnostic, headMessage)
+	if maybeMissingAwait {
+		diagnostic.AddRelatedInfo(NewDiagnosticForNode(errorTarget, diagnostics.Did_you_forget_to_use_await))
+	}
+	return diagnostic
 }
 
 func (c *Checker) invocationError(errorTarget *ast.Node, apparentType *Type, kind SignatureKind, relatedInformation *ast.Diagnostic) {
-	messageChain, relatedInfo := c.invocationErrorDetails(errorTarget, apparentType, kind)
-	target := errorTarget
-	if ast.IsPropertyAccessExpression(errorTarget) && ast.IsCallExpression(errorTarget.Parent) {
-		target = errorTarget.Name()
-	}
-	diagnostic := NewDiagnosticForNodeFromMessageChain(target, messageChain)
-	if relatedInfo != nil {
-		diagnostic.AddRelatedInfo(createDiagnosticForNode(errorTarget, relatedInfo))
-	}
+	diagnostic := c.invocationErrorDetails(errorTarget, apparentType, kind)
 	c.diagnostics.add(diagnostic)
 	// !!!
 	// c.invocationErrorRecovery(apparentType, kind, ifElse(relatedInformation != nil, addRelatedInfo(diagnostic, relatedInformation), diagnostic))
@@ -4750,12 +4744,11 @@ func (c *Checker) checkPrivateIdentifierPropertyAccess(leftType *Type, right *as
 }
 
 func (c *Checker) reportNonexistentProperty(propNode *ast.Node, containingType *Type) {
-	var errorInfo *ast.MessageChain
-	var relatedInfo *ast.Diagnostic
+	var diagnostic *ast.Diagnostic
 	if !ast.IsPrivateIdentifier(propNode) && containingType.flags&TypeFlagsUnion != 0 && containingType.flags&TypeFlagsPrimitive == 0 {
 		for _, subtype := range containingType.Types() {
 			if c.getPropertyOfType(subtype, propNode.Text()) == nil && c.getApplicableIndexInfoForName(subtype, propNode.Text()) == nil {
-				errorInfo = chainDiagnosticMessages(errorInfo, diagnostics.Property_0_does_not_exist_on_type_1, declarationNameToString(propNode), c.typeToString(subtype))
+				diagnostic = NewDiagnosticChainForNode(diagnostic, propNode, diagnostics.Property_0_does_not_exist_on_type_1, declarationNameToString(propNode), c.typeToString(subtype))
 				break
 			}
 		}
@@ -4763,40 +4756,40 @@ func (c *Checker) reportNonexistentProperty(propNode *ast.Node, containingType *
 	if c.typeHasStaticProperty(propNode.Text(), containingType) {
 		propName := declarationNameToString(propNode)
 		typeName := c.typeToString(containingType)
-		errorInfo = chainDiagnosticMessages(errorInfo, diagnostics.Property_0_does_not_exist_on_type_1_Did_you_mean_to_access_the_static_member_2_instead, propName, typeName, typeName+"."+propName)
+		diagnostic = NewDiagnosticChainForNode(diagnostic, propNode, diagnostics.Property_0_does_not_exist_on_type_1_Did_you_mean_to_access_the_static_member_2_instead, propName, typeName, typeName+"."+propName)
 	} else {
 		promisedType := c.getPromisedTypeOfPromise(containingType)
 		if promisedType != nil && c.getPropertyOfType(promisedType, propNode.Text()) != nil {
-			errorInfo = chainDiagnosticMessages(errorInfo, diagnostics.Property_0_does_not_exist_on_type_1, declarationNameToString(propNode), c.typeToString(containingType))
-			relatedInfo = createDiagnosticForNode(propNode, diagnostics.Did_you_forget_to_use_await)
+			diagnostic = NewDiagnosticChainForNode(diagnostic, propNode, diagnostics.Property_0_does_not_exist_on_type_1, declarationNameToString(propNode), c.typeToString(containingType))
+			diagnostic.AddRelatedInfo(NewDiagnosticForNode(propNode, diagnostics.Did_you_forget_to_use_await))
 		} else {
 			missingProperty := declarationNameToString(propNode)
 			container := c.typeToString(containingType)
 			libSuggestion := c.getSuggestedLibForNonExistentProperty(missingProperty, containingType)
 			if libSuggestion != "" {
-				errorInfo = chainDiagnosticMessages(errorInfo, diagnostics.Property_0_does_not_exist_on_type_1_Do_you_need_to_change_your_target_library_Try_changing_the_lib_compiler_option_to_2_or_later, missingProperty, container, libSuggestion)
+				diagnostic = NewDiagnosticChainForNode(diagnostic, propNode, diagnostics.Property_0_does_not_exist_on_type_1_Do_you_need_to_change_your_target_library_Try_changing_the_lib_compiler_option_to_2_or_later, missingProperty, container, libSuggestion)
 			} else {
 				suggestion := c.getSuggestedSymbolForNonexistentProperty(propNode, containingType)
 				if suggestion != nil {
 					suggestedName := symbolName(suggestion)
-					errorInfo = chainDiagnosticMessages(errorInfo, diagnostics.Property_0_does_not_exist_on_type_1_Did_you_mean_2, missingProperty, container, suggestedName)
+					diagnostic = NewDiagnosticChainForNode(diagnostic, propNode, diagnostics.Property_0_does_not_exist_on_type_1_Did_you_mean_2, missingProperty, container, suggestedName)
 					if suggestion.ValueDeclaration != nil {
-						relatedInfo = createDiagnosticForNode(suggestion.ValueDeclaration, diagnostics.X_0_is_declared_here, suggestedName)
+						diagnostic.AddRelatedInfo(NewDiagnosticForNode(suggestion.ValueDeclaration, diagnostics.X_0_is_declared_here, suggestedName))
 					}
 				} else {
-					var diagnostic *diagnostics.Message
+					diagnostic = c.elaborateNeverIntersection(diagnostic, propNode, containingType)
+					var message *diagnostics.Message
 					if c.containerSeemsToBeEmptyDomElement(containingType) {
-						diagnostic = diagnostics.Property_0_does_not_exist_on_type_1_Try_changing_the_lib_compiler_option_to_include_dom
+						message = diagnostics.Property_0_does_not_exist_on_type_1_Try_changing_the_lib_compiler_option_to_include_dom
 					} else {
-						diagnostic = diagnostics.Property_0_does_not_exist_on_type_1
+						message = diagnostics.Property_0_does_not_exist_on_type_1
 					}
-					errorInfo = chainDiagnosticMessages(c.elaborateNeverIntersection(errorInfo, containingType), diagnostic, missingProperty, container)
+					diagnostic = NewDiagnosticChainForNode(diagnostic, propNode, message, missingProperty, container)
 				}
 			}
 		}
 	}
-	resultDiagnostic := NewDiagnosticForNodeFromMessageChain(propNode, errorInfo).AddRelatedInfo(relatedInfo)
-	c.diagnostics.add(resultDiagnostic)
+	c.diagnostics.add(diagnostic)
 }
 
 func (c *Checker) getSuggestedLibForNonExistentProperty(missingProperty string, containingType *Type) string {
@@ -9872,8 +9865,9 @@ func (c *Checker) resolveBaseTypesOfClass(t *Type) {
 	}
 	reducedBaseType := c.getReducedType(baseType)
 	if !c.isValidBaseType(reducedBaseType) {
-		diagnostic := NewDiagnosticForNode(baseTypeNode.Expression(), diagnostics.Base_constructor_return_type_0_is_not_an_object_type_or_intersection_of_object_types_with_statically_known_members, c.typeToString(reducedBaseType))
-		diagnostic.AddMessageChain(c.elaborateNeverIntersection(nil, baseType))
+		errorNode := baseTypeNode.Expression()
+		diagnostic := c.elaborateNeverIntersection(nil, errorNode, baseType)
+		diagnostic = NewDiagnosticChainForNode(diagnostic, errorNode, diagnostics.Base_constructor_return_type_0_is_not_an_object_type_or_intersection_of_object_types_with_statically_known_members, c.typeToString(reducedBaseType))
 		c.diagnostics.add(diagnostic)
 		return
 	}
@@ -11348,18 +11342,18 @@ func (c *Checker) getReducedApparentType(t *Type) *Type {
 	return c.getReducedType(c.getApparentType(c.getReducedType(t)))
 }
 
-func (c *Checker) elaborateNeverIntersection(errorInfo *ast.MessageChain, t *Type) *ast.MessageChain {
+func (c *Checker) elaborateNeverIntersection(chain *ast.Diagnostic, node *ast.Node, t *Type) *ast.Diagnostic {
 	if t.flags&TypeFlagsIntersection != 0 && t.objectFlags&ObjectFlagsIsNeverIntersection != 0 {
 		neverProp := core.Find(c.getPropertiesOfUnionOrIntersectionType(t), c.isDiscriminantWithNeverType)
 		if neverProp != nil {
-			return ast.NewMessageChain(diagnostics.The_intersection_0_was_reduced_to_never_because_property_1_has_conflicting_types_in_some_constituents, c.typeToStringEx(t, nil, TypeFormatFlagsNoTypeReduction), c.symbolToString(neverProp))
+			return NewDiagnosticChainForNode(chain, node, diagnostics.The_intersection_0_was_reduced_to_never_because_property_1_has_conflicting_types_in_some_constituents, c.typeToStringEx(t, nil, TypeFormatFlagsNoTypeReduction), c.symbolToString(neverProp))
 		}
 		privateProp := core.Find(c.getPropertiesOfUnionOrIntersectionType(t), isConflictingPrivateProperty)
 		if privateProp != nil {
-			return chainDiagnosticMessages(errorInfo, diagnostics.The_intersection_0_was_reduced_to_never_because_property_1_exists_in_multiple_constituents_and_is_private_in_some, c.typeToStringEx(t, nil, TypeFormatFlagsNoTypeReduction), c.symbolToString(privateProp))
+			return NewDiagnosticChainForNode(chain, node, diagnostics.The_intersection_0_was_reduced_to_never_because_property_1_exists_in_multiple_constituents_and_is_private_in_some, c.typeToStringEx(t, nil, TypeFormatFlagsNoTypeReduction), c.symbolToString(privateProp))
 		}
 	}
-	return nil
+	return chain
 }
 
 func (c *Checker) isDiscriminantWithNeverType(prop *ast.Symbol) bool {
@@ -15504,24 +15498,21 @@ func (c *Checker) getPropertyTypeForIndexType(originalObjectType *Type, objectTy
 						if suggestion != "" {
 							c.error(accessExpression, diagnostics.Element_implicitly_has_an_any_type_because_type_0_has_no_index_signature_Did_you_mean_to_call_1, c.typeToString(objectType), suggestion)
 						} else {
-							var errorInfo *ast.MessageChain
+							var diagnostic *ast.Diagnostic
 							switch {
 							case indexType.flags&TypeFlagsEnumLiteral != 0:
-								errorInfo = ast.NewMessageChain(nil, diagnostics.Property_0_does_not_exist_on_type_1, "["+c.typeToString(indexType)+"]", c.typeToString(objectType))
+								diagnostic = NewDiagnosticForNode(accessExpression, diagnostics.Property_0_does_not_exist_on_type_1, "["+c.typeToString(indexType)+"]", c.typeToString(objectType))
 							case indexType.flags&TypeFlagsUniqueESSymbol != 0:
 								symbolName := c.getFullyQualifiedName(indexType.symbol, accessExpression)
-								errorInfo = ast.NewMessageChain(nil, diagnostics.Property_0_does_not_exist_on_type_1, "["+symbolName+"]", c.typeToString(objectType))
+								diagnostic = NewDiagnosticForNode(accessExpression, diagnostics.Property_0_does_not_exist_on_type_1, "["+symbolName+"]", c.typeToString(objectType))
 							case indexType.flags&TypeFlagsStringLiteral != 0:
-								errorInfo = ast.NewMessageChain(nil, diagnostics.Property_0_does_not_exist_on_type_1, indexType.AsLiteralType().value, c.typeToString(objectType))
+								diagnostic = NewDiagnosticForNode(accessExpression, diagnostics.Property_0_does_not_exist_on_type_1, indexType.AsLiteralType().value, c.typeToString(objectType))
 							case indexType.flags&TypeFlagsNumberLiteral != 0:
-								errorInfo = ast.NewMessageChain(nil, diagnostics.Property_0_does_not_exist_on_type_1, indexType.AsLiteralType().value, c.typeToString(objectType))
+								diagnostic = NewDiagnosticForNode(accessExpression, diagnostics.Property_0_does_not_exist_on_type_1, indexType.AsLiteralType().value, c.typeToString(objectType))
 							case indexType.flags&(TypeFlagsNumber|TypeFlagsString) != 0:
-								errorInfo = ast.NewMessageChain(nil, diagnostics.No_index_signature_with_a_parameter_of_type_0_was_found_on_type_1, c.typeToString(indexType), c.typeToString(objectType))
+								diagnostic = NewDiagnosticForNode(accessExpression, diagnostics.No_index_signature_with_a_parameter_of_type_0_was_found_on_type_1, c.typeToString(indexType), c.typeToString(objectType))
 							}
-							diagnostic := c.error(accessExpression, diagnostics.Element_implicitly_has_an_any_type_because_expression_of_type_0_can_t_be_used_to_index_type_1, c.typeToString(fullIndexType), c.typeToString(objectType))
-							if errorInfo != nil {
-								diagnostic.AddMessageChain(errorInfo)
-							}
+							c.diagnostics.add(NewDiagnosticChainForNode(diagnostic, accessExpression, diagnostics.Element_implicitly_has_an_any_type_because_expression_of_type_0_can_t_be_used_to_index_type_1, c.typeToString(fullIndexType), c.typeToString(objectType)))
 						}
 					}
 				}
@@ -17510,12 +17501,11 @@ func (c *Checker) getAwaitedTypeNoAliasEx(t *Type, errorNode *ast.Node, diagnost
 	// be treated as a promise, they can cast to <any>.
 	if c.isThenableType(t) {
 		if errorNode != nil {
-			var chain *ast.MessageChain
+			var diagnostic *ast.Diagnostic
 			if thisTypeForError != nil {
-				chain = chainDiagnosticMessages(chain, diagnostics.The_this_context_of_type_0_is_not_assignable_to_method_s_this_of_type_1, c.typeToString(t), c.typeToString(thisTypeForError))
+				diagnostic = NewDiagnosticForNode(errorNode, diagnostics.The_this_context_of_type_0_is_not_assignable_to_method_s_this_of_type_1, c.typeToString(t), c.typeToString(thisTypeForError))
 			}
-			chain = chainDiagnosticMessages(chain, diagnosticMessage, args...)
-			c.diagnostics.add(NewDiagnosticForNodeFromMessageChain(errorNode, chain))
+			c.diagnostics.add(NewDiagnosticChainForNode(diagnostic, errorNode, diagnosticMessage, args...))
 		}
 		return nil
 	}

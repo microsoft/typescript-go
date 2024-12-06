@@ -77,18 +77,11 @@ func NewDiagnosticForNode(node *ast.Node, message *diagnostics.Message, args ...
 	return ast.NewDiagnostic(file, loc, message, args...)
 }
 
-func NewDiagnosticForNodeFromMessageChain(node *ast.Node, messageChain *ast.MessageChain) *ast.Diagnostic {
-	var file *ast.SourceFile
-	var loc core.TextRange
-	if node != nil {
-		file = ast.GetSourceFileOfNode(node)
-		loc = getErrorRangeForNode(file, node)
+func NewDiagnosticChainForNode(chain *ast.Diagnostic, node *ast.Node, message *diagnostics.Message, args ...any) *ast.Diagnostic {
+	if chain != nil {
+		return ast.NewDiagnosticChain(chain, message, args...)
 	}
-	return ast.NewDiagnosticFromMessageChain(file, loc, messageChain)
-}
-
-func chainDiagnosticMessages(details *ast.MessageChain, message *diagnostics.Message, args ...any) *ast.MessageChain {
-	return ast.NewMessageChain(message, args...).AddMessageChain(details)
+	return NewDiagnosticForNode(node, message, args...)
 }
 
 type OperatorPrecedence int
@@ -1344,7 +1337,7 @@ func equalDiagnostics(d1, d2 *ast.Diagnostic) bool {
 		slices.EqualFunc(d1.RelatedInformation(), d2.RelatedInformation(), equalDiagnostics)
 }
 
-func equalMessageChain(c1, c2 *ast.MessageChain) bool {
+func equalMessageChain(c1, c2 *ast.Diagnostic) bool {
 	return c1.Code() == c2.Code() &&
 		c1.Message() == c2.Message() &&
 		slices.EqualFunc(c1.MessageChain(), c2.MessageChain(), equalMessageChain)
@@ -1382,7 +1375,7 @@ func CompareDiagnostics(d1, d2 *ast.Diagnostic) int {
 	return compareRelatedInfo(d1.RelatedInformation(), d2.RelatedInformation())
 }
 
-func compareMessageChainSize(c1, c2 []*ast.MessageChain) int {
+func compareMessageChainSize(c1, c2 []*ast.Diagnostic) int {
 	c := len(c2) - len(c1)
 	if c != 0 {
 		return c
@@ -1396,7 +1389,7 @@ func compareMessageChainSize(c1, c2 []*ast.MessageChain) int {
 	return 0
 }
 
-func compareMessageChainContent(c1, c2 []*ast.MessageChain) int {
+func compareMessageChainContent(c1, c2 []*ast.Diagnostic) int {
 	for i := range c1 {
 		c := strings.Compare(c1[i].Message(), c2[i].Message())
 		if c != 0 {
@@ -3069,14 +3062,6 @@ func getClassExtendsHeritageElement(node *ast.Node) *ast.Node {
 		return heritageClause.AsHeritageClause().Types.Nodes[0]
 	}
 	return nil
-}
-
-func concatenateDiagnosticMessageChains(headChain *ast.MessageChain, tailChain *ast.MessageChain) {
-	lastChain := headChain
-	for len(lastChain.MessageChain()) != 0 {
-		lastChain = lastChain.MessageChain()[0]
-	}
-	lastChain.SetMessageChain([]*ast.MessageChain{tailChain})
 }
 
 func isObjectOrArrayLiteralType(t *Type) bool {

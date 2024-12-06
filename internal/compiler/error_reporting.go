@@ -161,7 +161,7 @@ func WriteFlattenedDiagnosticMessage(writer *strings.Builder, diagnostic *ast.Di
 	}
 }
 
-func flattenDiagnosticMessageChain(writer *strings.Builder, chain *ast.MessageChain, newLine string, level int) {
+func flattenDiagnosticMessageChain(writer *strings.Builder, chain *ast.Diagnostic, newLine string, level int) {
 	writer.WriteString(newLine)
 	for range level {
 		writer.WriteString("  ")
