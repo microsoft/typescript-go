@@ -1595,7 +1595,7 @@ func (c *Checker) tryGetNameFromEntityNameExpression(node *ast.Node) (string, bo
 				return tryGetNameFromType(initializerType)
 			}
 		} else if ast.IsEnumMember(declaration) {
-			return tryGetTextOfPropertyName(declaration.Name())
+			return TryGetTextOfPropertyName(declaration.Name())
 		}
 	}
 	return "", false
@@ -1611,7 +1611,7 @@ func tryGetNameFromType(t *Type) (string, bool) {
 	return "", false
 }
 
-func tryGetTextOfPropertyName(name *ast.Node) (string, bool) {
+func TryGetTextOfPropertyName(name *ast.Node) (string, bool) {
 	switch name.Kind {
 	case ast.KindIdentifier, ast.KindPrivateIdentifier, ast.KindStringLiteral, ast.KindNumericLiteral, ast.KindBigIntLiteral,
 		ast.KindNoSubstitutionTemplateLiteral:

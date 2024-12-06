@@ -6,6 +6,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"testing"
+
+	"github.com/microsoft/typescript-go/internal/compiler"
+	"github.com/microsoft/typescript-go/internal/tspath"
 	// "encoding/json"
 )
 
@@ -110,17 +113,49 @@ func TestGetParsedCommandJson(t *testing.T) {
 			test.basePath,
 			//basePath ?? ts.getNormalizedAbsolutePath(ts.getDirectoryPath(configFileName), host.sys.getCurrentDirectory()),
 			nil,
-			&test.configFileName,
+			test.configFileName,
 			/*resolutionStack*/ nil,
 			/*extraFileExtensions*/ nil,
 			/*extendedConfigCache*/ nil,
 		)
-		configJson, err := json.Marshal(parseConfigFileContent)
+		configJson, err := json.Marshal(parseConfigFileContent.Options)
 		if err != nil {
 			t.Errorf("Failed to marshal parseConfigFileContent: %v", err)
 		}
 		fmt.Println("****************************************************")
 		fmt.Println(string(configJson))
+	}
+}
+
+func TestGetParsedCommandJsonSourceFile(t *testing.T) {
+	for _, test := range parseCommandJson {
+		parsed := compiler.ParseJSONText(test.configFileName, test.jsonText)
+		var basePath string
+		if test.basePath == "" {
+			basePath = test.basePath
+		} else {
+			basePath = tspath.GetNormalizedAbsolutePath(tspath.GetDirectoryPath(test.configFileName), "")
+		}
+		parseConfigFileContent := ParseJsonSourceFileConfigFileContent(
+			parsed,
+			host,
+			basePath,
+			nil,
+			tspath.GetNormalizedAbsolutePath(test.configFileName, ""), //&test.configFileName,
+			/*resolutionStack*/ nil,
+			/*extraFileExtensions*/ nil,
+			/*extendedConfigCache*/ nil,
+		)
+		configJson, err := json.Marshal(parseConfigFileContent.Raw)
+		if err != nil {
+			t.Errorf("Failed to marshal parseConfigFileContent: %v", err)
+		}
+		fmt.Println("****************************************************")
+		fmt.Println(string(configJson))
+		fmt.Println("fileNames: ", parseConfigFileContent.FileNames)
+		fmt.Println("configFileName: ", tspath.GetNormalizedAbsolutePath(test.configFileName, ""))
+		fmt.Println("****************************************************")
+		fmt.Println("")
 	}
 }
 
@@ -135,12 +170,55 @@ var parseCommandJson = []verifyConfig{
 		basePath:       "/apath",
 		allFileList:    []string{"/apath/test.ts", "/apath/foge.ts"},
 	},
-	{
-		jsonText:       `{}`,
-		configFileName: "tsconfig.json",
-		basePath:       "/apath",
-		allFileList:    []string{"/apath/test.ts", "/apath/.git/a.ts", "/apath/.b.ts", "/apath/..c.ts"},
-	},
+	// {
+	// 	jsonText:       `{}`,
+	// 	configFileName: "tsconfig.json",
+	// 	basePath:       "/apath",
+	// 	allFileList:    []string{"/apath/test.ts", "/apath/.git/a.ts", "/apath/.b.ts", "/apath/..c.ts"},
+	// },
+	//"allow dotted files and folders when explicitly requested"
+	// {
+	// 	jsonText: `{
+	// 	"files": ["/apath/.git/a.ts", "/apath/.b.ts", "/apath/..c.ts"]
+	// }`,
+	// 	configFileName: "tsconfig.json",
+	// 	basePath:       "/apath",
+	// 	allFileList:    []string{"/apath/test.ts", "/apath/.git/a.ts", "/apath/.b.ts", "/apath/..c.ts"},
+	// },
+	// {
+	// 	jsonText: `{
+	// 		"files": [],
+	// 		"references": [{ "path": "/apath" }]
+	// 	}`,
+	// 	configFileName: "/apath/tsconfig.json",
+	// 	basePath:       "/apath",
+	// 	allFileList:    []string{"/apath/a.ts"},
+	// },
+	// {
+	// 	jsonText: `{
+	// 		"compilerOptions": {
+	// 			"target": "es5",
+	// 			"module": "commonjs",
+	// 			"lib": ["es2015", "dom"],
+	// 			"strict": true,
+	// 			"esModuleInterop": true,
+	// 			"skipLibCheck": true,
+	// 			"forceConsistentCasingInFileNames": true
+	// 		},
+	// 		"include": ["src/**/*"]
+	// 	}`,
+	// 	configFileName: "tsconfig.json",
+	// 	basePath:       "/apath",
+	// 	//allFileList:    []string{"/apath/test.ts", "/apath/foge.ts"},
+	// },
+	// {
+	// 	jsonText: `{
+	//     "exclude": ["node_modules", "dist"]
+	// }`,
+	// 	configFileName: "tsconfig.json",
+	// 	basePath:       "/apath",
+	// 	allFileList:    []string{"/apath/test.ts", "/apath/.git/a.ts", "/apath/.b.ts", "/apath/..c.ts"},
+	// },
 }
 
 var host ParseConfigHost = ParseConfigHost{

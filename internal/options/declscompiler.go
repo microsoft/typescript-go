@@ -296,7 +296,6 @@ var optionsDeclarations = []CommandLineOption{
 		Name: "lib",
 		Kind: CommandLineOptionTypeList,
 		// elements: &CommandLineOption{
-		// 	name:                    "lib",
 		// 	kind:                   CommandLineOptionTypeEnum, // libMap,
 		// 	defaultValueDescription: core.TSUnknown,
 		// },

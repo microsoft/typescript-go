@@ -26,7 +26,10 @@ type ModeAwareCacheKey struct {
 type ModeAwareCache[T any] map[ModeAwareCacheKey]T
 
 type ParsedCommandLine struct {
-	Options *core.CompilerOptions
+	Options       *core.CompilerOptions
+	FileNames     []string
+	Raw           any
+	compileOnSave *bool
 }
 
 type ResolvedProjectReference struct {
