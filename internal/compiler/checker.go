@@ -3623,10 +3623,10 @@ func (c *Checker) getArgumentArityError(node *ast.Node, signatures []*Signature,
 	if spreadIndex > -1 {
 		return NewDiagnosticForNode(args[spreadIndex], diagnostics.A_spread_argument_must_either_have_a_tuple_type_or_be_passed_to_a_rest_parameter)
 	}
-	minCount := math.MaxInt64 // smallest parameter count
-	maxCount := math.MinInt64 // largest parameter count
-	maxBelow := math.MinInt64 // largest parameter count that is smaller than the number of arguments
-	minAbove := math.MaxInt64 // smallest parameter count that is larger than the number of arguments
+	minCount := math.MaxInt // smallest parameter count
+	maxCount := math.MinInt // largest parameter count
+	maxBelow := math.MinInt // largest parameter count that is smaller than the number of arguments
+	minAbove := math.MaxInt // smallest parameter count that is larger than the number of arguments
 	var closestSignature *Signature
 	for _, sig := range signatures {
 		minParameter := c.getMinArgumentCount(sig)
