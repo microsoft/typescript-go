@@ -70,6 +70,10 @@ func NewDiagnostic(file *SourceFile, loc core.TextRange, message *diagnostics.Me
 	}
 }
 
+func NewCompilerDiagnostic(message *diagnostics.Message, args ...any) *Diagnostic {
+	return NewDiagnostic(nil, core.UndefinedTextRange(), message, args...)
+}
+
 func NewDiagnosticFromMessageChain(file *SourceFile, loc core.TextRange, messageChain *MessageChain) *Diagnostic {
 	return &Diagnostic{
 		file:         file,
