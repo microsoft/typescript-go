@@ -10,8 +10,10 @@ import (
 	"github.com/microsoft/typescript-go/internal/compiler/diagnostics"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/repo"
+
 	// "github.com/microsoft/typescript-go/internal/testutil/baseline"
 	"github.com/microsoft/typescript-go/internal/testutil/filefixture"
+	"github.com/microsoft/typescript-go/internal/vfs"
 	"gotest.tools/v3/assert"
 )
 
@@ -171,7 +173,7 @@ func (f commandLineSubScenario) assertParseResult(t *testing.T) {
 	existing := parseExistingCompilerBaseline(originalBaseline)
 
 	// f.workerDiagnostic is either defined or set to default pointer in `createSubScenario`
-	parsed := parseCommandLineWorker(f.workerDiagnostic, f.commandLine, nil)
+	parsed := parseCommandLineWorker(f.workerDiagnostic, f.commandLine, vfs.FromOS())
 
 	assert.Equal(t, strings.Join(parsed.fileNames, ","), existing.fileNames)
 

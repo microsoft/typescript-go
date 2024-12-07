@@ -70,7 +70,7 @@ type CommandLineParser struct {
 	fs                vfs.FS
 	options           OptionsBase
 	// todo: watchOptions   OptionsBase
-	readFile  *func(string) (string, bool)
+	// todo: determine if needed readFile  func(string) (string, bool)
 	fileNames []string
 	errorLoc  core.TextRange
 	errors    []*ast.Diagnostic
@@ -91,7 +91,7 @@ type ParsedCommandLine struct {
 
 func ParseCommandLine(
 	commandLine []string,
-	readFile func(string) (string, error),
+	fs vfs.FS,
 ) *ParsedCommandLine {
 	//todo: convert commandLineWorker output to compileroptions
 	// parseCommandLineWorker()
@@ -102,10 +102,10 @@ func ParseCommandLine(
 func parseCommandLineWorker(
 	parseCommandLineWithDiagnostics *ParseCommandLineWorkerDiagnostics,
 	commandLine []string,
-	readFile *func(string) (string, bool),
+	fs vfs.FS,
 ) *CommandLineParser {
 	var parser = &CommandLineParser{
-		readFile:          readFile,
+		fs:          fs,
 		workerDiagnostics: parseCommandLineWithDiagnostics,
 		fileNames:         []string{},
 		options:           OptionsBase{},
@@ -124,8 +124,7 @@ func (p *CommandLineParser) parseStrings(args []string) {
 		if s == "" {
 			continue
 		}
-		char, _ := utf8.DecodeRuneInString(s)
-		switch char {
+		switch s[0] {
 		case '@':
 			p.parseResponseFile(s[1:])
 		case '-':
@@ -148,24 +147,20 @@ func (p *CommandLineParser) parseStrings(args []string) {
 	}
 }
 
-// removes leading '-' from the input string
 func getInputOptionName(input string) string {
-	return strings.ToLower(strings.TrimLeft(input, "-"))
+	// removes at most two leading '-' from the input string
+	return strings.ToLower(strings.TrimLeft(strings.TrimLeft(input, "-"), "-"))
 }
 
 func (p *CommandLineParser) parseResponseFile(fileName string) {
-	fileContents := ""
-	if p.readFile == nil {
-		fileContents, _ = tryReadFile(fileName, func(fileName string) (string, bool) {
-			if p.fs == nil {
-				return "", false
-			}
-			read, err := p.fs.ReadFile(fileName)
-			return string(read), err
-		}, p.errors)
-	} else {
-		fileContents, _ = tryReadFile(fileName, *p.readFile, p.errors)
-	}
+	fileContents, _ := tryReadFile(fileName, func(fileName string) (string, bool) {
+		if p.fs == nil {
+			return "", false
+		}
+		read, err := p.fs.ReadFile(fileName)
+		return string(read), err
+	}, p.errors)
+
 
 	if fileContents == "" {
 		return
@@ -221,7 +216,7 @@ func tryReadFile(fileName string, readFile func(string) (string, bool), errors [
 	text, e := readFile(fileName)
 
 	if !e {
-		// no errror message from the standard error
+		// no error message from the standard error, so the error with reason won't be the same 
 		// errors = append(errors, ast.NewDiagnostic(nil, core.NewTextRange(-1,-1), diagnostics.Cannot_read_file_0_Colon_1, *e));
 		errors = append(errors, ast.NewDiagnostic(nil, core.NewTextRange(-1, -1), diagnostics.Cannot_read_file_0, fileName))
 		return "", errors
