@@ -3546,8 +3546,7 @@ func (c *Checker) pickLongestCandidateSignature(node *ast.Node, candidates []*Si
 	}
 	var instantiated *Signature
 	if len(typeArgumentNodes) != 0 {
-		typeArgumentTypes := c.fillMissingTypeArguments(core.Map(typeArgumentNodes, c.getTypeFromTypeNode), typeParameters, c.getMinTypeArgumentCount(typeParameters))
-		instantiated = c.createSignatureInstantiation(candidate, typeArgumentTypes)
+		instantiated = c.createSignatureInstantiation(candidate, c.getTypeArgumentsFromNodes(typeArgumentNodes, typeParameters))
 	} else {
 		instantiated = c.inferSignatureInstantiationForOverloadFailure(node, typeParameters, candidate, args, checkMode)
 	}
@@ -3569,6 +3568,24 @@ func (c *Checker) getLongestCandidateIndex(candidates []*Signature, argsCount in
 		}
 	}
 	return maxParamsIndex
+}
+
+func (c *Checker) getTypeArgumentsFromNodes(typeArgumentNodes []*ast.Node, typeParameters []*Type) []*Type {
+	if len(typeArgumentNodes) > len(typeParameters) {
+		typeArgumentNodes = typeArgumentNodes[:len(typeParameters)]
+	}
+	typeArguments := core.Map(typeArgumentNodes, c.getTypeFromTypeNode)
+	for len(typeArguments) < len(typeParameters) {
+		t := c.getDefaultFromTypeParameter(typeParameters[len(typeArguments)])
+		if t == nil {
+			t = c.getConstraintOfTypeParameter(typeParameters[len(typeArguments)])
+			if t == nil {
+				t = c.unknownType
+			}
+		}
+		typeArguments = append(typeArguments, t)
+	}
+	return typeArguments
 }
 
 func (c *Checker) inferSignatureInstantiationForOverloadFailure(node *ast.Node, typeParameters []*Type, candidate *Signature, args []*ast.Node, checkMode CheckMode) *Signature {
@@ -4842,10 +4859,6 @@ func (c *Checker) isUncalledFunctionReference(node *ast.Node, symbol *ast.Symbol
 		})
 	}
 	return true
-}
-
-func (c *Checker) hasMatchingArgument(expression *ast.Node, reference *ast.Node) bool {
-	return false // !!!
 }
 
 func (c *Checker) checkPropertyNotUsedBeforeDeclaration(prop *ast.Symbol, node *ast.Node, right *ast.Node) {
@@ -8299,9 +8312,9 @@ func (c *Checker) getTypeOfSymbol(symbol *ast.Symbol) *Type {
 	// if symbol.flags&SymbolFlagsAccessor != 0 {
 	// 	return c.getTypeOfAccessors(symbol)
 	// }
-	// if symbol.flags&SymbolFlagsAlias != 0 {
-	// 	return c.getTypeOfAlias(symbol)
-	// }
+	if symbol.Flags&ast.SymbolFlagsAlias != 0 {
+		return c.getTypeOfAlias(symbol)
+	}
 	return c.errorType
 }
 
@@ -9277,6 +9290,54 @@ func (c *Checker) getTypeOfEnumMember(symbol *ast.Symbol) *Type {
 		links.resolvedType = c.getDeclaredTypeOfEnumMember(symbol)
 	}
 	return links.resolvedType
+}
+
+func (c *Checker) getTypeOfAlias(symbol *ast.Symbol) *Type {
+	links := c.valueSymbolLinks.get(symbol)
+	if links.resolvedType == nil {
+		if !c.pushTypeResolution(symbol, TypeSystemPropertyNameType) {
+			return c.errorType
+		}
+		targetSymbol := c.resolveAlias(symbol)
+		exportSymbol := c.getTargetOfAliasDeclaration(c.getDeclarationOfAliasSymbol(symbol), true /*dontRecursivelyResolve*/)
+		declaredType := c.getExportAssignmentType(exportSymbol)
+		// It only makes sense to get the type of a value symbol. If the result of resolving
+		// the alias is not a value, then it has no type. To get the type associated with a
+		// type symbol, call getDeclaredTypeOfSymbol.
+		// This check is important because without it, a call to getTypeOfSymbol could end
+		// up recursively calling getTypeOfAlias, causing a stack overflow.
+		if links.resolvedType == nil {
+			if declaredType != nil {
+				links.resolvedType = declaredType
+			} else if c.getSymbolFlags(targetSymbol)&ast.SymbolFlagsValue != 0 {
+				links.resolvedType = c.getTypeOfSymbol(targetSymbol)
+			} else {
+				links.resolvedType = c.errorType
+			}
+		}
+		if !c.popTypeResolution() {
+			c.reportCircularityError(core.OrElse(exportSymbol, symbol))
+			if links.resolvedType == nil {
+				links.resolvedType = c.errorType
+			}
+			return links.resolvedType
+		}
+	}
+	return links.resolvedType
+}
+
+func (c *Checker) getExportAssignmentType(symbol *ast.Symbol) *Type {
+	if symbol != nil {
+		for _, d := range symbol.Declarations {
+			if ast.IsExportAssignment(d) {
+				t := c.tryGetTypeFromEffectiveTypeNode(d)
+				if t != nil {
+					return t
+				}
+			}
+		}
+	}
+	return nil
 }
 
 func (c *Checker) addOptionalityEx(t *Type, isProperty bool, isOptional bool) *Type {
