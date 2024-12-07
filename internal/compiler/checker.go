@@ -3424,10 +3424,10 @@ func (c *Checker) isSignatureApplicable(node *ast.Node, args []*ast.Node, signat
 		restArgCount := len(args) - argCount
 		var errorNode *ast.Node
 		if reportErrors {
-			switch {
-			case restArgCount == 0:
+			switch restArgCount {
+			case 0:
 				errorNode = node
-			case restArgCount == 1:
+			case 1:
 				errorNode = c.getEffectiveCheckNode(args[argCount])
 			default:
 				errorNode = c.createSyntheticExpression(node, spreadType, false, nil)
@@ -3455,9 +3455,7 @@ func (c *Checker) isSignatureApplicable(node *ast.Node, args []*ast.Node, signat
 	// }
 }
 
-/**
- * Returns the this argument in calls like x.f(...) and x[f](...). Undefined otherwise.
- */
+// Returns the `this` argument node in calls like `x.f(...)` and `x[f](...)`. `nil` otherwise.
 func (c *Checker) getThisArgumentOfCall(node *ast.Node) *ast.Node {
 	if ast.IsBinaryExpression(node) {
 		return node.AsBinaryExpression().Right
