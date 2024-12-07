@@ -105,7 +105,7 @@ func parseCommandLineWorker(
 	fs vfs.FS,
 ) *CommandLineParser {
 	var parser = &CommandLineParser{
-		fs:          fs,
+		fs:                fs,
 		workerDiagnostics: parseCommandLineWithDiagnostics,
 		fileNames:         []string{},
 		options:           OptionsBase{},
@@ -158,9 +158,8 @@ func (p *CommandLineParser) parseResponseFile(fileName string) {
 			return "", false
 		}
 		read, err := p.fs.ReadFile(fileName)
-		return string(read), err
+		return read, err
 	}, p.errors)
-
 
 	if fileContents == "" {
 		return
@@ -216,7 +215,7 @@ func tryReadFile(fileName string, readFile func(string) (string, bool), errors [
 	text, e := readFile(fileName)
 
 	if !e {
-		// no error message from the standard error, so the error with reason won't be the same 
+		// no error message from the standard error, so the error with reason won't be the same
 		// errors = append(errors, ast.NewDiagnostic(nil, core.NewTextRange(-1,-1), diagnostics.Cannot_read_file_0_Colon_1, *e));
 		errors = append(errors, ast.NewDiagnostic(nil, core.NewTextRange(-1, -1), diagnostics.Cannot_read_file_0, fileName))
 		return "", errors
@@ -384,5 +383,4 @@ func (parser *CommandLineParser) convertJsonOptionOfEnumType(
 	}
 	parser.errors = append(parser.errors, createDiagnosticForInvalidEnumType(opt, parser.errorLoc))
 	return ""
-
 }

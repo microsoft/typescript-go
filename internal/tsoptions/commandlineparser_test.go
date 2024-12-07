@@ -6,11 +6,9 @@ import (
 	"testing"
 
 	json2 "github.com/go-json-experiment/json"
-
 	"github.com/microsoft/typescript-go/internal/compiler/diagnostics"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/repo"
-
 	// "github.com/microsoft/typescript-go/internal/testutil/baseline"
 	"github.com/microsoft/typescript-go/internal/testutil/filefixture"
 	"github.com/microsoft/typescript-go/internal/vfs"
@@ -79,6 +77,7 @@ func TestCommandLineParseResult(t *testing.T) {
 	}
 
 	for _, testCase := range parseCommandLineSubSecnarios {
+		t.Parallel()
 		t.Run(testCase.subScenario, testCase.assertParseResult)
 	}
 }
@@ -112,6 +111,7 @@ func TestParseCommandLineVerifyNull(t *testing.T) {
 	}
 
 	for _, verifyNullCase := range verifyNullSubScenarios {
+		t.Parallel()
 		t.Run(
 			verifyNullCase.subScenario,
 			createSubScenario(
@@ -169,8 +169,10 @@ func createVerifyNullForNonNullIncluded(subScenario string, kind CommandLineOpti
 }
 
 func (f commandLineSubScenario) assertParseResult(t *testing.T) {
+	t.Helper()
+	t.Parallel()
 	originalBaseline := f.baseline.ReadFile(t)
-	existing := parseExistingCompilerBaseline(originalBaseline)
+	existing := parseExistingCompilerBaseline(t, originalBaseline)
 
 	// f.workerDiagnostic is either defined or set to default pointer in `createSubScenario`
 	parsed := parseCommandLineWorker(f.workerDiagnostic, f.commandLine, vfs.FromOS())
@@ -179,7 +181,8 @@ func (f commandLineSubScenario) assertParseResult(t *testing.T) {
 
 	o, _ := json2.Marshal(parsed.options)
 	parsedCompilerOptions := core.CompilerOptions{}
-	json2.Unmarshal(o, &parsedCompilerOptions)
+	e := json2.Unmarshal(o, &parsedCompilerOptions)
+	assert.NilError(t, e)
 	assert.DeepEqual(t, parsedCompilerOptions, existing.options)
 
 	// todo: baselines not useful ATM
@@ -200,14 +203,15 @@ func (f commandLineSubScenario) assertParseResult(t *testing.T) {
 	// assert.Equal(t, formattedErrors.String(), existing.errors)
 }
 
-func parseExistingCompilerBaseline(baseline string) *TestCommandLineParser {
+func parseExistingCompilerBaseline(t *testing.T, baseline string) *TestCommandLineParser {
 	_, rest, _ := strings.Cut(baseline, "CompilerOptions::\n")
 	compilerOptions, rest, _ := strings.Cut(rest, "\nWatchOptions::\n")
 	_, rest, _ = strings.Cut(rest, "\nFileNames::\n")
 	fileNames, errors, _ := strings.Cut(rest, "\nErrors::\n")
 
 	baselineOptions := &core.CompilerOptions{}
-	json2.Unmarshal([]byte(compilerOptions), &baselineOptions)
+	e := json2.Unmarshal([]byte(compilerOptions), &baselineOptions)
+	assert.NilError(t, e)
 
 	var parser = TestCommandLineParser{
 		options:   *baselineOptions,
@@ -304,8 +308,12 @@ type TestCommandLineParser struct {
 }
 
 func TestAffectsBuildInfo(t *testing.T) {
+	t.Parallel()
+
 	t.Run("should have affectsBuildInfo true for every option with affectsSemanticDiagnostics", func(t *testing.T) {
+		t.Parallel()
 		for _, option := range optionsDeclarations {
+			t.Parallel()
 			if option.affectsSemanticDiagnostics {
 				// semantic diagnostics affect the build info, so ensure they're included
 				assert.Assert(t, option.affectsBuildInfo)

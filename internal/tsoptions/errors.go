@@ -18,7 +18,7 @@ func createDiagnosticForInvalidEnumType(opt *CommandLineOption, loc core.TextRan
 	} else {
 		stringNames = formatEnumTypeKeys(namesOfType)
 	}
-	optName := fmt.Sprintf(`--%s`, opt.Name)
+	optName := "--" + opt.Name
 	return ast.NewDiagnostic(nil, loc, diagnostics.Argument_for_0_option_must_be_Colon_1, optName, stringNames)
 }
 
