@@ -215,7 +215,7 @@ func tryReadFile(fileName string, readFile func(string) (string, bool), errors [
 	text, e := readFile(fileName)
 
 	if !e {
-		// no error message from the standard error, so the error with reason won't be the same
+		// !!! Divergence: the returned error will not give a useful message
 		// errors = append(errors, ast.NewDiagnostic(nil, core.NewTextRange(-1,-1), diagnostics.Cannot_read_file_0_Colon_1, *e));
 		errors = append(errors, ast.NewDiagnostic(nil, core.NewTextRange(-1, -1), diagnostics.Cannot_read_file_0, fileName))
 		return "", errors
@@ -250,7 +250,7 @@ func (p *CommandLineParser) parseOptionValue(
 			}
 		} else {
 			p.errors = append(p.errors, ast.NewDiagnostic(nil, p.errorLoc, diagnostics.Option_0_can_only_be_specified_in_tsconfig_json_file_or_set_to_null_on_command_line, opt.Name))
-			if len(optValue) != 0 && !strings.HasPrefix(optValue, "=") {
+			if len(optValue) != 0 && !strings.HasPrefix(optValue, "-") {
 				i++
 			}
 		}
@@ -285,7 +285,7 @@ func (p *CommandLineParser) parseOptionValue(
 				} else {
 					p.options[opt.Name] = true
 				}
-				// do not consume argument if it is not "true" or "false"
+				// try to consume next argument as value for boolean flag; do not consume argument if it is not "true" or "false"
 				if optValue == "false" || optValue == "true" {
 					i++
 				}
