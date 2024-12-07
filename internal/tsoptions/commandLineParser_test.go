@@ -16,7 +16,9 @@ import (
 )
 
 func TestCommandLineParseResult(t *testing.T) {
-	// subScenario string, commandLine []string
+	t.Parallel()
+	repo.SkipIfNoTypeScriptSubmodule(t)
+
 	var parseCommandLineSubSecnarios = []*commandLineSubScenario{
 		// --lib es6 0.ts
 		createSubScenario("Parse single option of library flag", []string{"--lib", "es6", "0.ts"}),
@@ -74,23 +76,19 @@ func TestCommandLineParseResult(t *testing.T) {
 		// assertParseResult("errors on invalid excludeFiles", ["--excludeFiles", "**/../*", "0.ts"]);
 	}
 
-	for _, f := range parseCommandLineSubSecnarios {
-		t.Run(f.subScenario, f.assertParseResult)
+	for _, testCase := range parseCommandLineSubSecnarios {
+		t.Run(testCase.subScenario, testCase.assertParseResult)
 	}
 }
 
 func TestParseCommandLineVerifyNull(t *testing.T) {
+	t.Parallel()
+	repo.SkipIfNoTypeScriptSubmodule(t)
+
 	f := createSubScenario("allows setting option type boolean to false", []string{"--composite", "false", "0.ts"})
 	t.Run(f.subScenario, f.assertParseResult)
 
-	type VerifyNull struct {
-		subScenario      string
-		optionName       string
-		nonNullValue     string
-		workerDiagnostic func() ParseCommandLineWorkerDiagnostics
-	}
-	// workerDiagnostic := *GetCompilerOptionsDidYouMeanDiagnostics()
-	verifyNullSubScenarios := []VerifyNull{
+	verifyNullSubScenarios := []verifyNull{
 		{
 			subScenario:  "option of type boolean",
 			optionName:   "composite",
@@ -105,54 +103,75 @@ func TestParseCommandLineVerifyNull(t *testing.T) {
 			optionName:   "rootDirs",
 			nonNullValue: "abc,xyz",
 		},
-		// todo: non null included options
+		createVerifyNullForNonNullIncluded("option of type string", CommandLineOptionTypeString, "hello"),
+		createVerifyNullForNonNullIncluded("option of type number", CommandLineOptionTypeNumber, "10"),
+		// todo: make the following work for tests
+		// createVerifyNullForNonNullIncluded("option of type custom map", CommandLineOptionTypeEnum, "node"),
 	}
 
-	for _, subScenario := range verifyNullSubScenarios {
+	for _, verifyNullCase := range verifyNullSubScenarios {
 		t.Run(
-			subScenario.subScenario,
+			verifyNullCase.subScenario,
 			createSubScenario(
-				subScenario.subScenario+" allows setting it to null",
-				[]string{"--" + subScenario.optionName, "null", "0.ts"},
+				verifyNullCase.subScenario+" allows setting it to null",
+				[]string{"--" + verifyNullCase.optionName, "null", "0.ts"},
+				verifyNullCase.workerDiagnostic,
 			).assertParseResult,
 		)
-		if subScenario.nonNullValue != "" {
+		if verifyNullCase.nonNullValue != "" {
 			t.Run(
-				subScenario.subScenario,
+				verifyNullCase.subScenario,
 				createSubScenario(
-					subScenario.subScenario+" errors if non null value is passed",
-					[]string{"--" + subScenario.optionName, subScenario.nonNullValue, "0.ts"},
+					verifyNullCase.subScenario+" errors if non null value is passed",
+					[]string{"--" + verifyNullCase.optionName, verifyNullCase.nonNullValue, "0.ts"},
+					verifyNullCase.workerDiagnostic,
 				).assertParseResult,
 			)
 		}
 
 		t.Run(
-			subScenario.subScenario,
+			verifyNullCase.subScenario,
 			createSubScenario(
-				subScenario.subScenario+" errors if its followed by another option",
-				[]string{"0.ts", "--strictNullChecks", "--" + subScenario.optionName},
+				verifyNullCase.subScenario+" errors if its followed by another option",
+				[]string{"0.ts", "--strictNullChecks", "--" + verifyNullCase.optionName},
+				verifyNullCase.workerDiagnostic,
 			).assertParseResult,
 		)
 		t.Run(
-			subScenario.subScenario,
+			verifyNullCase.subScenario,
 			createSubScenario(
-				subScenario.subScenario+" errors if its last option",
-				[]string{"0.ts", "--" + subScenario.optionName},
+				verifyNullCase.subScenario+" errors if its last option",
+				[]string{"0.ts", "--" + verifyNullCase.optionName},
+				verifyNullCase.workerDiagnostic,
 			).assertParseResult,
 		)
 	}
 }
 
-func TestParseCommandLineVerifyNonNullIncludedOption(t *testing.T) {
-	// todo: non null included options
+func createVerifyNullForNonNullIncluded(subScenario string, kind CommandLineOptionKind, nonNullValue string) verifyNull {
+	workerDiagnostics := GetCompilerOptionsDidYouMeanDiagnostics(append(optionsDeclarations, CommandLineOption{
+		Name:                    "optionName",
+		Kind:                    kind,
+		isTSConfigOnly:          true,
+		category:                diagnostics.Backwards_Compatibility,
+		description:             diagnostics.Enable_project_compilation,
+		defaultValueDescription: nil,
+	}))
+
+	return verifyNull{
+		subScenario:      subScenario,
+		optionName:       "optionName",
+		nonNullValue:     nonNullValue,
+		workerDiagnostic: workerDiagnostics,
+	}
 }
 
 func (f commandLineSubScenario) assertParseResult(t *testing.T) {
 	originalBaseline := f.baseline.ReadFile(t)
 	existing := parseExistingCompilerBaseline(originalBaseline)
 
-	// todo: workerDiagnostic?.()
-	parsed := parseCommandLineWorker(compilerOptionsDidYouMeanDiagnostics, f.commandLine, nil)
+	// f.workerDiagnostic is either defined or set to default pointer in `createSubScenario`
+	parsed := parseCommandLineWorker(f.workerDiagnostic, f.commandLine, nil)
 
 	assert.Equal(t, strings.Join(parsed.fileNames, ","), existing.fileNames)
 
@@ -229,16 +248,16 @@ func formatNewCommandLineParse(p *CommandLineParser, opts []byte) string {
 // 	return &parser
 // }
 
-var compilerOptionsDidYouMeanDiagnostics = GetCompilerOptionsDidYouMeanDiagnostics()
+var compilerOptionsDidYouMeanDiagnostics = GetCompilerOptionsDidYouMeanDiagnostics(optionsDeclarations)
 
-func GetCompilerOptionsDidYouMeanDiagnostics() *ParseCommandLineWorkerDiagnostics {
+func GetCompilerOptionsDidYouMeanDiagnostics(decls []CommandLineOption) *ParseCommandLineWorkerDiagnostics {
 	return &ParseCommandLineWorkerDiagnostics{
 		didYouMean: DidYouMeanOptionsDiagnostics{
 			alternateMode: &AlternateModeDiagnostics{
 				diagnostic:     diagnostics.Compiler_option_0_may_only_be_used_with_build,
 				optionsNameMap: GetNameMapFromList(optionsForBuild),
 			},
-			OptionDeclarations:          optionsDeclarations,
+			OptionDeclarations:          decls,
 			UnknownOptionDiagnostic:     diagnostics.Unknown_compiler_option_0,
 			UnknownDidYouMeanDiagnostic: diagnostics.Unknown_compiler_option_0_Did_you_mean_1,
 		},
@@ -247,19 +266,34 @@ func GetCompilerOptionsDidYouMeanDiagnostics() *ParseCommandLineWorkerDiagnostic
 	}
 }
 
-func createSubScenario(subScenario string, commandline []string) *commandLineSubScenario {
+func createSubScenario(subScenario string, commandline []string, d ...*ParseCommandLineWorkerDiagnostics) *commandLineSubScenario {
 	baselineFileName := "tests/baselines/reference/config/commandLineParsing/parseCommandLine/" + subScenario + ".js"
+	var workerDiagnostic *ParseCommandLineWorkerDiagnostics
+	if d == nil || d[0] == nil {
+		workerDiagnostic = compilerOptionsDidYouMeanDiagnostics
+	} else {
+		workerDiagnostic = d[0]
+	}
 	return &commandLineSubScenario{
 		filefixture.FromFile(subScenario, filepath.Join(repo.TypeScriptSubmodulePath, baselineFileName)),
 		subScenario,
 		commandline,
+		workerDiagnostic,
 	}
 }
 
 type commandLineSubScenario struct {
-	baseline    filefixture.Fixture
-	subScenario string
-	commandLine []string
+	baseline         filefixture.Fixture
+	subScenario      string
+	commandLine      []string
+	workerDiagnostic *ParseCommandLineWorkerDiagnostics
+}
+
+type verifyNull struct {
+	subScenario      string
+	optionName       string
+	nonNullValue     string
+	workerDiagnostic *ParseCommandLineWorkerDiagnostics
 }
 
 type TestCommandLineParser struct {
