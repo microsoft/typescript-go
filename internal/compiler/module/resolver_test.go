@@ -19,6 +19,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/vfs"
 	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
 	"gotest.tools/v3/assert"
+	"gotest.tools/v3/assert/cmp"
 )
 
 var skip = []string{
@@ -359,44 +360,44 @@ func doCall(t *testing.T, resolver *module.Resolver, call functionCall) {
 		var locations module.WithFailedLookupLocations
 		if call.call == "resolveModuleName" {
 			resolved := resolver.ResolveModuleName(call.args.Name, call.args.ContainingFile, core.ModuleKind(call.args.ResolutionMode), redirectedReference)
-			assert.Assert(t, resolved != nil, "ResolveModuleName should not return nil")
+			assert.Check(t, resolved != nil, "ResolveModuleName should not return nil")
 			locations = resolved.WithFailedLookupLocations
 			if expectedResolvedModule, ok := call.returnValue["resolvedModule"].(map[string]any); ok {
-				assert.Assert(t, resolved.IsResolved())
-				assert.Equal(t, resolved.ResolvedModule.ResolvedFileName, expectedResolvedModule["resolvedFileName"].(string))
-				assert.Equal(t, resolved.ResolvedModule.Extension, expectedResolvedModule["extension"].(string))
-				assert.Equal(t, resolved.ResolvedModule.ResolvedUsingTsExtension, expectedResolvedModule["resolvedUsingTsExtension"].(bool))
-				assert.Equal(t, resolved.ResolvedModule.IsExternalLibraryImport, expectedResolvedModule["isExternalLibraryImport"].(bool))
+				assert.Check(t, resolved.IsResolved())
+				assert.Check(t, cmp.Equal(resolved.ResolvedModule.ResolvedFileName, expectedResolvedModule["resolvedFileName"].(string)))
+				assert.Check(t, cmp.Equal(resolved.ResolvedModule.Extension, expectedResolvedModule["extension"].(string)))
+				assert.Check(t, cmp.Equal(resolved.ResolvedModule.ResolvedUsingTsExtension, expectedResolvedModule["resolvedUsingTsExtension"].(bool)))
+				assert.Check(t, cmp.Equal(resolved.ResolvedModule.IsExternalLibraryImport, expectedResolvedModule["isExternalLibraryImport"].(bool)))
 			} else {
-				assert.Assert(t, !resolved.IsResolved())
+				assert.Check(t, !resolved.IsResolved())
 			}
 		} else {
 			resolved := resolver.ResolveTypeReferenceDirective(call.args.Name, call.args.ContainingFile, core.ModuleKind(call.args.ResolutionMode), redirectedReference)
-			assert.Assert(t, resolved != nil, "ResolveTypeReferenceDirective should not return nil")
+			assert.Check(t, resolved != nil, "ResolveTypeReferenceDirective should not return nil")
 			locations = resolved.WithFailedLookupLocations
 			if expectedResolvedTypeReferenceDirective, ok := call.returnValue["resolvedTypeReferenceDirective"].(map[string]any); ok {
-				assert.Assert(t, resolved.IsResolved())
-				assert.Equal(t, resolved.ResolvedTypeReferenceDirective.ResolvedFileName, expectedResolvedTypeReferenceDirective["resolvedFileName"].(string))
-				assert.Equal(t, resolved.ResolvedTypeReferenceDirective.Primary, expectedResolvedTypeReferenceDirective["primary"].(bool))
-				assert.Equal(t, resolved.ResolvedTypeReferenceDirective.IsExternalLibraryImport, expectedResolvedTypeReferenceDirective["isExternalLibraryImport"].(bool))
+				assert.Check(t, resolved.IsResolved())
+				assert.Check(t, cmp.Equal(resolved.ResolvedTypeReferenceDirective.ResolvedFileName, expectedResolvedTypeReferenceDirective["resolvedFileName"].(string)))
+				assert.Check(t, cmp.Equal(resolved.ResolvedTypeReferenceDirective.Primary, expectedResolvedTypeReferenceDirective["primary"].(bool)))
+				assert.Check(t, cmp.Equal(resolved.ResolvedTypeReferenceDirective.IsExternalLibraryImport, expectedResolvedTypeReferenceDirective["isExternalLibraryImport"].(bool)))
 			} else {
-				assert.Assert(t, !resolved.IsResolved())
+				assert.Check(t, !resolved.IsResolved())
 			}
 		}
 		if expectedFailedLookupLocations, ok := call.returnValue["failedLookupLocations"].([]interface{}); ok {
-			assert.DeepEqual(t, locations.FailedLookupLocations, core.Map(expectedFailedLookupLocations, func(i interface{}) string { return i.(string) }))
+			assert.Check(t, cmp.DeepEqual(locations.FailedLookupLocations, core.Map(expectedFailedLookupLocations, func(i interface{}) string { return i.(string) })))
 		} else {
-			assert.Equal(t, len(locations.FailedLookupLocations), 0)
+			assert.Check(t, cmp.Equal(len(locations.FailedLookupLocations), 0))
 		}
 		if expectedAffectingLocations, ok := call.returnValue["affectingLocations"].([]interface{}); ok {
-			assert.DeepEqual(t, locations.AffectingLocations, core.Map(expectedAffectingLocations, func(i interface{}) string { return i.(string) }))
+			assert.Check(t, cmp.DeepEqual(locations.AffectingLocations, core.Map(expectedAffectingLocations, func(i interface{}) string { return i.(string) })))
 		} else {
-			assert.Equal(t, len(locations.AffectingLocations), 0)
+			assert.Check(t, cmp.Equal(len(locations.AffectingLocations), 0))
 		}
 	case "getPackageScopeForPath":
 		resolver.GetPackageScopeForPath(call.args.Directory)
 	default:
-		t.Fatalf("Unexpected call: %s", call.call)
+		t.Errorf("Unexpected call: %s", call.call)
 	}
 }
 
@@ -409,6 +410,9 @@ func runTraceBaseline(t *testing.T, test traceTestCase) {
 
 		for _, call := range test.calls {
 			doCall(t, resolver, call)
+			if t.Failed() {
+				t.FailNow()
+			}
 		}
 
 		if test.trace {
