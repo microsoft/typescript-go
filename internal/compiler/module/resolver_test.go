@@ -345,7 +345,7 @@ func sanitizeTraceOutput(trace string) string {
 	return typesVersionsMessageRegex.ReplaceAllString(trace, "that matches compiler version '3.1.0-dev'")
 }
 
-func doCall(t *testing.T, resolver *module.Resolver, call functionCall) {
+func doCall(t *testing.T, resolver *module.Resolver, call functionCall, skipLocations bool) {
 	switch call.call {
 	case "resolveModuleName", "resolveTypeReferenceDirective":
 		var redirectedReference *module.ResolvedProjectReference
@@ -385,6 +385,9 @@ func doCall(t *testing.T, resolver *module.Resolver, call functionCall) {
 				assert.Check(t, !resolved.IsResolved())
 			}
 		}
+		if skipLocations {
+			break
+		}
 		if expectedFailedLookupLocations, ok := call.returnValue["failedLookupLocations"].([]interface{}); ok {
 			assert.Check(t, cmp.DeepEqual(locations.FailedLookupLocations, core.Map(expectedFailedLookupLocations, func(i interface{}) string { return i.(string) })))
 		} else {
@@ -410,7 +413,7 @@ func runTraceBaseline(t *testing.T, test traceTestCase) {
 		resolver := module.NewResolver(host, test.compilerOptions)
 
 		for _, call := range test.calls {
-			doCall(t, resolver, call)
+			doCall(t, resolver, call, false /*skipLocations*/)
 			if t.Failed() {
 				t.FailNow()
 			}
@@ -425,7 +428,7 @@ func runTraceBaseline(t *testing.T, test traceTestCase) {
 				wg.Add(1)
 				go func() {
 					defer wg.Done()
-					doCall(t, resolver, call)
+					doCall(t, resolver, call, true /*skipLocations*/)
 				}()
 			}
 

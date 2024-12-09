@@ -5,6 +5,7 @@ import (
 	"path"
 	"slices"
 	"strings"
+	"sync"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
@@ -109,6 +110,7 @@ func newResolutionState(
 }
 
 type Resolver struct {
+	mu sync.Mutex
 	caches
 	host            ResolutionHost
 	compilerOptions *core.CompilerOptions
@@ -131,10 +133,16 @@ func (r *Resolver) traceEnabled() bool {
 }
 
 func (r *Resolver) GetPackageScopeForPath(directory string) *packagejson.InfoCacheEntry {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+
 	return (&resolutionState{compilerOptions: r.compilerOptions, resolver: r}).getPackageScopeForPath(directory)
 }
 
 func (r *Resolver) ResolveTypeReferenceDirective(typeReferenceDirectiveName string, containingFile string, resolutionMode core.ResolutionMode, redirectedReference *ResolvedProjectReference) *ResolvedTypeReferenceDirectiveWithFailedLookupLocations {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+
 	traceEnabled := r.traceEnabled()
 
 	compilerOptions := r.compilerOptions
@@ -183,6 +191,9 @@ func (r *Resolver) ResolveTypeReferenceDirective(typeReferenceDirectiveName stri
 }
 
 func (r *Resolver) ResolveModuleName(moduleName string, containingFile string, resolutionMode core.ResolutionMode, redirectedReference *ResolvedProjectReference) *ResolvedModuleWithFailedLookupLocations {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	
 	traceEnabled := r.traceEnabled()
 
 	compilerOptions := r.compilerOptions
