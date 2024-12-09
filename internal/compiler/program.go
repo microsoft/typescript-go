@@ -23,18 +23,19 @@ type ProgramOptions struct {
 }
 
 type Program struct {
-	host               CompilerHost
-	programOptions     ProgramOptions
-	compilerOptions    *core.CompilerOptions
-	rootPath           string
-	processedFileNames core.Set[string]
-	files              []*ast.SourceFile
-	filesByPath        map[tspath.Path]*ast.SourceFile
-	nodeModules        map[string]*ast.SourceFile
-	checker            *Checker
-	resolver           *module.Resolver
-	currentDirectory   string
-	mutex              sync.Mutex
+	host             CompilerHost
+	programOptions   ProgramOptions
+	compilerOptions  *core.CompilerOptions
+	rootPath         string
+	nodeModules      map[string]*ast.SourceFile
+	checker          *Checker
+	resolver         *module.Resolver
+	currentDirectory string
+
+	fileProcessingMutex sync.Mutex
+	files               []*ast.SourceFile
+	filesByPath         map[tspath.Path]*ast.SourceFile
+	processedFileNames  core.Set[string]
 
 	// The below settings are to track if a .js file should be add to the program if loaded via searching under node_modules.
 	// This works as imported modules are discovered recursively in a depth first manner, specifically:
@@ -117,14 +118,15 @@ func (p *Program) Options() *core.CompilerOptions { return p.compilerOptions }
 func (p *Program) Host() CompilerHost             { return p.host }
 
 func (p *Program) bindSourceFiles() {
+	wg := core.NewWorkGroup(p.programOptions.SingleThreaded)
 	for _, file := range p.files {
 		if !file.IsBound {
-			p.host.RunTask(func() {
+			wg.Run(func() {
 				bindSourceFile(file, p.compilerOptions)
 			})
 		}
 	}
-	p.host.WaitForTasks()
+	wg.Wait()
 }
 
 func (p *Program) processRootFiles(rootFiles []FileInfo) {
@@ -159,8 +161,8 @@ func (p *Program) startParseTask(fileName string, wg *core.WorkGroup) {
 
 		filesToParse = append(filesToParse, p.getImportsToParse(file)...)
 
-		p.mutex.Lock()
-		defer p.mutex.Unlock()
+		p.fileProcessingMutex.Lock()
+		defer p.fileProcessingMutex.Unlock()
 		p.files = append(p.files, file)
 		p.filesByPath[file.Path()] = file
 

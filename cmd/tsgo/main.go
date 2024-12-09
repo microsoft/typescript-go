@@ -67,7 +67,7 @@ func main() {
 	}
 	fs := vfs.FromOS()
 	useCaseSensitiveFileNames := fs.UseCaseSensitiveFileNames()
-	host := ts.NewCompilerHost(compilerOptions, singleThreaded, currentDirectory, fs)
+	host := ts.NewCompilerHost(compilerOptions, currentDirectory, fs)
 
 	normalizedRootPath := tspath.ResolvePath(currentDirectory, rootPath)
 	if !fs.DirectoryExists(normalizedRootPath) {
