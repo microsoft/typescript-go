@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+	"unicode/utf8"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
@@ -125,4 +126,53 @@ func allParsableFiles(tb testing.TB, root string) iter.Seq[parsableFile] {
 		})
 		assert.NilError(tb, err)
 	}
+}
+
+func FuzzParser(f *testing.F) {
+	repo.SkipIfNoTypeScriptSubmodule(f)
+
+	tests := []string{
+		"src",
+		"scripts",
+		"Herebyfile.mjs",
+		// "tests/cases",
+	}
+
+	for _, test := range tests {
+		root := filepath.Join(repo.TypeScriptSubmodulePath, test)
+
+		for file := range allParsableFiles(f, root) {
+			sourceText, err := os.ReadFile(file.path)
+			assert.NilError(f, err)
+
+			if file.name == "compiler/unicodeEscapesInNames01.ts" {
+				continue
+			}
+
+			f.Add(filepath.Base(file.path), string(sourceText), int32(core.ScriptTargetESNext))
+		}
+	}
+
+	f.Fuzz(func(t *testing.T, filename string, sourceText string, scriptTarget_ int32) {
+		scriptTarget := core.ScriptTarget(scriptTarget_)
+
+		if filename == "" || tspath.TryGetExtensionFromPath(filename) == "" {
+			t.Skip()
+		}
+
+		if !utf8.ValidString(sourceText) {
+			t.Skip() // TODO: do something else
+		}
+
+		if core.ScriptTargetNone < scriptTarget && scriptTarget > core.ScriptTargetLatest {
+			t.Skip()
+		}
+
+		if strings.HasSuffix(filename, ".json") {
+			ParseJSONText(filename, sourceText)
+			return
+		}
+
+		ParseSourceFile(filename, sourceText, scriptTarget)
+	})
 }

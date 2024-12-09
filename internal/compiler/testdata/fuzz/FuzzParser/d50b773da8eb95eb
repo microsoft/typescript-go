@@ -1,0 +1,4 @@
+go test fuzz v1
+string("0.ts")
+string("1AAAA\\#Symbol\\terator\\)")
+rune('c')
