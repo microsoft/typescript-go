@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"slices"
+	"sync"
 	"testing"
 	"testing/fstest"
 
@@ -414,6 +415,22 @@ func runTraceBaseline(t *testing.T, test traceTestCase) {
 				t.FailNow()
 			}
 		}
+
+		t.Run("concurrent", func(t *testing.T) {
+			host := newVFSModuleResolutionHost(test.files, test.currentDirectory)
+			resolver := module.NewResolver(host, test.compilerOptions)
+
+			var wg sync.WaitGroup
+			for _, call := range test.calls {
+				wg.Add(1)
+				go func() {
+					defer wg.Done()
+					doCall(t, resolver, call)
+				}()
+			}
+
+			wg.Wait()
+		})
 
 		if test.trace {
 			t.Run("trace", func(t *testing.T) {
