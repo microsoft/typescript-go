@@ -2,6 +2,7 @@ package compiler
 
 import (
 	"path"
+	"sync"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/compiler/diagnostics"
@@ -45,23 +46,40 @@ const (
 type ParsingContexts int
 
 type Parser struct {
-	scanner               *scanner.Scanner
-	factory               ast.NodeFactory
-	fileName              string
-	sourceText            string
-	languageVersion       core.ScriptTarget
-	scriptKind            core.ScriptKind
-	languageVariant       core.LanguageVariant
-	contextFlags          ast.NodeFlags
-	token                 ast.Kind
-	parsingContexts       ParsingContexts
-	diagnostics           []*ast.Diagnostic
-	identifiers           core.Set[string]
-	sourceFlags           ast.NodeFlags
-	notParenthesizedArrow core.Set[int]
-	nodeSlicePool         core.Pool[*ast.Node]
+	scanner                   *scanner.Scanner
+	factory                   ast.NodeFactory
+	fileName                  string
+	sourceText                string
+	languageVersion           core.ScriptTarget
+	scriptKind                core.ScriptKind
+	languageVariant           core.LanguageVariant
+	contextFlags              ast.NodeFlags
+	token                     ast.Kind
+	parsingContexts           ParsingContexts
+	diagnostics               []*ast.Diagnostic
+	identifiers               core.Set[string]
+	sourceFlags               ast.NodeFlags
+	notParenthesizedArrow     core.Set[int]
+	nodeSlicePool             core.Pool[*ast.Node]
+	hasAwaitIdentifier        bool
+	hasPossibleAwaitStatement bool
 }
 
+var (
+	possibleAwaitCache   map[*ast.Node]bool = make(map[*ast.Node]bool)
+	possibleAwaitCacheMu sync.Mutex
+)
+
+func setPossibleAwait(node *ast.Node) {
+	possibleAwaitCacheMu.Lock()
+	defer possibleAwaitCacheMu.Unlock()
+	possibleAwaitCache[node] = true
+}
+func getPossibleAwait(node *ast.Node) bool {
+	possibleAwaitCacheMu.Lock()
+	defer possibleAwaitCacheMu.Unlock()
+	return possibleAwaitCache[node]
+}
 func NewParser() *Parser {
 	p := &Parser{}
 	p.scanner = scanner.NewScanner()
@@ -174,13 +192,21 @@ func (p *Parser) parseErrorAtRange(loc core.TextRange, message *diagnostics.Mess
 }
 
 type ParserState struct {
-	scannerState   scanner.ScannerState
-	contextFlags   ast.NodeFlags
-	diagnosticsLen int
+	scannerState              scanner.ScannerState
+	contextFlags              ast.NodeFlags
+	diagnosticsLen            int
+	hasAwaitIdentifier        bool
+	hasPossibleAwaitStatement bool
 }
 
 func (p *Parser) mark() ParserState {
-	return ParserState{scannerState: p.scanner.Mark(), contextFlags: p.contextFlags, diagnosticsLen: len(p.diagnostics)}
+	return ParserState{
+		scannerState:              p.scanner.Mark(),
+		contextFlags:              p.contextFlags,
+		diagnosticsLen:            len(p.diagnostics),
+		hasAwaitIdentifier:        p.hasAwaitIdentifier,
+		hasPossibleAwaitStatement: p.hasPossibleAwaitStatement,
+	}
 }
 
 func (p *Parser) rewind(state ParserState) {
@@ -220,18 +246,152 @@ func (p *Parser) parseSourceFileWorker() *ast.SourceFile {
 		p.contextFlags |= ast.NodeFlagsAmbient
 	}
 	pos := p.nodePos()
-	statements := p.parseList(PCSourceElements, (*Parser).parseStatement)
+	statements := p.parseList(PCSourceElements, (*Parser).parseToplevelStatement)
 	eof := p.parseTokenNode()
 	if eof.Kind != ast.KindEndOfFile {
 		panic("Expected end of file token from scanner.")
 	}
 	node := p.factory.NewSourceFile(p.sourceText, p.fileName, statements)
 	p.finishNode(node, pos)
-	result := node.AsSourceFile()
+	var result *ast.SourceFile
+	result = node.AsSourceFile()
 	result.SetDiagnostics(attachFileToDiagnostics(p.diagnostics, result))
 	result.ExternalModuleIndicator = isFileProbablyExternalModule(result)
 	result.IsDeclarationFile = isDeclarationFile
+	if !result.IsDeclarationFile && result.ExternalModuleIndicator != nil && p.hasPossibleAwaitStatement {
+		reparse := p.reparseTopLevelAwait(result)
+		if node != reparse {
+			p.finishNode(reparse, pos)
+			result = reparse.AsSourceFile()
+			result.SetDiagnostics(attachFileToDiagnostics(p.diagnostics, result))
+			result.ExternalModuleIndicator = isFileProbablyExternalModule(result)
+			result.IsDeclarationFile = isDeclarationFile
+		}
+	}
 	return result
+}
+
+func (p *Parser) parseToplevelStatement() *ast.Node {
+	p.hasAwaitIdentifier = false
+	statement := p.parseStatement()
+	if p.hasAwaitIdentifier {
+		setPossibleAwait(statement)
+		p.hasPossibleAwaitStatement = true
+	}
+	return statement
+}
+
+func (p *Parser) reparseTopLevelAwait(sourceFile *ast.SourceFile) *ast.Node {
+	statements := []*ast.Statement{}
+	savedParseDiagnostics := p.diagnostics
+	p.diagnostics = []*ast.Diagnostic{}
+
+	pos := 0
+	start := findNextStatementWithAwait(sourceFile.Statements, 0)
+	for start != -1 {
+		// append all statements between pos and start
+		prevStatement := sourceFile.Statements.Nodes[pos]
+		nextStatement := sourceFile.Statements.Nodes[start]
+		statements = append(statements, sourceFile.Statements.Nodes[pos:start]...)
+		pos = findNextStatementWithoutAwait(sourceFile.Statements, start)
+
+		// append all diagnostics associated with the copied range
+		diagnosticStart := core.FindIndex(savedParseDiagnostics, func(diagnostic *ast.Diagnostic) bool {
+			return diagnostic.Pos() >= prevStatement.Pos()
+		})
+		var diagnosticEnd int
+		if diagnosticStart >= 0 {
+			diagnosticEnd = core.FindIndex(savedParseDiagnostics[:diagnosticStart], func(diagnostic *ast.Diagnostic) bool {
+				return diagnostic.Pos() >= nextStatement.Pos()
+			})
+		} else {
+			diagnosticEnd = -1
+		}
+		if diagnosticStart >= 0 {
+			var slice []*ast.Diagnostic
+			if diagnosticEnd >= 0 {
+				slice = savedParseDiagnostics[diagnosticStart : diagnosticStart+diagnosticEnd]
+			} else {
+				slice = savedParseDiagnostics[diagnosticStart:]
+			}
+			p.diagnostics = append(p.diagnostics, slice...)
+		}
+
+		state := p.mark()
+		// reparse all statements between start and pos. We skip existing diagnostics for the same range and allow the parser to generate new ones.
+		p.contextFlags |= ast.NodeFlagsAwaitContext
+		p.scanner.ResetTokenState(nextStatement.Pos())
+		p.nextToken()
+
+		for p.token != ast.KindEndOfFile {
+			startPos := p.scanner.TokenFullStart()
+			statement := p.parseStatement()
+			statements = append(statements, statement)
+			if startPos == p.scanner.TokenFullStart() {
+				p.nextToken()
+			}
+
+			if pos >= 0 {
+				nonAwaitStatement := sourceFile.Statements.Nodes[pos]
+				if statement.End() == nonAwaitStatement.Pos() {
+					// done reparsing this section
+					break
+				}
+				if statement.End() > nonAwaitStatement.Pos() {
+					// we ate into the next statement, so we must reparse it.
+					pos = findNextStatementWithoutAwait(sourceFile.Statements, pos+1)
+				}
+			}
+		}
+
+		// Keep diagnostics from the reparse
+		state.diagnosticsLen = len(p.diagnostics)
+		p.rewind(state)
+
+		if pos < 0 {
+			break
+		}
+		// find the next statement containing an `await`
+		start = findNextStatementWithAwait(sourceFile.Statements, pos)
+	}
+
+	// append all statements between pos and the end of the list
+	if pos >= 0 {
+		prevStatement := sourceFile.Statements.Nodes[pos]
+		statements = append(statements, sourceFile.Statements.Nodes[pos:]...)
+
+		// append all diagnostics associated with the copied range
+		diagnosticStart := core.FindIndex(savedParseDiagnostics, func(diagnostic *ast.Diagnostic) bool {
+			return diagnostic.Pos() >= prevStatement.Pos()
+		})
+		if diagnosticStart >= 0 {
+			p.diagnostics = append(p.diagnostics, savedParseDiagnostics[diagnosticStart:]...)
+		}
+	}
+
+	return p.factory.NewSourceFile(sourceFile.Text, sourceFile.FileName(), p.factory.NewNodeList(sourceFile.Statements.Loc, statements))
+}
+
+func containsPossibleTopLevelAwait(node *ast.Node) bool {
+	return !(node.Flags&ast.NodeFlagsAwaitContext != 0) && getPossibleAwait(node)
+}
+
+func findNextStatementWithAwait(statements *ast.NodeList, start int) int {
+	for i, statement := range statements.Nodes[start:] {
+		if containsPossibleTopLevelAwait(statement) {
+			return start + i
+		}
+	}
+	return -1
+}
+
+func findNextStatementWithoutAwait(statements *ast.NodeList, start int) int {
+	for i, statement := range statements.Nodes[start:] {
+		if !containsPossibleTopLevelAwait(statement) {
+			return start + i
+		}
+	}
+	return -1
 }
 
 func (p *Parser) parseList(kind ParsingContext, parseElement func(p *Parser) *ast.Node) *ast.NodeList {
@@ -1318,6 +1478,7 @@ func (p *Parser) parseClassExpression() *ast.Node {
 
 func (p *Parser) parseClassDeclarationOrExpression(pos int, hasJSDoc bool, modifiers *ast.ModifierList, kind ast.Kind) *ast.Node {
 	saveContextFlags := p.contextFlags
+	saveHasAwaitIdentifier := p.hasAwaitIdentifier
 	p.parseExpected(ast.KindClassKeyword)
 	// We don't parse the name here in await context, instead we will report a grammar error in the checker.
 	name := p.parseNameOfClassDeclarationOrExpression()
@@ -1325,6 +1486,7 @@ func (p *Parser) parseClassDeclarationOrExpression(pos int, hasJSDoc bool, modif
 	if modifiers != nil && core.Some(modifiers.Nodes, isExportModifier) {
 		p.setContextFlags(ast.NodeFlagsAwaitContext, true /*value*/)
 	}
+	// TODO: something above parseClassDecl unsets NodeFlagsAwaitContext
 	heritageClauses := p.parseHeritageClauses()
 	var members *ast.NodeList
 	if p.parseExpected(ast.KindOpenBraceToken) {
@@ -1337,6 +1499,9 @@ func (p *Parser) parseClassDeclarationOrExpression(pos int, hasJSDoc bool, modif
 	}
 	p.contextFlags = saveContextFlags
 	var result *ast.Node
+	if modifiers != nil && ast.ModifiersToFlags(modifiers.Nodes)&ast.ModifierFlagsAmbient != 0 {
+		p.hasAwaitIdentifier = saveHasAwaitIdentifier
+	}
 	if kind == ast.KindClassDeclaration {
 		result = p.factory.NewClassDeclaration(modifiers, name, typeParameters, heritageClauses, members)
 	} else {
@@ -1778,6 +1943,7 @@ func (p *Parser) parseImportDeclarationOrImportEqualsDeclaration(pos int, hasJSD
 	p.parseExpected(ast.KindImportKeyword)
 	afterImportPos := p.nodePos()
 	// We don't parse the identifier here in await context, instead we will report a grammar error in the checker.
+	saveHasAwaitIdentifier := p.hasAwaitIdentifier
 	var identifier *ast.Node
 	if p.isIdentifier() {
 		identifier = p.parseIdentifier()
@@ -1793,9 +1959,12 @@ func (p *Parser) parseImportDeclarationOrImportEqualsDeclaration(pos int, hasJSD
 		}
 	}
 	if identifier != nil && !p.tokenAfterImportedIdentifierDefinitelyProducesImportDeclaration() {
-		return p.parseImportEqualsDeclaration(pos, hasJSDoc, modifiers, identifier, isTypeOnly)
+		importEquals := p.parseImportEqualsDeclaration(pos, hasJSDoc, modifiers, identifier, isTypeOnly)
+		p.hasAwaitIdentifier = saveHasAwaitIdentifier // Import= declaration is always parsed in an Await context, no need to reparse
+		return importEquals
 	}
 	importClause := p.tryParseImportClause(identifier, afterImportPos, isTypeOnly, false /*skipJsDocLeadingAsterisks*/)
+	p.hasAwaitIdentifier = saveHasAwaitIdentifier // import clause is always parsed in an Await context
 	moduleSpecifier := p.parseModuleSpecifier()
 	attributes := p.tryParseImportAttributes()
 	p.parseSemicolon()
@@ -2460,7 +2629,11 @@ func (p *Parser) parseRightSideOfDot(allowIdentifierNames bool, allowPrivateIden
 }
 
 func (p *Parser) newIdentifier(text string) *ast.Node {
-	return p.factory.NewIdentifier(text)
+	id := p.factory.NewIdentifier(text)
+	if text == "await" {
+		p.hasAwaitIdentifier = true
+	}
+	return id
 }
 
 func (p *Parser) createMissingIdentifier() *ast.Node {

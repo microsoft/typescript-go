@@ -277,6 +277,20 @@ func (s *Scanner) Rewind(state ScannerState) {
 	s.ScannerState = state
 }
 
+func (s *Scanner) ResetTokenState(pos int) {
+	if pos < 0 {
+		panic("Cannot reset token state to negative position")
+	}
+	s.Rewind(ScannerState{
+		pos:          pos,
+		fullStartPos: pos,
+		tokenStart:   pos,
+		token:        ast.KindUnknown,
+		tokenValue:   "",
+		tokenFlags:   ast.TokenFlagsNone,
+	})
+}
+
 func (s *Scanner) HasUnicodeEscape() bool {
 	return s.tokenFlags&ast.TokenFlagsUnicodeEscape != 0
 }
