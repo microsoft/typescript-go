@@ -24,7 +24,8 @@ type ProgramOptions struct {
 
 type Program struct {
 	host               CompilerHost
-	options            *core.CompilerOptions
+	programOptions     ProgramOptions
+	compilerOptions    *core.CompilerOptions
 	rootPath           string
 	processedFileNames core.Set[string]
 	files              []*ast.SourceFile
@@ -52,9 +53,10 @@ var extensions = []string{".ts", ".tsx"}
 
 func NewProgram(options ProgramOptions) *Program {
 	p := &Program{}
-	p.options = options.Options
-	if p.options == nil {
-		p.options = &core.CompilerOptions{}
+	p.programOptions = options
+	p.compilerOptions = options.Options
+	if p.compilerOptions == nil {
+		p.compilerOptions = &core.CompilerOptions{}
 	}
 	p.filesByPath = make(map[tspath.Path]*ast.SourceFile)
 
@@ -69,7 +71,7 @@ func NewProgram(options ProgramOptions) *Program {
 		panic("host required")
 	}
 
-	p.resolver = module.NewResolver(p.host, p.options)
+	p.resolver = module.NewResolver(p.host, p.compilerOptions)
 
 	// TODO(ercornel): !!!: SKIPPING FOR NOW :: default lib
 	p.rootPath = options.RootPath
@@ -82,7 +84,7 @@ func NewProgram(options ProgramOptions) *Program {
 		return int(b.Size) - int(a.Size)
 	})
 
-	p.processRootFiles(fileInfos, options.SingleThreaded)
+	p.processRootFiles(fileInfos)
 
 	return p
 }
@@ -111,22 +113,22 @@ func readFileInfos(fs vfs.FS, rootPath string, extensions []string) []FileInfo {
 }
 
 func (p *Program) SourceFiles() []*ast.SourceFile { return p.files }
-func (p *Program) Options() *core.CompilerOptions { return p.options }
+func (p *Program) Options() *core.CompilerOptions { return p.compilerOptions }
 func (p *Program) Host() CompilerHost             { return p.host }
 
 func (p *Program) bindSourceFiles() {
 	for _, file := range p.files {
 		if !file.IsBound {
 			p.host.RunTask(func() {
-				bindSourceFile(file, p.options)
+				bindSourceFile(file, p.compilerOptions)
 			})
 		}
 	}
 	p.host.WaitForTasks()
 }
 
-func (p *Program) processRootFiles(rootFiles []FileInfo, singleThreaded bool) {
-	wg := core.NewWorkGroup(singleThreaded)
+func (p *Program) processRootFiles(rootFiles []FileInfo) {
+	wg := core.NewWorkGroup(p.programOptions.SingleThreaded)
 
 	absPaths := make([]string, 0, len(rootFiles))
 	for _, fileInfo := range rootFiles {
@@ -193,7 +195,7 @@ func (p *Program) findSourceFile(candidate string, reason FileIncludeReason) *as
 func (p *Program) parseSourceFile(fileName string) *ast.SourceFile {
 	path := tspath.ToPath(fileName, p.currentDirectory, p.host.FS().UseCaseSensitiveFileNames())
 	text, _ := p.host.FS().ReadFile(fileName)
-	sourceFile := ParseSourceFile(fileName, text, p.options.GetEmitScriptTarget())
+	sourceFile := ParseSourceFile(fileName, text, p.compilerOptions.GetEmitScriptTarget())
 	sourceFile.SetPath(path)
 	return sourceFile
 }
@@ -338,7 +340,7 @@ func (p *Program) getSemanticDiagnosticsForFile(sourceFile *ast.SourceFile) []*a
 func (p *Program) getDiagnosticsHelper(sourceFile *ast.SourceFile, ensureBound bool, getDiagnostics func(*ast.SourceFile) []*ast.Diagnostic) []*ast.Diagnostic {
 	if sourceFile != nil {
 		if ensureBound {
-			bindSourceFile(sourceFile, p.options)
+			bindSourceFile(sourceFile, p.compilerOptions)
 		}
 		return sortAndDeduplicateDiagnostics(getDiagnostics(sourceFile))
 	}
@@ -570,5 +572,5 @@ func (p *Program) getEmitModuleFormatOfFile(sourceFile *ast.SourceFile) core.Mod
 	// if !hadImpliedFormat {
 	// 	mode = options.GetEmitModuleKind()
 	// }
-	return p.options.GetEmitModuleKind()
+	return p.compilerOptions.GetEmitModuleKind()
 }
