@@ -57,14 +57,14 @@ func encodeJsxCharacterEntity(b *strings.Builder, charCode rune) {
 	hexCharCode := strings.ToUpper(strconv.FormatUint(uint64(charCode), 16))
 	b.WriteString("&#x")
 	b.WriteString(hexCharCode)
-	b.WriteString(";")
+	b.WriteByte(';')
 }
 
 func encodeUtf16EscapeSequence(b *strings.Builder, charCode rune) {
 	hexCharCode := strings.ToUpper(strconv.FormatUint(uint64(charCode), 16))
 	b.WriteString(`\u`)
 	for i := len(hexCharCode); i < 4; i++ {
-		b.WriteRune('0')
+		b.WriteByte('0')
 	}
 	b.WriteString(hexCharCode)
 }
@@ -97,8 +97,8 @@ func escapeStringWorker(s string, quoteChar quoteChar, flags getLiteralTextFlags
 		case rune(quoteChar), '\u2028', '\u2029', '\u0085', '\r':
 			escape = true
 		case '\n':
-			// Template strings preserve simple LF newlines, still encode CRLF (or CR)
 			if quoteChar != quoteCharBacktick {
+				// Template strings preserve simple LF newlines, still encode CRLF (or CR).
 				escape = true
 			}
 		default:
@@ -124,8 +124,9 @@ func escapeStringWorker(s string, quoteChar quoteChar, flags getLiteralTextFlags
 				}
 
 			default:
-				// Template strings preserve simple LF newlines, still encode CRLF (or CR)
 				if ch == '\r' && quoteChar == quoteCharBacktick && i+1 < len(s) && s[i+1] == '\n' {
+					// Template strings preserve simple LF newlines, but still must escape CRLF. Left alone, the
+					// above cases for `\r` and `\n` would inadvertently escape CRLF as two independent characters.
 					size++
 					b.WriteString(`\r\n`)
 				} else if ch > 0xffff {

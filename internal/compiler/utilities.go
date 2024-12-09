@@ -903,10 +903,6 @@ func isPrivateIdentifierClassElementDeclaration(node *ast.Node) bool {
 	return (ast.IsPropertyDeclaration(node) || isMethodOrAccessor(node)) && ast.IsPrivateIdentifier(node.Name())
 }
 
-func isModifier(node *ast.Node) bool {
-	return isModifierKind(node.Kind)
-}
-
 func isMethodOrAccessor(node *ast.Node) bool {
 	switch node.Kind {
 	case ast.KindMethodDeclaration, ast.KindGetAccessor, ast.KindSetAccessor:

@@ -326,7 +326,7 @@ func IsTypeElement(node *Node) bool {
 		KindIndexSignature,
 		KindGetAccessor,
 		KindSetAccessor:
-		// KindNotEmittedTypeElement
+		// !!! KindNotEmittedTypeElement
 		return true
 	}
 	return false
