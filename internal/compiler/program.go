@@ -151,7 +151,7 @@ func (p *Program) startParseTask(fileName string, wg *core.WorkGroup) {
 		filesToParse := make([]string, 0, len(file.ReferencedFiles)+len(file.Imports)+len(file.ModuleAugmentations))
 
 		for _, ref := range file.ReferencedFiles {
-			resolvedPath := p.resolveTripleslashReference(ref.FileName, file.FileName())
+			resolvedPath := p.resolveTripleslashPathReference(ref.FileName, file.FileName())
 			filesToParse = append(filesToParse, resolvedPath)
 		}
 
@@ -555,7 +555,7 @@ func (p *Program) collectModuleReferences(file *ast.SourceFile, node *ast.Statem
 	}
 }
 
-func (p *Program) resolveTripleslashReference(moduleName string, containingFile string) string {
+func (p *Program) resolveTripleslashPathReference(moduleName string, containingFile string) string {
 	basePath := tspath.GetDirectoryPath(containingFile)
 	referencedFileName := core.IfElse(tspath.IsRootedDiskPath(moduleName), moduleName, tspath.CombinePaths(basePath, moduleName))
 	return tspath.NormalizePath(referencedFileName)
