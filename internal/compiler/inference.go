@@ -351,7 +351,6 @@ func (c *Checker) inferFromMatchingTypes(n *InferenceState, sources []*Type, tar
 	}
 	if len(matchedTargets) != 0 {
 		targets = core.Filter(targets, func(t *Type) bool { return !slices.Contains(matchedTargets, t) })
-
 	}
 	return sources, targets
 }
@@ -490,7 +489,7 @@ func (c *Checker) inferFromObjectTypes(n *InferenceState, source *Type, target *
 			// When source and target are tuple types with the same structure (fixed, variadic, and rest are matched
 			// to the same kind in each position), simply infer between the element types.
 			if isTupleType(source) && c.isTupleTypeStructureMatching(source, target) {
-				for i := 0; i < targetArity; i++ {
+				for i := range targetArity {
 					c.inferFromTypes(n, c.getTypeArguments(source)[i], elementTypes[i])
 				}
 				return
