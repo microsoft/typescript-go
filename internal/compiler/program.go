@@ -82,7 +82,7 @@ func NewProgram(options ProgramOptions) *Program {
 		return int(b.Size) - int(a.Size)
 	})
 
-	p.processRootFiles(fileInfos)
+	p.processRootFiles(fileInfos, options.SingleThreaded)
 
 	return p
 }
@@ -125,8 +125,8 @@ func (p *Program) bindSourceFiles() {
 	p.host.WaitForTasks()
 }
 
-func (p *Program) processRootFiles(rootFiles []FileInfo) {
-	wg := sync.WaitGroup{}
+func (p *Program) processRootFiles(rootFiles []FileInfo, singleThreaded bool) {
+	wg := core.NewWorkGroup(singleThreaded)
 
 	absPaths := make([]string, 0, len(rootFiles))
 	for _, fileInfo := range rootFiles {
@@ -136,21 +136,17 @@ func (p *Program) processRootFiles(rootFiles []FileInfo) {
 	}
 
 	for _, absPath := range absPaths {
-		p.startParseTask(absPath, &wg)
+		p.startParseTask(absPath, wg)
 	}
 
 	wg.Wait()
 }
 
-func (p *Program) startParseTask(fileName string, wg *sync.WaitGroup) {
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
+func (p *Program) startParseTask(fileName string, wg *core.WorkGroup) {
+	wg.Run(func() {
 		normalizedPath := tspath.NormalizePath(fileName)
 		file := p.parseSourceFile(normalizedPath)
 		p.collectExternalModuleReferences(file)
-
-		bindSourceFile(file, p.options)
 
 		filesToParse := make([]string, 0, len(file.ReferencedFiles)+len(file.Imports)+len(file.ModuleAugmentations))
 
@@ -174,7 +170,7 @@ func (p *Program) startParseTask(fileName string, wg *sync.WaitGroup) {
 				}
 			}
 		}
-	}()
+	})
 }
 
 func (p *Program) getResolvedModule(currentSourceFile *ast.SourceFile, moduleReference string) *ast.SourceFile {
