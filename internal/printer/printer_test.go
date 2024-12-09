@@ -582,7 +582,7 @@ func formatDiagnostic(b *strings.Builder, d *ast.Diagnostic, level int) {
 	}
 }
 
-func formatMessageChain(b *strings.Builder, messageChain []*ast.MessageChain, level int) {
+func formatMessageChain(b *strings.Builder, messageChain []*ast.Diagnostic, level int) {
 	for _, c := range messageChain {
 		b.WriteString(fmt.Sprintf("%v%v\n", strings.Repeat(" ", level*2), c.Message()))
 		formatMessageChain(b, c.MessageChain(), level+1)
