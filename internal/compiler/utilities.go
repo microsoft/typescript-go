@@ -3390,7 +3390,8 @@ func isSuperProperty(node *ast.Node) bool {
 }
 
 func getLeftSideOfImportEqualsOrExportAssignment(nodeOnRightSide *ast.EntityName) *ast.Node {
-	for ; nodeOnRightSide.Parent.Kind == ast.KindQualifiedName; nodeOnRightSide = nodeOnRightSide.Parent {
+	for nodeOnRightSide.Parent.Kind == ast.KindQualifiedName {
+		nodeOnRightSide = nodeOnRightSide.Parent
 	}
 
 	if nodeOnRightSide.Parent.Kind == ast.KindImportEqualsDeclaration {

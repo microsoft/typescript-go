@@ -18249,7 +18249,7 @@ func (c *Checker) getSymbolOfNameOrPropertyAccessExpression(name *ast.Node) *ast
 	}
 
 	if isInNameOfExpressionWithTypeArguments(name) {
-		meaning := ast.SymbolFlagsNone
+		var meaning ast.SymbolFlags
 		if name.Parent.Kind == ast.KindExpressionWithTypeArguments {
 			// An 'ExpressionWithTypeArguments' may appear in type space (interface Foo extends Bar<T>),
 			// value space (return foo<T>), or both(class Foo extends Bar<T>); ensure the meaning matches.
