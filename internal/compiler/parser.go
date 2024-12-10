@@ -46,39 +46,41 @@ const (
 type ParsingContexts int
 
 type Parser struct {
-	scanner                       *scanner.Scanner
-	factory                       ast.NodeFactory
-	fileName                      string
-	sourceText                    string
-	languageVersion               core.ScriptTarget
-	scriptKind                    core.ScriptKind
-	languageVariant               core.LanguageVariant
-	contextFlags                  ast.NodeFlags
+	scanner *scanner.Scanner
+	factory ast.NodeFactory
+
+	fileName        string
+	sourceText      string
+	languageVersion core.ScriptTarget
+	scriptKind      core.ScriptKind
+	languageVariant core.LanguageVariant
+	diagnostics     []*ast.Diagnostic
+
 	token                         ast.Kind
-	parsingContexts               ParsingContexts
-	diagnostics                   []*ast.Diagnostic
-	identifiers                   core.Set[string]
 	sourceFlags                   ast.NodeFlags
-	notParenthesizedArrow         core.Set[int]
-	nodeSlicePool                 core.Pool[*ast.Node]
+	contextFlags                  ast.NodeFlags
+	parsingContexts               ParsingContexts
 	statementHasAwaitIdentifier   bool
 	fileHasPossibleAwaitStatement bool
+
+	identifiers           core.Set[string]
+	notParenthesizedArrow core.Set[int]
+	nodeSlicePool         core.Pool[*ast.Node]
+	possibleAwaitCache    map[*ast.Node]bool
+	possibleAwaitCacheMu  sync.Mutex
 }
 
-var (
-	possibleAwaitCache   map[*ast.Node]bool = make(map[*ast.Node]bool)
-	possibleAwaitCacheMu sync.Mutex
-)
+var ()
 
-func setPossibleAwait(node *ast.Node) {
-	possibleAwaitCacheMu.Lock()
-	defer possibleAwaitCacheMu.Unlock()
-	possibleAwaitCache[node] = true
+func (p *Parser) setPossibleAwait(node *ast.Node) {
+	p.possibleAwaitCacheMu.Lock()
+	defer p.possibleAwaitCacheMu.Unlock()
+	p.possibleAwaitCache[node] = true
 }
-func getPossibleAwait(node *ast.Node) bool {
-	possibleAwaitCacheMu.Lock()
-	defer possibleAwaitCacheMu.Unlock()
-	return possibleAwaitCache[node]
+func (p *Parser) getPossibleAwait(node *ast.Node) bool {
+	p.possibleAwaitCacheMu.Lock()
+	defer p.possibleAwaitCacheMu.Unlock()
+	return p.possibleAwaitCache[node]
 }
 func NewParser() *Parser {
 	p := &Parser{}
@@ -155,6 +157,7 @@ func (p *Parser) initializeState(fileName string, sourceText string, languageVer
 	p.languageVersion = languageVersion
 	p.scriptKind = ensureScriptKind(fileName, scriptKind)
 	p.languageVariant = getLanguageVariant(p.scriptKind)
+	p.possibleAwaitCache = make(map[*ast.Node]bool)
 	switch p.scriptKind {
 	case core.ScriptKindJS, core.ScriptKindJSX:
 		p.contextFlags = ast.NodeFlagsJavaScriptFile
@@ -275,7 +278,7 @@ func (p *Parser) parseToplevelStatement() *ast.Node {
 	p.statementHasAwaitIdentifier = false
 	statement := p.parseStatement()
 	if p.statementHasAwaitIdentifier {
-		setPossibleAwait(statement)
+		p.setPossibleAwait(statement)
 		p.fileHasPossibleAwaitStatement = true
 	}
 	return statement
@@ -287,13 +290,13 @@ func (p *Parser) reparseTopLevelAwait(sourceFile *ast.SourceFile) *ast.Node {
 	p.diagnostics = []*ast.Diagnostic{}
 
 	pos := 0
-	start := findNextStatementWithAwait(sourceFile.Statements, 0)
+	start := p.findNextStatementWithAwait(sourceFile.Statements, 0)
 	for start != -1 {
 		// append all statements between pos and start
 		prevStatement := sourceFile.Statements.Nodes[pos]
 		nextStatement := sourceFile.Statements.Nodes[start]
 		statements = append(statements, sourceFile.Statements.Nodes[pos:start]...)
-		pos = findNextStatementWithoutAwait(sourceFile.Statements, start)
+		pos = p.findNextStatementWithoutAwait(sourceFile.Statements, start)
 
 		// append all diagnostics associated with the copied range
 		diagnosticStart := core.FindIndex(savedParseDiagnostics, func(diagnostic *ast.Diagnostic) bool {
@@ -339,7 +342,7 @@ func (p *Parser) reparseTopLevelAwait(sourceFile *ast.SourceFile) *ast.Node {
 				}
 				if statement.End() > nonAwaitStatement.Pos() {
 					// we ate into the next statement, so we must reparse it.
-					pos = findNextStatementWithoutAwait(sourceFile.Statements, pos+1)
+					pos = p.findNextStatementWithoutAwait(sourceFile.Statements, pos+1)
 				}
 			}
 		}
@@ -352,7 +355,7 @@ func (p *Parser) reparseTopLevelAwait(sourceFile *ast.SourceFile) *ast.Node {
 			break
 		}
 		// find the next statement containing an `await`
-		start = findNextStatementWithAwait(sourceFile.Statements, pos)
+		start = p.findNextStatementWithAwait(sourceFile.Statements, pos)
 	}
 
 	// append all statements between pos and the end of the list
@@ -372,22 +375,22 @@ func (p *Parser) reparseTopLevelAwait(sourceFile *ast.SourceFile) *ast.Node {
 	return p.factory.NewSourceFile(sourceFile.Text, sourceFile.FileName(), p.factory.NewNodeList(sourceFile.Statements.Loc, statements))
 }
 
-func containsPossibleTopLevelAwait(node *ast.Node) bool {
-	return !(node.Flags&ast.NodeFlagsAwaitContext != 0) && getPossibleAwait(node)
+func (p *Parser) containsPossibleTopLevelAwait(node *ast.Node) bool {
+	return !(node.Flags&ast.NodeFlagsAwaitContext != 0) && p.getPossibleAwait(node)
 }
 
-func findNextStatementWithAwait(statements *ast.NodeList, start int) int {
+func (p *Parser) findNextStatementWithAwait(statements *ast.NodeList, start int) int {
 	for i, statement := range statements.Nodes[start:] {
-		if containsPossibleTopLevelAwait(statement) {
+		if p.containsPossibleTopLevelAwait(statement) {
 			return start + i
 		}
 	}
 	return -1
 }
 
-func findNextStatementWithoutAwait(statements *ast.NodeList, start int) int {
+func (p *Parser) findNextStatementWithoutAwait(statements *ast.NodeList, start int) int {
 	for i, statement := range statements.Nodes[start:] {
-		if !containsPossibleTopLevelAwait(statement) {
+		if !p.containsPossibleTopLevelAwait(statement) {
 			return start + i
 		}
 	}
@@ -1340,7 +1343,8 @@ func (p *Parser) parseIdentifierOrPatternWithDiagnostic(privateIdentifierDiagnos
 	if p.token == ast.KindOpenBraceToken {
 		return p.parseObjectBindingPattern()
 	}
-	return p.parseBindingIdentifierWithDiagnostic(privateIdentifierDiagnosticMessage)
+	id := p.parseBindingIdentifierWithDiagnostic(privateIdentifierDiagnosticMessage)
+	return id
 }
 
 func (p *Parser) parseArrayBindingPattern() *ast.Node {
@@ -1518,7 +1522,10 @@ func (p *Parser) parseNameOfClassDeclarationOrExpression() *ast.Node {
 	// - class with name 'implements'
 	// 'isImplementsClause' helps to disambiguate between these two cases
 	if p.isBindingIdentifier() && !p.isImplementsClause() {
-		return p.createIdentifier(p.isBindingIdentifier())
+		saveHasAwaitIdentifier := p.statementHasAwaitIdentifier
+		id := p.createIdentifier(p.isBindingIdentifier())
+		p.statementHasAwaitIdentifier = saveHasAwaitIdentifier
+		return id
 	}
 	return nil
 }
@@ -1844,6 +1851,7 @@ func (p *Parser) parseEnumMember() *ast.Node {
 }
 
 func (p *Parser) parseEnumDeclaration(pos int, hasJSDoc bool, modifiers *ast.ModifierList) *ast.Node {
+	saveHasAwaitIdentifier := p.statementHasAwaitIdentifier
 	p.parseExpected(ast.KindEnumKeyword)
 	name := p.parseIdentifier()
 	var members *ast.NodeList
@@ -1858,6 +1866,7 @@ func (p *Parser) parseEnumDeclaration(pos int, hasJSDoc bool, modifiers *ast.Mod
 	}
 	result := p.factory.NewEnumDeclaration(modifiers, name, members)
 	p.finishNode(result, pos)
+	p.statementHasAwaitIdentifier = saveHasAwaitIdentifier
 	_ = hasJSDoc
 	return result
 }
@@ -1881,6 +1890,7 @@ func (p *Parser) parseModuleDeclaration(pos int, hasJSDoc bool, modifiers *ast.M
 func (p *Parser) parseAmbientExternalModuleDeclaration(pos int, hasJSDoc bool, modifiers *ast.ModifierList) *ast.Node {
 	var flags ast.NodeFlags
 	var name *ast.Node
+	saveHasAwaitIdentifier := p.statementHasAwaitIdentifier
 	if p.token == ast.KindGlobalKeyword {
 		// parse 'global' as name of global scope augmentation
 		name = p.parseIdentifier()
@@ -1899,6 +1909,7 @@ func (p *Parser) parseAmbientExternalModuleDeclaration(pos int, hasJSDoc bool, m
 	result := p.factory.NewModuleDeclaration(modifiers, name, body, flags)
 	p.finishNode(result, pos)
 	_ = hasJSDoc
+	p.statementHasAwaitIdentifier = saveHasAwaitIdentifier
 	return result
 }
 
@@ -1917,6 +1928,7 @@ func (p *Parser) parseModuleBlock() *ast.Node {
 }
 
 func (p *Parser) parseModuleOrNamespaceDeclaration(pos int, hasJSDoc bool, modifiers *ast.ModifierList, flags ast.NodeFlags) *ast.Node {
+	saveHasAwaitIdentifier := p.statementHasAwaitIdentifier
 	// If we are parsing a dotted namespace name, we want to
 	// propagate the 'Namespace' flag across the names if set.
 	namespaceFlag := flags & ast.NodeFlagsNamespace
@@ -1935,6 +1947,7 @@ func (p *Parser) parseModuleOrNamespaceDeclaration(pos int, hasJSDoc bool, modif
 	result := p.factory.NewModuleDeclaration(modifiers, name, body, flags)
 	p.finishNode(result, pos)
 	_ = hasJSDoc
+	p.statementHasAwaitIdentifier = saveHasAwaitIdentifier
 	return result
 }
 
@@ -2005,6 +2018,7 @@ func (p *Parser) parseModuleReference() *ast.Node {
 }
 
 func (p *Parser) parseExternalModuleReference() *ast.Node {
+	saveHasAwaitIdentifier := p.statementHasAwaitIdentifier
 	pos := p.nodePos()
 	p.parseExpected(ast.KindRequireKeyword)
 	p.parseExpected(ast.KindOpenParenToken)
@@ -2012,6 +2026,7 @@ func (p *Parser) parseExternalModuleReference() *ast.Node {
 	p.parseExpected(ast.KindCloseParenToken)
 	result := p.factory.NewExternalModuleReference(expression)
 	p.finishNode(result, pos)
+	p.statementHasAwaitIdentifier = saveHasAwaitIdentifier
 	return result
 }
 
@@ -2049,6 +2064,7 @@ func (p *Parser) parseImportClause(identifier *ast.Node, pos int, isTypeOnly boo
 	// If there was no default import or if there is comma token after default import
 	// parse namespace or named imports
 	var namedBindings *ast.Node
+	saveHasAwaitIdentifier := p.statementHasAwaitIdentifier
 	if identifier == nil || p.parseOptional(ast.KindCommaToken) {
 		_ = skipJsDocLeadingAsterisks
 		// !!! if (skipJsDocLeadingAsterisks) scanner.setSkipJsDocLeadingAsterisks(true);
@@ -2061,6 +2077,7 @@ func (p *Parser) parseImportClause(identifier *ast.Node, pos int, isTypeOnly boo
 	}
 	result := p.factory.NewImportClause(isTypeOnly, identifier, namedBindings)
 	p.finishNode(result, pos)
+	p.statementHasAwaitIdentifier = saveHasAwaitIdentifier
 	return result
 }
 
@@ -2201,6 +2218,7 @@ func (p *Parser) tryParseImportAttributes() *ast.Node {
 
 func (p *Parser) parseExportAssignment(pos int, hasJSDoc bool, modifiers *ast.ModifierList) *ast.Node {
 	saveContextFlags := p.contextFlags
+	saveHasAwaitIdentifier := p.statementHasAwaitIdentifier
 	p.setContextFlags(ast.NodeFlagsAwaitContext, true)
 	isExportEquals := false
 	if p.parseOptional(ast.KindEqualsToken) {
@@ -2211,6 +2229,7 @@ func (p *Parser) parseExportAssignment(pos int, hasJSDoc bool, modifiers *ast.Mo
 	expression := p.parseAssignmentExpressionOrHigher()
 	p.parseSemicolon()
 	p.contextFlags = saveContextFlags
+	p.statementHasAwaitIdentifier = saveHasAwaitIdentifier
 	result := p.factory.NewExportAssignment(modifiers, isExportEquals, expression)
 	p.finishNode(result, pos)
 	_ = hasJSDoc
@@ -2220,7 +2239,9 @@ func (p *Parser) parseExportAssignment(pos int, hasJSDoc bool, modifiers *ast.Mo
 func (p *Parser) parseNamespaceExportDeclaration(pos int, hasJSDoc bool, modifiers *ast.ModifierList) *ast.Node {
 	p.parseExpected(ast.KindAsKeyword)
 	p.parseExpected(ast.KindNamespaceKeyword)
+	saveHasAwaitIdentifier := p.statementHasAwaitIdentifier
 	name := p.parseIdentifier()
+	p.statementHasAwaitIdentifier = saveHasAwaitIdentifier
 	p.parseSemicolon()
 	// NamespaceExportDeclaration nodes cannot have decorators or modifiers, we attach them here so we can report them in the grammar checker
 	result := p.factory.NewNamespaceExportDeclaration(modifiers, name)
@@ -2231,6 +2252,7 @@ func (p *Parser) parseNamespaceExportDeclaration(pos int, hasJSDoc bool, modifie
 
 func (p *Parser) parseExportDeclaration(pos int, hasJSDoc bool, modifiers *ast.ModifierList) *ast.Node {
 	saveContextFlags := p.contextFlags
+	saveHasAwaitIdentifier := p.statementHasAwaitIdentifier
 	p.setContextFlags(ast.NodeFlagsAwaitContext, true)
 	var exportClause *ast.Node
 	var moduleSpecifier *ast.Expression
@@ -2258,6 +2280,7 @@ func (p *Parser) parseExportDeclaration(pos int, hasJSDoc bool, modifiers *ast.M
 	}
 	p.parseSemicolon()
 	p.contextFlags = saveContextFlags
+	p.statementHasAwaitIdentifier = saveHasAwaitIdentifier
 	result := p.factory.NewExportDeclaration(modifiers, isTypeOnly, exportClause, moduleSpecifier, attributes)
 	p.finishNode(result, pos)
 	_ = hasJSDoc
@@ -2623,8 +2646,10 @@ func (p *Parser) parseRightSideOfDot(allowIdentifierNames bool, allowPrivateIden
 		}
 		return p.parseIdentifierNameErrorOnUnicodeEscapeSequence()
 	}
-
-	return p.parseIdentifier()
+	saveHasAwaitIdentifier := p.statementHasAwaitIdentifier
+	id := p.parseIdentifier()
+	p.statementHasAwaitIdentifier = saveHasAwaitIdentifier
+	return id
 }
 
 func (p *Parser) newIdentifier(text string) *ast.Node {
@@ -3117,7 +3142,10 @@ func (p *Parser) parseAccessorDeclaration(pos int, hasJSDoc bool, modifiers *ast
 }
 
 func (p *Parser) parsePropertyName() *ast.Node {
-	return p.parsePropertyNameWorker(true /*allowComputedPropertyNames*/)
+	saveHasAwaitIdentifier := p.statementHasAwaitIdentifier
+	prop := p.parsePropertyNameWorker(true /*allowComputedPropertyNames*/)
+	p.statementHasAwaitIdentifier = saveHasAwaitIdentifier
+	return prop
 }
 
 func (p *Parser) parsePropertyNameWorker(allowComputedPropertyNames bool) *ast.Node {
@@ -3167,6 +3195,7 @@ func (p *Parser) parseFunctionBlockOrSemicolon(flags ParseFlags, diagnosticMessa
 
 func (p *Parser) parseFunctionBlock(flags ParseFlags, diagnosticMessage *diagnostics.Message) *ast.Node {
 	saveContextFlags := p.contextFlags
+	saveHasAwaitIdentifier := p.statementHasAwaitIdentifier
 	p.setContextFlags(ast.NodeFlagsYieldContext, flags&ParseFlagsYield != 0)
 	p.setContextFlags(ast.NodeFlagsAwaitContext, flags&ParseFlagsAwait != 0)
 	// We may be in a [Decorator] context when parsing a function expression or
@@ -3174,6 +3203,7 @@ func (p *Parser) parseFunctionBlock(flags ParseFlags, diagnosticMessage *diagnos
 	p.setContextFlags(ast.NodeFlagsDecoratorContext, false)
 	block := p.parseBlock(flags&ParseFlagsIgnoreMissingOpenBrace != 0, diagnosticMessage)
 	p.contextFlags = saveContextFlags
+	p.statementHasAwaitIdentifier = saveHasAwaitIdentifier
 	return block
 }
 
@@ -5527,7 +5557,10 @@ func (p *Parser) parseBindingIdentifier() *ast.Node {
 }
 
 func (p *Parser) parseBindingIdentifierWithDiagnostic(privateIdentifierDiagnosticMessage *diagnostics.Message) *ast.Node {
-	return p.createIdentifierWithDiagnostic(p.isBindingIdentifier(), nil /*diagnosticMessage*/, privateIdentifierDiagnosticMessage)
+	saveHasAwaitIdentifier := p.statementHasAwaitIdentifier
+	id := p.createIdentifierWithDiagnostic(p.isBindingIdentifier(), nil /*diagnosticMessage*/, privateIdentifierDiagnosticMessage)
+	p.statementHasAwaitIdentifier = saveHasAwaitIdentifier
+	return id
 }
 
 func (p *Parser) parseIdentifierName() *ast.Node {
