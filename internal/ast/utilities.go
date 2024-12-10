@@ -910,6 +910,7 @@ func GetRightMostAssignedExpression(node *Node) *Node {
 	for IsAssignmentExpression(node, true /*excludeCompoundAssignment*/) {
 		node = node.AsBinaryExpression().Right
 	}
+	return node
 }
 
 func isVoidZero(node *Node) bool {
@@ -961,4 +962,46 @@ func GetElementOrPropertyAccessArgumentExpressionOrName(node *Node) *Node {
 		return node
 	}
 	panic("Unhandled case in GetElementOrPropertyAccessArgumentExpressionOrName")
+}
+
+func IsExpressionWithTypeArgumentsInClassExtendsClause(node *Node) bool {
+	return TryGetClassExtendingExpressionWithTypeArguments(node) != nil
+}
+
+func TryGetClassExtendingExpressionWithTypeArguments(node *Node) *ClassLikeDeclaration {
+	cls, isImplements := TryGetClassImplementingOrExtendingExpressionWithTypeArguments(node)
+	if cls != nil && !isImplements {
+		return cls
+	}
+	return nil
+}
+
+func TryGetClassImplementingOrExtendingExpressionWithTypeArguments(node *Node) (class *ClassLikeDeclaration, isImplements bool) {
+	if IsExpressionWithTypeArguments(node) {
+		if IsHeritageClause(node.Parent) && IsClassLike(node.Parent.Parent) {
+			return node.Parent.Parent, node.Parent.AsHeritageClause().Token == KindImplementsKeyword
+		}
+		if IsJSDocAugmentsTag(node.Parent) {
+			host := GetEffectiveJSDocHost(node.Parent)
+			if host != nil && IsClassLike(host) {
+				return host, false
+			}
+		}
+	}
+	return nil, false
+}
+
+func GetEffectiveJSDocHost(node *Node) *Node {
+	// !!! JSDoc
+	return nil
+}
+
+func GetHostSignatureFromJSDoc(node *Node) *SignatureDeclaration {
+	// !!! JSDoc
+	return nil
+}
+
+func GetJSDocHost(node *Node) *Node {
+	// !!! JSDoc
+	return nil
 }

@@ -372,6 +372,7 @@ type Checker struct {
 	requireSymbol                          *ast.Symbol
 	unknownSymbol                          *ast.Symbol
 	resolvingSymbol                        *ast.Symbol
+	unresolvedSymbols                      map[string]*ast.Symbol
 	errorTypes                             map[string]*Type
 	globalThisSymbol                       *ast.Symbol
 	resolveName                            func(location *ast.Node, name string, meaning ast.SymbolFlags, nameNotFoundMessage *diagnostics.Message, isUse bool, excludeGlobals bool) *ast.Symbol
@@ -405,6 +406,7 @@ type Checker struct {
 	autoType                               *Type
 	wildcardType                           *Type
 	errorType                              *Type
+	unresolvedType                         *Type
 	nonInferrableAnyType                   *Type
 	intrinsicMarkerType                    *Type
 	unknownType                            *Type
@@ -559,6 +561,7 @@ func NewChecker(program *Program) *Checker {
 	c.requireSymbol = c.newSymbol(ast.SymbolFlagsProperty, "require")
 	c.unknownSymbol = c.newSymbol(ast.SymbolFlagsProperty, "unknown")
 	c.resolvingSymbol = c.newSymbol(ast.SymbolFlagsNone, InternalSymbolNameResolving)
+	c.unresolvedSymbols = make(map[string]*ast.Symbol)
 	c.errorTypes = make(map[string]*Type)
 	c.globalThisSymbol = c.newSymbolEx(ast.SymbolFlagsModule, "globalThis", ast.CheckFlagsReadonly)
 	c.globalThisSymbol.Exports = c.globals
@@ -576,6 +579,7 @@ func NewChecker(program *Program) *Checker {
 	c.autoType = c.newIntrinsicTypeEx(TypeFlagsAny, "any", ObjectFlagsNonInferrableType)
 	c.wildcardType = c.newIntrinsicType(TypeFlagsAny, "any")
 	c.errorType = c.newIntrinsicType(TypeFlagsAny, "error")
+	c.unresolvedType = c.newIntrinsicType(TypeFlagsAny, "unresolved")
 	c.nonInferrableAnyType = c.newIntrinsicTypeEx(TypeFlagsAny, "any", ObjectFlagsContainsWideningType)
 	c.intrinsicMarkerType = c.newIntrinsicType(TypeFlagsAny, "intrinsic")
 	c.unknownType = c.newIntrinsicType(TypeFlagsUnknown, "unknown")
@@ -15813,7 +15817,163 @@ func (c *Checker) getSymbolOfNameOrPropertyAccessExpression(name *ast.Node) *ast
 		return c.getSymbolOfPartOfRightHandSideOfImportEquals(name, true /*dontResolveAlias*/)
 	}
 
-	// !!!
+	if ast.IsEntityName(name) {
+		possibleImportNode := isImportTypeQualifierPart(name)
+		if possibleImportNode != nil {
+			c.getTypeFromTypeNode(possibleImportNode)
+			sym := c.typeNodeLinks.get(name).resolvedSymbol
+			return core.IfElse(sym == c.unknownSymbol, nil, sym)
+		}
+	}
+
+	for isRightSideOfQualifiedNameOrPropertyAccessOrJSDocMemberName(name) {
+		name = name.Parent
+	}
+
+	if isInNameOfExpressionWithTypeArguments(name) {
+		meaning := ast.SymbolFlagsNone
+		if name.Parent.Kind == ast.KindExpressionWithTypeArguments {
+			// An 'ExpressionWithTypeArguments' may appear in type space (interface Foo extends Bar<T>),
+			// value space (return foo<T>), or both(class Foo extends Bar<T>); ensure the meaning matches.
+			if isPartOfTypeNode(name) {
+				meaning = ast.SymbolFlagsType
+			} else {
+				meaning = ast.SymbolFlagsValue
+			}
+
+			// In a class 'extends' clause we are also looking for a value.
+			if ast.IsExpressionWithTypeArgumentsInClassExtendsClause(name.Parent) {
+				meaning = meaning | ast.SymbolFlagsValue
+			}
+		} else {
+			meaning = ast.SymbolFlagsNamespace
+		}
+
+		meaning = meaning | ast.SymbolFlagsAlias
+		var entityNameSymbol *ast.Symbol
+		if ast.IsEntityNameExpression(name) {
+			entityNameSymbol = c.resolveEntityName(name, meaning, true /*ignoreErrors*/, false /*dontResolveAlias*/, nil /*location*/)
+		}
+		if entityNameSymbol != nil {
+			return entityNameSymbol
+		}
+	}
+
+	if name.Parent.Kind == ast.KindJSDocParameterTag {
+		// return getParameterSymbolFromJSDoc(name.Parent)
+		// !!! JSDoc
+		return nil
+	}
+
+	if name.Parent.Kind == ast.KindTypeParameter && name.Parent.Parent.Kind == ast.KindJSDocTemplateTag {
+		if ast.IsInJSFile(name) {
+			panic("Should not be in JS file, otherwise `isDeclarationName` would have been true")
+		}
+		var typeParameter *ast.Node
+		// typeParameter := getTypeParameterFromJsDoc(name.Parent)
+		// !!! JSDoc
+		if typeParameter != nil {
+			return typeParameter.Symbol()
+		}
+		return nil
+	}
+
+	if isExpressionNode(name) {
+		if ast.NodeIsMissing(name) {
+			// Missing entity name.
+			return nil
+		}
+
+		isJSDoc := ast.FindAncestor(name, core.Or(isJSDocLinkLike, ast.IsJSDocNameReference))
+		var meaning ast.SymbolFlags
+		if isJSDoc != nil {
+			meaning = ast.SymbolFlagsType | ast.SymbolFlagsNamespace | ast.SymbolFlagsValue
+		} else {
+			meaning = ast.SymbolFlagsValue
+		}
+
+		if name.Kind == ast.KindIdentifier {
+			if ast.IsJsxTagName(name) && isJsxIntrinsicTagName(name) {
+				symbol := c.getIntrinsicTagSymbol(name.Parent)
+				if symbol == c.unknownSymbol {
+					return nil
+				}
+				return symbol
+			}
+			result := c.resolveEntityName(
+				name,
+				meaning,
+				true, /*ignoreErrors*/
+				true, /*dontResolveAlias*/
+				ast.GetHostSignatureFromJSDoc(name))
+			if result == nil && isJSDoc != nil {
+				container := ast.FindAncestor(name, core.Or(ast.IsClassLike, ast.IsInterfaceDeclaration))
+				if container != nil {
+					return c.resolveJSDocMemberName(name, true /*ignoreErrors*/, c.getSymbolOfDeclaration(container))
+				}
+			}
+			if result != nil && isJSDoc != nil {
+				container := ast.GetJSDocHost(name)
+				if container != nil && ast.IsEnumMember(container) && container == result.ValueDeclaration {
+					resolved := c.resolveEntityName(
+						name,
+						meaning,
+						true, /*ignoreErrors*/
+						true, /*dontResolveAlias*/
+						ast.GetSourceFileOfNode(container).AsNode())
+					if resolved != nil {
+						return resolved
+					}
+					return result
+				}
+			}
+			return result
+		} else if ast.IsPrivateIdentifier(name) {
+			return c.getSymbolForPrivateIdentifierExpression(name)
+		} else if name.Kind == ast.KindPropertyAccessExpression || name.Kind == ast.KindQualifiedName {
+			links := c.typeNodeLinks.get(name)
+			if links.resolvedSymbol != nil {
+				return links.resolvedSymbol
+			}
+
+			if name.Kind == ast.KindPropertyAccessExpression {
+				c.checkPropertyAccessExpression(name, CheckModeNormal, false /*writeOnly*/)
+				if links.resolvedSymbol == nil {
+					links.resolvedSymbol = c.getApplicableIndexSymbol(
+						c.checkExpressionCached(name.Expression()),
+						c.getLiteralTypeFromPropertyName(name.Name()),
+					)
+				}
+			} else {
+				c.checkQualifiedName(name, CheckModeNormal)
+			}
+
+			if links.resolvedSymbol == nil && isJSDoc != nil && ast.IsQualifiedName(name) {
+				return c.resolveJSDocMemberName(name, false /*ignoreErrors*/, nil /*container*/)
+			}
+
+			return links.resolvedSymbol
+		} else if ast.IsJSDocNameReference(name) {
+			return c.resolveJSDocMemberName(name, false /*ignoreErrors*/, nil /*container*/)
+		}
+	} else if ast.IsEntityName(name) && isTypeReferenceIdentifier(name) {
+		meaning := core.IfElse(name.Parent.Kind == ast.KindTypeReference, ast.SymbolFlagsType, ast.SymbolFlagsNamespace)
+		symbol := c.resolveEntityName(name, meaning, false /*ignoreErrors*/, true /*dontResolveAlias*/, nil /*location*/)
+		if symbol != nil && symbol != c.unknownSymbol {
+			return symbol
+		}
+		return c.getUnresolvedSymbolForEntityName(name)
+	}
+
+	if name.Parent.Kind == ast.KindTypePredicate {
+		return c.resolveEntityName(
+			name,
+			ast.SymbolFlagsFunctionScopedVariable, /*meaning*/
+			false,                                 /*ignoreErrors*/
+			false,                                 /*dontResolveAlias*/
+			nil,                                   /*location*/
+		)
+	}
 	return nil
 }
 
@@ -15891,4 +16051,51 @@ func (c *Checker) getThisTypeArgument(t *Type) *Type {
 		return c.getTypeArguments(t)[0]
 	}
 	return nil
+}
+
+// Recursively resolve entity names and jsdoc instance references:
+// 1. K#m as K.prototype.m for a class (or other value) K
+// 2. K.m as K.prototype.m
+// 3. I.m as I.m for a type I, or any other I.m that fails to resolve in (1) or (2)
+//
+// For unqualified names, a container K may be provided as a second argument.
+func (c *Checker) resolveJSDocMemberName(name *ast.Node, ignoreErrors bool, container *ast.Symbol) *ast.Symbol {
+	// !!! JSDoc
+	return nil
+}
+
+func (c *Checker) getApplicableIndexSymbol(t *Type, keyType *Type) *ast.Symbol {
+	// !!!
+	return nil
+}
+
+func (c *Checker) getUnresolvedSymbolForEntityName(name *ast.Node) *ast.Symbol {
+	identifier := core.IfElse(
+		name.Kind == ast.KindQualifiedName,
+		name.AsQualifiedName().Right,
+		core.IfElse(name.Kind == ast.KindPropertyAccessExpression, name.Name(), name))
+	text := identifier.Text()
+	if text != "" {
+		var parentSymbol *ast.Symbol
+		if name.Kind == ast.KindQualifiedName {
+			parentSymbol = c.getUnresolvedSymbolForEntityName(name.AsQualifiedName().Left)
+		} else if name.Kind == ast.KindPropertyAccessExpression {
+			parentSymbol = c.getUnresolvedSymbolForEntityName(name.Expression())
+		}
+
+		path := text
+		if parentSymbol != nil {
+			path = getSymbolPath(parentSymbol) + "." + text
+		}
+
+		result := c.unresolvedSymbols[path]
+		if result == nil {
+			result = c.newSymbolEx(ast.SymbolFlagsTypeAlias, text, ast.CheckFlagsUnresolved)
+			c.unresolvedSymbols[path] = result
+			result.Parent = parentSymbol
+			c.typeAliasLinks.get(result).declaredType = c.unresolvedType
+		}
+		return result
+	}
+	return c.unknownSymbol
 }

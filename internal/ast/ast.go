@@ -5074,6 +5074,10 @@ func (node *JSDocAugmentsTag) ForEachChild(v Visitor) bool {
 	return visit(v, node.TagName) || visit(v, node.ClassName) || visitNodeList(v, node.Comment)
 }
 
+func IsJSDocAugmentsTag(node *Node) bool {
+	return node.Kind == KindJSDocAugmentsTag
+}
+
 // JSDocSatisfiesTag
 type JSDocSatisfiesTag struct {
 	JSDocTagBase
@@ -5249,6 +5253,10 @@ func (node *JSDocNameReference) ForEachChild(v Visitor) bool {
 }
 
 func (node *JSDocNameReference) Name() *EntityName { return node.name }
+
+func IsJSDocNameReference(node *Node) bool {
+	return node.Kind == KindJSDocNameReference
+}
 
 // PatternAmbientModule
 

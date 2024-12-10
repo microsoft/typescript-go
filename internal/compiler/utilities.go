@@ -3424,3 +3424,39 @@ func getContainingObjectLiteral(f *ast.SignatureDeclaration) *ast.Node {
 	}
 	return nil
 }
+
+func isImportTypeQualifierPart(node *ast.Node) *ast.Node {
+	parent := node.Parent
+	for ast.IsQualifiedName(parent) {
+		node = parent
+		parent = parent.Parent
+	}
+
+	if parent != nil && parent.Kind == ast.KindImportType && parent.AsImportTypeNode().Qualifier == node {
+		return parent
+	}
+
+	return nil
+}
+
+func isRightSideOfQualifiedNameOrPropertyAccessOrJSDocMemberName(node *ast.Node) bool {
+	return ast.IsQualifiedName(node.Parent) && node.Parent.AsQualifiedName().Right == node ||
+		ast.IsPropertyAccessExpression(node.Parent) && node.Parent.Name() == node ||
+		// ast.IsJSDocMemberName(node.Parent) && node.Parent.ASJSDocMemberName().Right == node
+		false // !!! TODO: JSDocMemberName will remain or become something else?
+}
+
+func isInNameOfExpressionWithTypeArguments(node *ast.Node) bool {
+	for node.Parent.Kind == ast.KindPropertyAccessExpression {
+		node = node.Parent
+	}
+
+	return node.Parent.Kind == ast.KindExpressionWithTypeArguments
+}
+
+func getSymbolPath(symbol *ast.Symbol) string {
+	if symbol.Parent != nil {
+		return getSymbolPath(symbol.Parent) + "." + symbol.Name
+	}
+	return symbol.Name
+}
