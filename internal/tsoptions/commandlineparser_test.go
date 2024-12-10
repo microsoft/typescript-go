@@ -19,7 +19,7 @@ func TestCommandLineParseResult(t *testing.T) {
 	t.Parallel()
 	repo.SkipIfNoTypeScriptSubmodule(t)
 
-	var parseCommandLineSubSecnarios = []*subScenarioInput{
+	var parseCommandLineSubScenarios = []*subScenarioInput{
 		// --lib es6 0.ts
 		{"Parse single option of library flag", []string{"--lib", "es6", "0.ts"}},
 		{"Handles may only be used with --build flags", []string{"--build", "--clean", "--dry", "--force", "--verbose"}},
@@ -75,7 +75,7 @@ func TestCommandLineParseResult(t *testing.T) {
 		// assertParseResult("errors on invalid excludeFiles", ["--excludeFiles", "**/../*", "0.ts"]);
 	}
 
-	for _, testCase := range parseCommandLineSubSecnarios {
+	for _, testCase := range parseCommandLineSubScenarios {
 		testCase.createSubScenario().assertParseResult(t)
 	}
 }
@@ -109,34 +109,31 @@ func TestParseCommandLineVerifyNull(t *testing.T) {
 	}
 
 	for _, verifyNullCase := range verifyNullSubScenarios {
-		t.Run(verifyNullCase.subScenario, func(t *testing.T) {
-			t.Parallel()
+		createSubScenario(
+			verifyNullCase.subScenario+" allows setting it to null",
+			[]string{"--" + verifyNullCase.optionName, "null", "0.ts"},
+			verifyNullCase.workerDiagnostic,
+		).assertParseResult(t)
+
+		if verifyNullCase.nonNullValue != "" {
 			createSubScenario(
-				verifyNullCase.subScenario+" allows setting it to null",
-				[]string{"--" + verifyNullCase.optionName, "null", "0.ts"},
+				verifyNullCase.subScenario+" errors if non null value is passed",
+				[]string{"--" + verifyNullCase.optionName, verifyNullCase.nonNullValue, "0.ts"},
 				verifyNullCase.workerDiagnostic,
 			).assertParseResult(t)
+		}
 
-			if verifyNullCase.nonNullValue != "" {
-				createSubScenario(
-					verifyNullCase.subScenario+" errors if non null value is passed",
-					[]string{"--" + verifyNullCase.optionName, verifyNullCase.nonNullValue, "0.ts"},
-					verifyNullCase.workerDiagnostic,
-				).assertParseResult(t)
-			}
+		createSubScenario(
+			verifyNullCase.subScenario+" errors if its followed by another option",
+			[]string{"0.ts", "--strictNullChecks", "--" + verifyNullCase.optionName},
+			verifyNullCase.workerDiagnostic,
+		).assertParseResult(t)
 
-			createSubScenario(
-				verifyNullCase.subScenario+" errors if its followed by another option",
-				[]string{"0.ts", "--strictNullChecks", "--" + verifyNullCase.optionName},
-				verifyNullCase.workerDiagnostic,
-			).assertParseResult(t)
-
-			createSubScenario(
-				verifyNullCase.subScenario+" errors if its last option",
-				[]string{"0.ts", "--" + verifyNullCase.optionName},
-				verifyNullCase.workerDiagnostic,
-			).assertParseResult(t)
-		})
+		createSubScenario(
+			verifyNullCase.subScenario+" errors if its last option",
+			[]string{"0.ts", "--" + verifyNullCase.optionName},
+			verifyNullCase.workerDiagnostic,
+		).assertParseResult(t)
 	}
 }
 
