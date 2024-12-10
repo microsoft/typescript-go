@@ -174,7 +174,7 @@ func (p *CommandLineParser) parseResponseFile(fileName string) {
 		for pos < textLength && text[pos] < ' ' {
 			pos++
 		}
-		if pos < textLength {
+		if pos >= textLength {
 			break
 		}
 		if text[pos] == '"' {
@@ -187,11 +187,7 @@ func (p *CommandLineParser) parseResponseFile(fileName string) {
 				pos++
 				start = pos
 			} else {
-				p.errors = append(p.errors, ast.NewDiagnostic(
-					nil,
-					p.errorLoc,
-					diagnostics.Unterminated_quoted_string_in_response_file_0,
-					fileName))
+				p.errors = append(p.errors, ast.NewCompilerDiagnostic(diagnostics.Unterminated_quoted_string_in_response_file_0, fileName))
 			}
 		} else {
 			for text[pos] > ' ' {
@@ -213,15 +209,11 @@ func incrementStringByRune(text string, argSoFar []rune) (rest string, r rune, c
 func tryReadFile(fileName string, readFile func(string) (string, bool), errors []*ast.Diagnostic) (string, []*ast.Diagnostic) {
 	text, e := readFile(fileName)
 
-	if !e {
-		// no error message from the standard error, so the error with reason won't be the same
-		// errors = append(errors, ast.NewDiagnostic(nil, core.NewTextRange(-1,-1), diagnostics.Cannot_read_file_0_Colon_1, *e));
-		errors = append(errors, ast.NewDiagnostic(nil, core.NewTextRange(-1, -1), diagnostics.Cannot_read_file_0, fileName))
-		return "", errors
-	}
-
-	if text == "" {
-		errors = append(errors, ast.NewDiagnostic(nil, core.NewTextRange(-1, -1), diagnostics.Cannot_read_file_0, fileName))
+	if !e || text == "" {
+		// !!! Divergence: the returned error will not give a useful message
+		// errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.Cannot_read_file_0_Colon_1, *e));
+		text = ""
+		errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.Cannot_read_file_0, fileName))
 	}
 	return text, errors
 }
@@ -245,11 +237,11 @@ func (p *CommandLineParser) parseOptionValue(
 					p.options[opt.Name] = true
 					i++
 				}
-				p.errors = append(p.errors, ast.NewDiagnostic(nil, p.errorLoc, diagnostics.Option_0_can_only_be_specified_in_tsconfig_json_file_or_set_to_false_or_null_on_command_line, opt.Name))
+				p.errors = append(p.errors, ast.NewCompilerDiagnostic(diagnostics.Option_0_can_only_be_specified_in_tsconfig_json_file_or_set_to_false_or_null_on_command_line, opt.Name))
 			}
 		} else {
-			p.errors = append(p.errors, ast.NewDiagnostic(nil, p.errorLoc, diagnostics.Option_0_can_only_be_specified_in_tsconfig_json_file_or_set_to_null_on_command_line, opt.Name))
-			if len(optValue) != 0 && !strings.HasPrefix(optValue, "=") {
+			p.errors = append(p.errors, ast.NewCompilerDiagnostic(diagnostics.Option_0_can_only_be_specified_in_tsconfig_json_file_or_set_to_null_on_command_line, opt.Name))
+			if len(optValue) != 0 && !strings.HasPrefix(optValue, "-") {
 				i++
 			}
 		}
@@ -257,7 +249,7 @@ func (p *CommandLineParser) parseOptionValue(
 		// Check to see if no argument was provided (e.g. "--locale" is the last command-line argument).
 		if i >= len(args) {
 			if opt.Kind != "boolean" {
-				p.errors = append(p.errors, ast.NewDiagnostic(nil, p.errorLoc, p.workerDiagnostics.OptionTypeMismatchDiagnostic, opt.Name, getCompilerOptionValueTypeString(opt)))
+				p.errors = append(p.errors, ast.NewCompilerDiagnostic(p.workerDiagnostics.OptionTypeMismatchDiagnostic, opt.Name, getCompilerOptionValueTypeString(opt)))
 				if opt.Kind == "list" {
 					p.options[opt.Name] = []string{}
 				}
@@ -284,7 +276,7 @@ func (p *CommandLineParser) parseOptionValue(
 				} else {
 					p.options[opt.Name] = true
 				}
-				// do not consume argument if it is not "true" or "false"
+				// try to consume next argument as value for boolean flag; do not consume argument if it is not "true" or "false"
 				if optValue == "false" || optValue == "true" {
 					i++
 				}
@@ -380,6 +372,6 @@ func (parser *CommandLineParser) convertJsonOptionOfEnumType(
 	if (val != nil) && (val != "" || b) {
 		return val
 	}
-	parser.errors = append(parser.errors, createDiagnosticForInvalidEnumType(opt, parser.errorLoc))
+	parser.errors = append(parser.errors, createDiagnosticForInvalidEnumType(opt))
 	return ""
 }

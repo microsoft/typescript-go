@@ -10,7 +10,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 )
 
-func createDiagnosticForInvalidEnumType(opt *CommandLineOption, loc core.TextRange) *ast.Diagnostic {
+func createDiagnosticForInvalidEnumType(opt *CommandLineOption) *ast.Diagnostic {
 	namesOfType := slices.Collect(opt.EnumMap().Keys())
 	stringNames := ""
 	if opt.DeprecatedKeys() != nil {
@@ -19,7 +19,7 @@ func createDiagnosticForInvalidEnumType(opt *CommandLineOption, loc core.TextRan
 		stringNames = formatEnumTypeKeys(namesOfType)
 	}
 	optName := "--" + opt.Name
-	return ast.NewDiagnostic(nil, loc, diagnostics.Argument_for_0_option_must_be_Colon_1, optName, stringNames)
+	return ast.NewCompilerDiagnostic(diagnostics.Argument_for_0_option_must_be_Colon_1, optName, stringNames)
 }
 
 func formatEnumTypeKeys(keys []string) string {
