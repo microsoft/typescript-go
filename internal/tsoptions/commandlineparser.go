@@ -175,7 +175,7 @@ func (p *CommandLineParser) parseResponseFile(fileName string) {
 		for pos < textLength && text[pos] < ' ' {
 			pos++
 		}
-		if pos < textLength {
+		if pos >= textLength {
 			break
 		}
 		if text[pos] == '"' {
