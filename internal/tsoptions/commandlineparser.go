@@ -3,6 +3,7 @@ package tsoptions
 import (
 	"strconv"
 	"strings"
+	"sync"
 	"unicode/utf8"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -27,6 +28,7 @@ type AlternateModeDiagnostics struct {
 type ParseCommandLineWorkerDiagnostics struct {
 	didYouMean                   DidYouMeanOptionsDiagnostics
 	optionsNameMap               *NameMap
+	optionsNameMapOnce           sync.Once
 	OptionTypeMismatchDiagnostic *diagnostics.Message
 }
 
@@ -45,23 +47,20 @@ func (p *CommandLineParser) UnknownDidYouMeanDiagnostic() *diagnostics.Message {
 	return p.workerDiagnostics.didYouMean.UnknownDidYouMeanDiagnostic
 }
 func (p *CommandLineParser) GetOptionsNameMap() *NameMap {
-	if p.workerDiagnostics.optionsNameMap != nil {
-		return p.workerDiagnostics.optionsNameMap
-	}
-
-	optionsNames := map[string]*CommandLineOption{}
-	shortOptionNames := map[string]string{}
-	for _, option := range p.workerDiagnostics.didYouMean.OptionDeclarations {
-		optionsNames[strings.ToLower(option.Name)] = &option
-		if option.shortName != "" {
-			shortOptionNames[option.shortName] = option.Name
+	p.workerDiagnostics.optionsNameMapOnce.Do(func() {
+		optionsNames := map[string]*CommandLineOption{}
+		shortOptionNames := map[string]string{}
+		for _, option := range p.workerDiagnostics.didYouMean.OptionDeclarations {
+			optionsNames[strings.ToLower(option.Name)] = &option
+			if option.shortName != "" {
+				shortOptionNames[option.shortName] = option.Name
+			}
 		}
-	}
-	p.workerDiagnostics.optionsNameMap = &NameMap{
-		optionsNames:     optionsNames,
-		shortOptionNames: shortOptionNames,
-	}
-
+		p.workerDiagnostics.optionsNameMap = &NameMap{
+			optionsNames:     optionsNames,
+			shortOptionNames: shortOptionNames,
+		}
+	})
 	return p.workerDiagnostics.optionsNameMap
 }
 
