@@ -68,6 +68,8 @@ jobs:
       - run: npm ci
 
       - run: go install gotest.tools/gotestsum@latest
+        # Installing gotestsum is super slow on Windows.
+        if: ${{ matrix.os != 'windows-latest' }}
 
       - run: npx hereby test:all
         if: ${{ !matrix.race }}
