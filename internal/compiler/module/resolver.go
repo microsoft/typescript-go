@@ -199,6 +199,11 @@ func (r *Resolver) ResolveModuleName(moduleName string, containingFile string, r
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
+	result := r.resolveModuleName(moduleName, containingFile, resolutionMode, redirectedReference)
+	return result.clone()
+}
+
+func (r *Resolver) resolveModuleName(moduleName string, containingFile string, resolutionMode core.ResolutionMode, redirectedReference *ResolvedProjectReference) *ResolvedModuleWithFailedLookupLocations {
 	traceEnabled := r.traceEnabled()
 
 	compilerOptions := r.compilerOptions
@@ -261,7 +266,7 @@ func (r *Resolver) ResolveModuleName(moduleName string, containingFile string, r
 		}
 	}
 
-	return result.clone()
+	return result
 }
 
 func (r *Resolver) traceTypeReferenceDirectiveResult(typeReferenceDirectiveName string, result *ResolvedTypeReferenceDirectiveWithFailedLookupLocations) {
