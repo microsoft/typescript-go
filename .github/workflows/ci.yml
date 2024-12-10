@@ -66,44 +66,17 @@ jobs:
           cache-name: test
 
       - run: npm ci
+
       - run: go install gotest.tools/gotestsum@latest
 
-      - run: npx hereby test
+      - run: npx hereby test:all
         if: ${{ !matrix.race }}
 
-      - run: npx hereby test --race
+      - run: npx hereby test:all --race
         if: ${{ matrix.race }}
 
       - run: git add .
       - run: git diff --staged --exit-code --stat
-
-  test-benchmarks:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-      - uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4.1.0
-      - uses: ./.github/actions/setup-go
-        with:
-          cache-name: test-benchmarks
-
-      - run: npm ci
-      - run: go install gotest.tools/gotestsum@latest
-
-      - run: npx hereby test:benchmarks --race
-
-  test-tools:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-      - uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4.1.0
-      - uses: ./.github/actions/setup-go
-        with:
-          cache-name: test-tools
-
-      - run: npm ci
-      - run: go install gotest.tools/gotestsum@latest
-
-      - run: npx hereby test:tools --race
 
   lint:
     runs-on: ubuntu-latest
