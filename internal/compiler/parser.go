@@ -1341,8 +1341,7 @@ func (p *Parser) parseIdentifierOrPatternWithDiagnostic(privateIdentifierDiagnos
 	if p.token == ast.KindOpenBraceToken {
 		return p.parseObjectBindingPattern()
 	}
-	id := p.parseBindingIdentifierWithDiagnostic(privateIdentifierDiagnosticMessage)
-	return id
+	return p.parseBindingIdentifierWithDiagnostic(privateIdentifierDiagnosticMessage)
 }
 
 func (p *Parser) parseArrayBindingPattern() *ast.Node {
