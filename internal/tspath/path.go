@@ -328,13 +328,28 @@ func GetNormalizedAbsolutePath(fileName string, currentDirectory string) string 
 	return getPathFromPathComponents(getNormalizedPathComponents(fileName, currentDirectory))
 }
 
-// check path for these segments:
-//
-//	'', '.'. '..'
-var relativePathSegmentRegExp = regexp.MustCompile(`//|(?:^|/)\.\.?(?:$|/)`)
-
 func hasRelativePathSegment(p string) bool {
-	return relativePathSegmentRegExp.MatchString(p)
+	if p == "." || p == ".." {
+		return true
+	}
+
+	if strings.Contains(p, "//") {
+		return true
+	}
+
+	if strings.Contains(p, "/./") || strings.Contains(p, "/../") {
+		return true
+	}
+
+	if strings.HasPrefix(p, "./") || strings.HasPrefix(p, "../") {
+		return true
+	}
+
+	if strings.HasSuffix(p, "/.") || strings.HasSuffix(p, "/..") {
+		return true
+	}
+
+	return false
 }
 
 func NormalizePath(path string) string {
