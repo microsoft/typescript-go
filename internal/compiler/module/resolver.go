@@ -193,7 +193,7 @@ func (r *Resolver) ResolveTypeReferenceDirective(typeReferenceDirectiveName stri
 func (r *Resolver) ResolveModuleName(moduleName string, containingFile string, resolutionMode core.ResolutionMode, redirectedReference *ResolvedProjectReference) *ResolvedModuleWithFailedLookupLocations {
 	r.mu.Lock()
 	defer r.mu.Unlock()
-	
+
 	traceEnabled := r.traceEnabled()
 
 	compilerOptions := r.compilerOptions
@@ -256,7 +256,8 @@ func (r *Resolver) ResolveModuleName(moduleName string, containingFile string, r
 		}
 	}
 
-	return result
+	cloned := *result
+	return &cloned
 }
 
 func (r *Resolver) traceTypeReferenceDirectiveResult(typeReferenceDirectiveName string, result *ResolvedTypeReferenceDirectiveWithFailedLookupLocations) {
@@ -661,6 +662,10 @@ func (r *resolutionState) createResolvedModuleWithFailedLookupLocations(resolved
 		result.FailedLookupLocations = slices.Concat(result.FailedLookupLocations, r.failedLookupLocations)
 		result.AffectingLocations = slices.Concat(result.AffectingLocations, r.affectingLocations)
 		result.ResolutionDiagnostics = slices.Concat(result.ResolutionDiagnostics, r.resultFromCache.ResolutionDiagnostics)
+		if result == r.resultFromCache {
+			cloned := *result
+			result = &cloned
+		}
 		return result
 	}
 	var resolvedModule ResolvedModule
