@@ -16,11 +16,6 @@ type Path string
 const directorySeparator = '/'
 const urlSchemeSeparator = "://"
 
-// check path for these segments:
-//
-//	'', '.'. '..'
-var relativePathSegmentRegExp = regexp.MustCompile(`//|(?:^|/)\.\.?(?:$|/)`)
-
 // We convert the file names to lower case as key for file name on case insensitive file system
 // While doing so we need to handle special characters (eg \u0130) to ensure that we dont convert
 // it to lower case, fileName with its lowercase form can exist along side it.
@@ -333,16 +328,25 @@ func GetNormalizedAbsolutePath(fileName string, currentDirectory string) string 
 	return getPathFromPathComponents(getNormalizedPathComponents(fileName, currentDirectory))
 }
 
+// check path for these segments:
+//
+//	'', '.'. '..'
+var relativePathSegmentRegExp = regexp.MustCompile(`//|(?:^|/)\.\.?(?:$|/)`)
+
+func hasRelativePathSegment(p string) bool {
+	return relativePathSegmentRegExp.MatchString(p)
+}
+
 func NormalizePath(path string) string {
 	path = NormalizeSlashes(path)
 	// Most paths don't require normalization
-	if !relativePathSegmentRegExp.MatchString(path) {
+	if !hasRelativePathSegment(path) {
 		return path
 	}
 	// Some paths only require cleanup of `/./` or leading `./`
 	simplified := strings.ReplaceAll(path, "/./", "/")
 	simplified = strings.TrimPrefix(simplified, "./")
-	if simplified != path && !relativePathSegmentRegExp.MatchString(simplified) {
+	if simplified != path && !hasRelativePathSegment(simplified) {
 		path = simplified
 		return path
 	}
@@ -622,7 +626,7 @@ func ComparePaths(a string, b string, options ComparePathsOptions) int {
 	//       the non-root portion of the path
 	aRest := a[len(aRoot):]
 	bRest := b[len(bRoot):]
-	if !relativePathSegmentRegExp.MatchString(aRest) && !relativePathSegmentRegExp.MatchString(bRest) {
+	if !hasRelativePathSegment(aRest) && !hasRelativePathSegment(bRest) {
 		return options.GetComparer()(aRest, bRest)
 	}
 
