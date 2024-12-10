@@ -4,63 +4,6 @@ import (
 	"fmt"
 )
 
-type Associativity int
-
-const (
-	AssociativityLeft Associativity = iota
-	AssociativityRight
-)
-
-// Gets whether an expression is left- or right-associative
-func GetExpressionAssociativity(expression *Expression) Associativity {
-	operator := getOperator(expression)
-	hasArguments := expression.Kind == KindNewExpression && expression.AsNewExpression().Arguments != nil
-	return GetOperatorAssociativity(expression.Kind, operator, hasArguments)
-}
-
-// Gets whether an operator is left- or right-associative
-func GetOperatorAssociativity(nodeKind Kind, operatorKind Kind, hasArguments bool) Associativity {
-	switch nodeKind {
-	case KindNewExpression:
-		if hasArguments {
-			return AssociativityLeft
-		}
-		return AssociativityRight
-
-	case KindPrefixUnaryExpression,
-		KindTypeOfExpression,
-		KindVoidExpression,
-		KindDeleteExpression,
-		KindAwaitExpression,
-		KindConditionalExpression,
-		KindYieldExpression:
-		return AssociativityRight
-
-	case KindBinaryExpression:
-		switch operatorKind {
-		case KindAsteriskAsteriskToken,
-			KindEqualsToken,
-			KindPlusEqualsToken,
-			KindMinusEqualsToken,
-			KindAsteriskAsteriskEqualsToken,
-			KindAsteriskEqualsToken,
-			KindSlashEqualsToken,
-			KindPercentEqualsToken,
-			KindLessThanLessThanEqualsToken,
-			KindGreaterThanGreaterThanEqualsToken,
-			KindGreaterThanGreaterThanGreaterThanEqualsToken,
-			KindAmpersandEqualsToken,
-			KindCaretEqualsToken,
-			KindBarEqualsToken,
-			KindBarBarEqualsToken,
-			KindAmpersandAmpersandEqualsToken,
-			KindQuestionQuestionEqualsToken:
-			return AssociativityRight
-		}
-	}
-	return AssociativityLeft
-}
-
 type OperatorPrecedence int
 
 const (
