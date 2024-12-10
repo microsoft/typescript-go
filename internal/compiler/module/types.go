@@ -27,6 +27,7 @@ type ParsedCommandLine struct {
 	FileNames     []string
 	Raw           any
 	compileOnSave *bool
+	Errors        []*ast.Diagnostic
 }
 
 type ResolvedProjectReference struct {

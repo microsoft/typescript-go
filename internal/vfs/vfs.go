@@ -287,6 +287,28 @@ func (v *vfs) GetDirectories(path string) []string {
 	return dirs
 }
 
+func (v *vfs) GetFiles(path string) []string {
+	fsys, _, rest := v.rootAndPath(path)
+	if fsys == nil {
+		return nil
+	}
+	entries, err := fs.ReadDir(fsys, rest)
+	if err != nil {
+		return nil
+	}
+	// TODO: should this really exist? ReadDir with manual filtering seems like a better idea.
+	var dirs []string
+	var files []string
+	for _, entry := range entries {
+		if entry.IsDir() {
+			dirs = append(dirs, entry.Name())
+		} else {
+			files = append(files, entry.Name())
+		}
+	}
+	return files
+}
+
 func (v *vfs) WalkDir(root string, walkFn WalkDirFunc) error {
 	fsys, rootName, rest := v.rootAndPath(root)
 	if fsys == nil {

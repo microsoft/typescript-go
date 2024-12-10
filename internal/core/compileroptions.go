@@ -44,6 +44,7 @@ type CompilerOptions struct {
 	AllowUnusedLabels                  Tristate             `json:"allowUnusedLabels"`
 	CheckJs                            Tristate             `json:"checkJs"`
 	CustomConditions                   []string             `json:"customConditions"`
+	DeclarationDir                     string               `json:"declarationDir"`
 	ESModuleInterop                    Tristate             `json:"esModuleInterop"`
 	ExactOptionalPropertyTypes         Tristate             `json:"exactOptionalPropertyTypes"`
 	ExperimentalDecorators             Tristate             `json:"experimentalDecorators"`
@@ -81,6 +82,7 @@ type CompilerOptions struct {
 	MaxNodeModuleJsDepth               Tristate             `json:"maxNodeModuleJsDepth"`
 	SkipLibCheck                       Tristate             `json:"skipLibCheck"`
 	NoEmit                             Tristate             `json:"noEmit"`
+	OutDir                             string               `json:"outDir"`
 
 	// Internal fields
 	ConfigFilePath  string   `json:"configFilePath"`

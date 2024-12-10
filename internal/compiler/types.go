@@ -1143,3 +1143,14 @@ var LanguageFeatureMinimumTarget = LanguageFeatureMinimumTargetMap{
 	ClassAndClassElementDecorators:    core.ScriptTargetESNext,
 	RegularExpressionFlagsUnicodeSets: core.ScriptTargetESNext,
 }
+
+type ProjectReference struct {
+	/** A normalized path on disk */
+	path string
+	/** The path as the user originally wrote it */
+	originalPath *string
+	/** @deprecated */
+	prepend bool
+	/** True if it is intended that this reference form a circularity */
+	circular bool
+}

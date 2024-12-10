@@ -1,3 +1,5 @@
+github.com/bmatcuk/doublestar/v4 v4.7.1 h1:fdDeAqgT47acgwd9bd9HxJRDmc9UAmPpc+2m0CXv75Q=
+github.com/bmatcuk/doublestar/v4 v4.7.1/go.mod h1:xBQ8jztBU6kakFMg+8WGxn0c6z1fTSPVIjEY1Wr7jzc=
 github.com/go-json-experiment/json v0.0.0-20241127185351-9802db03f36a h1:W/o3DbExdFptoPsZlbGsFnm0f8xDce+C0+Y0u54mJo4=
 github.com/go-json-experiment/json v0.0.0-20241127185351-9802db03f36a/go.mod h1:BWmvoE1Xia34f3l/ibJweyhrT+aROb/FQ6d+37F0e2s=
 github.com/google/go-cmp v0.6.0 h1:ofyhxvXcZhMsU5ulbFiLKl/XBFqE1GSq7atu8tAmTRI=
