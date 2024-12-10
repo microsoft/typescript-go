@@ -2,7 +2,6 @@ package compiler
 
 import (
 	"path"
-	"sync"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/compiler/diagnostics"
@@ -63,23 +62,12 @@ type Parser struct {
 	statementHasAwaitIdentifier   bool
 	fileHasPossibleAwaitStatement bool
 
-	identifiers           core.Set[string]
-	notParenthesizedArrow core.Set[int]
-	nodeSlicePool         core.Pool[*ast.Node]
-	possibleAwaitCache    map[*ast.Node]bool
-	possibleAwaitCacheMu  sync.Mutex
+	identifiers            core.Set[string]
+	notParenthesizedArrow  core.Set[int]
+	nodeSlicePool          core.Pool[*ast.Node]
+	possibleAwaitStatement core.Set[*ast.Node]
 }
 
-func (p *Parser) setPossibleAwait(node *ast.Node) {
-	p.possibleAwaitCacheMu.Lock()
-	defer p.possibleAwaitCacheMu.Unlock()
-	p.possibleAwaitCache[node] = true
-}
-func (p *Parser) getPossibleAwait(node *ast.Node) bool {
-	p.possibleAwaitCacheMu.Lock()
-	defer p.possibleAwaitCacheMu.Unlock()
-	return p.possibleAwaitCache[node]
-}
 func NewParser() *Parser {
 	p := &Parser{}
 	p.scanner = scanner.NewScanner()
@@ -155,7 +143,6 @@ func (p *Parser) initializeState(fileName string, sourceText string, languageVer
 	p.languageVersion = languageVersion
 	p.scriptKind = ensureScriptKind(fileName, scriptKind)
 	p.languageVariant = getLanguageVariant(p.scriptKind)
-	p.possibleAwaitCache = make(map[*ast.Node]bool)
 	switch p.scriptKind {
 	case core.ScriptKindJS, core.ScriptKindJSX:
 		p.contextFlags = ast.NodeFlagsJavaScriptFile
@@ -276,7 +263,7 @@ func (p *Parser) parseToplevelStatement() *ast.Node {
 	p.statementHasAwaitIdentifier = false
 	statement := p.parseStatement()
 	if p.statementHasAwaitIdentifier {
-		p.setPossibleAwait(statement)
+		p.possibleAwaitStatement.Add(statement)
 		p.fileHasPossibleAwaitStatement = true
 	}
 	return statement
@@ -374,7 +361,7 @@ func (p *Parser) reparseTopLevelAwait(sourceFile *ast.SourceFile) *ast.Node {
 }
 
 func (p *Parser) containsPossibleTopLevelAwait(node *ast.Node) bool {
-	return !(node.Flags&ast.NodeFlagsAwaitContext != 0) && p.getPossibleAwait(node)
+	return !(node.Flags&ast.NodeFlagsAwaitContext != 0) && p.possibleAwaitStatement.Has(node)
 }
 
 func (p *Parser) findNextStatementWithAwait(statements *ast.NodeList, start int) int {
