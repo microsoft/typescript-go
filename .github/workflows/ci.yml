@@ -68,7 +68,7 @@ jobs:
       - run: npm ci
 
       - run: go install gotest.tools/gotestsum@latest
-      
+
       - run: npx hereby test:all
         if: ${{ !matrix.race }}
 
