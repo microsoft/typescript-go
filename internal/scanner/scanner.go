@@ -707,7 +707,7 @@ func (s *Scanner) Scan() ast.Kind {
 					continue
 				}
 				s.errorAt(diagnostics.X_can_only_be_used_at_the_start_of_a_file, s.pos, 2)
-				s.pos += 2
+				s.pos++
 				s.token = ast.KindUnknown
 				break
 			}
