@@ -87,6 +87,10 @@ function unaliasKind(kind) {
             return "JSDocTag";
         case ts.SyntaxKind.LastJSDocTagNode:
             return "JSDocImportTag";
+        case ts.SyntaxKind.AssertClause:
+            return "ImportAttributes";
+        case ts.SyntaxKind.AssertEntry:
+            return "ImportAttribute";
         default:
             kind = ts.SyntaxKind[kind];
             if (kind === "FirstContextualKeyword") {
