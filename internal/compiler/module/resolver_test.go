@@ -246,6 +246,7 @@ var skip = []string{
 }
 
 type vfsModuleResolutionHost struct {
+	mu               sync.Mutex
 	fs               vfs.FS
 	currentDirectory string
 	traces           []string
@@ -291,6 +292,8 @@ func (v *vfsModuleResolutionHost) GetCurrentDirectory() string {
 
 // Trace implements ModuleResolutionHost.
 func (v *vfsModuleResolutionHost) Trace(msg string) {
+	v.mu.Lock()
+	defer v.mu.Unlock()
 	v.traces = append(v.traces, msg)
 }
 
@@ -358,29 +361,29 @@ func doCall(t *testing.T, resolver *module.Resolver, call functionCall, skipLoca
 			}
 		}
 
-		var locations module.WithFailedLookupLocations
+		var locations *module.LookupLocations
 		if call.call == "resolveModuleName" {
 			resolved := resolver.ResolveModuleName(call.args.Name, call.args.ContainingFile, core.ModuleKind(call.args.ResolutionMode), redirectedReference)
 			assert.Check(t, resolved != nil, "ResolveModuleName should not return nil")
-			locations = resolved.WithFailedLookupLocations
+			locations = resolver.GetLookupLocationsForResolvedModule(resolved)
 			if expectedResolvedModule, ok := call.returnValue["resolvedModule"].(map[string]any); ok {
 				assert.Check(t, resolved.IsResolved())
-				assert.Check(t, cmp.Equal(resolved.ResolvedModule.ResolvedFileName, expectedResolvedModule["resolvedFileName"].(string)))
-				assert.Check(t, cmp.Equal(resolved.ResolvedModule.Extension, expectedResolvedModule["extension"].(string)))
-				assert.Check(t, cmp.Equal(resolved.ResolvedModule.ResolvedUsingTsExtension, expectedResolvedModule["resolvedUsingTsExtension"].(bool)))
-				assert.Check(t, cmp.Equal(resolved.ResolvedModule.IsExternalLibraryImport, expectedResolvedModule["isExternalLibraryImport"].(bool)))
+				assert.Check(t, cmp.Equal(resolved.ResolvedFileName, expectedResolvedModule["resolvedFileName"].(string)))
+				assert.Check(t, cmp.Equal(resolved.Extension, expectedResolvedModule["extension"].(string)))
+				assert.Check(t, cmp.Equal(resolved.ResolvedUsingTsExtension, expectedResolvedModule["resolvedUsingTsExtension"].(bool)))
+				assert.Check(t, cmp.Equal(resolved.IsExternalLibraryImport, expectedResolvedModule["isExternalLibraryImport"].(bool)))
 			} else {
 				assert.Check(t, !resolved.IsResolved())
 			}
 		} else {
 			resolved := resolver.ResolveTypeReferenceDirective(call.args.Name, call.args.ContainingFile, core.ModuleKind(call.args.ResolutionMode), redirectedReference)
 			assert.Check(t, resolved != nil, "ResolveTypeReferenceDirective should not return nil")
-			locations = resolved.WithFailedLookupLocations
+			locations = resolver.GetLookupLocationsForResolvedTypeReferenceDirective(resolved)
 			if expectedResolvedTypeReferenceDirective, ok := call.returnValue["resolvedTypeReferenceDirective"].(map[string]any); ok {
 				assert.Check(t, resolved.IsResolved())
-				assert.Check(t, cmp.Equal(resolved.ResolvedTypeReferenceDirective.ResolvedFileName, expectedResolvedTypeReferenceDirective["resolvedFileName"].(string)))
-				assert.Check(t, cmp.Equal(resolved.ResolvedTypeReferenceDirective.Primary, expectedResolvedTypeReferenceDirective["primary"].(bool)))
-				assert.Check(t, cmp.Equal(resolved.ResolvedTypeReferenceDirective.IsExternalLibraryImport, expectedResolvedTypeReferenceDirective["isExternalLibraryImport"].(bool)))
+				assert.Check(t, cmp.Equal(resolved.ResolvedFileName, expectedResolvedTypeReferenceDirective["resolvedFileName"].(string)))
+				assert.Check(t, cmp.Equal(resolved.Primary, expectedResolvedTypeReferenceDirective["primary"].(bool)))
+				assert.Check(t, cmp.Equal(resolved.IsExternalLibraryImport, expectedResolvedTypeReferenceDirective["isExternalLibraryImport"].(bool)))
 			} else {
 				assert.Check(t, !resolved.IsResolved())
 			}
