@@ -78,9 +78,23 @@ jobs:
       - run: git diff --staged --exit-code --stat
 
   test-benchmarks:
-    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+        no-submodules:
+          - true
+          - false
+
+    name: test-benchmarks (${{ matrix.os }}${{ (matrix.no-submodules && ' without submodules') || '' }})
+
+    runs-on: ${{ matrix.os }}
+
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          submodules: ${{ !matrix.no-submodules }}
       - uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4.1.0
       - uses: ./.github/actions/setup-go
         with:
@@ -170,6 +184,8 @@ jobs:
     needs:
       - build
       - test
+      - test-benchmarks
+      - test-tools
       - lint
       - format
       - generate
