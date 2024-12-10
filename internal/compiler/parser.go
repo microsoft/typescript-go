@@ -70,8 +70,6 @@ type Parser struct {
 	possibleAwaitCacheMu  sync.Mutex
 }
 
-var ()
-
 func (p *Parser) setPossibleAwait(node *ast.Node) {
 	p.possibleAwaitCacheMu.Lock()
 	defer p.possibleAwaitCacheMu.Unlock()
