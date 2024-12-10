@@ -77,18 +77,11 @@ func NewDiagnosticForNode(node *ast.Node, message *diagnostics.Message, args ...
 	return ast.NewDiagnostic(file, loc, message, args...)
 }
 
-func NewDiagnosticForNodeFromMessageChain(node *ast.Node, messageChain *ast.MessageChain) *ast.Diagnostic {
-	var file *ast.SourceFile
-	var loc core.TextRange
-	if node != nil {
-		file = ast.GetSourceFileOfNode(node)
-		loc = getErrorRangeForNode(file, node)
+func NewDiagnosticChainForNode(chain *ast.Diagnostic, node *ast.Node, message *diagnostics.Message, args ...any) *ast.Diagnostic {
+	if chain != nil {
+		return ast.NewDiagnosticChain(chain, message, args...)
 	}
-	return ast.NewDiagnosticFromMessageChain(file, loc, messageChain)
-}
-
-func chainDiagnosticMessages(details *ast.MessageChain, message *diagnostics.Message, args ...any) *ast.MessageChain {
-	return ast.NewMessageChain(message, args...).AddMessageChain(details)
+	return NewDiagnosticForNode(node, message, args...)
 }
 
 type OperatorPrecedence int
@@ -625,14 +618,14 @@ func hasEffectiveReadonlyModifier(node *ast.Node) bool {
 }
 
 func getImmediatelyInvokedFunctionExpression(fn *ast.Node) *ast.Node {
-	if fn.Kind == ast.KindFunctionExpression || fn.Kind == ast.KindArrowFunction {
+	if ast.IsFunctionExpressionOrArrowFunction(fn) {
 		prev := fn
 		parent := fn.Parent
-		for parent.Kind == ast.KindParenthesizedExpression {
+		for ast.IsParenthesizedExpression(parent) {
 			prev = parent
 			parent = parent.Parent
 		}
-		if parent.Kind == ast.KindCallExpression && parent.AsCallExpression().Expression == prev {
+		if ast.IsCallExpression(parent) && parent.AsCallExpression().Expression == prev {
 			return parent
 		}
 	}
@@ -747,11 +740,11 @@ func isFunctionPropertyAssignment(node *ast.Node) bool {
 }
 
 func isBlockOrCatchScoped(declaration *ast.Node) bool {
-	return getCombinedNodeFlags(declaration)&ast.NodeFlagsBlockScoped != 0 || isCatchClauseVariableDeclarationOrBindingElement(declaration)
+	return ast.GetCombinedNodeFlags(declaration)&ast.NodeFlagsBlockScoped != 0 || isCatchClauseVariableDeclarationOrBindingElement(declaration)
 }
 
 func isCatchClauseVariableDeclarationOrBindingElement(declaration *ast.Node) bool {
-	node := getRootDeclaration(declaration)
+	node := ast.GetRootDeclaration(declaration)
 	return node.Kind == ast.KindVariableDeclaration && node.Parent.Kind == ast.KindCatchClause
 }
 
@@ -775,34 +768,6 @@ func setParentInChildren(node *ast.Node) {
 		setParentInChildren(child)
 		return false
 	})
-}
-
-func getCombinedFlags[T ~uint32](node *ast.Node, getFlags func(*ast.Node) T) T {
-	node = getRootDeclaration(node)
-	flags := getFlags(node)
-	if node.Kind == ast.KindVariableDeclaration {
-		node = node.Parent
-	}
-	if node != nil && node.Kind == ast.KindVariableDeclarationList {
-		flags |= getFlags(node)
-		node = node.Parent
-	}
-	if node != nil && node.Kind == ast.KindVariableStatement {
-		flags |= getFlags(node)
-	}
-	return flags
-}
-
-func getCombinedModifierFlags(node *ast.Node) ast.ModifierFlags {
-	return getCombinedFlags(node, (*ast.Node).ModifierFlags)
-}
-
-func getCombinedNodeFlags(node *ast.Node) ast.NodeFlags {
-	return getCombinedFlags(node, getNodeFlags)
-}
-
-func getNodeFlags(node *ast.Node) ast.NodeFlags {
-	return node.Flags
 }
 
 func isParameterPropertyDeclaration(node *ast.Node, parent *ast.Node) bool {
@@ -858,14 +823,7 @@ func isRequireCall(node *ast.Node, requireStringLiteralLikeArgument bool) bool {
  * If you are looking to test that a `Node` is a `ParameterDeclaration`, use `isParameter`.
  */
 func isPartOfParameterDeclaration(node *ast.Node) bool {
-	return getRootDeclaration(node).Kind == ast.KindParameter
-}
-
-func getRootDeclaration(node *ast.Node) *ast.Node {
-	for node.Kind == ast.KindBindingElement {
-		node = node.Parent.Parent
-	}
-	return node
+	return ast.GetRootDeclaration(node).Kind == ast.KindParameter
 }
 
 func isExternalOrCommonJsModule(file *ast.SourceFile) bool {
@@ -902,10 +860,6 @@ func isStaticPrivateIdentifierProperty(s *ast.Symbol) bool {
 
 func isPrivateIdentifierClassElementDeclaration(node *ast.Node) bool {
 	return (ast.IsPropertyDeclaration(node) || isMethodOrAccessor(node)) && ast.IsPrivateIdentifier(node.Name())
-}
-
-func isModifier(node *ast.Node) bool {
-	return isModifierKind(node.Kind)
 }
 
 func isMethodOrAccessor(node *ast.Node) bool {
@@ -1298,7 +1252,7 @@ func equalDiagnostics(d1, d2 *ast.Diagnostic) bool {
 		slices.EqualFunc(d1.RelatedInformation(), d2.RelatedInformation(), equalDiagnostics)
 }
 
-func equalMessageChain(c1, c2 *ast.MessageChain) bool {
+func equalMessageChain(c1, c2 *ast.Diagnostic) bool {
 	return c1.Code() == c2.Code() &&
 		c1.Message() == c2.Message() &&
 		slices.EqualFunc(c1.MessageChain(), c2.MessageChain(), equalMessageChain)
@@ -1336,7 +1290,7 @@ func CompareDiagnostics(d1, d2 *ast.Diagnostic) int {
 	return compareRelatedInfo(d1.RelatedInformation(), d2.RelatedInformation())
 }
 
-func compareMessageChainSize(c1, c2 []*ast.MessageChain) int {
+func compareMessageChainSize(c1, c2 []*ast.Diagnostic) int {
 	c := len(c2) - len(c1)
 	if c != 0 {
 		return c
@@ -1350,7 +1304,7 @@ func compareMessageChainSize(c1, c2 []*ast.MessageChain) int {
 	return 0
 }
 
-func compareMessageChainContent(c1, c2 []*ast.MessageChain) int {
+func compareMessageChainContent(c1, c2 []*ast.Diagnostic) int {
 	for i := range c1 {
 		c := strings.Compare(c1[i].Message(), c2[i].Message())
 		if c != 0 {
@@ -1387,12 +1341,22 @@ func getDiagnosticPath(d *ast.Diagnostic) string {
 	return ""
 }
 
-func isConstAssertion(location *ast.Node) bool {
-	switch location.Kind {
+func getAssertedTypeNode(node *ast.Node) *ast.Node {
+	switch node.Kind {
 	case ast.KindAsExpression:
-		return isConstTypeReference(location.AsAsExpression().Type)
+		return node.AsAsExpression().Type
+	case ast.KindSatisfiesExpression:
+		return node.AsSatisfiesExpression().Type
 	case ast.KindTypeAssertionExpression:
-		return isConstTypeReference(location.AsTypeAssertion().Type)
+		return node.AsTypeAssertion().Type
+	}
+	panic("Unhandled case in getAssertedTypeNode")
+}
+
+func isConstAssertion(node *ast.Node) bool {
+	switch node.Kind {
+	case ast.KindAsExpression, ast.KindTypeAssertionExpression:
+		return isConstTypeReference(getAssertedTypeNode(node))
 	}
 	return false
 }
@@ -2536,7 +2500,7 @@ func isEmptyArrayLiteral(expression *ast.Node) bool {
 }
 
 func declarationBelongsToPrivateAmbientMember(declaration *ast.Node) bool {
-	root := getRootDeclaration(declaration)
+	root := ast.GetRootDeclaration(declaration)
 	memberDeclaration := root
 	if root.Kind == ast.KindParameter {
 		memberDeclaration = root.Parent
@@ -2640,7 +2604,7 @@ func getDeclarationModifierFlagsFromSymbolEx(s *ast.Symbol, isWrite bool) ast.Mo
 		if declaration == nil {
 			declaration = s.ValueDeclaration
 		}
-		flags := getCombinedModifierFlags(declaration)
+		flags := ast.GetCombinedModifierFlags(declaration)
 		if s.Parent != nil && s.Parent.Flags&ast.SymbolFlagsClass != 0 {
 			return flags
 		}
@@ -2745,7 +2709,7 @@ func isObjectLiteralType(t *Type) bool {
 }
 
 func isDeclarationReadonly(declaration *ast.Node) bool {
-	return getCombinedModifierFlags(declaration)&ast.ModifierFlagsReadonly != 0 && !isParameterPropertyDeclaration(declaration, declaration.Parent)
+	return ast.GetCombinedModifierFlags(declaration)&ast.ModifierFlagsReadonly != 0 && !isParameterPropertyDeclaration(declaration, declaration.Parent)
 }
 
 func getPostfixTokenFromNode(node *ast.Node) *ast.Node {
@@ -2922,16 +2886,12 @@ func isValidBigIntString(s string, roundTripOnly bool) bool {
 
 func isValidESSymbolDeclaration(node *ast.Node) bool {
 	if ast.IsVariableDeclaration(node) {
-		return isVarConst(node) && ast.IsIdentifier(node.AsVariableDeclaration().Name()) && isVariableDeclarationInVariableStatement(node)
+		return ast.IsVarConst(node) && ast.IsIdentifier(node.AsVariableDeclaration().Name()) && isVariableDeclarationInVariableStatement(node)
 	}
 	if ast.IsPropertyDeclaration(node) {
 		return hasEffectiveReadonlyModifier(node) && hasStaticModifier(node)
 	}
 	return ast.IsPropertySignatureDeclaration(node) && hasEffectiveReadonlyModifier(node)
-}
-
-func isVarConst(node *ast.Node) bool {
-	return getCombinedNodeFlags(node)&ast.NodeFlagsBlockScoped == ast.NodeFlagsConst
 }
 
 func isVariableDeclarationInVariableStatement(node *ast.Node) bool {
@@ -3009,14 +2969,6 @@ func getClassExtendsHeritageElement(node *ast.Node) *ast.Node {
 		return heritageClause.AsHeritageClause().Types.Nodes[0]
 	}
 	return nil
-}
-
-func concatenateDiagnosticMessageChains(headChain *ast.MessageChain, tailChain *ast.MessageChain) {
-	lastChain := headChain
-	for len(lastChain.MessageChain()) != 0 {
-		lastChain = lastChain.MessageChain()[0]
-	}
-	lastChain.SetMessageChain([]*ast.MessageChain{tailChain})
 }
 
 func isObjectOrArrayLiteralType(t *Type) bool {
@@ -3312,7 +3264,7 @@ func (c *Checker) isConstantVariable(symbol *ast.Symbol) bool {
 func (c *Checker) isParameterOrMutableLocalVariable(symbol *ast.Symbol) bool {
 	// Return true if symbol is a parameter, a catch clause variable, or a mutable local variable
 	if symbol.ValueDeclaration != nil {
-		declaration := getRootDeclaration(symbol.ValueDeclaration)
+		declaration := ast.GetRootDeclaration(symbol.ValueDeclaration)
 		return declaration != nil && (ast.IsParameter(declaration) || ast.IsVariableDeclaration(declaration) && (ast.IsCatchClause(declaration.Parent) || c.isMutableLocalVariableDeclaration(declaration)))
 	}
 	return false
@@ -3320,7 +3272,7 @@ func (c *Checker) isParameterOrMutableLocalVariable(symbol *ast.Symbol) bool {
 
 func (c *Checker) isMutableLocalVariableDeclaration(declaration *ast.Node) bool {
 	// Return true if symbol is a non-exported and non-global `let` variable
-	return declaration.Parent.Flags&ast.NodeFlagsLet != 0 && !(getCombinedModifierFlags(declaration)&ast.ModifierFlagsExport != 0 || declaration.Parent.Parent.Kind == ast.KindVariableStatement && isGlobalSourceFile(declaration.Parent.Parent.Parent))
+	return declaration.Parent.Flags&ast.NodeFlagsLet != 0 && !(ast.GetCombinedModifierFlags(declaration)&ast.ModifierFlagsExport != 0 || declaration.Parent.Parent.Kind == ast.KindVariableStatement && isGlobalSourceFile(declaration.Parent.Parent.Parent))
 }
 
 func isInAmbientOrTypeNode(node *ast.Node) bool {
@@ -3383,6 +3335,58 @@ func getBindingElementPropertyName(node *ast.Node) *ast.Node {
 		return name
 	}
 	return node.Name()
+}
+
+func indexOfNode(nodes []*ast.Node, node *ast.Node) int {
+	index, ok := slices.BinarySearchFunc(nodes, node, compareNodePositions)
+	if ok {
+		return index
+	}
+	return -1
+}
+
+func compareNodePositions(n1, n2 *ast.Node) int {
+	return n1.Pos() - n2.Pos()
+}
+
+func hasContextSensitiveParameters(node *ast.Node) bool {
+	// Functions with type parameters are not context sensitive.
+	if node.TypeParameters() == nil {
+		// Functions with any parameters that lack type annotations are context sensitive.
+		if core.Some(node.Parameters(), func(p *ast.Node) bool { return p.Type() == nil }) {
+			return true
+		}
+		if !ast.IsArrowFunction(node) {
+			// If the first parameter is not an explicit 'this' parameter, then the function has
+			// an implicit 'this' parameter which is subject to contextual typing.
+			parameter := core.FirstOrNil(node.Parameters())
+			if parameter == nil || !parameterIsThisKeyword(parameter) {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+func isCallChain(node *ast.Node) bool {
+	return ast.IsCallExpression(node) && node.Flags&ast.NodeFlagsOptionalChain != 0
+}
+
+func (c *Checker) callLikeExpressionMayHaveTypeArguments(node *ast.Node) bool {
+	return isCallOrNewExpression(node) || ast.IsTaggedTemplateExpression(node) || isJsxOpeningLikeElement(node)
+}
+
+func isSuperCall(n *ast.Node) bool {
+	return ast.IsCallExpression(n) && n.Expression().Kind == ast.KindSuperKeyword
+}
+
+/**
+ * Determines whether a node is a property or element access expression for `super`.
+ *
+ * @internal
+ */
+func isSuperProperty(node *ast.Node) bool {
+	return ast.IsAccessExpression(node) && node.Expression().Kind == ast.KindSuperKeyword
 }
 
 func getLeftSideOfImportEqualsOrExportAssignment(nodeOnRightSide *ast.EntityName) *ast.Node {
