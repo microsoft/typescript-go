@@ -143,6 +143,11 @@ func (r *Resolver) ResolveTypeReferenceDirective(typeReferenceDirectiveName stri
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
+	result := r.resolveTypeReferenceDirective(typeReferenceDirectiveName, containingFile, resolutionMode, redirectedReference)
+	return result.clone()
+}
+
+func (r *Resolver) resolveTypeReferenceDirective(typeReferenceDirectiveName string, containingFile string, resolutionMode core.ResolutionMode, redirectedReference *ResolvedProjectReference) *ResolvedTypeReferenceDirectiveWithFailedLookupLocations {
 	traceEnabled := r.traceEnabled()
 
 	compilerOptions := r.compilerOptions
@@ -256,8 +261,7 @@ func (r *Resolver) ResolveModuleName(moduleName string, containingFile string, r
 		}
 	}
 
-	cloned := *result
-	return &cloned
+	return result.clone()
 }
 
 func (r *Resolver) traceTypeReferenceDirectiveResult(typeReferenceDirectiveName string, result *ResolvedTypeReferenceDirectiveWithFailedLookupLocations) {
@@ -656,16 +660,11 @@ func (r *resolutionState) createResolvedModuleWithFailedLookupLocations(resolved
 		if !r.resolver.moduleNameCache.isReadonly {
 			result = r.resultFromCache
 		} else {
-			cloned := *r.resultFromCache
-			result = &cloned
+			result = r.resultFromCache.clone()
 		}
 		result.FailedLookupLocations = slices.Concat(result.FailedLookupLocations, r.failedLookupLocations)
 		result.AffectingLocations = slices.Concat(result.AffectingLocations, r.affectingLocations)
 		result.ResolutionDiagnostics = slices.Concat(result.ResolutionDiagnostics, r.resultFromCache.ResolutionDiagnostics)
-		if result == r.resultFromCache {
-			cloned := *result
-			result = &cloned
-		}
 		return result
 	}
 	var resolvedModule ResolvedModule

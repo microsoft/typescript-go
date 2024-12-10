@@ -83,6 +83,16 @@ type ResolvedModule struct {
 type ResolvedModuleWithFailedLookupLocations struct {
 	WithFailedLookupLocations
 	ResolvedModule
+	isCloned bool
+}
+
+func (r *ResolvedModuleWithFailedLookupLocations) clone() *ResolvedModuleWithFailedLookupLocations {
+	if r.isCloned {
+		return r
+	}
+	clone := *r
+	clone.isCloned = true
+	return &clone
 }
 
 func (r *ResolvedModuleWithFailedLookupLocations) IsResolved() bool {
@@ -100,6 +110,16 @@ type ResolvedTypeReferenceDirective struct {
 type ResolvedTypeReferenceDirectiveWithFailedLookupLocations struct {
 	WithFailedLookupLocations
 	ResolvedTypeReferenceDirective
+	isCloned bool
+}
+
+func (r *ResolvedTypeReferenceDirectiveWithFailedLookupLocations) clone() *ResolvedTypeReferenceDirectiveWithFailedLookupLocations {
+	if r.isCloned {
+		return r
+	}
+	clone := *r
+	clone.isCloned = true
+	return &clone
 }
 
 func (r *ResolvedTypeReferenceDirectiveWithFailedLookupLocations) IsResolved() bool {
