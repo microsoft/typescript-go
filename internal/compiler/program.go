@@ -213,12 +213,12 @@ func getModuleNames(file *ast.SourceFile) []*ast.Node {
 	return res
 }
 
-func (p *Program) resolveModuleNames(entries []*ast.Node, file *ast.SourceFile) []*module.ResolvedModuleWithFailedLookupLocations {
+func (p *Program) resolveModuleNames(entries []*ast.Node, file *ast.SourceFile) []*module.ResolvedModule {
 	if len(entries) == 0 {
 		return nil
 	}
 
-	resolvedModules := make([]*module.ResolvedModuleWithFailedLookupLocations, 0, len(entries))
+	resolvedModules := make([]*module.ResolvedModule, 0, len(entries))
 
 	for _, entry := range entries {
 		moduleName := entry.Text()
