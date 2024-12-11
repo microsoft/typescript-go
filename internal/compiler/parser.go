@@ -314,8 +314,8 @@ func (p *Parser) parseDelimitedList(kind ParsingContext, parseElement func(p *Pa
 	return p.factory.NewNodeList(core.NewTextRange(pos, p.nodePos()), slice)
 }
 
-// Return a non-nil (but possibly empty) NodeList if parsing was successful or if parseElement returned nil, 
-// or nil if opening token wasn't found
+// Return a non-nil (but possibly empty) NodeList if parsing was successful,
+// or nil if opening token wasn't found or parseElement returned nil.
 func (p *Parser) parseBracketedList(kind ParsingContext, parseElement func(p *Parser) *ast.Node, opening ast.Kind, closing ast.Kind) *ast.NodeList {
 	if p.parseExpected(opening) {
 		result := p.parseDelimitedList(kind, parseElement)
