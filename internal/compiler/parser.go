@@ -314,8 +314,8 @@ func (p *Parser) parseDelimitedList(kind ParsingContext, parseElement func(p *Pa
 	return p.factory.NewNodeList(core.NewTextRange(pos, p.nodePos()), slice)
 }
 
-// Return a non-nil (but possibly empty) slice if parsing was successful, or nil if opening token wasn't found
-// or parseElement returned nil
+// Return a non-nil (but possibly empty) NodeList if parsing was successful, or nil if opening token wasn't found
+// or parseElement returned nil.
 func (p *Parser) parseBracketedList(kind ParsingContext, parseElement func(p *Parser) *ast.Node, opening ast.Kind, closing ast.Kind) *ast.NodeList {
 	if p.parseExpected(opening) {
 		result := p.parseDelimitedList(kind, parseElement)
@@ -2026,7 +2026,7 @@ func (p *Parser) parseModuleExportName(disallowKeywords bool) (node *ast.Node, n
 
 func (p *Parser) tryParseImportAttributes() *ast.Node {
 	if (p.token == ast.KindWithKeyword || p.token == ast.KindAssertKeyword) && !p.hasPrecedingLineBreak() {
-		return p.parseImportAttributes(p.token, true /*skipKeyword*/)
+		return p.parseImportAttributes(p.token, false /*skipKeyword*/)
 	}
 	return nil
 }
@@ -2086,7 +2086,7 @@ func (p *Parser) parseExportDeclaration(pos int, hasJSDoc bool, modifiers *ast.M
 		}
 	}
 	if moduleSpecifier != nil && (p.token == ast.KindWithKeyword || p.token == ast.KindAssertKeyword) && !p.hasPrecedingLineBreak() {
-		attributes = p.parseImportAttributes(p.token, true /*skipKeyword*/)
+		attributes = p.parseImportAttributes(p.token, false /*skipKeyword*/)
 	}
 	p.parseSemicolon()
 	p.contextFlags = saveContextFlags
@@ -2864,7 +2864,7 @@ func (p *Parser) parseNameOfParameter(modifiers *ast.ModifierList) *ast.Node {
 	// FormalParameter [Yield,Await]:
 	//      BindingElement[?Yield,?Await]
 	name := p.parseIdentifierOrPatternWithDiagnostic(diagnostics.Private_identifiers_cannot_be_used_as_parameters)
-	if name.Loc.Len() == 0 && modifiers == nil && isModifierKind(p.token) {
+	if name.Loc.Len() == 0 && modifiers == nil && ast.IsModifierKind(p.token) {
 		// in cases like
 		// 'use strict'
 		// function foo(static)
@@ -3030,7 +3030,7 @@ func (p *Parser) nextIsUnambiguouslyIndexSignature() bool {
 	if p.token == ast.KindDotDotDotToken || p.token == ast.KindCloseBracketToken {
 		return true
 	}
-	if isModifierKind(p.token) {
+	if ast.IsModifierKind(p.token) {
 		p.nextToken()
 		if p.isIdentifier() {
 			return true
@@ -3353,7 +3353,7 @@ func (p *Parser) nextIsUnambiguouslyStartOfFunctionType() bool {
 }
 
 func (p *Parser) skipParameterStart() bool {
-	if isModifierKind(p.token) {
+	if ast.IsModifierKind(p.token) {
 		// Skip modifiers
 		p.parseModifiers()
 	}
@@ -3475,7 +3475,7 @@ func (p *Parser) parseContextualModifier(t ast.Kind) bool {
 
 func (p *Parser) parseAnyContextualModifier() bool {
 	state := p.mark()
-	if isModifierKind(p.token) && p.nextTokenCanFollowModifier() {
+	if ast.IsModifierKind(p.token) && p.nextTokenCanFollowModifier() {
 		return true
 	}
 	p.rewind(state)
@@ -3645,7 +3645,7 @@ func (p *Parser) parseAssignmentExpressionOrHigherWorker(allowReturnTypeInArrowF
 	// and consumes anything.
 	pos := p.nodePos()
 	hasJSDoc := p.hasPrecedingJSDocComment()
-	expr := p.parseBinaryExpressionOrHigher(OperatorPrecedenceLowest)
+	expr := p.parseBinaryExpressionOrHigher(ast.OperatorPrecedenceLowest)
 	// To avoid a look-ahead, we did not handle the case of an arrow function with a single un-parenthesized
 	// parameter ('x => ...') above. We handle it here by checking if the parsed expression was a single
 	// identifier and the current token is an arrow.
@@ -3770,7 +3770,7 @@ func (p *Parser) nextIsParenthesizedArrowFunctionExpression() core.Tristate {
 		// Check for "(xxx yyy", where xxx is a modifier and yyy is an identifier. This
 		// isn't actually allowed, but we want to treat it as a lambda so we can provide
 		// a good error message.
-		if isModifierKind(second) && second != ast.KindAsyncKeyword && p.lookAhead(p.nextTokenIsIdentifier) {
+		if ast.IsModifierKind(second) && second != ast.KindAsyncKeyword && p.lookAhead(p.nextTokenIsIdentifier) {
 			if p.nextToken() == ast.KindAsKeyword {
 				// https://github.com/microsoft/TypeScript/issues/44466
 				return core.TSFalse
@@ -3973,7 +3973,7 @@ func typeHasArrowFunctionBlockingParseError(node *ast.TypeNode) bool {
 	case ast.KindTypeReference:
 		return ast.NodeIsMissing(node.AsTypeReference().TypeName)
 	case ast.KindFunctionType, ast.KindConstructorType:
-		return len(node.Parameters()) == 0 || typeHasArrowFunctionBlockingParseError(node.Type())
+		return typeHasArrowFunctionBlockingParseError(node.Type())
 	case ast.KindParenthesizedType:
 		return typeHasArrowFunctionBlockingParseError(node.AsParenthesizedTypeNode().Type)
 	}
@@ -4031,7 +4031,7 @@ func (p *Parser) tryParseAsyncSimpleArrowFunctionExpression(allowReturnTypeInArr
 		pos := p.nodePos()
 		hasJSDoc := p.hasPrecedingJSDocComment()
 		asyncModifier := p.parseModifiersForArrowFunction()
-		expr := p.parseBinaryExpressionOrHigher(OperatorPrecedenceLowest)
+		expr := p.parseBinaryExpressionOrHigher(ast.OperatorPrecedenceLowest)
 		return p.parseSimpleArrowFunctionExpression(pos, expr, allowReturnTypeInArrowFunction, hasJSDoc, asyncModifier)
 	}
 	return nil
@@ -4049,7 +4049,7 @@ func (p *Parser) nextIsUnParenthesizedAsyncArrowFunction() bool {
 			return false
 		}
 		// Check for un-parenthesized AsyncArrowFunction
-		expr := p.parseBinaryExpressionOrHigher(OperatorPrecedenceLowest)
+		expr := p.parseBinaryExpressionOrHigher(ast.OperatorPrecedenceLowest)
 		if !p.hasPrecedingLineBreak() && expr.Kind == ast.KindIdentifier && p.token == ast.KindEqualsGreaterThanToken {
 			return true
 		}
@@ -4095,18 +4095,18 @@ func (p *Parser) parseConditionalExpressionRest(leftOperand *ast.Expression, pos
 	return result
 }
 
-func (p *Parser) parseBinaryExpressionOrHigher(precedence OperatorPrecedence) *ast.Expression {
+func (p *Parser) parseBinaryExpressionOrHigher(precedence ast.OperatorPrecedence) *ast.Expression {
 	pos := p.nodePos()
 	leftOperand := p.parseUnaryExpressionOrHigher()
 	return p.parseBinaryExpressionRest(precedence, leftOperand, pos)
 }
 
-func (p *Parser) parseBinaryExpressionRest(precedence OperatorPrecedence, leftOperand *ast.Expression, pos int) *ast.Expression {
+func (p *Parser) parseBinaryExpressionRest(precedence ast.OperatorPrecedence, leftOperand *ast.Expression, pos int) *ast.Expression {
 	for {
 		// We either have a binary operator here, or we're finished.  We call
 		// reScanGreaterToken so that we merge token sequences like > and = into >=
 		p.reScanGreaterThanToken()
-		newPrecedence := getBinaryOperatorPrecedence(p.token)
+		newPrecedence := ast.GetBinaryOperatorPrecedence(p.token)
 		// Check the precedence to see if we should "take" this operator
 		// - For left associative operator (all operator but **), consume the operator,
 		//   recursively call the function below, and parse binaryExpression as a rightOperand
@@ -4193,7 +4193,7 @@ func (p *Parser) parseUnaryExpressionOrHigher() *ast.Expression {
 		pos := p.nodePos()
 		updateExpression := p.parseUpdateExpression()
 		if p.token == ast.KindAsteriskAsteriskToken {
-			return p.parseBinaryExpressionRest(getBinaryOperatorPrecedence(p.token), updateExpression, pos)
+			return p.parseBinaryExpressionRest(ast.GetBinaryOperatorPrecedence(p.token), updateExpression, pos)
 		}
 		return updateExpression
 	}
@@ -4760,7 +4760,7 @@ func (p *Parser) parseSuperExpression() *ast.Expression {
 		if typeArguments != nil {
 			p.parseErrorAt(startPos, p.nodePos(), diagnostics.X_super_may_not_use_type_arguments)
 			if !p.isTemplateStartOfTaggedTemplate() {
-				expression := p.factory.NewExpressionWithTypeArguments(expression, typeArguments)
+				expression = p.factory.NewExpressionWithTypeArguments(expression, typeArguments)
 				p.finishNode(expression, pos)
 			}
 		}
@@ -5323,18 +5323,23 @@ func (p *Parser) parseKeywordExpression() *ast.Node {
 func (p *Parser) parseLiteralExpression() *ast.Node {
 	pos := p.nodePos()
 	text := p.scanner.TokenValue()
+	tokenFlags := p.scanner.TokenFlags()
 	var result *ast.Node
 	switch p.token {
 	case ast.KindStringLiteral:
 		result = p.factory.NewStringLiteral(text)
+		result.AsStringLiteral().TokenFlags |= tokenFlags & ast.TokenFlagsStringLiteralFlags
 	case ast.KindNumericLiteral:
 		result = p.factory.NewNumericLiteral(text)
+		result.AsNumericLiteral().TokenFlags |= tokenFlags & ast.TokenFlagsNumericLiteralFlags
 	case ast.KindBigIntLiteral:
 		result = p.factory.NewBigIntLiteral(text)
+		result.AsBigIntLiteral().TokenFlags |= tokenFlags & ast.TokenFlagsNumericLiteralFlags
 	case ast.KindRegularExpressionLiteral:
 		result = p.factory.NewRegularExpressionLiteral(text)
 	case ast.KindNoSubstitutionTemplateLiteral:
 		result = p.factory.NewNoSubstitutionTemplateLiteral(text)
+		result.AsNoSubstitutionTemplateLiteral().TokenFlags |= tokenFlags & ast.TokenFlagsTemplateLiteralLikeFlags
 	default:
 		panic("Unhandled case in parseLiteralExpression")
 	}
@@ -5428,7 +5433,7 @@ func (p *Parser) scanTypeMemberStart() bool {
 	}
 	idToken := false
 	// Eat up all modifiers, but hold on to the last one in case it is actually an identifier
-	for isModifierKind(p.token) {
+	for ast.IsModifierKind(p.token) {
 		idToken = true
 		p.nextToken()
 	}
@@ -5455,7 +5460,7 @@ func (p *Parser) scanClassMemberStart() bool {
 		return true
 	}
 	// Eat up all modifiers, but hold on to the last one in case it is actually an identifier.
-	for isModifierKind(p.token) {
+	for ast.IsModifierKind(p.token) {
 		idToken = p.token
 		// If the idToken is a class modifier (protected, private, public, and static), it is
 		// certain that we are starting to parse class member. This allows better error recovery
@@ -5712,7 +5717,7 @@ func (p *Parser) nextIsParenthesizedOrFunctionType() bool {
 func (p *Parser) isStartOfParameter(isJSDocParameter bool) bool {
 	return p.token == ast.KindDotDotDotToken ||
 		p.isBindingIdentifierOrPrivateIdentifierOrPattern() ||
-		isModifierKind(p.token) ||
+		ast.IsModifierKind(p.token) ||
 		p.token == ast.KindAtToken ||
 		p.isStartOfType(!isJSDocParameter /*inStartOfParameter*/)
 }
@@ -5771,7 +5776,7 @@ func (p *Parser) isBinaryOperator() bool {
 	if p.inDisallowInContext() && p.token == ast.KindInKeyword {
 		return false
 	}
-	return getBinaryOperatorPrecedence(p.token) != OperatorPrecedenceInvalid
+	return ast.GetBinaryOperatorPrecedence(p.token) != ast.OperatorPrecedenceInvalid
 }
 
 func (p *Parser) isValidHeritageClauseObjectLiteral() bool {
@@ -5872,17 +5877,6 @@ func (p *Parser) inAwaitContext() bool {
 
 func (p *Parser) skipRangeTrivia(textRange core.TextRange) core.TextRange {
 	return core.NewTextRange(scanner.SkipTrivia(p.sourceText, textRange.Pos()), textRange.End())
-}
-
-func isModifierKind(token ast.Kind) bool {
-	switch token {
-	case ast.KindAbstractKeyword, ast.KindAccessorKeyword, ast.KindAsyncKeyword, ast.KindConstKeyword, ast.KindDeclareKeyword,
-		ast.KindDefaultKeyword, ast.KindExportKeyword, ast.KindImmediateKeyword, ast.KindInKeyword, ast.KindPublicKeyword,
-		ast.KindPrivateKeyword, ast.KindProtectedKeyword, ast.KindReadonlyKeyword, ast.KindStaticKeyword, ast.KindOutKeyword,
-		ast.KindOverrideKeyword:
-		return true
-	}
-	return false
 }
 
 func isClassMemberModifier(token ast.Kind) bool {

@@ -84,259 +84,6 @@ func NewDiagnosticChainForNode(chain *ast.Diagnostic, node *ast.Node, message *d
 	return NewDiagnosticForNode(node, message, args...)
 }
 
-type OperatorPrecedence int
-
-const (
-	// Expression:
-	//     AssignmentExpression
-	//     Expression `,` AssignmentExpression
-	OperatorPrecedenceComma OperatorPrecedence = iota
-	// NOTE: `Spread` is higher than `Comma` due to how it is parsed in |ElementList|
-	// SpreadElement:
-	//     `...` AssignmentExpression
-	OperatorPrecedenceSpread
-	// AssignmentExpression:
-	//     ConditionalExpression
-	//     YieldExpression
-	//     ArrowFunction
-	//     AsyncArrowFunction
-	//     LeftHandSideExpression `=` AssignmentExpression
-	//     LeftHandSideExpression AssignmentOperator AssignmentExpression
-	//
-	// NOTE: AssignmentExpression is broken down into several precedences due to the requirements
-	//       of the parenthesizer rules.
-	// AssignmentExpression: YieldExpression
-	// YieldExpression:
-	//     `yield`
-	//     `yield` AssignmentExpression
-	//     `yield` `*` AssignmentExpression
-	OperatorPrecedenceYield
-	// AssignmentExpression: LeftHandSideExpression `=` AssignmentExpression
-	// AssignmentExpression: LeftHandSideExpression AssignmentOperator AssignmentExpression
-	// AssignmentOperator: one of
-	//     `*=` `/=` `%=` `+=` `-=` `<<=` `>>=` `>>>=` `&=` `^=` `|=` `**=`
-	OperatorPrecedenceAssignment
-	// NOTE: `Conditional` is considered higher than `Assignment` here, but in reality they have
-	//       the same precedence.
-	// AssignmentExpression: ConditionalExpression
-	// ConditionalExpression:
-	//     ShortCircuitExpression
-	//     ShortCircuitExpression `?` AssignmentExpression `:` AssignmentExpression
-	// ShortCircuitExpression:
-	//     LogicalORExpression
-	//     CoalesceExpression
-	OperatorPrecedenceConditional
-	// LogicalORExpression:
-	//     LogicalANDExpression
-	//     LogicalORExpression `||` LogicalANDExpression
-	OperatorPrecedenceLogicalOR
-	// LogicalANDExpression:
-	//     BitwiseORExpression
-	//     LogicalANDExprerssion `&&` BitwiseORExpression
-	OperatorPrecedenceLogicalAND
-	// BitwiseORExpression:
-	//     BitwiseXORExpression
-	//     BitwiseORExpression `^` BitwiseXORExpression
-	OperatorPrecedenceBitwiseOR
-	// BitwiseXORExpression:
-	//     BitwiseANDExpression
-	//     BitwiseXORExpression `^` BitwiseANDExpression
-	OperatorPrecedenceBitwiseXOR
-	// BitwiseANDExpression:
-	//     EqualityExpression
-	//     BitwiseANDExpression `^` EqualityExpression
-	OperatorPrecedenceBitwiseAND
-	// EqualityExpression:
-	//     RelationalExpression
-	//     EqualityExpression `==` RelationalExpression
-	//     EqualityExpression `!=` RelationalExpression
-	//     EqualityExpression `===` RelationalExpression
-	//     EqualityExpression `!==` RelationalExpression
-	OperatorPrecedenceEquality
-	// RelationalExpression:
-	//     ShiftExpression
-	//     RelationalExpression `<` ShiftExpression
-	//     RelationalExpression `>` ShiftExpression
-	//     RelationalExpression `<=` ShiftExpression
-	//     RelationalExpression `>=` ShiftExpression
-	//     RelationalExpression `instanceof` ShiftExpression
-	//     RelationalExpression `in` ShiftExpression
-	//     [+TypeScript] RelationalExpression `as` Type
-	OperatorPrecedenceRelational
-	// ShiftExpression:
-	//     AdditiveExpression
-	//     ShiftExpression `<<` AdditiveExpression
-	//     ShiftExpression `>>` AdditiveExpression
-	//     ShiftExpression `>>>` AdditiveExpression
-	OperatorPrecedenceShift
-	// AdditiveExpression:
-	//     MultiplicativeExpression
-	//     AdditiveExpression `+` MultiplicativeExpression
-	//     AdditiveExpression `-` MultiplicativeExpression
-	OperatorPrecedenceAdditive
-	// MultiplicativeExpression:
-	//     ExponentiationExpression
-	//     MultiplicativeExpression MultiplicativeOperator ExponentiationExpression
-	// MultiplicativeOperator: one of `*`, `/`, `%`
-	OperatorPrecedenceMultiplicative
-	// ExponentiationExpression:
-	//     UnaryExpression
-	//     UpdateExpression `**` ExponentiationExpression
-	OperatorPrecedenceExponentiation
-	// UnaryExpression:
-	//     UpdateExpression
-	//     `delete` UnaryExpression
-	//     `void` UnaryExpression
-	//     `typeof` UnaryExpression
-	//     `+` UnaryExpression
-	//     `-` UnaryExpression
-	//     `~` UnaryExpression
-	//     `!` UnaryExpression
-	//     AwaitExpression
-	// UpdateExpression:            // TODO: Do we need to investigate the precedence here?
-	//     `++` UnaryExpression
-	//     `--` UnaryExpression
-	OperatorPrecedenceUnary
-	// UpdateExpression:
-	//     LeftHandSideExpression
-	//     LeftHandSideExpression `++`
-	//     LeftHandSideExpression `--`
-	OperatorPrecedenceUpdate
-	// LeftHandSideExpression:
-	//     NewExpression
-	//     CallExpression
-	// NewExpression:
-	//     MemberExpression
-	//     `new` NewExpression
-	OperatorPrecedenceLeftHandSide
-	// CallExpression:
-	//     CoverCallExpressionAndAsyncArrowHead
-	//     SuperCall
-	//     ImportCall
-	//     CallExpression Arguments
-	//     CallExpression `[` Expression `]`
-	//     CallExpression `.` IdentifierName
-	//     CallExpression TemplateLiteral
-	// MemberExpression:
-	//     PrimaryExpression
-	//     MemberExpression `[` Expression `]`
-	//     MemberExpression `.` IdentifierName
-	//     MemberExpression TemplateLiteral
-	//     SuperProperty
-	//     MetaProperty
-	//     `new` MemberExpression Arguments
-	OperatorPrecedenceMember
-	// TODO: JSXElement?
-	// PrimaryExpression:
-	//     `this`
-	//     IdentifierReference
-	//     Literal
-	//     ArrayLiteral
-	//     ObjectLiteral
-	//     FunctionExpression
-	//     ClassExpression
-	//     GeneratorExpression
-	//     AsyncFunctionExpression
-	//     AsyncGeneratorExpression
-	//     RegularExpressionLiteral
-	//     TemplateLiteral
-	//     CoverParenthesizedExpressionAndArrowParameterList
-	OperatorPrecedencePrimary
-	// CoalesceExpression:
-	//     CoalesceExpressionHead `??` BitwiseORExpression
-	// CoalesceExpressionHead:
-	//     CoalesceExpression
-	//     BitwiseORExpression
-	OperatorPrecedenceCoalesce = OperatorPrecedenceConditional // NOTE: This is wrong
-	OperatorPrecedenceLowest   = OperatorPrecedenceComma
-	OperatorPrecedenceHighest  = OperatorPrecedencePrimary
-	// -1 is lower than all other precedences. Returning it will cause binary expression
-	// parsing to stop.
-	OperatorPrecedenceInvalid OperatorPrecedence = -1
-)
-
-func getOperatorPrecedence(nodeKind ast.Kind, operatorKind ast.Kind, hasArguments bool) OperatorPrecedence {
-	switch nodeKind {
-	case ast.KindCommaListExpression:
-		return OperatorPrecedenceComma
-	case ast.KindSpreadElement:
-		return OperatorPrecedenceSpread
-	case ast.KindYieldExpression:
-		return OperatorPrecedenceYield
-	case ast.KindConditionalExpression:
-		return OperatorPrecedenceConditional
-	case ast.KindBinaryExpression:
-		switch operatorKind {
-		case ast.KindCommaToken:
-			return OperatorPrecedenceComma
-		case ast.KindEqualsToken, ast.KindPlusEqualsToken, ast.KindMinusEqualsToken, ast.KindAsteriskAsteriskEqualsToken,
-			ast.KindAsteriskEqualsToken, ast.KindSlashEqualsToken, ast.KindPercentEqualsToken, ast.KindLessThanLessThanEqualsToken,
-			ast.KindGreaterThanGreaterThanEqualsToken, ast.KindGreaterThanGreaterThanGreaterThanEqualsToken, ast.KindAmpersandEqualsToken,
-			ast.KindCaretEqualsToken, ast.KindBarEqualsToken, ast.KindBarBarEqualsToken, ast.KindAmpersandAmpersandEqualsToken,
-			ast.KindQuestionQuestionEqualsToken:
-			return OperatorPrecedenceAssignment
-		}
-		return getBinaryOperatorPrecedence(operatorKind)
-	// TODO: Should prefix `++` and `--` be moved to the `Update` precedence?
-	case ast.KindTypeAssertionExpression, ast.KindNonNullExpression, ast.KindPrefixUnaryExpression, ast.KindTypeOfExpression,
-		ast.KindVoidExpression, ast.KindDeleteExpression, ast.KindAwaitExpression:
-		return OperatorPrecedenceUnary
-	case ast.KindPostfixUnaryExpression:
-		return OperatorPrecedenceUpdate
-	case ast.KindCallExpression:
-		return OperatorPrecedenceLeftHandSide
-	case ast.KindNewExpression:
-		if hasArguments {
-			return OperatorPrecedenceMember
-		}
-		return OperatorPrecedenceLeftHandSide
-	case ast.KindTaggedTemplateExpression, ast.KindPropertyAccessExpression, ast.KindElementAccessExpression, ast.KindMetaProperty:
-		return OperatorPrecedenceMember
-	case ast.KindAsExpression, ast.KindSatisfiesExpression:
-		return OperatorPrecedenceRelational
-	case ast.KindThisKeyword, ast.KindSuperKeyword, ast.KindIdentifier, ast.KindPrivateIdentifier, ast.KindNullKeyword,
-		ast.KindTrueKeyword, ast.KindFalseKeyword, ast.KindNumericLiteral, ast.KindBigIntLiteral, ast.KindStringLiteral,
-		ast.KindArrayLiteralExpression, ast.KindObjectLiteralExpression, ast.KindFunctionExpression, ast.KindArrowFunction,
-		ast.KindClassExpression, ast.KindRegularExpressionLiteral, ast.KindNoSubstitutionTemplateLiteral, ast.KindTemplateExpression,
-		ast.KindParenthesizedExpression, ast.KindOmittedExpression, ast.KindJsxElement, ast.KindJsxSelfClosingElement, ast.KindJsxFragment:
-		return OperatorPrecedencePrimary
-	}
-	return OperatorPrecedenceInvalid
-}
-
-func getBinaryOperatorPrecedence(kind ast.Kind) OperatorPrecedence {
-	switch kind {
-	case ast.KindQuestionQuestionToken:
-		return OperatorPrecedenceCoalesce
-	case ast.KindBarBarToken:
-		return OperatorPrecedenceLogicalOR
-	case ast.KindAmpersandAmpersandToken:
-		return OperatorPrecedenceLogicalAND
-	case ast.KindBarToken:
-		return OperatorPrecedenceBitwiseOR
-	case ast.KindCaretToken:
-		return OperatorPrecedenceBitwiseXOR
-	case ast.KindAmpersandToken:
-		return OperatorPrecedenceBitwiseAND
-	case ast.KindEqualsEqualsToken, ast.KindExclamationEqualsToken, ast.KindEqualsEqualsEqualsToken, ast.KindExclamationEqualsEqualsToken:
-		return OperatorPrecedenceEquality
-	case ast.KindLessThanToken, ast.KindGreaterThanToken, ast.KindLessThanEqualsToken, ast.KindGreaterThanEqualsToken,
-		ast.KindInstanceOfKeyword, ast.KindInKeyword, ast.KindAsKeyword, ast.KindSatisfiesKeyword:
-		return OperatorPrecedenceRelational
-	case ast.KindLessThanLessThanToken, ast.KindGreaterThanGreaterThanToken, ast.KindGreaterThanGreaterThanGreaterThanToken:
-		return OperatorPrecedenceShift
-	case ast.KindPlusToken, ast.KindMinusToken:
-		return OperatorPrecedenceAdditive
-	case ast.KindAsteriskToken, ast.KindSlashToken, ast.KindPercentToken:
-		return OperatorPrecedenceMultiplicative
-	case ast.KindAsteriskAsteriskToken:
-		return OperatorPrecedenceExponentiation
-	}
-	// -1 is lower than all other precedences.  Returning it will cause binary expression
-	// parsing to stop.
-	return OperatorPrecedenceInvalid
-}
-
 func isIntrinsicJsxName(name string) bool {
 	if len(name) == 0 {
 		return false
@@ -773,11 +520,11 @@ func isAssignmentExpression(node *ast.Node, excludeCompoundAssignment bool) bool
 }
 
 func isBlockOrCatchScoped(declaration *ast.Node) bool {
-	return getCombinedNodeFlags(declaration)&ast.NodeFlagsBlockScoped != 0 || isCatchClauseVariableDeclarationOrBindingElement(declaration)
+	return ast.GetCombinedNodeFlags(declaration)&ast.NodeFlagsBlockScoped != 0 || isCatchClauseVariableDeclarationOrBindingElement(declaration)
 }
 
 func isCatchClauseVariableDeclarationOrBindingElement(declaration *ast.Node) bool {
-	node := getRootDeclaration(declaration)
+	node := ast.GetRootDeclaration(declaration)
 	return node.Kind == ast.KindVariableDeclaration && node.Parent.Kind == ast.KindCatchClause
 }
 
@@ -801,34 +548,6 @@ func setParentInChildren(node *ast.Node) {
 		setParentInChildren(child)
 		return false
 	})
-}
-
-func getCombinedFlags[T ~uint32](node *ast.Node, getFlags func(*ast.Node) T) T {
-	node = getRootDeclaration(node)
-	flags := getFlags(node)
-	if node.Kind == ast.KindVariableDeclaration {
-		node = node.Parent
-	}
-	if node != nil && node.Kind == ast.KindVariableDeclarationList {
-		flags |= getFlags(node)
-		node = node.Parent
-	}
-	if node != nil && node.Kind == ast.KindVariableStatement {
-		flags |= getFlags(node)
-	}
-	return flags
-}
-
-func getCombinedModifierFlags(node *ast.Node) ast.ModifierFlags {
-	return getCombinedFlags(node, (*ast.Node).ModifierFlags)
-}
-
-func getCombinedNodeFlags(node *ast.Node) ast.NodeFlags {
-	return getCombinedFlags(node, getNodeFlags)
-}
-
-func getNodeFlags(node *ast.Node) ast.NodeFlags {
-	return node.Flags
 }
 
 func isParameterPropertyDeclaration(node *ast.Node, parent *ast.Node) bool {
@@ -884,14 +603,7 @@ func isRequireCall(node *ast.Node, requireStringLiteralLikeArgument bool) bool {
  * If you are looking to test that a `Node` is a `ParameterDeclaration`, use `isParameter`.
  */
 func isPartOfParameterDeclaration(node *ast.Node) bool {
-	return getRootDeclaration(node).Kind == ast.KindParameter
-}
-
-func getRootDeclaration(node *ast.Node) *ast.Node {
-	for node.Kind == ast.KindBindingElement {
-		node = node.Parent.Parent
-	}
-	return node
+	return ast.GetRootDeclaration(node).Kind == ast.KindParameter
 }
 
 func isExternalOrCommonJsModule(file *ast.SourceFile) bool {
@@ -928,10 +640,6 @@ func isStaticPrivateIdentifierProperty(s *ast.Symbol) bool {
 
 func isPrivateIdentifierClassElementDeclaration(node *ast.Node) bool {
 	return (ast.IsPropertyDeclaration(node) || isMethodOrAccessor(node)) && ast.IsPrivateIdentifier(node.Name())
-}
-
-func isModifier(node *ast.Node) bool {
-	return isModifierKind(node.Kind)
 }
 
 func isMethodOrAccessor(node *ast.Node) bool {
@@ -2584,7 +2292,7 @@ func isEmptyArrayLiteral(expression *ast.Node) bool {
 }
 
 func declarationBelongsToPrivateAmbientMember(declaration *ast.Node) bool {
-	root := getRootDeclaration(declaration)
+	root := ast.GetRootDeclaration(declaration)
 	memberDeclaration := root
 	if root.Kind == ast.KindParameter {
 		memberDeclaration = root.Parent
@@ -2688,7 +2396,7 @@ func getDeclarationModifierFlagsFromSymbolEx(s *ast.Symbol, isWrite bool) ast.Mo
 		if declaration == nil {
 			declaration = s.ValueDeclaration
 		}
-		flags := getCombinedModifierFlags(declaration)
+		flags := ast.GetCombinedModifierFlags(declaration)
 		if s.Parent != nil && s.Parent.Flags&ast.SymbolFlagsClass != 0 {
 			return flags
 		}
@@ -2793,7 +2501,7 @@ func isObjectLiteralType(t *Type) bool {
 }
 
 func isDeclarationReadonly(declaration *ast.Node) bool {
-	return getCombinedModifierFlags(declaration)&ast.ModifierFlagsReadonly != 0 && !isParameterPropertyDeclaration(declaration, declaration.Parent)
+	return ast.GetCombinedModifierFlags(declaration)&ast.ModifierFlagsReadonly != 0 && !isParameterPropertyDeclaration(declaration, declaration.Parent)
 }
 
 func getPostfixTokenFromNode(node *ast.Node) *ast.Node {
@@ -2970,16 +2678,12 @@ func isValidBigIntString(s string, roundTripOnly bool) bool {
 
 func isValidESSymbolDeclaration(node *ast.Node) bool {
 	if ast.IsVariableDeclaration(node) {
-		return isVarConst(node) && ast.IsIdentifier(node.AsVariableDeclaration().Name()) && isVariableDeclarationInVariableStatement(node)
+		return ast.IsVarConst(node) && ast.IsIdentifier(node.AsVariableDeclaration().Name()) && isVariableDeclarationInVariableStatement(node)
 	}
 	if ast.IsPropertyDeclaration(node) {
 		return hasEffectiveReadonlyModifier(node) && hasStaticModifier(node)
 	}
 	return ast.IsPropertySignatureDeclaration(node) && hasEffectiveReadonlyModifier(node)
-}
-
-func isVarConst(node *ast.Node) bool {
-	return getCombinedNodeFlags(node)&ast.NodeFlagsBlockScoped == ast.NodeFlagsConst
 }
 
 func isVariableDeclarationInVariableStatement(node *ast.Node) bool {
@@ -3352,7 +3056,7 @@ func (c *Checker) isConstantVariable(symbol *ast.Symbol) bool {
 func (c *Checker) isParameterOrMutableLocalVariable(symbol *ast.Symbol) bool {
 	// Return true if symbol is a parameter, a catch clause variable, or a mutable local variable
 	if symbol.ValueDeclaration != nil {
-		declaration := getRootDeclaration(symbol.ValueDeclaration)
+		declaration := ast.GetRootDeclaration(symbol.ValueDeclaration)
 		return declaration != nil && (ast.IsParameter(declaration) || ast.IsVariableDeclaration(declaration) && (ast.IsCatchClause(declaration.Parent) || c.isMutableLocalVariableDeclaration(declaration)))
 	}
 	return false
@@ -3360,7 +3064,7 @@ func (c *Checker) isParameterOrMutableLocalVariable(symbol *ast.Symbol) bool {
 
 func (c *Checker) isMutableLocalVariableDeclaration(declaration *ast.Node) bool {
 	// Return true if symbol is a non-exported and non-global `let` variable
-	return declaration.Parent.Flags&ast.NodeFlagsLet != 0 && !(getCombinedModifierFlags(declaration)&ast.ModifierFlagsExport != 0 || declaration.Parent.Parent.Kind == ast.KindVariableStatement && isGlobalSourceFile(declaration.Parent.Parent.Parent))
+	return declaration.Parent.Flags&ast.NodeFlagsLet != 0 && !(ast.GetCombinedModifierFlags(declaration)&ast.ModifierFlagsExport != 0 || declaration.Parent.Parent.Kind == ast.KindVariableStatement && isGlobalSourceFile(declaration.Parent.Parent.Parent))
 }
 
 func isInAmbientOrTypeNode(node *ast.Node) bool {
