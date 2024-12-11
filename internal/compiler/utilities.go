@@ -374,14 +374,6 @@ func isStringOrNumericLiteralLike(node *ast.Node) bool {
 	return isStringLiteralLike(node) || ast.IsNumericLiteral(node)
 }
 
-func isSignedNumericLiteral(node *ast.Node) bool {
-	if node.Kind == ast.KindPrefixUnaryExpression {
-		node := node.AsPrefixUnaryExpression()
-		return (node.Operator == ast.KindPlusToken || node.Operator == ast.KindMinusToken) && ast.IsNumericLiteral(node.Operand)
-	}
-	return false
-}
-
 func tokenIsIdentifierOrKeyword(token ast.Kind) bool {
 	return token >= ast.KindIdentifier
 }
@@ -642,20 +634,7 @@ func getImmediatelyInvokedFunctionExpression(fn *ast.Node) *ast.Node {
  */
 func hasDynamicName(declaration *ast.Node) bool {
 	name := getNameOfDeclaration(declaration)
-	return name != nil && isDynamicName(name)
-}
-
-func isDynamicName(name *ast.Node) bool {
-	var expr *ast.Node
-	switch name.Kind {
-	case ast.KindComputedPropertyName:
-		expr = name.AsComputedPropertyName().Expression
-	case ast.KindElementAccessExpression:
-		expr = ast.SkipParentheses(name.AsElementAccessExpression().ArgumentExpression)
-	default:
-		return false
-	}
-	return !isStringOrNumericLiteralLike(expr) && !isSignedNumericLiteral(expr)
+	return name != nil && ast.IsDynamicName(name)
 }
 
 func getNameOfDeclaration(declaration *ast.Node) *ast.Node {
@@ -2841,7 +2820,7 @@ func getPropertyNameForPropertyNameNode(name *ast.Node) string {
 		if isStringOrNumericLiteralLike(nameExpression) {
 			return nameExpression.Text()
 		}
-		if isSignedNumericLiteral(nameExpression) {
+		if ast.IsSignedNumericLiteral(nameExpression) {
 			text := nameExpression.AsPrefixUnaryExpression().Operand.Text()
 			if nameExpression.AsPrefixUnaryExpression().Operator == ast.KindMinusToken {
 				text = "-" + text
@@ -3470,4 +3449,14 @@ func getTypeParameterFromJsDoc(node *ast.Node) *ast.Node {
 	name := node.Name().Text()
 	typeParameters := node.Parent.Parent.Parent.TypeParameters()
 	return core.Find(typeParameters, func(p *ast.Node) bool { return p.Name().Text() == name })
+}
+
+func isTypeDeclarationName(name *ast.Node) bool {
+	return name.Kind == ast.KindIdentifier &&
+		isTypeDeclaration(name.Parent) &&
+		getNameOfDeclaration(name.Parent) == name
+}
+
+func getIndexSymbolFromSymbolTable(symbolTable ast.SymbolTable) *ast.Symbol {
+	return symbolTable[InternalSymbolNameIndex]
 }

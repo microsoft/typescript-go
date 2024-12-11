@@ -46,6 +46,20 @@ func MapIndex[T, U any](slice []T, f func(T, int) U) []U {
 	return result
 }
 
+func MapDefined[T, U any](slice []T, f func(T) *U) []*U {
+	if len(slice) == 0 {
+		return nil
+	}
+	var result []*U
+	for _, value := range slice {
+		r := f(value)
+		if r != nil {
+			result = append(result, r)
+		}
+	}
+	return result
+}
+
 func SameMap[T comparable](slice []T, f func(T) T) []T {
 	for i, value := range slice {
 		mapped := f(value)

@@ -1436,7 +1436,7 @@ func (c *Checker) checkGrammarForInvalidDynamicName(node *ast.DeclarationName, m
 
 // Indicates whether a declaration name is a dynamic name that cannot be late-bound.
 func (c *Checker) isNonBindableDynamicName(node *ast.DeclarationName) bool {
-	return isDynamicName(node) && !c.isLateBindableName(node)
+	return ast.IsDynamicName(node) && !c.isLateBindableName(node)
 }
 
 func (c *Checker) checkGrammarMethod(node *ast.Node /*Union[MethodDeclaration, MethodSignature]*/) bool {

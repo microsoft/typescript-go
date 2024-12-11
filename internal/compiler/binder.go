@@ -301,7 +301,7 @@ func (b *Binder) getDeclarationName(node *ast.Node) string {
 			if isStringOrNumericLiteralLike(nameExpression) {
 				return nameExpression.Text()
 			}
-			if isSignedNumericLiteral(nameExpression) {
+			if ast.IsSignedNumericLiteral(nameExpression) {
 				unaryExpression := nameExpression.AsPrefixUnaryExpression()
 				return scanner.TokenToString(unaryExpression.Operator) + unaryExpression.Operand.Text()
 			}

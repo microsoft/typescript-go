@@ -813,7 +813,7 @@ func IsInJSFile(node *Node) bool {
 	return node != nil && node.Flags&NodeFlagsJavaScriptFile != 0
 }
 
-func isDeclaration(node *Node) bool {
+func IsDeclaration(node *Node) bool {
 	if node.Kind == KindTypeParameter {
 		return (node.Parent != nil && node.Parent.Kind != KindJSDocTemplateTag) || IsInJSFile(node)
 	}
@@ -822,7 +822,7 @@ func isDeclaration(node *Node) bool {
 
 // True if `name` is the name of a declaration node
 func IsDeclarationName(name *Node) bool {
-	return !IsSourceFile(name) && !IsBindingPattern(name) && isDeclaration(name.Parent)
+	return !IsSourceFile(name) && !IsBindingPattern(name) && IsDeclaration(name.Parent)
 }
 
 // Like 'isDeclarationName', but returns true for LHS of `import { x as y }` or `export { x as y }`.
@@ -846,7 +846,7 @@ func isStringOrNumericLiteralLike(node *Node) bool {
 func IsLiteralComputedPropertyDeclarationName(node *Node) bool {
 	return isStringOrNumericLiteralLike(node) &&
 		node.Parent.Kind == KindComputedPropertyName &&
-		isDeclaration(node.Parent.Parent)
+		IsDeclaration(node.Parent.Parent)
 }
 
 func IsExternalModuleImportEqualsDeclaration(node *Node) bool {
@@ -1017,8 +1017,60 @@ func getAssignmentDeclarationKindWorker(expr *Node) AssignmentDeclarationKind {
 }
 
 func GetAssignmentDeclarationPropertyAccessKind(lhs *Node) AssignmentDeclarationKind {
-	// !!!
+	if lhs.Expression().Kind == KindThisKeyword {
+		return AssignmentDeclarationKindThisProperty
+	} else if IsModuleExportsAccessExpression(lhs) {
+		// module.exports = expr
+		return AssignmentDeclarationKindModuleExports
+	} else if isBindableStaticNameExpression(lhs.Expression(), true /*excludeThisKeyword*/) {
+		if IsPrototypeAccess(lhs.Expression()) {
+			// F.G....prototype.x = expr
+			return AssignmentDeclarationKindPrototypeProperty
+		}
+
+		nextToLast := lhs
+		for !IsIdentifier(nextToLast.Expression()) {
+			nextToLast = nextToLast.Expression()
+		}
+
+		id := nextToLast.Expression()
+		if (id.Text() == "exports" || id.Text() == "module" && GetElementOrPropertyAccessName(nextToLast) == "exports") &&
+			isBindableStaticAccessExpression(lhs, false /*excludeThisKeyword*/) { // ExportsProperty does not support binding with computed names
+			// exports.name = expr OR module.exports.name = expr OR exports["name"] = expr ...
+			return AssignmentDeclarationKindExportsProperty
+		}
+		if isBindableStaticNameExpression(lhs, true /*excludeThisKeyword*/) ||
+			IsElementAccessExpression(lhs) && IsDynamicName(lhs) {
+			// F.G...x = expr
+			return AssignmentDeclarationKindProperty
+		}
+	}
 	return AssignmentDeclarationKindNone
+}
+
+func IsDynamicName(name *Node) bool {
+	var expr *Node
+	switch name.Kind {
+	case KindComputedPropertyName:
+		expr = name.AsComputedPropertyName().Expression
+	case KindElementAccessExpression:
+		expr = SkipParentheses(name.AsElementAccessExpression().ArgumentExpression)
+	default:
+		return false
+	}
+	return !isStringOrNumericLiteralLike(expr) && !IsSignedNumericLiteral(expr)
+}
+
+func IsSignedNumericLiteral(node *Node) bool {
+	if node.Kind == KindPrefixUnaryExpression {
+		node := node.AsPrefixUnaryExpression()
+		return (node.Operator == KindPlusToken || node.Operator == KindMinusToken) && IsNumericLiteral(node.Operand)
+	}
+	return false
+}
+
+func IsPrototypeAccess(node *Node) bool {
+	return isBindableStaticAccessExpression(node, false /*excludeThisKeyword*/) && GetElementOrPropertyAccessName(node) == "prototype"
 }
 
 func GetInitializerOfBinaryExpression(expr *Node) *Node {

@@ -4160,6 +4160,10 @@ func (node *ImportAttributes) ForEachChild(v Visitor) bool {
 	return visitNodeList(v, node.Attributes)
 }
 
+func IsImportAttributes(node *Node) bool {
+	return node.Kind == KindImportAttributes
+}
+
 // TypeQueryNode
 
 type TypeQueryNode struct {
