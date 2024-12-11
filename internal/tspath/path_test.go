@@ -403,13 +403,6 @@ func FuzzHasRelativePathSegment(f *testing.F) {
 	})
 }
 
-// var pathIsRelativeRegexp = regexp.MustCompile(`^\.\.?(?:$|[\\/])`)
-
-func oldPathIsRelative(path string) bool {
-	// True if path is ".", "..", or starts with "./", "../", ".\\", or "..\\".
-	return pathIsRelativeRegexp.MatchString(path)
-}
-
 var pathIsRelativeTests = []struct {
 	p          string
 	isRelative bool
