@@ -3973,7 +3973,7 @@ func typeHasArrowFunctionBlockingParseError(node *ast.TypeNode) bool {
 	case ast.KindTypeReference:
 		return ast.NodeIsMissing(node.AsTypeReference().TypeName)
 	case ast.KindFunctionType, ast.KindConstructorType:
-		return node.FunctionLikeData().Parameters == nil || typeHasArrowFunctionBlockingParseError(node.Type())
+		return typeHasArrowFunctionBlockingParseError(node.Type())
 	case ast.KindParenthesizedType:
 		return typeHasArrowFunctionBlockingParseError(node.AsParenthesizedTypeNode().Type)
 	}
