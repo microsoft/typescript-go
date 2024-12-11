@@ -438,6 +438,7 @@ func TestPathIsRelative(t *testing.T) {
 	for _, tt := range pathIsRelativeTests {
 		name := shortenName(tt.p)
 		t.Run(name, func(t *testing.T) {
+			t.Parallel()
 			assert.Equal(t, PathIsRelative(tt.p), tt.isRelative)
 		})
 	}
