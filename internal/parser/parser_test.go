@@ -1,4 +1,4 @@
-package compiler
+package parser
 
 import (
 	"io/fs"
