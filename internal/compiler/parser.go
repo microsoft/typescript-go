@@ -249,7 +249,7 @@ func (p *Parser) parseList(kind ParsingContext, parseElement func(p *Parser) *as
 		}
 	}
 	p.parsingContexts = saveParsingContexts
-	slice := p.nodeSlicePool.NewSlice(len(list))
+	slice := p.nodeSlicePool.NewSlice(len(list), false) // probably should be true
 	copy(slice, list)
 	return p.factory.NewNodeList(core.NewTextRange(pos, p.nodePos()), slice)
 }
@@ -309,11 +309,12 @@ func (p *Parser) parseDelimitedList(kind ParsingContext, parseElement func(p *Pa
 		}
 	}
 	p.parsingContexts = saveParsingContexts
-	slice := p.nodeSlicePool.NewSlice(len(list))
+	slice := p.nodeSlicePool.NewSlice(len(list), /*explicitEmpty*/ true)
 	copy(slice, list)
 	return p.factory.NewNodeList(core.NewTextRange(pos, p.nodePos()), slice)
 }
 
+// NOTE This comment was wrong until this commit: the slice was nil if the list was empty
 // Return a non-nil (but possibly empty) slice if parsing was successful, or nil if opening token wasn't found
 // or parseElement returned nil
 func (p *Parser) parseBracketedList(kind ParsingContext, parseElement func(p *Parser) *ast.Node, opening ast.Kind, closing ast.Kind) *ast.NodeList {
@@ -3316,7 +3317,7 @@ func (p *Parser) parseModifiersForConstructorType() *ast.ModifierList {
 		modifier := p.factory.NewModifier(p.token)
 		p.nextToken()
 		p.finishNode(modifier, pos)
-		nodes := p.nodeSlicePool.NewSlice(1)
+		nodes := p.nodeSlicePool.NewSlice(1, false)
 		nodes[0] = modifier
 		return p.factory.NewModifierList(modifier.Loc, nodes)
 	}
@@ -3410,7 +3411,7 @@ func (p *Parser) parseModifiersEx(allowDecorators bool, permitConstAsModifier bo
 		}
 	}
 	if len(list) != 0 {
-		nodes := p.nodeSlicePool.NewSlice(len(list))
+		nodes := p.nodeSlicePool.NewSlice(len(list), false) // but maybe should be true
 		copy(nodes, list)
 		return p.factory.NewModifierList(core.NewTextRange(pos, p.nodePos()), nodes)
 	}
@@ -3960,7 +3961,7 @@ func (p *Parser) parseModifiersForArrowFunction() *ast.ModifierList {
 		p.nextToken()
 		modifier := p.factory.NewModifier(ast.KindAsyncKeyword)
 		p.finishNode(modifier, pos)
-		nodes := p.nodeSlicePool.NewSlice(1)
+		nodes := p.nodeSlicePool.NewSlice(1, false)
 		nodes[0] = modifier
 		return p.factory.NewModifierList(modifier.Loc, nodes)
 	}
@@ -3973,7 +3974,7 @@ func typeHasArrowFunctionBlockingParseError(node *ast.TypeNode) bool {
 	case ast.KindTypeReference:
 		return ast.NodeIsMissing(node.AsTypeReference().TypeName)
 	case ast.KindFunctionType, ast.KindConstructorType:
-		return len(node.Parameters()) == 0 || typeHasArrowFunctionBlockingParseError(node.Type())
+		return node.Parameters() == nil || typeHasArrowFunctionBlockingParseError(node.Type())
 	case ast.KindParenthesizedType:
 		return typeHasArrowFunctionBlockingParseError(node.AsParenthesizedTypeNode().Type)
 	}

@@ -21,8 +21,8 @@ func (p *Pool[T]) New() *T {
 // and a pool of the next size up still wouldn't fit the slice, make a separate memory allocation for the slice.
 // Otherwise, grow the pool if necessary and allocate a slice out of it. The length and capacity of the resulting
 // slice are equal to the given size.
-func (p *Pool[T]) NewSlice(size int) []T {
-	if size == 0 {
+func (p *Pool[T]) NewSlice(size int, explicitEmpty bool) []T {
+	if size == 0 && !explicitEmpty{
 		return nil
 	}
 	if len(p.data)+size > cap(p.data) {
