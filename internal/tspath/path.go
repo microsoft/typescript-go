@@ -2,7 +2,6 @@ package tspath
 
 import (
 	"cmp"
-	"regexp"
 	"strings"
 	"unicode"
 
@@ -589,8 +588,6 @@ func tryGetExtensionFromPath(path string, extension string, stringEqualityCompar
 	}
 	return ""
 }
-
-var pathIsRelativeRegexp = regexp.MustCompile(`^\.\.?(?:$|[\\/])`)
 
 func PathIsRelative(path string) bool {
 	// True if path is ".", "..", or starts with "./", "../", ".\\", or "..\\".
