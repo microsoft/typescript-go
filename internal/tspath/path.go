@@ -594,7 +594,20 @@ var pathIsRelativeRegexp = regexp.MustCompile(`^\.\.?(?:$|[\\/])`)
 
 func PathIsRelative(path string) bool {
 	// True if path is ".", "..", or starts with "./", "../", ".\\", or "..\\".
-	return pathIsRelativeRegexp.MatchString(path)
+
+	if path == "." || path == ".." {
+		return true
+	}
+
+	if len(path) >= 2 && path[0] == '.' && (path[1] == '/' || path[1] == '\\') {
+		return true
+	}
+
+	if len(path) >= 3 && path[0] == '.' && path[1] == '.' && (path[2] == '/' || path[2] == '\\') {
+		return true
+	}
+
+	return false
 }
 
 func IsExternalModuleNameRelative(moduleName string) bool {
