@@ -254,6 +254,7 @@ func (p *Parser) parseSourceFileWorker() *ast.SourceFile {
 			result.SetDiagnostics(attachFileToDiagnostics(p.diagnostics, result))
 			result.ExternalModuleIndicator = isFileProbablyExternalModule(result)
 			result.IsDeclarationFile = isDeclarationFile
+			p.possibleAwaitStatement = core.Set[*ast.Node]{}
 		}
 	}
 	return result
@@ -361,7 +362,7 @@ func (p *Parser) reparseTopLevelAwait(sourceFile *ast.SourceFile) *ast.Node {
 }
 
 func (p *Parser) containsPossibleTopLevelAwait(node *ast.Node) bool {
-	return !(node.Flags&ast.NodeFlagsAwaitContext != 0) && p.possibleAwaitStatement.Has(node)
+	return node.Flags&ast.NodeFlagsAwaitContext == 0 && p.possibleAwaitStatement.Has(node)
 }
 
 func (p *Parser) findNextStatementWithAwait(statements *ast.NodeList, start int) int {
