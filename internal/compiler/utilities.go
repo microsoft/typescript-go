@@ -3465,3 +3465,9 @@ func getSymbolPath(symbol *ast.Symbol) string {
 	}
 	return symbol.Name
 }
+
+func getTypeParameterFromJsDoc(node *ast.Node) *ast.Node {
+	name := node.Name().Text()
+	typeParameters := node.Parent.Parent.Parent.TypeParameters()
+	return core.Find(typeParameters, func(p *ast.Node) bool { return p.Name().Text() == name })
+}

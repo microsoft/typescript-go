@@ -18041,7 +18041,7 @@ func (c *Checker) getSymbolAtLocation(node *ast.Node, ignoreErrors bool) *ast.Sy
 	if ast.IsDeclarationNameOrImportPropertyName(node) {
 		// This is a declaration, call getSymbolOfNode
 		parentSymbol := c.getSymbolOfDeclaration(parent)
-		if ast.IsImportOrExportSpecifier(parent) && ast.GetImportOrExportSpecifierPropertyName(parent) == node {
+		if ast.IsImportOrExportSpecifier(parent) && parent.TagName() == node {
 			return c.getImmediateAliasedSymbol(parentSymbol)
 		}
 		return parentSymbol
@@ -18253,11 +18253,7 @@ func (c *Checker) getSymbolOfNameOrPropertyAccessExpression(name *ast.Node) *ast
 		if name.Parent.Kind == ast.KindExpressionWithTypeArguments {
 			// An 'ExpressionWithTypeArguments' may appear in type space (interface Foo extends Bar<T>),
 			// value space (return foo<T>), or both(class Foo extends Bar<T>); ensure the meaning matches.
-			if isPartOfTypeNode(name) {
-				meaning = ast.SymbolFlagsType
-			} else {
-				meaning = ast.SymbolFlagsValue
-			}
+			meaning = core.IfElse(isPartOfTypeNode(name), ast.SymbolFlagsType, ast.SymbolFlagsValue)
 
 			// In a class 'extends' clause we are also looking for a value.
 			if ast.IsExpressionWithTypeArgumentsInClassExtendsClause(name.Parent) {
@@ -18287,9 +18283,7 @@ func (c *Checker) getSymbolOfNameOrPropertyAccessExpression(name *ast.Node) *ast
 		if ast.IsInJSFile(name) {
 			panic("Should not be in JS file, otherwise `isDeclarationName` would have been true")
 		}
-		var typeParameter *ast.Node
-		// typeParameter := getTypeParameterFromJsDoc(name.Parent)
-		// !!! JSDoc
+		typeParameter := getTypeParameterFromJsDoc(name.Parent)
 		if typeParameter != nil {
 			return typeParameter.Symbol()
 		}
@@ -18302,7 +18296,9 @@ func (c *Checker) getSymbolOfNameOrPropertyAccessExpression(name *ast.Node) *ast
 			return nil
 		}
 
-		isJSDoc := ast.FindAncestor(name, core.Or(isJSDocLinkLike, ast.IsJSDocNameReference))
+		isJSDoc := ast.FindAncestor(name, func(n *ast.Node) bool {
+			return isJSDocLinkLike(n) || ast.IsJSDocNameReference(n) || ast.IsJSDocMemberName(n)
+		})
 		var meaning ast.SymbolFlags
 		if isJSDoc != nil {
 			meaning = ast.SymbolFlagsType | ast.SymbolFlagsNamespace | ast.SymbolFlagsValue
@@ -18313,10 +18309,7 @@ func (c *Checker) getSymbolOfNameOrPropertyAccessExpression(name *ast.Node) *ast
 		if name.Kind == ast.KindIdentifier {
 			if ast.IsJsxTagName(name) && isJsxIntrinsicTagName(name) {
 				symbol := c.getIntrinsicTagSymbol(name.Parent)
-				if symbol == c.unknownSymbol {
-					return nil
-				}
-				return symbol
+				return core.IfElse(symbol == c.unknownSymbol, nil, symbol)
 			}
 			result := c.resolveEntityName(
 				name,
@@ -18325,7 +18318,9 @@ func (c *Checker) getSymbolOfNameOrPropertyAccessExpression(name *ast.Node) *ast
 				true, /*dontResolveAlias*/
 				ast.GetHostSignatureFromJSDoc(name))
 			if result == nil && isJSDoc != nil {
-				container := ast.FindAncestor(name, core.Or(ast.IsClassLike, ast.IsInterfaceDeclaration))
+				container := ast.FindAncestor(
+					name,
+					func(n *ast.Node) bool { return ast.IsClassLike(n) || ast.IsInterfaceDeclaration(n) })
 				if container != nil {
 					return c.resolveJSDocMemberName(name, true /*ignoreErrors*/, c.getSymbolOfDeclaration(container))
 				}
@@ -18342,7 +18337,6 @@ func (c *Checker) getSymbolOfNameOrPropertyAccessExpression(name *ast.Node) *ast
 					if resolved != nil {
 						return resolved
 					}
-					return result
 				}
 			}
 			return result
@@ -18369,7 +18363,6 @@ func (c *Checker) getSymbolOfNameOrPropertyAccessExpression(name *ast.Node) *ast
 			if links.resolvedSymbol == nil && isJSDoc != nil && ast.IsQualifiedName(name) {
 				return c.resolveJSDocMemberName(name, false /*ignoreErrors*/, nil /*container*/)
 			}
-
 			return links.resolvedSymbol
 		} else if ast.IsJSDocNameReference(name) {
 			return c.resolveJSDocMemberName(name, false /*ignoreErrors*/, nil /*container*/)

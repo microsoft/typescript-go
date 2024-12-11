@@ -373,6 +373,31 @@ func (n *Node) Initializer() *Node {
 	panic("Unhandled case in Node.Initializer")
 }
 
+func (n *Node) TagName() *Node {
+	switch n.Kind {
+	case KindJsxOpeningElement:
+		return n.AsJsxOpeningElement().TagName
+	case KindJsxClosingElement:
+		return n.AsJsxClosingElement().TagName
+	case KindJsxSelfClosingElement:
+		return n.AsJsxSelfClosingElement().TagName
+		// !!! JSDoc tags
+	}
+	panic("Unhandled case in Node.TagName: " + n.Kind.String())
+}
+
+func (n *Node) PropertyName() *Node {
+	switch n.Kind {
+	case KindImportSpecifier:
+		return n.AsImportSpecifier().PropertyName
+	case KindExportSpecifier:
+		return n.AsExportSpecifier().PropertyName
+	case KindBindingElement:
+		return n.AsBindingElement().PropertyName
+	}
+	panic("Unhandled case in Node.PropertyName: " + n.Kind.String())
+}
+
 // Node casts
 
 func (n *Node) AsIdentifier() *Identifier {
@@ -5387,7 +5412,6 @@ type JSDocNameReference struct {
 	name *EntityName
 }
 
-// JSDocMemberName
 func NewJSDocNameReference(name *EntityName) *JSDocNameReference {
 	data := &JSDocNameReference{}
 	data.name = name
@@ -5402,6 +5426,28 @@ func (node *JSDocNameReference) Name() *EntityName { return node.name }
 
 func IsJSDocNameReference(node *Node) bool {
 	return node.Kind == KindJSDocNameReference
+}
+
+// JSDocMemberName
+type JSDocMemberName struct {
+	TypeNodeBase
+	left  *Node           // EntityName | JSDocMemberName
+	right *IdentifierNode // Identifier
+}
+
+func NewJSDocMemberName(left *Node, right *Node) *JSDocMemberName {
+	data := &JSDocMemberName{}
+	data.left = left
+	data.right = right
+	return data
+}
+
+func (node *JSDocMemberName) ForEachChild(v Visitor) bool {
+	return visit(v, node.left) || visit(v, node.right)
+}
+
+func IsJSDocMemberName(node *Node) bool {
+	return node.Kind == KindJSDocMemberName
 }
 
 // PatternAmbientModule

@@ -940,39 +940,13 @@ func IsJsxTagName(node *Node) bool {
 	parent := node.Parent
 	switch parent.Kind {
 	case KindJsxOpeningElement, KindJsxClosingElement, KindJsxSelfClosingElement:
-		return getJsxTagName(parent) == node
+		return parent.TagName() == node
 	}
 	return false
 }
 
-func getJsxTagName(node *Node) *JsxTagNameExpression {
-	switch node.Kind {
-	case KindJsxOpeningElement:
-		return node.AsJsxOpeningElement().TagName
-	case KindJsxClosingElement:
-		return node.AsJsxClosingElement().TagName
-	case KindJsxSelfClosingElement:
-		return node.AsJsxSelfClosingElement().TagName
-	}
-	panic("Unhandled case in getJsxTagName: " + node.Kind.String())
-}
-
 func IsImportOrExportSpecifier(node *Node) bool {
 	return IsImportSpecifier(node) || IsExportSpecifier(node)
-}
-
-func GetImportOrExportSpecifierPropertyName(node *Node) *ModuleExportName {
-	switch node.Kind {
-	case KindImportSpecifier:
-		return node.AsImportSpecifier().PropertyName
-	case KindExportSpecifier:
-		return node.AsExportSpecifier().PropertyName
-	}
-	panic("Unhandled case in GetImportOrExportSpecifierPropertyName: " + node.Kind.String())
-}
-
-func IsJSDocMemberName(node *Node) bool {
-	return node.Kind == KindJSDocMemberName
 }
 
 type AssignmentDeclarationKind int32

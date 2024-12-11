@@ -271,14 +271,3 @@ func ComputeLineStarts(text string) []TextPos {
 	result = append(result, TextPos(lineStart))
 	return result
 }
-
-func Or[T any](fs ...func(T) bool) func(T) bool {
-	return func(v T) bool {
-		for _, f := range fs {
-			if f(v) {
-				return true
-			}
-		}
-		return false
-	}
-}
