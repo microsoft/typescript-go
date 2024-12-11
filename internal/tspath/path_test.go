@@ -307,6 +307,52 @@ func TestToFileNameLowerCase(t *testing.T) {
 	assert.Equal(t, toFileNameLowerCase("/user/UserName/projects/ı/file.ts"), "/user/username/projects/ı/file.ts")
 }
 
+var toFileNameLowerCaseTests = []string{
+	"/path/to/file.ext",
+	"/PATH/TO/FILE.EXT",
+	"/path/to/FILE.EXT",
+	"/user/UserName/projects/Project/file.ts",
+	"/user/UserName/projects/projectß/file.ts",
+	"/user/UserName/projects/İproject/file.ts",
+	"/user/UserName/projects/ı/file.ts",
+	strings.Repeat("FoO/", 100),
+}
+
+// See [toFileNameLowerCase] for more info.
+//
+// To avoid having to do string building for most common cases, also ignore
+// a-z, 0-9, \u0131, \u00DF, \, /, ., : and space
+var fileNameLowerCaseRegExp = regexp.MustCompile(`[^\x{0130}\x{0131}\x{00DF}a-z0-9\\/:\-_. ]+`)
+
+func oldToFileNameLowerCase(fileName string) string {
+	return fileNameLowerCaseRegExp.ReplaceAllStringFunc(fileName, strings.ToLower)
+}
+
+func BenchmarkToFileNameLowerCase(b *testing.B) {
+	for _, test := range toFileNameLowerCaseTests {
+		name := test
+		if len(name) > 20 {
+			name = name[:20] + "...etc"
+		}
+		b.Run(name, func(b *testing.B) {
+			b.ReportAllocs()
+			for i := 0; i < b.N; i++ {
+				toFileNameLowerCase(test)
+			}
+		})
+	}
+}
+
+func FuzzToFileNameLowerCase(f *testing.F) {
+	for _, test := range toFileNameLowerCaseTests {
+		f.Add(test)
+	}
+
+	f.Fuzz(func(t *testing.T, p string) {
+		assert.Equal(t, oldToFileNameLowerCase(p), toFileNameLowerCase(p))
+	})
+}
+
 func TestToPath(t *testing.T) {
 	t.Parallel()
 	assert.Equal(t, string(ToPath("file.ext", "path/to", false /*useCaseSensitiveFileNames*/)), "path/to/file.ext")
