@@ -330,10 +330,7 @@ func oldToFileNameLowerCase(fileName string) string {
 
 func BenchmarkToFileNameLowerCase(b *testing.B) {
 	for _, test := range toFileNameLowerCaseTests {
-		name := test
-		if len(name) > 20 {
-			name = name[:20] + "...etc"
-		}
+		name := shortenName(test)
 		b.Run(name, func(b *testing.B) {
 			b.ReportAllocs()
 			for i := 0; i < b.N; i++ {
@@ -386,11 +383,7 @@ func BenchmarkHasRelativePathSegment(b *testing.B) {
 		if !tt.bench {
 			continue
 		}
-		name := tt.p
-		if len(name) > 20 {
-			name = name[:20] + "...etc"
-		}
-
+		name := shortenName(tt.p)
 		b.Run(name, func(b *testing.B) {
 			b.ReportAllocs()
 			for i := 0; i < b.N; i++ {
@@ -408,4 +401,73 @@ func FuzzHasRelativePathSegment(f *testing.F) {
 	f.Fuzz(func(t *testing.T, p string) {
 		assert.Equal(t, oldHasRelativePathSegment(p), hasRelativePathSegment(p))
 	})
+}
+
+// var pathIsRelativeRegexp = regexp.MustCompile(`^\.\.?(?:$|[\\/])`)
+
+func oldPathIsRelative(path string) bool {
+	// True if path is ".", "..", or starts with "./", "../", ".\\", or "..\\".
+	return pathIsRelativeRegexp.MatchString(path)
+}
+
+var pathIsRelativeTests = []struct {
+	p          string
+	isRelative bool
+	benchmark  bool
+}{
+	// relative
+	{".", true, false},
+	{"..", true, false},
+	{"./", true, false},
+	{"../", true, false},
+	{"./foo/bar", true, true},
+	{"../foo/bar", true, true},
+	{"../" + strings.Repeat("foo/", 100), true, true},
+	// non-relative
+	{"", false, false},
+	{"foo", false, false},
+	{"foo/bar", false, false},
+	{"/foo/bar", false, false},
+	{"c:/foo/bar", false, false},
+}
+
+func init() {
+	old := pathIsRelativeTests
+
+	for _, t := range old {
+		t.p = strings.ReplaceAll(t.p, "/", "\\")
+		pathIsRelativeTests = append(pathIsRelativeTests, t)
+	}
+}
+
+func TestPathIsRelative(t *testing.T) {
+	t.Parallel()
+	for _, tt := range pathIsRelativeTests {
+		name := shortenName(tt.p)
+		t.Run(name, func(t *testing.T) {
+			assert.Equal(t, PathIsRelative(tt.p), tt.isRelative)
+		})
+	}
+}
+
+func BenchmarkPathIsRelative(b *testing.B) {
+	for _, tt := range pathIsRelativeTests {
+		if !tt.benchmark {
+			continue
+		}
+		name := shortenName(tt.p)
+		b.Run(name, func(b *testing.B) {
+			b.ReportAllocs()
+			for i := 0; i < b.N; i++ {
+				PathIsRelative(tt.p)
+			}
+		})
+	}
+}
+
+func shortenName(name string) string {
+	if len(name) > 20 {
+		return name[:20] + "...etc"
+	}
+	return name
 }

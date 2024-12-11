@@ -593,6 +593,7 @@ func tryGetExtensionFromPath(path string, extension string, stringEqualityCompar
 var pathIsRelativeRegexp = regexp.MustCompile(`^\.\.?(?:$|[\\/])`)
 
 func PathIsRelative(path string) bool {
+	// True if path is ".", "..", or starts with "./", "../", ".\\", or "..\\".
 	return pathIsRelativeRegexp.MatchString(path)
 }
 
