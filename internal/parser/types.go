@@ -1,7 +1,5 @@
 package parser
 
-//go:generate go run golang.org/x/tools/cmd/stringer -type=SignatureKind -output=stringer_generated.go
-
 // ParseFlags
 
 type ParseFlags uint32
