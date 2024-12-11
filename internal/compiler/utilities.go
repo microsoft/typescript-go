@@ -158,7 +158,7 @@ func isEffectiveModuleDeclaration(node *ast.Node) bool {
 }
 
 func isCommonJSContainingModuleKind(kind core.ModuleKind) bool {
-	return kind == core.ModuleKindCommonJS || kind == core.ModuleKindNode16 || kind == core.ModuleKindNodeNext
+	return kind == core.ModuleKindCommonJS || core.ModuleKindNode16 <= kind && kind <= core.ModuleKindNodeNext
 }
 
 /** @internal */

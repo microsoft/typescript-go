@@ -79,7 +79,7 @@ func (options *CompilerOptions) GetModuleResolutionKind() ModuleResolutionKind {
 		return options.ModuleResolution
 	}
 	switch options.GetEmitModuleKind() {
-	case ModuleKindNode16:
+	case ModuleKindNode16, ModuleKindNode18:
 		return ModuleResolutionKindNode16
 	case ModuleKindNodeNext:
 		return ModuleResolutionKindNodeNext
@@ -93,7 +93,7 @@ func (options *CompilerOptions) GetESModuleInterop() bool {
 		return options.ESModuleInterop == TSTrue
 	}
 	switch options.GetEmitModuleKind() {
-	case ModuleKindNode16, ModuleKindNodeNext, ModuleKindPreserve:
+	case ModuleKindNode16, ModuleKindNode18, ModuleKindNodeNext, ModuleKindPreserve:
 		return true
 	}
 	return false
@@ -176,6 +176,7 @@ const (
 	ModuleKindESNext ModuleKind = 99
 	// Node16+ is an amalgam of commonjs (albeit updated) and es2022+, and represents a distinct module system from es2020/esnext
 	ModuleKindNode16   ModuleKind = 100
+	ModuleKindNode18   ModuleKind = 101
 	ModuleKindNodeNext ModuleKind = 199
 	// Emit as written
 	ModuleKindPreserve ModuleKind = 200
