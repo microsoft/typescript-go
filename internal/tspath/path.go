@@ -333,19 +333,19 @@ func hasRelativePathSegment(p string) bool {
 		return true
 	}
 
-	if strings.Contains(p, "//") {
-		return true
-	}
-
-	if strings.Contains(p, "/./") || strings.Contains(p, "/../") {
-		return true
-	}
-
 	if strings.HasPrefix(p, "./") || strings.HasPrefix(p, "../") {
 		return true
 	}
 
 	if strings.HasSuffix(p, "/.") || strings.HasSuffix(p, "/..") {
+		return true
+	}
+
+	if strings.Contains(p, "//") {
+		return true
+	}
+
+	if strings.Contains(p, "/./") || strings.Contains(p, "/../") {
 		return true
 	}
 
