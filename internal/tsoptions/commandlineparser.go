@@ -4,7 +4,6 @@ import (
 	"strconv"
 	"strings"
 	"sync"
-	"unicode/utf8"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/compiler/diagnostics"
@@ -69,7 +68,6 @@ type CommandLineParser struct {
 	fs                vfs.FS
 	options           OptionsBase
 	// todo: watchOptions   OptionsBase
-	// todo: determine if needed readFile  func(string) (string, bool)
 	fileNames []string
 	errorLoc  core.TextRange
 	errors    []*ast.Diagnostic
@@ -77,7 +75,8 @@ type CommandLineParser struct {
 
 // todo: used in executeCommandLine
 type ParsedCommandLine struct {
-	Options *core.CompilerOptions
+	Options    *core.CompilerOptions
+	ConfigFile *ast.SourceFile // TsConfigSourceFile
 	// TypeAquisition *core.TypeAcquisition
 	FileNames         []string
 	ProjectReferences []string // todo: core.ProjectReference
@@ -88,14 +87,22 @@ type ParsedCommandLine struct {
 	CompileOnSave bool
 }
 
+func (p *ParsedCommandLine) GetConfigFileParsingDiagnostics() []*ast.Diagnostic {
+	if p.ConfigFile != nil {
+		// todo: !!! should be ConfigFile.ParseDiagnostics, check if they are the same
+		return append(p.ConfigFile.Diagnostics(), p.Errors...)
+	}
+	return p.Errors
+}
+
 func ParseCommandLine(
 	commandLine []string,
 	fs vfs.FS,
 ) *ParsedCommandLine {
-	//todo: convert commandLineWorker output to compileroptions
+	// this function should convert commandLineWorker output to compileroptions
+	// todo: return correct type (waiting on shared tsconfig parsing utilities)
 	// parseCommandLineWorker()
 	return &ParsedCommandLine{}
-	// todo: return correct type (waiting on shared tsconfig parsing utilities)
 }
 
 func parseCommandLineWorker(
@@ -167,25 +174,23 @@ func (p *CommandLineParser) parseResponseFile(fileName string) {
 	var args []string
 	text := []rune(fileContents)
 	textLength := len(text)
-	start := 0
 	pos := 0
 	for pos < textLength {
-		pos++
 		for pos < textLength && text[pos] < ' ' {
 			pos++
 		}
 		if pos >= textLength {
 			break
 		}
+		start := pos
 		if text[pos] == '"' {
 			pos++
 			for pos < textLength && text[pos] != '"' {
 				pos++
 			}
 			if pos < textLength {
-				args = append(args, string(text[start:pos]))
+				args = append(args, string(text[start+1:pos]))
 				pos++
-				start = pos
 			} else {
 				p.errors = append(p.errors, ast.NewCompilerDiagnostic(diagnostics.Unterminated_quoted_string_in_response_file_0, fileName))
 			}
@@ -194,16 +199,9 @@ func (p *CommandLineParser) parseResponseFile(fileName string) {
 				pos++
 			}
 			args = append(args, string(text[start:pos]))
-			start = pos
 		}
 	}
 	p.parseStrings(args)
-}
-
-func incrementStringByRune(text string, argSoFar []rune) (rest string, r rune, curArg []rune) {
-	r, size := utf8.DecodeRuneInString(text)
-	text = text[size:]
-	return text, r, append(argSoFar, r)
 }
 
 func tryReadFile(fileName string, readFile func(string) (string, bool), errors []*ast.Diagnostic) (string, []*ast.Diagnostic) {
@@ -234,7 +232,6 @@ func (p *CommandLineParser) parseOptionValue(
 				i++
 			} else {
 				if optValue == "true" {
-					p.options[opt.Name] = true
 					i++
 				}
 				p.errors = append(p.errors, ast.NewCompilerDiagnostic(diagnostics.Option_0_can_only_be_specified_in_tsconfig_json_file_or_set_to_false_or_null_on_command_line, opt.Name))
@@ -261,6 +258,7 @@ func (p *CommandLineParser) parseOptionValue(
 		if args[i] != "null" {
 			switch opt.Kind {
 			case "number":
+				// todo: Make sure this parseInt matches JS parseInt
 				num, e := strconv.ParseInt(args[i], 10, 0)
 				if e == nil {
 					p.options[opt.Name] = num
@@ -305,7 +303,7 @@ func (p *CommandLineParser) parseOptionValue(
 }
 
 func (p *CommandLineParser) parseListTypeOption(opt *CommandLineOption, value string) []string {
-	value = strings.TrimFunc(value, stringutil.IsWhiteSpaceLike)
+	value = strings.TrimSpace(value)
 	if strings.HasPrefix(value, "-") {
 		return []string{}
 	}
@@ -321,6 +319,7 @@ func (p *CommandLineParser) parseListTypeOption(opt *CommandLineOption, value st
 		return core.Filter(core.Map(values, func(v string) string { return p.validateJsonOptionValue(opt.Elements(), v, nil, nil) }), isDefined)
 	case "boolean", "object", "number":
 		// do nothing: only string and enum/object types currently allowed as list entries
+		// 				!!! we don't actually have number list options, so I didn't implement number list parsing
 		panic("List of " + opt.Elements().Kind + " is not yet supported.")
 	default:
 		return core.Filter(core.Map(values, func(v string) string { return p.parseEnumOption(opt.Elements(), v).(string) }), isDefined)
