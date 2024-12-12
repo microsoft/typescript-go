@@ -346,7 +346,6 @@ const (
 	KindJSDocNonNullableType
 	KindJSDocOptionalType
 	KindJSDocVariadicType
-	KindJSDocNamepathType // https://jsdoc.app/about-namepaths.html
 	KindJSDoc
 	KindJSDocText
 	KindJSDocTypeLiteral
