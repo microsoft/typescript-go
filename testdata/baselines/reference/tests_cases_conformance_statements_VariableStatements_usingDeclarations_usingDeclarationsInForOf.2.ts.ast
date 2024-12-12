@@ -1,7 +1,0 @@
-SourceFile
-  ForOfStatement
-    Identifier: 'using'
-    ElementAccessExpression
-      Identifier: ' of'
-      Identifier: ''
-    Block

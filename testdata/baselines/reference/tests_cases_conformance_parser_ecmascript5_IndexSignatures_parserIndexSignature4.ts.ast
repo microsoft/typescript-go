@@ -1,9 +1,0 @@
-SourceFile
-  InterfaceDeclaration
-    Identifier: ' I'
-    PropertySignature
-      ComputedPropertyName
-        BinaryExpression
-          Identifier: 'a'
-          EqualsToken
-          NumericLiteral

@@ -1,6 +1,0 @@
-SourceFile
-  ImportEqualsDeclaration
-    Identifier: ' TypeScript'
-    QualifiedName
-      Identifier: ' TypeScriptServices'
-      Identifier: 'TypeScript'

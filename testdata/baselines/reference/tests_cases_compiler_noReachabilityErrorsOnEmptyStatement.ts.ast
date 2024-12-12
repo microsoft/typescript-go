@@ -1,7 +1,0 @@
-SourceFile
-  FunctionDeclaration
-    Identifier: ' foo'
-    Block
-      ReturnStatement
-        NumericLiteral
-      EmptyStatement

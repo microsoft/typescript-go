@@ -1,7 +1,0 @@
-SourceFile
-  ClassDeclaration
-    Identifier: ' C'
-    MethodDeclaration
-      PublicKeyword
-      Identifier: ' foo'
-      Block

@@ -1,8 +1,0 @@
-SourceFile
-  ClassDeclaration
-    Identifier: ' a'
-    PropertyDeclaration
-      PublicKeyword
-      Identifier: ' c'
-  ExportAssignment
-    Identifier: ' a'

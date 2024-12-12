@@ -1,7 +1,0 @@
-SourceFile
-  FunctionDeclaration
-    Identifier: ' foo'
-    Parameter
-      Identifier: 'x'
-      NumericLiteral
-    Block

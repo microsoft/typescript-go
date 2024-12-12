@@ -1,9 +1,0 @@
-SourceFile
-  ExpressionStatement
-    PrefixUnaryExpression
-      Identifier: ''
-  ExpressionStatement
-    DeleteExpression
-      PropertyAccessExpression
-        Identifier: ' foo'
-        Identifier: 'bar'

@@ -1,9 +1,0 @@
-SourceFile
-  VariableStatement
-    VariableDeclarationList
-      VariableDeclaration
-        Identifier: ' str'
-        StringKeyword
-        ElementAccessExpression
-          StringLiteral
-          NumericLiteral

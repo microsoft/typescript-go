@@ -1,6 +1,0 @@
-SourceFile
-  ClassDeclaration
-    Identifier: ' C'
-  Block
-    ClassDeclaration
-      Identifier: ' C'

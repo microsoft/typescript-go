@@ -1,6 +1,0 @@
-SourceFile
-  FunctionDeclaration
-    Identifier: ' f'
-    Parameter
-      Identifier: 'color'
-    Block

@@ -1,9 +1,0 @@
-SourceFile
-  InterfaceDeclaration
-    Identifier: ' color'
-  InterfaceDeclaration
-    Identifier: ' blue'
-    HeritageClause
-      ExpressionWithTypeArguments
-        CallExpression
-          Identifier: ' color'

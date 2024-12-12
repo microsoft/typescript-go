@@ -1,9 +1,0 @@
-SourceFile
-  FunctionDeclaration
-    AsteriskToken
-    Identifier: ' g'
-    TypeReference
-      Identifier: ' IterableIterator'
-      AnyKeyword
-    Block
-      ReturnStatement

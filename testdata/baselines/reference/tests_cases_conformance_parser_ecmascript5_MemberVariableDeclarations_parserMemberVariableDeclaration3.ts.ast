@@ -1,7 +1,0 @@
-SourceFile
-  ClassDeclaration
-    Identifier: ' C'
-    PropertyDeclaration
-      StaticKeyword
-      PublicKeyword
-      Identifier: ' Foo'

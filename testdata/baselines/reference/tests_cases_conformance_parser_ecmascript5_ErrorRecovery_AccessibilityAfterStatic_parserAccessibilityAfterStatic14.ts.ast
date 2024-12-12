@@ -1,9 +1,0 @@
-SourceFile
-  ClassDeclaration
-    Identifier: ' Outer'
-    MethodDeclaration
-      StaticKeyword
-      Identifier: ' public'
-      TypeParameter
-        Identifier: 'T'
-      Block

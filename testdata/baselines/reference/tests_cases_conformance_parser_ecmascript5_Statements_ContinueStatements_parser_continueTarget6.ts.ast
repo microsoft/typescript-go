@@ -1,6 +1,0 @@
-SourceFile
-  WhileStatement
-    TrueKeyword
-    Block
-      ContinueStatement
-        Identifier: ' target'

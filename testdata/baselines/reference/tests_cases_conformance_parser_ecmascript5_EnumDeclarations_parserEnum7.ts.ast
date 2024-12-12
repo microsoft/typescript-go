@@ -1,9 +1,0 @@
-SourceFile
-  EnumDeclaration
-    Identifier: ' E'
-    EnumMember
-      NumericLiteral
-    EnumMember
-      NumericLiteral
-    EnumMember
-      NumericLiteral

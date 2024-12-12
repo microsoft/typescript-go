@@ -1,7 +1,0 @@
-SourceFile
-  ImportDeclaration
-    ImportClause
-      NamespaceImport
-        Identifier: ' j'
-    StringLiteral
-  Block

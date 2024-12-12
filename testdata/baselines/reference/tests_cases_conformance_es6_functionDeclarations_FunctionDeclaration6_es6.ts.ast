@@ -1,8 +1,0 @@
-SourceFile
-  FunctionDeclaration
-    AsteriskToken
-    Identifier: 'foo'
-    Parameter
-      Identifier: 'a'
-      YieldExpression
-    Block

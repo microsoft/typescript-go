@@ -1,6 +1,0 @@
-SourceFile
-  ForInStatement
-    NewExpression
-      Identifier: ' foo'
-    Identifier: ' b'
-    Block

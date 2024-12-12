@@ -1,8 +1,0 @@
-SourceFile
-  FunctionDeclaration
-    AsteriskToken
-    Identifier: ' g'
-    Block
-      ExpressionStatement
-        YieldExpression
-          NumericLiteral

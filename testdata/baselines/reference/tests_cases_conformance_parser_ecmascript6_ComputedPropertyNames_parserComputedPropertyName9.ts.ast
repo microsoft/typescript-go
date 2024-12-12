@@ -1,8 +1,0 @@
-SourceFile
-  ClassDeclaration
-    Identifier: ' C'
-    PropertyDeclaration
-      ComputedPropertyName
-        Identifier: 'e'
-      TypeReference
-        Identifier: ' Type'

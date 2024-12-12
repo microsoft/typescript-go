@@ -1,9 +1,0 @@
-SourceFile
-  ClassDeclaration
-    DeclareKeyword
-    Identifier: ' C'
-    GetAccessor
-      Identifier: ' foo'
-      Block
-        ReturnStatement
-          NumericLiteral

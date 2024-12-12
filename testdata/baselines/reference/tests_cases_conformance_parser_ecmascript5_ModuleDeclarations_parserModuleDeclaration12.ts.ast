@@ -1,6 +1,0 @@
-SourceFile
-  ModuleDeclaration
-    Identifier: ' A'
-    ModuleDeclaration
-      Identifier: 'string'
-      ModuleBlock

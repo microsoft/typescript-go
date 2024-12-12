@@ -1,6 +1,0 @@
-SourceFile
-  ClassDeclaration
-    Identifier: ' C'
-    PropertyDeclaration
-      ComputedPropertyName
-        Identifier: 'e'

@@ -1,7 +1,0 @@
-SourceFile
-  FunctionDeclaration
-    Identifier: ' F'
-    Parameter
-      Identifier: 'p'
-      QuestionToken
-    Block

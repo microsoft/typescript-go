@@ -1,6 +1,0 @@
-SourceFile
-  ExpressionStatement
-    StringLiteral
-  ClassDeclaration
-    ExportKeyword
-    Identifier: ' Foo'

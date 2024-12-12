@@ -1,8 +1,0 @@
-SourceFile
-  ClassDeclaration
-    Identifier: ' B'
-    PropertyDeclaration
-      PublicKeyword
-      Identifier: ' c'
-      TypeReference
-        Identifier: ' C'

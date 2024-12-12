@@ -1,8 +1,0 @@
-SourceFile
-  ClassDeclaration
-    Identifier: ' BlockIntrinsics'
-    IndexSignature
-      Parameter
-        Identifier: 's'
-        StringKeyword
-      StringKeyword

@@ -1,8 +1,0 @@
-SourceFile
-  ExpressionStatement
-    PropertyAccessExpression
-      Identifier: '// "module.module { }" should raise a syntax error
-
-module'
-      Identifier: 'module'
-  Block

@@ -1,7 +1,0 @@
-SourceFile
-  FunctionDeclaration
-    Identifier: ' f'
-    Parameter
-      Identifier: 'a'
-    Parameter
-      ObjectBindingPattern

@@ -1,7 +1,0 @@
-SourceFile
-  EnumDeclaration
-    AsyncKeyword
-    Identifier: ' E'
-    EnumMember
-      Identifier: '  
-  Value'

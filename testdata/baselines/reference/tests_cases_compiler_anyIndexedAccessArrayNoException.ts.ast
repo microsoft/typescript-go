@@ -1,8 +1,0 @@
-SourceFile
-  VariableStatement
-    VariableDeclarationList
-      VariableDeclaration
-        Identifier: ' x'
-        IndexedAccessType
-          AnyKeyword
-          TupleType

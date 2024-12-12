@@ -1,9 +1,0 @@
-SourceFile
-  ExpressionStatement
-    ElementAccessExpression
-      TemplateExpression
-        TemplateHead
-        TemplateSpan
-          NumericLiteral
-          TemplateTail
-      NoSubstitutionTemplateLiteral

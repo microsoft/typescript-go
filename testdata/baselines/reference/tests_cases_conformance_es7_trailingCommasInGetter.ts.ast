@@ -1,8 +1,0 @@
-SourceFile
-  ClassDeclaration
-    Identifier: ' X'
-    GetAccessor
-      Identifier: ' x'
-      Block
-        ReturnStatement
-          NumericLiteral

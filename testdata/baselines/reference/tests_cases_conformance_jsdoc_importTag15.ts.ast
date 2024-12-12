@@ -1,9 +1,0 @@
-SourceFile
-  InterfaceDeclaration
-    ExportKeyword
-    Identifier: ' I'
-  FunctionDeclaration
-    Identifier: ' f'
-    Parameter
-      Identifier: 'a'
-    Block

@@ -1,9 +1,0 @@
-SourceFile
-  ExpressionStatement
-    StringLiteral
-  ExpressionStatement
-    BinaryExpression
-      Identifier: '
-eval'
-      EqualsToken
-      NumericLiteral

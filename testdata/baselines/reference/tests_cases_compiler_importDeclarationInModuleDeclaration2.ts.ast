@@ -1,6 +1,0 @@
-SourceFile
-  FunctionDeclaration
-    Identifier: ' container'
-    Block
-      ImportDeclaration
-        StringLiteral

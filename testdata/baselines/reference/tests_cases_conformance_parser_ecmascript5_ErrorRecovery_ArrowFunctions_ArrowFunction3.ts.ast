@@ -1,9 +1,0 @@
-SourceFile
-  VariableStatement
-    VariableDeclarationList
-      VariableDeclaration
-        Identifier: ' v'
-        ParenthesizedExpression
-          Identifier: 'a'
-  Block
-  EmptyStatement

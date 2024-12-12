@@ -1,8 +1,0 @@
-SourceFile
-  ImportEqualsDeclaration
-    Identifier: ' Foo'
-    Identifier: ' From'
-  ExpressionStatement
-    StringLiteral
-  ExportAssignment
-    Identifier: ' Foo'

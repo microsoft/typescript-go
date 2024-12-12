@@ -1,7 +1,0 @@
-SourceFile
-  ExportAssignment
-    ParenthesizedExpression
-      AsExpression
-        ClassExpression
-          Identifier: ' Foo'
-        AnyKeyword

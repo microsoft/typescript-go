@@ -1,8 +1,0 @@
-SourceFile
-  InterfaceDeclaration
-    Identifier: ' I'
-  VariableStatement
-    VariableDeclarationList
-      VariableDeclaration
-        Identifier: ' x'
-        NumericLiteral

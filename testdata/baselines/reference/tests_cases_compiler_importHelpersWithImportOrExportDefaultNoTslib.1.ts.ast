@@ -1,9 +1,0 @@
-SourceFile
-  ClassDeclaration
-    ExportKeyword
-    DefaultKeyword
-  ExportDeclaration
-    NamedExports
-      ExportSpecifier
-        Identifier: ' default'
-    StringLiteral

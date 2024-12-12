@@ -1,9 +1,0 @@
-SourceFile
-  ClassDeclaration
-    Identifier: ' C'
-    PropertyDeclaration
-      ComputedPropertyName
-        PropertyAccessExpression
-          Identifier: 'Symbol'
-          Identifier: 'toPrimitive'
-      StringLiteral

@@ -1,9 +1,0 @@
-SourceFile
-  ClassDeclaration
-    ExportKeyword
-    DefaultKeyword
-    Identifier: ' C'
-    MethodDeclaration
-      Identifier: '
-    method'
-      Block

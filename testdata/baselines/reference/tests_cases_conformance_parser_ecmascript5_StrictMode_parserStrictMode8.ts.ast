@@ -1,6 +1,0 @@
-SourceFile
-  ExpressionStatement
-    StringLiteral
-  FunctionDeclaration
-    Identifier: ' eval'
-    Block

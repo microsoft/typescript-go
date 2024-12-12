@@ -1,7 +1,0 @@
-SourceFile
-  VariableStatement
-    VariableDeclarationList
-      VariableDeclaration
-        Identifier: ' a'
-        NumberKeyword
-        NumericLiteral

@@ -1,6 +1,0 @@
-SourceFile
-  ExportAssignment
-    BinaryExpression
-      NumericLiteral
-      PlusToken
-      NumericLiteral

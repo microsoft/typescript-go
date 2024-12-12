@@ -1,7 +1,0 @@
-SourceFile
-  SwitchStatement
-    NumericLiteral
-    CaseBlock
-      CaseClause
-        NumericLiteral
-        ContinueStatement

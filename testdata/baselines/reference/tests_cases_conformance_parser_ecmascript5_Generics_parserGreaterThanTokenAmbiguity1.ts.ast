@@ -1,6 +1,0 @@
-SourceFile
-  ExpressionStatement
-    BinaryExpression
-      NumericLiteral
-      GreaterThanGreaterThanToken
-      NumericLiteral

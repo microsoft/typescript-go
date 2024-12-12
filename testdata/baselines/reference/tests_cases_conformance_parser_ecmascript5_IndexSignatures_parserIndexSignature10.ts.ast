@@ -1,9 +1,0 @@
-SourceFile
-  InterfaceDeclaration
-    Identifier: ' I'
-    IndexSignature
-      Parameter
-        Identifier: 'a'
-      Parameter
-        Identifier: ' b'
-      NumberKeyword

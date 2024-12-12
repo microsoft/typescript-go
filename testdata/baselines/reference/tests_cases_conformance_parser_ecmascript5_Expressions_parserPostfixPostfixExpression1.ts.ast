@@ -1,7 +1,0 @@
-SourceFile
-  ExpressionStatement
-    PostfixUnaryExpression
-      Identifier: 'a'
-  ExpressionStatement
-    PrefixUnaryExpression
-      Identifier: ''

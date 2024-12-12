@@ -1,8 +1,0 @@
-SourceFile
-  InterfaceDeclaration
-    Identifier: ' I'
-    PropertySignature
-      Identifier: '
-  D'
-      QuestionToken
-      AnyKeyword

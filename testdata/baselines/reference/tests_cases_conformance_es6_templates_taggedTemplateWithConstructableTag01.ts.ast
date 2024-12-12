@@ -1,9 +1,0 @@
-SourceFile
-  ClassDeclaration
-    Identifier: ' CtorTag'
-  ExpressionStatement
-    TaggedTemplateExpression
-      Identifier: '
-
-CtorTag'
-      NoSubstitutionTemplateLiteral

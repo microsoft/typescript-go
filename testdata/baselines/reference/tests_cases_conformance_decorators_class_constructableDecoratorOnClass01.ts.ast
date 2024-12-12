@@ -1,7 +1,0 @@
-SourceFile
-  ClassDeclaration
-    Identifier: ' CtorDtor'
-  ClassDeclaration
-    Decorator
-      Identifier: 'CtorDtor'
-    Identifier: ' C'

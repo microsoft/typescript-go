@@ -1,7 +1,0 @@
-SourceFile
-  ForOfStatement
-    VariableDeclarationList
-      VariableDeclaration
-        Identifier: ' i'
-    Identifier: ' e'
-    Block

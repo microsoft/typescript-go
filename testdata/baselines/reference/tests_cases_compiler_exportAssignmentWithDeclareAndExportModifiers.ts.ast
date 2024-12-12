@@ -1,9 +1,0 @@
-SourceFile
-  VariableStatement
-    VariableDeclarationList
-      VariableDeclaration
-        Identifier: ' x'
-  ExportAssignment
-    ExportKeyword
-    DeclareKeyword
-    Identifier: ' x'

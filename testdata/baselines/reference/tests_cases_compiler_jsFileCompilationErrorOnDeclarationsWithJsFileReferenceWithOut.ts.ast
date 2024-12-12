@@ -1,9 +1,0 @@
-SourceFile
-  ClassDeclaration
-    Identifier: ' c'
-  FunctionDeclaration
-    Identifier: ' foo'
-    Block
-  FunctionDeclaration
-    Identifier: ' bar'
-    Block

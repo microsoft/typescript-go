@@ -1,7 +1,0 @@
-SourceFile
-  ClassDeclaration
-    Identifier: ' c'
-  FunctionDeclaration
-    DeclareKeyword
-    Identifier: ' isC'
-    BooleanKeyword

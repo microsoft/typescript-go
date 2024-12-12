@@ -1,9 +1,0 @@
-SourceFile
-  ClassDeclaration
-    Identifier: ' Foo'
-    Constructor
-      Parameter
-        PublicKeyword
-        Identifier: ' constructor'
-        StringKeyword
-      Block

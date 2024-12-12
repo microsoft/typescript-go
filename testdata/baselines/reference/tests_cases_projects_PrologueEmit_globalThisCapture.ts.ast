@@ -1,8 +1,0 @@
-SourceFile
-  ExpressionStatement
-    ParenthesizedExpression
-      ArrowFunction
-        EqualsGreaterThanToken
-        PropertyAccessExpression
-          ThisKeyword
-          Identifier: 'window'

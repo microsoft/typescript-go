@@ -1,9 +1,0 @@
-SourceFile
-  ClassDeclaration
-    Identifier: ' C'
-    PropertyDeclaration
-      Identifier: '
-   var'
-    PropertyDeclaration
-      Identifier: '
-   public'

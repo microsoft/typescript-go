@@ -1,8 +1,0 @@
-SourceFile
-  FunctionDeclaration
-    AsyncKeyword
-    Identifier: ' await'
-    TypeReference
-      Identifier: ' Promise'
-      VoidKeyword
-    Block

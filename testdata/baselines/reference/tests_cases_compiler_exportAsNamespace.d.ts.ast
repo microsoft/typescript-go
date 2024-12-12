@@ -1,8 +1,0 @@
-SourceFile
-  VariableStatement
-    ExportKeyword
-    VariableDeclarationList
-      VariableDeclaration
-        Identifier: ' X'
-  NamespaceExportDeclaration
-    Identifier: ' N'

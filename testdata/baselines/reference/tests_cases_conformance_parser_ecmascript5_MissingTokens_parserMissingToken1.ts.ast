@@ -1,9 +1,0 @@
-SourceFile
-  ExpressionStatement
-    BinaryExpression
-      Identifier: 'a'
-      SlashToken
-      Identifier: ''
-  TryStatement
-    Block
-    Block

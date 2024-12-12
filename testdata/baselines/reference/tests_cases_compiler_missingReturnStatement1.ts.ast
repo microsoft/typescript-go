@@ -1,8 +1,0 @@
-SourceFile
-  ClassDeclaration
-    Identifier: ' Foo'
-    MethodDeclaration
-      Identifier: '
-    foo'
-      NumberKeyword
-      Block

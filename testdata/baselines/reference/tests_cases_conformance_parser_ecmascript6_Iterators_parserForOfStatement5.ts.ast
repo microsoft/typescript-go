@@ -1,8 +1,0 @@
-SourceFile
-  ForOfStatement
-    VariableDeclarationList
-      VariableDeclaration
-        Identifier: ' a'
-        NumberKeyword
-    Identifier: ' X'
-    Block

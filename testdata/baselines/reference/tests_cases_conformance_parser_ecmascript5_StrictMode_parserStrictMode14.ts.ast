@@ -1,6 +1,0 @@
-SourceFile
-  ExpressionStatement
-    StringLiteral
-  WithStatement
-    Identifier: 'a'
-    Block

@@ -1,7 +1,0 @@
-SourceFile
-  ClassDeclaration
-    Identifier: ' Hello'
-  ClassDeclaration
-    Identifier: ' Hi'
-  ClassDeclaration
-    Identifier: ' Hola'

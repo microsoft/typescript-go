@@ -1,9 +1,0 @@
-SourceFile
-  ImportDeclaration
-    ImportClause
-      NamespaceImport
-        Identifier: ' f'
-    StringLiteral
-    ImportAttributes
-  ExpressionStatement
-    Identifier: ' assert'

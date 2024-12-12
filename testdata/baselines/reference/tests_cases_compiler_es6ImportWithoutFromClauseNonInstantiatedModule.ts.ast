@@ -1,6 +1,0 @@
-SourceFile
-  InterfaceDeclaration
-    ExportKeyword
-    Identifier: ' i'
-  ImportDeclaration
-    StringLiteral

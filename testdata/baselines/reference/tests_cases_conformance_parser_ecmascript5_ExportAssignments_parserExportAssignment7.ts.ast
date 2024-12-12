@@ -1,6 +1,0 @@
-SourceFile
-  ClassDeclaration
-    ExportKeyword
-    Identifier: ' C'
-  ExportAssignment
-    Identifier: ' B'

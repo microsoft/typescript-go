@@ -1,8 +1,0 @@
-SourceFile
-  InterfaceDeclaration
-    Identifier: ' I'
-    MethodSignature
-      Identifier: '
-  C'
-      TypeParameter
-        Identifier: 'T'

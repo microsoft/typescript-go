@@ -1,8 +1,0 @@
-SourceFile
-  ExpressionStatement
-    ParenthesizedExpression
-      ClassExpression
-        PropertyDeclaration
-          StaticKeyword
-          Identifier: ' x'
-          NumericLiteral

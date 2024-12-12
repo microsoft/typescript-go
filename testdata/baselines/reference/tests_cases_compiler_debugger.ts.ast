@@ -1,6 +1,0 @@
-SourceFile
-  DebuggerStatement
-  FunctionDeclaration
-    Identifier: ' foo'
-    Block
-      DebuggerStatement

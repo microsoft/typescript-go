@@ -1,9 +1,0 @@
-SourceFile
-  ClassDeclaration
-    Identifier: ' C'
-    MethodDeclaration
-      Identifier: '
-    // ? should be removed in emit
-    method'
-      QuestionToken
-      Block

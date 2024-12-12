@@ -1,8 +1,0 @@
-SourceFile
-  InterfaceDeclaration
-    Identifier: ' Array'
-    TypeParameter
-      Identifier: 'T'
-    CallSignature
-      ArrayType
-        AnyKeyword

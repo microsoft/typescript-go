@@ -1,8 +1,0 @@
-SourceFile
-  ClassDeclaration
-    DeclareKeyword
-    Identifier: ' C'
-    MethodDeclaration
-      AsteriskToken
-      Identifier: 'generator'
-      AnyKeyword

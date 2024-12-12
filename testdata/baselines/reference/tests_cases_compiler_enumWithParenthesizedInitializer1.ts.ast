@@ -1,9 +1,0 @@
-SourceFile
-  EnumDeclaration
-    Identifier: ' E'
-    EnumMember
-      Identifier: '
- e'
-      PrefixUnaryExpression
-        ParenthesizedExpression
-          NumericLiteral

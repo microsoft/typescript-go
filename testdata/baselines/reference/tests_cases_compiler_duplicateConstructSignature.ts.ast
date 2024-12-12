@@ -1,7 +1,0 @@
-SourceFile
-  InterfaceDeclaration
-    Identifier: ' I'
-    CallSignature
-      NumberKeyword
-    CallSignature
-      StringKeyword

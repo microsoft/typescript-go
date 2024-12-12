@@ -1,8 +1,0 @@
-SourceFile
-  Block
-    VariableStatement
-      VariableDeclarationList
-        VariableDeclaration
-          Identifier: ' a'
-  ExportDeclaration
-    NamedExports

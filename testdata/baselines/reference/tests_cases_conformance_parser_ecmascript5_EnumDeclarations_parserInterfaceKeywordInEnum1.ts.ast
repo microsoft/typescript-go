@@ -1,8 +1,0 @@
-SourceFile
-  ExpressionStatement
-    StringLiteral
-  EnumDeclaration
-    Identifier: ' Bar'
-    EnumMember
-      Identifier: '
-    interface'

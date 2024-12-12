@@ -1,9 +1,0 @@
-SourceFile
-  ClassDeclaration
-    Identifier: ' C'
-    PropertyDeclaration
-      StaticKeyword
-      Identifier: ' static'
-    MethodDeclaration
-      Identifier: ' Foo'
-      Block

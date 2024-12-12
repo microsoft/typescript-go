@@ -1,9 +1,0 @@
-SourceFile
-  VariableStatement
-    ExportKeyword
-    VariableDeclarationList
-      VariableDeclaration
-        Identifier: ' a'
-      VariableDeclaration
-        Identifier: ' string'
-        StringLiteral

@@ -1,9 +1,0 @@
-SourceFile
-  ExpressionStatement
-    StringLiteral
-  ExpressionStatement
-    StringLiteral
-  FunctionDeclaration
-    ExportKeyword
-    Identifier: ' f'
-    Block

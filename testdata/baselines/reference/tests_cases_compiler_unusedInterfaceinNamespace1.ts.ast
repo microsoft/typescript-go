@@ -1,6 +1,0 @@
-SourceFile
-  ModuleDeclaration
-    Identifier: ' Validation'
-    ModuleBlock
-      InterfaceDeclaration
-        Identifier: ' i1'

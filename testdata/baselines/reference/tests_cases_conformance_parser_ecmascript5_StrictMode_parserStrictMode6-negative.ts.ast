@@ -1,4 +1,0 @@
-SourceFile
-  ExpressionStatement
-    PostfixUnaryExpression
-      Identifier: 'eval'

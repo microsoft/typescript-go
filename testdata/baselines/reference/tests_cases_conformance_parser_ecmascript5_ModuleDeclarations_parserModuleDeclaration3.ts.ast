@@ -1,9 +1,0 @@
-SourceFile
-  ModuleDeclaration
-    DeclareKeyword
-    Identifier: ' M'
-    ModuleBlock
-      ModuleDeclaration
-        DeclareKeyword
-        Identifier: ' M2'
-        ModuleBlock

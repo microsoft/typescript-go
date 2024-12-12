@@ -1,5 +1,0 @@
-SourceFile
-  ExpressionStatement
-    PropertyAccessExpression
-      NullKeyword
-      Identifier: 'foo'

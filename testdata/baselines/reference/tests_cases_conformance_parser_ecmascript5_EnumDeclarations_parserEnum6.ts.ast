@@ -1,9 +1,0 @@
-SourceFile
-  EnumDeclaration
-    Identifier: ' E'
-    EnumMember
-      StringLiteral
-    EnumMember
-      StringLiteral
-    EnumMember
-      StringLiteral

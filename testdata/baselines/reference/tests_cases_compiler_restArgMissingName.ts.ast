@@ -1,7 +1,0 @@
-SourceFile
-  FunctionDeclaration
-    Identifier: ' sum'
-    Parameter
-      DotDotDotToken
-      Identifier: ''
-    Block

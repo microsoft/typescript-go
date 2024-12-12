@@ -1,7 +1,0 @@
-SourceFile
-  EnumDeclaration
-    Identifier: ' string'
-  EnumDeclaration
-    Identifier: ' number'
-  EnumDeclaration
-    Identifier: ' any'

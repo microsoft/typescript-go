@@ -1,5 +1,0 @@
-SourceFile
-  ImportEqualsDeclaration
-    Identifier: ' fs'
-    ExternalModuleReference
-      StringLiteral

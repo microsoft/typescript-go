@@ -1,8 +1,0 @@
-SourceFile
-  ClassDeclaration
-    Identifier: ' C'
-    SetAccessor
-      NumericLiteral
-      Parameter
-        Identifier: 'i'
-      Block

@@ -1,8 +1,0 @@
-SourceFile
-  InterfaceDeclaration
-    Identifier: ' I'
-    MethodSignature
-      NumericLiteral
-      QuestionToken
-      TypeParameter
-        Identifier: 'T'

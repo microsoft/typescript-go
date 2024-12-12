@@ -1,9 +1,0 @@
-SourceFile
-  ClassDeclaration
-    Identifier: ' C'
-    IndexSignature
-      PrivateKeyword
-      Parameter
-        Identifier: 'x'
-        StringKeyword
-      StringKeyword

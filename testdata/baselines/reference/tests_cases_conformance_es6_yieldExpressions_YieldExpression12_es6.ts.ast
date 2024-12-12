@@ -1,8 +1,0 @@
-SourceFile
-  ClassDeclaration
-    Identifier: ' C'
-    Constructor
-      Block
-        ExpressionStatement
-          YieldExpression
-            Identifier: ' foo'

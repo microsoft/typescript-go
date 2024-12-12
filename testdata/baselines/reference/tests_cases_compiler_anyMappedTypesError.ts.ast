@@ -1,8 +1,0 @@
-SourceFile
-  TypeAliasDeclaration
-    Identifier: ' Foo'
-    MappedType
-      TypeParameter
-        Identifier: 'P'
-        LiteralType
-          StringLiteral

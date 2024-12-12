@@ -1,7 +1,0 @@
-SourceFile
-  ModuleDeclaration
-    DeclareKeyword
-    StringLiteral
-    ModuleBlock
-      ExportAssignment
-        Identifier: ' A'

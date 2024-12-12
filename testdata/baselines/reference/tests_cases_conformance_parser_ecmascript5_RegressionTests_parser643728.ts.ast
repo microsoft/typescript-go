@@ -1,9 +1,0 @@
-SourceFile
-  InterfaceDeclaration
-    Identifier: ' C'
-    PropertySignature
-      Identifier: '
-    foo'
-    PropertySignature
-      Identifier: '
-    new'

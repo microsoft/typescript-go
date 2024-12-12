@@ -1,5 +1,0 @@
-SourceFile
-  ClassDeclaration
-    Decorator
-      Identifier: 'internal'
-    Identifier: ' C'

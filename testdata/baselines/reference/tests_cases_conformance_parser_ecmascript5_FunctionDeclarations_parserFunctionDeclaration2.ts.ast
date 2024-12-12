@@ -1,5 +1,0 @@
-SourceFile
-  FunctionDeclaration
-    DeclareKeyword
-    Identifier: ' Foo'
-    Block

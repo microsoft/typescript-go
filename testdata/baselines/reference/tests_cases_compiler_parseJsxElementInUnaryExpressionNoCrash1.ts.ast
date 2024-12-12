@@ -1,8 +1,0 @@
-SourceFile
-  ExpressionStatement
-    PrefixUnaryExpression
-      TypeAssertionExpression
-        FunctionType
-          TypeReference
-            Identifier: ''
-        Identifier: ''

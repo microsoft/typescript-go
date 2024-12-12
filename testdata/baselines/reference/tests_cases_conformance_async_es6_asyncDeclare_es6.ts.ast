@@ -1,8 +1,0 @@
-SourceFile
-  FunctionDeclaration
-    DeclareKeyword
-    AsyncKeyword
-    Identifier: ' foo'
-    TypeReference
-      Identifier: ' Promise'
-      VoidKeyword

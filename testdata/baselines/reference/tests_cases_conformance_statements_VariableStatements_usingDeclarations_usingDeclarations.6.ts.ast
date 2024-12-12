@@ -1,9 +1,0 @@
-SourceFile
-  Block
-    VariableStatement
-      VariableDeclarationList
-        VariableDeclaration
-          ObjectBindingPattern
-            BindingElement
-              Identifier: 'a'
-          NullKeyword

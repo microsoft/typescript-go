@@ -1,7 +1,0 @@
-SourceFile
-  ClassDeclaration
-    Identifier: ' foo'
-  EmptyStatement
-  FunctionDeclaration
-    Identifier: ' foo'
-    Block

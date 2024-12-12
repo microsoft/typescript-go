@@ -1,7 +1,0 @@
-SourceFile
-  FunctionDeclaration
-    Identifier: ''
-    Parameter
-      Identifier: 'a'
-    Parameter
-      Identifier: ' b'

@@ -1,6 +1,0 @@
-SourceFile
-  ClassDeclaration
-    Identifier: ' CustomBuffer'
-    HeritageClause
-      ExpressionWithTypeArguments
-        Identifier: ' Uint8Array'

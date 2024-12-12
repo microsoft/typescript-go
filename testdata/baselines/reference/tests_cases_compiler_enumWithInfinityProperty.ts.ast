@@ -1,7 +1,0 @@
-SourceFile
-  EnumDeclaration
-    Identifier: ' A'
-    EnumMember
-      Identifier: '
-    Infinity'
-      NumericLiteral

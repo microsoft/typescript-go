@@ -1,7 +1,0 @@
-SourceFile
-  ImportEqualsDeclaration
-    Identifier: ' ts'
-    ExternalModuleReference
-      StringLiteral
-  ExportAssignment
-    Identifier: ' ts'

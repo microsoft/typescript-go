@@ -1,6 +1,0 @@
-SourceFile
-  ClassDeclaration
-    Identifier: ' Test1'
-    MethodDeclaration
-      StringLiteral
-      Block

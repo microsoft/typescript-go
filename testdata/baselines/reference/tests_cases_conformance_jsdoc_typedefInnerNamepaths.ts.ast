@@ -1,7 +1,0 @@
-SourceFile
-  ClassDeclaration
-    Identifier: ' C'
-    Constructor
-      Parameter
-        Identifier: 'o'
-      Block

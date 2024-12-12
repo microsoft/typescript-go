@@ -1,5 +1,0 @@
-SourceFile
-  ExportDeclaration
-    NamespaceExport
-      Identifier: ' ns'
-    StringLiteral

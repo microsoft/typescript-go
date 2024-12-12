@@ -1,6 +1,0 @@
-SourceFile
-  FunctionDeclaration
-    Identifier: ' foo'
-  FunctionDeclaration
-    Identifier: ' bar'
-    Block

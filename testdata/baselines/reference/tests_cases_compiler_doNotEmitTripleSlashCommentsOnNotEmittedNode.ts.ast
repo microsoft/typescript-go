@@ -1,9 +1,0 @@
-SourceFile
-  VariableStatement
-    DeclareKeyword
-    VariableDeclarationList
-      VariableDeclaration
-        Identifier: ' OData'
-        AnyKeyword
-  InterfaceDeclaration
-    Identifier: ' F'

@@ -1,9 +1,0 @@
-SourceFile
-  ClassDeclaration
-    ExportKeyword
-    Identifier: ' Doo'
-  ClassDeclaration
-    Identifier: ' Scooby'
-    HeritageClause
-      ExpressionWithTypeArguments
-        Identifier: ' Doo'

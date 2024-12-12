@@ -1,9 +1,0 @@
-SourceFile
-  InterfaceDeclaration
-    Identifier: ' A'
-  ModuleDeclaration
-    Identifier: ' A'
-    ModuleBlock
-  TypeAliasDeclaration
-    Identifier: ' A'
-    TypeLiteral

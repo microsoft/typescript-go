@@ -1,6 +1,0 @@
-SourceFile
-  Block
-    FunctionDeclaration
-      ExportKeyword
-      Identifier: ' bar'
-      Block

@@ -1,7 +1,0 @@
-SourceFile
-  ExpressionStatement
-    ParenthesizedExpression
-      BinaryExpression
-        Identifier: 'a'
-        CommaToken
-        NumericLiteral

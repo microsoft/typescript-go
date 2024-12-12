@@ -1,7 +1,0 @@
-SourceFile
-  TypeAliasDeclaration
-    ExportKeyword
-    Identifier: ' T'
-    NumberKeyword
-  ExportDeclaration
-    StringLiteral

@@ -1,5 +1,0 @@
-SourceFile
-  LabeledStatement
-    Identifier: 'target'
-    BreakStatement
-      Identifier: ' target'

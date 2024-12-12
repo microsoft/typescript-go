@@ -1,8 +1,0 @@
-SourceFile
-  TryStatement
-    Block
-    CatchClause
-      VariableDeclaration
-        Identifier: 'e'
-        NumericLiteral
-      Block

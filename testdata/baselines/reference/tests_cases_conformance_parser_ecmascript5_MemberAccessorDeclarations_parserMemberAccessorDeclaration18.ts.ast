@@ -1,9 +1,0 @@
-SourceFile
-  ClassDeclaration
-    Identifier: ' C'
-    SetAccessor
-      Identifier: ' Foo'
-      Parameter
-        DotDotDotToken
-        Identifier: 'a'
-      Block

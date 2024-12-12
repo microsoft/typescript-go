@@ -1,7 +1,0 @@
-SourceFile
-  ClassDeclaration
-    ExportKeyword
-    Identifier: ' A'
-  ExportAssignment
-    NewExpression
-      Identifier: ' A'

@@ -1,7 +1,0 @@
-SourceFile
-  InterfaceDeclaration
-    Identifier: ' I'
-    ConstructSignature
-      Parameter
-        PublicKeyword
-        Identifier: ' x'

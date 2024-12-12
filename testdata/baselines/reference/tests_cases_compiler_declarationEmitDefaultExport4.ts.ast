@@ -1,7 +1,0 @@
-SourceFile
-  FunctionDeclaration
-    ExportKeyword
-    DefaultKeyword
-    Block
-      ReturnStatement
-        NumericLiteral

@@ -1,8 +1,0 @@
-SourceFile
-  FunctionDeclaration
-    ExportKeyword
-    AsteriskToken
-    Identifier: ' foo'
-    Block
-      ExpressionStatement
-        YieldExpression

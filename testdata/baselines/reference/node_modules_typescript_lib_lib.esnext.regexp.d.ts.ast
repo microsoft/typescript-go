@@ -1,7 +1,0 @@
-SourceFile
-  InterfaceDeclaration
-    Identifier: ' RegExp'
-    PropertySignature
-      ReadonlyKeyword
-      Identifier: ' unicodeSets'
-      BooleanKeyword

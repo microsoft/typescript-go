@@ -1,7 +1,0 @@
-SourceFile
-  ClassDeclaration
-    Identifier: ' C'
-    GetAccessor
-      AsyncKeyword
-      Identifier: ' foo'
-      Block

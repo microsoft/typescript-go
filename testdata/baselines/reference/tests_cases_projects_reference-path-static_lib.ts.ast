@@ -1,7 +1,0 @@
-SourceFile
-  ModuleDeclaration
-    Identifier: ' Lib'
-    ModuleBlock
-      ClassDeclaration
-        ExportKeyword
-        Identifier: ' LibType'

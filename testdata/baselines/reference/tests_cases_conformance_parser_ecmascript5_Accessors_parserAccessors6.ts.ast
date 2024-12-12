@@ -1,9 +1,0 @@
-SourceFile
-  ClassDeclaration
-    DeclareKeyword
-    Identifier: ' C'
-    SetAccessor
-      Identifier: ' foo'
-      Parameter
-        Identifier: 'v'
-      Block

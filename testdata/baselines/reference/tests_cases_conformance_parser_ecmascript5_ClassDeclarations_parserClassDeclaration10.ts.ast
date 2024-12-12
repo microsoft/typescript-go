@@ -1,7 +1,0 @@
-SourceFile
-  ClassDeclaration
-    Identifier: ' C'
-    Constructor
-    MethodDeclaration
-      Identifier: '
-   foo'

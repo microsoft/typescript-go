@@ -1,7 +1,0 @@
-SourceFile
-  ClassDeclaration
-    AbstractKeyword
-    Identifier: ' A'
-    Constructor
-      AbstractKeyword
-      Block

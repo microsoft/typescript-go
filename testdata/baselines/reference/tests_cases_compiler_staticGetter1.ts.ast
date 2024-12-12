@@ -1,9 +1,0 @@
-SourceFile
-  ClassDeclaration
-    Identifier: ' C'
-    GetAccessor
-      StaticKeyword
-      Identifier: ' x'
-      Block
-        ReturnStatement
-          ThisKeyword

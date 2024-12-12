@@ -1,7 +1,0 @@
-SourceFile
-  ExportAssignment
-    ObjectLiteralExpression
-      PropertyAssignment
-        ComputedPropertyName
-          StringLiteral
-        StringLiteral

@@ -1,9 +1,0 @@
-SourceFile
-  ClassDeclaration
-    Identifier: ' Foo'
-  SwitchStatement
-    NumericLiteral
-    CaseBlock
-      CaseClause
-        Identifier: ' Foo'
-        BreakStatement

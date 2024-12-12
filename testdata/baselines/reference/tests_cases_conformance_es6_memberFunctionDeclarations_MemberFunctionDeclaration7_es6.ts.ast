@@ -1,9 +1,0 @@
-SourceFile
-  ClassDeclaration
-    Identifier: ' C'
-    MethodDeclaration
-      AsteriskToken
-      Identifier: 'foo'
-      TypeParameter
-        Identifier: 'T'
-      Block

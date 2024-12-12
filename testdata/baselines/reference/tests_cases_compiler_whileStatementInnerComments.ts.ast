@@ -1,7 +1,0 @@
-SourceFile
-  WhileStatement
-    FalseKeyword
-    Block
-  DoStatement
-    Block
-    TrueKeyword

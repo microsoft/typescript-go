@@ -1,9 +1,0 @@
-SourceFile
-  ClassDeclaration
-    ExportKeyword
-    Identifier: ' A'
-  VariableStatement
-    VariableDeclarationList
-      VariableDeclaration
-        Identifier: ' x'
-        NumericLiteral

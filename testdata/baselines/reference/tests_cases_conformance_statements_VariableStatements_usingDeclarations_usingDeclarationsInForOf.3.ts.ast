@@ -1,7 +1,0 @@
-SourceFile
-  ForOfStatement
-    VariableDeclarationList
-      VariableDeclaration
-        ObjectBindingPattern
-    ArrayLiteralExpression
-    Block

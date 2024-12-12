@@ -1,9 +1,0 @@
-SourceFile
-  ModuleDeclaration
-    Identifier: ' Validation'
-    ModuleBlock
-      VariableStatement
-        VariableDeclarationList
-          VariableDeclaration
-            Identifier: ' lettersRegexp'
-            RegularExpressionLiteral

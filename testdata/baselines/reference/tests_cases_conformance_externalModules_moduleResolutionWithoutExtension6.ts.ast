@@ -1,7 +1,0 @@
-SourceFile
-  ImportDeclaration
-    ImportClause
-      NamedImports
-        ImportSpecifier
-          Identifier: ' foo'
-    StringLiteral

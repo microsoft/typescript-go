@@ -1,6 +1,0 @@
-SourceFile
-  ExpressionStatement
-    Identifier: 'G'
-  MissingDeclaration
-    Decorator
-      Identifier: ''

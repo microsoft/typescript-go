@@ -1,6 +1,0 @@
-SourceFile
-  ExpressionStatement
-    PropertyAccessExpression
-      Identifier: '// 'public' should be marked unusable, should complain on trailing /*
-a'
-      Identifier: 'public'

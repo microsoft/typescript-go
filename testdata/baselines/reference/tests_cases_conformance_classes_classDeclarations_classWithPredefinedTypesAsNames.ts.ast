@@ -1,9 +1,0 @@
-SourceFile
-  ClassDeclaration
-    Identifier: ' any'
-  ClassDeclaration
-    Identifier: ' number'
-  ClassDeclaration
-    Identifier: ' boolean'
-  ClassDeclaration
-    Identifier: ' string'

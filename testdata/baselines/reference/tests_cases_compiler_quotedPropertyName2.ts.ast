@@ -1,7 +1,0 @@
-SourceFile
-  ClassDeclaration
-    Identifier: ' Test1'
-    PropertyDeclaration
-      StaticKeyword
-      StringLiteral
-      NumericLiteral

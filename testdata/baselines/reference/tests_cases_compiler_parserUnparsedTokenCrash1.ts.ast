@@ -1,9 +1,0 @@
-SourceFile
-  ExpressionStatement
-    ParenthesizedExpression
-      BinaryExpression
-        Identifier: ' y'
-        EqualsToken
-        NumericLiteral
-  ExpressionStatement
-    NumericLiteral

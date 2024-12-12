@@ -1,6 +1,0 @@
-SourceFile
-  ExpressionStatement
-    NewExpression
-      ElementAccessExpression
-        Identifier: ' Foo'
-        NumericLiteral

@@ -1,9 +1,0 @@
-SourceFile
-  ExportAssignment
-    NumericLiteral
-  ExportDeclaration
-    NamedExports
-      ExportSpecifier
-        Identifier: ' default'
-        Identifier: ' A'
-    StringLiteral

@@ -1,8 +1,0 @@
-SourceFile
-  ImportEqualsDeclaration
-    Identifier: ' Foo'
-    Identifier: ' SomeNonExistingName'
-  ExportDeclaration
-    NamedExports
-      ExportSpecifier
-        Identifier: 'Foo'

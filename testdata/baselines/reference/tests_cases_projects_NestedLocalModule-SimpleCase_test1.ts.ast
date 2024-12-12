@@ -1,9 +1,0 @@
-SourceFile
-  ModuleDeclaration
-    ExportKeyword
-    Identifier: ' myModule'
-    ModuleBlock
-      ImportEqualsDeclaration
-        Identifier: ' foo'
-        ExternalModuleReference
-          StringLiteral

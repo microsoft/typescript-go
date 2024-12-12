@@ -1,9 +1,0 @@
-SourceFile
-  ExpressionStatement
-    CallExpression
-      Identifier: 'Boolean'
-      ObjectLiteralExpression
-        PropertyAssignment
-          Identifier: '
-    x'
-          NumericLiteral

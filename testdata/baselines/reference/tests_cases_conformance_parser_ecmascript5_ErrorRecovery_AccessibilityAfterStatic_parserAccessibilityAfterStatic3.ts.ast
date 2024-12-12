@@ -1,7 +1,0 @@
-SourceFile
-  ClassDeclaration
-    Identifier: ' Outer'
-    PropertyDeclaration
-      StaticKeyword
-      Identifier: ' public'
-      NumericLiteral

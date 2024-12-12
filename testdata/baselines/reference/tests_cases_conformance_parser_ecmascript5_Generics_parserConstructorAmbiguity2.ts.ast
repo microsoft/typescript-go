@@ -1,7 +1,0 @@
-SourceFile
-  ExpressionStatement
-    BinaryExpression
-      NewExpression
-        Identifier: ' Date'
-      LessThanToken
-      Identifier: 'A'

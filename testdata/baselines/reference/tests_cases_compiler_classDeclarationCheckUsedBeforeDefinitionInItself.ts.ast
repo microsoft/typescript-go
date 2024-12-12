@@ -1,8 +1,0 @@
-SourceFile
-  ClassDeclaration
-    Identifier: ' C3'
-    PropertyDeclaration
-      StaticKeyword
-      Identifier: ' intance'
-      NewExpression
-        Identifier: ' C3'

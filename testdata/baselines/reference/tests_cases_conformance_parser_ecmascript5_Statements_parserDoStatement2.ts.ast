@@ -1,7 +1,0 @@
-SourceFile
-  DoStatement
-    Block
-      EmptyStatement
-    FalseKeyword
-  ExpressionStatement
-    FalseKeyword

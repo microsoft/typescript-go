@@ -1,9 +1,0 @@
-SourceFile
-  ImportEqualsDeclaration
-    Identifier: ' b'
-    ExternalModuleReference
-      StringLiteral
-  FunctionDeclaration
-    ExportKeyword
-    Identifier: ' hello'
-    Block

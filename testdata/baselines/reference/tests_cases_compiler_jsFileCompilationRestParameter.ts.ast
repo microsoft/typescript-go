@@ -1,7 +1,0 @@
-SourceFile
-  FunctionDeclaration
-    Identifier: ' foo'
-    Parameter
-      DotDotDotToken
-      Identifier: 'a'
-    Block

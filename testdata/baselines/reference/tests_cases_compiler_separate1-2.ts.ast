@@ -1,8 +1,0 @@
-SourceFile
-  ModuleDeclaration
-    Identifier: ' X'
-    ModuleBlock
-      FunctionDeclaration
-        ExportKeyword
-        Identifier: ' f'
-        Block

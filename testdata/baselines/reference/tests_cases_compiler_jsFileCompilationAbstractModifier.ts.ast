@@ -1,7 +1,0 @@
-SourceFile
-  ClassDeclaration
-    AbstractKeyword
-    Identifier: ' c'
-    PropertyDeclaration
-      AbstractKeyword
-      Identifier: ' x'

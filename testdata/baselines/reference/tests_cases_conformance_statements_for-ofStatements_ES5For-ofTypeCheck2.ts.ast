@@ -1,8 +1,0 @@
-SourceFile
-  ForOfStatement
-    VariableDeclarationList
-      VariableDeclaration
-        Identifier: ' v'
-    ArrayLiteralExpression
-      TrueKeyword
-    Block

@@ -1,9 +1,0 @@
-SourceFile
-  FunctionDeclaration
-    Identifier: ' clone'
-    NumberKeyword
-    Block
-      ThrowStatement
-        NewExpression
-          Identifier: ' Error'
-          StringLiteral

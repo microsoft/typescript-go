@@ -1,8 +1,0 @@
-SourceFile
-  EnumDeclaration
-    DeclareKeyword
-    Identifier: ' E'
-    EnumMember
-      Identifier: '
-  A'
-      NumericLiteral

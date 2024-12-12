@@ -1,9 +1,0 @@
-SourceFile
-  ModuleDeclaration
-    Identifier: ' m'
-    ModuleBlock
-      InterfaceDeclaration
-        ExportKeyword
-        Identifier: ' foo'
-  ExportAssignment
-    Identifier: ' m'

@@ -1,8 +1,0 @@
-SourceFile
-  ClassDeclaration
-    ExportKeyword
-    Identifier: ' MyClass'
-  VariableStatement
-    VariableDeclarationList
-      VariableDeclaration
-        Identifier: ' v'

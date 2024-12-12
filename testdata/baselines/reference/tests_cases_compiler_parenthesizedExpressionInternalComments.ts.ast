@@ -1,7 +1,0 @@
-SourceFile
-  ExpressionStatement
-    ParenthesizedExpression
-      StringLiteral
-  ExpressionStatement
-    ParenthesizedExpression
-      StringLiteral

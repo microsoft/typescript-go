@@ -1,5 +1,0 @@
-SourceFile
-  ExpressionStatement
-    ArrowFunction
-      EqualsGreaterThanToken
-      NumericLiteral

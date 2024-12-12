@@ -1,5 +1,0 @@
-SourceFile
-  ExpressionStatement
-    JsxSelfClosingElement
-      Identifier: 'nope'
-      JsxAttributes

@@ -1,9 +1,0 @@
-SourceFile
-  ClassDeclaration
-    Identifier: ' C'
-    IndexSignature
-      Parameter
-        Identifier: 'a'
-        NumberKeyword
-        NumericLiteral
-      NumberKeyword

@@ -1,9 +1,0 @@
-SourceFile
-  ExpressionStatement
-    CallExpression
-      PropertyAccessExpression
-        Identifier: '// @lib: es2017
-
-Date'
-        Identifier: 'UTC'
-      NumericLiteral

@@ -1,5 +1,0 @@
-SourceFile
-  ImportDeclaration
-    ImportClause
-      Identifier: ' n'
-    StringLiteral

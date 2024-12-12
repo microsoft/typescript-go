@@ -1,7 +1,0 @@
-SourceFile
-  ClassDeclaration
-    Identifier: ' C'
-    PropertyDeclaration
-      PublicKeyword
-      ComputedPropertyName
-        Identifier: 'e'

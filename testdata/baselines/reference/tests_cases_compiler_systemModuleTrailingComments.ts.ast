@@ -1,7 +1,0 @@
-SourceFile
-  VariableStatement
-    ExportKeyword
-    VariableDeclarationList
-      VariableDeclaration
-        Identifier: ' test'
-        StringLiteral

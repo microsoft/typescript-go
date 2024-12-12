@@ -1,4 +1,0 @@
-SourceFile
-  ExpressionStatement
-    Identifier: '// @target:es6
-let'

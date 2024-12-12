@@ -1,7 +1,0 @@
-SourceFile
-  ClassDeclaration
-    Identifier: ' test'
-    Constructor
-      Parameter
-        Identifier: 'static'
-      Block

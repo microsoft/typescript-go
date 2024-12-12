@@ -1,8 +1,0 @@
-SourceFile
-  ExpressionStatement
-    PostfixUnaryExpression
-      Identifier: '// @lib: es5
-a'
-  ExpressionStatement
-    CallExpression
-      Identifier: 'toString'

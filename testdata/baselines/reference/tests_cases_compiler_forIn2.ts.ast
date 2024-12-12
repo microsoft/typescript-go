@@ -1,7 +1,0 @@
-SourceFile
-  ForInStatement
-    VariableDeclarationList
-      VariableDeclaration
-        Identifier: ' i'
-    NumericLiteral
-    Block

@@ -1,6 +1,0 @@
-SourceFile
-  ClassDeclaration
-    Identifier: ' A'
-    PropertyDeclaration
-      PrivateIdentifier
-      NumericLiteral

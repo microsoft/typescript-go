@@ -1,7 +1,0 @@
-SourceFile
-  ClassDeclaration
-    Identifier: ' A'
-    TypeParameter
-      Identifier: 'T'
-      TypeReference
-        Identifier: ' A'

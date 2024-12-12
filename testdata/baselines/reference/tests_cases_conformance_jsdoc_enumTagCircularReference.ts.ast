@@ -1,9 +1,0 @@
-SourceFile
-  VariableStatement
-    VariableDeclarationList
-      VariableDeclaration
-        Identifier: ' E'
-        ObjectLiteralExpression
-          PropertyAssignment
-            Identifier: ' x'
-            NumericLiteral

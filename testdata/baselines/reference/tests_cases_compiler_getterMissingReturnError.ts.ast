@@ -1,7 +1,0 @@
-SourceFile
-  ClassDeclaration
-    Identifier: ' test'
-    GetAccessor
-      PublicKeyword
-      Identifier: ' p2'
-      Block

@@ -1,9 +1,0 @@
-SourceFile
-  ClassDeclaration
-    Identifier: ' C'
-    Constructor
-      Parameter
-        ReadonlyKeyword
-        Identifier: ' x'
-        NumberKeyword
-      Block

@@ -1,5 +1,0 @@
-SourceFile
-  ExpressionStatement
-    NewExpression
-      NewExpression
-        Identifier: ' Foo'

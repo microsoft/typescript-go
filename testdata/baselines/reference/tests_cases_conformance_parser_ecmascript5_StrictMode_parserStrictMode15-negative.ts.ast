@@ -1,8 +1,0 @@
-SourceFile
-  ExpressionStatement
-    StringLiteral
-  ExpressionStatement
-    DeleteExpression
-      ElementAccessExpression
-        Identifier: ' a'
-        Identifier: 'b'
