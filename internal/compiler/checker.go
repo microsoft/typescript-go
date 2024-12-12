@@ -2724,7 +2724,7 @@ func (c *Checker) checkArrayLiteral(node *ast.Node, checkMode CheckMode) *Type {
 	elementTypes := make([]*Type, len(elements))
 	elementInfos := make([]TupleElementInfo, len(elements))
 	c.pushCachedContextualType(node)
-	inDestructuringPattern := isAssignmentTarget(node)
+	inDestructuringPattern := ast.IsAssignmentTarget(node)
 	inConstContext := c.isConstContext(node)
 	contextualType := c.getApparentTypeOfContextualType(node, ContextFlagsNone)
 	inTupleContext := isSpreadIntoCallOrNew(node) || contextualType != nil && someType(contextualType, func(t *Type) bool {
@@ -2927,7 +2927,7 @@ func (c *Checker) checkIndexedAccessIndexType(t *Type, accessNode *ast.Node) *Ty
 	if everyType(indexType, func(t *Type) bool {
 		return c.isTypeAssignableTo(t, objectIndexType) || hasNumberIndexInfo && c.isApplicableIndexType(t, c.numberType)
 	}) {
-		if accessNode.Kind == ast.KindElementAccessExpression && isAssignmentTarget(accessNode) && objectType.objectFlags&ObjectFlagsMapped != 0 && getMappedTypeModifiers(objectType)&MappedTypeModifiersIncludeReadonly != 0 {
+		if accessNode.Kind == ast.KindElementAccessExpression && ast.IsAssignmentTarget(accessNode) && objectType.objectFlags&ObjectFlagsMapped != 0 && getMappedTypeModifiers(objectType)&MappedTypeModifiersIncludeReadonly != 0 {
 			c.error(accessNode, diagnostics.Index_signature_in_type_0_only_permits_reading, c.typeToString(objectType))
 		}
 		return t
