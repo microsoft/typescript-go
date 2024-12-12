@@ -28,6 +28,8 @@ type FS interface {
 	// If the file fails to be read, ok will be false.
 	ReadFile(path string) (contents string, ok bool)
 
+	WriteFile(path string, data string, writeByteOrderMark bool) error
+
 	// DirectoryExists returns true if the path is a directory.
 	DirectoryExists(path string) bool
 
@@ -309,4 +311,38 @@ func (v *vfs) Realpath(path string) string {
 		return path
 	}
 	return realpath
+}
+
+func (v *vfs) writeFile(path string, content string, writeByteOrderMark bool) error {
+	file, err := os.Create(path)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	if writeByteOrderMark {
+		if _, err := file.WriteString("\uFEFF"); err != nil {
+			return err
+		}
+	}
+
+	if _, err := file.WriteString(content); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (v *vfs) ensureDirectoryExists(directoryPath string) error {
+	return os.MkdirAll(directoryPath, 0o777)
+}
+
+func (v *vfs) WriteFile(path string, content string, writeByteOrderMark bool) error {
+	if err := v.writeFile(path, content, writeByteOrderMark); err == nil {
+		return nil
+	}
+	if err := v.ensureDirectoryExists(tspath.GetDirectoryPath(tspath.NormalizePath(path))); err != nil {
+		return err
+	}
+	return v.writeFile(path, content, writeByteOrderMark)
 }

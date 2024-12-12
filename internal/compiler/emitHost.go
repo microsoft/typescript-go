@@ -1,0 +1,67 @@
+package compiler
+
+import (
+	"sync"
+
+	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/core"
+)
+
+type WriteFileData struct {
+	SourceMapUrlPos int
+	// BuildInfo BuildInfo
+	Diagnostics      []*ast.Diagnostic
+	DiffersOnlyInMap bool
+	SkippedDtsWrite  bool
+}
+
+// NOTE: EmitHost operations must be thread-safe
+type EmitHost interface {
+	Options() *core.CompilerOptions
+	SourceFiles() []*ast.SourceFile
+	UseCaseSensitiveFileNames() bool
+	GetCurrentDirectory() string
+	CommonSourceDirectory() string
+	IsEmitBlocked(file string) bool
+	WriteFile(fileName string, text string, writeByteOrderMark bool, relatedSourceFiles []*ast.SourceFile, data *WriteFileData) error
+}
+
+var _ EmitHost = (*emitHost)(nil)
+
+// NOTE: emitHost operations must be thread-safe
+type emitHost struct {
+	program *Program
+
+	commonSourceDirectory      string
+	commonSourceDirectoryMutex sync.Mutex
+}
+
+func (host *emitHost) Options() *core.CompilerOptions { return host.program.Options() }
+func (host *emitHost) SourceFiles() []*ast.SourceFile { return host.program.SourceFiles() }
+func (host *emitHost) GetCurrentDirectory() string    { return host.program.host.GetCurrentDirectory() }
+func (host *emitHost) CommonSourceDirectory() string {
+	if len(host.commonSourceDirectory) > 0 {
+		return host.commonSourceDirectory
+	}
+
+	host.commonSourceDirectoryMutex.Lock()
+	defer host.commonSourceDirectoryMutex.Unlock()
+
+	// double-check after lock
+	if len(host.commonSourceDirectory) > 0 {
+		return host.commonSourceDirectory
+	}
+
+	host.commonSourceDirectory = host.program.CommonSourceDirectory()
+	return host.commonSourceDirectory
+}
+func (host *emitHost) UseCaseSensitiveFileNames() bool {
+	return host.program.host.FS().UseCaseSensitiveFileNames()
+}
+func (host *emitHost) IsEmitBlocked(file string) bool {
+	// !!!
+	return false
+}
+func (host *emitHost) WriteFile(fileName string, text string, writeByteOrderMark bool, _ []*ast.SourceFile, _ *WriteFileData) error {
+	return host.program.host.FS().WriteFile(fileName, text, writeByteOrderMark)
+}
