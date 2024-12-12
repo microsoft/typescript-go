@@ -29,12 +29,12 @@ func (c *Checker) getTypePrecedence(t *Type) ast.TypePrecedence {
 
 func (c *Checker) symbolToString(s *ast.Symbol) string {
 	if s.ValueDeclaration != nil {
-		name := getNameOfDeclaration(s.ValueDeclaration)
+		name := ast.GetNameOfDeclaration(s.ValueDeclaration)
 		if name != nil {
 			if ast.IsIdentifier(name) {
-				return getTextOfNode(name)
+				return scanner.GetTextOfNode(name)
 			}
-			return "[" + getTextOfNode(name) + "]"
+			return "[" + scanner.GetTextOfNode(name) + "]"
 		}
 	}
 	return s.Name
@@ -522,7 +522,7 @@ func (c *Checker) getTextAndTypeOfNode(node *ast.Node) (string, *Type, bool) {
 		}
 	}
 	if isExpressionNode(node) && !isRightSideOfQualifiedNameOrPropertyAccess(node) {
-		return getTextOfNode(node), c.getTypeOfExpression(node), false
+		return scanner.GetTextOfNode(node), c.getTypeOfExpression(node), false
 	}
 	return "", nil, false
 }
