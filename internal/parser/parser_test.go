@@ -1,4 +1,4 @@
-package compiler_test
+package parser_test
 
 import (
 	"bytes"
@@ -13,16 +13,17 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/ast"
-	"github.com/microsoft/typescript-go/internal/compiler"
+	"github.com/microsoft/typescript-go/internal/parser"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/repo"
 	"github.com/microsoft/typescript-go/internal/testutil/baseline"
+	"github.com/microsoft/typescript-go/internal/testutil/fixtures"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"gotest.tools/v3/assert"
 )
 
 func BenchmarkParse(b *testing.B) {
-	for _, f := range compiler.BenchFixtures {
+	for _, f := range fixtures.BenchFixtures {
 		b.Run(f.Name(), func(b *testing.B) {
 			f.SkipIfNotExist(b)
 
@@ -30,7 +31,7 @@ func BenchmarkParse(b *testing.B) {
 			sourceText := f.ReadFile(b)
 
 			for i := 0; i < b.N; i++ {
-				compiler.ParseSourceFile(fileName, sourceText, core.ScriptTargetESNext)
+				parser.ParseSourceFile(fileName, sourceText, core.ScriptTargetESNext)
 			}
 		})
 	}
@@ -101,7 +102,7 @@ func parseTestComparisonWorker(t *testing.T) func(fileName string, d fs.DirEntry
 				}
 				expected = stdout.String()
 			}
-			actual := printAST(compiler.ParseSourceFile(fileName, string(sourceText), core.ScriptTargetESNext))
+			actual := printAST(parser.ParseSourceFile(fileName, string(sourceText), core.ScriptTargetESNext))
 			baseline.RunFromText(t, outputFilename, expected, actual, baseline.Options{})
 		})
 		return nil
@@ -238,9 +239,9 @@ func TestParseTypeScriptRepo(t *testing.T) {
 					var sourceFile *ast.SourceFile
 
 					if strings.HasSuffix(f.name, ".json") {
-						sourceFile = compiler.ParseJSONText(f.path, string(sourceText))
+						sourceFile = parser.ParseJSONText(f.path, string(sourceText))
 					} else {
-						sourceFile = compiler.ParseSourceFile(f.path, string(sourceText), core.ScriptTargetESNext)
+						sourceFile = parser.ParseSourceFile(f.path, string(sourceText), core.ScriptTargetESNext)
 					}
 
 					if !test.ignoreErrors {

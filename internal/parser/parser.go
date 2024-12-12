@@ -1,4 +1,4 @@
-package compiler
+package parser
 
 import (
 	"path"
@@ -314,8 +314,8 @@ func (p *Parser) parseDelimitedList(kind ParsingContext, parseElement func(p *Pa
 	return p.factory.NewNodeList(core.NewTextRange(pos, p.nodePos()), slice)
 }
 
-// Return a non-nil (but possibly empty) slice if parsing was successful, or nil if opening token wasn't found
-// or parseElement returned nil
+// Return a non-nil (but possibly empty) NodeList if parsing was successful, or nil if opening token wasn't found
+// or parseElement returned nil.
 func (p *Parser) parseBracketedList(kind ParsingContext, parseElement func(p *Parser) *ast.Node, opening ast.Kind, closing ast.Kind) *ast.NodeList {
 	if p.parseExpected(opening) {
 		result := p.parseDelimitedList(kind, parseElement)
@@ -3645,7 +3645,7 @@ func (p *Parser) parseAssignmentExpressionOrHigherWorker(allowReturnTypeInArrowF
 	// and consumes anything.
 	pos := p.nodePos()
 	hasJSDoc := p.hasPrecedingJSDocComment()
-	expr := p.parseBinaryExpressionOrHigher(OperatorPrecedenceLowest)
+	expr := p.parseBinaryExpressionOrHigher(ast.OperatorPrecedenceLowest)
 	// To avoid a look-ahead, we did not handle the case of an arrow function with a single un-parenthesized
 	// parameter ('x => ...') above. We handle it here by checking if the parsed expression was a single
 	// identifier and the current token is an arrow.
@@ -3658,7 +3658,7 @@ func (p *Parser) parseAssignmentExpressionOrHigherWorker(allowReturnTypeInArrowF
 	//
 	// Note: we call reScanGreaterToken so that we get an appropriately merged token
 	// for cases like `> > =` becoming `>>=`
-	if ast.IsLeftHandSideExpression(expr) && isAssignmentOperator(p.reScanGreaterThanToken()) {
+	if ast.IsLeftHandSideExpression(expr) && ast.IsAssignmentOperator(p.reScanGreaterThanToken()) {
 		return p.makeBinaryExpression(expr, p.parseTokenNode(), p.parseAssignmentExpressionOrHigherWorker(allowReturnTypeInArrowFunction), pos)
 	}
 	// It wasn't an assignment or a lambda.  This is a conditional expression:
@@ -3973,7 +3973,7 @@ func typeHasArrowFunctionBlockingParseError(node *ast.TypeNode) bool {
 	case ast.KindTypeReference:
 		return ast.NodeIsMissing(node.AsTypeReference().TypeName)
 	case ast.KindFunctionType, ast.KindConstructorType:
-		return len(node.Parameters()) == 0 || typeHasArrowFunctionBlockingParseError(node.Type())
+		return typeHasArrowFunctionBlockingParseError(node.Type())
 	case ast.KindParenthesizedType:
 		return typeHasArrowFunctionBlockingParseError(node.AsParenthesizedTypeNode().Type)
 	}
@@ -4031,7 +4031,7 @@ func (p *Parser) tryParseAsyncSimpleArrowFunctionExpression(allowReturnTypeInArr
 		pos := p.nodePos()
 		hasJSDoc := p.hasPrecedingJSDocComment()
 		asyncModifier := p.parseModifiersForArrowFunction()
-		expr := p.parseBinaryExpressionOrHigher(OperatorPrecedenceLowest)
+		expr := p.parseBinaryExpressionOrHigher(ast.OperatorPrecedenceLowest)
 		return p.parseSimpleArrowFunctionExpression(pos, expr, allowReturnTypeInArrowFunction, hasJSDoc, asyncModifier)
 	}
 	return nil
@@ -4049,7 +4049,7 @@ func (p *Parser) nextIsUnParenthesizedAsyncArrowFunction() bool {
 			return false
 		}
 		// Check for un-parenthesized AsyncArrowFunction
-		expr := p.parseBinaryExpressionOrHigher(OperatorPrecedenceLowest)
+		expr := p.parseBinaryExpressionOrHigher(ast.OperatorPrecedenceLowest)
 		if !p.hasPrecedingLineBreak() && expr.Kind == ast.KindIdentifier && p.token == ast.KindEqualsGreaterThanToken {
 			return true
 		}
@@ -4095,18 +4095,18 @@ func (p *Parser) parseConditionalExpressionRest(leftOperand *ast.Expression, pos
 	return result
 }
 
-func (p *Parser) parseBinaryExpressionOrHigher(precedence OperatorPrecedence) *ast.Expression {
+func (p *Parser) parseBinaryExpressionOrHigher(precedence ast.OperatorPrecedence) *ast.Expression {
 	pos := p.nodePos()
 	leftOperand := p.parseUnaryExpressionOrHigher()
 	return p.parseBinaryExpressionRest(precedence, leftOperand, pos)
 }
 
-func (p *Parser) parseBinaryExpressionRest(precedence OperatorPrecedence, leftOperand *ast.Expression, pos int) *ast.Expression {
+func (p *Parser) parseBinaryExpressionRest(precedence ast.OperatorPrecedence, leftOperand *ast.Expression, pos int) *ast.Expression {
 	for {
 		// We either have a binary operator here, or we're finished.  We call
 		// reScanGreaterToken so that we merge token sequences like > and = into >=
 		p.reScanGreaterThanToken()
-		newPrecedence := getBinaryOperatorPrecedence(p.token)
+		newPrecedence := ast.GetBinaryOperatorPrecedence(p.token)
 		// Check the precedence to see if we should "take" this operator
 		// - For left associative operator (all operator but **), consume the operator,
 		//   recursively call the function below, and parse binaryExpression as a rightOperand
@@ -4193,7 +4193,7 @@ func (p *Parser) parseUnaryExpressionOrHigher() *ast.Expression {
 		pos := p.nodePos()
 		updateExpression := p.parseUpdateExpression()
 		if p.token == ast.KindAsteriskAsteriskToken {
-			return p.parseBinaryExpressionRest(getBinaryOperatorPrecedence(p.token), updateExpression, pos)
+			return p.parseBinaryExpressionRest(ast.GetBinaryOperatorPrecedence(p.token), updateExpression, pos)
 		}
 		return updateExpression
 	}
@@ -4974,7 +4974,7 @@ func (p *Parser) parseElementAccessExpressionRest(pos int, expression *ast.Expre
 		argumentExpression = p.createMissingIdentifier()
 	} else {
 		argument := p.parseExpressionAllowIn()
-		if isStringOrNumericLiteralLike(argument) {
+		if ast.IsStringOrNumericLiteralLike(argument) {
 			p.internIdentifier(argument.Text())
 		}
 		argumentExpression = argument
@@ -5776,7 +5776,7 @@ func (p *Parser) isBinaryOperator() bool {
 	if p.inDisallowInContext() && p.token == ast.KindInKeyword {
 		return false
 	}
-	return getBinaryOperatorPrecedence(p.token) != OperatorPrecedenceInvalid
+	return ast.GetBinaryOperatorPrecedence(p.token) != ast.OperatorPrecedenceInvalid
 }
 
 func (p *Parser) isValidHeritageClauseObjectLiteral() bool {
@@ -5905,14 +5905,14 @@ func isFileProbablyExternalModule(sourceFile *ast.SourceFile) *ast.Node {
 }
 
 func isAnExternalModuleIndicatorNode(node *ast.Statement) bool {
-	return hasSyntacticModifier(node, ast.ModifierFlagsExport) ||
+	return ast.HasSyntacticModifier(node, ast.ModifierFlagsExport) ||
 		ast.IsImportEqualsDeclaration(node) && ast.IsExternalModuleReference(node.AsImportEqualsDeclaration().ModuleReference) ||
 		ast.IsImportDeclaration(node) || ast.IsExportAssignment(node) || ast.IsExportDeclaration(node)
 }
 
 func getImportMetaIfNecessary(sourceFile *ast.SourceFile) *ast.Node {
 	if sourceFile.AsNode().Flags&ast.NodeFlagsPossiblyContainsImportMeta != 0 {
-		return findChildNode(sourceFile.AsNode(), isImportMeta)
+		return findChildNode(sourceFile.AsNode(), ast.IsImportMeta)
 	}
 	return nil
 }
