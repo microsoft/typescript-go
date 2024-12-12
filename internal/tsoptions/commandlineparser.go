@@ -1,6 +1,7 @@
 package tsoptions
 
 import (
+	"slices"
 	"strconv"
 	"strings"
 	"sync"
@@ -90,7 +91,7 @@ type ParsedCommandLine struct {
 func (p *ParsedCommandLine) GetConfigFileParsingDiagnostics() []*ast.Diagnostic {
 	if p.ConfigFile != nil {
 		// todo: !!! should be ConfigFile.ParseDiagnostics, check if they are the same
-		return append(p.ConfigFile.Diagnostics(), p.Errors...)
+		return slices.Concat(p.ConfigFile.Diagnostics(), p.Errors)
 	}
 	return p.Errors
 }
