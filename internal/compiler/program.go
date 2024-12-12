@@ -11,6 +11,8 @@ import (
 	"github.com/microsoft/typescript-go/internal/compiler/module"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/parser"
+	"github.com/microsoft/typescript-go/internal/printer"
+	"github.com/microsoft/typescript-go/internal/sourcemap"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 )
@@ -659,4 +661,80 @@ func getCommonSourceDirectory(options *core.CompilerOptions, files []string, cur
 	}
 
 	return commonSourceDirectory
+}
+
+type EmitOptions struct {
+	TargetSourceFile *ast.SourceFile // Single file to emit. If `nil`, emits all files
+	forceDtsEmit     bool
+}
+
+type EmitResult struct {
+	EmitSkipped  bool
+	Diagnostics  []*ast.Diagnostic      // Contains declaration emit diagnostics
+	EmittedFiles []string               // Array of files the compiler wrote to disk
+	sourceMaps   []*sourceMapEmitResult // Array of sourceMapData if compiler emitted sourcemaps
+}
+
+type sourceMapEmitResult struct {
+	inputSourceFileNames []string // Input source file (which one can use on program to get the file), 1:1 mapping with the sourceMap.sources list
+	sourceMap            *sourcemap.RawSourceMap
+}
+
+func (p *Program) Emit(options *EmitOptions) *EmitResult {
+	// !!! performance measurement
+
+	host := &emitHost{program: p}
+
+	writerPool := &sync.Pool{
+		New: func() any {
+			return printer.NewTextWriter(host.Options().NewLine.GetNewLineCharacter())
+		},
+	}
+	wg := core.NewWorkGroup(p.programOptions.SingleThreaded)
+
+	var emitters []*emitter
+	sourceFiles := getSourceFilesToEmit(host, options.TargetSourceFile, options.forceDtsEmit)
+	for _, sourceFile := range sourceFiles {
+		emitter := &emitter{
+			host:              host,
+			emittedFilesList:  nil,
+			sourceMapDataList: nil,
+			writer:            nil,
+			sourceFile:        sourceFile,
+		}
+		emitters = append(emitters, emitter)
+		wg.Run(func() {
+			// take an unused writer
+			writer := writerPool.Get().(printer.EmitTextWriter)
+			writer.Clear()
+
+			// attach writer and perform emit
+			emitter.writer = writer
+			emitter.paths = getOutputPathsFor(sourceFile, host, options.forceDtsEmit)
+			emitter.emit()
+			emitter.writer = nil
+
+			// put the writer back in the pool
+			writerPool.Put(writer)
+		})
+	}
+
+	// wait for emit to complete
+	wg.Wait()
+
+	// collect results from emit, preserving input order
+	result := &EmitResult{}
+	for _, emitter := range emitters {
+		if emitter.emitSkipped {
+			result.EmitSkipped = true
+		}
+		result.Diagnostics = append(result.Diagnostics, emitter.emitterDiagnostics.GetDiagnostics()...)
+		if emitter.emittedFilesList != nil {
+			result.EmittedFiles = append(result.EmittedFiles, emitter.emittedFilesList...)
+		}
+		if emitter.sourceMapDataList != nil {
+			result.sourceMaps = append(result.sourceMaps, emitter.sourceMapDataList...)
+		}
+	}
+	return result
 }
