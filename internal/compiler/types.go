@@ -86,7 +86,8 @@ type ValueSymbolLinks struct {
 	target         *ast.Symbol
 	mapper         *TypeMapper
 	nameType       *Type
-	containingType *Type // Containing union or intersection type for synthetic property
+	keyType        *Type // Key type for mapped type member
+	containingType *Type // Mapped type for mapped type property, containing union or intersection type for synthetic property
 }
 
 // Links for alias symbols
@@ -845,7 +846,7 @@ type InstantiationExpressionType struct {
 
 type MappedType struct {
 	ObjectType
-	declaration          ast.MappedTypeNode
+	declaration          *ast.MappedTypeNode
 	typeParameter        *Type
 	constraintType       *Type
 	nameType             *Type

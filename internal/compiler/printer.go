@@ -222,6 +222,8 @@ func (p *Printer) printObjectType(t *Type) {
 		p.printParameterizedType(t)
 	case t.objectFlags&ObjectFlagsClassOrInterface != 0:
 		p.print(t.symbol.Name)
+	case p.c.isGenericMappedType(t):
+		p.printMappedType(t)
 	default:
 		p.printAnonymousType(t)
 	}
@@ -330,6 +332,9 @@ func (p *Printer) printAnonymousType(t *Type) {
 		if tail {
 			p.print(",")
 		}
+		if info.isReadonly {
+			p.print(" readonly")
+		}
 		p.print(" [")
 		p.print(getNameFromIndexInfo(info))
 		p.print(": ")
@@ -342,8 +347,14 @@ func (p *Printer) printAnonymousType(t *Type) {
 		if tail {
 			p.print(",")
 		}
+		if p.c.isReadonlySymbol(prop) {
+			p.print(" readonly")
+		}
 		p.print(" ")
 		p.print(prop.Name)
+		if prop.Flags&ast.SymbolFlagsOptional != 0 {
+			p.print("?")
+		}
 		p.print(": ")
 		p.printType(p.c.getTypeOfSymbol(prop))
 		tail = true
@@ -464,6 +475,36 @@ func (p *Printer) printIndexedAccessType(t *Type) {
 	p.print("[")
 	p.printType(t.AsIndexedAccessType().indexType)
 	p.print("]")
+}
+
+func (p *Printer) printMappedType(t *Type) {
+	d := t.AsMappedType().declaration
+	p.print("{ ")
+	if d.ReadonlyToken != nil {
+		if d.ReadonlyToken.Kind != ast.KindReadonlyKeyword {
+			p.print(scanner.TokenToString(d.ReadonlyToken.Kind))
+		}
+		p.print("readonly ")
+	}
+	p.print("[")
+	p.print(p.c.getTypeParameterFromMappedType(t).symbol.Name)
+	p.print(" in ")
+	p.printType(p.c.getConstraintTypeFromMappedType(t))
+	nameType := p.c.getNameTypeFromMappedType(t)
+	if nameType != nil {
+		p.print(" as ")
+		p.printType(nameType)
+	}
+	p.print("]")
+	if d.QuestionToken != nil {
+		if d.QuestionToken.Kind != ast.KindQuestionToken {
+			p.print(scanner.TokenToString(d.QuestionToken.Kind))
+		}
+		p.print("?")
+	}
+	p.print(": ")
+	p.printType(p.c.getTemplateTypeFromMappedType(t))
+	p.print(" }")
 }
 
 func (p *Printer) printSourceFileWithTypes(sourceFile *ast.SourceFile) {
