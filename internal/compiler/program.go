@@ -160,7 +160,7 @@ func (p *Program) startParseTask(fileName string, wg *core.WorkGroup) {
 			filesToParse = append(filesToParse, resolvedPath)
 		}
 
-		filesToParse = append(filesToParse, p.getImportsToParse(file)...)
+		filesToParse = append(filesToParse, p.resolveImportsAndModuleAugmentations(file)...)
 
 		p.fileProcessingMutex.Lock()
 		defer p.fileProcessingMutex.Unlock()
@@ -229,7 +229,7 @@ func (p *Program) resolveModuleNames(entries []*ast.Node, file *ast.SourceFile) 
 	return resolvedModules
 }
 
-func (p *Program) getImportsToParse(file *ast.SourceFile) []string {
+func (p *Program) resolveImportsAndModuleAugmentations(file *ast.SourceFile) []string {
 	toParse := make([]string, 0, len(file.Imports))
 	if len(file.Imports) > 0 || len(file.ModuleAugmentations) > 0 {
 		moduleNames := getModuleNames(file)
