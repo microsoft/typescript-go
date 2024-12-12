@@ -2390,18 +2390,6 @@ func (p *Parser) parseJSDocNullableType() *ast.Node {
 	return result
 }
 
-func (p *Parser) parseJSDocParameter() *ast.ParameterDeclarationNode {
-	pos := p.nodePos()
-	var name *ast.Node
-	if p.token == ast.KindThisKeyword || p.token == ast.KindNewKeyword {
-		name = p.parseIdentifierName()
-		p.parseExpected(ast.KindColonToken)
-	}
-	result := p.factory.NewParameterDeclaration(nil, nil, name, nil, p.parseJSDocType(), nil)
-	p.finishNode(result, pos)
-	return result
-}
-
 func (p *Parser) parseJSDocType() *ast.TypeNode {
 	p.scanner.SetSkipJsDocLeadingAsterisks(true)
 	pos := p.nodePos()

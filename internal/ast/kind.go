@@ -339,8 +339,8 @@ const (
 	// JSDoc nodes
 	KindJSDocTypeExpression
 	KindJSDocNameReference
-	KindJSDocMemberName  // C#p
-	KindJSDocAllType     // The * type
+	KindJSDocMemberName // C#p
+	KindJSDocAllType    // The * type
 	KindJSDocNullableType
 	KindJSDocNonNullableType
 	KindJSDocOptionalType
