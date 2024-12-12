@@ -3,6 +3,7 @@ package vfs
 import (
 	"bytes"
 	"encoding/binary"
+	"errors"
 	"fmt"
 	"io/fs"
 	"os"
@@ -115,6 +116,12 @@ func FromIOFS(fsys fs.FS, useCaseSensitiveFileNames bool) FS {
 			return sub
 		},
 		realpath: realpath,
+		writeFile: func(string, string, bool) error {
+			return errors.ErrUnsupported
+		},
+		mkdirAll: func(string) error {
+			return errors.ErrUnsupported
+		},
 	}
 }
 
@@ -137,6 +144,28 @@ func FromOS() FS {
 				return "", err
 			}
 			return tspath.NormalizeSlashes(path), nil
+		},
+		writeFile: func(path string, content string, writeByteOrderMark bool) error {
+			file, err := os.Create(path)
+			if err != nil {
+				return err
+			}
+			defer file.Close()
+
+			if writeByteOrderMark {
+				if _, err := file.WriteString("\uFEFF"); err != nil {
+					return err
+				}
+			}
+
+			if _, err := file.WriteString(content); err != nil {
+				return err
+			}
+
+			return nil
+		},
+		mkdirAll: func(path string) error {
+			return os.MkdirAll(path, 0o777)
 		},
 	}
 }
@@ -173,8 +202,10 @@ type vfs struct {
 
 	useCaseSensitiveFileNames bool
 
-	rootFor  func(root string) fs.FS
-	realpath func(path string) (string, error)
+	rootFor   func(root string) fs.FS
+	realpath  func(path string) (string, error)
+	writeFile func(path string, content string, writeByteOrderMark bool) error
+	mkdirAll  func(path string) error
 }
 
 func (v *vfs) UseCaseSensitiveFileNames() bool {
@@ -313,28 +344,8 @@ func (v *vfs) Realpath(path string) string {
 	return realpath
 }
 
-func (v *vfs) writeFile(path string, content string, writeByteOrderMark bool) error {
-	file, err := os.Create(path)
-	if err != nil {
-		return err
-	}
-	defer file.Close()
-
-	if writeByteOrderMark {
-		if _, err := file.WriteString("\uFEFF"); err != nil {
-			return err
-		}
-	}
-
-	if _, err := file.WriteString(content); err != nil {
-		return err
-	}
-
-	return nil
-}
-
 func (v *vfs) ensureDirectoryExists(directoryPath string) error {
-	return os.MkdirAll(directoryPath, 0o777)
+	return v.mkdirAll(directoryPath)
 }
 
 func (v *vfs) WriteFile(path string, content string, writeByteOrderMark bool) error {
