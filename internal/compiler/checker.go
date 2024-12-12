@@ -17751,6 +17751,7 @@ func (c *Checker) createSyntheticExpression(parent *ast.Node, t *Type, isSpread 
 func (c *Checker) getSpreadIndices(node *ast.Node) (int, int) {
 	links := c.arrayLiteralLinks.get(node)
 	if !links.indicesComputed {
+		links.indicesComputed = true
 		first, last := -1, -1
 		for i, element := range node.AsArrayLiteralExpression().Elements.Nodes {
 			if ast.IsSpreadElement(element) {
