@@ -2296,8 +2296,6 @@ func (p *Parser) parseNonArrayType() *ast.Node {
 		fallthrough
 	case ast.KindQuestionToken:
 		return p.parseJSDocUnknownOrNullableType()
-	case ast.KindFunctionKeyword:
-		return p.parseJSDocFunctionType()
 	case ast.KindExclamationToken:
 		return p.parseJSDocNonNullableType()
 	case ast.KindNoSubstitutionTemplateLiteral, ast.KindStringLiteral, ast.KindNumericLiteral, ast.KindBigIntLiteral, ast.KindTrueKeyword,
@@ -2388,24 +2386,6 @@ func (p *Parser) parseJSDocUnknownOrNullableType() *ast.Node {
 	// skip the ?
 	p.nextToken()
 	result := p.factory.NewJSDocNullableType(p.parseType())
-	p.finishNode(result, pos)
-	return result
-}
-
-func (p *Parser) parseJSDocFunctionType() *ast.Node {
-	pos := p.nodePos()
-	// hasJSDoc := p.hasPrecedingJSDocComment()
-	state := p.mark()
-	if p.nextTokenIsOpenParen() {
-		parameters := p.parseParameters(ParseFlagsType | ParseFlagsJSDoc)
-		type_ := p.parseReturnType(ast.KindColonToken /*isType*/, false)
-		result := p.factory.NewJSDocFunctionType(parameters, type_)
-		p.finishNode(result, pos)
-		// p.withJSDoc(result, hasJSDoc)
-		return result
-	}
-	p.rewind(state)
-	result := p.factory.NewTypeReferenceNode(p.parseIdentifierName() /*typeArguments*/, nil)
 	p.finishNode(result, pos)
 	return result
 }
@@ -3987,8 +3967,7 @@ func (p *Parser) parseParenthesizedArrowFunctionExpression(allowAmbiguity bool, 
 	for unwrappedType != nil && unwrappedType.Kind == ast.KindParenthesizedType {
 		unwrappedType = unwrappedType.AsParenthesizedTypeNode().Type // Skip parens if need be
 	}
-	hasJSDocFunctionType := unwrappedType != nil && unwrappedType.Kind == ast.KindJSDocFunctionType
-	if !allowAmbiguity && p.token != ast.KindEqualsGreaterThanToken && (hasJSDocFunctionType || p.token != ast.KindOpenBraceToken) {
+	if !allowAmbiguity && p.token != ast.KindEqualsGreaterThanToken && p.token != ast.KindOpenBraceToken {
 		// Returning undefined here will cause our caller to rewind to where we started from.
 		return nil
 	}

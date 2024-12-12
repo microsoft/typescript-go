@@ -1159,11 +1159,7 @@ func (p *Printer) emitParameter(node *ast.ParameterDeclaration) {
 	p.emitParameterName(node.Name())
 	p.emitTokenNode(node.QuestionToken)
 
-	if node.Parent != nil && node.Parent.Kind == ast.KindJSDocFunctionType && node.Name() == nil {
-		p.emitTypeNodeOutsideExtends(node.Type)
-	} else {
-		p.emitTypeAnnotation(node.Type)
-	}
+	p.emitTypeAnnotation(node.Type)
 
 	// The comment position has to fallback to any present node within the parameter declaration because as it turns
 	// out, the parser can make parameter declarations with _just_ an initializer.
@@ -2009,7 +2005,6 @@ func (p *Printer) emitTypeNode(node *ast.TypeNode, precedence ast.TypePrecedence
 		ast.KindJSDocNullableType,
 		ast.KindJSDocNonNullableType,
 		ast.KindJSDocOptionalType,
-		ast.KindJSDocFunctionType,
 		ast.KindJSDocVariadicType:
 		// TODO
 		panic("not implemented")

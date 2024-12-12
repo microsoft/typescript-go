@@ -301,7 +301,6 @@ func isFunctionLikeKind(kind Kind) bool {
 		KindConstructSignature,
 		KindIndexSignature,
 		KindFunctionType,
-		KindJSDocFunctionType,
 		KindConstructorType:
 		return true
 	}
@@ -484,7 +483,6 @@ func IsTypeNodeKind(kind Kind) bool {
 		KindJSDocNullableType,
 		KindJSDocNonNullableType,
 		KindJSDocOptionalType,
-		KindJSDocFunctionType,
 		KindJSDocVariadicType:
 		return true
 	}
