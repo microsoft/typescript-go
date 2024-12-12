@@ -22,5 +22,13 @@
         "ui.diagnostic.analyses": {
             "unusedparams": false
         }
-    }
+    },
+    "go.lintTool": "golangci-lint",
+    "go.alternateTools": {
+        "golangci-lint": "${workspaceFolder}/_tools/custom-gcl${env:GOEXE}"
+    },
+    // "go.lintOnSave": "workspace",
+    // "go.lintOnSave": "package",
+    // "go.lintOnSave": "file",
+    "go.lintOnSave": "off"
 }

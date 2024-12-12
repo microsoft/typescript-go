@@ -3,27 +3,32 @@ package compiler
 import (
 	"encoding/json"
 	"fmt"
-	"path/filepath"
 	"slices"
 	"strings"
+
+	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/parser"
+	"github.com/microsoft/typescript-go/internal/tspath"
+	"github.com/microsoft/typescript-go/internal/vfs"
 )
 
 type ProgramOptions struct {
 	RootPath       string
 	Host           CompilerHost
-	Options        *CompilerOptions
+	Options        *core.CompilerOptions
 	SingleThreaded bool
 }
 
 type Program struct {
 	host                        CompilerHost
-	options                     *CompilerOptions
+	options                     *core.CompilerOptions
 	rootPath                    string
-	files                       []*SourceFile
-	filesByPath                 map[string]*SourceFile
-	nodeModules                 map[string]*SourceFile
+	files                       []*ast.SourceFile
+	filesByPath                 map[tspath.Path]*ast.SourceFile
+	nodeModules                 map[string]*ast.SourceFile
 	checker                     *Checker
-	usesUriStyleNodeCoreModules Tristate
+	usesUriStyleNodeCoreModules core.Tristate
 	currentNodeModulesDepth     int
 }
 
@@ -33,18 +38,17 @@ func NewProgram(options ProgramOptions) *Program {
 	p := &Program{}
 	p.options = options.Options
 	if p.options == nil {
-		p.options = &CompilerOptions{}
+		p.options = &core.CompilerOptions{}
 	}
 	p.host = options.Host
 	if p.host == nil {
-		p.host = NewCompilerHost(p.options, options.SingleThreaded)
+		panic("host required")
 	}
-	rootPath := options.RootPath
-	if rootPath == "" {
-		rootPath = "."
+	p.rootPath = options.RootPath
+	if p.rootPath == "" {
+		panic("root path required")
 	}
-	p.rootPath = p.host.AbsFileName(rootPath)
-	fileInfos := p.host.ReadDirectory(rootPath, extensions)
+	fileInfos := readFileInfos(p.host.FS(), p.rootPath, extensions)
 	// Sort files by descending file size
 	slices.SortFunc(fileInfos, func(a FileInfo, b FileInfo) int {
 		return int(b.Size) - int(a.Size)
@@ -53,32 +57,56 @@ func NewProgram(options ProgramOptions) *Program {
 	return p
 }
 
-func (p *Program) SourceFiles() []*SourceFile { return p.files }
-func (p *Program) Options() *CompilerOptions  { return p.options }
-func (p *Program) Host() CompilerHost         { return p.host }
+func readFileInfos(fs vfs.FS, rootPath string, extensions []string) []FileInfo {
+	var fileInfos []FileInfo
+
+	err := fs.WalkDir(rootPath, func(path string, d vfs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+		if !d.IsDir() && slices.ContainsFunc(extensions, func(ext string) bool { return tspath.FileExtensionIs(path, ext) }) {
+			info, err := d.Info()
+			if err != nil {
+				return err //nolint:wrapcheck
+			}
+			fileInfos = append(fileInfos, FileInfo{Name: path, Size: info.Size()})
+		}
+		return nil
+	})
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	return fileInfos
+}
+
+func (p *Program) SourceFiles() []*ast.SourceFile { return p.files }
+func (p *Program) Options() *core.CompilerOptions { return p.options }
+func (p *Program) Host() CompilerHost             { return p.host }
 
 func (p *Program) parseSourceFiles(fileInfos []FileInfo) {
-	p.files = make([]*SourceFile, len(fileInfos))[:len(fileInfos)]
+	p.files = make([]*ast.SourceFile, len(fileInfos))[:len(fileInfos)]
 	for i := range fileInfos {
 		p.host.RunTask(func() {
 			fileName := fileInfos[i].Name
-			text, _ := p.host.ReadFile(fileName)
-			sourceFile := ParseSourceFile(fileName, text, getEmitScriptTarget(p.options))
-			sourceFile.path, _ = filepath.Abs(fileName)
+			text, _ := p.host.FS().ReadFile(fileName)
+			sourceFile := parser.ParseSourceFile(fileName, text, p.options.GetEmitScriptTarget())
+			path := tspath.ToPath(fileName, p.host.GetCurrentDirectory(), p.host.FS().UseCaseSensitiveFileNames())
+			sourceFile.SetPath(path)
 			p.collectExternalModuleReferences(sourceFile)
 			p.files[i] = sourceFile
 		})
 	}
 	p.host.WaitForTasks()
-	p.filesByPath = make(map[string]*SourceFile)
+	p.filesByPath = make(map[tspath.Path]*ast.SourceFile)
 	for _, file := range p.files {
-		p.filesByPath[file.path] = file
+		p.filesByPath[file.Path()] = file
 	}
 }
 
 func (p *Program) bindSourceFiles() {
 	for _, file := range p.files {
-		if !file.isBound {
+		if !file.IsBound {
 			p.host.RunTask(func() {
 				bindSourceFile(file, p.options)
 			})
@@ -87,18 +115,18 @@ func (p *Program) bindSourceFiles() {
 	p.host.WaitForTasks()
 }
 
-func (p *Program) getResolvedModule(currentSourceFile *SourceFile, moduleReference string) *SourceFile {
-	directory := filepath.Dir(currentSourceFile.path)
-	if isExternalModuleNameRelative(moduleReference) {
-		return p.findSourceFile(filepath.Join(directory, moduleReference))
+func (p *Program) getResolvedModule(currentSourceFile *ast.SourceFile, moduleReference string) *ast.SourceFile {
+	directory := tspath.GetDirectoryPath(currentSourceFile.FileName())
+	if tspath.IsExternalModuleNameRelative(moduleReference) {
+		return p.findSourceFile(tspath.CombinePaths(directory, moduleReference))
 	}
 	return p.findNodeModule(moduleReference)
 }
 
-func (p *Program) findSourceFile(candidate string) *SourceFile {
-	extensionless := removeFileExtension(candidate)
-	for _, ext := range []string{ExtensionTs, ExtensionTsx, ExtensionDts} {
-		path := extensionless + ext
+func (p *Program) findSourceFile(candidate string) *ast.SourceFile {
+	extensionless := tspath.RemoveFileExtension(candidate)
+	for _, ext := range []string{tspath.ExtensionTs, tspath.ExtensionTsx, tspath.ExtensionDts} {
+		path := tspath.ToPath(extensionless+ext, p.host.GetCurrentDirectory(), p.host.FS().UseCaseSensitiveFileNames())
 		if result, ok := p.filesByPath[path]; ok {
 			return result
 		}
@@ -106,23 +134,23 @@ func (p *Program) findSourceFile(candidate string) *SourceFile {
 	return nil
 }
 
-func (p *Program) findNodeModule(moduleReference string) *SourceFile {
+func (p *Program) findNodeModule(moduleReference string) *ast.SourceFile {
 	if p.nodeModules == nil {
-		p.nodeModules = make(map[string]*SourceFile)
+		p.nodeModules = make(map[string]*ast.SourceFile)
 	}
 	if sourceFile, ok := p.nodeModules[moduleReference]; ok {
 		return sourceFile
 	}
-	sourceFile := p.tryLoadNodeModule(filepath.Join(p.rootPath, "node_modules", moduleReference))
+	sourceFile := p.tryLoadNodeModule(tspath.CombinePaths(p.rootPath, "node_modules", moduleReference))
 	if sourceFile == nil {
-		sourceFile = p.tryLoadNodeModule(filepath.Join(p.rootPath, "node_modules/@types", moduleReference))
+		sourceFile = p.tryLoadNodeModule(tspath.CombinePaths(p.rootPath, "node_modules/@types", moduleReference))
 	}
 	p.nodeModules[moduleReference] = sourceFile
 	return sourceFile
 }
 
-func (p *Program) tryLoadNodeModule(modulePath string) *SourceFile {
-	if packageJson, ok := p.host.ReadFile(filepath.Join(modulePath, "package.json")); ok {
+func (p *Program) tryLoadNodeModule(modulePath string) *ast.SourceFile {
+	if packageJson, ok := p.host.FS().ReadFile(tspath.CombinePaths(modulePath, "package.json")); ok {
 		var jsonMap map[string]any
 		if json.Unmarshal([]byte(packageJson), &jsonMap) == nil {
 			typesValue := jsonMap["types"]
@@ -130,28 +158,27 @@ func (p *Program) tryLoadNodeModule(modulePath string) *SourceFile {
 				typesValue = jsonMap["typings"]
 			}
 			if fileName, ok := typesValue.(string); ok {
-				path := filepath.Join(modulePath, fileName)
-				return p.filesByPath[path]
+				path := tspath.CombinePaths(modulePath, fileName)
+				return p.filesByPath[tspath.ToPath(path, p.host.GetCurrentDirectory(), p.host.FS().UseCaseSensitiveFileNames())]
 			}
 		}
 	}
 	return nil
 }
 
-func (p *Program) GetSyntacticDiagnostics(sourceFile *SourceFile) []*Diagnostic {
-	return p.getDiagnosticsHelper(sourceFile, p.getSyntaticDiagnosticsForFile)
+func (p *Program) GetSyntacticDiagnostics(sourceFile *ast.SourceFile) []*ast.Diagnostic {
+	return p.getDiagnosticsHelper(sourceFile, false /*ensureBound*/, p.getSyntaticDiagnosticsForFile)
 }
 
-func (p *Program) GetBindDiagnostics(sourceFile *SourceFile) []*Diagnostic {
-	p.bindSourceFiles()
-	return p.getDiagnosticsHelper(sourceFile, p.getBindDiagnosticsForFile)
+func (p *Program) GetBindDiagnostics(sourceFile *ast.SourceFile) []*ast.Diagnostic {
+	return p.getDiagnosticsHelper(sourceFile, true /*ensureBound*/, p.getBindDiagnosticsForFile)
 }
 
-func (p *Program) GetSemanticDiagnostics(sourceFile *SourceFile) []*Diagnostic {
-	return p.getDiagnosticsHelper(sourceFile, p.getSemanticDiagnosticsForFile)
+func (p *Program) GetSemanticDiagnostics(sourceFile *ast.SourceFile) []*ast.Diagnostic {
+	return p.getDiagnosticsHelper(sourceFile, true /*ensureBound*/, p.getSemanticDiagnosticsForFile)
 }
 
-func (p *Program) GetGlobalDiagnostics() []*Diagnostic {
+func (p *Program) GetGlobalDiagnostics() []*ast.Diagnostic {
 	return sortAndDeduplicateDiagnostics(p.getTypeChecker().GetGlobalDiagnostics())
 }
 
@@ -169,49 +196,53 @@ func (p *Program) getTypeChecker() *Checker {
 	return p.checker
 }
 
-func (p *Program) getSyntaticDiagnosticsForFile(sourceFile *SourceFile) []*Diagnostic {
-	return sourceFile.diagnostics
+func (p *Program) getSyntaticDiagnosticsForFile(sourceFile *ast.SourceFile) []*ast.Diagnostic {
+	return sourceFile.Diagnostics()
 }
 
-func (p *Program) getBindDiagnosticsForFile(sourceFile *SourceFile) []*Diagnostic {
-	return sourceFile.bindDiagnostics
+func (p *Program) getBindDiagnosticsForFile(sourceFile *ast.SourceFile) []*ast.Diagnostic {
+	return sourceFile.BindDiagnostics()
 }
 
-func (p *Program) getSemanticDiagnosticsForFile(sourceFile *SourceFile) []*Diagnostic {
-	return p.getTypeChecker().GetDiagnostics(sourceFile)
+func (p *Program) getSemanticDiagnosticsForFile(sourceFile *ast.SourceFile) []*ast.Diagnostic {
+	return core.Concatenate(sourceFile.BindDiagnostics(), p.getTypeChecker().GetDiagnostics(sourceFile))
 }
 
-func (p *Program) getDiagnosticsHelper(sourceFile *SourceFile, getDiagnostics func(*SourceFile) []*Diagnostic) []*Diagnostic {
+func (p *Program) getDiagnosticsHelper(sourceFile *ast.SourceFile, ensureBound bool, getDiagnostics func(*ast.SourceFile) []*ast.Diagnostic) []*ast.Diagnostic {
 	if sourceFile != nil {
+		if ensureBound {
+			bindSourceFile(sourceFile, p.options)
+		}
 		return sortAndDeduplicateDiagnostics(getDiagnostics(sourceFile))
 	}
-	var result []*Diagnostic
+	if ensureBound {
+		p.bindSourceFiles()
+	}
+	var result []*ast.Diagnostic
 	for _, file := range p.files {
 		result = append(result, getDiagnostics(file)...)
 	}
 	return sortAndDeduplicateDiagnostics(result)
 }
 
-func (p *Program) PrintTypeAliases() {
+type NodeCount struct {
+	kind  ast.Kind
+	count int
+}
+
+func (p *Program) PrintSourceFileWithTypes() {
 	for _, file := range p.files {
-		if filepath.Base(file.fileName) == "main.ts" {
-			file.AsNode().ForEachChild(p.printTypeAlias)
+		if tspath.GetBaseFileName(file.FileName()) == "main.ts" {
+			fmt.Print(p.getTypeChecker().sourceFileWithTypes(file))
 		}
 	}
 }
 
-func (p *Program) printTypeAlias(node *Node) bool {
-	if isTypeAliasDeclaration(node) {
-		fmt.Println(p.getTypeChecker().typeAliasToString(node.AsTypeAliasDeclaration()))
-	}
-	return node.ForEachChild(p.printTypeAlias)
-}
-
-func (p *Program) collectExternalModuleReferences(file *SourceFile) {
-	if file.moduleReferencesProcessed {
+func (p *Program) collectExternalModuleReferences(file *ast.SourceFile) {
+	if file.ModuleReferencesProcessed {
 		return
 	}
-	file.moduleReferencesProcessed = true
+	file.ModuleReferencesProcessed = true
 	// !!!
 	// If we are importing helpers, we need to add a synthetic reference to resolve the
 	// helpers library. (A JavaScript file without `externalModuleIndicator` set might be
@@ -229,7 +260,7 @@ func (p *Program) collectExternalModuleReferences(file *SourceFile) {
 	// 		(imports ||= []).push(createSyntheticImport(jsxImport, file));
 	// 	}
 	// }
-	for _, node := range file.statements {
+	for _, node := range file.Statements.Nodes {
 		p.collectModuleReferences(file, node, false /*inAmbientModule*/)
 	}
 	// if ((file.flags & NodeFlags.PossiblyContainsDynamicImport) || isJavaScriptFile) {
@@ -265,7 +296,7 @@ func (p *Program) collectExternalModuleReferences(file *SourceFile) {
 	// function getNodeAtPosition(sourceFile: SourceFile, position: number): Node {
 	// 	let current: Node = sourceFile;
 	// 	const getContainingChild = (child: Node) => {
-	// 		if (child.pos <= position && (position < child.end || (position === child.end && (child.kind === SyntaxKind.EndOfFileToken)))) {
+	// 		if (child.pos <= position && (position < child.end || (position === child.end && (child.kind === Kind.EndOfFileToken)))) {
 	// 			return child;
 	// 		}
 	// 	};
@@ -344,55 +375,67 @@ var exclusivelyPrefixedNodeCoreModules = map[string]bool{
 	"node:test/reporters": true,
 }
 
-func (p *Program) collectModuleReferences(file *SourceFile, node *Statement, inAmbientModule bool) {
+func (p *Program) collectModuleReferences(file *ast.SourceFile, node *ast.Statement, inAmbientModule bool) {
 	if isAnyImportOrReExport(node) {
 		moduleNameExpr := getExternalModuleName(node)
 		// TypeScript 1.0 spec (April 2014): 12.1.6
 		// An ExternalImportDeclaration in an AmbientExternalModuleDeclaration may reference other external modules
 		// only through top - level external module names. Relative external module names are not permitted.
-		if moduleNameExpr != nil && isStringLiteral(moduleNameExpr) {
-			moduleName := moduleNameExpr.AsStringLiteral().text
-			if moduleName != "" && (!inAmbientModule || !isExternalModuleNameRelative(moduleName)) {
+		if moduleNameExpr != nil && ast.IsStringLiteral(moduleNameExpr) {
+			moduleName := moduleNameExpr.AsStringLiteral().Text
+			if moduleName != "" && (!inAmbientModule || !tspath.IsExternalModuleNameRelative(moduleName)) {
 				setParentInChildren(node) // we need parent data on imports before the program is fully bound, so we ensure it's set here
-				file.imports = append(file.imports, moduleNameExpr)
-				if file.usesUriStyleNodeCoreModules != TSTrue && p.currentNodeModulesDepth == 0 && !file.isDeclarationFile {
+				file.Imports = append(file.Imports, moduleNameExpr)
+				if file.UsesUriStyleNodeCoreModules != core.TSTrue && p.currentNodeModulesDepth == 0 && !file.IsDeclarationFile {
 					if strings.HasPrefix(moduleName, "node:") && !exclusivelyPrefixedNodeCoreModules[moduleName] {
 						// Presence of `node:` prefix takes precedence over unprefixed node core modules
-						file.usesUriStyleNodeCoreModules = TSTrue
-					} else if file.usesUriStyleNodeCoreModules == TSUnknown && unprefixedNodeCoreModules[moduleName] {
+						file.UsesUriStyleNodeCoreModules = core.TSTrue
+					} else if file.UsesUriStyleNodeCoreModules == core.TSUnknown && unprefixedNodeCoreModules[moduleName] {
 						// Avoid `unprefixedNodeCoreModules.has` for every import
-						file.usesUriStyleNodeCoreModules = TSFalse
+						file.UsesUriStyleNodeCoreModules = core.TSFalse
 					}
 				}
 			}
 		}
 		return
 	}
-	if isModuleDeclaration(node) && isAmbientModule(node) && (inAmbientModule || hasSyntacticModifier(node, ModifierFlagsAmbient) || file.isDeclarationFile) {
+	if ast.IsModuleDeclaration(node) && isAmbientModule(node) && (inAmbientModule || ast.HasSyntacticModifier(node, ast.ModifierFlagsAmbient) || file.IsDeclarationFile) {
 		setParentInChildren(node)
-		nameText := getTextOfIdentifierOrLiteral(node.AsModuleDeclaration().name)
+		nameText := node.AsModuleDeclaration().Name().Text()
 		// Ambient module declarations can be interpreted as augmentations for some existing external modules.
 		// This will happen in two cases:
 		// - if current file is external module then module augmentation is a ambient module declaration defined in the top level scope
 		// - if current file is not external module then module augmentation is an ambient module declaration with non-relative module name
 		//   immediately nested in top level ambient module declaration .
-		if isExternalModule(file) || (inAmbientModule && !isExternalModuleNameRelative(nameText)) {
-			file.moduleAugmentations = append(file.moduleAugmentations, node.AsModuleDeclaration().name)
+		if isExternalModule(file) || (inAmbientModule && !tspath.IsExternalModuleNameRelative(nameText)) {
+			file.ModuleAugmentations = append(file.ModuleAugmentations, node.AsModuleDeclaration().Name())
 		} else if !inAmbientModule {
-			if file.isDeclarationFile {
+			if file.IsDeclarationFile {
 				// for global .d.ts files record name of ambient module
-				file.ambientModuleNames = append(file.ambientModuleNames, nameText)
+				file.AmbientModuleNames = append(file.AmbientModuleNames, nameText)
 			}
 			// An AmbientExternalModuleDeclaration declares an external module.
 			// This type of declaration is permitted only in the global module.
 			// The StringLiteral must specify a top - level external module name.
 			// Relative external module names are not permitted
 			// NOTE: body of ambient module is always a module block, if it exists
-			if node.AsModuleDeclaration().body != nil {
-				for _, statement := range node.AsModuleDeclaration().body.AsModuleBlock().statements {
+			if node.AsModuleDeclaration().Body != nil {
+				for _, statement := range node.AsModuleDeclaration().Body.AsModuleBlock().Statements.Nodes {
 					p.collectModuleReferences(file, statement, true /*inAmbientModule*/)
 				}
 			}
 		}
 	}
+}
+
+func (p *Program) getEmitModuleFormatOfFile(sourceFile *ast.SourceFile) core.ModuleKind {
+	// !!!
+	// Must reimplement the below.
+	// Also, previous version is a method on `TypeCheckerHost`/`Program`.
+
+	// mode, hadImpliedFormat := getImpliedNodeFormatForEmitWorker(sourceFile, options)
+	// if !hadImpliedFormat {
+	// 	mode = options.GetEmitModuleKind()
+	// }
+	return p.options.GetEmitModuleKind()
 }

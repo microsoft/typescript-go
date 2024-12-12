@@ -23,9 +23,9 @@ jobs:
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4.1.0
-      - uses: actions/setup-go@41dfa10bad2bb2ae585af6ee5bb4d7d973ad74ed # v5.1.0
+      - uses: ./.github/actions/setup-go
         with:
-          go-version: '>=1.23.0'
+          cache-name: build
 
       - run: npm ci
 
@@ -39,36 +39,59 @@ jobs:
           - ubuntu-latest
           - windows-latest
           - macos-latest
+        no-submodules:
+          - false
+        race:
+          - false
+        include:
+          - os: ubuntu-latest
+            no-submodules: true
+          - os: ubuntu-latest
+            race: true
+
+    name: test (${{ matrix.os }}${{ (matrix.no-submodules && ' without submodules') || '' }}${{ (matrix.race && ' in race mode') || '' }})
 
     runs-on: ${{ matrix.os }}
 
     steps:
       - run: git config --system core.longpaths true
-        if: matrix.os == 'windows-latest'
+        if: ${{ matrix.os == 'windows-latest' }}
 
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
-          submodules: true
+          submodules: ${{ !matrix.no-submodules }}
       - uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4.1.0
-      - uses: actions/setup-go@41dfa10bad2bb2ae585af6ee5bb4d7d973ad74ed # v5.1.0
+      - uses: ./.github/actions/setup-go
         with:
-          go-version: '>=1.23.0'
+          cache-name: test
 
       - run: npm ci
 
-      - run: npx hereby test --race
+      - run: go install gotest.tools/gotestsum@latest
+        # Installing gotestsum is super slow on Windows.
+        if: ${{ matrix.os != 'windows-latest' }}
+
+      - run: npx hereby test:all
+        if: ${{ !matrix.race }}
+
+      - run: npx hereby test:all --race
+        if: ${{ matrix.race }}
+
+      - run: git add .
+      - run: git diff --staged --exit-code --stat
 
   lint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4.1.0
-      - uses: actions/setup-go@41dfa10bad2bb2ae585af6ee5bb4d7d973ad74ed # v5.1.0
+      - uses: ./.github/actions/setup-go
         with:
-          go-version: '>=1.23.0'
+          cache-name: lint
 
       - run: npm ci
 
+      - run: npx hereby install-tools
       - run: npx hereby lint
 
   format:
@@ -76,9 +99,9 @@ jobs:
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4.1.0
-      - uses: actions/setup-go@41dfa10bad2bb2ae585af6ee5bb4d7d973ad74ed # v5.1.0
+      - uses: ./.github/actions/setup-go
         with:
-          go-version: '>=1.23.0'
+          cache-name: format
 
       - run: npm ci
 
@@ -91,27 +114,30 @@ jobs:
         with:
           submodules: true
       - uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4.1.0
-      - uses: actions/setup-go@41dfa10bad2bb2ae585af6ee5bb4d7d973ad74ed # v5.1.0
+      - uses: ./.github/actions/setup-go
         with:
-          go-version: '>=1.23.0'
+          cache-name: generate
 
       - run: npm ci
 
       - run: npx hereby generate
 
-      - run: git diff --exit-code
+      - run: git add .
+      - run: git diff --staged --exit-code --stat
 
   tidy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-      - uses: actions/setup-go@41dfa10bad2bb2ae585af6ee5bb4d7d973ad74ed # v5.1.0
+      - uses: ./.github/actions/setup-go
         with:
-          go-version: '>=1.23.0'
+          cache-name: tidy
 
       - run: go mod tidy
+      - run: go -C ./_tools mod tidy
 
-      - run: git diff --exit-code
+      - run: git add .
+      - run: git diff --staged --exit-code --stat
 
   required:
     runs-on: ubuntu-latest
