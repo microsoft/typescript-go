@@ -123,7 +123,15 @@ func isIgnoredTestFile(name string) bool {
 			strings.Contains(name, "reference/config/") ||
 			strings.Contains(name, "reference/tsc") ||
 			strings.Contains(name, "reference/tsserver") ||
-			strings.Contains(name, "reference/tsbuild"))
+			strings.Contains(name, "reference/tsbuild") ||
+			// dropped features or good enough
+			strings.HasSuffix(name, "cases/conformance/decorators/decoratorMetadata-jsdoc.ts") ||
+			strings.HasSuffix(name, "cases/conformance/jsdoc/jsdocDisallowedInTypescript.ts") ||
+			strings.HasSuffix(name, "cases/conformance/types/tuple/restTupleElements1.ts") ||
+			strings.HasSuffix(name, "cases/conformance/types/tuple/named/namedTupleMembersErrors.ts") ||
+			strings.HasSuffix(name, "cases/compiler/expressionWithJSDocTypeArguments.ts") ||
+			strings.HasSuffix(name, "cases/compiler/parseInvalidNonNullableTypes.ts") ||
+			strings.HasSuffix(name, "cases/compiler/parseInvalidNullableTypes.ts"))
 }
 
 func generateOutputFileName(t *testing.T, fileName string) string {

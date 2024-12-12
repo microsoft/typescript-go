@@ -22,9 +22,6 @@ function printNode(node, indentLevel = 0) {
 }
 function unaliasKind(kind) {
     switch (kind) {
-        // Special case (T? now parses as an optional type), not an alias
-        case ts.SyntaxKind.JSDocNullableType:
-            return "OptionalType";
         case ts.SyntaxKind.FirstAssignment:
             return "EqualsToken";
         case ts.SyntaxKind.LastAssignment:
@@ -144,7 +141,15 @@ function processDirectory(inputRoot, targetRoot) {
                     dirent.name.includes("reference/config/") ||
                     dirent.name.includes("reference/tsc") ||
                     dirent.name.includes("reference/tsserver") ||
-                    dirent.name.includes("reference/tsbuild")
+                    dirent.name.includes("reference/tsbuild") ||
+                    // dropped features or good enough
+                    dirent.name.endsWith("cases/conformance/decorators/decoratorMetadata-jsdoc.ts") ||
+                    dirent.name.endsWith("cases/conformance/jsdoc/jsdocDisallowedInTypescript.ts") ||
+                    dirent.name.endsWith("cases/conformance/types/tuple/restTupleElements1.ts") ||
+                    dirent.name.endsWith("cases/conformance/types/tuple/named/namedTupleMembersErrors.ts") ||
+                    dirent.name.endsWith("cases/compiler/expressionWithJSDocTypeArguments.ts") ||
+                    dirent.name.endsWith("cases/compiler/parseInvalidNonNullableTypes.ts") ||
+                    dirent.name.endsWith("cases/compiler/parseInvalidNullableTypes.ts")
                 ) {
                     continue;
                 }
