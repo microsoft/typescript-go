@@ -2295,7 +2295,7 @@ func (p *Parser) parseNonArrayType() *ast.Node {
 		p.scanner.ReScanQuestionToken()
 		fallthrough
 	case ast.KindQuestionToken:
-		return p.parseJSDocUnknownOrNullableType()
+		return p.parseJSDocNullableType()
 	case ast.KindExclamationToken:
 		return p.parseJSDocNonNullableType()
 	case ast.KindNoSubstitutionTemplateLiteral, ast.KindStringLiteral, ast.KindNumericLiteral, ast.KindBigIntLiteral, ast.KindTrueKeyword,
@@ -2381,7 +2381,7 @@ func (p *Parser) parseJSDocNonNullableType() *ast.TypeNode {
 	return result
 }
 
-func (p *Parser) parseJSDocUnknownOrNullableType() *ast.Node {
+func (p *Parser) parseJSDocNullableType() *ast.Node {
 	pos := p.nodePos()
 	// skip the ?
 	p.nextToken()
