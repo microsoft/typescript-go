@@ -479,7 +479,6 @@ func IsTypeNodeKind(kind Kind) bool {
 		KindIntrinsicKeyword,
 		KindExpressionWithTypeArguments,
 		KindJSDocAllType,
-		KindJSDocUnknownType,
 		KindJSDocNullableType,
 		KindJSDocNonNullableType,
 		KindJSDocOptionalType,

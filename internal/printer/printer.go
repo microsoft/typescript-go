@@ -2001,7 +2001,6 @@ func (p *Printer) emitTypeNode(node *ast.TypeNode, precedence ast.TypePrecedence
 		p.emitExpressionWithTypeArguments(node.AsExpressionWithTypeArguments())
 
 	case ast.KindJSDocAllType,
-		ast.KindJSDocUnknownType,
 		ast.KindJSDocNullableType,
 		ast.KindJSDocNonNullableType,
 		ast.KindJSDocOptionalType,

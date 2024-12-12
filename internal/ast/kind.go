@@ -341,7 +341,6 @@ const (
 	KindJSDocNameReference
 	KindJSDocMemberName  // C#p
 	KindJSDocAllType     // The * type
-	KindJSDocUnknownType // The ? type
 	KindJSDocNullableType
 	KindJSDocNonNullableType
 	KindJSDocOptionalType
