@@ -4,6 +4,7 @@ import (
 	"encoding/binary"
 	"os"
 	"path/filepath"
+	"runtime"
 	"slices"
 	"testing"
 	"testing/fstest"
@@ -132,6 +133,12 @@ func TestIOFS(t *testing.T) {
 		realpath := fs.Realpath("/foo.ts")
 		assert.Equal(t, realpath, "/foo.ts")
 	})
+
+	t.Run("UseCaseSensitiveFileNames", func(t *testing.T) {
+		t.Parallel()
+
+		assert.Assert(t, fs.UseCaseSensitiveFileNames())
+	})
 }
 
 func TestVFSTestMapFS(t *testing.T) {
@@ -175,6 +182,12 @@ func TestVFSTestMapFS(t *testing.T) {
 
 		realpath = fs.Realpath("/does/not/exist.ts")
 		assert.Equal(t, realpath, "/does/not/exist.ts")
+	})
+
+	t.Run("UseCaseSensitiveFileNames", func(t *testing.T) {
+		t.Parallel()
+
+		assert.Assert(t, !fs.UseCaseSensitiveFileNames())
 	})
 }
 
@@ -247,6 +260,17 @@ func TestOS(t *testing.T) {
 
 		realpath := fs.Realpath(goModPath)
 		assert.Equal(t, realpath, goModPath)
+	})
+
+	t.Run("UseCaseSensitiveFileNames", func(t *testing.T) {
+		t.Parallel()
+
+		// Just check that it works.
+		fs.UseCaseSensitiveFileNames()
+
+		if runtime.GOOS == "windows" {
+			assert.Assert(t, !fs.UseCaseSensitiveFileNames())
+		}
 	})
 }
 
