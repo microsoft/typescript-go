@@ -9,7 +9,6 @@ import (
 	"path/filepath"
 	"runtime"
 	"strings"
-	"sync"
 	"unicode"
 	"unicode/utf16"
 
@@ -118,10 +117,9 @@ func FromIOFS(fsys fs.FS, useCaseSensitiveFileNames bool) FS {
 
 // FromOS creates a new FS from the OS file system.
 func FromOS() FS {
-	useCaseSensitiveFileNames := isFileSystemCaseSensitive()
 	return &vfs{
 		readSema:                  osReadSema,
-		useCaseSensitiveFileNames: useCaseSensitiveFileNames,
+		useCaseSensitiveFileNames: isFileSystemCaseSensitive,
 		rootFor:                   os.DirFS,
 		realpath: func(path string) (string, error) {
 			// TODO: replace once https://go.dev/cl/385534 is available
@@ -141,12 +139,16 @@ func FromOS() FS {
 
 var osReadSema = make(chan struct{}, 128)
 
-var isFileSystemCaseSensitive = sync.OnceValue(func() bool {
+// We do this right at startup to minimize the chance that executable gets moved or deleted.
+var isFileSystemCaseSensitive = func() bool {
 	// win32/win64 are case insensitive platforms
 	if runtime.GOOS == "windows" {
 		return false
 	}
 
+	// As a proxy for case-insensitivity, we check if the current executable exists under a different case.
+	// This is not entirely correct, since different OSs can have differing case sensitivity in different paths,
+	// but this is largely good enough for our purposes (and what sys.ts used to do with __filename).
 	exe, err := os.Executable()
 	if err != nil {
 		panic(fmt.Sprintf("vfs: failed to get executable path: %v", err))
@@ -157,7 +159,7 @@ var isFileSystemCaseSensitive = sync.OnceValue(func() bool {
 		return false
 	}
 	return true
-})
+}()
 
 // Convert all lowercase chars to uppercase, and vice-versa
 func swapCase(str string) string {
