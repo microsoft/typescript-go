@@ -12880,7 +12880,35 @@ func (c *Checker) getApparentType(t *Type) *Type {
 }
 
 func (c *Checker) getApparentTypeOfMappedType(t *Type) *Type {
-	return t // !!!
+	m := t.AsMappedType()
+	if m.resolvedApparentType == nil {
+		m.resolvedApparentType = c.getResolvedApparentTypeOfMappedType(t)
+	}
+	return m.resolvedApparentType
+}
+
+func (c *Checker) getResolvedApparentTypeOfMappedType(t *Type) *Type {
+	target := core.OrElse(t.AsMappedType().target, t)
+	typeVariable := c.getHomomorphicTypeVariable(target)
+	if typeVariable != nil && target.AsMappedType().declaration.NameType == nil {
+		// We have a homomorphic mapped type or an instantiation of a homomorphic mapped type, i.e. a type
+		// of the form { [P in keyof T]: X }. Obtain the modifiers type (the T of the keyof T), and if it is
+		// another generic mapped type, recursively obtain its apparent type. Otherwise, obtain its base
+		// constraint. Then, if every constituent of the base constraint is an array or tuple type, apply
+		// this mapped type to the base constraint. It is safe to recurse when the modifiers type is a
+		// mapped type because we protect again circular constraints in getTypeFromMappedTypeNode.
+		modifiersType := c.getModifiersTypeFromMappedType(t)
+		var baseConstraint *Type
+		if c.isGenericMappedType(modifiersType) {
+			baseConstraint = c.getApparentTypeOfMappedType(modifiersType)
+		} else {
+			baseConstraint = c.getBaseConstraintOfType(modifiersType)
+		}
+		if baseConstraint != nil && everyType(baseConstraint, func(t *Type) bool { return c.isArrayOrTupleType(t) || c.isArrayOrTupleOrIntersection(t) }) {
+			return c.instantiateType(target, prependTypeMapping(typeVariable, baseConstraint, t.AsMappedType().mapper))
+		}
+	}
+	return t
 }
 
 func (c *Checker) getApparentTypeOfIntersectionType(t *Type, thisArgument *Type) *Type {
