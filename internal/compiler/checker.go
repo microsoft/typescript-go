@@ -2415,7 +2415,6 @@ func (c *Checker) getIteratedTypeOrElementType(use IterationUse, inputType *Type
 		return c.includeUndefinedInIndexSignature(arrayElementType)
 	}
 	return arrayElementType
-
 }
 
 // Gets the requested "iteration type" from an `Iterable`-like or `AsyncIterable`-like type.
@@ -3454,7 +3453,7 @@ func (c *Checker) resolveNewExpression(node *ast.Node, candidatesOutArray *[]*Si
 	// If expressionType is of type Any, Args can be any argument
 	// list and the result of the operation is of type Any.
 	if isTypeAny(expressionType) {
-		if node.TypeArguments != nil {
+		if len(node.TypeArguments()) != 0 {
 			c.error(node, diagnostics.Untyped_function_calls_may_not_accept_type_arguments)
 		}
 		return c.resolveUntypedCall(node)
@@ -4753,8 +4752,8 @@ func (c *Checker) checkFunctionExpressionOrObjectLiteralMethodDeferred(node *ast
 }
 
 func (c *Checker) inferFromAnnotatedParameters(sig *Signature, context *Signature, inferenceContext *InferenceContext) {
-	len := len(sig.parameters) - core.IfElse(signatureHasRestParameter(sig), 1, 0)
-	for i := range len {
+	length := len(sig.parameters) - core.IfElse(signatureHasRestParameter(sig), 1, 0)
+	for i := range length {
 		declaration := sig.parameters[i].ValueDeclaration
 		typeNode := declaration.Type()
 		if typeNode != nil {
