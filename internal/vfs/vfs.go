@@ -32,6 +32,8 @@ type FS interface {
 	// It is has the same behavior as [fs.WalkDir], but with paths as [string].
 	WalkDir(root string, walkFn WalkDirFunc) error
 
+	// Realpath returns the "real path" of the specified path,
+	// following symlinks and correcting filename casing.
 	Realpath(path string) string
 }
 
