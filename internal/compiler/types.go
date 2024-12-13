@@ -108,6 +108,12 @@ type ModuleSymbolLinks struct {
 	typeOnlyExportStarMap map[string]*ast.Node // Set on a module symbol when some of its exports were resolved through a 'export type * from "mod"' declaration
 }
 
+// Links for late-bound symbols
+
+type LateBoundLinks struct {
+	lateSymbol *ast.Symbol
+}
+
 // Links for export type symbols
 
 type ExportTypeLinks struct {
@@ -984,6 +990,12 @@ type ConditionalType struct {
 	resolvedConstraintOfDistributive *Type
 	mapper                           *TypeMapper
 	combinedMapper                   *TypeMapper
+}
+
+type IterationTypes struct {
+	yieldType  *Type
+	returnType *Type
+	nextType   *Type
 }
 
 // SignatureFlags
