@@ -13,12 +13,13 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/ast"
-	"github.com/microsoft/typescript-go/internal/parser"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/parser"
 	"github.com/microsoft/typescript-go/internal/repo"
 	"github.com/microsoft/typescript-go/internal/testutil/baseline"
 	"github.com/microsoft/typescript-go/internal/testutil/fixtures"
 	"github.com/microsoft/typescript-go/internal/tspath"
+	"github.com/microsoft/typescript-go/internal/vfs"
 	"gotest.tools/v3/assert"
 )
 
@@ -54,8 +55,9 @@ func TestParseAgainstTSC(t *testing.T) {
 		t.Skip()
 	}
 	t.Parallel()
+	osfs := vfs.FromOS()
+	err := osfs.WalkDir(repo.TypeScriptSubmodulePath, parseTestComparisonWorker(osfs, t))
 	// TODO: Either build tsc first or document that you have to build it yourself
-	err := filepath.WalkDir(repo.TypeScriptSubmodulePath, parseTestComparisonWorker(t))
 	if err != nil {
 		t.Fatalf("Error walking the path %q: %v", repo.TypeScriptSubmodulePath, err)
 	}
@@ -66,10 +68,11 @@ func TestParseSingleAgainstTSC(t *testing.T) {
 		t.Skip()
 	}
 	t.Parallel()
-	parseTestComparisonWorker(t)(filepath.Join(repo.TypeScriptSubmodulePath, "tests/baselines/reference/dynamicImportsDeclaration.js"), nil, nil)
+	osfs := vfs.FromOS()
+	parseTestComparisonWorker(osfs, t)(tspath.CombinePaths(repo.TypeScriptSubmodulePath, "tests/cases/conformance/es6/for-ofStatements/for-of10.ts"), nil, nil)
 }
 
-func parseTestComparisonWorker(t *testing.T) func(fileName string, d fs.DirEntry, err error) error {
+func parseTestComparisonWorker(osfs vfs.FS, t *testing.T) func(fileName string, d fs.DirEntry, err error) error {
 	return func(fileName string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err
@@ -83,15 +86,15 @@ func parseTestComparisonWorker(t *testing.T) func(fileName string, d fs.DirEntry
 			if isIgnoredTestFile(fileName) {
 				t.Skip()
 			}
-			sourceText, err := os.ReadFile(fileName)
+			sourceText, ok := osfs.ReadFile(fileName)
 			outputFilename := generateOutputFileName(t, fileName)
-			assert.NilError(t, err)
+			assert.Assert(t, ok)
 			var expected string
-			cachetext, err := os.ReadFile(filepath.Join(repo.TestDataPath, "baselines", "gold", outputFilename))
-			if err == nil {
+			cachetext, ok := osfs.ReadFile(tspath.CombinePaths(repo.TestDataPath, "baselines", "gold", outputFilename))
+			if ok {
 				expected = string(cachetext)
 			} else {
-				cmd := exec.Command("node", "testdata/baselineAST.js", fileName)
+				cmd := exec.Command("node", tspath.CombinePaths("testdata", "baselineAST.js"), fileName)
 				var stderr bytes.Buffer
 				var stdout bytes.Buffer
 				cmd.Stderr = &stderr
@@ -175,21 +178,30 @@ func printAST(sourceFile *ast.SourceFile) string {
 		case ast.KindIdentifier:
 			indent := getIndentation(indentation)
 			if parent != nil && parent.AsImportSpecifier().Name() == node && node.AsIdentifier().Text == "" && sourceFile.Text[node.Loc.Pos():node.Loc.End()] != "" {
-				sb.WriteString(fmt.Sprintf("%s%s: '%s'\n", indent, skind, ""))
+				sb.WriteString(fmt.Sprintf("%s%s(%d,%d): ''\n", indent, skind, node.Pos(), node.End()))
 			} else {
-				sb.WriteString(fmt.Sprintf("%s%s: '%s'\n", indent, skind, sourceFile.Text[node.Loc.Pos():node.Loc.End()]))
+				sb.WriteString(fmt.Sprintf("%s%s(%d,%d): '%s'\n", indent, skind, node.Pos(), node.End(), sourceFile.Text[node.Loc.Pos():node.Loc.End()]))
 			}
 		default:
 			if isOmittedExpression(node) {
 				skind = "OmittedExpression"
 			}
 			indent := strings.Repeat("  ", indentation)
-			sb.WriteString(fmt.Sprintf("%s%s\n", indent, skind))
+			sb.WriteString(fmt.Sprintf("%s%s(%d,%d)\n", indent, skind, node.Pos(), node.End()))
 		}
 		// TODO: Include trivia in a more structured way than GetFullText
 		return node.ForEachChild(func(child *ast.Node) bool {
 			if node.Kind == ast.KindShorthandPropertyAssignment && node.AsShorthandPropertyAssignment().ObjectAssignmentInitializer == child {
+				short := node.AsShorthandPropertyAssignment()
+				// print an extra line for the EqualsToken
 				indent := strings.Repeat("  ", indentation+offset)
+				var end int
+				if short.PostfixToken != nil {
+					end = short.PostfixToken.Pos()
+				} else {
+					end = short.Name().Loc.Pos()
+				}
+				sb.WriteString(fmt.Sprintf("%s%s(%d,%d)\n", indent, "EqualsToken", end, short.ObjectAssignmentInitializer.Pos()))
 				sb.WriteString(indent + "EqualsToken\n") // print an extra line for the EqualsToken
 			}
 			visit(child, indentation+offset)

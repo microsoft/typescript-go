@@ -6,13 +6,13 @@ const path = require("path");
 function printNode(node, indentLevel = 0) {
     let s = "";
     if (ts.isIdentifier(node)) {
-        s = `${" ".repeat(indentLevel * 2)}${unaliasKind(node.kind)}: '${node.getFullText()}'\n`;
+        s = `${" ".repeat(indentLevel * 2)}${unaliasKind(node.kind)}(${node.pos},${node.end}): '${node.getFullText()}'\n`;
     }
     else if (node.kind === ts.SyntaxKind.EndOfFileToken) {
         return "";
     }
     else {
-        s = `${" ".repeat(indentLevel * 2)}${unaliasKind(node.kind)}\n`;
+        s = `${" ".repeat(indentLevel * 2)}${unaliasKind(node.kind)}(${node.pos},${node.end})\n`;
     }
     node.forEachChild(child => {
         s += printNode(child, indentLevel + 1);
@@ -103,7 +103,10 @@ function unaliasKind(kind) {
 }
 /** @param filePath {string} */
 function printAST(filePath) {
-    const fileContent = fs.readFileSync(filePath, "utf8");
+    const fileContent = ts.sys.readFile(filePath, "utf8");
+    if (fileContent === undefined)
+        throw new Error("Couldn't read file " + filePath)
+
     const sourceFile = ts.createSourceFile(
         path.basename(filePath),
         fileContent,
