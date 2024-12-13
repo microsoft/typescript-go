@@ -1,8 +1,6 @@
 package compiler
 
 import (
-	"sync"
-
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
 )
@@ -31,9 +29,6 @@ var _ EmitHost = (*emitHost)(nil)
 // NOTE: emitHost operations must be thread-safe
 type emitHost struct {
 	program *Program
-
-	commonSourceDirectory      string
-	commonSourceDirectoryMutex sync.Mutex
 }
 
 func (host *emitHost) Options() *core.CompilerOptions { return host.program.Options() }
