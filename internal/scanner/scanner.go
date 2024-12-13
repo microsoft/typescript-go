@@ -703,7 +703,7 @@ func (s *Scanner) Scan() ast.Kind {
 			if s.charAt(1) == '!' {
 				if s.pos == 0 {
 					s.pos += 2
-					for s.char() >= 0 && s.char() != '\n' {
+					for s.char() >= 0 && !stringutil.IsLineBreak(s.char()) {
 						s.pos++
 					}
 					continue
