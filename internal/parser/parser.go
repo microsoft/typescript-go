@@ -261,9 +261,9 @@ func (p *Parser) parseSourceFileWorker() *ast.SourceFile {
 			result.SetDiagnostics(attachFileToDiagnostics(p.diagnostics, result))
 			result.ExternalModuleIndicator = isFileProbablyExternalModule(result)
 			result.IsDeclarationFile = isDeclarationFile
-			p.possibleAwaitStatement = core.Set[*ast.Node]{}
 		}
 	}
+	p.possibleAwaitStatement = core.Set[*ast.Node]{}
 	return result
 }
 
