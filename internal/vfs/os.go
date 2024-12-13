@@ -11,6 +11,21 @@ import (
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
+// FromOS creates a new FS from the OS file system.
+func FromOS() FS {
+	return osVFS
+}
+
+var osVFS FS = &osFS{
+	common: common{
+		rootFor: os.DirFS,
+	},
+}
+
+type osFS struct {
+	common
+}
+
 var isFileSystemCaseSensitive = sync.OnceValue(func() bool {
 	// win32/win64 are case insensitive platforms
 	if runtime.GOOS == "windows" {
@@ -34,21 +49,6 @@ func swapCase(str string) string {
 			return upper
 		}
 	}, str)
-}
-
-// FromOS creates a new FS from the OS file system.
-func FromOS() FS {
-	return osVFS
-}
-
-var osVFS FS = &osFS{
-	common: common{
-		rootFor: os.DirFS,
-	},
-}
-
-type osFS struct {
-	common
 }
 
 func (vfs *osFS) UseCaseSensitiveFileNames() bool {
