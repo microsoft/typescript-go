@@ -58,16 +58,10 @@ func (vfs *osFS) UseCaseSensitiveFileNames() bool {
 var osReadSema = make(chan struct{}, 128)
 
 func (vfs *osFS) ReadFile(path string) (contents string, ok bool) {
-	_ = rootLength(path) // Assert path is rooted
-
 	osReadSema <- struct{}{}
 	defer func() { <-osReadSema }()
 
-	b, err := os.ReadFile(path)
-	if err != nil {
-		return "", false
-	}
-	return decodeBytes(b)
+	return vfs.common.ReadFile(path)
 }
 
 func (vfs *osFS) Realpath(path string) string {

@@ -146,6 +146,20 @@ func (c *common) WalkDir(root string, walkFn WalkDirFunc) error {
 	})
 }
 
+func (c *common) ReadFile(path string) (contents string, ok bool) {
+	fsys, _, rest := c.rootAndPath(path)
+	if fsys == nil {
+		return "", false
+	}
+
+	b, err := fs.ReadFile(fsys, rest)
+	if err != nil {
+		return "", false
+	}
+
+	return decodeBytes(b)
+}
+
 func decodeBytes(b []byte) (contents string, ok bool) {
 	var bom [2]byte
 	if len(b) >= 2 {

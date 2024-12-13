@@ -69,20 +69,6 @@ func (vfs *ioFS) UseCaseSensitiveFileNames() bool {
 	return vfs.useCaseSensitiveFileNames
 }
 
-func (vfs *ioFS) ReadFile(path string) (contents string, ok bool) {
-	fsys, _, rest := vfs.rootAndPath(path)
-	if fsys == nil {
-		return "", false
-	}
-
-	b, err := fs.ReadFile(fsys, rest)
-	if err != nil {
-		return "", false
-	}
-
-	return decodeBytes(b)
-}
-
 func (vfs *ioFS) Realpath(path string) string {
 	root, rest := splitPath(path)
 	// splitPath normalizes the path into parts (e.g. "c:/foo/bar" -> "c:/", "foo/bar")
