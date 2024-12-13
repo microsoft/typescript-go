@@ -160,13 +160,14 @@ func getInputOptionName(input string) string {
 }
 
 func (p *CommandLineParser) parseResponseFile(fileName string) {
-	fileContents, _ := tryReadFile(fileName, func(fileName string) (string, bool) {
+	fileContents, errors := tryReadFile(fileName, func(fileName string) (string, bool) {
 		if p.fs == nil {
 			return "", false
 		}
 		read, err := p.fs.ReadFile(fileName)
 		return read, err
 	}, p.errors)
+	p.errors = errors
 
 	if fileContents == "" {
 		return
@@ -177,7 +178,7 @@ func (p *CommandLineParser) parseResponseFile(fileName string) {
 	textLength := len(text)
 	pos := 0
 	for pos < textLength {
-		for pos < textLength && text[pos] < ' ' {
+		for pos < textLength && text[pos] <= ' ' {
 			pos++
 		}
 		if pos >= textLength {

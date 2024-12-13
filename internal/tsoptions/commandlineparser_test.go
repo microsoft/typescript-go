@@ -1,11 +1,11 @@
 package tsoptions
 
 import (
+	"encoding/json"
 	"path/filepath"
 	"strings"
 	"testing"
 
-	json2 "github.com/go-json-experiment/json"
 	"github.com/microsoft/typescript-go/internal/compiler/diagnostics"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/repo"
@@ -166,9 +166,9 @@ func (f commandLineSubScenario) assertParseResult(t *testing.T) {
 
 		assert.Equal(t, strings.Join(parsed.fileNames, ","), existing.fileNames)
 
-		o, _ := json2.Marshal(parsed.options)
+		o, _ := json.Marshal(parsed.options)
 		parsedCompilerOptions := core.CompilerOptions{}
-		e := json2.Unmarshal(o, &parsedCompilerOptions)
+		e := json.Unmarshal(o, &parsedCompilerOptions)
 		assert.NilError(t, e)
 		assert.DeepEqual(t, parsedCompilerOptions, existing.options)
 
@@ -198,7 +198,7 @@ func parseExistingCompilerBaseline(t *testing.T, baseline string) *TestCommandLi
 	fileNames, errors, _ := strings.Cut(rest, "\nErrors::\n")
 
 	baselineOptions := &core.CompilerOptions{}
-	e := json2.Unmarshal([]byte(compilerOptions), &baselineOptions)
+	e := json.Unmarshal([]byte(compilerOptions), &baselineOptions)
 	assert.NilError(t, e)
 
 	var parser = TestCommandLineParser{
@@ -233,7 +233,7 @@ func parseExistingCompilerBaseline(t *testing.T, baseline string) *TestCommandLi
 
 // 	// todo: change CompilerOptions to buildoptions
 // 	baselineOptions := &core.CompilerOptions{}
-// 	json2.Unmarshal([]byte(buildOptions), &baselineOptions)
+// 	json.Unmarshal([]byte(buildOptions), &baselineOptions)
 
 // 	var parser = TestCommandLineParser{
 // 		options:   *baselineOptions,
