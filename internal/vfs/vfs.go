@@ -57,11 +57,6 @@ var (
 	SkipDir = fs.SkipDir //nolint:errname
 )
 
-type RealpathFS interface {
-	fs.FS
-	Realpath(path string) (string, error)
-}
-
 type common struct {
 	rootFor func(root string) fs.FS
 }

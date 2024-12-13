@@ -8,6 +8,11 @@ import (
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
+type RealpathFS interface {
+	fs.FS
+	Realpath(path string) (string, error)
+}
+
 // FromIOFS creates a new FS from an [fs.FS].
 //
 // For paths like `c:/foo/bar`, fsys will be used as though it's rooted at `/` and the path is `/c:/foo/bar`.
