@@ -63,16 +63,18 @@ func main() {
 
 	rootPath := flag.Arg(0)
 	compilerOptions := &core.CompilerOptions{Strict: core.TSTrue, Target: core.ScriptTargetESNext, ModuleKind: core.ModuleKindNodeNext, NoEmit: core.TSTrue}
-	if len(outDir) > 0 {
-		compilerOptions.NoEmit = core.TSFalse
-		compilerOptions.OutDir = outDir
-	}
 
 	currentDirectory, err := os.Getwd()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error getting current directory: %v\n", err)
 		os.Exit(1)
 	}
+
+	if len(outDir) > 0 {
+		compilerOptions.NoEmit = core.TSFalse
+		compilerOptions.OutDir = tspath.ResolvePath(currentDirectory, outDir)
+	}
+
 	fs := vfs.FromOS()
 	useCaseSensitiveFileNames := fs.UseCaseSensitiveFileNames()
 	host := ts.NewCompilerHost(compilerOptions, currentDirectory, fs)
