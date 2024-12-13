@@ -1923,7 +1923,7 @@ func (f *NodeFactory) NewBindingElement(dotDotDotToken *TokenNode, propertyName 
 }
 
 func (node *BindingElement) ForEachChild(v Visitor) bool {
-	return visit(v, node.PropertyName) || visit(v, node.DotDotDotToken) || visit(v, node.name) || visit(v, node.Initializer)
+	return visit(v, node.DotDotDotToken) || visit(v, node.PropertyName) || visit(v, node.name) || visit(v, node.Initializer)
 }
 
 func (node *BindingElement) Name() *DeclarationName {
@@ -5436,6 +5436,10 @@ type SourceFile struct {
 	AmbientModuleNames          []string
 	HasNoDefaultLib             bool
 	jsdocCache                  map[*Node][]*Node
+	Pragmas                     []Pragma
+	ReferencedFiles             []*FileReference
+	TypeReferenceDirectives     []*FileReference
+	LibReferenceDirectives      []*FileReference
 }
 
 func (f *NodeFactory) NewSourceFile(text string, fileName string, statements *NodeList) *Node {
@@ -5481,4 +5485,62 @@ func (node *SourceFile) ForEachChild(v Visitor) bool {
 
 func IsSourceFile(node *Node) bool {
 	return node.Kind == KindSourceFile
+}
+
+type CommentRange struct {
+	core.TextRange
+	HasTrailingNewLine bool
+	Kind               Kind
+}
+
+func NewCommentRange(kind Kind, pos int, end int, hasTrailingNewLine bool) CommentRange {
+	return CommentRange{
+		TextRange:          core.NewTextRange(pos, end),
+		HasTrailingNewLine: hasTrailingNewLine,
+		Kind:               kind,
+	}
+}
+
+type FileReference struct {
+	core.TextRange
+	FileName       string
+	ResolutionMode core.ResolutionMode
+	Preserve       bool
+}
+
+type PragmaArgument struct {
+	core.TextRange
+	Name  string
+	Value string
+}
+
+type Pragma struct {
+	Name      string
+	Args      map[string]PragmaArgument
+	ArgsRange CommentRange
+}
+
+type PragmaKindFlags = uint8
+
+const (
+	PragmaKindFlagsNone PragmaKindFlags = iota
+	PragmaKindTripleSlashXML
+	PragmaKindSingleLine
+	PragmaKindMultiLine
+	PragmaKindAll     = PragmaKindTripleSlashXML | PragmaKindSingleLine | PragmaKindMultiLine
+	PragmaKindDefault = PragmaKindAll
+)
+
+type PragmaArgumentSpecification struct {
+	Name        string
+	Optional    bool
+	CaptureSpan bool
+}
+type PragmaSpecification struct {
+	Args []PragmaArgumentSpecification
+	Kind PragmaKindFlags
+}
+
+func (spec *PragmaSpecification) IsTripleSlash() bool {
+	return (spec.Kind & PragmaKindTripleSlashXML) > 0
 }
