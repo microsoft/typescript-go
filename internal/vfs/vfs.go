@@ -147,8 +147,13 @@ var isFileSystemCaseSensitive = sync.OnceValue(func() bool {
 		return false
 	}
 
+	exe, err := os.Executable()
+	if err != nil {
+		panic(fmt.Sprintf("vfs: failed to get executable path: %v", err))
+	}
+
 	// If the current executable exists under a different case, we must be case-insensitve.
-	if _, err := os.Stat(swapCase(os.Args[0])); os.IsNotExist(err) {
+	if _, err := os.Stat(swapCase(exe)); os.IsNotExist(err) {
 		return false
 	}
 	return true
