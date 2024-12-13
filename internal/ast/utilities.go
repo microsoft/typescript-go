@@ -62,6 +62,10 @@ func IsPunctuationKind(token Kind) bool {
 	return KindFirstPunctuation <= token && token <= KindLastPunctuation
 }
 
+func IsAssignmentOperator(token Kind) bool {
+	return token >= KindFirstAssignment && token <= KindLastAssignment
+}
+
 func IsTokenKind(token Kind) bool {
 	return KindFirstToken <= token && token <= KindLastToken
 }
@@ -103,6 +107,22 @@ func IsPropertyName(node *Node) bool {
 
 func IsBooleanLiteral(node *Node) bool {
 	return node.Kind == KindTrueKeyword || node.Kind == KindFalseKeyword
+}
+
+func IsLiteralKind(kind Kind) bool {
+	return KindFirstLiteralToken <= kind && kind <= KindLastLiteralToken
+}
+
+func IsStringLiteralLike(node *Node) bool {
+	switch node.Kind {
+	case KindStringLiteral, KindNoSubstitutionTemplateLiteral:
+		return true
+	}
+	return false
+}
+
+func IsStringOrNumericLiteralLike(node *Node) bool {
+	return IsStringLiteralLike(node) || IsNumericLiteral(node)
 }
 
 // Determines if a node is part of an OptionalChain
@@ -644,6 +664,10 @@ func ModifiersToFlags(modifiers []*Node) ModifierFlags {
 	return flags
 }
 
+func HasSyntacticModifier(node *Node, flags ModifierFlags) bool {
+	return node.ModifierFlags()&flags != 0
+}
+
 func CanHaveIllegalDecorators(node *Node) bool {
 	switch node.Kind {
 	case KindPropertyAssignment, KindShorthandPropertyAssignment,
@@ -806,4 +830,11 @@ func IsVarConstLike(node *Node) bool {
 // Gets whether a bound `VariableDeclaration` or `VariableDeclarationList` is part of a `let` declaration.
 func IsVarLet(node *Node) bool {
 	return GetCombinedNodeFlags(node)&NodeFlagsBlockScoped == NodeFlagsLet
+}
+
+func IsImportMeta(node *Node) bool {
+	if node.Kind == KindMetaProperty {
+		return node.AsMetaProperty().KeywordToken == KindImportKeyword && node.AsMetaProperty().Name().AsIdentifier().Text == "meta"
+	}
+	return false
 }
