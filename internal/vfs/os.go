@@ -38,18 +38,18 @@ func swapCase(str string) string {
 
 // FromOS creates a new FS from the OS file system.
 func FromOS() FS {
-	return &osFS{
-		common: common{
-			rootFor: os.DirFS,
-		},
-	}
+	return osVFS
+}
+
+var osVFS FS = &osFS{
+	common: common{
+		rootFor: os.DirFS,
+	},
 }
 
 type osFS struct {
 	common
 }
-
-var _ FS = (*osFS)(nil)
 
 func (vfs *osFS) UseCaseSensitiveFileNames() bool {
 	return isFileSystemCaseSensitive()
