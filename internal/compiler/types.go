@@ -1160,3 +1160,12 @@ type ProjectReference struct {
 	/** True if it is intended that this reference form a circularity */
 	circular bool
 }
+
+// CharacterCodes
+const (
+	EOF               = -1
+	NullCharacter     = 0
+	MaxAsciiCharacter = 0x7F
+	Asterisk          = 0x2A
+	Question          = 0x3F // ?
+)

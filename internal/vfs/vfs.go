@@ -34,6 +34,8 @@ type FS interface {
 	// GetDirectories returns the names of the directories in the specified directory.
 	GetDirectories(path string) []string
 
+	GetEntries(path string) []fs.DirEntry
+
 	// WalkDir walks the file tree rooted at root, calling walkFn for each file or directory in the tree.
 	// It is has the same behavior as [fs.WalkDir], but with paths as [string].
 	WalkDir(root string, walkFn WalkDirFunc) error
@@ -285,6 +287,20 @@ func (v *vfs) GetDirectories(path string) []string {
 		}
 	}
 	return dirs
+}
+
+func (v *vfs) GetEntries(path string) []fs.DirEntry {
+	fsys, _, rest := v.rootAndPath(path)
+	if fsys == nil {
+		return nil
+	}
+
+	entries, err := fs.ReadDir(fsys, rest)
+	if err != nil {
+		return nil
+	}
+
+	return entries
 }
 
 func (v *vfs) GetFiles(path string) []string {

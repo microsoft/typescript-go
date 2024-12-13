@@ -39,12 +39,14 @@ type CompilerOptionsValue struct {
 type CompilerOptions struct {
 	AllowJs                            Tristate             `json:"allowJs"`
 	AllowSyntheticDefaultImports       Tristate             `json:"allowSyntheticDefaultImports"`
+	AllowImportingTsExtensions         Tristate             `json:"allowImportingTsExtensions"`
 	AllowUmdGlobalAccess               Tristate             `json:"allowUmdGlobalAccess"`
 	AllowUnreachableCode               Tristate             `json:"allowUnreachableCode"`
 	AllowUnusedLabels                  Tristate             `json:"allowUnusedLabels"`
 	CheckJs                            Tristate             `json:"checkJs"`
 	CustomConditions                   []string             `json:"customConditions"`
 	DeclarationDir                     string               `json:"declarationDir"`
+	DeclarationMap                     Tristate             `json:"declarationMap"`
 	ESModuleInterop                    Tristate             `json:"esModuleInterop"`
 	ExactOptionalPropertyTypes         Tristate             `json:"exactOptionalPropertyTypes"`
 	ExperimentalDecorators             Tristate             `json:"experimentalDecorators"`
@@ -67,6 +69,7 @@ type CompilerOptions struct {
 	ResolveJsonModule                  Tristate             `json:"resolveJsonModule"`
 	ResolvePackageJsonExports          Tristate             `json:"resolvePackageJsonExports"`
 	ResolvePackageJsonImports          Tristate             `json:"resolvePackageJsonImports"`
+	RewriteRelativeImportExtensions    Tristate             `json:"rewriteRelativeImportExtensions"`
 	Strict                             Tristate             `json:"strict"`
 	StrictBindCallApply                Tristate             `json:"strictBindCallApply"`
 	StrictFunctionTypes                Tristate             `json:"strictFunctionTypes"`
@@ -296,3 +299,117 @@ const (
 	JsxEmitReactJSX    JsxEmit = 4
 	JsxEmitReactJSXDev JsxEmit = 5
 )
+
+var CompilerOptionsKeys = []string{
+	"allowJs",
+	"allowSyntheticDefaultImports",
+	"allowUmdGlobalAccess",
+	"allowUnreachableCode",
+	"allowUnusedLabels",
+	"checkJs",
+	"customConditions",
+	"declarationDir",
+	"esModuleInterop",
+	"exactOptionalPropertyTypes",
+	"experimentalDecorators",
+	"isolatedModules",
+	"jsx",
+	"lib",
+	"legacyDecorators",
+	"module",
+	"moduleResolution",
+	"moduleSuffixes",
+	"moduleDetection",
+	"noFallthroughCasesInSwitch",
+	"noImplicitAny",
+	"noImplicitThis",
+	"noPropertyAccessFromIndexSignature",
+	"noUncheckedIndexedAccess",
+	"paths",
+	"preserveConstEnums",
+	"preserveSymlinks",
+	"resolveJsonModule",
+	"resolvePackageJsonExports",
+	"resolvePackageJsonImports",
+	"strict",
+	"strictBindCallApply",
+	"strictFunctionTypes",
+	"strictNullChecks",
+	"strictPropertyInitialization",
+	"target",
+	"traceResolution",
+	"typeRoots",
+	"types",
+	"useDefineForClassFields",
+	"useUnknownInCatchVariables",
+	"verbatimModuleSyntax",
+	"maxNodeModuleJsDepth",
+	"skipLibCheck",
+	"noEmit",
+	"outDir",
+	"configFilePath",
+	"noDtsResolution",
+	"pathsBasePath",
+	"option",
+}
+
+type Option struct {
+	Dependencies []string
+	ComputeValue func(compilerOptions *CompilerOptions) interface{}
+}
+
+func createComputedCompilerOptions(options map[string]Option) map[string]Option {
+	return options
+}
+
+var options = map[string]Option{ //todo: add more of these and fix circular dependencies
+	"allowImportingTsExtensions": {
+		Dependencies: []string{"rewriteRelativeImportExtensions"},
+		ComputeValue: func(compilerOptions *CompilerOptions) interface{} {
+			// Implement the logic to compute the value
+			if compilerOptions.AllowImportingTsExtensions != 2 {
+				return compilerOptions.AllowImportingTsExtensions
+			}
+			allowImportingTsExtensions := compilerOptions.AllowImportingTsExtensions
+			rewriteRelativeImportExtensions := compilerOptions.RewriteRelativeImportExtensions
+			return allowImportingTsExtensions == 2 || rewriteRelativeImportExtensions == 2
+		},
+	},
+	"target": {
+		Dependencies: []string{"module"},
+		ComputeValue: func(compilerOptions *CompilerOptions) interface{} {
+			target := compilerOptions.Target
+			if target == ScriptTargetES3 {
+				target = 0
+			}
+			if target != 0 {
+				return target
+			}
+			module := compilerOptions.ModuleKind
+			return ((module == ModuleKindNode16) || (module == ModuleKindNodeNext)) //how to check for script targets
+		},
+	},
+	"allowJs": {
+		Dependencies: []string{"checkJs"},
+		ComputeValue: func(compilerOptions *CompilerOptions) interface{} {
+			if compilerOptions.AllowJs == 0 {
+				return compilerOptions.CheckJs
+			}
+			return compilerOptions.AllowJs
+		},
+	},
+	"resolveJsonModule": { //look into this
+		Dependencies: []string{"moduleResolution", "module", "target"},
+		ComputeValue: func(compilerOptions *CompilerOptions) interface{} {
+			if compilerOptions.ResolveJsonModule == 0 {
+				return compilerOptions.ResolveJsonModule
+			}
+			if compilerOptions.ModuleKind == ModuleKindPreserve {
+				return (Tristate)(2)
+			}
+			return (Tristate)(1)
+		},
+	},
+}
+
+var ComputedOptions = createComputedCompilerOptions(options)

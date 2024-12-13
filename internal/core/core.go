@@ -259,3 +259,27 @@ func ComputeLineStarts(text string) []TextPos {
 	result = append(result, TextPos(lineStart))
 	return result
 }
+
+func Flatten[T any](array [][]T) []T {
+	var result []T
+	for _, subArray := range array {
+		for _, v := range subArray {
+			result = append(result, v)
+		}
+	}
+	return result
+}
+
+func IndexOfAnyCharCode(text string, charCodes []int, start ...int) int {
+	startIndex := 0
+	if len(start) > 0 {
+		startIndex = start[0]
+	}
+
+	for i := startIndex; i < len(text); i++ {
+		if slices.Contains(charCodes, int(text[i])) {
+			return i
+		}
+	}
+	return -1
+}

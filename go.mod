@@ -11,6 +11,7 @@ require (
 
 require (
 	github.com/bmatcuk/doublestar/v4 v4.7.1 // indirect
+	github.com/dlclark/regexp2 v1.11.4 // indirect
 	golang.org/x/mod v0.22.0 // indirect
 	golang.org/x/sync v0.9.0 // indirect
 )

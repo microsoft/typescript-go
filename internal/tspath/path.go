@@ -13,7 +13,7 @@ type Path string
 // Internally, we represent paths as strings with '/' as the directory separator.
 // When we make system calls (eg: LanguageServiceHost.getDirectory()),
 // we expect the host to correctly handle paths in our specified format.
-const directorySeparator = '/'
+const DirectorySeparator = '/'
 const urlSchemeSeparator = "://"
 
 // check path for these segments:
@@ -325,12 +325,12 @@ func ResolvePath(path string, paths ...string) string {
 	return NormalizePath(combinedPath)
 }
 
-func getNormalizedPathComponents(path string, currentDirectory string) []string {
+func GetNormalizedPathComponents(path string, currentDirectory string) []string {
 	return reducePathComponents(GetPathComponents(path, currentDirectory))
 }
 
 func GetNormalizedAbsolutePath(fileName string, currentDirectory string) string {
-	return getPathFromPathComponents(getNormalizedPathComponents(fileName, currentDirectory))
+	return getPathFromPathComponents(GetNormalizedPathComponents(fileName, currentDirectory))
 }
 
 func NormalizePath(path string) string {
@@ -468,7 +468,7 @@ func GetRelativePathToDirectoryOrUrl(directoryPathOrUrl string, relativeOrAbsolu
 	firstComponent := pathComponents[0]
 	if isAbsolutePathAnUrl && IsRootedDiskPath(firstComponent) {
 		var prefix string
-		if firstComponent[0] == directorySeparator {
+		if firstComponent[0] == DirectorySeparator {
 			prefix = "file://"
 		} else {
 			prefix = "file:///"
@@ -517,7 +517,7 @@ func GetBaseFileName(path string) string {
 	// return the trailing portion of the path starting after the last (non-terminal) directory
 	// separator but not including any trailing directory separator.
 	path = RemoveTrailingDirectorySeparator(path)
-	return path[max(GetRootLength(path), strings.LastIndex(path, string(directorySeparator))+1):]
+	return path[max(GetRootLength(path), strings.LastIndex(path, string(DirectorySeparator))+1):]
 }
 
 // Gets the file extension for a path.
@@ -704,4 +704,8 @@ func ForEachAncestorDirectoryPath[T any](directory Path, callback func(directory
 	return ForEachAncestorDirectory(string(directory), func(directory string) (T, bool) {
 		return callback(Path(directory))
 	})
+}
+
+func HasExtension(fileName string) bool {
+	return strings.Contains(GetBaseFileName(fileName), ".")
 }

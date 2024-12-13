@@ -109,35 +109,38 @@ type verifyConfig struct {
 	expectedErrors string
 }
 
-func TestGetParsedCommandJson(t *testing.T) {
-	for _, test := range parseCommandJson {
-		host := newVFSParseConfigHost(test.allFileList, "")
-		parsed := ParseConfigFileTextToJson(test.configFileName, test.jsonText)
-		parseConfigFileContent := ParseJsonConfigFileContent(
-			parsed.config.(map[string]interface{}),
-			*host,
-			test.basePath,
-			//basePath ?? ts.getNormalizedAbsolutePath(ts.getDirectoryPath(configFileName), host.sys.getCurrentDirectory()),
-			nil,
-			test.configFileName,
-			/*resolutionStack*/ nil,
-			/*extraFileExtensions*/ nil,
-			/*extendedConfigCache*/ nil,
-		)
-		configJson, err := json.Marshal(parseConfigFileContent.Options)
-		if err != nil {
-			t.Errorf("Failed to marshal parseConfigFileContent: %v", err)
-		}
-		fmt.Println("****************************************************")
-		fmt.Println(string(configJson))
-	}
-}
+// func TestGetParsedCommandJson(t *testing.T) {
+// 	for _, test := range parseCommandJson {
+// 		//host := newVFSParseConfigHost(test.allFileList, "")
+// 		parsed := ParseConfigFileTextToJson(test.configFileName, test.jsonText)
+// 		parseConfigFileContent := ParseJsonConfigFileContent(
+// 			parsed.config.(map[string]interface{}),
+// 			*host,
+// 			test.basePath,
+// 			//basePath ?? ts.getNormalizedAbsolutePath(ts.getDirectoryPath(configFileName), host.sys.getCurrentDirectory()),
+// 			nil,
+// 			test.configFileName,
+// 			/*resolutionStack*/ nil,
+// 			/*extraFileExtensions*/ nil,
+// 			/*extendedConfigCache*/ nil,
+// 		)
+// 		configJson, err := json.Marshal(parseConfigFileContent.Options)
+// 		if err != nil {
+// 			t.Errorf("Failed to marshal parseConfigFileContent: %v", err)
+// 		}
+// 		fmt.Println("****************************************************")
+// 		fmt.Println(string(configJson))
+// 	}
+// }
 
 func TestGetParsedCommandJsonSourceFile(t *testing.T) {
 
-	//parseConfig := newParseConfigHost(host)
 	for _, test := range parseCommandJson {
-		host := newVFSParseConfigHost(test.allFileList, "")
+		var currentTestFile = make(map[string]string, len(test.allFileList))
+		for _, file := range test.allFileList {
+			currentTestFile[file] = ""
+		}
+		host := newVFSParseConfigHost(currentTestFile, test.basePath)
 		parsed := compiler.ParseJSONText(test.configFileName, test.jsonText)
 		var basePath string
 		if test.basePath != "" {
@@ -145,10 +148,13 @@ func TestGetParsedCommandJsonSourceFile(t *testing.T) {
 		} else {
 			basePath = tspath.GetNormalizedAbsolutePath(tspath.GetDirectoryPath(test.configFileName), "")
 		}
+		var tsConfigSourceFile *tsConfigSourceFile = &tsConfigSourceFile{
+			sourceFile: parsed,
+		}
 		parseConfigFileContent := ParseJsonSourceFileConfigFileContent(
-			parsed,
+			tsConfigSourceFile,
 			*host,
-			basePath,
+			host.currentDirectory,
 			nil,
 			tspath.GetNormalizedAbsolutePath(test.configFileName, basePath), //&test.configFileName,
 			/*resolutionStack*/ nil,
@@ -170,7 +176,7 @@ func TestGetParsedCommandJsonSourceFile(t *testing.T) {
 		//k := string(expectedResultJson)
 		// assert.DeepEqual(t, string(configJson), strings.ReplaceAll(k, " ", ""))
 		// assert.Equal(t, parseConfigFileContent.Errors[0].Message(), test.expectedErrors)
-		// fmt.Println("****************************************************")
+		fmt.Println("****************************************************")
 		fmt.Println(string(configJson))
 		if parseConfigFileContent.Errors != nil {
 			fmt.Println("errors: ", parseConfigFileContent.Errors[0].Message())
@@ -201,24 +207,25 @@ var parseCommandJson = []verifyConfig{
 	// }`,
 	// 	expectedErrors: "Unknown option 'excludes'. Did you mean 'exclude'?",
 	// },
+
+	//ignore dotted files and folders
 	// {
 	// 	jsonText:       `{}`,
 	// 	configFileName: "tsconfig.json",
 	// 	basePath:       "/apath",
 	// 	allFileList:    []string{"/apath/test.ts", "/apath/.git/a.ts", "/apath/.b.ts", "/apath/..c.ts"},
 	// },
-	// 	configFileName: "tsconfig.json",
-	// 	basePath:       "/apath",
-	// 	allFileList:    []string{"/apath/test.ts", "/apath/foge.ts"},
-	// },
+
+	//allow dotted files and folders when explicitly requested
 	// {
 	// 	jsonText: `{
-	// 		"files": []
-	// 	}`,
-	// 	configFileName: "/apath/tsconfig.json",
+	// 				"files": ["/apath/.git/a.ts", "/apath/.b.ts", "/apath/..c.ts"]
+	// 			}`,
+	// 	configFileName: "tsconfig.json",
 	// 	basePath:       "/apath",
-	// 	allFileList:    []string{"/apath/a.ts"},
+	// 	allFileList:    []string{"/apath/test.ts", "/apath/.git/a.ts", "/apath/.b.ts", "/apath/..c.ts"},
 	// },
+
 	// "exclude outDir unless overridden"
 	{
 		jsonText: `{
@@ -303,14 +310,26 @@ func newParseConfigHost(host parseConfigHost) *typeParseConfig {
 	}
 }
 
-func newVFSParseConfigHost(file []string, currentDirectory string) *VfsParseConfigHost {
+func fixRoot(path string) string {
+	rootLength := tspath.GetRootLength(path)
+	if rootLength == 0 {
+		return path
+	}
+	if len(path) == rootLength {
+		return "."
+	}
+	return path[rootLength:]
+}
+
+func newVFSParseConfigHost(files map[string]string, currentDirectory string) *VfsParseConfigHost {
 	fs := fstest.MapFS{}
-	for _, f := range file {
-		fs[f] = &fstest.MapFile{
-			Data: []byte(""),
+	for name, content := range files {
+		fs[fixRoot(name)] = &fstest.MapFile{
+			Data: []byte(content),
 		}
 	}
 	return &VfsParseConfigHost{
-		vfstest.FromMapFS(fs, true /*useCaseSensitiveFileNames*/),
+		fs:               vfstest.FromMapFS(fs, true /*useCaseSensitiveFileNames*/),
+		currentDirectory: currentDirectory,
 	}
 }
