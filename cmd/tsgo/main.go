@@ -58,7 +58,7 @@ func main() {
 	flag.BoolVar(&pretty, "pretty", true, "Get prettier errors")
 	flag.BoolVar(&listFiles, "listfiles", false, "List files in the program")
 	flag.StringVar(&pprofDir, "pprofdir", "", "Generate pprof CPU/memory profiles to the given directory")
-	flag.StringVar(&outDir, "outDir", "", "Emit to the given directory")
+	flag.StringVar(&outDir, "outdir", "", "Emit to the given directory")
 	flag.Parse()
 
 	rootPath := flag.Arg(0)
