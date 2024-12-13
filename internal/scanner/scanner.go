@@ -873,8 +873,13 @@ func (s *Scanner) ReScanSlashToken() ast.Kind {
 				s.pos += size
 			}
 			// Whitespaces and semicolons at the end are not likely to be part of the regex
-			for stringutil.IsWhiteSpaceLike(s.charAt(-1)) || s.charAt(-1) == ';' {
-				s.pos--
+			for {
+				ch, size := utf8.DecodeLastRuneInString(s.text[:s.pos])
+				if stringutil.IsWhiteSpaceLike(ch) || ch == ';' {
+					s.pos -= size
+				} else {
+					break
+				}
 			}
 		} else {
 			// Consume the slash character
