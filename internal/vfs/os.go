@@ -42,8 +42,12 @@ var isFileSystemCaseSensitive = func() bool {
 	}
 
 	// If the current executable exists under a different case, we must be case-insensitve.
-	if _, err := os.Stat(swapCase(exe)); os.IsNotExist(err) {
-		return false
+	swapped := swapCase(exe)
+	if _, err := os.Stat(swapped); err != nil {
+		if os.IsNotExist(err) {
+			return false
+		}
+		panic(fmt.Sprintf("vfs: failed to stat %q: %v", swapped, err))
 	}
 	return true
 }()
