@@ -8,13 +8,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
-type ioFS struct {
-	common
-
-	useCaseSensitiveFileNames bool
-	realpath                  func(path string) (string, error)
-}
-
 // FromIOFS creates a new FS from an [fs.FS].
 //
 // For paths like `c:/foo/bar`, fsys will be used as though it's rooted at `/` and the path is `/c:/foo/bar`.
@@ -61,6 +54,13 @@ func FromIOFS(fsys fs.FS, useCaseSensitiveFileNames bool) FS {
 		useCaseSensitiveFileNames: useCaseSensitiveFileNames,
 		realpath:                  realpath,
 	}
+}
+
+type ioFS struct {
+	common
+
+	useCaseSensitiveFileNames bool
+	realpath                  func(path string) (string, error)
 }
 
 var _ FS = (*ioFS)(nil)
