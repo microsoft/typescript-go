@@ -607,7 +607,7 @@ func NewChecker(program *Program) *Checker {
 	c := &Checker{}
 	c.program = program
 	c.host = program.host
-	c.compilerOptions = program.options
+	c.compilerOptions = program.compilerOptions
 	c.files = program.files
 	c.languageVersion = c.compilerOptions.GetEmitScriptTarget()
 	c.moduleKind = c.compilerOptions.GetEmitModuleKind()
@@ -17761,6 +17761,7 @@ func (c *Checker) getSpreadIndices(node *ast.Node) (int, int) {
 			}
 		}
 		links.firstSpreadIndex, links.lastSpreadIndex = first, last
+		links.indicesComputed = true
 	}
 	return links.firstSpreadIndex, links.lastSpreadIndex
 }
