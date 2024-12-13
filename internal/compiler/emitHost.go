@@ -39,22 +39,7 @@ type emitHost struct {
 func (host *emitHost) Options() *core.CompilerOptions { return host.program.Options() }
 func (host *emitHost) SourceFiles() []*ast.SourceFile { return host.program.SourceFiles() }
 func (host *emitHost) GetCurrentDirectory() string    { return host.program.host.GetCurrentDirectory() }
-func (host *emitHost) CommonSourceDirectory() string {
-	if len(host.commonSourceDirectory) > 0 {
-		return host.commonSourceDirectory
-	}
-
-	host.commonSourceDirectoryMutex.Lock()
-	defer host.commonSourceDirectoryMutex.Unlock()
-
-	// double-check after lock
-	if len(host.commonSourceDirectory) > 0 {
-		return host.commonSourceDirectory
-	}
-
-	host.commonSourceDirectory = host.program.CommonSourceDirectory()
-	return host.commonSourceDirectory
-}
+func (host *emitHost) CommonSourceDirectory() string  { return host.program.CommonSourceDirectory() }
 func (host *emitHost) UseCaseSensitiveFileNames() bool {
 	return host.program.host.FS().UseCaseSensitiveFileNames()
 }

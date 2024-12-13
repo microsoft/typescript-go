@@ -51,8 +51,8 @@ type Program struct {
 
 	usesUriStyleNodeCoreModules core.Tristate
 
-	commonSourceDirectory            string
-	hasComputedCommonSourceDirectory bool
+	commonSourceDirectory     string
+	commonSourceDirectoryOnce sync.Once
 }
 
 var extensions = []string{".ts", ".tsx"}
@@ -548,7 +548,7 @@ func (p *Program) getEmitModuleFormatOfFile(sourceFile *ast.SourceFile) core.Mod
 }
 
 func (p *Program) CommonSourceDirectory() string {
-	if !p.hasComputedCommonSourceDirectory {
+	p.commonSourceDirectoryOnce.Do(func() {
 		var files []string
 		host := &emitHost{program: p}
 		for _, file := range p.files {
@@ -562,13 +562,12 @@ func (p *Program) CommonSourceDirectory() string {
 			p.host.GetCurrentDirectory(),
 			p.host.FS().UseCaseSensitiveFileNames(),
 		)
-		p.hasComputedCommonSourceDirectory = true
-	}
+	})
 	return p.commonSourceDirectory
 }
 
 func computeCommonSourceDirectoryOfFilenames(fileNames []string, currentDirectory string, useCaseSensitiveFileNames bool) string {
-	var commonPathComponents []string = nil
+	var commonPathComponents []string
 	for _, sourceFile := range fileNames {
 		// Each file contributes into common source file path
 		sourcePathComponents := tspath.GetNormalizedPathComponents(sourceFile, currentDirectory)
