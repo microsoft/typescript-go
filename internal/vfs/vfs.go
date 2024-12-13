@@ -82,16 +82,16 @@ func splitPath(p string) (rootName, rest string) {
 	return rootName, rest
 }
 
-func (c *common) rootAndPath(path string) (fsys fs.FS, rootName string, rest string) {
+func (vfs *common) rootAndPath(path string) (fsys fs.FS, rootName string, rest string) {
 	rootName, rest = splitPath(path)
 	if rest == "" {
 		rest = "."
 	}
-	return c.rootFor(rootName), rootName, rest
+	return vfs.rootFor(rootName), rootName, rest
 }
 
-func (c *common) stat(path string) fs.FileInfo {
-	fsys, _, rest := c.rootAndPath(path)
+func (vfs *common) stat(path string) fs.FileInfo {
+	fsys, _, rest := vfs.rootAndPath(path)
 	if fsys == nil {
 		return nil
 	}
@@ -102,18 +102,18 @@ func (c *common) stat(path string) fs.FileInfo {
 	return stat
 }
 
-func (c *common) FileExists(path string) bool {
-	stat := c.stat(path)
+func (vfs *common) FileExists(path string) bool {
+	stat := vfs.stat(path)
 	return stat != nil && !stat.IsDir()
 }
 
-func (c *common) DirectoryExists(path string) bool {
-	stat := c.stat(path)
+func (vfs *common) DirectoryExists(path string) bool {
+	stat := vfs.stat(path)
 	return stat != nil && stat.IsDir()
 }
 
-func (c *common) GetDirectories(path string) []string {
-	fsys, _, rest := c.rootAndPath(path)
+func (vfs *common) GetDirectories(path string) []string {
+	fsys, _, rest := vfs.rootAndPath(path)
 	if fsys == nil {
 		return nil
 	}
@@ -133,8 +133,8 @@ func (c *common) GetDirectories(path string) []string {
 	return dirs
 }
 
-func (c *common) WalkDir(root string, walkFn WalkDirFunc) error {
-	fsys, rootName, rest := c.rootAndPath(root)
+func (vfs *common) WalkDir(root string, walkFn WalkDirFunc) error {
+	fsys, rootName, rest := vfs.rootAndPath(root)
 	if fsys == nil {
 		return nil
 	}
@@ -146,8 +146,8 @@ func (c *common) WalkDir(root string, walkFn WalkDirFunc) error {
 	})
 }
 
-func (c *common) ReadFile(path string) (contents string, ok bool) {
-	fsys, _, rest := c.rootAndPath(path)
+func (vfs *common) ReadFile(path string) (contents string, ok bool) {
+	fsys, _, rest := vfs.rootAndPath(path)
 	if fsys == nil {
 		return "", false
 	}
