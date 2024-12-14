@@ -152,6 +152,13 @@ type AssignmentReducedKey struct {
 	id2 TypeId
 }
 
+// DiscriminatedContextualTypeKey
+
+type DiscriminatedContextualTypeKey struct {
+	nodeId ast.NodeId
+	typeId TypeId
+}
+
 // FlowLoopKey
 
 type FlowLoopKey struct {
@@ -449,6 +456,7 @@ type Checker struct {
 	cachedSignatures                        map[CachedSignatureKey]*Signature
 	narrowedTypes                           map[NarrowedTypeKey]*Type
 	assignmentReducedTypes                  map[AssignmentReducedKey]*Type
+	discriminatedContextualTypes            map[DiscriminatedContextualTypeKey]*Type
 	markerTypes                             core.Set[*Type]
 	identifierSymbols                       map[*ast.Node]*ast.Symbol
 	undefinedSymbol                         *ast.Symbol
@@ -648,6 +656,7 @@ func NewChecker(program *Program) *Checker {
 	c.cachedSignatures = make(map[CachedSignatureKey]*Signature)
 	c.narrowedTypes = make(map[NarrowedTypeKey]*Type)
 	c.assignmentReducedTypes = make(map[AssignmentReducedKey]*Type)
+	c.discriminatedContextualTypes = make(map[DiscriminatedContextualTypeKey]*Type)
 	c.identifierSymbols = make(map[*ast.Node]*ast.Symbol)
 	c.undefinedSymbol = c.newSymbol(ast.SymbolFlagsProperty, "undefined")
 	c.argumentsSymbol = c.newSymbol(ast.SymbolFlagsProperty, "arguments")
@@ -17123,8 +17132,61 @@ func (c *Checker) getIndexTypeForGenericType(t *Type, indexFlags IndexFlags) *Ty
 	return indexType
 }
 
+// This roughly mirrors `resolveMappedTypeMembers` in the nongeneric case, except only reports a union of the keys calculated,
+// rather than manufacturing the properties. We can't just fetch the `constraintType` since that would ignore mappings
+// and mapping the `constraintType` directly ignores how mapped types map _properties_ and not keys (thus ignoring subtype
+// reduction in the constraintType) when possible.
+// @param noIndexSignatures Indicates if _string_ index signatures should be elided. (other index signatures are always reported)
 func (c *Checker) getIndexTypeForMappedType(t *Type, indexFlags IndexFlags) *Type {
-	return c.neverType // !!!
+	typeParameter := c.getTypeParameterFromMappedType(t)
+	constraintType := c.getConstraintTypeFromMappedType(t)
+	nameType := c.getNameTypeFromMappedType(core.OrElse(t.AsMappedType().target, t))
+	if nameType == nil && indexFlags&IndexFlagsNoIndexSignatures == 0 {
+		// no mapping and no filtering required, just quickly bail to returning the constraint in the common case
+		return constraintType
+	}
+	var keyTypes []*Type
+	addMemberForKeyType := func(keyType *Type) {
+		propNameType := keyType
+		if nameType != nil {
+			propNameType = c.instantiateType(nameType, appendTypeMapping(t.AsMappedType().mapper, typeParameter, keyType))
+		}
+		// `keyof` currently always returns `string | number` for concrete `string` index signatures - the below ternary keeps that behavior for mapped types
+		// See `getLiteralTypeFromProperties` where there's a similar ternary to cause the same behavior.
+		keyTypes = append(keyTypes, core.IfElse(propNameType == c.stringType, c.stringOrNumberType, propNameType))
+	}
+	// Calling getApparentType on the `T` of a `keyof T` in the constraint type of a generic mapped type can
+	// trigger a circularity. For example, `T extends { [P in keyof T & string as Captitalize<P>]: any }` is
+	// a circular definition. For this reason, we only eagerly manifest the keys if the constraint is non-generic.
+	if c.isGenericIndexType(constraintType) {
+		if c.isMappedTypeWithKeyofConstraintDeclaration(t) {
+			// We have a generic index and a homomorphic mapping (but a distributive key remapping) - we need to defer
+			// the whole `keyof whatever` for later since it's not safe to resolve the shape of modifier type.
+			return c.getIndexTypeForGenericType(t, indexFlags)
+		}
+		// Include the generic component in the resulting type.
+		forEachType(constraintType, addMemberForKeyType)
+	} else if c.isMappedTypeWithKeyofConstraintDeclaration(t) {
+		modifiersType := c.getApparentType(c.getModifiersTypeFromMappedType(t))
+		// The 'T' in 'keyof T'
+		c.forEachMappedTypePropertyKeyTypeAndIndexSignatureKeyType(modifiersType, TypeFlagsStringOrNumberLiteralOrUnique, indexFlags&IndexFlagsStringsOnly != 0, addMemberForKeyType)
+	} else {
+		forEachType(c.getLowerBoundOfKeyType(constraintType), addMemberForKeyType)
+	}
+	// We had to pick apart the constraintType to potentially map/filter it - compare the final resulting list with the
+	// original constraintType, so we can return the union that preserves aliases/origin data if possible.
+	var result *Type
+	if indexFlags&IndexFlagsNoIndexSignatures != 0 {
+		result = c.filterType(c.getUnionType(keyTypes), func(t *Type) bool {
+			return t.flags&(TypeFlagsAny|TypeFlagsString) == 0
+		})
+	} else {
+		result = c.getUnionType(keyTypes)
+	}
+	if result.flags&TypeFlagsUnion != 0 && constraintType.flags&TypeFlagsUnion != 0 && getTypeListKey(result.Types()) == getTypeListKey(constraintType.Types()) {
+		return constraintType
+	}
+	return result
 }
 
 func (c *Checker) getIndexedAccessType(objectType *Type, indexType *Type) *Type {
@@ -17489,7 +17551,7 @@ func (c *Checker) shouldDeferIndexedAccessType(objectType *Type, indexType *Type
 	if c.isGenericIndexType(indexType) {
 		return true
 	}
-	if accessNode != nil && ast.IsIndexedAccessTypeNode(accessNode) {
+	if accessNode != nil && !ast.IsIndexedAccessTypeNode(accessNode) {
 		return c.isGenericTupleType(objectType) && !indexTypeLessThan(indexType, getTotalFixedElementCount(objectType.TargetTupleType()))
 	}
 	return c.isGenericObjectType(objectType) && !(isTupleType(objectType) && indexTypeLessThan(indexType, getTotalFixedElementCount(objectType.TargetTupleType()))) ||
@@ -19134,8 +19196,102 @@ func (c *Checker) getApparentTypeOfContextualType(node *ast.Node, contextFlags C
 	return nil
 }
 
+type ObjectLiteralDiscriminator struct {
+	c       *Checker
+	props   []*ast.Node
+	members []*ast.Symbol
+}
+
+func (d *ObjectLiteralDiscriminator) len() int {
+	return len(d.props) + len(d.members)
+}
+
+func (d *ObjectLiteralDiscriminator) name(index int) string {
+	if index < len(d.props) {
+		return d.props[index].Symbol().Name
+	}
+	return d.members[index-len(d.props)].Name
+}
+
+func (d *ObjectLiteralDiscriminator) matches(index int, t *Type) bool {
+	var propType *Type
+	if index < len(d.props) {
+		prop := d.props[index]
+		if ast.IsPropertyAssignment(prop) {
+			propType = d.c.getContextFreeTypeOfExpression(prop.Initializer())
+		} else {
+			propType = d.c.getContextFreeTypeOfExpression(prop.Name())
+		}
+	} else {
+		propType = d.c.undefinedType
+	}
+	for _, s := range propType.Distributed() {
+		if d.c.isTypeAssignableTo(s, t) {
+			return true
+		}
+	}
+	return false
+}
+
 func (c *Checker) discriminateContextualTypeByObjectMembers(node *ast.Node, contextualType *Type) *Type {
-	return contextualType // !!!
+	key := DiscriminatedContextualTypeKey{nodeId: getNodeId(node), typeId: contextualType.id}
+	if discriminated := c.discriminatedContextualTypes[key]; discriminated != nil {
+		return discriminated
+	}
+	discriminated := c.getMatchingUnionConstituentForObjectLiteral(contextualType, node)
+	if discriminated == nil {
+		discriminantProperties := core.Filter(node.AsObjectLiteralExpression().Properties.Nodes, func(p *ast.Node) bool {
+			symbol := p.Symbol()
+			if symbol == nil {
+				return false
+			}
+			if ast.IsPropertyAssignment(p) {
+				return c.isPossiblyDiscriminantValue(p.Initializer()) && c.isDiscriminantProperty(contextualType, symbol.Name)
+			}
+			if ast.IsShorthandPropertyAssignment(p) {
+				return c.isDiscriminantProperty(contextualType, symbol.Name)
+			}
+			return false
+		})
+		discriminantMembers := core.Filter(c.getPropertiesOfType(contextualType), func(s *ast.Symbol) bool {
+			return s.Flags&ast.SymbolFlagsOptional != 0 && node.Symbol().Members[s.Name] == nil && c.isDiscriminantProperty(contextualType, s.Name)
+		})
+		discriminator := &ObjectLiteralDiscriminator{c: c, props: discriminantProperties, members: discriminantMembers}
+		discriminated = c.discriminateTypeByDiscriminableItems(contextualType, discriminator)
+	}
+	c.discriminatedContextualTypes[key] = discriminated
+	return discriminated
+}
+
+func (c *Checker) getMatchingUnionConstituentForObjectLiteral(unionType *Type, node *ast.Node) *Type {
+	keyPropertyName := c.getKeyPropertyName(unionType)
+	if keyPropertyName == "" {
+		propNode := core.Find(node.AsObjectLiteralExpression().Properties.Nodes, func(p *ast.Node) bool {
+			return p.Symbol() != nil && ast.IsPropertyAssignment(p) && p.Symbol().Name == keyPropertyName && c.isPossiblyDiscriminantValue(p.Initializer())
+		})
+		if propNode != nil {
+			propType := c.getContextFreeTypeOfExpression(propNode.Initializer())
+			return c.getConstituentTypeForKeyType(unionType, propType)
+		}
+	}
+	return nil
+}
+
+// Return true if the given expression is possibly a discriminant value. We limit the kinds of
+// expressions we check to those that don't depend on their contextual type in order not to cause
+// recursive (and possibly infinite) invocations of getContextualType.
+func (c *Checker) isPossiblyDiscriminantValue(node *ast.Node) bool {
+	switch node.Kind {
+	case ast.KindStringLiteral, ast.KindNumericLiteral, ast.KindBigIntLiteral, ast.KindNoSubstitutionTemplateLiteral, ast.KindTemplateExpression,
+		ast.KindTrueKeyword, ast.KindFalseKeyword, ast.KindNullKeyword, ast.KindIdentifier, ast.KindUndefinedKeyword:
+		return true
+	case ast.KindPropertyAccessExpression, ast.KindParenthesizedExpression:
+		return c.isPossiblyDiscriminantValue(node.Expression())
+		// !!!
+		// case ast.KindJsxExpression:
+		// 	return node.AsJsxExpression().Expression == nil || c.isPossiblyDiscriminantValue(node.AsJsxExpression().Expression)
+	}
+	return false
 }
 
 func (c *Checker) discriminateContextualTypeByJSXAttributes(node *ast.Node, contextualType *Type) *Type {
