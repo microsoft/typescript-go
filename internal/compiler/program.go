@@ -79,13 +79,9 @@ func NewProgram(options ProgramOptions) *Program {
 	if p.rootPath == "" {
 		panic("root path required")
 	}
-	fileInfos := readFileInfos(p.host.FS(), p.rootPath, extensions)
-	// Sort files by descending file size
-	slices.SortFunc(fileInfos, func(a FileInfo, b FileInfo) int {
-		return int(b.Size) - int(a.Size)
-	})
+	files := findFiles(p.host.FS(), p.rootPath, extensions)
 
-	p.processRootFiles(fileInfos)
+	p.processRootFiles(files)
 
 	// Sort files by path so we get a stable ordering between runs
 	slices.SortFunc(p.files, func(f1 *ast.SourceFile, f2 *ast.SourceFile) int {
@@ -95,19 +91,15 @@ func NewProgram(options ProgramOptions) *Program {
 	return p
 }
 
-func readFileInfos(fs vfs.FS, rootPath string, extensions []string) []FileInfo {
-	var fileInfos []FileInfo
+func findFiles(fs vfs.FS, rootPath string, extensions []string) []string {
+	var files []string
 
 	err := fs.WalkDir(rootPath, func(path string, d vfs.DirEntry, err error) error {
 		if err != nil {
 			return err
 		}
 		if !d.IsDir() && slices.ContainsFunc(extensions, func(ext string) bool { return tspath.FileExtensionIs(path, ext) }) {
-			info, err := d.Info()
-			if err != nil {
-				return err //nolint:wrapcheck
-			}
-			fileInfos = append(fileInfos, FileInfo{Name: path, Size: info.Size()})
+			files = append(files, path)
 		}
 		return nil
 	})
@@ -115,7 +107,7 @@ func readFileInfos(fs vfs.FS, rootPath string, extensions []string) []FileInfo {
 		fmt.Println(err)
 	}
 
-	return fileInfos
+	return files
 }
 
 func (p *Program) SourceFiles() []*ast.SourceFile { return p.files }
@@ -134,12 +126,12 @@ func (p *Program) bindSourceFiles() {
 	wg.Wait()
 }
 
-func (p *Program) processRootFiles(rootFiles []FileInfo) {
+func (p *Program) processRootFiles(rootFiles []string) {
 	wg := core.NewWorkGroup(p.programOptions.SingleThreaded)
 
 	absPaths := make([]string, 0, len(rootFiles))
-	for _, fileInfo := range rootFiles {
-		absPath := tspath.GetNormalizedAbsolutePath(fileInfo.Name, p.currentDirectory)
+	for _, file := range rootFiles {
+		absPath := tspath.GetNormalizedAbsolutePath(file, p.currentDirectory)
 		p.processedFileNames.Add(absPath)
 		absPaths = append(absPaths, absPath)
 	}

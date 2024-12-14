@@ -11,11 +11,6 @@ type CompilerHost interface {
 	Trace(msg string)
 }
 
-type FileInfo struct {
-	Name string
-	Size int64
-}
-
 var _ CompilerHost = (*compilerHost)(nil)
 
 type compilerHost struct {
