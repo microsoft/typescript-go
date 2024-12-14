@@ -1,7 +1,11 @@
-package compiler
+package parser
 
 import (
+	"fmt"
 	"path"
+	"regexp"
+	"strings"
+	"sync"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/compiler/diagnostics"
@@ -228,9 +232,16 @@ func (p *Parser) parseSourceFileWorker() *ast.SourceFile {
 	node := p.factory.NewSourceFile(p.sourceText, p.fileName, statements)
 	p.finishNode(node, pos)
 	result := node.AsSourceFile()
+
+	result.Pragmas = getCommentPragmas(p.sourceText)
+	processPragmasIntoFields(result)
+
 	result.SetDiagnostics(attachFileToDiagnostics(p.diagnostics, result))
 	result.ExternalModuleIndicator = isFileProbablyExternalModule(result)
 	result.IsDeclarationFile = isDeclarationFile
+	result.LanguageVersion = p.languageVersion
+	result.LanguageVariant = p.languageVariant
+	result.ScriptKind = p.scriptKind
 	return result
 }
 
@@ -314,8 +325,8 @@ func (p *Parser) parseDelimitedList(kind ParsingContext, parseElement func(p *Pa
 	return p.factory.NewNodeList(core.NewTextRange(pos, p.nodePos()), slice)
 }
 
-// Return a non-nil (but possibly empty) slice if parsing was successful, or nil if opening token wasn't found
-// or parseElement returned nil
+// Return a non-nil (but possibly empty) NodeList if parsing was successful, or nil if opening token wasn't found
+// or parseElement returned nil.
 func (p *Parser) parseBracketedList(kind ParsingContext, parseElement func(p *Parser) *ast.Node, opening ast.Kind, closing ast.Kind) *ast.NodeList {
 	if p.parseExpected(opening) {
 		result := p.parseDelimitedList(kind, parseElement)
@@ -3645,7 +3656,7 @@ func (p *Parser) parseAssignmentExpressionOrHigherWorker(allowReturnTypeInArrowF
 	// and consumes anything.
 	pos := p.nodePos()
 	hasJSDoc := p.hasPrecedingJSDocComment()
-	expr := p.parseBinaryExpressionOrHigher(OperatorPrecedenceLowest)
+	expr := p.parseBinaryExpressionOrHigher(ast.OperatorPrecedenceLowest)
 	// To avoid a look-ahead, we did not handle the case of an arrow function with a single un-parenthesized
 	// parameter ('x => ...') above. We handle it here by checking if the parsed expression was a single
 	// identifier and the current token is an arrow.
@@ -3973,7 +3984,7 @@ func typeHasArrowFunctionBlockingParseError(node *ast.TypeNode) bool {
 	case ast.KindTypeReference:
 		return ast.NodeIsMissing(node.AsTypeReference().TypeName)
 	case ast.KindFunctionType, ast.KindConstructorType:
-		return len(node.Parameters()) == 0 || typeHasArrowFunctionBlockingParseError(node.Type())
+		return typeHasArrowFunctionBlockingParseError(node.Type())
 	case ast.KindParenthesizedType:
 		return typeHasArrowFunctionBlockingParseError(node.AsParenthesizedTypeNode().Type)
 	}
@@ -4031,7 +4042,7 @@ func (p *Parser) tryParseAsyncSimpleArrowFunctionExpression(allowReturnTypeInArr
 		pos := p.nodePos()
 		hasJSDoc := p.hasPrecedingJSDocComment()
 		asyncModifier := p.parseModifiersForArrowFunction()
-		expr := p.parseBinaryExpressionOrHigher(OperatorPrecedenceLowest)
+		expr := p.parseBinaryExpressionOrHigher(ast.OperatorPrecedenceLowest)
 		return p.parseSimpleArrowFunctionExpression(pos, expr, allowReturnTypeInArrowFunction, hasJSDoc, asyncModifier)
 	}
 	return nil
@@ -4049,7 +4060,7 @@ func (p *Parser) nextIsUnParenthesizedAsyncArrowFunction() bool {
 			return false
 		}
 		// Check for un-parenthesized AsyncArrowFunction
-		expr := p.parseBinaryExpressionOrHigher(OperatorPrecedenceLowest)
+		expr := p.parseBinaryExpressionOrHigher(ast.OperatorPrecedenceLowest)
 		if !p.hasPrecedingLineBreak() && expr.Kind == ast.KindIdentifier && p.token == ast.KindEqualsGreaterThanToken {
 			return true
 		}
@@ -4095,18 +4106,18 @@ func (p *Parser) parseConditionalExpressionRest(leftOperand *ast.Expression, pos
 	return result
 }
 
-func (p *Parser) parseBinaryExpressionOrHigher(precedence OperatorPrecedence) *ast.Expression {
+func (p *Parser) parseBinaryExpressionOrHigher(precedence ast.OperatorPrecedence) *ast.Expression {
 	pos := p.nodePos()
 	leftOperand := p.parseUnaryExpressionOrHigher()
 	return p.parseBinaryExpressionRest(precedence, leftOperand, pos)
 }
 
-func (p *Parser) parseBinaryExpressionRest(precedence OperatorPrecedence, leftOperand *ast.Expression, pos int) *ast.Expression {
+func (p *Parser) parseBinaryExpressionRest(precedence ast.OperatorPrecedence, leftOperand *ast.Expression, pos int) *ast.Expression {
 	for {
 		// We either have a binary operator here, or we're finished.  We call
 		// reScanGreaterToken so that we merge token sequences like > and = into >=
 		p.reScanGreaterThanToken()
-		newPrecedence := getBinaryOperatorPrecedence(p.token)
+		newPrecedence := ast.GetBinaryOperatorPrecedence(p.token)
 		// Check the precedence to see if we should "take" this operator
 		// - For left associative operator (all operator but **), consume the operator,
 		//   recursively call the function below, and parse binaryExpression as a rightOperand
@@ -4193,7 +4204,7 @@ func (p *Parser) parseUnaryExpressionOrHigher() *ast.Expression {
 		pos := p.nodePos()
 		updateExpression := p.parseUpdateExpression()
 		if p.token == ast.KindAsteriskAsteriskToken {
-			return p.parseBinaryExpressionRest(getBinaryOperatorPrecedence(p.token), updateExpression, pos)
+			return p.parseBinaryExpressionRest(ast.GetBinaryOperatorPrecedence(p.token), updateExpression, pos)
 		}
 		return updateExpression
 	}
@@ -4974,7 +4985,7 @@ func (p *Parser) parseElementAccessExpressionRest(pos int, expression *ast.Expre
 		argumentExpression = p.createMissingIdentifier()
 	} else {
 		argument := p.parseExpressionAllowIn()
-		if isStringOrNumericLiteralLike(argument) {
+		if ast.IsStringOrNumericLiteralLike(argument) {
 			p.internIdentifier(argument.Text())
 		}
 		argumentExpression = argument
@@ -5776,7 +5787,7 @@ func (p *Parser) isBinaryOperator() bool {
 	if p.inDisallowInContext() && p.token == ast.KindInKeyword {
 		return false
 	}
-	return getBinaryOperatorPrecedence(p.token) != OperatorPrecedenceInvalid
+	return ast.GetBinaryOperatorPrecedence(p.token) != ast.OperatorPrecedenceInvalid
 }
 
 func (p *Parser) isValidHeritageClauseObjectLiteral() bool {
@@ -5905,14 +5916,14 @@ func isFileProbablyExternalModule(sourceFile *ast.SourceFile) *ast.Node {
 }
 
 func isAnExternalModuleIndicatorNode(node *ast.Statement) bool {
-	return hasSyntacticModifier(node, ast.ModifierFlagsExport) ||
+	return ast.HasSyntacticModifier(node, ast.ModifierFlagsExport) ||
 		ast.IsImportEqualsDeclaration(node) && ast.IsExternalModuleReference(node.AsImportEqualsDeclaration().ModuleReference) ||
 		ast.IsImportDeclaration(node) || ast.IsExportAssignment(node) || ast.IsExportDeclaration(node)
 }
 
 func getImportMetaIfNecessary(sourceFile *ast.SourceFile) *ast.Node {
 	if sourceFile.AsNode().Flags&ast.NodeFlagsPossiblyContainsImportMeta != 0 {
-		return findChildNode(sourceFile.AsNode(), isImportMeta)
+		return findChildNode(sourceFile.AsNode(), ast.IsImportMeta)
 	}
 	return nil
 }
@@ -5955,4 +5966,186 @@ func attachFileToDiagnostics(diagnostics []*ast.Diagnostic, file *ast.SourceFile
 		d.SetFile(file)
 	}
 	return diagnostics
+}
+
+func getCommentPragmas(sourceText string) (pragmas []ast.Pragma) {
+	for commentRange := range scanner.GetLeadingCommentRanges(sourceText, 0) {
+		comment := sourceText[commentRange.Pos():commentRange.End()]
+		pragmas = extractPragmas(commentRange, comment)
+	}
+
+	return pragmas
+}
+
+var ReferencePragmaSpec = &ast.PragmaSpecification{
+	Args: []ast.PragmaArgumentSpecification{
+		{Name: "types", Optional: false, CaptureSpan: true},
+		{Name: "lib", Optional: false, CaptureSpan: true},
+		{Name: "path", Optional: false, CaptureSpan: true},
+		{Name: "no-default-lib", Optional: false, CaptureSpan: true},
+		{Name: "resolution-mode", Optional: false, CaptureSpan: true},
+		{Name: "preserve", Optional: false, CaptureSpan: true},
+	},
+	Kind: ast.PragmaKindTripleSlashXML,
+}
+
+func getCommentPragmaSpec(name string) (*ast.PragmaSpecification, bool) {
+	switch name {
+	case "reference":
+		return ReferencePragmaSpec, true
+	default:
+		return nil, false
+	}
+}
+
+type NamedArgRegEx struct {
+	regex *regexp.Regexp
+	once  sync.Once
+}
+
+var namedArgRegExCache sync.Map
+
+func getNamedArgRegEx(name string) *regexp.Regexp {
+	value, _ := namedArgRegExCache.LoadOrStore(name, &NamedArgRegEx{})
+	namedArgRegex := value.(*NamedArgRegEx)
+	namedArgRegex.once.Do(func() {
+		namedArgRegex.regex = regexp.MustCompile(fmt.Sprintf(`(?im)(\s%s\s*=\s*)(?:(?:'([^']*)')|(?:"([^"]*)"))`, name))
+	})
+	return namedArgRegex.regex
+}
+
+var tripleSlashXMLCommentStartRegEx = regexp.MustCompile(`(?m)^\/\/\/\s*<(\S+)\s.*?\/>`)
+var singleLinePragmaRegEx = regexp.MustCompile(`(?m)^\/\/\/?\s*@([^\s:]+)((?:[^\S\r\n]|:).*)?$`)
+
+func extractPragmas(commentRange ast.CommentRange, text string) []ast.Pragma {
+	if commentRange.Kind == ast.KindSingleLineCommentTrivia {
+		matches := tripleSlashXMLCommentStartRegEx.FindStringSubmatch(text)
+		if len(matches) < 2 {
+			return nil
+		}
+
+		name := strings.ToLower(matches[1])
+		pragmaSpec, ok := getCommentPragmaSpec(name)
+		if !(ok && pragmaSpec.IsTripleSlash()) {
+			return nil
+		}
+
+		pragma := ast.Pragma{
+			Name:      name,
+			Args:      make(map[string]ast.PragmaArgument),
+			ArgsRange: commentRange,
+		}
+		if len(pragmaSpec.Args) > 0 {
+			for _, argSpec := range pragmaSpec.Args {
+				argMatcher := getNamedArgRegEx(argSpec.Name)
+				argMatchIndicies := argMatcher.FindStringSubmatchIndex(text)
+				argMatches := argMatcher.FindStringSubmatch(text)
+				if len(argMatches) < 2 {
+					continue
+				}
+				var value string
+				if argMatches[2] != "" {
+					value = argMatches[2]
+				} else if len(argMatches) > 3 {
+					value = argMatches[3]
+				}
+				if argSpec.CaptureSpan {
+					startPos := commentRange.Pos() + argMatchIndicies[0] + len(argMatches[1]) + 1
+
+					newArg := ast.PragmaArgument{
+						Name:      argSpec.Name,
+						Value:     value,
+						TextRange: core.NewTextRange(startPos, startPos+len(value)),
+					}
+
+					pragma.Args[argSpec.Name] = newArg
+				} else {
+					newArg := ast.PragmaArgument{
+						Value: value,
+					}
+
+					pragma.Args[argSpec.Name] = newArg
+				}
+			}
+		}
+		return []ast.Pragma{pragma}
+	}
+	return nil
+
+	// const singleLine = range.kind === SyntaxKind.SingleLineCommentTrivia && singleLinePragmaRegEx.exec(text);
+	// if (singleLine) {
+	//     return addPragmaForMatch(pragmas, range, PragmaKindFlags.SingleLine, singleLine);
+	// }
+
+	// if (range.kind === SyntaxKind.MultiLineCommentTrivia) {
+	//     const multiLinePragmaRegEx = /@(\S+)(\s+(?:\S.*)?)?$/gm; // Defined inline since it uses the "g" flag, which keeps a persistent index (for iterating)
+	//     let multiLineMatch: RegExpExecArray | null; // eslint-disable-line no-restricted-syntax
+	//     while (multiLineMatch = multiLinePragmaRegEx.exec(text)) {
+	//         addPragmaForMatch(pragmas, range, PragmaKindFlags.MultiLine, multiLineMatch);
+	//     }
+	// }
+}
+
+func processPragmasIntoFields(context *ast.SourceFile /* !!! reportDiagnostic func(*ast.Diagnostic)*/) {
+	//context.CheckJsDirective = nil
+	context.ReferencedFiles = nil
+	context.TypeReferenceDirectives = nil
+	context.LibReferenceDirectives = nil
+	//context.AmdDependencies = nil
+	context.HasNoDefaultLib = false
+	for _, pragma := range context.Pragmas {
+		switch pragma.Name {
+		case "reference":
+			types, typesOk := pragma.Args["types"]
+			lib, libOk := pragma.Args["lib"]
+			path, pathOk := pragma.Args["path"]
+			resolutionMode, resolutionModeOk := pragma.Args["resolution-mode"]
+			preserve, preserveOk := pragma.Args["preserve"]
+			noDefaultLib, noDefaultLibOk := pragma.Args["no-default-lib"]
+
+			if noDefaultLibOk && noDefaultLib.Value == "true" {
+				context.HasNoDefaultLib = true
+			} else if typesOk {
+				var parsed core.ResolutionMode
+				if resolutionModeOk {
+					parsed = parseResolutionMode(resolutionMode.Value, types.Pos(), types.End() /*, reportDiagnostic*/)
+				}
+				context.TypeReferenceDirectives = append(context.TypeReferenceDirectives, &ast.FileReference{
+					TextRange:      types.TextRange,
+					FileName:       types.Value,
+					ResolutionMode: parsed,
+					Preserve:       preserveOk && preserve.Value == "true",
+				})
+			} else if libOk {
+				context.LibReferenceDirectives = append(context.LibReferenceDirectives, &ast.FileReference{
+					TextRange: types.TextRange,
+					FileName:  lib.Value,
+					Preserve:  preserveOk && preserve.Value == "true",
+				})
+			} else if pathOk {
+				context.ReferencedFiles = append(context.ReferencedFiles, &ast.FileReference{
+					TextRange: types.TextRange,
+					FileName:  path.Value,
+					Preserve:  preserveOk && preserve.Value == "true",
+				})
+			} else {
+				//reportDiagnostic(argMap.Pos, argMap.End-argMap.Pos, "Invalid reference directive syntax")
+			}
+
+		default:
+			panic("Unhandled pragma kind")
+		}
+	}
+}
+
+func parseResolutionMode(mode string, pos int, end int /*reportDiagnostic: PragmaDiagnosticReporter*/) (resolutionKind core.ResolutionMode) {
+	if mode == "import" {
+		resolutionKind = core.ModuleKindESNext
+	}
+	if mode == "require" {
+		resolutionKind = core.ModuleKindCommonJS
+	}
+	return resolutionKind
+	//reportDiagnostic(pos, end - pos, Diagnostics.resolution_mode_should_be_either_require_or_import);
+	//return undefined;
 }

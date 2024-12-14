@@ -12,7 +12,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/stringutil"
-	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
 // Links store
@@ -84,259 +83,6 @@ func NewDiagnosticChainForNode(chain *ast.Diagnostic, node *ast.Node, message *d
 	return NewDiagnosticForNode(node, message, args...)
 }
 
-type OperatorPrecedence int
-
-const (
-	// Expression:
-	//     AssignmentExpression
-	//     Expression `,` AssignmentExpression
-	OperatorPrecedenceComma OperatorPrecedence = iota
-	// NOTE: `Spread` is higher than `Comma` due to how it is parsed in |ElementList|
-	// SpreadElement:
-	//     `...` AssignmentExpression
-	OperatorPrecedenceSpread
-	// AssignmentExpression:
-	//     ConditionalExpression
-	//     YieldExpression
-	//     ArrowFunction
-	//     AsyncArrowFunction
-	//     LeftHandSideExpression `=` AssignmentExpression
-	//     LeftHandSideExpression AssignmentOperator AssignmentExpression
-	//
-	// NOTE: AssignmentExpression is broken down into several precedences due to the requirements
-	//       of the parenthesizer rules.
-	// AssignmentExpression: YieldExpression
-	// YieldExpression:
-	//     `yield`
-	//     `yield` AssignmentExpression
-	//     `yield` `*` AssignmentExpression
-	OperatorPrecedenceYield
-	// AssignmentExpression: LeftHandSideExpression `=` AssignmentExpression
-	// AssignmentExpression: LeftHandSideExpression AssignmentOperator AssignmentExpression
-	// AssignmentOperator: one of
-	//     `*=` `/=` `%=` `+=` `-=` `<<=` `>>=` `>>>=` `&=` `^=` `|=` `**=`
-	OperatorPrecedenceAssignment
-	// NOTE: `Conditional` is considered higher than `Assignment` here, but in reality they have
-	//       the same precedence.
-	// AssignmentExpression: ConditionalExpression
-	// ConditionalExpression:
-	//     ShortCircuitExpression
-	//     ShortCircuitExpression `?` AssignmentExpression `:` AssignmentExpression
-	// ShortCircuitExpression:
-	//     LogicalORExpression
-	//     CoalesceExpression
-	OperatorPrecedenceConditional
-	// LogicalORExpression:
-	//     LogicalANDExpression
-	//     LogicalORExpression `||` LogicalANDExpression
-	OperatorPrecedenceLogicalOR
-	// LogicalANDExpression:
-	//     BitwiseORExpression
-	//     LogicalANDExprerssion `&&` BitwiseORExpression
-	OperatorPrecedenceLogicalAND
-	// BitwiseORExpression:
-	//     BitwiseXORExpression
-	//     BitwiseORExpression `^` BitwiseXORExpression
-	OperatorPrecedenceBitwiseOR
-	// BitwiseXORExpression:
-	//     BitwiseANDExpression
-	//     BitwiseXORExpression `^` BitwiseANDExpression
-	OperatorPrecedenceBitwiseXOR
-	// BitwiseANDExpression:
-	//     EqualityExpression
-	//     BitwiseANDExpression `^` EqualityExpression
-	OperatorPrecedenceBitwiseAND
-	// EqualityExpression:
-	//     RelationalExpression
-	//     EqualityExpression `==` RelationalExpression
-	//     EqualityExpression `!=` RelationalExpression
-	//     EqualityExpression `===` RelationalExpression
-	//     EqualityExpression `!==` RelationalExpression
-	OperatorPrecedenceEquality
-	// RelationalExpression:
-	//     ShiftExpression
-	//     RelationalExpression `<` ShiftExpression
-	//     RelationalExpression `>` ShiftExpression
-	//     RelationalExpression `<=` ShiftExpression
-	//     RelationalExpression `>=` ShiftExpression
-	//     RelationalExpression `instanceof` ShiftExpression
-	//     RelationalExpression `in` ShiftExpression
-	//     [+TypeScript] RelationalExpression `as` Type
-	OperatorPrecedenceRelational
-	// ShiftExpression:
-	//     AdditiveExpression
-	//     ShiftExpression `<<` AdditiveExpression
-	//     ShiftExpression `>>` AdditiveExpression
-	//     ShiftExpression `>>>` AdditiveExpression
-	OperatorPrecedenceShift
-	// AdditiveExpression:
-	//     MultiplicativeExpression
-	//     AdditiveExpression `+` MultiplicativeExpression
-	//     AdditiveExpression `-` MultiplicativeExpression
-	OperatorPrecedenceAdditive
-	// MultiplicativeExpression:
-	//     ExponentiationExpression
-	//     MultiplicativeExpression MultiplicativeOperator ExponentiationExpression
-	// MultiplicativeOperator: one of `*`, `/`, `%`
-	OperatorPrecedenceMultiplicative
-	// ExponentiationExpression:
-	//     UnaryExpression
-	//     UpdateExpression `**` ExponentiationExpression
-	OperatorPrecedenceExponentiation
-	// UnaryExpression:
-	//     UpdateExpression
-	//     `delete` UnaryExpression
-	//     `void` UnaryExpression
-	//     `typeof` UnaryExpression
-	//     `+` UnaryExpression
-	//     `-` UnaryExpression
-	//     `~` UnaryExpression
-	//     `!` UnaryExpression
-	//     AwaitExpression
-	// UpdateExpression:            // TODO: Do we need to investigate the precedence here?
-	//     `++` UnaryExpression
-	//     `--` UnaryExpression
-	OperatorPrecedenceUnary
-	// UpdateExpression:
-	//     LeftHandSideExpression
-	//     LeftHandSideExpression `++`
-	//     LeftHandSideExpression `--`
-	OperatorPrecedenceUpdate
-	// LeftHandSideExpression:
-	//     NewExpression
-	//     CallExpression
-	// NewExpression:
-	//     MemberExpression
-	//     `new` NewExpression
-	OperatorPrecedenceLeftHandSide
-	// CallExpression:
-	//     CoverCallExpressionAndAsyncArrowHead
-	//     SuperCall
-	//     ImportCall
-	//     CallExpression Arguments
-	//     CallExpression `[` Expression `]`
-	//     CallExpression `.` IdentifierName
-	//     CallExpression TemplateLiteral
-	// MemberExpression:
-	//     PrimaryExpression
-	//     MemberExpression `[` Expression `]`
-	//     MemberExpression `.` IdentifierName
-	//     MemberExpression TemplateLiteral
-	//     SuperProperty
-	//     MetaProperty
-	//     `new` MemberExpression Arguments
-	OperatorPrecedenceMember
-	// TODO: JSXElement?
-	// PrimaryExpression:
-	//     `this`
-	//     IdentifierReference
-	//     Literal
-	//     ArrayLiteral
-	//     ObjectLiteral
-	//     FunctionExpression
-	//     ClassExpression
-	//     GeneratorExpression
-	//     AsyncFunctionExpression
-	//     AsyncGeneratorExpression
-	//     RegularExpressionLiteral
-	//     TemplateLiteral
-	//     CoverParenthesizedExpressionAndArrowParameterList
-	OperatorPrecedencePrimary
-	// CoalesceExpression:
-	//     CoalesceExpressionHead `??` BitwiseORExpression
-	// CoalesceExpressionHead:
-	//     CoalesceExpression
-	//     BitwiseORExpression
-	OperatorPrecedenceCoalesce = OperatorPrecedenceConditional // NOTE: This is wrong
-	OperatorPrecedenceLowest   = OperatorPrecedenceComma
-	OperatorPrecedenceHighest  = OperatorPrecedencePrimary
-	// -1 is lower than all other precedences. Returning it will cause binary expression
-	// parsing to stop.
-	OperatorPrecedenceInvalid OperatorPrecedence = -1
-)
-
-func getOperatorPrecedence(nodeKind ast.Kind, operatorKind ast.Kind, hasArguments bool) OperatorPrecedence {
-	switch nodeKind {
-	case ast.KindCommaListExpression:
-		return OperatorPrecedenceComma
-	case ast.KindSpreadElement:
-		return OperatorPrecedenceSpread
-	case ast.KindYieldExpression:
-		return OperatorPrecedenceYield
-	case ast.KindConditionalExpression:
-		return OperatorPrecedenceConditional
-	case ast.KindBinaryExpression:
-		switch operatorKind {
-		case ast.KindCommaToken:
-			return OperatorPrecedenceComma
-		case ast.KindEqualsToken, ast.KindPlusEqualsToken, ast.KindMinusEqualsToken, ast.KindAsteriskAsteriskEqualsToken,
-			ast.KindAsteriskEqualsToken, ast.KindSlashEqualsToken, ast.KindPercentEqualsToken, ast.KindLessThanLessThanEqualsToken,
-			ast.KindGreaterThanGreaterThanEqualsToken, ast.KindGreaterThanGreaterThanGreaterThanEqualsToken, ast.KindAmpersandEqualsToken,
-			ast.KindCaretEqualsToken, ast.KindBarEqualsToken, ast.KindBarBarEqualsToken, ast.KindAmpersandAmpersandEqualsToken,
-			ast.KindQuestionQuestionEqualsToken:
-			return OperatorPrecedenceAssignment
-		}
-		return getBinaryOperatorPrecedence(operatorKind)
-	// TODO: Should prefix `++` and `--` be moved to the `Update` precedence?
-	case ast.KindTypeAssertionExpression, ast.KindNonNullExpression, ast.KindPrefixUnaryExpression, ast.KindTypeOfExpression,
-		ast.KindVoidExpression, ast.KindDeleteExpression, ast.KindAwaitExpression:
-		return OperatorPrecedenceUnary
-	case ast.KindPostfixUnaryExpression:
-		return OperatorPrecedenceUpdate
-	case ast.KindCallExpression:
-		return OperatorPrecedenceLeftHandSide
-	case ast.KindNewExpression:
-		if hasArguments {
-			return OperatorPrecedenceMember
-		}
-		return OperatorPrecedenceLeftHandSide
-	case ast.KindTaggedTemplateExpression, ast.KindPropertyAccessExpression, ast.KindElementAccessExpression, ast.KindMetaProperty:
-		return OperatorPrecedenceMember
-	case ast.KindAsExpression, ast.KindSatisfiesExpression:
-		return OperatorPrecedenceRelational
-	case ast.KindThisKeyword, ast.KindSuperKeyword, ast.KindIdentifier, ast.KindPrivateIdentifier, ast.KindNullKeyword,
-		ast.KindTrueKeyword, ast.KindFalseKeyword, ast.KindNumericLiteral, ast.KindBigIntLiteral, ast.KindStringLiteral,
-		ast.KindArrayLiteralExpression, ast.KindObjectLiteralExpression, ast.KindFunctionExpression, ast.KindArrowFunction,
-		ast.KindClassExpression, ast.KindRegularExpressionLiteral, ast.KindNoSubstitutionTemplateLiteral, ast.KindTemplateExpression,
-		ast.KindParenthesizedExpression, ast.KindOmittedExpression, ast.KindJsxElement, ast.KindJsxSelfClosingElement, ast.KindJsxFragment:
-		return OperatorPrecedencePrimary
-	}
-	return OperatorPrecedenceInvalid
-}
-
-func getBinaryOperatorPrecedence(kind ast.Kind) OperatorPrecedence {
-	switch kind {
-	case ast.KindQuestionQuestionToken:
-		return OperatorPrecedenceCoalesce
-	case ast.KindBarBarToken:
-		return OperatorPrecedenceLogicalOR
-	case ast.KindAmpersandAmpersandToken:
-		return OperatorPrecedenceLogicalAND
-	case ast.KindBarToken:
-		return OperatorPrecedenceBitwiseOR
-	case ast.KindCaretToken:
-		return OperatorPrecedenceBitwiseXOR
-	case ast.KindAmpersandToken:
-		return OperatorPrecedenceBitwiseAND
-	case ast.KindEqualsEqualsToken, ast.KindExclamationEqualsToken, ast.KindEqualsEqualsEqualsToken, ast.KindExclamationEqualsEqualsToken:
-		return OperatorPrecedenceEquality
-	case ast.KindLessThanToken, ast.KindGreaterThanToken, ast.KindLessThanEqualsToken, ast.KindGreaterThanEqualsToken,
-		ast.KindInstanceOfKeyword, ast.KindInKeyword, ast.KindAsKeyword, ast.KindSatisfiesKeyword:
-		return OperatorPrecedenceRelational
-	case ast.KindLessThanLessThanToken, ast.KindGreaterThanGreaterThanToken, ast.KindGreaterThanGreaterThanGreaterThanToken:
-		return OperatorPrecedenceShift
-	case ast.KindPlusToken, ast.KindMinusToken:
-		return OperatorPrecedenceAdditive
-	case ast.KindAsteriskToken, ast.KindSlashToken, ast.KindPercentToken:
-		return OperatorPrecedenceMultiplicative
-	case ast.KindAsteriskAsteriskToken:
-		return OperatorPrecedenceExponentiation
-	}
-	// -1 is lower than all other precedences.  Returning it will cause binary expression
-	// parsing to stop.
-	return OperatorPrecedenceInvalid
-}
-
 func isIntrinsicJsxName(name string) bool {
 	if len(name) == 0 {
 		return false
@@ -364,14 +110,6 @@ func boolToTristate(b bool) core.Tristate {
 
 func isCompoundAssignment(token ast.Kind) bool {
 	return token >= ast.KindFirstCompoundAssignment && token <= ast.KindLastCompoundAssignment
-}
-
-func isStringLiteralLike(node *ast.Node) bool {
-	return node.Kind == ast.KindStringLiteral || node.Kind == ast.KindNoSubstitutionTemplateLiteral
-}
-
-func isStringOrNumericLiteralLike(node *ast.Node) bool {
-	return isStringLiteralLike(node) || ast.IsNumericLiteral(node)
 }
 
 func tokenIsIdentifierOrKeyword(token ast.Kind) bool {
@@ -565,32 +303,28 @@ func isPartOfTypeQuery(node *ast.Node) bool {
 	return node.Kind == ast.KindTypeQuery
 }
 
-func hasSyntacticModifier(node *ast.Node, flags ast.ModifierFlags) bool {
-	return node.ModifierFlags()&flags != 0
-}
-
 func hasAbstractModifier(node *ast.Node) bool {
-	return hasSyntacticModifier(node, ast.ModifierFlagsAbstract)
+	return ast.HasSyntacticModifier(node, ast.ModifierFlagsAbstract)
 }
 
 func hasAmbientModifier(node *ast.Node) bool {
-	return hasSyntacticModifier(node, ast.ModifierFlagsAmbient)
+	return ast.HasSyntacticModifier(node, ast.ModifierFlagsAmbient)
 }
 
 func hasAccessorModifier(node *ast.Node) bool {
-	return hasSyntacticModifier(node, ast.ModifierFlagsAccessor)
+	return ast.HasSyntacticModifier(node, ast.ModifierFlagsAccessor)
 }
 
 func hasAsyncModifier(node *ast.Node) bool {
-	return hasSyntacticModifier(node, ast.ModifierFlagsAsync)
+	return ast.HasSyntacticModifier(node, ast.ModifierFlagsAsync)
 }
 
 func hasDecorators(node *ast.Node) bool {
-	return hasSyntacticModifier(node, ast.ModifierFlagsDecorator)
+	return ast.HasSyntacticModifier(node, ast.ModifierFlagsDecorator)
 }
 
 func hasStaticModifier(node *ast.Node) bool {
-	return hasSyntacticModifier(node, ast.ModifierFlagsStatic)
+	return ast.HasSyntacticModifier(node, ast.ModifierFlagsStatic)
 }
 
 func getEffectiveModifierFlags(node *ast.Node) ast.ModifierFlags {
@@ -686,7 +420,7 @@ func getAssignedName(node *ast.Node) *ast.Node {
 					return left.AsPropertyAccessExpression().Name()
 				case ast.KindElementAccessExpression:
 					arg := ast.SkipParentheses(left.AsElementAccessExpression().ArgumentExpression)
-					if isStringOrNumericLiteralLike(arg) {
+					if ast.IsStringOrNumericLiteralLike(arg) {
 						return arg
 					}
 				}
@@ -750,7 +484,7 @@ func setParentInChildren(node *ast.Node) {
 }
 
 func isParameterPropertyDeclaration(node *ast.Node, parent *ast.Node) bool {
-	return ast.IsParameter(node) && hasSyntacticModifier(node, ast.ModifierFlagsParameterPropertyModifier) && parent.Kind == ast.KindConstructor
+	return ast.IsParameter(node) && ast.HasSyntacticModifier(node, ast.ModifierFlagsParameterPropertyModifier) && parent.Kind == ast.KindConstructor
 }
 
 func isBindingElementOfBareOrAccessedRequire(node *ast.Node) bool {
@@ -787,7 +521,7 @@ func isRequireCall(node *ast.Node, requireStringLiteralLikeArgument bool) bool {
 		callExpression := node.AsCallExpression()
 		if len(callExpression.Arguments.Nodes) == 1 {
 			if ast.IsIdentifier(callExpression.Expression) && callExpression.Expression.AsIdentifier().Text == "require" {
-				return !requireStringLiteralLikeArgument || isStringLiteralLike(callExpression.Arguments.Nodes[0])
+				return !requireStringLiteralLikeArgument || ast.IsStringLiteralLike(callExpression.Arguments.Nodes[0])
 			}
 		}
 	}
@@ -817,7 +551,7 @@ func isAsyncFunction(node *ast.Node) bool {
 	switch node.Kind {
 	case ast.KindFunctionDeclaration, ast.KindFunctionExpression, ast.KindArrowFunction, ast.KindMethodDeclaration:
 		data := node.BodyData()
-		return data.Body != nil && data.AsteriskToken == nil && hasSyntacticModifier(node, ast.ModifierFlagsAsync)
+		return data.Body != nil && data.AsteriskToken == nil && ast.HasSyntacticModifier(node, ast.ModifierFlagsAsync)
 	}
 	return false
 }
@@ -1117,57 +851,6 @@ func nodeHasName(statement *ast.Node, id *ast.Node) bool {
 	return false
 }
 
-func isImportMeta(node *ast.Node) bool {
-	if node.Kind == ast.KindMetaProperty {
-		return node.AsMetaProperty().KeywordToken == ast.KindImportKeyword && node.AsMetaProperty().Name().AsIdentifier().Text == "meta"
-	}
-	return false
-}
-
-func ensureScriptKind(fileName string, scriptKind core.ScriptKind) core.ScriptKind {
-	// Using scriptKind as a condition handles both:
-	// - 'scriptKind' is unspecified and thus it is `undefined`
-	// - 'scriptKind' is set and it is `Unknown` (0)
-	// If the 'scriptKind' is 'undefined' or 'Unknown' then we attempt
-	// to get the ScriptKind from the file name. If it cannot be resolved
-	// from the file name then the default 'TS' script kind is returned.
-	if scriptKind == core.ScriptKindUnknown {
-		scriptKind = getScriptKindFromFileName(fileName)
-	}
-	if scriptKind == core.ScriptKindUnknown {
-		scriptKind = core.ScriptKindTS
-	}
-	return scriptKind
-}
-
-func getScriptKindFromFileName(fileName string) core.ScriptKind {
-	dotPos := strings.LastIndex(fileName, ".")
-	if dotPos >= 0 {
-		switch strings.ToLower(fileName[dotPos:]) {
-		case tspath.ExtensionJs, tspath.ExtensionCjs, tspath.ExtensionMjs:
-			return core.ScriptKindJS
-		case tspath.ExtensionJsx:
-			return core.ScriptKindJSX
-		case tspath.ExtensionTs, tspath.ExtensionCts, tspath.ExtensionMts:
-			return core.ScriptKindTS
-		case tspath.ExtensionTsx:
-			return core.ScriptKindTSX
-		case tspath.ExtensionJson:
-			return core.ScriptKindJSON
-		}
-	}
-	return core.ScriptKindUnknown
-}
-
-func getLanguageVariant(scriptKind core.ScriptKind) core.LanguageVariant {
-	switch scriptKind {
-	case core.ScriptKindTSX, core.ScriptKindJSX, core.ScriptKindJS, core.ScriptKindJSON:
-		// .tsx and .jsx files are treated as jsx language variant.
-		return core.LanguageVariantJSX
-	}
-	return core.LanguageVariantStandard
-}
-
 type DiagnosticsCollection struct {
 	fileDiagnostics    map[string][]*ast.Diagnostic
 	nonFileDiagnostics []*ast.Diagnostic
@@ -1341,11 +1024,7 @@ func isConstAssertion(node *ast.Node) bool {
 }
 
 func isConstTypeReference(node *ast.Node) bool {
-	if node.Kind == ast.KindTypeReference {
-		ref := node.AsTypeReference()
-		return ref.TypeArguments != nil && ast.IsIdentifier(ref.TypeName) && ref.TypeName.AsIdentifier().Text == "const"
-	}
-	return false
+	return ast.IsTypeReferenceNode(node) && len(node.TypeArguments()) == 0 && ast.IsIdentifier(node.AsTypeReferenceNode().TypeName) && node.AsTypeReferenceNode().TypeName.Text() == "const"
 }
 
 func isModuleOrEnumDeclaration(node *ast.Node) bool {
@@ -1398,7 +1077,7 @@ func getLocalSymbolForExportDefault(symbol *ast.Symbol) *ast.Symbol {
 }
 
 func isExportDefaultSymbol(symbol *ast.Symbol) bool {
-	return symbol != nil && len(symbol.Declarations) > 0 && hasSyntacticModifier(symbol.Declarations[0], ast.ModifierFlagsDefault)
+	return symbol != nil && len(symbol.Declarations) > 0 && ast.HasSyntacticModifier(symbol.Declarations[0], ast.ModifierFlagsDefault)
 }
 
 func getDeclarationOfKind(symbol *ast.Symbol, kind ast.Kind) *ast.Node {
@@ -1820,7 +1499,7 @@ func getIsDeferredContext(location *ast.Node, lastLocation *ast.Node) bool {
 		return false
 	}
 	// generator functions and async functions are not inlined in control flow when immediately invoked
-	if location.BodyData().AsteriskToken != nil || hasSyntacticModifier(location, ast.ModifierFlagsAsync) {
+	if location.BodyData().AsteriskToken != nil || ast.HasSyntacticModifier(location, ast.ModifierFlagsAsync) {
 		return true
 	}
 	return getImmediatelyInvokedFunctionExpression(location) == nil
@@ -1951,7 +1630,7 @@ func isPartOfPossiblyValidTypeOrAbstractComputedPropertyName(node *ast.Node) boo
 	if node.Kind != ast.KindComputedPropertyName {
 		return false
 	}
-	if hasSyntacticModifier(node.Parent, ast.ModifierFlagsAbstract) {
+	if ast.HasSyntacticModifier(node.Parent, ast.ModifierFlagsAbstract) {
 		return true
 	}
 	return ast.NodeKindIs(node.Parent.Parent, ast.KindInterfaceDeclaration, ast.KindTypeLiteral)
@@ -2399,7 +2078,7 @@ func isJsonSourceFile(file *ast.SourceFile) bool {
 
 func isSyntacticDefault(node *ast.Node) bool {
 	return (ast.IsExportAssignment(node) && !node.AsExportAssignment().IsExportEquals) ||
-		hasSyntacticModifier(node, ast.ModifierFlagsDefault) ||
+		ast.HasSyntacticModifier(node, ast.ModifierFlagsDefault) ||
 		ast.IsExportSpecifier(node) ||
 		ast.IsNamespaceExport(node)
 }
@@ -2817,7 +2496,7 @@ func getPropertyNameForPropertyNameNode(name *ast.Node) string {
 		return name.Text()
 	case ast.KindComputedPropertyName:
 		nameExpression := name.AsComputedPropertyName().Expression
-		if isStringOrNumericLiteralLike(nameExpression) {
+		if ast.IsStringOrNumericLiteralLike(nameExpression) {
 			return nameExpression.Text()
 		}
 		if ast.IsSignedNumericLiteral(nameExpression) {
@@ -3229,7 +2908,7 @@ func createEvaluator(evaluateEntity Evaluator) Evaluator {
 }
 
 func isComputedNonLiteralName(name *ast.Node) bool {
-	return ast.IsComputedPropertyName(name) && !isStringOrNumericLiteralLike(name.Expression())
+	return ast.IsComputedPropertyName(name) && !ast.IsStringOrNumericLiteralLike(name.Expression())
 }
 
 func isInfinityOrNaNString(name string) bool {

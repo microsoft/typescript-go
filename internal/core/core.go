@@ -46,15 +46,12 @@ func MapIndex[T, U any](slice []T, f func(T, int) U) []U {
 	return result
 }
 
-func MapDefined[T, U any](slice []T, f func(T) *U) []*U {
-	if len(slice) == 0 {
-		return nil
-	}
-	var result []*U
+func MapNonNil[T any, U comparable](slice []T, f func(T) U) []U {
+	var result []U
 	for _, value := range slice {
-		r := f(value)
-		if r != nil {
-			result = append(result, r)
+		mapped := f(value)
+		if mapped != *new(U) {
+			result = append(result, mapped)
 		}
 	}
 	return result
@@ -169,6 +166,13 @@ func LastOrNil[T any](slice []T) T {
 	return *new(T)
 }
 
+func ElementOrNil[T any](slice []T, index int) T {
+	if index < len(slice) {
+		return slice[index]
+	}
+	return *new(T)
+}
+
 func FirstOrNilSeq[T any](seq iter.Seq[T]) T {
 	if seq != nil {
 		for value := range seq {
@@ -176,6 +180,16 @@ func FirstOrNilSeq[T any](seq iter.Seq[T]) T {
 		}
 	}
 	return *new(T)
+}
+
+func FirstNonNil[T any, U comparable](slice []T, f func(T) U) U {
+	for _, value := range slice {
+		mapped := f(value)
+		if mapped != *new(U) {
+			return mapped
+		}
+	}
+	return *new(U)
 }
 
 func Concatenate[T any](s1 []T, s2 []T) []T {

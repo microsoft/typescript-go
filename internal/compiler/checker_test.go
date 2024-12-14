@@ -23,7 +23,7 @@ foo.bar;`
 		},
 	}
 	cd := "/"
-	host := NewCompilerHost(nil, false, "/", vfstest.FromMapFS(fs, false /*useCaseSensitiveFileNames*/))
+	host := NewCompilerHost(nil, "/", vfstest.FromMapFS(fs, false /*useCaseSensitiveFileNames*/))
 	opts := ProgramOptions{
 		Host:     host,
 		RootPath: cd,
