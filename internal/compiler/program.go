@@ -35,7 +35,6 @@ type Program struct {
 	fileProcessingMutex sync.Mutex
 	files               []*ast.SourceFile
 	filesByPath         map[tspath.Path]*ast.SourceFile
-	processedFileNames  core.Set[string]
 
 	// The below settings are to track if a .js file should be add to the program if loaded via searching under node_modules.
 	// This works as imported modules are discovered recursively in a depth first manner, specifically:
@@ -129,25 +128,40 @@ func (p *Program) bindSourceFiles() {
 	wg.Wait()
 }
 
+type ParallelParseContext struct {
+	mu                 sync.Mutex
+	wg                 *core.WorkGroup
+	processedFileNames core.Set[string]
+}
+
+type ParallelParseTask struct {
+	file     *ast.SourceFile
+	subTasks []ParallelParseTask
+}
+
 func (p *Program) processRootFiles(rootFiles []FileInfo) {
-	wg := core.NewWorkGroup(p.programOptions.SingleThreaded)
+	ctx := &ParallelParseContext{}
+	ctx.wg = core.NewWorkGroup(p.programOptions.SingleThreaded)
 
 	absPaths := make([]string, 0, len(rootFiles))
 	for _, fileInfo := range rootFiles {
 		absPath := tspath.GetNormalizedAbsolutePath(fileInfo.Name, p.currentDirectory)
-		p.processedFileNames.Add(absPath)
+		ctx.processedFileNames.Add(absPath)
 		absPaths = append(absPaths, absPath)
 	}
 
-	for _, absPath := range absPaths {
-		p.startParseTask(absPath, wg)
+	tasks := make([]ParallelParseTask, len(absPaths))
+
+	for i, absPath := range absPaths {
+		p.startParseTask(absPath, ctx, &tasks[i])
 	}
 
-	wg.Wait()
+	ctx.wg.Wait()
+	p.addAllFilesToProgram(tasks)
 }
 
-func (p *Program) startParseTask(fileName string, wg *core.WorkGroup) {
-	wg.Run(func() {
+func (p *Program) startParseTask(fileName string, ctx *ParallelParseContext, task *ParallelParseTask) {
+	ctx.wg.Run(func() {
 		normalizedPath := tspath.NormalizePath(fileName)
 		file := p.parseSourceFile(normalizedPath)
 		p.collectExternalModuleReferences(file)
@@ -160,21 +174,61 @@ func (p *Program) startParseTask(fileName string, wg *core.WorkGroup) {
 		}
 
 		filesToParse = append(filesToParse, p.resolveImportsAndModuleAugmentations(file)...)
+		task.file = file
+		p.processFiles(filesToParse, task, ctx)
+	})
+}
 
-		p.fileProcessingMutex.Lock()
-		defer p.fileProcessingMutex.Unlock()
-		p.files = append(p.files, file)
-		p.filesByPath[file.Path()] = file
+func (p *Program) processFiles(files []string, task *ParallelParseTask, ctx *ParallelParseContext) {
+	if len(files) > 0 {
+		task.subTasks = make([]ParallelParseTask, len(files))
 
-		if len(filesToParse) > 0 {
-			for _, fileName := range filesToParse {
-				if !p.processedFileNames.Has(fileName) {
-					p.processedFileNames.Add(fileName)
-					p.startParseTask(fileName, wg)
-				}
+		ctx.mu.Lock()
+		defer ctx.mu.Unlock()
+		for i, fileName := range files {
+			if !ctx.processedFileNames.Has(fileName) {
+				ctx.processedFileNames.Add(fileName)
+				p.startParseTask(fileName, ctx, &task.subTasks[i])
 			}
 		}
-	})
+	}
+}
+
+func (p *Program) addAllFilesToProgram(tasks []ParallelParseTask) {
+	if tasks == nil {
+		return
+	}
+
+	totalFileCount := getTotalParsedFileCount(tasks)
+	p.files = make([]*ast.SourceFile, 0, totalFileCount)
+	p.filesByPath = make(map[tspath.Path]*ast.SourceFile, totalFileCount)
+
+	p.addAllFilesToProgramWorker(tasks)
+}
+
+func (p *Program) addAllFilesToProgramWorker(tasks []ParallelParseTask) {
+	for _, task := range tasks {
+		if task.subTasks != nil {
+			p.addAllFilesToProgramWorker(task.subTasks)
+		}
+
+		if task.file != nil {
+			p.files = append(p.files, task.file)
+			p.filesByPath[task.file.Path()] = task.file
+		}
+	}
+}
+
+func getTotalParsedFileCount(t []ParallelParseTask) int {
+	if t == nil {
+		return 0
+	}
+
+	count := len(t)
+	for _, task := range t {
+		count += getTotalParsedFileCount(task.subTasks)
+	}
+	return count
 }
 
 func (p *Program) getResolvedModule(currentSourceFile *ast.SourceFile, moduleReference string) *ast.SourceFile {
