@@ -3956,6 +3956,6 @@ func forEachPropertyAssignment(objectLiteral *ast.ObjectLiteralExpression, key s
 	return ""
 }
 
-func ForEachTsConfigPropArray(tsConfigSourceFile *ast.SourceFile, propKey string, callback func(property ast.PropertyAssignment) *ast.Node) string {
+func ForEachTsConfigPropArray(tsConfigSourceFile *ast.SourceFile, propKey string, callback func(property ast.PropertyAssignment) *ast.Node) string { //todo
 	return forEachPropertyAssignment(getTsConfigObjectLiteralExpression(tsConfigSourceFile), propKey, callback, "")
 }

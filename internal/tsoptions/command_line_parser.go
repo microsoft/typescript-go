@@ -65,7 +65,7 @@ func getTsconfigRootOptionsMap() CommandLineOption { //TsConfigOnlyOption
 				compilerOptionsDeclaration,
 				{
 					Name: "references",
-					Kind: CommandLineOptionTypeList,
+					Kind: CommandLineOptionTypeList, //should be a list of projectReference
 					//Category: diagnostics.Projects,
 				},
 				{
@@ -538,8 +538,9 @@ func convertJsonOption(
 			return normalizeNonListOptionValue(opt, basePath, validatedValue), errors
 		}
 	} else {
+		errors = append(errors, compiler.NewDiagnosticForNode(&sourceFile.sourceFile.Node, diagnostics.Compiler_option_0_requires_a_value_of_type_1, opt.Name, opt.Kind))
 		//errors.push(createDiagnosticForNodeInSourceFileOrCompilerDiagnostic(sourceFile, valueExpression, diagnostics.Compiler_option_0_requires_a_value_of_type_1, opt.name, getCompilerOptionValueTypeString(opt)));
-		return core.CompilerOptionsValue{}, errors
+		return nil, errors
 	}
 }
 
@@ -655,6 +656,8 @@ func parseCompilerOptions(key string, value any) core.CompilerOptions {
 		options.CheckJs = parseTristate(value)
 	case "customConditions":
 		options.CustomConditions = parseStringArray(value)
+	case "declarationDir":
+		options.DeclarationDir = parseString(value)
 	case "esModuleInterop":
 		options.ESModuleInterop = parseTristate(value)
 	case "exactOptionalPropertyTypes":
@@ -748,34 +751,53 @@ func parseCompilerOptions(key string, value any) core.CompilerOptions {
 type tsConfigOptions struct {
 	prop                map[string][]string
 	compilerOptionsProp core.CompilerOptions
-	// include    map[string][]string
-	// exclude    map[string][]string
-	// references map[string][]string
-	// files      map[string][]string
-	// extends    map[string][]string
-	notDefined string
+	references          []compiler.ProjectReference
+	notDefined          string
 }
 
+func parseProjectReference(json any) []compiler.ProjectReference {
+	var result []compiler.ProjectReference
+	if arr, ok := json.([]interface{}); ok {
+		for _, v := range arr {
+			if m, ok := v.(map[string]interface{}); ok {
+				var reference compiler.ProjectReference
+				if v, ok := m["path"]; ok {
+					reference.Path = v.(string)
+				}
+				if v, ok := m["originalPath"]; ok {
+					reference.OriginalPath = v.(string)
+				}
+				if v, ok := m["circular"]; ok {
+					reference.Circular = v.(bool)
+				}
+				result = append(result, reference)
+			}
+		}
+	}
+	return result
+}
 func ParseRawConfig(json any, basePath string, errors []*ast.Diagnostic, configFileName string) tsConfigOptions {
-	var options tsConfigOptions
+	options := tsConfigOptions{
+		prop: make(map[string][]string),
+	}
 	if json == nil {
 		return options
 	}
 	if m, ok := json.(map[string]interface{}); ok {
 		if v, ok := m["include"]; ok {
-			options.prop = map[string][]string{"include": parseStringArray(v)}
+			options.prop["include"] = parseRawStringArray(v)
 		}
 		if v, ok := m["exclude"]; ok {
-			options.prop = map[string][]string{"exclude": parseStringArray(v)}
+			options.prop["exclude"] = parseRawStringArray(v) //possible parseStringsArray if it is not a string?
 		}
 		if v, ok := m["files"]; ok {
-			options.prop = map[string][]string{"files": parseRawStringArray(v)}
+			options.prop["files"] = parseRawStringArray(v)
 		}
 		if v, ok := m["references"]; ok {
-			options.prop = map[string][]string{"references": parseStringArray(v)}
+			options.references = parseProjectReference(v)
 		}
 		if v, ok := m["extends"]; ok {
-			options.prop = map[string][]string{"extends": parseStringArray(v)}
+			options.prop["extends"] = parseRawStringArray(v)
 		}
 		if v, ok := m["compilerOptions"]; ok {
 			options.compilerOptionsProp = convertCompilerOptionsFromJsonWorker(v.(map[string]interface{}), basePath, errors, configFileName)
@@ -1278,14 +1300,14 @@ func parseJsonConfigFileContentWorker(
 	getPropFromRaw := func(prop propFromRaw, validateElement func(value string) bool) []string {
 		value, exists := rawConfig.prop[string(prop)]
 		if exists {
-			if value != nil { //or len!=0
+			if len(value) >= 0 {
 				result := rawConfig.prop[string(prop)]
-				if sourceFile == nil && core.Every(result, validateElement) {
+				if sourceFile == nil && !core.Every(result, validateElement) {
 					errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.Compiler_option_0_requires_a_value_of_type_1, prop)) // , elementTypeName
 				}
 				return result
 			} else {
-				errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.Compiler_option_0_requires_a_value_of_type_1, "Array"))
+				errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.Compiler_option_0_requires_a_value_of_type_1, prop, "Array"))
 			}
 		}
 		return []string{string(noProp)}
@@ -1294,9 +1316,9 @@ func parseJsonConfigFileContentWorker(
 	getConfigFileSpecs := func() configFileSpecs {
 		referencesOfRaw := getPropFromRaw(references, func(element string) bool { return element == "object" })
 		fileSpecs := getPropFromRaw(files, func(element string) bool { return reflect.TypeOf(element).Kind() == reflect.String })
-		if fileSpecs[0] != "no-prop" {
+		if len(fileSpecs) == 0 || fileSpecs[0] != "no-prop" {
 			hasZeroOrNoReferences := false
-			if referencesOfRaw != nil && (referencesOfRaw[0] == "no-prop" || len(referencesOfRaw) == 0) {
+			if len(referencesOfRaw) == 0 || referencesOfRaw[0] == "no-prop" {
 				hasZeroOrNoReferences = true
 			}
 			hasExtends := rawConfig.prop[string(extends)]
@@ -1322,7 +1344,7 @@ func parseJsonConfigFileContentWorker(
 
 		excludeSpecs := getPropFromRaw(exclude, func(element string) bool { return reflect.TypeOf(element).Kind() == reflect.String })
 		isDefaultIncludeSpec := false
-		if excludeSpecs[0] == "no-prop" {
+		if len(excludeSpecs) != 0 && excludeSpecs[0] == "no-prop" {
 			outDir := options.OutDir
 			declarationDir := options.DeclarationDir
 
@@ -1331,7 +1353,7 @@ func parseJsonConfigFileContentWorker(
 			}
 		}
 
-		if fileSpecs[0] == "no-prop" && includeSpecs[0] == "no-prop" {
+		if len(fileSpecs) != 0 && fileSpecs[0] == "no-prop" && len(includeSpecs) != 0 && includeSpecs[0] == "no-prop" {
 			includeSpecs = []string{defaultIncludeSpec}
 			isDefaultIncludeSpec = true
 		}
@@ -1344,7 +1366,7 @@ func parseJsonConfigFileContentWorker(
 		// test whether a file or directory should be excluded before recursively traversing the
 		// file system.
 
-		if includeSpecs[0] != "no-prop" {
+		if len(includeSpecs) != 0 && includeSpecs[0] != "no-prop" {
 			validatedIncludeSpecsBeforeSubstitution = validateSpecs(includeSpecs, errors /*disallowTrailingRecursion*/, true, sourceFile, "include")
 			validatedIncludeSpecs = getSubstitutedStringArrayWithConfigDirTemplate(
 				validatedIncludeSpecsBeforeSubstitution,
@@ -1355,7 +1377,7 @@ func parseJsonConfigFileContentWorker(
 			}
 		}
 
-		if excludeSpecs[0] != "no-prop" {
+		if len(excludeSpecs) != 0 && excludeSpecs[0] != "no-prop" {
 			validatedExcludeSpecsBeforeSubstitution = validateSpecs(excludeSpecs, errors /*disallowTrailingRecursion*/, false, sourceFile, "exclude")
 			validatedExcludeSpecs = getSubstitutedStringArrayWithConfigDirTemplate(
 				validatedExcludeSpecsBeforeSubstitution,
@@ -1371,7 +1393,7 @@ func parseJsonConfigFileContentWorker(
 			validatedFilesSpecBeforeSubstitution,
 			basePathForFileNames,
 		)
-		if validatedFilesSpec == nil && validatedFilesSpecBeforeSubstitution[0] != "no-prop" {
+		if validatedFilesSpec == nil && len(validatedFilesSpecBeforeSubstitution) != 0 && validatedFilesSpecBeforeSubstitution[0] != "no-prop" {
 			validatedFilesSpec = validatedFilesSpecBeforeSubstitution
 		}
 
@@ -1393,8 +1415,8 @@ func parseJsonConfigFileContentWorker(
 
 	getFileNames := func(basePath string) []string {
 		fileNames := getFileNamesFromConfigSpecs(configFileSpecs, basePath, options, host.fs, extraFileExtensions)
-		if shouldReportNoInputFiles(fileNames, true, resolutionStack) {
-			errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.No_inputs_were_found_in_config_file_0_Specified_include_paths_were_1_and_exclude_paths_were_2))
+		if shouldReportNoInputFiles(fileNames, canJsonReportNoInputFiles(rawConfig), resolutionStack) {
+			errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.No_inputs_were_found_in_config_file_0_Specified_include_paths_were_1_and_exclude_paths_were_2, configFileName, configFileSpecs.includeSpecs, configFileSpecs.excludeSpecs))
 		}
 		return fileNames
 	}
@@ -1405,6 +1427,12 @@ func parseJsonConfigFileContentWorker(
 		Errors:    errors,
 	}
 
+}
+
+func canJsonReportNoInputFiles(rawConfig tsConfigOptions) bool {
+	_, filesExists := rawConfig.prop["files"]
+	_, referencesExists := rawConfig.prop["references"]
+	return !filesExists && !referencesExists
 }
 
 func shouldReportNoInputFiles(fileNames []string, canJsonReportNoInutFiles bool, resolutionStack []tspath.Path) bool {

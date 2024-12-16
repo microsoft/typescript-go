@@ -12,6 +12,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
+	"gotest.tools/v3/assert"
 	// "encoding/json"
 )
 
@@ -100,13 +101,16 @@ func TestBaselineParseResult(t *testing.T) {
 	}
 }
 
-type verifyConfig struct {
+type testConfig struct {
 	jsonText       string
 	configFileName string
 	basePath       string
 	allFileList    []string
-	expectedResult any
-	expectedErrors string
+}
+type verifyConfig struct {
+	fileNames      []string
+	configFile     map[string]interface{}
+	expectedErrors []string
 }
 
 // func TestGetParsedCommandJson(t *testing.T) {
@@ -188,114 +192,7 @@ func TestGetParsedCommandJsonSourceFile(t *testing.T) {
 	}
 }
 
-var parseCommandJson = []verifyConfig{
-	//"returns error when tsconfig have excludes"
-	// {
-	// 	jsonText: `{
-	// 	"compilerOptions": {
-	// 		"lib": ["es5"]
-	// 	},
-	// }`,
-	// },
-	// 		expectedResult: `{
-	// "compilerOptions": {
-	// 	"lib": ["es5"]
-	// },
-	// "excludes": [
-	// 	"foge.ts"
-	// ]
-	// }`,
-	// 	expectedErrors: "Unknown option 'excludes'. Did you mean 'exclude'?",
-	// },
-
-	//ignore dotted files and folders
-	// {
-	// 	jsonText:       `{}`,
-	// 	configFileName: "tsconfig.json",
-	// 	basePath:       "/apath",
-	// 	allFileList:    []string{"/apath/test.ts", "/apath/.git/a.ts", "/apath/.b.ts", "/apath/..c.ts"},
-	// },
-
-	//allow dotted files and folders when explicitly requested
-	// {
-	// 	jsonText: `{
-	// 				"files": ["/apath/.git/a.ts", "/apath/.b.ts", "/apath/..c.ts"]
-	// 			}`,
-	// 	configFileName: "tsconfig.json",
-	// 	basePath:       "/apath",
-	// 	allFileList:    []string{"/apath/test.ts", "/apath/.git/a.ts", "/apath/.b.ts", "/apath/..c.ts"},
-	// },
-
-	// "exclude outDir unless overridden"
-	{
-		jsonText: `{
-			"compilerOptions": {
-				"outDir": "bin"
-			}
-		}`,
-		configFileName: "tsconfig.json",
-		basePath:       "/",
-		allFileList:    []string{"bin/a.ts", "b.ts"},
-	},
-	// {
-	// 	jsonText: `{
-	// 		"compilerOptions": {
-	// 			"outDir": "bin"
-	// 		},
-	// 		"exclude": ["obj"]
-	// 	}`,
-	// 	configFileName: "tsconfig.json",
-	// 	basePath:       "/",
-	// 	allFileList:    []string{"/bin/a.ts", "/b.ts"},
-	// },
-	// {
-	// 	jsonText: `{
-	// 		"files": [],
-	// 		"references": [{ "path": "/apath" }]
-	// 	}`,
-	// 	configFileName: "/apath/tsconfig.json",
-	// 	basePath:       "/apath",
-	// 	allFileList:    []string{"/apath/a.ts"},
-	// },
-	// {
-	// 	jsonText: `{
-	// 		"compilerOptions": {
-	// 			"target": "es5",
-	// 			"module": "commonjs",
-	// 			"lib": ["es2015", "dom"],
-	// 			"strict": true,
-	// 			"esModuleInterop": true,
-	// 			"skipLibCheck": true,
-	// 			"forceConsistentCasingInFileNames": true
-	// 		},
-	// 		"include": ["src/**/*"]
-	// 	}`,
-	// 	configFileName: "tsconfig.json",
-	// 	basePath:       "/apath",
-	// 	allFileList:    []string{"/apath/test.ts", "/apath/foge.ts"},
-	// },
-	// {
-	// 	jsonText: `{
-	//     "exclude": ["node_modules", "dist"]
-	// }`,
-	// 	configFileName: "tsconfig.json",
-	// 	basePath:       "/apath",
-	// 	allFileList:    []string{"/apath/test.ts", "/apath/.git/a.ts", "/apath/.b.ts", "/apath/..c.ts"},
-	// },
-}
-
-// var host ParseConfigHost = ParseConfigHost{
-// 	useCaseSensitiveFileNames: true,
-// 	readDirectory: func(rootDir string, extensions []string, excludes []string, includes []string, depth int) []string {
-// 		return []string{}
-// 	},
-// 	fileExists: func(path string) bool {
-// 		return true
-// 	},
-// 	readFile: func(path string) string {
-// 		return parseCommandJson[0].jsonText
-// 	},
-// }
+var parseCommandJson = []testConfig{}
 
 type parseConfigHost interface {
 	FS() vfs.FS
@@ -332,4 +229,285 @@ func newVFSParseConfigHost(files map[string]string, currentDirectory string) *Vf
 		fs:               vfstest.FromMapFS(fs, true /*useCaseSensitiveFileNames*/),
 		currentDirectory: currentDirectory,
 	}
+}
+
+var data = []struct {
+	title  string
+	input  testConfig
+	output verifyConfig
+}{
+	// {
+	// 	title: "ignore dotted files and folders",
+	// 	input: testConfig{
+	// 		jsonText:       `{}`,
+	// 		configFileName: "tsconfig.json",
+	// 		basePath:       "/apath",
+	// 		allFileList:    []string{"/apath/test.ts", "/apath/.git/a.ts", "/apath/.b.ts", "/apath/..c.ts"},
+	// 	},
+	// 	output: verifyConfig{
+	// 		fileNames:      []string{"/apath/test.ts"},
+	// 		configFile:     map[string]interface{}{},
+	// 		expectedErrors: []string{},
+	// 	},
+	// },
+	// {
+	// 	title: "allow dotted files and folders when explicitly requested",
+	// 	input: testConfig{
+	// 		jsonText: `{
+	// 					"files": ["/apath/.git/a.ts", "/apath/.b.ts", "/apath/..c.ts"]
+	// 				}`,
+	// 		configFileName: "tsconfig.json",
+	// 		basePath:       "/apath",
+	// 		allFileList:    []string{"/apath/test.ts", "/apath/.git/a.ts", "/apath/.b.ts", "/apath/..c.ts"},
+	// 	},
+	// 	output: verifyConfig{
+	// 		fileNames: []string{"/apath/.git/a.ts", "/apath/.b.ts", "/apath/..c.ts"},
+	// 		configFile: map[string]interface{}{
+	// 			"files": []string{"/apath/.git/a.ts", "/apath/.b.ts", "/apath/..c.ts"},
+	// 		},
+	// 		expectedErrors: []string{},
+	// 	},
+	// },
+	// {
+	// 	title: "implicitly exclude common package folders",
+	// 	input: testConfig{
+	// 		jsonText:       `{}`,
+	// 		configFileName: "tsconfig.json",
+	// 		basePath:       "/",
+	// 		allFileList:    []string{"/node_modules/a.ts", "/bower_components/b.ts", "/jspm_packages/c.ts", "/d.ts", "/folder/e.ts"},
+	// 	},
+	// 	output: verifyConfig{
+	// 		fileNames:      []string{"/d.ts", "/folder/e.ts"},
+	// 		configFile:     map[string]interface{}{},
+	// 		expectedErrors: []string{},
+	// 	},
+	// },
+	// {
+	// 	title: "generates errors for empty files list",
+	// 	input: testConfig{
+	// 		jsonText: `{
+	// 			"files": []
+	// 		}`,
+	// 		configFileName: "/apath/tsconfig.json",
+	// 		basePath:       "/apath",
+	// 		allFileList:    []string{"/apath/a.ts"},
+	// 	},
+	// 	output: verifyConfig{
+	// 		fileNames: nil,
+	// 		configFile: map[string]interface{}{
+	// 			"files": nil,
+	// 		},
+	// 		expectedErrors: []string{"The 'files' list in config file '/apath/tsconfig.json' is empty."},
+	// 	},
+	// },
+	// {
+	// 	title: "generates errors for empty files list when no references are provided",
+	// 	input: testConfig{
+	// 		jsonText: `{
+	// 			"files": [],
+	// 			"references": []
+	// 		}`,
+	// 		configFileName: "/apath/tsconfig.json",
+	// 		basePath:       "/apath",
+	// 		allFileList:    []string{"/apath/a.ts"},
+	// 	},
+	// 	output: verifyConfig{
+	// 		fileNames: nil,
+	// 		configFile: map[string]interface{}{
+	// 			"files":      nil,
+	// 			"references": nil,
+	// 		},
+	// 		expectedErrors: []string{"The 'files' list in config file '/apath/tsconfig.json' is empty."},
+	// 	},
+	// },
+	// {
+	// 	title: "generates errors for directory with no .ts files",
+	// 	input: testConfig{
+	// 		jsonText:       `{}`,
+	// 		configFileName: "/apath/tsconfig.json",
+	// 		basePath:       "/apath",
+	// 		allFileList:    []string{"/apath/a.js"},
+	// 	},
+	// 	output: verifyConfig{
+	// 		fileNames:      nil,
+	// 		configFile:     map[string]interface{}{},
+	// 		expectedErrors: []string{"No inputs were found in config file '/apath/tsconfig.json'. Specified 'include' paths were '[**/*]' and 'exclude' paths were '[no-prop]'."},
+	// 	},
+	// },
+	// {
+	// 	title: "generates errors for empty include",
+	// 	input: testConfig{
+	// 		jsonText: `{
+	// 	"include": []
+	// }`,
+	// 		configFileName: "/apath/tsconfig.json",
+	// 		basePath:       "tests/cases/unittests",
+	// 		allFileList:    []string{"/apath/a.ts"},
+	// 	},
+	// 	output: verifyConfig{
+	// 		fileNames: nil,
+	// 		configFile: map[string]interface{}{
+	// 			"include": nil,
+	// 		},
+	// 		expectedErrors: []string{"No inputs were found in config file '/apath/tsconfig.json'. Specified 'include' paths were '[]' and 'exclude' paths were '[no-prop]'."},
+	// 	},
+	// },
+	// { // something about outDir is not working
+	// 	title: "generates errors for includes with outDir",
+	// 	input: testConfig{
+	// 		jsonText: `{
+	// 	"compilerOptions": {
+	// 		"outDir": "./"
+	// 	},
+	// 	"include": ["**/*"]
+	// }`,
+	// 		configFileName: "/apath/tsconfig.json",
+	// 		basePath:       "/apath",
+	// 		allFileList:    []string{"/apath/a.ts"},
+	// 	},
+	// 	output: verifyConfig{
+	// 		fileNames: nil,
+	// 		configFile: map[string]interface{}{
+	// 			"compilerOptions": map[string]interface{}{
+	// 				"outDir": "./",
+	// 			},
+	// 			"include": []string{"**/*"},
+	// 		},
+	// 		expectedErrors: []string{"No inputs were found in config file '/apath/tsconfig.json'. Specified 'include' paths were '[**/*]' and 'exclude' paths were '[/apath]'."},
+	// 	},
+	// },
+	// 	{
+	// 		title: "generates errors when include is not string",
+	// 		input: testConfig{
+	// 			jsonText: `{
+	//             "include": ["./**/*.ts"]
+	// }`,
+	// 			configFileName: "/apath/tsconfig.json",
+	// 			basePath:       "/apath",
+	// 			allFileList:    []string{"/apath/a.ts"},
+	// 		},
+	// 		output: verifyConfig{
+	// 			fileNames: nil,
+	// 			configFile: map[string]interface{}{
+	// 				"include": []string{"./**/*.ts"},
+	// 			},
+	// 			expectedErrors: []string{"Compiler option 'include' requires a value of type string."},
+	// 		},
+	// 	},
+	//"returns error when tsconfig have excludes" -- fix the test
+	// {
+	// 	jsonText: `{
+	// 	"compilerOptions": {
+	// 		"lib": ["es5"]
+	// 	},
+	{ //need to be fixed
+		title: "returns error when tsconfig have excludes",
+		input: testConfig{
+			jsonText: `{
+				"compilerOptions": {
+					"lib": ["es5"]
+				},
+				"exclude": ["foge.ts"]
+			}`,
+			configFileName: "tsconfig.json",
+			basePath:       "/apath",
+			allFileList:    []string{"/apath/test.ts", "/apath/foge.ts"},
+		},
+		output: verifyConfig{
+			fileNames: []string{"/apath/test.ts", "/apath/foge.ts"},
+			configFile: map[string]interface{}{
+				"compilerOptions": map[string]interface{}{
+					"lib": []string{"es5"},
+				},
+				"exclude": []string{"foge.ts"},
+			},
+			expectedErrors: []string{"Unknown option 'exclude'. Did you mean 'exclude'?", "File '/apath/foge.ts' not found."},
+		},
+	},
+}
+
+func TestParsedCommandJson(t *testing.T) {
+	for _, rec := range data {
+		t.Run(rec.title, func(t *testing.T) {
+			t.Parallel()
+
+			var allFileLists = make(map[string]string, len(rec.input.allFileList))
+			for _, file := range rec.input.allFileList {
+				allFileLists[file] = ""
+			}
+			host := newVFSParseConfigHost(allFileLists, rec.input.basePath)
+			parsed := ParseConfigFileTextToJson(rec.input.configFileName, rec.input.jsonText)
+			var basePath string
+			if rec.input.basePath != "" {
+				basePath = rec.input.basePath
+			} else {
+				basePath = tspath.GetNormalizedAbsolutePath(tspath.GetDirectoryPath(rec.input.configFileName), "")
+			}
+			var tsConfigSourceFile *tsConfigSourceFile = &tsConfigSourceFile{
+				sourceFile: parsed,
+			}
+			parsedConfig := ParseRawConfig(parsed.config, basePath, nil, "tsconfig.json")
+			parseConfigFileContent := ParseJsonConfigFileContent(
+				parsedConfig.prop,
+				*host,
+				basePath,
+				nil,
+				tspath.GetNormalizedAbsolutePath(rec.input.configFileName, basePath),
+				/*resolutionStack*/ nil,
+				/*extraFileExtensions*/ nil,
+				/*extendedConfigCache*/ nil,
+			)
+		})
+	}
+}
+func TestParsedCommandJsonSourceFile(t *testing.T) {
+	for _, rec := range data {
+		t.Run(rec.title, func(t *testing.T) {
+			t.Parallel()
+
+			var allFileLists = make(map[string]string, len(rec.input.allFileList))
+			for _, file := range rec.input.allFileList {
+				allFileLists[file] = ""
+			}
+			host := newVFSParseConfigHost(allFileLists, rec.input.basePath)
+			parsed := compiler.ParseJSONText(rec.input.configFileName, rec.input.jsonText)
+			var basePath string
+			if rec.input.basePath != "" {
+				basePath = rec.input.basePath
+			} else {
+				basePath = tspath.GetNormalizedAbsolutePath(tspath.GetDirectoryPath(rec.input.configFileName), "")
+			}
+			var tsConfigSourceFile *tsConfigSourceFile = &tsConfigSourceFile{
+				sourceFile: parsed,
+			}
+			parseConfigFileContent := ParseJsonSourceFileConfigFileContent(
+				tsConfigSourceFile,
+				*host,
+				host.currentDirectory,
+				nil,
+				tspath.GetNormalizedAbsolutePath(rec.input.configFileName, basePath),
+				/*resolutionStack*/ nil,
+				/*extraFileExtensions*/ nil,
+				/*extendedConfigCache*/ nil,
+			)
+			assert.DeepEqual(t, parseConfigFileContent.FileNames, rec.output.fileNames)
+			compareTsConfigOptions(t, ParseRawConfig(parseConfigFileContent.Raw, basePath, parseConfigFileContent.Errors, "tsconfig.json"), ParseRawConfig(rec.output.configFile, basePath, nil, "tsconfig.json"))
+			var actualErrorMessages = []string{}
+			for _, error := range parseConfigFileContent.Errors {
+				actualErrorMessages = append(actualErrorMessages, error.Message())
+			}
+			compareDiagnosticMessages(t, actualErrorMessages, rec.output.expectedErrors)
+			//assert.DeepEqual(t, parseConfigFileContent.Errors, rec.output.expectedErrors)
+		})
+	}
+}
+
+func compareTsConfigOptions(t *testing.T, tsConfigOptionsInput tsConfigOptions, tsConfigOptionsResults tsConfigOptions) {
+	assert.DeepEqual(t, tsConfigOptionsInput.prop, tsConfigOptionsResults.prop)
+	// assert.DeepEqual(t, tsConfigOptionsInput.compilerOptionsProp, tsConfigOptionsResults.compilerOptionsProp)
+	// assert.DeepEqual(t, tsConfigOptionsInput.references, tsConfigOptionsResults.references)
+}
+
+func compareDiagnosticMessages(t *testing.T, actual []string, expected []string) {
+	assert.DeepEqual(t, actual, expected)
 }
