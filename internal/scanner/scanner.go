@@ -854,7 +854,7 @@ func (s *Scanner) ReScanSlashToken() ast.Kind {
 					characterClassDepth++
 				} else if ch == ']' && characterClassDepth != 0 {
 					characterClassDepth--
-				} else if !(characterClassDepth != 0) {
+				} else if characterClassDepth == 0 {
 					if ch == '{' {
 						inDecimalQuantifier = true
 					} else if ch == '}' && inDecimalQuantifier {
@@ -881,6 +881,7 @@ func (s *Scanner) ReScanSlashToken() ast.Kind {
 					break
 				}
 			}
+			s.errorAt(diagnostics.Unterminated_regular_expression_literal, s.tokenStart, s.pos - s.tokenStart);
 		} else {
 			// Consume the slash character
 			s.pos++
