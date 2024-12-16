@@ -3154,12 +3154,6 @@ func isImportTypeQualifierPart(node *ast.Node) *ast.Node {
 	return nil
 }
 
-func isRightSideOfQualifiedNameOrPropertyAccessOrJSDocMemberName(node *ast.Node) bool {
-	return ast.IsQualifiedName(node.Parent) && node.Parent.AsQualifiedName().Right == node ||
-		ast.IsPropertyAccessExpression(node.Parent) && node.Parent.Name() == node
-	// || ast.IsJSDocMemberName(node.Parent) && node.Parent.ASJSDocMemberName().Right == node // !!! JSDoc
-}
-
 func isInNameOfExpressionWithTypeArguments(node *ast.Node) bool {
 	for node.Parent.Kind == ast.KindPropertyAccessExpression {
 		node = node.Parent

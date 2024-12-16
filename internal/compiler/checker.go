@@ -20048,8 +20048,6 @@ func (c *Checker) getSymbolAtLocation(node *ast.Node, ignoreErrors bool) *ast.Sy
 		// 4). type A = import("./f/*gotToDefinitionHere*/oo")
 		if (ast.IsExternalModuleImportEqualsDeclaration(grandParent) && getExternalModuleImportEqualsDeclarationExpression(grandParent) == node) ||
 			((parent.Kind == ast.KindImportDeclaration || parent.Kind == ast.KindExportDeclaration) && parent.AsImportDeclaration().ModuleSpecifier == node) ||
-			// (ast.IsInJSFile(node) && ast.IsJSDocImportTag(parent) && parent.AsJSDocImportTag().ModuleSpecifier == node) || // !!! JSDoc
-			// ((ast.IsInJSFile(node) && isRequireCall(parent, false /*requireStringLiteralLikeArgument*/)) || isImportCall(parent)) || // !!! JS
 			(ast.IsLiteralTypeNode(parent) && ast.IsLiteralImportTypeNode(grandParent) && grandParent.AsImportTypeNode().Argument == parent) {
 			return c.resolveExternalModuleName(node, node, ignoreErrors)
 		}
@@ -20135,20 +20133,6 @@ func (c *Checker) getSymbolOfNameOrPropertyAccessExpression(name *ast.Node) *ast
 		return c.getSymbolOfNode(name.Parent)
 	}
 
-	// !!! JS
-	// if ast.IsInJSFile(name) &&
-	// 	name.Parent.Kind == ast.KindPropertyAccessExpression &&
-	// 	name.Parent.Parent.Kind == ast.KindBinaryExpression &&
-	// 	name.Parent == name.Parent.Parent.AsBinaryExpression().Left {
-	// 	// Check if this is a special property assignment
-	// 	if !ast.IsPrivateIdentifier(name) && !ast.IsJSDocMemberName(name) && !c.isThisPropertyAndThisTyped(name.Parent) {
-	// 		specialPropertyAssignmentSymbol := c.getSpecialPropertyAssignmentSymbolFromEntityName(name)
-	// 		if specialPropertyAssignmentSymbol != nil {
-	// 			return specialPropertyAssignmentSymbol
-	// 		}
-	// 	}
-	// }
-
 	if name.Parent.Kind == ast.KindExportAssignment && ast.IsEntityNameExpression(name) {
 		// Even an entity name expression that doesn't resolve as an entityname may still typecheck as a property access expression
 		success := c.resolveEntityName(
@@ -20176,7 +20160,7 @@ func (c *Checker) getSymbolOfNameOrPropertyAccessExpression(name *ast.Node) *ast
 		}
 	}
 
-	for isRightSideOfQualifiedNameOrPropertyAccessOrJSDocMemberName(name) {
+	for isRightSideOfQualifiedNameOrPropertyAccess(name) {
 		name = name.Parent
 	}
 
@@ -20205,40 +20189,11 @@ func (c *Checker) getSymbolOfNameOrPropertyAccessExpression(name *ast.Node) *ast
 		}
 	}
 
-	// !!! JSDoc
-	// if name.Parent.Kind == ast.KindJSDocParameterTag {
-	// 	return getParameterSymbolFromJSDoc(name.Parent)
-	// }
-
-	// !!! JSDoc
-	// if name.Parent.Kind == ast.KindTypeParameter && name.Parent.Parent.Kind == ast.KindJSDocTemplateTag {
-	// 	if ast.IsInJSFile(name) {
-	// 		panic("Should not be in JS file, otherwise `isDeclarationName` would have been true")
-	// 	}
-	// 	typeParameter := getTypeParameterFromJsDoc(name.Parent)
-	// 	if typeParameter != nil {
-	// 		return typeParameter.Symbol()
-	// 	}
-	// 	return nil
-	// }
-
 	if isExpressionNode(name) {
 		if ast.NodeIsMissing(name) {
 			// Missing entity name.
 			return nil
 		}
-
-		// !!! JSDoc
-		// isJSDoc := ast.FindAncestor(name, func(n *ast.Node) bool {
-		// 	return isJSDocLinkLike(n) || ast.IsJSDocNameReference(n) || ast.IsJSDocMemberName(n)
-		// })
-		// var meaning ast.SymbolFlags
-		// if isJSDoc != nil {
-		// 	meaning = ast.SymbolFlagsType | ast.SymbolFlagsNamespace | ast.SymbolFlagsValue
-		// } else {
-		// 	meaning = ast.SymbolFlagsValue
-		// }
-		meaning := ast.SymbolFlagsValue
 
 		if name.Kind == ast.KindIdentifier {
 			if ast.IsJsxTagName(name) && isJsxIntrinsicTagName(name) {
@@ -20247,34 +20202,10 @@ func (c *Checker) getSymbolOfNameOrPropertyAccessExpression(name *ast.Node) *ast
 			}
 			result := c.resolveEntityName(
 				name,
-				meaning,
-				true, /*ignoreErrors*/
-				true, /*dontResolveAlias*/
+				ast.SymbolFlagsValue, /*meaning*/
+				true,                 /*ignoreErrors*/
+				true,                 /*dontResolveAlias*/
 				nil /*location*/)
-			// !!! JSDoc
-			// result := c.resolveEntityName(name, meaning, true /*ignoreErrors*/, true /*dontResolveAlias*/, ast.GetHostSignatureFromJSDoc(name))
-			// if result == nil && isJSDoc != nil {
-			// 	container := ast.FindAncestor(
-			// 		name,
-			// 		func(n *ast.Node) bool { return ast.IsClassLike(n) || ast.IsInterfaceDeclaration(n) })
-			// 	if container != nil {
-			// 		return c.resolveJSDocMemberName(name, true /*ignoreErrors*/, c.getSymbolOfDeclaration(container))
-			// 	}
-			// }
-			// if result != nil && isJSDoc != nil {
-			// 	container := ast.GetJSDocHost(name)
-			// 	if container != nil && ast.IsEnumMember(container) && container == result.ValueDeclaration {
-			// 		resolved := c.resolveEntityName(
-			// 			name,
-			// 			meaning,
-			// 			true, /*ignoreErrors*/
-			// 			true, /*dontResolveAlias*/
-			// 			ast.GetSourceFileOfNode(container).AsNode())
-			// 		if resolved != nil {
-			// 			return resolved
-			// 		}
-			// 	}
-			// }
 			return result
 		} else if ast.IsPrivateIdentifier(name) {
 			return c.getSymbolForPrivateIdentifierExpression(name)
@@ -20296,16 +20227,8 @@ func (c *Checker) getSymbolOfNameOrPropertyAccessExpression(name *ast.Node) *ast
 				c.checkQualifiedName(name, CheckModeNormal)
 			}
 
-			// !!! JSDoc
-			// if links.resolvedSymbol == nil && isJSDoc != nil && ast.IsQualifiedName(name) {
-			// 	return c.resolveJSDocMemberName(name, false /*ignoreErrors*/, nil /*container*/)
-			// }
 			return links.resolvedSymbol
 		}
-		// !!! JSDoc
-		// else if ast.IsJSDocMemberName(name) {
-		// 	return c.resolveJSDocMemberName(name, false /*ignoreErrors*/, nil /*container*/)
-		// }
 	} else if ast.IsEntityName(name) && isTypeReferenceIdentifier(name) {
 		meaning := core.IfElse(name.Parent.Kind == ast.KindTypeReference, ast.SymbolFlagsType, ast.SymbolFlagsNamespace)
 		symbol := c.resolveEntityName(name, meaning, false /*ignoreErrors*/, true /*dontResolveAlias*/, nil /*location*/)
