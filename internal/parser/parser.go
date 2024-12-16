@@ -5418,9 +5418,7 @@ func (p *Parser) createIdentifierWithDiagnostic(isIdentifier bool, diagnosticMes
 	} else {
 		p.parseErrorAtCurrentToken(diagnostics.Identifier_expected)
 	}
-	result := p.newIdentifier("")
-	p.finishNode(result, p.nodePos())
-	return result
+	return p.createMissingIdentifier()
 }
 
 func (p *Parser) internIdentifier(text string) {
