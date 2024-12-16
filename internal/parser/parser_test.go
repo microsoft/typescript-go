@@ -233,13 +233,13 @@ func printAST(sourceFile *ast.SourceFile, utf8offsets []int) string {
 				short := node.AsShorthandPropertyAssignment()
 				// print an extra line for the EqualsToken
 				indent := strings.Repeat("  ", indentation+1)
-				var end int
+				var pos int
 				if short.PostfixToken != nil {
-					end = short.PostfixToken.Pos()
+					pos = short.PostfixToken.End()
 				} else {
-					end = short.Name().Loc.Pos()
+					pos = short.Name().Loc.End()
 				}
-				sb.WriteString(fmt.Sprintf("%s%s(%d,%d)\n", indent, "EqualsToken", end-utf8offset, short.ObjectAssignmentInitializer.Pos()-utf8endoffset))
+				sb.WriteString(fmt.Sprintf("%s%s(%d,%d)\n", indent, "EqualsToken", pos-utf8offset, short.ObjectAssignmentInitializer.Pos()-utf8endoffset))
 			}
 			visit(child, indentation+1)
 			return false
