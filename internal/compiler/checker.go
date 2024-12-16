@@ -9977,6 +9977,12 @@ func (b *KeyBuilder) WriteTypeReference(ref *Type, ignoreConstraints bool, depth
 	return constrained
 }
 
+func (b *KeyBuilder) WriteNode(node *ast.Node) {
+	if node != nil {
+		b.WriteInt(int(getNodeId(node)))
+	}
+}
+
 func getTypeListKey(types []*Type) string {
 	var b KeyBuilder
 	b.WriteTypes(types)
@@ -10112,6 +10118,17 @@ func getRelationKey(source *Type, target *Type, intersectionState IntersectionSt
 		// We mark keys with type references that reference constrained type parameters such that we know
 		// to obtain and look for a "broadest equivalent key" in the cache.
 		b.WriteByte('*')
+	}
+	return b.String()
+}
+
+func getNodeListKey(nodes []*ast.Node) string {
+	var b KeyBuilder
+	for i, n := range nodes {
+		if i > 0 {
+			b.WriteByte(',')
+		}
+		b.WriteNode(n)
 	}
 	return b.String()
 }
@@ -20031,8 +20048,8 @@ func (c *Checker) getSymbolAtLocation(node *ast.Node, ignoreErrors bool) *ast.Sy
 		// 4). type A = import("./f/*gotToDefinitionHere*/oo")
 		if (ast.IsExternalModuleImportEqualsDeclaration(grandParent) && getExternalModuleImportEqualsDeclarationExpression(grandParent) == node) ||
 			((parent.Kind == ast.KindImportDeclaration || parent.Kind == ast.KindExportDeclaration) && parent.AsImportDeclaration().ModuleSpecifier == node) ||
-			(ast.IsInJSFile(node) && ast.IsJSDocImportTag(parent) && parent.AsJSDocImportTag().ModuleSpecifier == node) ||
-			((ast.IsInJSFile(node) && isRequireCall(parent, false /*requireStringLiteralLikeArgument*/)) || isImportCall(parent)) ||
+			// (ast.IsInJSFile(node) && ast.IsJSDocImportTag(parent) && parent.AsJSDocImportTag().ModuleSpecifier == node) || // !!! JSDoc
+			// ((ast.IsInJSFile(node) && isRequireCall(parent, false /*requireStringLiteralLikeArgument*/)) || isImportCall(parent)) || // !!! JS
 			(ast.IsLiteralTypeNode(parent) && ast.IsLiteralImportTypeNode(grandParent) && grandParent.AsImportTypeNode().Argument == parent) {
 			return c.resolveExternalModuleName(node, node, ignoreErrors)
 		}
@@ -20118,18 +20135,19 @@ func (c *Checker) getSymbolOfNameOrPropertyAccessExpression(name *ast.Node) *ast
 		return c.getSymbolOfNode(name.Parent)
 	}
 
-	if ast.IsInJSFile(name) &&
-		name.Parent.Kind == ast.KindPropertyAccessExpression &&
-		name.Parent.Parent.Kind == ast.KindBinaryExpression &&
-		name.Parent == name.Parent.Parent.AsBinaryExpression().Left {
-		// Check if this is a special property assignment
-		if !ast.IsPrivateIdentifier(name) && !ast.IsJSDocMemberName(name) && !c.isThisPropertyAndThisTyped(name.Parent) {
-			specialPropertyAssignmentSymbol := c.getSpecialPropertyAssignmentSymbolFromEntityName(name)
-			if specialPropertyAssignmentSymbol != nil {
-				return specialPropertyAssignmentSymbol
-			}
-		}
-	}
+	// !!! JS
+	// if ast.IsInJSFile(name) &&
+	// 	name.Parent.Kind == ast.KindPropertyAccessExpression &&
+	// 	name.Parent.Parent.Kind == ast.KindBinaryExpression &&
+	// 	name.Parent == name.Parent.Parent.AsBinaryExpression().Left {
+	// 	// Check if this is a special property assignment
+	// 	if !ast.IsPrivateIdentifier(name) && !ast.IsJSDocMemberName(name) && !c.isThisPropertyAndThisTyped(name.Parent) {
+	// 		specialPropertyAssignmentSymbol := c.getSpecialPropertyAssignmentSymbolFromEntityName(name)
+	// 		if specialPropertyAssignmentSymbol != nil {
+	// 			return specialPropertyAssignmentSymbol
+	// 		}
+	// 	}
+	// }
 
 	if name.Parent.Kind == ast.KindExportAssignment && ast.IsEntityNameExpression(name) {
 		// Even an entity name expression that doesn't resolve as an entityname may still typecheck as a property access expression
@@ -20187,22 +20205,22 @@ func (c *Checker) getSymbolOfNameOrPropertyAccessExpression(name *ast.Node) *ast
 		}
 	}
 
-	if name.Parent.Kind == ast.KindJSDocParameterTag {
-		// return getParameterSymbolFromJSDoc(name.Parent)
-		// !!! JSDoc
-		return nil
-	}
+	// !!! JSDoc
+	// if name.Parent.Kind == ast.KindJSDocParameterTag {
+	// 	return getParameterSymbolFromJSDoc(name.Parent)
+	// }
 
-	if name.Parent.Kind == ast.KindTypeParameter && name.Parent.Parent.Kind == ast.KindJSDocTemplateTag {
-		if ast.IsInJSFile(name) {
-			panic("Should not be in JS file, otherwise `isDeclarationName` would have been true")
-		}
-		typeParameter := getTypeParameterFromJsDoc(name.Parent)
-		if typeParameter != nil {
-			return typeParameter.Symbol()
-		}
-		return nil
-	}
+	// !!! JSDoc
+	// if name.Parent.Kind == ast.KindTypeParameter && name.Parent.Parent.Kind == ast.KindJSDocTemplateTag {
+	// 	if ast.IsInJSFile(name) {
+	// 		panic("Should not be in JS file, otherwise `isDeclarationName` would have been true")
+	// 	}
+	// 	typeParameter := getTypeParameterFromJsDoc(name.Parent)
+	// 	if typeParameter != nil {
+	// 		return typeParameter.Symbol()
+	// 	}
+	// 	return nil
+	// }
 
 	if isExpressionNode(name) {
 		if ast.NodeIsMissing(name) {
@@ -20210,15 +20228,17 @@ func (c *Checker) getSymbolOfNameOrPropertyAccessExpression(name *ast.Node) *ast
 			return nil
 		}
 
-		isJSDoc := ast.FindAncestor(name, func(n *ast.Node) bool {
-			return isJSDocLinkLike(n) || ast.IsJSDocNameReference(n) || ast.IsJSDocMemberName(n)
-		})
-		var meaning ast.SymbolFlags
-		if isJSDoc != nil {
-			meaning = ast.SymbolFlagsType | ast.SymbolFlagsNamespace | ast.SymbolFlagsValue
-		} else {
-			meaning = ast.SymbolFlagsValue
-		}
+		// !!! JSDoc
+		// isJSDoc := ast.FindAncestor(name, func(n *ast.Node) bool {
+		// 	return isJSDocLinkLike(n) || ast.IsJSDocNameReference(n) || ast.IsJSDocMemberName(n)
+		// })
+		// var meaning ast.SymbolFlags
+		// if isJSDoc != nil {
+		// 	meaning = ast.SymbolFlagsType | ast.SymbolFlagsNamespace | ast.SymbolFlagsValue
+		// } else {
+		// 	meaning = ast.SymbolFlagsValue
+		// }
+		meaning := ast.SymbolFlagsValue
 
 		if name.Kind == ast.KindIdentifier {
 			if ast.IsJsxTagName(name) && isJsxIntrinsicTagName(name) {
@@ -20230,29 +20250,31 @@ func (c *Checker) getSymbolOfNameOrPropertyAccessExpression(name *ast.Node) *ast
 				meaning,
 				true, /*ignoreErrors*/
 				true, /*dontResolveAlias*/
-				ast.GetHostSignatureFromJSDoc(name))
-			if result == nil && isJSDoc != nil {
-				container := ast.FindAncestor(
-					name,
-					func(n *ast.Node) bool { return ast.IsClassLike(n) || ast.IsInterfaceDeclaration(n) })
-				if container != nil {
-					return c.resolveJSDocMemberName(name, true /*ignoreErrors*/, c.getSymbolOfDeclaration(container))
-				}
-			}
-			if result != nil && isJSDoc != nil {
-				container := ast.GetJSDocHost(name)
-				if container != nil && ast.IsEnumMember(container) && container == result.ValueDeclaration {
-					resolved := c.resolveEntityName(
-						name,
-						meaning,
-						true, /*ignoreErrors*/
-						true, /*dontResolveAlias*/
-						ast.GetSourceFileOfNode(container).AsNode())
-					if resolved != nil {
-						return resolved
-					}
-				}
-			}
+				nil /*location*/)
+			// !!! JSDoc
+			// result := c.resolveEntityName(name, meaning, true /*ignoreErrors*/, true /*dontResolveAlias*/, ast.GetHostSignatureFromJSDoc(name))
+			// if result == nil && isJSDoc != nil {
+			// 	container := ast.FindAncestor(
+			// 		name,
+			// 		func(n *ast.Node) bool { return ast.IsClassLike(n) || ast.IsInterfaceDeclaration(n) })
+			// 	if container != nil {
+			// 		return c.resolveJSDocMemberName(name, true /*ignoreErrors*/, c.getSymbolOfDeclaration(container))
+			// 	}
+			// }
+			// if result != nil && isJSDoc != nil {
+			// 	container := ast.GetJSDocHost(name)
+			// 	if container != nil && ast.IsEnumMember(container) && container == result.ValueDeclaration {
+			// 		resolved := c.resolveEntityName(
+			// 			name,
+			// 			meaning,
+			// 			true, /*ignoreErrors*/
+			// 			true, /*dontResolveAlias*/
+			// 			ast.GetSourceFileOfNode(container).AsNode())
+			// 		if resolved != nil {
+			// 			return resolved
+			// 		}
+			// 	}
+			// }
 			return result
 		} else if ast.IsPrivateIdentifier(name) {
 			return c.getSymbolForPrivateIdentifierExpression(name)
@@ -20274,13 +20296,16 @@ func (c *Checker) getSymbolOfNameOrPropertyAccessExpression(name *ast.Node) *ast
 				c.checkQualifiedName(name, CheckModeNormal)
 			}
 
-			if links.resolvedSymbol == nil && isJSDoc != nil && ast.IsQualifiedName(name) {
-				return c.resolveJSDocMemberName(name, false /*ignoreErrors*/, nil /*container*/)
-			}
+			// !!! JSDoc
+			// if links.resolvedSymbol == nil && isJSDoc != nil && ast.IsQualifiedName(name) {
+			// 	return c.resolveJSDocMemberName(name, false /*ignoreErrors*/, nil /*container*/)
+			// }
 			return links.resolvedSymbol
-		} else if ast.IsJSDocNameReference(name) {
-			return c.resolveJSDocMemberName(name, false /*ignoreErrors*/, nil /*container*/)
 		}
+		// !!! JSDoc
+		// else if ast.IsJSDocMemberName(name) {
+		// 	return c.resolveJSDocMemberName(name, false /*ignoreErrors*/, nil /*container*/)
+		// }
 	} else if ast.IsEntityName(name) && isTypeReferenceIdentifier(name) {
 		meaning := core.IfElse(name.Parent.Kind == ast.KindTypeReference, ast.SymbolFlagsType, ast.SymbolFlagsNamespace)
 		symbol := c.resolveEntityName(name, meaning, false /*ignoreErrors*/, true /*dontResolveAlias*/, nil /*location*/)
@@ -20483,17 +20508,6 @@ func (c *Checker) getThisTypeArgument(t *Type) *Type {
 	return nil
 }
 
-// Recursively resolve entity names and jsdoc instance references:
-// 1. K#m as K.prototype.m for a class (or other value) K
-// 2. K.m as K.prototype.m
-// 3. I.m as I.m for a type I, or any other I.m that fails to resolve in (1) or (2)
-//
-// For unqualified names, a container K may be provided as a second argument.
-func (c *Checker) resolveJSDocMemberName(name *ast.Node, ignoreErrors bool, container *ast.Symbol) *ast.Symbol {
-	// !!! JSDoc
-	return nil
-}
-
 func (c *Checker) getApplicableIndexInfos(t *Type, keyType *Type) []*IndexInfo {
 	return core.Filter(c.getIndexInfosOfType(t), func(info *IndexInfo) bool { return c.isApplicableIndexType(keyType, info.keyType) })
 }
@@ -20507,7 +20521,7 @@ func (c *Checker) getApplicableIndexSymbol(t *Type, keyType *Type) *ast.Symbol {
 		} else if symbol != nil {
 			indexSymbolLinks := c.indexSymbolLinks.get(symbol)
 			declarationList := core.MapNonNil(infos, func(info *IndexInfo) *ast.Node { return info.declaration })
-			nodeListId := strings.Join(core.Map(declarationList, func(n *ast.Node) string { return strconv.FormatInt(int64(getNodeId(n)), 10) }), ",")
+			nodeListId := getNodeListKey(declarationList)
 			if indexSymbolLinks.filteredIndexSymbolCache == nil {
 				indexSymbolLinks.filteredIndexSymbolCache = make(map[string]*ast.Symbol)
 			}
@@ -20532,10 +20546,14 @@ func (c *Checker) getApplicableIndexSymbol(t *Type, keyType *Type) *ast.Symbol {
 }
 
 func (c *Checker) getUnresolvedSymbolForEntityName(name *ast.Node) *ast.Symbol {
-	identifier := core.IfElse(
-		name.Kind == ast.KindQualifiedName,
-		name.AsQualifiedName().Right,
-		core.IfElse(name.Kind == ast.KindPropertyAccessExpression, name.Name(), name))
+	var identifier *ast.Node
+	if name.Kind == ast.KindQualifiedName {
+		identifier = name.AsQualifiedName().Right
+	} else if name.Kind == ast.KindPropertyAccessExpression {
+		identifier = name.Name()
+	} else {
+		identifier = name
+	}
 	text := identifier.Text()
 	if text != "" {
 		var parentSymbol *ast.Symbol

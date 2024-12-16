@@ -850,7 +850,9 @@ func IsInJSFile(node *Node) bool {
 
 func IsDeclaration(node *Node) bool {
 	if node.Kind == KindTypeParameter {
-		return (node.Parent != nil && node.Parent.Kind != KindJSDocTemplateTag) || IsInJSFile(node)
+		// !!! JSDoc
+		// return (node.Parent != nil && node.Parent.Kind != KindJSDocTemplateTag) || IsInJSFile(node)
+		return node.Parent != nil
 	}
 	return IsDeclarationNode(node)
 }
@@ -886,10 +888,6 @@ func IsLiteralComputedPropertyDeclarationName(node *Node) bool {
 
 func IsExternalModuleImportEqualsDeclaration(node *Node) bool {
 	return node.Kind == KindImportEqualsDeclaration && node.AsImportEqualsDeclaration().ModuleReference.Kind == KindExternalModuleReference
-}
-
-func IsJSDocImportTag(node *Node) bool {
-	return node.Kind == KindJSDocImportTag
 }
 
 func IsLiteralImportTypeNode(node *Node) bool {
@@ -1199,27 +1197,13 @@ func TryGetClassImplementingOrExtendingExpressionWithTypeArguments(node *Node) (
 		if IsHeritageClause(node.Parent) && IsClassLike(node.Parent.Parent) {
 			return node.Parent.Parent, node.Parent.AsHeritageClause().Token == KindImplementsKeyword
 		}
-		if IsJSDocAugmentsTag(node.Parent) {
-			host := GetEffectiveJSDocHost(node.Parent)
-			if host != nil && IsClassLike(host) {
-				return host, false
-			}
-		}
+		// !!! JSDoc
+		// if IsJSDocAugmentsTag(node.Parent) {
+		// 	host := GetEffectiveJSDocHost(node.Parent)
+		// 	if host != nil && IsClassLike(host) {
+		// 		return host, false
+		// 	}
+		// }
 	}
 	return nil, false
-}
-
-func GetEffectiveJSDocHost(node *Node) *Node {
-	// !!! JSDoc
-	return nil
-}
-
-func GetHostSignatureFromJSDoc(node *Node) *SignatureDeclaration {
-	// !!! JSDoc
-	return nil
-}
-
-func GetJSDocHost(node *Node) *Node {
-	// !!! JSDoc
-	return nil
 }
