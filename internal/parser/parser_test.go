@@ -11,6 +11,7 @@ import (
 	"strings"
 	"sync"
 	"testing"
+	"unicode/utf8"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
@@ -65,11 +66,11 @@ func TestParseAgainstTSC(t *testing.T) {
 
 func TestParseSingleAgainstTSC(t *testing.T) {
 	if os.Getenv("TEST_ALL") == "" {
-		t.Skip()
+		// t.Skip()
 	}
 	t.Parallel()
 	osfs := vfs.FromOS()
-	parseTestComparisonWorker(osfs, t)(tspath.CombinePaths(repo.TypeScriptSubmodulePath, "tests/cases/conformance/es6/for-ofStatements/for-of10.ts"), nil, nil)
+	parseTestComparisonWorker(osfs, t)(tspath.CombinePaths(repo.TypeScriptSubmodulePath, "tests/cases/compiler/collisionCodeGenModuleWithUnicodeNames.ts"), nil, nil)
 }
 
 func parseTestComparisonWorker(osfs vfs.FS, t *testing.T) func(fileName string, d fs.DirEntry, err error) error {
@@ -86,30 +87,57 @@ func parseTestComparisonWorker(osfs vfs.FS, t *testing.T) func(fileName string, 
 			if isIgnoredTestFile(fileName) {
 				t.Skip()
 			}
-			sourceText, ok := osfs.ReadFile(fileName)
 			outputFilename := generateOutputFileName(t, fileName)
+			sourceText, ok := osfs.ReadFile(fileName)
+			utf8offsets := findTwoByteUTF8(sourceText)
 			assert.Assert(t, ok)
-			var expected string
-			cachetext, ok := osfs.ReadFile(tspath.CombinePaths(repo.TestDataPath, "baselines", "gold", outputFilename))
-			if ok {
-				expected = string(cachetext)
-			} else {
-				cmd := exec.Command("node", tspath.CombinePaths("testdata", "baselineAST.js"), fileName)
-				var stderr bytes.Buffer
-				var stdout bytes.Buffer
-				cmd.Stderr = &stderr
-				cmd.Stdout = &stdout
-				err = cmd.Run()
-				if err != nil {
-					t.Fatalf("Error running the command %q: %v\nStderr: %s", cmd.String(), err, stderr.String())
-				}
-				expected = stdout.String()
-			}
-			actual := printAST(parser.ParseSourceFile(fileName, string(sourceText), core.ScriptTargetESNext))
+			actual := printAST(parser.ParseSourceFile(fileName, sourceText, core.ScriptTargetESNext), utf8offsets)
+
+			expected := getExpectedText(t, osfs, fileName, outputFilename)
 			baseline.RunFromText(t, outputFilename, expected, actual, baseline.Options{})
 		})
 		return nil
 	}
+}
+
+func findTwoByteUTF8(text string) []int {
+	var byteOffsets []int
+	// initial scan for characters >7F
+	allAscii := true
+	for _, r := range text {
+		if r > 0x7F {
+			allAscii = false
+			break
+		}
+	}
+	if allAscii {
+		return byteOffsets
+	}
+	for i := 0; i < len(text); {
+		_, size := utf8.DecodeRuneInString(text[i:])
+		for j := 1; j < size; j++ {
+			byteOffsets = append(byteOffsets, i+j)
+		}
+		i += size
+	}
+	return byteOffsets
+}
+
+func getExpectedText(t *testing.T, osfs vfs.FS, fileName string, outputFilename string) string {
+	cachetext, ok := osfs.ReadFile(tspath.CombinePaths(repo.TestDataPath, "baselines", "gold", outputFilename))
+	if ok {
+		return cachetext
+	}
+	cmd := exec.Command("node", tspath.CombinePaths("testdata", "baselineAST.js"), fileName)
+	var stderr bytes.Buffer
+	var stdout bytes.Buffer
+	cmd.Stderr = &stderr
+	cmd.Stdout = &stdout
+	err := cmd.Run()
+	if err != nil {
+		t.Fatalf("Error running the command %q: %v\nStderr: %s", cmd.String(), err, stderr.String())
+	}
+	return stdout.String()
 }
 
 func isIgnoredTestFile(name string) bool {
@@ -162,49 +190,58 @@ func getIndentation(level int) string {
 }
 
 // prefix specifies the directory to write the baseline
-func printAST(sourceFile *ast.SourceFile) string {
+func printAST(sourceFile *ast.SourceFile, utf8offsets []int) string {
+	utf8offset := 0
+	offsetindex := 0
 	var sb strings.Builder
 	var visit func(node *ast.Node, indentation int) bool
 	var parent *ast.Node
 	visit = func(node *ast.Node, indentation int) bool {
-		offset := 1
 		skind, _ := strings.CutPrefix(node.Kind.String(), "Kind")
 		if node.Kind == ast.KindImportSpecifier {
 			parent = node
 		}
+		if offsetindex < len(utf8offsets) && node.Loc.Pos() > utf8offsets[offsetindex] {
+			utf8offset++
+			offsetindex++
+		}
+		utf8endoffset := utf8offset
+		endoffsetindex := offsetindex
+		for endoffsetindex < len(utf8offsets) && node.Loc.End() > utf8offsets[endoffsetindex] {
+			utf8endoffset++
+			endoffsetindex++
+		}
 		switch node.Kind {
-		case ast.KindSyntaxList:
-			offset = 0
 		case ast.KindIdentifier:
 			indent := getIndentation(indentation)
 			if parent != nil && parent.AsImportSpecifier().Name() == node && node.AsIdentifier().Text == "" && sourceFile.Text[node.Loc.Pos():node.Loc.End()] != "" {
-				sb.WriteString(fmt.Sprintf("%s%s(%d,%d): ''\n", indent, skind, node.Pos(), node.End()))
+				sb.WriteString(fmt.Sprintf("%s%s(%d,%d): ''\n", indent, skind, node.Pos()-utf8offset, node.End()-utf8endoffset))
 			} else {
-				sb.WriteString(fmt.Sprintf("%s%s(%d,%d): '%s'\n", indent, skind, node.Pos(), node.End(), sourceFile.Text[node.Loc.Pos():node.Loc.End()]))
+				text := sourceFile.Text[node.Loc.Pos():node.Loc.End()]
+				sb.WriteString(fmt.Sprintf("%s%s(%d,%d): '%s'\n", indent, skind, node.Pos()-utf8offset, node.End()-utf8endoffset, text))
 			}
 		default:
 			if isOmittedExpression(node) {
 				skind = "OmittedExpression"
 			}
 			indent := strings.Repeat("  ", indentation)
-			sb.WriteString(fmt.Sprintf("%s%s(%d,%d)\n", indent, skind, node.Pos(), node.End()))
+			sb.WriteString(fmt.Sprintf("%s%s(%d,%d)\n", indent, skind, node.Pos()-utf8offset, node.End()-utf8endoffset))
 		}
 		// TODO: Include trivia in a more structured way than GetFullText
 		return node.ForEachChild(func(child *ast.Node) bool {
 			if node.Kind == ast.KindShorthandPropertyAssignment && node.AsShorthandPropertyAssignment().ObjectAssignmentInitializer == child {
 				short := node.AsShorthandPropertyAssignment()
 				// print an extra line for the EqualsToken
-				indent := strings.Repeat("  ", indentation+offset)
+				indent := strings.Repeat("  ", indentation+1)
 				var end int
 				if short.PostfixToken != nil {
 					end = short.PostfixToken.Pos()
 				} else {
 					end = short.Name().Loc.Pos()
 				}
-				sb.WriteString(fmt.Sprintf("%s%s(%d,%d)\n", indent, "EqualsToken", end, short.ObjectAssignmentInitializer.Pos()))
-				sb.WriteString(indent + "EqualsToken\n") // print an extra line for the EqualsToken
+				sb.WriteString(fmt.Sprintf("%s%s(%d,%d)\n", indent, "EqualsToken", end-utf8offset, short.ObjectAssignmentInitializer.Pos()-utf8endoffset))
 			}
-			visit(child, indentation+offset)
+			visit(child, indentation+1)
 			return false
 		})
 	}
