@@ -253,6 +253,9 @@ func (p *Parser) parseSourceFileWorker() *ast.SourceFile {
 	result.SetDiagnostics(attachFileToDiagnostics(p.diagnostics, result))
 	result.ExternalModuleIndicator = isFileProbablyExternalModule(result)
 	result.IsDeclarationFile = isDeclarationFile
+	result.LanguageVersion = p.languageVersion
+	result.LanguageVariant = p.languageVariant
+	result.ScriptKind = p.scriptKind
 	if !result.IsDeclarationFile && result.ExternalModuleIndicator != nil && p.fileHasPossibleAwaitStatement {
 		reparse := p.reparseTopLevelAwait(result)
 		if node != reparse {
@@ -261,6 +264,9 @@ func (p *Parser) parseSourceFileWorker() *ast.SourceFile {
 			result.SetDiagnostics(attachFileToDiagnostics(p.diagnostics, result))
 			result.ExternalModuleIndicator = isFileProbablyExternalModule(result)
 			result.IsDeclarationFile = isDeclarationFile
+			result.LanguageVersion = p.languageVersion
+			result.LanguageVariant = p.languageVariant
+			result.ScriptKind = p.scriptKind
 		}
 	}
 	p.possibleAwaitStatement = core.Set[*ast.Node]{}
