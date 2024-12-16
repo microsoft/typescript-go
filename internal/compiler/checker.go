@@ -104,6 +104,9 @@ const (
 	CachedTypeKindAwaitedType
 	CachedTypeKindEvolvingArrayType
 	CachedTypeKindArrayLiteralType
+	CachedTypeKindPermissiveInstantiation
+	CachedTypeKindRestrictiveInstantiation
+	CachedTypeKindRestrictiveTypeParameter
 )
 
 // CachedTypeKey
@@ -536,6 +539,8 @@ type Checker struct {
 	outofbandVarianceMarkerHandler          func(onlyUnreliable bool)
 	reportUnreliableMapper                  *TypeMapper
 	reportUnmeasurableMapper                *TypeMapper
+	restrictiveMapper                       *TypeMapper
+	permissiveMapper                        *TypeMapper
 	emptyObjectType                         *Type
 	emptyTypeLiteralType                    *Type
 	unknownEmptyObjectType                  *Type
@@ -544,6 +549,7 @@ type Checker struct {
 	anyFunctionType                         *Type
 	noConstraintType                        *Type
 	circularConstraintType                  *Type
+	resolvingDefaultType                    *Type
 	markerSuperType                         *Type
 	markerSubType                           *Type
 	markerOtherType                         *Type
@@ -719,6 +725,8 @@ func NewChecker(program *Program) *Checker {
 	c.uniqueLiteralMapper = newFunctionTypeMapper(c.getUniqueLiteralTypeForTypeParameter)
 	c.reportUnreliableMapper = newFunctionTypeMapper(c.reportUnreliableWorker)
 	c.reportUnmeasurableMapper = newFunctionTypeMapper(c.reportUnmeasurableWorker)
+	c.restrictiveMapper = newFunctionTypeMapper(c.restrictiveMapperWorker)
+	c.permissiveMapper = newFunctionTypeMapper(c.permissiveMapperWorker)
 	c.emptyObjectType = c.newAnonymousType(nil /*symbol*/, nil, nil, nil, nil)
 	c.emptyTypeLiteralType = c.newAnonymousType(c.newSymbol(ast.SymbolFlagsTypeLiteral, InternalSymbolNameType), nil, nil, nil, nil)
 	c.unknownEmptyObjectType = c.newAnonymousType(nil /*symbol*/, nil, nil, nil, nil)
@@ -729,6 +737,7 @@ func NewChecker(program *Program) *Checker {
 	c.anyFunctionType.objectFlags |= ObjectFlagsNonInferrableType
 	c.noConstraintType = c.newAnonymousType(nil /*symbol*/, nil, nil, nil, nil)
 	c.circularConstraintType = c.newAnonymousType(nil /*symbol*/, nil, nil, nil, nil)
+	c.resolvingDefaultType = c.newAnonymousType(nil /*symbol*/, nil, nil, nil, nil)
 	c.markerSuperType = c.newTypeParameter(nil)
 	c.markerSubType = c.newTypeParameter(nil)
 	c.markerSubType.AsTypeParameter().constraint = c.markerSuperType
@@ -2329,35 +2338,36 @@ func (c *Checker) getIteratedTypeOrElementType(use IterationUse, inputType *Type
 	// or higher, when inside of an async generator or for-await-if, or when
 	// downlevelIteration is requested.
 	if uplevelIteration || downlevelIteration || allowAsyncIterables {
-		// We only report errors for an invalid iterable type in ES2015 or higher.
-		iterationTypes := c.getIterationTypesOfIterable(inputType, use, core.IfElse(uplevelIteration, errorNode, nil))
-		if checkAssignability {
-			if iterationTypes != nil {
-				var diagnostic *diagnostics.Message
-				switch {
-				case use&IterationUseForOfFlag != 0:
-					diagnostic = diagnostics.Cannot_iterate_value_because_the_next_method_of_its_iterator_expects_type_1_but_for_of_will_always_send_0
-				case use&IterationUseSpreadFlag != 0:
-					diagnostic = diagnostics.Cannot_iterate_value_because_the_next_method_of_its_iterator_expects_type_1_but_array_spread_will_always_send_0
-				case use&IterationUseDestructuringFlag != 0:
-					diagnostic = diagnostics.Cannot_iterate_value_because_the_next_method_of_its_iterator_expects_type_1_but_array_destructuring_will_always_send_0
-				case use&IterationUseYieldStarFlag != 0:
-					diagnostic = diagnostics.Cannot_delegate_iteration_to_value_because_the_next_method_of_its_iterator_expects_type_1_but_the_containing_generator_will_always_send_0
-				}
-				if diagnostic != nil {
-					c.checkTypeAssignableTo(sentType, iterationTypes.nextType, errorNode, diagnostic)
-				}
-			}
-		}
-		if iterationTypes != nil || uplevelIteration {
-			if iterationTypes == nil {
-				return nil
-			}
-			if possibleOutOfBounds {
-				return c.includeUndefinedInIndexSignature(iterationTypes.yieldType)
-			}
-			return iterationTypes.yieldType
-		}
+		// !!!
+		// // We only report errors for an invalid iterable type in ES2015 or higher.
+		// iterationTypes := c.getIterationTypesOfIterable(inputType, use, core.IfElse(uplevelIteration, errorNode, nil))
+		// if checkAssignability {
+		// 	if iterationTypes != nil {
+		// 		var diagnostic *diagnostics.Message
+		// 		switch {
+		// 		case use&IterationUseForOfFlag != 0:
+		// 			diagnostic = diagnostics.Cannot_iterate_value_because_the_next_method_of_its_iterator_expects_type_1_but_for_of_will_always_send_0
+		// 		case use&IterationUseSpreadFlag != 0:
+		// 			diagnostic = diagnostics.Cannot_iterate_value_because_the_next_method_of_its_iterator_expects_type_1_but_array_spread_will_always_send_0
+		// 		case use&IterationUseDestructuringFlag != 0:
+		// 			diagnostic = diagnostics.Cannot_iterate_value_because_the_next_method_of_its_iterator_expects_type_1_but_array_destructuring_will_always_send_0
+		// 		case use&IterationUseYieldStarFlag != 0:
+		// 			diagnostic = diagnostics.Cannot_delegate_iteration_to_value_because_the_next_method_of_its_iterator_expects_type_1_but_the_containing_generator_will_always_send_0
+		// 		}
+		// 		if diagnostic != nil {
+		// 			c.checkTypeAssignableTo(sentType, iterationTypes.nextType, errorNode, diagnostic)
+		// 		}
+		// 	}
+		// }
+		// if iterationTypes != nil || uplevelIteration {
+		// 	if iterationTypes == nil {
+		// 		return nil
+		// 	}
+		// 	if possibleOutOfBounds {
+		// 		return c.includeUndefinedInIndexSignature(iterationTypes.yieldType)
+		// 	}
+		// 	return iterationTypes.yieldType
+		// }
 	}
 	arrayType := inputType
 	hasStringConstituent := false
@@ -2799,8 +2809,136 @@ func (c *Checker) checkExpressionEx(node *ast.Node, checkMode CheckMode) *Type {
 	return t
 }
 
-func (c *Checker) instantiateTypeWithSingleGenericCallSignature(node *ast.Node, uninstantiatedType *Type, checkMode CheckMode) *Type {
-	return uninstantiatedType // !!!
+func (c *Checker) instantiateTypeWithSingleGenericCallSignature(node *ast.Node, t *Type, checkMode CheckMode) *Type {
+	if checkMode&(CheckModeInferential|CheckModeSkipGenericFunctions) == 0 {
+		return t
+	}
+	callSignature := c.getSingleSignature(t, SignatureKindCall, true /*allowMembers*/)
+	constructSignature := c.getSingleSignature(t, SignatureKindConstruct, true /*allowMembers*/)
+	signature := core.OrElse(callSignature, constructSignature)
+	if signature == nil || len(signature.typeParameters) == 0 {
+		return t
+	}
+	contextualType := c.getApparentTypeOfContextualType(node, ContextFlagsNoConstraints)
+	if contextualType == nil {
+		return t
+	}
+	contextualSignature := c.getSingleSignature(c.getNonNullableType(contextualType), core.IfElse(callSignature != nil, SignatureKindCall, SignatureKindConstruct), false /*allowMembers*/)
+	if contextualSignature == nil || len(contextualSignature.typeParameters) != 0 {
+		return t
+	}
+	if checkMode&CheckModeSkipGenericFunctions != 0 {
+		c.skippedGenericFunction(node, checkMode)
+		return c.anyFunctionType
+	}
+	context := c.getInferenceContext(node)
+	// We have an expression that is an argument of a generic function for which we are performing
+	// type argument inference. The expression is of a function type with a single generic call
+	// signature and a contextual function type with a single non-generic call signature. Now check
+	// if the outer function returns a function type with a single non-generic call signature and
+	// if some of the outer function type parameters have no inferences so far. If so, we can
+	// potentially add inferred type parameters to the outer function return type.
+	var returnSignature *Signature
+	if context.signature != nil {
+		returnType := c.getReturnTypeOfSignature(context.signature)
+		if returnType != nil {
+			returnSignature = c.getSingleCallOrConstructSignature(returnType)
+		}
+	}
+	if returnSignature != nil && len(returnSignature.typeParameters) == 0 && !core.Every(context.inferences, hasInferenceCandidates) {
+		// Instantiate the signature with its own type parameters as type arguments, possibly
+		// renaming the type parameters to ensure they have unique names.
+		uniqueTypeParameters := c.getUniqueTypeParameters(context, signature.typeParameters)
+		instantiatedSignature := c.getSignatureInstantiationWithoutFillingInTypeArguments(signature, uniqueTypeParameters)
+		// Infer from the parameters of the instantiated signature to the parameters of the
+		// contextual signature starting with an empty set of inference candidates.
+		inferences := core.Map(context.inferences, func(info *InferenceInfo) *InferenceInfo {
+			return newInferenceInfo(info.typeParameter)
+		})
+		c.applyToParameterTypes(instantiatedSignature, contextualSignature, func(source *Type, target *Type) {
+			c.inferTypes(inferences, source, target, InferencePriorityNone, true /*contravariant*/)
+		})
+		if core.Some(inferences, hasInferenceCandidates) {
+			// We have inference candidates, indicating that one or more type parameters are referenced
+			// in the parameter types of the contextual signature. Now also infer from the return type.
+			c.applyToReturnTypes(instantiatedSignature, contextualSignature, func(source *Type, target *Type) {
+				c.inferTypes(inferences, source, target, InferencePriorityNone, false)
+			})
+			// If the type parameters for which we produced candidates do not have any inferences yet,
+			// we adopt the new inference candidates and add the type parameters of the expression type
+			// to the set of inferred type parameters for the outer function return type.
+			if !hasOverlappingInferences(context.inferences, inferences) {
+				c.mergeInferences(context.inferences, inferences)
+				context.inferredTypeParameters = core.Concatenate(context.inferredTypeParameters, uniqueTypeParameters)
+				return c.getOrCreateTypeFromSignature(instantiatedSignature, nil)
+			}
+		}
+	}
+	// TODO: The signature may reference any outer inference contexts, but we map pop off and then apply new inference contexts,
+	// and thus get different inferred types. That this is cached on the *first* such attempt is not currently an issue, since expression
+	// types *also* get cached on the first pass. If we ever properly speculate, though, the cached "isolatedSignatureType" signature
+	// field absolutely needs to be included in the list of speculative caches.
+	return c.getOrCreateTypeFromSignature(c.instantiateSignatureInContextOf(signature, contextualSignature, context, nil), c.getOuterInferenceTypeParameters())
+}
+
+func (c *Checker) getOuterInferenceTypeParameters() []*Type {
+	var result []*Type
+	for i := range c.inferenceContextInfos {
+		context := c.inferenceContextInfos[i].context
+		if context != nil {
+			for _, info := range context.inferences {
+				result = append(result, info.typeParameter)
+			}
+		}
+	}
+	return result
+}
+
+func (c *Checker) getUniqueTypeParameters(context *InferenceContext, typeParameters []*Type) []*Type {
+	var oldTypeParameters []*Type
+	var newTypeParameters []*Type
+	result := make([]*Type, 0, len(typeParameters))
+	for _, tp := range typeParameters {
+		name := tp.symbol.Name
+		if hasTypeParameterByName(context.inferredTypeParameters, name) || hasTypeParameterByName(result, name) {
+			newName := getUniqueTypeParameterName(core.Concatenate(context.inferredTypeParameters, result), name)
+			symbol := c.newSymbol(ast.SymbolFlagsTypeParameter, newName)
+			newTypeParameter := c.newTypeParameter(symbol)
+			newTypeParameter.AsTypeParameter().target = tp
+			oldTypeParameters = append(oldTypeParameters, tp)
+			newTypeParameters = append(newTypeParameters, newTypeParameter)
+			result = append(result, newTypeParameter)
+		} else {
+			result = append(result, tp)
+		}
+	}
+	if len(newTypeParameters) != 0 {
+		mapper := newTypeMapper(oldTypeParameters, newTypeParameters)
+		for _, tp := range newTypeParameters {
+			tp.AsTypeParameter().mapper = mapper
+		}
+	}
+	return result
+}
+
+func hasTypeParameterByName(typeParameters []*Type, name string) bool {
+	return core.Some(typeParameters, func(tp *Type) bool {
+		return tp.symbol.Name == name
+	})
+}
+
+func getUniqueTypeParameterName(typeParameters []*Type, baseName string) string {
+	for len(baseName) > 1 && baseName[len(baseName)-1] >= '0' && baseName[len(baseName)-1] <= '9' {
+		baseName = baseName[:len(baseName)-1]
+	}
+	index := 1
+	for {
+		augmentedName := baseName + strconv.Itoa(index)
+		if !hasTypeParameterByName(typeParameters, augmentedName) {
+			return augmentedName
+		}
+		index++
+	}
 }
 
 func (c *Checker) checkExpressionWorker(node *ast.Node, checkMode CheckMode) *Type {
@@ -4658,9 +4796,7 @@ func (c *Checker) checkTaggedTemplateExpression(node *ast.Node) *Type {
 }
 
 func (c *Checker) checkParenthesizedExpression(node *ast.Node, checkMode CheckMode) *Type {
-	// !!!
-	c.checkExpression(node.Expression())
-	return c.errorType
+	return c.checkExpressionEx(node.Expression(), checkMode)
 }
 
 func (c *Checker) checkClassExpression(node *ast.Node) *Type {
@@ -6817,17 +6953,13 @@ func (c *Checker) checkObjectLiteral(node *ast.Node, checkMode CheckMode) *Type 
 				allPropertiesTable[prop.Name] = prop
 			}
 			if contextualType != nil && checkMode&CheckModeInferential != 0 && checkMode&CheckModeSkipContextSensitive == 0 && (ast.IsPropertyAssignment(memberDecl) || ast.IsMethodDeclaration(memberDecl)) && c.isContextSensitive(memberDecl) {
-				// !!!
-				// inferenceContext := c.getInferenceContext(node)
-				// Debug.assert(inferenceContext)
-				// // In CheckMode.Inferential we should always have an inference context
-				// var inferenceNode /* TODO(TS-TO-GO) inferred type Expression | MethodDeclaration */ any
-				// if memberDecl.kind == KindPropertyAssignment {
-				// 	inferenceNode = memberDecl.initializer
-				// } else {
-				// 	inferenceNode = memberDecl
-				// }
-				// c.addIntraExpressionInferenceSite(inferenceContext, inferenceNode, t)
+				inferenceContext := c.getInferenceContext(node)
+				// In CheckMode.Inferential we should always have an inference context
+				inferenceNode := memberDecl
+				if ast.IsPropertyAssignment(memberDecl) {
+					inferenceNode = memberDecl.Initializer()
+				}
+				c.addIntraExpressionInferenceSite(inferenceContext, inferenceNode, t)
 			}
 		} else if memberDecl.Kind == ast.KindSpreadAssignment {
 			if len(propertiesArray) > 0 {
@@ -9814,11 +9946,67 @@ func (c *Checker) getConstraintOfConditionalType(t *Type) *Type {
 }
 
 func (c *Checker) getConstraintFromConditionalType(t *Type) *Type {
-	return c.anyType // !!!
+	constraint := c.getConstraintOfDistributiveConditionalType(t)
+	if constraint != nil {
+		return constraint
+	}
+	return c.getDefaultConstraintOfConditionalType(t)
 }
 
 func (c *Checker) getDefaultConstraintOfConditionalType(t *Type) *Type {
-	return c.anyType // !!!
+	d := t.AsConditionalType()
+	if d.resolvedDefaultConstraint == nil {
+		// An `any` branch of a conditional type would normally be viral - specifically, without special handling here,
+		// a conditional type with a single branch of type `any` would be assignable to anything, since it's constraint would simplify to
+		// just `any`. This result is _usually_ unwanted - so instead here we elide an `any` branch from the constraint type,
+		// in effect treating `any` like `never` rather than `unknown` in this location.
+		trueConstraint := c.getInferredTrueTypeFromConditionalType(t)
+		falseConstraint := c.getFalseTypeFromConditionalType(t)
+		switch {
+		case isTypeAny(trueConstraint):
+			d.resolvedDefaultConstraint = falseConstraint
+		case isTypeAny(falseConstraint):
+			d.resolvedDefaultConstraint = trueConstraint
+		default:
+			d.resolvedDefaultConstraint = c.getUnionType([]*Type{trueConstraint, falseConstraint})
+		}
+	}
+	return d.resolvedDefaultConstraint
+}
+
+func (c *Checker) getConstraintOfDistributiveConditionalType(t *Type) *Type {
+	d := t.AsConditionalType()
+	if d.resolvedConstraintOfDistributive == nil {
+		// Check if we have a conditional type of the form 'T extends U ? X : Y', where T is a constrained
+		// type parameter. If so, create an instantiation of the conditional type where T is replaced
+		// with its constraint. We do this because if the constraint is a union type it will be distributed
+		// over the conditional type and possibly reduced. For example, 'T extends undefined ? never : T'
+		// removes 'undefined' from T.
+		// We skip returning a distributive constraint for a restrictive instantiation of a conditional type
+		// as the constraint for all type params (check type included) have been replace with `unknown`, which
+		// is going to produce even more false positive/negative results than the distribute constraint already does.
+		// Please note: the distributive constraint is a kludge for emulating what a negated type could to do filter
+		// a union - once negated types exist and are applied to the conditional false branch, this "constraint"
+		// likely doesn't need to exist.
+		if d.root.isDistributive && c.cachedTypes[CachedTypeKey{kind: CachedTypeKindRestrictiveInstantiation, typeId: t.id}] != t {
+			constraint := c.getSimplifiedType(d.checkType, false /*writing*/)
+			if constraint == d.checkType {
+				constraint = c.getConstraintOfType(constraint)
+			}
+			if constraint != nil && constraint != d.checkType {
+				instantiated := c.getConditionalTypeInstantiation(t, prependTypeMapping(d.root.checkType, constraint, d.mapper), true /*forConstraint*/, nil)
+				if instantiated.flags&TypeFlagsNever == 0 {
+					d.resolvedConstraintOfDistributive = instantiated
+					return instantiated
+				}
+			}
+		}
+		d.resolvedConstraintOfDistributive = c.noConstraintType
+	}
+	if d.resolvedConstraintOfDistributive != c.noConstraintType {
+		return d.resolvedConstraintOfDistributive
+	}
+	return nil
 }
 
 func (c *Checker) getDeclaredTypeOfClassOrInterface(symbol *ast.Symbol) *Type {
@@ -10080,6 +10268,16 @@ func getTemplateTypeKey(texts []string, types []*Type) string {
 	return b.String()
 }
 
+func getConditionalTypeKey(typeArguments []*Type, alias *TypeAlias, forConstraint bool) string {
+	var b KeyBuilder
+	b.WriteTypes(typeArguments)
+	b.WriteAlias(alias)
+	if forConstraint {
+		b.WriteByte('!')
+	}
+	return b.String()
+}
+
 func getRelationKey(source *Type, target *Type, intersectionState IntersectionState, isIdentity bool, ignoreConstraints bool) string {
 	if isIdentity && source.id > target.id {
 		source, target = target, source
@@ -10146,7 +10344,8 @@ func (c *Checker) isNullOrUndefined(node *ast.Node) bool {
 }
 
 func (c *Checker) checkRightHandSideOfForOf(statement *ast.Node) *Type {
-	return c.anyType // !!!
+	use := core.IfElse(statement.AsForInOrOfStatement().AwaitModifier != nil, IterationUseForAwaitOf, IterationUseForOf)
+	return c.checkIteratedTypeOrElementType(use, c.checkNonNullExpression(statement.Expression()), c.undefinedType, statement.Expression())
 }
 
 func (c *Checker) getTypeForBindingElement(declaration *ast.Node) *Type {
@@ -12199,14 +12398,13 @@ func (c *Checker) getLowerBoundOfKeyType(t *Type) *Type {
 		}
 		return c.getIndexType(t)
 	case t.flags&TypeFlagsConditional != 0:
-		// !!!
-		// if t.AsConditionalType().root.isDistributive {
-		// 	checkType := t.AsConditionalType().checkType
-		// 	constraint := c.getLowerBoundOfKeyType(checkType)
-		// 	if constraint != checkType {
-		// 		return c.getConditionalTypeInstantiation(t.AsConditionalType(), prependTypeMapping(t.AsConditionalType().root.checkType, constraint, t.AsConditionalType().mapper), false /*forConstraint*/)
-		// 	}
-		// }
+		if t.AsConditionalType().root.isDistributive {
+			checkType := t.AsConditionalType().checkType
+			constraint := c.getLowerBoundOfKeyType(checkType)
+			if constraint != checkType {
+				return c.getConditionalTypeInstantiation(t, prependTypeMapping(t.AsConditionalType().root.checkType, constraint, t.AsConditionalType().mapper), false /*forConstraint*/, nil)
+			}
+		}
 		return t
 	case t.flags&TypeFlagsUnion != 0:
 		return c.mapTypeEx(t, c.getLowerBoundOfKeyType, true /*noReductions*/)
@@ -13160,8 +13358,52 @@ func (c *Checker) fillMissingTypeArguments(typeArguments []*Type, typeParameters
 	return typeArguments
 }
 
+// Gets the default type for a type parameter. If the type parameter is the result of an instantiation,
+// this gets the instantiated default type of its target. If the type parameter has no default type or
+// the default is circular, `undefined` is returned.
 func (c *Checker) getDefaultFromTypeParameter(t *Type) *Type {
-	return c.unknownType // !!!
+	defaultType := c.getResolvedTypeParameterDefault(t)
+	if defaultType != c.noConstraintType && defaultType != c.circularConstraintType {
+		return defaultType
+	}
+	return nil
+}
+
+func (c *Checker) getResolvedTypeParameterDefault(t *Type) *Type {
+	d := t.AsTypeParameter()
+	if d.resolvedDefaultType == nil {
+		if d.target != nil {
+			targetDefault := c.getResolvedTypeParameterDefault(d.target)
+			if targetDefault != nil {
+				d.resolvedDefaultType = c.instantiateType(targetDefault, d.mapper)
+			} else {
+				d.resolvedDefaultType = c.noConstraintType
+			}
+		} else {
+			// To block recursion, set the initial value to the resolvingDefaultType.
+			d.resolvedDefaultType = c.resolvingDefaultType
+			defaultType := c.noConstraintType
+			if t.symbol != nil {
+				defaultDeclaration := core.FirstNonNil(t.symbol.Declarations, func(decl *ast.Node) *ast.Node {
+					if ast.IsTypeParameterDeclaration(decl) {
+						return decl.AsTypeParameter().DefaultType
+					}
+					return nil
+				})
+				if defaultDeclaration != nil {
+					defaultType = c.getTypeFromTypeNode(defaultDeclaration)
+				}
+			}
+			if d.resolvedDefaultType == c.resolvingDefaultType {
+				// If we have not been called recursively, set the correct default type.
+				d.resolvedDefaultType = defaultType
+			}
+		}
+	} else if d.resolvedDefaultType == c.resolvingDefaultType {
+		// If we are called recursively for this type parameter, mark the default as circular.
+		d.resolvedDefaultType = c.circularConstraintType
+	}
+	return d.resolvedDefaultType
 }
 
 func (c *Checker) getDefaultOrUnknownFromTypeParameter(t *Type) *Type {
@@ -13314,9 +13556,9 @@ func (c *Checker) instantiateTypeWorker(t *Type, m *TypeMapper, alias *TypeAlias
 		return c.getTemplateLiteralType(t.AsTemplateLiteralType().texts, c.instantiateTypes(t.AsTemplateLiteralType().types, m))
 	case flags&TypeFlagsStringMapping != 0:
 		return c.getStringMappingType(t.symbol, c.instantiateType(t.AsStringMappingType().target, m))
+	case flags&TypeFlagsConditional != 0:
+		return c.getConditionalTypeInstantiation(t, c.combineTypeMappers(t.AsConditionalType().mapper, m), false /*forConstraint*/, alias)
 		// !!!
-		// case flags&TypeFlagsConditional != 0:
-		// 	return c.getConditionalTypeInstantiation(t.(ConditionalType), c.combineTypeMappers((t.(ConditionalType)).mapper, m) /*forConstraint*/, false, aliasSymbol, aliasTypeArguments)
 		// case flags&TypeFlagsSubstitution != 0:
 		// 	newBaseType := c.instantiateType((t.(SubstitutionType)).baseType, m)
 		// 	if c.isNoInferType(t) {
@@ -13522,6 +13764,39 @@ func (c *Checker) instantiateAnonymousType(t *Type, m *TypeMapper, alias *TypeAl
 	d.target = t
 	d.mapper = m
 	return result
+}
+
+func (c *Checker) getConditionalTypeInstantiation(t *Type, mapper *TypeMapper, forConstraint bool, alias *TypeAlias) *Type {
+	root := t.AsConditionalType().root
+	if len(root.outerTypeParameters) != 0 {
+		// We are instantiating a conditional type that has one or more type parameters in scope. Apply the
+		// mapper to the type parameters to produce the effective list of type arguments, and compute the
+		// instantiation cache key from the type IDs of the type arguments.
+		typeArguments := core.Map(root.outerTypeParameters, func(t *Type) *Type { return mapper.Map(t) })
+		key := getConditionalTypeKey(typeArguments, alias, forConstraint)
+		result := root.instantiations[key]
+		if result == nil {
+			newMapper := newTypeMapper(root.outerTypeParameters, typeArguments)
+			checkType := root.checkType
+			var distributionType *Type
+			if root.isDistributive {
+				distributionType = c.getReducedType(newMapper.Map(checkType))
+			}
+			// Distributive conditional types are distributed over union types. For example, when the
+			// distributive conditional type T extends U ? X : Y is instantiated with A | B for T, the
+			// result is (A extends U ? X : Y) | (B extends U ? X : Y).
+			if distributionType != nil && checkType != distributionType && distributionType.flags&(TypeFlagsUnion|TypeFlagsNever) != 0 {
+				result = c.mapTypeWithAlias(distributionType, func(t *Type) *Type {
+					return c.getConditionalType(root, prependTypeMapping(checkType, t, newMapper), forConstraint, nil)
+				}, alias)
+			} else {
+				result = c.getConditionalType(root, newMapper, forConstraint, alias)
+			}
+			root.instantiations[key] = result
+		}
+		return result
+	}
+	return t
 }
 
 func (c *Checker) cloneTypeParameter(tp *Type) *Type {
@@ -13870,11 +14145,11 @@ func (c *Checker) getTypeFromTypeNodeWorker(node *ast.Node) *Type {
 		return c.getTypeFromTemplateTypeNode(node)
 	case ast.KindMappedType:
 		return c.getTypeFromMappedTypeNode(node)
+	case ast.KindConditionalType:
+		return c.getTypeFromConditionalTypeNode(node /* as ConditionalTypeNode */)
+	case ast.KindInferType:
+		return c.getTypeFromInferTypeNode(node /* as InferTypeNode */)
 	// !!!
-	// case KindConditionalType:
-	// 	return c.getTypeFromConditionalTypeNode(node /* as ConditionalTypeNode */)
-	// case KindInferType:
-	// 	return c.getTypeFromInferTypeNode(node /* as InferTypeNode */)
 	// case KindImportType:
 	// 	return c.getTypeFromImportTypeNode(node /* as ImportTypeNode */)
 	// case KindIdentifier, /* as TypeNodeast.Kind */
@@ -15105,6 +15380,312 @@ func (c *Checker) getTypeFromMappedTypeNode(node *ast.Node) *Type {
 	return links.resolvedType
 }
 
+func (c *Checker) getTypeFromConditionalTypeNode(node *ast.Node) *Type {
+	links := c.typeNodeLinks.get(node)
+	if links.resolvedType == nil {
+		checkType := c.getTypeFromTypeNode(node.AsConditionalTypeNode().CheckType)
+		alias := c.getAliasForTypeNode(node)
+		allOuterTypeParameters := c.getOuterTypeParameters(node, true /*includeThisTypes*/)
+		var outerTypeParameters []*Type
+		if alias != nil && len(alias.typeArguments) != 0 {
+			outerTypeParameters = allOuterTypeParameters
+		} else {
+			outerTypeParameters = core.Filter(allOuterTypeParameters, func(tp *Type) bool { return c.isTypeParameterPossiblyReferenced(tp, node) })
+		}
+		root := &ConditionalRoot{
+			node:                node.AsConditionalTypeNode(),
+			checkType:           checkType,
+			extendsType:         c.getTypeFromTypeNode(node.AsConditionalTypeNode().ExtendsType),
+			isDistributive:      checkType.flags&TypeFlagsTypeParameter != 0,
+			inferTypeParameters: c.getInferTypeParameters(node),
+			outerTypeParameters: outerTypeParameters,
+			instantiations:      nil,
+			alias:               alias,
+		}
+		links.resolvedType = c.getConditionalType(root, nil /*mapper*/, false /*forConstraint*/, nil)
+		if outerTypeParameters != nil {
+			root.instantiations = make(map[string]*Type)
+			root.instantiations[getTypeListKey(outerTypeParameters)] = links.resolvedType
+		}
+	}
+	return links.resolvedType
+}
+
+func (c *Checker) getTypeFromInferTypeNode(node *ast.Node) *Type {
+	links := c.typeNodeLinks.get(node)
+	if links.resolvedType == nil {
+		links.resolvedType = c.getDeclaredTypeOfTypeParameter(c.getSymbolOfDeclaration(node.AsInferTypeNode().TypeParameter))
+	}
+	return links.resolvedType
+}
+
+func (c *Checker) getConditionalType(root *ConditionalRoot, mapper *TypeMapper, forConstraint bool, alias *TypeAlias) *Type {
+	var result *Type
+	var extraTypes []*Type
+	tailCount := 0
+	// We loop here for an immediately nested conditional type in the false position, effectively treating
+	// types of the form 'A extends B ? X : C extends D ? Y : E extends F ? Z : ...' as a single construct for
+	// purposes of resolution. We also loop here when resolution of a conditional type ends in resolution of
+	// another (or, through recursion, possibly the same) conditional type. In the potentially tail-recursive
+	// cases we increment the tail recursion counter and stop after 1000 iterations.
+	for {
+		if tailCount == 1000 {
+			c.error(c.currentNode, diagnostics.Type_instantiation_is_excessively_deep_and_possibly_infinite)
+			return c.errorType
+		}
+		checkType := c.instantiateType(c.getActualTypeVariable(root.checkType), mapper)
+		extendsType := c.instantiateType(root.extendsType, mapper)
+		if checkType == c.errorType || extendsType == c.errorType {
+			return c.errorType
+		}
+		if checkType == c.wildcardType || extendsType == c.wildcardType {
+			return c.wildcardType
+		}
+		checkTypeNode := ast.SkipTypeParentheses(root.node.CheckType)
+		extendsTypeNode := ast.SkipTypeParentheses(root.node.ExtendsType)
+		// When the check and extends types are simple tuple types of the same arity, we defer resolution of the
+		// conditional type when any tuple elements are generic. This is such that non-distributable conditional
+		// types can be written `[X] extends [Y] ? ...` and be deferred similarly to `X extends Y ? ...`.
+		checkTuples := c.isSimpleTupleType(checkTypeNode) && c.isSimpleTupleType(extendsTypeNode) && len(checkTypeNode.AsTupleTypeNode().Elements.Nodes) == len(extendsTypeNode.AsTupleTypeNode().Elements.Nodes)
+		checkTypeDeferred := c.isDeferredType(checkType, checkTuples)
+		var combinedMapper *TypeMapper
+		if root.inferTypeParameters != nil {
+			// When we're looking at making an inference for an infer type, when we get its constraint, it'll automagically be
+			// instantiated with the context, so it doesn't need the mapper for the inference context - however the constraint
+			// may refer to another _root_, _uncloned_ `infer` type parameter [1], or to something mapped by `mapper` [2].
+			// [1] Eg, if we have `Foo<T, U extends T>` and `Foo<number, infer B>` - `B` is constrained to `T`, which, in turn, has been instantiated
+			// as `number`
+			// Conversely, if we have `Foo<infer A, infer B>`, `B` is still constrained to `T` and `T` is instantiated as `A`
+			// [2] Eg, if we have `Foo<T, U extends T>` and `Foo<Q, infer B>` where `Q` is mapped by `mapper` into `number` - `B` is constrained to `T`
+			// which is in turn instantiated as `Q`, which is in turn instantiated as `number`.
+			// So we need to:
+			//    * combine `context.nonFixingMapper` with `mapper` so their constraints can be instantiated in the context of `mapper` (otherwise they'd only get inference context information)
+			//    * incorporate all of the component mappers into the combined mapper for the true and false members
+			// This means we have two mappers that need applying:
+			//    * The original `mapper` used to create this conditional
+			//    * The mapper that maps the infer type parameter to its inference result (`context.mapper`)
+			context := c.newInferenceContext(root.inferTypeParameters, nil /*signature*/, InferenceFlagsNone, nil)
+			if mapper != nil {
+				context.nonFixingMapper = c.combineTypeMappers(context.nonFixingMapper, mapper)
+			}
+			if !checkTypeDeferred {
+				// We don't want inferences from constraints as they may cause us to eagerly resolve the
+				// conditional type instead of deferring resolution. Also, we always want strict function
+				// types rules (i.e. proper contravariance) for inferences.
+				c.inferTypes(context.inferences, checkType, extendsType, InferencePriorityNoConstraints|InferencePriorityAlwaysStrict, false)
+			}
+			// It's possible for 'infer T' type paramteters to be given uninstantiated constraints when the
+			// those type parameters are used in type references (see getInferredTypeParameterConstraint). For
+			// that reason we need context.mapper to be first in the combined mapper. See #42636 for examples.
+			if mapper != nil {
+				combinedMapper = c.combineTypeMappers(context.mapper, mapper)
+			} else {
+				combinedMapper = context.mapper
+			}
+		}
+		// Instantiate the extends type including inferences for 'infer T' type parameters
+		var inferredExtendsType *Type
+		if combinedMapper != nil {
+			inferredExtendsType = c.instantiateType(root.extendsType, combinedMapper)
+		} else {
+			inferredExtendsType = extendsType
+		}
+		// We attempt to resolve the conditional type only when the check and extends types are non-generic
+		if !checkTypeDeferred && !c.isDeferredType(inferredExtendsType, checkTuples) {
+			// Return falseType for a definitely false extends check. We check an instantiations of the two
+			// types with type parameters mapped to the wildcard type, the most permissive instantiations
+			// possible (the wildcard type is assignable to and from all types). If those are not related,
+			// then no instantiations will be and we can just return the false branch type.
+			if inferredExtendsType.flags&TypeFlagsAnyOrUnknown == 0 && (checkType.flags&TypeFlagsAny != 0 || !c.isTypeAssignableTo(c.getPermissiveInstantiation(checkType), c.getPermissiveInstantiation(inferredExtendsType))) {
+				// Return union of trueType and falseType for 'any' since it matches anything. Furthermore, for a
+				// distributive conditional type applied to the constraint of a type variable, include trueType if
+				// there are possible values of the check type that are also possible values of the extends type.
+				// We use a reverse assignability check as it is less expensive than the comparable relationship
+				// and avoids false positives of a non-empty intersection check.
+				if checkType.flags&TypeFlagsAny != 0 || forConstraint && inferredExtendsType.flags&TypeFlagsNever == 0 && someType(c.getPermissiveInstantiation(inferredExtendsType), func(t *Type) bool {
+					return c.isTypeAssignableTo(t, c.getPermissiveInstantiation(checkType))
+				}) {
+					extraTypes = append(extraTypes, c.instantiateType(c.getTypeFromTypeNode(root.node.TrueType), core.OrElse(combinedMapper, mapper)))
+				}
+				// If falseType is an immediately nested conditional type that isn't distributive or has an
+				// identical checkType, switch to that type and loop.
+				falseType := c.getTypeFromTypeNode(root.node.FalseType)
+				if falseType.flags&TypeFlagsConditional != 0 {
+					newRoot := falseType.AsConditionalType().root
+					if newRoot.node.Parent == root.node.AsNode() && (!newRoot.isDistributive || newRoot.checkType == root.checkType) {
+						root = newRoot
+						continue
+					}
+					if newRoot, newRootMapper := c.getTailRecursionRoot(falseType, mapper); newRoot != nil {
+						root = newRoot
+						mapper = newRootMapper
+						alias = nil
+						if newRoot.alias != nil {
+							tailCount++
+						}
+						continue
+					}
+				}
+				result = c.instantiateType(falseType, mapper)
+				break
+			}
+			// Return trueType for a definitely true extends check. We check instantiations of the two
+			// types with type parameters mapped to their restrictive form, i.e. a form of the type parameter
+			// that has no constraint. This ensures that, for example, the type
+			//   type Foo<T extends { x: any }> = T extends { x: string } ? string : number
+			// doesn't immediately resolve to 'string' instead of being deferred.
+			if inferredExtendsType.flags&TypeFlagsAnyOrUnknown != 0 || c.isTypeAssignableTo(c.getRestrictiveInstantiation(checkType), c.getRestrictiveInstantiation(inferredExtendsType)) {
+				trueType := c.getTypeFromTypeNode(root.node.TrueType)
+				trueMapper := core.OrElse(combinedMapper, mapper)
+				if newRoot, newRootMapper := c.getTailRecursionRoot(trueType, trueMapper); newRoot != nil {
+					root = newRoot
+					mapper = newRootMapper
+					alias = nil
+					if newRoot.alias != nil {
+						tailCount++
+					}
+					continue
+				}
+				result = c.instantiateType(trueType, trueMapper)
+				break
+			}
+		}
+		// Return a deferred type for a check that is neither definitely true nor definitely false
+		result = c.newConditionalType(root, mapper, combinedMapper)
+		if alias != nil {
+			result.alias = alias
+		} else {
+			result.alias = c.instantiateTypeAlias(root.alias, mapper)
+		}
+		break
+	}
+	if extraTypes != nil {
+		return c.getUnionType(append(extraTypes, result))
+	}
+	return result
+}
+
+// We tail-recurse for generic conditional types that (a) have not already been evaluated and cached, and
+// (b) are non distributive, have a check type that is unaffected by instantiation, or have a non-union check
+// type. Note that recursion is possible only through aliased conditional types, so we only increment the tail
+// recursion counter for those.
+func (c *Checker) getTailRecursionRoot(newType *Type, newMapper *TypeMapper) (*ConditionalRoot, *TypeMapper) {
+	if newType.flags&TypeFlagsConditional != 0 && newMapper != nil {
+		newRoot := newType.AsConditionalType().root
+		if newRoot.outerTypeParameters != nil {
+			typeParamMapper := c.combineTypeMappers(newType.AsConditionalType().mapper, newMapper)
+			typeArguments := core.Map(newRoot.outerTypeParameters, func(t *Type) *Type { return typeParamMapper.Map(t) })
+			newRootMapper := newTypeMapper(newRoot.outerTypeParameters, typeArguments)
+			var newCheckType *Type
+			if newRoot.isDistributive {
+				newCheckType = newRootMapper.Map(newRoot.checkType)
+			}
+			if newCheckType == nil || newCheckType == newRoot.checkType || newCheckType.flags&(TypeFlagsUnion|TypeFlagsNever) == 0 {
+				return newRoot, newRootMapper
+			}
+		}
+	}
+	return nil, nil
+}
+
+func (c *Checker) isSimpleTupleType(node *ast.Node) bool {
+	return ast.IsTupleTypeNode(node) && len(node.AsTupleTypeNode().Elements.Nodes) > 0 && !core.Some(node.AsTupleTypeNode().Elements.Nodes, func(e *ast.Node) bool {
+		return ast.IsOptionalTypeNode(e) || ast.IsRestTypeNode(e) || ast.IsNamedTupleMember(e) && (e.AsNamedTupleMember().QuestionToken != nil || e.AsNamedTupleMember().DotDotDotToken != nil)
+	})
+}
+
+func (c *Checker) isDeferredType(t *Type, checkTuples bool) bool {
+	return c.isGenericType(t) || checkTuples && isTupleType(t) && core.Some(c.getElementTypes(t), c.isGenericType)
+}
+
+func (c *Checker) getPermissiveInstantiation(t *Type) *Type {
+	if t.flags&(TypeFlagsPrimitive|TypeFlagsAnyOrUnknown|TypeFlagsNever) != 0 {
+		return t
+	}
+	key := CachedTypeKey{kind: CachedTypeKindPermissiveInstantiation, typeId: t.id}
+	if cached := c.cachedTypes[key]; cached != nil {
+		return cached
+	}
+	result := c.instantiateType(t, c.permissiveMapper)
+	c.cachedTypes[key] = result
+	return result
+}
+
+func (c *Checker) getRestrictiveInstantiation(t *Type) *Type {
+	if t.flags&(TypeFlagsPrimitive|TypeFlagsAnyOrUnknown|TypeFlagsNever) != 0 {
+		return t
+	}
+	key := CachedTypeKey{kind: CachedTypeKindRestrictiveInstantiation, typeId: t.id}
+	if cached := c.cachedTypes[key]; cached != nil {
+		return cached
+	}
+	result := c.instantiateType(t, c.restrictiveMapper)
+	c.cachedTypes[key] = result
+	// We set the following so we don't attempt to set the restrictive instance of a restrictive instance
+	// which is redundant - we'll produce new type identities, but all type params have already been mapped.
+	// This also gives us a way to detect restrictive instances upon comparisons and _disable_ the "distributeive constraint"
+	// assignability check for them, which is distinctly unsafe, as once you have a restrctive instance, all the type parameters
+	// are constrained to `unknown` and produce tons of false positives/negatives!
+	c.cachedTypes[CachedTypeKey{kind: CachedTypeKindRestrictiveInstantiation, typeId: result.id}] = result
+	return result
+}
+
+func (c *Checker) getRestrictiveTypeParameter(t *Type) *Type {
+	if t.AsTypeParameter().constraint == nil && c.getConstraintDeclaration(t) == nil || t.AsTypeParameter().constraint == c.noConstraintType {
+		return t
+	}
+	key := CachedTypeKey{kind: CachedTypeKindRestrictiveTypeParameter, typeId: t.id}
+	if cached := c.cachedTypes[key]; cached != nil {
+		return cached
+	}
+	result := c.newTypeParameter(t.symbol)
+	result.AsTypeParameter().constraint = c.noConstraintType
+	c.cachedTypes[key] = result
+	return result
+}
+
+func (c *Checker) restrictiveMapperWorker(t *Type) *Type {
+	if t.flags&TypeFlagsTypeParameter != 0 {
+		return c.getRestrictiveTypeParameter(t)
+	}
+	return t
+}
+
+func (c *Checker) permissiveMapperWorker(t *Type) *Type {
+	if t.flags&TypeFlagsTypeParameter != 0 {
+		return c.wildcardType
+	}
+	return t
+}
+
+func (c *Checker) getTrueTypeFromConditionalType(t *Type) *Type {
+	d := t.AsConditionalType()
+	if d.resolvedTrueType == nil {
+		d.resolvedTrueType = c.instantiateType(c.getTypeFromTypeNode(d.root.node.TrueType), d.mapper)
+	}
+	return d.resolvedTrueType
+}
+
+func (c *Checker) getFalseTypeFromConditionalType(t *Type) *Type {
+	d := t.AsConditionalType()
+	if d.resolvedFalseType == nil {
+		d.resolvedFalseType = c.instantiateType(c.getTypeFromTypeNode(d.root.node.FalseType), d.mapper)
+	}
+	return d.resolvedFalseType
+}
+
+func (c *Checker) getInferredTrueTypeFromConditionalType(t *Type) *Type {
+	d := t.AsConditionalType()
+	if d.resolvedTrueType == nil {
+		if d.combinedMapper != nil {
+			d.resolvedTrueType = c.instantiateType(c.getTypeFromTypeNode(d.root.node.TrueType), d.mapper)
+		} else {
+			d.resolvedTrueType = c.getTrueTypeFromConditionalType(t)
+		}
+	}
+	return d.resolvedTrueType
+}
+
 func (c *Checker) createTypeFromGenericGlobalType(genericGlobalType *Type, typeArguments []*Type) *Type {
 	if genericGlobalType != c.emptyGenericType {
 		return c.createTypeReference(genericGlobalType, typeArguments)
@@ -15500,7 +16081,7 @@ func (c *Checker) createTypeReference(target *Type, typeArguments []*Type) *Type
 
 func (c *Checker) createDeferredTypeReference(target *Type, node *ast.Node, mapper *TypeMapper, alias *TypeAlias) *Type {
 	if alias == nil {
-		alias := c.getAliasForTypeNode(node)
+		alias = c.getAliasForTypeNode(node)
 		if alias != nil && mapper != nil {
 			alias.typeArguments = c.instantiateTypes(alias.typeArguments, mapper)
 		}
@@ -15605,6 +16186,16 @@ func (c *Checker) newStringMappingType(symbol *ast.Symbol, target *Type) *Type {
 	t := c.newType(TypeFlagsStringMapping, ObjectFlagsNone, data)
 	t.symbol = symbol
 	return t
+}
+
+func (c *Checker) newConditionalType(root *ConditionalRoot, mapper *TypeMapper, combinedMapper *TypeMapper) *Type {
+	data := &ConditionalType{}
+	data.root = root
+	data.checkType = c.instantiateType(root.checkType, mapper)
+	data.extendsType = c.instantiateType(root.extendsType, mapper)
+	data.mapper = mapper
+	data.combinedMapper = combinedMapper
+	return c.newType(TypeFlagsConditional, ObjectFlagsNone, data)
 }
 
 func (c *Checker) newSignature(flags SignatureFlags, declaration *ast.Node, typeParameters []*Type, thisParameter *ast.Symbol, parameters []*ast.Symbol, resolvedReturnType *Type, resolvedTypePredicate *TypePredicate, minArgumentCount int) *Signature {
@@ -18064,22 +18655,6 @@ func (c *Checker) getRegularTypeOfObjectLiteral(t *Type) *Type {
 	return t // !!!
 }
 
-func (c *Checker) getTrueTypeFromConditionalType(t *Type) *Type {
-	data := t.AsConditionalType()
-	if data.resolvedTrueType == nil {
-		data.resolvedTrueType = c.instantiateType(c.getTypeFromTypeNode(data.root.node.AsConditionalTypeNode().TrueType), data.mapper)
-	}
-	return data.resolvedTrueType
-}
-
-func (c *Checker) getFalseTypeFromConditionalType(t *Type) *Type {
-	data := t.AsConditionalType()
-	if data.resolvedFalseType == nil {
-		data.resolvedFalseType = c.instantiateType(c.getTypeFromTypeNode(data.root.node.AsConditionalTypeNode().FalseType), data.mapper)
-	}
-	return data.resolvedFalseType
-}
-
 func (c *Checker) markLinkedReferences(location *ast.Node, hint ReferenceHint, propSymbol *ast.Symbol, parentType *Type) {
 	// !!!
 }
@@ -19109,16 +19684,29 @@ func (c *Checker) getIndexedMappedTypeSubstitutedTypeOfContextualType(t *Type, n
 		propertyNameType = c.getStringLiteralType(name)
 	}
 	constraint := c.getConstraintTypeFromMappedType(t)
-	// !!!
 	// special case for conditional types pretending to be negated types
-	// if t.nameType != nil && c.isExcludedMappedPropertyName(t.nameType, propertyNameType) || c.isExcludedMappedPropertyName(constraint, propertyNameType) {
-	// 	return
-	// }
+	if t.AsMappedType().nameType != nil && c.isExcludedMappedPropertyName(t.AsMappedType().nameType, propertyNameType) || c.isExcludedMappedPropertyName(constraint, propertyNameType) {
+		return nil
+	}
 	constraintOfConstraint := c.getBaseConstraintOrType(constraint)
 	if !c.isTypeAssignableTo(propertyNameType, constraintOfConstraint) {
 		return nil
 	}
 	return c.substituteIndexedMappedType(t, propertyNameType)
+}
+
+func (c *Checker) isExcludedMappedPropertyName(t *Type, propertyNameType *Type) bool {
+	if t.flags&TypeFlagsConditional != 0 {
+		return c.getReducedType(c.getTrueTypeFromConditionalType(t)).flags&TypeFlagsNever != 0 &&
+			c.getActualTypeVariable(c.getFalseTypeFromConditionalType(t)) == c.getActualTypeVariable(t.AsConditionalType().checkType) &&
+			c.isTypeAssignableTo(propertyNameType, t.AsConditionalType().extendsType)
+	}
+	if t.flags&TypeFlagsIntersection != 0 {
+		return core.Some(t.Types(), func(t *Type) bool {
+			return c.isExcludedMappedPropertyName(t, propertyNameType)
+		})
+	}
+	return false
 }
 
 func (c *Checker) getTypeOfConcretePropertyOfContextualType(t *Type, name string) *Type {

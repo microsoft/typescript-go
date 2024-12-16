@@ -553,6 +553,13 @@ func SkipParentheses(node *Expression) *Expression {
 	return SkipOuterExpressions(node, OEKParentheses)
 }
 
+func SkipTypeParentheses(node *Node) *Node {
+	for IsParenthesizedTypeNode(node) {
+		node = node.AsParenthesizedTypeNode().Type
+	}
+	return node
+}
+
 func SkipPartiallyEmittedExpressions(node *Expression) *Expression {
 	return SkipOuterExpressions(node, OEKPartiallyEmittedExpressions)
 }

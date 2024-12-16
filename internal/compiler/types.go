@@ -968,7 +968,7 @@ type SubstitutionType struct {
 }
 
 type ConditionalRoot struct {
-	node                *ast.Node // ConditionalTypeNode
+	node                *ast.ConditionalTypeNode
 	checkType           *Type
 	extendsType         *Type
 	isDistributive      bool
