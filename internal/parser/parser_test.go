@@ -11,6 +11,7 @@ import (
 	"strings"
 	"sync"
 	"testing"
+	"unicode/utf16"
 	"unicode/utf8"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -70,7 +71,7 @@ func TestParseSingleAgainstTSC(t *testing.T) {
 	}
 	t.Parallel()
 	osfs := vfs.FromOS()
-	parseTestComparisonWorker(osfs, t)(tspath.CombinePaths(repo.TypeScriptSubmodulePath, "tests/cases/compiler/collisionCodeGenModuleWithUnicodeNames.ts"), nil, nil)
+	parseTestComparisonWorker(osfs, t)(tspath.CombinePaths(repo.TypeScriptSubmodulePath, "tests/cases/compiler/extendedUnicodePlaneIdentifiersJSDoc.ts"), nil, nil)
 }
 
 func parseTestComparisonWorker(osfs vfs.FS, t *testing.T) func(fileName string, d fs.DirEntry, err error) error {
@@ -114,8 +115,17 @@ func findTwoByteUTF8(text string) []int {
 		return byteOffsets
 	}
 	for i := 0; i < len(text); {
-		_, size := utf8.DecodeRuneInString(text[i:])
-		for j := 1; j < size; j++ {
+		r, size := utf8.DecodeRuneInString(text[i:])
+		if size == 1 {
+			i++
+			continue
+		}
+		ur1, _ := utf16.EncodeRune(r)
+		var dstOffset int
+		if ur1 != 0xFFFD {
+			dstOffset = 1
+		}
+		for j := 1; j < size - dstOffset; j++ {
 			byteOffsets = append(byteOffsets, i+j)
 		}
 		i += size
@@ -201,7 +211,7 @@ func printAST(sourceFile *ast.SourceFile, utf8offsets []int) string {
 		if node.Kind == ast.KindImportSpecifier {
 			parent = node
 		}
-		if offsetindex < len(utf8offsets) && node.Loc.Pos() > utf8offsets[offsetindex] {
+		for offsetindex < len(utf8offsets) && node.Loc.Pos() > utf8offsets[offsetindex] {
 			utf8offset++
 			offsetindex++
 		}
