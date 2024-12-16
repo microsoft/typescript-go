@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/bundled"
 	ts "github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/scanner"
@@ -77,7 +78,7 @@ func main() {
 		compilerOptions.OutDir = tspath.ResolvePath(currentDirectory, outDir)
 	}
 
-	fs := vfs.FromOS()
+	fs := bundled.WrapFS(vfs.FromOS())
 	useCaseSensitiveFileNames := fs.UseCaseSensitiveFileNames()
 	host := ts.NewCompilerHost(compilerOptions, currentDirectory, fs)
 
@@ -87,7 +88,13 @@ func main() {
 		os.Exit(1)
 	}
 
-	programOptions := ts.ProgramOptions{RootPath: normalizedRootPath, Options: compilerOptions, SingleThreaded: singleThreaded, Host: host}
+	programOptions := ts.ProgramOptions{
+		RootPath:           normalizedRootPath,
+		Options:            compilerOptions,
+		SingleThreaded:     singleThreaded,
+		Host:               host,
+		DefaultLibraryPath: bundled.LibPath(),
+	}
 
 	if pprofDir != "" {
 		profileSession := beginProfiling(pprofDir)
