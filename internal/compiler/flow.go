@@ -1274,12 +1274,10 @@ func (c *Checker) getTypeAtFlowLoopLabel(f *FlowState, flow *ast.FlowNode) FlowT
 			// All but the first antecedent are the looping control flow paths that lead
 			// back to the loop junction. We track these on the flow loop stack.
 			c.flowLoopStack = append(c.flowLoopStack, FlowLoopInfo{key: key, types: antecedentTypes})
+			saveFlowTypeCache := c.flowTypeCache
+			c.flowTypeCache = nil
 			flowType = c.getTypeAtFlowNode(f, list.Flow)
-			// !!!
-			// saveFlowTypeCache := c.flowTypeCache
-			// c.flowTypeCache = nil
-			// flowType = getTypeAtFlowNode(antecedent)
-			// c.flowTypeCache = saveFlowTypeCache
+			c.flowTypeCache = saveFlowTypeCache
 			c.flowLoopStack = c.flowLoopStack[:len(c.flowLoopStack)-1]
 			// If we see a value appear in the cache it is a sign that control flow analysis
 			// was restarted and completed by checkExpressionCached. We can simply pick up
@@ -2031,7 +2029,7 @@ func (c *Checker) getSymbolHasInstanceMethodOfObjectType(t *Type) *Type {
 }
 
 func (c *Checker) getPropertyNameForKnownSymbolName(symbolName string) string {
-	ctorType := c.getGlobalESSymbolConstructorSymbol()
+	ctorType := c.getGlobalESSymbolConstructorSymbolOrNil()
 	if ctorType != nil {
 		uniqueType := c.getTypeOfPropertyOfType(c.getTypeOfSymbol(ctorType), symbolName)
 		if uniqueType != nil && isTypeUsableAsPropertyName(uniqueType) {
