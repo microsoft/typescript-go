@@ -881,7 +881,7 @@ func (s *Scanner) ReScanSlashToken() ast.Kind {
 					break
 				}
 			}
-			s.errorAt(diagnostics.Unterminated_regular_expression_literal, s.tokenStart, s.pos - s.tokenStart);
+			s.errorAt(diagnostics.Unterminated_regular_expression_literal, s.tokenStart, s.pos-s.tokenStart)
 		} else {
 			// Consume the slash character
 			s.pos++
