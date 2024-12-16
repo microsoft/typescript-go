@@ -18,6 +18,7 @@ type CompilerOptions struct {
 	CustomConditions                   []string             `json:"customConditions"`
 	EmitDeclarationOnly                Tristate             `json:"emitDeclarationOnly"`
 	EmitBOM                            Tristate             `json:"emitBOM"`
+	DownlevelIteration                 Tristate             `json:"downlevelIteration"`
 	ESModuleInterop                    Tristate             `json:"esModuleInterop"`
 	ExactOptionalPropertyTypes         Tristate             `json:"exactOptionalPropertyTypes"`
 	ExperimentalDecorators             Tristate             `json:"experimentalDecorators"`
