@@ -4531,15 +4531,15 @@ type JsxNamespacedName struct {
 	Namespace *IdentifierNode // IdentifierNode
 }
 
-func (f *NodeFactory) NewJsxNamespacedName(name *IdentifierNode, namespace *IdentifierNode) *Node {
+func (f *NodeFactory) NewJsxNamespacedName(namespace *IdentifierNode, name *IdentifierNode) *Node {
 	data := &JsxNamespacedName{}
-	data.name = name
 	data.Namespace = namespace
+	data.name = name
 	return newNode(KindJsxNamespacedName, data)
 }
 
 func (node *JsxNamespacedName) ForEachChild(v Visitor) bool {
-	return visit(v, node.name) || visit(v, node.Namespace)
+	return visit(v, node.Namespace) || visit(v, node.name)
 }
 
 func (node *JsxNamespacedName) Name() *DeclarationName {
@@ -4659,6 +4659,10 @@ func (f *NodeFactory) NewJsxAttribute(name *JsxAttributeName, initializer *JsxAt
 	data.name = name
 	data.Initializer = initializer
 	return newNode(KindJsxAttribute, data)
+}
+
+func (node *JsxAttribute) Name() *JsxAttributeName {
+	return node.name
 }
 
 func (node *JsxAttribute) ForEachChild(v Visitor) bool {

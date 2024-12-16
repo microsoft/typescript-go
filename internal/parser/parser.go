@@ -239,6 +239,9 @@ func (p *Parser) parseSourceFileWorker() *ast.SourceFile {
 	result.SetDiagnostics(attachFileToDiagnostics(p.diagnostics, result))
 	result.ExternalModuleIndicator = isFileProbablyExternalModule(result)
 	result.IsDeclarationFile = isDeclarationFile
+	result.LanguageVersion = p.languageVersion
+	result.LanguageVariant = p.languageVariant
+	result.ScriptKind = p.scriptKind
 	return result
 }
 
@@ -3155,8 +3158,8 @@ func (p *Parser) nextTokenIsColonOrQuestionColon() bool {
 }
 
 func (p *Parser) parseTupleElementType() *ast.TypeNode {
+	pos := p.nodePos()
 	if p.parseOptional(ast.KindDotDotDotToken) {
-		pos := p.nodePos()
 		result := p.factory.NewRestTypeNode(p.parseType())
 		p.finishNode(result, pos)
 		return result
@@ -3164,7 +3167,6 @@ func (p *Parser) parseTupleElementType() *ast.TypeNode {
 	typeNode := p.parseType()
 	// If next token is start of a type we have a conditional type and not an optional type
 	if p.token == ast.KindQuestionToken && !p.lookAhead(p.nextIsStartOfType) {
-		pos := p.nodePos()
 		p.nextToken()
 		typeNode = p.factory.NewOptionalTypeNode(typeNode)
 		p.finishNode(typeNode, pos)
