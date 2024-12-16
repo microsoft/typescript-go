@@ -1461,8 +1461,7 @@ func (p *Parser) parseClassElement() *ast.Node {
 	if modifiers != nil {
 		// treat this as a property declaration with a missing name.
 		p.parseErrorAt(p.nodePos(), p.nodePos(), diagnostics.Declaration_expected)
-		name := p.newIdentifier("")
-		p.finishNode(name, p.nodePos())
+		name := p.createMissingIdentifier()
 		return p.parsePropertyDeclaration(pos, hasJSDoc, modifiers, name, nil /*questionToken*/)
 	}
 	// 'isClassMemberStart' should have hinted not to attempt parsing.
