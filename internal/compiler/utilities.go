@@ -2561,7 +2561,7 @@ func isJSDocOptionalParameter(node *ast.ParameterDeclaration) bool {
 	return false // !!!
 }
 
-func isQuestionToken(node *ast.Node) bool {
+func IsQuestionToken(node *ast.Node) bool {
 	return node != nil && node.Kind == ast.KindQuestionToken
 }
 
@@ -2574,17 +2574,17 @@ func isOptionalDeclaration(declaration *ast.Node) bool {
 	case ast.KindParameter:
 		return declaration.AsParameterDeclaration().QuestionToken != nil
 	case ast.KindPropertyDeclaration:
-		return isQuestionToken(declaration.AsPropertyDeclaration().PostfixToken)
+		return IsQuestionToken(declaration.AsPropertyDeclaration().PostfixToken)
 	case ast.KindPropertySignature:
-		return isQuestionToken(declaration.AsPropertySignatureDeclaration().PostfixToken)
+		return IsQuestionToken(declaration.AsPropertySignatureDeclaration().PostfixToken)
 	case ast.KindMethodDeclaration:
-		return isQuestionToken(declaration.AsMethodDeclaration().PostfixToken)
+		return IsQuestionToken(declaration.AsMethodDeclaration().PostfixToken)
 	case ast.KindMethodSignature:
-		return isQuestionToken(declaration.AsMethodSignatureDeclaration().PostfixToken)
+		return IsQuestionToken(declaration.AsMethodSignatureDeclaration().PostfixToken)
 	case ast.KindPropertyAssignment:
-		return isQuestionToken(declaration.AsPropertyAssignment().PostfixToken)
+		return IsQuestionToken(declaration.AsPropertyAssignment().PostfixToken)
 	case ast.KindShorthandPropertyAssignment:
-		return isQuestionToken(declaration.AsShorthandPropertyAssignment().PostfixToken)
+		return IsQuestionToken(declaration.AsShorthandPropertyAssignment().PostfixToken)
 	}
 	return false
 }
@@ -3507,9 +3507,6 @@ func getAccessibleFileSystemEntries(path string, host vfs.FS) FileSystemEntries 
 			continue
 		}
 
-		// if dirent.IsDir() {
-		// 	directories = append(directories, entry)
-		// } else {
 		index := strings.Index(entry[1:], string("."))
 		if index == -1 {
 			directories = append(directories, entry)
@@ -3537,9 +3534,9 @@ type FileMatcherPatterns struct {
 type usage string
 
 const (
-	files       usage = "files"
-	directories usage = "directories"
-	exclude     usage = "exclude"
+	usageFiles       usage = "files"
+	usageDirectories usage = "directories"
+	usageExclude     usage = "exclude"
 )
 
 func GetRegularExpressionsForWildcards(specs []string, basePath string, usage usage) []string {
@@ -3650,9 +3647,9 @@ var excludeMatcher = WildcardMatcher{
 }
 
 var wildcardMatchers = map[usage]WildcardMatcher{
-	files:       filesMatcher,
-	directories: directoriesMatcher,
-	exclude:     excludeMatcher,
+	usageFiles:       filesMatcher,
+	usageDirectories: directoriesMatcher,
+	usageExclude:     excludeMatcher,
 }
 
 func getSubPatternFromSpec(
