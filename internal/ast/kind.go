@@ -7,8 +7,10 @@ type Kind int16
 const (
 	KindUnknown Kind = iota
 	KindEndOfFile
-	KindWhitespaceTrivia
+	KindSingleLineCommentTrivia
+	KindMultiLineCommentTrivia
 	KindNewLineTrivia
+	KindWhitespaceTrivia
 	KindConflictMarkerTrivia
 	KindNonTextFileMarkerTrivia
 	KindNumericLiteral
@@ -419,4 +421,5 @@ const (
 	KindLastJSDocTagNode        = KindJSDocImportTag
 	KindFirstContextualKeyword  = KindAbstractKeyword
 	KindLastContextualKeyword   = KindOfKeyword
+	KindComment                 = KindSingleLineCommentTrivia | KindMultiLineCommentTrivia
 )

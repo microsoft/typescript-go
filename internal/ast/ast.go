@@ -371,6 +371,31 @@ func (n *Node) Initializer() *Node {
 	panic("Unhandled case in Node.Initializer")
 }
 
+func (n *Node) TagName() *Node {
+	switch n.Kind {
+	case KindJsxOpeningElement:
+		return n.AsJsxOpeningElement().TagName
+	case KindJsxClosingElement:
+		return n.AsJsxClosingElement().TagName
+	case KindJsxSelfClosingElement:
+		return n.AsJsxSelfClosingElement().TagName
+		// !!! JSDoc tags
+	}
+	panic("Unhandled case in Node.TagName: " + n.Kind.String())
+}
+
+func (n *Node) PropertyName() *Node {
+	switch n.Kind {
+	case KindImportSpecifier:
+		return n.AsImportSpecifier().PropertyName
+	case KindExportSpecifier:
+		return n.AsExportSpecifier().PropertyName
+	case KindBindingElement:
+		return n.AsBindingElement().PropertyName
+	}
+	panic("Unhandled case in Node.PropertyName: " + n.Kind.String())
+}
+
 // Node casts
 
 func (n *Node) AsIdentifier() *Identifier {
@@ -1028,6 +1053,7 @@ type ImportAttributeName = Node         // Identifier | StringLiteral
 type LeftHandSideExpression = Node      // subset of Expression
 type JSDocComment = Node                // JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain;
 type JSDocTag = Node                    // Node with JSDocTagBase
+type SignatureDeclaration = Node        // CallSignatureDeclaration | ConstructSignatureDeclaration | MethodSignature | IndexSignatureDeclaration | FunctionTypeNode | ConstructorTypeNode | JSDocFunctionType | FunctionDeclaration | MethodDeclaration | ConstructorDeclaration | AccessorDeclaration | FunctionExpression | ArrowFunction;
 
 // Aliases for node singletons
 
@@ -4129,6 +4155,10 @@ func (node *ImportAttributes) ForEachChild(v Visitor) bool {
 	return visitNodeList(v, node.Attributes)
 }
 
+func IsImportAttributes(node *Node) bool {
+	return node.Kind == KindImportAttributes
+}
+
 // TypeQueryNode
 
 type TypeQueryNode struct {
@@ -4225,6 +4255,10 @@ func (node *TupleTypeNode) ForEachChild(v Visitor) bool {
 	return visitNodeList(v, node.Elements)
 }
 
+func IsTupleTypeNode(node *Node) bool {
+	return node.Kind == KindTupleType
+}
+
 // NamedTupleTypeMember
 
 type NamedTupleMember struct {
@@ -4252,6 +4286,7 @@ func (node *NamedTupleMember) ForEachChild(v Visitor) bool {
 func (node *NamedTupleMember) Name() *DeclarationName {
 	return node.name
 }
+
 func IsNamedTupleMember(node *Node) bool {
 	return node.Kind == KindNamedTupleMember
 }
@@ -4273,6 +4308,10 @@ func (node *OptionalTypeNode) ForEachChild(v Visitor) bool {
 	return visit(v, node.Type)
 }
 
+func IsOptionalTypeNode(node *Node) bool {
+	return node.Kind == KindOptionalType
+}
+
 // RestTypeNode
 
 type RestTypeNode struct {
@@ -4288,6 +4327,10 @@ func (f *NodeFactory) NewRestTypeNode(typeNode *TypeNode) *Node {
 
 func (node *RestTypeNode) ForEachChild(v Visitor) bool {
 	return visit(v, node.Type)
+}
+
+func IsRestTypeNode(node *Node) bool {
+	return node.Kind == KindRestType
 }
 
 // ParenthesizedTypeNode
@@ -4526,15 +4569,15 @@ type JsxNamespacedName struct {
 	Namespace *IdentifierNode // IdentifierNode
 }
 
-func (f *NodeFactory) NewJsxNamespacedName(name *IdentifierNode, namespace *IdentifierNode) *Node {
+func (f *NodeFactory) NewJsxNamespacedName(namespace *IdentifierNode, name *IdentifierNode) *Node {
 	data := &JsxNamespacedName{}
-	data.name = name
 	data.Namespace = namespace
+	data.name = name
 	return newNode(KindJsxNamespacedName, data)
 }
 
 func (node *JsxNamespacedName) ForEachChild(v Visitor) bool {
-	return visit(v, node.name) || visit(v, node.Namespace)
+	return visit(v, node.Namespace) || visit(v, node.name)
 }
 
 func (node *JsxNamespacedName) Name() *DeclarationName {
@@ -4654,6 +4697,10 @@ func (f *NodeFactory) NewJsxAttribute(name *JsxAttributeName, initializer *JsxAt
 	data.name = name
 	data.Initializer = initializer
 	return newNode(KindJsxAttribute, data)
+}
+
+func (node *JsxAttribute) Name() *JsxAttributeName {
+	return node.name
 }
 
 func (node *JsxAttribute) ForEachChild(v Visitor) bool {
@@ -5358,7 +5405,6 @@ type JSDocNameReference struct {
 	name *EntityName
 }
 
-// JSDocMemberName
 func NewJSDocNameReference(name *EntityName) *JSDocNameReference {
 	data := &JSDocNameReference{}
 	data.name = name
@@ -5412,6 +5458,10 @@ type SourceFile struct {
 	AmbientModuleNames          []string
 	HasNoDefaultLib             bool
 	jsdocCache                  map[*Node][]*Node
+	Pragmas                     []Pragma
+	ReferencedFiles             []*FileReference
+	TypeReferenceDirectives     []*FileReference
+	LibReferenceDirectives      []*FileReference
 }
 
 func (f *NodeFactory) NewSourceFile(text string, fileName string, statements *NodeList) *Node {
@@ -5457,4 +5507,62 @@ func (node *SourceFile) ForEachChild(v Visitor) bool {
 
 func IsSourceFile(node *Node) bool {
 	return node.Kind == KindSourceFile
+}
+
+type CommentRange struct {
+	core.TextRange
+	HasTrailingNewLine bool
+	Kind               Kind
+}
+
+func NewCommentRange(kind Kind, pos int, end int, hasTrailingNewLine bool) CommentRange {
+	return CommentRange{
+		TextRange:          core.NewTextRange(pos, end),
+		HasTrailingNewLine: hasTrailingNewLine,
+		Kind:               kind,
+	}
+}
+
+type FileReference struct {
+	core.TextRange
+	FileName       string
+	ResolutionMode core.ResolutionMode
+	Preserve       bool
+}
+
+type PragmaArgument struct {
+	core.TextRange
+	Name  string
+	Value string
+}
+
+type Pragma struct {
+	Name      string
+	Args      map[string]PragmaArgument
+	ArgsRange CommentRange
+}
+
+type PragmaKindFlags = uint8
+
+const (
+	PragmaKindFlagsNone PragmaKindFlags = iota
+	PragmaKindTripleSlashXML
+	PragmaKindSingleLine
+	PragmaKindMultiLine
+	PragmaKindAll     = PragmaKindTripleSlashXML | PragmaKindSingleLine | PragmaKindMultiLine
+	PragmaKindDefault = PragmaKindAll
+)
+
+type PragmaArgumentSpecification struct {
+	Name        string
+	Optional    bool
+	CaptureSpan bool
+}
+type PragmaSpecification struct {
+	Args []PragmaArgumentSpecification
+	Kind PragmaKindFlags
+}
+
+func (spec *PragmaSpecification) IsTripleSlash() bool {
+	return (spec.Kind & PragmaKindTripleSlashXML) > 0
 }

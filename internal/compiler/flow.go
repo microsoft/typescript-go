@@ -309,6 +309,9 @@ func (c *Checker) getTypeAtFlowCondition(f *FlowState, flow *ast.FlowNode) FlowT
 	assumeTrue := flow.Flags&ast.FlowFlagsTrueCondition != 0
 	nonEvolvingType := c.finalizeEvolvingArrayType(flowType.t)
 	narrowedType := c.narrowType(f, nonEvolvingType, flow.Node, assumeTrue)
+	if narrowedType == nonEvolvingType {
+		return flowType
+	}
 	return FlowType{t: narrowedType, incomplete: flowType.incomplete}
 }
 
@@ -1273,12 +1276,10 @@ func (c *Checker) getTypeAtFlowLoopLabel(f *FlowState, flow *ast.FlowNode) FlowT
 			// All but the first antecedent are the looping control flow paths that lead
 			// back to the loop junction. We track these on the flow loop stack.
 			c.flowLoopStack = append(c.flowLoopStack, FlowLoopInfo{key: key, types: antecedentTypes})
+			saveFlowTypeCache := c.flowTypeCache
+			c.flowTypeCache = nil
 			flowType = c.getTypeAtFlowNode(f, list.Flow)
-			// !!!
-			// saveFlowTypeCache := c.flowTypeCache
-			// c.flowTypeCache = nil
-			// flowType = getTypeAtFlowNode(antecedent)
-			// c.flowTypeCache = saveFlowTypeCache
+			c.flowTypeCache = saveFlowTypeCache
 			c.flowLoopStack = c.flowLoopStack[:len(c.flowLoopStack)-1]
 			// If we see a value appear in the cache it is a sign that control flow analysis
 			// was restarted and completed by checkExpressionCached. We can simply pick up
@@ -1312,7 +1313,7 @@ func (c *Checker) getTypeAtFlowLoopLabel(f *FlowState, flow *ast.FlowNode) FlowT
 }
 
 func (c *Checker) getTypeAtFlowArrayMutation(f *FlowState, flow *ast.FlowNode) FlowType {
-	if f.declaredType != c.autoType || f.declaredType == c.autoArrayType {
+	if f.declaredType == c.autoType || f.declaredType == c.autoArrayType {
 		node := flow.Node
 		var expr *ast.Node
 		if ast.IsCallExpression(node) {
@@ -1503,7 +1504,7 @@ func (c *Checker) isMatchingReference(source *ast.Node, target *ast.Node) bool {
 	case ast.KindParenthesizedExpression, ast.KindNonNullExpression:
 		return c.isMatchingReference(source, target.Expression())
 	case ast.KindBinaryExpression:
-		return isAssignmentExpression(target, false) && c.isMatchingReference(source, target.AsBinaryExpression().Left) ||
+		return ast.IsAssignmentExpression(target, false) && c.isMatchingReference(source, target.AsBinaryExpression().Left) ||
 			ast.IsBinaryExpression(target) && target.AsBinaryExpression().OperatorToken.Kind == ast.KindCommaToken &&
 				c.isMatchingReference(source, target.AsBinaryExpression().Right)
 	}
@@ -1642,7 +1643,7 @@ func (c *Checker) tryGetElementAccessExpressionName(node *ast.ElementAccessExpre
 	switch {
 	case ast.IsStringOrNumericLiteralLike(node.ArgumentExpression):
 		return node.ArgumentExpression.Text(), true
-	case isEntityNameExpression(node.ArgumentExpression):
+	case ast.IsEntityNameExpression(node.ArgumentExpression):
 		return c.tryGetNameFromEntityNameExpression(node.ArgumentExpression)
 	}
 	return "", false
@@ -2030,7 +2031,7 @@ func (c *Checker) getSymbolHasInstanceMethodOfObjectType(t *Type) *Type {
 }
 
 func (c *Checker) getPropertyNameForKnownSymbolName(symbolName string) string {
-	ctorType := c.getGlobalESSymbolConstructorSymbol()
+	ctorType := c.getGlobalESSymbolConstructorSymbolOrNil()
 	if ctorType != nil {
 		uniqueType := c.getTypeOfPropertyOfType(c.getTypeOfSymbol(ctorType), symbolName)
 		if uniqueType != nil && isTypeUsableAsPropertyName(uniqueType) {

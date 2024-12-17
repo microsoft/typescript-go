@@ -86,7 +86,8 @@ type ValueSymbolLinks struct {
 	target         *ast.Symbol
 	mapper         *TypeMapper
 	nameType       *Type
-	containingType *Type // Containing union or intersection type for synthetic property
+	keyType        *Type // Key type for mapped type member
+	containingType *Type // Mapped type for mapped type property, containing union or intersection type for synthetic property
 }
 
 // Links for alias symbols
@@ -105,6 +106,12 @@ type ModuleSymbolLinks struct {
 	resolvedExports       ast.SymbolTable      // Resolved exports of module or combined early- and late-bound static members of a class.
 	cjsExportMerged       *ast.Symbol          // Version of the symbol with all non export= exports merged with the export= target
 	typeOnlyExportStarMap map[string]*ast.Node // Set on a module symbol when some of its exports were resolved through a 'export type * from "mod"' declaration
+}
+
+// Links for late-bound symbols
+
+type LateBoundLinks struct {
+	lateSymbol *ast.Symbol
 }
 
 // Links for export type symbols
@@ -190,6 +197,10 @@ const (
 	VarianceFlagsUnreliable               VarianceFlags = 1 << 4                                                                                                  // Variance result is unreliable - checking may produce false negatives, but not false positives
 	VarianceFlagsAllowsStructuralFallback               = VarianceFlagsUnmeasurable | VarianceFlagsUnreliable
 )
+
+type IndexSymbolLinks struct {
+	filteredIndexSymbolCache map[string]*ast.Symbol // Symbol with applicable declarations
+}
 
 type AccessFlags uint32
 
@@ -845,7 +856,7 @@ type InstantiationExpressionType struct {
 
 type MappedType struct {
 	ObjectType
-	declaration          ast.MappedTypeNode
+	declaration          *ast.MappedTypeNode
 	typeParameter        *Type
 	constraintType       *Type
 	nameType             *Type
@@ -961,7 +972,7 @@ type SubstitutionType struct {
 }
 
 type ConditionalRoot struct {
-	node                *ast.Node // ConditionalTypeNode
+	node                *ast.ConditionalTypeNode
 	checkType           *Type
 	extendsType         *Type
 	isDistributive      bool
@@ -983,6 +994,12 @@ type ConditionalType struct {
 	resolvedConstraintOfDistributive *Type
 	mapper                           *TypeMapper
 	combinedMapper                   *TypeMapper
+}
+
+type IterationTypes struct {
+	yieldType  *Type
+	returnType *Type
+	nextType   *Type
 }
 
 // SignatureFlags
@@ -1028,8 +1045,8 @@ type Signature struct {
 }
 
 type CompositeSignature struct {
-	flags      TypeFlags // TypeFlagsUnion | TypeFlagsIntersection
-	signatures []*Signature
+	isUnion    bool         // True for union, false for intersection
+	signatures []*Signature // Individual signatures
 }
 
 type TypePredicateKind int32
@@ -1148,4 +1165,29 @@ var LanguageFeatureMinimumTarget = LanguageFeatureMinimumTargetMap{
 	UsingAndAwaitUsing:                core.ScriptTargetESNext,
 	ClassAndClassElementDecorators:    core.ScriptTargetESNext,
 	RegularExpressionFlagsUnicodeSets: core.ScriptTargetESNext,
+}
+
+type ProjectReference struct {
+	path         string
+	originalPath string
+	circular     bool
+}
+
+type FileIncludeKind int
+
+const (
+	FileIncludeKindRootFile FileIncludeKind = iota
+	FileIncludeKindSourceFromProjectReference
+	FileIncludeKindOutputFromProjectReference
+	FileIncludeKindImport
+	FileIncludeKindReferenceFile
+	FileIncludeKindTypeReferenceDirective
+	FileIncludeKindLibFile
+	FileIncludeKindLibReferenceDirective
+	FileIncludeKindAutomaticTypeDirectiveFile
+)
+
+type FileIncludeReason struct {
+	Kind  FileIncludeKind
+	Index int
 }

@@ -1,7 +1,11 @@
 package parser
 
 import (
+	"fmt"
 	"path"
+	"regexp"
+	"strings"
+	"sync"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/compiler/diagnostics"
@@ -233,9 +237,16 @@ func (p *Parser) parseSourceFileWorker() *ast.SourceFile {
 	node := p.factory.NewSourceFile(p.sourceText, p.fileName, statements)
 	p.finishNode(node, pos)
 	result := node.AsSourceFile()
+
+	result.Pragmas = getCommentPragmas(p.sourceText)
+	processPragmasIntoFields(result)
+
 	result.SetDiagnostics(attachFileToDiagnostics(p.diagnostics, result))
 	result.ExternalModuleIndicator = isFileProbablyExternalModule(result)
 	result.IsDeclarationFile = isDeclarationFile
+	result.LanguageVersion = p.languageVersion
+	result.LanguageVariant = p.languageVariant
+	result.ScriptKind = p.scriptKind
 	return result
 }
 
@@ -1455,7 +1466,7 @@ func (p *Parser) parseClassElement() *ast.Node {
 	if modifiers != nil {
 		// treat this as a property declaration with a missing name.
 		p.parseErrorAt(p.nodePos(), p.nodePos(), diagnostics.Declaration_expected)
-		name := p.newIdentifier("")
+		name := p.createMissingIdentifier()
 		return p.parsePropertyDeclaration(pos, hasJSDoc, modifiers, name, nil /*questionToken*/)
 	}
 	// 'isClassMemberStart' should have hinted not to attempt parsing.
@@ -3193,8 +3204,8 @@ func (p *Parser) nextTokenIsColonOrQuestionColon() bool {
 }
 
 func (p *Parser) parseTupleElementType() *ast.TypeNode {
+	pos := p.nodePos()
 	if p.parseOptional(ast.KindDotDotDotToken) {
-		pos := p.nodePos()
 		result := p.factory.NewRestTypeNode(p.parseType())
 		p.finishNode(result, pos)
 		return result
@@ -3202,7 +3213,6 @@ func (p *Parser) parseTupleElementType() *ast.TypeNode {
 	typeNode := p.parseType()
 	// If next token is start of a type we have a conditional type and not an optional type
 	if p.token == ast.KindQuestionToken && !p.lookAhead(p.nextIsStartOfType) {
-		pos := p.nodePos()
 		p.nextToken()
 		typeNode = p.factory.NewOptionalTypeNode(typeNode)
 		p.finishNode(typeNode, pos)
@@ -5453,9 +5463,7 @@ func (p *Parser) createIdentifierWithDiagnostic(isIdentifier bool, diagnosticMes
 	} else {
 		p.parseErrorAtCurrentToken(diagnostics.Identifier_expected)
 	}
-	result := p.newIdentifier("")
-	p.finishNode(result, p.nodePos())
-	return result
+	return p.createMissingIdentifier()
 }
 
 func (p *Parser) internIdentifier(text string) {
@@ -6000,4 +6008,186 @@ func attachFileToDiagnostics(diagnostics []*ast.Diagnostic, file *ast.SourceFile
 		d.SetFile(file)
 	}
 	return diagnostics
+}
+
+func getCommentPragmas(sourceText string) (pragmas []ast.Pragma) {
+	for commentRange := range scanner.GetLeadingCommentRanges(sourceText, 0) {
+		comment := sourceText[commentRange.Pos():commentRange.End()]
+		pragmas = extractPragmas(commentRange, comment)
+	}
+
+	return pragmas
+}
+
+var ReferencePragmaSpec = &ast.PragmaSpecification{
+	Args: []ast.PragmaArgumentSpecification{
+		{Name: "types", Optional: false, CaptureSpan: true},
+		{Name: "lib", Optional: false, CaptureSpan: true},
+		{Name: "path", Optional: false, CaptureSpan: true},
+		{Name: "no-default-lib", Optional: false, CaptureSpan: true},
+		{Name: "resolution-mode", Optional: false, CaptureSpan: true},
+		{Name: "preserve", Optional: false, CaptureSpan: true},
+	},
+	Kind: ast.PragmaKindTripleSlashXML,
+}
+
+func getCommentPragmaSpec(name string) (*ast.PragmaSpecification, bool) {
+	switch name {
+	case "reference":
+		return ReferencePragmaSpec, true
+	default:
+		return nil, false
+	}
+}
+
+type NamedArgRegEx struct {
+	regex *regexp.Regexp
+	once  sync.Once
+}
+
+var namedArgRegExCache sync.Map
+
+func getNamedArgRegEx(name string) *regexp.Regexp {
+	value, _ := namedArgRegExCache.LoadOrStore(name, &NamedArgRegEx{})
+	namedArgRegex := value.(*NamedArgRegEx)
+	namedArgRegex.once.Do(func() {
+		namedArgRegex.regex = regexp.MustCompile(fmt.Sprintf(`(?im)(\s%s\s*=\s*)(?:(?:'([^']*)')|(?:"([^"]*)"))`, name))
+	})
+	return namedArgRegex.regex
+}
+
+var tripleSlashXMLCommentStartRegEx = regexp.MustCompile(`(?m)^\/\/\/\s*<(\S+)\s.*?\/>`)
+var singleLinePragmaRegEx = regexp.MustCompile(`(?m)^\/\/\/?\s*@([^\s:]+)((?:[^\S\r\n]|:).*)?$`)
+
+func extractPragmas(commentRange ast.CommentRange, text string) []ast.Pragma {
+	if commentRange.Kind == ast.KindSingleLineCommentTrivia {
+		matches := tripleSlashXMLCommentStartRegEx.FindStringSubmatch(text)
+		if len(matches) < 2 {
+			return nil
+		}
+
+		name := strings.ToLower(matches[1])
+		pragmaSpec, ok := getCommentPragmaSpec(name)
+		if !(ok && pragmaSpec.IsTripleSlash()) {
+			return nil
+		}
+
+		pragma := ast.Pragma{
+			Name:      name,
+			Args:      make(map[string]ast.PragmaArgument),
+			ArgsRange: commentRange,
+		}
+		if len(pragmaSpec.Args) > 0 {
+			for _, argSpec := range pragmaSpec.Args {
+				argMatcher := getNamedArgRegEx(argSpec.Name)
+				argMatchIndicies := argMatcher.FindStringSubmatchIndex(text)
+				argMatches := argMatcher.FindStringSubmatch(text)
+				if len(argMatches) < 2 {
+					continue
+				}
+				var value string
+				if argMatches[2] != "" {
+					value = argMatches[2]
+				} else if len(argMatches) > 3 {
+					value = argMatches[3]
+				}
+				if argSpec.CaptureSpan {
+					startPos := commentRange.Pos() + argMatchIndicies[0] + len(argMatches[1]) + 1
+
+					newArg := ast.PragmaArgument{
+						Name:      argSpec.Name,
+						Value:     value,
+						TextRange: core.NewTextRange(startPos, startPos+len(value)),
+					}
+
+					pragma.Args[argSpec.Name] = newArg
+				} else {
+					newArg := ast.PragmaArgument{
+						Value: value,
+					}
+
+					pragma.Args[argSpec.Name] = newArg
+				}
+			}
+		}
+		return []ast.Pragma{pragma}
+	}
+	return nil
+
+	// const singleLine = range.kind === SyntaxKind.SingleLineCommentTrivia && singleLinePragmaRegEx.exec(text);
+	// if (singleLine) {
+	//     return addPragmaForMatch(pragmas, range, PragmaKindFlags.SingleLine, singleLine);
+	// }
+
+	// if (range.kind === SyntaxKind.MultiLineCommentTrivia) {
+	//     const multiLinePragmaRegEx = /@(\S+)(\s+(?:\S.*)?)?$/gm; // Defined inline since it uses the "g" flag, which keeps a persistent index (for iterating)
+	//     let multiLineMatch: RegExpExecArray | null; // eslint-disable-line no-restricted-syntax
+	//     while (multiLineMatch = multiLinePragmaRegEx.exec(text)) {
+	//         addPragmaForMatch(pragmas, range, PragmaKindFlags.MultiLine, multiLineMatch);
+	//     }
+	// }
+}
+
+func processPragmasIntoFields(context *ast.SourceFile /* !!! reportDiagnostic func(*ast.Diagnostic)*/) {
+	//context.CheckJsDirective = nil
+	context.ReferencedFiles = nil
+	context.TypeReferenceDirectives = nil
+	context.LibReferenceDirectives = nil
+	//context.AmdDependencies = nil
+	context.HasNoDefaultLib = false
+	for _, pragma := range context.Pragmas {
+		switch pragma.Name {
+		case "reference":
+			types, typesOk := pragma.Args["types"]
+			lib, libOk := pragma.Args["lib"]
+			path, pathOk := pragma.Args["path"]
+			resolutionMode, resolutionModeOk := pragma.Args["resolution-mode"]
+			preserve, preserveOk := pragma.Args["preserve"]
+			noDefaultLib, noDefaultLibOk := pragma.Args["no-default-lib"]
+
+			if noDefaultLibOk && noDefaultLib.Value == "true" {
+				context.HasNoDefaultLib = true
+			} else if typesOk {
+				var parsed core.ResolutionMode
+				if resolutionModeOk {
+					parsed = parseResolutionMode(resolutionMode.Value, types.Pos(), types.End() /*, reportDiagnostic*/)
+				}
+				context.TypeReferenceDirectives = append(context.TypeReferenceDirectives, &ast.FileReference{
+					TextRange:      types.TextRange,
+					FileName:       types.Value,
+					ResolutionMode: parsed,
+					Preserve:       preserveOk && preserve.Value == "true",
+				})
+			} else if libOk {
+				context.LibReferenceDirectives = append(context.LibReferenceDirectives, &ast.FileReference{
+					TextRange: types.TextRange,
+					FileName:  lib.Value,
+					Preserve:  preserveOk && preserve.Value == "true",
+				})
+			} else if pathOk {
+				context.ReferencedFiles = append(context.ReferencedFiles, &ast.FileReference{
+					TextRange: types.TextRange,
+					FileName:  path.Value,
+					Preserve:  preserveOk && preserve.Value == "true",
+				})
+			} else {
+				//reportDiagnostic(argMap.Pos, argMap.End-argMap.Pos, "Invalid reference directive syntax")
+			}
+
+		default:
+			panic("Unhandled pragma kind")
+		}
+	}
+}
+
+func parseResolutionMode(mode string, pos int, end int /*reportDiagnostic: PragmaDiagnosticReporter*/) (resolutionKind core.ResolutionMode) {
+	if mode == "import" {
+		resolutionKind = core.ModuleKindESNext
+	}
+	if mode == "require" {
+		resolutionKind = core.ModuleKindCommonJS
+	}
+	return resolutionKind
+	//reportDiagnostic(pos, end - pos, Diagnostics.resolution_mode_should_be_either_require_or_import);
+	//return undefined;
 }
