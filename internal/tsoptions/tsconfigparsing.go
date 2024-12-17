@@ -243,7 +243,7 @@ func isCompilerOptionsValue(option CommandLineOption, value any) core.CompilerOp
 			//isCompilerOptionsValue(option.element, value);
 		}
 		// todo: find a better way to check
-		if option.Kind == "string" {
+		if option.Kind == "string" || option.Kind == "enum" {
 			_, ok := value.(string)
 			return core.CompilerOptionsValue{BooleanValue: ok}
 		}
@@ -506,16 +506,16 @@ func parseCompilerOptions(key string, value any, allOptions *core.CompilerOption
 		allOptions.ExperimentalDecorators = parseTristate(value)
 	case "isolatedModules":
 		allOptions.IsolatedModules = parseTristate(value)
-	// case "jsx":
-	//     options.Jsx = parseJsxEmit(value)
+	case "jsx":
+		allOptions.Jsx = parseJsxEmit(value)
 	case "lib":
 		allOptions.Lib = parseStringArray(value)
 	case "legacyDecorators":
 		allOptions.LegacyDecorators = parseTristate(value)
-	// case "module":
-	//     options.ModuleKind = parseModuleKind(value)
-	// case "moduleResolution":
-	//     options.ModuleResolution = parseModuleResolutionKind(value)
+	case "module":
+		allOptions.ModuleKind = parseModuleKind(value)
+	case "moduleResolution":
+		allOptions.ModuleResolution = parseModuleResolutionKind(value)
 	case "moduleSuffixes":
 		allOptions.ModuleSuffixes = parseStringArray(value)
 	// case "moduleDetectionKind":
@@ -552,8 +552,8 @@ func parseCompilerOptions(key string, value any, allOptions *core.CompilerOption
 		allOptions.StrictNullChecks = parseTristate(value)
 	case "strictPropertyInitialization":
 		allOptions.StrictPropertyInitialization = parseTristate(value)
-	// case "target":
-	//     options.Target = parseScriptTarget(value)
+	case "target":
+		allOptions.Target = parseScriptTarget(value)
 	case "traceResolution":
 		allOptions.TraceResolution = parseTristate(value)
 	case "typeRoots":
@@ -580,6 +580,8 @@ func parseCompilerOptions(key string, value any, allOptions *core.CompilerOption
 		allOptions.PathsBasePath = parseString(value)
 	case "outDir":
 		allOptions.OutDir = parseString(value)
+	case "newLine":
+		allOptions.NewLine = parseNewLineKind(value)
 	default:
 		// Handle unknown options
 		fmt.Printf("Unknown option: %s\n", key)
@@ -594,6 +596,146 @@ type tsConfigOptions struct {
 	notDefined          string
 }
 
+func parseScriptTarget(json any) core.ScriptTarget {
+	var result core.ScriptTarget
+	if target, ok := json.(string); ok {
+		target = strings.ToLower(target)
+		switch target {
+		case "es3":
+			result = core.ScriptTargetES3
+		case "es5":
+			result = core.ScriptTargetES5
+		case "es2015":
+			result = core.ScriptTargetES2015
+		case "es2016":
+			result = core.ScriptTargetES2016
+		case "es2017":
+			result = core.ScriptTargetES2017
+		case "es2018":
+			result = core.ScriptTargetES2018
+		case "es2019":
+			result = core.ScriptTargetES2019
+		case "es2020":
+			result = core.ScriptTargetES2020
+		case "es2021":
+			result = core.ScriptTargetES2021
+		case "es2022":
+			result = core.ScriptTargetES2022
+		case "es2023":
+			result = core.ScriptTargetES2023
+		case "esnext":
+			result = core.ScriptTargetESNext
+		default:
+			result = core.ScriptTargetNone
+		}
+	}
+	return result
+}
+
+func parseJsxEmit(json any) core.JsxEmit {
+	var result core.JsxEmit
+	if jsx, ok := json.(string); ok {
+		switch jsx {
+		case "preserve":
+			result = core.JsxEmitPreserve
+		case "react":
+			result = core.JsxEmitReact
+		case "react-native":
+			result = core.JsxEmitReactNative
+		case "react-jsx":
+			result = core.JsxEmitReactJSX
+		case "react-jsxdev":
+			result = core.JsxEmitReactJSXDev
+		default:
+			result = core.JsxEmitNone
+		}
+	}
+	return result
+}
+
+func parseModuleDetectionKind(json any) core.ModuleDetectionKind {
+	var result core.ModuleDetectionKind
+	if module, ok := json.(string); ok {
+		module = strings.ToLower(module)
+		switch module {
+		case "auto":
+			result = core.ModuleDetectionKindAuto
+		case "legacy":
+			result = core.ModuleDetectionKindLegacy
+		case "force":
+			result = core.ModuleDetectionKindForce
+		default:
+			result = core.ModuleDetectionKindNone
+		}
+	}
+	return result
+}
+
+func parseModuleKind(json any) core.ModuleKind {
+	var result core.ModuleKind
+	if module, ok := json.(string); ok {
+		module = strings.ToLower(module)
+		switch module {
+		case "none":
+			result = core.ModuleKindNone
+		case "commonjs":
+			result = core.ModuleKindCommonJS
+		case "amd":
+			result = core.ModuleKindAMD
+		case "umd":
+			result = core.ModuleKindUMD
+		case "system":
+			result = core.ModuleKindSystem
+		case "es2015":
+			result = core.ModuleKindES2015
+		case "es2020":
+			result = core.ModuleKindES2020
+		case "es2022":
+			result = core.ModuleKindES2022
+		case "node16":
+			result = core.ModuleKindNode16
+		case "esnext":
+			result = core.ModuleKindESNext
+		case "nodenext":
+			result = core.ModuleKindNodeNext
+		case "preserve":
+			result = core.ModuleKindPreserve
+		default:
+			result = core.ModuleKindNone
+		}
+	}
+	return result
+}
+
+func parseNewLineKind(json any) core.NewLineKind {
+	var result core.NewLineKind
+	if newline, ok := json.(string); ok {
+		switch newline {
+		case "crlf":
+			result = core.NewLineKindCRLF
+		case "lf":
+			result = core.NewLineKindLF
+		}
+	}
+	return result
+}
+func parseModuleResolutionKind(json any) core.ModuleResolutionKind {
+	var result core.ModuleResolutionKind
+	if module, ok := json.(string); ok {
+		module = strings.ToLower(module)
+		switch module {
+		case "node":
+			result = core.ModuleResolutionKindNode16
+		case "classic":
+			result = core.ModuleResolutionKindNodeNext
+		case "bundler":
+			result = core.ModuleResolutionKindBundler
+		default:
+			result = core.ModuleResolutionKindUnknown
+		}
+	}
+	return result
+}
 func parseProjectReference(json any) []compiler.ProjectReference {
 	var result []compiler.ProjectReference
 	if arr, ok := json.([]interface{}); ok {
@@ -708,6 +850,9 @@ func convertOptionsFromJson(optionsNameMap map[string]CommandLineOption, jsonOpt
 			convertJson, _ := convertJsonOption(opt, value, basePath, errors, nil, nil, nil)
 			parseCompilerOptions(key, convertJson, defaultOptions)
 		}
+		// else {
+		//     errors.push(createUnknownOptionError(id, diagnostics));
+		// }
 	}
 	return defaultOptions
 }

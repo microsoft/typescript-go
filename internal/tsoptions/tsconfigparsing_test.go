@@ -308,30 +308,30 @@ var data = []struct {
 			expectedErrors: []string{"No inputs were found in config file '/apath/tsconfig.json'. Specified 'include' paths were '[]' and 'exclude' paths were '[no-prop]'."},
 		},
 	},
-	// // {
-	// // 	title: "generates errors for includes with outDir",
-	// // 	input: testConfig{
-	// // 		jsonText: `{
-	// // 	"compilerOptions": {
-	// // 		"outDir": "./"
-	// // 	},
-	// // 	"include": ["**/*"]
-	// // }`,
-	// // 		configFileName: "/apath/tsconfig.json",
-	// // 		basePath:       "/apath",
-	// // 		allFileList:    []string{"/apath/a.ts"},
-	// // 	},
-	// // 	output: verifyConfig{
-	// // 		fileNames: nil,
-	// // 		configFile: map[string]interface{}{
-	// // 			"compilerOptions": map[string]interface{}{
-	// // 				"outDir": "./",
-	// // 			},
-	// // 			"include": []string{"**/*"},
-	// // 		},
-	// // 		expectedErrors: []string{"No inputs were found in config file '/apath/tsconfig.json'. Specified 'include' paths were '[**/*]' and 'exclude' paths were '[/apath]'."},
-	// // 	},
-	// // },
+	// {
+	// 	title: "generates errors for includes with outDir",
+	// 	input: testConfig{
+	// 		jsonText: `{
+	// 	"compilerOptions": {
+	// 		"outDir": "./"
+	// 	},
+	// 	"include": ["**/*"]
+	// }`,
+	// 		configFileName: "/apath/tsconfig.json",
+	// 		basePath:       "/apath",
+	// 		allFileList:    []string{"/apath/a.ts"},
+	// 	},
+	// 	output: verifyConfig{
+	// 		fileNames: nil,
+	// 		configFile: map[string]interface{}{
+	// 			"compilerOptions": map[string]interface{}{
+	// 				"outDir": "./",
+	// 			},
+	// 			"include": []string{"**/*"},
+	// 		},
+	// 		expectedErrors: []string{"No inputs were found in config file '/apath/tsconfig.json'. Specified 'include' paths were '[**/*]' and 'exclude' paths were '[/apath]'."},
+	// 	},
+	// },
 	{
 		title: "parses tsconfig with compilerOptions, files, include, and exclude",
 		input: testConfig{
@@ -340,6 +340,11 @@ var data = []struct {
                     "outDir": "./dist",
 					"strict": true,
 					"noImplicitAny": true,
+					"target": "ES2017",
+					"module": "ESNext",
+					"moduleResolution": "bundler,
+					"moduleDetection": "auto",
+					"jsx": "react",
                 },
                 "files": ["/apath/src/index.ts", "/apath/src/app.ts"],
                 "include": ["/apath/src/**/*"],
@@ -356,6 +361,9 @@ var data = []struct {
 					OutDir:        "./dist",
 					Strict:        core.TSTrue,
 					NoImplicitAny: core.TSTrue,
+					Target:        core.ScriptTargetES2017,
+					ModuleKind:    core.ModuleKindESNext,
+					Jsx:           core.JsxEmitReact,
 				},
 				"files":   []string{"/apath/src/index.ts", "/apath/src/app.ts"},
 				"include": []string{"/apath/src/**/*"},
