@@ -4569,7 +4569,7 @@ func (f *NodeFactory) NewJsxNamespacedName(namespace *IdentifierNode, name *Iden
 }
 
 func (node *JsxNamespacedName) ForEachChild(v Visitor) bool {
-	return visit(v, node.name) || visit(v, node.Namespace)
+	return visit(v, node.Namespace) || visit(v, node.name)
 }
 
 func (node *JsxNamespacedName) Name() *DeclarationName {
