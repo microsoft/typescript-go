@@ -19996,7 +19996,7 @@ func (c *Checker) getSymbolAtLocation(node *ast.Node, ignoreErrors bool) *ast.Sy
 			}
 		} else if ast.IsMetaProperty(parent) && parent.AsMetaProperty().Name() == node {
 			metaProp := parent.AsMetaProperty()
-			if metaProp.KeywordToken == ast.KindNewKeyword && ast.IdText(node) == "target" {
+			if metaProp.KeywordToken == ast.KindNewKeyword && node.Text() == "target" {
 				// `target` in `new.target`
 				return c.checkNewTargetMetaProperty(parent).symbol
 			}
@@ -20004,7 +20004,7 @@ func (c *Checker) getSymbolAtLocation(node *ast.Node, ignoreErrors bool) *ast.Sy
 			// we have a fake expression type made for other reasons already, whose transient `meta`
 			// member should more exactly be the kind of (declarationless) symbol we want.
 			// (See #44364 and #45031 for relevant implementation PRs)
-			if metaProp.KeywordToken == ast.KindImportKeyword && ast.IdText(node) == "meta" {
+			if metaProp.KeywordToken == ast.KindImportKeyword && node.Text() == "meta" {
 				return c.getGlobalImportMetaExpressionType().AsObjectType().members["meta"]
 			}
 			// no other meta properties are valid syntax, thus no others should have symbols
@@ -20044,7 +20044,6 @@ func (c *Checker) getSymbolAtLocation(node *ast.Node, ignoreErrors bool) *ast.Sy
 	case ast.KindStringLiteral, ast.KindNoSubstitutionTemplateLiteral:
 		// 1). import x = require("./mo/*gotToDefinitionHere*/d")
 		// 2). External module name in an import declaration
-		// 3). Dynamic import call or require in javascript
 		// 4). type A = import("./f/*gotToDefinitionHere*/oo")
 		if (ast.IsExternalModuleImportEqualsDeclaration(grandParent) && getExternalModuleImportEqualsDeclarationExpression(grandParent) == node) ||
 			((parent.Kind == ast.KindImportDeclaration || parent.Kind == ast.KindExportDeclaration) && parent.AsImportDeclaration().ModuleSpecifier == node) ||
@@ -20052,11 +20051,6 @@ func (c *Checker) getSymbolAtLocation(node *ast.Node, ignoreErrors bool) *ast.Sy
 			return c.resolveExternalModuleName(node, node, ignoreErrors)
 		}
 
-		if ast.IsCallExpression(parent) &&
-			ast.IsBindableObjectDefinePropertyCall(parent.AsCallExpression()) &&
-			parent.Arguments()[1] == node {
-			return c.getSymbolOfDeclaration(parent)
-		}
 		fallthrough
 	case ast.KindNumericLiteral:
 		// index access
@@ -20070,7 +20064,7 @@ func (c *Checker) getSymbolAtLocation(node *ast.Node, ignoreErrors bool) *ast.Sy
 		}
 
 		if objectType != nil {
-			return c.getPropertyOfType(objectType, ast.EscapeLeadingUnderscores(node.Text()))
+			return c.getPropertyOfType(objectType, node.Text())
 		}
 		return nil
 	case ast.KindDefaultKeyword, ast.KindFunctionKeyword, ast.KindEqualsGreaterThanToken, ast.KindClassKeyword:
@@ -20246,22 +20240,6 @@ func (c *Checker) getSymbolOfNameOrPropertyAccessExpression(name *ast.Node) *ast
 			false,                                 /*dontResolveAlias*/
 			nil,                                   /*location*/
 		)
-	}
-	return nil
-}
-
-func (c *Checker) getSpecialPropertyAssignmentSymbolFromEntityName(entityName *ast.Node) *ast.Symbol {
-	specialPropertyAssignmentKind := ast.GetAssignmentDeclarationKind(entityName)
-	switch specialPropertyAssignmentKind {
-	case ast.AssignmentDeclarationKindExportsProperty, ast.AssignmentDeclarationKindPrototypeProperty:
-		return c.getSymbolOfNode(entityName.Parent)
-	case ast.AssignmentDeclarationKindProperty:
-		if ast.IsPropertyAccessExpression(entityName.Parent) && getLeftmostAccessExpression(entityName.Parent) == entityName {
-			return nil
-		}
-		fallthrough
-	case ast.AssignmentDeclarationKindThisProperty, ast.AssignmentDeclarationKindModuleExports:
-		return c.getSymbolOfDeclaration(entityName.Parent.Parent)
 	}
 	return nil
 }

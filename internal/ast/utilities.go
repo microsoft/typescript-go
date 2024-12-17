@@ -2,7 +2,6 @@ package ast
 
 import (
 	"slices"
-	"strings"
 )
 
 // Determines if a node is missing (either `nil` or empty)
@@ -870,16 +869,8 @@ func IsDeclarationNameOrImportPropertyName(name *Node) bool {
 	}
 }
 
-func isStringLiteralLike(node *Node) bool {
-	return node.Kind == KindStringLiteral || node.Kind == KindNoSubstitutionTemplateLiteral
-}
-
-func isStringOrNumericLiteralLike(node *Node) bool {
-	return isStringLiteralLike(node) || IsNumericLiteral(node)
-}
-
 func IsLiteralComputedPropertyDeclarationName(node *Node) bool {
-	return isStringOrNumericLiteralLike(node) &&
+	return IsStringOrNumericLiteralLike(node) &&
 		node.Parent.Kind == KindComputedPropertyName &&
 		IsDeclaration(node.Parent.Parent)
 }
@@ -892,49 +883,6 @@ func IsLiteralImportTypeNode(node *Node) bool {
 	return IsImportTypeNode(node) && IsLiteralTypeNode(node.AsImportTypeNode().Argument) && IsStringLiteral(node.AsImportTypeNode().Argument.AsLiteralTypeNode().Literal)
 }
 
-// Add an extra underscore to identifiers that start with two underscores to avoid issues with magic names like '__proto__'
-func EscapeLeadingUnderscores(identifier string) string { // !!! Use a new type instead of `string`
-	if strings.HasPrefix(identifier, "__") {
-		return "_" + identifier
-	}
-	return identifier
-}
-
-// Remove extra underscore from escaped identifier text content.
-func UnescapeLeadingUnderscores(identifier string) string {
-	if strings.HasPrefix(identifier, "___") {
-		return identifier[1:]
-	}
-	return identifier
-}
-
-func IdText(identifierOrPrivateName *Node) string {
-	var escapedText string
-	switch identifierOrPrivateName.Kind {
-	case KindIdentifier:
-		escapedText = identifierOrPrivateName.AsIdentifier().Text
-	case KindPrivateIdentifier:
-		escapedText = identifierOrPrivateName.AsPrivateIdentifier().Text
-	default:
-		panic("Unhandled case in IdText: " + identifierOrPrivateName.Kind.String())
-	}
-	return UnescapeLeadingUnderscores(escapedText)
-}
-
-func IsBindableObjectDefinePropertyCall(expr *CallExpression) bool {
-	return len(expr.AsNode().Arguments()) == 3 &&
-		IsPropertyAccessExpression(expr.Expression) &&
-		IsIdentifier(expr.Expression.AsPropertyAccessExpression().Expression) &&
-		IdText(expr.Expression.AsPropertyAccessExpression().Expression) == "Object" &&
-		IdText(expr.Expression.AsPropertyAccessExpression().Name()) == "defineProperty" &&
-		isStringOrNumericLiteralLike(expr.Arguments.Nodes[1]) &&
-		isBindableStaticNameExpression(expr.Arguments.Nodes[0], true /*excludeThisKeyword*/)
-}
-
-func isBindableStaticNameExpression(node *Node, excludeThisKeyword bool) bool {
-	return IsEntityNameExpression(node) || isBindableStaticAccessExpression(node, excludeThisKeyword)
-}
-
 func IsEntityNameExpression(node *Node) bool {
 	return node.Kind == KindIdentifier || isPropertyAccessEntityNameExpression(node)
 }
@@ -945,26 +893,6 @@ func isPropertyAccessEntityNameExpression(node *Node) bool {
 		return expr.Name().Kind == KindIdentifier && IsEntityNameExpression(expr.Expression)
 	}
 	return false
-}
-
-// Any series of property and element accesses.
-func isBindableStaticAccessExpression(node *Node, excludeThisKeyword bool) bool {
-	return IsPropertyAccessExpression(node) &&
-		(!excludeThisKeyword && node.Expression().Kind == KindThisKeyword ||
-			IsIdentifier(node.Name()) && isBindableStaticNameExpression(node.Expression(), excludeThisKeyword)) ||
-		isBindableStaticElementAccessExpression(node, excludeThisKeyword)
-}
-
-func isBindableStaticElementAccessExpression(node *Node, excludeThisKeyword bool) bool {
-	return isLiteralLikeElementAccess(node) &&
-		((!excludeThisKeyword && node.Expression().Kind == KindThisKeyword) ||
-			IsEntityNameExpression(node.Expression()) ||
-			isBindableStaticAccessExpression(node.Expression(), true /*excludeThisKeyword*/))
-}
-
-// x[0] OR x['a'] OR x[Symbol.y]
-func isLiteralLikeElementAccess(node *Node) bool {
-	return IsElementAccessExpression(node) && isStringOrNumericLiteralLike(node.AsElementAccessExpression().ArgumentExpression)
 }
 
 func IsJsxTagName(node *Node) bool {
@@ -980,105 +908,6 @@ func IsImportOrExportSpecifier(node *Node) bool {
 	return IsImportSpecifier(node) || IsExportSpecifier(node)
 }
 
-type AssignmentDeclarationKind int32
-
-const (
-	AssignmentDeclarationKindNone AssignmentDeclarationKind = iota
-	// exports.name = expr
-	// module.exports.name = expr
-	AssignmentDeclarationKindExportsProperty
-	// module.exports = expr
-	AssignmentDeclarationKindModuleExports
-	// className.prototype.name = expr
-	AssignmentDeclarationKindPrototypeProperty
-	// this.name = expr
-	AssignmentDeclarationKindThisProperty
-	// F.name = expr
-	AssignmentDeclarationKindProperty
-	// F.prototype = { ... }
-	AssignmentDeclarationKindPrototype
-	// Object.defineProperty(x, 'name', { value: any, writable?: boolean (false by default) });
-	// Object.defineProperty(x, 'name', { get: Function, set: Function });
-	// Object.defineProperty(x, 'name', { get: Function });
-	// Object.defineProperty(x, 'name', { set: Function });
-	AssignmentDeclarationKindObjectDefinePropertyValue
-	// Object.defineProperty(exports || module.exports, 'name', ...);
-	AssignmentDeclarationKindObjectDefinePropertyExports
-	// Object.defineProperty(Foo.prototype, 'name', ...);
-	AssignmentDeclarationKindObjectDefinePrototypeProperty
-)
-
-// Given a BinaryExpression, returns SpecialPropertyAssignmentKind for the various kinds of property
-// assignments we treat as special in the binder
-func GetAssignmentDeclarationKind(expr *Node) AssignmentDeclarationKind {
-	special := getAssignmentDeclarationKindWorker(expr)
-	if special == AssignmentDeclarationKindProperty || IsInJSFile(expr) {
-		return special
-	}
-	return AssignmentDeclarationKindNone
-}
-
-func getAssignmentDeclarationKindWorker(expr *Node) AssignmentDeclarationKind {
-	if IsCallExpression(expr) {
-		if !IsBindableObjectDefinePropertyCall(expr.AsCallExpression()) {
-			return AssignmentDeclarationKindNone
-		}
-		entityName := expr.AsCallExpression().Arguments.Nodes[0]
-		if IsExportsIdentifier(entityName) || IsModuleExportsAccessExpression(entityName) {
-			return AssignmentDeclarationKindObjectDefinePropertyExports
-		}
-		if isBindableStaticAccessExpression(entityName, false /*excludeThisKeyword*/) && GetElementOrPropertyAccessName(entityName) == "prototype" {
-			return AssignmentDeclarationKindObjectDefinePrototypeProperty
-		}
-		return AssignmentDeclarationKindObjectDefinePropertyValue
-	}
-	if expr.AsBinaryExpression().OperatorToken.Kind != KindEqualsToken ||
-		!IsAccessExpression(expr.AsBinaryExpression().Left) ||
-		isVoidZero(GetRightMostAssignedExpression(expr)) {
-		return AssignmentDeclarationKindNone
-	}
-	if isBindableStaticNameExpression(expr.AsBinaryExpression().Left.Expression(), true /*excludeThisKeyword*/) &&
-		GetElementOrPropertyAccessName(expr.AsBinaryExpression().Left) == "prototype" &&
-		IsObjectLiteralExpression(GetInitializerOfBinaryExpression(expr)) {
-		// F.prototype = { ... }
-		return AssignmentDeclarationKindPrototype
-	}
-
-	return GetAssignmentDeclarationPropertyAccessKind(expr.AsBinaryExpression().Left)
-}
-
-func GetAssignmentDeclarationPropertyAccessKind(lhs *Node) AssignmentDeclarationKind {
-	if lhs.Expression().Kind == KindThisKeyword {
-		return AssignmentDeclarationKindThisProperty
-	} else if IsModuleExportsAccessExpression(lhs) {
-		// module.exports = expr
-		return AssignmentDeclarationKindModuleExports
-	} else if isBindableStaticNameExpression(lhs.Expression(), true /*excludeThisKeyword*/) {
-		if IsPrototypeAccess(lhs.Expression()) {
-			// F.G....prototype.x = expr
-			return AssignmentDeclarationKindPrototypeProperty
-		}
-
-		nextToLast := lhs
-		for !IsIdentifier(nextToLast.Expression()) {
-			nextToLast = nextToLast.Expression()
-		}
-
-		id := nextToLast.Expression()
-		if (id.Text() == "exports" || id.Text() == "module" && GetElementOrPropertyAccessName(nextToLast) == "exports") &&
-			isBindableStaticAccessExpression(lhs, false /*excludeThisKeyword*/) { // ExportsProperty does not support binding with computed names
-			// exports.name = expr OR module.exports.name = expr OR exports["name"] = expr ...
-			return AssignmentDeclarationKindExportsProperty
-		}
-		if isBindableStaticNameExpression(lhs, true /*excludeThisKeyword*/) ||
-			IsElementAccessExpression(lhs) && IsDynamicName(lhs) {
-			// F.G...x = expr
-			return AssignmentDeclarationKindProperty
-		}
-	}
-	return AssignmentDeclarationKindNone
-}
-
 func IsDynamicName(name *Node) bool {
 	var expr *Node
 	switch name.Kind {
@@ -1089,7 +918,7 @@ func IsDynamicName(name *Node) bool {
 	default:
 		return false
 	}
-	return !isStringOrNumericLiteralLike(expr) && !IsSignedNumericLiteral(expr)
+	return !IsStringOrNumericLiteralLike(expr) && !IsSignedNumericLiteral(expr)
 }
 
 func IsSignedNumericLiteral(node *Node) bool {
@@ -1098,17 +927,6 @@ func IsSignedNumericLiteral(node *Node) bool {
 		return (node.Operator == KindPlusToken || node.Operator == KindMinusToken) && IsNumericLiteral(node.Operand)
 	}
 	return false
-}
-
-func IsPrototypeAccess(node *Node) bool {
-	return isBindableStaticAccessExpression(node, false /*excludeThisKeyword*/) && GetElementOrPropertyAccessName(node) == "prototype"
-}
-
-func GetInitializerOfBinaryExpression(expr *Node) *Node {
-	for IsBinaryExpression(expr.AsBinaryExpression().Right) {
-		expr = expr.AsBinaryExpression().Right
-	}
-	return expr.AsBinaryExpression().Right
 }
 
 func IsAssignmentExpression(node *Node, excludeCompoundAssignment bool) bool {
@@ -1143,25 +961,6 @@ func IsModuleIdentifier(node *Node) bool {
 	return IsIdentifier(node) && node.Text() == "module"
 }
 
-func IsModuleExportsAccessExpression(node *Node) bool {
-	return (IsPropertyAccessExpression(node) || isLiteralLikeElementAccess(node)) &&
-		IsModuleIdentifier(node.Expression()) &&
-		GetElementOrPropertyAccessName(node) == "exports"
-}
-
-func GetElementOrPropertyAccessName(node *Node) string {
-	name := GetElementOrPropertyAccessArgumentExpressionOrName(node)
-	if name != nil {
-		if IsIdentifier(name) {
-			return name.Text()
-		}
-		if isStringLiteralLike(name) || IsNumericLiteral(name) {
-			return EscapeLeadingUnderscores(name.Text())
-		}
-	}
-	return ""
-}
-
 // Does not handle signed numeric names like `a[+0]` - handling those would require handling prefix unary expressions
 // throughout late binding handling as well, which is awkward (but ultimately probably doable if there is demand)
 func GetElementOrPropertyAccessArgumentExpressionOrName(node *Node) *Node {
@@ -1170,7 +969,7 @@ func GetElementOrPropertyAccessArgumentExpressionOrName(node *Node) *Node {
 		return node.Name()
 	case KindElementAccessExpression:
 		arg := SkipParentheses(node.AsElementAccessExpression().ArgumentExpression)
-		if isStringOrNumericLiteralLike(arg) {
+		if IsStringOrNumericLiteralLike(arg) {
 			return arg
 		}
 		return node
