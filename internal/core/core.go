@@ -46,6 +46,17 @@ func MapIndex[T, U any](slice []T, f func(T, int) U) []U {
 	return result
 }
 
+func MapNonNil[T any, U comparable](slice []T, f func(T) U) []U {
+	var result []U
+	for _, value := range slice {
+		mapped := f(value)
+		if mapped != *new(U) {
+			result = append(result, mapped)
+		}
+	}
+	return result
+}
+
 func SameMap[T comparable](slice []T, f func(T) T) []T {
 	for i, value := range slice {
 		mapped := f(value)
@@ -155,6 +166,13 @@ func LastOrNil[T any](slice []T) T {
 	return *new(T)
 }
 
+func ElementOrNil[T any](slice []T, index int) T {
+	if index < len(slice) {
+		return slice[index]
+	}
+	return *new(T)
+}
+
 func FirstOrNilSeq[T any](seq iter.Seq[T]) T {
 	if seq != nil {
 		for value := range seq {
@@ -162,6 +180,16 @@ func FirstOrNilSeq[T any](seq iter.Seq[T]) T {
 		}
 	}
 	return *new(T)
+}
+
+func FirstNonNil[T any, U comparable](slice []T, f func(T) U) U {
+	for _, value := range slice {
+		mapped := f(value)
+		if mapped != *new(U) {
+			return mapped
+		}
+	}
+	return *new(U)
 }
 
 func Concatenate[T any](s1 []T, s2 []T) []T {
@@ -222,11 +250,23 @@ func IfElse[T any](b bool, whenTrue T, whenFalse T) T {
 	return whenFalse
 }
 
+// Returns value if value is not the zero value of T; Otherwise, returns defaultValue. OrElse should only be used when
+// defaultValue is constant or precomputed as its argument will be evaluated regardless as to the content of value.
 func OrElse[T comparable](value T, defaultValue T) T {
 	if value != *new(T) {
 		return value
 	}
 	return defaultValue
+}
+
+// Returns `a` if `a` is not `nil`; Otherwise, returns `b`. Coalesce is roughly analogous to `??` in JS, except that it
+// non-shortcutting, so it is advised to only use a constant or precomputed value for `b`
+func Coalesce[T *U, U any](a T, b T) T {
+	if a == nil {
+		return b
+	} else {
+		return a
+	}
 }
 
 func ComputeLineStarts(text string) []TextPos {

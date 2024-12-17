@@ -125,7 +125,7 @@ func (b *Binder) declareSymbol(symbolTable ast.SymbolTable, parent *ast.Symbol, 
 
 func (b *Binder) declareSymbolEx(symbolTable ast.SymbolTable, parent *ast.Symbol, node *ast.Node, includes ast.SymbolFlags, excludes ast.SymbolFlags, isReplaceableByMethod bool, isComputedName bool) *ast.Symbol {
 	//Debug.assert(isComputedName || !hasDynamicName(node))
-	isDefaultExport := hasSyntacticModifier(node, ast.ModifierFlagsDefault) || ast.IsExportSpecifier(node) && moduleExportNameIsDefault(node.AsExportSpecifier().Name())
+	isDefaultExport := ast.HasSyntacticModifier(node, ast.ModifierFlagsDefault) || ast.IsExportSpecifier(node) && moduleExportNameIsDefault(node.AsExportSpecifier().Name())
 	// The exported symbol for an export default function/class node is always named "default"
 	var name string
 	switch {
@@ -231,7 +231,7 @@ func (b *Binder) declareSymbolEx(symbolTable ast.SymbolTable, parent *ast.Symbol
 				} else {
 					diag = b.createDiagnosticForNode(declarationName, message)
 				}
-				if ast.IsTypeAliasDeclaration(node) && ast.NodeIsMissing(node.AsTypeAliasDeclaration().Type) && hasSyntacticModifier(node, ast.ModifierFlagsExport) && symbol.Flags&(ast.SymbolFlagsAlias|ast.SymbolFlagsType|ast.SymbolFlagsNamespace) != 0 {
+				if ast.IsTypeAliasDeclaration(node) && ast.NodeIsMissing(node.AsTypeAliasDeclaration().Type) && ast.HasSyntacticModifier(node, ast.ModifierFlagsExport) && symbol.Flags&(ast.SymbolFlagsAlias|ast.SymbolFlagsType|ast.SymbolFlagsNamespace) != 0 {
 					// export type T; - may have meant export type { T }?
 					diag.AddRelatedInfo(b.createDiagnosticForNode(node, diagnostics.Did_you_mean_0, "export type { "+node.AsTypeAliasDeclaration().Name().AsIdentifier().Text+" }"))
 				}
@@ -298,7 +298,7 @@ func (b *Binder) getDeclarationName(node *ast.Node) string {
 		if ast.IsComputedPropertyName(name) {
 			nameExpression := name.AsComputedPropertyName().Expression
 			// treat computed property names where expression is string/numeric literal as just string/numeric literal
-			if isStringOrNumericLiteralLike(nameExpression) {
+			if ast.IsStringOrNumericLiteralLike(nameExpression) {
 				return nameExpression.Text()
 			}
 			if isSignedNumericLiteral(nameExpression) {
@@ -350,7 +350,7 @@ func getSymbolNameForPrivateIdentifier(containingClassSymbol *ast.Symbol, descri
 }
 
 func (b *Binder) declareModuleMember(node *ast.Node, symbolFlags ast.SymbolFlags, symbolExcludes ast.SymbolFlags) *ast.Symbol {
-	hasExportModifier := getCombinedModifierFlags(node)&ast.ModifierFlagsExport != 0
+	hasExportModifier := ast.GetCombinedModifierFlags(node)&ast.ModifierFlagsExport != 0
 	if symbolFlags&ast.SymbolFlagsAlias != 0 {
 		if node.Kind == ast.KindExportSpecifier || (node.Kind == ast.KindImportEqualsDeclaration && hasExportModifier) {
 			return b.declareSymbol(getExports(b.container.Symbol()), b.container.Symbol(), node, symbolFlags, symbolExcludes)
@@ -373,7 +373,7 @@ func (b *Binder) declareModuleMember(node *ast.Node, symbolFlags ast.SymbolFlags
 	//       and this case is specially handled. Module augmentations should only be merged with original module definition
 	//       and should never be merged directly with other augmentation, and the latter case would be possible if automatic merge is allowed.
 	if !isAmbientModule(node) && (hasExportModifier || b.container.Flags&ast.NodeFlagsExportContext != 0) {
-		if !ast.IsLocalsContainer(b.container) || (hasSyntacticModifier(node, ast.ModifierFlagsDefault) && b.getDeclarationName(node) == InternalSymbolNameMissing) {
+		if !ast.IsLocalsContainer(b.container) || (ast.HasSyntacticModifier(node, ast.ModifierFlagsDefault) && b.getDeclarationName(node) == InternalSymbolNameMissing) {
 			return b.declareSymbol(getExports(b.container.Symbol()), b.container.Symbol(), node, symbolFlags, symbolExcludes)
 			// No local symbol for an unnamed default!
 		}
@@ -742,7 +742,7 @@ func (b *Binder) bindSourceFileAsExternalModule() {
 func (b *Binder) bindModuleDeclaration(node *ast.Node) {
 	b.setExportContextFlag(node)
 	if isAmbientModule(node) {
-		if hasSyntacticModifier(node, ast.ModifierFlagsExport) {
+		if ast.HasSyntacticModifier(node, ast.ModifierFlagsExport) {
 			b.errorOnFirstToken(node, diagnostics.X_export_modifier_cannot_be_applied_to_ambient_modules_and_module_augmentations_since_they_are_always_visible)
 		}
 		if isModuleAugmentationExternal(node) {
@@ -882,7 +882,7 @@ func getModuleInstanceStateWorker(node *ast.Node, visited map[ast.NodeId]ModuleI
 			return ModuleInstanceStateConstEnumOnly
 		}
 	case ast.KindImportDeclaration, ast.KindImportEqualsDeclaration:
-		if !hasSyntacticModifier(node, ast.ModifierFlagsExport) {
+		if !ast.HasSyntacticModifier(node, ast.ModifierFlagsExport) {
 			return ModuleInstanceStateNonInstantiated
 		}
 	case ast.KindExportDeclaration:
@@ -1245,11 +1245,8 @@ func (b *Binder) lookupName(name string, container *ast.Node) *ast.Symbol {
 		}
 	}
 	declaration := container.DeclarationData()
-	if declaration != nil {
-		symbol := declaration.Symbol
-		if symbol != nil {
-			return symbol.Exports[name]
-		}
+	if declaration != nil && declaration.Symbol != nil {
+		return declaration.Symbol.Exports[name]
 	}
 	return nil
 }
@@ -1362,7 +1359,7 @@ func (b *Binder) getStrictModeBlockScopeFunctionDeclarationMessage(node *ast.Nod
 
 func (b *Binder) checkStrictModeBinaryExpression(node *ast.Node) {
 	expr := node.AsBinaryExpression()
-	if b.inStrictMode && ast.IsLeftHandSideExpression(expr.Left) && isAssignmentOperator(expr.OperatorToken.Kind) {
+	if b.inStrictMode && ast.IsLeftHandSideExpression(expr.Left) && ast.IsAssignmentOperator(expr.OperatorToken.Kind) {
 		// ECMA 262 (Annex C) The identifier eval or arguments may not appear as the LeftHandSideExpression of an
 		// Assignment operator(11.13) or of a PostfixExpression(11.3)
 		b.checkStrictModeEvalOrArguments(node, expr.Left)
@@ -1503,7 +1500,7 @@ func (b *Binder) bindContainer(node *ast.Node, containerFlags ContainerFlags) {
 		saveActiveLabelList := b.activeLabelList
 		saveHasExplicitReturn := b.hasExplicitReturn
 		isImmediatelyInvoked := (containerFlags&ContainerFlagsIsFunctionExpression != 0 &&
-			!hasSyntacticModifier(node, ast.ModifierFlagsAsync) &&
+			!ast.HasSyntacticModifier(node, ast.ModifierFlagsAsync) &&
 			!isGeneratorFunctionExpression(node) &&
 			getImmediatelyInvokedFunctionExpression(node) != nil) || node.Kind == ast.KindClassStaticBlockDeclaration
 		// A non-async, non-generator IIFE is considered part of the containing control flow. Return statements behave
@@ -1736,7 +1733,7 @@ func (b *Binder) checkUnreachable(node *ast.Node) bool {
 				//   Rationale: we don't want to report errors on non-initialized var's since they are hoisted
 				//   On the other side we do want to report errors on non-initialized 'lets' because of TDZ
 				isError := unreachableCodeIsError(b.options) && node.Flags&ast.NodeFlagsAmbient == 0 && (!ast.IsVariableStatement(node) ||
-					getCombinedNodeFlags(node.AsVariableStatement().DeclarationList)&ast.NodeFlagsBlockScoped != 0 ||
+					ast.GetCombinedNodeFlags(node.AsVariableStatement().DeclarationList)&ast.NodeFlagsBlockScoped != 0 ||
 					core.Some(node.AsVariableStatement().DeclarationList.AsVariableDeclarationList().Declarations.Nodes, func(d *ast.Node) bool {
 						return d.AsVariableDeclaration().Initializer != nil
 					}))
@@ -1779,7 +1776,7 @@ func (b *Binder) errorOnEachUnreachableRange(node *ast.Node, isError bool) {
 // As opposed to a pure declaration like an `interface`
 func (b *Binder) isExecutableStatement(s *ast.Node) bool {
 	// Don't remove statements that can validly be used before they appear.
-	return !ast.IsFunctionDeclaration(s) && !b.isPurelyTypeDeclaration(s) && !(ast.IsVariableStatement(s) && getCombinedNodeFlags(s)&ast.NodeFlagsBlockScoped == 0 &&
+	return !ast.IsFunctionDeclaration(s) && !b.isPurelyTypeDeclaration(s) && !(ast.IsVariableStatement(s) && ast.GetCombinedNodeFlags(s)&ast.NodeFlagsBlockScoped == 0 &&
 		core.Some(s.AsVariableStatement().DeclarationList.AsVariableDeclarationList().Declarations.Nodes, func(d *ast.Node) bool {
 			return d.AsVariableDeclaration().Initializer == nil
 		}))
@@ -2266,7 +2263,7 @@ func (b *Binder) bindBinaryExpressionFlow(node *ast.Node) {
 		if operator == ast.KindCommaToken {
 			b.maybeBindExpressionFlowIfCall(node)
 		}
-		if isAssignmentOperator(operator) && !isAssignmentTarget(node) {
+		if ast.IsAssignmentOperator(operator) && !isAssignmentTarget(node) {
 			b.bindAssignmentTargetFlow(expr.Left)
 			if operator == ast.KindEqualsToken && expr.Left.Kind == ast.KindElementAccessExpression {
 				elementAccess := expr.Left.AsElementAccessExpression()
@@ -2675,12 +2672,12 @@ func isNarrowableReference(node *ast.Node) bool {
 		return isNarrowableReference(node.AsNonNullExpression().Expression)
 	case ast.KindElementAccessExpression:
 		expr := node.AsElementAccessExpression()
-		return isStringOrNumericLiteralLike(expr.ArgumentExpression) ||
+		return ast.IsStringOrNumericLiteralLike(expr.ArgumentExpression) ||
 			isEntityNameExpression(expr.ArgumentExpression) && isNarrowableReference(expr.Expression)
 	case ast.KindBinaryExpression:
 		expr := node.AsBinaryExpression()
 		return expr.OperatorToken.Kind == ast.KindCommaToken && isNarrowableReference(expr.Right) ||
-			isAssignmentOperator(expr.OperatorToken.Kind) && ast.IsLeftHandSideExpression(expr.Left)
+			ast.IsAssignmentOperator(expr.OperatorToken.Kind) && ast.IsLeftHandSideExpression(expr.Left)
 	}
 	return false
 }
@@ -2735,7 +2732,7 @@ func isNarrowableOperand(expr *ast.Node) bool {
 }
 
 func isNarrowingTypeOfOperands(expr1 *ast.Node, expr2 *ast.Node) bool {
-	return ast.IsTypeOfExpression(expr1) && isNarrowableOperand(expr1.AsTypeOfExpression().Expression) && isStringLiteralLike(expr2)
+	return ast.IsTypeOfExpression(expr1) && isNarrowableOperand(expr1.AsTypeOfExpression().Expression) && ast.IsStringLiteralLike(expr2)
 }
 
 func (b *Binder) errorOnNode(node *ast.Node, message *diagnostics.Message, args ...any) {
@@ -2774,5 +2771,5 @@ func (b *Binder) addDiagnostic(diagnostic *ast.Diagnostic) {
 }
 
 func isEnumConst(node *ast.Node) bool {
-	return getCombinedModifierFlags(node)&ast.ModifierFlagsConst != 0
+	return ast.GetCombinedModifierFlags(node)&ast.ModifierFlagsConst != 0
 }

@@ -398,7 +398,7 @@ func (c *Checker) narrowTypeByCallExpression(f *FlowState, t *Type, callExpressi
 		callAccess := callExpression.Expression()
 		if c.isMatchingReference(f.reference.Expression(), c.getReferenceCandidate(callAccess.Expression())) && ast.IsIdentifier(callAccess.Name()) && callAccess.Name().Text() == "hasOwnProperty" && len(callExpression.Arguments()) == 1 {
 			argument := callExpression.Arguments()[0]
-			if accessedName, ok := c.getAccessedPropertyName(f.reference); ok && isStringLiteralLike(argument) && accessedName == argument.Text() {
+			if accessedName, ok := c.getAccessedPropertyName(f.reference); ok && ast.IsStringLiteralLike(argument) && accessedName == argument.Text() {
 				return c.getTypeWithFacts(t, core.IfElse(assumeTrue, TypeFactsNEUndefined, TypeFactsEQUndefined))
 			}
 		}
@@ -414,10 +414,10 @@ func (c *Checker) narrowTypeByBinaryExpression(f *FlowState, t *Type, expr *ast.
 		operator := expr.OperatorToken.Kind
 		left := c.getReferenceCandidate(expr.Left)
 		right := c.getReferenceCandidate(expr.Right)
-		if left.Kind == ast.KindTypeOfExpression && isStringLiteralLike(right) {
+		if left.Kind == ast.KindTypeOfExpression && ast.IsStringLiteralLike(right) {
 			return c.narrowTypeByTypeof(f, t, left.AsTypeOfExpression(), operator, right, assumeTrue)
 		}
-		if right.Kind == ast.KindTypeOfExpression && isStringLiteralLike(left) {
+		if right.Kind == ast.KindTypeOfExpression && ast.IsStringLiteralLike(left) {
 			return c.narrowTypeByTypeof(f, t, right.AsTypeOfExpression(), operator, left, assumeTrue)
 		}
 		if c.isMatchingReference(f.reference, left) {
@@ -1273,12 +1273,10 @@ func (c *Checker) getTypeAtFlowLoopLabel(f *FlowState, flow *ast.FlowNode) FlowT
 			// All but the first antecedent are the looping control flow paths that lead
 			// back to the loop junction. We track these on the flow loop stack.
 			c.flowLoopStack = append(c.flowLoopStack, FlowLoopInfo{key: key, types: antecedentTypes})
+			saveFlowTypeCache := c.flowTypeCache
+			c.flowTypeCache = nil
 			flowType = c.getTypeAtFlowNode(f, list.Flow)
-			// !!!
-			// saveFlowTypeCache := c.flowTypeCache
-			// c.flowTypeCache = nil
-			// flowType = getTypeAtFlowNode(antecedent)
-			// c.flowTypeCache = saveFlowTypeCache
+			c.flowTypeCache = saveFlowTypeCache
 			c.flowLoopStack = c.flowLoopStack[:len(c.flowLoopStack)-1]
 			// If we see a value appear in the cache it is a sign that control flow analysis
 			// was restarted and completed by checkExpressionCached. We can simply pick up
@@ -1640,7 +1638,7 @@ func (c *Checker) getAccessedPropertyName(access *ast.Node) (string, bool) {
 
 func (c *Checker) tryGetElementAccessExpressionName(node *ast.ElementAccessExpression) (string, bool) {
 	switch {
-	case isStringOrNumericLiteralLike(node.ArgumentExpression):
+	case ast.IsStringOrNumericLiteralLike(node.ArgumentExpression):
 		return node.ArgumentExpression.Text(), true
 	case isEntityNameExpression(node.ArgumentExpression):
 		return c.tryGetNameFromEntityNameExpression(node.ArgumentExpression)
@@ -1698,7 +1696,7 @@ func TryGetTextOfPropertyName(name *ast.Node) (string, bool) {
 		ast.KindNoSubstitutionTemplateLiteral:
 		return name.Text(), true
 	case ast.KindComputedPropertyName:
-		if isStringOrNumericLiteralLike(name.Expression()) {
+		if ast.IsStringOrNumericLiteralLike(name.Expression()) {
 			return name.Expression().Text(), true
 		}
 	case ast.KindJsxNamespacedName:
@@ -1750,7 +1748,7 @@ func (c *Checker) isConstantReference(node *ast.Node) bool {
 			}
 		}
 	case ast.KindObjectBindingPattern, ast.KindArrayBindingPattern:
-		rootDeclaration := getRootDeclaration(node.Parent)
+		rootDeclaration := ast.GetRootDeclaration(node.Parent)
 		if ast.IsParameter(rootDeclaration) || ast.IsVariableDeclaration(rootDeclaration) && ast.IsCatchClause(rootDeclaration.Parent) {
 			return !c.isSomeSymbolAssigned(rootDeclaration)
 		}
@@ -1915,7 +1913,7 @@ func (c *Checker) getSwitchClauseTypeOfWitnesses(node *ast.Node) []string {
 		for i, clause := range clauses {
 			if clause.Kind == ast.KindCaseClause {
 				var text string
-				if isStringLiteralLike(clause.Expression()) {
+				if ast.IsStringLiteralLike(clause.Expression()) {
 					text = clause.Expression().Text()
 				}
 				if text == "" {
@@ -2030,7 +2028,7 @@ func (c *Checker) getSymbolHasInstanceMethodOfObjectType(t *Type) *Type {
 }
 
 func (c *Checker) getPropertyNameForKnownSymbolName(symbolName string) string {
-	ctorType := c.getGlobalESSymbolConstructorSymbol()
+	ctorType := c.getGlobalESSymbolConstructorSymbolOrNil()
 	if ctorType != nil {
 		uniqueType := c.getTypeOfPropertyOfType(c.getTypeOfSymbol(ctorType), symbolName)
 		if uniqueType != nil && isTypeUsableAsPropertyName(uniqueType) {

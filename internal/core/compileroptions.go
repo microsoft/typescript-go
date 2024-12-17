@@ -45,6 +45,7 @@ type CompilerOptions struct {
 	AllowUnusedLabels                  Tristate             `json:"allowUnusedLabels"`
 	CheckJs                            Tristate             `json:"checkJs"`
 	CustomConditions                   []string             `json:"customConditions"`
+	DownlevelIteration                 Tristate             `json:"downlevelIteration"`
 	DeclarationDir                     string               `json:"declarationDir"`
 	DeclarationMap                     Tristate             `json:"declarationMap"`
 	ESModuleInterop                    Tristate             `json:"esModuleInterop"`

@@ -467,7 +467,7 @@ func (c *Checker) checkGrammarModifiers(node *ast.Node /*Union[HasModifiers, Has
 					if node.Kind != ast.KindMethodDeclaration && node.Kind != ast.KindPropertyDeclaration && node.Kind != ast.KindGetAccessor && node.Kind != ast.KindSetAccessor {
 						return c.grammarErrorOnNode(modifier, diagnostics.X_abstract_modifier_can_only_appear_on_a_class_method_or_property_declaration)
 					}
-					if !(node.Parent.Kind == ast.KindClassDeclaration && hasSyntacticModifier(node.Parent, ast.ModifierFlagsAbstract)) {
+					if !(node.Parent.Kind == ast.KindClassDeclaration && ast.HasSyntacticModifier(node.Parent, ast.ModifierFlagsAbstract)) {
 						var message *diagnostics.Message
 						if node.Kind == ast.KindPropertyDeclaration {
 							message = diagnostics.Abstract_properties_can_only_appear_within_an_abstract_class
@@ -583,7 +583,7 @@ func (c *Checker) findFirstModifierExcept(node *ast.Node, allowedModifier ast.Ki
 	if modifiers == nil {
 		return nil
 	}
-	modifier := core.Find(modifiers.Nodes, isModifier)
+	modifier := core.Find(modifiers.Nodes, ast.IsModifier)
 	if modifier != nil && modifier.Kind != allowedModifier {
 		return modifier
 	} else {
@@ -617,7 +617,7 @@ func (c *Checker) findFirstIllegalModifier(node *ast.Node) *ast.Node {
 		ast.KindNamespaceExportDeclaration,
 		ast.KindMissingDeclaration:
 		if modifiers := node.Modifiers(); modifiers != nil {
-			return core.Find(modifiers.Nodes, isModifier)
+			return core.Find(modifiers.Nodes, ast.IsModifier)
 		}
 		return nil
 	default:
@@ -634,14 +634,14 @@ func (c *Checker) findFirstIllegalModifier(node *ast.Node) *ast.Node {
 			ast.KindInterfaceDeclaration,
 			ast.KindTypeAliasDeclaration:
 			if modifiers := node.Modifiers(); modifiers != nil {
-				return core.Find(modifiers.Nodes, isModifier)
+				return core.Find(modifiers.Nodes, ast.IsModifier)
 			}
 			return nil
 		case ast.KindVariableStatement:
 			if node.AsVariableStatement().DeclarationList.Flags&ast.NodeFlagsUsing != 0 {
 				return c.findFirstModifierExcept(node, ast.KindAwaitKeyword)
 			} else if modifiers := node.Modifiers(); modifiers != nil {
-				return core.Find(modifiers.Nodes, isModifier)
+				return core.Find(modifiers.Nodes, ast.IsModifier)
 			}
 			return nil
 		case ast.KindEnumDeclaration:
@@ -1067,13 +1067,13 @@ func (c *Checker) checkGrammarObjectLiteralExpression(node *ast.ObjectLiteralExp
 		if modifiers := prop.Modifiers(); modifiers != nil {
 			if ast.CanHaveModifiers(prop) {
 				for _, mod := range modifiers.Nodes {
-					if isModifier(mod) && (mod.Kind != ast.KindAsyncKeyword || prop.Kind != ast.KindMethodDeclaration) {
+					if ast.IsModifier(mod) && (mod.Kind != ast.KindAsyncKeyword || prop.Kind != ast.KindMethodDeclaration) {
 						c.grammarErrorOnNode(mod, diagnostics.X_0_modifier_cannot_be_used_here, getTextOfNode(mod))
 					}
 				}
 			} else if ast.CanHaveIllegalModifiers(prop) {
 				for _, mod := range modifiers.Nodes {
-					if isModifier(mod) {
+					if ast.IsModifier(mod) {
 						c.grammarErrorOnNode(mod, diagnostics.X_0_modifier_cannot_be_used_here, getTextOfNode(mod))
 					}
 				}
@@ -1320,12 +1320,12 @@ func (c *Checker) checkGrammarAccessor(accessor *ast.AccessorDeclaration) bool {
 		if c.languageVersion < core.ScriptTargetES2015 && ast.IsPrivateIdentifier(accessor.Name()) {
 			return c.grammarErrorOnNode(accessor.Name(), diagnostics.Private_identifiers_are_only_available_when_targeting_ECMAScript_2015_and_higher)
 		}
-		if body == nil && !hasSyntacticModifier(accessor, ast.ModifierFlagsAbstract) {
+		if body == nil && !ast.HasSyntacticModifier(accessor, ast.ModifierFlagsAbstract) {
 			return c.grammarErrorAtPos(accessor, accessor.End()-1, len(";"), diagnostics.X_0_expected, "{")
 		}
 	}
 	if body != nil {
-		if hasSyntacticModifier(accessor, ast.ModifierFlagsAbstract) {
+		if ast.HasSyntacticModifier(accessor, ast.ModifierFlagsAbstract) {
 			return c.grammarErrorOnNode(accessor, diagnostics.An_abstract_accessor_cannot_have_an_implementation)
 		}
 		if accessor.Parent.Kind == ast.KindTypeLiteral || accessor.Parent.Kind == ast.KindInterfaceDeclaration {
@@ -1410,7 +1410,7 @@ func (c *Checker) checkGrammarTypeOperatorNode(node *ast.TypeOperatorNode) bool 
 				return c.grammarErrorOnNode((parent.AsPropertyDeclaration()).Name(), diagnostics.A_property_of_a_class_whose_type_is_a_unique_symbol_type_must_be_both_static_and_readonly)
 			}
 		case ast.KindPropertySignature:
-			if !hasSyntacticModifier(parent, ast.ModifierFlagsReadonly) {
+			if !ast.HasSyntacticModifier(parent, ast.ModifierFlagsReadonly) {
 				return c.grammarErrorOnNode((parent.AsPropertySignatureDeclaration()).Name(), diagnostics.A_property_of_an_interface_or_type_literal_whose_type_is_a_unique_symbol_type_must_be_readonly)
 			}
 		default:
@@ -1619,7 +1619,7 @@ func (c *Checker) checkGrammarVariableDeclaration(node *ast.VariableDeclaration)
 		return c.grammarErrorOnNode(node.ExclamationToken, message)
 	}
 
-	if c.program.getEmitModuleFormatOfFile(ast.GetSourceFileOfNode(node.AsNode())) < core.ModuleKindSystem && (node.Parent.Parent.Flags&ast.NodeFlagsAmbient == 0) && hasSyntacticModifier(node.Parent.Parent, ast.ModifierFlagsExport) {
+	if c.program.getEmitModuleFormatOfFile(ast.GetSourceFileOfNode(node.AsNode())) < core.ModuleKindSystem && (node.Parent.Parent.Flags&ast.NodeFlagsAmbient == 0) && ast.HasSyntacticModifier(node.Parent.Parent, ast.ModifierFlagsExport) {
 		c.checkGrammarForEsModuleMarkerInBindingName(node.Name())
 	}
 
@@ -1985,7 +1985,7 @@ func (c *Checker) checkAmbientInitializer(node *ast.Node) bool {
 }
 
 func isInitializerStringOrNumberLiteralExpression(expr *ast.Expression) bool {
-	return isStringOrNumericLiteralLike(expr) ||
+	return ast.IsStringOrNumericLiteralLike(expr) ||
 		expr.Kind == ast.KindPrefixUnaryExpression && (expr.AsPrefixUnaryExpression()).Operator == ast.KindMinusToken && (expr.AsPrefixUnaryExpression()).Operand.Kind == ast.KindNumericLiteral
 }
 
@@ -2031,7 +2031,7 @@ func (c *Checker) checkGrammarTopLevelElementForRequiredDeclareModifier(node *as
 	//     export_opt   AmbientDeclaration
 	//
 	// TODO: The spec needs to be amended to reflect this grammar.
-	if node.Kind == ast.KindInterfaceDeclaration || node.Kind == ast.KindTypeAliasDeclaration || node.Kind == ast.KindImportDeclaration || node.Kind == ast.KindImportEqualsDeclaration || node.Kind == ast.KindExportDeclaration || node.Kind == ast.KindExportAssignment || node.Kind == ast.KindNamespaceExportDeclaration || hasSyntacticModifier(node, ast.ModifierFlagsAmbient|ast.ModifierFlagsExport|ast.ModifierFlagsDefault) {
+	if node.Kind == ast.KindInterfaceDeclaration || node.Kind == ast.KindTypeAliasDeclaration || node.Kind == ast.KindImportDeclaration || node.Kind == ast.KindImportEqualsDeclaration || node.Kind == ast.KindExportDeclaration || node.Kind == ast.KindExportAssignment || node.Kind == ast.KindNamespaceExportDeclaration || ast.HasSyntacticModifier(node, ast.ModifierFlagsAmbient|ast.ModifierFlagsExport|ast.ModifierFlagsDefault) {
 		return false
 	}
 

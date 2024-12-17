@@ -458,7 +458,15 @@ func (c *Checker) inferToTemplateLiteralType(n *InferenceState, source *Type, ta
 }
 
 func (c *Checker) inferFromGenericMappedTypes(n *InferenceState, source *Type, target *Type) {
-	// !!!
+	// The source and target types are generic types { [P in S]: X } and { [P in T]: Y }, so we infer
+	// from S to T and from X to Y.
+	c.inferFromTypes(n, c.getConstraintTypeFromMappedType(source), c.getConstraintTypeFromMappedType(target))
+	c.inferFromTypes(n, c.getTemplateTypeFromMappedType(source), c.getTemplateTypeFromMappedType(target))
+	sourceNameType := c.getNameTypeFromMappedType(source)
+	targetNameType := c.getNameTypeFromMappedType(target)
+	if sourceNameType != nil && targetNameType != nil {
+		c.inferFromTypes(n, sourceNameType, targetNameType)
+	}
 }
 
 func (c *Checker) inferFromObjectTypes(n *InferenceState, source *Type, target *Type) {
@@ -810,6 +818,10 @@ func (c *Checker) newInferenceContextWorker(inferences []*InferenceInfo, signatu
 	return n
 }
 
+func (c *Checker) addIntraExpressionInferenceSite(context *InferenceContext, node *ast.Node, t *Type) {
+	// !!!
+}
+
 // We collect intra-expression inference sites within object and array literals to handle cases where
 // inferred types flow between context sensitive element expressions. For example:
 //
@@ -1124,4 +1136,19 @@ func clearCachedInferences(inferences []*InferenceInfo) {
 
 func hasInferenceCandidates(info *InferenceInfo) bool {
 	return len(info.candidates) != 0 || len(info.contraCandidates) != 0
+}
+
+func hasInferenceCandidatesOrDefault(info *InferenceInfo) bool {
+	return info.candidates != nil || info.contraCandidates != nil || hasTypeParameterDefault(info.typeParameter)
+}
+
+func hasTypeParameterDefault(tp *Type) bool {
+	if tp.symbol != nil {
+		for _, d := range tp.symbol.Declarations {
+			if ast.IsTypeParameterDeclaration(d) && d.AsTypeParameter().DefaultType != nil {
+				return true
+			}
+		}
+	}
+	return false
 }
