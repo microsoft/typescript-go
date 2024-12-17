@@ -167,8 +167,14 @@ func (p *parallelParseContext) addIfNotProcessed(fileName string) bool {
 }
 
 type parallelParseTask struct {
-	file     *ast.SourceFile
-	subTasks []parallelParseTask
+	file        *ast.SourceFile
+	hasSubTasks bool
+	subTasks    []parallelParseTask
+}
+
+func (t *parallelParseTask) createSubTasks(count int) {
+	t.subTasks = make([]parallelParseTask, count)
+	t.hasSubTasks = true
 }
 
 func (p *Program) processRootFiles(rootFiles []FileInfo) {
@@ -212,7 +218,7 @@ func (p *Program) startParseTask(fileName string, ctx *parallelParseContext, tas
 
 func (p *Program) processFiles(files []string, task *parallelParseTask, ctx *parallelParseContext) {
 	if len(files) > 0 {
-		task.subTasks = make([]parallelParseTask, len(files))
+		task.createSubTasks(len(files))
 
 		ctx.lock()
 		defer ctx.unlock()
@@ -225,10 +231,6 @@ func (p *Program) processFiles(files []string, task *parallelParseTask, ctx *par
 }
 
 func (p *Program) addAllFilesToProgram(tasks []parallelParseTask) {
-	if tasks == nil {
-		return
-	}
-
 	totalFileCount := getTotalParsedFileCount(tasks)
 	p.files = make([]*ast.SourceFile, 0, totalFileCount)
 	p.filesByPath = make(map[tspath.Path]*ast.SourceFile, totalFileCount)
@@ -238,7 +240,7 @@ func (p *Program) addAllFilesToProgram(tasks []parallelParseTask) {
 
 func (p *Program) addAllFilesToProgramWorker(tasks []parallelParseTask) {
 	for _, task := range tasks {
-		if task.subTasks != nil {
+		if task.hasSubTasks {
 			p.addAllFilesToProgramWorker(task.subTasks)
 		}
 
@@ -250,13 +252,11 @@ func (p *Program) addAllFilesToProgramWorker(tasks []parallelParseTask) {
 }
 
 func getTotalParsedFileCount(t []parallelParseTask) int {
-	if t == nil {
-		return 0
-	}
-
 	count := len(t)
 	for _, task := range t {
-		count += getTotalParsedFileCount(task.subTasks)
+		if task.hasSubTasks {
+			count += getTotalParsedFileCount(task.subTasks)
+		}
 	}
 	return count
 }
