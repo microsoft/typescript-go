@@ -62,7 +62,7 @@ const (
 	OperatorPrecedenceLogicalAND
 	// BitwiseORExpression:
 	//     BitwiseXORExpression
-	//     BitwiseORExpression `^` BitwiseXORExpression
+	//     BitwiseORExpression `|` BitwiseXORExpression
 	OperatorPrecedenceBitwiseOR
 	// BitwiseXORExpression:
 	//     BitwiseANDExpression
@@ -70,7 +70,7 @@ const (
 	OperatorPrecedenceBitwiseXOR
 	// BitwiseANDExpression:
 	//     EqualityExpression
-	//     BitwiseANDExpression `^` EqualityExpression
+	//     BitwiseANDExpression `&` EqualityExpression
 	OperatorPrecedenceBitwiseAND
 	// EqualityExpression:
 	//     RelationalExpression
