@@ -134,14 +134,45 @@ type parallelParseContext struct {
 	processedFileNames core.Set[string]
 }
 
+func newParallelParseContext(isSingleThreaded bool) *parallelParseContext {
+	return &parallelParseContext{
+		wg: core.NewWorkGroup(isSingleThreaded),
+	}
+}
+
+func (p *parallelParseContext) lock() {
+	p.mu.Lock()
+}
+
+func (p *parallelParseContext) unlock() {
+	p.mu.Unlock()
+}
+
+func (p *parallelParseContext) wait() {
+	p.wg.Wait()
+}
+
+func (p *parallelParseContext) run(fn func()) {
+	p.wg.Run(fn)
+}
+
+// Checks if a file has already been processed in the current context and if not, adds it to the processed files set.
+// Returns true if the file was added to the set, false if it was already present.
+func (p *parallelParseContext) addIfNotProcessed(fileName string) bool {
+	if !p.processedFileNames.Has(fileName) {
+		p.processedFileNames.Add(fileName)
+		return true
+	}
+	return false
+}
+
 type parallelParseTask struct {
 	file     *ast.SourceFile
 	subTasks []parallelParseTask
 }
 
 func (p *Program) processRootFiles(rootFiles []FileInfo) {
-	ctx := &parallelParseContext{}
-	ctx.wg = core.NewWorkGroup(p.programOptions.SingleThreaded)
+	ctx := newParallelParseContext(p.programOptions.SingleThreaded)
 
 	absPaths := make([]string, 0, len(rootFiles))
 	for _, fileInfo := range rootFiles {
@@ -156,12 +187,12 @@ func (p *Program) processRootFiles(rootFiles []FileInfo) {
 		p.startParseTask(absPath, ctx, &tasks[i])
 	}
 
-	ctx.wg.Wait()
+	ctx.wait()
 	p.addAllFilesToProgram(tasks)
 }
 
 func (p *Program) startParseTask(fileName string, ctx *parallelParseContext, task *parallelParseTask) {
-	ctx.wg.Run(func() {
+	ctx.run(func() {
 		normalizedPath := tspath.NormalizePath(fileName)
 		file := p.parseSourceFile(normalizedPath)
 		p.collectExternalModuleReferences(file)
@@ -183,11 +214,10 @@ func (p *Program) processFiles(files []string, task *parallelParseTask, ctx *par
 	if len(files) > 0 {
 		task.subTasks = make([]parallelParseTask, len(files))
 
-		ctx.mu.Lock()
-		defer ctx.mu.Unlock()
+		ctx.lock()
+		defer ctx.unlock()
 		for i, fileName := range files {
-			if !ctx.processedFileNames.Has(fileName) {
-				ctx.processedFileNames.Add(fileName)
+			if ctx.addIfNotProcessed(fileName) {
 				p.startParseTask(fileName, ctx, &task.subTasks[i])
 			}
 		}
