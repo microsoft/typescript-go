@@ -1,8 +1,6 @@
 package tsoptions
 
 import (
-	// "runtime"
-
 	"testing"
 	"testing/fstest"
 
@@ -183,16 +181,6 @@ var baselineParseData = []struct {
 			{"compilerOptions": map[string]interface{}{"lib": []string{"es5", "es6"}}},
 		},
 	},
-	// {
-	// 	title: "returns object with error when json is invalid",
-	// 	input: []string{
-	// 		"invalid",
-	// 	},
-	// 	output: []map[string]interface{}{
-	// 		{},
-	// 		{},
-	// 	},
-	// },
 }
 
 func TestBaselineParseResult(t *testing.T) {
