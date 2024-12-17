@@ -1461,7 +1461,7 @@ func (p *Parser) parseClassElement() *ast.Node {
 	if modifiers != nil {
 		// treat this as a property declaration with a missing name.
 		p.parseErrorAt(p.nodePos(), p.nodePos(), diagnostics.Declaration_expected)
-		name := p.newIdentifier("")
+		name := p.createMissingIdentifier()
 		return p.parsePropertyDeclaration(pos, hasJSDoc, modifiers, name, nil /*questionToken*/)
 	}
 	// 'isClassMemberStart' should have hinted not to attempt parsing.
@@ -3158,8 +3158,8 @@ func (p *Parser) nextTokenIsColonOrQuestionColon() bool {
 }
 
 func (p *Parser) parseTupleElementType() *ast.TypeNode {
+	pos := p.nodePos()
 	if p.parseOptional(ast.KindDotDotDotToken) {
-		pos := p.nodePos()
 		result := p.factory.NewRestTypeNode(p.parseType())
 		p.finishNode(result, pos)
 		return result
@@ -3167,7 +3167,6 @@ func (p *Parser) parseTupleElementType() *ast.TypeNode {
 	typeNode := p.parseType()
 	// If next token is start of a type we have a conditional type and not an optional type
 	if p.token == ast.KindQuestionToken && !p.lookAhead(p.nextIsStartOfType) {
-		pos := p.nodePos()
 		p.nextToken()
 		typeNode = p.factory.NewOptionalTypeNode(typeNode)
 		p.finishNode(typeNode, pos)
@@ -5419,9 +5418,7 @@ func (p *Parser) createIdentifierWithDiagnostic(isIdentifier bool, diagnosticMes
 	} else {
 		p.parseErrorAtCurrentToken(diagnostics.Identifier_expected)
 	}
-	result := p.newIdentifier("")
-	p.finishNode(result, p.nodePos())
-	return result
+	return p.createMissingIdentifier()
 }
 
 func (p *Parser) internIdentifier(text string) {
