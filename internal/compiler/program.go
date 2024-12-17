@@ -32,9 +32,8 @@ type Program struct {
 	resolver         *module.Resolver
 	currentDirectory string
 
-	fileProcessingMutex sync.Mutex
-	files               []*ast.SourceFile
-	filesByPath         map[tspath.Path]*ast.SourceFile
+	files       []*ast.SourceFile
+	filesByPath map[tspath.Path]*ast.SourceFile
 
 	// The below settings are to track if a .js file should be add to the program if loaded via searching under node_modules.
 	// This works as imported modules are discovered recursively in a depth first manner, specifically:
