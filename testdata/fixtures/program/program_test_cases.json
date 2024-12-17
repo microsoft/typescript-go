@@ -1,0 +1,89 @@
+[
+    {
+        "name": "BasicFileOrdering",
+        "files": [
+            { "name": "c:/dev/src/index.ts", "contents": "/// <reference path='c:/dev/src2/a/5.ts' />\n/// <reference path='c:/dev/src2/a/10.ts' />"},
+            { "name": "c:/dev/src2/a/5.ts", "contents": "/// <reference path='4.ts' />"},
+            { "name": "c:/dev/src2/a/4.ts", "contents": "/// <reference path='b/3.ts' />"},
+            { "name": "c:/dev/src2/a/b/3.ts", "contents": "/// <reference path='2.ts' />"},
+            { "name": "c:/dev/src2/a/b/2.ts", "contents": "/// <reference path='c/1.ts' />"},
+            { "name": "c:/dev/src2/a/b/c/1.ts", "contents": "console.log('hello');"},
+            { "name": "c:/dev/src2/a/10.ts", "contents": "/// <reference path='b/c/d/9.ts' />"},
+            { "name": "c:/dev/src2/a/b/c/d/9.ts", "contents": "/// <reference path='e/8.ts' />"},
+            { "name": "c:/dev/src2/a/b/c/d/e/8.ts", "contents": "/// <reference path='7.ts' />"},
+            { "name": "c:/dev/src2/a/b/c/d/e/7.ts", "contents": "/// <reference path='f/6.ts' />"},
+            { "name": "c:/dev/src2/a/b/c/d/e/f/6.ts", "contents": "console.log('world!');"}
+        ],
+        "expectedFiles":[
+            "c:/dev/src2/a/b/c/1.ts",
+            "c:/dev/src2/a/b/2.ts",
+            "c:/dev/src2/a/b/3.ts",
+            "c:/dev/src2/a/4.ts",
+            "c:/dev/src2/a/5.ts",
+            "c:/dev/src2/a/b/c/d/e/f/6.ts",
+            "c:/dev/src2/a/b/c/d/e/7.ts",
+            "c:/dev/src2/a/b/c/d/e/8.ts",
+            "c:/dev/src2/a/b/c/d/9.ts",
+            "c:/dev/src2/a/10.ts",
+            "c:/dev/src/index.ts"
+        ]
+    },
+    {
+        "name": "FileOrderingImports",
+        "files": [
+            { "name": "c:/dev/src/index.ts", "contents": "import * as five from '../src2/a/5.ts';\nimport * as ten from '../src2/a/10.ts';"},
+            { "name": "c:/dev/src2/a/5.ts", "contents": "import * as four from './4.ts';"},
+            { "name": "c:/dev/src2/a/4.ts", "contents": "import * as three from './b/3.ts';"},
+            { "name": "c:/dev/src2/a/b/3.ts", "contents": "import * as two from './2.ts';"},
+            { "name": "c:/dev/src2/a/b/2.ts", "contents": "import * as one from './c/1.ts';"},
+            { "name": "c:/dev/src2/a/b/c/1.ts", "contents": "console.log('hello');"},
+            { "name": "c:/dev/src2/a/10.ts", "contents": "import * as nine from './b/c/d/9.ts';"},
+            { "name": "c:/dev/src2/a/b/c/d/9.ts", "contents": "import * as eight from './e/8.ts';"},
+            { "name": "c:/dev/src2/a/b/c/d/e/8.ts", "contents": "import * as seven from './7.ts';"},
+            { "name": "c:/dev/src2/a/b/c/d/e/7.ts", "contents": "import * as six from './f/6.ts';"},
+            { "name": "c:/dev/src2/a/b/c/d/e/f/6.ts", "contents": "console.log('world!');"}
+        ],
+        "expectedFiles":[
+            "c:/dev/src2/a/b/c/1.ts",
+            "c:/dev/src2/a/b/2.ts",
+            "c:/dev/src2/a/b/3.ts",
+            "c:/dev/src2/a/4.ts",
+            "c:/dev/src2/a/5.ts",
+            "c:/dev/src2/a/b/c/d/e/f/6.ts",
+            "c:/dev/src2/a/b/c/d/e/7.ts",
+            "c:/dev/src2/a/b/c/d/e/8.ts",
+            "c:/dev/src2/a/b/c/d/9.ts",
+            "c:/dev/src2/a/10.ts",
+            "c:/dev/src/index.ts"
+        ]
+    },
+    {
+        "name": "FileOrderingCycles",
+        "files": [
+            { "name": "c:/dev/src/index.ts", "contents": "import * as five from '../src2/a/5.ts';\nimport * as ten from '../src2/a/10.ts';"},
+            { "name": "c:/dev/src2/a/5.ts", "contents": "import * as four from './4.ts';"},
+            { "name": "c:/dev/src2/a/4.ts", "contents": "import * as three from './b/3.ts';"},
+            { "name": "c:/dev/src2/a/b/3.ts", "contents": "import * as two from './2.ts';\nimport * as cycle from 'c:/dev/src/index.ts'; "},
+            { "name": "c:/dev/src2/a/b/2.ts", "contents": "import * as one from './c/1.ts';"},
+            { "name": "c:/dev/src2/a/b/c/1.ts", "contents": "console.log('hello');"},
+            { "name": "c:/dev/src2/a/10.ts", "contents": "import * as nine from './b/c/d/9.ts';"},
+            { "name": "c:/dev/src2/a/b/c/d/9.ts", "contents": "import * as eight from './e/8.ts';\nimport * as cycle from 'c:/dev/src/index.ts';"},
+            { "name": "c:/dev/src2/a/b/c/d/e/8.ts", "contents": "import * as seven from './7.ts';"},
+            { "name": "c:/dev/src2/a/b/c/d/e/7.ts", "contents": "import * as six from './f/6.ts';"},
+            { "name": "c:/dev/src2/a/b/c/d/e/f/6.ts", "contents": "console.log('world!');"}
+        ],
+        "expectedFiles":[
+            "c:/dev/src2/a/b/c/1.ts",
+            "c:/dev/src2/a/b/2.ts",
+            "c:/dev/src2/a/b/3.ts",
+            "c:/dev/src2/a/4.ts",
+            "c:/dev/src2/a/5.ts",
+            "c:/dev/src2/a/b/c/d/e/f/6.ts",
+            "c:/dev/src2/a/b/c/d/e/7.ts",
+            "c:/dev/src2/a/b/c/d/e/8.ts",
+            "c:/dev/src2/a/b/c/d/9.ts",
+            "c:/dev/src2/a/10.ts",
+            "c:/dev/src/index.ts"
+        ]
+    }
+]

@@ -1,65 +1,69 @@
 package compiler
 
 import (
+	"encoding/json"
+	"os"
+	"path/filepath"
 	"testing"
 	"testing/fstest"
 
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/repo"
 	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
 	"gotest.tools/v3/assert"
 )
 
-func TestProgramFileOrdering(t *testing.T) {
+type testFile struct {
+	FileName string `json:"name"`
+	Contents string `json:"contents"`
+}
+
+type programTest struct {
+	TestName      string     `json:"name"`
+	Files         []testFile `json:"files"`
+	ExpectedFiles []string   `json:"expectedFiles"`
+}
+
+func TestProgram(t *testing.T) {
 	t.Parallel()
-	fs := fstest.MapFS{}
+	testsFilePath := filepath.Join(repo.TestDataPath, "fixtures", "program", "program_test_cases.json")
 
-	files := map[string]string{
-		"c:/dev/src/index.ts":          "/// <reference path='c:/dev/src2/a/5.ts' />\n/// <reference path='c:/dev/src2/a/10.ts' />",
-		"c:/dev/src2/a/5.ts":           `/// <reference path="4.ts" />`,
-		"c:/dev/src2/a/4.ts":           `/// <reference path="b/3.ts" />`,
-		"c:/dev/src2/a/b/3.ts":         `/// <reference path="2.ts" />`,
-		"c:/dev/src2/a/b/2.ts":         `/// <reference path="c/1.ts" />`,
-		"c:/dev/src2/a/b/c/1.ts":       `console.log("hello");`,
-		"c:/dev/src2/a/10.ts":          `/// <reference path="b/c/d/9.ts" />`,
-		"c:/dev/src2/a/b/c/d/9.ts":     `/// <reference path="e/8.ts" />`,
-		"c:/dev/src2/a/b/c/d/e/8.ts":   `/// <reference path="7.ts" />`,
-		"c:/dev/src2/a/b/c/d/e/7.ts":   `/// <reference path="f/6.ts" />`,
-		"c:/dev/src2/a/b/c/d/e/f/6.ts": `console.log("world!");`,
+	file, err := os.Open(testsFilePath)
+	if err != nil {
+		t.Fatal(err)
 	}
 
-	for fileName, contents := range files {
-		fs[fileName] = &fstest.MapFile{
-			Data: []byte(contents),
-		}
+	decoder := json.NewDecoder(file)
+	var programTestCases []programTest
+	err = decoder.Decode(&programTestCases)
+	if err != nil {
+		t.Fatalf("Failed to decode test cases: %v", err)
 	}
 
-	opts := core.CompilerOptions{}
+	for _, testCase := range programTestCases {
+		t.Run(testCase.TestName, func(t *testing.T) {
+			fs := fstest.MapFS{}
+			for _, testFile := range testCase.Files {
+				fs[testFile.FileName] = &fstest.MapFile{
+					Data: []byte(testFile.Contents),
+				}
+			}
 
-	program := NewProgram(ProgramOptions{
-		RootPath:       "c:/dev/src",
-		Host:           NewCompilerHost(&opts, "c:/dev/src", vfstest.FromMapFS(fs, true)),
-		Options:        &opts,
-		SingleThreaded: false,
-	})
+			opts := core.CompilerOptions{}
 
-	actualOrder := []string{}
-	for _, file := range program.files {
-		actualOrder = append(actualOrder, file.FileName())
+			program := NewProgram(ProgramOptions{
+				RootPath:       "c:/dev/src",
+				Host:           NewCompilerHost(&opts, "c:/dev/src", vfstest.FromMapFS(fs, true)),
+				Options:        &opts,
+				SingleThreaded: false,
+			})
+
+			actualFiles := []string{}
+			for _, file := range program.files {
+				actualFiles = append(actualFiles, file.FileName())
+			}
+
+			assert.DeepEqual(t, testCase.ExpectedFiles, actualFiles)
+		})
 	}
-
-	expectedOrder := []string{
-		"c:/dev/src2/a/b/c/1.ts",
-		"c:/dev/src2/a/b/2.ts",
-		"c:/dev/src2/a/b/3.ts",
-		"c:/dev/src2/a/4.ts",
-		"c:/dev/src2/a/5.ts",
-		"c:/dev/src2/a/b/c/d/e/f/6.ts",
-		"c:/dev/src2/a/b/c/d/e/7.ts",
-		"c:/dev/src2/a/b/c/d/e/8.ts",
-		"c:/dev/src2/a/b/c/d/9.ts",
-		"c:/dev/src2/a/10.ts",
-		"c:/dev/src/index.ts",
-	}
-
-	assert.DeepEqual(t, expectedOrder, actualOrder)
 }
