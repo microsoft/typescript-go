@@ -13,6 +13,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/compiler/diagnostics"
 	"github.com/microsoft/typescript-go/internal/compiler/module"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/parser"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 )
@@ -222,7 +223,7 @@ func convertConfigFileToObject(
 				return convertToJson(sourceFile, firstObject, errors /*returnValue*/, true, jsonConversionNotifier)
 			}
 		}
-		return struct{}{}
+		return map[string]interface{}{}
 	}
 	return convertToJson(sourceFile, rootExpression, errors, true, jsonConversionNotifier)
 }
@@ -886,7 +887,7 @@ func directoryOfCombinedPath(fileName string, basePath string) string {
  * @param jsonText The text of the config file
  */
 func ParseConfigFileTextToJson(fileName string, basePath string, jsonText string, errors []*ast.Diagnostic) (any, []*ast.Diagnostic) {
-	jsonSourceFile := compiler.ParseJSONText(fileName, jsonText)
+	jsonSourceFile := parser.ParseJSONText(fileName, jsonText)
 	config := convertConfigFileToObject(jsonSourceFile, jsonSourceFile.Diagnostics() /*jsonConversionNotifier*/, nil)
 	if len(jsonSourceFile.Diagnostics()) > 0 {
 		errors = append(errors, jsonSourceFile.Diagnostics()[0])

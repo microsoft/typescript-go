@@ -132,6 +132,20 @@ func (vfs *common) GetDirectories(path string) []string {
 	return dirs
 }
 
+func (v *common) GetEntries(path string) []fs.DirEntry {
+	fsys, _, rest := v.rootAndPath(path)
+	if fsys == nil {
+		return nil
+	}
+
+	entries, err := fs.ReadDir(fsys, rest)
+	if err != nil {
+		return nil
+	}
+
+	return entries
+}
+
 func (vfs *common) WalkDir(root string, walkFn WalkDirFunc) error {
 	fsys, rootName, rest := vfs.rootAndPath(root)
 	if fsys == nil {
@@ -183,90 +197,4 @@ func decodeUtf16(b []byte, order binary.ByteOrder) string {
 		return ""
 	}
 	return string(utf16.Decode(ints))
-}
-
-func (v *vfs) DirectoryExists(path string) bool {
-	stat := v.stat(path)
-	return stat != nil && stat.IsDir()
-}
-
-func (v *vfs) GetDirectories(path string) []string {
-	fsys, _, rest := v.rootAndPath(path)
-	if fsys == nil {
-		return nil
-	}
-
-	entries, err := fs.ReadDir(fsys, rest)
-	if err != nil {
-		return nil
-	}
-
-	// TODO: should this really exist? ReadDir with manual filtering seems like a better idea.
-	var dirs []string
-	for _, entry := range entries {
-		if entry.IsDir() {
-			dirs = append(dirs, entry.Name())
-		}
-	}
-	return dirs
-}
-
-func (v *vfs) GetEntries(path string) []fs.DirEntry {
-	fsys, _, rest := v.rootAndPath(path)
-	if fsys == nil {
-		return nil
-	}
-
-	entries, err := fs.ReadDir(fsys, rest)
-	if err != nil {
-		return nil
-	}
-
-	return entries
-}
-
-func (v *vfs) GetFiles(path string) []string {
-	fsys, _, rest := v.rootAndPath(path)
-	if fsys == nil {
-		return nil
-	}
-	entries, err := fs.ReadDir(fsys, rest)
-	if err != nil {
-		return nil
-	}
-	// TODO: should this really exist? ReadDir with manual filtering seems like a better idea.
-	var dirs []string
-	var files []string
-	for _, entry := range entries {
-		if entry.IsDir() {
-			dirs = append(dirs, entry.Name())
-		} else {
-			files = append(files, entry.Name())
-		}
-	}
-	return files
-}
-
-func (v *vfs) WalkDir(root string, walkFn WalkDirFunc) error {
-	fsys, rootName, rest := v.rootAndPath(root)
-	if fsys == nil {
-		return nil
-	}
-	return fs.WalkDir(fsys, rest, func(path string, d fs.DirEntry, err error) error {
-		if path == "." {
-			path = ""
-		}
-		return walkFn(rootName+path, d, err)
-	})
-}
-
-func (v *vfs) Realpath(path string) string {
-	root, rest := splitPath(path)
-	// splitPath normalizes the path into parts (e.g. "c:/foo/bar" -> "c:/", "foo/bar")
-	// Put them back together to call realpath.
-	realpath, err := v.realpath(root + rest)
-	if err != nil {
-		return path
-	}
-	return realpath
 }

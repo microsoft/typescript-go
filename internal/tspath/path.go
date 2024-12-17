@@ -301,7 +301,7 @@ func GetNormalizedPathComponents(path string, currentDirectory string) []string 
 }
 
 func GetNormalizedAbsolutePath(fileName string, currentDirectory string) string {
-	return getPathFromPathComponents(getNormalizedPathComponents(fileName, currentDirectory))
+	return getPathFromPathComponents(GetNormalizedPathComponents(fileName, currentDirectory))
 }
 
 func hasRelativePathSegment(p string) bool {
@@ -353,7 +353,7 @@ func GetCanonicalFileName(fileName string, useCaseSensitiveFileNames bool) strin
 	if useCaseSensitiveFileNames {
 		return fileName
 	}
-	return ToFileNameLowerCase(fileName)
+	return toFileNameLowerCase(fileName)
 }
 
 // We convert the file names to lower case as key for file name on case insensitive file system

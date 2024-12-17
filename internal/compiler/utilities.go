@@ -2980,10 +2980,8 @@ func createEvaluator(evaluateEntity Evaluator) Evaluator {
 	return evaluate
 }
 
-func isComputedNonLiteralName(name *ast.Node) bool {
-	return ast.IsComputedPropertyName(name) && !ast.IsStringOrNumericLiteralLike(name.Expression())
 func IsComputedNonLiteralName(name *ast.Node) bool {
-	return ast.IsComputedPropertyName(name) && !isStringOrNumericLiteralLike(name.Expression())
+	return ast.IsComputedPropertyName(name) && !ast.IsStringOrNumericLiteralLike(name.Expression())
 }
 
 func isInfinityOrNaNString(name string) bool {
@@ -3610,7 +3608,7 @@ func tryGetTextOfPropertyName(name *ast.PropertyName) string {
 	case ast.KindStringLiteral, ast.KindNumericLiteral, ast.KindBigIntLiteral, ast.KindNoSubstitutionTemplateLiteral:
 		return name.Text() // return escapeLeadingUnderscores(name.text);
 	case ast.KindComputedPropertyName:
-		if isStringLiteralLike(name.Expression()) {
+		if ast.IsStringLiteralLike(name.Expression()) {
 			return name.Expression().Text() //escapeLeadingUnderscores(name.expression.text);
 		}
 		return ""

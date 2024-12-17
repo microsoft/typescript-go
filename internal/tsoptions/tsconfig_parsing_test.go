@@ -3,104 +3,17 @@ package tsoptions
 import (
 	// "runtime"
 
-	"fmt"
 	"testing"
 	"testing/fstest"
 
 	"github.com/microsoft/typescript-go/internal/ast"
-	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/parser"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
 	"gotest.tools/v3/assert"
-	// "encoding/json"
 )
-
-//type jsonTexts func() []string
-// var jsonTexts = func() []string {
-// 	text := []string{[
-//         "// Comment",
-//         "/* Comment*/",]
-// 	}
-// 	return text
-// }
-
-var jsonTexts = []string{
-	// returns empty config for file with only whitespaces
-	// `"",
-	// 	" ",
-	//  	`,
-	// 	// returns empty config for file with comments only
-	// 	`"// Comment",
-	// "/* Comment*/",`,
-	// 	// return empty config when file is empty object
-	// 	`{}`,
-	// returns config object without comments
-	// `{ // Excluded files
-	// 	"exclude": [
-	// 		// Exclude d.ts
-	// 		"file.d.ts"
-	// 	]
-	// }`,
-	// `{
-	// 	/* Excluded
-	// 			Files
-	// 	*/
-	// 	"exclude": [
-	// 		/* multiline comments can be in the middle of a line */"file.d.ts"
-	// 	]
-	// }`,
-	// keeps string content untouched
-	// `{
-	// 	"exclude": [
-	// 		"xx//file.d.ts"
-	// 	]
-	// }`,
-	// `{
-	// 	"exclude": [
-	// 		"xx/*file.d.ts*/"
-	// 	]
-	// }`,
-	// handles escaped characters in strings correctly
-	// `{ //doesn't work
-	// 	"exclude": [
-	// 		"xx\\"//files"
-	// 	]
-	// }`,
-	// `{
-	// 	"exclude": [
-	// 		"xx\\\\" // end of line comment
-	// 	]
-	// }`,
-	// returns object when users correctly specify library
-	`{
-		"compilerOptions": {
-			"lib": ["es5"]
-		}
-	}`,
-	`{
-		"compilerOptions": {
-			"lib": ["es5", "es6"]
-		}
-	}`,
-}
-
-// func TestBaselineParseResult(t *testing.T) {
-// 	//var baseline []string = []string{}
-
-// 	for _, jsonText := range jsonTexts {
-// 		//baseline = append(baseline, "Input::", jsonText)
-// 		parsed := ParseConfigFileTextToJson("/apath/tsconfig.json", jsonText)
-// 		config := json.Unmarshal(parsed.config.([]byte), "Config::")
-// 		fmt.Println(config)
-// 		// s, ok := (parsed.config).([]byte)
-// 		// if ok {
-// 		// 	json.Unmarshal([]byte(s), &parsed)
-// 		// }
-// 		// fmt.Println(s)
-// 	}
-// }
 
 type testConfig struct {
 	jsonText       string
@@ -113,85 +26,6 @@ type verifyConfig struct {
 	configFile     map[string]interface{}
 	expectedErrors []string
 }
-
-// func TestGetParsedCommandJson(t *testing.T) {
-// 	for _, test := range parseCommandJson {
-// 		//host := newVFSParseConfigHost(test.allFileList, "")
-// 		parsed := ParseConfigFileTextToJson(test.configFileName, test.jsonText)
-// 		parseConfigFileContent := ParseJsonConfigFileContent(
-// 			parsed.config.(map[string]interface{}),
-// 			*host,
-// 			test.basePath,
-// 			//basePath ?? ts.getNormalizedAbsolutePath(ts.getDirectoryPath(configFileName), host.sys.getCurrentDirectory()),
-// 			nil,
-// 			test.configFileName,
-// 			/*resolutionStack*/ nil,
-// 			/*extraFileExtensions*/ nil,
-// 			/*extendedConfigCache*/ nil,
-// 		)
-// 		configJson, err := json.Marshal(parseConfigFileContent.Options)
-// 		if err != nil {
-// 			t.Errorf("Failed to marshal parseConfigFileContent: %v", err)
-// 		}
-// 		fmt.Println("****************************************************")
-// 		fmt.Println(string(configJson))
-// 	}
-// }
-
-// func TestGetParsedCommandJsonSourceFile(t *testing.T) {
-
-// 	for _, test := range parseCommandJson {
-// 		var currentTestFile = make(map[string]string, len(test.allFileList))
-// 		for _, file := range test.allFileList {
-// 			currentTestFile[file] = ""
-// 		}
-// 		host := newVFSParseConfigHost(currentTestFile, test.basePath)
-// 		parsed := compiler.ParseJSONText(test.configFileName, test.jsonText)
-// 		var basePath string
-// 		if test.basePath != "" {
-// 			basePath = test.basePath
-// 		} else {
-// 			basePath = tspath.GetNormalizedAbsolutePath(tspath.GetDirectoryPath(test.configFileName), "")
-// 		}
-// 		var tsConfigSourceFile *tsConfigSourceFile = &tsConfigSourceFile{
-// 			sourceFile: parsed,
-// 		}
-// 		parseConfigFileContent := ParseJsonSourceFileConfigFileContent(
-// 			tsConfigSourceFile,
-// 			*host,
-// 			host.currentDirectory,
-// 			nil,
-// 			tspath.GetNormalizedAbsolutePath(test.configFileName, basePath), //&test.configFileName,
-// 			/*resolutionStack*/ nil,
-// 			/*extraFileExtensions*/ nil,
-// 			/*extendedConfigCache*/ nil,
-// 		)
-// 		// k := ParseRawConfig(parseConfigFileContent.Raw)
-// 		// l := ParseRawConfig(test.expectedResult)
-// 		// assert.DeepEqual(t, k.prop, l)
-
-// 		configJson, err := json.Marshal(parseConfigFileContent.Raw)
-// 		if err != nil {
-// 			t.Errorf("Failed to marshal parseConfigFileContent: %v", err)
-// 		}
-// 		// expectedResultJson, err := json.Marshal(test.expectedResult)
-// 		// if err != nil {
-// 		// 	t.Errorf("Failed to marshal expectedResult: %v", err)
-// 		// }
-// 		//k := string(expectedResultJson)
-// 		// assert.DeepEqual(t, string(configJson), strings.ReplaceAll(k, " ", ""))
-// 		// assert.Equal(t, parseConfigFileContent.Errors[0].Message(), test.expectedErrors)
-// 		fmt.Println("****************************************************")
-// 		fmt.Println(string(configJson))
-// 		if parseConfigFileContent.Errors != nil {
-// 			fmt.Println("errors: ", parseConfigFileContent.Errors[0].Message())
-// 		}
-// 		fmt.Println("fileNames: ", parseConfigFileContent.FileNames)
-// 		fmt.Println("configFileName: ", tspath.GetNormalizedAbsolutePath(test.configFileName, ""))
-// 		fmt.Println("****************************************************")
-// 		fmt.Println("")
-// 	}
-// }
 
 var parseCommandJson = []testConfig{}
 
@@ -229,6 +63,148 @@ func newVFSParseConfigHost(files map[string]string, currentDirectory string) *Vf
 	return &VfsParseConfigHost{
 		fs:               vfstest.FromMapFS(fs, true /*useCaseSensitiveFileNames*/),
 		currentDirectory: currentDirectory,
+	}
+}
+
+var baselineParseData = []struct {
+	title  string
+	input  []string
+	output []map[string]interface{}
+}{
+	{
+		title: "returns empty config for file with only whitespaces",
+		input: []string{
+			"",
+			" ",
+		},
+		output: []map[string]interface{}{
+			{},
+			{},
+		},
+	},
+	{
+		title: "returns empty config for file with comments only",
+		input: []string{
+			"// Comment",
+			"/* Comment*/",
+		},
+		output: []map[string]interface{}{
+			{},
+			{},
+		},
+	},
+	{
+		title: "returns empty config when config is empty object",
+		input: []string{
+			`{}`,
+		},
+		output: []map[string]interface{}{
+			{},
+			{},
+		},
+	},
+	{
+		title: "returns config object without comments",
+		input: []string{
+			`{ // Excluded files
+	        "exclude": [
+	            // Exclude d.ts
+	            "file.d.ts"
+	        ]
+	    }`,
+			`{
+	        /* Excluded
+	                Files
+	        */
+	        "exclude": [
+	            /* multiline comments can be in the middle of a line */"file.d.ts"
+	        ]
+	    }`,
+		},
+		output: []map[string]interface{}{
+			{"exclude": []string{"file.d.ts"}},
+			{"exclude": []string{"file.d.ts"}},
+		},
+	},
+	{
+		title: "keeps string content untouched",
+		input: []string{
+			`{
+				"exclude": [
+					"xx//file.d.ts"
+				]
+			}`,
+			`{
+				"exclude": [
+					"xx/*file.d.ts*/"
+				]
+			}`,
+		},
+		output: []map[string]interface{}{
+			{"exclude": []string{"xx//file.d.ts"}},
+			{"exclude": []string{"xx/*file.d.ts*/"}},
+		},
+	},
+	// {
+	// 	title: "handles escaped characters in strings correctly",
+	// 	input: []string{
+	// 		`{
+	// 			"exclude": [
+	// 				"xx\\"//files"
+	// 			]
+	// 		}`,
+	// 		`{
+	// 			"exclude": [
+	// 				"xx\\\\" // end of line comment
+	// 			]
+	// 		}`,
+	// 	},
+	// 	output: []map[string]interface{}{
+	// 		{"exclude": []string{"xx\"//files"}},
+	// 		{"exclude": []string{"xx\\"}},
+	// 	},
+	// },
+	{
+		title: "returns object when users correctly specify library",
+		input: []string{
+			`{
+				"compilerOptions": {
+					"lib": ["es5"]
+				}
+			}`,
+			`{
+				"compilerOptions": {
+					"lib": ["es5", "es6"]
+				}
+			}`,
+		},
+		output: []map[string]interface{}{
+			{"compilerOptions": map[string]interface{}{"lib": []string{"es5"}}},
+			{"compilerOptions": map[string]interface{}{"lib": []string{"es5", "es6"}}},
+		},
+	},
+	// {
+	// 	title: "returns object with error when json is invalid",
+	// 	input: []string{
+	// 		"invalid",
+	// 	},
+	// 	output: []map[string]interface{}{
+	// 		{},
+	// 		{},
+	// 	},
+	// },
+}
+
+func TestBaselineParseResult(t *testing.T) {
+	for _, rec := range baselineParseData {
+		t.Run(rec.title, func(t *testing.T) {
+			t.Parallel()
+			var errors []*ast.Diagnostic
+			for index, jsonText := range rec.input {
+				parsed, _ := ParseConfigFileTextToJson("/apath/tsconfig.json", "/apath", jsonText, errors)
+				assert.DeepEqual(t, parsed, rec.output[index])
+			}
+		})
 	}
 }
 
@@ -407,9 +383,7 @@ func TestParsedCommandJson(t *testing.T) {
 				/*extraFileExtensions*/ nil,
 				/*extendedConfigCache*/ nil,
 			)
-			fmt.Printf(rec.title)
-			fmt.Println(parseConfigFileContent.FileNames)
-			fmt.Println(rec.output.fileNames)
+
 			assert.DeepEqual(t, parseConfigFileContent.FileNames, rec.output.fileNames)
 			compareTsConfigOptions(t, ParseRawConfig(parseConfigFileContent.Raw, basePath, parseConfigFileContent.Errors, "tsconfig.json"), ParseRawConfig(rec.output.configFile, basePath, nil, "tsconfig.json"), rec.output.configFile)
 			var actualErrorMessages = []string{}
@@ -430,7 +404,7 @@ func TestParsedCommandJsonSourceFile(t *testing.T) {
 				allFileLists[file] = ""
 			}
 			host := newVFSParseConfigHost(allFileLists, rec.input.basePath)
-			parsed := compiler.ParseJSONText(rec.input.configFileName, rec.input.jsonText)
+			parsed := parser.ParseJSONText(rec.input.configFileName, rec.input.jsonText)
 			var basePath string
 			if rec.input.basePath != "" {
 				basePath = rec.input.basePath
