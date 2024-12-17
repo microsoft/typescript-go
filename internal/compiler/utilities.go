@@ -105,10 +105,6 @@ func tokenIsIdentifierOrKeywordOrGreaterThan(token ast.Kind) bool {
 	return token == ast.KindGreaterThanToken || tokenIsIdentifierOrKeyword(token)
 }
 
-func isInJSFile(node *ast.Node) bool {
-	return node != nil && node.Flags&ast.NodeFlagsJavaScriptFile != 0
-}
-
 func isCommonJSContainingModuleKind(kind core.ModuleKind) bool {
 	return kind == core.ModuleKindCommonJS || kind == core.ModuleKindNode16 || kind == core.ModuleKindNodeNext
 }
@@ -1483,10 +1479,6 @@ func hasExportAssignmentSymbol(moduleSymbol *ast.Symbol) bool {
 	return moduleSymbol.Exports[ast.InternalSymbolNameExportEquals] != nil
 }
 
-func isImportOrExportSpecifier(node *ast.Node) bool {
-	return ast.IsImportSpecifier(node) || ast.IsExportSpecifier(node)
-}
-
 func parsePseudoBigInt(stringValue string) string {
 	return stringValue // !!!
 }
@@ -2439,4 +2431,90 @@ func getFunctionFlags(node *ast.Node) FunctionFlags {
 		flags |= FunctionFlagsInvalid
 	}
 	return flags
+}
+
+func getLeftSideOfImportEqualsOrExportAssignment(nodeOnRightSide *ast.EntityName) *ast.Node {
+	for nodeOnRightSide.Parent.Kind == ast.KindQualifiedName {
+		nodeOnRightSide = nodeOnRightSide.Parent
+	}
+
+	if nodeOnRightSide.Parent.Kind == ast.KindImportEqualsDeclaration {
+		if nodeOnRightSide.Parent.AsImportEqualsDeclaration().ModuleReference == nodeOnRightSide {
+			return nodeOnRightSide.Parent
+		}
+		return nil
+	}
+
+	if nodeOnRightSide.Parent.Kind == ast.KindExportAssignment {
+		if nodeOnRightSide.Parent.AsExportAssignment().Expression == nodeOnRightSide {
+			return nodeOnRightSide.Parent
+		}
+		return nil
+	}
+
+	return nil
+}
+
+func isInRightSideOfImportOrExportAssignment(node *ast.EntityName) bool {
+	return getLeftSideOfImportEqualsOrExportAssignment(node) != nil
+}
+
+func isJsxIntrinsicTagName(tagName *ast.Node) bool {
+	return ast.IsIdentifier(tagName) && isIntrinsicJsxName(tagName.Text()) || ast.IsJsxNamespacedName(tagName)
+}
+
+func getContainingObjectLiteral(f *ast.SignatureDeclaration) *ast.Node {
+	if (f.Kind == ast.KindMethodDeclaration ||
+		f.Kind == ast.KindGetAccessor ||
+		f.Kind == ast.KindSetAccessor) && f.Parent.Kind == ast.KindObjectLiteralExpression {
+		return f.Parent
+	} else if f.Kind == ast.KindFunctionExpression && f.Parent.Kind == ast.KindPropertyAssignment {
+		return f.Parent.Parent
+	}
+	return nil
+}
+
+func isImportTypeQualifierPart(node *ast.Node) *ast.Node {
+	parent := node.Parent
+	for ast.IsQualifiedName(parent) {
+		node = parent
+		parent = parent.Parent
+	}
+
+	if parent != nil && parent.Kind == ast.KindImportType && parent.AsImportTypeNode().Qualifier == node {
+		return parent
+	}
+
+	return nil
+}
+
+func isInNameOfExpressionWithTypeArguments(node *ast.Node) bool {
+	for node.Parent.Kind == ast.KindPropertyAccessExpression {
+		node = node.Parent
+	}
+
+	return node.Parent.Kind == ast.KindExpressionWithTypeArguments
+}
+
+func getSymbolPath(symbol *ast.Symbol) string {
+	if symbol.Parent != nil {
+		return getSymbolPath(symbol.Parent) + "." + symbol.Name
+	}
+	return symbol.Name
+}
+
+func getTypeParameterFromJsDoc(node *ast.Node) *ast.Node {
+	name := node.Name().Text()
+	typeParameters := node.Parent.Parent.Parent.TypeParameters()
+	return core.Find(typeParameters, func(p *ast.Node) bool { return p.Name().Text() == name })
+}
+
+func isTypeDeclarationName(name *ast.Node) bool {
+	return name.Kind == ast.KindIdentifier &&
+		isTypeDeclaration(name.Parent) &&
+		ast.GetNameOfDeclaration(name.Parent) == name
+}
+
+func getIndexSymbolFromSymbolTable(symbolTable ast.SymbolTable) *ast.Symbol {
+	return symbolTable[ast.InternalSymbolNameIndex]
 }

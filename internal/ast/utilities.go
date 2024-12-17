@@ -114,6 +114,13 @@ func IsAssignmentExpression(node *Node, excludeCompoundAssignment bool) bool {
 	return false
 }
 
+func GetRightMostAssignedExpression(node *Node) *Node {
+	for IsAssignmentExpression(node, true /*excludeCompoundAssignment*/) {
+		node = node.AsBinaryExpression().Right
+	}
+	return node
+}
+
 func IsDestructuringAssignment(node *Node) bool {
 	if IsAssignmentExpression(node, true /*excludeCompoundAssignment*/) {
 		kind := node.AsBinaryExpression().Left.Kind
@@ -786,6 +793,13 @@ func SkipParentheses(node *Expression) *Expression {
 	return SkipOuterExpressions(node, OEKParentheses)
 }
 
+func SkipTypeParentheses(node *Node) *Node {
+	for IsParenthesizedTypeNode(node) {
+		node = node.AsParenthesizedTypeNode().Type
+	}
+	return node
+}
+
 func SkipPartiallyEmittedExpressions(node *Expression) *Expression {
 	return SkipOuterExpressions(node, OEKPartiallyEmittedExpressions)
 }
@@ -1087,6 +1101,120 @@ func IsImportMeta(node *Node) bool {
 		return node.AsMetaProperty().KeywordToken == KindImportKeyword && node.AsMetaProperty().Name().AsIdentifier().Text == "meta"
 	}
 	return false
+}
+
+func WalkUpBindingElementsAndPatterns(binding *Node) *Node {
+	node := binding.Parent
+	for IsBindingElement(node.Parent) {
+		node = node.Parent.Parent
+	}
+	return node.Parent
+}
+
+func IsInJSFile(node *Node) bool {
+	return node != nil && node.Flags&NodeFlagsJavaScriptFile != 0
+}
+
+func IsDeclaration(node *Node) bool {
+	if node.Kind == KindTypeParameter {
+		return node.Parent != nil
+	}
+	return IsDeclarationNode(node)
+}
+
+// True if `name` is the name of a declaration node
+func IsDeclarationName(name *Node) bool {
+	return !IsSourceFile(name) && !IsBindingPattern(name) && IsDeclaration(name.Parent)
+}
+
+// Like 'isDeclarationName', but returns true for LHS of `import { x as y }` or `export { x as y }`.
+func IsDeclarationNameOrImportPropertyName(name *Node) bool {
+	switch name.Parent.Kind {
+	case KindImportSpecifier, KindExportSpecifier:
+		return IsIdentifier(name) || name.Kind == KindStringLiteral
+	default:
+		return IsDeclarationName(name)
+	}
+}
+
+func IsLiteralComputedPropertyDeclarationName(node *Node) bool {
+	return IsStringOrNumericLiteralLike(node) &&
+		node.Parent.Kind == KindComputedPropertyName &&
+		IsDeclaration(node.Parent.Parent)
+}
+
+func IsExternalModuleImportEqualsDeclaration(node *Node) bool {
+	return node.Kind == KindImportEqualsDeclaration && node.AsImportEqualsDeclaration().ModuleReference.Kind == KindExternalModuleReference
+}
+
+func IsLiteralImportTypeNode(node *Node) bool {
+	return IsImportTypeNode(node) && IsLiteralTypeNode(node.AsImportTypeNode().Argument) && IsStringLiteral(node.AsImportTypeNode().Argument.AsLiteralTypeNode().Literal)
+}
+
+func IsJsxTagName(node *Node) bool {
+	parent := node.Parent
+	switch parent.Kind {
+	case KindJsxOpeningElement, KindJsxClosingElement, KindJsxSelfClosingElement:
+		return parent.TagName() == node
+	}
+	return false
+}
+
+func IsImportOrExportSpecifier(node *Node) bool {
+	return IsImportSpecifier(node) || IsExportSpecifier(node)
+}
+
+func isVoidZero(node *Node) bool {
+	return IsVoidExpression(node) && IsNumericLiteral(node.Expression()) && node.Expression().Text() == "0"
+}
+
+func IsVoidExpression(node *Node) bool {
+	return node.Kind == KindVoidExpression
+}
+
+func IsExportsIdentifier(node *Node) bool {
+	return IsIdentifier(node) && node.Text() == "exports"
+}
+
+func IsModuleIdentifier(node *Node) bool {
+	return IsIdentifier(node) && node.Text() == "module"
+}
+
+// Does not handle signed numeric names like `a[+0]` - handling those would require handling prefix unary expressions
+// throughout late binding handling as well, which is awkward (but ultimately probably doable if there is demand)
+func GetElementOrPropertyAccessArgumentExpressionOrName(node *Node) *Node {
+	switch node.Kind {
+	case KindPropertyAccessExpression:
+		return node.Name()
+	case KindElementAccessExpression:
+		arg := SkipParentheses(node.AsElementAccessExpression().ArgumentExpression)
+		if IsStringOrNumericLiteralLike(arg) {
+			return arg
+		}
+		return node
+	}
+	panic("Unhandled case in GetElementOrPropertyAccessArgumentExpressionOrName")
+}
+
+func IsExpressionWithTypeArgumentsInClassExtendsClause(node *Node) bool {
+	return TryGetClassExtendingExpressionWithTypeArguments(node) != nil
+}
+
+func TryGetClassExtendingExpressionWithTypeArguments(node *Node) *ClassLikeDeclaration {
+	cls, isImplements := TryGetClassImplementingOrExtendingExpressionWithTypeArguments(node)
+	if cls != nil && !isImplements {
+		return cls
+	}
+	return nil
+}
+
+func TryGetClassImplementingOrExtendingExpressionWithTypeArguments(node *Node) (class *ClassLikeDeclaration, isImplements bool) {
+	if IsExpressionWithTypeArguments(node) {
+		if IsHeritageClause(node.Parent) && IsClassLike(node.Parent.Parent) {
+			return node.Parent.Parent, node.Parent.AsHeritageClause().Token == KindImplementsKeyword
+		}
+	}
+	return nil, false
 }
 
 func GetNameOfDeclaration(declaration *Node) *Node {

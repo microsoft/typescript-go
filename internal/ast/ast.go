@@ -373,6 +373,31 @@ func (n *Node) Initializer() *Node {
 	panic("Unhandled case in Node.Initializer")
 }
 
+func (n *Node) TagName() *Node {
+	switch n.Kind {
+	case KindJsxOpeningElement:
+		return n.AsJsxOpeningElement().TagName
+	case KindJsxClosingElement:
+		return n.AsJsxClosingElement().TagName
+	case KindJsxSelfClosingElement:
+		return n.AsJsxSelfClosingElement().TagName
+		// !!! JSDoc tags
+	}
+	panic("Unhandled case in Node.TagName: " + n.Kind.String())
+}
+
+func (n *Node) PropertyName() *Node {
+	switch n.Kind {
+	case KindImportSpecifier:
+		return n.AsImportSpecifier().PropertyName
+	case KindExportSpecifier:
+		return n.AsExportSpecifier().PropertyName
+	case KindBindingElement:
+		return n.AsBindingElement().PropertyName
+	}
+	panic("Unhandled case in Node.PropertyName: " + n.Kind.String())
+}
+
 // Node casts
 
 func (n *Node) AsIdentifier() *Identifier {
@@ -1033,6 +1058,7 @@ type ImportAttributeName = Node         // Identifier | StringLiteral
 type LeftHandSideExpression = Node      // subset of Expression
 type JSDocComment = Node                // JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain;
 type JSDocTag = Node                    // Node with JSDocTagBase
+type SignatureDeclaration = Node        // CallSignatureDeclaration | ConstructSignatureDeclaration | MethodSignature | IndexSignatureDeclaration | FunctionTypeNode | ConstructorTypeNode | JSDocFunctionType | FunctionDeclaration | MethodDeclaration | ConstructorDeclaration | AccessorDeclaration | FunctionExpression | ArrowFunction;
 
 // Aliases for node singletons
 
@@ -4134,6 +4160,10 @@ func (node *ImportAttributes) ForEachChild(v Visitor) bool {
 	return visitNodeList(v, node.Attributes)
 }
 
+func IsImportAttributes(node *Node) bool {
+	return node.Kind == KindImportAttributes
+}
+
 // TypeQueryNode
 
 type TypeQueryNode struct {
@@ -4230,6 +4260,10 @@ func (node *TupleTypeNode) ForEachChild(v Visitor) bool {
 	return visitNodeList(v, node.Elements)
 }
 
+func IsTupleTypeNode(node *Node) bool {
+	return node.Kind == KindTupleType
+}
+
 // NamedTupleTypeMember
 
 type NamedTupleMember struct {
@@ -4257,6 +4291,7 @@ func (node *NamedTupleMember) ForEachChild(v Visitor) bool {
 func (node *NamedTupleMember) Name() *DeclarationName {
 	return node.name
 }
+
 func IsNamedTupleMember(node *Node) bool {
 	return node.Kind == KindNamedTupleMember
 }
@@ -4278,6 +4313,10 @@ func (node *OptionalTypeNode) ForEachChild(v Visitor) bool {
 	return visit(v, node.Type)
 }
 
+func IsOptionalTypeNode(node *Node) bool {
+	return node.Kind == KindOptionalType
+}
+
 // RestTypeNode
 
 type RestTypeNode struct {
@@ -4293,6 +4332,10 @@ func (f *NodeFactory) NewRestTypeNode(typeNode *TypeNode) *Node {
 
 func (node *RestTypeNode) ForEachChild(v Visitor) bool {
 	return visit(v, node.Type)
+}
+
+func IsRestTypeNode(node *Node) bool {
+	return node.Kind == KindRestType
 }
 
 // ParenthesizedTypeNode
@@ -4539,7 +4582,7 @@ func (f *NodeFactory) NewJsxNamespacedName(namespace *IdentifierNode, name *Iden
 }
 
 func (node *JsxNamespacedName) ForEachChild(v Visitor) bool {
-	return visit(v, node.name) || visit(v, node.Namespace)
+	return visit(v, node.Namespace) || visit(v, node.name)
 }
 
 func (node *JsxNamespacedName) Name() *DeclarationName {
@@ -5386,7 +5429,6 @@ type JSDocNameReference struct {
 	name *EntityName
 }
 
-// JSDocMemberName
 func NewJSDocNameReference(name *EntityName) *JSDocNameReference {
 	data := &JSDocNameReference{}
 	data.name = name
