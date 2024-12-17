@@ -128,19 +128,19 @@ func (p *Program) bindSourceFiles() {
 	wg.Wait()
 }
 
-type ParallelParseContext struct {
+type parallelParseContext struct {
 	mu                 sync.Mutex
 	wg                 *core.WorkGroup
 	processedFileNames core.Set[string]
 }
 
-type ParallelParseTask struct {
+type parallelParseTask struct {
 	file     *ast.SourceFile
-	subTasks []ParallelParseTask
+	subTasks []parallelParseTask
 }
 
 func (p *Program) processRootFiles(rootFiles []FileInfo) {
-	ctx := &ParallelParseContext{}
+	ctx := &parallelParseContext{}
 	ctx.wg = core.NewWorkGroup(p.programOptions.SingleThreaded)
 
 	absPaths := make([]string, 0, len(rootFiles))
@@ -150,7 +150,7 @@ func (p *Program) processRootFiles(rootFiles []FileInfo) {
 		absPaths = append(absPaths, absPath)
 	}
 
-	tasks := make([]ParallelParseTask, len(absPaths))
+	tasks := make([]parallelParseTask, len(absPaths))
 
 	for i, absPath := range absPaths {
 		p.startParseTask(absPath, ctx, &tasks[i])
@@ -160,7 +160,7 @@ func (p *Program) processRootFiles(rootFiles []FileInfo) {
 	p.addAllFilesToProgram(tasks)
 }
 
-func (p *Program) startParseTask(fileName string, ctx *ParallelParseContext, task *ParallelParseTask) {
+func (p *Program) startParseTask(fileName string, ctx *parallelParseContext, task *parallelParseTask) {
 	ctx.wg.Run(func() {
 		normalizedPath := tspath.NormalizePath(fileName)
 		file := p.parseSourceFile(normalizedPath)
@@ -179,9 +179,9 @@ func (p *Program) startParseTask(fileName string, ctx *ParallelParseContext, tas
 	})
 }
 
-func (p *Program) processFiles(files []string, task *ParallelParseTask, ctx *ParallelParseContext) {
+func (p *Program) processFiles(files []string, task *parallelParseTask, ctx *parallelParseContext) {
 	if len(files) > 0 {
-		task.subTasks = make([]ParallelParseTask, len(files))
+		task.subTasks = make([]parallelParseTask, len(files))
 
 		ctx.mu.Lock()
 		defer ctx.mu.Unlock()
@@ -194,7 +194,7 @@ func (p *Program) processFiles(files []string, task *ParallelParseTask, ctx *Par
 	}
 }
 
-func (p *Program) addAllFilesToProgram(tasks []ParallelParseTask) {
+func (p *Program) addAllFilesToProgram(tasks []parallelParseTask) {
 	if tasks == nil {
 		return
 	}
@@ -206,7 +206,7 @@ func (p *Program) addAllFilesToProgram(tasks []ParallelParseTask) {
 	p.addAllFilesToProgramWorker(tasks)
 }
 
-func (p *Program) addAllFilesToProgramWorker(tasks []ParallelParseTask) {
+func (p *Program) addAllFilesToProgramWorker(tasks []parallelParseTask) {
 	for _, task := range tasks {
 		if task.subTasks != nil {
 			p.addAllFilesToProgramWorker(task.subTasks)
@@ -219,7 +219,7 @@ func (p *Program) addAllFilesToProgramWorker(tasks []ParallelParseTask) {
 	}
 }
 
-func getTotalParsedFileCount(t []ParallelParseTask) int {
+func getTotalParsedFileCount(t []parallelParseTask) int {
 	if t == nil {
 		return 0
 	}
