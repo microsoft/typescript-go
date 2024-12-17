@@ -1642,7 +1642,7 @@ func (c *Checker) getTypePredicateOfSignature(sig *Signature) *TypePredicate {
 				sig.resolvedTypePredicate = c.instantiateTypePredicate(targetTypePredicate, sig.mapper)
 			}
 		case sig.composite != nil:
-			sig.resolvedTypePredicate = c.getUnionOrIntersectionTypePredicate(sig.composite.signatures, sig.composite.flags)
+			sig.resolvedTypePredicate = c.getUnionOrIntersectionTypePredicate(sig.composite.signatures, sig.composite.isUnion)
 		default:
 			var typeNode *ast.TypeNode
 			if sig.declaration != nil {
@@ -1666,7 +1666,7 @@ func (c *Checker) getTypePredicateOfSignature(sig *Signature) *TypePredicate {
 	return sig.resolvedTypePredicate
 }
 
-func (c *Checker) getUnionOrIntersectionTypePredicate(signatures []*Signature, flags TypeFlags) *TypePredicate {
+func (c *Checker) getUnionOrIntersectionTypePredicate(signatures []*Signature, isUnion bool) *TypePredicate {
 	var last *TypePredicate
 	var types []*Type
 	for _, sig := range signatures {
@@ -1681,7 +1681,7 @@ func (c *Checker) getUnionOrIntersectionTypePredicate(signatures []*Signature, f
 		} else {
 			// In composite union signatures we permit and ignore signatures with a return type `false`.
 			var returnType *Type
-			if flags&TypeFlagsUnion != 0 {
+			if isUnion {
 				returnType = c.getReturnTypeOfSignature(sig)
 			}
 			if returnType != c.falseType && returnType != c.regularFalseType {
@@ -1692,7 +1692,7 @@ func (c *Checker) getUnionOrIntersectionTypePredicate(signatures []*Signature, f
 	if last == nil {
 		return nil
 	}
-	compositeType := c.getUnionOrIntersectionType(types, flags, UnionReductionLiteral)
+	compositeType := c.getUnionOrIntersectionType(types, isUnion, UnionReductionLiteral)
 	return c.newTypePredicate(last.kind, last.parameterName, last.parameterIndex, compositeType)
 }
 

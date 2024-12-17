@@ -1041,8 +1041,8 @@ type Signature struct {
 }
 
 type CompositeSignature struct {
-	flags      TypeFlags // TypeFlagsUnion | TypeFlagsIntersection
-	signatures []*Signature
+	isUnion    bool         // True for union, false for intersection
+	signatures []*Signature // Individual signatures
 }
 
 type TypePredicateKind int32

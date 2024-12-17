@@ -849,3 +849,11 @@ func IsImportMeta(node *Node) bool {
 	}
 	return false
 }
+
+func WalkUpBindingElementsAndPatterns(binding *Node) *Node {
+	node := binding.Parent
+	for IsBindingElement(node.Parent) {
+		node = node.Parent.Parent
+	}
+	return node.Parent
+}

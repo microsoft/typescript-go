@@ -622,6 +622,7 @@ type Checker struct {
 	getGlobalESSymbolConstructorSymbolOrNil func() *ast.Symbol
 	getGlobalImportCallOptionsType          func() *Type
 	getGlobalPromiseLikeType                func() *Type
+	getGlobalOmitSymbol                     func() *ast.Symbol
 	isPrimitiveOrObjectOrEmptyType          func(*Type) bool
 	containsMissingType                     func(*Type) bool
 	couldContainTypeVariables               func(*Type) bool
@@ -775,6 +776,7 @@ func NewChecker(program *Program) *Checker {
 	c.getGlobalESSymbolConstructorSymbolOrNil = c.getGlobalValueSymbolResolver("Symbol", false /*reportErrors*/)
 	c.getGlobalImportCallOptionsType = c.getGlobalTypeResolver("ImportCallOptions", 0 /*arity*/, false /*reportErrors*/)
 	c.getGlobalPromiseLikeType = c.getGlobalTypeResolver("PromiseLike", 1 /*arity*/, true /*reportErrors*/)
+	c.getGlobalOmitSymbol = c.getGlobalTypeAliasResolver("Omit", 2 /*arity*/, true /*reportErrors*/)
 	c.initializeClosures()
 	c.initializeChecker()
 	return c
@@ -3718,7 +3720,7 @@ func (c *Checker) typeHasProtectedAccessibleBase(target *ast.Symbol, t *Type) bo
 
 func someSignature(signatures []*Signature, f func(s *Signature) bool) bool {
 	for _, sig := range signatures {
-		if sig.composite != nil && sig.composite.flags == TypeFlagsUnion && core.Some(sig.composite.signatures, f) || sig.composite == nil && f(sig) {
+		if sig.composite != nil && sig.composite.isUnion && core.Some(sig.composite.signatures, f) || sig.composite == nil && f(sig) {
 			return true
 		}
 	}
@@ -4947,7 +4949,7 @@ func (c *Checker) getContextualSignature(node *ast.Node) *Signature {
 
 func (c *Checker) createUnionSignature(sig *Signature, unionSignatures []*Signature) *Signature {
 	result := c.cloneSignature(sig)
-	result.composite = &CompositeSignature{flags: TypeFlagsUnion, signatures: unionSignatures}
+	result.composite = &CompositeSignature{isUnion: true, signatures: unionSignatures}
 	result.target = nil
 	result.mapper = nil
 	return result
@@ -4965,7 +4967,21 @@ func (c *Checker) getContextualCallSignature(t *Type, node *ast.Node) *Signature
 }
 
 func (c *Checker) getIntersectedSignatures(signatures []*Signature) *Signature {
-	return nil // !!!
+	if !c.noImplicitAny {
+		return nil
+	}
+	var combined *Signature
+	for _, sig := range signatures {
+		switch {
+		case combined == sig || combined == nil:
+			combined = sig
+		case c.compareTypeParametersIdentical(combined.typeParameters, sig.typeParameters):
+			combined = c.combineUnionOrIntersectionMemberSignatures(combined, sig, false /*isUnion*/)
+		default:
+			return nil
+		}
+	}
+	return combined
 }
 
 /** If the contextual signature has fewer parameters than the function expression, do not use it */
@@ -5078,10 +5094,6 @@ func (c *Checker) assignBindingElementTypes(pattern *ast.Node, parentType *Type)
 			}
 		}
 	}
-}
-
-func (c *Checker) getBindingElementTypeFromParentType(declaration *ast.Node, parentType *Type, noTupleBoundsCheck bool) *Type {
-	return c.errorType // !!!
 }
 
 func (c *Checker) checkCollisionsForDeclarationName(node *ast.Node, name *ast.Node) {
@@ -10348,8 +10360,226 @@ func (c *Checker) checkRightHandSideOfForOf(statement *ast.Node) *Type {
 	return c.checkIteratedTypeOrElementType(use, c.checkNonNullExpression(statement.Expression()), c.undefinedType, statement.Expression())
 }
 
+// Return the inferred type for a binding element
 func (c *Checker) getTypeForBindingElement(declaration *ast.Node) *Type {
-	return c.anyType // !!!
+	checkMode := core.IfElse(hasDotDotDotToken(declaration), CheckModeRestBindingElement, CheckModeNormal)
+	parentType := c.getTypeForBindingElementParent(declaration.Parent.Parent, checkMode)
+	if parentType != nil {
+		return c.getBindingElementTypeFromParentType(declaration, parentType, false /*noTupleBoundsCheck*/)
+	}
+	return nil
+}
+
+// Return the type of a binding element parent. We check SymbolLinks first to see if a type has been
+// assigned by contextual typing.
+func (c *Checker) getTypeForBindingElementParent(node *ast.Node, checkMode CheckMode) *Type {
+	if checkMode != CheckModeNormal {
+		return c.getTypeForVariableLikeDeclaration(node, false /*includeOptionality*/, checkMode)
+	}
+	symbol := c.getSymbolOfDeclaration(node)
+	if symbol != nil {
+		resolvedType := c.valueSymbolLinks.get(symbol).resolvedType
+		if resolvedType != nil {
+			return resolvedType
+		}
+	}
+	return c.getTypeForVariableLikeDeclaration(node, false /*includeOptionality*/, checkMode)
+}
+
+func (c *Checker) getBindingElementTypeFromParentType(declaration *ast.Node, parentType *Type, noTupleBoundsCheck bool) *Type {
+	// If an any type was inferred for parent, infer that for the binding element
+	if isTypeAny(parentType) {
+		return parentType
+	}
+	pattern := declaration.Parent
+	// Relax null check on ambient destructuring parameters, since the parameters have no implementation and are just documentation
+	if c.strictNullChecks && declaration.Flags&ast.NodeFlagsAmbient != 0 && isPartOfParameterDeclaration(declaration) {
+		parentType = c.getNonNullableType(parentType)
+	} else if c.strictNullChecks && pattern.Parent.Initializer() != nil && !(c.hasTypeFacts(c.getTypeOfInitializer(pattern.Parent.Initializer()), TypeFactsEQUndefined)) {
+		parentType = c.getTypeWithFacts(parentType, TypeFactsNEUndefined)
+	}
+	accessFlags := AccessFlagsExpressionPosition | core.IfElse(noTupleBoundsCheck || c.hasDefaultValue(declaration), AccessFlagsAllowMissing, 0)
+	var t *Type
+	switch pattern.Kind {
+	case ast.KindObjectBindingPattern:
+		if hasDotDotDotToken(declaration) {
+			parentType = c.getReducedType(parentType)
+			if parentType.flags&TypeFlagsUnknown != 0 || !c.isValidSpreadType(parentType) {
+				c.error(declaration, diagnostics.Rest_types_may_only_be_created_from_object_types)
+				return c.errorType
+			}
+			elements := pattern.AsBindingPattern().Elements.Nodes
+			literalMembers := make([]*ast.Node, 0, len(elements))
+			for _, element := range elements {
+				if !hasDotDotDotToken(element) {
+					name := element.AsBindingElement().PropertyName
+					if name == nil {
+						name = element.Name()
+					}
+					literalMembers = append(literalMembers, name)
+				}
+			}
+			t = c.getRestType(parentType, literalMembers, declaration.Symbol())
+		} else {
+			// Use explicitly specified property name ({ p: xxx } form), or otherwise the implied name ({ p } form)
+			name := declaration.AsBindingElement().PropertyName
+			if name == nil {
+				name = declaration.Name()
+			}
+			indexType := c.getLiteralTypeFromPropertyName(name)
+			declaredType := c.getIndexedAccessTypeEx(parentType, indexType, accessFlags, name, nil)
+			t = c.getFlowTypeOfDestructuring(declaration, declaredType)
+		}
+	case ast.KindArrayBindingPattern:
+		// This elementType will be used if the specific property corresponding to this index is not
+		// present (aka the tuple element property). This call also checks that the parentType is in
+		// fact an iterable or array (depending on target language).
+		elementType := c.checkIteratedTypeOrElementType(IterationUseDestructuring|core.IfElse(hasDotDotDotToken(declaration), 0, IterationUsePossiblyOutOfBounds), parentType, c.undefinedType, pattern)
+		index := slices.Index(pattern.AsBindingPattern().Elements.Nodes, declaration)
+		if hasDotDotDotToken(declaration) {
+			// If the parent is a tuple type, the rest element has a tuple type of the
+			// remaining tuple element types. Otherwise, the rest element has an array type with same
+			// element type as the parent type.
+			baseConstraint := c.mapType(parentType, func(t *Type) *Type {
+				if t.flags&TypeFlagsInstantiableNonPrimitive != 0 {
+					return c.getBaseConstraintOrType(t)
+				}
+				return t
+			})
+			if everyType(baseConstraint, isTupleType) {
+				t = c.mapType(baseConstraint, func(t *Type) *Type {
+					return c.sliceTupleType(t, index, 0)
+				})
+			} else {
+				t = c.createArrayType(elementType)
+			}
+		} else if c.isArrayLikeType(parentType) {
+			indexType := c.getNumberLiteralType(float64(index))
+			declaredType := core.OrElse(c.getIndexedAccessTypeOrUndefined(parentType, indexType, accessFlags, declaration.Name(), nil), c.errorType)
+			t = c.getFlowTypeOfDestructuring(declaration, declaredType)
+		} else {
+			t = elementType
+		}
+	default:
+		panic("Unhandled case in getBindingElementTypeFromParentType")
+	}
+	if declaration.Initializer() == nil {
+		return t
+	}
+	if ast.WalkUpBindingElementsAndPatterns(declaration).Type() != nil {
+		// In strict null checking mode, if a default value of a non-undefined type is specified, remove
+		// undefined from the final type.
+		if c.strictNullChecks && !c.hasTypeFacts(c.checkDeclarationInitializer(declaration, CheckModeNormal, nil), TypeFactsIsUndefined) {
+			return c.getNonUndefinedType(t)
+		}
+		return t
+	}
+	return c.widenTypeInferredFromInitializer(declaration, c.getUnionTypeEx([]*Type{c.getNonUndefinedType(t), c.checkDeclarationInitializer(declaration, CheckModeNormal, nil)}, UnionReductionSubtype, nil, nil))
+}
+
+func (c *Checker) getRestType(source *Type, properties []*ast.Node, symbol *ast.Symbol) *Type {
+	source = c.filterType(source, func(t *Type) bool { return t.flags&TypeFlagsNullable == 0 })
+	if source.flags&TypeFlagsNever != 0 {
+		return c.emptyObjectType
+	}
+	if source.flags&TypeFlagsUnion != 0 {
+		return c.mapType(source, func(t *Type) *Type {
+			return c.getRestType(t, properties, symbol)
+		})
+	}
+	omitKeyType := c.getUnionType(core.Map(properties, c.getLiteralTypeFromPropertyName))
+	var spreadableProperties []*ast.Symbol
+	var unspreadableToRestKeys []*Type
+	for _, prop := range c.getPropertiesOfType(source) {
+		literalTypeFromProperty := c.getLiteralTypeFromProperty(prop, TypeFlagsStringOrNumberLiteralOrUnique, false)
+		if !c.isTypeAssignableTo(literalTypeFromProperty, omitKeyType) && getDeclarationModifierFlagsFromSymbol(prop)&(ast.ModifierFlagsPrivate|ast.ModifierFlagsProtected) == 0 && c.isSpreadableProperty(prop) {
+			spreadableProperties = append(spreadableProperties, prop)
+		} else {
+			unspreadableToRestKeys = append(unspreadableToRestKeys, literalTypeFromProperty)
+		}
+	}
+	if c.isGenericObjectType(source) || c.isGenericIndexType(omitKeyType) {
+		if len(unspreadableToRestKeys) != 0 {
+			// If the type we're spreading from has properties that cannot
+			// be spread into the rest type (e.g. getters, methods), ensure
+			// they are explicitly omitted, as they would in the non-generic case.
+			omitKeyType = c.getUnionType(append([]*Type{omitKeyType}, unspreadableToRestKeys...))
+		}
+		if omitKeyType.flags&TypeFlagsNever != 0 {
+			return source
+		}
+		omitTypeAlias := c.getGlobalOmitSymbol()
+		if omitTypeAlias == nil {
+			return c.errorType
+		}
+		return c.getTypeAliasInstantiation(omitTypeAlias, []*Type{source, omitKeyType}, nil)
+	}
+	members := make(ast.SymbolTable)
+	for _, prop := range spreadableProperties {
+		members[prop.Name] = c.getSpreadSymbol(prop, false /*readonly*/)
+	}
+	result := c.newAnonymousType(symbol, members, nil, nil, c.getIndexInfosOfType(source))
+	result.objectFlags |= ObjectFlagsObjectRestType
+	return result
+}
+
+// Determine the control flow type associated with a destructuring declaration or assignment. The following
+// forms of destructuring are possible:
+//
+//	let { x } = obj;  // BindingElement
+//	let [ x ] = obj;  // BindingElement
+//	{ x } = obj;      // ShorthandPropertyAssignment
+//	{ x: v } = obj;   // PropertyAssignment
+//	[ x ] = obj;      // Expression
+//
+// We construct a synthetic element access expression corresponding to 'obj.x' such that the control
+// flow analyzer doesn't have to handle all the different syntactic forms.
+func (c *Checker) getFlowTypeOfDestructuring(node *ast.Node, declaredType *Type) *Type {
+	reference := c.getSyntheticElementAccess(node)
+	if reference != nil {
+		return c.getFlowTypeOfReference(reference, declaredType)
+	}
+	return declaredType
+}
+
+func (c *Checker) getSyntheticElementAccess(node *ast.Node) *ast.Node {
+	parentAccess := c.getParentElementAccess(node)
+	if parentAccess != nil && getFlowNodeOfNode(parentAccess) != nil {
+		if propName, ok := c.getDestructuringPropertyName(node); ok {
+			literal := c.factory.NewStringLiteral(propName)
+			literal.Loc = node.Loc
+			lhsExpr := parentAccess
+			if !ast.IsLeftHandSideExpression(parentAccess) {
+				lhsExpr = c.factory.NewParenthesizedExpression(parentAccess)
+				lhsExpr.Loc = node.Loc
+			}
+			result := c.factory.NewElementAccessExpression(lhsExpr, nil, literal, ast.NodeFlagsNone)
+			result.Loc = node.Loc
+			literal.Parent = result
+			result.Parent = node
+			if lhsExpr != parentAccess {
+				lhsExpr.Parent = result
+			}
+			result.FlowNodeData().FlowNode = getFlowNodeOfNode(parentAccess)
+			return result
+		}
+	}
+	return nil
+}
+
+func (c *Checker) getParentElementAccess(node *ast.Node) *ast.Node {
+	ancestor := node.Parent.Parent
+	switch ancestor.Kind {
+	case ast.KindBindingElement, ast.KindPropertyAssignment:
+		return c.getSyntheticElementAccess(ancestor)
+	case ast.KindArrayLiteralExpression:
+		return c.getSyntheticElementAccess(node.Parent)
+	case ast.KindVariableDeclaration:
+		return ancestor.Initializer()
+	case ast.KindBinaryExpression:
+		return ancestor.AsBinaryExpression().Right
+	}
+	return nil
 }
 
 // Return the type implied by a binding pattern. This is the type implied purely by the binding pattern itself
@@ -11873,7 +12103,7 @@ func (c *Checker) getReturnTypeOfSignature(sig *Signature) *Type {
 	case sig.target != nil:
 		t = c.instantiateType(c.getReturnTypeOfSignature(sig.target), sig.mapper)
 	case sig.composite != nil:
-		t = c.instantiateType(c.getUnionOrIntersectionType(core.Map(sig.composite.signatures, c.getReturnTypeOfSignature), sig.composite.flags, UnionReductionSubtype), sig.mapper)
+		t = c.instantiateType(c.getUnionOrIntersectionType(core.Map(sig.composite.signatures, c.getReturnTypeOfSignature), sig.composite.isUnion, UnionReductionSubtype), sig.mapper)
 	default:
 		t = c.getReturnTypeFromAnnotation(sig.declaration)
 		if t == nil {
@@ -12503,7 +12733,7 @@ func (c *Checker) getUnionSignatures(signatureLists [][]*Signature) []*Signature
 					results = nil
 				} else {
 					results = core.Map(results, func(sig *Signature) *Signature {
-						return c.combineSignaturesOfUnionMembers(sig, signature)
+						return c.combineUnionOrIntersectionMemberSignatures(sig, signature, true /*isUnion*/)
 					})
 				}
 				if results == nil {
@@ -12516,7 +12746,7 @@ func (c *Checker) getUnionSignatures(signatureLists [][]*Signature) []*Signature
 	return result
 }
 
-func (c *Checker) combineSignaturesOfUnionMembers(left *Signature, right *Signature) *Signature {
+func (c *Checker) combineUnionOrIntersectionMemberSignatures(left *Signature, right *Signature, isUnion bool) *Signature {
 	typeParams := left.typeParameters
 	if len(typeParams) == 0 {
 		typeParams = right.typeParameters
@@ -12528,34 +12758,34 @@ func (c *Checker) combineSignaturesOfUnionMembers(left *Signature, right *Signat
 	}
 	flags := (left.flags | right.flags) & (SignatureFlagsPropagatingFlags & ^SignatureFlagsHasRestParameter)
 	declaration := left.declaration
-	params := c.combineUnionParameters(left, right, paramMapper)
+	params := c.combineUnionOrIntersectionParameters(left, right, paramMapper, isUnion)
 	lastParam := core.LastOrNil(params)
 	if lastParam != nil && lastParam.CheckFlags&ast.CheckFlagsRestParameter != 0 {
 		flags |= SignatureFlagsHasRestParameter
 	}
-	thisParam := c.combineUnionThisParam(left.thisParameter, right.thisParameter, paramMapper)
+	thisParam := c.combineUnionOrIntersectionThisParam(left.thisParameter, right.thisParameter, paramMapper, isUnion)
 	minArgCount := int(max(left.minArgumentCount, right.minArgumentCount))
 	result := c.newSignature(flags, declaration, typeParams, thisParam, params, nil, nil, minArgCount)
 	var leftSignatures []*Signature
-	if left.composite != nil && left.composite.flags != TypeFlagsIntersection {
+	if left.composite != nil && left.composite.isUnion {
 		leftSignatures = left.composite.signatures
 	} else {
 		leftSignatures = []*Signature{left}
 	}
-	result.composite = &CompositeSignature{flags: TypeFlagsUnion, signatures: append(leftSignatures, right)}
+	result.composite = &CompositeSignature{isUnion: true, signatures: append(leftSignatures, right)}
 	if paramMapper != nil {
-		if left.composite != nil && left.composite.flags != TypeFlagsIntersection && left.mapper != nil {
+		if left.composite != nil && left.composite.isUnion == isUnion && left.mapper != nil {
 			result.mapper = c.combineTypeMappers(left.mapper, paramMapper)
 		} else {
 			result.mapper = paramMapper
 		}
-	} else if left.composite != nil && left.composite.flags != TypeFlagsIntersection {
+	} else if left.composite != nil && left.composite.isUnion == isUnion {
 		result.mapper = left.mapper
 	}
 	return result
 }
 
-func (c *Checker) combineUnionParameters(left *Signature, right *Signature, mapper *TypeMapper) []*ast.Symbol {
+func (c *Checker) combineUnionOrIntersectionParameters(left *Signature, right *Signature, mapper *TypeMapper, isUnion bool) []*ast.Symbol {
 	leftCount := c.getParameterCount(left)
 	rightCount := c.getParameterCount(right)
 	var longestCount int
@@ -12577,7 +12807,7 @@ func (c *Checker) combineUnionParameters(left *Signature, right *Signature, mapp
 		if shorter == right {
 			shorterParamType = c.instantiateType(shorterParamType, mapper)
 		}
-		unionParamType := c.getIntersectionType([]*Type{longestParamType, shorterParamType})
+		combinedParamType := c.getUnionOrIntersectionType([]*Type{longestParamType, shorterParamType}, !isUnion, UnionReductionLiteral)
 		isRestParam := eitherHasEffectiveRest && !needsExtraRestElement && i == (longestCount-1)
 		isOptional := i >= c.getMinArgumentCount(longest) && i >= c.getMinArgumentCount(shorter)
 		var leftName, rightName string
@@ -12603,9 +12833,9 @@ func (c *Checker) combineUnionParameters(left *Signature, right *Signature, mapp
 			core.IfElse(isRestParam, ast.CheckFlagsRestParameter, core.IfElse(isOptional, ast.CheckFlagsOptionalParameter, 0)))
 		links := c.valueSymbolLinks.get(paramSymbol)
 		if isRestParam {
-			links.resolvedType = c.createArrayType(unionParamType)
+			links.resolvedType = c.createArrayType(combinedParamType)
 		} else {
-			links.resolvedType = unionParamType
+			links.resolvedType = combinedParamType
 		}
 		params[i] = paramSymbol
 	}
@@ -12621,7 +12851,7 @@ func (c *Checker) combineUnionParameters(left *Signature, right *Signature, mapp
 	return params
 }
 
-func (c *Checker) combineUnionThisParam(left *ast.Symbol, right *ast.Symbol, mapper *TypeMapper) *ast.Symbol {
+func (c *Checker) combineUnionOrIntersectionThisParam(left *ast.Symbol, right *ast.Symbol, mapper *TypeMapper, isUnion bool) *ast.Symbol {
 	if left == nil {
 		return right
 	}
@@ -12631,7 +12861,7 @@ func (c *Checker) combineUnionThisParam(left *ast.Symbol, right *ast.Symbol, map
 	// A signature `this` type might be a read or a write position... It's very possible that it should be invariant
 	// and we should refuse to merge signatures if there are `this` types and they do not match. However, so as to be
 	// permissive when calling, for now, we'll intersect the `this` types just like we do for param types in union signatures.
-	thisType := c.getIntersectionType([]*Type{c.getTypeOfSymbol(left), c.instantiateType(c.getTypeOfSymbol(right), mapper)})
+	thisType := c.getUnionOrIntersectionType([]*Type{c.getTypeOfSymbol(left), c.instantiateType(c.getTypeOfSymbol(right), mapper)}, !isUnion, UnionReductionLiteral)
 	return c.createSymbolWithType(left, thisType)
 }
 
@@ -16526,8 +16756,8 @@ const (
 	UnionReductionSubtype
 )
 
-func (c *Checker) getUnionOrIntersectionType(types []*Type, flags TypeFlags, unionReduction UnionReduction) *Type {
-	if flags&TypeFlagsIntersection == 0 {
+func (c *Checker) getUnionOrIntersectionType(types []*Type, isUnion bool, unionReduction UnionReduction) *Type {
+	if isUnion {
 		return c.getUnionTypeEx(types, unionReduction, nil, nil)
 	}
 	return c.getIntersectionType(types)
@@ -17347,8 +17577,8 @@ func (c *Checker) filterTypes(types []*Type, predicate func(*Type) bool) {
 }
 
 func (c *Checker) isEmptyAnonymousObjectType(t *Type) bool {
-	return t.objectFlags&ObjectFlagsAnonymous != 0 && t.objectFlags&ObjectFlagsMembersResolved != 0 && c.isEmptyResolvedType(t.AsStructuredType()) ||
-		t.symbol != nil && t.symbol.Flags&ast.SymbolFlagsTypeLiteral != 0 && len(c.getMembersOfSymbol(t.symbol)) == 0
+	return t.objectFlags&ObjectFlagsAnonymous != 0 && (t.objectFlags&ObjectFlagsMembersResolved != 0 && c.isEmptyResolvedType(t.AsStructuredType()) ||
+		t.symbol != nil && t.symbol.Flags&ast.SymbolFlagsTypeLiteral != 0 && len(c.getMembersOfSymbol(t.symbol)) == 0)
 }
 
 func (c *Checker) isEmptyResolvedType(t *StructuredType) bool {
@@ -19233,7 +19463,35 @@ func (c *Checker) getMutableArrayOrTupleType(t *Type) *Type {
 }
 
 func (c *Checker) getContextualTypeForBindingElement(declaration *ast.Node, contextFlags ContextFlags) *Type {
-	return nil // !!!
+	name := declaration.AsBindingElement().PropertyName
+	if name == nil {
+		name = declaration.Name()
+	}
+	if ast.IsBindingPattern(name) || isComputedNonLiteralName(name) {
+		return nil
+	}
+	parent := declaration.Parent.Parent
+	parentType := c.getContextualTypeForVariableLikeDeclaration(parent, contextFlags)
+	if parentType == nil {
+		if ast.IsBindingElement(parent) && parent.Initializer() != nil {
+			parentType = c.checkDeclarationInitializer(parent, core.IfElse(hasDotDotDotToken(declaration), CheckModeRestBindingElement, CheckModeNormal), nil)
+		}
+	}
+	if parentType == nil {
+		return nil
+	}
+	if ast.IsArrayBindingPattern(parent.Name()) {
+		index := slices.Index(declaration.Parent.AsBindingPattern().Elements.Nodes, declaration)
+		if index < 0 {
+			return nil
+		}
+		return c.getContextualTypeForElementExpression(parentType, index, -1, -1, -1)
+	}
+	nameType := c.getLiteralTypeFromPropertyName(name)
+	if isTypeUsableAsPropertyName(nameType) {
+		return c.getTypeOfPropertyOfType(parentType, getPropertyNameFromType(nameType))
+	}
+	return nil
 }
 
 func (c *Checker) getContextualTypeForStaticPropertyDeclaration(declaration *ast.Node, contextFlags ContextFlags) *Type {
