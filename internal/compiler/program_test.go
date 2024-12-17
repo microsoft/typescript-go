@@ -27,10 +27,6 @@ func TestProgramFileOrdering(t *testing.T) {
 		"c:/dev/src2/a/b/c/d/e/f/6.ts": `console.log("world!");`,
 	}
 
-	fs["c:/dev/src/index.ts"] = &fstest.MapFile{
-		Data: []byte("/// <reference path=\"a/1.ts\" />"),
-	}
-
 	for fileName, contents := range files {
 		fs[fileName] = &fstest.MapFile{
 			Data: []byte(contents),
