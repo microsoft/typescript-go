@@ -71,7 +71,7 @@ func TestParseSingleAgainstTSC(t *testing.T) {
 	}
 	t.Parallel()
 	osfs := vfs.FromOS()
-	parseTestComparisonWorker(osfs, t)(tspath.CombinePaths(repo.TypeScriptSubmodulePath, "tests/cases/compiler/extendedUnicodePlaneIdentifiersJSDoc.ts"), nil, nil)
+	parseTestComparisonWorker(osfs, t)(tspath.CombinePaths(repo.TypeScriptSubmodulePath, "tests/cases/compiler/destructionAssignmentError.ts"), nil, nil)
 }
 
 func parseTestComparisonWorker(osfs vfs.FS, t *testing.T) func(fileName string, d fs.DirEntry, err error) error {
@@ -225,7 +225,7 @@ func printAST(sourceFile *ast.SourceFile, utf8offsets []int) string {
 		case ast.KindIdentifier:
 			indent := getIndentation(indentation)
 			if parent != nil && parent.AsImportSpecifier().Name() == node && node.AsIdentifier().Text == "" && sourceFile.Text[node.Loc.Pos():node.Loc.End()] != "" {
-				sb.WriteString(fmt.Sprintf("%s%s(%d,%d): ''\n", indent, skind, node.Pos()-utf8offset, node.End()-utf8endoffset))
+				sb.WriteString(fmt.Sprintf("%s%s(%d,%d): ''\n", indent, skind, node.Pos()-utf8offset, node.Pos()-utf8offset))
 			} else {
 				text := sourceFile.Text[node.Loc.Pos():node.Loc.End()]
 				sb.WriteString(fmt.Sprintf("%s%s(%d,%d): '%s'\n", indent, skind, node.Pos()-utf8offset, node.End()-utf8endoffset, text))
