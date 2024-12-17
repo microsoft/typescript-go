@@ -30,15 +30,6 @@ var parseCommandJson = []testConfig{}
 type parseConfigHost interface {
 	FS() vfs.FS
 }
-type typeParseConfig struct {
-	host parseConfigHost
-}
-
-func newParseConfigHost(host parseConfigHost) *typeParseConfig {
-	return &typeParseConfig{
-		host: host,
-	}
-}
 
 func fixRoot(path string) string {
 	rootLength := tspath.GetRootLength(path)
@@ -317,30 +308,62 @@ var data = []struct {
 			expectedErrors: []string{"No inputs were found in config file '/apath/tsconfig.json'. Specified 'include' paths were '[]' and 'exclude' paths were '[no-prop]'."},
 		},
 	},
-	// {
-	// 	title: "generates errors for includes with outDir",
-	// 	input: testConfig{
-	// 		jsonText: `{
-	// 	"compilerOptions": {
-	// 		"outDir": "./"
-	// 	},
-	// 	"include": ["**/*"]
-	// }`,
-	// 		configFileName: "/apath/tsconfig.json",
-	// 		basePath:       "/apath",
-	// 		allFileList:    []string{"/apath/a.ts"},
-	// 	},
-	// 	output: verifyConfig{
-	// 		fileNames: nil,
-	// 		configFile: map[string]interface{}{
-	// 			"compilerOptions": map[string]interface{}{
-	// 				"outDir": "./",
-	// 			},
-	// 			"include": []string{"**/*"},
-	// 		},
-	// 		expectedErrors: []string{"No inputs were found in config file '/apath/tsconfig.json'. Specified 'include' paths were '[**/*]' and 'exclude' paths were '[/apath]'."},
-	// 	},
-	// },
+	// // {
+	// // 	title: "generates errors for includes with outDir",
+	// // 	input: testConfig{
+	// // 		jsonText: `{
+	// // 	"compilerOptions": {
+	// // 		"outDir": "./"
+	// // 	},
+	// // 	"include": ["**/*"]
+	// // }`,
+	// // 		configFileName: "/apath/tsconfig.json",
+	// // 		basePath:       "/apath",
+	// // 		allFileList:    []string{"/apath/a.ts"},
+	// // 	},
+	// // 	output: verifyConfig{
+	// // 		fileNames: nil,
+	// // 		configFile: map[string]interface{}{
+	// // 			"compilerOptions": map[string]interface{}{
+	// // 				"outDir": "./",
+	// // 			},
+	// // 			"include": []string{"**/*"},
+	// // 		},
+	// // 		expectedErrors: []string{"No inputs were found in config file '/apath/tsconfig.json'. Specified 'include' paths were '[**/*]' and 'exclude' paths were '[/apath]'."},
+	// // 	},
+	// // },
+	{
+		title: "parses tsconfig with compilerOptions, files, include, and exclude",
+		input: testConfig{
+			jsonText: `{
+                "compilerOptions": {
+                    "outDir": "./dist",
+					"strict": true,
+					"noImplicitAny": true,
+                },
+                "files": ["/apath/src/index.ts", "/apath/src/app.ts"],
+                "include": ["/apath/src/**/*"],
+                "exclude": ["/apath/node_modules", "/apath/dist"]
+            }`,
+			configFileName: "/apath/tsconfig.json",
+			basePath:       "/apath",
+			allFileList:    []string{"/apath/src/index.ts", "/apath/src/app.ts", "/apath/node_modules/module.ts", "/apath/dist/output.js"},
+		},
+		output: verifyConfig{
+			fileNames: []string{"/apath/src/index.ts", "/apath/src/app.ts"},
+			configFile: map[string]interface{}{
+				"compilerOptions": core.CompilerOptions{
+					OutDir:        "./dist",
+					Strict:        core.TSTrue,
+					NoImplicitAny: core.TSTrue,
+				},
+				"files":   []string{"/apath/src/index.ts", "/apath/src/app.ts"},
+				"include": []string{"/apath/src/**/*"},
+				"exclude": []string{"/apath/node_modules", "/apath/dist"},
+			},
+			expectedErrors: []string{},
+		},
+	},
 }
 
 func TestParsedCommandJson(t *testing.T) {
@@ -372,8 +395,15 @@ func TestParsedCommandJson(t *testing.T) {
 				/*extendedConfigCache*/ nil,
 			)
 
+			// Check for file names
 			assert.DeepEqual(t, parseConfigFileContent.FileNames, rec.output.fileNames)
-			compareTsConfigOptions(t, ParseRawConfig(parseConfigFileContent.Raw, basePath, parseConfigFileContent.Errors, "tsconfig.json"), ParseRawConfig(rec.output.configFile, basePath, nil, "tsconfig.json"), rec.output.configFile)
+			// Check for compiler options
+			if rec.output.configFile["compilerOptions"] != nil {
+				assert.DeepEqual(t, ParseRawConfig(parseConfigFileContent.Raw, basePath, parseConfigFileContent.Errors, "tsconfig.json").compilerOptionsProp, rec.output.configFile["compilerOptions"])
+			}
+			// Check for all other options
+			assert.DeepEqual(t, ParseRawConfig(parseConfigFileContent.Raw, basePath, parseConfigFileContent.Errors, "tsconfig.json").prop, ParseRawConfig(rec.output.configFile, basePath, nil, "tsconfig.json").prop)
+			// Check for diagnostics
 			var actualErrorMessages = []string{}
 			for _, error := range parseConfigFileContent.Errors {
 				actualErrorMessages = append(actualErrorMessages, error.Message())
@@ -412,9 +442,16 @@ func TestParsedCommandJsonSourceFile(t *testing.T) {
 				/*extraFileExtensions*/ nil,
 				/*extendedConfigCache*/ nil,
 			)
-			assert.DeepEqual(t, parseConfigFileContent.FileNames, rec.output.fileNames)
 
-			compareTsConfigOptions(t, ParseRawConfig(parseConfigFileContent.Raw, basePath, parseConfigFileContent.Errors, "tsconfig.json"), ParseRawConfig(rec.output.configFile, basePath, nil, "tsconfig.json"), rec.output.configFile)
+			// Check for file names
+			assert.DeepEqual(t, parseConfigFileContent.FileNames, rec.output.fileNames)
+			// Check for compiler options
+			if rec.output.configFile["compilerOptions"] != nil {
+				assert.DeepEqual(t, ParseRawConfig(parseConfigFileContent.Raw, basePath, parseConfigFileContent.Errors, "tsconfig.json").compilerOptionsProp, rec.output.configFile["compilerOptions"])
+			}
+			// Check for all other options
+			assert.DeepEqual(t, ParseRawConfig(parseConfigFileContent.Raw, basePath, parseConfigFileContent.Errors, "tsconfig.json").prop, ParseRawConfig(rec.output.configFile, basePath, nil, "tsconfig.json").prop)
+			// Check for diagnostics
 			var actualErrorMessages = []string{}
 			for _, error := range parseConfigFileContent.Errors {
 				actualErrorMessages = append(actualErrorMessages, error.Message())
@@ -422,20 +459,6 @@ func TestParsedCommandJsonSourceFile(t *testing.T) {
 			compareDiagnosticMessages(t, actualErrorMessages, rec.output.expectedErrors)
 		})
 	}
-}
-
-func compareTsConfigOptions(t *testing.T, tsConfigOptionsInput tsConfigOptions, tsConfigOptionsResults tsConfigOptions, configFileOutput map[string]interface{}) {
-	assert.DeepEqual(t, tsConfigOptionsInput.prop, tsConfigOptionsResults.prop)
-
-	var parsedOutputCompilerOptions *core.CompilerOptions = &core.CompilerOptions{}
-	if configFileOutput["compilerOptions"] != nil {
-		for key, value := range configFileOutput["compilerOptions"].(map[string]interface{}) {
-			parseCompilerOptions(key, value, parsedOutputCompilerOptions)
-		}
-	}
-
-	assert.DeepEqual(t, tsConfigOptionsInput.compilerOptionsProp, *parsedOutputCompilerOptions)
-	// assert.DeepEqual(t, tsConfigOptionsInput.references, tsConfigOptionsResults.references)
 }
 
 func compareDiagnosticMessages(t *testing.T, actual []string, expected []string) {

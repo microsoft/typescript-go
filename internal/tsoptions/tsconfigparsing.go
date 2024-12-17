@@ -164,7 +164,7 @@ func parseOwnConfigOfJsonSourceFile(
 
 	return &ParsedTsconfig{
 		raw:     json,
-		options: &options,
+		options: options,
 		//watchOptions:    watchOptions,
 		// typeAcquisition: typeAcquisition,
 		//extendedConfigPath: extendedConfigPath,
@@ -205,7 +205,7 @@ func convertConfigFileToObject(
 	jsonConversionNotifier *JsonConversionNotifier,
 ) any {
 	var rootExpression *ast.Expression
-	if len(sourceFile.Statements.Nodes) > 0 { //check
+	if len(sourceFile.Statements.Nodes) > 0 {
 		rootExpression = sourceFile.Statements.Nodes[0].AsExpressionStatement().Expression
 	}
 	if rootExpression != nil && rootExpression.Kind != ast.KindObjectLiteralExpression {
@@ -430,17 +430,13 @@ func parseTristate(value interface{}) core.Tristate {
 	switch v := value.(type) {
 	case bool:
 		if v {
-			return 2
+			return core.TSTrue
 		}
-		return 1
-	case string:
-		if v == "true" {
-			return 2
-		} else if v == "false" {
-			return 1
+		if !v {
+			return core.TSFalse
 		}
 	}
-	return 0
+	return core.TSUnknown
 }
 
 func parseStringArray(value interface{}) []string {
@@ -481,248 +477,114 @@ func parseString(value interface{}) string {
 	return ""
 }
 
-func parseCompilerOptions(key string, value any, allOptions *core.CompilerOptions) core.CompilerOptions {
-	var options core.CompilerOptions
+func parseCompilerOptions(key string, value any, allOptions *core.CompilerOptions) *core.CompilerOptions {
+	if allOptions == nil {
+		return nil
+	}
 	switch key {
 	case "allowJs":
-		options.AllowJs = parseTristate(value)
-		if allOptions != nil {
-			allOptions.AllowJs = options.AllowJs
-		}
+		allOptions.AllowJs = parseTristate(value)
 	case "allowSyntheticDefaultImports":
-		options.AllowSyntheticDefaultImports = parseTristate(value)
-		if allOptions != nil {
-			allOptions.AllowSyntheticDefaultImports = options.AllowSyntheticDefaultImports
-		}
+		allOptions.AllowSyntheticDefaultImports = parseTristate(value)
 	case "allowUmdGlobalAccess":
-		options.AllowUmdGlobalAccess = parseTristate(value)
-		if allOptions != nil {
-			allOptions.AllowUmdGlobalAccess = options.AllowUmdGlobalAccess
-		}
+		allOptions.AllowUmdGlobalAccess = parseTristate(value)
 	case "allowUnreachableCode":
-		options.AllowUnreachableCode = parseTristate(value)
-		if allOptions != nil {
-			allOptions.AllowUnreachableCode = options.AllowUnreachableCode
-		}
+		allOptions.AllowUnreachableCode = parseTristate(value)
 	case "allowUnusedLabels":
-		options.AllowUnusedLabels = parseTristate(value)
-		if allOptions != nil {
-			allOptions.AllowUnusedLabels = options.AllowUnusedLabels
-		}
+		allOptions.AllowUnusedLabels = parseTristate(value)
 	case "checkJs":
-		options.CheckJs = parseTristate(value)
-		if allOptions != nil {
-			allOptions.CheckJs = options.CheckJs
-		}
+		allOptions.CheckJs = parseTristate(value)
 	case "customConditions":
-		options.CustomConditions = parseStringArray(value)
-		if allOptions != nil {
-			allOptions.CustomConditions = options.CustomConditions
-		}
+		allOptions.CustomConditions = parseStringArray(value)
 	case "declarationDir":
-		options.DeclarationDir = parseString(value)
-		if allOptions != nil {
-			allOptions.DeclarationDir = options.DeclarationDir
-		}
+		allOptions.DeclarationDir = parseString(value)
 	case "esModuleInterop":
-		options.ESModuleInterop = parseTristate(value)
-		if allOptions != nil {
-			allOptions.ESModuleInterop = options.ESModuleInterop
-		}
+		allOptions.ESModuleInterop = parseTristate(value)
 	case "exactOptionalPropertyTypes":
-		options.ExactOptionalPropertyTypes = parseTristate(value)
-		if allOptions != nil {
-			allOptions.ExactOptionalPropertyTypes = options.ExactOptionalPropertyTypes
-		}
+		allOptions.ExactOptionalPropertyTypes = parseTristate(value)
 	case "experimentalDecorators":
-		options.ExperimentalDecorators = parseTristate(value)
-		if allOptions != nil {
-			allOptions.ExperimentalDecorators = options.ExperimentalDecorators
-		}
+		allOptions.ExperimentalDecorators = parseTristate(value)
 	case "isolatedModules":
-		options.IsolatedModules = parseTristate(value)
-		if allOptions != nil {
-			allOptions.IsolatedModules = options.IsolatedModules
-		}
+		allOptions.IsolatedModules = parseTristate(value)
 	// case "jsx":
 	//     options.Jsx = parseJsxEmit(value)
 	case "lib":
-		options.Lib = parseStringArray(value)
-		if allOptions != nil {
-			allOptions.Lib = options.Lib
-		}
+		allOptions.Lib = parseStringArray(value)
 	case "legacyDecorators":
-		options.LegacyDecorators = parseTristate(value)
-		if allOptions != nil {
-			allOptions.LegacyDecorators = options.LegacyDecorators
-		}
+		allOptions.LegacyDecorators = parseTristate(value)
 	// case "module":
 	//     options.ModuleKind = parseModuleKind(value)
 	// case "moduleResolution":
 	//     options.ModuleResolution = parseModuleResolutionKind(value)
 	case "moduleSuffixes":
-		options.ModuleSuffixes = parseStringArray(value)
-		if allOptions != nil {
-			allOptions.ModuleSuffixes = options.ModuleSuffixes
-		}
+		allOptions.ModuleSuffixes = parseStringArray(value)
 	// case "moduleDetectionKind":
 	//     options.ModuleDetection = parseModuleDetectionKind(value)
 	case "noFallthroughCasesInSwitch":
-		options.NoFallthroughCasesInSwitch = parseTristate(value)
-		if allOptions != nil {
-			allOptions.NoFallthroughCasesInSwitch = options.NoFallthroughCasesInSwitch
-		}
+		allOptions.NoFallthroughCasesInSwitch = parseTristate(value)
 	case "noImplicitAny":
-		options.NoImplicitAny = parseTristate(value.(core.Tristate))
-		if allOptions != nil {
-			allOptions.NoImplicitAny = options.NoImplicitAny
-		}
+		allOptions.NoImplicitAny = parseTristate(value)
 	case "noImplicitThis":
-		options.NoImplicitThis = parseTristate(value)
-		if allOptions != nil {
-			allOptions.NoImplicitThis = options.NoImplicitThis
-		}
+		allOptions.NoImplicitThis = parseTristate(value)
 	case "noPropertyAccessFromIndexSignature":
-		options.NoPropertyAccessFromIndexSignature = parseTristate(value)
-		if allOptions != nil {
-			allOptions.NoPropertyAccessFromIndexSignature = options.NoPropertyAccessFromIndexSignature
-		}
+		allOptions.NoPropertyAccessFromIndexSignature = parseTristate(value)
 	case "noUncheckedIndexedAccess":
-		options.NoUncheckedIndexedAccess = parseTristate(value)
-		if allOptions != nil {
-			allOptions.NoUncheckedIndexedAccess = options.NoUncheckedIndexedAccess
-		}
+		allOptions.NoUncheckedIndexedAccess = parseTristate(value)
 	case "paths":
-		options.Paths = parseStringMap(value)
-		if allOptions != nil {
-			allOptions.Paths = options.Paths
-		}
+		allOptions.Paths = parseStringMap(value)
 	case "preserveConstEnums":
-		options.PreserveConstEnums = parseTristate(value)
-		if allOptions != nil {
-			allOptions.PreserveConstEnums = options.PreserveConstEnums
-		}
+		allOptions.PreserveConstEnums = parseTristate(value)
 	case "preserveSymlinks":
-		options.PreserveSymlinks = parseTristate(value)
-		if allOptions != nil {
-			allOptions.PreserveSymlinks = options.PreserveSymlinks
-		}
+		allOptions.PreserveSymlinks = parseTristate(value)
 	case "resolveJsonModule":
-		options.ResolveJsonModule = parseTristate(value)
-		if allOptions != nil {
-			allOptions.ResolveJsonModule = options.ResolveJsonModule
-		}
+		allOptions.ResolveJsonModule = parseTristate(value)
 	case "resolvePackageJsonExports":
-		options.ResolvePackageJsonExports = parseTristate(value)
-		if allOptions != nil {
-			allOptions.ResolvePackageJsonExports = options.ResolvePackageJsonExports
-		}
+		allOptions.ResolvePackageJsonExports = parseTristate(value)
 	case "resolvePackageJsonImports":
-		options.ResolvePackageJsonImports = parseTristate(value)
-		if allOptions != nil {
-			allOptions.ResolvePackageJsonImports = options.ResolvePackageJsonImports
-		}
+		allOptions.ResolvePackageJsonImports = parseTristate(value)
 	case "strict":
-		options.Strict = parseTristate(value)
-		if allOptions != nil {
-			allOptions.Strict = options.Strict
-		}
+		allOptions.Strict = parseTristate(value)
 	case "strictBindCallApply":
-		options.StrictBindCallApply = parseTristate(value)
-		if allOptions != nil {
-			allOptions.StrictBindCallApply = options.StrictBindCallApply
-		}
+		allOptions.StrictBindCallApply = parseTristate(value)
 	case "strictFunctionTypes":
-		options.StrictFunctionTypes = parseTristate(value)
-		if allOptions != nil {
-			allOptions.StrictFunctionTypes = options.StrictFunctionTypes
-		}
+		allOptions.StrictFunctionTypes = parseTristate(value)
 	case "strictNullChecks":
-		options.StrictNullChecks = parseTristate(value)
-		if allOptions != nil {
-			allOptions.StrictNullChecks = options.StrictNullChecks
-		}
+		allOptions.StrictNullChecks = parseTristate(value)
 	case "strictPropertyInitialization":
-		options.StrictPropertyInitialization = parseTristate(value)
-		if allOptions != nil {
-			allOptions.StrictPropertyInitialization = options.StrictPropertyInitialization
-		}
+		allOptions.StrictPropertyInitialization = parseTristate(value)
 	// case "target":
 	//     options.Target = parseScriptTarget(value)
 	case "traceResolution":
-		options.TraceResolution = parseTristate(value)
-		if allOptions != nil {
-			allOptions.TraceResolution = options.TraceResolution
-		}
+		allOptions.TraceResolution = parseTristate(value)
 	case "typeRoots":
-		options.TypeRoots = parseStringArray(value)
-		if allOptions != nil {
-			allOptions.TypeRoots = options.TypeRoots
-		}
+		allOptions.TypeRoots = parseStringArray(value)
 	case "types":
-		options.Types = parseStringArray(value)
-		if allOptions != nil {
-			allOptions.Types = options.Types
-		}
+		allOptions.Types = parseStringArray(value)
 	case "useDefineForClassFields":
-		options.UseDefineForClassFields = parseTristate(value)
-		if allOptions != nil {
-			allOptions.UseDefineForClassFields = options.UseDefineForClassFields
-		}
+		allOptions.UseDefineForClassFields = parseTristate(value)
 	case "useUnknownInCatchVariables":
-		options.UseUnknownInCatchVariables = parseTristate(value)
-		if allOptions != nil {
-			allOptions.UseUnknownInCatchVariables = options.UseUnknownInCatchVariables
-		}
+		allOptions.UseUnknownInCatchVariables = parseTristate(value)
 	case "verbatimModuleSyntax":
-		options.VerbatimModuleSyntax = parseTristate(value)
-		if allOptions != nil {
-			allOptions.VerbatimModuleSyntax = options.VerbatimModuleSyntax
-		}
+		allOptions.VerbatimModuleSyntax = parseTristate(value)
 	case "maxNodeModuleJsDepth":
-		options.MaxNodeModuleJsDepth = parseTristate(value)
-		if allOptions != nil {
-			allOptions.MaxNodeModuleJsDepth = options.MaxNodeModuleJsDepth
-		}
+		allOptions.MaxNodeModuleJsDepth = parseTristate(value)
 	case "skipLibCheck":
-		options.SkipLibCheck = parseTristate(value)
-		if allOptions != nil {
-			allOptions.SkipLibCheck = options.SkipLibCheck
-		}
+		allOptions.SkipLibCheck = parseTristate(value)
 	case "noEmit":
-		options.NoEmit = parseTristate(value)
-		if allOptions != nil {
-			allOptions.NoEmit = options.NoEmit
-		}
+		allOptions.NoEmit = parseTristate(value)
 	case "configFilePath":
-		options.ConfigFilePath = parseString(value)
-		if allOptions != nil {
-			allOptions.ConfigFilePath = options.ConfigFilePath
-		}
+		allOptions.ConfigFilePath = parseString(value)
 	case "noDtsResolution":
-		options.NoDtsResolution = parseTristate(value)
-		if allOptions != nil {
-			allOptions.NoDtsResolution = options.NoDtsResolution
-		}
+		allOptions.NoDtsResolution = parseTristate(value)
 	case "pathsBasePath":
-		options.PathsBasePath = parseString(value)
-		if allOptions != nil {
-			allOptions.PathsBasePath = options.PathsBasePath
-		}
+		allOptions.PathsBasePath = parseString(value)
 	case "outDir":
-		options.OutDir = parseString(value)
-		if allOptions != nil {
-			allOptions.OutDir = options.OutDir
-		}
+		allOptions.OutDir = parseString(value)
 	default:
 		// Handle unknown options
 		fmt.Printf("Unknown option: %s\n", key)
 	}
-
-	if allOptions != nil {
-		return *allOptions
-	}
-	return options
+	return allOptions
 }
 
 type tsConfigOptions struct {
@@ -836,18 +698,18 @@ func getCommandLineCompilerOptionsMap() map[string]CommandLineOption {
 	return commandLineCompilerOptionsMapCache
 }
 
-func convertOptionsFromJson(optionsNameMap map[string]CommandLineOption, jsonOptions map[string]interface{}, basePath string, defaultOptions *core.CompilerOptions, errors []*ast.Diagnostic) core.CompilerOptions {
+func convertOptionsFromJson(optionsNameMap map[string]CommandLineOption, jsonOptions map[string]interface{}, basePath string, defaultOptions *core.CompilerOptions, errors []*ast.Diagnostic) *core.CompilerOptions {
 	if jsonOptions == nil {
-		return core.CompilerOptions{}
+		return nil
 	}
 	for key, value := range jsonOptions {
 		opt, ok := optionsNameMap[key]
 		if ok {
 			convertJson, _ := convertJsonOption(opt, value, basePath, errors, nil, nil, nil)
-			*defaultOptions = parseCompilerOptions(key, convertJson, nil)
+			parseCompilerOptions(key, convertJson, defaultOptions)
 		}
 	}
-	return *defaultOptions
+	return defaultOptions
 }
 
 func convertArrayLiteralExpressionToJson(
@@ -1082,10 +944,10 @@ func convertToObject(sourceFile *ast.SourceFile, errors []*ast.Diagnostic) any {
 	return convertToJson(sourceFile, rootExpression, errors /*returnValue*/, true /*jsonConversionNotifier*/, nil)
 }
 
-func getDefaultCompilerOptions(configFileName string) core.CompilerOptions {
-	var options core.CompilerOptions
+func getDefaultCompilerOptions(configFileName string) *core.CompilerOptions {
+	var options *core.CompilerOptions = &core.CompilerOptions{}
 	if configFileName != "" && tspath.GetBaseFileName(configFileName) == "jsconfig.json" {
-		options = core.CompilerOptions{
+		options = &core.CompilerOptions{
 			AllowJs:                      2,
 			MaxNodeModuleJsDepth:         2,
 			AllowSyntheticDefaultImports: 2,
@@ -1108,9 +970,9 @@ const (
 	noProp          propFromRaw = "no-prop"
 )
 
-func convertCompilerOptionsFromJsonWorker(jsonOptions map[string]interface{}, basePath string, errors []*ast.Diagnostic, configFileName string) core.CompilerOptions {
+func convertCompilerOptionsFromJsonWorker(jsonOptions map[string]interface{}, basePath string, errors []*ast.Diagnostic, configFileName string) *core.CompilerOptions {
 	options := getDefaultCompilerOptions(configFileName)
-	convertOptionsFromJson(getCommandLineCompilerOptionsMap(), jsonOptions, basePath, &options, errors)
+	convertOptionsFromJson(getCommandLineCompilerOptionsMap(), jsonOptions, basePath, options, errors)
 	if configFileName != "" {
 		options.ConfigFilePath = tspath.NormalizeSlashes(configFileName)
 	}
@@ -1127,7 +989,7 @@ func parseOwnConfigOfJson(
 	// if json["excludes"] != nil {
 	// 	errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.Unknown_option_excludes_Did_you_mean_exclude))
 	// }
-	var options core.CompilerOptions
+	var options *core.CompilerOptions
 	for k, v := range json {
 		if k == "compilerOptions" {
 			options = convertCompilerOptionsFromJsonWorker(v.(map[string]interface{}), basePath, errors, configFileName)
@@ -1142,7 +1004,7 @@ func parseOwnConfigOfJson(
 	// }
 	var parsedConfig = &ParsedTsconfig{
 		raw:     json,
-		options: &options,
+		options: options,
 	}
 	return parsedConfig
 }
@@ -1261,11 +1123,11 @@ func parseJsonConfigFileContentWorker(
 	// 	configDirTemplateSubstitutionOptions,
 	// 	basePath,
 	// )
-	options := parsedConfig.options
+	//options := parsedConfig.options
 	rawConfig := ParseRawConfig(parsedConfig.raw, basePath, errors, configFileName)
-	if json == nil {
-		options = &rawConfig.compilerOptionsProp
-	}
+	// if json == nil {
+	options := &rawConfig.compilerOptionsProp
+	// }
 	var basePathForFileNames string
 	if configFileName != "" {
 		rawConfig.compilerOptionsProp.ConfigFilePath = tspath.NormalizeSlashes(configFileName)
