@@ -234,7 +234,6 @@ func (p *Program) processFiles(files []string, task *parallelParseTask, ctx *par
 }
 
 func (p *Program) addAllFilesToProgram(ctx *parallelParseContext) {
-
 	p.files = make([]*ast.SourceFile, 0, ctx.processedFileCount())
 	p.filesByPath = make(map[tspath.Path]*ast.SourceFile, ctx.processedFileCount())
 

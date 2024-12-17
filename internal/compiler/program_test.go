@@ -42,6 +42,7 @@ func TestProgram(t *testing.T) {
 
 	for _, testCase := range programTestCases {
 		t.Run(testCase.TestName, func(t *testing.T) {
+			t.Parallel()
 			fs := fstest.MapFS{}
 			for _, testFile := range testCase.Files {
 				fs[testFile.FileName] = &fstest.MapFile{
