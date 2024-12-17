@@ -131,11 +131,13 @@ type parallelParseContext struct {
 	mu                 sync.Mutex
 	wg                 *core.WorkGroup
 	processedFileNames core.Set[string]
+	rootTasks          []parallelParseTask
 }
 
-func newParallelParseContext(isSingleThreaded bool) *parallelParseContext {
+func newParallelParseContext(isSingleThreaded bool, rootTaskCount int) *parallelParseContext {
 	return &parallelParseContext{
-		wg: core.NewWorkGroup(isSingleThreaded),
+		wg:        core.NewWorkGroup(isSingleThreaded),
+		rootTasks: make([]parallelParseTask, rootTaskCount),
 	}
 }
 
@@ -153,6 +155,10 @@ func (p *parallelParseContext) wait() {
 
 func (p *parallelParseContext) run(fn func()) {
 	p.wg.Run(fn)
+}
+
+func (p *parallelParseContext) processedFileCount() int {
+	return p.processedFileNames.Len()
 }
 
 // Checks if a file has already been processed in the current context and if not, adds it to the processed files set.
@@ -177,7 +183,7 @@ func (t *parallelParseTask) createSubTasks(count int) {
 }
 
 func (p *Program) processRootFiles(rootFiles []FileInfo) {
-	ctx := newParallelParseContext(p.programOptions.SingleThreaded)
+	ctx := newParallelParseContext(p.programOptions.SingleThreaded, len(rootFiles))
 
 	absPaths := make([]string, 0, len(rootFiles))
 	for _, fileInfo := range rootFiles {
@@ -186,14 +192,12 @@ func (p *Program) processRootFiles(rootFiles []FileInfo) {
 		absPaths = append(absPaths, absPath)
 	}
 
-	tasks := make([]parallelParseTask, len(absPaths))
-
 	for i, absPath := range absPaths {
-		p.startParseTask(absPath, ctx, &tasks[i])
+		p.startParseTask(absPath, ctx, &ctx.rootTasks[i])
 	}
 
 	ctx.wait()
-	p.addAllFilesToProgram(tasks)
+	p.addAllFilesToProgram(ctx)
 }
 
 func (p *Program) startParseTask(fileName string, ctx *parallelParseContext, task *parallelParseTask) {
@@ -229,12 +233,12 @@ func (p *Program) processFiles(files []string, task *parallelParseTask, ctx *par
 	}
 }
 
-func (p *Program) addAllFilesToProgram(tasks []parallelParseTask) {
-	totalFileCount := getTotalParsedFileCount(tasks)
-	p.files = make([]*ast.SourceFile, 0, totalFileCount)
-	p.filesByPath = make(map[tspath.Path]*ast.SourceFile, totalFileCount)
+func (p *Program) addAllFilesToProgram(ctx *parallelParseContext) {
 
-	p.addAllFilesToProgramWorker(tasks)
+	p.files = make([]*ast.SourceFile, 0, ctx.processedFileCount())
+	p.filesByPath = make(map[tspath.Path]*ast.SourceFile, ctx.processedFileCount())
+
+	p.addAllFilesToProgramWorker(ctx.rootTasks)
 }
 
 func (p *Program) addAllFilesToProgramWorker(tasks []parallelParseTask) {
@@ -248,16 +252,6 @@ func (p *Program) addAllFilesToProgramWorker(tasks []parallelParseTask) {
 			p.filesByPath[task.file.Path()] = task.file
 		}
 	}
-}
-
-func getTotalParsedFileCount(t []parallelParseTask) int {
-	count := len(t)
-	for _, task := range t {
-		if task.hasSubTasks {
-			count += getTotalParsedFileCount(task.subTasks)
-		}
-	}
-	return count
 }
 
 func (p *Program) getResolvedModule(currentSourceFile *ast.SourceFile, moduleReference string) *ast.SourceFile {
