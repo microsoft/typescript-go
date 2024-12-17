@@ -1579,7 +1579,7 @@ func (c *Checker) writeFlowCacheKey(b *KeyBuilder, node *ast.Node, declaredType 
 		}
 		if flowContainer != nil {
 			b.WriteByte('@')
-			b.WriteInt(int(binder.GetNodeId(flowContainer)))
+			b.WriteInt(int(ast.GetNodeId(flowContainer)))
 		}
 		return true
 	case ast.KindNonNullExpression, ast.KindParenthesizedExpression:
@@ -1613,7 +1613,7 @@ func (c *Checker) writeFlowCacheKey(b *KeyBuilder, node *ast.Node, declaredType 
 		}
 	case ast.KindObjectBindingPattern, ast.KindArrayBindingPattern, ast.KindFunctionDeclaration,
 		ast.KindFunctionExpression, ast.KindArrowFunction, ast.KindMethodDeclaration:
-		b.WriteInt(int(binder.GetNodeId(node)))
+		b.WriteInt(int(ast.GetNodeId(node)))
 		b.WriteByte('#')
 		b.WriteType(declaredType)
 		return true
@@ -2036,7 +2036,7 @@ func (c *Checker) getPropertyNameForKnownSymbolName(symbolName string) string {
 			return getPropertyNameFromType(uniqueType)
 		}
 	}
-	return InternalSymbolNamePrefix + "@" + symbolName
+	return ast.InternalSymbolNamePrefix + "@" + symbolName
 }
 
 // We require the dotted function name in an assertion expression to be comprised of identifiers
@@ -2368,7 +2368,7 @@ func (c *Checker) getTypePredicateArgument(predicate *TypePredicate, callExpress
 
 func (c *Checker) getFlowTypeInConstructor(symbol *ast.Symbol, constructor *ast.Node) *Type {
 	var accessName *ast.Node
-	if strings.HasPrefix(symbol.Name, InternalSymbolNamePrefix+"#") {
+	if strings.HasPrefix(symbol.Name, ast.InternalSymbolNamePrefix+"#") {
 		accessName = c.factory.NewPrivateIdentifier(symbol.Name[strings.Index(symbol.Name, "@")+1:])
 	} else {
 		accessName = c.factory.NewIdentifier(symbol.Name)
@@ -2390,7 +2390,7 @@ func (c *Checker) getFlowTypeInConstructor(symbol *ast.Symbol, constructor *ast.
 
 func (c *Checker) getFlowTypeInStaticBlocks(symbol *ast.Symbol, staticBlocks []*ast.Node) *Type {
 	var accessName *ast.Node
-	if strings.HasPrefix(symbol.Name, InternalSymbolNamePrefix+"#") {
+	if strings.HasPrefix(symbol.Name, ast.InternalSymbolNamePrefix+"#") {
 		accessName = c.factory.NewPrivateIdentifier(symbol.Name[strings.Index(symbol.Name, "@")+1:])
 	} else {
 		accessName = c.factory.NewIdentifier(symbol.Name)

@@ -2,7 +2,46 @@ package ast
 
 import (
 	"slices"
+	"sync/atomic"
 )
+
+// Atomic ids
+
+var nextNodeId atomic.Uint32
+var nextSymbolId atomic.Uint32
+
+func GetNodeId(node *Node) NodeId {
+	if node.Id == 0 {
+		node.Id = NodeId(nextNodeId.Add(1))
+	}
+	return node.Id
+}
+
+func GetSymbolId(symbol *Symbol) SymbolId {
+	if symbol.Id == 0 {
+		symbol.Id = SymbolId(nextSymbolId.Add(1))
+	}
+	return symbol.Id
+}
+
+func GetSymbolTable(data *SymbolTable) SymbolTable {
+	if *data == nil {
+		*data = make(SymbolTable)
+	}
+	return *data
+}
+
+func GetMembers(symbol *Symbol) SymbolTable {
+	return GetSymbolTable(&symbol.Members)
+}
+
+func GetExports(symbol *Symbol) SymbolTable {
+	return GetSymbolTable(&symbol.Exports)
+}
+
+func GetLocals(container *Node) SymbolTable {
+	return GetSymbolTable(&container.LocalsContainerData().Locals)
+}
 
 // Determines if a node is missing (either `nil` or empty)
 func NodeIsMissing(node *Node) bool {
@@ -1311,4 +1350,22 @@ func GetImmediatelyInvokedFunctionExpression(fn *Node) *Node {
 
 func IsEnumConst(node *Node) bool {
 	return GetCombinedModifierFlags(node)&ModifierFlagsConst != 0
+}
+
+func ExportAssignmentIsAlias(node *Node) bool {
+	return isAliasableExpression(getExportAssignmentExpression(node))
+}
+
+func getExportAssignmentExpression(node *Node) *Node {
+	switch node.Kind {
+	case KindExportAssignment:
+		return node.AsExportAssignment().Expression
+	case KindBinaryExpression:
+		return node.AsBinaryExpression().Right
+	}
+	panic("Unhandled case in getExportAssignmentExpression")
+}
+
+func isAliasableExpression(e *Node) bool {
+	return IsEntityNameExpression(e) || IsClassExpression(e)
 }

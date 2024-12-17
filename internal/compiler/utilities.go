@@ -598,7 +598,7 @@ loop:
 			if ast.IsSourceFile(location) || (ast.IsModuleDeclaration(location) && location.Flags&ast.NodeFlagsAmbient != 0 && !ast.IsGlobalScopeAugmentation(location)) {
 				// It's an external module. First see if the module has an export default and if the local
 				// name of that export default matches.
-				result = moduleExports[InternalSymbolNameDefault]
+				result = moduleExports[ast.InternalSymbolNameDefault]
 				if result != nil {
 					localSymbol := getLocalSymbolForExportDefault(result)
 					if localSymbol != nil && result.Flags&meaning != 0 && localSymbol.Name == name {
@@ -622,7 +622,7 @@ loop:
 					break
 				}
 			}
-			if name != InternalSymbolNameDefault {
+			if name != ast.InternalSymbolNameDefault {
 				result = r.lookup(moduleExports, name, meaning&ast.SymbolFlagsModuleMember)
 				if result != nil {
 					break loop
@@ -1480,7 +1480,7 @@ func isSyntacticDefault(node *ast.Node) bool {
 }
 
 func hasExportAssignmentSymbol(moduleSymbol *ast.Symbol) bool {
-	return moduleSymbol.Exports[InternalSymbolNameExportEquals] != nil
+	return moduleSymbol.Exports[ast.InternalSymbolNameExportEquals] != nil
 }
 
 func isImportOrExportSpecifier(node *ast.Node) bool {
@@ -1871,7 +1871,7 @@ func getPropertyNameForPropertyNameNode(name *ast.Node) string {
 			}
 			return text
 		}
-		return InternalSymbolNameMissing
+		return ast.InternalSymbolNameMissing
 	}
 	panic("Unhandled case in getPropertyNameForPropertyNameNode")
 }
