@@ -2406,19 +2406,19 @@ func (p *Parser) parseJSDocType() *ast.TypeNode {
 	pos := p.nodePos()
 
 	hasDotDotDot := p.parseOptional(ast.KindDotDotDotToken)
-	type_ := p.parseTypeOrTypePredicate()
+	t := p.parseTypeOrTypePredicate()
 	p.scanner.SetSkipJsDocLeadingAsterisks(false)
 	if hasDotDotDot {
-		type_ = p.factory.NewJSDocVariadicType(type_)
-		p.finishNode(type_, pos)
+		t = p.factory.NewJSDocVariadicType(t)
+		p.finishNode(t, pos)
 	}
 	if p.token == ast.KindEqualsToken {
 		p.nextToken()
-		result := p.factory.NewJSDocOptionalType(type_)
+		result := p.factory.NewJSDocOptionalType(t)
 		p.finishNode(result, pos)
 		return result
 	}
-	return type_
+	return t
 }
 func (p *Parser) parseLiteralTypeNode(negative bool) *ast.Node {
 	pos := p.nodePos()
