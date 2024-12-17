@@ -13,6 +13,8 @@ import (
 	"syscall"
 )
 
+// This is a copy of filepath.EvalSymlinks, but treats junctions as symlinks, matching pre-Go 1.23 behavior.
+
 func volumeNameLen(path string) int {
 	return len(filepath.VolumeName(path))
 }
@@ -91,7 +93,7 @@ func walkSymlinks(path string) (string, error) {
 			return "", err
 		}
 
-		if fi.Mode()&fs.ModeSymlink == 0 {
+		if fi.Mode()&fs.ModeSymlink == 0 && !isJunction(fi) {
 			if !fi.Mode().IsDir() && end < len(path) {
 				return "", syscall.ENOTDIR
 			}
