@@ -210,8 +210,8 @@ var data = []struct {
 		title: "allow dotted files and folders when explicitly requested",
 		input: testConfig{
 			jsonText: `{
-						"files": ["/apath/.git/a.ts", "/apath/.b.ts", "/apath/..c.ts"]
-					}`,
+							"files": ["/apath/.git/a.ts", "/apath/.b.ts", "/apath/..c.ts"]
+						}`,
 			configFileName: "tsconfig.json",
 			basePath:       "/apath",
 			allFileList:    []string{"/apath/test.ts", "/apath/.git/a.ts", "/apath/.b.ts", "/apath/..c.ts"},
@@ -242,8 +242,8 @@ var data = []struct {
 		title: "generates errors for empty files list",
 		input: testConfig{
 			jsonText: `{
-				"files": []
-			}`,
+					"files": []
+				}`,
 			configFileName: "/apath/tsconfig.json",
 			basePath:       "/apath",
 			allFileList:    []string{"/apath/a.ts"},
@@ -260,9 +260,9 @@ var data = []struct {
 		title: "generates errors for empty files list when no references are provided",
 		input: testConfig{
 			jsonText: `{
-				"files": [],
-				"references": []
-			}`,
+					"files": [],
+					"references": []
+				}`,
 			configFileName: "/apath/tsconfig.json",
 			basePath:       "/apath",
 			allFileList:    []string{"/apath/a.ts"},
@@ -287,15 +287,15 @@ var data = []struct {
 		output: verifyConfig{
 			fileNames:      nil,
 			configFile:     map[string]interface{}{},
-			expectedErrors: []string{"No inputs were found in config file '/apath/tsconfig.json'. Specified 'include' paths were '[**/*]' and 'exclude' paths were '[no-prop]'."},
+			expectedErrors: []string{"No inputs were found in config file '/apath/tsconfig.json'. Specified 'include' paths were '[**/*]' and 'exclude' paths were '[]'."},
 		},
 	},
 	{
 		title: "generates errors for empty include",
 		input: testConfig{
 			jsonText: `{
-		"include": []
-	}`,
+			"include": []
+		}`,
 			configFileName: "/apath/tsconfig.json",
 			basePath:       "tests/cases/unittests",
 			allFileList:    []string{"/apath/a.ts"},
@@ -305,7 +305,7 @@ var data = []struct {
 			configFile: map[string]interface{}{
 				"include": nil,
 			},
-			expectedErrors: []string{"No inputs were found in config file '/apath/tsconfig.json'. Specified 'include' paths were '[]' and 'exclude' paths were '[no-prop]'."},
+			expectedErrors: []string{"No inputs were found in config file '/apath/tsconfig.json'. Specified 'include' paths were '[]' and 'exclude' paths were '[]'."},
 		},
 	},
 	// {
@@ -336,20 +336,20 @@ var data = []struct {
 		title: "parses tsconfig with compilerOptions, files, include, and exclude",
 		input: testConfig{
 			jsonText: `{
-                "compilerOptions": {
-                    "outDir": "./dist",
-					"strict": true,
-					"noImplicitAny": true,
-					"target": "ES2017",
-					"module": "ESNext",
-					"moduleResolution": "bundler,
-					"moduleDetection": "auto",
-					"jsx": "react",
-                },
-                "files": ["/apath/src/index.ts", "/apath/src/app.ts"],
-                "include": ["/apath/src/**/*"],
-                "exclude": ["/apath/node_modules", "/apath/dist"]
-            }`,
+	                "compilerOptions": {
+	                    "outDir": "./dist",
+						"strict": true,
+						"noImplicitAny": true,
+						"target": "ES2017",
+						"module": "ESNext",
+						"moduleResolution": "bundler,
+						"moduleDetection": "auto",
+						"jsx": "react",
+	                },
+	                "files": ["/apath/src/index.ts", "/apath/src/app.ts"],
+	                "include": ["/apath/src/**/*"],
+	                "exclude": ["/apath/node_modules", "/apath/dist"]
+	            }`,
 			configFileName: "/apath/tsconfig.json",
 			basePath:       "/apath",
 			allFileList:    []string{"/apath/src/index.ts", "/apath/src/app.ts", "/apath/node_modules/module.ts", "/apath/dist/output.js"},
@@ -370,6 +370,26 @@ var data = []struct {
 				"exclude": []string{"/apath/node_modules", "/apath/dist"},
 			},
 			expectedErrors: []string{},
+		},
+	},
+	{
+		title: "generates errors when commandline option is in tsconfig",
+		input: testConfig{
+			jsonText: `{
+				"compilerOptions": {
+			"help": true,
+		},
+	}`,
+			configFileName: "/apath/tsconfig.json",
+			basePath:       "/apath",
+			allFileList:    []string{"/apath/a.ts"},
+		},
+		output: verifyConfig{
+			fileNames: []string{"/apath/a.ts"},
+			configFile: map[string]interface{}{
+				"compilerOptions": core.CompilerOptions{},
+			},
+			expectedErrors: []string{"Option 'help' can only be specified on command line."},
 		},
 	},
 }
@@ -420,6 +440,7 @@ func TestParsedCommandJson(t *testing.T) {
 		})
 	}
 }
+
 func TestParsedCommandJsonSourceFile(t *testing.T) {
 	for _, rec := range data {
 		t.Run(rec.title, func(t *testing.T) {

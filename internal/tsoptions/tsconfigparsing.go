@@ -128,7 +128,7 @@ func parseOwnConfigOfJsonSourceFile(
 	) {
 		// Ensure value is verified except for extends which is handled in its own way for error reporting
 		if option != nil && option != &extendsOptionDeclaration { //&& option != extendsOptionDeclaration {
-			value, _ = convertJsonOption(*option, value, basePath, errors, &propertyAssignment, propertyAssignment.Initializer, sourceFile)
+			value, errors = convertJsonOption(*option, value, basePath, errors, &propertyAssignment, propertyAssignment.Initializer, sourceFile)
 		}
 		if parentOption.Name != "undefined" && value != nil { // todo: if needed
 			if option != nil && option.Name != "" {
@@ -233,24 +233,54 @@ func isCompilerOptionsValue(option CommandLineOption, value any) core.CompilerOp
 		if value == nil {
 			return core.CompilerOptionsValue{BooleanValue: !option.DisallowNullOrUndefined()} // All options are undefinable/nullable
 		}
-		if option.Kind == "list" {
-			_, ok := value.([]string)
-			return core.CompilerOptionsValue{BooleanValue: ok}
+		// if option.Kind == "list" {
+		// 	_, ok := value.([]string)
+		// 	return core.CompilerOptionsValue{BooleanValue: ok}
+		// }
+		// if option.Kind == "listOrElement" {
+		// 	_, ok := value.([]string)
+		// 	return core.CompilerOptionsValue{BooleanValue: ok}
+		// }
+
+		switch option.Kind {
+		case "list":
+			if _, ok := value.([]string); ok {
+				return core.CompilerOptionsValue{BooleanValue: true}
+			}
+		case "listOrElement":
+			if _, ok := value.([]string); ok {
+				return core.CompilerOptionsValue{BooleanValue: true}
+			}
+		case "string":
+			if _, ok := value.(string); ok {
+				return core.CompilerOptionsValue{BooleanValue: true}
+			}
+		case "number":
+			if _, ok := value.(int); ok {
+				return core.CompilerOptionsValue{BooleanValue: true}
+			}
+		case "boolean":
+			if _, ok := value.(bool); ok {
+				return core.CompilerOptionsValue{BooleanValue: true}
+			}
+		case "object":
+			if _, ok := value.(map[string]interface{}); ok {
+				return core.CompilerOptionsValue{BooleanValue: true}
+			}
+		case "enum":
+			if _, ok := value.(string); ok {
+				return core.CompilerOptionsValue{BooleanValue: true}
+			}
+		default:
+			return core.CompilerOptionsValue{BooleanValue: false}
 		}
-		if option.Kind == "listOrElement" {
-			_, ok := value.([]string)
-			return core.CompilerOptionsValue{BooleanValue: ok}
-			//isCompilerOptionsValue(option.element, value);
-		}
-		// todo: find a better way to check
-		if option.Kind == "string" || option.Kind == "enum" {
-			_, ok := value.(string)
-			return core.CompilerOptionsValue{BooleanValue: ok}
-		}
-		if option.Kind == "object" || option.Kind == "boolean" {
-			return core.CompilerOptionsValue{BooleanValue: true}
-		}
-		return core.CompilerOptionsValue{BooleanValue: false}
+		// if option.Kind == "string" || option.Kind == "enum" || option.Kind == "object" || option.Kind == "boolean" {
+		// 	return core.CompilerOptionsValue{BooleanValue: ok}
+		// }
+		// if option.Kind == "object" || option.Kind == "boolean" {
+		// 	return core.CompilerOptionsValue{BooleanValue: true}
+		// }
+		// return core.CompilerOptionsValue{BooleanValue: false}
 	}
 	return core.CompilerOptionsValue{BooleanValue: false}
 }
@@ -362,7 +392,7 @@ func convertJsonOption(
 	sourceFile *tsConfigSourceFile,
 ) (any, []*ast.Diagnostic) {
 	if opt.isCommandLineOnly != false {
-		errors = append(errors, compiler.NewDiagnosticForNode(&sourceFile.sourceFile.Node, diagnostics.Option_0_can_only_be_specified_on_command_line, opt.Name))
+		errors = append(errors, compiler.NewDiagnosticForNode(nil, diagnostics.Option_0_can_only_be_specified_on_command_line, opt.Name))
 		return core.CompilerOptionsValue{}, errors
 	}
 	if isCompilerOptionsValue(opt, value).BooleanValue {
@@ -840,21 +870,22 @@ func getCommandLineCompilerOptionsMap() map[string]CommandLineOption {
 	return commandLineCompilerOptionsMapCache
 }
 
-func convertOptionsFromJson(optionsNameMap map[string]CommandLineOption, jsonOptions map[string]interface{}, basePath string, defaultOptions *core.CompilerOptions, errors []*ast.Diagnostic) *core.CompilerOptions {
+func convertOptionsFromJson(optionsNameMap map[string]CommandLineOption, jsonOptions map[string]interface{}, basePath string, defaultOptions *core.CompilerOptions, errors []*ast.Diagnostic) (*core.CompilerOptions, []*ast.Diagnostic) {
 	if jsonOptions == nil {
-		return nil
+		return nil, errors
 	}
 	for key, value := range jsonOptions {
 		opt, ok := optionsNameMap[key]
+		var convertJson any
 		if ok {
-			convertJson, _ := convertJsonOption(opt, value, basePath, errors, nil, nil, nil)
+			convertJson, errors = convertJsonOption(opt, value, basePath, errors, nil, nil, nil)
 			parseCompilerOptions(key, convertJson, defaultOptions)
 		}
 		// else {
 		//     errors.push(createUnknownOptionError(id, diagnostics));
 		// }
 	}
-	return defaultOptions
+	return defaultOptions, errors
 }
 
 func convertArrayLiteralExpressionToJson(
@@ -941,7 +972,7 @@ func convertObjectLiteralExpressionToJson(
 		if compiler.IsQuestionToken(element) {
 			errors = append(errors, compiler.NewDiagnosticForNode(element, diagnostics.Property_assignment_expected))
 		}
-		if isDoubleQuotedString(element.Name()) == false {
+		if element.Name() != nil && isDoubleQuotedString(element.Name()) == false {
 			errors = append(errors, compiler.NewDiagnosticForNode(element.Name(), diagnostics.String_literal_with_double_quotes_expected))
 		}
 
@@ -1115,13 +1146,13 @@ const (
 	noProp          propFromRaw = "no-prop"
 )
 
-func convertCompilerOptionsFromJsonWorker(jsonOptions map[string]interface{}, basePath string, errors []*ast.Diagnostic, configFileName string) *core.CompilerOptions {
+func convertCompilerOptionsFromJsonWorker(jsonOptions map[string]interface{}, basePath string, errors []*ast.Diagnostic, configFileName string) (*core.CompilerOptions, []*ast.Diagnostic) {
 	options := getDefaultCompilerOptions(configFileName)
-	convertOptionsFromJson(getCommandLineCompilerOptionsMap(), jsonOptions, basePath, options, errors)
+	_, errors = convertOptionsFromJson(getCommandLineCompilerOptionsMap(), jsonOptions, basePath, options, errors)
 	if configFileName != "" {
 		options.ConfigFilePath = tspath.NormalizeSlashes(configFileName)
 	}
-	return options
+	return options, errors
 }
 
 func parseOwnConfigOfJson(
@@ -1130,14 +1161,14 @@ func parseOwnConfigOfJson(
 	basePath string,
 	configFileName string,
 	errors []*ast.Diagnostic,
-) *ParsedTsconfig {
+) (*ParsedTsconfig, []*ast.Diagnostic) {
 	// if json["excludes"] != nil {
 	// 	errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.Unknown_option_excludes_Did_you_mean_exclude))
 	// }
 	var options *core.CompilerOptions
 	for k, v := range json {
 		if k == "compilerOptions" {
-			options = convertCompilerOptionsFromJsonWorker(v.(map[string]interface{}), basePath, errors, configFileName)
+			options, errors = convertCompilerOptionsFromJsonWorker(v.(map[string]interface{}), basePath, errors, configFileName)
 		}
 	}
 	// typeAcquisition := convertTypeAcquisitionFromJsonWorker(json.typeAcquisition, basePath, errors, configFileName)
@@ -1151,7 +1182,7 @@ func parseOwnConfigOfJson(
 		raw:     json,
 		options: options,
 	}
-	return parsedConfig
+	return parsedConfig, errors
 }
 
 func isEmptyStruct(s interface{}) bool {
@@ -1187,7 +1218,7 @@ func parseConfig(
 	}
 	var ownConfig *ParsedTsconfig
 	if json != nil {
-		ownConfig = parseOwnConfigOfJson(json, host, basePath, configFileName, errors)
+		ownConfig, errors = parseOwnConfigOfJson(json, host, basePath, configFileName, errors)
 	} else {
 		ownConfig, errors = parseOwnConfigOfJsonSourceFile(sourceFile, host, basePath, &configFileName, errors)
 	}
@@ -1396,11 +1427,22 @@ func parseJsonConfigFileContentWorker(
 	}
 
 	configFileSpecs := getConfigFileSpecs()
-
+	if sourceFile != nil {
+		sourceFile.configFileSpecs = &configFileSpecs
+	}
+	// setConfigFileInOptions(options, sourceFile);
 	getFileNames := func(basePath string) []string {
 		fileNames := getFileNamesFromConfigSpecs(configFileSpecs, basePath, options, host.fs, extraFileExtensions)
 		if shouldReportNoInputFiles(fileNames, canJsonReportNoInputFiles(rawConfig), resolutionStack) {
-			errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.No_inputs_were_found_in_config_file_0_Specified_include_paths_were_1_and_exclude_paths_were_2, configFileName, configFileSpecs.includeSpecs, configFileSpecs.excludeSpecs))
+			includeSpecs := configFileSpecs.includeSpecs
+			excludeSpecs := configFileSpecs.excludeSpecs
+			if configFileSpecs.includeSpecs != nil && configFileSpecs.includeSpecs[0] == "no-prop" {
+				includeSpecs = []string{}
+			}
+			if configFileSpecs.excludeSpecs != nil && configFileSpecs.excludeSpecs[0] == "no-prop" {
+				excludeSpecs = []string{}
+			}
+			errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.No_inputs_were_found_in_config_file_0_Specified_include_paths_were_1_and_exclude_paths_were_2, configFileName, includeSpecs, excludeSpecs))
 		}
 		return fileNames
 	}
