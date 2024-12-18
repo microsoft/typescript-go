@@ -8,11 +8,24 @@ function printNode(node, indentLevel = 0) {
     if (ts.isIdentifier(node)) {
         s = `${" ".repeat(indentLevel * 2)}${unaliasKind(node.kind)}(${node.pos},${node.end}): '${node.getFullText()}'\n`;
     }
+    else if (ts.isJSDoc(node)) {
+        const text = typeof node.comment === 'string' ? node.comment
+            : Array.isArray(node.comment) ? node.comment.map(c => c.text).join("\n")
+            : "";
+        s = `${" ".repeat(indentLevel * 2)}${unaliasKind(node.kind)}(${node.pos},${node.end}): '${text}'\n`;
+    }
     else if (node.kind === ts.SyntaxKind.EndOfFileToken) {
         return "";
     }
     else {
         s = `${" ".repeat(indentLevel * 2)}${unaliasKind(node.kind)}(${node.pos},${node.end})\n`;
+    }
+    // visit jsdoc first, even though it's internal
+    const jsDoc = /** @type {any} */(node).jsDoc;
+    if (jsDoc) {
+        for (const j of jsDoc) {
+            s += printNode(j, indentLevel + 1);
+        }
     }
     node.forEachChild(child => {
         s += printNode(child, indentLevel + 1);
@@ -84,6 +97,8 @@ function unaliasKind(kind) {
             return "JSDocTag";
         case ts.SyntaxKind.LastJSDocTagNode:
             return "JSDocImportTag";
+        case ts.SyntaxKind.JSDocComment:
+            return "JSDoc";
         case ts.SyntaxKind.AssertClause:
             return "ImportAttributes";
         case ts.SyntaxKind.AssertEntry:
