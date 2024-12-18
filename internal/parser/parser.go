@@ -2420,6 +2420,7 @@ func (p *Parser) parseJSDocType() *ast.TypeNode {
 	}
 	return t
 }
+
 func (p *Parser) parseLiteralTypeNode(negative bool) *ast.Node {
 	pos := p.nodePos()
 	if negative {

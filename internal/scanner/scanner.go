@@ -813,6 +813,7 @@ func (s *Scanner) ReScanTemplateToken(isTaggedTemplate bool) ast.Kind {
 	s.token = s.scanTemplateAndSetTokenValue(!isTaggedTemplate)
 	return s.token
 }
+
 func (scanner *Scanner) ReScanAsteriskEqualsToken() ast.Kind {
 	if scanner.token != ast.KindAsteriskEqualsToken {
 		panic("'ReScanAsteriskEqualsToken' should only be called on a '*='")
@@ -926,6 +927,7 @@ func (s *Scanner) ReScanJsxToken(allowMultilineJsxText bool) ast.Kind {
 	s.token = s.ScanJsxTokenEx(allowMultilineJsxText)
 	return s.token
 }
+
 func (s *Scanner) ReScanHashToken() ast.Kind {
 	if s.token == ast.KindPrivateIdentifier {
 		s.pos = s.tokenStart + 1
@@ -942,6 +944,7 @@ func (scanner *Scanner) ReScanQuestionToken() ast.Kind {
 	scanner.token = ast.KindQuestionToken
 	return scanner.token
 }
+
 func (s *Scanner) ScanJsxToken() ast.Kind {
 	return s.ScanJsxTokenEx(true /*allowMultilineJsxText*/)
 }
