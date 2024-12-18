@@ -1160,6 +1160,7 @@ func (n *Node) AsFlowReduceLabelData() *FlowReduceLabelData {
 func (n *Node) AsSyntheticExpression() *SyntheticExpression {
 	return n.data.(*SyntheticExpression)
 }
+
 func (n *Node) AsSyntaxList() *SyntaxList {
 	return n.data.(*SyntaxList)
 }
