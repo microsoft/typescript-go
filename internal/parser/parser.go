@@ -5429,8 +5429,7 @@ func (p *Parser) internIdentifier(text string) {
 }
 
 func (p *Parser) finishNode(node *ast.Node, pos int) {
-	node.Loc = core.NewTextRange(pos, p.nodePos())
-	node.Flags |= p.contextFlags
+	p.finishNodeWithEnd(node, pos, p.nodePos())
 }
 
 func (p *Parser) finishNodeWithEnd(node *ast.Node, pos int, end int) {
