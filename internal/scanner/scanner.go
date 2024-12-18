@@ -242,8 +242,7 @@ type Scanner struct {
 	onError          ErrorCallback
 	skipTrivia       bool
 	jsdocParsingMode JSDocParsingMode
-	// TODO: Seems not needed
-	scriptKind core.ScriptKind
+	scriptKind       core.ScriptKind
 	ScannerState
 }
 
@@ -348,6 +347,10 @@ func (s *Scanner) SetOnError(errorCallback ErrorCallback) {
 
 func (s *Scanner) SetScriptTarget(scriptTarget core.ScriptTarget) {
 	s.languageVersion = scriptTarget
+}
+
+func (s *Scanner) SetJSDocParsingMode(kind JSDocParsingMode) {
+	s.jsdocParsingMode = kind
 }
 
 func (s *Scanner) SetLanguageVariant(languageVariant core.LanguageVariant) {
@@ -2181,6 +2184,10 @@ func ComputePositionOfLineAndCharacter(lineStarts []core.TextPos, line int, char
 
 func GetLeadingCommentRanges(text string, pos int) iter.Seq[ast.CommentRange] {
 	return iterateCommentRanges(text, pos, false)
+}
+
+func GetTrailingCommentRanges(text string, pos int) iter.Seq[ast.CommentRange] {
+	return iterateCommentRanges(text, pos, true)
 }
 
 /*

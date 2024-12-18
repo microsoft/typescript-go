@@ -1,10 +1,12 @@
 package parser
 
 import (
+	"slices"
 	"strings"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
@@ -58,4 +60,46 @@ func tokenIsIdentifierOrKeyword(token ast.Kind) bool {
 
 func tokenIsIdentifierOrKeywordOrGreaterThan(token ast.Kind) bool {
 	return token == ast.KindGreaterThanToken || tokenIsIdentifierOrKeyword(token)
+}
+
+func mapDefined[T any, U any](slice []T, mapFn func(T) *U) []*U {
+	if len(slice) == 0 {
+		return nil
+	}
+	result := make([]*U, len(slice))
+	for _, v := range slice {
+		if mapped := mapFn(v); mapped != nil {
+			result = append(result, mapped)
+		}
+	}
+	return result
+}
+
+func getJSDocCommentRanges(node *ast.Node, text string) []ast.CommentRange {
+	var commentRanges []ast.CommentRange
+	switch node.Kind {
+	case ast.KindParameter, ast.KindTypeParameter, ast.KindFunctionExpression, ast.KindArrowFunction, ast.KindParenthesizedExpression, ast.KindVariableDeclaration, ast.KindExportSpecifier:
+		for commentRange := range scanner.GetLeadingCommentRanges(text, node.Pos()) {
+			commentRanges = append(commentRanges, commentRange)
+		}
+		for commentRange := range scanner.GetTrailingCommentRanges(text, node.Pos()) {
+			commentRanges = append(commentRanges, commentRange)
+		}
+	default:
+		for commentRange := range scanner.GetLeadingCommentRanges(text, node.Pos()) {
+			commentRanges = append(commentRanges, commentRange)
+		}
+	}
+	// True if the comment starts with '/**' but not if it is '/**/'
+	return slices.DeleteFunc(commentRanges, func(comment ast.CommentRange) bool {
+		return comment.End() <= node.End() && text[comment.Pos()+1] == '*' && text[comment.Pos()+2] == '*' && text[comment.Pos()+3] != '/'
+	})
+}
+
+func isKeywordOrPunctuation(token ast.Kind) bool {
+	return ast.IsKeywordKind(token) || ast.IsPunctuationKind(token)
+}
+
+func isJSDocLikeText(text string) bool {
+	return text[1] == '*' && text[2] == '*' && text[3] != '/'
 }
