@@ -22,10 +22,12 @@ const { values: options } = parseArgs({
     options: {
         race: { type: "boolean" },
         fix: { type: "boolean" },
+        noembed: { type: "boolean" },
     },
     strict: false,
     allowPositionals: true,
     allowNegative: true,
+    noembed: false,
 });
 
 /**
@@ -122,10 +124,22 @@ export const generate = task({
     },
 });
 
-const goTest = memoize(() => isInstalled("gotestsum") ? ["gotestsum", "--format-hide-empty-pkg", "--"] : ["go", "test"]);
+const goTestFlags = [
+    ...(options.race ? ["-race"] : []),
+    ...(options.noembed ? ["-tags=noembed"] : []),
+]
+
+const gotestsum = memoize(() => {
+    const args = isInstalled("gotestsum") ? ["gotestsum", "--format-hide-empty-pkg", "--"] : ["go", "test"];
+    return args.concat(goTestFlags);
+});
+
+const goTest = memoize(() => {
+    return ["go", "test"].concat(goTestFlags);
+})
 
 async function runTests() {
-    await $`${goTest()} ${options.race ? ["-race"] : []} ./...`;
+    await $`${gotestsum()} ./...`;
 }
 
 export const test = task({
@@ -135,7 +149,7 @@ export const test = task({
 
 async function runTestBenchmarks() {
     // Run the benchmarks once to ensure they compile and run without errors.
-    await $`go test ${options.race ? ["-race"] : []} -run=- -bench=. -benchtime=1x ./...`;
+    await $`${goTest()} -run=- -bench=. -benchtime=1x ./...`;
 }
 
 export const testBenchmarks = task({
@@ -144,7 +158,7 @@ export const testBenchmarks = task({
 });
 
 async function runTestTools() {
-    await $({ cwd: path.join(__dirname, "_tools") })`${goTest()} ${options.race ? ["-race"] : []} ./...`;
+    await $({ cwd: path.join(__dirname, "_tools") })`${gotestsum()} ./...`;
 }
 
 export const testTools = task({
