@@ -308,30 +308,6 @@ var data = []struct {
 			expectedErrors: []string{"No inputs were found in config file '/apath/tsconfig.json'. Specified 'include' paths were '[]' and 'exclude' paths were '[]'."},
 		},
 	},
-	// {
-	// 	title: "generates errors for includes with outDir",
-	// 	input: testConfig{
-	// 		jsonText: `{
-	// 	"compilerOptions": {
-	// 		"outDir": "./"
-	// 	},
-	// 	"include": ["**/*"]
-	// }`,
-	// 		configFileName: "/apath/tsconfig.json",
-	// 		basePath:       "/apath",
-	// 		allFileList:    []string{"/apath/a.ts"},
-	// 	},
-	// 	output: verifyConfig{
-	// 		fileNames: nil,
-	// 		configFile: map[string]interface{}{
-	// 			"compilerOptions": map[string]interface{}{
-	// 				"outDir": "./",
-	// 			},
-	// 			"include": []string{"**/*"},
-	// 		},
-	// 		expectedErrors: []string{"No inputs were found in config file '/apath/tsconfig.json'. Specified 'include' paths were '[**/*]' and 'exclude' paths were '[/apath]'."},
-	// 	},
-	// },
 	{
 		title: "parses tsconfig with compilerOptions, files, include, and exclude",
 		input: testConfig{
