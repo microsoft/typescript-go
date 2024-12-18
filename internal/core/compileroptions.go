@@ -16,6 +16,8 @@ type CompilerOptions struct {
 	AllowUnusedLabels                  Tristate             `json:"allowUnusedLabels"`
 	CheckJs                            Tristate             `json:"checkJs"`
 	CustomConditions                   []string             `json:"customConditions"`
+	EmitDeclarationOnly                Tristate             `json:"emitDeclarationOnly"`
+	EmitBOM                            Tristate             `json:"emitBOM"`
 	DownlevelIteration                 Tristate             `json:"downlevelIteration"`
 	ESModuleInterop                    Tristate             `json:"esModuleInterop"`
 	ExactOptionalPropertyTypes         Tristate             `json:"exactOptionalPropertyTypes"`
@@ -28,11 +30,14 @@ type CompilerOptions struct {
 	ModuleResolution                   ModuleResolutionKind `json:"moduleResolution"`
 	ModuleSuffixes                     []string             `json:"moduleSuffixes"`
 	ModuleDetection                    ModuleDetectionKind  `json:"moduleDetectionKind"`
+	NewLine                            NewLineKind          `json:"newLine"`
+	NoEmit                             Tristate             `json:"noEmit"`
 	NoFallthroughCasesInSwitch         Tristate             `json:"noFallthroughCasesInSwitch"`
 	NoImplicitAny                      Tristate             `json:"noImplicitAny"`
 	NoImplicitThis                     Tristate             `json:"noImplicitThis"`
 	NoPropertyAccessFromIndexSignature Tristate             `json:"noPropertyAccessFromIndexSignature"`
 	NoUncheckedIndexedAccess           Tristate             `json:"noUncheckedIndexedAccess"`
+	OutDir                             string               `json:"outDir"`
 	Paths                              map[string][]string  `json:"paths"`
 	PreserveConstEnums                 Tristate             `json:"preserveConstEnums"`
 	PreserveSymlinks                   Tristate             `json:"preserveSymlinks"`
@@ -99,6 +104,7 @@ func (options *CompilerOptions) GetESModuleInterop() bool {
 	}
 	return false
 }
+
 func (options *CompilerOptions) GetAllowSyntheticDefaultImports() bool {
 	if options.AllowSyntheticDefaultImports != TSUnknown {
 		return options.AllowSyntheticDefaultImports == TSTrue
@@ -113,6 +119,10 @@ func (options *CompilerOptions) GetResolveJsonModule() bool {
 		return options.ResolveJsonModule == TSTrue
 	}
 	return options.GetModuleResolutionKind() == ModuleResolutionKindBundler
+}
+
+func (options *CompilerOptions) ShouldPreserveConstEnums() bool {
+	return options.PreserveConstEnums == TSTrue || options.IsolatedModules == TSTrue
 }
 
 func (options *CompilerOptions) GetAllowJs() bool {
@@ -149,6 +159,16 @@ func (options *CompilerOptions) GetEffectiveTypeRoots(currentDirectory string) (
 		return nil, false
 	})
 	return typeRoots, false
+}
+
+func (options *CompilerOptions) GetEmitDeclarations() bool {
+	// !!!
+	return false
+}
+
+func (options *CompilerOptions) GetAreDeclarationMapsEnabled() bool {
+	// !!!
+	return false
 }
 
 type ModuleDetectionKind int32
@@ -232,6 +252,15 @@ const (
 	NewLineKindCRLF NewLineKind = 0
 	NewLineKindLF   NewLineKind = 1
 )
+
+func (newLine NewLineKind) GetNewLineCharacter() string {
+	switch newLine {
+	case NewLineKindCRLF:
+		return "\r\n"
+	default:
+		return "\n"
+	}
+}
 
 type ScriptTarget int32
 
