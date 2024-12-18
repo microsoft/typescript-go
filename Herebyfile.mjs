@@ -127,7 +127,7 @@ export const generate = task({
 const goTestFlags = [
     ...(options.race ? ["-race"] : []),
     ...(options.noembed ? ["-tags=noembed"] : []),
-]
+];
 
 const gotestsum = memoize(() => {
     const args = isInstalled("gotestsum") ? ["gotestsum", "--format-hide-empty-pkg", "--"] : ["go", "test"];
@@ -136,7 +136,7 @@ const gotestsum = memoize(() => {
 
 const goTest = memoize(() => {
     return ["go", "test"].concat(goTestFlags);
-})
+});
 
 async function runTests() {
     await $`${gotestsum()} ./...`;
