@@ -51,7 +51,7 @@ jobs:
           - os: ubuntu-latest
             noembed: true
 
-    name: test (${{ matrix.os }}${{ (matrix.no-submodules && ' without submodules') || '' }}${{ (matrix.race && ' in race mode') || '' }}${{ (matrix.race && ' with noembed') || '' }})
+    name: test (${{ matrix.os }}${{ (matrix.no-submodules && ' without submodules') || '' }}${{ (matrix.race && ' in race mode') || '' }}${{ (matrix.noembed && ' with noembed') || '' }})
 
     runs-on: ${{ matrix.os }}
 
