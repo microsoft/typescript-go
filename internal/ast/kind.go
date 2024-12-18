@@ -9,6 +9,8 @@ const (
 	KindEndOfFile
 	KindSingleLineCommentTrivia
 	KindMultiLineCommentTrivia
+	KindNewLineTrivia
+	KindWhitespaceTrivia
 	KindConflictMarkerTrivia
 	KindNonTextFileMarkerTrivia
 	KindNumericLiteral
