@@ -73,7 +73,7 @@ jobs:
         # Installing gotestsum is super slow on Windows.
         if: ${{ matrix.os != 'windows-latest' }}
 
-      - run: npx hereby test:all ${RACE_FLAG+"$RACE_FLAG"} ${NOEMBED_FLAG+"$NOEMBED_FLAG"}
+      - run: npx hereby test:all ${RACE_FLAG:+"$RACE_FLAG"} ${NOEMBED_FLAG:+"$NOEMBED_FLAG"}
         env:
           RACE_FLAG: ${{ (matrix.race && '--race') || '' }}
           NOEMBED_FLAG: ${{ (matrix.noembed && '--noembed') || '' }}
