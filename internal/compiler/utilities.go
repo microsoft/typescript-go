@@ -2532,8 +2532,7 @@ type FileSystemEntries struct {
 }
 
 func getAccessibleFileSystemEntries(path string, host vfs.FS) FileSystemEntries {
-	// try {
-	entries := host.GetEntries(path) //fs.readdirSync(path || ".", { withFileTypes: true });
+	entries := host.GetEntries(path)
 	var files []string
 	var directories []string
 	var entry string
@@ -2554,10 +2553,6 @@ func getAccessibleFileSystemEntries(path string, host vfs.FS) FileSystemEntries 
 		}
 	}
 	return FileSystemEntries{files: files, directories: directories}
-}
-
-func realpath(path string) string { //todo
-	return path
 }
 
 type FileMatcherPatterns struct {
@@ -2624,8 +2619,6 @@ func replaceWildcardCharacter(match string, singleAsteriskRegexFragment string) 
 /**
  * An "includes" path "foo" is implicitly a glob "foo/** /*" (without the space) if its last component has no extension,
  * and does not contain any glob characters itself.
- *
- * @internal
  */
 func isImplicitGlob(lastPathComponent string) bool {
 	re := regexp.MustCompile(`[.*?]`)
@@ -2826,8 +2819,6 @@ func getBasePaths(path string, includes []string, useCaseSensitiveFileNames bool
 
 /**
  * @param path directory of the tsconfig.json
- *
- * @internal
  */
 func getFileMatcherPatterns(path string, excludes []string, includes []string, useCaseSensitiveFileNames bool, currentDirectory string) FileMatcherPatterns {
 	path = tspath.NormalizePath(path)
@@ -2943,7 +2934,7 @@ func matchFiles(path string, extensions []string, excludes []string, includes []
 }
 
 func ReadDirectory(host vfs.FS, currentDir string, path string, extensions []string, excludes []string, includes []string, depth int) []string {
-	return matchFiles(path, extensions, excludes, includes, host.UseCaseSensitiveFileNames(), currentDir, depth, host, getAccessibleFileSystemEntries, realpath)
+	return matchFiles(path, extensions, excludes, includes, host.UseCaseSensitiveFileNames(), currentDir, depth, host, getAccessibleFileSystemEntries, host.Realpath)
 }
 
 func getTsConfigObjectLiteralExpression(tsConfigSourceFile *ast.SourceFile) *ast.ObjectLiteralExpression {

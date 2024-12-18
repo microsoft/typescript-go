@@ -8,34 +8,6 @@ import (
 
 //go:generate go run golang.org/x/tools/cmd/stringer -type=ModuleKind,ScriptTarget -output=compileroptions_stringer_generated.go
 
-// Probably not needed
-func (cov CompilerOptionsValue) HasValue() bool {
-	return cov.StringValue != "" ||
-		cov.NumberValue != 0 ||
-		cov.BooleanValue != false ||
-		cov.StringArrayValue != nil ||
-		cov.NumberArrayValue != nil ||
-		cov.MapLikeValue != nil ||
-		cov.NullValue != false ||
-		cov.UndefinedValue != false
-}
-
-type CompilerOptionsValue struct {
-	StringValue      string
-	NumberValue      float64 //number
-	BooleanValue     bool
-	StringArrayValue []string
-	NumberArrayValue []float64 //number
-	MapLikeValue     *map[string][]string
-	//PluginImportArray         *[]pluginImport
-	//ProjectReferenceArray     *[]module.ResolvedProjectReference //*[]compiler.ProjectReference
-	NullValue                 bool
-	UndefinedValue            bool
-	CompilerOptionsValueSlice []CompilerOptionsValue //maybe not needed
-	EnumMaps                  any                    //nay not be needed
-	JsonOption                []any
-	//(string | number)[]
-}
 type CompilerOptions struct {
 	AllowJs                            Tristate             `json:"allowJs"`
 	AllowSyntheticDefaultImports       Tristate             `json:"allowSyntheticDefaultImports"`
@@ -95,7 +67,7 @@ type CompilerOptions struct {
 	ConfigFilePath  string   `json:"configFilePath"`
 	NoDtsResolution Tristate `json:"noDtsResolution"`
 	PathsBasePath   string   `json:"pathsBasePath"`
-	Option          map[string]CompilerOptionsValue
+	//Option          map[string]CompilerOptionsValue
 }
 
 func (options *CompilerOptions) GetEmitScriptTarget() ScriptTarget {

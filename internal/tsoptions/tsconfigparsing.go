@@ -6,6 +6,7 @@ import (
 	"regexp"
 	"slices"
 	"strings"
+	"sync"
 
 	"github.com/dlclark/regexp2"
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -31,7 +32,7 @@ type extendsResult struct {
 
 var tsconfigRootOptions *CommandLineOption
 
-func getTsconfigRootOptionsMap() CommandLineOption {
+var getTsconfigRootOptionsMap = sync.OnceValue(func() CommandLineOption {
 	if tsconfigRootOptions == nil {
 		tsconfigRootOptions = &CommandLineOption{
 			Name: "undefined", // should never be needed since this is root
@@ -64,9 +65,8 @@ func getTsconfigRootOptionsMap() CommandLineOption {
 			}),
 		}
 	}
-	tsconfigRootOptions.Elements()
 	return *tsconfigRootOptions
-}
+})
 
 type configFileSpecs struct {
 	filesSpecs []string
@@ -87,16 +87,16 @@ type configFileSpecs struct {
 	isDefaultIncludeSpec                    bool
 }
 
-type FileExtensionInfo struct {
+type fileExtensionInfo struct {
 	extension      string
 	isMixedContent bool
 	scriptKind     core.ScriptKind
 }
-type ExtendedConfigCacheEntry struct {
+type extendedConfigCacheEntry struct {
 	extendedResult *ast.SourceFile
-	extendedConfig ParsedTsconfig
+	extendedConfig parsedTsconfig
 }
-type ParsedTsconfig struct {
+type parsedTsconfig struct {
 	raw     any
 	options *core.CompilerOptions
 	//watchOptions    *compiler.WatchOptions
@@ -111,7 +111,7 @@ func parseOwnConfigOfJsonSourceFile(
 	basePath string,
 	configFileName *string,
 	errors []*ast.Diagnostic,
-) (*ParsedTsconfig, []*ast.Diagnostic) {
+) (*parsedTsconfig, []*ast.Diagnostic) {
 	options := getDefaultCompilerOptions(*configFileName)
 	//var typeAcquisition *compiler.TypeAcquisition
 	//var watchOptions *compiler.WatchOptions
@@ -156,18 +156,18 @@ func parseOwnConfigOfJsonSourceFile(
 	json := convertConfigFileToObject(
 		sourceFile.sourceFile,
 		errors,
-		&JsonConversionNotifier{
+		&jsonConversionNotifier{
 			rootOptions,
 			onPropertySet,
 		},
 	)
 
-	return &ParsedTsconfig{
+	return &parsedTsconfig{
 		raw:     json,
 		options: options,
-		//watchOptions:    watchOptions,
+		// watchOptions:    watchOptions,
 		// typeAcquisition: typeAcquisition,
-		//extendedConfigPath: extendedConfigPath,
+		// extendedConfigPath: extendedConfigPath,
 	}, errors
 
 }
@@ -194,7 +194,7 @@ type tsConfigSourceFile struct {
 	sourceFile          *ast.SourceFile
 }
 
-type JsonConversionNotifier struct {
+type jsonConversionNotifier struct {
 	rootOptions   CommandLineOption
 	onPropertySet func(keyText string, value any, propertyAssignment ast.PropertyAssignment, parentOption CommandLineOption, option *CommandLineOption)
 }
@@ -202,7 +202,7 @@ type JsonConversionNotifier struct {
 func convertConfigFileToObject(
 	sourceFile *ast.SourceFile,
 	errors []*ast.Diagnostic,
-	jsonConversionNotifier *JsonConversionNotifier,
+	jsonConversionNotifier *jsonConversionNotifier,
 ) any {
 	var rootExpression *ast.Expression
 	if len(sourceFile.Statements.Nodes) > 0 {
@@ -228,61 +228,45 @@ func convertConfigFileToObject(
 	return convertToJson(sourceFile, rootExpression, errors, true, jsonConversionNotifier)
 }
 
-func isCompilerOptionsValue(option CommandLineOption, value any) core.CompilerOptionsValue {
+func isCompilerOptionsValue(option CommandLineOption, value any) bool {
 	if option.Name != "" || option.Kind != "" {
 		if value == nil {
-			return core.CompilerOptionsValue{BooleanValue: !option.DisallowNullOrUndefined()} // All options are undefinable/nullable
+			return !option.DisallowNullOrUndefined() // All options are undefinable/nullable
 		}
-		// if option.Kind == "list" {
-		// 	_, ok := value.([]string)
-		// 	return core.CompilerOptionsValue{BooleanValue: ok}
-		// }
-		// if option.Kind == "listOrElement" {
-		// 	_, ok := value.([]string)
-		// 	return core.CompilerOptionsValue{BooleanValue: ok}
-		// }
-
 		switch option.Kind {
 		case "list":
 			if _, ok := value.([]string); ok {
-				return core.CompilerOptionsValue{BooleanValue: true}
+				return true
 			}
 		case "listOrElement":
 			if _, ok := value.([]string); ok {
-				return core.CompilerOptionsValue{BooleanValue: true}
+				return true
 			}
 		case "string":
 			if _, ok := value.(string); ok {
-				return core.CompilerOptionsValue{BooleanValue: true}
+				return true
 			}
 		case "number":
 			if _, ok := value.(int); ok {
-				return core.CompilerOptionsValue{BooleanValue: true}
+				return true
 			}
 		case "boolean":
 			if _, ok := value.(bool); ok {
-				return core.CompilerOptionsValue{BooleanValue: true}
+				return true
 			}
 		case "object":
 			if _, ok := value.(map[string]interface{}); ok {
-				return core.CompilerOptionsValue{BooleanValue: true}
+				return true
 			}
 		case "enum":
 			if _, ok := value.(string); ok {
-				return core.CompilerOptionsValue{BooleanValue: true}
+				return true
 			}
 		default:
-			return core.CompilerOptionsValue{BooleanValue: false}
+			return true
 		}
-		// if option.Kind == "string" || option.Kind == "enum" || option.Kind == "object" || option.Kind == "boolean" {
-		// 	return core.CompilerOptionsValue{BooleanValue: ok}
-		// }
-		// if option.Kind == "object" || option.Kind == "boolean" {
-		// 	return core.CompilerOptionsValue{BooleanValue: true}
-		// }
-		// return core.CompilerOptionsValue{BooleanValue: false}
 	}
-	return core.CompilerOptionsValue{BooleanValue: false}
+	return false
 }
 
 func validateJsonOptionValue(
@@ -293,7 +277,7 @@ func validateJsonOptionValue(
 	sourceFile *tsConfigSourceFile,
 ) any {
 	if val == nil || val == "" {
-		return core.CompilerOptionsValue{}
+		return nil
 	}
 	d := (opt.extraValidation)
 	if d == nil {
@@ -302,7 +286,7 @@ func validateJsonOptionValue(
 		//d = opt.extraValidation.val
 	}
 	//errors.push(createDiagnosticForNodeInSourceFileOrCompilerDiagnostic(sourceFile, valueExpression, d));
-	return core.CompilerOptionsValue{}
+	return nil
 }
 
 func convertJsonOptionOfCustomType(
@@ -313,12 +297,12 @@ func convertJsonOptionOfCustomType(
 	sourceFile *tsConfigSourceFile,
 ) any {
 	if value == "" {
-		return core.CompilerOptionsValue{}
+		return nil
 	}
 	key := strings.ToLower(value)
 	typeMap := opt.EnumMap()
 	if typeMap == nil {
-		return core.CompilerOptionsValue{}
+		return nil
 	}
 	val, b := typeMap.Get(key)
 	if (val != nil) && (val != "" || b) { //need to check
@@ -327,7 +311,7 @@ func convertJsonOptionOfCustomType(
 	// else {
 	//     errors.push(createDiagnosticForInvalidCustomType(opt, (message, ...args) => createDiagnosticForNodeInSourceFileOrCompilerDiagnostic(sourceFile, valueExpression, message, ...args)));
 	// }
-	return core.CompilerOptionsValue{}
+	return nil
 }
 
 func convertJsonOptionOfListType(
@@ -393,9 +377,9 @@ func convertJsonOption(
 ) (any, []*ast.Diagnostic) {
 	if opt.isCommandLineOnly != false {
 		errors = append(errors, compiler.NewDiagnosticForNode(nil, diagnostics.Option_0_can_only_be_specified_on_command_line, opt.Name))
-		return core.CompilerOptionsValue{}, errors
+		return false, errors
 	}
-	if isCompilerOptionsValue(opt, value).BooleanValue {
+	if isCompilerOptionsValue(opt, value) {
 		optType := opt.Kind
 		_, ok := value.([]string)
 		if (optType == "list") && ok {
@@ -456,169 +440,6 @@ func getExtendsConfigPath(
 	return ""
 }
 
-func parseTristate(value interface{}) core.Tristate {
-	switch v := value.(type) {
-	case bool:
-		if v {
-			return core.TSTrue
-		}
-		if !v {
-			return core.TSFalse
-		}
-	}
-	return core.TSUnknown
-}
-
-func parseStringArray(value interface{}) []string {
-	if arr, ok := value.([]interface{}); ok {
-		var result []string
-		for _, v := range arr {
-			if str, ok := v.(string); ok {
-				result = append(result, str)
-			}
-		}
-		return result
-	}
-	return nil
-}
-
-func parseRawStringArray(value interface{}) []string {
-	if arr, ok := value.([]string); ok {
-		return arr
-	}
-	return nil
-}
-
-func parseStringMap(value interface{}) map[string][]string {
-	if m, ok := value.(map[string]interface{}); ok {
-		result := make(map[string][]string)
-		for k, v := range m {
-			result[k] = parseStringArray(v)
-		}
-		return result
-	}
-	return nil
-}
-
-func parseString(value interface{}) string {
-	if str, ok := value.(string); ok {
-		return str
-	}
-	return ""
-}
-
-func parseCompilerOptions(key string, value any, allOptions *core.CompilerOptions) *core.CompilerOptions {
-	if allOptions == nil {
-		return nil
-	}
-	switch key {
-	case "allowJs":
-		allOptions.AllowJs = parseTristate(value)
-	case "allowSyntheticDefaultImports":
-		allOptions.AllowSyntheticDefaultImports = parseTristate(value)
-	case "allowUmdGlobalAccess":
-		allOptions.AllowUmdGlobalAccess = parseTristate(value)
-	case "allowUnreachableCode":
-		allOptions.AllowUnreachableCode = parseTristate(value)
-	case "allowUnusedLabels":
-		allOptions.AllowUnusedLabels = parseTristate(value)
-	case "checkJs":
-		allOptions.CheckJs = parseTristate(value)
-	case "customConditions":
-		allOptions.CustomConditions = parseStringArray(value)
-	case "declarationDir":
-		allOptions.DeclarationDir = parseString(value)
-	case "esModuleInterop":
-		allOptions.ESModuleInterop = parseTristate(value)
-	case "exactOptionalPropertyTypes":
-		allOptions.ExactOptionalPropertyTypes = parseTristate(value)
-	case "experimentalDecorators":
-		allOptions.ExperimentalDecorators = parseTristate(value)
-	case "isolatedModules":
-		allOptions.IsolatedModules = parseTristate(value)
-	case "jsx":
-		allOptions.Jsx = parseJsxEmit(value)
-	case "lib":
-		allOptions.Lib = parseStringArray(value)
-	case "legacyDecorators":
-		allOptions.LegacyDecorators = parseTristate(value)
-	case "module":
-		allOptions.ModuleKind = parseModuleKind(value)
-	case "moduleResolution":
-		allOptions.ModuleResolution = parseModuleResolutionKind(value)
-	case "moduleSuffixes":
-		allOptions.ModuleSuffixes = parseStringArray(value)
-	// case "moduleDetectionKind":
-	//     options.ModuleDetection = parseModuleDetectionKind(value)
-	case "noFallthroughCasesInSwitch":
-		allOptions.NoFallthroughCasesInSwitch = parseTristate(value)
-	case "noImplicitAny":
-		allOptions.NoImplicitAny = parseTristate(value)
-	case "noImplicitThis":
-		allOptions.NoImplicitThis = parseTristate(value)
-	case "noPropertyAccessFromIndexSignature":
-		allOptions.NoPropertyAccessFromIndexSignature = parseTristate(value)
-	case "noUncheckedIndexedAccess":
-		allOptions.NoUncheckedIndexedAccess = parseTristate(value)
-	case "paths":
-		allOptions.Paths = parseStringMap(value)
-	case "preserveConstEnums":
-		allOptions.PreserveConstEnums = parseTristate(value)
-	case "preserveSymlinks":
-		allOptions.PreserveSymlinks = parseTristate(value)
-	case "resolveJsonModule":
-		allOptions.ResolveJsonModule = parseTristate(value)
-	case "resolvePackageJsonExports":
-		allOptions.ResolvePackageJsonExports = parseTristate(value)
-	case "resolvePackageJsonImports":
-		allOptions.ResolvePackageJsonImports = parseTristate(value)
-	case "strict":
-		allOptions.Strict = parseTristate(value)
-	case "strictBindCallApply":
-		allOptions.StrictBindCallApply = parseTristate(value)
-	case "strictFunctionTypes":
-		allOptions.StrictFunctionTypes = parseTristate(value)
-	case "strictNullChecks":
-		allOptions.StrictNullChecks = parseTristate(value)
-	case "strictPropertyInitialization":
-		allOptions.StrictPropertyInitialization = parseTristate(value)
-	case "target":
-		allOptions.Target = parseScriptTarget(value)
-	case "traceResolution":
-		allOptions.TraceResolution = parseTristate(value)
-	case "typeRoots":
-		allOptions.TypeRoots = parseStringArray(value)
-	case "types":
-		allOptions.Types = parseStringArray(value)
-	case "useDefineForClassFields":
-		allOptions.UseDefineForClassFields = parseTristate(value)
-	case "useUnknownInCatchVariables":
-		allOptions.UseUnknownInCatchVariables = parseTristate(value)
-	case "verbatimModuleSyntax":
-		allOptions.VerbatimModuleSyntax = parseTristate(value)
-	case "maxNodeModuleJsDepth":
-		allOptions.MaxNodeModuleJsDepth = parseTristate(value)
-	case "skipLibCheck":
-		allOptions.SkipLibCheck = parseTristate(value)
-	case "noEmit":
-		allOptions.NoEmit = parseTristate(value)
-	case "configFilePath":
-		allOptions.ConfigFilePath = parseString(value)
-	case "noDtsResolution":
-		allOptions.NoDtsResolution = parseTristate(value)
-	case "pathsBasePath":
-		allOptions.PathsBasePath = parseString(value)
-	case "outDir":
-		allOptions.OutDir = parseString(value)
-	case "newLine":
-		allOptions.NewLine = parseNewLineKind(value)
-	default:
-		// Handle unknown options
-		fmt.Printf("Unknown option: %s\n", key)
-	}
-	return allOptions
-}
-
 type tsConfigOptions struct {
 	prop                map[string][]string
 	compilerOptionsProp core.CompilerOptions
@@ -626,228 +447,6 @@ type tsConfigOptions struct {
 	notDefined          string
 }
 
-func parseScriptTarget(json any) core.ScriptTarget {
-	var result core.ScriptTarget
-	if target, ok := json.(string); ok {
-		target = strings.ToLower(target)
-		switch target {
-		case "es3":
-			result = core.ScriptTargetES3
-		case "es5":
-			result = core.ScriptTargetES5
-		case "es2015":
-			result = core.ScriptTargetES2015
-		case "es2016":
-			result = core.ScriptTargetES2016
-		case "es2017":
-			result = core.ScriptTargetES2017
-		case "es2018":
-			result = core.ScriptTargetES2018
-		case "es2019":
-			result = core.ScriptTargetES2019
-		case "es2020":
-			result = core.ScriptTargetES2020
-		case "es2021":
-			result = core.ScriptTargetES2021
-		case "es2022":
-			result = core.ScriptTargetES2022
-		case "es2023":
-			result = core.ScriptTargetES2023
-		case "esnext":
-			result = core.ScriptTargetESNext
-		default:
-			result = core.ScriptTargetNone
-		}
-	}
-	return result
-}
-
-func parseJsxEmit(json any) core.JsxEmit {
-	var result core.JsxEmit
-	if jsx, ok := json.(string); ok {
-		switch jsx {
-		case "preserve":
-			result = core.JsxEmitPreserve
-		case "react":
-			result = core.JsxEmitReact
-		case "react-native":
-			result = core.JsxEmitReactNative
-		case "react-jsx":
-			result = core.JsxEmitReactJSX
-		case "react-jsxdev":
-			result = core.JsxEmitReactJSXDev
-		default:
-			result = core.JsxEmitNone
-		}
-	}
-	return result
-}
-
-func parseModuleDetectionKind(json any) core.ModuleDetectionKind {
-	var result core.ModuleDetectionKind
-	if module, ok := json.(string); ok {
-		module = strings.ToLower(module)
-		switch module {
-		case "auto":
-			result = core.ModuleDetectionKindAuto
-		case "legacy":
-			result = core.ModuleDetectionKindLegacy
-		case "force":
-			result = core.ModuleDetectionKindForce
-		default:
-			result = core.ModuleDetectionKindNone
-		}
-	}
-	return result
-}
-
-func parseModuleKind(json any) core.ModuleKind {
-	var result core.ModuleKind
-	if module, ok := json.(string); ok {
-		module = strings.ToLower(module)
-		switch module {
-		case "none":
-			result = core.ModuleKindNone
-		case "commonjs":
-			result = core.ModuleKindCommonJS
-		case "amd":
-			result = core.ModuleKindAMD
-		case "umd":
-			result = core.ModuleKindUMD
-		case "system":
-			result = core.ModuleKindSystem
-		case "es2015":
-			result = core.ModuleKindES2015
-		case "es2020":
-			result = core.ModuleKindES2020
-		case "es2022":
-			result = core.ModuleKindES2022
-		case "node16":
-			result = core.ModuleKindNode16
-		case "esnext":
-			result = core.ModuleKindESNext
-		case "nodenext":
-			result = core.ModuleKindNodeNext
-		case "preserve":
-			result = core.ModuleKindPreserve
-		default:
-			result = core.ModuleKindNone
-		}
-	}
-	return result
-}
-
-func parseNewLineKind(json any) core.NewLineKind {
-	var result core.NewLineKind
-	if newline, ok := json.(string); ok {
-		switch newline {
-		case "crlf":
-			result = core.NewLineKindCRLF
-		case "lf":
-			result = core.NewLineKindLF
-		}
-	}
-	return result
-}
-func parseModuleResolutionKind(json any) core.ModuleResolutionKind {
-	var result core.ModuleResolutionKind
-	if module, ok := json.(string); ok {
-		module = strings.ToLower(module)
-		switch module {
-		case "node":
-			result = core.ModuleResolutionKindNode16
-		case "classic":
-			result = core.ModuleResolutionKindNodeNext
-		case "bundler":
-			result = core.ModuleResolutionKindBundler
-		default:
-			result = core.ModuleResolutionKindUnknown
-		}
-	}
-	return result
-}
-func parseProjectReference(json any) []compiler.ProjectReference {
-	var result []compiler.ProjectReference
-	if arr, ok := json.([]interface{}); ok {
-		for _, v := range arr {
-			if m, ok := v.(map[string]interface{}); ok {
-				var reference compiler.ProjectReference
-				if v, ok := m["path"]; ok {
-					reference.Path = v.(string)
-				}
-				if v, ok := m["originalPath"]; ok {
-					reference.OriginalPath = v.(string)
-				}
-				if v, ok := m["circular"]; ok {
-					reference.Circular = v.(bool)
-				}
-				result = append(result, reference)
-			}
-		}
-	}
-	return result
-}
-
-func parseJsonToStringKey(json any) map[string]interface{} {
-	result := make(map[string]interface{})
-	if m, ok := json.(map[string]interface{}); ok {
-		if v, ok := m["include"]; ok {
-			result["include"] = v
-		}
-		if v, ok := m["exclude"]; ok {
-			result["exclude"] = v
-		}
-		if v, ok := m["files"]; ok {
-			result["files"] = v
-		}
-		if v, ok := m["references"]; ok {
-			result["references"] = v
-		}
-		if v, ok := m["extends"]; ok {
-			result["extends"] = v
-		}
-		if v, ok := m["compilerOptions"]; ok {
-			result["compilerOptions"] = v
-		}
-	}
-	return result
-}
-
-func ParseRawConfig(json any, basePath string, errors []*ast.Diagnostic, configFileName string) tsConfigOptions {
-	options := tsConfigOptions{
-		prop: make(map[string][]string),
-	}
-	if json == nil {
-		return options
-	}
-	if m, ok := json.(map[string]interface{}); ok {
-		if v, ok := m["include"]; ok {
-			options.prop["include"] = parseRawStringArray(v)
-		}
-		if v, ok := m["exclude"]; ok {
-			options.prop["exclude"] = parseRawStringArray(v)
-		}
-		if v, ok := m["files"]; ok {
-			options.prop["files"] = parseRawStringArray(v)
-		}
-		if v, ok := m["references"]; ok {
-			options.references = parseProjectReference(v)
-		}
-		if v, ok := m["extends"]; ok {
-			options.prop["extends"] = parseRawStringArray(v)
-		}
-		if v, ok := m["compilerOptions"]; ok {
-			var option *core.CompilerOptions = &core.CompilerOptions{}
-			if vMap, ok := v.(map[string]interface{}); ok {
-				for key, value := range vMap {
-					parseCompilerOptions(key, value, option)
-				}
-				options.compilerOptionsProp = *option
-			}
-		}
-	}
-	return options
-}
 func getOptionName(option CommandLineOption) string {
 	return option.Name
 }
@@ -941,7 +540,7 @@ type VfsParseConfigHost struct {
 func (h *VfsParseConfigHost) FS() vfs.FS {
 	return h.fs
 }
-func ParseJsonSourceFileConfigFileContent(sourceFile *tsConfigSourceFile, host VfsParseConfigHost, basePath string, existingOptions *core.CompilerOptions, configFileName string, resolutionStack []tspath.Path, extraFileExtensions []FileExtensionInfo, extendedConfigCache *map[string]ExtendedConfigCacheEntry) module.ParsedCommandLine {
+func ParseJsonSourceFileConfigFileContent(sourceFile *tsConfigSourceFile, host VfsParseConfigHost, basePath string, existingOptions *core.CompilerOptions, configFileName string, resolutionStack []tspath.Path, extraFileExtensions []fileExtensionInfo, extendedConfigCache *map[string]extendedConfigCacheEntry) module.ParsedCommandLine {
 	//tracing?.push(tracing.Phase.Parse, "parseJsonSourceFileConfigFileContent", { path: sourceFile.fileName });
 	result := parseJsonConfigFileContentWorker( /*json*/ nil, sourceFile, host, basePath, existingOptions, configFileName, resolutionStack, extraFileExtensions, extendedConfigCache)
 	//tracing?.pop();
@@ -952,10 +551,9 @@ func convertObjectLiteralExpressionToJson(
 	returnValue bool,
 	node *ast.ObjectLiteralExpression,
 	objectOption *CommandLineOption,
-	jsonConversionNotifier *JsonConversionNotifier,
+	jsonConversionNotifier *jsonConversionNotifier,
 	errors []*ast.Diagnostic,
 ) map[string]any {
-	fmt.Println("convertObjectLiteralExpressionToJson")
 	var result map[string]any
 	if returnValue {
 		result = make(map[string]any)
@@ -963,7 +561,6 @@ func convertObjectLiteralExpressionToJson(
 		result = nil
 	}
 	for _, element := range node.Properties.Nodes {
-		fmt.Println("element", element)
 		if element.Kind != ast.KindPropertyAssignment {
 			errors = append(errors, compiler.NewDiagnosticForNode(element, diagnostics.Property_assignment_expected))
 			continue
@@ -1012,15 +609,13 @@ func convertObjectLiteralExpressionToJson(
  * Convert the json syntax tree into the json value and report errors
  * This returns the json value (apart from checking errors) only if returnValue provided is true.
  * Otherwise it just checks the errors and returns undefined
- *
- * @internal
  */
 func convertToJson(
 	sourceFile *ast.SourceFile,
 	rootExpression *ast.Expression,
 	errors []*ast.Diagnostic,
 	returnValue bool,
-	jsonConversionNotifier *JsonConversionNotifier,
+	jsonConversionNotifier *jsonConversionNotifier,
 ) any {
 	if rootExpression == nil {
 		if returnValue {
@@ -1033,7 +628,6 @@ func convertToJson(
 	if jsonConversionNotifier != nil {
 		jsonConversionNotifierValue = &jsonConversionNotifier.rootOptions
 	}
-	fmt.Println("in convertToJson", rootExpression.Kind)
 	return convertPropertyValueToJson(rootExpression, jsonConversionNotifierValue, returnValue, jsonConversionNotifier, errors)
 }
 
@@ -1041,8 +635,7 @@ func isDoubleQuotedString(node *ast.Node) bool {
 	return ast.IsStringLiteral(node)
 }
 
-func convertPropertyValueToJson(valueExpression *ast.Expression, option *CommandLineOption, returnValue bool, jsonConversionNotifier *JsonConversionNotifier, errors []*ast.Diagnostic) any {
-	fmt.Println("valueExpression    ", valueExpression.Kind)
+func convertPropertyValueToJson(valueExpression *ast.Expression, option *CommandLineOption, returnValue bool, jsonConversionNotifier *jsonConversionNotifier, errors []*ast.Diagnostic) any {
 	switch valueExpression.Kind {
 	case ast.KindTrueKeyword:
 		return true
@@ -1079,7 +672,6 @@ func convertPropertyValueToJson(valueExpression *ast.Expression, option *Command
 		// If need arises, we can modify this interface and callbacks as needed
 		return convertObjectLiteralExpressionToJson(returnValue, objectLiteralExpression, option, jsonConversionNotifier, errors)
 	case ast.KindArrayLiteralExpression:
-		fmt.Println("array literal expression")
 		result := convertArrayLiteralExpressionToJson(
 			(valueExpression.AsArrayLiteralExpression()).Elements.Nodes,
 			option, //option && (option.(CommandLineOptionOfListType)).element,
@@ -1104,7 +696,7 @@ func convertPropertyValueToJson(valueExpression *ast.Expression, option *Command
  * @param basePath A root directory to resolve relative path entries in the config
  *    file to. e.g. outDir
  */
-func ParseJsonConfigFileContent(json any, host VfsParseConfigHost, basePath string, existingOptions *core.CompilerOptions, configFileName string, resolutionStack []tspath.Path, extraFileExtensions []FileExtensionInfo, extendedConfigCache *map[string]ExtendedConfigCacheEntry) module.ParsedCommandLine {
+func ParseJsonConfigFileContent(json any, host VfsParseConfigHost, basePath string, existingOptions *core.CompilerOptions, configFileName string, resolutionStack []tspath.Path, extraFileExtensions []fileExtensionInfo, extendedConfigCache *map[string]extendedConfigCacheEntry) module.ParsedCommandLine {
 	result := parseJsonConfigFileContentWorker(parseJsonToStringKey(json) /*sourceFile*/, nil, host, basePath, existingOptions, configFileName, resolutionStack, extraFileExtensions, extendedConfigCache)
 	return result
 }
@@ -1161,7 +753,7 @@ func parseOwnConfigOfJson(
 	basePath string,
 	configFileName string,
 	errors []*ast.Diagnostic,
-) (*ParsedTsconfig, []*ast.Diagnostic) {
+) (*parsedTsconfig, []*ast.Diagnostic) {
 	// if json["excludes"] != nil {
 	// 	errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.Unknown_option_excludes_Did_you_mean_exclude))
 	// }
@@ -1178,7 +770,7 @@ func parseOwnConfigOfJson(
 	// if json.extends != nil || json.extends == "" {
 	// 	extendedConfigPath = getExtendsConfigPathOrArray(json.extends, host, basePath, configFileName, errors)
 	// }
-	var parsedConfig = &ParsedTsconfig{
+	var parsedConfig = &parsedTsconfig{
 		raw:     json,
 		options: options,
 	}
@@ -1201,22 +793,22 @@ func parseConfig(
 	configFileName string,
 	resolutionStack []string,
 	errors []*ast.Diagnostic,
-	extendedConfigCache *map[string]ExtendedConfigCacheEntry,
-) (*ParsedTsconfig, []*ast.Diagnostic) {
+	extendedConfigCache *map[string]extendedConfigCacheEntry,
+) (*parsedTsconfig, []*ast.Diagnostic) {
 	basePath = tspath.NormalizeSlashes(basePath)
 	resolvedPath := tspath.GetNormalizedAbsolutePath(configFileName, basePath)
 
 	if slices.Contains(resolutionStack, resolvedPath) {
-		var result *ParsedTsconfig
+		var result *parsedTsconfig
 		errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.Circularity_detected_while_resolving_configuration_Colon_0))
 		if !isEmptyStruct(json) {
-			result = &ParsedTsconfig{raw: json}
+			result = &parsedTsconfig{raw: json}
 		} else {
-			result = &ParsedTsconfig{raw: convertToObject(sourceFile.sourceFile, errors)}
+			result = &parsedTsconfig{raw: convertToObject(sourceFile.sourceFile, errors)}
 		}
 		return result, errors
 	}
-	var ownConfig *ParsedTsconfig
+	var ownConfig *parsedTsconfig
 	if json != nil {
 		ownConfig, errors = parseOwnConfigOfJson(json, host, basePath, configFileName, errors)
 	} else {
@@ -1287,8 +879,8 @@ func parseJsonConfigFileContentWorker(
 	existingOptions *core.CompilerOptions,
 	configFileName string,
 	resolutionStack []tspath.Path,
-	extraFileExtensions []FileExtensionInfo,
-	extendedConfigCache *map[string]ExtendedConfigCacheEntry,
+	extraFileExtensions []fileExtensionInfo,
+	extendedConfigCache *map[string]extendedConfigCacheEntry,
 ) module.ParsedCommandLine {
 	//Debug.assert((json === undefined && sourceFile !== undefined) || (json !== undefined && sourceFile === undefined));
 	var errors []*ast.Diagnostic
@@ -1673,17 +1265,15 @@ func must[T any](v T, err error) T {
  * @param options Compiler options.
  * @param host The host used to resolve files and directories.
  * @param extraFileExtensions optionaly file extra file extension information from host
- *
- * @internal
  */
 func getFileNamesFromConfigSpecs(
 	configFileSpecs configFileSpecs,
 	basePath string, //considering this is the current directory
 	options *core.CompilerOptions,
 	host vfs.FS,
-	extraFileExtensions []FileExtensionInfo,
+	extraFileExtensions []fileExtensionInfo,
 ) []string {
-	extraFileExtensions = []FileExtensionInfo{}
+	extraFileExtensions = []fileExtensionInfo{}
 	basePath = tspath.NormalizePath(basePath)
 
 	// Literal file names (provided via the "files" array in tsconfig.json) are stored in a
@@ -1719,7 +1309,7 @@ func getFileNamesFromConfigSpecs(
 	}
 
 	var jsonOnlyIncludeRegexes []*regexp2.Regexp
-	if validatedIncludeSpecs != nil && len(validatedIncludeSpecs) > 0 { // In place of process.cwd, I'm doing basePath which is the current directory
+	if validatedIncludeSpecs != nil && len(validatedIncludeSpecs) > 0 {
 		files := compiler.ReadDirectory(host, basePath, basePath, core.Flatten(supportedExtensionsWithJsonIfResolveJsonModule), validatedExcludeSpecs, validatedIncludeSpecs, -1)
 		for _, file := range files {
 			if tspath.FileExtensionIs(file, tspath.ExtensionJson) {
@@ -1795,7 +1385,7 @@ func getAllowJSCompilerOption(compilerOptions *core.CompilerOptions) core.Trista
 func getResolveJsonModule(compilerOptions *core.CompilerOptions) bool {
 	return core.ComputedOptions["resolveJsonModule"].ComputeValue(compilerOptions).(bool)
 }
-func getSupportedExtensions(options *core.CompilerOptions, extraFileExtensions []FileExtensionInfo) [][]string {
+func getSupportedExtensions(options *core.CompilerOptions, extraFileExtensions []fileExtensionInfo) [][]string {
 	needJsExtensions := getAllowJSCompilerOption(options) == 2
 
 	if extraFileExtensions == nil || len(extraFileExtensions) == 0 {
@@ -1812,7 +1402,7 @@ func getSupportedExtensions(options *core.CompilerOptions, extraFileExtensions [
 		builtins = supportedTSExtensions
 	}
 	var flatBuiltins = core.Flatten(builtins)
-	result := core.Map(extraFileExtensions, func(x FileExtensionInfo) []string {
+	result := core.Map(extraFileExtensions, func(x fileExtensionInfo) []string {
 		if x.scriptKind == core.ScriptKindDeferred || (needJsExtensions && (x.scriptKind == core.ScriptKindJS || x.scriptKind == core.ScriptKindJSX) && !slices.Contains(flatBuiltins, x.extension)) {
 			return []string{x.extension}
 		}

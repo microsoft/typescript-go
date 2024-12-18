@@ -106,8 +106,6 @@ func GetDeclarationFileExtension(fileName string) string {
  * changeAnyExtension("/path/to/file.ext", ".js", ".ts") === "/path/to/file.ext"
  * changeAnyExtension("/path/to/file.ext", ".js", [".ext", ".ts"]) === "/path/to/file.js"
  * ```
- *
- * @internal
  */
 func changeAnyExtension(path string, ext string, extensions []string, ignoreCase bool) string {
 	var pathext string
