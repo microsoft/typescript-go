@@ -2,10 +2,15 @@ package vfstest
 
 import (
 	"io/fs"
+	"math/rand/v2"
+	"runtime"
+	"slices"
+	"sync"
 	"testing"
 	"testing/fstest"
 
 	"github.com/microsoft/typescript-go/internal/testutil"
+	"github.com/microsoft/typescript-go/internal/vfs"
 	"gotest.tools/v3/assert"
 )
 
@@ -229,6 +234,50 @@ func TestWritableFS(t *testing.T) {
 
 	err = fs.WriteFile("/foo/bar/baz/oops", "goodbye, world", false)
 	assert.ErrorContains(t, err, `mkdir "foo/bar/baz": path exists but is not a directory`)
+}
+
+func TestStress(t *testing.T) {
+	t.Parallel()
+
+	testfs := fstest.MapFS{}
+
+	fs := FromMapFS(testfs, false)
+
+	ops := []func(){
+		func() { _ = fs.WriteFile("/foo/bar/baz.txt", "hello, world", false) },
+		func() { fs.ReadFile("/foo/bar/baz.txt") },
+		func() { fs.DirectoryExists("/foo/bar") },
+		func() { fs.FileExists("/foo/bar") },
+		func() { fs.FileExists("/foo/bar/baz.txt") },
+		func() { fs.GetDirectories("/foo/bar") },
+		func() { fs.Realpath("/foo/bar/baz.txt") },
+		func() {
+			_ = fs.WalkDir("/", func(path string, d vfs.DirEntry, err error) error {
+				if err != nil {
+					return err
+				}
+				_, err = d.Info()
+				return err
+			})
+		},
+	}
+
+	var wg sync.WaitGroup
+	for range runtime.GOMAXPROCS(0) {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+
+			randomOps := slices.Clone(ops)
+			rand.Shuffle(len(randomOps), func(i, j int) {
+				randomOps[i], randomOps[j] = randomOps[j], randomOps[i]
+			})
+
+			for i := range 10000 {
+				randomOps[i%len(randomOps)]()
+			}
+		}()
+	}
 }
 
 func TestParentDirFile(t *testing.T) {
