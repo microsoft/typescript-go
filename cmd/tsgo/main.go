@@ -19,13 +19,16 @@ import (
 	"github.com/microsoft/typescript-go/internal/vfs"
 )
 
-var quiet = false
-var singleThreaded = false
-var parseAndBindOnly = false
-var printTypes = false
-var pretty = true
-var listFiles = false
-var pprofDir = ""
+var (
+	quiet            = false
+	singleThreaded   = false
+	parseAndBindOnly = false
+	printTypes       = false
+	pretty           = true
+	listFiles        = false
+	pprofDir         = ""
+	outDir           = ""
+)
 
 func printDiagnostic(d *ast.Diagnostic, level int, comparePathOptions tspath.ComparePathsOptions) {
 	file := d.File()
@@ -57,15 +60,23 @@ func main() {
 	flag.BoolVar(&pretty, "pretty", true, "Get prettier errors")
 	flag.BoolVar(&listFiles, "listfiles", false, "List files in the program")
 	flag.StringVar(&pprofDir, "pprofdir", "", "Generate pprof CPU/memory profiles to the given directory")
+	flag.StringVar(&outDir, "outdir", "", "Emit to the given directory")
 	flag.Parse()
 
 	rootPath := flag.Arg(0)
-	compilerOptions := &core.CompilerOptions{Strict: core.TSTrue, Target: core.ScriptTargetESNext, ModuleKind: core.ModuleKindNodeNext}
+	compilerOptions := &core.CompilerOptions{Strict: core.TSTrue, Target: core.ScriptTargetESNext, ModuleKind: core.ModuleKindNodeNext, NoEmit: core.TSTrue}
+
 	currentDirectory, err := os.Getwd()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error getting current directory: %v\n", err)
 		os.Exit(1)
 	}
+
+	if len(outDir) > 0 {
+		compilerOptions.NoEmit = core.TSFalse
+		compilerOptions.OutDir = tspath.ResolvePath(currentDirectory, outDir)
+	}
+
 	fs := vfs.FromOS()
 	useCaseSensitiveFileNames := fs.UseCaseSensitiveFileNames()
 	host := ts.NewCompilerHost(compilerOptions, currentDirectory, fs)
@@ -98,6 +109,13 @@ func main() {
 		}
 	}
 	compileTime := time.Since(startTime)
+
+	startTime = time.Now()
+	if len(outDir) > 0 {
+		result := program.Emit(&ts.EmitOptions{})
+		diagnostics = append(diagnostics, result.Diagnostics...)
+	}
+	emitTime := time.Since(startTime)
 
 	var memStats runtime.MemStats
 	runtime.GC()
@@ -133,6 +151,7 @@ func main() {
 	fmt.Printf("Files:         %v\n", len(program.SourceFiles()))
 	fmt.Printf("Types:         %v\n", program.TypeCount())
 	fmt.Printf("Compile time:  %v\n", compileTime)
+	fmt.Printf("Emit time:     %v\n", emitTime)
 	fmt.Printf("Memory used:   %vK\n", memStats.Alloc/1024)
 }
 
@@ -144,7 +163,7 @@ type profileSession struct {
 }
 
 func beginProfiling(profileDir string) *profileSession {
-	if err := os.MkdirAll(profileDir, 0755); err != nil {
+	if err := os.MkdirAll(profileDir, 0o755); err != nil {
 		panic(err)
 	}
 
