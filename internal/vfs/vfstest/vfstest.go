@@ -3,7 +3,10 @@ package vfstest
 import (
 	"fmt"
 	"io/fs"
+	"maps"
 	"path"
+	"slices"
+	"strings"
 	"sync"
 	"testing/fstest"
 
@@ -56,7 +59,14 @@ func convertMapFS(input fstest.MapFS, useCaseSensitiveFileNames bool) *mapFS {
 		canonicalPaths[canonical] = path
 	}
 
-	for p, file := range input {
+	// Sort the input by depth and path so we ensure parent dirs are created
+	// before their children, if explicitly specified by the input.
+	inputKeys := slices.Collect(maps.Keys(input))
+	slices.SortFunc(inputKeys, comparePaths)
+
+	for _, p := range inputKeys {
+		file := input[p]
+
 		// Create all missing intermediate directories so we can attach the realpath to each of them.
 		// fstest.MapFS doesn't require this as it synthesizes directories on the fly, but it's a lot
 		// harder to reapply a realpath onto those when we're deep in some FileInfo method.
@@ -67,6 +77,23 @@ func convertMapFS(input fstest.MapFS, useCaseSensitiveFileNames bool) *mapFS {
 	}
 
 	return m
+}
+
+func comparePaths(a, b string) int {
+	for {
+		aStart, aEnd, aOk := strings.Cut(a, "/")
+		bStart, bEnd, bOk := strings.Cut(b, "/")
+
+		if !aOk || !bOk {
+			return strings.Compare(a, b)
+		}
+
+		if r := strings.Compare(aStart, bStart); r != 0 {
+			return r
+		}
+
+		a, b = aEnd, bEnd
+	}
 }
 
 type canonicalPath string
