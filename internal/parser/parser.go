@@ -396,23 +396,7 @@ func (p *Parser) parseListIndex(kind ParsingContext, parseElement func(p *Parser
 }
 
 func (p *Parser) parseList(kind ParsingContext, parseElement func(p *Parser) *ast.Node) *ast.NodeList {
-	pos := p.nodePos()
-	saveParsingContexts := p.parsingContexts
-	p.parsingContexts |= 1 << kind
-	list := make([]*ast.Node, 0, 16)
-	for !p.isListTerminator(kind) {
-		if p.isListElement(kind, false /*inErrorRecovery*/) {
-			list = append(list, parseElement(p))
-			continue
-		}
-		if p.abortParsingListOrMoveToNextToken(kind) {
-			break
-		}
-	}
-	p.parsingContexts = saveParsingContexts
-	slice := p.nodeSlicePool.NewSlice(len(list))
-	copy(slice, list)
-	return p.factory.NewNodeList(core.NewTextRange(pos, p.nodePos()), slice)
+	return p.parseListIndex(kind, func(p *Parser, _ int) *ast.Node { return parseElement(p) })
 }
 
 // Return a non-nil (but possibly empty) slice if parsing was successful, or nil if parseElement returned nil
