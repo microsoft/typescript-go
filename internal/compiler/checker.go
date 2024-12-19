@@ -3300,7 +3300,7 @@ func isSpreadIntoCallOrNew(node *ast.Node) bool {
 func (c *Checker) checkQualifiedName(node *ast.Node, checkMode CheckMode) *Type {
 	left := node.AsQualifiedName().Left
 	var leftType *Type
-	if isPartOfTypeQuery(node) && isThisIdentifier(left) {
+	if ast.IsPartOfTypeQuery(node) && isThisIdentifier(left) {
 		leftType = c.checkNonNullType(c.checkThisExpression(left), left)
 	} else {
 		leftType = c.checkNonNullExpression(left)
@@ -5249,7 +5249,7 @@ func (c *Checker) getInstantiationExpressionType(exprType *Type, node *ast.Node)
 	if exprType == c.silentNeverType || c.isErrorType(exprType) || typeArguments == nil {
 		return exprType
 	}
-	key := InstantiationExpressionKey{nodeId: getNodeId(node), typeId: exprType.id}
+	key := InstantiationExpressionKey{nodeId: ast.GetNodeId(node), typeId: exprType.id}
 	if cached := c.instantiationExpressionTypes[key]; cached != nil {
 		return cached
 	}
@@ -5280,7 +5280,7 @@ func (c *Checker) getInstantiationExpressionType(exprType *Type, node *ast.Node)
 				hasSignatures = hasSignatures || len(resolved.CallSignatures()) != 0 || len(resolved.ConstructSignatures()) != 0
 				hasApplicableSignature = hasApplicableSignature || len(callSignatures) != 0 || len(constructSignatures) != 0
 				if !core.Same(callSignatures, resolved.CallSignatures()) || !core.Same(constructSignatures, resolved.ConstructSignatures()) {
-					result := c.newObjectType(ObjectFlagsAnonymous|ObjectFlagsInstantiationExpressionType, c.newSymbol(ast.SymbolFlagsNone, InternalSymbolNameInstantiationExpression))
+					result := c.newObjectType(ObjectFlagsAnonymous|ObjectFlagsInstantiationExpressionType, c.newSymbol(ast.SymbolFlagsNone, ast.InternalSymbolNameInstantiationExpression))
 					c.setStructuredTypeMembers(result, resolved.members, callSignatures, constructSignatures, resolved.indexInfos)
 					result.AsInstantiationExpressionType().node = node
 					return result
@@ -17044,7 +17044,7 @@ func (c *Checker) getTypeFromImportTypeNode(node *ast.Node) *Type {
 				}
 				next := core.OrElse(symbolFromModule, symbolFromVariable)
 				if next == nil {
-					c.error(current, diagnostics.Namespace_0_has_no_exported_member_1, c.getFullyQualifiedName(currentNamespace, nil), declarationNameToString(current))
+					c.error(current, diagnostics.Namespace_0_has_no_exported_member_1, c.getFullyQualifiedName(currentNamespace, nil), scanner.DeclarationNameToString(current))
 					links.resolvedType = c.errorType
 					return links.resolvedType
 				}
