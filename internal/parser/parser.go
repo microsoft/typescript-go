@@ -801,19 +801,19 @@ func (p *Parser) parseBlock(ignoreMissingOpenBrace bool, diagnosticMessage *diag
 	openBracePosition := p.scanner.TokenStart()
 	openBraceParsed := p.parseExpectedWithDiagnostic(ast.KindOpenBraceToken, diagnosticMessage, true /*shouldAdvance*/)
 	multiline := false
-	var statements *ast.NodeList
 	if openBraceParsed || ignoreMissingOpenBrace {
 		multiline = p.hasPrecedingLineBreak()
-		statements = p.parseList(PCBlockStatements, (*Parser).parseStatement)
+		statements := p.parseList(PCBlockStatements, (*Parser).parseStatement)
 		p.parseExpectedMatchingBrackets(ast.KindOpenBraceToken, ast.KindCloseBraceToken, openBraceParsed, openBracePosition)
+		result := p.factory.NewBlock(statements, multiline)
+		p.finishNode(result, pos)
 		if p.token == ast.KindEqualsToken {
 			p.parseErrorAtCurrentToken(diagnostics.Declaration_or_statement_expected_This_follows_a_block_of_statements_so_if_you_intended_to_write_a_destructuring_assignment_you_might_need_to_wrap_the_whole_assignment_in_parentheses)
 			p.nextToken()
 		}
-	} else {
-		statements = p.parseEmptyNodeList()
+		return result
 	}
-	result := p.factory.NewBlock(statements, multiline)
+	result := p.factory.NewBlock(p.parseEmptyNodeList(), multiline)
 	p.finishNode(result, pos)
 	return result
 }
@@ -2239,7 +2239,7 @@ func (j *JSDocParser) parseJSDocNameReference() *ast.Node {
 	entityName := j.parseEntityName(false, nil)
 	for j.token == ast.KindPrivateIdentifier {
 		j.scanner.ReScanHashToken() // rescan #id as # id
-		j.nextTokenJSDoc()  // then skip the #
+		j.nextTokenJSDoc()          // then skip the #
 		entityName = j.factory.NewQualifiedName(entityName, j.parseIdentifier())
 		j.finishNode(entityName, p2)
 	}
@@ -3603,23 +3603,20 @@ func (p *Parser) parseNonArrayType() *ast.Node {
 		}
 		p.rewind(state)
 		return p.parseTypeReference()
-		// !!!
-		// case KindAsteriskEqualsToken:
-		// 	// If there is '*=', treat it as * followed by postfix =
-		// 	p.scanner.reScanAsteriskEqualsToken()
-		// 	fallthrough
-		// case KindAsteriskToken:
-		// 	return p.parseJSDocAllType()
-		// case KindQuestionQuestionToken:
-		// 	// If there is '??', treat it as prefix-'?' in JSDoc type.
-		// 	p.scanner.reScanQuestionToken()
-		// 	fallthrough
-		// case KindQuestionToken:
-		// 	return p.parseJSDocUnknownOrNullableType()
-		// case KindFunctionKeyword:
-		// 	return p.parseJSDocFunctionType()
-		// case KindExclamationToken:
-		// 	return p.parseJSDocNonNullableType()
+	case ast.KindAsteriskEqualsToken:
+		// If there is '*=', treat it as * followed by postfix =
+		p.scanner.ReScanAsteriskEqualsToken()
+		fallthrough
+	case ast.KindAsteriskToken:
+		return p.parseJSDocAllType()
+	case ast.KindQuestionQuestionToken:
+		// If there is '??', treat it as prefix-'?' in JSDoc type.
+		p.scanner.ReScanQuestionToken()
+		fallthrough
+	case ast.KindQuestionToken:
+		return p.parseJSDocNullableType()
+	case ast.KindExclamationToken:
+		return p.parseJSDocNonNullableType()
 	case ast.KindNoSubstitutionTemplateLiteral, ast.KindStringLiteral, ast.KindNumericLiteral, ast.KindBigIntLiteral, ast.KindTrueKeyword,
 		ast.KindFalseKeyword, ast.KindNullKeyword:
 		return p.parseLiteralTypeNode(false /*negative*/)
@@ -3684,6 +3681,31 @@ func (p *Parser) parseThisTypePredicate(lhs *ast.Node) *ast.Node {
 	p.nextToken()
 	result := p.factory.NewTypePredicateNode(nil /*assertsModifier*/, lhs, p.parseType())
 	p.finishNode(result, lhs.Pos())
+	return result
+}
+
+func (p *Parser) parseJSDocAllType() *ast.Node {
+	pos := p.nodePos()
+	p.nextToken()
+	result := p.factory.NewJSDocAllType()
+	p.finishNode(result, pos)
+	return result
+}
+
+func (p *Parser) parseJSDocNonNullableType() *ast.TypeNode {
+	pos := p.nodePos()
+	p.nextToken()
+	result := p.factory.NewJSDocNonNullableType(p.parseNonArrayType())
+	p.finishNode(result, pos)
+	return result
+}
+
+func (p *Parser) parseJSDocNullableType() *ast.Node {
+	pos := p.nodePos()
+	// skip the ?
+	p.nextToken()
+	result := p.factory.NewJSDocNullableType(p.parseType())
+	p.finishNode(result, pos)
 	return result
 }
 
@@ -5252,8 +5274,7 @@ func (p *Parser) parseParenthesizedArrowFunctionExpression(allowAmbiguity bool, 
 	for unwrappedType != nil && unwrappedType.Kind == ast.KindParenthesizedType {
 		unwrappedType = unwrappedType.AsParenthesizedTypeNode().Type // Skip parens if need be
 	}
-	hasJSDocFunctionType := unwrappedType != nil && unwrappedType.Kind == ast.KindJSDocFunctionType
-	if !allowAmbiguity && p.token != ast.KindEqualsGreaterThanToken && (hasJSDocFunctionType || p.token != ast.KindOpenBraceToken) {
+	if !allowAmbiguity && p.token != ast.KindEqualsGreaterThanToken && p.token != ast.KindOpenBraceToken {
 		// Returning undefined here will cause our caller to rewind to where we started from.
 		return nil
 	}
@@ -5612,10 +5633,13 @@ func (p *Parser) parseJsxElementOrSelfClosingElementOrFragment(inExpressionConte
 			// when an unclosed JsxOpeningElement incorrectly parses its parent's JsxClosingElement,
 			// restructure (<div>(...<span>...</div>)) --> (<div>(...<span>...</>)</div>)
 			// (no need to error; the parent will error)
-			newClosingElement := p.factory.NewJsxClosingElement(p.createMissingIdentifier())
-			p.finishNode(newClosingElement, p.nodePos())
+			end := lastChild.AsJsxElement().OpeningElement.End()
+			missingIdentifier := p.newIdentifier("")
+			p.finishNodeWithEnd(missingIdentifier, end, end)
+			newClosingElement := p.factory.NewJsxClosingElement(missingIdentifier)
+			p.finishNodeWithEnd(newClosingElement, end, end)
 			newLast := p.factory.NewJsxElement(lastChild.AsJsxElement().OpeningElement, lastChild.AsJsxElement().Children, newClosingElement)
-			p.finishNode(newLast, lastChild.AsJsxElement().OpeningElement.Pos())
+			p.finishNodeWithEnd(newLast, lastChild.AsJsxElement().OpeningElement.Pos(), end)
 			children = p.factory.NewNodeList(core.NewTextRange(children.Pos(), newLast.End()), append(children.Nodes[0:len(children.Nodes)-1], newLast))
 			closingElement = lastChild.AsJsxElement().ClosingElement
 		} else {
@@ -6763,7 +6787,7 @@ func (p *Parser) finishNode(node *ast.Node, pos int) {
 }
 
 func (p *Parser) finishNodeWithEnd(node *ast.Node, pos int, end int) {
-	node.Loc = core.NewTextRange(p.offset+pos, p.offset+p.nodePos())
+	node.Loc = core.NewTextRange(p.offset+pos, p.offset+end)
 	node.Flags |= p.contextFlags
 }
 
