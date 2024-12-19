@@ -10,6 +10,8 @@ import (
 	"github.com/microsoft/typescript-go/internal/vfs"
 )
 
+const embedded = true
+
 const scheme = "embedded:"
 
 func splitPath(path string) (root string, rest string, ok bool) {

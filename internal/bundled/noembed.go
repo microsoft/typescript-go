@@ -13,6 +13,8 @@ import (
 	"github.com/microsoft/typescript-go/internal/vfs"
 )
 
+const embedded = false
+
 func wrapFS(fs vfs.FS) vfs.FS {
 	return fs
 }
