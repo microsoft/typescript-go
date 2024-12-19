@@ -60,7 +60,7 @@ func convertMapFS(input fstest.MapFS, useCaseSensitiveFileNames bool) *mapFS {
 		// Create all missing intermediate directories so we can attach the realpath to each of them.
 		// fstest.MapFS doesn't require this as it synthesizes directories on the fly, but it's a lot
 		// harder to reapply a realpath onto those when we're deep in some FileInfo method.
-		if err := m.mkdirAll(dirName(p)); err != nil {
+		if err := m.mkdirAll(dirName(p), 0o777); err != nil {
 			panic(fmt.Sprintf("failed to create intermediate directories for %q: %v", p, err))
 		}
 		m.setEntry(p, m.getCanonicalPath(p), *file)
@@ -104,7 +104,7 @@ func dirName(p string) string {
 	return dir
 }
 
-func (m *mapFS) mkdirAll(p string) error {
+func (m *mapFS) mkdirAll(p string, perm fs.FileMode) error {
 	for ; p != ""; p = dirName(p) {
 		canonical := m.getCanonicalPath(p)
 		if other, ok := m.get(canonical); ok {
@@ -114,7 +114,7 @@ func (m *mapFS) mkdirAll(p string) error {
 			return fmt.Errorf("mkdir %q: path exists but is not a directory", p)
 		}
 		m.setEntry(p, canonical, fstest.MapFile{
-			Mode: fs.ModeDir | 0o555,
+			Mode: fs.ModeDir | perm&^umask,
 		})
 	}
 	return nil
@@ -237,18 +237,36 @@ func convertInfo(info fs.FileInfo) (*fileInfo, bool) {
 	}, true
 }
 
+const umask = 0o022
+
 func (m *mapFS) MkdirAll(path string, perm fs.FileMode) error {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 
-	panic("unimplemented")
+	return m.mkdirAll(path, perm)
 }
 
 func (m *mapFS) WriteFile(path string, data []byte, perm fs.FileMode) error {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 
-	panic("unimplemented")
+	if parent := dirName(path); parent != "" {
+		canonical := m.getCanonicalPath(parent)
+		parentFile, ok := m.get(canonical)
+		if !ok {
+			return fmt.Errorf("write %q: parent directory does not exist", path)
+		}
+		if !parentFile.Mode.IsDir() {
+			return fmt.Errorf("write %q: parent path exists but is not a directory", path)
+		}
+	}
+
+	m.setEntry(path, m.getCanonicalPath(path), fstest.MapFile{
+		Data: data,
+		Mode: perm &^ umask,
+	})
+
+	return nil
 }
 
 func must[T any](v T, err error) T {

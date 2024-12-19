@@ -201,3 +201,21 @@ func dirEntriesToNames(entries []fs.DirEntry) []string {
 	}
 	return names
 }
+
+func TestWritableFS(t *testing.T) {
+	t.Parallel()
+
+	testfs := fstest.MapFS{}
+
+	fs := FromMapFS(testfs, false)
+
+	err := fs.WriteFile("/foo/bar/baz", "hello, world", false)
+	assert.NilError(t, err)
+
+	content, ok := fs.ReadFile("/foo/bar/baz")
+	assert.Assert(t, ok)
+	assert.Equal(t, content, "hello, world")
+
+	err = fs.WriteFile("/foo/bar/baz/oops", "goodbye, world", false)
+	assert.ErrorContains(t, err, `mkdir "foo/bar/baz": path exists but is not a directory`)
+}

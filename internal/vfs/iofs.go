@@ -52,13 +52,15 @@ func FromIOFS(fsys fs.FS, useCaseSensitiveFileNames bool) FS {
 	var mkdirAll func(path string) error
 	if fsys, ok := fsys.(WritableFS); ok {
 		writeFile = func(path string, content string, writeByteOrderMark bool) error {
+			rest, _ := strings.CutPrefix(path, "/")
 			if writeByteOrderMark {
 				content = "\uFEFF" + content
 			}
-			return fsys.WriteFile(path, []byte(content), 0o666)
+			return fsys.WriteFile(rest, []byte(content), 0o666)
 		}
 		mkdirAll = func(path string) error {
-			return fsys.MkdirAll(path, 0o777)
+			rest, _ := strings.CutPrefix(path, "/")
+			return fsys.MkdirAll(rest, 0o777)
 		}
 	} else {
 		writeFile = func(string, string, bool) error {
