@@ -12,7 +12,7 @@ import (
 
 const embedded = true
 
-const scheme = "embedded:"
+const scheme = "bundled:"
 
 func splitPath(path string) (root string, rest string, ok bool) {
 	rest, ok = strings.CutPrefix(path, scheme)
