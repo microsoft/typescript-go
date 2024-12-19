@@ -59,17 +59,16 @@ type Parser struct {
 	languageVariant core.LanguageVariant
 	diagnostics     []*ast.Diagnostic
 
-	token                         ast.Kind
-	sourceFlags                   ast.NodeFlags
-	contextFlags                  ast.NodeFlags
-	parsingContexts               ParsingContexts
-	statementHasAwaitIdentifier   bool
-	fileHasPossibleAwaitStatement bool
+	token                       ast.Kind
+	sourceFlags                 ast.NodeFlags
+	contextFlags                ast.NodeFlags
+	parsingContexts             ParsingContexts
+	statementHasAwaitIdentifier bool
 
-	identifiers            core.Set[string]
-	notParenthesizedArrow  core.Set[int]
-	nodeSlicePool          core.Pool[*ast.Node]
-	possibleAwaitStatement core.Set[*ast.Node]
+	identifiers           core.Set[string]
+	notParenthesizedArrow core.Set[int]
+	nodeSlicePool         core.Pool[*ast.Node]
+	possibleAwaitSpans    []int
 }
 
 func NewParser() *Parser {
@@ -184,20 +183,18 @@ func (p *Parser) parseErrorAtRange(loc core.TextRange, message *diagnostics.Mess
 }
 
 type ParserState struct {
-	scannerState                  scanner.ScannerState
-	contextFlags                  ast.NodeFlags
-	diagnosticsLen                int
-	statementHasAwaitIdentifier   bool
-	fileHasPossibleAwaitStatement bool
+	scannerState                scanner.ScannerState
+	contextFlags                ast.NodeFlags
+	diagnosticsLen              int
+	statementHasAwaitIdentifier bool
 }
 
 func (p *Parser) mark() ParserState {
 	return ParserState{
-		scannerState:                  p.scanner.Mark(),
-		contextFlags:                  p.contextFlags,
-		diagnosticsLen:                len(p.diagnostics),
-		statementHasAwaitIdentifier:   p.statementHasAwaitIdentifier,
-		fileHasPossibleAwaitStatement: p.fileHasPossibleAwaitStatement,
+		scannerState:                p.scanner.Mark(),
+		contextFlags:                p.contextFlags,
+		diagnosticsLen:              len(p.diagnostics),
+		statementHasAwaitIdentifier: p.statementHasAwaitIdentifier,
 	}
 }
 
@@ -238,7 +235,7 @@ func (p *Parser) parseSourceFileWorker() *ast.SourceFile {
 		p.contextFlags |= ast.NodeFlagsAmbient
 	}
 	pos := p.nodePos()
-	statements := p.parseList(PCSourceElements, (*Parser).parseToplevelStatement)
+	statements := p.parseListIndex(PCSourceElements, (*Parser).parseToplevelStatement)
 	eof := p.parseTokenNode()
 	if eof.Kind != ast.KindEndOfFile {
 		panic("Expected end of file token from scanner.")
@@ -256,7 +253,7 @@ func (p *Parser) parseSourceFileWorker() *ast.SourceFile {
 	result.LanguageVersion = p.languageVersion
 	result.LanguageVariant = p.languageVariant
 	result.ScriptKind = p.scriptKind
-	if !result.IsDeclarationFile && result.ExternalModuleIndicator != nil && p.fileHasPossibleAwaitStatement {
+	if !result.IsDeclarationFile && result.ExternalModuleIndicator != nil && len(p.possibleAwaitSpans) > 0 {
 		reparse := p.reparseTopLevelAwait(result)
 		if node != reparse {
 			p.finishNode(reparse, pos)
@@ -269,33 +266,38 @@ func (p *Parser) parseSourceFileWorker() *ast.SourceFile {
 			result.ScriptKind = p.scriptKind
 		}
 	}
-	p.possibleAwaitStatement = core.Set[*ast.Node]{}
+	p.possibleAwaitSpans = []int{}
 	return result
 }
 
-func (p *Parser) parseToplevelStatement() *ast.Node {
+func (p *Parser) parseToplevelStatement(i int) *ast.Node {
 	p.statementHasAwaitIdentifier = false
 	statement := p.parseStatement()
-	if p.statementHasAwaitIdentifier {
-		p.possibleAwaitStatement.Add(statement)
-		p.fileHasPossibleAwaitStatement = true
+	if p.statementHasAwaitIdentifier && statement.Flags&ast.NodeFlagsAwaitContext == 0 {
+		if len(p.possibleAwaitSpans) == 0 || p.possibleAwaitSpans[len(p.possibleAwaitSpans)-1] != i {
+			p.possibleAwaitSpans = append(p.possibleAwaitSpans, i, i+1)
+		} else {
+			p.possibleAwaitSpans[len(p.possibleAwaitSpans)-1] = i + 1
+		}
 	}
 	return statement
 }
 
 func (p *Parser) reparseTopLevelAwait(sourceFile *ast.SourceFile) *ast.Node {
+	if len(p.possibleAwaitSpans)%2 == 1 {
+		panic("possibleAwaitSpans malformed: odd number of indices, not paired into spans.")
+	}
 	statements := []*ast.Statement{}
 	savedParseDiagnostics := p.diagnostics
 	p.diagnostics = []*ast.Diagnostic{}
 
-	pos := 0
-	start := p.findNextStatementWithAwait(sourceFile.Statements, 0)
-	for start != -1 {
-		// append all statements between pos and start
-		prevStatement := sourceFile.Statements.Nodes[pos]
-		nextStatement := sourceFile.Statements.Nodes[start]
-		statements = append(statements, sourceFile.Statements.Nodes[pos:start]...)
-		pos = p.findNextStatementWithoutAwait(sourceFile.Statements, start)
+	afterAwaitStatement := 0
+	for i := 0; i < len(p.possibleAwaitSpans); i += 2 {
+		nextAwaitStatement := p.possibleAwaitSpans[i]
+		// append all non-await statements between afterAwaitStatement and nextAwaitStatement
+		prevStatement := sourceFile.Statements.Nodes[afterAwaitStatement]
+		nextStatement := sourceFile.Statements.Nodes[nextAwaitStatement]
+		statements = append(statements, sourceFile.Statements.Nodes[afterAwaitStatement:nextAwaitStatement]...)
 
 		// append all diagnostics associated with the copied range
 		diagnosticStart := core.FindIndex(savedParseDiagnostics, func(diagnostic *ast.Diagnostic) bool {
@@ -325,6 +327,7 @@ func (p *Parser) reparseTopLevelAwait(sourceFile *ast.SourceFile) *ast.Node {
 		p.scanner.ResetTokenState(nextStatement.Pos())
 		p.nextToken()
 
+		afterAwaitStatement = p.possibleAwaitSpans[i+1]
 		for p.token != ast.KindEndOfFile {
 			startPos := p.scanner.TokenFullStart()
 			statement := p.parseStatement()
@@ -332,16 +335,20 @@ func (p *Parser) reparseTopLevelAwait(sourceFile *ast.SourceFile) *ast.Node {
 			if startPos == p.scanner.TokenFullStart() {
 				p.nextToken()
 			}
-
-			if pos >= 0 {
-				nonAwaitStatement := sourceFile.Statements.Nodes[pos]
+			if afterAwaitStatement < len(sourceFile.Statements.Nodes) {
+				nonAwaitStatement := sourceFile.Statements.Nodes[afterAwaitStatement]
 				if statement.End() == nonAwaitStatement.Pos() {
 					// done reparsing this section
 					break
 				}
 				if statement.End() > nonAwaitStatement.Pos() {
-					// we ate into the next statement, so we must reparse it.
-					pos = p.findNextStatementWithoutAwait(sourceFile.Statements, pos+1)
+					// we ate into the next statement, so we must continue reparsing the next span
+					i += 2
+					if i < len(p.possibleAwaitSpans) {
+						afterAwaitStatement = p.possibleAwaitSpans[i+1]
+					} else {
+						afterAwaitStatement = len(sourceFile.Statements.Nodes)
+					}
 				}
 			}
 		}
@@ -349,18 +356,12 @@ func (p *Parser) reparseTopLevelAwait(sourceFile *ast.SourceFile) *ast.Node {
 		// Keep diagnostics from the reparse
 		state.diagnosticsLen = len(p.diagnostics)
 		p.rewind(state)
-
-		if pos < 0 {
-			break
-		}
-		// find the next statement containing an `await`
-		start = p.findNextStatementWithAwait(sourceFile.Statements, pos)
 	}
 
 	// append all statements between pos and the end of the list
-	if pos >= 0 {
-		prevStatement := sourceFile.Statements.Nodes[pos]
-		statements = append(statements, sourceFile.Statements.Nodes[pos:]...)
+	if afterAwaitStatement < len(sourceFile.Statements.Nodes) {
+		prevStatement := sourceFile.Statements.Nodes[afterAwaitStatement]
+		statements = append(statements, sourceFile.Statements.Nodes[afterAwaitStatement:]...)
 
 		// append all diagnostics associated with the copied range
 		diagnosticStart := core.FindIndex(savedParseDiagnostics, func(diagnostic *ast.Diagnostic) bool {
@@ -374,26 +375,24 @@ func (p *Parser) reparseTopLevelAwait(sourceFile *ast.SourceFile) *ast.Node {
 	return p.factory.NewSourceFile(sourceFile.Text, sourceFile.FileName(), p.factory.NewNodeList(sourceFile.Statements.Loc, statements))
 }
 
-func (p *Parser) containsPossibleTopLevelAwait(node *ast.Node) bool {
-	return node.Flags&ast.NodeFlagsAwaitContext == 0 && p.possibleAwaitStatement.Has(node)
-}
-
-func (p *Parser) findNextStatementWithAwait(statements *ast.NodeList, start int) int {
-	for i, statement := range statements.Nodes[start:] {
-		if p.containsPossibleTopLevelAwait(statement) {
-			return start + i
+func (p *Parser) parseListIndex(kind ParsingContext, parseElement func(p *Parser, index int) *ast.Node) *ast.NodeList {
+	pos := p.nodePos()
+	saveParsingContexts := p.parsingContexts
+	p.parsingContexts |= 1 << kind
+	list := make([]*ast.Node, 0, 16)
+	for i := 0; !p.isListTerminator(kind); i++ {
+		if p.isListElement(kind, false /*inErrorRecovery*/) {
+			list = append(list, parseElement(p, i))
+			continue
+		}
+		if p.abortParsingListOrMoveToNextToken(kind) {
+			break
 		}
 	}
-	return -1
-}
-
-func (p *Parser) findNextStatementWithoutAwait(statements *ast.NodeList, start int) int {
-	for i, statement := range statements.Nodes[start:] {
-		if !p.containsPossibleTopLevelAwait(statement) {
-			return start + i
-		}
-	}
-	return -1
+	p.parsingContexts = saveParsingContexts
+	slice := p.nodeSlicePool.NewSlice(len(list))
+	copy(slice, list)
+	return p.factory.NewNodeList(core.NewTextRange(pos, p.nodePos()), slice)
 }
 
 func (p *Parser) parseList(kind ParsingContext, parseElement func(p *Parser) *ast.Node) *ast.NodeList {
