@@ -9,6 +9,7 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"gotest.tools/v3/assert"
+	"gotest.tools/v3/assert/cmp"
 )
 
 func TestSymlinkRealpath(t *testing.T) {
@@ -46,5 +47,11 @@ func TestSymlinkRealpath(t *testing.T) {
 		targetRealpath = fs.Realpath(targetRealpath)
 	}
 	linkRealpath := fs.Realpath(tspath.NormalizePath(linkFile))
-	assert.Equal(t, targetRealpath, linkRealpath)
+
+	if !assert.Check(t, cmp.Equal(targetRealpath, linkRealpath)) {
+		cmd := exec.Command("node", "-e", `console.log({ native: fs.realpathSync.native(process.argv[1]), node: fs.realpathSync(process.argv[1]) })`, linkFile)
+		out, err := cmd.CombinedOutput()
+		assert.NilError(t, err)
+		t.Logf("node: %s", out)
+	}
 }
