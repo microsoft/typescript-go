@@ -216,6 +216,30 @@ func TestWritableFS(t *testing.T) {
 	assert.Assert(t, ok)
 	assert.Equal(t, content, "hello, world")
 
+	err = fs.WriteFile("/foo/bar/baz", "goodbye, world", false)
+	assert.NilError(t, err)
+
+	content, ok = fs.ReadFile("/foo/bar/baz")
+	assert.Assert(t, ok)
+	assert.Equal(t, content, "goodbye, world")
+
 	err = fs.WriteFile("/foo/bar/baz/oops", "goodbye, world", false)
 	assert.ErrorContains(t, err, `mkdir "foo/bar/baz": path exists but is not a directory`)
+}
+
+func TestParentDirFile(t *testing.T) {
+	t.Parallel()
+
+	testfs := fstest.MapFS{
+		"foo": &fstest.MapFile{
+			Data: []byte("bar"),
+		},
+		"foo/oops": &fstest.MapFile{
+			Data: []byte("baz"),
+		},
+	}
+
+	testutil.AssertPanics(t, func() {
+		convertMapFS(testfs, false /*useCaseSensitiveFileNames*/)
+	}, `failed to create intermediate directories for "foo/oops": mkdir "foo": path exists but is not a directory`)
 }
