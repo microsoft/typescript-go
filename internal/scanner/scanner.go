@@ -2182,12 +2182,12 @@ func ComputePositionOfLineAndCharacter(lineStarts []core.TextPos, line int, char
 	return res
 }
 
-func GetLeadingCommentRanges(text string, pos int) iter.Seq[ast.CommentRange] {
-	return iterateCommentRanges(text, pos, false)
+func GetLeadingCommentRanges(f *ast.NodeFactory, text string, pos int) iter.Seq[ast.CommentRange] {
+	return iterateCommentRanges(f, text, pos, false)
 }
 
-func GetTrailingCommentRanges(text string, pos int) iter.Seq[ast.CommentRange] {
-	return iterateCommentRanges(text, pos, true)
+func GetTrailingCommentRanges(f *ast.NodeFactory, text string, pos int) iter.Seq[ast.CommentRange] {
+	return iterateCommentRanges(f, text, pos, true)
 }
 
 /*
@@ -2196,7 +2196,7 @@ Single-line comment ranges include the leading double-slash characters but not t
 line break. Multi-line comment ranges include the leading slash-asterisk and trailing
 asterisk-slash characters.
 */
-func iterateCommentRanges(text string, pos int, trailing bool) iter.Seq[ast.CommentRange] {
+func iterateCommentRanges(f *ast.NodeFactory, text string, pos int, trailing bool) iter.Seq[ast.CommentRange] {
 	return func(yield func(ast.CommentRange) bool) {
 		var pendingPos int
 		var pendingEnd int
@@ -2268,7 +2268,7 @@ func iterateCommentRanges(text string, pos int, trailing bool) iter.Seq[ast.Comm
 
 					if collecting {
 						if hasPendingCommentRange {
-							if !yield(ast.NewCommentRange(pendingKind, pendingPos, pendingEnd, pendingHasTrailingNewLine)) {
+							if !yield(f.NewCommentRange(pendingKind, pendingPos, pendingEnd, pendingHasTrailingNewLine)) {
 								return
 							}
 						}
@@ -2296,7 +2296,7 @@ func iterateCommentRanges(text string, pos int, trailing bool) iter.Seq[ast.Comm
 		}
 
 		if hasPendingCommentRange {
-			yield(ast.NewCommentRange(pendingKind, pendingPos, pendingEnd, pendingHasTrailingNewLine))
+			yield(f.NewCommentRange(pendingKind, pendingPos, pendingEnd, pendingHasTrailingNewLine))
 		}
 	}
 }

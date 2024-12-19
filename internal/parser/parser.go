@@ -254,7 +254,7 @@ func (p *Parser) parseSourceFileWorker() *ast.SourceFile {
 	p.finishNode(node, pos)
 	result := node.AsSourceFile()
 
-	result.Pragmas = getCommentPragmas(p.sourceText)
+	result.Pragmas = getCommentPragmas(&p.factory, p.sourceText)
 	processPragmasIntoFields(result)
 
 	result.SetDiagnostics(attachFileToDiagnostics(p.diagnostics, result))
@@ -2266,10 +2266,11 @@ func (p *Parser) parseJSDocComment(parent *ast.Node, start int /*  = 0 */, end i
 	}
 
 	var j JSDocParser
+
 	// + 3 for leading /**, - 5 in total for /** */
 	j.initializeState(p.fileName, p.sourceText[start+3:end-5], p.languageVersion, p.scriptKind)
-	// TODO: Decide what to do with all these other properties.
 	j.offset = start + 3
+	// TODO: The rest of this should go into initializeState or a second, similar function
 	j.identifiers = p.identifiers
 	j.contextFlags = p.contextFlags
 	j.setContextFlags(ast.NodeFlagsJSDoc, true)
@@ -2278,18 +2279,19 @@ func (p *Parser) parseJSDocComment(parent *ast.Node, start int /*  = 0 */, end i
 	j.jsdocDiagnostics = p.jsdocDiagnostics // not sure
 	j.sourceFlags = p.sourceFlags
 	j.notParenthesizedArrow = p.notParenthesizedArrow
-	j.identifierPool = p.identifierPool
+	j.nodeSlicePool = p.nodeSlicePool
+	j.hasDeprecatedTag = p.hasDeprecatedTag
 
-	j.scanner.SetJSDocParsingMode(JSDocParsingModeParseAll)
-	// TODO: Copied from parseSourceFile; might conflict with j.nextTokenJSDoc in doJSDocScan
-	j.nextToken()
+	j.scanner.SetJSDocParsingMode(scanner.JSDocParsingModeParseAll)
 
-	// + 4 for leading '/** '
-	// + 1 because the last index of \n is always one index before the first character in the line and coincidentally, if there is no \n before start, it is -1, which is also one index before the first character
+	// initial indent + 4 for leading '/** '
+	// + 1 because the last index of \n is always one index before the first character in the line and,
+	// if there is no \n before start, it is -1, which is also one index before the first character
 	comment := j.parseJSDocCommentWorker(start - (strings.LastIndex(p.sourceText[:start], "\n") + 1) + 4)
 
-	setParent(comment, parent)
-	if p.contextFlags&NodeFlagsJavaScriptFile != 0 {
+	comment.Parent = parent
+	// TODO: Now copy state things like hasDeprecatedTag *back* to p
+	if p.contextFlags&ast.NodeFlagsJavaScriptFile != 0 {
 		p.jsdocDiagnostics = append(p.jsdocDiagnostics, j.diagnostics...)
 	}
 	return comment
@@ -2299,18 +2301,21 @@ func (p *Parser) parseJSDocComment(parent *ast.Node, start int /*  = 0 */, end i
  * @param offset - the offset in the containing file
  * @param indent - the number of spaces to consider as the margin (applies to non-first lines only)
  */
-func (j *JSDocParser) parseJSDocCommentWorker(indent int) *JSDoc {
+func (j *JSDocParser) parseJSDocCommentWorker(indent int) *ast.Node {
 	// Initially we can parse out a tag.  We also have seen a starting asterisk.
 	// This is so that /** * @type */ doesn't parse.
 	state := JSDocStateSawAsterisk
-	parts := []JSDocComment{}
+	parts := []*ast.Node{}
 	comments := []string{}
 	commentsPos := -1
 	linkEnd := 0
-	var margin *int
+	var hasMargin bool
+	var margin int
+	// TODO: This can be a standalone function if you will pass in margin,indent,comments and out indent,comments
 	pushComment := func(text string) {
-		if margin == nil {
-			margin = &indent
+		if !hasMargin {
+			hasMargin = true
+			margin = indent
 		}
 		comments = append(comments, text)
 		indent += len(text)
@@ -2318,14 +2323,13 @@ func (j *JSDocParser) parseJSDocCommentWorker(indent int) *JSDoc {
 
 	j.nextTokenJSDoc()
 	for j.parseOptionalJsdoc(ast.KindWhitespaceTrivia) {
-		/* TODO(TS-TO-GO) Node EmptyStatement: ; */
 	}
 	if j.parseOptionalJsdoc(ast.KindNewLineTrivia) {
 		state = JSDocStateBeginningOfLine
 		indent = 0
 	}
 loop:
-	for true {
+	for {
 		switch j.token {
 		case ast.KindAtToken:
 			comments = removeTrailingWhitespace(comments)
@@ -2337,7 +2341,7 @@ loop:
 			// Real-world comments may break this rule, so "BeginningOfLine" will not be a real line beginning
 			// for malformed examples like `/** @param {string} x @returns {number} the length */`
 			state = JSDocStateBeginningOfLine
-			margin = nil
+			hasMargin = false
 		case ast.KindNewLineTrivia:
 			comments = append(comments, j.scanner.TokenText())
 			state = JSDocStateBeginningOfLine
@@ -2362,8 +2366,8 @@ loop:
 			}
 			// only collect whitespace if we're already saving comments or have just crossed the comment indent margin
 			whitespace := j.scanner.TokenText()
-			if margin != nil && indent+len(whitespace) > *margin {
-				comments = append(comments, whitespace[*margin-indent:])
+			if hasMargin && indent+len(whitespace) > margin {
+				comments = append(comments, whitespace[margin-indent:])
 			}
 			indent += len(whitespace)
 		case ast.KindEndOfFile:
@@ -2410,7 +2414,9 @@ loop:
 	if len(parts) > 0 && j.tags != nil && commentsPos == -1 {
 		panic("having parsed tags implies that the end of the comment span should be set")
 	}
-	jsdocComment := j.factory.NewJSDoc(parts, j.tags)
+	jsdocComment := j.factory.NewJSDoc(
+		j.factory.NewNodeList(core.NewTextRange(j.offset, j.offset+commentsPos), parts),
+		j.factory.NewNodeList(core.NewTextRange(j.offset+j.tagsPos, j.offset+j.tagsEnd), j.tags))
 	j.finishNodeWithEnd(jsdocComment, 0, len(j.sourceText))
 	return jsdocComment
 }
@@ -2443,7 +2449,7 @@ func removeTrailingWhitespace(comments []string) []string {
 
 func (j *JSDocParser) isNextNonwhitespaceTokenEndOfFile() bool {
 	// We must use infinite lookahead, as there could be any number of newlines :(
-	for true {
+	for {
 		j.nextTokenJSDoc()
 		if j.token == ast.KindEndOfFile {
 			return true
@@ -2452,7 +2458,6 @@ func (j *JSDocParser) isNextNonwhitespaceTokenEndOfFile() bool {
 			return false
 		}
 	}
-	return false
 }
 
 func (j *JSDocParser) skipWhitespace() {
@@ -2496,7 +2501,7 @@ func (j *JSDocParser) skipWhitespaceOrAsterisk() string {
 	}
 }
 
-func (j *JSDocParser) parseTag(tags []Node, margin int) Node {
+func (j *JSDocParser) parseTag(tags []*ast.Node, margin int) *ast.Node {
 	if j.token != ast.KindAtToken {
 		panic("should be called only at the start of a tag")
 	}
@@ -2506,37 +2511,39 @@ func (j *JSDocParser) parseTag(tags []Node, margin int) Node {
 	tagName := j.parseJSDocIdentifierName(nil)
 	indentText := j.skipWhitespaceOrAsterisk()
 
-	var tag Node
+	var tag *ast.Node
 	switch tagName.Text() {
-	case "author":
-		tag = j.parseAuthorTag(start, tagName, margin, indentText)
 	case "implements":
 		tag = j.parseImplementsTag(start, tagName, margin, indentText)
 	case "augments", "extends":
 		tag = j.parseAugmentsTag(start, tagName, margin, indentText)
-	case "class", "constructor":
-		tag = j.parseSimpleTag(start, func(tagName *Identifier, comments []JSDocComment) Node { return NewJSDocClassTag(tagName, comments) }, tagName, margin, indentText)
 	case "public":
-		tag = j.parseSimpleTag(start, func(tagName *Identifier, comments []JSDocComment) Node { return NewJSDocPublicTag(tagName, comments) }, tagName, margin, indentText)
+		tag = j.parseSimpleTag(start, func(tagName *ast.IdentifierNode, comments *ast.NodeList) *ast.Node {
+			return j.factory.NewJSDocPublicTag(tagName, comments)
+		}, tagName, margin, indentText)
 	case "private":
-		tag = j.parseSimpleTag(start, func(tagName *Identifier, comments []JSDocComment) Node { return NewJSDocPrivateTag(tagName, comments) }, tagName, margin, indentText)
+		tag = j.parseSimpleTag(start, func(tagName *ast.IdentifierNode, comments *ast.NodeList) *ast.Node {
+			return j.factory.NewJSDocPrivateTag(tagName, comments)
+		}, tagName, margin, indentText)
 	case "protected":
-		tag = j.parseSimpleTag(start, func(tagName *Identifier, comments []JSDocComment) Node {
-			return NewJSDocProtectedTag(tagName, comments)
+		tag = j.parseSimpleTag(start, func(tagName *ast.IdentifierNode, comments *ast.NodeList) *ast.Node {
+			return j.factory.NewJSDocProtectedTag(tagName, comments)
 		}, tagName, margin, indentText)
 	case "readonly":
-		tag = j.parseSimpleTag(start, func(tagName *Identifier, comments []JSDocComment) Node { return NewJSDocReadonlyTag(tagName, comments) }, tagName, margin, indentText)
+		tag = j.parseSimpleTag(start, func(tagName *ast.IdentifierNode, comments *ast.NodeList) *ast.Node {
+			return j.factory.NewJSDocReadonlyTag(tagName, comments)
+		}, tagName, margin, indentText)
 	case "override":
-		tag = j.parseSimpleTag(start, func(tagName *Identifier, comments []JSDocComment) Node { return NewJSDocOverrideTag(tagName, comments) }, tagName, margin, indentText)
+		tag = j.parseSimpleTag(start, func(tagName *ast.IdentifierNode, comments *ast.NodeList) *ast.Node {
+			return j.factory.NewJSDocOverrideTag(tagName, comments)
+		}, tagName, margin, indentText)
 	case "deprecated":
-		hasDeprecatedTag = true
-		tag = j.parseSimpleTag(start, func(tagName *Identifier, comments []JSDocComment) Node {
-			return NewJSDocDeprecatedTag(tagName, comments)
+		j.hasDeprecatedTag = true
+		tag = j.parseSimpleTag(start, func(tagName *ast.IdentifierNode, comments *ast.NodeList) *ast.Node {
+			return j.factory.NewJSDocDeprecatedTag(tagName, comments)
 		}, tagName, margin, indentText)
 	case "this":
 		tag = j.parseThisTag(start, tagName, margin, indentText)
-	case "enum":
-		tag = j.parseEnumTag(start, tagName, margin, indentText)
 	case "arg", "argument", "param":
 		return j.parseParameterOrPropertyTag(start, tagName, PropertyLikeParseParameter, margin)
 	case "return", "returns":
@@ -2555,8 +2562,6 @@ func (j *JSDocParser) parseTag(tags []Node, margin int) Node {
 		tag = j.parseSatisfiesTag(start, tagName, margin, indentText)
 	case "see":
 		tag = j.parseSeeTag(start, tagName, margin, indentText)
-	case "exception", "throws":
-		tag = j.parseThrowsTag(start, tagName, margin, indentText)
 	case "import":
 		tag = j.parseImportTag(start, tagName, margin, indentText)
 	default:
@@ -2565,7 +2570,7 @@ func (j *JSDocParser) parseTag(tags []Node, margin int) Node {
 	return tag
 }
 
-func (j *JSDocParser) parseTrailingTagComments(pos int, end int, margin int, indentText string) []Node {
+func (j *JSDocParser) parseTrailingTagComments(pos int, end int, margin int, indentText string) *ast.NodeList {
 	// some tags, like typedef and callback, have already parsed their comments earlier
 	if len(indentText) == 0 {
 		margin += end - pos
@@ -2574,10 +2579,10 @@ func (j *JSDocParser) parseTrailingTagComments(pos int, end int, margin int, ind
 	return j.parseTagComments(margin, &initialMargin)
 }
 
-func (j *JSDocParser) parseTagComments(indent int, initialMargin *string) []Node {
+func (j *JSDocParser) parseTagComments(indent int, initialMargin *string) *ast.NodeList {
 	commentsPos := j.nodePos()
 	var comments []string
-	var parts []JSDocComment
+	var parts []*ast.Node
 	linkEnd := -1
 	state := JSDocStateBeginningOfLine
 	// TODO: Probably should be int with -1, but I'm not sure whether indent can be negative.
@@ -2599,7 +2604,7 @@ func (j *JSDocParser) parseTagComments(indent int, initialMargin *string) []Node
 	}
 	tok := j.token /* as JSDocast.Kind | ast.Kind.JSDocCommentTextToken */
 loop:
-	for true {
+	for {
 		switch tok {
 		case ast.KindNewLineTrivia:
 			state = JSDocStateBeginningOfLine
@@ -2693,10 +2698,10 @@ loop:
 		j.finishNode(text, commentStart)
 		parts = append(parts, text)
 	}
-	return parts
+	return j.factory.NewNodeList(core.NewTextRange(j.offset+commentsPos, j.offset+j.scanner.TokenEnd()), parts)
 }
 
-func (j *JSDocParser) parseJSDocLink(start int) JSDocComment {
+func (j *JSDocParser) parseJSDocLink(start int) *ast.Node {
 	state := j.mark()
 	linkType := j.parseJSDocLinkPrefix()
 	if linkType == "NONE" {
@@ -2712,7 +2717,7 @@ func (j *JSDocParser) parseJSDocLink(start int) JSDocComment {
 		text = append(text, j.scanner.TokenText())
 		j.nextTokenJSDoc()
 	}
-	var create JSDocComment
+	var create *ast.Node
 	switch linkType {
 	case "link":
 		create = j.factory.NewJSDocLink(name, strings.Join(text, ""))
@@ -2725,14 +2730,14 @@ func (j *JSDocParser) parseJSDocLink(start int) JSDocComment {
 	return create
 }
 
-func (j *JSDocParser) parseJSDocLinkName() Node {
+func (j *JSDocParser) parseJSDocLinkName() *ast.Node {
 	if tokenIsIdentifierOrKeyword(j.token) {
 		pos := j.nodePos()
 
-		var name Node
+		var name *ast.Node
 		name = j.parseIdentifierName()
 		for j.parseOptional(ast.KindDotToken) {
-			var right *Identifier
+			var right *ast.IdentifierNode
 			if j.token == ast.KindPrivateIdentifier {
 				right = j.createMissingIdentifier()
 			} else {
@@ -2740,10 +2745,10 @@ func (j *JSDocParser) parseJSDocLinkName() Node {
 			}
 			name = j.factory.NewQualifiedName(name, right)
 			j.finishNode(name, pos)
-
 		}
+
 		for j.token == ast.KindPrivateIdentifier {
-			j.reScanHashToken()
+			j.scanner.ReScanHashToken()
 			j.nextTokenJSDoc()
 			name = j.factory.NewQualifiedName(name, j.parseIdentifier())
 			j.finishNode(name, pos)
@@ -2770,20 +2775,19 @@ func isJSDocLinkTag(kind string) bool {
 	return kind == "link" || kind == "linkcode" || kind == "linkplain"
 }
 
-func (j *JSDocParser) parseUnknownTag(start int, tagName *Identifier, indent int, indentText string) Node {
+func (j *JSDocParser) parseUnknownTag(start int, tagName *ast.IdentifierNode, indent int, indentText string) *ast.Node {
 	tag := j.factory.NewJSDocUnknownTag(tagName, j.parseTrailingTagComments(start, j.nodePos(), indent, indentText))
 	j.finishNode(tag, start)
 	return tag
 }
 
-// TODO: JSDocTag should be a struct, not a Node synonym
-func (j *JSDocParser) addTag(tag Node) {
+func (j *JSDocParser) addTag(tag *ast.Node) {
 	// TODO: Maybe this is never nil and this case can be skipped!?
 	if tag == nil {
 		return
 	}
 	if j.tags == nil {
-		j.tags = []Node{tag}
+		j.tags = []*ast.Node{tag}
 		j.tagsPos = tag.Pos()
 	} else {
 		j.tags = append(j.tags, tag)
@@ -2791,7 +2795,7 @@ func (j *JSDocParser) addTag(tag Node) {
 	j.tagsEnd = tag.End()
 }
 
-func (j *JSDocParser) tryParseTypeExpression() *JSDocTypeExpression {
+func (j *JSDocParser) tryParseTypeExpression() *ast.Node {
 	j.skipWhitespaceOrAsterisk()
 	if j.token == ast.KindOpenBraceToken {
 		return j.parseJSDocTypeExpression(false /*mayOmitBraces*/)
@@ -2800,7 +2804,7 @@ func (j *JSDocParser) tryParseTypeExpression() *JSDocTypeExpression {
 	}
 }
 
-func (j *JSDocParser) parseBracketNameInPropertyAndParamTag() (name EntityName, isBracketed bool) {
+func (j *JSDocParser) parseBracketNameInPropertyAndParamTag() (name *ast.EntityName, isBracketed bool) {
 	// Looking for something like '[foo]', 'foo', '[foo.bar]' or 'foo.bar'
 	isBracketed = j.parseOptionalJsdoc(ast.KindOpenBracketToken)
 	if isBracketed {
@@ -2825,22 +2829,22 @@ func (j *JSDocParser) parseBracketNameInPropertyAndParamTag() (name EntityName, 
 	return name, isBracketed
 }
 
-func isObjectOrObjectArrayTypeReference(node TypeNode) bool {
-	switch node.Kind() {
+func isObjectOrObjectArrayTypeReference(node *ast.TypeNode) bool {
+	switch node.Kind {
 	case ast.KindObjectKeyword:
 		return true
 	case ast.KindArrayType:
-		return isObjectOrObjectArrayTypeReference((node.(*ArrayTypeNode)).elementType)
+		return isObjectOrObjectArrayTypeReference(node.AsArrayTypeNode().ElementType)
 	default:
-		if isTypeReferenceNode(node) {
-			ref := node.(*TypeReferenceNode)
-			return isIdentifier(ref.typeName) && ref.typeName.(*Identifier).text == "Object" && ref.typeArguments == nil
+		if ast.IsTypeReferenceNode(node) {
+			ref := node.AsTypeReferenceNode()
+			return ast.IsIdentifier(ref.TypeName) && ref.TypeName.AsIdentifier().Text == "Object" && ref.TypeArguments == nil
 		}
 		return false
 	}
 }
 
-func (j *JSDocParser) parseParameterOrPropertyTag(start int, tagName *Identifier, target PropertyLikeParse, indent int) Node {
+func (j *JSDocParser) parseParameterOrPropertyTag(start int, tagName *ast.IdentifierNode, target PropertyLikeParse, indent int) *ast.Node {
 	typeExpression := j.tryParseTypeExpression()
 	isNameFirst := typeExpression == nil
 	j.skipWhitespaceOrAsterisk()
@@ -2859,7 +2863,7 @@ func (j *JSDocParser) parseParameterOrPropertyTag(start int, tagName *Identifier
 		typeExpression = nestedTypeLiteral
 		isNameFirst = true
 	}
-	var result Node /* JSDocPropertyTag | JSDocParameterTag */
+	var result *ast.Node /* JSDocPropertyTag | JSDocParameterTag */
 	if target == PropertyLikeParseProperty {
 		result = j.factory.NewJSDocPropertyTag(tagName, name, isBracketed, typeExpression, isNameFirst, comment)
 	} else {
@@ -2869,11 +2873,11 @@ func (j *JSDocParser) parseParameterOrPropertyTag(start int, tagName *Identifier
 	return result
 }
 
-func (j *JSDocParser) parseNestedTypeLiteral(typeExpression *JSDocTypeExpression, name EntityName, target PropertyLikeParse, indent int) *JSDocTypeExpression {
-	if typeExpression != nil && isObjectOrObjectArrayTypeReference(typeExpression.typeNode) {
+func (j *JSDocParser) parseNestedTypeLiteral(typeExpression *ast.Node, name *ast.EntityName, target PropertyLikeParse, indent int) *ast.Node {
+	if typeExpression != nil && isObjectOrObjectArrayTypeReference(typeExpression.Type()) {
 		pos := j.nodePos()
-		var child Node
-		var children []Node
+		var child *ast.Node
+		var children []*ast.Node
 		for {
 			state := j.mark()
 			child = j.parseChildParameterOrPropertyTag(target, indent, name)
@@ -2881,14 +2885,14 @@ func (j *JSDocParser) parseNestedTypeLiteral(typeExpression *JSDocTypeExpression
 				j.rewind(state)
 				break
 			}
-			if child.Kind() == ast.KindJSDocParameterTag || child.Kind() == ast.KindJSDocPropertyTag {
+			if child.Kind == ast.KindJSDocParameterTag || child.Kind == ast.KindJSDocPropertyTag {
 				children = append(children, child)
-			} else if child.Kind() == ast.KindJSDocTemplateTag {
-				j.parseErrorAtRange(child.(*JSDocTemplateTag).tagName.Loc(), diagnostics.A_JSDoc_template_tag_may_not_follow_a_typedef_callback_or_overload_tag)
+			} else if child.Kind == ast.KindJSDocTemplateTag {
+				j.parseErrorAtRange(child.AsJSDocTemplateTag().TagName.Loc, diagnostics.A_JSDoc_template_tag_may_not_follow_a_typedef_callback_or_overload_tag)
 			}
 		}
 		if children != nil {
-			literal := j.factory.NewJSDocTypeLiteral(children, typeExpression.typeNode.Kind() == ast.KindArrayType)
+			literal := j.factory.NewJSDocTypeLiteral(children, typeExpression.Type().Kind == ast.KindArrayType)
 			j.finishNode(literal, pos)
 			result := j.factory.NewJSDocTypeExpression(literal)
 			j.finishNode(result, pos)
@@ -2898,9 +2902,9 @@ func (j *JSDocParser) parseNestedTypeLiteral(typeExpression *JSDocTypeExpression
 	return nil
 }
 
-func (j *JSDocParser) parseReturnTag(start int, tagName *Identifier, indent int, indentText string) *JSDocReturnTag {
+func (j *JSDocParser) parseReturnTag(start int, tagName *ast.IdentifierNode, indent int, indentText string) *ast.Node {
 	// TODO: Just pass in tags
-	if some(j.tags, isJSDocReturnTag) {
+	if core.Some(j.tags, ast.IsJSDocReturnTag) {
 		j.parseErrorAt(tagName.Pos(), j.scanner.TokenStart(), diagnostics.X_0_tag_already_specified, tagName.Text())
 	}
 
@@ -2910,13 +2914,13 @@ func (j *JSDocParser) parseReturnTag(start int, tagName *Identifier, indent int,
 	return result
 }
 
-func (j *JSDocParser) parseTypeTag(start int, tagName *Identifier, indent int, indentText string) *JSDocTypeTag {
-	if some(j.tags, isJSDocTypeTag) {
+func (j *JSDocParser) parseTypeTag(start int, tagName *ast.IdentifierNode, indent int, indentText string) *ast.Node {
+	if core.Some(j.tags, ast.IsJSDocTypeTag) {
 		j.parseErrorAt(tagName.Pos(), j.scanner.TokenStart(), diagnostics.X_0_tag_already_specified, tagName.Text())
 	}
 
 	typeExpression := j.parseJSDocTypeExpression(true)
-	var comments []Node
+	var comments *ast.NodeList
 	if indent != -1 && indentText != "" {
 		comments = j.parseTrailingTagComments(start, j.nodePos(), indent, indentText)
 	}
@@ -2925,11 +2929,11 @@ func (j *JSDocParser) parseTypeTag(start int, tagName *Identifier, indent int, i
 	return result
 }
 
-func (j *JSDocParser) parseSeeTag(start int, tagName *Identifier, indent int, indentText string) *JSDocSeeTag {
+func (j *JSDocParser) parseSeeTag(start int, tagName *ast.IdentifierNode, indent int, indentText string) *ast.Node {
 	isMarkdownOrJSDocLink := j.token == ast.KindOpenBracketToken || j.lookAhead(func() bool {
 		return j.nextTokenJSDoc() == ast.KindAtToken && tokenIsIdentifierOrKeyword(j.nextTokenJSDoc()) && isJSDocLinkTag(j.scanner.TokenValue())
 	})
-	var nameExpression *JSDocNameReference
+	var nameExpression *ast.Node
 	if !isMarkdownOrJSDocLink {
 		nameExpression = j.parseJSDocNameReference()
 	}
@@ -2939,67 +2943,21 @@ func (j *JSDocParser) parseSeeTag(start int, tagName *Identifier, indent int, in
 	return result
 }
 
-func (j *JSDocParser) parseThrowsTag(start int, tagName *Identifier, indent int, indentText string) *JSDocThrowsTag {
-	typeExpression := j.tryParseTypeExpression()
-	comment := j.parseTrailingTagComments(start, j.nodePos(), indent, indentText)
-	result := j.factory.NewJSDocThrowsTag(tagName, typeExpression, comment)
-	j.finishNode(result, start)
-	return result
-}
-
-func (j *JSDocParser) parseAuthorTag(start int, tagName *Identifier, indent int, indentText string) *JSDocAuthorTag {
-	commentStart := j.nodePos()
-	textOnly := j.parseAuthorNameAndEmail()
-	commentEnd := j.scanner.TokenFullStart()
-	comments := j.parseTrailingTagComments(start, commentEnd, indent, indentText)
-	if comments == nil {
-		commentEnd = j.scanner.TokenFullStart()
-	}
-	j.finishNodeWithEnd(textOnly, commentStart, commentEnd)
-	var allParts []JSDocComment = []JSDocComment{textOnly}
-	allParts = append(allParts, comments...)
-
-	result := j.factory.NewJSDocAuthorTag(tagName, allParts)
-	j.finishNode(result, start)
-	return result
-}
-
-func (j *JSDocParser) parseAuthorNameAndEmail() *JSDocText {
-	var comments []string
-	inEmail := false
-	token := j.scanner.token
-	for token != ast.KindEndOfFile && token != ast.KindNewLineTrivia {
-		if token == ast.KindLessThanToken {
-			inEmail = true
-		} else if token == ast.KindAtToken && !inEmail {
-			break
-		} else if token == ast.KindGreaterThanToken && inEmail {
-			comments = append(comments, j.scanner.TokenText())
-			j.scanner.ResetTokenState(j.scanner.TokenEnd())
-			break
-		}
-		comments = append(comments, j.scanner.TokenText())
-		token = j.nextTokenJSDoc()
-	}
-
-	return NewJSDocText(strings.Join(comments, ""))
-}
-
-func (j *JSDocParser) parseImplementsTag(start int, tagName *Identifier, margin int, indentText string) *JSDocImplementsTag {
+func (j *JSDocParser) parseImplementsTag(start int, tagName *ast.IdentifierNode, margin int, indentText string) *ast.Node {
 	className := j.parseExpressionWithTypeArgumentsForAugments()
 	result := j.factory.NewJSDocImplementsTag(tagName, className, j.parseTrailingTagComments(start, j.nodePos(), margin, indentText))
 	j.finishNode(result, start)
 	return result
 }
 
-func (j *JSDocParser) parseAugmentsTag(start int, tagName *Identifier, margin int, indentText string) *JSDocAugmentsTag {
+func (j *JSDocParser) parseAugmentsTag(start int, tagName *ast.IdentifierNode, margin int, indentText string) *ast.Node {
 	className := j.parseExpressionWithTypeArgumentsForAugments()
 	result := j.factory.NewJSDocAugmentsTag(tagName, className, j.parseTrailingTagComments(start, j.nodePos(), margin, indentText))
 	j.finishNode(result, start)
 	return result
 }
 
-func (j *JSDocParser) parseSatisfiesTag(start int, tagName *Identifier, margin int, indentText string) *JSDocSatisfiesTag {
+func (j *JSDocParser) parseSatisfiesTag(start int, tagName *ast.IdentifierNode, margin int, indentText string) *ast.Node {
 	typeExpression := j.parseJSDocTypeExpression(false)
 	comments := j.parseTrailingTagComments(start, j.nodePos(), margin, indentText)
 	result := j.factory.NewJSDocSatisfiesTag(tagName, typeExpression, comments)
@@ -3007,10 +2965,10 @@ func (j *JSDocParser) parseSatisfiesTag(start int, tagName *Identifier, margin i
 	return result
 }
 
-func (j *JSDocParser) parseImportTag(start int, tagName *Identifier, margin int, indentText string) *JSDocImportTag {
+func (j *JSDocParser) parseImportTag(start int, tagName *ast.IdentifierNode, margin int, indentText string) *ast.Node {
 	afterImportTagPos := j.scanner.TokenFullStart()
 
-	var identifier *Identifier
+	var identifier *ast.IdentifierNode
 	if j.isIdentifier() {
 		identifier = j.parseIdentifier()
 	}
@@ -3025,13 +2983,13 @@ func (j *JSDocParser) parseImportTag(start int, tagName *Identifier, margin int,
 	return result
 }
 
-func (j *JSDocParser) parseExpressionWithTypeArgumentsForAugments() *ExpressionWithTypeArguments {
+func (j *JSDocParser) parseExpressionWithTypeArgumentsForAugments() *ast.Node {
 	usedBrace := j.parseOptional(ast.KindOpenBraceToken)
 	pos := j.nodePos()
 	expression := j.parsePropertyAccessEntityNameExpression()
-	j.scanner.setSkipJsDocLeadingAsterisks(true)
+	j.scanner.SetSkipJsDocLeadingAsterisks(true)
 	typeArguments := j.parseTypeArguments()
-	j.scanner.setSkipJsDocLeadingAsterisks(false)
+	j.scanner.SetSkipJsDocLeadingAsterisks(false)
 	node := j.factory.NewExpressionWithTypeArguments(expression, typeArguments)
 	res := node
 	j.finishNode(node, pos)
@@ -3041,24 +2999,24 @@ func (j *JSDocParser) parseExpressionWithTypeArgumentsForAugments() *ExpressionW
 	return res
 }
 
-func (j *JSDocParser) parsePropertyAccessEntityNameExpression() Node {
+func (j *JSDocParser) parsePropertyAccessEntityNameExpression() *ast.Node {
 	pos := j.nodePos()
-	var node Node = j.parseJSDocIdentifierName(nil)
+	node := j.parseJSDocIdentifierName(nil)
 	for j.parseOptional(ast.KindDotToken) {
 		name := j.parseJSDocIdentifierName(nil)
-		node = j.factory.NewPropertyAccessExpression(node, nil, name, NodeFlagsNone)
+		node = j.factory.NewPropertyAccessExpression(node, nil, name, ast.NodeFlagsNone)
 		j.finishNode(node, pos)
 	}
 	return node
 }
 
-func (j *JSDocParser) parseSimpleTag(start int, createTag func(tagName *Identifier, comment []JSDocComment) Node, tagName *Identifier, margin int, indentText string) Node {
+func (j *JSDocParser) parseSimpleTag(start int, createTag func(tagName *ast.IdentifierNode, comment *ast.NodeList) *ast.Node, tagName *ast.IdentifierNode, margin int, indentText string) *ast.Node {
 	tag := createTag(tagName, j.parseTrailingTagComments(start, j.nodePos(), margin, indentText))
 	j.finishNode(tag, start)
 	return tag
 }
 
-func (j *JSDocParser) parseThisTag(start int, tagName *Identifier, margin int, indentText string) *JSDocThisTag {
+func (j *JSDocParser) parseThisTag(start int, tagName *ast.IdentifierNode, margin int, indentText string) *ast.Node {
 	typeExpression := j.parseJSDocTypeExpression(true)
 	j.skipWhitespace()
 	result := j.factory.NewJSDocThisTag(tagName, typeExpression, j.parseTrailingTagComments(start, j.nodePos(), margin, indentText))
@@ -3066,17 +3024,10 @@ func (j *JSDocParser) parseThisTag(start int, tagName *Identifier, margin int, i
 	return result
 }
 
-func (j *JSDocParser) parseEnumTag(start int, tagName *Identifier, margin int, indentText string) *JSDocEnumTag {
-	typeExpression := j.parseJSDocTypeExpression(true)
-	j.skipWhitespace()
-	result := j.factory.NewJSDocEnumTag(tagName, typeExpression, j.parseTrailingTagComments(start, j.nodePos(), margin, indentText))
-	j.finishNode(result, start)
-	return result
-}
-
-func (j *JSDocParser) parseTypedefTag(start int, tagName *Identifier, indent int, indentText string) *JSDocTypedefTag {
+func (j *JSDocParser) parseTypedefTag(start int, tagName *ast.IdentifierNode, indent int, indentText string) *ast.Node {
+	// TODO: Don't need to parse anonymous typedef/callback tags anymore
 	typeExpression := j.tryParseTypeExpression()
-	var finalTypeExpression Node
+	var finalTypeExpression *ast.Node
 	j.skipWhitespaceOrAsterisk()
 
 	fullName := j.parseJSDocTypeNameWithNamespace(false /*nested*/)
@@ -3084,30 +3035,30 @@ func (j *JSDocParser) parseTypedefTag(start int, tagName *Identifier, indent int
 	comment := j.parseTagComments(indent, nil)
 
 	end := -1
-	if typeExpression == nil || isObjectOrObjectArrayTypeReference(typeExpression.typeNode) {
-		var child Node
-		var childTypeTag *JSDocTypeTag
-		var jsDocPropertyTags []Node
+	if typeExpression == nil || isObjectOrObjectArrayTypeReference(typeExpression.Type()) {
+		var child *ast.Node
+		var childTypeTag *ast.JSDocTypeTag
+		var jsDocPropertyTags []*ast.Node
 		hasChildren := false
-		for true {
+		for {
 			state := j.mark()
 			child = j.parseChildPropertyTag(indent)
 			if child == nil {
 				j.rewind(state)
 				break
 			}
-			if child.Kind() == ast.KindJSDocTemplateTag {
+			if child.Kind == ast.KindJSDocTemplateTag {
 				break
 			}
 			hasChildren = true
-			if child.Kind() == ast.KindJSDocTypeTag {
+			if child.Kind == ast.KindJSDocTypeTag {
 				if childTypeTag == nil {
-					childTypeTag = child.(*JSDocTypeTag)
+					childTypeTag = child.AsJSDocTypeTag()
 				} else {
 					lastError := j.parseErrorAtCurrentToken(diagnostics.A_JSDoc_typedef_comment_may_not_contain_multiple_type_tags)
 					if lastError != nil {
-						related := j.factory.NewDiagnostic(nil, NewTextRange(0, 0), diagnostics.The_tag_was_first_specified_here)
-						addRelatedInfo(lastError, related)
+						related := ast.NewDiagnostic(nil, core.NewTextRange(j.offset, j.offset), diagnostics.The_tag_was_first_specified_here)
+						lastError.AddRelatedInfo(related)
 					}
 					break
 				}
@@ -3116,10 +3067,10 @@ func (j *JSDocParser) parseTypedefTag(start int, tagName *Identifier, indent int
 			}
 		}
 		if hasChildren {
-			isArrayType := typeExpression != nil && typeExpression.typeNode.Kind() == ast.KindArrayType
+			isArrayType := typeExpression != nil && typeExpression.Type().Kind == ast.KindArrayType
 			jsdocTypeLiteral := j.factory.NewJSDocTypeLiteral(jsDocPropertyTags, isArrayType)
-			if childTypeTag != nil && childTypeTag.typeExpression != nil && !isObjectOrObjectArrayTypeReference(childTypeTag.typeExpression.typeNode) {
-				finalTypeExpression = childTypeTag.typeExpression
+			if childTypeTag != nil && childTypeTag.TypeExpression != nil && !isObjectOrObjectArrayTypeReference(childTypeTag.TypeExpression.Type()) {
+				finalTypeExpression = childTypeTag.TypeExpression
 			} else {
 				j.finishNode(jsdocTypeLiteral, start)
 				finalTypeExpression = jsdocTypeLiteral
@@ -3150,7 +3101,7 @@ func (j *JSDocParser) parseTypedefTag(start int, tagName *Identifier, indent int
 	return typedefTag
 }
 
-func (j *JSDocParser) parseJSDocTypeNameWithNamespace(nested bool) Node {
+func (j *JSDocParser) parseJSDocTypeNameWithNamespace(nested bool) *ast.Node {
 	start := j.scanner.TokenStart()
 	if !tokenIsIdentifierOrKeyword(j.token) {
 		return nil
@@ -3158,11 +3109,11 @@ func (j *JSDocParser) parseJSDocTypeNameWithNamespace(nested bool) Node {
 	typeNameOrNamespaceName := j.parseJSDocIdentifierName(nil)
 	if j.parseOptional(ast.KindDotToken) {
 		body := j.parseJSDocTypeNameWithNamespace(true)
-		var flags NodeFlags
+		var flags ast.NodeFlags
 		if nested {
-			flags = NodeFlagsNestedNamespace
+			flags = ast.NodeFlagsNestedNamespace
 		} else {
-			flags = NodeFlagsNone
+			flags = ast.NodeFlagsNone
 		}
 		jsDocNamespaceNode := j.factory.NewModuleDeclaration(nil, typeNameOrNamespaceName, body, flags)
 		j.finishNode(jsDocNamespaceNode, start)
@@ -3170,15 +3121,15 @@ func (j *JSDocParser) parseJSDocTypeNameWithNamespace(nested bool) Node {
 	}
 
 	if nested {
-		typeNameOrNamespaceName.flags |= NodeFlagsIdentifierIsInJSDocNamespace
+		typeNameOrNamespaceName.Flags |= ast.NodeFlagsIdentifierIsInJSDocNamespace
 	}
 	return typeNameOrNamespaceName
 }
 
-// TODO: Maybe should make a separate CallbackTagParameterList (array-holding type)
-func (j *JSDocParser) parseCallbackTagParameters(indent int) []*JSDocParameterTag {
-	var child Node
-	var parameters []*JSDocParameterTag
+func (j *JSDocParser) parseCallbackTagParameters(indent int) *ast.NodeList {
+	var child *ast.Node
+	var parameters []*ast.Node
+	pos := j.nodePos()
 	for {
 		state := j.mark()
 		child = j.parseChildParameterOrPropertyTag(PropertyLikeParseCallbackParameter, indent, nil)
@@ -3186,23 +3137,23 @@ func (j *JSDocParser) parseCallbackTagParameters(indent int) []*JSDocParameterTa
 			j.rewind(state)
 			break
 		}
-		if child.Kind() == ast.KindJSDocTemplateTag {
-			j.parseErrorAtRange(child.(*JSDocTemplateTag).tagName.Loc(), diagnostics.A_JSDoc_template_tag_may_not_follow_a_typedef_callback_or_overload_tag)
+		if child.Kind == ast.KindJSDocTemplateTag {
+			j.parseErrorAtRange(child.AsJSDocTemplateTag().TagName.Loc, diagnostics.A_JSDoc_template_tag_may_not_follow_a_typedef_callback_or_overload_tag)
 			break
 		}
-		parameters = append(parameters, child.(*JSDocParameterTag))
+		parameters = append(parameters, child)
 	}
-	return parameters
+	return j.factory.NewNodeList(core.NewTextRange(j.offset+pos, j.offset+j.nodePos()), parameters)
 }
 
-func (j *JSDocParser) parseJSDocSignature(tags []JSDocComment, start int, indent int) *JSDocSignature {
+func (j *JSDocParser) parseJSDocSignature(tags []*ast.Node, start int, indent int) *ast.Node {
 	parameters := j.parseCallbackTagParameters(indent)
-	var returnTag *JSDocReturnTag
+	var returnTag *ast.JSDocTag
 	state := j.mark()
 	if j.parseOptionalJsdoc(ast.KindAtToken) {
 		tag := j.parseTag(tags, indent)
-		if tag != nil && tag.Kind() == ast.KindJSDocReturnTag {
-			returnTag = tag.(*JSDocReturnTag)
+		if tag != nil && tag.Kind == ast.KindJSDocReturnTag {
+			returnTag = tag
 		}
 	}
 	if returnTag == nil {
@@ -3213,7 +3164,8 @@ func (j *JSDocParser) parseJSDocSignature(tags []JSDocComment, start int, indent
 	return result
 }
 
-func (j *JSDocParser) parseCallbackTag(tags []JSDocComment, start int, tagName *Identifier, indent int, indentText string) *JSDocCallbackTag {
+func (j *JSDocParser) parseCallbackTag(tags []*ast.Node, start int, tagName *ast.IdentifierNode, indent int, indentText string) *ast.Node {
+	// TODO: name doesn't have to be optional anymore
 	fullName := j.parseJSDocTypeNameWithNamespace(false /*nested*/)
 	j.skipWhitespace()
 	comment := j.parseTagComments(indent, nil)
@@ -3232,7 +3184,7 @@ func (j *JSDocParser) parseCallbackTag(tags []JSDocComment, start int, tagName *
 	return result
 }
 
-func (j *JSDocParser) parseOverloadTag(tags []JSDocComment, start int, tagName *Identifier, indent int, indentText string) *JSDocOverloadTag {
+func (j *JSDocParser) parseOverloadTag(tags []*ast.Node, start int, tagName *ast.IdentifierNode, indent int, indentText string) *ast.Node {
 	j.skipWhitespace()
 	comment := j.parseTagComments(indent, nil)
 	typeExpression := j.parseJSDocSignature(tags, start, indent)
@@ -3250,37 +3202,36 @@ func (j *JSDocParser) parseOverloadTag(tags []JSDocComment, start int, tagName *
 	return result
 }
 
-func textsEqual(a EntityName, b EntityName) bool {
-	for !isIdentifier(a) || !isIdentifier(b) {
-		// TODO: For safety I should positively assert that a and b are QualifiedName here
-		if !isIdentifier(a) && !isIdentifier(b) && a.(*QualifiedName).right.text == b.(*QualifiedName).right.text {
-			a = a.(*QualifiedName).left
-			b = b.(*QualifiedName).left
+func textsEqual(a *ast.EntityName, b *ast.EntityName) bool {
+	for !ast.IsIdentifier(a) || !ast.IsIdentifier(b) {
+		if !ast.IsIdentifier(a) && !ast.IsIdentifier(b) && a.AsQualifiedName().Right.Text() == b.AsQualifiedName().Right.Text() {
+			a = a.AsQualifiedName().Left
+			b = b.AsQualifiedName().Left
 		} else {
 			return false
 		}
 	}
-	return a.(*Identifier).text == b.(*Identifier).text
+	return a.AsIdentifier().Text == b.AsIdentifier().Text
 }
 
-func (j *JSDocParser) parseChildPropertyTag(indent int) Node {
+func (j *JSDocParser) parseChildPropertyTag(indent int) *ast.Node {
 	return j.parseChildParameterOrPropertyTag(PropertyLikeParseProperty, indent, nil)
 }
 
-func (j *JSDocParser) parseChildParameterOrPropertyTag(target PropertyLikeParse, indent int, name EntityName) Node {
+func (j *JSDocParser) parseChildParameterOrPropertyTag(target PropertyLikeParse, indent int, name *ast.EntityName) *ast.Node {
 	canParseTag := true
 	seenAsterisk := false
-	for true {
+	for {
 		switch j.nextTokenJSDoc() {
 		case ast.KindAtToken:
 			if canParseTag {
 				child := j.tryParseChildTag(target, indent)
 				if child != nil &&
 					name != nil &&
-					(child.Kind() == ast.KindJSDocParameterTag &&
-						(isIdentifier(child.(*JSDocParameterTag).name) || !textsEqual(name, child.(*JSDocParameterTag).name.(*QualifiedName).left))) ||
-					(child.Kind() == ast.KindJSDocPropertyTag &&
-						(isIdentifier(child.(*JSDocPropertyTag).name) || !textsEqual(name, child.(*JSDocPropertyTag).name.(*QualifiedName).left))) {
+					(child.Kind == ast.KindJSDocParameterTag &&
+						(ast.IsIdentifier(child.AsJSDocParameterTag().Name()) || !textsEqual(name, child.AsJSDocParameterTag().Name().AsQualifiedName().Left))) ||
+					(child.Kind == ast.KindJSDocPropertyTag &&
+						(ast.IsIdentifier(child.AsJSDocPropertyTag().Name()) || !textsEqual(name, child.AsJSDocPropertyTag().Name().AsQualifiedName().Left))) {
 					return nil
 				}
 				return child
@@ -3300,10 +3251,9 @@ func (j *JSDocParser) parseChildParameterOrPropertyTag(target PropertyLikeParse,
 			return nil
 		}
 	}
-	return nil
 }
 
-func (j *JSDocParser) tryParseChildTag(target PropertyLikeParse, indent int) Node {
+func (j *JSDocParser) tryParseChildTag(target PropertyLikeParse, indent int) *ast.Node {
 	if j.token != ast.KindAtToken {
 		panic("should only be called when at @")
 	}
@@ -3335,27 +3285,27 @@ func (j *JSDocParser) tryParseChildTag(target PropertyLikeParse, indent int) Nod
 	return j.parseParameterOrPropertyTag(start, tagName, target, indent)
 }
 
-func (j *JSDocParser) parseTemplateTagTypeParameter() *TypeParameterDeclaration {
+func (j *JSDocParser) parseTemplateTagTypeParameter() *ast.Node {
 	typeParameterPos := j.nodePos()
 	isBracketed := j.parseOptionalJsdoc(ast.KindOpenBracketToken)
 	if isBracketed {
 		j.skipWhitespace()
 	}
 
-	modifiers := j.parseModifiersWithOptions(false, true /*permitConstAsModifier*/, false)
+	modifiers := j.parseModifiersEx(false, true /*permitConstAsModifier*/, false)
 	name := j.parseJSDocIdentifierName(diagnostics.Unexpected_token_A_type_parameter_name_was_expected_without_curly_braces)
-	var defaultType TypeNode
+	var defaultType *ast.Node
 	if isBracketed {
 		j.skipWhitespace()
 		j.parseExpected(ast.KindEqualsToken)
 		saveContextFlags := j.contextFlags
-		j.setContextFlags(NodeFlagsJSDoc, true)
+		j.setContextFlags(ast.NodeFlagsJSDoc, true)
 		defaultType = j.parseJSDocType()
 		j.contextFlags = saveContextFlags
 		j.parseExpected(ast.KindCloseBracketToken)
 	}
 
-	if nodeIsMissing(name) {
+	if ast.NodeIsMissing(name) {
 		return nil
 	}
 	result := j.factory.NewTypeParameterDeclaration(modifiers, name /*constraint*/, nil, defaultType)
@@ -3363,20 +3313,20 @@ func (j *JSDocParser) parseTemplateTagTypeParameter() *TypeParameterDeclaration 
 	return result
 }
 
-func (j *JSDocParser) parseTemplateTagTypeParameters() *TypeParameterList {
-	typeParameters := TypeParameterList{}
+func (j *JSDocParser) parseTemplateTagTypeParameters() *ast.TypeParameterList {
+	typeParameters := ast.TypeParameterList{}
 	for ok := true; ok; ok = j.parseOptionalJsdoc(ast.KindCommaToken) { // do-while loop
 		j.skipWhitespace()
 		node := j.parseTemplateTagTypeParameter()
 		if node != nil {
-			typeParameters.parameters = append(typeParameters.parameters, node)
+			typeParameters.Nodes = append(typeParameters.Nodes, node)
 		}
 		j.skipWhitespaceOrAsterisk()
 	}
 	return &typeParameters
 }
 
-func (j *JSDocParser) parseTemplateTag(start int, tagName *Identifier, indent int, indentText string) *JSDocTemplateTag {
+func (j *JSDocParser) parseTemplateTag(start int, tagName *ast.IdentifierNode, indent int, indentText string) *ast.Node {
 	// The template tag looks like one of the following:
 	//   @template T,U,V
 	//   @template {Constraint} T
@@ -3388,7 +3338,7 @@ func (j *JSDocParser) parseTemplateTag(start int, tagName *Identifier, indent in
 	// TODO: Determine whether we should enforce this in the checker.
 	// TODO: Consider moving the `constraint` to the first type parameter as we could then remove `getEffectiveConstraintOfTypeParameter`.
 	// TODO: Consider only parsing a single type parameter if there is a constraint.
-	var constraint *JSDocTypeExpression
+	var constraint *ast.Node
 	if j.token == ast.KindOpenBraceToken {
 		constraint = j.parseJSDocTypeExpression(false)
 	} else {
@@ -3408,8 +3358,8 @@ func (j *JSDocParser) parseOptionalJsdoc(t ast.Kind) bool {
 	return false
 }
 
-func (j *JSDocParser) parseJSDocEntityName() EntityName {
-	var entity EntityName = j.parseJSDocIdentifierName(nil)
+func (j *JSDocParser) parseJSDocEntityName() *ast.EntityName {
+	var entity *ast.EntityName = j.parseJSDocIdentifierName(nil)
 	if j.parseOptional(ast.KindOpenBracketToken) {
 		j.parseExpected(ast.KindCloseBracketToken)
 		// Note that y[] is accepted as an entity name, but the postfix brackets are not saved for checking.
@@ -3427,7 +3377,7 @@ func (j *JSDocParser) parseJSDocEntityName() EntityName {
 	return entity
 }
 
-func (j *JSDocParser) parseJSDocIdentifierName(diagnosticMessage *diagnostics.Message) *Identifier {
+func (j *JSDocParser) parseJSDocIdentifierName(diagnosticMessage *diagnostics.Message) *ast.IdentifierNode {
 	if !tokenIsIdentifierOrKeyword(j.token) {
 		if diagnosticMessage != nil {
 			j.parseErrorAtCurrentToken(diagnosticMessage)
@@ -3440,7 +3390,8 @@ func (j *JSDocParser) parseJSDocIdentifierName(diagnosticMessage *diagnostics.Me
 		j.finishNode(result, j.nodePos())
 	}
 	pos := j.nodePos()
-	text := j.internIdentifier(j.scanner.TokenValue())
+	text := j.scanner.TokenValue()
+	j.internIdentifier(text)
 	j.nextTokenJSDoc()
 	result := j.newIdentifier(text)
 	j.finishNode(result, pos)
@@ -6801,9 +6752,8 @@ func (p *Parser) withJSDoc(node *ast.Node, file *ast.SourceFile, hasJSDoc bool) 
 		panic("tried to set JSDoc on a node with existing JSDoc")
 	}
 	// Should only be called once per node
-	var jsDoc []*ast.Node = nil
 	p.hasDeprecatedTag = false
-	jsDoc = mapDefined(getJSDocCommentRanges(node, p.sourceText), func(comment ast.CommentRange) *ast.Node {
+	jsDoc := mapDefined(getJSDocCommentRanges(&p.factory, node, p.sourceText), func(comment ast.CommentRange) *ast.Node {
 		return p.parseJSDocComment(node, comment.Pos(), comment.End())
 	})
 	if jsDoc != nil {
@@ -7351,8 +7301,8 @@ func attachFileToDiagnostics(diagnostics []*ast.Diagnostic, file *ast.SourceFile
 	return diagnostics
 }
 
-func getCommentPragmas(sourceText string) (pragmas []ast.Pragma) {
-	for commentRange := range scanner.GetLeadingCommentRanges(sourceText, 0) {
+func getCommentPragmas(f *ast.NodeFactory, sourceText string) (pragmas []ast.Pragma) {
+	for commentRange := range scanner.GetLeadingCommentRanges(f, sourceText, 0) {
 		comment := sourceText[commentRange.Pos():commentRange.End()]
 		pragmas = extractPragmas(commentRange, comment)
 	}

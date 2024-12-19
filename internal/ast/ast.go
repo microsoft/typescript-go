@@ -5189,6 +5189,10 @@ func (node *JSDocTypeTag) ForEachChild(v Visitor) bool {
 	return visit(v, node.TagName) || visit(v, node.TypeExpression) || visitNodeList(v, node.Comment)
 }
 
+func IsJSDocTypeTag(node *Node) bool {
+	return node.Kind == KindJSDocTypeTag
+}
+
 // JSDocUnknownTag
 type JSDocUnknownTag struct {
 	JSDocTagBase
@@ -5291,6 +5295,10 @@ func (f *NodeFactory) NewJSDocReturnTag(tagName *IdentifierNode, typeExpression 
 
 func (node *JSDocReturnTag) ForEachChild(v Visitor) bool {
 	return visit(v, node.TagName) || visit(v, node.TypeExpression) || visitNodeList(v, node.Comment)
+}
+
+func IsJSDocReturnTag(node *Node) bool {
+	return node.Kind == KindJSDocReturnTag
 }
 
 // JSDocPublicTag
@@ -5582,11 +5590,11 @@ func (node *JSDocTypeLiteral) ForEachChild(v Visitor) bool {
 type JSDocSignature struct {
 	TypeNodeBase
 	typeParameters *TypeParameterList
-	Parameters     []*JSDocTag
+	Parameters     *NodeList
 	Type           *JSDocTag
 }
 
-func (f *NodeFactory) NewJSDocSignature(typeParameters *TypeParameterList, parameters []*JSDocTag, typeNode *JSDocTag) *Node {
+func (f *NodeFactory) NewJSDocSignature(typeParameters *TypeParameterList, parameters *NodeList, typeNode *JSDocTag) *Node {
 	data := &JSDocSignature{}
 	data.typeParameters = typeParameters
 	data.Parameters = parameters
@@ -5595,7 +5603,7 @@ func (f *NodeFactory) NewJSDocSignature(typeParameters *TypeParameterList, param
 }
 
 func (node *JSDocSignature) ForEachChild(v Visitor) bool {
-	return visitNodeList(v, node.typeParameters) || visitNodes(v, node.Parameters) || visit(v, node.Type)
+	return visitNodeList(v, node.typeParameters) || visitNodeList(v, node.Parameters) || visit(v, node.Type)
 }
 
 func (node *JSDocSignature) TypeParameters() *TypeParameterList { return node.typeParameters }

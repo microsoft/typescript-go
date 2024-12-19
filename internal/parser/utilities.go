@@ -66,7 +66,7 @@ func mapDefined[T any, U any](slice []T, mapFn func(T) *U) []*U {
 	if len(slice) == 0 {
 		return nil
 	}
-	result := make([]*U, len(slice))
+	result := make([]*U, 0, len(slice))
 	for _, v := range slice {
 		if mapped := mapFn(v); mapped != nil {
 			result = append(result, mapped)
@@ -75,18 +75,18 @@ func mapDefined[T any, U any](slice []T, mapFn func(T) *U) []*U {
 	return result
 }
 
-func getJSDocCommentRanges(node *ast.Node, text string) []ast.CommentRange {
+func getJSDocCommentRanges(f *ast.NodeFactory, node *ast.Node, text string) []ast.CommentRange {
 	var commentRanges []ast.CommentRange
 	switch node.Kind {
 	case ast.KindParameter, ast.KindTypeParameter, ast.KindFunctionExpression, ast.KindArrowFunction, ast.KindParenthesizedExpression, ast.KindVariableDeclaration, ast.KindExportSpecifier:
-		for commentRange := range scanner.GetLeadingCommentRanges(text, node.Pos()) {
+		for commentRange := range scanner.GetLeadingCommentRanges(f, text, node.Pos()) {
 			commentRanges = append(commentRanges, commentRange)
 		}
-		for commentRange := range scanner.GetTrailingCommentRanges(text, node.Pos()) {
+		for commentRange := range scanner.GetTrailingCommentRanges(f, text, node.Pos()) {
 			commentRanges = append(commentRanges, commentRange)
 		}
 	default:
-		for commentRange := range scanner.GetLeadingCommentRanges(text, node.Pos()) {
+		for commentRange := range scanner.GetLeadingCommentRanges(f, text, node.Pos()) {
 			commentRanges = append(commentRanges, commentRange)
 		}
 	}
