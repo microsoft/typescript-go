@@ -109,6 +109,8 @@ const (
 	CachedTypeKindRestrictiveTypeParameter
 	CachedTypeKindIndexedAccessForReading
 	CachedTypeKindIndexedAccessForWriting
+	CachedTypeKindWidened
+	CachedTypeKindRegularObjectLiteral
 )
 
 // CachedTypeKey
@@ -440,6 +442,13 @@ const (
 	IterationTypeKindNext
 )
 
+type WideningContext struct {
+	parent             *WideningContext // Parent context
+	propertyName       string           // Name of property in parent
+	siblings           []*Type          // Types of siblings
+	resolvedProperties []*ast.Symbol    // Properties occurring in sibling object literals
+}
+
 // Checker
 
 type Checker struct {
@@ -481,6 +490,7 @@ type Checker struct {
 	subtypeReductionCache                   map[string][]*Type
 	cachedTypes                             map[CachedTypeKey]*Type
 	cachedSignatures                        map[CachedSignatureKey]*Signature
+	undefinedProperties                     map[string]*ast.Symbol
 	narrowedTypes                           map[NarrowedTypeKey]*Type
 	assignmentReducedTypes                  map[AssignmentReducedKey]*Type
 	discriminatedContextualTypes            map[DiscriminatedContextualTypeKey]*Type
@@ -703,6 +713,7 @@ func NewChecker(program *Program) *Checker {
 	c.subtypeReductionCache = make(map[string][]*Type)
 	c.cachedTypes = make(map[CachedTypeKey]*Type)
 	c.cachedSignatures = make(map[CachedSignatureKey]*Signature)
+	c.undefinedProperties = make(map[string]*ast.Symbol)
 	c.narrowedTypes = make(map[NarrowedTypeKey]*Type)
 	c.assignmentReducedTypes = make(map[AssignmentReducedKey]*Type)
 	c.discriminatedContextualTypes = make(map[DiscriminatedContextualTypeKey]*Type)
@@ -6834,8 +6845,7 @@ func (c *Checker) checkBinaryLikeExpression(left *ast.Node, operatorToken *ast.N
 			c.checkAssignmentOperator(left, operator, right, leftType, rightType)
 		}
 		return resultType
-	case ast.KindBarBarToken,
-		ast.KindBarBarEqualsToken:
+	case ast.KindBarBarToken, ast.KindBarBarEqualsToken:
 		resultType := leftType
 		if c.hasTypeFacts(leftType, TypeFactsFalsy) {
 			resultType = c.getUnionTypeEx([]*Type{c.getNonNullableType(c.removeDefinitelyFalsyTypes(leftType)), rightType}, UnionReductionSubtype, nil, nil)
@@ -11124,20 +11134,19 @@ func (c *Checker) getWidenedTypeForAssignmentDeclaration(symbol *ast.Symbol, res
 
 func (c *Checker) widenTypeForVariableLikeDeclaration(t *Type, declaration *ast.Node, reportErrors bool) *Type {
 	if t != nil {
-		return t
 		// !!!
-		// // TODO: If back compat with pre-3.0/4.0 libs isn't required, remove the following SymbolConstructor special case transforming `symbol` into `unique symbol`
+		// TODO: If back compat with pre-3.0/4.0 libs isn't required, remove the following SymbolConstructor special case transforming `symbol` into `unique symbol`
 		// if t.flags&TypeFlagsESSymbol != 0 && c.isGlobalSymbolConstructor(declaration.parent) {
 		// 	t = c.getESSymbolLikeTypeForNode(declaration)
 		// }
-		// if reportErrors {
-		// 	c.reportErrorsFromWidening(declaration, t)
-		// }
-		// // always widen a 'unique symbol' type if the type was created for a different declaration.
-		// if t.flags&TypeFlagsUniqueESSymbol && (isBindingElement(declaration) || !declaration.type_) && t.symbol != c.getSymbolOfDeclaration(declaration) {
-		// 	t = c.esSymbolType
-		// }
-		// return c.getWidenedType(t)
+		if reportErrors {
+			c.reportErrorsFromWidening(declaration, t, WideningKindNormal)
+		}
+		// always widen a 'unique symbol' type if the type was created for a different declaration.
+		if t.flags&TypeFlagsUniqueESSymbol != 0 && (ast.IsBindingElement(declaration) || declaration.Type() == nil) && t.symbol != c.getSymbolOfDeclaration(declaration) {
+			t = c.esSymbolType
+		}
+		return c.getWidenedType(t)
 	}
 	// Rest parameters default to type any[], other parameters default to type any
 	if ast.IsParameter(declaration) && declaration.AsParameterDeclaration().DotDotDotToken != nil {
@@ -11228,7 +11237,129 @@ func (c *Checker) reportImplicitAny(declaration *ast.Node, t *Type, wideningKind
 }
 
 func (c *Checker) getWidenedType(t *Type) *Type {
-	return t // !!!
+	return c.getWidenedTypeWithContext(t, nil /*context*/)
+}
+
+func (c *Checker) getWidenedTypeWithContext(t *Type, context *WideningContext) *Type {
+	if t.objectFlags&ObjectFlagsRequiresWidening != 0 {
+		if context == nil {
+			if cached := c.cachedTypes[CachedTypeKey{kind: CachedTypeKindWidened, typeId: t.id}]; cached != nil {
+				return cached
+			}
+		}
+		var result *Type
+		switch {
+		case t.flags&(TypeFlagsAny|TypeFlagsNullable) != 0:
+			result = c.anyType
+		case isObjectLiteralType(t):
+			result = c.getWidenedTypeOfObjectLiteral(t, context)
+		case t.flags&TypeFlagsUnion != 0:
+			unionContext := context
+			if unionContext == nil {
+				unionContext = &WideningContext{siblings: t.Types()}
+			}
+			widenedTypes := core.SameMap(t.Types(), func(t *Type) *Type {
+				if t.flags&TypeFlagsNullable != 0 {
+					return t
+				}
+				return c.getWidenedTypeWithContext(t, unionContext)
+			})
+			// Widening an empty object literal transitions from a highly restrictive type to
+			// a highly inclusive one. For that reason we perform subtype reduction here if the
+			// union includes empty object types (e.g. reducing {} | string to just {}).
+			result = c.getUnionTypeEx(widenedTypes, core.IfElse(core.Some(widenedTypes, c.isEmptyObjectType), UnionReductionSubtype, UnionReductionLiteral), nil, nil)
+		case t.flags&TypeFlagsIntersection != 0:
+			result = c.getIntersectionType(core.SameMap(t.Types(), c.getWidenedType))
+		case c.isArrayOrTupleType(t):
+			result = c.createTypeReference(t.Target(), core.SameMap(c.getTypeArguments(t), c.getWidenedType))
+		}
+		if result != nil && context == nil {
+			c.cachedTypes[CachedTypeKey{kind: CachedTypeKindWidened, typeId: t.id}] = result
+		}
+		return core.OrElse(result, t)
+	}
+	return t
+}
+
+func (c *Checker) getWidenedTypeOfObjectLiteral(t *Type, context *WideningContext) *Type {
+	members := make(ast.SymbolTable)
+	for _, prop := range c.getPropertiesOfObjectType(t) {
+		members[prop.Name] = c.getWidenedProperty(prop, context)
+	}
+	if context != nil {
+		for _, prop := range c.getPropertiesOfContext(context) {
+			if _, ok := members[prop.Name]; !ok {
+				members[prop.Name] = c.getUndefinedProperty(prop)
+			}
+		}
+	}
+	result := c.newAnonymousType(t.symbol, members, nil, nil, core.SameMap(c.getIndexInfosOfType(t), func(info *IndexInfo) *IndexInfo {
+		return c.newIndexInfo(info.keyType, c.getWidenedType(info.valueType), info.isReadonly, info.declaration)
+	}))
+	// Retain js literal flag through widening
+	result.objectFlags |= t.objectFlags & (ObjectFlagsJSLiteral | ObjectFlagsNonInferrableType)
+	return result
+}
+
+func (c *Checker) getWidenedProperty(prop *ast.Symbol, context *WideningContext) *ast.Symbol {
+	if prop.Flags&ast.SymbolFlagsProperty == 0 {
+		// Since get accessors already widen their return value there is no need to
+		// widen accessor based properties here.
+		return prop
+	}
+	original := c.getTypeOfSymbol(prop)
+	var propContext *WideningContext
+	if context != nil {
+		propContext = &WideningContext{parent: context, propertyName: prop.Name}
+	}
+	widened := c.getWidenedTypeWithContext(original, propContext)
+	if widened == original {
+		return prop
+	}
+	return c.createSymbolWithType(prop, widened)
+}
+
+func (c *Checker) getPropertiesOfContext(context *WideningContext) []*ast.Symbol {
+	if context.resolvedProperties == nil {
+		var names collections.OrderedMap[string, *ast.Symbol]
+		for _, t := range c.getSiblingsOfContext(context) {
+			if isObjectLiteralType(t) && t.objectFlags&ObjectFlagsContainsSpread == 0 {
+				for _, prop := range c.getPropertiesOfType(t) {
+					names.Set(prop.Name, prop)
+				}
+			}
+		}
+		context.resolvedProperties = slices.Collect(names.Values())
+	}
+	return context.resolvedProperties
+}
+
+func (c *Checker) getSiblingsOfContext(context *WideningContext) []*Type {
+	if context.siblings == nil {
+		siblings := []*Type{}
+		for _, t := range c.getSiblingsOfContext(context.parent) {
+			if isObjectLiteralType(t) {
+				prop := c.getPropertyOfObjectType(t, context.propertyName)
+				if prop != nil {
+					for _, t := range c.getTypeOfSymbol(prop).Distributed() {
+						siblings = append(siblings, t)
+					}
+				}
+			}
+		}
+		context.siblings = siblings
+	}
+	return context.siblings
+}
+
+func (c *Checker) getUndefinedProperty(prop *ast.Symbol) *ast.Symbol {
+	if cached := c.undefinedProperties[prop.Name]; cached != nil {
+		return cached
+	}
+	result := c.createSymbolWithType(prop, c.undefinedOrMissingType)
+	result.Flags |= ast.SymbolFlagsOptional
+	c.undefinedProperties[prop.Name] = result
+	return result
 }
 
 func (c *Checker) getTypeOfEnumMember(symbol *ast.Symbol) *Type {
@@ -12999,15 +13130,86 @@ func (c *Checker) createGeneratorType(yieldType *Type, returnType *Type, nextTyp
 }
 
 func (c *Checker) reportErrorsFromWidening(declaration *ast.Node, t *Type, wideningKind WideningKind) {
-	// !!!
-	// if c.noImplicitAny && getObjectFlags(t)&ObjectFlagsContainsWideningType != 0 {
-	// 	if !wideningKind || isFunctionLikeDeclaration(declaration) && c.shouldReportErrorsFromWideningWithContextualSignature(declaration, wideningKind) {
-	// 		// Report implicit any error within type if possible, otherwise report error on declaration
-	// 		if !c.reportWideningErrorsInType(t) {
-	// 			c.reportImplicitAny(declaration, t, wideningKind)
-	// 		}
-	// 	}
-	// }
+	if c.noImplicitAny && t.objectFlags&ObjectFlagsContainsWideningType != 0 {
+		if wideningKind == WideningKindNormal || ast.IsFunctionLikeDeclaration(declaration) && c.shouldReportErrorsFromWideningWithContextualSignature(declaration, wideningKind) {
+			// Report implicit any error within type if possible, otherwise report error on declaration
+			if !c.reportWideningErrorsInType(t) {
+				c.reportImplicitAny(declaration, t, wideningKind)
+			}
+		}
+	}
+}
+
+func (c *Checker) shouldReportErrorsFromWideningWithContextualSignature(declaration *ast.Node, wideningKind WideningKind) bool {
+	signature := c.getContextualSignatureForFunctionLikeDeclaration(declaration)
+	if signature == nil {
+		return true
+	}
+	returnType := c.getReturnTypeOfSignature(signature)
+	flags := getFunctionFlags(declaration)
+	switch wideningKind {
+	case WideningKindFunctionReturn:
+		if flags&FunctionFlagsGenerator != 0 {
+			returnType = core.OrElse(c.getIterationTypeOfGeneratorFunctionReturnType(IterationTypeKindReturn, returnType, flags&FunctionFlagsAsync != 0), returnType)
+		} else if flags&FunctionFlagsAsync != 0 {
+			returnType = core.OrElse(c.getAwaitedTypeNoAlias(returnType), returnType)
+		}
+		return c.isGenericType(returnType)
+	case WideningKindGeneratorYield:
+		yieldType := c.getIterationTypeOfGeneratorFunctionReturnType(IterationTypeKindYield, returnType, flags&FunctionFlagsAsync != 0)
+		return yieldType != nil && c.isGenericType(yieldType)
+	case WideningKindGeneratorNext:
+		nextType := c.getIterationTypeOfGeneratorFunctionReturnType(IterationTypeKindNext, returnType, flags&FunctionFlagsAsync != 0)
+		return nextType != nil && c.isGenericType(nextType)
+	}
+	return false
+}
+
+// Reports implicit any errors that occur as a result of widening 'null' and 'undefined'
+// to 'any'. A call to reportWideningErrorsInType is normally accompanied by a call to
+// getWidenedType. But in some cases getWidenedType is called without reporting errors
+// (type argument inference is an example).
+//
+// The return value indicates whether an error was in fact reported. The particular circumstances
+// are on a best effort basis. Currently, if the null or undefined that causes widening is inside
+// an object literal property (arbitrarily deeply), this function reports an error. If no error is
+// reported, reportImplicitAnyError is a suitable fallback to report a general error.
+func (c *Checker) reportWideningErrorsInType(t *Type) bool {
+	errorReported := false
+	if t.objectFlags&ObjectFlagsContainsWideningType != 0 {
+		if t.flags&TypeFlagsUnion != 0 {
+			if core.Some(t.Types(), c.isEmptyObjectType) {
+				errorReported = true
+			} else {
+				for _, s := range t.Types() {
+					errorReported = errorReported || c.reportWideningErrorsInType(s)
+				}
+			}
+		} else if c.isArrayOrTupleType(t) {
+			for _, s := range c.getTypeArguments(t) {
+				errorReported = errorReported || c.reportWideningErrorsInType(s)
+			}
+		} else if isObjectLiteralType(t) {
+			for _, p := range c.getPropertiesOfObjectType(t) {
+				s := c.getTypeOfSymbol(p)
+				if s.objectFlags&ObjectFlagsContainsWideningType != 0 {
+					errorReported = c.reportWideningErrorsInType(s)
+					if !errorReported {
+						// we need to account for property types coming from object literal type normalization in unions
+						valueDeclaration := core.Find(p.Declarations, func(d *ast.Node) bool {
+							valueDeclaration := d.Symbol().ValueDeclaration
+							return valueDeclaration != nil && valueDeclaration.Parent == t.symbol.ValueDeclaration
+						})
+						if valueDeclaration != nil {
+							c.error(valueDeclaration, diagnostics.Object_literal_s_property_0_implicitly_has_an_1_type, c.symbolToString(p), c.typeToString(c.getWidenedType(s)))
+							errorReported = true
+						}
+					}
+				}
+			}
+		}
+	}
+	return errorReported
 }
 
 func (c *Checker) getTypePredicateFromBody(fn *ast.Node) *TypePredicate {
@@ -20097,7 +20299,33 @@ func (c *Checker) extractTypesOfKind(t *Type, kind TypeFlags) *Type {
 }
 
 func (c *Checker) getRegularTypeOfObjectLiteral(t *Type) *Type {
-	return t // !!!
+	if !(isObjectLiteralType(t) && t.objectFlags&ObjectFlagsFreshLiteral != 0) {
+		return t
+	}
+	key := CachedTypeKey{kind: CachedTypeKindRegularObjectLiteral, typeId: t.id}
+	if cached := c.cachedTypes[key]; cached != nil {
+		return cached
+	}
+	resolved := c.resolveStructuredTypeMembers(t)
+	members := c.transformTypeOfMembers(t, c.getRegularTypeOfObjectLiteral)
+	regular := c.newAnonymousType(t.symbol, members, resolved.CallSignatures(), resolved.ConstructSignatures(), resolved.indexInfos)
+	regular.flags = resolved.flags
+	regular.objectFlags |= resolved.objectFlags & ^ObjectFlagsFreshLiteral
+	c.cachedTypes[key] = regular
+	return regular
+}
+
+func (c *Checker) transformTypeOfMembers(t *Type, f func(propertyType *Type) *Type) ast.SymbolTable {
+	members := make(ast.SymbolTable)
+	for _, property := range c.getPropertiesOfObjectType(t) {
+		original := c.getTypeOfSymbol(property)
+		updated := f(original)
+		if updated != original {
+			property = c.createSymbolWithType(property, updated)
+		}
+		members[property.Name] = property
+	}
+	return members
 }
 
 func (c *Checker) markLinkedReferences(location *ast.Node, hint ReferenceHint, propSymbol *ast.Symbol, parentType *Type) {
