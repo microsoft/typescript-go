@@ -5,6 +5,7 @@ import (
 	"io/fs"
 	"path"
 	"strings"
+	"sync"
 	"testing/fstest"
 
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -12,11 +13,18 @@ import (
 )
 
 type mapFS struct {
-	m                         fstest.MapFS
+	// mu protects m.
+	// A single mutex is sufficient as we only use fstest.Map's Open method.
+	mu sync.RWMutex
+	m  fstest.MapFS
+
 	useCaseSensitiveFileNames bool
 }
 
-var _ vfs.RealpathFS = (*mapFS)(nil)
+var (
+	_ vfs.RealpathFS = (*mapFS)(nil)
+	_ vfs.WritableFS = (*mapFS)(nil)
+)
 
 type sys struct {
 	original any
@@ -133,6 +141,9 @@ func (f *readDirFile) ReadDir(n int) ([]fs.DirEntry, error) {
 }
 
 func (m *mapFS) Open(name string) (fs.File, error) {
+	m.mu.RLock()
+	defer m.mu.RUnlock()
+
 	f, err := m.m.Open(tspath.GetCanonicalFileName(name, m.useCaseSensitiveFileNames))
 	if err != nil {
 		return nil, err
@@ -171,6 +182,9 @@ func (m *mapFS) Open(name string) (fs.File, error) {
 }
 
 func (m *mapFS) Realpath(name string) (string, error) {
+	m.mu.RLock()
+	defer m.mu.RUnlock()
+
 	// TODO: handle symlinks after https://go.dev/cl/385534 is available
 	// Don't bother going through fs.Stat.
 	canonical := tspath.GetCanonicalFileName(name, m.useCaseSensitiveFileNames)
@@ -191,6 +205,20 @@ func convertInfo(info fs.FileInfo) (*fileInfo, bool) {
 		sys:      sys.original,
 		realpath: sys.realpath,
 	}, true
+}
+
+func (m *mapFS) MkdirAll(path string, perm fs.FileMode) error {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+
+	panic("unimplemented")
+}
+
+func (m *mapFS) WriteFile(path string, data []byte, perm fs.FileMode) error {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+
+	panic("unimplemented")
 }
 
 func must[T any](v T, err error) T {
