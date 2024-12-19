@@ -75,7 +75,6 @@ func openMetadata(path string) (windows.Handle, error) {
 		_FILE_FLAG_BACKUP_SEMANTICS,
 		0,
 	)
-
 	if err != nil {
 		return 0, &os.PathError{
 			Op:   "CreateFile",
