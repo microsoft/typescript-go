@@ -62,7 +62,7 @@ func convertMapFS(input fstest.MapFS, useCaseSensitiveFileNames bool) *mapFS {
 	// Sort the input by depth and path so we ensure parent dirs are created
 	// before their children, if explicitly specified by the input.
 	inputKeys := slices.Collect(maps.Keys(input))
-	slices.SortFunc(inputKeys, comparePaths)
+	slices.SortFunc(inputKeys, comparePathsByParts)
 
 	for _, p := range inputKeys {
 		file := input[p]
@@ -79,7 +79,7 @@ func convertMapFS(input fstest.MapFS, useCaseSensitiveFileNames bool) *mapFS {
 	return m
 }
 
-func comparePaths(a, b string) int {
+func comparePathsByParts(a, b string) int {
 	for {
 		aStart, aEnd, aOk := strings.Cut(a, "/")
 		bStart, bEnd, bOk := strings.Cut(b, "/")
