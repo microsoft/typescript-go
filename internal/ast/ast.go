@@ -54,6 +54,13 @@ func newNode(kind Kind, data nodeData) *Node {
 	return n
 }
 
+func updateNode(updated *Node, original *Node) *Node {
+	if updated != original {
+		updated.Loc = original.Loc
+	}
+	return updated
+}
+
 // NodeList
 
 type NodeList struct {
@@ -451,6 +458,10 @@ func (n *Node) AsNonNullExpression() *NonNullExpression {
 
 func (n *Node) AsBindingElement() *BindingElement {
 	return n.data.(*BindingElement)
+}
+
+func (n *Node) AsMissingDeclaration() *MissingDeclaration {
+	return n.data.(*MissingDeclaration)
 }
 
 func (n *Node) AsImportSpecifier() *ImportSpecifier {
@@ -1493,17 +1504,19 @@ func (f *NodeFactory) NewQualifiedName(left *EntityName, right *IdentifierNode) 
 	return newNode(KindQualifiedName, data)
 }
 
+func (f *NodeFactory) UpdateQualifiedName(node *QualifiedName, left *EntityName, right *IdentifierNode) *Node {
+	if left != node.Left || right != node.Right {
+		return updateNode(f.NewQualifiedName(left, right), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *QualifiedName) ForEachChild(v Visitor) bool {
 	return visit(v, node.Left) || visit(v, node.Right)
 }
 
 func (node *QualifiedName) VisitEachChild(v *NodeVisitor) *Node {
-	left := v.VisitNode(node.Left)
-	right := v.VisitNode(node.Right)
-	if left != node.Left || right != node.Right {
-		return v.UpdateNode(v.Factory.NewQualifiedName(left, right), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateQualifiedName(node, v.VisitNode(node.Left), v.VisitNode(node.Right))
 }
 
 func IsQualifiedName(node *Node) bool {
@@ -1531,19 +1544,19 @@ func (f *NodeFactory) NewTypeParameterDeclaration(modifiers *ModifierList, name 
 	return newNode(KindTypeParameter, data)
 }
 
+func (f *NodeFactory) UpdateTypeParameterDeclaration(node *TypeParameterDeclaration, modifiers *ModifierList, name *IdentifierNode, constraint *TypeNode, defaultType *TypeNode) *Node {
+	if modifiers != node.modifiers || name != node.name || constraint != node.Constraint || defaultType != node.DefaultType {
+		return updateNode(f.NewTypeParameterDeclaration(modifiers, name, constraint, defaultType), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *TypeParameterDeclaration) ForEachChild(v Visitor) bool {
 	return visitModifiers(v, node.modifiers) || visit(v, node.name) || visit(v, node.Constraint) || visit(v, node.DefaultType)
 }
 
 func (node *TypeParameterDeclaration) VisitEachChild(v *NodeVisitor) *Node {
-	modifiers := v.VisitModifiers(node.modifiers)
-	name := v.VisitNode(node.name)
-	constraint := v.VisitNode(node.Constraint)
-	defaultType := v.VisitNode(node.DefaultType)
-	if modifiers != node.modifiers || name != node.name || constraint != node.Constraint || defaultType != node.DefaultType {
-		return v.UpdateNode(v.Factory.NewTypeParameterDeclaration(modifiers, name, constraint, defaultType), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateTypeParameterDeclaration(node, v.VisitModifiers(node.modifiers), v.VisitNode(node.name), v.VisitNode(node.Constraint), v.VisitNode(node.DefaultType))
 }
 
 func (node *TypeParameterDeclaration) Name() *DeclarationName {
@@ -1567,16 +1580,19 @@ func (f *NodeFactory) NewComputedPropertyName(expression *Expression) *Node {
 	return newNode(KindComputedPropertyName, data)
 }
 
+func (f *NodeFactory) UpdateComputedPropertyName(node *ComputedPropertyName, expression *Expression) *Node {
+	if expression != node.Expression {
+		return updateNode(f.NewComputedPropertyName(expression), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *ComputedPropertyName) ForEachChild(v Visitor) bool {
 	return visit(v, node.Expression)
 }
 
 func (node *ComputedPropertyName) VisitEachChild(v *NodeVisitor) *Node {
-	expression := v.VisitNode(node.Expression)
-	if expression != node.Expression {
-		return v.UpdateNode(v.Factory.NewComputedPropertyName(expression), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateComputedPropertyName(node, v.VisitNode(node.Expression))
 }
 
 func IsComputedPropertyName(node *Node) bool {
@@ -1602,16 +1618,19 @@ func (f *NodeFactory) NewDecorator(expression *LeftHandSideExpression) *Node {
 	return newNode(KindDecorator, data)
 }
 
+func (f *NodeFactory) UpdateDecorator(node *Decorator, expression *Expression) *Node {
+	if expression != node.Expression {
+		return updateNode(f.NewDecorator(expression), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *Decorator) ForEachChild(v Visitor) bool {
 	return visit(v, node.Expression)
 }
 
 func (node *Decorator) VisitEachChild(v *NodeVisitor) *Node {
-	expression := v.VisitNode(node.Expression)
-	if expression != node.Expression {
-		return v.UpdateNode(v.Factory.NewDecorator(expression), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateDecorator(node, v.VisitNode(node.Expression))
 }
 
 func IsDecorator(node *Node) bool {
@@ -1656,18 +1675,19 @@ func (f *NodeFactory) NewIfStatement(expression *Expression, thenStatement *Stat
 	return newNode(KindIfStatement, data)
 }
 
+func (f *NodeFactory) UpdateIfStatement(node *IfStatement, expression *Expression, thenStatement *Statement, elseStatement *Statement) *Node {
+	if expression != node.Expression || thenStatement != node.ThenStatement || elseStatement != node.ElseStatement {
+		return updateNode(f.NewIfStatement(expression, thenStatement, elseStatement), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *IfStatement) ForEachChild(v Visitor) bool {
 	return visit(v, node.Expression) || visit(v, node.ThenStatement) || visit(v, node.ElseStatement)
 }
 
 func (node *IfStatement) VisitEachChild(v *NodeVisitor) *Node {
-	expression := v.VisitNode(node.Expression)
-	thenStatement := v.VisitNode(node.ThenStatement)
-	elseStatement := v.VisitNode(node.ElseStatement)
-	if expression != node.Expression || thenStatement != node.ThenStatement || elseStatement != node.ElseStatement {
-		return v.UpdateNode(v.Factory.NewIfStatement(expression, thenStatement, elseStatement), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateIfStatement(node, v.VisitNode(node.Expression), v.VisitNode(node.ThenStatement), v.VisitNode(node.ElseStatement))
 }
 
 // DoStatement
@@ -1678,6 +1698,13 @@ type DoStatement struct {
 	Expression *Expression // Expression
 }
 
+func (f *NodeFactory) UpdateDoStatement(node *DoStatement, statement *Statement, expression *Expression) *Node {
+	if statement != node.Statement || expression != node.Expression {
+		return updateNode(f.NewDoStatement(statement, expression), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (f *NodeFactory) NewDoStatement(statement *Statement, expression *Expression) *Node {
 	data := &DoStatement{}
 	data.Statement = statement
@@ -1686,12 +1713,7 @@ func (f *NodeFactory) NewDoStatement(statement *Statement, expression *Expressio
 }
 
 func (node *DoStatement) VisitEachChild(v *NodeVisitor) *Node {
-	statement := v.VisitNode(node.Statement)
-	expression := v.VisitNode(node.Expression)
-	if statement != node.Statement || expression != node.Expression {
-		return v.UpdateNode(v.Factory.NewDoStatement(statement, expression), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateDoStatement(node, v.VisitNode(node.Statement), v.VisitNode(node.Expression))
 }
 
 func (node *DoStatement) ForEachChild(v Visitor) bool {
@@ -1713,17 +1735,19 @@ func (f *NodeFactory) NewWhileStatement(expression *Expression, statement *State
 	return newNode(KindWhileStatement, data)
 }
 
+func (f *NodeFactory) UpdateWhileStatement(node *WhileStatement, expression *Expression, statement *Statement) *Node {
+	if expression != node.Expression || statement != node.Statement {
+		return updateNode(f.NewWhileStatement(expression, statement), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *WhileStatement) ForEachChild(v Visitor) bool {
 	return visit(v, node.Expression) || visit(v, node.Statement)
 }
 
 func (node *WhileStatement) VisitEachChild(v *NodeVisitor) *Node {
-	expression := v.VisitNode(node.Expression)
-	statement := v.VisitNode(node.Statement)
-	if expression != node.Expression || statement != node.Statement {
-		return v.UpdateNode(v.Factory.NewWhileStatement(expression, statement), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateWhileStatement(node, v.VisitNode(node.Expression), v.VisitNode(node.Statement))
 }
 
 // ForStatement
@@ -1746,19 +1770,19 @@ func (f *NodeFactory) NewForStatement(initializer *ForInitializer, condition *Ex
 	return newNode(KindForStatement, data)
 }
 
+func (f *NodeFactory) UpdateForStatement(node *ForStatement, initializer *ForInitializer, condition *Expression, incrementor *Expression, statement *Statement) *Node {
+	if initializer != node.Initializer || condition != node.Condition || incrementor != node.Incrementor || statement != node.Statement {
+		return updateNode(f.NewForStatement(initializer, condition, incrementor, statement), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *ForStatement) ForEachChild(v Visitor) bool {
 	return visit(v, node.Initializer) || visit(v, node.Condition) || visit(v, node.Incrementor) || visit(v, node.Statement)
 }
 
 func (node *ForStatement) VisitEachChild(v *NodeVisitor) *Node {
-	initializer := v.VisitNode(node.Initializer)
-	condition := v.VisitNode(node.Condition)
-	incrementor := v.VisitNode(node.Incrementor)
-	statement := v.VisitNode(node.Statement)
-	if initializer != node.Initializer || condition != node.Condition || incrementor != node.Incrementor || statement != node.Statement {
-		return v.UpdateNode(v.Factory.NewForStatement(initializer, condition, incrementor, statement), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateForStatement(node, v.VisitNode(node.Initializer), v.VisitNode(node.Condition), v.VisitNode(node.Incrementor), v.VisitNode(node.Statement))
 }
 
 // ForInOrOfStatement
@@ -1781,19 +1805,19 @@ func (f *NodeFactory) NewForInOrOfStatement(kind Kind, awaitModifier *TokenNode,
 	return newNode(kind, data)
 }
 
+func (f *NodeFactory) UpdateForInOrOfStatement(node *ForInOrOfStatement, awaitModifier *TokenNode, initializer *ForInitializer, expression *Expression, statement *Statement) *Node {
+	if awaitModifier != node.AwaitModifier || initializer != node.Initializer || expression != node.Expression || statement != node.Statement {
+		return updateNode(f.NewForInOrOfStatement(node.AsNode().Kind, awaitModifier, initializer, expression, statement), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *ForInOrOfStatement) ForEachChild(v Visitor) bool {
 	return visit(v, node.AwaitModifier) || visit(v, node.Initializer) || visit(v, node.Expression) || visit(v, node.Statement)
 }
 
 func (node *ForInOrOfStatement) VisitEachChild(v *NodeVisitor) *Node {
-	awaitModifier := v.VisitToken(node.AwaitModifier)
-	initializer := v.VisitNode(node.Initializer)
-	expression := v.VisitNode(node.Expression)
-	statement := v.VisitNode(node.Statement)
-	if awaitModifier != node.AwaitModifier || initializer != node.Initializer || expression != node.Expression || statement != node.Statement {
-		return v.UpdateNode(v.Factory.NewForInOrOfStatement(node.Kind, awaitModifier, initializer, expression, statement), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateForInOrOfStatement(node, v.VisitToken(node.AwaitModifier), v.VisitNode(node.Initializer), v.VisitNode(node.Expression), v.VisitNode(node.Statement))
 }
 
 func IsForInStatement(node *Node) bool {
@@ -1821,16 +1845,19 @@ func (f *NodeFactory) NewBreakStatement(label *IdentifierNode) *Node {
 	return newNode(KindBreakStatement, data)
 }
 
+func (f *NodeFactory) UpdateBreakStatement(node *BreakStatement, label *IdentifierNode) *Node {
+	if label != node.Label {
+		return updateNode(f.NewBreakStatement(label), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *BreakStatement) ForEachChild(v Visitor) bool {
 	return visit(v, node.Label)
 }
 
 func (node *BreakStatement) VisitEachChild(v *NodeVisitor) *Node {
-	label := v.VisitNode(node.Label)
-	if label != node.Label {
-		return v.UpdateNode(v.Factory.NewBreakStatement(label), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateBreakStatement(node, v.VisitNode(node.Label))
 }
 
 // ContinueStatement
@@ -1846,16 +1873,19 @@ func (f *NodeFactory) NewContinueStatement(label *IdentifierNode) *Node {
 	return newNode(KindContinueStatement, data)
 }
 
+func (f *NodeFactory) UpdateContinueStatement(node *ContinueStatement, label *IdentifierNode) *Node {
+	if label != node.Label {
+		return updateNode(f.NewContinueStatement(label), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *ContinueStatement) ForEachChild(v Visitor) bool {
 	return visit(v, node.Label)
 }
 
 func (node *ContinueStatement) VisitEachChild(v *NodeVisitor) *Node {
-	label := v.VisitNode(node.Label)
-	if label != node.Label {
-		return v.UpdateNode(v.Factory.NewContinueStatement(label), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateContinueStatement(node, v.VisitNode(node.Label))
 }
 
 // ReturnStatement
@@ -1871,16 +1901,19 @@ func (f *NodeFactory) NewReturnStatement(expression *Expression) *Node {
 	return newNode(KindReturnStatement, data)
 }
 
+func (f *NodeFactory) UpdateReturnStatement(node *ReturnStatement, expression *Expression) *Node {
+	if expression != node.Expression {
+		return updateNode(f.NewReturnStatement(expression), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *ReturnStatement) ForEachChild(v Visitor) bool {
 	return visit(v, node.Expression)
 }
 
 func (node *ReturnStatement) VisitEachChild(v *NodeVisitor) *Node {
-	expression := v.VisitNode(node.Expression)
-	if expression != node.Expression {
-		return v.UpdateNode(v.Factory.NewReturnStatement(expression), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateReturnStatement(node, v.VisitNode(node.Expression))
 }
 
 // WithStatement
@@ -1898,17 +1931,19 @@ func (f *NodeFactory) NewWithStatement(expression *Expression, statement *Statem
 	return newNode(KindWithStatement, data)
 }
 
+func (f *NodeFactory) UpdateWithStatement(node *WithStatement, expression *Expression, statement *Statement) *Node {
+	if expression != node.Expression || statement != node.Statement {
+		return updateNode(f.NewWithStatement(expression, statement), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *WithStatement) ForEachChild(v Visitor) bool {
 	return visit(v, node.Expression) || visit(v, node.Statement)
 }
 
 func (node *WithStatement) VisitEachChild(v *NodeVisitor) *Node {
-	expression := v.VisitNode(node.Expression)
-	statement := v.VisitNode(node.Statement)
-	if expression != node.Expression || statement != node.Statement {
-		return v.UpdateNode(v.Factory.NewWithStatement(expression, statement), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateWithStatement(node, v.VisitNode(node.Expression), v.VisitNode(node.Statement))
 }
 
 // SwitchStatement
@@ -1926,17 +1961,19 @@ func (f *NodeFactory) NewSwitchStatement(expression *Expression, caseBlock *Case
 	return newNode(KindSwitchStatement, data)
 }
 
+func (f *NodeFactory) UpdateSwitchStatement(node *SwitchStatement, expression *Expression, caseBlock *CaseBlockNode) *Node {
+	if expression != node.Expression || caseBlock != node.CaseBlock {
+		return updateNode(f.NewSwitchStatement(expression, caseBlock), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *SwitchStatement) ForEachChild(v Visitor) bool {
 	return visit(v, node.Expression) || visit(v, node.CaseBlock)
 }
 
 func (node *SwitchStatement) VisitEachChild(v *NodeVisitor) *Node {
-	expression := v.VisitNode(node.Expression)
-	caseBlock := v.VisitNode(node.CaseBlock)
-	if expression != node.Expression || caseBlock != node.CaseBlock {
-		return v.UpdateNode(v.Factory.NewSwitchStatement(expression, caseBlock), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateSwitchStatement(node, v.VisitNode(node.Expression), v.VisitNode(node.CaseBlock))
 }
 
 // CaseBlock
@@ -1953,16 +1990,19 @@ func (f *NodeFactory) NewCaseBlock(clauses *NodeList) *Node {
 	return newNode(KindCaseBlock, data)
 }
 
+func (f *NodeFactory) UpdateCaseBlock(node *CaseBlock, clauses *CaseClausesList) *Node {
+	if clauses != node.Clauses {
+		return updateNode(f.NewCaseBlock(clauses), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *CaseBlock) ForEachChild(v Visitor) bool {
 	return visitNodeList(v, node.Clauses)
 }
 
 func (node *CaseBlock) VisitEachChild(v *NodeVisitor) *Node {
-	clauses := v.VisitNodes(node.Clauses)
-	if clauses != node.Clauses {
-		return v.UpdateNode(v.Factory.NewCaseBlock(clauses), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateCaseBlock(node, v.VisitNodes(node.Clauses))
 }
 
 // CaseOrDefaultClause
@@ -1981,17 +2021,19 @@ func (f *NodeFactory) NewCaseOrDefaultClause(kind Kind, expression *Expression, 
 	return newNode(kind, data)
 }
 
+func (f *NodeFactory) UpdateCaseOrDefaultClause(node *CaseOrDefaultClause, expression *Expression, statements *StatementList) *Node {
+	if expression != node.Expression || statements != node.Statements {
+		return updateNode(f.NewCaseOrDefaultClause(node.Kind, expression, statements), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *CaseOrDefaultClause) ForEachChild(v Visitor) bool {
 	return visit(v, node.Expression) || visitNodeList(v, node.Statements)
 }
 
 func (node *CaseOrDefaultClause) VisitEachChild(v *NodeVisitor) *Node {
-	expression := v.VisitNode(node.Expression)
-	statements := v.VisitNodes(node.Statements)
-	if expression != node.Expression || statements != node.Statements {
-		return v.UpdateNode(v.Factory.NewCaseOrDefaultClause(node.Kind, expression, statements), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateCaseOrDefaultClause(node, v.VisitNode(node.Expression), v.VisitNodes(node.Statements))
 }
 
 // ThrowStatement
@@ -2007,16 +2049,19 @@ func (f *NodeFactory) NewThrowStatement(expression *Expression) *Node {
 	return newNode(KindThrowStatement, data)
 }
 
+func (f *NodeFactory) UpdateThrowStatement(node *ThrowStatement, expression *Expression) *Node {
+	if expression != node.Expression {
+		return updateNode(f.NewThrowStatement(expression), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *ThrowStatement) ForEachChild(v Visitor) bool {
 	return visit(v, node.Expression)
 }
 
 func (node *ThrowStatement) VisitEachChild(v *NodeVisitor) *Node {
-	expression := v.VisitNode(node.Expression)
-	if expression != node.Expression {
-		return v.UpdateNode(v.Factory.NewThrowStatement(expression), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateThrowStatement(node, v.VisitNode(node.Expression))
 }
 
 // TryStatement
@@ -2036,18 +2081,19 @@ func (f *NodeFactory) NewTryStatement(tryBlock *BlockNode, catchClause *CatchCla
 	return newNode(KindTryStatement, data)
 }
 
+func (f *NodeFactory) UpdateTryStatement(node *TryStatement, tryBlock *BlockNode, catchClause *CatchClauseNode, finallyBlock *BlockNode) *Node {
+	if tryBlock != node.TryBlock || catchClause != node.CatchClause || finallyBlock != node.FinallyBlock {
+		return updateNode(f.NewTryStatement(tryBlock, catchClause, finallyBlock), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *TryStatement) ForEachChild(v Visitor) bool {
 	return visit(v, node.TryBlock) || visit(v, node.CatchClause) || visit(v, node.FinallyBlock)
 }
 
 func (node *TryStatement) VisitEachChild(v *NodeVisitor) *Node {
-	tryBlock := v.VisitNode(node.TryBlock)
-	catchClause := v.VisitNode(node.CatchClause)
-	finallyBlock := v.VisitNode(node.FinallyBlock)
-	if tryBlock != node.TryBlock || catchClause != node.CatchClause || finallyBlock != node.FinallyBlock {
-		return v.UpdateNode(v.Factory.NewTryStatement(tryBlock, catchClause, finallyBlock), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateTryStatement(node, v.VisitNode(node.TryBlock), v.VisitNode(node.CatchClause), v.VisitNode(node.FinallyBlock))
 }
 
 // CatchClause
@@ -2066,17 +2112,19 @@ func (f *NodeFactory) NewCatchClause(variableDeclaration *VariableDeclarationNod
 	return newNode(KindCatchClause, data)
 }
 
+func (f *NodeFactory) UpdateCatchClause(node *CatchClause, variableDeclaration *VariableDeclarationNode, block *BlockNode) *Node {
+	if variableDeclaration != node.VariableDeclaration || block != node.Block {
+		return updateNode(f.NewCatchClause(variableDeclaration, block), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *CatchClause) ForEachChild(v Visitor) bool {
 	return visit(v, node.VariableDeclaration) || visit(v, node.Block)
 }
 
 func (node *CatchClause) VisitEachChild(v *NodeVisitor) *Node {
-	variableDeclaration := v.VisitNode(node.VariableDeclaration)
-	block := v.VisitNode(node.Block)
-	if variableDeclaration != node.VariableDeclaration || block != node.Block {
-		return v.UpdateNode(v.Factory.NewCatchClause(variableDeclaration, block), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateCatchClause(node, v.VisitNode(node.VariableDeclaration), v.VisitNode(node.Block))
 }
 
 func IsCatchClause(node *Node) bool {
@@ -2108,17 +2156,19 @@ func (f *NodeFactory) NewLabeledStatement(label *IdentifierNode, statement *Stat
 	return newNode(KindLabeledStatement, data)
 }
 
+func (f *NodeFactory) UpdateLabeledStatement(node *LabeledStatement, label *IdentifierNode, statement *Statement) *Node {
+	if label != node.Label || statement != node.Statement {
+		return updateNode(f.NewLabeledStatement(label, statement), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *LabeledStatement) ForEachChild(v Visitor) bool {
 	return visit(v, node.Label) || visit(v, node.Statement)
 }
 
 func (node *LabeledStatement) VisitEachChild(v *NodeVisitor) *Node {
-	label := v.VisitNode(node.Label)
-	statement := v.VisitNode(node.Statement)
-	if label != node.Label || statement != node.Statement {
-		return v.UpdateNode(v.Factory.NewLabeledStatement(label, statement), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateLabeledStatement(node, v.VisitNode(node.Label), v.VisitNode(node.Statement))
 }
 
 // ExpressionStatement
@@ -2134,16 +2184,19 @@ func (f *NodeFactory) NewExpressionStatement(expression *Expression) *Node {
 	return newNode(KindExpressionStatement, data)
 }
 
+func (f *NodeFactory) UpdateExpressionStatement(node *ExpressionStatement, expression *Expression) *Node {
+	if expression != node.Expression {
+		return updateNode(f.NewExpressionStatement(expression), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *ExpressionStatement) ForEachChild(v Visitor) bool {
 	return visit(v, node.Expression)
 }
 
 func (node *ExpressionStatement) VisitEachChild(v *NodeVisitor) *Node {
-	expression := v.VisitNode(node.Expression)
-	if expression != node.Expression {
-		return v.UpdateNode(v.Factory.NewExpressionStatement(expression), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateExpressionStatement(node, v.VisitNode(node.Expression))
 }
 
 func IsExpressionStatement(node *Node) bool {
@@ -2166,16 +2219,19 @@ func (f *NodeFactory) NewBlock(statements *NodeList, multiline bool) *Node {
 	return newNode(KindBlock, data)
 }
 
+func (f *NodeFactory) UpdateBlock(node *Block, statements *StatementList) *Node {
+	if statements != node.Statements {
+		return updateNode(f.NewBlock(statements, node.Multiline), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *Block) ForEachChild(v Visitor) bool {
 	return visitNodeList(v, node.Statements)
 }
 
 func (node *Block) VisitEachChild(v *NodeVisitor) *Node {
-	statements := v.VisitNodes(node.Statements)
-	if statements != node.Statements {
-		return v.UpdateNode(v.Factory.NewBlock(statements, node.Multiline), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateBlock(node, v.VisitNodes(node.Statements))
 }
 
 func IsBlock(node *Node) bool {
@@ -2197,17 +2253,19 @@ func (f *NodeFactory) NewVariableStatement(modifiers *ModifierList, declarationL
 	return newNode(KindVariableStatement, data)
 }
 
+func (f *NodeFactory) UpdateVariableStatement(node *VariableStatement, modifiers *ModifierList, declarationList *VariableDeclarationListNode) *Node {
+	if modifiers != node.modifiers || declarationList != node.DeclarationList {
+		return updateNode(f.NewVariableStatement(modifiers, declarationList), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *VariableStatement) ForEachChild(v Visitor) bool {
 	return visitModifiers(v, node.modifiers) || visit(v, node.DeclarationList)
 }
 
 func (node *VariableStatement) VisitEachChild(v *NodeVisitor) *Node {
-	modifiers := v.VisitModifiers(node.modifiers)
-	declarationList := v.VisitNode(node.DeclarationList)
-	if modifiers != node.modifiers || declarationList != node.DeclarationList {
-		return v.UpdateNode(v.Factory.NewVariableStatement(modifiers, declarationList), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateVariableStatement(node, v.VisitModifiers(node.modifiers), v.VisitNode(node.DeclarationList))
 }
 
 func IsVariableStatement(node *Node) bool {
@@ -2235,19 +2293,19 @@ func (f *NodeFactory) NewVariableDeclaration(name *BindingName, exclamationToken
 	return newNode(KindVariableDeclaration, data)
 }
 
+func (f *NodeFactory) UpdateVariableDeclaration(node *VariableDeclaration, name *BindingName, exclamationToken *TokenNode, typeNode *TypeNode, initializer *Expression) *Node {
+	if name != node.name || exclamationToken != node.ExclamationToken || typeNode != node.Type || initializer != node.Initializer {
+		return updateNode(f.NewVariableDeclaration(name, exclamationToken, typeNode, initializer), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *VariableDeclaration) ForEachChild(v Visitor) bool {
 	return visit(v, node.name) || visit(v, node.ExclamationToken) || visit(v, node.Type) || visit(v, node.Initializer)
 }
 
 func (node *VariableDeclaration) VisitEachChild(v *NodeVisitor) *Node {
-	name := v.VisitNode(node.name)
-	exclamationToken := v.VisitToken(node.ExclamationToken)
-	type_ := v.VisitNode(node.Type)
-	initializer := v.VisitNode(node.Initializer)
-	if name != node.name || exclamationToken != node.ExclamationToken || type_ != node.Type || initializer != node.Initializer {
-		return v.UpdateNode(v.Factory.NewVariableDeclaration(name, exclamationToken, type_, initializer), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateVariableDeclaration(node, v.VisitNode(node.name), v.VisitToken(node.ExclamationToken), v.VisitNode(node.Type), v.VisitNode(node.Initializer))
 }
 
 func (node *VariableDeclaration) Name() *DeclarationName {
@@ -2273,16 +2331,19 @@ func (f *NodeFactory) NewVariableDeclarationList(flags NodeFlags, declarations *
 	return node
 }
 
+func (f *NodeFactory) UpdateVariableDeclarationList(node *VariableDeclarationList, declarations *VariableDeclarationNodeList) *Node {
+	if declarations != node.Declarations {
+		return updateNode(f.NewVariableDeclarationList(node.Flags, declarations), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *VariableDeclarationList) ForEachChild(v Visitor) bool {
 	return visitNodeList(v, node.Declarations)
 }
 
 func (node *VariableDeclarationList) VisitEachChild(v *NodeVisitor) *Node {
-	declarations := v.VisitNodes(node.Declarations)
-	if declarations != node.Declarations {
-		return v.UpdateNode(v.Factory.NewVariableDeclarationList(node.Flags, declarations), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateVariableDeclarationList(node, v.VisitNodes(node.Declarations))
 }
 
 func IsVariableDeclarationList(node *Node) bool {
@@ -2302,16 +2363,19 @@ func (f *NodeFactory) NewBindingPattern(kind Kind, elements *NodeList) *Node {
 	return newNode(kind, data)
 }
 
+func (f *NodeFactory) UpdateBindingPattern(node *BindingPattern, elements *BindingElementList) *Node {
+	if elements != node.Elements {
+		return updateNode(f.NewBindingPattern(node.Kind, elements), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *BindingPattern) ForEachChild(v Visitor) bool {
 	return visitNodeList(v, node.Elements)
 }
 
 func (node *BindingPattern) VisitEachChild(v *NodeVisitor) *Node {
-	elements := v.VisitNodes(node.Elements)
-	if elements != node.Elements {
-		return v.UpdateNode(v.Factory.NewBindingPattern(node.Kind, elements), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateBindingPattern(node, v.VisitNodes(node.Elements))
 }
 
 func IsObjectBindingPattern(node *Node) bool {
@@ -2350,22 +2414,20 @@ func (f *NodeFactory) NewParameterDeclaration(modifiers *ModifierList, dotDotDot
 	return newNode(KindParameter, data)
 }
 
+func (f *NodeFactory) UpdateParameterDeclaration(node *ParameterDeclaration, modifiers *ModifierList, dotDotDotToken *TokenNode, name *BindingName, questionToken *TokenNode, typeNode *TypeNode, initializer *Expression) *Node {
+	if modifiers != node.modifiers || dotDotDotToken != node.DotDotDotToken || name != node.name || questionToken != node.QuestionToken || typeNode != node.Type || initializer != node.Initializer {
+		return updateNode(f.NewParameterDeclaration(modifiers, dotDotDotToken, name, questionToken, typeNode, initializer), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *ParameterDeclaration) ForEachChild(v Visitor) bool {
 	return visitModifiers(v, node.modifiers) || visit(v, node.DotDotDotToken) || visit(v, node.name) ||
 		visit(v, node.QuestionToken) || visit(v, node.Type) || visit(v, node.Initializer)
 }
 
 func (node *ParameterDeclaration) VisitEachChild(v *NodeVisitor) *Node {
-	modifiers := v.VisitModifiers(node.modifiers)
-	dotDotDotToken := v.VisitToken(node.DotDotDotToken)
-	name := v.VisitNode(node.name)
-	questionToken := v.VisitToken(node.QuestionToken)
-	type_ := v.VisitNode(node.Type)
-	initializer := v.VisitNode(node.Initializer)
-	if modifiers != node.modifiers || dotDotDotToken != node.DotDotDotToken || name != node.name || questionToken != node.QuestionToken || type_ != node.Type || initializer != node.Initializer {
-		return v.UpdateNode(v.Factory.NewParameterDeclaration(modifiers, dotDotDotToken, name, questionToken, type_, initializer), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateParameterDeclaration(node, v.VisitModifiers(node.modifiers), v.VisitToken(node.DotDotDotToken), v.VisitNode(node.name), v.VisitToken(node.QuestionToken), v.VisitNode(node.Type), v.VisitNode(node.Initializer))
 }
 
 func (node *ParameterDeclaration) Name() *DeclarationName {
@@ -2398,19 +2460,19 @@ func (f *NodeFactory) NewBindingElement(dotDotDotToken *TokenNode, propertyName 
 	return newNode(KindBindingElement, data)
 }
 
+func (f *NodeFactory) UpdateBindingElement(node *BindingElement, dotDotDotToken *TokenNode, propertyName *PropertyName, name *BindingName, initializer *Expression) *Node {
+	if dotDotDotToken != node.DotDotDotToken || propertyName != node.PropertyName || name != node.name || initializer != node.Initializer {
+		return updateNode(f.NewBindingElement(dotDotDotToken, propertyName, name, initializer), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *BindingElement) ForEachChild(v Visitor) bool {
 	return visit(v, node.DotDotDotToken) || visit(v, node.PropertyName) || visit(v, node.name) || visit(v, node.Initializer)
 }
 
 func (node *BindingElement) VisitEachChild(v *NodeVisitor) *Node {
-	dotDotDotToken := v.VisitToken(node.DotDotDotToken)
-	propertyName := v.VisitNode(node.PropertyName)
-	name := v.VisitNode(node.name)
-	initializer := v.VisitNode(node.Initializer)
-	if dotDotDotToken != node.DotDotDotToken || propertyName != node.PropertyName || name != node.name || initializer != node.Initializer {
-		return v.UpdateNode(v.Factory.NewBindingElement(dotDotDotToken, propertyName, name, initializer), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateBindingElement(node, v.VisitToken(node.DotDotDotToken), v.VisitNode(node.PropertyName), v.VisitNode(node.name), v.VisitNode(node.Initializer))
 }
 
 func (node *BindingElement) Name() *DeclarationName {
@@ -2435,16 +2497,19 @@ func (f *NodeFactory) NewMissingDeclaration(modifiers *ModifierList) *Node {
 	return newNode(KindMissingDeclaration, data)
 }
 
+func (f *NodeFactory) UpdateMissingDeclaration(node *MissingDeclaration, modifiers *ModifierList) *Node {
+	if modifiers != node.modifiers {
+		return updateNode(f.NewMissingDeclaration(modifiers), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *MissingDeclaration) ForEachChild(v Visitor) bool {
 	return visitModifiers(v, node.modifiers)
 }
 
 func (node *MissingDeclaration) VisitEachChild(v *NodeVisitor) *Node {
-	modifiers := v.VisitModifiers(node.modifiers)
-	if modifiers != node.modifiers {
-		return v.UpdateNode(v.Factory.NewMissingDeclaration(modifiers), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateMissingDeclaration(node, v.VisitModifiers(node.modifiers))
 }
 
 // FunctionDeclaration
@@ -2471,23 +2536,20 @@ func (f *NodeFactory) NewFunctionDeclaration(modifiers *ModifierList, asteriskTo
 	return newNode(KindFunctionDeclaration, data)
 }
 
+func (f *NodeFactory) UpdateFunctionDeclaration(node *FunctionDeclaration, modifiers *ModifierList, asteriskToken *TokenNode, name *IdentifierNode, typeParameters *TypeParameterList, parameters *ParameterList, returnType *TypeNode, body *BlockNode) *Node {
+	if modifiers != node.modifiers || asteriskToken != node.AsteriskToken || name != node.name || typeParameters != node.TypeParameters || parameters != node.Parameters || returnType != node.Type || body != node.Body {
+		return updateNode(f.NewFunctionDeclaration(modifiers, asteriskToken, name, typeParameters, parameters, returnType, body), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *FunctionDeclaration) ForEachChild(v Visitor) bool {
 	return visitModifiers(v, node.modifiers) || visit(v, node.AsteriskToken) || visit(v, node.name) || visitNodeList(v, node.TypeParameters) ||
 		visitNodeList(v, node.Parameters) || visit(v, node.Type) || visit(v, node.Body)
 }
 
 func (node *FunctionDeclaration) VisitEachChild(v *NodeVisitor) *Node {
-	modifiers := v.VisitModifiers(node.modifiers)
-	asteriskToken := v.VisitToken(node.AsteriskToken)
-	name := v.VisitNode(node.name)
-	typeParameters := v.VisitNodes(node.TypeParameters)
-	parameters := v.VisitNodes(node.Parameters)
-	type_ := v.VisitNode(node.Type)
-	body := v.VisitNode(node.Body)
-	if modifiers != node.modifiers || asteriskToken != node.AsteriskToken || name != node.name || typeParameters != node.TypeParameters || parameters != node.Parameters || type_ != node.Type || body != node.Body {
-		return v.UpdateNode(v.Factory.NewFunctionDeclaration(modifiers, asteriskToken, name, typeParameters, parameters, type_, body), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateFunctionDeclaration(node, v.VisitModifiers(node.modifiers), v.VisitToken(node.AsteriskToken), v.VisitNode(node.name), v.VisitNodes(node.TypeParameters), v.VisitNodes(node.Parameters), v.VisitNode(node.Type), v.VisitNode(node.Body))
 }
 
 func (node *FunctionDeclaration) Name() *DeclarationName {
@@ -2527,6 +2589,13 @@ type ClassDeclaration struct {
 	ClassLikeBase
 }
 
+func (f *NodeFactory) UpdateClassDeclaration(node *ClassDeclaration, modifiers *ModifierList, name *IdentifierNode, typeParameters *TypeParameterList, heritageClauses *HeritageClauseList, members *ClassElementList) *Node {
+	if modifiers != node.modifiers || name != node.name || typeParameters != node.TypeParameters || heritageClauses != node.HeritageClauses || members != node.Members {
+		return updateNode(f.NewClassDeclaration(modifiers, name, typeParameters, heritageClauses, members), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (f *NodeFactory) NewClassDeclaration(modifiers *ModifierList, name *IdentifierNode, typeParameters *NodeList, heritageClauses *NodeList, members *NodeList) *Node {
 	data := &ClassDeclaration{}
 	data.modifiers = modifiers
@@ -2546,10 +2615,7 @@ func (node *ClassDeclaration) VisitEachChild(v *NodeVisitor) *Node {
 		heritageClauses = nil
 	}
 	members := v.VisitNodes(node.Members)
-	if modifiers != node.modifiers || name != node.name || typeParameters != node.TypeParameters || heritageClauses != node.HeritageClauses || members != node.Members {
-		return v.UpdateNode(v.Factory.NewClassDeclaration(modifiers, name, typeParameters, heritageClauses, members), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateClassDeclaration(node, modifiers, name, typeParameters, heritageClauses, members)
 }
 
 func IsClassDeclaration(node *Node) bool {
@@ -2561,6 +2627,13 @@ func IsClassDeclaration(node *Node) bool {
 type ClassExpression struct {
 	ExpressionBase
 	ClassLikeBase
+}
+
+func (f *NodeFactory) UpdateClassExpression(node *ClassExpression, modifiers *ModifierList, name *IdentifierNode, typeParameters *TypeParameterList, heritageClauses *HeritageClauseList, members *ClassElementList) *Node {
+	if modifiers != node.modifiers || name != node.name || typeParameters != node.TypeParameters || heritageClauses != node.HeritageClauses || members != node.Members {
+		return updateNode(f.NewClassExpression(modifiers, name, typeParameters, heritageClauses, members), node.AsNode())
+	}
+	return node.AsNode()
 }
 
 func (f *NodeFactory) NewClassExpression(modifiers *ModifierList, name *IdentifierNode, typeParameters *NodeList, heritageClauses *NodeList, members *NodeList) *Node {
@@ -2582,10 +2655,7 @@ func (node *ClassExpression) VisitEachChild(v *NodeVisitor) *Node {
 		heritageClauses = nil
 	}
 	members := v.VisitNodes(node.Members)
-	if modifiers != node.modifiers || name != node.name || typeParameters != node.TypeParameters || heritageClauses != node.HeritageClauses || members != node.Members {
-		return v.UpdateNode(v.Factory.NewClassExpression(modifiers, name, typeParameters, heritageClauses, members), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateClassExpression(node, modifiers, name, typeParameters, heritageClauses, members)
 }
 
 func IsClassExpression(node *Node) bool {
@@ -2607,16 +2677,19 @@ func (f *NodeFactory) NewHeritageClause(token Kind, types *NodeList) *Node {
 	return newNode(KindHeritageClause, data)
 }
 
+func (f *NodeFactory) UpdateHeritageClause(node *HeritageClause, types *ExpressionWithTypeArgumentsList) *Node {
+	if types != node.Types {
+		return updateNode(f.NewHeritageClause(node.Token, types), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *HeritageClause) ForEachChild(v Visitor) bool {
 	return visitNodeList(v, node.Types)
 }
 
 func (node *HeritageClause) VisitEachChild(v *NodeVisitor) *Node {
-	types := v.VisitNodes(node.Types)
-	if types != node.Types {
-		return v.UpdateNode(v.Factory.NewHeritageClause(node.Token, types), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateHeritageClause(node, v.VisitNodes(node.Types))
 }
 
 func IsHeritageClause(node *Node) bool {
@@ -2646,21 +2719,20 @@ func (f *NodeFactory) NewInterfaceDeclaration(modifiers *ModifierList, name *Ide
 	return newNode(KindInterfaceDeclaration, data)
 }
 
+func (f *NodeFactory) UpdateInterfaceDeclaration(node *InterfaceDeclaration, modifiers *ModifierList, name *IdentifierNode, typeParameters *TypeParameterList, heritageClauses *HeritageClauseList, members *TypeElementList) *Node {
+	if modifiers != node.modifiers || name != node.name || typeParameters != node.TypeParameters || heritageClauses != node.HeritageClauses || members != node.Members {
+		return updateNode(f.NewInterfaceDeclaration(modifiers, name, typeParameters, heritageClauses, members), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *InterfaceDeclaration) ForEachChild(v Visitor) bool {
 	return visitModifiers(v, node.modifiers) || visit(v, node.name) || visitNodeList(v, node.TypeParameters) ||
 		visitNodeList(v, node.HeritageClauses) || visitNodeList(v, node.Members)
 }
 
 func (node *InterfaceDeclaration) VisitEachChild(v *NodeVisitor) *Node {
-	modifiers := v.VisitModifiers(node.modifiers)
-	name := v.VisitNode(node.name)
-	typeParameters := v.VisitNodes(node.TypeParameters)
-	heritageClauses := v.VisitNodes(node.HeritageClauses)
-	members := v.VisitNodes(node.Members)
-	if modifiers != node.modifiers || name != node.name || typeParameters != node.TypeParameters || heritageClauses != node.HeritageClauses || members != node.Members {
-		return v.UpdateNode(v.Factory.NewInterfaceDeclaration(modifiers, name, typeParameters, heritageClauses, members), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateInterfaceDeclaration(node, v.VisitModifiers(node.modifiers), v.VisitNode(node.name), v.VisitNodes(node.TypeParameters), v.VisitNodes(node.HeritageClauses), v.VisitNodes(node.Members))
 }
 
 func (node *InterfaceDeclaration) Name() *DeclarationName { return node.name }
@@ -2691,19 +2763,19 @@ func (f *NodeFactory) NewTypeAliasDeclaration(modifiers *ModifierList, name *Ide
 	return newNode(KindTypeAliasDeclaration, data)
 }
 
+func (f *NodeFactory) UpdateTypeAliasDeclaration(node *TypeAliasDeclaration, modifiers *ModifierList, name *IdentifierNode, typeParameters *TypeParameterList, typeNode *TypeNode) *Node {
+	if modifiers != node.modifiers || name != node.name || typeParameters != node.TypeParameters || typeNode != node.Type {
+		return updateNode(f.NewTypeAliasDeclaration(modifiers, name, typeParameters, typeNode), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *TypeAliasDeclaration) ForEachChild(v Visitor) bool {
 	return visitModifiers(v, node.modifiers) || visit(v, node.name) || visitNodeList(v, node.TypeParameters) || visit(v, node.Type)
 }
 
 func (node *TypeAliasDeclaration) VisitEachChild(v *NodeVisitor) *Node {
-	modifiers := v.VisitModifiers(node.modifiers)
-	name := v.VisitNode(node.name)
-	typeParameters := v.VisitNodes(node.TypeParameters)
-	type_ := v.VisitNode(node.Type)
-	if modifiers != node.modifiers || name != node.name || typeParameters != node.TypeParameters || type_ != node.Type {
-		return v.UpdateNode(v.Factory.NewTypeAliasDeclaration(modifiers, name, typeParameters, type_), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateTypeAliasDeclaration(node, v.VisitModifiers(node.modifiers), v.VisitNode(node.name), v.VisitNodes(node.TypeParameters), v.VisitNode(node.Type))
 }
 
 func (node *TypeAliasDeclaration) Name() *DeclarationName { return node.name }
@@ -2727,17 +2799,19 @@ func (f *NodeFactory) NewEnumMember(name *PropertyName, initializer *Expression)
 	return newNode(KindEnumMember, data)
 }
 
+func (f *NodeFactory) UpdateEnumMember(node *EnumMember, name *PropertyName, initializer *Expression) *Node {
+	if name != node.name || initializer != node.Initializer {
+		return updateNode(f.NewEnumMember(name, initializer), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *EnumMember) ForEachChild(v Visitor) bool {
 	return visit(v, node.name) || visit(v, node.Initializer)
 }
 
 func (node *EnumMember) VisitEachChild(v *NodeVisitor) *Node {
-	name := v.VisitNode(node.name)
-	initializer := v.VisitNode(node.Initializer)
-	if name != node.name || initializer != node.Initializer {
-		return v.UpdateNode(v.Factory.NewEnumMember(name, initializer), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateEnumMember(node, v.VisitNode(node.name), v.VisitNode(node.Initializer))
 }
 
 func (node *EnumMember) Name() *DeclarationName {
@@ -2767,18 +2841,19 @@ func (f *NodeFactory) NewEnumDeclaration(modifiers *ModifierList, name *Identifi
 	return newNode(KindEnumDeclaration, data)
 }
 
+func (f *NodeFactory) UpdateEnumDeclaration(node *EnumDeclaration, modifiers *ModifierList, name *IdentifierNode, members *EnumMemberList) *Node {
+	if modifiers != node.modifiers || name != node.name || members != node.Members {
+		return updateNode(f.NewEnumDeclaration(modifiers, name, members), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *EnumDeclaration) ForEachChild(v Visitor) bool {
 	return visitModifiers(v, node.modifiers) || visit(v, node.name) || visitNodeList(v, node.Members)
 }
 
 func (node *EnumDeclaration) VisitEachChild(v *NodeVisitor) *Node {
-	modifiers := v.VisitModifiers(node.modifiers)
-	name := v.VisitNode(node.name)
-	members := v.VisitNodes(node.Members)
-	if modifiers != node.modifiers || name != node.name || members != node.Members {
-		return v.UpdateNode(v.Factory.NewEnumDeclaration(modifiers, name, members), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateEnumDeclaration(node, v.VisitModifiers(node.modifiers), v.VisitNode(node.name), v.VisitNodes(node.Members))
 }
 
 func (node *EnumDeclaration) Name() *DeclarationName {
@@ -2802,16 +2877,19 @@ func (f *NodeFactory) NewModuleBlock(statements *NodeList) *Node {
 	return newNode(KindModuleBlock, data)
 }
 
+func (f *NodeFactory) UpdateModuleBlock(node *ModuleBlock, statements *StatementList) *Node {
+	if statements != node.Statements {
+		return updateNode(f.NewModuleBlock(statements), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *ModuleBlock) ForEachChild(v Visitor) bool {
 	return visitNodeList(v, node.Statements)
 }
 
 func (node *ModuleBlock) VisitEachChild(v *NodeVisitor) *Node {
-	statements := v.VisitNodes(node.Statements)
-	if statements != node.Statements {
-		return v.UpdateNode(v.Factory.NewModuleBlock(statements), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateModuleBlock(node, v.VisitNodes(node.Statements))
 }
 
 func IsModuleBlock(node *Node) bool {
@@ -2840,18 +2918,19 @@ func (f *NodeFactory) NewModuleDeclaration(modifiers *ModifierList, name *Module
 	return node
 }
 
+func (f *NodeFactory) UpdateModuleDeclaration(node *ModuleDeclaration, modifiers *ModifierList, name *ModuleName, body *ModuleBody) *Node {
+	if modifiers != node.modifiers || name != node.name || body != node.Body {
+		return updateNode(f.NewModuleDeclaration(modifiers, name, body, node.Flags), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *ModuleDeclaration) ForEachChild(v Visitor) bool {
 	return visitModifiers(v, node.modifiers) || visit(v, node.name) || visit(v, node.Body)
 }
 
 func (node *ModuleDeclaration) VisitEachChild(v *NodeVisitor) *Node {
-	modifiers := v.VisitModifiers(node.modifiers)
-	name := v.VisitNode(node.name)
-	body := v.VisitNode(node.Body)
-	if modifiers != node.modifiers || name != node.name || body != node.Body {
-		return v.UpdateNode(v.Factory.NewModuleDeclaration(modifiers, name, body, node.Flags), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateModuleDeclaration(node, v.VisitModifiers(node.modifiers), v.VisitNode(node.name), v.VisitNode(node.Body))
 }
 
 func (node *ModuleDeclaration) Name() *DeclarationName {
@@ -2885,18 +2964,19 @@ func (f *NodeFactory) NewImportEqualsDeclaration(modifiers *ModifierList, isType
 	return newNode(KindImportEqualsDeclaration, data)
 }
 
+func (f *NodeFactory) UpdateImportEqualsDeclaration(node *ImportEqualsDeclaration, modifiers *ModifierList, isTypeOnly bool, name *IdentifierNode, moduleReference *ModuleReference) *Node {
+	if modifiers != node.modifiers || isTypeOnly != node.IsTypeOnly || name != node.name || moduleReference != node.ModuleReference {
+		return updateNode(f.NewImportEqualsDeclaration(modifiers, isTypeOnly, name, moduleReference), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *ImportEqualsDeclaration) ForEachChild(v Visitor) bool {
 	return visitModifiers(v, node.modifiers) || visit(v, node.name) || visit(v, node.ModuleReference)
 }
 
 func (node *ImportEqualsDeclaration) VisitEachChild(v *NodeVisitor) *Node {
-	modifiers := v.VisitModifiers(node.modifiers)
-	name := v.VisitNode(node.name)
-	moduleReference := v.VisitNode(node.ModuleReference)
-	if modifiers != node.modifiers || name != node.name || moduleReference != node.ModuleReference {
-		return v.UpdateNode(v.Factory.NewImportEqualsDeclaration(modifiers, node.IsTypeOnly, name, moduleReference), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateImportEqualsDeclaration(node, v.VisitModifiers(node.modifiers), node.IsTypeOnly, v.VisitNode(node.name), v.VisitNode(node.ModuleReference))
 }
 
 func (node *ImportEqualsDeclaration) Name() *DeclarationName {
@@ -2926,19 +3006,19 @@ func (f *NodeFactory) NewImportDeclaration(modifiers *ModifierList, importClause
 	return newNode(KindImportDeclaration, data)
 }
 
+func (f *NodeFactory) UpdateImportDeclaration(node *ImportDeclaration, modifiers *ModifierList, importClause *ImportClauseNode, moduleSpecifier *Expression, attributes *ImportAttributesNode) *Node {
+	if modifiers != node.modifiers || importClause != node.ImportClause || moduleSpecifier != node.ModuleSpecifier || attributes != node.Attributes {
+		return updateNode(f.NewImportDeclaration(modifiers, importClause, moduleSpecifier, attributes), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *ImportDeclaration) ForEachChild(v Visitor) bool {
 	return visitModifiers(v, node.modifiers) || visit(v, node.ImportClause) || visit(v, node.ModuleSpecifier) || visit(v, node.Attributes)
 }
 
 func (node *ImportDeclaration) VisitEachChild(v *NodeVisitor) *Node {
-	modifiers := v.VisitModifiers(node.modifiers)
-	importClause := v.VisitNode(node.ImportClause)
-	moduleSpecifier := v.VisitNode(node.ModuleSpecifier)
-	attributes := v.VisitNode(node.Attributes)
-	if modifiers != node.modifiers || importClause != node.ImportClause || moduleSpecifier != node.ModuleSpecifier || attributes != node.Attributes {
-		return v.UpdateNode(v.Factory.NewImportDeclaration(modifiers, importClause, moduleSpecifier, attributes), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateImportDeclaration(node, v.VisitModifiers(node.modifiers), v.VisitNode(node.ImportClause), v.VisitNode(node.ModuleSpecifier), v.VisitNode(node.Attributes))
 }
 
 func IsImportDeclaration(node *Node) bool {
@@ -2964,17 +3044,19 @@ func (f *NodeFactory) NewImportSpecifier(isTypeOnly bool, propertyName *ModuleEx
 	return newNode(KindImportSpecifier, data)
 }
 
+func (f *NodeFactory) UpdateImportSpecifier(node *ImportSpecifier, isTypeOnly bool, propertyName *ModuleExportName, name *IdentifierNode) *Node {
+	if isTypeOnly != node.IsTypeOnly || propertyName != node.PropertyName || name != node.name {
+		return updateNode(f.NewImportSpecifier(isTypeOnly, propertyName, name), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *ImportSpecifier) ForEachChild(v Visitor) bool {
 	return visit(v, node.PropertyName) || visit(v, node.name)
 }
 
 func (node *ImportSpecifier) VisitEachChild(v *NodeVisitor) *Node {
-	propertyName := v.VisitNode(node.PropertyName)
-	name := v.VisitNode(node.name)
-	if propertyName != node.PropertyName || name != node.name {
-		return v.UpdateNode(v.Factory.NewImportSpecifier(node.IsTypeOnly, propertyName, name), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateImportSpecifier(node, node.IsTypeOnly, v.VisitNode(node.PropertyName), v.VisitNode(node.name))
 }
 
 func (node *ImportSpecifier) Name() *DeclarationName {
@@ -2998,16 +3080,19 @@ func (f *NodeFactory) NewExternalModuleReference(expression *Expression) *Node {
 	return newNode(KindExternalModuleReference, data)
 }
 
+func (f *NodeFactory) UpdateExternalModuleReference(node *ExternalModuleReference, expression *Expression) *Node {
+	if expression != node.Expression_ {
+		return updateNode(f.NewExternalModuleReference(expression), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *ExternalModuleReference) ForEachChild(v Visitor) bool {
 	return visit(v, node.Expression_)
 }
 
 func (node *ExternalModuleReference) VisitEachChild(v *NodeVisitor) *Node {
-	expression_ := v.VisitNode(node.Expression_)
-	if expression_ != node.Expression_ {
-		return v.UpdateNode(v.Factory.NewExternalModuleReference(expression_), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateExternalModuleReference(node, v.VisitNode(node.Expression_))
 }
 
 func IsExternalModuleReference(node *Node) bool {
@@ -3033,17 +3118,19 @@ func (f *NodeFactory) NewImportClause(isTypeOnly bool, name *IdentifierNode, nam
 	return newNode(KindImportClause, data)
 }
 
+func (f *NodeFactory) UpdateImportClause(node *ImportClause, isTypeOnly bool, name *IdentifierNode, namedBindings *NamedImportBindings) *Node {
+	if isTypeOnly != node.IsTypeOnly || name != node.name || namedBindings != node.NamedBindings {
+		return updateNode(f.NewImportClause(isTypeOnly, name, namedBindings), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *ImportClause) ForEachChild(v Visitor) bool {
 	return visit(v, node.name) || visit(v, node.NamedBindings)
 }
 
 func (node *ImportClause) VisitEachChild(v *NodeVisitor) *Node {
-	name := v.VisitNode(node.name)
-	namedBindings := v.VisitNode(node.NamedBindings)
-	if name != node.name || namedBindings != node.NamedBindings {
-		return v.UpdateNode(v.Factory.NewImportClause(node.IsTypeOnly, name, namedBindings), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateImportClause(node, node.IsTypeOnly, v.VisitNode(node.name), v.VisitNode(node.NamedBindings))
 }
 
 func (node *ImportClause) Name() *DeclarationName {
@@ -3065,16 +3152,19 @@ func (f *NodeFactory) NewNamespaceImport(name *IdentifierNode) *Node {
 	return newNode(KindNamespaceImport, data)
 }
 
+func (f *NodeFactory) UpdateNamespaceImport(node *NamespaceImport, name *IdentifierNode) *Node {
+	if name != node.name {
+		return updateNode(f.NewNamespaceImport(name), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *NamespaceImport) ForEachChild(v Visitor) bool {
 	return visit(v, node.name)
 }
 
 func (node *NamespaceImport) VisitEachChild(v *NodeVisitor) *Node {
-	name := v.VisitNode(node.name)
-	if name != node.name {
-		return v.UpdateNode(v.Factory.NewNamespaceImport(name), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateNamespaceImport(node, v.VisitNode(node.name))
 }
 
 func (node *NamespaceImport) Name() *DeclarationName {
@@ -3098,16 +3188,19 @@ func (f *NodeFactory) NewNamedImports(elements *ImportSpecifierList) *Node {
 	return newNode(KindNamedImports, data)
 }
 
+func (f *NodeFactory) UpdateNamedImports(node *NamedImports, elements *ImportSpecifierList) *Node {
+	if elements != node.Elements {
+		return updateNode(f.NewNamedImports(elements), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *NamedImports) ForEachChild(v Visitor) bool {
 	return visitNodeList(v, node.Elements)
 }
 
 func (node *NamedImports) VisitEachChild(v *NodeVisitor) *Node {
-	elements := v.VisitNodes(node.Elements)
-	if elements != node.Elements {
-		return v.UpdateNode(v.Factory.NewNamedImports(elements), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateNamedImports(node, v.VisitNodes(node.Elements))
 }
 
 func IsNamedImports(node *Node) bool {
@@ -3134,17 +3227,19 @@ func (f *NodeFactory) NewExportAssignment(modifiers *ModifierList, isExportEqual
 	return newNode(KindExportAssignment, data)
 }
 
+func (f *NodeFactory) UpdateExportAssignment(node *ExportAssignment, modifiers *ModifierList, expression *Expression) *Node {
+	if modifiers != node.modifiers || expression != node.Expression {
+		return updateNode(f.NewExportAssignment(modifiers, node.IsExportEquals, expression), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *ExportAssignment) ForEachChild(v Visitor) bool {
 	return visitModifiers(v, node.modifiers) || visit(v, node.Expression)
 }
 
 func (node *ExportAssignment) VisitEachChild(v *NodeVisitor) *Node {
-	modifiers := v.VisitModifiers(node.modifiers)
-	expression := v.VisitNode(node.Expression)
-	if modifiers != node.modifiers || expression != node.Expression {
-		return v.UpdateNode(v.Factory.NewExportAssignment(modifiers, node.IsExportEquals, expression), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateExportAssignment(node, v.VisitModifiers(node.modifiers), v.VisitNode(node.Expression))
 }
 
 func IsExportAssignment(node *Node) bool {
@@ -3167,17 +3262,19 @@ func (f *NodeFactory) NewNamespaceExportDeclaration(modifiers *ModifierList, nam
 	return newNode(KindNamespaceExportDeclaration, data)
 }
 
+func (f *NodeFactory) UpdateNamespaceExportDeclaration(node *NamespaceExportDeclaration, modifiers *ModifierList, name *IdentifierNode) *Node {
+	if modifiers != node.modifiers || name != node.name {
+		return updateNode(f.NewNamespaceExportDeclaration(modifiers, name), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *NamespaceExportDeclaration) ForEachChild(v Visitor) bool {
 	return visitModifiers(v, node.modifiers) || visit(v, node.name)
 }
 
 func (node *NamespaceExportDeclaration) VisitEachChild(v *NodeVisitor) *Node {
-	modifiers := v.VisitModifiers(node.modifiers)
-	name := v.VisitNode(node.name)
-	if modifiers != node.modifiers || name != node.name {
-		return v.UpdateNode(v.Factory.NewNamespaceExportDeclaration(modifiers, name), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateNamespaceExportDeclaration(node, v.VisitModifiers(node.modifiers), v.VisitNode(node.name))
 }
 
 func (node *NamespaceExportDeclaration) Name() *DeclarationName {
@@ -3210,19 +3307,19 @@ func (f *NodeFactory) NewExportDeclaration(modifiers *ModifierList, isTypeOnly b
 	return newNode(KindExportDeclaration, data)
 }
 
+func (f *NodeFactory) UpdateExportDeclaration(node *ExportDeclaration, modifiers *ModifierList, isTypeOnly bool, exportClause *NamedExportBindings, moduleSpecifier *Expression, attributes *ImportAttributesNode) *Node {
+	if modifiers != node.modifiers || exportClause != node.ExportClause || moduleSpecifier != node.ModuleSpecifier || attributes != node.Attributes {
+		return updateNode(f.NewExportDeclaration(modifiers, isTypeOnly, exportClause, moduleSpecifier, attributes), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *ExportDeclaration) ForEachChild(v Visitor) bool {
 	return visitModifiers(v, node.modifiers) || visit(v, node.ExportClause) || visit(v, node.ModuleSpecifier) || visit(v, node.Attributes)
 }
 
 func (node *ExportDeclaration) VisitEachChild(v *NodeVisitor) *Node {
-	modifiers := v.VisitModifiers(node.modifiers)
-	exportClause := v.VisitNode(node.ExportClause)
-	moduleSpecifier := v.VisitNode(node.ModuleSpecifier)
-	attributes := v.VisitNode(node.Attributes)
-	if modifiers != node.modifiers || exportClause != node.ExportClause || moduleSpecifier != node.ModuleSpecifier || attributes != node.Attributes {
-		return v.UpdateNode(v.Factory.NewExportDeclaration(modifiers, node.IsTypeOnly, exportClause, moduleSpecifier, attributes), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateExportDeclaration(node, v.VisitModifiers(node.modifiers), node.IsTypeOnly, v.VisitNode(node.ExportClause), v.VisitNode(node.ModuleSpecifier), v.VisitNode(node.Attributes))
 }
 
 func IsExportDeclaration(node *Node) bool {
@@ -3243,16 +3340,19 @@ func (f *NodeFactory) NewNamespaceExport(name *ModuleExportName) *Node {
 	return newNode(KindNamespaceExport, data)
 }
 
+func (f *NodeFactory) UpdateNamespaceExport(node *NamespaceExport, name *ModuleExportName) *Node {
+	if name != node.name {
+		return updateNode(f.NewNamespaceExport(name), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *NamespaceExport) ForEachChild(v Visitor) bool {
 	return visit(v, node.name)
 }
 
 func (node *NamespaceExport) VisitEachChild(v *NodeVisitor) *Node {
-	name := v.VisitNode(node.name)
-	if name != node.name {
-		return v.UpdateNode(v.Factory.NewNamespaceExport(name), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateNamespaceExport(node, v.VisitNode(node.name))
 }
 
 func (node *NamespaceExport) Name() *DeclarationName {
@@ -3276,16 +3376,19 @@ func (f *NodeFactory) NewNamedExports(elements *NodeList) *Node {
 	return newNode(KindNamedExports, data)
 }
 
+func (f *NodeFactory) UpdateNamedExports(node *NamedExports, elements *ExportSpecifierList) *Node {
+	if elements != node.Elements {
+		return updateNode(f.NewNamedExports(elements), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *NamedExports) ForEachChild(v Visitor) bool {
 	return visitNodeList(v, node.Elements)
 }
 
 func (node *NamedExports) VisitEachChild(v *NodeVisitor) *Node {
-	elements := v.VisitNodes(node.Elements)
-	if elements != node.Elements {
-		return v.UpdateNode(v.Factory.NewNamedExports(elements), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateNamedExports(node, v.VisitNodes(node.Elements))
 }
 
 // ExportSpecifier
@@ -3307,17 +3410,19 @@ func (f *NodeFactory) NewExportSpecifier(isTypeOnly bool, propertyName *ModuleEx
 	return newNode(KindExportSpecifier, data)
 }
 
+func (f *NodeFactory) UpdateExportSpecifier(node *ExportSpecifier, isTypeOnly bool, propertyName *ModuleExportName, name *ModuleExportName) *Node {
+	if isTypeOnly != node.IsTypeOnly || propertyName != node.PropertyName || name != node.name {
+		return updateNode(f.NewExportSpecifier(isTypeOnly, propertyName, name), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *ExportSpecifier) ForEachChild(v Visitor) bool {
 	return visit(v, node.PropertyName) || visit(v, node.name)
 }
 
 func (node *ExportSpecifier) VisitEachChild(v *NodeVisitor) *Node {
-	propertyName := v.VisitNode(node.PropertyName)
-	name := v.VisitNode(node.name)
-	if propertyName != node.PropertyName || name != node.name {
-		return v.UpdateNode(v.Factory.NewExportSpecifier(node.IsTypeOnly, propertyName, name), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateExportSpecifier(node, node.IsTypeOnly, v.VisitNode(node.PropertyName), v.VisitNode(node.name))
 }
 
 func (node *ExportSpecifier) Name() *DeclarationName {
@@ -3366,18 +3471,19 @@ func (f *NodeFactory) NewCallSignatureDeclaration(typeParameters *NodeList, para
 	return newNode(KindCallSignature, data)
 }
 
+func (f *NodeFactory) UpdateCallSignatureDeclaration(node *CallSignatureDeclaration, typeParameters *TypeParameterList, parameters *ParameterList, returnType *TypeNode) *Node {
+	if typeParameters != node.TypeParameters || parameters != node.Parameters || returnType != node.Type {
+		return updateNode(f.NewCallSignatureDeclaration(typeParameters, parameters, returnType), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *CallSignatureDeclaration) ForEachChild(v Visitor) bool {
 	return visitNodeList(v, node.TypeParameters) || visitNodeList(v, node.Parameters) || visit(v, node.Type)
 }
 
 func (node *CallSignatureDeclaration) VisitEachChild(v *NodeVisitor) *Node {
-	typeParameters := v.VisitNodes(node.TypeParameters)
-	parameters := v.VisitNodes(node.Parameters)
-	type_ := v.VisitNode(node.Type)
-	if typeParameters != node.TypeParameters || parameters != node.Parameters || type_ != node.Type {
-		return v.UpdateNode(v.Factory.NewCallSignatureDeclaration(typeParameters, parameters, type_), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateCallSignatureDeclaration(node, v.VisitNodes(node.TypeParameters), v.VisitNodes(node.Parameters), v.VisitNode(node.Type))
 }
 
 func IsCallSignatureDeclaration(node *Node) bool {
@@ -3401,18 +3507,19 @@ func (f *NodeFactory) NewConstructSignatureDeclaration(typeParameters *NodeList,
 	return newNode(KindConstructSignature, data)
 }
 
+func (f *NodeFactory) UpdateConstructSignatureDeclaration(node *ConstructSignatureDeclaration, typeParameters *TypeParameterList, parameters *ParameterList, returnType *TypeNode) *Node {
+	if typeParameters != node.TypeParameters || parameters != node.Parameters || returnType != node.Type {
+		return updateNode(f.NewConstructSignatureDeclaration(typeParameters, parameters, returnType), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *ConstructSignatureDeclaration) ForEachChild(v Visitor) bool {
 	return visitNodeList(v, node.TypeParameters) || visitNodeList(v, node.Parameters) || visit(v, node.Type)
 }
 
 func (node *ConstructSignatureDeclaration) VisitEachChild(v *NodeVisitor) *Node {
-	typeParameters := v.VisitNodes(node.TypeParameters)
-	parameters := v.VisitNodes(node.Parameters)
-	type_ := v.VisitNode(node.Type)
-	if typeParameters != node.TypeParameters || parameters != node.Parameters || type_ != node.Type {
-		return v.UpdateNode(v.Factory.NewConstructSignatureDeclaration(typeParameters, parameters, type_), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateConstructSignatureDeclaration(node, v.VisitNodes(node.TypeParameters), v.VisitNodes(node.Parameters), v.VisitNode(node.Type))
 }
 
 func IsConstructSignatureDeclaration(node *Node) bool {
@@ -3440,20 +3547,19 @@ func (f *NodeFactory) NewConstructorDeclaration(modifiers *ModifierList, typePar
 	return newNode(KindConstructor, data)
 }
 
+func (f *NodeFactory) UpdateConstructorDeclaration(node *ConstructorDeclaration, modifiers *ModifierList, typeParameters *TypeParameterList, parameters *ParameterList, returnType *TypeNode, body *BlockNode) *Node {
+	if modifiers != node.modifiers || typeParameters != node.TypeParameters || parameters != node.Parameters || returnType != node.Type || body != node.Body {
+		return updateNode(f.NewConstructorDeclaration(modifiers, typeParameters, parameters, returnType, body), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *ConstructorDeclaration) ForEachChild(v Visitor) bool {
 	return visitModifiers(v, node.modifiers) || visitNodeList(v, node.TypeParameters) || visitNodeList(v, node.Parameters) || visit(v, node.Type) || visit(v, node.Body)
 }
 
 func (node *ConstructorDeclaration) VisitEachChild(v *NodeVisitor) *Node {
-	modifiers := v.VisitModifiers(node.modifiers)
-	typeParameters := v.VisitNodes(node.TypeParameters)
-	parameters := v.VisitNodes(node.Parameters)
-	type_ := v.VisitNode(node.Type)
-	body := v.VisitNode(node.Body)
-	if modifiers != node.modifiers || typeParameters != node.TypeParameters || parameters != node.Parameters || type_ != node.Type || body != node.Body {
-		return v.UpdateNode(v.Factory.NewConstructorDeclaration(modifiers, typeParameters, parameters, type_, body), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateConstructorDeclaration(node, v.VisitModifiers(node.modifiers), v.VisitNodes(node.TypeParameters), v.VisitNodes(node.Parameters), v.VisitNode(node.Type), v.VisitNode(node.Body))
 }
 
 func IsConstructorDeclaration(node *Node) bool {
@@ -3485,6 +3591,13 @@ type GetAccessorDeclaration struct {
 	AccessorDeclarationBase
 }
 
+func (f *NodeFactory) UpdateGetAccessorDeclaration(node *GetAccessorDeclaration, modifiers *ModifierList, name *PropertyName, typeParameters *TypeParameterList, parameters *ParameterList, returnType *TypeNode, body *BlockNode) *Node {
+	if modifiers != node.modifiers || name != node.name || typeParameters != node.TypeParameters || parameters != node.Parameters || returnType != node.Type || body != node.Body {
+		return updateNode(f.NewGetAccessorDeclaration(modifiers, name, typeParameters, parameters, returnType, body), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (f *NodeFactory) NewGetAccessorDeclaration(modifiers *ModifierList, name *PropertyName, typeParameters *NodeList, parameters *NodeList, returnType *TypeNode, body *BlockNode) *Node {
 	data := &GetAccessorDeclaration{}
 	data.modifiers = modifiers
@@ -3497,16 +3610,7 @@ func (f *NodeFactory) NewGetAccessorDeclaration(modifiers *ModifierList, name *P
 }
 
 func (node *GetAccessorDeclaration) VisitEachChild(v *NodeVisitor) *Node {
-	modifiers := v.VisitModifiers(node.modifiers)
-	name := v.VisitNode(node.name)
-	typeParameters := v.VisitNodes(node.TypeParameters)
-	parameters := v.VisitNodes(node.Parameters)
-	type_ := v.VisitNode(node.Type)
-	body := v.VisitNode(node.Body)
-	if modifiers != node.modifiers || name != node.name || typeParameters != node.TypeParameters || parameters != node.Parameters || type_ != node.Type || body != node.Body {
-		return v.UpdateNode(v.Factory.NewGetAccessorDeclaration(modifiers, name, typeParameters, parameters, type_, body), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateGetAccessorDeclaration(node, v.VisitModifiers(node.modifiers), v.VisitNode(node.name), v.VisitNodes(node.TypeParameters), v.VisitNodes(node.Parameters), v.VisitNode(node.Type), v.VisitNode(node.Body))
 }
 
 func IsGetAccessorDeclaration(node *Node) bool {
@@ -3517,6 +3621,13 @@ func IsGetAccessorDeclaration(node *Node) bool {
 
 type SetAccessorDeclaration struct {
 	AccessorDeclarationBase
+}
+
+func (f *NodeFactory) UpdateSetAccessorDeclaration(node *SetAccessorDeclaration, modifiers *ModifierList, name *PropertyName, typeParameters *TypeParameterList, parameters *ParameterList, returnType *TypeNode, body *BlockNode) *Node {
+	if modifiers != node.modifiers || name != node.name || typeParameters != node.TypeParameters || parameters != node.Parameters || returnType != node.Type || body != node.Body {
+		return updateNode(f.NewSetAccessorDeclaration(modifiers, name, typeParameters, parameters, returnType, body), node.AsNode())
+	}
+	return node.AsNode()
 }
 
 func (f *NodeFactory) NewSetAccessorDeclaration(modifiers *ModifierList, name *PropertyName, typeParameters *NodeList, parameters *NodeList, returnType *TypeNode, body *BlockNode) *Node {
@@ -3531,16 +3642,7 @@ func (f *NodeFactory) NewSetAccessorDeclaration(modifiers *ModifierList, name *P
 }
 
 func (node *SetAccessorDeclaration) VisitEachChild(v *NodeVisitor) *Node {
-	modifiers := v.VisitModifiers(node.modifiers)
-	name := v.VisitNode(node.name)
-	typeParameters := v.VisitNodes(node.TypeParameters)
-	parameters := v.VisitNodes(node.Parameters)
-	type_ := v.VisitNode(node.Type)
-	body := v.VisitNode(node.Body)
-	if modifiers != node.modifiers || name != node.name || typeParameters != node.TypeParameters || parameters != node.Parameters || type_ != node.Type || body != node.Body {
-		return v.UpdateNode(v.Factory.NewSetAccessorDeclaration(modifiers, name, typeParameters, parameters, type_, body), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateSetAccessorDeclaration(node, v.VisitModifiers(node.modifiers), v.VisitNode(node.name), v.VisitNodes(node.TypeParameters), v.VisitNodes(node.Parameters), v.VisitNode(node.Type), v.VisitNode(node.Body))
 }
 
 func IsSetAccessorDeclaration(node *Node) bool {
@@ -3566,18 +3668,19 @@ func (f *NodeFactory) NewIndexSignatureDeclaration(modifiers *ModifierList, para
 	return newNode(KindIndexSignature, data)
 }
 
+func (f *NodeFactory) UpdateIndexSignatureDeclaration(node *IndexSignatureDeclaration, modifiers *ModifierList, parameters *ParameterList, returnType *TypeNode) *Node {
+	if modifiers != node.modifiers || parameters != node.Parameters || returnType != node.Type {
+		return updateNode(f.NewIndexSignatureDeclaration(modifiers, parameters, returnType), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *IndexSignatureDeclaration) ForEachChild(v Visitor) bool {
 	return visitModifiers(v, node.modifiers) || visitNodeList(v, node.Parameters) || visit(v, node.Type)
 }
 
 func (node *IndexSignatureDeclaration) VisitEachChild(v *NodeVisitor) *Node {
-	modifiers := v.VisitModifiers(node.modifiers)
-	parameters := v.VisitNodes(node.Parameters)
-	type_ := v.VisitNode(node.Type)
-	if modifiers != node.modifiers || parameters != node.Parameters || type_ != node.Type {
-		return v.UpdateNode(v.Factory.NewIndexSignatureDeclaration(modifiers, parameters, type_), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateIndexSignatureDeclaration(node, v.VisitModifiers(node.modifiers), v.VisitNodes(node.Parameters), v.VisitNode(node.Type))
 }
 
 func IsIndexSignatureDeclaration(node *Node) bool {
@@ -3604,22 +3707,20 @@ func (f *NodeFactory) NewMethodSignatureDeclaration(modifiers *ModifierList, nam
 	return newNode(KindMethodSignature, data)
 }
 
+func (f *NodeFactory) UpdateMethodSignatureDeclaration(node *MethodSignatureDeclaration, modifiers *ModifierList, name *PropertyName, postfixToken *TokenNode, typeParameters *TypeParameterList, parameters *ParameterList, returnType *TypeNode) *Node {
+	if modifiers != node.modifiers || name != node.name || postfixToken != node.PostfixToken || typeParameters != node.TypeParameters || parameters != node.Parameters || returnType != node.Type {
+		return updateNode(f.NewMethodSignatureDeclaration(modifiers, name, postfixToken, typeParameters, parameters, returnType), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *MethodSignatureDeclaration) ForEachChild(v Visitor) bool {
 	return visitModifiers(v, node.modifiers) || visit(v, node.name) || visit(v, node.PostfixToken) || visitNodeList(v, node.TypeParameters) ||
 		visitNodeList(v, node.Parameters) || visit(v, node.Type)
 }
 
 func (node *MethodSignatureDeclaration) VisitEachChild(v *NodeVisitor) *Node {
-	modifiers := v.VisitModifiers(node.modifiers)
-	name := v.VisitNode(node.name)
-	postfixToken := v.VisitToken(node.PostfixToken)
-	typeParameters := v.VisitNodes(node.TypeParameters)
-	parameters := v.VisitNodes(node.Parameters)
-	type_ := v.VisitNode(node.Type)
-	if modifiers != node.modifiers || name != node.name || postfixToken != node.PostfixToken || typeParameters != node.TypeParameters || parameters != node.Parameters || type_ != node.Type {
-		return v.UpdateNode(v.Factory.NewMethodSignatureDeclaration(modifiers, name, postfixToken, typeParameters, parameters, type_), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateMethodSignatureDeclaration(node, v.VisitModifiers(node.modifiers), v.VisitNode(node.name), v.VisitToken(node.PostfixToken), v.VisitNodes(node.TypeParameters), v.VisitNodes(node.Parameters), v.VisitNode(node.Type))
 }
 
 func IsMethodSignatureDeclaration(node *Node) bool {
@@ -3650,24 +3751,20 @@ func (f *NodeFactory) NewMethodDeclaration(modifiers *ModifierList, asteriskToke
 	return newNode(KindMethodDeclaration, data)
 }
 
+func (f *NodeFactory) UpdateMethodDeclaration(node *MethodDeclaration, modifiers *ModifierList, asteriskToken *TokenNode, name *PropertyName, postfixToken *TokenNode, typeParameters *TypeParameterList, parameters *ParameterList, returnType *TypeNode, body *BlockNode) *Node {
+	if modifiers != node.modifiers || asteriskToken != node.AsteriskToken || name != node.name || postfixToken != node.PostfixToken || typeParameters != node.TypeParameters || parameters != node.Parameters || returnType != node.Type || body != node.Body {
+		return updateNode(f.NewMethodDeclaration(modifiers, asteriskToken, name, postfixToken, typeParameters, parameters, returnType, body), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *MethodDeclaration) ForEachChild(v Visitor) bool {
 	return visitModifiers(v, node.modifiers) || visit(v, node.AsteriskToken) || visit(v, node.name) || visit(v, node.PostfixToken) ||
 		visitNodeList(v, node.TypeParameters) || visitNodeList(v, node.Parameters) || visit(v, node.Type) || visit(v, node.Body)
 }
 
 func (node *MethodDeclaration) VisitEachChild(v *NodeVisitor) *Node {
-	modifiers := v.VisitModifiers(node.modifiers)
-	asteriskToken := v.VisitToken(node.AsteriskToken)
-	name := v.VisitNode(node.name)
-	postfixToken := v.VisitToken(node.PostfixToken)
-	typeParameters := v.VisitNodes(node.TypeParameters)
-	parameters := v.VisitNodes(node.Parameters)
-	type_ := v.VisitNode(node.Type)
-	body := v.VisitNode(node.Body)
-	if modifiers != node.modifiers || asteriskToken != node.AsteriskToken || name != node.name || postfixToken != node.PostfixToken || typeParameters != node.TypeParameters || parameters != node.Parameters || type_ != node.Type || body != node.Body {
-		return v.UpdateNode(v.Factory.NewMethodDeclaration(modifiers, asteriskToken, name, postfixToken, typeParameters, parameters, type_, body), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateMethodDeclaration(node, v.VisitModifiers(node.modifiers), v.VisitToken(node.AsteriskToken), v.VisitNode(node.name), v.VisitToken(node.PostfixToken), v.VisitNodes(node.TypeParameters), v.VisitNodes(node.Parameters), v.VisitNode(node.Type), v.VisitNode(node.Body))
 }
 
 func IsMethodDeclaration(node *Node) bool {
@@ -3694,20 +3791,19 @@ func (f *NodeFactory) NewPropertySignatureDeclaration(modifiers *ModifierList, n
 	return newNode(KindPropertySignature, data)
 }
 
+func (f *NodeFactory) UpdatePropertySignatureDeclaration(node *PropertySignatureDeclaration, modifiers *ModifierList, name *PropertyName, postfixToken *TokenNode, typeNode *TypeNode, initializer *Expression) *Node {
+	if modifiers != node.modifiers || name != node.name || postfixToken != node.PostfixToken || typeNode != node.Type || initializer != node.Initializer {
+		return updateNode(f.NewPropertySignatureDeclaration(modifiers, name, postfixToken, typeNode, initializer), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *PropertySignatureDeclaration) ForEachChild(v Visitor) bool {
 	return visitModifiers(v, node.modifiers) || visit(v, node.name) || visit(v, node.PostfixToken) || visit(v, node.Type) || visit(v, node.Initializer)
 }
 
 func (node *PropertySignatureDeclaration) VisitEachChild(v *NodeVisitor) *Node {
-	modifiers := v.VisitModifiers(node.modifiers)
-	name := v.VisitNode(node.name)
-	postfixToken := v.VisitToken(node.PostfixToken)
-	type_ := v.VisitNode(node.Type)
-	initializer := v.VisitNode(node.Initializer)
-	if modifiers != node.modifiers || name != node.name || postfixToken != node.PostfixToken || type_ != node.Type || initializer != node.Initializer {
-		return v.UpdateNode(v.Factory.NewPropertySignatureDeclaration(modifiers, name, postfixToken, type_, initializer), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdatePropertySignatureDeclaration(node, v.VisitModifiers(node.modifiers), v.VisitNode(node.name), v.VisitToken(node.PostfixToken), v.VisitNode(node.Type), v.VisitNode(node.Initializer))
 }
 
 func IsPropertySignatureDeclaration(node *Node) bool {
@@ -3734,20 +3830,19 @@ func (f *NodeFactory) NewPropertyDeclaration(modifiers *ModifierList, name *Prop
 	return newNode(KindPropertyDeclaration, data)
 }
 
+func (f *NodeFactory) UpdatePropertyDeclaration(node *PropertyDeclaration, modifiers *ModifierList, name *PropertyName, postfixToken *TokenNode, typeNode *TypeNode, initializer *Expression) *Node {
+	if modifiers != node.modifiers || name != node.name || postfixToken != node.PostfixToken || typeNode != node.Type || initializer != node.Initializer {
+		return updateNode(f.NewPropertyDeclaration(modifiers, name, postfixToken, typeNode, initializer), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *PropertyDeclaration) ForEachChild(v Visitor) bool {
 	return visitModifiers(v, node.modifiers) || visit(v, node.name) || visit(v, node.PostfixToken) || visit(v, node.Type) || visit(v, node.Initializer)
 }
 
 func (node *PropertyDeclaration) VisitEachChild(v *NodeVisitor) *Node {
-	modifiers := v.VisitModifiers(node.modifiers)
-	name := v.VisitNode(node.name)
-	postfixToken := v.VisitToken(node.PostfixToken)
-	type_ := v.VisitNode(node.Type)
-	initializer := v.VisitNode(node.Initializer)
-	if modifiers != node.modifiers || name != node.name || postfixToken != node.PostfixToken || type_ != node.Type || initializer != node.Initializer {
-		return v.UpdateNode(v.Factory.NewPropertyDeclaration(modifiers, name, postfixToken, type_, initializer), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdatePropertyDeclaration(node, v.VisitModifiers(node.modifiers), v.VisitNode(node.name), v.VisitToken(node.PostfixToken), v.VisitNode(node.Type), v.VisitNode(node.Initializer))
 }
 
 func IsPropertyDeclaration(node *Node) bool {
@@ -3785,6 +3880,13 @@ func (f *NodeFactory) NewClassStaticBlockDeclaration(modifiers *ModifierList, bo
 	return newNode(KindClassStaticBlockDeclaration, data)
 }
 
+func (f *NodeFactory) UpdateClassStaticBlockDeclaration(node *ClassStaticBlockDeclaration, modifiers *ModifierList, body *BlockNode) *Node {
+	if modifiers != node.modifiers || body != node.Body {
+		return updateNode(f.NewClassStaticBlockDeclaration(modifiers, body), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *ClassStaticBlockDeclaration) ForEachChild(v Visitor) bool {
 	return visitModifiers(v, node.modifiers) || visit(v, node.Body)
 }
@@ -3793,10 +3895,7 @@ func (node *ClassStaticBlockDeclaration) VisitEachChild(v *NodeVisitor) *Node {
 	// A `static {}` Block does not have parameters, but we must still ensure we enter the lexical scope
 	modifiers := v.VisitModifiers(node.modifiers)
 	body := v.VisitNode(node.Body)
-	if modifiers != node.modifiers || body != node.Body {
-		return v.UpdateNode(v.Factory.NewClassStaticBlockDeclaration(modifiers, body), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateClassStaticBlockDeclaration(node, modifiers, body)
 }
 
 func IsClassStaticBlockDeclaration(node *Node) bool {
@@ -3938,18 +4037,19 @@ func (f *NodeFactory) NewBinaryExpression(left *Expression, operatorToken *Token
 	return newNode(KindBinaryExpression, data)
 }
 
+func (f *NodeFactory) UpdateBinaryExpression(node *BinaryExpression, left *Expression, operatorToken *TokenNode, right *Expression) *Node {
+	if left != node.Left || operatorToken != node.OperatorToken || right != node.Right {
+		return updateNode(f.NewBinaryExpression(left, operatorToken, right), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *BinaryExpression) ForEachChild(v Visitor) bool {
 	return visit(v, node.Left) || visit(v, node.OperatorToken) || visit(v, node.Right)
 }
 
 func (node *BinaryExpression) VisitEachChild(v *NodeVisitor) *Node {
-	left := v.VisitNode(node.Left)
-	operatorToken := v.VisitToken(node.OperatorToken)
-	right := v.VisitNode(node.Right)
-	if left != node.Left || operatorToken != node.OperatorToken || right != node.Right {
-		return v.UpdateNode(v.Factory.NewBinaryExpression(left, operatorToken, right), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateBinaryExpression(node, v.VisitNode(node.Left), v.VisitToken(node.OperatorToken), v.VisitNode(node.Right))
 }
 
 func IsBinaryExpression(node *Node) bool {
@@ -3971,16 +4071,19 @@ func (f *NodeFactory) NewPrefixUnaryExpression(operator Kind, operand *Expressio
 	return newNode(KindPrefixUnaryExpression, data)
 }
 
+func (f *NodeFactory) UpdatePrefixUnaryExpression(node *PrefixUnaryExpression, operand *Expression) *Node {
+	if operand != node.Operand {
+		return updateNode(f.NewPrefixUnaryExpression(node.Operator, operand), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *PrefixUnaryExpression) ForEachChild(v Visitor) bool {
 	return visit(v, node.Operand)
 }
 
 func (node *PrefixUnaryExpression) VisitEachChild(v *NodeVisitor) *Node {
-	operand := v.VisitNode(node.Operand)
-	if operand != node.Operand {
-		return v.UpdateNode(v.Factory.NewPrefixUnaryExpression(node.Operator, operand), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdatePrefixUnaryExpression(node, v.VisitNode(node.Operand))
 }
 
 func IsPrefixUnaryExpression(node *Node) bool {
@@ -4002,16 +4105,19 @@ func (f *NodeFactory) NewPostfixUnaryExpression(operand *Expression, operator Ki
 	return newNode(KindPostfixUnaryExpression, data)
 }
 
+func (f *NodeFactory) UpdatePostfixUnaryExpression(node *PostfixUnaryExpression, operand *Expression) *Node {
+	if operand != node.Operand {
+		return updateNode(f.NewPostfixUnaryExpression(operand, node.Operator), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *PostfixUnaryExpression) ForEachChild(v Visitor) bool {
 	return visit(v, node.Operand)
 }
 
 func (node *PostfixUnaryExpression) VisitEachChild(v *NodeVisitor) *Node {
-	operand := v.VisitNode(node.Operand)
-	if operand != node.Operand {
-		return v.UpdateNode(v.Factory.NewPostfixUnaryExpression(operand, node.Operator), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdatePostfixUnaryExpression(node, v.VisitNode(node.Operand))
 }
 
 // YieldExpression
@@ -4029,17 +4135,19 @@ func (f *NodeFactory) NewYieldExpression(asteriskToken *TokenNode, expression *E
 	return newNode(KindYieldExpression, data)
 }
 
+func (f *NodeFactory) UpdateYieldExpression(node *YieldExpression, asteriskToken *TokenNode, expression *Expression) *Node {
+	if asteriskToken != node.AsteriskToken || expression != node.Expression {
+		return updateNode(f.NewYieldExpression(asteriskToken, expression), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *YieldExpression) ForEachChild(v Visitor) bool {
 	return visit(v, node.AsteriskToken) || visit(v, node.Expression)
 }
 
 func (node *YieldExpression) VisitEachChild(v *NodeVisitor) *Node {
-	asteriskToken := v.VisitToken(node.AsteriskToken)
-	expression := v.VisitNode(node.Expression)
-	if asteriskToken != node.AsteriskToken || expression != node.Expression {
-		return v.UpdateNode(v.Factory.NewYieldExpression(asteriskToken, expression), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateYieldExpression(node, v.VisitToken(node.AsteriskToken), v.VisitNode(node.Expression))
 }
 
 // ArrowFunction
@@ -4064,22 +4172,20 @@ func (f *NodeFactory) NewArrowFunction(modifiers *ModifierList, typeParameters *
 	return newNode(KindArrowFunction, data)
 }
 
+func (f *NodeFactory) UpdateArrowFunction(node *ArrowFunction, modifiers *ModifierList, typeParameters *TypeParameterList, parameters *ParameterList, returnType *TypeNode, equalsGreaterThanToken *TokenNode, body *BlockOrExpression) *Node {
+	if modifiers != node.modifiers || typeParameters != node.TypeParameters || parameters != node.Parameters || returnType != node.Type || equalsGreaterThanToken != node.EqualsGreaterThanToken || body != node.Body {
+		return updateNode(f.NewArrowFunction(modifiers, typeParameters, parameters, returnType, equalsGreaterThanToken, body), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *ArrowFunction) ForEachChild(v Visitor) bool {
 	return visitModifiers(v, node.modifiers) || visitNodeList(v, node.TypeParameters) || visitNodeList(v, node.Parameters) ||
 		visit(v, node.Type) || visit(v, node.EqualsGreaterThanToken) || visit(v, node.Body)
 }
 
 func (node *ArrowFunction) VisitEachChild(v *NodeVisitor) *Node {
-	modifiers := v.VisitModifiers(node.modifiers)
-	typeParameters := v.VisitNodes(node.TypeParameters)
-	parameters := v.VisitNodes(node.Parameters)
-	type_ := v.VisitNode(node.Type)
-	equalsGreaterThanToken := v.VisitToken(node.EqualsGreaterThanToken)
-	body := v.VisitNode(node.Body)
-	if modifiers != node.modifiers || typeParameters != node.TypeParameters || parameters != node.Parameters || type_ != node.Type || equalsGreaterThanToken != node.EqualsGreaterThanToken || body != node.Body {
-		return v.UpdateNode(v.Factory.NewArrowFunction(modifiers, typeParameters, parameters, type_, equalsGreaterThanToken, body), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateArrowFunction(node, v.VisitModifiers(node.modifiers), v.VisitNodes(node.TypeParameters), v.VisitNodes(node.Parameters), v.VisitNode(node.Type), v.VisitToken(node.EqualsGreaterThanToken), v.VisitNode(node.Body))
 }
 
 func (node *ArrowFunction) Name() *DeclarationName {
@@ -4114,23 +4220,20 @@ func (f *NodeFactory) NewFunctionExpression(modifiers *ModifierList, asteriskTok
 	return newNode(KindFunctionExpression, data)
 }
 
+func (f *NodeFactory) UpdateFunctionExpression(node *FunctionExpression, modifiers *ModifierList, asteriskToken *TokenNode, name *IdentifierNode, typeParameters *TypeParameterList, parameters *ParameterList, returnType *TypeNode, body *BlockNode) *Node {
+	if modifiers != node.modifiers || asteriskToken != node.AsteriskToken || name != node.name || typeParameters != node.TypeParameters || parameters != node.Parameters || returnType != node.Type || body != node.Body {
+		return updateNode(f.NewFunctionExpression(modifiers, asteriskToken, name, typeParameters, parameters, returnType, body), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *FunctionExpression) ForEachChild(v Visitor) bool {
 	return visitModifiers(v, node.modifiers) || visit(v, node.AsteriskToken) || visit(v, node.name) || visitNodeList(v, node.TypeParameters) ||
 		visitNodeList(v, node.Parameters) || visit(v, node.Type) || visit(v, node.Body)
 }
 
 func (node *FunctionExpression) VisitEachChild(v *NodeVisitor) *Node {
-	modifiers := v.VisitModifiers(node.modifiers)
-	asteriskToken := v.VisitToken(node.AsteriskToken)
-	name := v.VisitNode(node.name)
-	typeParameters := v.VisitNodes(node.TypeParameters)
-	parameters := v.VisitNodes(node.Parameters)
-	type_ := v.VisitNode(node.Type)
-	body := v.VisitNode(node.Body)
-	if modifiers != node.modifiers || asteriskToken != node.AsteriskToken || name != node.name || typeParameters != node.TypeParameters || parameters != node.Parameters || type_ != node.Type || body != node.Body {
-		return v.UpdateNode(v.Factory.NewFunctionExpression(modifiers, asteriskToken, name, typeParameters, parameters, type_, body), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateFunctionExpression(node, v.VisitModifiers(node.modifiers), v.VisitToken(node.AsteriskToken), v.VisitNode(node.name), v.VisitNodes(node.TypeParameters), v.VisitNodes(node.Parameters), v.VisitNode(node.Type), v.VisitNode(node.Body))
 }
 
 func (node *FunctionExpression) Name() *DeclarationName {
@@ -4156,17 +4259,19 @@ func (f *NodeFactory) NewAsExpression(expression *Expression, typeNode *TypeNode
 	return newNode(KindAsExpression, data)
 }
 
+func (f *NodeFactory) UpdateAsExpression(node *AsExpression, expression *Expression, typeNode *TypeNode) *Node {
+	if expression != node.Expression || typeNode != node.Type {
+		return updateNode(f.NewAsExpression(expression, typeNode), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *AsExpression) ForEachChild(v Visitor) bool {
 	return visit(v, node.Expression) || visit(v, node.Type)
 }
 
 func (node *AsExpression) VisitEachChild(v *NodeVisitor) *Node {
-	expression := v.VisitNode(node.Expression)
-	type_ := v.VisitNode(node.Type)
-	if expression != node.Expression || type_ != node.Type {
-		return v.UpdateNode(v.Factory.NewAsExpression(expression, type_), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateAsExpression(node, v.VisitNode(node.Expression), v.VisitNode(node.Type))
 }
 
 // SatisfiesExpression
@@ -4184,17 +4289,19 @@ func (f *NodeFactory) NewSatisfiesExpression(expression *Expression, typeNode *T
 	return newNode(KindSatisfiesExpression, data)
 }
 
+func (f *NodeFactory) UpdateSatisfiesExpression(node *SatisfiesExpression, expression *Expression, typeNode *TypeNode) *Node {
+	if expression != node.Expression || typeNode != node.Type {
+		return updateNode(f.NewSatisfiesExpression(expression, typeNode), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *SatisfiesExpression) ForEachChild(v Visitor) bool {
 	return visit(v, node.Expression) || visit(v, node.Type)
 }
 
 func (node *SatisfiesExpression) VisitEachChild(v *NodeVisitor) *Node {
-	expression := v.VisitNode(node.Expression)
-	type_ := v.VisitNode(node.Type)
-	if expression != node.Expression || type_ != node.Type {
-		return v.UpdateNode(v.Factory.NewSatisfiesExpression(expression, type_), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateSatisfiesExpression(node, v.VisitNode(node.Expression), v.VisitNode(node.Type))
 }
 
 func IsSatisfiesExpression(node *Node) bool {
@@ -4222,21 +4329,20 @@ func (f *NodeFactory) NewConditionalExpression(condition *Expression, questionTo
 	return newNode(KindConditionalExpression, data)
 }
 
+func (f *NodeFactory) UpdateConditionalExpression(node *ConditionalExpression, condition *Expression, questionToken *TokenNode, whenTrue *Expression, colonToken *TokenNode, whenFalse *Expression) *Node {
+	if condition != node.Condition || questionToken != node.QuestionToken || whenTrue != node.WhenTrue || colonToken != node.ColonToken || whenFalse != node.WhenFalse {
+		return updateNode(f.NewConditionalExpression(condition, questionToken, whenTrue, colonToken, whenFalse), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *ConditionalExpression) ForEachChild(v Visitor) bool {
 	return visit(v, node.Condition) || visit(v, node.QuestionToken) || visit(v, node.WhenTrue) ||
 		visit(v, node.ColonToken) || visit(v, node.WhenFalse)
 }
 
 func (node *ConditionalExpression) VisitEachChild(v *NodeVisitor) *Node {
-	condition := v.VisitNode(node.Condition)
-	questionToken := v.VisitToken(node.QuestionToken)
-	whenTrue := v.VisitNode(node.WhenTrue)
-	colonToken := v.VisitToken(node.ColonToken)
-	whenFalse := v.VisitNode(node.WhenFalse)
-	if condition != node.Condition || questionToken != node.QuestionToken || whenTrue != node.WhenTrue || colonToken != node.ColonToken || whenFalse != node.WhenFalse {
-		return v.UpdateNode(v.Factory.NewConditionalExpression(condition, questionToken, whenTrue, colonToken, whenFalse), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateConditionalExpression(node, v.VisitNode(node.Condition), v.VisitToken(node.QuestionToken), v.VisitNode(node.WhenTrue), v.VisitToken(node.ColonToken), v.VisitNode(node.WhenFalse))
 }
 
 // PropertyAccessExpression
@@ -4259,18 +4365,19 @@ func (f *NodeFactory) NewPropertyAccessExpression(expression *Expression, questi
 	return node
 }
 
+func (f *NodeFactory) UpdatePropertyAccessExpression(node *PropertyAccessExpression, expression *Expression, questionDotToken *TokenNode, name *MemberName) *Node {
+	if expression != node.Expression || questionDotToken != node.QuestionDotToken || name != node.name {
+		return updateNode(f.NewPropertyAccessExpression(expression, questionDotToken, name, node.Flags), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *PropertyAccessExpression) ForEachChild(v Visitor) bool {
 	return visit(v, node.Expression) || visit(v, node.QuestionDotToken) || visit(v, node.name)
 }
 
 func (node *PropertyAccessExpression) VisitEachChild(v *NodeVisitor) *Node {
-	expression := v.VisitNode(node.Expression)
-	questionDotToken := v.VisitToken(node.QuestionDotToken)
-	name := v.VisitNode(node.name)
-	if expression != node.Expression || questionDotToken != node.QuestionDotToken || name != node.name {
-		return v.UpdateNode(v.Factory.NewPropertyAccessExpression(expression, questionDotToken, name, node.Flags), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdatePropertyAccessExpression(node, v.VisitNode(node.Expression), v.VisitToken(node.QuestionDotToken), v.VisitNode(node.name))
 }
 
 func (node *PropertyAccessExpression) Name() *DeclarationName { return node.name }
@@ -4299,18 +4406,19 @@ func (f *NodeFactory) NewElementAccessExpression(expression *Expression, questio
 	return node
 }
 
+func (f *NodeFactory) UpdateElementAccessExpression(node *ElementAccessExpression, expression *Expression, questionDotToken *TokenNode, argumentExpression *Expression) *Node {
+	if expression != node.Expression || questionDotToken != node.QuestionDotToken || argumentExpression != node.ArgumentExpression {
+		return updateNode(f.NewElementAccessExpression(expression, questionDotToken, argumentExpression, node.Flags), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *ElementAccessExpression) ForEachChild(v Visitor) bool {
 	return visit(v, node.Expression) || visit(v, node.QuestionDotToken) || visit(v, node.ArgumentExpression)
 }
 
 func (node *ElementAccessExpression) VisitEachChild(v *NodeVisitor) *Node {
-	expression := v.VisitNode(node.Expression)
-	questionDotToken := v.VisitToken(node.QuestionDotToken)
-	argumentExpression := v.VisitNode(node.ArgumentExpression)
-	if expression != node.Expression || questionDotToken != node.QuestionDotToken || argumentExpression != node.ArgumentExpression {
-		return v.UpdateNode(v.Factory.NewElementAccessExpression(expression, questionDotToken, argumentExpression, node.Flags), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateElementAccessExpression(node, v.VisitNode(node.Expression), v.VisitToken(node.QuestionDotToken), v.VisitNode(node.ArgumentExpression))
 }
 
 func IsElementAccessExpression(node *Node) bool {
@@ -4338,19 +4446,19 @@ func (f *NodeFactory) NewCallExpression(expression *Expression, questionDotToken
 	return node
 }
 
+func (f *NodeFactory) UpdateCallExpression(node *CallExpression, expression *Expression, questionDotToken *TokenNode, typeArguments *TypeArgumentList, arguments *ArgumentList) *Node {
+	if expression != node.Expression || questionDotToken != node.QuestionDotToken || typeArguments != node.TypeArguments || arguments != node.Arguments {
+		return updateNode(f.NewCallExpression(expression, questionDotToken, typeArguments, arguments, node.Flags), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *CallExpression) ForEachChild(v Visitor) bool {
 	return visit(v, node.Expression) || visit(v, node.QuestionDotToken) || visitNodeList(v, node.TypeArguments) || visitNodeList(v, node.Arguments)
 }
 
 func (node *CallExpression) VisitEachChild(v *NodeVisitor) *Node {
-	expression := v.VisitNode(node.Expression)
-	questionDotToken := v.VisitToken(node.QuestionDotToken)
-	typeArguments := v.VisitNodes(node.TypeArguments)
-	arguments := v.VisitNodes(node.Arguments)
-	if expression != node.Expression || questionDotToken != node.QuestionDotToken || typeArguments != node.TypeArguments || arguments != node.Arguments {
-		return v.UpdateNode(v.Factory.NewCallExpression(expression, questionDotToken, typeArguments, arguments, node.Flags), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateCallExpression(node, v.VisitNode(node.Expression), v.VisitToken(node.QuestionDotToken), v.VisitNodes(node.TypeArguments), v.VisitNodes(node.Arguments))
 }
 
 func IsCallExpression(node *Node) bool {
@@ -4366,6 +4474,13 @@ type NewExpression struct {
 	Arguments     *NodeList   // NodeList[*Expression]. Optional
 }
 
+func (f *NodeFactory) UpdateNewExpression(node *NewExpression, expression *Expression, typeArguments *TypeArgumentList, arguments *ArgumentList) *Node {
+	if expression != node.Expression || typeArguments != node.TypeArguments || arguments != node.Arguments {
+		return updateNode(f.NewNewExpression(expression, typeArguments, arguments), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (f *NodeFactory) NewNewExpression(expression *Expression, typeArguments *NodeList, arguments *NodeList) *Node {
 	data := &NewExpression{}
 	data.Expression = expression
@@ -4375,13 +4490,7 @@ func (f *NodeFactory) NewNewExpression(expression *Expression, typeArguments *No
 }
 
 func (node *NewExpression) VisitEachChild(v *NodeVisitor) *Node {
-	expression := v.VisitNode(node.Expression)
-	typeArguments := v.VisitNodes(node.TypeArguments)
-	arguments := v.VisitNodes(node.Arguments)
-	if expression != node.Expression || typeArguments != node.TypeArguments || arguments != node.Arguments {
-		return v.UpdateNode(v.Factory.NewNewExpression(expression, typeArguments, arguments), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateNewExpression(node, v.VisitNode(node.Expression), v.VisitNodes(node.TypeArguments), v.VisitNodes(node.Arguments))
 }
 
 func (node *NewExpression) ForEachChild(v Visitor) bool {
@@ -4408,16 +4517,19 @@ func (f *NodeFactory) NewMetaProperty(keywordToken Kind, name *IdentifierNode) *
 	return newNode(KindMetaProperty, data)
 }
 
+func (f *NodeFactory) UpdateMetaProperty(node *MetaProperty, name *IdentifierNode) *Node {
+	if name != node.name {
+		return updateNode(f.NewMetaProperty(node.KeywordToken, name), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *MetaProperty) ForEachChild(v Visitor) bool {
 	return visit(v, node.name)
 }
 
 func (node *MetaProperty) VisitEachChild(v *NodeVisitor) *Node {
-	name := v.VisitNode(node.name)
-	if name != node.name {
-		return v.UpdateNode(v.Factory.NewMetaProperty(node.KeywordToken, name), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateMetaProperty(node, v.VisitNode(node.name))
 }
 
 func (node *MetaProperty) Name() *DeclarationName {
@@ -4435,10 +4547,18 @@ type NonNullExpression struct {
 	Expression *Expression // Expression
 }
 
-func (f *NodeFactory) NewNonNullExpression(expression *Expression) *Node {
+func (f *NodeFactory) NewNonNullExpression(expression *Expression, flags NodeFlags) *Node {
 	data := &NonNullExpression{}
 	data.Expression = expression
+	data.Flags |= flags & NodeFlagsOptionalChain
 	return newNode(KindNonNullExpression, data)
+}
+
+func (f *NodeFactory) UpdateNonNullExpression(node *NonNullExpression, expression *Expression) *Node {
+	if expression != node.Expression {
+		return updateNode(f.NewNonNullExpression(expression, node.AsNode().Flags), node.AsNode())
+	}
+	return node.AsNode()
 }
 
 func (node *NonNullExpression) ForEachChild(v Visitor) bool {
@@ -4446,11 +4566,7 @@ func (node *NonNullExpression) ForEachChild(v Visitor) bool {
 }
 
 func (node *NonNullExpression) VisitEachChild(v *NodeVisitor) *Node {
-	expression := v.VisitNode(node.Expression)
-	if expression != node.Expression {
-		return v.UpdateNode(v.Factory.NewNonNullExpression(expression), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateNonNullExpression(node, v.VisitNode(node.Expression))
 }
 
 func IsNonNullExpression(node *Node) bool {
@@ -4470,16 +4586,19 @@ func (f *NodeFactory) NewSpreadElement(expression *Expression) *Node {
 	return newNode(KindSpreadElement, data)
 }
 
+func (f *NodeFactory) UpdateSpreadElement(node *SpreadElement, expression *Expression) *Node {
+	if expression != node.Expression {
+		return updateNode(f.NewSpreadElement(expression), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *SpreadElement) ForEachChild(v Visitor) bool {
 	return visit(v, node.Expression)
 }
 
 func (node *SpreadElement) VisitEachChild(v *NodeVisitor) *Node {
-	expression := v.VisitNode(node.Expression)
-	if expression != node.Expression {
-		return v.UpdateNode(v.Factory.NewSpreadElement(expression), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateSpreadElement(node, v.VisitNode(node.Expression))
 }
 
 func IsSpreadElement(node *Node) bool {
@@ -4501,17 +4620,19 @@ func (f *NodeFactory) NewTemplateExpression(head *TemplateHeadNode, templateSpan
 	return newNode(KindTemplateExpression, data)
 }
 
+func (f *NodeFactory) UpdateTemplateExpression(node *TemplateExpression, head *TemplateHeadNode, templateSpans *TemplateSpanList) *Node {
+	if head != node.Head || templateSpans != node.TemplateSpans {
+		return updateNode(f.NewTemplateExpression(head, templateSpans), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *TemplateExpression) ForEachChild(v Visitor) bool {
 	return visit(v, node.Head) || visitNodeList(v, node.TemplateSpans)
 }
 
 func (node *TemplateExpression) VisitEachChild(v *NodeVisitor) *Node {
-	head := v.VisitNode(node.Head)
-	templateSpans := v.VisitNodes(node.TemplateSpans)
-	if head != node.Head || templateSpans != node.TemplateSpans {
-		return v.UpdateNode(v.Factory.NewTemplateExpression(head, templateSpans), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateTemplateExpression(node, v.VisitNode(node.Head), v.VisitNodes(node.TemplateSpans))
 }
 
 func IsTemplateExpression(node *Node) bool {
@@ -4533,17 +4654,19 @@ func (f *NodeFactory) NewTemplateSpan(expression *Expression, literal *TemplateM
 	return newNode(KindTemplateSpan, data)
 }
 
+func (f *NodeFactory) UpdateTemplateSpan(node *TemplateSpan, expression *Expression, literal *TemplateMiddleOrTail) *Node {
+	if expression != node.Expression || literal != node.Literal {
+		return updateNode(f.NewTemplateSpan(expression, literal), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *TemplateSpan) ForEachChild(v Visitor) bool {
 	return visit(v, node.Expression) || visit(v, node.Literal)
 }
 
 func (node *TemplateSpan) VisitEachChild(v *NodeVisitor) *Node {
-	expression := v.VisitNode(node.Expression)
-	literal := v.VisitNode(node.Literal)
-	if expression != node.Expression || literal != node.Literal {
-		return v.UpdateNode(v.Factory.NewTemplateSpan(expression, literal), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateTemplateSpan(node, v.VisitNode(node.Expression), v.VisitNode(node.Literal))
 }
 
 func IsTemplateSpan(node *Node) bool {
@@ -4571,19 +4694,19 @@ func (f *NodeFactory) NewTaggedTemplateExpression(tag *Expression, questionDotTo
 	return node
 }
 
+func (f *NodeFactory) UpdateTaggedTemplateExpression(node *TaggedTemplateExpression, tag *Expression, questionDotToken *TokenNode, typeArguments *TypeArgumentList, template *TemplateLiteral) *Node {
+	if tag != node.Tag || questionDotToken != node.QuestionDotToken || typeArguments != node.TypeArguments || template != node.Template {
+		return updateNode(f.NewTaggedTemplateExpression(tag, questionDotToken, typeArguments, template, node.Flags), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *TaggedTemplateExpression) ForEachChild(v Visitor) bool {
 	return visit(v, node.Tag) || visit(v, node.QuestionDotToken) || visitNodeList(v, node.TypeArguments) || visit(v, node.Template)
 }
 
 func (node *TaggedTemplateExpression) VisitEachChild(v *NodeVisitor) *Node {
-	tag := v.VisitNode(node.Tag)
-	questionDotToken := v.VisitToken(node.QuestionDotToken)
-	typeArguments := v.VisitNodes(node.TypeArguments)
-	template := v.VisitNode(node.Template)
-	if tag != node.Tag || questionDotToken != node.QuestionDotToken || typeArguments != node.TypeArguments || template != node.Template {
-		return v.UpdateNode(v.Factory.NewTaggedTemplateExpression(tag, questionDotToken, typeArguments, template, node.Flags), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateTaggedTemplateExpression(node, v.VisitNode(node.Tag), v.VisitToken(node.QuestionDotToken), v.VisitNodes(node.TypeArguments), v.VisitNode(node.Template))
 }
 
 func IsTaggedTemplateExpression(node *Node) bool {
@@ -4603,16 +4726,19 @@ func (f *NodeFactory) NewParenthesizedExpression(expression *Expression) *Node {
 	return newNode(KindParenthesizedExpression, data)
 }
 
+func (f *NodeFactory) UpdateParenthesizedExpression(node *ParenthesizedExpression, expression *Expression) *Node {
+	if expression != node.Expression {
+		return updateNode(f.NewParenthesizedExpression(expression), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *ParenthesizedExpression) ForEachChild(v Visitor) bool {
 	return visit(v, node.Expression)
 }
 
 func (node *ParenthesizedExpression) VisitEachChild(v *NodeVisitor) *Node {
-	expression := v.VisitNode(node.Expression)
-	if expression != node.Expression {
-		return v.UpdateNode(v.Factory.NewParenthesizedExpression(expression), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateParenthesizedExpression(node, v.VisitNode(node.Expression))
 }
 
 func IsParenthesizedExpression(node *Node) bool {
@@ -4634,16 +4760,19 @@ func (f *NodeFactory) NewArrayLiteralExpression(elements *NodeList, multiLine bo
 	return newNode(KindArrayLiteralExpression, data)
 }
 
+func (f *NodeFactory) UpdateArrayLiteralExpression(node *ArrayLiteralExpression, elements *ElementList) *Node {
+	if elements != node.Elements {
+		return updateNode(f.NewArrayLiteralExpression(elements, node.MultiLine), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *ArrayLiteralExpression) ForEachChild(v Visitor) bool {
 	return visitNodeList(v, node.Elements)
 }
 
 func (node *ArrayLiteralExpression) VisitEachChild(v *NodeVisitor) *Node {
-	elements := v.VisitNodes(node.Elements)
-	if elements != node.Elements {
-		return v.UpdateNode(v.Factory.NewArrayLiteralExpression(elements, node.MultiLine), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateArrayLiteralExpression(node, v.VisitNodes(node.Elements))
 }
 
 func IsArrayLiteralExpression(node *Node) bool {
@@ -4666,16 +4795,19 @@ func (f *NodeFactory) NewObjectLiteralExpression(properties *NodeList, multiLine
 	return newNode(KindObjectLiteralExpression, data)
 }
 
+func (f *NodeFactory) UpdateObjectLiteralExpression(node *ObjectLiteralExpression, properties *PropertyDefinitionList) *Node {
+	if properties != node.Properties {
+		return updateNode(f.NewObjectLiteralExpression(properties, node.MultiLine), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *ObjectLiteralExpression) ForEachChild(v Visitor) bool {
 	return visitNodeList(v, node.Properties)
 }
 
 func (node *ObjectLiteralExpression) VisitEachChild(v *NodeVisitor) *Node {
-	properties := v.VisitNodes(node.Properties)
-	if properties != node.Properties {
-		return v.UpdateNode(v.Factory.NewObjectLiteralExpression(properties, node.MultiLine), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateObjectLiteralExpression(node, v.VisitNodes(node.Properties))
 }
 
 func IsObjectLiteralExpression(node *Node) bool {
@@ -4701,16 +4833,19 @@ func (f *NodeFactory) NewSpreadAssignment(expression *Expression) *Node {
 	return newNode(KindSpreadAssignment, data)
 }
 
+func (f *NodeFactory) UpdateSpreadAssignment(node *SpreadAssignment, expression *Expression) *Node {
+	if expression != node.Expression {
+		return updateNode(f.NewSpreadAssignment(expression), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *SpreadAssignment) ForEachChild(v Visitor) bool {
 	return visit(v, node.Expression)
 }
 
 func (node *SpreadAssignment) VisitEachChild(v *NodeVisitor) *Node {
-	expression := v.VisitNode(node.Expression)
-	if expression != node.Expression {
-		return v.UpdateNode(v.Factory.NewSpreadAssignment(expression), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateSpreadAssignment(node, v.VisitNode(node.Expression))
 }
 
 func IsSpreadAssignment(node *Node) bool {
@@ -4735,19 +4870,19 @@ func (f *NodeFactory) NewPropertyAssignment(modifiers *ModifierList, name *Prope
 	return newNode(KindPropertyAssignment, data)
 }
 
+func (f *NodeFactory) UpdatePropertyAssignment(node *PropertyAssignment, modifiers *ModifierList, name *PropertyName, postfixToken *TokenNode, initializer *Expression) *Node {
+	if modifiers != node.modifiers || name != node.name || postfixToken != node.PostfixToken || initializer != node.Initializer {
+		return updateNode(f.NewPropertyAssignment(modifiers, name, postfixToken, initializer), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *PropertyAssignment) ForEachChild(v Visitor) bool {
 	return visitModifiers(v, node.modifiers) || visit(v, node.name) || visit(v, node.PostfixToken) || visit(v, node.Initializer)
 }
 
 func (node *PropertyAssignment) VisitEachChild(v *NodeVisitor) *Node {
-	modifiers := v.VisitModifiers(node.modifiers)
-	name := v.VisitNode(node.name)
-	postfixToken := v.VisitToken(node.PostfixToken)
-	initializer := v.VisitNode(node.Initializer)
-	if modifiers != node.modifiers || name != node.name || postfixToken != node.PostfixToken || initializer != node.Initializer {
-		return v.UpdateNode(v.Factory.NewPropertyAssignment(modifiers, name, postfixToken, initializer), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdatePropertyAssignment(node, v.VisitModifiers(node.modifiers), v.VisitNode(node.name), v.VisitToken(node.PostfixToken), v.VisitNode(node.Initializer))
 }
 
 func IsPropertyAssignment(node *Node) bool {
@@ -4772,19 +4907,19 @@ func (f *NodeFactory) NewShorthandPropertyAssignment(modifiers *ModifierList, na
 	return newNode(KindShorthandPropertyAssignment, data)
 }
 
+func (f *NodeFactory) UpdateShorthandPropertyAssignment(node *ShorthandPropertyAssignment, modifiers *ModifierList, name *PropertyName, postfixToken *TokenNode, objectAssignmentInitializer *Expression) *Node {
+	if modifiers != node.modifiers || name != node.name || postfixToken != node.PostfixToken || objectAssignmentInitializer != node.ObjectAssignmentInitializer {
+		return updateNode(f.NewShorthandPropertyAssignment(modifiers, name, postfixToken, objectAssignmentInitializer), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *ShorthandPropertyAssignment) ForEachChild(v Visitor) bool {
 	return visitModifiers(v, node.modifiers) || visit(v, node.name) || visit(v, node.PostfixToken) || visit(v, node.ObjectAssignmentInitializer)
 }
 
 func (node *ShorthandPropertyAssignment) VisitEachChild(v *NodeVisitor) *Node {
-	modifiers := v.VisitModifiers(node.modifiers)
-	name := v.VisitNode(node.name)
-	postfixToken := v.VisitToken(node.PostfixToken)
-	objectAssignmentInitializer := v.VisitNode(node.ObjectAssignmentInitializer)
-	if modifiers != node.modifiers || name != node.name || postfixToken != node.PostfixToken || objectAssignmentInitializer != node.ObjectAssignmentInitializer {
-		return v.UpdateNode(v.Factory.NewShorthandPropertyAssignment(modifiers, name, postfixToken, objectAssignmentInitializer), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateShorthandPropertyAssignment(node, v.VisitModifiers(node.modifiers), v.VisitNode(node.name), v.VisitToken(node.PostfixToken), v.VisitNode(node.ObjectAssignmentInitializer))
 }
 
 func IsShorthandPropertyAssignment(node *Node) bool {
@@ -4804,16 +4939,19 @@ func (f *NodeFactory) NewDeleteExpression(expression *Expression) *Node {
 	return newNode(KindDeleteExpression, data)
 }
 
+func (f *NodeFactory) UpdateDeleteExpression(node *DeleteExpression, expression *Expression) *Node {
+	if expression != node.Expression {
+		return updateNode(f.NewDeleteExpression(expression), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *DeleteExpression) ForEachChild(v Visitor) bool {
 	return visit(v, node.Expression)
 }
 
 func (node *DeleteExpression) VisitEachChild(v *NodeVisitor) *Node {
-	expression := v.VisitNode(node.Expression)
-	if expression != node.Expression {
-		return v.UpdateNode(v.Factory.NewDeleteExpression(expression), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateDeleteExpression(node, v.VisitNode(node.Expression))
 }
 
 // TypeOfExpression
@@ -4829,16 +4967,19 @@ func (f *NodeFactory) NewTypeOfExpression(expression *Expression) *Node {
 	return newNode(KindTypeOfExpression, data)
 }
 
+func (f *NodeFactory) UpdateTypeOfExpression(node *TypeOfExpression, expression *Expression) *Node {
+	if expression != node.Expression {
+		return updateNode(f.NewTypeOfExpression(expression), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *TypeOfExpression) ForEachChild(v Visitor) bool {
 	return visit(v, node.Expression)
 }
 
 func (node *TypeOfExpression) VisitEachChild(v *NodeVisitor) *Node {
-	expression := v.VisitNode(node.Expression)
-	if expression != node.Expression {
-		return v.UpdateNode(v.Factory.NewTypeOfExpression(expression), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateTypeOfExpression(node, v.VisitNode(node.Expression))
 }
 
 func IsTypeOfExpression(node *Node) bool {
@@ -4858,16 +4999,19 @@ func (f *NodeFactory) NewVoidExpression(expression *Expression) *Node {
 	return newNode(KindVoidExpression, data)
 }
 
+func (f *NodeFactory) UpdateVoidExpression(node *VoidExpression, expression *Expression) *Node {
+	if expression != node.Expression {
+		return updateNode(f.NewVoidExpression(expression), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *VoidExpression) ForEachChild(v Visitor) bool {
 	return visit(v, node.Expression)
 }
 
 func (node *VoidExpression) VisitEachChild(v *NodeVisitor) *Node {
-	expression := v.VisitNode(node.Expression)
-	if expression != node.Expression {
-		return v.UpdateNode(v.Factory.NewVoidExpression(expression), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateVoidExpression(node, v.VisitNode(node.Expression))
 }
 
 // AwaitExpression
@@ -4883,16 +5027,19 @@ func (f *NodeFactory) NewAwaitExpression(expression *Expression) *Node {
 	return newNode(KindAwaitExpression, data)
 }
 
+func (f *NodeFactory) UpdateAwaitExpression(node *AwaitExpression, expression *Expression) *Node {
+	if expression != node.Expression {
+		return updateNode(f.NewAwaitExpression(expression), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *AwaitExpression) ForEachChild(v Visitor) bool {
 	return visit(v, node.Expression)
 }
 
 func (node *AwaitExpression) VisitEachChild(v *NodeVisitor) *Node {
-	expression := v.VisitNode(node.Expression)
-	if expression != node.Expression {
-		return v.UpdateNode(v.Factory.NewAwaitExpression(expression), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateAwaitExpression(node, v.VisitNode(node.Expression))
 }
 
 func IsAwaitExpression(node *Node) bool {
@@ -4914,17 +5061,19 @@ func (f *NodeFactory) NewTypeAssertion(typeNode *TypeNode, expression *Expressio
 	return newNode(KindTypeAssertionExpression, data)
 }
 
+func (f *NodeFactory) UpdateTypeAssertion(node *TypeAssertion, typeNode *TypeNode, expression *Expression) *Node {
+	if typeNode != node.Type || expression != node.Expression {
+		return updateNode(f.NewTypeAssertion(typeNode, expression), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *TypeAssertion) ForEachChild(v Visitor) bool {
 	return visit(v, node.Type) || visit(v, node.Expression)
 }
 
 func (node *TypeAssertion) VisitEachChild(v *NodeVisitor) *Node {
-	type_ := v.VisitNode(node.Type)
-	expression := v.VisitNode(node.Expression)
-	if type_ != node.Type || expression != node.Expression {
-		return v.UpdateNode(v.Factory.NewTypeAssertion(type_, expression), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateTypeAssertion(node, v.VisitNode(node.Type), v.VisitNode(node.Expression))
 }
 
 // TypeNodeBase
@@ -4960,6 +5109,13 @@ type UnionTypeNode struct {
 	UnionOrIntersectionTypeNodeBase
 }
 
+func (f *NodeFactory) UpdateUnionTypeNode(node *UnionTypeNode, types *TypeList) *Node {
+	if types != node.Types {
+		return updateNode(f.NewUnionTypeNode(types), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (f *NodeFactory) NewUnionTypeNode(types *NodeList) *Node {
 	data := &UnionTypeNode{}
 	data.Types = types
@@ -4967,17 +5123,20 @@ func (f *NodeFactory) NewUnionTypeNode(types *NodeList) *Node {
 }
 
 func (node *UnionTypeNode) VisitEachChild(v *NodeVisitor) *Node {
-	types := v.VisitNodes(node.Types)
-	if types != node.Types {
-		return v.UpdateNode(v.Factory.NewUnionTypeNode(types), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateUnionTypeNode(node, v.VisitNodes(node.Types))
 }
 
 // IntersectionTypeNode
 
 type IntersectionTypeNode struct {
 	UnionOrIntersectionTypeNodeBase
+}
+
+func (f *NodeFactory) UpdateIntersectionTypeNode(node *IntersectionTypeNode, types *TypeList) *Node {
+	if types != node.Types {
+		return updateNode(f.NewIntersectionTypeNode(types), node.AsNode())
+	}
+	return node.AsNode()
 }
 
 func (f *NodeFactory) NewIntersectionTypeNode(types *NodeList) *Node {
@@ -4987,11 +5146,7 @@ func (f *NodeFactory) NewIntersectionTypeNode(types *NodeList) *Node {
 }
 
 func (node *IntersectionTypeNode) VisitEachChild(v *NodeVisitor) *Node {
-	types := v.VisitNodes(node.Types)
-	if types != node.Types {
-		return v.UpdateNode(v.Factory.NewIntersectionTypeNode(types), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateIntersectionTypeNode(node, v.VisitNodes(node.Types))
 }
 
 // ConditionalTypeNode
@@ -5014,19 +5169,19 @@ func (f *NodeFactory) NewConditionalTypeNode(checkType *TypeNode, extendsType *T
 	return newNode(KindConditionalType, data)
 }
 
+func (f *NodeFactory) UpdateConditionalTypeNode(node *ConditionalTypeNode, checkType *TypeNode, extendsType *TypeNode, trueType *TypeNode, falseType *TypeNode) *Node {
+	if checkType != node.CheckType || extendsType != node.ExtendsType || trueType != node.TrueType || falseType != node.FalseType {
+		return updateNode(f.NewConditionalTypeNode(checkType, extendsType, trueType, falseType), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *ConditionalTypeNode) ForEachChild(v Visitor) bool {
 	return visit(v, node.CheckType) || visit(v, node.ExtendsType) || visit(v, node.TrueType) || visit(v, node.FalseType)
 }
 
 func (node *ConditionalTypeNode) VisitEachChild(v *NodeVisitor) *Node {
-	checkType := v.VisitNode(node.CheckType)
-	extendsType := v.VisitNode(node.ExtendsType)
-	trueType := v.VisitNode(node.TrueType)
-	falseType := v.VisitNode(node.FalseType)
-	if checkType != node.CheckType || extendsType != node.ExtendsType || trueType != node.TrueType || falseType != node.FalseType {
-		return v.UpdateNode(v.Factory.NewConditionalTypeNode(checkType, extendsType, trueType, falseType), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateConditionalTypeNode(node, v.VisitNode(node.CheckType), v.VisitNode(node.ExtendsType), v.VisitNode(node.TrueType), v.VisitNode(node.FalseType))
 }
 
 func IsConditionalTypeNode(node *Node) bool {
@@ -5048,16 +5203,19 @@ func (f *NodeFactory) NewTypeOperatorNode(operator Kind, typeNode *TypeNode) *No
 	return newNode(KindTypeOperator, data)
 }
 
+func (f *NodeFactory) UpdateTypeOperatorNode(node *TypeOperatorNode, typeNode *TypeNode) *Node {
+	if typeNode != node.Type {
+		return updateNode(f.NewTypeOperatorNode(node.Operator, typeNode), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *TypeOperatorNode) ForEachChild(v Visitor) bool {
 	return visit(v, node.Type)
 }
 
 func (node *TypeOperatorNode) VisitEachChild(v *NodeVisitor) *Node {
-	type_ := v.VisitNode(node.Type)
-	if type_ != node.Type {
-		return v.UpdateNode(v.Factory.NewTypeOperatorNode(node.Operator, node.Type), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateTypeOperatorNode(node, v.VisitNode(node.Type))
 }
 
 func IsTypeOperatorNode(node *Node) bool {
@@ -5077,16 +5235,19 @@ func (f *NodeFactory) NewInferTypeNode(typeParameter *TypeParameterDeclarationNo
 	return newNode(KindInferType, data)
 }
 
+func (f *NodeFactory) UpdateInferTypeNode(node *InferTypeNode, typeParameter *TypeNode) *Node {
+	if typeParameter != node.TypeParameter {
+		return updateNode(f.NewInferTypeNode(typeParameter), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *InferTypeNode) ForEachChild(v Visitor) bool {
 	return visit(v, node.TypeParameter)
 }
 
 func (node *InferTypeNode) VisitEachChild(v *NodeVisitor) *Node {
-	typeParameter := v.VisitNode(node.TypeParameter)
-	if typeParameter != node.TypeParameter {
-		return v.UpdateNode(v.Factory.NewInferTypeNode(typeParameter), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateInferTypeNode(node, v.VisitNode(node.TypeParameter))
 }
 
 func IsInferTypeNode(node *Node) bool {
@@ -5106,16 +5267,19 @@ func (f *NodeFactory) NewArrayTypeNode(elementType *TypeNode) *Node {
 	return newNode(KindArrayType, data)
 }
 
+func (f *NodeFactory) UpdateArrayTypeNode(node *ArrayTypeNode, elementType *TypeNode) *Node {
+	if elementType != node.ElementType {
+		return updateNode(f.NewArrayTypeNode(elementType), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *ArrayTypeNode) ForEachChild(v Visitor) bool {
 	return visit(v, node.ElementType)
 }
 
 func (node *ArrayTypeNode) VisitEachChild(v *NodeVisitor) *Node {
-	elementType := v.VisitNode(node.ElementType)
-	if elementType != node.ElementType {
-		return v.UpdateNode(v.Factory.NewArrayTypeNode(elementType), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateArrayTypeNode(node, v.VisitNode(node.ElementType))
 }
 
 // IndexedAccessTypeNode
@@ -5133,17 +5297,19 @@ func (f *NodeFactory) NewIndexedAccessTypeNode(objectType *TypeNode, indexType *
 	return newNode(KindIndexedAccessType, data)
 }
 
+func (f *NodeFactory) UpdateIndexedAccessTypeNode(node *IndexedAccessTypeNode, objectType *TypeNode, indexType *TypeNode) *Node {
+	if objectType != node.ObjectType || indexType != node.IndexType {
+		return updateNode(f.NewIndexedAccessTypeNode(objectType, indexType), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *IndexedAccessTypeNode) ForEachChild(v Visitor) bool {
 	return visit(v, node.ObjectType) || visit(v, node.IndexType)
 }
 
 func (node *IndexedAccessTypeNode) VisitEachChild(v *NodeVisitor) *Node {
-	objectType := v.VisitNode(node.ObjectType)
-	indexType := v.VisitNode(node.IndexType)
-	if objectType != node.ObjectType || indexType != node.IndexType {
-		return v.UpdateNode(v.Factory.NewIndexedAccessTypeNode(objectType, indexType), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateIndexedAccessTypeNode(node, v.VisitNode(node.ObjectType), v.VisitNode(node.IndexType))
 }
 
 func IsIndexedAccessTypeNode(node *Node) bool {
@@ -5165,17 +5331,19 @@ func (f *NodeFactory) NewTypeReferenceNode(typeName *EntityName, typeArguments *
 	return newNode(KindTypeReference, data)
 }
 
+func (f *NodeFactory) UpdateTypeReferenceNode(node *TypeReferenceNode, typeName *EntityName, typeArguments *TypeArgumentList) *Node {
+	if typeName != node.TypeName || typeArguments != node.TypeArguments {
+		return updateNode(f.NewTypeReferenceNode(typeName, typeArguments), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *TypeReferenceNode) ForEachChild(v Visitor) bool {
 	return visit(v, node.TypeName) || visitNodeList(v, node.TypeArguments)
 }
 
 func (node *TypeReferenceNode) VisitEachChild(v *NodeVisitor) *Node {
-	typeName := v.VisitNode(node.TypeName)
-	typeArguments := v.VisitNodes(node.TypeArguments)
-	if typeName != node.TypeName || typeArguments != node.TypeArguments {
-		return v.UpdateNode(v.Factory.NewTypeReferenceNode(typeName, typeArguments), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateTypeReferenceNode(node, v.VisitNode(node.TypeName), v.VisitNodes(node.TypeArguments))
 }
 
 func IsTypeReferenceNode(node *Node) bool {
@@ -5197,17 +5365,19 @@ func (f *NodeFactory) NewExpressionWithTypeArguments(expression *Expression, typ
 	return newNode(KindExpressionWithTypeArguments, data)
 }
 
+func (f *NodeFactory) UpdateExpressionWithTypeArguments(node *ExpressionWithTypeArguments, expression *Expression, typeArguments *TypeArgumentList) *Node {
+	if expression != node.Expression || typeArguments != node.TypeArguments {
+		return updateNode(f.NewExpressionWithTypeArguments(expression, typeArguments), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *ExpressionWithTypeArguments) ForEachChild(v Visitor) bool {
 	return visit(v, node.Expression) || visitNodeList(v, node.TypeArguments)
 }
 
 func (node *ExpressionWithTypeArguments) VisitEachChild(v *NodeVisitor) *Node {
-	expression := v.VisitNode(node.Expression)
-	typeArguments := v.VisitNodes(node.TypeArguments)
-	if expression != node.Expression || typeArguments != node.TypeArguments {
-		return v.UpdateNode(v.Factory.NewExpressionWithTypeArguments(expression, typeArguments), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateExpressionWithTypeArguments(node, v.VisitNode(node.Expression), v.VisitNodes(node.TypeArguments))
 }
 
 func IsExpressionWithTypeArguments(node *Node) bool {
@@ -5227,16 +5397,19 @@ func (f *NodeFactory) NewLiteralTypeNode(literal *Node) *Node {
 	return newNode(KindLiteralType, data)
 }
 
+func (f *NodeFactory) UpdateLiteralTypeNode(node *LiteralTypeNode, literal *Node) *Node {
+	if literal != node.Literal {
+		return updateNode(f.NewLiteralTypeNode(literal), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *LiteralTypeNode) ForEachChild(v Visitor) bool {
 	return visit(v, node.Literal)
 }
 
 func (node *LiteralTypeNode) VisitEachChild(v *NodeVisitor) *Node {
-	literal := v.VisitNode(node.Literal)
-	if literal != node.Literal {
-		return v.UpdateNode(v.Factory.NewLiteralTypeNode(literal), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateLiteralTypeNode(node, v.VisitNode(node.Literal))
 }
 
 func IsLiteralTypeNode(node *Node) bool {
@@ -5274,18 +5447,19 @@ func (f *NodeFactory) NewTypePredicateNode(assertsModifier *TokenNode, parameter
 	return newNode(KindTypePredicate, data)
 }
 
+func (f *NodeFactory) UpdateTypePredicateNode(node *TypePredicateNode, assertsModifier *TokenNode, parameterName *TypePredicateParameterName, typeNode *TypeNode) *Node {
+	if assertsModifier != node.AssertsModifier || parameterName != node.ParameterName || typeNode != node.Type {
+		return updateNode(f.NewTypePredicateNode(assertsModifier, parameterName, typeNode), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *TypePredicateNode) ForEachChild(v Visitor) bool {
 	return visit(v, node.AssertsModifier) || visit(v, node.ParameterName) || visit(v, node.Type)
 }
 
 func (node *TypePredicateNode) VisitEachChild(v *NodeVisitor) *Node {
-	assertsModifier := v.VisitNode(node.AssertsModifier)
-	parameterName := v.VisitNode(node.ParameterName)
-	type_ := v.VisitNode(node.Type)
-	if assertsModifier != node.AssertsModifier || parameterName != node.ParameterName || type_ != node.Type {
-		return v.UpdateNode(v.Factory.NewTypePredicateNode(assertsModifier, parameterName, type_), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateTypePredicateNode(node, v.VisitNode(node.AssertsModifier), v.VisitNode(node.ParameterName), v.VisitNode(node.Type))
 }
 
 func IsTypePredicateNode(node *Node) bool {
@@ -5313,19 +5487,19 @@ func (f *NodeFactory) NewImportTypeNode(isTypeOf bool, argument *TypeNode, attri
 	return newNode(KindImportType, data)
 }
 
+func (f *NodeFactory) UpdateImportTypeNode(node *ImportTypeNode, isTypeOf bool, argument *TypeNode, attributes *ImportAttributesNode, qualifier *EntityName, typeArguments *TypeArgumentList) *Node {
+	if isTypeOf != node.IsTypeOf || argument != node.Argument || attributes != node.Attributes || qualifier != node.Qualifier || typeArguments != node.TypeArguments {
+		return updateNode(f.NewImportTypeNode(isTypeOf, argument, attributes, qualifier, typeArguments), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *ImportTypeNode) ForEachChild(v Visitor) bool {
 	return visit(v, node.Argument) || visit(v, node.Attributes) || visit(v, node.Qualifier) || visitNodeList(v, node.TypeArguments)
 }
 
 func (node *ImportTypeNode) VisitEachChild(v *NodeVisitor) *Node {
-	argument := v.VisitNode(node.Argument)
-	attributes := v.VisitNode(node.Attributes)
-	qualifier := v.VisitNode(node.Qualifier)
-	typeArguments := v.VisitNodes(node.TypeArguments)
-	if argument != node.Argument || attributes != node.Attributes || qualifier != node.Qualifier || typeArguments != node.TypeArguments {
-		return v.UpdateNode(v.Factory.NewImportTypeNode(node.IsTypeOf, argument, attributes, qualifier, typeArguments), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateImportTypeNode(node, node.IsTypeOf, v.VisitNode(node.Argument), v.VisitNode(node.Attributes), v.VisitNode(node.Qualifier), v.VisitNodes(node.TypeArguments))
 }
 
 func IsImportTypeNode(node *Node) bool {
@@ -5347,17 +5521,19 @@ func (f *NodeFactory) NewImportAttribute(name *ImportAttributeName, value *Expre
 	return newNode(KindImportAttribute, data)
 }
 
+func (f *NodeFactory) UpdateImportAttribute(node *ImportAttribute, name *ImportAttributeName, value *Expression) *Node {
+	if name != node.name || value != node.Value {
+		return updateNode(f.NewImportAttribute(name, value), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *ImportAttribute) ForEachChild(v Visitor) bool {
 	return visit(v, node.name) || visit(v, node.Value)
 }
 
 func (node *ImportAttribute) VisitEachChild(v *NodeVisitor) *Node {
-	name := v.VisitNode(node.name)
-	value := v.VisitNode(node.Value)
-	if name != node.name || value != node.Value {
-		return v.UpdateNode(v.Factory.NewImportAttribute(name, value), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateImportAttribute(node, v.VisitNode(node.name), v.VisitNode(node.Value))
 }
 
 func (node *ImportAttribute) Name() *ImportAttributeName {
@@ -5381,16 +5557,19 @@ func (f *NodeFactory) NewImportAttributes(token Kind, attributes *NodeList, mult
 	return newNode(KindImportAttributes, data)
 }
 
+func (f *NodeFactory) UpdateImportAttributes(node *ImportAttributes, attributes *ImportAttributeList) *Node {
+	if attributes != node.Attributes {
+		return updateNode(f.NewImportAttributes(node.Token, attributes, node.MultiLine), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *ImportAttributes) ForEachChild(v Visitor) bool {
 	return visitNodeList(v, node.Attributes)
 }
 
 func (node *ImportAttributes) VisitEachChild(v *NodeVisitor) *Node {
-	attributes := v.VisitNodes(node.Attributes)
-	if attributes != node.Attributes {
-		return v.UpdateNode(v.Factory.NewImportAttributes(node.Token, attributes, node.MultiLine), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateImportAttributes(node, v.VisitNodes(node.Attributes))
 }
 
 func IsImportAttributes(node *Node) bool {
@@ -5412,17 +5591,19 @@ func (f *NodeFactory) NewTypeQueryNode(exprName *EntityName, typeArguments *Node
 	return newNode(KindTypeQuery, data)
 }
 
+func (f *NodeFactory) UpdateTypeQueryNode(node *TypeQueryNode, exprName *EntityName, typeArguments *TypeArgumentList) *Node {
+	if exprName != node.ExprName || typeArguments != node.TypeArguments {
+		return updateNode(f.NewTypeQueryNode(exprName, typeArguments), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *TypeQueryNode) ForEachChild(v Visitor) bool {
 	return visit(v, node.ExprName) || visitNodeList(v, node.TypeArguments)
 }
 
 func (node *TypeQueryNode) VisitEachChild(v *NodeVisitor) *Node {
-	exprName := v.VisitNode(node.ExprName)
-	typeArguments := v.VisitNodes(node.TypeArguments)
-	if exprName != node.ExprName || typeArguments != node.TypeArguments {
-		return v.UpdateNode(v.Factory.NewTypeQueryNode(exprName, typeArguments), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateTypeQueryNode(node, v.VisitNode(node.ExprName), v.VisitNodes(node.TypeArguments))
 }
 
 func IsTypeQueryNode(node *Node) bool {
@@ -5454,22 +5635,20 @@ func (f *NodeFactory) NewMappedTypeNode(readonlyToken *TokenNode, typeParameter 
 	return newNode(KindMappedType, data)
 }
 
+func (f *NodeFactory) UpdateMappedTypeNode(node *MappedTypeNode, readonlyToken *TokenNode, typeParameter *TypeParameterDeclarationNode, nameType *TypeNode, questionToken *TokenNode, typeNode *TypeNode, members *TypeElementList) *Node {
+	if readonlyToken != node.ReadonlyToken || typeParameter != node.TypeParameter || nameType != node.NameType || questionToken != node.QuestionToken || typeNode != node.Type || members != node.Members {
+		return updateNode(f.NewMappedTypeNode(readonlyToken, typeParameter, nameType, questionToken, typeNode, members), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *MappedTypeNode) ForEachChild(v Visitor) bool {
 	return visit(v, node.ReadonlyToken) || visit(v, node.TypeParameter) || visit(v, node.NameType) ||
 		visit(v, node.QuestionToken) || visit(v, node.Type) || visitNodeList(v, node.Members)
 }
 
 func (node *MappedTypeNode) VisitEachChild(v *NodeVisitor) *Node {
-	readonlyToken := v.VisitToken(node.ReadonlyToken)
-	typeParameter := v.VisitNode(node.TypeParameter)
-	nameType := v.VisitNode(node.NameType)
-	questionToken := v.VisitToken(node.QuestionToken)
-	type_ := v.VisitNode(node.Type)
-	members := v.VisitNodes(node.Members)
-	if readonlyToken != node.ReadonlyToken || typeParameter != node.TypeParameter || nameType != node.NameType || questionToken != node.QuestionToken || type_ != node.Type || members != node.Members {
-		return v.UpdateNode(v.Factory.NewMappedTypeNode(readonlyToken, typeParameter, nameType, questionToken, type_, members), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateMappedTypeNode(node, v.VisitToken(node.ReadonlyToken), v.VisitNode(node.TypeParameter), v.VisitNode(node.NameType), v.VisitToken(node.QuestionToken), v.VisitNode(node.Type), v.VisitNodes(node.Members))
 }
 
 func IsMappedTypeNode(node *Node) bool {
@@ -5490,16 +5669,19 @@ func (f *NodeFactory) NewTypeLiteralNode(members *NodeList) *Node {
 	return newNode(KindTypeLiteral, data)
 }
 
+func (f *NodeFactory) UpdateTypeLiteralNode(node *TypeLiteralNode, members *TypeElementList) *Node {
+	if members != node.Members {
+		return updateNode(f.NewTypeLiteralNode(members), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *TypeLiteralNode) ForEachChild(v Visitor) bool {
 	return visitNodeList(v, node.Members)
 }
 
 func (node *TypeLiteralNode) VisitEachChild(v *NodeVisitor) *Node {
-	members := v.VisitNodes(node.Members)
-	if members != node.Members {
-		return v.UpdateNode(v.Factory.NewTypeLiteralNode(members), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateTypeLiteralNode(node, v.VisitNodes(node.Members))
 }
 
 func IsTypeLiteralNode(node *Node) bool {
@@ -5519,16 +5701,19 @@ func (f *NodeFactory) NewTupleTypeNode(elements *NodeList) *Node {
 	return newNode(KindTupleType, data)
 }
 
+func (f *NodeFactory) UpdateTupleTypeNode(node *TupleTypeNode, elements *TypeList) *Node {
+	if elements != node.Elements {
+		return updateNode(f.NewTupleTypeNode(elements), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *TupleTypeNode) ForEachChild(v Visitor) bool {
 	return visitNodeList(v, node.Elements)
 }
 
 func (node *TupleTypeNode) VisitEachChild(v *NodeVisitor) *Node {
-	elements := v.VisitNodes(node.Elements)
-	if elements != node.Elements {
-		return v.UpdateNode(v.Factory.NewTupleTypeNode(elements), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateTupleTypeNode(node, v.VisitNodes(node.Elements))
 }
 
 func IsTupleTypeNode(node *Node) bool {
@@ -5555,19 +5740,19 @@ func (f *NodeFactory) NewNamedTupleMember(dotDotDotToken *TokenNode, name *Ident
 	return newNode(KindNamedTupleMember, data)
 }
 
+func (f *NodeFactory) UpdateNamedTupleMember(node *NamedTupleMember, dotDotDotToken *TokenNode, name *IdentifierNode, questionToken *TokenNode, typeNode *TypeNode) *Node {
+	if dotDotDotToken != node.DotDotDotToken || name != node.name || questionToken != node.QuestionToken || typeNode != node.Type {
+		return updateNode(f.NewNamedTupleMember(dotDotDotToken, name, questionToken, typeNode), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *NamedTupleMember) ForEachChild(v Visitor) bool {
 	return visit(v, node.DotDotDotToken) || visit(v, node.name) || visit(v, node.QuestionToken) || visit(v, node.Type)
 }
 
 func (node *NamedTupleMember) VisitEachChild(v *NodeVisitor) *Node {
-	dotDotDotToken := v.VisitToken(node.DotDotDotToken)
-	name := v.VisitNode(node.name)
-	questionToken := v.VisitToken(node.QuestionToken)
-	type_ := v.VisitNode(node.Type)
-	if dotDotDotToken != node.DotDotDotToken || name != node.name || questionToken != node.QuestionToken || type_ != node.Type {
-		return v.UpdateNode(v.Factory.NewNamedTupleMember(dotDotDotToken, name, questionToken, type_), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateNamedTupleMember(node, v.VisitToken(node.DotDotDotToken), v.VisitNode(node.name), v.VisitToken(node.QuestionToken), v.VisitNode(node.Type))
 }
 
 func (node *NamedTupleMember) Name() *DeclarationName {
@@ -5591,16 +5776,19 @@ func (f *NodeFactory) NewOptionalTypeNode(typeNode *TypeNode) *Node {
 	return newNode(KindOptionalType, data)
 }
 
+func (f *NodeFactory) UpdateOptionalTypeNode(node *OptionalTypeNode, typeNode *TypeNode) *Node {
+	if typeNode != node.Type {
+		return updateNode(f.NewOptionalTypeNode(typeNode), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *OptionalTypeNode) ForEachChild(v Visitor) bool {
 	return visit(v, node.Type)
 }
 
 func (node *OptionalTypeNode) VisitEachChild(v *NodeVisitor) *Node {
-	type_ := v.VisitNode(node.Type)
-	if type_ != node.Type {
-		return v.UpdateNode(v.Factory.NewOptionalTypeNode(type_), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateOptionalTypeNode(node, v.VisitNode(node.Type))
 }
 
 func IsOptionalTypeNode(node *Node) bool {
@@ -5620,16 +5808,19 @@ func (f *NodeFactory) NewRestTypeNode(typeNode *TypeNode) *Node {
 	return newNode(KindRestType, data)
 }
 
+func (f *NodeFactory) UpdateRestTypeNode(node *RestTypeNode, typeNode *TypeNode) *Node {
+	if typeNode != node.Type {
+		return updateNode(f.NewRestTypeNode(typeNode), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *RestTypeNode) ForEachChild(v Visitor) bool {
 	return visit(v, node.Type)
 }
 
 func (node *RestTypeNode) VisitEachChild(v *NodeVisitor) *Node {
-	type_ := v.VisitNode(node.Type)
-	if type_ != node.Type {
-		return v.UpdateNode(v.Factory.NewRestTypeNode(type_), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateRestTypeNode(node, v.VisitNode(node.Type))
 }
 
 func IsRestTypeNode(node *Node) bool {
@@ -5649,16 +5840,19 @@ func (f *NodeFactory) NewParenthesizedTypeNode(typeNode *TypeNode) *Node {
 	return newNode(KindParenthesizedType, data)
 }
 
+func (f *NodeFactory) UpdateParenthesizedTypeNode(node *ParenthesizedTypeNode, typeNode *TypeNode) *Node {
+	if typeNode != node.Type {
+		return updateNode(f.NewParenthesizedTypeNode(typeNode), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *ParenthesizedTypeNode) ForEachChild(v Visitor) bool {
 	return visit(v, node.Type)
 }
 
 func (node *ParenthesizedTypeNode) VisitEachChild(v *NodeVisitor) *Node {
-	type_ := v.VisitNode(node.Type)
-	if type_ != node.Type {
-		return v.UpdateNode(v.Factory.NewParenthesizedTypeNode(type_), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateParenthesizedTypeNode(node, v.VisitNode(node.Type))
 }
 
 func IsParenthesizedTypeNode(node *Node) bool {
@@ -5674,18 +5868,19 @@ type FunctionOrConstructorTypeNodeBase struct {
 	FunctionLikeBase
 }
 
+func (f *NodeFactory) UpdateFunctionTypeNode(node *FunctionTypeNode, typeParameters *TypeParameterList, parameters *ParameterList, returnType *TypeNode) *Node {
+	if typeParameters != node.TypeParameters || parameters != node.Parameters || returnType != node.Type {
+		return updateNode(f.NewFunctionTypeNode(typeParameters, parameters, returnType), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *FunctionOrConstructorTypeNodeBase) ForEachChild(v Visitor) bool {
 	return visitModifiers(v, node.modifiers) || visitNodeList(v, node.TypeParameters) || visitNodeList(v, node.Parameters) || visit(v, node.Type)
 }
 
 func (node *FunctionTypeNode) VisitEachChild(v *NodeVisitor) *Node {
-	typeParameters := v.VisitNodes(node.TypeParameters)
-	parameters := v.VisitNodes(node.Parameters)
-	type_ := v.VisitNode(node.Type)
-	if typeParameters != node.TypeParameters || parameters != node.Parameters || type_ != node.Type {
-		return v.UpdateNode(v.Factory.NewFunctionTypeNode(typeParameters, parameters, type_), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateFunctionTypeNode(node, v.VisitNodes(node.TypeParameters), v.VisitNodes(node.Parameters), v.VisitNode(node.Type))
 }
 
 // FunctionTypeNode
@@ -5796,19 +5991,19 @@ func (f *NodeFactory) NewTemplateLiteralTypeNode(head *TemplateHeadNode, templat
 	return newNode(KindTemplateLiteralType, data)
 }
 
+func (f *NodeFactory) UpdateConstructorTypeNode(node *ConstructorTypeNode, modifiers *ModifierList, typeParameters *TypeParameterList, parameters *ParameterList, returnType *TypeNode) *Node {
+	if modifiers != node.modifiers || typeParameters != node.TypeParameters || parameters != node.Parameters || returnType != node.Type {
+		return updateNode(f.NewConstructorTypeNode(modifiers, typeParameters, parameters, returnType), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *TemplateLiteralTypeNode) ForEachChild(v Visitor) bool {
 	return visit(v, node.Head) || visitNodeList(v, node.TemplateSpans)
 }
 
 func (node *ConstructorTypeNode) VisitEachChild(v *NodeVisitor) *Node {
-	modifiers := v.VisitModifiers(node.modifiers)
-	typeParameters := v.VisitNodes(node.TypeParameters)
-	parameters := v.VisitNodes(node.Parameters)
-	type_ := v.VisitNode(node.Type)
-	if modifiers != node.modifiers || typeParameters != node.TypeParameters || parameters != node.Parameters || type_ != node.Type {
-		return v.UpdateNode(v.Factory.NewConstructorTypeNode(modifiers, typeParameters, parameters, type_), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateConstructorTypeNode(node, v.VisitModifiers(node.modifiers), v.VisitNodes(node.TypeParameters), v.VisitNodes(node.Parameters), v.VisitNode(node.Type))
 }
 
 // TemplateLiteralTypeSpan
@@ -5826,17 +6021,19 @@ func (f *NodeFactory) NewTemplateLiteralTypeSpan(typeNode *TypeNode, literal *Te
 	return newNode(KindTemplateLiteralTypeSpan, data)
 }
 
+func (f *NodeFactory) UpdateTemplateLiteralTypeNode(node *TemplateLiteralTypeNode, head *TemplateHeadNode, templateSpans *TemplateLiteralTypeSpanList) *Node {
+	if head != node.Head || templateSpans != node.TemplateSpans {
+		return updateNode(f.NewTemplateLiteralTypeNode(head, templateSpans), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *TemplateLiteralTypeSpan) ForEachChild(v Visitor) bool {
 	return visit(v, node.Type) || visit(v, node.Literal)
 }
 
 func (node *TemplateLiteralTypeNode) VisitEachChild(v *NodeVisitor) *Node {
-	head := v.VisitNode(node.Head)
-	templateSpans := v.VisitNodes(node.TemplateSpans)
-	if head != node.Head || templateSpans != node.TemplateSpans {
-		return v.UpdateNode(v.Factory.NewTemplateLiteralTypeNode(head, templateSpans), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateTemplateLiteralTypeNode(node, v.VisitNode(node.Head), v.VisitNodes(node.TemplateSpans))
 }
 
 // SyntheticExpression
@@ -5877,17 +6074,19 @@ func (f *NodeFactory) NewJsxElement(openingElement *JsxOpeningElementNode, child
 	return newNode(KindJsxElement, data)
 }
 
+func (f *NodeFactory) UpdateTemplateLiteralTypeSpan(node *TemplateLiteralTypeSpan, typeNode *TypeNode, literal *TemplateMiddleOrTail) *Node {
+	if typeNode != node.Type || literal != node.Literal {
+		return updateNode(f.NewTemplateLiteralTypeSpan(typeNode, literal), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *JsxElement) ForEachChild(v Visitor) bool {
 	return visit(v, node.OpeningElement) || visitNodeList(v, node.Children) || visit(v, node.ClosingElement)
 }
 
 func (node *TemplateLiteralTypeSpan) VisitEachChild(v *NodeVisitor) *Node {
-	type_ := v.VisitNode(node.Type)
-	literal := v.VisitNode(node.Literal)
-	if type_ != node.Type || literal != node.Literal {
-		return v.UpdateNode(v.Factory.NewTemplateLiteralTypeSpan(type_, literal), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateTemplateLiteralTypeSpan(node, v.VisitNode(node.Type), v.VisitNode(node.Literal))
 }
 
 // JsxAttributes
@@ -5903,18 +6102,19 @@ func (f *NodeFactory) NewJsxAttributes(properties *NodeList) *Node {
 	return newNode(KindJsxAttributes, data)
 }
 
+func (f *NodeFactory) UpdateJsxElement(node *JsxElement, openingElement *JsxOpeningElementNode, children *JsxChildList, closingElement *JsxClosingElementNode) *Node {
+	if openingElement != node.OpeningElement || children != node.Children || closingElement != node.ClosingElement {
+		return updateNode(f.NewJsxElement(openingElement, children, closingElement), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *JsxAttributes) ForEachChild(v Visitor) bool {
 	return visitNodeList(v, node.Properties)
 }
 
 func (node *JsxElement) VisitEachChild(v *NodeVisitor) *Node {
-	openingElement := v.VisitNode(node.OpeningElement)
-	children := v.VisitNodes(node.Children)
-	closingElement := v.VisitNode(node.ClosingElement)
-	if openingElement != node.OpeningElement || children != node.Children || closingElement != node.ClosingElement {
-		return v.UpdateNode(v.Factory.NewJsxElement(openingElement, children, closingElement), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateJsxElement(node, v.VisitNode(node.OpeningElement), v.VisitNodes(node.Children), v.VisitNode(node.ClosingElement))
 }
 
 func IsJsxAttributes(node *Node) bool {
@@ -5936,16 +6136,19 @@ func (f *NodeFactory) NewJsxNamespacedName(namespace *IdentifierNode, name *Iden
 	return newNode(KindJsxNamespacedName, data)
 }
 
+func (f *NodeFactory) UpdateJsxAttributes(node *JsxAttributes, properties *JsxAttributeList) *Node {
+	if properties != node.Properties {
+		return updateNode(f.NewJsxAttributes(properties), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *JsxNamespacedName) ForEachChild(v Visitor) bool {
 	return visit(v, node.Namespace) || visit(v, node.name)
 }
 
 func (node *JsxAttributes) VisitEachChild(v *NodeVisitor) *Node {
-	properties := v.VisitNodes(node.Properties)
-	if properties != node.Properties {
-		return v.UpdateNode(v.Factory.NewJsxAttributes(properties), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateJsxAttributes(node, v.VisitNodes(node.Properties))
 }
 
 func (node *JsxNamespacedName) Name() *DeclarationName {
@@ -5973,17 +6176,19 @@ func (f *NodeFactory) NewJsxOpeningElement(tagName *JsxTagNameExpression, typeAr
 	return newNode(KindJsxOpeningElement, data)
 }
 
+func (f *NodeFactory) UpdateJsxNamespacedName(node *JsxNamespacedName, name *IdentifierNode, namespace *IdentifierNode) *Node {
+	if name != node.name || namespace != node.Namespace {
+		return updateNode(f.NewJsxNamespacedName(name, namespace), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *JsxOpeningElement) ForEachChild(v Visitor) bool {
 	return visit(v, node.TagName) || visitNodeList(v, node.TypeArguments) || visit(v, node.Attributes)
 }
 
 func (node *JsxNamespacedName) VisitEachChild(v *NodeVisitor) *Node {
-	name := v.VisitNode(node.name)
-	namespace := v.VisitNode(node.Namespace)
-	if name != node.name || namespace != node.Namespace {
-		return v.UpdateNode(v.Factory.NewJsxNamespacedName(name, namespace), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateJsxNamespacedName(node, v.VisitNode(node.name), v.VisitNode(node.Namespace))
 }
 
 func IsJsxOpeningElement(node *Node) bool {
@@ -6007,18 +6212,19 @@ func (f *NodeFactory) NewJsxSelfClosingElement(tagName *JsxTagNameExpression, ty
 	return newNode(KindJsxSelfClosingElement, data)
 }
 
+func (f *NodeFactory) UpdateJsxOpeningElement(node *JsxOpeningElement, tagName *JsxTagNameExpression, typeArguments *TypeArgumentList, attributes *JsxAttributesNode) *Node {
+	if tagName != node.TagName || typeArguments != node.TypeArguments || attributes != node.Attributes {
+		return updateNode(f.NewJsxOpeningElement(tagName, typeArguments, attributes), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *JsxSelfClosingElement) ForEachChild(v Visitor) bool {
 	return visit(v, node.TagName) || visitNodeList(v, node.TypeArguments) || visit(v, node.Attributes)
 }
 
 func (node *JsxOpeningElement) VisitEachChild(v *NodeVisitor) *Node {
-	tagName := v.VisitNode(node.TagName)
-	typeArguments := v.VisitNodes(node.TypeArguments)
-	attributes := v.VisitNode(node.Attributes)
-	if tagName != node.TagName || typeArguments != node.TypeArguments || attributes != node.Attributes {
-		return v.UpdateNode(v.Factory.NewJsxOpeningElement(tagName, typeArguments, attributes), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateJsxOpeningElement(node, v.VisitNode(node.TagName), v.VisitNodes(node.TypeArguments), v.VisitNode(node.Attributes))
 }
 
 func IsJsxSelfClosingElement(node *Node) bool {
@@ -6042,18 +6248,19 @@ func (f *NodeFactory) NewJsxFragment(openingFragment *JsxOpeningFragmentNode, ch
 	return newNode(KindJsxFragment, data)
 }
 
+func (f *NodeFactory) UpdateJsxSelfClosingElement(node *JsxSelfClosingElement, tagName *JsxTagNameExpression, typeArguments *TypeArgumentList, attributes *JsxAttributesNode) *Node {
+	if tagName != node.TagName || typeArguments != node.TypeArguments || attributes != node.Attributes {
+		return updateNode(f.NewJsxSelfClosingElement(tagName, typeArguments, attributes), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *JsxFragment) ForEachChild(v Visitor) bool {
 	return visit(v, node.OpeningFragment) || visitNodeList(v, node.Children) || visit(v, node.ClosingFragment)
 }
 
 func (node *JsxSelfClosingElement) VisitEachChild(v *NodeVisitor) *Node {
-	tagName := v.VisitNode(node.TagName)
-	typeArguments := v.VisitNodes(node.TypeArguments)
-	attributes := v.VisitNode(node.Attributes)
-	if tagName != node.TagName || typeArguments != node.TypeArguments || attributes != node.Attributes {
-		return v.UpdateNode(v.Factory.NewJsxSelfClosingElement(tagName, typeArguments, attributes), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateJsxSelfClosingElement(node, v.VisitNode(node.TagName), v.VisitNodes(node.TypeArguments), v.VisitNode(node.Attributes))
 }
 
 /// The opening element of a <>...</> JsxFragment
@@ -6100,18 +6307,19 @@ func (node *JsxAttribute) Name() *JsxAttributeName {
 	return node.name
 }
 
+func (f *NodeFactory) UpdateJsxFragment(node *JsxFragment, openingFragment *JsxOpeningFragmentNode, children *JsxChildList, closingFragment *JsxClosingFragmentNode) *Node {
+	if openingFragment != node.OpeningFragment || children != node.Children || closingFragment != node.ClosingFragment {
+		return updateNode(f.NewJsxFragment(openingFragment, children, closingFragment), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *JsxAttribute) ForEachChild(v Visitor) bool {
 	return visit(v, node.name) || visit(v, node.Initializer)
 }
 
 func (node *JsxFragment) VisitEachChild(v *NodeVisitor) *Node {
-	openingFragment := v.VisitNode(node.OpeningFragment)
-	children := v.VisitNodes(node.Children)
-	closingFragment := v.VisitNode(node.ClosingFragment)
-	if openingFragment != node.OpeningFragment || children != node.Children || closingFragment != node.ClosingFragment {
-		return v.UpdateNode(v.Factory.NewJsxFragment(openingFragment, children, closingFragment), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateJsxFragment(node, v.VisitNode(node.OpeningFragment), v.VisitNodes(node.Children), v.VisitNode(node.ClosingFragment))
 }
 
 func IsJsxAttribute(node *Node) bool {
@@ -6131,17 +6339,19 @@ func (f *NodeFactory) NewJsxSpreadAttribute(expression *Expression) *Node {
 	return newNode(KindJsxSpreadAttribute, data)
 }
 
+func (f *NodeFactory) UpdateJsxAttribute(node *JsxAttribute, name *JsxAttributeName, initializer *JsxAttributeValue) *Node {
+	if name != node.name || initializer != node.Initializer {
+		return updateNode(f.NewJsxAttribute(name, initializer), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *JsxSpreadAttribute) ForEachChild(v Visitor) bool {
 	return visit(v, node.Expression)
 }
 
 func (node *JsxAttribute) VisitEachChild(v *NodeVisitor) *Node {
-	name := v.VisitNode(node.name)
-	initializer := v.VisitNode(node.Initializer)
-	if name != node.name || initializer != node.Initializer {
-		return v.UpdateNode(v.Factory.NewJsxAttribute(name, initializer), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateJsxAttribute(node, v.VisitNode(node.name), v.VisitNode(node.Initializer))
 }
 
 // JsxClosingElement
@@ -6157,16 +6367,19 @@ func (f *NodeFactory) NewJsxClosingElement(tagName *JsxTagNameExpression) *Node 
 	return newNode(KindJsxClosingElement, data)
 }
 
+func (f *NodeFactory) UpdateJsxSpreadAttribute(node *JsxSpreadAttribute, expression *Expression) *Node {
+	if expression != node.Expression {
+		return updateNode(f.NewJsxSpreadAttribute(expression), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *JsxClosingElement) ForEachChild(v Visitor) bool {
 	return visit(v, node.TagName)
 }
 
 func (node *JsxSpreadAttribute) VisitEachChild(v *NodeVisitor) *Node {
-	expression := v.VisitNode(node.Expression)
-	if expression != node.Expression {
-		return v.UpdateNode(v.Factory.NewJsxSpreadAttribute(expression), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateJsxSpreadAttribute(node, v.VisitNode(node.Expression))
 }
 
 // JsxExpression
@@ -6184,16 +6397,19 @@ func (f *NodeFactory) NewJsxExpression(dotDotDotToken *TokenNode, expression *Ex
 	return newNode(KindJsxExpression, data)
 }
 
+func (f *NodeFactory) UpdateJsxClosingElement(node *JsxClosingElement, tagName *JsxTagNameExpression) *Node {
+	if tagName != node.TagName {
+		return updateNode(f.NewJsxClosingElement(tagName), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *JsxExpression) ForEachChild(v Visitor) bool {
 	return visit(v, node.DotDotDotToken) || visit(v, node.Expression)
 }
 
 func (node *JsxClosingElement) VisitEachChild(v *NodeVisitor) *Node {
-	tagName := v.VisitNode(node.TagName)
-	if tagName != node.TagName {
-		return v.UpdateNode(v.Factory.NewJsxClosingElement(tagName), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateJsxClosingElement(node, v.VisitNode(node.TagName))
 }
 
 // JsxText
@@ -6243,17 +6459,19 @@ func (f *NodeFactory) NewJSDoc(comment *NodeList, tags *NodeList) *Node {
 	return newNode(KindJSDoc, data)
 }
 
+func (f *NodeFactory) UpdateJsxExpression(node *JsxExpression, dotDotDotToken *TokenNode, expression *Expression) *Node {
+	if dotDotDotToken != node.DotDotDotToken || expression != node.Expression {
+		return updateNode(f.NewJsxExpression(dotDotDotToken, expression), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *JSDoc) ForEachChild(v Visitor) bool {
 	return visitNodeList(v, node.Comment) || visitNodeList(v, node.Tags)
 }
 
 func (node *JsxExpression) VisitEachChild(v *NodeVisitor) *Node {
-	dotDotDotToken := v.VisitToken(node.DotDotDotToken)
-	expression := v.VisitNode(node.Expression)
-	if dotDotDotToken != node.DotDotDotToken || expression != node.Expression {
-		return v.UpdateNode(v.Factory.NewJsxExpression(dotDotDotToken, expression), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateJsxExpression(node, v.VisitToken(node.DotDotDotToken), v.VisitNode(node.Expression))
 }
 
 type JSDocTagBase struct {
@@ -6368,16 +6586,19 @@ func (f *NodeFactory) NewJSDocNonNullableType(typeNode *TypeNode) *Node {
 	return newNode(KindJSDocNonNullableType, data)
 }
 
+func (f *NodeFactory) UpdateJSDocNonNullableType(node *JSDocNonNullableType, typeNode *TypeNode) *Node {
+	if typeNode != node.Type {
+		return updateNode(f.NewJSDocNonNullableType(typeNode), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *JSDocNonNullableType) ForEachChild(v Visitor) bool {
 	return visit(v, node.Type)
 }
 
 func (node *JSDocNonNullableType) VisitEachChild(v *NodeVisitor) *Node {
-	type_ := v.VisitNode(node.Type)
-	if type_ != node.Type {
-		return v.UpdateNode(v.Factory.NewJSDocNonNullableType(type_), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateJSDocNonNullableType(node, v.VisitNode(node.Type))
 }
 
 // JSDocNullableType
@@ -6393,16 +6614,19 @@ func (f *NodeFactory) NewJSDocNullableType(typeNode *TypeNode) *Node {
 	return newNode(KindJSDocNullableType, data)
 }
 
+func (f *NodeFactory) UpdateJSDocNullableType(node *JSDocNullableType, typeNode *TypeNode) *Node {
+	if typeNode != node.Type {
+		return updateNode(f.NewJSDocNullableType(typeNode), node.AsNode())
+	}
+	return node.AsNode()
+}
+
 func (node *JSDocNullableType) ForEachChild(v Visitor) bool {
 	return visit(v, node.Type)
 }
 
 func (node *JSDocNullableType) VisitEachChild(v *NodeVisitor) *Node {
-	type_ := v.VisitNode(node.Type)
-	if type_ != node.Type {
-		return v.UpdateNode(v.Factory.NewJSDocNullableType(type_), node.AsNode())
-	}
-	return node.AsNode()
+	return v.Factory.UpdateJSDocNullableType(node, v.VisitNode(node.Type))
 }
 
 // JSDocAllType
@@ -7004,9 +7228,12 @@ func (node *SourceFile) ForEachChild(v Visitor) bool {
 }
 
 func (node *SourceFile) VisitEachChild(v *NodeVisitor) *Node {
-	statements := v.VisitNodes(node.Statements)
+	return v.Factory.UpdateSourceFile(node, v.VisitNodes(node.Statements))
+}
+
+func (f *NodeFactory) UpdateSourceFile(node *SourceFile, statements *StatementList) *Node {
 	if statements != node.Statements {
-		updated := v.Factory.NewSourceFile(node.Text, node.fileName, statements).AsSourceFile()
+		updated := f.NewSourceFile(node.Text, node.fileName, statements).AsSourceFile()
 		updated.path = node.path
 		updated.LanguageVersion = node.LanguageVersion
 		updated.LanguageVariant = node.LanguageVariant
@@ -7015,7 +7242,7 @@ func (node *SourceFile) VisitEachChild(v *NodeVisitor) *Node {
 		updated.CommonJsModuleIndicator = node.CommonJsModuleIndicator
 		updated.ExternalModuleIndicator = node.ExternalModuleIndicator
 		// TODO: Include other fields or use .original to get to original source file
-		return v.UpdateNode(updated.AsNode(), node.AsNode())
+		return updateNode(updated.AsNode(), node.AsNode())
 	}
 	return node.AsNode()
 }

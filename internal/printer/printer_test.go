@@ -1824,6 +1824,7 @@ func TestParenthesizeNonNullExpression(t *testing.T) {
 						factory.NewToken(ast.KindCommaToken),
 						factory.NewIdentifier("b"),
 					),
+					ast.NodeFlagsNone,
 				),
 			),
 		},

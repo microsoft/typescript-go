@@ -4919,7 +4919,7 @@ func (p *Parser) parseMemberExpressionRest(pos int, expression *ast.Expression, 
 		if questionDotToken == nil {
 			if p.token == ast.KindExclamationToken && !p.hasPrecedingLineBreak() {
 				p.nextToken()
-				expression = p.factory.NewNonNullExpression(expression)
+				expression = p.factory.NewNonNullExpression(expression, ast.NodeFlagsNone)
 				p.finishNode(expression, pos)
 				continue
 			}

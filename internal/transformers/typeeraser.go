@@ -76,10 +76,7 @@ func (v *TypeEraserTransformer) visit(node *ast.Node) *ast.Node {
 
 	case ast.KindExpressionWithTypeArguments:
 		n := node.AsExpressionWithTypeArguments()
-		expression := v.VisitNode(n.Expression)
-		if expression != n.Expression || nil != n.TypeArguments {
-			return v.UpdateNode(v.Factory.NewExpressionWithTypeArguments(expression, nil), node)
-		}
+		return v.Factory.UpdateExpressionWithTypeArguments(n, v.VisitNode(n.Expression), nil)
 
 	case ast.KindPropertyDeclaration:
 		if ast.HasSyntacticModifier(node, ast.ModifierFlagsAmbient) {
@@ -87,12 +84,7 @@ func (v *TypeEraserTransformer) visit(node *ast.Node) *ast.Node {
 			return nil
 		}
 		n := node.AsPropertyDeclaration()
-		modifiers := v.VisitModifiers(n.Modifiers())
-		name := v.VisitNode(n.Name())
-		initializer := v.VisitNode(n.Initializer)
-		if modifiers != n.Modifiers() || name != n.Name() || nil != n.PostfixToken || nil != n.Type || initializer != n.Initializer {
-			return v.UpdateNode(v.Factory.NewPropertyDeclaration(modifiers, name, nil, nil, initializer), node)
-		}
+		return v.Factory.UpdatePropertyDeclaration(n, v.VisitModifiers(n.Modifiers()), v.VisitNode(n.Name()), nil, nil, v.VisitNode(n.Initializer))
 
 	case ast.KindConstructor:
 		n := node.AsConstructorDeclaration()
@@ -100,11 +92,7 @@ func (v *TypeEraserTransformer) visit(node *ast.Node) *ast.Node {
 			// TypeScript overloads are elided
 			return nil
 		}
-		parameters := v.VisitNodes(n.Parameters)
-		body := v.VisitNode(n.Body)
-		if nil != n.Modifiers() || nil != n.TypeParameters || parameters != n.Parameters || nil != n.Type || body != n.Body {
-			return v.UpdateNode(v.Factory.NewConstructorDeclaration(nil, nil, parameters, nil, body), node)
-		}
+		return v.Factory.UpdateConstructorDeclaration(n, nil, nil, v.VisitNodes(n.Parameters), nil, v.VisitNode(n.Body))
 
 	case ast.KindMethodDeclaration:
 		n := node.AsMethodDeclaration()
@@ -112,14 +100,7 @@ func (v *TypeEraserTransformer) visit(node *ast.Node) *ast.Node {
 			// TypeScript overloads are elided
 			return nil
 		}
-		modifiers := v.VisitModifiers(n.Modifiers())
-		asteriskToken := v.VisitToken(n.AsteriskToken)
-		name := v.VisitNode(n.Name())
-		parameters := v.VisitNodes(n.Parameters)
-		body := v.VisitNode(n.Body)
-		if modifiers != n.Modifiers() || asteriskToken != n.AsteriskToken || name != n.Name() || nil != n.PostfixToken || nil != n.TypeParameters || parameters != n.Parameters || nil != n.Type || body != n.Body {
-			return v.UpdateNode(v.Factory.NewMethodDeclaration(modifiers, asteriskToken, name, nil, nil, parameters, nil, body), node)
-		}
+		return v.Factory.UpdateMethodDeclaration(n, v.VisitModifiers(n.Modifiers()), v.VisitToken(n.AsteriskToken), v.VisitNode(n.Name()), nil, nil, v.VisitNodes(n.Parameters), nil, v.VisitNode(n.Body))
 
 	case ast.KindGetAccessor:
 		n := node.AsGetAccessorDeclaration()
@@ -127,13 +108,7 @@ func (v *TypeEraserTransformer) visit(node *ast.Node) *ast.Node {
 			// TypeScript overloads are elided
 			return nil
 		}
-		modifiers := v.VisitModifiers(n.Modifiers())
-		name := v.VisitNode(n.Name())
-		parameters := v.VisitNodes(n.Parameters)
-		body := v.VisitNode(n.Body)
-		if modifiers != n.Modifiers() || name != n.Name() || nil != n.PostfixToken || nil != n.TypeParameters || parameters != n.Parameters || nil != n.Type || body != n.Body {
-			return v.UpdateNode(v.Factory.NewGetAccessorDeclaration(modifiers, name, nil, parameters, nil, body), node)
-		}
+		return v.Factory.UpdateGetAccessorDeclaration(n, v.VisitModifiers(n.Modifiers()), v.VisitNode(n.Name()), nil, v.VisitNodes(n.Parameters), nil, v.VisitNode(n.Body))
 
 	case ast.KindSetAccessor:
 		n := node.AsSetAccessorDeclaration()
@@ -141,21 +116,11 @@ func (v *TypeEraserTransformer) visit(node *ast.Node) *ast.Node {
 			// TypeScript overloads are elided
 			return nil
 		}
-		modifiers := v.VisitModifiers(n.Modifiers())
-		name := v.VisitNode(n.Name())
-		parameters := v.VisitNodes(n.Parameters)
-		body := v.VisitNode(n.Body)
-		if modifiers != n.Modifiers() || name != n.Name() || nil != n.PostfixToken || nil != n.TypeParameters || parameters != n.Parameters || nil != n.Type || body != n.Body {
-			return v.UpdateNode(v.Factory.NewSetAccessorDeclaration(modifiers, name, nil, parameters, nil, body), node)
-		}
+		return v.Factory.UpdateSetAccessorDeclaration(n, v.VisitModifiers(n.Modifiers()), v.VisitNode(n.Name()), nil, v.VisitNodes(n.Parameters), nil, v.VisitNode(n.Body))
 
 	case ast.KindVariableDeclaration:
 		n := node.AsVariableDeclaration()
-		name := v.VisitNode(n.Name())
-		initializer := v.VisitNode(n.Initializer)
-		if name != n.Name() || nil != n.ExclamationToken || nil != n.Type || initializer != n.Initializer {
-			return v.UpdateNode(v.Factory.NewVariableDeclaration(name, nil, nil, initializer), node)
-		}
+		return v.Factory.UpdateVariableDeclaration(n, v.VisitNode(n.Name()), nil, nil, v.VisitNode(n.Initializer))
 
 	case ast.KindHeritageClause:
 		n := node.AsHeritageClause()
@@ -163,36 +128,15 @@ func (v *TypeEraserTransformer) visit(node *ast.Node) *ast.Node {
 			// TypeScript `implements` clauses are elided
 			return nil
 		}
-		types := v.VisitNodes(n.Types)
-		if types != n.Types {
-			return v.UpdateNode(v.Factory.NewHeritageClause(n.Token, types), node)
-		}
+		return v.Factory.UpdateHeritageClause(n, v.VisitNodes(n.Types))
 
 	case ast.KindClassDeclaration:
 		n := node.AsClassDeclaration()
-		modifiers := v.VisitModifiers(n.Modifiers())
-		name := v.VisitNode(n.Name())
-		heritageClauses := v.VisitNodes(n.HeritageClauses)
-		if heritageClauses != nil && len(heritageClauses.Nodes) == 0 {
-			heritageClauses = nil
-		}
-		members := v.VisitNodes(n.Members)
-		if modifiers != n.Modifiers() || name != n.Name() || nil != n.TypeParameters || heritageClauses != n.HeritageClauses || members != n.Members {
-			return v.UpdateNode(v.Factory.NewClassDeclaration(modifiers, name, nil, heritageClauses, members), node)
-		}
+		return v.Factory.UpdateClassDeclaration(n, v.VisitModifiers(n.Modifiers()), v.VisitNode(n.Name()), nil, v.VisitNodes(n.HeritageClauses), v.VisitNodes(n.Members))
 
 	case ast.KindClassExpression:
 		n := node.AsClassExpression()
-		modifiers := v.VisitModifiers(n.Modifiers())
-		name := v.VisitNode(n.Name())
-		heritageClauses := v.VisitNodes(n.HeritageClauses)
-		if heritageClauses != nil && len(heritageClauses.Nodes) == 0 {
-			heritageClauses = nil
-		}
-		members := v.VisitNodes(n.Members)
-		if modifiers != n.Modifiers() || name != n.Name() || nil != n.TypeParameters || heritageClauses != n.HeritageClauses || members != n.Members {
-			return v.UpdateNode(v.Factory.NewClassExpression(modifiers, name, nil, heritageClauses, members), node)
-		}
+		return v.Factory.UpdateClassExpression(n, v.VisitModifiers(n.Modifiers()), v.VisitNode(n.Name()), nil, v.VisitNodes(n.HeritageClauses), v.VisitNodes(n.Members))
 
 	case ast.KindFunctionDeclaration:
 		n := node.AsFunctionDeclaration()
@@ -200,35 +144,15 @@ func (v *TypeEraserTransformer) visit(node *ast.Node) *ast.Node {
 			// TypeScript overloads are elided
 			return nil
 		}
-		modifiers := v.VisitModifiers(n.Modifiers())
-		asteriskToken := v.VisitToken(n.AsteriskToken)
-		name := v.VisitNode(n.Name())
-		parameters := v.VisitNodes(n.Parameters)
-		body := v.VisitNode(n.Body)
-		if modifiers != n.Modifiers() || asteriskToken != n.AsteriskToken || name != n.Name() || nil != n.TypeParameters || parameters != n.Parameters || nil != n.Type || body != n.Body {
-			return v.UpdateNode(v.Factory.NewFunctionDeclaration(modifiers, asteriskToken, name, nil, parameters, nil, body), node)
-		}
+		return v.Factory.UpdateFunctionDeclaration(n, v.VisitModifiers(n.Modifiers()), v.VisitToken(n.AsteriskToken), v.VisitNode(n.Name()), nil, v.VisitNodes(n.Parameters), nil, v.VisitNode(n.Body))
 
 	case ast.KindFunctionExpression:
 		n := node.AsFunctionExpression()
-		modifiers := v.VisitModifiers(n.Modifiers())
-		asteriskToken := v.VisitToken(n.AsteriskToken)
-		name := v.VisitNode(n.Name())
-		parameters := v.VisitNodes(n.Parameters)
-		body := v.VisitNode(n.Body)
-		if modifiers != n.Modifiers() || asteriskToken != n.AsteriskToken || name != n.Name() || nil != n.TypeParameters || parameters != n.Parameters || nil != n.Type || body != n.Body {
-			return v.UpdateNode(v.Factory.NewFunctionExpression(modifiers, asteriskToken, name, nil, parameters, nil, body), node)
-		}
+		return v.Factory.UpdateFunctionExpression(n, v.VisitModifiers(n.Modifiers()), v.VisitToken(n.AsteriskToken), v.VisitNode(n.Name()), nil, v.VisitNodes(n.Parameters), nil, v.VisitNode(n.Body))
 
 	case ast.KindArrowFunction:
 		n := node.AsArrowFunction()
-		modifiers := v.VisitModifiers(n.Modifiers())
-		parameters := v.VisitNodes(n.Parameters)
-		equalsGreaterThanToken := v.VisitToken(n.EqualsGreaterThanToken)
-		body := v.VisitNode(n.Body)
-		if modifiers != n.Modifiers() || nil != n.TypeParameters || parameters != n.Parameters || nil != n.Type || equalsGreaterThanToken != n.EqualsGreaterThanToken || body != n.Body {
-			return v.UpdateNode(v.Factory.NewArrowFunction(modifiers, nil, parameters, nil, equalsGreaterThanToken, body), node)
-		}
+		return v.Factory.UpdateArrowFunction(n, v.VisitModifiers(n.Modifiers()), nil, v.VisitNodes(n.Parameters), nil, v.VisitToken(n.EqualsGreaterThanToken), v.VisitNode(n.Body))
 
 	case ast.KindParameter:
 		if ast.IsThisParameter(node) {
@@ -236,38 +160,19 @@ func (v *TypeEraserTransformer) visit(node *ast.Node) *ast.Node {
 			return nil
 		}
 		n := node.AsParameterDeclaration()
-		dotDotDotToken := v.VisitToken(n.DotDotDotToken)
-		name := v.VisitNode(n.Name())
-		initializer := v.VisitNode(n.Initializer)
-		if nil != n.Modifiers() || dotDotDotToken != n.DotDotDotToken || name != n.Name() || nil != n.QuestionToken || nil != n.Type || initializer != n.Initializer {
-			return v.UpdateNode(v.Factory.NewParameterDeclaration(nil, dotDotDotToken, name, nil, nil, initializer), node)
-		}
+		return v.Factory.UpdateParameterDeclaration(n, nil, v.VisitToken(n.DotDotDotToken), v.VisitNode(n.Name()), nil, nil, v.VisitNode(n.Initializer))
 
 	case ast.KindCallExpression:
 		n := node.AsCallExpression()
-		expression := v.VisitNode(n.Expression)
-		questionDotToken := v.VisitToken(n.QuestionDotToken)
-		arguments := v.VisitNodes(n.Arguments)
-		if expression != n.Expression || questionDotToken != n.QuestionDotToken || nil != n.TypeArguments || arguments != n.Arguments {
-			return v.UpdateNode(v.Factory.NewCallExpression(expression, questionDotToken, nil, arguments, node.Flags), node)
-		}
+		return v.Factory.UpdateCallExpression(n, v.VisitNode(n.Expression), v.VisitToken(n.QuestionDotToken), nil, v.VisitNodes(n.Arguments))
 
 	case ast.KindNewExpression:
 		n := node.AsNewExpression()
-		expression := v.VisitNode(n.Expression)
-		arguments := v.VisitNodes(n.Arguments)
-		if expression != n.Expression || nil != n.TypeArguments || arguments != n.Arguments {
-			return v.UpdateNode(v.Factory.NewNewExpression(expression, nil, arguments), node)
-		}
+		return v.Factory.UpdateNewExpression(n, v.VisitNode(n.Expression), nil, v.VisitNodes(n.Arguments))
 
 	case ast.KindTaggedTemplateExpression:
 		n := node.AsTaggedTemplateExpression()
-		tag := v.VisitNode(n.Tag)
-		questionDotToken := v.VisitToken(n.QuestionDotToken)
-		template := v.VisitNode(n.Template)
-		if tag != n.Tag || questionDotToken != n.QuestionDotToken || nil != n.TypeArguments || template != n.Template {
-			return v.UpdateNode(v.Factory.NewTaggedTemplateExpression(tag, questionDotToken, nil, template, node.Flags), node)
-		}
+		return v.Factory.UpdateTaggedTemplateExpression(n, v.VisitNode(n.Tag), v.VisitToken(n.QuestionDotToken), nil, v.VisitNode(n.Template))
 
 	case ast.KindNonNullExpression:
 		// !!! Use PartiallyEmittedExpression to preserve comments
@@ -287,24 +192,13 @@ func (v *TypeEraserTransformer) visit(node *ast.Node) *ast.Node {
 
 	case ast.KindJsxSelfClosingElement:
 		n := node.AsJsxSelfClosingElement()
-		tagName := v.VisitNode(n.TagName)
-		attributes := v.VisitNode(n.Attributes)
-		if tagName != n.TagName || nil != n.TypeArguments || attributes != n.Attributes {
-			return v.UpdateNode(v.Factory.NewJsxSelfClosingElement(tagName, nil, attributes), node)
-		}
+		return v.Factory.UpdateJsxSelfClosingElement(n, v.VisitNode(n.TagName), nil, v.VisitNode(n.Attributes))
 
 	case ast.KindJsxOpeningElement:
 		n := node.AsJsxOpeningElement()
-		tagName := v.VisitNode(n.TagName)
-		attributes := v.VisitNode(n.Attributes)
-		if tagName != n.TagName || nil != n.TypeArguments || attributes != n.Attributes {
-			return v.UpdateNode(v.Factory.NewJsxOpeningElement(tagName, nil, attributes), node)
-		}
+		return v.Factory.UpdateJsxOpeningElement(n, v.VisitNode(n.TagName), nil, v.VisitNode(n.Attributes))
 
 	default:
 		return v.VisitEachChild(node)
 	}
-
-	// Reuse subtree
-	return node
 }
