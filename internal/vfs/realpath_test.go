@@ -40,8 +40,11 @@ func TestSymlinkRealpath(t *testing.T) {
 
 	fs := FromOS()
 
-	// Realpath both; some systems like macOS make TempDir itself a symlink.
-	targetRealpath := fs.Realpath(tspath.NormalizePath(targetFile))
+	targetRealpath := tspath.NormalizePath(targetFile)
+	if runtime.GOOS == "darwin" {
+		// macOS makes its temporary directory a symlink itself.
+		targetRealpath = fs.Realpath(targetRealpath)
+	}
 	linkRealpath := fs.Realpath(tspath.NormalizePath(linkFile))
 	assert.Equal(t, targetRealpath, linkRealpath)
 }
