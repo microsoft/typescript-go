@@ -11018,7 +11018,7 @@ func (c *Checker) getTypeFromObjectBindingPattern(pattern *ast.Node, includePatt
 			continue
 		}
 		text := getPropertyNameFromType(exprType)
-		flags := ast.SymbolFlagsProperty | core.IfElse(e.Initializer != nil, ast.SymbolFlagsOptional, 0)
+		flags := ast.SymbolFlagsProperty | core.IfElse(e.Initializer() != nil, ast.SymbolFlagsOptional, 0)
 		symbol := c.newSymbol(flags, text)
 		c.valueSymbolLinks.get(symbol).resolvedType = c.getTypeFromBindingElement(e, includePatternInType, reportErrors)
 		// !!! This appears to be obsolete
@@ -11341,9 +11341,7 @@ func (c *Checker) getSiblingsOfContext(context *WideningContext) []*Type {
 			if isObjectLiteralType(t) {
 				prop := c.getPropertyOfObjectType(t, context.propertyName)
 				if prop != nil {
-					for _, t := range c.getTypeOfSymbol(prop).Distributed() {
-						siblings = append(siblings, t)
-					}
+					siblings = append(siblings, c.getTypeOfSymbol(prop).Distributed()...)
 				}
 			}
 		}
