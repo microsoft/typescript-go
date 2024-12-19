@@ -565,6 +565,7 @@ type Checker struct {
 	stringOrNumberType                      *Type
 	stringNumberSymbolType                  *Type
 	numberOrBigIntType                      *Type
+	templateConstraintType                  *Type
 	numericStringType                       *Type
 	uniqueLiteralType                       *Type
 	uniqueLiteralMapper                     *TypeMapper
@@ -769,7 +770,8 @@ func NewChecker(program *Program) *Checker {
 	c.stringNumberSymbolType = c.getUnionType([]*Type{c.stringType, c.numberType, c.esSymbolType})
 	c.numberOrBigIntType = c.getUnionType([]*Type{c.numberType, c.bigintType})
 	c.numericStringType = c.getTemplateLiteralType([]string{"", ""}, []*Type{c.numberType}) // The `${number}` type
-	c.uniqueLiteralType = c.newIntrinsicType(TypeFlagsNever, "never")                       // Special `never` flagged by union reduction to behave as a literal
+	c.templateConstraintType = c.getUnionType([]*Type{c.stringType, c.numberType, c.booleanType, c.bigintType, c.nullType, c.undefinedType})
+	c.uniqueLiteralType = c.newIntrinsicType(TypeFlagsNever, "never") // Special `never` flagged by union reduction to behave as a literal
 	c.uniqueLiteralMapper = newFunctionTypeMapper(c.getUniqueLiteralTypeForTypeParameter)
 	c.reportUnreliableMapper = newFunctionTypeMapper(c.reportUnreliableWorker)
 	c.reportUnmeasurableMapper = newFunctionTypeMapper(c.reportUnmeasurableWorker)
@@ -3019,7 +3021,7 @@ func (c *Checker) checkExpressionWorker(node *ast.Node, checkMode CheckMode) *Ty
 		c.checkGrammarBigIntLiteral(node.AsBigIntLiteral())
 		return c.getFreshTypeOfLiteralType(c.getBigIntLiteralType(PseudoBigInt{
 			negative:    false,
-			base10Value: parsePseudoBigInt(node.AsBigIntLiteral().Text),
+			base10Value: parsePseudoBigInt(node.Text()),
 		}))
 	case ast.KindTrueKeyword:
 		return c.trueType
@@ -3142,16 +3144,44 @@ func (c *Checker) checkSuperExpression(node *ast.Node) *Type {
 }
 
 func (c *Checker) checkTemplateExpression(node *ast.Node) *Type {
-	// !!!
-	for _, span := range node.AsTemplateExpression().TemplateSpans.Nodes {
-		c.checkExpression(span.AsTemplateSpan().Expression)
+	expr := node.AsTemplateExpression()
+	length := len(expr.TemplateSpans.Nodes)
+	texts := make([]string, length+1)
+	types := make([]*Type, length)
+	texts[0] = expr.Head.Text()
+	for i, span := range expr.TemplateSpans.Nodes {
+		t := c.checkExpression(span.Expression())
+		if c.maybeTypeOfKindConsideringBaseConstraint(t, TypeFlagsESSymbolLike) {
+			c.error(span.Expression(), diagnostics.Implicit_conversion_of_a_symbol_to_a_string_will_fail_at_runtime_Consider_wrapping_this_expression_in_String)
+		}
+		texts[i+1] = span.AsTemplateSpan().Literal.Text()
+		types[i] = core.IfElse(c.isTypeAssignableTo(t, c.templateConstraintType), t, c.stringType)
 	}
-	return c.errorType
+	var evaluated any
+	if !ast.IsTaggedTemplateExpression(node.Parent) {
+		evaluated = c.evaluate(node, node).value
+	}
+	if evaluated != nil {
+		return c.getFreshTypeOfLiteralType(c.getStringLiteralType(evaluated.(string)))
+	}
+	if c.isConstContext(node) || c.isTemplateLiteralContext(node) || someType(core.OrElse(c.getContextualType(node, ContextFlagsNone), c.unknownType), c.isTemplateLiteralContextualType) {
+		return c.getTemplateLiteralType(texts, types)
+	}
+	return c.stringType
+}
+
+func (c *Checker) isTemplateLiteralContext(node *ast.Node) bool {
+	parent := node.Parent
+	return ast.IsParenthesizedExpression(parent) && c.isTemplateLiteralContext(parent) || ast.IsElementAccessExpression(parent) && parent.AsElementAccessExpression().ArgumentExpression == node
+}
+
+func (c *Checker) isTemplateLiteralContextualType(t *Type) bool {
+	return t.flags&(TypeFlagsStringLiteral|TypeFlagsTemplateLiteral) != 0 || t.flags&TypeFlagsInstantiableNonPrimitive != 0 && c.maybeTypeOfKind(core.OrElse(c.getBaseConstraintOfType(t), c.unknownType), TypeFlagsStringLike)
 }
 
 func (c *Checker) checkRegularExpressionLiteral(node *ast.Node) *Type {
 	// !!!
-	return c.errorType
+	return c.globalRegExpType
 }
 
 func (c *Checker) checkArrayLiteral(node *ast.Node, checkMode CheckMode) *Type {
@@ -3256,8 +3286,14 @@ func isSpreadIntoCallOrNew(node *ast.Node) bool {
 }
 
 func (c *Checker) checkQualifiedName(node *ast.Node, checkMode CheckMode) *Type {
-	// !!!
-	return c.errorType
+	left := node.AsQualifiedName().Left
+	var leftType *Type
+	if isPartOfTypeQuery(node) && isThisIdentifier(left) {
+		leftType = c.checkNonNullType(c.checkThisExpression(left), left)
+	} else {
+		leftType = c.checkNonNullExpression(left)
+	}
+	return c.checkPropertyAccessExpressionOrQualifiedName(node, left, leftType, node.AsQualifiedName().Right, checkMode, false)
 }
 
 func (c *Checker) checkIndexedAccess(node *ast.Node, checkMode CheckMode) *Type {
@@ -5304,9 +5340,40 @@ func (c *Checker) checkMetaPropertyKeyword(node *ast.Node) *Type {
 }
 
 func (c *Checker) checkDeleteExpression(node *ast.Node) *Type {
-	// !!!
 	c.checkExpression(node.Expression())
-	return c.errorType
+	expr := ast.SkipParentheses(node.Expression())
+	if !ast.IsAccessExpression(expr) {
+		c.error(expr, diagnostics.The_operand_of_a_delete_operator_must_be_a_property_reference)
+		return c.booleanType
+	}
+	if ast.IsPropertyAccessExpression(expr) && ast.IsPrivateIdentifier(expr.Name()) {
+		c.error(expr, diagnostics.The_operand_of_a_delete_operator_cannot_be_a_private_identifier)
+	}
+	links := c.typeNodeLinks.get(expr)
+	symbol := c.getExportSymbolOfValueSymbolIfExported(links.resolvedSymbol)
+	if symbol != nil {
+		if c.isReadonlySymbol(symbol) {
+			c.error(expr, diagnostics.The_operand_of_a_delete_operator_cannot_be_a_read_only_property)
+		} else {
+			c.checkDeleteExpressionMustBeOptional(expr, symbol)
+		}
+	}
+	return c.booleanType
+}
+
+func (c *Checker) checkDeleteExpressionMustBeOptional(expr *ast.Node, symbol *ast.Symbol) {
+	t := c.getTypeOfSymbol(symbol)
+	if c.strictNullChecks && t.flags&(TypeFlagsAnyOrUnknown|TypeFlagsNever) == 0 {
+		var isOptional bool
+		if c.exactOptionalPropertyTypes {
+			isOptional = symbol.Flags&ast.SymbolFlagsOptional != 0
+		} else {
+			isOptional = c.hasTypeFacts(t, TypeFactsIsUndefined)
+		}
+		if !isOptional {
+			c.error(expr, diagnostics.The_operand_of_a_delete_operator_must_be_optional)
+		}
+	}
 }
 
 func (c *Checker) checkVoidExpression(node *ast.Node) *Type {
@@ -5326,15 +5393,85 @@ func (c *Checker) checkAwaitExpression(node *ast.Node) *Type {
 }
 
 func (c *Checker) checkPrefixUnaryExpression(node *ast.Node) *Type {
-	// !!!
-	c.checkExpression(node.AsPrefixUnaryExpression().Operand)
+	expr := node.AsPrefixUnaryExpression()
+	operandType := c.checkExpression(expr.Operand)
+	if operandType == c.silentNeverType {
+		return c.silentNeverType
+	}
+	switch expr.Operand.Kind {
+	case ast.KindNumericLiteral:
+		switch expr.Operator {
+		case ast.KindMinusToken:
+			return c.getFreshTypeOfLiteralType(c.getNumberLiteralType(-stringutil.ToNumber(expr.Operand.Text())))
+		case ast.KindPlusToken:
+			return c.getFreshTypeOfLiteralType(c.getNumberLiteralType(+stringutil.ToNumber(expr.Operand.Text())))
+		}
+	case ast.KindBigIntLiteral:
+		if expr.Operator == ast.KindMinusToken {
+			return c.getFreshTypeOfLiteralType(c.getBigIntLiteralType(PseudoBigInt{
+				negative:    true,
+				base10Value: parsePseudoBigInt(expr.Operand.Text()),
+			}))
+		}
+	}
+	switch expr.Operator {
+	case ast.KindPlusToken, ast.KindMinusToken, ast.KindTildeToken:
+		c.checkNonNullType(operandType, expr.Operand)
+		if c.maybeTypeOfKindConsideringBaseConstraint(operandType, TypeFlagsESSymbolLike) {
+			c.error(expr.Operand, diagnostics.The_0_operator_cannot_be_applied_to_type_symbol, scanner.TokenToString(expr.Operator))
+		}
+		if expr.Operator == ast.KindPlusToken {
+			if c.maybeTypeOfKindConsideringBaseConstraint(operandType, TypeFlagsBigIntLike) {
+				c.error(expr.Operand, diagnostics.Operator_0_cannot_be_applied_to_type_1, scanner.TokenToString(expr.Operator), c.typeToString(c.getBaseTypeOfLiteralType(operandType)))
+			}
+			return c.numberType
+		}
+		return c.getUnaryResultType(operandType)
+	case ast.KindExclamationToken:
+		c.checkTruthinessOfType(operandType, expr.Operand)
+		facts := c.getTypeFacts(operandType, TypeFactsTruthy|TypeFactsFalsy)
+		switch {
+		case facts == TypeFactsTruthy:
+			return c.falseType
+		case facts == TypeFactsFalsy:
+			return c.trueType
+		default:
+			return c.booleanType
+		}
+	case ast.KindPlusPlusToken, ast.KindMinusMinusToken:
+		ok := c.checkArithmeticOperandType(expr.Operand, c.checkNonNullType(operandType, expr.Operand), diagnostics.An_arithmetic_operand_must_be_of_type_any_number_bigint_or_an_enum_type, false)
+		if ok {
+			// run check only if former checks succeeded to avoid reporting cascading errors
+			c.checkReferenceExpression(expr.Operand, diagnostics.The_operand_of_an_increment_or_decrement_operator_must_be_a_variable_or_a_property_access, diagnostics.The_operand_of_an_increment_or_decrement_operator_may_not_be_an_optional_property_access)
+		}
+		return c.getUnaryResultType(operandType)
+	}
 	return c.errorType
 }
 
 func (c *Checker) checkPostfixUnaryExpression(node *ast.Node) *Type {
-	// !!!
-	c.checkExpression(node.AsPostfixUnaryExpression().Operand)
-	return c.errorType
+	expr := node.AsPostfixUnaryExpression()
+	operandType := c.checkExpression(expr.Operand)
+	if operandType == c.silentNeverType {
+		return c.silentNeverType
+	}
+	ok := c.checkArithmeticOperandType(expr.Operand, c.checkNonNullType(operandType, expr.Operand), diagnostics.An_arithmetic_operand_must_be_of_type_any_number_bigint_or_an_enum_type, false)
+	if ok {
+		// run check only if former checks succeeded to avoid reporting cascading errors
+		c.checkReferenceExpression(expr.Operand, diagnostics.The_operand_of_an_increment_or_decrement_operator_must_be_a_variable_or_a_property_access, diagnostics.The_operand_of_an_increment_or_decrement_operator_may_not_be_an_optional_property_access)
+	}
+	return c.getUnaryResultType(operandType)
+}
+
+func (c *Checker) getUnaryResultType(operandType *Type) *Type {
+	if c.maybeTypeOfKind(operandType, TypeFlagsBigIntLike) {
+		if c.isTypeAssignableToKind(operandType, TypeFlagsAnyOrUnknown) || c.maybeTypeOfKind(operandType, TypeFlagsNumberLike) {
+			return c.numberOrBigIntType
+		}
+		return c.bigintType
+	}
+	// If it's not a bigint type, implicit coercion will result in a number
+	return c.numberType
 }
 
 func (c *Checker) checkConditionalExpression(node *ast.Node, checkMode CheckMode) *Type {
@@ -5353,9 +5490,8 @@ func (c *Checker) checkTruthinessExpression(node *ast.Node, checkMode CheckMode)
 }
 
 func (c *Checker) checkSpreadExpression(node *ast.Node, checkMode CheckMode) *Type {
-	// !!!
-	c.checkExpression(node.Expression())
-	return c.errorType
+	arrayOrIterableType := c.checkExpressionEx(node.Expression(), checkMode)
+	return c.checkIteratedTypeOrElementType(IterationUseSpread, arrayOrIterableType, c.undefinedType, node.Expression())
 }
 
 func (c *Checker) checkYieldExpression(node *ast.Node) *Type {
