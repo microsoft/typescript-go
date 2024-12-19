@@ -183,25 +183,25 @@ func (t *parallelParseTask) createSubTasks(count int) {
 }
 
 func (p *Program) processRootFiles(rootFiles []FileInfo) {
-	ctx := newParallelParseContext(p.programOptions.SingleThreaded, len(rootFiles))
+	parseContext := newParallelParseContext(p.programOptions.SingleThreaded, len(rootFiles))
 
 	absPaths := make([]string, 0, len(rootFiles))
 	for _, fileInfo := range rootFiles {
 		absPath := tspath.GetNormalizedAbsolutePath(fileInfo.Name, p.currentDirectory)
-		ctx.processedFileNames.Add(absPath)
+		parseContext.processedFileNames.Add(absPath)
 		absPaths = append(absPaths, absPath)
 	}
 
 	for i, absPath := range absPaths {
-		p.startParseTask(absPath, ctx, &ctx.rootTasks[i])
+		p.startParseTask(absPath, parseContext, &parseContext.rootTasks[i])
 	}
 
-	ctx.wait()
-	p.addAllFilesToProgram(ctx)
+	parseContext.wait()
+	p.addAllFilesToProgram(parseContext)
 }
 
-func (p *Program) startParseTask(fileName string, ctx *parallelParseContext, task *parallelParseTask) {
-	ctx.run(func() {
+func (p *Program) startParseTask(fileName string, parseContext *parallelParseContext, task *parallelParseTask) {
+	parseContext.run(func() {
 		normalizedPath := tspath.NormalizePath(fileName)
 		file := p.parseSourceFile(normalizedPath)
 		p.collectExternalModuleReferences(file)
@@ -215,29 +215,29 @@ func (p *Program) startParseTask(fileName string, ctx *parallelParseContext, tas
 
 		filesToParse = append(filesToParse, p.resolveImportsAndModuleAugmentations(file)...)
 		task.file = file
-		p.processFiles(filesToParse, task, ctx)
+		p.processFiles(filesToParse, task, parseContext)
 	})
 }
 
-func (p *Program) processFiles(files []string, task *parallelParseTask, ctx *parallelParseContext) {
+func (p *Program) processFiles(files []string, task *parallelParseTask, parseContext *parallelParseContext) {
 	if len(files) > 0 {
 		task.createSubTasks(len(files))
 
-		ctx.lock()
-		defer ctx.unlock()
+		parseContext.lock()
+		defer parseContext.unlock()
 		for i, fileName := range files {
-			if ctx.addIfNotProcessed(fileName) {
-				p.startParseTask(fileName, ctx, &task.subTasks[i])
+			if parseContext.addIfNotProcessed(fileName) {
+				p.startParseTask(fileName, parseContext, &task.subTasks[i])
 			}
 		}
 	}
 }
 
-func (p *Program) addAllFilesToProgram(ctx *parallelParseContext) {
-	p.files = make([]*ast.SourceFile, 0, ctx.processedFileCount())
-	p.filesByPath = make(map[tspath.Path]*ast.SourceFile, ctx.processedFileCount())
+func (p *Program) addAllFilesToProgram(parseContext *parallelParseContext) {
+	p.files = make([]*ast.SourceFile, 0, parseContext.processedFileCount())
+	p.filesByPath = make(map[tspath.Path]*ast.SourceFile, parseContext.processedFileCount())
 
-	p.addAllFilesToProgramWorker(ctx.rootTasks)
+	p.addAllFilesToProgramWorker(parseContext.rootTasks)
 }
 
 func (p *Program) addAllFilesToProgramWorker(tasks []parallelParseTask) {
