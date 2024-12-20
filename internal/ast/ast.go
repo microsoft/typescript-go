@@ -5267,7 +5267,14 @@ func (f *NodeFactory) NewJSDocParameterTag(tagName *IdentifierNode, name *Entity
 }
 
 func (node *JSDocParameterTag) ForEachChild(v Visitor) bool {
-	return visit(v, node.TagName) || visit(v, node.name) || visit(v, node.TypeExpression) || visitNodeList(v, node.Comment)
+	if visit(v, node.TagName) {
+		return true
+	}
+	if node.IsNameFirst {
+		return visit(v, node.name) || visit(v, node.TypeExpression) || visitNodeList(v, node.Comment)
+	} else {
+		return visit(v, node.TypeExpression) || visit(v, node.name) || visitNodeList(v, node.Comment)
+	}
 }
 
 func (node *JSDocParameterTag) Name() *EntityName { return node.name }

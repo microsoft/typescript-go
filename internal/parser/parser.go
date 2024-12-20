@@ -2336,8 +2336,8 @@ func (j *JSDocParser) parseJSDocCommentWorker(indent int) *ast.Node {
 	// Initially we can parse out a tag.  We also have seen a starting asterisk.
 	// This is so that /** * @type */ doesn't parse.
 	state := JSDocStateSawAsterisk
-	parts := []*ast.Node{}
-	comments := []string{}
+	var parts []*ast.Node
+	var comments []string
 	commentsPos := -1
 	linkEnd := 0
 	var hasMargin bool
@@ -2435,6 +2435,9 @@ loop:
 		} else {
 			j.nextTokenJSDoc()
 		}
+	}
+	if commentsPos == -1 {
+		commentsPos = j.scanner.TokenFullStart()
 	}
 	trimmedComments := trimEnd(strings.Join(comments, ""))
 	if len(trimmedComments) > 0 {
@@ -2606,7 +2609,10 @@ func (j *JSDocParser) parseTrailingTagComments(pos int, end int, margin int, ind
 	if len(indentText) == 0 {
 		margin += end - pos
 	}
-	initialMargin := indentText[margin:]
+	var initialMargin string
+	if margin < len(initialMargin) {
+		initialMargin = indentText[margin:]
+	}
 	return j.parseTagComments(margin, &initialMargin)
 }
 
@@ -2633,7 +2639,7 @@ func (j *JSDocParser) parseTagComments(indent int, initialMargin *string) *ast.N
 		}
 		state = JSDocStateSawAsterisk
 	}
-	tok := j.token /* as JSDocast.Kind | ast.Kind.JSDocCommentTextToken */
+	tok := j.token
 loop:
 	for {
 		switch tok {
@@ -6783,7 +6789,6 @@ func (p *Parser) finishNodeWithEnd(node *ast.Node, pos int, end int) {
 	node.Flags |= p.contextFlags
 }
 
-// TODO: Still need to make sure add all the withJSDoc calls in
 func (p *Parser) withJSDoc(node *ast.Node, hasJSDoc bool) {
 	if !hasJSDoc {
 		return
@@ -6797,9 +6802,10 @@ func (p *Parser) withJSDoc(node *ast.Node, hasJSDoc bool) {
 	jsDoc := mapDefined(getJSDocCommentRanges(&p.factory, node, p.sourceText), func(comment ast.CommentRange) *ast.Node {
 		return p.parseJSDocComment(node, comment.Pos(), comment.End())
 	})
+	// TODO: Looks like jsdoc is always defined, never nil (mapDefined defaults to len(out)==len(in) so always allocs a new slice)
 	if jsDoc != nil {
 		if node.Flags&ast.NodeFlagsHasJSDoc == 0 {
-			node.Flags &= ast.NodeFlagsHasJSDoc
+			node.Flags |= ast.NodeFlagsHasJSDoc
 		}
 		if p.hasDeprecatedTag {
 			p.hasDeprecatedTag = false

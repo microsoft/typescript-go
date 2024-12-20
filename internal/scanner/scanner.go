@@ -1134,6 +1134,7 @@ func (s *Scanner) ScanJSDocCommentTextToken(inBackticks bool) ast.Kind {
 		s.token = ast.KindEndOfFile
 		return s.token
 	}
+	s.tokenStart = s.pos
 	for ch, size := s.charAndSize(); s.pos < len(s.text) && !stringutil.IsLineBreak(ch) && ch != '`'; {
 		if !inBackticks {
 			if ch == '{' {
@@ -1164,111 +1165,112 @@ func (s *Scanner) ScanJSDocCommentTextToken(inBackticks bool) ast.Kind {
 	return s.token
 }
 
-func (scanner *Scanner) ScanJSDocToken() ast.Kind {
-	scanner.fullStartPos = scanner.pos
-	scanner.tokenFlags = ast.TokenFlagsNone
-	if scanner.pos >= len(scanner.text) {
-		scanner.token = ast.KindEndOfFile
-		return scanner.token
+func (s *Scanner) ScanJSDocToken() ast.Kind {
+	s.fullStartPos = s.pos
+	s.tokenFlags = ast.TokenFlagsNone
+	if s.pos >= len(s.text) {
+		s.token = ast.KindEndOfFile
+		return s.token
 	}
 
-	ch, size := scanner.charAndSize()
-	scanner.pos += size
+	s.tokenStart = s.pos
+	ch, size := s.charAndSize()
+	s.pos += size
 	switch ch {
 	case '\t', '\v', '\f', ' ':
-		ch2 := scanner.char()
+		ch2 := s.char()
 		for ch2 > -1 && stringutil.IsWhiteSpaceSingleLine(ch2) {
-			scanner.pos++
+			s.pos++
 		}
-		scanner.token = ast.KindWhitespaceTrivia
-		return scanner.token
+		s.token = ast.KindWhitespaceTrivia
+		return s.token
 	case '@':
-		scanner.token = ast.KindAtToken
-		return scanner.token
+		s.token = ast.KindAtToken
+		return s.token
 	case '\r':
-		if scanner.char() == '\n' {
-			scanner.pos++
+		if s.char() == '\n' {
+			s.pos++
 		}
 		fallthrough
 	case '\n':
-		scanner.tokenFlags |= ast.TokenFlagsPrecedingLineBreak
-		scanner.token = ast.KindNewLineTrivia
-		return scanner.token
+		s.tokenFlags |= ast.TokenFlagsPrecedingLineBreak
+		s.token = ast.KindNewLineTrivia
+		return s.token
 	case '*':
-		scanner.token = ast.KindAsteriskToken
-		return scanner.token
+		s.token = ast.KindAsteriskToken
+		return s.token
 	case '{':
-		scanner.token = ast.KindOpenBraceToken
-		return scanner.token
+		s.token = ast.KindOpenBraceToken
+		return s.token
 	case '}':
-		scanner.token = ast.KindCloseBraceToken
-		return scanner.token
+		s.token = ast.KindCloseBraceToken
+		return s.token
 	case '[':
-		scanner.token = ast.KindOpenBracketToken
-		return scanner.token
+		s.token = ast.KindOpenBracketToken
+		return s.token
 	case ']':
-		scanner.token = ast.KindCloseBracketToken
-		return scanner.token
+		s.token = ast.KindCloseBracketToken
+		return s.token
 	case '(':
-		scanner.token = ast.KindOpenParenToken
-		return scanner.token
+		s.token = ast.KindOpenParenToken
+		return s.token
 	case ')':
-		scanner.token = ast.KindCloseParenToken
-		return scanner.token
+		s.token = ast.KindCloseParenToken
+		return s.token
 	case '<':
-		scanner.token = ast.KindLessThanToken
-		return scanner.token
+		s.token = ast.KindLessThanToken
+		return s.token
 	case '>':
-		scanner.token = ast.KindGreaterThanToken
-		return scanner.token
+		s.token = ast.KindGreaterThanToken
+		return s.token
 	case '=':
-		scanner.token = ast.KindEqualsToken
-		return scanner.token
+		s.token = ast.KindEqualsToken
+		return s.token
 	case ',':
-		scanner.token = ast.KindCommaToken
-		return scanner.token
+		s.token = ast.KindCommaToken
+		return s.token
 	case '.':
-		scanner.token = ast.KindDotToken
-		return scanner.token
+		s.token = ast.KindDotToken
+		return s.token
 	case '`':
-		scanner.token = ast.KindBacktickToken
-		return scanner.token
+		s.token = ast.KindBacktickToken
+		return s.token
 	case '#':
-		scanner.token = ast.KindHashToken
-		return scanner.token
+		s.token = ast.KindHashToken
+		return s.token
 	case '\\':
-		scanner.pos--
-		cp := scanner.peekUnicodeEscape()
-		if cp >= 0 && isIdentifierStart(cp, scanner.languageVersion) {
-			scanner.tokenValue = string(scanner.scanUnicodeEscape(true)) + scanner.scanIdentifierParts()
-			scanner.token = GetIdentifierToken(scanner.tokenValue)
+		s.pos--
+		cp := s.peekUnicodeEscape()
+		if cp >= 0 && isIdentifierStart(cp, s.languageVersion) {
+			s.tokenValue = string(s.scanUnicodeEscape(true)) + s.scanIdentifierParts()
+			s.token = GetIdentifierToken(s.tokenValue)
 		} else {
-			scanner.scanInvalidCharacter()
+			s.scanInvalidCharacter()
 		}
-		return scanner.token
+		return s.token
 	}
 
-	if isIdentifierStart(ch, scanner.languageVersion) {
+	if isIdentifierStart(ch, s.languageVersion) {
 		char := ch
 		for {
-			if scanner.pos >= len(scanner.text) {
+			if s.pos >= len(s.text) {
 				break
 			}
-			char, size = scanner.charAndSize()
-			if !isIdentifierPart(char, scanner.languageVersion) && char != '-' {
+			char, size = s.charAndSize()
+			if !isIdentifierPart(char, s.languageVersion) && char != '-' {
 				break
 			}
-			scanner.pos += size
+			s.pos += size
 		}
-		scanner.tokenValue = scanner.text[scanner.tokenStart:scanner.pos]
+		s.tokenValue = s.text[s.tokenStart:s.pos]
 		if char == '\\' {
-			scanner.tokenValue += scanner.scanIdentifierParts()
+			s.tokenValue += s.scanIdentifierParts()
 		}
-		scanner.token = GetIdentifierToken(scanner.tokenValue)
-		return scanner.token
+		s.token = GetIdentifierToken(s.tokenValue)
+		return s.token
 	} else {
-		scanner.token = ast.KindUnknown
-		return scanner.token
+		s.token = ast.KindUnknown
+		return s.token
 	}
 }
 
