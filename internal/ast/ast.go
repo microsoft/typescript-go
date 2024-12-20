@@ -1412,13 +1412,6 @@ func (node *Node) JSDoc(file *SourceFile) []*Node {
 	return nil
 }
 
-func (node *Node) SetJSDoc(file *SourceFile, jsDocs []*Node) {
-	if node.Flags&NodeFlagsHasJSDoc == 0 {
-		node.Flags &= NodeFlagsHasJSDoc
-	}
-	file.jsdocCache[node] = jsDocs
-}
-
 // Token
 
 type Token struct {
@@ -5709,6 +5702,10 @@ func (node *SourceFile) JSDocDiagnostics() []*Diagnostic {
 
 func (node *SourceFile) SetJSDocDiagnostics(diags []*Diagnostic) {
 	node.jsdocDiagnostics = diags
+}
+
+func (node *SourceFile) SetJSDocCache(cache *map[*Node][]*Node) {
+	node.jsdocCache = *cache
 }
 
 func (node *SourceFile) BindDiagnostics() []*Diagnostic {
