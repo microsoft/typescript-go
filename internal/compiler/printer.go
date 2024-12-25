@@ -112,6 +112,7 @@ func (p *Printer) printType(t *Type) {
 }
 
 func (p *Printer) printTypeNoAlias(t *Type) {
+	p.depth++
 	switch {
 	case t.flags&TypeFlagsIntrinsic != 0:
 		p.print(t.AsIntrinsicType().intrinsicName)
@@ -136,14 +137,13 @@ func (p *Printer) printTypeNoAlias(t *Type) {
 	case t.flags&TypeFlagsStringMapping != 0:
 		p.printStringMappingType(t)
 	}
+	p.depth--
 }
 
 func (p *Printer) printRecursive(t *Type, f func(*Printer, *Type)) {
 	if !p.printing.Has(t) && p.depth < 10 {
 		p.printing.Add(t)
-		p.depth++
 		f(p, t)
-		p.depth--
 		p.printing.Delete(t)
 	} else {
 		p.print("???")
@@ -288,14 +288,28 @@ func (p *Printer) printTupleType(t *Type) {
 		if info.flags&ElementFlagsVariable != 0 {
 			p.print("...")
 		}
-		if info.flags&ElementFlagsOptional != 0 {
-			p.printTypeEx(t, ast.TypePrecedencePostfix)
-			p.print("?")
-		} else if info.flags&ElementFlagsRest != 0 {
-			p.printTypeEx(t, ast.TypePrecedencePostfix)
-			p.print("[]")
+		if info.labeledDeclaration != nil {
+			p.print(info.labeledDeclaration.Name().Text())
+			if info.flags&ElementFlagsOptional != 0 {
+				p.print("?")
+			}
+			p.print(": ")
+			if info.flags&ElementFlagsRest != 0 {
+				p.printTypeEx(t, ast.TypePrecedencePostfix)
+				p.print("[]")
+			} else {
+				p.printType(t)
+			}
 		} else {
-			p.printType(t)
+			if info.flags&ElementFlagsOptional != 0 {
+				p.printTypeEx(t, ast.TypePrecedencePostfix)
+				p.print("?")
+			} else if info.flags&ElementFlagsRest != 0 {
+				p.printTypeEx(t, ast.TypePrecedencePostfix)
+				p.print("[]")
+			} else {
+				p.printType(t)
+			}
 		}
 		tail = true
 	}

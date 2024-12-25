@@ -816,7 +816,7 @@ func NewChecker(program *Program) *Checker {
 	c.emptyStringType = c.getStringLiteralType("")
 	c.zeroType = c.getNumberLiteralType(0)
 	c.zeroBigIntType = c.getBigIntLiteralType(PseudoBigInt{negative: false, base10Value: "0"})
-	c.typeofType = c.getUnionType(core.Map(slices.Collect(maps.Keys(typeofNEFacts)), c.getStringLiteralType))
+	c.typeofType = c.getUnionType(core.Map(slices.Sorted(maps.Keys(typeofNEFacts)), c.getStringLiteralType))
 	c.flowLoopCache = make(map[FlowLoopKey]*Type)
 	c.flowNodeReachable = make(map[*ast.FlowNode]bool)
 	c.flowNodePostSuper = make(map[*ast.FlowNode]bool)
@@ -18214,14 +18214,7 @@ func (c *Checker) addTypeToUnion(typeSet []*Type, includes TypeFlags, t *Type) (
 				includes |= TypeFlagsIncludesNonWideningType
 			}
 		} else {
-			var index int
-			var ok bool
-			if len(typeSet) != 0 && t.id > typeSet[len(typeSet)-1].id {
-				index = len(typeSet)
-			} else {
-				index, ok = slices.BinarySearchFunc(typeSet, t, compareTypeIds)
-			}
-			if !ok {
+			if index, ok := slices.BinarySearchFunc(typeSet, t, compareTypes); !ok {
 				typeSet = slices.Insert(typeSet, index, t)
 			}
 		}
@@ -18963,12 +18956,12 @@ func (c *Checker) removeType(t *Type, targetType *Type) *Type {
 }
 
 func containsType(types []*Type, t *Type) bool {
-	_, ok := slices.BinarySearchFunc(types, t, compareTypeIds)
+	_, ok := slices.BinarySearchFunc(types, t, compareTypes)
 	return ok
 }
 
 func insertType(types []*Type, t *Type) ([]*Type, bool) {
-	if i, ok := slices.BinarySearchFunc(types, t, compareTypeIds); !ok {
+	if i, ok := slices.BinarySearchFunc(types, t, compareTypes); !ok {
 		return slices.Insert(types, i, t), true
 	}
 	return types, false
