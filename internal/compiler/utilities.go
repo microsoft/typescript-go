@@ -1593,15 +1593,8 @@ func compareSymbols(s1, s2 *ast.Symbol) int {
 		return -1
 	}
 	if len(s1.Declarations) != 0 && len(s2.Declarations) != 0 {
-		if s1.Parent == s2.Parent && s1.Parent != nil {
-			// Symbols with the same unmerged parent are always in the same file
-			if c := s1.Declarations[0].Pos() - s2.Declarations[0].Pos(); c != 0 {
-				return c
-			}
-		} else {
-			if c := compareNodes(s1.Declarations[0], s2.Declarations[0]); c != 0 {
-				return c
-			}
+		if c := compareNodes(s1.Declarations[0], s2.Declarations[0]); c != 0 {
+			return c
 		}
 	} else if len(s1.Declarations) != 0 {
 		return -1
