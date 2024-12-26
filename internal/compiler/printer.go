@@ -280,11 +280,12 @@ func (p *Printer) printTupleType(t *Type) {
 	tail := false
 	p.print("[")
 	elementInfos := t.TargetTupleType().elementInfos
-	for i, t := range p.c.getTypeArguments(t) {
+	typeArguments := p.c.getTypeArguments(t)
+	for i, info := range elementInfos {
+		t := typeArguments[i]
 		if tail {
 			p.print(", ")
 		}
-		info := elementInfos[i]
 		if info.flags&ElementFlagsVariable != 0 {
 			p.print("...")
 		}
