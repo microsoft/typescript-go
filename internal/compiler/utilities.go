@@ -1698,7 +1698,28 @@ func compareTypes(t1, t2 *Type) int {
 				return c
 			}
 		}
-	case t1.flags&TypeFlagsUnionOrIntersection != 0:
+	case t1.flags&TypeFlagsUnion != 0:
+		// Unions are ordered by their alias, then by their origin, and finally by their constituent type lists.
+		if c := compareAliases(t1.alias, t2.alias); c != 0 {
+			return c
+		}
+		o1 := t1.AsUnionType().origin
+		o2 := t2.AsUnionType().origin
+		if o1 == nil && o2 == nil {
+			if c := compareTypeLists(t1.Types(), t2.Types()); c != 0 {
+				return c
+			}
+		} else if o1 == nil {
+			return 1
+		} else if o2 == nil {
+			return -1
+		} else {
+			if c := compareTypes(o1, o2); c != 0 {
+				return c
+			}
+		}
+	case t1.flags&TypeFlagsIntersection != 0:
+		// Intersections are ordered by their alias and then by their constituent type lists.
 		if c := compareAliases(t1.alias, t2.alias); c != 0 {
 			return c
 		}
@@ -1706,16 +1727,17 @@ func compareTypes(t1, t2 *Type) int {
 			return c
 		}
 	case t1.flags&(TypeFlagsEnumLiteral|TypeFlagsUniqueESSymbol) != 0:
+		// Enum members are ordered by their symbol (and thus their declaration order).
 		if c := compareSymbols(t1.symbol, t2.symbol); c != 0 {
 			return c
 		}
 	case t1.flags&TypeFlagsStringLiteral != 0:
-		// We order string literal types by their values.
+		// String literal types are ordered by their values.
 		if c := strings.Compare(t1.AsLiteralType().value.(string), t2.AsLiteralType().value.(string)); c != 0 {
 			return c
 		}
 	case t1.flags&TypeFlagsNumberLiteral != 0:
-		// We order numeric literal types by their values.
+		// Numeric literal types are ordered by their values.
 		if c := cmp.Compare(t1.AsLiteralType().value.(float64), t2.AsLiteralType().value.(float64)); c != 0 {
 			return c
 		}
