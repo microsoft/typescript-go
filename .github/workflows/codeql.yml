@@ -38,6 +38,7 @@ jobs:
 
     permissions:
       # required for all workflows
+      actions: read
       contents: read
       security-events: write
 
