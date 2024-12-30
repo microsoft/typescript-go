@@ -34,7 +34,7 @@ jobs:
   CodeQL-Build:
     # CodeQL runs on ubuntu-latest, windows-latest, and macos-latest
     runs-on: ubuntu-latest
-    if: github.repository == 'microsoft/TypeScript-go'
+    if: github.repository == 'microsoft/typescript-go'
 
     permissions:
       # required for all workflows
