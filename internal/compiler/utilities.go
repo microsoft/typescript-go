@@ -1643,17 +1643,20 @@ func compareTypes(t1, t2 *Type) int {
 	if c := getSortOrderFlags(t1) - getSortOrderFlags(t2); c != 0 {
 		return c
 	}
-	// We have identical type flags, now sort by data specific to the type.
+	// Order named types by name and, in the case of aliased types, by alias type arguments.
+	if c := compareTypeNames(t1, t2); c != 0 {
+		return c
+	}
+	// We have unnamed types or types with identical names. Now sort by data specific to the type.
 	switch {
 	case t1.flags&(TypeFlagsAny|TypeFlagsUnknown|TypeFlagsString|TypeFlagsNumber|TypeFlagsBoolean|TypeFlagsBigInt|TypeFlagsESSymbol|TypeFlagsVoid|TypeFlagsUndefined|TypeFlagsNull|TypeFlagsNever|TypeFlagsNonPrimitive) != 0:
 		// Only distinguished by type IDs
 	case t1.flags&TypeFlagsObject != 0:
-		// Order types by symbol. For ordering we prefer alias symbols over type symbols because alias symbols are
-		// more specific (two types with the same type symbol may have differing alias symbols, but not vice-versa).
-		if c := compareSymbols(getNamedObjectTypeSymbol(t1), getNamedObjectTypeSymbol(t2)); c != 0 {
+		// Order unnamed or identically named object types by symbol.
+		if c := compareSymbols(t1.symbol, t2.symbol); c != 0 {
 			return c
 		}
-		// When object types have the same symbol, order by kind. We order type references before other kinds.
+		// When object types have the same or no symbol, order by kind. We order type references before other kinds.
 		if t1.objectFlags&ObjectFlagsReference != 0 && t2.objectFlags&ObjectFlagsReference != 0 {
 			r1 := t1.AsTypeReference()
 			r2 := t2.AsTypeReference()
@@ -1685,12 +1688,9 @@ func compareTypes(t1, t2 *Type) int {
 		} else if t2.objectFlags&ObjectFlagsReference != 0 {
 			return 1
 		} else {
-			// Order unnamed non-reference object types by their symbol (if any), then by their kind, and finally
-			// by their associated type mappers. Reverse mapped types have neither symbols nor mappers so they're
-			// ultimately ordered by unstable type IDs, but given their rarity this should be fine.
-			if c := compareSymbols(t1.symbol, t2.symbol); c != 0 {
-				return c
-			}
+			// Order unnamed non-reference object types by kind associated type mappers. Reverse mapped types have
+			// neither symbols nor mappers so they're ultimately ordered by unstable type IDs, but given their rarity
+			// this should be fine.
 			if c := int(t1.objectFlags&ObjectFlagsObjectTypeKindMask) - int(t2.objectFlags&ObjectFlagsObjectTypeKindMask); c != 0 {
 				return c
 			}
@@ -1699,10 +1699,7 @@ func compareTypes(t1, t2 *Type) int {
 			}
 		}
 	case t1.flags&TypeFlagsUnion != 0:
-		// Unions are ordered by their alias, then by their origin, and finally by their constituent type lists.
-		if c := compareAliases(t1.alias, t2.alias); c != 0 {
-			return c
-		}
+		// Unions are ordered by origin and then constituent type lists.
 		o1 := t1.AsUnionType().origin
 		o2 := t2.AsUnionType().origin
 		if o1 == nil && o2 == nil {
@@ -1719,10 +1716,7 @@ func compareTypes(t1, t2 *Type) int {
 			}
 		}
 	case t1.flags&TypeFlagsIntersection != 0:
-		// Intersections are ordered by their alias and then by their constituent type lists.
-		if c := compareAliases(t1.alias, t2.alias); c != 0 {
-			return c
-		}
+		// Intersections are ordered by their constituent type lists.
 		if c := compareTypeLists(t1.Types(), t2.Types()); c != 0 {
 			return c
 		}
@@ -1762,9 +1756,6 @@ func compareTypes(t1, t2 *Type) int {
 			return c
 		}
 	case t1.flags&TypeFlagsIndexedAccess != 0:
-		if c := compareAliases(t1.alias, t2.alias); c != 0 {
-			return c
-		}
 		if c := compareTypes(t1.AsIndexedAccessType().objectType, t2.AsIndexedAccessType().objectType); c != 0 {
 			return c
 		}
@@ -1772,9 +1763,6 @@ func compareTypes(t1, t2 *Type) int {
 			return c
 		}
 	case t1.flags&TypeFlagsConditional != 0:
-		if c := compareAliases(t1.alias, t2.alias); c != 0 {
-			return c
-		}
 		if c := compareNodes(t1.AsConditionalType().root.node.AsNode(), t2.AsConditionalType().root.node.AsNode()); c != 0 {
 			return c
 		}
@@ -1796,9 +1784,6 @@ func compareTypes(t1, t2 *Type) int {
 			return c
 		}
 	case t1.flags&TypeFlagsStringMapping != 0:
-		if c := compareSymbols(t1.symbol, t2.symbol); c != 0 {
-			return c
-		}
 		if c := compareTypes(t1.AsStringMappingType().target, t2.AsStringMappingType().target); c != 0 {
 			return c
 		}
@@ -1813,10 +1798,35 @@ func getSortOrderFlags(t *Type) int {
 	return int((t.flags&TypeFlagsEnum)>>1 | t.flags&^TypeFlagsEnum)
 }
 
-func getNamedObjectTypeSymbol(t *Type) *ast.Symbol {
+func compareTypeNames(t1, t2 *Type) int {
+	s1 := getTypeNameSymbol(t1)
+	s2 := getTypeNameSymbol(t2)
+	if s1 == s2 {
+		if t1.alias != nil {
+			return compareTypeLists(t1.alias.typeArguments, t2.alias.typeArguments)
+		}
+		return 0
+	}
+	if s1 == nil {
+		return 1
+	}
+	if s2 == nil {
+		return -1
+	}
+	return strings.Compare(s1.Name, s2.Name)
+}
+
+func getTypeNameSymbol(t *Type) *ast.Symbol {
 	if t.alias != nil {
 		return t.alias.symbol
 	}
+	if t.flags&(TypeFlagsTypeParameter|TypeFlagsStringMapping) != 0 || t.objectFlags&(ObjectFlagsClassOrInterface|ObjectFlagsReference) != 0 {
+		return t.symbol
+	}
+	return nil
+}
+
+func getObjectTypeName(t *Type) *ast.Symbol {
 	if t.objectFlags&(ObjectFlagsClassOrInterface|ObjectFlagsReference) != 0 {
 		return t.symbol
 	}
@@ -1857,22 +1867,6 @@ func compareElementLabels(n1, n2 *ast.Node) int {
 		return 1
 	}
 	return strings.Compare(n1.Name().Text(), n2.Name().Text())
-}
-
-func compareAliases(a1, a2 *TypeAlias) int {
-	if a1 == a2 {
-		return 0
-	}
-	if a1 == nil {
-		return 1
-	}
-	if a2 == nil {
-		return -1
-	}
-	if c := compareSymbols(a1.symbol, a2.symbol); c != 0 {
-		return c
-	}
-	return compareTypeLists(a1.typeArguments, a2.typeArguments)
 }
 
 func compareTypeLists(s1, s2 []*Type) int {
