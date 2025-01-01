@@ -6,7 +6,7 @@ import (
 	"math"
 	"slices"
 	"strings"
-	"sync/atomic"
+	"sync"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/binder"
@@ -43,12 +43,19 @@ func (s *LinkStore[K, V]) has(key K) bool {
 
 // Atomic ids
 
-var nextMergeId atomic.Uint32
+var symbolMergeMutex sync.Mutex
+var nextMergeId uint32
 
 func getMergeId(symbol *ast.Symbol) ast.MergeId {
-	if symbol.MergeId == 0 {
-		symbol.MergeId = ast.MergeId(nextMergeId.Add(1))
+	if symbol.MergeId != 0 {
+		return symbol.MergeId
 	}
+	symbolMergeMutex.Lock()
+	if symbol.MergeId == 0 {
+		nextMergeId++
+		symbol.MergeId = ast.MergeId(nextMergeId)
+	}
+	symbolMergeMutex.Unlock()
 	return symbol.MergeId
 }
 

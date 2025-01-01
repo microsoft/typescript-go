@@ -29,8 +29,9 @@ foo.bar;`
 	}
 	p := NewProgram(opts)
 	p.bindSourceFiles()
-	c := p.getTypeChecker()
+	p.checkSourceFiles()
 	file := p.SourceFiles()[0]
+	c := p.getTypeChecker(file)
 	interfaceId := file.Statements.Nodes[0].Name()
 	varId := file.Statements.Nodes[1].AsVariableStatement().DeclarationList.AsVariableDeclarationList().Declarations.Nodes[0].Name()
 	propAccess := file.Statements.Nodes[2].AsExpressionStatement().Expression
