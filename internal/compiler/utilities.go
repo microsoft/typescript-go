@@ -43,8 +43,10 @@ func (s *LinkStore[K, V]) has(key K) bool {
 
 // Atomic ids
 
-var symbolMergeMutex sync.Mutex
-var nextMergeId uint32
+var (
+	symbolMergeMutex sync.Mutex
+	nextMergeId      uint32
+)
 
 func getMergeId(symbol *ast.Symbol) ast.MergeId {
 	if symbol.MergeId != 0 {
