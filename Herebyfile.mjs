@@ -3,6 +3,7 @@
 import { $ as _$ } from "execa";
 import { glob } from "glob";
 import { task } from "hereby";
+import { createHash } from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import url from "node:url";
@@ -125,6 +126,7 @@ export const testAll = task({
 });
 
 const customLinterPath = "./_tools/custom-gcl";
+const customLinterHashPath = customLinterPath + ".hash";
 
 const golangciLintVersion = memoize(() => {
     const golangciLintYml = fs.readFileSync(".custom-gcl.yml", "utf8");
@@ -135,17 +137,48 @@ const golangciLintVersion = memoize(() => {
     return parsed;
 });
 
+const customlintHash = memoize(() => {
+    const files = glob.sync([
+        "./_tools/go.mod",
+        "./_tools/customlint/**/*",
+        "./.custom-gcl.yml",
+    ], {
+        ignore: "**/testdata/**",
+        nodir: true,
+        absolute: true,
+    });
+    files.sort();
+
+    const hash = createHash("sha256");
+
+    for (const file of files) {
+        hash.update(file);
+        hash.update(fs.readFileSync(file));
+    }
+
+    return hash.digest("hex") + "\n";
+});
+
 async function buildCustomLinter() {
+    const hash = customlintHash();
+    if (
+        isInstalled(customLinterPath)
+        && fs.existsSync(customLinterHashPath)
+        && fs.readFileSync(customLinterHashPath, "utf8") === hash
+    ) {
+        return;
+    }
+
     await $`go run github.com/golangci/golangci-lint/cmd/golangci-lint@${golangciLintVersion()} custom`;
     await $`${customLinterPath} cache clean`;
+
+    fs.writeFileSync(customLinterHashPath, hash);
 }
 
 export const lint = task({
     name: "lint",
     run: async () => {
-        if (!isInstalled(customLinterPath)) {
-            await buildCustomLinter();
-        }
+        await buildCustomLinter();
         await $`${customLinterPath} run ${options.fix ? ["--fix"] : []} ${isCI ? ["--timeout=5m"] : []}`;
     },
 });
