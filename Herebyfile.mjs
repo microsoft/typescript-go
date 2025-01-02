@@ -9,7 +9,6 @@ import path from "node:path";
 import url from "node:url";
 import { parseArgs } from "node:util";
 import which from "which";
-import * as YAML from "yaml";
 
 const __filename = url.fileURLToPath(new URL(import.meta.url));
 const __dirname = path.dirname(__filename);
@@ -130,11 +129,12 @@ const customLinterHashPath = customLinterPath + ".hash";
 
 const golangciLintVersion = memoize(() => {
     const golangciLintYml = fs.readFileSync(".custom-gcl.yml", "utf8");
-    const parsed = YAML.parse(golangciLintYml).version;
-    if (typeof parsed !== "string") {
-        throw new Error("Expected version in .custom-gcl.yml to be a string");
+    const pattern = /^version:\s*(v\d+\.\d+\.\d+).*$/m;
+    const match = pattern.exec(golangciLintYml);
+    if (!match) {
+        throw new Error("Expected version in .custom-gcl.yml");
     }
-    return parsed;
+    return match[1];
 });
 
 const customlintHash = memoize(() => {
