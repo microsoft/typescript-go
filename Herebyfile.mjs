@@ -3,7 +3,7 @@
 import { $ as _$ } from "execa";
 import { glob } from "glob";
 import { task } from "hereby";
-import { createHash } from "node:crypto";
+import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import url from "node:url";
@@ -149,7 +149,7 @@ const customlintHash = memoize(() => {
     });
     files.sort();
 
-    const hash = createHash("sha256");
+    const hash = crypto.createHash("sha256");
 
     for (const file of files) {
         hash.update(file);
