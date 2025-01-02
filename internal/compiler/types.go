@@ -1143,12 +1143,6 @@ var LanguageFeatureMinimumTarget = LanguageFeatureMinimumTargetMap{
 	RegularExpressionFlagsUnicodeSets: core.ScriptTargetESNext,
 }
 
-type ProjectReference struct {
-	Path         string
-	OriginalPath string
-	Circular     bool
-}
-
 type FileIncludeKind int
 
 const (

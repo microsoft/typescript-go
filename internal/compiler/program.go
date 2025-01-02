@@ -22,7 +22,7 @@ type ProgramOptions struct {
 	Host             CompilerHost
 	Options          *core.CompilerOptions
 	SingleThreaded   bool
-	ProjectReference []ProjectReference
+	ProjectReference []core.ProjectReference
 }
 
 type Program struct {

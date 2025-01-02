@@ -23,11 +23,12 @@ type ModeAwareCacheKey struct {
 }
 
 type ParsedCommandLine struct {
-	Options       *core.CompilerOptions
-	FileNames     []string
-	Raw           any
-	compileOnSave *bool
-	Errors        []*ast.Diagnostic
+	Options           *core.CompilerOptions
+	FileNames         []string
+	Raw               any
+	ProjectReferences []core.ProjectReference
+	compileOnSave     *bool
+	Errors            []*ast.Diagnostic
 }
 
 type ResolvedProjectReference struct {

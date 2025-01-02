@@ -5,7 +5,6 @@ import (
 	"strings"
 
 	"github.com/microsoft/typescript-go/internal/ast"
-	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 )
 
@@ -39,7 +38,7 @@ func parseRawStringArray(value interface{}) []string {
 	if arr, ok := value.([]string); ok {
 		return arr
 	}
-	return nil
+	return []string{}
 }
 
 func parseStringMap(value interface{}) map[string][]string {
@@ -200,23 +199,21 @@ func parseModuleResolutionKind(json any) core.ModuleResolutionKind {
 	}
 	return result
 }
-func parseProjectReference(json any) []compiler.ProjectReference {
-	var result []compiler.ProjectReference
-	if arr, ok := json.([]interface{}); ok {
+func parseProjectReference(json any) []core.ProjectReference {
+	var result []core.ProjectReference
+	if arr, ok := json.([]map[string]interface{}); ok {
 		for _, v := range arr {
-			if m, ok := v.(map[string]interface{}); ok {
-				var reference compiler.ProjectReference
-				if v, ok := m["path"]; ok {
-					reference.Path = v.(string)
-				}
-				if v, ok := m["originalPath"]; ok {
-					reference.OriginalPath = v.(string)
-				}
-				if v, ok := m["circular"]; ok {
-					reference.Circular = v.(bool)
-				}
-				result = append(result, reference)
+			var reference core.ProjectReference
+			if v, ok := v["path"]; ok {
+				reference.Path = v.(string)
 			}
+			if v, ok := v["originalPath"]; ok {
+				reference.OriginalPath = v.(string)
+			}
+			if v, ok := v["circular"]; ok {
+				reference.Circular = v.(bool)
+			}
+			result = append(result, reference)
 		}
 	}
 	return result

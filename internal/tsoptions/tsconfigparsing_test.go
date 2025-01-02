@@ -251,7 +251,7 @@ var data = []struct {
 		output: verifyConfig{
 			fileNames: nil,
 			configFile: map[string]interface{}{
-				"files": nil,
+				"files": []string{},
 			},
 			expectedErrors: []string{"The 'files' list in config file '/apath/tsconfig.json' is empty."},
 		},
@@ -270,8 +270,8 @@ var data = []struct {
 		output: verifyConfig{
 			fileNames: nil,
 			configFile: map[string]interface{}{
-				"files":      nil,
-				"references": nil,
+				"files":      []string{},
+				"references": []map[string]interface{}{},
 			},
 			expectedErrors: []string{"The 'files' list in config file '/apath/tsconfig.json' is empty."},
 		},
@@ -303,7 +303,7 @@ var data = []struct {
 		output: verifyConfig{
 			fileNames: nil,
 			configFile: map[string]interface{}{
-				"include": nil,
+				"include": []string{},
 			},
 			expectedErrors: []string{"No inputs were found in config file '/apath/tsconfig.json'. Specified 'include' paths were '[]' and 'exclude' paths were '[]'."},
 		},
@@ -366,6 +366,26 @@ var data = []struct {
 				"compilerOptions": core.CompilerOptions{},
 			},
 			expectedErrors: []string{"Option 'help' can only be specified on command line."},
+		},
+	},
+	{
+		title: "does not generate errors for empty files list when one or more references are provided",
+		input: testConfig{
+			jsonText: `{
+	            "files": [],
+	            "references": [{ "path": "/apath" }]
+	        }`,
+			configFileName: "/apath/tsconfig.json",
+			basePath:       "/apath",
+			allFileList:    []string{"/apath/a.ts"},
+		},
+		output: verifyConfig{
+			fileNames: nil,
+			configFile: map[string]interface{}{
+				"files":      []string{},
+				"references": []map[string]interface{}{{"path": "/apath"}},
+			},
+			expectedErrors: []string{},
 		},
 	},
 }
