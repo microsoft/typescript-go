@@ -8,6 +8,7 @@ import path from "node:path";
 import url from "node:url";
 import { parseArgs } from "node:util";
 import which from "which";
+import * as YAML from "yaml";
 
 const __filename = url.fileURLToPath(new URL(import.meta.url));
 const __dirname = path.dirname(__filename);
@@ -124,10 +125,18 @@ export const testAll = task({
 });
 
 const customLinterPath = "./_tools/custom-gcl";
-const golangciLintVersion = "v1.62.2"; // NOTE: this must match the version in .custom-gcl.yml
+
+const golangciLintVersion = memoize(() => {
+    const golangciLintYml = fs.readFileSync(".custom-gcl.yml", "utf8");
+    const parsed = YAML.parse(golangciLintYml).version;
+    if (typeof parsed !== "string") {
+        throw new Error("Expected version in .custom-gcl.yml to be a string");
+    }
+    return parsed;
+});
 
 async function buildCustomLinter() {
-    await $`go run github.com/golangci/golangci-lint/cmd/golangci-lint@${golangciLintVersion} custom`;
+    await $`go run github.com/golangci/golangci-lint/cmd/golangci-lint@${golangciLintVersion()} custom`;
     await $`${customLinterPath} cache clean`;
 }
 
