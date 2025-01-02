@@ -42,7 +42,6 @@ func TestSymlinkRealpath(t *testing.T) {
 	fs := FromOS()
 
 	targetRealpath := fs.Realpath(tspath.NormalizePath(targetFile))
-	}
 	linkRealpath := fs.Realpath(tspath.NormalizePath(linkFile))
 
 	if !assert.Check(t, cmp.Equal(targetRealpath, linkRealpath)) {
