@@ -2,6 +2,8 @@
 
 package bundled
 
+// LibNames is the list of all bundled lib files, sorted by name.
+// For the list of libs sorted by load order, use [tsoptions.Libs].
 var LibNames = []string{
 	"lib.d.ts",
 	"lib.decorators.d.ts",
