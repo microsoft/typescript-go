@@ -27,6 +27,7 @@ var (
 	printTypes       = false
 	pretty           = true
 	listFiles        = false
+	noLib            = false
 	pprofDir         = ""
 	outDir           = ""
 )
@@ -60,12 +61,16 @@ func main() {
 	flag.BoolVar(&printTypes, "t", false, "Print types defined in main.ts")
 	flag.BoolVar(&pretty, "pretty", true, "Get prettier errors")
 	flag.BoolVar(&listFiles, "listfiles", false, "List files in the program")
+	flag.BoolVar(&noLib, "nolib", false, "Do not load lib.d.ts files")
 	flag.StringVar(&pprofDir, "pprofdir", "", "Generate pprof CPU/memory profiles to the given directory")
 	flag.StringVar(&outDir, "outdir", "", "Emit to the given directory")
 	flag.Parse()
 
 	rootPath := flag.Arg(0)
 	compilerOptions := &core.CompilerOptions{Strict: core.TSTrue, Target: core.ScriptTargetESNext, ModuleKind: core.ModuleKindNodeNext, NoEmit: core.TSTrue}
+	if noLib {
+		compilerOptions.NoLib = core.TSTrue
+	}
 
 	currentDirectory, err := os.Getwd()
 	if err != nil {
