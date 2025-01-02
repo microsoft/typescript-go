@@ -159,7 +159,7 @@ const customlintHash = memoize(() => {
     return hash.digest("hex") + "\n";
 });
 
-async function buildCustomLinter() {
+const buildCustomLinter = memoize(async () => {
     const hash = customlintHash();
     if (
         isInstalled(customLinterPath)
@@ -173,7 +173,7 @@ async function buildCustomLinter() {
     await $`${customLinterPath} cache clean`;
 
     fs.writeFileSync(customLinterHashPath, hash);
-}
+});
 
 export const lint = task({
     name: "lint",
