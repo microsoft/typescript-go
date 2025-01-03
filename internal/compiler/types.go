@@ -1161,12 +1161,3 @@ type FileIncludeReason struct {
 	Kind  FileIncludeKind
 	Index int
 }
-
-// CharacterCodes
-const (
-	EOF               = -1
-	NullCharacter     = 0
-	MaxAsciiCharacter = 0x7F
-	Asterisk          = 0x2A
-	Question          = 0x3F // ?
-)
