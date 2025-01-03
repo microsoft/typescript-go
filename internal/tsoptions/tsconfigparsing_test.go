@@ -420,7 +420,7 @@ func TestParsedCommandJson(t *testing.T) {
 			)
 
 			// Check for file names
-			assert.DeepEqual(t, parseConfigFileContent.FileNames, rec.output.fileNames)
+			assert.DeepEqual(t, parseConfigFileContent.Options.FileNames, rec.output.fileNames)
 			// Check for compiler options
 			if rec.output.configFile["compilerOptions"] != nil {
 				assert.DeepEqual(t, ParseRawConfig(parseConfigFileContent.Raw, basePath, parseConfigFileContent.Errors, "tsconfig.json").compilerOptionsProp, rec.output.configFile["compilerOptions"])
@@ -469,7 +469,7 @@ func TestParsedCommandJsonSourceFile(t *testing.T) {
 			)
 
 			// Check for file names
-			assert.DeepEqual(t, parseConfigFileContent.FileNames, rec.output.fileNames)
+			assert.DeepEqual(t, parseConfigFileContent.Options.FileNames, rec.output.fileNames)
 			// Check for compiler options
 			if rec.output.configFile["compilerOptions"] != nil {
 				assert.DeepEqual(t, ParseRawConfig(parseConfigFileContent.Raw, basePath, parseConfigFileContent.Errors, "tsconfig.json").compilerOptionsProp, rec.output.configFile["compilerOptions"])

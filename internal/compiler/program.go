@@ -18,11 +18,12 @@ import (
 )
 
 type ProgramOptions struct {
-	RootPath         string
-	Host             CompilerHost
-	Options          *core.CompilerOptions
-	SingleThreaded   bool
-	ProjectReference []core.ProjectReference
+	RootPath           string
+	Host               CompilerHost
+	Options            *core.CompilerOptions
+	SingleThreaded     bool
+	ProjectReference   []core.ProjectReference
+	DefaultLibraryPath string
 }
 
 type Program struct {

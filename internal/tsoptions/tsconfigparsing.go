@@ -11,7 +11,6 @@ import (
 	"github.com/dlclark/regexp2"
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/compiler/diagnostics"
-	"github.com/microsoft/typescript-go/internal/compiler/module"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/parser"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -554,7 +553,7 @@ type VfsParseConfigHost struct {
 func (h *VfsParseConfigHost) FS() vfs.FS {
 	return h.fs
 }
-func ParseJsonSourceFileConfigFileContent(sourceFile *tsConfigSourceFile, host VfsParseConfigHost, basePath string, existingOptions *core.CompilerOptions, configFileName string, resolutionStack []tspath.Path, extraFileExtensions []fileExtensionInfo, extendedConfigCache *map[string]extendedConfigCacheEntry) module.ParsedCommandLine {
+func ParseJsonSourceFileConfigFileContent(sourceFile *tsConfigSourceFile, host VfsParseConfigHost, basePath string, existingOptions *core.CompilerOptions, configFileName string, resolutionStack []tspath.Path, extraFileExtensions []fileExtensionInfo, extendedConfigCache *map[string]extendedConfigCacheEntry) ParsedCommandLine {
 	//tracing?.push(tracing.Phase.Parse, "parseJsonSourceFileConfigFileContent", { path: sourceFile.fileName });
 	result := parseJsonConfigFileContentWorker( /*json*/ nil, sourceFile, host, basePath, existingOptions, configFileName, resolutionStack, extraFileExtensions, extendedConfigCache)
 	//tracing?.pop();
@@ -710,7 +709,7 @@ func convertPropertyValueToJson(valueExpression *ast.Expression, option *Command
  * @param basePath A root directory to resolve relative path entries in the config
  *    file to. e.g. outDir
  */
-func ParseJsonConfigFileContent(json any, host VfsParseConfigHost, basePath string, existingOptions *core.CompilerOptions, configFileName string, resolutionStack []tspath.Path, extraFileExtensions []fileExtensionInfo, extendedConfigCache *map[string]extendedConfigCacheEntry) module.ParsedCommandLine {
+func ParseJsonConfigFileContent(json any, host VfsParseConfigHost, basePath string, existingOptions *core.CompilerOptions, configFileName string, resolutionStack []tspath.Path, extraFileExtensions []fileExtensionInfo, extendedConfigCache *map[string]extendedConfigCacheEntry) ParsedCommandLine {
 	result := parseJsonConfigFileContentWorker(parseJsonToStringKey(json) /*sourceFile*/, nil, host, basePath, existingOptions, configFileName, resolutionStack, extraFileExtensions, extendedConfigCache)
 	return result
 }
@@ -900,7 +899,7 @@ func parseJsonConfigFileContentWorker(
 	resolutionStack []tspath.Path,
 	extraFileExtensions []fileExtensionInfo,
 	extendedConfigCache *map[string]extendedConfigCacheEntry,
-) module.ParsedCommandLine {
+) ParsedCommandLine {
 	//Debug.assert((json === undefined && sourceFile !== undefined) || (json !== undefined && sourceFile === undefined));
 	var errors []*ast.Diagnostic
 	resolutionStackString := []string{}
@@ -1087,12 +1086,14 @@ func parseJsonConfigFileContentWorker(
 		return projectReferences
 	}
 
-	return module.ParsedCommandLine{
-		Options:           options,
-		FileNames:         getFileNames(basePathForFileNames),
-		ProjectReferences: getProjectReferences(basePathForFileNames),
-		Raw:               parsedConfig.raw,
-		Errors:            errors,
+	return ParsedCommandLine{
+		Options: &core.ParsedOptions{
+			Options:           options,
+			FileNames:         getFileNames(basePathForFileNames),
+			ProjectReferences: getProjectReferences(basePathForFileNames),
+		},
+		Raw:    parsedConfig.raw,
+		Errors: errors,
 	}
 
 }
