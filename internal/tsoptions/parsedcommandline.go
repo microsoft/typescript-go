@@ -6,7 +6,9 @@ import (
 )
 
 type ParsedCommandLine struct {
-	Options    *core.ParsedOptions
-	ConfigFile *ast.SourceFile
-	Errors     []*ast.Diagnostic
+	Options       *core.ParsedOptions
+	ConfigFile    *ast.SourceFile
+	Errors        []*ast.Diagnostic
+	Raw           any
+	CompileOnSave *bool
 }
