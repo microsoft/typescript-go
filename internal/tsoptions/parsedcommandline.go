@@ -6,8 +6,8 @@ import (
 )
 
 type ParsedCommandLine struct {
-	Options       *core.ParsedOptions
-	ConfigFile    *ast.SourceFile
+	Options *core.ParsedOptions
+	// ConfigFile    *ast.SourceFile  // used in Program and ExecuteCommandLine
 	Errors        []*ast.Diagnostic
 	Raw           any
 	CompileOnSave *bool
