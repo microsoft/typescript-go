@@ -10,6 +10,7 @@ import (
 
 	"github.com/dlclark/regexp2"
 	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/compiler/diagnostics"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/parser"
@@ -97,8 +98,8 @@ type extendedConfigCacheEntry struct {
 type parsedTsconfig struct {
 	raw     any
 	options *core.CompilerOptions
-	// watchOptions    *compiler.WatchOptions
-	// typeAcquisition *compiler.TypeAcquisition
+	//watchOptions    *compiler.WatchOptions
+	//typeAcquisition *compiler.TypeAcquisition
 	// Note that the case of the config path has not yet been normalized, as no files have been imported into the project yet
 	extendedConfigPath *[]string
 }
@@ -135,9 +136,9 @@ func parseOwnConfigOfJsonSourceFile(
 				}
 			} else if keyText != "" {
 				if parentOption.ElementOptions != nil {
-					errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.Option_build_must_be_the_first_command_line_argument, keyText))
+					errors = append(errors, compiler.NewDiagnosticForNode(&sourceFile.sourceFile.Node, diagnostics.Option_build_must_be_the_first_command_line_argument, keyText))
 				} else {
-					//errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.Unknown_compiler_option_0_Did_you_mean_1, keyText, core.FindKey(parentOption.ElementOptions, keyText)))
+					// errors = append(errors, compiler.NewDiagnosticForNode(&sourceFile.sourceFile.Node, diagnostics.Unknown_option_0_Did_you_mean_1, keyText, core.FindKey(parentOption.ElementOptions, keyText)))
 				}
 			}
 		} else if parentOption.Name == rootOptions.Name {
@@ -211,7 +212,7 @@ func convertConfigFileToObject(
 		if tspath.GetBaseFileName(sourceFile.FileName()) == "jsconfig.json" {
 			baseFileName = "jsconfig.json"
 		}
-		errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.The_root_value_of_a_0_file_must_be_an_object, baseFileName))
+		errors = append(errors, compiler.NewDiagnosticForNode(&sourceFile.Node, diagnostics.The_root_value_of_a_0_file_must_be_an_object, baseFileName))
 		// Last-ditch error recovery. Somewhat useful because the JSON parser will recover from some parse errors by
 		// synthesizing a top-level array literal expression. There's a reasonable chance the first element of that
 		// array is a well-formed configuration object, made into an array element by stray characters.
@@ -376,7 +377,7 @@ func convertJsonOption(
 	sourceFile *tsConfigSourceFile,
 ) (any, []*ast.Diagnostic) {
 	if opt.isCommandLineOnly != false {
-		errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.Option_0_can_only_be_specified_on_command_line, opt.Name))
+		errors = append(errors, compiler.NewDiagnosticForNode(nil, diagnostics.Option_0_can_only_be_specified_on_command_line, opt.Name))
 		return false, errors
 	}
 	if isCompilerOptionsValue(opt, value) {
@@ -401,7 +402,7 @@ func convertJsonOption(
 			return normalizeNonListOptionValue(opt, basePath, validatedValue), errors
 		}
 	} else {
-		errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.Compiler_option_0_requires_a_value_of_type_1, opt.Name, opt.Kind))
+		errors = append(errors, compiler.NewDiagnosticForNode(&sourceFile.sourceFile.Node, diagnostics.Compiler_option_0_requires_a_value_of_type_1, opt.Name, opt.Kind))
 		return nil, errors
 	}
 }
@@ -575,22 +576,22 @@ func convertObjectLiteralExpressionToJson(
 	}
 	for _, element := range node.Properties.Nodes {
 		if element.Kind != ast.KindPropertyAssignment {
-			errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.Property_assignment_expected))
+			errors = append(errors, compiler.NewDiagnosticForNode(element, diagnostics.Property_assignment_expected))
 			continue
 		}
 
-		if ast.IsQuestionToken(element) {
-			errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.Property_assignment_expected))
+		if compiler.IsQuestionToken(element) {
+			errors = append(errors, compiler.NewDiagnosticForNode(element, diagnostics.Property_assignment_expected))
 		}
 		if element.Name() != nil && isDoubleQuotedString(element.Name()) == false {
-			errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.String_literal_with_double_quotes_expected))
+			errors = append(errors, compiler.NewDiagnosticForNode(element.Name(), diagnostics.String_literal_with_double_quotes_expected))
 		}
 
 		var textOfKey any
-		if ast.IsComputedNonLiteralName(element.Name()) {
+		if compiler.IsComputedNonLiteralName(element.Name()) {
 			textOfKey = nil
 		} else {
-			textOfKey, _ = ast.TryGetTextOfPropertyName(element.Name())
+			textOfKey, _ = compiler.TryGetTextOfPropertyName(element.Name())
 		}
 		var keyText = textOfKey
 		var option CommandLineOption
@@ -661,7 +662,7 @@ func convertPropertyValueToJson(valueExpression *ast.Expression, option *Command
 
 	case ast.KindStringLiteral:
 		if !isDoubleQuotedString(valueExpression) {
-			errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.String_literal_with_double_quotes_expected))
+			errors = append(errors, compiler.NewDiagnosticForNode(valueExpression, diagnostics.String_literal_with_double_quotes_expected))
 		}
 		return (valueExpression.AsStringLiteral()).Text
 
@@ -695,9 +696,9 @@ func convertPropertyValueToJson(valueExpression *ast.Expression, option *Command
 	}
 	// Not in expected format
 	if option != nil {
-		errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.Compiler_option_0_requires_a_value_of_type_1, option.Name, option.Kind))
+		errors = append(errors, compiler.NewDiagnosticForNode(valueExpression, diagnostics.Compiler_option_0_requires_a_value_of_type_1, option.Name, option.Kind))
 	} else {
-		errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.Property_value_can_only_be_string_literal_numeric_literal_true_false_null_object_literal_or_array_literal))
+		errors = append(errors, compiler.NewDiagnosticForNode(valueExpression, diagnostics.Property_value_can_only_be_string_literal_numeric_literal_true_false_null_object_literal_or_array_literal))
 	}
 	return nil
 }
@@ -968,7 +969,7 @@ func parseJsonConfigFileContentWorker(
 						fileName = "tsconfig.json"
 					}
 					diagnosticMessage := diagnostics.The_files_list_in_config_file_0_is_empty
-					nodeValue := ast.ForEachTsConfigPropArray(sourceFile.sourceFile, "files", func(property ast.PropertyAssignment) *ast.Node { return property.Initializer })
+					nodeValue := compiler.ForEachTsConfigPropArray(sourceFile.sourceFile, "files", func(property ast.PropertyAssignment) *ast.Node { return property.Initializer })
 					errors = append(errors, ast.NewCompilerDiagnostic(diagnosticMessage, fileName, nodeValue))
 				} else {
 					errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.The_files_list_in_config_file_0_is_empty, configFileName))
@@ -1200,7 +1201,7 @@ func forEachPropertyAssignment[T any](objectLiteral ast.ObjectLiteralExpression,
 			if !ast.IsPropertyAssignment(property) {
 				continue
 			}
-			if propName, ok := ast.TryGetTextOfPropertyName(property.Name()); ok {
+			if propName, ok := compiler.TryGetTextOfPropertyName(property.Name()); ok {
 				if propName == key || (len(key2) > 0 && key2[0] == propName) {
 					result := callback(*property.AsPropertyAssignment())
 					return result
@@ -1301,6 +1302,13 @@ func removeWildcardFilesWithLowerPriorityExtension(file string, wildcardFiles ma
 	}
 }
 
+func must[T any](v T, err error) T {
+	if err != nil {
+		panic(err)
+	}
+	return v
+}
+
 /**
  * Gets the file names from the provided config file specs that contain, files, include, exclude and
  * other properties needed to resolve the file names
@@ -1354,15 +1362,15 @@ func getFileNamesFromConfigSpecs(
 
 	var jsonOnlyIncludeRegexes []*regexp2.Regexp
 	if validatedIncludeSpecs != nil && len(validatedIncludeSpecs) > 0 {
-		files := readDirectory(host, basePath, basePath, core.Flatten(supportedExtensionsWithJsonIfResolveJsonModule), validatedExcludeSpecs, validatedIncludeSpecs, -1)
+		files := compiler.ReadDirectory(host, basePath, basePath, core.Flatten(supportedExtensionsWithJsonIfResolveJsonModule), validatedExcludeSpecs, validatedIncludeSpecs, -1)
 		for _, file := range files {
 			if tspath.FileExtensionIs(file, tspath.ExtensionJson) {
 				if jsonOnlyIncludeRegexes != nil {
 					includes := core.Filter(validatedIncludeSpecs, func(include string) bool { return strings.HasSuffix(include, tspath.ExtensionJson) })
-					var includeFilePatterns []string = core.Map(getRegularExpressionsForWildcards(includes, basePath, "files"), func(pattern string) string { return fmt.Sprintf("^%s$", pattern) })
+					var includeFilePatterns []string = core.Map(compiler.GetRegularExpressionsForWildcards(includes, basePath, "files"), func(pattern string) string { return fmt.Sprintf("^%s$", pattern) })
 					if includeFilePatterns != nil {
 						jsonOnlyIncludeRegexes = core.Map(includeFilePatterns, func(pattern string) *regexp2.Regexp {
-							return getRegexFromPattern(pattern, host.UseCaseSensitiveFileNames())
+							return compiler.GetRegexFromPattern(pattern, host.UseCaseSensitiveFileNames())
 						})
 					} else {
 						jsonOnlyIncludeRegexes = nil
