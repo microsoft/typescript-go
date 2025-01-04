@@ -388,6 +388,176 @@ var data = []struct {
 			expectedErrors: []string{},
 		},
 	},
+	{
+		title: "exclude outDir",
+		input: testConfig{
+			jsonText: `{
+				"compilerOptions": {
+					"outDir": "bin"
+				},
+			}`,
+			configFileName: "tsconfig.json",
+			basePath:       "/",
+			allFileList:    []string{"/bin/a.ts", "/b.ts"},
+		},
+		output: verifyConfig{
+			fileNames: []string{"/b.ts"},
+			configFile: map[string]interface{}{
+				"compilerOptions": core.CompilerOptions{
+					OutDir: "bin",
+				},
+			},
+			expectedErrors: []string{},
+		},
+	},
+	{
+		title: "exclude outDir unless overridden",
+		input: testConfig{
+			jsonText: `{
+				"compilerOptions": {
+					"outDir": "bin"
+				},
+				"exclude": ["obj"],
+			}`,
+			configFileName: "tsconfig.json",
+			basePath:       "/",
+			allFileList:    []string{"/bin/a.ts", "/b.ts"},
+		},
+		output: verifyConfig{
+			fileNames: []string{"/b.ts", "/bin/a.ts"},
+			configFile: map[string]interface{}{
+				"compilerOptions": core.CompilerOptions{
+					OutDir: "bin",
+				},
+				"exclude": []string{"obj"},
+			},
+			expectedErrors: []string{},
+		},
+	},
+	{
+		title: "exclude declarationDir",
+		input: testConfig{
+			jsonText: `{
+				"compilerOptions": {
+					"declarationDir": "declarations"
+				},
+			}`,
+			configFileName: "tsconfig.json",
+			basePath:       "/",
+			allFileList:    []string{"/declarations/a.d.ts", "/a.ts"},
+		},
+		output: verifyConfig{
+			fileNames: []string{"/a.ts"},
+			configFile: map[string]interface{}{
+				"compilerOptions": core.CompilerOptions{
+					DeclarationDir: "declarations",
+				},
+			},
+			expectedErrors: []string{},
+		},
+	},
+	{
+		title: "exclude declarationDir unless overridden",
+		input: testConfig{
+			jsonText: `{
+				"compilerOptions": {
+					"declarationDir": "declarations"
+				},
+				"exclude": ["types"],
+			}`,
+			configFileName: "tsconfig.json",
+			basePath:       "/",
+			allFileList:    []string{"/declarations/a.d.ts", "/a.ts"},
+		},
+		output: verifyConfig{
+			fileNames: []string{"/a.ts", "/declarations/a.d.ts"},
+			configFile: map[string]interface{}{
+				"compilerOptions": core.CompilerOptions{
+					DeclarationDir: "declarations",
+				},
+				"exclude": []string{"types"},
+			},
+			expectedErrors: []string{},
+		},
+	},
+	{
+		title: "generates errors for empty directory",
+		input: testConfig{
+			jsonText: `{
+				"compilerOptions": {
+					"allowJs": true
+				},
+			}`,
+			configFileName: "/apath/tsconfig.json",
+			basePath:       "/apath",
+			allFileList:    []string{},
+		},
+		output: verifyConfig{
+			fileNames: nil,
+			configFile: map[string]interface{}{
+				"compilerOptions": core.CompilerOptions{
+					AllowJs: core.TSTrue,
+				},
+			},
+			expectedErrors: []string{"No inputs were found in config file '/apath/tsconfig.json'. Specified 'include' paths were '[**/*]' and 'exclude' paths were '[]'."},
+		},
+	},
+	{
+		title: "generates errors for includes with outDir",
+		input: testConfig{
+			jsonText: `{
+				"compilerOptions": {
+					"outDir": "./"
+				},
+				"include": ["**/*"]
+			}`,
+			configFileName: "/apath/tsconfig.json",
+			basePath:       "/apath",
+			allFileList:    []string{"/apath/a.ts"},
+		},
+		output: verifyConfig{
+			fileNames: nil,
+			configFile: map[string]interface{}{
+				"compilerOptions": core.CompilerOptions{
+					OutDir: "./",
+				},
+				"include": []string{"**/*"},
+			},
+			expectedErrors: []string{"No inputs were found in config file '/apath/tsconfig.json'. Specified 'include' paths were '[**/*]' and 'exclude' paths were '[./]'."},
+		},
+	},
+	{
+		title: "generates errors when include is not string",
+		input: testConfig{
+			jsonText: `{
+				"include": [./**/*.ts]
+				}`,
+			configFileName: "/apath/tsconfig.json",
+			basePath:       "/apath",
+			allFileList:    []string{"/apath/a.ts"},
+		},
+		output: verifyConfig{
+			fileNames:      nil,
+			configFile:     map[string]interface{}{"include": []string{}},
+			expectedErrors: []string{"No inputs were found in config file '/apath/tsconfig.json'. Specified 'include' paths were '[]' and 'exclude' paths were '[]'."},
+		},
+	},
+	{
+		title: "generates errors when files is not string",
+		input: testConfig{
+			jsonText: `{
+				"files": [{"compilerOptions": {}}]
+			}`,
+			configFileName: "/apath/tsconfig.json",
+			basePath:       "/apath",
+			allFileList:    []string{"/apath/a.ts"},
+		},
+		output: verifyConfig{
+			fileNames:      nil,
+			configFile:     map[string]interface{}{"files": []string{}},
+			expectedErrors: []string{"The 'files' list in config file '/apath/tsconfig.json' is empty."},
+		},
+	},
 }
 
 func TestParsedCommandJson(t *testing.T) {
@@ -419,14 +589,17 @@ func TestParsedCommandJson(t *testing.T) {
 				/*extendedConfigCache*/ nil,
 			)
 
+			rawConfigResult := ParseRawConfig(parseConfigFileContent.Raw, basePath, parseConfigFileContent.Errors, "tsconfig.json")
+			rawConfigExpected := ParseRawConfig(rec.output.configFile, basePath, nil, "tsconfig.json")
+
 			// Check for file names
 			assert.DeepEqual(t, parseConfigFileContent.Options.FileNames, rec.output.fileNames)
 			// Check for compiler options
 			if rec.output.configFile["compilerOptions"] != nil {
-				assert.DeepEqual(t, ParseRawConfig(parseConfigFileContent.Raw, basePath, parseConfigFileContent.Errors, "tsconfig.json").compilerOptionsProp, rec.output.configFile["compilerOptions"])
+				assert.DeepEqual(t, rawConfigResult.compilerOptionsProp, rec.output.configFile["compilerOptions"])
 			}
 			// Check for all other options
-			assert.DeepEqual(t, ParseRawConfig(parseConfigFileContent.Raw, basePath, parseConfigFileContent.Errors, "tsconfig.json").prop, ParseRawConfig(rec.output.configFile, basePath, nil, "tsconfig.json").prop)
+			assert.DeepEqual(t, rawConfigResult.prop, rawConfigExpected.prop)
 			// Check for diagnostics
 			var actualErrorMessages = []string{}
 			for _, error := range parseConfigFileContent.Errors {
@@ -468,14 +641,17 @@ func TestParsedCommandJsonSourceFile(t *testing.T) {
 				/*extendedConfigCache*/ nil,
 			)
 
+			rawConfigResult := ParseRawConfig(parseConfigFileContent.Raw, basePath, parseConfigFileContent.Errors, "tsconfig.json")
+			rawConfigExpected := ParseRawConfig(rec.output.configFile, basePath, nil, "tsconfig.json")
+
 			// Check for file names
 			assert.DeepEqual(t, parseConfigFileContent.Options.FileNames, rec.output.fileNames)
 			// Check for compiler options
 			if rec.output.configFile["compilerOptions"] != nil {
-				assert.DeepEqual(t, ParseRawConfig(parseConfigFileContent.Raw, basePath, parseConfigFileContent.Errors, "tsconfig.json").compilerOptionsProp, rec.output.configFile["compilerOptions"])
+				assert.DeepEqual(t, rawConfigResult.compilerOptionsProp, rec.output.configFile["compilerOptions"])
 			}
 			// Check for all other options
-			assert.DeepEqual(t, ParseRawConfig(parseConfigFileContent.Raw, basePath, parseConfigFileContent.Errors, "tsconfig.json").prop, ParseRawConfig(rec.output.configFile, basePath, nil, "tsconfig.json").prop)
+			assert.DeepEqual(t, rawConfigResult.prop, rawConfigExpected.prop)
 			// Check for diagnostics
 			var actualErrorMessages = []string{}
 			for _, error := range parseConfigFileContent.Errors {

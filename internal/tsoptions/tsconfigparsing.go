@@ -137,7 +137,7 @@ func parseOwnConfigOfJsonSourceFile(
 				if parentOption.ElementOptions != nil {
 					errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.Option_build_must_be_the_first_command_line_argument, keyText))
 				} else {
-					// errors = append(errors, ast.NewCompilerDiagnostic(&sourceFile.sourceFile.Node, diagnostics.Unknown_option_0_Did_you_mean_1, keyText, core.FindKey(parentOption.ElementOptions, keyText)))
+					//errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.Unknown_compiler_option_0_Did_you_mean_1, keyText, core.FindKey(parentOption.ElementOptions, keyText)))
 				}
 			}
 		} else if parentOption.Name == rootOptions.Name {
