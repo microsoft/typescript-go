@@ -1485,18 +1485,18 @@ func (c *Checker) getRestTypeAtPosition(source *Signature, pos int, readonly boo
 			return c.createArrayType(c.getIndexedAccessType(restType, c.numberType))
 		}
 	}
-	types := make([]*Type, parameterCount)
-	infos := make([]TupleElementInfo, parameterCount)
-	for i := range parameterCount {
+	types := make([]*Type, parameterCount-pos)
+	infos := make([]TupleElementInfo, parameterCount-pos)
+	for i := range types {
 		var flags ElementFlags
-		if restType == nil || i < parameterCount-1 {
-			types[i] = c.getTypeAtPosition(source, i)
-			flags = core.IfElse(i < minArgumentCount, ElementFlagsRequired, ElementFlagsOptional)
+		if restType == nil || i < len(types)-1 {
+			types[i] = c.getTypeAtPosition(source, i+pos)
+			flags = core.IfElse(i+pos < minArgumentCount, ElementFlagsRequired, ElementFlagsOptional)
 		} else {
 			types[i] = restType
 			flags = ElementFlagsVariadic
 		}
-		infos[i] = TupleElementInfo{flags: flags, labeledDeclaration: c.getNameableDeclarationAtPosition(source, i)}
+		infos[i] = TupleElementInfo{flags: flags, labeledDeclaration: c.getNameableDeclarationAtPosition(source, i+pos)}
 	}
 	return c.createTupleTypeEx(types, infos, readonly)
 }
@@ -2420,7 +2420,7 @@ func (c *Checker) isTypeSubsetOf(source *Type, target *Type) bool {
 func (c *Checker) isTypeSubsetOfUnion(source *Type, target *Type) bool {
 	if source.flags&TypeFlagsUnion != 0 {
 		for _, t := range source.Types() {
-			if containsType(target.Types(), t) {
+			if !containsType(target.Types(), t) {
 				return false
 			}
 		}

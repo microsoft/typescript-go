@@ -978,12 +978,6 @@ type ConditionalType struct {
 	combinedMapper                   *TypeMapper
 }
 
-type IterationTypes struct {
-	yieldType  *Type
-	returnType *Type
-	nextType   *Type
-}
-
 // SignatureFlags
 
 type SignatureFlags uint32

@@ -189,6 +189,13 @@ type ReverseMappedTypeKey struct {
 	constraintId TypeId
 }
 
+// IterationTypesKey
+
+type IterationTypesKey struct {
+	typeId TypeId
+	use    IterationUse
+}
+
 // FlowLoopKey
 
 type FlowLoopKey struct {
@@ -423,6 +430,7 @@ const (
 	IterationUseSpreadFlag               IterationUse = 1 << 5
 	IterationUseDestructuringFlag        IterationUse = 1 << 6
 	IterationUsePossiblyOutOfBounds      IterationUse = 1 << 7
+	IterationUseReportError              IterationUse = 1 << 8
 	// Spread, Destructuring, Array element assignment
 	IterationUseElement                  = IterationUseAllowsSyncIterablesFlag
 	IterationUseSpread                   = IterationUseAllowsSyncIterablesFlag | IterationUseSpreadFlag
@@ -433,7 +441,14 @@ const (
 	IterationUseAsyncYieldStar           = IterationUseAllowsSyncIterablesFlag | IterationUseAllowsAsyncIterablesFlag | IterationUseYieldStarFlag
 	IterationUseGeneratorReturnType      = IterationUseAllowsSyncIterablesFlag
 	IterationUseAsyncGeneratorReturnType = IterationUseAllowsAsyncIterablesFlag
+	IterationUseCacheFlags               = IterationUseAllowsSyncIterablesFlag | IterationUseAllowsAsyncIterablesFlag | IterationUseForOfFlag | IterationUseReportError
 )
+
+type IterationTypes struct {
+	yieldType  *Type
+	returnType *Type
+	nextType   *Type
+}
 
 type IterationTypeKind int32
 
@@ -442,6 +457,20 @@ const (
 	IterationTypeKindReturn
 	IterationTypeKindNext
 )
+
+type IterationTypesResolver struct {
+	iteratorSymbolName            string
+	getGlobalIteratorType         func() *Type
+	getGlobalIterableType         func() *Type
+	getGlobalIterableIteratorType func() *Type
+	getGlobalIteratorObjectType   func() *Type
+	getGlobalGeneratorType        func() *Type
+	getGlobalBuiltinIteratorTypes func() []*Type
+	resolveIterationType          func(t *Type, errorNode *ast.Node) *Type
+	// mustHaveANextMethodDiagnostic DiagnosticMessage
+	// mustBeAMethodDiagnostic       DiagnosticMessage
+	// mustHaveAValueDiagnostic      DiagnosticMessage
+}
 
 type WideningContext struct {
 	parent             *WideningContext // Parent context
@@ -473,6 +502,7 @@ type Checker struct {
 	strictFunctionTypes                     bool
 	strictBindCallApply                     bool
 	strictPropertyInitialization            bool
+	strictBuiltinIteratorReturn             bool
 	noImplicitAny                           bool
 	noImplicitThis                          bool
 	useUnknownInCatchVariables              bool
@@ -499,6 +529,7 @@ type Checker struct {
 	substitutionTypes                       map[SubstitutionTypeKey]*Type
 	reverseMappedCache                      map[ReverseMappedTypeKey]*Type
 	reverseHomomorphicMappedCache           map[ReverseMappedTypeKey]*Type
+	iterationTypesCache                     map[IterationTypesKey]IterationTypes
 	markerTypes                             core.Set[*Type]
 	identifierSymbols                       map[*ast.Node]*ast.Symbol
 	undefinedSymbol                         *ast.Symbol
@@ -676,6 +707,8 @@ type Checker struct {
 	getGlobalPromiseLikeType                func() *Type
 	getGlobalPromiseConstructorSymbol       func() *ast.Symbol
 	getGlobalOmitSymbol                     func() *ast.Symbol
+	syncIterationTypesResolver              *IterationTypesResolver
+	asyncIterationTypesResolver             *IterationTypesResolver
 	isPrimitiveOrObjectOrEmptyType          func(*Type) bool
 	containsMissingType                     func(*Type) bool
 	couldContainTypeVariables               func(*Type) bool
@@ -696,6 +729,7 @@ func NewChecker(program *Program) *Checker {
 	c.strictFunctionTypes = c.getStrictOptionValue(c.compilerOptions.StrictFunctionTypes)
 	c.strictBindCallApply = c.getStrictOptionValue(c.compilerOptions.StrictBindCallApply)
 	c.strictPropertyInitialization = c.getStrictOptionValue(c.compilerOptions.StrictPropertyInitialization)
+	c.strictBuiltinIteratorReturn = c.getStrictOptionValue(c.compilerOptions.StrictBuiltinIteratorReturn)
 	c.noImplicitAny = c.getStrictOptionValue(c.compilerOptions.NoImplicitAny)
 	c.noImplicitThis = c.getStrictOptionValue(c.compilerOptions.NoImplicitThis)
 	c.useUnknownInCatchVariables = c.getStrictOptionValue(c.compilerOptions.UseUnknownInCatchVariables)
@@ -723,6 +757,7 @@ func NewChecker(program *Program) *Checker {
 	c.identifierSymbols = make(map[*ast.Node]*ast.Symbol)
 	c.reverseMappedCache = make(map[ReverseMappedTypeKey]*Type)
 	c.reverseHomomorphicMappedCache = make(map[ReverseMappedTypeKey]*Type)
+	c.iterationTypesCache = make(map[IterationTypesKey]IterationTypes)
 	c.undefinedSymbol = c.newSymbol(ast.SymbolFlagsProperty, "undefined")
 	c.argumentsSymbol = c.newSymbol(ast.SymbolFlagsProperty, "arguments")
 	c.requireSymbol = c.newSymbol(ast.SymbolFlagsProperty, "require")
@@ -842,6 +877,7 @@ func NewChecker(program *Program) *Checker {
 	c.getGlobalPromiseConstructorSymbol = c.getGlobalValueSymbolResolver("Promise", true /*reportErrors*/)
 	c.getGlobalOmitSymbol = c.getGlobalTypeAliasResolver("Omit", 2 /*arity*/, true /*reportErrors*/)
 	c.initializeClosures()
+	c.initializeIterationResolvers()
 	c.initializeChecker()
 	return c
 }
@@ -885,6 +921,14 @@ func (c *Checker) getGlobalTypeAliasResolver(name string, arity int, reportError
 func (c *Checker) getGlobalValueSymbolResolver(name string, reportErrors bool) func() *ast.Symbol {
 	return core.Memoize(func() *ast.Symbol {
 		return c.getGlobalSymbol(name, ast.SymbolFlagsValue, core.IfElse(reportErrors, diagnostics.Cannot_find_global_value_0, nil))
+	})
+}
+
+func (c *Checker) getGlobalTypesResolver(names []string, arity int, reportErrors bool) func() []*Type {
+	return core.Memoize(func() []*Type {
+		return core.Map(names, func(name string) *Type {
+			return c.getGlobalType(name, arity, reportErrors)
+		})
 	})
 }
 
@@ -950,6 +994,33 @@ func (c *Checker) initializeClosures() {
 	}
 	c.couldContainTypeVariables = c.couldContainTypeVariablesWorker
 	c.isStringIndexSignatureOnlyType = c.isStringIndexSignatureOnlyTypeWorker
+}
+
+func (c *Checker) initializeIterationResolvers() {
+	c.syncIterationTypesResolver = &IterationTypesResolver{
+		iteratorSymbolName:            "iterator",
+		getGlobalIteratorType:         c.getGlobalTypeResolver("Iterator", 3 /*arity*/, false /*reportErrors*/),
+		getGlobalIterableType:         c.getGlobalTypeResolver("Iterable", 3 /*arity*/, false /*reportErrors*/),
+		getGlobalIterableIteratorType: c.getGlobalTypeResolver("IterableIterator", 3 /*arity*/, false /*reportErrors*/),
+		getGlobalIteratorObjectType:   c.getGlobalTypeResolver("IteratorObject", 3 /*arity*/, false /*reportErrors*/),
+		getGlobalGeneratorType:        c.getGlobalTypeResolver("Generator", 3 /*arity*/, false /*reportErrors*/),
+		getGlobalBuiltinIteratorTypes: c.getGlobalTypesResolver([]string{"ArrayIterator", "MapIterator", "SetIterator", "StringIterator"}, 1, false /*reportErrors*/),
+		resolveIterationType: func(t *Type, errorNode *ast.Node) *Type {
+			return t
+		},
+	}
+	c.asyncIterationTypesResolver = &IterationTypesResolver{
+		iteratorSymbolName:            "asyncIterator",
+		getGlobalIteratorType:         c.getGlobalTypeResolver("AsyncIterator", 3 /*arity*/, false /*reportErrors*/),
+		getGlobalIterableType:         c.getGlobalTypeResolver("AsyncIterable", 3 /*arity*/, false /*reportErrors*/),
+		getGlobalIterableIteratorType: c.getGlobalTypeResolver("AsyncIterableIterator", 3 /*arity*/, false /*reportErrors*/),
+		getGlobalIteratorObjectType:   c.getGlobalTypeResolver("AsyncIteratorObject", 3 /*arity*/, false /*reportErrors*/),
+		getGlobalGeneratorType:        c.getGlobalTypeResolver("AsyncGenerator", 3 /*arity*/, false /*reportErrors*/),
+		getGlobalBuiltinIteratorTypes: c.getGlobalTypesResolver([]string{"ReadableStreamAsyncIterator"}, 1, false /*reportErrors*/),
+		resolveIterationType: func(t *Type, errorNode *ast.Node) *Type {
+			return c.getAwaitedTypeEx(t, errorNode, diagnostics.Type_of_await_operand_must_either_be_a_valid_promise_or_must_not_contain_a_callable_then_member)
+		},
+	}
 }
 
 func (c *Checker) initializeChecker() {
@@ -1481,15 +1552,12 @@ func (c *Checker) checkSourceElementWorker(node *ast.Node) {
 		c.checkExportDeclaration(node)
 	case ast.KindExportAssignment:
 		c.checkExportAssignment(node)
-	case ast.KindEmptyStatement, ast.KindDebuggerStatement:
+	case ast.KindEmptyStatement:
+		c.checkGrammarStatementInAmbientContext(node)
+	case ast.KindDebuggerStatement:
 		c.checkGrammarStatementInAmbientContext(node)
 	case ast.KindMissingDeclaration:
 		c.checkMissingDeclaration(node)
-	default:
-		// !!! Temporary
-		if isExpressionNode(node) && !(ast.IsIdentifier(node) && isRightSideOfQualifiedNameOrPropertyAccess(node)) {
-			_ = c.checkExpression(node)
-		}
 	}
 }
 
@@ -1618,12 +1686,16 @@ func (c *Checker) checkSignatureDeclaration(node *ast.Node) {
 	// Grammar checking
 	if node.Kind == ast.KindIndexSignature {
 		c.checkGrammarIndexSignature(node.AsIndexSignatureDeclaration())
-	} else if node.Kind == ast.KindFunctionType || node.Kind == ast.KindFunctionDeclaration || node.Kind == ast.KindConstructorType || node.Kind == ast.KindCallSignature || node.Kind == ast.KindConstructor || node.Kind == ast.KindConstructSignature {
+	} else if node.Kind == ast.KindFunctionType || node.Kind == ast.KindFunctionDeclaration || node.Kind == ast.KindConstructorType ||
+		node.Kind == ast.KindCallSignature || node.Kind == ast.KindConstructor || node.Kind == ast.KindConstructSignature {
 		c.checkGrammarFunctionLikeDeclaration(node)
 	}
-
 	// !!!
-	node.ForEachChild(c.checkSourceElement)
+	for _, parameter := range node.Parameters() {
+		c.checkParameter(parameter)
+	}
+	c.checkSourceElement(node.Type())
+	// !!!
 }
 
 func (c *Checker) checkMethodDeclaration(node *ast.Node) {
@@ -2404,36 +2476,35 @@ func (c *Checker) getIteratedTypeOrElementType(use IterationUse, inputType *Type
 	// or higher, when inside of an async generator or for-await-if, or when
 	// downlevelIteration is requested.
 	if uplevelIteration || downlevelIteration || allowAsyncIterables {
-		// !!!
-		// // We only report errors for an invalid iterable type in ES2015 or higher.
-		// iterationTypes := c.getIterationTypesOfIterable(inputType, use, core.IfElse(uplevelIteration, errorNode, nil))
-		// if checkAssignability {
-		// 	if iterationTypes != nil {
-		// 		var diagnostic *diagnostics.Message
-		// 		switch {
-		// 		case use&IterationUseForOfFlag != 0:
-		// 			diagnostic = diagnostics.Cannot_iterate_value_because_the_next_method_of_its_iterator_expects_type_1_but_for_of_will_always_send_0
-		// 		case use&IterationUseSpreadFlag != 0:
-		// 			diagnostic = diagnostics.Cannot_iterate_value_because_the_next_method_of_its_iterator_expects_type_1_but_array_spread_will_always_send_0
-		// 		case use&IterationUseDestructuringFlag != 0:
-		// 			diagnostic = diagnostics.Cannot_iterate_value_because_the_next_method_of_its_iterator_expects_type_1_but_array_destructuring_will_always_send_0
-		// 		case use&IterationUseYieldStarFlag != 0:
-		// 			diagnostic = diagnostics.Cannot_delegate_iteration_to_value_because_the_next_method_of_its_iterator_expects_type_1_but_the_containing_generator_will_always_send_0
-		// 		}
-		// 		if diagnostic != nil {
-		// 			c.checkTypeAssignableTo(sentType, iterationTypes.nextType, errorNode, diagnostic)
-		// 		}
-		// 	}
-		// }
-		// if iterationTypes != nil || uplevelIteration {
-		// 	if iterationTypes == nil {
-		// 		return nil
-		// 	}
-		// 	if possibleOutOfBounds {
-		// 		return c.includeUndefinedInIndexSignature(iterationTypes.yieldType)
-		// 	}
-		// 	return iterationTypes.yieldType
-		// }
+		// We only report errors for an invalid iterable type in ES2015 or higher.
+		iterationTypes := c.getIterationTypesOfIterable(inputType, use, core.IfElse(uplevelIteration, errorNode, nil))
+		if checkAssignability {
+			if iterationTypes.nextType != nil {
+				var diagnostic *diagnostics.Message
+				switch {
+				case use&IterationUseForOfFlag != 0:
+					diagnostic = diagnostics.Cannot_iterate_value_because_the_next_method_of_its_iterator_expects_type_1_but_for_of_will_always_send_0
+				case use&IterationUseSpreadFlag != 0:
+					diagnostic = diagnostics.Cannot_iterate_value_because_the_next_method_of_its_iterator_expects_type_1_but_array_spread_will_always_send_0
+				case use&IterationUseDestructuringFlag != 0:
+					diagnostic = diagnostics.Cannot_iterate_value_because_the_next_method_of_its_iterator_expects_type_1_but_array_destructuring_will_always_send_0
+				case use&IterationUseYieldStarFlag != 0:
+					diagnostic = diagnostics.Cannot_delegate_iteration_to_value_because_the_next_method_of_its_iterator_expects_type_1_but_the_containing_generator_will_always_send_0
+				}
+				if diagnostic != nil {
+					c.checkTypeAssignableTo(sentType, iterationTypes.nextType, errorNode, diagnostic)
+				}
+			}
+		}
+		if iterationTypes.yieldType != nil || uplevelIteration {
+			if iterationTypes.yieldType == nil {
+				return nil
+			}
+			if possibleOutOfBounds {
+				return c.includeUndefinedInIndexSignature(iterationTypes.yieldType)
+			}
+			return iterationTypes.yieldType
+		}
 	}
 	arrayType := inputType
 	hasStringConstituent := false
@@ -2508,7 +2579,19 @@ func (c *Checker) getIterationTypeOfGeneratorFunctionReturnType(kind IterationTy
 
 // Gets the requested "iteration type" from an `Iterable`-like or `AsyncIterable`-like type.
 func (c *Checker) getIterationTypeOfIterable(use IterationUse, typeKind IterationTypeKind, inputType *Type, errorNode *ast.Node) *Type {
-	return nil // !!!
+	if isTypeAny(inputType) {
+		return nil
+	}
+	iterationTypes := c.getIterationTypesOfIterable(inputType, use, errorNode)
+	switch typeKind {
+	case IterationTypeKindYield:
+		return iterationTypes.yieldType
+	case IterationTypeKindReturn:
+		return iterationTypes.returnType
+	case IterationTypeKindNext:
+		return iterationTypes.nextType
+	}
+	panic("Unhandled case in getIterationTypeOfIterable")
 }
 
 // Gets the *yield*, *return*, and *next* types from an `Iterable`-like or `AsyncIterable`-like type.
@@ -2530,8 +2613,180 @@ func (c *Checker) getIterationTypeOfIterable(use IterationUse, typeKind Iteratio
 //
 // For a **for-await-of** statement or a `yield*` in an async generator we will look for
 // the `[Symbol.asyncIterator]()` method first, and then the `[Symbol.iterator]()` method.
-func (c *Checker) getIterationTypesOfIterable(t *Type, use IterationUse, errorNode *ast.Node) *IterationTypes {
-	return nil // !!!
+func (c *Checker) getIterationTypesOfIterable(t *Type, use IterationUse, errorNode *ast.Node) IterationTypes {
+	if isTypeAny(t) {
+		return IterationTypes{c.anyType, c.anyType, c.anyType}
+	}
+	key := IterationTypesKey{typeId: t.id, use: use&IterationUseCacheFlags | core.IfElse(errorNode != nil, IterationUseReportError, 0)}
+	if cached, ok := c.iterationTypesCache[key]; ok {
+		return cached
+	}
+	result := c.getIterationTypesOfIterableWorker(t, use, errorNode)
+	c.iterationTypesCache[key] = result
+	return result
+}
+
+func (c *Checker) getIterationTypesOfIterableWorker(t *Type, use IterationUse, errorNode *ast.Node) IterationTypes {
+	if t.flags&TypeFlagsUnion != 0 {
+		return c.combineIterationTypes(core.Map(t.Types(), func(t *Type) IterationTypes { return c.getIterationTypesOfIterableWorker(t, use, errorNode) }))
+	}
+	if use&IterationUseAllowsAsyncIterablesFlag != 0 {
+		iterationTypes := c.getIterationTypesOfIteratorLikeFast(t, c.asyncIterationTypesResolver)
+		if iterationTypes.hasTypes() {
+			if use&IterationUseForOfFlag != 0 {
+				return c.getAsyncFromSyncIterationTypes(iterationTypes, errorNode)
+			}
+			return iterationTypes
+		}
+	}
+	if use&IterationUseAllowsSyncIterablesFlag != 0 {
+		iterationTypes := c.getIterationTypesOfIteratorLikeFast(t, c.syncIterationTypesResolver)
+		if iterationTypes.hasTypes() {
+			if use&IterationUseAllowsAsyncIterablesFlag != 0 {
+				return c.getAsyncFromSyncIterationTypes(iterationTypes, errorNode)
+			}
+			return iterationTypes
+		}
+	}
+	if use&IterationUseAllowsAsyncIterablesFlag != 0 {
+		iterationTypes := c.getIterationTypesOfIterableSlow(t, c.asyncIterationTypesResolver, errorNode)
+		if iterationTypes.hasTypes() {
+			return iterationTypes
+		}
+	}
+	if use&IterationUseAllowsSyncIterablesFlag != 0 {
+		iterationTypes := c.getIterationTypesOfIterableSlow(t, c.syncIterationTypesResolver, errorNode)
+		if iterationTypes.hasTypes() {
+			if use&IterationUseAllowsAsyncIterablesFlag != 0 {
+				return c.getAsyncFromSyncIterationTypes(iterationTypes, errorNode)
+			}
+			return iterationTypes
+		}
+	}
+	if errorNode != nil {
+		c.reportTypeNotIterableError(errorNode, t, use&IterationUseAllowsAsyncIterablesFlag != 0)
+	}
+	return IterationTypes{}
+}
+
+func (c *Checker) getIterationTypesOfIteratorLikeFast(t *Type, r *IterationTypesResolver) IterationTypes {
+	// As an optimization, if the type is an instantiation of the following global type, then
+	// just grab its related type arguments:
+	// - `Iterable<T, TReturn, TNext>` or `AsyncIterable<T, TReturn, TNext>`
+	// - `IteratorObject<T, TReturn, TNext>` or `AsyncIteratorObject<T, TReturn, TNext>`
+	// - `IterableIterator<T, TReturn, TNext>` or `AsyncIterableIterator<T, TReturn, TNext>`
+	// - `Generator<T, TReturn, TNext>` or `AsyncGenerator<T, TReturn, TNext>`
+	if c.isReferenceToType(t, r.getGlobalIterableType()) ||
+		c.isReferenceToType(t, r.getGlobalIteratorObjectType()) ||
+		c.isReferenceToType(t, r.getGlobalIterableIteratorType()) ||
+		c.isReferenceToType(t, r.getGlobalGeneratorType()) {
+		typeArguments := c.getTypeArguments(t)
+		return r.getResolvedIterationTypes(typeArguments[0], typeArguments[1], typeArguments[2])
+	}
+	// As an optimization, if the type is an instantiation of one of the following global types, then
+	// just grab the related type argument:
+	// - `ArrayIterator<T>`
+	// - `MapIterator<T>`
+	// - `SetIterator<T>`
+	// - `StringIterator<T>`
+	// - `ReadableStreamAsyncIterator<T>`
+	if c.isReferenceToSomeType(t, r.getGlobalBuiltinIteratorTypes()) {
+		return r.getResolvedIterationTypes(c.getTypeArguments(t)[0], c.getBuiltinIteratorReturnType(), c.unknownType)
+	}
+	return IterationTypes{}
+}
+
+func (r *IterationTypesResolver) getResolvedIterationTypes(yieldType *Type, returnType *Type, nextType *Type) IterationTypes {
+	return IterationTypes{
+		yieldType:  core.OrElse(r.resolveIterationType(yieldType, nil /*errorNode*/), yieldType),
+		returnType: core.OrElse(r.resolveIterationType(returnType, nil /*errorNode*/), returnType),
+		nextType:   nextType,
+	}
+}
+
+func (c *Checker) isReferenceToType(t *Type, target *Type) bool {
+	return t != nil && t.objectFlags&ObjectFlagsReference != 0 && t.Target() == target
+}
+
+func (c *Checker) isReferenceToSomeType(t *Type, targets []*Type) bool {
+	return t != nil && t.objectFlags&ObjectFlagsReference != 0 && slices.Contains(targets, t.Target())
+}
+
+func (c *Checker) getBuiltinIteratorReturnType() *Type {
+	return core.IfElse(c.strictBuiltinIteratorReturn, c.undefinedType, c.anyType)
+}
+
+func (iterationTypes *IterationTypes) hasTypes() bool {
+	return iterationTypes.yieldType != nil && iterationTypes.returnType != nil && iterationTypes.nextType != nil
+}
+
+func (c *Checker) combineIterationTypes(iterationTypes []IterationTypes) IterationTypes {
+	return IterationTypes{
+		c.getIterationTypeUnion(iterationTypes, func(t IterationTypes) *Type { return t.yieldType }),
+		c.getIterationTypeUnion(iterationTypes, func(t IterationTypes) *Type { return t.returnType }),
+		c.getIterationTypeUnion(iterationTypes, func(t IterationTypes) *Type { return t.nextType }),
+	}
+}
+
+func (c *Checker) getIterationTypeUnion(iterationTypes []IterationTypes, f func(IterationTypes) *Type) *Type {
+	types := core.MapNonNil(iterationTypes, f)
+	if len(types) == 0 {
+		return nil
+	}
+	return c.getUnionType(types)
+}
+
+func (c *Checker) getAsyncFromSyncIterationTypes(iterationTypes IterationTypes, errorNode *ast.Node) IterationTypes {
+	if !iterationTypes.hasTypes() ||
+		iterationTypes.yieldType == c.anyType && iterationTypes.returnType == c.anyType && iterationTypes.nextType == c.anyType {
+		return iterationTypes
+	}
+	// if we're requesting diagnostics, report errors for a missing `Awaited<T>`.
+	if errorNode != nil {
+		c.getGlobalAwaitedSymbol()
+	}
+	return IterationTypes{
+		yieldType:  core.OrElse(c.getAwaitedTypeEx(iterationTypes.yieldType, errorNode, nil), c.anyType),
+		returnType: core.OrElse(c.getAwaitedTypeEx(iterationTypes.returnType, errorNode, nil), c.anyType),
+		nextType:   iterationTypes.nextType,
+	}
+}
+
+// Gets the *yield*, *return*, and *next* types of an `Iterable`-like or `AsyncIterable`-like
+// type from its members.
+//
+// If we successfully found the *yield*, *return*, and *next* types, an `IterationTypes`
+// record is returned. Otherwise, `noIterationTypes` is returned.
+//
+// NOTE: You probably don't want to call this directly and should be calling
+// `getIterationTypesOfIterable` instead.
+func (c *Checker) getIterationTypesOfIterableSlow(t *Type, r *IterationTypesResolver, errorNode *ast.Node) IterationTypes {
+	if method := c.getPropertyOfType(t, c.getPropertyNameForKnownSymbolName(r.iteratorSymbolName)); method != nil && method.Flags&ast.SymbolFlagsOptional == 0 {
+		methodType := c.getTypeOfSymbol(method)
+		if isTypeAny(methodType) {
+			return IterationTypes{c.anyType, c.anyType, c.anyType}
+		}
+		if signatures := c.getSignaturesOfType(methodType, SignatureKindCall); len(signatures) != 0 {
+			iteratorType := c.getIntersectionType(core.Map(signatures, c.getReturnTypeOfSignature))
+			return c.getIterationTypesOfIteratorWorker(iteratorType, r, errorNode)
+		}
+	}
+	return IterationTypes{}
+}
+
+// Gets the *yield*, *return*, and *next* types from an `Iterator`-like or `AsyncIterator`-like type.
+//
+// If we successfully found the *yield*, *return*, and *next* types, an `IterationTypes`
+// record is returned. Otherwise, `undefined` is returned.
+//
+// NOTE: You probably don't want to call this directly and should be calling
+// `getIterationTypesOfIterator` instead.
+func (c *Checker) getIterationTypesOfIteratorWorker(t *Type, r *IterationTypesResolver, errorNode *ast.Node) IterationTypes {
+	if isTypeAny(t) {
+		return IterationTypes{c.anyType, c.anyType, c.anyType}
+	}
+	return c.getIterationTypesOfIteratorLikeFast(t, r)
+	// !!! Incorporate getIterationTypesOfIteratorSlow
 }
 
 func (c *Checker) reportTypeNotIterableError(errorNode *ast.Node, t *Type, allowAsyncIterables bool) {
@@ -17016,7 +17271,7 @@ func (c *Checker) getTypeFromImportTypeNode(node *ast.Node) *Type {
 		}
 		targetMeaning := core.IfElse(n.IsTypeOf, ast.SymbolFlagsValue, ast.SymbolFlagsType)
 		// TODO: Future work: support unions/generics/whatever via a deferred import-type
-		innerModuleSymbol := c.resolveExternalModuleName(node, n.Argument, false /*ignoreErrors*/)
+		innerModuleSymbol := c.resolveExternalModuleName(node, n.Argument.AsLiteralTypeNode().Literal, false /*ignoreErrors*/)
 		if innerModuleSymbol == nil {
 			links.resolvedSymbol = c.unknownSymbol
 			links.resolvedType = c.errorType
