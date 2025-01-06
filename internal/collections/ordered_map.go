@@ -106,6 +106,7 @@ func (m *OrderedMap[K, V]) Delete(key K) (V, bool) {
 func (m *OrderedMap[K, V]) Keys() iter.Seq[K] {
 	return func(yield func(K) bool) {
 		// We use a for loop here to ensure we enumerate new items added during iteration.
+		//nolint:intrange
 		for i := 0; i < len(m.keys); i++ {
 			if !yield(m.keys[i]) {
 				break
@@ -119,6 +120,7 @@ func (m *OrderedMap[K, V]) Keys() iter.Seq[K] {
 func (m *OrderedMap[K, V]) Values() iter.Seq[V] {
 	return func(yield func(V) bool) {
 		// We use a for loop here to ensure we enumerate new items added during iteration.
+		//nolint:intrange
 		for i := 0; i < len(m.keys); i++ {
 			if !yield(m.mp[m.keys[i]]) {
 				break
@@ -131,6 +133,7 @@ func (m *OrderedMap[K, V]) Values() iter.Seq[V] {
 func (m *OrderedMap[K, V]) Entries() iter.Seq2[K, V] {
 	return func(yield func(K, V) bool) {
 		// We use a for loop here to ensure we enumerate new items added during iteration.
+		//nolint:intrange
 		for i := 0; i < len(m.keys); i++ {
 			key := m.keys[i]
 			if !yield(key, m.mp[key]) {
