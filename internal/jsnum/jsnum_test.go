@@ -13,6 +13,8 @@ const (
 	minSafeInteger = -maxSafeInteger
 )
 
+var negativeZero = math.Copysign(0, -1)
+
 var toInt32Tests = []struct {
 	name  string
 	input float64
@@ -20,7 +22,7 @@ var toInt32Tests = []struct {
 	bench bool
 }{
 	{"0.0", 0, 0, true},
-	{"-0.0", math.Copysign(0, -1), 0, false},
+	{"-0.0", negativeZero, 0, false},
 	{"NaN", math.NaN(), 0, true},
 	{"+Inf", math.Inf(1), 0, true},
 	{"-Inf", math.Inf(-1), 0, true},
@@ -177,4 +179,40 @@ func TestLeftShift(t *testing.T) {
 	assert.Equal(t, LeftShift(-4, 3), -32.0)
 	assert.Equal(t, LeftShift(-4, 31), 0.0)
 	assert.Equal(t, LeftShift(-4, 32), -4.0)
+}
+
+func TestExponentiate(t *testing.T) {
+	t.Parallel()
+
+	assert.Equal(t, Exponentiate(2, 3), 8.0)
+
+	assert.Equal(t, Exponentiate(math.Inf(1), 3), math.Inf(1))
+	assert.Equal(t, Exponentiate(math.Inf(1), -5), 0.0)
+
+	assert.Equal(t, Exponentiate(math.Inf(-1), 3), math.Inf(-1))
+	assert.Equal(t, Exponentiate(math.Inf(-1), 4), math.Inf(1))
+	assert.Equal(t, Exponentiate(math.Inf(-1), -3), negativeZero)
+	assert.Equal(t, Exponentiate(math.Inf(-1), -4), 0.0)
+
+	assert.Equal(t, Exponentiate(0, 3), 0.0)
+	assert.Equal(t, Exponentiate(0, -10), math.Inf(1))
+
+	assert.Equal(t, Exponentiate(negativeZero, 3), negativeZero)
+	assert.Equal(t, Exponentiate(negativeZero, 4), 0.0)
+	assert.Equal(t, Exponentiate(negativeZero, -3), math.Inf(-1))
+	assert.Equal(t, Exponentiate(negativeZero, -4), math.Inf(1))
+
+	assert.Equal(t, Exponentiate(3, math.Inf(1)), math.Inf(1))
+	assert.Equal(t, Exponentiate(-3, math.Inf(1)), 0.0)
+
+	assert.Equal(t, Exponentiate(3, math.Inf(-1)), 0.0)
+	assert.Equal(t, Exponentiate(-3, math.Inf(-1)), math.Inf(1))
+
+	// Special cases in https://262.ecma-international.org/#sec-numeric-types-number-exponentiate
+	assert.Assert(t, math.IsNaN(Exponentiate(math.NaN(), 3)))
+	assert.Assert(t, math.IsNaN(Exponentiate(1, math.Inf(1))))
+	assert.Assert(t, math.IsNaN(Exponentiate(1, math.Inf(-1))))
+	assert.Assert(t, math.IsNaN(Exponentiate(-1, math.Inf(1))))
+	assert.Assert(t, math.IsNaN(Exponentiate(-1, math.Inf(-1))))
+	assert.Assert(t, math.IsNaN(Exponentiate(1, math.NaN())))
 }

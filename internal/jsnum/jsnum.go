@@ -72,3 +72,16 @@ func BitwiseAND(x, y float64) float64 {
 func BitwiseXOR(x, y float64) float64 {
 	return float64(toInt32(x) ^ toInt32(y))
 }
+
+// https://262.ecma-international.org/#sec-numeric-types-number-exponentiate
+func Exponentiate(base, exponent float64) float64 {
+	// Special cases in https://262.ecma-international.org/#sec-numeric-types-number-exponentiate
+	if (base == 1 || base == -1) && math.IsInf(exponent, 0) {
+		return math.NaN()
+	}
+	if base == 1 && math.IsNaN(exponent) {
+		return math.NaN()
+	}
+
+	return math.Pow(base, exponent)
+}
