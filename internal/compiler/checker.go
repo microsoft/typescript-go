@@ -556,6 +556,7 @@ type Checker struct {
 	signatureLinks                          LinkStore[*ast.Node, SignatureLinks]
 	typeNodeLinks                           LinkStore[*ast.Node, TypeNodeLinks]
 	enumMemberLinks                         LinkStore[*ast.Node, EnumMemberLinks]
+	assertionLinks                          LinkStore[*ast.Node, AssertionLinks]
 	arrayLiteralLinks                       LinkStore[*ast.Node, ArrayLiteralLinks]
 	switchStatementLinks                    LinkStore[*ast.Node, SwitchStatementLinks]
 	valueSymbolLinks                        LinkStore[*ast.Symbol, ValueSymbolLinks]
@@ -1592,44 +1593,32 @@ func (c *Checker) checkDeferredNode(node *ast.Node) {
 	saveCurrentNode := c.currentNode
 	c.currentNode = node
 	c.instantiationCount = 0
-	// !!!
-	// switch node.Kind {
-	// case ast.KindCallExpression,
-	// 	ast.KindNewExpression,
-	// 	ast.KindTaggedTemplateExpression,
-	// 	ast.KindDecorator,
-	// 	ast.KindJsxOpeningElement:
-	// 	// These node kinds are deferred checked when overload resolution fails
-	// 	// To save on work, we ensure the arguments are checked just once, in
-	// 	// a deferred way
-	// 	c.resolveUntypedCall(node.AsCallLikeExpression())
-	// case ast.KindFunctionExpression,
-	// 	ast.KindArrowFunction,
-	// 	ast.KindMethodDeclaration,
-	// 	ast.KindMethodSignature:
-	// 	c.checkFunctionExpressionOrObjectLiteralMethodDeferred(node.AsFunctionExpression())
-	// case ast.KindGetAccessor,
-	// 	ast.KindSetAccessor:
-	// 	c.checkAccessorDeclaration(node.AsAccessorDeclaration())
-	// case ast.KindClassExpression:
-	// 	c.checkClassExpressionDeferred(node.AsClassExpression())
-	// case ast.KindTypeParameter:
-	// 	c.checkTypeParameterDeferred(node.AsTypeParameterDeclaration())
-	// case ast.KindJsxSelfClosingElement:
-	// 	c.checkJsxSelfClosingElementDeferred(node.AsJsxSelfClosingElement())
-	// case ast.KindJsxElement:
-	// 	c.checkJsxElementDeferred(node.AsJsxElement())
-	// case ast.KindTypeAssertionExpression,
-	// 	ast.KindAsExpression,
-	// 	ast.KindParenthesizedExpression:
-	// 	c.checkAssertionDeferred(node /* as AssertionExpression | JSDocTypeAssertion */)
-	// case ast.KindVoidExpression:
-	// 	c.checkExpression(node.AsVoidExpression().Expression)
-	// case ast.KindBinaryExpression:
-	// 	if isInstanceOfExpression(node) {
-	// 		c.resolveUntypedCall(node)
-	// 	}
-	// }
+	switch node.Kind {
+	case ast.KindCallExpression, ast.KindNewExpression, ast.KindTaggedTemplateExpression, ast.KindDecorator, ast.KindJsxOpeningElement:
+		// These node kinds are deferred checked when overload resolution fails. To save on work,
+		// we ensure the arguments are checked just once in a deferred way.
+		c.resolveUntypedCall(node)
+	case ast.KindFunctionExpression, ast.KindArrowFunction, ast.KindMethodDeclaration, ast.KindMethodSignature:
+		c.checkFunctionExpressionOrObjectLiteralMethodDeferred(node)
+	case ast.KindGetAccessor, ast.KindSetAccessor:
+		c.checkAccessorDeclaration(node)
+	case ast.KindClassExpression:
+		c.checkClassExpressionDeferred(node)
+	case ast.KindTypeParameter:
+		c.checkTypeParameterDeferred(node)
+	case ast.KindJsxSelfClosingElement:
+		c.checkJsxSelfClosingElementDeferred(node)
+	case ast.KindJsxElement:
+		c.checkJsxElementDeferred(node)
+	case ast.KindTypeAssertionExpression, ast.KindAsExpression, ast.KindParenthesizedExpression:
+		c.checkAssertionDeferred(node)
+	case ast.KindVoidExpression:
+		c.checkExpression(node.AsVoidExpression().Expression)
+	case ast.KindBinaryExpression:
+		if ast.IsInstanceOfExpression(node) {
+			c.resolveUntypedCall(node)
+		}
+	}
 	c.currentNode = saveCurrentNode
 }
 
@@ -1642,6 +1631,10 @@ func (c *Checker) checkTypeParameter(node *ast.Node) {
 
 	// !!!
 	node.ForEachChild(c.checkSourceElement)
+}
+
+func (c *Checker) checkTypeParameterDeferred(node *ast.Node) {
+	// !!!
 }
 
 func (c *Checker) checkParameter(node *ast.Node) {
@@ -5165,6 +5158,10 @@ func (c *Checker) checkClassExpression(node *ast.Node) *Type {
 	return c.getTypeOfSymbol(c.getSymbolOfDeclaration(node))
 }
 
+func (c *Checker) checkClassExpressionDeferred(node *ast.Node) {
+	// !!!
+}
+
 func (c *Checker) checkFunctionExpressionOrObjectLiteralMethod(node *ast.Node, checkMode CheckMode) *Type {
 	c.checkNodeDeferred(node)
 	if ast.IsFunctionExpression(node) {
@@ -5253,7 +5250,43 @@ func (c *Checker) contextuallyCheckFunctionExpressionOrObjectLiteralMethod(node 
 }
 
 func (c *Checker) checkFunctionExpressionOrObjectLiteralMethodDeferred(node *ast.Node) {
+	functionFlags := getFunctionFlags(node)
+	returnType := c.getReturnTypeFromAnnotation(node)
 	// !!!
+	// c.checkAllCodePathsInNonVoidFunctionReturnOrThrow(node, returnType)
+	body := getBodyOfNode(node)
+	if body != nil {
+		if node.Type() == nil {
+			// There are some checks that are only performed in getReturnTypeFromBody, that may produce errors
+			// we need. An example is the noImplicitAny errors resulting from widening the return expression
+			// of a function. Because checking of function expression bodies is deferred, there was never an
+			// appropriate time to do this during the main walk of the file (see the comment at the top of
+			// checkFunctionExpressionBodies). So it must be done now.
+			c.getReturnTypeOfSignature(c.getSignatureFromDeclaration(node))
+		}
+		if ast.IsBlock(body) {
+			c.checkSourceElement(body)
+		} else {
+			// From within an async function you can return either a non-promise value or a promise. Any
+			// Promise/A+ compatible implementation will always assimilate any foreign promise, so we
+			// should not be checking assignability of a promise to the return type. Instead, we need to
+			// check assignability of the awaited type of the expression body against the promised type of
+			// its return type annotation.
+			exprType := c.checkExpression(body)
+			if returnType != nil {
+				returnOrPromisedType := c.unwrapReturnType(returnType, functionFlags)
+				if returnOrPromisedType != nil {
+					effectiveCheckNode := c.getEffectiveCheckNode(body)
+					if (functionFlags & FunctionFlagsAsyncGenerator) == FunctionFlagsAsync {
+						awaitedType := c.checkAwaitedType(exprType, false /*withAlias*/, effectiveCheckNode, diagnostics.The_return_type_of_an_async_function_must_either_be_a_valid_promise_or_must_not_contain_a_callable_then_member)
+						c.checkTypeAssignableToAndOptionallyElaborate(awaitedType, returnOrPromisedType, effectiveCheckNode, effectiveCheckNode, nil, nil)
+					} else {
+						c.checkTypeAssignableToAndOptionallyElaborate(exprType, returnOrPromisedType, effectiveCheckNode, effectiveCheckNode, nil, nil)
+					}
+				}
+			}
+		}
+	}
 }
 
 func (c *Checker) inferFromAnnotatedParameters(sig *Signature, context *Signature, inferenceContext *InferenceContext) {
@@ -5781,13 +5814,22 @@ func (c *Checker) checkJsxExpression(node *ast.Node, checkMode CheckMode) *Type 
 }
 
 func (c *Checker) checkJsxElement(node *ast.Node, checkMode CheckMode) *Type {
+	c.checkNodeDeferred(node)
 	// !!!
 	return c.errorType
 }
 
+func (c *Checker) checkJsxElementDeferred(node *ast.Node) {
+}
+
 func (c *Checker) checkJsxSelfClosingElement(node *ast.Node, checkMode CheckMode) *Type {
+	c.checkNodeDeferred(node)
 	// !!!
 	return c.errorType
+}
+
+func (c *Checker) checkJsxSelfClosingElementDeferred(node *ast.Node) {
+	// !!!
 }
 
 func (c *Checker) checkJsxFragment(node *ast.Node) *Type {
@@ -6924,18 +6966,29 @@ func (c *Checker) classDeclarationExtendsNull(classDecl *ast.Node) bool {
 
 func (c *Checker) checkAssertion(node *ast.Node, checkMode CheckMode) *Type {
 	typeNode := node.Type()
+	exprType := c.checkExpressionEx(node.Expression(), checkMode)
 	if isConstTypeReference(typeNode) {
 		if !c.isValidConstAssertionArgument(node.Expression()) {
 			c.error(node.Expression(), diagnostics.A_const_assertions_can_only_be_applied_to_references_to_enum_members_or_string_number_boolean_array_or_object_literals)
 		}
-		return c.getRegularTypeOfLiteralType(c.checkExpression(node.Expression()))
+		return c.getRegularTypeOfLiteralType(exprType)
 	}
-	// !!!
-	// links := c.getNodeLinks(node)
-	// links.assertionExpressionType = exprType
+	links := c.assertionLinks.get(node)
+	links.exprType = exprType
 	c.checkSourceElement(typeNode)
 	c.checkNodeDeferred(node)
 	return c.getTypeFromTypeNode(typeNode)
+}
+
+func (c *Checker) checkAssertionDeferred(node *ast.Node) {
+	exprType := c.getRegularTypeOfObjectLiteral(c.getBaseTypeOfLiteralType(c.assertionLinks.get(node).exprType))
+	targetType := c.getTypeFromTypeNode(node.Type())
+	if !c.isErrorType(targetType) {
+		widenedType := c.getWidenedType(exprType)
+		if !c.isTypeComparableTo(targetType, widenedType) {
+			c.checkTypeComparableTo(exprType, targetType, node, diagnostics.Conversion_of_type_0_to_type_1_may_be_a_mistake_because_neither_type_sufficiently_overlaps_with_the_other_If_this_was_intentional_convert_the_expression_to_unknown_first)
+		}
+	}
 }
 
 func (c *Checker) checkBinaryExpression(node *ast.Node, checkMode CheckMode) *Type {
@@ -10051,9 +10104,9 @@ func (c *Checker) getTypeOfSymbol(symbol *ast.Symbol) *Type {
 	if symbol.Flags&ast.SymbolFlagsEnumMember != 0 {
 		return c.getTypeOfEnumMember(symbol)
 	}
-	// if symbol.flags&SymbolFlagsAccessor != 0 {
-	// 	return c.getTypeOfAccessors(symbol)
-	// }
+	if symbol.Flags&ast.SymbolFlagsAccessor != 0 {
+		return c.getTypeOfAccessors(symbol)
+	}
 	if symbol.Flags&ast.SymbolFlagsAlias != 0 {
 		return c.getTypeOfAlias(symbol)
 	}
@@ -11622,6 +11675,65 @@ func (c *Checker) getTypeOfEnumMember(symbol *ast.Symbol) *Type {
 	links := c.valueSymbolLinks.get(symbol)
 	if links.resolvedType == nil {
 		links.resolvedType = c.getDeclaredTypeOfEnumMember(symbol)
+	}
+	return links.resolvedType
+}
+
+func (c *Checker) getTypeOfAccessors(symbol *ast.Symbol) *Type {
+	links := c.valueSymbolLinks.get(symbol)
+	if links.resolvedType == nil {
+		if !c.pushTypeResolution(symbol, TypeSystemPropertyNameType) {
+			return c.errorType
+		}
+		getter := getDeclarationOfKind(symbol, ast.KindGetAccessor)
+		setter := getDeclarationOfKind(symbol, ast.KindSetAccessor)
+		property := getDeclarationOfKind(symbol, ast.KindPropertyDeclaration)
+		var accessor *ast.Node
+		if property != nil && ast.IsAutoAccessorPropertyDeclaration(property) {
+			accessor = property
+		}
+		// We try to resolve a getter type annotation, a setter type annotation, or a getter function
+		// body return type inference, in that order.
+		t := c.getAnnotatedAccessorType(getter)
+		if t == nil {
+			t = c.getAnnotatedAccessorType(setter)
+		}
+		if t == nil {
+			t = c.getAnnotatedAccessorType(accessor)
+		}
+		if t == nil && getter != nil {
+			if body := getBodyOfNode(getter); body != nil {
+				t = c.getReturnTypeFromBody(body, CheckModeNormal)
+			}
+		}
+		if t == nil && accessor != nil && accessor.Initializer() != nil {
+			t = c.getWidenedTypeForVariableLikeDeclaration(accessor, true /*reportErrors*/)
+		}
+		if t == nil {
+			if setter != nil && !isPrivateWithinAmbient(setter) {
+				c.errorOrSuggestion(c.noImplicitAny, setter, diagnostics.Property_0_implicitly_has_type_any_because_its_set_accessor_lacks_a_parameter_type_annotation, c.symbolToString(symbol))
+			} else if getter != nil && !isPrivateWithinAmbient(getter) {
+				c.errorOrSuggestion(c.noImplicitAny, getter, diagnostics.Property_0_implicitly_has_type_any_because_its_get_accessor_lacks_a_return_type_annotation, c.symbolToString(symbol))
+			} else if accessor != nil && !isPrivateWithinAmbient(accessor) {
+				c.errorOrSuggestion(c.noImplicitAny, accessor, diagnostics.Member_0_implicitly_has_an_1_type, c.symbolToString(symbol), "any")
+			}
+			t = c.anyType
+		}
+		if !c.popTypeResolution() {
+			if c.getAnnotatedAccessorTypeNode(getter) != nil {
+				c.error(getter, diagnostics.X_0_is_referenced_directly_or_indirectly_in_its_own_type_annotation, c.symbolToString(symbol))
+			} else if c.getAnnotatedAccessorTypeNode(setter) != nil {
+				c.error(setter, diagnostics.X_0_is_referenced_directly_or_indirectly_in_its_own_type_annotation, c.symbolToString(symbol))
+			} else if c.getAnnotatedAccessorTypeNode(accessor) != nil {
+				c.error(setter, diagnostics.X_0_is_referenced_directly_or_indirectly_in_its_own_type_annotation, c.symbolToString(symbol))
+			} else if getter != nil && c.noImplicitAny {
+				c.error(getter, diagnostics.X_0_implicitly_has_return_type_any_because_it_does_not_have_a_return_type_annotation_and_is_referenced_directly_or_indirectly_in_one_of_its_return_expressions, c.symbolToString(symbol))
+			}
+			t = c.anyType
+		}
+		if links.resolvedType == nil {
+			links.resolvedType = t
+		}
 	}
 	return links.resolvedType
 }
