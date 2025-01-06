@@ -11,8 +11,10 @@ func toUint32(x float64) uint32 {
 		return uint32(smi)
 	}
 
-	// If the number is non-finite, it maps to zero.
-	if math.IsNaN(x) || math.IsInf(x, 0) {
+	// If the number is non-finite (NaN, +Inf, -Inf; exp=0x7FF), it maps to zero.
+	// This is equivalent to checking `math.IsNaN(x) || math.IsInf(x, 0)` in one operation.
+	const mask = 0x7FF0000000000000
+	if math.Float64bits(x)&mask == mask {
 		return 0
 	}
 
