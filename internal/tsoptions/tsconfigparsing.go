@@ -1444,11 +1444,13 @@ var (
 )
 
 func getAllowJSCompilerOption(compilerOptions *core.CompilerOptions) core.Tristate {
-	return core.ComputedOptions["allowJs"].ComputeValue(compilerOptions).(core.Tristate)
+	// todo
+	return core.Tristate(1)
 }
 
 func getResolveJsonModule(compilerOptions *core.CompilerOptions) bool {
-	return core.ComputedOptions["resolveJsonModule"].ComputeValue(compilerOptions).(bool)
+	// todo
+	return false
 }
 
 func getSupportedExtensions(options *core.CompilerOptions, extraFileExtensions []fileExtensionInfo) [][]string {

@@ -115,16 +115,7 @@ func (vfs *common) DirectoryExists(path string) bool {
 }
 
 func (vfs *common) GetDirectories(path string) []string {
-	fsys, _, rest := vfs.rootAndPath(path)
-	if fsys == nil {
-		return nil
-	}
-
-	entries, err := fs.ReadDir(fsys, rest)
-	if err != nil {
-		return nil
-	}
-
+	entries := vfs.GetEntries(path)
 	// TODO: should this really exist? ReadDir with manual filtering seems like a better idea.
 	var dirs []string
 	for _, entry := range entries {
