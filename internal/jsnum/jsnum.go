@@ -73,6 +73,38 @@ func BitwiseXOR(x, y float64) float64 {
 	return float64(toInt32(x) ^ toInt32(y))
 }
 
+var negativeZero = math.Copysign(0, -1)
+
+// https://262.ecma-international.org/#sec-numeric-types-number-remainder
+func Remainder(n, d float64) float64 {
+	if math.IsNaN(n) || math.IsNaN(d) {
+		return math.NaN()
+	}
+
+	if math.IsInf(n, 0) {
+		return math.NaN()
+	}
+
+	if math.IsInf(d, 0) {
+		return n
+	}
+
+	if d == 0 {
+		return math.NaN()
+	}
+
+	if n == 0 {
+		return n
+	}
+
+	r := n - d*math.Trunc(n/d)
+	if r == 0 || n < 0 {
+		return negativeZero
+	}
+
+	return r
+}
+
 // https://262.ecma-international.org/#sec-numeric-types-number-exponentiate
 func Exponentiate(base, exponent float64) float64 {
 	// Special cases in https://262.ecma-international.org/#sec-numeric-types-number-exponentiate

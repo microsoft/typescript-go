@@ -13,8 +13,6 @@ const (
 	minSafeInteger = -maxSafeInteger
 )
 
-var negativeZero = math.Copysign(0, -1)
-
 var toInt32Tests = []struct {
 	name  string
 	input float64
@@ -179,6 +177,25 @@ func TestLeftShift(t *testing.T) {
 	assert.Equal(t, LeftShift(-4, 3), -32.0)
 	assert.Equal(t, LeftShift(-4, 31), 0.0)
 	assert.Equal(t, LeftShift(-4, 32), -4.0)
+}
+
+func TestRemainder(t *testing.T) {
+	t.Parallel()
+
+	assert.Assert(t, math.IsNaN(Remainder(math.NaN(), 1)))
+	assert.Assert(t, math.IsNaN(Remainder(1, math.NaN())))
+
+	assert.Assert(t, math.IsNaN(Remainder(math.Inf(1), 1)))
+	assert.Assert(t, math.IsNaN(Remainder(math.Inf(-1), 1)))
+
+	assert.Equal(t, Remainder(123, math.Inf(1)), 123.0)
+	assert.Equal(t, Remainder(123, math.Inf(-1)), 123.0)
+
+	assert.Assert(t, math.IsNaN(Remainder(123, 0)))
+	assert.Assert(t, math.IsNaN(Remainder(123, negativeZero)))
+
+	assert.Equal(t, Remainder(0, 123), 0.0)
+	assert.Equal(t, Remainder(negativeZero, 123), negativeZero)
 }
 
 func TestExponentiate(t *testing.T) {

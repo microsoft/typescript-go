@@ -2208,7 +2208,7 @@ func createEvaluator(evaluateEntity Evaluator) Evaluator {
 				case ast.KindMinusToken:
 					return evaluatorResult(leftNum-rightNum, isSyntacticallyString, resolvedOtherFiles, hasExternalReferences)
 				case ast.KindPercentToken:
-					return evaluatorResult(leftNum-rightNum*math.Floor(leftNum/rightNum), isSyntacticallyString, resolvedOtherFiles, hasExternalReferences)
+					return evaluatorResult(jsnum.Remainder(leftNum, rightNum), isSyntacticallyString, resolvedOtherFiles, hasExternalReferences)
 				case ast.KindAsteriskAsteriskToken:
 					return evaluatorResult(jsnum.Exponentiate(leftNum, rightNum), isSyntacticallyString, resolvedOtherFiles, hasExternalReferences)
 				}
