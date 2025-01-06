@@ -3,7 +3,7 @@ package jsnum
 
 import "math"
 
-// https://262.ecma-international.org/#sec-touint32
+// https://tc39.es/ecma262/2024/multipage/abstract-operations.html#sec-touint32
 func toUint32(x float64) uint32 {
 	// Fast path: if the number is the range (-2^31, 2^32), i.e. an SMI,
 	// then we don't need to do any special mapping.
@@ -26,7 +26,7 @@ func toUint32(x float64) uint32 {
 	return uint32(x)
 }
 
-// https://262.ecma-international.org/#sec-toint32
+// https://tc39.es/ecma262/2024/multipage/abstract-operations.html#sec-toint32
 func toInt32(x float64) int32 {
 	// The only difference between ToUint32 and ToInt32 is the interpretation of the bits.
 	return int32(toUint32(x))
@@ -36,46 +36,46 @@ func toShiftCount(x float64) uint32 {
 	return toUint32(x) & 31
 }
 
-// https://262.ecma-international.org/#sec-numeric-types-number-signedRightShift
+// https://tc39.es/ecma262/2024/multipage/ecmascript-data-types-and-values.html#sec-numeric-types-number-signedRightShift
 func SignedRightShift(x, y float64) float64 {
 	return float64(toInt32(x) >> toShiftCount(y))
 }
 
-// https://262.ecma-international.org/#sec-numeric-types-number-unsignedRightShift
+// https://tc39.es/ecma262/2024/multipage/ecmascript-data-types-and-values.html#sec-numeric-types-number-unsignedRightShift
 func UnsignedRightShift(x, y float64) float64 {
 	return float64(toUint32(x) >> toShiftCount(y))
 }
 
-// https://262.ecma-international.org/#sec-numeric-types-number-leftShift
+// https://tc39.es/ecma262/2024/multipage/ecmascript-data-types-and-values.html#sec-numeric-types-number-leftShift
 func LeftShift(x, y float64) float64 {
 	return float64(toInt32(x) << toShiftCount(y))
 }
 
-// https://262.ecma-international.org/#sec-numeric-types-number-bitwiseNOT
+// https://tc39.es/ecma262/2024/multipage/ecmascript-data-types-and-values.html#sec-numeric-types-number-bitwiseNOT
 func BitwiseNOT(x float64) float64 {
 	return float64(^toInt32(x))
 }
 
-// The below are implemented by https://262.ecma-international.org/#sec-numberbitwiseop.
+// The below are implemented by https://tc39.es/ecma262/2024/multipage/ecmascript-data-types-and-values.html#sec-numberbitwiseop.
 
-// https://262.ecma-international.org/#sec-numeric-types-number-bitwiseOR
+// https://tc39.es/ecma262/2024/multipage/ecmascript-data-types-and-values.html#sec-numeric-types-number-bitwiseOR
 func BitwiseOR(x, y float64) float64 {
 	return float64(toInt32(x) | toInt32(y))
 }
 
-// https://262.ecma-international.org/#sec-numeric-types-number-bitwiseAND
+// https://tc39.es/ecma262/2024/multipage/ecmascript-data-types-and-values.html#sec-numeric-types-number-bitwiseAND
 func BitwiseAND(x, y float64) float64 {
 	return float64(toInt32(x) & toInt32(y))
 }
 
-// https://262.ecma-international.org/#sec-numeric-types-number-bitwiseXOR
+// https://tc39.es/ecma262/2024/multipage/ecmascript-data-types-and-values.html#sec-numeric-types-number-bitwiseXOR
 func BitwiseXOR(x, y float64) float64 {
 	return float64(toInt32(x) ^ toInt32(y))
 }
 
 var negativeZero = math.Copysign(0, -1)
 
-// https://262.ecma-international.org/#sec-numeric-types-number-remainder
+// https://tc39.es/ecma262/2024/multipage/ecmascript-data-types-and-values.html#sec-numeric-types-number-remainder
 func Remainder(n, d float64) float64 {
 	switch {
 	case math.IsNaN(n) || math.IsNaN(d):
@@ -98,9 +98,8 @@ func Remainder(n, d float64) float64 {
 	return r
 }
 
-// https://262.ecma-international.org/#sec-numeric-types-number-exponentiate
+// https://tc39.es/ecma262/2024/multipage/ecmascript-data-types-and-values.html#sec-numeric-types-number-exponentiate
 func Exponentiate(base, exponent float64) float64 {
-	// Special cases in https://262.ecma-international.org/#sec-numeric-types-number-exponentiate
 	switch {
 	case (base == 1 || base == -1) && math.IsInf(exponent, 0):
 		return math.NaN()
