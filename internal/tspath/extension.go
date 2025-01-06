@@ -113,7 +113,6 @@ func changeAnyExtension(path string, ext string, extensions []string, ignoreCase
 	var pathext string
 	if extensions != nil && ignoreCase {
 		pathext = GetAnyExtensionFromPath(path, extensions, ignoreCase)
-
 	} else {
 		pathext = GetAnyExtensionFromPath(path, nil, false)
 	}
@@ -126,7 +125,6 @@ func changeAnyExtension(path string, ext string, extensions []string, ignoreCase
 		}
 	}
 	return path
-
 }
 
 func ChangeExtension(path string, newExtension string) string {

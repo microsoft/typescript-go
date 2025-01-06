@@ -68,7 +68,7 @@ type CompilerOptions struct {
 	ConfigFilePath  string   `json:"configFilePath"`
 	NoDtsResolution Tristate `json:"noDtsResolution"`
 	PathsBasePath   string   `json:"pathsBasePath"`
-	//Option map[string]CompilerOptionsValue
+	// Option map[string]CompilerOptionsValue
 }
 
 func (options *CompilerOptions) GetEmitScriptTarget() ScriptTarget {
@@ -310,7 +310,7 @@ func createComputedCompilerOptions(options map[string]Option) map[string]Option 
 	return options
 }
 
-var options = map[string]Option{ //todo: add more of these and fix circular dependencies
+var options = map[string]Option{ // todo: add more of these and fix circular dependencies
 	"allowImportingTsExtensions": {
 		Dependencies: []string{"rewriteRelativeImportExtensions"},
 		ComputeValue: func(compilerOptions *CompilerOptions) interface{} {
@@ -334,7 +334,7 @@ var options = map[string]Option{ //todo: add more of these and fix circular depe
 				return target
 			}
 			module := compilerOptions.ModuleKind
-			return ((module == ModuleKindNode16) || (module == ModuleKindNodeNext)) //how to check for script targets
+			return ((module == ModuleKindNode16) || (module == ModuleKindNodeNext)) // todo: how to check for script targets
 		},
 	},
 	"allowJs": {
@@ -346,7 +346,7 @@ var options = map[string]Option{ //todo: add more of these and fix circular depe
 			return compilerOptions.AllowJs
 		},
 	},
-	"resolveJsonModule": { //look into this
+	"resolveJsonModule": {
 		Dependencies: []string{"moduleResolution", "module", "target"},
 		ComputeValue: func(compilerOptions *CompilerOptions) interface{} {
 			if compilerOptions.ResolveJsonModule == 0 {

@@ -566,7 +566,7 @@ func TestParsedCommandJson(t *testing.T) {
 		t.Run(rec.title, func(t *testing.T) {
 			t.Parallel()
 
-			var allFileLists = make(map[string]string, len(rec.input.allFileList))
+			allFileLists := make(map[string]string, len(rec.input.allFileList))
 			for _, file := range rec.input.allFileList {
 				allFileLists[file] = ""
 			}
@@ -604,7 +604,7 @@ func TestParsedCommandJson(t *testing.T) {
 			// Check for all other options
 			assert.DeepEqual(t, rawConfigResult.prop, rawConfigExpected.prop)
 			// Check for diagnostics
-			var actualErrorMessages = []string{}
+			actualErrorMessages := []string{}
 			for _, error := range parseConfigFileContent.Errors {
 				actualErrorMessages = append(actualErrorMessages, error.Message())
 			}
@@ -618,7 +618,7 @@ func TestParsedCommandJsonSourceFile(t *testing.T) {
 		t.Run(rec.title, func(t *testing.T) {
 			t.Parallel()
 
-			var allFileLists = make(map[string]string, len(rec.input.allFileList))
+			allFileLists := make(map[string]string, len(rec.input.allFileList))
 			for _, file := range rec.input.allFileList {
 				allFileLists[file] = ""
 			}
@@ -658,7 +658,7 @@ func TestParsedCommandJsonSourceFile(t *testing.T) {
 			// Check for all other options
 			assert.DeepEqual(t, rawConfigResult.prop, rawConfigExpected.prop)
 			// Check for diagnostics
-			var actualErrorMessages = []string{}
+			actualErrorMessages := []string{}
 			for _, error := range parseConfigFileContent.Errors {
 				actualErrorMessages = append(actualErrorMessages, error.Message())
 			}

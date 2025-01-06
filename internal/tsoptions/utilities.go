@@ -124,11 +124,15 @@ func isImplicitGlob(lastPathComponent string) bool {
 // Reserved characters, forces escaping of any non-word (or digit), non-whitespace character.
 // It may be inefficient (we could just match (/[-[\]{}()*+?.,\\^$|#\s]/g), but this is future
 // proof.
-var reservedCharacterPattern *regexp.Regexp = regexp.MustCompile(`[^\w\s/]`)
-var wildcardCharCodes = []int{Asterisk, Question}
+var (
+	reservedCharacterPattern *regexp.Regexp = regexp.MustCompile(`[^\w\s/]`)
+	wildcardCharCodes                       = []int{Asterisk, Question}
+)
 
-var commonPackageFolders = []string{"node_modules", "bower_components", "jspm_packages"}
-var implicitExcludePathRegexPattern = "(?!(" + strings.Join(commonPackageFolders, "|") + ")(/|$))"
+var (
+	commonPackageFolders            = []string{"node_modules", "bower_components", "jspm_packages"}
+	implicitExcludePathRegexPattern = "(?!(" + strings.Join(commonPackageFolders, "|") + ")(/|$))"
+)
 
 type WildcardMatcher struct {
 	singleAsteriskRegexFragment string
@@ -190,8 +194,8 @@ func getSubPatternFromSpec(
 
 	replaceWildcardCharacter := matcher.replaceWildcardCharacter
 
-	var subpattern = ""
-	var hasWrittenComponent = false
+	subpattern := ""
+	hasWrittenComponent := false
 	components := tspath.GetNormalizedPathComponents(spec, basePath)
 	lastComponent := core.LastOrNil(components)
 	if usage != "exclude" && lastComponent == "**" {
@@ -206,7 +210,7 @@ func getSubPatternFromSpec(
 		components = append(components, "**", "*")
 	}
 
-	var optionalCount = 0
+	optionalCount := 0
 	for _, component := range components {
 		if component == "**" {
 			subpattern += matcher.doubleAsteriskRegexFragment

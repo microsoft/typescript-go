@@ -123,7 +123,7 @@ var commandLineOptionElements = map[string]*CommandLineOption{
 		Name: "plugin",
 		Kind: CommandLineOptionTypeObject,
 	},
-	//For tsconfig root options
+	// For tsconfig root options
 	"references": {
 		Name: "references",
 		Kind: CommandLineOptionTypeObject,

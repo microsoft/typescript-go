@@ -182,6 +182,7 @@ func parseNewLineKind(json any) core.NewLineKind {
 	}
 	return result
 }
+
 func parseModuleResolutionKind(json any) core.ModuleResolutionKind {
 	var result core.ModuleResolutionKind
 	if module, ok := json.(string); ok {
@@ -199,6 +200,7 @@ func parseModuleResolutionKind(json any) core.ModuleResolutionKind {
 	}
 	return result
 }
+
 func parseProjectReference(json any) []core.ProjectReference {
 	var result []core.ProjectReference
 	if arr, ok := json.([]map[string]interface{}); ok {
