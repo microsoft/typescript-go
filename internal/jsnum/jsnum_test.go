@@ -220,10 +220,10 @@ func TestExponentiate(t *testing.T) {
 	assert.Equal(t, Exponentiate(negativeZero, -4), math.Inf(1))
 
 	assert.Equal(t, Exponentiate(3, math.Inf(1)), math.Inf(1))
-	assert.Equal(t, Exponentiate(-3, math.Inf(1)), 0.0)
+	assert.Equal(t, Exponentiate(-3, math.Inf(1)), math.Inf(1))
 
 	assert.Equal(t, Exponentiate(3, math.Inf(-1)), 0.0)
-	assert.Equal(t, Exponentiate(-3, math.Inf(-1)), math.Inf(1))
+	assert.Equal(t, Exponentiate(-3, math.Inf(-1)), 0.0)
 
 	assert.Assert(t, math.IsNaN(Exponentiate(math.NaN(), 3)))
 	assert.Assert(t, math.IsNaN(Exponentiate(1, math.Inf(1))))
