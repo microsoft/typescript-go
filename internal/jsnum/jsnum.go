@@ -77,23 +77,16 @@ var negativeZero = math.Copysign(0, -1)
 
 // https://262.ecma-international.org/#sec-numeric-types-number-remainder
 func Remainder(n, d float64) float64 {
-	if math.IsNaN(n) || math.IsNaN(d) {
+	switch {
+	case math.IsNaN(n) || math.IsNaN(d):
 		return math.NaN()
-	}
-
-	if math.IsInf(n, 0) {
+	case math.IsInf(n, 0):
 		return math.NaN()
-	}
-
-	if math.IsInf(d, 0) {
+	case math.IsInf(d, 0):
 		return n
-	}
-
-	if d == 0 {
+	case d == 0:
 		return math.NaN()
-	}
-
-	if n == 0 {
+	case n == 0:
 		return n
 	}
 
@@ -108,10 +101,10 @@ func Remainder(n, d float64) float64 {
 // https://262.ecma-international.org/#sec-numeric-types-number-exponentiate
 func Exponentiate(base, exponent float64) float64 {
 	// Special cases in https://262.ecma-international.org/#sec-numeric-types-number-exponentiate
-	if (base == 1 || base == -1) && math.IsInf(exponent, 0) {
+	switch {
+	case (base == 1 || base == -1) && math.IsInf(exponent, 0):
 		return math.NaN()
-	}
-	if base == 1 && math.IsNaN(exponent) {
+	case base == 1 && math.IsNaN(exponent):
 		return math.NaN()
 	}
 
