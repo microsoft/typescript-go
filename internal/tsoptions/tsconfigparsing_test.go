@@ -1,6 +1,7 @@
 package tsoptions
 
 import (
+	"sort"
 	"testing"
 	"testing/fstest"
 
@@ -593,6 +594,8 @@ func TestParsedCommandJson(t *testing.T) {
 			rawConfigExpected := ParseRawConfig(rec.output.configFile, basePath, nil, "tsconfig.json")
 
 			// Check for file names
+			sort.Strings(parseConfigFileContent.Options.FileNames)
+			sort.Strings(rec.output.fileNames)
 			assert.DeepEqual(t, parseConfigFileContent.Options.FileNames, rec.output.fileNames)
 			// Check for compiler options
 			if rec.output.configFile["compilerOptions"] != nil {
@@ -645,6 +648,8 @@ func TestParsedCommandJsonSourceFile(t *testing.T) {
 			rawConfigExpected := ParseRawConfig(rec.output.configFile, basePath, nil, "tsconfig.json")
 
 			// Check for file names
+			sort.Strings(parseConfigFileContent.Options.FileNames)
+			sort.Strings(rec.output.fileNames)
 			assert.DeepEqual(t, parseConfigFileContent.Options.FileNames, rec.output.fileNames)
 			// Check for compiler options
 			if rec.output.configFile["compilerOptions"] != nil {
