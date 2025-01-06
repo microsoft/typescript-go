@@ -1533,7 +1533,6 @@ func forEachPropertyAssignment(objectLiteral *ObjectLiteralExpression, key strin
 		if key == propName || (key2 != "" && key2 == propName) {
 			callback(*property.AsPropertyAssignment())
 		}
-
 	}
 	return ""
 }

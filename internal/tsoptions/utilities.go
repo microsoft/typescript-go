@@ -70,7 +70,7 @@ const (
 )
 
 func getRegularExpressionsForWildcards(specs []string, basePath string, usage usage) []string {
-	if specs == nil || len(specs) == 0 {
+	if len(specs) == 0 {
 		return nil
 	}
 	return core.Map(specs, func(spec string) string {
@@ -80,7 +80,7 @@ func getRegularExpressionsForWildcards(specs []string, basePath string, usage us
 
 func getRegularExpressionForWildcard(specs []string, basePath string, usage usage) string {
 	patterns := getRegularExpressionsForWildcards(specs, basePath, usage)
-	if patterns == nil || len(patterns) == 0 {
+	if len(patterns) == 0 {
 		return ""
 	}
 
@@ -413,7 +413,6 @@ func matchFiles(path string, extensions []string, excludes []string, includes []
 	// If there are no "includes", then just put everything in results[0].
 	var results [][]string
 	if includeFileRegexes[0] != nil {
-		results = make([][]string, len(includeFileRegexes))
 		results = core.Map(includeFileRegexes, func(_ *regexp2.Regexp) []string { return []string{} })
 	} else {
 		results = [][]string{{}}

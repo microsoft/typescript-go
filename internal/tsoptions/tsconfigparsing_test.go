@@ -176,6 +176,7 @@ var baselineParseData = []struct {
 }
 
 func TestBaselineParseResult(t *testing.T) {
+	t.Parallel()
 	for _, rec := range baselineParseData {
 		t.Run(rec.title, func(t *testing.T) {
 			t.Parallel()
@@ -562,10 +563,10 @@ var data = []struct {
 }
 
 func TestParsedCommandJson(t *testing.T) {
+	t.Parallel()
 	for _, rec := range data {
 		t.Run(rec.title, func(t *testing.T) {
 			t.Parallel()
-
 			allFileLists := make(map[string]string, len(rec.input.allFileList))
 			for _, file := range rec.input.allFileList {
 				allFileLists[file] = ""
@@ -614,10 +615,10 @@ func TestParsedCommandJson(t *testing.T) {
 }
 
 func TestParsedCommandJsonSourceFile(t *testing.T) {
+	t.Parallel()
 	for _, rec := range data {
 		t.Run(rec.title, func(t *testing.T) {
 			t.Parallel()
-
 			allFileLists := make(map[string]string, len(rec.input.allFileList))
 			for _, file := range rec.input.allFileList {
 				allFileLists[file] = ""

@@ -122,7 +122,7 @@ func parseOwnConfigOfJsonSourceFile(
 		propertyAssignment ast.PropertyAssignment,
 		parentOption CommandLineOption, // TsConfigOnlyOption,
 		option *CommandLineOption,
-	) {
+	) (any, []*ast.Diagnostic) {
 		// Ensure value is verified except for extends which is handled in its own way for error reporting
 		if option != nil && option != &extendsOptionDeclaration { //&& option != extendsOptionDeclaration {
 			value, errors = convertJsonOption(*option, value, basePath, errors, &propertyAssignment, propertyAssignment.Initializer, sourceFile)
@@ -155,8 +155,10 @@ func parseOwnConfigOfJsonSourceFile(
 				}
 			}
 		}
+		return value, errors
 	}
-	json := convertConfigFileToObject(
+	var json any
+	json, errors = convertConfigFileToObject(
 		sourceFile.sourceFile,
 		errors,
 		&jsonConversionNotifier{
@@ -195,14 +197,14 @@ type tsConfigSourceFile struct {
 }
 type jsonConversionNotifier struct {
 	rootOptions   CommandLineOption
-	onPropertySet func(keyText string, value any, propertyAssignment ast.PropertyAssignment, parentOption CommandLineOption, option *CommandLineOption)
+	onPropertySet func(keyText string, value any, propertyAssignment ast.PropertyAssignment, parentOption CommandLineOption, option *CommandLineOption) (any, []*ast.Diagnostic)
 }
 
 func convertConfigFileToObject(
 	sourceFile *ast.SourceFile,
 	errors []*ast.Diagnostic,
 	jsonConversionNotifier *jsonConversionNotifier,
-) any {
+) (any, []*ast.Diagnostic) {
 	var rootExpression *ast.Expression
 	if len(sourceFile.Statements.Nodes) > 0 {
 		rootExpression = sourceFile.Statements.Nodes[0].AsExpressionStatement().Expression
@@ -222,7 +224,7 @@ func convertConfigFileToObject(
 				return convertToJson(sourceFile, firstObject, errors /*returnValue*/, true, jsonConversionNotifier)
 			}
 		}
-		return map[string]interface{}{}
+		return map[string]interface{}{}, errors
 	}
 	return convertToJson(sourceFile, rootExpression, errors, true, jsonConversionNotifier)
 }
@@ -426,7 +428,7 @@ func getExtendsConfigPathOrArray(
 		newBase = basePath
 	}
 	if reflect.TypeOf(value).Kind() == reflect.String {
-		extendedConfigPath, errors = getExtendsConfigPath(value.(string), host, newBase, errors, valueExpression, sourceFile)
+		extendedConfigPath, _ = getExtendsConfigPath(value.(string), host, newBase, errors, valueExpression, sourceFile)
 	} else if reflect.TypeOf(value).Kind() == reflect.Slice {
 		extendedConfigPathArray = []string{}
 		for index, v := range value.([]any) {
@@ -498,7 +500,7 @@ func getOptionName(option CommandLineOption) string {
 
 func commandLineOptionsToMap(options []CommandLineOption) map[string]CommandLineOption {
 	result := make(map[string]CommandLineOption)
-	for i := 0; i < len(options); i++ {
+	for i := range options {
 		result[getOptionName(options[i])] = options[i]
 	}
 	return result
@@ -551,7 +553,8 @@ func convertArrayLiteralExpressionToJson(
 		return []string{}
 	}
 	for _, element := range elements {
-		convertedValue := convertPropertyValueToJson(element, elementOption, returnValue, nil, errors)
+		var convertedValue any
+		convertedValue, errors = convertPropertyValueToJson(element, elementOption, returnValue, nil, errors)
 		if str, ok := convertedValue.(string); ok {
 			convertedElements = append(convertedElements, str)
 		}
@@ -582,7 +585,8 @@ func directoryOfCombinedPath(fileName string, basePath string) string {
  */
 func ParseConfigFileTextToJson(fileName string, basePath string, jsonText string, errors []*ast.Diagnostic) (any, []*ast.Diagnostic) {
 	jsonSourceFile := parser.ParseJSONText(fileName, jsonText)
-	config := convertConfigFileToObject(jsonSourceFile, jsonSourceFile.Diagnostics() /*jsonConversionNotifier*/, nil)
+	var config any
+	config, errors = convertConfigFileToObject(jsonSourceFile, jsonSourceFile.Diagnostics() /*jsonConversionNotifier*/, nil)
 	if len(jsonSourceFile.Diagnostics()) > 0 {
 		errors = append(errors, jsonSourceFile.Diagnostics()[0])
 	}
@@ -611,7 +615,7 @@ func convertObjectLiteralExpressionToJson(
 	objectOption *CommandLineOption,
 	jsonConversionNotifier *jsonConversionNotifier,
 	errors []*ast.Diagnostic,
-) map[string]any {
+) (map[string]any, []*ast.Diagnostic) {
 	var result map[string]any
 	if returnValue {
 		result = make(map[string]any)
@@ -627,7 +631,7 @@ func convertObjectLiteralExpressionToJson(
 		if ast.IsQuestionToken(element) {
 			errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.Property_assignment_expected))
 		}
-		if element.Name() != nil && isDoubleQuotedString(element.Name()) == false {
+		if element.Name() != nil && !isDoubleQuotedString(element.Name()) {
 			errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.String_literal_with_double_quotes_expected))
 		}
 
@@ -647,18 +651,19 @@ func convertObjectLiteralExpressionToJson(
 				// errors.push(createDiagnosticForNodeInSourceFile(sourceFile, element.name, diagnostics.Unknown_option_0, keyText));
 			}
 		}
-		value := convertPropertyValueToJson(element.AsPropertyAssignment().Initializer, &option, returnValue, jsonConversionNotifier, errors)
+		var value any
+		value, errors = convertPropertyValueToJson(element.AsPropertyAssignment().Initializer, &option, returnValue, jsonConversionNotifier, errors)
 		if keyText != "undefined" {
 			if returnValue {
 				result[keyText.(string)] = value
 			}
 			// Notify key value set, if user asked for it
 			if jsonConversionNotifier != nil {
-				jsonConversionNotifier.onPropertySet(keyText.(string), value, *element.AsPropertyAssignment(), *objectOption, &option)
+				_, errors = jsonConversionNotifier.onPropertySet(keyText.(string), value, *element.AsPropertyAssignment(), *objectOption, &option)
 			}
 		}
 	}
-	return result
+	return result, errors
 }
 
 /**
@@ -672,12 +677,12 @@ func convertToJson(
 	errors []*ast.Diagnostic,
 	returnValue bool,
 	jsonConversionNotifier *jsonConversionNotifier,
-) any {
+) (any, []*ast.Diagnostic) {
 	if rootExpression == nil {
 		if returnValue {
-			return struct{}{}
+			return struct{}{}, errors
 		} else {
-			return nil
+			return nil, errors
 		}
 	}
 	var jsonConversionNotifierValue *CommandLineOption
@@ -691,28 +696,28 @@ func isDoubleQuotedString(node *ast.Node) bool {
 	return ast.IsStringLiteral(node)
 }
 
-func convertPropertyValueToJson(valueExpression *ast.Expression, option *CommandLineOption, returnValue bool, jsonConversionNotifier *jsonConversionNotifier, errors []*ast.Diagnostic) any {
+func convertPropertyValueToJson(valueExpression *ast.Expression, option *CommandLineOption, returnValue bool, jsonConversionNotifier *jsonConversionNotifier, errors []*ast.Diagnostic) (any, []*ast.Diagnostic) {
 	switch valueExpression.Kind {
 	case ast.KindTrueKeyword:
-		return true
+		return true, errors
 	case ast.KindFalseKeyword:
-		return false
+		return false, errors
 	case ast.KindNullKeyword:
-		return nil // eslint-disable-line no-restricted-syntax
+		return nil, errors // eslint-disable-line no-restricted-syntax
 
 	case ast.KindStringLiteral:
 		if !isDoubleQuotedString(valueExpression) {
 			errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.String_literal_with_double_quotes_expected))
 		}
-		return (valueExpression.AsStringLiteral()).Text
+		return (valueExpression.AsStringLiteral()).Text, errors
 
 	case ast.KindNumericLiteral:
-		return valueExpression.AsNumericLiteral().Text
+		return valueExpression.AsNumericLiteral().Text, errors
 	case ast.KindPrefixUnaryExpression:
 		if valueExpression.AsPrefixUnaryExpression().Operator != ast.KindMinusToken || valueExpression.AsPrefixUnaryExpression().Operand.Kind != ast.KindNumericLiteral {
 			break // not valid JSON syntax
 		}
-		return (valueExpression.AsPrefixUnaryExpression().Operand).AsNumericLiteral().Text
+		return (valueExpression.AsPrefixUnaryExpression().Operand).AsNumericLiteral().Text, errors
 	case ast.KindObjectLiteralExpression:
 		objectLiteralExpression := valueExpression.AsObjectLiteralExpression()
 		// Currently having element option declaration in the tsconfig with type "object"
@@ -729,7 +734,7 @@ func convertPropertyValueToJson(valueExpression *ast.Expression, option *Command
 			returnValue,
 			errors,
 		)
-		return result
+		return result, errors
 	}
 	// Not in expected format
 	if option != nil {
@@ -737,7 +742,7 @@ func convertPropertyValueToJson(valueExpression *ast.Expression, option *Command
 	} else {
 		errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.Property_value_can_only_be_string_literal_numeric_literal_true_false_null_object_literal_or_array_literal))
 	}
-	return nil
+	return nil, errors
 }
 
 /**
@@ -755,7 +760,7 @@ func ParseJsonConfigFileContent(json any, host VfsParseConfigHost, basePath stri
 /**
  * Convert the json syntax tree into the json value
  */
-func convertToObject(sourceFile *ast.SourceFile, errors []*ast.Diagnostic) any {
+func convertToObject(sourceFile *ast.SourceFile, errors []*ast.Diagnostic) (any, []*ast.Diagnostic) {
 	var rootExpression *ast.Expression
 	if sourceFile.Statements != nil {
 		rootExpression = sourceFile.Statements.Nodes[0].AsExpressionStatement().Expression
@@ -854,7 +859,9 @@ func parseConfig(
 		if !isEmptyStruct(json) {
 			result = &parsedTsconfig{raw: json}
 		} else {
-			result = &parsedTsconfig{raw: convertToObject(sourceFile.sourceFile, errors)}
+			var rawResult any
+			rawResult, errors = convertToObject(sourceFile.sourceFile, errors)
+			result = &parsedTsconfig{raw: rawResult}
 		}
 		return result, errors
 	}
@@ -873,7 +880,7 @@ func parseConfig(
 	}
 	if ownConfig.extendedConfigPath != nil {
 		// copy the resolution stack so it is never reused between branches in potential diamond-problem scenarios.
-		resolutionStack = append(resolutionStack, resolvedPath) // resolutionStack.concat([resolvedPath]); //here
+		// resolutionStack = append(resolutionStack, resolvedPath)
 		result := extendsResult{
 			options: core.CompilerOptions{},
 		}
@@ -1360,15 +1367,13 @@ func getFileNamesFromConfigSpecs(
 	supportedExtensionsWithJsonIfResolveJsonModule := getSupportedExtensionsWithJsonIfResolveJsonModule(options, supportedExtensions)
 	// Literal files are always included verbatim. An "include" or "exclude" specification cannot
 	// remove a literal file.
-	if validatedFilesSpec != nil {
-		for _, fileName := range validatedFilesSpec {
-			file := tspath.GetNormalizedAbsolutePath(fileName, basePath)
-			literalFileMap[tspath.GetCanonicalFileName(fileName, host.UseCaseSensitiveFileNames())] = file
-		}
+	for _, fileName := range validatedFilesSpec {
+		file := tspath.GetNormalizedAbsolutePath(fileName, basePath)
+		literalFileMap[tspath.GetCanonicalFileName(fileName, host.UseCaseSensitiveFileNames())] = file
 	}
 
 	var jsonOnlyIncludeRegexes []*regexp2.Regexp
-	if validatedIncludeSpecs != nil && len(validatedIncludeSpecs) > 0 {
+	if len(validatedIncludeSpecs) > 0 {
 		files := readDirectory(host, basePath, basePath, core.Flatten(supportedExtensionsWithJsonIfResolveJsonModule), validatedExcludeSpecs, validatedIncludeSpecs, -1)
 		for _, file := range files {
 			if tspath.FileExtensionIs(file, tspath.ExtensionJson) {
@@ -1434,8 +1439,8 @@ func getFileNamesFromConfigSpecs(
 var (
 	allSupportedExtensions         = [][]string{{tspath.ExtensionTs, tspath.ExtensionTsx, tspath.ExtensionDts, tspath.ExtensionJs, tspath.ExtensionJsx}, {tspath.ExtensionCts, tspath.ExtensionDcts, tspath.ExtensionCjs}, {tspath.ExtensionMts, tspath.ExtensionDmts, tspath.ExtensionMjs}}
 	supportedTSExtensions          = [][]string{{tspath.ExtensionTs, tspath.ExtensionTsx, tspath.ExtensionDts}, {tspath.ExtensionCts, tspath.ExtensionDcts}, {tspath.ExtensionMts, tspath.ExtensionDmts}}
-	allSupportedExtensionsWithJson = [][]string(slices.Concat(allSupportedExtensions, ([][]string{{tspath.ExtensionJson}})))
-	supportedTSExtensionsWithJson  = [][]string(slices.Concat(supportedTSExtensions, ([][]string{{tspath.ExtensionJson}})))
+	allSupportedExtensionsWithJson = slices.Concat(allSupportedExtensions, [][]string{{tspath.ExtensionJson}})
+	supportedTSExtensionsWithJson  = slices.Concat(supportedTSExtensions, [][]string{{tspath.ExtensionJson}})
 )
 
 func getAllowJSCompilerOption(compilerOptions *core.CompilerOptions) core.Tristate {
@@ -1448,7 +1453,7 @@ func getResolveJsonModule(compilerOptions *core.CompilerOptions) bool {
 
 func getSupportedExtensions(options *core.CompilerOptions, extraFileExtensions []fileExtensionInfo) [][]string {
 	needJsExtensions := getAllowJSCompilerOption(options) == 2
-	if extraFileExtensions == nil || len(extraFileExtensions) == 0 {
+	if len(extraFileExtensions) == 0 {
 		if needJsExtensions {
 			return allSupportedExtensions
 		} else {
@@ -1493,5 +1498,5 @@ func getSupportedExtensionsWithJsonIfResolveJsonModule(options *core.CompilerOpt
 	if compareExtensions(supportedExtensions, supportedTSExtensions) {
 		return supportedTSExtensionsWithJson
 	}
-	return [][]string(slices.Concat(supportedExtensions, ([][]string{{tspath.ExtensionJson}})))
+	return slices.Concat(supportedExtensions, [][]string{{tspath.ExtensionJson}})
 }

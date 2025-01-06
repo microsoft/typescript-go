@@ -303,9 +303,7 @@ func ComputeLineStarts(text string) []TextPos {
 func Flatten[T any](array [][]T) []T {
 	var result []T
 	for _, subArray := range array {
-		for _, v := range subArray {
-			result = append(result, v)
-		}
+		result = append(result, subArray...)
 	}
 	return result
 }
