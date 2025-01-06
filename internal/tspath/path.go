@@ -13,8 +13,10 @@ type Path string
 // Internally, we represent paths as strings with '/' as the directory separator.
 // When we make system calls (eg: LanguageServiceHost.getDirectory()),
 // we expect the host to correctly handle paths in our specified format.
-const directorySeparator = '/'
-const urlSchemeSeparator = "://"
+const (
+	directorySeparator = '/'
+	urlSchemeSeparator = "://"
+)
 
 //// Path Tests
 
@@ -229,11 +231,12 @@ func GetDirectoryPath(path string) string {
 	path = RemoveTrailingDirectorySeparator(path)
 	return path[:max(rootLength, strings.LastIndex(path, "/"))]
 }
+
 func (p Path) GetDirectoryPath() Path {
 	return Path(GetDirectoryPath(string(p)))
 }
 
-func getPathFromPathComponents(pathComponents []string) string {
+func GetPathFromPathComponents(pathComponents []string) string {
 	if len(pathComponents) == 0 {
 		return ""
 	}
@@ -296,12 +299,12 @@ func ResolvePath(path string, paths ...string) string {
 	return NormalizePath(combinedPath)
 }
 
-func getNormalizedPathComponents(path string, currentDirectory string) []string {
+func GetNormalizedPathComponents(path string, currentDirectory string) []string {
 	return reducePathComponents(GetPathComponents(path, currentDirectory))
 }
 
 func GetNormalizedAbsolutePath(fileName string, currentDirectory string) string {
-	return getPathFromPathComponents(getNormalizedPathComponents(fileName, currentDirectory))
+	return GetPathFromPathComponents(GetNormalizedPathComponents(fileName, currentDirectory))
 }
 
 func hasRelativePathSegment(p string) bool {
@@ -342,7 +345,7 @@ func NormalizePath(path string) string {
 		return path
 	}
 	// Other paths require full normalization
-	normalized := getPathFromPathComponents(reducePathComponents(GetPathComponents(path, "")))
+	normalized := GetPathFromPathComponents(reducePathComponents(GetPathComponents(path, "")))
 	if normalized != "" && HasTrailingDirectorySeparator(path) {
 		normalized = EnsureTrailingDirectorySeparator(normalized)
 	}
@@ -353,7 +356,7 @@ func GetCanonicalFileName(fileName string, useCaseSensitiveFileNames bool) strin
 	if useCaseSensitiveFileNames {
 		return fileName
 	}
-	return toFileNameLowerCase(fileName)
+	return ToFileNameLowerCase(fileName)
 }
 
 // We convert the file names to lower case as key for file name on case insensitive file system
@@ -376,7 +379,7 @@ func GetCanonicalFileName(fileName string, useCaseSensitiveFileNames bool) strin
 // Rest special characters are either already in lower case format or
 // they have corresponding upper case character so they dont need special handling
 
-func toFileNameLowerCase(fileName string) string {
+func ToFileNameLowerCase(fileName string) string {
 	return strings.Map(func(r rune) rune {
 		if r == '\u0130' {
 			return r
@@ -401,6 +404,7 @@ func RemoveTrailingDirectorySeparator(path string) string {
 	}
 	return path
 }
+
 func (p Path) RemoveTrailingDirectorySeparator() Path {
 	return Path(RemoveTrailingDirectorySeparator(string(p)))
 }
@@ -412,6 +416,7 @@ func EnsureTrailingDirectorySeparator(path string) string {
 
 	return path
 }
+
 func (p Path) EnsureTrailingDirectorySeparator() Path {
 	return Path(EnsureTrailingDirectorySeparator(string(p)))
 }
@@ -467,7 +472,7 @@ func GetRelativePathFromDirectory(fromDirectory string, to string, options Compa
 		panic("paths must either both be absolute or both be relative")
 	}
 	pathComponents := GetPathComponentsRelativeTo(fromDirectory, to, options)
-	return getPathFromPathComponents(pathComponents)
+	return GetPathFromPathComponents(pathComponents)
 }
 
 func ConvertToRelativePath(absoluteOrRelativePath string, options ComparePathsOptions) string {
@@ -496,7 +501,7 @@ func GetRelativePathToDirectoryOrUrl(directoryPathOrUrl string, relativeOrAbsolu
 		pathComponents[0] = prefix + firstComponent
 	}
 
-	return getPathFromPathComponents(pathComponents)
+	return GetPathFromPathComponents(pathComponents)
 }
 
 // Gets the portion of a path following the last (non-terminal) separator (`/`).

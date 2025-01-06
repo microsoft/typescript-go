@@ -1,4 +1,4 @@
-package compiler
+package binder
 
 import (
 	"runtime"
@@ -19,7 +19,7 @@ func BenchmarkBind(b *testing.B) {
 			sourceText := f.ReadFile(b)
 
 			sourceFiles := make([]*ast.SourceFile, b.N)
-			for i := 0; i < b.N; i++ {
+			for i := range b.N {
 				sourceFiles[i] = parser.ParseSourceFile(fileName, sourceText, core.ScriptTargetESNext)
 			}
 
@@ -30,8 +30,8 @@ func BenchmarkBind(b *testing.B) {
 			runtime.GC()
 
 			b.ResetTimer()
-			for i := 0; i < b.N; i++ {
-				bindSourceFile(sourceFiles[i], compilerOptions)
+			for i := range b.N {
+				BindSourceFile(sourceFiles[i], compilerOptions)
 			}
 		})
 	}

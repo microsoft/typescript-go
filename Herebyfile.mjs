@@ -3,6 +3,7 @@
 import { $ as _$ } from "execa";
 import { glob } from "glob";
 import { task } from "hereby";
+import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import url from "node:url";
@@ -22,10 +23,12 @@ const { values: options } = parseArgs({
     options: {
         race: { type: "boolean" },
         fix: { type: "boolean" },
+        noembed: { type: "boolean" },
     },
     strict: false,
     allowPositionals: true,
     allowNegative: true,
+    noembed: false,
 });
 
 /**
@@ -58,6 +61,7 @@ function assertTypeScriptCloned() {
 
 const tools = new Map([
     ["gotest.tools/gotestsum", "latest"],
+    ["mvdan.cc/gofumpt", "v0.7.0"],
 ]);
 
 /**
@@ -67,11 +71,50 @@ function isInstalled(tool) {
     return !!which.sync(tool, { nothrow: true });
 }
 
+export const generateLibs = task({
+    name: "lib",
+    run: async () => {
+        await fs.promises.mkdir("./built/local", { recursive: true });
+
+        const libsDir = "./internal/bundled/libs";
+        const libs = await fs.promises.readdir(libsDir);
+
+        await Promise.all(libs.map(async lib => {
+            fs.promises.copyFile(`${libsDir}/${lib}`, `./built/local/${lib}`);
+        }));
+    },
+});
+
+function buildExecutableToBuilt(packagePath) {
+    return $`go build ${options.race ? ["-race"] : []} -tags=noembed -o ./built/local/ ${packagePath}`;
+}
+
+export const tsgoBuild = task({
+    name: "tsgo:build",
+    run: async () => {
+        await buildExecutableToBuilt("./cmd/tsgo");
+    },
+});
+
+export const tsgo = task({
+    name: "tsgo",
+    dependencies: [generateLibs, tsgoBuild],
+});
+
+export const local = task({
+    name: "local",
+    dependencies: [tsgo],
+});
+
 export const build = task({
     name: "build",
-    run: async () => {
-        await $`go build ${options.race ? ["-race"] : []} -o ./bin/ ./cmd/...`;
-    },
+    dependencies: [local],
+});
+
+export const cleanBuilt = task({
+    name: "clean:built",
+    hiddenFromTaskList: true,
+    run: () => fs.promises.rm("built", { recursive: true, force: true }),
 });
 
 export const generate = task({
@@ -82,10 +125,22 @@ export const generate = task({
     },
 });
 
-const goTest = memoize(() => isInstalled("gotestsum") ? ["gotestsum", "--format-hide-empty-pkg", "--"] : ["go", "test"]);
+const goTestFlags = [
+    ...(options.race ? ["-race"] : []),
+    ...(options.noembed ? ["-tags=noembed"] : []),
+];
+
+const gotestsum = memoize(() => {
+    const args = isInstalled("gotestsum") ? ["gotestsum", "--format-hide-empty-pkg", "--"] : ["go", "test"];
+    return args.concat(goTestFlags);
+});
+
+const goTest = memoize(() => {
+    return ["go", "test"].concat(goTestFlags);
+});
 
 async function runTests() {
-    await $`${goTest()} ${options.race ? ["-race"] : []} ./...`;
+    await $`${gotestsum()} ./...`;
 }
 
 export const test = task({
@@ -95,7 +150,7 @@ export const test = task({
 
 async function runTestBenchmarks() {
     // Run the benchmarks once to ensure they compile and run without errors.
-    await $`go test ${options.race ? ["-race"] : []} -run=- -bench=. -benchtime=1x ./...`;
+    await $`${goTest()} -run=- -bench=. -benchtime=1x ./...`;
 }
 
 export const testBenchmarks = task({
@@ -104,7 +159,7 @@ export const testBenchmarks = task({
 });
 
 async function runTestTools() {
-    await $({ cwd: path.join(__dirname, "_tools") })`${goTest()} ${options.race ? ["-race"] : []} ./...`;
+    await $({ cwd: path.join(__dirname, "_tools") })`${gotestsum()} ./...`;
 }
 
 export const testTools = task({
@@ -123,19 +178,60 @@ export const testAll = task({
 });
 
 const customLinterPath = "./_tools/custom-gcl";
-const golangciLintVersion = "v1.62.2"; // NOTE: this must match the version in .custom-gcl.yml
+const customLinterHashPath = customLinterPath + ".hash";
 
-async function buildCustomLinter() {
-    await $`go run github.com/golangci/golangci-lint/cmd/golangci-lint@${golangciLintVersion} custom`;
+const golangciLintVersion = memoize(() => {
+    const golangciLintYml = fs.readFileSync(".custom-gcl.yml", "utf8");
+    const pattern = /^version:\s*(v\d+\.\d+\.\d+).*$/m;
+    const match = pattern.exec(golangciLintYml);
+    if (!match) {
+        throw new Error("Expected version in .custom-gcl.yml");
+    }
+    return match[1];
+});
+
+const customlintHash = memoize(() => {
+    const files = glob.sync([
+        "./_tools/go.mod",
+        "./_tools/customlint/**/*",
+        "./.custom-gcl.yml",
+    ], {
+        ignore: "**/testdata/**",
+        nodir: true,
+        absolute: true,
+    });
+    files.sort();
+
+    const hash = crypto.createHash("sha256");
+
+    for (const file of files) {
+        hash.update(file);
+        hash.update(fs.readFileSync(file));
+    }
+
+    return hash.digest("hex") + "\n";
+});
+
+const buildCustomLinter = memoize(async () => {
+    const hash = customlintHash();
+    if (
+        isInstalled(customLinterPath)
+        && fs.existsSync(customLinterHashPath)
+        && fs.readFileSync(customLinterHashPath, "utf8") === hash
+    ) {
+        return;
+    }
+
+    await $`go run github.com/golangci/golangci-lint/cmd/golangci-lint@${golangciLintVersion()} custom`;
     await $`${customLinterPath} cache clean`;
-}
+
+    fs.writeFileSync(customLinterHashPath, hash);
+});
 
 export const lint = task({
     name: "lint",
     run: async () => {
-        if (!isInstalled(customLinterPath)) {
-            await buildCustomLinter();
-        }
+        await buildCustomLinter();
         await $`${customLinterPath} run ${options.fix ? ["--fix"] : []} ${isCI ? ["--timeout=5m"] : []}`;
     },
 });
@@ -144,7 +240,7 @@ export const installTools = task({
     name: "install-tools",
     run: async () => {
         await Promise.all([
-            ...[...tools].map(([tool, version]) => $`go install ${tool}@${version}`),
+            ...[...tools].map(([tool, version]) => $`go install ${tool}${version ? `@${version}` : ""}`),
             buildCustomLinter(),
         ]);
     },

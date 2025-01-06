@@ -86,7 +86,8 @@ type ValueSymbolLinks struct {
 	target         *ast.Symbol
 	mapper         *TypeMapper
 	nameType       *Type
-	containingType *Type // Containing union or intersection type for synthetic property
+	keyType        *Type // Key type for mapped type member
+	containingType *Type // Mapped type for mapped type property, containing union or intersection type for synthetic property
 }
 
 // Links for alias symbols
@@ -105,6 +106,18 @@ type ModuleSymbolLinks struct {
 	resolvedExports       ast.SymbolTable      // Resolved exports of module or combined early- and late-bound static members of a class.
 	cjsExportMerged       *ast.Symbol          // Version of the symbol with all non export= exports merged with the export= target
 	typeOnlyExportStarMap map[string]*ast.Node // Set on a module symbol when some of its exports were resolved through a 'export type * from "mod"' declaration
+}
+
+type ReverseMappedSymbolLinks struct {
+	propertyType   *Type
+	mappedType     *Type // References a mapped type
+	constraintType *Type // References an index type
+}
+
+// Links for late-bound symbols
+
+type LateBoundLinks struct {
+	lateSymbol *ast.Symbol
 }
 
 // Links for export type symbols
@@ -191,6 +204,10 @@ const (
 	VarianceFlagsAllowsStructuralFallback               = VarianceFlagsUnmeasurable | VarianceFlagsUnreliable
 )
 
+type IndexSymbolLinks struct {
+	filteredIndexSymbolCache map[string]*ast.Symbol // Symbol with applicable declarations
+}
+
 type AccessFlags uint32
 
 const (
@@ -233,30 +250,6 @@ const (
 	AssignmentDeclarationKindObjectDefinePropertyExports
 	// Object.defineProperty(Foo.prototype, 'name', ...);
 	AssignmentDeclarationKindObjectDefinePrototypeProperty
-)
-
-const InternalSymbolNamePrefix = "\xFE" // Invalid UTF8 sequence, will never occur as IdentifierName
-
-const (
-	InternalSymbolNameCall                    = InternalSymbolNamePrefix + "call"                    // Call signatures
-	InternalSymbolNameConstructor             = InternalSymbolNamePrefix + "constructor"             // Constructor implementations
-	InternalSymbolNameNew                     = InternalSymbolNamePrefix + "new"                     // Constructor signatures
-	InternalSymbolNameIndex                   = InternalSymbolNamePrefix + "index"                   // Index signatures
-	InternalSymbolNameExportStar              = InternalSymbolNamePrefix + "export"                  // Module export * declarations
-	InternalSymbolNameGlobal                  = InternalSymbolNamePrefix + "global"                  // Global self-reference
-	InternalSymbolNameMissing                 = InternalSymbolNamePrefix + "missing"                 // Indicates missing symbol
-	InternalSymbolNameType                    = InternalSymbolNamePrefix + "type"                    // Anonymous type literal symbol
-	InternalSymbolNameObject                  = InternalSymbolNamePrefix + "object"                  // Anonymous object literal declaration
-	InternalSymbolNameJSXAttributes           = InternalSymbolNamePrefix + "jsxAttributes"           // Anonymous JSX attributes object literal declaration
-	InternalSymbolNameClass                   = InternalSymbolNamePrefix + "class"                   // Unnamed class expression
-	InternalSymbolNameFunction                = InternalSymbolNamePrefix + "function"                // Unnamed function expression
-	InternalSymbolNameComputed                = InternalSymbolNamePrefix + "computed"                // Computed property name declaration with dynamic name
-	InternalSymbolNameResolving               = InternalSymbolNamePrefix + "resolving"               // Indicator symbol used to mark partially resolved type aliases
-	InternalSymbolNameExportEquals            = InternalSymbolNamePrefix + "export="                 // Export assignment symbol
-	InternalSymbolNameInstantiationExpression = InternalSymbolNamePrefix + "instantiationExpression" // Instantiation expressions
-	InternalSymbolNameImportAttributes        = InternalSymbolNamePrefix + "importAttributes"
-	InternalSymbolNameDefault                 = "default" // Default export symbol (technically not wholly internal, but included here for usability)
-	InternalSymbolNameThis                    = "this"
 )
 
 type NodeCheckFlags uint32
@@ -845,7 +838,7 @@ type InstantiationExpressionType struct {
 
 type MappedType struct {
 	ObjectType
-	declaration          ast.MappedTypeNode
+	declaration          *ast.MappedTypeNode
 	typeParameter        *Type
 	constraintType       *Type
 	nameType             *Type
@@ -961,7 +954,7 @@ type SubstitutionType struct {
 }
 
 type ConditionalRoot struct {
-	node                *ast.Node // ConditionalTypeNode
+	node                *ast.ConditionalTypeNode
 	checkType           *Type
 	extendsType         *Type
 	isDistributive      bool
@@ -983,6 +976,12 @@ type ConditionalType struct {
 	resolvedConstraintOfDistributive *Type
 	mapper                           *TypeMapper
 	combinedMapper                   *TypeMapper
+}
+
+type IterationTypes struct {
+	yieldType  *Type
+	returnType *Type
+	nextType   *Type
 }
 
 // SignatureFlags
@@ -1028,8 +1027,8 @@ type Signature struct {
 }
 
 type CompositeSignature struct {
-	flags      TypeFlags // TypeFlagsUnion | TypeFlagsIntersection
-	signatures []*Signature
+	isUnion    bool         // True for union, false for intersection
+	signatures []*Signature // Individual signatures
 }
 
 type TypePredicateKind int32
@@ -1148,12 +1147,6 @@ var LanguageFeatureMinimumTarget = LanguageFeatureMinimumTargetMap{
 	UsingAndAwaitUsing:                core.ScriptTargetESNext,
 	ClassAndClassElementDecorators:    core.ScriptTargetESNext,
 	RegularExpressionFlagsUnicodeSets: core.ScriptTargetESNext,
-}
-
-type ProjectReference struct {
-	path         string
-	originalPath string
-	circular     bool
 }
 
 type FileIncludeKind int

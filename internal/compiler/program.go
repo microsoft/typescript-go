@@ -1,25 +1,31 @@
 package compiler
 
 import (
+	"cmp"
 	"fmt"
 	"slices"
 	"strings"
 	"sync"
 
 	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/binder"
 	"github.com/microsoft/typescript-go/internal/compiler/module"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/parser"
+	"github.com/microsoft/typescript-go/internal/printer"
+	"github.com/microsoft/typescript-go/internal/sourcemap"
+	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 )
 
 type ProgramOptions struct {
-	RootPath         string
-	Host             CompilerHost
-	Options          *core.CompilerOptions
-	SingleThreaded   bool
-	ProjectReference []ProjectReference
+	RootPath           string
+	Host               CompilerHost
+	Options            *core.CompilerOptions
+	SingleThreaded     bool
+	ProjectReference   []core.ProjectReference
+	DefaultLibraryPath string
 }
 
 type Program struct {
@@ -32,7 +38,12 @@ type Program struct {
 	resolver         *module.Resolver
 	currentDirectory string
 
+	comparePathsOptions tspath.ComparePathsOptions
+	defaultLibraryPath  string
+
 	fileProcessingMutex sync.Mutex
+	libFiles            []*ast.SourceFile
+	otherFiles          []*ast.SourceFile
 	files               []*ast.SourceFile
 	filesByPath         map[tspath.Path]*ast.SourceFile
 	processedFileNames  core.Set[string]
@@ -44,10 +55,13 @@ type Program struct {
 	// - This calls resolveModuleNames, and then calls findSourceFile for each resolved module.
 	// As all these operations happen - and are nested - within the createProgram call, they close over the below variables.
 	// The current resolution depth is tracked by incrementing/decrementing as the depth first search progresses.
-	//maxNodeModuleJsDepth      int
+	// maxNodeModuleJsDepth      int
 	currentNodeModulesDepth int
 
 	usesUriStyleNodeCoreModules core.Tristate
+
+	commonSourceDirectory     string
+	commonSourceDirectoryOnce sync.Once
 }
 
 var extensions = []string{".ts", ".tsx"}
@@ -61,7 +75,7 @@ func NewProgram(options ProgramOptions) *Program {
 	}
 	p.filesByPath = make(map[tspath.Path]*ast.SourceFile)
 
-	//p.maxNodeModuleJsDepth = p.options.MaxNodeModuleJsDepth
+	// p.maxNodeModuleJsDepth = p.options.MaxNodeModuleJsDepth
 
 	// TODO(ercornel): !!! tracing?
 	// tracing?.push(tracing.Phase.Program, "createProgram", { configFilePath: options.configFilePath, rootDir: options.rootDir }, /*separateBeginAndEnd*/ true);
@@ -72,37 +86,86 @@ func NewProgram(options ProgramOptions) *Program {
 		panic("host required")
 	}
 
+	p.comparePathsOptions = tspath.ComparePathsOptions{
+		UseCaseSensitiveFileNames: p.host.FS().UseCaseSensitiveFileNames(),
+		CurrentDirectory:          p.host.GetCurrentDirectory(),
+	}
+
+	p.defaultLibraryPath = options.DefaultLibraryPath
+	if p.defaultLibraryPath == "" {
+		panic("default library path required")
+	}
+
 	p.resolver = module.NewResolver(p.host, p.compilerOptions)
 
-	// TODO(ercornel): !!!: SKIPPING FOR NOW :: default lib
 	p.rootPath = options.RootPath
 	if p.rootPath == "" {
 		panic("root path required")
 	}
-	fileInfos := readFileInfos(p.host.FS(), p.rootPath, extensions)
-	// Sort files by descending file size
-	slices.SortFunc(fileInfos, func(a FileInfo, b FileInfo) int {
-		return int(b.Size) - int(a.Size)
+
+	var libs []string
+
+	if p.compilerOptions.NoLib != core.TSTrue {
+		if p.compilerOptions.Lib == nil {
+			name := tsoptions.GetDefaultLibFileName(p.compilerOptions)
+			libs = append(libs, tspath.CombinePaths(p.defaultLibraryPath, name))
+		} else {
+			for _, lib := range p.compilerOptions.Lib {
+				name, ok := tsoptions.GetLibFileName(lib)
+				if ok {
+					libs = append(libs, tspath.CombinePaths(p.defaultLibraryPath, name))
+				}
+				// !!! error on unknown name
+			}
+		}
+	}
+
+	otherFiles := walkFiles(p.host.FS(), p.rootPath, extensions)
+
+	// Process otherFiles first so breakpoints on user code are more likely to be hit first.
+	p.processRootFiles(otherFiles, false)
+	p.processRootFiles(libs, true)
+
+	slices.SortFunc(p.libFiles, func(f1 *ast.SourceFile, f2 *ast.SourceFile) int {
+		return cmp.Compare(p.getDefaultLibFilePriority(f1), p.getDefaultLibFilePriority(f2))
 	})
 
-	p.processRootFiles(fileInfos)
+	// Sort files by path so we get a stable ordering between runs
+	slices.SortFunc(p.otherFiles, func(f1 *ast.SourceFile, f2 *ast.SourceFile) int {
+		return strings.Compare(string(f1.Path()), string(f2.Path()))
+	})
+
+	p.files = slices.Concat(p.libFiles, p.otherFiles)
+	p.libFiles = nil
+	p.otherFiles = nil
 
 	return p
 }
 
-func readFileInfos(fs vfs.FS, rootPath string, extensions []string) []FileInfo {
-	var fileInfos []FileInfo
+func (p *Program) getDefaultLibFilePriority(a *ast.SourceFile) int {
+	if tspath.ContainsPath(p.defaultLibraryPath, a.FileName(), p.comparePathsOptions) {
+		basename := tspath.GetBaseFileName(a.FileName())
+		if basename == "lib.d.ts" || basename == "lib.es6.d.ts" {
+			return 0
+		}
+		name := strings.TrimSuffix(strings.TrimPrefix(basename, "lib."), ".d.ts")
+		index := slices.Index(tsoptions.Libs, name)
+		if index != -1 {
+			return index + 1
+		}
+	}
+	return len(tsoptions.Libs) + 2
+}
+
+func walkFiles(fs vfs.FS, rootPath string, extensions []string) []string {
+	var files []string
 
 	err := fs.WalkDir(rootPath, func(path string, d vfs.DirEntry, err error) error {
 		if err != nil {
 			return err
 		}
 		if !d.IsDir() && slices.ContainsFunc(extensions, func(ext string) bool { return tspath.FileExtensionIs(path, ext) }) {
-			info, err := d.Info()
-			if err != nil {
-				return err //nolint:wrapcheck
-			}
-			fileInfos = append(fileInfos, FileInfo{Name: path, Size: info.Size()})
+			files = append(files, path)
 		}
 		return nil
 	})
@@ -110,7 +173,7 @@ func readFileInfos(fs vfs.FS, rootPath string, extensions []string) []FileInfo {
 		fmt.Println(err)
 	}
 
-	return fileInfos
+	return files
 }
 
 func (p *Program) SourceFiles() []*ast.SourceFile { return p.files }
@@ -122,55 +185,81 @@ func (p *Program) bindSourceFiles() {
 	for _, file := range p.files {
 		if !file.IsBound {
 			wg.Run(func() {
-				bindSourceFile(file, p.compilerOptions)
+				binder.BindSourceFile(file, p.compilerOptions)
 			})
 		}
 	}
 	wg.Wait()
 }
 
-func (p *Program) processRootFiles(rootFiles []FileInfo) {
+func (p *Program) processRootFiles(rootFiles []string, isLib bool) {
 	wg := core.NewWorkGroup(p.programOptions.SingleThreaded)
 
 	absPaths := make([]string, 0, len(rootFiles))
-	for _, fileInfo := range rootFiles {
-		absPath := tspath.GetNormalizedAbsolutePath(fileInfo.Name, p.currentDirectory)
+	for _, file := range rootFiles {
+		absPath := tspath.GetNormalizedAbsolutePath(file, p.currentDirectory)
 		p.processedFileNames.Add(absPath)
 		absPaths = append(absPaths, absPath)
 	}
 
 	for _, absPath := range absPaths {
-		p.startParseTask(absPath, wg)
+		p.startParseTask(absPath, wg, isLib)
 	}
 
 	wg.Wait()
 }
 
-func (p *Program) startParseTask(fileName string, wg *core.WorkGroup) {
+func (p *Program) startParseTask(fileName string, wg *core.WorkGroup, isLib bool) {
 	wg.Run(func() {
 		normalizedPath := tspath.NormalizePath(fileName)
 		file := p.parseSourceFile(normalizedPath)
+
+		// !!! if noResolve, skip all of this
+
 		p.collectExternalModuleReferences(file)
 
-		filesToParse := make([]string, 0, len(file.ReferencedFiles)+len(file.Imports)+len(file.ModuleAugmentations))
+		type toParse struct {
+			p     string
+			isLib bool
+		}
+
+		filesToParse := make([]toParse, 0, len(file.ReferencedFiles)+len(file.Imports)+len(file.ModuleAugmentations))
 
 		for _, ref := range file.ReferencedFiles {
 			resolvedPath := p.resolveTripleslashPathReference(ref.FileName, file.FileName())
-			filesToParse = append(filesToParse, resolvedPath)
+			filesToParse = append(filesToParse, toParse{p: resolvedPath})
 		}
 
-		filesToParse = append(filesToParse, p.resolveImportsAndModuleAugmentations(file)...)
+		if p.compilerOptions.NoLib != core.TSTrue {
+			for _, lib := range file.LibReferenceDirectives {
+				name, ok := tsoptions.GetLibFileName(lib.FileName)
+				if !ok {
+					continue
+				}
+				filesToParse = append(filesToParse, toParse{p: tspath.CombinePaths(p.defaultLibraryPath, name), isLib: true})
+			}
+		}
+
+		for _, imp := range p.resolveImportsAndModuleAugmentations(file) {
+			filesToParse = append(filesToParse, toParse{p: imp})
+		}
 
 		p.fileProcessingMutex.Lock()
 		defer p.fileProcessingMutex.Unlock()
-		p.files = append(p.files, file)
+
+		if isLib {
+			p.libFiles = append(p.libFiles, file)
+		} else {
+			p.otherFiles = append(p.otherFiles, file)
+		}
+
 		p.filesByPath[file.Path()] = file
 
 		if len(filesToParse) > 0 {
-			for _, fileName := range filesToParse {
-				if !p.processedFileNames.Has(fileName) {
-					p.processedFileNames.Add(fileName)
-					p.startParseTask(fileName, wg)
+			for _, f := range filesToParse {
+				if !p.processedFileNames.Has(f.p) {
+					p.processedFileNames.Add(f.p)
+					p.startParseTask(f.p, wg, f.isLib)
 				}
 			}
 		}
@@ -241,7 +330,7 @@ func (p *Program) resolveImportsAndModuleAugmentations(file *ast.SourceFile) []s
 			// - module name comes from the list of imports
 			// - it's not a top level JavaScript module that exceeded the search max
 
-			//const elideImport = isJsFileFromNodeModules && currentNodeModulesDepth > maxNodeModuleJsDepth;
+			// const elideImport = isJsFileFromNodeModules && currentNodeModulesDepth > maxNodeModuleJsDepth;
 
 			// Don't add the file if it has a bad extension (e.g. 'tsx' if we don't have '--allowJs')
 			// This may still end up being an untyped module -- the file won't be included but imports will be allowed.
@@ -250,7 +339,7 @@ func (p *Program) resolveImportsAndModuleAugmentations(file *ast.SourceFile) []s
 			// TODO(ercornel): !!!: other checks on whether or not to add the file
 
 			if shouldAddFile {
-				//p.findSourceFile(resolvedFileName, FileIncludeReason{Import, 0})
+				// p.findSourceFile(resolvedFileName, FileIncludeReason{Import, 0})
 				toParse = append(toParse, resolvedFileName)
 			}
 		}
@@ -303,7 +392,7 @@ func (p *Program) getSemanticDiagnosticsForFile(sourceFile *ast.SourceFile) []*a
 func (p *Program) getDiagnosticsHelper(sourceFile *ast.SourceFile, ensureBound bool, getDiagnostics func(*ast.SourceFile) []*ast.Diagnostic) []*ast.Diagnostic {
 	if sourceFile != nil {
 		if ensureBound {
-			bindSourceFile(sourceFile, p.compilerOptions)
+			binder.BindSourceFile(sourceFile, p.compilerOptions)
 		}
 		return sortAndDeduplicateDiagnostics(getDiagnostics(sourceFile))
 	}
@@ -476,7 +565,7 @@ func (p *Program) collectModuleReferences(file *ast.SourceFile, node *ast.Statem
 		if moduleNameExpr != nil && ast.IsStringLiteral(moduleNameExpr) {
 			moduleName := moduleNameExpr.AsStringLiteral().Text
 			if moduleName != "" && (!inAmbientModule || !tspath.IsExternalModuleNameRelative(moduleName)) {
-				setParentInChildren(node) // we need parent data on imports before the program is fully bound, so we ensure it's set here
+				binder.SetParentInChildren(node) // we need parent data on imports before the program is fully bound, so we ensure it's set here
 				file.Imports = append(file.Imports, moduleNameExpr)
 				if file.UsesUriStyleNodeCoreModules != core.TSTrue && p.currentNodeModulesDepth == 0 && !file.IsDeclarationFile {
 					if strings.HasPrefix(moduleName, "node:") && !exclusivelyPrefixedNodeCoreModules[moduleName] {
@@ -491,15 +580,15 @@ func (p *Program) collectModuleReferences(file *ast.SourceFile, node *ast.Statem
 		}
 		return
 	}
-	if ast.IsModuleDeclaration(node) && isAmbientModule(node) && (inAmbientModule || ast.HasSyntacticModifier(node, ast.ModifierFlagsAmbient) || file.IsDeclarationFile) {
-		setParentInChildren(node)
+	if ast.IsModuleDeclaration(node) && ast.IsAmbientModule(node) && (inAmbientModule || ast.HasSyntacticModifier(node, ast.ModifierFlagsAmbient) || file.IsDeclarationFile) {
+		binder.SetParentInChildren(node)
 		nameText := node.AsModuleDeclaration().Name().Text()
 		// Ambient module declarations can be interpreted as augmentations for some existing external modules.
 		// This will happen in two cases:
 		// - if current file is external module then module augmentation is a ambient module declaration defined in the top level scope
 		// - if current file is not external module then module augmentation is an ambient module declaration with non-relative module name
 		//   immediately nested in top level ambient module declaration .
-		if isExternalModule(file) || (inAmbientModule && !tspath.IsExternalModuleNameRelative(nameText)) {
+		if ast.IsExternalModule(file) || (inAmbientModule && !tspath.IsExternalModuleNameRelative(nameText)) {
 			file.ModuleAugmentations = append(file.ModuleAugmentations, node.AsModuleDeclaration().Name())
 		} else if !inAmbientModule {
 			if file.IsDeclarationFile {
@@ -540,4 +629,159 @@ func (p *Program) getEmitModuleFormatOfFile(sourceFile *ast.SourceFile) core.Mod
 	// 	mode = options.GetEmitModuleKind()
 	// }
 	return p.compilerOptions.GetEmitModuleKind()
+}
+
+func (p *Program) CommonSourceDirectory() string {
+	p.commonSourceDirectoryOnce.Do(func() {
+		var files []string
+		host := &emitHost{program: p}
+		for _, file := range p.files {
+			if sourceFileMayBeEmitted(file, host, false /*forceDtsEmit*/) {
+				files = append(files, file.FileName())
+			}
+		}
+		p.commonSourceDirectory = getCommonSourceDirectory(
+			p.compilerOptions,
+			files,
+			p.host.GetCurrentDirectory(),
+			p.host.FS().UseCaseSensitiveFileNames(),
+		)
+	})
+	return p.commonSourceDirectory
+}
+
+func computeCommonSourceDirectoryOfFilenames(fileNames []string, currentDirectory string, useCaseSensitiveFileNames bool) string {
+	var commonPathComponents []string
+	for _, sourceFile := range fileNames {
+		// Each file contributes into common source file path
+		sourcePathComponents := tspath.GetNormalizedPathComponents(sourceFile, currentDirectory)
+
+		// The base file name is not part of the common directory path
+		sourcePathComponents = sourcePathComponents[:len(sourcePathComponents)-1]
+
+		if commonPathComponents == nil {
+			// first file
+			commonPathComponents = sourcePathComponents
+			continue
+		}
+
+		n := min(len(commonPathComponents), len(sourcePathComponents))
+		for i := range n {
+			if tspath.GetCanonicalFileName(commonPathComponents[i], useCaseSensitiveFileNames) != tspath.GetCanonicalFileName(sourcePathComponents[i], useCaseSensitiveFileNames) {
+				if i == 0 {
+					// Failed to find any common path component
+					return ""
+				}
+
+				// New common path found that is 0 -> i-1
+				commonPathComponents = commonPathComponents[:i]
+				break
+			}
+		}
+
+		// If the sourcePathComponents was shorter than the commonPathComponents, truncate to the sourcePathComponents
+		if len(sourcePathComponents) < len(commonPathComponents) {
+			commonPathComponents = commonPathComponents[:len(sourcePathComponents)]
+		}
+	}
+
+	if len(commonPathComponents) == 0 {
+		// Can happen when all input files are .d.ts files
+		return currentDirectory
+	}
+
+	return tspath.GetPathFromPathComponents(commonPathComponents)
+}
+
+func getCommonSourceDirectory(options *core.CompilerOptions, files []string, currentDirectory string, useCaseSensitiveFileNames bool) string {
+	var commonSourceDirectory string
+	// !!! If a rootDir is specified use it as the commonSourceDirectory
+	// !!! Project compilations never infer their root from the input source paths
+
+	commonSourceDirectory = computeCommonSourceDirectoryOfFilenames(files, currentDirectory, useCaseSensitiveFileNames)
+
+	if len(commonSourceDirectory) > 0 {
+		// Make sure directory path ends with directory separator so this string can directly
+		// used to replace with "" to get the relative path of the source file and the relative path doesn't
+		// start with / making it rooted path
+		commonSourceDirectory = tspath.EnsureTrailingDirectorySeparator(commonSourceDirectory)
+	}
+
+	return commonSourceDirectory
+}
+
+type EmitOptions struct {
+	TargetSourceFile *ast.SourceFile // Single file to emit. If `nil`, emits all files
+	forceDtsEmit     bool
+}
+
+type EmitResult struct {
+	EmitSkipped  bool
+	Diagnostics  []*ast.Diagnostic      // Contains declaration emit diagnostics
+	EmittedFiles []string               // Array of files the compiler wrote to disk
+	sourceMaps   []*sourceMapEmitResult // Array of sourceMapData if compiler emitted sourcemaps
+}
+
+type sourceMapEmitResult struct {
+	inputSourceFileNames []string // Input source file (which one can use on program to get the file), 1:1 mapping with the sourceMap.sources list
+	sourceMap            *sourcemap.RawSourceMap
+}
+
+func (p *Program) Emit(options *EmitOptions) *EmitResult {
+	// !!! performance measurement
+
+	host := &emitHost{program: p}
+
+	writerPool := &sync.Pool{
+		New: func() any {
+			return printer.NewTextWriter(host.Options().NewLine.GetNewLineCharacter())
+		},
+	}
+	wg := core.NewWorkGroup(p.programOptions.SingleThreaded)
+
+	var emitters []*emitter
+	sourceFiles := getSourceFilesToEmit(host, options.TargetSourceFile, options.forceDtsEmit)
+	for _, sourceFile := range sourceFiles {
+		emitter := &emitter{
+			host:              host,
+			emittedFilesList:  nil,
+			sourceMapDataList: nil,
+			writer:            nil,
+			sourceFile:        sourceFile,
+		}
+		emitters = append(emitters, emitter)
+		wg.Run(func() {
+			// take an unused writer
+			writer := writerPool.Get().(printer.EmitTextWriter)
+			writer.Clear()
+
+			// attach writer and perform emit
+			emitter.writer = writer
+			emitter.paths = getOutputPathsFor(sourceFile, host, options.forceDtsEmit)
+			emitter.emit()
+			emitter.writer = nil
+
+			// put the writer back in the pool
+			writerPool.Put(writer)
+		})
+	}
+
+	// wait for emit to complete
+	wg.Wait()
+
+	// collect results from emit, preserving input order
+	result := &EmitResult{}
+	for _, emitter := range emitters {
+		if emitter.emitSkipped {
+			result.EmitSkipped = true
+		}
+		result.Diagnostics = append(result.Diagnostics, emitter.emitterDiagnostics.GetDiagnostics()...)
+		if emitter.emittedFilesList != nil {
+			result.EmittedFiles = append(result.EmittedFiles, emitter.emittedFilesList...)
+		}
+		if emitter.sourceMapDataList != nil {
+			result.sourceMaps = append(result.sourceMaps, emitter.sourceMapDataList...)
+		}
+	}
+	return result
 }

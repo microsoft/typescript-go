@@ -46,6 +46,13 @@ func mergeTypeMappers(m1 *TypeMapper, m2 *TypeMapper) *TypeMapper {
 	return m2
 }
 
+func prependTypeMapping(source *Type, target *Type, mapper *TypeMapper) *TypeMapper {
+	if mapper == nil {
+		return newSimpleTypeMapper(source, target)
+	}
+	return newMergedTypeMapper(newSimpleTypeMapper(source, target), mapper)
+}
+
 func appendTypeMapping(mapper *TypeMapper, source *Type, target *Type) *TypeMapper {
 	if mapper == nil {
 		return newSimpleTypeMapper(source, target)
@@ -239,6 +246,7 @@ func (c *Checker) newInferenceTypeMapper(n *InferenceContext, fixing bool) *Type
 	m.data = m
 	m.c = c
 	m.n = n
+	m.fixing = fixing
 	return &m.TypeMapper
 }
 
