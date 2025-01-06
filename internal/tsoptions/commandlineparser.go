@@ -1,7 +1,6 @@
 package tsoptions
 
 import (
-	"slices"
 	"strconv"
 	"strings"
 	"sync"
@@ -32,20 +31,24 @@ type ParseCommandLineWorkerDiagnostics struct {
 	OptionTypeMismatchDiagnostic *diagnostics.Message
 }
 
-type OptionsBase map[string]any //CompilerOptionsValue|TsConfigSourceFile
+type OptionsBase map[string]any // CompilerOptionsValue|TsConfigSourceFile
 
 func (p *CommandLineParser) AlternateMode() *AlternateModeDiagnostics {
 	return p.workerDiagnostics.didYouMean.alternateMode
 }
+
 func (p *CommandLineParser) OptionsDeclarations() []CommandLineOption {
 	return p.workerDiagnostics.didYouMean.OptionDeclarations
 }
+
 func (p *CommandLineParser) UnknownOptionDiagnostic() *diagnostics.Message {
 	return p.workerDiagnostics.didYouMean.UnknownOptionDiagnostic
 }
+
 func (p *CommandLineParser) UnknownDidYouMeanDiagnostic() *diagnostics.Message {
 	return p.workerDiagnostics.didYouMean.UnknownDidYouMeanDiagnostic
 }
+
 func (p *CommandLineParser) GetOptionsNameMap() *NameMap {
 	p.workerDiagnostics.optionsNameMapOnce.Do(func() {
 		optionsNames := map[string]*CommandLineOption{}
@@ -74,28 +77,6 @@ type CommandLineParser struct {
 	errors    []*ast.Diagnostic
 }
 
-// todo: used in executeCommandLine
-type ParsedCommandLine struct {
-	Options    *core.CompilerOptions
-	ConfigFile *ast.SourceFile // TsConfigSourceFile
-	// TypeAquisition *core.TypeAcquisition
-	FileNames         []string
-	ProjectReferences []string // todo: core.ProjectReference
-	// WatchOptions WatchOptions
-	// Raw any
-	Errors []*ast.Diagnostic
-	// WildcardDirectories map[string]watchDirectoryFlags
-	CompileOnSave bool
-}
-
-func (p *ParsedCommandLine) GetConfigFileParsingDiagnostics() []*ast.Diagnostic {
-	if p.ConfigFile != nil {
-		// todo: !!! should be ConfigFile.ParseDiagnostics, check if they are the same
-		return slices.Concat(p.ConfigFile.Diagnostics(), p.Errors)
-	}
-	return p.Errors
-}
-
 func ParseCommandLine(
 	commandLine []string,
 	fs vfs.FS,
@@ -111,7 +92,7 @@ func parseCommandLineWorker(
 	commandLine []string,
 	fs vfs.FS,
 ) *CommandLineParser {
-	var parser = &CommandLineParser{
+	parser := &CommandLineParser{
 		fs:                fs,
 		workerDiagnostics: parseCommandLineWithDiagnostics,
 		fileNames:         []string{},
@@ -338,7 +319,7 @@ func (p *CommandLineParser) validateJsonOptionValue(
 	opt *CommandLineOption,
 	value string,
 	loc *core.TextRange,
-	sourceFile *ast.SourceFile, //TODO TsConfigSourceFile,
+	sourceFile *ast.SourceFile, // TODO TsConfigSourceFile,
 ) string {
 	if opt.extraValidation != nil {
 		d, args := opt.extraValidation(value)

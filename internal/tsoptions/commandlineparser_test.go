@@ -18,7 +18,7 @@ func TestCommandLineParseResult(t *testing.T) {
 	t.Parallel()
 	repo.SkipIfNoTypeScriptSubmodule(t)
 
-	var parseCommandLineSubScenarios = []*subScenarioInput{
+	parseCommandLineSubScenarios := []*subScenarioInput{
 		// --lib es6 0.ts
 		{"Parse single option of library flag", []string{"--lib", "es6", "0.ts"}},
 		{"Handles may only be used with --build flags", []string{"--build", "--clean", "--dry", "--force", "--verbose"}},
@@ -201,7 +201,7 @@ func parseExistingCompilerBaseline(t *testing.T, baseline string) *TestCommandLi
 	e := json.Unmarshal([]byte(compilerOptions), &baselineOptions)
 	assert.NilError(t, e)
 
-	var parser = TestCommandLineParser{
+	parser := TestCommandLineParser{
 		options:   *baselineOptions,
 		fileNames: fileNames,
 		errors:    errors,
