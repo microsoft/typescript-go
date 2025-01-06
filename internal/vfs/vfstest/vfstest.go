@@ -10,6 +10,7 @@ import (
 	"sync"
 	"testing/fstest"
 
+	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 )
@@ -187,7 +188,7 @@ func (f *readDirFile) ReadDir(n int) ([]fs.DirEntry, error) {
 
 	entries := make([]fs.DirEntry, len(list))
 	for i, entry := range list {
-		info := must(entry.Info())
+		info := core.Must(entry.Info())
 		newInfo, ok := convertInfo(info)
 		if !ok {
 			panic(fmt.Sprintf("unexpected synthesized dir: %q", info.Name()))
@@ -207,7 +208,7 @@ func (m *mapFS) Open(name string) (fs.File, error) {
 		return nil, err
 	}
 
-	info := must(f.Stat())
+	info := core.Must(f.Stat())
 
 	newInfo, ok := convertInfo(info)
 	if !ok {
@@ -294,11 +295,4 @@ func (m *mapFS) WriteFile(path string, data []byte, perm fs.FileMode) error {
 	})
 
 	return nil
-}
-
-func must[T any](v T, err error) T {
-	if err != nil {
-		panic(err)
-	}
-	return v
 }

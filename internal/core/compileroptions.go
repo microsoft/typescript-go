@@ -11,6 +11,7 @@ import (
 type CompilerOptions struct {
 	AllowJs                            Tristate             `json:"allowJs"`
 	AllowSyntheticDefaultImports       Tristate             `json:"allowSyntheticDefaultImports"`
+	AllowImportingTsExtensions         Tristate             `json:"allowImportingTsExtensions"`
 	AllowUmdGlobalAccess               Tristate             `json:"allowUmdGlobalAccess"`
 	AllowUnreachableCode               Tristate             `json:"allowUnreachableCode"`
 	AllowUnusedLabels                  Tristate             `json:"allowUnusedLabels"`
@@ -19,6 +20,8 @@ type CompilerOptions struct {
 	EmitDeclarationOnly                Tristate             `json:"emitDeclarationOnly"`
 	EmitBOM                            Tristate             `json:"emitBOM"`
 	DownlevelIteration                 Tristate             `json:"downlevelIteration"`
+	DeclarationDir                     string               `json:"declarationDir"`
+	DeclarationMap                     Tristate             `json:"declarationMap"`
 	ESModuleInterop                    Tristate             `json:"esModuleInterop"`
 	ExactOptionalPropertyTypes         Tristate             `json:"exactOptionalPropertyTypes"`
 	ExperimentalDecorators             Tristate             `json:"experimentalDecorators"`
@@ -45,6 +48,7 @@ type CompilerOptions struct {
 	ResolveJsonModule                  Tristate             `json:"resolveJsonModule"`
 	ResolvePackageJsonExports          Tristate             `json:"resolvePackageJsonExports"`
 	ResolvePackageJsonImports          Tristate             `json:"resolvePackageJsonImports"`
+	RewriteRelativeImportExtensions    Tristate             `json:"rewriteRelativeImportExtensions"`
 	Strict                             Tristate             `json:"strict"`
 	StrictBindCallApply                Tristate             `json:"strictBindCallApply"`
 	StrictFunctionTypes                Tristate             `json:"strictFunctionTypes"`
@@ -57,11 +61,14 @@ type CompilerOptions struct {
 	UseDefineForClassFields            Tristate             `json:"useDefineForClassFields"`
 	UseUnknownInCatchVariables         Tristate             `json:"useUnknownInCatchVariables"`
 	VerbatimModuleSyntax               Tristate             `json:"verbatimModuleSyntax"`
+	MaxNodeModuleJsDepth               Tristate             `json:"maxNodeModuleJsDepth"`
+	SkipLibCheck                       Tristate             `json:"skipLibCheck"`
 
 	// Internal fields
 	ConfigFilePath  string   `json:"configFilePath"`
 	NoDtsResolution Tristate `json:"noDtsResolution"`
 	PathsBasePath   string   `json:"pathsBasePath"`
+	//Option map[string]CompilerOptionsValue
 }
 
 func (options *CompilerOptions) GetEmitScriptTarget() ScriptTarget {
@@ -293,3 +300,64 @@ const (
 	JsxEmitReactJSX    JsxEmit = 4
 	JsxEmitReactJSXDev JsxEmit = 5
 )
+
+type Option struct {
+	Dependencies []string
+	ComputeValue func(compilerOptions *CompilerOptions) interface{}
+}
+
+func createComputedCompilerOptions(options map[string]Option) map[string]Option {
+	return options
+}
+
+var options = map[string]Option{ //todo: add more of these and fix circular dependencies
+	"allowImportingTsExtensions": {
+		Dependencies: []string{"rewriteRelativeImportExtensions"},
+		ComputeValue: func(compilerOptions *CompilerOptions) interface{} {
+			// Implement the logic to compute the value
+			if compilerOptions.AllowImportingTsExtensions != 2 {
+				return compilerOptions.AllowImportingTsExtensions
+			}
+			allowImportingTsExtensions := compilerOptions.AllowImportingTsExtensions
+			rewriteRelativeImportExtensions := compilerOptions.RewriteRelativeImportExtensions
+			return allowImportingTsExtensions == 2 || rewriteRelativeImportExtensions == 2
+		},
+	},
+	"target": {
+		Dependencies: []string{"module"},
+		ComputeValue: func(compilerOptions *CompilerOptions) interface{} {
+			target := compilerOptions.Target
+			if target == ScriptTargetES3 {
+				target = 0
+			}
+			if target != 0 {
+				return target
+			}
+			module := compilerOptions.ModuleKind
+			return ((module == ModuleKindNode16) || (module == ModuleKindNodeNext)) //how to check for script targets
+		},
+	},
+	"allowJs": {
+		Dependencies: []string{"checkJs"},
+		ComputeValue: func(compilerOptions *CompilerOptions) interface{} {
+			if compilerOptions.AllowJs == 0 {
+				return compilerOptions.CheckJs
+			}
+			return compilerOptions.AllowJs
+		},
+	},
+	"resolveJsonModule": { //look into this
+		Dependencies: []string{"moduleResolution", "module", "target"},
+		ComputeValue: func(compilerOptions *CompilerOptions) interface{} {
+			if compilerOptions.ResolveJsonModule == 0 {
+				return compilerOptions.ResolveJsonModule
+			}
+			if compilerOptions.ModuleKind == ModuleKindPreserve {
+				return (Tristate)(2)
+			}
+			return (Tristate)(1)
+		},
+	},
+}
+
+var ComputedOptions = createComputedCompilerOptions(options)

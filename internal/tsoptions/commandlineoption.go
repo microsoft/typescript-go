@@ -36,7 +36,7 @@ type CommandLineOption struct {
 	category *diagnostics.Message
 
 	// defined once
-	extraValidation func(value CompilerOptionsValue) (d *diagnostics.Message, args []string)
+	extraValidation func(value bool) (d *diagnostics.Message, args []string)
 
 	// true or undefined
 	// used for configDirTemplateSubstitutionOptions
@@ -61,6 +61,8 @@ type CommandLineOption struct {
 
 	// used for CommandLineOptionTypeList
 	listPreserveFalsyValues bool
+	// used for compilerOptionsDeclaration
+	ElementOptions map[string]CommandLineOption
 }
 
 func (o *CommandLineOption) DeprecatedKeys() *core.Set[string] {
@@ -121,6 +123,27 @@ var commandLineOptionElements = map[string]*CommandLineOption{
 		Name: "plugin",
 		Kind: CommandLineOptionTypeObject,
 	},
+	//For tsconfig root options
+	"references": {
+		Name: "references",
+		Kind: CommandLineOptionTypeObject,
+	},
+	"files": {
+		Name: "files",
+		Kind: CommandLineOptionTypeString,
+	},
+	"include": {
+		Name: "include",
+		Kind: CommandLineOptionTypeString,
+	},
+	"exclude": {
+		Name: "exclude",
+		Kind: CommandLineOptionTypeString,
+	},
+	"extends": {
+		Name: "extends",
+		Kind: CommandLineOptionTypeString,
+	},
 }
 
 // CommandLineOption.EnumMap()
@@ -142,3 +165,21 @@ var commandLineOptionDeprecated = map[string]*core.Set[string]{
 
 // todo: revisit to see if this can be improved
 type CompilerOptionsValue any
+
+var compilerOptionsDeclaration = CommandLineOption{
+	Name:           "compilerOptions",
+	Kind:           CommandLineOptionTypeObject,
+	ElementOptions: getCommandLineCompilerOptionsMap(),
+}
+
+var compileOnSaveCommandLineOption = CommandLineOption{
+	Name:                    "compileOnSave",
+	Kind:                    CommandLineOptionTypeBoolean,
+	defaultValueDescription: false,
+}
+
+var extendsOptionDeclaration = CommandLineOption{
+	Name:     "extends",
+	Kind:     CommandLineOptionTypeListOrElement,
+	category: diagnostics.File_Management,
+}

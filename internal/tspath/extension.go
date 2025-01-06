@@ -99,3 +99,36 @@ func GetDeclarationFileExtension(fileName string) string {
 	}
 	return ""
 }
+
+/**
+ * Changes the extension of a path to the provided extension if it has one of the provided extensions.
+ *
+ * ```ts
+ * changeAnyExtension("/path/to/file.ext", ".js", ".ext") === "/path/to/file.js"
+ * changeAnyExtension("/path/to/file.ext", ".js", ".ts") === "/path/to/file.ext"
+ * changeAnyExtension("/path/to/file.ext", ".js", [".ext", ".ts"]) === "/path/to/file.js"
+ * ```
+ */
+func changeAnyExtension(path string, ext string, extensions []string, ignoreCase bool) string {
+	var pathext string
+	if extensions != nil && ignoreCase {
+		pathext = GetAnyExtensionFromPath(path, extensions, ignoreCase)
+
+	} else {
+		pathext = GetAnyExtensionFromPath(path, nil, false)
+	}
+	if pathext != "" {
+		result := path[:len(path)-len(pathext)]
+		if strings.HasPrefix(ext, ".") {
+			return result + ext
+		} else {
+			return result + "." + ext
+		}
+	}
+	return path
+
+}
+
+func ChangeExtension(path string, newExtension string) string {
+	return changeAnyExtension(path, newExtension, extensionsToRemove /*ignoreCase*/, false)
+}
