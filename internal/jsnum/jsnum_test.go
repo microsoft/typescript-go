@@ -8,32 +8,27 @@ import (
 	"gotest.tools/v3/assert"
 )
 
-const (
-	maxSafeInteger = 1<<53 - 1
-	minSafeInteger = -maxSafeInteger
-)
-
 var toInt32Tests = []struct {
 	name  string
-	input float64
+	input Number
 	want  int32
 	bench bool
 }{
 	{"0.0", 0, 0, true},
-	{"-0.0", negativeZero, 0, false},
-	{"NaN", math.NaN(), 0, true},
-	{"+Inf", math.Inf(1), 0, true},
-	{"-Inf", math.Inf(-1), 0, true},
-	{"MaxInt32", float64(math.MaxInt32), math.MaxInt32, false},
-	{"MaxInt32+1", float64(int64(math.MaxInt32) + 1), math.MinInt32, true},
-	{"MinInt32", float64(math.MinInt32), math.MinInt32, false},
-	{"MinInt32-1", float64(int64(math.MinInt32) - 1), math.MaxInt32, true},
-	{"MIN_SAFE_INTEGER", minSafeInteger, 1, false},
-	{"MIN_SAFE_INTEGER-1", minSafeInteger - 1, 0, false},
-	{"MIN_SAFE_INTEGER+1", minSafeInteger + 1, 2, false},
-	{"MAX_SAFE_INTEGER", maxSafeInteger, -1, true},
-	{"MAX_SAFE_INTEGER-1", maxSafeInteger - 1, -2, true},
-	{"MAX_SAFE_INTEGER+1", maxSafeInteger + 1, 0, true},
+	{"-0.0", Number(negativeZero), 0, false},
+	{"NaN", NaN(), 0, true},
+	{"+Inf", Inf(1), 0, true},
+	{"-Inf", Inf(-1), 0, true},
+	{"MaxInt32", Number(math.MaxInt32), math.MaxInt32, false},
+	{"MaxInt32+1", Number(int64(math.MaxInt32) + 1), math.MinInt32, true},
+	{"MinInt32", Number(math.MinInt32), math.MinInt32, false},
+	{"MinInt32-1", Number(int64(math.MinInt32) - 1), math.MaxInt32, true},
+	{"MIN_SAFE_INTEGER", MinSafeInteger, 1, false},
+	{"MIN_SAFE_INTEGER-1", MinSafeInteger - 1, 0, false},
+	{"MIN_SAFE_INTEGER+1", MinSafeInteger + 1, 2, false},
+	{"MAX_SAFE_INTEGER", MaxSafeInteger, -1, true},
+	{"MAX_SAFE_INTEGER-1", MaxSafeInteger - 1, -2, true},
+	{"MAX_SAFE_INTEGER+1", MaxSafeInteger + 1, 0, true},
 	{"-8589934590", -8589934590, 2, false},
 	{"0xDEADBEEF", 0xDEADBEEF, -559038737, true},
 	{"4294967808", 4294967808, 512, false},
@@ -42,8 +37,8 @@ var toInt32Tests = []struct {
 	{"-SmallestNonzeroFloat64", -math.SmallestNonzeroFloat64, 0, false},
 	{"MaxFloat64", math.MaxFloat64, 0, false},
 	{"-MaxFloat64", -math.MaxFloat64, 0, false},
-	{"Largest subnormal number", math.Float64frombits(0x000FFFFFFFFFFFFF), 0, false},
-	{"Smallest positive normal number", math.Float64frombits(0x0010000000000000), 0, false},
+	{"Largest subnormal number", Number(math.Float64frombits(0x000FFFFFFFFFFFFF)), 0, false},
+	{"Smallest positive normal number", Number(math.Float64frombits(0x0010000000000000)), 0, false},
 	{"Largest normal number", math.MaxFloat64, 0, false},
 	{"-Largest normal number", -math.MaxFloat64, 0, false},
 	{"1.0", 1.0, 1, false},
@@ -97,138 +92,138 @@ func BenchmarkToInt32(b *testing.B) {
 func TestBitwiseNOT(t *testing.T) {
 	t.Parallel()
 
-	assert.Equal(t, BitwiseNOT(-2147483649), BitwiseNOT(2147483647))
-	assert.Equal(t, BitwiseNOT(-4294967296), BitwiseNOT(0))
-	assert.Equal(t, BitwiseNOT(-2147483648), BitwiseNOT(-2147483648))
-	assert.Equal(t, BitwiseNOT(-4294967296), BitwiseNOT(0))
+	assert.Equal(t, Number(-2147483649).BitwiseNOT(), Number(2147483647).BitwiseNOT())
+	assert.Equal(t, Number(-4294967296).BitwiseNOT(), Number(0).BitwiseNOT())
+	assert.Equal(t, Number(-2147483648).BitwiseNOT(), Number(-2147483648).BitwiseNOT())
+	assert.Equal(t, Number(-4294967296).BitwiseNOT(), Number(0).BitwiseNOT())
 }
 
 func TestBitwiseAND(t *testing.T) {
 	t.Parallel()
 
-	assert.Equal(t, BitwiseAND(1, 0), 0.0)
-	assert.Equal(t, BitwiseAND(1, 1), 1.0)
+	assert.Equal(t, Number(1).BitwiseAND(0), Number(0.0))
+	assert.Equal(t, Number(1).BitwiseAND(1), Number(1.0))
 }
 
 func TestBitwiseOR(t *testing.T) {
 	t.Parallel()
 
-	assert.Equal(t, BitwiseOR(1, 0), 1.0)
-	assert.Equal(t, BitwiseOR(1, 1), 1.0)
+	assert.Equal(t, Number(1).BitwiseOR(0), Number(1.0))
+	assert.Equal(t, Number(1).BitwiseOR(1), Number(1.0))
 }
 
 func TestBitwiseXOR(t *testing.T) {
 	t.Parallel()
 
-	assert.Equal(t, BitwiseXOR(1, 0), 1.0)
-	assert.Equal(t, BitwiseXOR(1, 1), 0.0)
+	assert.Equal(t, Number(1).BitwiseXOR(0), Number(1.0))
+	assert.Equal(t, Number(1).BitwiseXOR(1), Number(0.0))
 }
 
 func TestSignedRightShift(t *testing.T) {
 	t.Parallel()
 
-	assert.Equal(t, SignedRightShift(1, 0), 1.0)
-	assert.Equal(t, SignedRightShift(1, 1), 0.0)
-	assert.Equal(t, SignedRightShift(1, 2), 0.0)
-	assert.Equal(t, SignedRightShift(1, 31), 0.0)
-	assert.Equal(t, SignedRightShift(1, 32), 1.0)
+	assert.Equal(t, Number(1).SignedRightShift(0), Number(1.0))
+	assert.Equal(t, Number(1).SignedRightShift(1), Number(0.0))
+	assert.Equal(t, Number(1).SignedRightShift(2), Number(0.0))
+	assert.Equal(t, Number(1).SignedRightShift(31), Number(0.0))
+	assert.Equal(t, Number(1).SignedRightShift(32), Number(1.0))
 
-	assert.Equal(t, SignedRightShift(-4, 0), -4.0)
-	assert.Equal(t, SignedRightShift(-4, 1), -2.0)
-	assert.Equal(t, SignedRightShift(-4, 2), -1.0)
-	assert.Equal(t, SignedRightShift(-4, 3), -1.0)
-	assert.Equal(t, SignedRightShift(-4, 4), -1.0)
-	assert.Equal(t, SignedRightShift(-4, 31), -1.0)
-	assert.Equal(t, SignedRightShift(-4, 32), -4.0)
-	assert.Equal(t, SignedRightShift(-4, 33), -2.0)
+	assert.Equal(t, Number(-4).SignedRightShift(0), Number(-4.0))
+	assert.Equal(t, Number(-4).SignedRightShift(1), Number(-2.0))
+	assert.Equal(t, Number(-4).SignedRightShift(2), Number(-1.0))
+	assert.Equal(t, Number(-4).SignedRightShift(3), Number(-1.0))
+	assert.Equal(t, Number(-4).SignedRightShift(4), Number(-1.0))
+	assert.Equal(t, Number(-4).SignedRightShift(31), Number(-1.0))
+	assert.Equal(t, Number(-4).SignedRightShift(32), Number(-4.0))
+	assert.Equal(t, Number(-4).SignedRightShift(33), Number(-2.0))
 }
 
 func TestUnsignedRightShift(t *testing.T) {
 	t.Parallel()
 
-	assert.Equal(t, UnsignedRightShift(1, 0), 1.0)
-	assert.Equal(t, UnsignedRightShift(1, 1), 0.0)
-	assert.Equal(t, UnsignedRightShift(1, 2), 0.0)
-	assert.Equal(t, UnsignedRightShift(1, 31), 0.0)
-	assert.Equal(t, UnsignedRightShift(1, 32), 1.0)
+	assert.Equal(t, Number(1).UnsignedRightShift(0), Number(1.0))
+	assert.Equal(t, Number(1).UnsignedRightShift(1), Number(0.0))
+	assert.Equal(t, Number(1).UnsignedRightShift(2), Number(0.0))
+	assert.Equal(t, Number(1).UnsignedRightShift(31), Number(0.0))
+	assert.Equal(t, Number(1).UnsignedRightShift(32), Number(1.0))
 
-	assert.Equal(t, UnsignedRightShift(-4, 0), 4294967292.0)
-	assert.Equal(t, UnsignedRightShift(-4, 1), 2147483646.0)
-	assert.Equal(t, UnsignedRightShift(-4, 2), 1073741823.0)
-	assert.Equal(t, UnsignedRightShift(-4, 3), 536870911.0)
-	assert.Equal(t, UnsignedRightShift(-4, 4), 268435455.0)
-	assert.Equal(t, UnsignedRightShift(-4, 31), 1.0)
-	assert.Equal(t, UnsignedRightShift(-4, 32), 4294967292.0)
-	assert.Equal(t, UnsignedRightShift(-4, 33), 2147483646.0)
+	assert.Equal(t, Number(-4).UnsignedRightShift(0), Number(4294967292.0))
+	assert.Equal(t, Number(-4).UnsignedRightShift(1), Number(2147483646.0))
+	assert.Equal(t, Number(-4).UnsignedRightShift(2), Number(1073741823.0))
+	assert.Equal(t, Number(-4).UnsignedRightShift(3), Number(536870911.0))
+	assert.Equal(t, Number(-4).UnsignedRightShift(4), Number(268435455.0))
+	assert.Equal(t, Number(-4).UnsignedRightShift(31), Number(1.0))
+	assert.Equal(t, Number(-4).UnsignedRightShift(32), Number(4294967292.0))
+	assert.Equal(t, Number(-4).UnsignedRightShift(33), Number(2147483646.0))
 }
 
 func TestLeftShift(t *testing.T) {
 	t.Parallel()
 
-	assert.Equal(t, LeftShift(1, 0), 1.0)
-	assert.Equal(t, LeftShift(1, 1), 2.0)
-	assert.Equal(t, LeftShift(1, 2), 4.0)
-	assert.Equal(t, LeftShift(1, 31), -2147483648.0)
-	assert.Equal(t, LeftShift(1, 32), 1.0)
+	assert.Equal(t, Number(1).LeftShift(0), Number(1.0))
+	assert.Equal(t, Number(1).LeftShift(1), Number(2.0))
+	assert.Equal(t, Number(1).LeftShift(2), Number(4.0))
+	assert.Equal(t, Number(1).LeftShift(31), Number(-2147483648.0))
+	assert.Equal(t, Number(1).LeftShift(32), Number(1.0))
 
-	assert.Equal(t, LeftShift(-4, 0), -4.0)
-	assert.Equal(t, LeftShift(-4, 1), -8.0)
-	assert.Equal(t, LeftShift(-4, 2), -16.0)
-	assert.Equal(t, LeftShift(-4, 3), -32.0)
-	assert.Equal(t, LeftShift(-4, 31), 0.0)
-	assert.Equal(t, LeftShift(-4, 32), -4.0)
+	assert.Equal(t, Number(-4).LeftShift(0), Number(-4.0))
+	assert.Equal(t, Number(-4).LeftShift(1), Number(-8.0))
+	assert.Equal(t, Number(-4).LeftShift(2), Number(-16.0))
+	assert.Equal(t, Number(-4).LeftShift(3), Number(-32.0))
+	assert.Equal(t, Number(-4).LeftShift(31), Number(0.0))
+	assert.Equal(t, Number(-4).LeftShift(32), Number(-4.0))
 }
 
 func TestRemainder(t *testing.T) {
 	t.Parallel()
 
-	assert.Assert(t, math.IsNaN(Remainder(math.NaN(), 1)))
-	assert.Assert(t, math.IsNaN(Remainder(1, math.NaN())))
+	assert.Assert(t, NaN().Remainder(1).IsNaN())
+	assert.Assert(t, Number(1).Remainder(NaN()).IsNaN())
 
-	assert.Assert(t, math.IsNaN(Remainder(math.Inf(1), 1)))
-	assert.Assert(t, math.IsNaN(Remainder(math.Inf(-1), 1)))
+	assert.Assert(t, Inf(1).Remainder(1).IsNaN())
+	assert.Assert(t, Inf(-1).Remainder(1).IsNaN())
 
-	assert.Equal(t, Remainder(123, math.Inf(1)), 123.0)
-	assert.Equal(t, Remainder(123, math.Inf(-1)), 123.0)
+	assert.Equal(t, Number(123).Remainder(Inf(1)), Number(123.0))
+	assert.Equal(t, Number(123).Remainder(Inf(-1)), Number(123.0))
 
-	assert.Assert(t, math.IsNaN(Remainder(123, 0)))
-	assert.Assert(t, math.IsNaN(Remainder(123, negativeZero)))
+	assert.Assert(t, Number(123).Remainder(0).IsNaN())
+	assert.Assert(t, Number(123).Remainder(negativeZero).IsNaN())
 
-	assert.Equal(t, Remainder(0, 123), 0.0)
-	assert.Equal(t, Remainder(negativeZero, 123), negativeZero)
+	assert.Equal(t, Number(0).Remainder(123), Number(0.0))
+	assert.Equal(t, negativeZero.Remainder(123), negativeZero)
 }
 
 func TestExponentiate(t *testing.T) {
 	t.Parallel()
 
-	assert.Equal(t, Exponentiate(2, 3), 8.0)
+	assert.Equal(t, Number(2).Exponentiate(3), Number(8.0))
 
-	assert.Equal(t, Exponentiate(math.Inf(1), 3), math.Inf(1))
-	assert.Equal(t, Exponentiate(math.Inf(1), -5), 0.0)
+	assert.Equal(t, Inf(1).Exponentiate(3), Inf(1))
+	assert.Equal(t, Inf(1).Exponentiate(-5), Number(0.0))
 
-	assert.Equal(t, Exponentiate(math.Inf(-1), 3), math.Inf(-1))
-	assert.Equal(t, Exponentiate(math.Inf(-1), 4), math.Inf(1))
-	assert.Equal(t, Exponentiate(math.Inf(-1), -3), negativeZero)
-	assert.Equal(t, Exponentiate(math.Inf(-1), -4), 0.0)
+	assert.Equal(t, Inf(-1).Exponentiate(3), Inf(-1))
+	assert.Equal(t, Inf(-1).Exponentiate(4), Inf(1))
+	assert.Equal(t, Inf(-1).Exponentiate(-3), negativeZero)
+	assert.Equal(t, Inf(-1).Exponentiate(-4), Number(0.0))
 
-	assert.Equal(t, Exponentiate(0, 3), 0.0)
-	assert.Equal(t, Exponentiate(0, -10), math.Inf(1))
+	assert.Equal(t, Number(0).Exponentiate(3), Number(0.0))
+	assert.Equal(t, Number(0).Exponentiate(-10), Inf(1))
 
-	assert.Equal(t, Exponentiate(negativeZero, 3), negativeZero)
-	assert.Equal(t, Exponentiate(negativeZero, 4), 0.0)
-	assert.Equal(t, Exponentiate(negativeZero, -3), math.Inf(-1))
-	assert.Equal(t, Exponentiate(negativeZero, -4), math.Inf(1))
+	assert.Equal(t, negativeZero.Exponentiate(3), negativeZero)
+	assert.Equal(t, negativeZero.Exponentiate(4), Number(0.0))
+	assert.Equal(t, negativeZero.Exponentiate(-3), Inf(-1))
+	assert.Equal(t, negativeZero.Exponentiate(-4), Inf(1))
 
-	assert.Equal(t, Exponentiate(3, math.Inf(1)), math.Inf(1))
-	assert.Equal(t, Exponentiate(-3, math.Inf(1)), math.Inf(1))
+	assert.Equal(t, Number(3).Exponentiate(Inf(1)), Inf(1))
+	assert.Equal(t, Number(-3).Exponentiate(Inf(1)), Number(math.Inf(1)))
 
-	assert.Equal(t, Exponentiate(3, math.Inf(-1)), 0.0)
-	assert.Equal(t, Exponentiate(-3, math.Inf(-1)), 0.0)
+	assert.Equal(t, Number(3).Exponentiate(Inf(-1)), Number(0.0))
+	assert.Equal(t, Number(-3).Exponentiate(Inf(-1)), Number(0.0))
 
-	assert.Assert(t, math.IsNaN(Exponentiate(math.NaN(), 3)))
-	assert.Assert(t, math.IsNaN(Exponentiate(1, math.Inf(1))))
-	assert.Assert(t, math.IsNaN(Exponentiate(1, math.Inf(-1))))
-	assert.Assert(t, math.IsNaN(Exponentiate(-1, math.Inf(1))))
-	assert.Assert(t, math.IsNaN(Exponentiate(-1, math.Inf(-1))))
-	assert.Assert(t, math.IsNaN(Exponentiate(1, math.NaN())))
+	assert.Assert(t, NaN().Exponentiate(3).IsNaN())
+	assert.Assert(t, Number(1).Exponentiate(Inf(1)).IsNaN())
+	assert.Assert(t, Number(1).Exponentiate(Inf(-1)).IsNaN())
+	assert.Assert(t, Number(-1).Exponentiate(Inf(1)).IsNaN())
+	assert.Assert(t, Number(-1).Exponentiate(Inf(-1)).IsNaN())
+	assert.Assert(t, Number(1).Exponentiate(NaN()).IsNaN())
 }
