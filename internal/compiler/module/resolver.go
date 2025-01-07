@@ -24,11 +24,7 @@ type resolved struct {
 }
 
 func (r *resolved) shouldContinueSearching() bool {
-	return r == nil || r.isResolved()
-}
-
-func (r *resolved) isResolved() bool {
-	return r.path != ""
+	return r == nil
 }
 
 func unresolved() *resolved {
@@ -463,18 +459,18 @@ func (r *resolutionState) loadModuleFromExports(packageInfo *packagejson.InfoCac
 	}
 
 	if subpath == "." {
-		var mainExport *packagejson.Exports
+		var mainExport packagejson.Exports
 		switch packageInfo.Contents.Exports.Type {
 		case packagejson.JSONValueTypeString, packagejson.JSONValueTypeArray:
-			mainExport = &packageInfo.Contents.Exports
+			mainExport = packageInfo.Contents.Exports
 		case packagejson.JSONValueTypeObject:
 			if packageInfo.Contents.Exports.IsConditions() {
-				mainExport = &packageInfo.Contents.Exports
+				mainExport = packageInfo.Contents.Exports
 			} else if dot, ok := packageInfo.Contents.Exports.AsObject().Get("."); ok {
 				mainExport = dot
 			}
 		}
-		if mainExport != nil {
+		if mainExport.Type != packagejson.JSONValueTypeNotPresent {
 			return r.loadModuleFromTargetExportOrImport(ext, subpath, packageInfo, false /*isImports*/, mainExport, "", false /*isPattern*/, ".")
 		}
 	} else if packageInfo.Contents.Exports.Type == packagejson.JSONValueTypeObject && packageInfo.Contents.Exports.IsSubpaths() {
@@ -492,7 +488,7 @@ func (r *resolutionState) loadModuleFromExports(packageInfo *packagejson.InfoCac
 func (r *resolutionState) loadModuleFromExportsOrImports(
 	extensions extensions,
 	moduleName string,
-	lookupTable *collections.OrderedMap[string, *packagejson.Exports],
+	lookupTable *collections.OrderedMap[string, packagejson.Exports],
 	scope *packagejson.InfoCacheEntry,
 	isImports bool,
 ) *resolved {
@@ -504,7 +500,7 @@ func (r *resolutionState) loadModuleFromExportsOrImports(
 
 	expandingKeys := make([]string, 0, lookupTable.Size())
 	for key := range lookupTable.Keys() {
-		if strings.Contains(key, "*") || strings.HasSuffix(key, "/") {
+		if strings.Count(key, "*") == 1 || strings.HasSuffix(key, "/") {
 			expandingKeys = append(expandingKeys, key)
 		}
 	}
@@ -530,7 +526,7 @@ func (r *resolutionState) loadModuleFromExportsOrImports(
 	return continueSearching()
 }
 
-func (r *resolutionState) loadModuleFromTargetExportOrImport(extensions extensions, moduleName string, scope *packagejson.InfoCacheEntry, isImports bool, target *packagejson.Exports, subpath string, isPattern bool, key string) *resolved {
+func (r *resolutionState) loadModuleFromTargetExportOrImport(extensions extensions, moduleName string, scope *packagejson.InfoCacheEntry, isImports bool, target packagejson.Exports, subpath string, isPattern bool, key string) *resolved {
 	switch target.Type {
 	case packagejson.JSONValueTypeString:
 		targetString, _ := target.Value.(string)
