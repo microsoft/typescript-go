@@ -35,11 +35,11 @@ func (e Exports) AsObject() *collections.OrderedMap[string, Exports] {
 	return e.Value.(*collections.OrderedMap[string, Exports])
 }
 
-func (e Exports) AsArray() []*Exports {
+func (e Exports) AsArray() []Exports {
 	if e.Type != JSONValueTypeArray {
 		panic("expected array")
 	}
-	return e.Value.([]*Exports)
+	return e.Value.([]Exports)
 }
 
 func (e Exports) IsSubpaths() bool {

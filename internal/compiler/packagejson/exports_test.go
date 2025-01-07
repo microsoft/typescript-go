@@ -37,7 +37,8 @@ func testExports(t *testing.T, unmarshal func([]byte, any) error) {
 			},
 			"./test": [
 				"./test1.ts",
-				"./test2.ts"
+				"./test2.ts",
+				null
 			],
 			"./null": null
 		}
@@ -50,5 +51,6 @@ func testExports(t *testing.T, unmarshal func([]byte, any) error) {
 	assert.Equal(t, e.Exports.AsObject().Size(), 3)
 	assert.Assert(t, e.Exports.AsObject().GetOrZero(".").IsConditions())
 	assert.Assert(t, e.Exports.AsObject().GetOrZero(".").AsObject().GetOrZero("import").Type == packagejson.JSONValueTypeString)
+	assert.Equal(t, e.Exports.AsObject().GetOrZero("./test").AsArray()[2].Type, packagejson.JSONValueTypeNull)
 	assert.Assert(t, e.Exports.AsObject().GetOrZero("./null").Type == packagejson.JSONValueTypeNull)
 }
