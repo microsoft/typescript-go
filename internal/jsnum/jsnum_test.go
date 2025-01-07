@@ -8,6 +8,15 @@ import (
 	"gotest.tools/v3/assert"
 )
 
+func assertEqualNumber(t *testing.T, got, want Number) {
+	t.Helper()
+	if want.IsNaN() {
+		assert.Assert(t, got.IsNaN())
+	} else {
+		assert.Equal(t, got, want)
+	}
+}
+
 var toInt32Tests = []struct {
 	name  string
 	input Number
@@ -104,7 +113,7 @@ func TestBitwiseNOT(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.input.String(), func(t *testing.T) {
 			t.Parallel()
-			assert.Equal(t, test.input.BitwiseNOT(), test.want)
+			assertEqualNumber(t, test.input.BitwiseNOT(), test.want)
 		})
 	}
 }
@@ -124,7 +133,7 @@ func TestBitwiseAND(t *testing.T) {
 	for _, test := range tests {
 		t.Run(fmt.Sprintf("%v & %v", test.x, test.y), func(t *testing.T) {
 			t.Parallel()
-			assert.Equal(t, test.x.BitwiseAND(test.y), test.want)
+			assertEqualNumber(t, test.x.BitwiseAND(test.y), test.want)
 		})
 	}
 }
@@ -144,7 +153,7 @@ func TestBitwiseOR(t *testing.T) {
 	for _, test := range tests {
 		t.Run(fmt.Sprintf("%v | %v", test.x, test.y), func(t *testing.T) {
 			t.Parallel()
-			assert.Equal(t, test.x.BitwiseOR(test.y), test.want)
+			assertEqualNumber(t, test.x.BitwiseOR(test.y), test.want)
 		})
 	}
 }
@@ -164,7 +173,7 @@ func TestBitwiseXOR(t *testing.T) {
 	for _, test := range tests {
 		t.Run(fmt.Sprintf("%v ^ %v", test.x, test.y), func(t *testing.T) {
 			t.Parallel()
-			assert.Equal(t, test.x.BitwiseXOR(test.y), test.want)
+			assertEqualNumber(t, test.x.BitwiseXOR(test.y), test.want)
 		})
 	}
 }
@@ -193,7 +202,7 @@ func TestSignedRightShift(t *testing.T) {
 	for _, test := range tests {
 		t.Run(fmt.Sprintf("%v >> %v", test.x, test.y), func(t *testing.T) {
 			t.Parallel()
-			assert.Equal(t, test.x.SignedRightShift(test.y), test.want)
+			assertEqualNumber(t, test.x.SignedRightShift(test.y), test.want)
 		})
 	}
 }
@@ -222,7 +231,7 @@ func TestUnsignedRightShift(t *testing.T) {
 	for _, test := range tests {
 		t.Run(fmt.Sprintf("%v >>> %v", test.x, test.y), func(t *testing.T) {
 			t.Parallel()
-			assert.Equal(t, test.x.UnsignedRightShift(test.y), test.want)
+			assertEqualNumber(t, test.x.UnsignedRightShift(test.y), test.want)
 		})
 	}
 }
@@ -249,7 +258,7 @@ func TestLeftShift(t *testing.T) {
 	for _, test := range tests {
 		t.Run(fmt.Sprintf("%v << %v", test.x, test.y), func(t *testing.T) {
 			t.Parallel()
-			assert.Equal(t, test.x.LeftShift(test.y), test.want)
+			assertEqualNumber(t, test.x.LeftShift(test.y), test.want)
 		})
 	}
 }
@@ -275,12 +284,7 @@ func TestRemainder(t *testing.T) {
 	for _, test := range tests {
 		t.Run(fmt.Sprintf("%v %% %v", test.x, test.y), func(t *testing.T) {
 			t.Parallel()
-			got := test.x.Remainder(test.y)
-			if test.want.IsNaN() {
-				assert.Assert(t, got.IsNaN())
-			} else {
-				assert.Equal(t, got, test.want)
-			}
+			assertEqualNumber(t, test.x.Remainder(test.y), test.want)
 		})
 	}
 }
@@ -319,12 +323,7 @@ func TestExponentiate(t *testing.T) {
 	for _, test := range tests {
 		t.Run(fmt.Sprintf("%v ** %v", test.x, test.y), func(t *testing.T) {
 			t.Parallel()
-			got := test.x.Exponentiate(test.y)
-			if test.want.IsNaN() {
-				assert.Assert(t, got.IsNaN())
-			} else {
-				assert.Equal(t, got, test.want)
-			}
+			assertEqualNumber(t, test.x.Exponentiate(test.y), test.want)
 		})
 	}
 }
