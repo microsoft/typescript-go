@@ -28,6 +28,10 @@ func (c *Checker) getTypePrecedence(t *Type) ast.TypePrecedence {
 }
 
 func (c *Checker) SymbolToString(s *ast.Symbol) string {
+	return c.symbolToString(s)
+}
+
+func (c *Checker) symbolToString(s *ast.Symbol) string {
 	if s.ValueDeclaration != nil {
 		name := ast.GetNameOfDeclaration(s.ValueDeclaration)
 		if name != nil {
@@ -89,7 +93,7 @@ func (p *Printer) print(s string) {
 }
 
 func (p *Printer) printName(symbol *ast.Symbol) {
-	p.print(p.c.SymbolToString(symbol))
+	p.print(p.c.symbolToString(symbol))
 }
 
 func (p *Printer) printTypeEx(t *Type, precedence ast.TypePrecedence) {
@@ -562,10 +566,10 @@ func (c *Checker) getTextAndTypeOfNode(node *ast.Node) (string, *Type, bool) {
 		symbol := node.Symbol()
 		if symbol != nil && !isReservedMemberName(symbol.Name) {
 			if symbol.Flags&ast.SymbolFlagsValue != 0 {
-				return c.SymbolToString(symbol), c.getTypeOfSymbol(symbol), true
+				return c.symbolToString(symbol), c.getTypeOfSymbol(symbol), true
 			}
 			if symbol.Flags&ast.SymbolFlagsTypeAlias != 0 {
-				return c.SymbolToString(symbol), c.getDeclaredTypeOfTypeAlias(symbol), true
+				return c.symbolToString(symbol), c.getDeclaredTypeOfTypeAlias(symbol), true
 			}
 		}
 	}
