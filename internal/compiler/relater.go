@@ -1456,7 +1456,7 @@ func (c *Checker) tryGetTypeAtPosition(signature *Signature, pos int) *Type {
 		restType := c.getTypeOfSymbol(signature.parameters[paramCount])
 		index := pos - paramCount
 		if !isTupleType(restType) || restType.TargetTupleType().combinedFlags&ElementFlagsVariable != 0 || index < restType.TargetTupleType().fixedLength {
-			return c.getIndexedAccessType(restType, c.getNumberLiteralType(jsnum.Number(index)))
+			return c.getIndexedAccessType(restType, c.getNumberLiteralType(jsnum.From(index)))
 		}
 	}
 	return nil

@@ -5,6 +5,7 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/jsnum"
 )
 
 type InferenceKey struct {
@@ -963,7 +964,7 @@ func (c *Checker) replaceIndexedAccess(instantiable *Type, t *Type, replacement 
 	// map type.indexType to 0
 	// map type.objectType to `[TReplacement]`
 	// thus making the indexed access `[TReplacement][0]` or `TReplacement`
-	return c.instantiateType(instantiable, newTypeMapper([]*Type{t.AsIndexedAccessType().indexType, t.AsIndexedAccessType().objectType}, []*Type{c.getNumberLiteralType(0), c.createTupleType([]*Type{replacement})}))
+	return c.instantiateType(instantiable, newTypeMapper([]*Type{t.AsIndexedAccessType().indexType, t.AsIndexedAccessType().objectType}, []*Type{c.getNumberLiteralType(jsnum.Zero()), c.createTupleType([]*Type{replacement})}))
 }
 
 func (c *Checker) typesDefinitelyUnrelated(source *Type, target *Type) bool {
@@ -1367,7 +1368,7 @@ func (c *Checker) hasSkipDirectInferenceFlag(node *ast.Node) bool {
 
 // Returns `true` if `type` has the shape `[T[0]]` where `T` is `typeParameter`
 func (c *Checker) isTupleOfSelf(tp *Type, t *Type) bool {
-	return isTupleType(t) && c.getTupleElementType(t, 0) == c.getIndexedAccessType(tp, c.getNumberLiteralType(0)) && c.getTypeOfPropertyOfType(t, "1") == nil
+	return isTupleType(t) && c.getTupleElementType(t, 0) == c.getIndexedAccessType(tp, c.getNumberLiteralType(jsnum.Zero())) && c.getTypeOfPropertyOfType(t, "1") == nil
 }
 
 func newInferenceInfo(typeParameter *Type) *InferenceInfo {

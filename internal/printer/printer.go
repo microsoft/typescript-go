@@ -2112,7 +2112,7 @@ func (p *Printer) mayNeedDotDotForPropertyAccess(expression *ast.Expression) boo
 	} else if ast.IsAccessExpression(expression) {
 		// check if constant enum value is a non-negative integer
 		if constantValue, ok := p.getConstantValue(expression).(jsnum.Number); ok {
-			return !constantValue.IsInf() && constantValue >= 0 && constantValue.Floor() == constantValue
+			return !constantValue.IsInf() && constantValue.GreaterThanOrEqualTo(jsnum.Zero()) && constantValue.Floor() == constantValue
 		}
 		return false
 	}

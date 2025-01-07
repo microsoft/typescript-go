@@ -2112,7 +2112,7 @@ func (c *Checker) checkGrammarNumericLiteral(node *ast.NumericLiteral) {
 	// 2) otherwise, although `node.text` may be imprecise string representation, its mathematical value and consequently `value` cannot be less than 2 ** 53,
 	//    thus the result of the predicate won't be affected.
 	value := jsnum.FromString(node.Text)
-	if value <= jsnum.MaxSafeInteger {
+	if value.LessThanOrEqualTo(jsnum.MaxSafeInteger()) {
 		return
 	}
 

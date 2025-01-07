@@ -2169,7 +2169,7 @@ func createEvaluator(evaluateEntity Evaluator) Evaluator {
 				case ast.KindPlusToken:
 					return evaluatorResult(value, isSyntacticallyString, resolvedOtherFiles, hasExternalReferences)
 				case ast.KindMinusToken:
-					return evaluatorResult(-value, isSyntacticallyString, resolvedOtherFiles, hasExternalReferences)
+					return evaluatorResult(value.Negate(), isSyntacticallyString, resolvedOtherFiles, hasExternalReferences)
 				case ast.KindTildeToken:
 					return evaluatorResult(value.BitwiseNOT(), isSyntacticallyString, resolvedOtherFiles, hasExternalReferences)
 				}
@@ -2198,13 +2198,13 @@ func createEvaluator(evaluateEntity Evaluator) Evaluator {
 				case ast.KindCaretToken:
 					return evaluatorResult(leftNum.BitwiseXOR(rightNum), isSyntacticallyString, resolvedOtherFiles, hasExternalReferences)
 				case ast.KindAsteriskToken:
-					return evaluatorResult(leftNum*rightNum, isSyntacticallyString, resolvedOtherFiles, hasExternalReferences)
+					return evaluatorResult(leftNum.Multiply(rightNum), isSyntacticallyString, resolvedOtherFiles, hasExternalReferences)
 				case ast.KindSlashToken:
-					return evaluatorResult(leftNum/rightNum, isSyntacticallyString, resolvedOtherFiles, hasExternalReferences)
+					return evaluatorResult(leftNum.Divide(rightNum), isSyntacticallyString, resolvedOtherFiles, hasExternalReferences)
 				case ast.KindPlusToken:
-					return evaluatorResult(leftNum+rightNum, isSyntacticallyString, resolvedOtherFiles, hasExternalReferences)
+					return evaluatorResult(leftNum.Add(rightNum), isSyntacticallyString, resolvedOtherFiles, hasExternalReferences)
 				case ast.KindMinusToken:
-					return evaluatorResult(leftNum-rightNum, isSyntacticallyString, resolvedOtherFiles, hasExternalReferences)
+					return evaluatorResult(leftNum.Sub(rightNum), isSyntacticallyString, resolvedOtherFiles, hasExternalReferences)
 				case ast.KindPercentToken:
 					return evaluatorResult(leftNum.Remainder(rightNum), isSyntacticallyString, resolvedOtherFiles, hasExternalReferences)
 				case ast.KindAsteriskAsteriskToken:

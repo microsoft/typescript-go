@@ -19,25 +19,25 @@ func assertEqualNumber(t *testing.T, got, want Number) {
 
 var toInt32Tests = []struct {
 	name  string
-	input Number
+	input float64
 	want  int32
 	bench bool
 }{
 	{"0.0", 0, 0, true},
-	{"-0.0", Number(negativeZero), 0, false},
-	{"NaN", NaN(), 0, true},
-	{"+Inf", Inf(1), 0, true},
-	{"-Inf", Inf(-1), 0, true},
-	{"MaxInt32", Number(math.MaxInt32), math.MaxInt32, false},
-	{"MaxInt32+1", Number(int64(math.MaxInt32) + 1), math.MinInt32, true},
-	{"MinInt32", Number(math.MinInt32), math.MinInt32, false},
-	{"MinInt32-1", Number(int64(math.MinInt32) - 1), math.MaxInt32, true},
-	{"MIN_SAFE_INTEGER", MinSafeInteger, 1, false},
-	{"MIN_SAFE_INTEGER-1", MinSafeInteger - 1, 0, false},
-	{"MIN_SAFE_INTEGER+1", MinSafeInteger + 1, 2, false},
-	{"MAX_SAFE_INTEGER", MaxSafeInteger, -1, true},
-	{"MAX_SAFE_INTEGER-1", MaxSafeInteger - 1, -2, true},
-	{"MAX_SAFE_INTEGER+1", MaxSafeInteger + 1, 0, true},
+	{"-0.0", negativeZero.f, 0, false},
+	{"NaN", NaN().f, 0, true},
+	{"+Inf", Inf(1).f, 0, true},
+	{"-Inf", Inf(-1).f, 0, true},
+	{"MaxInt32", math.MaxInt32, math.MaxInt32, false},
+	{"MaxInt32+1", float64(int64(math.MaxInt32) + 1), math.MinInt32, true},
+	{"MinInt32", float64(math.MinInt32), math.MinInt32, false},
+	{"MinInt32-1", float64(int64(math.MinInt32) - 1), math.MaxInt32, true},
+	{"MIN_SAFE_INTEGER", MinSafeInteger().f, 1, false},
+	{"MIN_SAFE_INTEGER-1", MinSafeInteger().f - 1, 0, false},
+	{"MIN_SAFE_INTEGER+1", MinSafeInteger().f + 1, 2, false},
+	{"MAX_SAFE_INTEGER", MaxSafeInteger().f, -1, true},
+	{"MAX_SAFE_INTEGER-1", MaxSafeInteger().f - 1, -2, true},
+	{"MAX_SAFE_INTEGER+1", MaxSafeInteger().f + 1, 0, true},
 	{"-8589934590", -8589934590, 2, false},
 	{"0xDEADBEEF", 0xDEADBEEF, -559038737, true},
 	{"4294967808", 4294967808, 512, false},
@@ -46,8 +46,8 @@ var toInt32Tests = []struct {
 	{"-SmallestNonzeroFloat64", -math.SmallestNonzeroFloat64, 0, false},
 	{"MaxFloat64", math.MaxFloat64, 0, false},
 	{"-MaxFloat64", -math.MaxFloat64, 0, false},
-	{"Largest subnormal number", Number(math.Float64frombits(0x000FFFFFFFFFFFFF)), 0, false},
-	{"Smallest positive normal number", Number(math.Float64frombits(0x0010000000000000)), 0, false},
+	{"Largest subnormal number", float64(math.Float64frombits(0x000FFFFFFFFFFFFF)), 0, false},
+	{"Smallest positive normal number", float64(math.Float64frombits(0x0010000000000000)), 0, false},
 	{"Largest normal number", math.MaxFloat64, 0, false},
 	{"-Largest normal number", -math.MaxFloat64, 0, false},
 	{"1.0", 1.0, 1, false},
@@ -75,9 +75,11 @@ func TestToInt32(t *testing.T) {
 	t.Parallel()
 
 	for _, test := range toInt32Tests {
-		t.Run(fmt.Sprintf("%s (%v)", test.name, test.input), func(t *testing.T) {
+		input := From(test.input)
+
+		t.Run(fmt.Sprintf("%s (%v)", test.name, input), func(t *testing.T) {
 			t.Parallel()
-			assert.Equal(t, test.input.toInt32(), test.want)
+			assert.Equal(t, input.toInt32(), test.want)
 		})
 	}
 }
@@ -90,9 +92,11 @@ func BenchmarkToInt32(b *testing.B) {
 			continue
 		}
 
-		b.Run(fmt.Sprintf("%s (%v)", test.name, test.input), func(b *testing.B) {
+		input := From(test.input)
+
+		b.Run(fmt.Sprintf("%s (%v)", test.name, input), func(b *testing.B) {
 			for range b.N {
-				sink = test.input.toInt32()
+				sink = input.toInt32()
 			}
 		})
 	}
@@ -102,18 +106,21 @@ func TestBitwiseNOT(t *testing.T) {
 	t.Parallel()
 
 	tests := []struct {
-		input, want Number
+		input float64
+		want  Number
 	}{
-		{-2147483649, Number(2147483647).BitwiseNOT()},
-		{-4294967296, Number(0).BitwiseNOT()},
-		{-2147483648, Number(-2147483648).BitwiseNOT()},
-		{-4294967296, Number(0).BitwiseNOT()},
+		{-2147483649, From(2147483647).BitwiseNOT()},
+		{-4294967296, From(0).BitwiseNOT()},
+		{-2147483648, From(-2147483648).BitwiseNOT()},
+		{-4294967296, From(0).BitwiseNOT()},
 	}
 
 	for _, test := range tests {
-		t.Run(test.input.String(), func(t *testing.T) {
+		input := From(test.input)
+
+		t.Run(input.String(), func(t *testing.T) {
 			t.Parallel()
-			assertEqualNumber(t, test.input.BitwiseNOT(), test.want)
+			assertEqualNumber(t, input.BitwiseNOT(), test.want)
 		})
 	}
 }
@@ -122,7 +129,7 @@ func TestBitwiseAND(t *testing.T) {
 	t.Parallel()
 
 	tests := []struct {
-		x, y, want Number
+		x, y, want float64
 	}{
 		{0, 0, 0},
 		{0, 1, 0},
@@ -131,9 +138,13 @@ func TestBitwiseAND(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		t.Run(fmt.Sprintf("%v & %v", test.x, test.y), func(t *testing.T) {
+		x := From(test.x)
+		y := From(test.y)
+		want := From(test.want)
+
+		t.Run(fmt.Sprintf("%v & %v", x, y), func(t *testing.T) {
 			t.Parallel()
-			assertEqualNumber(t, test.x.BitwiseAND(test.y), test.want)
+			assertEqualNumber(t, x.BitwiseAND(y), want)
 		})
 	}
 }
@@ -142,7 +153,7 @@ func TestBitwiseOR(t *testing.T) {
 	t.Parallel()
 
 	tests := []struct {
-		x, y, want Number
+		x, y, want float64
 	}{
 		{0, 0, 0},
 		{0, 1, 1},
@@ -151,9 +162,13 @@ func TestBitwiseOR(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		t.Run(fmt.Sprintf("%v | %v", test.x, test.y), func(t *testing.T) {
+		x := From(test.x)
+		y := From(test.y)
+		want := From(test.want)
+
+		t.Run(fmt.Sprintf("%v | %v", x, y), func(t *testing.T) {
 			t.Parallel()
-			assertEqualNumber(t, test.x.BitwiseOR(test.y), test.want)
+			assertEqualNumber(t, x.BitwiseOR(y), want)
 		})
 	}
 }
@@ -162,7 +177,7 @@ func TestBitwiseXOR(t *testing.T) {
 	t.Parallel()
 
 	tests := []struct {
-		x, y, want Number
+		x, y, want float64
 	}{
 		{0, 0, 0},
 		{0, 1, 1},
@@ -171,9 +186,13 @@ func TestBitwiseXOR(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		t.Run(fmt.Sprintf("%v ^ %v", test.x, test.y), func(t *testing.T) {
+		x := From(test.x)
+		y := From(test.y)
+		want := From(test.want)
+
+		t.Run(fmt.Sprintf("%v ^ %v", x, y), func(t *testing.T) {
 			t.Parallel()
-			assertEqualNumber(t, test.x.BitwiseXOR(test.y), test.want)
+			assertEqualNumber(t, x.BitwiseXOR(y), want)
 		})
 	}
 }
@@ -182,7 +201,7 @@ func TestSignedRightShift(t *testing.T) {
 	t.Parallel()
 
 	tests := []struct {
-		x, y, want Number
+		x, y, want float64
 	}{
 		{1, 0, 1},
 		{1, 1, 0},
@@ -200,9 +219,13 @@ func TestSignedRightShift(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		t.Run(fmt.Sprintf("%v >> %v", test.x, test.y), func(t *testing.T) {
+		x := From(test.x)
+		y := From(test.y)
+		want := From(test.want)
+
+		t.Run(fmt.Sprintf("%v >> %v", x, y), func(t *testing.T) {
 			t.Parallel()
-			assertEqualNumber(t, test.x.SignedRightShift(test.y), test.want)
+			assertEqualNumber(t, x.SignedRightShift(y), want)
 		})
 	}
 }
@@ -211,7 +234,7 @@ func TestUnsignedRightShift(t *testing.T) {
 	t.Parallel()
 
 	tests := []struct {
-		x, y, want Number
+		x, y, want float64
 	}{
 		{1, 0, 1},
 		{1, 1, 0},
@@ -229,9 +252,13 @@ func TestUnsignedRightShift(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		t.Run(fmt.Sprintf("%v >>> %v", test.x, test.y), func(t *testing.T) {
+		x := From(test.x)
+		y := From(test.y)
+		want := From(test.want)
+
+		t.Run(fmt.Sprintf("%v >>> %v", x, y), func(t *testing.T) {
 			t.Parallel()
-			assertEqualNumber(t, test.x.UnsignedRightShift(test.y), test.want)
+			assertEqualNumber(t, x.UnsignedRightShift(y), want)
 		})
 	}
 }
@@ -240,7 +267,7 @@ func TestLeftShift(t *testing.T) {
 	t.Parallel()
 
 	tests := []struct {
-		x, y, want Number
+		x, y, want float64
 	}{
 		{1, 0, 1},
 		{1, 1, 2},
@@ -256,9 +283,13 @@ func TestLeftShift(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		t.Run(fmt.Sprintf("%v << %v", test.x, test.y), func(t *testing.T) {
+		x := From(test.x)
+		y := From(test.y)
+		want := From(test.want)
+
+		t.Run(fmt.Sprintf("%v << %v", x, y), func(t *testing.T) {
 			t.Parallel()
-			assertEqualNumber(t, test.x.LeftShift(test.y), test.want)
+			assertEqualNumber(t, x.LeftShift(y), want)
 		})
 	}
 }
@@ -267,24 +298,28 @@ func TestRemainder(t *testing.T) {
 	t.Parallel()
 
 	tests := []struct {
-		x, y, want Number
+		x, y, want float64
 	}{
-		{NaN(), 1, NaN()},
-		{1, NaN(), NaN()},
-		{Inf(1), 1, NaN()},
-		{Inf(-1), 1, NaN()},
-		{123, Inf(1), 123},
-		{123, Inf(-1), 123},
-		{123, 0, NaN()},
-		{123, negativeZero, NaN()},
+		{NaN().f, 1, NaN().f},
+		{1, NaN().f, NaN().f},
+		{Inf(1).f, 1, NaN().f},
+		{Inf(-1).f, 1, NaN().f},
+		{123, Inf(1).f, 123},
+		{123, Inf(-1).f, 123},
+		{123, 0, NaN().f},
+		{123, negativeZero.f, NaN().f},
 		{0, 123, 0},
-		{negativeZero, 123, negativeZero},
+		{negativeZero.f, 123, negativeZero.f},
 	}
 
 	for _, test := range tests {
-		t.Run(fmt.Sprintf("%v %% %v", test.x, test.y), func(t *testing.T) {
+		x := From(test.x)
+		y := From(test.y)
+		want := From(test.want)
+
+		t.Run(fmt.Sprintf("%v %% %v", x, y), func(t *testing.T) {
 			t.Parallel()
-			assertEqualNumber(t, test.x.Remainder(test.y), test.want)
+			assertEqualNumber(t, x.Remainder(y), want)
 		})
 	}
 }
@@ -293,37 +328,41 @@ func TestExponentiate(t *testing.T) {
 	t.Parallel()
 
 	tests := []struct {
-		x, y, want Number
+		x, y, want float64
 	}{
 		{2, 3, 8},
-		{Inf(1), 3, Inf(1)},
-		{Inf(1), -5, 0},
-		{Inf(-1), 3, Inf(-1)},
-		{Inf(-1), 4, Inf(1)},
-		{Inf(-1), -3, negativeZero},
-		{Inf(-1), -4, 0},
+		{Inf(1).f, 3, Inf(1).f},
+		{Inf(1).f, -5, 0},
+		{Inf(-1).f, 3, Inf(-1).f},
+		{Inf(-1).f, 4, Inf(1).f},
+		{Inf(-1).f, -3, negativeZero.f},
+		{Inf(-1).f, -4, 0},
 		{0, 3, 0},
-		{0, -10, Inf(1)},
-		{negativeZero, 3, negativeZero},
-		{negativeZero, 4, 0},
-		{negativeZero, -3, Inf(-1)},
-		{negativeZero, -4, Inf(1)},
-		{3, Inf(1), Inf(1)},
-		{-3, Inf(1), Inf(1)},
-		{3, Inf(-1), 0},
-		{-3, Inf(-1), 0},
-		{NaN(), 3, NaN()},
-		{1, Inf(1), NaN()},
-		{1, Inf(-1), NaN()},
-		{-1, Inf(1), NaN()},
-		{-1, Inf(-1), NaN()},
-		{1, NaN(), NaN()},
+		{0, -10, Inf(1).f},
+		{negativeZero.f, 3, negativeZero.f},
+		{negativeZero.f, 4, 0},
+		{negativeZero.f, -3, Inf(-1).f},
+		{negativeZero.f, -4, Inf(1).f},
+		{3, Inf(1).f, Inf(1).f},
+		{-3, Inf(1).f, Inf(1).f},
+		{3, Inf(-1).f, 0},
+		{-3, Inf(-1).f, 0},
+		{NaN().f, 3, NaN().f},
+		{1, Inf(1).f, NaN().f},
+		{1, Inf(-1).f, NaN().f},
+		{-1, Inf(1).f, NaN().f},
+		{-1, Inf(-1).f, NaN().f},
+		{1, NaN().f, NaN().f},
 	}
 
 	for _, test := range tests {
-		t.Run(fmt.Sprintf("%v ** %v", test.x, test.y), func(t *testing.T) {
+		x := From(test.x)
+		y := From(test.y)
+		want := From(test.want)
+
+		t.Run(fmt.Sprintf("%v ** %v", x, y), func(t *testing.T) {
 			t.Parallel()
-			assertEqualNumber(t, test.x.Exponentiate(test.y), test.want)
+			assertEqualNumber(t, x.Exponentiate(y), want)
 		})
 	}
 }

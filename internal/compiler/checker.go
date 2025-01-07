@@ -815,7 +815,7 @@ func NewChecker(program *Program) *Checker {
 	c.silentNeverSignature = c.newSignature(SignatureFlagsNone, nil, nil, nil, nil, c.silentNeverType, nil, 0)
 	c.enumNumberIndexInfo = &IndexInfo{keyType: c.numberType, valueType: c.stringType, isReadonly: true}
 	c.emptyStringType = c.getStringLiteralType("")
-	c.zeroType = c.getNumberLiteralType(0)
+	c.zeroType = c.getNumberLiteralType(jsnum.Zero())
 	c.zeroBigIntType = c.getBigIntLiteralType(PseudoBigInt{negative: false, base10Value: "0"})
 	c.typeofType = c.getUnionType(core.Map(slices.Collect(maps.Keys(typeofNEFacts)), c.getStringLiteralType))
 	c.flowLoopCache = make(map[FlowLoopKey]*Type)
@@ -5415,9 +5415,9 @@ func (c *Checker) checkPrefixUnaryExpression(node *ast.Node) *Type {
 	case ast.KindNumericLiteral:
 		switch expr.Operator {
 		case ast.KindMinusToken:
-			return c.getFreshTypeOfLiteralType(c.getNumberLiteralType(-jsnum.FromString(expr.Operand.Text())))
+			return c.getFreshTypeOfLiteralType(c.getNumberLiteralType(jsnum.FromString(expr.Operand.Text()).Negate()))
 		case ast.KindPlusToken:
-			return c.getFreshTypeOfLiteralType(c.getNumberLiteralType(+jsnum.FromString(expr.Operand.Text())))
+			return c.getFreshTypeOfLiteralType(c.getNumberLiteralType(jsnum.FromString(expr.Operand.Text())))
 		}
 	case ast.KindBigIntLiteral:
 		if expr.Operator == ast.KindMinusToken {
@@ -6748,8 +6748,8 @@ func (c *Checker) checkBinaryLikeExpression(left *ast.Node, operatorToken *ast.N
 				ast.KindGreaterThanGreaterThanEqualsToken, ast.KindGreaterThanGreaterThanGreaterThanToken,
 				ast.KindGreaterThanGreaterThanGreaterThanEqualsToken:
 				rhsEval := c.evaluate(right, right)
-				if numValue, ok := rhsEval.value.(jsnum.Number); ok && numValue.Abs() >= 32 {
-					c.errorOrSuggestion(ast.IsEnumMember(ast.WalkUpParenthesizedExpressions(right.Parent.Parent)), errorNode, diagnostics.This_operation_can_be_simplified_This_shift_is_identical_to_0_1_2, scanner.GetTextOfNode(left), scanner.TokenToString(operator), (numValue / 32).Floor())
+				if numValue, ok := rhsEval.value.(jsnum.Number); ok && numValue.Abs().GreaterThanOrEqualTo(jsnum.From(32)) {
+					c.errorOrSuggestion(ast.IsEnumMember(ast.WalkUpParenthesizedExpressions(right.Parent.Parent)), errorNode, diagnostics.This_operation_can_be_simplified_This_shift_is_identical_to_0_1_2, scanner.GetTextOfNode(left), scanner.TokenToString(operator), numValue.Divide(jsnum.From(32)).Floor())
 				}
 			}
 		}
@@ -10850,7 +10850,7 @@ func (c *Checker) getBindingElementTypeFromParentType(declaration *ast.Node, par
 				t = c.createArrayType(elementType)
 			}
 		} else if c.isArrayLikeType(parentType) {
-			indexType := c.getNumberLiteralType(jsnum.Number(index))
+			indexType := c.getNumberLiteralType(jsnum.From(index))
 			declaredType := core.OrElse(c.getIndexedAccessTypeOrUndefined(parentType, indexType, accessFlags, declaration.Name(), nil), c.errorType)
 			t = c.getFlowTypeOfDestructuring(declaration, declaredType)
 		} else {
@@ -16006,7 +16006,7 @@ func (c *Checker) getTupleElementType(t *Type, index int) *Type {
 		return propType
 	}
 	if everyType(t, isTupleType) {
-		return c.getTupleElementTypeOutOfStartCount(t, jsnum.Number(index), core.IfElse(c.compilerOptions.NoUncheckedIndexedAccess == core.TSTrue, c.undefinedType, nil))
+		return c.getTupleElementTypeOutOfStartCount(t, float64(index), core.IfElse(c.compilerOptions.NoUncheckedIndexedAccess == core.TSTrue, c.undefinedType, nil))
 	}
 	return nil
 }
@@ -16384,7 +16384,7 @@ func (c *Checker) computeEnumMemberValues(node *ast.Node) {
 			result := c.computeEnumMemberValue(member, autoValue, previous)
 			c.enumMemberLinks.get(member).value = result
 			if value, isNumber := result.value.(jsnum.Number); isNumber {
-				autoValue = value + 1
+				autoValue = value.Add(jsnum.From(1))
 			} else {
 				autoValue = jsnum.NaN()
 			}
@@ -17271,7 +17271,7 @@ func (c *Checker) createTupleTargetType(elementInfos []TupleElementInfo, readonl
 	} else {
 		var literalTypes []*Type
 		for i := minLength; i <= arity; i++ {
-			literalTypes = append(literalTypes, c.getNumberLiteralType(jsnum.Number(i)))
+			literalTypes = append(literalTypes, c.getNumberLiteralType(jsnum.From(i)))
 		}
 		c.valueSymbolLinks.get(lengthSymbol).resolvedType = c.getUnionType(literalTypes)
 	}
@@ -17321,13 +17321,13 @@ func (c *Checker) getRestTypeOfTupleType(t *Type) *Type {
 	return c.getElementTypeOfSliceOfTupleType(t, t.TargetTupleType().fixedLength, 0, false, false)
 }
 
-func (c *Checker) getTupleElementTypeOutOfStartCount(t *Type, index jsnum.Number, undefinedOrMissingType *Type) *Type {
+func (c *Checker) getTupleElementTypeOutOfStartCount(t *Type, index float64, undefinedOrMissingType *Type) *Type {
 	return c.mapType(t, func(t *Type) *Type {
 		restType := c.getRestTypeOfTupleType(t)
 		if restType == nil {
 			return c.undefinedType
 		}
-		if c.undefinedOrMissingType != nil && index >= jsnum.Number(getTotalFixedElementCount(t.TargetTupleType())) {
+		if c.undefinedOrMissingType != nil && index >= float64(getTotalFixedElementCount(t.TargetTupleType())) {
 			return c.getUnionType([]*Type{restType, c.undefinedOrMissingType})
 		}
 		return restType
@@ -19415,7 +19415,7 @@ func (c *Checker) getPropertyTypeForIndexType(originalObjectType *Type, objectTy
 			}
 		}
 		if everyType(objectType, isTupleType) && isNumericLiteralName(propName) {
-			index := jsnum.FromString(propName)
+			index := jsnum.FromString(propName).Float64()
 			if accessNode != nil && everyType(objectType, func(t *Type) bool {
 				return t.TargetTupleType().combinedFlags&ElementFlagsVariable == 0
 			}) && accessFlags&AccessFlagsAllowMissing == 0 {
@@ -19656,8 +19656,8 @@ func indexTypeLessThan(indexType *Type, limit int) bool {
 		if t.flags&TypeFlagsStringOrNumberLiteral != 0 {
 			propName := getPropertyNameFromType(t)
 			if isNumericLiteralName(propName) {
-				index := jsnum.FromString(propName)
-				return index >= 0 && index < jsnum.Number(limit)
+				index := jsnum.FromString(propName).Float64()
+				return index >= 0 && index < float64(limit)
 			}
 		}
 		return false
@@ -20456,7 +20456,7 @@ func (c *Checker) getDefinitelyFalsyPartOfType(t *Type) *Type {
 	case t == c.regularFalseType || t == c.falseType ||
 		t.flags&(TypeFlagsVoid|TypeFlagsUndefined|TypeFlagsNull|TypeFlagsAnyOrUnknown) != 0 ||
 		t.flags&TypeFlagsStringLiteral != 0 && t.AsLiteralType().value.(string) == "" ||
-		t.flags&TypeFlagsNumberLiteral != 0 && t.AsLiteralType().value.(jsnum.Number) == 0 ||
+		t.flags&TypeFlagsNumberLiteral != 0 && t.AsLiteralType().value.(jsnum.Number) == jsnum.Zero() ||
 		t.flags&TypeFlagsBigIntLiteral != 0 && isZeroBigInt(t):
 		return t
 	}
@@ -20876,7 +20876,7 @@ func (c *Checker) getSpreadArgumentType(args []*ast.Node, index int, argCount in
 			if isTupleType(restType) {
 				contextualType = core.OrElse(c.getContextualTypeForElementExpression(restType, i-index, argCount-index, -1, -1), c.unknownType)
 			} else {
-				contextualType = c.getIndexedAccessTypeEx(restType, c.getNumberLiteralType(jsnum.Number(i-index)), AccessFlagsContextual, nil, nil)
+				contextualType = c.getIndexedAccessTypeEx(restType, c.getNumberLiteralType(jsnum.From(i-index)), AccessFlagsContextual, nil, nil)
 			}
 			argType := c.checkExpressionWithContextualType(arg, contextualType, context, checkMode)
 			hasPrimitiveContextualType := inConstContext || c.maybeTypeOfKind(contextualType, TypeFlagsPrimitive|TypeFlagsIndex|TypeFlagsTemplateLiteral|TypeFlagsStringMapping)
@@ -21071,7 +21071,7 @@ func (c *Checker) getContextualTypeForArgumentAtIndex(callTarget *ast.Node, argI
 	// }
 	restIndex := len(signature.parameters) - 1
 	if signatureHasRestParameter(signature) && argIndex >= restIndex {
-		return c.getIndexedAccessTypeEx(c.getTypeOfSymbol(signature.parameters[restIndex]), c.getNumberLiteralType(jsnum.Number(argIndex-restIndex)), AccessFlagsContextual, nil, nil)
+		return c.getIndexedAccessTypeEx(c.getTypeOfSymbol(signature.parameters[restIndex]), c.getNumberLiteralType(jsnum.From(argIndex-restIndex)), AccessFlagsContextual, nil, nil)
 	}
 	return c.getTypeAtPosition(signature, argIndex)
 }
@@ -21431,7 +21431,7 @@ func (c *Checker) getTypeOfConcretePropertyOfContextualType(t *Type, name string
 }
 
 func (c *Checker) getTypeFromIndexInfosOfContextualType(t *Type, name string, nameType *Type) *Type {
-	if isTupleType(t) && isNumericLiteralName(name) && jsnum.FromString(name) >= 0 {
+	if isTupleType(t) && isNumericLiteralName(name) && jsnum.FromString(name).GreaterThanOrEqualTo(jsnum.Zero()) {
 		restType := c.getElementTypeOfSliceOfTupleType(t, t.TargetTupleType().fixedLength, 0 /*endSkipCount*/, false /*writing*/, true /*noReductions*/)
 		if restType != nil {
 			return restType
@@ -21783,7 +21783,7 @@ func (c *Checker) getTypeFactsWorker(t *Type, callerOnlyNeeds TypeFacts) TypeFac
 		}
 		return TypeFactsNumberFacts
 	case flags&TypeFlagsNumberLiteral != 0:
-		isZero := t.AsLiteralType().value.(jsnum.Number) == 0
+		isZero := t.AsLiteralType().value.(jsnum.Number) == jsnum.Zero()
 		if c.strictNullChecks {
 			if isZero {
 				return TypeFactsZeroNumberStrictFacts
