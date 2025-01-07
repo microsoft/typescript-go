@@ -67,11 +67,11 @@ func (v JSONValue) AsObject() *collections.OrderedMap[string, JSONValue] {
 	return v.Value.(*collections.OrderedMap[string, JSONValue])
 }
 
-func (v JSONValue) AsArray() []*JSONValue {
+func (v JSONValue) AsArray() []JSONValue {
 	if v.Type != JSONValueTypeArray {
 		panic(fmt.Sprintf("expected array, got %v", v.Type))
 	}
-	return v.Value.([]*JSONValue)
+	return v.Value.([]JSONValue)
 }
 
 func (v *JSONValue) UnmarshalJSON(data []byte) error {
@@ -89,7 +89,7 @@ func unmarshalJSONValue[T any](v *JSONValue, data []byte) error {
 		v.Type = JSONValueTypeString
 		return json.Unmarshal(data, &v.Value)
 	} else if data[0] == '[' {
-		var elements []*T
+		var elements []T
 		if err := json.Unmarshal(data, &elements); err != nil {
 			return err
 		}
@@ -133,9 +133,9 @@ func unmarshalJSONValueV2[T any](v *JSONValue, dec *jsontext.Decoder, opts json2
 		if _, err := dec.ReadToken(); err != nil {
 			return err
 		}
-		var elements []*T
+		var elements []T
 		for dec.PeekKind() != jsontext.ArrayEnd.Kind() {
-			var element *T
+			var element T
 			if err := json2.UnmarshalDecode(dec, &element, opts); err != nil {
 				return err
 			}
