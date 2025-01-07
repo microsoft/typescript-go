@@ -68,7 +68,7 @@ func TestToInt32(t *testing.T) {
 	for _, test := range toInt32Tests {
 		t.Run(fmt.Sprintf("%s (%v)", test.name, test.input), func(t *testing.T) {
 			t.Parallel()
-			assert.Equal(t, toInt32(test.input), test.want)
+			assert.Equal(t, test.input.toInt32(), test.want)
 		})
 	}
 }
@@ -83,7 +83,7 @@ func BenchmarkToInt32(b *testing.B) {
 
 		b.Run(fmt.Sprintf("%s (%v)", test.name, test.input), func(b *testing.B) {
 			for range b.N {
-				sink = toInt32(test.input)
+				sink = test.input.toInt32()
 			}
 		})
 	}

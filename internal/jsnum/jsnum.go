@@ -61,8 +61,8 @@ func isNonFinite(x float64) bool {
 }
 
 // https://tc39.es/ecma262/2024/multipage/abstract-operations.html#sec-touint32
-func toUint32(number Number) uint32 {
-	x := float64(number)
+func (n Number) toUint32() uint32 {
+	x := float64(n)
 	// Fast path: if the number is the range (-2^31, 2^32), i.e. an SMI,
 	// then we don't need to do any special mapping.
 	if smi := int32(x); float64(smi) == x {
@@ -83,50 +83,50 @@ func toUint32(number Number) uint32 {
 }
 
 // https://tc39.es/ecma262/2024/multipage/abstract-operations.html#sec-toint32
-func toInt32(x Number) int32 {
+func (x Number) toInt32() int32 {
 	// The only difference between ToUint32 and ToInt32 is the interpretation of the bits.
-	return int32(toUint32(x))
+	return int32(x.toUint32())
 }
 
-func toShiftCount(x Number) uint32 {
-	return toUint32(x) & 31
+func (x Number) toShiftCount() uint32 {
+	return x.toUint32() & 31
 }
 
 // https://tc39.es/ecma262/2024/multipage/ecmascript-data-types-and-values.html#sec-numeric-types-number-signedRightShift
 func (x Number) SignedRightShift(y Number) Number {
-	return Number(toInt32(x) >> toShiftCount(y))
+	return Number(x.toInt32() >> y.toShiftCount())
 }
 
 // https://tc39.es/ecma262/2024/multipage/ecmascript-data-types-and-values.html#sec-numeric-types-number-unsignedRightShift
 func (x Number) UnsignedRightShift(y Number) Number {
-	return Number(toUint32(x) >> toShiftCount(y))
+	return Number(x.toUint32() >> y.toShiftCount())
 }
 
 // https://tc39.es/ecma262/2024/multipage/ecmascript-data-types-and-values.html#sec-numeric-types-number-leftShift
 func (x Number) LeftShift(y Number) Number {
-	return Number(toInt32(x) << toShiftCount(y))
+	return Number(x.toInt32() << y.toShiftCount())
 }
 
 // https://tc39.es/ecma262/2024/multipage/ecmascript-data-types-and-values.html#sec-numeric-types-number-bitwiseNOT
 func (x Number) BitwiseNOT() Number {
-	return Number(^toInt32(x))
+	return Number(^x.toInt32())
 }
 
 // The below are implemented by https://tc39.es/ecma262/2024/multipage/ecmascript-data-types-and-values.html#sec-numberbitwiseop.
 
 // https://tc39.es/ecma262/2024/multipage/ecmascript-data-types-and-values.html#sec-numeric-types-number-bitwiseOR
 func (x Number) BitwiseOR(y Number) Number {
-	return Number(toInt32(x) | toInt32(y))
+	return Number(x.toInt32() | y.toInt32())
 }
 
 // https://tc39.es/ecma262/2024/multipage/ecmascript-data-types-and-values.html#sec-numeric-types-number-bitwiseAND
 func (x Number) BitwiseAND(y Number) Number {
-	return Number(toInt32(x) & toInt32(y))
+	return Number(x.toInt32() & y.toInt32())
 }
 
 // https://tc39.es/ecma262/2024/multipage/ecmascript-data-types-and-values.html#sec-numeric-types-number-bitwiseXOR
 func (x Number) BitwiseXOR(y Number) Number {
-	return Number(toInt32(x) ^ toInt32(y))
+	return Number(x.toInt32() ^ y.toInt32())
 }
 
 func (x Number) trunc() Number {
