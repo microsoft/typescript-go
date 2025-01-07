@@ -19,6 +19,7 @@ const (
 // not the "math" package and conversions.
 type Number float64
 
+// https://tc39.es/ecma262/2024/multipage/ecmascript-data-types-and-values.html#sec-numeric-types-number-tostring
 func (n Number) String() string {
 	// !!! verify that this is actually the same as JS.
 	return strconv.FormatFloat(float64(n), 'g', -1, 64)
