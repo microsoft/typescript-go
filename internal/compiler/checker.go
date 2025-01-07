@@ -708,6 +708,16 @@ type Checker struct {
 	getGlobalPromiseLikeType                func() *Type
 	getGlobalPromiseConstructorSymbol       func() *ast.Symbol
 	getGlobalOmitSymbol                     func() *ast.Symbol
+	getGlobalIteratorType                   func() *Type
+	getGlobalIterableType                   func() *Type
+	getGlobalIterableIteratorType           func() *Type
+	getGlobalIteratorObjectType             func() *Type
+	getGlobalGeneratorType                  func() *Type
+	getGlobalAsyncIteratorType              func() *Type
+	getGlobalAsyncIterableType              func() *Type
+	getGlobalAsyncIterableIteratorType      func() *Type
+	getGlobalAsyncIteratorObjectType        func() *Type
+	getGlobalAsyncGeneratorType             func() *Type
 	syncIterationTypesResolver              *IterationTypesResolver
 	asyncIterationTypesResolver             *IterationTypesResolver
 	isPrimitiveOrObjectOrEmptyType          func(*Type) bool
@@ -877,6 +887,16 @@ func NewChecker(program *Program) *Checker {
 	c.getGlobalPromiseLikeType = c.getGlobalTypeResolver("PromiseLike", 1 /*arity*/, true /*reportErrors*/)
 	c.getGlobalPromiseConstructorSymbol = c.getGlobalValueSymbolResolver("Promise", true /*reportErrors*/)
 	c.getGlobalOmitSymbol = c.getGlobalTypeAliasResolver("Omit", 2 /*arity*/, true /*reportErrors*/)
+	c.getGlobalIteratorType = c.getGlobalTypeResolver("Iterator", 3 /*arity*/, false /*reportErrors*/)
+	c.getGlobalIterableType = c.getGlobalTypeResolver("Iterable", 3 /*arity*/, false /*reportErrors*/)
+	c.getGlobalIterableIteratorType = c.getGlobalTypeResolver("IterableIterator", 3 /*arity*/, false /*reportErrors*/)
+	c.getGlobalIteratorObjectType = c.getGlobalTypeResolver("IteratorObject", 3 /*arity*/, false /*reportErrors*/)
+	c.getGlobalGeneratorType = c.getGlobalTypeResolver("Generator", 3 /*arity*/, false /*reportErrors*/)
+	c.getGlobalAsyncIteratorType = c.getGlobalTypeResolver("AsyncIterator", 3 /*arity*/, false /*reportErrors*/)
+	c.getGlobalAsyncIterableType = c.getGlobalTypeResolver("AsyncIterable", 3 /*arity*/, false /*reportErrors*/)
+	c.getGlobalAsyncIterableIteratorType = c.getGlobalTypeResolver("AsyncIterableIterator", 3 /*arity*/, false /*reportErrors*/)
+	c.getGlobalAsyncIteratorObjectType = c.getGlobalTypeResolver("AsyncIteratorObject", 3 /*arity*/, false /*reportErrors*/)
+	c.getGlobalAsyncGeneratorType = c.getGlobalTypeResolver("AsyncGenerator", 3 /*arity*/, false /*reportErrors*/)
 	c.initializeClosures()
 	c.initializeIterationResolvers()
 	c.initializeChecker()
@@ -1000,11 +1020,11 @@ func (c *Checker) initializeClosures() {
 func (c *Checker) initializeIterationResolvers() {
 	c.syncIterationTypesResolver = &IterationTypesResolver{
 		iteratorSymbolName:            "iterator",
-		getGlobalIteratorType:         c.getGlobalTypeResolver("Iterator", 3 /*arity*/, false /*reportErrors*/),
-		getGlobalIterableType:         c.getGlobalTypeResolver("Iterable", 3 /*arity*/, false /*reportErrors*/),
-		getGlobalIterableIteratorType: c.getGlobalTypeResolver("IterableIterator", 3 /*arity*/, false /*reportErrors*/),
-		getGlobalIteratorObjectType:   c.getGlobalTypeResolver("IteratorObject", 3 /*arity*/, false /*reportErrors*/),
-		getGlobalGeneratorType:        c.getGlobalTypeResolver("Generator", 3 /*arity*/, false /*reportErrors*/),
+		getGlobalIteratorType:         c.getGlobalIteratorType,
+		getGlobalIterableType:         c.getGlobalIterableType,
+		getGlobalIterableIteratorType: c.getGlobalIterableIteratorType,
+		getGlobalIteratorObjectType:   c.getGlobalIteratorObjectType,
+		getGlobalGeneratorType:        c.getGlobalGeneratorType,
 		getGlobalBuiltinIteratorTypes: c.getGlobalTypesResolver([]string{"ArrayIterator", "MapIterator", "SetIterator", "StringIterator"}, 1, false /*reportErrors*/),
 		resolveIterationType: func(t *Type, errorNode *ast.Node) *Type {
 			return t
@@ -1012,11 +1032,11 @@ func (c *Checker) initializeIterationResolvers() {
 	}
 	c.asyncIterationTypesResolver = &IterationTypesResolver{
 		iteratorSymbolName:            "asyncIterator",
-		getGlobalIteratorType:         c.getGlobalTypeResolver("AsyncIterator", 3 /*arity*/, false /*reportErrors*/),
-		getGlobalIterableType:         c.getGlobalTypeResolver("AsyncIterable", 3 /*arity*/, false /*reportErrors*/),
-		getGlobalIterableIteratorType: c.getGlobalTypeResolver("AsyncIterableIterator", 3 /*arity*/, false /*reportErrors*/),
-		getGlobalIteratorObjectType:   c.getGlobalTypeResolver("AsyncIteratorObject", 3 /*arity*/, false /*reportErrors*/),
-		getGlobalGeneratorType:        c.getGlobalTypeResolver("AsyncGenerator", 3 /*arity*/, false /*reportErrors*/),
+		getGlobalIteratorType:         c.getGlobalAsyncIteratorType,
+		getGlobalIterableType:         c.getGlobalAsyncIterableType,
+		getGlobalIterableIteratorType: c.getGlobalAsyncIterableIteratorType,
+		getGlobalIteratorObjectType:   c.getGlobalAsyncIteratorObjectType,
+		getGlobalGeneratorType:        c.getGlobalAsyncGeneratorType,
 		getGlobalBuiltinIteratorTypes: c.getGlobalTypesResolver([]string{"ReadableStreamAsyncIterator"}, 1, false /*reportErrors*/),
 		resolveIterationType: func(t *Type, errorNode *ast.Node) *Type {
 			return c.getAwaitedTypeEx(t, errorNode, diagnostics.Type_of_await_operand_must_either_be_a_valid_promise_or_must_not_contain_a_callable_then_member)
@@ -2033,9 +2053,13 @@ func (c *Checker) checkClassDeclaration(node *ast.Node) {
 	if node.Name() == nil && !ast.HasSyntacticModifier(node, ast.ModifierFlagsDefault) {
 		c.grammarErrorOnFirstToken(node, diagnostics.A_class_declaration_without_the_default_modifier_must_have_a_name)
 	}
+	c.checkClassLikeDeclaration(node)
+	c.checkSourceElements(classDecl.Members.Nodes)
+	c.registerForUnusedIdentifiersCheck(node)
+}
 
+func (c *Checker) checkClassLikeDeclaration(node *ast.Node) {
 	// !!!
-	node.ForEachChild(c.checkSourceElement)
 }
 
 func (c *Checker) checkInterfaceDeclaration(node *ast.Node) {
@@ -2789,14 +2813,12 @@ func (c *Checker) reportTypeNotIterableError(errorNode *ast.Node, t *Type, allow
 	} else {
 		message = diagnostics.Type_0_must_have_a_Symbol_iterator_method_that_returns_an_iterator
 	}
-	c.error(errorNode, message, c.typeToString(t))
-	// !!!
-	// suggestAwait := c.getAwaitedTypeOfPromise(t) != nil || (!allowAsyncIterables &&
-	// 	ast.IsForOfStatement(errorNode.Parent) &&
-	// 	errorNode.Parent.Expression() == errorNode &&
-	// 	c.getGlobalAsyncIterableType(false) != c.emptyGenericType &&
-	// 	c.isTypeAssignableTo(t, c.createTypeFromGenericGlobalType(c.getGlobalAsyncIterableType(false), []*Type{c.anyType, c.anyType, c.anyType})))
-	// return c.errorAndMaybeSuggestAwait(errorNode, suggestAwait, message, c.typeToString(t))
+	suggestAwait := c.getAwaitedTypeOfPromise(t) != nil || (!allowAsyncIterables &&
+		ast.IsForOfStatement(errorNode.Parent) &&
+		errorNode.Parent.Expression() == errorNode &&
+		c.getGlobalAsyncIterableType() != c.emptyGenericType &&
+		c.isTypeAssignableTo(t, c.createTypeFromGenericGlobalType(c.getGlobalAsyncIterableType(), []*Type{c.anyType, c.anyType, c.anyType})))
+	c.errorAndMaybeSuggestAwait(errorNode, suggestAwait, message, c.typeToString(t))
 }
 
 func (c *Checker) getIterationDiagnosticDetails(use IterationUse, inputType *Type, allowsStrings bool, downlevelIteration bool) (*diagnostics.Message, bool) {
@@ -5150,16 +5172,14 @@ func (c *Checker) checkParenthesizedExpression(node *ast.Node, checkMode CheckMo
 }
 
 func (c *Checker) checkClassExpression(node *ast.Node) *Type {
-	// !!!
-	// c.checkClassLikeDeclaration(node)
+	c.checkClassLikeDeclaration(node)
 	c.checkNodeDeferred(node)
-	// !!!
-	// c.checkClassExpressionExternalHelpers(node)
 	return c.getTypeOfSymbol(c.getSymbolOfDeclaration(node))
 }
 
 func (c *Checker) checkClassExpressionDeferred(node *ast.Node) {
-	// !!!
+	c.checkSourceElements(node.AsClassExpression().Members.Nodes)
+	c.registerForUnusedIdentifiersCheck(node)
 }
 
 func (c *Checker) checkFunctionExpressionOrObjectLiteralMethod(node *ast.Node, checkMode CheckMode) *Type {
@@ -17353,14 +17373,14 @@ func (c *Checker) getFalseTypeFromConditionalType(t *Type) *Type {
 
 func (c *Checker) getInferredTrueTypeFromConditionalType(t *Type) *Type {
 	d := t.AsConditionalType()
-	if d.resolvedTrueType == nil {
+	if d.resolvedInferredTrueType == nil {
 		if d.combinedMapper != nil {
-			d.resolvedTrueType = c.instantiateType(c.getTypeFromTypeNode(d.root.node.TrueType), d.mapper)
+			d.resolvedInferredTrueType = c.instantiateType(c.getTypeFromTypeNode(d.root.node.TrueType), d.combinedMapper)
 		} else {
-			d.resolvedTrueType = c.getTrueTypeFromConditionalType(t)
+			d.resolvedInferredTrueType = c.getTrueTypeFromConditionalType(t)
 		}
 	}
-	return d.resolvedTrueType
+	return d.resolvedInferredTrueType
 }
 
 func (c *Checker) getTypeFromInferTypeNode(node *ast.Node) *Type {
