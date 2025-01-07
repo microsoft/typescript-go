@@ -11,6 +11,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/compiler/diagnostics"
 	"github.com/microsoft/typescript-go/internal/compiler/packagejson"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/semver"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
@@ -462,23 +463,22 @@ func (r *resolutionState) loadModuleFromExports(packageInfo *packagejson.InfoCac
 	}
 
 	if subpath == "." {
-		var mainExport any
+		var mainExport *packagejson.Exports
 		switch packageInfo.Contents.Exports.Type {
 		case packagejson.JSONValueTypeString, packagejson.JSONValueTypeArray:
-			mainExport = packageInfo.Contents.Exports.Value
+			mainExport = &packageInfo.Contents.Exports
 		case packagejson.JSONValueTypeObject:
 			if packageInfo.Contents.Exports.IsConditions() {
-				mainExport = packageInfo.Contents.Exports.Value
-			}
-			if dot, ok := packageInfo.Contents.Exports.AsObject().Get("."); ok {
+				mainExport = &packageInfo.Contents.Exports
+			} else if dot, ok := packageInfo.Contents.Exports.AsObject().Get("."); ok {
 				mainExport = dot
 			}
 		}
 		if mainExport != nil {
-			return r.getLoadModuleFromTargetExportOrImport(ext, subpath, packageInfo, false /*isImports*/)(mainExport, "", false /*pattern*/, ".")
+			return r.loadModuleFromTargetExportOrImport(ext, subpath, packageInfo, false /*isImports*/, mainExport, "", false /*isPattern*/, ".")
 		}
 	} else if packageInfo.Contents.Exports.Type == packagejson.JSONValueTypeObject && packageInfo.Contents.Exports.IsSubpaths() {
-		if result := r.loadModuleFromExportsOrImports(ext, subpath, packageInfo.Contents.Exports.AsObject(), packageInfo, false /*isImports*/); result.stop {
+		if result := r.loadModuleFromExportsOrImports(ext, subpath, packageInfo.Contents.Exports.AsObject(), packageInfo, false /*isImports*/); !result.shouldContinueSearching() {
 			return result
 		}
 	}
@@ -486,6 +486,197 @@ func (r *resolutionState) loadModuleFromExports(packageInfo *packagejson.InfoCac
 	if r.resolver.traceEnabled() {
 		r.resolver.host.Trace(diagnostics.Export_specifier_0_does_not_exist_in_package_json_scope_at_path_1.Format(subpath, packageInfo.PackageDirectory))
 	}
+	return continueSearching()
+}
+
+func (r *resolutionState) loadModuleFromExportsOrImports(
+	extensions extensions,
+	moduleName string,
+	lookupTable *collections.OrderedMap[string, *packagejson.Exports],
+	scope *packagejson.InfoCacheEntry,
+	isImports bool,
+) *resolved {
+	if !strings.HasSuffix(moduleName, "/") && !strings.Contains(moduleName, "*") {
+		if target, ok := lookupTable.Get(moduleName); ok {
+			return r.loadModuleFromTargetExportOrImport(extensions, moduleName, scope, isImports, target, "", false /*isPattern*/, moduleName)
+		}
+	}
+
+	expandingKeys := make([]string, 0, lookupTable.Size())
+	for key := range lookupTable.Keys() {
+		if strings.Contains(key, "*") || strings.HasSuffix(key, "/") {
+			expandingKeys = append(expandingKeys, key)
+		}
+	}
+	slices.SortFunc(expandingKeys, ComparePatternKeys)
+
+	for _, potentialTarget := range expandingKeys {
+		if r.features&NodeResolutionFeaturesExportsPatternTrailers != 0 && matchesPatternWithTrailer(potentialTarget, moduleName) {
+			target, _ := lookupTable.Get(potentialTarget)
+			starPos := strings.Index(potentialTarget, "*")
+			subpath := moduleName[len(potentialTarget[:starPos]) : len(moduleName)-(len(potentialTarget)-1-starPos)]
+			return r.loadModuleFromTargetExportOrImport(extensions, moduleName, scope, isImports, target, subpath, true, potentialTarget)
+		} else if strings.HasSuffix(potentialTarget, "*") && strings.HasPrefix(moduleName, potentialTarget[:len(potentialTarget)-1]) {
+			target, _ := lookupTable.Get(potentialTarget)
+			subpath := moduleName[len(potentialTarget)-1:]
+			return r.loadModuleFromTargetExportOrImport(extensions, moduleName, scope, isImports, target, subpath, true, potentialTarget)
+		} else if strings.HasPrefix(moduleName, potentialTarget) {
+			target, _ := lookupTable.Get(potentialTarget)
+			subpath := moduleName[len(potentialTarget):]
+			return r.loadModuleFromTargetExportOrImport(extensions, moduleName, scope, isImports, target, subpath, false, potentialTarget)
+		}
+	}
+
+	return continueSearching()
+}
+
+func (r *resolutionState) loadModuleFromTargetExportOrImport(extensions extensions, moduleName string, scope *packagejson.InfoCacheEntry, isImports bool, target *packagejson.Exports, subpath string, isPattern bool, key string) *resolved {
+	switch target.Type {
+	case packagejson.JSONValueTypeString:
+		targetString, _ := target.Value.(string)
+		if !isPattern && len(subpath) > 0 && !strings.HasSuffix(targetString, "/") {
+			if r.resolver.traceEnabled() {
+				r.resolver.host.Trace(diagnostics.X_package_json_scope_0_has_invalid_type_for_target_of_specifier_1.Format(scope.PackageDirectory, moduleName))
+			}
+			return continueSearching()
+		}
+		if !strings.HasPrefix(targetString, "./") {
+			if isImports && !strings.HasPrefix(targetString, "../") && !strings.HasPrefix(targetString, "/") && !tspath.IsRootedDiskPath(targetString) {
+				combinedLookup := targetString + subpath
+				if isPattern {
+					combinedLookup = strings.ReplaceAll(targetString, "*", subpath)
+				}
+				if r.resolver.traceEnabled() {
+					r.resolver.host.Trace(diagnostics.Using_0_subpath_1_with_target_2.Format("imports", key, combinedLookup))
+					r.resolver.host.Trace(diagnostics.Resolving_module_0_from_1.Format(combinedLookup, scope.PackageDirectory+"/"))
+				}
+				name, containingDirectory := r.name, r.containingDirectory
+				r.name, r.containingDirectory = combinedLookup, scope.PackageDirectory+"/"
+				defer func() {
+					r.name, r.containingDirectory = name, containingDirectory
+				}()
+				if result := r.resolveNodeLike(); result.IsResolved() {
+					return &resolved{
+						path:                     result.ResolvedFileName,
+						extension:                result.Extension,
+						packageId:                result.PackageId,
+						originalPath:             result.OriginalPath,
+						resolvedUsingTsExtension: result.ResolvedUsingTsExtension,
+					}
+				}
+				return continueSearching()
+			}
+			if r.resolver.traceEnabled() {
+				r.resolver.host.Trace(diagnostics.X_package_json_scope_0_has_invalid_type_for_target_of_specifier_1.Format(scope.PackageDirectory, moduleName))
+			}
+			return continueSearching()
+		}
+		var parts []string
+		if tspath.PathIsRelative(targetString) {
+			parts = tspath.GetPathComponents(targetString, "")[1:]
+		} else {
+			parts = tspath.GetPathComponents(targetString, "")
+		}
+		partsAfterFirst := parts[1:]
+		if slices.Contains(partsAfterFirst, "..") || slices.Contains(partsAfterFirst, ".") || slices.Contains(partsAfterFirst, "node_modules") {
+			if r.resolver.traceEnabled() {
+				r.resolver.host.Trace(diagnostics.X_package_json_scope_0_has_invalid_type_for_target_of_specifier_1.Format(scope.PackageDirectory, moduleName))
+			}
+			return continueSearching()
+		}
+		resolvedTarget := tspath.CombinePaths(scope.PackageDirectory, targetString)
+		// TODO: Assert that `resolvedTarget` is actually within the package directory? That's what the spec says.... but I'm not sure we need
+		// to be in the business of validating everyone's import and export map correctness.
+		subpathParts := tspath.GetPathComponents(subpath, "")
+		if slices.Contains(subpathParts, "..") || slices.Contains(subpathParts, ".") || slices.Contains(subpathParts, "node_modules") {
+			if r.resolver.traceEnabled() {
+				r.resolver.host.Trace(diagnostics.X_package_json_scope_0_has_invalid_type_for_target_of_specifier_1.Format(scope.PackageDirectory, moduleName))
+			}
+			return continueSearching()
+		}
+
+		if r.resolver.traceEnabled() {
+			var messageTarget string
+			if isPattern {
+				messageTarget = strings.ReplaceAll(targetString, "*", subpath)
+			} else {
+				messageTarget = targetString + subpath
+			}
+			r.resolver.host.Trace(diagnostics.Using_0_subpath_1_with_target_2.Format(core.IfElse(isImports, "imports", "exports"), key, messageTarget))
+		}
+		var finalPath string
+		if isPattern {
+			finalPath = tspath.GetNormalizedAbsolutePath(strings.ReplaceAll(resolvedTarget, "*", subpath), r.resolver.host.GetCurrentDirectory())
+		} else {
+			finalPath = tspath.GetNormalizedAbsolutePath(resolvedTarget+subpath, r.resolver.host.GetCurrentDirectory())
+		}
+		if inputLink := r.tryLoadInputFileForPath(finalPath, subpath, tspath.CombinePaths(scope.PackageDirectory, "package.json"), isImports); !inputLink.shouldContinueSearching() {
+			return inputLink
+		}
+		if result := r.loadFileNameFromPackageJSONField(extensions, finalPath, targetString, false /*onlyRecordFailures*/); !result.shouldContinueSearching() {
+			result.packageId = r.getPackageId(result.path, scope)
+		}
+		return continueSearching()
+
+	case packagejson.JSONValueTypeObject:
+		if r.resolver.traceEnabled() {
+			r.resolver.host.Trace(diagnostics.Entering_conditional_exports.Format())
+		}
+		for condition := range target.AsObject().Keys() {
+			if r.conditionMatches(condition) {
+				if r.resolver.traceEnabled() {
+					r.resolver.host.Trace(diagnostics.Matched_0_condition_1.Format(core.IfElse(isImports, "imports", "exports"), condition))
+				}
+				subTarget, _ := target.AsObject().Get(condition)
+				if result := r.loadModuleFromTargetExportOrImport(extensions, moduleName, scope, isImports, subTarget, subpath, isPattern, key); !result.shouldContinueSearching() {
+					if r.resolver.traceEnabled() {
+						r.resolver.host.Trace(diagnostics.Resolved_under_condition_0.Format(condition))
+					}
+					if r.resolver.traceEnabled() {
+						r.resolver.host.Trace(diagnostics.Exiting_conditional_exports.Format())
+					}
+					return result
+				} else if r.resolver.traceEnabled() {
+					r.resolver.host.Trace(diagnostics.Failed_to_resolve_under_condition_0.Format(condition))
+				}
+			} else {
+				if r.resolver.traceEnabled() {
+					r.resolver.host.Trace(diagnostics.Saw_non_matching_condition_0.Format(condition))
+				}
+			}
+		}
+		if r.resolver.traceEnabled() {
+			r.resolver.host.Trace(diagnostics.Exiting_conditional_exports.Format())
+		}
+		return continueSearching()
+	case packagejson.JSONValueTypeArray:
+		if len(target.AsArray()) == 0 {
+			if r.resolver.traceEnabled() {
+				r.resolver.host.Trace(diagnostics.X_package_json_scope_0_has_invalid_type_for_target_of_specifier_1.Format(scope.PackageDirectory, moduleName))
+			}
+			return continueSearching()
+		}
+		for _, elem := range target.AsArray() {
+			if result := r.loadModuleFromTargetExportOrImport(extensions, moduleName, scope, isImports, elem, subpath, isPattern, key); !result.shouldContinueSearching() {
+				return result
+			}
+		}
+
+	case packagejson.JSONValueTypeNull:
+		if r.resolver.traceEnabled() {
+			r.resolver.host.Trace(diagnostics.X_package_json_scope_0_explicitly_maps_specifier_1_to_null.Format(scope.PackageDirectory, moduleName))
+		}
+		return continueSearching()
+	}
+
+	if r.resolver.traceEnabled() {
+		r.resolver.host.Trace(diagnostics.X_package_json_scope_0_has_invalid_type_for_target_of_specifier_1.Format(scope.PackageDirectory, moduleName))
+	}
+	return continueSearching()
+}
+
+func (r *resolutionState) tryLoadInputFileForPath(finalPath string, entry string, packagePath string, isImports bool) *resolved {
+	// !!!
 	return continueSearching()
 }
 
@@ -1338,6 +1529,22 @@ func (r *resolutionState) getPackageJSONPathField(fieldName string, field *packa
 	return path, true
 }
 
+func (r *resolutionState) conditionMatches(condition string) bool {
+	if condition == "default" || slices.Contains(r.conditions, condition) {
+		return true
+	}
+	if !slices.Contains(r.conditions, "types") {
+		return false // only apply versioned types conditions if the types condition is applied
+	}
+	if !strings.HasPrefix(condition, "types@") {
+		return false
+	}
+	if versionRange, ok := semver.TryParseVersionRange(condition[len("types@"):]); ok {
+		return versionRange.Test(&typeScriptVersion)
+	}
+	return false
+}
+
 func (r *resolutionState) getTraceFunc() func(string) {
 	if r.resolver.traceEnabled() {
 		return r.resolver.host.Trace
@@ -1464,4 +1671,15 @@ func normalizePathForCJSResolution(containingDirectory string, moduleName string
 		return tspath.EnsureTrailingDirectorySeparator(tspath.NormalizePath(combined))
 	}
 	return tspath.NormalizePath(combined)
+}
+
+func matchesPatternWithTrailer(target string, name string) bool {
+	if strings.HasSuffix(target, "*") {
+		return false
+	}
+	starPos := strings.Index(target, "*")
+	if starPos == -1 {
+		return false
+	}
+	return strings.HasPrefix(name, target[:starPos]) && strings.HasSuffix(name, target[starPos+1:])
 }
