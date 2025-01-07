@@ -1650,7 +1650,7 @@ func compareTypes(t1, t2 *Type) int {
 	// We have unnamed types or types with identical names. Now sort by data specific to the type.
 	switch {
 	case t1.flags&(TypeFlagsAny|TypeFlagsUnknown|TypeFlagsString|TypeFlagsNumber|TypeFlagsBoolean|TypeFlagsBigInt|TypeFlagsESSymbol|TypeFlagsVoid|TypeFlagsUndefined|TypeFlagsNull|TypeFlagsNever|TypeFlagsNonPrimitive) != 0:
-		// Only distinguished by type IDs
+		// Only distinguished by type IDs, handled below.
 	case t1.flags&TypeFlagsObject != 0:
 		// Order unnamed or identically named object types by symbol.
 		if c := compareSymbols(t1.symbol, t2.symbol); c != 0 {
@@ -1882,15 +1882,12 @@ func compareTypeLists(s1, s2 []*Type) int {
 }
 
 func compareTexts(s1, s2 []string) int {
-	if len(s1) != len(s2) {
-		return len(s1) - len(s2)
-	}
-	for i, t1 := range s1 {
-		if c := strings.Compare(t1, s2[i]); c != 0 {
+	for i := range min(len(s1), len(s2)) {
+		if c := strings.Compare(s1[i], s2[i]); c != 0 {
 			return c
 		}
 	}
-	return 0
+	return len(s1) - len(s2)
 }
 
 func compareTypeMappers(m1, m2 *TypeMapper) int {
