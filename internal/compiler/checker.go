@@ -2593,10 +2593,10 @@ func (c *Checker) getIterationTypeOfIterable(use IterationUse, typeKind Iteratio
 //
 // Another thing to note is that at any step of this process, we could run into a dead end,
 // meaning either the property is missing, or we run into the anyType. If either of these things
-// happens, we return `undefined` to signal that we could not find the iteration type. If a property
-// is missing, and the previous step did not result in `any`, then we also give an error if the
-// caller requested it. Then the caller can decide what to do in the case where there is no iterated
-// type.
+// happens, we return a default `IterationTypes{}` to signal that we could not find the iteration type.
+// If a property is missing, and the previous step did not result in `any`, then we also give an error
+// if the caller requested it. Then the caller can decide what to do in the case where there is no
+// iterated type.
 //
 // For a **for-of** statement, `yield*` (in a normal generator), spread, array
 // destructuring, or normal generator we will only ever look for a `[Symbol.iterator]()`
@@ -2748,8 +2748,8 @@ func (c *Checker) getAsyncFromSyncIterationTypes(iterationTypes IterationTypes, 
 // Gets the *yield*, *return*, and *next* types of an `Iterable`-like or `AsyncIterable`-like
 // type from its members.
 //
-// If we successfully found the *yield*, *return*, and *next* types, an `IterationTypes`
-// record is returned. Otherwise, `noIterationTypes` is returned.
+// If we successfully found the *yield*, *return*, and *next* types, an `IterationTypes` with non-nil
+// members is returned. Otherwise, a default `IterationTypes{}` is returned.
 //
 // NOTE: You probably don't want to call this directly and should be calling
 // `getIterationTypesOfIterable` instead.
@@ -2769,8 +2769,8 @@ func (c *Checker) getIterationTypesOfIterableSlow(t *Type, r *IterationTypesReso
 
 // Gets the *yield*, *return*, and *next* types from an `Iterator`-like or `AsyncIterator`-like type.
 //
-// If we successfully found the *yield*, *return*, and *next* types, an `IterationTypes`
-// record is returned. Otherwise, `undefined` is returned.
+// If we successfully found the *yield*, *return*, and *next* types, an `IterationTypes` with non-nil
+// members is returned. Otherwise, a default `IterationTypes{}` is returned.
 //
 // NOTE: You probably don't want to call this directly and should be calling
 // `getIterationTypesOfIterator` instead.
