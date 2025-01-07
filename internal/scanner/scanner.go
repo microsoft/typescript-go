@@ -1548,14 +1548,14 @@ func (s *Scanner) scanNumber() ast.Kind {
 	}
 	if s.tokenFlags&ast.TokenFlagsContainsLeadingZero != 0 {
 		s.errorAt(diagnostics.Decimals_with_leading_zeros_are_not_allowed, start, s.pos-start)
-		s.tokenValue = jsnum.ToNumber(s.tokenValue).String()
+		s.tokenValue = jsnum.FromString(s.tokenValue).String()
 		return ast.KindNumericLiteral
 	}
 	var result ast.Kind
 	if fixedPartEnd == s.pos {
 		result = s.scanBigIntSuffix()
 	} else {
-		s.tokenValue = jsnum.ToNumber(s.tokenValue).String()
+		s.tokenValue = jsnum.FromString(s.tokenValue).String()
 		result = ast.KindNumericLiteral
 	}
 	ch, _ := s.charAndSize()
@@ -1713,7 +1713,7 @@ func (s *Scanner) scanBigIntSuffix() ast.Kind {
 			return ast.KindNumericLiteral
 		}
 	}
-	s.tokenValue = jsnum.ToNumber(s.tokenValue).String()
+	s.tokenValue = jsnum.FromString(s.tokenValue).String()
 	return ast.KindNumericLiteral
 }
 
