@@ -13,7 +13,7 @@ func TestExports(t *testing.T) {
 	t.Parallel()
 
 	t.Run("UnmarshalJSON", func(t *testing.T) {
-		// t.Parallel()
+		t.Parallel()
 		testExports(t, json.Unmarshal)
 	})
 	t.Run("UnmarshalJSONV2", func(t *testing.T) {
