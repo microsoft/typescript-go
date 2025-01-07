@@ -5198,6 +5198,14 @@ func (f *NodeFactory) NewJSDocUnknownTag(tagName *IdentifierNode, comment *NodeL
 	return newNode(KindJSDocTag, data)
 }
 
+func (node *JSDocUnknownTag) ForEachChild(v Visitor) bool {
+	return visit(v, node.TagName) || visitNodeList(v, node.Comment)
+}
+
+func IsJSDocUnknownTag(node *Node) bool {
+	return node.Kind == KindJSDocTag
+}
+
 // JSDocTemplateTag
 type JSDocTemplateTag struct {
 	JSDocTagBase
@@ -5564,6 +5572,9 @@ func (f *NodeFactory) NewJSDocTypedefTag(tagName *IdentifierNode, typeExpression
 }
 
 func (node *JSDocTypedefTag) ForEachChild(v Visitor) bool {
+	if node.TypeExpression != nil && node.TypeExpression.Kind == KindJSDocTypeLiteral {
+		return visit(v, node.TagName) || visit(v, node.FullName) || visit(v, node.TypeExpression) || visitNodeList(v, node.Comment)
+	}
 	return visit(v, node.TagName) || visit(v, node.TypeExpression) || visit(v, node.FullName) || visitNodeList(v, node.Comment)
 }
 

@@ -1135,7 +1135,7 @@ func (s *Scanner) ScanJSDocCommentTextToken(inBackticks bool) ast.Kind {
 		return s.token
 	}
 	s.tokenStart = s.pos
-	for ch, size := s.charAndSize(); s.pos < len(s.text) && !stringutil.IsLineBreak(ch) && ch != '`'; {
+	for ch, size := s.charAndSize(); s.pos < len(s.text) && !stringutil.IsLineBreak(ch) && ch != '`'; ch, size = s.charAndSize() {
 		if !inBackticks {
 			if ch == '{' {
 				break
@@ -1144,7 +1144,7 @@ func (s *Scanner) ScanJSDocCommentTextToken(inBackticks bool) ast.Kind {
 				previous, _ := utf8.DecodeLastRuneInString(s.text[:s.pos])
 				if stringutil.IsWhiteSpaceSingleLine(previous) {
 					if s.pos+size >= len(s.text) {
-						// EOF is non-whitespace
+						// EOF counts as non-whitespace
 						break
 					}
 					next, _ := utf8.DecodeRuneInString(s.text[s.pos+size:])
@@ -1154,7 +1154,6 @@ func (s *Scanner) ScanJSDocCommentTextToken(inBackticks bool) ast.Kind {
 				}
 			}
 		}
-		ch, size = s.charAndSize()
 		s.pos += size
 	}
 	if s.pos == s.tokenStart {
