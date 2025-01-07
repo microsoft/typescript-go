@@ -1842,7 +1842,7 @@ func isNumericLiteralName(name string) bool {
 	// Note that this accepts the values 'Infinity', '-Infinity', and 'NaN', and that this is intentional.
 	// This is desired behavior, because when indexing with them as numeric entities, you are indexing
 	// with the strings '"Infinity"', '"-Infinity"', and '"NaN"' respectively.
-	return jsnum.ParseNumber(name).String() == name
+	return jsnum.ToNumber(name).String() == name
 }
 
 func getPropertyNameForPropertyNameNode(name *ast.Node) string {
@@ -1890,7 +1890,7 @@ func isValidNumberString(s string, roundTripOnly bool) bool {
 	if s == "" {
 		return false
 	}
-	n := jsnum.ParseNumber(s)
+	n := jsnum.ToNumber(s)
 	return !n.IsNaN() && !n.IsInf() && (!roundTripOnly || n.String() == s)
 }
 
@@ -2227,7 +2227,7 @@ func createEvaluator(evaluateEntity Evaluator) Evaluator {
 		case ast.KindTemplateExpression:
 			return evaluateTemplateExpression(expr, location)
 		case ast.KindNumericLiteral:
-			return evaluatorResult(jsnum.ParseNumber(expr.Text()), false, false, false)
+			return evaluatorResult(jsnum.ToNumber(expr.Text()), false, false, false)
 		case ast.KindIdentifier, ast.KindElementAccessExpression:
 			return evaluateEntity(expr, location)
 		case ast.KindPropertyAccessExpression:

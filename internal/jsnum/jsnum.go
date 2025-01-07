@@ -40,7 +40,8 @@ func (n Number) IsInf() bool {
 	return math.IsInf(float64(n), 0)
 }
 
-func ParseNumber(s string) Number {
+// https://tc39.es/ecma262/2024/multipage/abstract-operations.html#sec-stringtonumber
+func ToNumber(s string) Number {
 	// !!! verify that this is actually the same as JS.
 	floatValue, err := strconv.ParseFloat(s, 64)
 	if err == nil {
