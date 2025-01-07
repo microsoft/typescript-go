@@ -36,7 +36,11 @@ func NewParsedCommandLine(
 	}
 }
 
-func (p *ParsedCommandLine) SetParsedOptions(o *core.CompilerOptions) {
+func (p *ParsedCommandLine) SetParsedOptions(o *core.ParsedOptions) {
+	p.options = o
+}
+
+func (p *ParsedCommandLine) SetCompilerOptions(o *core.CompilerOptions) {
 	p.options.CompilerOptions = o
 }
 
