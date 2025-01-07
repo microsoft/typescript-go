@@ -268,7 +268,7 @@ func (walker *typeWriterWalker) writeTypeOrSymbol(node *ast.Node, isSymbolWalk b
 		// !!! Types baseline
 	}
 
-	symbol := walker.checker.GetSymbolAtLocation(node /*ignoreErrors*/, true)
+	symbol := walker.checker.GetSymbolAtLocation(node)
 	if symbol == nil {
 		return nil
 	}

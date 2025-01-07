@@ -2360,9 +2360,9 @@ func (r *Relater) hasExcessProperties(source *Type, target *Type, reportErrors b
 							}
 						}
 						if suggestion != "" {
-							r.reportError(diagnostics.Object_literal_may_only_specify_known_properties_but_0_does_not_exist_in_type_1_Did_you_mean_to_write_2, r.c.SymbolToString(prop), r.c.typeToString(errorTarget), suggestion)
+							r.reportError(diagnostics.Object_literal_may_only_specify_known_properties_but_0_does_not_exist_in_type_1_Did_you_mean_to_write_2, r.c.symbolToString(prop), r.c.typeToString(errorTarget), suggestion)
 						} else {
-							r.reportError(diagnostics.Object_literal_may_only_specify_known_properties_and_0_does_not_exist_in_type_1, r.c.SymbolToString(prop), r.c.typeToString(errorTarget))
+							r.reportError(diagnostics.Object_literal_may_only_specify_known_properties_and_0_does_not_exist_in_type_1, r.c.symbolToString(prop), r.c.typeToString(errorTarget))
 						}
 					}
 				}
@@ -2370,7 +2370,7 @@ func (r *Relater) hasExcessProperties(source *Type, target *Type, reportErrors b
 			}
 			if checkTypes != nil && r.isRelatedTo(r.c.getTypeOfSymbol(prop), r.c.getTypeOfPropertyInTypes(checkTypes, prop.Name), RecursionFlagsBoth, reportErrors) == TernaryFalse {
 				if reportErrors {
-					r.reportError(diagnostics.Types_of_property_0_are_incompatible, r.c.SymbolToString(prop))
+					r.reportError(diagnostics.Types_of_property_0_are_incompatible, r.c.symbolToString(prop))
 				}
 				return true
 			}
@@ -3811,7 +3811,7 @@ func (r *Relater) propertiesRelatedTo(source *Type, target *Type, reportErrors b
 				sourceType := r.c.getTypeOfSymbol(sourceProp)
 				if sourceType.flags&TypeFlagsUndefined == 0 {
 					if reportErrors {
-						r.reportError(diagnostics.Property_0_does_not_exist_on_type_1, r.c.SymbolToString(sourceProp), r.c.typeToString(target))
+						r.reportError(diagnostics.Property_0_does_not_exist_on_type_1, r.c.symbolToString(sourceProp), r.c.typeToString(target))
 					}
 					return TernaryFalse
 				}
@@ -3846,9 +3846,9 @@ func (r *Relater) propertyRelatedTo(source *Type, target *Type, sourceProp *ast.
 		if sourceProp.ValueDeclaration != targetProp.ValueDeclaration {
 			if reportErrors {
 				if sourcePropFlags&ast.ModifierFlagsPrivate != 0 && targetPropFlags&ast.ModifierFlagsPrivate != 0 {
-					r.reportError(diagnostics.Types_have_separate_declarations_of_a_private_property_0, r.c.SymbolToString(targetProp))
+					r.reportError(diagnostics.Types_have_separate_declarations_of_a_private_property_0, r.c.symbolToString(targetProp))
 				} else {
-					r.reportError(diagnostics.Property_0_is_private_in_type_1_but_not_in_type_2, r.c.SymbolToString(targetProp), r.c.typeToString(core.IfElse(sourcePropFlags&ast.ModifierFlagsPrivate != 0, source, target)), r.c.typeToString(core.IfElse(sourcePropFlags&ast.ModifierFlagsPrivate != 0, target, source)))
+					r.reportError(diagnostics.Property_0_is_private_in_type_1_but_not_in_type_2, r.c.symbolToString(targetProp), r.c.typeToString(core.IfElse(sourcePropFlags&ast.ModifierFlagsPrivate != 0, source, target)), r.c.typeToString(core.IfElse(sourcePropFlags&ast.ModifierFlagsPrivate != 0, target, source)))
 				}
 			}
 			return TernaryFalse
@@ -3864,13 +3864,13 @@ func (r *Relater) propertyRelatedTo(source *Type, target *Type, sourceProp *ast.
 				if targetType == nil {
 					targetType = target
 				}
-				r.reportError(diagnostics.Property_0_is_protected_but_type_1_is_not_a_class_derived_from_2, r.c.SymbolToString(targetProp), r.c.typeToString(sourceType), r.c.typeToString(targetType))
+				r.reportError(diagnostics.Property_0_is_protected_but_type_1_is_not_a_class_derived_from_2, r.c.symbolToString(targetProp), r.c.typeToString(sourceType), r.c.typeToString(targetType))
 			}
 			return TernaryFalse
 		}
 	case sourcePropFlags&ast.ModifierFlagsProtected != 0:
 		if reportErrors {
-			r.reportError(diagnostics.Property_0_is_protected_in_type_1_but_public_in_type_2, r.c.SymbolToString(targetProp), r.c.typeToString(source), r.c.typeToString(target))
+			r.reportError(diagnostics.Property_0_is_protected_in_type_1_but_public_in_type_2, r.c.symbolToString(targetProp), r.c.typeToString(source), r.c.typeToString(target))
 		}
 		return TernaryFalse
 	}
@@ -3887,7 +3887,7 @@ func (r *Relater) propertyRelatedTo(source *Type, target *Type, sourceProp *ast.
 	related := r.isPropertySymbolTypeRelated(sourceProp, targetProp, getTypeOfSourceProperty, reportErrors, intersectionState)
 	if related == TernaryFalse {
 		if reportErrors {
-			r.reportError(diagnostics.Types_of_property_0_are_incompatible, r.c.SymbolToString(targetProp))
+			r.reportError(diagnostics.Types_of_property_0_are_incompatible, r.c.symbolToString(targetProp))
 		}
 		return TernaryFalse
 	}
@@ -3901,7 +3901,7 @@ func (r *Relater) propertyRelatedTo(source *Type, target *Type, sourceProp *ast.
 		// (M - property in T)
 		// (N - property in S)
 		if reportErrors {
-			r.reportError(diagnostics.Property_0_is_optional_in_type_1_but_required_in_type_2, r.c.SymbolToString(targetProp), r.c.typeToString(source), r.c.typeToString(target))
+			r.reportError(diagnostics.Property_0_is_optional_in_type_1_but_required_in_type_2, r.c.symbolToString(targetProp), r.c.typeToString(source), r.c.typeToString(target))
 		}
 		return TernaryFalse
 	}
@@ -3933,17 +3933,17 @@ func (r *Relater) reportUnmatchedProperty(source *Type, target *Type, unmatchedP
 	}
 	props := slices.Collect(r.c.getUnmatchedProperties(source, target, requireOptionalProperties, false /*matchDiscriminantProperties*/))
 	if len(props) == 1 {
-		propName := r.c.SymbolToString(unmatchedProperty)
+		propName := r.c.symbolToString(unmatchedProperty)
 		r.reportError(diagnostics.Property_0_is_missing_in_type_1_but_required_in_type_2, unmatchedProperty.Name, r.c.typeToString(source), r.c.typeToString(target))
 		if len(unmatchedProperty.Declarations) != 0 {
 			r.relatedInfo = append(r.relatedInfo, createDiagnosticForNode(unmatchedProperty.Declarations[0], diagnostics.X_0_is_declared_here, propName))
 		}
 	} else if r.tryElaborateArrayLikeErrors(source, target, false /*reportErrors*/) {
 		if len(props) > 5 {
-			propNames := strings.Join(core.Map(props[:4], r.c.SymbolToString), ", ")
+			propNames := strings.Join(core.Map(props[:4], r.c.symbolToString), ", ")
 			r.reportError(diagnostics.Type_0_is_missing_the_following_properties_from_type_1_Colon_2_and_3_more, r.c.typeToString(source), r.c.typeToString(target), propNames, len(props)-4)
 		} else {
-			propNames := strings.Join(core.Map(props, r.c.SymbolToString), ", ")
+			propNames := strings.Join(core.Map(props, r.c.symbolToString), ", ")
 			r.reportError(diagnostics.Type_0_is_missing_the_following_properties_from_type_1_Colon_2, r.c.typeToString(source), r.c.typeToString(target), propNames)
 		}
 	}
@@ -4225,7 +4225,7 @@ func (r *Relater) membersRelatedToIndexInfo(source *Type, targetInfo *IndexInfo,
 			related := r.isRelatedToEx(t, targetInfo.valueType, RecursionFlagsBoth, reportErrors, nil /*headMessage*/, intersectionState)
 			if related == TernaryFalse {
 				if reportErrors {
-					r.reportError(diagnostics.Property_0_is_incompatible_with_index_signature, r.c.SymbolToString(prop))
+					r.reportError(diagnostics.Property_0_is_incompatible_with_index_signature, r.c.symbolToString(prop))
 				}
 				return TernaryFalse
 			}
@@ -4305,7 +4305,7 @@ func (r *Relater) reportErrorResults(originalSource *Type, originalTarget *Type,
 			prop = core.Find(r.c.getPropertiesOfUnionOrIntersectionType(originalTarget), isConflictingPrivateProperty)
 		}
 		if prop != nil {
-			r.reportError(message, r.c.typeToStringEx(originalTarget, nil /*enclosingDeclaration*/, TypeFormatFlagsNoTypeReduction), r.c.SymbolToString(prop))
+			r.reportError(message, r.c.typeToStringEx(originalTarget, nil /*enclosingDeclaration*/, TypeFormatFlagsNoTypeReduction), r.c.symbolToString(prop))
 		}
 	}
 	// !!! Logic having to do with canonical diagnostics for deduplication purposes

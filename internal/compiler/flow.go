@@ -2111,7 +2111,7 @@ func (c *Checker) getExplicitTypeOfSymbol(symbol *ast.Symbol, diagnostic *ast.Di
 				}
 			}
 			if diagnostic != nil {
-				diagnostic.AddRelatedInfo(createDiagnosticForNode(declaration, diagnostics.X_0_needs_an_explicit_type_annotation, c.SymbolToString(symbol)))
+				diagnostic.AddRelatedInfo(createDiagnosticForNode(declaration, diagnostics.X_0_needs_an_explicit_type_annotation, c.symbolToString(symbol)))
 			}
 		}
 	}
@@ -2382,7 +2382,7 @@ func (c *Checker) getFlowTypeInConstructor(symbol *ast.Symbol, constructor *ast.
 	reference.FlowNodeData().FlowNode = constructor.AsConstructorDeclaration().ReturnFlowNode
 	flowType := c.getFlowTypeOfProperty(reference, symbol)
 	if c.noImplicitAny && (flowType == c.autoType || flowType == c.autoArrayType) {
-		c.error(symbol.ValueDeclaration, diagnostics.Member_0_implicitly_has_an_1_type, c.SymbolToString(symbol), c.typeToString(flowType))
+		c.error(symbol.ValueDeclaration, diagnostics.Member_0_implicitly_has_an_1_type, c.symbolToString(symbol), c.typeToString(flowType))
 	}
 	// We don't infer a type if assignments are only null or undefined.
 	if everyType(flowType, c.isNullableType) {
@@ -2405,7 +2405,7 @@ func (c *Checker) getFlowTypeInStaticBlocks(symbol *ast.Symbol, staticBlocks []*
 		reference.FlowNodeData().FlowNode = staticBlock.AsClassStaticBlockDeclaration().ReturnFlowNode
 		flowType := c.getFlowTypeOfProperty(reference, symbol)
 		if c.noImplicitAny && (flowType == c.autoType || flowType == c.autoArrayType) {
-			c.error(symbol.ValueDeclaration, diagnostics.Member_0_implicitly_has_an_1_type, c.SymbolToString(symbol), c.typeToString(flowType))
+			c.error(symbol.ValueDeclaration, diagnostics.Member_0_implicitly_has_an_1_type, c.symbolToString(symbol), c.typeToString(flowType))
 		}
 		// We don't infer a type if assignments are only null or undefined.
 		if everyType(flowType, c.isNullableType) {

@@ -40,7 +40,7 @@ foo.bar;`
 	propAccess := file.Statements.Nodes[2].AsExpressionStatement().Expression
 	nodes := []*ast.Node{interfaceId, varId, propAccess}
 	for _, node := range nodes {
-		symbol := c.GetSymbolAtLocation(node, true /*ignoreErrors*/)
+		symbol := c.GetSymbolAtLocation(node)
 		if symbol == nil {
 			t.Fatalf("Expected symbol to be non-nil")
 		}
