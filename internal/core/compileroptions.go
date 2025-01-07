@@ -35,6 +35,7 @@ type CompilerOptions struct {
 	NoFallthroughCasesInSwitch         Tristate             `json:"noFallthroughCasesInSwitch"`
 	NoImplicitAny                      Tristate             `json:"noImplicitAny"`
 	NoImplicitThis                     Tristate             `json:"noImplicitThis"`
+	NoLib                              Tristate             `json:"noLib"`
 	NoPropertyAccessFromIndexSignature Tristate             `json:"noPropertyAccessFromIndexSignature"`
 	NoUncheckedIndexedAccess           Tristate             `json:"noUncheckedIndexedAccess"`
 	OutDir                             string               `json:"outDir"`
@@ -46,6 +47,7 @@ type CompilerOptions struct {
 	ResolvePackageJsonImports          Tristate             `json:"resolvePackageJsonImports"`
 	Strict                             Tristate             `json:"strict"`
 	StrictBindCallApply                Tristate             `json:"strictBindCallApply"`
+	StrictBuiltinIteratorReturn        Tristate             `json:"strictBuiltinIteratorReturn"`
 	StrictFunctionTypes                Tristate             `json:"strictFunctionTypes"`
 	StrictNullChecks                   Tristate             `json:"strictNullChecks"`
 	StrictPropertyInitialization       Tristate             `json:"strictPropertyInitialization"`

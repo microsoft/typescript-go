@@ -328,7 +328,7 @@ type rawArgs struct {
 			FileName string `json:"fileName"`
 		} `json:"sourceFile"`
 		CommandLine struct {
-			Options *core.CompilerOptions `json:"options"`
+			CompilerOptions *core.CompilerOptions `json:"options"`
 		} `json:"commandLine"`
 	} `json:"redirectedReference"`
 }
@@ -355,8 +355,8 @@ func doCall(t *testing.T, resolver *module.Resolver, call functionCall, skipLoca
 		if call.args.RedirectedRef != nil {
 			redirectedReference = &module.ResolvedProjectReference{
 				SourceFile: (&ast.NodeFactory{}).NewSourceFile("", call.args.RedirectedRef.SourceFile.FileName, nil).AsSourceFile(),
-				CommandLine: module.ParsedCommandLine{
-					Options: call.args.RedirectedRef.CommandLine.Options,
+				CommandLine: core.ParsedOptions{
+					CompilerOptions: call.args.RedirectedRef.CommandLine.CompilerOptions,
 				},
 			}
 		}
