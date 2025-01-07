@@ -92,138 +92,239 @@ func BenchmarkToInt32(b *testing.B) {
 func TestBitwiseNOT(t *testing.T) {
 	t.Parallel()
 
-	assert.Equal(t, Number(-2147483649).BitwiseNOT(), Number(2147483647).BitwiseNOT())
-	assert.Equal(t, Number(-4294967296).BitwiseNOT(), Number(0).BitwiseNOT())
-	assert.Equal(t, Number(-2147483648).BitwiseNOT(), Number(-2147483648).BitwiseNOT())
-	assert.Equal(t, Number(-4294967296).BitwiseNOT(), Number(0).BitwiseNOT())
+	tests := []struct {
+		input, want Number
+	}{
+		{-2147483649, Number(2147483647).BitwiseNOT()},
+		{-4294967296, Number(0).BitwiseNOT()},
+		{-2147483648, Number(-2147483648).BitwiseNOT()},
+		{-4294967296, Number(0).BitwiseNOT()},
+	}
+
+	for _, test := range tests {
+		t.Run(test.input.String(), func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, test.input.BitwiseNOT(), test.want)
+		})
+	}
 }
 
 func TestBitwiseAND(t *testing.T) {
 	t.Parallel()
 
-	assert.Equal(t, Number(1).BitwiseAND(0), Number(0.0))
-	assert.Equal(t, Number(1).BitwiseAND(1), Number(1.0))
+	tests := []struct {
+		x, y, want Number
+	}{
+		{0, 0, 0},
+		{0, 1, 0},
+		{1, 0, 0},
+		{1, 1, 1},
+	}
+
+	for _, test := range tests {
+		t.Run(fmt.Sprintf("%v & %v", test.x, test.y), func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, test.x.BitwiseAND(test.y), test.want)
+		})
+	}
 }
 
 func TestBitwiseOR(t *testing.T) {
 	t.Parallel()
 
-	assert.Equal(t, Number(1).BitwiseOR(0), Number(1.0))
-	assert.Equal(t, Number(1).BitwiseOR(1), Number(1.0))
+	tests := []struct {
+		x, y, want Number
+	}{
+		{0, 0, 0},
+		{0, 1, 1},
+		{1, 0, 1},
+		{1, 1, 1},
+	}
+
+	for _, test := range tests {
+		t.Run(fmt.Sprintf("%v | %v", test.x, test.y), func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, test.x.BitwiseOR(test.y), test.want)
+		})
+	}
 }
 
 func TestBitwiseXOR(t *testing.T) {
 	t.Parallel()
 
-	assert.Equal(t, Number(1).BitwiseXOR(0), Number(1.0))
-	assert.Equal(t, Number(1).BitwiseXOR(1), Number(0.0))
+	tests := []struct {
+		x, y, want Number
+	}{
+		{0, 0, 0},
+		{0, 1, 1},
+		{1, 0, 1},
+		{1, 1, 0},
+	}
+
+	for _, test := range tests {
+		t.Run(fmt.Sprintf("%v ^ %v", test.x, test.y), func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, test.x.BitwiseXOR(test.y), test.want)
+		})
+	}
 }
 
 func TestSignedRightShift(t *testing.T) {
 	t.Parallel()
 
-	assert.Equal(t, Number(1).SignedRightShift(0), Number(1.0))
-	assert.Equal(t, Number(1).SignedRightShift(1), Number(0.0))
-	assert.Equal(t, Number(1).SignedRightShift(2), Number(0.0))
-	assert.Equal(t, Number(1).SignedRightShift(31), Number(0.0))
-	assert.Equal(t, Number(1).SignedRightShift(32), Number(1.0))
+	tests := []struct {
+		x, y, want Number
+	}{
+		{1, 0, 1},
+		{1, 1, 0},
+		{1, 2, 0},
+		{1, 31, 0},
+		{1, 32, 1},
+		{-4, 0, -4},
+		{-4, 1, -2},
+		{-4, 2, -1},
+		{-4, 3, -1},
+		{-4, 4, -1},
+		{-4, 31, -1},
+		{-4, 32, -4},
+		{-4, 33, -2},
+	}
 
-	assert.Equal(t, Number(-4).SignedRightShift(0), Number(-4.0))
-	assert.Equal(t, Number(-4).SignedRightShift(1), Number(-2.0))
-	assert.Equal(t, Number(-4).SignedRightShift(2), Number(-1.0))
-	assert.Equal(t, Number(-4).SignedRightShift(3), Number(-1.0))
-	assert.Equal(t, Number(-4).SignedRightShift(4), Number(-1.0))
-	assert.Equal(t, Number(-4).SignedRightShift(31), Number(-1.0))
-	assert.Equal(t, Number(-4).SignedRightShift(32), Number(-4.0))
-	assert.Equal(t, Number(-4).SignedRightShift(33), Number(-2.0))
+	for _, test := range tests {
+		t.Run(fmt.Sprintf("%v >> %v", test.x, test.y), func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, test.x.SignedRightShift(test.y), test.want)
+		})
+	}
 }
 
 func TestUnsignedRightShift(t *testing.T) {
 	t.Parallel()
 
-	assert.Equal(t, Number(1).UnsignedRightShift(0), Number(1.0))
-	assert.Equal(t, Number(1).UnsignedRightShift(1), Number(0.0))
-	assert.Equal(t, Number(1).UnsignedRightShift(2), Number(0.0))
-	assert.Equal(t, Number(1).UnsignedRightShift(31), Number(0.0))
-	assert.Equal(t, Number(1).UnsignedRightShift(32), Number(1.0))
+	tests := []struct {
+		x, y, want Number
+	}{
+		{1, 0, 1},
+		{1, 1, 0},
+		{1, 2, 0},
+		{1, 31, 0},
+		{1, 32, 1},
+		{-4, 0, 4294967292},
+		{-4, 1, 2147483646},
+		{-4, 2, 1073741823},
+		{-4, 3, 536870911},
+		{-4, 4, 268435455},
+		{-4, 31, 1},
+		{-4, 32, 4294967292},
+		{-4, 33, 2147483646},
+	}
 
-	assert.Equal(t, Number(-4).UnsignedRightShift(0), Number(4294967292.0))
-	assert.Equal(t, Number(-4).UnsignedRightShift(1), Number(2147483646.0))
-	assert.Equal(t, Number(-4).UnsignedRightShift(2), Number(1073741823.0))
-	assert.Equal(t, Number(-4).UnsignedRightShift(3), Number(536870911.0))
-	assert.Equal(t, Number(-4).UnsignedRightShift(4), Number(268435455.0))
-	assert.Equal(t, Number(-4).UnsignedRightShift(31), Number(1.0))
-	assert.Equal(t, Number(-4).UnsignedRightShift(32), Number(4294967292.0))
-	assert.Equal(t, Number(-4).UnsignedRightShift(33), Number(2147483646.0))
+	for _, test := range tests {
+		t.Run(fmt.Sprintf("%v >>> %v", test.x, test.y), func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, test.x.UnsignedRightShift(test.y), test.want)
+		})
+	}
 }
 
 func TestLeftShift(t *testing.T) {
 	t.Parallel()
 
-	assert.Equal(t, Number(1).LeftShift(0), Number(1.0))
-	assert.Equal(t, Number(1).LeftShift(1), Number(2.0))
-	assert.Equal(t, Number(1).LeftShift(2), Number(4.0))
-	assert.Equal(t, Number(1).LeftShift(31), Number(-2147483648.0))
-	assert.Equal(t, Number(1).LeftShift(32), Number(1.0))
+	tests := []struct {
+		x, y, want Number
+	}{
+		{1, 0, 1},
+		{1, 1, 2},
+		{1, 2, 4},
+		{1, 31, -2147483648},
+		{1, 32, 1},
+		{-4, 0, -4},
+		{-4, 1, -8},
+		{-4, 2, -16},
+		{-4, 3, -32},
+		{-4, 31, 0},
+		{-4, 32, -4},
+	}
 
-	assert.Equal(t, Number(-4).LeftShift(0), Number(-4.0))
-	assert.Equal(t, Number(-4).LeftShift(1), Number(-8.0))
-	assert.Equal(t, Number(-4).LeftShift(2), Number(-16.0))
-	assert.Equal(t, Number(-4).LeftShift(3), Number(-32.0))
-	assert.Equal(t, Number(-4).LeftShift(31), Number(0.0))
-	assert.Equal(t, Number(-4).LeftShift(32), Number(-4.0))
+	for _, test := range tests {
+		t.Run(fmt.Sprintf("%v << %v", test.x, test.y), func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, test.x.LeftShift(test.y), test.want)
+		})
+	}
 }
 
 func TestRemainder(t *testing.T) {
 	t.Parallel()
 
-	assert.Assert(t, NaN().Remainder(1).IsNaN())
-	assert.Assert(t, Number(1).Remainder(NaN()).IsNaN())
+	tests := []struct {
+		x, y, want Number
+	}{
+		{NaN(), 1, NaN()},
+		{1, NaN(), NaN()},
+		{Inf(1), 1, NaN()},
+		{Inf(-1), 1, NaN()},
+		{123, Inf(1), 123},
+		{123, Inf(-1), 123},
+		{123, 0, NaN()},
+		{123, negativeZero, NaN()},
+		{0, 123, 0},
+		{negativeZero, 123, negativeZero},
+	}
 
-	assert.Assert(t, Inf(1).Remainder(1).IsNaN())
-	assert.Assert(t, Inf(-1).Remainder(1).IsNaN())
-
-	assert.Equal(t, Number(123).Remainder(Inf(1)), Number(123.0))
-	assert.Equal(t, Number(123).Remainder(Inf(-1)), Number(123.0))
-
-	assert.Assert(t, Number(123).Remainder(0).IsNaN())
-	assert.Assert(t, Number(123).Remainder(negativeZero).IsNaN())
-
-	assert.Equal(t, Number(0).Remainder(123), Number(0.0))
-	assert.Equal(t, negativeZero.Remainder(123), negativeZero)
+	for _, test := range tests {
+		t.Run(fmt.Sprintf("%v %% %v", test.x, test.y), func(t *testing.T) {
+			t.Parallel()
+			got := test.x.Remainder(test.y)
+			if test.want.IsNaN() {
+				assert.Assert(t, got.IsNaN())
+			} else {
+				assert.Equal(t, got, test.want)
+			}
+		})
+	}
 }
 
 func TestExponentiate(t *testing.T) {
 	t.Parallel()
 
-	assert.Equal(t, Number(2).Exponentiate(3), Number(8.0))
+	tests := []struct {
+		x, y, want Number
+	}{
+		{2, 3, 8},
+		{Inf(1), 3, Inf(1)},
+		{Inf(1), -5, 0},
+		{Inf(-1), 3, Inf(-1)},
+		{Inf(-1), 4, Inf(1)},
+		{Inf(-1), -3, negativeZero},
+		{Inf(-1), -4, 0},
+		{0, 3, 0},
+		{0, -10, Inf(1)},
+		{negativeZero, 3, negativeZero},
+		{negativeZero, 4, 0},
+		{negativeZero, -3, Inf(-1)},
+		{negativeZero, -4, Inf(1)},
+		{3, Inf(1), Inf(1)},
+		{-3, Inf(1), Inf(1)},
+		{3, Inf(-1), 0},
+		{-3, Inf(-1), 0},
+		{NaN(), 3, NaN()},
+		{1, Inf(1), NaN()},
+		{1, Inf(-1), NaN()},
+		{-1, Inf(1), NaN()},
+		{-1, Inf(-1), NaN()},
+		{1, NaN(), NaN()},
+	}
 
-	assert.Equal(t, Inf(1).Exponentiate(3), Inf(1))
-	assert.Equal(t, Inf(1).Exponentiate(-5), Number(0.0))
-
-	assert.Equal(t, Inf(-1).Exponentiate(3), Inf(-1))
-	assert.Equal(t, Inf(-1).Exponentiate(4), Inf(1))
-	assert.Equal(t, Inf(-1).Exponentiate(-3), negativeZero)
-	assert.Equal(t, Inf(-1).Exponentiate(-4), Number(0.0))
-
-	assert.Equal(t, Number(0).Exponentiate(3), Number(0.0))
-	assert.Equal(t, Number(0).Exponentiate(-10), Inf(1))
-
-	assert.Equal(t, negativeZero.Exponentiate(3), negativeZero)
-	assert.Equal(t, negativeZero.Exponentiate(4), Number(0.0))
-	assert.Equal(t, negativeZero.Exponentiate(-3), Inf(-1))
-	assert.Equal(t, negativeZero.Exponentiate(-4), Inf(1))
-
-	assert.Equal(t, Number(3).Exponentiate(Inf(1)), Inf(1))
-	assert.Equal(t, Number(-3).Exponentiate(Inf(1)), Number(math.Inf(1)))
-
-	assert.Equal(t, Number(3).Exponentiate(Inf(-1)), Number(0.0))
-	assert.Equal(t, Number(-3).Exponentiate(Inf(-1)), Number(0.0))
-
-	assert.Assert(t, NaN().Exponentiate(3).IsNaN())
-	assert.Assert(t, Number(1).Exponentiate(Inf(1)).IsNaN())
-	assert.Assert(t, Number(1).Exponentiate(Inf(-1)).IsNaN())
-	assert.Assert(t, Number(-1).Exponentiate(Inf(1)).IsNaN())
-	assert.Assert(t, Number(-1).Exponentiate(Inf(-1)).IsNaN())
-	assert.Assert(t, Number(1).Exponentiate(NaN()).IsNaN())
+	for _, test := range tests {
+		t.Run(fmt.Sprintf("%v ** %v", test.x, test.y), func(t *testing.T) {
+			t.Parallel()
+			got := test.x.Exponentiate(test.y)
+			if test.want.IsNaN() {
+				assert.Assert(t, got.IsNaN())
+			} else {
+				assert.Equal(t, got, test.want)
+			}
+		})
+	}
 }
