@@ -39,6 +39,7 @@ linters:
     - unconvert
     - usestdlibvars
     - whitespace
+
     - customlint
 
     # Need to add headers
