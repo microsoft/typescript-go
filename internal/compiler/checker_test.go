@@ -33,9 +33,8 @@ foo.bar;`
 	}
 	p := NewProgram(opts)
 	p.bindSourceFiles()
-	p.checkSourceFiles()
+	c := p.GetTypeChecker()
 	file := p.filesByPath["/foo.ts"]
-	c := p.getTypeChecker(file)
 	interfaceId := file.Statements.Nodes[0].Name()
 	varId := file.Statements.Nodes[1].AsVariableStatement().DeclarationList.AsVariableDeclarationList().Declarations.Nodes[0].Name()
 	propAccess := file.Statements.Nodes[2].AsExpressionStatement().Expression

@@ -219,7 +219,20 @@ func (p *Program) createCheckers() {
 	}
 }
 
-func (p *Program) getTypeChecker(file *ast.SourceFile) *Checker {
+// Return the type checker associated with the program.
+func (p *Program) GetTypeChecker() *Checker {
+	p.createCheckers()
+	// Just use the first (and possibly only) checker for checker requests. Such requests are likely
+	// to obtain types through multiple API calls and we want to ensure that those types are created
+	// by the same checker so they can interoperate.
+	return p.checkers[0]
+}
+
+// Return a checker for the given file. We may have multiple checkers in concurrent scenarios and this
+// method returns the checker that was tasked with checking the file. Note that it isn't possible to mix
+// types obtained from different checkers, so only non-type data (such as diagnostics or string
+// representations of types) should be obtained from checkers returned by this method.
+func (p *Program) getTypeCheckerForFile(file *ast.SourceFile) *Checker {
 	p.createCheckers()
 	return p.checkersByFile[file]
 }
@@ -409,7 +422,7 @@ func (p *Program) getBindDiagnosticsForFile(sourceFile *ast.SourceFile) []*ast.D
 }
 
 func (p *Program) getSemanticDiagnosticsForFile(sourceFile *ast.SourceFile) []*ast.Diagnostic {
-	return core.Concatenate(sourceFile.BindDiagnostics(), p.getTypeChecker(sourceFile).GetDiagnostics(sourceFile))
+	return core.Concatenate(sourceFile.BindDiagnostics(), p.getTypeCheckerForFile(sourceFile).GetDiagnostics(sourceFile))
 }
 
 func (p *Program) getDiagnosticsHelper(sourceFile *ast.SourceFile, ensureBound bool, ensureChecked bool, getDiagnostics func(*ast.SourceFile) []*ast.Diagnostic) []*ast.Diagnostic {
@@ -443,7 +456,7 @@ func (p *Program) TypeCount() int {
 func (p *Program) PrintSourceFileWithTypes() {
 	for _, file := range p.files {
 		if tspath.GetBaseFileName(file.FileName()) == "main.ts" {
-			fmt.Print(p.getTypeChecker(file).sourceFileWithTypes(file))
+			fmt.Print(p.GetTypeChecker().sourceFileWithTypes(file))
 		}
 	}
 }
