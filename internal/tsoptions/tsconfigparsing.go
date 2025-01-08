@@ -497,14 +497,10 @@ type tsConfigOptions struct {
 	notDefined string
 }
 
-func getOptionName(option CommandLineOption) string {
-	return option.Name
-}
-
 func commandLineOptionsToMap(options []CommandLineOption) map[string]CommandLineOption {
 	result := make(map[string]CommandLineOption)
 	for i := range options {
-		result[getOptionName(options[i])] = options[i]
+		result[(options[i]).Name] = options[i]
 	}
 	return result
 }
@@ -793,18 +789,6 @@ func getDefaultCompilerOptions(configFileName string) *core.CompilerOptions {
 	return options
 }
 
-type propFromRaw string
-
-const (
-	files           propFromRaw = "files"
-	include         propFromRaw = "include"
-	exclude         propFromRaw = "exclude"
-	extends         propFromRaw = "extends"
-	compilerOptions propFromRaw = "compilerOptions"
-	references      propFromRaw = "references"
-	noProp          propFromRaw = "no-prop"
-)
-
 func convertCompilerOptionsFromJsonWorker(jsonOptions map[string]interface{}, basePath string, errors []*ast.Diagnostic, configFileName string) (*core.CompilerOptions, []*ast.Diagnostic) {
 	options := getDefaultCompilerOptions(configFileName)
 	_, errors = convertOptionsFromJson(getCommandLineCompilerOptionsMap(), jsonOptions, basePath, options, errors)
@@ -970,7 +954,7 @@ func parseJsonConfigFileContentWorker(
 	} else {
 		basePathForFileNames = tspath.NormalizePath(basePath)
 	}
-	getPropFromRaw := func(prop propFromRaw, validateElement func(value string) bool) PropOfRaw {
+	getPropFromRaw := func(prop string, validateElement func(value string) bool) PropOfRaw {
 		value, exists := rawConfig.prop[string(prop)]
 		if exists {
 			if len(value) >= 0 {
@@ -997,14 +981,14 @@ func parseJsonConfigFileContentWorker(
 		return PropOfRaw{stringValues: []string{"no-prop"}, projectReferencesValues: nil}
 	}
 	getConfigFileSpecs := func() configFileSpecs {
-		referencesOfRaw := getPropFromRaw(references, func(element string) bool { return element == "object" })
-		fileSpecs := getPropFromRaw(files, func(element string) bool { return reflect.TypeOf(element).Kind() == reflect.String })
+		referencesOfRaw := getPropFromRaw("references", func(element string) bool { return element == "object" })
+		fileSpecs := getPropFromRaw("files", func(element string) bool { return reflect.TypeOf(element).Kind() == reflect.String })
 		if len(fileSpecs.stringValues) == 0 || fileSpecs.stringValues[0] != "no-prop" {
 			hasZeroOrNoReferences := false
 			if len(referencesOfRaw.projectReferencesValues) == 0 || referencesOfRaw.projectReferencesValues == nil {
 				hasZeroOrNoReferences = true
 			}
-			hasExtends := rawConfig.prop[string(extends)]
+			hasExtends := rawConfig.prop[string("extends")]
 			if len(fileSpecs.stringValues) == 0 && hasZeroOrNoReferences && hasExtends == nil {
 				if sourceFile != nil {
 					var fileName string
@@ -1014,15 +998,15 @@ func parseJsonConfigFileContentWorker(
 						fileName = "tsconfig.json"
 					}
 					diagnosticMessage := diagnostics.The_files_list_in_config_file_0_is_empty
-					nodeValue := ast.ForEachTsConfigPropArray(sourceFile.sourceFile, "files", func(property ast.PropertyAssignment) *ast.Node { return property.Initializer })
+					nodeValue := forEachTsConfigPropArray(sourceFile, "files", func(property ast.PropertyAssignment) *ast.Node { return property.Initializer })
 					errors = append(errors, ast.NewCompilerDiagnostic(diagnosticMessage, fileName, nodeValue))
 				} else {
 					errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.The_files_list_in_config_file_0_is_empty, configFileName))
 				}
 			}
 		}
-		includeSpecs := getPropFromRaw(include, func(element string) bool { return reflect.TypeOf(element).Kind() == reflect.String })
-		excludeSpecs := getPropFromRaw(exclude, func(element string) bool { return reflect.TypeOf(element).Kind() == reflect.String })
+		includeSpecs := getPropFromRaw("include", func(element string) bool { return reflect.TypeOf(element).Kind() == reflect.String })
+		excludeSpecs := getPropFromRaw("exclude", func(element string) bool { return reflect.TypeOf(element).Kind() == reflect.String })
 		isDefaultIncludeSpec := false
 		if len(excludeSpecs.stringValues) != 0 && excludeSpecs.stringValues[0] == "no-prop" && parsedConfig.options != nil {
 			outDir := parsedConfig.options.OutDir
@@ -1111,7 +1095,7 @@ func parseJsonConfigFileContentWorker(
 
 	getProjectReferences := func(basePath string) []core.ProjectReference {
 		var projectReferences []core.ProjectReference = []core.ProjectReference{}
-		referencesOfRaw := getPropFromRaw(references, func(element string) bool { return element == "object" })
+		referencesOfRaw := getPropFromRaw("references", func(element string) bool { return element == "object" })
 		if referencesOfRaw.projectReferencesValues != nil {
 			for _, ref := range referencesOfRaw.projectReferencesValues {
 				if reflect.TypeOf(ref.Path).Kind() != reflect.String {

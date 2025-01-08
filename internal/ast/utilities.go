@@ -1523,32 +1523,3 @@ func TryGetTextOfPropertyName(name *Node) (string, bool) {
 	}
 	return "", false
 }
-
-func forEachPropertyAssignment(objectLiteral *ObjectLiteralExpression, key string, callback func(property PropertyAssignment) *Node, key2 string) string {
-	if objectLiteral == nil {
-		return ""
-	}
-
-	for _, property := range (*objectLiteral).Properties.Nodes {
-		if !IsPropertyAssignment(property) {
-			continue
-		}
-		propName, _ := TryGetTextOfPropertyName(property.Name())
-		if key == propName || (key2 != "" && key2 == propName) {
-			callback(*property.AsPropertyAssignment())
-		}
-	}
-	return ""
-}
-
-func getTsConfigObjectLiteralExpression(tsConfigSourceFile *SourceFile) *ObjectLiteralExpression {
-	if tsConfigSourceFile != nil && tsConfigSourceFile.Statements.Nodes != nil {
-		expression := tsConfigSourceFile.Statements.Nodes[0].AsExpressionStatement().Expression
-		return expression.AsObjectLiteralExpression()
-	}
-	return nil
-}
-
-func ForEachTsConfigPropArray(tsConfigSourceFile *SourceFile, propKey string, callback func(property PropertyAssignment) *Node) string {
-	return forEachPropertyAssignment(getTsConfigObjectLiteralExpression(tsConfigSourceFile), propKey, callback, "")
-}

@@ -301,12 +301,3 @@ const (
 	JsxEmitReactJSX    JsxEmit = 4
 	JsxEmitReactJSXDev JsxEmit = 5
 )
-
-type Option struct {
-	Dependencies []string
-	ComputeValue func(compilerOptions *CompilerOptions) interface{}
-}
-
-func createComputedCompilerOptions(options map[string]Option) map[string]Option {
-	return options
-}

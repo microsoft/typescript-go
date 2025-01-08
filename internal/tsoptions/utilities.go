@@ -13,15 +13,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/vfs"
 )
 
-// CharacterCodes
-const (
-	EOF               = -1
-	NullCharacter     = 0
-	MaxAsciiCharacter = 0x7F
-	Asterisk          = 0x2A
-	Question          = 0x3F // ?
-)
-
 type FileSystemEntries struct {
 	files       []string
 	directories []string
@@ -126,7 +117,7 @@ func isImplicitGlob(lastPathComponent string) bool {
 // proof.
 var (
 	reservedCharacterPattern *regexp.Regexp = regexp.MustCompile(`[^\w\s/]`)
-	wildcardCharCodes                       = []int{Asterisk, Question}
+	wildcardCharCodes                       = []int{0x2A, 0x3F} // "*", "?"
 )
 
 var (
@@ -226,10 +217,10 @@ func getSubPatternFromSpec(
 
 			if usage != "exclude" {
 				componentPattern := ""
-				if component != "" && []rune(component)[0] == Asterisk {
+				if component != "" && []rune(component)[0] == 0x2A {
 					componentPattern += "([^./]" + matcher.singleAsteriskRegexFragment + ")?"
 					component = component[1:]
-				} else if component != "" && []rune(component)[0] == Question {
+				} else if component != "" && []rune(component)[0] == 0x3F {
 					componentPattern += "[^./]"
 					component = component[1:]
 				}
