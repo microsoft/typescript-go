@@ -340,8 +340,6 @@ func (n *Node) Type() *Node {
 		return n.AsJSDocNullableType().Type
 	case KindJSDocNonNullableType:
 		return n.AsJSDocNonNullableType().Type
-	case KindJSDocFunctionType:
-		return n.AsJSDocFunctionType().Type
 	case KindJSDocOptionalType:
 		return n.AsJSDocOptionalType().Type
 	case KindEnumMember, KindBindingElement, KindExportAssignment:
@@ -1038,10 +1036,6 @@ func (n *Node) AsJSDocNullableType() *JSDocNullableType {
 
 func (n *Node) AsJSDocAllType() *JSDocAllType {
 	return n.data.(*JSDocAllType)
-}
-
-func (n *Node) AsJSDocFunctionType() *JSDocFunctionType {
-	return n.data.(*JSDocFunctionType)
 }
 
 func (n *Node) AsJSDocVariadicType() *JSDocVariadicType {
@@ -1914,6 +1908,10 @@ func (node *ReturnStatement) ForEachChild(v Visitor) bool {
 
 func (node *ReturnStatement) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateReturnStatement(node, v.VisitNode(node.Expression))
+}
+
+func IsReturnStatement(node *Node) bool {
+	return node.Kind == KindReturnStatement
 }
 
 // WithStatement
@@ -6638,25 +6636,6 @@ type JSDocAllType struct {
 func (f *NodeFactory) NewJSDocAllType() *Node {
 	data := &JSDocAllType{}
 	return newNode(KindJSDocAllType, data)
-}
-
-// JSDocFunctionType
-
-type JSDocFunctionType struct {
-	TypeNodeBase
-	Parameters *NodeList // NodeList[*ParameterDeclarationNode]
-	Type       *TypeNode
-}
-
-func (node *JSDocFunctionType) ForEachChild(v Visitor) bool {
-	return visitNodeList(v, node.Parameters) || visit(v, node.Type)
-}
-
-func (f *NodeFactory) NewJSDocFunctionType(parameters *NodeList, typeNode *TypeNode) *Node {
-	data := &JSDocFunctionType{}
-	data.Parameters = parameters
-	data.Type = typeNode
-	return newNode(KindJSDocFunctionType, data)
 }
 
 // JSDocVariadicType

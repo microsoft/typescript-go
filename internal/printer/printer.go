@@ -19,11 +19,11 @@ package printer
 
 import (
 	"fmt"
-	"math"
 	"strings"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/jsnum"
 	"github.com/microsoft/typescript-go/internal/scanner"
 )
 
@@ -1164,11 +1164,7 @@ func (p *Printer) emitParameter(node *ast.ParameterDeclaration) {
 	p.emitParameterName(node.Name())
 	p.emitTokenNode(node.QuestionToken)
 
-	if node.Parent != nil && node.Parent.Kind == ast.KindJSDocFunctionType && node.Name() == nil {
-		p.emitTypeNodeOutsideExtends(node.Type)
-	} else {
-		p.emitTypeAnnotation(node.Type)
-	}
+	p.emitTypeAnnotation(node.Type)
 
 	// The comment position has to fallback to any present node within the parameter declaration because as it turns
 	// out, the parser can make parameter declarations with _just_ an initializer.
@@ -2010,11 +2006,9 @@ func (p *Printer) emitTypeNode(node *ast.TypeNode, precedence ast.TypePrecedence
 		p.emitExpressionWithTypeArguments(node.AsExpressionWithTypeArguments())
 
 	case ast.KindJSDocAllType,
-		ast.KindJSDocUnknownType,
 		ast.KindJSDocNullableType,
 		ast.KindJSDocNonNullableType,
 		ast.KindJSDocOptionalType,
-		ast.KindJSDocFunctionType,
 		ast.KindJSDocVariadicType:
 		// TODO
 		panic("not implemented")
@@ -2117,8 +2111,8 @@ func (p *Printer) mayNeedDotDotForPropertyAccess(expression *ast.Expression) boo
 			!strings.Contains(text, "e")
 	} else if ast.IsAccessExpression(expression) {
 		// check if constant enum value is a non-negative integer
-		if constantValue, ok := p.getConstantValue(expression).(float64); ok {
-			return !math.IsInf(constantValue, 0 /*sign*/) && constantValue >= 0 && math.Floor(constantValue) == constantValue
+		if constantValue, ok := p.getConstantValue(expression).(jsnum.Number); ok {
+			return !constantValue.IsInf() && constantValue >= 0 && constantValue.Floor() == constantValue
 		}
 		return false
 	}

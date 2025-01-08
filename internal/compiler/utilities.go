@@ -2,7 +2,6 @@ package compiler
 
 import (
 	"maps"
-	"math"
 	"slices"
 	"strings"
 	"sync/atomic"
@@ -11,8 +10,8 @@ import (
 	"github.com/microsoft/typescript-go/internal/binder"
 	"github.com/microsoft/typescript-go/internal/compiler/diagnostics"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/jsnum"
 	"github.com/microsoft/typescript-go/internal/scanner"
-	"github.com/microsoft/typescript-go/internal/stringutil"
 )
 
 // Links store
@@ -992,7 +991,7 @@ func isValidTypeOnlyAliasUseSite(useSite *ast.Node) bool {
 		ast.IsPartOfTypeQuery(useSite) ||
 		isIdentifierInNonEmittingHeritageClause(useSite) ||
 		isPartOfPossiblyValidTypeOrAbstractComputedPropertyName(useSite) ||
-		!(isExpressionNode(useSite) || isShorthandPropertyNameUseSite(useSite))
+		!(IsExpressionNode(useSite) || isShorthandPropertyNameUseSite(useSite))
 }
 
 func isIdentifierInNonEmittingHeritageClause(node *ast.Node) bool {
@@ -1061,7 +1060,7 @@ func nodeCanBeDecorated(useLegacyDecorators bool, node *ast.Node, parent *ast.No
 	return false
 }
 
-func isExpressionNode(node *ast.Node) bool {
+func IsExpressionNode(node *ast.Node) bool {
 	switch node.Kind {
 	case ast.KindSuperKeyword, ast.KindNullKeyword, ast.KindTrueKeyword, ast.KindFalseKeyword, ast.KindRegularExpressionLiteral,
 		ast.KindArrayLiteralExpression, ast.KindObjectLiteralExpression, ast.KindPropertyAccessExpression, ast.KindElementAccessExpression,
@@ -1153,7 +1152,7 @@ func isInExpressionContext(node *ast.Node) bool {
 	case ast.KindSatisfiesExpression:
 		return parent.AsSatisfiesExpression().Expression == node
 	default:
-		return isExpressionNode(parent)
+		return IsExpressionNode(parent)
 	}
 }
 
@@ -1265,7 +1264,7 @@ func canHaveSymbol(node *ast.Node) bool {
 		ast.KindConstructSignature, ast.KindElementAccessExpression, ast.KindEnumDeclaration, ast.KindEnumMember, ast.KindExportAssignment,
 		ast.KindExportDeclaration, ast.KindExportSpecifier, ast.KindFunctionDeclaration, ast.KindFunctionExpression, ast.KindFunctionType,
 		ast.KindGetAccessor, ast.KindIdentifier, ast.KindImportClause, ast.KindImportEqualsDeclaration, ast.KindImportSpecifier,
-		ast.KindIndexSignature, ast.KindInterfaceDeclaration, ast.KindJSDocCallbackTag, ast.KindJSDocEnumTag, ast.KindJSDocFunctionType,
+		ast.KindIndexSignature, ast.KindInterfaceDeclaration, ast.KindJSDocCallbackTag, ast.KindJSDocEnumTag,
 		ast.KindJSDocParameterTag, ast.KindJSDocPropertyTag, ast.KindJSDocSignature, ast.KindJSDocTypedefTag, ast.KindJSDocTypeLiteral,
 		ast.KindJsxAttribute, ast.KindJsxAttributes, ast.KindJsxSpreadAttribute, ast.KindMappedType, ast.KindMethodDeclaration,
 		ast.KindMethodSignature, ast.KindModuleDeclaration, ast.KindNamedTupleMember, ast.KindNamespaceExport, ast.KindNamespaceExportDeclaration,
@@ -1284,7 +1283,7 @@ func canHaveLocals(node *ast.Node) bool {
 		ast.KindClassStaticBlockDeclaration, ast.KindConditionalType, ast.KindConstructor, ast.KindConstructorType,
 		ast.KindConstructSignature, ast.KindForStatement, ast.KindForInStatement, ast.KindForOfStatement, ast.KindFunctionDeclaration,
 		ast.KindFunctionExpression, ast.KindFunctionType, ast.KindGetAccessor, ast.KindIndexSignature, ast.KindJSDocCallbackTag,
-		ast.KindJSDocEnumTag, ast.KindJSDocFunctionType, ast.KindJSDocSignature, ast.KindJSDocTypedefTag, ast.KindMappedType,
+		ast.KindJSDocEnumTag, ast.KindJSDocSignature, ast.KindJSDocTypedefTag, ast.KindMappedType,
 		ast.KindMethodDeclaration, ast.KindMethodSignature, ast.KindModuleDeclaration, ast.KindSetAccessor, ast.KindSourceFile,
 		ast.KindTypeAliasDeclaration:
 		return true
@@ -1806,7 +1805,7 @@ func getPropertyNameFromType(t *Type) string {
 	case t.flags&TypeFlagsStringLiteral != 0:
 		return t.AsLiteralType().value.(string)
 	case t.flags&TypeFlagsNumberLiteral != 0:
-		return stringutil.FromNumber(t.AsLiteralType().value.(float64))
+		return t.AsLiteralType().value.(jsnum.Number).String()
 	case t.flags&TypeFlagsUniqueESSymbol != 0:
 		return t.AsUniqueESSymbolType().name
 	}
@@ -1835,7 +1834,7 @@ func isNumericLiteralName(name string) bool {
 	// Note that this accepts the values 'Infinity', '-Infinity', and 'NaN', and that this is intentional.
 	// This is desired behavior, because when indexing with them as numeric entities, you are indexing
 	// with the strings '"Infinity"', '"-Infinity"', and '"NaN"' respectively.
-	return stringutil.FromNumber(stringutil.ToNumber(name)) == name
+	return jsnum.FromString(name).String() == name
 }
 
 func getPropertyNameForPropertyNameNode(name *ast.Node) string {
@@ -1869,8 +1868,8 @@ func anyToString(v any) string {
 	switch v := v.(type) {
 	case string:
 		return v
-	case float64:
-		return stringutil.FromNumber(v)
+	case jsnum.Number:
+		return v.String()
 	case bool:
 		return core.IfElse(v, "true", "false")
 	case PseudoBigInt:
@@ -1883,8 +1882,8 @@ func isValidNumberString(s string, roundTripOnly bool) bool {
 	if s == "" {
 		return false
 	}
-	n := stringutil.ToNumber(s)
-	return !math.IsNaN(n) && !math.IsInf(n, 0) && (!roundTripOnly || stringutil.FromNumber(n) == s)
+	n := jsnum.FromString(s)
+	return !n.IsNaN() && !n.IsInf() && (!roundTripOnly || n.String() == s)
 }
 
 func isValidBigIntString(s string, roundTripOnly bool) bool {
@@ -2158,14 +2157,14 @@ func createEvaluator(evaluateEntity Evaluator) Evaluator {
 			result := evaluate(expr.AsPrefixUnaryExpression().Operand, location)
 			resolvedOtherFiles = result.resolvedOtherFiles
 			hasExternalReferences = result.hasExternalReferences
-			if value, ok := result.value.(float64); ok {
+			if value, ok := result.value.(jsnum.Number); ok {
 				switch expr.AsPrefixUnaryExpression().Operator {
 				case ast.KindPlusToken:
 					return evaluatorResult(value, isSyntacticallyString, resolvedOtherFiles, hasExternalReferences)
 				case ast.KindMinusToken:
 					return evaluatorResult(-value, isSyntacticallyString, resolvedOtherFiles, hasExternalReferences)
 				case ast.KindTildeToken:
-					return evaluatorResult(float64(^int32(value)), isSyntacticallyString, resolvedOtherFiles, hasExternalReferences)
+					return evaluatorResult(value.BitwiseNOT(), isSyntacticallyString, resolvedOtherFiles, hasExternalReferences)
 				}
 			}
 		case ast.KindBinaryExpression:
@@ -2175,22 +2174,22 @@ func createEvaluator(evaluateEntity Evaluator) Evaluator {
 			isSyntacticallyString = (left.isSyntacticallyString || right.isSyntacticallyString) && expr.AsBinaryExpression().OperatorToken.Kind == ast.KindPlusToken
 			resolvedOtherFiles = left.resolvedOtherFiles || right.resolvedOtherFiles
 			hasExternalReferences = left.hasExternalReferences || right.hasExternalReferences
-			leftNum, leftIsNum := left.value.(float64)
-			rightNum, rightIsNum := right.value.(float64)
+			leftNum, leftIsNum := left.value.(jsnum.Number)
+			rightNum, rightIsNum := right.value.(jsnum.Number)
 			if leftIsNum && rightIsNum {
 				switch operator {
 				case ast.KindBarToken:
-					return evaluatorResult(float64(int32(leftNum)|int32(rightNum)), isSyntacticallyString, resolvedOtherFiles, hasExternalReferences)
+					return evaluatorResult(leftNum.BitwiseOR(rightNum), isSyntacticallyString, resolvedOtherFiles, hasExternalReferences)
 				case ast.KindAmpersandToken:
-					return evaluatorResult(float64(int32(leftNum)&int32(rightNum)), isSyntacticallyString, resolvedOtherFiles, hasExternalReferences)
+					return evaluatorResult(leftNum.BitwiseAND(rightNum), isSyntacticallyString, resolvedOtherFiles, hasExternalReferences)
 				case ast.KindGreaterThanGreaterThanToken:
-					return evaluatorResult(float64(int32(leftNum)>>int32(rightNum)), isSyntacticallyString, resolvedOtherFiles, hasExternalReferences)
+					return evaluatorResult(leftNum.SignedRightShift(rightNum), isSyntacticallyString, resolvedOtherFiles, hasExternalReferences)
 				case ast.KindGreaterThanGreaterThanGreaterThanToken:
-					return evaluatorResult(float64(uint32(leftNum)>>uint32(rightNum)), isSyntacticallyString, resolvedOtherFiles, hasExternalReferences)
+					return evaluatorResult(leftNum.UnsignedRightShift(rightNum), isSyntacticallyString, resolvedOtherFiles, hasExternalReferences)
 				case ast.KindLessThanLessThanToken:
-					return evaluatorResult(float64(int32(leftNum)<<int32(rightNum)), isSyntacticallyString, resolvedOtherFiles, hasExternalReferences)
+					return evaluatorResult(leftNum.LeftShift(rightNum), isSyntacticallyString, resolvedOtherFiles, hasExternalReferences)
 				case ast.KindCaretToken:
-					return evaluatorResult(float64(int32(leftNum)^int32(rightNum)), isSyntacticallyString, resolvedOtherFiles, hasExternalReferences)
+					return evaluatorResult(leftNum.BitwiseXOR(rightNum), isSyntacticallyString, resolvedOtherFiles, hasExternalReferences)
 				case ast.KindAsteriskToken:
 					return evaluatorResult(leftNum*rightNum, isSyntacticallyString, resolvedOtherFiles, hasExternalReferences)
 				case ast.KindSlashToken:
@@ -2200,19 +2199,19 @@ func createEvaluator(evaluateEntity Evaluator) Evaluator {
 				case ast.KindMinusToken:
 					return evaluatorResult(leftNum-rightNum, isSyntacticallyString, resolvedOtherFiles, hasExternalReferences)
 				case ast.KindPercentToken:
-					return evaluatorResult(leftNum-rightNum*math.Floor(leftNum/rightNum), isSyntacticallyString, resolvedOtherFiles, hasExternalReferences)
+					return evaluatorResult(leftNum.Remainder(rightNum), isSyntacticallyString, resolvedOtherFiles, hasExternalReferences)
 				case ast.KindAsteriskAsteriskToken:
-					return evaluatorResult(math.Pow(leftNum, rightNum), isSyntacticallyString, resolvedOtherFiles, hasExternalReferences)
+					return evaluatorResult(leftNum.Exponentiate(rightNum), isSyntacticallyString, resolvedOtherFiles, hasExternalReferences)
 				}
 			}
 			leftStr, leftIsStr := left.value.(string)
 			rightStr, rightIsStr := right.value.(string)
 			if (leftIsStr || leftIsNum) && (rightIsStr || rightIsNum) && operator == ast.KindPlusToken {
 				if leftIsNum {
-					leftStr = stringutil.FromNumber(leftNum)
+					leftStr = leftNum.String()
 				}
 				if rightIsNum {
-					rightStr = stringutil.FromNumber(rightNum)
+					rightStr = rightNum.String()
 				}
 				return evaluatorResult(leftStr+rightStr, isSyntacticallyString, resolvedOtherFiles, hasExternalReferences)
 			}
@@ -2221,7 +2220,7 @@ func createEvaluator(evaluateEntity Evaluator) Evaluator {
 		case ast.KindTemplateExpression:
 			return evaluateTemplateExpression(expr, location)
 		case ast.KindNumericLiteral:
-			return evaluatorResult(stringutil.ToNumber(expr.Text()), false, false, false)
+			return evaluatorResult(jsnum.FromString(expr.Text()), false, false, false)
 		case ast.KindIdentifier, ast.KindElementAccessExpression:
 			return evaluateEntity(expr, location)
 		case ast.KindPropertyAccessExpression:
