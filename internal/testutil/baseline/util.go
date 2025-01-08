@@ -17,7 +17,7 @@ var (
 )
 
 var (
-	libFolder   = "built/local/" // !!! This needs to change
+	libFolder   = "built/local/"
 	builtFolder = "/.ts"
 )
 
