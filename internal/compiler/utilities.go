@@ -1781,7 +1781,7 @@ func compareTypes(t1, t2 *Type) int {
 			return c
 		}
 	case t1.flags&TypeFlagsTemplateLiteral != 0:
-		if c := compareTexts(t1.AsTemplateLiteralType().texts, t2.AsTemplateLiteralType().texts); c != 0 {
+		if c := slices.Compare(t1.AsTemplateLiteralType().texts, t2.AsTemplateLiteralType().texts); c != 0 {
 			return c
 		}
 		if c := compareTypeLists(t1.AsTemplateLiteralType().types, t2.AsTemplateLiteralType().types); c != 0 {
@@ -1883,15 +1883,6 @@ func compareTypeLists(s1, s2 []*Type) int {
 		}
 	}
 	return 0
-}
-
-func compareTexts(s1, s2 []string) int {
-	for i := range min(len(s1), len(s2)) {
-		if c := strings.Compare(s1[i], s2[i]); c != 0 {
-			return c
-		}
-	}
-	return len(s1) - len(s2)
 }
 
 func compareTypeMappers(m1, m2 *TypeMapper) int {
