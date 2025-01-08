@@ -3,7 +3,6 @@ package compiler
 import (
 	"cmp"
 	"maps"
-	"math"
 	"slices"
 	"strings"
 	"sync"
@@ -14,7 +13,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/jsnum"
 	"github.com/microsoft/typescript-go/internal/scanner"
-	"github.com/microsoft/typescript-go/internal/stringutil"
 )
 
 // Links store
@@ -1003,7 +1001,7 @@ func isValidTypeOnlyAliasUseSite(useSite *ast.Node) bool {
 		ast.IsPartOfTypeQuery(useSite) ||
 		isIdentifierInNonEmittingHeritageClause(useSite) ||
 		isPartOfPossiblyValidTypeOrAbstractComputedPropertyName(useSite) ||
-		!(isExpressionNode(useSite) || isShorthandPropertyNameUseSite(useSite))
+		!(IsExpressionNode(useSite) || isShorthandPropertyNameUseSite(useSite))
 }
 
 func isIdentifierInNonEmittingHeritageClause(node *ast.Node) bool {
@@ -1072,7 +1070,7 @@ func nodeCanBeDecorated(useLegacyDecorators bool, node *ast.Node, parent *ast.No
 	return false
 }
 
-func isExpressionNode(node *ast.Node) bool {
+func IsExpressionNode(node *ast.Node) bool {
 	switch node.Kind {
 	case ast.KindSuperKeyword, ast.KindNullKeyword, ast.KindTrueKeyword, ast.KindFalseKeyword, ast.KindRegularExpressionLiteral,
 		ast.KindArrayLiteralExpression, ast.KindObjectLiteralExpression, ast.KindPropertyAccessExpression, ast.KindElementAccessExpression,
@@ -1164,7 +1162,7 @@ func isInExpressionContext(node *ast.Node) bool {
 	case ast.KindSatisfiesExpression:
 		return parent.AsSatisfiesExpression().Expression == node
 	default:
-		return isExpressionNode(parent)
+		return IsExpressionNode(parent)
 	}
 }
 
@@ -1588,11 +1586,11 @@ func createSymbolTable(symbols []*ast.Symbol) ast.SymbolTable {
 	return result
 }
 
-func sortSymbols(symbols []*ast.Symbol) {
-	slices.SortFunc(symbols, compareSymbols)
+func (c *Checker) sortSymbols(symbols []*ast.Symbol) {
+	slices.SortFunc(symbols, c.compareSymbols)
 }
 
-func compareSymbols(s1, s2 *ast.Symbol) int {
+func (c *Checker) compareSymbolsWorker(s1, s2 *ast.Symbol) int {
 	if s1 == s2 {
 		return 0
 	}
@@ -1603,23 +1601,23 @@ func compareSymbols(s1, s2 *ast.Symbol) int {
 		return -1
 	}
 	if len(s1.Declarations) != 0 && len(s2.Declarations) != 0 {
-		if c := compareNodes(s1.Declarations[0], s2.Declarations[0]); c != 0 {
-			return c
+		if r := c.compareNodes(s1.Declarations[0], s2.Declarations[0]); r != 0 {
+			return r
 		}
 	} else if len(s1.Declarations) != 0 {
 		return -1
 	} else if len(s2.Declarations) != 0 {
 		return 1
 	}
-	if c := strings.Compare(s1.Name, s2.Name); c != 0 {
-		return c
+	if r := strings.Compare(s1.Name, s2.Name); r != 0 {
+		return r
 	}
 	// Fall back to symbol IDs. This is a last resort that should happen only when symbols have
 	// no declaration and duplicate names.
 	return int(ast.GetSymbolId(s1)) - int(ast.GetSymbolId(s2))
 }
 
-func compareNodes(n1, n2 *ast.Node) int {
+func (c *Checker) compareNodes(n1, n2 *ast.Node) int {
 	if n1 == n2 {
 		return 0
 	}
@@ -1629,13 +1627,13 @@ func compareNodes(n1, n2 *ast.Node) int {
 	if n2 == nil {
 		return -1
 	}
-	f1 := ast.GetSourceFileOfNode(n1)
-	f2 := ast.GetSourceFileOfNode(n2)
+	f1 := c.fileIndexMap[ast.GetSourceFileOfNode(n1)]
+	f2 := c.fileIndexMap[ast.GetSourceFileOfNode(n2)]
 	if f1 != f2 {
-		// Compare the full paths (no two files should have the same full path)
-		return strings.Compare(string(f1.Path()), string(f2.Path()))
+		// Order by index of file in the containing program
+		return f1 - f2
 	}
-	// In the same file, compare source positions
+	// In the same file, order by source position
 	return n1.Pos() - n2.Pos()
 }
 
@@ -1649,6 +1647,9 @@ func compareTypes(t1, t2 *Type) int {
 	if t2 == nil {
 		return 1
 	}
+	if t1.checker != t2.checker {
+		panic("Cannot compare types from different checkers")
+	}
 	// First sort in order of increasing type flags values.
 	if c := getSortOrderFlags(t1) - getSortOrderFlags(t2); c != 0 {
 		return c
@@ -1660,10 +1661,10 @@ func compareTypes(t1, t2 *Type) int {
 	// We have unnamed types or types with identical names. Now sort by data specific to the type.
 	switch {
 	case t1.flags&(TypeFlagsAny|TypeFlagsUnknown|TypeFlagsString|TypeFlagsNumber|TypeFlagsBoolean|TypeFlagsBigInt|TypeFlagsESSymbol|TypeFlagsVoid|TypeFlagsUndefined|TypeFlagsNull|TypeFlagsNever|TypeFlagsNonPrimitive) != 0:
-		// Only distinguished by type IDs
+		// Only distinguished by type IDs, handled below.
 	case t1.flags&TypeFlagsObject != 0:
 		// Order unnamed or identically named object types by symbol.
-		if c := compareSymbols(t1.symbol, t2.symbol); c != 0 {
+		if c := t1.checker.compareSymbols(t1.symbol, t2.symbol); c != 0 {
 			return c
 		}
 		// When object types have the same or no symbol, order by kind. We order type references before other kinds.
@@ -1684,7 +1685,7 @@ func compareTypes(t1, t2 *Type) int {
 				}
 			} else {
 				// Deferred type references with the same target are ordered by the source location of the reference.
-				if c := compareNodes(r1.node, r2.node); c != 0 {
+				if c := t1.checker.compareNodes(r1.node, r2.node); c != 0 {
 					return c
 				}
 				// Instantiations of the same deferred type reference are ordered by their associated type mappers
@@ -1732,7 +1733,7 @@ func compareTypes(t1, t2 *Type) int {
 		}
 	case t1.flags&(TypeFlagsEnumLiteral|TypeFlagsUniqueESSymbol) != 0:
 		// Enum members are ordered by their symbol (and thus their declaration order).
-		if c := compareSymbols(t1.symbol, t2.symbol); c != 0 {
+		if c := t1.checker.compareSymbols(t1.symbol, t2.symbol); c != 0 {
 			return c
 		}
 	case t1.flags&TypeFlagsStringLiteral != 0:
@@ -1742,7 +1743,7 @@ func compareTypes(t1, t2 *Type) int {
 		}
 	case t1.flags&TypeFlagsNumberLiteral != 0:
 		// Numeric literal types are ordered by their values.
-		if c := cmp.Compare(t1.AsLiteralType().value.(float64), t2.AsLiteralType().value.(float64)); c != 0 {
+		if c := cmp.Compare(t1.AsLiteralType().value.(jsnum.Number), t2.AsLiteralType().value.(jsnum.Number)); c != 0 {
 			return c
 		}
 	case t1.flags&TypeFlagsBooleanLiteral != 0:
@@ -1755,7 +1756,7 @@ func compareTypes(t1, t2 *Type) int {
 			return -1
 		}
 	case t1.flags&TypeFlagsTypeParameter != 0:
-		if c := compareSymbols(t1.symbol, t2.symbol); c != 0 {
+		if c := t1.checker.compareSymbols(t1.symbol, t2.symbol); c != 0 {
 			return c
 		}
 	case t1.flags&TypeFlagsIndex != 0:
@@ -1773,7 +1774,7 @@ func compareTypes(t1, t2 *Type) int {
 			return c
 		}
 	case t1.flags&TypeFlagsConditional != 0:
-		if c := compareNodes(t1.AsConditionalType().root.node.AsNode(), t2.AsConditionalType().root.node.AsNode()); c != 0 {
+		if c := t1.checker.compareNodes(t1.AsConditionalType().root.node.AsNode(), t2.AsConditionalType().root.node.AsNode()); c != 0 {
 			return c
 		}
 		if c := compareTypeMappers(t1.AsConditionalType().mapper, t2.AsConditionalType().mapper); c != 0 {
@@ -1787,7 +1788,7 @@ func compareTypes(t1, t2 *Type) int {
 			return c
 		}
 	case t1.flags&TypeFlagsTemplateLiteral != 0:
-		if c := compareTexts(t1.AsTemplateLiteralType().texts, t2.AsTemplateLiteralType().texts); c != 0 {
+		if c := slices.Compare(t1.AsTemplateLiteralType().texts, t2.AsTemplateLiteralType().texts); c != 0 {
 			return c
 		}
 		if c := compareTypeLists(t1.AsTemplateLiteralType().types, t2.AsTemplateLiteralType().types); c != 0 {
@@ -1885,18 +1886,6 @@ func compareTypeLists(s1, s2 []*Type) int {
 	}
 	for i, t1 := range s1 {
 		if c := compareTypes(t1, s2[i]); c != 0 {
-			return c
-		}
-	}
-	return 0
-}
-
-func compareTexts(s1, s2 []string) int {
-	if len(s1) != len(s2) {
-		return len(s1) - len(s2)
-	}
-	for i, t1 := range s1 {
-		if c := strings.Compare(t1, s2[i]); c != 0 {
 			return c
 		}
 	}
@@ -2142,7 +2131,7 @@ func getPropertyNameFromType(t *Type) string {
 	case t.flags&TypeFlagsStringLiteral != 0:
 		return t.AsLiteralType().value.(string)
 	case t.flags&TypeFlagsNumberLiteral != 0:
-		return stringutil.FromNumber(t.AsLiteralType().value.(float64))
+		return t.AsLiteralType().value.(jsnum.Number).String()
 	case t.flags&TypeFlagsUniqueESSymbol != 0:
 		return t.AsUniqueESSymbolType().name
 	}
@@ -2171,7 +2160,7 @@ func isNumericLiteralName(name string) bool {
 	// Note that this accepts the values 'Infinity', '-Infinity', and 'NaN', and that this is intentional.
 	// This is desired behavior, because when indexing with them as numeric entities, you are indexing
 	// with the strings '"Infinity"', '"-Infinity"', and '"NaN"' respectively.
-	return stringutil.FromNumber(stringutil.ToNumber(name)) == name
+	return jsnum.FromString(name).String() == name
 }
 
 func getPropertyNameForPropertyNameNode(name *ast.Node) string {
@@ -2205,8 +2194,8 @@ func anyToString(v any) string {
 	switch v := v.(type) {
 	case string:
 		return v
-	case float64:
-		return stringutil.FromNumber(v)
+	case jsnum.Number:
+		return v.String()
 	case bool:
 		return core.IfElse(v, "true", "false")
 	case PseudoBigInt:
@@ -2219,8 +2208,8 @@ func isValidNumberString(s string, roundTripOnly bool) bool {
 	if s == "" {
 		return false
 	}
-	n := stringutil.ToNumber(s)
-	return !math.IsNaN(n) && !math.IsInf(n, 0) && (!roundTripOnly || stringutil.FromNumber(n) == s)
+	n := jsnum.FromString(s)
+	return !n.IsNaN() && !n.IsInf() && (!roundTripOnly || n.String() == s)
 }
 
 func isValidBigIntString(s string, roundTripOnly bool) bool {
@@ -2493,14 +2482,14 @@ func createEvaluator(evaluateEntity Evaluator) Evaluator {
 			result := evaluate(expr.AsPrefixUnaryExpression().Operand, location)
 			resolvedOtherFiles = result.resolvedOtherFiles
 			hasExternalReferences = result.hasExternalReferences
-			if value, ok := result.value.(float64); ok {
+			if value, ok := result.value.(jsnum.Number); ok {
 				switch expr.AsPrefixUnaryExpression().Operator {
 				case ast.KindPlusToken:
 					return evaluatorResult(value, isSyntacticallyString, resolvedOtherFiles, hasExternalReferences)
 				case ast.KindMinusToken:
 					return evaluatorResult(-value, isSyntacticallyString, resolvedOtherFiles, hasExternalReferences)
 				case ast.KindTildeToken:
-					return evaluatorResult(jsnum.BitwiseNOT(value), isSyntacticallyString, resolvedOtherFiles, hasExternalReferences)
+					return evaluatorResult(value.BitwiseNOT(), isSyntacticallyString, resolvedOtherFiles, hasExternalReferences)
 				}
 			}
 		case ast.KindBinaryExpression:
@@ -2510,22 +2499,22 @@ func createEvaluator(evaluateEntity Evaluator) Evaluator {
 			isSyntacticallyString = (left.isSyntacticallyString || right.isSyntacticallyString) && expr.AsBinaryExpression().OperatorToken.Kind == ast.KindPlusToken
 			resolvedOtherFiles = left.resolvedOtherFiles || right.resolvedOtherFiles
 			hasExternalReferences = left.hasExternalReferences || right.hasExternalReferences
-			leftNum, leftIsNum := left.value.(float64)
-			rightNum, rightIsNum := right.value.(float64)
+			leftNum, leftIsNum := left.value.(jsnum.Number)
+			rightNum, rightIsNum := right.value.(jsnum.Number)
 			if leftIsNum && rightIsNum {
 				switch operator {
 				case ast.KindBarToken:
-					return evaluatorResult(jsnum.BitwiseOR(leftNum, rightNum), isSyntacticallyString, resolvedOtherFiles, hasExternalReferences)
+					return evaluatorResult(leftNum.BitwiseOR(rightNum), isSyntacticallyString, resolvedOtherFiles, hasExternalReferences)
 				case ast.KindAmpersandToken:
-					return evaluatorResult(jsnum.BitwiseAND(leftNum, rightNum), isSyntacticallyString, resolvedOtherFiles, hasExternalReferences)
+					return evaluatorResult(leftNum.BitwiseAND(rightNum), isSyntacticallyString, resolvedOtherFiles, hasExternalReferences)
 				case ast.KindGreaterThanGreaterThanToken:
-					return evaluatorResult(jsnum.SignedRightShift(leftNum, rightNum), isSyntacticallyString, resolvedOtherFiles, hasExternalReferences)
+					return evaluatorResult(leftNum.SignedRightShift(rightNum), isSyntacticallyString, resolvedOtherFiles, hasExternalReferences)
 				case ast.KindGreaterThanGreaterThanGreaterThanToken:
-					return evaluatorResult(jsnum.UnsignedRightShift(leftNum, rightNum), isSyntacticallyString, resolvedOtherFiles, hasExternalReferences)
+					return evaluatorResult(leftNum.UnsignedRightShift(rightNum), isSyntacticallyString, resolvedOtherFiles, hasExternalReferences)
 				case ast.KindLessThanLessThanToken:
-					return evaluatorResult(jsnum.LeftShift(leftNum, rightNum), isSyntacticallyString, resolvedOtherFiles, hasExternalReferences)
+					return evaluatorResult(leftNum.LeftShift(rightNum), isSyntacticallyString, resolvedOtherFiles, hasExternalReferences)
 				case ast.KindCaretToken:
-					return evaluatorResult(jsnum.BitwiseXOR(leftNum, rightNum), isSyntacticallyString, resolvedOtherFiles, hasExternalReferences)
+					return evaluatorResult(leftNum.BitwiseXOR(rightNum), isSyntacticallyString, resolvedOtherFiles, hasExternalReferences)
 				case ast.KindAsteriskToken:
 					return evaluatorResult(leftNum*rightNum, isSyntacticallyString, resolvedOtherFiles, hasExternalReferences)
 				case ast.KindSlashToken:
@@ -2535,19 +2524,19 @@ func createEvaluator(evaluateEntity Evaluator) Evaluator {
 				case ast.KindMinusToken:
 					return evaluatorResult(leftNum-rightNum, isSyntacticallyString, resolvedOtherFiles, hasExternalReferences)
 				case ast.KindPercentToken:
-					return evaluatorResult(jsnum.Remainder(leftNum, rightNum), isSyntacticallyString, resolvedOtherFiles, hasExternalReferences)
+					return evaluatorResult(leftNum.Remainder(rightNum), isSyntacticallyString, resolvedOtherFiles, hasExternalReferences)
 				case ast.KindAsteriskAsteriskToken:
-					return evaluatorResult(jsnum.Exponentiate(leftNum, rightNum), isSyntacticallyString, resolvedOtherFiles, hasExternalReferences)
+					return evaluatorResult(leftNum.Exponentiate(rightNum), isSyntacticallyString, resolvedOtherFiles, hasExternalReferences)
 				}
 			}
 			leftStr, leftIsStr := left.value.(string)
 			rightStr, rightIsStr := right.value.(string)
 			if (leftIsStr || leftIsNum) && (rightIsStr || rightIsNum) && operator == ast.KindPlusToken {
 				if leftIsNum {
-					leftStr = stringutil.FromNumber(leftNum)
+					leftStr = leftNum.String()
 				}
 				if rightIsNum {
-					rightStr = stringutil.FromNumber(rightNum)
+					rightStr = rightNum.String()
 				}
 				return evaluatorResult(leftStr+rightStr, isSyntacticallyString, resolvedOtherFiles, hasExternalReferences)
 			}
@@ -2556,7 +2545,7 @@ func createEvaluator(evaluateEntity Evaluator) Evaluator {
 		case ast.KindTemplateExpression:
 			return evaluateTemplateExpression(expr, location)
 		case ast.KindNumericLiteral:
-			return evaluatorResult(stringutil.ToNumber(expr.Text()), false, false, false)
+			return evaluatorResult(jsnum.FromString(expr.Text()), false, false, false)
 		case ast.KindIdentifier, ast.KindElementAccessExpression:
 			return evaluateEntity(expr, location)
 		case ast.KindPropertyAccessExpression:

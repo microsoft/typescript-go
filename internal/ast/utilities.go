@@ -1121,7 +1121,7 @@ func IsDeclaration(node *Node) bool {
 
 // True if `name` is the name of a declaration node
 func IsDeclarationName(name *Node) bool {
-	return !IsSourceFile(name) && !IsBindingPattern(name) && IsDeclaration(name.Parent)
+	return !IsSourceFile(name) && !IsBindingPattern(name) && IsDeclaration(name.Parent) && name.Parent.Name() == name
 }
 
 // Like 'isDeclarationName', but returns true for LHS of `import { x as y }` or `export { x as y }`.
@@ -1493,4 +1493,8 @@ func getExportAssignmentExpression(node *Node) *Node {
 
 func isAliasableExpression(e *Node) bool {
 	return IsEntityNameExpression(e) || IsClassExpression(e)
+}
+
+func IsInstanceOfExpression(node *Node) bool {
+	return IsBinaryExpression(node) && node.AsBinaryExpression().OperatorToken.Kind == KindInstanceOfKeyword
 }

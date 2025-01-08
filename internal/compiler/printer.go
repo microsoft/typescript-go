@@ -5,8 +5,8 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/jsnum"
 	"github.com/microsoft/typescript-go/internal/scanner"
-	"github.com/microsoft/typescript-go/internal/stringutil"
 )
 
 func (c *Checker) getTypePrecedence(t *Type) ast.TypePrecedence {
@@ -25,6 +25,10 @@ func (c *Checker) getTypePrecedence(t *Type) ast.TypePrecedence {
 		}
 	}
 	return ast.TypePrecedenceNonArray
+}
+
+func (c *Checker) SymbolToString(s *ast.Symbol) string {
+	return c.symbolToString(s)
 }
 
 func (c *Checker) symbolToString(s *ast.Symbol) string {
@@ -139,6 +143,8 @@ func (p *Printer) printTypeNoAlias(t *Type) {
 		p.printTemplateLiteralType(t)
 	case t.flags&TypeFlagsStringMapping != 0:
 		p.printStringMappingType(t)
+	case t.flags&TypeFlagsSubstitution != 0:
+		p.printType(t.AsSubstitutionType().baseType)
 	}
 	p.depth--
 }
@@ -165,7 +171,7 @@ func (p *Printer) printLiteralTypeValue(t *Type) {
 	switch value := t.AsLiteralType().value.(type) {
 	case string:
 		p.printStringLiteral(value)
-	case float64:
+	case jsnum.Number:
 		p.printNumberLiteral(value)
 	case bool:
 		p.printBooleanLiteral(value)
@@ -180,8 +186,8 @@ func (p *Printer) printStringLiteral(s string) {
 	p.print("\"")
 }
 
-func (p *Printer) printNumberLiteral(f float64) {
-	p.print(stringutil.FromNumber(f))
+func (p *Printer) printNumberLiteral(f jsnum.Number) {
+	p.print(f.String())
 }
 
 func (p *Printer) printBooleanLiteral(b bool) {
@@ -587,7 +593,7 @@ func (c *Checker) getTextAndTypeOfNode(node *ast.Node) (string, *Type, bool) {
 			}
 		}
 	}
-	if isExpressionNode(node) && !isRightSideOfQualifiedNameOrPropertyAccess(node) {
+	if IsExpressionNode(node) && !isRightSideOfQualifiedNameOrPropertyAccess(node) {
 		return scanner.GetTextOfNode(node), c.getTypeOfExpression(node), false
 	}
 	return "", nil, false

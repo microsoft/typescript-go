@@ -304,6 +304,12 @@ type EnumMemberLinks struct {
 	value EvaluatorResult // Constant value of enum member
 }
 
+// Links for assertion expressions
+
+type AssertionLinks struct {
+	exprType *Type // Assertion expression type
+}
+
 // SourceFile links
 
 type SourceFileLinks struct {
@@ -542,6 +548,7 @@ type Type struct {
 	id          TypeId
 	symbol      *ast.Symbol
 	alias       *TypeAlias
+	checker     *Checker
 	data        TypeData // Type specific data
 }
 
@@ -672,7 +679,7 @@ type IntrinsicType struct {
 
 type LiteralType struct {
 	TypeBase
-	value       any   // string | float64 | bool | PseudoBigInt | nil (computed enum)
+	value       any   // string | jsnum.Number | bool | PseudoBigInt | nil (computed enum)
 	freshType   *Type // Fresh version of type
 	regularType *Type // Regular version of type
 }
@@ -1000,12 +1007,6 @@ type ConditionalType struct {
 	resolvedConstraintOfDistributive *Type
 	mapper                           *TypeMapper
 	combinedMapper                   *TypeMapper
-}
-
-type IterationTypes struct {
-	yieldType  *Type
-	returnType *Type
-	nextType   *Type
 }
 
 // SignatureFlags
