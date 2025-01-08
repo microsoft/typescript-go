@@ -320,7 +320,7 @@ var data = []struct {
 						"noImplicitAny": true,
 						"target": "ES2017",
 						"module": "ESNext",
-						"moduleResolution": "bundler,
+						"moduleResolution": "bundler",
 						"moduleDetection": "auto",
 						"jsx": "react",
 	                },
@@ -336,12 +336,15 @@ var data = []struct {
 			fileNames: []string{"/apath/src/index.ts", "/apath/src/app.ts"},
 			configFile: map[string]interface{}{
 				"compilerOptions": core.CompilerOptions{
-					OutDir:        "./dist",
-					Strict:        core.TSTrue,
-					NoImplicitAny: core.TSTrue,
-					Target:        core.ScriptTargetES2017,
-					ModuleKind:    core.ModuleKindESNext,
-					Jsx:           core.JsxEmitReact,
+					OutDir:           "/apath/dist",
+					Strict:           core.TSTrue,
+					NoImplicitAny:    core.TSTrue,
+					Target:           core.ScriptTargetES2017,
+					ModuleKind:       core.ModuleKindESNext,
+					ModuleResolution: core.ModuleResolutionKindBundler,
+					ModuleDetection:  core.ModuleDetectionKindAuto,
+					Jsx:              core.JsxEmitReact,
+					ConfigFilePath:   "/apath/tsconfig.json",
 				},
 				"files":   []string{"/apath/src/index.ts", "/apath/src/app.ts"},
 				"include": []string{"/apath/src/**/*"},
@@ -365,9 +368,11 @@ var data = []struct {
 		output: verifyConfig{
 			fileNames: []string{"/apath/a.ts"},
 			configFile: map[string]interface{}{
-				"compilerOptions": core.CompilerOptions{},
+				"compilerOptions": core.CompilerOptions{
+					ConfigFilePath: "/apath/tsconfig.json",
+				},
 			},
-			expectedErrors: []string{"Option 'help' can only be specified on command line."},
+			expectedErrors: []string{"Option 'help' can only be specified on command line.", "Unknown compiler option 'help'."},
 		},
 	},
 	{
@@ -406,7 +411,8 @@ var data = []struct {
 			fileNames: []string{"/b.ts"},
 			configFile: map[string]interface{}{
 				"compilerOptions": core.CompilerOptions{
-					OutDir: "bin",
+					OutDir:         "/bin",
+					ConfigFilePath: "/tsconfig.json",
 				},
 			},
 			expectedErrors: []string{},
@@ -429,7 +435,8 @@ var data = []struct {
 			fileNames: []string{"/b.ts", "/bin/a.ts"},
 			configFile: map[string]interface{}{
 				"compilerOptions": core.CompilerOptions{
-					OutDir: "bin",
+					OutDir:         "/bin",
+					ConfigFilePath: "/tsconfig.json",
 				},
 				"exclude": []string{"obj"},
 			},
@@ -452,7 +459,8 @@ var data = []struct {
 			fileNames: []string{"/a.ts"},
 			configFile: map[string]interface{}{
 				"compilerOptions": core.CompilerOptions{
-					DeclarationDir: "declarations",
+					DeclarationDir: "/declarations",
+					ConfigFilePath: "/tsconfig.json",
 				},
 			},
 			expectedErrors: []string{},
@@ -475,7 +483,8 @@ var data = []struct {
 			fileNames: []string{"/a.ts", "/declarations/a.d.ts"},
 			configFile: map[string]interface{}{
 				"compilerOptions": core.CompilerOptions{
-					DeclarationDir: "declarations",
+					DeclarationDir: "/declarations",
+					ConfigFilePath: "/tsconfig.json",
 				},
 				"exclude": []string{"types"},
 			},
@@ -498,7 +507,8 @@ var data = []struct {
 			fileNames: nil,
 			configFile: map[string]interface{}{
 				"compilerOptions": core.CompilerOptions{
-					AllowJs: core.TSTrue,
+					AllowJs:        core.TSTrue,
+					ConfigFilePath: "/apath/tsconfig.json",
 				},
 			},
 			expectedErrors: []string{"No inputs were found in config file '/apath/tsconfig.json'. Specified 'include' paths were '[**/*]' and 'exclude' paths were '[]'."},
@@ -521,11 +531,12 @@ var data = []struct {
 			fileNames: nil,
 			configFile: map[string]interface{}{
 				"compilerOptions": core.CompilerOptions{
-					OutDir: "./",
+					OutDir:         "/apath",
+					ConfigFilePath: "/apath/tsconfig.json",
 				},
 				"include": []string{"**/*"},
 			},
-			expectedErrors: []string{"No inputs were found in config file '/apath/tsconfig.json'. Specified 'include' paths were '[**/*]' and 'exclude' paths were '[./]'."},
+			expectedErrors: []string{"No inputs were found in config file '/apath/tsconfig.json'. Specified 'include' paths were '[**/*]' and 'exclude' paths were '[/apath]'."},
 		},
 	},
 	{
@@ -600,7 +611,7 @@ func TestParsedCommandJson(t *testing.T) {
 			assert.DeepEqual(t, parseConfigFileContent.Options.FileNames, rec.output.fileNames)
 			// Check for compiler options
 			if rec.output.configFile["compilerOptions"] != nil {
-				assert.DeepEqual(t, rawConfigResult.compilerOptionsProp, rec.output.configFile["compilerOptions"])
+				assert.DeepEqual(t, *(parseConfigFileContent.Options.Options), rec.output.configFile["compilerOptions"])
 			}
 			// Check for all other options
 			assert.DeepEqual(t, rawConfigResult.prop, rawConfigExpected.prop)
@@ -654,7 +665,7 @@ func TestParsedCommandJsonSourceFile(t *testing.T) {
 			assert.DeepEqual(t, parseConfigFileContent.Options.FileNames, rec.output.fileNames)
 			// Check for compiler options
 			if rec.output.configFile["compilerOptions"] != nil {
-				assert.DeepEqual(t, rawConfigResult.compilerOptionsProp, rec.output.configFile["compilerOptions"])
+				assert.DeepEqual(t, *(parseConfigFileContent.Options.Options), rec.output.configFile["compilerOptions"])
 			}
 			// Check for all other options
 			assert.DeepEqual(t, rawConfigResult.prop, rawConfigExpected.prop)

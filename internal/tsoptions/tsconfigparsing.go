@@ -124,16 +124,20 @@ func parseOwnConfigOfJsonSourceFile(
 		option *CommandLineOption,
 	) (any, []*ast.Diagnostic) {
 		// Ensure value is verified except for extends which is handled in its own way for error reporting
-		if option != nil && option != &extendsOptionDeclaration { //&& option != extendsOptionDeclaration {
+		if option != nil && option != &extendsOptionDeclaration {
 			value, errors = convertJsonOption(*option, value, basePath, errors, &propertyAssignment, propertyAssignment.Initializer, sourceFile)
 		}
 		if parentOption.Name != "undefined" && value != nil {
 			if option != nil && option.Name != "" {
-				// 	var currentOption core.CompilerOptions
-				// 	if parentOption.Name == compilerOptionsDeclaration.Name {
-				// 		currentOption = *options
-				// 	}
-				// 	currentOption = *parseCompilerOptions(option.Name, value, &core.CompilerOptions{})
+				commandLineOptionEnumMapVal := option.EnumMap()
+				if commandLineOptionEnumMapVal != nil {
+					val, ok := commandLineOptionEnumMapVal.Get(strings.ToLower(value.(string)))
+					if ok {
+						errors = parseCompilerOptions(option.Name, val, options, errors)
+					}
+				} else {
+					errors = parseCompilerOptions(option.Name, value, options, errors)
+				}
 			} else if keyText != "" {
 				if parentOption.ElementOptions != nil {
 					errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.Option_build_must_be_the_first_command_line_argument, keyText))
@@ -308,7 +312,7 @@ func convertJsonOptionOfCustomType(
 		return nil
 	}
 	val, b := typeMap.Get(key)
-	if (val != nil) && (val != "" || b) { // need to check
+	if (val != nil) && (val != "" || b) {
 		return validateJsonOptionValue(opt, val.(string), errors, valueExpression, sourceFile)
 	}
 	// else {
@@ -358,7 +362,7 @@ func startsWithConfigDirTemplate(value any) bool {
 
 func normalizeNonListOptionValue(option CommandLineOption, basePath string, value any) any {
 	if option.isFilePath {
-		value = tspath.NormalizeSlashes(value.(string)) // what is value is not a string
+		value = tspath.NormalizeSlashes(value.(string))
 		if !startsWithConfigDirTemplate(value) {
 			value = tspath.GetNormalizedAbsolutePath(value.(string), basePath)
 		}
@@ -488,10 +492,9 @@ func getExtendsConfigPath(
 }
 
 type tsConfigOptions struct {
-	prop                map[string][]string
-	compilerOptionsProp core.CompilerOptions
-	references          []core.ProjectReference
-	notDefined          string
+	prop       map[string][]string
+	references []core.ProjectReference
+	notDefined string
 }
 
 func getOptionName(option CommandLineOption) string {
@@ -522,10 +525,18 @@ func convertOptionsFromJson(optionsNameMap map[string]CommandLineOption, jsonOpt
 	}
 	for key, value := range jsonOptions {
 		opt, ok := optionsNameMap[key]
-		var convertJson any
-		if ok {
-			convertJson, errors = convertJsonOption(opt, value, basePath, errors, nil, nil, nil)
-			parseCompilerOptions(key, convertJson, defaultOptions)
+		commandLineOptionEnumMapVal := opt.EnumMap()
+		if commandLineOptionEnumMapVal != nil {
+			val, ok := commandLineOptionEnumMapVal.Get(strings.ToLower(value.(string)))
+			if ok {
+				errors = parseCompilerOptions(key, val, defaultOptions, errors)
+			}
+		} else {
+			var convertJson any
+			if ok {
+				convertJson, errors = convertJsonOption(opt, value, basePath, errors, nil, nil, nil)
+				errors = parseCompilerOptions(key, convertJson, defaultOptions, errors)
+			}
 		}
 		// else {
 		//     errors.push(createUnknownOptionError(id, diagnostics));
@@ -949,14 +960,12 @@ func parseJsonConfigFileContentWorker(
 	// 	configDirTemplateSubstitutionOptions,
 	// 	basePath,
 	// )
-	// options := parsedConfig.options
 	rawConfig := ParseRawConfig(parsedConfig.raw, basePath, errors, configFileName)
-	// if json == nil {
-	options := &rawConfig.compilerOptionsProp
-	// }
 	var basePathForFileNames string
 	if configFileName != "" {
-		rawConfig.compilerOptionsProp.ConfigFilePath = tspath.NormalizeSlashes(configFileName)
+		if parsedConfig.options != nil {
+			parsedConfig.options.ConfigFilePath = tspath.NormalizeSlashes(configFileName)
+		}
 		basePathForFileNames = tspath.NormalizePath(directoryOfCombinedPath(configFileName, basePath))
 	} else {
 		basePathForFileNames = tspath.NormalizePath(basePath)
@@ -1015,9 +1024,9 @@ func parseJsonConfigFileContentWorker(
 		includeSpecs := getPropFromRaw(include, func(element string) bool { return reflect.TypeOf(element).Kind() == reflect.String })
 		excludeSpecs := getPropFromRaw(exclude, func(element string) bool { return reflect.TypeOf(element).Kind() == reflect.String })
 		isDefaultIncludeSpec := false
-		if len(excludeSpecs.stringValues) != 0 && excludeSpecs.stringValues[0] == "no-prop" {
-			outDir := options.OutDir
-			declarationDir := options.DeclarationDir
+		if len(excludeSpecs.stringValues) != 0 && excludeSpecs.stringValues[0] == "no-prop" && parsedConfig.options != nil {
+			outDir := parsedConfig.options.OutDir
+			declarationDir := parsedConfig.options.DeclarationDir
 			if outDir != "" || declarationDir != "" {
 				excludeSpecs = PropOfRaw{stringValues: core.Filter([]string{outDir, declarationDir}, func(d string) bool { return d != "" })}
 			}
@@ -1081,7 +1090,11 @@ func parseJsonConfigFileContentWorker(
 	}
 
 	getFileNames := func(basePath string) []string {
-		fileNames := getFileNamesFromConfigSpecs(configFileSpecs, basePath, options, host.fs, extraFileExtensions)
+		var parsedConfigOptions *core.CompilerOptions = nil
+		if parsedConfig.options != nil {
+			parsedConfigOptions = parsedConfig.options
+		}
+		fileNames := getFileNamesFromConfigSpecs(configFileSpecs, basePath, parsedConfigOptions, host.fs, extraFileExtensions)
 		if shouldReportNoInputFiles(fileNames, canJsonReportNoInputFiles(rawConfig), resolutionStack) {
 			includeSpecs := configFileSpecs.includeSpecs
 			excludeSpecs := configFileSpecs.excludeSpecs
@@ -1117,7 +1130,7 @@ func parseJsonConfigFileContentWorker(
 
 	return ParsedCommandLine{
 		Options: &core.ParsedOptions{
-			Options:           options,
+			Options:           parsedConfig.options,
 			FileNames:         getFileNames(basePathForFileNames),
 			ProjectReferences: getProjectReferences(basePathForFileNames),
 		},
