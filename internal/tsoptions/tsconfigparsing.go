@@ -1130,7 +1130,7 @@ func parseJsonConfigFileContentWorker(
 
 	return ParsedCommandLine{
 		Options: &core.ParsedOptions{
-			Options:           parsedConfig.options,
+			CompilerOptions:   parsedConfig.options,
 			FileNames:         getFileNames(basePathForFileNames),
 			ProjectReferences: getProjectReferences(basePathForFileNames),
 		},

@@ -36,7 +36,7 @@ type CommandLineOption struct {
 	category *diagnostics.Message
 
 	// defined once
-	extraValidation func(value bool) (d *diagnostics.Message, args []string)
+	extraValidation func(value CompilerOptionsValue) (d *diagnostics.Message, args []string)
 
 	// true or undefined
 	// used for configDirTemplateSubstitutionOptions

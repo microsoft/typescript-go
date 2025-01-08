@@ -1497,6 +1497,10 @@ func isAliasableExpression(e *Node) bool {
 	return IsEntityNameExpression(e) || IsClassExpression(e)
 }
 
+func IsInstanceOfExpression(node *Node) bool {
+	return IsBinaryExpression(node) && node.AsBinaryExpression().OperatorToken.Kind == KindInstanceOfKeyword
+}
+
 func IsComputedNonLiteralName(name *Node) bool {
 	return IsComputedPropertyName(name) && !IsStringOrNumericLiteralLike(name.Expression())
 }

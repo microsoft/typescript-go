@@ -284,6 +284,20 @@ func (s *Scanner) Rewind(state ScannerState) {
 	s.ScannerState = state
 }
 
+func (s *Scanner) ResetTokenState(pos int) {
+	if pos < 0 {
+		panic("Cannot reset token state to negative position")
+	}
+	s.Rewind(ScannerState{
+		pos:          pos,
+		fullStartPos: pos,
+		tokenStart:   pos,
+		token:        ast.KindUnknown,
+		tokenValue:   "",
+		tokenFlags:   ast.TokenFlagsNone,
+	})
+}
+
 func (scanner *Scanner) SetSkipJsDocLeadingAsterisks(skip bool) {
 	if skip {
 		scanner.skipJSDocLeadingAsterisks += 1
@@ -716,13 +730,13 @@ func (s *Scanner) Scan() ast.Kind {
 			if s.charAt(1) == '!' {
 				if s.pos == 0 {
 					s.pos += 2
-					for s.char() >= 0 && s.char() != '\n' {
-						s.pos++
+					for ch, size := s.charAndSize(); size > 0 && !stringutil.IsLineBreak(ch); ch, size = s.charAndSize() {
+						s.pos += size
 					}
 					continue
 				}
 				s.errorAt(diagnostics.X_can_only_be_used_at_the_start_of_a_file, s.pos, 2)
-				s.pos += 2
+				s.pos++
 				s.token = ast.KindUnknown
 				break
 			}
