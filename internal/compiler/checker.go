@@ -486,6 +486,8 @@ type Checker struct {
 	host                                    CompilerHost
 	compilerOptions                         *core.CompilerOptions
 	files                                   []*ast.SourceFile
+	fileIndexMap                            map[*ast.SourceFile]int
+	compareSymbolsFunc                      func(*ast.Symbol, *ast.Symbol) int
 	typeCount                               uint32
 	symbolCount                             uint32
 	totalInstantiationCount                 uint32
@@ -732,6 +734,8 @@ func NewChecker(program *Program) *Checker {
 	c.host = program.host
 	c.compilerOptions = program.compilerOptions
 	c.files = program.files
+	c.fileIndexMap = createFileIndexMap(c.files)
+	c.compareSymbolsFunc = c.compareSymbols // Closure optimization
 	c.languageVersion = c.compilerOptions.GetEmitScriptTarget()
 	c.moduleKind = c.compilerOptions.GetEmitModuleKind()
 	c.legacyDecorators = c.compilerOptions.ExperimentalDecorators == core.TSTrue
@@ -901,6 +905,14 @@ func NewChecker(program *Program) *Checker {
 	c.initializeIterationResolvers()
 	c.initializeChecker()
 	return c
+}
+
+func createFileIndexMap(files []*ast.SourceFile) map[*ast.SourceFile]int {
+	result := make(map[*ast.SourceFile]int)
+	for i, file := range files {
+		result[file] = i
+	}
+	return result
 }
 
 func (c *Checker) reportUnreliableWorker(t *Type) *Type {
@@ -15109,7 +15121,7 @@ func (c *Checker) getNamedMembers(members ast.SymbolTable) []*ast.Symbol {
 			result = append(result, symbol)
 		}
 	}
-	sortSymbols(result)
+	c.sortSymbols(result)
 	return result
 }
 
@@ -17861,6 +17873,7 @@ func (c *Checker) newType(flags TypeFlags, objectFlags ObjectFlags, data TypeDat
 	t.flags = flags
 	t.objectFlags = objectFlags &^ (ObjectFlagsCouldContainTypeVariablesComputed | ObjectFlagsCouldContainTypeVariables | ObjectFlagsMembersResolved)
 	t.id = TypeId(c.typeCount)
+	t.checker = c
 	t.data = data
 	return t
 }

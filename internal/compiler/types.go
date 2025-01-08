@@ -548,6 +548,7 @@ type Type struct {
 	id          TypeId
 	symbol      *ast.Symbol
 	alias       *TypeAlias
+	checker     *Checker
 	data        TypeData // Type specific data
 }
 
