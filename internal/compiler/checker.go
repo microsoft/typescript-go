@@ -487,7 +487,7 @@ type Checker struct {
 	compilerOptions                         *core.CompilerOptions
 	files                                   []*ast.SourceFile
 	fileIndexMap                            map[*ast.SourceFile]int
-	compareSymbolsFunc                      func(*ast.Symbol, *ast.Symbol) int
+	compareSymbols                          func(*ast.Symbol, *ast.Symbol) int
 	typeCount                               uint32
 	symbolCount                             uint32
 	totalInstantiationCount                 uint32
@@ -735,7 +735,7 @@ func NewChecker(program *Program) *Checker {
 	c.compilerOptions = program.compilerOptions
 	c.files = program.files
 	c.fileIndexMap = createFileIndexMap(c.files)
-	c.compareSymbolsFunc = c.compareSymbols // Closure optimization
+	c.compareSymbols = c.compareSymbolsWorker // Closure optimization
 	c.languageVersion = c.compilerOptions.GetEmitScriptTarget()
 	c.moduleKind = c.compilerOptions.GetEmitModuleKind()
 	c.legacyDecorators = c.compilerOptions.ExperimentalDecorators == core.TSTrue
@@ -908,7 +908,7 @@ func NewChecker(program *Program) *Checker {
 }
 
 func createFileIndexMap(files []*ast.SourceFile) map[*ast.SourceFile]int {
-	result := make(map[*ast.SourceFile]int)
+	result := make(map[*ast.SourceFile]int, len(files))
 	for i, file := range files {
 		result[file] = i
 	}

@@ -1580,10 +1580,10 @@ func createSymbolTable(symbols []*ast.Symbol) ast.SymbolTable {
 }
 
 func (c *Checker) sortSymbols(symbols []*ast.Symbol) {
-	slices.SortFunc(symbols, c.compareSymbolsFunc)
+	slices.SortFunc(symbols, c.compareSymbols)
 }
 
-func (c *Checker) compareSymbols(s1, s2 *ast.Symbol) int {
+func (c *Checker) compareSymbolsWorker(s1, s2 *ast.Symbol) int {
 	if s1 == s2 {
 		return 0
 	}
