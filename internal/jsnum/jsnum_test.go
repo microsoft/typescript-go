@@ -3,6 +3,7 @@ package jsnum
 import (
 	"encoding/json"
 	"errors"
+	"flag"
 	"fmt"
 	"math"
 	"os"
@@ -16,8 +17,9 @@ import (
 
 func assertEqualNumber(t *testing.T, got, want Number) {
 	t.Helper()
-	if want.IsNaN() {
-		assert.Assert(t, got.IsNaN())
+
+	if got.IsNaN() || want.IsNaN() {
+		assert.Equal(t, got.IsNaN(), want.IsNaN(), "got: %v, want: %v", got, want)
 	} else {
 		assert.Equal(t, got, want)
 	}
@@ -384,27 +386,90 @@ var fromStringTests = []stringTest{
 	{Inf(-1), "    -Infinity"},
 	{1, "1."},
 	{1, "1.0   "},
+	{1, "+1"},
+	{1, "+1."},
+	{1, "+1.0"},
 	{NaN(), "whoops"},
+	{0, ""},
+	{0, "0"},
+	{0, "0."},
+	{0, "0.0"},
+	{0, "0.0000"},
+	{0, ".0000"},
+	{negativeZero, "-0"},
+	{negativeZero, "-0."},
+	{negativeZero, "-0.0"},
+	{negativeZero, "-.0"},
+	{NaN(), "."},
+	{NaN(), "e"},
+	{NaN(), ".e"},
+	{NaN(), "+"},
+	{0, "0X0"},
+	{NaN(), "e0"},
+	{NaN(), "E0"},
+	{NaN(), "1e"},
+	{NaN(), "1e+"},
+	{NaN(), "1e-"},
+	{1, "1e+0"},
+	{NaN(), "++0"},
+	{NaN(), "0_0"},
+	{Inf(1), "1e1000"},
+	{Inf(-1), "-1e1000"},
+	{0, ".0e0"},
+	{NaN(), "0e++0"},
+	{10, "0XA"},
+	{0b1010, "0b1010"},
+	{0b1010, "0B1010"},
+	{0o12, "0o12"},
+	{0o12, "0O12"},
+	{0x123456789abcdef0, "0x123456789abcdef0"},
+	{0x123456789abcdef0, "0X123456789ABCDEF0"},
+	{18446744073709552000, "0X10000000000000000"},
+	{18446744073709597000, "0X1000000000000A801"},
+	{NaN(), "0B0.0"},
+	{1.231235345083403e+91, "12312353450834030486384068034683603046834603806830644850340602384608368034634603680348603864"},
+	{NaN(), "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX8OOOOOOOOOOOOOOOOOOO"},
+	{Inf(1), "+Infinity"},
+	{1234.56, "  \t1234.56  "},
+	{NaN(), "\u200b"},
+	{0, " "},
+	{0, "\n"},
+	{0, "\r"},
+	{0, "\r\n"},
+	{0, "\u2028"},
+	{0, "\u2029"},
+	{0, "\t"},
+	{0, "\v"},
+	{0, "\f"},
+	{0, "\uFEFF"},
+	{0, "\u00A0"},
+	{10000000000000000000, "010000000000000000000"},
 }
 
 func TestFromString(t *testing.T) {
 	t.Parallel()
 
-	for _, test := range stringTests {
-		t.Run(test.str, func(t *testing.T) {
-			t.Parallel()
-			assertEqualNumber(t, FromString(test.str), test.number)
-			assertEqualNumber(t, FromString(test.str+" "), test.number)
-			assertEqualNumber(t, FromString(" "+test.str), test.number)
-		})
-	}
+	t.Run("stringTests", func(t *testing.T) {
+		t.Parallel()
+		for _, test := range stringTests {
+			t.Run(test.str, func(t *testing.T) {
+				t.Parallel()
+				assertEqualNumber(t, FromString(test.str), test.number)
+				assertEqualNumber(t, FromString(test.str+" "), test.number)
+				assertEqualNumber(t, FromString(" "+test.str), test.number)
+			})
+		}
+	})
 
-	for _, test := range fromStringTests {
-		t.Run(test.str, func(t *testing.T) {
-			t.Parallel()
-			assertEqualNumber(t, FromString(test.str), test.number)
-		})
-	}
+	t.Run("fromStringTests", func(t *testing.T) {
+		t.Parallel()
+		for _, test := range fromStringTests {
+			t.Run(test.str, func(t *testing.T) {
+				t.Parallel()
+				assertEqualNumber(t, FromString(test.str), test.number)
+			})
+		}
+	})
 }
 
 func getNodeExe(t testing.TB) string {
@@ -451,7 +516,15 @@ func TestNodeString(t *testing.T) {
 	})
 }
 
+func skipIfNotFuzzing(f *testing.F) {
+	if flag.CommandLine.Lookup("test.fuzz").Value.String() == "" {
+		f.Skip("skipping fuzz test during normal test run")
+	}
+}
+
 func FuzzNodeString(f *testing.F) {
+	skipIfNotFuzzing(f)
+
 	exe := getNodeExe(f)
 
 	for _, test := range stringTests {
@@ -463,10 +536,40 @@ func FuzzNodeString(f *testing.F) {
 
 	f.Fuzz(func(t *testing.T, f float64) {
 		n := Number(f)
+		nStr := n.String()
 
-		results := getRealStringResults(t, exe, []stringTest{{number: n}})
+		results := getRealStringResults(t, exe, []stringTest{{number: n, str: nStr}})
 		assert.Equal(t, len(results), 1)
-		assert.Equal(t, results[0].str, n.String())
+
+		nodeStr := results[0].str
+		nodeNumber := results[0].number
+
+		assert.Equal(t, nStr, nodeStr)
+		assertEqualNumber(t, n, nodeNumber)
+	})
+}
+
+func FuzzNodeFromString(f *testing.F) {
+	skipIfNotFuzzing(f)
+
+	exe := getNodeExe(f)
+
+	for _, test := range stringTests {
+		f.Add(test.str)
+	}
+	for _, test := range fromStringTests {
+		f.Add(test.str)
+	}
+
+	f.Fuzz(func(t *testing.T, s string) {
+		if len(s) > 350 {
+			t.Skip()
+		}
+
+		n := FromString(s)
+		results := getRealStringResults(t, exe, []stringTest{{str: s}})
+		assert.Equal(t, len(results), 1)
+		assertEqualNumber(t, n, results[0].number)
 	})
 }
 
