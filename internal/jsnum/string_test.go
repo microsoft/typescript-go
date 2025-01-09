@@ -123,6 +123,8 @@ var fromStringTests = []stringTest{
 	{0, "\uFEFF"},
 	{0, "\u00A0"},
 	{10000000000000000000, "010000000000000000000"},
+	{NaN(), "0x1.fffffffffffffp1023"}, // Make sure Go's extended float syntax doesn't work.
+	{NaN(), "0X_1FFFP-16"},
 }
 
 func TestFromString(t *testing.T) {
