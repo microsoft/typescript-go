@@ -195,22 +195,21 @@ func TestStringJS(t *testing.T) {
 	})
 }
 
-func skipIfNotFuzzing(f *testing.F) {
-	if flag.CommandLine.Lookup("test.fuzz").Value.String() == "" {
-		f.Skip("skipping fuzz test during normal test run")
-	}
+func isFuzzing() bool {
+	return flag.CommandLine.Lookup("test.fuzz").Value.String() != ""
 }
 
 func FuzzStringJS(f *testing.F) {
-	skipIfNotFuzzing(f)
-
 	exe := getNodeExe(f)
 
-	for _, test := range stringTests {
-		f.Add(float64(test.number))
-	}
-	for _, test := range fromStringTests {
-		f.Add(float64(test.number))
+	if isFuzzing() {
+		// Avoid running anything other than regressions in the fuzzing mode.
+		for _, test := range stringTests {
+			f.Add(float64(test.number))
+		}
+		for _, test := range fromStringTests {
+			f.Add(float64(test.number))
+		}
 	}
 
 	f.Fuzz(func(t *testing.T, f float64) {
@@ -229,15 +228,16 @@ func FuzzStringJS(f *testing.F) {
 }
 
 func FuzzFromStringJS(f *testing.F) {
-	skipIfNotFuzzing(f)
-
 	exe := getNodeExe(f)
 
-	for _, test := range stringTests {
-		f.Add(test.str)
-	}
-	for _, test := range fromStringTests {
-		f.Add(test.str)
+	if isFuzzing() {
+		// Avoid running anything other than regressions in the fuzzing mode.
+		for _, test := range stringTests {
+			f.Add(test.str)
+		}
+		for _, test := range fromStringTests {
+			f.Add(test.str)
+		}
 	}
 
 	f.Fuzz(func(t *testing.T, s string) {
