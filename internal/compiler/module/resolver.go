@@ -362,15 +362,42 @@ func (r *resolutionState) resolveNodeLike() *ResolvedModule {
 			r.resolver.host.Trace(diagnostics.Resolving_in_0_mode_with_conditions_1.Format("CJS", conditions))
 		}
 	}
+	result := r.resolveNodeLikeWorker()
+	if r.resultFromCache == nil &&
+		r.resolvedPackageDirectory &&
+		!r.isConfigLookup &&
+		r.features&NodeResolutionFeaturesExports != 0 &&
+		r.extensions&(extensionsTypeScript|extensionsDeclaration) != 0 &&
+		!tspath.IsExternalModuleNameRelative(r.name) &&
+		result.IsResolved() &&
+		result.IsExternalLibraryImport &&
+		!extensionIsOk(extensionsTypeScript|extensionsDeclaration, result.Extension) &&
+		slices.Contains(r.conditions, "import") {
+		if r.resolver.traceEnabled() {
+			r.resolver.host.Trace(diagnostics.Resolution_of_non_relative_name_failed_trying_with_modern_Node_resolution_features_disabled_to_see_if_npm_library_needs_configuration_update.Format())
+		}
+		r.features = r.features & ^NodeResolutionFeaturesExports
+		r.extensions = r.extensions & (extensionsTypeScript | extensionsDeclaration)
+		diagnosticsCount := len(r.diagnostics)
+		if diagnosticResult := r.resolveNodeLikeWorker(); diagnosticResult.IsResolved() && diagnosticResult.IsExternalLibraryImport {
+			result.AlternateResult = diagnosticResult.ResolvedFileName
+		}
+		r.diagnostics = r.diagnostics[:diagnosticsCount]
+		r.resolver.moduleNameCache.setLookupLocations(result, r.failedLookupLocations, r.affectingLocations, r.diagnostics)
+	}
+	return result
+}
 
+func (r *resolutionState) resolveNodeLikeWorker() *ResolvedModule {
 	if resolved := r.tryLoadModuleUsingOptionalResolutionSettings(); !resolved.shouldContinueSearching() {
 		return r.createResolvedModuleHandlingSymlink(resolved)
 	}
 
 	if !tspath.IsExternalModuleNameRelative(r.name) {
 		if r.features&NodeResolutionFeaturesImports != 0 && strings.HasPrefix(r.name, "#") {
-			// !!!
-			return r.createResolvedModule(nil, false)
+			if resolved := r.loadModuleFromImports(); !resolved.shouldContinueSearching() {
+				return r.createResolvedModuleHandlingSymlink(resolved)
+			}
 		}
 		if r.features&NodeResolutionFeaturesSelfName != 0 {
 			if resolved := r.loadModuleFromSelfNameReference(); !resolved.shouldContinueSearching() {
@@ -445,10 +472,45 @@ func (r *resolutionState) loadModuleFromSelfNameReference() *resolved {
 	if r.compilerOptions.GetAllowJs() && !strings.Contains(r.containingDirectory, "/node_modules/") {
 		return r.loadModuleFromExports(scope, r.extensions, subpath)
 	}
-	// !!!
-	// priorityExtensions := r.extensions & (ExtensionsTypeScript | ExtensionsDeclaration)
-	// secondaryExtensions := r.extensions & ^(ExtensionsTypeScript | ExtensionsDeclaration)
-	// return ...
+	priorityExtensions := r.extensions & (extensionsTypeScript | extensionsDeclaration)
+	secondaryExtensions := r.extensions & ^(extensionsTypeScript | extensionsDeclaration)
+	if resolved := r.loadModuleFromExports(scope, priorityExtensions, subpath); !resolved.shouldContinueSearching() {
+		return resolved
+	}
+	return r.loadModuleFromExports(scope, secondaryExtensions, subpath)
+}
+
+func (r *resolutionState) loadModuleFromImports() *resolved {
+	if r.name == "#" || strings.HasPrefix(r.name, "#/") {
+		if r.resolver.traceEnabled() {
+			r.resolver.host.Trace(diagnostics.Invalid_import_specifier_0_has_no_possible_resolutions.Format(r.name))
+		}
+		return continueSearching()
+	}
+	directoryPath := tspath.GetNormalizedAbsolutePath(r.containingDirectory, r.resolver.host.GetCurrentDirectory())
+	scope := r.getPackageScopeForPath(directoryPath)
+	if !scope.Exists() {
+		if r.resolver.traceEnabled() {
+			r.resolver.host.Trace(diagnostics.Directory_0_has_no_containing_package_json_scope_Imports_will_not_resolve.Format(directoryPath))
+		}
+		return continueSearching()
+	}
+	if scope.Contents.Imports.Type != packagejson.JSONValueTypeObject {
+		// !!! Old compiler only checks for undefined, but then assumes `imports` is an object if present.
+		// Maybe should have a new diagnostic for imports of an invalid type. Also, array should be handled?
+		if r.resolver.traceEnabled() {
+			r.resolver.host.Trace(diagnostics.X_package_json_scope_0_has_no_imports_defined.Format(scope.PackageDirectory))
+		}
+		return continueSearching()
+	}
+
+	if result := r.loadModuleFromExportsOrImports(r.extensions, r.name, scope.Contents.Imports.AsObject(), scope /*isImports*/, true); !result.shouldContinueSearching() {
+		return result
+	}
+
+	if r.resolver.traceEnabled() {
+		r.resolver.host.Trace(diagnostics.Import_specifier_0_does_not_exist_in_package_json_scope_at_path_1.Format(r.name, scope.PackageDirectory))
+	}
 	return continueSearching()
 }
 
@@ -611,6 +673,7 @@ func (r *resolutionState) loadModuleFromTargetExportOrImport(extensions extensio
 		}
 		if result := r.loadFileNameFromPackageJSONField(extensions, finalPath, targetString, false /*onlyRecordFailures*/); !result.shouldContinueSearching() {
 			result.packageId = r.getPackageId(result.path, scope)
+			return result
 		}
 		return continueSearching()
 
@@ -876,11 +939,11 @@ func (r *resolutionState) createResolvedModule(resolved *resolved, isExternalLib
 		var result *ResolvedModule
 		if !r.resolver.moduleNameCache.isReadonly {
 			result = r.resultFromCache
-			r.resolver.moduleNameCache.updateLookupLocations(result, r.failedLookupLocations, r.affectingLocations, r.diagnostics)
+			r.resolver.moduleNameCache.appendLookupLocations(result, r.failedLookupLocations, r.affectingLocations, r.diagnostics)
 		} else {
 			cloned := *r.resultFromCache
 			result = &cloned
-			r.resolver.moduleNameCache.initializeLookupLocations(result, r.failedLookupLocations, r.affectingLocations, r.diagnostics)
+			r.resolver.moduleNameCache.setLookupLocations(result, r.failedLookupLocations, r.affectingLocations, r.diagnostics)
 		}
 		return result
 	}
@@ -896,7 +959,7 @@ func (r *resolutionState) createResolvedModule(resolved *resolved, isExternalLib
 			PackageId:                resolved.packageId,
 		}
 	}
-	r.resolver.moduleNameCache.initializeLookupLocations(&resolvedModule, r.failedLookupLocations, r.affectingLocations, r.diagnostics)
+	r.resolver.moduleNameCache.setLookupLocations(&resolvedModule, r.failedLookupLocations, r.affectingLocations, r.diagnostics)
 	return &resolvedModule
 }
 
@@ -919,7 +982,7 @@ func (r *resolutionState) createResolvedTypeReferenceDirective(resolved *resolve
 			}
 		}
 	}
-	r.resolver.typeReferenceDirectiveCache.initializeLookupLocations(&resolvedTypeReferenceDirective, r.failedLookupLocations, r.affectingLocations, r.diagnostics)
+	r.resolver.typeReferenceDirectiveCache.setLookupLocations(&resolvedTypeReferenceDirective, r.failedLookupLocations, r.affectingLocations, r.diagnostics)
 	return &resolvedTypeReferenceDirective
 }
 
@@ -1255,7 +1318,7 @@ func (r *resolutionState) loadNodeModuleFromDirectoryWorker(ext extensions, cand
 			return fromFile
 		}
 
-		// Even if `extensions == ExtensionsDeclaration`, we can still look up a .ts file as a result of package.json "types"
+		// Even if `extensions == extensionsDeclaration`, we can still look up a .ts file as a result of package.json "types"
 		// !!! should we not set this before the filename lookup above?
 		expandedExtensions := extensions
 		if extensions == extensionsDeclaration {
@@ -1678,4 +1741,12 @@ func matchesPatternWithTrailer(target string, name string) bool {
 		return false
 	}
 	return strings.HasPrefix(name, target[:starPos]) && strings.HasSuffix(name, target[starPos+1:])
+}
+
+/** True if `extension` is one of the supported `extensions`. */
+func extensionIsOk(extensions extensions, extension string) bool {
+	return (extensions&extensionsJavaScript != 0 && (extension == tspath.ExtensionJs || extension == tspath.ExtensionJsx || extension == tspath.ExtensionMjs || extension == tspath.ExtensionCjs) ||
+		(extensions&extensionsTypeScript != 0 && (extension == tspath.ExtensionTs || extension == tspath.ExtensionTsx || extension == tspath.ExtensionMts || extension == tspath.ExtensionCts)) ||
+		(extensions&extensionsDeclaration != 0 && (extension == tspath.ExtensionDts || extension == tspath.ExtensionDmts || extension == tspath.ExtensionDcts)) ||
+		(extensions&extensionsJson != 0 && extension == tspath.ExtensionJson))
 }
