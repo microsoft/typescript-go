@@ -101,7 +101,7 @@ type parsedTsconfig struct {
 
 func parseOwnConfigOfJsonSourceFile(
 	sourceFile *tsConfigSourceFile,
-	host VfsParseConfigHost,
+	host ParseConfigHost,
 	basePath string,
 	configFileName string,
 	errors []*ast.Diagnostic,
@@ -411,7 +411,7 @@ func convertJsonOption(
 
 func getExtendsConfigPathOrArray(
 	value CompilerOptionsValue,
-	host VfsParseConfigHost,
+	host ParseConfigHost,
 	basePath string,
 	configFileName string,
 	errors []*ast.Diagnostic,
@@ -453,7 +453,7 @@ func getExtendsConfigPathOrArray(
 
 func getExtendsConfigPath(
 	extendedConfig string,
-	host VfsParseConfigHost,
+	host ParseConfigHost,
 	basePath string,
 	errors []*ast.Diagnostic,
 	valueExpression *ast.Expression,
@@ -462,9 +462,9 @@ func getExtendsConfigPath(
 	extendedConfig = tspath.NormalizeSlashes(extendedConfig)
 	if tspath.IsRootedDiskPath(extendedConfig) || strings.HasPrefix(extendedConfig, "./") || strings.HasPrefix(extendedConfig, "../") {
 		extendedConfigPath := tspath.GetNormalizedAbsolutePath(extendedConfig, basePath)
-		if !host.fs.FileExists(extendedConfigPath) && !strings.HasSuffix(extendedConfigPath, tspath.ExtensionJson) {
+		if !host.FS().FileExists(extendedConfigPath) && !strings.HasSuffix(extendedConfigPath, tspath.ExtensionJson) {
 			extendedConfigPath = extendedConfigPath + tspath.ExtensionJson
-			if !host.fs.FileExists(extendedConfigPath) {
+			if !host.FS().FileExists(extendedConfigPath) {
 				// errors.push(createDiagnosticForNodeInSourceFileOrCompilerDiagnostic(sourceFile, valueExpression, diagnostics.File_0_not_found, extendedConfig));
 				errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.File_0_not_found, extendedConfig))
 				return "", errors
@@ -594,16 +594,12 @@ func ParseConfigFileTextToJson(fileName string, basePath string, jsonText string
 	return config, errors
 }
 
-type VfsParseConfigHost struct {
-	fs               vfs.FS
-	currentDirectory string
+type ParseConfigHost interface {
+	FS() vfs.FS
+	GetCurrentDirectory() string
 }
 
-func (h *VfsParseConfigHost) FS() vfs.FS {
-	return h.fs
-}
-
-func ParseJsonSourceFileConfigFileContent(sourceFile *tsConfigSourceFile, host VfsParseConfigHost, basePath string, existingOptions *core.CompilerOptions, configFileName string, resolutionStack []tspath.Path, extraFileExtensions []fileExtensionInfo, extendedConfigCache map[string]extendedConfigCacheEntry) ParsedCommandLine {
+func ParseJsonSourceFileConfigFileContent(sourceFile *tsConfigSourceFile, host ParseConfigHost, basePath string, existingOptions *core.CompilerOptions, configFileName string, resolutionStack []tspath.Path, extraFileExtensions []fileExtensionInfo, extendedConfigCache map[string]extendedConfigCacheEntry) ParsedCommandLine {
 	// tracing?.push(tracing.Phase.Parse, "parseJsonSourceFileConfigFileContent", { path: sourceFile.fileName });
 	result := parseJsonConfigFileContentWorker( /*json*/ nil, sourceFile, host, basePath, existingOptions, configFileName, resolutionStack, extraFileExtensions, extendedConfigCache)
 	// tracing?.pop();
@@ -748,7 +744,7 @@ func convertPropertyValueToJson(valueExpression *ast.Expression, option *Command
 // jsonNode: The contents of the config file to parse
 // host: Instance of ParseConfigHost used to enumerate files in folder.
 // basePath: A root directory to resolve relative path entries in the config file to. e.g. outDir
-func ParseJsonConfigFileContent(json any, host VfsParseConfigHost, basePath string, existingOptions *core.CompilerOptions, configFileName string, resolutionStack []tspath.Path, extraFileExtensions []fileExtensionInfo, extendedConfigCache map[string]extendedConfigCacheEntry) ParsedCommandLine {
+func ParseJsonConfigFileContent(json any, host ParseConfigHost, basePath string, existingOptions *core.CompilerOptions, configFileName string, resolutionStack []tspath.Path, extraFileExtensions []fileExtensionInfo, extendedConfigCache map[string]extendedConfigCacheEntry) ParsedCommandLine {
 	result := parseJsonConfigFileContentWorker(parseJsonToStringKey(json) /*sourceFile*/, nil, host, basePath, existingOptions, configFileName, resolutionStack, extraFileExtensions, extendedConfigCache)
 	return result
 }
@@ -787,7 +783,7 @@ func convertCompilerOptionsFromJsonWorker(jsonOptions map[string]any, basePath s
 
 func parseOwnConfigOfJson(
 	json map[string]any,
-	host VfsParseConfigHost,
+	host ParseConfigHost,
 	basePath string,
 	configFileName string,
 	errors []*ast.Diagnostic,
@@ -824,7 +820,7 @@ func isEmptyStruct(s any) bool {
 func parseConfig(
 	json map[string]any,
 	sourceFile *tsConfigSourceFile,
-	host VfsParseConfigHost,
+	host ParseConfigHost,
 	basePath string,
 	configFileName string,
 	resolutionStack []string,
@@ -909,7 +905,7 @@ type PropOfRaw struct {
 func parseJsonConfigFileContentWorker(
 	json map[string]any,
 	sourceFile *tsConfigSourceFile,
-	host VfsParseConfigHost,
+	host ParseConfigHost,
 	basePath string,
 	existingOptions *core.CompilerOptions,
 	configFileName string,
@@ -1060,7 +1056,7 @@ func parseJsonConfigFileContentWorker(
 		if parsedConfig.options != nil {
 			parsedConfigOptions = parsedConfig.options
 		}
-		fileNames := getFileNamesFromConfigSpecs(configFileSpecs, basePath, parsedConfigOptions, host.fs, extraFileExtensions)
+		fileNames := getFileNamesFromConfigSpecs(configFileSpecs, basePath, parsedConfigOptions, host.FS(), extraFileExtensions)
 		if shouldReportNoInputFiles(fileNames, canJsonReportNoInputFiles(rawConfig), resolutionStack) {
 			includeSpecs := configFileSpecs.includeSpecs
 			excludeSpecs := configFileSpecs.excludeSpecs

@@ -1,6 +1,7 @@
 package tsoptions
 
 import (
+	"path/filepath"
 	"sort"
 	"testing"
 	"testing/fstest"
@@ -8,6 +9,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/parser"
+	"github.com/microsoft/typescript-go/internal/repo"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
@@ -43,14 +45,29 @@ func fixRoot(path string) string {
 	return path[rootLength:]
 }
 
-func newVFSParseConfigHost(files map[string]string, currentDirectory string) *VfsParseConfigHost {
+type vfsParseConfigHost struct {
+	fs               vfs.FS
+	currentDirectory string
+}
+
+var _ ParseConfigHost = (*vfsParseConfigHost)(nil)
+
+func (h *vfsParseConfigHost) FS() vfs.FS {
+	return h.fs
+}
+
+func (h *vfsParseConfigHost) GetCurrentDirectory() string {
+	return h.currentDirectory
+}
+
+func newVFSParseConfigHost(files map[string]string, currentDirectory string) *vfsParseConfigHost {
 	fs := fstest.MapFS{}
 	for name, content := range files {
 		fs[fixRoot(name)] = &fstest.MapFile{
 			Data: []byte(content),
 		}
 	}
-	return &VfsParseConfigHost{
+	return &vfsParseConfigHost{
 		fs:               vfstest.FromMapFS(fs, true /*useCaseSensitiveFileNames*/),
 		currentDirectory: currentDirectory,
 	}
@@ -593,7 +610,7 @@ func TestParsedCommandJson(t *testing.T) {
 			}
 			parseConfigFileContent := ParseJsonConfigFileContent(
 				parsed,
-				*host,
+				host,
 				basePath,
 				nil,
 				tspath.GetNormalizedAbsolutePath(rec.input.configFileName, basePath),
@@ -647,7 +664,7 @@ func TestParsedCommandJsonSourceFile(t *testing.T) {
 			}
 			parseConfigFileContent := ParseJsonSourceFileConfigFileContent(
 				tsConfigSourceFile,
-				*host,
+				host,
 				host.currentDirectory,
 				nil,
 				tspath.GetNormalizedAbsolutePath(rec.input.configFileName, basePath),
@@ -681,4 +698,58 @@ func TestParsedCommandJsonSourceFile(t *testing.T) {
 
 func compareDiagnosticMessages(t *testing.T, actual []string, expected []string) {
 	assert.DeepEqual(t, actual, expected)
+}
+
+func TestParseSrcCompiler(t *testing.T) {
+	t.Parallel()
+
+	repo.SkipIfNoTypeScriptSubmodule(t)
+
+	compilerDir := tspath.NormalizeSlashes(filepath.Join(repo.TypeScriptSubmodulePath, "src", "compiler"))
+	tsconfigPath := tspath.CombinePaths(compilerDir, "tsconfig.json")
+
+	fs := vfs.FromOS()
+	host := &vfsParseConfigHost{
+		fs:               fs,
+		currentDirectory: compilerDir,
+	}
+
+	jsonText, ok := fs.ReadFile(tsconfigPath)
+	assert.Assert(t, ok)
+	parsed := parser.ParseJSONText(tsconfigPath, jsonText)
+
+	if len(parsed.Diagnostics()) > 0 {
+		for _, error := range parsed.Diagnostics() {
+			t.Log(error.Message())
+		}
+		t.FailNow()
+	}
+
+	tsConfigSourceFile := &tsConfigSourceFile{
+		sourceFile: parsed,
+	}
+
+	parseConfigFileContent := ParseJsonSourceFileConfigFileContent(
+		tsConfigSourceFile,
+		host,
+		host.GetCurrentDirectory(),
+		nil,
+		tsconfigPath,
+		/*resolutionStack*/ nil,
+		/*extraFileExtensions*/ nil,
+		/*extendedConfigCache*/ nil,
+	)
+
+	if len(parseConfigFileContent.Errors) > 0 {
+		for _, error := range parseConfigFileContent.Errors {
+			t.Log(error.Message())
+		}
+		t.FailNow()
+	}
+
+	opts := parseConfigFileContent.CompilerOptions()
+	assert.DeepEqual(t, opts, &core.CompilerOptions{}) // TODO: fill out
+
+	fileNames := parseConfigFileContent.FileNames()
+	assert.DeepEqual(t, fileNames, []string{}) // TODO: fill out (make paths relative to cwd)
 }
