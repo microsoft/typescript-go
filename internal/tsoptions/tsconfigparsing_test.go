@@ -1,6 +1,7 @@
 package tsoptions
 
 import (
+	"path/filepath"
 	"sort"
 	"testing"
 	"testing/fstest"
@@ -8,6 +9,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/parser"
+	"github.com/microsoft/typescript-go/internal/repo"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
@@ -696,4 +698,58 @@ func TestParsedCommandJsonSourceFile(t *testing.T) {
 
 func compareDiagnosticMessages(t *testing.T, actual []string, expected []string) {
 	assert.DeepEqual(t, actual, expected)
+}
+
+func TestParseSrcCompiler(t *testing.T) {
+	t.Parallel()
+
+	repo.SkipIfNoTypeScriptSubmodule(t)
+
+	compilerDir := tspath.NormalizeSlashes(filepath.Join(repo.TypeScriptSubmodulePath, "src", "compiler"))
+	tsconfigPath := tspath.CombinePaths(compilerDir, "tsconfig.json")
+
+	fs := vfs.FromOS()
+	host := &vfsParseConfigHost{
+		fs:               fs,
+		currentDirectory: compilerDir,
+	}
+
+	jsonText, ok := fs.ReadFile(tsconfigPath)
+	assert.Assert(t, ok)
+	parsed := parser.ParseJSONText(tsconfigPath, jsonText)
+
+	if len(parsed.Diagnostics()) > 0 {
+		for _, error := range parsed.Diagnostics() {
+			t.Log(error.Message())
+		}
+		t.FailNow()
+	}
+
+	tsConfigSourceFile := &tsConfigSourceFile{
+		sourceFile: parsed,
+	}
+
+	parseConfigFileContent := ParseJsonSourceFileConfigFileContent(
+		tsConfigSourceFile,
+		host,
+		host.GetCurrentDirectory(),
+		nil,
+		tsconfigPath,
+		/*resolutionStack*/ nil,
+		/*extraFileExtensions*/ nil,
+		/*extendedConfigCache*/ nil,
+	)
+
+	if len(parseConfigFileContent.Errors) > 0 {
+		for _, error := range parseConfigFileContent.Errors {
+			t.Log(error.Message())
+		}
+		t.FailNow()
+	}
+
+	opts := parseConfigFileContent.CompilerOptions()
+	assert.DeepEqual(t, opts, &core.CompilerOptions{}) // TODO: fill out
+
+	fileNames := parseConfigFileContent.FileNames()
+	assert.DeepEqual(t, fileNames, []string{}) // TODO: fill out (make paths relative to cwd)
 }
