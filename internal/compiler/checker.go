@@ -16792,7 +16792,7 @@ func (c *Checker) computeEnumMemberValues(node *ast.Node) {
 	}
 }
 
-func (c *Checker) computeEnumMemberValue(member *ast.Node, autoValue float64, previous *ast.Node) EvaluatorResult {
+func (c *Checker) computeEnumMemberValue(member *ast.Node, autoValue jsnum.Number, previous *ast.Node) EvaluatorResult {
 	if ast.IsComputedNonLiteralName(member.Name()) {
 		c.error(member.Name(), diagnostics.Computed_property_names_are_not_allowed_in_enums)
 	} else {
