@@ -220,11 +220,11 @@ func FuzzStringJS(f *testing.F) {
 		results := getStringResultsFromJS(t, exe, []stringTest{{number: n, str: nStr}})
 		assert.Equal(t, len(results), 1)
 
-		nodeStr := results[0].str
-		nodeNumber := results[0].number
+		nToJSStr := results[0].str
+		nStrToJSNumber := results[0].number
 
-		assert.Equal(t, nStr, nodeStr)
-		assertEqualNumber(t, n, nodeNumber)
+		assert.Equal(t, nStr, nToJSStr)
+		assertEqualNumber(t, n, nStrToJSNumber)
 	})
 }
 
