@@ -276,7 +276,7 @@ func (p *Program) startParseTask(fileName string, wg *core.WorkGroup, isLib bool
 		}
 
 		for _, ref := range file.TypeReferenceDirectives {
-			resolved := p.resolver.ResolveModuleName(ref.FileName, file.FileName(), core.ModuleKindNodeNext, nil)
+			resolved := p.resolver.ResolveTypeReferenceDirective(ref.FileName, file.FileName(), core.ModuleKindNodeNext, nil)
 			if resolved.IsResolved() {
 				filesToParse = append(filesToParse, toParse{p: resolved.ResolvedFileName})
 			}
