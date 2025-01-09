@@ -266,29 +266,21 @@ func cutAny(s string, cutset string) (before, after string, found bool) {
 }
 
 func trimLeadingZeros(s string) string {
-	for strings.HasPrefix(s, "0") {
-		rest, ok := strings.CutPrefix(s, "0")
-		if !ok {
-			return s
-		}
-		if rest == "" {
+	if strings.HasPrefix(s, "0") {
+		s = strings.TrimLeft(s, "0")
+		if s == "" {
 			return "0"
 		}
-		s = rest
 	}
 	return s
 }
 
 func trimTrailingZeros(s string) string {
-	for strings.HasSuffix(s, "0") {
-		rest, ok := strings.CutSuffix(s, "0")
-		if !ok {
-			return s
-		}
-		if rest == "" {
+	if strings.HasSuffix(s, "0") {
+		s = strings.TrimRight(s, "0")
+		if s == "" {
 			return "0"
 		}
-		s = rest
 	}
 	return s
 }
