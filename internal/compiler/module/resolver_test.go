@@ -172,15 +172,15 @@ func doCall(t *testing.T, resolver *module.Resolver, call functionCall, skipLoca
 		if skipLocations {
 			break
 		}
-		if expectedFailedLookupLocations, ok := call.returnValue["failedLookupLocations"].([]interface{}); ok {
-			assert.Check(t, cmp.DeepEqual(locations.FailedLookupLocations, core.Map(expectedFailedLookupLocations, func(i interface{}) string { return i.(string) })))
+		if expectedFailedLookupLocations, ok := call.returnValue["failedLookupLocations"].([]any); ok {
+			assert.Check(t, cmp.DeepEqual(locations.FailedLookupLocations, core.Map(expectedFailedLookupLocations, func(i any) string { return i.(string) })), errorMessageArgs)
 		} else {
-			assert.Check(t, cmp.Equal(len(locations.FailedLookupLocations), 0))
+			assert.Check(t, cmp.Equal(len(locations.FailedLookupLocations), 0), errorMessageArgs)
 		}
-		if expectedAffectingLocations, ok := call.returnValue["affectingLocations"].([]interface{}); ok {
-			assert.Check(t, cmp.DeepEqual(locations.AffectingLocations, core.Map(expectedAffectingLocations, func(i interface{}) string { return i.(string) })))
+		if expectedAffectingLocations, ok := call.returnValue["affectingLocations"].([]any); ok {
+			assert.Check(t, cmp.DeepEqual(locations.AffectingLocations, core.Map(expectedAffectingLocations, func(i any) string { return i.(string) })), errorMessageArgs)
 		} else {
-			assert.Check(t, cmp.Equal(len(locations.AffectingLocations), 0))
+			assert.Check(t, cmp.Equal(len(locations.AffectingLocations), 0), errorMessageArgs)
 		}
 	case "getPackageScopeForPath":
 		resolver.GetPackageScopeForPath(call.args.Directory)
