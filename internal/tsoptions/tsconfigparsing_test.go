@@ -22,7 +22,7 @@ type testConfig struct {
 }
 type verifyConfig struct {
 	fileNames      []string
-	configFile     map[string]interface{}
+	configFile     map[string]any
 	expectedErrors []string
 }
 
@@ -59,7 +59,7 @@ func newVFSParseConfigHost(files map[string]string, currentDirectory string) *Vf
 var baselineParseData = []struct {
 	title  string
 	input  []string
-	output []map[string]interface{}
+	output []map[string]any
 }{
 	{
 		title: "returns empty config for file with only whitespaces",
@@ -67,7 +67,7 @@ var baselineParseData = []struct {
 			"",
 			" ",
 		},
-		output: []map[string]interface{}{
+		output: []map[string]any{
 			{},
 			{},
 		},
@@ -78,7 +78,7 @@ var baselineParseData = []struct {
 			"// Comment",
 			"/* Comment*/",
 		},
-		output: []map[string]interface{}{
+		output: []map[string]any{
 			{},
 			{},
 		},
@@ -88,7 +88,7 @@ var baselineParseData = []struct {
 		input: []string{
 			`{}`,
 		},
-		output: []map[string]interface{}{
+		output: []map[string]any{
 			{},
 			{},
 		},
@@ -111,7 +111,7 @@ var baselineParseData = []struct {
 	        ]
 	    }`,
 		},
-		output: []map[string]interface{}{
+		output: []map[string]any{
 			{"exclude": []string{"file.d.ts"}},
 			{"exclude": []string{"file.d.ts"}},
 		},
@@ -130,7 +130,7 @@ var baselineParseData = []struct {
 				]
 			}`,
 		},
-		output: []map[string]interface{}{
+		output: []map[string]any{
 			{"exclude": []string{"xx//file.d.ts"}},
 			{"exclude": []string{"xx/*file.d.ts*/"}},
 		},
@@ -149,7 +149,7 @@ var baselineParseData = []struct {
 	// 			]
 	// 		}`,
 	// 	},
-	// 	output: []map[string]interface{}{
+	// 	output: []map[string]any{
 	// 		{"exclude": []string{"xx\"//files"}},
 	// 		{"exclude": []string{"xx\\"}},
 	// 	},
@@ -168,9 +168,9 @@ var baselineParseData = []struct {
 				}
 			}`,
 		},
-		output: []map[string]interface{}{
-			{"compilerOptions": map[string]interface{}{"lib": []string{"es5"}}},
-			{"compilerOptions": map[string]interface{}{"lib": []string{"es5", "es6"}}},
+		output: []map[string]any{
+			{"compilerOptions": map[string]any{"lib": []string{"es5"}}},
+			{"compilerOptions": map[string]any{"lib": []string{"es5", "es6"}}},
 		},
 	},
 }
@@ -204,7 +204,7 @@ var data = []struct {
 		},
 		output: verifyConfig{
 			fileNames:      []string{"/apath/test.ts"},
-			configFile:     map[string]interface{}{},
+			configFile:     map[string]any{},
 			expectedErrors: []string{},
 		},
 	},
@@ -220,7 +220,7 @@ var data = []struct {
 		},
 		output: verifyConfig{
 			fileNames: []string{"/apath/.git/a.ts", "/apath/.b.ts", "/apath/..c.ts"},
-			configFile: map[string]interface{}{
+			configFile: map[string]any{
 				"files": []string{"/apath/.git/a.ts", "/apath/.b.ts", "/apath/..c.ts"},
 			},
 			expectedErrors: []string{},
@@ -236,7 +236,7 @@ var data = []struct {
 		},
 		output: verifyConfig{
 			fileNames:      []string{"/d.ts", "/folder/e.ts"},
-			configFile:     map[string]interface{}{},
+			configFile:     map[string]any{},
 			expectedErrors: []string{},
 		},
 	},
@@ -252,7 +252,7 @@ var data = []struct {
 		},
 		output: verifyConfig{
 			fileNames: nil,
-			configFile: map[string]interface{}{
+			configFile: map[string]any{
 				"files": []string{},
 			},
 			expectedErrors: []string{"The 'files' list in config file '/apath/tsconfig.json' is empty."},
@@ -271,9 +271,9 @@ var data = []struct {
 		},
 		output: verifyConfig{
 			fileNames: nil,
-			configFile: map[string]interface{}{
+			configFile: map[string]any{
 				"files":      []string{},
-				"references": []map[string]interface{}{},
+				"references": []map[string]any{},
 			},
 			expectedErrors: []string{"The 'files' list in config file '/apath/tsconfig.json' is empty."},
 		},
@@ -288,7 +288,7 @@ var data = []struct {
 		},
 		output: verifyConfig{
 			fileNames:      nil,
-			configFile:     map[string]interface{}{},
+			configFile:     map[string]any{},
 			expectedErrors: []string{"No inputs were found in config file '/apath/tsconfig.json'. Specified 'include' paths were '[**/*]' and 'exclude' paths were '[]'."},
 		},
 	},
@@ -304,7 +304,7 @@ var data = []struct {
 		},
 		output: verifyConfig{
 			fileNames: nil,
-			configFile: map[string]interface{}{
+			configFile: map[string]any{
 				"include": []string{},
 			},
 			expectedErrors: []string{"No inputs were found in config file '/apath/tsconfig.json'. Specified 'include' paths were '[]' and 'exclude' paths were '[]'."},
@@ -334,7 +334,7 @@ var data = []struct {
 		},
 		output: verifyConfig{
 			fileNames: []string{"/apath/src/index.ts", "/apath/src/app.ts"},
-			configFile: map[string]interface{}{
+			configFile: map[string]any{
 				"compilerOptions": core.CompilerOptions{
 					OutDir:           "/apath/dist",
 					Strict:           core.TSTrue,
@@ -367,7 +367,7 @@ var data = []struct {
 		},
 		output: verifyConfig{
 			fileNames: []string{"/apath/a.ts"},
-			configFile: map[string]interface{}{
+			configFile: map[string]any{
 				"compilerOptions": core.CompilerOptions{
 					ConfigFilePath: "/apath/tsconfig.json",
 				},
@@ -388,9 +388,9 @@ var data = []struct {
 		},
 		output: verifyConfig{
 			fileNames: nil,
-			configFile: map[string]interface{}{
+			configFile: map[string]any{
 				"files":      []string{},
-				"references": []map[string]interface{}{{"path": "/apath"}},
+				"references": []map[string]any{{"path": "/apath"}},
 			},
 			expectedErrors: []string{},
 		},
@@ -409,7 +409,7 @@ var data = []struct {
 		},
 		output: verifyConfig{
 			fileNames: []string{"/b.ts"},
-			configFile: map[string]interface{}{
+			configFile: map[string]any{
 				"compilerOptions": core.CompilerOptions{
 					OutDir:         "/bin",
 					ConfigFilePath: "/tsconfig.json",
@@ -433,7 +433,7 @@ var data = []struct {
 		},
 		output: verifyConfig{
 			fileNames: []string{"/b.ts", "/bin/a.ts"},
-			configFile: map[string]interface{}{
+			configFile: map[string]any{
 				"compilerOptions": core.CompilerOptions{
 					OutDir:         "/bin",
 					ConfigFilePath: "/tsconfig.json",
@@ -457,7 +457,7 @@ var data = []struct {
 		},
 		output: verifyConfig{
 			fileNames: []string{"/a.ts"},
-			configFile: map[string]interface{}{
+			configFile: map[string]any{
 				"compilerOptions": core.CompilerOptions{
 					DeclarationDir: "/declarations",
 					ConfigFilePath: "/tsconfig.json",
@@ -481,7 +481,7 @@ var data = []struct {
 		},
 		output: verifyConfig{
 			fileNames: []string{"/a.ts", "/declarations/a.d.ts"},
-			configFile: map[string]interface{}{
+			configFile: map[string]any{
 				"compilerOptions": core.CompilerOptions{
 					DeclarationDir: "/declarations",
 					ConfigFilePath: "/tsconfig.json",
@@ -505,7 +505,7 @@ var data = []struct {
 		},
 		output: verifyConfig{
 			fileNames: nil,
-			configFile: map[string]interface{}{
+			configFile: map[string]any{
 				"compilerOptions": core.CompilerOptions{
 					AllowJs:        core.TSTrue,
 					ConfigFilePath: "/apath/tsconfig.json",
@@ -529,7 +529,7 @@ var data = []struct {
 		},
 		output: verifyConfig{
 			fileNames: nil,
-			configFile: map[string]interface{}{
+			configFile: map[string]any{
 				"compilerOptions": core.CompilerOptions{
 					OutDir:         "/apath",
 					ConfigFilePath: "/apath/tsconfig.json",
@@ -551,7 +551,7 @@ var data = []struct {
 		},
 		output: verifyConfig{
 			fileNames:      nil,
-			configFile:     map[string]interface{}{"include": []string{}},
+			configFile:     map[string]any{"include": []string{}},
 			expectedErrors: []string{"No inputs were found in config file '/apath/tsconfig.json'. Specified 'include' paths were '[]' and 'exclude' paths were '[]'."},
 		},
 	},
@@ -567,7 +567,7 @@ var data = []struct {
 		},
 		output: verifyConfig{
 			fileNames:      nil,
-			configFile:     map[string]interface{}{"files": []string{}},
+			configFile:     map[string]any{"files": []string{}},
 			expectedErrors: []string{"The 'files' list in config file '/apath/tsconfig.json' is empty."},
 		},
 	},

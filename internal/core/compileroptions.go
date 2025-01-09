@@ -69,7 +69,6 @@ type CompilerOptions struct {
 	ConfigFilePath  string   `json:"configFilePath"`
 	NoDtsResolution Tristate `json:"noDtsResolution"`
 	PathsBasePath   string   `json:"pathsBasePath"`
-	// Option map[string]CompilerOptionsValue
 }
 
 func (options *CompilerOptions) GetEmitScriptTarget() ScriptTarget {

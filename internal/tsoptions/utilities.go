@@ -43,9 +43,9 @@ func getAccessibleFileSystemEntries(path string, host vfs.FS) FileSystemEntries 
 }
 
 type FileMatcherPatterns struct {
-	/** One pattern for each "include" spec. */
+	// One pattern for each "include" spec.
 	includeFilePatterns []string
-	/** One pattern matching one of any of the "include" specs. */
+	// One pattern matching one of any of the "include" specs.
 	includeFilePattern      string
 	includeDirectoryPattern string
 	excludePattern          string
@@ -103,10 +103,8 @@ func replaceWildcardCharacter(match string, singleAsteriskRegexFragment string) 
 	}
 }
 
-/**
- * An "includes" path "foo" is implicitly a glob "foo/** /*" (without the space) if its last component has no extension,
- * and does not contain any glob characters itself.
- */
+// An "includes" path "foo" is implicitly a glob "foo/** /*" (without the space) if its last component has no extension,
+// and does not contain any glob characters itself.
 func isImplicitGlob(lastPathComponent string) bool {
 	re := regexp.MustCompile(`[.*?]`)
 	return !re.MatchString(lastPathComponent)
@@ -117,7 +115,7 @@ func isImplicitGlob(lastPathComponent string) bool {
 // proof.
 var (
 	reservedCharacterPattern *regexp.Regexp = regexp.MustCompile(`[^\w\s/]`)
-	wildcardCharCodes                       = []int{0x2A, 0x3F} // "*", "?"
+	wildcardCharCodes                       = []rune{'*', '?'}
 )
 
 var (
@@ -132,17 +130,13 @@ type WildcardMatcher struct {
 }
 
 var filesMatcher = WildcardMatcher{
-	/**
-	 * Matches any single directory segment unless it is the last segment and a .min.js file
-	 * Breakdown:
-	 *  [^./]                   # matches everything up to the first . character (excluding directory separators)
-	 *  (\\.(?!min\\.js$))?     # matches . characters but not if they are part of the .min.js file extension
-	 */
+	// Matches any single directory segment unless it is the last segment and a .min.js file
+	// Breakdown:
+	//  [^./]                   # matches everything up to the first . character (excluding directory separators)
+	//  (\\.(?!min\\.js$))?     # matches . characters but not if they are part of the .min.js file extension
 	singleAsteriskRegexFragment: "([^./]|(\\.(?!min\\.js$))?)*",
-	/**
-	 * Regex for the ** wildcard. Matches any number of subdirectories. When used for including
-	 * files or directories, does not match subdirectories that start with a . character
-	 */
+	// Regex for the ** wildcard. Matches any number of subdirectories. When used for including
+	// files or directories, does not match subdirectories that start with a . character
 	doubleAsteriskRegexFragment: "(/" + implicitExcludePathRegexPattern + "[^/.][^/]*)*?",
 	replaceWildcardCharacter: func(match string) string {
 		return replaceWildcardCharacter(match, "([^./]|(\\.(?!min\\.js$))?)*")
@@ -151,10 +145,8 @@ var filesMatcher = WildcardMatcher{
 
 var directoriesMatcher = WildcardMatcher{
 	singleAsteriskRegexFragment: "[^/]*",
-	/**
-	 * Regex for the ** wildcard. Matches any number of subdirectories. When used for including
-	 * files or directories, does not match subdirectories that start with a . character
-	 */
+	//Regex for the ** wildcard. Matches any number of subdirectories. When used for including
+	//files or directories, does not match subdirectories that start with a . character
 	doubleAsteriskRegexFragment: "(/" + implicitExcludePathRegexPattern + "[^/.][^/]*)*?",
 	replaceWildcardCharacter: func(match string) string {
 		return replaceWildcardCharacter(match, "[^/]*")
@@ -252,7 +244,7 @@ func getSubPatternFromSpec(
 }
 
 func getIncludeBasePath(absolute string) string {
-	wildcardOffset := core.IndexOfAnyCharCode(absolute, wildcardCharCodes)
+	wildcardOffset := core.IndexOfAnyCharCode(absolute, wildcardCharCodes, 0)
 	if wildcardOffset < 0 {
 		// No "*" or "?" in the path
 		if !tspath.HasExtension(absolute) {
@@ -264,9 +256,7 @@ func getIncludeBasePath(absolute string) string {
 	return absolute[0:strings.LastIndex(absolute, string(tspath.DirectorySeparator))]
 }
 
-/**
- * Computes the unique non-wildcard base paths amongst the provided include patterns.
- */
+// getBasePaths computes the unique non-wildcard base paths amongst the provided include patterns.
 func getBasePaths(path string, includes []string, useCaseSensitiveFileNames bool) []string {
 	// Storage for our results in the form of literal paths (e.g. the paths as written by the user).
 	basePaths := []string{path}
@@ -308,9 +298,8 @@ func getBasePaths(path string, includes []string, useCaseSensitiveFileNames bool
 	return basePaths
 }
 
-/**
- * @param path directory of the tsconfig.json
- */
+// getFileMatcherPatterns generates file matching patterns based on the provided path,
+// includes, excludes, and other parameters. path is the directory of the tsconfig.json file.
 func getFileMatcherPatterns(path string, excludes []string, includes []string, useCaseSensitiveFileNames bool, currentDirectory string) FileMatcherPatterns {
 	path = tspath.NormalizePath(path)
 	currentDirectory = tspath.NormalizePath(currentDirectory)
@@ -377,11 +366,7 @@ func visitDirectory(visited map[string]bool, path string, absolutePath string, d
 	}
 }
 
-/**
- * @param path directory of the tsconfig.json
- *
- * @internal
- */
+// path is the directory of the tsconfig.json
 func matchFiles(path string, extensions []string, excludes []string, includes []string, useCaseSensitiveFileNames bool, currentDirectory string, depth int, host vfs.FS, getFileSystemEntries func(path string, host vfs.FS) FileSystemEntries, realpath func(path string) string) []string {
 	// path := tspath.NormalizePath(path)
 	currentDirectory = tspath.NormalizePath(currentDirectory)

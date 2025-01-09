@@ -6,21 +6,19 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 )
 
-func parseTristate(value interface{}) core.Tristate {
+func parseTristate(value any) core.Tristate {
 	switch v := value.(type) {
 	case bool:
 		if v {
 			return core.TSTrue
 		}
-		if !v {
-			return core.TSFalse
-		}
+		return core.TSFalse
 	}
 	return core.TSUnknown
 }
 
-func parseStringArray(value interface{}) []string {
-	if arr, ok := value.([]interface{}); ok {
+func parseStringArray(value any) []string {
+	if arr, ok := value.([]any); ok {
 		var result []string
 		for _, v := range arr {
 			if str, ok := v.(string); ok {
@@ -32,15 +30,15 @@ func parseStringArray(value interface{}) []string {
 	return nil
 }
 
-func parseRawStringArray(value interface{}) []string {
+func parseRawStringArray(value any) []string {
 	if arr, ok := value.([]string); ok {
 		return arr
 	}
 	return []string{}
 }
 
-func parseStringMap(value interface{}) map[string][]string {
-	if m, ok := value.(map[string]interface{}); ok {
+func parseStringMap(value any) map[string][]string {
+	if m, ok := value.(map[string]any); ok {
 		result := make(map[string][]string)
 		for k, v := range m {
 			result[k] = parseStringArray(v)
@@ -50,7 +48,7 @@ func parseStringMap(value interface{}) map[string][]string {
 	return nil
 }
 
-func parseString(value interface{}) string {
+func parseString(value any) string {
 	if str, ok := value.(string); ok {
 		return str
 	}
@@ -59,7 +57,7 @@ func parseString(value interface{}) string {
 
 func parseProjectReference(json any) []core.ProjectReference {
 	var result []core.ProjectReference
-	if arr, ok := json.([]map[string]interface{}); ok {
+	if arr, ok := json.([]map[string]any); ok {
 		for _, v := range arr {
 			var reference core.ProjectReference
 			if v, ok := v["path"]; ok {
@@ -77,9 +75,9 @@ func parseProjectReference(json any) []core.ProjectReference {
 	return result
 }
 
-func parseJsonToStringKey(json any) map[string]interface{} {
-	result := make(map[string]interface{})
-	if m, ok := json.(map[string]interface{}); ok {
+func parseJsonToStringKey(json any) map[string]any {
+	result := make(map[string]any)
+	if m, ok := json.(map[string]any); ok {
 		if v, ok := m["include"]; ok {
 			result["include"] = v
 		}
@@ -220,7 +218,7 @@ func ParseRawConfig(json any, basePath string, errors []*ast.Diagnostic, configF
 	if json == nil {
 		return options
 	}
-	if m, ok := json.(map[string]interface{}); ok {
+	if m, ok := json.(map[string]any); ok {
 		if v, ok := m["include"]; ok {
 			options.prop["include"] = parseRawStringArray(v)
 		}
