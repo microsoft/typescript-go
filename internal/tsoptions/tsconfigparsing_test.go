@@ -43,14 +43,29 @@ func fixRoot(path string) string {
 	return path[rootLength:]
 }
 
-func newVFSParseConfigHost(files map[string]string, currentDirectory string) *VfsParseConfigHost {
+type vfsParseConfigHost struct {
+	fs               vfs.FS
+	currentDirectory string
+}
+
+var _ ParseConfigHost = (*vfsParseConfigHost)(nil)
+
+func (h *vfsParseConfigHost) FS() vfs.FS {
+	return h.fs
+}
+
+func (h *vfsParseConfigHost) GetCurrentDirectory() string {
+	return h.currentDirectory
+}
+
+func newVFSParseConfigHost(files map[string]string, currentDirectory string) *vfsParseConfigHost {
 	fs := fstest.MapFS{}
 	for name, content := range files {
 		fs[fixRoot(name)] = &fstest.MapFile{
 			Data: []byte(content),
 		}
 	}
-	return &VfsParseConfigHost{
+	return &vfsParseConfigHost{
 		fs:               vfstest.FromMapFS(fs, true /*useCaseSensitiveFileNames*/),
 		currentDirectory: currentDirectory,
 	}
@@ -593,7 +608,7 @@ func TestParsedCommandJson(t *testing.T) {
 			}
 			parseConfigFileContent := ParseJsonConfigFileContent(
 				parsed,
-				*host,
+				host,
 				basePath,
 				nil,
 				tspath.GetNormalizedAbsolutePath(rec.input.configFileName, basePath),
@@ -647,7 +662,7 @@ func TestParsedCommandJsonSourceFile(t *testing.T) {
 			}
 			parseConfigFileContent := ParseJsonSourceFileConfigFileContent(
 				tsConfigSourceFile,
-				*host,
+				host,
 				host.currentDirectory,
 				nil,
 				tspath.GetNormalizedAbsolutePath(rec.input.configFileName, basePath),
