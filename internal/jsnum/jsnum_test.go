@@ -398,6 +398,13 @@ func TestFromString(t *testing.T) {
 			assertEqualNumber(t, FromString(" "+test.str), test.number)
 		})
 	}
+
+	for _, test := range fromStringTests {
+		t.Run(test.str, func(t *testing.T) {
+			t.Parallel()
+			assertEqualNumber(t, FromString(test.str), test.number)
+		})
+	}
 }
 
 func getNodeExe(t testing.TB) string {
