@@ -22,9 +22,8 @@ func getAccessibleFileSystemEntries(path string, host vfs.FS) FileSystemEntries 
 	entries := host.GetEntries(path)
 	var files []string
 	var directories []string
-	var entry string
 	for _, dirent := range entries {
-		entry = dirent.Name()
+		entry := dirent.Name()
 
 		// This is necessary because on some file system node fails to exclude
 		// "." and "..". See https://github.com/nodejs/node/issues/4002
@@ -32,8 +31,7 @@ func getAccessibleFileSystemEntries(path string, host vfs.FS) FileSystemEntries 
 			continue
 		}
 
-		index := strings.Index(entry[1:], string("."))
-		if index == -1 {
+		if dirent.IsDir() {
 			directories = append(directories, entry)
 		} else {
 			files = append(files, entry)
@@ -88,7 +86,7 @@ func getRegularExpressionForWildcard(specs []string, basePath string, usage usag
 	} else {
 		terminator = "$"
 	}
-	return fmt.Sprintf("^%s%s", pattern, terminator)
+	return fmt.Sprintf("^(%s)%s", pattern, terminator)
 }
 
 func replaceWildcardCharacter(match string, singleAsteriskRegexFragment string) string {
@@ -103,11 +101,16 @@ func replaceWildcardCharacter(match string, singleAsteriskRegexFragment string) 
 	}
 }
 
+var isImplicitGlobRegex = regexp2.MustCompile(`[.*?]`, regexp2.None)
+
 // An "includes" path "foo" is implicitly a glob "foo/** /*" (without the space) if its last component has no extension,
 // and does not contain any glob characters itself.
 func isImplicitGlob(lastPathComponent string) bool {
-	re := regexp.MustCompile(`[.*?]`)
-	return !re.MatchString(lastPathComponent)
+	match, err := isImplicitGlobRegex.MatchString(lastPathComponent)
+	if err != nil {
+		return false
+	}
+	return !match
 }
 
 // Reserved characters, forces escaping of any non-word (or digit), non-whitespace character.
@@ -129,35 +132,41 @@ type WildcardMatcher struct {
 	replaceWildcardCharacter    func(match string) string
 }
 
-var filesMatcher = WildcardMatcher{
+const (
 	// Matches any single directory segment unless it is the last segment and a .min.js file
 	// Breakdown:
-	//  [^./]                   # matches everything up to the first . character (excluding directory separators)
-	//  (\\.(?!min\\.js$))?     # matches . characters but not if they are part of the .min.js file extension
-	singleAsteriskRegexFragment: "([^./]|(\\.(?!min\\.js$))?)*",
+	//
+	//	[^./]                   # matches everything up to the first . character (excluding directory separators)
+	//	(\\.(?!min\\.js$))?     # matches . characters but not if they are part of the .min.js file extension
+	singleAsteriskRegexFragmentFilesMatcher = "([^./]|(\\.(?!min\\.js$))?)*"
+	singleAsteriskRegexFragment             = "[^/]*"
+)
+
+var filesMatcher = WildcardMatcher{
+	singleAsteriskRegexFragment: singleAsteriskRegexFragmentFilesMatcher,
 	// Regex for the ** wildcard. Matches any number of subdirectories. When used for including
 	// files or directories, does not match subdirectories that start with a . character
 	doubleAsteriskRegexFragment: "(/" + implicitExcludePathRegexPattern + "[^/.][^/]*)*?",
 	replaceWildcardCharacter: func(match string) string {
-		return replaceWildcardCharacter(match, "([^./]|(\\.(?!min\\.js$))?)*")
+		return replaceWildcardCharacter(match, singleAsteriskRegexFragmentFilesMatcher)
 	},
 }
 
 var directoriesMatcher = WildcardMatcher{
-	singleAsteriskRegexFragment: "[^/]*",
+	singleAsteriskRegexFragment: singleAsteriskRegexFragment,
 	// Regex for the ** wildcard. Matches any number of subdirectories. When used for including
 	// files or directories, does not match subdirectories that start with a . character
 	doubleAsteriskRegexFragment: "(/" + implicitExcludePathRegexPattern + "[^/.][^/]*)*?",
 	replaceWildcardCharacter: func(match string) string {
-		return replaceWildcardCharacter(match, "[^/]*")
+		return replaceWildcardCharacter(match, singleAsteriskRegexFragment)
 	},
 }
 
 var excludeMatcher = WildcardMatcher{
-	singleAsteriskRegexFragment: "[^/]*",
+	singleAsteriskRegexFragment: singleAsteriskRegexFragment,
 	doubleAsteriskRegexFragment: "(/.+?)?",
 	replaceWildcardCharacter: func(match string) string {
-		return replaceWildcardCharacter(match, "[^/]*")
+		return replaceWildcardCharacter(match, singleAsteriskRegexFragment)
 	},
 }
 
@@ -177,7 +186,7 @@ func getSubPatternFromSpec(
 
 	replaceWildcardCharacter := matcher.replaceWildcardCharacter
 
-	subpattern := ""
+	var subpattern strings.Builder
 	hasWrittenComponent := false
 	components := tspath.GetNormalizedPathComponents(spec, basePath)
 	lastComponent := core.LastOrNil(components)
@@ -196,27 +205,27 @@ func getSubPatternFromSpec(
 	optionalCount := 0
 	for _, component := range components {
 		if component == "**" {
-			subpattern += matcher.doubleAsteriskRegexFragment
+			subpattern.WriteString(matcher.doubleAsteriskRegexFragment)
 		} else {
 			if usage == "directories" {
-				subpattern += "("
+				subpattern.WriteString("(")
 				optionalCount++
 			}
 
 			if hasWrittenComponent {
-				subpattern += string(tspath.DirectorySeparator)
+				subpattern.WriteString(string(tspath.DirectorySeparator))
 			}
 
 			if usage != "exclude" {
-				componentPattern := ""
-				if component != "" && []rune(component)[0] == 0x2A {
-					componentPattern += "([^./]" + matcher.singleAsteriskRegexFragment + ")?"
+				var componentPattern strings.Builder
+				if strings.HasPrefix(component, "*") {
+					componentPattern.WriteString("([^./]" + matcher.singleAsteriskRegexFragment + ")?")
 					component = component[1:]
-				} else if component != "" && []rune(component)[0] == 0x3F {
-					componentPattern += "[^./]"
+				} else if strings.HasPrefix(component, "?") {
+					componentPattern.WriteString("[^./]")
 					component = component[1:]
 				}
-				componentPattern += reservedCharacterPattern.ReplaceAllStringFunc(component, replaceWildcardCharacter)
+				componentPattern.WriteString(reservedCharacterPattern.ReplaceAllStringFunc(component, replaceWildcardCharacter))
 
 				// Patterns should not include subfolders like node_modules unless they are
 				// explicitly included as part of the path.
@@ -224,23 +233,23 @@ func getSubPatternFromSpec(
 				// As an optimization, if the component pattern is the same as the component,
 				// then there definitely were no wildcard characters and we do not need to
 				// add the exclusion pattern.
-				if componentPattern != component {
-					subpattern += implicitExcludePathRegexPattern
+				if componentPattern.String() != component {
+					subpattern.WriteString(implicitExcludePathRegexPattern)
 				}
-				subpattern += componentPattern
+				subpattern.WriteString(componentPattern.String())
 			} else {
-				subpattern += reservedCharacterPattern.ReplaceAllStringFunc(component, replaceWildcardCharacter)
+				subpattern.WriteString(reservedCharacterPattern.ReplaceAllStringFunc(component, replaceWildcardCharacter))
 			}
 		}
 		hasWrittenComponent = true
 	}
 
 	for optionalCount > 0 {
-		subpattern += ")?"
+		subpattern.WriteString(")?")
 		optionalCount--
 	}
 
-	return subpattern
+	return subpattern.String()
 }
 
 func getIncludeBasePath(absolute string) string {
@@ -250,10 +259,10 @@ func getIncludeBasePath(absolute string) string {
 		if !tspath.HasExtension(absolute) {
 			return absolute
 		} else {
-			tspath.RemoveTrailingDirectorySeparator(tspath.GetDirectoryPath(absolute))
+			return tspath.RemoveTrailingDirectorySeparator(tspath.GetDirectoryPath(absolute))
 		}
 	}
-	return absolute[0:strings.LastIndex(absolute, string(tspath.DirectorySeparator))]
+	return absolute[:strings.LastIndex(absolute, string(tspath.DirectorySeparator))]
 }
 
 // getBasePaths computes the unique non-wildcard base paths amongst the provided include patterns.
@@ -261,7 +270,7 @@ func getBasePaths(path string, includes []string, useCaseSensitiveFileNames bool
 	// Storage for our results in the form of literal paths (e.g. the paths as written by the user).
 	basePaths := []string{path}
 
-	if includes != nil {
+	if len(includes) > 0 {
 		// Storage for literal base paths amongst the include patterns.
 		includeBasePaths := []string{}
 		for _, include := range includes {
@@ -278,20 +287,19 @@ func getBasePaths(path string, includes []string, useCaseSensitiveFileNames bool
 		}
 
 		// Sort the offsets array using either the literal or canonical path representations.
+		stringComparer := stringutil.GetStringComparer(!useCaseSensitiveFileNames)
 		sort.SliceStable(includeBasePaths, func(i, j int) bool {
-			return stringutil.GetStringComparer(!useCaseSensitiveFileNames)(includeBasePaths[i], includeBasePaths[j]) < 0
+			return stringComparer(includeBasePaths[i], includeBasePaths[j]) < 0
 		})
 
 		// Iterate over each include base path and include unique base paths that are not a
 		// subpath of an existing base path
 		for _, includeBasePath := range includeBasePaths {
-			core.Every(basePaths, func(basepath string) bool {
-				if !tspath.ContainsPath(basepath, includeBasePath, tspath.ComparePathsOptions{CurrentDirectory: path, UseCaseSensitiveFileNames: !useCaseSensitiveFileNames}) {
-					basePaths = append(basePaths, includeBasePath)
-					return false
-				}
-				return true
-			})
+			if core.Every(basePaths, func(basepath string) bool {
+				return !tspath.ContainsPath(basepath, includeBasePath, tspath.ComparePathsOptions{CurrentDirectory: path, UseCaseSensitiveFileNames: !useCaseSensitiveFileNames})
+			}) {
+				basePaths = append(basePaths, includeBasePath)
+			}
 		}
 	}
 
@@ -306,7 +314,7 @@ func getFileMatcherPatterns(path string, excludes []string, includes []string, u
 	absolutePath := tspath.CombinePaths(currentDirectory, path)
 
 	return FileMatcherPatterns{
-		includeFilePatterns:     core.Map(getRegularExpressionsForWildcards(includes, absolutePath, "files"), func(pattern string) string { return fmt.Sprintf("^%s$", pattern) }),
+		includeFilePatterns:     core.Map(getRegularExpressionsForWildcards(includes, absolutePath, "files"), func(pattern string) string { return "^" + pattern + "$" }),
 		includeFilePattern:      getRegularExpressionForWildcard(includes, absolutePath, "files"),
 		includeDirectoryPattern: getRegularExpressionForWildcard(includes, absolutePath, "directories"),
 		excludePattern:          getRegularExpressionForWildcard(excludes, absolutePath, "exclude"),
@@ -315,16 +323,43 @@ func getFileMatcherPatterns(path string, excludes []string, includes []string, u
 }
 
 func getRegexFromPattern(pattern string, useCaseSensitiveFileNames bool) *regexp2.Regexp {
-	var re *regexp2.Regexp
-	if useCaseSensitiveFileNames {
-		re = regexp2.MustCompile(pattern, regexp2.ECMAScript)
-	} else {
-		re = regexp2.MustCompile(pattern, regexp2.ECMAScript|regexp2.IgnoreCase)
+	flags := regexp2.ECMAScript
+	if !useCaseSensitiveFileNames {
+		flags |= regexp2.IgnoreCase
 	}
-	return re
+	return regexp2.MustCompile(pattern, regexp2.RegexOptions(flags))
 }
 
-func visitDirectory(visited map[string]bool, path string, absolutePath string, depth int, useCaseSensitiveFileNames bool, host vfs.FS, getFileSystemEntries func(path string, host vfs.FS) FileSystemEntries, includeFileRegexes []*regexp2.Regexp, excludeRegex *regexp2.Regexp, results [][]string, includeDirectoryRegex *regexp2.Regexp, extensions []string) {
+type visitor struct {
+	visited                   map[string]bool
+	name                      string
+	absolutePath              string
+	results                   [][]string
+	includeFileRegexes        []*regexp2.Regexp
+	excludeRegex              *regexp2.Regexp
+	includeDirectoryRegex     *regexp2.Regexp
+	extensions                []string
+	useCaseSensitiveFileNames bool
+	host                      vfs.FS
+	getFileSystemEntries      func(path string, host vfs.FS) FileSystemEntries
+	currentDirectory          string
+	depth                     int
+}
+
+func (v *visitor) visitDirectory(
+	visited map[string]bool,
+	path string,
+	absolutePath string,
+	depth int,
+	useCaseSensitiveFileNames bool,
+	host vfs.FS,
+	getFileSystemEntries func(path string, host vfs.FS) FileSystemEntries,
+	includeFileRegexes []*regexp2.Regexp,
+	excludeRegex *regexp2.Regexp,
+	results [][]string,
+	includeDirectoryRegex *regexp2.Regexp,
+	extensions []string,
+) {
 	canonicalPath := tspath.GetCanonicalFileName(absolutePath, useCaseSensitiveFileNames)
 	if visited[canonicalPath] {
 		return
@@ -337,7 +372,10 @@ func visitDirectory(visited map[string]bool, path string, absolutePath string, d
 	for _, current := range files {
 		name := tspath.CombinePaths(path, current)
 		absoluteName := tspath.CombinePaths(absolutePath, current)
-		if (extensions != nil && !tspath.FileExtensionIsOneOf(name, extensions)) || (excludeRegex != nil && core.Must(excludeRegex.MatchString(absoluteName))) {
+		if len(extensions) > 0 && !tspath.FileExtensionIsOneOf(name, extensions) {
+			continue
+		}
+		if excludeRegex != nil && core.Must(excludeRegex.MatchString(absoluteName)) {
 			continue
 		}
 		if includeFileRegexes == nil {
@@ -361,14 +399,28 @@ func visitDirectory(visited map[string]bool, path string, absolutePath string, d
 		name := tspath.CombinePaths(path, current)
 		absoluteName := tspath.CombinePaths(absolutePath, current)
 		if (includeDirectoryRegex == nil || core.Must(includeDirectoryRegex.MatchString(absoluteName))) && (excludeRegex == nil || !core.Must(excludeRegex.MatchString(absoluteName))) {
-			visitDirectory(visited, name, absoluteName, depth, useCaseSensitiveFileNames, host, getFileSystemEntries, includeFileRegexes, excludeRegex, results, includeDirectoryRegex, extensions)
+			v := visitor{
+				visited:                   visited,
+				name:                      name,
+				absolutePath:              absoluteName,
+				depth:                     depth,
+				useCaseSensitiveFileNames: useCaseSensitiveFileNames,
+				host:                      host,
+				getFileSystemEntries:      getFileSystemEntries,
+				includeFileRegexes:        includeFileRegexes,
+				excludeRegex:              excludeRegex,
+				results:                   results,
+				includeDirectoryRegex:     includeDirectoryRegex,
+				extensions:                extensions,
+			}
+			v.visitDirectory(visited, name, absoluteName, depth, useCaseSensitiveFileNames, host, getFileSystemEntries, includeFileRegexes, excludeRegex, results, includeDirectoryRegex, extensions)
 		}
 	}
 }
 
 // path is the directory of the tsconfig.json
 func matchFiles(path string, extensions []string, excludes []string, includes []string, useCaseSensitiveFileNames bool, currentDirectory string, depth int, host vfs.FS, getFileSystemEntries func(path string, host vfs.FS) FileSystemEntries, realpath func(path string) string) []string {
-	// path := tspath.NormalizePath(path)
+	path = tspath.NormalizePath(path)
 	currentDirectory = tspath.NormalizePath(currentDirectory)
 
 	patterns := getFileMatcherPatterns(path, excludes, includes, useCaseSensitiveFileNames, currentDirectory)
@@ -395,7 +447,21 @@ func matchFiles(path string, extensions []string, excludes []string, includes []
 	}
 	visited := make(map[string]bool)
 	for _, basePath := range patterns.basePaths {
-		visitDirectory(visited, basePath, tspath.CombinePaths(currentDirectory, basePath), depth, useCaseSensitiveFileNames, host, getFileSystemEntries, includeFileRegexes, excludeRegex, results, includeDirectoryRegex, extensions)
+		v := visitor{
+			visited:                   visited,
+			name:                      basePath,
+			absolutePath:              tspath.CombinePaths(currentDirectory, basePath),
+			depth:                     depth,
+			useCaseSensitiveFileNames: useCaseSensitiveFileNames,
+			host:                      host,
+			getFileSystemEntries:      getFileSystemEntries,
+			includeFileRegexes:        includeFileRegexes,
+			excludeRegex:              excludeRegex,
+			results:                   results,
+			includeDirectoryRegex:     includeDirectoryRegex,
+			extensions:                extensions,
+		}
+		v.visitDirectory(visited, basePath, tspath.CombinePaths(currentDirectory, basePath), depth, useCaseSensitiveFileNames, host, getFileSystemEntries, includeFileRegexes, excludeRegex, results, includeDirectoryRegex, extensions)
 	}
 
 	return core.Flatten(results)

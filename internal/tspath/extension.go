@@ -112,11 +112,7 @@ func GetDeclarationFileExtension(fileName string) string {
 // changeAnyExtension("/path/to/file.ext", ".js", [".ext", ".ts"]) === "/path/to/file.js"
 func changeAnyExtension(path string, ext string, extensions []string, ignoreCase bool) string {
 	var pathext string
-	if extensions != nil && ignoreCase {
-		pathext = GetAnyExtensionFromPath(path, extensions, ignoreCase)
-	} else {
-		pathext = GetAnyExtensionFromPath(path, nil, false)
-	}
+	pathext = GetAnyExtensionFromPath(path, extensions, ignoreCase)
 	if pathext != "" {
 		result := path[:len(path)-len(pathext)]
 		if strings.HasPrefix(ext, ".") {
