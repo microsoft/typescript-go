@@ -162,7 +162,7 @@ func getNodeExe(t testing.TB) string {
 	return exe
 }
 
-func TestNodeString(t *testing.T) {
+func TestStringJS(t *testing.T) {
 	t.Parallel()
 
 	exe := getNodeExe(t)
@@ -171,7 +171,7 @@ func TestNodeString(t *testing.T) {
 		t.Parallel()
 
 		// These tests should roundtrip both ways.
-		stringTestsResults := getRealStringResults(t, exe, stringTests)
+		stringTestsResults := getStringResultsFromJS(t, exe, stringTests)
 		for i, test := range stringTests {
 			t.Run(fmt.Sprintf("%v", float64(test.number)), func(t *testing.T) {
 				t.Parallel()
@@ -185,7 +185,7 @@ func TestNodeString(t *testing.T) {
 		t.Parallel()
 
 		// These tests should convert the string to the same number.
-		fromStringTestsResults := getRealStringResults(t, exe, fromStringTests)
+		fromStringTestsResults := getStringResultsFromJS(t, exe, fromStringTests)
 		for i, test := range fromStringTests {
 			t.Run(fmt.Sprintf("fromString %q", test.str), func(t *testing.T) {
 				t.Parallel()
@@ -201,7 +201,7 @@ func skipIfNotFuzzing(f *testing.F) {
 	}
 }
 
-func FuzzNodeString(f *testing.F) {
+func FuzzStringJS(f *testing.F) {
 	skipIfNotFuzzing(f)
 
 	exe := getNodeExe(f)
@@ -217,7 +217,7 @@ func FuzzNodeString(f *testing.F) {
 		n := Number(f)
 		nStr := n.String()
 
-		results := getRealStringResults(t, exe, []stringTest{{number: n, str: nStr}})
+		results := getStringResultsFromJS(t, exe, []stringTest{{number: n, str: nStr}})
 		assert.Equal(t, len(results), 1)
 
 		nodeStr := results[0].str
@@ -228,7 +228,7 @@ func FuzzNodeString(f *testing.F) {
 	})
 }
 
-func FuzzNodeFromString(f *testing.F) {
+func FuzzFromStringJS(f *testing.F) {
 	skipIfNotFuzzing(f)
 
 	exe := getNodeExe(f)
@@ -246,13 +246,13 @@ func FuzzNodeFromString(f *testing.F) {
 		}
 
 		n := FromString(s)
-		results := getRealStringResults(t, exe, []stringTest{{str: s}})
+		results := getStringResultsFromJS(t, exe, []stringTest{{str: s}})
 		assert.Equal(t, len(results), 1)
 		assertEqualNumber(t, n, results[0].number)
 	})
 }
 
-func getRealStringResults(t testing.TB, exe string, tests []stringTest) []stringTest {
+func getStringResultsFromJS(t testing.TB, exe string, tests []stringTest) []stringTest {
 	t.Helper()
 	tmpdir := t.TempDir()
 
