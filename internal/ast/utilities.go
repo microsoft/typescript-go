@@ -821,15 +821,13 @@ func WalkUpParenthesizedTypes(node *TypeNode) *Node {
 
 // Walks up the parents of a node to find the containing SourceFile
 func GetSourceFileOfNode(node *Node) *SourceFile {
-	for {
-		if node == nil {
-			return nil
-		}
-		if node.Kind == KindSourceFile {
-			return node.AsSourceFile()
-		}
+	for node.Parent != nil {
 		node = node.Parent
 	}
+	if node.Kind == KindSourceFile {
+		return node.AsSourceFile()
+	}
+	return nil
 }
 
 // Walks up the parents of a node to find the ancestor that matches the callback
@@ -1123,7 +1121,7 @@ func IsDeclaration(node *Node) bool {
 
 // True if `name` is the name of a declaration node
 func IsDeclarationName(name *Node) bool {
-	return !IsSourceFile(name) && !IsBindingPattern(name) && IsDeclaration(name.Parent)
+	return !IsSourceFile(name) && !IsBindingPattern(name) && IsDeclaration(name.Parent) && name.Parent.Name() == name
 }
 
 // Like 'isDeclarationName', but returns true for LHS of `import { x as y }` or `export { x as y }`.

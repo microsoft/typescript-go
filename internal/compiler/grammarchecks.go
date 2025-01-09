@@ -2,15 +2,14 @@ package compiler
 
 import (
 	"fmt"
-	"math"
 	"strings"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/binder"
 	"github.com/microsoft/typescript-go/internal/compiler/diagnostics"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/jsnum"
 	"github.com/microsoft/typescript-go/internal/scanner"
-	"github.com/microsoft/typescript-go/internal/stringutil"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
@@ -97,7 +96,7 @@ func (c *Checker) checkGrammarPrivateIdentifierExpression(privId *ast.PrivateIde
 	}
 
 	if !ast.IsForInStatement(privId.Parent) {
-		if !isExpressionNode(privIdAsNode) {
+		if !IsExpressionNode(privIdAsNode) {
 			return c.grammarErrorOnNode(privIdAsNode, diagnostics.Private_identifiers_are_only_allowed_in_class_bodies_and_may_only_be_used_as_part_of_a_class_member_declaration_property_access_or_on_the_left_hand_side_of_an_in_expression)
 		}
 
@@ -2112,8 +2111,8 @@ func (c *Checker) checkGrammarNumericLiteral(node *ast.NumericLiteral) {
 	// 1) when `node` represents an integer <= 2 ** 53 - 1, `node.text` is its exact string representation and thus `value` precisely represents the integer.
 	// 2) otherwise, although `node.text` may be imprecise string representation, its mathematical value and consequently `value` cannot be less than 2 ** 53,
 	//    thus the result of the predicate won't be affected.
-	value := stringutil.ToNumber(node.Text)
-	if value <= math.Pow(2, 53-1) {
+	value := jsnum.FromString(node.Text)
+	if value <= jsnum.MaxSafeInteger {
 		return
 	}
 

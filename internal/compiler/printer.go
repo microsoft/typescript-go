@@ -5,8 +5,8 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/jsnum"
 	"github.com/microsoft/typescript-go/internal/scanner"
-	"github.com/microsoft/typescript-go/internal/stringutil"
 )
 
 func (c *Checker) getTypePrecedence(t *Type) ast.TypePrecedence {
@@ -27,6 +27,10 @@ func (c *Checker) getTypePrecedence(t *Type) ast.TypePrecedence {
 	return ast.TypePrecedenceNonArray
 }
 
+func (c *Checker) SymbolToString(s *ast.Symbol) string {
+	return c.symbolToString(s)
+}
+
 func (c *Checker) symbolToString(s *ast.Symbol) string {
 	if s.ValueDeclaration != nil {
 		name := ast.GetNameOfDeclaration(s.ValueDeclaration)
@@ -34,7 +38,10 @@ func (c *Checker) symbolToString(s *ast.Symbol) string {
 			return scanner.GetTextOfNode(name)
 		}
 	}
-	return s.Name
+	if len(s.Name) >= 1 && s.Name[0] != '\xFE' {
+		return s.Name
+	}
+	return "###"
 }
 
 func (c *Checker) typeToString(t *Type) string {
@@ -112,6 +119,7 @@ func (p *Printer) printType(t *Type) {
 }
 
 func (p *Printer) printTypeNoAlias(t *Type) {
+	p.depth++
 	switch {
 	case t.flags&TypeFlagsIntrinsic != 0:
 		p.print(t.AsIntrinsicType().intrinsicName)
@@ -138,14 +146,13 @@ func (p *Printer) printTypeNoAlias(t *Type) {
 	case t.flags&TypeFlagsSubstitution != 0:
 		p.printType(t.AsSubstitutionType().baseType)
 	}
+	p.depth--
 }
 
 func (p *Printer) printRecursive(t *Type, f func(*Printer, *Type)) {
 	if !p.printing.Has(t) && p.depth < 10 {
 		p.printing.Add(t)
-		p.depth++
 		f(p, t)
-		p.depth--
 		p.printing.Delete(t)
 	} else {
 		p.print("???")
@@ -164,7 +171,7 @@ func (p *Printer) printLiteralTypeValue(t *Type) {
 	switch value := t.AsLiteralType().value.(type) {
 	case string:
 		p.printStringLiteral(value)
-	case float64:
+	case jsnum.Number:
 		p.printNumberLiteral(value)
 	case bool:
 		p.printBooleanLiteral(value)
@@ -179,8 +186,8 @@ func (p *Printer) printStringLiteral(s string) {
 	p.print("\"")
 }
 
-func (p *Printer) printNumberLiteral(f float64) {
-	p.print(stringutil.FromNumber(f))
+func (p *Printer) printNumberLiteral(f jsnum.Number) {
+	p.print(f.String())
 }
 
 func (p *Printer) printBooleanLiteral(b bool) {
@@ -282,22 +289,37 @@ func (p *Printer) printTupleType(t *Type) {
 	tail := false
 	p.print("[")
 	elementInfos := t.TargetTupleType().elementInfos
-	for i, t := range p.c.getTypeArguments(t) {
+	typeArguments := p.c.getTypeArguments(t)
+	for i, info := range elementInfos {
+		t := typeArguments[i]
 		if tail {
 			p.print(", ")
 		}
-		info := elementInfos[i]
 		if info.flags&ElementFlagsVariable != 0 {
 			p.print("...")
 		}
-		if info.flags&ElementFlagsOptional != 0 {
-			p.printTypeEx(t, ast.TypePrecedencePostfix)
-			p.print("?")
-		} else if info.flags&ElementFlagsRest != 0 {
-			p.printTypeEx(t, ast.TypePrecedencePostfix)
-			p.print("[]")
+		if info.labeledDeclaration != nil {
+			p.print(info.labeledDeclaration.Name().Text())
+			if info.flags&ElementFlagsOptional != 0 {
+				p.print("?")
+			}
+			p.print(": ")
+			if info.flags&ElementFlagsRest != 0 {
+				p.printTypeEx(t, ast.TypePrecedencePostfix)
+				p.print("[]")
+			} else {
+				p.printType(t)
+			}
 		} else {
-			p.printType(t)
+			if info.flags&ElementFlagsOptional != 0 {
+				p.printTypeEx(t, ast.TypePrecedencePostfix)
+				p.print("?")
+			} else if info.flags&ElementFlagsRest != 0 {
+				p.printTypeEx(t, ast.TypePrecedencePostfix)
+				p.print("[]")
+			} else {
+				p.printType(t)
+			}
 		}
 		tail = true
 	}
@@ -571,7 +593,7 @@ func (c *Checker) getTextAndTypeOfNode(node *ast.Node) (string, *Type, bool) {
 			}
 		}
 	}
-	if isExpressionNode(node) && !isRightSideOfQualifiedNameOrPropertyAccess(node) {
+	if IsExpressionNode(node) && !isRightSideOfQualifiedNameOrPropertyAccess(node) {
 		return scanner.GetTextOfNode(node), c.getTypeOfExpression(node), false
 	}
 	return "", nil, false
