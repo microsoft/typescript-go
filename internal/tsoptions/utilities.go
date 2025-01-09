@@ -145,8 +145,8 @@ var filesMatcher = WildcardMatcher{
 
 var directoriesMatcher = WildcardMatcher{
 	singleAsteriskRegexFragment: "[^/]*",
-	//Regex for the ** wildcard. Matches any number of subdirectories. When used for including
-	//files or directories, does not match subdirectories that start with a . character
+	// Regex for the ** wildcard. Matches any number of subdirectories. When used for including
+	// files or directories, does not match subdirectories that start with a . character
 	doubleAsteriskRegexFragment: "(/" + implicitExcludePathRegexPattern + "[^/.][^/]*)*?",
 	replaceWildcardCharacter: func(match string) string {
 		return replaceWildcardCharacter(match, "[^/]*")
