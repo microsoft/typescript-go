@@ -170,23 +170,23 @@ func (vfs *common) ReadFile(path string) (contents string, ok bool) {
 		return "", false
 	}
 
-	return decodeBytes(b.String())
+	return decodeBytes(b.String()), true
 }
 
-func decodeBytes(s string) (contents string, ok bool) {
+func decodeBytes(s string) string {
 	if len(s) >= 2 {
 		if s[0] == 0xFF && s[1] == 0xFE {
-			return decodeUtf16(s[2:], binary.LittleEndian), true
+			return decodeUtf16(s[2:], binary.LittleEndian)
 		}
 		if s[0] == 0xFE && s[1] == 0xFF {
-			return decodeUtf16(s[2:], binary.BigEndian), true
+			return decodeUtf16(s[2:], binary.BigEndian)
 		}
 	}
 	if len(s) >= 3 && s[0] == 0xEF && s[1] == 0xBB && s[2] == 0xBF {
 		s = s[3:]
 	}
 
-	return s, true
+	return s
 }
 
 func decodeUtf16(b string, order binary.ByteOrder) string {
