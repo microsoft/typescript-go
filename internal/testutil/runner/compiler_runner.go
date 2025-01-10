@@ -14,6 +14,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/repo"
 	"github.com/microsoft/typescript-go/internal/testutil/baseline"
 	"github.com/microsoft/typescript-go/internal/testutil/harnessutil"
+	"github.com/microsoft/typescript-go/internal/testutil/tsbaseline"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
@@ -248,7 +249,7 @@ func (c *compilerTest) verifyDiagnostics(t *testing.T, suiteName string) {
 	// pretty := c.result.options.pretty
 	pretty := false // !!! Add `pretty` to compiler options
 	files := core.Concatenate(c.tsConfigFiles, core.Concatenate(c.toBeCompiled, c.otherFiles))
-	baseline.DoErrorBaseline(t, c.configuredName, files, c.result.Diagnostics, pretty, suiteName)
+	tsbaseline.DoErrorBaseline(t, c.configuredName, files, c.result.Diagnostics, pretty, suiteName)
 }
 
 func (c *compilerTest) verifyTypesAndSymbols(t *testing.T, suiteName string) {
@@ -267,7 +268,7 @@ func (c *compilerTest) verifyTypesAndSymbols(t *testing.T, suiteName string) {
 	)
 
 	header := tspath.GetRelativePathFromDirectory(repo.TestDataPath, c.filename, tspath.ComparePathsOptions{})
-	baseline.DoTypeAndSymbolBaseline(
+	tsbaseline.DoTypeAndSymbolBaseline(
 		t,
 		c.configuredName,
 		header,

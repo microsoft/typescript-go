@@ -1,4 +1,4 @@
-package baseline
+package tsbaseline
 
 import (
 	"fmt"
@@ -11,6 +11,8 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/diagnosticwriter"
+	"github.com/microsoft/typescript-go/internal/testutil/baseline"
 	"github.com/microsoft/typescript-go/internal/testutil/harnessutil"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"gotest.tools/v3/assert"
@@ -20,7 +22,7 @@ import (
 // IO
 const harnessNewLine = "\r\n"
 
-var formatOpts = &compiler.DiagnosticsFormattingOptions{
+var formatOpts = &diagnosticwriter.FormattingOptions{
 	NewLine: harnessNewLine,
 }
 
@@ -35,17 +37,17 @@ func DoErrorBaseline(t *testing.T, baselinePath string, inputFiles []*harnessuti
 	if len(errors) > 0 {
 		errorBaseline = getErrorBaseline(t, inputFiles, errors, pretty)
 	} else {
-		errorBaseline = NoContent
+		errorBaseline = baseline.NoContent
 	}
-	Run(t, baselinePath, errorBaseline, Options{Subfolder: subfolder})
+	baseline.Run(t, baselinePath, errorBaseline, baseline.Options{Subfolder: subfolder})
 }
 
 func minimalDiagnosticsToString(diagnostics []*ast.Diagnostic, pretty bool) string {
 	var output strings.Builder
 	if pretty {
-		compiler.FormatDiagnosticsWithColorAndContext(&output, diagnostics, formatOpts)
+		diagnosticwriter.FormatDiagnosticsWithColorAndContext(&output, diagnostics, formatOpts)
 	} else {
-		compiler.WriteFormatDiagnostics(&output, diagnostics, formatOpts)
+		diagnosticwriter.WriteFormatDiagnostics(&output, diagnostics, formatOpts)
 	}
 	return output.String()
 }
@@ -56,7 +58,7 @@ func getErrorBaseline(t *testing.T, inputFiles []*harnessutil.TestFile, diagnost
 
 	if pretty {
 		var summaryBuilder strings.Builder
-		compiler.WriteErrorSummaryText(
+		diagnosticwriter.WriteErrorSummaryText(
 			&summaryBuilder,
 			diagnostics,
 			formatOpts)
@@ -243,12 +245,12 @@ func iterateErrorBaseline(t *testing.T, inputFiles []*harnessutil.TestFile, inpu
 
 func flattenDiagnosticMessage(d *ast.Diagnostic, newLine string) string {
 	var output strings.Builder
-	compiler.WriteFlattenedDiagnosticMessage(&output, d, newLine)
+	diagnosticwriter.WriteFlattenedDiagnosticMessage(&output, d, newLine)
 	return output.String()
 }
 
-func formatLocation(file *ast.SourceFile, pos int, formatOpts *compiler.DiagnosticsFormattingOptions, writeWithStyleAndReset compiler.FormattedWriter) string {
+func formatLocation(file *ast.SourceFile, pos int, formatOpts *diagnosticwriter.FormattingOptions, writeWithStyleAndReset diagnosticwriter.FormattedWriter) string {
 	var output strings.Builder
-	compiler.WriteLocation(&output, file, pos, formatOpts, writeWithStyleAndReset)
+	diagnosticwriter.WriteLocation(&output, file, pos, formatOpts, writeWithStyleAndReset)
 	return output.String()
 }

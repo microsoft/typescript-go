@@ -1,4 +1,4 @@
-package baseline
+package tsbaseline
 
 import (
 	"fmt"
@@ -12,6 +12,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/scanner"
+	"github.com/microsoft/typescript-go/internal/testutil/baseline"
 	"github.com/microsoft/typescript-go/internal/testutil/harnessutil"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
@@ -28,7 +29,7 @@ func DoTypeAndSymbolBaseline(
 	header string,
 	program *compiler.Program,
 	allFiles []*harnessutil.TestFile,
-	opts Options,
+	opts baseline.Options,
 	skipTypeBaselines bool,
 	skipSymbolBaselines bool,
 	hasErrorBaseline bool,
@@ -65,13 +66,13 @@ func checkBaselines(
 	allFiles []*harnessutil.TestFile,
 	fullWalker *typeWriterWalker,
 	header string,
-	opts Options,
+	opts baseline.Options,
 	isSymbolBaseline bool,
 ) {
 	fullExtension := core.IfElse(isSymbolBaseline, ".symbols", ".types")
 	outputFileName := tspath.RemoveFileExtension(baselinePath)
 	fullBaseline := generateBaseline(allFiles, fullWalker, header, isSymbolBaseline)
-	Run(t, outputFileName+fullExtension, fullBaseline, opts)
+	baseline.Run(t, outputFileName+fullExtension, fullBaseline, opts)
 }
 
 func generateBaseline(
