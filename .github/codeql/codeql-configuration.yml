@@ -3,3 +3,8 @@ name: CodeQL Configuration
 paths-ignore:
   - _submodules/**
   - '**/testdata/**'
+
+query-filters:
+  # This query takes too long on complicated string manipulations
+  - exclude:
+      id: go/unsafe-quoting
