@@ -2835,3 +2835,30 @@ func isTypeDeclarationName(name *ast.Node) bool {
 func getIndexSymbolFromSymbolTable(symbolTable ast.SymbolTable) *ast.Symbol {
 	return symbolTable[ast.InternalSymbolNameIndex]
 }
+
+// Indicates whether the result of an `Expression` will be unused.
+// NOTE: This requires a node with a valid `parent` pointer.
+func expressionResultIsUnused(node *ast.Node) bool {
+	for {
+		parent := node.Parent
+		// walk up parenthesized expressions, but keep a pointer to the top-most parenthesized expression
+		if ast.IsParenthesizedExpression(parent) {
+			node = parent
+			continue
+		}
+		// result is unused in an expression statement, `void` expression, or the initializer or incrementer of a `for` loop
+		if ast.IsExpressionStatement(parent) || ast.IsVoidExpression(parent) || ast.IsForStatement(parent) && (parent.Initializer() == node || parent.AsForStatement().Incrementor == node) {
+			return true
+		}
+		if ast.IsBinaryExpression(parent) && parent.AsBinaryExpression().OperatorToken.Kind == ast.KindCommaToken {
+			// left side of comma is always unused
+			if node == parent.AsBinaryExpression().Left {
+				return true
+			}
+			// right side of comma is unused if parent is unused
+			node = parent
+			continue
+		}
+		return false
+	}
+}

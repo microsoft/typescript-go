@@ -113,6 +113,7 @@ const (
 	CachedTypeKindIndexedAccessForWriting
 	CachedTypeKindWidened
 	CachedTypeKindRegularObjectLiteral
+	CachedTypeKindPromisedTypeOfPromise
 )
 
 // CachedTypeKey
@@ -144,8 +145,16 @@ type UnionOfUnionKey struct {
 
 type CachedSignatureKey struct {
 	sig *Signature
-	key string
+	key string // Type list key or one of the strings below
 }
+
+const (
+	SignatureKeyErased    string = "-"
+	SignatureKeyCanonical string = "*"
+	SignatureKeyBase      string = "#"
+	SignatureKeyInner     string = "<"
+	SignatureKeyOuter     string = ">"
+)
 
 // StringMappingKey
 
@@ -460,14 +469,15 @@ const (
 )
 
 type IterationTypesResolver struct {
-	iteratorSymbolName            string
-	getGlobalIteratorType         func() *Type
-	getGlobalIterableType         func() *Type
-	getGlobalIterableIteratorType func() *Type
-	getGlobalIteratorObjectType   func() *Type
-	getGlobalGeneratorType        func() *Type
-	getGlobalBuiltinIteratorTypes func() []*Type
-	resolveIterationType          func(t *Type, errorNode *ast.Node) *Type
+	iteratorSymbolName                   string
+	getGlobalIteratorType                func() *Type
+	getGlobalIterableType                func() *Type
+	getGlobalIterableIteratorType        func() *Type
+	getGlobalIterableIteratorTypeChecked func() *Type
+	getGlobalIteratorObjectType          func() *Type
+	getGlobalGeneratorType               func() *Type
+	getGlobalBuiltinIteratorTypes        func() []*Type
+	resolveIterationType                 func(t *Type, errorNode *ast.Node) *Type
 	// mustHaveANextMethodDiagnostic DiagnosticMessage
 	// mustBeAMethodDiagnostic       DiagnosticMessage
 	// mustHaveAValueDiagnostic      DiagnosticMessage
@@ -483,250 +493,253 @@ type WideningContext struct {
 // Checker
 
 type Checker struct {
-	program                                 *Program
-	host                                    CompilerHost
-	compilerOptions                         *core.CompilerOptions
-	files                                   []*ast.SourceFile
-	fileIndexMap                            map[*ast.SourceFile]int
-	compareSymbols                          func(*ast.Symbol, *ast.Symbol) int
-	typeCount                               uint32
-	symbolCount                             uint32
-	totalInstantiationCount                 uint32
-	instantiationCount                      uint32
-	instantiationDepth                      uint32
-	inlineLevel                             int
-	currentNode                             *ast.Node
-	languageVersion                         core.ScriptTarget
-	moduleKind                              core.ModuleKind
-	isInferencePartiallyBlocked             bool
-	legacyDecorators                        bool
-	allowSyntheticDefaultImports            bool
-	strictNullChecks                        bool
-	strictFunctionTypes                     bool
-	strictBindCallApply                     bool
-	strictPropertyInitialization            bool
-	strictBuiltinIteratorReturn             bool
-	noImplicitAny                           bool
-	noImplicitThis                          bool
-	useUnknownInCatchVariables              bool
-	exactOptionalPropertyTypes              bool
-	arrayVariances                          []VarianceFlags
-	globals                                 ast.SymbolTable
-	evaluate                                Evaluator
-	stringLiteralTypes                      map[string]*Type
-	numberLiteralTypes                      map[jsnum.Number]*Type
-	bigintLiteralTypes                      map[PseudoBigInt]*Type
-	enumLiteralTypes                        map[EnumLiteralKey]*Type
-	indexedAccessTypes                      map[string]*Type
-	templateLiteralTypes                    map[string]*Type
-	stringMappingTypes                      map[StringMappingKey]*Type
-	uniqueESSymbolTypes                     map[*ast.Symbol]*Type
-	subtypeReductionCache                   map[string][]*Type
-	cachedTypes                             map[CachedTypeKey]*Type
-	cachedSignatures                        map[CachedSignatureKey]*Signature
-	undefinedProperties                     map[string]*ast.Symbol
-	narrowedTypes                           map[NarrowedTypeKey]*Type
-	assignmentReducedTypes                  map[AssignmentReducedKey]*Type
-	discriminatedContextualTypes            map[DiscriminatedContextualTypeKey]*Type
-	instantiationExpressionTypes            map[InstantiationExpressionKey]*Type
-	substitutionTypes                       map[SubstitutionTypeKey]*Type
-	reverseMappedCache                      map[ReverseMappedTypeKey]*Type
-	reverseHomomorphicMappedCache           map[ReverseMappedTypeKey]*Type
-	iterationTypesCache                     map[IterationTypesKey]IterationTypes
-	markerTypes                             core.Set[*Type]
-	identifierSymbols                       map[*ast.Node]*ast.Symbol
-	undefinedSymbol                         *ast.Symbol
-	argumentsSymbol                         *ast.Symbol
-	requireSymbol                           *ast.Symbol
-	unknownSymbol                           *ast.Symbol
-	resolvingSymbol                         *ast.Symbol
-	unresolvedSymbols                       map[string]*ast.Symbol
-	errorTypes                              map[string]*Type
-	globalThisSymbol                        *ast.Symbol
-	resolveName                             func(location *ast.Node, name string, meaning ast.SymbolFlags, nameNotFoundMessage *diagnostics.Message, isUse bool, excludeGlobals bool) *ast.Symbol
-	tupleTypes                              map[string]*Type
-	unionTypes                              map[string]*Type
-	unionOfUnionTypes                       map[UnionOfUnionKey]*Type
-	intersectionTypes                       map[string]*Type
-	diagnostics                             DiagnosticsCollection
-	suggestionDiagnostics                   DiagnosticsCollection
-	symbolPool                              core.Pool[ast.Symbol]
-	signaturePool                           core.Pool[Signature]
-	indexInfoPool                           core.Pool[IndexInfo]
-	mergedSymbols                           map[ast.MergeId]*ast.Symbol
-	factory                                 ast.NodeFactory
-	nodeLinks                               LinkStore[*ast.Node, NodeLinks]
-	signatureLinks                          LinkStore[*ast.Node, SignatureLinks]
-	typeNodeLinks                           LinkStore[*ast.Node, TypeNodeLinks]
-	enumMemberLinks                         LinkStore[*ast.Node, EnumMemberLinks]
-	assertionLinks                          LinkStore[*ast.Node, AssertionLinks]
-	arrayLiteralLinks                       LinkStore[*ast.Node, ArrayLiteralLinks]
-	switchStatementLinks                    LinkStore[*ast.Node, SwitchStatementLinks]
-	valueSymbolLinks                        LinkStore[*ast.Symbol, ValueSymbolLinks]
-	aliasSymbolLinks                        LinkStore[*ast.Symbol, AliasSymbolLinks]
-	moduleSymbolLinks                       LinkStore[*ast.Symbol, ModuleSymbolLinks]
-	lateBoundLinks                          LinkStore[*ast.Symbol, LateBoundLinks]
-	exportTypeLinks                         LinkStore[*ast.Symbol, ExportTypeLinks]
-	membersAndExportsLinks                  LinkStore[*ast.Symbol, MembersAndExportsLinks]
-	typeAliasLinks                          LinkStore[*ast.Symbol, TypeAliasLinks]
-	declaredTypeLinks                       LinkStore[*ast.Symbol, DeclaredTypeLinks]
-	spreadLinks                             LinkStore[*ast.Symbol, SpreadLinks]
-	varianceLinks                           LinkStore[*ast.Symbol, VarianceLinks]
-	indexSymbolLinks                        LinkStore[*ast.Symbol, IndexSymbolLinks]
-	ReverseMappedSymbolLinks                LinkStore[*ast.Symbol, ReverseMappedSymbolLinks]
-	sourceFileLinks                         LinkStore[*ast.SourceFile, SourceFileLinks]
-	patternForType                          map[*Type]*ast.Node
-	contextFreeTypes                        map[*ast.Node]*Type
-	anyType                                 *Type
-	autoType                                *Type
-	wildcardType                            *Type
-	blockedStringType                       *Type
-	errorType                               *Type
-	unresolvedType                          *Type
-	nonInferrableAnyType                    *Type
-	intrinsicMarkerType                     *Type
-	unknownType                             *Type
-	undefinedType                           *Type
-	undefinedWideningType                   *Type
-	missingType                             *Type
-	undefinedOrMissingType                  *Type
-	optionalType                            *Type
-	nullType                                *Type
-	nullWideningType                        *Type
-	stringType                              *Type
-	numberType                              *Type
-	bigintType                              *Type
-	regularFalseType                        *Type
-	falseType                               *Type
-	regularTrueType                         *Type
-	trueType                                *Type
-	booleanType                             *Type
-	esSymbolType                            *Type
-	voidType                                *Type
-	neverType                               *Type
-	silentNeverType                         *Type
-	implicitNeverType                       *Type
-	unreachableNeverType                    *Type
-	nonPrimitiveType                        *Type
-	stringOrNumberType                      *Type
-	stringNumberSymbolType                  *Type
-	numberOrBigIntType                      *Type
-	templateConstraintType                  *Type
-	numericStringType                       *Type
-	uniqueLiteralType                       *Type
-	uniqueLiteralMapper                     *TypeMapper
-	outofbandVarianceMarkerHandler          func(onlyUnreliable bool)
-	reportUnreliableMapper                  *TypeMapper
-	reportUnmeasurableMapper                *TypeMapper
-	restrictiveMapper                       *TypeMapper
-	permissiveMapper                        *TypeMapper
-	emptyObjectType                         *Type
-	emptyTypeLiteralType                    *Type
-	unknownEmptyObjectType                  *Type
-	unknownUnionType                        *Type
-	emptyGenericType                        *Type
-	anyFunctionType                         *Type
-	noConstraintType                        *Type
-	circularConstraintType                  *Type
-	resolvingDefaultType                    *Type
-	markerSuperType                         *Type
-	markerSubType                           *Type
-	markerOtherType                         *Type
-	markerSuperTypeForCheck                 *Type
-	markerSubTypeForCheck                   *Type
-	noTypePredicate                         *TypePredicate
-	anySignature                            *Signature
-	unknownSignature                        *Signature
-	resolvingSignature                      *Signature
-	silentNeverSignature                    *Signature
-	enumNumberIndexInfo                     *IndexInfo
-	patternAmbientModules                   []ast.PatternAmbientModule
-	patternAmbientModuleAugmentations       ast.SymbolTable
-	globalObjectType                        *Type
-	globalFunctionType                      *Type
-	globalCallableFunctionType              *Type
-	globalNewableFunctionType               *Type
-	globalArrayType                         *Type
-	globalReadonlyArrayType                 *Type
-	globalStringType                        *Type
-	globalNumberType                        *Type
-	globalBooleanType                       *Type
-	globalRegExpType                        *Type
-	globalThisType                          *Type
-	anyArrayType                            *Type
-	autoArrayType                           *Type
-	anyReadonlyArrayType                    *Type
-	deferredGlobalESSymbolType              *Type
-	deferredGlobalBigIntType                *Type
-	deferredGlobalImportMetaType            *Type
-	deferredGlobalImportMetaExpressionType  *Type
-	deferredGlobalImportAttributesType      *Type
-	contextualBindingPatterns               []*ast.Node
-	emptyStringType                         *Type
-	zeroType                                *Type
-	zeroBigIntType                          *Type
-	typeofType                              *Type
-	typeResolutions                         []TypeResolution
-	resolutionStart                         int
-	inVarianceComputation                   bool
-	apparentArgumentCount                   *int
-	lastGetCombinedNodeFlagsNode            *ast.Node
-	lastGetCombinedNodeFlagsResult          ast.NodeFlags
-	lastGetCombinedModifierFlagsNode        *ast.Node
-	lastGetCombinedModifierFlagsResult      ast.ModifierFlags
-	flowLoopCache                           map[FlowLoopKey]*Type
-	flowLoopStack                           []FlowLoopInfo
-	sharedFlows                             []SharedFlow
-	flowAnalysisDisabled                    bool
-	flowInvocationCount                     int
-	flowTypeCache                           map[*ast.Node]*Type
-	lastFlowNode                            *ast.FlowNode
-	lastFlowNodeReachable                   bool
-	flowNodeReachable                       map[*ast.FlowNode]bool
-	flowNodePostSuper                       map[*ast.FlowNode]bool
-	contextualInfos                         []ContextualInfo
-	inferenceContextInfos                   []InferenceContextInfo
-	awaitedTypeStack                        []*Type
-	reverseMappedSourceStack                []*Type
-	reverseMappedTargetStack                []*Type
-	reverseExpandingFlags                   ExpandingFlags
-	subtypeRelation                         *Relation
-	strictSubtypeRelation                   *Relation
-	assignableRelation                      *Relation
-	comparableRelation                      *Relation
-	identityRelation                        *Relation
-	enumRelation                            *Relation
-	getGlobalNonNullableTypeAliasOrNil      func() *ast.Symbol
-	getGlobalExtractSymbol                  func() *ast.Symbol
-	getGlobalDisposableType                 func() *Type
-	getGlobalAsyncDisposableType            func() *Type
-	getGlobalAwaitedSymbol                  func() *ast.Symbol
-	getGlobalAwaitedSymbolOrNil             func() *ast.Symbol
-	getGlobalNaNSymbolOrNil                 func() *ast.Symbol
-	getGlobalRecordSymbol                   func() *ast.Symbol
-	getGlobalTemplateStringsArrayType       func() *Type
-	getGlobalESSymbolConstructorSymbolOrNil func() *ast.Symbol
-	getGlobalImportCallOptionsType          func() *Type
-	getGlobalPromiseType                    func() *Type
-	getGlobalPromiseLikeType                func() *Type
-	getGlobalPromiseConstructorSymbol       func() *ast.Symbol
-	getGlobalOmitSymbol                     func() *ast.Symbol
-	getGlobalIteratorType                   func() *Type
-	getGlobalIterableType                   func() *Type
-	getGlobalIterableIteratorType           func() *Type
-	getGlobalIteratorObjectType             func() *Type
-	getGlobalGeneratorType                  func() *Type
-	getGlobalAsyncIteratorType              func() *Type
-	getGlobalAsyncIterableType              func() *Type
-	getGlobalAsyncIterableIteratorType      func() *Type
-	getGlobalAsyncIteratorObjectType        func() *Type
-	getGlobalAsyncGeneratorType             func() *Type
-	syncIterationTypesResolver              *IterationTypesResolver
-	asyncIterationTypesResolver             *IterationTypesResolver
-	isPrimitiveOrObjectOrEmptyType          func(*Type) bool
-	containsMissingType                     func(*Type) bool
-	couldContainTypeVariables               func(*Type) bool
-	isStringIndexSignatureOnlyType          func(*Type) bool
+	program                                   *Program
+	host                                      CompilerHost
+	compilerOptions                           *core.CompilerOptions
+	files                                     []*ast.SourceFile
+	fileIndexMap                              map[*ast.SourceFile]int
+	compareSymbols                            func(*ast.Symbol, *ast.Symbol) int
+	typeCount                                 uint32
+	symbolCount                               uint32
+	totalInstantiationCount                   uint32
+	instantiationCount                        uint32
+	instantiationDepth                        uint32
+	inlineLevel                               int
+	currentNode                               *ast.Node
+	languageVersion                           core.ScriptTarget
+	moduleKind                                core.ModuleKind
+	isInferencePartiallyBlocked               bool
+	legacyDecorators                          bool
+	allowSyntheticDefaultImports              bool
+	strictNullChecks                          bool
+	strictFunctionTypes                       bool
+	strictBindCallApply                       bool
+	strictPropertyInitialization              bool
+	strictBuiltinIteratorReturn               bool
+	noImplicitAny                             bool
+	noImplicitThis                            bool
+	useUnknownInCatchVariables                bool
+	exactOptionalPropertyTypes                bool
+	arrayVariances                            []VarianceFlags
+	globals                                   ast.SymbolTable
+	evaluate                                  Evaluator
+	stringLiteralTypes                        map[string]*Type
+	numberLiteralTypes                        map[jsnum.Number]*Type
+	bigintLiteralTypes                        map[PseudoBigInt]*Type
+	enumLiteralTypes                          map[EnumLiteralKey]*Type
+	indexedAccessTypes                        map[string]*Type
+	templateLiteralTypes                      map[string]*Type
+	stringMappingTypes                        map[StringMappingKey]*Type
+	uniqueESSymbolTypes                       map[*ast.Symbol]*Type
+	subtypeReductionCache                     map[string][]*Type
+	cachedTypes                               map[CachedTypeKey]*Type
+	cachedSignatures                          map[CachedSignatureKey]*Signature
+	undefinedProperties                       map[string]*ast.Symbol
+	narrowedTypes                             map[NarrowedTypeKey]*Type
+	assignmentReducedTypes                    map[AssignmentReducedKey]*Type
+	discriminatedContextualTypes              map[DiscriminatedContextualTypeKey]*Type
+	instantiationExpressionTypes              map[InstantiationExpressionKey]*Type
+	substitutionTypes                         map[SubstitutionTypeKey]*Type
+	reverseMappedCache                        map[ReverseMappedTypeKey]*Type
+	reverseHomomorphicMappedCache             map[ReverseMappedTypeKey]*Type
+	iterationTypesCache                       map[IterationTypesKey]IterationTypes
+	markerTypes                               core.Set[*Type]
+	identifierSymbols                         map[*ast.Node]*ast.Symbol
+	undefinedSymbol                           *ast.Symbol
+	argumentsSymbol                           *ast.Symbol
+	requireSymbol                             *ast.Symbol
+	unknownSymbol                             *ast.Symbol
+	resolvingSymbol                           *ast.Symbol
+	unresolvedSymbols                         map[string]*ast.Symbol
+	errorTypes                                map[string]*Type
+	globalThisSymbol                          *ast.Symbol
+	resolveName                               func(location *ast.Node, name string, meaning ast.SymbolFlags, nameNotFoundMessage *diagnostics.Message, isUse bool, excludeGlobals bool) *ast.Symbol
+	tupleTypes                                map[string]*Type
+	unionTypes                                map[string]*Type
+	unionOfUnionTypes                         map[UnionOfUnionKey]*Type
+	intersectionTypes                         map[string]*Type
+	diagnostics                               DiagnosticsCollection
+	suggestionDiagnostics                     DiagnosticsCollection
+	symbolPool                                core.Pool[ast.Symbol]
+	signaturePool                             core.Pool[Signature]
+	indexInfoPool                             core.Pool[IndexInfo]
+	mergedSymbols                             map[ast.MergeId]*ast.Symbol
+	factory                                   ast.NodeFactory
+	nodeLinks                                 LinkStore[*ast.Node, NodeLinks]
+	signatureLinks                            LinkStore[*ast.Node, SignatureLinks]
+	typeNodeLinks                             LinkStore[*ast.Node, TypeNodeLinks]
+	enumMemberLinks                           LinkStore[*ast.Node, EnumMemberLinks]
+	assertionLinks                            LinkStore[*ast.Node, AssertionLinks]
+	arrayLiteralLinks                         LinkStore[*ast.Node, ArrayLiteralLinks]
+	switchStatementLinks                      LinkStore[*ast.Node, SwitchStatementLinks]
+	valueSymbolLinks                          LinkStore[*ast.Symbol, ValueSymbolLinks]
+	aliasSymbolLinks                          LinkStore[*ast.Symbol, AliasSymbolLinks]
+	moduleSymbolLinks                         LinkStore[*ast.Symbol, ModuleSymbolLinks]
+	lateBoundLinks                            LinkStore[*ast.Symbol, LateBoundLinks]
+	exportTypeLinks                           LinkStore[*ast.Symbol, ExportTypeLinks]
+	membersAndExportsLinks                    LinkStore[*ast.Symbol, MembersAndExportsLinks]
+	typeAliasLinks                            LinkStore[*ast.Symbol, TypeAliasLinks]
+	declaredTypeLinks                         LinkStore[*ast.Symbol, DeclaredTypeLinks]
+	spreadLinks                               LinkStore[*ast.Symbol, SpreadLinks]
+	varianceLinks                             LinkStore[*ast.Symbol, VarianceLinks]
+	indexSymbolLinks                          LinkStore[*ast.Symbol, IndexSymbolLinks]
+	ReverseMappedSymbolLinks                  LinkStore[*ast.Symbol, ReverseMappedSymbolLinks]
+	sourceFileLinks                           LinkStore[*ast.SourceFile, SourceFileLinks]
+	patternForType                            map[*Type]*ast.Node
+	contextFreeTypes                          map[*ast.Node]*Type
+	anyType                                   *Type
+	autoType                                  *Type
+	wildcardType                              *Type
+	blockedStringType                         *Type
+	errorType                                 *Type
+	unresolvedType                            *Type
+	nonInferrableAnyType                      *Type
+	intrinsicMarkerType                       *Type
+	unknownType                               *Type
+	undefinedType                             *Type
+	undefinedWideningType                     *Type
+	missingType                               *Type
+	undefinedOrMissingType                    *Type
+	optionalType                              *Type
+	nullType                                  *Type
+	nullWideningType                          *Type
+	stringType                                *Type
+	numberType                                *Type
+	bigintType                                *Type
+	regularFalseType                          *Type
+	falseType                                 *Type
+	regularTrueType                           *Type
+	trueType                                  *Type
+	booleanType                               *Type
+	esSymbolType                              *Type
+	voidType                                  *Type
+	neverType                                 *Type
+	silentNeverType                           *Type
+	implicitNeverType                         *Type
+	unreachableNeverType                      *Type
+	nonPrimitiveType                          *Type
+	stringOrNumberType                        *Type
+	stringNumberSymbolType                    *Type
+	numberOrBigIntType                        *Type
+	templateConstraintType                    *Type
+	numericStringType                         *Type
+	uniqueLiteralType                         *Type
+	uniqueLiteralMapper                       *TypeMapper
+	outofbandVarianceMarkerHandler            func(onlyUnreliable bool)
+	reportUnreliableMapper                    *TypeMapper
+	reportUnmeasurableMapper                  *TypeMapper
+	restrictiveMapper                         *TypeMapper
+	permissiveMapper                          *TypeMapper
+	emptyObjectType                           *Type
+	emptyTypeLiteralType                      *Type
+	unknownEmptyObjectType                    *Type
+	unknownUnionType                          *Type
+	emptyGenericType                          *Type
+	anyFunctionType                           *Type
+	noConstraintType                          *Type
+	circularConstraintType                    *Type
+	resolvingDefaultType                      *Type
+	markerSuperType                           *Type
+	markerSubType                             *Type
+	markerOtherType                           *Type
+	markerSuperTypeForCheck                   *Type
+	markerSubTypeForCheck                     *Type
+	noTypePredicate                           *TypePredicate
+	anySignature                              *Signature
+	unknownSignature                          *Signature
+	resolvingSignature                        *Signature
+	silentNeverSignature                      *Signature
+	enumNumberIndexInfo                       *IndexInfo
+	patternAmbientModules                     []ast.PatternAmbientModule
+	patternAmbientModuleAugmentations         ast.SymbolTable
+	globalObjectType                          *Type
+	globalFunctionType                        *Type
+	globalCallableFunctionType                *Type
+	globalNewableFunctionType                 *Type
+	globalArrayType                           *Type
+	globalReadonlyArrayType                   *Type
+	globalStringType                          *Type
+	globalNumberType                          *Type
+	globalBooleanType                         *Type
+	globalRegExpType                          *Type
+	globalThisType                            *Type
+	anyArrayType                              *Type
+	autoArrayType                             *Type
+	anyReadonlyArrayType                      *Type
+	deferredGlobalESSymbolType                *Type
+	deferredGlobalBigIntType                  *Type
+	deferredGlobalImportMetaType              *Type
+	deferredGlobalImportMetaExpressionType    *Type
+	deferredGlobalImportAttributesType        *Type
+	contextualBindingPatterns                 []*ast.Node
+	emptyStringType                           *Type
+	zeroType                                  *Type
+	zeroBigIntType                            *Type
+	typeofType                                *Type
+	typeResolutions                           []TypeResolution
+	resolutionStart                           int
+	inVarianceComputation                     bool
+	apparentArgumentCount                     *int
+	lastGetCombinedNodeFlagsNode              *ast.Node
+	lastGetCombinedNodeFlagsResult            ast.NodeFlags
+	lastGetCombinedModifierFlagsNode          *ast.Node
+	lastGetCombinedModifierFlagsResult        ast.ModifierFlags
+	flowLoopCache                             map[FlowLoopKey]*Type
+	flowLoopStack                             []FlowLoopInfo
+	sharedFlows                               []SharedFlow
+	flowAnalysisDisabled                      bool
+	flowInvocationCount                       int
+	flowTypeCache                             map[*ast.Node]*Type
+	lastFlowNode                              *ast.FlowNode
+	lastFlowNodeReachable                     bool
+	flowNodeReachable                         map[*ast.FlowNode]bool
+	flowNodePostSuper                         map[*ast.FlowNode]bool
+	contextualInfos                           []ContextualInfo
+	inferenceContextInfos                     []InferenceContextInfo
+	awaitedTypeStack                          []*Type
+	reverseMappedSourceStack                  []*Type
+	reverseMappedTargetStack                  []*Type
+	reverseExpandingFlags                     ExpandingFlags
+	subtypeRelation                           *Relation
+	strictSubtypeRelation                     *Relation
+	assignableRelation                        *Relation
+	comparableRelation                        *Relation
+	identityRelation                          *Relation
+	enumRelation                              *Relation
+	getGlobalNonNullableTypeAliasOrNil        func() *ast.Symbol
+	getGlobalExtractSymbol                    func() *ast.Symbol
+	getGlobalDisposableType                   func() *Type
+	getGlobalAsyncDisposableType              func() *Type
+	getGlobalAwaitedSymbol                    func() *ast.Symbol
+	getGlobalAwaitedSymbolOrNil               func() *ast.Symbol
+	getGlobalNaNSymbolOrNil                   func() *ast.Symbol
+	getGlobalRecordSymbol                     func() *ast.Symbol
+	getGlobalTemplateStringsArrayType         func() *Type
+	getGlobalESSymbolConstructorSymbolOrNil   func() *ast.Symbol
+	getGlobalImportCallOptionsType            func() *Type
+	getGlobalPromiseType                      func() *Type
+	getGlobalPromiseTypeChecked               func() *Type
+	getGlobalPromiseLikeType                  func() *Type
+	getGlobalPromiseConstructorSymbol         func() *ast.Symbol
+	getGlobalOmitSymbol                       func() *ast.Symbol
+	getGlobalIteratorType                     func() *Type
+	getGlobalIterableType                     func() *Type
+	getGlobalIterableIteratorType             func() *Type
+	getGlobalIterableIteratorTypeChecked      func() *Type
+	getGlobalIteratorObjectType               func() *Type
+	getGlobalGeneratorType                    func() *Type
+	getGlobalAsyncIteratorType                func() *Type
+	getGlobalAsyncIterableType                func() *Type
+	getGlobalAsyncIterableIteratorType        func() *Type
+	getGlobalAsyncIterableIteratorTypeChecked func() *Type
+	getGlobalAsyncIteratorObjectType          func() *Type
+	getGlobalAsyncGeneratorType               func() *Type
+	syncIterationTypesResolver                *IterationTypesResolver
+	asyncIterationTypesResolver               *IterationTypesResolver
+	isPrimitiveOrObjectOrEmptyType            func(*Type) bool
+	containsMissingType                       func(*Type) bool
+	couldContainTypeVariables                 func(*Type) bool
+	isStringIndexSignatureOnlyType            func(*Type) bool
 }
 
 func NewChecker(program *Program) *Checker {
@@ -888,18 +901,21 @@ func NewChecker(program *Program) *Checker {
 	c.getGlobalTemplateStringsArrayType = c.getGlobalTypeResolver("TemplateStringsArray", 0 /*arity*/, true /*reportErrors*/)
 	c.getGlobalESSymbolConstructorSymbolOrNil = c.getGlobalValueSymbolResolver("Symbol", false /*reportErrors*/)
 	c.getGlobalImportCallOptionsType = c.getGlobalTypeResolver("ImportCallOptions", 0 /*arity*/, false /*reportErrors*/)
-	c.getGlobalPromiseType = c.getGlobalTypeResolver("Promise", 1 /*arity*/, true /*reportErrors*/)
+	c.getGlobalPromiseType = c.getGlobalTypeResolver("Promise", 1 /*arity*/, false /*reportErrors*/)
+	c.getGlobalPromiseTypeChecked = c.getGlobalTypeResolver("Promise", 1 /*arity*/, true /*reportErrors*/)
 	c.getGlobalPromiseLikeType = c.getGlobalTypeResolver("PromiseLike", 1 /*arity*/, true /*reportErrors*/)
 	c.getGlobalPromiseConstructorSymbol = c.getGlobalValueSymbolResolver("Promise", true /*reportErrors*/)
 	c.getGlobalOmitSymbol = c.getGlobalTypeAliasResolver("Omit", 2 /*arity*/, true /*reportErrors*/)
 	c.getGlobalIteratorType = c.getGlobalTypeResolver("Iterator", 3 /*arity*/, false /*reportErrors*/)
 	c.getGlobalIterableType = c.getGlobalTypeResolver("Iterable", 3 /*arity*/, false /*reportErrors*/)
 	c.getGlobalIterableIteratorType = c.getGlobalTypeResolver("IterableIterator", 3 /*arity*/, false /*reportErrors*/)
+	c.getGlobalIterableIteratorTypeChecked = c.getGlobalTypeResolver("IterableIterator", 3 /*arity*/, true /*reportErrors*/)
 	c.getGlobalIteratorObjectType = c.getGlobalTypeResolver("IteratorObject", 3 /*arity*/, false /*reportErrors*/)
 	c.getGlobalGeneratorType = c.getGlobalTypeResolver("Generator", 3 /*arity*/, false /*reportErrors*/)
 	c.getGlobalAsyncIteratorType = c.getGlobalTypeResolver("AsyncIterator", 3 /*arity*/, false /*reportErrors*/)
 	c.getGlobalAsyncIterableType = c.getGlobalTypeResolver("AsyncIterable", 3 /*arity*/, false /*reportErrors*/)
 	c.getGlobalAsyncIterableIteratorType = c.getGlobalTypeResolver("AsyncIterableIterator", 3 /*arity*/, false /*reportErrors*/)
+	c.getGlobalAsyncIterableIteratorTypeChecked = c.getGlobalTypeResolver("AsyncIterableIterator", 3 /*arity*/, true /*reportErrors*/)
 	c.getGlobalAsyncIteratorObjectType = c.getGlobalTypeResolver("AsyncIteratorObject", 3 /*arity*/, false /*reportErrors*/)
 	c.getGlobalAsyncGeneratorType = c.getGlobalTypeResolver("AsyncGenerator", 3 /*arity*/, false /*reportErrors*/)
 	c.initializeClosures()
@@ -1032,25 +1048,27 @@ func (c *Checker) initializeClosures() {
 
 func (c *Checker) initializeIterationResolvers() {
 	c.syncIterationTypesResolver = &IterationTypesResolver{
-		iteratorSymbolName:            "iterator",
-		getGlobalIteratorType:         c.getGlobalIteratorType,
-		getGlobalIterableType:         c.getGlobalIterableType,
-		getGlobalIterableIteratorType: c.getGlobalIterableIteratorType,
-		getGlobalIteratorObjectType:   c.getGlobalIteratorObjectType,
-		getGlobalGeneratorType:        c.getGlobalGeneratorType,
-		getGlobalBuiltinIteratorTypes: c.getGlobalTypesResolver([]string{"ArrayIterator", "MapIterator", "SetIterator", "StringIterator"}, 1, false /*reportErrors*/),
+		iteratorSymbolName:                   "iterator",
+		getGlobalIteratorType:                c.getGlobalIteratorType,
+		getGlobalIterableType:                c.getGlobalIterableType,
+		getGlobalIterableIteratorType:        c.getGlobalIterableIteratorType,
+		getGlobalIterableIteratorTypeChecked: c.getGlobalIterableIteratorTypeChecked,
+		getGlobalIteratorObjectType:          c.getGlobalIteratorObjectType,
+		getGlobalGeneratorType:               c.getGlobalGeneratorType,
+		getGlobalBuiltinIteratorTypes:        c.getGlobalTypesResolver([]string{"ArrayIterator", "MapIterator", "SetIterator", "StringIterator"}, 1, false /*reportErrors*/),
 		resolveIterationType: func(t *Type, errorNode *ast.Node) *Type {
 			return t
 		},
 	}
 	c.asyncIterationTypesResolver = &IterationTypesResolver{
-		iteratorSymbolName:            "asyncIterator",
-		getGlobalIteratorType:         c.getGlobalAsyncIteratorType,
-		getGlobalIterableType:         c.getGlobalAsyncIterableType,
-		getGlobalIterableIteratorType: c.getGlobalAsyncIterableIteratorType,
-		getGlobalIteratorObjectType:   c.getGlobalAsyncIteratorObjectType,
-		getGlobalGeneratorType:        c.getGlobalAsyncGeneratorType,
-		getGlobalBuiltinIteratorTypes: c.getGlobalTypesResolver([]string{"ReadableStreamAsyncIterator"}, 1, false /*reportErrors*/),
+		iteratorSymbolName:                   "asyncIterator",
+		getGlobalIteratorType:                c.getGlobalAsyncIteratorType,
+		getGlobalIterableType:                c.getGlobalAsyncIterableType,
+		getGlobalIterableIteratorType:        c.getGlobalAsyncIterableIteratorType,
+		getGlobalIterableIteratorTypeChecked: c.getGlobalAsyncIterableIteratorTypeChecked,
+		getGlobalIteratorObjectType:          c.getGlobalAsyncIteratorObjectType,
+		getGlobalGeneratorType:               c.getGlobalAsyncGeneratorType,
+		getGlobalBuiltinIteratorTypes:        c.getGlobalTypesResolver([]string{"ReadableStreamAsyncIterator"}, 1, false /*reportErrors*/),
 		resolveIterationType: func(t *Type, errorNode *ast.Node) *Type {
 			return c.getAwaitedTypeEx(t, errorNode, diagnostics.Type_of_await_operand_must_either_be_a_valid_promise_or_must_not_contain_a_callable_then_member)
 		},
@@ -2603,8 +2621,28 @@ func (c *Checker) getIteratedTypeOrElementType(use IterationUse, inputType *Type
 	return arrayElementType
 }
 
-func (c *Checker) getIterationTypeOfGeneratorFunctionReturnType(kind IterationTypeKind, returnType *Type, isAsyncGenerator bool) *Type {
-	return nil // !!!
+// Gets the requested "iteration type" from a type that is either `Iterable`-like, `Iterator`-like,
+// `IterableIterator`-like, or `Generator`-like (for a non-async generator); or `AsyncIterable`-like,
+// `AsyncIterator`-like, `AsyncIterableIterator`-like, or `AsyncGenerator`-like (for an async generator).
+func (c *Checker) getIterationTypeOfGeneratorFunctionReturnType(typeKind IterationTypeKind, returnType *Type, isAsyncGenerator bool) *Type {
+	if isTypeAny(returnType) {
+		return nil
+	}
+	iterationTypes := c.getIterationTypesOfGeneratorFunctionReturnType(returnType, isAsyncGenerator)
+	return iterationTypes.getType(typeKind)
+}
+
+func (c *Checker) getIterationTypesOfGeneratorFunctionReturnType(t *Type, isAsyncGenerator bool) IterationTypes {
+	if isTypeAny(t) {
+		return IterationTypes{c.anyType, c.anyType, c.anyType}
+	}
+	use := core.IfElse(isAsyncGenerator, IterationUseAsyncGeneratorReturnType, IterationUseGeneratorReturnType)
+	resolver := core.IfElse(isAsyncGenerator, c.asyncIterationTypesResolver, c.syncIterationTypesResolver)
+	result := c.getIterationTypesOfIterable(t, use, nil /*errorNode*/)
+	if result.hasTypes() {
+		return result
+	}
+	return c.getIterationTypesOfIterator(t, resolver, nil /*errorNode*/)
 }
 
 // Gets the requested "iteration type" from an `Iterable`-like or `AsyncIterable`-like type.
@@ -2613,15 +2651,7 @@ func (c *Checker) getIterationTypeOfIterable(use IterationUse, typeKind Iteratio
 		return nil
 	}
 	iterationTypes := c.getIterationTypesOfIterable(inputType, use, errorNode)
-	switch typeKind {
-	case IterationTypeKindYield:
-		return iterationTypes.yieldType
-	case IterationTypeKindReturn:
-		return iterationTypes.returnType
-	case IterationTypeKindNext:
-		return iterationTypes.nextType
-	}
-	panic("Unhandled case in getIterationTypeOfIterable")
+	return iterationTypes.getType(typeKind)
 }
 
 // Gets the *yield*, *return*, and *next* types from an `Iterable`-like or `AsyncIterable`-like type.
@@ -2750,6 +2780,18 @@ func (iterationTypes *IterationTypes) hasTypes() bool {
 	return iterationTypes.yieldType != nil && iterationTypes.returnType != nil && iterationTypes.nextType != nil
 }
 
+func (iterationTypes *IterationTypes) getType(typeKind IterationTypeKind) *Type {
+	switch typeKind {
+	case IterationTypeKindYield:
+		return iterationTypes.yieldType
+	case IterationTypeKindReturn:
+		return iterationTypes.returnType
+	case IterationTypeKindNext:
+		return iterationTypes.nextType
+	}
+	panic("Unhandled case in getIterationTypeOfIterable")
+}
+
 func (c *Checker) combineIterationTypes(iterationTypes []IterationTypes) IterationTypes {
 	return IterationTypes{
 		c.getIterationTypeUnion(iterationTypes, func(t IterationTypes) *Type { return t.yieldType }),
@@ -2808,9 +2850,16 @@ func (c *Checker) getIterationTypesOfIterableSlow(t *Type, r *IterationTypesReso
 //
 // If we successfully found the *yield*, *return*, and *next* types, an `IterationTypes` with non-nil
 // members is returned. Otherwise, a default `IterationTypes{}` is returned.
+func (c *Checker) getIterationTypesOfIterator(t *Type, r *IterationTypesResolver, errorNode *ast.Node) IterationTypes {
+	return c.getIterationTypesOfIteratorWorker(t, r, errorNode)
+}
+
+// Gets the *yield*, *return*, and *next* types from an `Iterator`-like or `AsyncIterator`-like type.
 //
-// NOTE: You probably don't want to call this directly and should be calling
-// `getIterationTypesOfIterator` instead.
+// If we successfully found the *yield*, *return*, and *next* types, an `IterationTypes` with non-nil
+// members is returned. Otherwise, a default `IterationTypes{}` is returned.
+//
+// NOTE: You probably don't want to call this directly and should be calling `getIterationTypesOfIterator` instead.
 func (c *Checker) getIterationTypesOfIteratorWorker(t *Type, r *IterationTypesResolver, errorNode *ast.Node) IterationTypes {
 	if isTypeAny(t) {
 		return IterationTypes{c.anyType, c.anyType, c.anyType}
@@ -2926,7 +2975,6 @@ func (c *Checker) registerForUnusedIdentifiersCheck(node *ast.Node) {
 func (c *Checker) checkExpressionStatement(node *ast.Node) {
 	// Grammar checking
 	c.checkGrammarStatementInAmbientContext(node)
-
 	c.checkExpression(node.AsExpressionStatement().Expression)
 }
 
@@ -3434,7 +3482,7 @@ func (c *Checker) getSymbolForPrivateIdentifierExpression(node *ast.Node) *ast.S
 // }
 
 func (c *Checker) checkSuperExpression(node *ast.Node) *Type {
-	// !!!
+	// !!!!
 	return c.errorType
 }
 
@@ -3723,7 +3771,7 @@ func (c *Checker) getConstituentProperty(objectType *Type, propertyName string) 
 }
 
 func (c *Checker) checkImportCallExpression(node *ast.Node) *Type {
-	// !!!
+	// !!!!
 	return c.errorType
 }
 
@@ -4303,7 +4351,17 @@ func signatureHasLiteralTypes(s *Signature) bool {
 }
 
 func (c *Checker) getOptionalCallSignature(signature *Signature, callChainFlags SignatureFlags) *Signature {
-	return signature // !!!
+	if signature.flags&SignatureFlagsCallChainFlags == callChainFlags {
+		return signature
+	}
+	key := CachedSignatureKey{sig: signature, key: core.IfElse(callChainFlags == SignatureFlagsIsInnerCallChain, SignatureKeyInner, SignatureKeyOuter)}
+	if cached := c.cachedSignatures[key]; cached != nil {
+		return cached
+	}
+	result := c.cloneSignature(signature)
+	result.flags |= callChainFlags
+	c.cachedSignatures[key] = result
+	return result
 }
 
 func (c *Checker) chooseOverload(s *CallState, relation *Relation) *Signature {
@@ -5174,7 +5232,7 @@ func (c *Checker) skippedGenericFunction(node *ast.Node, checkMode CheckMode) {
 }
 
 func (c *Checker) checkTaggedTemplateExpression(node *ast.Node) *Type {
-	// !!!
+	// !!!!
 	c.checkExpression(node.AsTaggedTemplateExpression().Tag)
 	c.checkExpression(node.AsTaggedTemplateExpression().Template)
 	return c.errorType
@@ -5715,8 +5773,7 @@ func (c *Checker) checkVoidExpression(node *ast.Node) *Type {
 }
 
 func (c *Checker) checkAwaitExpression(node *ast.Node) *Type {
-	// !!!
-	// c.checkAwaitGrammar(node)
+	c.checkGrammarAwaitOrAwaitUsing(node)
 	operandType := c.checkExpression(node.Expression())
 	awaitedType := c.checkAwaitedType(operandType, true /*withAlias*/, node, diagnostics.Type_of_await_operand_must_either_be_a_valid_promise_or_must_not_contain_a_callable_then_member)
 	if awaitedType == operandType && !c.isErrorType(awaitedType) && operandType.flags&TypeFlagsAnyOrUnknown == 0 {
@@ -5828,9 +5885,76 @@ func (c *Checker) checkSpreadExpression(node *ast.Node, checkMode CheckMode) *Ty
 }
 
 func (c *Checker) checkYieldExpression(node *ast.Node) *Type {
-	// !!!
-	c.checkExpression(node.Expression())
-	return c.errorType
+	c.checkGrammarYieldExpression(node)
+	fn := getContainingFunction(node)
+	if fn == nil {
+		return c.anyType
+	}
+	functionFlags := getFunctionFlags(fn)
+	if functionFlags&FunctionFlagsGenerator == 0 {
+		// If the user's code is syntactically correct, the func should always have a star. After all, we are in a yield context.
+		return c.anyType
+	}
+	isAsync := (functionFlags & FunctionFlagsAsync) != 0
+	// There is no point in doing an assignability check if the function
+	// has no explicit return type because the return type is directly computed
+	// from the yield expressions.
+	returnType := c.getReturnTypeFromAnnotation(fn)
+	if returnType != nil && returnType.flags&TypeFlagsUnion != 0 {
+		returnType = c.filterType(returnType, func(t *Type) bool {
+			return c.checkGeneratorInstantiationAssignabilityToReturnType(t, functionFlags, nil /*errorNode*/)
+		})
+	}
+	var iterationTypes IterationTypes
+	if returnType != nil {
+		iterationTypes = c.getIterationTypesOfGeneratorFunctionReturnType(returnType, isAsync)
+	}
+	signatureYieldType := core.OrElse(iterationTypes.yieldType, c.anyType)
+	signatureNextType := core.OrElse(iterationTypes.nextType, c.anyType)
+	var yieldExpressionType *Type
+	if node.Expression() != nil {
+		yieldExpressionType = c.checkExpression(node.Expression())
+	} else {
+		yieldExpressionType = c.undefinedWideningType
+	}
+	yieldedType := c.getYieldedTypeOfYieldExpression(node, yieldExpressionType, signatureNextType, isAsync)
+	if returnType != nil && yieldedType != nil {
+		c.checkTypeAssignableToAndOptionallyElaborate(yieldedType, signatureYieldType, core.OrElse(node.Expression(), node), node.Expression(), nil, nil)
+	}
+	if node.AsYieldExpression().AsteriskToken != nil {
+		use := core.IfElse(isAsync, IterationUseAsyncYieldStar, IterationUseYieldStar)
+		return core.OrElse(c.getIterationTypeOfIterable(use, IterationTypeKindReturn, yieldExpressionType, node.Expression()), c.anyType)
+	}
+	if returnType != nil {
+		return core.OrElse(c.getIterationTypeOfGeneratorFunctionReturnType(IterationTypeKindNext, returnType, isAsync), c.anyType)
+	}
+	t := c.getContextualIterationType(IterationTypeKindNext, fn)
+	if t == nil {
+		t = c.anyType
+		if c.noImplicitAny && !expressionResultIsUnused(node) {
+			contextualType := c.getContextualType(node, ContextFlagsNone)
+			if contextualType == nil || isTypeAny(contextualType) {
+				c.error(node, diagnostics.X_yield_expression_implicitly_results_in_an_any_type_because_its_containing_generator_lacks_a_return_type_annotation)
+			}
+		}
+	}
+	return t
+}
+
+func (c *Checker) getYieldedTypeOfYieldExpression(node *ast.Node, expressionType *Type, sentType *Type, isAsync bool) *Type {
+	errorNode := core.OrElse(node.Expression(), node)
+	isYieldStar := node.AsYieldExpression().AsteriskToken != nil
+	// A `yield*` expression effectively yields everything that its operand yields
+	yieldedType := expressionType
+	if isYieldStar {
+		yieldedType = c.checkIteratedTypeOrElementType(core.IfElse(isAsync, IterationUseAsyncYieldStar, IterationUseYieldStar), expressionType, sentType, errorNode)
+	}
+	if !isAsync {
+		return yieldedType
+	}
+	return c.getAwaitedTypeEx(yieldedType, errorNode, core.IfElse(isYieldStar,
+		diagnostics.Type_of_iterated_elements_of_a_yield_Asterisk_operand_must_either_be_a_valid_promise_or_must_not_contain_a_callable_then_member,
+		diagnostics.Type_of_yield_operand_in_an_async_generator_must_either_be_a_valid_promise_or_must_not_contain_a_callable_then_member))
 }
 
 func (c *Checker) checkSyntheticExpression(node *ast.Node) *Type {
@@ -7032,7 +7156,7 @@ func (c *Checker) checkBinaryExpression(node *ast.Node, checkMode CheckMode) *Ty
 func (c *Checker) checkBinaryLikeExpression(left *ast.Node, operatorToken *ast.Node, right *ast.Node, checkMode CheckMode, errorNode *ast.Node) *Type {
 	operator := operatorToken.Kind
 	if operator == ast.KindEqualsToken && (left.Kind == ast.KindObjectLiteralExpression || left.Kind == ast.KindArrayLiteralExpression) {
-		// !!! Handle destructuring assignment
+		// !!!! Handle destructuring assignment
 		return c.checkExpressionEx(right, checkMode)
 	}
 	leftType := c.checkExpressionEx(left, checkMode)
@@ -8064,10 +8188,9 @@ func (c *Checker) checkPropertyAssignment(node *ast.Node, checkMode CheckMode) *
 	// Do not use hasDynamicName here, because that returns false for well known symbols.
 	// We want to perform checkComputedPropertyName for all computed properties, including
 	// well known symbols.
-	// !!!
-	// if node.name.kind == KindComputedPropertyName {
-	// 	c.checkComputedPropertyName(node.name)
-	// }
+	if ast.IsComputedPropertyName(node.Name()) {
+		c.checkComputedPropertyName(node.Name())
+	}
 	return c.checkExpressionForMutableLocation(node.Initializer(), checkMode)
 }
 
@@ -8095,7 +8218,7 @@ func (c *Checker) isInPropertyInitializerOrClassStaticBlock(node *ast.Node) bool
 }
 
 func (c *Checker) getNarrowedTypeOfSymbol(symbol *ast.Symbol, location *ast.Node) *Type {
-	return c.getTypeOfSymbol(symbol) // !!!
+	return c.getTypeOfSymbol(symbol) // !!!!
 }
 
 func (c *Checker) isReadonlySymbol(symbol *ast.Symbol) bool {
@@ -8773,42 +8896,49 @@ func (c *Checker) getTargetOfModuleDefault(moduleSymbol *ast.Symbol, node *ast.N
 	} else {
 		exportDefaultSymbol = c.resolveExportByName(moduleSymbol, ast.InternalSymbolNameDefault, node, dontResolveAlias)
 	}
-	// !!!
-	// file := find(moduleSymbol.declarations, isSourceFile)
-	// specifier := c.getModuleSpecifierForImportOrExport(node)
-	// if specifier == nil {
-	// 	return exportDefaultSymbol
-	// }
-	// hasDefaultOnly := c.isOnlyImportableAsDefault(specifier, moduleSymbol)
-	// hasSyntheticDefault := c.canHaveSyntheticDefault(file, moduleSymbol, dontResolveAlias, specifier)
-	// if !exportDefaultSymbol && !hasSyntheticDefault && !hasDefaultOnly {
-	// 	if c.hasExportAssignmentSymbol(moduleSymbol) && !c.allowSyntheticDefaultImports {
-	// 		var compilerOptionName /* TODO(TS-TO-GO) inferred type "allowSyntheticDefaultImports" | "esModuleInterop" */ any
-	// 		if c.moduleKind >= core.ModuleKindES2015 {
-	// 			compilerOptionName = "allowSyntheticDefaultImports"
-	// 		} else {
-	// 			compilerOptionName = "esModuleInterop"
-	// 		}
-	// 		exportEqualsSymbol := moduleSymbol.exports.get(ast.InternalSymbolNameExportEquals)
-	// 		exportAssignment := exportEqualsSymbol.valueDeclaration
-	// 		err := c.error(node.name, Diagnostics.Module_0_can_only_be_default_imported_using_the_1_flag, c.symbolToString(moduleSymbol), compilerOptionName)
-
-	// 		if exportAssignment {
-	// 			addRelatedInfo(err, createDiagnosticForNode(exportAssignment, Diagnostics.This_module_is_declared_with_export_and_can_only_be_used_with_a_default_import_when_using_the_0_flag, compilerOptionName))
-	// 		}
-	// 	} else if isImportClause(node) {
-	// 		c.reportNonDefaultExport(moduleSymbol, node)
-	// 	} else {
-	// 		c.errorNoModuleMemberSymbol(moduleSymbol, moduleSymbol, node, isImportOrExportSpecifier(node) && node.propertyName || node.name)
-	// 	}
-	// } else if hasSyntheticDefault || hasDefaultOnly {
-	// 	// per emit behavior, a synthetic default overrides a "real" .default member if `__esModule` is not present
-	// 	resolved := c.resolveExternalModuleSymbol(moduleSymbol, dontResolveAlias) || c.resolveSymbol(moduleSymbol, dontResolveAlias)
-	// 	c.markSymbolOfAliasDeclarationIfTypeOnly(node, moduleSymbol, resolved /*overwriteEmpty*/, false)
-	// 	return resolved
-	// }
-	// c.markSymbolOfAliasDeclarationIfTypeOnly(node, exportDefaultSymbol /*finalTarget*/, nil /*overwriteEmpty*/, false)
+	file := core.Find(moduleSymbol.Declarations, ast.IsSourceFile)
+	specifier := c.getModuleSpecifierForImportOrExport(node)
+	if specifier == nil {
+		return exportDefaultSymbol
+	}
+	hasDefaultOnly := c.isOnlyImportableAsDefault(specifier, moduleSymbol)
+	hasSyntheticDefault := c.canHaveSyntheticDefault(file, moduleSymbol, dontResolveAlias, specifier)
+	if exportDefaultSymbol == nil && !hasSyntheticDefault && !hasDefaultOnly {
+		if hasExportAssignmentSymbol(moduleSymbol) && !c.allowSyntheticDefaultImports {
+			compilerOptionName := core.IfElse(c.moduleKind >= core.ModuleKindES2015, "allowSyntheticDefaultImports", "esModuleInterop")
+			exportEqualsSymbol := moduleSymbol.Exports[ast.InternalSymbolNameExportEquals]
+			exportAssignment := exportEqualsSymbol.ValueDeclaration
+			err := c.error(node.Name(), diagnostics.Module_0_can_only_be_default_imported_using_the_1_flag, c.symbolToString(moduleSymbol), compilerOptionName)
+			if exportAssignment != nil {
+				err.AddRelatedInfo(createDiagnosticForNode(exportAssignment, diagnostics.This_module_is_declared_with_export_and_can_only_be_used_with_a_default_import_when_using_the_0_flag, compilerOptionName))
+			}
+		} else if ast.IsImportClause(node) {
+			c.reportNonDefaultExport(moduleSymbol, node)
+		} else {
+			var name *ast.Node
+			if ast.IsImportOrExportSpecifier(node) {
+				name = node.PropertyName()
+			}
+			if name == nil {
+				name = node.Name()
+			}
+			c.errorNoModuleMemberSymbol(moduleSymbol, moduleSymbol, node, name)
+		}
+	} else if hasSyntheticDefault || hasDefaultOnly {
+		// per emit behavior, a synthetic default overrides a "real" .default member if `__esModule` is not present
+		resolved := c.resolveExternalModuleSymbol(moduleSymbol, dontResolveAlias)
+		if resolved == nil {
+			resolved = c.resolveSymbolEx(moduleSymbol, dontResolveAlias)
+		}
+		c.markSymbolOfAliasDeclarationIfTypeOnly(node, moduleSymbol, resolved /*overwriteEmpty*/, false, nil, "")
+		return resolved
+	}
+	c.markSymbolOfAliasDeclarationIfTypeOnly(node, exportDefaultSymbol /*finalTarget*/, nil /*overwriteEmpty*/, false, nil, "")
 	return exportDefaultSymbol
+}
+
+func (c *Checker) reportNonDefaultExport(moduleSymbol *ast.Symbol, node *ast.Node) {
+	// !!!
 }
 
 func (c *Checker) resolveExportByName(moduleSymbol *ast.Symbol, name string, sourceNode *ast.Node, dontResolveAlias bool) *ast.Symbol {
@@ -8906,7 +9036,7 @@ func (c *Checker) getExternalModuleMember(node *ast.Node, specifier *ast.Node, d
 			symbolFromModule := c.getExportOfModule(targetSymbol, nameText, specifier, dontResolveAlias)
 			if symbolFromModule == nil && nameText == ast.InternalSymbolNameDefault {
 				file := core.Find(moduleSymbol.Declarations, ast.IsSourceFile)
-				if c.isOnlyImportableAsDefault(moduleSpecifier, moduleSymbol) || c.canHaveSyntheticDefault(file.AsSourceFile(), moduleSymbol, dontResolveAlias, moduleSpecifier) {
+				if c.isOnlyImportableAsDefault(moduleSpecifier, moduleSymbol) || c.canHaveSyntheticDefault(file, moduleSymbol, dontResolveAlias, moduleSpecifier) {
 					symbolFromModule = c.resolveExternalModuleSymbol(moduleSymbol, dontResolveAlias)
 					if symbolFromModule == nil {
 						symbolFromModule = c.resolveSymbolEx(moduleSymbol, dontResolveAlias)
@@ -9009,7 +9139,7 @@ func (c *Checker) isOnlyImportableAsDefault(usage *ast.Node, resolvedModule *ast
 	return false
 }
 
-func (c *Checker) canHaveSyntheticDefault(file *ast.SourceFile, moduleSymbol *ast.Symbol, dontResolveAlias bool, usage *ast.Node) bool {
+func (c *Checker) canHaveSyntheticDefault(file *ast.Node, moduleSymbol *ast.Symbol, dontResolveAlias bool, usage *ast.Node) bool {
 	// !!!
 	// var usageMode ResolutionMode
 	// if file != nil {
@@ -9031,7 +9161,7 @@ func (c *Checker) canHaveSyntheticDefault(file *ast.SourceFile, moduleSymbol *as
 		return false
 	}
 	// Declaration files (and ambient modules)
-	if file == nil || file.IsDeclarationFile {
+	if file == nil || file.AsSourceFile().IsDeclarationFile {
 		// Definitely cannot have a synthetic default if they have a syntactic default member specified
 		defaultExportSymbol := c.resolveExportByName(moduleSymbol, ast.InternalSymbolNameDefault /*sourceNode*/, nil /*dontResolveAlias*/, true)
 		// Dont resolve alias because we want the immediately exported symbol's declaration
@@ -9785,7 +9915,24 @@ func (c *Checker) lateBindMember(parent *ast.Symbol, earlySymbols ast.SymbolTabl
 }
 
 func (c *Checker) lateBindIndexSignature(parent *ast.Symbol, earlySymbols ast.SymbolTable, lateSymbols ast.SymbolTable, decl *ast.Node) {
-	// !!!
+	// First, late bind the index symbol itself, if needed
+	indexSymbol := lateSymbols[ast.InternalSymbolNameIndex]
+	if indexSymbol == nil {
+		early := earlySymbols[ast.InternalSymbolNameIndex]
+		if early == nil {
+			indexSymbol = c.newSymbolEx(ast.SymbolFlagsNone, ast.InternalSymbolNameIndex, ast.CheckFlagsLate)
+		} else {
+			indexSymbol = c.cloneSymbol(early)
+			indexSymbol.CheckFlags |= ast.CheckFlagsLate
+		}
+		lateSymbols[ast.InternalSymbolNameIndex] = indexSymbol
+	}
+	// Then just add the computed name as a late bound declaration
+	// (note: unlike `addDeclarationToLateBoundSymbol` we do not set up a `.lateSymbol` on `decl`'s links,
+	// since that would point at an index symbol and not a single property symbol, like most consumers would expect)
+	if len(indexSymbol.Declarations) == 0 || !decl.Symbol().IsReplaceableByMethod {
+		indexSymbol.Declarations = append(indexSymbol.Declarations, decl)
+	}
 }
 
 // Adds a declaration to a late-bound dynamic member. This performs the same function for
@@ -12577,7 +12724,7 @@ func (c *Checker) getErasedSignature(signature *Signature) *Signature {
 	if len(signature.typeParameters) == 0 {
 		return signature
 	}
-	key := CachedSignatureKey{sig: signature, key: "-"}
+	key := CachedSignatureKey{sig: signature, key: SignatureKeyErased}
 	erased := c.cachedSignatures[key]
 	if erased == nil {
 		erased = c.instantiateSignatureEx(signature, newArrayToSingleTypeMapper(signature.typeParameters, c.anyType), true /*eraseTypeParameters*/)
@@ -12590,7 +12737,7 @@ func (c *Checker) getCanonicalSignature(signature *Signature) *Signature {
 	if len(signature.typeParameters) == 0 {
 		return signature
 	}
-	key := CachedSignatureKey{sig: signature, key: "*"}
+	key := CachedSignatureKey{sig: signature, key: SignatureKeyCanonical}
 	canonical := c.cachedSignatures[key]
 	if canonical == nil {
 		canonical = c.createCanonicalSignature(signature)
@@ -12619,7 +12766,7 @@ func (c *Checker) getBaseSignature(signature *Signature) *Signature {
 	if len(typeParameters) == 0 {
 		return signature
 	}
-	key := CachedSignatureKey{sig: signature, key: "#"}
+	key := CachedSignatureKey{sig: signature, key: SignatureKeyBase}
 	if cached := c.cachedSignatures[key]; cached != nil {
 		return cached
 	}
@@ -13453,12 +13600,24 @@ func mayReturnNever(fn *ast.Node) bool {
 
 func (c *Checker) createPromiseType(promisedType *Type) *Type {
 	// creates a `Promise<T>` type where `T` is the promisedType argument
-	globalPromiseType := c.getGlobalPromiseType()
+	globalPromiseType := c.getGlobalPromiseTypeChecked()
 	if globalPromiseType != c.emptyGenericType {
 		// if the promised type is itself a promise, get the underlying type; otherwise, fallback to the promised type
 		// Unwrap an `Awaited<T>` to `T` to improve inference.
 		promisedType = core.OrElse(c.getAwaitedTypeNoAlias(c.unwrapAwaitedType(promisedType)), c.unknownType)
 		return c.createTypeReference(globalPromiseType, []*Type{promisedType})
+	}
+	return c.unknownType
+}
+
+func (c *Checker) createPromiseLikeType(promisedType *Type) *Type {
+	// creates a `PromiseLike<T>` type where `T` is the promisedType argument
+	globalPromiseLikeType := c.getGlobalPromiseLikeType()
+	if globalPromiseLikeType != c.emptyGenericType {
+		// if the promised type is itself a promise, get the underlying type; otherwise, fallback to the promised type
+		// Unwrap an `Awaited<T>` to `T` to improve inference.
+		promisedType = core.OrElse(c.getAwaitedTypeNoAlias(c.unwrapAwaitedType(promisedType)), c.unknownType)
+		return c.createTypeReference(globalPromiseLikeType, []*Type{promisedType})
 	}
 	return c.unknownType
 }
@@ -13526,8 +13685,21 @@ func (c *Checker) getWidenedLiteralLikeTypeForContextualIterationTypeIfNeeded(t 
 }
 
 func (c *Checker) createGeneratorType(yieldType *Type, returnType *Type, nextType *Type, isAsyncGenerator bool) *Type {
-	// !!!
-	return c.errorType
+	resolver := core.IfElse(isAsyncGenerator, c.asyncIterationTypesResolver, c.syncIterationTypesResolver)
+	globalGeneratorType := resolver.getGlobalGeneratorType()
+	yieldType = core.OrElse(resolver.resolveIterationType(yieldType, nil /*errorNode*/), c.unknownType)
+	returnType = core.OrElse(resolver.resolveIterationType(returnType, nil /*errorNode*/), c.unknownType)
+	if globalGeneratorType == c.emptyGenericType {
+		// Fall back to the global IterableIterator type.
+		globalIterableIteratorType := resolver.getGlobalIterableIteratorType()
+		if globalIterableIteratorType != c.emptyGenericType {
+			return c.createTypeFromGenericGlobalType(globalIterableIteratorType, []*Type{yieldType, returnType, nextType})
+		}
+		// The global Generator type doesn't exist, so report an error
+		resolver.getGlobalIterableIteratorTypeChecked()
+		return c.emptyObjectType
+	}
+	return c.createTypeFromGenericGlobalType(globalGeneratorType, []*Type{yieldType, returnType, nextType})
 }
 
 func (c *Checker) reportErrorsFromWidening(declaration *ast.Node, t *Type, wideningKind WideningKind) {
@@ -20732,8 +20904,93 @@ func (c *Checker) getPromisedTypeOfPromise(t *Type) *Type {
 	return c.getPromisedTypeOfPromiseEx(t, nil, nil)
 }
 
+// Gets the "promised type" of a promise.
+// @param type The type of the promise.
+// @remarks The "promised type" of a type is the type of the "value" parameter of the "onfulfilled" callback.
 func (c *Checker) getPromisedTypeOfPromiseEx(t *Type, errorNode *ast.Node, thisTypeForErrorOut **Type) *Type {
-	return nil // !!!
+	//  { // type
+	//      then( // thenFunction
+	//          onfulfilled: ( // onfulfilledParameterType
+	//              value: T // valueParameterType
+	//          ) => any
+	//      ): any;
+	//  }
+	if isTypeAny(t) {
+		return nil
+	}
+	key := CachedTypeKey{kind: CachedTypeKindPromisedTypeOfPromise, typeId: t.id}
+	if cached := c.cachedTypes[key]; cached != nil {
+		return cached
+	}
+	if c.isReferenceToType(t, c.getGlobalPromiseType()) {
+		result := c.getTypeArguments(t)[0]
+		c.cachedTypes[key] = result
+		return result
+	}
+	// primitives with a `{ then() }` won't be unwrapped/adopted.
+	if c.allTypesAssignableToKind(c.getBaseConstraintOrType(t), TypeFlagsPrimitive|TypeFlagsNever) {
+		return nil
+	}
+	thenFunction := c.getTypeOfPropertyOfType(t, "then")
+	// TODO: GH#18217
+	if isTypeAny(thenFunction) {
+		return nil
+	}
+	var thenSignatures []*Signature
+	if thenFunction != nil {
+		thenSignatures = c.getSignaturesOfType(thenFunction, SignatureKindCall)
+	}
+	if len(thenSignatures) == 0 {
+		if errorNode != nil {
+			c.error(errorNode, diagnostics.A_promise_must_have_a_then_method)
+		}
+		return nil
+	}
+	var thisTypeForError *Type
+	var candidates []*Signature
+	for _, thenSignature := range thenSignatures {
+		thisType := c.getThisTypeOfSignature(thenSignature)
+		if thisType != nil && thisType != c.voidType && !c.isTypeRelatedTo(t, thisType, c.subtypeRelation) {
+			thisTypeForError = thisType
+		} else {
+			candidates = append(candidates, thenSignature)
+		}
+	}
+	if len(candidates) == 0 {
+		// Debug.assertIsDefined(thisTypeForError)
+		if thisTypeForErrorOut != nil {
+			*thisTypeForErrorOut = thisTypeForError
+		}
+		if errorNode != nil {
+			c.error(errorNode, diagnostics.The_this_context_of_type_0_is_not_assignable_to_method_s_this_of_type_1, c.typeToString(t), c.typeToString(thisTypeForError))
+		}
+		return nil
+	}
+	onfulfilledParameterType := c.getTypeWithFacts(c.getUnionType(core.Map(candidates, c.getTypeOfFirstParameterOfSignature)), TypeFactsNEUndefinedOrNull)
+	if isTypeAny(onfulfilledParameterType) {
+		return nil
+	}
+	onfulfilledParameterSignatures := c.getSignaturesOfType(onfulfilledParameterType, SignatureKindCall)
+	if len(onfulfilledParameterSignatures) == 0 {
+		if errorNode != nil {
+			c.error(errorNode, diagnostics.The_first_parameter_of_the_then_method_of_a_promise_must_be_a_callback)
+		}
+		return nil
+	}
+	result := c.getUnionTypeEx(core.Map(onfulfilledParameterSignatures, c.getTypeOfFirstParameterOfSignature), UnionReductionSubtype, nil, nil)
+	c.cachedTypes[key] = result
+	return result
+}
+
+func (c *Checker) getTypeOfFirstParameterOfSignature(signature *Signature) *Type {
+	return c.getTypeOfFirstParameterOfSignatureWithFallback(signature, c.neverType)
+}
+
+func (c *Checker) getTypeOfFirstParameterOfSignatureWithFallback(signature *Signature, fallbackType *Type) *Type {
+	if len(signature.parameters) > 0 {
+		return c.getTypeAtPosition(signature, 0)
+	}
+	return fallbackType
 }
 
 func getMappedTypeModifiers(t *Type) MappedTypeModifiers {
@@ -21334,7 +21591,12 @@ func (c *Checker) getContextualTypeForBindingElement(declaration *ast.Node, cont
 }
 
 func (c *Checker) getContextualTypeForStaticPropertyDeclaration(declaration *ast.Node, contextFlags ContextFlags) *Type {
-	return nil // !!!
+	if ast.IsExpression(declaration.Parent) {
+		if parentType := c.getContextualType(declaration.Parent, contextFlags); parentType != nil {
+			return c.getTypeOfPropertyOfContextualType(parentType, c.getSymbolOfDeclaration(declaration).Name)
+		}
+	}
+	return nil
 }
 
 func (c *Checker) getContextualTypeForReturnExpression(node *ast.Node, contextFlags ContextFlags) *Type {
@@ -21342,27 +21604,26 @@ func (c *Checker) getContextualTypeForReturnExpression(node *ast.Node, contextFl
 	if fn != nil {
 		contextualReturnType := c.getContextualReturnType(fn, contextFlags)
 		if contextualReturnType != nil {
-			// !!!
-			// functionFlags := getFunctionFlags(fn)
-			// if functionFlags&FunctionFlagsGenerator != 0 {
-			// 	isAsyncGenerator := (functionFlags & FunctionFlagsAsync) != 0
-			// 	if contextualReturnType.flags&TypeFlagsUnion != 0 {
-			// 		contextualReturnType = c.filterType(contextualReturnType, func(t *Type) bool {
-			// 			return c.getIterationTypeOfGeneratorFunctionReturnType(IterationTypeKindReturn, t, isAsyncGenerator) != nil
-			// 		})
-			// 	}
-			// 	iterationReturnType := c.getIterationTypeOfGeneratorFunctionReturnType(IterationTypeKindReturn, contextualReturnType, (functionFlags&FunctionFlagsAsync) != 0)
-			// 	if iterationReturnType == nil {
-			// 		return nil
-			// 	}
-			// 	contextualReturnType = iterationReturnType
-			// 	// falls through to unwrap Promise for AsyncGenerators
-			// }
-			// if functionFlags&FunctionFlagsAsync != 0 {
-			// 	// Get the awaited type without the `Awaited<T>` alias
-			// 	contextualAwaitedType := c.mapType(contextualReturnType, c.getAwaitedTypeNoAlias)
-			// 	return c.getUnionType([]*Type{contextualAwaitedType, c.createPromiseLikeType(contextualAwaitedType)})
-			// }
+			functionFlags := getFunctionFlags(fn)
+			if functionFlags&FunctionFlagsGenerator != 0 {
+				isAsyncGenerator := (functionFlags & FunctionFlagsAsync) != 0
+				if contextualReturnType.flags&TypeFlagsUnion != 0 {
+					contextualReturnType = c.filterType(contextualReturnType, func(t *Type) bool {
+						return c.getIterationTypeOfGeneratorFunctionReturnType(IterationTypeKindReturn, t, isAsyncGenerator) != nil
+					})
+				}
+				iterationReturnType := c.getIterationTypeOfGeneratorFunctionReturnType(IterationTypeKindReturn, contextualReturnType, (functionFlags&FunctionFlagsAsync) != 0)
+				if iterationReturnType == nil {
+					return nil
+				}
+				contextualReturnType = iterationReturnType
+				// falls through to unwrap Promise for AsyncGenerators
+			}
+			if functionFlags&FunctionFlagsAsync != 0 {
+				// Get the awaited type without the `Awaited<T>` alias
+				contextualAwaitedType := c.mapType(contextualReturnType, c.getAwaitedTypeNoAlias)
+				return c.getUnionType([]*Type{contextualAwaitedType, c.createPromiseLikeType(contextualAwaitedType)})
+			}
 			// Regular function or Generator function
 			return contextualReturnType
 		}
@@ -21391,18 +21652,17 @@ func (c *Checker) getContextualReturnType(functionDecl *ast.Node, contextFlags C
 	signature := c.getContextualSignatureForFunctionLikeDeclaration(functionDecl)
 	if signature != nil && !c.isResolvingReturnTypeOfSignature(signature) {
 		returnType := c.getReturnTypeOfSignature(signature)
-		// !!!
-		// functionFlags := getFunctionFlags(functionDecl)
-		// if functionFlags&FunctionFlagsGenerator != 0 {
-		// 	return c.filterType(returnType, func(t *Type) bool {
-		// 		return t.flags&(TypeFlagsAnyOrUnknown|TypeFlagsVoid|TypeFlagsInstantiableNonPrimitive) != 0 || c.checkGeneratorInstantiationAssignabilityToReturnType(t, functionFlags, nil /*errorNode*/)
-		// 	})
-		// }
-		// if functionFlags&FunctionFlagsAsync != 0 {
-		// 	return c.filterType(returnType, func(t *Type) bool {
-		// 		return t.flags&(TypeFlagsAnyOrUnknown|TypeFlagsVoid|TypeFlagsInstantiableNonPrimitive) != 0 || c.getAwaitedTypeOfPromise(t) != nil
-		// 	})
-		// }
+		functionFlags := getFunctionFlags(functionDecl)
+		if functionFlags&FunctionFlagsGenerator != 0 {
+			return c.filterType(returnType, func(t *Type) bool {
+				return t.flags&(TypeFlagsAnyOrUnknown|TypeFlagsVoid|TypeFlagsInstantiableNonPrimitive) != 0 || c.checkGeneratorInstantiationAssignabilityToReturnType(t, functionFlags, nil /*errorNode*/)
+			})
+		}
+		if functionFlags&FunctionFlagsAsync != 0 {
+			return c.filterType(returnType, func(t *Type) bool {
+				return t.flags&(TypeFlagsAnyOrUnknown|TypeFlagsVoid|TypeFlagsInstantiableNonPrimitive) != 0 || c.getAwaitedTypeOfPromise(t) != nil
+			})
+		}
 		return returnType
 	}
 	iife := ast.GetImmediatelyInvokedFunctionExpression(functionDecl)
@@ -21410,6 +21670,20 @@ func (c *Checker) getContextualReturnType(functionDecl *ast.Node, contextFlags C
 		return c.getContextualType(iife, contextFlags)
 	}
 	return nil
+}
+
+func (c *Checker) checkGeneratorInstantiationAssignabilityToReturnType(returnType *Type, functionFlags FunctionFlags, errorNode *ast.Node) bool {
+	// Naively, one could check that Generator<any, any, any> is assignable to the return type annotation.
+	// However, that would not catch the error in the following case.
+	//
+	//    interface BadGenerator extends Iterable<number>, Iterator<string> { }
+	//    function* g(): BadGenerator { } // Iterable and Iterator have different types!
+	//
+	generatorYieldType := core.OrElse(c.getIterationTypeOfGeneratorFunctionReturnType(IterationTypeKindYield, returnType, (functionFlags&FunctionFlagsAsync) != 0), c.anyType)
+	generatorReturnType := core.OrElse(c.getIterationTypeOfGeneratorFunctionReturnType(IterationTypeKindReturn, returnType, (functionFlags&FunctionFlagsAsync) != 0), generatorYieldType)
+	generatorNextType := core.OrElse(c.getIterationTypeOfGeneratorFunctionReturnType(IterationTypeKindNext, returnType, (functionFlags&FunctionFlagsAsync) != 0), c.unknownType)
+	generatorInstantiation := c.createGeneratorType(generatorYieldType, generatorReturnType, generatorNextType, functionFlags&FunctionFlagsAsync != 0)
+	return c.checkTypeAssignableTo(generatorInstantiation, returnType, errorNode, nil)
 }
 
 func (c *Checker) getContextualSignatureForFunctionLikeDeclaration(node *ast.Node) *Signature {
@@ -21421,11 +21695,45 @@ func (c *Checker) getContextualSignatureForFunctionLikeDeclaration(node *ast.Nod
 }
 
 func (c *Checker) getContextualTypeForYieldOperand(node *ast.Node, contextFlags ContextFlags) *Type {
-	return nil // !!!
+	fn := getContainingFunction(node)
+	if fn != nil {
+		functionFlags := getFunctionFlags(fn)
+		contextualReturnType := c.getContextualReturnType(fn, contextFlags)
+		if contextualReturnType != nil {
+			isAsyncGenerator := functionFlags&FunctionFlagsAsync != 0
+			isYieldStar := node.AsYieldExpression().AsteriskToken != nil
+			if !isYieldStar && contextualReturnType.flags&TypeFlagsUnion != 0 {
+				contextualReturnType = c.filterType(contextualReturnType, func(t *Type) bool {
+					return c.getIterationTypeOfGeneratorFunctionReturnType(IterationTypeKindReturn, t, isAsyncGenerator) != nil
+				})
+			}
+			if isYieldStar {
+				iterationTypes := c.getIterationTypesOfGeneratorFunctionReturnType(contextualReturnType, isAsyncGenerator)
+				yieldType := core.OrElse(iterationTypes.yieldType, c.silentNeverType)
+				returnType := core.OrElse(c.getContextualType(node, contextFlags), c.silentNeverType)
+				nextType := core.OrElse(iterationTypes.nextType, c.unknownType)
+				generatorType := c.createGeneratorType(yieldType, returnType, nextType, false /*isAsyncGenerator*/)
+				if isAsyncGenerator {
+					asyncGeneratorType := c.createGeneratorType(yieldType, returnType, nextType, true /*isAsyncGenerator*/)
+					return c.getUnionType([]*Type{generatorType, asyncGeneratorType})
+				}
+				return generatorType
+			}
+			return c.getIterationTypeOfGeneratorFunctionReturnType(IterationTypeKindYield, contextualReturnType, isAsyncGenerator)
+		}
+	}
+	return nil
 }
 
 func (c *Checker) getContextualTypeForAwaitOperand(node *ast.Node, contextFlags ContextFlags) *Type {
-	return nil // !!!
+	contextualType := c.getContextualType(node, contextFlags)
+	if contextualType != nil {
+		contextualAwaitedType := c.getAwaitedTypeNoAlias(contextualType)
+		if contextualAwaitedType != nil {
+			return c.getUnionType([]*Type{contextualAwaitedType, c.createPromiseLikeType(contextualAwaitedType)})
+		}
+	}
+	return nil
 }
 
 // In a typed function call, an argument or substitution expression is contextually typed by the type of the corresponding parameter.
@@ -21610,7 +21918,10 @@ func (c *Checker) getContextualTypeForConditionalOperand(node *ast.Node, context
 }
 
 func (c *Checker) getContextualTypeForSubstitutionExpression(template *ast.Node, substitutionExpression *ast.Node) *Type {
-	return nil // !!!
+	if ast.IsTaggedTemplateExpression(template.Parent) {
+		return c.getContextualTypeForArgument(template.Parent, substitutionExpression)
+	}
+	return nil
 }
 
 func (c *Checker) getContextualTypeForJsxExpression(node *ast.Node, contextFlags ContextFlags) *Type {
@@ -21626,7 +21937,7 @@ func (c *Checker) getContextualJsxElementAttributesType(attribute *ast.Node, con
 }
 
 func (c *Checker) getContextualImportAttributeType(node *ast.Node) *Type {
-	return nil // !!!
+	return c.getTypeOfPropertyOfContextualType(c.getGlobalImportAttributesType(false), node.Name().Text())
 }
 
 /**
