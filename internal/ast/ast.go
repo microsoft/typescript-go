@@ -379,7 +379,48 @@ func (n *Node) TagName() *Node {
 		return n.AsJsxClosingElement().TagName
 	case KindJsxSelfClosingElement:
 		return n.AsJsxSelfClosingElement().TagName
-		// TODO: JSDoc tags
+	case KindJSDocTag:
+		return n.AsJSDocUnknownTag().TagName
+	case KindJSDocAugmentsTag:
+		return n.AsJSDocAugmentsTag().TagName
+	case KindJSDocImplementsTag:
+		return n.AsJSDocImplementsTag().TagName
+	case KindJSDocDeprecatedTag:
+		return n.AsJSDocDeprecatedTag().TagName
+	case KindJSDocPublicTag:
+		return n.AsJSDocPublicTag().TagName
+	case KindJSDocPrivateTag:
+		return n.AsJSDocPrivateTag().TagName
+	case KindJSDocProtectedTag:
+		return n.AsJSDocProtectedTag().TagName
+	case KindJSDocReadonlyTag:
+		return n.AsJSDocReadonlyTag().TagName
+	case KindJSDocOverrideTag:
+		return n.AsJSDocOverrideTag().TagName
+	case KindJSDocCallbackTag:
+		return n.AsJSDocCallbackTag().TagName
+	case KindJSDocOverloadTag:
+		return n.AsJSDocOverloadTag().TagName
+	case KindJSDocParameterTag:
+		return n.AsJSDocParameterTag().TagName
+	case KindJSDocReturnTag:
+		return n.AsJSDocReturnTag().TagName
+	case KindJSDocThisTag:
+		return n.AsJSDocThisTag().TagName
+	case KindJSDocTypeTag:
+		return n.AsJSDocTypeTag().TagName
+	case KindJSDocTemplateTag:
+		return n.AsJSDocTemplateTag().TagName
+	case KindJSDocTypedefTag:
+		return n.AsJSDocTypedefTag().TagName
+	case KindJSDocSeeTag:
+		return n.AsJSDocSeeTag().TagName
+	case KindJSDocPropertyTag:
+		return n.AsJSDocPropertyTag().TagName
+	case KindJSDocSatisfiesTag:
+		return n.AsJSDocSatisfiesTag().TagName
+	case KindJSDocImportTag:
+		return n.AsJSDocImportTag().TagName
 	}
 	panic("Unhandled case in Node.TagName: " + n.Kind.String())
 }
