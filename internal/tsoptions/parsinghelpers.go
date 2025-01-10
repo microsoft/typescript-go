@@ -100,7 +100,7 @@ func parseJsonToStringKey(json any) map[string]any {
 	return result
 }
 
-func parseCompilerOptions(key string, value any, allOptions *core.CompilerOptions, errors []*ast.Diagnostic) []*ast.Diagnostic {
+func parseCompilerOptions(key string, value any, allOptions *core.CompilerOptions) []*ast.Diagnostic {
 	if allOptions == nil {
 		return nil
 	}
@@ -206,9 +206,9 @@ func parseCompilerOptions(key string, value any, allOptions *core.CompilerOption
 	case "newLine":
 		allOptions.NewLine = value.(core.NewLineKind)
 	default:
-		errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.Unknown_compiler_option_0, key))
+		return []*ast.Diagnostic{ast.NewCompilerDiagnostic(diagnostics.Unknown_compiler_option_0, key)}
 	}
-	return errors
+	return nil
 }
 
 func ParseRawConfig(json any, basePath string, errors []*ast.Diagnostic, configFileName string) tsConfigOptions {
