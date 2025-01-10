@@ -1,4 +1,4 @@
-package baseline
+package tsbaseline
 
 import (
 	"fmt"
@@ -11,6 +11,9 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/diagnosticwriter"
+	"github.com/microsoft/typescript-go/internal/testutil/baseline"
+	"github.com/microsoft/typescript-go/internal/testutil/harnessutil"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"gotest.tools/v3/assert"
 	"gotest.tools/v3/assert/cmp"
@@ -19,20 +22,8 @@ import (
 // IO
 const harnessNewLine = "\r\n"
 
-var (
-	lineDelimiter = regexp.MustCompile("\r?\n")
-	nonWhitespace = regexp.MustCompile(`\S`)
-	tsExtension   = regexp.MustCompile(`\.tsx?$`)
-)
-
-var formatOpts = &compiler.DiagnosticsFormattingOptions{
+var formatOpts = &diagnosticwriter.FormattingOptions{
 	NewLine: harnessNewLine,
-}
-
-type TestFile struct {
-	unitName    string
-	content     string
-	fileOptions map[string]string
 }
 
 var (
@@ -40,34 +31,34 @@ var (
 	diagnosticsLocationPattern = regexp.MustCompile(`(?i)(lib.*\.d\.ts):\d+:\d+`)
 )
 
-func DoErrorBaseline(t testing.TB, baselinePath string, inputFiles []*TestFile, errors []*ast.Diagnostic, pretty bool) {
+func DoErrorBaseline(t *testing.T, baselinePath string, inputFiles []*harnessutil.TestFile, errors []*ast.Diagnostic, pretty bool, subfolder string) {
 	baselinePath = tsExtension.ReplaceAllString(baselinePath, ".errors.txt")
 	var errorBaseline string
 	if len(errors) > 0 {
 		errorBaseline = getErrorBaseline(t, inputFiles, errors, pretty)
 	} else {
-		errorBaseline = NoContent
+		errorBaseline = baseline.NoContent
 	}
-	Run(t, baselinePath, errorBaseline, Options{})
+	baseline.Run(t, baselinePath, errorBaseline, baseline.Options{Subfolder: subfolder})
 }
 
 func minimalDiagnosticsToString(diagnostics []*ast.Diagnostic, pretty bool) string {
 	var output strings.Builder
 	if pretty {
-		compiler.FormatDiagnosticsWithColorAndContext(&output, diagnostics, formatOpts)
+		diagnosticwriter.FormatDiagnosticsWithColorAndContext(&output, diagnostics, formatOpts)
 	} else {
-		compiler.WriteFormatDiagnostics(&output, diagnostics, formatOpts)
+		diagnosticwriter.WriteFormatDiagnostics(&output, diagnostics, formatOpts)
 	}
 	return output.String()
 }
 
-func getErrorBaseline(t testing.TB, inputFiles []*TestFile, diagnostics []*ast.Diagnostic, pretty bool) string {
+func getErrorBaseline(t *testing.T, inputFiles []*harnessutil.TestFile, diagnostics []*ast.Diagnostic, pretty bool) string {
 	t.Helper()
 	outputLines := iterateErrorBaseline(t, inputFiles, diagnostics, pretty)
 
 	if pretty {
 		var summaryBuilder strings.Builder
-		compiler.WriteErrorSummaryText(
+		diagnosticwriter.WriteErrorSummaryText(
 			&summaryBuilder,
 			diagnostics,
 			formatOpts)
@@ -77,7 +68,7 @@ func getErrorBaseline(t testing.TB, inputFiles []*TestFile, diagnostics []*ast.D
 	return strings.Join(outputLines, "")
 }
 
-func iterateErrorBaseline(t testing.TB, inputFiles []*TestFile, inputDiagnostics []*ast.Diagnostic, pretty bool) []string {
+func iterateErrorBaseline(t *testing.T, inputFiles []*harnessutil.TestFile, inputDiagnostics []*ast.Diagnostic, pretty bool) []string {
 	t.Helper()
 	diagnostics := slices.Clone(inputDiagnostics)
 	slices.SortFunc(diagnostics, compiler.CompareDiagnostics)
@@ -108,7 +99,7 @@ func iterateErrorBaseline(t testing.TB, inputFiles []*TestFile, inputDiagnostics
 			if len(line) < 0 {
 				continue
 			}
-			out := fmt.Sprintf("!!! %s TS%d: %s", diag.Category().String(), diag.Code(), line)
+			out := fmt.Sprintf("!!! %s TS%d: %s", diag.Category().Name(), diag.Code(), line)
 			errLines = append(errLines, out)
 		}
 
@@ -161,19 +152,19 @@ func iterateErrorBaseline(t testing.TB, inputFiles []*TestFile, inputDiagnostics
 
 	// 'merge' the lines of each input file with any errors associated with it
 	dupeCase := map[string]int{}
-	nonEmptyFiles := core.Filter(inputFiles, func(f *TestFile) bool { return len(f.content) > 0 })
+	nonEmptyFiles := core.Filter(inputFiles, func(f *harnessutil.TestFile) bool { return len(f.Content) > 0 })
 	for _, inputFile := range nonEmptyFiles {
 		// Filter down to the errors in the file
 		fileErrors := core.Filter(diagnostics, func(e *ast.Diagnostic) bool {
 			return e.File() != nil &&
-				tspath.ComparePaths(removeTestPathPrefixes(e.File().FileName(), false), removeTestPathPrefixes(inputFile.unitName, false), tspath.ComparePathsOptions{}) == 0
+				tspath.ComparePaths(removeTestPathPrefixes(e.File().FileName(), false), removeTestPathPrefixes(inputFile.UnitName, false), tspath.ComparePathsOptions{}) == 0
 		})
 
 		// Header
 		fmt.Fprintf(&outputLines,
 			"%s==== %s (%d errors) ====",
 			newLine(),
-			removeTestPathPrefixes(inputFile.unitName, false),
+			removeTestPathPrefixes(inputFile.UnitName, false),
 			len(fileErrors),
 		)
 
@@ -181,15 +172,15 @@ func iterateErrorBaseline(t testing.TB, inputFiles []*TestFile, inputDiagnostics
 		markedErrorCount := 0
 		// For each line, emit the line followed by any error squiggles matching this line
 
-		lineStarts := core.ComputeLineStarts(inputFile.content)
-		lines := lineDelimiter.Split(inputFile.content, -1)
+		lineStarts := core.ComputeLineStarts(inputFile.Content)
+		lines := lineDelimiter.Split(inputFile.Content, -1)
 
 		for lineIndex, line := range lines {
 			thisLineStart := int(lineStarts[lineIndex])
 			var nextLineStart int
 			// On the last line of the file, fake the next line start number so that we handle errors on the last character of the file correctly
 			if lineIndex == len(lines)-1 {
-				nextLineStart = len(inputFile.content)
+				nextLineStart = len(inputFile.Content)
 			} else {
 				nextLineStart = int(lineStarts[lineIndex+1])
 			}
@@ -223,9 +214,8 @@ func iterateErrorBaseline(t testing.TB, inputFiles []*TestFile, inputDiagnostics
 		}
 
 		// Verify we didn't miss any errors in this file
-		assert.Check(t, cmp.Equal(markedErrorCount, len(fileErrors)), "count of errors in "+inputFile.unitName)
-		_, isDupe := dupeCase[sanitizeTestFilePath(inputFile.unitName)]
-		checkDuplicatedFileName(inputFile.unitName, dupeCase)
+		assert.Check(t, cmp.Equal(markedErrorCount, len(fileErrors)), "count of errors in "+inputFile.UnitName)
+		_, isDupe := dupeCase[sanitizeTestFilePath(inputFile.UnitName)]
 		result = append(result, outputLines.String())
 		if isDupe {
 			// Case-duplicated files on a case-insensitive build will have errors reported in both the dupe and the original
@@ -253,27 +243,14 @@ func iterateErrorBaseline(t testing.TB, inputFiles []*TestFile, inputDiagnostics
 	return result
 }
 
-func checkDuplicatedFileName(resultName string, dupeCase map[string]int) string {
-	resultName = sanitizeTestFilePath(resultName)
-	if _, ok := dupeCase[resultName]; ok {
-		// A different baseline filename should be manufactured if the names differ only in case, for windows compat
-		count := 1 + dupeCase[resultName]
-		dupeCase[resultName] = count
-		resultName = fmt.Sprintf("%s.dupe%d", resultName, count)
-	} else {
-		dupeCase[resultName] = 0
-	}
-	return resultName
-}
-
 func flattenDiagnosticMessage(d *ast.Diagnostic, newLine string) string {
 	var output strings.Builder
-	compiler.WriteFlattenedDiagnosticMessage(&output, d, newLine)
+	diagnosticwriter.WriteFlattenedDiagnosticMessage(&output, d, newLine)
 	return output.String()
 }
 
-func formatLocation(file *ast.SourceFile, pos int, formatOpts *compiler.DiagnosticsFormattingOptions, writeWithStyleAndReset compiler.FormattedWriter) string {
+func formatLocation(file *ast.SourceFile, pos int, formatOpts *diagnosticwriter.FormattingOptions, writeWithStyleAndReset diagnosticwriter.FormattedWriter) string {
 	var output strings.Builder
-	compiler.WriteLocation(&output, file, pos, formatOpts, writeWithStyleAndReset)
+	diagnosticwriter.WriteLocation(&output, file, pos, formatOpts, writeWithStyleAndReset)
 	return output.String()
 }

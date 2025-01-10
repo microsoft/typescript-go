@@ -1844,6 +1844,10 @@ func (node *ReturnStatement) ForEachChild(v Visitor) bool {
 	return visit(v, node.Expression)
 }
 
+func IsReturnStatement(node *Node) bool {
+	return node.Kind == KindReturnStatement
+}
+
 // WithStatement
 
 type WithStatement struct {
@@ -5765,6 +5769,7 @@ type SourceFile struct {
 	IsDeclarationFile           bool
 	IsBound                     bool
 	ModuleReferencesProcessed   bool
+	HasNoDefaultLib             bool
 	UsesUriStyleNodeCoreModules core.Tristate
 	SymbolCount                 int
 	ClassifiableNames           core.Set[string]
@@ -5772,7 +5777,6 @@ type SourceFile struct {
 	ModuleAugmentations         []*ModuleName      // []ModuleName
 	PatternAmbientModules       []PatternAmbientModule
 	AmbientModuleNames          []string
-	HasNoDefaultLib             bool
 	jsdocCache                  map[*Node][]*Node
 	Pragmas                     []Pragma
 	ReferencedFiles             []*FileReference

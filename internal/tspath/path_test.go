@@ -408,10 +408,10 @@ func TestGetRelativePathToDirectoryOrUrl(t *testing.T) {
 
 func TestToFileNameLowerCase(t *testing.T) {
 	t.Parallel()
-	assert.Equal(t, toFileNameLowerCase("/user/UserName/projects/Project/file.ts"), "/user/username/projects/project/file.ts")
-	assert.Equal(t, toFileNameLowerCase("/user/UserName/projects/projectß/file.ts"), "/user/username/projects/projectß/file.ts")
-	assert.Equal(t, toFileNameLowerCase("/user/UserName/projects/İproject/file.ts"), "/user/username/projects/İproject/file.ts")
-	assert.Equal(t, toFileNameLowerCase("/user/UserName/projects/ı/file.ts"), "/user/username/projects/ı/file.ts")
+	assert.Equal(t, ToFileNameLowerCase("/user/UserName/projects/Project/file.ts"), "/user/username/projects/project/file.ts")
+	assert.Equal(t, ToFileNameLowerCase("/user/UserName/projects/projectß/file.ts"), "/user/username/projects/projectß/file.ts")
+	assert.Equal(t, ToFileNameLowerCase("/user/UserName/projects/İproject/file.ts"), "/user/username/projects/İproject/file.ts")
+	assert.Equal(t, ToFileNameLowerCase("/user/UserName/projects/ı/file.ts"), "/user/username/projects/ı/file.ts")
 }
 
 var toFileNameLowerCaseTests = []string{
@@ -440,8 +440,8 @@ func BenchmarkToFileNameLowerCase(b *testing.B) {
 		name := shortenName(test)
 		b.Run(name, func(b *testing.B) {
 			b.ReportAllocs()
-			for i := 0; i < b.N; i++ {
-				toFileNameLowerCase(test)
+			for range b.N {
+				ToFileNameLowerCase(test)
 			}
 		})
 	}
@@ -453,7 +453,7 @@ func FuzzToFileNameLowerCase(f *testing.F) {
 	}
 
 	f.Fuzz(func(t *testing.T, p string) {
-		assert.Equal(t, oldToFileNameLowerCase(p), toFileNameLowerCase(p))
+		assert.Equal(t, oldToFileNameLowerCase(p), ToFileNameLowerCase(p))
 	})
 }
 
@@ -493,7 +493,7 @@ func BenchmarkHasRelativePathSegment(b *testing.B) {
 		name := shortenName(tt.p)
 		b.Run(name, func(b *testing.B) {
 			b.ReportAllocs()
-			for i := 0; i < b.N; i++ {
+			for range b.N {
 				hasRelativePathSegment(tt.p)
 			}
 		})
@@ -559,7 +559,7 @@ func BenchmarkPathIsRelative(b *testing.B) {
 		name := shortenName(tt.p)
 		b.Run(name, func(b *testing.B) {
 			b.ReportAllocs()
-			for i := 0; i < b.N; i++ {
+			for range b.N {
 				PathIsRelative(tt.p)
 			}
 		})
