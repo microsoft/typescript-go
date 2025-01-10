@@ -164,7 +164,11 @@ func (vfs *common) ReadFile(path string) (contents string, ok bool) {
 		return "", false
 	}
 
-	b.Grow(int(stat.Size()))
+	var size int
+	if size64 := stat.Size(); int64(int(size64)) == size64 {
+		size = int(size64)
+	}
+	b.Grow(size)
 
 	if _, err := io.Copy(&b, f); err != nil {
 		return "", false
