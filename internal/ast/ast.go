@@ -379,7 +379,7 @@ func (n *Node) TagName() *Node {
 		return n.AsJsxClosingElement().TagName
 	case KindJsxSelfClosingElement:
 		return n.AsJsxSelfClosingElement().TagName
-		// !!! JSDoc tags
+		// TODO: JSDoc tags
 	}
 	panic("Unhandled case in Node.TagName: " + n.Kind.String())
 }
@@ -394,6 +394,56 @@ func (n *Node) PropertyName() *Node {
 		return n.AsBindingElement().PropertyName
 	}
 	panic("Unhandled case in Node.PropertyName: " + n.Kind.String())
+}
+
+func (n *Node) Comments() []*Node {
+	switch n.Kind {
+	case KindJSDoc:
+		return n.AsJSDoc().Comment.Nodes
+	case KindJSDocTag:
+		return n.AsJSDocUnknownTag().Comment.Nodes
+	case KindJSDocAugmentsTag:
+		return n.AsJSDocAugmentsTag().Comment.Nodes
+	case KindJSDocImplementsTag:
+		return n.AsJSDocImplementsTag().Comment.Nodes
+	case KindJSDocDeprecatedTag:
+		return n.AsJSDocDeprecatedTag().Comment.Nodes
+	case KindJSDocPublicTag:
+		return n.AsJSDocPublicTag().Comment.Nodes
+	case KindJSDocPrivateTag:
+		return n.AsJSDocPrivateTag().Comment.Nodes
+	case KindJSDocProtectedTag:
+		return n.AsJSDocProtectedTag().Comment.Nodes
+	case KindJSDocReadonlyTag:
+		return n.AsJSDocReadonlyTag().Comment.Nodes
+	case KindJSDocOverrideTag:
+		return n.AsJSDocOverrideTag().Comment.Nodes
+	case KindJSDocCallbackTag:
+		return n.AsJSDocCallbackTag().Comment.Nodes
+	case KindJSDocOverloadTag:
+		return n.AsJSDocOverloadTag().Comment.Nodes
+	case KindJSDocParameterTag:
+		return n.AsJSDocParameterTag().Comment.Nodes
+	case KindJSDocReturnTag:
+		return n.AsJSDocReturnTag().Comment.Nodes
+	case KindJSDocThisTag:
+		return n.AsJSDocThisTag().Comment.Nodes
+	case KindJSDocTypeTag:
+		return n.AsJSDocTypeTag().Comment.Nodes
+	case KindJSDocTemplateTag:
+		return n.AsJSDocTemplateTag().Comment.Nodes
+	case KindJSDocTypedefTag:
+		return n.AsJSDocTypedefTag().Comment.Nodes
+	case KindJSDocSeeTag:
+		return n.AsJSDocSeeTag().Comment.Nodes
+	case KindJSDocPropertyTag:
+		return n.AsJSDocPropertyTag().Comment.Nodes
+	case KindJSDocSatisfiesTag:
+		return n.AsJSDocSatisfiesTag().Comment.Nodes
+	case KindJSDocImportTag:
+		return n.AsJSDocImportTag().Comment.Nodes
+	}
+	panic("Unhandled case in Node.Comments: " + n.Kind.String())
 }
 
 // Node casts
@@ -5011,7 +5061,7 @@ func (f *NodeFactory) NewJSDocText(text string) *Node {
 
 type JSDocLink struct {
 	JSDocCommentBase
-	name *Node // optional (should only be EntityName | JSDocMemberName)
+	name *Node // optional (should only be EntityName)
 }
 
 func (f *NodeFactory) NewJSDocLink(name *Node, text string) *Node {
@@ -5031,7 +5081,7 @@ func (node *JSDocLink) Name() *DeclarationName {
 
 type JSDocLinkPlain struct {
 	JSDocCommentBase
-	name *Node // optional (should only be EntityName | JSDocMemberName)
+	name *Node // optional (should only be EntityName)
 }
 
 func (f *NodeFactory) NewJSDocLinkPlain(name *Node, text string) *Node {
@@ -5051,7 +5101,7 @@ func (node *JSDocLinkPlain) Name() *DeclarationName {
 
 type JSDocLinkCode struct {
 	JSDocCommentBase
-	name *Node // optional (should only be EntityName | JSDocMemberName)
+	name *Node // optional (should only be EntityName)
 }
 
 func (f *NodeFactory) NewJSDocLinkCode(name *Node, text string) *Node {
@@ -5250,7 +5300,11 @@ func (f *NodeFactory) NewJSDocPropertyTag(tagName *IdentifierNode, name *EntityN
 }
 
 func (node *JSDocPropertyTag) ForEachChild(v Visitor) bool {
-	return visit(v, node.TagName) || visit(v, node.name) || visit(v, node.TypeExpression) || visitNodeList(v, node.Comment)
+	if node.IsNameFirst {
+		return visit(v, node.TagName) || visit(v, node.name) || visit(v, node.TypeExpression) || visitNodeList(v, node.Comment)
+	} else {
+		return visit(v, node.TagName) || visit(v, node.TypeExpression) || visit(v, node.name) || visitNodeList(v, node.Comment)
+	}
 }
 
 func (node *JSDocPropertyTag) Name() *EntityName { return node.name }

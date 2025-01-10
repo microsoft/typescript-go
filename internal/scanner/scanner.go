@@ -241,7 +241,7 @@ type Scanner struct {
 	languageVariant  core.LanguageVariant
 	onError          ErrorCallback
 	skipTrivia       bool
-	jsdocParsingMode JSDocParsingMode
+	JSDocParsingMode JSDocParsingMode
 	scriptKind       core.ScriptKind
 	ScannerState
 }
@@ -294,18 +294,13 @@ func (s *Scanner) Rewind(state ScannerState) {
 	s.ScannerState = state
 }
 
-func (s *Scanner) ResetTokenState(pos int) {
+func (s *Scanner) ResetPos(pos int) {
 	if pos < 0 {
 		panic("Cannot reset token state to negative position")
 	}
-	s.Rewind(ScannerState{
-		pos:          pos,
-		fullStartPos: pos,
-		tokenStart:   pos,
-		token:        ast.KindUnknown,
-		tokenValue:   "",
-		tokenFlags:   ast.TokenFlagsNone,
-	})
+	s.pos = pos
+	s.fullStartPos = pos
+	s.tokenStart = pos
 }
 
 func (scanner *Scanner) SetSkipJsDocLeadingAsterisks(skip bool) {
@@ -350,7 +345,7 @@ func (s *Scanner) SetScriptTarget(scriptTarget core.ScriptTarget) {
 }
 
 func (s *Scanner) SetJSDocParsingMode(kind JSDocParsingMode) {
-	s.jsdocParsingMode = kind
+	s.JSDocParsingMode = kind
 }
 
 func (s *Scanner) SetLanguageVariant(languageVariant core.LanguageVariant) {
@@ -386,7 +381,7 @@ func (s *Scanner) charAndSize() (rune, int) {
 }
 
 func (s *Scanner) shouldParseJSDoc() bool {
-	switch s.jsdocParsingMode {
+	switch s.JSDocParsingMode {
 	case JSDocParsingModeParseAll:
 		return true
 	case JSDocParsingModeParseNone:
@@ -396,7 +391,7 @@ func (s *Scanner) shouldParseJSDoc() bool {
 		// If outside of TS, we need JSDoc to get any type info.
 		return true
 	}
-	if s.jsdocParsingMode == JSDocParsingModeParseForTypeInfo {
+	if s.JSDocParsingMode == JSDocParsingModeParseForTypeInfo {
 		// If we're in TS, but we don't need to produce reliable errors,
 		// we don't need to parse to find @see or @link.
 		return false
@@ -1177,9 +1172,8 @@ func (s *Scanner) ScanJSDocToken() ast.Kind {
 	s.pos += size
 	switch ch {
 	case '\t', '\v', '\f', ' ':
-		ch2 := s.char()
-		for ch2 > -1 && stringutil.IsWhiteSpaceSingleLine(ch2) {
-			s.pos++
+		for ch2, size2 := s.charAndSize(); size2 > 0 && stringutil.IsWhiteSpaceSingleLine(ch2); ch2, size2 = s.charAndSize() {
+			s.pos += size2
 		}
 		s.token = ast.KindWhitespaceTrivia
 		return s.token
@@ -1290,7 +1284,7 @@ func (s *Scanner) scanIdentifier(prefixLength int) bool {
 			s.tokenValue = s.text[start:s.pos]
 			return true
 		}
-		s.pos = start
+		s.pos = start + prefixLength
 	}
 	ch, size := s.charAndSize()
 	if isIdentifierStart(ch, s.languageVersion) {
