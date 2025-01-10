@@ -173,16 +173,22 @@ func (vfs *common) ReadFile(path string) (contents string, ok bool) {
 	return decodeBytes(b.String()), true
 }
 
+const (
+	utf16le = "\xFF\xFE"
+	utf16be = "\xFE\xFF"
+	utf8bom = "\xEF\xBB\xBF"
+)
+
 func decodeBytes(s string) string {
 	if len(s) >= 2 {
-		if s[0] == 0xFF && s[1] == 0xFE {
+		switch s[:2] {
+		case utf16le:
 			return decodeUtf16(s[2:], binary.LittleEndian)
-		}
-		if s[0] == 0xFE && s[1] == 0xFF {
+		case utf16be:
 			return decodeUtf16(s[2:], binary.BigEndian)
 		}
 	}
-	if len(s) >= 3 && s[0] == 0xEF && s[1] == 0xBB && s[2] == 0xBF {
+	if len(s) >= 3 && s[:3] == utf8bom {
 		s = s[3:]
 	}
 
