@@ -15,6 +15,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/bundled"
 	ts "github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/diagnosticwriter"
 	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
@@ -92,6 +93,7 @@ func main() {
 		fmt.Fprintf(os.Stderr, "Error: The directory %v does not exist.\n", normalizedRootPath)
 		os.Exit(1)
 	}
+	compilerOptions.ConfigFilePath = normalizedRootPath // This matters for type reference directive resolution
 
 	programOptions := ts.ProgramOptions{
 		RootPath:           normalizedRootPath,
@@ -140,13 +142,13 @@ func main() {
 			UseCaseSensitiveFileNames: useCaseSensitiveFileNames,
 		}
 		if pretty {
-			formatOpts := ts.DiagnosticsFormattingOptions{
+			formatOpts := diagnosticwriter.FormattingOptions{
 				NewLine:             "\n",
 				ComparePathsOptions: comparePathOptions,
 			}
-			ts.FormatDiagnosticsWithColorAndContext(os.Stdout, diagnostics, &formatOpts)
+			diagnosticwriter.FormatDiagnosticsWithColorAndContext(os.Stdout, diagnostics, &formatOpts)
 			fmt.Fprintln(os.Stdout)
-			ts.WriteErrorSummaryText(os.Stdout, diagnostics, &formatOpts)
+			diagnosticwriter.WriteErrorSummaryText(os.Stdout, diagnostics, &formatOpts)
 		} else {
 			for _, diagnostic := range diagnostics {
 				printDiagnostic(diagnostic, 0, comparePathOptions)

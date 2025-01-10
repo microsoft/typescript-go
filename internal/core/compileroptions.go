@@ -20,6 +20,7 @@ type CompilerOptions struct {
 	EmitDeclarationOnly                Tristate             `json:"emitDeclarationOnly"`
 	EmitBOM                            Tristate             `json:"emitBOM"`
 	DownlevelIteration                 Tristate             `json:"downlevelIteration"`
+	Declaration                        Tristate             `json:"declaration"`
 	DeclarationDir                     string               `json:"declarationDir"`
 	DeclarationMap                     Tristate             `json:"declarationMap"`
 	ESModuleInterop                    Tristate             `json:"esModuleInterop"`
@@ -35,6 +36,7 @@ type CompilerOptions struct {
 	ModuleDetection                    ModuleDetectionKind  `json:"moduleDetectionKind"`
 	NewLine                            NewLineKind          `json:"newLine"`
 	NoEmit                             Tristate             `json:"noEmit"`
+	NoErrorTruncation                  Tristate             `json:"noErrorTruncation"`
 	NoFallthroughCasesInSwitch         Tristate             `json:"noFallthroughCasesInSwitch"`
 	NoImplicitAny                      Tristate             `json:"noImplicitAny"`
 	NoImplicitThis                     Tristate             `json:"noImplicitThis"`
@@ -49,6 +51,7 @@ type CompilerOptions struct {
 	ResolvePackageJsonExports          Tristate             `json:"resolvePackageJsonExports"`
 	ResolvePackageJsonImports          Tristate             `json:"resolvePackageJsonImports"`
 	RewriteRelativeImportExtensions    Tristate             `json:"rewriteRelativeImportExtensions"`
+	SkipLibCheck                       Tristate             `json:"skipLibCheck"`
 	Strict                             Tristate             `json:"strict"`
 	StrictBindCallApply                Tristate             `json:"strictBindCallApply"`
 	StrictBuiltinIteratorReturn        Tristate             `json:"strictBuiltinIteratorReturn"`
@@ -63,7 +66,6 @@ type CompilerOptions struct {
 	UseUnknownInCatchVariables         Tristate             `json:"useUnknownInCatchVariables"`
 	VerbatimModuleSyntax               Tristate             `json:"verbatimModuleSyntax"`
 	MaxNodeModuleJsDepth               Tristate             `json:"maxNodeModuleJsDepth"`
-	SkipLibCheck                       Tristate             `json:"skipLibCheck"`
 
 	// Internal fields
 	ConfigFilePath  string   `json:"configFilePath"`
@@ -257,8 +259,9 @@ func (m ModuleResolutionKind) String() string {
 type NewLineKind int32
 
 const (
-	NewLineKindCRLF NewLineKind = 0
-	NewLineKindLF   NewLineKind = 1
+	NewLineKindNone NewLineKind = 0
+	NewLineKindCRLF NewLineKind = 1
+	NewLineKindLF   NewLineKind = 2
 )
 
 func (newLine NewLineKind) GetNewLineCharacter() string {
