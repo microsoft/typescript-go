@@ -19,13 +19,13 @@ import (
 
 var (
 	compilerBaselineRegex = regexp.MustCompile(`\.tsx?$`)
-	requireRegex          = regexp.MustCompile(`require\(`)
+	requireStr            = "require("
 	referencesRegex       = regexp.MustCompile(`reference\spath`)
 )
 
 var (
 	// Posix-style path to sources under test
-	srcFolder = "/.src" // !!! Move this to vfs or equivalent of `vfsUtils.ts`
+	srcFolder = "/.src"
 	// Posix-style path to the TypeScript compiler build outputs (including tsc.js, lib.d.ts, etc.)
 	builtFolder = "/.ts"
 	// Posix-style path to additional test libraries
@@ -207,7 +207,7 @@ func newCompilerTest(filename string, testContent *testCaseContent, configuratio
 		// otherwise, assume all files are just meant to be in the same compilation session without explicit references to one another.
 
 		if testCaseContentWithConfig.configuration["noImplicitReferences"] != "" ||
-			requireRegex.MatchString(lastUnit.content) ||
+			strings.Contains(lastUnit.content, requireStr) ||
 			referencesRegex.MatchString(lastUnit.content) {
 			toBeCompiled = append(toBeCompiled, createHarnessTestFile(lastUnit, currentDirectory))
 			for _, unit := range units[:len(units)-1] {
