@@ -1,10 +1,11 @@
 package vfs
 
 import (
-	"bytes"
 	"encoding/binary"
 	"fmt"
+	"io"
 	"io/fs"
+	"strings"
 	"unicode/utf16"
 
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -151,35 +152,46 @@ func (vfs *common) ReadFile(path string) (contents string, ok bool) {
 		return "", false
 	}
 
-	b, err := fs.ReadFile(fsys, rest)
+	var b strings.Builder
+	f, err := fsys.Open(rest)
+	if err != nil {
+		return "", false
+	}
+	defer f.Close()
+
+	stat, err := f.Stat()
 	if err != nil {
 		return "", false
 	}
 
-	return decodeBytes(b)
+	b.Grow(int(stat.Size()))
+
+	if _, err := io.Copy(&b, f); err != nil {
+		return "", false
+	}
+
+	return decodeBytes(b.String())
 }
 
-func decodeBytes(b []byte) (contents string, ok bool) {
-	var bom [2]byte
-	if len(b) >= 2 {
-		bom = [2]byte{b[0], b[1]}
-		switch bom {
-		case [2]byte{0xFF, 0xFE}:
-			return decodeUtf16(b[2:], binary.LittleEndian), true
-		case [2]byte{0xFE, 0xFF}:
-			return decodeUtf16(b[2:], binary.BigEndian), true
+func decodeBytes(s string) (contents string, ok bool) {
+	if len(s) >= 2 {
+		if s[0] == 0xFF && s[1] == 0xFE {
+			return decodeUtf16(s[2:], binary.LittleEndian), true
+		}
+		if s[0] == 0xFE && s[1] == 0xFF {
+			return decodeUtf16(s[2:], binary.BigEndian), true
 		}
 	}
-	if len(b) >= 3 && b[0] == 0xEF && b[1] == 0xBB && b[2] == 0xBF {
-		b = b[3:]
+	if len(s) >= 3 && s[0] == 0xEF && s[1] == 0xBB && s[2] == 0xBF {
+		s = s[3:]
 	}
 
-	return string(b), true
+	return s, true
 }
 
-func decodeUtf16(b []byte, order binary.ByteOrder) string {
+func decodeUtf16(b string, order binary.ByteOrder) string {
 	ints := make([]uint16, len(b)/2)
-	if err := binary.Read(bytes.NewReader(b), order, &ints); err != nil {
+	if err := binary.Read(strings.NewReader(b), order, &ints); err != nil {
 		return ""
 	}
 	return string(utf16.Decode(ints))
