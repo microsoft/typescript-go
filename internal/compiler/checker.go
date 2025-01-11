@@ -6785,7 +6785,7 @@ func (c *Checker) getDeclaringClass(prop *ast.Symbol) *Type {
 func (c *Checker) isValidOverrideOf(sourceProp *ast.Symbol, targetProp *ast.Symbol) bool {
 	return !c.forEachProperty(targetProp, func(tp *ast.Symbol) bool {
 		if getDeclarationModifierFlagsFromSymbol(tp)&ast.ModifierFlagsProtected != 0 {
-			return c.isPropertyInClassDerivedFrom(sourceProp, c.getDeclaringClass(tp))
+			return !c.isPropertyInClassDerivedFrom(sourceProp, c.getDeclaringClass(tp))
 		}
 		return false
 	})
