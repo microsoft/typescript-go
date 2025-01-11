@@ -2862,3 +2862,10 @@ func expressionResultIsUnused(node *ast.Node) bool {
 		return false
 	}
 }
+
+func pseudoBigIntToString(value PseudoBigInt) string {
+	if value.negative && value.base10Value != "0" {
+		return "-" + value.base10Value
+	}
+	return value.base10Value
+}
