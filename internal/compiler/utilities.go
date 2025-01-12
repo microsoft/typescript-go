@@ -2869,3 +2869,35 @@ func pseudoBigIntToString(value PseudoBigInt) string {
 	}
 	return value.base10Value
 }
+
+func getSuperContainer(node *ast.Node, stopOnFunctions bool) *ast.Node {
+	for {
+		node = node.Parent
+		if node == nil {
+			return nil
+		}
+		switch node.Kind {
+		case ast.KindComputedPropertyName:
+			node = node.Parent
+		case ast.KindFunctionDeclaration, ast.KindFunctionExpression, ast.KindArrowFunction:
+			if !stopOnFunctions {
+				continue
+			}
+			fallthrough
+		case ast.KindPropertyDeclaration, ast.KindPropertySignature, ast.KindMethodDeclaration, ast.KindMethodSignature, ast.KindConstructor,
+			ast.KindGetAccessor, ast.KindSetAccessor, ast.KindClassStaticBlockDeclaration:
+			return node
+		case ast.KindDecorator:
+			// Decorators are always applied outside of the body of a class or method.
+			if ast.IsParameter(node.Parent) && ast.IsClassElement(node.Parent.Parent) {
+				// If the decorator's parent is a Parameter, we resolve the this container from
+				// the grandparent class declaration.
+				node = node.Parent.Parent
+			} else if ast.IsClassElement(node.Parent) {
+				// If the decorator's parent is a class element, we resolve the 'this' container
+				// from the parent class declaration.
+				node = node.Parent
+			}
+		}
+	}
+}

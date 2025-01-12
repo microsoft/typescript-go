@@ -2691,7 +2691,7 @@ func (c *Checker) getIterationTypesOfIterableWorker(t *Type, use IterationUse, e
 		return c.combineIterationTypes(core.Map(t.Types(), func(t *Type) IterationTypes { return c.getIterationTypesOfIterableWorker(t, use, errorNode) }))
 	}
 	if use&IterationUseAllowsAsyncIterablesFlag != 0 {
-		iterationTypes := c.getIterationTypesOfIteratorLikeFast(t, c.asyncIterationTypesResolver)
+		iterationTypes := c.getIterationTypesOfIterableFast(t, c.asyncIterationTypesResolver)
 		if iterationTypes.hasTypes() {
 			if use&IterationUseForOfFlag != 0 {
 				return c.getAsyncFromSyncIterationTypes(iterationTypes, errorNode)
@@ -2700,7 +2700,7 @@ func (c *Checker) getIterationTypesOfIterableWorker(t *Type, use IterationUse, e
 		}
 	}
 	if use&IterationUseAllowsSyncIterablesFlag != 0 {
-		iterationTypes := c.getIterationTypesOfIteratorLikeFast(t, c.syncIterationTypesResolver)
+		iterationTypes := c.getIterationTypesOfIterableFast(t, c.syncIterationTypesResolver)
 		if iterationTypes.hasTypes() {
 			if use&IterationUseAllowsAsyncIterablesFlag != 0 {
 				return c.getAsyncFromSyncIterationTypes(iterationTypes, errorNode)
@@ -2729,7 +2729,7 @@ func (c *Checker) getIterationTypesOfIterableWorker(t *Type, use IterationUse, e
 	return IterationTypes{}
 }
 
-func (c *Checker) getIterationTypesOfIteratorLikeFast(t *Type, r *IterationTypesResolver) IterationTypes {
+func (c *Checker) getIterationTypesOfIterableFast(t *Type, r *IterationTypesResolver) IterationTypes {
 	// As an optimization, if the type is an instantiation of the following global type, then
 	// just grab its related type arguments:
 	// - `Iterable<T, TReturn, TNext>` or `AsyncIterable<T, TReturn, TNext>`
@@ -2864,8 +2864,35 @@ func (c *Checker) getIterationTypesOfIteratorWorker(t *Type, r *IterationTypesRe
 	if isTypeAny(t) {
 		return IterationTypes{c.anyType, c.anyType, c.anyType}
 	}
-	return c.getIterationTypesOfIteratorLikeFast(t, r)
+	return c.getIterationTypesOfIteratorFast(t, r)
 	// !!! Incorporate getIterationTypesOfIteratorSlow
+}
+
+func (c *Checker) getIterationTypesOfIteratorFast(t *Type, r *IterationTypesResolver) IterationTypes {
+	// As an optimization, if the type is an instantiation of the following global type, then
+	// just grab its related type arguments:
+	// - `Iterable<T, TReturn, TNext>` or `AsyncIterable<T, TReturn, TNext>`
+	// - `IteratorObject<T, TReturn, TNext>` or `AsyncIteratorObject<T, TReturn, TNext>`
+	// - `IterableIterator<T, TReturn, TNext>` or `AsyncIterableIterator<T, TReturn, TNext>`
+	// - `Generator<T, TReturn, TNext>` or `AsyncGenerator<T, TReturn, TNext>`
+	if c.isReferenceToType(t, r.getGlobalIteratorType()) ||
+		c.isReferenceToType(t, r.getGlobalIteratorObjectType()) ||
+		c.isReferenceToType(t, r.getGlobalIterableIteratorType()) ||
+		c.isReferenceToType(t, r.getGlobalGeneratorType()) {
+		typeArguments := c.getTypeArguments(t)
+		return r.getResolvedIterationTypes(typeArguments[0], typeArguments[1], typeArguments[2])
+	}
+	// As an optimization, if the type is an instantiation of one of the following global types, then
+	// just grab the related type argument:
+	// - `ArrayIterator<T>`
+	// - `MapIterator<T>`
+	// - `SetIterator<T>`
+	// - `StringIterator<T>`
+	// - `ReadableStreamAsyncIterator<T>`
+	if c.isReferenceToSomeType(t, r.getGlobalBuiltinIteratorTypes()) {
+		return r.getResolvedIterationTypes(c.getTypeArguments(t)[0], c.getBuiltinIteratorReturnType(), c.unknownType)
+	}
+	return IterationTypes{}
 }
 
 func (c *Checker) reportTypeNotIterableError(errorNode *ast.Node, t *Type, allowAsyncIterables bool) {
@@ -3482,8 +3509,204 @@ func (c *Checker) getSymbolForPrivateIdentifierExpression(node *ast.Node) *ast.S
 // }
 
 func (c *Checker) checkSuperExpression(node *ast.Node) *Type {
-	// !!!!
-	return c.errorType
+	isCallExpression := ast.IsCallExpression(node.Parent) && node.Parent.Expression() == node
+	immediateContainer := getSuperContainer(node, true /*stopOnFunctions*/)
+	container := immediateContainer
+	// adjust the container reference in case if super is used inside arrow functions with arbitrarily deep nesting
+	if !isCallExpression {
+		for container != nil && ast.IsArrowFunction(container) {
+			container = getSuperContainer(container, true /*stopOnFunctions*/)
+		}
+	}
+	isLegalUsageOfSuperExpression := func() bool {
+		if isCallExpression {
+			// TS 1.0 SPEC (April 2014): 4.8.1
+			// Super calls are only permitted in constructors of derived classes
+			return ast.IsConstructorDeclaration(container)
+		}
+		// TS 1.0 SPEC (April 2014)
+		// 'super' property access is allowed
+		// - In a constructor, instance member function, instance member accessor, or instance member variable initializer where this references a derived class instance
+		// - In a static member function or static member accessor
+
+		// topmost container must be something that is directly nested in the class declaration\object literal expression
+		if ast.IsClassLike(container.Parent) || ast.IsObjectLiteralExpression(container.Parent) {
+			if ast.IsStatic(container) {
+				return ast.NodeKindIs(container, ast.KindMethodDeclaration, ast.KindMethodSignature, ast.KindGetAccessor, ast.KindSetAccessor, ast.KindPropertyDeclaration, ast.KindClassStaticBlockDeclaration)
+			}
+			return ast.NodeKindIs(container, ast.KindMethodDeclaration, ast.KindMethodSignature, ast.KindGetAccessor, ast.KindSetAccessor, ast.KindPropertyDeclaration, ast.KindPropertySignature, ast.KindConstructor)
+		}
+		return false
+	}
+	if container == nil || !isLegalUsageOfSuperExpression() {
+		// issue more specific error if super is used in computed property name
+		// class A { foo() { return "1" }}
+		// class B {
+		//     [super.foo()]() {}
+		// }
+		current := ast.FindAncestorOrQuit(node, func(n *ast.Node) ast.FindAncestorResult {
+			if n == container {
+				return ast.FindAncestorQuit
+			}
+			if ast.IsComputedPropertyName(n) {
+				return ast.FindAncestorTrue
+			}
+			return ast.FindAncestorFalse
+		})
+		switch {
+		case current != nil && ast.IsComputedPropertyName(current):
+			c.error(node, diagnostics.X_super_cannot_be_referenced_in_a_computed_property_name)
+		case isCallExpression:
+			c.error(node, diagnostics.Super_calls_are_not_permitted_outside_constructors_or_in_nested_functions_inside_constructors)
+		case container == nil || container.Parent == nil || !(ast.IsClassLike(container.Parent) || ast.IsObjectLiteralExpression(container.Parent)):
+			c.error(node, diagnostics.X_super_can_only_be_referenced_in_members_of_derived_classes_or_object_literal_expressions)
+		default:
+			c.error(node, diagnostics.X_super_property_access_is_permitted_only_in_a_constructor_member_function_or_member_accessor_of_a_derived_class)
+		}
+		return c.errorType
+	}
+	if !isCallExpression && ast.IsConstructorDeclaration(immediateContainer) {
+		c.checkThisBeforeSuper(node, container, diagnostics.X_super_must_be_called_before_accessing_a_property_of_super_in_the_constructor_of_a_derived_class)
+	}
+	// !!!
+	// nodeCheckFlag := NodeCheckFlagsNone
+	// if ast.IsStatic(container) || isCallExpression {
+	// 	nodeCheckFlag = NodeCheckFlagsSuperStatic
+	// 	if !isCallExpression && c.languageVersion >= core.ScriptTargetES2015 && c.languageVersion <= core.ScriptTargetES2021 && (ast.IsPropertyDeclaration(container) || ast.IsClassStaticBlockDeclaration(container)) {
+	// 		// for `super.x` or `super[x]` in a static initializer, mark all enclosing
+	// 		// block scope containers so that we can report potential collisions with
+	// 		// `Reflect`.
+	// 		forEachEnclosingBlockScopeContainer(node.Parent, func(current *ast.Node) {
+	// 			if !isSourceFile(current) || isExternalOrCommonJsModule(current) {
+	// 				c.getNodeLinks(current).flags |= NodeCheckFlagsContainsSuperPropertyInStaticInitializer
+	// 			}
+	// 		})
+	// 	}
+	// } else {
+	// 	nodeCheckFlag = NodeCheckFlagsSuperInstance
+	// }
+	// c.getNodeLinks(node).flags |= nodeCheckFlag
+	// // Due to how we emit async functions, we need to specialize the emit for an async method that contains a `super` reference.
+	// // This is due to the fact that we emit the body of an async function inside of a generator function. As generator
+	// // functions cannot reference `super`, we emit a helper inside of the method body, but outside of the generator. This helper
+	// // uses an arrow function, which is permitted to reference `super`.
+	// //
+	// // There are two primary ways we can access `super` from within an async method. The first is getting the value of a property
+	// // or indexed access on super, either as part of a right-hand-side expression or call expression. The second is when setting the value
+	// // of a property or indexed access, either as part of an assignment expression or destructuring assignment.
+	// //
+	// // The simplest case is reading a value, in which case we will emit something like the following:
+	// //
+	// //  // ts
+	// //  ...
+	// //  async asyncMethod() {
+	// //    let x = await super.asyncMethod();
+	// //    return x;
+	// //  }
+	// //  ...
+	// //
+	// //  // js
+	// //  ...
+	// //  asyncMethod() {
+	// //      const _super = Object.create(null, {
+	// //        asyncMethod: { get: () => super.asyncMethod },
+	// //      });
+	// //      return __awaiter(this, arguments, Promise, function *() {
+	// //          let x = yield _super.asyncMethod.call(this);
+	// //          return x;
+	// //      });
+	// //  }
+	// //  ...
+	// //
+	// // The more complex case is when we wish to assign a value, especially as part of a destructuring assignment. As both cases
+	// // are legal in ES6, but also likely less frequent, we only emit setters if there is an assignment:
+	// //
+	// //  // ts
+	// //  ...
+	// //  async asyncMethod(ar: Promise<any[]>) {
+	// //      [super.a, super.b] = await ar;
+	// //  }
+	// //  ...
+	// //
+	// //  // js
+	// //  ...
+	// //  asyncMethod(ar) {
+	// //      const _super = Object.create(null, {
+	// //        a: { get: () => super.a, set: (v) => super.a = v },
+	// //        b: { get: () => super.b, set: (v) => super.b = v }
+	// //      };
+	// //      return __awaiter(this, arguments, Promise, function *() {
+	// //          [_super.a, _super.b] = yield ar;
+	// //      });
+	// //  }
+	// //  ...
+	// //
+	// // Creating an object that has getter and setters instead of just an accessor function is required for destructuring assignments
+	// // as a call expression cannot be used as the target of a destructuring assignment while a property access can.
+	// //
+	// // For element access expressions (`super[x]`), we emit a generic helper that forwards the element access in both situations.
+	// if container.Kind == ast.KindMethodDeclaration && inAsyncFunction {
+	// 	if isSuperProperty(node.Parent) && isAssignmentTarget(node.Parent) {
+	// 		c.getNodeLinks(container).flags |= NodeCheckFlagsMethodWithSuperPropertyAssignmentInAsync
+	// 	} else {
+	// 		c.getNodeLinks(container).flags |= NodeCheckFlagsMethodWithSuperPropertyAccessInAsync
+	// 	}
+	// }
+	// if needToCaptureLexicalThis {
+	// 	// call expressions are allowed only in constructors so they should always capture correct 'this'
+	// 	// super property access expressions can also appear in arrow functions -
+	// 	// in this case they should also use correct lexical this
+	// 	c.captureLexicalThis(node.Parent, container)
+	// }
+	if container.Parent.Kind == ast.KindObjectLiteralExpression {
+		if c.languageVersion < core.ScriptTargetES2015 {
+			c.error(node, diagnostics.X_super_is_only_allowed_in_members_of_object_literal_expressions_when_option_target_is_ES2015_or_higher)
+			return c.errorType
+		}
+		// for object literal assume that type of 'super' is 'any'
+		return c.anyType
+	}
+	// at this point the only legal case for parent is ClassLikeDeclaration
+	classLikeDeclaration := container.Parent
+	if getClassExtendsHeritageElement(classLikeDeclaration) == nil {
+		c.error(node, diagnostics.X_super_can_only_be_referenced_in_a_derived_class)
+		return c.errorType
+	}
+	if c.classDeclarationExtendsNull(classLikeDeclaration) {
+		if isCallExpression {
+			return c.errorType
+		}
+		return c.nullWideningType
+	}
+	classType := c.getDeclaredTypeOfSymbol(c.getSymbolOfDeclaration(classLikeDeclaration))
+	var baseClassType *Type
+	if classType != nil {
+		baseClassType = core.FirstOrNil(c.getBaseTypes(classType))
+	}
+	if baseClassType == nil {
+		return c.errorType
+	}
+	if ast.IsConstructorDeclaration(container) && c.isInConstructorArgumentInitializer(node, container) {
+		// issue custom error message for super property access in constructor arguments (to be aligned with old compiler)
+		c.error(node, diagnostics.X_super_cannot_be_referenced_in_constructor_arguments)
+		return c.errorType
+	}
+	if ast.IsStatic(container) || isCallExpression {
+		return c.getBaseConstructorTypeOfClass(classType)
+	}
+	return c.getTypeWithThisArgument(baseClassType, classType.AsInterfaceType().thisType, false)
+}
+
+func (c *Checker) isInConstructorArgumentInitializer(node *ast.Node, constructorDecl *ast.Node) bool {
+	return ast.FindAncestorOrQuit(node, func(n *ast.Node) ast.FindAncestorResult {
+		if ast.IsFunctionLikeDeclaration(n) {
+			return ast.FindAncestorQuit
+		}
+		if ast.IsParameter(n) && n.Parent == constructorDecl {
+			return ast.FindAncestorTrue
+		}
+		return ast.FindAncestorFalse
+	}) != nil
 }
 
 func (c *Checker) checkTemplateExpression(node *ast.Node) *Type {
@@ -11883,7 +12106,7 @@ func (c *Checker) getTypeOfAccessors(symbol *ast.Symbol) *Type {
 		}
 		if t == nil && getter != nil {
 			if body := getBodyOfNode(getter); body != nil {
-				t = c.getReturnTypeFromBody(body, CheckModeNormal)
+				t = c.getReturnTypeFromBody(getter, CheckModeNormal)
 			}
 		}
 		if t == nil && accessor != nil && accessor.Initializer() != nil {
@@ -15709,11 +15932,8 @@ func (c *Checker) instantiateMappedType(t *Type, m *TypeMapper, alias *TypeAlias
 			return s
 		}
 		if d.declaration.NameType == nil {
-			if c.isArrayType(s) || s.flags&TypeFlagsAny != 0 && c.findResolutionCycleStartIndex(typeVariable, TypeSystemPropertyNameResolvedBaseConstraint) < 0 {
-				constraint := c.getConstraintOfTypeParameter(typeVariable)
-				if constraint != nil && everyType(constraint, c.isArrayOrTupleType) {
-					return c.instantiateMappedArrayType(s, t, prependTypeMapping(typeVariable, s, m))
-				}
+			if c.isArrayType(s) || s.flags&TypeFlagsAny != 0 && c.findResolutionCycleStartIndex(typeVariable, TypeSystemPropertyNameResolvedBaseConstraint) < 0 && c.hasArrayOrTypeTypeConstraint(typeVariable) {
+				return c.instantiateMappedArrayType(s, t, prependTypeMapping(typeVariable, s, m))
 			}
 			if isTupleType(s) {
 				return c.instantiateMappedTupleType(s, t, typeVariable, m)
@@ -15735,6 +15955,11 @@ func (c *Checker) instantiateMappedType(t *Type, m *TypeMapper, alias *TypeAlias
 		return c.wildcardType
 	}
 	return c.instantiateAnonymousType(t, m, alias)
+}
+
+func (c *Checker) hasArrayOrTypeTypeConstraint(typeVariable *Type) bool {
+	constraint := c.getConstraintOfTypeParameter(typeVariable)
+	return constraint != nil && everyType(constraint, c.isArrayOrTupleType)
 }
 
 func (c *Checker) instantiateMappedArrayType(arrayType *Type, mappedType *Type, m *TypeMapper) *Type {

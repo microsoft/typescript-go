@@ -721,6 +721,7 @@ func excludeProperties(properties []*ast.Symbol, excludedProperties core.Set[str
 			}
 		} else if !excluded {
 			reduced = slices.Clip(properties[:i])
+			excluded = true
 		}
 	}
 	if excluded {
