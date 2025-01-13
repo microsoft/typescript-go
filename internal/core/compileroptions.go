@@ -19,19 +19,20 @@ type CompilerOptions struct {
 	EmitDeclarationOnly                Tristate             `json:"emitDeclarationOnly"`
 	EmitBOM                            Tristate             `json:"emitBOM"`
 	DownlevelIteration                 Tristate             `json:"downlevelIteration"`
+	Declaration                        Tristate             `json:"declaration"`
 	ESModuleInterop                    Tristate             `json:"esModuleInterop"`
 	ExactOptionalPropertyTypes         Tristate             `json:"exactOptionalPropertyTypes"`
 	ExperimentalDecorators             Tristate             `json:"experimentalDecorators"`
 	IsolatedModules                    Tristate             `json:"isolatedModules"`
 	Jsx                                JsxEmit              `json:"jsx"`
 	Lib                                []string             `json:"lib"`
-	LegacyDecorators                   Tristate             `json:"legacyDecorators"`
 	ModuleKind                         ModuleKind           `json:"module"`
 	ModuleResolution                   ModuleResolutionKind `json:"moduleResolution"`
 	ModuleSuffixes                     []string             `json:"moduleSuffixes"`
 	ModuleDetection                    ModuleDetectionKind  `json:"moduleDetectionKind"`
 	NewLine                            NewLineKind          `json:"newLine"`
 	NoEmit                             Tristate             `json:"noEmit"`
+	NoErrorTruncation                  Tristate             `json:"noErrorTruncation"`
 	NoFallthroughCasesInSwitch         Tristate             `json:"noFallthroughCasesInSwitch"`
 	NoImplicitAny                      Tristate             `json:"noImplicitAny"`
 	NoImplicitThis                     Tristate             `json:"noImplicitThis"`
@@ -45,6 +46,7 @@ type CompilerOptions struct {
 	ResolveJsonModule                  Tristate             `json:"resolveJsonModule"`
 	ResolvePackageJsonExports          Tristate             `json:"resolvePackageJsonExports"`
 	ResolvePackageJsonImports          Tristate             `json:"resolvePackageJsonImports"`
+	SkipLibCheck                       Tristate             `json:"skipLibCheck"`
 	Strict                             Tristate             `json:"strict"`
 	StrictBindCallApply                Tristate             `json:"strictBindCallApply"`
 	StrictBuiltinIteratorReturn        Tristate             `json:"strictBuiltinIteratorReturn"`
@@ -251,8 +253,9 @@ func (m ModuleResolutionKind) String() string {
 type NewLineKind int32
 
 const (
-	NewLineKindCRLF NewLineKind = 0
-	NewLineKindLF   NewLineKind = 1
+	NewLineKindNone NewLineKind = 0
+	NewLineKindCRLF NewLineKind = 1
+	NewLineKindLF   NewLineKind = 2
 )
 
 func (newLine NewLineKind) GetNewLineCharacter() string {
