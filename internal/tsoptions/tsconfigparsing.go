@@ -68,11 +68,11 @@ var (
 )
 
 type configFileSpecs struct {
-	filesSpecs []string
+	filesSpecs any
 	// Present to report errors (user specified specs), validatedIncludeSpecs are used for file name matching
-	includeSpecs []string
+	includeSpecs any
 	// Present to report errors (user specified specs), validatedExcludeSpecs are used for file name matching
-	excludeSpecs                            []string
+	excludeSpecs                            any
 	validatedFilesSpec                      []string
 	validatedIncludeSpecs                   []string
 	validatedExcludeSpecs                   []string
@@ -120,8 +120,9 @@ func parseOwnConfigOfJsonSourceFile(
 		option *CommandLineOption,
 	) (any, []*ast.Diagnostic) {
 		// Ensure value is verified except for extends which is handled in its own way for error reporting
+		var propertySetErrors []*ast.Diagnostic
 		if option != nil && option != extendsOptionDeclaration {
-			value, errors = convertJsonOption(option, value, basePath, &propertyAssignment, propertyAssignment.Initializer, sourceFile)
+			value, propertySetErrors = convertJsonOption(option, value, basePath, &propertyAssignment, propertyAssignment.Initializer, sourceFile)
 		}
 		if parentOption.Name != "undefined" && value != nil {
 			if option != nil && option.Name != "" {
@@ -129,14 +130,14 @@ func parseOwnConfigOfJsonSourceFile(
 				if commandLineOptionEnumMapVal != nil {
 					val, ok := commandLineOptionEnumMapVal.Get(strings.ToLower(value.(string)))
 					if ok {
-						errors = append(errors, parseCompilerOptions(option.Name, val, options)...)
+						propertySetErrors = append(propertySetErrors, parseCompilerOptions(option.Name, val, options)...)
 					}
 				} else {
-					errors = append(errors, parseCompilerOptions(option.Name, value, options)...)
+					propertySetErrors = append(propertySetErrors, parseCompilerOptions(option.Name, value, options)...)
 				}
 			} else if keyText != "" {
 				if parentOption.ElementOptions != nil {
-					errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.Option_build_must_be_the_first_command_line_argument, keyText))
+					propertySetErrors = append(propertySetErrors, ast.NewCompilerDiagnostic(diagnostics.Option_build_must_be_the_first_command_line_argument, keyText))
 				} else {
 					// errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.Unknown_compiler_option_0_Did_you_mean_1, keyText, core.FindKey(parentOption.ElementOptions, keyText)))
 				}
@@ -145,10 +146,10 @@ func parseOwnConfigOfJsonSourceFile(
 			if option == extendsOptionDeclaration {
 				configPath, err := getExtendsConfigPathOrArray(value, host, basePath, configFileName, &propertyAssignment, (&propertyAssignment).Initializer, sourceFile)
 				extendedConfigPath = configPath
-				errors = append(errors, err...)
+				propertySetErrors = append(propertySetErrors, err...)
 			} else if option == nil {
 				if keyText == "excludes" {
-					errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.Unknown_option_excludes_Did_you_mean_exclude))
+					propertySetErrors = append(propertySetErrors, ast.NewCompilerDiagnostic(diagnostics.Unknown_option_excludes_Did_you_mean_exclude))
 				}
 				if core.Find(optionsDeclarations, func(option CommandLineOption) bool {
 					return option.Name == keyText
@@ -157,7 +158,7 @@ func parseOwnConfigOfJsonSourceFile(
 				}
 			}
 		}
-		return value, errors
+		return value, propertySetErrors
 	}
 
 	json, err := convertConfigFileToObject(
@@ -220,39 +221,27 @@ func isCompilerOptionsValue(option *CommandLineOption, value any) bool {
 		if value == nil {
 			return !option.DisallowNullOrUndefined() // All options are undefinable/nullable
 		}
-		switch option.Kind {
-		case "list":
-			if _, ok := value.([]string); ok {
+		if option.Kind == "list" {
+			return reflect.TypeOf(value).Kind() == reflect.Slice
+		}
+		if option.Kind == "listOrElement" {
+			if reflect.TypeOf(value).Kind() == reflect.Slice {
 				return true
-			} else if _, ok := value.([]map[string]any); ok {
-				return true
+			} else {
+				isCompilerOptionsValue(option.Elements(), value)
 			}
-		case "listOrElement":
-			if _, ok := value.([]string); ok {
-				return true
-			}
-		case "string":
-			if _, ok := value.(string); ok {
-				return true
-			}
-		case "number":
-			if _, ok := value.(int); ok {
-				return true
-			}
-		case "boolean":
-			if _, ok := value.(bool); ok {
-				return true
-			}
-		case "object":
-			if _, ok := value.(map[string]any); ok {
-				return true
-			}
-		case "enum":
-			if _, ok := value.(string); ok {
-				return true
-			}
-		default:
-			return true
+		}
+		if option.Kind == "string" {
+			return reflect.TypeOf(value).Kind() == reflect.String
+		}
+		if option.Kind == "boolean" {
+			return reflect.TypeOf(value).Kind() == reflect.Bool
+		}
+		if option.Kind == "number" {
+			return reflect.TypeOf(value).Kind() == reflect.Int
+		}
+		if option.Kind == "object" {
+			return reflect.TypeOf(value).Kind() == reflect.Map
 		}
 	}
 	return false
@@ -303,7 +292,7 @@ func convertJsonOptionOfCustomType(
 
 func convertJsonOptionOfListType(
 	option *CommandLineOption,
-	values []string,
+	values any,
 	basePath string,
 	propertyAssignment *ast.PropertyAssignment,
 	valueExpression *ast.Node,
@@ -312,23 +301,26 @@ func convertJsonOptionOfListType(
 	var expression *ast.Node
 	var errors []*ast.Diagnostic
 	index := 0
-	mappedValue := core.Map(values, func(v string) any {
-		if valueExpression != nil {
-			expression = valueExpression.AsArrayLiteralExpression().Elements.Nodes[index]
-		}
-		result, err := convertJsonOption(option.Elements(), v, basePath, propertyAssignment, expression, sourceFile)
-		index++
-		errors = append(errors, err...)
-		return result
-	})
-	filteredValues := core.Filter(mappedValue, func(v any) bool {
-		if option.listPreserveFalsyValues {
-			return true
-		} else {
-			return (v != nil && v != false && v != 0 && v != "")
-		}
-	})
-	return filteredValues, errors
+	if _, ok := values.([]any); ok {
+		mappedValue := core.Map(values.([]any), func(v any) any {
+			if valueExpression != nil {
+				expression = valueExpression.AsArrayLiteralExpression().Elements.Nodes[index]
+			}
+			result, err := convertJsonOption(option.Elements(), v, basePath, propertyAssignment, expression, sourceFile)
+			index++
+			errors = append(errors, err...)
+			return result
+		})
+		filteredValues := core.Filter(mappedValue, func(v any) bool {
+			if option.listPreserveFalsyValues {
+				return true
+			} else {
+				return (v != nil && v != false && v != 0 && v != "")
+			}
+		})
+		return filteredValues, errors
+	}
+	return nil, errors
 }
 
 const configDirTemplate = "${configDir}"
@@ -369,13 +361,12 @@ func convertJsonOption(
 	}
 	if isCompilerOptionsValue(opt, value) {
 		optType := opt.Kind
-		_, ok := value.([]string)
-		if (optType == "list") && ok {
-			list, err := convertJsonOptionOfListType(opt, value.([]string), basePath, propertyAssignment, valueExpression, sourceFile) // as ArrayLiteralExpression | undefined
+		if optType == "list" {
+			list, err := convertJsonOptionOfListType(opt, value, basePath, propertyAssignment, valueExpression, sourceFile) // as ArrayLiteralExpression | undefined
 			return list, append(errors, err...)
 		} else if optType == "listOrElement" {
-			if ok {
-				listOrElement, err := convertJsonOptionOfListType(opt, value.([]string), basePath, propertyAssignment, valueExpression, sourceFile)
+			if reflect.TypeOf(value).Kind() == reflect.Slice {
+				listOrElement, err := convertJsonOptionOfListType(opt, value, basePath, propertyAssignment, valueExpression, sourceFile)
 				errors = append(errors, err...)
 				return listOrElement, errors
 			} else {
@@ -537,30 +528,17 @@ func convertArrayLiteralExpressionToJson(
 		return nil, nil
 	}
 	// Filter out invalid values
-	var convertedElements []string
-	var convertedElementsMap []map[string]any = []map[string]any{}
 	if len(elements) == 0 {
 		return []string{}, nil
 	}
 	var errors []*ast.Diagnostic
-	var convertedValue any
+	var value []any
 	for _, element := range elements {
-		convertedValue, errors = convertPropertyValueToJson(element, elementOption, returnValue, nil)
-		if str, ok := convertedValue.(string); ok {
-			convertedElements = append(convertedElements, str)
-		}
-		// Used for references. For eg. `references: [{ "path": "/apath" }]`
-		if m, ok := convertedValue.(map[string]any); ok {
-			convertedElementsMap = append(convertedElementsMap, m)
-		}
+		convertedValue, err := convertPropertyValueToJson(element, elementOption, returnValue, nil)
+		errors = append(errors, err...)
+		value = append(value, convertedValue)
 	}
-	filteredElements := core.Filter(convertedElements, func(v string) bool {
-		return v != ""
-	})
-	if len(filteredElements) != 0 {
-		return filteredElements, errors
-	}
-	return convertedElementsMap, errors
+	return value, errors
 }
 
 func directoryOfCombinedPath(fileName string, basePath string) string {
@@ -684,7 +662,7 @@ func convertPropertyValueToJson(valueExpression *ast.Expression, option *Command
 		return true, nil
 	case ast.KindFalseKeyword:
 		return false, nil
-	case ast.KindNullKeyword:
+	case ast.KindNullKeyword: //todo: how to manage null
 		return nil, nil
 
 	case ast.KindStringLiteral:
@@ -880,8 +858,8 @@ func parseConfig(
 const defaultIncludeSpec = "**/*"
 
 type PropOfRaw struct {
-	stringValues            []string
-	projectReferencesValues []core.ProjectReference
+	sliceValue any
+	wrongValue string
 }
 
 // parseJsonConfigFileContentWorker parses the contents of a config file from json or json source file (tsconfig.json).
@@ -910,7 +888,7 @@ func parseJsonConfigFileContentWorker(
 	// 	configDirTemplateSubstitutionOptions,
 	// 	basePath,
 	// )
-	rawConfig := ParseRawConfig(parsedConfig.raw, basePath, errors, configFileName)
+	rawConfig := parseJsonToStringKey(parsedConfig.raw)
 	var basePathForFileNames string
 	if configFileName != "" {
 		if parsedConfig.options != nil {
@@ -920,42 +898,34 @@ func parseJsonConfigFileContentWorker(
 	} else {
 		basePathForFileNames = tspath.NormalizePath(basePath)
 	}
-	getPropFromRaw := func(prop string, validateElement func(value string) bool) PropOfRaw {
-		value, exists := rawConfig.prop[string(prop)]
+	getPropFromRaw := func(prop string, validateElement func(value any) bool, elementTypeName string) PropOfRaw {
+		value, exists := rawConfig[string(prop)]
 		if exists {
-			if len(value) >= 0 {
-				result := rawConfig.prop[string(prop)]
-				if sourceFile == nil && !core.Every(result, validateElement) {
-					errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.Compiler_option_0_requires_a_value_of_type_1, prop)) // , elementTypeName
+			if reflect.TypeOf(value).Kind() == reflect.Slice {
+				result := rawConfig[string(prop)]
+				if _, ok := result.([]any); ok {
+					if sourceFile == nil && !core.Every(result.([]any), validateElement) {
+						errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.Compiler_option_0_requires_a_value_of_type_1, prop, elementTypeName))
+					}
 				}
-				return PropOfRaw{stringValues: result}
+				return PropOfRaw{sliceValue: result}
 			} else {
 				errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.Compiler_option_0_requires_a_value_of_type_1, prop, "Array"))
-			}
-		} else if rawConfig.references != nil {
-			if reflect.TypeOf(rawConfig.references).Kind() == reflect.Slice {
-				result := rawConfig.references
-				// if sourceFile != nil && core.Every(result, func(element compiler.ProjectReference) bool { return validateElement(element.Path) }) {
-				// 	errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.Compiler_option_0_requires_a_value_of_type_1, prop)) // , elementTypeName
-				// }
-				return PropOfRaw{stringValues: nil, projectReferencesValues: result}
-			} else {
-				errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.Compiler_option_0_requires_a_value_of_type_1, prop, "Array"))
-				return PropOfRaw{stringValues: nil, projectReferencesValues: nil}
+				return PropOfRaw{sliceValue: nil, wrongValue: "not-array"}
 			}
 		}
-		return PropOfRaw{stringValues: []string{"no-prop"}, projectReferencesValues: nil}
+		return PropOfRaw{sliceValue: nil, wrongValue: "no-prop"}
 	}
 	getConfigFileSpecs := func() configFileSpecs {
-		referencesOfRaw := getPropFromRaw("references", func(element string) bool { return element == "object" })
-		fileSpecs := getPropFromRaw("files", func(element string) bool { return reflect.TypeOf(element).Kind() == reflect.String })
-		if len(fileSpecs.stringValues) == 0 || fileSpecs.stringValues[0] != "no-prop" {
+		referencesOfRaw := getPropFromRaw("references", func(element any) bool { return reflect.TypeOf(element).Kind() == reflect.Map }, "object")
+		fileSpecs := getPropFromRaw("files", func(element any) bool { return reflect.TypeOf(element).Kind() == reflect.String }, "string")
+		if fileSpecs.sliceValue != nil || fileSpecs.wrongValue == "" {
 			hasZeroOrNoReferences := false
-			if len(referencesOfRaw.projectReferencesValues) == 0 || referencesOfRaw.projectReferencesValues == nil {
+			if referencesOfRaw.wrongValue == "no-prop" || referencesOfRaw.wrongValue == "not-array" || len(referencesOfRaw.sliceValue.([]any)) == 0 {
 				hasZeroOrNoReferences = true
 			}
-			hasExtends := rawConfig.prop[string("extends")]
-			if len(fileSpecs.stringValues) == 0 && hasZeroOrNoReferences && hasExtends == nil {
+			hasExtends := rawConfig[string("extends")]
+			if fileSpecs.sliceValue != nil && len(fileSpecs.sliceValue.([]any)) == 0 && hasZeroOrNoReferences && hasExtends == nil {
 				if sourceFile != nil {
 					var fileName string
 					if configFileName != "" {
@@ -971,30 +941,39 @@ func parseJsonConfigFileContentWorker(
 				}
 			}
 		}
-		includeSpecs := getPropFromRaw("include", func(element string) bool { return reflect.TypeOf(element).Kind() == reflect.String })
-		excludeSpecs := getPropFromRaw("exclude", func(element string) bool { return reflect.TypeOf(element).Kind() == reflect.String })
+		includeSpecs := getPropFromRaw("include", func(element any) bool { return reflect.TypeOf(element).Kind() == reflect.String }, "string")
+		excludeSpecs := getPropFromRaw("exclude", func(element any) bool { return reflect.TypeOf(element).Kind() == reflect.String }, "string")
 		isDefaultIncludeSpec := false
-		if len(excludeSpecs.stringValues) != 0 && excludeSpecs.stringValues[0] == "no-prop" && parsedConfig.options != nil {
+		if excludeSpecs.wrongValue == "no-prop" && parsedConfig.options != nil {
 			outDir := parsedConfig.options.OutDir
 			declarationDir := parsedConfig.options.DeclarationDir
 			if outDir != "" || declarationDir != "" {
-				excludeSpecs = PropOfRaw{stringValues: core.Filter([]string{outDir, declarationDir}, func(d string) bool { return d != "" })}
+				values := []any{}
+				if outDir != "" {
+					values = append(values, outDir)
+				}
+				if declarationDir != "" {
+					values = append(values, declarationDir)
+				}
+				excludeSpecs = PropOfRaw{sliceValue: values}
 			}
 		}
-		if len(fileSpecs.stringValues) != 0 && fileSpecs.stringValues[0] == "no-prop" && len(includeSpecs.stringValues) != 0 && includeSpecs.stringValues[0] == "no-prop" {
-			includeSpecs = PropOfRaw{stringValues: []string{defaultIncludeSpec}}
+		if fileSpecs.sliceValue == nil && includeSpecs.sliceValue == nil {
+			includeSpecs = PropOfRaw{sliceValue: []any{defaultIncludeSpec}}
 			isDefaultIncludeSpec = true
 		}
 		var validatedIncludeSpecsBeforeSubstitution []string
 		var validatedExcludeSpecsBeforeSubstitution []string
+		var validatedFilesSpecBeforeSubstitution []string
 		var validatedIncludeSpecs []string
 		var validatedExcludeSpecs []string
+		var validatedFilesSpec []string
 		// The exclude spec list is converted into a regular expression, which allows us to quickly
 		// test whether a file or directory should be excluded before recursively traversing the
 		// file system.
-		if len(includeSpecs.stringValues) != 0 && includeSpecs.stringValues[0] != "no-prop" {
+		if includeSpecs.sliceValue != nil {
 			var err []*ast.Diagnostic
-			validatedIncludeSpecsBeforeSubstitution, err = validateSpecs(includeSpecs.stringValues /*disallowTrailingRecursion*/, true, sourceFile, "include")
+			validatedIncludeSpecsBeforeSubstitution, err = validateSpecs(includeSpecs.sliceValue /*disallowTrailingRecursion*/, true, sourceFile, "include")
 			errors = append(errors, err...)
 			validatedIncludeSpecs = getSubstitutedStringArrayWithConfigDirTemplate(
 				validatedIncludeSpecsBeforeSubstitution,
@@ -1004,9 +983,9 @@ func parseJsonConfigFileContentWorker(
 				validatedIncludeSpecs = validatedIncludeSpecsBeforeSubstitution
 			}
 		}
-		if len(excludeSpecs.stringValues) != 0 && excludeSpecs.stringValues[0] != "no-prop" {
+		if excludeSpecs.sliceValue != nil {
 			var err []*ast.Diagnostic
-			validatedExcludeSpecsBeforeSubstitution, err = validateSpecs(excludeSpecs.stringValues /*disallowTrailingRecursion*/, false, sourceFile, "exclude")
+			validatedExcludeSpecsBeforeSubstitution, err = validateSpecs(excludeSpecs.sliceValue /*disallowTrailingRecursion*/, false, sourceFile, "exclude")
 			errors = append(errors, err...)
 			validatedExcludeSpecs = getSubstitutedStringArrayWithConfigDirTemplate(
 				validatedExcludeSpecsBeforeSubstitution,
@@ -1016,18 +995,27 @@ func parseJsonConfigFileContentWorker(
 				validatedExcludeSpecs = validatedExcludeSpecsBeforeSubstitution
 			}
 		}
-		validatedFilesSpecBeforeSubstitution := core.Filter(fileSpecs.stringValues, func(spec string) bool { return reflect.TypeOf(spec).Kind() == reflect.String })
-		validatedFilesSpec := getSubstitutedStringArrayWithConfigDirTemplate(
-			validatedFilesSpecBeforeSubstitution,
-			basePathForFileNames,
-		)
-		if validatedFilesSpec == nil && len(validatedFilesSpecBeforeSubstitution) != 0 && validatedFilesSpecBeforeSubstitution[0] != "no-prop" {
+		if fileSpecs.sliceValue != nil {
+			if _, ok := fileSpecs.sliceValue.([]any); ok {
+				fileSpecs := core.Filter(fileSpecs.sliceValue.([]any), func(spec any) bool { return reflect.TypeOf(spec).Kind() == reflect.String })
+				for _, spec := range fileSpecs {
+					if spec, ok := spec.(string); ok {
+						validatedFilesSpecBeforeSubstitution = append(validatedFilesSpecBeforeSubstitution, spec)
+					}
+				}
+			}
+			validatedFilesSpec = getSubstitutedStringArrayWithConfigDirTemplate(
+				validatedFilesSpecBeforeSubstitution,
+				basePathForFileNames,
+			)
+		}
+		if validatedFilesSpec == nil {
 			validatedFilesSpec = validatedFilesSpecBeforeSubstitution
 		}
 		return configFileSpecs{
-			fileSpecs.stringValues,
-			includeSpecs.stringValues,
-			excludeSpecs.stringValues,
+			fileSpecs.sliceValue,
+			includeSpecs.sliceValue,
+			excludeSpecs.sliceValue,
 			validatedFilesSpec,
 			validatedIncludeSpecs,
 			validatedExcludeSpecs,
@@ -1052,30 +1040,32 @@ func parseJsonConfigFileContentWorker(
 		if shouldReportNoInputFiles(fileNames, canJsonReportNoInputFiles(rawConfig), resolutionStack) {
 			includeSpecs := configFileSpecs.includeSpecs
 			excludeSpecs := configFileSpecs.excludeSpecs
-			if len(configFileSpecs.includeSpecs) == 0 || configFileSpecs.includeSpecs != nil && configFileSpecs.includeSpecs[0] == "no-prop" {
+			if includeSpecs == nil {
 				includeSpecs = []string{}
 			}
-			if len(configFileSpecs.excludeSpecs) == 0 || configFileSpecs.excludeSpecs != nil && configFileSpecs.excludeSpecs[0] == "no-prop" {
+			if excludeSpecs == nil {
 				excludeSpecs = []string{}
 			}
-			errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.No_inputs_were_found_in_config_file_0_Specified_include_paths_were_1_and_exclude_paths_were_2, configFileName, includeSpecs, excludeSpecs))
+			errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.No_inputs_were_found_in_config_file_0_Specified_include_paths_were_1_and_exclude_paths_were_2, configFileName, core.Must(core.StringifyJson(includeSpecs)), core.Must(core.StringifyJson(excludeSpecs))))
 		}
 		return fileNames
 	}
 
 	getProjectReferences := func(basePath string) []core.ProjectReference {
 		var projectReferences []core.ProjectReference = []core.ProjectReference{}
-		referencesOfRaw := getPropFromRaw("references", func(element string) bool { return element == "object" })
-		if referencesOfRaw.projectReferencesValues != nil {
-			for _, ref := range referencesOfRaw.projectReferencesValues {
-				if reflect.TypeOf(ref.Path).Kind() != reflect.String {
-					errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.Compiler_option_0_requires_a_value_of_type_1, "reference.path", "string"))
-				} else {
-					projectReferences = append(projectReferences, core.ProjectReference{
-						Path:         tspath.GetNormalizedAbsolutePath(ref.Path, basePath),
-						OriginalPath: ref.Path,
-						Circular:     ref.Circular,
-					})
+		referencesOfRaw := getPropFromRaw("references", func(element any) bool { return reflect.TypeOf(element).Kind() == reflect.Map }, "object")
+		if referencesOfRaw.sliceValue != nil {
+			for _, reference := range referencesOfRaw.sliceValue.([]any) {
+				for _, ref := range parseProjectReference(reference) {
+					if reflect.TypeOf(ref.Path).Kind() != reflect.String {
+						errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.Compiler_option_0_requires_a_value_of_type_1, "reference.path", "string"))
+					} else {
+						projectReferences = append(projectReferences, core.ProjectReference{
+							Path:         tspath.GetNormalizedAbsolutePath(ref.Path, basePath),
+							OriginalPath: ref.Path,
+							Circular:     ref.Circular,
+						})
+					}
 				}
 			}
 		}
@@ -1093,9 +1083,9 @@ func parseJsonConfigFileContentWorker(
 	}
 }
 
-func canJsonReportNoInputFiles(rawConfig tsConfigOptions) bool {
-	_, filesExists := rawConfig.prop["files"]
-	_, referencesExists := rawConfig.prop["references"]
+func canJsonReportNoInputFiles(rawConfig map[string]any) bool {
+	_, filesExists := rawConfig["files"]
+	_, referencesExists := rawConfig["references"]
 	return !filesExists && !referencesExists
 }
 
@@ -1103,23 +1093,24 @@ func shouldReportNoInputFiles(fileNames []string, canJsonReportNoInutFiles bool,
 	return len(fileNames) == 0 && canJsonReportNoInutFiles && (resolutionStack != nil || len(resolutionStack) == 0)
 }
 
-func validateSpecs(specs []string, disallowTrailingRecursion bool, jsonSourceFile *tsConfigSourceFile, specKey string) ([]string, []*ast.Diagnostic) {
+func validateSpecs(specs any, disallowTrailingRecursion bool, jsonSourceFile *tsConfigSourceFile, specKey string) ([]string, []*ast.Diagnostic) {
 	createDiagnostic := func(message *diagnostics.Message, spec string) *ast.Diagnostic {
 		element := getTsConfigPropArrayElementValue(jsonSourceFile, specKey, spec)
 		return ast.NewCompilerDiagnostic(message, element)
 	}
 	var errors []*ast.Diagnostic
-	return core.Filter(specs, func(spec string) bool {
-		if spec == "" {
-			return false
+	var finalSpecs []string
+	for _, spec := range specs.([]any) {
+		if reflect.TypeOf(spec).Kind() != reflect.String {
+			continue
 		}
-		diag, _ := specToDiagnostic(spec, disallowTrailingRecursion)
+		diag, _ := specToDiagnostic(spec.(string), disallowTrailingRecursion)
 		if diag != nil {
-			errors = append(errors, createDiagnostic(diag, spec))
-			// errors.push(createDiagnosticForNodeInSourceFileOrCompilerDiagnostic(jsonSourceFile, getTsConfigPropArrayElementValue(jsonSourceFile, specKey, spec), diag.message, spec));
+			errors = append(errors, createDiagnostic(diag, spec.(string)))
 		}
-		return diag == nil
-	}), errors
+		finalSpecs = append(finalSpecs, spec.(string))
+	}
+	return finalSpecs, errors
 }
 
 func specToDiagnostic(spec string, disallowTrailingRecursion bool) (*diagnostics.Message, string) {

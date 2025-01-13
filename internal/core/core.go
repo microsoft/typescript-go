@@ -1,8 +1,11 @@
 package core
 
 import (
+	"bytes"
+	"encoding/json"
 	"iter"
 	"slices"
+	"strings"
 	"unicode/utf8"
 
 	"github.com/microsoft/typescript-go/internal/stringutil"
@@ -324,4 +327,14 @@ func Must[T any](v T, err error) T {
 		panic(err)
 	}
 	return v
+}
+
+func StringifyJson(input any) (string, error) {
+	var buf bytes.Buffer
+	encoder := json.NewEncoder(&buf)
+	encoder.SetEscapeHTML(false)
+	if err := encoder.Encode(input); err != nil {
+		return "", err
+	}
+	return strings.TrimSpace(buf.String()), nil
 }

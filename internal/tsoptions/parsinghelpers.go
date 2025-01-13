@@ -2,7 +2,6 @@ package tsoptions
 
 import (
 	"github.com/microsoft/typescript-go/internal/ast"
-	"github.com/microsoft/typescript-go/internal/compiler/diagnostics"
 	"github.com/microsoft/typescript-go/internal/core"
 )
 
@@ -57,20 +56,18 @@ func parseString(value any) string {
 
 func parseProjectReference(json any) []core.ProjectReference {
 	var result []core.ProjectReference
-	if arr, ok := json.([]map[string]any); ok {
-		for _, v := range arr {
-			var reference core.ProjectReference
-			if v, ok := v["path"]; ok {
-				reference.Path = v.(string)
-			}
-			if v, ok := v["originalPath"]; ok {
-				reference.OriginalPath = v.(string)
-			}
-			if v, ok := v["circular"]; ok {
-				reference.Circular = v.(bool)
-			}
-			result = append(result, reference)
+	if v, ok := json.(map[string]any); ok {
+		var reference core.ProjectReference
+		if v, ok := v["path"]; ok {
+			reference.Path = v.(string)
 		}
+		if v, ok := v["originalPath"]; ok {
+			reference.OriginalPath = v.(string)
+		}
+		if v, ok := v["circular"]; ok {
+			reference.Circular = v.(bool)
+		}
+		result = append(result, reference)
 	}
 	return result
 }
@@ -79,19 +76,49 @@ func parseJsonToStringKey(json any) map[string]any {
 	result := make(map[string]any)
 	if m, ok := json.(map[string]any); ok {
 		if v, ok := m["include"]; ok {
-			result["include"] = v
+			if arr, ok := v.([]string); ok {
+				if len(arr) == 0 {
+					result["include"] = []any{}
+				}
+			} else {
+				result["include"] = v
+			}
 		}
 		if v, ok := m["exclude"]; ok {
-			result["exclude"] = v
+			if arr, ok := v.([]string); ok {
+				if len(arr) == 0 {
+					result["exclude"] = []any{}
+				}
+			} else {
+				result["exclude"] = v
+			}
 		}
 		if v, ok := m["files"]; ok {
-			result["files"] = v
+			if arr, ok := v.([]string); ok {
+				if len(arr) == 0 {
+					result["files"] = []any{}
+				}
+			} else {
+				result["files"] = v
+			}
 		}
 		if v, ok := m["references"]; ok {
-			result["references"] = v
+			if arr, ok := v.([]string); ok {
+				if len(arr) == 0 {
+					result["references"] = []any{}
+				}
+			} else {
+				result["references"] = v
+			}
 		}
 		if v, ok := m["extends"]; ok {
-			result["extends"] = v
+			if arr, ok := v.([]string); ok {
+				if len(arr) == 0 {
+					result["extends"] = []any{}
+				}
+			} else {
+				result["extends"] = v
+			}
 		}
 		if v, ok := m["compilerOptions"]; ok {
 			result["compilerOptions"] = v
@@ -205,8 +232,6 @@ func parseCompilerOptions(key string, value any, allOptions *core.CompilerOption
 		allOptions.OutDir = parseString(value)
 	case "newLine":
 		allOptions.NewLine = value.(core.NewLineKind)
-	default:
-		return []*ast.Diagnostic{ast.NewCompilerDiagnostic(diagnostics.Unknown_compiler_option_0, key)}
 	}
 	return nil
 }
