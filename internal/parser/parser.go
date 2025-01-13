@@ -152,7 +152,7 @@ func (p *Parser) initializeState(fileName string, sourceText string, languageVer
 	p.scriptKind = ensureScriptKind(fileName, scriptKind)
 	p.languageVariant = getLanguageVariant(p.scriptKind)
 	p.jsdocCache = make(map[*ast.Node][]*ast.Node)
-	p.scanner.SetJSDocParsingMode(scanner.JSDocParsingModeParseAll)
+	p.scanner.SetJSDocParsingMode(scanner.JSDocParsingModeParseNone)
 	switch p.scriptKind {
 	case core.ScriptKindJS, core.ScriptKindJSX:
 		p.contextFlags = ast.NodeFlagsJavaScriptFile
@@ -2472,7 +2472,6 @@ func (p *Parser) parseJSDocComment(parent *ast.Node, start int /*  = 0 */, end i
 	p.offset = start + 3
 	p.setContextFlags(ast.NodeFlagsJSDoc, true)
 	p.parsingContexts = p.parsingContexts | ParsingContexts(PCJSDocComment)
-	p.scanner.SetJSDocParsingMode(scanner.JSDocParsingModeParseAll)
 
 	// initial indent + 4 for leading '/** '
 	// + 1 because the last index of \n is always one index before the first character in the line and,

@@ -980,6 +980,13 @@ func (s *Scanner) ReScanSlashToken() ast.Kind {
 	return s.token
 }
 
+func (s *Scanner) ReScanJsxToken(allowMultilineJsxText bool) ast.Kind {
+	s.pos = s.fullStartPos
+	s.tokenStart = s.fullStartPos
+	s.token = s.ScanJsxTokenEx(allowMultilineJsxText)
+	return s.token
+}
+
 func (s *Scanner) ReScanHashToken() ast.Kind {
 	if s.token == ast.KindPrivateIdentifier {
 		s.pos = s.tokenStart + 1
@@ -994,13 +1001,6 @@ func (s *Scanner) ReScanQuestionToken() ast.Kind {
 	}
 	s.pos = s.tokenStart + 1
 	s.token = ast.KindQuestionToken
-	return s.token
-}
-
-func (s *Scanner) ReScanJsxToken(allowMultilineJsxText bool) ast.Kind {
-	s.pos = s.fullStartPos
-	s.tokenStart = s.fullStartPos
-	s.token = s.ScanJsxTokenEx(allowMultilineJsxText)
 	return s.token
 }
 
