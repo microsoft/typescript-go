@@ -150,7 +150,6 @@ func (p *Parser) initializeState(fileName string, sourceText string, languageVer
 	p.languageVersion = languageVersion
 	p.scriptKind = ensureScriptKind(fileName, scriptKind)
 	p.languageVariant = getLanguageVariant(p.scriptKind)
-	p.jsdocCache = make(map[*ast.Node][]*ast.Node)
 	p.scanner.SetJSDocParsingMode(scanner.JSDocParsingModeParseNone)
 	switch p.scriptKind {
 	case core.ScriptKindJS, core.ScriptKindJSX:
@@ -270,7 +269,7 @@ func (p *Parser) parseSourceFileWorker() *ast.SourceFile {
 	result.LanguageVariant = p.languageVariant
 	result.ScriptKind = p.scriptKind
 	result.SetJSDocCache(&p.jsdocCache)
-	p.jsdocCache = make(map[*ast.Node][]*ast.Node)
+	p.jsdocCache = nil
 	if !result.IsDeclarationFile && result.ExternalModuleIndicator != nil && len(p.possibleAwaitSpans) > 0 {
 		reparse := p.reparseTopLevelAwait(result)
 		if node != reparse {
@@ -283,7 +282,7 @@ func (p *Parser) parseSourceFileWorker() *ast.SourceFile {
 			result.LanguageVariant = p.languageVariant
 			result.ScriptKind = p.scriptKind
 			result.SetJSDocCache(&p.jsdocCache)
-			p.jsdocCache = make(map[*ast.Node][]*ast.Node)
+			p.jsdocCache = nil
 		}
 	}
 	p.possibleAwaitSpans = []int{}
@@ -6979,7 +6978,9 @@ func (p *Parser) withJSDoc(node *ast.Node, hasJSDoc bool) {
 		return
 	}
 
-	if _, ok := p.jsdocCache[node]; ok {
+	if p.jsdocCache == nil {
+		p.jsdocCache = make(map[*ast.Node][]*ast.Node)
+	} else if _, ok := p.jsdocCache[node]; ok {
 		panic("tried to set JSDoc on a node with existing JSDoc")
 	}
 	// Should only be called once per node
