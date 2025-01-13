@@ -151,7 +151,7 @@ func (p *Parser) initializeState(fileName string, sourceText string, languageVer
 	p.scriptKind = ensureScriptKind(fileName, scriptKind)
 	p.languageVariant = getLanguageVariant(p.scriptKind)
 	p.jsdocCache = make(map[*ast.Node][]*ast.Node)
-	p.scanner.SetJSDocParsingMode(scanner.JSDocParsingModeParseAll)
+	p.scanner.SetJSDocParsingMode(scanner.JSDocParsingModeParseNone)
 	switch p.scriptKind {
 	case core.ScriptKindJS, core.ScriptKindJSX:
 		p.contextFlags = ast.NodeFlagsJavaScriptFile
