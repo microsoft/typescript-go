@@ -1531,7 +1531,7 @@ func isQuestionToken(node *ast.Node) bool {
 }
 
 func isExclamationToken(node *ast.Node) bool {
-	return node != nil && node.Kind == ast.KindQuestionToken
+	return node != nil && node.Kind == ast.KindExclamationToken
 }
 
 func isOptionalDeclaration(declaration *ast.Node) bool {
@@ -2900,4 +2900,13 @@ func getSuperContainer(node *ast.Node, stopOnFunctions bool) *ast.Node {
 			}
 		}
 	}
+}
+
+func isCommentOrBlankLine(text string, pos int) bool {
+	for pos < len(text) && (text[pos] == ' ' || text[pos] == '\t') {
+		pos++
+	}
+	return pos == len(text) ||
+		pos < len(text) && (text[pos] == '\r' || text[pos] == '\n') ||
+		pos+1 < len(text) && text[pos] == '/' && text[pos+1] == '/'
 }

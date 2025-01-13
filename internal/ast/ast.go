@@ -5637,6 +5637,19 @@ type PatternAmbientModule struct {
 	Symbol  *Symbol
 }
 
+type CommentDirectiveKind int32
+
+const (
+	CommentDirectiveKindUnknown CommentDirectiveKind = iota
+	CommentDirectiveKindExpectError
+	CommentDirectiveKindIgnore
+)
+
+type CommentDirective struct {
+	Loc  core.TextRange
+	Kind CommentDirectiveKind
+}
+
 // SourceFile
 
 type SourceFile struct {
@@ -5670,6 +5683,7 @@ type SourceFile struct {
 	ModuleAugmentations         []*ModuleName      // []ModuleName
 	PatternAmbientModules       []PatternAmbientModule
 	AmbientModuleNames          []string
+	CommentDirectives           []CommentDirective
 	jsdocCache                  map[*Node][]*Node
 	Pragmas                     []Pragma
 	ReferencedFiles             []*FileReference

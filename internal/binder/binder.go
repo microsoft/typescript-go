@@ -631,7 +631,7 @@ func (b *Binder) bindWorker(node *ast.Node) bool {
 	case ast.KindCallSignature, ast.KindConstructSignature, ast.KindIndexSignature:
 		b.declareSymbolAndAddToSymbolTable(node, ast.SymbolFlagsSignature, ast.SymbolFlagsNone)
 	case ast.KindMethodDeclaration, ast.KindMethodSignature:
-		b.bindPropertyOrMethodOrAccessor(node, ast.SymbolFlagsMethod|core.IfElse(getPostfixTokenFromNode(node) != nil, ast.SymbolFlagsOptional, ast.SymbolFlagsNone), core.IfElse(ast.IsObjectLiteralMethod(node), ast.SymbolFlagsPropertyExcludes, ast.SymbolFlagsMethodExcludes))
+		b.bindPropertyOrMethodOrAccessor(node, ast.SymbolFlagsMethod|getOptionalSymbolFlagForNode(node), core.IfElse(ast.IsObjectLiteralMethod(node), ast.SymbolFlagsPropertyExcludes, ast.SymbolFlagsMethodExcludes))
 	case ast.KindFunctionDeclaration:
 		b.bindFunctionDeclaration(node)
 	case ast.KindConstructor:
@@ -716,7 +716,7 @@ func (b *Binder) bindPropertyWorker(node *ast.Node) {
 	isAutoAccessor := ast.IsAutoAccessorPropertyDeclaration(node)
 	includes := core.IfElse(isAutoAccessor, ast.SymbolFlagsAccessor, ast.SymbolFlagsProperty)
 	excludes := core.IfElse(isAutoAccessor, ast.SymbolFlagsAccessorExcludes, ast.SymbolFlagsPropertyExcludes)
-	b.bindPropertyOrMethodOrAccessor(node, includes|core.IfElse(getPostfixTokenFromNode(node) != nil, ast.SymbolFlagsOptional, ast.SymbolFlagsNone), excludes)
+	b.bindPropertyOrMethodOrAccessor(node, includes|getOptionalSymbolFlagForNode(node), excludes)
 }
 
 func (b *Binder) bindSourceFileIfExternalModule() {
@@ -2807,6 +2807,11 @@ func isFunctionPropertyAssignment(node *ast.Node) bool {
 		}
 	}
 	return false
+}
+
+func getOptionalSymbolFlagForNode(node *ast.Node) ast.SymbolFlags {
+	postfixToken := getPostfixTokenFromNode(node)
+	return core.IfElse(postfixToken != nil && postfixToken.Kind == ast.KindQuestionToken, ast.SymbolFlagsOptional, ast.SymbolFlagsNone)
 }
 
 func getPostfixTokenFromNode(node *ast.Node) *ast.Node {

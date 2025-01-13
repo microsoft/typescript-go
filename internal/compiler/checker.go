@@ -93,6 +93,13 @@ type EnumLiteralKey struct {
 	value      any
 }
 
+// EnumRelationKey
+
+type EnumRelationKey struct {
+	sourceId ast.SymbolId
+	targetId ast.SymbolId
+}
+
 // TypeCacheKind
 
 type CachedTypeKind int32
@@ -705,7 +712,7 @@ type Checker struct {
 	assignableRelation                        *Relation
 	comparableRelation                        *Relation
 	identityRelation                          *Relation
-	enumRelation                              *Relation
+	enumRelation                              map[EnumRelationKey]RelationComparisonResult
 	getGlobalNonNullableTypeAliasOrNil        func() *ast.Symbol
 	getGlobalExtractSymbol                    func() *ast.Symbol
 	getGlobalDisposableType                   func() *Type
@@ -889,7 +896,7 @@ func NewChecker(program *Program) *Checker {
 	c.assignableRelation = &Relation{}
 	c.comparableRelation = &Relation{}
 	c.identityRelation = &Relation{}
-	c.enumRelation = &Relation{}
+	c.enumRelation = make(map[EnumRelationKey]RelationComparisonResult)
 	c.getGlobalNonNullableTypeAliasOrNil = c.getGlobalTypeAliasResolver("NonNullable", 1 /*arity*/, false /*reportErrors*/)
 	c.getGlobalExtractSymbol = c.getGlobalTypeAliasResolver("Extract", 2 /*arity*/, true /*reportErrors*/)
 	c.getGlobalDisposableType = c.getGlobalTypeResolver("Disposable", 0 /*arity*/, true /*reportErrors*/)
@@ -22021,10 +22028,8 @@ func (c *Checker) getContextualTypeForBinaryOperand(node *ast.Node, contextFlags
 		// by the type of the left operand, except for the special case of Javascript declarations of the form
 		// `namespace.prop = namespace.prop || {}`.
 		t := c.getContextualType(binary.AsNode(), contextFlags)
-		if t != nil && node == binary.Right {
-			if pattern := c.patternForType[t]; pattern != nil {
-				return c.getTypeOfExpression(binary.Left)
-			}
+		if node == binary.Right && (t == nil || c.patternForType[t] != nil) {
+			return c.getTypeOfExpression(binary.Left)
 		}
 		return t
 	case ast.KindAmpersandAmpersandToken, ast.KindCommaToken:
