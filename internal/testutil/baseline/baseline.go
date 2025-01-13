@@ -17,31 +17,47 @@ type Options struct {
 
 const NoContent = "<no content>"
 
-func Run(t testing.TB, fileName string, actual string, opts Options) {
+func Run(t *testing.T, fileName string, actual string, opts Options) {
 	opts.Expected = false
-	writeComparison(t, "", actual, fileName, opts)
+	writeComparison(t, "", actual, fileName, false /*useSubmodule*/, opts)
+}
+
+func RunAgainstSubmodule(t *testing.T, fileName string, actual string, opts Options) {
+	writeComparison(t, "", actual, fileName, true /*useSubmodule*/, opts)
 }
 
 func RunFromText(t testing.TB, fileName string, expected string, actual string, opts Options) {
 	opts.Expected = true
-	writeComparison(t, expected, actual, fileName, opts)
+	writeComparison(t, expected, actual, fileName, false /*useSubmodule*/, opts)
 }
 
-func writeComparison(t testing.TB, expected string, actual string, relativeFileName string, opts Options) {
+func writeComparison(t testing.TB, expected string, actual string, relativeFileName string, useSubmodule bool, opts Options) {
 	if actual == "" || opts.Expected && expected == "" {
 		panic("The generated content was \"\". Return 'baseline.NoContent' if no baselining is required.")
 	}
+	var (
+		localFileName     string
+		referenceFileName string
+	)
 
-	localFileName := localPath(relativeFileName, opts.Subfolder)
-	var referenceFileName string
-	if opts.Gold {
+	if useSubmodule {
+		localFileName = submoduleLocalPath(relativeFileName, opts.Subfolder)
+		referenceFileName = submoduleReferencePath(relativeFileName, opts.Subfolder)
+	} else if opts.Gold {
+		localFileName = localPath(relativeFileName, opts.Subfolder)
 		referenceFileName = goldPath(relativeFileName, opts.Subfolder)
 	} else {
+		localFileName = localPath(relativeFileName, opts.Subfolder)
 		referenceFileName = referencePath(relativeFileName, opts.Subfolder)
 	}
+
 	if !opts.Expected {
-		expected = getExpectedContent(referenceFileName)
+		expected = NoContent
+		if content, err := os.ReadFile(referenceFileName); err == nil {
+			expected = string(content)
+		}
 	}
+
 	if _, err := os.Stat(localFileName); err == nil {
 		if err := os.Remove(localFileName); err != nil {
 			t.Fatal(fmt.Errorf("failed to remove the local baseline file %s: %w", localFileName, err))
@@ -60,23 +76,25 @@ func writeComparison(t testing.TB, expected string, actual string, relativeFileN
 		}
 
 		if _, err := os.Stat(referenceFileName); err != nil {
-			t.Errorf("New baseline created at %s.", localFileName)
+			if useSubmodule {
+				t.Errorf("the baseline file %s does not exist in the TypeScript submodule", referenceFileName)
+			} else {
+				t.Errorf("new baseline created at %s.", localFileName)
+			}
+		} else if useSubmodule {
+			t.Errorf("the baseline file %s does not match the reference in the TypeScript submodule", relativeFileName)
 		} else {
-			t.Errorf("The baseline file %s has changed. (Run `hereby baseline-accept` if the new baseline is correct.)", relativeFileName)
+			t.Errorf("the baseline file %s has changed. (Run `hereby baseline-accept` if the new baseline is correct.)", relativeFileName)
 		}
 	}
 }
 
-func getExpectedContent(referenceFileName string) string {
-	expected := NoContent
-	if content, err := os.ReadFile(referenceFileName); err == nil {
-		expected = string(content)
-	}
-	return expected
-}
-
 func localPath(fileName string, subfolder string) string {
 	return filepath.Join(repo.TestDataPath, "baselines", "local", subfolder, fileName)
+}
+
+func submoduleLocalPath(fileName string, subfolder string) string {
+	return filepath.Join(repo.TestDataPath, "baselines", "tmp", subfolder, fileName)
 }
 
 func referencePath(fileName string, subfolder string) string {
@@ -85,4 +103,8 @@ func referencePath(fileName string, subfolder string) string {
 
 func goldPath(fileName string, subfolder string) string {
 	return filepath.Join(repo.TestDataPath, "baselines", "gold", subfolder, fileName)
+}
+
+func submoduleReferencePath(fileName string, subfolder string) string {
+	return filepath.Join(repo.TypeScriptSubmodulePath, "tests", "baselines", "reference", subfolder, fileName)
 }

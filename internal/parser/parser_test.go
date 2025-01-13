@@ -33,7 +33,7 @@ func BenchmarkParse(b *testing.B) {
 			fileName := f.Path()
 			sourceText := f.ReadFile(b)
 
-			for i := 0; i < b.N; i++ {
+			for range b.N {
 				parser.ParseSourceFile(fileName, sourceText, core.ScriptTargetESNext)
 			}
 		})
@@ -294,11 +294,6 @@ func TestParseTypeScriptRepo(t *testing.T) {
 			for f := range allParsableFiles(t, root) {
 				t.Run(f.name, func(t *testing.T) {
 					t.Parallel()
-
-					// !!! TODO: Fix this bug
-					if f.name == "compiler/unicodeEscapesInNames01.ts" {
-						t.Skip("times out")
-					}
 
 					sourceText, err := os.ReadFile(f.path)
 					assert.NilError(t, err)

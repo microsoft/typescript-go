@@ -2,15 +2,14 @@ package compiler
 
 import (
 	"fmt"
-	"math"
 	"strings"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/binder"
 	"github.com/microsoft/typescript-go/internal/compiler/diagnostics"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/jsnum"
 	"github.com/microsoft/typescript-go/internal/scanner"
-	"github.com/microsoft/typescript-go/internal/stringutil"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
@@ -97,7 +96,7 @@ func (c *Checker) checkGrammarPrivateIdentifierExpression(privId *ast.PrivateIde
 	}
 
 	if !ast.IsForInStatement(privId.Parent) {
-		if !isExpressionNode(privIdAsNode) {
+		if !IsExpressionNode(privIdAsNode) {
 			return c.grammarErrorOnNode(privIdAsNode, diagnostics.Private_identifiers_are_only_allowed_in_class_bodies_and_may_only_be_used_as_part_of_a_class_member_declaration_property_access_or_on_the_left_hand_side_of_an_in_expression)
 		}
 
@@ -235,13 +234,13 @@ func (c *Checker) checkGrammarModifiers(node *ast.Node /*Union[HasModifiers, Has
 	}
 	for _, modifier := range modifiers {
 		if ast.IsDecorator(modifier) {
-			if !nodeCanBeDecorated(c.compilerOptions.LegacyDecorators == core.TSTrue, node, node.Parent, node.Parent.Parent) {
+			if !nodeCanBeDecorated(c.legacyDecorators, node, node.Parent, node.Parent.Parent) {
 				if node.Kind == ast.KindMethodDeclaration && !ast.NodeIsPresent(getBodyOfNode(node)) {
 					return c.grammarErrorOnFirstToken(node, diagnostics.A_decorator_can_only_decorate_a_method_implementation_not_an_overload)
 				} else {
 					return c.grammarErrorOnFirstToken(node, diagnostics.Decorators_are_not_valid_here)
 				}
-			} else if c.compilerOptions.LegacyDecorators == core.TSTrue && (node.Kind == ast.KindGetAccessor || node.Kind == ast.KindSetAccessor) {
+			} else if c.legacyDecorators && (node.Kind == ast.KindGetAccessor || node.Kind == ast.KindSetAccessor) {
 				accessors := c.getAllAccessorDeclarationsForDeclaration(node)
 				if hasDecorators(accessors.firstAccessor) && node == accessors.secondAccessor {
 					return c.grammarErrorOnFirstToken(node, diagnostics.Decorators_cannot_be_applied_to_multiple_get_Slashset_accessors_of_the_same_name)
@@ -1793,6 +1792,19 @@ func (c *Checker) checkGrammarAwaitOrAwaitUsing(node *ast.Node) bool {
 	return hasError
 }
 
+func (c *Checker) checkGrammarYieldExpression(node *ast.Node) bool {
+	hasError := false
+	if node.Flags&ast.NodeFlagsYieldContext == 0 {
+		c.grammarErrorOnFirstToken(node, diagnostics.A_yield_expression_is_only_allowed_in_a_generator_body)
+		hasError = true
+	}
+	if c.isInParameterInitializerBeforeContainingFunction(node) {
+		c.error(node, diagnostics.X_yield_expressions_cannot_be_used_in_a_parameter_initializer)
+		hasError = true
+	}
+	return hasError
+}
+
 func (c *Checker) checkGrammarForDisallowedBlockScopedVariableStatement(node *ast.VariableStatement) bool {
 	if !c.containerAllowsBlockScopedVariable(node.Parent) {
 		blockScopeKind := c.getCombinedNodeFlagsCached(node.DeclarationList) & ast.NodeFlagsBlockScoped
@@ -2112,8 +2124,8 @@ func (c *Checker) checkGrammarNumericLiteral(node *ast.NumericLiteral) {
 	// 1) when `node` represents an integer <= 2 ** 53 - 1, `node.text` is its exact string representation and thus `value` precisely represents the integer.
 	// 2) otherwise, although `node.text` may be imprecise string representation, its mathematical value and consequently `value` cannot be less than 2 ** 53,
 	//    thus the result of the predicate won't be affected.
-	value := stringutil.ToNumber(node.Text)
-	if value <= math.Pow(2, 53-1) {
+	value := jsnum.FromString(node.Text)
+	if value <= jsnum.MaxSafeInteger {
 		return
 	}
 

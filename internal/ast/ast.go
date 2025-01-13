@@ -1673,6 +1673,10 @@ func (node *ForStatement) ForEachChild(v Visitor) bool {
 	return visit(v, node.Initializer) || visit(v, node.Condition) || visit(v, node.Incrementor) || visit(v, node.Statement)
 }
 
+func IsForStatement(node *Node) bool {
+	return node.Kind == KindForStatement
+}
+
 // ForInOrOfStatement
 
 type ForInOrOfStatement struct {
@@ -1758,6 +1762,10 @@ func (f *NodeFactory) NewReturnStatement(expression *Expression) *Node {
 
 func (node *ReturnStatement) ForEachChild(v Visitor) bool {
 	return visit(v, node.Expression)
+}
+
+func IsReturnStatement(node *Node) bool {
+	return node.Kind == KindReturnStatement
 }
 
 // WithStatement
@@ -2611,6 +2619,10 @@ func (node *ImportClause) ForEachChild(v Visitor) bool {
 
 func (node *ImportClause) Name() *DeclarationName {
 	return node.name
+}
+
+func IsImportClause(node *Node) bool {
+	return node.Kind == KindImportClause
 }
 
 // NamespaceImport
@@ -5650,6 +5662,7 @@ type SourceFile struct {
 	IsDeclarationFile           bool
 	IsBound                     bool
 	ModuleReferencesProcessed   bool
+	HasNoDefaultLib             bool
 	UsesUriStyleNodeCoreModules core.Tristate
 	SymbolCount                 int
 	ClassifiableNames           core.Set[string]
@@ -5657,7 +5670,6 @@ type SourceFile struct {
 	ModuleAugmentations         []*ModuleName      // []ModuleName
 	PatternAmbientModules       []PatternAmbientModule
 	AmbientModuleNames          []string
-	HasNoDefaultLib             bool
 	jsdocCache                  map[*Node][]*Node
 	Pragmas                     []Pragma
 	ReferencedFiles             []*FileReference
