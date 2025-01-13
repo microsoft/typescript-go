@@ -39,7 +39,7 @@ func (n Number) String() string {
 
 // https://tc39.es/ecma262/2024/multipage/abstract-operations.html#sec-stringtonumber
 func FromString(s string) Number {
-	// Implemeting StringToNumber exactly as written in the spec involves
+	// Implementing StringToNumber exactly as written in the spec involves
 	// writing a parser, along with the conversion of the parsed AST into the
 	// actual value.
 	//
