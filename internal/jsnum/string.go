@@ -280,12 +280,6 @@ func stringToFloat64(s string) float64 {
 			return f
 		}
 	}
-
-	i, err := strconv.ParseInt(s, 0, 64)
-	if err == nil {
-		return float64(i)
-	}
-
 	return math.NaN()
 }
 
