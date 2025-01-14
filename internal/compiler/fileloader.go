@@ -27,11 +27,11 @@ type fileLoader struct {
 	currentNodeModulesDepth int
 	defaultLibraryPath      string
 	comparePathsOptions     tspath.ComparePathsOptions
-	rootTasks               []parallelParseTask
+	rootTasks               []*parseTask
 }
 
 func processAllProgramFiles(host CompilerHost, programOptions ProgramOptions, compilerOptions *core.CompilerOptions, resolver *module.Resolver, rootFiles []string, libs []string) []*ast.SourceFile {
-	ctxt := fileLoader{
+	loader := fileLoader{
 		host:               host,
 		programOptions:     programOptions,
 		compilerOptions:    compilerOptions,
@@ -42,21 +42,18 @@ func processAllProgramFiles(host CompilerHost, programOptions ProgramOptions, co
 			CurrentDirectory:          host.GetCurrentDirectory(),
 		},
 		wg:        core.NewWorkGroup(programOptions.SingleThreaded),
-		rootTasks: make([]parallelParseTask, len(rootFiles)+len(libs)),
+		rootTasks: make([]*parseTask, 0, len(rootFiles)+len(libs)),
 	}
 
-	ctxt.addRootTasks(rootFiles, false)
-	ctxt.addRootTasks(libs, true)
+	loader.addRootTasks(rootFiles, false)
+	loader.addRootTasks(libs, true)
 
-	ctxt.startTasks(ctxt.rootTasks)
+	loader.startTasks(loader.rootTasks)
 
-	ctxt.wg.Wait()
+	loader.wg.Wait()
 
-	files := []*ast.SourceFile{}
-	libFiles := []*ast.SourceFile{}
-
-	collectFiles(ctxt.rootTasks, files, libFiles)
-	ctxt.sortLibs(libFiles)
+	files, libFiles := collectFiles(loader.rootTasks)
+	loader.sortLibs(libFiles)
 
 	return append(libFiles, files...)
 }
@@ -64,11 +61,11 @@ func processAllProgramFiles(host CompilerHost, programOptions ProgramOptions, co
 func (p *fileLoader) addRootTasks(files []string, isLib bool) {
 	for _, fileName := range files {
 		absPath := tspath.GetNormalizedAbsolutePath(fileName, p.host.GetCurrentDirectory())
-		p.rootTasks = append(p.rootTasks, parallelParseTask{normalizedFilePath: absPath, isLib: isLib})
+		p.rootTasks = append(p.rootTasks, &parseTask{normalizedFilePath: absPath, isLib: isLib})
 	}
 }
 
-func (p *fileLoader) startTasks(tasks []parallelParseTask) {
+func (p *fileLoader) startTasks(tasks []*parseTask) {
 	if len(tasks) > 0 {
 		p.mu.Lock()
 		defer p.mu.Unlock()
@@ -81,10 +78,15 @@ func (p *fileLoader) startTasks(tasks []parallelParseTask) {
 	}
 }
 
-func collectFiles(tasks []parallelParseTask, files []*ast.SourceFile, libFiles []*ast.SourceFile) {
+func collectFiles(tasks []*parseTask) (files []*ast.SourceFile, libFiles []*ast.SourceFile) {
+	files = make([]*ast.SourceFile, 0)
+	libFiles = make([]*ast.SourceFile, 0)
 	for _, task := range tasks {
 		if len(task.subTasks) > 0 {
-			collectFiles(task.subTasks, files, libFiles)
+			subFiles, subLibs := collectFiles(task.subTasks)
+
+			files = append(files, subFiles...)
+			libFiles = append(libFiles, subLibs...)
 		}
 
 		if task.file != nil {
@@ -96,6 +98,7 @@ func collectFiles(tasks []parallelParseTask, files []*ast.SourceFile, libFiles [
 			}
 		}
 	}
+	return files, libFiles
 }
 
 func (p *fileLoader) sortLibs(libFiles []*ast.SourceFile) {
@@ -119,48 +122,43 @@ func (p *fileLoader) getDefaultLibFilePriority(a *ast.SourceFile) int {
 	return len(tsoptions.Libs) + 2
 }
 
-type parallelParseTask struct {
+type parseTask struct {
 	normalizedFilePath string
 	file               *ast.SourceFile
 	isLib              bool
-	subTasks           []parallelParseTask
+	subTasks           []*parseTask
 }
 
-type toParse struct {
-	fileName string
-	isLib    bool
-}
-
-func (t *parallelParseTask) start(context *fileLoader) {
-	context.wg.Run(func() {
-		file := context.parseSourceFile(t.normalizedFilePath)
+func (t *parseTask) start(loader *fileLoader) {
+	loader.wg.Run(func() {
+		file := loader.parseSourceFile(t.normalizedFilePath)
 
 		// !!! if noResolve, skip all of this
-		context.collectExternalModuleReferences(file)
+		loader.collectExternalModuleReferences(file)
 
-		t.subTasks = make([]parallelParseTask, 0, len(file.ReferencedFiles)+len(file.Imports)+len(file.ModuleAugmentations))
+		t.subTasks = make([]*parseTask, 0, len(file.ReferencedFiles)+len(file.Imports)+len(file.ModuleAugmentations))
 
 		for _, ref := range file.ReferencedFiles {
-			resolvedPath := context.resolveTripleslashPathReference(ref.FileName, file.FileName())
+			resolvedPath := loader.resolveTripleslashPathReference(ref.FileName, file.FileName())
 			t.addSubTask(resolvedPath, false)
 		}
 
-		if context.compilerOptions.NoLib != core.TSTrue {
+		if loader.compilerOptions.NoLib != core.TSTrue {
 			for _, lib := range file.LibReferenceDirectives {
 				name, ok := tsoptions.GetLibFileName(lib.FileName)
 				if !ok {
 					continue
 				}
-				t.addSubTask(tspath.CombinePaths(context.programOptions.DefaultLibraryPath, name), true)
+				t.addSubTask(tspath.CombinePaths(loader.programOptions.DefaultLibraryPath, name), true)
 			}
 		}
 
-		for _, imp := range context.resolveImportsAndModuleAugmentations(file) {
+		for _, imp := range loader.resolveImportsAndModuleAugmentations(file) {
 			t.addSubTask(imp, false)
 		}
 
 		t.file = file
-		context.startTasks(t.subTasks)
+		loader.startTasks(t.subTasks)
 	})
 }
 
@@ -172,9 +170,9 @@ func (p *fileLoader) parseSourceFile(fileName string) *ast.SourceFile {
 	return sourceFile
 }
 
-func (t *parallelParseTask) addSubTask(fileName string, isLib bool) {
+func (t *parseTask) addSubTask(fileName string, isLib bool) {
 	normalizedFilePath := tspath.NormalizePath(fileName)
-	t.subTasks = append(t.subTasks, parallelParseTask{normalizedFilePath: normalizedFilePath, isLib: isLib})
+	t.subTasks = append(t.subTasks, &parseTask{normalizedFilePath: normalizedFilePath, isLib: isLib})
 }
 
 func (p *fileLoader) collectExternalModuleReferences(file *ast.SourceFile) {
