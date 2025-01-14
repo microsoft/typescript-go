@@ -3508,7 +3508,7 @@ func (c *Checker) getSymbolForPrivateIdentifierExpression(node *ast.Node) *ast.S
 // !!!
 // Review
 // func (c *Checker) getSymbolForPrivateIdentifierExpression(privId *ast.Node) *ast.Symbol {
-// 	if !isExpressionNode(privId) {
+// 	if !ast.IsExpressionNode(privId) {
 // 		return nil
 // 	}
 
@@ -8443,7 +8443,7 @@ func (c *Checker) isInPropertyInitializerOrClassStaticBlock(node *ast.Node) bool
 			}
 			return ast.FindAncestorQuit
 		default:
-			if IsExpressionNode(node) {
+			if ast.IsExpressionNode(node) {
 				return ast.FindAncestorFalse
 			}
 			return ast.FindAncestorQuit
@@ -16623,7 +16623,7 @@ func (n *TupleNormalizer) normalize(c *Checker, elementTypes []*Type, elementInf
 			} else if isTupleType(t) {
 				spreadTypes := c.getElementTypes(t)
 				if len(spreadTypes)+len(n.types) >= 10_000 {
-					message := core.IfElse(isPartOfTypeNode(c.currentNode),
+					message := core.IfElse(ast.IsPartOfTypeNode(c.currentNode),
 						diagnostics.Type_produces_a_tuple_type_that_is_too_large_to_represent,
 						diagnostics.Expression_produces_a_tuple_type_that_is_too_large_to_represent)
 					c.error(c.currentNode, message)
@@ -23368,7 +23368,7 @@ func (c *Checker) getSymbolAtLocation(node *ast.Node, ignoreErrors bool) *ast.Sy
 				return sig.thisParameter
 			}
 		}
-		if isInExpressionContext(node) {
+		if ast.IsInExpressionContext(node) {
 			return c.checkExpression(node).symbol
 		}
 		fallthrough
@@ -23505,7 +23505,7 @@ func (c *Checker) getSymbolOfNameOrPropertyAccessExpression(name *ast.Node) *ast
 		if name.Parent.Kind == ast.KindExpressionWithTypeArguments {
 			// An 'ExpressionWithTypeArguments' may appear in type space (interface Foo extends Bar<T>),
 			// value space (return foo<T>), or both(class Foo extends Bar<T>); ensure the meaning matches.
-			meaning = core.IfElse(isPartOfTypeNode(name), ast.SymbolFlagsType, ast.SymbolFlagsValue)
+			meaning = core.IfElse(ast.IsPartOfTypeNode(name), ast.SymbolFlagsType, ast.SymbolFlagsValue)
 
 			// In a class 'extends' clause we are also looking for a value.
 			if ast.IsExpressionWithTypeArgumentsInClassExtendsClause(name.Parent) {
@@ -23525,7 +23525,7 @@ func (c *Checker) getSymbolOfNameOrPropertyAccessExpression(name *ast.Node) *ast
 		}
 	}
 
-	if IsExpressionNode(name) {
+	if ast.IsExpressionNode(name) {
 		if ast.NodeIsMissing(name) {
 			// Missing entity name.
 			return nil
@@ -23617,7 +23617,7 @@ func (c *Checker) getTypeOfNode(node *ast.Node) *Type {
 		classType = c.getDeclaredTypeOfClassOrInterface(c.getSymbolOfDeclaration(classDecl))
 	}
 
-	if isPartOfTypeNode(node) {
+	if ast.IsPartOfTypeNode(node) {
 		typeFromTypeNode := c.getTypeFromTypeNode(node)
 		if classType != nil {
 			return c.getTypeWithThisArgument(
@@ -23628,7 +23628,7 @@ func (c *Checker) getTypeOfNode(node *ast.Node) *Type {
 		return typeFromTypeNode
 	}
 
-	if IsExpressionNode(node) {
+	if ast.IsExpressionNode(node) {
 		return c.getRegularTypeOfExpression(node)
 	}
 
