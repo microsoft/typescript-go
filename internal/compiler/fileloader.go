@@ -143,6 +143,13 @@ func (t *parseTask) start(loader *fileLoader) {
 			t.addSubTask(resolvedPath, false)
 		}
 
+		for _, ref := range file.TypeReferenceDirectives {
+			resolved := p.resolver.ResolveTypeReferenceDirective(ref.FileName, file.FileName(), core.ModuleKindNodeNext, nil)
+			if resolved.IsResolved() {
+				t.addSubTask(resolved.ResolvedFileName, false)
+			}
+		}
+
 		if loader.compilerOptions.NoLib != core.TSTrue {
 			for _, lib := range file.LibReferenceDirectives {
 				name, ok := tsoptions.GetLibFileName(lib.FileName)
@@ -331,7 +338,7 @@ func (p *fileLoader) resolveImportsAndModuleAugmentations(file *ast.SourceFile) 
 			// Don't add the file if it has a bad extension (e.g. 'tsx' if we don't have '--allowJs')
 			// This may still end up being an untyped module -- the file won't be included but imports will be allowed.
 
-			shouldAddFile := resolution.IsResolved()
+			shouldAddFile := resolution.IsResolved() && tspath.FileExtensionIsOneOf(resolvedFileName, []string{".ts", ".tsx", ".mts", ".cts"})
 			// TODO(ercornel): !!!: other checks on whether or not to add the file
 
 			if shouldAddFile {
