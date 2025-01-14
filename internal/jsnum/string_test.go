@@ -160,6 +160,17 @@ func TestFromString(t *testing.T) {
 	})
 }
 
+func TestStringRoundtrip(t *testing.T) {
+	t.Parallel()
+
+	for _, test := range stringTests {
+		t.Run(test.str, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, FromString(test.str).String(), test.str)
+		})
+	}
+}
+
 func getNodeExe(t testing.TB) string {
 	t.Helper()
 
