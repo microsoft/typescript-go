@@ -144,7 +144,7 @@ func (t *parseTask) start(loader *fileLoader) {
 		}
 
 		for _, ref := range file.TypeReferenceDirectives {
-			resolved := p.resolver.ResolveTypeReferenceDirective(ref.FileName, file.FileName(), core.ModuleKindNodeNext, nil)
+			resolved := loader.resolver.ResolveTypeReferenceDirective(ref.FileName, file.FileName(), core.ModuleKindNodeNext, nil)
 			if resolved.IsResolved() {
 				t.addSubTask(resolved.ResolvedFileName, false)
 			}
