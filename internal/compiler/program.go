@@ -226,7 +226,6 @@ func getModuleNames(file *ast.SourceFile) []*ast.Node {
 		// Do nothing if it's an Identifier; we don't need to do module resolution for `declare global`.
 	}
 	return res
-			shouldAddFile := resolution.IsResolved()
 }
 
 func (p *Program) GetSyntacticDiagnostics(sourceFile *ast.SourceFile) []*ast.Diagnostic {
