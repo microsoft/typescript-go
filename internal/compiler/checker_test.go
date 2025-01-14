@@ -32,7 +32,7 @@ foo.bar;`
 		DefaultLibraryPath: bundled.LibPath(),
 	}
 	p := NewProgram(opts)
-	p.bindSourceFiles()
+	p.BindSourceFiles()
 	c := p.GetTypeChecker()
 	file := p.filesByPath["/foo.ts"]
 	interfaceId := file.Statements.Nodes[0].Name()

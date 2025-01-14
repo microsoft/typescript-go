@@ -1,4 +1,4 @@
-package compiler
+package checker
 
 import (
 	"iter"
@@ -320,7 +320,7 @@ func (c *Checker) checkTypeRelatedToEx(
 		if diagnosticOutput != nil {
 			*diagnosticOutput = diag
 		} else {
-			c.diagnostics.add(diag)
+			c.diagnostics.Add(diag)
 		}
 	} else if r.errorChain != nil {
 		diag := createDiagnosticChainFromErrorChain(r.errorChain, r.errorNode, r.relatedInfo)
@@ -343,7 +343,7 @@ func (c *Checker) checkTypeRelatedToEx(
 			if diagnosticOutput != nil {
 				*diagnosticOutput = diag
 			} else {
-				c.diagnostics.add(diag)
+				c.diagnostics.Add(diag)
 			}
 		}
 	}

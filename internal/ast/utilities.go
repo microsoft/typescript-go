@@ -3,6 +3,8 @@ package ast
 import (
 	"slices"
 	"sync/atomic"
+
+	"github.com/microsoft/typescript-go/internal/core"
 )
 
 // Atomic ids
@@ -1497,4 +1499,53 @@ func isAliasableExpression(e *Node) bool {
 
 func IsInstanceOfExpression(node *Node) bool {
 	return IsBinaryExpression(node) && node.AsBinaryExpression().OperatorToken.Kind == KindInstanceOfKeyword
+}
+
+func IsAnyImportOrReExport(node *Node) bool {
+	return IsAnyImportSyntax(node) || IsExportDeclaration(node)
+}
+
+func IsAnyImportSyntax(node *Node) bool {
+	return NodeKindIs(node, KindImportDeclaration, KindImportEqualsDeclaration)
+}
+
+func IsJsonSourceFile(file *SourceFile) bool {
+	return file.ScriptKind == core.ScriptKindJSON
+}
+
+func GetExternalModuleName(node *Node) *Node {
+	switch node.Kind {
+	case KindImportDeclaration:
+		return node.AsImportDeclaration().ModuleSpecifier
+	case KindExportDeclaration:
+		return node.AsExportDeclaration().ModuleSpecifier
+	case KindImportEqualsDeclaration:
+		if node.AsImportEqualsDeclaration().ModuleReference.Kind == KindExternalModuleReference {
+			return node.AsImportEqualsDeclaration().ModuleReference.AsExternalModuleReference().Expression_
+		}
+		return nil
+	case KindImportType:
+		return getImportTypeNodeLiteral(node)
+	case KindCallExpression:
+		return node.AsCallExpression().Arguments.Nodes[0]
+	case KindModuleDeclaration:
+		if IsStringLiteral(node.AsModuleDeclaration().Name()) {
+			return node.AsModuleDeclaration().Name()
+		}
+		return nil
+	}
+	panic("Unhandled case in getExternalModuleName")
+}
+
+func getImportTypeNodeLiteral(node *Node) *Node {
+	if IsImportTypeNode(node) {
+		importTypeNode := node.AsImportTypeNode()
+		if IsLiteralTypeNode(importTypeNode.Argument) {
+			literalTypeNode := importTypeNode.Argument.AsLiteralTypeNode()
+			if IsStringLiteral(literalTypeNode.Literal) {
+				return literalTypeNode.Literal
+			}
+		}
+	}
+	return nil
 }
