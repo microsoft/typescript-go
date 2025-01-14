@@ -3,6 +3,7 @@ package module
 import (
 	"strings"
 
+	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
@@ -55,4 +56,9 @@ func UnmangleScopedPackageName(packageName string) string {
 		return "@" + packageName[:idx] + "/" + packageName[idx+2:]
 	}
 	return packageName
+}
+
+func moduleResolutionSupportsPackageJsonExportsAndImports(moduleResolution core.ModuleResolutionKind) bool {
+	return moduleResolution >= core.ModuleResolutionKindNode16 && moduleResolution <= core.ModuleResolutionKindNodeNext ||
+		moduleResolution == core.ModuleResolutionKindBundler
 }

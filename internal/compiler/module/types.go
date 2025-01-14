@@ -92,10 +92,10 @@ func (r *ResolvedTypeReferenceDirective) IsResolved() bool {
 	return r.ResolvedFileName != ""
 }
 
-type extensions int32
+type Extensions int32
 
 const (
-	extensionsTypeScript extensions = 1 << iota
+	extensionsTypeScript Extensions = 1 << iota
 	extensionsJavaScript
 	extensionsDeclaration
 	extensionsJson
@@ -103,7 +103,7 @@ const (
 	extensionsImplementationFiles = extensionsTypeScript | extensionsJavaScript
 )
 
-func (e extensions) String() string {
+func (e Extensions) String() string {
 	result := make([]string, 0, bits.OnesCount(uint(e)))
 	if e&extensionsTypeScript != 0 {
 		result = append(result, "TypeScript")
@@ -120,7 +120,7 @@ func (e extensions) String() string {
 	return strings.Join(result, ", ")
 }
 
-func (e extensions) Array() []string {
+func (e Extensions) Array() []string {
 	result := []string{}
 	if e&extensionsTypeScript != 0 {
 		result = append(result, tspath.ExtensionTs, tspath.ExtensionTsx)
@@ -135,4 +135,27 @@ func (e extensions) Array() []string {
 		result = append(result, tspath.ExtensionJson)
 	}
 	return result
+}
+
+// ResolvedModule with an explicitly provided `extension` property.
+// Prefer this over `ResolvedModule`.
+// If changing this, remember to change `moduleResolutionIsEqualTo`.
+type resolvedModuleFull struct {
+	ResolvedModule
+	// This is a file name with preserved original casing, not a normalized `Path`
+	originalPath string
+	// Extension of resolvedFileName. This must match what's at the end of resolvedFileName.
+	// This is optional for backwards-compatibility, but will be added if not provided.
+	extension string
+	packageId PackageId
+}
+
+type ResolvedModuleWithFailedLookupLocations struct {
+	ResolvedModule        *resolvedModuleFull
+	failedLookupLocations []string
+	affectingLocations    []string
+	resolutionDiagnostics []ast.Diagnostic
+	// Used to issue a better diagnostic when an unresolvable module may
+	// have been resolvable under different module resolution settings.
+	alternateResult string
 }

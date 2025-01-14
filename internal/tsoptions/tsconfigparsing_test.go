@@ -25,7 +25,7 @@ type testConfig struct {
 	jsonText       string
 	configFileName string
 	basePath       string
-	allFileList    []string
+	allFileList    map[string]string
 }
 
 func fixRoot(path string) string {
@@ -206,7 +206,7 @@ var parseJsonConfigFileTests = []struct {
 			jsonText:       `{}`,
 			configFileName: "tsconfig.json",
 			basePath:       "/apath",
-			allFileList:    []string{"/apath/test.ts", "/apath/.git/a.ts", "/apath/.b.ts", "/apath/..c.ts"},
+			allFileList:    map[string]string{"/apath/test.ts": "", "/apath/.git/a.ts": "", "/apath/.b.ts": "", "/apath/..c.ts": ""},
 		}},
 	},
 	{
@@ -217,7 +217,7 @@ var parseJsonConfigFileTests = []struct {
                 }`,
 			configFileName: "tsconfig.json",
 			basePath:       "/apath",
-			allFileList:    []string{"/apath/test.ts", "/apath/.git/a.ts", "/apath/.b.ts", "/apath/..c.ts"},
+			allFileList:    map[string]string{"/apath/test.ts": "", "/apath/.git/a.ts": "", "/apath/.b.ts": "", "/apath/..c.ts": ""},
 		}},
 	},
 	{
@@ -226,7 +226,7 @@ var parseJsonConfigFileTests = []struct {
 			jsonText:       `{}`,
 			configFileName: "tsconfig.json",
 			basePath:       "/",
-			allFileList:    []string{"/node_modules/a.ts", "/bower_components/b.ts", "/jspm_packages/c.ts", "/d.ts", "/folder/e.ts"},
+			allFileList:    map[string]string{"/node_modules/a.ts": "", "/bower_components/b.ts": "", "/jspm_packages/c.ts": "", "/d.ts": "", "/folder/e.ts": ""},
 		}},
 	},
 	{
@@ -237,7 +237,7 @@ var parseJsonConfigFileTests = []struct {
             }`,
 			configFileName: "/apath/tsconfig.json",
 			basePath:       "/apath",
-			allFileList:    []string{"/apath/a.ts"},
+			allFileList:    map[string]string{"/apath/a.ts": ""},
 		}},
 	},
 	{
@@ -249,7 +249,7 @@ var parseJsonConfigFileTests = []struct {
             }`,
 			configFileName: "/apath/tsconfig.json",
 			basePath:       "/apath",
-			allFileList:    []string{"/apath/a.ts"},
+			allFileList:    map[string]string{"/apath/a.ts": ""},
 		}},
 	},
 	{
@@ -259,7 +259,7 @@ var parseJsonConfigFileTests = []struct {
             }`,
 			configFileName: "/apath/tsconfig.json",
 			basePath:       "/apath",
-			allFileList:    []string{"/apath/a.js"},
+			allFileList:    map[string]string{"/apath/a.js": ""},
 		}},
 	},
 	{
@@ -270,7 +270,7 @@ var parseJsonConfigFileTests = []struct {
             }`,
 			configFileName: "/apath/tsconfig.json",
 			basePath:       "tests/cases/unittests",
-			allFileList:    []string{"/apath/a.ts"},
+			allFileList:    map[string]string{"/apath/a.ts": ""},
 		}},
 	},
 	{
@@ -294,7 +294,7 @@ var parseJsonConfigFileTests = []struct {
 }`,
 			configFileName: "/apath/tsconfig.json",
 			basePath:       "/apath",
-			allFileList:    []string{"/apath/src/index.ts", "/apath/src/app.ts", "/apath/node_modules/module.ts", "/apath/dist/output.js"},
+			allFileList:    map[string]string{"/apath/src/index.ts": "", "/apath/src/app.ts": "", "/apath/node_modules/module.ts": "", "/apath/dist/output.js": ""},
 		}},
 	},
 	{
@@ -307,7 +307,7 @@ var parseJsonConfigFileTests = []struct {
 }`,
 			configFileName: "/apath/tsconfig.json",
 			basePath:       "/apath",
-			allFileList:    []string{"/apath/a.ts"},
+			allFileList:    map[string]string{"/apath/a.ts": ""},
 		}},
 	},
 	{
@@ -319,7 +319,7 @@ var parseJsonConfigFileTests = []struct {
             }`,
 			configFileName: "/apath/tsconfig.json",
 			basePath:       "/apath",
-			allFileList:    []string{"/apath/a.ts"},
+			allFileList:    map[string]string{"/apath/a.ts": ""},
 		}},
 	},
 	{
@@ -332,7 +332,7 @@ var parseJsonConfigFileTests = []struct {
             }`,
 			configFileName: "tsconfig.json",
 			basePath:       "/",
-			allFileList:    []string{"/bin/a.ts", "/b.ts"},
+			allFileList:    map[string]string{"/bin/a.ts": "", "/b.ts": ""},
 		}, {
 			jsonText: `{
                 "compilerOptions": {
@@ -342,7 +342,7 @@ var parseJsonConfigFileTests = []struct {
             }`,
 			configFileName: "tsconfig.json",
 			basePath:       "/",
-			allFileList:    []string{"/bin/a.ts", "/b.ts"},
+			allFileList:    map[string]string{"/bin/a.ts": "", "/b.ts": ""},
 		}},
 	},
 	{
@@ -355,7 +355,7 @@ var parseJsonConfigFileTests = []struct {
             }`,
 			configFileName: "tsconfig.json",
 			basePath:       "/",
-			allFileList:    []string{"/declarations/a.d.ts", "/a.ts"},
+			allFileList:    map[string]string{"/declarations/a.d.ts": "", "/a.ts": ""},
 		}, {
 			jsonText: `{
                 "compilerOptions": {
@@ -365,7 +365,7 @@ var parseJsonConfigFileTests = []struct {
             }`,
 			configFileName: "tsconfig.json",
 			basePath:       "/",
-			allFileList:    []string{"/declarations/a.d.ts", "/a.ts"},
+			allFileList:    map[string]string{"/declarations/a.d.ts": "", "/a.ts": ""},
 		}},
 	},
 	{
@@ -378,7 +378,7 @@ var parseJsonConfigFileTests = []struct {
             }`,
 			configFileName: "/apath/tsconfig.json",
 			basePath:       "/apath",
-			allFileList:    []string{},
+			allFileList:    map[string]string{},
 		}},
 	},
 	{
@@ -392,7 +392,7 @@ var parseJsonConfigFileTests = []struct {
             }`,
 			configFileName: "/apath/tsconfig.json",
 			basePath:       "/apath",
-			allFileList:    []string{"/apath/a.ts"},
+			allFileList:    map[string]string{"/apath/a.ts": ""},
 		}},
 	},
 	{
@@ -407,7 +407,7 @@ var parseJsonConfigFileTests = []struct {
 }`,
 			configFileName: "/apath/tsconfig.json",
 			basePath:       "/apath",
-			allFileList:    []string{"/apath/a.ts"},
+			allFileList:    map[string]string{"/apath/a.ts": ""},
 		}},
 	},
 	{
@@ -425,10 +425,44 @@ var parseJsonConfigFileTests = []struct {
 }`,
 			configFileName: "/apath/tsconfig.json",
 			basePath:       "/apath",
-			allFileList:    []string{"/apath/a.ts"},
+			allFileList:    map[string]string{"/apath/a.ts": ""},
 		}},
 	},
+	{
+		title: "with outDir from base tsconfig",
+		input: []testConfig{{
+			jsonText: `{
+				"extends": ["./tsconfigWithoutConfigDir.json"]
+			}`,
+			configFileName: "tsconfig.json",
+			basePath:       "/",
+			allFileList: map[string]string{
+				"/tsconfigWithoutConfigDir.json": tsconfigWithoutConfigDir,
+				"/bin/a.ts":                      "",
+				"/b.ts":                          ""},
+		},
+			{
+				jsonText: `{
+			extends: "./tsconfigWithConfigDir.json"
+		}`,
+				configFileName: "tsconfig.json",
+				basePath:       "/",
+				allFileList: map[string]string{
+					"/tsconfigWithConfigDir.json": tsconfigWithConfigDir,
+					"/bin/a.ts":                   "",
+					"/b.ts":                       "",
+				},
+			},
+		},
+	},
 }
+
+var tsconfigWithoutConfigDir = `{
+	"compilerOptions": { "outDir": "bin" } 
+}`
+var tsconfigWithConfigDir = `{
+	"compilerOptions": { "outDir": "${configDir}/bin" }
+}`
 
 func TestParseJsonConfigFileContent(t *testing.T) {
 	t.Parallel()
@@ -486,8 +520,8 @@ func baselineParseConfigWith(t *testing.T, baselineFileName string, noSubmoduleB
 		}
 		configFileName := tspath.CombinePaths(basePath, config.configFileName)
 		allFileLists := make(map[string]string, len(config.allFileList)+1)
-		for _, file := range config.allFileList {
-			allFileLists[file] = ""
+		for file, content := range config.allFileList {
+			allFileLists[file] = content
 		}
 		allFileLists[configFileName] = config.jsonText
 		host := newVFSParseConfigHost(allFileLists, config.basePath)

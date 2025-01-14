@@ -11,6 +11,7 @@ import (
 	"github.com/dlclark/regexp2"
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/compiler/diagnostics"
+	"github.com/microsoft/typescript-go/internal/compiler/module"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/parser"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -18,13 +19,13 @@ import (
 )
 
 type extendsResult struct {
-	options core.CompilerOptions
+	options *core.CompilerOptions
 	// watchOptions        compiler.WatchOptions
 	watchOptionsCopied  bool
-	include             *[]string
-	exclude             *[]string
-	files               *[]string
-	compileOnSave       *bool
+	include             []string
+	exclude             []string
+	files               []string
+	compileOnSave       bool
 	extendedSourceFiles map[string]struct{}
 }
 
@@ -87,8 +88,8 @@ type fileExtensionInfo struct {
 	scriptKind     core.ScriptKind
 }
 type extendedConfigCacheEntry struct {
-	extendedResult *ast.SourceFile
-	extendedConfig parsedTsconfig
+	extendedResult *tsConfigSourceFile
+	extendedConfig *parsedTsconfig
 }
 type parsedTsconfig struct {
 	raw     any
@@ -243,6 +244,9 @@ func isCompilerOptionsValue(option *CommandLineOption, value any) bool {
 		if option.Kind == "object" {
 			return reflect.TypeOf(value).Kind() == reflect.Map
 		}
+		if option.Kind == "enum" {
+			return true
+		}
 	}
 	return false
 }
@@ -395,8 +399,7 @@ func getExtendsConfigPathOrArray(
 	propertyAssignment *ast.PropertyAssignment,
 	valueExpression *ast.Expression,
 	sourceFile *tsConfigSourceFile,
-) (any, []*ast.Diagnostic) {
-	var extendedConfigPath string
+) ([]string, []*ast.Diagnostic) {
 	var extendedConfigPathArray []string
 	var newBase string
 	if configFileName != "" {
@@ -406,28 +409,28 @@ func getExtendsConfigPathOrArray(
 	}
 
 	var errors []*ast.Diagnostic
-	if reflect.TypeOf(value).Kind() == reflect.String {
-		extendedConfigPath, errors = getExtendsConfigPath(value.(string), host, newBase, valueExpression, sourceFile)
-	} else if reflect.TypeOf(value).Kind() == reflect.Slice {
-		extendedConfigPathArray = []string{}
-		for index, v := range value.([]any) {
-			fileName := v
-			if reflect.TypeOf(v).Kind() == reflect.String {
-				val, _ := getExtendsConfigPath(fileName.(string), host, newBase, valueExpression.AsArrayLiteralExpression().Elements.Nodes[index], sourceFile)
-				extendedConfigPathArray = append(extendedConfigPathArray, val)
+	if _, ok := value.([]any); ok {
+		for index, fileName := range value.([]any) {
+			if reflect.TypeOf(fileName).Kind() == reflect.String {
+				var expression *ast.Expression = nil
+				if valueExpression != nil {
+					expression = valueExpression.AsArrayLiteralExpression().Elements.Nodes[index]
+				}
+				val, err := getExtendsConfigPath(fileName.(string), host, newBase, expression, sourceFile)
+				if val != "" {
+					extendedConfigPathArray = append(extendedConfigPathArray, val)
+				}
+				errors = append(errors, err...)
 			} else {
-				_, errors = convertJsonOption(extendsOptionDeclaration, value, basePath, propertyAssignment, valueExpression, sourceFile)
+				var err []*ast.Diagnostic
+				_, err = convertJsonOption(extendsOptionDeclaration.Elements(), value, basePath, propertyAssignment, valueExpression.AsArrayLiteralExpression().Elements.Nodes[index], sourceFile) // check
+				errors = append(errors, err...)
 			}
 		}
 	} else {
-		_, errors = convertJsonOption(extendsOptionDeclaration, value, basePath, propertyAssignment, valueExpression, sourceFile)
+		_, errors = convertJsonOption(extendsOptionDeclaration, value, basePath, propertyAssignment, valueExpression, sourceFile) // check
 	}
-
-	if reflect.TypeOf(value).Kind() == reflect.String {
-		return extendedConfigPath, errors
-	} else {
-		return extendedConfigPathArray, errors
-	}
+	return extendedConfigPathArray, errors
 }
 
 func getExtendsConfigPath(
@@ -452,10 +455,10 @@ func getExtendsConfigPath(
 		return extendedConfigPath, errors
 	}
 	// If the path isn't a rooted or relative path, resolve like a module
-	// const resolved = nodeNextJsonConfigResolver(extendedConfig, combinePaths(basePath, "tsconfig.json"), host);
-	// if (resolved.resolvedModule) {
-	//     return resolved.resolvedModule.resolvedFileName;
-	// }
+	resolved := module.NodeNextJsonConfigResolver(extendedConfig, tspath.CombinePaths(basePath, "tsconfig.json"), nil) // should resilution host be a part of parseConfigHost?
+	if resolved.ResolvedModule != nil {
+		return resolved.ResolvedModule.ResolvedFileName, errors
+	}
 	if extendedConfig == "" {
 		// errors.push(createDiagnosticForNodeInSourceFileOrCompilerDiagnostic(sourceFile, valueExpression, diagnostics.Compiler_option_0_cannot_be_given_an_empty_string, "extends"));
 		errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.Compiler_option_0_cannot_be_given_an_empty_string, "extends"))
@@ -564,7 +567,7 @@ type ParseConfigHost interface {
 	GetCurrentDirectory() string
 }
 
-func ParseJsonSourceFileConfigFileContent(sourceFile *tsConfigSourceFile, host ParseConfigHost, basePath string, existingOptions *core.CompilerOptions, configFileName string, resolutionStack []tspath.Path, extraFileExtensions []fileExtensionInfo, extendedConfigCache map[string]extendedConfigCacheEntry) ParsedCommandLine {
+func ParseJsonSourceFileConfigFileContent(sourceFile *tsConfigSourceFile, host ParseConfigHost, basePath string, existingOptions *core.CompilerOptions, configFileName string, resolutionStack []tspath.Path, extraFileExtensions []fileExtensionInfo, extendedConfigCache map[string]*extendedConfigCacheEntry) ParsedCommandLine {
 	// tracing?.push(tracing.Phase.Parse, "parseJsonSourceFileConfigFileContent", { path: sourceFile.fileName });
 	result := parseJsonConfigFileContentWorker( /*json*/ nil, sourceFile, host, basePath, existingOptions, configFileName, resolutionStack, extraFileExtensions, extendedConfigCache)
 	// tracing?.pop();
@@ -662,7 +665,7 @@ func convertPropertyValueToJson(valueExpression *ast.Expression, option *Command
 		return true, nil
 	case ast.KindFalseKeyword:
 		return false, nil
-	case ast.KindNullKeyword: //todo: how to manage null
+	case ast.KindNullKeyword: // todo: how to manage null
 		return nil, nil
 
 	case ast.KindStringLiteral:
@@ -709,7 +712,7 @@ func convertPropertyValueToJson(valueExpression *ast.Expression, option *Command
 // jsonNode: The contents of the config file to parse
 // host: Instance of ParseConfigHost used to enumerate files in folder.
 // basePath: A root directory to resolve relative path entries in the config file to. e.g. outDir
-func ParseJsonConfigFileContent(json any, host ParseConfigHost, basePath string, existingOptions *core.CompilerOptions, configFileName string, resolutionStack []tspath.Path, extraFileExtensions []fileExtensionInfo, extendedConfigCache map[string]extendedConfigCacheEntry) ParsedCommandLine {
+func ParseJsonConfigFileContent(json any, host ParseConfigHost, basePath string, existingOptions *core.CompilerOptions, configFileName string, resolutionStack []tspath.Path, extraFileExtensions []fileExtensionInfo, extendedConfigCache map[string]*extendedConfigCacheEntry) ParsedCommandLine {
 	result := parseJsonConfigFileContentWorker(parseJsonToStringKey(json) /*sourceFile*/, nil, host, basePath, existingOptions, configFileName, resolutionStack, extraFileExtensions, extendedConfigCache)
 	return result
 }
@@ -762,7 +765,7 @@ func parseOwnConfigOfJson(
 	// typeAcquisition := convertTypeAcquisitionFromJsonWorker(json.typeAcquisition, basePath, errors, configFileName)
 	// watchOptions := convertWatchOptionsFromJsonWorker(json.watchOptions, basePath, errors)
 	// json.compileOnSave = convertCompileOnSaveOptionFromJson(json, basePath, errors)
-	var extendedConfigPath any
+	var extendedConfigPath []string
 	if json["extends"] != nil || json["extends"] == "" {
 		extendedConfigPath, errors = getExtendsConfigPathOrArray(json["extends"], host, basePath, configFileName, nil, nil, nil)
 	} else {
@@ -776,6 +779,76 @@ func parseOwnConfigOfJson(
 	return parsedConfig, errors
 }
 
+func readJsonConfigFile(fileName string, readFile func(fileName string) (string, bool)) (*tsConfigSourceFile, []*ast.Diagnostic) {
+	text, diagnostic := TryReadFile(fileName, readFile, []*ast.Diagnostic{})
+	if text != "" {
+		return &tsConfigSourceFile{
+			sourceFile: parser.ParseJSONText(fileName, text),
+		}, diagnostic
+	} else {
+		file := &tsConfigSourceFile{
+			sourceFile: (&ast.NodeFactory{}).NewSourceFile("", fileName, nil).AsSourceFile(),
+		}
+		file.sourceFile.SetDiagnostics(diagnostic)
+		return file, diagnostic
+	}
+}
+
+func getExtendedConfig(
+	sourceFile *tsConfigSourceFile,
+	extendedConfigPath string,
+	host ParseConfigHost,
+	resolutionStack []string,
+	extendedConfigCache map[string]*extendedConfigCacheEntry,
+	result *extendsResult,
+) (*parsedTsconfig, []*ast.Diagnostic) {
+	var path string
+	if host.FS().UseCaseSensitiveFileNames() {
+		path = extendedConfigPath
+	} else {
+		path = tspath.ToFileNameLowerCase(extendedConfigPath)
+	}
+	var value *extendedConfigCacheEntry
+	var extendedResult *tsConfigSourceFile
+	var extendedConfig *parsedTsconfig
+	var errors []*ast.Diagnostic
+	value = extendedConfigCache[path]
+	if extendedConfigCache != nil && value != nil {
+		extendedResult = value.extendedResult
+		extendedConfig = value.extendedConfig
+	} else {
+		var err []*ast.Diagnostic
+		extendedResult, err = readJsonConfigFile(extendedConfigPath, host.FS().ReadFile)
+		errors = append(errors, err...)
+		if extendedResult.sourceFile.Diagnostics() == nil {
+			extendedConfig, err = parseConfig(nil, extendedResult, host, tspath.GetDirectoryPath(extendedConfigPath), tspath.GetBaseFileName(extendedConfigPath), resolutionStack, extendedConfigCache)
+			errors = append(errors, err...)
+		}
+		if extendedConfigCache != nil {
+			extendedConfigCache[path] = &extendedConfigCacheEntry{
+				extendedResult: extendedResult,
+				extendedConfig: extendedConfig,
+			}
+		}
+	}
+	if sourceFile != nil {
+		if result.extendedSourceFiles == nil {
+			result.extendedSourceFiles = make(map[string]struct{})
+			result.extendedSourceFiles[extendedResult.sourceFile.FileName()] = struct{}{}
+		}
+		if len(extendedResult.extendedSourceFiles) != 0 {
+			for _, extenedSourceFile := range extendedResult.extendedSourceFiles {
+				result.extendedSourceFiles[extenedSourceFile] = struct{}{}
+			}
+		}
+	}
+	if extendedResult.sourceFile.Diagnostics() != nil {
+		errors = append(errors, extendedResult.sourceFile.Diagnostics()...)
+		return nil, errors
+	}
+	return extendedConfig, errors
+}
+
 // parseConfig just extracts options/include/exclude/files out of a config file.
 // It does not resolve the included files.
 func parseConfig(
@@ -785,7 +858,7 @@ func parseConfig(
 	basePath string,
 	configFileName string,
 	resolutionStack []string,
-	extendedConfigCache map[string]extendedConfigCacheEntry,
+	extendedConfigCache map[string]*extendedConfigCacheEntry,
 ) (*parsedTsconfig, []*ast.Diagnostic) {
 	basePath = tspath.NormalizeSlashes(basePath)
 	resolvedPath := tspath.GetNormalizedAbsolutePath(configFileName, basePath)
@@ -820,18 +893,63 @@ func parseConfig(
 		// we wouldn't know which directory to use unless we store it here.
 		ownConfig.options.PathsBasePath = basePath
 	}
+
+	applyExtendedConfig := func(result *extendsResult, extendedConfigPath string) {
+		extendedConfig, err := getExtendedConfig(sourceFile, extendedConfigPath, host, resolutionStack, extendedConfigCache, result)
+		errors = append(errors, err...)
+		if extendedConfig != nil && extendedConfig.options != nil {
+			extendsRaw := extendedConfig.raw
+			var relativeDifference string
+			setPropertyValue := func(propertyName string) {
+				if rawMap, ok := ownConfig.raw.(map[string]any); ok && rawMap[propertyName] != nil {
+					return
+				}
+				if rawMap, ok := extendedConfig.raw.(map[string]any); ok && rawMap[propertyName] != nil {
+					if propertyName == "include" {
+						result.include = core.Map(rawMap[propertyName].([]string), func(path string) string {
+							if startsWithConfigDirTemplate(path) || tspath.IsRootedDiskPath(path) {
+								return path
+							} else {
+								if relativeDifference == "" {
+									t := tspath.ComparePathsOptions{
+										UseCaseSensitiveFileNames: host.FS().UseCaseSensitiveFileNames(),
+										CurrentDirectory:          host.GetCurrentDirectory(),
+									}
+									relativeDifference = tspath.ConvertToRelativePath(basePath, t)
+								}
+								return tspath.CombinePaths(relativeDifference, path)
+							}
+						})
+					}
+				}
+			}
+
+			setPropertyValue("include")
+			setPropertyValue("exclude")
+			setPropertyValue("files")
+			if extendedRawMap, ok := extendsRaw.(map[string]any); ok && extendedRawMap["compileOnSave"] != nil {
+				if compileOnSave, ok := extendedRawMap["compileOnSave"].(bool); ok {
+					result.compileOnSave = compileOnSave
+				}
+			}
+			result.options = extendedConfig.options
+
+		}
+	}
+
 	if ownConfig.extendedConfigPath != nil {
 		// copy the resolution stack so it is never reused between branches in potential diamond-problem scenarios.
-		// resolutionStack = append(resolutionStack, resolvedPath)
-		result := extendsResult{
-			options: core.CompilerOptions{},
+		resolutionStack = append(resolutionStack, resolvedPath)
+		var result *extendsResult = &extendsResult{
+			options: &core.CompilerOptions{},
 		}
-		// if compiler.IsString(ownConfig.extendedConfigPath) {
-		// 	applyExtendedConfig(result, *ownConfig.extendedConfigPath)
-		// } else {
-		// for _, extendedConfigPath := range *ownConfig.extendedConfigPath {
-		// 	//applyExtendedConfig(result, []string{extendedConfigPath})
-		// }
+		if reflect.TypeOf(ownConfig.extendedConfigPath).Kind() == reflect.String { //never true
+			applyExtendedConfig(result, ownConfig.extendedConfigPath.(string))
+		} else if configPath, ok := ownConfig.extendedConfigPath.([]string); ok {
+			for _, extendedConfigPath := range configPath {
+				applyExtendedConfig(result, extendedConfigPath)
+			}
+		}
 		if result.include != nil {
 			ownConfig.raw = result.include
 		}
@@ -841,13 +959,19 @@ func parseConfig(
 		if result.files != nil {
 			ownConfig.raw = result.files
 		}
-		if ownConfig.raw == nil && result.compileOnSave != nil {
-			ownConfig.raw = result.compileOnSave
+		if ownConfig.raw == nil {
+			if raw, ok := ownConfig.raw.(map[string]any); ok && raw["compileOnSave"] != nil {
+				ownConfig.raw.(map[string]any)["compileOnSave"] = result.compileOnSave
+			}
 		}
 		if sourceFile != nil && result.extendedSourceFiles != nil {
 			// sourceFile.extendedSourceFiles = arrayFrom(result.extendedSourceFiles.keys()) //todo extendedSourceFile does not exist in sourcefile
+			for extendedSourceFile := range result.extendedSourceFiles {
+				sourceFile.extendedSourceFiles = append(sourceFile.extendedSourceFiles, extendedSourceFile)
+			}
 		}
-		// ownConfig.options = assign(result.options, ownConfig.options);
+		//ownConfig.options = assign(result.options, ownConfig.options);
+		//ownConfig.options = result.options
 		// ownConfig.watchOptions = ownConfig.watchOptions && result.watchOptions ?
 		//     assignWatchOptions(result, ownConfig.watchOptions) :
 		//     ownConfig.watchOptions || result.watchOptions;
@@ -877,7 +1001,7 @@ func parseJsonConfigFileContentWorker(
 	configFileName string,
 	resolutionStack []tspath.Path,
 	extraFileExtensions []fileExtensionInfo,
-	extendedConfigCache map[string]extendedConfigCacheEntry,
+	extendedConfigCache map[string]*extendedConfigCacheEntry,
 ) ParsedCommandLine {
 	// Debug.assert((json === undefined && sourceFile !== undefined) || (json !== undefined && sourceFile === undefined));
 	var errors []*ast.Diagnostic
@@ -1372,7 +1496,7 @@ func getFileNamesFromConfigSpecs(
 			}
 		}
 	}
-	var files []string
+	var files []string //collection.orderedMap
 	for _, file := range literalFileMap {
 		files = append(files, file)
 	}

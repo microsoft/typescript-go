@@ -116,6 +116,8 @@ func parseJsonToStringKey(json any) map[string]any {
 				if len(arr) == 0 {
 					result["extends"] = []any{}
 				}
+			} else if str, ok := v.(string); ok {
+				result["extends"] = []any{str}
 			} else {
 				result["extends"] = v
 			}

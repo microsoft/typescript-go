@@ -122,17 +122,17 @@ func ParseJSONText(fileName string, sourceText string) *ast.SourceFile {
 	}
 
 	var statement *ast.Node
+	var statements *ast.NodeList
 	if len(expressions) == 1 {
 		statement = p.factory.NewExpressionStatement(expressions[0])
+		statements = p.factory.NewNodeList(expressions[0].Loc, []*ast.Node{statement})
+		p.finishNode(statement, pos)
 	} else {
-		arr := p.factory.NewArrayLiteralExpression(p.factory.NewNodeList(core.NewTextRange(pos, p.nodePos()), expressions), false)
-		p.finishNode(arr, pos)
-		statement = p.factory.NewExpressionStatement(arr)
+		statements = p.factory.NewNodeList(core.NewTextRange(pos, p.nodePos()), []*ast.Node{})
 	}
 
-	p.finishNode(statement, pos)
 	p.parseExpectedToken(ast.KindEndOfFile)
-	node := p.factory.NewSourceFile(p.sourceText, p.fileName, p.factory.NewNodeList(statement.Loc, []*ast.Node{statement}))
+	node := p.factory.NewSourceFile(p.sourceText, p.fileName, statements)
 	p.finishNode(node, pos)
 	result := node.AsSourceFile()
 	result.SetDiagnostics(attachFileToDiagnostics(p.diagnostics, result))
