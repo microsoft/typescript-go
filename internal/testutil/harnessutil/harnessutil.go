@@ -170,12 +170,12 @@ func setCompilerOptionsFromHarnessConfig(harnessConfig TestConfiguration, option
 	}
 }
 
-func createCompilerHost(fs vfs.FS, options *core.CompilerOptions, currentDirectory string) compiler.CompilerHost {
-	return compiler.NewCompilerHost(options, currentDirectory, fs)
+func createCompilerHost(fs vfs.FS, options *core.CompilerOptions, currentDirectory string) core.CompilerHost {
+	return core.NewCompilerHost(options, currentDirectory, fs)
 }
 
 func compileFilesWithHost(
-	host compiler.CompilerHost,
+	host core.CompilerHost,
 	rootFiles []string,
 	options *core.CompilerOptions,
 	typescriptVersion string,
@@ -260,7 +260,7 @@ func compileFilesWithHost(
 }
 
 // !!! Temporary while we don't have the real `createProgram`
-func createProgram(host compiler.CompilerHost, options *core.CompilerOptions) *compiler.Program {
+func createProgram(host core.CompilerHost, options *core.CompilerOptions) *compiler.Program {
 	programOptions := compiler.ProgramOptions{
 		RootPath:           "/", // Include all files while we don't have a way to specify root files
 		Host:               host,

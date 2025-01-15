@@ -7,6 +7,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/bundled"
 	"github.com/microsoft/typescript-go/internal/compiler"
+	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
 )
 
@@ -26,7 +27,7 @@ foo.bar;`
 	fs = bundled.WrapFS(fs)
 
 	cd := "/"
-	host := compiler.NewCompilerHost(nil, "/", fs)
+	host := core.NewCompilerHost(nil, "/", fs)
 	opts := compiler.ProgramOptions{
 		Host:               host,
 		RootPath:           cd,

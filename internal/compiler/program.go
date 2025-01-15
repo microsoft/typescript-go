@@ -24,7 +24,7 @@ import (
 
 type ProgramOptions struct {
 	RootPath           string
-	Host               CompilerHost
+	Host               core.CompilerHost
 	Options            *core.CompilerOptions
 	SingleThreaded     bool
 	ProjectReference   []core.ProjectReference
@@ -32,7 +32,7 @@ type ProgramOptions struct {
 }
 
 type Program struct {
-	host             CompilerHost
+	host             core.CompilerHost
 	programOptions   ProgramOptions
 	compilerOptions  *core.CompilerOptions
 	rootPath         string
@@ -186,7 +186,7 @@ func walkFiles(fs vfs.FS, rootPath string, extensions []string) []string {
 
 func (p *Program) SourceFiles() []*ast.SourceFile { return p.files }
 func (p *Program) Options() *core.CompilerOptions { return p.compilerOptions }
-func (p *Program) Host() CompilerHost             { return p.host }
+func (p *Program) Host() core.CompilerHost        { return p.host }
 
 func (p *Program) BindSourceFiles() {
 	wg := core.NewWorkGroup(p.programOptions.SingleThreaded)

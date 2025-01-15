@@ -110,13 +110,13 @@ func newResolutionState(
 
 type Resolver struct {
 	caches
-	host            ResolutionHost
+	host            core.CompilerHost
 	compilerOptions *core.CompilerOptions
 	// reportDiagnostic: DiagnosticReporter
 }
 
 func NewResolver(
-	host ResolutionHost,
+	host core.CompilerHost,
 	options *core.CompilerOptions,
 ) *Resolver {
 	return &Resolver{

@@ -86,7 +86,7 @@ func main() {
 
 	fs := bundled.WrapFS(vfs.FromOS())
 	useCaseSensitiveFileNames := fs.UseCaseSensitiveFileNames()
-	host := ts.NewCompilerHost(compilerOptions, currentDirectory, fs)
+	host := core.NewCompilerHost(compilerOptions, currentDirectory, fs)
 
 	normalizedRootPath := tspath.ResolvePath(currentDirectory, rootPath)
 	if !fs.DirectoryExists(normalizedRootPath) {

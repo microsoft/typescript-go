@@ -1,7 +1,6 @@
-package compiler
+package core
 
 import (
-	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/vfs"
 )
 
@@ -19,12 +18,12 @@ type FileInfo struct {
 var _ CompilerHost = (*compilerHost)(nil)
 
 type compilerHost struct {
-	options          *core.CompilerOptions
+	options          *CompilerOptions
 	currentDirectory string
 	fs               vfs.FS
 }
 
-func NewCompilerHost(options *core.CompilerOptions, currentDirectory string, fs vfs.FS) CompilerHost {
+func NewCompilerHost(options *CompilerOptions, currentDirectory string, fs vfs.FS) CompilerHost {
 	h := &compilerHost{}
 	h.options = options
 	h.currentDirectory = currentDirectory

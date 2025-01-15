@@ -8,14 +8,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/tspath"
-	"github.com/microsoft/typescript-go/internal/vfs"
 )
-
-type ResolutionHost interface {
-	FS() vfs.FS
-	GetCurrentDirectory() string
-	Trace(msg string)
-}
 
 type ModeAwareCacheKey struct {
 	name string

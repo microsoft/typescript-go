@@ -245,7 +245,7 @@ var skip = []string{
 	"typesVersionsDeclarationEmit.multiFileBackReferenceToUnmapped.ts",
 }
 
-type vfsModuleResolutionHost struct {
+type vfsModuleCompilerHost struct {
 	mu               sync.Mutex
 	fs               vfs.FS
 	currentDirectory string
@@ -263,7 +263,7 @@ func fixRoot(path string) string {
 	return path[rootLength:]
 }
 
-func newVFSModuleResolutionHost(files map[string]string, currentDirectory string) *vfsModuleResolutionHost {
+func newVFSModuleCompilerHost(files map[string]string, currentDirectory string) *vfsModuleCompilerHost {
 	fs := fstest.MapFS{}
 	for name, content := range files {
 		fs[fixRoot(name)] = &fstest.MapFile{
@@ -275,23 +275,23 @@ func newVFSModuleResolutionHost(files map[string]string, currentDirectory string
 	} else if currentDirectory[0] != '/' {
 		currentDirectory = "/.src/" + currentDirectory
 	}
-	return &vfsModuleResolutionHost{
+	return &vfsModuleCompilerHost{
 		fs:               vfstest.FromMapFS(fs, true /*useCaseSensitiveFileNames*/),
 		currentDirectory: currentDirectory,
 	}
 }
 
-func (v *vfsModuleResolutionHost) FS() vfs.FS {
+func (v *vfsModuleCompilerHost) FS() vfs.FS {
 	return v.fs
 }
 
-// GetCurrentDirectory implements ModuleResolutionHost.
-func (v *vfsModuleResolutionHost) GetCurrentDirectory() string {
+// GetCurrentDirectory implements Modulecore.CompilerHost.
+func (v *vfsModuleCompilerHost) GetCurrentDirectory() string {
 	return v.currentDirectory
 }
 
-// Trace implements ModuleResolutionHost.
-func (v *vfsModuleResolutionHost) Trace(msg string) {
+// Trace implements Modulecore.CompilerHost.
+func (v *vfsModuleCompilerHost) Trace(msg string) {
 	v.mu.Lock()
 	defer v.mu.Unlock()
 	v.traces = append(v.traces, msg)
@@ -412,7 +412,7 @@ func runTraceBaseline(t *testing.T, test traceTestCase) {
 	t.Run(test.name, func(t *testing.T) {
 		t.Parallel()
 
-		host := newVFSModuleResolutionHost(test.files, test.currentDirectory)
+		host := newVFSModuleCompilerHost(test.files, test.currentDirectory)
 		resolver := module.NewResolver(host, test.compilerOptions)
 
 		for _, call := range test.calls {
@@ -423,7 +423,7 @@ func runTraceBaseline(t *testing.T, test traceTestCase) {
 		}
 
 		t.Run("concurrent", func(t *testing.T) {
-			host := newVFSModuleResolutionHost(test.files, test.currentDirectory)
+			host := newVFSModuleCompilerHost(test.files, test.currentDirectory)
 			resolver := module.NewResolver(host, test.compilerOptions)
 
 			var wg sync.WaitGroup

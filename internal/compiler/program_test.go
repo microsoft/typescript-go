@@ -24,7 +24,7 @@ func TestLibOrdering(t *testing.T) {
 	fs = bundled.WrapFS(fs)
 
 	cd := "/"
-	host := NewCompilerHost(nil, "/", fs)
+	host := core.NewCompilerHost(nil, "/", fs)
 	opts := ProgramOptions{
 		Host:               host,
 		RootPath:           cd,
