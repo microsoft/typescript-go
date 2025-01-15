@@ -36,7 +36,7 @@ func processAllProgramFiles(host CompilerHost, programOptions ProgramOptions, co
 		programOptions:     programOptions,
 		compilerOptions:    compilerOptions,
 		resolver:           resolver,
-		defaultLibraryPath: tspath.CombinePaths(programOptions.DefaultLibraryPath, "lib.d.ts"),
+		defaultLibraryPath: programOptions.DefaultLibraryPath,
 		comparePathsOptions: tspath.ComparePathsOptions{
 			UseCaseSensitiveFileNames: host.FS().UseCaseSensitiveFileNames(),
 			CurrentDirectory:          host.GetCurrentDirectory(),
@@ -156,7 +156,7 @@ func (t *parseTask) start(loader *fileLoader) {
 				if !ok {
 					continue
 				}
-				t.addSubTask(tspath.CombinePaths(loader.programOptions.DefaultLibraryPath, name), true)
+				t.addSubTask(tspath.CombinePaths(loader.defaultLibraryPath, name), true)
 			}
 		}
 
