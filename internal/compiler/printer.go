@@ -31,9 +31,14 @@ func (c *Checker) SymbolToString(s *ast.Symbol) string {
 	return c.symbolToString(s)
 }
 
-// Deprecated: use scanner.SymbolToString(s)
 func (c *Checker) symbolToString(s *ast.Symbol) string {
-	return scanner.SymbolToString(s)
+	if s.ValueDeclaration != nil {
+		name := ast.GetNameOfDeclaration(s.ValueDeclaration)
+		if name != nil {
+			return scanner.GetTextOfNode(name)
+		}
+	}
+	return s.Name
 }
 
 func (c *Checker) typeToString(t *Type) string {

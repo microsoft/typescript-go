@@ -8,7 +8,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/compiler/diagnostics"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/jsnum"
-	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/stringutil"
 )
 
@@ -161,6 +160,7 @@ type ConstantEvaluator struct {
 	SetEnumDeclarationValuesComputed   func(node *ast.Node)                                                                    // Required
 	GetEnumMemberValueCache            func(node *ast.Node) EvaluatorResult                                                    // Required
 	SetEnumMemberValueCache            func(node *ast.Node, result EvaluatorResult)                                            // Required
+	SymbolToString                     func(s *ast.Symbol) string                                                              // Required
 	Error                              func(location *ast.Node, message *diagnostics.Message, args ...any) *ast.Diagnostic     // Optional
 	GetGlobalSymbol                    func(name string, meaning ast.SymbolFlags, diagnostic *diagnostics.Message) *ast.Symbol // Optional
 	IsBlockScopedNameDeclaredBeforeUse func(declaration *ast.Node, usage *ast.Node) bool                                       // Optional
@@ -257,7 +257,7 @@ func (c *ConstantEvaluator) GetEnumMemberValue(node *ast.Node) EvaluatorResult {
 func (c *ConstantEvaluator) evaluateEnumMember(expr *ast.Node, symbol *ast.Symbol, location *ast.Node) EvaluatorResult {
 	declaration := symbol.ValueDeclaration
 	if declaration == nil || declaration == location {
-		c.error(expr, diagnostics.Property_0_is_used_before_being_assigned, scanner.SymbolToString(symbol))
+		c.error(expr, diagnostics.Property_0_is_used_before_being_assigned, c.SymbolToString(symbol))
 		return EvaluatorResult{nil, false, false, false}
 	}
 	if !c.IsBlockScopedNameDeclaredBeforeUse(declaration, location) {
@@ -325,13 +325,6 @@ func (c *ConstantEvaluator) getGlobalSymbol(name string, meaning ast.SymbolFlags
 		return c.GetGlobalSymbol(name, meaning, diagnostic)
 	}
 	return nil
-}
-
-func (c *ConstantEvaluator) isBlockScopedNameDeclaredBeforeUse(declaration *ast.Node, usage *ast.Node) bool {
-	if c.IsBlockScopedNameDeclaredBeforeUse != nil {
-		return c.IsBlockScopedNameDeclaredBeforeUse(declaration, usage)
-	}
-	return true
 }
 
 func (c *ConstantEvaluator) isConstantVariable(symbol *ast.Symbol) bool {

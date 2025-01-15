@@ -1391,6 +1391,7 @@ func (c *Checker) createConstantEvaluator() *evaluator.ConstantEvaluator {
 		GetGlobalSymbol:                    c.getGlobalSymbol,
 		IsBlockScopedNameDeclaredBeforeUse: c.isBlockScopedNameDeclaredBeforeUse,
 		GetCombinedNodeFlags:               c.getCombinedNodeFlagsCached,
+		SymbolToString:                     c.symbolToString,
 		GetEnumDeclarationValuesComputed:   c.getEnumDeclarationValuesComputed,
 		SetEnumDeclarationValuesComputed:   c.setEnumDeclarationValuesComputed,
 		GetEnumMemberValueCache:            c.getEnumMemberValueCache,
