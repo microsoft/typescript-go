@@ -182,4 +182,7 @@ var extendsOptionDeclaration = &CommandLineOption{
 	Name:     "extends",
 	Kind:     CommandLineOptionTypeListOrElement,
 	category: diagnostics.File_Management,
+	ElementOptions: map[string]*CommandLineOption{
+		"extends": {Name: "extends", Kind: CommandLineOptionTypeString},
+	},
 }

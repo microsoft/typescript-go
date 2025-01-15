@@ -256,6 +256,12 @@ func (r *Resolver) ResolveModuleName(moduleName string, containingFile string, r
 	return result
 }
 
+// func (r *Resolver) ResolveConfig(moduleName string, containingFile string) *ResolvedModule {
+// 	containingDirectory := tspath.GetDirectoryPath(containingFile)
+// 	state := newResolutionState(moduleName, containingDirectory, false /*isTypeReferenceDirective*/, core.ModuleKindCommonJS, r.compilerOptions, nil, r)
+
+// }
+
 func (r *Resolver) traceTypeReferenceDirectiveResult(typeReferenceDirectiveName string, result *ResolvedTypeReferenceDirective) {
 	if !result.IsResolved() {
 		r.host.Trace(diagnostics.Type_reference_directive_0_was_not_resolved.Format(typeReferenceDirectiveName))
@@ -1439,84 +1445,4 @@ func extensionIsOk(extensions Extensions, extension string) bool {
 		((extensions&extensionsDeclaration) != 0 && (extension == tspath.ExtensionDts || extension == tspath.ExtensionDmts || extension == tspath.ExtensionDcts)) ||
 		((extensions&extensionsJson) != 0 && extension == tspath.ExtensionJson) ||
 		false
-}
-
-func nodeModuleNameResolverWorker(
-	features NodeResolutionFeatures,
-	moduleName string,
-	containingDirectory string,
-	compilerOptions *core.CompilerOptions,
-	host ResolutionHost,
-	cache ResolutionCache[string], // check
-	extensions Extensions,
-	isConfigLookup bool,
-	redirectedReference *ResolvedProjectReference,
-	conditions []string,
-) ResolvedModuleWithFailedLookupLocations { // todo
-	// traceEnabled = isTraceEnabled(compilerOptions, host);
-
-	// failedLookupLocations := []string{}
-	// affectingLocations := []string{}
-	moduleResolution := compilerOptions.GetModuleResolutionKind()
-	if conditions == nil || len(conditions) == 0 { // check
-		var resolutionMode core.ModuleKind
-		if moduleResolution != core.ModuleResolutionKindBundler || moduleResolution != core.ModuleResolutionKindNode16 {
-			resolutionMode = core.ModuleKindESNext
-		} else {
-			resolutionMode = core.ModuleKindCommonJS
-		}
-		getConditions(compilerOptions, resolutionMode)
-	}
-	// conditions ??= getConditions(
-	//     compilerOptions,
-	//     moduleResolution === ModuleResolutionKind.Bundler || moduleResolution === ModuleResolutionKind.Node10
-	//         ? undefined
-	//         : (features & NodeResolutionFeatures.EsmMode) ? ModuleKind.ESNext : ModuleKind.CommonJS,
-	// );
-	// diagnostics := []ast.Diagnostic{}
-	state := newResolutionState(moduleName, containingDirectory, false /*isTypeReferenceDirective*/, core.ModuleKind(moduleResolution), compilerOptions, redirectedReference, NewResolver(host, compilerOptions))
-	if moduleResolutionSupportsPackageJsonExportsAndImports(moduleResolution) {
-		// trace(host, Diagnostics.Resolving_in_0_mode_with_conditions_1, features & NodeResolutionFeatures.EsmMode ? "ESM" : "CJS", state.conditions.map(c => `'${c}'`).join(", "));
-	}
-
-	// var result any
-	// if (moduleResolution === ModuleResolutionKind.Node10) {
-	//     const priorityExtensions = extensions & (Extensions.TypeScript | Extensions.Declaration);
-	//     const secondaryExtensions = extensions & ~(Extensions.TypeScript | Extensions.Declaration);
-	//     result = priorityExtensions && tryResolve(priorityExtensions, state) ||
-	//         secondaryExtensions && tryResolve(secondaryExtensions, state) ||
-	//         undefined;
-	// }
-	// else {
-	// result := state.resolveNodeLike()
-	// }
-	// var alternateState any
-	if state.getResolvedPackageDirectory() && isConfigLookup && tspath.IsExternalModuleNameRelative(moduleName) {
-		// if result != nil && extensions&(extensionsTypeScript|extensionsDeclaration) && !extensionIsOk(extensionsTypeScript|extensionsDeclaration, result.getres) {
-		// 	alternateState = state
-		// }
-		// wantedTypesButGotJs := (extensions&(extensionsTypeScript|extensionsDeclaration) != 0) && !extensionIsOk(extensionsTypeScript|extensionsDeclaration, result.Extension)
-		// if (
-		// 	result?.value?.isExternalLibraryImport
-		// 	&& wantedTypesButGotJs
-		// 	&& features & NodeResolutionFeatures.Exports
-		// 	&& conditions?.includes("import")
-		// ) {
-		// 	traceIfEnabled(state, Diagnostics.Resolution_of_non_relative_name_failed_trying_with_modern_Node_resolution_features_disabled_to_see_if_npm_library_needs_configuration_update);
-		// 	const diagnosticState = {
-		// 		...state,
-		// 		features: state.features & ~NodeResolutionFeatures.Exports,
-		// 		reportDiagnostic: noop,
-		// 	};
-		// 	const diagnosticResult = tryResolve(extensions & (Extensions.TypeScript | Extensions.Declaration), diagnosticState);
-		// 	if (diagnosticResult?.value?.isExternalLibraryImport) {
-		// 		alternateResult = diagnosticResult.value.resolved.path;
-		// 	}
-		// }
-	}
-	return ResolvedModuleWithFailedLookupLocations{}
-}
-
-func NodeNextJsonConfigResolver(moduleName string, containingFile string, host ResolutionHost) ResolvedModuleWithFailedLookupLocations {
-	return nodeModuleNameResolverWorker(NodeResolutionFeaturesNodeNextDefault, moduleName, tspath.GetDirectoryPath(containingFile), &core.CompilerOptions{ModuleResolution: core.ModuleResolutionKindNodeNext}, host /*cache*/, ResolutionCache[string]{}, extensionsJson /*isConfigLookup*/, true /*redirectedReference*/, nil /*conditions*/, nil)
 }

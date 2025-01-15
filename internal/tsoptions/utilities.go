@@ -331,10 +331,6 @@ func getRegexFromPattern(pattern string, useCaseSensitiveFileNames bool) *regexp
 }
 
 type visitor struct {
-	visited                   map[string]bool
-	name                      string
-	absolutePath              string
-	results                   [][]string
 	includeFileRegexes        []*regexp2.Regexp
 	excludeRegex              *regexp2.Regexp
 	includeDirectoryRegex     *regexp2.Regexp
@@ -342,48 +338,39 @@ type visitor struct {
 	useCaseSensitiveFileNames bool
 	host                      vfs.FS
 	getFileSystemEntries      func(path string, host vfs.FS) FileSystemEntries
-	currentDirectory          string
-	depth                     int
 }
 
 func (v *visitor) visitDirectory(
-	visited map[string]bool,
 	path string,
 	absolutePath string,
 	depth int,
-	useCaseSensitiveFileNames bool,
-	host vfs.FS,
-	getFileSystemEntries func(path string, host vfs.FS) FileSystemEntries,
-	includeFileRegexes []*regexp2.Regexp,
-	excludeRegex *regexp2.Regexp,
-	results [][]string,
-	includeDirectoryRegex *regexp2.Regexp,
-	extensions []string,
+	visited map[string]bool,
+	results *[][]string,
 ) {
-	canonicalPath := tspath.GetCanonicalFileName(absolutePath, useCaseSensitiveFileNames)
+	canonicalPath := tspath.GetCanonicalFileName(absolutePath, v.useCaseSensitiveFileNames)
 	if visited[canonicalPath] {
 		return
 	}
 	visited[canonicalPath] = true
-	systemEntries := getFileSystemEntries(absolutePath, host)
+	systemEntries := v.getFileSystemEntries(absolutePath, v.host)
 	files := systemEntries.files
 	directories := systemEntries.directories
 
 	for _, current := range files {
 		name := tspath.CombinePaths(path, current)
 		absoluteName := tspath.CombinePaths(absolutePath, current)
-		if len(extensions) > 0 && !tspath.FileExtensionIsOneOf(name, extensions) {
+		if len(v.extensions) > 0 && !tspath.FileExtensionIsOneOf(name, v.extensions) {
 			continue
 		}
-		if excludeRegex != nil && core.Must(excludeRegex.MatchString(absoluteName)) {
+		if v.excludeRegex != nil && core.Must(v.excludeRegex.MatchString(absoluteName)) {
 			continue
 		}
-		if includeFileRegexes == nil {
-			results[0] = append(results[0], name)
+		if v.includeFileRegexes == nil {
+			(*results)[0] = append((*results)[0], name)
 		} else {
-			includeIndex := core.FindIndex(includeFileRegexes, func(re *regexp2.Regexp) bool { return core.Must(re.MatchString(absoluteName)) })
+			includeIndex := core.FindIndex(v.includeFileRegexes, func(re *regexp2.Regexp) bool { return core.Must(re.MatchString(absoluteName)) })
 			if includeIndex != -1 {
-				results[includeIndex] = append(results[includeIndex], name)
+				(*results)[includeIndex] = append((*results)[includeIndex], name)
 			}
 		}
 	}
@@ -398,22 +385,8 @@ func (v *visitor) visitDirectory(
 	for _, current := range directories {
 		name := tspath.CombinePaths(path, current)
 		absoluteName := tspath.CombinePaths(absolutePath, current)
-		if (includeDirectoryRegex == nil || core.Must(includeDirectoryRegex.MatchString(absoluteName))) && (excludeRegex == nil || !core.Must(excludeRegex.MatchString(absoluteName))) {
-			v := visitor{
-				visited:                   visited,
-				name:                      name,
-				absolutePath:              absoluteName,
-				depth:                     depth,
-				useCaseSensitiveFileNames: useCaseSensitiveFileNames,
-				host:                      host,
-				getFileSystemEntries:      getFileSystemEntries,
-				includeFileRegexes:        includeFileRegexes,
-				excludeRegex:              excludeRegex,
-				results:                   results,
-				includeDirectoryRegex:     includeDirectoryRegex,
-				extensions:                extensions,
-			}
-			v.visitDirectory(visited, name, absoluteName, depth, useCaseSensitiveFileNames, host, getFileSystemEntries, includeFileRegexes, excludeRegex, results, includeDirectoryRegex, extensions)
+		if (v.includeDirectoryRegex == nil || core.Must(v.includeDirectoryRegex.MatchString(absoluteName))) && (v.excludeRegex == nil || !core.Must(v.excludeRegex.MatchString(absoluteName))) {
+			v.visitDirectory(name, absoluteName, depth, visited, results)
 		}
 	}
 }
@@ -439,32 +412,31 @@ func matchFiles(path string, extensions []string, excludes []string, includes []
 
 	// Associate an array of results with each include regex. This keeps results in order of the "include" order.
 	// If there are no "includes", then just put everything in results[0].
-	var results [][]string
-	if includeFileRegexes[0] != nil {
-		results = core.Map(includeFileRegexes, func(_ *regexp2.Regexp) []string { return []string{} })
+	var results *[][]string
+	if len(includeFileRegexes) > 0 {
+		tempResults := make([][]string, len(includeFileRegexes))
+		for i := range includeFileRegexes {
+			tempResults[i] = []string{}
+		}
+		results = &tempResults
 	} else {
-		results = [][]string{{}}
+		results = &[][]string{{}}
 	}
 	visited := make(map[string]bool)
+	v := visitor{
+		useCaseSensitiveFileNames: useCaseSensitiveFileNames,
+		host:                      host,
+		getFileSystemEntries:      getFileSystemEntries,
+		includeFileRegexes:        includeFileRegexes,
+		excludeRegex:              excludeRegex,
+		includeDirectoryRegex:     includeDirectoryRegex,
+		extensions:                extensions,
+	}
 	for _, basePath := range patterns.basePaths {
-		v := visitor{
-			visited:                   visited,
-			name:                      basePath,
-			absolutePath:              tspath.CombinePaths(currentDirectory, basePath),
-			depth:                     depth,
-			useCaseSensitiveFileNames: useCaseSensitiveFileNames,
-			host:                      host,
-			getFileSystemEntries:      getFileSystemEntries,
-			includeFileRegexes:        includeFileRegexes,
-			excludeRegex:              excludeRegex,
-			results:                   results,
-			includeDirectoryRegex:     includeDirectoryRegex,
-			extensions:                extensions,
-		}
-		v.visitDirectory(visited, basePath, tspath.CombinePaths(currentDirectory, basePath), depth, useCaseSensitiveFileNames, host, getFileSystemEntries, includeFileRegexes, excludeRegex, results, includeDirectoryRegex, extensions)
+		v.visitDirectory(basePath, tspath.CombinePaths(currentDirectory, basePath), depth, visited, results)
 	}
 
-	return core.Flatten(results)
+	return core.Flatten(*results)
 }
 
 func readDirectory(host vfs.FS, currentDir string, path string, extensions []string, excludes []string, includes []string, depth int) []string {

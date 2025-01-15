@@ -14,7 +14,7 @@ import (
 
 type DidYouMeanOptionsDiagnostics struct {
 	alternateMode               *AlternateModeDiagnostics
-	OptionDeclarations          []CommandLineOption
+	OptionDeclarations          []*CommandLineOption
 	UnknownOptionDiagnostic     *diagnostics.Message
 	UnknownDidYouMeanDiagnostic *diagnostics.Message
 }
@@ -37,7 +37,7 @@ func (p *CommandLineParser) AlternateMode() *AlternateModeDiagnostics {
 	return p.workerDiagnostics.didYouMean.alternateMode
 }
 
-func (p *CommandLineParser) OptionsDeclarations() []CommandLineOption {
+func (p *CommandLineParser) OptionsDeclarations() []*CommandLineOption {
 	return p.workerDiagnostics.didYouMean.OptionDeclarations
 }
 
@@ -54,7 +54,7 @@ func (p *CommandLineParser) GetOptionsNameMap() *NameMap {
 		optionsNames := map[string]*CommandLineOption{}
 		shortOptionNames := map[string]string{}
 		for _, option := range p.workerDiagnostics.didYouMean.OptionDeclarations {
-			optionsNames[strings.ToLower(option.Name)] = &option
+			optionsNames[strings.ToLower(option.Name)] = option
 			if option.shortName != "" {
 				shortOptionNames[option.shortName] = option.Name
 			}

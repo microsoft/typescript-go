@@ -4,12 +4,12 @@ import (
 	"slices"
 
 	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 )
 
-// todo: used in executeCommandLine
 type ParsedCommandLine struct {
-	Options *core.ParsedOptions
+	ParsedOptions *core.ParsedOptions
 	// WatchOptions WatchOptions
 
 	ConfigFile *ast.SourceFile // TsConfigSourceFile, used in Program and ExecuteCommandLine
@@ -28,7 +28,7 @@ func NewParsedCommandLine(
 	compileOnSave *bool,
 ) ParsedCommandLine {
 	return ParsedCommandLine{
-		Options:       options,
+		ParsedOptions: options,
 		ConfigFile:    configFile,
 		Errors:        errors,
 		Raw:           raw,
@@ -37,23 +37,23 @@ func NewParsedCommandLine(
 }
 
 func (p *ParsedCommandLine) SetParsedOptions(o *core.ParsedOptions) {
-	p.Options = o
+	p.ParsedOptions = o
 }
 
 func (p *ParsedCommandLine) SetCompilerOptions(o *core.CompilerOptions) {
-	p.Options.CompilerOptions = o
+	p.ParsedOptions.CompilerOptions = o
 }
 
 func (p *ParsedCommandLine) CompilerOptions() *core.CompilerOptions {
-	return p.Options.CompilerOptions
+	return p.ParsedOptions.CompilerOptions
 }
 
-func (p *ParsedCommandLine) FileNames() []string {
-	return p.Options.FileNames
+func (p *ParsedCommandLine) FileNames() collections.OrderedMap[string, string] {
+	return p.ParsedOptions.FileNames
 }
 
 func (p *ParsedCommandLine) ProjectReferences() []core.ProjectReference {
-	return p.Options.ProjectReferences
+	return p.ParsedOptions.ProjectReferences
 }
 
 func (p *ParsedCommandLine) GetConfigFileParsingDiagnostics() []*ast.Diagnostic {

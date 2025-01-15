@@ -7,6 +7,7 @@ import (
 	"io"
 	"io/fs"
 	"path/filepath"
+	"slices"
 	"strings"
 	"testing"
 	"testing/fstest"
@@ -432,8 +433,8 @@ var parseJsonConfigFileTests = []struct {
 		title: "with outDir from base tsconfig",
 		input: []testConfig{{
 			jsonText: `{
-				"extends": ["./tsconfigWithoutConfigDir.json"]
-			}`,
+  "extends": "./tsconfigWithoutConfigDir.json"
+}`,
 			configFileName: "tsconfig.json",
 			basePath:       "/",
 			allFileList: map[string]string{
@@ -443,8 +444,8 @@ var parseJsonConfigFileTests = []struct {
 		},
 			{
 				jsonText: `{
-			extends: "./tsconfigWithConfigDir.json"
-		}`,
+  "extends": "./tsconfigWithConfigDir.json"
+}`,
 				configFileName: "tsconfig.json",
 				basePath:       "/",
 				allFileList: map[string]string{
@@ -458,10 +459,14 @@ var parseJsonConfigFileTests = []struct {
 }
 
 var tsconfigWithoutConfigDir = `{
-	"compilerOptions": { "outDir": "bin" } 
+  "compilerOptions": {
+    "outDir": "bin"
+  }
 }`
 var tsconfigWithConfigDir = `{
-	"compilerOptions": { "outDir": "${configDir}/bin" }
+  "compilerOptions": {
+    "outDir": "${configDir}/bin"
+  }
 }`
 
 func TestParseJsonConfigFileContent(t *testing.T) {
@@ -532,7 +537,7 @@ func baselineParseConfigWith(t *testing.T, baselineFileName string, noSubmoduleB
 		baselineContent.WriteString("\n")
 		baselineContent.WriteString("configFileName:: " + config.configFileName + "\n")
 		baselineContent.WriteString("FileNames::\n")
-		baselineContent.WriteString(strings.Join(parsedConfigFileContent.Options.FileNames, ",") + "\n")
+		baselineContent.WriteString(strings.Join(slices.Collect(parsedConfigFileContent.ParsedOptions.FileNames.Keys()), ",") + "\n")
 		baselineContent.WriteString("Errors::\n")
 		diagnosticwriter.FormatDiagnosticsWithColorAndContext(&baselineContent, parsedConfigFileContent.Errors, &diagnosticwriter.FormattingOptions{
 			NewLine: "\r\n",
@@ -630,7 +635,7 @@ func TestParseSrcCompiler(t *testing.T) {
 	// opts := parseConfigFileContent.CompilerOptions()
 	// assert.DeepEqual(t, opts, &core.CompilerOptions{}) // TODO: fill out
 
-	fileNames := parseConfigFileContent.Options.FileNames
+	fileNames := parseConfigFileContent.ParsedOptions.FileNames
 	fmt.Println(fileNames)
 	// assert.DeepEqual(t, fileNames, []string{}) // TODO: fill out (make paths relative to cwd)
 }
