@@ -1,6 +1,8 @@
 package ast
 
 import (
+	"sync/atomic"
+
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
@@ -94,7 +96,7 @@ type Node struct {
 	Kind   Kind
 	Flags  NodeFlags
 	Loc    core.TextRange
-	Id     NodeId
+	id     atomic.Uint32
 	Parent *Node
 	data   nodeData
 }

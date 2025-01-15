@@ -1,5 +1,7 @@
 package ast
 
+import "sync/atomic"
+
 // Symbol
 
 type Symbol struct {
@@ -14,7 +16,7 @@ type Symbol struct {
 	ValueDeclaration             *Node
 	Members                      SymbolTable
 	Exports                      SymbolTable
-	Id                           SymbolId
+	id                           atomic.Uint32
 	MergeId                      MergeId // Assigned once symbol is merged somewhere
 	Parent                       *Symbol
 	ExportSymbol                 *Symbol
