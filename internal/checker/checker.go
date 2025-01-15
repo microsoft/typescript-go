@@ -582,7 +582,7 @@ type Checker struct {
 	symbolPool                                core.Pool[ast.Symbol]
 	signaturePool                             core.Pool[Signature]
 	indexInfoPool                             core.Pool[IndexInfo]
-	mergedSymbols                             map[ast.MergeId]*ast.Symbol
+	mergedSymbols                             map[*ast.Symbol]*ast.Symbol
 	factory                                   ast.NodeFactory
 	nodeLinks                                 LinkStore[*ast.Node, NodeLinks]
 	signatureLinks                            LinkStore[*ast.Node, SignatureLinks]
@@ -823,7 +823,7 @@ func NewChecker(program Program) *Checker {
 	c.intersectionTypes = make(map[string]*Type)
 	c.diagnostics = ast.DiagnosticsCollection{}
 	c.suggestionDiagnostics = ast.DiagnosticsCollection{}
-	c.mergedSymbols = make(map[ast.MergeId]*ast.Symbol)
+	c.mergedSymbols = make(map[*ast.Symbol]*ast.Symbol)
 	c.patternForType = make(map[*Type]*ast.Node)
 	c.contextFreeTypes = make(map[*ast.Node]*Type)
 	c.anyType = c.newIntrinsicType(TypeFlagsAny, "any")
@@ -8967,7 +8967,7 @@ func (c *Checker) cloneSymbol(symbol *ast.Symbol) *ast.Symbol {
 
 func (c *Checker) getMergedSymbol(symbol *ast.Symbol) *ast.Symbol {
 	if symbol != nil {
-		merged := c.mergedSymbols[ast.GetMergeId(symbol)]
+		merged := c.mergedSymbols[symbol]
 		if merged != nil {
 			return merged
 		}
@@ -8983,7 +8983,7 @@ func (c *Checker) getParentOfSymbol(symbol *ast.Symbol) *ast.Symbol {
 }
 
 func (c *Checker) recordMergedSymbol(target *ast.Symbol, source *ast.Symbol) {
-	c.mergedSymbols[ast.GetMergeId(source)] = target
+	c.mergedSymbols[source] = target
 }
 
 func (c *Checker) getSymbolIfSameReference(s1 *ast.Symbol, s2 *ast.Symbol) *ast.Symbol {

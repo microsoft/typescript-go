@@ -12,7 +12,6 @@ import (
 var (
 	nextNodeId   atomic.Uint32
 	nextSymbolId atomic.Uint32
-	nextMergeId atomic.Uint32
 )
 
 func GetNodeId(node *Node) NodeId {
@@ -37,18 +36,6 @@ func GetSymbolId(symbol *Symbol) SymbolId {
 		}
 	}
 	return SymbolId(id)
-}
-
-func GetMergeId(symbol *Symbol) MergeId {
-	id := symbol.MergeId.Load()
-	if id == 0 {
-		// Worst case, we burn a few ids if we have to CAS.
-		id = nextMergeId.Add(1)
-		if !symbol.MergeId.CompareAndSwap(0, id) {
-			id = symbol.MergeId.Load()
-		}
-	}
-	return MergeId(id)
 }
 
 func GetSymbolTable(data *SymbolTable) SymbolTable {
