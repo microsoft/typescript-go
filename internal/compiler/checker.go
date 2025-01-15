@@ -3014,10 +3014,8 @@ func (c *Checker) getTypeOfExpression(node *ast.Node) *Type {
 		return quickType
 	}
 	// If a type has been cached for the node, return it.
-	if node.Flags&ast.NodeFlagsTypeCached != 0 {
-		if cachedType := c.flowTypeCache[node]; cachedType != nil {
-			return cachedType
-		}
+	if cachedType := c.flowTypeCache[node]; cachedType != nil {
+		return cachedType
 	}
 	startInvocationCount := c.flowInvocationCount
 	t := c.checkExpressionEx(node, CheckModeTypeOnly)
@@ -3027,7 +3025,6 @@ func (c *Checker) getTypeOfExpression(node *ast.Node) *Type {
 			c.flowTypeCache = make(map[*ast.Node]*Type)
 		}
 		c.flowTypeCache[node] = t
-		node.Flags |= ast.NodeFlagsTypeCached
 	}
 	return t
 }
