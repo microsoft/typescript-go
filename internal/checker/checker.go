@@ -1,4 +1,4 @@
-package compiler
+package checker
 
 import (
 	"fmt"
@@ -93,6 +93,13 @@ type EnumLiteralKey struct {
 	value      any
 }
 
+// EnumRelationKey
+
+type EnumRelationKey struct {
+	sourceId ast.SymbolId
+	targetId ast.SymbolId
+}
+
 // TypeCacheKind
 
 type CachedTypeKind int32
@@ -149,11 +156,12 @@ type CachedSignatureKey struct {
 }
 
 const (
-	SignatureKeyErased    string = "-"
-	SignatureKeyCanonical string = "*"
-	SignatureKeyBase      string = "#"
-	SignatureKeyInner     string = "<"
-	SignatureKeyOuter     string = ">"
+	SignatureKeyErased         string = "-"
+	SignatureKeyCanonical      string = "*"
+	SignatureKeyBase           string = "#"
+	SignatureKeyInner          string = "<"
+	SignatureKeyOuter          string = ">"
+	SignatureKeyImplementation string = "+"
 )
 
 // StringMappingKey
@@ -490,16 +498,27 @@ type WideningContext struct {
 	resolvedProperties []*ast.Symbol    // Properties occurring in sibling object literals
 }
 
+type Program interface {
+	Options() *core.CompilerOptions
+	Files() []*ast.SourceFile
+
+	BindSourceFiles()
+	GetEmitModuleFormatOfFile(sourceFile *ast.SourceFile) core.ModuleKind
+	GetResolvedModule(currentSourceFile *ast.SourceFile, moduleReference string) *ast.SourceFile
+}
+
+type Host interface{}
+
 // Checker
 
 type Checker struct {
-	program                                   *Program
-	host                                      CompilerHost
+	program                                   Program
+	host                                      Host
 	compilerOptions                           *core.CompilerOptions
 	files                                     []*ast.SourceFile
 	fileIndexMap                              map[*ast.SourceFile]int
 	compareSymbols                            func(*ast.Symbol, *ast.Symbol) int
-	typeCount                                 uint32
+	TypeCount                                 uint32
 	symbolCount                               uint32
 	totalInstantiationCount                   uint32
 	instantiationCount                        uint32
@@ -558,8 +577,8 @@ type Checker struct {
 	unionTypes                                map[string]*Type
 	unionOfUnionTypes                         map[UnionOfUnionKey]*Type
 	intersectionTypes                         map[string]*Type
-	diagnostics                               DiagnosticsCollection
-	suggestionDiagnostics                     DiagnosticsCollection
+	diagnostics                               ast.DiagnosticsCollection
+	suggestionDiagnostics                     ast.DiagnosticsCollection
 	symbolPool                                core.Pool[ast.Symbol]
 	signaturePool                             core.Pool[Signature]
 	indexInfoPool                             core.Pool[IndexInfo]
@@ -705,7 +724,7 @@ type Checker struct {
 	assignableRelation                        *Relation
 	comparableRelation                        *Relation
 	identityRelation                          *Relation
-	enumRelation                              *Relation
+	enumRelation                              map[EnumRelationKey]RelationComparisonResult
 	getGlobalNonNullableTypeAliasOrNil        func() *ast.Symbol
 	getGlobalExtractSymbol                    func() *ast.Symbol
 	getGlobalDisposableType                   func() *Type
@@ -742,12 +761,12 @@ type Checker struct {
 	isStringIndexSignatureOnlyType            func(*Type) bool
 }
 
-func NewChecker(program *Program) *Checker {
+func NewChecker(program Program) *Checker {
 	c := &Checker{}
 	c.program = program
-	c.host = program.host
-	c.compilerOptions = program.compilerOptions
-	c.files = program.files
+	// c.host = program.host
+	c.compilerOptions = program.Options()
+	c.files = program.Files()
 	c.fileIndexMap = createFileIndexMap(c.files)
 	c.compareSymbols = c.compareSymbolsWorker // Closure optimization
 	c.languageVersion = c.compilerOptions.GetEmitScriptTarget()
@@ -802,8 +821,8 @@ func NewChecker(program *Program) *Checker {
 	c.unionTypes = make(map[string]*Type)
 	c.unionOfUnionTypes = make(map[UnionOfUnionKey]*Type)
 	c.intersectionTypes = make(map[string]*Type)
-	c.diagnostics = DiagnosticsCollection{}
-	c.suggestionDiagnostics = DiagnosticsCollection{}
+	c.diagnostics = ast.DiagnosticsCollection{}
+	c.suggestionDiagnostics = ast.DiagnosticsCollection{}
 	c.mergedSymbols = make(map[ast.MergeId]*ast.Symbol)
 	c.patternForType = make(map[*Type]*ast.Node)
 	c.contextFreeTypes = make(map[*ast.Node]*Type)
@@ -889,7 +908,7 @@ func NewChecker(program *Program) *Checker {
 	c.assignableRelation = &Relation{}
 	c.comparableRelation = &Relation{}
 	c.identityRelation = &Relation{}
-	c.enumRelation = &Relation{}
+	c.enumRelation = make(map[EnumRelationKey]RelationComparisonResult)
 	c.getGlobalNonNullableTypeAliasOrNil = c.getGlobalTypeAliasResolver("NonNullable", 1 /*arity*/, false /*reportErrors*/)
 	c.getGlobalExtractSymbol = c.getGlobalTypeAliasResolver("Extract", 2 /*arity*/, true /*reportErrors*/)
 	c.getGlobalDisposableType = c.getGlobalTypeResolver("Disposable", 0 /*arity*/, true /*reportErrors*/)
@@ -1076,7 +1095,7 @@ func (c *Checker) initializeIterationResolvers() {
 }
 
 func (c *Checker) initializeChecker() {
-	c.program.bindSourceFiles()
+	c.program.BindSourceFiles()
 	// Initialize global symbol table
 	augmentations := make([][]*ast.Node, 0, len(c.files))
 	for _, file := range c.files {
@@ -1208,7 +1227,7 @@ func (c *Checker) addUndefinedToGlobalsOrErrorOnRedeclaration() {
 	if targetSymbol != nil {
 		for _, declaration := range targetSymbol.Declarations {
 			if !isTypeDeclaration(declaration) {
-				c.diagnostics.add(createDiagnosticForNode(declaration, diagnostics.Declaration_name_conflicts_with_built_in_global_identifier_0, name))
+				c.diagnostics.Add(createDiagnosticForNode(declaration, diagnostics.Declaration_name_conflicts_with_built_in_global_identifier_0, name))
 			}
 		}
 	} else {
@@ -1456,7 +1475,7 @@ func (c *Checker) getSymbol(symbols ast.SymbolTable, name string, meaning ast.Sy
 	return nil
 }
 
-func (c *Checker) checkSourceFile(sourceFile *ast.SourceFile) {
+func (c *Checker) CheckSourceFile(sourceFile *ast.SourceFile) {
 	links := c.sourceFileLinks.get(sourceFile)
 	if !links.typeChecked {
 		// Grammar checking
@@ -3210,8 +3229,12 @@ func (c *Checker) checkExpressionCachedEx(node *ast.Node, checkMode CheckMode) *
 // and requesting the contextual type might cause a circularity or other bad behaviour.
 // It sets the contextual type of the node to any before calling getTypeOfExpression.
 func (c *Checker) getContextFreeTypeOfExpression(node *ast.Node) *Type {
+	if cached := c.contextFreeTypes[node]; cached != nil {
+		return cached
+	}
 	c.pushContextualType(node, c.anyType, false /*isCache*/)
 	t := c.checkExpressionEx(node, CheckModeSkipContextSensitive)
+	c.contextFreeTypes[node] = t
 	c.popContextualType()
 	return t
 }
@@ -3494,7 +3517,7 @@ func (c *Checker) getSymbolForPrivateIdentifierExpression(node *ast.Node) *ast.S
 // !!!
 // Review
 // func (c *Checker) getSymbolForPrivateIdentifierExpression(privId *ast.Node) *ast.Symbol {
-// 	if !isExpressionNode(privId) {
+// 	if !ast.IsExpressionNode(privId) {
 // 		return nil
 // 	}
 
@@ -4606,16 +4629,20 @@ func (c *Checker) chooseOverload(s *CallState, relation *Relation) *Signature {
 		var checkCandidate *Signature
 		var inferenceContext *InferenceContext
 		if len(candidate.typeParameters) != 0 {
-			// !!!
-			// // If we are *inside the body of candidate*, we need to create a clone of `candidate` with differing type parameter identities,
-			// // so our inference results for this call doesn't pollute expression types referencing the outer type parameter!
-			// paramLocation := candidate.typeParameters[0].symbol.Declarations[0]. /* ? */ parent
-			// candidateParameterContext := paramLocation || (ifElse(candidate.declaration != nil && isConstructorDeclaration(candidate.declaration), candidate.declaration.Parent, candidate.declaration))
-			// if candidateParameterContext != nil && findAncestor(node, func(a *ast.Node) bool {
-			// 	return a == candidateParameterContext
-			// }) != nil {
-			// 	candidate = c.getImplementationSignature(candidate)
-			// }
+			// If we are *inside the body of candidate*, we need to create a clone of `candidate` with differing type parameter identities,
+			// so our inference results for this call doesn't pollute expression types referencing the outer type parameter!
+			var candidateParameterContext *ast.Node
+			typeParamDeclaration := core.FirstOrNil(candidate.typeParameters[0].symbol.Declarations)
+			if typeParamDeclaration != nil {
+				candidateParameterContext = typeParamDeclaration.Parent
+			} else if candidate.declaration != nil && ast.IsConstructorDeclaration(candidate.declaration) {
+				candidateParameterContext = candidate.declaration.Parent
+			} else {
+				candidateParameterContext = candidate.declaration
+			}
+			if candidateParameterContext != nil && ast.FindAncestor(s.node, func(a *ast.Node) bool { return a == candidateParameterContext }) != nil {
+				candidate = c.getImplementationSignature(candidate)
+			}
 			var typeArgumentTypes []*Type
 			if len(s.typeArguments) != 0 {
 				typeArgumentTypes = c.checkTypeArguments(candidate, s.typeArguments, false /*reportErrors*/, nil)
@@ -4676,6 +4703,16 @@ func (c *Checker) chooseOverload(s *CallState, relation *Relation) *Signature {
 		return checkCandidate
 	}
 	return nil
+}
+
+func (c *Checker) getImplementationSignature(signature *Signature) *Signature {
+	key := CachedSignatureKey{sig: signature, key: SignatureKeyImplementation}
+	if cached := c.cachedSignatures[key]; cached != nil {
+		return cached
+	}
+	result := c.instantiateSignature(signature, newTypeMapper(nil, nil))
+	c.cachedSignatures[key] = result
+	return result
 }
 
 func (c *Checker) hasCorrectArity(node *ast.Node, args []*ast.Node, signature *Signature, signatureHelpTrailingComma bool) bool {
@@ -4826,7 +4863,7 @@ func (c *Checker) checkTypeArguments(signature *Signature, typeArgumentNodes []*
 					if headMessage != nil {
 						diagnostic = ast.NewDiagnosticChain(diagnostic, diagnostics.Type_0_does_not_satisfy_the_constraint_1)
 					}
-					c.diagnostics.add(diagnostic)
+					c.diagnostics.Add(diagnostic)
 				}
 				return nil
 			}
@@ -5191,9 +5228,9 @@ func (c *Checker) reportCallResolutionErrors(s *CallState, signatures []*Signatu
 			diagnostic.AddRelatedInfo(NewDiagnosticForNode(last.declaration, diagnostics.The_last_overload_is_declared_here))
 		}
 		// !!! addImplementationSuccessElaboration(last, d)
-		c.diagnostics.add(diagnostic)
+		c.diagnostics.Add(diagnostic)
 	case s.candidateForArgumentArityError != nil:
-		c.diagnostics.add(c.getArgumentArityError(s.node, []*Signature{s.candidateForArgumentArityError}, s.args, headMessage))
+		c.diagnostics.Add(c.getArgumentArityError(s.node, []*Signature{s.candidateForArgumentArityError}, s.args, headMessage))
 	case s.candidateForTypeArgumentError != nil:
 		c.checkTypeArguments(s.candidateForTypeArgumentError, s.node.TypeArguments(), true /*reportErrors*/, headMessage)
 	default:
@@ -5201,9 +5238,9 @@ func (c *Checker) reportCallResolutionErrors(s *CallState, signatures []*Signatu
 			return c.hasCorrectTypeArgumentArity(sig, s.typeArguments)
 		})
 		if len(signaturesWithCorrectTypeArgumentArity) == 0 {
-			c.diagnostics.add(c.getTypeArgumentArityError(s.node, signatures, s.typeArguments, headMessage))
+			c.diagnostics.Add(c.getTypeArgumentArityError(s.node, signatures, s.typeArguments, headMessage))
 		} else {
-			c.diagnostics.add(c.getArgumentArityError(s.node, signaturesWithCorrectTypeArgumentArity, s.args, headMessage))
+			c.diagnostics.Add(c.getArgumentArityError(s.node, signaturesWithCorrectTypeArgumentArity, s.args, headMessage))
 		}
 	}
 }
@@ -5433,7 +5470,7 @@ func (c *Checker) invocationErrorDetails(errorTarget *ast.Node, apparentType *Ty
 
 func (c *Checker) invocationError(errorTarget *ast.Node, apparentType *Type, kind SignatureKind, relatedInformation *ast.Diagnostic) {
 	diagnostic := c.invocationErrorDetails(errorTarget, apparentType, kind)
-	c.diagnostics.add(diagnostic)
+	c.diagnostics.Add(diagnostic)
 	// !!!
 	// c.invocationErrorRecovery(apparentType, kind, ifElse(relatedInformation != nil, addRelatedInfo(diagnostic, relatedInformation), diagnostic))
 }
@@ -5919,7 +5956,7 @@ func (c *Checker) getInstantiationExpressionType(exprType *Type, node *ast.Node)
 	if errorType != nil {
 		sourceFile := ast.GetSourceFileOfNode(node)
 		loc := core.NewTextRange(scanner.SkipTrivia(sourceFile.Text, typeArguments.Pos()), typeArguments.End())
-		c.diagnostics.add(ast.NewDiagnostic(sourceFile, loc, diagnostics.Type_0_has_no_signatures_for_which_the_type_argument_list_is_applicable, c.typeToString(errorType)))
+		c.diagnostics.Add(ast.NewDiagnostic(sourceFile, loc, diagnostics.Type_0_has_no_signatures_for_which_the_type_argument_list_is_applicable, c.typeToString(errorType)))
 	}
 	return result
 }
@@ -6749,7 +6786,7 @@ func (c *Checker) reportNonexistentProperty(propNode *ast.Node, containingType *
 			}
 		}
 	}
-	c.diagnostics.add(diagnostic)
+	c.diagnostics.Add(diagnostic)
 }
 
 func (c *Checker) getSuggestedLibForNonExistentProperty(missingProperty string, containingType *Type) string {
@@ -8429,7 +8466,7 @@ func (c *Checker) isInPropertyInitializerOrClassStaticBlock(node *ast.Node) bool
 			}
 			return ast.FindAncestorQuit
 		default:
-			if IsExpressionNode(node) {
+			if ast.IsExpressionNode(node) {
 				return ast.FindAncestorFalse
 			}
 			return ast.FindAncestorQuit
@@ -8539,11 +8576,11 @@ func (c *Checker) getCannotFindNameDiagnosticForName(node *ast.Node) *diagnostic
 
 func (c *Checker) GetDiagnostics(sourceFile *ast.SourceFile) []*ast.Diagnostic {
 	if sourceFile != nil {
-		c.checkSourceFile(sourceFile)
+		c.CheckSourceFile(sourceFile)
 		return c.diagnostics.GetDiagnosticsForFile(sourceFile.FileName())
 	}
 	for _, file := range c.files {
-		c.checkSourceFile(file)
+		c.CheckSourceFile(file)
 	}
 	return c.diagnostics.GetDiagnostics()
 }
@@ -8554,7 +8591,7 @@ func (c *Checker) GetGlobalDiagnostics() []*ast.Diagnostic {
 
 func (c *Checker) error(location *ast.Node, message *diagnostics.Message, args ...any) *ast.Diagnostic {
 	diagnostic := NewDiagnosticForNode(location, message, args...)
-	c.diagnostics.add(diagnostic)
+	c.diagnostics.Add(diagnostic)
 	return diagnostic
 }
 
@@ -8571,11 +8608,11 @@ func (c *Checker) errorAndMaybeSuggestAwait(location *ast.Node, maybeMissingAwai
 
 func (c *Checker) addErrorOrSuggestion(isError bool, diagnostic *ast.Diagnostic) {
 	if isError {
-		c.diagnostics.add(diagnostic)
+		c.diagnostics.Add(diagnostic)
 	} else {
 		suggestion := *diagnostic
 		suggestion.SetCategory(diagnostics.CategorySuggestion)
-		c.suggestionDiagnostics.add(&suggestion)
+		c.suggestionDiagnostics.Add(&suggestion)
 	}
 }
 
@@ -8607,7 +8644,7 @@ func (c *Checker) addDeprecatedSuggestionWorker(declarations []*ast.Node, diagno
 	// 	addRelatedInfo(diagnostic, createDiagnosticForNode(deprecatedTag, Diagnostics.The_declaration_was_marked_as_deprecated_here))
 	// }
 	// // We call `addRelatedInfo()` before adding the diagnostic to prevent duplicates.
-	c.suggestionDiagnostics.add(diagnostic)
+	c.suggestionDiagnostics.Add(diagnostic)
 	return diagnostic
 }
 
@@ -8815,7 +8852,7 @@ func (c *Checker) addDuplicateDeclarationError(node *ast.Node, message *diagnost
 		leadingMessage := createDiagnosticForNode(adjustedNode, diagnostics.X_0_was_also_declared_here, symbolName)
 		followOnMessage := createDiagnosticForNode(adjustedNode, diagnostics.X_and_here)
 		if len(err.RelatedInformation()) >= 5 || core.Some(err.RelatedInformation(), func(d *ast.Diagnostic) bool {
-			return CompareDiagnostics(d, followOnMessage) == 0 || CompareDiagnostics(d, leadingMessage) == 0
+			return ast.CompareDiagnostics(d, followOnMessage) == 0 || ast.CompareDiagnostics(d, leadingMessage) == 0
 		}) {
 			continue
 		}
@@ -8847,11 +8884,11 @@ func (c *Checker) lookupOrIssueError(location *ast.Node, message *diagnostics.Me
 		loc = location.Loc
 	}
 	diagnostic := ast.NewDiagnostic(file, loc, message, args...)
-	existing := c.diagnostics.lookup(diagnostic)
+	existing := c.diagnostics.Lookup(diagnostic)
 	if existing != nil {
 		return existing
 	}
-	c.diagnostics.add(diagnostic)
+	c.diagnostics.Add(diagnostic)
 	return diagnostic
 }
 
@@ -9217,7 +9254,7 @@ func (c *Checker) getExternalModuleMember(node *ast.Node, specifier *ast.Node, d
 	// specifier is ImportSpecifier | ExportSpecifier | BindingElement | PropertyAccessExpression
 	moduleSpecifier := getExternalModuleRequireArgument(node)
 	if moduleSpecifier == nil {
-		moduleSpecifier = getExternalModuleName(node)
+		moduleSpecifier = ast.GetExternalModuleName(node)
 	}
 	moduleSymbol := c.resolveExternalModuleName(node, moduleSpecifier, false /*ignoreErrors*/)
 	var name *ast.Node
@@ -9352,7 +9389,7 @@ func (c *Checker) isOnlyImportableAsDefault(usage *ast.Node, resolvedModule *ast
 			if resolvedModule != nil {
 				targetFile = getSourceFileOfModule(resolvedModule)
 			}
-			return targetFile != nil && (isJsonSourceFile(targetFile) || tspath.GetDeclarationFileExtension(targetFile.FileName()) == ".d.json.ts")
+			return targetFile != nil && (ast.IsJsonSourceFile(targetFile) || tspath.GetDeclarationFileExtension(targetFile.FileName()) == ".d.json.ts")
 		}
 	}
 	return false
@@ -9697,7 +9734,7 @@ func (c *Checker) resolveExternalModule(location *ast.Node, moduleReference stri
 		return ambientModule
 	}
 	// !!! The following only implements simple module resoltion
-	sourceFile := c.program.getResolvedModule(ast.GetSourceFileOfNode(location), moduleReference)
+	sourceFile := c.program.GetResolvedModule(ast.GetSourceFileOfNode(location), moduleReference)
 	if sourceFile != nil {
 		if sourceFile.Symbol != nil {
 			return c.getMergedSymbol(sourceFile.Symbol)
@@ -10245,7 +10282,7 @@ func (c *Checker) getExportsOfModuleWorker(moduleSymbol *ast.Symbol) (exports as
 					continue
 				}
 				for _, node := range s.exportsWithDuplicate {
-					c.diagnostics.add(createDiagnosticForNode(node, diagnostics.Module_0_has_already_exported_a_member_named_1_Consider_explicitly_re_exporting_to_resolve_the_ambiguity, s.specifierText, id))
+					c.diagnostics.Add(createDiagnosticForNode(node, diagnostics.Module_0_has_already_exported_a_member_named_1_Consider_explicitly_re_exporting_to_resolve_the_ambiguity, s.specifierText, id))
 				}
 			}
 			c.extendExportSymbols(symbols, nestedSymbols, nil, nil)
@@ -10595,7 +10632,7 @@ func (c *Checker) getTypeOfVariableOrParameterOrPropertyWorker(symbol *ast.Symbo
 	case ast.KindExportAssignment:
 		result = c.widenTypeForVariableLikeDeclaration(c.checkExpressionCached(declaration.AsExportAssignment().Expression), declaration, false /*reportErrors*/)
 	case ast.KindBinaryExpression:
-		result = c.getWidenedTypeForAssignmentDeclaration(symbol, nil)
+		result = c.getWidenedTypeForAssignmentDeclaration(symbol)
 	case ast.KindJsxAttribute:
 		result = c.checkJsxAttribute(declaration.AsJsxAttribute(), CheckModeNormal)
 	case ast.KindEnumMember:
@@ -11838,8 +11875,14 @@ func (c *Checker) getTypeOfPrototypeProperty(prototype *ast.Symbol) *Type {
 	return c.anyType // !!!
 }
 
-func (c *Checker) getWidenedTypeForAssignmentDeclaration(symbol *ast.Symbol, resolvedSymbol *ast.Symbol) *Type {
-	return c.anyType // !!!
+func (c *Checker) getWidenedTypeForAssignmentDeclaration(symbol *ast.Symbol) *Type {
+	var types []*Type
+	for _, declaration := range symbol.Declarations {
+		if ast.IsBinaryExpression(declaration) {
+			types = core.AppendIfUnique(types, c.getWidenedLiteralType(c.checkExpressionCached(declaration.AsBinaryExpression().Right)))
+		}
+	}
+	return c.getWidenedType(c.getUnionType(types))
 }
 
 func (c *Checker) widenTypeForVariableLikeDeclaration(t *Type, declaration *ast.Node, reportErrors bool) *Type {
@@ -12789,7 +12832,7 @@ func (c *Checker) resolveBaseTypesOfClass(t *Type) {
 		errorNode := baseTypeNode.Expression()
 		diagnostic := c.elaborateNeverIntersection(nil, errorNode, baseType)
 		diagnostic = NewDiagnosticChainForNode(diagnostic, errorNode, diagnostics.Base_constructor_return_type_0_is_not_an_object_type_or_intersection_of_object_types_with_statically_known_members, c.typeToString(reducedBaseType))
-		c.diagnostics.add(diagnostic)
+		c.diagnostics.Add(diagnostic)
 		return
 	}
 	if t == reducedBaseType || c.hasBaseType(reducedBaseType, t) {
@@ -13143,7 +13186,7 @@ func (c *Checker) getTypeWithThisArgument(t *Type, thisArgument *Type, needAppar
 func (c *Checker) addInheritedMembers(symbols ast.SymbolTable, baseSymbols []*ast.Symbol) ast.SymbolTable {
 	for _, base := range baseSymbols {
 		if !isStaticPrivateIdentifierProperty(base) {
-			if _, ok := symbols[base.Name]; !ok {
+			if s, ok := symbols[base.Name]; !ok || s.Flags&ast.SymbolFlagsValue == 0 {
 				if symbols == nil {
 					symbols = make(ast.SymbolTable)
 				}
@@ -13651,18 +13694,13 @@ func (c *Checker) getReturnTypeFromBody(fn *ast.Node, checkMode CheckMode) *Type
 		} else if len(returnTypes) != 0 {
 			returnType = c.getUnionTypeEx(returnTypes, UnionReductionSubtype, nil, nil)
 		}
-		// !!!
-		// TODO_IDENTIFIER := c.checkAndAggregateYieldOperandTypes(fn, checkMode)
-		// if core.Some(yieldTypes) {
-		// 	yieldType = c.getUnionType(yieldTypes, UnionReductionSubtype)
-		// } else {
-		// 	yieldType = nil
-		// }
-		// if core.Some(nextTypes) {
-		// 	nextType = c.getIntersectionType(nextTypes)
-		// } else {
-		// 	nextType = nil
-		// }
+		yieldTypes, nextTypes := c.checkAndAggregateYieldOperandTypes(fn, checkMode)
+		if len(yieldTypes) != 0 {
+			yieldType = c.getUnionTypeEx(yieldTypes, UnionReductionSubtype, nil, nil)
+		}
+		if len(nextTypes) != 0 {
+			nextType = c.getIntersectionType(nextTypes)
+		}
 	default:
 		types, isNeverReturning := c.checkAndAggregateReturnExpressionTypes(fn, checkMode)
 		if isNeverReturning {
@@ -13815,6 +13853,28 @@ func mayReturnNever(fn *ast.Node) bool {
 		return ast.IsObjectLiteralExpression(fn.Parent)
 	}
 	return false
+}
+
+func (c *Checker) checkAndAggregateYieldOperandTypes(fn *ast.Node, checkMode CheckMode) (yieldTypes []*Type, nextTypes []*Type) {
+	isAsync := (getFunctionFlags(fn) & FunctionFlagsAsync) != 0
+	forEachYieldExpression(getBodyOfNode(fn), func(yieldExpr *ast.Node) {
+		yieldExprType := c.undefinedWideningType
+		if yieldExpr.Expression() != nil {
+			yieldExprType = c.checkExpressionEx(yieldExpr.Expression(), checkMode)
+		}
+		yieldTypes = core.AppendIfUnique(yieldTypes, c.getYieldedTypeOfYieldExpression(yieldExpr, yieldExprType, c.anyType, isAsync))
+		var nextType *Type
+		if yieldExpr.AsYieldExpression().AsteriskToken != nil {
+			iterationTypes := c.getIterationTypesOfIterable(yieldExprType, core.IfElse(isAsync, IterationUseAsyncYieldStar, IterationUseYieldStar), yieldExpr.Expression())
+			nextType = iterationTypes.nextType
+		} else {
+			nextType = c.getContextualType(yieldExpr, ContextFlagsNone)
+		}
+		if nextType != nil {
+			nextTypes = core.AppendIfUnique(nextTypes, nextType)
+		}
+	})
+	return
 }
 
 func (c *Checker) createPromiseType(promisedType *Type) *Type {
@@ -16608,7 +16668,7 @@ func (n *TupleNormalizer) normalize(c *Checker, elementTypes []*Type, elementInf
 			} else if isTupleType(t) {
 				spreadTypes := c.getElementTypes(t)
 				if len(spreadTypes)+len(n.types) >= 10_000 {
-					message := core.IfElse(isPartOfTypeNode(c.currentNode),
+					message := core.IfElse(ast.IsPartOfTypeNode(c.currentNode),
 						diagnostics.Type_produces_a_tuple_type_that_is_too_large_to_represent,
 						diagnostics.Expression_produces_a_tuple_type_that_is_too_large_to_represent)
 					c.error(c.currentNode, message)
@@ -18262,11 +18322,11 @@ func isUnaryTupleTypeNode(node *ast.Node) bool {
 }
 
 func (c *Checker) newType(flags TypeFlags, objectFlags ObjectFlags, data TypeData) *Type {
-	c.typeCount++
+	c.TypeCount++
 	t := data.AsType()
 	t.flags = flags
 	t.objectFlags = objectFlags &^ (ObjectFlagsCouldContainTypeVariablesComputed | ObjectFlagsCouldContainTypeVariables | ObjectFlagsMembersResolved)
-	t.id = TypeId(c.typeCount)
+	t.id = TypeId(c.TypeCount)
 	t.checker = c
 	t.data = data
 	return t
@@ -20272,7 +20332,7 @@ func (c *Checker) getPropertyTypeForIndexType(originalObjectType *Type, objectTy
 		if accessExpression != nil && !isConstEnumObjectType(objectType) {
 			if isObjectLiteralType(objectType) {
 				if c.noImplicitAny && indexType.flags&(TypeFlagsStringLiteral|TypeFlagsNumberLiteral) != 0 {
-					c.diagnostics.add(createDiagnosticForNode(accessExpression, diagnostics.Property_0_does_not_exist_on_type_1, indexType.AsLiteralType().value, c.typeToString(objectType)))
+					c.diagnostics.Add(createDiagnosticForNode(accessExpression, diagnostics.Property_0_does_not_exist_on_type_1, indexType.AsLiteralType().value, c.typeToString(objectType)))
 					return c.undefinedType
 				} else if indexType.flags&(TypeFlagsNumber|TypeFlagsString) != 0 {
 					types := core.Map(objectType.AsStructuredType().properties, func(prop *ast.Symbol) *Type {
@@ -20315,7 +20375,7 @@ func (c *Checker) getPropertyTypeForIndexType(originalObjectType *Type, objectTy
 							case indexType.flags&(TypeFlagsNumber|TypeFlagsString) != 0:
 								diagnostic = NewDiagnosticForNode(accessExpression, diagnostics.No_index_signature_with_a_parameter_of_type_0_was_found_on_type_1, c.typeToString(indexType), c.typeToString(objectType))
 							}
-							c.diagnostics.add(NewDiagnosticChainForNode(diagnostic, accessExpression, diagnostics.Element_implicitly_has_an_any_type_because_expression_of_type_0_can_t_be_used_to_index_type_1, c.typeToString(fullIndexType), c.typeToString(objectType)))
+							c.diagnostics.Add(NewDiagnosticChainForNode(diagnostic, accessExpression, diagnostics.Element_implicitly_has_an_any_type_because_expression_of_type_0_can_t_be_used_to_index_type_1, c.typeToString(fullIndexType), c.typeToString(objectType)))
 						}
 					}
 				}
@@ -22007,7 +22067,8 @@ func (c *Checker) getContextualTypeForBinaryOperand(node *ast.Node, contextFlags
 	switch binary.OperatorToken.Kind {
 	case ast.KindEqualsToken, ast.KindAmpersandAmpersandEqualsToken, ast.KindBarBarEqualsToken, ast.KindQuestionQuestionEqualsToken:
 		// In an assignment expression, the right operand is contextually typed by the type of the left operand.
-		if node == binary.Right {
+		// If the binary operator has a symbol, this is an assignment declaration and there is no contextual type.
+		if node == binary.Right && binary.Symbol == nil {
 			return c.getTypeOfExpression(binary.Left)
 		}
 	case ast.KindBarBarToken, ast.KindQuestionQuestionToken:
@@ -22017,10 +22078,8 @@ func (c *Checker) getContextualTypeForBinaryOperand(node *ast.Node, contextFlags
 		// by the type of the left operand, except for the special case of Javascript declarations of the form
 		// `namespace.prop = namespace.prop || {}`.
 		t := c.getContextualType(binary.AsNode(), contextFlags)
-		if t != nil && node == binary.Right {
-			if pattern := c.patternForType[t]; pattern != nil {
-				return c.getTypeOfExpression(binary.Left)
-			}
+		if node == binary.Right && (t == nil || c.patternForType[t] != nil) {
+			return c.getTypeOfExpression(binary.Left)
 		}
 		return t
 	case ast.KindAmpersandAmpersandToken, ast.KindCommaToken:
@@ -23070,7 +23129,7 @@ func (c *Checker) getAwaitedTypeNoAliasEx(t *Type, errorNode *ast.Node, diagnost
 			if thisTypeForError != nil {
 				diagnostic = NewDiagnosticForNode(errorNode, diagnostics.The_this_context_of_type_0_is_not_assignable_to_method_s_this_of_type_1, c.typeToString(t), c.typeToString(thisTypeForError))
 			}
-			c.diagnostics.add(NewDiagnosticChainForNode(diagnostic, errorNode, diagnosticMessage, args...))
+			c.diagnostics.Add(NewDiagnosticChainForNode(diagnostic, errorNode, diagnosticMessage, args...))
 		}
 		return nil
 	}
@@ -23353,7 +23412,7 @@ func (c *Checker) getSymbolAtLocation(node *ast.Node, ignoreErrors bool) *ast.Sy
 				return sig.thisParameter
 			}
 		}
-		if isInExpressionContext(node) {
+		if ast.IsInExpressionContext(node) {
 			return c.checkExpression(node).symbol
 		}
 		fallthrough
@@ -23490,7 +23549,7 @@ func (c *Checker) getSymbolOfNameOrPropertyAccessExpression(name *ast.Node) *ast
 		if name.Parent.Kind == ast.KindExpressionWithTypeArguments {
 			// An 'ExpressionWithTypeArguments' may appear in type space (interface Foo extends Bar<T>),
 			// value space (return foo<T>), or both(class Foo extends Bar<T>); ensure the meaning matches.
-			meaning = core.IfElse(isPartOfTypeNode(name), ast.SymbolFlagsType, ast.SymbolFlagsValue)
+			meaning = core.IfElse(ast.IsPartOfTypeNode(name), ast.SymbolFlagsType, ast.SymbolFlagsValue)
 
 			// In a class 'extends' clause we are also looking for a value.
 			if ast.IsExpressionWithTypeArgumentsInClassExtendsClause(name.Parent) {
@@ -23510,7 +23569,7 @@ func (c *Checker) getSymbolOfNameOrPropertyAccessExpression(name *ast.Node) *ast
 		}
 	}
 
-	if IsExpressionNode(name) {
+	if ast.IsExpressionNode(name) {
 		if ast.NodeIsMissing(name) {
 			// Missing entity name.
 			return nil
@@ -23602,7 +23661,7 @@ func (c *Checker) getTypeOfNode(node *ast.Node) *Type {
 		classType = c.getDeclaredTypeOfClassOrInterface(c.getSymbolOfDeclaration(classDecl))
 	}
 
-	if isPartOfTypeNode(node) {
+	if ast.IsPartOfTypeNode(node) {
 		typeFromTypeNode := c.getTypeFromTypeNode(node)
 		if classType != nil {
 			return c.getTypeWithThisArgument(
@@ -23613,7 +23672,7 @@ func (c *Checker) getTypeOfNode(node *ast.Node) *Type {
 		return typeFromTypeNode
 	}
 
-	if IsExpressionNode(node) {
+	if ast.IsExpressionNode(node) {
 		return c.getRegularTypeOfExpression(node)
 	}
 
