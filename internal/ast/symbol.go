@@ -17,7 +17,7 @@ type Symbol struct {
 	Members                      SymbolTable
 	Exports                      SymbolTable
 	id                           atomic.Uint32
-	MergeId                      MergeId // Assigned once symbol is merged somewhere
+	MergeId                      atomic.Uint32 // Assigned once symbol is merged somewhere
 	Parent                       *Symbol
 	ExportSymbol                 *Symbol
 	AssignmentDeclarationMembers map[NodeId]*Node // Set of detected assignment declarations

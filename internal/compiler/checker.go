@@ -8929,9 +8929,8 @@ func (c *Checker) cloneSymbol(symbol *ast.Symbol) *ast.Symbol {
 }
 
 func (c *Checker) getMergedSymbol(symbol *ast.Symbol) *ast.Symbol {
-	// If a symbol was never merged it will have a zero mergeId
-	if symbol != nil && symbol.MergeId != 0 {
-		merged := c.mergedSymbols[symbol.MergeId]
+	if symbol != nil {
+		merged := c.mergedSymbols[ast.GetMergeId(symbol)]
 		if merged != nil {
 			return merged
 		}
@@ -8947,7 +8946,7 @@ func (c *Checker) getParentOfSymbol(symbol *ast.Symbol) *ast.Symbol {
 }
 
 func (c *Checker) recordMergedSymbol(target *ast.Symbol, source *ast.Symbol) {
-	c.mergedSymbols[getMergeId(source)] = target
+	c.mergedSymbols[ast.GetMergeId(source)] = target
 }
 
 func (c *Checker) getSymbolIfSameReference(s1 *ast.Symbol, s2 *ast.Symbol) *ast.Symbol {
