@@ -877,7 +877,6 @@ func getNodeAtPosition(file *ast.SourceFile, position int, isJavaScriptFile bool
 		}
 		current = child
 	}
-	return nil
 }
 
 func nodeContainsPosition(node *ast.Node, position int) bool {
