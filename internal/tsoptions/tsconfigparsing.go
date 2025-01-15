@@ -13,6 +13,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler/diagnostics"
+	"github.com/microsoft/typescript-go/internal/compiler/module"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/parser"
 	"github.com/microsoft/typescript-go/internal/scanner"
@@ -367,7 +368,11 @@ func convertJsonOption(
 		if propertyAssignment != nil {
 			nodeValue = propertyAssignment.Name()
 		}
-		errors = append(errors, ast.NewDiagnostic(sourceFile.sourceFile, core.NewTextRange(scanner.SkipTrivia(sourceFile.sourceFile.Text, nodeValue.Loc.Pos()), nodeValue.End()), diagnostics.Option_0_can_only_be_specified_on_command_line, opt.Name))
+		if sourceFile == nil && nodeValue == nil {
+			errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.Option_0_can_only_be_specified_on_command_line, opt.Name))
+		} else {
+			errors = append(errors, ast.NewDiagnostic(sourceFile.sourceFile, core.NewTextRange(scanner.SkipTrivia(sourceFile.sourceFile.Text, nodeValue.Loc.Pos()), nodeValue.End()), diagnostics.Option_0_can_only_be_specified_on_command_line, opt.Name))
+		}
 		return false, errors
 	}
 	if isCompilerOptionsValue(opt, value) {
@@ -393,7 +398,7 @@ func convertJsonOption(
 			return normalizeNonListOptionValue(opt, basePath, validatedValue), errors
 		}
 	} else {
-		errors = append(errors, ast.NewDiagnostic(sourceFile.sourceFile, core.NewTextRange(scanner.SkipTrivia(sourceFile.sourceFile.Text, valueExpression.Pos()), valueExpression.End()), diagnostics.Compiler_option_0_requires_a_value_of_type_1, opt.Name, getCompilerOptionValueTypeString(opt)))
+		errors = append(errors, ast.NewDiagnostic(sourceFile.sourceFile, core.NewTextRange(scanner.SkipTrivia(sourceFile.sourceFile.Text, valueExpression.Loc.Pos()), valueExpression.End()), diagnostics.Compiler_option_0_requires_a_value_of_type_1, opt.Name, getCompilerOptionValueTypeString(opt)))
 		return nil, errors
 	}
 }
@@ -468,11 +473,10 @@ func getExtendsConfigPath(
 		return extendedConfigPath, errors
 	}
 	// If the path isn't a rooted or relative path, resolve like a module
-	// resolverHost := &resolverHost{host}
-	//resolved := module.NodeNextJsonConfigResolver(extendedConfig, tspath.CombinePaths(basePath, "tsconfig.json"), resolverHost) // should resilution host be a part of parseConfigHost?
-	// if resolved.ResolvedModule != nil {
-	// 	return resolved.ResolvedModule.ResolvedFileName, errors
-	// }
+	resolverHost := &resolverHost{host}
+	if resolved := module.ResolveConfig(extendedConfig, tspath.CombinePaths(basePath, "tsconfig.json"), resolverHost); resolved.IsResolved() {
+		return resolved.ResolvedFileName, errors
+	}
 	if extendedConfig == "" {
 		// errors.push(createDiagnosticForNodeInSourceFileOrCompilerDiagnostic(sourceFile, valueExpression, diagnostics.Compiler_option_0_cannot_be_given_an_empty_string, "extends"));
 		errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.Compiler_option_0_cannot_be_given_an_empty_string, "extends"))
@@ -726,9 +730,9 @@ func convertPropertyValueToJson(sourceFile *ast.SourceFile, valueExpression *ast
 	// Not in expected format
 	var errors []*ast.Diagnostic
 	if option != nil {
-		errors = []*ast.Diagnostic{ast.NewDiagnostic(sourceFile, core.NewTextRange(scanner.SkipTrivia(sourceFile.Text, valueExpression.Pos()), valueExpression.End()), diagnostics.Compiler_option_0_requires_a_value_of_type_1, option.Name, getCompilerOptionValueTypeString(option))}
+		errors = []*ast.Diagnostic{createDiagnosticForNodeInSourceFileOrCompilerDiagnostic(sourceFile, valueExpression, diagnostics.Compiler_option_0_requires_a_value_of_type_1, option.Name, getCompilerOptionValueTypeString(option))}
 	} else {
-		errors = []*ast.Diagnostic{ast.NewDiagnostic(sourceFile, core.NewTextRange(scanner.SkipTrivia(sourceFile.Text, valueExpression.Pos()), valueExpression.End()), diagnostics.Property_value_can_only_be_string_literal_numeric_literal_true_false_null_object_literal_or_array_literal)}
+		errors = []*ast.Diagnostic{createDiagnosticForNodeInSourceFileOrCompilerDiagnostic(sourceFile, valueExpression, diagnostics.Property_value_can_only_be_string_literal_numeric_literal_true_false_null_object_literal_or_array_literal)}
 	}
 	return nil, errors
 }
@@ -964,7 +968,7 @@ func parseConfig(
 		var result *extendsResult = &extendsResult{
 			options: &core.CompilerOptions{},
 		}
-		if reflect.TypeOf(ownConfig.extendedConfigPath).Kind() == reflect.String { //never true
+		if reflect.TypeOf(ownConfig.extendedConfigPath).Kind() == reflect.String { // never true
 			applyExtendedConfig(result, ownConfig.extendedConfigPath.(string))
 		} else if configPath, ok := ownConfig.extendedConfigPath.([]string); ok {
 			for _, extendedConfigPath := range configPath {
@@ -992,8 +996,6 @@ func parseConfig(
 			}
 		}
 		mergeCompilerOptions(result.options, ownConfig.options)
-		//ownConfig.options = assign(result.options, ownConfig.options);
-		//ownConfig.options = result.options
 		// ownConfig.watchOptions = ownConfig.watchOptions && result.watchOptions ?
 		//     assignWatchOptions(result, ownConfig.watchOptions) :
 		//     ownConfig.watchOptions || result.watchOptions;
@@ -1009,7 +1011,6 @@ type PropOfRaw struct {
 }
 
 func mergeCompilerOptions(existingOptions, newOptions *core.CompilerOptions) {
-
 	jsonData, err := json.Marshal(newOptions)
 	if err != nil {
 		return
@@ -1574,7 +1575,7 @@ func getFileNamesFromConfigSpecs(
 }
 
 func getSupportedExtensions(options *core.CompilerOptions, extraFileExtensions []fileExtensionInfo) [][]string {
-	needJsExtensions := false //(*core.CompilerOptions).GetAllowJs(options)
+	needJsExtensions := options.GetAllowJs()
 	if len(extraFileExtensions) == 0 {
 		if needJsExtensions {
 			return tspath.AllSupportedExtensions
@@ -1600,7 +1601,7 @@ func getSupportedExtensions(options *core.CompilerOptions, extraFileExtensions [
 }
 
 func getSupportedExtensionsWithJsonIfResolveJsonModule(options *core.CompilerOptions, supportedExtensions [][]string) [][]string {
-	if options != nil || false { //!(*core.CompilerOptions).GetResolveJsonModule(options) {
+	if options != nil || options.GetResolveJsonModule() {
 		return supportedExtensions
 	}
 	if core.Same(supportedExtensions, tspath.AllSupportedExtensions) {
@@ -1612,9 +1613,9 @@ func getSupportedExtensionsWithJsonIfResolveJsonModule(options *core.CompilerOpt
 	return slices.Concat(supportedExtensions, [][]string{{tspath.ExtensionJson}})
 }
 
-// func createDiagnosticForNodeInSourceFileOrCompilerDiagnostic(sourceFile *ast.SourceFile, node *ast.Node, message *diagnostics.Message, args ...any) *ast.Diagnostic {
-// 	if sourceFile != nil && node != nil {
-// 		return ast.NewDiagnostic(sourceFile, core.NewTextRange(scanner.SkipTrivia(sourceFile.Text, node.Loc.Pos()), node.End()), message, args)
-// 	}
-// 	return ast.NewCompilerDiagnostic(message, args...)
-// }
+func createDiagnosticForNodeInSourceFileOrCompilerDiagnostic(sourceFile *ast.SourceFile, node *ast.Node, message *diagnostics.Message, args ...any) *ast.Diagnostic {
+	if sourceFile != nil && node != nil {
+		return ast.NewDiagnostic(sourceFile, core.NewTextRange(scanner.SkipTrivia(sourceFile.Text, node.Loc.Pos()), node.End()), message, args)
+	}
+	return ast.NewCompilerDiagnostic(message, args...)
+}

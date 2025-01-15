@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"maps"
+	"math"
 	"slices"
 	"strconv"
 	"strings"
@@ -75,9 +76,8 @@ func FormatDiagnosticsWithColorAndContext(output io.Writer, diags []*ast.Diagnos
 				WriteFlattenedDiagnosticMessage(output, relatedInformation, formatOpts.NewLine)
 			}
 		}
-
-		fmt.Fprint(output, formatOpts.NewLine)
 	}
+	fmt.Fprint(output, formatOpts.NewLine)
 }
 
 func writeCodeSnippet(writer io.Writer, sourceFile *ast.SourceFile, start int, length int, squiggleColor string, formatOpts *FormattingOptions) {
@@ -87,7 +87,10 @@ func writeCodeSnippet(writer io.Writer, sourceFile *ast.SourceFile, start int, l
 	lastLineOfFile, _ := scanner.GetLineAndCharacterOfPosition(sourceFile, len(sourceFile.Text))
 
 	hasMoreThanFiveLines := lastLine-firstLine >= 4
-	gutterWidth := len(strconv.Itoa(lastLineOfFile + 1))
+	gutterWidth := len(strconv.Itoa(lastLineOfFile + 1 + len("")))
+	if hasMoreThanFiveLines {
+		gutterWidth = int(math.Max(float64(len(ellipsis)), float64(gutterWidth)))
+	}
 
 	for i := firstLine; i <= lastLine; i++ {
 		fmt.Fprint(writer, formatOpts.NewLine)

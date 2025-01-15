@@ -431,17 +431,19 @@ var parseJsonConfigFileTests = []struct {
 	},
 	{
 		title: "with outDir from base tsconfig",
-		input: []testConfig{{
-			jsonText: `{
+		input: []testConfig{
+			{
+				jsonText: `{
   "extends": "./tsconfigWithoutConfigDir.json"
 }`,
-			configFileName: "tsconfig.json",
-			basePath:       "/",
-			allFileList: map[string]string{
-				"/tsconfigWithoutConfigDir.json": tsconfigWithoutConfigDir,
-				"/bin/a.ts":                      "",
-				"/b.ts":                          ""},
-		},
+				configFileName: "tsconfig.json",
+				basePath:       "/",
+				allFileList: map[string]string{
+					"/tsconfigWithoutConfigDir.json": tsconfigWithoutConfigDir,
+					"/bin/a.ts":                      "",
+					"/b.ts":                          "",
+				},
+			},
 			{
 				jsonText: `{
   "extends": "./tsconfigWithConfigDir.json"
@@ -463,6 +465,7 @@ var tsconfigWithoutConfigDir = `{
     "outDir": "bin"
   }
 }`
+
 var tsconfigWithConfigDir = `{
   "compilerOptions": {
     "outDir": "${configDir}/bin"

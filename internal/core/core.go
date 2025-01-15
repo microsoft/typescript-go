@@ -311,17 +311,6 @@ func Flatten[T any](array [][]T) []T {
 	return result
 }
 
-func IndexOfAnyCharCode(text string, runes []rune, start int) int {
-	for i, r := range text[start:] {
-		for _, runeValue := range runes {
-			if r == runeValue {
-				return start + i
-			}
-		}
-	}
-	return -1
-}
-
 func Must[T any](v T, err error) T {
 	if err != nil {
 		panic(err)

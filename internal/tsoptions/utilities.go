@@ -253,7 +253,7 @@ func getSubPatternFromSpec(
 }
 
 func getIncludeBasePath(absolute string) string {
-	wildcardOffset := core.IndexOfAnyCharCode(absolute, wildcardCharCodes, 0)
+	wildcardOffset := strings.IndexAny(absolute, string(wildcardCharCodes))
 	if wildcardOffset < 0 {
 		// No "*" or "?" in the path
 		if !tspath.HasExtension(absolute) {

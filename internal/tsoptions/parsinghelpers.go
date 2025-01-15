@@ -161,7 +161,11 @@ func parseCompilerOptions(key string, value any, allOptions *core.CompilerOption
 	case "jsx":
 		allOptions.Jsx = value.(core.JsxEmit)
 	case "lib":
-		allOptions.Lib = value.([]string)
+		if _, ok := value.([]string); ok {
+			allOptions.Lib = value.([]string)
+		} else {
+			allOptions.Lib = parseStringArray(value)
+		}
 	case "legacyDecorators":
 		allOptions.LegacyDecorators = parseTristate(value)
 	case "module":
