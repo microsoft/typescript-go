@@ -1233,7 +1233,7 @@ func GetNameOfDeclaration(declaration *Node) *Node {
 func getNonAssignedNameOfDeclaration(declaration *Node) *Node {
 	switch declaration.Kind {
 	case KindBinaryExpression:
-		if isFunctionPropertyAssignment(declaration) {
+		if IsFunctionPropertyAssignment(declaration) {
 			return getElementOrPropertyAccessArgumentExpressionOrName(declaration.AsBinaryExpression().Left)
 		}
 		return nil
@@ -1280,7 +1280,7 @@ func getAssignedName(node *Node) *Node {
 	return nil
 }
 
-func isFunctionPropertyAssignment(node *Node) bool {
+func IsFunctionPropertyAssignment(node *Node) bool {
 	if node.Kind == KindBinaryExpression {
 		expr := node.AsBinaryExpression()
 		if expr.OperatorToken.Kind == KindEqualsToken {

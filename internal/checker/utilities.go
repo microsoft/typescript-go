@@ -1151,7 +1151,7 @@ func isQuestionToken(node *ast.Node) bool {
 }
 
 func isExclamationToken(node *ast.Node) bool {
-	return node != nil && node.Kind == ast.KindQuestionToken
+	return node != nil && node.Kind == ast.KindExclamationToken
 }
 
 func isOptionalDeclaration(declaration *ast.Node) bool {
@@ -2520,4 +2520,35 @@ func getSuperContainer(node *ast.Node, stopOnFunctions bool) *ast.Node {
 			}
 		}
 	}
+}
+
+func forEachYieldExpression(body *ast.Node, visitor func(expr *ast.Node)) {
+	var traverse func(*ast.Node) bool
+	traverse = func(node *ast.Node) bool {
+		switch node.Kind {
+		case ast.KindYieldExpression:
+			visitor(node)
+			operand := node.Expression()
+			if operand != nil {
+				traverse(operand)
+			}
+		case ast.KindEnumDeclaration, ast.KindInterfaceDeclaration, ast.KindModuleDeclaration, ast.KindTypeAliasDeclaration:
+			// These are not allowed inside a generator now, but eventually they may be allowed
+			// as local types. Regardless, skip them to avoid the work.
+		default:
+			if ast.IsFunctionLike(node) {
+				if node.Name() != nil && ast.IsComputedPropertyName(node.Name()) {
+					// Note that we will not include methods/accessors of a class because they would require
+					// first descending into the class. This is by design.
+					traverse(node.Expression())
+				}
+			} else if !ast.IsPartOfTypeNode(node) {
+				// This is the general case, which should include mostly expressions and statements.
+				// Also includes NodeArrays.
+				node.ForEachChild(traverse)
+			}
+		}
+		return false
+	}
+	traverse(body)
 }
