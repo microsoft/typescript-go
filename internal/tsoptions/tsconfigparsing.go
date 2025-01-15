@@ -478,11 +478,9 @@ func getExtendsConfigPath(
 		return resolved.ResolvedFileName, errors
 	}
 	if extendedConfig == "" {
-		// errors.push(createDiagnosticForNodeInSourceFileOrCompilerDiagnostic(sourceFile, valueExpression, diagnostics.Compiler_option_0_cannot_be_given_an_empty_string, "extends"));
-		errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.Compiler_option_0_cannot_be_given_an_empty_string, "extends"))
+		errors = append(errors, createDiagnosticForNodeInSourceFileOrCompilerDiagnostic(nil, nil, diagnostics.Compiler_option_0_cannot_be_given_an_empty_string, "extends"))
 	} else {
-		// errors.push(createDiagnosticForNodeInSourceFileOrCompilerDiagnostic(sourceFile, valueExpression, diagnostics.File_0_not_found, extendedConfig));
-		errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.File_0_not_found, extendedConfig))
+		errors = append(errors, createDiagnosticForNodeInSourceFileOrCompilerDiagnostic(nil, nil, diagnostics.File_0_not_found, extendedConfig))
 	}
 	return "", errors
 }

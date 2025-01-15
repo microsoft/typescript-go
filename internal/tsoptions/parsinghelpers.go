@@ -166,8 +166,6 @@ func parseCompilerOptions(key string, value any, allOptions *core.CompilerOption
 		} else {
 			allOptions.Lib = parseStringArray(value)
 		}
-	case "legacyDecorators":
-		allOptions.LegacyDecorators = parseTristate(value)
 	case "module":
 		allOptions.ModuleKind = value.(core.ModuleKind)
 	case "moduleResolution":
@@ -240,31 +238,4 @@ func parseCompilerOptions(key string, value any, allOptions *core.CompilerOption
 		allOptions.NewLine = value.(core.NewLineKind)
 	}
 	return nil
-}
-
-func ParseRawConfig(json any, basePath string, errors []*ast.Diagnostic, configFileName string) tsConfigOptions {
-	options := tsConfigOptions{
-		prop: make(map[string][]string),
-	}
-	if json == nil {
-		return options
-	}
-	if m, ok := json.(map[string]any); ok {
-		if v, ok := m["include"]; ok {
-			options.prop["include"] = parseRawStringArray(v)
-		}
-		if v, ok := m["exclude"]; ok {
-			options.prop["exclude"] = parseRawStringArray(v)
-		}
-		if v, ok := m["files"]; ok {
-			options.prop["files"] = parseRawStringArray(v)
-		}
-		if v, ok := m["references"]; ok {
-			options.references = parseProjectReference(v)
-		}
-		if v, ok := m["extends"]; ok {
-			options.prop["extends"] = parseRawStringArray(v)
-		}
-	}
-	return options
 }

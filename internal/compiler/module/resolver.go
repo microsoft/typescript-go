@@ -1454,7 +1454,6 @@ type resolveConfigHost struct {
 }
 
 func ResolveConfig(moduleName string, containingFile string, host ResolutionHost) *ResolvedModule {
-
 	resolver := NewResolver(host, &core.CompilerOptions{ModuleResolution: core.ModuleResolutionKindNodeNext})
 	return resolver.resolveConfig(moduleName, containingFile)
 }
