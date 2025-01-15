@@ -542,10 +542,10 @@ func (c *Checker) inferToTemplateLiteralType(n *InferenceState, source *Type, ta
 								case left.flags&TypeFlagsBigInt != 0:
 									return left
 								case right.flags&TypeFlagsBigInt != 0:
-									return c.getBigIntLiteralType(PseudoBigInt{}) // !!!
+									return c.getBigIntLiteralType(jsnum.PseudoBigInt{}) // !!!
 								case left.flags&TypeFlagsBigIntLiteral != 0:
 									return left
-								case right.flags&TypeFlagsBigIntLiteral != 0 && pseudoBigIntToString(getBigIntLiteralValue(right)) == str:
+								case right.flags&TypeFlagsBigIntLiteral != 0 && getBigIntLiteralValue(right).String() == str:
 									return right
 								case left.flags&TypeFlagsBoolean != 0:
 									return left

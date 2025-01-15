@@ -40,3 +40,13 @@ func DeclarationNameToString(name *ast.Node) string {
 	}
 	return GetTextOfNode(name)
 }
+
+func SymbolToString(s *ast.Symbol) string {
+	if s.ValueDeclaration != nil {
+		name := ast.GetNameOfDeclaration(s.ValueDeclaration)
+		if name != nil {
+			return GetTextOfNode(name)
+		}
+	}
+	return s.Name
+}

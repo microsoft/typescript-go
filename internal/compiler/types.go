@@ -6,6 +6,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/evaluator"
 )
 
 //go:generate go run golang.org/x/tools/cmd/stringer -type=SignatureKind -output=stringer_generated.go
@@ -301,7 +302,7 @@ type TypeNodeLinks struct {
 // Links for enum members
 
 type EnumMemberLinks struct {
-	value EvaluatorResult // Constant value of enum member
+	value evaluator.EvaluatorResult // Constant value of enum member
 }
 
 // Links for assertion expressions
@@ -679,14 +680,9 @@ type IntrinsicType struct {
 
 type LiteralType struct {
 	TypeBase
-	value       any   // string | jsnum.Number | bool | PseudoBigInt | nil (computed enum)
+	value       any   // string | jsnum.Number | bool | jsnum.PseudoBigInt | nil (computed enum)
 	freshType   *Type // Fresh version of type
 	regularType *Type // Regular version of type
-}
-
-type PseudoBigInt struct {
-	negative    bool
-	base10Value string
 }
 
 // UniqueESSymbolTypeData

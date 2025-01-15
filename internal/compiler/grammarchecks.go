@@ -235,7 +235,7 @@ func (c *Checker) checkGrammarModifiers(node *ast.Node /*Union[HasModifiers, Has
 	for _, modifier := range modifiers {
 		if ast.IsDecorator(modifier) {
 			if !nodeCanBeDecorated(c.legacyDecorators, node, node.Parent, node.Parent.Parent) {
-				if node.Kind == ast.KindMethodDeclaration && !ast.NodeIsPresent(getBodyOfNode(node)) {
+				if node.Kind == ast.KindMethodDeclaration && !ast.NodeIsPresent(ast.GetBodyOfNode(node)) {
 					return c.grammarErrorOnFirstToken(node, diagnostics.A_decorator_can_only_decorate_a_method_implementation_not_an_overload)
 				} else {
 					return c.grammarErrorOnFirstToken(node, diagnostics.Decorators_are_not_valid_here)
@@ -739,7 +739,7 @@ func (c *Checker) checkGrammarParameterList(parameters *ast.NodeList) bool {
 
 func (c *Checker) checkGrammarForUseStrictSimpleParameterList(node *ast.Node) bool {
 	if c.languageVersion >= core.ScriptTargetES2016 {
-		body := getBodyOfNode(node)
+		body := ast.GetBodyOfNode(node)
 		var useStrictDirective *ast.Node
 		if body != nil && ast.IsBlock(body) {
 			useStrictDirective = binder.FindUseStrictPrologue(ast.GetSourceFileOfNode(node), body.AsBlock().Statements.Nodes)
@@ -1321,7 +1321,7 @@ func (c *Checker) checkGrammarForInOrForOfStatement(forInOrOfStatement *ast.ForI
 }
 
 func (c *Checker) checkGrammarAccessor(accessor *ast.AccessorDeclaration) bool {
-	body := getBodyOfNode(accessor)
+	body := ast.GetBodyOfNode(accessor)
 	if accessor.Flags&ast.NodeFlagsAmbient == 0 && (accessor.Parent.Kind != ast.KindTypeLiteral) && (accessor.Parent.Kind != ast.KindInterfaceDeclaration) {
 		if c.languageVersion < core.ScriptTargetES2015 && ast.IsPrivateIdentifier(accessor.Name()) {
 			return c.grammarErrorOnNode(accessor.Name(), diagnostics.Private_identifiers_are_only_available_when_targeting_ECMAScript_2015_and_higher)
@@ -1464,7 +1464,7 @@ func (c *Checker) checkGrammarMethod(node *ast.Node /*Union[MethodDeclaration, M
 			if c.checkGrammarForInvalidExclamationToken(methodDecl.PostfixToken, diagnostics.A_definite_assignment_assertion_is_not_permitted_in_this_context) {
 				return true
 			}
-			if getBodyOfNode(node) == nil {
+			if ast.GetBodyOfNode(node) == nil {
 				return c.grammarErrorAtPos(node, node.End()-1, len(";"), diagnostics.X_0_expected, "{")
 			}
 		}
@@ -1484,7 +1484,7 @@ func (c *Checker) checkGrammarMethod(node *ast.Node /*Union[MethodDeclaration, M
 		// so this error only really matters for methods.
 		if node.Flags&ast.NodeFlagsAmbient != 0 {
 			return c.checkGrammarForInvalidDynamicName(node.Name(), diagnostics.A_computed_property_name_in_an_ambient_context_must_refer_to_an_expression_whose_type_is_a_literal_type_or_a_unique_symbol_type)
-		} else if node.Kind == ast.KindMethodDeclaration && getBodyOfNode(node) == nil {
+		} else if node.Kind == ast.KindMethodDeclaration && ast.GetBodyOfNode(node) == nil {
 			return c.checkGrammarForInvalidDynamicName(node.Name(), diagnostics.A_computed_property_name_in_a_method_overload_must_refer_to_an_expression_whose_type_is_a_literal_type_or_a_unique_symbol_type)
 		}
 	} else if node.Parent.Kind == ast.KindInterfaceDeclaration {

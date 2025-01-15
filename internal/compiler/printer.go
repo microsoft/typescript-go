@@ -31,17 +31,9 @@ func (c *Checker) SymbolToString(s *ast.Symbol) string {
 	return c.symbolToString(s)
 }
 
+// Deprecated: use scanner.SymbolToString(s)
 func (c *Checker) symbolToString(s *ast.Symbol) string {
-	if s.ValueDeclaration != nil {
-		name := ast.GetNameOfDeclaration(s.ValueDeclaration)
-		if name != nil {
-			return scanner.GetTextOfNode(name)
-		}
-	}
-	if len(s.Name) >= 1 && s.Name[0] != '\xFE' {
-		return s.Name
-	}
-	return "###"
+	return scanner.SymbolToString(s)
 }
 
 func (c *Checker) typeToString(t *Type) string {
@@ -175,7 +167,7 @@ func (p *Printer) printLiteralTypeValue(t *Type) {
 		p.printNumberLiteral(value)
 	case bool:
 		p.printBooleanLiteral(value)
-	case PseudoBigInt:
+	case jsnum.PseudoBigInt:
 		p.printBigIntLiteral(value)
 	}
 }
@@ -194,11 +186,8 @@ func (p *Printer) printBooleanLiteral(b bool) {
 	p.print(core.IfElse(b, "true", "false"))
 }
 
-func (p *Printer) printBigIntLiteral(b PseudoBigInt) {
-	if b.negative {
-		p.print("-")
-	}
-	p.print(b.base10Value)
+func (p *Printer) printBigIntLiteral(b jsnum.PseudoBigInt) {
+	p.print(b.String())
 }
 
 func (p *Printer) printUniqueESSymbolType(t *Type) {
