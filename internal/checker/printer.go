@@ -1,4 +1,4 @@
-package compiler
+package checker
 
 import (
 	"strings"
@@ -51,7 +51,7 @@ func (c *Checker) typeToStringEx(t *Type, enclosingDeclaration *ast.Node, flags 
 	return p.string()
 }
 
-func (c *Checker) sourceFileWithTypes(sourceFile *ast.SourceFile) string {
+func (c *Checker) SourceFileWithTypes(sourceFile *ast.SourceFile) string {
 	p := c.newPrinter(TypeFormatFlagsInTypeAlias)
 	p.printSourceFileWithTypes(sourceFile)
 	return p.string()
@@ -69,6 +69,12 @@ func (c *Checker) signatureToString(s *Signature) string {
 func (c *Checker) typePredicateToString(t *TypePredicate) string {
 	p := c.newPrinter(TypeFormatFlagsNone)
 	p.printTypePredicate(t)
+	return p.string()
+}
+
+func (c *Checker) valueToString(value any) string {
+	p := c.newPrinter(TypeFormatFlagsNone)
+	p.printValue(value)
 	return p.string()
 }
 
@@ -160,12 +166,12 @@ func (p *Printer) printLiteralType(t *Type) {
 	if t.flags&TypeFlagsEnumLiteral != 0 {
 		p.printEnumLiteral(t)
 	} else {
-		p.printLiteralTypeValue(t)
+		p.printValue(t.AsLiteralType().value)
 	}
 }
 
-func (p *Printer) printLiteralTypeValue(t *Type) {
-	switch value := t.AsLiteralType().value.(type) {
+func (p *Printer) printValue(value any) {
+	switch value := value.(type) {
 	case string:
 		p.printStringLiteral(value)
 	case jsnum.Number:
@@ -564,7 +570,7 @@ func (p *Printer) printSourceFileWithTypes(sourceFile *ast.SourceFile) {
 			p.printType(t)
 			if isDeclaration && t.flags&TypeFlagsEnumLiteral != 0 && t.flags&(TypeFlagsStringLiteral|TypeFlagsNumberLiteral) != 0 {
 				p.print(" = ")
-				p.printLiteralTypeValue(t)
+				p.printValue(t.AsLiteralType().value)
 			}
 			p.print("\n")
 			typesPrinted = true
@@ -587,7 +593,7 @@ func (c *Checker) getTextAndTypeOfNode(node *ast.Node) (string, *Type, bool) {
 			}
 		}
 	}
-	if IsExpressionNode(node) && !isRightSideOfQualifiedNameOrPropertyAccess(node) {
+	if ast.IsExpressionNode(node) && !isRightSideOfQualifiedNameOrPropertyAccess(node) {
 		return scanner.GetTextOfNode(node), c.getTypeOfExpression(node), false
 	}
 	return "", nil, false

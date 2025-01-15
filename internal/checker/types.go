@@ -1,4 +1,4 @@
-package compiler
+package checker
 
 import (
 	"slices"
@@ -1168,23 +1168,4 @@ var LanguageFeatureMinimumTarget = LanguageFeatureMinimumTargetMap{
 	UsingAndAwaitUsing:                core.ScriptTargetESNext,
 	ClassAndClassElementDecorators:    core.ScriptTargetESNext,
 	RegularExpressionFlagsUnicodeSets: core.ScriptTargetESNext,
-}
-
-type FileIncludeKind int
-
-const (
-	FileIncludeKindRootFile FileIncludeKind = iota
-	FileIncludeKindSourceFromProjectReference
-	FileIncludeKindOutputFromProjectReference
-	FileIncludeKindImport
-	FileIncludeKindReferenceFile
-	FileIncludeKindTypeReferenceDirective
-	FileIncludeKindLibFile
-	FileIncludeKindLibReferenceDirective
-	FileIncludeKindAutomaticTypeDirectiveFile
-)
-
-type FileIncludeReason struct {
-	Kind  FileIncludeKind
-	Index int
 }
