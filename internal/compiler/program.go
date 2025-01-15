@@ -36,9 +36,11 @@ type Program struct {
 	nodeModules      map[string]*ast.SourceFile
 	checkers         []*Checker
 	checkersByFile   map[*ast.SourceFile]*Checker
-	resolver         *module.Resolver
 	currentDirectory string
-	resolvedModules  map[tspath.Path]module.ModeAwareCache[*module.ResolvedModule]
+
+	resolver             *module.Resolver
+	resolvedModulesMutex sync.Mutex
+	resolvedModules      map[tspath.Path]module.ModeAwareCache[*module.ResolvedModule]
 
 	comparePathsOptions tspath.ComparePathsOptions
 	defaultLibraryPath  string
@@ -302,12 +304,12 @@ func (p *Program) startParseTask(fileName string, wg *core.WorkGroup, isLib bool
 			}
 		}
 
-		p.fileProcessingMutex.Lock()
-		defer p.fileProcessingMutex.Unlock()
-
 		for _, imp := range p.resolveImportsAndModuleAugmentations(file) {
 			filesToParse = append(filesToParse, toParse{p: imp})
 		}
+
+		p.fileProcessingMutex.Lock()
+		defer p.fileProcessingMutex.Unlock()
 
 		if isLib {
 			p.libFiles = append(p.libFiles, file)
@@ -379,6 +381,9 @@ func (p *Program) resolveImportsAndModuleAugmentations(file *ast.SourceFile) []s
 		moduleNames := getModuleNames(file)
 		resolutions := p.resolveModuleNames(moduleNames, file)
 		resolutionsInFile := make(module.ModeAwareCache[*module.ResolvedModule], len(resolutions))
+
+		p.resolvedModulesMutex.Lock()
+		defer p.resolvedModulesMutex.Unlock()
 		if p.resolvedModules == nil {
 			p.resolvedModules = make(map[tspath.Path]module.ModeAwareCache[*module.ResolvedModule])
 		}
@@ -848,7 +853,7 @@ func (p *Program) GetSourceFile(filename string) *ast.SourceFile {
 // Returns a token if position is in [start-of-leading-trivia, end), includes JSDoc only in JS files
 func getNodeAtPosition(file *ast.SourceFile, position int, isJavaScriptFile bool) *ast.Node {
 	current := file.AsNode()
-	for true {
+	for {
 		var child *ast.Node
 		if isJavaScriptFile /* && hasJSDocNodes(current) */ {
 			for _, jsDoc := range current.JSDoc(file) {
