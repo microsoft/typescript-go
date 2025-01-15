@@ -38,6 +38,7 @@ type Program struct {
 	checkersByFile   map[*ast.SourceFile]*Checker
 	resolver         *module.Resolver
 	currentDirectory string
+	resolvedModules  map[tspath.Path]module.ModeAwareCache[*module.ResolvedModule]
 
 	comparePathsOptions tspath.ComparePathsOptions
 	defaultLibraryPath  string
@@ -285,7 +286,7 @@ func (p *Program) startParseTask(fileName string, wg *core.WorkGroup, isLib bool
 		}
 
 		for _, ref := range file.TypeReferenceDirectives {
-			resolved := p.resolver.ResolveTypeReferenceDirective(ref.FileName, file.FileName(), core.ModuleKindNodeNext, nil)
+			resolved := p.resolver.ResolveTypeReferenceDirective(ref.FileName, file.FileName(), core.ModuleKindCommonJS /* !!! */, nil)
 			if resolved.IsResolved() {
 				filesToParse = append(filesToParse, toParse{p: resolved.ResolvedFileName})
 			}
@@ -301,12 +302,12 @@ func (p *Program) startParseTask(fileName string, wg *core.WorkGroup, isLib bool
 			}
 		}
 
+		p.fileProcessingMutex.Lock()
+		defer p.fileProcessingMutex.Unlock()
+
 		for _, imp := range p.resolveImportsAndModuleAugmentations(file) {
 			filesToParse = append(filesToParse, toParse{p: imp})
 		}
-
-		p.fileProcessingMutex.Lock()
-		defer p.fileProcessingMutex.Unlock()
 
 		if isLib {
 			p.libFiles = append(p.libFiles, file)
@@ -320,9 +321,13 @@ func (p *Program) startParseTask(fileName string, wg *core.WorkGroup, isLib bool
 	})
 }
 
-func (p *Program) getResolvedModule(currentSourceFile *ast.SourceFile, moduleReference string) *ast.SourceFile {
-	resolved := p.resolver.ResolveModuleName(moduleReference, currentSourceFile.FileName(), core.ModuleKindNodeNext, nil)
-	return p.findSourceFile(resolved.ResolvedFileName, FileIncludeReason{FileIncludeKindImport, 0})
+func (p *Program) getResolvedModule(file *ast.SourceFile, moduleReference string) *ast.SourceFile {
+	if resolutions, ok := p.resolvedModules[file.Path()]; ok {
+		if resolved, ok := resolutions[module.ModeAwareCacheKey{Name: moduleReference, Mode: core.ModuleKindCommonJS}]; ok {
+			return p.findSourceFile(resolved.ResolvedFileName, FileIncludeReason{FileIncludeKindImport, 0})
+		}
+	}
+	return nil
 }
 
 func (p *Program) findSourceFile(candidate string, reason FileIncludeReason) *ast.SourceFile {
@@ -361,7 +366,7 @@ func (p *Program) resolveModuleNames(entries []*ast.Node, file *ast.SourceFile) 
 		if moduleName == "" {
 			continue
 		}
-		resolvedModule := p.resolver.ResolveModuleName(moduleName, file.FileName(), core.ModuleKindNodeNext, nil)
+		resolvedModule := p.resolver.ResolveModuleName(moduleName, file.FileName(), core.ModuleKindCommonJS /* !!! */, nil)
 		resolvedModules = append(resolvedModules, resolvedModule)
 	}
 
@@ -373,10 +378,18 @@ func (p *Program) resolveImportsAndModuleAugmentations(file *ast.SourceFile) []s
 	if len(file.Imports) > 0 || len(file.ModuleAugmentations) > 0 {
 		moduleNames := getModuleNames(file)
 		resolutions := p.resolveModuleNames(moduleNames, file)
+		resolutionsInFile := make(module.ModeAwareCache[*module.ResolvedModule], len(resolutions))
+		if p.resolvedModules == nil {
+			p.resolvedModules = make(map[tspath.Path]module.ModeAwareCache[*module.ResolvedModule])
+		}
+		p.resolvedModules[file.Path()] = resolutionsInFile
 
-		for _, resolution := range resolutions {
+		for i, resolution := range resolutions {
 			resolvedFileName := resolution.ResolvedFileName
 			// TODO(ercornel): !!!: check if from node modules
+
+			mode := core.ModuleKindCommonJS // !!!
+			resolutionsInFile[module.ModeAwareCacheKey{Name: moduleNames[i].Text(), Mode: mode}] = resolution
 
 			// add file to program only if:
 			// - resolution was successful
@@ -495,51 +508,41 @@ func (p *Program) collectExternalModuleReferences(file *ast.SourceFile) {
 	for _, node := range file.Statements.Nodes {
 		p.collectModuleReferences(file, node, false /*inAmbientModule*/)
 	}
-	// if ((file.flags & NodeFlags.PossiblyContainsDynamicImport) || isJavaScriptFile) {
-	// 	collectDynamicImportOrRequireOrJsDocImportCalls(file);
-	// }
-	// function collectDynamicImportOrRequireOrJsDocImportCalls(file: SourceFile) {
-	// 	const r = /import|require/g;
-	// 	while (r.exec(file.text) !== null) { // eslint-disable-line no-restricted-syntax
-	// 		const node = getNodeAtPosition(file, r.lastIndex);
-	// 		if (isJavaScriptFile && isRequireCall(node, /*requireStringLiteralLikeArgument*/ true)) {
-	// 			setParentRecursive(node, /*incremental*/ false); // we need parent data on imports before the program is fully bound, so we ensure it's set here
-	// 			imports = append(imports, node.arguments[0]);
-	// 		}
-	// 		// we have to check the argument list has length of at least 1. We will still have to process these even though we have parsing error.
-	// 		else if (isImportCall(node) && node.arguments.length >= 1 && isStringLiteralLike(node.arguments[0])) {
-	// 			setParentRecursive(node, /*incremental*/ false); // we need parent data on imports before the program is fully bound, so we ensure it's set here
-	// 			imports = append(imports, node.arguments[0]);
-	// 		}
-	// 		else if (isLiteralImportTypeNode(node)) {
-	// 			setParentRecursive(node, /*incremental*/ false); // we need parent data on imports before the program is fully bound, so we ensure it's set here
-	// 			imports = append(imports, node.argument.literal);
-	// 		}
-	// 		else if (isJavaScriptFile && isJSDocImportTag(node)) {
-	// 			const moduleNameExpr = getExternalModuleName(node);
-	// 			if (moduleNameExpr && isStringLiteral(moduleNameExpr) && moduleNameExpr.text) {
-	// 				setParentRecursive(node, /*incremental*/ false);
-	// 				imports = append(imports, moduleNameExpr);
-	// 			}
-	// 		}
-	// 	}
-	// }
-	// /** Returns a token if position is in [start-of-leading-trivia, end), includes JSDoc only in JS files */
-	// function getNodeAtPosition(sourceFile: SourceFile, position: number): Node {
-	// 	let current: Node = sourceFile;
-	// 	const getContainingChild = (child: Node) => {
-	// 		if (child.pos <= position && (position < child.end || (position === child.end && (child.kind === Kind.EndOfFileToken)))) {
-	// 			return child;
-	// 		}
-	// 	};
-	// 	while (true) {
-	// 		const child = isJavaScriptFile && hasJSDocNodes(current) && forEach(current.jsDoc, getContainingChild) || forEachChild(current, getContainingChild);
-	// 		if (!child) {
-	// 			return current;
-	// 		}
-	// 		current = child;
-	// 	}
-	// }
+	if file.Flags&ast.NodeFlagsPossiblyContainsDynamicImport != 0 {
+		p.collectDynamicImportOrRequireOrJsDocImportCalls(file)
+	}
+}
+
+func (p *Program) collectDynamicImportOrRequireOrJsDocImportCalls(file *ast.SourceFile) {
+	lastIndex := 0
+	for {
+		index := strings.Index(file.Text[lastIndex:], "import")
+		if index == -1 {
+			break
+		}
+		index += lastIndex
+		node := getNodeAtPosition(file, index, false /* !!! isJavaScriptFile */)
+		// if isJavaScriptFile && isRequireCall(node /*requireStringLiteralLikeArgument*/, true) {
+		// 	setParentRecursive(node /*incremental*/, false) // we need parent data on imports before the program is fully bound, so we ensure it's set here
+		// 	imports = append(imports, node.arguments[0])
+		// } else
+		if isImportCall(node) && len(node.Arguments()) >= 1 && ast.IsStringLiteralLike(node.Arguments()[0]) {
+			// we have to check the argument list has length of at least 1. We will still have to process these even though we have parsing error.
+			binder.SetParentInChildren(node) // we need parent data on imports before the program is fully bound, so we ensure it's set here
+			file.Imports = append(file.Imports, node.Arguments()[0])
+		} else if ast.IsLiteralImportTypeNode(node) {
+			binder.SetParentInChildren(node) // we need parent data on imports before the program is fully bound, so we ensure it's set here
+			file.Imports = append(file.Imports, node.AsImportTypeNode().Argument.AsLiteralTypeNode().Literal)
+		}
+		// else if isJavaScriptFile && isJSDocImportTag(node) {
+		// 	const moduleNameExpr = getExternalModuleName(node)
+		// 	if moduleNameExpr && isStringLiteral(moduleNameExpr) && moduleNameExpr.text {
+		// 		setParentRecursive(node /*incremental*/, false)
+		// 		imports = append(imports, moduleNameExpr)
+		// 	}
+		// }
+		lastIndex = min(index+len("import"), len(file.Text))
+	}
 }
 
 var unprefixedNodeCoreModules = map[string]bool{
@@ -840,4 +843,38 @@ func (p *Program) Emit(options *EmitOptions) *EmitResult {
 func (p *Program) GetSourceFile(filename string) *ast.SourceFile {
 	path := tspath.ToPath(filename, p.host.GetCurrentDirectory(), p.host.FS().UseCaseSensitiveFileNames())
 	return p.filesByPath[path]
+}
+
+// Returns a token if position is in [start-of-leading-trivia, end), includes JSDoc only in JS files
+func getNodeAtPosition(file *ast.SourceFile, position int, isJavaScriptFile bool) *ast.Node {
+	current := file.AsNode()
+	for true {
+		var child *ast.Node
+		if isJavaScriptFile /* && hasJSDocNodes(current) */ {
+			for _, jsDoc := range current.JSDoc(file) {
+				if nodeContainsPosition(jsDoc, position) {
+					child = jsDoc
+					break
+				}
+			}
+		}
+		if child == nil {
+			current.ForEachChild(func(node *ast.Node) bool {
+				if nodeContainsPosition(node, position) {
+					child = node
+					return true
+				}
+				return false
+			})
+		}
+		if child == nil {
+			return current
+		}
+		current = child
+	}
+	return nil
+}
+
+func nodeContainsPosition(node *ast.Node, position int) bool {
+	return node.Pos() <= position && (position < node.End() || (position == node.End() && (node.Kind == ast.KindEndOfFile)))
 }
