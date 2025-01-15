@@ -1,6 +1,7 @@
 package compiler
 
 import (
+	"cmp"
 	"fmt"
 	"slices"
 	"strings"
@@ -13,16 +14,18 @@ import (
 	"github.com/microsoft/typescript-go/internal/parser"
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/sourcemap"
+	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 )
 
 type ProgramOptions struct {
-	RootPath         string
-	Host             CompilerHost
-	Options          *core.CompilerOptions
-	SingleThreaded   bool
-	ProjectReference []ProjectReference
+	RootPath           string
+	Host               CompilerHost
+	Options            *core.CompilerOptions
+	SingleThreaded     bool
+	ProjectReference   []core.ProjectReference
+	DefaultLibraryPath string
 }
 
 type Program struct {
@@ -31,11 +34,17 @@ type Program struct {
 	compilerOptions  *core.CompilerOptions
 	rootPath         string
 	nodeModules      map[string]*ast.SourceFile
-	checker          *Checker
+	checkers         []*Checker
+	checkersByFile   map[*ast.SourceFile]*Checker
 	resolver         *module.Resolver
 	currentDirectory string
 
+	comparePathsOptions tspath.ComparePathsOptions
+	defaultLibraryPath  string
+
 	fileProcessingMutex sync.Mutex
+	libFiles            []*ast.SourceFile
+	otherFiles          []*ast.SourceFile
 	files               []*ast.SourceFile
 	filesByPath         map[tspath.Path]*ast.SourceFile
 	processedFileNames  core.Set[string]
@@ -78,42 +87,86 @@ func NewProgram(options ProgramOptions) *Program {
 		panic("host required")
 	}
 
+	p.comparePathsOptions = tspath.ComparePathsOptions{
+		UseCaseSensitiveFileNames: p.host.FS().UseCaseSensitiveFileNames(),
+		CurrentDirectory:          p.host.GetCurrentDirectory(),
+	}
+
+	p.defaultLibraryPath = options.DefaultLibraryPath
+	if p.defaultLibraryPath == "" {
+		panic("default library path required")
+	}
+
 	p.resolver = module.NewResolver(p.host, p.compilerOptions)
 
-	// TODO(ercornel): !!!: SKIPPING FOR NOW :: default lib
 	p.rootPath = options.RootPath
 	if p.rootPath == "" {
 		panic("root path required")
 	}
-	fileInfos := readFileInfos(p.host.FS(), p.rootPath, extensions)
-	// Sort files by descending file size
-	slices.SortFunc(fileInfos, func(a FileInfo, b FileInfo) int {
-		return int(b.Size) - int(a.Size)
-	})
 
-	p.processRootFiles(fileInfos)
+	var libs []string
+
+	if p.compilerOptions.NoLib != core.TSTrue {
+		if p.compilerOptions.Lib == nil {
+			name := tsoptions.GetDefaultLibFileName(p.compilerOptions)
+			libs = append(libs, tspath.CombinePaths(p.defaultLibraryPath, name))
+		} else {
+			for _, lib := range p.compilerOptions.Lib {
+				name, ok := tsoptions.GetLibFileName(lib)
+				if ok {
+					libs = append(libs, tspath.CombinePaths(p.defaultLibraryPath, name))
+				}
+				// !!! error on unknown name
+			}
+		}
+	}
+
+	otherFiles := walkFiles(p.host.FS(), p.rootPath, extensions)
+
+	// Process otherFiles first so breakpoints on user code are more likely to be hit first.
+	p.processRootFiles(otherFiles, false)
+	p.processRootFiles(libs, true)
+
+	slices.SortFunc(p.libFiles, func(f1 *ast.SourceFile, f2 *ast.SourceFile) int {
+		return cmp.Compare(p.getDefaultLibFilePriority(f1), p.getDefaultLibFilePriority(f2))
+	})
 
 	// Sort files by path so we get a stable ordering between runs
-	slices.SortFunc(p.files, func(f1 *ast.SourceFile, f2 *ast.SourceFile) int {
+	slices.SortFunc(p.otherFiles, func(f1 *ast.SourceFile, f2 *ast.SourceFile) int {
 		return strings.Compare(string(f1.Path()), string(f2.Path()))
 	})
+
+	p.files = slices.Concat(p.libFiles, p.otherFiles)
+	p.libFiles = nil
+	p.otherFiles = nil
 
 	return p
 }
 
-func readFileInfos(fs vfs.FS, rootPath string, extensions []string) []FileInfo {
-	var fileInfos []FileInfo
+func (p *Program) getDefaultLibFilePriority(a *ast.SourceFile) int {
+	if tspath.ContainsPath(p.defaultLibraryPath, a.FileName(), p.comparePathsOptions) {
+		basename := tspath.GetBaseFileName(a.FileName())
+		if basename == "lib.d.ts" || basename == "lib.es6.d.ts" {
+			return 0
+		}
+		name := strings.TrimSuffix(strings.TrimPrefix(basename, "lib."), ".d.ts")
+		index := slices.Index(tsoptions.Libs, name)
+		if index != -1 {
+			return index + 1
+		}
+	}
+	return len(tsoptions.Libs) + 2
+}
+
+func walkFiles(fs vfs.FS, rootPath string, extensions []string) []string {
+	var files []string
 
 	err := fs.WalkDir(rootPath, func(path string, d vfs.DirEntry, err error) error {
 		if err != nil {
 			return err
 		}
 		if !d.IsDir() && slices.ContainsFunc(extensions, func(ext string) bool { return tspath.FileExtensionIs(path, ext) }) {
-			info, err := d.Info()
-			if err != nil {
-				return err //nolint:wrapcheck
-			}
-			fileInfos = append(fileInfos, FileInfo{Name: path, Size: info.Size()})
+			files = append(files, path)
 		}
 		return nil
 	})
@@ -121,7 +174,7 @@ func readFileInfos(fs vfs.FS, rootPath string, extensions []string) []FileInfo {
 		fmt.Println(err)
 	}
 
-	return fileInfos
+	return files
 }
 
 func (p *Program) SourceFiles() []*ast.SourceFile { return p.files }
@@ -140,51 +193,130 @@ func (p *Program) bindSourceFiles() {
 	wg.Wait()
 }
 
-func (p *Program) processRootFiles(rootFiles []FileInfo) {
+func (p *Program) checkSourceFiles() {
+	p.createCheckers()
+	wg := core.NewWorkGroup(false)
+	for index, checker := range p.checkers {
+		wg.Run(func() {
+			for i := index; i < len(p.files); i += len(p.checkers) {
+				checker.checkSourceFile(p.files[i])
+			}
+		})
+	}
+	wg.Wait()
+}
+
+func (p *Program) createCheckers() {
+	if len(p.checkers) == 0 {
+		p.checkers = make([]*Checker, core.IfElse(p.programOptions.SingleThreaded, 1, 4))
+		for i := range p.checkers {
+			p.checkers[i] = NewChecker(p)
+		}
+		p.checkersByFile = make(map[*ast.SourceFile]*Checker)
+		for i, file := range p.files {
+			p.checkersByFile[file] = p.checkers[i%len(p.checkers)]
+		}
+	}
+}
+
+// Return the type checker associated with the program.
+func (p *Program) GetTypeChecker() *Checker {
+	p.createCheckers()
+	// Just use the first (and possibly only) checker for checker requests. Such requests are likely
+	// to obtain types through multiple API calls and we want to ensure that those types are created
+	// by the same checker so they can interoperate.
+	return p.checkers[0]
+}
+
+// Return a checker for the given file. We may have multiple checkers in concurrent scenarios and this
+// method returns the checker that was tasked with checking the file. Note that it isn't possible to mix
+// types obtained from different checkers, so only non-type data (such as diagnostics or string
+// representations of types) should be obtained from checkers returned by this method.
+func (p *Program) getTypeCheckerForFile(file *ast.SourceFile) *Checker {
+	p.createCheckers()
+	return p.checkersByFile[file]
+}
+
+func (p *Program) processRootFiles(rootFiles []string, isLib bool) {
 	wg := core.NewWorkGroup(p.programOptions.SingleThreaded)
 
-	absPaths := make([]string, 0, len(rootFiles))
-	for _, fileInfo := range rootFiles {
-		absPath := tspath.GetNormalizedAbsolutePath(fileInfo.Name, p.currentDirectory)
-		p.processedFileNames.Add(absPath)
-		absPaths = append(absPaths, absPath)
+	filesToParse := make([]toParse, 0, len(rootFiles))
+	for _, file := range rootFiles {
+		absPath := tspath.GetNormalizedAbsolutePath(file, p.currentDirectory)
+		filesToParse = append(filesToParse, toParse{p: absPath, isLib: isLib})
 	}
-
-	for _, absPath := range absPaths {
-		p.startParseTask(absPath, wg)
-	}
+	p.processFiles(filesToParse, wg)
 
 	wg.Wait()
 }
 
-func (p *Program) startParseTask(fileName string, wg *core.WorkGroup) {
+type toParse struct {
+	p     string
+	isLib bool
+}
+
+func (p *Program) processFiles(filesToParse []toParse, wg *core.WorkGroup) {
+	tasks := make([]toParse, 0, len(filesToParse))
+	for _, f := range filesToParse {
+		if !p.processedFileNames.Has(f.p) {
+			p.processedFileNames.Add(f.p)
+			tasks = append(tasks, f)
+		}
+	}
+	for _, f := range tasks {
+		p.startParseTask(f.p, wg, f.isLib)
+	}
+}
+
+func (p *Program) startParseTask(fileName string, wg *core.WorkGroup, isLib bool) {
 	wg.Run(func() {
 		normalizedPath := tspath.NormalizePath(fileName)
 		file := p.parseSourceFile(normalizedPath)
+
+		// !!! if noResolve, skip all of this
+
 		p.collectExternalModuleReferences(file)
 
-		filesToParse := make([]string, 0, len(file.ReferencedFiles)+len(file.Imports)+len(file.ModuleAugmentations))
+		filesToParse := make([]toParse, 0, len(file.ReferencedFiles)+len(file.Imports)+len(file.ModuleAugmentations))
 
 		for _, ref := range file.ReferencedFiles {
 			resolvedPath := p.resolveTripleslashPathReference(ref.FileName, file.FileName())
-			filesToParse = append(filesToParse, resolvedPath)
+			filesToParse = append(filesToParse, toParse{p: resolvedPath})
 		}
 
-		filesToParse = append(filesToParse, p.resolveImportsAndModuleAugmentations(file)...)
+		for _, ref := range file.TypeReferenceDirectives {
+			resolved := p.resolver.ResolveTypeReferenceDirective(ref.FileName, file.FileName(), core.ModuleKindNodeNext, nil)
+			if resolved.IsResolved() {
+				filesToParse = append(filesToParse, toParse{p: resolved.ResolvedFileName})
+			}
+		}
+
+		if p.compilerOptions.NoLib != core.TSTrue {
+			for _, lib := range file.LibReferenceDirectives {
+				name, ok := tsoptions.GetLibFileName(lib.FileName)
+				if !ok {
+					continue
+				}
+				filesToParse = append(filesToParse, toParse{p: tspath.CombinePaths(p.defaultLibraryPath, name), isLib: true})
+			}
+		}
+
+		for _, imp := range p.resolveImportsAndModuleAugmentations(file) {
+			filesToParse = append(filesToParse, toParse{p: imp})
+		}
 
 		p.fileProcessingMutex.Lock()
 		defer p.fileProcessingMutex.Unlock()
-		p.files = append(p.files, file)
+
+		if isLib {
+			p.libFiles = append(p.libFiles, file)
+		} else {
+			p.otherFiles = append(p.otherFiles, file)
+		}
+
 		p.filesByPath[file.Path()] = file
 
-		if len(filesToParse) > 0 {
-			for _, fileName := range filesToParse {
-				if !p.processedFileNames.Has(fileName) {
-					p.processedFileNames.Add(fileName)
-					p.startParseTask(fileName, wg)
-				}
-			}
-		}
+		p.processFiles(filesToParse, wg)
 	})
 }
 
@@ -257,7 +389,7 @@ func (p *Program) resolveImportsAndModuleAugmentations(file *ast.SourceFile) []s
 			// Don't add the file if it has a bad extension (e.g. 'tsx' if we don't have '--allowJs')
 			// This may still end up being an untyped module -- the file won't be included but imports will be allowed.
 
-			shouldAddFile := resolution.IsResolved()
+			shouldAddFile := resolution.IsResolved() && tspath.FileExtensionIsOneOf(resolvedFileName, []string{".ts", ".tsx", ".mts", ".cts"})
 			// TODO(ercornel): !!!: other checks on whether or not to add the file
 
 			if shouldAddFile {
@@ -270,33 +402,24 @@ func (p *Program) resolveImportsAndModuleAugmentations(file *ast.SourceFile) []s
 }
 
 func (p *Program) GetSyntacticDiagnostics(sourceFile *ast.SourceFile) []*ast.Diagnostic {
-	return p.getDiagnosticsHelper(sourceFile, false /*ensureBound*/, p.getSyntaticDiagnosticsForFile)
+	return p.getDiagnosticsHelper(sourceFile, false /*ensureBound*/, false /*ensureChecked*/, p.getSyntaticDiagnosticsForFile)
 }
 
 func (p *Program) GetBindDiagnostics(sourceFile *ast.SourceFile) []*ast.Diagnostic {
-	return p.getDiagnosticsHelper(sourceFile, true /*ensureBound*/, p.getBindDiagnosticsForFile)
+	return p.getDiagnosticsHelper(sourceFile, true /*ensureBound*/, false /*ensureChecked*/, p.getBindDiagnosticsForFile)
 }
 
 func (p *Program) GetSemanticDiagnostics(sourceFile *ast.SourceFile) []*ast.Diagnostic {
-	return p.getDiagnosticsHelper(sourceFile, true /*ensureBound*/, p.getSemanticDiagnosticsForFile)
+	return p.getDiagnosticsHelper(sourceFile, true /*ensureBound*/, true /*ensureChecked*/, p.getSemanticDiagnosticsForFile)
 }
 
 func (p *Program) GetGlobalDiagnostics() []*ast.Diagnostic {
-	return sortAndDeduplicateDiagnostics(p.getTypeChecker().GetGlobalDiagnostics())
-}
-
-func (p *Program) TypeCount() int {
-	if p.checker == nil {
-		return 0
+	p.createCheckers()
+	var globalDiagnostics []*ast.Diagnostic
+	for _, checker := range p.checkers {
+		globalDiagnostics = append(globalDiagnostics, checker.GetGlobalDiagnostics()...)
 	}
-	return int(p.checker.typeCount)
-}
-
-func (p *Program) getTypeChecker() *Checker {
-	if p.checker == nil {
-		p.checker = NewChecker(p)
-	}
-	return p.checker
+	return sortAndDeduplicateDiagnostics(globalDiagnostics)
 }
 
 func (p *Program) getSyntaticDiagnosticsForFile(sourceFile *ast.SourceFile) []*ast.Diagnostic {
@@ -308,10 +431,10 @@ func (p *Program) getBindDiagnosticsForFile(sourceFile *ast.SourceFile) []*ast.D
 }
 
 func (p *Program) getSemanticDiagnosticsForFile(sourceFile *ast.SourceFile) []*ast.Diagnostic {
-	return core.Concatenate(sourceFile.BindDiagnostics(), p.getTypeChecker().GetDiagnostics(sourceFile))
+	return core.Concatenate(sourceFile.BindDiagnostics(), p.getTypeCheckerForFile(sourceFile).GetDiagnostics(sourceFile))
 }
 
-func (p *Program) getDiagnosticsHelper(sourceFile *ast.SourceFile, ensureBound bool, getDiagnostics func(*ast.SourceFile) []*ast.Diagnostic) []*ast.Diagnostic {
+func (p *Program) getDiagnosticsHelper(sourceFile *ast.SourceFile, ensureBound bool, ensureChecked bool, getDiagnostics func(*ast.SourceFile) []*ast.Diagnostic) []*ast.Diagnostic {
 	if sourceFile != nil {
 		if ensureBound {
 			binder.BindSourceFile(sourceFile, p.compilerOptions)
@@ -321,6 +444,9 @@ func (p *Program) getDiagnosticsHelper(sourceFile *ast.SourceFile, ensureBound b
 	if ensureBound {
 		p.bindSourceFiles()
 	}
+	if ensureChecked {
+		p.checkSourceFiles()
+	}
 	var result []*ast.Diagnostic
 	for _, file := range p.files {
 		result = append(result, getDiagnostics(file)...)
@@ -328,15 +454,18 @@ func (p *Program) getDiagnosticsHelper(sourceFile *ast.SourceFile, ensureBound b
 	return sortAndDeduplicateDiagnostics(result)
 }
 
-type NodeCount struct {
-	kind  ast.Kind
-	count int
+func (p *Program) TypeCount() int {
+	var count int
+	for _, checker := range p.checkers {
+		count += int(checker.typeCount)
+	}
+	return count
 }
 
 func (p *Program) PrintSourceFileWithTypes() {
 	for _, file := range p.files {
 		if tspath.GetBaseFileName(file.FileName()) == "main.ts" {
-			fmt.Print(p.getTypeChecker().sourceFileWithTypes(file))
+			fmt.Print(p.GetTypeChecker().sourceFileWithTypes(file))
 		}
 	}
 }
@@ -706,4 +835,9 @@ func (p *Program) Emit(options *EmitOptions) *EmitResult {
 		}
 	}
 	return result
+}
+
+func (p *Program) GetSourceFile(filename string) *ast.SourceFile {
+	path := tspath.ToPath(filename, p.host.GetCurrentDirectory(), p.host.FS().UseCaseSensitiveFileNames())
+	return p.filesByPath[path]
 }

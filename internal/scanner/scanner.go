@@ -11,6 +11,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/compiler/diagnostics"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/jsnum"
 	"github.com/microsoft/typescript-go/internal/stringutil"
 )
 
@@ -218,12 +219,13 @@ var (
 )
 
 type ScannerState struct {
-	pos          int            // Current position in text (and ending position of current token)
-	fullStartPos int            // Starting position of current token including preceding whitespace
-	tokenStart   int            // Starting position of non-whitespace part of current token
-	token        ast.Kind       // Kind of current token
-	tokenValue   string         // Parsed value of current token
-	tokenFlags   ast.TokenFlags // Flags for current token
+	pos                       int            // Current position in text (and ending position of current token)
+	fullStartPos              int            // Starting position of current token including preceding whitespace
+	tokenStart                int            // Starting position of non-whitespace part of current token
+	token                     ast.Kind       // Kind of current token
+	tokenValue                string         // Parsed value of current token
+	tokenFlags                ast.TokenFlags // Flags for current token
+	skipJSDocLeadingAsterisks int
 }
 
 type Scanner struct {
@@ -281,6 +283,28 @@ func (s *Scanner) Mark() ScannerState {
 
 func (s *Scanner) Rewind(state ScannerState) {
 	s.ScannerState = state
+}
+
+func (s *Scanner) ResetTokenState(pos int) {
+	if pos < 0 {
+		panic("Cannot reset token state to negative position")
+	}
+	s.Rewind(ScannerState{
+		pos:          pos,
+		fullStartPos: pos,
+		tokenStart:   pos,
+		token:        ast.KindUnknown,
+		tokenValue:   "",
+		tokenFlags:   ast.TokenFlagsNone,
+	})
+}
+
+func (scanner *Scanner) SetSkipJsDocLeadingAsterisks(skip bool) {
+	if skip {
+		scanner.skipJSDocLeadingAsterisks += 1
+	} else {
+		scanner.skipJSDocLeadingAsterisks += -1
+	}
 }
 
 func (s *Scanner) HasUnicodeEscape() bool {
@@ -707,13 +731,13 @@ func (s *Scanner) Scan() ast.Kind {
 			if s.charAt(1) == '!' {
 				if s.pos == 0 {
 					s.pos += 2
-					for s.char() >= 0 && s.char() != '\n' {
-						s.pos++
+					for ch, size := s.charAndSize(); size > 0 && !stringutil.IsLineBreak(ch); ch, size = s.charAndSize() {
+						s.pos += size
 					}
 					continue
 				}
 				s.errorAt(diagnostics.X_can_only_be_used_at_the_start_of_a_file, s.pos, 2)
-				s.pos += 2
+				s.pos++
 				s.token = ast.KindUnknown
 				break
 			}
@@ -803,6 +827,15 @@ func (s *Scanner) ReScanTemplateToken(isTaggedTemplate bool) ast.Kind {
 	s.pos = s.tokenStart
 	s.token = s.scanTemplateAndSetTokenValue(!isTaggedTemplate)
 	return s.token
+}
+
+func (scanner *Scanner) ReScanAsteriskEqualsToken() ast.Kind {
+	if scanner.token != ast.KindAsteriskEqualsToken {
+		panic("'ReScanAsteriskEqualsToken' should only be called on a '*='")
+	}
+	scanner.pos = scanner.tokenStart + 1
+	scanner.token = ast.KindEqualsToken
+	return scanner.token
 }
 
 // !!! https://github.com/microsoft/TypeScript/pull/55600
@@ -908,6 +941,23 @@ func (s *Scanner) ReScanJsxToken(allowMultilineJsxText bool) ast.Kind {
 	s.tokenStart = s.fullStartPos
 	s.token = s.ScanJsxTokenEx(allowMultilineJsxText)
 	return s.token
+}
+
+func (s *Scanner) ReScanHashToken() ast.Kind {
+	if s.token == ast.KindPrivateIdentifier {
+		s.pos = s.tokenStart + 1
+		s.token = ast.KindHashToken
+	}
+	return s.token
+}
+
+func (scanner *Scanner) ReScanQuestionToken() ast.Kind {
+	if scanner.token != ast.KindQuestionQuestionToken {
+		panic("'reScanQuestionToken' should only be called on a '??'")
+	}
+	scanner.pos = scanner.tokenStart + 1
+	scanner.token = ast.KindQuestionToken
+	return scanner.token
 }
 
 func (s *Scanner) ScanJsxToken() ast.Kind {
@@ -1028,6 +1078,114 @@ func (s *Scanner) ReScanJsxAttributeValue() ast.Kind {
 	return s.ScanJsxAttributeValue()
 }
 
+func (scanner *Scanner) ScanJSDocToken() ast.Kind {
+	scanner.fullStartPos = scanner.pos
+	scanner.tokenFlags = ast.TokenFlagsNone
+	if scanner.pos >= len(scanner.text) {
+		scanner.token = ast.KindEndOfFile
+		return scanner.token
+	}
+
+	ch, size := scanner.charAndSize()
+	scanner.pos += size
+	switch ch {
+	case '\t', '\v', '\f', ' ':
+		ch2 := scanner.char()
+		for ch2 > -1 && stringutil.IsWhiteSpaceSingleLine(ch2) {
+			scanner.pos++
+		}
+		scanner.token = ast.KindWhitespaceTrivia
+		return scanner.token
+	case '@':
+		scanner.token = ast.KindAtToken
+		return scanner.token
+	case '\r':
+		if scanner.char() == '\n' {
+			scanner.pos++
+		}
+		fallthrough
+	case '\n':
+		scanner.tokenFlags |= ast.TokenFlagsPrecedingLineBreak
+		scanner.token = ast.KindNewLineTrivia
+		return scanner.token
+	case '*':
+		scanner.token = ast.KindAsteriskToken
+		return scanner.token
+	case '{':
+		scanner.token = ast.KindOpenBraceToken
+		return scanner.token
+	case '}':
+		scanner.token = ast.KindCloseBraceToken
+		return scanner.token
+	case '[':
+		scanner.token = ast.KindOpenBracketToken
+		return scanner.token
+	case ']':
+		scanner.token = ast.KindCloseBracketToken
+		return scanner.token
+	case '(':
+		scanner.token = ast.KindOpenParenToken
+		return scanner.token
+	case ')':
+		scanner.token = ast.KindCloseParenToken
+		return scanner.token
+	case '<':
+		scanner.token = ast.KindLessThanToken
+		return scanner.token
+	case '>':
+		scanner.token = ast.KindGreaterThanToken
+		return scanner.token
+	case '=':
+		scanner.token = ast.KindEqualsToken
+		return scanner.token
+	case ',':
+		scanner.token = ast.KindCommaToken
+		return scanner.token
+	case '.':
+		scanner.token = ast.KindDotToken
+		return scanner.token
+	case '`':
+		scanner.token = ast.KindBacktickToken
+		return scanner.token
+	case '#':
+		scanner.token = ast.KindHashToken
+		return scanner.token
+	case '\\':
+		scanner.pos--
+		cp := scanner.peekUnicodeEscape()
+		if cp >= 0 && isIdentifierStart(cp, scanner.languageVersion) {
+			scanner.tokenValue = string(scanner.scanUnicodeEscape(true)) + scanner.scanIdentifierParts()
+			scanner.token = GetIdentifierToken(scanner.tokenValue)
+		} else {
+			scanner.scanInvalidCharacter()
+		}
+		return scanner.token
+	}
+
+	if isIdentifierStart(ch, scanner.languageVersion) {
+		char := ch
+		for {
+			if scanner.pos >= len(scanner.text) {
+				break
+			}
+			char, size = scanner.charAndSize()
+			if !isIdentifierPart(char, scanner.languageVersion) && char != '-' {
+				break
+			}
+			scanner.pos += size
+		}
+		scanner.tokenValue = scanner.text[scanner.tokenStart:scanner.pos]
+		if char == '\\' {
+			scanner.tokenValue += scanner.scanIdentifierParts()
+		}
+		scanner.token = GetIdentifierToken(scanner.tokenValue)
+		return scanner.token
+	} else {
+		scanner.token = ast.KindUnknown
+		return scanner.token
+	}
+}
+
 func (s *Scanner) scanIdentifier(prefixLength int) bool {
 	start := s.pos
 	s.pos += prefixLength
@@ -1045,7 +1203,7 @@ func (s *Scanner) scanIdentifier(prefixLength int) bool {
 			s.tokenValue = s.text[start:s.pos]
 			return true
 		}
-		s.pos = start
+		s.pos = start + prefixLength
 	}
 	ch, size := s.charAndSize()
 	if isIdentifierStart(ch, s.languageVersion) {
@@ -1404,14 +1562,14 @@ func (s *Scanner) scanNumber() ast.Kind {
 	}
 	if s.tokenFlags&ast.TokenFlagsContainsLeadingZero != 0 {
 		s.errorAt(diagnostics.Decimals_with_leading_zeros_are_not_allowed, start, s.pos-start)
-		s.tokenValue = stringutil.FromNumber(stringutil.ToNumber(s.tokenValue))
+		s.tokenValue = jsnum.FromString(s.tokenValue).String()
 		return ast.KindNumericLiteral
 	}
 	var result ast.Kind
 	if fixedPartEnd == s.pos {
 		result = s.scanBigIntSuffix()
 	} else {
-		s.tokenValue = stringutil.FromNumber(stringutil.ToNumber(s.tokenValue))
+		s.tokenValue = jsnum.FromString(s.tokenValue).String()
 		result = ast.KindNumericLiteral
 	}
 	ch, _ := s.charAndSize()
@@ -1569,7 +1727,7 @@ func (s *Scanner) scanBigIntSuffix() ast.Kind {
 			return ast.KindNumericLiteral
 		}
 	}
-	s.tokenValue = stringutil.FromNumber(stringutil.ToNumber(s.tokenValue))
+	s.tokenValue = jsnum.FromString(s.tokenValue).String()
 	return ast.KindNumericLiteral
 }
 

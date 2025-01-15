@@ -12,8 +12,10 @@ import (
 	"time"
 
 	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/bundled"
 	ts "github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/diagnosticwriter"
 	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
@@ -26,6 +28,7 @@ var (
 	printTypes       = false
 	pretty           = true
 	listFiles        = false
+	noLib            = false
 	pprofDir         = ""
 	outDir           = ""
 )
@@ -59,12 +62,16 @@ func main() {
 	flag.BoolVar(&printTypes, "t", false, "Print types defined in main.ts")
 	flag.BoolVar(&pretty, "pretty", true, "Get prettier errors")
 	flag.BoolVar(&listFiles, "listfiles", false, "List files in the program")
+	flag.BoolVar(&noLib, "nolib", false, "Do not load lib.d.ts files")
 	flag.StringVar(&pprofDir, "pprofdir", "", "Generate pprof CPU/memory profiles to the given directory")
 	flag.StringVar(&outDir, "outdir", "", "Emit to the given directory")
 	flag.Parse()
 
 	rootPath := flag.Arg(0)
 	compilerOptions := &core.CompilerOptions{Strict: core.TSTrue, Target: core.ScriptTargetESNext, ModuleKind: core.ModuleKindNodeNext, NoEmit: core.TSTrue}
+	if noLib {
+		compilerOptions.NoLib = core.TSTrue
+	}
 
 	currentDirectory, err := os.Getwd()
 	if err != nil {
@@ -77,7 +84,7 @@ func main() {
 		compilerOptions.OutDir = tspath.ResolvePath(currentDirectory, outDir)
 	}
 
-	fs := vfs.FromOS()
+	fs := bundled.WrapFS(vfs.FromOS())
 	useCaseSensitiveFileNames := fs.UseCaseSensitiveFileNames()
 	host := ts.NewCompilerHost(compilerOptions, currentDirectory, fs)
 
@@ -86,8 +93,15 @@ func main() {
 		fmt.Fprintf(os.Stderr, "Error: The directory %v does not exist.\n", normalizedRootPath)
 		os.Exit(1)
 	}
+	compilerOptions.ConfigFilePath = normalizedRootPath // This matters for type reference directive resolution
 
-	programOptions := ts.ProgramOptions{RootPath: normalizedRootPath, Options: compilerOptions, SingleThreaded: singleThreaded, Host: host}
+	programOptions := ts.ProgramOptions{
+		RootPath:           normalizedRootPath,
+		Options:            compilerOptions,
+		SingleThreaded:     singleThreaded,
+		Host:               host,
+		DefaultLibraryPath: bundled.LibPath(),
+	}
 
 	if pprofDir != "" {
 		profileSession := beginProfiling(pprofDir)
@@ -128,13 +142,13 @@ func main() {
 			UseCaseSensitiveFileNames: useCaseSensitiveFileNames,
 		}
 		if pretty {
-			formatOpts := ts.DiagnosticsFormattingOptions{
+			formatOpts := diagnosticwriter.FormattingOptions{
 				NewLine:             "\n",
 				ComparePathsOptions: comparePathOptions,
 			}
-			ts.FormatDiagnosticsWithColorAndContext(os.Stdout, diagnostics, &formatOpts)
+			diagnosticwriter.FormatDiagnosticsWithColorAndContext(os.Stdout, diagnostics, &formatOpts)
 			fmt.Fprintln(os.Stdout)
-			ts.WriteErrorSummaryText(os.Stdout, diagnostics, &formatOpts)
+			diagnosticwriter.WriteErrorSummaryText(os.Stdout, diagnostics, &formatOpts)
 		} else {
 			for _, diagnostic := range diagnostics {
 				printDiagnostic(diagnostic, 0, comparePathOptions)

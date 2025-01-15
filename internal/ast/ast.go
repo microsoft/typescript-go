@@ -332,8 +332,6 @@ func (n *Node) Type() *Node {
 		return n.AsJSDocNullableType().Type
 	case KindJSDocNonNullableType:
 		return n.AsJSDocNonNullableType().Type
-	case KindJSDocFunctionType:
-		return n.AsJSDocFunctionType().Type
 	case KindJSDocOptionalType:
 		return n.AsJSDocOptionalType().Type
 	case KindEnumMember, KindBindingElement, KindExportAssignment:
@@ -1028,10 +1026,6 @@ func (n *Node) AsJSDocAllType() *JSDocAllType {
 	return n.data.(*JSDocAllType)
 }
 
-func (n *Node) AsJSDocFunctionType() *JSDocFunctionType {
-	return n.data.(*JSDocFunctionType)
-}
-
 func (n *Node) AsJSDocVariadicType() *JSDocVariadicType {
 	return n.data.(*JSDocVariadicType)
 }
@@ -1679,6 +1673,10 @@ func (node *ForStatement) ForEachChild(v Visitor) bool {
 	return visit(v, node.Initializer) || visit(v, node.Condition) || visit(v, node.Incrementor) || visit(v, node.Statement)
 }
 
+func IsForStatement(node *Node) bool {
+	return node.Kind == KindForStatement
+}
+
 // ForInOrOfStatement
 
 type ForInOrOfStatement struct {
@@ -1764,6 +1762,10 @@ func (f *NodeFactory) NewReturnStatement(expression *Expression) *Node {
 
 func (node *ReturnStatement) ForEachChild(v Visitor) bool {
 	return visit(v, node.Expression)
+}
+
+func IsReturnStatement(node *Node) bool {
+	return node.Kind == KindReturnStatement
 }
 
 // WithStatement
@@ -2617,6 +2619,10 @@ func (node *ImportClause) ForEachChild(v Visitor) bool {
 
 func (node *ImportClause) Name() *DeclarationName {
 	return node.name
+}
+
+func IsImportClause(node *Node) bool {
+	return node.Kind == KindImportClause
 }
 
 // NamespaceImport
@@ -5144,25 +5150,6 @@ func (f *NodeFactory) NewJSDocAllType() *Node {
 	return newNode(KindJSDocAllType, data)
 }
 
-// JSDocFunctionType
-
-type JSDocFunctionType struct {
-	TypeNodeBase
-	Parameters *NodeList // NodeList[*ParameterDeclarationNode]
-	Type       *TypeNode
-}
-
-func (node *JSDocFunctionType) ForEachChild(v Visitor) bool {
-	return visitNodeList(v, node.Parameters) || visit(v, node.Type)
-}
-
-func (f *NodeFactory) NewJSDocFunctionType(parameters *NodeList, typeNode *TypeNode) *Node {
-	data := &JSDocFunctionType{}
-	data.Parameters = parameters
-	data.Type = typeNode
-	return newNode(KindJSDocFunctionType, data)
-}
-
 // JSDocVariadicType
 
 type JSDocVariadicType struct {
@@ -5675,6 +5662,7 @@ type SourceFile struct {
 	IsDeclarationFile           bool
 	IsBound                     bool
 	ModuleReferencesProcessed   bool
+	HasNoDefaultLib             bool
 	UsesUriStyleNodeCoreModules core.Tristate
 	SymbolCount                 int
 	ClassifiableNames           core.Set[string]
@@ -5682,7 +5670,6 @@ type SourceFile struct {
 	ModuleAugmentations         []*ModuleName      // []ModuleName
 	PatternAmbientModules       []PatternAmbientModule
 	AmbientModuleNames          []string
-	HasNoDefaultLib             bool
 	jsdocCache                  map[*Node][]*Node
 	Pragmas                     []Pragma
 	ReferencedFiles             []*FileReference
