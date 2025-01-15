@@ -334,7 +334,7 @@ func (n *Node) Type() *Node {
 		return n.AsJSDocNonNullableType().Type
 	case KindJSDocOptionalType:
 		return n.AsJSDocOptionalType().Type
-	case KindEnumMember, KindBindingElement, KindExportAssignment:
+	case KindEnumMember, KindBindingElement, KindExportAssignment, KindBinaryExpression:
 		return nil
 	default:
 		funcLike := n.FunctionLikeData()

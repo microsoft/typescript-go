@@ -595,7 +595,7 @@ func (b *Binder) bindWorker(node *ast.Node) bool {
 			setFlowNode(node, b.currentFlow)
 		}
 	case ast.KindBinaryExpression:
-		if isFunctionPropertyAssignment(node) {
+		if ast.IsFunctionPropertyAssignment(node) {
 			b.bindFunctionPropertyAssignment(node)
 		}
 		b.checkStrictModeBinaryExpression(node)
@@ -1082,7 +1082,7 @@ func addLateBoundAssignmentDeclarationToSymbol(node *ast.Node, symbol *ast.Symbo
 
 func (b *Binder) bindFunctionPropertyAssignment(node *ast.Node) {
 	expr := node.AsBinaryExpression()
-	parentName := expr.Left.Expression().AsIdentifier().Text
+	parentName := expr.Left.Expression().Text()
 	parentSymbol := b.lookupName(parentName, b.blockScopeContainer)
 	if parentSymbol == nil {
 		parentSymbol = b.lookupName(parentName, b.container)
@@ -1235,7 +1235,7 @@ func (b *Binder) lookupName(name string, container *ast.Node) *ast.Symbol {
 	if localsContainer != nil {
 		local := localsContainer.Locals[name]
 		if local != nil {
-			return local
+			return core.OrElse(local.ExportSymbol, local)
 		}
 	}
 	if ast.IsSourceFile(container) {
@@ -2788,23 +2788,6 @@ func isSignedNumericLiteral(node *ast.Node) bool {
 	if node.Kind == ast.KindPrefixUnaryExpression {
 		node := node.AsPrefixUnaryExpression()
 		return (node.Operator == ast.KindPlusToken || node.Operator == ast.KindMinusToken) && ast.IsNumericLiteral(node.Operand)
-	}
-	return false
-}
-
-func isFunctionPropertyAssignment(node *ast.Node) bool {
-	if node.Kind == ast.KindBinaryExpression {
-		expr := node.AsBinaryExpression()
-		if expr.OperatorToken.Kind == ast.KindEqualsToken {
-			switch expr.Left.Kind {
-			case ast.KindPropertyAccessExpression:
-				// F.id = expr
-				return ast.IsIdentifier(expr.Left.Expression()) && ast.IsIdentifier(expr.Left.Name())
-			case ast.KindElementAccessExpression:
-				// F[xxx] = expr
-				return ast.IsIdentifier(expr.Left.Expression())
-			}
-		}
 	}
 	return false
 }

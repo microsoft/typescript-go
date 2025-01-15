@@ -3220,8 +3220,12 @@ func (c *Checker) checkExpressionCachedEx(node *ast.Node, checkMode CheckMode) *
 // and requesting the contextual type might cause a circularity or other bad behaviour.
 // It sets the contextual type of the node to any before calling getTypeOfExpression.
 func (c *Checker) getContextFreeTypeOfExpression(node *ast.Node) *Type {
+	if cached := c.contextFreeTypes[node]; cached != nil {
+		return cached
+	}
 	c.pushContextualType(node, c.anyType, false /*isCache*/)
 	t := c.checkExpressionEx(node, CheckModeSkipContextSensitive)
+	c.contextFreeTypes[node] = t
 	c.popContextualType()
 	return t
 }
@@ -10606,7 +10610,7 @@ func (c *Checker) getTypeOfVariableOrParameterOrPropertyWorker(symbol *ast.Symbo
 	case ast.KindExportAssignment:
 		result = c.widenTypeForVariableLikeDeclaration(c.checkExpressionCached(declaration.AsExportAssignment().Expression), declaration, false /*reportErrors*/)
 	case ast.KindBinaryExpression:
-		result = c.getWidenedTypeForAssignmentDeclaration(symbol, nil)
+		result = c.getWidenedTypeForAssignmentDeclaration(symbol)
 	case ast.KindJsxAttribute:
 		result = c.checkJsxAttribute(declaration.AsJsxAttribute(), CheckModeNormal)
 	case ast.KindEnumMember:
@@ -11849,8 +11853,14 @@ func (c *Checker) getTypeOfPrototypeProperty(prototype *ast.Symbol) *Type {
 	return c.anyType // !!!
 }
 
-func (c *Checker) getWidenedTypeForAssignmentDeclaration(symbol *ast.Symbol, resolvedSymbol *ast.Symbol) *Type {
-	return c.anyType // !!!
+func (c *Checker) getWidenedTypeForAssignmentDeclaration(symbol *ast.Symbol) *Type {
+	var types []*Type
+	for _, declaration := range symbol.Declarations {
+		if ast.IsBinaryExpression(declaration) {
+			types = core.AppendIfUnique(types, c.getWidenedLiteralType(c.checkExpressionCached(declaration.AsBinaryExpression().Right)))
+		}
+	}
+	return c.getWidenedType(c.getUnionType(types))
 }
 
 func (c *Checker) widenTypeForVariableLikeDeclaration(t *Type, declaration *ast.Node, reportErrors bool) *Type {
@@ -13154,7 +13164,7 @@ func (c *Checker) getTypeWithThisArgument(t *Type, thisArgument *Type, needAppar
 func (c *Checker) addInheritedMembers(symbols ast.SymbolTable, baseSymbols []*ast.Symbol) ast.SymbolTable {
 	for _, base := range baseSymbols {
 		if !isStaticPrivateIdentifierProperty(base) {
-			if _, ok := symbols[base.Name]; !ok {
+			if s, ok := symbols[base.Name]; !ok || s.Flags&ast.SymbolFlagsValue == 0 {
 				if symbols == nil {
 					symbols = make(ast.SymbolTable)
 				}
@@ -13662,18 +13672,13 @@ func (c *Checker) getReturnTypeFromBody(fn *ast.Node, checkMode CheckMode) *Type
 		} else if len(returnTypes) != 0 {
 			returnType = c.getUnionTypeEx(returnTypes, UnionReductionSubtype, nil, nil)
 		}
-		// !!!
-		// TODO_IDENTIFIER := c.checkAndAggregateYieldOperandTypes(fn, checkMode)
-		// if core.Some(yieldTypes) {
-		// 	yieldType = c.getUnionType(yieldTypes, UnionReductionSubtype)
-		// } else {
-		// 	yieldType = nil
-		// }
-		// if core.Some(nextTypes) {
-		// 	nextType = c.getIntersectionType(nextTypes)
-		// } else {
-		// 	nextType = nil
-		// }
+		yieldTypes, nextTypes := c.checkAndAggregateYieldOperandTypes(fn, checkMode)
+		if len(yieldTypes) != 0 {
+			yieldType = c.getUnionTypeEx(yieldTypes, UnionReductionSubtype, nil, nil)
+		}
+		if len(nextTypes) != 0 {
+			nextType = c.getIntersectionType(nextTypes)
+		}
 	default:
 		types, isNeverReturning := c.checkAndAggregateReturnExpressionTypes(fn, checkMode)
 		if isNeverReturning {
@@ -13826,6 +13831,28 @@ func mayReturnNever(fn *ast.Node) bool {
 		return ast.IsObjectLiteralExpression(fn.Parent)
 	}
 	return false
+}
+
+func (c *Checker) checkAndAggregateYieldOperandTypes(fn *ast.Node, checkMode CheckMode) (yieldTypes []*Type, nextTypes []*Type) {
+	isAsync := (getFunctionFlags(fn) & FunctionFlagsAsync) != 0
+	forEachYieldExpression(getBodyOfNode(fn), func(yieldExpr *ast.Node) {
+		yieldExprType := c.undefinedWideningType
+		if yieldExpr.Expression() != nil {
+			yieldExprType = c.checkExpressionEx(yieldExpr.Expression(), checkMode)
+		}
+		yieldTypes = core.AppendIfUnique(yieldTypes, c.getYieldedTypeOfYieldExpression(yieldExpr, yieldExprType, c.anyType, isAsync))
+		var nextType *Type
+		if yieldExpr.AsYieldExpression().AsteriskToken != nil {
+			iterationTypes := c.getIterationTypesOfIterable(yieldExprType, core.IfElse(isAsync, IterationUseAsyncYieldStar, IterationUseYieldStar), yieldExpr.Expression())
+			nextType = iterationTypes.nextType
+		} else {
+			nextType = c.getContextualType(yieldExpr, ContextFlagsNone)
+		}
+		if nextType != nil {
+			nextTypes = core.AppendIfUnique(nextTypes, nextType)
+		}
+	})
+	return
 }
 
 func (c *Checker) createPromiseType(promisedType *Type) *Type {
@@ -22018,7 +22045,8 @@ func (c *Checker) getContextualTypeForBinaryOperand(node *ast.Node, contextFlags
 	switch binary.OperatorToken.Kind {
 	case ast.KindEqualsToken, ast.KindAmpersandAmpersandEqualsToken, ast.KindBarBarEqualsToken, ast.KindQuestionQuestionEqualsToken:
 		// In an assignment expression, the right operand is contextually typed by the type of the left operand.
-		if node == binary.Right {
+		// If the binary operator has a symbol, this is an assignment declaration and there is no contextual type.
+		if node == binary.Right && binary.Symbol == nil {
 			return c.getTypeOfExpression(binary.Left)
 		}
 	case ast.KindBarBarToken, ast.KindQuestionQuestionToken:
