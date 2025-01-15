@@ -1,10 +1,10 @@
-package compiler
+package checker
 
 import (
-	"maps"
+	"cmp"
 	"slices"
 	"strings"
-	"sync/atomic"
+	"sync"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/binder"
@@ -41,12 +41,21 @@ func (s *LinkStore[K, V]) has(key K) bool {
 
 // Atomic ids
 
-var nextMergeId atomic.Uint32
+var (
+	symbolMergeMutex sync.Mutex
+	nextMergeId      uint32
+)
 
 func getMergeId(symbol *ast.Symbol) ast.MergeId {
-	if symbol.MergeId == 0 {
-		symbol.MergeId = ast.MergeId(nextMergeId.Add(1))
+	if symbol.MergeId != 0 {
+		return symbol.MergeId
 	}
+	symbolMergeMutex.Lock()
+	if symbol.MergeId == 0 {
+		nextMergeId++
+		symbol.MergeId = ast.MergeId(nextMergeId)
+	}
+	symbolMergeMutex.Unlock()
 	return symbol.MergeId
 }
 
@@ -240,158 +249,6 @@ func isInCompoundLikeAssignment(node *ast.Node) bool {
 func isCompoundLikeAssignment(assignment *ast.Node) bool {
 	right := ast.SkipParentheses(assignment.AsBinaryExpression().Right)
 	return right.Kind == ast.KindBinaryExpression && isShiftOperatorOrHigher(right.AsBinaryExpression().OperatorToken.Kind)
-}
-
-type DiagnosticsCollection struct {
-	fileDiagnostics    map[string][]*ast.Diagnostic
-	nonFileDiagnostics []*ast.Diagnostic
-}
-
-func (c *DiagnosticsCollection) add(diagnostic *ast.Diagnostic) {
-	if diagnostic.File() != nil {
-		fileName := diagnostic.File().FileName()
-		if c.fileDiagnostics == nil {
-			c.fileDiagnostics = make(map[string][]*ast.Diagnostic)
-		}
-		c.fileDiagnostics[fileName] = core.InsertSorted(c.fileDiagnostics[fileName], diagnostic, CompareDiagnostics)
-	} else {
-		c.nonFileDiagnostics = core.InsertSorted(c.nonFileDiagnostics, diagnostic, CompareDiagnostics)
-	}
-}
-
-func (c *DiagnosticsCollection) lookup(diagnostic *ast.Diagnostic) *ast.Diagnostic {
-	var diagnostics []*ast.Diagnostic
-	if diagnostic.File() != nil {
-		diagnostics = c.fileDiagnostics[diagnostic.File().FileName()]
-	} else {
-		diagnostics = c.nonFileDiagnostics
-	}
-	if i, ok := slices.BinarySearchFunc(diagnostics, diagnostic, CompareDiagnostics); ok {
-		return diagnostics[i]
-	}
-	return nil
-}
-
-func (c *DiagnosticsCollection) GetGlobalDiagnostics() []*ast.Diagnostic {
-	return c.nonFileDiagnostics
-}
-
-func (c *DiagnosticsCollection) GetDiagnosticsForFile(fileName string) []*ast.Diagnostic {
-	return c.fileDiagnostics[fileName]
-}
-
-func (c *DiagnosticsCollection) GetDiagnostics() []*ast.Diagnostic {
-	fileNames := slices.Collect(maps.Keys(c.fileDiagnostics))
-	slices.Sort(fileNames)
-	diagnostics := c.nonFileDiagnostics
-	for _, fileName := range fileNames {
-		diagnostics = append(diagnostics, c.fileDiagnostics[fileName]...)
-	}
-	return diagnostics
-}
-
-func sortAndDeduplicateDiagnostics(diagnostics []*ast.Diagnostic) []*ast.Diagnostic {
-	result := slices.Clone(diagnostics)
-	slices.SortFunc(result, CompareDiagnostics)
-	return slices.CompactFunc(result, equalDiagnostics)
-}
-
-func equalDiagnostics(d1, d2 *ast.Diagnostic) bool {
-	return getDiagnosticPath(d1) == getDiagnosticPath(d2) &&
-		d1.Loc() == d2.Loc() &&
-		d1.Code() == d2.Code() &&
-		d1.Message() == d2.Message() &&
-		slices.EqualFunc(d1.MessageChain(), d2.MessageChain(), equalMessageChain) &&
-		slices.EqualFunc(d1.RelatedInformation(), d2.RelatedInformation(), equalDiagnostics)
-}
-
-func equalMessageChain(c1, c2 *ast.Diagnostic) bool {
-	return c1.Code() == c2.Code() &&
-		c1.Message() == c2.Message() &&
-		slices.EqualFunc(c1.MessageChain(), c2.MessageChain(), equalMessageChain)
-}
-
-func CompareDiagnostics(d1, d2 *ast.Diagnostic) int {
-	c := strings.Compare(getDiagnosticPath(d1), getDiagnosticPath(d2))
-	if c != 0 {
-		return c
-	}
-	c = d1.Loc().Pos() - d2.Loc().Pos()
-	if c != 0 {
-		return c
-	}
-	c = d1.Loc().End() - d2.Loc().End()
-	if c != 0 {
-		return c
-	}
-	c = int(d1.Code()) - int(d2.Code())
-	if c != 0 {
-		return c
-	}
-	c = strings.Compare(d1.Message(), d2.Message())
-	if c != 0 {
-		return c
-	}
-	c = compareMessageChainSize(d1.MessageChain(), d2.MessageChain())
-	if c != 0 {
-		return c
-	}
-	c = compareMessageChainContent(d1.MessageChain(), d2.MessageChain())
-	if c != 0 {
-		return c
-	}
-	return compareRelatedInfo(d1.RelatedInformation(), d2.RelatedInformation())
-}
-
-func compareMessageChainSize(c1, c2 []*ast.Diagnostic) int {
-	c := len(c2) - len(c1)
-	if c != 0 {
-		return c
-	}
-	for i := range c1 {
-		c = compareMessageChainSize(c1[i].MessageChain(), c2[i].MessageChain())
-		if c != 0 {
-			return c
-		}
-	}
-	return 0
-}
-
-func compareMessageChainContent(c1, c2 []*ast.Diagnostic) int {
-	for i := range c1 {
-		c := strings.Compare(c1[i].Message(), c2[i].Message())
-		if c != 0 {
-			return c
-		}
-		if c1[i].MessageChain() != nil {
-			c = compareMessageChainContent(c1[i].MessageChain(), c2[i].MessageChain())
-			if c != 0 {
-				return c
-			}
-		}
-	}
-	return 0
-}
-
-func compareRelatedInfo(r1, r2 []*ast.Diagnostic) int {
-	c := len(r2) - len(r1)
-	if c != 0 {
-		return c
-	}
-	for i := range r1 {
-		c = CompareDiagnostics(r1[i], r2[i])
-		if c != 0 {
-			return c
-		}
-	}
-	return 0
-}
-
-func getDiagnosticPath(d *ast.Diagnostic) string {
-	if d.File() != nil {
-		return d.File().FileName()
-	}
-	return ""
 }
 
 func getAssertedTypeNode(node *ast.Node) *ast.Node {
@@ -991,7 +848,7 @@ func isValidTypeOnlyAliasUseSite(useSite *ast.Node) bool {
 		ast.IsPartOfTypeQuery(useSite) ||
 		isIdentifierInNonEmittingHeritageClause(useSite) ||
 		isPartOfPossiblyValidTypeOrAbstractComputedPropertyName(useSite) ||
-		!(IsExpressionNode(useSite) || isShorthandPropertyNameUseSite(useSite))
+		!(ast.IsExpressionNode(useSite) || isShorthandPropertyNameUseSite(useSite))
 }
 
 func isIdentifierInNonEmittingHeritageClause(node *ast.Node) bool {
@@ -1060,184 +917,6 @@ func nodeCanBeDecorated(useLegacyDecorators bool, node *ast.Node, parent *ast.No
 	return false
 }
 
-func IsExpressionNode(node *ast.Node) bool {
-	switch node.Kind {
-	case ast.KindSuperKeyword, ast.KindNullKeyword, ast.KindTrueKeyword, ast.KindFalseKeyword, ast.KindRegularExpressionLiteral,
-		ast.KindArrayLiteralExpression, ast.KindObjectLiteralExpression, ast.KindPropertyAccessExpression, ast.KindElementAccessExpression,
-		ast.KindCallExpression, ast.KindNewExpression, ast.KindTaggedTemplateExpression, ast.KindAsExpression, ast.KindTypeAssertionExpression,
-		ast.KindSatisfiesExpression, ast.KindNonNullExpression, ast.KindParenthesizedExpression, ast.KindFunctionExpression,
-		ast.KindClassExpression, ast.KindArrowFunction, ast.KindVoidExpression, ast.KindDeleteExpression, ast.KindTypeOfExpression,
-		ast.KindPrefixUnaryExpression, ast.KindPostfixUnaryExpression, ast.KindBinaryExpression, ast.KindConditionalExpression,
-		ast.KindSpreadElement, ast.KindTemplateExpression, ast.KindOmittedExpression, ast.KindJsxElement, ast.KindJsxSelfClosingElement,
-		ast.KindJsxFragment, ast.KindYieldExpression, ast.KindAwaitExpression, ast.KindMetaProperty:
-		return true
-	case ast.KindExpressionWithTypeArguments:
-		return !ast.IsHeritageClause(node.Parent)
-	case ast.KindQualifiedName:
-		for node.Parent.Kind == ast.KindQualifiedName {
-			node = node.Parent
-		}
-		return ast.IsTypeQueryNode(node.Parent) || isJSDocLinkLike(node.Parent) || isJSXTagName(node)
-	case ast.KindJSDocMemberName:
-		return ast.IsTypeQueryNode(node.Parent) || isJSDocLinkLike(node.Parent) || isJSXTagName(node)
-	case ast.KindPrivateIdentifier:
-		return ast.IsBinaryExpression(node.Parent) && node.Parent.AsBinaryExpression().Left == node && node.Parent.AsBinaryExpression().OperatorToken.Kind == ast.KindInKeyword
-	case ast.KindIdentifier:
-		if ast.IsTypeQueryNode(node.Parent) || isJSDocLinkLike(node.Parent) || isJSXTagName(node) {
-			return true
-		}
-		fallthrough
-	case ast.KindNumericLiteral, ast.KindBigIntLiteral, ast.KindStringLiteral, ast.KindNoSubstitutionTemplateLiteral, ast.KindThisKeyword:
-		return isInExpressionContext(node)
-	default:
-		return false
-	}
-}
-
-func isInExpressionContext(node *ast.Node) bool {
-	parent := node.Parent
-	switch parent.Kind {
-	case ast.KindVariableDeclaration:
-		return parent.AsVariableDeclaration().Initializer == node
-	case ast.KindParameter:
-		return parent.AsParameterDeclaration().Initializer == node
-	case ast.KindPropertyDeclaration:
-		return parent.AsPropertyDeclaration().Initializer == node
-	case ast.KindPropertySignature:
-		return parent.AsPropertySignatureDeclaration().Initializer == node
-	case ast.KindEnumMember:
-		return parent.AsEnumMember().Initializer == node
-	case ast.KindPropertyAssignment:
-		return parent.AsPropertyAssignment().Initializer == node
-	case ast.KindBindingElement:
-		return parent.AsBindingElement().Initializer == node
-	case ast.KindExpressionStatement:
-		return parent.AsExpressionStatement().Expression == node
-	case ast.KindIfStatement:
-		return parent.AsIfStatement().Expression == node
-	case ast.KindDoStatement:
-		return parent.AsDoStatement().Expression == node
-	case ast.KindWhileStatement:
-		return parent.AsWhileStatement().Expression == node
-	case ast.KindReturnStatement:
-		return parent.AsReturnStatement().Expression == node
-	case ast.KindWithStatement:
-		return parent.AsWithStatement().Expression == node
-	case ast.KindSwitchStatement:
-		return parent.AsSwitchStatement().Expression == node
-	case ast.KindCaseClause, ast.KindDefaultClause:
-		return parent.AsCaseOrDefaultClause().Expression == node
-	case ast.KindThrowStatement:
-		return parent.AsThrowStatement().Expression == node
-	case ast.KindForStatement:
-		s := parent.AsForStatement()
-		return s.Initializer == node && s.Initializer.Kind != ast.KindVariableDeclarationList || s.Condition == node || s.Incrementor == node
-	case ast.KindForInStatement, ast.KindForOfStatement:
-		s := parent.AsForInOrOfStatement()
-		return s.Initializer == node && s.Initializer.Kind != ast.KindVariableDeclarationList || s.Expression == node
-	case ast.KindTypeAssertionExpression:
-		return parent.AsTypeAssertion().Expression == node
-	case ast.KindAsExpression:
-		return parent.AsAsExpression().Expression == node
-	case ast.KindTemplateSpan:
-		return parent.AsTemplateSpan().Expression == node
-	case ast.KindComputedPropertyName:
-		return parent.AsComputedPropertyName().Expression == node
-	case ast.KindDecorator, ast.KindJsxExpression, ast.KindJsxSpreadAttribute, ast.KindSpreadAssignment:
-		return true
-	case ast.KindExpressionWithTypeArguments:
-		return parent.AsExpressionWithTypeArguments().Expression == node && !isPartOfTypeNode(parent)
-	case ast.KindShorthandPropertyAssignment:
-		return parent.AsShorthandPropertyAssignment().ObjectAssignmentInitializer == node
-	case ast.KindSatisfiesExpression:
-		return parent.AsSatisfiesExpression().Expression == node
-	default:
-		return IsExpressionNode(parent)
-	}
-}
-
-func isPartOfTypeNode(node *ast.Node) bool {
-	kind := node.Kind
-	if kind >= ast.KindFirstTypeNode && kind <= ast.KindLastTypeNode {
-		return true
-	}
-	switch node.Kind {
-	case ast.KindAnyKeyword, ast.KindUnknownKeyword, ast.KindNumberKeyword, ast.KindBigIntKeyword, ast.KindStringKeyword,
-		ast.KindBooleanKeyword, ast.KindSymbolKeyword, ast.KindObjectKeyword, ast.KindUndefinedKeyword, ast.KindNullKeyword,
-		ast.KindNeverKeyword:
-		return true
-	case ast.KindExpressionWithTypeArguments:
-		return isPartOfTypeExpressionWithTypeArguments(node)
-	case ast.KindTypeParameter:
-		return node.Parent.Kind == ast.KindMappedType || node.Parent.Kind == ast.KindInferType
-	case ast.KindIdentifier:
-		parent := node.Parent
-		if ast.IsQualifiedName(parent) && parent.AsQualifiedName().Right == node {
-			return isPartOfTypeNodeInParent(parent)
-		}
-		if ast.IsPropertyAccessExpression(parent) && parent.AsPropertyAccessExpression().Name() == node {
-			return isPartOfTypeNodeInParent(parent)
-		}
-		return isPartOfTypeNodeInParent(node)
-	case ast.KindQualifiedName, ast.KindPropertyAccessExpression, ast.KindThisKeyword:
-		return isPartOfTypeNodeInParent(node)
-	}
-	return false
-}
-
-func isPartOfTypeNodeInParent(node *ast.Node) bool {
-	parent := node.Parent
-	// Do not recursively call isPartOfTypeNode on the parent. In the example:
-	//
-	//     let a: A.B.C;
-	//
-	// Calling isPartOfTypeNode would consider the qualified name A.B a type node.
-	// Only C and A.B.C are type nodes.
-	if parent.Kind >= ast.KindFirstTypeNode && parent.Kind <= ast.KindLastTypeNode {
-		return true
-	}
-	switch parent.Kind {
-	case ast.KindTypeQuery:
-		return false
-	case ast.KindImportType:
-		return !parent.AsImportTypeNode().IsTypeOf
-	case ast.KindExpressionWithTypeArguments:
-		return isPartOfTypeExpressionWithTypeArguments(parent)
-	case ast.KindTypeParameter:
-		return node == parent.AsTypeParameter().Constraint
-	case ast.KindVariableDeclaration, ast.KindParameter, ast.KindPropertyDeclaration, ast.KindPropertySignature, ast.KindFunctionDeclaration,
-		ast.KindFunctionExpression, ast.KindArrowFunction, ast.KindConstructor, ast.KindMethodDeclaration, ast.KindMethodSignature,
-		ast.KindGetAccessor, ast.KindSetAccessor, ast.KindCallSignature, ast.KindConstructSignature, ast.KindIndexSignature,
-		ast.KindTypeAssertionExpression:
-		return node == parent.Type()
-	case ast.KindCallExpression, ast.KindNewExpression, ast.KindTaggedTemplateExpression:
-		return slices.Contains(parent.TypeArguments(), node)
-	}
-	return false
-}
-
-func isPartOfTypeExpressionWithTypeArguments(node *ast.Node) bool {
-	parent := node.Parent
-	return ast.IsHeritageClause(parent) && (!ast.IsClassLike(parent.Parent) || parent.AsHeritageClause().Token == ast.KindImplementsKeyword)
-}
-
-func isJSDocLinkLike(node *ast.Node) bool {
-	return ast.NodeKindIs(node, ast.KindJSDocLink, ast.KindJSDocLinkCode, ast.KindJSDocLinkPlain)
-}
-
-func isJSXTagName(node *ast.Node) bool {
-	parent := node.Parent
-	switch parent.Kind {
-	case ast.KindJsxOpeningElement:
-		return parent.AsJsxOpeningElement().TagName == node
-	case ast.KindJsxSelfClosingElement:
-		return parent.AsJsxSelfClosingElement().TagName == node
-	case ast.KindJsxClosingElement:
-		return parent.AsJsxClosingElement().TagName == node
-	}
-	return false
-}
-
 func isShorthandPropertyNameUseSite(useSite *ast.Node) bool {
 	return ast.IsIdentifier(useSite) && ast.IsShorthandPropertyAssignment(useSite.Parent) && useSite.Parent.AsShorthandPropertyAssignment().Name() == useSite
 }
@@ -1289,51 +968,6 @@ func canHaveLocals(node *ast.Node) bool {
 		return true
 	}
 	return false
-}
-
-func isAnyImportOrReExport(node *ast.Node) bool {
-	return isAnyImportSyntax(node) || ast.IsExportDeclaration(node)
-}
-
-func isAnyImportSyntax(node *ast.Node) bool {
-	return ast.NodeKindIs(node, ast.KindImportDeclaration, ast.KindImportEqualsDeclaration)
-}
-
-func getExternalModuleName(node *ast.Node) *ast.Node {
-	switch node.Kind {
-	case ast.KindImportDeclaration:
-		return node.AsImportDeclaration().ModuleSpecifier
-	case ast.KindExportDeclaration:
-		return node.AsExportDeclaration().ModuleSpecifier
-	case ast.KindImportEqualsDeclaration:
-		if node.AsImportEqualsDeclaration().ModuleReference.Kind == ast.KindExternalModuleReference {
-			return node.AsImportEqualsDeclaration().ModuleReference.AsExternalModuleReference().Expression_
-		}
-		return nil
-	case ast.KindImportType:
-		return getImportTypeNodeLiteral(node)
-	case ast.KindCallExpression:
-		return node.AsCallExpression().Arguments.Nodes[0]
-	case ast.KindModuleDeclaration:
-		if ast.IsStringLiteral(node.AsModuleDeclaration().Name()) {
-			return node.AsModuleDeclaration().Name()
-		}
-		return nil
-	}
-	panic("Unhandled case in getExternalModuleName")
-}
-
-func getImportTypeNodeLiteral(node *ast.Node) *ast.Node {
-	if ast.IsImportTypeNode(node) {
-		importTypeNode := node.AsImportTypeNode()
-		if ast.IsLiteralTypeNode(importTypeNode.Argument) {
-			literalTypeNode := importTypeNode.Argument.AsLiteralTypeNode()
-			if ast.IsStringLiteral(literalTypeNode.Literal) {
-				return literalTypeNode.Literal
-			}
-		}
-	}
-	return nil
 }
 
 func isShorthandAmbientModuleSymbol(moduleSymbol *ast.Symbol) bool {
@@ -1463,10 +1097,6 @@ func isExternalModuleAugmentation(node *ast.Node) bool {
 	return ast.IsAmbientModule(node) && ast.IsModuleAugmentationExternal(node)
 }
 
-func isJsonSourceFile(file *ast.SourceFile) bool {
-	return file.ScriptKind == core.ScriptKindJSON
-}
-
 func isSyntacticDefault(node *ast.Node) bool {
 	return (ast.IsExportAssignment(node) && !node.AsExportAssignment().IsExportEquals) ||
 		ast.HasSyntacticModifier(node, ast.ModifierFlagsDefault) ||
@@ -1521,7 +1151,7 @@ func isQuestionToken(node *ast.Node) bool {
 }
 
 func isExclamationToken(node *ast.Node) bool {
-	return node != nil && node.Kind == ast.KindQuestionToken
+	return node != nil && node.Kind == ast.KindExclamationToken
 }
 
 func isOptionalDeclaration(declaration *ast.Node) bool {
@@ -1576,43 +1206,351 @@ func createSymbolTable(symbols []*ast.Symbol) ast.SymbolTable {
 	return result
 }
 
-func sortSymbols(symbols []*ast.Symbol) {
-	slices.SortFunc(symbols, compareSymbols)
+func (c *Checker) sortSymbols(symbols []*ast.Symbol) {
+	slices.SortFunc(symbols, c.compareSymbols)
 }
 
-func compareSymbols(s1, s2 *ast.Symbol) int {
+func (c *Checker) compareSymbolsWorker(s1, s2 *ast.Symbol) int {
 	if s1 == s2 {
 		return 0
 	}
-	if s1.ValueDeclaration != nil && s2.ValueDeclaration != nil {
-		// Symbols with the same unmerged parent are always in the same file
-		if s1.Parent != s2.Parent {
-			f1 := ast.GetSourceFileOfNode(s1.ValueDeclaration)
-			f2 := ast.GetSourceFileOfNode(s2.ValueDeclaration)
-			if f1 != f2 {
-				// Compare the full paths (no two files should have the same full path)
-				return strings.Compare(string(f1.Path()), string(f2.Path()))
-			}
-			// In the same file, compare source positions
-		}
-		r := s1.ValueDeclaration.Pos() - s2.ValueDeclaration.Pos()
-		if r != 0 {
-			return r
-		}
-	}
-	// Symbols with value declarations sort before symbols without
-	if s1.ValueDeclaration != nil && s2.ValueDeclaration == nil {
-		return -1
-	}
-	if s1.ValueDeclaration == nil && s2.ValueDeclaration != nil {
+	if s1 == nil {
 		return 1
 	}
-	// Sort by name
-	r := strings.Compare(s1.Name, s2.Name)
-	if r != 0 {
+	if s2 == nil {
+		return -1
+	}
+	if len(s1.Declarations) != 0 && len(s2.Declarations) != 0 {
+		if r := c.compareNodes(s1.Declarations[0], s2.Declarations[0]); r != 0 {
+			return r
+		}
+	} else if len(s1.Declarations) != 0 {
+		return -1
+	} else if len(s2.Declarations) != 0 {
+		return 1
+	}
+	if r := strings.Compare(s1.Name, s2.Name); r != 0 {
 		return r
 	}
-	panic("Symbols must have unique names to be sorted")
+	// Fall back to symbol IDs. This is a last resort that should happen only when symbols have
+	// no declaration and duplicate names.
+	return int(ast.GetSymbolId(s1)) - int(ast.GetSymbolId(s2))
+}
+
+func (c *Checker) compareNodes(n1, n2 *ast.Node) int {
+	if n1 == n2 {
+		return 0
+	}
+	if n1 == nil {
+		return 1
+	}
+	if n2 == nil {
+		return -1
+	}
+	f1 := c.fileIndexMap[ast.GetSourceFileOfNode(n1)]
+	f2 := c.fileIndexMap[ast.GetSourceFileOfNode(n2)]
+	if f1 != f2 {
+		// Order by index of file in the containing program
+		return f1 - f2
+	}
+	// In the same file, order by source position
+	return n1.Pos() - n2.Pos()
+}
+
+func compareTypes(t1, t2 *Type) int {
+	if t1 == t2 {
+		return 0
+	}
+	if t1 == nil {
+		return -1
+	}
+	if t2 == nil {
+		return 1
+	}
+	if t1.checker != t2.checker {
+		panic("Cannot compare types from different checkers")
+	}
+	// First sort in order of increasing type flags values.
+	if c := getSortOrderFlags(t1) - getSortOrderFlags(t2); c != 0 {
+		return c
+	}
+	// Order named types by name and, in the case of aliased types, by alias type arguments.
+	if c := compareTypeNames(t1, t2); c != 0 {
+		return c
+	}
+	// We have unnamed types or types with identical names. Now sort by data specific to the type.
+	switch {
+	case t1.flags&(TypeFlagsAny|TypeFlagsUnknown|TypeFlagsString|TypeFlagsNumber|TypeFlagsBoolean|TypeFlagsBigInt|TypeFlagsESSymbol|TypeFlagsVoid|TypeFlagsUndefined|TypeFlagsNull|TypeFlagsNever|TypeFlagsNonPrimitive) != 0:
+		// Only distinguished by type IDs, handled below.
+	case t1.flags&TypeFlagsObject != 0:
+		// Order unnamed or identically named object types by symbol.
+		if c := t1.checker.compareSymbols(t1.symbol, t2.symbol); c != 0 {
+			return c
+		}
+		// When object types have the same or no symbol, order by kind. We order type references before other kinds.
+		if t1.objectFlags&ObjectFlagsReference != 0 && t2.objectFlags&ObjectFlagsReference != 0 {
+			r1 := t1.AsTypeReference()
+			r2 := t2.AsTypeReference()
+			if r1.target.objectFlags&ObjectFlagsTuple != 0 && r2.target.objectFlags&ObjectFlagsTuple != 0 {
+				// Tuple types have no associated symbol, instead we order by tuple element information.
+				if c := compareTupleTypes(r1.target.AsTupleType(), r2.target.AsTupleType()); c != 0 {
+					return c
+				}
+			}
+			// Here we know we have references to instantiations of the same type because we have matching targets.
+			if r1.node == nil && r2.node == nil {
+				// Non-deferred type references with the same target are sorted by their type argument lists.
+				if c := compareTypeLists(t1.AsTypeReference().resolvedTypeArguments, t2.AsTypeReference().resolvedTypeArguments); c != 0 {
+					return c
+				}
+			} else {
+				// Deferred type references with the same target are ordered by the source location of the reference.
+				if c := t1.checker.compareNodes(r1.node, r2.node); c != 0 {
+					return c
+				}
+				// Instantiations of the same deferred type reference are ordered by their associated type mappers
+				// (which reflect the mapping of in-scope type parameters to type arguments).
+				if c := compareTypeMappers(t1.AsObjectType().mapper, t2.AsObjectType().mapper); c != 0 {
+					return c
+				}
+			}
+		} else if t1.objectFlags&ObjectFlagsReference != 0 {
+			return -1
+		} else if t2.objectFlags&ObjectFlagsReference != 0 {
+			return 1
+		} else {
+			// Order unnamed non-reference object types by kind associated type mappers. Reverse mapped types have
+			// neither symbols nor mappers so they're ultimately ordered by unstable type IDs, but given their rarity
+			// this should be fine.
+			if c := int(t1.objectFlags&ObjectFlagsObjectTypeKindMask) - int(t2.objectFlags&ObjectFlagsObjectTypeKindMask); c != 0 {
+				return c
+			}
+			if c := compareTypeMappers(t1.AsObjectType().mapper, t2.AsObjectType().mapper); c != 0 {
+				return c
+			}
+		}
+	case t1.flags&TypeFlagsUnion != 0:
+		// Unions are ordered by origin and then constituent type lists.
+		o1 := t1.AsUnionType().origin
+		o2 := t2.AsUnionType().origin
+		if o1 == nil && o2 == nil {
+			if c := compareTypeLists(t1.Types(), t2.Types()); c != 0 {
+				return c
+			}
+		} else if o1 == nil {
+			return 1
+		} else if o2 == nil {
+			return -1
+		} else {
+			if c := compareTypes(o1, o2); c != 0 {
+				return c
+			}
+		}
+	case t1.flags&TypeFlagsIntersection != 0:
+		// Intersections are ordered by their constituent type lists.
+		if c := compareTypeLists(t1.Types(), t2.Types()); c != 0 {
+			return c
+		}
+	case t1.flags&(TypeFlagsEnumLiteral|TypeFlagsUniqueESSymbol) != 0:
+		// Enum members are ordered by their symbol (and thus their declaration order).
+		if c := t1.checker.compareSymbols(t1.symbol, t2.symbol); c != 0 {
+			return c
+		}
+	case t1.flags&TypeFlagsStringLiteral != 0:
+		// String literal types are ordered by their values.
+		if c := strings.Compare(t1.AsLiteralType().value.(string), t2.AsLiteralType().value.(string)); c != 0 {
+			return c
+		}
+	case t1.flags&TypeFlagsNumberLiteral != 0:
+		// Numeric literal types are ordered by their values.
+		if c := cmp.Compare(t1.AsLiteralType().value.(jsnum.Number), t2.AsLiteralType().value.(jsnum.Number)); c != 0 {
+			return c
+		}
+	case t1.flags&TypeFlagsBooleanLiteral != 0:
+		b1 := t1.AsLiteralType().value.(bool)
+		b2 := t2.AsLiteralType().value.(bool)
+		if b1 != b2 {
+			if b1 {
+				return 1
+			}
+			return -1
+		}
+	case t1.flags&TypeFlagsTypeParameter != 0:
+		if c := t1.checker.compareSymbols(t1.symbol, t2.symbol); c != 0 {
+			return c
+		}
+	case t1.flags&TypeFlagsIndex != 0:
+		if c := compareTypes(t1.AsIndexType().target, t2.AsIndexType().target); c != 0 {
+			return c
+		}
+		if c := int(t1.AsIndexType().flags) - int(t2.AsIndexType().flags); c != 0 {
+			return c
+		}
+	case t1.flags&TypeFlagsIndexedAccess != 0:
+		if c := compareTypes(t1.AsIndexedAccessType().objectType, t2.AsIndexedAccessType().objectType); c != 0 {
+			return c
+		}
+		if c := compareTypes(t1.AsIndexedAccessType().indexType, t2.AsIndexedAccessType().indexType); c != 0 {
+			return c
+		}
+	case t1.flags&TypeFlagsConditional != 0:
+		if c := t1.checker.compareNodes(t1.AsConditionalType().root.node.AsNode(), t2.AsConditionalType().root.node.AsNode()); c != 0 {
+			return c
+		}
+		if c := compareTypeMappers(t1.AsConditionalType().mapper, t2.AsConditionalType().mapper); c != 0 {
+			return c
+		}
+	case t1.flags&TypeFlagsSubstitution != 0:
+		if c := compareTypes(t1.AsSubstitutionType().baseType, t2.AsSubstitutionType().baseType); c != 0 {
+			return c
+		}
+		if c := compareTypes(t1.AsSubstitutionType().constraint, t2.AsSubstitutionType().constraint); c != 0 {
+			return c
+		}
+	case t1.flags&TypeFlagsTemplateLiteral != 0:
+		if c := slices.Compare(t1.AsTemplateLiteralType().texts, t2.AsTemplateLiteralType().texts); c != 0 {
+			return c
+		}
+		if c := compareTypeLists(t1.AsTemplateLiteralType().types, t2.AsTemplateLiteralType().types); c != 0 {
+			return c
+		}
+	case t1.flags&TypeFlagsStringMapping != 0:
+		if c := compareTypes(t1.AsStringMappingType().target, t2.AsStringMappingType().target); c != 0 {
+			return c
+		}
+	}
+	// Fall back to type IDs. This results in type creation order for built-in types.
+	return int(t1.id) - int(t2.id)
+}
+
+func getSortOrderFlags(t *Type) int {
+	// We want enum literal and computed values to be ordered by their declarations, so we merge TypeFlagsEnum into
+	// TypeFlagsEnumLiteral and clear TypeFlagsEnum.
+	return int((t.flags&TypeFlagsEnum)>>1 | t.flags&^TypeFlagsEnum)
+}
+
+func compareTypeNames(t1, t2 *Type) int {
+	s1 := getTypeNameSymbol(t1)
+	s2 := getTypeNameSymbol(t2)
+	if s1 == s2 {
+		if t1.alias != nil {
+			return compareTypeLists(t1.alias.typeArguments, t2.alias.typeArguments)
+		}
+		return 0
+	}
+	if s1 == nil {
+		return 1
+	}
+	if s2 == nil {
+		return -1
+	}
+	return strings.Compare(s1.Name, s2.Name)
+}
+
+func getTypeNameSymbol(t *Type) *ast.Symbol {
+	if t.alias != nil {
+		return t.alias.symbol
+	}
+	if t.flags&(TypeFlagsTypeParameter|TypeFlagsStringMapping) != 0 || t.objectFlags&(ObjectFlagsClassOrInterface|ObjectFlagsReference) != 0 {
+		return t.symbol
+	}
+	return nil
+}
+
+func getObjectTypeName(t *Type) *ast.Symbol {
+	if t.objectFlags&(ObjectFlagsClassOrInterface|ObjectFlagsReference) != 0 {
+		return t.symbol
+	}
+	return nil
+}
+
+func compareTupleTypes(t1, t2 *TupleType) int {
+	if t1 == t2 {
+		return 0
+	}
+	if t1.readonly != t2.readonly {
+		return core.IfElse(t1.readonly, 1, -1)
+	}
+	if len(t1.elementInfos) != len(t2.elementInfos) {
+		return len(t1.elementInfos) - len(t2.elementInfos)
+	}
+	for i := range t1.elementInfos {
+		if c := int(t1.elementInfos[i].flags) - int(t2.elementInfos[i].flags); c != 0 {
+			return c
+		}
+	}
+	for i := range t1.elementInfos {
+		if c := compareElementLabels(t1.elementInfos[i].labeledDeclaration, t2.elementInfos[i].labeledDeclaration); c != 0 {
+			return c
+		}
+	}
+	return 0
+}
+
+func compareElementLabels(n1, n2 *ast.Node) int {
+	if n1 == n2 {
+		return 0
+	}
+	if n1 == nil {
+		return -1
+	}
+	if n2 == nil {
+		return 1
+	}
+	return strings.Compare(n1.Name().Text(), n2.Name().Text())
+}
+
+func compareTypeLists(s1, s2 []*Type) int {
+	if len(s1) != len(s2) {
+		return len(s1) - len(s2)
+	}
+	for i, t1 := range s1 {
+		if c := compareTypes(t1, s2[i]); c != 0 {
+			return c
+		}
+	}
+	return 0
+}
+
+func compareTypeMappers(m1, m2 *TypeMapper) int {
+	if m1 == m2 {
+		return 0
+	}
+	if m1 == nil {
+		return 1
+	}
+	if m2 == nil {
+		return -1
+	}
+	kind1 := m1.Kind()
+	kind2 := m2.Kind()
+	if kind1 != kind2 {
+		return int(kind1) - int(kind2)
+	}
+	switch kind1 {
+	case TypeMapperKindSimple:
+		m1 := m1.data.(*SimpleTypeMapper)
+		m2 := m2.data.(*SimpleTypeMapper)
+		if c := compareTypes(m1.source, m2.source); c != 0 {
+			return c
+		}
+		return compareTypes(m1.target, m2.target)
+	case TypeMapperKindArray:
+		m1 := m1.data.(*ArrayTypeMapper)
+		m2 := m2.data.(*ArrayTypeMapper)
+		if c := compareTypeLists(m1.sources, m2.sources); c != 0 {
+			return c
+		}
+		return compareTypeLists(m1.targets, m2.targets)
+	case TypeMapperKindMerged:
+		m1 := m1.data.(*MergedTypeMapper)
+		m2 := m2.data.(*MergedTypeMapper)
+		if c := compareTypeMappers(m1.m1, m2.m1); c != 0 {
+			return c
+		}
+		return compareTypeMappers(m1.m2, m2.m2)
+	}
+	return 0
 }
 
 func getClassLikeDeclarationOfSymbol(symbol *ast.Symbol) *ast.Node {
@@ -2509,4 +2447,101 @@ func isTypeDeclarationName(name *ast.Node) bool {
 
 func getIndexSymbolFromSymbolTable(symbolTable ast.SymbolTable) *ast.Symbol {
 	return symbolTable[ast.InternalSymbolNameIndex]
+}
+
+// Indicates whether the result of an `Expression` will be unused.
+// NOTE: This requires a node with a valid `parent` pointer.
+func expressionResultIsUnused(node *ast.Node) bool {
+	for {
+		parent := node.Parent
+		// walk up parenthesized expressions, but keep a pointer to the top-most parenthesized expression
+		if ast.IsParenthesizedExpression(parent) {
+			node = parent
+			continue
+		}
+		// result is unused in an expression statement, `void` expression, or the initializer or incrementer of a `for` loop
+		if ast.IsExpressionStatement(parent) || ast.IsVoidExpression(parent) || ast.IsForStatement(parent) && (parent.Initializer() == node || parent.AsForStatement().Incrementor == node) {
+			return true
+		}
+		if ast.IsBinaryExpression(parent) && parent.AsBinaryExpression().OperatorToken.Kind == ast.KindCommaToken {
+			// left side of comma is always unused
+			if node == parent.AsBinaryExpression().Left {
+				return true
+			}
+			// right side of comma is unused if parent is unused
+			node = parent
+			continue
+		}
+		return false
+	}
+}
+
+func pseudoBigIntToString(value PseudoBigInt) string {
+	if value.negative && value.base10Value != "0" {
+		return "-" + value.base10Value
+	}
+	return value.base10Value
+}
+
+func getSuperContainer(node *ast.Node, stopOnFunctions bool) *ast.Node {
+	for {
+		node = node.Parent
+		if node == nil {
+			return nil
+		}
+		switch node.Kind {
+		case ast.KindComputedPropertyName:
+			node = node.Parent
+		case ast.KindFunctionDeclaration, ast.KindFunctionExpression, ast.KindArrowFunction:
+			if !stopOnFunctions {
+				continue
+			}
+			fallthrough
+		case ast.KindPropertyDeclaration, ast.KindPropertySignature, ast.KindMethodDeclaration, ast.KindMethodSignature, ast.KindConstructor,
+			ast.KindGetAccessor, ast.KindSetAccessor, ast.KindClassStaticBlockDeclaration:
+			return node
+		case ast.KindDecorator:
+			// Decorators are always applied outside of the body of a class or method.
+			if ast.IsParameter(node.Parent) && ast.IsClassElement(node.Parent.Parent) {
+				// If the decorator's parent is a Parameter, we resolve the this container from
+				// the grandparent class declaration.
+				node = node.Parent.Parent
+			} else if ast.IsClassElement(node.Parent) {
+				// If the decorator's parent is a class element, we resolve the 'this' container
+				// from the parent class declaration.
+				node = node.Parent
+			}
+		}
+	}
+}
+
+func forEachYieldExpression(body *ast.Node, visitor func(expr *ast.Node)) {
+	var traverse func(*ast.Node) bool
+	traverse = func(node *ast.Node) bool {
+		switch node.Kind {
+		case ast.KindYieldExpression:
+			visitor(node)
+			operand := node.Expression()
+			if operand != nil {
+				traverse(operand)
+			}
+		case ast.KindEnumDeclaration, ast.KindInterfaceDeclaration, ast.KindModuleDeclaration, ast.KindTypeAliasDeclaration:
+			// These are not allowed inside a generator now, but eventually they may be allowed
+			// as local types. Regardless, skip them to avoid the work.
+		default:
+			if ast.IsFunctionLike(node) {
+				if node.Name() != nil && ast.IsComputedPropertyName(node.Name()) {
+					// Note that we will not include methods/accessors of a class because they would require
+					// first descending into the class. This is by design.
+					traverse(node.Expression())
+				}
+			} else if !ast.IsPartOfTypeNode(node) {
+				// This is the general case, which should include mostly expressions and statements.
+				// Also includes NodeArrays.
+				node.ForEachChild(traverse)
+			}
+		}
+		return false
+	}
+	traverse(body)
 }

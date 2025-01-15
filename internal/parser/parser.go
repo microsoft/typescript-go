@@ -2,7 +2,6 @@ package parser
 
 import (
 	"fmt"
-	"path"
 	"regexp"
 	"strings"
 	"sync"
@@ -141,7 +140,7 @@ func ParseJSONText(fileName string, sourceText string) *ast.SourceFile {
 
 func (p *Parser) initializeState(fileName string, sourceText string, languageVersion core.ScriptTarget, scriptKind core.ScriptKind) {
 	p.scanner = scanner.NewScanner()
-	p.fileName = path.Clean(fileName)
+	p.fileName = fileName
 	p.sourceText = sourceText
 	p.languageVersion = languageVersion
 	p.scriptKind = ensureScriptKind(fileName, scriptKind)
@@ -248,10 +247,9 @@ func (p *Parser) parseSourceFileWorker() *ast.SourceFile {
 	node := p.factory.NewSourceFile(p.sourceText, p.fileName, statements)
 	p.finishNode(node, pos)
 	result := node.AsSourceFile()
-
+	result.CommentDirectives = p.scanner.CommentDirectives()
 	result.Pragmas = getCommentPragmas(p.sourceText)
 	processPragmasIntoFields(result)
-
 	result.SetDiagnostics(attachFileToDiagnostics(p.diagnostics, result))
 	result.ExternalModuleIndicator = isFileProbablyExternalModule(result)
 	result.IsDeclarationFile = isDeclarationFile

@@ -342,7 +342,7 @@ func (n *Node) Type() *Node {
 		return n.AsJSDocNonNullableType().Type
 	case KindJSDocOptionalType:
 		return n.AsJSDocOptionalType().Type
-	case KindEnumMember, KindBindingElement, KindExportAssignment:
+	case KindEnumMember, KindBindingElement, KindExportAssignment, KindBinaryExpression:
 		return nil
 	default:
 		funcLike := n.FunctionLikeData()
@@ -1779,6 +1779,10 @@ func (node *ForStatement) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateForStatement(node, v.VisitNode(node.Initializer), v.VisitNode(node.Condition), v.VisitNode(node.Incrementor), v.VisitNode(node.Statement))
 }
 
+func IsForStatement(node *Node) bool {
+	return node.Kind == KindForStatement
+}
+
 // ForInOrOfStatement
 
 type ForInOrOfStatement struct {
@@ -3133,6 +3137,10 @@ func (node *ImportClause) VisitEachChild(v *NodeVisitor) *Node {
 
 func (node *ImportClause) Name() *DeclarationName {
 	return node.name
+}
+
+func IsImportClause(node *Node) bool {
+	return node.Kind == KindImportClause
 }
 
 // NamespaceImport
@@ -7125,6 +7133,19 @@ type PatternAmbientModule struct {
 	Symbol  *Symbol
 }
 
+type CommentDirectiveKind int32
+
+const (
+	CommentDirectiveKindUnknown CommentDirectiveKind = iota
+	CommentDirectiveKindExpectError
+	CommentDirectiveKindIgnore
+)
+
+type CommentDirective struct {
+	Loc  core.TextRange
+	Kind CommentDirectiveKind
+}
+
 // SourceFile
 
 type SourceFile struct {
@@ -7150,6 +7171,7 @@ type SourceFile struct {
 	IsDeclarationFile           bool
 	IsBound                     bool
 	ModuleReferencesProcessed   bool
+	HasNoDefaultLib             bool
 	UsesUriStyleNodeCoreModules core.Tristate
 	SymbolCount                 int
 	ClassifiableNames           core.Set[string]
@@ -7157,7 +7179,7 @@ type SourceFile struct {
 	ModuleAugmentations         []*ModuleName      // []ModuleName
 	PatternAmbientModules       []PatternAmbientModule
 	AmbientModuleNames          []string
-	HasNoDefaultLib             bool
+	CommentDirectives           []CommentDirective
 	jsdocCache                  map[*Node][]*Node
 	Pragmas                     []Pragma
 	ReferencedFiles             []*FileReference
