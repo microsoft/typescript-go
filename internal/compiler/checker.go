@@ -156,11 +156,12 @@ type CachedSignatureKey struct {
 }
 
 const (
-	SignatureKeyErased    string = "-"
-	SignatureKeyCanonical string = "*"
-	SignatureKeyBase      string = "#"
-	SignatureKeyInner     string = "<"
-	SignatureKeyOuter     string = ">"
+	SignatureKeyErased         string = "-"
+	SignatureKeyCanonical      string = "*"
+	SignatureKeyBase           string = "#"
+	SignatureKeyInner          string = "<"
+	SignatureKeyOuter          string = ">"
+	SignatureKeyImplementation string = "+"
 )
 
 // StringMappingKey
@@ -4620,16 +4621,20 @@ func (c *Checker) chooseOverload(s *CallState, relation *Relation) *Signature {
 		var checkCandidate *Signature
 		var inferenceContext *InferenceContext
 		if len(candidate.typeParameters) != 0 {
-			// !!!
-			// // If we are *inside the body of candidate*, we need to create a clone of `candidate` with differing type parameter identities,
-			// // so our inference results for this call doesn't pollute expression types referencing the outer type parameter!
-			// paramLocation := candidate.typeParameters[0].symbol.Declarations[0]. /* ? */ parent
-			// candidateParameterContext := paramLocation || (ifElse(candidate.declaration != nil && isConstructorDeclaration(candidate.declaration), candidate.declaration.Parent, candidate.declaration))
-			// if candidateParameterContext != nil && findAncestor(node, func(a *ast.Node) bool {
-			// 	return a == candidateParameterContext
-			// }) != nil {
-			// 	candidate = c.getImplementationSignature(candidate)
-			// }
+			// If we are *inside the body of candidate*, we need to create a clone of `candidate` with differing type parameter identities,
+			// so our inference results for this call doesn't pollute expression types referencing the outer type parameter!
+			var candidateParameterContext *ast.Node
+			typeParamDeclaration := core.FirstOrNil(candidate.typeParameters[0].symbol.Declarations)
+			if typeParamDeclaration != nil {
+				candidateParameterContext = typeParamDeclaration.Parent
+			} else if candidate.declaration != nil && ast.IsConstructorDeclaration(candidate.declaration) {
+				candidateParameterContext = candidate.declaration.Parent
+			} else {
+				candidateParameterContext = candidate.declaration
+			}
+			if candidateParameterContext != nil && ast.FindAncestor(s.node, func(a *ast.Node) bool { return a == candidateParameterContext }) != nil {
+				candidate = c.getImplementationSignature(candidate)
+			}
 			var typeArgumentTypes []*Type
 			if len(s.typeArguments) != 0 {
 				typeArgumentTypes = c.checkTypeArguments(candidate, s.typeArguments, false /*reportErrors*/, nil)
@@ -4690,6 +4695,16 @@ func (c *Checker) chooseOverload(s *CallState, relation *Relation) *Signature {
 		return checkCandidate
 	}
 	return nil
+}
+
+func (c *Checker) getImplementationSignature(signature *Signature) *Signature {
+	key := CachedSignatureKey{sig: signature, key: SignatureKeyImplementation}
+	if cached := c.cachedSignatures[key]; cached != nil {
+		return cached
+	}
+	result := c.instantiateSignature(signature, newTypeMapper(nil, nil))
+	c.cachedSignatures[key] = result
+	return result
 }
 
 func (c *Checker) hasCorrectArity(node *ast.Node, args []*ast.Node, signature *Signature, signatureHelpTrailingComma bool) bool {
