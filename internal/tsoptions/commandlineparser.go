@@ -205,8 +205,11 @@ func (p *CommandLineParser) parseOptionValue(
 	i int,
 	opt *CommandLineOption,
 ) int {
-	if opt.isTSConfigOnly && i < len(args) {
-		optValue := args[i]
+	if opt.isTSConfigOnly && i <= len(args) {
+		optValue := ""
+		if i < len(args) {
+			optValue = args[i]
+		}
 		if optValue == "null" {
 			p.options[opt.Name] = nil
 			i++
