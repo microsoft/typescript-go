@@ -1,6 +1,7 @@
 package compiler
 
 import (
+	"slices"
 	"strings"
 	"testing"
 	"testing/fstest"
@@ -12,15 +13,15 @@ import (
 )
 
 type testFile struct {
-	FileName string `json:"name"`
-	Contents string `json:"contents"`
+	fileName string
+	contents string
 }
 
 type programTest struct {
-	TestName      string            `json:"name"`
-	Files         []testFile        `json:"files"`
-	ExpectedFiles []string          `json:"expectedFiles"`
-	Target        core.ScriptTarget `json:"target"`
+	testName      string
+	files         []testFile
+	expectedFiles []string
+	target        core.ScriptTarget
 }
 
 var esnextLibs = []string{
@@ -106,94 +107,97 @@ var esnextLibs = []string{
 
 var programTestCases = []programTest{
 	{
-		TestName: "BasicFileOrdering",
-		Files: []testFile{
-			{FileName: "c:/dev/src/index.ts", Contents: "/// <reference path='c:/dev/src2/a/5.ts' />\n/// <reference path='c:/dev/src2/a/10.ts' />"},
-			{FileName: "c:/dev/src2/a/5.ts", Contents: "/// <reference path='4.ts' />"},
-			{FileName: "c:/dev/src2/a/4.ts", Contents: "/// <reference path='b/3.ts' />"},
-			{FileName: "c:/dev/src2/a/b/3.ts", Contents: "/// <reference path='2.ts' />"},
-			{FileName: "c:/dev/src2/a/b/2.ts", Contents: "/// <reference path='c/1.ts' />"},
-			{FileName: "c:/dev/src2/a/b/c/1.ts", Contents: "console.log('hello');"},
-			{FileName: "c:/dev/src2/a/10.ts", Contents: "/// <reference path='b/c/d/9.ts' />"},
-			{FileName: "c:/dev/src2/a/b/c/d/9.ts", Contents: "/// <reference path='e/8.ts' />"},
-			{FileName: "c:/dev/src2/a/b/c/d/e/8.ts", Contents: "/// <reference path='7.ts' />"},
-			{FileName: "c:/dev/src2/a/b/c/d/e/7.ts", Contents: "/// <reference path='f/6.ts' />"},
-			{FileName: "c:/dev/src2/a/b/c/d/e/f/6.ts", Contents: "console.log('world!');"},
+		testName: "BasicFileOrdering",
+		files: []testFile{
+			{fileName: "c:/dev/src/index.ts", contents: "/// <reference path='c:/dev/src2/a/5.ts' />\n/// <reference path='c:/dev/src2/a/10.ts' />"},
+			{fileName: "c:/dev/src2/a/5.ts", contents: "/// <reference path='4.ts' />"},
+			{fileName: "c:/dev/src2/a/4.ts", contents: "/// <reference path='b/3.ts' />"},
+			{fileName: "c:/dev/src2/a/b/3.ts", contents: "/// <reference path='2.ts' />"},
+			{fileName: "c:/dev/src2/a/b/2.ts", contents: "/// <reference path='c/1.ts' />"},
+			{fileName: "c:/dev/src2/a/b/c/1.ts", contents: "console.log('hello');"},
+			{fileName: "c:/dev/src2/a/10.ts", contents: "/// <reference path='b/c/d/9.ts' />"},
+			{fileName: "c:/dev/src2/a/b/c/d/9.ts", contents: "/// <reference path='e/8.ts' />"},
+			{fileName: "c:/dev/src2/a/b/c/d/e/8.ts", contents: "/// <reference path='7.ts' />"},
+			{fileName: "c:/dev/src2/a/b/c/d/e/7.ts", contents: "/// <reference path='f/6.ts' />"},
+			{fileName: "c:/dev/src2/a/b/c/d/e/f/6.ts", contents: "console.log('world!');"},
 		},
-		ExpectedFiles: append(esnextLibs,
-			"c:/dev/src2/a/b/c/1.ts",
-			"c:/dev/src2/a/b/2.ts",
-			"c:/dev/src2/a/b/3.ts",
-			"c:/dev/src2/a/4.ts",
-			"c:/dev/src2/a/5.ts",
-			"c:/dev/src2/a/b/c/d/e/f/6.ts",
-			"c:/dev/src2/a/b/c/d/e/7.ts",
-			"c:/dev/src2/a/b/c/d/e/8.ts",
-			"c:/dev/src2/a/b/c/d/9.ts",
-			"c:/dev/src2/a/10.ts",
-			"c:/dev/src/index.ts",
-		),
-		Target: core.ScriptTargetESNext,
+		expectedFiles: slices.Concat(esnextLibs,
+			[]string{
+				"c:/dev/src2/a/b/c/1.ts",
+				"c:/dev/src2/a/b/2.ts",
+				"c:/dev/src2/a/b/3.ts",
+				"c:/dev/src2/a/4.ts",
+				"c:/dev/src2/a/5.ts",
+				"c:/dev/src2/a/b/c/d/e/f/6.ts",
+				"c:/dev/src2/a/b/c/d/e/7.ts",
+				"c:/dev/src2/a/b/c/d/e/8.ts",
+				"c:/dev/src2/a/b/c/d/9.ts",
+				"c:/dev/src2/a/10.ts",
+				"c:/dev/src/index.ts",
+			}),
+		target: core.ScriptTargetESNext,
 	},
 	{
-		TestName: "FileOrderingImports",
-		Files: []testFile{
-			{FileName: "c:/dev/src/index.ts", Contents: "import * as five from '../src2/a/5.ts';\nimport * as ten from '../src2/a/10.ts';"},
-			{FileName: "c:/dev/src2/a/5.ts", Contents: "import * as four from './4.ts';"},
-			{FileName: "c:/dev/src2/a/4.ts", Contents: "import * as three from './b/3.ts';"},
-			{FileName: "c:/dev/src2/a/b/3.ts", Contents: "import * as two from './2.ts';"},
-			{FileName: "c:/dev/src2/a/b/2.ts", Contents: "import * as one from './c/1.ts';"},
-			{FileName: "c:/dev/src2/a/b/c/1.ts", Contents: "console.log('hello');"},
-			{FileName: "c:/dev/src2/a/10.ts", Contents: "import * as nine from './b/c/d/9.ts';"},
-			{FileName: "c:/dev/src2/a/b/c/d/9.ts", Contents: "import * as eight from './e/8.ts';"},
-			{FileName: "c:/dev/src2/a/b/c/d/e/8.ts", Contents: "import * as seven from './7.ts';"},
-			{FileName: "c:/dev/src2/a/b/c/d/e/7.ts", Contents: "import * as six from './f/6.ts';"},
-			{FileName: "c:/dev/src2/a/b/c/d/e/f/6.ts", Contents: "console.log('world!');"},
+		testName: "FileOrderingImports",
+		files: []testFile{
+			{fileName: "c:/dev/src/index.ts", contents: "import * as five from '../src2/a/5.ts';\nimport * as ten from '../src2/a/10.ts';"},
+			{fileName: "c:/dev/src2/a/5.ts", contents: "import * as four from './4.ts';"},
+			{fileName: "c:/dev/src2/a/4.ts", contents: "import * as three from './b/3.ts';"},
+			{fileName: "c:/dev/src2/a/b/3.ts", contents: "import * as two from './2.ts';"},
+			{fileName: "c:/dev/src2/a/b/2.ts", contents: "import * as one from './c/1.ts';"},
+			{fileName: "c:/dev/src2/a/b/c/1.ts", contents: "console.log('hello');"},
+			{fileName: "c:/dev/src2/a/10.ts", contents: "import * as nine from './b/c/d/9.ts';"},
+			{fileName: "c:/dev/src2/a/b/c/d/9.ts", contents: "import * as eight from './e/8.ts';"},
+			{fileName: "c:/dev/src2/a/b/c/d/e/8.ts", contents: "import * as seven from './7.ts';"},
+			{fileName: "c:/dev/src2/a/b/c/d/e/7.ts", contents: "import * as six from './f/6.ts';"},
+			{fileName: "c:/dev/src2/a/b/c/d/e/f/6.ts", contents: "console.log('world!');"},
 		},
-		ExpectedFiles: append(esnextLibs,
-			"c:/dev/src2/a/b/c/1.ts",
-			"c:/dev/src2/a/b/2.ts",
-			"c:/dev/src2/a/b/3.ts",
-			"c:/dev/src2/a/4.ts",
-			"c:/dev/src2/a/5.ts",
-			"c:/dev/src2/a/b/c/d/e/f/6.ts",
-			"c:/dev/src2/a/b/c/d/e/7.ts",
-			"c:/dev/src2/a/b/c/d/e/8.ts",
-			"c:/dev/src2/a/b/c/d/9.ts",
-			"c:/dev/src2/a/10.ts",
-			"c:/dev/src/index.ts",
-		),
-		Target: core.ScriptTargetESNext,
+		expectedFiles: slices.Concat(esnextLibs,
+			[]string{
+				"c:/dev/src2/a/b/c/1.ts",
+				"c:/dev/src2/a/b/2.ts",
+				"c:/dev/src2/a/b/3.ts",
+				"c:/dev/src2/a/4.ts",
+				"c:/dev/src2/a/5.ts",
+				"c:/dev/src2/a/b/c/d/e/f/6.ts",
+				"c:/dev/src2/a/b/c/d/e/7.ts",
+				"c:/dev/src2/a/b/c/d/e/8.ts",
+				"c:/dev/src2/a/b/c/d/9.ts",
+				"c:/dev/src2/a/10.ts",
+				"c:/dev/src/index.ts",
+			}),
+		target: core.ScriptTargetESNext,
 	},
 	{
-		TestName: "FileOrderingCycles",
-		Files: []testFile{
-			{FileName: "c:/dev/src/index.ts", Contents: "import * as five from '../src2/a/5.ts';\nimport * as ten from '../src2/a/10.ts';"},
-			{FileName: "c:/dev/src2/a/5.ts", Contents: "import * as four from './4.ts';"},
-			{FileName: "c:/dev/src2/a/4.ts", Contents: "import * as three from './b/3.ts';"},
-			{FileName: "c:/dev/src2/a/b/3.ts", Contents: "import * as two from './2.ts';\nimport * as cycle from 'c:/dev/src/index.ts'; "},
-			{FileName: "c:/dev/src2/a/b/2.ts", Contents: "import * as one from './c/1.ts';"},
-			{FileName: "c:/dev/src2/a/b/c/1.ts", Contents: "console.log('hello');"},
-			{FileName: "c:/dev/src2/a/10.ts", Contents: "import * as nine from './b/c/d/9.ts';"},
-			{FileName: "c:/dev/src2/a/b/c/d/9.ts", Contents: "import * as eight from './e/8.ts';\nimport * as cycle from 'c:/dev/src/index.ts';"},
-			{FileName: "c:/dev/src2/a/b/c/d/e/8.ts", Contents: "import * as seven from './7.ts';"},
-			{FileName: "c:/dev/src2/a/b/c/d/e/7.ts", Contents: "import * as six from './f/6.ts';"},
-			{FileName: "c:/dev/src2/a/b/c/d/e/f/6.ts", Contents: "console.log('world!');"},
+		testName: "FileOrderingCycles",
+		files: []testFile{
+			{fileName: "c:/dev/src/index.ts", contents: "import * as five from '../src2/a/5.ts';\nimport * as ten from '../src2/a/10.ts';"},
+			{fileName: "c:/dev/src2/a/5.ts", contents: "import * as four from './4.ts';"},
+			{fileName: "c:/dev/src2/a/4.ts", contents: "import * as three from './b/3.ts';"},
+			{fileName: "c:/dev/src2/a/b/3.ts", contents: "import * as two from './2.ts';\nimport * as cycle from 'c:/dev/src/index.ts'; "},
+			{fileName: "c:/dev/src2/a/b/2.ts", contents: "import * as one from './c/1.ts';"},
+			{fileName: "c:/dev/src2/a/b/c/1.ts", contents: "console.log('hello');"},
+			{fileName: "c:/dev/src2/a/10.ts", contents: "import * as nine from './b/c/d/9.ts';"},
+			{fileName: "c:/dev/src2/a/b/c/d/9.ts", contents: "import * as eight from './e/8.ts';\nimport * as cycle from 'c:/dev/src/index.ts';"},
+			{fileName: "c:/dev/src2/a/b/c/d/e/8.ts", contents: "import * as seven from './7.ts';"},
+			{fileName: "c:/dev/src2/a/b/c/d/e/7.ts", contents: "import * as six from './f/6.ts';"},
+			{fileName: "c:/dev/src2/a/b/c/d/e/f/6.ts", contents: "console.log('world!');"},
 		},
-		ExpectedFiles: append(esnextLibs,
-			"c:/dev/src2/a/b/c/1.ts",
-			"c:/dev/src2/a/b/2.ts",
-			"c:/dev/src2/a/b/3.ts",
-			"c:/dev/src2/a/4.ts",
-			"c:/dev/src2/a/5.ts",
-			"c:/dev/src2/a/b/c/d/e/f/6.ts",
-			"c:/dev/src2/a/b/c/d/e/7.ts",
-			"c:/dev/src2/a/b/c/d/e/8.ts",
-			"c:/dev/src2/a/b/c/d/9.ts",
-			"c:/dev/src2/a/10.ts",
-			"c:/dev/src/index.ts",
-		),
-		Target: core.ScriptTargetESNext,
+		expectedFiles: slices.Concat(esnextLibs,
+			[]string{
+				"c:/dev/src2/a/b/c/1.ts",
+				"c:/dev/src2/a/b/2.ts",
+				"c:/dev/src2/a/b/3.ts",
+				"c:/dev/src2/a/4.ts",
+				"c:/dev/src2/a/5.ts",
+				"c:/dev/src2/a/b/c/d/e/f/6.ts",
+				"c:/dev/src2/a/b/c/d/e/7.ts",
+				"c:/dev/src2/a/b/c/d/e/8.ts",
+				"c:/dev/src2/a/b/c/d/9.ts",
+				"c:/dev/src2/a/10.ts",
+				"c:/dev/src/index.ts",
+			}),
+		target: core.ScriptTargetESNext,
 	},
 }
 
@@ -207,17 +211,17 @@ func TestProgram(t *testing.T) {
 	}
 
 	for _, testCase := range programTestCases {
-		t.Run(testCase.TestName, func(t *testing.T) {
+		t.Run(testCase.testName, func(t *testing.T) {
 			t.Parallel()
 			libPrefix := bundled.LibPath() + "/"
 			fs := vfstest.FromMapFS(fstest.MapFS{}, false /*useCaseSensitiveFileNames*/)
 			fs = bundled.WrapFS(fs)
 
-			for _, testFile := range testCase.Files {
-				_ = fs.WriteFile(testFile.FileName, testFile.Contents, false)
+			for _, testFile := range testCase.files {
+				_ = fs.WriteFile(testFile.fileName, testFile.contents, false)
 			}
 
-			opts := core.CompilerOptions{Target: testCase.Target}
+			opts := core.CompilerOptions{Target: testCase.target}
 
 			program := NewProgram(ProgramOptions{
 				RootPath:           "c:/dev/src",
@@ -232,7 +236,7 @@ func TestProgram(t *testing.T) {
 				actualFiles = append(actualFiles, strings.TrimPrefix(file.FileName(), libPrefix))
 			}
 
-			assert.DeepEqual(t, testCase.ExpectedFiles, actualFiles)
+			assert.DeepEqual(t, testCase.expectedFiles, actualFiles)
 		})
 	}
 }
