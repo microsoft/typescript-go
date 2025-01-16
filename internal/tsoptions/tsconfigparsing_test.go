@@ -7,7 +7,6 @@ import (
 	"io"
 	"io/fs"
 	"path/filepath"
-	"slices"
 	"strings"
 	"testing"
 	"testing/fstest"
@@ -546,7 +545,7 @@ func baselineParseConfigWith(t *testing.T, baselineFileName string, noSubmoduleB
 		baselineContent.WriteString("\n")
 		baselineContent.WriteString("configFileName:: " + config.configFileName + "\n")
 		baselineContent.WriteString("FileNames::\n")
-		baselineContent.WriteString(strings.Join(slices.Collect(parsedConfigFileContent.ParsedOptions.FileNames.Keys()), ",") + "\n")
+		baselineContent.WriteString(strings.Join(parsedConfigFileContent.ParsedOptions.FileNames, ",") + "\n")
 		baselineContent.WriteString("Errors::\n")
 		diagnosticwriter.FormatDiagnosticsWithColorAndContext(&baselineContent, parsedConfigFileContent.Errors, &diagnosticwriter.FormattingOptions{
 			NewLine: "\r\n",

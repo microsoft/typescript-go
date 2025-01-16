@@ -1175,7 +1175,7 @@ func parseJsonConfigFileContentWorker(
 		sourceFile.configFileSpecs = &configFileSpecs
 	}
 
-	getFileNames := func(basePath string) collections.OrderedMap[string, string] {
+	getFileNames := func(basePath string) []string {
 		var parsedConfigOptions *core.CompilerOptions = nil
 		if parsedConfig.options != nil {
 			parsedConfigOptions = parsedConfig.options
@@ -1233,8 +1233,8 @@ func canJsonReportNoInputFiles(rawConfig map[string]any) bool {
 	return !filesExists && !referencesExists
 }
 
-func shouldReportNoInputFiles(fileNames collections.OrderedMap[string, string], canJsonReportNoInutFiles bool, resolutionStack []tspath.Path) bool {
-	return fileNames.Size() == 0 && canJsonReportNoInutFiles && (resolutionStack != nil || len(resolutionStack) == 0)
+func shouldReportNoInputFiles(fileNames []string, canJsonReportNoInutFiles bool, resolutionStack []tspath.Path) bool {
+	return len(fileNames) == 0 && canJsonReportNoInutFiles && (resolutionStack != nil || len(resolutionStack) == 0)
 }
 
 func validateSpecs(specs any, disallowTrailingRecursion bool, jsonSourceFile *tsConfigSourceFile, specKey string) ([]string, []*ast.Diagnostic) {
@@ -1438,7 +1438,7 @@ func getFileNamesFromConfigSpecs(
 	options *core.CompilerOptions,
 	host vfs.FS,
 	extraFileExtensions []fileExtensionInfo,
-) collections.OrderedMap[string, string] {
+) []string {
 	extraFileExtensions = []fileExtensionInfo{}
 	basePath = tspath.NormalizePath(basePath)
 	// Literal file names (provided via the "files" array in tsconfig.json) are stored in a
@@ -1516,18 +1516,15 @@ func getFileNamesFromConfigSpecs(
 			}
 		}
 	}
-	var files collections.OrderedMap[string, string]
-	fileMaps := slices.Collect(literalFileMap.Values())
-	for _, file := range fileMaps {
-		files.Set(file, "")
+	files := make([]string, 0, literalFileMap.Size()+wildcardFileMap.Size()+wildCardJsonFileMap.Size())
+	for file := range literalFileMap.Values() {
+		files = append(files, file)
 	}
-	wildcardMaps := slices.Collect(wildcardFileMap.Values())
-	for _, file := range wildcardMaps {
-		files.Set(file, "")
+	for file := range wildcardFileMap.Values() {
+		files = append(files, file)
 	}
-	wildcarJsonMaps := slices.Collect(wildCardJsonFileMap.Values())
-	for _, file := range wildcarJsonMaps {
-		files.Set(file, "")
+	for file := range wildCardJsonFileMap.Values() {
+		files = append(files, file)
 	}
 	return files
 }

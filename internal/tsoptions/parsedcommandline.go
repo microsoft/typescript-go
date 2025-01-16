@@ -4,7 +4,6 @@ import (
 	"slices"
 
 	"github.com/microsoft/typescript-go/internal/ast"
-	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 )
 
@@ -48,7 +47,7 @@ func (p *ParsedCommandLine) CompilerOptions() *core.CompilerOptions {
 	return p.ParsedOptions.CompilerOptions
 }
 
-func (p *ParsedCommandLine) FileNames() collections.OrderedMap[string, string] {
+func (p *ParsedCommandLine) FileNames() []string {
 	return p.ParsedOptions.FileNames
 }
 
