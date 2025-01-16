@@ -148,7 +148,7 @@ func parseOwnConfigOfJsonSourceFile(
 			}
 		} else if parentOption.Name == rootOptions.Name {
 			if option.Name == extendsOptionDeclaration.Name {
-				configPath, err := getExtendsConfigPathOrArray(value, host, basePath, configFileName, propertyAssignment, (propertyAssignment).Initializer, sourceFile)
+				configPath, err := getExtendsConfigPathOrArray(value, host, basePath, configFileName, propertyAssignment, propertyAssignment.Initializer, sourceFile)
 				extendedConfigPath = configPath
 				propertySetErrors = append(propertySetErrors, err...)
 			} else if option == nil {
@@ -1078,7 +1078,7 @@ func parseJsonConfigFileContentWorker(
 						fileName = "tsconfig.json"
 					}
 					diagnosticMessage := diagnostics.The_files_list_in_config_file_0_is_empty
-					nodeValue := forEachTsConfigPropArray(sourceFile, "files", func(property ast.PropertyAssignment) *ast.Node { return property.Initializer })
+					nodeValue := forEachTsConfigPropArray(sourceFile, "files", func(property *ast.PropertyAssignment) *ast.Node { return property.Initializer })
 					errors = append(errors, ast.NewDiagnostic(sourceFile.sourceFile, core.NewTextRange(scanner.SkipTrivia(sourceFile.sourceFile.Text, nodeValue.Pos()), nodeValue.End()), diagnosticMessage, fileName))
 				} else {
 					errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.The_files_list_in_config_file_0_is_empty, configFileName))
@@ -1305,7 +1305,7 @@ func invalidDotDotAfterRecursiveWildcard(s string) bool {
 const invalidTrailingRecursionPattern = `(?:^|\/)\*\*\/?$`
 
 func getTsConfigPropArrayElementValue(tsConfigSourceFile *tsConfigSourceFile, propKey string, elementValue string) *ast.StringLiteral {
-	return forEachTsConfigPropArray(tsConfigSourceFile, propKey, func(property ast.PropertyAssignment) *ast.StringLiteral {
+	return forEachTsConfigPropArray(tsConfigSourceFile, propKey, func(property *ast.PropertyAssignment) *ast.StringLiteral {
 		if ast.IsArrayLiteralExpression(property.Initializer) {
 			value := core.Find(property.Initializer.AsArrayLiteralExpression().Elements.Nodes, func(element *ast.Node) bool {
 				return ast.IsStringLiteral(element) && element.AsStringLiteral().Text == elementValue
@@ -1318,14 +1318,14 @@ func getTsConfigPropArrayElementValue(tsConfigSourceFile *tsConfigSourceFile, pr
 	})
 }
 
-func forEachTsConfigPropArray[T any](tsConfigSourceFile *tsConfigSourceFile, propKey string, callback func(property ast.PropertyAssignment) T) T {
+func forEachTsConfigPropArray[T any](tsConfigSourceFile *tsConfigSourceFile, propKey string, callback func(property *ast.PropertyAssignment) *T) *T {
 	if tsConfigSourceFile != nil {
 		return forEachPropertyAssignment(getTsConfigObjectLiteralExpression(tsConfigSourceFile), propKey, callback)
 	}
-	return *new(T)
+	return new(T)
 }
 
-func forEachPropertyAssignment[T any](objectLiteral *ast.ObjectLiteralExpression, key string, callback func(property ast.PropertyAssignment) T, key2 ...string) T {
+func forEachPropertyAssignment[T any](objectLiteral *ast.ObjectLiteralExpression, key string, callback func(property *ast.PropertyAssignment) T, key2 ...string) T {
 	if objectLiteral != nil {
 		for _, property := range objectLiteral.Properties.Nodes {
 			if !ast.IsPropertyAssignment(property) {
@@ -1333,7 +1333,7 @@ func forEachPropertyAssignment[T any](objectLiteral *ast.ObjectLiteralExpression
 			}
 			if propName, ok := ast.TryGetTextOfPropertyName(property.Name()); ok {
 				if propName == key || (len(key2) > 0 && key2[0] == propName) {
-					result := callback(*property.AsPropertyAssignment())
+					result := callback(property.AsPropertyAssignment())
 					return result
 				}
 			}
