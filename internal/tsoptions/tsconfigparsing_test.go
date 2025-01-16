@@ -7,7 +7,6 @@ import (
 	"io"
 	"io/fs"
 	"path/filepath"
-	"slices"
 	"strings"
 	"testing"
 	"testing/fstest"
@@ -546,7 +545,7 @@ func baselineParseConfigWith(t *testing.T, baselineFileName string, noSubmoduleB
 		baselineContent.WriteString("\n")
 		baselineContent.WriteString("configFileName:: " + config.configFileName + "\n")
 		baselineContent.WriteString("FileNames::\n")
-		baselineContent.WriteString(strings.Join(slices.Collect(parsedConfigFileContent.ParsedOptions.FileNames.Keys()), ",") + "\n")
+		baselineContent.WriteString(strings.Join(parsedConfigFileContent.ParsedOptions.FileNames, ",") + "\n")
 		baselineContent.WriteString("Errors::\n")
 		diagnosticwriter.FormatDiagnosticsWithColorAndContext(&baselineContent, parsedConfigFileContent.Errors, &diagnosticwriter.FormattingOptions{
 			NewLine: "\r\n",
@@ -670,6 +669,93 @@ func TestParseSrcCompiler(t *testing.T) {
 	})
 
 	fileNames := parseConfigFileContent.ParsedOptions.FileNames
-	fmt.Println(fileNames)
-	// assert.DeepEqual(t, fileNames, []string{}) // TODO: fill out (make paths relative to cwd)
+	relativePaths := make([]string, 0, len(fileNames))
+	for _, fileName := range fileNames {
+		if strings.Contains(fileName, ".generated.") {
+			continue
+		}
+
+		relativePaths = append(relativePaths, tspath.ConvertToRelativePath(fileName, tspath.ComparePathsOptions{
+			CurrentDirectory:          compilerDir,
+			UseCaseSensitiveFileNames: fs.UseCaseSensitiveFileNames(),
+		}))
+	}
+
+	assert.DeepEqual(t, relativePaths, []string{
+		"binder.ts",
+		"builder.ts",
+		"builderPublic.ts",
+		"builderState.ts",
+		"builderStatePublic.ts",
+		"checker.ts",
+		"commandLineParser.ts",
+		"core.ts",
+		"corePublic.ts",
+		"debug.ts",
+		"emitter.ts",
+		"executeCommandLine.ts",
+		"expressionToTypeNode.ts",
+		"moduleNameResolver.ts",
+		"moduleSpecifiers.ts",
+		"parser.ts",
+		"path.ts",
+		"performance.ts",
+		"performanceCore.ts",
+		"program.ts",
+		"resolutionCache.ts",
+		"scanner.ts",
+		"semver.ts",
+		"sourcemap.ts",
+		"symbolWalker.ts",
+		"sys.ts",
+		"tracing.ts",
+		"transformer.ts",
+		"tsbuild.ts",
+		"tsbuildPublic.ts",
+		"types.ts",
+		"utilities.ts",
+		"utilitiesPublic.ts",
+		"visitorPublic.ts",
+		"watch.ts",
+		"watchPublic.ts",
+		"watchUtilities.ts",
+		"_namespaces/ts.moduleSpecifiers.ts",
+		"_namespaces/ts.performance.ts",
+		"_namespaces/ts.ts",
+		"factory/baseNodeFactory.ts",
+		"factory/emitHelpers.ts",
+		"factory/emitNode.ts",
+		"factory/nodeChildren.ts",
+		"factory/nodeConverters.ts",
+		"factory/nodeFactory.ts",
+		"factory/nodeTests.ts",
+		"factory/parenthesizerRules.ts",
+		"factory/utilities.ts",
+		"factory/utilitiesPublic.ts",
+		"transformers/classFields.ts",
+		"transformers/classThis.ts",
+		"transformers/declarations.ts",
+		"transformers/destructuring.ts",
+		"transformers/es2015.ts",
+		"transformers/es2016.ts",
+		"transformers/es2017.ts",
+		"transformers/es2018.ts",
+		"transformers/es2019.ts",
+		"transformers/es2020.ts",
+		"transformers/es2021.ts",
+		"transformers/esDecorators.ts",
+		"transformers/esnext.ts",
+		"transformers/generators.ts",
+		"transformers/jsx.ts",
+		"transformers/legacyDecorators.ts",
+		"transformers/namedEvaluation.ts",
+		"transformers/taggedTemplate.ts",
+		"transformers/ts.ts",
+		"transformers/typeSerializer.ts",
+		"transformers/utilities.ts",
+		"transformers/declarations/diagnostics.ts",
+		"transformers/module/esnextAnd2015.ts",
+		"transformers/module/impliedNodeFormatDependent.ts",
+		"transformers/module/module.ts",
+	})
 }
