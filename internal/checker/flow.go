@@ -151,6 +151,8 @@ func (c *Checker) getTypeAtFlowNode(f *FlowState, flow *ast.FlowNode) FlowType {
 			}
 		case flags&ast.FlowFlagsReduceLabel != 0:
 			data := flow.Node.AsFlowReduceLabelData()
+			data.TargetLock.Lock(c)
+			defer data.TargetLock.Unlock(c)
 			saveAntecedents := data.Target.Antecedents
 			data.Target.Antecedents = data.Antecedents
 			t = c.getTypeAtFlowNode(f, flow.Antecedent)
@@ -2494,6 +2496,8 @@ func (c *Checker) isReachableFlowNodeWorker(flow *ast.FlowNode, noCacheCheck boo
 			// Cache is unreliable once we start adjusting labels
 			c.lastFlowNode = nil
 			data := flow.Node.AsFlowReduceLabelData()
+			data.TargetLock.Lock(c)
+			defer data.TargetLock.Unlock(c)
 			saveAntecedents := data.Target.Antecedents
 			data.Target.Antecedents = data.Antecedents
 			result := c.isReachableFlowNodeWorker(flow.Antecedent, false /*noCacheCheck*/)
@@ -2553,6 +2557,8 @@ func (c *Checker) isPostSuperFlowNode(flow *ast.FlowNode, noCacheCheck bool) boo
 			flow = flow.Antecedents.Flow
 		case flags&ast.FlowFlagsReduceLabel != 0:
 			data := flow.Node.AsFlowReduceLabelData()
+			data.TargetLock.Lock(c)
+			defer data.TargetLock.Unlock(c)
 			saveAntecedents := data.Target.Antecedents
 			data.Target.Antecedents = data.Antecedents
 			result := c.isPostSuperFlowNode(flow.Antecedent, false /*noCacheCheck*/)
