@@ -234,7 +234,7 @@ type ScannerState struct {
 	tokenValue                string         // Parsed value of current token
 	tokenFlags                ast.TokenFlags // Flags for current token
 	commentDirectives         []ast.CommentDirective
-	skipJSDocLeadingAsterisks int            // Leading asterisks to skip when scanning types inside JSDoc. Should be 0 outside JSDoc
+	skipJSDocLeadingAsterisks int // Leading asterisks to skip when scanning types inside JSDoc. Should be 0 outside JSDoc
 }
 
 type Scanner struct {
