@@ -8,7 +8,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/compiler/diagnostics"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/jsnum"
-	"github.com/microsoft/typescript-go/internal/stringutil"
 )
 
 type EvaluatorResult struct {
@@ -282,7 +281,7 @@ func (c *ConstantEvaluator) computeEnumMemberValue(member *ast.Node, autoValue j
 		c.error(member.Name(), diagnostics.Computed_property_names_are_not_allowed_in_enums)
 	} else {
 		text := member.Name().Text()
-		if stringutil.IsNumericLiteralName(text) && !isInfinityOrNaNString(text) {
+		if jsnum.IsNumericLiteralName(text) && !isInfinityOrNaNString(text) {
 			c.error(member.Name(), diagnostics.An_enum_member_cannot_have_a_numeric_name)
 		}
 	}

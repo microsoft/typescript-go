@@ -12,7 +12,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/jsnum"
 	"github.com/microsoft/typescript-go/internal/scanner"
-	"github.com/microsoft/typescript-go/internal/stringutil"
 )
 
 type SignatureCheckMode uint32
@@ -3884,7 +3883,7 @@ func (r *Relater) propertiesRelatedTo(source *Type, target *Type, reportErrors b
 	numericNamesOnly := isTupleType(source) && isTupleType(target)
 	for _, targetProp := range excludeProperties(properties, excludedProperties) {
 		name := targetProp.Name
-		if targetProp.Flags&ast.SymbolFlagsPrototype == 0 && (!numericNamesOnly || stringutil.IsNumericLiteralName(name) || name == "length") && (!optionalsOnly || targetProp.Flags&ast.SymbolFlagsOptional != 0) {
+		if targetProp.Flags&ast.SymbolFlagsPrototype == 0 && (!numericNamesOnly || jsnum.IsNumericLiteralName(name) || name == "length") && (!optionalsOnly || targetProp.Flags&ast.SymbolFlagsOptional != 0) {
 			sourceProp := r.c.getPropertyOfType(source, name)
 			if sourceProp != nil && sourceProp != targetProp {
 				related := r.propertyRelatedTo(source, target, sourceProp, targetProp, r.c.getNonMissingTypeOfSymbol, reportErrors, intersectionState, r.relation == r.c.comparableRelation)
