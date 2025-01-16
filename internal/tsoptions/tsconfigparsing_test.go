@@ -757,5 +757,6 @@ func TestParseSrcCompiler(t *testing.T) {
 		"transformers/module/esnextAnd2015.ts",
 		"transformers/module/impliedNodeFormatDependent.ts",
 		"transformers/module/module.ts",
+		"transformers/module/system.ts",
 	})
 }
