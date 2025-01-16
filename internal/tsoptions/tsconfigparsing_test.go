@@ -474,6 +474,7 @@ var tsconfigWithConfigDir = `{
 
 func TestParseJsonConfigFileContent(t *testing.T) {
 	t.Parallel()
+	repo.SkipIfNoTypeScriptSubmodule(t)
 	for _, rec := range parseJsonConfigFileTests {
 		t.Run(rec.title+" with json api", func(t *testing.T) {
 			t.Parallel()
@@ -496,6 +497,7 @@ func TestParseJsonConfigFileContent(t *testing.T) {
 
 func TestParseJsonSourceFileConfigFileContent(t *testing.T) {
 	t.Parallel()
+	repo.SkipIfNoTypeScriptSubmodule(t)
 	for _, rec := range parseJsonConfigFileTests {
 		t.Run(rec.title+" with jsonSourceFile api", func(t *testing.T) {
 			t.Parallel()
@@ -536,7 +538,9 @@ func baselineParseConfigWith(t *testing.T, baselineFileName string, noSubmoduleB
 		parsedConfigFileContent := getParsed(config, host, basePath)
 
 		baselineContent.WriteString("Fs::\n")
-		printFS(&baselineContent, host.FS(), "/")
+		if err := printFS(&baselineContent, host.FS(), "/"); err != nil {
+			t.Fatal(err)
+		}
 		baselineContent.WriteString("\n")
 		baselineContent.WriteString("configFileName:: " + config.configFileName + "\n")
 		baselineContent.WriteString("FileNames::\n")
@@ -581,7 +585,9 @@ func printFS(output io.Writer, files vfs.FS, root string) error {
 			if content, ok := files.ReadFile(path); !ok {
 				return fmt.Errorf("failed to read file %s", path)
 			} else {
-				output.Write([]byte(fmt.Sprintf("//// [%s]\r\n%s\r\n\r\n", path, content)))
+				if _, err := output.Write([]byte(fmt.Sprintf("//// [%s]\r\n%s\r\n\r\n", path, content))); err != nil {
+					return err
+				}
 			}
 		}
 		return nil

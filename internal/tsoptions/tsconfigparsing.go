@@ -1,7 +1,6 @@
 package tsoptions
 
 import (
-	"encoding/json"
 	"fmt"
 	"reflect"
 	"regexp"
@@ -889,7 +888,7 @@ func parseConfig(
 	if slices.Contains(resolutionStack, resolvedPath) {
 		var result *parsedTsconfig
 		errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.Circularity_detected_while_resolving_configuration_Colon_0))
-		if json == nil || len(json) == 0 {
+		if len(json) == 0 {
 			result = &parsedTsconfig{raw: json}
 		} else {
 			rawResult, err := convertToObject(sourceFile.sourceFile)
@@ -956,7 +955,6 @@ func parseConfig(
 				}
 			}
 			result.options = extendedConfig.options
-
 		}
 	}
 
@@ -966,7 +964,7 @@ func parseConfig(
 		var result *extendsResult = &extendsResult{
 			options: &core.CompilerOptions{},
 		}
-		if reflect.TypeOf(ownConfig.extendedConfigPath).Kind() == reflect.String { // never true
+		if reflect.TypeOf(ownConfig.extendedConfigPath).Kind() == reflect.String {
 			applyExtendedConfig(result, ownConfig.extendedConfigPath.(string))
 		} else if configPath, ok := ownConfig.extendedConfigPath.([]string); ok {
 			for _, extendedConfigPath := range configPath {
@@ -988,7 +986,6 @@ func parseConfig(
 			}
 		}
 		if sourceFile != nil && result.extendedSourceFiles != nil {
-			// sourceFile.extendedSourceFiles = arrayFrom(result.extendedSourceFiles.keys()) //todo extendedSourceFile does not exist in sourcefile
 			for extendedSourceFile := range result.extendedSourceFiles {
 				sourceFile.extendedSourceFiles = append(sourceFile.extendedSourceFiles, extendedSourceFile)
 			}
@@ -1006,43 +1003,6 @@ const defaultIncludeSpec = "**/*"
 type PropOfRaw struct {
 	sliceValue any
 	wrongValue string
-}
-
-func mergeCompilerOptions(existingOptions, newOptions *core.CompilerOptions) {
-	jsonData, err := json.Marshal(newOptions)
-	if err != nil {
-		return
-	}
-	var newOptionsMap map[string]any
-	err = json.Unmarshal(jsonData, &newOptionsMap)
-	if err != nil {
-		return
-	}
-
-	jsonDataExisting, err := json.Marshal(existingOptions)
-	if err != nil {
-		return
-	}
-	var existingOptionsMap map[string]any
-	err = json.Unmarshal(jsonDataExisting, &existingOptionsMap)
-	if err != nil {
-		return
-	}
-
-	for k, v := range newOptionsMap {
-		if existingOptionsMap[k] != v {
-			existingValue := existingOptionsMap[k]
-			if existingValue != nil && existingValue != 0 && existingValue != "" {
-				newOptionsMap[k] = existingOptionsMap[k]
-			}
-		}
-	}
-
-	jsonData, err = json.Marshal(newOptionsMap)
-	if err != nil {
-		return
-	}
-	err = json.Unmarshal(jsonData, &newOptions)
 }
 
 // parseJsonConfigFileContentWorker parses the contents of a config file from json or json source file (tsconfig.json).
@@ -1083,10 +1043,10 @@ func parseJsonConfigFileContentWorker(
 		basePathForFileNames = tspath.NormalizePath(basePath)
 	}
 	getPropFromRaw := func(prop string, validateElement func(value any) bool, elementTypeName string) PropOfRaw {
-		value, exists := rawConfig[string(prop)]
+		value, exists := rawConfig[prop]
 		if exists {
 			if reflect.TypeOf(value).Kind() == reflect.Slice {
-				result := rawConfig[string(prop)]
+				result := rawConfig[prop]
 				if _, ok := result.([]any); ok {
 					if sourceFile == nil && !core.Every(result.([]any), validateElement) {
 						errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.Compiler_option_0_requires_a_value_of_type_1, prop, elementTypeName))

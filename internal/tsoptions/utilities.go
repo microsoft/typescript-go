@@ -213,7 +213,7 @@ func getSubPatternFromSpec(
 			}
 
 			if hasWrittenComponent {
-				subpattern.WriteString(string(tspath.DirectorySeparator))
+				subpattern.WriteRune(tspath.DirectorySeparator)
 			}
 
 			if usage != "exclude" {
