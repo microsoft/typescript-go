@@ -87,22 +87,23 @@ func (p *fileLoader) startTasks(tasks []*parseTask) {
 }
 
 func iterTasks(tasks []*parseTask) iter.Seq[*parseTask] {
-	return func(yield func(*parseTask) bool) {
-		iterTasksWorker(tasks, yield)
-	}
-}
+	var iterTasksWorker func(tasks []*parseTask, yield func(*parseTask) bool)
+	iterTasksWorker = func(tasks []*parseTask, yield func(*parseTask) bool) {
+		for _, task := range tasks {
+			if len(task.subTasks) > 0 {
+				iterTasksWorker(task.subTasks, yield)
+			}
 
-func iterTasksWorker(tasks []*parseTask, yield func(*parseTask) bool) {
-	for _, task := range tasks {
-		if len(task.subTasks) > 0 {
-			iterTasksWorker(task.subTasks, yield)
-		}
-
-		if task.file != nil {
-			if !yield(task) {
-				return
+			if task.file != nil {
+				if !yield(task) {
+					return
+				}
 			}
 		}
+	}
+
+	return func(yield func(*parseTask) bool) {
+		iterTasksWorker(tasks, yield)
 	}
 }
 
