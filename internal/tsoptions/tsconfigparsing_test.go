@@ -642,11 +642,11 @@ func TestParseSrcCompiler(t *testing.T) {
 		ModuleKind:       core.ModuleKindNodeNext,
 		ModuleResolution: core.ModuleResolutionKindNodeNext,
 		NewLine:          core.NewLineKindLF,
-		OutDir:           tspath.NormalizeSlashes(filepath.Join(repo.RootPath, "built", "local")),
+		OutDir:           tspath.NormalizeSlashes(filepath.Join(repo.TypeScriptSubmodulePath, "built", "local")),
 		Target:           core.ScriptTargetES2020,
 		Types:            []string{"node"},
 		ConfigFilePath:   tsconfigPath,
-	}) // TODO: fill out
+	})
 
 	fileNames := parseConfigFileContent.ParsedOptions.FileNames
 	fmt.Println(fileNames)
