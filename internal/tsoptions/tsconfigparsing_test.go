@@ -165,6 +165,7 @@ var parseConfigFileTextToJsonTests = []struct {
 
 func TestParseConfigFileTextToJson(t *testing.T) {
 	t.Parallel()
+	repo.SkipIfNoTypeScriptSubmodule(t)
 	for _, rec := range parseConfigFileTextToJsonTests {
 		t.Run(rec.title, func(t *testing.T) {
 			t.Parallel()
