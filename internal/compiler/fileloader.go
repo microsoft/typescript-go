@@ -255,8 +255,8 @@ func (p *fileLoader) collectExternalModuleReferences(file *ast.SourceFile) {
 }
 
 func (p *fileLoader) collectModuleReferences(file *ast.SourceFile, node *ast.Statement, inAmbientModule bool) {
-	if isAnyImportOrReExport(node) {
-		moduleNameExpr := getExternalModuleName(node)
+	if ast.IsAnyImportOrReExport(node) {
+		moduleNameExpr := ast.GetExternalModuleName(node)
 		// TypeScript 1.0 spec (April 2014): 12.1.6
 		// An ExternalImportDeclaration in an AmbientExternalModuleDeclaration may reference other external modules
 		// only through top - level external module names. Relative external module names are not permitted.
