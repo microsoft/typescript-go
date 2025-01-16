@@ -233,6 +233,7 @@ type ScannerState struct {
 	token                     ast.Kind       // Kind of current token
 	tokenValue                string         // Parsed value of current token
 	tokenFlags                ast.TokenFlags // Flags for current token
+	commentDirectives         []ast.CommentDirective
 	skipJSDocLeadingAsterisks int            // Leading asterisks to skip when scanning types inside JSDoc. Should be 0 outside JSDoc
 }
 
@@ -285,6 +286,10 @@ func (s *Scanner) TokenValue() string {
 
 func (s *Scanner) TokenRange() core.TextRange {
 	return core.NewTextRange(s.tokenStart, s.pos)
+}
+
+func (s *Scanner) CommentDirectives() []ast.CommentDirective {
+	return s.commentDirectives
 }
 
 func (s *Scanner) Mark() ScannerState {
@@ -543,7 +548,7 @@ func (s *Scanner) Scan() ast.Kind {
 						s.pos += size
 					}
 				}
-				// commentDirectives = appendIfCommentDirective(commentDirectives, text.slice(tokenStart, pos), commentDirectiveRegExSingleLine, tokenStart);
+				s.processCommentDirective(s.tokenStart, s.pos)
 				continue
 			}
 			if s.charAt(1) == '*' {
@@ -575,7 +580,6 @@ func (s *Scanner) Scan() ast.Kind {
 				if isJSDoc && s.shouldParseJSDoc() {
 					s.tokenFlags |= ast.TokenFlagsPrecedingJSDocComment
 				}
-				// commentDirectives = appendIfCommentDirective(commentDirectives, text.slice(lastLineStart, pos), commentDirectiveRegExMultiLine, lastLineStart);
 				continue
 			}
 			if s.charAt(1) == '=' {
@@ -830,6 +834,29 @@ func (s *Scanner) Scan() ast.Kind {
 		}
 		return s.token
 	}
+}
+
+func (s *Scanner) processCommentDirective(start int, end int) {
+	// Skip starting slashes and whitespace
+	pos := start + 2
+	for pos < len(s.text) && (s.text[pos] == ' ' || s.text[pos] == '\t') {
+		pos++
+	}
+	// Directive must start with '@'
+	if !(pos < len(s.text) && s.text[pos] == '@') {
+		return
+	}
+	pos++
+	var kind ast.CommentDirectiveKind
+	switch {
+	case strings.HasPrefix(s.text[pos:], "ts-expect-error"):
+		kind = ast.CommentDirectiveKindExpectError
+	case strings.HasPrefix(s.text[pos:], "ts-ignore"):
+		kind = ast.CommentDirectiveKindIgnore
+	default:
+		return
+	}
+	s.commentDirectives = append(s.commentDirectives, ast.CommentDirective{Loc: core.NewTextRange(start, end), Kind: kind})
 }
 
 func (s *Scanner) ReScanLessThanToken() ast.Kind {
@@ -2122,15 +2149,13 @@ func ComputeLineOfPosition(lineStarts []core.TextPos, pos int) int {
 }
 
 func GetLineStarts(sourceFile *ast.SourceFile) []core.TextPos {
-	if sourceFile.LineMap == nil {
-		sourceFile.LineMap = core.ComputeLineStarts(sourceFile.Text)
-	}
-	return sourceFile.LineMap
+	return sourceFile.LineMap()
 }
 
 func GetLineAndCharacterOfPosition(sourceFile *ast.SourceFile, pos int) (line int, character int) {
-	line = ComputeLineOfPosition(GetLineStarts(sourceFile), pos)
-	character = utf8.RuneCountInString(sourceFile.Text[sourceFile.LineMap[line]:pos])
+	lineMap := GetLineStarts(sourceFile)
+	line = ComputeLineOfPosition(lineMap, pos)
+	character = utf8.RuneCountInString(sourceFile.Text[lineMap[line]:pos])
 	return
 }
 

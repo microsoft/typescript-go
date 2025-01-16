@@ -1,4 +1,4 @@
-package compiler
+package checker
 
 import (
 	"math"
@@ -20,6 +20,13 @@ type FlowType struct {
 
 func (ft *FlowType) isNil() bool {
 	return ft.t == nil
+}
+
+func (c *Checker) newFlowType(t *Type, incomplete bool) FlowType {
+	if incomplete && t.flags&TypeFlagsNever != 0 {
+		t = c.silentNeverType
+	}
+	return FlowType{t: t, incomplete: incomplete}
 }
 
 type SharedFlow struct {
@@ -181,7 +188,7 @@ func (c *Checker) getTypeAtFlowAssignment(f *FlowState, flow *ast.FlowNode) Flow
 		}
 		if getAssignmentTargetKind(node) == AssignmentKindCompound {
 			flowType := c.getTypeAtFlowNode(f, flow.Antecedent)
-			return FlowType{t: c.getBaseTypeOfLiteralType(flowType.t), incomplete: flowType.incomplete}
+			return c.newFlowType(c.getBaseTypeOfLiteralType(flowType.t), flowType.incomplete)
 		}
 		if f.declaredType == c.autoType || f.declaredType == c.autoArrayType {
 			if c.isEmptyArrayAssignment(node) {
@@ -248,7 +255,10 @@ func (c *Checker) getTypeAtFlowCall(f *FlowState, flow *ast.FlowNode) FlowType {
 			default:
 				narrowedType = t
 			}
-			return FlowType{t: narrowedType, incomplete: flowType.incomplete}
+			if narrowedType == t {
+				return flowType
+			}
+			return c.newFlowType(narrowedType, flowType.incomplete)
 		}
 		if c.getReturnTypeOfSignature(signature).flags&TypeFlagsNever != 0 {
 			return FlowType{t: c.unreachableNeverType}
@@ -313,7 +323,7 @@ func (c *Checker) getTypeAtFlowCondition(f *FlowState, flow *ast.FlowNode) FlowT
 	if narrowedType == nonEvolvingType {
 		return flowType
 	}
-	return FlowType{t: narrowedType, incomplete: flowType.incomplete}
+	return c.newFlowType(narrowedType, flowType.incomplete)
 }
 
 // Narrow the given type based on the given expression having the assumed boolean value. The returned type
@@ -1013,7 +1023,7 @@ func (c *Checker) getTypeAtSwitchClause(f *FlowState, flow *ast.FlowNode) FlowTy
 			t = c.narrowTypeBySwitchOnDiscriminantProperty(t, access, data)
 		}
 	}
-	return FlowType{t: t, incomplete: flowType.incomplete}
+	return c.newFlowType(t, flowType.incomplete)
 }
 
 func (c *Checker) narrowTypeBySwitchOnDiscriminant(t *Type, data *ast.FlowSwitchClauseData) *Type {
@@ -1217,7 +1227,7 @@ func (c *Checker) getTypeAtFlowBranchLabel(f *FlowState, flow *ast.FlowNode) Flo
 			}
 		}
 	}
-	return FlowType{t: c.getUnionOrEvolvingArrayType(f, antecedentTypes, core.IfElse(subtypeReduction, UnionReductionSubtype, UnionReductionLiteral)), incomplete: seenIncomplete}
+	return c.newFlowType(c.getUnionOrEvolvingArrayType(f, antecedentTypes, core.IfElse(subtypeReduction, UnionReductionSubtype, UnionReductionLiteral)), seenIncomplete)
 }
 
 // At flow control branch or loop junctions, if the type along every antecedent code path
@@ -1258,7 +1268,7 @@ func (c *Checker) getTypeAtFlowLoopLabel(f *FlowState, flow *ast.FlowNode) FlowT
 	// path that leads to the top.
 	for _, loopInfo := range c.flowLoopStack {
 		if loopInfo.key == key && len(loopInfo.types) != 0 {
-			return FlowType{t: c.getUnionOrEvolvingArrayType(f, loopInfo.types, UnionReductionLiteral), incomplete: true}
+			return c.newFlowType(c.getUnionOrEvolvingArrayType(f, loopInfo.types, UnionReductionLiteral), true /*incomplete*/)
 		}
 	}
 	// Add the flow loop junction and reference to the in-process stack and analyze
@@ -1307,7 +1317,7 @@ func (c *Checker) getTypeAtFlowLoopLabel(f *FlowState, flow *ast.FlowNode) FlowT
 	// is incomplete.
 	result := c.getUnionOrEvolvingArrayType(f, antecedentTypes, core.IfElse(subtypeReduction, UnionReductionSubtype, UnionReductionLiteral))
 	if firstAntecedentType.incomplete {
-		return FlowType{t: result, incomplete: true}
+		return c.newFlowType(result, true /*incomplete*/)
 	}
 	c.flowLoopCache[key] = result
 	return FlowType{t: result}
@@ -1337,7 +1347,7 @@ func (c *Checker) getTypeAtFlowArrayMutation(f *FlowState, flow *ast.FlowNode) F
 						evolvedType = c.addEvolvingArrayElementType(evolvedType, node.AsBinaryExpression().Right)
 					}
 				}
-				return FlowType{t: evolvedType, incomplete: flowType.incomplete}
+				return c.newFlowType(evolvedType, flowType.incomplete)
 			}
 			return flowType
 		}
@@ -1497,7 +1507,7 @@ func (c *Checker) reportFlowControlError(node *ast.Node) {
 	block := ast.FindAncestor(node, ast.IsFunctionOrModuleBlock)
 	sourceFile := ast.GetSourceFileOfNode(node)
 	span := scanner.GetRangeOfTokenAtPosition(sourceFile, ast.GetStatementsOfBlock(block).Pos())
-	c.diagnostics.add(ast.NewDiagnostic(sourceFile, span, diagnostics.The_containing_function_or_module_body_is_too_large_for_control_flow_analysis))
+	c.diagnostics.Add(ast.NewDiagnostic(sourceFile, span, diagnostics.The_containing_function_or_module_body_is_too_large_for_control_flow_analysis))
 }
 
 func (c *Checker) isMatchingReference(source *ast.Node, target *ast.Node) bool {
@@ -2558,24 +2568,25 @@ func (c *Checker) isPostSuperFlowNode(flow *ast.FlowNode, noCacheCheck bool) boo
 // Check if a parameter, catch variable, or mutable local variable is definitely assigned anywhere
 func (c *Checker) isSymbolAssignedDefinitely(symbol *ast.Symbol) bool {
 	c.ensureAssignmentsMarked(symbol)
-	return symbol.HasDefiniteAssignment
+	return c.markedAssignmentSymbolLinks.get(symbol).hasDefiniteAssignment
 }
 
 // Check if a parameter, catch variable, or mutable local variable is assigned anywhere
 func (c *Checker) isSymbolAssigned(symbol *ast.Symbol) bool {
 	c.ensureAssignmentsMarked(symbol)
-	return symbol.LastAssignmentPos != 0
+	return c.markedAssignmentSymbolLinks.get(symbol).lastAssignmentPos != 0
 }
 
 // Return true if there are no assignments to the given symbol or if the given location
 // is past the last assignment to the symbol.
 func (c *Checker) isPastLastAssignment(symbol *ast.Symbol, location *ast.Node) bool {
 	c.ensureAssignmentsMarked(symbol)
-	return symbol.LastAssignmentPos == 0 || location != nil && int(symbol.LastAssignmentPos) < location.Pos()
+	lastAssignmentPos := c.markedAssignmentSymbolLinks.get(symbol).lastAssignmentPos
+	return lastAssignmentPos == 0 || location != nil && int(lastAssignmentPos) < location.Pos()
 }
 
 func (c *Checker) ensureAssignmentsMarked(symbol *ast.Symbol) {
-	if symbol.LastAssignmentPos != 0 {
+	if c.markedAssignmentSymbolLinks.get(symbol).lastAssignmentPos != 0 {
 		return
 	}
 	parent := ast.FindAncestor(symbol.ValueDeclaration, ast.IsFunctionOrSourceFile)
@@ -2610,17 +2621,18 @@ func (c *Checker) markNodeAssignments(node *ast.Node) bool {
 		if assignmentKind != AssignmentKindNone {
 			symbol := c.getResolvedSymbol(node)
 			if c.isParameterOrMutableLocalVariable(symbol) {
-				if symbol.LastAssignmentPos == 0 || symbol.LastAssignmentPos != math.MaxInt32 {
+				links := c.markedAssignmentSymbolLinks.get(symbol)
+				if pos := links.lastAssignmentPos; pos == 0 || pos != math.MaxInt32 {
 					referencingFunction := ast.FindAncestor(node, ast.IsFunctionOrSourceFile)
 					declaringFunction := ast.FindAncestor(symbol.ValueDeclaration, ast.IsFunctionOrSourceFile)
 					if referencingFunction == declaringFunction {
-						symbol.LastAssignmentPos = int32(c.extendAssignmentPosition(node, symbol.ValueDeclaration))
+						links.lastAssignmentPos = int32(c.extendAssignmentPosition(node, symbol.ValueDeclaration))
 					} else {
-						symbol.LastAssignmentPos = math.MaxInt32
+						links.lastAssignmentPos = math.MaxInt32
 					}
 				}
 				if assignmentKind == AssignmentKindDefinite {
-					symbol.HasDefiniteAssignment = true
+					links.hasDefiniteAssignment = true
 				}
 			}
 		}
@@ -2634,7 +2646,8 @@ func (c *Checker) markNodeAssignments(node *ast.Node) bool {
 		if !node.AsExportSpecifier().IsTypeOnly && !exportDeclaration.IsTypeOnly && exportDeclaration.ModuleSpecifier == nil && !ast.IsStringLiteral(name) {
 			symbol := c.resolveEntityName(name, ast.SymbolFlagsValue, true /*ignoreErrors*/, true /*dontResolveAlias*/, nil)
 			if symbol != nil && c.isParameterOrMutableLocalVariable(symbol) {
-				symbol.LastAssignmentPos = math.MaxInt32
+				links := c.markedAssignmentSymbolLinks.get(symbol)
+				links.lastAssignmentPos = math.MaxInt32
 			}
 		}
 		return false
