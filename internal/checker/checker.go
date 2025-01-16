@@ -603,6 +603,7 @@ type Checker struct {
 	varianceLinks                             LinkStore[*ast.Symbol, VarianceLinks]
 	indexSymbolLinks                          LinkStore[*ast.Symbol, IndexSymbolLinks]
 	ReverseMappedSymbolLinks                  LinkStore[*ast.Symbol, ReverseMappedSymbolLinks]
+	markedAssignmentSymbolLinks               LinkStore[*ast.Symbol, MarkedAssignmentSymbolLinks]
 	sourceFileLinks                           LinkStore[*ast.SourceFile, SourceFileLinks]
 	patternForType                            map[*Type]*ast.Node
 	contextFreeTypes                          map[*ast.Node]*Type
@@ -713,8 +714,6 @@ type Checker struct {
 	lastFlowNodeReachable                     bool
 	flowNodeReachable                         map[*ast.FlowNode]bool
 	flowNodePostSuper                         map[*ast.FlowNode]bool
-	symbolLastAssignmentPos                   map[*ast.Symbol]int32
-	symbolHasDefiniteAssignment               core.Set[*ast.Symbol] // Symbol is definitely assigned somewhere
 	contextualInfos                           []ContextualInfo
 	inferenceContextInfos                     []InferenceContextInfo
 	awaitedTypeStack                          []*Type
@@ -905,7 +904,6 @@ func NewChecker(program Program) *Checker {
 	c.flowLoopCache = make(map[FlowLoopKey]*Type)
 	c.flowNodeReachable = make(map[*ast.FlowNode]bool)
 	c.flowNodePostSuper = make(map[*ast.FlowNode]bool)
-	c.symbolLastAssignmentPos = make(map[*ast.Symbol]int32)
 	c.subtypeRelation = &Relation{}
 	c.strictSubtypeRelation = &Relation{}
 	c.assignableRelation = &Relation{}
