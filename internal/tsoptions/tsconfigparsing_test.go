@@ -12,6 +12,7 @@ import (
 	"testing"
 	"testing/fstest"
 
+	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnosticwriter"
 	"github.com/microsoft/typescript-go/internal/parser"
 	"github.com/microsoft/typescript-go/internal/repo"
@@ -641,8 +642,17 @@ func TestParseSrcCompiler(t *testing.T) {
 		t.FailNow()
 	}
 
-	// opts := parseConfigFileContent.CompilerOptions()
-	// assert.DeepEqual(t, opts, &core.CompilerOptions{}) // TODO: fill out
+	opts := parseConfigFileContent.CompilerOptions()
+	assert.DeepEqual(t, opts, &core.CompilerOptions{
+		Lib:              []string{"es2020"},
+		ModuleKind:       core.ModuleKindNodeNext,
+		ModuleResolution: core.ModuleResolutionKindNodeNext,
+		NewLine:          core.NewLineKindLF,
+		OutDir:           tspath.NormalizeSlashes(filepath.Join(repo.TypeScriptSubmodulePath, "built", "local")),
+		Target:           core.ScriptTargetES2020,
+		Types:            []string{"node"},
+		ConfigFilePath:   tsconfigPath,
+	})
 
 	fileNames := parseConfigFileContent.ParsedOptions.FileNames
 	fmt.Println(fileNames)
