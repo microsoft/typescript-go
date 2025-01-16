@@ -644,14 +644,28 @@ func TestParseSrcCompiler(t *testing.T) {
 
 	opts := parseConfigFileContent.CompilerOptions()
 	assert.DeepEqual(t, opts, &core.CompilerOptions{
-		Lib:              []string{"es2020"},
-		ModuleKind:       core.ModuleKindNodeNext,
-		ModuleResolution: core.ModuleResolutionKindNodeNext,
-		NewLine:          core.NewLineKindLF,
-		OutDir:           tspath.NormalizeSlashes(filepath.Join(repo.TypeScriptSubmodulePath, "built", "local")),
-		Target:           core.ScriptTargetES2020,
-		Types:            []string{"node"},
-		ConfigFilePath:   tsconfigPath,
+		Lib:                        []string{"es2020"},
+		ModuleKind:                 core.ModuleKindNodeNext,
+		ModuleResolution:           core.ModuleResolutionKindNodeNext,
+		NewLine:                    core.NewLineKindLF,
+		OutDir:                     tspath.NormalizeSlashes(filepath.Join(repo.TypeScriptSubmodulePath, "built", "local")),
+		Target:                     core.ScriptTargetES2020,
+		Types:                      []string{"node"},
+		ConfigFilePath:             tsconfigPath,
+		Declaration:                core.TSTrue,
+		DeclarationMap:             core.TSTrue,
+		AlwaysStrict:               core.TSTrue,
+		Composite:                  core.TSTrue,
+		IsolatedDeclarations:       core.TSTrue,
+		NoImplicitOverride:         core.TSTrue,
+		PreserveConstEnums:         core.TSTrue,
+		RootDir:                    tspath.NormalizeSlashes(filepath.Join(repo.TypeScriptSubmodulePath, "src")),
+		SkipLibCheck:               core.TSTrue,
+		Strict:                     core.TSTrue,
+		StrictBindCallApply:        core.TSFalse,
+		SourceMap:                  core.TSTrue,
+		UseUnknownInCatchVariables: core.TSFalse,
+		Pretty:                     core.TSTrue,
 	})
 
 	fileNames := parseConfigFileContent.ParsedOptions.FileNames

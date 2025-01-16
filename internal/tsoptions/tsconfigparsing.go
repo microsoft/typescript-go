@@ -954,7 +954,7 @@ func parseConfig(
 					result.compileOnSave = compileOnSave
 				}
 			}
-			result.options = extendedConfig.options
+			mergeCompilerOptions(extendedConfig.options, result.options)
 		}
 	}
 

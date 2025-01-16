@@ -8,14 +8,14 @@ import (
 )
 
 func parseTristate(value any) core.Tristate {
-	switch v := value.(type) {
-	case bool:
-		if v {
-			return core.TSTrue
-		}
+	if value == nil {
+		return core.TSUnknown
+	}
+	if value == true {
+		return core.TSTrue
+	} else {
 		return core.TSFalse
 	}
-	return core.TSUnknown
 }
 
 func parseStringArray(value any) []string {
@@ -176,6 +176,10 @@ func parseCompilerOptions(key string, value any, allOptions *core.CompilerOption
 		allOptions.DisableSolutionSearching = parseTristate(value)
 	case "disableReferencedProjectLoad":
 		allOptions.DisableReferencedProjectLoad = parseTristate(value)
+	case "declarationMap":
+		allOptions.DeclarationMap = parseTristate(value)
+	case "declaration":
+		allOptions.Declaration = parseTristate(value)
 	case "extendedDiagnostics":
 		allOptions.ExtendedDiagnostics = parseTristate(value)
 	case "emitDecoratorMetadata":
@@ -436,6 +440,14 @@ func compareAndMergeCompilerOptions(field string, existingOptions *core.Compiler
 	case "Composite":
 		if existingOptions.Composite != newOptions.Composite && newOptions.Composite == core.TSUnknown {
 			newOptions.Composite = existingOptions.Composite
+		}
+	case "Declaration":
+		if existingOptions.Declaration != newOptions.Declaration && newOptions.Declaration == core.TSUnknown {
+			newOptions.Declaration = existingOptions.Declaration
+		}
+	case "DeclarationMap":
+		if existingOptions.DeclarationMap != newOptions.DeclarationMap && newOptions.DeclarationMap == core.TSUnknown {
+			newOptions.DeclarationMap = existingOptions.DeclarationMap
 		}
 	case "DeclarationDir":
 		if existingOptions.DeclarationDir != newOptions.DeclarationDir && newOptions.DeclarationDir == "" {
