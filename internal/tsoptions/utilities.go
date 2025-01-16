@@ -339,22 +339,8 @@ type visitor struct {
 	useCaseSensitiveFileNames bool
 	host                      vfs.FS
 	getFileSystemEntries      func(path string, host vfs.FS) FileSystemEntries
-	visited                   map[string]bool
+	visited                   core.Set[string]
 	results                   [][]string
-}
-
-func visit(depth *int) {
-	if depth == nil {
-		return
-	}
-	if depth != nil {
-		newDepth := *depth - 1
-		if newDepth == 0 {
-			return
-		}
-		depth = &newDepth
-	}
-	visit(depth)
 }
 
 func (v *visitor) visitDirectory(
@@ -363,10 +349,10 @@ func (v *visitor) visitDirectory(
 	depth *int,
 ) {
 	canonicalPath := tspath.GetCanonicalFileName(absolutePath, v.useCaseSensitiveFileNames)
-	if v.visited[canonicalPath] {
+	if v.visited.Has(canonicalPath) {
 		return
 	}
-	v.visited[canonicalPath] = true
+	v.visited.Add(canonicalPath)
 	systemEntries := v.getFileSystemEntries(absolutePath, v.host)
 	files := systemEntries.files
 	directories := systemEntries.directories
@@ -389,7 +375,14 @@ func (v *visitor) visitDirectory(
 			}
 		}
 	}
-	visit(depth)
+
+	if depth != nil {
+		newDepth := *depth - 1
+		if newDepth == 0 {
+			return
+		}
+		depth = &newDepth
+	}
 
 	for _, current := range directories {
 		name := tspath.CombinePaths(path, current)
@@ -439,7 +432,6 @@ func matchFiles(path string, extensions []string, excludes []string, includes []
 		excludeRegex:              excludeRegex,
 		includeDirectoryRegex:     includeDirectoryRegex,
 		extensions:                extensions,
-		visited:                   map[string]bool{},
 		results:                   results,
 	}
 	for _, basePath := range patterns.basePaths {

@@ -1559,7 +1559,7 @@ func getSupportedExtensions(options *core.CompilerOptions, extraFileExtensions [
 }
 
 func getSupportedExtensionsWithJsonIfResolveJsonModule(options *core.CompilerOptions, supportedExtensions [][]string) [][]string {
-	if options != nil || options.GetResolveJsonModule() {
+	if options == nil || !options.GetResolveJsonModule() {
 		return supportedExtensions
 	}
 	if core.Same(supportedExtensions, tspath.AllSupportedExtensions) {
