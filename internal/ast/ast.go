@@ -5847,8 +5847,8 @@ func (node *SourceFile) SetJSDocDiagnostics(diags []*Diagnostic) {
 	node.jsdocDiagnostics = diags
 }
 
-func (node *SourceFile) SetJSDocCache(cache *map[*Node][]*Node) {
-	node.jsdocCache = *cache
+func (node *SourceFile) SetJSDocCache(cache map[*Node][]*Node) {
+	node.jsdocCache = cache
 }
 
 func (node *SourceFile) BindDiagnostics() []*Diagnostic {

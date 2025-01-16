@@ -88,5 +88,5 @@ func isKeywordOrPunctuation(token ast.Kind) bool {
 }
 
 func isJSDocLikeText(text string) bool {
-	return text[1] == '*' && text[2] == '*' && text[3] != '/'
+	return len(text) >= 4 && text[1] == '*' && text[2] == '*' && text[3] != '/'
 }
