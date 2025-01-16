@@ -68,10 +68,8 @@ func (node *FlowSwitchClauseData) IsEmpty() bool {
 
 type FlowReduceLabelData struct {
 	NodeBase
-	Target *FlowLabel // Target label
-	// Guards Target modification in the checker.
-	TargetLock  ReentrantLock
-	Antecedents *FlowList // Temporary antecedent list
+	Target      *FlowLabel // Target label
+	Antecedents *FlowList  // Temporary antecedent list
 }
 
 func NewFlowReduceLabelData(target *FlowLabel, antecedents *FlowList) *Node {
