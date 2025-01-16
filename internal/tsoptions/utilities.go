@@ -343,10 +343,24 @@ type visitor struct {
 	results                   [][]string
 }
 
+func visit(depth *int) {
+	if depth == nil {
+		return
+	}
+	if depth != nil {
+		newDepth := *depth - 1
+		if newDepth == 0 {
+			return
+		}
+		depth = &newDepth
+	}
+	visit(depth)
+}
+
 func (v *visitor) visitDirectory(
 	path string,
 	absolutePath string,
-	depth int,
+	depth *int,
 ) {
 	canonicalPath := tspath.GetCanonicalFileName(absolutePath, v.useCaseSensitiveFileNames)
 	if v.visited[canonicalPath] {
@@ -375,13 +389,7 @@ func (v *visitor) visitDirectory(
 			}
 		}
 	}
-
-	if depth >= 0 {
-		depth--
-		if depth == 0 {
-			return
-		}
-	}
+	visit(depth)
 
 	for _, current := range directories {
 		name := tspath.CombinePaths(path, current)
@@ -393,7 +401,7 @@ func (v *visitor) visitDirectory(
 }
 
 // path is the directory of the tsconfig.json
-func matchFiles(path string, extensions []string, excludes []string, includes []string, useCaseSensitiveFileNames bool, currentDirectory string, depth int, host vfs.FS, getFileSystemEntries func(path string, host vfs.FS) FileSystemEntries, realpath func(path string) string) []string {
+func matchFiles(path string, extensions []string, excludes []string, includes []string, useCaseSensitiveFileNames bool, currentDirectory string, depth *int, host vfs.FS, getFileSystemEntries func(path string, host vfs.FS) FileSystemEntries, realpath func(path string) string) []string {
 	path = tspath.NormalizePath(path)
 	currentDirectory = tspath.NormalizePath(currentDirectory)
 
@@ -441,6 +449,6 @@ func matchFiles(path string, extensions []string, excludes []string, includes []
 	return core.Flatten(results)
 }
 
-func readDirectory(host vfs.FS, currentDir string, path string, extensions []string, excludes []string, includes []string, depth int) []string {
+func readDirectory(host vfs.FS, currentDir string, path string, extensions []string, excludes []string, includes []string, depth *int) []string {
 	return matchFiles(path, extensions, excludes, includes, host.UseCaseSensitiveFileNames(), currentDir, depth, host, getAccessibleFileSystemEntries, host.Realpath)
 }

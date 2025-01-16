@@ -1322,7 +1322,7 @@ func forEachTsConfigPropArray[T any](tsConfigSourceFile *tsConfigSourceFile, pro
 	if tsConfigSourceFile != nil {
 		return forEachPropertyAssignment(getTsConfigObjectLiteralExpression(tsConfigSourceFile), propKey, callback)
 	}
-	return new(T)
+	return nil
 }
 
 func forEachPropertyAssignment[T any](objectLiteral *ast.ObjectLiteralExpression, key string, callback func(property *ast.PropertyAssignment) T, key2 ...string) T {
@@ -1469,7 +1469,7 @@ func getFileNamesFromConfigSpecs(
 
 	var jsonOnlyIncludeRegexes []*regexp2.Regexp
 	if len(validatedIncludeSpecs) > 0 {
-		files := readDirectory(host, basePath, basePath, core.Flatten(supportedExtensionsWithJsonIfResolveJsonModule), validatedExcludeSpecs, validatedIncludeSpecs, -1)
+		files := readDirectory(host, basePath, basePath, core.Flatten(supportedExtensionsWithJsonIfResolveJsonModule), validatedExcludeSpecs, validatedIncludeSpecs, nil)
 		for _, file := range files {
 			if tspath.FileExtensionIs(file, tspath.ExtensionJson) {
 				if jsonOnlyIncludeRegexes == nil {
