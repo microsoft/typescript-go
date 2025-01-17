@@ -21,7 +21,7 @@ type fileLoader struct {
 	compilerOptions *core.CompilerOptions
 
 	resolver             *module.Resolver
-	resolvedModulesMutex *sync.Mutex
+	resolvedModulesMutex sync.Mutex
 	resolvedModules      map[tspath.Path]module.ModeAwareCache[*module.ResolvedModule]
 
 	mu                      sync.Mutex
@@ -38,19 +38,16 @@ func processAllProgramFiles(
 	programOptions ProgramOptions,
 	compilerOptions *core.CompilerOptions,
 	resolver *module.Resolver,
-	resolvedModulesMutex *sync.Mutex,
-	resolvedModules map[tspath.Path]module.ModeAwareCache[*module.ResolvedModule],
 	rootFiles []string,
 	libs []string,
-) []*ast.SourceFile {
+) (files []*ast.SourceFile, resolvedModules map[tspath.Path]module.ModeAwareCache[*module.ResolvedModule]) {
 	loader := fileLoader{
-		host:                 host,
-		programOptions:       programOptions,
-		compilerOptions:      compilerOptions,
-		resolver:             resolver,
-		resolvedModulesMutex: resolvedModulesMutex,
-		resolvedModules:      resolvedModules,
-		defaultLibraryPath:   programOptions.DefaultLibraryPath,
+		host:               host,
+		programOptions:     programOptions,
+		compilerOptions:    compilerOptions,
+		resolver:           resolver,
+		resolvedModules:    resolvedModules,
+		defaultLibraryPath: programOptions.DefaultLibraryPath,
 		comparePathsOptions: tspath.ComparePathsOptions{
 			UseCaseSensitiveFileNames: host.FS().UseCaseSensitiveFileNames(),
 			CurrentDirectory:          host.GetCurrentDirectory(),
@@ -69,7 +66,7 @@ func processAllProgramFiles(
 	files, libFiles := collectFiles(loader.rootTasks)
 	loader.sortLibs(libFiles)
 
-	return append(libFiles, files...)
+	return append(libFiles, files...), loader.resolvedModules
 }
 
 func (p *fileLoader) addRootTasks(files []string, isLib bool) {
@@ -332,6 +329,9 @@ func (p *fileLoader) resolveImportsAndModuleAugmentations(file *ast.SourceFile) 
 
 		p.resolvedModulesMutex.Lock()
 		defer p.resolvedModulesMutex.Unlock()
+		if p.resolvedModules == nil {
+			p.resolvedModules = make(map[tspath.Path]module.ModeAwareCache[*module.ResolvedModule])
+		}
 		p.resolvedModules[file.Path()] = resolutionsInFile
 
 		for i, resolution := range resolutions {

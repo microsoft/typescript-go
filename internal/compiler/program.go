@@ -39,9 +39,8 @@ type Program struct {
 	checkersByFile   map[*ast.SourceFile]*checker.Checker
 	currentDirectory string
 
-	resolver             *module.Resolver
-	resolvedModulesMutex sync.Mutex
-	resolvedModules      map[tspath.Path]module.ModeAwareCache[*module.ResolvedModule]
+	resolver        *module.Resolver
+	resolvedModules map[tspath.Path]module.ModeAwareCache[*module.ResolvedModule]
 
 	comparePathsOptions tspath.ComparePathsOptions
 	defaultLibraryPath  string
@@ -118,7 +117,7 @@ func NewProgram(options ProgramOptions) *Program {
 	}
 
 	rootFiles := walkFiles(p.host.FS(), p.rootPath, extensions)
-	p.files = processAllProgramFiles(p.host, p.programOptions, p.compilerOptions, p.resolver, &p.resolvedModulesMutex, p.resolvedModules, rootFiles, libs)
+	p.files, p.resolvedModules = processAllProgramFiles(p.host, p.programOptions, p.compilerOptions, p.resolver, rootFiles, libs)
 	p.filesByPath = make(map[tspath.Path]*ast.SourceFile, len(p.files))
 	for _, file := range p.files {
 		p.filesByPath[file.Path()] = file
