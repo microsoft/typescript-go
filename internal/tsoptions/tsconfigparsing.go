@@ -637,7 +637,7 @@ func convertObjectLiteralExpressionToJson(
 			if objectOption != nil && objectOption.ElementOptions != nil {
 				option = objectOption.ElementOptions[keyText.(string)]
 			} else {
-				option = &CommandLineOption{}
+				option = nil
 				// errors.push(createDiagnosticForNodeInSourceFile(sourceFile, element.name, diagnostics.Unknown_option_0, keyText));
 			}
 		}
