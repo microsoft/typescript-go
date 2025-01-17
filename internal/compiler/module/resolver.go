@@ -25,7 +25,7 @@ type resolved struct {
 	resolvedUsingTsExtension bool
 }
 
-type resolutionKindSpecificLoader = func(extensions Extensions, candidate string, onlyRecordFailures bool) *resolved
+type resolutionKindSpecificLoader = func(extensions extensions, candidate string, onlyRecordFailures bool) *resolved
 
 // !!! this seems unnecessary
 type searchResult[T any] struct {
@@ -37,7 +37,7 @@ func newSearchResult[T any](result *T) searchResult[T] {
 	return searchResult[T]{value: result, stop: result != nil}
 }
 
-type ResolutionState struct {
+type resolutionState struct {
 	resolver *Resolver
 
 	// request fields
@@ -47,7 +47,7 @@ type ResolutionState struct {
 	features            NodeResolutionFeatures
 	esmMode             bool
 	conditions          []string
-	extensions          Extensions
+	extensions          extensions
 	compilerOptions     *core.CompilerOptions
 	redirectedReference *ResolvedProjectReference
 
@@ -68,8 +68,8 @@ func newResolutionState(
 	compilerOptions *core.CompilerOptions,
 	redirectedReference *ResolvedProjectReference,
 	resolver *Resolver,
-) *ResolutionState {
-	state := &ResolutionState{
+) *resolutionState {
+	state := &resolutionState{
 		name:                name,
 		containingDirectory: containingDirectory,
 		compilerOptions:     compilerOptions,
@@ -139,7 +139,7 @@ func (r *Resolver) traceEnabled() bool {
 }
 
 func (r *Resolver) GetPackageScopeForPath(directory string) *packagejson.InfoCacheEntry {
-	return (&ResolutionState{compilerOptions: r.compilerOptions, resolver: r}).getPackageScopeForPath(directory)
+	return (&resolutionState{compilerOptions: r.compilerOptions, resolver: r}).getPackageScopeForPath(directory)
 }
 
 func (r *Resolver) ResolveTypeReferenceDirective(typeReferenceDirectiveName string, containingFile string, resolutionMode core.ResolutionMode, redirectedReference *ResolvedProjectReference) *ResolvedTypeReferenceDirective {
@@ -283,7 +283,7 @@ func (r *Resolver) traceTypeReferenceDirectiveResult(typeReferenceDirectiveName 
 	}
 }
 
-func (r *ResolutionState) resolveTypeReferenceDirective(typeRoots []string, fromConfig bool, fromInferredTypesContainingFile bool) *ResolvedTypeReferenceDirective {
+func (r *resolutionState) resolveTypeReferenceDirective(typeRoots []string, fromConfig bool, fromInferredTypesContainingFile bool) *ResolvedTypeReferenceDirective {
 	// Primary lookup
 	if len(typeRoots) > 0 {
 		if r.resolver.traceEnabled() {
@@ -331,7 +331,7 @@ func (r *ResolutionState) resolveTypeReferenceDirective(typeRoots []string, from
 	return r.createResolvedTypeReferenceDirective(resolved, false /*primary*/)
 }
 
-func (r *ResolutionState) getCandidateFromTypeRoot(typeRoot string) string {
+func (r *resolutionState) getCandidateFromTypeRoot(typeRoot string) string {
 	nameForLookup := r.name
 	if strings.HasSuffix(typeRoot, "/node_modules/@types") || strings.HasSuffix(typeRoot, "/node_modules/@types/") {
 		nameForLookup = r.mangleScopedPackageName(r.name)
@@ -339,7 +339,7 @@ func (r *ResolutionState) getCandidateFromTypeRoot(typeRoot string) string {
 	return tspath.CombinePaths(typeRoot, nameForLookup)
 }
 
-func (r *ResolutionState) mangleScopedPackageName(name string) string {
+func (r *resolutionState) mangleScopedPackageName(name string) string {
 	mangled := MangleScopedPackageName(name)
 	if r.resolver.traceEnabled() && mangled != name {
 		r.resolver.host.Trace(diagnostics.Scoped_package_detected_looking_in_0.Format(mangled))
@@ -347,7 +347,7 @@ func (r *ResolutionState) mangleScopedPackageName(name string) string {
 	return mangled
 }
 
-func (r *ResolutionState) getPackageScopeForPath(directory string) *packagejson.InfoCacheEntry {
+func (r *resolutionState) getPackageScopeForPath(directory string) *packagejson.InfoCacheEntry {
 	result, _ := tspath.ForEachAncestorDirectory(
 		directory,
 		func(directory string) (*packagejson.InfoCacheEntry, bool) {
@@ -361,11 +361,11 @@ func (r *ResolutionState) getPackageScopeForPath(directory string) *packagejson.
 	return result
 }
 
-func (r *ResolutionState) getResolvedPackageDirectory() bool {
+func (r *resolutionState) getResolvedPackageDirectory() bool {
 	return r.resolvedPackageDirectory
 }
 
-func (r *ResolutionState) resolveNodeLike() *ResolvedModule {
+func (r *resolutionState) resolveNodeLike() *ResolvedModule {
 	if r.resolver.traceEnabled() {
 		conditions := strings.Join(core.Map(r.conditions, func(c string) string { return `'` + c + `'` }), ", ")
 		if r.esmMode {
@@ -418,7 +418,7 @@ func (r *ResolutionState) resolveNodeLike() *ResolvedModule {
 	return r.createResolvedModule(nil, false)
 }
 
-func (r *ResolutionState) loadModuleFromSelfNameReference() *resolved {
+func (r *resolutionState) loadModuleFromSelfNameReference() *resolved {
 	directoryPath := tspath.GetNormalizedAbsolutePath(r.containingDirectory, r.resolver.host.GetCurrentDirectory())
 	scope := r.getPackageScopeForPath(directoryPath)
 	if !scope.Exists() || scope.Contents.Exports.IsFalsy() {
@@ -463,7 +463,7 @@ func (r *ResolutionState) loadModuleFromSelfNameReference() *resolved {
 	return nil
 }
 
-func (r *ResolutionState) loadModuleFromNearestNodeModulesDirectory(typesScopeOnly bool) searchResult[resolved] {
+func (r *resolutionState) loadModuleFromNearestNodeModulesDirectory(typesScopeOnly bool) searchResult[resolved] {
 	mode := core.ResolutionModeCommonJS
 	if r.esmMode {
 		mode = core.ResolutionModeESM
@@ -495,7 +495,7 @@ func (r *ResolutionState) loadModuleFromNearestNodeModulesDirectory(typesScopeOn
 	return newSearchResult[resolved](nil)
 }
 
-func (r *ResolutionState) loadModuleFromNearestNodeModulesDirectoryWorker(ext Extensions, mode core.ResolutionMode, typesScopeOnly bool) searchResult[resolved] {
+func (r *resolutionState) loadModuleFromNearestNodeModulesDirectoryWorker(ext extensions, mode core.ResolutionMode, typesScopeOnly bool) searchResult[resolved] {
 	result, _ := tspath.ForEachAncestorDirectory(
 		r.containingDirectory,
 		func(directory string) (searchResult[resolved], bool) {
@@ -513,7 +513,7 @@ func (r *ResolutionState) loadModuleFromNearestNodeModulesDirectoryWorker(ext Ex
 	return result
 }
 
-func (r *ResolutionState) loadModuleFromImmediateNodeModulesDirectory(extensions Extensions, directory string, typesScopeOnly bool) *resolved {
+func (r *resolutionState) loadModuleFromImmediateNodeModulesDirectory(extensions extensions, directory string, typesScopeOnly bool) *resolved {
 	nodeModulesFolder := tspath.CombinePaths(directory, "node_modules")
 	nodeModulesFolderExists := r.resolver.host.FS().DirectoryExists(nodeModulesFolder)
 	if !nodeModulesFolderExists && r.resolver.traceEnabled() {
@@ -538,7 +538,7 @@ func (r *ResolutionState) loadModuleFromImmediateNodeModulesDirectory(extensions
 	return nil
 }
 
-func (r *ResolutionState) loadModuleFromSpecificNodeModulesDirectory(ext Extensions, moduleName string, nodeModulesDirectory string, nodeModulesDirectoryExists bool) *resolved {
+func (r *resolutionState) loadModuleFromSpecificNodeModulesDirectory(ext extensions, moduleName string, nodeModulesDirectory string, nodeModulesDirectoryExists bool) *resolved {
 	candidate := tspath.NormalizePath(tspath.CombinePaths(nodeModulesDirectory, moduleName))
 	packageName, rest := ParsePackageName(moduleName)
 	packageDirectory := tspath.CombinePaths(nodeModulesDirectory, packageName)
@@ -563,7 +563,7 @@ func (r *ResolutionState) loadModuleFromSpecificNodeModulesDirectory(ext Extensi
 		}
 	}
 
-	loader := func(extensions Extensions, candidate string, onlyRecordFailures bool) *resolved {
+	loader := func(extensions extensions, candidate string, onlyRecordFailures bool) *resolved {
 		if rest != "" || !r.esmMode {
 			if fromFile := r.loadModuleFromFile(extensions, candidate, onlyRecordFailures); fromFile != nil {
 				fromFile.packageId = r.getPackageId(packageDirectory, packageInfo)
@@ -620,7 +620,7 @@ func (r *ResolutionState) loadModuleFromSpecificNodeModulesDirectory(ext Extensi
 	return loader(ext, candidate, !nodeModulesDirectoryExists)
 }
 
-func (r *ResolutionState) tryFindNonRelativeModuleNameInCache(nameAndMode ModeAwareCacheKey, directory string) searchResult[resolved] {
+func (r *resolutionState) tryFindNonRelativeModuleNameInCache(nameAndMode ModeAwareCacheKey, directory string) searchResult[resolved] {
 	if result, ok := r.resolver.moduleNameCache.getFromNonRelativeNameCache(nameAndMode, directory, r.redirectedReference); ok {
 		if r.resolver.traceEnabled() {
 			r.resolver.host.Trace(diagnostics.Resolution_for_module_0_was_found_in_cache_from_location_1.Format(nameAndMode.name, directory))
@@ -642,7 +642,7 @@ func (r *ResolutionState) tryFindNonRelativeModuleNameInCache(nameAndMode ModeAw
 	return newSearchResult[resolved](nil)
 }
 
-func (r *ResolutionState) createResolvedModuleHandlingSymlink(resolved *resolved) *ResolvedModule {
+func (r *resolutionState) createResolvedModuleHandlingSymlink(resolved *resolved) *ResolvedModule {
 	isExternalLibraryImport := resolved != nil && strings.Contains(resolved.path, "/node_modules/")
 	if r.resultFromCache == nil &&
 		r.compilerOptions.PreserveSymlinks != core.TSTrue &&
@@ -658,7 +658,7 @@ func (r *ResolutionState) createResolvedModuleHandlingSymlink(resolved *resolved
 	return r.createResolvedModule(resolved, isExternalLibraryImport)
 }
 
-func (r *ResolutionState) createResolvedModule(resolved *resolved, isExternalLibraryImport bool) *ResolvedModule {
+func (r *resolutionState) createResolvedModule(resolved *resolved, isExternalLibraryImport bool) *ResolvedModule {
 	if r.resultFromCache != nil {
 		var result *ResolvedModule
 		if !r.resolver.moduleNameCache.isReadonly {
@@ -687,7 +687,7 @@ func (r *ResolutionState) createResolvedModule(resolved *resolved, isExternalLib
 	return &resolvedModule
 }
 
-func (r *ResolutionState) createResolvedTypeReferenceDirective(resolved *resolved, primary bool) *ResolvedTypeReferenceDirective {
+func (r *resolutionState) createResolvedTypeReferenceDirective(resolved *resolved, primary bool) *ResolvedTypeReferenceDirective {
 	var resolvedTypeReferenceDirective ResolvedTypeReferenceDirective
 	if resolved != nil {
 		if !tspath.ExtensionIsTs(resolved.extension) {
@@ -710,7 +710,7 @@ func (r *ResolutionState) createResolvedTypeReferenceDirective(resolved *resolve
 	return &resolvedTypeReferenceDirective
 }
 
-func (r *ResolutionState) getOriginalAndResolvedFileName(fileName string) (string, string) {
+func (r *resolutionState) getOriginalAndResolvedFileName(fileName string) (string, string) {
 	resolvedFileName := r.realPath(fileName)
 	comparePathsOptions := tspath.ComparePathsOptions{
 		UseCaseSensitiveFileNames: r.resolver.host.FS().UseCaseSensitiveFileNames(),
@@ -724,11 +724,11 @@ func (r *ResolutionState) getOriginalAndResolvedFileName(fileName string) (strin
 	return fileName, resolvedFileName
 }
 
-func (r *ResolutionState) tryLoadModuleUsingOptionalResolutionSettings() *resolved {
+func (r *resolutionState) tryLoadModuleUsingOptionalResolutionSettings() *resolved {
 	return r.tryLoadModuleUsingPathsIfEligible().value
 }
 
-func (r *ResolutionState) tryLoadModuleUsingPathsIfEligible() searchResult[resolved] {
+func (r *resolutionState) tryLoadModuleUsingPathsIfEligible() searchResult[resolved] {
 	if len(r.compilerOptions.Paths) > 0 && !tspath.PathIsRelative(r.name) {
 		if r.resolver.traceEnabled() {
 			r.resolver.host.Trace(diagnostics.X_paths_option_is_specified_looking_for_a_pattern_to_match_module_name_0.Format(r.name))
@@ -744,14 +744,14 @@ func (r *ResolutionState) tryLoadModuleUsingPathsIfEligible() searchResult[resol
 		baseDirectory,
 		r.compilerOptions.Paths,
 		pathPatterns,
-		func(extensions Extensions, candidate string, onlyRecordFailures bool) *resolved {
+		func(extensions extensions, candidate string, onlyRecordFailures bool) *resolved {
 			return r.nodeLoadModuleByRelativeName(extensions, candidate, onlyRecordFailures, true /*considerPackageJson*/)
 		},
 		false, /*onlyRecordFailures*/
 	)
 }
 
-func (r *ResolutionState) tryLoadModuleUsingPaths(extensions Extensions, moduleName string, containingDirectory string, paths map[string][]string, pathPatterns parsedPatterns, loader resolutionKindSpecificLoader, onlyRecordFailures bool) searchResult[resolved] {
+func (r *resolutionState) tryLoadModuleUsingPaths(extensions extensions, moduleName string, containingDirectory string, paths map[string][]string, pathPatterns parsedPatterns, loader resolutionKindSpecificLoader, onlyRecordFailures bool) searchResult[resolved] {
 	if matchedPattern := matchPatternOrExact(pathPatterns, moduleName); matchedPattern.IsValid() {
 		matchedStar := matchedPattern.MatchedText(moduleName)
 		if r.resolver.traceEnabled() {
@@ -780,7 +780,7 @@ func (r *ResolutionState) tryLoadModuleUsingPaths(extensions Extensions, moduleN
 	return newSearchResult[resolved](nil)
 }
 
-func (r *ResolutionState) nodeLoadModuleByRelativeName(extensions Extensions, candidate string, onlyRecordFailures bool, considerPackageJson bool) *resolved {
+func (r *resolutionState) nodeLoadModuleByRelativeName(extensions extensions, candidate string, onlyRecordFailures bool, considerPackageJson bool) *resolved {
 	if r.resolver.traceEnabled() {
 		r.resolver.host.Trace(diagnostics.Loading_module_as_file_Slash_folder_candidate_module_location_0_target_file_types_Colon_1.Format(candidate, extensions.String()))
 	}
@@ -822,7 +822,7 @@ func (r *ResolutionState) nodeLoadModuleByRelativeName(extensions Extensions, ca
 	return nil
 }
 
-func (r *ResolutionState) loadModuleFromFile(extensions Extensions, candidate string, onlyRecordFailures bool) *resolved {
+func (r *resolutionState) loadModuleFromFile(extensions extensions, candidate string, onlyRecordFailures bool) *resolved {
 	// ./foo.js -> ./foo.ts
 	resolvedByReplacingExtension := r.loadModuleFromFileNoImplicitExtensions(extensions, candidate, onlyRecordFailures)
 	if resolvedByReplacingExtension != nil {
@@ -837,7 +837,7 @@ func (r *ResolutionState) loadModuleFromFile(extensions Extensions, candidate st
 	return nil
 }
 
-func (r *ResolutionState) loadModuleFromFileNoImplicitExtensions(extensions Extensions, candidate string, onlyRecordFailures bool) *resolved {
+func (r *resolutionState) loadModuleFromFileNoImplicitExtensions(extensions extensions, candidate string, onlyRecordFailures bool) *resolved {
 	base := path.Base(candidate)
 	if !strings.Contains(base, ".") {
 		return nil // extensionless import, no lookups performed, since we don't support extensionless files
@@ -855,7 +855,7 @@ func (r *ResolutionState) loadModuleFromFileNoImplicitExtensions(extensions Exte
 	return r.tryAddingExtensions(extensionless, extensions, extension, onlyRecordFailures)
 }
 
-func (r *ResolutionState) tryAddingExtensions(extensionless string, extensions Extensions, originalExtension string, onlyRecordFailures bool) *resolved {
+func (r *resolutionState) tryAddingExtensions(extensionless string, extensions extensions, originalExtension string, onlyRecordFailures bool) *resolved {
 	if !onlyRecordFailures {
 		directory := tspath.GetDirectoryPath(extensionless)
 		onlyRecordFailures = directory != "" && !r.resolver.host.FS().DirectoryExists(directory)
@@ -972,7 +972,7 @@ func (r *ResolutionState) tryAddingExtensions(extensionless string, extensions E
 	}
 }
 
-func (r *ResolutionState) tryExtension(extension string, extensionless string, resolvedUsingTsExtension bool, onlyRecordFailures bool) *resolved {
+func (r *resolutionState) tryExtension(extension string, extensionless string, resolvedUsingTsExtension bool, onlyRecordFailures bool) *resolved {
 	fileName := extensionless + extension
 	if path, ok := r.tryFile(fileName, onlyRecordFailures); ok {
 		return &resolved{
@@ -984,7 +984,7 @@ func (r *ResolutionState) tryExtension(extension string, extensionless string, r
 	return nil
 }
 
-func (r *ResolutionState) tryFile(fileName string, onlyRecordFailures bool) (string, bool) {
+func (r *resolutionState) tryFile(fileName string, onlyRecordFailures bool) (string, bool) {
 	if len(r.compilerOptions.ModuleSuffixes) == 0 {
 		return fileName, r.tryFileLookup(fileName, onlyRecordFailures)
 	}
@@ -1000,7 +1000,7 @@ func (r *ResolutionState) tryFile(fileName string, onlyRecordFailures bool) (str
 	return fileName, false
 }
 
-func (r *ResolutionState) tryFileLookup(fileName string, onlyRecordFailures bool) bool {
+func (r *resolutionState) tryFileLookup(fileName string, onlyRecordFailures bool) bool {
 	if !onlyRecordFailures {
 		if r.resolver.host.FS().FileExists(fileName) {
 			if r.resolver.traceEnabled() {
@@ -1015,7 +1015,7 @@ func (r *ResolutionState) tryFileLookup(fileName string, onlyRecordFailures bool
 	return false
 }
 
-func (r *ResolutionState) loadNodeModuleFromDirectory(extensions Extensions, candidate string, onlyRecordFailures bool, considerPackageJson bool) *resolved {
+func (r *resolutionState) loadNodeModuleFromDirectory(extensions extensions, candidate string, onlyRecordFailures bool, considerPackageJson bool) *resolved {
 	var packageInfo *packagejson.InfoCacheEntry
 	if considerPackageJson {
 		packageInfo = r.getPackageJsonInfo(candidate, onlyRecordFailures)
@@ -1024,7 +1024,7 @@ func (r *ResolutionState) loadNodeModuleFromDirectory(extensions Extensions, can
 	return r.loadNodeModuleFromDirectoryWorker(extensions, candidate, onlyRecordFailures, packageInfo)
 }
 
-func (r *ResolutionState) loadNodeModuleFromDirectoryWorker(ext Extensions, candidate string, onlyRecordFailures bool, packageInfo *packagejson.InfoCacheEntry) *resolved {
+func (r *resolutionState) loadNodeModuleFromDirectoryWorker(ext extensions, candidate string, onlyRecordFailures bool, packageInfo *packagejson.InfoCacheEntry) *resolved {
 	var (
 		packageFile                      string
 		onlyRecordFailuresForPackageFile bool
@@ -1037,7 +1037,7 @@ func (r *ResolutionState) loadNodeModuleFromDirectoryWorker(ext Extensions, cand
 		}
 	}
 
-	loader := func(extensions Extensions, candidate string, onlyRecordFailures bool) *resolved {
+	loader := func(extensions extensions, candidate string, onlyRecordFailures bool) *resolved {
 		if fromFile := r.loadFileNameFromPackageJSONField(extensions, candidate, packageFile, onlyRecordFailures); fromFile != nil {
 			return fromFile
 		}
@@ -1109,7 +1109,7 @@ func (r *ResolutionState) loadNodeModuleFromDirectoryWorker(ext Extensions, cand
 // This function is only ever called with paths written in package.json files - never
 // module specifiers written in source files - and so it always allows the
 // candidate to end with a TS extension (but will also try substituting a JS extension for a TS extension).
-func (r *ResolutionState) loadFileNameFromPackageJSONField(extensions Extensions, candidate string, packageJSONValue string, onlyRecordFailures bool) *resolved {
+func (r *resolutionState) loadFileNameFromPackageJSONField(extensions extensions, candidate string, packageJSONValue string, onlyRecordFailures bool) *resolved {
 	if extensions&extensionsTypeScript != 0 && tspath.HasImplementationTSFileExtension(candidate) || extensions&extensionsDeclaration != 0 && tspath.IsDeclarationFileName(candidate) {
 		if path, ok := r.tryFile(candidate, onlyRecordFailures); ok {
 			extension := tspath.TryExtractTSExtension(path)
@@ -1134,7 +1134,7 @@ func (r *ResolutionState) loadFileNameFromPackageJSONField(extensions Extensions
 	return r.loadModuleFromFileNoImplicitExtensions(extensions, candidate, onlyRecordFailures)
 }
 
-func (r *ResolutionState) getPackageFile(extensions Extensions, packageInfo *packagejson.InfoCacheEntry) (string, bool) {
+func (r *resolutionState) getPackageFile(extensions extensions, packageInfo *packagejson.InfoCacheEntry) (string, bool) {
 	if !packageInfo.Exists() {
 		return "", false
 	}
@@ -1155,7 +1155,7 @@ func (r *ResolutionState) getPackageFile(extensions Extensions, packageInfo *pac
 	return "", false
 }
 
-func (r *ResolutionState) getPackageJsonInfo(packageDirectory string, onlyRecordFailures bool) *packagejson.InfoCacheEntry {
+func (r *resolutionState) getPackageJsonInfo(packageDirectory string, onlyRecordFailures bool) *packagejson.InfoCacheEntry {
 	packageJsonPath := tspath.CombinePaths(packageDirectory, "package.json")
 	if onlyRecordFailures {
 		r.failedLookupLocations = append(r.failedLookupLocations, packageJsonPath)
@@ -1221,7 +1221,7 @@ func (r *ResolutionState) getPackageJsonInfo(packageDirectory string, onlyRecord
 	return nil
 }
 
-func (r *ResolutionState) getPackageId(resolvedFileName string, packageInfo *packagejson.InfoCacheEntry) PackageId {
+func (r *resolutionState) getPackageId(resolvedFileName string, packageInfo *packagejson.InfoCacheEntry) PackageId {
 	if packageInfo.Exists() {
 		packageJsonContent := packageInfo.Contents
 		if name, ok := packageJsonContent.Name.GetValue(); ok {
@@ -1242,7 +1242,7 @@ func (r *ResolutionState) getPackageId(resolvedFileName string, packageInfo *pac
 	return PackageId{}
 }
 
-func (r *ResolutionState) readPackageJsonPeerDependencies(packageJsonInfo *packagejson.InfoCacheEntry) string {
+func (r *resolutionState) readPackageJsonPeerDependencies(packageJsonInfo *packagejson.InfoCacheEntry) string {
 	peerDependencies := packageJsonInfo.Contents.PeerDependencies
 	ok := r.validatePackageJSONField("peerDependencies", &peerDependencies)
 	if !ok || len(peerDependencies.Value) == 0 {
@@ -1272,7 +1272,7 @@ func (r *ResolutionState) readPackageJsonPeerDependencies(packageJsonInfo *packa
 	return builder.String()
 }
 
-func (r *ResolutionState) realPath(path string) string {
+func (r *resolutionState) realPath(path string) string {
 	rp := tspath.NormalizePath(r.resolver.host.FS().Realpath(path))
 	if r.resolver.traceEnabled() {
 		r.resolver.host.Trace(diagnostics.Resolving_real_path_for_0_result_1.Format(path, rp))
@@ -1280,7 +1280,7 @@ func (r *ResolutionState) realPath(path string) string {
 	return rp
 }
 
-func (r *ResolutionState) validatePackageJSONField(fieldName string, field packagejson.TypeValidatedField) bool {
+func (r *resolutionState) validatePackageJSONField(fieldName string, field packagejson.TypeValidatedField) bool {
 	if field.IsPresent() {
 		if field.IsValid() {
 			return true
@@ -1295,7 +1295,7 @@ func (r *ResolutionState) validatePackageJSONField(fieldName string, field packa
 	return false
 }
 
-func (r *ResolutionState) getPackageJSONPathField(fieldName string, field *packagejson.Expected[string], directory string) (string, bool) {
+func (r *resolutionState) getPackageJSONPathField(fieldName string, field *packagejson.Expected[string], directory string) (string, bool) {
 	if !r.validatePackageJSONField(fieldName, field) {
 		return "", false
 	}
@@ -1312,7 +1312,7 @@ func (r *ResolutionState) getPackageJSONPathField(fieldName string, field *packa
 	return path, true
 }
 
-func (r *ResolutionState) getTraceFunc() func(string) {
+func (r *resolutionState) getTraceFunc() func(string) {
 	if r.resolver.traceEnabled() {
 		return r.resolver.host.Trace
 	}
@@ -1441,7 +1441,7 @@ func normalizePathForCJSResolution(containingDirectory string, moduleName string
 }
 
 // True if `extension` is one of the supported `extensions`
-func extensionIsOk(extensions Extensions, extension string) bool {
+func extensionIsOk(extensions extensions, extension string) bool {
 	return ((extensions&extensionsJavaScript) != 0 && (extension == tspath.ExtensionJs || extension == tspath.ExtensionJsx || extension == tspath.ExtensionMjs || extension == tspath.ExtensionCjs)) ||
 		((extensions&extensionsTypeScript) != 0 && (extension == tspath.ExtensionTs || extension == tspath.ExtensionTsx || extension == tspath.ExtensionMts || extension == tspath.ExtensionCts)) ||
 		((extensions&extensionsDeclaration) != 0 && (extension == tspath.ExtensionDts || extension == tspath.ExtensionDmts || extension == tspath.ExtensionDcts)) ||

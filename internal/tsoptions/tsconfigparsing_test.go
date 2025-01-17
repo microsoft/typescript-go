@@ -289,6 +289,9 @@ var parseJsonConfigFileTests = []struct {
     "moduleResolution": "bundler",
     "moduleDetection": "auto",
     "jsx": "react",
+	"paths": {
+      "jquery": ["./vendor/jquery/dist/jquery"]
+    }
   },
   "files": ["/apath/src/index.ts", "/apath/src/app.ts"],
   "include": ["/apath/src/**/*"],
@@ -459,6 +462,22 @@ var parseJsonConfigFileTests = []struct {
 			},
 		},
 	},
+	{
+		title: "returns error when tsconfig have excludes",
+		input: []testConfig{{
+			jsonText: `{
+                    "compilerOptions": {
+                        "lib": ["es5"]
+                    },
+                    "excludes": [
+                        "foge.ts"
+                    ]
+                }`,
+			configFileName: "tsconfig.json",
+			basePath:       "/apath",
+			allFileList:    map[string]string{"/apath/test.ts": "", "/apath/foge.ts": ""},
+		}},
+	},
 }
 
 var tsconfigWithoutConfigDir = `{
@@ -504,8 +523,8 @@ func TestParseJsonSourceFileConfigFileContent(t *testing.T) {
 			t.Parallel()
 			baselineParseConfigWith(t, rec.title+" with jsonSourceFile api.js", rec.noSubmoduleBaseline, rec.input, func(config testConfig, host ParseConfigHost, basePath string) ParsedCommandLine {
 				parsed := parser.ParseJSONText(config.configFileName, config.jsonText)
-				tsConfigSourceFile := &tsConfigSourceFile{
-					sourceFile: parsed,
+				tsConfigSourceFile := &TsConfigSourceFile{
+					SourceFile: parsed,
 				}
 				return ParseJsonSourceFileConfigFileContent(
 					tsConfigSourceFile,
@@ -620,8 +639,8 @@ func TestParseSrcCompiler(t *testing.T) {
 		t.FailNow()
 	}
 
-	tsConfigSourceFile := &tsConfigSourceFile{
-		sourceFile: parsed,
+	tsConfigSourceFile := &TsConfigSourceFile{
+		SourceFile: parsed,
 	}
 
 	parseConfigFileContent := ParseJsonSourceFileConfigFileContent(

@@ -22,6 +22,9 @@ Fs::
     "moduleResolution": "bundler",
     "moduleDetection": "auto",
     "jsx": "react",
+	"paths": {
+      "jquery": ["./vendor/jquery/dist/jquery"]
+    }
   },
   "files": ["/apath/src/index.ts", "/apath/src/app.ts"],
   "include": ["/apath/src/**/*"],

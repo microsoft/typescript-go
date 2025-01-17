@@ -127,6 +127,9 @@ func parseJsonToStringKey(json any) map[string]any {
 		if v, ok := m["compilerOptions"]; ok {
 			result["compilerOptions"] = v
 		}
+		if v, ok := m["excludes"]; ok {
+			result["excludes"] = v
+		}
 	}
 	return result
 }

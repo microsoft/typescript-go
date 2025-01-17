@@ -14,8 +14,8 @@ import (
 type ModeAwareCache[T any] map[ModeAwareCacheKey]T
 
 type caches struct {
-	moduleNameCache                               *ResolutionCache[*ResolvedModule]
-	typeReferenceDirectiveCache                   *ResolutionCache[*ResolvedTypeReferenceDirective]
+	moduleNameCache                               *resolutionCache[*ResolvedModule]
+	typeReferenceDirectiveCache                   *resolutionCache[*ResolvedTypeReferenceDirective]
 	packageJsonInfoCache                          *packagejson.InfoCache
 	resolvedTypeReferenceDirectiveLookupLocations map[*ResolvedTypeReferenceDirective]*LookupLocations
 }
@@ -45,7 +45,7 @@ func newCaches(
 	}
 }
 
-type ResolutionCache[T comparable] struct {
+type resolutionCache[T comparable] struct {
 	perDirectoryResolutionCache[T]
 	nonRelativeNameResolutionCache[T]
 	mu              sync.RWMutex
@@ -60,21 +60,21 @@ func newResolutionCache[T comparable](
 	getResolvedFileName func(result T) tspath.Path,
 	optionsToRedirectsKey map[*core.CompilerOptions]string,
 	isReadonly bool,
-) *ResolutionCache[T] {
-	return &ResolutionCache[T]{
+) *resolutionCache[T] {
+	return &resolutionCache[T]{
 		perDirectoryResolutionCache:    newPerDirectoryResolutionCache[T](currentDirectory, useCaseSensitiveFileNames, options, optionsToRedirectsKey),
 		nonRelativeNameResolutionCache: newNonRelativeNameResolutionCache[T](currentDirectory, useCaseSensitiveFileNames, options, getResolvedFileName, optionsToRedirectsKey),
 		isReadonly:                     isReadonly,
 	}
 }
 
-func (c *ResolutionCache[T]) getLookupLocations(resolved T) *LookupLocations {
+func (c *resolutionCache[T]) getLookupLocations(resolved T) *LookupLocations {
 	c.mu.RLock()
 	defer c.mu.RUnlock()
 	return c.lookupLocations[resolved]
 }
 
-func (c *ResolutionCache[T]) initializeLookupLocations(resolved T, failedLookupLocations []string, affectingLocations []string, resolutionDiagnostics []ast.Diagnostic) {
+func (c *resolutionCache[T]) initializeLookupLocations(resolved T, failedLookupLocations []string, affectingLocations []string, resolutionDiagnostics []ast.Diagnostic) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 	if c.lookupLocations == nil {
@@ -87,7 +87,7 @@ func (c *ResolutionCache[T]) initializeLookupLocations(resolved T, failedLookupL
 	}
 }
 
-func (c *ResolutionCache[T]) updateLookupLocations(resolved T, failedLookupLocations []string, affectingLocations []string, resolutionDiagnostics []ast.Diagnostic) {
+func (c *resolutionCache[T]) updateLookupLocations(resolved T, failedLookupLocations []string, affectingLocations []string, resolutionDiagnostics []ast.Diagnostic) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 	lookupLocations := c.lookupLocations[resolved]
