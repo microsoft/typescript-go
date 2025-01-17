@@ -46,7 +46,6 @@ func processAllProgramFiles(
 		programOptions:     programOptions,
 		compilerOptions:    compilerOptions,
 		resolver:           resolver,
-		resolvedModules:    resolvedModules,
 		defaultLibraryPath: programOptions.DefaultLibraryPath,
 		comparePathsOptions: tspath.ComparePathsOptions{
 			UseCaseSensitiveFileNames: host.FS().UseCaseSensitiveFileNames(),
