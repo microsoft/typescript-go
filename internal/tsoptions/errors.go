@@ -2,7 +2,6 @@ package tsoptions
 
 import (
 	"fmt"
-	"reflect"
 	"slices"
 	"strings"
 
@@ -41,10 +40,7 @@ func getCompilerOptionValueTypeString(option *CommandLineOption) string {
 	case CommandLineOptionTypeList:
 		return "Array"
 	default:
-		if reflect.TypeOf(option.Kind).Kind() == reflect.String {
-			return string(option.Kind)
-		}
-		return "string"
+		return string(option.Kind)
 	}
 }
 

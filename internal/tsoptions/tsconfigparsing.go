@@ -28,7 +28,7 @@ type extendsResult struct {
 	exclude             []string
 	files               []string
 	compileOnSave       bool
-	extendedSourceFiles map[string]struct{}
+	extendedSourceFiles core.Set[string]
 }
 
 var (
@@ -740,7 +740,7 @@ func getDefaultCompilerOptions(configFileName string) *core.CompilerOptions {
 	if configFileName != "" && tspath.GetBaseFileName(configFileName) == "jsconfig.json" {
 		options = &core.CompilerOptions{
 			AllowJs:                      core.TSTrue,
-			MaxNodeModuleJsDepth:         core.TSTrue,
+			MaxNodeModuleJsDepth:         2,
 			AllowSyntheticDefaultImports: core.TSTrue,
 			SkipLibCheck:                 core.TSTrue,
 			NoEmit:                       core.TSTrue,
@@ -843,13 +843,10 @@ func getExtendedConfig(
 		}
 	}
 	if sourceFile != nil {
-		if result.extendedSourceFiles == nil {
-			result.extendedSourceFiles = make(map[string]struct{})
-			result.extendedSourceFiles[extendedResult.SourceFile.FileName()] = struct{}{}
-		}
+		result.extendedSourceFiles.Add(extendedResult.SourceFile.FileName())
 		if len(extendedResult.extendedSourceFiles) != 0 {
 			for _, extenedSourceFile := range extendedResult.extendedSourceFiles {
-				result.extendedSourceFiles[extenedSourceFile] = struct{}{}
+				result.extendedSourceFiles.Add(extenedSourceFile)
 			}
 		}
 	}
@@ -974,8 +971,8 @@ func parseConfig(
 				ownConfig.raw.(map[string]any)["compileOnSave"] = result.compileOnSave
 			}
 		}
-		if sourceFile != nil && result.extendedSourceFiles != nil {
-			for extendedSourceFile := range result.extendedSourceFiles {
+		if sourceFile != nil {
+			for extendedSourceFile := range result.extendedSourceFiles.Keys() {
 				sourceFile.extendedSourceFiles = append(sourceFile.extendedSourceFiles, extendedSourceFile)
 			}
 		}
@@ -990,7 +987,7 @@ func parseConfig(
 const defaultIncludeSpec = "**/*"
 
 type PropOfRaw struct {
-	sliceValue any
+	sliceValue []any
 	wrongValue string
 }
 
@@ -1041,7 +1038,7 @@ func parseJsonConfigFileContentWorker(
 						errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.Compiler_option_0_requires_a_value_of_type_1, prop, elementTypeName))
 					}
 				}
-				return PropOfRaw{sliceValue: result}
+				return PropOfRaw{sliceValue: result.([]any)}
 			} else {
 				errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.Compiler_option_0_requires_a_value_of_type_1, prop, "Array"))
 				return PropOfRaw{sliceValue: nil, wrongValue: "not-array"}
@@ -1054,11 +1051,11 @@ func parseJsonConfigFileContentWorker(
 		fileSpecs := getPropFromRaw("files", func(element any) bool { return reflect.TypeOf(element).Kind() == reflect.String }, "string")
 		if fileSpecs.sliceValue != nil || fileSpecs.wrongValue == "" {
 			hasZeroOrNoReferences := false
-			if referencesOfRaw.wrongValue == "no-prop" || referencesOfRaw.wrongValue == "not-array" || len(referencesOfRaw.sliceValue.([]any)) == 0 {
+			if referencesOfRaw.wrongValue == "no-prop" || referencesOfRaw.wrongValue == "not-array" || len(referencesOfRaw.sliceValue) == 0 {
 				hasZeroOrNoReferences = true
 			}
-			hasExtends := rawConfig[string("extends")]
-			if fileSpecs.sliceValue != nil && len(fileSpecs.sliceValue.([]any)) == 0 && hasZeroOrNoReferences && hasExtends == nil {
+			hasExtends := rawConfig["extends"]
+			if fileSpecs.sliceValue != nil && len(fileSpecs.sliceValue) == 0 && hasZeroOrNoReferences && hasExtends == nil {
 				if sourceFile != nil {
 					var fileName string
 					if configFileName != "" {
@@ -1129,12 +1126,10 @@ func parseJsonConfigFileContentWorker(
 			}
 		}
 		if fileSpecs.sliceValue != nil {
-			if _, ok := fileSpecs.sliceValue.([]any); ok {
-				fileSpecs := core.Filter(fileSpecs.sliceValue.([]any), func(spec any) bool { return reflect.TypeOf(spec).Kind() == reflect.String })
-				for _, spec := range fileSpecs {
-					if spec, ok := spec.(string); ok {
-						validatedFilesSpecBeforeSubstitution = append(validatedFilesSpecBeforeSubstitution, spec)
-					}
+			fileSpecs := core.Filter(fileSpecs.sliceValue, func(spec any) bool { return reflect.TypeOf(spec).Kind() == reflect.String })
+			for _, spec := range fileSpecs {
+				if spec, ok := spec.(string); ok {
+					validatedFilesSpecBeforeSubstitution = append(validatedFilesSpecBeforeSubstitution, spec)
 				}
 			}
 			validatedFilesSpec = getSubstitutedStringArrayWithConfigDirTemplate(
@@ -1188,7 +1183,7 @@ func parseJsonConfigFileContentWorker(
 		var projectReferences []core.ProjectReference = []core.ProjectReference{}
 		referencesOfRaw := getPropFromRaw("references", func(element any) bool { return reflect.TypeOf(element).Kind() == reflect.Map }, "object")
 		if referencesOfRaw.sliceValue != nil {
-			for _, reference := range referencesOfRaw.sliceValue.([]any) {
+			for _, reference := range referencesOfRaw.sliceValue {
 				for _, ref := range parseProjectReference(reference) {
 					if reflect.TypeOf(ref.Path).Kind() != reflect.String {
 						errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.Compiler_option_0_requires_a_value_of_type_1, "reference.path", "string"))
@@ -1206,7 +1201,7 @@ func parseJsonConfigFileContentWorker(
 	}
 
 	return ParsedCommandLine{
-		ParsedOptions: &core.ParsedOptions{
+		ParsedConfig: &core.ParsedOptions{
 			CompilerOptions:   parsedConfig.options,
 			FileNames:         getFileNames(basePathForFileNames),
 			ProjectReferences: getProjectReferences(basePathForFileNames),

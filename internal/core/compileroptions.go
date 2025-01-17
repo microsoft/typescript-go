@@ -112,7 +112,7 @@ type CompilerOptions struct {
 	UseDefineForClassFields                   Tristate             `json:"useDefineForClassFields"`
 	UseUnknownInCatchVariables                Tristate             `json:"useUnknownInCatchVariables"`
 	VerbatimModuleSyntax                      Tristate             `json:"verbatimModuleSyntax"`
-	MaxNodeModuleJsDepth                      Tristate             `json:"maxNodeModuleJsDepth"`
+	MaxNodeModuleJsDepth                      int                  `json:"maxNodeModuleJsDepth"`
 
 	// Internal fields
 	ConfigFilePath      string   `json:"configFilePath"`

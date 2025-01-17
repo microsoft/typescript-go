@@ -564,7 +564,7 @@ func baselineParseConfigWith(t *testing.T, baselineFileName string, noSubmoduleB
 		baselineContent.WriteString("\n")
 		baselineContent.WriteString("configFileName:: " + config.configFileName + "\n")
 		baselineContent.WriteString("FileNames::\n")
-		baselineContent.WriteString(strings.Join(parsedConfigFileContent.ParsedOptions.FileNames, ",") + "\n")
+		baselineContent.WriteString(strings.Join(parsedConfigFileContent.ParsedConfig.FileNames, ",") + "\n")
 		baselineContent.WriteString("Errors::\n")
 		diagnosticwriter.FormatDiagnosticsWithColorAndContext(&baselineContent, parsedConfigFileContent.Errors, &diagnosticwriter.FormattingOptions{
 			NewLine: "\r\n",
@@ -687,7 +687,7 @@ func TestParseSrcCompiler(t *testing.T) {
 		Pretty:                     core.TSTrue,
 	})
 
-	fileNames := parseConfigFileContent.ParsedOptions.FileNames
+	fileNames := parseConfigFileContent.ParsedConfig.FileNames
 	relativePaths := make([]string, 0, len(fileNames))
 	for _, fileName := range fileNames {
 		if strings.Contains(fileName, ".generated.") {

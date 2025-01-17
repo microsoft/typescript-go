@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"io"
 	"maps"
-	"math"
 	"slices"
 	"strconv"
 	"strings"
@@ -89,7 +88,7 @@ func writeCodeSnippet(writer io.Writer, sourceFile *ast.SourceFile, start int, l
 	hasMoreThanFiveLines := lastLine-firstLine >= 4
 	gutterWidth := len(strconv.Itoa(lastLineOfFile + 1 + len("")))
 	if hasMoreThanFiveLines {
-		gutterWidth = int(math.Max(float64(len(ellipsis)), float64(gutterWidth)))
+		gutterWidth = max(len(ellipsis), gutterWidth)
 	}
 
 	for i := firstLine; i <= lastLine; i++ {

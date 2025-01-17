@@ -126,8 +126,8 @@ func (vfs *common) GetDirectories(path string) []string {
 	return dirs
 }
 
-func (v *common) GetEntries(path string) []fs.DirEntry {
-	fsys, _, rest := v.rootAndPath(path)
+func (vfs *common) GetEntries(path string) []fs.DirEntry {
+	fsys, _, rest := vfs.rootAndPath(path)
 	if fsys == nil {
 		return nil
 	}

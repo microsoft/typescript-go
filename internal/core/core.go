@@ -322,6 +322,9 @@ func StringifyJson(input any) (string, error) {
 	var buf bytes.Buffer
 	encoder := json.NewEncoder(&buf)
 	encoder.SetEscapeHTML(false)
+	if _, ok := input.([]any); ok && len(input.([]any)) == 0 {
+		return "[]", nil
+	}
 	if err := encoder.Encode(input); err != nil {
 		return "", err
 	}

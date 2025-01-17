@@ -8,7 +8,7 @@ import (
 )
 
 type ParsedCommandLine struct {
-	ParsedOptions *core.ParsedOptions
+	ParsedConfig *core.ParsedOptions
 	// WatchOptions WatchOptions
 
 	ConfigFile *ast.SourceFile // TsConfigSourceFile, used in Program and ExecuteCommandLine
@@ -27,7 +27,7 @@ func NewParsedCommandLine(
 	compileOnSave *bool,
 ) ParsedCommandLine {
 	return ParsedCommandLine{
-		ParsedOptions: options,
+		ParsedConfig:  options,
 		ConfigFile:    configFile,
 		Errors:        errors,
 		Raw:           raw,
@@ -36,23 +36,23 @@ func NewParsedCommandLine(
 }
 
 func (p *ParsedCommandLine) SetParsedOptions(o *core.ParsedOptions) {
-	p.ParsedOptions = o
+	p.ParsedConfig = o
 }
 
 func (p *ParsedCommandLine) SetCompilerOptions(o *core.CompilerOptions) {
-	p.ParsedOptions.CompilerOptions = o
+	p.ParsedConfig.CompilerOptions = o
 }
 
 func (p *ParsedCommandLine) CompilerOptions() *core.CompilerOptions {
-	return p.ParsedOptions.CompilerOptions
+	return p.ParsedConfig.CompilerOptions
 }
 
 func (p *ParsedCommandLine) FileNames() []string {
-	return p.ParsedOptions.FileNames
+	return p.ParsedConfig.FileNames
 }
 
 func (p *ParsedCommandLine) ProjectReferences() []core.ProjectReference {
-	return p.ParsedOptions.ProjectReferences
+	return p.ParsedConfig.ProjectReferences
 }
 
 func (p *ParsedCommandLine) GetConfigFileParsingDiagnostics() []*ast.Diagnostic {

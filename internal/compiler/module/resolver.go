@@ -1440,19 +1440,6 @@ func normalizePathForCJSResolution(containingDirectory string, moduleName string
 	return tspath.NormalizePath(combined)
 }
 
-// True if `extension` is one of the supported `extensions`
-func extensionIsOk(extensions extensions, extension string) bool {
-	return ((extensions&extensionsJavaScript) != 0 && (extension == tspath.ExtensionJs || extension == tspath.ExtensionJsx || extension == tspath.ExtensionMjs || extension == tspath.ExtensionCjs)) ||
-		((extensions&extensionsTypeScript) != 0 && (extension == tspath.ExtensionTs || extension == tspath.ExtensionTsx || extension == tspath.ExtensionMts || extension == tspath.ExtensionCts)) ||
-		((extensions&extensionsDeclaration) != 0 && (extension == tspath.ExtensionDts || extension == tspath.ExtensionDmts || extension == tspath.ExtensionDcts)) ||
-		((extensions&extensionsJson) != 0 && extension == tspath.ExtensionJson) ||
-		false
-}
-
-type resolveConfigHost struct {
-	ResolutionHost
-}
-
 func ResolveConfig(moduleName string, containingFile string, host ResolutionHost) *ResolvedModule {
 	resolver := NewResolver(host, &core.CompilerOptions{ModuleResolution: core.ModuleResolutionKindNodeNext})
 	return resolver.resolveConfig(moduleName, containingFile)

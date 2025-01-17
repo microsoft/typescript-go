@@ -31,13 +31,6 @@ func parseStringArray(value any) []string {
 	return nil
 }
 
-func parseRawStringArray(value any) []string {
-	if arr, ok := value.([]string); ok {
-		return arr
-	}
-	return []string{}
-}
-
 func parseStringMap(value any) map[string][]string {
 	if m, ok := value.(map[string]any); ok {
 		result := make(map[string][]string)
@@ -54,6 +47,13 @@ func parseString(value any) string {
 		return str
 	}
 	return ""
+}
+
+func parseNumber(value any) int {
+	if num, ok := value.(int); ok {
+		return num
+	}
+	return 0
 }
 
 func parseProjectReference(json any) []core.ProjectReference {
@@ -78,46 +78,36 @@ func parseJsonToStringKey(json any) map[string]any {
 	result := make(map[string]any)
 	if m, ok := json.(map[string]any); ok {
 		if v, ok := m["include"]; ok {
-			if arr, ok := v.([]string); ok {
-				if len(arr) == 0 {
-					result["include"] = []any{}
-				}
+			if arr, ok := v.([]string); ok && len(arr) == 0 {
+				result["include"] = []any{}
 			} else {
 				result["include"] = v
 			}
 		}
 		if v, ok := m["exclude"]; ok {
-			if arr, ok := v.([]string); ok {
-				if len(arr) == 0 {
-					result["exclude"] = []any{}
-				}
+			if arr, ok := v.([]string); ok && len(arr) == 0 {
+				result["exclude"] = []any{}
 			} else {
 				result["exclude"] = v
 			}
 		}
 		if v, ok := m["files"]; ok {
-			if arr, ok := v.([]string); ok {
-				if len(arr) == 0 {
-					result["files"] = []any{}
-				}
+			if arr, ok := v.([]string); ok && len(arr) == 0 {
+				result["files"] = []any{}
 			} else {
 				result["files"] = v
 			}
 		}
 		if v, ok := m["references"]; ok {
-			if arr, ok := v.([]string); ok {
-				if len(arr) == 0 {
-					result["references"] = []any{}
-				}
+			if arr, ok := v.([]string); ok && len(arr) == 0 {
+				result["references"] = []any{}
 			} else {
 				result["references"] = v
 			}
 		}
 		if v, ok := m["extends"]; ok {
-			if arr, ok := v.([]string); ok {
-				if len(arr) == 0 {
-					result["extends"] = []any{}
-				}
+			if arr, ok := v.([]string); ok && len(arr) == 0 {
+				result["extends"] = []any{}
 			} else if str, ok := v.(string); ok {
 				result["extends"] = []any{str}
 			} else {
@@ -352,7 +342,7 @@ func parseCompilerOptions(key string, value any, allOptions *core.CompilerOption
 	case "version":
 		allOptions.Version = parseTristate(value)
 	case "maxNodeModuleJsDepth":
-		allOptions.MaxNodeModuleJsDepth = parseTristate(value)
+		allOptions.MaxNodeModuleJsDepth = parseNumber(value)
 	case "skipLibCheck":
 		allOptions.SkipLibCheck = parseTristate(value)
 	case "noEmit":
@@ -377,6 +367,10 @@ func parseCompilerOptions(key string, value any, allOptions *core.CompilerOption
 
 func mergeCompilerOptions(existingOptions, newOptions *core.CompilerOptions) {
 	if existingOptions == nil {
+		return
+	}
+	if newOptions == nil {
+		newOptions = existingOptions
 		return
 	}
 
