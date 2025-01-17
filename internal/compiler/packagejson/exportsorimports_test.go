@@ -63,5 +63,5 @@ func testExports(t *testing.T, unmarshal func([]byte, any) error) {
 	assert.Assert(t, e.Imports.IsImports())
 	assert.Equal(t, e.Imports.AsObject().Size(), 1)
 	assert.Assert(t, e.Imports.AsObject().GetOrZero("#foo").IsConditions())
-	assert.Assert(t, e.Imports.AsObject().GetOrZero("#foo").AsObject().GetOrZero("import").Type == packagejson.JSONValueTypeString)``
+	assert.Assert(t, e.Imports.AsObject().GetOrZero("#foo").AsObject().GetOrZero("import").Type == packagejson.JSONValueTypeString)
 }
