@@ -1,4 +1,4 @@
-package compiler
+package checker
 
 import (
 	"slices"
@@ -206,6 +206,11 @@ const (
 
 type IndexSymbolLinks struct {
 	filteredIndexSymbolCache map[string]*ast.Symbol // Symbol with applicable declarations
+}
+
+type MarkedAssignmentSymbolLinks struct {
+	lastAssignmentPos     int32
+	hasDefiniteAssignment bool // Symbol is definitely assigned somewhere
 }
 
 type AccessFlags uint32
@@ -1172,23 +1177,4 @@ var LanguageFeatureMinimumTarget = LanguageFeatureMinimumTargetMap{
 	UsingAndAwaitUsing:                core.ScriptTargetESNext,
 	ClassAndClassElementDecorators:    core.ScriptTargetESNext,
 	RegularExpressionFlagsUnicodeSets: core.ScriptTargetESNext,
-}
-
-type FileIncludeKind int
-
-const (
-	FileIncludeKindRootFile FileIncludeKind = iota
-	FileIncludeKindSourceFromProjectReference
-	FileIncludeKindOutputFromProjectReference
-	FileIncludeKindImport
-	FileIncludeKindReferenceFile
-	FileIncludeKindTypeReferenceDirective
-	FileIncludeKindLibFile
-	FileIncludeKindLibReferenceDirective
-	FileIncludeKindAutomaticTypeDirectiveFile
-)
-
-type FileIncludeReason struct {
-	Kind  FileIncludeKind
-	Index int
 }
