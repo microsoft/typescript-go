@@ -33,7 +33,7 @@ type extendsResult struct {
 
 var (
 	tsconfigRootOptions       *CommandLineOption
-	getTsconfigRootOptionsMap = sync.OnceValue(func() CommandLineOption {
+	getTsconfigRootOptionsMap = sync.OnceValue(func() *CommandLineOption {
 		if tsconfigRootOptions == nil {
 			tsconfigRootOptions = &CommandLineOption{
 				Name: "undefined", // should never be needed since this is root
@@ -67,7 +67,7 @@ var (
 				}),
 			}
 		}
-		return *tsconfigRootOptions
+		return tsconfigRootOptions
 	})
 )
 
@@ -120,7 +120,7 @@ func parseOwnConfigOfJsonSourceFile(
 		keyText string,
 		value any,
 		propertyAssignment *ast.PropertyAssignment,
-		parentOption CommandLineOption, // TsConfigOnlyOption,
+		parentOption *CommandLineOption, // TsConfigOnlyOption,
 		option *CommandLineOption,
 	) (any, []*ast.Diagnostic) {
 		// Ensure value is verified except for extends which is handled in its own way for error reporting
@@ -146,8 +146,8 @@ func parseOwnConfigOfJsonSourceFile(
 					// errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.Unknown_compiler_option_0_Did_you_mean_1, keyText, core.FindKey(parentOption.ElementOptions, keyText)))
 				}
 			}
-		} else if reflect.DeepEqual(parentOption, rootOptions) {
-			if reflect.DeepEqual(option, extendsOptionDeclaration) {
+		} else if parentOption == rootOptions {
+			if option == extendsOptionDeclaration {
 				configPath, err := getExtendsConfigPathOrArray(value, host, basePath, configFileName, propertyAssignment, propertyAssignment.Initializer, sourceFile)
 				extendedConfigPath = configPath
 				propertySetErrors = append(propertySetErrors, err...)
@@ -188,8 +188,8 @@ type TsConfigSourceFile struct {
 	SourceFile          *ast.SourceFile
 }
 type jsonConversionNotifier struct {
-	rootOptions   CommandLineOption
-	onPropertySet func(keyText string, value any, propertyAssignment *ast.PropertyAssignment, parentOption CommandLineOption, option *CommandLineOption) (any, []*ast.Diagnostic)
+	rootOptions   *CommandLineOption
+	onPropertySet func(keyText string, value any, propertyAssignment *ast.PropertyAssignment, parentOption *CommandLineOption, option *CommandLineOption) (any, []*ast.Diagnostic)
 }
 
 func convertConfigFileToObject(
@@ -259,42 +259,23 @@ func validateJsonOptionValue(
 	val any,
 	valueExpression *ast.Expression,
 	sourceFile *TsConfigSourceFile,
-) any {
+) (any, []*ast.Diagnostic) {
 	if val == nil || val == "" {
-		return nil
+		return nil, nil
 	}
-	d := (opt.extraValidation)
-	if d == nil {
-		return val
+	errors := []*ast.Diagnostic{}
+	d := opt.extraValidation
+	if d != nil {
+		err, result := d(val)
+		if result == nil {
+			return val, nil
+		} else {
+			errors = append(errors, createDiagnosticForNodeInSourceFileOrCompilerDiagnostic(sourceFile.SourceFile, valueExpression, err, nil))
+		}
 	} else {
-		// d = opt.extraValidation.val
+		return val, nil
 	}
-	// errors.push(createDiagnosticForNodeInSourceFileOrCompilerDiagnostic(sourceFile, valueExpression, d));
-	return nil
-}
-
-func convertJsonOptionOfCustomType(
-	opt *CommandLineOption,
-	value string,
-	valueExpression *ast.Expression,
-	sourceFile *TsConfigSourceFile,
-) any {
-	if value == "" {
-		return nil
-	}
-	key := strings.ToLower(value)
-	typeMap := opt.EnumMap()
-	if typeMap == nil {
-		return nil
-	}
-	val, b := typeMap.Get(key)
-	if (val != nil) && (val != "" || b) {
-		return validateJsonOptionValue(opt, val.(string), valueExpression, sourceFile)
-	}
-	// else {
-	//     errors.push(createDiagnosticForInvalidCustomType(opt, (message, ...args) => createDiagnosticForNodeInSourceFileOrCompilerDiagnostic(sourceFile, valueExpression, message, ...args)));
-	// }
-	return nil
+	return nil, errors
 }
 
 func convertJsonOptionOfListType(
@@ -388,9 +369,11 @@ func convertJsonOption(
 				return convertJsonOption(opt.Elements(), value, basePath, propertyAssignment, valueExpression, sourceFile)
 			}
 		} else if !(reflect.TypeOf(optType).Kind() == reflect.String) {
-			return convertJsonOptionOfCustomType(opt, value.(string), valueExpression, sourceFile), errors
+			val, err := convertJsonOptionOfEnumType(opt, value.(string), valueExpression, sourceFile)
+			return val, append(errors, err...)
 		}
-		validatedValue := validateJsonOptionValue(opt, value, valueExpression, sourceFile)
+		validatedValue, err := validateJsonOptionValue(opt, value, valueExpression, sourceFile)
+		errors = append(errors, err...)
 		if validatedValue == nil {
 			return validatedValue, errors
 		} else {
@@ -649,7 +632,7 @@ func convertObjectLiteralExpressionToJson(
 			}
 			// Notify key value set, if user asked for it
 			if jsonConversionNotifier != nil {
-				_, err := jsonConversionNotifier.onPropertySet(keyText.(string), value, element.AsPropertyAssignment(), *objectOption, option)
+				_, err := jsonConversionNotifier.onPropertySet(keyText.(string), value, element.AsPropertyAssignment(), objectOption, option)
 				errors = append(errors, err...)
 			}
 		}
@@ -675,7 +658,7 @@ func convertToJson(
 	}
 	var jsonConversionNotifierValue *CommandLineOption
 	if jsonConversionNotifier != nil {
-		jsonConversionNotifierValue = &jsonConversionNotifier.rootOptions
+		jsonConversionNotifierValue = jsonConversionNotifier.rootOptions
 	}
 	return convertPropertyValueToJson(sourceFile, rootExpression, jsonConversionNotifierValue, returnValue, jsonConversionNotifier)
 }
