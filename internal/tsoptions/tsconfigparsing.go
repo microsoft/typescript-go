@@ -6,7 +6,6 @@ import (
 	"regexp"
 	"slices"
 	"strings"
-	"sync"
 
 	"github.com/dlclark/regexp2"
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -31,45 +30,58 @@ type extendsResult struct {
 	extendedSourceFiles core.Set[string]
 }
 
-var (
-	tsconfigRootOptions       *CommandLineOption
-	getTsconfigRootOptionsMap = sync.OnceValue(func() *CommandLineOption {
-		if tsconfigRootOptions == nil {
-			tsconfigRootOptions = &CommandLineOption{
-				Name: "undefined", // should never be needed since this is root
-				Kind: CommandLineOptionTypeObject,
-				ElementOptions: commandLineOptionsToMap([]*CommandLineOption{
-					compilerOptionsDeclaration,
-					extendsOptionDeclaration,
-					{
-						Name: "references",
-						Kind: CommandLineOptionTypeList, // should be a list of projectReference
-						// Category: diagnostics.Projects,
-					},
-					{
-						Name: "files",
-						Kind: CommandLineOptionTypeList,
-						// Category: diagnostics.File_Management,
-					},
-					{
-						Name: "include",
-						Kind: CommandLineOptionTypeList,
-						// Category: diagnostics.File_Management,
-						// DefaultValueDescription: diagnostics.if_files_is_specified_otherwise_Asterisk_Asterisk_Slash_Asterisk,
-					},
-					{
-						Name: "exclude",
-						Kind: CommandLineOptionTypeList,
-						// Category: diagnostics.File_Management,
-						// DefaultValueDescription: diagnostics.Node_modules_bower_components_jspm_packages_plus_the_value_of_outDir_if_one_is_specified,
-					},
-					compileOnSaveCommandLineOption,
-				}),
-			}
-		}
-		return tsconfigRootOptions
-	})
-)
+var compilerOptionsDeclaration = &CommandLineOption{
+	Name:           "compilerOptions",
+	Kind:           CommandLineOptionTypeObject,
+	ElementOptions: getCommandLineCompilerOptionsMap(),
+}
+
+var compileOnSaveCommandLineOption = &CommandLineOption{
+	Name:                    "compileOnSave",
+	Kind:                    CommandLineOptionTypeBoolean,
+	defaultValueDescription: false,
+}
+
+var extendsOptionDeclaration = &CommandLineOption{
+	Name:     "extends",
+	Kind:     CommandLineOptionTypeListOrElement,
+	category: diagnostics.File_Management,
+	ElementOptions: map[string]*CommandLineOption{
+		"extends": {Name: "extends", Kind: CommandLineOptionTypeString},
+	},
+}
+
+var tsconfigRootOptionsMap = &CommandLineOption{
+	Name: "undefined", // should never be needed since this is root
+	Kind: CommandLineOptionTypeObject,
+	ElementOptions: commandLineOptionsToMap([]*CommandLineOption{
+		compilerOptionsDeclaration,
+		extendsOptionDeclaration,
+		{
+			Name: "references",
+			Kind: CommandLineOptionTypeList, // should be a list of projectReference
+			// Category: diagnostics.Projects,
+		},
+		{
+			Name: "files",
+			Kind: CommandLineOptionTypeList,
+			// Category: diagnostics.File_Management,
+		},
+		{
+			Name: "include",
+			Kind: CommandLineOptionTypeList,
+			// Category: diagnostics.File_Management,
+			// DefaultValueDescription: diagnostics.if_files_is_specified_otherwise_Asterisk_Asterisk_Slash_Asterisk,
+		},
+		{
+			Name: "exclude",
+			Kind: CommandLineOptionTypeList,
+			// Category: diagnostics.File_Management,
+			// DefaultValueDescription: diagnostics.Node_modules_bower_components_jspm_packages_plus_the_value_of_outDir_if_one_is_specified,
+		},
+		compileOnSaveCommandLineOption,
+	}),
+}
 
 type configFileSpecs struct {
 	filesSpecs any
@@ -115,7 +127,6 @@ func parseOwnConfigOfJsonSourceFile(
 	var extendedConfigPath any
 	var rootCompilerOptions []*ast.PropertyName
 	var errors []*ast.Diagnostic
-	rootOptions := getTsconfigRootOptionsMap()
 	onPropertySet := func(
 		keyText string,
 		value any,
@@ -146,7 +157,7 @@ func parseOwnConfigOfJsonSourceFile(
 					// errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.Unknown_compiler_option_0_Did_you_mean_1, keyText, core.FindKey(parentOption.ElementOptions, keyText)))
 				}
 			}
-		} else if parentOption == rootOptions {
+		} else if parentOption == tsconfigRootOptionsMap {
 			if option == extendsOptionDeclaration {
 				configPath, err := getExtendsConfigPathOrArray(value, host, basePath, configFileName, propertyAssignment, propertyAssignment.Initializer, sourceFile)
 				extendedConfigPath = configPath
@@ -168,11 +179,14 @@ func parseOwnConfigOfJsonSourceFile(
 	json, err := convertConfigFileToObject(
 		sourceFile.SourceFile,
 		&jsonConversionNotifier{
-			rootOptions,
+			tsconfigRootOptionsMap,
 			onPropertySet,
 		},
 	)
 	errors = append(errors, err...)
+	// if len(rootCompilerOptions) != 0  && json != nil && json.CompilerOptions != nil {
+	//    errors = append(errors, ast.NewDiagnostic(sourceFile, rootCompilerOptions[0], diagnostics.X_0_should_be_set_inside_the_compilerOptions_object_of_the_config_json_file))
+	// }
 	return &parsedTsconfig{
 		raw:     json,
 		options: options,
@@ -738,9 +752,11 @@ func convertToObject(sourceFile *ast.SourceFile) (any, []*ast.Diagnostic) {
 func getDefaultCompilerOptions(configFileName string) *core.CompilerOptions {
 	var options *core.CompilerOptions = &core.CompilerOptions{}
 	if configFileName != "" && tspath.GetBaseFileName(configFileName) == "jsconfig.json" {
+		ptr := new(int)
+		*ptr = 2
 		options = &core.CompilerOptions{
 			AllowJs:                      core.TSTrue,
-			MaxNodeModuleJsDepth:         2,
+			MaxNodeModuleJsDepth:         ptr,
 			AllowSyntheticDefaultImports: core.TSTrue,
 			SkipLibCheck:                 core.TSTrue,
 			NoEmit:                       core.TSTrue,

@@ -49,11 +49,11 @@ func parseString(value any) string {
 	return ""
 }
 
-func parseNumber(value any) int {
+func parseNumber(value any) *int {
 	if num, ok := value.(int); ok {
-		return num
+		return &num
 	}
-	return 0
+	return nil
 }
 
 func parseProjectReference(json any) []core.ProjectReference {
@@ -367,10 +367,6 @@ func parseCompilerOptions(key string, value any, allOptions *core.CompilerOption
 
 func mergeCompilerOptions(existingOptions, newOptions *core.CompilerOptions) {
 	if existingOptions == nil {
-		return
-	}
-	if newOptions == nil {
-		newOptions = existingOptions
 		return
 	}
 

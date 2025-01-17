@@ -165,24 +165,3 @@ var commandLineOptionDeprecated = map[string]*core.Set[string]{
 
 // todo: revisit to see if this can be improved
 type CompilerOptionsValue any
-
-var compilerOptionsDeclaration = &CommandLineOption{
-	Name:           "compilerOptions",
-	Kind:           CommandLineOptionTypeObject,
-	ElementOptions: getCommandLineCompilerOptionsMap(),
-}
-
-var compileOnSaveCommandLineOption = &CommandLineOption{
-	Name:                    "compileOnSave",
-	Kind:                    CommandLineOptionTypeBoolean,
-	defaultValueDescription: false,
-}
-
-var extendsOptionDeclaration = &CommandLineOption{
-	Name:     "extends",
-	Kind:     CommandLineOptionTypeListOrElement,
-	category: diagnostics.File_Management,
-	ElementOptions: map[string]*CommandLineOption{
-		"extends": {Name: "extends", Kind: CommandLineOptionTypeString},
-	},
-}
