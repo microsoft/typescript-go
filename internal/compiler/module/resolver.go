@@ -521,7 +521,7 @@ func (r *resolutionState) loadModuleFromExports(packageInfo *packagejson.InfoCac
 	}
 
 	if subpath == "." {
-		var mainExport packagejson.Exports
+		var mainExport packagejson.ExportsOrImports
 		switch packageInfo.Contents.Exports.Type {
 		case packagejson.JSONValueTypeString, packagejson.JSONValueTypeArray:
 			mainExport = packageInfo.Contents.Exports
@@ -550,7 +550,7 @@ func (r *resolutionState) loadModuleFromExports(packageInfo *packagejson.InfoCac
 func (r *resolutionState) loadModuleFromExportsOrImports(
 	extensions extensions,
 	moduleName string,
-	lookupTable *collections.OrderedMap[string, packagejson.Exports],
+	lookupTable *collections.OrderedMap[string, packagejson.ExportsOrImports],
 	scope *packagejson.InfoCacheEntry,
 	isImports bool,
 ) *resolved {
@@ -588,7 +588,7 @@ func (r *resolutionState) loadModuleFromExportsOrImports(
 	return continueSearching()
 }
 
-func (r *resolutionState) loadModuleFromTargetExportOrImport(extensions extensions, moduleName string, scope *packagejson.InfoCacheEntry, isImports bool, target packagejson.Exports, subpath string, isPattern bool, key string) *resolved {
+func (r *resolutionState) loadModuleFromTargetExportOrImport(extensions extensions, moduleName string, scope *packagejson.InfoCacheEntry, isImports bool, target packagejson.ExportsOrImports, subpath string, isPattern bool, key string) *resolved {
 	switch target.Type {
 	case packagejson.JSONValueTypeString:
 		targetString, _ := target.Value.(string)
