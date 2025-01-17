@@ -92,7 +92,6 @@ func NewProgram(options ProgramOptions) *Program {
 	}
 
 	p.resolver = module.NewResolver(p.host, p.compilerOptions)
-	p.resolvedModules = make(map[tspath.Path]module.ModeAwareCache[*module.ResolvedModule])
 
 	p.rootPath = options.RootPath
 	if p.rootPath == "" {
