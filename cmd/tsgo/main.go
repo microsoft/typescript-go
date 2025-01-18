@@ -69,7 +69,7 @@ func parseArgs() *cliOptions {
 	opts := &cliOptions{}
 	opts.Tsc.Pretty = true
 
-	parser := flags.NewParser(opts, flags.HelpFlag)
+	parser := flags.NewParser(opts, flags.HelpFlag|flags.AllowBoolValues)
 	if _, err := parser.Parse(); err != nil {
 		var parseErr *flags.Error
 		if errors.As(err, &parseErr) && parseErr.Type == flags.ErrHelp {
