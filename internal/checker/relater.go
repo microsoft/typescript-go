@@ -356,7 +356,8 @@ func (c *Checker) checkTypeRelatedToEx(
 	headMessage *diagnostics.Message,
 	diagnosticOutput **ast.Diagnostic,
 ) bool {
-	r := Relater{}
+	c.relaters = append(c.relaters, Relater{})
+	r := &c.relaters[len(c.relaters)-1]
 	r.c = c
 	r.relation = relation
 	r.errorNode = errorNode
@@ -401,6 +402,7 @@ func (c *Checker) checkTypeRelatedToEx(
 			}
 		}
 	}
+	c.relaters = c.relaters[:len(c.relaters)-1]
 	return result != TernaryFalse
 }
 

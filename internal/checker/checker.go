@@ -704,6 +704,7 @@ type Checker struct {
 	lastGetCombinedNodeFlagsResult            ast.NodeFlags
 	lastGetCombinedModifierFlagsNode          *ast.Node
 	lastGetCombinedModifierFlagsResult        ast.ModifierFlags
+	flowStates                                []FlowState
 	flowLoopCache                             map[FlowLoopKey]*Type
 	flowLoopStack                             []FlowLoopInfo
 	sharedFlows                               []SharedFlow
@@ -720,6 +721,7 @@ type Checker struct {
 	reverseMappedSourceStack                  []*Type
 	reverseMappedTargetStack                  []*Type
 	reverseExpandingFlags                     ExpandingFlags
+	relaters                                  []Relater
 	subtypeRelation                           *Relation
 	strictSubtypeRelation                     *Relation
 	assignableRelation                        *Relation
