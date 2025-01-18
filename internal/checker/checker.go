@@ -11873,7 +11873,16 @@ func (c *Checker) declarationBelongsToPrivateAmbientMember(declaration *ast.Node
 }
 
 func (c *Checker) getTypeOfPrototypeProperty(prototype *ast.Symbol) *Type {
-	return c.anyType // !!!
+	// TypeScript 1.0 spec (April 2014): 8.4
+	// Every class automatically contains a static property member named 'prototype',
+	// the type of which is an instantiation of the class type with type Any supplied as a type argument for each type parameter.
+	// It is an error to explicitly declare a static property member with the name 'prototype'.
+	classType := c.getDeclaredTypeOfSymbol(c.getParentOfSymbol(prototype))
+	typeParameters := classType.AsInterfaceType().TypeParameters()
+	if len(typeParameters) != 0 {
+		return c.createTypeReference(classType, core.Map(typeParameters, func(*Type) *Type { return c.anyType }))
+	}
+	return classType
 }
 
 func (c *Checker) getWidenedTypeForAssignmentDeclaration(symbol *ast.Symbol) *Type {
@@ -19332,8 +19341,12 @@ func (c *Checker) getIntersectionTypeEx(types []*Type, flags IntersectionFlags, 
 		includes&TypeFlagsVoidLike != 0 && includes&(TypeFlagsDisjointDomains&^TypeFlagsVoidLike) != 0 {
 		return c.neverType
 	}
-	if includes&(TypeFlagsTemplateLiteral|TypeFlagsStringMapping) != 0 && includes&TypeFlagsStringLiteral != 0 && c.extractRedundantTemplateLiterals(typeSet) {
-		return c.neverType
+	if includes&(TypeFlagsTemplateLiteral|TypeFlagsStringMapping) != 0 && includes&TypeFlagsStringLiteral != 0 {
+		var isEmptySet bool
+		typeSet, isEmptySet = c.extractRedundantTemplateLiterals(typeSet)
+		if isEmptySet {
+			return c.neverType
+		}
 	}
 	if includes&TypeFlagsAny != 0 {
 		switch {
@@ -19559,9 +19572,27 @@ func (c *Checker) removeRedundantSupertypes(types []*Type, includes TypeFlags) [
  * Returns true if the intersection of the template literals and string literals is the empty set,
  * for example `get${string}` & "setX", and should reduce to never.
  */
-func (c *Checker) extractRedundantTemplateLiterals(types []*Type) bool {
-	// !!!
-	return false
+func (c *Checker) extractRedundantTemplateLiterals(types []*Type) ([]*Type, bool) {
+	literals := core.Filter(types, func(t *Type) bool { return t.flags&TypeFlagsStringLiteral != 0 })
+	i := len(types)
+	for i > 0 {
+		i--
+		t := types[i]
+		if t.flags&(TypeFlagsTemplateLiteral|TypeFlagsStringMapping) == 0 {
+			continue
+		}
+		for _, t2 := range literals {
+			if c.isTypeSubtypeOf(t2, t) {
+				// For example, `get${T}` & "getX" is just "getX", and Lowercase<string> & "foo" is just "foo"
+				types = slices.Delete(types, i, i+1)
+				break
+			}
+			if c.isPatternLiteralType(t) {
+				return types, true
+			}
+		}
+	}
+	return types, false
 }
 
 // If the given list of types contains more than one union of primitive types, replace the
@@ -21759,7 +21790,7 @@ func (c *Checker) isContextSensitiveFunctionOrObjectLiteralMethod(fn *ast.Node) 
 
 func (c *Checker) getSpreadArgumentType(args []*ast.Node, index int, argCount int, restType *Type, context *InferenceContext, checkMode CheckMode) *Type {
 	inConstContext := c.isConstTypeVariable(restType, 0)
-	if index >= argCount-1 {
+	if argCount > 0 && index >= argCount-1 {
 		arg := args[argCount-1]
 		if isSpreadArgument(arg) {
 			// We are inferring from a spread expression in the last argument position, i.e. both the parameter

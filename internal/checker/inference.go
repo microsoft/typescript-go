@@ -790,7 +790,7 @@ func (c *Checker) applyToParameterTypes(source *Signature, target *Signature, ca
 		callback(c.getTypeAtPosition(source, i), c.getTypeAtPosition(target, i))
 	}
 	if targetRestType != nil {
-		callback(c.getRestTypeAtPosition(source, paramCount, c.isConstTypeVariable(targetRestType, 0) && someType(targetRestType, c.isMutableArrayLikeType) /*readonly*/), targetRestType)
+		callback(c.getRestTypeAtPosition(source, paramCount, c.isConstTypeVariable(targetRestType, 0) && !someType(targetRestType, c.isMutableArrayLikeType) /*readonly*/), targetRestType)
 	}
 }
 
@@ -1175,12 +1175,10 @@ func (c *Checker) cloneInferredPartOfContext(n *InferenceContext) *InferenceCont
 
 func (c *Checker) newInferenceContextWorker(inferences []*InferenceInfo, signature *Signature, flags InferenceFlags, compareTypes TypeComparer) *InferenceContext {
 	n := &InferenceContext{
-		inferences:      inferences,
-		signature:       signature,
-		flags:           flags,
-		compareTypes:    compareTypes,
-		mapper:          c.reportUnmeasurableMapper,
-		nonFixingMapper: c.reportUnmeasurableMapper,
+		inferences:   inferences,
+		signature:    signature,
+		flags:        flags,
+		compareTypes: compareTypes,
 	}
 	n.mapper = c.newInferenceTypeMapper(n, true /*fixing*/)
 	n.nonFixingMapper = c.newInferenceTypeMapper(n, false /*fixing*/)

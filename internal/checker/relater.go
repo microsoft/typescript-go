@@ -1237,7 +1237,7 @@ func (c *Checker) compareSignaturesRelated(source *Signature, target *Signature,
 	if target.declaration != nil {
 		kind = target.declaration.Kind
 	}
-	strictVariance := checkMode&SignatureCheckModeCallback != 0 && c.strictFunctionTypes && kind != ast.KindMethodDeclaration && kind != ast.KindMethodSignature && kind != ast.KindConstructor
+	strictVariance := checkMode&SignatureCheckModeCallback == 0 && c.strictFunctionTypes && kind != ast.KindMethodDeclaration && kind != ast.KindMethodSignature && kind != ast.KindConstructor
 	result := TernaryTrue
 	sourceThisType := c.getThisTypeOfSignature(source)
 	if sourceThisType != nil && sourceThisType != c.voidType {
@@ -1594,7 +1594,7 @@ func (c *Checker) isValidDeclarationForTupleLabel(d *ast.Node) bool {
 
 func (c *Checker) getNonArrayRestType(signature *Signature) *Type {
 	restType := c.getEffectiveRestType(signature)
-	if restType != nil && !c.isArrayType(restType) && isTypeAny(restType) {
+	if restType != nil && !c.isArrayType(restType) && !isTypeAny(restType) {
 		return restType
 	}
 	return nil
