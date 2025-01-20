@@ -11211,19 +11211,31 @@ var base64chars = []byte{
 	'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '$', '%',
 }
 
-func (b *KeyBuilder) WriteInt(value int) {
+func (b *KeyBuilder) WriteUint64(value uint64) {
 	for value != 0 {
 		b.WriteByte(base64chars[value&0x3F])
 		value >>= 6
 	}
 }
 
+func (b *KeyBuilder) WriteInt(value int) {
+	b.WriteUint64(uint64(int64(value)))
+}
+
+func (b *KeyBuilder) WriteSymbolId(id ast.SymbolId) {
+	b.WriteUint64(uint64(id))
+}
+
 func (b *KeyBuilder) WriteSymbol(s *ast.Symbol) {
-	b.WriteInt(int(ast.GetSymbolId(s)))
+	b.WriteSymbolId(ast.GetSymbolId(s))
+}
+
+func (b *KeyBuilder) WriteTypeId(id TypeId) {
+	b.WriteUint64(uint64(id))
 }
 
 func (b *KeyBuilder) WriteType(t *Type) {
-	b.WriteInt(int(t.id))
+	b.WriteTypeId(t.id)
 }
 
 func (b *KeyBuilder) WriteTypes(types []*Type) {
@@ -11238,7 +11250,7 @@ func (b *KeyBuilder) WriteTypes(types []*Type) {
 		if tail {
 			b.WriteByte(',')
 		}
-		b.WriteInt(int(startId))
+		b.WriteTypeId(startId)
 		if count > 1 {
 			b.WriteByte(':')
 			b.WriteInt(count)
@@ -11291,9 +11303,13 @@ func (b *KeyBuilder) WriteTypeReference(ref *Type, ignoreConstraints bool, depth
 	return constrained
 }
 
+func (b *KeyBuilder) WriteNodeId(id ast.NodeId) {
+	b.WriteUint64(uint64(id))
+}
+
 func (b *KeyBuilder) WriteNode(node *ast.Node) {
 	if node != nil {
-		b.WriteInt(int(ast.GetNodeId(node)))
+		b.WriteNodeId(ast.GetNodeId(node))
 	}
 }
 
@@ -11358,7 +11374,7 @@ func getTupleKey(elementInfos []TupleElementInfo, readonly bool) string {
 			b.WriteByte('*')
 		}
 		if e.labeledDeclaration != nil {
-			b.WriteInt(int(ast.GetNodeId(e.labeledDeclaration)))
+			b.WriteNode(e.labeledDeclaration)
 		}
 	}
 	if readonly {
@@ -11387,7 +11403,7 @@ func getIndexedAccessKey(objectType *Type, indexType *Type, accessFlags AccessFl
 	b.WriteByte(',')
 	b.WriteType(indexType)
 	b.WriteByte(',')
-	b.WriteInt(int(accessFlags))
+	b.WriteUint64(uint64(accessFlags))
 	b.WriteAlias(alias)
 	return b.String()
 }
@@ -11436,7 +11452,7 @@ func getRelationKey(source *Type, target *Type, intersectionState IntersectionSt
 	}
 	if intersectionState != IntersectionStateNone {
 		b.WriteByte(':')
-		b.WriteInt(int(intersectionState))
+		b.WriteUint64(uint64(intersectionState))
 	}
 	if constrained {
 		// We mark keys with type references that reference constrained type parameters such that we know
