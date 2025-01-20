@@ -4709,6 +4709,10 @@ func (node *TemplateLiteralTypeSpan) ForEachChild(v Visitor) bool {
 	return visit(v, node.Type) || visit(v, node.Literal)
 }
 
+func IsTemplateLiteralTypeSpan(node *Node) bool {
+	return node.Kind == KindTemplateLiteralTypeSpan
+}
+
 // SyntheticExpression
 
 type SyntheticExpression struct {
