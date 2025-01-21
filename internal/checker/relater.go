@@ -356,8 +356,9 @@ func (c *Checker) checkTypeRelatedToEx(
 	headMessage *diagnostics.Message,
 	diagnosticOutput **ast.Diagnostic,
 ) bool {
-	c.relaters = append(c.relaters, Relater{})
-	r := &c.relaters[len(c.relaters)-1]
+	relaterCount := len(c.relaters)
+	c.relaters = slices.Grow(c.relaters, 1)[:relaterCount+1]
+	r := &c.relaters[relaterCount]
 	r.c = c
 	r.relation = relation
 	r.errorNode = errorNode
@@ -402,7 +403,8 @@ func (c *Checker) checkTypeRelatedToEx(
 			}
 		}
 	}
-	c.relaters = c.relaters[:len(c.relaters)-1]
+	c.relaters[relaterCount] = Relater{}
+	c.relaters = c.relaters[:relaterCount]
 	return result != TernaryFalse
 }
 

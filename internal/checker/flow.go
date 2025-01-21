@@ -68,8 +68,9 @@ func (c *Checker) getFlowTypeOfReferenceEx(reference *ast.Node, declaredType *Ty
 			return declaredType
 		}
 	}
-	c.flowStates = append(c.flowStates, FlowState{})
-	f := &c.flowStates[len(c.flowStates)-1]
+	flowStateCount := len(c.flowStates)
+	c.flowStates = slices.Grow(c.flowStates, 1)[:flowStateCount+1]
+	f := &c.flowStates[flowStateCount]
 	f.reference = reference
 	f.declaredType = declaredType
 	f.initialType = initialType
@@ -79,7 +80,8 @@ func (c *Checker) getFlowTypeOfReferenceEx(reference *ast.Node, declaredType *Ty
 	c.flowInvocationCount++
 	evolvedType := c.getTypeAtFlowNode(f, flowNode).t
 	c.sharedFlows = c.sharedFlows[:f.sharedFlowStart]
-	c.flowStates = c.flowStates[:len(c.flowStates)-1]
+	c.flowStates[flowStateCount] = FlowState{}
+	c.flowStates = c.flowStates[:flowStateCount]
 	// When the reference is 'x' in an 'x.length', 'x.push(value)', 'x.unshift(value)' or x[n] = value' operation,
 	// we give type 'any[]' to 'x' instead of using the type determined by control flow analysis such that operations
 	// on empty arrays are possible without implicit any errors and new element types can be inferred without
