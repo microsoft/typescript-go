@@ -365,18 +365,23 @@ func parseCompilerOptions(key string, value any, allOptions *core.CompilerOption
 	return nil
 }
 
-func mergeCompilerOptions(existingOptions, newOptions *core.CompilerOptions) {
-	if existingOptions == nil {
+// mergeCompilerOptions merges the source compiler options into the target compiler options.
+// Fields in the source options will overwrite the corresponding fields in the target options.
+func mergeCompilerOptions(targetOptions, sourceOptions *core.CompilerOptions) {
+	if sourceOptions == nil {
 		return
 	}
 
-	existingValue := reflect.ValueOf(existingOptions).Elem()
-	newValue := reflect.ValueOf(newOptions).Elem()
+	targetValue := reflect.ValueOf(targetOptions).Elem()
+	sourceValue := reflect.ValueOf(sourceOptions).Elem()
 
-	for i := range newValue.NumField() {
-		newField := newValue.Field(i)
-		if newField.IsZero() {
-			newField.Set(existingValue.Field(i))
+	for i := range targetValue.NumField() {
+		targetField := targetValue.Field(i)
+		sourceField := sourceValue.Field(i)
+		if sourceField.IsZero() {
+			continue
+		} else {
+			targetField.Set(sourceField)
 		}
 	}
 }

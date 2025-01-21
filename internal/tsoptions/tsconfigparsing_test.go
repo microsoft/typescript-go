@@ -126,7 +126,7 @@ var parseConfigFileTextToJsonTests = []struct {
         }`,
 		},
 	},
-	// {
+	// { todo: fix this test
 	// 	title: "handles escaped characters in strings correctly",
 	// 	input: []string{
 	// 		`{
