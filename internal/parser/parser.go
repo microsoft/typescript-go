@@ -90,6 +90,10 @@ func ParseJSONText(fileName string, sourceText string) *ast.SourceFile {
 	pos := p.nodePos()
 	var expressions []*ast.Node
 
+	var statements *ast.NodeList
+	if p.token == ast.KindEndOfFile {
+		statements = p.factory.NewNodeList([]*ast.Node{})
+	}
 	for p.token != ast.KindEndOfFile {
 		var expression *ast.Node
 		switch p.token {
@@ -121,13 +125,14 @@ func ParseJSONText(fileName string, sourceText string) *ast.SourceFile {
 	}
 
 	var statement *ast.Node
-	var statements *ast.NodeList
 	if len(expressions) == 1 {
 		statement = p.factory.NewExpressionStatement(expressions[0])
 		statements = p.factory.NewNodeList([]*ast.Node{statement})
 		p.finishNode(statement, pos)
-	} else {
-		statements = p.factory.NewNodeList(expressions)
+	} else if len(expressions) > 1 {
+		arr := p.factory.NewArrayLiteralExpression(p.newNodeList(core.NewTextRange(pos, p.nodePos()), expressions), false)
+		p.finishNode(arr, pos)
+		statement = p.factory.NewExpressionStatement(arr)
 	}
 
 	p.parseExpectedToken(ast.KindEndOfFile)

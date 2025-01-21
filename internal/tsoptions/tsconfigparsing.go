@@ -260,8 +260,9 @@ func isCompilerOptionsValue(option *CommandLineOption, value any) bool {
 		if option.Kind == "object" {
 			return reflect.TypeOf(value).Kind() == reflect.Map
 		}
-		if option.Kind == "enum" {
-			return reflect.TypeOf(value).Kind() == reflect.String
+		if option.Kind == "enum" && reflect.TypeOf(value).Kind() == reflect.String {
+			_, ok := option.EnumMap().Get(strings.ToLower(value.(string)))
+			return ok
 		}
 	}
 	return false
@@ -450,12 +451,16 @@ func getExtendsConfigPath(
 ) (string, []*ast.Diagnostic) {
 	extendedConfig = tspath.NormalizeSlashes(extendedConfig)
 	var errors []*ast.Diagnostic
+	var errorFile *ast.SourceFile
+	if sourceFile != nil {
+		errorFile = sourceFile.SourceFile
+	}
 	if tspath.IsRootedDiskPath(extendedConfig) || strings.HasPrefix(extendedConfig, "./") || strings.HasPrefix(extendedConfig, "../") {
 		extendedConfigPath := tspath.GetNormalizedAbsolutePath(extendedConfig, basePath)
 		if !host.FS().FileExists(extendedConfigPath) && !strings.HasSuffix(extendedConfigPath, tspath.ExtensionJson) {
 			extendedConfigPath = extendedConfigPath + tspath.ExtensionJson
 			if !host.FS().FileExists(extendedConfigPath) {
-				errors = append(errors, createDiagnosticForNodeInSourceFileOrCompilerDiagnostic(sourceFile.SourceFile, valueExpression, diagnostics.File_0_not_found, extendedConfig))
+				errors = append(errors, createDiagnosticForNodeInSourceFileOrCompilerDiagnostic(errorFile, valueExpression, diagnostics.File_0_not_found, extendedConfig))
 				return "", errors
 			}
 		}
@@ -467,9 +472,9 @@ func getExtendsConfigPath(
 		return resolved.ResolvedFileName, errors
 	}
 	if extendedConfig == "" {
-		errors = append(errors, createDiagnosticForNodeInSourceFileOrCompilerDiagnostic(sourceFile.SourceFile, valueExpression, diagnostics.Compiler_option_0_cannot_be_given_an_empty_string, "extends"))
+		errors = append(errors, createDiagnosticForNodeInSourceFileOrCompilerDiagnostic(errorFile, valueExpression, diagnostics.Compiler_option_0_cannot_be_given_an_empty_string, "extends"))
 	} else {
-		errors = append(errors, createDiagnosticForNodeInSourceFileOrCompilerDiagnostic(sourceFile.SourceFile, valueExpression, diagnostics.File_0_not_found, extendedConfig))
+		errors = append(errors, createDiagnosticForNodeInSourceFileOrCompilerDiagnostic(errorFile, valueExpression, diagnostics.File_0_not_found, extendedConfig))
 	}
 	return "", errors
 }
@@ -539,7 +544,9 @@ func convertArrayLiteralExpressionToJson(
 	for _, element := range elements {
 		convertedValue, err := convertPropertyValueToJson(sourceFile, element, elementOption, returnValue, nil)
 		errors = append(errors, err...)
-		value = append(value, convertedValue)
+		if convertedValue != nil {
+			value = append(value, convertedValue)
+		}
 	}
 	return value, errors
 }
@@ -680,7 +687,7 @@ func convertPropertyValueToJson(sourceFile *ast.SourceFile, valueExpression *ast
 		if valueExpression.AsPrefixUnaryExpression().Operator != ast.KindMinusToken || valueExpression.AsPrefixUnaryExpression().Operand.Kind != ast.KindNumericLiteral {
 			break // not valid JSON syntax
 		}
-		return jsnum.FromString("-" + valueExpression.AsPrefixUnaryExpression().Operand.AsNumericLiteral().Text), nil
+		return -jsnum.FromString(valueExpression.AsPrefixUnaryExpression().Operand.AsNumericLiteral().Text), nil
 	case ast.KindObjectLiteralExpression:
 		objectLiteralExpression := valueExpression.AsObjectLiteralExpression()
 		// Currently having element option declaration in the tsconfig with type "object"
