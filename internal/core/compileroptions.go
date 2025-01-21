@@ -42,6 +42,7 @@ type CompilerOptions struct {
 	OutDir                             string               `json:"outDir"`
 	Paths                              map[string][]string  `json:"paths"`
 	PreserveConstEnums                 Tristate             `json:"preserveConstEnums"`
+	Project                            string               `json:"project"`
 	PreserveSymlinks                   Tristate             `json:"preserveSymlinks"`
 	ResolveJsonModule                  Tristate             `json:"resolveJsonModule"`
 	ResolvePackageJsonExports          Tristate             `json:"resolvePackageJsonExports"`
@@ -63,8 +64,17 @@ type CompilerOptions struct {
 
 	// Internal fields
 	ConfigFilePath  string   `json:"configFilePath"`
+	ConfigFile      func()   `json:"configFile"` // todo: TsConfigSourceFile,
 	NoDtsResolution Tristate `json:"noDtsResolution"`
 	PathsBasePath   string   `json:"pathsBasePath"`
+
+	// cli
+	ShowConfig    bool `json:"showConfig"`
+	Watch         bool `json:"watch"`
+	Incremental   bool `json:"incremental"`
+	ListFilesOnly bool `json:"listFilesOnly"`
+	// ConfigFile *ast.SourceFile `json:"configFile"`
+	Pretty bool `json:"pretty"`
 }
 
 func (options *CompilerOptions) GetEmitScriptTarget() ScriptTarget {

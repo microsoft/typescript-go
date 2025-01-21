@@ -7,7 +7,9 @@ import (
 
 type CompilerHost interface {
 	FS() vfs.FS
+	SetOptions(options *core.CompilerOptions)
 	GetCurrentDirectory() string
+	NewLine() string
 	Trace(msg string)
 }
 
@@ -36,10 +38,18 @@ func (h *compilerHost) FS() vfs.FS {
 	return h.fs
 }
 
+func (h *compilerHost) SetOptions(options *core.CompilerOptions) {
+	h.options = options
+}
+
 func (h *compilerHost) GetCurrentDirectory() string {
 	return h.currentDirectory
 }
 
-func (d *compilerHost) Trace(msg string) {
+func (h *compilerHost) NewLine() string {
+	return h.options.NewLine.GetNewLineCharacter()
+}
+
+func (h *compilerHost) Trace(msg string) {
 	//!!! TODO: implement
 }

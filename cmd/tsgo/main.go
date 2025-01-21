@@ -17,6 +17,7 @@ import (
 	ts "github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnosticwriter"
+	"github.com/microsoft/typescript-go/internal/execute"
 	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
@@ -85,6 +86,10 @@ func parseArgs() *cliOptions {
 }
 
 func main() {
+	if os.Args[1] == "tsc" {
+		sys := execute.NewSystem()
+		sys.Exit(execute.CommandLine(sys, nil, os.Args[2:]))
+	}
 	opts := parseArgs()
 
 	rootPath := opts.Args.Root

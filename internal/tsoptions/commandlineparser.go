@@ -31,6 +31,22 @@ type ParseCommandLineWorkerDiagnostics struct {
 	OptionTypeMismatchDiagnostic *diagnostics.Message
 }
 
+func GetCompilerOptionsDidYouMeanDiagnostics(decls []CommandLineOption) *ParseCommandLineWorkerDiagnostics {
+	return &ParseCommandLineWorkerDiagnostics{
+		didYouMean: DidYouMeanOptionsDiagnostics{
+			alternateMode: &AlternateModeDiagnostics{
+				diagnostic:     diagnostics.Compiler_option_0_may_only_be_used_with_build,
+				optionsNameMap: GetNameMapFromList(optionsForBuild),
+			},
+			OptionDeclarations:          decls,
+			UnknownOptionDiagnostic:     diagnostics.Unknown_compiler_option_0,
+			UnknownDidYouMeanDiagnostic: diagnostics.Unknown_compiler_option_0_Did_you_mean_1,
+		},
+		optionsNameMap:               nil,
+		OptionTypeMismatchDiagnostic: diagnostics.Compiler_option_0_expects_an_argument,
+	}
+}
+
 type OptionsBase map[string]any // CompilerOptionsValue|TsConfigSourceFile
 
 func (p *CommandLineParser) AlternateMode() *AlternateModeDiagnostics {
@@ -80,11 +96,45 @@ type CommandLineParser struct {
 func ParseCommandLine(
 	commandLine []string,
 	fs vfs.FS,
+	currDir string,
 ) *ParsedCommandLine {
+	if commandLine == nil {
+		commandLine = []string{}
+	}
+	parseCommandLineDiagnostics := GetCompilerOptionsDidYouMeanDiagnostics(optionsDeclarations)
+	parser := parseCommandLineWorker(parseCommandLineDiagnostics, commandLine, fs)
 	// this function should convert commandLineWorker output to compileroptions
 	// todo: return correct type (waiting on shared tsconfig parsing utilities)
 	// parseCommandLineWorker()
-	return &ParsedCommandLine{}
+	fileNames := []string{currDir}
+	if len(parser.fileNames) != 0 && parser.fileNames[0] != "" {
+		fileNames = parser.fileNames
+	}
+	return &ParsedCommandLine{
+		options: &core.ParsedOptions{
+			CompilerOptions:   parser.tempGetCompilerOptions(),
+			FileNames:         fileNames,
+			ProjectReferences: []core.ProjectReference{},
+		},
+		Errors: parser.errors,
+	}
+}
+
+func (p *CommandLineParser) tempGetCompilerOptions() *core.CompilerOptions {
+	return &core.CompilerOptions{
+		NoEmit: boolToTri(p.options["noEmit"]),
+		Strict: boolToTri(p.options["strict"]),
+	}
+}
+
+func boolToTri(b any) core.Tristate {
+	if b == nil {
+		return core.TSUnknown
+	}
+	if b == true {
+		return core.TSTrue
+	}
+	return core.TSFalse
 }
 
 func parseCommandLineWorker(

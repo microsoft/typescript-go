@@ -245,22 +245,6 @@ func parseExistingCompilerBaseline(t *testing.T, baseline string) *TestCommandLi
 
 var compilerOptionsDidYouMeanDiagnostics = GetCompilerOptionsDidYouMeanDiagnostics(optionsDeclarations)
 
-func GetCompilerOptionsDidYouMeanDiagnostics(decls []CommandLineOption) *ParseCommandLineWorkerDiagnostics {
-	return &ParseCommandLineWorkerDiagnostics{
-		didYouMean: DidYouMeanOptionsDiagnostics{
-			alternateMode: &AlternateModeDiagnostics{
-				diagnostic:     diagnostics.Compiler_option_0_may_only_be_used_with_build,
-				optionsNameMap: GetNameMapFromList(optionsForBuild),
-			},
-			OptionDeclarations:          decls,
-			UnknownOptionDiagnostic:     diagnostics.Unknown_compiler_option_0,
-			UnknownDidYouMeanDiagnostic: diagnostics.Unknown_compiler_option_0_Did_you_mean_1,
-		},
-		optionsNameMap:               nil,
-		OptionTypeMismatchDiagnostic: diagnostics.Compiler_option_0_expects_an_argument,
-	}
-}
-
 func createSubScenario(subScenarioName string, commandline []string, d ...*ParseCommandLineWorkerDiagnostics) *commandLineSubScenario {
 	baselineFileName := "tests/baselines/reference/config/commandLineParsing/parseCommandLine/" + subScenarioName + ".js"
 	var workerDiagnostic *ParseCommandLineWorkerDiagnostics
