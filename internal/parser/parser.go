@@ -127,7 +127,7 @@ func ParseJSONText(fileName string, sourceText string) *ast.SourceFile {
 		statements = p.factory.NewNodeList([]*ast.Node{statement})
 		p.finishNode(statement, pos)
 	} else {
-		statements = p.factory.NewNodeList([]*ast.Node{})
+		statements = p.factory.NewNodeList(expressions)
 	}
 
 	p.parseExpectedToken(ast.KindEndOfFile)
