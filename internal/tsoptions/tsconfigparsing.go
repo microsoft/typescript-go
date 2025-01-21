@@ -255,7 +255,7 @@ func isCompilerOptionsValue(option *CommandLineOption, value any) bool {
 			return reflect.TypeOf(value).Kind() == reflect.Bool
 		}
 		if option.Kind == "number" {
-			return reflect.TypeOf(value).Kind() == reflect.Int
+			return reflect.TypeOf(value).Kind() == reflect.Float64
 		}
 		if option.Kind == "object" {
 			return reflect.TypeOf(value).Kind() == reflect.Map
@@ -933,7 +933,7 @@ func parseConfig(
 					result.compileOnSave = compileOnSave
 				}
 			}
-			mergeCompilerOptions(result.options, extendedConfig.options)
+			MergeCompilerOptions(result.options, extendedConfig.options)
 		}
 	}
 
@@ -967,7 +967,7 @@ func parseConfig(
 				sourceFile.extendedSourceFiles = append(sourceFile.extendedSourceFiles, extendedSourceFile)
 			}
 		}
-		ownConfig.options = mergeCompilerOptions(result.options, ownConfig.options)
+		ownConfig.options = MergeCompilerOptions(result.options, ownConfig.options)
 		// ownConfig.watchOptions = ownConfig.watchOptions && result.watchOptions ?
 		//     assignWatchOptions(result, ownConfig.watchOptions) :
 		//     ownConfig.watchOptions || result.watchOptions;
@@ -1003,7 +1003,7 @@ func parseJsonConfigFileContentWorker(
 	var errors []*ast.Diagnostic
 	resolutionStackString := []string{}
 	parsedConfig, errors := parseConfig(json, sourceFile, host, basePath, configFileName, resolutionStackString, extendedConfigCache)
-	mergeCompilerOptions(parsedConfig.options, existingOptions)
+	MergeCompilerOptions(parsedConfig.options, existingOptions)
 	// const options = handleOptionConfigDirTemplateSubstitution(
 	// 	extend(existingOptions, parsedConfig.options), //function in core.ts
 	// 	configDirTemplateSubstitutionOptions,

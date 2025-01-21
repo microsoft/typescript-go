@@ -289,6 +289,7 @@ var parseJsonConfigFileTests = []struct {
     "moduleResolution": "bundler",
     "moduleDetection": "auto",
     "jsx": "react",
+	"maxNodeModuleJsDepth": 1,
 	"paths": {
       "jquery": ["./vendor/jquery/dist/jquery"]
     }
