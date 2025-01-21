@@ -13,6 +13,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/compiler/diagnostics"
 	"github.com/microsoft/typescript-go/internal/compiler/module"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/jsnum"
 	"github.com/microsoft/typescript-go/internal/parser"
 	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -260,7 +261,7 @@ func isCompilerOptionsValue(option *CommandLineOption, value any) bool {
 			return reflect.TypeOf(value).Kind() == reflect.Map
 		}
 		if option.Kind == "enum" {
-			return true
+			return reflect.TypeOf(value).Kind() == reflect.String
 		}
 	}
 	return false
@@ -360,7 +361,7 @@ func convertJsonOption(
 		if sourceFile == nil && nodeValue == nil {
 			errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.Option_0_can_only_be_specified_on_command_line, opt.Name))
 		} else {
-			errors = append(errors, ast.NewDiagnostic(sourceFile.SourceFile, core.NewTextRange(scanner.SkipTrivia(sourceFile.SourceFile.Text, nodeValue.Loc.Pos()), nodeValue.End()), diagnostics.Option_0_can_only_be_specified_on_command_line, opt.Name))
+			errors = append(errors, createDiagnosticForNodeInSourceFileOrCompilerDiagnostic(sourceFile.SourceFile, nodeValue, diagnostics.Option_0_can_only_be_specified_on_command_line, opt.Name))
 		}
 		return nil, errors
 	}
@@ -389,7 +390,7 @@ func convertJsonOption(
 			return normalizeNonListOptionValue(opt, basePath, validatedValue), errors
 		}
 	} else {
-		errors = append(errors, ast.NewDiagnostic(sourceFile.SourceFile, core.NewTextRange(scanner.SkipTrivia(sourceFile.SourceFile.Text, valueExpression.Loc.Pos()), valueExpression.End()), diagnostics.Compiler_option_0_requires_a_value_of_type_1, opt.Name, getCompilerOptionValueTypeString(opt)))
+		errors = append(errors, createDiagnosticForNodeInSourceFileOrCompilerDiagnostic(sourceFile.SourceFile, valueExpression, diagnostics.Compiler_option_0_requires_a_value_of_type_1, opt.Name, getCompilerOptionValueTypeString(opt)))
 		return nil, errors
 	}
 }
@@ -606,24 +607,24 @@ func convertObjectLiteralExpressionToJson(
 			errors = append(errors, ast.NewDiagnostic(sourceFile, element.Loc, diagnostics.String_literal_with_double_quotes_expected))
 		}
 
-		var textOfKey any
+		textOfKey := ""
 		if !ast.IsComputedNonLiteralName(element.Name()) {
 			textOfKey, _ = ast.TryGetTextOfPropertyName(element.Name())
 		}
 		keyText := textOfKey
 		var option *CommandLineOption = nil
-		if keyText != nil && objectOption != nil && objectOption.ElementOptions != nil {
-			option = objectOption.ElementOptions[keyText.(string)]
+		if keyText != "" && objectOption != nil && objectOption.ElementOptions != nil {
+			option = objectOption.ElementOptions[keyText]
 		}
 		value, err := convertPropertyValueToJson(sourceFile, element.AsPropertyAssignment().Initializer, option, returnValue, jsonConversionNotifier)
 		errors = append(errors, err...)
-		if keyText != nil {
+		if keyText != "" {
 			if returnValue {
-				result[keyText.(string)] = value
+				result[keyText] = value
 			}
 			// Notify key value set, if user asked for it
 			if jsonConversionNotifier != nil {
-				_, err := jsonConversionNotifier.onPropertySet(keyText.(string), value, element.AsPropertyAssignment(), objectOption, option)
+				_, err := jsonConversionNotifier.onPropertySet(keyText, value, element.AsPropertyAssignment(), objectOption, option)
 				errors = append(errors, err...)
 			}
 		}
@@ -674,12 +675,12 @@ func convertPropertyValueToJson(sourceFile *ast.SourceFile, valueExpression *ast
 		return valueExpression.AsStringLiteral().Text, nil
 
 	case ast.KindNumericLiteral:
-		return valueExpression.AsNumericLiteral().Text, nil
+		return jsnum.FromString(valueExpression.AsNumericLiteral().Text), nil
 	case ast.KindPrefixUnaryExpression:
 		if valueExpression.AsPrefixUnaryExpression().Operator != ast.KindMinusToken || valueExpression.AsPrefixUnaryExpression().Operand.Kind != ast.KindNumericLiteral {
 			break // not valid JSON syntax
 		}
-		return "-" + valueExpression.AsPrefixUnaryExpression().Operand.AsNumericLiteral().Text, nil
+		return jsnum.FromString("-" + valueExpression.AsPrefixUnaryExpression().Operand.AsNumericLiteral().Text), nil
 	case ast.KindObjectLiteralExpression:
 		objectLiteralExpression := valueExpression.AsObjectLiteralExpression()
 		// Currently having element option declaration in the tsconfig with type "object"
@@ -760,9 +761,7 @@ func parseOwnConfigOfJson(
 	if json["excludes"] != nil {
 		errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.Unknown_option_excludes_Did_you_mean_exclude))
 	}
-	var options *core.CompilerOptions
-	var err []*ast.Diagnostic
-	options, err = convertCompilerOptionsFromJsonWorker(json["compilerOptions"], basePath, configFileName)
+	options, err := convertCompilerOptionsFromJsonWorker(json["compilerOptions"], basePath, configFileName)
 	errors = append(errors, err...)
 	// typeAcquisition := convertTypeAcquisitionFromJsonWorker(json.typeAcquisition, basePath, errors, configFileName)
 	// watchOptions := convertWatchOptionsFromJsonWorker(json.watchOptions, basePath, errors)
@@ -968,8 +967,7 @@ func parseConfig(
 				sourceFile.extendedSourceFiles = append(sourceFile.extendedSourceFiles, extendedSourceFile)
 			}
 		}
-		mergeCompilerOptions(result.options, ownConfig.options)
-		ownConfig.options = result.options
+		ownConfig.options = mergeCompilerOptions(result.options, ownConfig.options)
 		// ownConfig.watchOptions = ownConfig.watchOptions && result.watchOptions ?
 		//     assignWatchOptions(result, ownConfig.watchOptions) :
 		//     ownConfig.watchOptions || result.watchOptions;
