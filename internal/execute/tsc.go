@@ -188,7 +188,7 @@ func performCompilation(sys System, cb cbType, reportDiagnostic DiagnosticReport
 	emitResult := &ts.EmitResult{EmitSkipped: true, Diagnostics: []*ast.Diagnostic{}}
 	if !options.ListFilesOnly {
 		// todo emit not fully implemented
-		// emitResult = program.Emit(&ts.EmitOptions{})
+		emitResult = program.Emit(&ts.EmitOptions{})
 	}
 	diagnostics = append(diagnostics, emitResult.Diagnostics...)
 
