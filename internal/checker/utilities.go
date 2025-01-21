@@ -4,7 +4,6 @@ import (
 	"cmp"
 	"slices"
 	"strings"
-	"sync"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/binder"
@@ -37,26 +36,6 @@ func (s *LinkStore[K, V]) get(key K) *V {
 func (s *LinkStore[K, V]) has(key K) bool {
 	_, ok := s.entries[key]
 	return ok
-}
-
-// Atomic ids
-
-var (
-	symbolMergeMutex sync.Mutex
-	nextMergeId      uint32
-)
-
-func getMergeId(symbol *ast.Symbol) ast.MergeId {
-	if symbol.MergeId != 0 {
-		return symbol.MergeId
-	}
-	symbolMergeMutex.Lock()
-	if symbol.MergeId == 0 {
-		nextMergeId++
-		symbol.MergeId = ast.MergeId(nextMergeId)
-	}
-	symbolMergeMutex.Unlock()
-	return symbol.MergeId
 }
 
 func NewDiagnosticForNode(node *ast.Node, message *diagnostics.Message, args ...any) *ast.Diagnostic {
@@ -539,10 +518,6 @@ func getNamespaceDeclarationNode(node *ast.Node) *ast.Node {
 	return nil
 }
 
-func isImportCall(node *ast.Node) bool {
-	return ast.IsCallExpression(node) && node.AsCallExpression().Expression.Kind == ast.KindImportKeyword
-}
-
 func getSourceFileOfModule(module *ast.Symbol) *ast.SourceFile {
 	declaration := module.ValueDeclaration
 	if declaration == nil {
@@ -1022,21 +997,13 @@ func getClassLikeDeclarationOfSymbol(symbol *ast.Symbol) *ast.Node {
 }
 
 func isThisInTypeQuery(node *ast.Node) bool {
-	if !isThisIdentifier(node) {
+	if !ast.IsThisIdentifier(node) {
 		return false
 	}
 	for ast.IsQualifiedName(node.Parent) && node.Parent.AsQualifiedName().Left == node {
 		node = node.Parent
 	}
 	return node.Parent.Kind == ast.KindTypeQuery
-}
-
-func isThisIdentifier(node *ast.Node) bool {
-	return node != nil && node.Kind == ast.KindIdentifier && identifierIsThisKeyword(node)
-}
-
-func identifierIsThisKeyword(id *ast.Node) bool {
-	return id.AsIdentifier().Text == "this"
 }
 
 func getDeclarationModifierFlagsFromSymbol(s *ast.Symbol) ast.ModifierFlags {
@@ -1308,8 +1275,9 @@ func getThisParameter(signature *ast.Node) *ast.Node {
 	return nil
 }
 
+// Deprecated: use ast.IsThisParameter
 func parameterIsThisKeyword(parameter *ast.Node) bool {
-	return isThisIdentifier(parameter.Name())
+	return ast.IsThisParameter(parameter)
 }
 
 func getInterfaceBaseTypeNodes(node *ast.Node) []*ast.Node {

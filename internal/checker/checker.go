@@ -585,7 +585,7 @@ type Checker struct {
 	symbolPool                                core.Pool[ast.Symbol]
 	signaturePool                             core.Pool[Signature]
 	indexInfoPool                             core.Pool[IndexInfo]
-	mergedSymbols                             map[ast.MergeId]*ast.Symbol
+	mergedSymbols                             map[*ast.Symbol]*ast.Symbol
 	factory                                   ast.NodeFactory
 	nodeLinks                                 LinkStore[*ast.Node, NodeLinks]
 	signatureLinks                            LinkStore[*ast.Node, SignatureLinks]
@@ -606,6 +606,7 @@ type Checker struct {
 	varianceLinks                             LinkStore[*ast.Symbol, VarianceLinks]
 	indexSymbolLinks                          LinkStore[*ast.Symbol, IndexSymbolLinks]
 	ReverseMappedSymbolLinks                  LinkStore[*ast.Symbol, ReverseMappedSymbolLinks]
+	markedAssignmentSymbolLinks               LinkStore[*ast.Symbol, MarkedAssignmentSymbolLinks]
 	sourceFileLinks                           LinkStore[*ast.SourceFile, SourceFileLinks]
 	patternForType                            map[*Type]*ast.Node
 	contextFreeTypes                          map[*ast.Node]*Type
@@ -828,7 +829,7 @@ func NewChecker(program Program) *Checker {
 	c.intersectionTypes = make(map[string]*Type)
 	c.diagnostics = ast.DiagnosticsCollection{}
 	c.suggestionDiagnostics = ast.DiagnosticsCollection{}
-	c.mergedSymbols = make(map[ast.MergeId]*ast.Symbol)
+	c.mergedSymbols = make(map[*ast.Symbol]*ast.Symbol)
 	c.patternForType = make(map[*Type]*ast.Node)
 	c.contextFreeTypes = make(map[*ast.Node]*Type)
 	c.anyType = c.newIntrinsicType(TypeFlagsAny, "any")
@@ -3141,10 +3142,8 @@ func (c *Checker) getTypeOfExpression(node *ast.Node) *Type {
 		return quickType
 	}
 	// If a type has been cached for the node, return it.
-	if node.Flags&ast.NodeFlagsTypeCached != 0 {
-		if cachedType := c.flowTypeCache[node]; cachedType != nil {
-			return cachedType
-		}
+	if cachedType := c.flowTypeCache[node]; cachedType != nil {
+		return cachedType
 	}
 	startInvocationCount := c.flowInvocationCount
 	t := c.checkExpressionEx(node, CheckModeTypeOnly)
@@ -3154,7 +3153,6 @@ func (c *Checker) getTypeOfExpression(node *ast.Node) *Type {
 			c.flowTypeCache = make(map[*ast.Node]*Type)
 		}
 		c.flowTypeCache[node] = t
-		node.Flags |= ast.NodeFlagsTypeCached
 	}
 	return t
 }
@@ -3985,7 +3983,7 @@ func isSpreadIntoCallOrNew(node *ast.Node) bool {
 func (c *Checker) checkQualifiedName(node *ast.Node, checkMode CheckMode) *Type {
 	left := node.AsQualifiedName().Left
 	var leftType *Type
-	if ast.IsPartOfTypeQuery(node) && isThisIdentifier(left) {
+	if ast.IsPartOfTypeQuery(node) && ast.IsThisIdentifier(left) {
 		leftType = c.checkNonNullType(c.checkThisExpression(left), left)
 	} else {
 		leftType = c.checkNonNullExpression(left)
@@ -5982,7 +5980,7 @@ func (c *Checker) checkExpressionWithTypeArguments(node *ast.Node) *Type {
 		exprType = c.checkExpression(node.Expression())
 	} else {
 		exprName := node.AsTypeQueryNode().ExprName
-		if isThisIdentifier(exprName) {
+		if ast.IsThisIdentifier(exprName) {
 			exprType = c.checkThisExpression(node.AsTypeQueryNode().ExprName)
 		} else {
 			exprType = c.checkExpression(node.AsTypeQueryNode().ExprName)
@@ -9077,9 +9075,8 @@ func (c *Checker) cloneSymbol(symbol *ast.Symbol) *ast.Symbol {
 }
 
 func (c *Checker) getMergedSymbol(symbol *ast.Symbol) *ast.Symbol {
-	// If a symbol was never merged it will have a zero mergeId
-	if symbol != nil && symbol.MergeId != 0 {
-		merged := c.mergedSymbols[symbol.MergeId]
+	if symbol != nil {
+		merged := c.mergedSymbols[symbol]
 		if merged != nil {
 			return merged
 		}
@@ -9095,7 +9092,7 @@ func (c *Checker) getParentOfSymbol(symbol *ast.Symbol) *ast.Symbol {
 }
 
 func (c *Checker) recordMergedSymbol(target *ast.Symbol, source *ast.Symbol) {
-	c.mergedSymbols[getMergeId(source)] = target
+	c.mergedSymbols[source] = target
 }
 
 func (c *Checker) getSymbolIfSameReference(s1 *ast.Symbol, s2 *ast.Symbol) *ast.Symbol {
@@ -9932,9 +9929,9 @@ func (c *Checker) resolveESModuleSymbol(moduleSymbol *ast.Symbol, referencingLoc
 			return symbol
 		}
 		referenceParent := referencingLocation.Parent
-		if ast.IsImportDeclaration(referenceParent) && getNamespaceDeclarationNode(referenceParent) != nil || isImportCall(referenceParent) {
+		if ast.IsImportDeclaration(referenceParent) && getNamespaceDeclarationNode(referenceParent) != nil || ast.IsImportCall(referenceParent) {
 			var reference *ast.Node
-			if isImportCall(referenceParent) {
+			if ast.IsImportCall(referenceParent) {
 				reference = referenceParent.AsCallExpression().Arguments.Nodes[0]
 			} else {
 				reference = referenceParent.AsImportDeclaration().ModuleSpecifier
@@ -13925,13 +13922,13 @@ func (c *Checker) createPromiseLikeType(promisedType *Type) *Type {
 func (c *Checker) createPromiseReturnType(fn *ast.Node, promisedType *Type) *Type {
 	promiseType := c.createPromiseType(promisedType)
 	if promiseType == c.unknownType {
-		c.error(fn, core.IfElse(isImportCall(fn),
+		c.error(fn, core.IfElse(ast.IsImportCall(fn),
 			diagnostics.A_dynamic_import_call_returns_a_Promise_Make_sure_you_have_a_declaration_for_Promise_or_include_ES2015_in_your_lib_option,
 			diagnostics.An_async_function_or_method_must_return_a_Promise_Make_sure_you_have_a_declaration_for_Promise_or_include_ES2015_in_your_lib_option))
 		return c.errorType
 	}
 	if c.getGlobalPromiseConstructorSymbol() == nil {
-		c.error(fn, core.IfElse(isImportCall(fn),
+		c.error(fn, core.IfElse(ast.IsImportCall(fn),
 			diagnostics.A_dynamic_import_call_in_ES5_requires_the_Promise_constructor_Make_sure_you_have_a_declaration_for_the_Promise_constructor_or_include_ES2015_in_your_lib_option,
 			diagnostics.An_async_function_or_method_in_ES5_requires_the_Promise_constructor_Make_sure_you_have_a_declaration_for_the_Promise_constructor_or_include_ES2015_in_your_lib_option))
 	}
@@ -15869,7 +15866,7 @@ func (c *Checker) isTypeParameterPossiblyReferenced(tp *Type, node *ast.Node) bo
 		case ast.KindTypeQuery:
 			entityName := node.AsTypeQueryNode().ExprName
 			firstIdentifier := ast.GetFirstIdentifier(entityName)
-			if !isThisIdentifier(firstIdentifier) {
+			if !ast.IsThisIdentifier(firstIdentifier) {
 				firstIdentifierSymbol := c.getResolvedSymbol(firstIdentifier)
 				tpDeclaration := tp.symbol.Declarations[0] // There is exactly one declaration, otherwise `containsReference` is not called
 				var tpScope *ast.Node
@@ -21891,7 +21888,7 @@ func (c *Checker) getContextualTypeForArgument(callTarget *ast.Node, arg *ast.No
 }
 
 func (c *Checker) getContextualTypeForArgumentAtIndex(callTarget *ast.Node, argIndex int) *Type {
-	if isImportCall(callTarget) {
+	if ast.IsImportCall(callTarget) {
 		switch {
 		case argIndex == 0:
 			return c.stringType

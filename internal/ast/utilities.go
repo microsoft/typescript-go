@@ -15,17 +15,27 @@ var (
 )
 
 func GetNodeId(node *Node) NodeId {
-	if node.Id == 0 {
-		node.Id = NodeId(nextNodeId.Add(1))
+	id := node.id.Load()
+	if id == 0 {
+		// Worst case, we burn a few ids if we have to CAS.
+		id = nextNodeId.Add(1)
+		if !node.id.CompareAndSwap(0, id) {
+			id = node.id.Load()
+		}
 	}
-	return node.Id
+	return NodeId(id)
 }
 
 func GetSymbolId(symbol *Symbol) SymbolId {
-	if symbol.Id == 0 {
-		symbol.Id = SymbolId(nextSymbolId.Add(1))
+	id := symbol.id.Load()
+	if id == 0 {
+		// Worst case, we burn a few ids if we have to CAS.
+		id = nextSymbolId.Add(1)
+		if !symbol.id.CompareAndSwap(0, id) {
+			id = symbol.id.Load()
+		}
 	}
-	return symbol.Id
+	return SymbolId(id)
 }
 
 func GetSymbolTable(data *SymbolTable) SymbolTable {
@@ -1179,6 +1189,14 @@ func IsModuleIdentifier(node *Node) bool {
 	return IsIdentifier(node) && node.Text() == "module"
 }
 
+func IsThisIdentifier(node *Node) bool {
+	return IsIdentifier(node) && node.Text() == "this"
+}
+
+func IsThisParameter(node *Node) bool {
+	return IsParameter(node) && node.Name() != nil && IsThisIdentifier(node.Name())
+}
+
 // Does not handle signed numeric names like `a[+0]` - handling those would require handling prefix unary expressions
 // throughout late binding handling as well, which is awkward (but ultimately probably doable if there is demand)
 func GetElementOrPropertyAccessArgumentExpressionOrName(node *Node) *Node {
@@ -1726,6 +1744,10 @@ func isJSXTagName(node *Node) bool {
 		return parent.AsJsxClosingElement().TagName == node
 	}
 	return false
+}
+
+func IsImportCall(node *Node) bool {
+	return IsCallExpression(node) && node.AsCallExpression().Expression.Kind == KindImportKeyword
 }
 
 func GetAssertedTypeNode(node *Node) *Node {
