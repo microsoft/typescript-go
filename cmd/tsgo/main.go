@@ -200,9 +200,8 @@ func main() {
 		}
 	}
 
-	// !!! skipping emit without outDir for now
 	var emitTime time.Duration
-	if !compilerOptions.NoEmit.IsTrue() && len(compilerOptions.OutDir) >= 0 {
+	if compilerOptions.NoEmit.IsFalseOrUnknown() {
 		emitStart := time.Now()
 		result := program.Emit(&ts.EmitOptions{})
 		diagnostics = append(diagnostics, result.Diagnostics...)
