@@ -218,6 +218,9 @@ func (t *parseTask) start(loader *fileLoader) {
 func (p *fileLoader) parseSourceFile(fileName string) *ast.SourceFile {
 	path := tspath.ToPath(fileName, p.host.GetCurrentDirectory(), p.host.FS().UseCaseSensitiveFileNames())
 	text, _ := p.host.FS().ReadFile(fileName)
+	if tspath.FileExtensionIs(fileName, tspath.ExtensionJson) {
+		return parser.ParseJSONText(fileName, text)
+	}
 	sourceFile := parser.ParseSourceFile(fileName, text, p.compilerOptions.GetEmitScriptTarget())
 	sourceFile.SetPath(path)
 	return sourceFile
