@@ -185,7 +185,7 @@ func (p *Program) BindSourceFiles() {
 	wg := core.NewWorkGroup(p.programOptions.SingleThreaded)
 	for _, file := range p.files {
 		if !file.IsBound {
-			wg.Run(func() {
+			wg.Queue(func() {
 				binder.BindSourceFile(file, p.compilerOptions)
 			})
 		}
@@ -197,7 +197,7 @@ func (p *Program) CheckSourceFiles() {
 	p.createCheckers()
 	wg := core.NewWorkGroup(false)
 	for index, checker := range p.checkers {
-		wg.Run(func() {
+		wg.Queue(func() {
 			for i := index; i < len(p.files); i += len(p.checkers) {
 				checker.CheckSourceFile(p.files[i])
 			}
@@ -593,7 +593,7 @@ func (p *Program) Emit(options *EmitOptions) *EmitResult {
 			sourceFile:        sourceFile,
 		}
 		emitters = append(emitters, emitter)
-		wg.Run(func() {
+		wg.Queue(func() {
 			// take an unused writer
 			writer := writerPool.Get().(printer.EmitTextWriter)
 			writer.Clear()

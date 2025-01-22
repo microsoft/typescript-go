@@ -24,7 +24,7 @@ type fileLoader struct {
 	resolvedModules      map[tspath.Path]module.ModeAwareCache[*module.ResolvedModule]
 
 	mu                      sync.Mutex
-	wg                      *core.WorkGroup
+	wg                      core.WorkGroup
 	tasksByFileName         map[string]*parseTask
 	currentNodeModulesDepth int
 	defaultLibraryPath      string
@@ -174,7 +174,7 @@ type parseTask struct {
 }
 
 func (t *parseTask) start(loader *fileLoader) {
-	loader.wg.Run(func() {
+	loader.wg.Queue(func() {
 		file := loader.parseSourceFile(t.normalizedFilePath)
 
 		// !!! if noResolve, skip all of this
