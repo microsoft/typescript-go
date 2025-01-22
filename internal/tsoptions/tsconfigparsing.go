@@ -682,12 +682,12 @@ func convertPropertyValueToJson(sourceFile *ast.SourceFile, valueExpression *ast
 		return valueExpression.AsStringLiteral().Text, nil
 
 	case ast.KindNumericLiteral:
-		return jsnum.FromString(valueExpression.AsNumericLiteral().Text), nil
+		return float64(jsnum.FromString(valueExpression.AsNumericLiteral().Text)), nil
 	case ast.KindPrefixUnaryExpression:
 		if valueExpression.AsPrefixUnaryExpression().Operator != ast.KindMinusToken || valueExpression.AsPrefixUnaryExpression().Operand.Kind != ast.KindNumericLiteral {
 			break // not valid JSON syntax
 		}
-		return -jsnum.FromString(valueExpression.AsPrefixUnaryExpression().Operand.AsNumericLiteral().Text), nil
+		return float64(-jsnum.FromString(valueExpression.AsPrefixUnaryExpression().Operand.AsNumericLiteral().Text)), nil
 	case ast.KindObjectLiteralExpression:
 		objectLiteralExpression := valueExpression.AsObjectLiteralExpression()
 		// Currently having element option declaration in the tsconfig with type "object"
