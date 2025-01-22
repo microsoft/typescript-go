@@ -225,7 +225,7 @@ func (p *Program) findSourceFile(candidate string, reason FileIncludeReason) *as
 func (p *Program) parseSourceFile(fileName string) *ast.SourceFile {
 	path := tspath.ToPath(fileName, p.currentDirectory, p.host.FS().UseCaseSensitiveFileNames())
 	text, _ := p.host.FS().ReadFile(fileName)
-	sourceFile := parser.ParseSourceFile(fileName, text, p.compilerOptions.GetEmitScriptTarget())
+	sourceFile := parser.ParseSourceFile(fileName, text, p.compilerOptions.GetEmitScriptTarget(), scanner.JSDocParsingModeParseNone)
 	sourceFile.SetPath(path)
 	return sourceFile
 }

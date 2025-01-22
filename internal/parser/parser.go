@@ -10,6 +10,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/compiler/diagnostics"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/scanner"
+	"github.com/microsoft/typescript-go/internal/stringutil"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
@@ -79,16 +80,16 @@ func NewParser() *Parser {
 	return p
 }
 
-func ParseSourceFile(fileName string, sourceText string, languageVersion core.ScriptTarget) *ast.SourceFile {
+func ParseSourceFile(fileName string, sourceText string, languageVersion core.ScriptTarget, jsdocParsingMode scanner.JSDocParsingMode) *ast.SourceFile {
 	var p Parser
-	p.initializeState(fileName, sourceText, languageVersion, core.ScriptKindUnknown)
+	p.initializeState(fileName, sourceText, languageVersion, core.ScriptKindUnknown, jsdocParsingMode)
 	p.nextToken()
 	return p.parseSourceFileWorker()
 }
 
 func ParseJSONText(fileName string, sourceText string) *ast.SourceFile {
 	var p Parser
-	p.initializeState(fileName, sourceText, core.ScriptTargetES2015, core.ScriptKindJSON)
+	p.initializeState(fileName, sourceText, core.ScriptTargetES2015, core.ScriptKindJSON, scanner.JSDocParsingModeParseAll)
 	p.nextToken()
 	pos := p.nodePos()
 	var statements *ast.NodeList
@@ -156,14 +157,14 @@ func ParseJSONText(fileName string, sourceText string) *ast.SourceFile {
 	return result
 }
 
-func (p *Parser) initializeState(fileName string, sourceText string, languageVersion core.ScriptTarget, scriptKind core.ScriptKind) {
+func (p *Parser) initializeState(fileName string, sourceText string, languageVersion core.ScriptTarget, scriptKind core.ScriptKind, jsdocParsingMode scanner.JSDocParsingMode) {
 	p.scanner = scanner.NewScanner()
 	p.fileName = fileName
 	p.sourceText = sourceText
 	p.languageVersion = languageVersion
 	p.scriptKind = ensureScriptKind(fileName, scriptKind)
 	p.languageVariant = getLanguageVariant(p.scriptKind)
-	p.scanner.SetJSDocParsingMode(scanner.JSDocParsingModeParseNone)
+	p.scanner.SetJSDocParsingMode(jsdocParsingMode)
 	switch p.scriptKind {
 	case core.ScriptKindJS, core.ScriptKindJSX:
 		p.contextFlags = ast.NodeFlagsJavaScriptFile
@@ -271,6 +272,21 @@ func (p *Parser) parseSourceFileWorker() *ast.SourceFile {
 	node := p.factory.NewSourceFile(p.sourceText, p.fileName, statements)
 	p.finishNode(node, pos)
 	result := node.AsSourceFile()
+	p.finishSourceFile(result, isDeclarationFile)
+	if !result.IsDeclarationFile && result.ExternalModuleIndicator != nil && len(p.possibleAwaitSpans) > 0 {
+		reparse := p.reparseTopLevelAwait(result)
+		if node != reparse {
+			p.finishNode(reparse, pos)
+			result = reparse.AsSourceFile()
+			p.finishSourceFile(result, isDeclarationFile)
+		}
+	}
+	p.jsdocCache = nil
+	p.possibleAwaitSpans = []int{}
+	return result
+}
+
+func (p *Parser) finishSourceFile(result *ast.SourceFile, isDeclarationFile bool) {
 	result.CommentDirectives = p.scanner.CommentDirectives()
 	result.Pragmas = getCommentPragmas(&p.factory, p.sourceText)
 	processPragmasIntoFields(result)
@@ -283,23 +299,6 @@ func (p *Parser) parseSourceFileWorker() *ast.SourceFile {
 	result.Flags |= p.sourceFlags
 	result.SetJSDocCache(p.jsdocCache)
 	p.jsdocCache = nil
-	if !result.IsDeclarationFile && result.ExternalModuleIndicator != nil && len(p.possibleAwaitSpans) > 0 {
-		reparse := p.reparseTopLevelAwait(result)
-		if node != reparse {
-			p.finishNode(reparse, pos)
-			result = reparse.AsSourceFile()
-			result.SetDiagnostics(attachFileToDiagnostics(p.diagnostics, result))
-			result.ExternalModuleIndicator = isFileProbablyExternalModule(result)
-			result.IsDeclarationFile = isDeclarationFile
-			result.LanguageVersion = p.languageVersion
-			result.LanguageVariant = p.languageVariant
-			result.ScriptKind = p.scriptKind
-			result.SetJSDocCache(p.jsdocCache)
-			p.jsdocCache = nil
-		}
-	}
-	p.possibleAwaitSpans = []int{}
-	return result
 }
 
 func (p *Parser) parseToplevelStatement(i int) *ast.Node {
@@ -2393,21 +2392,21 @@ func (p *Parser) parseExportSpecifier() *ast.Node {
 
 // JSDOC
 
-type jSDocState int32
+type jsdocState int32
 
 const (
-	jSDocStateBeginningOfLine jSDocState = iota
-	jSDocStateSawAsterisk
-	jSDocStateSavingComments
-	jSDocStateSavingBackticks
+	jsdocStateBeginningOfLine jsdocState = iota
+	jsdocStateSawAsterisk
+	jsdocStateSavingComments
+	jsdocStateSavingBackticks
 )
 
 type propertyLikeParse int32
 
 const (
-	propertyLikeParseProperty          propertyLikeParse = 1 << 0
-	propertyLikeParseParameter         propertyLikeParse = 1 << 1
-	propertyLikeParseCallbackParameter propertyLikeParse = 1 << 2
+	propertyLikeParseProperty propertyLikeParse = 1 << iota
+	propertyLikeParseParameter
+	propertyLikeParseCallbackParameter
 )
 
 func (p *Parser) parseJSDocTypeExpression(mayOmitBraces bool) *ast.Node {
@@ -2416,17 +2415,17 @@ func (p *Parser) parseJSDocTypeExpression(mayOmitBraces bool) *ast.Node {
 	if mayOmitBraces {
 		hasBrace = p.parseOptional(ast.KindOpenBraceToken)
 	} else {
-		p.parseExpected(ast.KindOpenBraceToken)
+		hasBrace = p.parseExpected(ast.KindOpenBraceToken)
 	}
 	saveContextFlags := p.contextFlags
 	p.setContextFlags(ast.NodeFlagsJSDoc, true)
-	type_ := p.parseJSDocType()
+	t := p.parseJSDocType()
 	p.contextFlags = saveContextFlags
-	if !mayOmitBraces || hasBrace {
+	if hasBrace {
 		p.parseExpectedJSDoc(ast.KindCloseBraceToken)
 	}
 
-	result := p.factory.NewJSDocTypeExpression(type_)
+	result := p.factory.NewJSDocTypeExpression(t)
 	// normally parent references are set during binding. However, for clients that only need
 	// a syntax tree, and no semantic features, then the binding process is an unnecessary
 	// overhead.  This functions allows us to set all the parents, without all the expense of
@@ -2517,7 +2516,7 @@ func (p *Parser) parseJSDocCommentWorker(start int, indent int) *ast.Node {
 	var tags []*ast.Node
 	tagsPos := -1
 	tagsEnd := -1
-	state := jSDocStateSawAsterisk
+	state := jsdocStateSawAsterisk
 	var commentParts []*ast.Node
 	var comments []string
 	commentsPos := -1
@@ -2535,7 +2534,7 @@ func (p *Parser) parseJSDocCommentWorker(start int, indent int) *ast.Node {
 	for p.parseOptionalJsdoc(ast.KindWhitespaceTrivia) {
 	}
 	if p.parseOptionalJsdoc(ast.KindNewLineTrivia) {
-		state = jSDocStateBeginningOfLine
+		state = jsdocStateBeginningOfLine
 		indent = 0
 	}
 loop:
@@ -2555,28 +2554,28 @@ loop:
 			// NOTE: According to usejsdoc.org, a tag goes to end of line, except the last tag.
 			// Real-world comments may break this rule, so "BeginningOfLine" will not be a real line beginning
 			// for malformed examples like `/** @param {string} x @returns {number} the length */`
-			state = jSDocStateBeginningOfLine
+			state = jsdocStateBeginningOfLine
 			margin = -1
 		case ast.KindNewLineTrivia:
 			comments = append(comments, p.scanner.TokenText())
-			state = jSDocStateBeginningOfLine
+			state = jsdocStateBeginningOfLine
 			indent = 0
 		case ast.KindAsteriskToken:
 			asterisk := p.scanner.TokenText()
-			if state == jSDocStateSawAsterisk {
+			if state == jsdocStateSawAsterisk {
 				// If we've already seen an asterisk, then we can no longer parse a tag on this line
-				state = jSDocStateSavingComments
+				state = jsdocStateSavingComments
 				pushComment(asterisk)
 			} else {
-				if state != jSDocStateBeginningOfLine {
+				if state != jsdocStateBeginningOfLine {
 					panic("state must be BeginningOfLine")
 				}
 				// Ignore the first asterisk on a line
-				state = jSDocStateSawAsterisk
+				state = jsdocStateSawAsterisk
 				indent += len(asterisk)
 			}
 		case ast.KindWhitespaceTrivia:
-			if state == jSDocStateSavingComments {
+			if state == jsdocStateSavingComments {
 				panic("whitespace shouldn't come from the scanner while saving top-level comment text")
 			}
 			// only collect whitespace if we're already saving comments or have just crossed the comment indent margin
@@ -2595,10 +2594,10 @@ loop:
 		case ast.KindEndOfFile:
 			break loop
 		case ast.KindJSDocCommentTextToken:
-			state = jSDocStateSavingComments
+			state = jsdocStateSavingComments
 			pushComment(p.scanner.TokenValue())
 		case ast.KindOpenBraceToken:
-			state = jSDocStateSavingComments
+			state = jsdocStateSavingComments
 			commentEnd := p.scanner.TokenFullStart()
 			linkStart := p.scanner.TokenEnd() - 1
 			link := p.parseJSDocLink(linkStart)
@@ -2618,10 +2617,10 @@ loop:
 			// Anything else is doc comment text. We just save it. Because it
 			// wasn't a tag, we can no longer parse a tag on this line until we hit the next
 			// line break.
-			state = jSDocStateSavingComments
+			state = jsdocStateSavingComments
 			pushComment(p.scanner.TokenText())
 		}
-		if state == jSDocStateSavingComments {
+		if state == jsdocStateSavingComments {
 			p.nextJSDocCommentTextToken(false)
 		} else {
 			p.nextTokenJSDoc()
@@ -2655,7 +2654,7 @@ func removeLeadingNewlines(comments []string) []string {
 }
 
 func trimEnd(s string) string {
-	return strings.TrimRight(s, " \t\n\r\v\f")
+	return strings.TrimRightFunc(s, stringutil.IsWhiteSpaceLike)
 }
 
 func removeTrailingWhitespace(comments []string) []string {
@@ -2815,7 +2814,7 @@ func (p *Parser) parseTagComments(indent int, initialMargin *string) *ast.NodeLi
 	var comments []string
 	var parts []*ast.Node
 	linkEnd := -1
-	state := jSDocStateBeginningOfLine
+	state := jsdocStateBeginningOfLine
 	if indent < 0 {
 		panic("indent must be a natural number")
 	}
@@ -2833,14 +2832,14 @@ func (p *Parser) parseTagComments(indent int, initialMargin *string) *ast.NodeLi
 		if *initialMargin != "" {
 			pushComment(*initialMargin)
 		}
-		state = jSDocStateSawAsterisk
+		state = jsdocStateSawAsterisk
 	}
 	tok := p.token
 loop:
 	for {
 		switch tok {
 		case ast.KindNewLineTrivia:
-			state = jSDocStateBeginningOfLine
+			state = jsdocStateBeginningOfLine
 			// don't use pushComment here because we want to keep the margin unchanged
 			comments = append(comments, p.scanner.TokenText())
 			indent = 0
@@ -2851,18 +2850,18 @@ loop:
 			// Done
 			break loop
 		case ast.KindWhitespaceTrivia:
-			if state == jSDocStateSavingComments || state == jSDocStateSavingBackticks {
+			if state == jsdocStateSavingComments || state == jsdocStateSavingBackticks {
 				panic("whitespace shouldn't come from the scanner while saving comment text")
 			}
 			whitespace := p.scanner.TokenText()
 			// if the whitespace crosses the margin, take only the whitespace that passes the margin
 			if margin > -1 && indent+len(whitespace) > margin {
 				comments = append(comments, whitespace[margin-indent:])
-				state = jSDocStateSavingComments
+				state = jsdocStateSavingComments
 			}
 			indent += len(whitespace)
 		case ast.KindOpenBraceToken:
-			state = jSDocStateSavingComments
+			state = jsdocStateSavingComments
 			commentEnd := p.scanner.TokenFullStart()
 			linkStart := p.scanner.TokenEnd() - 1
 			link := p.parseJSDocLink(linkStart)
@@ -2883,36 +2882,36 @@ loop:
 				pushComment(p.scanner.TokenText())
 			}
 		case ast.KindBacktickToken:
-			if state == jSDocStateSavingBackticks {
-				state = jSDocStateSavingComments
+			if state == jsdocStateSavingBackticks {
+				state = jsdocStateSavingComments
 			} else {
-				state = jSDocStateSavingBackticks
+				state = jsdocStateSavingBackticks
 			}
 			pushComment(p.scanner.TokenText())
 		case ast.KindJSDocCommentTextToken:
-			if state != jSDocStateSavingBackticks {
-				state = jSDocStateSavingComments
+			if state != jsdocStateSavingBackticks {
+				state = jsdocStateSavingComments
 				// leading identifiers start recording as well
 			}
 			pushComment(p.scanner.TokenValue())
 		case ast.KindAsteriskToken:
-			if state == jSDocStateBeginningOfLine {
+			if state == jsdocStateBeginningOfLine {
 				// leading asterisks start recording on the *next* (non-whitespace) token
-				state = jSDocStateSawAsterisk
+				state = jsdocStateSawAsterisk
 				indent += 1
 				break
 			}
 			// record the * as a comment
 			fallthrough
 		default:
-			if state != jSDocStateSavingBackticks {
-				state = jSDocStateSavingComments
+			if state != jsdocStateSavingBackticks {
+				state = jsdocStateSavingComments
 				// leading identifiers start recording as well
 			}
 			pushComment(p.scanner.TokenText())
 		}
-		if state == jSDocStateSavingComments || state == jSDocStateSavingBackticks {
-			tok = p.nextJSDocCommentTextToken(state == jSDocStateSavingBackticks)
+		if state == jsdocStateSavingComments || state == jsdocStateSavingBackticks {
+			tok = p.nextJSDocCommentTextToken(state == jsdocStateSavingBackticks)
 		} else {
 			tok = p.nextTokenJSDoc()
 		}
@@ -2939,8 +2938,8 @@ loop:
 
 func (p *Parser) parseJSDocLink(start int) *ast.Node {
 	state := p.mark()
-	linkType := p.parseJSDocLinkPrefix()
-	if linkType == "NONE" {
+	linkType, ok := p.parseJSDocLinkPrefix()
+	if !ok {
 		p.rewind(state)
 		return nil
 	}
@@ -2970,8 +2969,7 @@ func (p *Parser) parseJSDocLinkName() *ast.Node {
 	if tokenIsIdentifierOrKeyword(p.token) {
 		pos := p.nodePos()
 
-		var name *ast.Node
-		name = p.parseIdentifierName()
+		name := p.parseIdentifierName()
 		for p.parseOptional(ast.KindDotToken) {
 			var right *ast.IdentifierNode
 			if p.token == ast.KindPrivateIdentifier {
@@ -2994,17 +2992,15 @@ func (p *Parser) parseJSDocLinkName() *ast.Node {
 	return nil
 }
 
-// returns "link" | "linkcode" | "linkplain" | "NONE"
-// "NONE" is when the token is not a valid link prefix
-func (p *Parser) parseJSDocLinkPrefix() string {
+func (p *Parser) parseJSDocLinkPrefix() (string, bool) {
 	p.skipWhitespaceOrAsterisk()
 	if p.token == ast.KindOpenBraceToken && p.nextTokenJSDoc() == ast.KindAtToken && tokenIsIdentifierOrKeyword(p.nextTokenJSDoc()) {
 		kind := p.scanner.TokenValue()
 		if isJSDocLinkTag(kind) {
-			return kind
+			return kind, true
 		}
 	}
-	return "NONE"
+	return "NONE", false
 }
 
 func isJSDocLinkTag(kind string) bool {
@@ -3074,7 +3070,7 @@ func (p *Parser) parseParameterOrPropertyTag(start int, tagName *ast.IdentifierN
 	name, isBracketed := p.parseBracketNameInPropertyAndParamTag()
 	indentText := p.skipWhitespaceOrAsterisk()
 
-	if isNameFirst && p.lookAhead(func() bool { return p.parseJSDocLinkPrefix() == "NONE" }) {
+	if isNameFirst && p.lookAhead(func() bool { _, ok := p.parseJSDocLinkPrefix(); return !ok }) {
 		typeExpression = p.tryParseTypeExpression()
 	}
 
@@ -3098,11 +3094,10 @@ func (p *Parser) parseParameterOrPropertyTag(start int, tagName *ast.IdentifierN
 func (p *Parser) parseNestedTypeLiteral(typeExpression *ast.Node, name *ast.EntityName, target propertyLikeParse, indent int) *ast.Node {
 	if typeExpression != nil && isObjectOrObjectArrayTypeReference(typeExpression.Type()) {
 		pos := p.nodePos()
-		var child *ast.Node
 		var children []*ast.Node
 		for {
 			state := p.mark()
-			child = p.parseChildParameterOrPropertyTag(target, indent, name)
+			child := p.parseChildParameterOrPropertyTag(target, indent, name)
 			if child == nil {
 				p.rewind(state)
 				break
@@ -3195,7 +3190,7 @@ func (p *Parser) parseImportTag(start int, tagName *ast.IdentifierNode, margin i
 		identifier = p.parseIdentifier()
 	}
 
-	importClause := p.tryParseImportClause(identifier, afterImportTagPos /*isTypeOnly*/, true /*skipJsDocLeadingAsterisks*/, true)
+	importClause := p.tryParseImportClause(identifier, afterImportTagPos, true /*isTypeOnly*/, true /*skipJsDocLeadingAsterisks*/)
 	moduleSpecifier := p.parseModuleSpecifier()
 	attributes := p.tryParseImportAttributes()
 
@@ -3330,8 +3325,6 @@ func (p *Parser) parseJSDocTypeNameWithNamespace(nested bool) *ast.Node {
 		var flags ast.NodeFlags
 		if nested {
 			flags = ast.NodeFlagsNestedNamespace
-		} else {
-			flags = ast.NodeFlagsNone
 		}
 		jsDocNamespaceNode := p.factory.NewModuleDeclaration(nil, typeNameOrNamespaceName, body, flags)
 		p.finishNode(jsDocNamespaceNode, start)
@@ -3555,8 +3548,6 @@ func (p *Parser) parseTemplateTag(start int, tagName *ast.IdentifierNode, indent
 	var constraint *ast.Node
 	if p.token == ast.KindOpenBraceToken {
 		constraint = p.parseJSDocTypeExpression(false)
-	} else {
-		constraint = nil
 	}
 	typeParameters := p.parseTemplateTagTypeParameters()
 	result := p.factory.NewJSDocTemplateTag(tagName, constraint, typeParameters, p.parseTrailingTagComments(start, p.nodePos(), indent, indentText))
@@ -7026,9 +7017,6 @@ func (p *Parser) withJSDoc(node *ast.Node, hasJSDoc bool) {
 		}
 		p.jsdocCache[node] = jsDoc
 	}
-}
-
-func (p *Parser) setJSDoc(node *ast.Node, jsDocs []*ast.Node) {
 }
 
 func (p *Parser) nextTokenIsSlash() bool {

@@ -402,8 +402,14 @@ func (s *Scanner) shouldParseJSDoc() bool {
 		// we don't need to parse to find @see or @link.
 		return false
 	}
-	for i, c := range s.text {
-		if c == '@' && (strings.HasPrefix(s.text[i:], "@see") || strings.HasPrefix(s.text[i:], "@link")) {
+	text := s.text
+	for {
+		i := strings.IndexByte(text, '@')
+		if i < 0 {
+			break
+		}
+		text = text[i+1:]
+		if strings.HasPrefix(text, "see") || strings.HasPrefix(text, "link") {
 			return true
 		}
 	}
