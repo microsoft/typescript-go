@@ -4593,7 +4593,6 @@ func (p *Printer) generateNames(node *ast.Node) {
 		p.generateNames(node.AsCatchClause().Block)
 	case ast.KindVariableStatement:
 		p.generateNames(node.AsVariableStatement().DeclarationList)
-		break
 	case ast.KindVariableDeclarationList:
 		p.generateAllNames(node.AsVariableDeclarationList().Declarations)
 	case ast.KindVariableDeclaration, ast.KindParameter, ast.KindBindingElement, ast.KindClassDeclaration:
@@ -4639,16 +4638,15 @@ func (p *Printer) generateMemberNames(node *ast.Node) {
 		return
 	}
 	switch node.Kind {
-	case ast.KindPropertyAssignment:
-	case ast.KindShorthandPropertyAssignment:
-	case ast.KindPropertyDeclaration:
-	case ast.KindPropertySignature:
-	case ast.KindMethodDeclaration:
-	case ast.KindMethodSignature:
-	case ast.KindGetAccessor:
-	case ast.KindSetAccessor:
+	case ast.KindPropertyAssignment,
+		ast.KindShorthandPropertyAssignment,
+		ast.KindPropertyDeclaration,
+		ast.KindPropertySignature,
+		ast.KindMethodDeclaration,
+		ast.KindMethodSignature,
+		ast.KindGetAccessor,
+		ast.KindSetAccessor:
 		p.generateNameIfNeeded(node.Name())
-		break
 	}
 }
 
