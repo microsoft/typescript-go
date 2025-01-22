@@ -585,10 +585,6 @@ func isJSDocOptionalParameter(node *ast.ParameterDeclaration) bool {
 	return false // !!!
 }
 
-func isQuestionToken(node *ast.Node) bool {
-	return node != nil && node.Kind == ast.KindQuestionToken
-}
-
 func isExclamationToken(node *ast.Node) bool {
 	return node != nil && node.Kind == ast.KindExclamationToken
 }
@@ -598,17 +594,17 @@ func isOptionalDeclaration(declaration *ast.Node) bool {
 	case ast.KindParameter:
 		return declaration.AsParameterDeclaration().QuestionToken != nil
 	case ast.KindPropertyDeclaration:
-		return isQuestionToken(declaration.AsPropertyDeclaration().PostfixToken)
+		return ast.IsQuestionToken(declaration.AsPropertyDeclaration().PostfixToken)
 	case ast.KindPropertySignature:
-		return isQuestionToken(declaration.AsPropertySignatureDeclaration().PostfixToken)
+		return ast.IsQuestionToken(declaration.AsPropertySignatureDeclaration().PostfixToken)
 	case ast.KindMethodDeclaration:
-		return isQuestionToken(declaration.AsMethodDeclaration().PostfixToken)
+		return ast.IsQuestionToken(declaration.AsMethodDeclaration().PostfixToken)
 	case ast.KindMethodSignature:
-		return isQuestionToken(declaration.AsMethodSignatureDeclaration().PostfixToken)
+		return ast.IsQuestionToken(declaration.AsMethodSignatureDeclaration().PostfixToken)
 	case ast.KindPropertyAssignment:
-		return isQuestionToken(declaration.AsPropertyAssignment().PostfixToken)
+		return ast.IsQuestionToken(declaration.AsPropertyAssignment().PostfixToken)
 	case ast.KindShorthandPropertyAssignment:
-		return isQuestionToken(declaration.AsShorthandPropertyAssignment().PostfixToken)
+		return ast.IsQuestionToken(declaration.AsShorthandPropertyAssignment().PostfixToken)
 	}
 	return false
 }
