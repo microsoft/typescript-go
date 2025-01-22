@@ -262,7 +262,7 @@ func isCompilerOptionsValue(option *CommandLineOption, value any) bool {
 		}
 		if option.Kind == "enum" && reflect.TypeOf(value).Kind() == reflect.String {
 			_, ok := option.EnumMap().Get(strings.ToLower(value.(string)))
-			return ok
+			return ok || option.DeprecatedKeys().Has(strings.ToLower(value.(string)))
 		}
 	}
 	return false
@@ -1044,115 +1044,112 @@ func parseJsonConfigFileContentWorker(
 		}
 		return propOfRaw{sliceValue: nil, wrongValue: "no-prop"}
 	}
-	getConfigFileSpecs := func() configFileSpecs {
-		referencesOfRaw := getPropFromRaw("references", func(element any) bool { return reflect.TypeOf(element).Kind() == reflect.Map }, "object")
-		fileSpecs := getPropFromRaw("files", func(element any) bool { return reflect.TypeOf(element).Kind() == reflect.String }, "string")
-		if fileSpecs.sliceValue != nil || fileSpecs.wrongValue == "" {
-			hasZeroOrNoReferences := false
-			if referencesOfRaw.wrongValue == "no-prop" || referencesOfRaw.wrongValue == "not-array" || len(referencesOfRaw.sliceValue) == 0 {
-				hasZeroOrNoReferences = true
-			}
-			hasExtends := rawConfig["extends"]
-			if fileSpecs.sliceValue != nil && len(fileSpecs.sliceValue) == 0 && hasZeroOrNoReferences && hasExtends == nil {
-				if sourceFile != nil {
-					var fileName string
-					if configFileName != "" {
-						fileName = configFileName
-					} else {
-						fileName = "tsconfig.json"
-					}
-					diagnosticMessage := diagnostics.The_files_list_in_config_file_0_is_empty
-					nodeValue := forEachTsConfigPropArray(sourceFile, "files", func(property *ast.PropertyAssignment) *ast.Node { return property.Initializer })
-					errors = append(errors, ast.NewDiagnostic(sourceFile.SourceFile, core.NewTextRange(scanner.SkipTrivia(sourceFile.SourceFile.Text, nodeValue.Pos()), nodeValue.End()), diagnosticMessage, fileName))
+	referencesOfRaw := getPropFromRaw("references", func(element any) bool { return reflect.TypeOf(element).Kind() == reflect.Map }, "object")
+	fileSpecs := getPropFromRaw("files", func(element any) bool { return reflect.TypeOf(element).Kind() == reflect.String }, "string")
+	if fileSpecs.sliceValue != nil || fileSpecs.wrongValue == "" {
+		hasZeroOrNoReferences := false
+		if referencesOfRaw.wrongValue == "no-prop" || referencesOfRaw.wrongValue == "not-array" || len(referencesOfRaw.sliceValue) == 0 {
+			hasZeroOrNoReferences = true
+		}
+		hasExtends := rawConfig["extends"]
+		if fileSpecs.sliceValue != nil && len(fileSpecs.sliceValue) == 0 && hasZeroOrNoReferences && hasExtends == nil {
+			if sourceFile != nil {
+				var fileName string
+				if configFileName != "" {
+					fileName = configFileName
 				} else {
-					errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.The_files_list_in_config_file_0_is_empty, configFileName))
+					fileName = "tsconfig.json"
 				}
+				diagnosticMessage := diagnostics.The_files_list_in_config_file_0_is_empty
+				nodeValue := forEachTsConfigPropArray(sourceFile, "files", func(property *ast.PropertyAssignment) *ast.Node { return property.Initializer })
+				errors = append(errors, ast.NewDiagnostic(sourceFile.SourceFile, core.NewTextRange(scanner.SkipTrivia(sourceFile.SourceFile.Text, nodeValue.Pos()), nodeValue.End()), diagnosticMessage, fileName))
+			} else {
+				errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.The_files_list_in_config_file_0_is_empty, configFileName))
 			}
-		}
-		includeSpecs := getPropFromRaw("include", func(element any) bool { return reflect.TypeOf(element).Kind() == reflect.String }, "string")
-		excludeSpecs := getPropFromRaw("exclude", func(element any) bool { return reflect.TypeOf(element).Kind() == reflect.String }, "string")
-		isDefaultIncludeSpec := false
-		if excludeSpecs.wrongValue == "no-prop" && parsedConfig.options != nil {
-			outDir := parsedConfig.options.OutDir
-			declarationDir := parsedConfig.options.DeclarationDir
-			if outDir != "" || declarationDir != "" {
-				values := []any{}
-				if outDir != "" {
-					values = append(values, outDir)
-				}
-				if declarationDir != "" {
-					values = append(values, declarationDir)
-				}
-				excludeSpecs = propOfRaw{sliceValue: values}
-			}
-		}
-		if fileSpecs.sliceValue == nil && includeSpecs.sliceValue == nil {
-			includeSpecs = propOfRaw{sliceValue: []any{defaultIncludeSpec}}
-			isDefaultIncludeSpec = true
-		}
-		var validatedIncludeSpecsBeforeSubstitution []string
-		var validatedExcludeSpecsBeforeSubstitution []string
-		var validatedFilesSpecBeforeSubstitution []string
-		var validatedIncludeSpecs []string
-		var validatedExcludeSpecs []string
-		var validatedFilesSpec []string
-		// The exclude spec list is converted into a regular expression, which allows us to quickly
-		// test whether a file or directory should be excluded before recursively traversing the
-		// file system.
-		if includeSpecs.sliceValue != nil {
-			var err []*ast.Diagnostic
-			validatedIncludeSpecsBeforeSubstitution, err = validateSpecs(includeSpecs.sliceValue, true /*disallowTrailingRecursion*/, sourceFile, "include")
-			errors = append(errors, err...)
-			validatedIncludeSpecs = getSubstitutedStringArrayWithConfigDirTemplate(
-				validatedIncludeSpecsBeforeSubstitution,
-				basePathForFileNames,
-			)
-			if validatedIncludeSpecs == nil {
-				validatedIncludeSpecs = validatedIncludeSpecsBeforeSubstitution
-			}
-		}
-		if excludeSpecs.sliceValue != nil {
-			var err []*ast.Diagnostic
-			validatedExcludeSpecsBeforeSubstitution, err = validateSpecs(excludeSpecs.sliceValue, false /*disallowTrailingRecursion*/, sourceFile, "exclude")
-			errors = append(errors, err...)
-			validatedExcludeSpecs = getSubstitutedStringArrayWithConfigDirTemplate(
-				validatedExcludeSpecsBeforeSubstitution,
-				basePathForFileNames,
-			)
-			if validatedExcludeSpecs == nil {
-				validatedExcludeSpecs = validatedExcludeSpecsBeforeSubstitution
-			}
-		}
-		if fileSpecs.sliceValue != nil {
-			fileSpecs := core.Filter(fileSpecs.sliceValue, func(spec any) bool { return reflect.TypeOf(spec).Kind() == reflect.String })
-			for _, spec := range fileSpecs {
-				if spec, ok := spec.(string); ok {
-					validatedFilesSpecBeforeSubstitution = append(validatedFilesSpecBeforeSubstitution, spec)
-				}
-			}
-			validatedFilesSpec = getSubstitutedStringArrayWithConfigDirTemplate(
-				validatedFilesSpecBeforeSubstitution,
-				basePathForFileNames,
-			)
-		}
-		if validatedFilesSpec == nil {
-			validatedFilesSpec = validatedFilesSpecBeforeSubstitution
-		}
-		return configFileSpecs{
-			fileSpecs.sliceValue,
-			includeSpecs.sliceValue,
-			excludeSpecs.sliceValue,
-			validatedFilesSpec,
-			validatedIncludeSpecs,
-			validatedExcludeSpecs,
-			validatedFilesSpecBeforeSubstitution,
-			validatedIncludeSpecsBeforeSubstitution,
-			validatedExcludeSpecsBeforeSubstitution,
-			isDefaultIncludeSpec,
 		}
 	}
+	includeSpecs := getPropFromRaw("include", func(element any) bool { return reflect.TypeOf(element).Kind() == reflect.String }, "string")
+	excludeSpecs := getPropFromRaw("exclude", func(element any) bool { return reflect.TypeOf(element).Kind() == reflect.String }, "string")
+	isDefaultIncludeSpec := false
+	if excludeSpecs.wrongValue == "no-prop" && parsedConfig.options != nil {
+		outDir := parsedConfig.options.OutDir
+		declarationDir := parsedConfig.options.DeclarationDir
+		if outDir != "" || declarationDir != "" {
+			values := []any{}
+			if outDir != "" {
+				values = append(values, outDir)
+			}
+			if declarationDir != "" {
+				values = append(values, declarationDir)
+			}
+			excludeSpecs = propOfRaw{sliceValue: values}
+		}
+	}
+	if fileSpecs.sliceValue == nil && includeSpecs.sliceValue == nil {
+		includeSpecs = propOfRaw{sliceValue: []any{defaultIncludeSpec}}
+		isDefaultIncludeSpec = true
+	}
+	var validatedIncludeSpecsBeforeSubstitution []string
+	var validatedExcludeSpecsBeforeSubstitution []string
+	var validatedFilesSpecBeforeSubstitution []string
+	var validatedIncludeSpecs []string
+	var validatedExcludeSpecs []string
+	var validatedFilesSpec []string
+	// The exclude spec list is converted into a regular expression, which allows us to quickly
+	// test whether a file or directory should be excluded before recursively traversing the
+	// file system.
+	if includeSpecs.sliceValue != nil {
+		var err []*ast.Diagnostic
+		validatedIncludeSpecsBeforeSubstitution, err = validateSpecs(includeSpecs.sliceValue, true /*disallowTrailingRecursion*/, sourceFile, "include")
+		errors = append(errors, err...)
+		validatedIncludeSpecs = getSubstitutedStringArrayWithConfigDirTemplate(
+			validatedIncludeSpecsBeforeSubstitution,
+			basePathForFileNames,
+		)
+		if validatedIncludeSpecs == nil {
+			validatedIncludeSpecs = validatedIncludeSpecsBeforeSubstitution
+		}
+	}
+	if excludeSpecs.sliceValue != nil {
+		var err []*ast.Diagnostic
+		validatedExcludeSpecsBeforeSubstitution, err = validateSpecs(excludeSpecs.sliceValue, false /*disallowTrailingRecursion*/, sourceFile, "exclude")
+		errors = append(errors, err...)
+		validatedExcludeSpecs = getSubstitutedStringArrayWithConfigDirTemplate(
+			validatedExcludeSpecsBeforeSubstitution,
+			basePathForFileNames,
+		)
+		if validatedExcludeSpecs == nil {
+			validatedExcludeSpecs = validatedExcludeSpecsBeforeSubstitution
+		}
+	}
+	if fileSpecs.sliceValue != nil {
+		fileSpecs := core.Filter(fileSpecs.sliceValue, func(spec any) bool { return reflect.TypeOf(spec).Kind() == reflect.String })
+		for _, spec := range fileSpecs {
+			if spec, ok := spec.(string); ok {
+				validatedFilesSpecBeforeSubstitution = append(validatedFilesSpecBeforeSubstitution, spec)
+			}
+		}
+		validatedFilesSpec = getSubstitutedStringArrayWithConfigDirTemplate(
+			validatedFilesSpecBeforeSubstitution,
+			basePathForFileNames,
+		)
+	}
+	if validatedFilesSpec == nil {
+		validatedFilesSpec = validatedFilesSpecBeforeSubstitution
+	}
+	configFileSpecs := configFileSpecs{
+		fileSpecs.sliceValue,
+		includeSpecs.sliceValue,
+		excludeSpecs.sliceValue,
+		validatedFilesSpec,
+		validatedIncludeSpecs,
+		validatedExcludeSpecs,
+		validatedFilesSpecBeforeSubstitution,
+		validatedIncludeSpecsBeforeSubstitution,
+		validatedExcludeSpecsBeforeSubstitution,
+		isDefaultIncludeSpec,
+	}
 
-	configFileSpecs := getConfigFileSpecs()
 	if sourceFile != nil {
 		sourceFile.configFileSpecs = &configFileSpecs
 	}
