@@ -14,14 +14,14 @@ type tristateFlag core.Tristate
 func (f *tristateFlag) Set(s string) error {
 	v, err := strconv.ParseBool(s)
 	if err != nil {
-		err = errParse
+		return errParse
 	}
 	if v {
 		*f = (tristateFlag)(core.TSTrue)
 	} else {
 		*f = (tristateFlag)(core.TSFalse)
 	}
-	return err
+	return nil
 }
 
 func (f *tristateFlag) String() string {
