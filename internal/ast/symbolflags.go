@@ -34,6 +34,8 @@ const (
 	SymbolFlagsTransient              SymbolFlags = 1 << 25 // Transient symbol (created during type check)
 	SymbolFlagsAssignment             SymbolFlags = 1 << 26 // Assignment treated as declaration (eg `this.prop = 1`)
 	SymbolFlagsModuleExports          SymbolFlags = 1 << 27 // Symbol for CommonJS `module` of `module.exports`
+	SymbolFlagsConstEnumOnlyModule    SymbolFlags = 1 << 28 // Module contains only const enums or other modules with only const enums
+	SymbolFlagsReplaceableByMethod    SymbolFlags = 1 << 29
 	SymbolFlagsAll                    SymbolFlags = 0xFFFFFFFF
 
 	SymbolFlagsEnum      = SymbolFlagsRegularEnum | SymbolFlagsConstEnum

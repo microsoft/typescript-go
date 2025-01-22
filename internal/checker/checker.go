@@ -4623,7 +4623,27 @@ func someSignature(signatures []*Signature, f func(s *Signature) bool) bool {
 }
 
 func (c *Checker) resolveTaggedTemplateExpression(node *ast.Node, candidatesOutArray *[]*Signature, checkMode CheckMode) *Signature {
-	return c.unknownSignature // !!!!
+	tag := node.AsTaggedTemplateExpression().Tag
+	tagType := c.checkExpression(tag)
+	apparentType := c.getApparentType(tagType)
+	if c.isErrorType(apparentType) {
+		// Another error has already been reported
+		return c.resolveErrorCall(node)
+	}
+	callSignatures := c.getSignaturesOfType(apparentType, SignatureKindCall)
+	numConstructSignatures := len(c.getSignaturesOfType(apparentType, SignatureKindConstruct))
+	if c.isUntypedFunctionCall(tagType, apparentType, len(callSignatures), numConstructSignatures) {
+		return c.resolveUntypedCall(node)
+	}
+	if len(callSignatures) == 0 {
+		if ast.IsArrayLiteralExpression(node.Parent) {
+			c.error(tag, diagnostics.It_is_likely_that_you_are_missing_a_comma_to_separate_these_two_template_expressions_They_form_a_tagged_template_expression_which_cannot_be_invoked)
+			return c.resolveErrorCall(node)
+		}
+		c.invocationError(tag, apparentType, SignatureKindCall, nil)
+		return c.resolveErrorCall(node)
+	}
+	return c.resolveCall(node, callSignatures, candidatesOutArray, checkMode, SignatureFlagsNone, nil)
 }
 
 func (c *Checker) resolveDecorator(node *ast.Node, candidatesOutArray *[]*Signature, checkMode CheckMode) *Signature {
@@ -7632,8 +7652,7 @@ func (c *Checker) checkBinaryExpression(node *ast.Node, checkMode CheckMode) *Ty
 func (c *Checker) checkBinaryLikeExpression(left *ast.Node, operatorToken *ast.Node, right *ast.Node, checkMode CheckMode, errorNode *ast.Node) *Type {
 	operator := operatorToken.Kind
 	if operator == ast.KindEqualsToken && (left.Kind == ast.KindObjectLiteralExpression || left.Kind == ast.KindArrayLiteralExpression) {
-		// !!!! Handle destructuring assignment
-		return c.checkExpressionEx(right, checkMode)
+		return c.checkDestructuringAssignment(left, c.checkExpressionEx(right, checkMode), checkMode, right.Kind == ast.KindThisKeyword)
 	}
 	leftType := c.checkExpressionEx(left, checkMode)
 	rightType := c.checkExpressionEx(right, checkMode)
@@ -7825,6 +7844,169 @@ func (c *Checker) checkBinaryLikeExpression(left *ast.Node, operatorToken *ast.N
 		return rightType
 	}
 	panic("Unhandled case in checkBinaryLikeExpression")
+}
+
+func (c *Checker) checkDestructuringAssignment(node *ast.Node, sourceType *Type, checkMode CheckMode, rightIsThis bool) *Type {
+	var target *ast.Node
+	if ast.IsShorthandPropertyAssignment(node) {
+		initializer := node.AsShorthandPropertyAssignment().ObjectAssignmentInitializer
+		if initializer != nil {
+			// In strict null checking mode, if a default value of a non-undefined type is specified, remove
+			// undefined from the final type.
+			if c.strictNullChecks && !(c.hasTypeFacts(c.checkExpression(initializer), TypeFactsIsUndefined)) {
+				sourceType = c.getTypeWithFacts(sourceType, TypeFactsNEUndefined)
+			}
+			c.checkBinaryLikeExpression(node.Name(), node.AsShorthandPropertyAssignment().EqualsToken, initializer, checkMode, nil)
+		}
+		target = node.Name()
+	} else {
+		target = node
+	}
+	if ast.IsBinaryExpression(target) && target.AsBinaryExpression().OperatorToken.Kind == ast.KindEqualsToken {
+		c.checkBinaryExpression(target, checkMode)
+		target = target.AsBinaryExpression().Left
+		// A default value is specified, so remove undefined from the final type.
+		if c.strictNullChecks {
+			sourceType = c.getTypeWithFacts(sourceType, TypeFactsNEUndefined)
+		}
+	}
+	if ast.IsObjectLiteralExpression(target) {
+		return c.checkObjectLiteralAssignment(target, sourceType, rightIsThis)
+	}
+	if ast.IsArrayLiteralExpression(target) {
+		return c.checkArrayLiteralAssignment(target, sourceType, checkMode)
+	}
+	return c.checkReferenceAssignment(target, sourceType, checkMode)
+}
+
+func (c *Checker) checkObjectLiteralAssignment(node *ast.Node, sourceType *Type, rightIsThis bool) *Type {
+	properties := node.AsObjectLiteralExpression().Properties
+	if c.strictNullChecks && len(properties.Nodes) == 0 {
+		return c.checkNonNullType(sourceType, node)
+	}
+	for i := range properties.Nodes {
+		c.checkObjectLiteralDestructuringPropertyAssignment(node, sourceType, i, properties, rightIsThis)
+	}
+	return sourceType
+}
+
+// Note: If property cannot be a SpreadAssignment, then allProperties does not need to be provided
+func (c *Checker) checkObjectLiteralDestructuringPropertyAssignment(node *ast.Node, objectLiteralType *Type, propertyIndex int, allProperties *ast.NodeList, rightIsThis bool) *Type {
+	properties := node.AsObjectLiteralExpression().Properties.Nodes
+	property := properties[propertyIndex]
+	if ast.IsPropertyAssignment(property) || ast.IsShorthandPropertyAssignment(property) {
+		name := property.Name()
+		exprType := c.getLiteralTypeFromPropertyName(name)
+		if isTypeUsableAsPropertyName(exprType) {
+			text := getPropertyNameFromType(exprType)
+			prop := c.getPropertyOfType(objectLiteralType, text)
+			if prop != nil {
+				c.markPropertyAsReferenced(prop, property, rightIsThis)
+				c.checkPropertyAccessibility(property, false /*isSuper*/, true /*writing*/, objectLiteralType, prop)
+			}
+		}
+		elementType := c.getIndexedAccessTypeEx(objectLiteralType, exprType, AccessFlagsExpressionPosition|(core.IfElse(c.hasDefaultValue(property), AccessFlagsAllowMissing, 0)), name, nil)
+		t := c.getFlowTypeOfDestructuring(property, elementType)
+		expr := property
+		if ast.IsPropertyAssignment(property) {
+			expr = property.Initializer()
+		}
+		return c.checkDestructuringAssignment(expr, t, CheckModeNormal, false)
+	}
+	if ast.IsSpreadAssignment(property) {
+		if propertyIndex < len(properties)-1 {
+			c.error(property, diagnostics.A_rest_element_must_be_last_in_a_destructuring_pattern)
+			return nil
+		}
+		var nonRestNames []*ast.Node
+		if allProperties != nil {
+			for _, otherProperty := range allProperties.Nodes {
+				if !ast.IsSpreadAssignment(otherProperty) {
+					nonRestNames = append(nonRestNames, otherProperty.Name())
+				}
+			}
+		}
+		t := c.getRestType(objectLiteralType, nonRestNames, objectLiteralType.symbol)
+		c.checkGrammarForDisallowedTrailingComma(allProperties, diagnostics.A_rest_parameter_or_binding_pattern_may_not_have_a_trailing_comma)
+		return c.checkDestructuringAssignment(property.Expression(), t, CheckModeNormal, false)
+	}
+	c.error(property, diagnostics.Property_assignment_expected)
+	return nil
+}
+
+func (c *Checker) checkArrayLiteralAssignment(node *ast.Node, sourceType *Type, checkMode CheckMode) *Type {
+	elements := node.AsArrayLiteralExpression().Elements
+	// This elementType will be used if the specific property corresponding to this index is not
+	// present (aka the tuple element property). This call also checks that the parentType is in
+	// fact an iterable or array (depending on target language).
+	possiblyOutOfBoundsType := core.OrElse(c.checkIteratedTypeOrElementType(IterationUseDestructuring|IterationUsePossiblyOutOfBounds, sourceType, c.undefinedType, node), c.errorType)
+	inBoundsType := core.IfElse(c.compilerOptions.NoUncheckedIndexedAccess == core.TSTrue, nil, possiblyOutOfBoundsType)
+	for i := range elements.Nodes {
+		t := possiblyOutOfBoundsType
+		if elements.Nodes[i].Kind == ast.KindSpreadElement {
+			if inBoundsType == nil {
+				inBoundsType = core.OrElse(c.checkIteratedTypeOrElementType(IterationUseDestructuring, sourceType, c.undefinedType, node), c.errorType)
+			}
+			t = inBoundsType
+		}
+		c.checkArrayLiteralDestructuringElementAssignment(node, sourceType, i, t, checkMode)
+	}
+	return sourceType
+}
+
+func (c *Checker) checkArrayLiteralDestructuringElementAssignment(node *ast.Node, sourceType *Type, elementIndex int, elementType *Type, checkMode CheckMode) *Type {
+	elements := node.AsArrayLiteralExpression().Elements
+	element := elements.Nodes[elementIndex]
+	if !ast.IsOmittedExpression(element) {
+		if !ast.IsSpreadElement(element) {
+			indexType := c.getNumberLiteralType(jsnum.Number(elementIndex))
+			if c.isArrayLikeType(sourceType) {
+				// We create a synthetic expression so that getIndexedAccessType doesn't get confused
+				// when the element is a SyntaxKind.ElementAccessExpression.
+				accessFlags := AccessFlagsExpressionPosition | core.IfElse(c.hasDefaultValue(element), AccessFlagsAllowMissing, 0)
+				elementType := core.OrElse(c.getIndexedAccessTypeOrUndefined(sourceType, indexType, accessFlags, c.createSyntheticExpression(element, indexType, false, nil), nil), c.errorType)
+				assignedType := elementType
+				if c.hasDefaultValue(element) {
+					assignedType = c.getTypeWithFacts(elementType, TypeFactsNEUndefined)
+				}
+				t := c.getFlowTypeOfDestructuring(element, assignedType)
+				return c.checkDestructuringAssignment(element, t, checkMode, false)
+			}
+			return c.checkDestructuringAssignment(element, elementType, checkMode, false)
+		}
+		if elementIndex < len(elements.Nodes)-1 {
+			c.error(element, diagnostics.A_rest_element_must_be_last_in_a_destructuring_pattern)
+		} else {
+			restExpression := element.Expression()
+			if ast.IsBinaryExpression(restExpression) && restExpression.AsBinaryExpression().OperatorToken.Kind == ast.KindEqualsToken {
+				c.error(restExpression.AsBinaryExpression().OperatorToken, diagnostics.A_rest_element_cannot_have_an_initializer)
+			} else {
+				c.checkGrammarForDisallowedTrailingComma(elements, diagnostics.A_rest_parameter_or_binding_pattern_may_not_have_a_trailing_comma)
+				var t *Type
+				if everyType(sourceType, isTupleType) {
+					t = c.mapType(sourceType, func(t *Type) *Type { return c.sliceTupleType(t, elementIndex, 0) })
+				} else {
+					t = c.createArrayType(elementType)
+				}
+				return c.checkDestructuringAssignment(restExpression, t, checkMode, false)
+			}
+		}
+	}
+	return nil
+}
+
+func (c *Checker) checkReferenceAssignment(target *ast.Node, sourceType *Type, checkMode CheckMode) *Type {
+	targetType := c.checkExpressionEx(target, checkMode)
+	message := core.IfElse(ast.IsSpreadAssignment(target.Parent),
+		diagnostics.The_target_of_an_object_rest_assignment_must_be_a_variable_or_a_property_access,
+		diagnostics.The_left_hand_side_of_an_assignment_expression_must_be_a_variable_or_a_property_access)
+	optionalMessage := core.IfElse(ast.IsSpreadAssignment(target.Parent),
+		diagnostics.The_target_of_an_object_rest_assignment_may_not_be_an_optional_property_access,
+		diagnostics.The_left_hand_side_of_an_assignment_expression_may_not_be_an_optional_property_access)
+	if c.checkReferenceExpression(target, message, optionalMessage) {
+		c.checkTypeAssignableToAndOptionallyElaborate(sourceType, targetType, target, target, nil, nil)
+	}
+	return sourceType
 }
 
 func (c *Checker) reportOperatorError(leftType *Type, operator ast.Kind, rightType *Type, errorNode *ast.Node, isRelated func(left *Type, right *Type) bool) {
@@ -8965,9 +9147,9 @@ func (c *Checker) mergeSymbol(target *ast.Symbol, source *ast.Symbol, unidirecti
 			}
 		}
 		// Javascript static-property-assignment declarations always merge, even though they are also values
-		if source.Flags&ast.SymbolFlagsValueModule != 0 && target.Flags&ast.SymbolFlagsValueModule != 0 && target.ConstEnumOnlyModule && !source.ConstEnumOnlyModule {
+		if source.Flags&ast.SymbolFlagsValueModule != 0 && target.Flags&ast.SymbolFlagsValueModule != 0 && target.Flags&ast.SymbolFlagsConstEnumOnlyModule != 0 && source.Flags&ast.SymbolFlagsConstEnumOnlyModule == 0 {
 			// reset flag when merging instantiated module into value module that has only const enums
-			target.ConstEnumOnlyModule = false
+			target.Flags &^= ast.SymbolFlagsConstEnumOnlyModule
 		}
 		target.Flags |= source.Flags
 		if source.ValueDeclaration != nil {
@@ -9177,7 +9359,6 @@ func (c *Checker) cloneSymbol(symbol *ast.Symbol) *ast.Symbol {
 	result.Declarations = symbol.Declarations[0:len(symbol.Declarations):len(symbol.Declarations)]
 	result.Parent = symbol.Parent
 	result.ValueDeclaration = symbol.ValueDeclaration
-	result.ConstEnumOnlyModule = symbol.ConstEnumOnlyModule
 	result.Members = maps.Clone(symbol.Members)
 	result.Exports = maps.Clone(symbol.Exports)
 	c.recordMergedSymbol(result, symbol)
@@ -10123,7 +10304,6 @@ func (c *Checker) createDefaultPropertyWrapperForModule(symbol *ast.Symbol, orig
 
 func (c *Checker) cloneTypeAsModuleType(symbol *ast.Symbol, moduleType *Type, referenceParent *ast.Node) *ast.Symbol {
 	result := c.newSymbol(symbol.Flags, symbol.Name)
-	result.ConstEnumOnlyModule = symbol.ConstEnumOnlyModule
 	result.Declarations = slices.Clone(symbol.Declarations)
 	result.ValueDeclaration = symbol.ValueDeclaration
 	result.Members = maps.Clone(symbol.Members)
@@ -10449,7 +10629,7 @@ func (c *Checker) lateBindIndexSignature(parent *ast.Symbol, earlySymbols ast.Sy
 	// Then just add the computed name as a late bound declaration
 	// (note: unlike `addDeclarationToLateBoundSymbol` we do not set up a `.lateSymbol` on `decl`'s links,
 	// since that would point at an index symbol and not a single property symbol, like most consumers would expect)
-	if len(indexSymbol.Declarations) == 0 || !decl.Symbol().IsReplaceableByMethod {
+	if len(indexSymbol.Declarations) == 0 || decl.Symbol().Flags&ast.SymbolFlagsReplaceableByMethod == 0 {
 		indexSymbol.Declarations = append(indexSymbol.Declarations, decl)
 	}
 }
@@ -10461,7 +10641,7 @@ func (c *Checker) addDeclarationToLateBoundSymbol(symbol *ast.Symbol, member *as
 	// Debug.assert(getCheckFlags(symbol)&ast.CheckFlagsLate != 0, "Expected a late-bound symbol.")
 	symbol.Flags |= symbolFlags
 	c.lateBoundLinks.get(member.Symbol()).lateSymbol = symbol
-	if len(symbol.Declarations) == 0 || !member.Symbol().IsReplaceableByMethod {
+	if len(symbol.Declarations) == 0 || member.Symbol().Flags&ast.SymbolFlagsReplaceableByMethod == 0 {
 		symbol.Declarations = append(symbol.Declarations, member)
 	}
 	if symbolFlags&ast.SymbolFlagsValue != 0 {

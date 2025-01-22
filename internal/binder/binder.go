@@ -171,13 +171,13 @@ func (b *Binder) declareSymbolEx(symbolTable ast.SymbolTable, parent *ast.Symbol
 			symbol = b.newSymbol(ast.SymbolFlagsNone, name)
 			symbolTable[name] = symbol
 			if isReplaceableByMethod {
-				symbol.IsReplaceableByMethod = true
+				symbol.Flags |= ast.SymbolFlagsReplaceableByMethod
 			}
-		} else if isReplaceableByMethod && !symbol.IsReplaceableByMethod {
+		} else if isReplaceableByMethod && symbol.Flags&ast.SymbolFlagsReplaceableByMethod == 0 {
 			// A symbol already exists, so don't add this as a declaration.
 			return symbol
 		} else if symbol.Flags&excludes != 0 {
-			if symbol.IsReplaceableByMethod {
+			if symbol.Flags&ast.SymbolFlagsReplaceableByMethod != 0 {
 				// Javascript constructor-declared symbols can be discarded in favor of
 				// prototype symbols like methods.
 				symbol = b.newSymbol(ast.SymbolFlagsNone, name)
@@ -763,8 +763,10 @@ func (b *Binder) bindModuleDeclaration(node *ast.Node) {
 		state := b.declareModuleSymbol(node)
 		if state != ModuleInstanceStateNonInstantiated {
 			symbol := node.AsModuleDeclaration().Symbol
-			// if module was already merged with some function, class or non-const enum, treat it as non-const-enum-only
-			symbol.ConstEnumOnlyModule = symbol.ConstEnumOnlyModule && (symbol.Flags&(ast.SymbolFlagsFunction|ast.SymbolFlagsClass|ast.SymbolFlagsRegularEnum) == 0) && state == ModuleInstanceStateConstEnumOnly
+			if symbol.Flags&(ast.SymbolFlagsFunction|ast.SymbolFlagsClass|ast.SymbolFlagsRegularEnum) != 0 || state != ModuleInstanceStateConstEnumOnly {
+				// if module was already merged with some function, class or non-const enum, treat it as non-const-enum-only
+				symbol.Flags &^= ast.SymbolFlagsConstEnumOnlyModule
+			}
 		}
 	}
 }
@@ -2547,8 +2549,8 @@ func (b *Binder) addDeclarationToSymbol(symbol *ast.Symbol, node *ast.Node, symb
 		symbol.Declarations = core.AppendIfUnique(symbol.Declarations, node)
 	}
 	// On merge of const enum module with class or function, reset const enum only flag (namespaces will already recalculate)
-	if symbol.ConstEnumOnlyModule && symbol.Flags&(ast.SymbolFlagsFunction|ast.SymbolFlagsClass|ast.SymbolFlagsRegularEnum) != 0 {
-		symbol.ConstEnumOnlyModule = false
+	if symbol.Flags&ast.SymbolFlagsConstEnumOnlyModule != 0 && symbol.Flags&(ast.SymbolFlagsFunction|ast.SymbolFlagsClass|ast.SymbolFlagsRegularEnum) != 0 {
+		symbol.Flags &^= ast.SymbolFlagsConstEnumOnlyModule
 	}
 	if symbolFlags&ast.SymbolFlagsValue != 0 {
 		SetValueDeclaration(symbol, node)
