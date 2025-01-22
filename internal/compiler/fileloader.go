@@ -27,7 +27,7 @@ type fileLoader struct {
 
 	mu                      sync.Mutex
 	wg                      *core.WorkGroup
-	processedFileNames      core.Set[string]
+	tasksByFileName         map[string]*parseTask
 	currentNodeModulesDepth int
 	defaultLibraryPath      string
 	comparePathsOptions     tspath.ComparePathsOptions
@@ -47,6 +47,7 @@ func processAllProgramFiles(
 		programOptions:     programOptions,
 		compilerOptions:    compilerOptions,
 		resolver:           resolver,
+		tasksByFileName:    make(map[string]*parseTask),
 		defaultLibraryPath: programOptions.DefaultLibraryPath,
 		comparePathsOptions: tspath.ComparePathsOptions{
 			UseCaseSensitiveFileNames: host.FS().UseCaseSensitiveFileNames(),
@@ -58,13 +59,14 @@ func processAllProgramFiles(
 
 	loader.addRootTasks(rootFiles, false)
 	loader.addRootTasks(libs, true)
+	loader.addAutomaticTypeDirectiveTasks()
 
 	loader.startTasks(loader.rootTasks)
 
 	loader.wg.Wait()
 
 	files, libFiles := []*ast.SourceFile{}, []*ast.SourceFile{}
-	for task := range iterTasks(loader.rootTasks) {
+	for task := range loader.collectTasks(loader.rootTasks) {
 		if task.isLib {
 			libFiles = append(libFiles, task.file)
 		} else {
@@ -83,36 +85,62 @@ func (p *fileLoader) addRootTasks(files []string, isLib bool) {
 	}
 }
 
+func (p *fileLoader) addAutomaticTypeDirectiveTasks() {
+	var containingDirectory string
+	if p.compilerOptions.ConfigFilePath != "" {
+		containingDirectory = tspath.GetDirectoryPath(p.compilerOptions.ConfigFilePath)
+	} else {
+		containingDirectory = p.host.GetCurrentDirectory()
+	}
+	containingFileName := tspath.CombinePaths(containingDirectory, module.InferredTypesContainingFile)
+
+	automaticTypeDirectiveNames := module.GetAutomaticTypeDirectiveNames(p.compilerOptions, p.host)
+	for _, name := range automaticTypeDirectiveNames {
+		resolved := p.resolver.ResolveTypeReferenceDirective(name, containingFileName, core.ModuleKindNodeNext, nil)
+		if resolved.IsResolved() {
+			p.rootTasks = append(p.rootTasks, &parseTask{normalizedFilePath: resolved.ResolvedFileName, isLib: false})
+		}
+	}
+}
+
 func (p *fileLoader) startTasks(tasks []*parseTask) {
 	if len(tasks) > 0 {
 		p.mu.Lock()
 		defer p.mu.Unlock()
-		for _, task := range tasks {
-			if !p.processedFileNames.Has(task.normalizedFilePath) {
-				p.processedFileNames.Add(task.normalizedFilePath)
+		for i, task := range tasks {
+			// dedup tasks to ensure correct file order, regardless of which task would be started first
+			if existingTask, ok := p.tasksByFileName[task.normalizedFilePath]; ok {
+				tasks[i] = existingTask
+			} else {
+				p.tasksByFileName[task.normalizedFilePath] = task
 				task.start(p)
 			}
 		}
 	}
 }
 
-func iterTasks(tasks []*parseTask) iter.Seq[*parseTask] {
+func (p *fileLoader) collectTasks(tasks []*parseTask) iter.Seq[*parseTask] {
 	return func(yield func(*parseTask) bool) {
-		iterTasksWorker(tasks, yield)
+		p.collectTasksWorker(tasks, yield)
 	}
 }
 
-func iterTasksWorker(tasks []*parseTask, yield func(*parseTask) bool) bool {
+func (p *fileLoader) collectTasksWorker(tasks []*parseTask, yield func(*parseTask) bool) bool {
 	for _, task := range tasks {
-		if len(task.subTasks) > 0 {
-			if !iterTasksWorker(task.subTasks, yield) {
-				return false
-			}
-		}
+		if _, ok := p.tasksByFileName[task.normalizedFilePath]; ok {
+			// ensure we only walk each task once
+			delete(p.tasksByFileName, task.normalizedFilePath)
 
-		if task.file != nil {
-			if !yield(task) {
-				return false
+			if len(task.subTasks) > 0 {
+				if !p.collectTasksWorker(task.subTasks, yield) {
+					return false
+				}
+			}
+
+			if task.file != nil {
+				if !yield(task) {
+					return false
+				}
 			}
 		}
 	}
@@ -420,5 +448,5 @@ func getNodeAtPosition(file *ast.SourceFile, position int, isJavaScriptFile bool
 }
 
 func nodeContainsPosition(node *ast.Node, position int) bool {
-	return node.Pos() <= position && (position < node.End() || (position == node.End() && (node.Kind == ast.KindEndOfFile)))
+	return node.Kind >= ast.KindFirstNode && node.Pos() <= position && (position < node.End() || position == node.End() && node.Kind == ast.KindEndOfFile)
 }

@@ -1189,6 +1189,14 @@ func IsModuleIdentifier(node *Node) bool {
 	return IsIdentifier(node) && node.Text() == "module"
 }
 
+func IsThisIdentifier(node *Node) bool {
+	return IsIdentifier(node) && node.Text() == "this"
+}
+
+func IsThisParameter(node *Node) bool {
+	return IsParameter(node) && node.Name() != nil && IsThisIdentifier(node.Name())
+}
+
 // Does not handle signed numeric names like `a[+0]` - handling those would require handling prefix unary expressions
 // throughout late binding handling as well, which is awkward (but ultimately probably doable if there is demand)
 func GetElementOrPropertyAccessArgumentExpressionOrName(node *Node) *Node {
@@ -1740,4 +1748,27 @@ func isJSXTagName(node *Node) bool {
 
 func IsImportCall(node *Node) bool {
 	return IsCallExpression(node) && node.AsCallExpression().Expression.Kind == KindImportKeyword
+}
+
+func IsComputedNonLiteralName(name *Node) bool {
+	return IsComputedPropertyName(name) && !IsStringOrNumericLiteralLike(name.Expression())
+}
+
+func IsQuestionToken(node *Node) bool {
+	return node != nil && node.Kind == KindQuestionToken
+}
+
+func TryGetTextOfPropertyName(name *Node) (string, bool) {
+	switch name.Kind {
+	case KindIdentifier, KindPrivateIdentifier, KindStringLiteral, KindNumericLiteral, KindBigIntLiteral,
+		KindNoSubstitutionTemplateLiteral:
+		return name.Text(), true
+	case KindComputedPropertyName:
+		if IsStringOrNumericLiteralLike(name.Expression()) {
+			return name.Expression().Text(), true
+		}
+	case KindJsxNamespacedName:
+		return name.AsJsxNamespacedName().Namespace.Text() + ":" + name.Name().Text(), true
+	}
+	return "", false
 }

@@ -11,6 +11,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/jsnum"
 	"github.com/microsoft/typescript-go/internal/scanner"
+	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
 // Links store
@@ -1121,10 +1122,6 @@ func isJSDocOptionalParameter(node *ast.ParameterDeclaration) bool {
 	return false // !!!
 }
 
-func isQuestionToken(node *ast.Node) bool {
-	return node != nil && node.Kind == ast.KindQuestionToken
-}
-
 func isExclamationToken(node *ast.Node) bool {
 	return node != nil && node.Kind == ast.KindExclamationToken
 }
@@ -1134,17 +1131,17 @@ func isOptionalDeclaration(declaration *ast.Node) bool {
 	case ast.KindParameter:
 		return declaration.AsParameterDeclaration().QuestionToken != nil
 	case ast.KindPropertyDeclaration:
-		return isQuestionToken(declaration.AsPropertyDeclaration().PostfixToken)
+		return ast.IsQuestionToken(declaration.AsPropertyDeclaration().PostfixToken)
 	case ast.KindPropertySignature:
-		return isQuestionToken(declaration.AsPropertySignatureDeclaration().PostfixToken)
+		return ast.IsQuestionToken(declaration.AsPropertySignatureDeclaration().PostfixToken)
 	case ast.KindMethodDeclaration:
-		return isQuestionToken(declaration.AsMethodDeclaration().PostfixToken)
+		return ast.IsQuestionToken(declaration.AsMethodDeclaration().PostfixToken)
 	case ast.KindMethodSignature:
-		return isQuestionToken(declaration.AsMethodSignatureDeclaration().PostfixToken)
+		return ast.IsQuestionToken(declaration.AsMethodSignatureDeclaration().PostfixToken)
 	case ast.KindPropertyAssignment:
-		return isQuestionToken(declaration.AsPropertyAssignment().PostfixToken)
+		return ast.IsQuestionToken(declaration.AsPropertyAssignment().PostfixToken)
 	case ast.KindShorthandPropertyAssignment:
-		return isQuestionToken(declaration.AsShorthandPropertyAssignment().PostfixToken)
+		return ast.IsQuestionToken(declaration.AsShorthandPropertyAssignment().PostfixToken)
 	}
 	return false
 }
@@ -1533,21 +1530,13 @@ func getClassLikeDeclarationOfSymbol(symbol *ast.Symbol) *ast.Node {
 }
 
 func isThisInTypeQuery(node *ast.Node) bool {
-	if !isThisIdentifier(node) {
+	if !ast.IsThisIdentifier(node) {
 		return false
 	}
 	for ast.IsQualifiedName(node.Parent) && node.Parent.AsQualifiedName().Left == node {
 		node = node.Parent
 	}
 	return node.Parent.Kind == ast.KindTypeQuery
-}
-
-func isThisIdentifier(node *ast.Node) bool {
-	return node != nil && node.Kind == ast.KindIdentifier && identifierIsThisKeyword(node)
-}
-
-func identifierIsThisKeyword(id *ast.Node) bool {
-	return id.AsIdentifier().Text == "this"
 }
 
 func getDeclarationModifierFlagsFromSymbol(s *ast.Symbol) ast.ModifierFlags {
@@ -1844,8 +1833,9 @@ func getThisParameter(signature *ast.Node) *ast.Node {
 	return nil
 }
 
+// Deprecated: use ast.IsThisParameter
 func parameterIsThisKeyword(parameter *ast.Node) bool {
-	return isThisIdentifier(parameter.Name())
+	return ast.IsThisParameter(parameter)
 }
 
 func getInterfaceBaseTypeNodes(node *ast.Node) []*ast.Node {
@@ -2151,10 +2141,6 @@ func createEvaluator(evaluateEntity Evaluator) Evaluator {
 		return evaluatorResult(nil, isSyntacticallyString, resolvedOtherFiles, hasExternalReferences)
 	}
 	return evaluate
-}
-
-func isComputedNonLiteralName(name *ast.Node) bool {
-	return ast.IsComputedPropertyName(name) && !ast.IsStringOrNumericLiteralLike(name.Expression())
 }
 
 func isInfinityOrNaNString(name string) bool {
@@ -2526,4 +2512,10 @@ func forEachYieldExpression(body *ast.Node, visitor func(expr *ast.Node)) {
 		return false
 	}
 	traverse(body)
+}
+
+func skipTypeChecking(sourceFile *ast.SourceFile, options *core.CompilerOptions) bool {
+	return options.NoCheck == core.TSTrue ||
+		options.SkipLibCheck == core.TSTrue && tspath.IsDeclarationFileName(sourceFile.FileName()) ||
+		options.SkipDefaultLibCheck == core.TSTrue && sourceFile.HasNoDefaultLib
 }

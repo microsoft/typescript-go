@@ -35,14 +35,15 @@ type SharedFlow struct {
 }
 
 type FlowState struct {
-	reference       *ast.Node
-	declaredType    *Type
-	initialType     *Type
-	flowContainer   *ast.Node
-	refKey          string
-	depth           int
-	sharedFlowStart int
-	reduceLabels    []*ast.FlowReduceLabelData
+	reference          *ast.Node
+	declaredType       *Type
+	initialType        *Type
+	flowContainer      *ast.Node
+	refKey             string
+	depth              int
+	sharedFlowStart    int
+	reduceLabels       []*ast.FlowReduceLabelData
+	reduceLabelsBuffer [4]*ast.FlowReduceLabelData
 }
 
 func getFlowNodeOfNode(node *ast.Node) *ast.FlowNode {
@@ -67,15 +68,20 @@ func (c *Checker) getFlowTypeOfReferenceEx(reference *ast.Node, declaredType *Ty
 			return declaredType
 		}
 	}
-	var f FlowState
+	flowStateCount := len(c.flowStates)
+	c.flowStates = slices.Grow(c.flowStates, 1)[:flowStateCount+1]
+	f := &c.flowStates[flowStateCount]
 	f.reference = reference
 	f.declaredType = declaredType
 	f.initialType = initialType
 	f.flowContainer = flowContainer
 	f.sharedFlowStart = len(c.sharedFlows)
+	f.reduceLabels = f.reduceLabelsBuffer[:0]
 	c.flowInvocationCount++
-	evolvedType := c.getTypeAtFlowNode(&f, flowNode).t
+	evolvedType := c.getTypeAtFlowNode(f, flowNode).t
 	c.sharedFlows = c.sharedFlows[:f.sharedFlowStart]
+	c.flowStates[flowStateCount] = FlowState{}
+	c.flowStates = c.flowStates[:flowStateCount]
 	// When the reference is 'x' in an 'x.length', 'x.push(value)', 'x.unshift(value)' or x[n] = value' operation,
 	// we give type 'any[]' to 'x' instead of using the type determined by control flow analysis such that operations
 	// on empty arrays are possible without implicit any errors and new element types can be inferred without
@@ -1702,7 +1708,7 @@ func (c *Checker) tryGetNameFromEntityNameExpression(node *ast.Node) (string, bo
 				return tryGetNameFromType(initializerType)
 			}
 		} else if ast.IsEnumMember(declaration) {
-			return tryGetTextOfPropertyName(declaration.Name())
+			return ast.TryGetTextOfPropertyName(declaration.Name())
 		}
 	}
 	return "", false
@@ -1714,21 +1720,6 @@ func tryGetNameFromType(t *Type) (string, bool) {
 		return t.AsUniqueESSymbolType().name, true
 	case t.flags&TypeFlagsStringOrNumberLiteral != 0:
 		return anyToString(t.AsLiteralType().value), true
-	}
-	return "", false
-}
-
-func tryGetTextOfPropertyName(name *ast.Node) (string, bool) {
-	switch name.Kind {
-	case ast.KindIdentifier, ast.KindPrivateIdentifier, ast.KindStringLiteral, ast.KindNumericLiteral, ast.KindBigIntLiteral,
-		ast.KindNoSubstitutionTemplateLiteral:
-		return name.Text(), true
-	case ast.KindComputedPropertyName:
-		if ast.IsStringOrNumericLiteralLike(name.Expression()) {
-			return name.Expression().Text(), true
-		}
-	case ast.KindJsxNamespacedName:
-		return name.AsJsxNamespacedName().Namespace.Text() + ":" + name.Name().Text(), true
 	}
 	return "", false
 }
@@ -2448,7 +2439,8 @@ func (c *Checker) isReachableFlowNode(flow *ast.FlowNode) bool {
 }
 
 func (c *Checker) isReachableFlowNodeWorker(flow *ast.FlowNode, noCacheCheck bool) bool {
-	var reduceLabels []*ast.FlowReduceLabelData
+	var reduceLabelsBuffer [4]*ast.FlowReduceLabelData
+	reduceLabels := reduceLabelsBuffer[:0]
 	for {
 		if flow == c.lastFlowNode {
 			return c.lastFlowNodeReachable
@@ -2534,7 +2526,8 @@ func (c *Checker) isFalseExpression(expr *ast.Node) bool {
 // Return true if the given flow node is preceded by a 'super(...)' call in every possible code path
 // leading to the node.
 func (c *Checker) isPostSuperFlowNode(flow *ast.FlowNode, noCacheCheck bool) bool {
-	var reduceLabels []*ast.FlowReduceLabelData
+	var reduceLabelsBuffer [4]*ast.FlowReduceLabelData
+	reduceLabels := reduceLabelsBuffer[:0]
 	for {
 		flags := flow.Flags
 		if flags&ast.FlowFlagsShared != 0 {

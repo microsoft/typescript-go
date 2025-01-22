@@ -67,7 +67,7 @@ func executeCommandLineWorker(sys System, cb cbType, commandLine *tsoptions.Pars
 	}
 
 	if configFileName != "" && len(commandLine.FileNames()) > 0 {
-		if commandLine.CompilerOptions().ShowConfig {
+		if commandLine.CompilerOptions().ShowConfig.IsTrue() {
 			reportDiagnostic(ast.NewCompilerDiagnostic(diagnostics.Cannot_find_a_tsconfig_json_file_at_the_current_directory_Colon_0, tspath.NormalizePath(sys.Host().GetCurrentDirectory())))
 		} else {
 			// print version
@@ -101,7 +101,7 @@ func executeCommandLineWorker(sys System, cb cbType, commandLine *tsoptions.Pars
 			)
 		}
 	} else {
-		if compilerOptionsFromCommandLine.ShowConfig {
+		if compilerOptionsFromCommandLine.ShowConfig.IsTrue() {
 			// write show config
 			return sys.Exit(ExitStatusSuccess)
 		}
@@ -172,7 +172,7 @@ func performCompilation(sys System, cb cbType, reportDiagnostic DiagnosticReport
 	diagnostics := program.GetSyntacticDiagnostics(nil)
 	if len(diagnostics) == 0 {
 		diagnostics = append(diagnostics, program.GetOptionsDiagnostics()...)
-		if !options.ListFilesOnly {
+		if options.ListFilesOnly.IsFalse() {
 			// program.GetBindDiagnostics(nil)
 			diagnostics = append(diagnostics, program.GetGlobalDiagnostics()...)
 		}
@@ -186,7 +186,7 @@ func performCompilation(sys System, cb cbType, reportDiagnostic DiagnosticReport
 	// }
 
 	emitResult := &ts.EmitResult{EmitSkipped: true, Diagnostics: []*ast.Diagnostic{}}
-	if !options.ListFilesOnly {
+	if options.ListFilesOnly.IsFalse() {
 		// todo emit not fully implemented
 		emitResult = program.Emit(&ts.EmitOptions{})
 	}
@@ -221,11 +221,11 @@ func isBuildCommand(args []string) bool {
 }
 
 func isWatchSet(options *core.CompilerOptions) bool {
-	return options.Watch
+	return options.Watch.IsTrue()
 }
 
 func isIncrementalCompilation(options *core.CompilerOptions) bool {
-	return options.Incremental
+	return options.Incremental.IsTrue()
 }
 
 type (
@@ -276,11 +276,11 @@ func createReportErrorSummary(sys System, options *core.CompilerOptions) func(di
 }
 
 func shouldBePretty(sys System, options *core.CompilerOptions) bool {
-	if options == nil || !options.Pretty {
+	if options == nil || options.Pretty.IsFalse() {
 		// todo: return defaultIsPretty(sys);
 		return true
 	}
-	return options.Pretty
+	return options.Pretty.IsTrue()
 }
 
 func reportStatistics(sys System, program *ts.Program) {
