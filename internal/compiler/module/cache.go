@@ -74,7 +74,7 @@ func (c *resolutionCache[T]) getLookupLocations(resolved T) *LookupLocations {
 	return c.lookupLocations[resolved]
 }
 
-func (c *resolutionCache[T]) initializeLookupLocations(resolved T, failedLookupLocations []string, affectingLocations []string, resolutionDiagnostics []ast.Diagnostic) {
+func (c *resolutionCache[T]) setLookupLocations(resolved T, failedLookupLocations []string, affectingLocations []string, resolutionDiagnostics []ast.Diagnostic) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 	if c.lookupLocations == nil {
@@ -87,7 +87,7 @@ func (c *resolutionCache[T]) initializeLookupLocations(resolved T, failedLookupL
 	}
 }
 
-func (c *resolutionCache[T]) updateLookupLocations(resolved T, failedLookupLocations []string, affectingLocations []string, resolutionDiagnostics []ast.Diagnostic) {
+func (c *resolutionCache[T]) appendLookupLocations(resolved T, failedLookupLocations []string, affectingLocations []string, resolutionDiagnostics []ast.Diagnostic) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 	lookupLocations := c.lookupLocations[resolved]
@@ -175,7 +175,7 @@ func newNonRelativeNameResolutionCache[T any](
 }
 
 func (c *nonRelativeNameResolutionCache[T]) getFromNonRelativeNameCache(nameAndMode ModeAwareCacheKey, directoryName string, redirectedReference *ResolvedProjectReference) (T, bool) {
-	if tspath.IsExternalModuleNameRelative(nameAndMode.name) {
+	if tspath.IsExternalModuleNameRelative(nameAndMode.Name) {
 		panic("module name must be non-relative")
 	}
 	c.mu.RLock()
@@ -184,7 +184,7 @@ func (c *nonRelativeNameResolutionCache[T]) getFromNonRelativeNameCache(nameAndM
 }
 
 func (c *nonRelativeNameResolutionCache[T]) setInNonRelativeNameCache(nameAndMode ModeAwareCacheKey, directoryName string, value T, redirectedReference *ResolvedProjectReference) {
-	if tspath.IsExternalModuleNameRelative(nameAndMode.name) {
+	if tspath.IsExternalModuleNameRelative(nameAndMode.Name) {
 		panic("module name must be non-relative")
 	}
 	cache := c.getOrCreateCacheForNonRelativeName(nameAndMode, redirectedReference)
@@ -194,7 +194,7 @@ func (c *nonRelativeNameResolutionCache[T]) setInNonRelativeNameCache(nameAndMod
 }
 
 func (c *nonRelativeNameResolutionCache[T]) getOrCreateCacheForNonRelativeName(nameAndMode ModeAwareCacheKey, redirectedReference *ResolvedProjectReference) *perNonRelativeNameCache[T] {
-	if tspath.IsExternalModuleNameRelative(nameAndMode.name) {
+	if tspath.IsExternalModuleNameRelative(nameAndMode.Name) {
 		panic("module name must be non-relative")
 	}
 	c.mu.RLock()

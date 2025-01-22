@@ -18,8 +18,8 @@ type ResolutionHost interface {
 }
 
 type ModeAwareCacheKey struct {
-	name string
-	mode core.ResolutionMode
+	Name string
+	Mode core.ResolutionMode
 }
 
 type ResolvedProjectReference struct {
@@ -74,6 +74,7 @@ type ResolvedModule struct {
 	ResolvedUsingTsExtension bool
 	PackageId                PackageId
 	IsExternalLibraryImport  bool
+	AlternateResult          string
 }
 
 func (r *ResolvedModule) IsResolved() bool {

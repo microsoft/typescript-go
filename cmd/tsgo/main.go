@@ -21,18 +21,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/vfs"
 )
 
-var (
-	quiet            = false
-	singleThreaded   = false
-	parseAndBindOnly = false
-	printTypes       = false
-	pretty           = true
-	listFiles        = false
-	noLib            = false
-	pprofDir         = ""
-	outDir           = ""
-)
-
 func printDiagnostic(d *ast.Diagnostic, level int, comparePathOptions tspath.ComparePathsOptions) {
 	file := d.File()
 	if file != nil {
@@ -55,21 +43,52 @@ func printMessageChain(messageChain []*ast.Diagnostic, level int) {
 	}
 }
 
-func main() {
-	flag.BoolVar(&quiet, "q", false, "Quiet output")
-	flag.BoolVar(&singleThreaded, "s", false, "Single threaded")
-	flag.BoolVar(&parseAndBindOnly, "p", false, "Parse and bind only")
-	flag.BoolVar(&printTypes, "t", false, "Print types defined in main.ts")
-	flag.BoolVar(&pretty, "pretty", true, "Get prettier errors")
-	flag.BoolVar(&listFiles, "listfiles", false, "List files in the program")
-	flag.BoolVar(&noLib, "nolib", false, "Do not load lib.d.ts files")
-	flag.StringVar(&pprofDir, "pprofdir", "", "Generate pprof CPU/memory profiles to the given directory")
-	flag.StringVar(&outDir, "outdir", "", "Emit to the given directory")
+type cliOptions struct {
+	Tsc struct {
+		Pretty    bool
+		ListFiles bool
+		NoLib     bool
+		OutDir    string
+	}
+
+	Devel struct {
+		Quiet            bool
+		SingleThreaded   bool
+		ParseAndBindOnly bool
+		PrintTypes       bool
+		PprofDir         string
+	}
+
+	Args struct {
+		Root string
+	}
+}
+
+func parseArgs() *cliOptions {
+	opts := &cliOptions{}
+	flag.BoolVar(&opts.Tsc.Pretty, "pretty", true, "Get prettier errors")
+	flag.BoolVar(&opts.Tsc.ListFiles, "listFiles", false, "List files in the program")
+	flag.BoolVar(&opts.Tsc.NoLib, "noLib", false, "Do not load lib.d.ts files")
+	flag.StringVar(&opts.Tsc.OutDir, "outDir", "", "Emit to the given directory")
+
+	flag.BoolVar(&opts.Devel.Quiet, "q", false, "Do not print diagnostics")
+	flag.BoolVar(&opts.Devel.SingleThreaded, "singleThreaded", false, "Run in single threaded mode")
+	flag.BoolVar(&opts.Devel.ParseAndBindOnly, "parseAndBindOnly", false, "Parse and bind only")
+	flag.BoolVar(&opts.Devel.PrintTypes, "printTypes", false, "Print types defined in main.ts")
+	flag.StringVar(&opts.Devel.PprofDir, "pprofDir", "", "Generate pprof CPU/memory profiles to the given directory")
 	flag.Parse()
 
-	rootPath := flag.Arg(0)
+	opts.Args.Root = flag.Arg(0)
+
+	return opts
+}
+
+func main() {
+	opts := parseArgs()
+
+	rootPath := opts.Args.Root
 	compilerOptions := &core.CompilerOptions{Strict: core.TSTrue, Target: core.ScriptTargetESNext, ModuleKind: core.ModuleKindNodeNext, NoEmit: core.TSTrue}
-	if noLib {
+	if opts.Tsc.NoLib {
 		compilerOptions.NoLib = core.TSTrue
 	}
 
@@ -79,9 +98,9 @@ func main() {
 		os.Exit(1)
 	}
 
-	if len(outDir) > 0 {
+	if len(opts.Tsc.OutDir) > 0 {
 		compilerOptions.NoEmit = core.TSFalse
-		compilerOptions.OutDir = tspath.ResolvePath(currentDirectory, outDir)
+		compilerOptions.OutDir = tspath.ResolvePath(currentDirectory, opts.Tsc.OutDir)
 	}
 
 	fs := bundled.WrapFS(vfs.FromOS())
@@ -98,13 +117,13 @@ func main() {
 	programOptions := ts.ProgramOptions{
 		RootPath:           normalizedRootPath,
 		Options:            compilerOptions,
-		SingleThreaded:     singleThreaded,
+		SingleThreaded:     opts.Devel.SingleThreaded,
 		Host:               host,
 		DefaultLibraryPath: bundled.LibPath(),
 	}
 
-	if pprofDir != "" {
-		profileSession := beginProfiling(pprofDir)
+	if opts.Devel.PprofDir != "" {
+		profileSession := beginProfiling(opts.Devel.PprofDir)
 		defer profileSession.stop()
 	}
 
@@ -112,10 +131,10 @@ func main() {
 	program := ts.NewProgram(programOptions)
 	diagnostics := program.GetSyntacticDiagnostics(nil)
 	if len(diagnostics) == 0 {
-		if parseAndBindOnly {
+		if opts.Devel.ParseAndBindOnly {
 			diagnostics = program.GetBindDiagnostics(nil)
 		} else {
-			if printTypes {
+			if opts.Devel.PrintTypes {
 				program.PrintSourceFileWithTypes()
 			} else {
 				diagnostics = program.GetSemanticDiagnostics(nil)
@@ -125,7 +144,7 @@ func main() {
 	compileTime := time.Since(startTime)
 
 	startTime = time.Now()
-	if len(outDir) > 0 {
+	if len(opts.Tsc.OutDir) > 0 {
 		result := program.Emit(&ts.EmitOptions{})
 		diagnostics = append(diagnostics, result.Diagnostics...)
 	}
@@ -136,12 +155,12 @@ func main() {
 	runtime.GC()
 	runtime.ReadMemStats(&memStats)
 
-	if !quiet && len(diagnostics) != 0 {
+	if !opts.Devel.Quiet && len(diagnostics) != 0 {
 		comparePathOptions := tspath.ComparePathsOptions{
 			CurrentDirectory:          currentDirectory,
 			UseCaseSensitiveFileNames: useCaseSensitiveFileNames,
 		}
-		if pretty {
+		if opts.Tsc.Pretty {
 			formatOpts := diagnosticwriter.FormattingOptions{
 				NewLine:             "\n",
 				ComparePathsOptions: comparePathOptions,
@@ -156,7 +175,7 @@ func main() {
 		}
 	}
 
-	if listFiles {
+	if opts.Tsc.ListFiles {
 		for _, file := range program.SourceFiles() {
 			fmt.Println(file.FileName())
 		}
