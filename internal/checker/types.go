@@ -78,6 +78,12 @@ const (
 
 type TypeId uint32
 
+// Links for referenced symbols
+
+type SymbolReferenceLinks struct {
+	referenceKinds ast.SymbolFlags // Flags for the meanings of the symbol that were referenced
+}
+
 // Links for value symbols
 
 type ValueSymbolLinks struct {
@@ -318,8 +324,9 @@ type AssertionLinks struct {
 // SourceFile links
 
 type SourceFileLinks struct {
-	typeChecked   bool
-	deferredNodes collections.OrderedSet[*ast.Node]
+	typeChecked          bool
+	deferredNodes        collections.OrderedSet[*ast.Node]
+	identifierCheckNodes []*ast.Node
 }
 
 // Signature specific links

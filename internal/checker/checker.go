@@ -593,6 +593,7 @@ type Checker struct {
 	assertionLinks                            LinkStore[*ast.Node, AssertionLinks]
 	arrayLiteralLinks                         LinkStore[*ast.Node, ArrayLiteralLinks]
 	switchStatementLinks                      LinkStore[*ast.Node, SwitchStatementLinks]
+	symbolReferenceLinks                      LinkStore[*ast.Symbol, SymbolReferenceLinks]
 	valueSymbolLinks                          LinkStore[*ast.Symbol, ValueSymbolLinks]
 	aliasSymbolLinks                          LinkStore[*ast.Symbol, AliasSymbolLinks]
 	moduleSymbolLinks                         LinkStore[*ast.Symbol, ModuleSymbolLinks]
@@ -1263,12 +1264,17 @@ func (c *Checker) createNameResolver() *NameResolver {
 		argumentsSymbol:                  c.argumentsSymbol,
 		requireSymbol:                    c.requireSymbol,
 		lookup:                           c.getSymbol,
+		symbolReferenced:                 c.symbolReferenced,
 		setRequiresScopeChangeCache:      c.setRequiresScopeChangeCache,
 		getRequiresScopeChangeCache:      c.getRequiresScopeChangeCache,
 		onPropertyWithInvalidInitializer: c.checkAndReportErrorForInvalidInitializer,
 		onFailedToResolveSymbol:          c.onFailedToResolveSymbol,
 		onSuccessfullyResolvedSymbol:     c.onSuccessfullyResolvedSymbol,
 	}
+}
+
+func (c *Checker) symbolReferenced(symbol *ast.Symbol, meaning ast.SymbolFlags) {
+	c.symbolReferenceLinks.get(symbol).referenceKinds |= meaning
 }
 
 func (c *Checker) getRequiresScopeChangeCache(node *ast.Node) core.Tristate {
@@ -3202,7 +3208,9 @@ func (c *Checker) checkTypeParameters(typeParameterDeclarations []*ast.Node) {
 }
 
 func (c *Checker) registerForUnusedIdentifiersCheck(node *ast.Node) {
-	// !!!
+	sourceFile := ast.GetSourceFileOfNode(node)
+	links := c.sourceFileLinks.get(sourceFile)
+	links.identifierCheckNodes = append(links.identifierCheckNodes, node)
 }
 
 func (c *Checker) checkExpressionStatement(node *ast.Node) {
@@ -21443,7 +21451,29 @@ func compareTypesEqual(s *Type, t *Type) Ternary {
 }
 
 func (c *Checker) markPropertyAsReferenced(prop *ast.Symbol, nodeForCheckWriteOnly *ast.Node, isSelfTypeAccess bool) {
-	// !!!
+	if prop.Flags&ast.SymbolFlagsClassMember == 0 || prop.ValueDeclaration == nil {
+		return
+	}
+	hasPrivateModifier := hasEffectiveModifier(prop.ValueDeclaration, ast.ModifierFlagsPrivate)
+	hasPrivateIdentifier := prop.ValueDeclaration.Name() != nil && ast.IsPrivateIdentifier(prop.ValueDeclaration.Name())
+	if !hasPrivateModifier && !hasPrivateIdentifier {
+		return
+	}
+	if nodeForCheckWriteOnly != nil && isWriteOnlyAccess(nodeForCheckWriteOnly) && prop.Flags&ast.SymbolFlagsSetAccessor == 0 {
+		return
+	}
+	if isSelfTypeAccess {
+		// Find any FunctionLikeDeclaration because those create a new 'this' binding. But this should only matter for methods (or getters/setters).
+		containingMethod := ast.FindAncestor(nodeForCheckWriteOnly, ast.IsFunctionLikeDeclaration)
+		if containingMethod != nil && containingMethod.Symbol() == prop {
+			return
+		}
+	}
+	target := prop
+	if prop.CheckFlags&ast.CheckFlagsInstantiated != 0 {
+		target = c.valueSymbolLinks.get(prop).target
+	}
+	c.symbolReferenceLinks.get(target).referenceKinds |= ast.SymbolFlagsAll
 }
 
 func hasRestParameter(signature *ast.Node) bool {

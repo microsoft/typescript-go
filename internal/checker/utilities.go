@@ -345,6 +345,7 @@ type NameResolver struct {
 	argumentsSymbol                  *ast.Symbol
 	requireSymbol                    *ast.Symbol
 	lookup                           func(symbols ast.SymbolTable, name string, meaning ast.SymbolFlags) *ast.Symbol
+	symbolReferenced                 func(symbol *ast.Symbol, meaning ast.SymbolFlags)
 	setRequiresScopeChangeCache      func(node *ast.Node, value core.Tristate)
 	getRequiresScopeChangeCache      func(node *ast.Node) core.Tristate
 	onPropertyWithInvalidInitializer func(location *ast.Node, name string, declaration *ast.Node, result *ast.Symbol) bool
@@ -641,7 +642,7 @@ loop:
 	// If `result === lastSelfReferenceLocation.symbol`, that means that we are somewhere inside `lastSelfReferenceLocation` looking up a name, and resolving to `lastLocation` itself.
 	// That means that this is a self-reference of `lastLocation`, and shouldn't count this when considering whether `lastLocation` is used.
 	if isUse && result != nil && (lastSelfReferenceLocation == nil || result != lastSelfReferenceLocation.Symbol()) {
-		// !!! result.isReferenced |= meaning
+		r.symbolReferenced(result, meaning)
 	}
 	if result == nil {
 		if !excludeGlobals {
