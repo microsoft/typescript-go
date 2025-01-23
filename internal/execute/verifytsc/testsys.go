@@ -7,9 +7,9 @@ import (
 	"testing/fstest"
 
 	"github.com/microsoft/typescript-go/internal/bundled"
-	ts "github.com/microsoft/typescript-go/internal/compiler"
+	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
-	dw "github.com/microsoft/typescript-go/internal/diagnosticwriter"
+	"github.com/microsoft/typescript-go/internal/diagnosticwriter"
 	"github.com/microsoft/typescript-go/internal/execute"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
@@ -29,13 +29,13 @@ func NewTestSys(fileOrFolderList FileMap, args ...string) *testSys {
 		fileList = append(fileList, name)
 	}
 	fs := bundled.WrapFS(vfstest.FromMapFS(mapFS, true /*useCaseSensitiveFileNames*/))
-	newHost := ts.NewCompilerHost(&core.CompilerOptions{}, "/home/src/workspaces/project", fs)
+	newHost := compiler.NewCompilerHost(&core.CompilerOptions{}, "/home/src/workspaces/project", fs)
 	return &testSys{
 		host:         newHost,
 		files:        fileList,
 		output:       []string{},
 		currentWrite: &strings.Builder{},
-		formatOpts: &dw.FormattingOptions{
+		formatOpts: &diagnosticwriter.FormattingOptions{
 			NewLine: newHost.NewLine(),
 			ComparePathsOptions: tspath.ComparePathsOptions{
 				CurrentDirectory:          newHost.GetCurrentDirectory(),
@@ -52,8 +52,8 @@ type testSys struct {
 	serializedDiff map[string]string
 
 	exitVal    execute.ExitStatus
-	host       ts.CompilerHost
-	formatOpts *dw.FormattingOptions
+	host       compiler.CompilerHost
+	formatOpts *diagnosticwriter.FormattingOptions
 	files      []string
 }
 
@@ -61,7 +61,7 @@ func (s *testSys) FS() vfs.FS {
 	return s.Host().FS()
 }
 
-func (s *testSys) Host() ts.CompilerHost {
+func (s *testSys) Host() compiler.CompilerHost {
 	return s.host
 }
 
@@ -70,7 +70,7 @@ func (s *testSys) Exit(e execute.ExitStatus) execute.ExitStatus {
 	return s.exitVal
 }
 
-func (s *testSys) GetFormatOpts() *dw.FormattingOptions {
+func (s *testSys) GetFormatOpts() *diagnosticwriter.FormattingOptions {
 	return s.formatOpts
 }
 
@@ -111,15 +111,19 @@ func (s *testSys) diff(baseline io.Writer) {
 	snap := map[string]string{}
 
 	err := s.FS().WalkDir(s.Host().GetCurrentDirectory(), func(path string, d vfs.DirEntry, e error) error {
-		if d == nil || d.IsDir() {
+		if d == nil {
 			return nil
 		}
-		newContents, ok := s.FS().ReadFile(path)
-		if !ok {
-			return e
+		if d.IsDir() {
+			for _, file := range s.FS().GetEntries(path) {
+				newContents, ok := s.FS().ReadFile(file.Name())
+				if !ok {
+					return e
+				}
+				snap[path] = newContents
+				diffFSEntry(baseline, s.serializedDiff[path], newContents, path)
+			}
 		}
-		snap[path] = newContents
-		diffFSEntry(baseline, s.serializedDiff[path], newContents, path)
 		return nil
 	})
 	if err != nil {
