@@ -223,6 +223,7 @@ type JSDocParsingMode int
 const (
 	JSDocParsingModeParseAll JSDocParsingMode = iota
 	JSDocParsingModeParseNone
+	JSDocParsingModeParseForTypeErrors
 	JSDocParsingModeParseForTypeInfo
 )
 

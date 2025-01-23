@@ -795,6 +795,52 @@ func (p *Parser) parseExpectedWithDiagnostic(kind ast.Kind, message *diagnostics
 	return false
 }
 
+func (p *Parser) parseTokenNode() *ast.Node {
+	pos := p.nodePos()
+	kind := p.token
+	p.nextToken()
+	result := p.factory.NewToken(kind)
+	p.finishNode(result, pos)
+	return result
+}
+
+func (p *Parser) parseExpectedToken(kind ast.Kind) *ast.Node {
+	token := p.parseOptionalToken(kind)
+	if token == nil {
+		p.parseErrorAtCurrentToken(diagnostics.X_0_expected, scanner.TokenToString(kind))
+		token = p.factory.NewToken(kind)
+		p.finishNode(token, p.nodePos())
+	}
+	return token
+}
+
+func (p *Parser) parseOptionalToken(kind ast.Kind) *ast.Node {
+	if p.token == kind {
+		return p.parseTokenNode()
+	}
+	return nil
+}
+
+func (p *Parser) parseExpectedTokenJSDoc(kind ast.Kind) *ast.Node {
+	optional := p.parseOptionalTokenJSDoc(kind)
+	if optional == nil {
+		if !isKeywordOrPunctuation(kind) {
+			panic("expected keyword or punctuation")
+		}
+		p.parseErrorAtCurrentToken(diagnostics.X_0_expected, scanner.TokenToString(kind))
+		optional = p.factory.NewToken(kind)
+		p.finishNode(optional, p.nodePos())
+	}
+	return optional
+}
+
+func (p *Parser) parseOptionalTokenJSDoc(kind ast.Kind) *ast.Node {
+	if p.token == kind {
+		return p.parseTokenNode()
+	}
+	return nil
+}
+
 func (p *Parser) parseStatement() *ast.Statement {
 	switch p.token {
 	case ast.KindSemicolonToken:
@@ -1453,52 +1499,6 @@ func (p *Parser) parseObjectBindingElement() *ast.Node {
 	result := p.factory.NewBindingElement(dotDotDotToken, propertyName, name, initializer)
 	p.finishNode(result, pos)
 	return result
-}
-
-func (p *Parser) parseTokenNode() *ast.Node {
-	pos := p.nodePos()
-	kind := p.token
-	p.nextToken()
-	result := p.factory.NewToken(kind)
-	p.finishNode(result, pos)
-	return result
-}
-
-func (p *Parser) parseExpectedToken(kind ast.Kind) *ast.Node {
-	token := p.parseOptionalToken(kind)
-	if token == nil {
-		p.parseErrorAtCurrentToken(diagnostics.X_0_expected, scanner.TokenToString(kind))
-		token = p.factory.NewToken(kind)
-		p.finishNode(token, p.nodePos())
-	}
-	return token
-}
-
-func (p *Parser) parseOptionalToken(kind ast.Kind) *ast.Node {
-	if p.token == kind {
-		return p.parseTokenNode()
-	}
-	return nil
-}
-
-func (p *Parser) parseExpectedTokenJSDoc(kind ast.Kind) *ast.Node {
-	optional := p.parseOptionalTokenJSDoc(kind)
-	if optional == nil {
-		if !isKeywordOrPunctuation(kind) {
-			panic("expected keyword or punctuation")
-		}
-		p.parseErrorAtCurrentToken(diagnostics.X_0_expected, scanner.TokenToString(kind))
-		optional = p.factory.NewToken(kind)
-		p.finishNode(optional, p.nodePos())
-	}
-	return optional
-}
-
-func (p *Parser) parseOptionalTokenJSDoc(kind ast.Kind) *ast.Node {
-	if p.token == kind {
-		return p.parseTokenNode()
-	}
-	return nil
 }
 
 func (p *Parser) parseInitializer() *ast.Expression {
@@ -5770,36 +5770,6 @@ func (p *Parser) finishNode(node *ast.Node, pos int) {
 func (p *Parser) finishNodeWithEnd(node *ast.Node, pos int, end int) {
 	node.Loc = core.NewTextRange(pos, end)
 	node.Flags |= p.contextFlags
-}
-
-func (p *Parser) withJSDoc(node *ast.Node, hasJSDoc bool) {
-	if !hasJSDoc {
-		return
-	}
-
-	if p.jsdocCache == nil {
-		p.jsdocCache = make(map[*ast.Node][]*ast.Node)
-	} else if _, ok := p.jsdocCache[node]; ok {
-		panic("tried to set JSDoc on a node with existing JSDoc")
-	}
-	// Should only be called once per node
-	p.hasDeprecatedTag = false
-	var jsDoc []*ast.Node
-	for _, comment := range getJSDocCommentRanges(&p.factory, node, p.sourceText) {
-		if parsed := p.parseJSDocComment(node, comment.Pos(), comment.End()); parsed != nil {
-			jsDoc = append(jsDoc, parsed)
-		}
-	}
-	if jsDoc != nil {
-		if node.Flags&ast.NodeFlagsHasJSDoc == 0 {
-			node.Flags |= ast.NodeFlagsHasJSDoc
-		}
-		if p.hasDeprecatedTag {
-			p.hasDeprecatedTag = false
-			node.Flags |= ast.NodeFlagsDeprecated
-		}
-		p.jsdocCache[node] = jsDoc
-	}
 }
 
 func (p *Parser) nextTokenIsSlash() bool {

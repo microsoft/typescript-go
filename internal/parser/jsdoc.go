@@ -26,6 +26,36 @@ const (
 	propertyLikeParseCallbackParameter
 )
 
+func (p *Parser) withJSDoc(node *ast.Node, hasJSDoc bool) {
+	if !hasJSDoc {
+		return
+	}
+
+	if p.jsdocCache == nil {
+		p.jsdocCache = make(map[*ast.Node][]*ast.Node)
+	} else if _, ok := p.jsdocCache[node]; ok {
+		panic("tried to set JSDoc on a node with existing JSDoc")
+	}
+	// Should only be called once per node
+	p.hasDeprecatedTag = false
+	var jsDoc []*ast.Node
+	for _, comment := range getJSDocCommentRanges(&p.factory, node, p.sourceText) {
+		if parsed := p.parseJSDocComment(node, comment.Pos(), comment.End()); parsed != nil {
+			jsDoc = append(jsDoc, parsed)
+		}
+	}
+	if jsDoc != nil {
+		if node.Flags&ast.NodeFlagsHasJSDoc == 0 {
+			node.Flags |= ast.NodeFlagsHasJSDoc
+		}
+		if p.hasDeprecatedTag {
+			p.hasDeprecatedTag = false
+			node.Flags |= ast.NodeFlagsDeprecated
+		}
+		p.jsdocCache[node] = jsDoc
+	}
+}
+
 func (p *Parser) parseJSDocTypeExpression(mayOmitBraces bool) *ast.Node {
 	pos := p.nodePos()
 	var hasBrace bool
