@@ -273,8 +273,7 @@ func (t *table) print() {
 }
 
 func formatDuration(d time.Duration) string {
-	seconds := d.Seconds()
-	return fmt.Sprintf("%.3fs", seconds)
+	return fmt.Sprintf("%.3fs", d.Seconds())
 }
 
 func listFiles(p *ts.Program) {
