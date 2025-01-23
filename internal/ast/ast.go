@@ -410,6 +410,14 @@ func (n *Node) PropertyName() *Node {
 	panic("Unhandled case in Node.PropertyName: " + n.Kind.String())
 }
 
+func (n *Node) PropertyNameOrName() *Node {
+	name := n.PropertyName()
+	if name == nil {
+		name = n.Name()
+	}
+	return name
+}
+
 // Node casts
 
 func (n *Node) AsIdentifier() *Identifier {

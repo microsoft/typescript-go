@@ -9585,9 +9585,8 @@ func (c *Checker) getTargetOfModuleDefault(moduleSymbol *ast.Symbol, node *ast.N
 		} else {
 			var name *ast.Node
 			if ast.IsImportOrExportSpecifier(node) {
-				name = node.PropertyName()
-			}
-			if name == nil {
+				name = node.PropertyNameOrName()
+			} else {
 				name = node.Name()
 			}
 			c.errorNoModuleMemberSymbol(moduleSymbol, moduleSymbol, node, name)
@@ -9642,10 +9641,7 @@ func (c *Checker) getTargetOfNamespaceExport(node *ast.Node, dontResolveAlias bo
 }
 
 func (c *Checker) getTargetOfImportSpecifier(node *ast.Node, dontResolveAlias bool) *ast.Symbol {
-	name := node.AsImportSpecifier().PropertyName
-	if name == nil {
-		name = node.AsImportSpecifier().Name()
-	}
+	name := node.PropertyNameOrName()
 	if binder.ModuleExportNameIsDefault(name) {
 		specifier := c.getModuleSpecifierForImportOrExport(node)
 		if specifier != nil {
@@ -9671,10 +9667,9 @@ func (c *Checker) getExternalModuleMember(node *ast.Node, specifier *ast.Node, d
 	moduleSymbol := c.resolveExternalModuleName(node, moduleSpecifier, false /*ignoreErrors*/)
 	var name *ast.Node
 	if !ast.IsPropertyAccessExpression(specifier) {
-		name = getPropertyNameFromSpecifier(specifier)
-	}
-	if name == nil {
-		name = getNameFromSpecifier(specifier)
+		name = specifier.PropertyNameOrName()
+	} else {
+		name = specifier.Name()
 	}
 	if !ast.IsIdentifier(name) && !ast.IsStringLiteral(name) {
 		return nil
@@ -9928,37 +9923,8 @@ func (c *Checker) reportInvalidImportEqualsExportMember(node *ast.Node, name *as
 	}
 }
 
-func getPropertyNameFromSpecifier(node *ast.Node) *ast.Node {
-	switch node.Kind {
-	case ast.KindImportSpecifier:
-		return node.AsImportSpecifier().PropertyName
-	case ast.KindExportSpecifier:
-		return node.AsExportSpecifier().PropertyName
-	case ast.KindBindingElement:
-		return node.AsBindingElement().PropertyName
-	}
-	panic("Unhandled case in getSpecifierPropertyName")
-}
-
-func getNameFromSpecifier(node *ast.Node) *ast.Node {
-	switch node.Kind {
-	case ast.KindImportSpecifier:
-		return node.AsImportSpecifier().Name()
-	case ast.KindExportSpecifier:
-		return node.AsExportSpecifier().Name()
-	case ast.KindBindingElement:
-		return node.AsBindingElement().Name()
-	case ast.KindPropertyAccessExpression:
-		return node.AsPropertyAccessExpression().Name()
-	}
-	panic("Unhandled case in getSpecifierPropertyName")
-}
-
 func (c *Checker) getTargetOfExportSpecifier(node *ast.Node, meaning ast.SymbolFlags, dontResolveAlias bool) *ast.Symbol {
-	name := node.AsExportSpecifier().PropertyName
-	if name == nil {
-		name = node.AsExportSpecifier().Name()
-	}
+	name := node.PropertyNameOrName()
 	if binder.ModuleExportNameIsDefault(name) {
 		specifier := c.getModuleSpecifierForImportOrExport(node)
 		if specifier != nil {
@@ -12128,20 +12094,14 @@ func (c *Checker) getBindingElementTypeFromParentType(declaration *ast.Node, par
 			literalMembers := make([]*ast.Node, 0, len(elements))
 			for _, element := range elements {
 				if !hasDotDotDotToken(element) {
-					name := element.AsBindingElement().PropertyName
-					if name == nil {
-						name = element.Name()
-					}
+					name := element.PropertyNameOrName()
 					literalMembers = append(literalMembers, name)
 				}
 			}
 			t = c.getRestType(parentType, literalMembers, declaration.Symbol())
 		} else {
 			// Use explicitly specified property name ({ p: xxx } form), or otherwise the implied name ({ p } form)
-			name := declaration.AsBindingElement().PropertyName
-			if name == nil {
-				name = declaration.Name()
-			}
+			name := declaration.PropertyNameOrName()
 			indexType := c.getLiteralTypeFromPropertyName(name)
 			declaredType := c.getIndexedAccessTypeEx(parentType, indexType, accessFlags, name, nil)
 			t = c.getFlowTypeOfDestructuring(declaration, declaredType)
@@ -12327,10 +12287,7 @@ func (c *Checker) getTypeFromObjectBindingPattern(pattern *ast.Node, includePatt
 	var stringIndexInfo *IndexInfo
 	objectFlags := ObjectFlagsObjectLiteral | ObjectFlagsContainsObjectOrArrayLiteral
 	for _, e := range pattern.AsBindingPattern().Elements.Nodes {
-		name := e.PropertyName()
-		if name == nil {
-			name = e.Name()
-		}
+		name := e.PropertyNameOrName()
 		if hasDotDotDotToken(e) {
 			stringIndexInfo = c.newIndexInfo(c.stringType, c.anyType, false /*isReadonly*/, nil)
 			continue
@@ -22499,10 +22456,7 @@ func (c *Checker) getMutableArrayOrTupleType(t *Type) *Type {
 }
 
 func (c *Checker) getContextualTypeForBindingElement(declaration *ast.Node, contextFlags ContextFlags) *Type {
-	name := declaration.AsBindingElement().PropertyName
-	if name == nil {
-		name = declaration.Name()
-	}
+	name := declaration.PropertyNameOrName()
 	if ast.IsBindingPattern(name) || ast.IsComputedNonLiteralName(name) {
 		return nil
 	}
