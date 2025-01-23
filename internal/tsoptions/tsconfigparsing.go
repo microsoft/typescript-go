@@ -1068,7 +1068,7 @@ func parseJsonConfigFileContentWorker(
 					fileName = "tsconfig.json"
 				}
 				diagnosticMessage := diagnostics.The_files_list_in_config_file_0_is_empty
-				nodeValue := forEachTsConfigPropArray(tsconfigToSourceFile(sourceFile), "files", func(property *ast.PropertyAssignment) *ast.Node { return property.Initializer })
+				nodeValue := forEachTsConfigPropArray(sourceFile.SourceFile, "files", func(property *ast.PropertyAssignment) *ast.Node { return property.Initializer })
 				errors = append(errors, ast.NewDiagnostic(sourceFile.SourceFile, core.NewTextRange(scanner.SkipTrivia(sourceFile.SourceFile.Text, nodeValue.Pos()), nodeValue.End()), diagnosticMessage, fileName))
 			} else {
 				errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.The_files_list_in_config_file_0_is_empty, configFileName))
