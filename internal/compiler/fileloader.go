@@ -59,6 +59,7 @@ func processAllProgramFiles(
 
 	loader.addRootTasks(rootFiles, false)
 	loader.addRootTasks(libs, true)
+	loader.addAutomaticTypeDirectiveTasks()
 
 	loader.startTasks(loader.rootTasks)
 
@@ -81,6 +82,24 @@ func (p *fileLoader) addRootTasks(files []string, isLib bool) {
 	for _, fileName := range files {
 		absPath := tspath.GetNormalizedAbsolutePath(fileName, p.host.GetCurrentDirectory())
 		p.rootTasks = append(p.rootTasks, &parseTask{normalizedFilePath: absPath, isLib: isLib})
+	}
+}
+
+func (p *fileLoader) addAutomaticTypeDirectiveTasks() {
+	var containingDirectory string
+	if p.compilerOptions.ConfigFilePath != "" {
+		containingDirectory = tspath.GetDirectoryPath(p.compilerOptions.ConfigFilePath)
+	} else {
+		containingDirectory = p.host.GetCurrentDirectory()
+	}
+	containingFileName := tspath.CombinePaths(containingDirectory, module.InferredTypesContainingFile)
+
+	automaticTypeDirectiveNames := module.GetAutomaticTypeDirectiveNames(p.compilerOptions, p.host)
+	for _, name := range automaticTypeDirectiveNames {
+		resolved := p.resolver.ResolveTypeReferenceDirective(name, containingFileName, core.ModuleKindNodeNext, nil)
+		if resolved.IsResolved() {
+			p.rootTasks = append(p.rootTasks, &parseTask{normalizedFilePath: resolved.ResolvedFileName, isLib: false})
+		}
 	}
 }
 
@@ -199,7 +218,12 @@ func (t *parseTask) start(loader *fileLoader) {
 func (p *fileLoader) parseSourceFile(fileName string) *ast.SourceFile {
 	path := tspath.ToPath(fileName, p.host.GetCurrentDirectory(), p.host.FS().UseCaseSensitiveFileNames())
 	text, _ := p.host.FS().ReadFile(fileName)
-	sourceFile := parser.ParseSourceFile(fileName, text, p.compilerOptions.GetEmitScriptTarget())
+	var sourceFile *ast.SourceFile
+	if tspath.FileExtensionIs(fileName, tspath.ExtensionJson) {
+		sourceFile = parser.ParseJSONText(fileName, text)
+	} else {
+		sourceFile = parser.ParseSourceFile(fileName, text, p.compilerOptions.GetEmitScriptTarget())
+	}
 	sourceFile.SetPath(path)
 	return sourceFile
 }

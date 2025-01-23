@@ -11,6 +11,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/jsnum"
 	"github.com/microsoft/typescript-go/internal/scanner"
+	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
 // Links store
@@ -1121,10 +1122,6 @@ func isJSDocOptionalParameter(node *ast.ParameterDeclaration) bool {
 	return false // !!!
 }
 
-func isQuestionToken(node *ast.Node) bool {
-	return node != nil && node.Kind == ast.KindQuestionToken
-}
-
 func isExclamationToken(node *ast.Node) bool {
 	return node != nil && node.Kind == ast.KindExclamationToken
 }
@@ -1134,17 +1131,17 @@ func isOptionalDeclaration(declaration *ast.Node) bool {
 	case ast.KindParameter:
 		return declaration.AsParameterDeclaration().QuestionToken != nil
 	case ast.KindPropertyDeclaration:
-		return isQuestionToken(declaration.AsPropertyDeclaration().PostfixToken)
+		return ast.IsQuestionToken(declaration.AsPropertyDeclaration().PostfixToken)
 	case ast.KindPropertySignature:
-		return isQuestionToken(declaration.AsPropertySignatureDeclaration().PostfixToken)
+		return ast.IsQuestionToken(declaration.AsPropertySignatureDeclaration().PostfixToken)
 	case ast.KindMethodDeclaration:
-		return isQuestionToken(declaration.AsMethodDeclaration().PostfixToken)
+		return ast.IsQuestionToken(declaration.AsMethodDeclaration().PostfixToken)
 	case ast.KindMethodSignature:
-		return isQuestionToken(declaration.AsMethodSignatureDeclaration().PostfixToken)
+		return ast.IsQuestionToken(declaration.AsMethodSignatureDeclaration().PostfixToken)
 	case ast.KindPropertyAssignment:
-		return isQuestionToken(declaration.AsPropertyAssignment().PostfixToken)
+		return ast.IsQuestionToken(declaration.AsPropertyAssignment().PostfixToken)
 	case ast.KindShorthandPropertyAssignment:
-		return isQuestionToken(declaration.AsShorthandPropertyAssignment().PostfixToken)
+		return ast.IsQuestionToken(declaration.AsShorthandPropertyAssignment().PostfixToken)
 	}
 	return false
 }
@@ -2146,10 +2143,6 @@ func createEvaluator(evaluateEntity Evaluator) Evaluator {
 	return evaluate
 }
 
-func isComputedNonLiteralName(name *ast.Node) bool {
-	return ast.IsComputedPropertyName(name) && !ast.IsStringOrNumericLiteralLike(name.Expression())
-}
-
 func isInfinityOrNaNString(name string) bool {
 	return name == "Infinity" || name == "-Infinity" || name == "NaN"
 }
@@ -2519,4 +2512,44 @@ func forEachYieldExpression(body *ast.Node, visitor func(expr *ast.Node)) {
 		return false
 	}
 	traverse(body)
+}
+
+func skipTypeChecking(sourceFile *ast.SourceFile, options *core.CompilerOptions) bool {
+	return options.NoCheck == core.TSTrue ||
+		options.SkipLibCheck == core.TSTrue && tspath.IsDeclarationFileName(sourceFile.FileName()) ||
+		options.SkipDefaultLibCheck == core.TSTrue && sourceFile.HasNoDefaultLib ||
+		!canIncludeBindAndCheckDiagnostics(sourceFile, options)
+}
+
+func canIncludeBindAndCheckDiagnostics(sourceFile *ast.SourceFile, options *core.CompilerOptions) bool {
+	// !!!
+	// if (!!sourceFile.checkJsDirective && sourceFile.checkJsDirective.enabled === false) return false;
+
+	if sourceFile.ScriptKind == core.ScriptKindTS || sourceFile.ScriptKind == core.ScriptKindTSX || sourceFile.ScriptKind == core.ScriptKindExternal {
+		return true
+	}
+
+	isJs := sourceFile.ScriptKind == core.ScriptKindJS || sourceFile.ScriptKind == core.ScriptKindJSX
+	isCheckJs := isJs && isCheckJsEnabledForFile(sourceFile, options)
+	isPlainJs := isPlainJsFile(sourceFile, options.CheckJs)
+
+	// By default, only type-check .ts, .tsx, Deferred, plain JS, checked JS and External
+	// - plain JS: .js files with no // ts-check and checkJs: undefined
+	// - check JS: .js files with either // ts-check or checkJs: true
+	// - external: files that are added by plugins
+	return isPlainJs || isCheckJs || sourceFile.ScriptKind == core.ScriptKindDeferred
+}
+
+func isCheckJsEnabledForFile(sourceFile *ast.SourceFile, compilerOptions *core.CompilerOptions) bool {
+	// !!!
+	// if sourceFile.CheckJsDirective != nil {
+	// 	return sourceFile.CheckJsDirective.Enabled
+	// }
+	return compilerOptions.CheckJs == core.TSTrue
+}
+
+func isPlainJsFile(file *ast.SourceFile, checkJs core.Tristate) bool {
+	// !!!
+	// return file != nil && (file.ScriptKind == core.ScriptKindJS || file.ScriptKind == core.ScriptKindJSX) && file.CheckJsDirective == nil && checkJs == core.TSUnknown
+	return file != nil && (file.ScriptKind == core.ScriptKindJS || file.ScriptKind == core.ScriptKindJSX) && checkJs == core.TSUnknown
 }
