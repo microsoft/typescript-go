@@ -335,8 +335,8 @@ func convertJsonOptionOfEnumType(
 	if typeMap == nil {
 		return nil, nil
 	}
-	val, b := typeMap.Get(key)
-	if b {
+	val, ok := typeMap.Get(key)
+	if ok {
 		return validateJsonOptionValue(opt, val, valueExpression, sourceFile)
 	}
 	// todo: clean up use of `TsConfigSourceFile`

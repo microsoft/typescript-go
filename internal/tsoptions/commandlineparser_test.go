@@ -177,13 +177,13 @@ func (f commandLineSubScenario) assertParseResult(t *testing.T) {
 
 		var formattedErrors strings.Builder
 		diagnosticwriter.WriteFormatDiagnostics(&formattedErrors, parsed.errors, &diagnosticwriter.FormattingOptions{NewLine: "\n"})
-		newBaseline := formattedErrors.String()
+		newBaselineErrors := formattedErrors.String()
 
 		// !!!
 		// useful for debugging--compares the new errors with the old errors. currently will NOT pass because of unimplemented options, not completely identical enum options, etc
 		// assert.Equal(t, tsBaseline.errors, newBaseline)
 
-		baseline.Run(t, f.testName+".js", formatNewBaseline(f.commandLine, o, newBaselineFileNames, newBaseline), baseline.Options{Subfolder: "tsoptions/commandLineParsing"})
+		baseline.Run(t, f.testName+".js", formatNewBaseline(f.commandLine, o, newBaselineFileNames, newBaselineErrors), baseline.Options{Subfolder: "tsoptions/commandLineParsing"})
 	})
 }
 
