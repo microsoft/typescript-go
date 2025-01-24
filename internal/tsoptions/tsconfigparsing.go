@@ -208,6 +208,14 @@ func tsconfigToSourceFile(tsconfigSourceFile *TsConfigSourceFile) *ast.SourceFil
 	return tsconfigSourceFile.SourceFile
 }
 
+func NewTsconfigSourceFileFromFilePath(configFileName string, configSourceText string) *TsConfigSourceFile {
+	sourceFile := parser.ParseJSONText(configFileName, configSourceText)
+	// todo: the other fields
+	return &TsConfigSourceFile{
+		SourceFile: sourceFile,
+	}
+}
+
 type jsonConversionNotifier struct {
 	rootOptions   *CommandLineOption
 	onPropertySet func(keyText string, value any, propertyAssignment *ast.PropertyAssignment, parentOption *CommandLineOption, option *CommandLineOption) (any, []*ast.Diagnostic)

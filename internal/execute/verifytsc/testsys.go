@@ -18,7 +18,10 @@ import (
 
 type FileMap map[string]string
 
-func NewTestSys(fileOrFolderList FileMap, args ...string) *testSys {
+func NewTestSys(fileOrFolderList FileMap, cwd string, args ...string) *testSys {
+	if cwd == "" {
+		cwd = "/home/src/workspaces/project"
+	}
 	// todo: rest of TestServerHost constructor
 	mapFS := fstest.MapFS{}
 	fileList := []string{}
@@ -29,7 +32,7 @@ func NewTestSys(fileOrFolderList FileMap, args ...string) *testSys {
 		fileList = append(fileList, name)
 	}
 	fs := bundled.WrapFS(vfstest.FromMapFS(mapFS, true /*useCaseSensitiveFileNames*/))
-	newHost := compiler.NewCompilerHost(&core.CompilerOptions{}, "/home/src/workspaces/project", fs)
+	newHost := compiler.NewCompilerHost(&core.CompilerOptions{}, cwd, fs)
 	return &testSys{
 		host:         newHost,
 		files:        fileList,

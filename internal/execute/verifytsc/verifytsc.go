@@ -1,6 +1,7 @@
 package verifytsc
 
 import (
+	"encoding/json"
 	"fmt"
 	"path/filepath"
 	"strings"
@@ -50,10 +51,12 @@ func (test *tscInput) verify(t *testing.T) {
 			fmt.Fprintln(baselineBuilder, strings.Join(test.commandLineArgs, " "))
 			// if (input.baselineSourceMap) generateSourceMapBasleineFiles
 
-			parsedCommandLine, _ := execute.TestCommandLine(test.sys, nil, test.commandLineArgs)
-			// todo: actually print compiler options
-			compilerOptionsString := "{ strict: " + parsedCommandLine.CompilerOptions().Strict.String() + ", noEmit: " + parsedCommandLine.CompilerOptions().NoEmit.String() + " }"
-			fmt.Fprintln(baselineBuilder, "\nCompilerOptions::", compilerOptionsString)
+			parsedCommandLine, exit := execute.TestCommandLine(test.sys, nil, test.commandLineArgs)
+			baselineBuilder.WriteString("\n\nExitStatus:: " + fmt.Sprint(exit))
+
+			compilerOptionsString, _ := json.MarshalIndent(parsedCommandLine.CompilerOptions(), "", "    ")
+			baselineBuilder.WriteString("\n\nCompilerOptions::")
+			baselineBuilder.Write(compilerOptionsString)
 
 			test.sys.serializeState(baselineBuilder, serializeOutputOrderBefore)
 			options, name := test.getBaselineName("")

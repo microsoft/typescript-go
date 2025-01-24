@@ -25,8 +25,8 @@ func NewParsedCommandLine(
 	errors []*ast.Diagnostic,
 	raw any,
 	compileOnSave *bool,
-) ParsedCommandLine {
-	return ParsedCommandLine{
+) *ParsedCommandLine {
+	return &ParsedCommandLine{
 		ParsedConfig:  options,
 		ConfigFile:    configFile,
 		Errors:        errors,

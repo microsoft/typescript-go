@@ -1,7 +1,7 @@
 
-currentDirectory::/home/src/workspaces/project
+currentDirectory::/home/src/workspaces/solution
 useCaseSensitiveFileNames::true
-Input::--help --all
+Input::--p project
 
 
 ExitStatus:: 1
@@ -81,7 +81,7 @@ CompilerOptions::{
     "paths": null,
     "preserveConstEnums": null,
     "preserveSymlinks": null,
-    "project": "",
+    "project": "/home/src/workspaces/solution/project",
     "resolveJsonModule": null,
     "resolvePackageJsonExports": null,
     "resolvePackageJsonImports": null,
@@ -131,5 +131,5 @@ CompilerOptions::{
     "tscBuild": null
 }
 Output::
-error TS6266: Option 'help' can only be specified on command line.
+error TS5081: Cannot find a tsconfig.json file at the current directory: /home/src/workspaces/solution/project/tsconfig.json.
 

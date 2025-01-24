@@ -5,11 +5,10 @@ import (
 	"strings"
 
 	"github.com/microsoft/typescript-go/internal/ast"
-	ts "github.com/microsoft/typescript-go/internal/compiler"
+	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/compiler/diagnostics"
 	"github.com/microsoft/typescript-go/internal/core"
-	dw "github.com/microsoft/typescript-go/internal/diagnosticwriter"
-	"github.com/microsoft/typescript-go/internal/parser"
+	"github.com/microsoft/typescript-go/internal/diagnosticwriter"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
@@ -20,7 +19,7 @@ func CommandLine(sys System, cb cbType, commandLineArgs []string) ExitStatus {
 }
 
 func TestCommandLine(sys System, cb cbType, commandLineArgs []string) (*tsoptions.ParsedCommandLine, ExitStatus) {
-	parsedCommandLine := tsoptions.ParseCommandLine(commandLineArgs, sys.FS(), sys.Host().GetCurrentDirectory())
+	parsedCommandLine := tsoptions.ParseCommandLine(commandLineArgs, sys.Host())
 	return parsedCommandLine, executeCommandLineWorker(sys, cb, parsedCommandLine)
 }
 
@@ -137,8 +136,7 @@ func parseConfigFileWithSystem(
 	return getParsedCommandLineOfConfigFile(configFileName, optionsToExtend, sys.Host())
 }
 
-func getParsedCommandLineOfConfigFile(configFileName string, options *core.CompilerOptions, host ts.CompilerHost) *tsoptions.ParsedCommandLine {
-	// todo implement when tsconfigParsing
+func getParsedCommandLineOfConfigFile(configFileName string, options *core.CompilerOptions, host compiler.CompilerHost) *tsoptions.ParsedCommandLine {
 	errors := []*ast.Diagnostic{}
 	configFileText, errors := tsoptions.TryReadFile(configFileName, host.FS().ReadFile, errors)
 	if len(errors) > 0 {
@@ -146,25 +144,25 @@ func getParsedCommandLineOfConfigFile(configFileName string, options *core.Compi
 		return nil
 	}
 
-	tsConfigSourceFile := parser.ParseJSONText(configFileName, configFileText)
+	tsConfigSourceFile := tsoptions.NewTsconfigSourceFileFromFilePath(configFileName, configFileText)
 	cwd := host.GetCurrentDirectory()
-
-	tsConfigSourceFile.SetPath(tspath.ToPath(configFileName, cwd, host.FS().UseCaseSensitiveFileNames()))
-	// todo tsconfigParsing
-	// result.resolvedPath = tspath.NormalizePath(result.resolvedPath)
-	// result.originalFileName = result.FileName()
-	// return tsoptions.ParseJsonSourceFileConfigFileContent(
-	// 	tsConfigSourceFile,
-	// 	host,
-	// 	tspath.GetNormalizedAbsolutePath(tspath.GetDirectoryPath(configFileName), cwd),
-	// 	options,
-	// 	tspath.GetNormalizedAbsolutePath(configFileName, cwd),
-	// )
-	return nil
+	tsConfigSourceFile.SourceFile.SetPath(tspath.ToPath(configFileName, cwd, host.FS().UseCaseSensitiveFileNames()))
+	// tsConfigSourceFile.resolvedPath = tsConfigSourceFile.FileName()
+	// tsConfigSourceFile.originalFileName = tsConfigSourceFile.FileName()
+	return tsoptions.ParseJsonSourceFileConfigFileContent(
+		tsConfigSourceFile,
+		host,
+		tspath.GetNormalizedAbsolutePath(tspath.GetDirectoryPath(configFileName), cwd),
+		options,
+		tspath.GetNormalizedAbsolutePath(configFileName, cwd),
+		nil,
+		nil,
+		nil,
+	)
 }
 
 func performCompilation(sys System, cb cbType, reportDiagnostic DiagnosticReporter, config *tsoptions.ParsedCommandLine) ExitStatus {
-	program := ts.NewProgramFromParsedCommandLine(config, sys.Host())
+	program := compiler.NewProgramFromParsedCommandLine(config, sys.Host())
 	options := program.Options()
 	allDiagnostics := program.ConfigParsingDiagnostics()
 
@@ -185,16 +183,16 @@ func performCompilation(sys System, cb cbType, reportDiagnostic DiagnosticReport
 	// 	addRange(allDiagnostics, program.getDeclarationDiagnostics(/*sourceFile*/ undefined, cancellationToken));
 	// }
 
-	emitResult := &ts.EmitResult{EmitSkipped: true, Diagnostics: []*ast.Diagnostic{}}
+	emitResult := &compiler.EmitResult{EmitSkipped: true, Diagnostics: []*ast.Diagnostic{}}
 	if options.ListFilesOnly.IsFalse() {
 		// todo emit not fully implemented
-		emitResult = program.Emit(&ts.EmitOptions{})
+		emitResult = program.Emit(&compiler.EmitOptions{})
 	}
 	diagnostics = append(diagnostics, emitResult.Diagnostics...)
 
 	allDiagnostics = append(allDiagnostics, diagnostics...)
 	if allDiagnostics != nil {
-		allDiagnostics = ts.SortAndDeduplicateDiagnostics(allDiagnostics)
+		allDiagnostics = compiler.SortAndDeduplicateDiagnostics(allDiagnostics)
 		for _, diagnostic := range allDiagnostics {
 			reportDiagnostic(diagnostic)
 		}
@@ -207,7 +205,7 @@ func performCompilation(sys System, cb cbType, reportDiagnostic DiagnosticReport
 	return sys.Exit(getExitStatus(emitResult, allDiagnostics))
 }
 
-func getExitStatus(emitResult *ts.EmitResult, diagnostics []*ast.Diagnostic) ExitStatus {
+func getExitStatus(emitResult *compiler.EmitResult, diagnostics []*ast.Diagnostic) ExitStatus {
 	if emitResult.EmitSkipped && diagnostics != nil && len(diagnostics) > 0 {
 		return ExitStatusDiagnosticsPresent_OutputsSkipped
 	} else if len(diagnostics) > 0 {
@@ -236,7 +234,7 @@ type (
 func CreateDiagnosticReporter(sys System, pretty bool) DiagnosticReporter {
 	if !pretty {
 		return func(diagnostic *ast.Diagnostic) {
-			dw.WriteFormatDiagnostic(sys, diagnostic, sys.GetFormatOpts())
+			diagnosticwriter.WriteFormatDiagnostic(sys, diagnostic, sys.GetFormatOpts())
 			sys.EndWrite()
 		}
 	}
@@ -244,7 +242,7 @@ func CreateDiagnosticReporter(sys System, pretty bool) DiagnosticReporter {
 	diagArr := [1]*ast.Diagnostic{}
 	return func(diagnostic *ast.Diagnostic) {
 		diagArr[0] = diagnostic
-		dw.FormatDiagnosticsWithColorAndContext(sys, diagArr[:], sys.GetFormatOpts())
+		diagnosticwriter.FormatDiagnosticsWithColorAndContext(sys, diagArr[:], sys.GetFormatOpts())
 		sys.EndWrite()
 		diagArr[0] = nil
 	}
@@ -268,7 +266,7 @@ func createReportErrorSummary(sys System, options *core.CompilerOptions) func(di
 	if shouldBePretty(sys, options) {
 		formatOpts := sys.GetFormatOpts()
 		return func(diagnostics []*ast.Diagnostic) {
-			dw.WriteErrorSummaryText(sys, diagnostics, formatOpts)
+			diagnosticwriter.WriteErrorSummaryText(sys, diagnostics, formatOpts)
 			sys.EndWrite()
 		}
 	}
@@ -283,7 +281,7 @@ func shouldBePretty(sys System, options *core.CompilerOptions) bool {
 	return options.Pretty.IsTrue()
 }
 
-func reportStatistics(sys System, program *ts.Program) {
+func reportStatistics(sys System, program *compiler.Program) {
 	// todo
 	stats := []statistic{
 		newStatistic("Files", len(program.SourceFiles())),

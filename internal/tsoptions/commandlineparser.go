@@ -11,8 +11,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/vfs"
 )
 
-type OptionsBase map[string]any // CompilerOptionsValue|TsConfigSourceFile
-
 func (p *CommandLineParser) AlternateMode() *AlternateModeDiagnostics {
 	return p.workerDiagnostics.didYouMean.alternateMode
 }
@@ -50,37 +48,32 @@ func (p *CommandLineParser) GetOptionsNameMap() *NameMap {
 type CommandLineParser struct {
 	workerDiagnostics *ParseCommandLineWorkerDiagnostics
 	fs                vfs.FS
-	options           OptionsBase
-	// todo: watchOptions   OptionsBase
+	options           map[string]any
+	// todo: watchOptions    map[string]any
 	fileNames []string
 	errors    []*ast.Diagnostic
 }
 
 func ParseCommandLine(
 	commandLine []string,
-	fs vfs.FS,
-	currDir string,
+	host ParseConfigHost,
 ) *ParsedCommandLine {
 	if commandLine == nil {
 		commandLine = []string{}
 	}
-	parseCommandLineDiagnostics := GetCompilerOptionsDidYouMeanDiagnostics(optionsDeclarations)
-	parser := parseCommandLineWorker(parseCommandLineDiagnostics, commandLine, fs)
+	parser := parseCommandLineWorker(CompilerOptionsDidYouMeanDiagnostics, commandLine, host.FS())
 	// this function should convert commandLineWorker output to compileroptions
 	// todo: return correct type (waiting on shared tsconfig parsing utilities)
 	// parseCommandLineWorker()
-	fileNames := []string{currDir}
-	if len(parser.fileNames) != 0 && parser.fileNames[0] != "" {
-		fileNames = parser.fileNames
-	}
-	return &ParsedCommandLine{
-		ParsedConfig: &core.ParsedOptions{
-			CompilerOptions:   parser.tempGetCompilerOptions(),
-			FileNames:         fileNames,
-			ProjectReferences: []core.ProjectReference{},
-		},
-		Errors: parser.errors,
-	}
+	// fileNames := []string{host.GetCurrentDirectory()}
+	// if len(parser.fileNames) != 0 && parser.fileNames[0] != "" {
+	// 	fileNames = parser.fileNames
+	// }
+	o, d := convertOptionsFromJson(commandLineCompilerOptionsMap, parser.options, host.GetCurrentDirectory(), &core.CompilerOptions{})
+	return NewParsedCommandLine(&core.ParsedOptions{
+		CompilerOptions: o,
+		FileNames:       parser.fileNames,
+	}, nil, d, parser, nil)
 }
 
 func (p *CommandLineParser) tempGetCompilerOptions() *core.CompilerOptions {
@@ -109,7 +102,7 @@ func parseCommandLineWorker(
 		fs:                fs,
 		workerDiagnostics: parseCommandLineWithDiagnostics,
 		fileNames:         []string{},
-		options:           OptionsBase{},
+		options:           map[string]any{},
 		errors:            []*ast.Diagnostic{},
 	}
 	parser.parseStrings(commandLine)

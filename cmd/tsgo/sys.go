@@ -7,14 +7,13 @@ import (
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/diagnosticwriter"
 	"github.com/microsoft/typescript-go/internal/execute"
-	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 )
 
 type osSys struct {
 	exit       func(int) // os.Exit
 	write      func([]byte) (int, error)
-	formatOpts diagnosticwriter.FormattingOptions
+	formatOpts *diagnosticwriter.FormattingOptions
 	host       compiler.CompilerHost
 }
 
@@ -41,7 +40,7 @@ func (s *osSys) EndWrite() {
 }
 
 func (s *osSys) GetFormatOpts() *diagnosticwriter.FormattingOptions {
-	return &s.formatOpts
+	return s.formatOpts
 }
 
 func NewSystem() *osSys {
@@ -52,15 +51,9 @@ func NewSystem() *osSys {
 	}
 	newHost := compiler.NewCompilerHost(nil, cwd, vfs.FromOS())
 	return &osSys{
-		host:  newHost,
-		exit:  os.Exit,
-		write: os.Stdout.Write,
-		formatOpts: diagnosticwriter.FormattingOptions{
-			NewLine: "\n",
-			ComparePathsOptions: tspath.ComparePathsOptions{
-				CurrentDirectory:          cwd,
-				UseCaseSensitiveFileNames: newHost.FS().UseCaseSensitiveFileNames(),
-			},
-		},
+		host:       newHost,
+		exit:       os.Exit,
+		write:      os.Stdout.Write,
+		formatOpts: getFormatOpts(newHost),
 	}
 }
