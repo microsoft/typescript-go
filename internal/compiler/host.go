@@ -1,7 +1,10 @@
 package compiler
 
 import (
+	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/parser"
+	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 )
 
@@ -11,6 +14,7 @@ type CompilerHost interface {
 	GetCurrentDirectory() string
 	NewLine() string
 	Trace(msg string)
+	GetSourceFile(fileName string, languageVersion core.ScriptTarget) *ast.SourceFile
 }
 
 type FileInfo struct {
@@ -47,9 +51,20 @@ func (h *compilerHost) GetCurrentDirectory() string {
 }
 
 func (h *compilerHost) NewLine() string {
+	if h.options == nil {
+		return "\n"
+	}
 	return h.options.NewLine.GetNewLineCharacter()
 }
 
 func (h *compilerHost) Trace(msg string) {
 	//!!! TODO: implement
+}
+
+func (h *compilerHost) GetSourceFile(fileName string, languageVersion core.ScriptTarget) *ast.SourceFile {
+	text, _ := h.FS().ReadFile(fileName)
+	if tspath.FileExtensionIs(fileName, tspath.ExtensionJson) {
+		return parser.ParseJSONText(fileName, text)
+	}
+	return parser.ParseSourceFile(fileName, text, languageVersion)
 }
