@@ -11,21 +11,29 @@ import (
 
 type Options struct {
 	Subfolder string
+	Gold      bool
+	Expected  bool
 }
 
 const NoContent = "<no content>"
 
 func Run(t *testing.T, fileName string, actual string, opts Options) {
-	writeComparison(t, actual, fileName, false /*useSubmodule*/, opts)
+	opts.Expected = false
+	writeComparison(t, "", actual, fileName, false /*useSubmodule*/, opts)
 }
 
 func RunAgainstSubmodule(t *testing.T, fileName string, actual string, opts Options) {
-	writeComparison(t, actual, fileName, true /*useSubmodule*/, opts)
+	writeComparison(t, "", actual, fileName, true /*useSubmodule*/, opts)
 }
 
-func writeComparison(t *testing.T, actual string, relativeFileName string, useSubmodule bool, opts Options) {
-	if actual == "" {
-		panic("the generated content was \"\". Return 'baseline.NoContent' if no baselining is required.")
+func RunFromText(t testing.TB, fileName string, expected string, actual string, opts Options) {
+	opts.Expected = true
+	writeComparison(t, expected, actual, fileName, false /*useSubmodule*/, opts)
+}
+
+func writeComparison(t testing.TB, expected string, actual string, relativeFileName string, useSubmodule bool, opts Options) {
+	if actual == "" || opts.Expected && expected == "" {
+		panic("The generated content was \"\". Return 'baseline.NoContent' if no baselining is required.")
 	}
 	var (
 		localFileName     string
@@ -35,14 +43,19 @@ func writeComparison(t *testing.T, actual string, relativeFileName string, useSu
 	if useSubmodule {
 		localFileName = submoduleLocalPath(relativeFileName, opts.Subfolder)
 		referenceFileName = submoduleReferencePath(relativeFileName, opts.Subfolder)
+	} else if opts.Gold {
+		localFileName = localPath(relativeFileName, opts.Subfolder)
+		referenceFileName = goldPath(relativeFileName, opts.Subfolder)
 	} else {
 		localFileName = localPath(relativeFileName, opts.Subfolder)
 		referenceFileName = referencePath(relativeFileName, opts.Subfolder)
 	}
 
-	expected := NoContent
-	if content, err := os.ReadFile(referenceFileName); err == nil {
-		expected = string(content)
+	if !opts.Expected {
+		expected = NoContent
+		if content, err := os.ReadFile(referenceFileName); err == nil {
+			expected = string(content)
+		}
 	}
 
 	if _, err := os.Stat(localFileName); err == nil {
@@ -86,6 +99,10 @@ func submoduleLocalPath(fileName string, subfolder string) string {
 
 func referencePath(fileName string, subfolder string) string {
 	return filepath.Join(repo.TestDataPath, "baselines", "reference", subfolder, fileName)
+}
+
+func goldPath(fileName string, subfolder string) string {
+	return filepath.Join(repo.TestDataPath, "baselines", "gold", subfolder, fileName)
 }
 
 func submoduleReferencePath(fileName string, subfolder string) string {
