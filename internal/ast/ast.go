@@ -46,21 +46,23 @@ func visitModifiers(v Visitor, modifiers *ModifierList) bool {
 // NodeFactory
 
 type NodeFactory struct {
-	binaryExpressionPool         core.Pool[BinaryExpression]
-	blockPool                    core.Pool[Block]
-	callExpressionPool           core.Pool[CallExpression]
-	expressionStatementPool      core.Pool[ExpressionStatement]
-	identifierPool               core.Pool[Identifier]
-	ifStatementPool              core.Pool[IfStatement]
-	nodeListPool                 core.Pool[NodeList]
-	parameterDeclarationPool     core.Pool[ParameterDeclaration]
-	propertyAccessExpressionPool core.Pool[PropertyAccessExpression]
-	returnStatementPool          core.Pool[ReturnStatement]
-	tokenPool                    core.Pool[Token]
-	typeReferenceNodePool        core.Pool[TypeReferenceNode]
-	variableDeclarationListPool  core.Pool[VariableDeclarationList]
-	variableDeclarationPool      core.Pool[VariableDeclaration]
-	variableStatementPool        core.Pool[VariableStatement]
+	binaryExpressionPool             core.Pool[BinaryExpression]
+	blockPool                        core.Pool[Block]
+	callExpressionPool               core.Pool[CallExpression]
+	expressionStatementPool          core.Pool[ExpressionStatement]
+	identifierPool                   core.Pool[Identifier]
+	ifStatementPool                  core.Pool[IfStatement]
+	keywordTypeNodePool              core.Pool[KeywordTypeNode]
+	nodeListPool                     core.Pool[NodeList]
+	parameterDeclarationPool         core.Pool[ParameterDeclaration]
+	propertyAccessExpressionPool     core.Pool[PropertyAccessExpression]
+	propertySignatureDeclarationPool core.Pool[PropertySignatureDeclaration]
+	returnStatementPool              core.Pool[ReturnStatement]
+	tokenPool                        core.Pool[Token]
+	typeReferenceNodePool            core.Pool[TypeReferenceNode]
+	variableDeclarationListPool      core.Pool[VariableDeclarationList]
+	variableDeclarationPool          core.Pool[VariableDeclaration]
+	variableStatementPool            core.Pool[VariableStatement]
 }
 
 func newNode(kind Kind, data nodeData) *Node {
@@ -3806,7 +3808,7 @@ type PropertySignatureDeclaration struct {
 }
 
 func (f *NodeFactory) NewPropertySignatureDeclaration(modifiers *ModifierList, name *PropertyName, postfixToken *TokenNode, typeNode *TypeNode, initializer *Expression) *Node {
-	data := &PropertySignatureDeclaration{}
+	data := f.propertySignatureDeclarationPool.New()
 	data.modifiers = modifiers
 	data.name = name
 	data.PostfixToken = postfixToken
@@ -5113,7 +5115,7 @@ type KeywordTypeNode struct {
 }
 
 func (f *NodeFactory) NewKeywordTypeNode(kind Kind) *Node {
-	return newNode(kind, &KeywordTypeNode{})
+	return newNode(kind, f.keywordTypeNodePool.New())
 }
 
 // UnionOrIntersectionTypeBase
