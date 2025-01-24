@@ -21,7 +21,7 @@ func BenchmarkBind(b *testing.B) {
 
 			sourceFiles := make([]*ast.SourceFile, b.N)
 			for i := range b.N {
-				sourceFiles[i] = parser.ParseSourceFile(fileName, sourceText, core.ScriptTargetESNext, scanner.JSDocParsingModeParseNone)
+				sourceFiles[i] = parser.ParseSourceFile(fileName, sourceText, core.ScriptTargetESNext, scanner.JSDocParsingModeParseAll)
 			}
 
 			compilerOptions := &core.CompilerOptions{Target: core.ScriptTargetESNext, ModuleKind: core.ModuleKindNodeNext}

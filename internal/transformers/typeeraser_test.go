@@ -94,7 +94,7 @@ func checkEmit(t *testing.T, file *ast.SourceFile, expected string) {
 }
 
 func parseTypeScript(text string, jsx bool) *ast.SourceFile {
-	file := parser.ParseSourceFile(core.IfElse(jsx, "main.tsx", "main.ts"), text, core.ScriptTargetESNext, scanner.JSDocParsingModeParseNone)
+	file := parser.ParseSourceFile(core.IfElse(jsx, "main.tsx", "main.ts"), text, core.ScriptTargetESNext, scanner.JSDocParsingModeParseAll)
 	ast.SetParentInChildren(file.AsNode())
 	return file
 }

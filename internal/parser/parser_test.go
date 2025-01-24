@@ -26,7 +26,7 @@ func BenchmarkParse(b *testing.B) {
 			sourceText := f.ReadFile(b)
 
 			for range b.N {
-				ParseSourceFile(fileName, sourceText, core.ScriptTargetESNext, scanner.JSDocParsingModeParseNone)
+				ParseSourceFile(fileName, sourceText, core.ScriptTargetESNext, scanner.JSDocParsingModeParseAll)
 			}
 		})
 	}
@@ -64,7 +64,7 @@ func TestParseTypeScriptRepo(t *testing.T) {
 					if strings.HasSuffix(f.name, ".json") {
 						sourceFile = ParseJSONText(f.path, string(sourceText))
 					} else {
-						sourceFile = ParseSourceFile(f.path, string(sourceText), core.ScriptTargetESNext, scanner.JSDocParsingModeParseNone)
+						sourceFile = ParseSourceFile(f.path, string(sourceText), core.ScriptTargetESNext, scanner.JSDocParsingModeParseAll)
 					}
 
 					if !test.ignoreErrors {
