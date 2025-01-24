@@ -38,13 +38,14 @@ func (p *Parser) withJSDoc(node *ast.Node, hasJSDoc bool) {
 	}
 	// Should only be called once per node
 	p.hasDeprecatedTag = false
-	var jsDoc []*ast.Node
-	for _, comment := range getJSDocCommentRanges(&p.factory, node, p.sourceText) {
+	ranges := getJSDocCommentRanges(&p.factory, node, p.sourceText)
+	jsDoc := p.nodeSlicePool.NewSlice(len(ranges))[:0]
+	for _, comment := range ranges {
 		if parsed := p.parseJSDocComment(node, comment.Pos(), comment.End()); parsed != nil {
 			jsDoc = append(jsDoc, parsed)
 		}
 	}
-	if jsDoc != nil {
+	if len(jsDoc) != 0 {
 		if node.Flags&ast.NodeFlagsHasJSDoc == 0 {
 			node.Flags |= ast.NodeFlagsHasJSDoc
 		}
@@ -165,7 +166,7 @@ func (p *Parser) parseJSDocCommentWorker(start int, indent int) *ast.Node {
 	tagsEnd := -1
 	state := jsdocStateSawAsterisk
 	var commentParts []*ast.Node
-	var comments []string
+	comments := p.jsdocCommentsBuf
 	commentsPos := -1
 	linkEnd := start
 	margin := -1
@@ -255,7 +256,7 @@ loop:
 				jsdocText := p.factory.NewJSDocText(strings.Join(comments, ""))
 				p.finishNodeWithEnd(jsdocText, linkEnd, commentEnd)
 				commentParts = append(commentParts, jsdocText, link)
-				comments = []string{}
+				comments = comments[:0]
 				linkEnd = p.scanner.TokenEnd()
 				break
 			}
@@ -289,6 +290,7 @@ loop:
 		p.newNodeList(core.NewTextRange(start, commentsPos), commentParts),
 		p.newNodeList(core.NewTextRange(tagsPos, tagsEnd), tags))
 	p.finishNodeWithEnd(jsdocComment, start, len(p.sourceText))
+	p.jsdocCommentsBuf = comments[:0] // Reuse this slice for further parses
 	return jsdocComment
 }
 

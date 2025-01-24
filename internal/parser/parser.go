@@ -71,6 +71,7 @@ type Parser struct {
 	nodeSlicePool         core.Pool[*ast.Node]
 	jsdocCache            map[*ast.Node][]*ast.Node
 	possibleAwaitSpans    []int
+	jsdocCommentsBuf      []string
 }
 
 func NewParser() *Parser {
