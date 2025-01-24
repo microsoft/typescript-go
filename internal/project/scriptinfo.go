@@ -10,6 +10,7 @@ import (
 type scriptInfo struct {
 	fileName   string
 	path       tspath.Path
+	isDynamic  bool
 	scriptKind core.ScriptKind
 	text       string
 	version    int
@@ -73,4 +74,16 @@ func (s *scriptInfo) isAttached(project *Project) bool {
 func (s *scriptInfo) isSymlink() bool {
 	// !!!
 	return false
+}
+
+func (s *scriptInfo) isOrphan() bool {
+	if s.deferredDelete {
+		return true
+	}
+	for _, project := range s.containingProjects {
+		if !project.isOrphan() {
+			return false
+		}
+	}
+	return true
 }

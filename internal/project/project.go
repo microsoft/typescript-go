@@ -11,19 +11,39 @@ import (
 
 var _ ls.Host = (*Project)(nil)
 
+type ProjectKind int
+
+const (
+	ProjectKindInferred ProjectKind = iota
+	ProjectKindConfigured
+)
+
 type Project struct {
 	projectService *ProjectService
+	kind           ProjectKind
 
 	dirty                     bool
 	version                   int
 	hasAddedOrRemovedFiles    bool
 	hasAddedOrRemovedSymlinks bool
+	deferredClose             bool
 
+	configFileName string
+	configFilePath tspath.Path
 	// rootFileNames was a map from Path to { NormalizedPath, ScriptInfo? } in the original code.
 	// But the ProjectService owns script infos, so it's not clear why there was an extra pointer.
 	rootFileNames   []string
 	compilerOptions *core.CompilerOptions
 	program         *compiler.Program
+}
+
+func NewConfiguredProject(configFileName string, configFilePath tspath.Path, projectService *ProjectService) *Project {
+	return &Project{
+		projectService: projectService,
+		kind:           ProjectKindConfigured,
+		configFileName: configFileName,
+		configFilePath: configFilePath,
+	}
 }
 
 // FS implements LanguageServiceHost.
@@ -94,9 +114,30 @@ func (p *Project) markAsDirty() {
 	p.version++
 }
 
+func (p *Project) updateIfDirty() {
+	// !!! p.invalidateResolutionsOfFailedLookupLocations()
+	if p.dirty {
+		p.updateGraph()
+	}
+}
+
 func (p *Project) onFileAddedOrRemoved(isSymlink bool) {
 	p.hasAddedOrRemovedFiles = true
 	if isSymlink {
 		p.hasAddedOrRemovedSymlinks = true
+	}
+}
+
+func (p *Project) updateGraph() {
+}
+
+func (p *Project) isOrphan() bool {
+	switch p.kind {
+	case ProjectKindInferred:
+		return len(p.rootFileNames) == 0
+	case ProjectKindConfigured:
+		return p.deferredClose
+	default:
+		panic("unhandled project kind")
 	}
 }
