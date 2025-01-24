@@ -351,6 +351,10 @@ func (s *Scanner) SetScriptTarget(scriptTarget core.ScriptTarget) {
 	s.languageVersion = scriptTarget
 }
 
+func (s *Scanner) SetScriptKind(scriptKind core.ScriptKind) {
+	s.scriptKind = scriptKind
+}
+
 func (s *Scanner) SetJSDocParsingMode(kind JSDocParsingMode) {
 	s.JSDocParsingMode = kind
 }
@@ -403,7 +407,7 @@ func (s *Scanner) shouldParseJSDoc() bool {
 		// we don't need to parse to find @see or @link.
 		return false
 	}
-	text := s.text
+	text := s.text[s.fullStartPos:s.pos]
 	for {
 		i := strings.IndexByte(text, '@')
 		if i < 0 {

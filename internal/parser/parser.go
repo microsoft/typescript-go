@@ -168,7 +168,6 @@ func (p *Parser) initializeState(fileName string, sourceText string, languageVer
 	p.languageVersion = languageVersion
 	p.scriptKind = ensureScriptKind(fileName, scriptKind)
 	p.languageVariant = getLanguageVariant(p.scriptKind)
-	p.scanner.SetJSDocParsingMode(jsdocParsingMode)
 	switch p.scriptKind {
 	case core.ScriptKindJS, core.ScriptKindJSX:
 		p.contextFlags = ast.NodeFlagsJavaScriptFile
@@ -181,6 +180,8 @@ func (p *Parser) initializeState(fileName string, sourceText string, languageVer
 	p.scanner.SetOnError(p.scanError)
 	p.scanner.SetScriptTarget(p.languageVersion)
 	p.scanner.SetLanguageVariant(p.languageVariant)
+	p.scanner.SetScriptKind(p.scriptKind)
+	p.scanner.SetJSDocParsingMode(jsdocParsingMode)
 }
 
 func (p *Parser) scanError(message *diagnostics.Message, pos int, length int, args ...any) {
