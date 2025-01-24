@@ -66,12 +66,13 @@ type Parser struct {
 	statementHasAwaitIdentifier bool
 	hasDeprecatedTag            bool
 
-	identifiers           core.Set[string]
-	notParenthesizedArrow core.Set[int]
-	nodeSlicePool         core.Pool[*ast.Node]
-	jsdocCache            map[*ast.Node][]*ast.Node
-	possibleAwaitSpans    []int
-	jsdocCommentsBuf      []string
+	identifiers             core.Set[string]
+	notParenthesizedArrow   core.Set[int]
+	nodeSlicePool           core.Pool[*ast.Node]
+	jsdocCache              map[*ast.Node][]*ast.Node
+	possibleAwaitSpans      []int
+	jsdocCommentsSpace      []string
+	jsdocCommentRangesSpace []ast.CommentRange
 }
 
 func NewParser() *Parser {
