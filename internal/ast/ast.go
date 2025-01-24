@@ -46,9 +46,21 @@ func visitModifiers(v Visitor, modifiers *ModifierList) bool {
 // NodeFactory
 
 type NodeFactory struct {
-	identifierPool core.Pool[Identifier]
-	tokenPool      core.Pool[Token]
-	nodeListPool   core.Pool[NodeList]
+	binaryExpressionPool         core.Pool[BinaryExpression]
+	blockPool                    core.Pool[Block]
+	callExpressionPool           core.Pool[CallExpression]
+	expressionStatementPool      core.Pool[ExpressionStatement]
+	identifierPool               core.Pool[Identifier]
+	ifStatementPool              core.Pool[IfStatement]
+	nodeListPool                 core.Pool[NodeList]
+	parameterDeclarationPool     core.Pool[ParameterDeclaration]
+	propertyAccessExpressionPool core.Pool[PropertyAccessExpression]
+	returnStatementPool          core.Pool[ReturnStatement]
+	tokenPool                    core.Pool[Token]
+	typeReferenceNodePool        core.Pool[TypeReferenceNode]
+	variableDeclarationListPool  core.Pool[VariableDeclarationList]
+	variableDeclarationPool      core.Pool[VariableDeclaration]
+	variableStatementPool        core.Pool[VariableStatement]
 }
 
 func newNode(kind Kind, data nodeData) *Node {
@@ -1668,7 +1680,7 @@ type IfStatement struct {
 }
 
 func (f *NodeFactory) NewIfStatement(expression *Expression, thenStatement *Statement, elseStatement *Statement) *Node {
-	data := &IfStatement{}
+	data := f.ifStatementPool.New()
 	data.Expression = expression
 	data.ThenStatement = thenStatement
 	data.ElseStatement = elseStatement
@@ -1900,7 +1912,7 @@ type ReturnStatement struct {
 }
 
 func (f *NodeFactory) NewReturnStatement(expression *Expression) *Node {
-	data := &ReturnStatement{}
+	data := f.returnStatementPool.New()
 	data.Expression = expression
 	return newNode(KindReturnStatement, data)
 }
@@ -2187,7 +2199,7 @@ type ExpressionStatement struct {
 }
 
 func (f *NodeFactory) NewExpressionStatement(expression *Expression) *Node {
-	data := &ExpressionStatement{}
+	data := f.expressionStatementPool.New()
 	data.Expression = expression
 	return newNode(KindExpressionStatement, data)
 }
@@ -2221,7 +2233,7 @@ type Block struct {
 }
 
 func (f *NodeFactory) NewBlock(statements *NodeList, multiline bool) *Node {
-	data := &Block{}
+	data := f.blockPool.New()
 	data.Statements = statements
 	data.Multiline = multiline
 	return newNode(KindBlock, data)
@@ -2255,7 +2267,7 @@ type VariableStatement struct {
 }
 
 func (f *NodeFactory) NewVariableStatement(modifiers *ModifierList, declarationList *VariableDeclarationListNode) *Node {
-	data := &VariableStatement{}
+	data := f.variableStatementPool.New()
 	data.modifiers = modifiers
 	data.DeclarationList = declarationList
 	return newNode(KindVariableStatement, data)
@@ -2293,7 +2305,7 @@ type VariableDeclaration struct {
 }
 
 func (f *NodeFactory) NewVariableDeclaration(name *BindingName, exclamationToken *TokenNode, typeNode *TypeNode, initializer *Expression) *Node {
-	data := &VariableDeclaration{}
+	data := f.variableDeclarationPool.New()
 	data.name = name
 	data.ExclamationToken = exclamationToken
 	data.Type = typeNode
@@ -2332,7 +2344,7 @@ type VariableDeclarationList struct {
 }
 
 func (f *NodeFactory) NewVariableDeclarationList(flags NodeFlags, declarations *NodeList) *Node {
-	data := &VariableDeclarationList{}
+	data := f.variableDeclarationListPool.New()
 	data.Declarations = declarations
 	node := newNode(KindVariableDeclarationList, data)
 	node.Flags = flags
@@ -2412,7 +2424,7 @@ type ParameterDeclaration struct {
 }
 
 func (f *NodeFactory) NewParameterDeclaration(modifiers *ModifierList, dotDotDotToken *TokenNode, name *BindingName, questionToken *TokenNode, typeNode *TypeNode, initializer *Expression) *Node {
-	data := &ParameterDeclaration{}
+	data := f.parameterDeclarationPool.New()
 	data.modifiers = modifiers
 	data.DotDotDotToken = dotDotDotToken
 	data.name = name
@@ -4042,7 +4054,7 @@ type BinaryExpression struct {
 }
 
 func (f *NodeFactory) NewBinaryExpression(left *Expression, operatorToken *TokenNode, right *Expression) *Node {
-	data := &BinaryExpression{}
+	data := f.binaryExpressionPool.New()
 	data.Left = left
 	data.OperatorToken = operatorToken
 	data.Right = right
@@ -4368,7 +4380,7 @@ type PropertyAccessExpression struct {
 }
 
 func (f *NodeFactory) NewPropertyAccessExpression(expression *Expression, questionDotToken *TokenNode, name *MemberName, flags NodeFlags) *Node {
-	data := &PropertyAccessExpression{}
+	data := f.propertyAccessExpressionPool.New()
 	data.Expression = expression
 	data.QuestionDotToken = questionDotToken
 	data.name = name
@@ -4448,7 +4460,7 @@ type CallExpression struct {
 }
 
 func (f *NodeFactory) NewCallExpression(expression *Expression, questionDotToken *TokenNode, typeArguments *NodeList, arguments *NodeList, flags NodeFlags) *Node {
-	data := &CallExpression{}
+	data := f.callExpressionPool.New()
 	data.Expression = expression
 	data.QuestionDotToken = questionDotToken
 	data.TypeArguments = typeArguments
@@ -5337,7 +5349,7 @@ type TypeReferenceNode struct {
 }
 
 func (f *NodeFactory) NewTypeReferenceNode(typeName *EntityName, typeArguments *NodeList) *Node {
-	data := &TypeReferenceNode{}
+	data := f.typeReferenceNodePool.New()
 	data.TypeName = typeName
 	data.TypeArguments = typeArguments
 	return newNode(KindTypeReference, data)
