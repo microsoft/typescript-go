@@ -5666,7 +5666,7 @@ func (p *Parser) internIdentifier(text string) string {
 	if identifier, ok := p.identifiers[text]; ok {
 		return identifier
 	}
-	identifier := strings.Clone(text)
+	identifier := text
 	if p.identifiers == nil {
 		p.identifiers = make(map[string]string)
 	}
