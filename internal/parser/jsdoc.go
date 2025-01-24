@@ -166,7 +166,7 @@ func (p *Parser) parseJSDocCommentWorker(start int, indent int) *ast.Node {
 	tagsPos := -1
 	tagsEnd := -1
 	state := jsdocStateSawAsterisk
-	var commentParts []*ast.Node
+	commentParts := p.nodeSlicePool.NewSlice(1)[:0]
 	comments := p.jsdocCommentsSpace
 	commentsPos := -1
 	linkEnd := start
@@ -275,6 +275,7 @@ loop:
 			p.nextTokenJSDoc()
 		}
 	}
+	p.jsdocCommentsSpace = comments[:0] // Reuse this slice for further parses
 	if commentsPos == -1 {
 		commentsPos = p.scanner.TokenFullStart()
 	}
@@ -291,7 +292,6 @@ loop:
 		p.newNodeList(core.NewTextRange(start, commentsPos), commentParts),
 		p.newNodeList(core.NewTextRange(tagsPos, tagsEnd), tags))
 	p.finishNodeWithEnd(jsdocComment, start, len(p.sourceText))
-	p.jsdocCommentsSpace = comments[:0] // Reuse this slice for further parses
 	return jsdocComment
 }
 
@@ -461,7 +461,8 @@ func (p *Parser) parseTrailingTagComments(pos int, end int, margin int, indentTe
 
 func (p *Parser) parseTagComments(indent int, initialMargin *string) *ast.NodeList {
 	commentsPos := p.nodePos()
-	var comments []string
+	comments := p.jsdocTagCommentsSpace
+	p.jsdocTagCommentsSpace = nil // !!! can parseTagComments call itself?
 	var parts []*ast.Node
 	linkEnd := -1
 	state := jsdocStateBeginningOfLine
@@ -526,7 +527,7 @@ loop:
 				p.finishNodeWithEnd(text, commentStart, commentEnd)
 				parts = append(parts, text)
 				parts = append(parts, link)
-				comments = []string{}
+				comments = comments[:0]
 				linkEnd = p.scanner.TokenEnd()
 			} else {
 				pushComment(p.scanner.TokenText())
@@ -566,6 +567,8 @@ loop:
 			tok = p.nextTokenJSDoc()
 		}
 	}
+
+	p.jsdocTagCommentsSpace = comments[:0]
 
 	comments = removeLeadingNewlines(comments)
 	trimmedComments := trimEnd(strings.Join(comments, ""))

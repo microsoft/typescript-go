@@ -49,6 +49,8 @@ type NodeFactory struct {
 	identifierPool core.Pool[Identifier]
 	tokenPool      core.Pool[Token]
 	nodeListPool   core.Pool[NodeList]
+	jsdocPool      core.Pool[JSDoc]
+	jsdocTextPool  core.Pool[JSDocText]
 }
 
 func newNode(kind Kind, data nodeData) *Node {
@@ -6553,7 +6555,7 @@ type JSDoc struct {
 }
 
 func (f *NodeFactory) NewJSDoc(comment *NodeList, tags *NodeList) *Node {
-	data := &JSDoc{}
+	data := f.jsdocPool.New()
 	data.Comment = comment
 	data.Tags = tags
 	return newNode(KindJSDoc, data)
@@ -6591,7 +6593,7 @@ type JSDocText struct {
 }
 
 func (f *NodeFactory) NewJSDocText(text string) *Node {
-	data := &JSDocText{}
+	data := f.jsdocTextPool.New()
 	data.Text = text
 	return newNode(KindJSDocText, data)
 }

@@ -73,6 +73,7 @@ type Parser struct {
 	possibleAwaitSpans      []int
 	jsdocCommentsSpace      []string
 	jsdocCommentRangesSpace []ast.CommentRange
+	jsdocTagCommentsSpace   []string
 }
 
 func NewParser() *Parser {
