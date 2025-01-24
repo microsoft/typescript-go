@@ -1,0 +1,120 @@
+package project
+
+import (
+	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/parser"
+	"github.com/microsoft/typescript-go/internal/tspath"
+)
+
+type sourceFileAffectingCompilerOptions struct {
+	// !!! generate this
+	target          core.ScriptTarget
+	jsx             core.JsxEmit
+	jsxImportSource string
+	importHelpers   core.Tristate
+	alwaysStrict    core.Tristate
+	moduleDetection core.ModuleDetectionKind
+}
+
+func getSourceFileAffectingCompilerOptions(options *core.CompilerOptions) sourceFileAffectingCompilerOptions {
+	return sourceFileAffectingCompilerOptions{
+		target:          options.Target,
+		jsx:             options.Jsx,
+		jsxImportSource: options.JsxImportSource,
+		importHelpers:   options.ImportHelpers,
+		alwaysStrict:    options.AlwaysStrict,
+		moduleDetection: options.ModuleDetection,
+	}
+}
+
+type registryKey struct {
+	sourceFileAffectingCompilerOptions
+	path       tspath.Path
+	scriptKind core.ScriptKind
+}
+
+func newRegistryKey(options *core.CompilerOptions, path tspath.Path, scriptKind core.ScriptKind) registryKey {
+	return registryKey{
+		sourceFileAffectingCompilerOptions: getSourceFileAffectingCompilerOptions(options),
+		path:                               path,
+		scriptKind:                         scriptKind,
+	}
+}
+
+type registryEntry struct {
+	sourceFile *ast.SourceFile
+	refCount   int
+}
+
+// The document registry represents a store of SourceFile objects that can be shared between
+// multiple LanguageService instances.
+type documentRegistry struct {
+	options   tspath.ComparePathsOptions
+	documents map[registryKey]registryEntry
+}
+
+func NewDocumentRegistry(options tspath.ComparePathsOptions) *documentRegistry {
+	return &documentRegistry{
+		options:   options,
+		documents: make(map[registryKey]registryEntry),
+	}
+}
+
+// GetDocument gets a SourceFile from the registry if it exists as the same version tracked
+// by the ScriptInfo. If it does not exist, or is out of date, it creates a new SourceFile and
+// stores it, tracking that the caller has referenced it. If an oldSourceFile is passed, the registry
+// will decrement its reference count and remove it from the registry if the count reaches 0.
+// (If the old file and new file have the same key, this results in a no-op to the ref count.)
+//
+// This code is greatly simplified compared to the old TS codebase because of the lack of
+// incremental parsing. Previously, source files could be updated and reused by the same
+// LanguageService instance over time, as well as across multiple instances. Here, we still
+// reuse files across multiple LanguageServices, but we only reuse them across Program updates
+// when the files haven't changed.
+func (r *documentRegistry) AcquireDocument(scriptInfo *scriptInfo, compilerOptions *core.CompilerOptions, oldSourceFile *ast.SourceFile, oldCompilerOptions *core.CompilerOptions) *ast.SourceFile {
+	key := newRegistryKey(compilerOptions, scriptInfo.path, scriptInfo.scriptKind)
+	document := r.getDocumentWorker(scriptInfo, compilerOptions, key)
+	if oldSourceFile != nil {
+		oldKey := newRegistryKey(oldCompilerOptions, scriptInfo.path, oldSourceFile.ScriptKind)
+		r.ReleaseDocument(oldKey)
+	}
+	return document
+}
+
+func (r *documentRegistry) ReleaseDocument(key registryKey) {
+	if entry, ok := r.documents[key]; ok {
+		entry.refCount--
+		if entry.refCount == 0 {
+			delete(r.documents, key)
+		}
+	}
+}
+
+func (r *documentRegistry) getDocumentWorker(
+	scriptInfo *scriptInfo,
+	compilerOptions *core.CompilerOptions,
+	key registryKey,
+) *ast.SourceFile {
+	scriptTarget := core.IfElse(scriptInfo.scriptKind == core.ScriptKindJSON, core.ScriptTargetJSON, compilerOptions.GetEmitScriptTarget())
+	if entry, ok := r.documents[key]; ok {
+		// We have an entry for this file. However, it may be for a different version of
+		// the script snapshot. If so, update it appropriately.
+		if entry.sourceFile.Version != scriptInfo.version {
+			entry.sourceFile = parser.ParseSourceFile(scriptInfo.fileName, scriptInfo.text, scriptTarget)
+			entry.sourceFile.Version = scriptInfo.version
+		}
+		entry.refCount++
+		return entry.sourceFile
+	} else {
+		// Have never seen this file with these settings. Create a new source file for it.
+		sourceFile := parser.ParseSourceFile(scriptInfo.fileName, scriptInfo.text, scriptTarget)
+		sourceFile.Version = scriptInfo.version
+		entry := registryEntry{
+			sourceFile: sourceFile,
+			refCount:   1,
+		}
+		r.documents[key] = entry
+		return sourceFile
+	}
+}
