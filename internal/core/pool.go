@@ -39,11 +39,8 @@ func (p *Pool[T]) NewSlice(size int) []T {
 }
 
 func nextPoolSize(size int) int {
-	switch {
-	case size < 16:
-		return 16
-	case size < 256:
-		return size * 2
-	}
+	// This compiles down branch-free.
+	size = max(size, 1)
+	size = min(size*2, 256)
 	return size
 }
