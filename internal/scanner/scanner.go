@@ -238,8 +238,17 @@ type Scanner struct {
 	ScannerState
 }
 
+func defaultScanner() Scanner {
+	return Scanner{languageVersion: core.ScriptTargetLatest, skipTrivia: true}
+}
+
 func NewScanner() *Scanner {
-	return &Scanner{languageVersion: core.ScriptTargetLatest, skipTrivia: true}
+	s := defaultScanner()
+	return &s
+}
+
+func (s *Scanner) Reset() {
+	*s = defaultScanner()
 }
 
 func (s *Scanner) Text() string {

@@ -81,7 +81,7 @@ func getParser() *Parser {
 }
 
 func putParser(p *Parser) {
-	*p = Parser{}
+	*p = Parser{scanner: p.scanner}
 	parserPool.Put(p)
 }
 
@@ -167,7 +167,11 @@ func ParseJSONText(fileName string, sourceText string) *ast.SourceFile {
 }
 
 func (p *Parser) initializeState(fileName string, sourceText string, languageVersion core.ScriptTarget, scriptKind core.ScriptKind) {
-	p.scanner = scanner.NewScanner()
+	if p.scanner == nil {
+		p.scanner = scanner.NewScanner()
+	} else {
+		p.scanner.Reset()
+	}
 	p.fileName = fileName
 	p.sourceText = sourceText
 	p.languageVersion = languageVersion
