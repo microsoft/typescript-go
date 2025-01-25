@@ -70,21 +70,32 @@ type Parser struct {
 	possibleAwaitSpans    []int
 }
 
-func NewParser() *Parser {
-	p := &Parser{}
-	p.scanner = scanner.NewScanner()
-	return p
+var parserPool = sync.Pool{
+	New: func() any {
+		return &Parser{}
+	},
+}
+
+func getParser() *Parser {
+	return parserPool.Get().(*Parser)
+}
+
+func putParser(p *Parser) {
+	*p = Parser{}
+	parserPool.Put(p)
 }
 
 func ParseSourceFile(fileName string, sourceText string, languageVersion core.ScriptTarget) *ast.SourceFile {
-	var p Parser
+	p := getParser()
+	defer putParser(p)
 	p.initializeState(fileName, sourceText, languageVersion, core.ScriptKindUnknown)
 	p.nextToken()
 	return p.parseSourceFileWorker()
 }
 
 func ParseJSONText(fileName string, sourceText string) *ast.SourceFile {
-	var p Parser
+	p := getParser()
+	defer putParser(p)
 	p.initializeState(fileName, sourceText, core.ScriptTargetES2015, core.ScriptKindJSON)
 	p.nextToken()
 	pos := p.nodePos()
