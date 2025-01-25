@@ -10,7 +10,7 @@ type Pool[T any] struct {
 // a new pool of the next size up is allocated.
 func (p *Pool[T]) New() *T {
 	if len(p.data) == cap(p.data) {
-		p.data = make([]T, 0, NextPoolSize(len(p.data)))
+		p.data = make([]T, 0, nextPoolSize(len(p.data)))
 	}
 	index := len(p.data)
 	p.data = p.data[:index+1]
@@ -26,7 +26,7 @@ func (p *Pool[T]) NewSlice(size int) []T {
 		return nil
 	}
 	if len(p.data)+size > cap(p.data) {
-		nextSize := NextPoolSize(len(p.data))
+		nextSize := nextPoolSize(len(p.data))
 		if size > nextSize {
 			return make([]T, size)
 		}
@@ -38,7 +38,7 @@ func (p *Pool[T]) NewSlice(size int) []T {
 	return slice
 }
 
-func NextPoolSize(size int) int {
+func nextPoolSize(size int) int {
 	switch {
 	case size < 16:
 		return 16
