@@ -4,7 +4,7 @@ useCaseSensitiveFileNames::true
 Input::--p project
 
 
-ExitStatus:: 1
+ExitStatus:: 0
 
 CompilerOptions::{
     "allowJs": null,
@@ -131,5 +131,18 @@ CompilerOptions::{
     "tscBuild": null
 }
 Output::
-error TS5081: Cannot find a tsconfig.json file at the current directory: /home/src/workspaces/solution/project/tsconfig.json.
+//// [/home/src/workspaces/solution/project/index.ts]\nimport { x } from "../utils";
+//// [/home/src/workspaces/solution/project/tsconfig.json]\n{
+		references: [
+			{ path: "../utils" },
+		],
+	}),
+},
+//// [/home/src/workspaces/solution/src/utils/index.ts]\nexport const x = 10;
+//// [/home/src/workspaces/solution/src/utils/tsconfig.json]\n{
+	compilerOptions: {
+		composite: true,
+		noEmit: true,
+	},
+})
 

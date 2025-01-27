@@ -26,7 +26,7 @@ func NewTestSys(fileOrFolderList FileMap, cwd string, args ...string) *testSys {
 	mapFS := fstest.MapFS{}
 	fileList := []string{}
 	for name, content := range fileOrFolderList {
-		mapFS[name] = &fstest.MapFile{
+		mapFS[strings.TrimPrefix(name, "/")] = &fstest.MapFile{
 			Data: []byte(content),
 		}
 		fileList = append(fileList, name)
@@ -104,6 +104,26 @@ func (s *testSys) serializeState(baseline io.Writer, order serializeOutputOrder)
 	// this.service?.baseline();
 }
 
+func (s *testSys) baselineFS(baseline io.Writer) {
+	fmt.Fprint(baseline, "\n\nCurrentFiles::")
+	err := s.FS().WalkDir(s.Host().GetCurrentDirectory(), func(path string, d vfs.DirEntry, e error) error {
+		if d == nil {
+			return nil
+		}
+		if !d.IsDir() {
+			contents, ok := s.FS().ReadFile(path)
+			if !ok {
+				return e
+			}
+			fmt.Fprint(baseline, "\n//// ["+path+"]\n"+contents+"\n")
+		}
+		return nil
+	})
+	if err != nil {
+		panic("walkdir error during fs baseline")
+	}
+}
+
 func (s *testSys) serializeOutput(baseline io.Writer) {
 	fmt.Fprintln(baseline, "\nOutput::")
 	// todo screen clears
@@ -111,22 +131,22 @@ func (s *testSys) serializeOutput(baseline io.Writer) {
 }
 
 func (s *testSys) diff(baseline io.Writer) {
+	// todo: watch isnt implemented
+	// todo: doesn't actually do anything rn, but don't really care atm because we aren't passing edits into the test, so we don't care abt diffs
 	snap := map[string]string{}
 
 	err := s.FS().WalkDir(s.Host().GetCurrentDirectory(), func(path string, d vfs.DirEntry, e error) error {
 		if d == nil {
 			return nil
 		}
-		if d.IsDir() {
-			for _, file := range s.FS().GetEntries(path) {
-				newContents, ok := s.FS().ReadFile(file.Name())
-				if !ok {
-					return e
-				}
-				snap[path] = newContents
-				diffFSEntry(baseline, s.serializedDiff[path], newContents, path)
-			}
+
+		newContents, ok := s.FS().ReadFile(path)
+		if !ok {
+			return e
 		}
+		snap[path] = newContents
+		diffFSEntry(baseline, s.serializedDiff[path], newContents, path)
+
 		return nil
 	})
 	if err != nil {
