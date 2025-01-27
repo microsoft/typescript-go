@@ -55,6 +55,7 @@ type NodeFactory struct {
 	jsdocPool                        core.Pool[JSDoc]
 	jsdocTextPool                    core.Pool[JSDocText]
 	keywordTypeNodePool              core.Pool[KeywordTypeNode]
+	literalTypeNodePool              core.Pool[LiteralTypeNode]
 	modifierListPool                 core.Pool[ModifierList]
 	nodeListPool                     core.Pool[NodeList]
 	parameterDeclarationPool         core.Pool[ParameterDeclaration]
@@ -5509,7 +5510,7 @@ type LiteralTypeNode struct {
 }
 
 func (f *NodeFactory) NewLiteralTypeNode(literal *Node) *Node {
-	data := &LiteralTypeNode{}
+	data := f.literalTypeNodePool.New()
 	data.Literal = literal
 	return newNode(KindLiteralType, data)
 }
