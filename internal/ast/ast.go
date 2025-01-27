@@ -59,6 +59,7 @@ type NodeFactory struct {
 	modifierListPool                 core.Pool[ModifierList]
 	nodeListPool                     core.Pool[NodeList]
 	parameterDeclarationPool         core.Pool[ParameterDeclaration]
+	parenthesizedExpressionPool      core.Pool[ParenthesizedExpression]
 	propertyAccessExpressionPool     core.Pool[PropertyAccessExpression]
 	propertyAssignmentPool           core.Pool[PropertyAssignment]
 	propertySignatureDeclarationPool core.Pool[PropertySignatureDeclaration]
@@ -4841,7 +4842,7 @@ type ParenthesizedExpression struct {
 }
 
 func (f *NodeFactory) NewParenthesizedExpression(expression *Expression) *Node {
-	data := &ParenthesizedExpression{}
+	data := f.parenthesizedExpressionPool.New()
 	data.Expression = expression
 	return newNode(KindParenthesizedExpression, data)
 }
