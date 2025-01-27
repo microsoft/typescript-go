@@ -60,6 +60,7 @@ type NodeFactory struct {
 	nodeListPool                     core.Pool[NodeList]
 	parameterDeclarationPool         core.Pool[ParameterDeclaration]
 	propertyAccessExpressionPool     core.Pool[PropertyAccessExpression]
+	propertyAssignmentPool           core.Pool[PropertyAssignment]
 	propertySignatureDeclarationPool core.Pool[PropertySignatureDeclaration]
 	returnStatementPool              core.Pool[ReturnStatement]
 	stringLiteralPool                core.Pool[StringLiteral]
@@ -4981,7 +4982,7 @@ type PropertyAssignment struct {
 }
 
 func (f *NodeFactory) NewPropertyAssignment(modifiers *ModifierList, name *PropertyName, postfixToken *TokenNode, initializer *Expression) *Node {
-	data := &PropertyAssignment{}
+	data := f.propertyAssignmentPool.New()
 	data.modifiers = modifiers
 	data.name = name
 	data.PostfixToken = postfixToken
