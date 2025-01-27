@@ -62,6 +62,7 @@ type NodeFactory struct {
 	propertyAccessExpressionPool     core.Pool[PropertyAccessExpression]
 	propertySignatureDeclarationPool core.Pool[PropertySignatureDeclaration]
 	returnStatementPool              core.Pool[ReturnStatement]
+	stringLiteralPool                core.Pool[StringLiteral]
 	tokenPool                        core.Pool[Token]
 	typeReferenceNodePool            core.Pool[TypeReferenceNode]
 	variableDeclarationListPool      core.Pool[VariableDeclarationList]
@@ -4068,7 +4069,7 @@ type StringLiteral struct {
 }
 
 func (f *NodeFactory) NewStringLiteral(text string) *Node {
-	data := &StringLiteral{}
+	data := f.stringLiteralPool.New()
 	data.Text = text
 	return newNode(KindStringLiteral, data)
 }
