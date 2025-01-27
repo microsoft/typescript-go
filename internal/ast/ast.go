@@ -55,6 +55,7 @@ type NodeFactory struct {
 	jsdocPool                        core.Pool[JSDoc]
 	jsdocTextPool                    core.Pool[JSDocText]
 	keywordTypeNodePool              core.Pool[KeywordTypeNode]
+	modifierListPool                 core.Pool[ModifierList]
 	nodeListPool                     core.Pool[NodeList]
 	parameterDeclarationPool         core.Pool[ParameterDeclaration]
 	propertyAccessExpressionPool     core.Pool[PropertyAccessExpression]
@@ -110,7 +111,11 @@ type ModifierList struct {
 }
 
 func (f *NodeFactory) NewModifierList(nodes []*Node) *ModifierList {
-	return &ModifierList{NodeList: NodeList{Loc: core.UndefinedTextRange(), Nodes: nodes}, ModifierFlags: ModifiersToFlags(nodes)}
+	list := f.modifierListPool.New()
+	list.Loc = core.UndefinedTextRange()
+	list.Nodes = nodes
+	list.ModifierFlags = ModifiersToFlags(nodes)
+	return list
 }
 
 // AST Node
