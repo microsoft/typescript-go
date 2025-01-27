@@ -29,6 +29,7 @@ type ProgramOptions struct {
 	ProjectReference         []core.ProjectReference
 	DefaultLibraryPath       string
 	ConfigParsingDiagnostics []*ast.Diagnostic
+	JSDocParsingMode         scanner.JSDocParsingMode
 }
 
 type Program struct {

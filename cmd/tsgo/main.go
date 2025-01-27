@@ -158,6 +158,7 @@ func main() {
 		Options:            compilerOptions,
 		SingleThreaded:     opts.devel.singleThreaded,
 		Host:               host,
+		JSDocParsingMode:   scanner.JSDocParsingModeParseForTypeErrors,
 		DefaultLibraryPath: defaultLibraryPath,
 	})
 	parseTime := time.Since(parseStart)

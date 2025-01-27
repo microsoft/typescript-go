@@ -6,7 +6,6 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/ast"
-	"github.com/microsoft/typescript-go/internal/binder"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/parser"
 	"github.com/microsoft/typescript-go/internal/printer"
@@ -85,18 +84,20 @@ func checkDiagnostics(t *testing.T, file *ast.SourceFile) {
 
 func checkEmit(t *testing.T, file *ast.SourceFile, expected string) {
 	t.Helper()
-	printer := &printer.Printer{
-		Options: printer.PrinterOptions{
+	printer := printer.NewPrinter(
+		printer.PrinterOptions{
 			NewLine: core.NewLineKindLF,
 		},
-	}
+		printer.PrintHandlers{},
+		nil,
+	)
 	actual := printer.EmitSourceFile(file)
 	assert.Equal(t, expected, actual)
 }
 
 func parseTypeScript(text string, jsx bool) *ast.SourceFile {
-	file := parser.ParseSourceFile(core.IfElse(jsx, "main.tsx", "main.ts"), text, core.ScriptTargetESNext)
-	binder.SetParentInChildren(file.AsNode())
+	file := parser.ParseSourceFile(core.IfElse(jsx, "main.tsx", "main.ts"), text, core.ScriptTargetESNext, scanner.JSDocParsingModeParseAll)
+	ast.SetParentInChildren(file.AsNode())
 	return file
 }
 
