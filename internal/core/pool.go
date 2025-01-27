@@ -1,5 +1,7 @@
 package core
 
+import "slices"
+
 // Pool allocator
 
 type Pool[T any] struct {
@@ -10,7 +12,9 @@ type Pool[T any] struct {
 // a new pool of the next size up is allocated.
 func (p *Pool[T]) New() *T {
 	if len(p.data) == cap(p.data) {
-		p.data = make([]T, 0, nextPoolSize(len(p.data)))
+		nextSize := nextPoolSize(len(p.data))
+		// Use the same trick as slices.Concat; Grow rounds up to the next size class.
+		p.data = slices.Grow[[]T](nil, nextSize)
 	}
 	index := len(p.data)
 	p.data = p.data[:index+1]
@@ -30,7 +34,8 @@ func (p *Pool[T]) NewSlice(size int) []T {
 		if size > nextSize {
 			return make([]T, size)
 		}
-		p.data = make([]T, 0, nextSize)
+		// Use the same trick as slices.Concat; Grow rounds up to the next size class.
+		p.data = slices.Grow[[]T](nil, nextSize)
 	}
 	newLen := len(p.data) + size
 	slice := p.data[len(p.data):newLen:newLen]
