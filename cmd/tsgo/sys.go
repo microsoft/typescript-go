@@ -11,7 +11,6 @@ import (
 )
 
 type osSys struct {
-	exit       func(int) // os.Exit
 	write      func([]byte) (int, error)
 	formatOpts *diagnosticwriter.FormattingOptions
 	host       compiler.CompilerHost
@@ -26,7 +25,6 @@ func (s *osSys) Host() compiler.CompilerHost {
 }
 
 func (s *osSys) Exit(e execute.ExitStatus) execute.ExitStatus {
-	s.exit(int(e))
 	return e
 }
 
@@ -52,7 +50,6 @@ func NewSystem() *osSys {
 	newHost := compiler.NewCompilerHost(nil, cwd, vfs.FromOS())
 	return &osSys{
 		host:       newHost,
-		exit:       os.Exit,
 		write:      os.Stdout.Write,
 		formatOpts: getFormatOpts(newHost),
 	}

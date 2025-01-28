@@ -115,8 +115,8 @@ func parseArgs() *cliOptions {
 
 func main() {
 	if os.Args[1] == "tsc" {
-		sys := NewSystem()
-		sys.Exit(execute.CommandLine(sys, nil, os.Args[2:]))
+		exitCode := execute.CommandLine(NewSystem(), nil, os.Args[2:])
+		os.Exit(int(exitCode))
 	}
 	opts := parseArgs()
 
