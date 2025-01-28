@@ -35,7 +35,7 @@ func TestBaseReader(t *testing.T) {
 		{
 			name: "invalid content",
 			data: []byte("Content-Length: 1\r\n\r\n{"),
-			err:  "lsp: decode content: unexpected EOF",
+			err:  "lsp: unmarshal content: unexpected end of JSON input",
 		},
 		{
 			name:  "valid content",
@@ -46,6 +46,11 @@ func TestBaseReader(t *testing.T) {
 			name:  "extra header values",
 			data:  []byte("Content-Length: 2\r\nExtra: 1\r\n\r\n{}"),
 			value: map[string]any{},
+		},
+		{
+			name: "too long content length",
+			data: []byte("Content-Length: 100\r\n\r\n{}"),
+			err:  "lsp: read content: unexpected EOF",
 		},
 	}
 
@@ -71,7 +76,7 @@ func TestBaseReaderUnmarshalError(t *testing.T) {
 	r := lsp.NewBaseReader(bytes.NewReader(data))
 	var v typeWithUnmarshalError
 	err := r.Read(&v)
-	assert.Error(t, err, "lsp: decode content: test error")
+	assert.Error(t, err, "lsp: unmarshal content: test error")
 }
 
 type typeWithUnmarshalError struct{}

@@ -64,10 +64,15 @@ func (r *BaseReader) Read(v any) error {
 		return ErrNoContentLength
 	}
 
-	dec := json.NewDecoder(io.LimitReader(r.r, contentLength))
-	if err := dec.Decode(v); err != nil {
-		return fmt.Errorf("lsp: decode content: %w", err)
+	buf := make([]byte, contentLength)
+	if _, err := io.ReadFull(r.r, buf); err != nil {
+		return fmt.Errorf("lsp: read content: %w", err)
 	}
+
+	if err := json.Unmarshal(buf, v); err != nil {
+		return fmt.Errorf("lsp: unmarshal content: %w", err)
+	}
+
 	return nil
 }
 
