@@ -46,7 +46,7 @@ func (r *BaseReader) Read(v any) error {
 
 		key, value, ok := bytes.Cut(line, []byte(":"))
 		if !ok {
-			return fmt.Errorf("%w: %s", ErrInvalidHeader, line)
+			return fmt.Errorf("%w: %q", ErrInvalidHeader, line)
 		}
 
 		if bytes.Equal(key, []byte("Content-Length")) {

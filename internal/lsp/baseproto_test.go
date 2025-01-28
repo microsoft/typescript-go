@@ -52,6 +52,16 @@ func TestBaseReader(t *testing.T) {
 			data: []byte("Content-Length: 100\r\n\r\n{}"),
 			err:  "lsp: read content: unexpected EOF",
 		},
+		{
+			name: "missing content length",
+			data: []byte("Content-Length: \r\n\r\n{}"),
+			err:  "lsp: invalid content length: parse error: strconv.ParseInt: parsing \"\": invalid syntax",
+		},
+		{
+			name: "invalid header",
+			data: []byte("Nope\r\n\r\n{}"),
+			err:  "lsp: invalid header: \"Nope\\r\\n\"",
+		},
 	}
 
 	for _, tt := range tests {
@@ -83,6 +93,21 @@ type typeWithUnmarshalError struct{}
 
 func (*typeWithUnmarshalError) UnmarshalJSON([]byte) error {
 	return errors.New("test error")
+}
+
+func TestBaseReaderReadError(t *testing.T) {
+	t.Parallel()
+
+	r := lsp.NewBaseReader(&errorReader{})
+	var v any
+	err := r.Read(&v)
+	assert.Error(t, err, "lsp: read header: test error")
+}
+
+type errorReader struct{}
+
+func (*errorReader) Read([]byte) (int, error) {
+	return 0, errors.New("test error")
 }
 
 func TestBaseWriter(t *testing.T) {
@@ -131,4 +156,18 @@ type typeWithMarshalError struct{}
 
 func (*typeWithMarshalError) MarshalJSON() ([]byte, error) {
 	return nil, errors.New("test error")
+}
+
+func TestBaseWriterWriteError(t *testing.T) {
+	t.Parallel()
+
+	w := lsp.NewBaseWriter(&errorWriter{})
+	err := w.Write(map[string]any{})
+	assert.Error(t, err, "lsp: write: test error")
+}
+
+type errorWriter struct{}
+
+func (*errorWriter) Write([]byte) (int, error) {
+	return 0, errors.New("test error")
 }
