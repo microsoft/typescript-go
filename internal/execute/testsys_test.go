@@ -1,4 +1,4 @@
-package verifytsc
+package execute_test
 
 import (
 	"fmt"
