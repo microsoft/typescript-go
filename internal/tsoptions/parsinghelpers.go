@@ -390,12 +390,22 @@ func MergeCompilerOptions(targetOptions, sourceOptions *core.CompilerOptions) *c
 
 func convertToOptionsWithAbsolutePaths(optionsBase map[string]any, optionMap map[string]*CommandLineOption, cwd string) map[string]any {
 	// !!! convert to options with absolute paths was previously done with `CompilerOptions` object, but for ease of implementation, we do it pre-conversion.
-	// !!! Revisit this choice if refactoring when conversion is done in tsconfig parsing
+	// !!! Revisit this choice if/when refactoring when conversion is done in tsconfig parsing
 	if optionsBase == nil {
 		return nil
 	}
 	for o, v := range optionsBase {
-		if optionMap[o] != nil && optionMap[o].isFilePath {
+		option := optionMap[o]
+		if option == nil || !option.isFilePath {
+			continue
+		}
+		if option.Kind == "list" {
+			if arr, ok := v.([]string); ok {
+				optionsBase[o] = core.Map(arr, func(item string) string {
+					return tspath.GetNormalizedAbsolutePath(item, cwd)
+				})
+			}
+		} else {
 			optionsBase[o] = tspath.GetNormalizedAbsolutePath(v.(string), cwd)
 		}
 	}

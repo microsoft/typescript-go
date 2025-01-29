@@ -52,9 +52,9 @@ type testSys struct {
 	output         []string
 	currentWrite   *strings.Builder
 	serializedDiff map[string]string
-	host       compiler.CompilerHost
-	formatOpts *diagnosticwriter.FormattingOptions
-	files      []string
+	host           compiler.CompilerHost
+	formatOpts     *diagnosticwriter.FormattingOptions
+	files          []string
 }
 
 func (s *testSys) FS() vfs.FS {
