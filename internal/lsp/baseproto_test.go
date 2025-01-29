@@ -79,6 +79,30 @@ func TestBaseReader(t *testing.T) {
 	}
 }
 
+func TestBaseReaderMultipleReads(t *testing.T) {
+	t.Parallel()
+
+	data := []byte(
+		"Content-Length: 4\r\n\r\n1234" +
+			"Content-Length: 2\r\n\r\n{}",
+	)
+	r := lsp.NewBaseReader(bytes.NewReader(data))
+
+	var v1 any
+	err := r.Read(&v1)
+	assert.NilError(t, err)
+	assert.DeepEqual(t, v1, 1234.0)
+
+	var v2 any
+	err = r.Read(&v2)
+	assert.NilError(t, err)
+	assert.DeepEqual(t, v2, map[string]any{})
+
+	var v3 any
+	err = r.Read(&v3)
+	assert.Error(t, err, "EOF")
+}
+
 func TestBaseReaderUnmarshalError(t *testing.T) {
 	t.Parallel()
 
@@ -86,7 +110,7 @@ func TestBaseReaderUnmarshalError(t *testing.T) {
 	r := lsp.NewBaseReader(bytes.NewReader(data))
 	var v typeWithUnmarshalError
 	err := r.Read(&v)
-	assert.Error(t, err, "lsp: unmarshal content: test error")
+	assert.Error(t, err, "EOF")
 }
 
 type typeWithUnmarshalError struct{}
