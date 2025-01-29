@@ -3370,11 +3370,11 @@ func (c *Checker) checkVariableStatement(node *ast.Node) {
 	if !c.checkGrammarModifiers(node) && !c.checkGrammarVariableDeclarationList(declarationList.AsVariableDeclarationList()) {
 		c.checkGrammarForDisallowedBlockScopedVariableStatement(varStatement)
 	}
-	c.checkVariableDeclarationList(node)
+	c.checkVariableDeclarationList(declarationList)
 }
 
 func (c *Checker) checkVariableDeclarationList(node *ast.Node) {
-	node.ForEachChild(c.checkSourceElement)
+	c.checkSourceElements(node.AsVariableDeclarationList().Declarations.Nodes)
 }
 
 func (c *Checker) checkVariableDeclaration(node *ast.Node) {
