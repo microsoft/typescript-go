@@ -2997,26 +2997,24 @@ func (c *Checker) checkClassLikeDeclaration(node *ast.Node) {
 	}
 	c.checkMembersForOverrideModifier(node, classType, typeWithThis, staticType)
 	implementedTypeNodes := getImplementsTypeNodes(node)
-	if implementedTypeNodes != nil {
-		for _, typeRefNode := range implementedTypeNodes {
-			expr := typeRefNode.Expression()
-			if !ast.IsEntityNameExpression(expr) || ast.IsOptionalChain(expr) {
-				c.error(expr, diagnostics.A_class_can_only_implement_an_identifier_Slashqualified_name_with_optional_type_arguments)
-			}
-			c.checkTypeReferenceNode(typeRefNode)
-			t := c.getReducedType(c.getTypeFromTypeNode(typeRefNode))
-			if !c.isErrorType(t) {
-				if c.isValidBaseType(t) {
-					genericDiag := core.IfElse(t.symbol != nil && t.symbol.Flags&ast.SymbolFlagsClass != 0,
-						diagnostics.Class_0_incorrectly_implements_class_1_Did_you_mean_to_extend_1_and_inherit_its_members_as_a_subclass,
-						diagnostics.Class_0_incorrectly_implements_interface_1)
-					baseWithThis := c.getTypeWithThisArgument(t, classType.AsInterfaceType().thisType, false)
-					if !c.checkTypeAssignableTo(typeWithThis, baseWithThis, nil, nil) {
-						c.issueMemberSpecificError(node, typeWithThis, baseWithThis, genericDiag)
-					}
-				} else {
-					c.error(typeRefNode, diagnostics.A_class_can_only_implement_an_object_type_or_intersection_of_object_types_with_statically_known_members)
+	for _, typeRefNode := range implementedTypeNodes {
+		expr := typeRefNode.Expression()
+		if !ast.IsEntityNameExpression(expr) || ast.IsOptionalChain(expr) {
+			c.error(expr, diagnostics.A_class_can_only_implement_an_identifier_Slashqualified_name_with_optional_type_arguments)
+		}
+		c.checkTypeReferenceNode(typeRefNode)
+		t := c.getReducedType(c.getTypeFromTypeNode(typeRefNode))
+		if !c.isErrorType(t) {
+			if c.isValidBaseType(t) {
+				genericDiag := core.IfElse(t.symbol != nil && t.symbol.Flags&ast.SymbolFlagsClass != 0,
+					diagnostics.Class_0_incorrectly_implements_class_1_Did_you_mean_to_extend_1_and_inherit_its_members_as_a_subclass,
+					diagnostics.Class_0_incorrectly_implements_interface_1)
+				baseWithThis := c.getTypeWithThisArgument(t, classType.AsInterfaceType().thisType, false)
+				if !c.checkTypeAssignableTo(typeWithThis, baseWithThis, nil, nil) {
+					c.issueMemberSpecificError(node, typeWithThis, baseWithThis, genericDiag)
 				}
+			} else {
+				c.error(typeRefNode, diagnostics.A_class_can_only_implement_an_object_type_or_intersection_of_object_types_with_statically_known_members)
 			}
 		}
 	}
