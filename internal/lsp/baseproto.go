@@ -64,6 +64,7 @@ func (r *BaseReader) Read(v any) error {
 		return ErrNoContentLength
 	}
 
+	// TODO: pool these buffers
 	buf := make([]byte, contentLength)
 	if _, err := io.ReadFull(r.r, buf); err != nil {
 		return fmt.Errorf("lsp: read content: %w", err)
