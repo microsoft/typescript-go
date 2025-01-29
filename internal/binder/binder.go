@@ -66,7 +66,7 @@ type Binder struct {
 	symbolPool             core.Pool[ast.Symbol]
 	flowNodePool           core.Pool[ast.FlowNode]
 	flowListPool           core.Pool[ast.FlowList]
-	singleDeclarations     []*ast.Node
+	singleDeclarationsPool core.Pool[*ast.Node]
 }
 
 type ModuleInstanceState int32
@@ -506,13 +506,9 @@ func (b *Binder) combineFlowLists(head *ast.FlowList, tail *ast.FlowList) *ast.F
 }
 
 func (b *Binder) newSingleDeclaration(declaration *ast.Node) []*ast.Node {
-	if len(b.singleDeclarations) == cap(b.singleDeclarations) {
-		b.singleDeclarations = make([]*ast.Node, 0, core.NextPoolSize(len(b.singleDeclarations)))
-	}
-	index := len(b.singleDeclarations)
-	b.singleDeclarations = b.singleDeclarations[:index+1]
-	b.singleDeclarations[index] = declaration
-	return b.singleDeclarations[index : index+1 : index+1]
+	nodes := b.singleDeclarationsPool.NewSlice(1)
+	nodes[0] = declaration
+	return nodes
 }
 
 func setFlowNodeReferenced(flow *ast.FlowNode) {
@@ -724,15 +720,13 @@ func (b *Binder) bindSourceFileIfExternalModule() {
 	b.setExportContextFlag(b.file.AsNode())
 	if ast.IsExternalModule(b.file) {
 		b.bindSourceFileAsExternalModule()
+	} else if ast.IsJsonSourceFile(b.file) {
+		b.bindSourceFileAsExternalModule()
+		// Create symbol equivalent for the module.exports = {}
+		originalSymbol := b.file.Symbol
+		b.declareSymbol(ast.GetSymbolTable(&b.file.Symbol.Exports), b.file.Symbol, b.file.AsNode(), ast.SymbolFlagsProperty, ast.SymbolFlagsAll)
+		b.file.Symbol = originalSymbol
 	}
-	// !!!
-	// else if isJsonSourceFile(b.file) {
-	// 	b.bindSourceFileAsExternalModule()
-	// 	// Create symbol equivalent for the module.exports = {}
-	// 	originalSymbol := b.file.symbol
-	// 	b.declareSymbol(b.file.symbol.exports, b.file.symbol, b.file, SymbolFlagsProperty, SymbolFlagsAll)
-	// 	b.file.symbol = originalSymbol
-	// }
 }
 
 func (b *Binder) bindSourceFileAsExternalModule() {
@@ -849,7 +843,7 @@ func getModuleInstanceState(node *ast.Node, visited map[ast.NodeId]ModuleInstanc
 	if module.Body != nil && module.Body.Parent == nil {
 		// getModuleInstanceStateForAliasTarget needs to walk up the parent chain, so parent pointers must be set on this tree already
 		setParent(module.Body, node)
-		SetParentInChildren(module.Body)
+		ast.SetParentInChildren(module.Body)
 	}
 	if module.Body != nil {
 		return getModuleInstanceStateCached(module.Body, visited)
@@ -948,7 +942,7 @@ func getModuleInstanceStateForAliasTarget(node *ast.Node, visited map[ast.NodeId
 				if nodeHasName(statement, name) {
 					if statement.Parent == nil {
 						setParent(statement, p)
-						SetParentInChildren(statement)
+						ast.SetParentInChildren(statement)
 					}
 					state := getModuleInstanceStateCached(statement, visited)
 					if found == ModuleInstanceStateUnknown || state > found {
@@ -2551,7 +2545,7 @@ func isGeneratorFunctionExpression(node *ast.Node) bool {
 
 func (b *Binder) addToContainerChain(next *ast.Node) {
 	if b.lastContainer != nil {
-		next.LocalsContainerData().NextContainer = next
+		b.lastContainer.LocalsContainerData().NextContainer = next
 	}
 	b.lastContainer = next
 }
@@ -2792,14 +2786,6 @@ func setParent(child *ast.Node, parent *ast.Node) {
 	if child != nil {
 		child.Parent = parent
 	}
-}
-
-func SetParentInChildren(node *ast.Node) {
-	node.ForEachChild(func(child *ast.Node) bool {
-		child.Parent = node
-		SetParentInChildren(child)
-		return false
-	})
 }
 
 func isSignedNumericLiteral(node *ast.Node) bool {

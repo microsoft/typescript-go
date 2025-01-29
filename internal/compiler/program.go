@@ -27,6 +27,7 @@ type ProgramOptions struct {
 	SingleThreaded     bool
 	ProjectReference   []core.ProjectReference
 	DefaultLibraryPath string
+	JSDocParsingMode   scanner.JSDocParsingMode
 }
 
 type Program struct {
@@ -243,14 +244,6 @@ func (p *Program) GetResolvedModule(file *ast.SourceFile, moduleReference string
 func (p *Program) findSourceFile(candidate string, reason FileIncludeReason) *ast.SourceFile {
 	path := tspath.ToPath(candidate, p.host.GetCurrentDirectory(), p.host.FS().UseCaseSensitiveFileNames())
 	return p.filesByPath[path]
-}
-
-func (p *Program) parseSourceFile(fileName string) *ast.SourceFile {
-	path := tspath.ToPath(fileName, p.currentDirectory, p.host.FS().UseCaseSensitiveFileNames())
-	text, _ := p.host.FS().ReadFile(fileName)
-	sourceFile := parser.ParseSourceFile(fileName, text, p.compilerOptions.GetEmitScriptTarget())
-	sourceFile.SetPath(path)
-	return sourceFile
 }
 
 func getModuleNames(file *ast.SourceFile) []*ast.Node {

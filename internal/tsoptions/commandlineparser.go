@@ -3,7 +3,6 @@ package tsoptions
 import (
 	"strconv"
 	"strings"
-	"sync"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/compiler/diagnostics"
@@ -11,25 +10,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/stringutil"
 	"github.com/microsoft/typescript-go/internal/vfs"
 )
-
-type DidYouMeanOptionsDiagnostics struct {
-	alternateMode               *AlternateModeDiagnostics
-	OptionDeclarations          []*CommandLineOption
-	UnknownOptionDiagnostic     *diagnostics.Message
-	UnknownDidYouMeanDiagnostic *diagnostics.Message
-}
-
-type AlternateModeDiagnostics struct {
-	diagnostic     *diagnostics.Message
-	optionsNameMap *NameMap
-}
-
-type ParseCommandLineWorkerDiagnostics struct {
-	didYouMean                   DidYouMeanOptionsDiagnostics
-	optionsNameMap               *NameMap
-	optionsNameMapOnce           sync.Once
-	OptionTypeMismatchDiagnostic *diagnostics.Message
-}
 
 type OptionsBase map[string]any // CompilerOptionsValue|TsConfigSourceFile
 
@@ -73,7 +53,6 @@ type CommandLineParser struct {
 	options           OptionsBase
 	// todo: watchOptions   OptionsBase
 	fileNames []string
-	errorLoc  core.TextRange
 	errors    []*ast.Diagnostic
 }
 
@@ -97,7 +76,6 @@ func parseCommandLineWorker(
 		workerDiagnostics: parseCommandLineWithDiagnostics,
 		fileNames:         []string{},
 		options:           OptionsBase{},
-		errorLoc:          core.NewTextRange(-1, -1),
 		errors:            []*ast.Diagnostic{},
 	}
 	parser.parseStrings(commandLine)
@@ -236,6 +214,8 @@ func (p *CommandLineParser) parseOptionValue(
 				p.errors = append(p.errors, ast.NewCompilerDiagnostic(p.workerDiagnostics.OptionTypeMismatchDiagnostic, opt.Name, getCompilerOptionValueTypeString(opt)))
 				if opt.Kind == "list" {
 					p.options[opt.Name] = []string{}
+				} else if opt.Kind == "enum" {
+					p.errors = append(p.errors, createDiagnosticForInvalidEnumType(opt, nil, nil))
 				}
 			} else {
 				p.options[opt.Name] = true
@@ -345,9 +325,8 @@ func convertJsonOptionOfEnumType(
 	opt *CommandLineOption,
 	value string,
 	valueExpression *ast.Expression,
-	sourceFile *TsConfigSourceFile,
+	sourceFile *ast.SourceFile,
 ) (any, []*ast.Diagnostic) {
-	var errors []*ast.Diagnostic
 	if value == "" {
 		return nil, nil
 	}
@@ -356,11 +335,9 @@ func convertJsonOptionOfEnumType(
 	if typeMap == nil {
 		return nil, nil
 	}
-	val, b := typeMap.Get(key)
-	if (val != nil) && (val != "" || b) {
+	val, ok := typeMap.Get(key)
+	if ok {
 		return validateJsonOptionValue(opt, val, valueExpression, sourceFile)
-	} else {
-		errors = []*ast.Diagnostic{createDiagnosticForInvalidEnumType(opt)}
 	}
-	return nil, errors
+	return nil, []*ast.Diagnostic{createDiagnosticForInvalidEnumType(opt, sourceFile, valueExpression)}
 }

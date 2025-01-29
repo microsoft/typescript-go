@@ -11067,7 +11067,7 @@ func (c *Checker) getModuleSpecifierForImportOrExport(node *ast.Node) *ast.Node 
 		return getModuleSpecifierFromNode(node.Parent)
 	case ast.KindImportEqualsDeclaration:
 		if ast.IsExternalModuleReference(node.AsImportEqualsDeclaration().ModuleReference) {
-			return node.AsImportEqualsDeclaration().ModuleReference.AsExternalModuleReference().Expression_
+			return node.AsImportEqualsDeclaration().ModuleReference.AsExternalModuleReference().Expression
 		} else {
 			return nil
 		}
@@ -12105,12 +12105,13 @@ func (c *Checker) getTypeOfVariableOrParameterOrPropertyWorker(symbol *ast.Symbo
 	// !!! Debug.assertIsDefined(symbol.valueDeclaration)
 	declaration := symbol.ValueDeclaration
 	// !!! Handle export default expressions
-	// if isSourceFile(declaration) && isJsonSourceFile(declaration) {
-	// 	if !declaration.statements.length {
-	// 		return c.emptyObjectType
-	// 	}
-	// 	return c.getWidenedType(c.getWidenedLiteralType(c.checkExpression(declaration.statements[0].expression)))
-	// }
+	if ast.IsSourceFile(declaration) && ast.IsJsonSourceFile(declaration.AsSourceFile()) {
+		statements := declaration.AsSourceFile().Statements.Nodes
+		if len(statements) == 0 {
+			return c.emptyObjectType
+		}
+		return c.getWidenedType(c.getWidenedLiteralType(c.checkExpression(statements[0].AsExpressionStatement().Expression)))
+	}
 	// Handle variable, parameter or property
 	if !c.pushTypeResolution(symbol, TypeSystemPropertyNameType) {
 		return c.reportCircularityError(symbol)
