@@ -2852,24 +2852,6 @@ func isFunctionSymbol(symbol *ast.Symbol) bool {
 	return false
 }
 
-// The given symbol represents the previously declared 'fn' in an assignment of the form 'fn.xxx = ...'.
-// Return
-func getExpandoFunctionSymbol(symbol *ast.Symbol) *ast.Symbol {
-	d := symbol.ValueDeclaration
-	if d != nil {
-		if ast.IsFunctionDeclaration(d) {
-			return symbol
-		}
-		if ast.IsVariableDeclaration(d) && ast.IsVariableDeclarationList(d.Parent) && d.Parent.Flags&ast.NodeFlagsConst != 0 {
-			initializer := d.Initializer()
-			if initializer != nil && ast.IsFunctionExpressionOrArrowFunction(initializer) {
-				return initializer.Symbol()
-			}
-		}
-	}
-	return nil
-}
-
 func unreachableCodeIsError(options *core.CompilerOptions) bool {
 	return options.AllowUnreachableCode == core.TSFalse
 }
