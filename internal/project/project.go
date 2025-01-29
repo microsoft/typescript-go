@@ -92,7 +92,7 @@ func (p *Project) Trace(msg string) {
 }
 
 func (p *Project) getOrCreateScriptInfoAndAttachToProject(fileName string, scriptKind core.ScriptKind) *scriptInfo {
-	if scriptInfo := p.projectService.getOrCreateScriptInfoNotOpenedByClient(fileName, scriptKind); scriptInfo != nil {
+	if scriptInfo := p.projectService.getOrCreateScriptInfoNotOpenedByClient(fileName, p.toPath(fileName), scriptKind); scriptInfo != nil {
 		scriptInfo.attachToProject(p)
 		return scriptInfo
 	}
@@ -140,4 +140,8 @@ func (p *Project) isOrphan() bool {
 	default:
 		panic("unhandled project kind")
 	}
+}
+
+func (p *Project) toPath(fileName string) tspath.Path {
+	return tspath.ToPath(fileName, p.GetCurrentDirectory(), p.FS().UseCaseSensitiveFileNames())
 }

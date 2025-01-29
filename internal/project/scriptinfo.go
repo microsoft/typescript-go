@@ -4,6 +4,7 @@ import (
 	"slices"
 
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
@@ -37,6 +38,14 @@ func (s *scriptInfo) open(newText string) {
 	if newText != s.text {
 		s.setText(newText)
 		s.matchesDiskText = false
+		s.markContainingProjectsAsDirty()
+	}
+}
+
+func (s *scriptInfo) close(fileExists bool) {
+	s.isOpen = false
+	if fileExists && !s.pendingReloadFromDisk && !s.matchesDiskText {
+		s.pendingReloadFromDisk = true
 		s.markContainingProjectsAsDirty()
 	}
 }
@@ -86,4 +95,9 @@ func (s *scriptInfo) isOrphan() bool {
 		}
 	}
 	return true
+}
+
+func (s *scriptInfo) editContent(change ls.TextChange) {
+	s.setText(change.ApplyTo(s.text))
+	s.markContainingProjectsAsDirty()
 }
