@@ -131,7 +131,7 @@ func (b *Binder) declareSymbolEx(symbolTable ast.SymbolTable, parent *ast.Symbol
 	switch {
 	case isComputedName:
 		name = ast.InternalSymbolNameComputed
-	case isDefaultExport && b.parent != nil:
+	case isDefaultExport && parent != nil:
 		name = ast.InternalSymbolNameDefault
 	default:
 		name = b.getDeclarationName(node)
@@ -182,7 +182,8 @@ func (b *Binder) declareSymbolEx(symbolTable ast.SymbolTable, parent *ast.Symbol
 				// prototype symbols like methods.
 				symbol = b.newSymbol(ast.SymbolFlagsNone, name)
 				symbolTable[name] = symbol
-			} else if includes&ast.SymbolFlagsVariable == 0 || symbol.Flags&ast.SymbolFlagsAssignment == 0 {
+			} else if !(includes&ast.SymbolFlagsVariable != 0 && symbol.Flags&ast.SymbolFlagsAssignment != 0 ||
+				includes&ast.SymbolFlagsAssignment != 0 && symbol.Flags&ast.SymbolFlagsVariable != 0) {
 				// Assignment declarations are allowed to merge with variables, no matter what other flags they have.
 				if node.Name() != nil {
 					setParent(node.Name(), node)
@@ -694,7 +695,7 @@ func (b *Binder) bindWorker(node *ast.Node) bool {
 	if node.Kind > ast.KindLastToken {
 		saveParent := b.parent
 		b.parent = node
-		containerFlags := getContainerFlags(node)
+		containerFlags := GetContainerFlags(node)
 		if containerFlags == ContainerFlagsNone {
 			b.bindChildren(node)
 		} else {
@@ -1085,19 +1086,34 @@ func addLateBoundAssignmentDeclarationToSymbol(node *ast.Node, symbol *ast.Symbo
 func (b *Binder) bindFunctionPropertyAssignment(node *ast.Node) {
 	expr := node.AsBinaryExpression()
 	parentName := expr.Left.Expression().Text()
-	parentSymbol := b.lookupName(parentName, b.blockScopeContainer)
-	if parentSymbol == nil {
-		parentSymbol = b.lookupName(parentName, b.container)
+	symbol := b.lookupName(parentName, b.blockScopeContainer)
+	if symbol == nil {
+		symbol = b.lookupName(parentName, b.container)
 	}
-	if parentSymbol != nil && isFunctionSymbol(parentSymbol) {
-		// Fix up parent pointers since we're going to use these nodes before we bind into them
-		setParent(expr.Left, node)
-		setParent(expr.Right, node)
-		if ast.HasDynamicName(node) {
-			b.bindAnonymousDeclaration(node, ast.SymbolFlagsProperty|ast.SymbolFlagsAssignment, ast.InternalSymbolNameComputed)
-			addLateBoundAssignmentDeclarationToSymbol(node, parentSymbol)
-		} else {
-			b.declareSymbol(ast.GetExports(parentSymbol), parentSymbol, node, ast.SymbolFlagsProperty|ast.SymbolFlagsAssignment, ast.SymbolFlagsPropertyExcludes)
+	if symbol != nil && symbol.ValueDeclaration != nil {
+		// For an assignment 'fn.xxx = ...', where 'fn' is a previously declared function or a previously
+		// declared const variable initialized with a function expression or arrow function, we add expando
+		// property declarations to the function's symbol.
+		var funcSymbol *ast.Symbol
+		switch {
+		case ast.IsFunctionDeclaration(symbol.ValueDeclaration):
+			funcSymbol = symbol
+		case ast.IsVariableDeclaration(symbol.ValueDeclaration) && symbol.ValueDeclaration.Parent.Flags&ast.NodeFlagsConst != 0:
+			initializer := symbol.ValueDeclaration.Initializer()
+			if initializer != nil && ast.IsFunctionExpressionOrArrowFunction(initializer) {
+				funcSymbol = initializer.Symbol()
+			}
+		}
+		if funcSymbol != nil {
+			// Fix up parent pointers since we're going to use these nodes before we bind into them
+			setParent(expr.Left, node)
+			setParent(expr.Right, node)
+			if ast.HasDynamicName(node) {
+				b.bindAnonymousDeclaration(node, ast.SymbolFlagsProperty|ast.SymbolFlagsAssignment, ast.InternalSymbolNameComputed)
+				addLateBoundAssignmentDeclarationToSymbol(node, funcSymbol)
+			} else {
+				b.declareSymbol(ast.GetExports(funcSymbol), funcSymbol, node, ast.SymbolFlagsProperty|ast.SymbolFlagsAssignment, ast.SymbolFlagsPropertyExcludes)
+			}
 		}
 	}
 }
@@ -2560,10 +2576,10 @@ func (b *Binder) addDeclarationToSymbol(symbol *ast.Symbol, node *ast.Node, symb
 func SetValueDeclaration(symbol *ast.Symbol, node *ast.Node) {
 	valueDeclaration := symbol.ValueDeclaration
 	if valueDeclaration == nil ||
-		!(node.Flags&ast.NodeFlagsAmbient != 0 && valueDeclaration.Flags&ast.NodeFlagsAmbient == 0) &&
-			(isAssignmentDeclaration(valueDeclaration) && !isAssignmentDeclaration(node)) ||
-		(valueDeclaration.Kind != node.Kind && isEffectiveModuleDeclaration(valueDeclaration)) {
-		// other kinds of value declarations take precedence over modules and assignment declarations
+		isAssignmentDeclaration(valueDeclaration) && !isAssignmentDeclaration(node) ||
+		valueDeclaration.Kind != node.Kind && isEffectiveModuleDeclaration(valueDeclaration) {
+		// Non-assignment declarations take precedence over assignment declarations and
+		// non-namespace declarations take precedence over namespace declarations.
 		symbol.ValueDeclaration = node
 	}
 }
@@ -2577,7 +2593,7 @@ func SetValueDeclaration(symbol *ast.Symbol, node *ast.Node) {
  * @param excludes - The flags which node cannot be declared alongside in a symbol table. Used to report forbidden declarations.
  */
 
-func getContainerFlags(node *ast.Node) ContainerFlags {
+func GetContainerFlags(node *ast.Node) ContainerFlags {
 	switch node.Kind {
 	case ast.KindClassExpression, ast.KindClassDeclaration, ast.KindEnumDeclaration, ast.KindObjectLiteralExpression, ast.KindTypeLiteral,
 		ast.KindJSDocTypeLiteral, ast.KindJsxAttributes:
@@ -2848,6 +2864,24 @@ func isFunctionSymbol(symbol *ast.Symbol) bool {
 		}
 	}
 	return false
+}
+
+// The given symbol represents the previously declared 'fn' in an assignment of the form 'fn.xxx = ...'.
+// Return
+func getExpandoFunctionSymbol(symbol *ast.Symbol) *ast.Symbol {
+	d := symbol.ValueDeclaration
+	if d != nil {
+		if ast.IsFunctionDeclaration(d) {
+			return symbol
+		}
+		if ast.IsVariableDeclaration(d) && ast.IsVariableDeclarationList(d.Parent) && d.Parent.Flags&ast.NodeFlagsConst != 0 {
+			initializer := d.Initializer()
+			if initializer != nil && ast.IsFunctionExpressionOrArrowFunction(initializer) {
+				return initializer.Symbol()
+			}
+		}
+	}
+	return nil
 }
 
 func unreachableCodeIsError(options *core.CompilerOptions) bool {

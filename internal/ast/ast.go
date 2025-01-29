@@ -123,11 +123,8 @@ func (n *Node) Name() *DeclarationName                    { return n.data.Name()
 func (n *Node) Modifiers() *ModifierList                  { return n.data.Modifiers() }
 func (n *Node) FlowNodeData() *FlowNodeBase               { return n.data.FlowNodeData() }
 func (n *Node) DeclarationData() *DeclarationBase         { return n.data.DeclarationData() }
-func (n *Node) Symbol() *Symbol                           { return n.data.DeclarationData().Symbol }
 func (n *Node) ExportableData() *ExportableBase           { return n.data.ExportableData() }
-func (n *Node) LocalSymbol() *Symbol                      { return n.data.ExportableData().LocalSymbol }
 func (n *Node) LocalsContainerData() *LocalsContainerBase { return n.data.LocalsContainerData() }
-func (n *Node) Locals() SymbolTable                       { return n.data.LocalsContainerData().Locals }
 func (n *Node) FunctionLikeData() *FunctionLikeBase       { return n.data.FunctionLikeData() }
 func (n *Node) Parameters() []*ParameterDeclarationNode {
 	return n.data.FunctionLikeData().Parameters.Nodes
@@ -137,6 +134,34 @@ func (n *Node) BodyData() *BodyBase               { return n.data.BodyData() }
 func (n *Node) LiteralLikeData() *LiteralLikeBase { return n.data.LiteralLikeData() }
 func (n *Node) TemplateLiteralLikeData() *TemplateLiteralLikeBase {
 	return n.data.TemplateLiteralLikeData()
+}
+
+func (n *Node) Symbol() *Symbol {
+	return n.DeclarationData().Symbol
+}
+
+func (n *Node) LocalSymbol() *Symbol {
+	data := n.ExportableData()
+	if data != nil {
+		return data.LocalSymbol
+	}
+	return nil
+}
+
+func (n *Node) Locals() SymbolTable {
+	data := n.LocalsContainerData()
+	if data != nil {
+		return data.Locals
+	}
+	return nil
+}
+
+func (n *Node) Body() *Node {
+	data := n.BodyData()
+	if data != nil {
+		return data.Body
+	}
+	return nil
 }
 
 func (n *Node) Text() string {
@@ -292,6 +317,30 @@ func (n *Node) TypeParameterList() *NodeList {
 
 func (n *Node) TypeParameters() []*Node {
 	list := n.TypeParameterList()
+	if list != nil {
+		return list.Nodes
+	}
+	return nil
+}
+
+func (n *Node) MemberList() *NodeList {
+	switch n.Kind {
+	case KindClassDeclaration:
+		return n.AsClassDeclaration().Members
+	case KindClassExpression:
+		return n.AsClassExpression().Members
+	case KindInterfaceDeclaration:
+		return n.AsInterfaceDeclaration().Members
+	case KindEnumDeclaration:
+		return n.AsEnumDeclaration().Members
+	case KindTypeLiteral:
+		return n.AsTypeLiteralNode().Members
+	}
+	panic("Unhandled case in Node.Members")
+}
+
+func (n *Node) Members() []*Node {
+	list := n.MemberList()
 	if list != nil {
 		return list.Nodes
 	}

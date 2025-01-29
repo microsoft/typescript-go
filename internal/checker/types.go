@@ -144,7 +144,8 @@ type TypeAliasLinks struct {
 // Links for declared types (type parameters, class types, interface types, enums)
 
 type DeclaredTypeLinks struct {
-	declaredType *Type
+	declaredType          *Type
+	typeParametersChecked bool
 }
 
 // Links for switch clauses
