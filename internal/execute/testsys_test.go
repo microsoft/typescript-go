@@ -77,9 +77,9 @@ func (s *testSys) GetFormatOpts() *diagnosticwriter.FormattingOptions {
 	return s.formatOpts
 }
 
-func (s *testSys) Write(p []byte) (n int, err error) {
+func (s *testSys) Writer() io.Writer {
 	// todo: check accuracy with original
-	return fmt.Fprint(s.currentWrite, string(p))
+	return s.currentWrite
 }
 
 func (s *testSys) EndWrite() {

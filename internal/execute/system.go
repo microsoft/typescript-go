@@ -1,6 +1,8 @@
 package execute
 
 import (
+	"io"
+
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/diagnosticwriter"
 	"github.com/microsoft/typescript-go/internal/vfs"
@@ -12,7 +14,7 @@ import (
 // compilerhost in compiler/host.go does not have a sys.exit or sys.write
 type System interface {
 	Exit(status ExitStatus) ExitStatus
-	Write(p []byte) (n int, err error)
+	Writer() io.Writer
 	EndWrite()
 	FS() vfs.FS
 	Host() compiler.CompilerHost

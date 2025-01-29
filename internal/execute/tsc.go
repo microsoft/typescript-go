@@ -174,7 +174,7 @@ func performCompilation(sys System, cb cbType, reportDiagnostic DiagnosticReport
 	if len(diagnostics) == 0 {
 		diagnostics = append(diagnostics, program.GetSemanticDiagnostics(nil)...)
 	}
-	// todo declaration diagnostics
+	// TODO: declaration diagnostics
 	// if len(diagnostics) == 0 && options.NoEmit == core.TSTrue && getEmitDeclarations(options) {
 	// 	addRange(allDiagnostics, program.getDeclarationDiagnostics(/*sourceFile*/ undefined, cancellationToken));
 	// }
@@ -192,8 +192,18 @@ func performCompilation(sys System, cb cbType, reportDiagnostic DiagnosticReport
 		for _, diagnostic := range allDiagnostics {
 			reportDiagnostic(diagnostic)
 		}
-		createReportErrorSummary(sys, config.CompilerOptions())(allDiagnostics)
 	}
+
+	// !!! if (write)
+	if sys.Writer() != nil {
+		for _, file := range emitResult.EmittedFiles {
+			fmt.Fprint(sys.Writer(), "TSFILE: ", tspath.GetNormalizedAbsolutePath(file, sys.Host().GetCurrentDirectory()))
+		}
+		// todo: listFiles(program, sys.Writer())
+	}
+
+	createReportErrorSummary(sys, config.CompilerOptions())(allDiagnostics)
+
 	reportStatistics(sys, program)
 	if cb != nil {
 		cb(program)
@@ -230,7 +240,7 @@ type (
 func CreateDiagnosticReporter(sys System, pretty bool) DiagnosticReporter {
 	if !pretty {
 		return func(diagnostic *ast.Diagnostic) {
-			diagnosticwriter.WriteFormatDiagnostic(sys, diagnostic, sys.GetFormatOpts())
+			diagnosticwriter.WriteFormatDiagnostic(sys.Writer(), diagnostic, sys.GetFormatOpts())
 			sys.EndWrite()
 		}
 	}
@@ -238,7 +248,7 @@ func CreateDiagnosticReporter(sys System, pretty bool) DiagnosticReporter {
 	diagArr := [1]*ast.Diagnostic{}
 	return func(diagnostic *ast.Diagnostic) {
 		diagArr[0] = diagnostic
-		diagnosticwriter.FormatDiagnosticsWithColorAndContext(sys, diagArr[:], sys.GetFormatOpts())
+		diagnosticwriter.FormatDiagnosticsWithColorAndContext(sys.Writer(), diagArr[:], sys.GetFormatOpts())
 		sys.EndWrite()
 		diagArr[0] = nil
 	}
@@ -262,11 +272,11 @@ func createReportErrorSummary(sys System, options *core.CompilerOptions) func(di
 	if shouldBePretty(sys, options) {
 		formatOpts := sys.GetFormatOpts()
 		return func(diagnostics []*ast.Diagnostic) {
-			diagnosticwriter.WriteErrorSummaryText(sys, diagnostics, formatOpts)
+			diagnosticwriter.WriteErrorSummaryText(sys.Writer(), diagnostics, formatOpts)
 			sys.EndWrite()
 		}
 	}
-	return nil
+	return func(diagnostics []*ast.Diagnostic) {}
 }
 
 func shouldBePretty(sys System, options *core.CompilerOptions) bool {
@@ -288,7 +298,7 @@ func reportStatistics(sys System, program *compiler.Program) {
 	}
 
 	for _, stat := range stats {
-		fmt.Fprintf(sys, "%s:"+strings.Repeat(" ", 20-len(stat.name))+"%v\n", stat.name, stat.value)
+		fmt.Fprintf(sys.Writer(), "%s:"+strings.Repeat(" ", 20-len(stat.name))+"%v\n", stat.name, stat.value)
 	}
 }
 

@@ -2,16 +2,18 @@ package main
 
 import (
 	"fmt"
+	"io"
 	"os"
 
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/diagnosticwriter"
 	"github.com/microsoft/typescript-go/internal/execute"
+	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 )
 
 type osSys struct {
-	write      func([]byte) (int, error)
+	writer     io.Writer
 	formatOpts *diagnosticwriter.FormattingOptions
 	host       compiler.CompilerHost
 }
@@ -28,8 +30,8 @@ func (s *osSys) Exit(e execute.ExitStatus) execute.ExitStatus {
 	return e
 }
 
-func (s *osSys) Write(p []byte) (n int, err error) {
-	return s.write(p)
+func (s *osSys) Writer() io.Writer {
+	return s.writer
 }
 
 func (s *osSys) EndWrite() {
@@ -47,10 +49,10 @@ func NewSystem() *osSys {
 		fmt.Fprintf(os.Stderr, "Error getting current directory: %v\n", err)
 		os.Exit(int(execute.ExitStatusInvalidProject_OutputsSkipped))
 	}
-	newHost := compiler.NewCompilerHost(nil, cwd, vfs.FromOS())
+	newHost := compiler.NewCompilerHost(nil, tspath.NormalizePath(cwd), vfs.FromOS())
 	return &osSys{
 		host:       newHost,
-		write:      os.Stdout.Write,
+		writer:     os.Stdout,
 		formatOpts: getFormatOpts(newHost),
 	}
 }
