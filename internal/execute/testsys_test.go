@@ -6,10 +6,12 @@ import (
 	"strings"
 	"testing/fstest"
 
+	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/bundled"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnosticwriter"
+	"github.com/microsoft/typescript-go/internal/execute"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
@@ -21,7 +23,6 @@ func NewTestSys(fileOrFolderList FileMap, cwd string, args ...string) *testSys {
 	if cwd == "" {
 		cwd = "/home/src/workspaces/project"
 	}
-	// todo: rest of TestServerHost constructor
 	mapFS := fstest.MapFS{}
 	fileList := []string{}
 	for name, content := range fileOrFolderList {
@@ -53,6 +54,7 @@ type testSys struct {
 	currentWrite   *strings.Builder
 	serializedDiff map[string]string
 	host           compiler.CompilerHost
+	reporter       execute.DiagnosticReporter
 	formatOpts     *diagnosticwriter.FormattingOptions
 	files          []string
 }
@@ -65,12 +67,19 @@ func (s *testSys) Host() compiler.CompilerHost {
 	return s.host
 }
 
+func (s *testSys) SetReportDiagnostics(r execute.DiagnosticReporter) {
+	s.reporter = r
+}
+
+func (s *testSys) ReportDiagnostic(d *ast.Diagnostic) {
+	s.reporter(d)
+}
+
 func (s *testSys) GetFormatOpts() *diagnosticwriter.FormattingOptions {
 	return s.formatOpts
 }
 
 func (s *testSys) Writer() io.Writer {
-	// todo: check accuracy with original
 	return s.currentWrite
 }
 

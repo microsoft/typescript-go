@@ -84,6 +84,11 @@ func TestTsc(t *testing.T) {
 
 func TestNoEmit(t *testing.T) {
 	t.Parallel()
+	if !bundled.Embedded {
+		// Without embedding, we'd need to read all of the lib files out from disk into the MapFS.
+		// Just skip this for now.
+		t.Skip("bundled files are not embedded")
+	}
 
 	(&tscInput{
 		scenario:    "noEmit",
@@ -103,6 +108,12 @@ func TestNoEmit(t *testing.T) {
 
 func TestProjectReferences(t *testing.T) {
 	t.Parallel()
+	if !bundled.Embedded {
+		// Without embedding, we'd need to read all of the lib files out from disk into the MapFS.
+		// Just skip this for now.
+		t.Skip("bundled files are not embedded")
+	}
+
 	(&tscInput{
 		scenario:    "projectReferences",
 		subScenario: "when project references composite project with noEmit",
@@ -130,7 +141,12 @@ func TestProjectReferences(t *testing.T) {
 
 // func TestExtends(t *testing.T) {
 // 	t.Parallel()
-
+// if !bundled.Embedded {
+// 	// Without embedding, we'd need to read all of the lib files out from disk into the MapFS.
+// 	// Just skip this for now.
+// 	t.Skip("bundled files are not embedded")
+// }
+//
 // 	extendsSys := NewTestSys(FileMap{
 //         "/home/src/projects/configs/first/tsconfig.json": `{
 // 	extends: "../second/tsconfig.json",
@@ -162,7 +178,7 @@ func TestProjectReferences(t *testing.T) {
 // 		traceResolution: true,
 // 	},
 // }`,
-
+//
 //         "/home/src/projects/myproject/main.ts": `
 // 	// some comment
 // 	export const y = 10;
@@ -180,7 +196,7 @@ func TestProjectReferences(t *testing.T) {
 // 	export const k = 10;
 // `,
 // 	}, "/home/src/projects/myproject" );
-
+//
 // 	cases := []tscInput{{
 //         scenario: "extends",
 //         subScenario: "configDir template",
@@ -197,9 +213,8 @@ func TestProjectReferences(t *testing.T) {
 //         sys: extendsSys,
 //         commandLineArgs: []string{"--explainFiles", "--outDir", "${configDir}/outDir"},
 //     }}
-
+//
 // 	for _, c := range cases {
 // 		c.verify(t)
 // 	}
-
 // }

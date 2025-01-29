@@ -210,7 +210,6 @@ func tsconfigToSourceFile(tsconfigSourceFile *TsConfigSourceFile) *ast.SourceFil
 
 func NewTsconfigSourceFileFromFilePath(configFileName string, configSourceText string) *TsConfigSourceFile {
 	sourceFile := parser.ParseJSONText(configFileName, configSourceText)
-	// todo: the other fields
 	return &TsConfigSourceFile{
 		SourceFile: sourceFile,
 	}
