@@ -117,7 +117,7 @@ type Printer struct {
 	writeKind          WriteKind
 	commentsDisabled   bool
 	inExtends          bool // whether we are emitting the `extends` clause of a ConditionalType or InferType
-	nameGenerator      nameGenerator
+	nameGenerator      NameGenerator
 }
 
 func NewPrinter(options PrinterOptions, handlers PrintHandlers, emitContext *EmitContext) *Printer {
