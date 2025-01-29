@@ -2,7 +2,6 @@ package lsp
 
 import (
 	"encoding/json"
-	"fmt"
 )
 
 type Integer int32
@@ -33,59 +32,33 @@ func (id *ID) UnmarshalJSON(data []byte) error {
 	return json.Unmarshal(data, &id.int)
 }
 
+type RequestParams interface {
+	requestParams()
+}
+
 type RequestMessage struct {
-	JSONRPC string `json:"jsonrpc"`
-	ID      ID     `json:"id"`
-	Method  string `json:"method"`
-	Params  any    `json:"params"`
+	JSONRPC string        `json:"jsonrpc"`
+	ID      ID            `json:"id"`
+	Method  string        `json:"method"`
+	Params  RequestParams `json:"params"`
 }
 
-type InitializeParams struct {
-	ProcessID             *Integer    `json:"processId"`
-	ClientInfo            *ClientInfo `json:"clientInfo"`
-	Locale                *string     `json:"locale"`
-	InitializationOptions any         `json:"initializationOptions"`
-	Capabilities          any         `json:"capabilities"`
-	Trace                 *TraceValue `json:"trace"`
-}
-
-type ClientInfo struct {
-	Name    string  `json:"name"`
-	Version *string `json:"version"`
-}
-
-const (
-	TraceValueOff      TraceValue = "off"
-	TraceValueMessages TraceValue = "messages"
-	TraceValueVerbose  TraceValue = "verbose"
-)
-
-type TraceValue string
-
-func (t *TraceValue) UnmarshalJSON(data []byte) error {
-	var s string
-	if err := json.Unmarshal(data, &s); err != nil {
+func (r *RequestMessage) UnmarshalJSON(data []byte) error {
+	var raw struct {
+		JSONRPC string          `json:"jsonrpc"`
+		ID      ID              `json:"id"`
+		Method  string          `json:"method"`
+		Params  json.RawMessage `json:"params"`
+	}
+	if err := json.Unmarshal(data, &raw); err != nil {
 		return err
 	}
-	switch TraceValue(s) {
-	case TraceValueOff:
-		*t = TraceValueOff
-	case TraceValueMessages:
-		*t = TraceValueMessages
-	case TraceValueVerbose:
-		*t = TraceValueVerbose
-	default:
-		return fmt.Errorf("unknown TraceValue: %q", s)
+
+	unmarshalParams, ok := requestMethodUnmarshallers[raw.Method]
+	if !ok {
+		// TODO: use a real error
+		return fmt.Errorf("unknown method %s", raw.Method)
 	}
-	return nil
-}
 
-type InitializeResult struct {
-	Capabilities any         `json:"capabilities"`
-	ServerInfo   *ServerInfo `json:"serverInfo,omitempty"`
-}
-
-type ServerInfo struct {
-	Name    string  `json:"name"`
-	Version *string `json:"version"`
+	
 }
