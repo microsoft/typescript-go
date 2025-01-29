@@ -26,10 +26,6 @@ func (s *osSys) Host() compiler.CompilerHost {
 	return s.host
 }
 
-func (s *osSys) Exit(e execute.ExitStatus) execute.ExitStatus {
-	return e
-}
-
 func (s *osSys) Writer() io.Writer {
 	return s.writer
 }

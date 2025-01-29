@@ -32,7 +32,7 @@ func executeCommandLineWorker(sys System, cb cbType, commandLine *tsoptions.Pars
 		for _, e := range commandLine.Errors {
 			reportDiagnostic(e)
 		}
-		return sys.Exit(ExitStatusDiagnosticsPresent_OutputsSkipped)
+		return ExitStatusDiagnosticsPresent_OutputsSkipped
 	}
 
 	// if commandLine.Options().Init != nil
@@ -43,7 +43,7 @@ func executeCommandLineWorker(sys System, cb cbType, commandLine *tsoptions.Pars
 	if commandLine.CompilerOptions().Project != "" {
 		if len(commandLine.FileNames()) != 0 {
 			reportDiagnostic(ast.NewCompilerDiagnostic(diagnostics.Option_project_cannot_be_mixed_with_source_files_on_a_command_line))
-			return sys.Exit(ExitStatusDiagnosticsPresent_OutputsSkipped)
+			return ExitStatusDiagnosticsPresent_OutputsSkipped
 		}
 
 		fileOrDirectory := tspath.NormalizePath(commandLine.CompilerOptions().Project)
@@ -51,13 +51,13 @@ func executeCommandLineWorker(sys System, cb cbType, commandLine *tsoptions.Pars
 			configFileName = tspath.CombinePaths(fileOrDirectory, "tsconfig.json")
 			if !sys.FS().FileExists(configFileName) {
 				reportDiagnostic(ast.NewCompilerDiagnostic(diagnostics.Cannot_find_a_tsconfig_json_file_at_the_current_directory_Colon_0, configFileName))
-				return sys.Exit(ExitStatusDiagnosticsPresent_OutputsSkipped)
+				return ExitStatusDiagnosticsPresent_OutputsSkipped
 			}
 		} else {
 			configFileName = fileOrDirectory
 			if !sys.FS().FileExists(configFileName) {
 				reportDiagnostic(ast.NewCompilerDiagnostic(diagnostics.The_specified_path_does_not_exist_Colon_0, fileOrDirectory))
-				return sys.Exit(ExitStatusDiagnosticsPresent_OutputsSkipped)
+				return ExitStatusDiagnosticsPresent_OutputsSkipped
 			}
 		}
 	} else if len(commandLine.FileNames()) == 0 {
@@ -72,7 +72,7 @@ func executeCommandLineWorker(sys System, cb cbType, commandLine *tsoptions.Pars
 			// print version
 			// print help
 		}
-		return sys.Exit(ExitStatusDiagnosticsPresent_OutputsSkipped)
+		return ExitStatusDiagnosticsPresent_OutputsSkipped
 	}
 
 	// !!! convert to options with absolute paths is usualy done here, but for ease of implementation, it's done in `tsoptions.ParseCommandLine`
@@ -85,7 +85,7 @@ func executeCommandLineWorker(sys System, cb cbType, commandLine *tsoptions.Pars
 		// updateReportDiagnostic
 		if isWatchSet(configParseResult.CompilerOptions()) {
 			// todo watch
-			return sys.Exit(ExitStatusDiagnosticsPresent_OutputsSkipped)
+			return ExitStatusDiagnosticsPresent_OutputsSkipped
 		} else if isIncrementalCompilation(configParseResult.CompilerOptions()) {
 			// todo performIncrementalCompilation
 		} else {
@@ -99,12 +99,12 @@ func executeCommandLineWorker(sys System, cb cbType, commandLine *tsoptions.Pars
 	} else {
 		if compilerOptionsFromCommandLine.ShowConfig.IsTrue() {
 			// write show config
-			return sys.Exit(ExitStatusSuccess)
+			return ExitStatusSuccess
 		}
 		// todo update reportDiagnostic
 		if isWatchSet(compilerOptionsFromCommandLine) {
 			// todo watch
-			return sys.Exit(ExitStatusDiagnosticsPresent_OutputsSkipped)
+			return ExitStatusDiagnosticsPresent_OutputsSkipped
 		} else if isIncrementalCompilation(compilerOptionsFromCommandLine) {
 			// todo incremental
 		} else {
@@ -118,7 +118,7 @@ func executeCommandLineWorker(sys System, cb cbType, commandLine *tsoptions.Pars
 		}
 	}
 
-	return sys.Exit(ExitStatusSuccess)
+	return ExitStatusSuccess
 }
 
 func parseConfigFileWithSystem(
@@ -208,7 +208,7 @@ func performCompilation(sys System, cb cbType, reportDiagnostic DiagnosticReport
 	if cb != nil {
 		cb(program)
 	}
-	return sys.Exit(getExitStatus(emitResult, allDiagnostics))
+	return getExitStatus(emitResult, allDiagnostics)
 }
 
 func getExitStatus(emitResult *compiler.EmitResult, diagnostics []*ast.Diagnostic) ExitStatus {

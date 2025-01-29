@@ -10,7 +10,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnosticwriter"
-	"github.com/microsoft/typescript-go/internal/execute"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
@@ -53,8 +52,6 @@ type testSys struct {
 	output         []string
 	currentWrite   *strings.Builder
 	serializedDiff map[string]string
-
-	exitVal    execute.ExitStatus
 	host       compiler.CompilerHost
 	formatOpts *diagnosticwriter.FormattingOptions
 	files      []string
@@ -66,11 +63,6 @@ func (s *testSys) FS() vfs.FS {
 
 func (s *testSys) Host() compiler.CompilerHost {
 	return s.host
-}
-
-func (s *testSys) Exit(e execute.ExitStatus) execute.ExitStatus {
-	s.exitVal = e
-	return s.exitVal
 }
 
 func (s *testSys) GetFormatOpts() *diagnosticwriter.FormattingOptions {

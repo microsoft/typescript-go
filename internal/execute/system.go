@@ -13,7 +13,6 @@ import (
 // from looking at go and main, it looks like they are different, host extends vfs sorta.
 // compilerhost in compiler/host.go does not have a sys.exit or sys.write
 type System interface {
-	Exit(status ExitStatus) ExitStatus
 	Writer() io.Writer
 	EndWrite()
 	FS() vfs.FS
