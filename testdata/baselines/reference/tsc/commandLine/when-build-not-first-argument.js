@@ -4,7 +4,7 @@ useCaseSensitiveFileNames::true
 Input::--verbose --build
 
 
-ExitStatus:: 0
+ExitStatus:: 1
 
 CompilerOptions::{
     "allowJs": null,
@@ -131,4 +131,7 @@ CompilerOptions::{
     "tscBuild": null
 }
 Output::
+error TS5093: Compiler option '--verbose' may only be used with '--build'.
+
+error TS6369: Option '--build' must be the first command line argument.
 

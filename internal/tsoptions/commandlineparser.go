@@ -62,35 +62,18 @@ func ParseCommandLine(
 		commandLine = []string{}
 	}
 	parser := parseCommandLineWorker(CompilerOptionsDidYouMeanDiagnostics, commandLine, host.FS())
-	// this function should convert commandLineWorker output to compileroptions
-	// todo: return correct type (waiting on shared tsconfig parsing utilities)
-	// parseCommandLineWorker()
-	// fileNames := []string{host.GetCurrentDirectory()}
-	// if len(parser.fileNames) != 0 && parser.fileNames[0] != "" {
-	// 	fileNames = parser.fileNames
-	// }
-	o, d := convertOptionsFromJson(commandLineCompilerOptionsMap, parser.options, host.GetCurrentDirectory(), &core.CompilerOptions{})
-	return NewParsedCommandLine(&core.ParsedOptions{
-		CompilerOptions: o,
-		FileNames:       parser.fileNames,
-	}, nil, d, parser, nil)
-}
-
-func (p *CommandLineParser) tempGetCompilerOptions() *core.CompilerOptions {
-	return &core.CompilerOptions{
-		NoEmit: boolToTri(p.options["noEmit"]),
-		Strict: boolToTri(p.options["strict"]),
+	optionsWithAbsolutePaths := convertToOptionsWithAbsolutePaths(parser.options, commandLineCompilerOptionsMap, host.GetCurrentDirectory())
+	o, d := convertOptionsFromJson(commandLineCompilerOptionsMap, optionsWithAbsolutePaths, host.GetCurrentDirectory(), &core.CompilerOptions{})
+	return &ParsedCommandLine{
+		ParsedConfig: &core.ParsedOptions{
+			CompilerOptions: o,
+			FileNames:       parser.fileNames,
+		},
+		ConfigFile:    nil,
+		Errors:        append(parser.errors, d...),
+		Raw:           parser, // todo: ask navya to review what this field is for
+		CompileOnSave: nil,
 	}
-}
-
-func boolToTri(b any) core.Tristate {
-	if b == nil {
-		return core.TSUnknown
-	}
-	if b == true {
-		return core.TSTrue
-	}
-	return core.TSFalse
 }
 
 func parseCommandLineWorker(

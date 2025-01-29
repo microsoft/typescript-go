@@ -103,7 +103,7 @@ type fileExtensionInfo struct {
 	isMixedContent bool
 	scriptKind     core.ScriptKind
 }
-type extendedConfigCacheEntry struct {
+type ExtendedConfigCacheEntry struct {
 	extendedResult *TsConfigSourceFile
 	extendedConfig *parsedTsconfig
 }
@@ -595,7 +595,7 @@ type resolverHost struct {
 
 func (r *resolverHost) Trace(msg string) {}
 
-func ParseJsonSourceFileConfigFileContent(sourceFile *TsConfigSourceFile, host ParseConfigHost, basePath string, existingOptions *core.CompilerOptions, configFileName string, resolutionStack []tspath.Path, extraFileExtensions []fileExtensionInfo, extendedConfigCache map[string]*extendedConfigCacheEntry) *ParsedCommandLine {
+func ParseJsonSourceFileConfigFileContent(sourceFile *TsConfigSourceFile, host ParseConfigHost, basePath string, existingOptions *core.CompilerOptions, configFileName string, resolutionStack []tspath.Path, extraFileExtensions []fileExtensionInfo, extendedConfigCache map[string]*ExtendedConfigCacheEntry) *ParsedCommandLine {
 	// tracing?.push(tracing.Phase.Parse, "parseJsonSourceFileConfigFileContent", { path: sourceFile.fileName });
 	result := parseJsonConfigFileContentWorker(nil /*json*/, sourceFile, host, basePath, existingOptions, configFileName, resolutionStack, extraFileExtensions, extendedConfigCache)
 	// tracing?.pop();
@@ -735,7 +735,7 @@ func convertPropertyValueToJson(sourceFile *ast.SourceFile, valueExpression *ast
 // jsonNode: The contents of the config file to parse
 // host: Instance of ParseConfigHost used to enumerate files in folder.
 // basePath: A root directory to resolve relative path entries in the config file to. e.g. outDir
-func ParseJsonConfigFileContent(json any, host ParseConfigHost, basePath string, existingOptions *core.CompilerOptions, configFileName string, resolutionStack []tspath.Path, extraFileExtensions []fileExtensionInfo, extendedConfigCache map[string]*extendedConfigCacheEntry) *ParsedCommandLine {
+func ParseJsonConfigFileContent(json any, host ParseConfigHost, basePath string, existingOptions *core.CompilerOptions, configFileName string, resolutionStack []tspath.Path, extraFileExtensions []fileExtensionInfo, extendedConfigCache map[string]*ExtendedConfigCacheEntry) *ParsedCommandLine {
 	result := parseJsonConfigFileContentWorker(parseJsonToStringKey(json), nil /*sourceFile*/, host, basePath, existingOptions, configFileName, resolutionStack, extraFileExtensions, extendedConfigCache)
 	return result
 }
@@ -821,7 +821,7 @@ func getExtendedConfig(
 	extendedConfigPath string,
 	host ParseConfigHost,
 	resolutionStack []string,
-	extendedConfigCache map[string]*extendedConfigCacheEntry,
+	extendedConfigCache map[string]*ExtendedConfigCacheEntry,
 	result *extendsResult,
 ) (*parsedTsconfig, []*ast.Diagnostic) {
 	var path string
@@ -846,7 +846,7 @@ func getExtendedConfig(
 			errors = append(errors, err...)
 		}
 		if extendedConfigCache != nil {
-			extendedConfigCache[path] = &extendedConfigCacheEntry{
+			extendedConfigCache[path] = &ExtendedConfigCacheEntry{
 				extendedResult: extendedResult,
 				extendedConfig: extendedConfig,
 			}
@@ -876,7 +876,7 @@ func parseConfig(
 	basePath string,
 	configFileName string,
 	resolutionStack []string,
-	extendedConfigCache map[string]*extendedConfigCacheEntry,
+	extendedConfigCache map[string]*ExtendedConfigCacheEntry,
 ) (*parsedTsconfig, []*ast.Diagnostic) {
 	basePath = tspath.NormalizeSlashes(basePath)
 	resolvedPath := tspath.GetNormalizedAbsolutePath(configFileName, basePath)
@@ -1019,7 +1019,7 @@ func parseJsonConfigFileContentWorker(
 	configFileName string,
 	resolutionStack []tspath.Path,
 	extraFileExtensions []fileExtensionInfo,
-	extendedConfigCache map[string]*extendedConfigCacheEntry,
+	extendedConfigCache map[string]*ExtendedConfigCacheEntry,
 ) *ParsedCommandLine {
 	// Debug.assert((json === undefined && sourceFile !== undefined) || (json !== undefined && sourceFile === undefined));
 	var errors []*ast.Diagnostic

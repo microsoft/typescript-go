@@ -75,17 +75,14 @@ func executeCommandLineWorker(sys System, cb cbType, commandLine *tsoptions.Pars
 		return sys.Exit(ExitStatusDiagnosticsPresent_OutputsSkipped)
 	}
 
-	// currentDirectory := sys.Host().GetCurrentDirectory()
-	compilerOptionsFromCommandLine := commandLine.CompilerOptions() // todo: convert to options with absolute paths
+	// !!! convert to options with absolute paths is usualy done here, but for ease of implementation, it's done in `tsoptions.ParseCommandLine`
+	compilerOptionsFromCommandLine := commandLine.CompilerOptions()
 
 	if configFileName != "" {
-		// extendedConfigCache := map[string]any{}
-		configParseResult := parseConfigFileWithSystem(
-			configFileName,
-			compilerOptionsFromCommandLine,
-			sys,
-		)
+		extendedConfigCache := map[string]*tsoptions.ExtendedConfigCacheEntry{}
+		configParseResult := parseConfigFileWithSystem(configFileName, compilerOptionsFromCommandLine, extendedConfigCache, sys)
 		// if commandLineOptions.ShowConfig
+		// updateReportDiagnostic
 		if isWatchSet(configParseResult.CompilerOptions()) {
 			// todo watch
 			return sys.Exit(ExitStatusDiagnosticsPresent_OutputsSkipped)
@@ -127,16 +124,15 @@ func executeCommandLineWorker(sys System, cb cbType, commandLine *tsoptions.Pars
 func parseConfigFileWithSystem(
 	configFileName string,
 	optionsToExtend *core.CompilerOptions,
+	extendedConfigCache map[string]*tsoptions.ExtendedConfigCacheEntry,
 	sys System,
 	// reportDiagnostic DiagnosticReporter,
-	// extendedConfigCache
 ) *tsoptions.ParsedCommandLine {
 	// todo: on unrecoverable diagnostic-- needs dignosticreporter
-
-	return getParsedCommandLineOfConfigFile(configFileName, optionsToExtend, sys.Host())
+	return getParsedCommandLineOfConfigFile(configFileName, optionsToExtend, sys.Host(), extendedConfigCache)
 }
 
-func getParsedCommandLineOfConfigFile(configFileName string, options *core.CompilerOptions, host compiler.CompilerHost) *tsoptions.ParsedCommandLine {
+func getParsedCommandLineOfConfigFile(configFileName string, options *core.CompilerOptions, host compiler.CompilerHost, extendedConfigCache map[string]*tsoptions.ExtendedConfigCacheEntry) *tsoptions.ParsedCommandLine {
 	errors := []*ast.Diagnostic{}
 	configFileText, errors := tsoptions.TryReadFile(configFileName, host.FS().ReadFile, errors)
 	if len(errors) > 0 {
@@ -157,14 +153,14 @@ func getParsedCommandLineOfConfigFile(configFileName string, options *core.Compi
 		tspath.GetNormalizedAbsolutePath(configFileName, cwd),
 		nil,
 		nil,
-		nil,
+		extendedConfigCache,
 	)
 }
 
 func performCompilation(sys System, cb cbType, reportDiagnostic DiagnosticReporter, config *tsoptions.ParsedCommandLine) ExitStatus {
 	program := compiler.NewProgramFromParsedCommandLine(config, sys.Host())
 	options := program.Options()
-	allDiagnostics := program.ConfigParsingDiagnostics()
+	allDiagnostics := program.GetOptionsDiagnostics()
 
 	// todo: early exit logic and append diagnostics
 	diagnostics := program.GetSyntacticDiagnostics(nil)
