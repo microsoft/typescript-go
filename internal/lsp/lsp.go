@@ -5,8 +5,14 @@ import (
 	"fmt"
 )
 
-var requestMethodUnmarshallers = map[string]func([]byte) (any, error){
-	"initialize": unmarshallerFor[InitializeParams],
+type Method string
+
+const (
+	MethodInitialize Method = "initialize"
+)
+
+var requestMethodUnmarshallers = map[Method]func([]byte) (any, error){
+	MethodInitialize: unmarshallerFor[InitializeParams],
 }
 
 func unmarshallerFor[T any](data []byte) (any, error) {

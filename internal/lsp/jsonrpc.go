@@ -51,10 +51,9 @@ func (r *RequestMessage) UnmarshalJSON(data []byte) error {
 		return err
 	}
 
-	unmarshalParams, ok := requestMethodUnmarshallers[raw.Method]
+	unmarshalParams, ok := requestMethodUnmarshallers[Method(raw.Method)]
 	if !ok {
-		// TODO: use a real error
-		return fmt.Errorf("unknown method %s", raw.Method)
+		return fmt.Errorf("%w: %s", ErrMethodNotFound, raw.Method)
 	}
 
 	params, err := unmarshalParams(raw.Params)
