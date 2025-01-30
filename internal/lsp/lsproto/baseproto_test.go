@@ -1,11 +1,11 @@
-package lsp_test
+package lsproto_test
 
 import (
 	"bytes"
 	"errors"
 	"testing"
 
-	"github.com/microsoft/typescript-go/internal/lsp"
+	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"gotest.tools/v3/assert"
 )
 
@@ -67,7 +67,7 @@ func TestBaseReader(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			r := lsp.NewBaseReader(bytes.NewReader(tt.data))
+			r := lsproto.NewBaseReader(bytes.NewReader(tt.data))
 
 			var v any
 			err := r.Read(&v)
@@ -86,7 +86,7 @@ func TestBaseReaderMultipleReads(t *testing.T) {
 		"Content-Length: 4\r\n\r\n1234" +
 			"Content-Length: 2\r\n\r\n{}",
 	)
-	r := lsp.NewBaseReader(bytes.NewReader(data))
+	r := lsproto.NewBaseReader(bytes.NewReader(data))
 
 	var v1 any
 	err := r.Read(&v1)
@@ -107,7 +107,7 @@ func TestBaseReaderUnmarshalError(t *testing.T) {
 	t.Parallel()
 
 	data := []byte("Content-Length: 2\r\n\r\n{}")
-	r := lsp.NewBaseReader(bytes.NewReader(data))
+	r := lsproto.NewBaseReader(bytes.NewReader(data))
 	var v typeWithUnmarshalError
 	err := r.Read(&v)
 	assert.Error(t, err, "EOF")
@@ -122,7 +122,7 @@ func (*typeWithUnmarshalError) UnmarshalJSON([]byte) error {
 func TestBaseReaderReadError(t *testing.T) {
 	t.Parallel()
 
-	r := lsp.NewBaseReader(&errorReader{})
+	r := lsproto.NewBaseReader(&errorReader{})
 	var v any
 	err := r.Read(&v)
 	assert.Error(t, err, "lsp: read header: test error")
@@ -159,7 +159,7 @@ func TestBaseWriter(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 			var b bytes.Buffer
-			w := lsp.NewBaseWriter(&b)
+			w := lsproto.NewBaseWriter(&b)
 			err := w.Write(tt.value)
 			assert.NilError(t, err)
 			assert.DeepEqual(t, b.Bytes(), tt.data)
@@ -171,7 +171,7 @@ func TestBaseWriterMarshalError(t *testing.T) {
 	t.Parallel()
 
 	var b bytes.Buffer
-	w := lsp.NewBaseWriter(&b)
+	w := lsproto.NewBaseWriter(&b)
 	err := w.Write(&typeWithMarshalError{})
 	assert.Error(t, err, "lsp: marshal: json: error calling MarshalJSON for type *lsp_test.typeWithMarshalError: test error")
 }
@@ -185,7 +185,7 @@ func (*typeWithMarshalError) MarshalJSON() ([]byte, error) {
 func TestBaseWriterWriteError(t *testing.T) {
 	t.Parallel()
 
-	w := lsp.NewBaseWriter(&errorWriter{})
+	w := lsproto.NewBaseWriter(&errorWriter{})
 	err := w.Write(map[string]any{})
 	assert.Error(t, err, "lsp: write: test error")
 }

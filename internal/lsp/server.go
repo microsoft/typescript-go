@@ -1,15 +1,19 @@
 package lsp
 
-import "io"
+import (
+	"io"
+
+	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
+)
 
 type Server struct {
-	r *BaseReader
-	w *BaseWriter
+	r *lsproto.BaseReader
+	w *lsproto.BaseWriter
 }
 
 func NewServer(r io.Reader, w io.Writer) *Server {
 	return &Server{
-		r: NewBaseReader(r),
-		w: NewBaseWriter(w),
+		r: lsproto.NewBaseReader(r),
+		w: lsproto.NewBaseWriter(w),
 	}
 }

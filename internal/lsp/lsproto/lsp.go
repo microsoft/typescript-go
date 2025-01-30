@@ -1,4 +1,4 @@
-package lsp
+package lsproto
 
 import (
 	"encoding/json"
