@@ -6,7 +6,6 @@ import (
 	"os"
 
 	"github.com/microsoft/typescript-go/internal/ast"
-	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/diagnosticwriter"
 	"github.com/microsoft/typescript-go/internal/execute"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -16,16 +15,17 @@ import (
 type osSys struct {
 	writer     io.Writer
 	formatOpts *diagnosticwriter.FormattingOptions
-	host       compiler.CompilerHost
+	fs         vfs.FS
+	cwd        string
 	reporter   execute.DiagnosticReporter
 }
 
 func (s *osSys) FS() vfs.FS {
-	return s.Host().FS()
+	return s.fs
 }
 
-func (s *osSys) Host() compiler.CompilerHost {
-	return s.host
+func (s *osSys) GetCurrentDirectory() string {
+	return s.cwd
 }
 
 func (s *osSys) SetReportDiagnostics(r execute.DiagnosticReporter) {
@@ -55,10 +55,18 @@ func NewSystem() *osSys {
 		fmt.Fprintf(os.Stderr, "Error getting current directory: %v\n", err)
 		os.Exit(int(execute.ExitStatusInvalidProject_OutputsSkipped))
 	}
-	newHost := compiler.NewCompilerHost(nil, tspath.NormalizePath(cwd), vfs.FromOS())
+	cwd = tspath.NormalizePath(cwd)
+	fs := vfs.FromOS()
 	return &osSys{
-		host:       newHost,
-		writer:     os.Stdout,
-		formatOpts: getFormatOpts(newHost),
+		cwd:    cwd,
+		fs:     fs,
+		writer: os.Stdout,
+		formatOpts: &diagnosticwriter.FormattingOptions{
+			NewLine: "\n",
+			ComparePathsOptions: tspath.ComparePathsOptions{
+				CurrentDirectory:          cwd,
+				UseCaseSensitiveFileNames: fs.UseCaseSensitiveFileNames(),
+			},
+		},
 	}
 }

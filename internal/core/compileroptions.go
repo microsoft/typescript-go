@@ -133,16 +133,6 @@ type CompilerOptions struct {
 	Watch               Tristate `json:"watch"`
 	ShowConfig          Tristate `json:"showConfig"`
 	TscBuild            Tristate `json:"tscBuild"`
-
-	// Internal fields
-	// ConfigFile      func()   `json:"configFile"` // todo: TsConfigSourceFile,
-
-	// // cli
-	// ShowConfig    bool `json:"showConfig"`
-	// Watch         bool `json:"watch"`
-	// Incremental   bool `json:"incremental"`
-	// ListFilesOnly bool `json:"listFilesOnly"`
-	// Pretty bool `json:"pretty"`
 }
 
 func (options *CompilerOptions) GetEmitScriptTarget() ScriptTarget {

@@ -19,7 +19,7 @@ func CommandLine(sys System, cb cbType, commandLineArgs []string) ExitStatus {
 }
 
 func TestCommandLine(sys System, cb cbType, commandLineArgs []string) (*tsoptions.ParsedCommandLine, ExitStatus) {
-	parsedCommandLine := tsoptions.ParseCommandLine(commandLineArgs, sys.Host())
+	parsedCommandLine := tsoptions.ParseCommandLine(commandLineArgs, sys)
 	return parsedCommandLine, executeCommandLineWorker(sys, cb, parsedCommandLine)
 }
 
@@ -61,13 +61,13 @@ func executeCommandLineWorker(sys System, cb cbType, commandLine *tsoptions.Pars
 			}
 		}
 	} else if len(commandLine.FileNames()) == 0 {
-		searchPath := tspath.NormalizePath(sys.Host().GetCurrentDirectory())
+		searchPath := tspath.NormalizePath(sys.GetCurrentDirectory())
 		configFileName = findConfigFile(searchPath, sys.FS().FileExists, "tsconfig.json")
 	}
 
 	if configFileName != "" && len(commandLine.FileNames()) > 0 {
 		if commandLine.CompilerOptions().ShowConfig.IsTrue() {
-			sys.ReportDiagnostic(ast.NewCompilerDiagnostic(diagnostics.Cannot_find_a_tsconfig_json_file_at_the_current_directory_Colon_0, tspath.NormalizePath(sys.Host().GetCurrentDirectory())))
+			sys.ReportDiagnostic(ast.NewCompilerDiagnostic(diagnostics.Cannot_find_a_tsconfig_json_file_at_the_current_directory_Colon_0, tspath.NormalizePath(sys.GetCurrentDirectory())))
 		} else {
 			// print version
 			// print help
@@ -137,13 +137,13 @@ func getParsedCommandLineOfConfigFile(configFileName string, options *core.Compi
 	}
 
 	tsConfigSourceFile := tsoptions.NewTsconfigSourceFileFromFilePath(configFileName, configFileText)
-	cwd := sys.Host().GetCurrentDirectory()
+	cwd := sys.GetCurrentDirectory()
 	tsConfigSourceFile.SourceFile.SetPath(tspath.ToPath(configFileName, cwd, sys.FS().UseCaseSensitiveFileNames()))
 	// tsConfigSourceFile.resolvedPath = tsConfigSourceFile.FileName()
 	// tsConfigSourceFile.originalFileName = tsConfigSourceFile.FileName()
 	return tsoptions.ParseJsonSourceFileConfigFileContent(
 		tsConfigSourceFile,
-		sys.Host(),
+		sys,
 		tspath.GetNormalizedAbsolutePath(tspath.GetDirectoryPath(configFileName), cwd),
 		options,
 		tspath.GetNormalizedAbsolutePath(configFileName, cwd),
@@ -154,7 +154,9 @@ func getParsedCommandLineOfConfigFile(configFileName string, options *core.Compi
 }
 
 func performCompilation(sys System, cb cbType, config *tsoptions.ParsedCommandLine) ExitStatus {
-	program := compiler.NewProgramFromParsedCommandLine(config, sys.Host())
+	host := compiler.NewCompilerHost(config.CompilerOptions(), sys.GetCurrentDirectory(), sys.FS())
+	// todo: cache, statistics, tracing
+	program := compiler.NewProgramFromParsedCommandLine(config, host)
 	options := program.Options()
 	allDiagnostics := program.GetOptionsDiagnostics()
 
@@ -194,7 +196,7 @@ func performCompilation(sys System, cb cbType, config *tsoptions.ParsedCommandLi
 	// !!! if (write)
 	if sys.Writer() != nil {
 		for _, file := range emitResult.EmittedFiles {
-			fmt.Fprint(sys.Writer(), "TSFILE: ", tspath.GetNormalizedAbsolutePath(file, sys.Host().GetCurrentDirectory()))
+			fmt.Fprint(sys.Writer(), "TSFILE: ", tspath.GetNormalizedAbsolutePath(file, sys.GetCurrentDirectory()))
 		}
 		// todo: listFiles(program, sys.Writer())
 	}
@@ -205,10 +207,7 @@ func performCompilation(sys System, cb cbType, config *tsoptions.ParsedCommandLi
 	if cb != nil {
 		cb(program)
 	}
-	return getExitStatus(emitResult, allDiagnostics)
-}
 
-func getExitStatus(emitResult *compiler.EmitResult, diagnostics []*ast.Diagnostic) ExitStatus {
 	if emitResult.EmitSkipped && diagnostics != nil && len(diagnostics) > 0 {
 		return ExitStatusDiagnosticsPresent_OutputsSkipped
 	} else if len(diagnostics) > 0 {

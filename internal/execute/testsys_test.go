@@ -8,8 +8,6 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/bundled"
-	"github.com/microsoft/typescript-go/internal/compiler"
-	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnosticwriter"
 	"github.com/microsoft/typescript-go/internal/execute"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -32,17 +30,17 @@ func NewTestSys(fileOrFolderList FileMap, cwd string, args ...string) *testSys {
 		fileList = append(fileList, name)
 	}
 	fs := bundled.WrapFS(vfstest.FromMapFS(mapFS, true /*useCaseSensitiveFileNames*/))
-	newHost := compiler.NewCompilerHost(&core.CompilerOptions{}, cwd, fs)
 	return &testSys{
-		host:         newHost,
+		fs:           fs,
+		cwd:          cwd,
 		files:        fileList,
 		output:       []string{},
 		currentWrite: &strings.Builder{},
 		formatOpts: &diagnosticwriter.FormattingOptions{
-			NewLine: newHost.NewLine(),
+			NewLine: "\n",
 			ComparePathsOptions: tspath.ComparePathsOptions{
-				CurrentDirectory:          newHost.GetCurrentDirectory(),
-				UseCaseSensitiveFileNames: newHost.FS().UseCaseSensitiveFileNames(),
+				CurrentDirectory:          cwd,
+				UseCaseSensitiveFileNames: fs.UseCaseSensitiveFileNames(),
 			},
 		},
 	}
@@ -53,18 +51,19 @@ type testSys struct {
 	output         []string
 	currentWrite   *strings.Builder
 	serializedDiff map[string]string
-	host           compiler.CompilerHost
+	fs             vfs.FS
+	cwd            string
 	reporter       execute.DiagnosticReporter
 	formatOpts     *diagnosticwriter.FormattingOptions
 	files          []string
 }
 
 func (s *testSys) FS() vfs.FS {
-	return s.Host().FS()
+	return s.fs
 }
 
-func (s *testSys) Host() compiler.CompilerHost {
-	return s.host
+func (s *testSys) GetCurrentDirectory() string {
+	return s.cwd
 }
 
 func (s *testSys) SetReportDiagnostics(r execute.DiagnosticReporter) {
@@ -107,7 +106,7 @@ func (s *testSys) serializeState(baseline io.Writer, order serializeOutputOrder)
 
 func (s *testSys) baselineFS(baseline io.Writer) {
 	fmt.Fprint(baseline, "\n\nCurrentFiles::")
-	err := s.FS().WalkDir(s.Host().GetCurrentDirectory(), func(path string, d vfs.DirEntry, e error) error {
+	err := s.FS().WalkDir(s.GetCurrentDirectory(), func(path string, d vfs.DirEntry, e error) error {
 		if d == nil {
 			return nil
 		}
@@ -136,7 +135,7 @@ func (s *testSys) diff(baseline io.Writer) {
 	// todo: doesn't actually do anything rn, but don't really care atm because we aren't passing edits into the test, so we don't care abt diffs
 	snap := map[string]string{}
 
-	err := s.FS().WalkDir(s.Host().GetCurrentDirectory(), func(path string, d vfs.DirEntry, e error) error {
+	err := s.FS().WalkDir(s.GetCurrentDirectory(), func(path string, d vfs.DirEntry, e error) error {
 		if d == nil {
 			return nil
 		}
@@ -163,7 +162,7 @@ func (s *testSys) diff(baseline io.Writer) {
 		}
 	}
 	s.serializedDiff = snap
-	fmt.Fprint(baseline, s.host.NewLine())
+	fmt.Fprint(baseline, s.GetFormatOpts().NewLine)
 }
 
 func diffFSEntry(baseline io.Writer, oldDirContent string, newDirContent string, path string) {

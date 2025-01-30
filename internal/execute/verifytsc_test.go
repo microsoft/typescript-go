@@ -99,7 +99,7 @@ func (test *tscInput) startBaseline() *strings.Builder {
 	fmt.Fprint(
 		s,
 		"\ncurrentDirectory::",
-		test.sys.Host().GetCurrentDirectory(),
+		test.sys.GetCurrentDirectory(),
 		"\nuseCaseSensitiveFileNames::",
 		test.sys.FS().UseCaseSensitiveFileNames(),
 		"\nInput::",

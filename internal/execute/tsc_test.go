@@ -72,14 +72,6 @@ func TestTsc(t *testing.T) {
 	for _, testCase := range testCases {
 		testCase.verify(t)
 	}
-
-	// todo: temp test, checking that the initial implementention of tsc in tsgo will parse correctly
-	(&tscInput{
-		scenario:        "commandLine",
-		subScenario:     "noEmit and Strict",
-		sys:             NewTestSys(nil, ""),
-		commandLineArgs: []string{"--noEmit", "--strict"},
-	}).verify(t)
 }
 
 func TestNoEmit(t *testing.T) {

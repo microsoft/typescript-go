@@ -11,7 +11,6 @@ import (
 
 type CompilerHost interface {
 	FS() vfs.FS
-	SetOptions(options *core.CompilerOptions)
 	GetCurrentDirectory() string
 	NewLine() string
 	Trace(msg string)

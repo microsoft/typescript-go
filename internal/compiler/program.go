@@ -167,14 +167,7 @@ func NewProgram(options ProgramOptions) *Program {
 	return p
 }
 
-func (p *Program) Files() []*ast.SourceFile {
-	return p.files
-}
-
 func NewProgramFromParsedCommandLine(config *tsoptions.ParsedCommandLine, host CompilerHost) *Program {
-	// todo: remove/edit setOptions call if compilerHost no longer has CompilerOptions. Since compilerHost was created before options were parsed, compiler host would
-	//     not have options yet
-	host.SetOptions(config.CompilerOptions())
 	programOptions := ProgramOptions{
 		RootFiles: config.FileNames(),
 		Options:   config.CompilerOptions(),
@@ -190,11 +183,6 @@ func (p *Program) SourceFiles() []*ast.SourceFile              { return p.files 
 func (p *Program) Options() *core.CompilerOptions              { return p.compilerOptions }
 func (p *Program) Host() CompilerHost                          { return p.host }
 func (p *Program) ConfigParsingDiagnostics() []*ast.Diagnostic { return p.configParsingDiagnostics }
-
-// todo: deduplicate function
-// func (p *Program) GetOptionsDiagnostics() []*ast.Diagnostic {
-// 	return p.optionsDiagnostics
-// }
 
 func (p *Program) BindSourceFiles() {
 	wg := core.NewWorkGroup(p.programOptions.SingleThreaded)
