@@ -28,6 +28,12 @@ type LanguageService struct {
 	lastProjectVersion int
 }
 
+func NewLanguageService(host Host) *LanguageService {
+	return &LanguageService{
+		host: host,
+	}
+}
+
 // FS implements compiler.CompilerHost.
 func (l *LanguageService) FS() vfs.FS {
 	return l.host.FS()
@@ -53,12 +59,11 @@ func (l *LanguageService) GetSourceFile(fileName string, languageVersion core.Sc
 	return l.host.GetSourceFile(fileName, languageVersion)
 }
 
-// UpdateProgram updates the program if the project version has changed.
-// This is analogous to `synchronizeHostData` in the original code.
-func (l *LanguageService) UpdateProgram() {
+// GetProgram updates the program if the project version has changed.
+func (l *LanguageService) GetProgram() *compiler.Program {
 	hostVersion := l.host.GetProjectVersion()
-	if hostVersion == l.lastProjectVersion {
-		return
+	if l.program != nil && hostVersion == l.lastProjectVersion {
+		return l.program
 	}
 
 	l.lastProjectVersion = hostVersion
@@ -72,4 +77,5 @@ func (l *LanguageService) UpdateProgram() {
 	})
 
 	l.program.BindSourceFiles()
+	return l.program
 }

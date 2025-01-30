@@ -39,16 +39,20 @@ type Project struct {
 	// But the ProjectService owns script infos, so it's not clear why there was an extra pointer.
 	rootFileNames   *collections.OrderedMap[tspath.Path, string]
 	compilerOptions *core.CompilerOptions
+	languageService *ls.LanguageService
 	program         *compiler.Program
 }
 
 func NewConfiguredProject(configFileName string, configFilePath tspath.Path, projectService *ProjectService) *Project {
-	return &Project{
+	project := &Project{
 		projectService: projectService,
 		kind:           ProjectKindConfigured,
 		configFileName: configFileName,
 		configFilePath: configFilePath,
 	}
+	project.languageService = ls.NewLanguageService(project)
+	project.markAsDirty()
+	return project
 }
 
 // FS implements LanguageServiceHost.
@@ -134,6 +138,10 @@ func (p *Project) onFileAddedOrRemoved(isSymlink bool) {
 }
 
 func (p *Project) updateGraph() {
+	// !!!
+	p.hasAddedOrRemovedFiles = false
+	p.hasAddedOrRemovedSymlinks = false
+	p.program = p.languageService.GetProgram()
 }
 
 func (p *Project) isOrphan() bool {
