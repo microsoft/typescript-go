@@ -39,7 +39,7 @@ func (s *osSys) EndWrite() {
 	// todo: revisit if improving tsc/build/watch unittest baselines
 }
 
-func NewSystem() *osSys {
+func newSystem() *osSys {
 	cwd, err := os.Getwd()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error getting current directory: %v\n", err)

@@ -18,7 +18,7 @@ func TestTsc(t *testing.T) {
 		{
 			scenario:    "commandLine",
 			subScenario: "show help with ExitStatus.DiagnosticsPresent_OutputsSkipped",
-			sys:         NewTestSys(nil, ""),
+			sys:         newTestSys(nil, ""),
 			// , {
 			// 	environmentVariables: new Map([["TS_TEST_TERMINAL_WIDTH", "120"]]),
 			// }),
@@ -27,13 +27,13 @@ func TestTsc(t *testing.T) {
 		{
 			scenario:        "commandLine",
 			subScenario:     "show help with ExitStatus.DiagnosticsPresent_OutputsSkipped when host can't provide terminal width",
-			sys:             NewTestSys(nil, ""),
+			sys:             newTestSys(nil, ""),
 			commandLineArgs: nil,
 		},
 		{
 			scenario:    "commandLine",
 			subScenario: "does not add color when NO_COLOR is set",
-			sys:         NewTestSys(nil, ""),
+			sys:         newTestSys(nil, ""),
 			// , {
 			// 		environmentVariables: new Map([["NO_COLOR", "true"]]),
 			// 	}),
@@ -42,7 +42,7 @@ func TestTsc(t *testing.T) {
 		{
 			scenario:    "commandLine",
 			subScenario: "does not add color when NO_COLOR is set",
-			sys:         NewTestSys(nil, ""),
+			sys:         newTestSys(nil, ""),
 			// , {
 			// 	environmentVariables: new Map([["NO_COLOR", "true"]]),
 			// }
@@ -52,19 +52,19 @@ func TestTsc(t *testing.T) {
 		{
 			scenario:        "commandLine",
 			subScenario:     "when build not first argument",
-			sys:             NewTestSys(nil, ""),
+			sys:             newTestSys(nil, ""),
 			commandLineArgs: []string{"--verbose", "--build"},
 		},
 		{
 			scenario:        "commandLine",
 			subScenario:     "help",
-			sys:             NewTestSys(nil, ""),
+			sys:             newTestSys(nil, ""),
 			commandLineArgs: []string{"--help"},
 		},
 		{
 			scenario:        "commandLine",
 			subScenario:     "help all",
-			sys:             NewTestSys(nil, ""),
+			sys:             newTestSys(nil, ""),
 			commandLineArgs: []string{"--help", "--all"},
 		},
 	}
@@ -85,7 +85,7 @@ func TestNoEmit(t *testing.T) {
 	(&tscInput{
 		scenario:    "noEmit",
 		subScenario: "when project has strict true",
-		sys: NewTestSys(FileMap{
+		sys: newTestSys(FileMap{
 			"/home/src/workspaces/project/tsconfig.json": `{
 	compilerOptions: {
 		incremental: true,
@@ -109,7 +109,7 @@ func TestProjectReferences(t *testing.T) {
 	(&tscInput{
 		scenario:    "projectReferences",
 		subScenario: "when project references composite project with noEmit",
-		sys: NewTestSys(FileMap{
+		sys: newTestSys(FileMap{
 			"/home/src/workspaces/solution/src/utils/index.ts": "export const x = 10;",
 			"/home/src/workspaces/solution/src/utils/tsconfig.json": `{
 	compilerOptions: {

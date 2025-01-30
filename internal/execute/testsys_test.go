@@ -8,7 +8,6 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/bundled"
 	"github.com/microsoft/typescript-go/internal/diagnosticwriter"
-	"github.com/microsoft/typescript-go/internal/execute"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
@@ -16,7 +15,7 @@ import (
 
 type FileMap map[string]string
 
-func NewTestSys(fileOrFolderList FileMap, cwd string, args ...string) *testSys {
+func newTestSys(fileOrFolderList FileMap, cwd string, args ...string) *testSys {
 	if cwd == "" {
 		cwd = "/home/src/workspaces/project"
 	}

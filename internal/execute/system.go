@@ -18,7 +18,7 @@ type System interface {
 type ExitStatus int
 
 const (
-	ExitStatusSuccess                              ExitStatus = iota
+	ExitStatusSuccess                              ExitStatus = 0
 	ExitStatusDiagnosticsPresent_OutputsSkipped    ExitStatus = 1
 	ExitStatusDiagnosticsPresent_OutputsGenerated  ExitStatus = 2
 	ExitStatusInvalidProject_OutputsSkipped        ExitStatus = 3
