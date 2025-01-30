@@ -27,7 +27,7 @@ func (id *ID) MarshalJSON() ([]byte, error) {
 
 func (id *ID) UnmarshalJSON(data []byte) error {
 	*id = ID{}
-	if data[0] == '"' {
+	if len(data) > 0 && data[0] == '"' {
 		return json.Unmarshal(data, &id.str)
 	}
 	return json.Unmarshal(data, &id.int)
