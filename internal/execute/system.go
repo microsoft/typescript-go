@@ -3,7 +3,6 @@ package execute
 import (
 	"io"
 
-	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/diagnosticwriter"
 	"github.com/microsoft/typescript-go/internal/vfs"
 )
@@ -13,8 +12,6 @@ type System interface {
 	EndWrite()
 	FS() vfs.FS
 	GetCurrentDirectory() string
-	SetReportDiagnostics(r DiagnosticReporter)
-	ReportDiagnostic(d *ast.Diagnostic)
 	GetFormatOpts() *diagnosticwriter.FormattingOptions // todo: should this be part of Host?
 }
 

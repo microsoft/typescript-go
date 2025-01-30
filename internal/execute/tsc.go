@@ -24,13 +24,12 @@ func TestCommandLine(sys System, cb cbType, commandLineArgs []string) (*tsoption
 }
 
 func executeCommandLineWorker(sys System, cb cbType, commandLine *tsoptions.ParsedCommandLine) ExitStatus {
-	sys.SetReportDiagnostics(CreateDiagnosticReporter(sys, false))
 	configFileName := ""
 	// if commandLine.Options().Locale != nil
 
 	if len(commandLine.Errors) > 0 {
 		for _, e := range commandLine.Errors {
-			sys.ReportDiagnostic(e)
+			reportDiagnostic(sys, e, &core.CompilerOptions{})
 		}
 		return ExitStatusDiagnosticsPresent_OutputsSkipped
 	}
@@ -42,7 +41,7 @@ func executeCommandLineWorker(sys System, cb cbType, commandLine *tsoptions.Pars
 
 	if commandLine.CompilerOptions().Project != "" {
 		if len(commandLine.FileNames()) != 0 {
-			sys.ReportDiagnostic(ast.NewCompilerDiagnostic(diagnostics.Option_project_cannot_be_mixed_with_source_files_on_a_command_line))
+			reportDiagnostic(sys, ast.NewCompilerDiagnostic(diagnostics.Option_project_cannot_be_mixed_with_source_files_on_a_command_line), commandLine.CompilerOptions())
 			return ExitStatusDiagnosticsPresent_OutputsSkipped
 		}
 
@@ -50,13 +49,13 @@ func executeCommandLineWorker(sys System, cb cbType, commandLine *tsoptions.Pars
 		if fileOrDirectory != "" || sys.FS().DirectoryExists(fileOrDirectory) {
 			configFileName = tspath.CombinePaths(fileOrDirectory, "tsconfig.json")
 			if !sys.FS().FileExists(configFileName) {
-				sys.ReportDiagnostic(ast.NewCompilerDiagnostic(diagnostics.Cannot_find_a_tsconfig_json_file_at_the_current_directory_Colon_0, configFileName))
+				reportDiagnostic(sys, ast.NewCompilerDiagnostic(diagnostics.Cannot_find_a_tsconfig_json_file_at_the_current_directory_Colon_0, configFileName), commandLine.CompilerOptions())
 				return ExitStatusDiagnosticsPresent_OutputsSkipped
 			}
 		} else {
 			configFileName = fileOrDirectory
 			if !sys.FS().FileExists(configFileName) {
-				sys.ReportDiagnostic(ast.NewCompilerDiagnostic(diagnostics.The_specified_path_does_not_exist_Colon_0, fileOrDirectory))
+				reportDiagnostic(sys, ast.NewCompilerDiagnostic(diagnostics.The_specified_path_does_not_exist_Colon_0, fileOrDirectory), commandLine.CompilerOptions())
 				return ExitStatusDiagnosticsPresent_OutputsSkipped
 			}
 		}
@@ -67,7 +66,7 @@ func executeCommandLineWorker(sys System, cb cbType, commandLine *tsoptions.Pars
 
 	if configFileName != "" && len(commandLine.FileNames()) > 0 {
 		if commandLine.CompilerOptions().ShowConfig.IsTrue() {
-			sys.ReportDiagnostic(ast.NewCompilerDiagnostic(diagnostics.Cannot_find_a_tsconfig_json_file_at_the_current_directory_Colon_0, tspath.NormalizePath(sys.GetCurrentDirectory())))
+			reportDiagnostic(sys, ast.NewCompilerDiagnostic(diagnostics.Cannot_find_a_tsconfig_json_file_at_the_current_directory_Colon_0, tspath.NormalizePath(sys.GetCurrentDirectory())), commandLine.CompilerOptions())
 		} else {
 			// print version
 			// print help
@@ -131,7 +130,7 @@ func getParsedCommandLineOfConfigFile(configFileName string, options *core.Compi
 	configFileText, errors := tsoptions.TryReadFile(configFileName, sys.FS().ReadFile, errors)
 	if len(errors) > 0 {
 		for _, e := range errors {
-			sys.ReportDiagnostic(e)
+			reportDiagnostic(sys, e, options)
 		}
 		return nil, ExitStatusDiagnosticsPresent_OutputsSkipped
 	}
@@ -189,7 +188,7 @@ func performCompilation(sys System, cb cbType, config *tsoptions.ParsedCommandLi
 	if allDiagnostics != nil {
 		allDiagnostics = compiler.SortAndDeduplicateDiagnostics(allDiagnostics)
 		for _, diagnostic := range allDiagnostics {
-			sys.ReportDiagnostic(diagnostic)
+			reportDiagnostic(sys, diagnostic, config.CompilerOptions())
 		}
 	}
 
@@ -228,26 +227,15 @@ func isIncrementalCompilation(options *core.CompilerOptions) bool {
 	return options.Incremental.IsTrue()
 }
 
-type (
-	DiagnosticReporter = func(diagnostic *ast.Diagnostic)
-	cbType             = func(p any) any
-)
+type cbType = func(p any) any
 
-func CreateDiagnosticReporter(sys System, pretty bool) DiagnosticReporter {
-	if !pretty {
-		return func(diagnostic *ast.Diagnostic) {
-			diagnosticwriter.WriteFormatDiagnostic(sys.Writer(), diagnostic, sys.GetFormatOpts())
-			sys.EndWrite()
-		}
+func reportDiagnostic(sys System, diagnostic *ast.Diagnostic, options *core.CompilerOptions) {
+	if !shouldBePretty(sys, options) {
+		diagnosticwriter.WriteFormatDiagnostic(sys.Writer(), diagnostic, sys.GetFormatOpts())
+	} else {
+		diagnosticwriter.FormatDiagnosticsWithColorAndContext(sys.Writer(), []*ast.Diagnostic{diagnostic}, sys.GetFormatOpts())
 	}
-
-	diagArr := [1]*ast.Diagnostic{}
-	return func(diagnostic *ast.Diagnostic) {
-		diagArr[0] = diagnostic
-		diagnosticwriter.FormatDiagnosticsWithColorAndContext(sys.Writer(), diagArr[:], sys.GetFormatOpts())
-		sys.EndWrite()
-		diagArr[0] = nil
-	}
+	sys.EndWrite()
 }
 
 func findConfigFile(searchPath string, fileExists func(string) bool, configName string) string {

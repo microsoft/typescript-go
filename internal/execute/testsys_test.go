@@ -6,7 +6,6 @@ import (
 	"strings"
 	"testing/fstest"
 
-	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/bundled"
 	"github.com/microsoft/typescript-go/internal/diagnosticwriter"
 	"github.com/microsoft/typescript-go/internal/execute"
@@ -53,7 +52,6 @@ type testSys struct {
 	serializedDiff map[string]string
 	fs             vfs.FS
 	cwd            string
-	reporter       execute.DiagnosticReporter
 	formatOpts     *diagnosticwriter.FormattingOptions
 	files          []string
 }
@@ -64,14 +62,6 @@ func (s *testSys) FS() vfs.FS {
 
 func (s *testSys) GetCurrentDirectory() string {
 	return s.cwd
-}
-
-func (s *testSys) SetReportDiagnostics(r execute.DiagnosticReporter) {
-	s.reporter = r
-}
-
-func (s *testSys) ReportDiagnostic(d *ast.Diagnostic) {
-	s.reporter(d)
 }
 
 func (s *testSys) GetFormatOpts() *diagnosticwriter.FormattingOptions {
@@ -132,7 +122,7 @@ func (s *testSys) serializeOutput(baseline io.Writer) {
 
 func (s *testSys) diff(baseline io.Writer) {
 	// todo: watch isnt implemented
-	// todo: doesn't actually do anything rn, but don't really care atm because we aren't passing edits into the test, so we don't care abt diffs
+	// todo: not sure if this actually runs diff correctly, but don't really care atm because we aren't passing edits into the test, so we don't care abt diffs
 	snap := map[string]string{}
 
 	err := s.FS().WalkDir(s.GetCurrentDirectory(), func(path string, d vfs.DirEntry, e error) error {

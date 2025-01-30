@@ -5,7 +5,6 @@ import (
 	"io"
 	"os"
 
-	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/diagnosticwriter"
 	"github.com/microsoft/typescript-go/internal/execute"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -17,7 +16,6 @@ type osSys struct {
 	formatOpts *diagnosticwriter.FormattingOptions
 	fs         vfs.FS
 	cwd        string
-	reporter   execute.DiagnosticReporter
 }
 
 func (s *osSys) FS() vfs.FS {
@@ -26,14 +24,6 @@ func (s *osSys) FS() vfs.FS {
 
 func (s *osSys) GetCurrentDirectory() string {
 	return s.cwd
-}
-
-func (s *osSys) SetReportDiagnostics(r execute.DiagnosticReporter) {
-	s.reporter = r
-}
-
-func (s *osSys) ReportDiagnostic(d *ast.Diagnostic) {
-	s.reporter(d)
 }
 
 func (s *osSys) GetFormatOpts() *diagnosticwriter.FormattingOptions {
