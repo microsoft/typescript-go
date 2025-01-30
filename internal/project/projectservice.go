@@ -48,6 +48,7 @@ type ProjectService struct {
 	// Contains all the deleted script info's version information so that
 	// it does not reset when creating script info again
 	filenameToScriptInfoVersion map[tspath.Path]int
+	realpathToScriptInfos       map[tspath.Path]map[*scriptInfo]struct{}
 }
 
 func NewProjectService(host ProjecServicetHost) *ProjectService {
@@ -63,6 +64,7 @@ func NewProjectService(host ProjecServicetHost) *ProjectService {
 		}),
 		scriptInfos:                 make(map[tspath.Path]*scriptInfo),
 		filenameToScriptInfoVersion: make(map[tspath.Path]int),
+		realpathToScriptInfos:       make(map[tspath.Path]map[*scriptInfo]struct{}),
 	}
 }
 
@@ -171,6 +173,68 @@ func (s *ProjectService) closeOpenFile(info *scriptInfo, skipAssignOrphanScriptI
 		// s.handleDeletedFile(info /*deferredDelete*/, false)
 	}
 	return ensureProjectsForOpenFiles
+}
+
+func (s *ProjectService) handleDeletedFile(info *scriptInfo, deferredDelete bool) {
+	if info.isOpen {
+		panic("cannot delete an open file")
+	}
+
+	s.delayUpdateProjectGraphs(info.containingProjects, false /*clearSourceMapperCache*/)
+	// !!!
+	// s.handleSourceMapProjects(info)
+	info.detachAllProjects()
+	if deferredDelete {
+		info.delayReloadNonMixedContentFile()
+		info.deferredDelete = true
+	} else {
+		s.deleteScriptInfo(info)
+	}
+}
+
+func (s *ProjectService) deleteScriptInfo(info *scriptInfo) {
+	if info.isOpen {
+		panic("cannot delete an open file")
+	}
+	delete(s.scriptInfos, info.path)
+	s.filenameToScriptInfoVersion[info.path] = info.version
+	// !!!
+	// s.stopWatchingScriptInfo(info)
+	if realpath, ok := info.getRealpathIfDifferent(); ok {
+		delete(s.realpathToScriptInfos[realpath], info)
+	}
+	// !!! closeSourceMapFileWatcher
+}
+
+func (s *ProjectService) recordSymlink(info *scriptInfo) {
+	if scriptInfos, ok := s.realpathToScriptInfos[info.realpath]; ok {
+		scriptInfos[info] = struct{}{}
+	} else {
+		scriptInfos = make(map[*scriptInfo]struct{})
+		scriptInfos[info] = struct{}{}
+		s.realpathToScriptInfos[info.realpath] = scriptInfos
+	}
+}
+
+func (s *ProjectService) delayUpdateProjectGraphs(projects []*Project, clearSourceMapperCache bool) {
+	for _, project := range projects {
+		if clearSourceMapperCache {
+			project.clearSourceMapperCache()
+		}
+		s.delayUpdateProjectGraph(project)
+	}
+}
+
+func (s *ProjectService) delayUpdateProjectGraph(project *Project) {
+	if project.deferredClose {
+		return
+	}
+	project.markAsDirty()
+	if project.kind == ProjectKindAutoImportProvider || project.kind == ProjectKindAuxiliary {
+		return
+	}
+	// !!! throttle
+	project.updateIfDirty()
 }
 
 func (s *ProjectService) getScriptInfo(path tspath.Path) *scriptInfo {

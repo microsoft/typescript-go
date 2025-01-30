@@ -1,7 +1,10 @@
 package project
 
 import (
+	"slices"
+
 	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls"
@@ -16,6 +19,8 @@ type ProjectKind int
 const (
 	ProjectKindInferred ProjectKind = iota
 	ProjectKindConfigured
+	ProjectKindAutoImportProvider
+	ProjectKindAuxiliary
 )
 
 type Project struct {
@@ -32,7 +37,7 @@ type Project struct {
 	configFilePath tspath.Path
 	// rootFileNames was a map from Path to { NormalizedPath, ScriptInfo? } in the original code.
 	// But the ProjectService owns script infos, so it's not clear why there was an extra pointer.
-	rootFileNames   []string
+	rootFileNames   *collections.OrderedMap[tspath.Path, string]
 	compilerOptions *core.CompilerOptions
 	program         *compiler.Program
 }
@@ -68,7 +73,7 @@ func (p *Project) GetProjectVersion() int {
 
 // GetRootFileNames implements LanguageServiceHost.
 func (p *Project) GetRootFileNames() []string {
-	return p.rootFileNames
+	return slices.Collect(p.rootFileNames.Values())
 }
 
 // GetSourceFile implements LanguageServiceHost.
@@ -134,7 +139,7 @@ func (p *Project) updateGraph() {
 func (p *Project) isOrphan() bool {
 	switch p.kind {
 	case ProjectKindInferred:
-		return len(p.rootFileNames) == 0
+		return p.rootFileNames.Size() == 0
 	case ProjectKindConfigured:
 		return p.deferredClose
 	default:
@@ -144,4 +149,35 @@ func (p *Project) isOrphan() bool {
 
 func (p *Project) toPath(fileName string) tspath.Path {
 	return tspath.ToPath(fileName, p.GetCurrentDirectory(), p.FS().UseCaseSensitiveFileNames())
+}
+
+func (p *Project) isRoot(info *scriptInfo) bool {
+	return p.rootFileNames.Has(info.path)
+}
+
+func (p *Project) removeFile(info *scriptInfo, fileExists bool, detachFromProject bool) {
+	if p.isRoot(info) {
+		p.rootFileNames.Delete(info.path)
+	}
+	// !!!
+	// if (fileExists) {
+	// 	// If file is present, just remove the resolutions for the file
+	// 	this.resolutionCache.removeResolutionsOfFile(info.path);
+	// } else {
+	// 	this.resolutionCache.invalidateResolutionOfFile(info.path);
+	// }
+	// this.cachedUnresolvedImportsPerFile.delete(info.path);
+	if detachFromProject {
+		info.detachFromProject(p)
+	}
+	p.markAsDirty()
+}
+
+func (p *Project) addMissingRootFile(fileName string, path tspath.Path) {
+	p.rootFileNames.Set(path, fileName)
+	p.markAsDirty()
+}
+
+func (p *Project) clearSourceMapperCache() {
+	// !!!
 }
