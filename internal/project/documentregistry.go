@@ -4,6 +4,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/parser"
+	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
@@ -101,14 +102,14 @@ func (r *documentRegistry) getDocumentWorker(
 		// We have an entry for this file. However, it may be for a different version of
 		// the script snapshot. If so, update it appropriately.
 		if entry.sourceFile.Version != scriptInfo.version {
-			entry.sourceFile = parser.ParseSourceFile(scriptInfo.fileName, scriptInfo.text, scriptTarget)
+			entry.sourceFile = parser.ParseSourceFile(scriptInfo.fileName, scriptInfo.text, scriptTarget, scanner.JSDocParsingModeParseAll)
 			entry.sourceFile.Version = scriptInfo.version
 		}
 		entry.refCount++
 		return entry.sourceFile
 	} else {
 		// Have never seen this file with these settings. Create a new source file for it.
-		sourceFile := parser.ParseSourceFile(scriptInfo.fileName, scriptInfo.text, scriptTarget)
+		sourceFile := parser.ParseSourceFile(scriptInfo.fileName, scriptInfo.text, scriptTarget, scanner.JSDocParsingModeParseAll)
 		sourceFile.Version = scriptInfo.version
 		entry := registryEntry{
 			sourceFile: sourceFile,
