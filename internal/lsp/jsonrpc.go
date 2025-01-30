@@ -2,6 +2,7 @@ package lsp
 
 import (
 	"encoding/json"
+	"fmt"
 )
 
 type Integer int32
@@ -17,7 +18,7 @@ type ID struct {
 	int int32
 }
 
-func (id ID) MarshalJSON() ([]byte, error) {
+func (id *ID) MarshalJSON() ([]byte, error) {
 	if id.str != "" {
 		return json.Marshal(id.str)
 	}
@@ -32,15 +33,11 @@ func (id *ID) UnmarshalJSON(data []byte) error {
 	return json.Unmarshal(data, &id.int)
 }
 
-type RequestParams interface {
-	requestParams()
-}
-
 type RequestMessage struct {
-	JSONRPC string        `json:"jsonrpc"`
-	ID      ID            `json:"id"`
-	Method  string        `json:"method"`
-	Params  RequestParams `json:"params"`
+	JSONRPC string `json:"jsonrpc"`
+	ID      ID     `json:"id"`
+	Method  string `json:"method"`
+	Params  any    `json:"params"`
 }
 
 func (r *RequestMessage) UnmarshalJSON(data []byte) error {
@@ -60,5 +57,15 @@ func (r *RequestMessage) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("unknown method %s", raw.Method)
 	}
 
-	
+	params, err := unmarshalParams(raw.Params)
+	if err != nil {
+		return err
+	}
+
+	r.JSONRPC = raw.JSONRPC
+	r.ID = raw.ID
+	r.Method = raw.Method
+	r.Params = params
+
+	return nil
 }

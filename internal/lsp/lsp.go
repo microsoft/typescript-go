@@ -5,11 +5,11 @@ import (
 	"fmt"
 )
 
-var requestMethodUnmarshallers = map[string]func([]byte) (RequestParams, error){
-	"initialize": unmarshallerFor[*InitializeParams],
+var requestMethodUnmarshallers = map[string]func([]byte) (any, error){
+	"initialize": unmarshallerFor[InitializeParams],
 }
 
-func unmarshallerFor[T RequestParams](data []byte) (RequestParams, error) {
+func unmarshallerFor[T any](data []byte) (any, error) {
 	var params T
 	if err := json.Unmarshal(data, &params); err != nil {
 		return nil, fmt.Errorf("unmarshal %T: %w", (*T)(nil), err)
@@ -25,8 +25,6 @@ type InitializeParams struct {
 	Capabilities          any         `json:"capabilities"`
 	Trace                 *TraceValue `json:"trace"`
 }
-
-func (*InitializeParams) requestParams() {}
 
 type ClientInfo struct {
 	Name    string  `json:"name"`
