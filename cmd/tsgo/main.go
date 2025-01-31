@@ -18,6 +18,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/compiler/diagnostics"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnosticwriter"
+	"github.com/microsoft/typescript-go/internal/lsp"
 	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
@@ -113,6 +114,25 @@ func parseArgs() *cliOptions {
 }
 
 func main() {
+	currentDirectory, err := os.Getwd()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error getting current directory: %v\n", err)
+		os.Exit(1)
+	}
+	fs := bundled.WrapFS(vfs.FromOS())
+	defaultLibraryPath := bundled.LibPath()
+
+	if args := os.Args[1:]; len(args) > 0 && args[0] == "lsp" {
+		os.Exit(lsp.Main(&lsp.MainOptions{
+			Stdin:              os.Stdin,
+			Stdout:             os.Stdout,
+			Stderr:             os.Stderr,
+			FS:                 fs,
+			CurrentDirectory:   currentDirectory,
+			DefaultLibraryPath: defaultLibraryPath,
+		}))
+	}
+
 	opts := parseArgs()
 
 	if opts.devel.pprofDir != "" {
@@ -121,15 +141,6 @@ func main() {
 	}
 
 	startTime := time.Now()
-
-	currentDirectory, err := os.Getwd()
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error getting current directory: %v\n", err)
-		os.Exit(1)
-	}
-
-	fs := bundled.WrapFS(vfs.FromOS())
-	defaultLibraryPath := bundled.LibPath()
 
 	configFilePath := tspath.ResolvePath(currentDirectory, opts.tsc.project)
 	if !fs.FileExists(configFilePath) {
