@@ -18,7 +18,7 @@ type JSONRPCVersion struct{}
 const jsonRPCVersion = "2.0"
 
 func (JSONRPCVersion) MarshalJSON() ([]byte, error) {
-	return []byte(jsonRPCVersion), nil
+	return []byte(`"` + jsonRPCVersion + `"`), nil
 }
 
 func (*JSONRPCVersion) UnmarshalJSON(data []byte) error {
