@@ -8,11 +8,13 @@ import (
 type Method string
 
 const (
-	MethodInitialize Method = "initialize"
+	MethodInitialize  Method = "initialize"
+	MethodInitialized Method = "initialized"
 )
 
 var requestMethodUnmarshallers = map[Method]func([]byte) (any, error){
-	MethodInitialize: unmarshallerFor[InitializeParams],
+	MethodInitialize:  unmarshallerFor[InitializeParams],
+	MethodInitialized: unmarshallerFor[InitializedParams],
 }
 
 func unmarshallerFor[T any](data []byte) (any, error) {
@@ -69,6 +71,8 @@ type InitializeResult struct {
 }
 
 type ServerInfo struct {
-	Name    string  `json:"name"`
-	Version *string `json:"version"`
+	Name    string `json:"name"`
+	Version string `json:"version,omitempty"`
 }
+
+type InitializedParams struct{}
