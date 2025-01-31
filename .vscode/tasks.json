@@ -2,7 +2,7 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "Build tsgo",
+            "label": "Build",
             "type": "npm",
             "script": "build",
             "group": "build",
@@ -17,7 +17,7 @@
         {
             "label": "Compile extension",
             "type": "npm",
-            "script": "build:extension",
+            "script": "extension:build",
             "group": "build",
             "presentation": {
                 "panel": "dedicated",
@@ -30,7 +30,7 @@
         {
             "label": "Watch extension",
             "type": "npm",
-            "script": "watch:extension",
+            "script": "extension:watch",
             "isBackground": true,
             "group": {
                 "kind": "build",
@@ -48,7 +48,7 @@
             "label": "Watch for extension run",
             "dependsOn": [
                 "Watch extension",
-                "Build tsgo"
+                "Build"
             ]
         }
     ]

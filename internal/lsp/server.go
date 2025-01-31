@@ -9,18 +9,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/vfs"
 )
 
-type server struct {
-	r *lsproto.BaseReader
-	w *lsproto.BaseWriter
-}
-
-func newServer(r io.Reader, w io.Writer) *server {
-	return &server{
-		r: lsproto.NewBaseReader(r),
-		w: lsproto.NewBaseWriter(w),
-	}
-}
-
 type MainOptions struct {
 	Stdin  io.Reader
 	Stdout io.Writer
@@ -32,22 +20,45 @@ type MainOptions struct {
 }
 
 func Main(opts *MainOptions) int {
-	// TODO: ctx signal cancel exit
-	server := newServer(opts.Stdin, opts.Stdout)
+	s := &server{
+		r:                  lsproto.NewBaseReader(opts.Stdin),
+		w:                  lsproto.NewBaseWriter(opts.Stdout),
+		stderr:             opts.Stderr,
+		fs:                 opts.FS,
+		currentDirectory:   opts.CurrentDirectory,
+		defaultLibraryPath: opts.DefaultLibraryPath,
+	}
 
+	if err := s.run(); err != nil {
+		return 1
+	}
+	return 0
+}
+
+type server struct {
+	r *lsproto.BaseReader
+	w *lsproto.BaseWriter
+
+	stderr io.Writer
+
+	fs                 vfs.FS
+	currentDirectory   string
+	defaultLibraryPath string
+}
+
+func (s *server) run() error {
 	for {
 		var req lsproto.RequestMessage
-		err := server.r.Read(&req)
+		err := s.r.Read(&req)
 		if err != nil {
-			fmt.Fprintln(opts.Stderr, err)
+			fmt.Fprintln(s.stderr, err)
 			continue
 		}
 
-		enc := json.NewEncoder(opts.Stderr)
+		// temporary debug logging
+		enc := json.NewEncoder(s.stderr)
 		enc.SetIndent("", "    ")
 		enc.SetEscapeHTML(false)
 		enc.Encode(req)
 	}
-
-	// return 0
 }
