@@ -133,9 +133,9 @@ CompilerOptions::{
 Output::
 //// [/home/src/workspaces/project/class1.ts]\nexport class class1 {}
 //// [/home/src/workspaces/project/tsconfig.json]\n{
-	compilerOptions: {
-		incremental: true,
-		strict: true,
+	"compilerOptions": {
+		"incremental": true,
+		"strict": true,
 	},
 }
 

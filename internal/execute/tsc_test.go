@@ -87,9 +87,9 @@ func TestNoEmit(t *testing.T) {
 		subScenario: "when project has strict true",
 		sys: newTestSys(FileMap{
 			"/home/src/workspaces/project/tsconfig.json": `{
-	compilerOptions: {
-		incremental: true,
-		strict: true,
+	"compilerOptions": {
+		"incremental": true,
+		"strict": true,
 	},
 }`,
 			"/home/src/workspaces/project/class1.ts": `export class class1 {}`,
@@ -112,15 +112,15 @@ func TestProjectReferences(t *testing.T) {
 		sys: newTestSys(FileMap{
 			"/home/src/workspaces/solution/src/utils/index.ts": "export const x = 10;",
 			"/home/src/workspaces/solution/src/utils/tsconfig.json": `{
-	compilerOptions: {
-		composite: true,
-		noEmit: true,
+	"compilerOptions": {
+		"composite": true,
+		"noEmit": true,
 	},
 })`,
 			"/home/src/workspaces/solution/project/index.ts": `import { x } from "../utils";`,
 			"/home/src/workspaces/solution/project/tsconfig.json": `{
-		references: [
-			{ path: "../utils" },
+		"references": [
+			{ "path": "../utils" },
 		],
 	}),
 },`,

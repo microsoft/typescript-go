@@ -33,23 +33,21 @@ type ProgramOptions struct {
 }
 
 type Program struct {
-	host                     CompilerHost
-	programOptions           ProgramOptions
-	compilerOptions          *core.CompilerOptions
-	configFilePath           string
-	nodeModules              map[string]*ast.SourceFile
-	checkers                 []*checker.Checker
-	checkersByFile           map[*ast.SourceFile]*checker.Checker
-	currentDirectory         string
-	configParsingDiagnostics []*ast.Diagnostic
+	host               CompilerHost
+	programOptions     ProgramOptions
+	compilerOptions    *core.CompilerOptions
+	configFilePath     string
+	nodeModules        map[string]*ast.SourceFile
+	checkers           []*checker.Checker
+	checkersByFile     map[*ast.SourceFile]*checker.Checker
+	currentDirectory   string
+	optionsDiagnostics []*ast.Diagnostic
 
 	resolver        *module.Resolver
 	resolvedModules map[tspath.Path]module.ModeAwareCache[*module.ResolvedModule]
 
 	comparePathsOptions tspath.ComparePathsOptions
 	defaultLibraryPath  string
-
-	optionsDiagnostics []*ast.Diagnostic
 
 	files       []*ast.SourceFile
 	filesByPath map[tspath.Path]*ast.SourceFile
@@ -76,6 +74,7 @@ func NewProgram(options ProgramOptions) *Program {
 	p := &Program{}
 	p.programOptions = options
 	p.compilerOptions = options.Options
+	p.optionsDiagnostics = options.ConfigParsingDiagnostics
 	if p.compilerOptions == nil {
 		p.compilerOptions = &core.CompilerOptions{}
 	}
@@ -179,10 +178,10 @@ func NewProgramFromParsedCommandLine(config *tsoptions.ParsedCommandLine, host C
 	return NewProgram(programOptions)
 }
 
-func (p *Program) SourceFiles() []*ast.SourceFile              { return p.files }
-func (p *Program) Options() *core.CompilerOptions              { return p.compilerOptions }
-func (p *Program) Host() CompilerHost                          { return p.host }
-func (p *Program) ConfigParsingDiagnostics() []*ast.Diagnostic { return p.configParsingDiagnostics }
+func (p *Program) SourceFiles() []*ast.SourceFile        { return p.files }
+func (p *Program) Options() *core.CompilerOptions        { return p.compilerOptions }
+func (p *Program) Host() CompilerHost                    { return p.host }
+func (p *Program) OptionsDiagnostics() []*ast.Diagnostic { return p.optionsDiagnostics }
 
 func (p *Program) BindSourceFiles() {
 	wg := core.NewWorkGroup(p.programOptions.SingleThreaded)
@@ -295,7 +294,7 @@ func (p *Program) getOptionsDiagnosticsOfConfigFile() []*ast.Diagnostic {
 	if p.Options() == nil || p.Options().ConfigFilePath == "" {
 		return nil
 	}
-	return p.configParsingDiagnostics
+	return p.optionsDiagnostics
 }
 
 func (p *Program) getSyntaticDiagnosticsForFile(sourceFile *ast.SourceFile) []*ast.Diagnostic {

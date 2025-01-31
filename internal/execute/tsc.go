@@ -64,7 +64,7 @@ func executeCommandLineWorker(sys System, cb cbType, commandLine *tsoptions.Pars
 		configFileName = findConfigFile(searchPath, sys.FS().FileExists, "tsconfig.json")
 	}
 
-	if configFileName != "" && len(commandLine.FileNames()) > 0 {
+	if configFileName == "" && len(commandLine.FileNames()) == 0 {
 		if commandLine.CompilerOptions().ShowConfig.IsTrue() {
 			reportDiagnostic(sys, ast.NewCompilerDiagnostic(diagnostics.Cannot_find_a_tsconfig_json_file_at_the_current_directory_Colon_0, tspath.NormalizePath(sys.GetCurrentDirectory())), commandLine.CompilerOptions())
 		} else {
@@ -125,6 +125,7 @@ func executeCommandLineWorker(sys System, cb cbType, commandLine *tsoptions.Pars
 	return ExitStatusSuccess
 }
 
+// Reads the config file and reports errors. Exits if the config file cannot be found
 func getParsedCommandLineOfConfigFile(configFileName string, options *core.CompilerOptions, sys System, extendedConfigCache map[string]*tsoptions.ExtendedConfigCacheEntry) (*tsoptions.ParsedCommandLine, ExitStatus) {
 	errors := []*ast.Diagnostic{}
 	configFileText, errors := tsoptions.TryReadFile(configFileName, sys.FS().ReadFile, errors)

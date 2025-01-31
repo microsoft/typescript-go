@@ -4,7 +4,7 @@ useCaseSensitiveFileNames::true
 Input::
 
 
-ExitStatus:: 0
+ExitStatus:: 1
 
 CompilerOptions::{
     "allowJs": null,

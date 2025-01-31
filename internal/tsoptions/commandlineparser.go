@@ -71,7 +71,7 @@ func ParseCommandLine(
 		},
 		ConfigFile:    nil,
 		Errors:        append(parser.errors, d...),
-		Raw:           parser, // todo: ask navya to review what this field is for
+		Raw:           parser.options, // todo: keep optionsBase incase needed later
 		CompileOnSave: nil,
 	}
 }
