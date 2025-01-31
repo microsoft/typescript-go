@@ -32,19 +32,21 @@ type MainOptions struct {
 }
 
 func Main(opts *MainOptions) int {
+	// TODO: ctx signal cancel exit
 	server := newServer(opts.Stdin, opts.Stdout)
 
 	for {
-		var v any
-		if err := server.r.Read(&v); err != nil {
+		var req lsproto.RequestMessage
+		err := server.r.Read(&req)
+		if err != nil {
 			fmt.Fprintln(opts.Stderr, err)
-			return 1
+			continue
 		}
 
 		enc := json.NewEncoder(opts.Stderr)
 		enc.SetIndent("", "    ")
 		enc.SetEscapeHTML(false)
-		enc.Encode(v)
+		enc.Encode(req)
 	}
 
 	// return 0

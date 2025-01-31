@@ -35,7 +35,7 @@ func (id *ID) UnmarshalJSON(data []byte) error {
 
 type RequestMessage struct {
 	JSONRPC string `json:"jsonrpc"`
-	ID      ID     `json:"id"`
+	ID      *ID    `json:"id"`
 	Method  string `json:"method"`
 	Params  any    `json:"params"`
 }
@@ -43,7 +43,7 @@ type RequestMessage struct {
 func (r *RequestMessage) UnmarshalJSON(data []byte) error {
 	var raw struct {
 		JSONRPC string          `json:"jsonrpc"`
-		ID      ID              `json:"id"`
+		ID      *ID             `json:"id"`
 		Method  string          `json:"method"`
 		Params  json.RawMessage `json:"params"`
 	}
