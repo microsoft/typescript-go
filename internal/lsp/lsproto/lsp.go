@@ -20,7 +20,7 @@ func unmarshallerFor[T any](data []byte) (any, error) {
 	if err := json.Unmarshal(data, &params); err != nil {
 		return nil, fmt.Errorf("unmarshal %T: %w", (*T)(nil), err)
 	}
-	return params, nil
+	return &params, nil
 }
 
 type InitializeParams struct {
