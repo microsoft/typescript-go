@@ -8,13 +8,21 @@ import (
 type Method string
 
 const (
-	MethodInitialize  Method = "initialize"
-	MethodInitialized Method = "initialized"
+	MethodInitialize            Method = "initialize"
+	MethodInitialized           Method = "initialized"
+	MethodDidOpenTextDocument   Method = "textDocument/didOpen"
+	MethodDidCloseTextDocument  Method = "textDocument/didClose"
+	MethodDidChangeTextDocument Method = "textDocument/didChange"
+	MethodHover                 Method = "textDocument/hover"
 )
 
 var requestMethodUnmarshallers = map[Method]func([]byte) (any, error){
-	MethodInitialize:  unmarshallerFor[InitializeParams],
-	MethodInitialized: unmarshallerFor[InitializedParams],
+	MethodInitialize:            unmarshallerFor[InitializeParams],
+	MethodInitialized:           unmarshallerFor[InitializedParams],
+	MethodDidOpenTextDocument:   unmarshallerFor[DidOpenTextDocumentParams],
+	MethodDidCloseTextDocument:  unmarshallerFor[DidCloseTextDocumentParams],
+	MethodDidChangeTextDocument: unmarshallerFor[DidChangeTextDocumentParams],
+	MethodHover:                 unmarshallerFor[HoverParams],
 }
 
 func unmarshallerFor[T any](data []byte) (any, error) {
@@ -76,3 +84,82 @@ type ServerInfo struct {
 }
 
 type InitializedParams struct{}
+
+type TextDocumentSyncKind int32
+
+const (
+	TextDocumentSyncKindNone        TextDocumentSyncKind = 0
+	TextDocumentSyncKindFull        TextDocumentSyncKind = 1
+	TextDocumentSyncKindIncremental TextDocumentSyncKind = 2
+)
+
+type TextDocumentItem struct {
+	URI        DocumentURI `json:"uri"`
+	LanguageID string      `json:"languageId"`
+	Version    Integer     `json:"version"`
+	Text       string      `json:"text"`
+}
+
+type TextDocumentIdentifier struct {
+	URI DocumentURI `json:"uri"`
+}
+
+type VersionedTextDocumentIdentifier struct {
+	TextDocumentIdentifier
+	Version Integer `json:"version"`
+}
+
+type DidOpenTextDocumentParams struct {
+	TextDocument TextDocumentItem `json:"textDocument"`
+}
+
+type DidCloseTextDocumentParams struct {
+	TextDocument TextDocumentIdentifier `json:"textDocument"`
+}
+
+type DidChangeTextDocumentParams struct {
+	TextDocument   VersionedTextDocumentIdentifier  `json:"textDocument"`
+	ContentChanges []TextDocumentContentChangeEvent `json:"contentChanges"`
+}
+
+type TextDocumentContentChangeEvent struct {
+	Range       *Range    `json:"range"`
+	RangeLength *Uinteger `json:"rangeLength"`
+	Text        string    `json:"text"`
+}
+
+type Position struct {
+	Line      Uinteger `json:"line"`
+	Character Uinteger `json:"character"`
+}
+
+type Range struct {
+	Start Position `json:"start"`
+	End   Position `json:"end"`
+}
+
+type TextDocumentPositionParams struct {
+	TextDocument TextDocumentIdentifier `json:"textDocument"`
+	Position     Position               `json:"position"`
+}
+
+type HoverParams struct {
+	TextDocumentPositionParams
+}
+
+type Hover struct {
+	Contents MarkupContent `json:"contents"`
+	Range    *Range        `json:"range,omitempty"`
+}
+
+type MarkupKind string
+
+const (
+	MarkupKindPlaintext MarkupKind = "plaintext"
+	MarkupKindMarkdown  MarkupKind = "markdown"
+)
+
+type MarkupContent struct {
+	Kind  MarkupKind `json:"kind"`
+	Value string     `json:"value"`
+}

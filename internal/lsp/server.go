@@ -74,19 +74,38 @@ func (s *server) run() error {
 		}
 
 		if s.initializeParams == nil {
-			if req.Method != lsproto.MethodInitialize {
+			if req.Method == lsproto.MethodInitialize {
+				if err := s.handleInitialize(req); err != nil {
+					return err
+				}
+			} else {
 				if err := s.sendError(req.ID, lsproto.ErrServerNotInitialized); err != nil {
 					// TODO(jakebailey): need to continue on error?
 					return err
 				}
-				continue
 			}
-			if err := s.handleInitialize(req); err != nil {
+			continue
+		}
+
+		if req.Method == lsproto.MethodHover {
+			// TODO(jakebailey): error handling
+			if err := s.sendResult(req.ID, &lsproto.Hover{
+				Contents: lsproto.MarkupContent{
+					Kind:  lsproto.MarkupKindPlaintext,
+					Value: "It works!",
+				},
+			}); err != nil {
+				return err
+			}
+			continue
+		}
+
+		if req.ID != nil {
+			// TODO(jakebailey): actually implement stuff
+			if err := s.sendError(req.ID, lsproto.ErrInvalidRequest); err != nil {
 				return err
 			}
 		}
-
-		// TODO(jakebailey): respond with cancellations for now
 	}
 }
 
@@ -135,7 +154,8 @@ func (s *server) handleInitialize(req *lsproto.RequestMessage) error {
 			// Version: core.Version, // TODO(jakebailey): put version in package other than core
 		},
 		Capabilities: map[string]any{ // TODO(jakebailey): do something here
-			"textDocumentSync": 1, // TextDocumentSyncKind.Full
+			"textDocumentSync": lsproto.TextDocumentSyncKindFull,
+			"hoverProvider":    true,
 		},
 	})
 }
