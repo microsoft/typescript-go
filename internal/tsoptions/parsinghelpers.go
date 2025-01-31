@@ -125,7 +125,7 @@ func parseJsonToStringKey(json any) map[string]any {
 	return result
 }
 
-func parseCompilerOptions(key string, value any, allOptions *core.CompilerOptions) []*ast.Diagnostic {
+func ParseCompilerOptions(key string, value any, allOptions *core.CompilerOptions) []*ast.Diagnostic {
 	if allOptions == nil {
 		return nil
 	}

@@ -21,15 +21,14 @@ import (
 )
 
 type ProgramOptions struct {
-	ConfigFilePath           string
-	RootFiles                []string
-	Host                     CompilerHost
-	Options                  *core.CompilerOptions
-	SingleThreaded           bool
-	ProjectReference         []core.ProjectReference
-	DefaultLibraryPath       string
-	ConfigParsingDiagnostics []*ast.Diagnostic
-	JSDocParsingMode         scanner.JSDocParsingMode
+	ConfigFilePath     string
+	RootFiles          []string
+	Host               CompilerHost
+	Options            *core.CompilerOptions
+	SingleThreaded     bool
+	ProjectReference   []core.ProjectReference
+	DefaultLibraryPath string
+	OptionsDiagnostics []*ast.Diagnostic
 }
 
 type Program struct {
@@ -74,7 +73,7 @@ func NewProgram(options ProgramOptions) *Program {
 	p := &Program{}
 	p.programOptions = options
 	p.compilerOptions = options.Options
-	p.optionsDiagnostics = options.ConfigParsingDiagnostics
+	p.optionsDiagnostics = options.OptionsDiagnostics
 	if p.compilerOptions == nil {
 		p.compilerOptions = &core.CompilerOptions{}
 	}
@@ -172,8 +171,8 @@ func NewProgramFromParsedCommandLine(config *tsoptions.ParsedCommandLine, host C
 		Options:   config.CompilerOptions(),
 		Host:      host,
 		// todo: ProjectReferences
-		ConfigParsingDiagnostics: config.GetConfigFileParsingDiagnostics(),
-		DefaultLibraryPath:       bundled.LibPath(),
+		OptionsDiagnostics: config.GetConfigFileParsingDiagnostics(),
+		DefaultLibraryPath: bundled.LibPath(),
 	}
 	return NewProgram(programOptions)
 }
