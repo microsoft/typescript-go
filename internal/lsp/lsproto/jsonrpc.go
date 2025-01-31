@@ -2,6 +2,7 @@ package lsproto
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 )
 
@@ -15,19 +16,17 @@ type URI string // !!!
 
 type JSONRPCVersion struct{}
 
-const jsonRPCVersion = "2.0"
+const jsonRPCVersion = `"2.0"`
 
 func (JSONRPCVersion) MarshalJSON() ([]byte, error) {
-	return []byte(`"` + jsonRPCVersion + `"`), nil
+	return []byte(jsonRPCVersion), nil
 }
 
+var ErrInvalidJSONRPCVersion = errors.New("invalid JSON-RPC version")
+
 func (*JSONRPCVersion) UnmarshalJSON(data []byte) error {
-	var s string
-	if err := json.Unmarshal(data, &s); err != nil {
-		return err
-	}
-	if s != jsonRPCVersion {
-		return fmt.Errorf("invalid JSON-RPC version %s", s)
+	if string(data) != jsonRPCVersion {
+		return ErrInvalidJSONRPCVersion
 	}
 	return nil
 }
@@ -72,21 +71,27 @@ func (r *RequestMessage) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("%w: %w", ErrInvalidRequest, err)
 	}
 
-	unmarshalParams, ok := requestMethodUnmarshallers[raw.Method]
-	if !ok {
-		return fmt.Errorf("%w: %s", ErrMethodNotFound, raw.Method)
-	}
+	var params any
+	var retErr error
 
-	params, err := unmarshalParams(raw.Params)
-	if err != nil {
-		return fmt.Errorf("%w: %w", ErrInvalidRequest, err)
+	if unmarshalParams, ok := requestMethodUnmarshallers[raw.Method]; ok {
+		var err error
+		params, err = unmarshalParams(raw.Params)
+		if err != nil {
+			retErr = fmt.Errorf("%w: %w", ErrInvalidRequest, err)
+		}
+	} else {
+		retErr = fmt.Errorf("%w: %s", ErrMethodNotFound, raw.Method)
+		var v any
+		_ = json.Unmarshal(raw.Params, &v)
+		params = v
 	}
 
 	r.ID = raw.ID
 	r.Method = raw.Method
 	r.Params = params
 
-	return nil
+	return retErr
 }
 
 type ResponseMessage struct {

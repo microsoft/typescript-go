@@ -59,18 +59,18 @@ func (s *server) run() error {
 	for {
 		req := &lsproto.RequestMessage{}
 		err := s.r.Read(req)
-		if err != nil {
-			fmt.Fprintln(s.stderr, err)
-			continue
-		}
 
 		// TODO(jakebailey): temporary debug logging
-
 		if _, err := s.stderr.Write([]byte("REQUEST\n")); err != nil {
 			return err
 		}
 		if err := s.stderrJSON.Encode(req); err != nil {
 			return err
+		}
+
+		if err != nil {
+			fmt.Fprintln(s.stderr, err)
+			continue
 		}
 
 		if s.initializeParams == nil {
