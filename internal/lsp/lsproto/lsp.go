@@ -16,6 +16,7 @@ const (
 	MethodDidOpenTextDocument   Method = "textDocument/didOpen"
 	MethodDidCloseTextDocument  Method = "textDocument/didClose"
 	MethodDidChangeTextDocument Method = "textDocument/didChange"
+	MethodDidSaveTextDocument   Method = "textDocument/didSave"
 	MethodHover                 Method = "textDocument/hover"
 )
 
@@ -26,6 +27,7 @@ var requestMethodUnmarshallers = map[Method]func([]byte) (any, error){
 	MethodDidOpenTextDocument:   unmarshallerFor[DidOpenTextDocumentParams],
 	MethodDidCloseTextDocument:  unmarshallerFor[DidCloseTextDocumentParams],
 	MethodDidChangeTextDocument: unmarshallerFor[DidChangeTextDocumentParams],
+	MethodDidSaveTextDocument:   unmarshallerFor[DidSaveTextDocumentParams],
 	MethodHover:                 unmarshallerFor[HoverParams],
 }
 
@@ -124,6 +126,11 @@ type DidCloseTextDocumentParams struct {
 type DidChangeTextDocumentParams struct {
 	TextDocument   VersionedTextDocumentIdentifier  `json:"textDocument"`
 	ContentChanges []TextDocumentContentChangeEvent `json:"contentChanges"`
+}
+
+type DidSaveTextDocumentParams struct {
+	TextDocument TextDocumentIdentifier `json:"textDocument"`
+	Text         *string                `json:"text,omitempty"`
 }
 
 type TextDocumentContentChangeEvent struct {

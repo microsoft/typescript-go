@@ -155,7 +155,7 @@ func (s *server) handleInitialize(req *lsproto.RequestMessage) error {
 			// Version: core.Version, // TODO(jakebailey): put version in package other than core
 		},
 		Capabilities: map[string]any{ // TODO(jakebailey): do something here
-			"textDocumentSync": lsproto.TextDocumentSyncKindFull,
+			"textDocumentSync": lsproto.TextDocumentSyncKindIncremental,
 			"hoverProvider":    true,
 		},
 	})
