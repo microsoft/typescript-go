@@ -71,27 +71,25 @@ func (r *RequestMessage) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("%w: %w", ErrInvalidRequest, err)
 	}
 
-	var params any
-	var retErr error
-
-	if unmarshalParams, ok := requestMethodUnmarshallers[raw.Method]; ok {
-		var err error
-		params, err = unmarshalParams(raw.Params)
-		if err != nil {
-			retErr = fmt.Errorf("%w: %w", ErrInvalidRequest, err)
-		}
-	} else {
-		retErr = fmt.Errorf("%w: %s", ErrMethodNotFound, raw.Method)
-		var v any
-		_ = json.Unmarshal(raw.Params, &v)
-		params = v
-	}
-
 	r.ID = raw.ID
 	r.Method = raw.Method
+
+	var params any
+	var err error
+
+	if unmarshalParams, ok := requestMethodUnmarshallers[raw.Method]; ok {
+		params, err = unmarshalParams(raw.Params)
+	} else {
+		// Fall back to default; it's probably an unknown message and we will probably not handle it.
+		err = json.Unmarshal(raw.Params, &params)
+	}
 	r.Params = params
 
-	return retErr
+	if err != nil {
+		return fmt.Errorf("%w: %w", ErrInvalidRequest, err)
+	}
+
+	return nil
 }
 
 type ResponseMessage struct {

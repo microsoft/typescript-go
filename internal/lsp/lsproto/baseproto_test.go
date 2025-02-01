@@ -13,68 +13,67 @@ func TestBaseReader(t *testing.T) {
 	t.Parallel()
 	tests := []struct {
 		name  string
-		data  []byte
-		value any
+		input []byte
+		value []byte
 		err   string
 	}{
 		{
-			name: "empty",
-			data: []byte("Content-Length: 0\r\n\r\n"),
-			err:  "lsp: no content length",
+			name:  "empty",
+			input: []byte("Content-Length: 0\r\n\r\n"),
+			err:   "lsp: no content length",
 		},
 		{
-			name: "early end",
-			data: []byte("oops"),
-			err:  "EOF",
+			name:  "early end",
+			input: []byte("oops"),
+			err:   "EOF",
 		},
 		{
-			name: "negative length",
-			data: []byte("Content-Length: -1\r\n\r\n"),
-			err:  "lsp: invalid content length: negative value -1",
+			name:  "negative length",
+			input: []byte("Content-Length: -1\r\n\r\n"),
+			err:   "lsp: invalid content length: negative value -1",
 		},
 		{
-			name: "invalid content",
-			data: []byte("Content-Length: 1\r\n\r\n{"),
-			err:  "lsp: unmarshal content: unexpected end of JSON input",
+			name:  "invalid content",
+			input: []byte("Content-Length: 1\r\n\r\n{"),
+			value: []byte("{"),
 		},
 		{
 			name:  "valid content",
-			data:  []byte("Content-Length: 2\r\n\r\n{}"),
-			value: map[string]any{},
+			input: []byte("Content-Length: 2\r\n\r\n{}"),
+			value: []byte("{}"),
 		},
 		{
 			name:  "extra header values",
-			data:  []byte("Content-Length: 2\r\nExtra: 1\r\n\r\n{}"),
-			value: map[string]any{},
+			input: []byte("Content-Length: 2\r\nExtra: 1\r\n\r\n{}"),
+			value: []byte("{}"),
 		},
 		{
-			name: "too long content length",
-			data: []byte("Content-Length: 100\r\n\r\n{}"),
-			err:  "lsp: read content: unexpected EOF",
+			name:  "too long content length",
+			input: []byte("Content-Length: 100\r\n\r\n{}"),
+			err:   "lsp: read content: unexpected EOF",
 		},
 		{
-			name: "missing content length",
-			data: []byte("Content-Length: \r\n\r\n{}"),
-			err:  "lsp: invalid content length: parse error: strconv.ParseInt: parsing \"\": invalid syntax",
+			name:  "missing content length",
+			input: []byte("Content-Length: \r\n\r\n{}"),
+			err:   "lsp: invalid content length: parse error: strconv.ParseInt: parsing \"\": invalid syntax",
 		},
 		{
-			name: "invalid header",
-			data: []byte("Nope\r\n\r\n{}"),
-			err:  "lsp: invalid header: \"Nope\\r\\n\"",
+			name:  "invalid header",
+			input: []byte("Nope\r\n\r\n{}"),
+			err:   "lsp: invalid header: \"Nope\\r\\n\"",
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			r := lsproto.NewBaseReader(bytes.NewReader(tt.data))
+			r := lsproto.NewBaseReader(bytes.NewReader(tt.input))
 
-			var v any
-			err := r.Read(&v)
+			out, err := r.Read()
 			if tt.err != "" {
 				assert.Error(t, err, tt.err)
 			}
-			assert.DeepEqual(t, v, tt.value)
+			assert.DeepEqual(t, out, tt.value)
 		})
 	}
 }
@@ -88,44 +87,16 @@ func TestBaseReaderMultipleReads(t *testing.T) {
 	)
 	r := lsproto.NewBaseReader(bytes.NewReader(data))
 
-	var v1 any
-	err := r.Read(&v1)
+	v1, err := r.Read()
 	assert.NilError(t, err)
-	assert.DeepEqual(t, v1, 1234.0)
+	assert.DeepEqual(t, v1, []byte("1234"))
 
-	var v2 any
-	err = r.Read(&v2)
+	v2, err := r.Read()
 	assert.NilError(t, err)
-	assert.DeepEqual(t, v2, map[string]any{})
+	assert.DeepEqual(t, v2, []byte("{}"))
 
-	var v3 any
-	err = r.Read(&v3)
+	_, err = r.Read()
 	assert.Error(t, err, "EOF")
-}
-
-func TestBaseReaderUnmarshalError(t *testing.T) {
-	t.Parallel()
-
-	data := []byte("Content-Length: 2\r\n\r\n{}")
-	r := lsproto.NewBaseReader(bytes.NewReader(data))
-	var v typeWithUnmarshalError
-	err := r.Read(&v)
-	assert.Error(t, err, "EOF")
-}
-
-type typeWithUnmarshalError struct{}
-
-func (*typeWithUnmarshalError) UnmarshalJSON([]byte) error {
-	return errors.New("test error")
-}
-
-func TestBaseReaderReadError(t *testing.T) {
-	t.Parallel()
-
-	r := lsproto.NewBaseReader(&errorReader{})
-	var v any
-	err := r.Read(&v)
-	assert.Error(t, err, "lsp: read header: test error")
 }
 
 type errorReader struct{}
@@ -138,20 +109,18 @@ func TestBaseWriter(t *testing.T) {
 	t.Parallel()
 	tests := []struct {
 		name  string
-		value any
-		data  []byte
+		value []byte
+		input []byte
 	}{
 		{
 			name:  "empty",
-			value: map[string]any{},
-			data:  []byte("Content-Length: 2\r\n\r\n{}"),
+			value: []byte("{}"),
+			input: []byte("Content-Length: 2\r\n\r\n{}"),
 		},
 		{
-			name: "bigger object",
-			value: map[string]any{
-				"key": "value",
-			},
-			data: []byte("Content-Length: 15\r\n\r\n{\"key\":\"value\"}"),
+			name:  "bigger object",
+			value: []byte("{\"key\":\"value\"}"),
+			input: []byte("Content-Length: 15\r\n\r\n{\"key\":\"value\"}"),
 		},
 	}
 
@@ -162,32 +131,17 @@ func TestBaseWriter(t *testing.T) {
 			w := lsproto.NewBaseWriter(&b)
 			err := w.Write(tt.value)
 			assert.NilError(t, err)
-			assert.DeepEqual(t, b.Bytes(), tt.data)
+			assert.DeepEqual(t, b.Bytes(), tt.input)
 		})
 	}
-}
-
-func TestBaseWriterMarshalError(t *testing.T) {
-	t.Parallel()
-
-	var b bytes.Buffer
-	w := lsproto.NewBaseWriter(&b)
-	err := w.Write(&typeWithMarshalError{})
-	assert.Error(t, err, "lsp: marshal: json: error calling MarshalJSON for type *lsp_test.typeWithMarshalError: test error")
-}
-
-type typeWithMarshalError struct{}
-
-func (*typeWithMarshalError) MarshalJSON() ([]byte, error) {
-	return nil, errors.New("test error")
 }
 
 func TestBaseWriterWriteError(t *testing.T) {
 	t.Parallel()
 
 	w := lsproto.NewBaseWriter(&errorWriter{})
-	err := w.Write(map[string]any{})
-	assert.Error(t, err, "lsp: write: test error")
+	err := w.Write([]byte("{}"))
+	assert.Error(t, err, "test error")
 }
 
 type errorWriter struct{}

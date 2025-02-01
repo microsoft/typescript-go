@@ -57,20 +57,14 @@ type server struct {
 
 func (s *server) run() error {
 	for {
-		req := &lsproto.RequestMessage{}
-		err := s.r.Read(req)
-
-		// TODO(jakebailey): temporary debug logging
-		if _, err := s.stderr.Write([]byte("REQUEST\n")); err != nil {
-			return err
-		}
-		if err := s.stderrJSON.Encode(req); err != nil {
-			return err
-		}
-
+		req, err := s.read()
 		if err != nil {
-			fmt.Fprintln(s.stderr, err)
-			continue
+			if errors.Is(err, lsproto.ErrInvalidRequest) {
+				// TODO(jakebailey): complain about bad request
+				fmt.Fprintln(s.stderr, err)
+				continue
+			}
+			return err
 		}
 
 		if s.initializeParams == nil {
@@ -109,6 +103,28 @@ func (s *server) run() error {
 	}
 }
 
+func (s *server) read() (*lsproto.RequestMessage, error) {
+	data, err := s.r.Read()
+	if err != nil {
+		return nil, err
+	}
+
+	req := &lsproto.RequestMessage{}
+	if err := json.Unmarshal(data, req); err != nil {
+		return nil, fmt.Errorf("%w: %w", lsproto.ErrInvalidRequest, err)
+	}
+
+	// TODO(jakebailey): temporary debug logging
+	if _, err := s.stderr.Write([]byte("REQUEST\n")); err != nil {
+		return nil, err
+	}
+	if err := s.stderrJSON.Encode(req); err != nil {
+		return nil, err
+	}
+
+	return req, err
+}
+
 func (s *server) sendResult(id *lsproto.ID, result any) error {
 	var resultPtr *any
 	if result != nil {
@@ -143,7 +159,12 @@ func (s *server) sendResponse(resp *lsproto.ResponseMessage) error {
 	if err := s.stderrJSON.Encode(resp); err != nil {
 		return err
 	}
-	return s.w.Write(resp)
+
+	data, err := json.Marshal(resp)
+	if err != nil {
+		return err
+	}
+	return s.w.Write(data)
 }
 
 func (s *server) handleInitialize(req *lsproto.RequestMessage) error {
