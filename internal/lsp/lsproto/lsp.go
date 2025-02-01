@@ -8,8 +8,11 @@ import (
 type Method string
 
 const (
-	MethodInitialize            Method = "initialize"
-	MethodInitialized           Method = "initialized"
+	MethodInitialize  Method = "initialize"
+	MethodInitialized Method = "initialized"
+
+	MethodCancel Method = "$/cancelRequest"
+
 	MethodDidOpenTextDocument   Method = "textDocument/didOpen"
 	MethodDidCloseTextDocument  Method = "textDocument/didClose"
 	MethodDidChangeTextDocument Method = "textDocument/didChange"
@@ -19,6 +22,7 @@ const (
 var requestMethodUnmarshallers = map[Method]func([]byte) (any, error){
 	MethodInitialize:            unmarshallerFor[InitializeParams],
 	MethodInitialized:           unmarshallerFor[InitializedParams],
+	MethodCancel:                unmarshallerFor[CancelParams],
 	MethodDidOpenTextDocument:   unmarshallerFor[DidOpenTextDocumentParams],
 	MethodDidCloseTextDocument:  unmarshallerFor[DidCloseTextDocumentParams],
 	MethodDidChangeTextDocument: unmarshallerFor[DidChangeTextDocumentParams],
@@ -162,4 +166,8 @@ const (
 type MarkupContent struct {
 	Kind  MarkupKind `json:"kind"`
 	Value string     `json:"value"`
+}
+
+type CancelParams struct {
+	ID *ID `json:"id"`
 }

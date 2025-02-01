@@ -35,7 +35,7 @@ func Main(opts *MainOptions) int {
 		defaultLibraryPath: opts.DefaultLibraryPath,
 	}
 
-	if err := s.run(); err != nil {
+	if err := s.run(); err != nil && !errors.Is(err, io.EOF) {
 		return 1
 	}
 	return 0
@@ -81,24 +81,8 @@ func (s *server) run() error {
 			continue
 		}
 
-		if req.Method == lsproto.MethodHover {
-			// TODO(jakebailey): error handling
-			if err := s.sendResult(req.ID, &lsproto.Hover{
-				Contents: lsproto.MarkupContent{
-					Kind:  lsproto.MarkupKindPlaintext,
-					Value: "It works!",
-				},
-			}); err != nil {
-				return err
-			}
-			continue
-		}
-
-		if req.ID != nil {
-			// TODO(jakebailey): actually implement stuff
-			if err := s.sendError(req.ID, lsproto.ErrInvalidRequest); err != nil {
-				return err
-			}
+		if err := s.handleMessage(req); err != nil {
+			return err
 		}
 	}
 }
@@ -175,4 +159,24 @@ func (s *server) handleInitialize(req *lsproto.RequestMessage) error {
 			"hoverProvider":    true,
 		},
 	})
+}
+
+func (s *server) handleMessage(req *lsproto.RequestMessage) error {
+	params := req.Params
+	switch params.(type) {
+	case *lsproto.InitializeParams:
+		return s.sendError(req.ID, lsproto.ErrInvalidRequest)
+	case *lsproto.HoverParams:
+		return s.sendResult(req.ID, &lsproto.Hover{
+			Contents: lsproto.MarkupContent{
+				Kind:  lsproto.MarkupKindPlaintext,
+				Value: "It works!",
+			},
+		})
+	default:
+		if req.ID != nil {
+			return s.sendError(req.ID, lsproto.ErrInvalidRequest)
+		}
+		return nil
+	}
 }
