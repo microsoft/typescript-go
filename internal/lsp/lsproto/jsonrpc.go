@@ -95,7 +95,7 @@ func (r *RequestMessage) UnmarshalJSON(data []byte) error {
 type ResponseMessage struct {
 	JSONRPC JSONRPCVersion `json:"jsonrpc"`
 	ID      *ID            `json:"id,omitempty"`
-	Result  *any           `json:"result"`
+	Result  any            `json:"result"`
 	Error   *ResponseError `json:"error,omitempty"`
 }
 

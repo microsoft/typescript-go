@@ -126,13 +126,9 @@ func (s *server) read() (*lsproto.RequestMessage, error) {
 }
 
 func (s *server) sendResult(id *lsproto.ID, result any) error {
-	var resultPtr *any
-	if result != nil {
-		resultPtr = &result
-	}
 	return s.sendResponse(&lsproto.ResponseMessage{
 		ID:     id,
-		Result: resultPtr,
+		Result: result,
 	})
 }
 
