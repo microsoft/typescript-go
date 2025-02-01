@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 
+	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/vfs"
 )
@@ -151,10 +152,10 @@ func (s *server) handleInitialize(req *lsproto.RequestMessage) error {
 	s.initializeParams = req.Params.(*lsproto.InitializeParams)
 	return s.sendResult(req.ID, &lsproto.InitializeResult{
 		ServerInfo: &lsproto.ServerInfo{
-			Name: "typescript-go",
-			// Version: core.Version, // TODO(jakebailey): put version in package other than core
+			Name:    "typescript-go",
+			Version: core.Version,
 		},
-		Capabilities: map[string]any{ // TODO(jakebailey): do something here
+		Capabilities: map[string]any{
 			"textDocumentSync": lsproto.TextDocumentSyncKindIncremental,
 			"hoverProvider":    true,
 		},
