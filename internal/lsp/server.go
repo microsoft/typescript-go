@@ -60,8 +60,9 @@ func (s *server) run() error {
 		req, err := s.read()
 		if err != nil {
 			if errors.Is(err, lsproto.ErrInvalidRequest) {
-				// TODO(jakebailey): complain about bad request
-				fmt.Fprintln(s.stderr, err)
+				if err := s.sendError(nil, err); err != nil {
+					return err
+				}
 				continue
 			}
 			return err
@@ -74,7 +75,6 @@ func (s *server) run() error {
 				}
 			} else {
 				if err := s.sendError(req.ID, lsproto.ErrServerNotInitialized); err != nil {
-					// TODO(jakebailey): need to continue on error?
 					return err
 				}
 			}
