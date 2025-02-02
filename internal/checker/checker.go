@@ -709,6 +709,7 @@ type Checker struct {
 	lastGetCombinedNodeFlagsResult            ast.NodeFlags
 	lastGetCombinedModifierFlagsNode          *ast.Node
 	lastGetCombinedModifierFlagsResult        ast.ModifierFlags
+	inferenceStates                           []InferenceState
 	flowStates                                []FlowState
 	flowLoopCache                             map[FlowLoopKey]*Type
 	flowLoopStack                             []FlowLoopInfo
@@ -17794,7 +17795,7 @@ func (c *Checker) getDefaultOrUnknownFromTypeParameter(t *Type) *Type {
 }
 
 func (c *Checker) getNamedMembers(members ast.SymbolTable) []*ast.Symbol {
-	var result []*ast.Symbol
+	result := make([]*ast.Symbol, 0, len(members))
 	for id, symbol := range members {
 		if c.isNamedMember(symbol, id) {
 			result = append(result, symbol)
@@ -21528,7 +21529,9 @@ func (c *Checker) getIntersectionType(types []*Type) *Type {
 }
 
 func (c *Checker) getIntersectionTypeEx(types []*Type, flags IntersectionFlags, alias *TypeAlias) *Type {
-	var orderedTypes orderedMap[TypeId, *Type]
+	var orderedTypes orderedSet[*Type]
+	orderedTypes.values = make([]*Type, 0, len(types))
+	orderedTypes.valuesByKey = make(map[*Type]struct{}, len(types))
 	includes := c.addTypesToIntersection(&orderedTypes, 0, types)
 	typeSet := orderedTypes.values
 	objectFlags := ObjectFlagsNone
@@ -21721,14 +21724,14 @@ func isNotNullType(t *Type) bool {
 
 // Add the given types to the given type set. Order is preserved, freshness is removed from literal
 // types, duplicates are removed, and nested types of the given kind are flattened into the set.
-func (c *Checker) addTypesToIntersection(typeSet *orderedMap[TypeId, *Type], includes TypeFlags, types []*Type) TypeFlags {
+func (c *Checker) addTypesToIntersection(typeSet *orderedSet[*Type], includes TypeFlags, types []*Type) TypeFlags {
 	for _, t := range types {
 		includes = c.addTypeToIntersection(typeSet, includes, c.getRegularTypeOfLiteralType(t))
 	}
 	return includes
 }
 
-func (c *Checker) addTypeToIntersection(typeSet *orderedMap[TypeId, *Type], includes TypeFlags, t *Type) TypeFlags {
+func (c *Checker) addTypeToIntersection(typeSet *orderedSet[*Type], includes TypeFlags, t *Type) TypeFlags {
 	flags := t.flags
 	if flags&TypeFlagsIntersection != 0 {
 		return c.addTypesToIntersection(typeSet, includes, t.Types())
@@ -21736,7 +21739,7 @@ func (c *Checker) addTypeToIntersection(typeSet *orderedMap[TypeId, *Type], incl
 	if c.isEmptyAnonymousObjectType(t) {
 		if includes&TypeFlagsIncludesEmptyObject == 0 {
 			includes |= TypeFlagsIncludesEmptyObject
-			typeSet.add(t.id, t)
+			typeSet.add(t)
 		}
 	} else {
 		if flags&TypeFlagsAnyOrUnknown != 0 {
@@ -21751,13 +21754,13 @@ func (c *Checker) addTypeToIntersection(typeSet *orderedMap[TypeId, *Type], incl
 				includes |= TypeFlagsIncludesMissingType
 				t = c.undefinedType
 			}
-			if !typeSet.contains(t.id) {
+			if !typeSet.contains(t) {
 				if t.flags&TypeFlagsUnit != 0 && includes&TypeFlagsUnit != 0 {
 					// We have seen two distinct unit types which means we should reduce to an
 					// empty intersection. Adding TypeFlags.NonPrimitive causes that to happen.
 					includes |= TypeFlagsNonPrimitive
 				}
-				typeSet.add(t.id, t)
+				typeSet.add(t)
 			}
 		}
 		includes |= flags & TypeFlagsIncludesMask

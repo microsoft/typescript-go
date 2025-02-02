@@ -29,14 +29,18 @@ type InferenceState struct {
 }
 
 func (c *Checker) inferTypes(inferences []*InferenceInfo, originalSource *Type, originalTarget *Type, priority InferencePriority, contravariant bool) {
-	var s InferenceState
-	s.inferences = inferences
-	s.originalSource = originalSource
-	s.originalTarget = originalTarget
-	s.priority = priority
-	s.inferencePriority = InferencePriorityMaxValue
-	s.contravariant = contravariant
-	c.inferFromTypes(&s, originalSource, originalTarget)
+	inferenceStateCount := len(c.inferenceStates)
+	c.inferenceStates = slices.Grow(c.inferenceStates, 1)[:inferenceStateCount+1]
+	n := &c.inferenceStates[inferenceStateCount]
+	n.inferences = inferences
+	n.originalSource = originalSource
+	n.originalTarget = originalTarget
+	n.priority = priority
+	n.inferencePriority = InferencePriorityMaxValue
+	n.contravariant = contravariant
+	c.inferFromTypes(n, originalSource, originalTarget)
+	c.inferenceStates[inferenceStateCount] = InferenceState{}
+	c.inferenceStates = c.inferenceStates[:inferenceStateCount]
 }
 
 func (c *Checker) inferFromTypes(n *InferenceState, source *Type, target *Type) {
@@ -77,11 +81,11 @@ func (c *Checker) inferFromTypes(n *InferenceState, source *Type, target *Type) 
 	if target.flags&TypeFlagsUnion != 0 && source.flags&TypeFlagsNever == 0 {
 		// First, infer between identically matching source and target constituents and remove the
 		// matching types.
-		tempSources, tempTargets := c.inferFromMatchingTypes(n, source.Distributed(), target.Distributed(), c.isTypeOrBaseIdenticalTo)
+		tempSources, tempTargets := c.inferFromMatchingTypes(n, source.Distributed(), target.Distributed(), (*Checker).isTypeOrBaseIdenticalTo)
 		// Next, infer between closely matching source and target constituents and remove
 		// the matching types. Types closely match when they are instantiations of the same
 		// object type or instantiations of the same type alias.
-		sources, targets := c.inferFromMatchingTypes(n, tempSources, tempTargets, c.isTypeCloselyMatchedBy)
+		sources, targets := c.inferFromMatchingTypes(n, tempSources, tempTargets, (*Checker).isTypeCloselyMatchedBy)
 		if len(targets) == 0 {
 			return
 		}
@@ -103,7 +107,7 @@ func (c *Checker) inferFromTypes(n *InferenceState, source *Type, target *Type) 
 		// string[] on the source side and infer string for T.
 		if source.flags&TypeFlagsUnion == 0 {
 			// Infer between identically matching source and target constituents and remove the matching types.
-			sources, targets := c.inferFromMatchingTypes(n, source.Distributed(), target.Distributed(), c.isTypeIdenticalTo)
+			sources, targets := c.inferFromMatchingTypes(n, source.Distributed(), target.Distributed(), (*Checker).isTypeIdenticalTo)
 			if len(sources) == 0 || len(targets) == 0 {
 				return
 			}
@@ -336,12 +340,12 @@ func (c *Checker) invokeOnce(n *InferenceState, source *Type, target *Type, acti
 	n.inferencePriority = min(n.inferencePriority, saveInferencePriority)
 }
 
-func (c *Checker) inferFromMatchingTypes(n *InferenceState, sources []*Type, targets []*Type, matches func(s *Type, t *Type) bool) ([]*Type, []*Type) {
+func (c *Checker) inferFromMatchingTypes(n *InferenceState, sources []*Type, targets []*Type, matches func(c *Checker, s *Type, t *Type) bool) ([]*Type, []*Type) {
 	var matchedSources []*Type
 	var matchedTargets []*Type
 	for _, t := range targets {
 		for _, s := range sources {
-			if matches(s, t) {
+			if matches(c, s, t) {
 				c.inferFromTypes(n, s, t)
 				matchedSources = core.AppendIfUnique(matchedSources, s)
 				matchedTargets = core.AppendIfUnique(matchedTargets, t)

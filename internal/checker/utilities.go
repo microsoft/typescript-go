@@ -1643,22 +1643,22 @@ func isDeclarationReadonly(declaration *ast.Node) bool {
 	return ast.GetCombinedModifierFlags(declaration)&ast.ModifierFlagsReadonly != 0 && !ast.IsParameterPropertyDeclaration(declaration, declaration.Parent)
 }
 
-type orderedMap[K comparable, V any] struct {
-	valuesByKey map[K]V
-	values      []V
+type orderedSet[T comparable] struct {
+	valuesByKey map[T]struct{}
+	values      []T
 }
 
-func (m *orderedMap[K, V]) contains(key K) bool {
-	_, ok := m.valuesByKey[key]
+func (s *orderedSet[T]) contains(value T) bool {
+	_, ok := s.valuesByKey[value]
 	return ok
 }
 
-func (m *orderedMap[K, V]) add(key K, value V) {
-	if m.valuesByKey == nil {
-		m.valuesByKey = make(map[K]V)
+func (s *orderedSet[T]) add(value T) {
+	if s.valuesByKey == nil {
+		s.valuesByKey = make(map[T]struct{})
 	}
-	m.valuesByKey[key] = value
-	m.values = append(m.values, value)
+	s.valuesByKey[value] = struct{}{}
+	s.values = append(s.values, value)
 }
 
 func getContainingFunction(node *ast.Node) *ast.Node {
