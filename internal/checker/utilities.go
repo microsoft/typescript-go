@@ -102,6 +102,10 @@ func isEffectiveExternalModule(node *ast.SourceFile, compilerOptions *core.Compi
 	return ast.IsExternalModule(node) || (isCommonJSContainingModuleKind(compilerOptions.GetEmitModuleKind()) && node.CommonJsModuleIndicator != nil)
 }
 
+func hasOverrideModifier(node *ast.Node) bool {
+	return ast.HasSyntacticModifier(node, ast.ModifierFlagsOverride)
+}
+
 func hasAbstractModifier(node *ast.Node) bool {
 	return ast.HasSyntacticModifier(node, ast.ModifierFlagsAbstract)
 }

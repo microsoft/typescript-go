@@ -1,7 +1,6 @@
 package checker
 
 import (
-	"iter"
 	"slices"
 	"strconv"
 	"strings"
@@ -732,38 +731,45 @@ func (c *Checker) shouldReportUnmatchedPropertyError(source *Type, target *Type)
 	return true
 }
 
-func (c *Checker) getUnmatchedProperties(source *Type, target *Type, requireOptionalProperties bool, matchDiscriminantProperties bool) iter.Seq[*ast.Symbol] {
-	return func(yield func(*ast.Symbol) bool) {
-		properties := c.getPropertiesOfType(target)
-		for _, targetProp := range properties {
-			// TODO: remove this when we support static private identifier fields and find other solutions to get privateNamesAndStaticFields test to pass
-			if isStaticPrivateIdentifierProperty(targetProp) {
-				continue
-			}
-			if requireOptionalProperties || targetProp.Flags&ast.SymbolFlagsOptional == 0 && targetProp.CheckFlags&ast.CheckFlagsPartial == 0 {
-				sourceProp := c.getPropertyOfType(source, targetProp.Name)
-				if sourceProp == nil {
-					if !yield(targetProp) {
-						return
-					}
-				} else if matchDiscriminantProperties {
-					targetType := c.getTypeOfSymbol(targetProp)
-					if targetType.flags&TypeFlagsUnit != 0 {
-						sourceType := c.getTypeOfSymbol(sourceProp)
-						if !(sourceType.flags&TypeFlagsAny != 0 || c.getRegularTypeOfLiteralType(sourceType) == c.getRegularTypeOfLiteralType(targetType)) {
-							if !yield(targetProp) {
-								return
-							}
+func (c *Checker) getUnmatchedProperty(source *Type, target *Type, requireOptionalProperties bool, matchDiscriminantProperties bool) *ast.Symbol {
+	return c.getUnmatchedPropertiesWorker(source, target, requireOptionalProperties, matchDiscriminantProperties, nil)
+}
+
+func (c *Checker) getUnmatchedProperties(source *Type, target *Type, requireOptionalProperties bool, matchDiscriminantProperties bool) []*ast.Symbol {
+	var props []*ast.Symbol
+	c.getUnmatchedPropertiesWorker(source, target, requireOptionalProperties, matchDiscriminantProperties, &props)
+	return props
+}
+
+func (c *Checker) getUnmatchedPropertiesWorker(source *Type, target *Type, requireOptionalProperties bool, matchDiscriminantProperties bool, propsOut *[]*ast.Symbol) *ast.Symbol {
+	properties := c.getPropertiesOfType(target)
+	for _, targetProp := range properties {
+		// TODO: remove this when we support static private identifier fields and find other solutions to get privateNamesAndStaticFields test to pass
+		if isStaticPrivateIdentifierProperty(targetProp) {
+			continue
+		}
+		if requireOptionalProperties || targetProp.Flags&ast.SymbolFlagsOptional == 0 && targetProp.CheckFlags&ast.CheckFlagsPartial == 0 {
+			sourceProp := c.getPropertyOfType(source, targetProp.Name)
+			if sourceProp == nil {
+				if propsOut == nil {
+					return targetProp
+				}
+				*propsOut = append(*propsOut, targetProp)
+			} else if matchDiscriminantProperties {
+				targetType := c.getTypeOfSymbol(targetProp)
+				if targetType.flags&TypeFlagsUnit != 0 {
+					sourceType := c.getTypeOfSymbol(sourceProp)
+					if !(sourceType.flags&TypeFlagsAny != 0 || c.getRegularTypeOfLiteralType(sourceType) == c.getRegularTypeOfLiteralType(targetType)) {
+						if propsOut == nil {
+							return targetProp
 						}
+						*propsOut = append(*propsOut, targetProp)
 					}
 				}
 			}
 		}
 	}
-}
-
-func (c *Checker) getUnmatchedProperty(source *Type, target *Type, requireOptionalProperties bool, matchDiscriminantProperties bool) *ast.Symbol {
-	return core.FirstOrNilSeq(c.getUnmatchedProperties(source, target, requireOptionalProperties, matchDiscriminantProperties))
+	return nil
 }
 
 func excludeProperties(properties []*ast.Symbol, excludedProperties core.Set[string]) []*ast.Symbol {
@@ -3993,7 +3999,7 @@ func (r *Relater) reportUnmatchedProperty(source *Type, target *Type, unmatchedP
 			return
 		}
 	}
-	props := slices.Collect(r.c.getUnmatchedProperties(source, target, requireOptionalProperties, false /*matchDiscriminantProperties*/))
+	props := r.c.getUnmatchedProperties(source, target, requireOptionalProperties, false /*matchDiscriminantProperties*/)
 	if len(props) == 1 {
 		propName := r.c.symbolToString(unmatchedProperty)
 		r.reportError(diagnostics.Property_0_is_missing_in_type_1_but_required_in_type_2, unmatchedProperty.Name, r.c.typeToString(source), r.c.typeToString(target))
