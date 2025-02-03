@@ -15,7 +15,7 @@ import (
 type osSys struct {
 	writer  io.Writer
 	fs      vfs.FS
-	newline string
+	newLine string
 	cwd     string
 }
 
@@ -28,7 +28,7 @@ func (s *osSys) GetCurrentDirectory() string {
 }
 
 func (s *osSys) NewLine() string {
-	return s.newline
+	return s.newLine
 }
 
 func (s *osSys) Writer() io.Writer {
@@ -51,6 +51,6 @@ func newSystem() *osSys {
 		cwd:     tspath.NormalizePath(cwd),
 		fs:      vfs.FromOS(),
 		writer:  os.Stdout,
-		newline: core.IfElse(runtime.GOOS == "windows", "\r\n", "\n"),
+		newLine: core.IfElse(runtime.GOOS == "windows", "\r\n", "\n"),
 	}
 }
