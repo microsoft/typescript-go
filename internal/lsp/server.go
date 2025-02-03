@@ -167,6 +167,7 @@ func (s *Server) handleMessage(req *lsproto.RequestMessage) error {
 			},
 		})
 	default:
+		fmt.Fprintln(s.stderr, "unknown method", req.Method)
 		if req.ID != nil {
 			return s.sendError(req.ID, lsproto.ErrInvalidRequest)
 		}
