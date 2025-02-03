@@ -94,7 +94,7 @@ func (s *testSys) baselineFS(baseline *strings.Builder) {
 			if !ok {
 				return e
 			}
-			baseline.WriteString("\n//// ["+path+"]\n"+contents)
+			baseline.WriteString("\n//// [" + path + "]\n" + contents)
 		}
 		return nil
 	})

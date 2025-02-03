@@ -51,7 +51,7 @@ func (test *tscInput) verify(t *testing.T) {
 			fmt.Fprint(baselineBuilder, strings.Join(test.commandLineArgs, " ")+"\n")
 			// if (input.baselineSourceMap) generateSourceMapBasleineFiles
 
-			parsedCommandLine, exit := execute.TestCommandLine(test.sys, nil, test.commandLineArgs)
+			parsedCommandLine, exit := execute.CommandLineTest(test.sys, nil, test.commandLineArgs)
 			baselineBuilder.WriteString("\n\nExitStatus:: " + fmt.Sprint(exit))
 
 			compilerOptionsString, _ := json.MarshalIndent(parsedCommandLine.CompilerOptions(), "", "    ")

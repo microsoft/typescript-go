@@ -11,7 +11,7 @@ type System interface {
 	EndWrite() // needed for testing
 	FS() vfs.FS
 	GetCurrentDirectory() string
-	NewLine() string
+	NewLine() string // #241 eventually we want to use "\n"
 }
 
 type ExitStatus int

@@ -14,13 +14,8 @@ import (
 type cbType = func(p any) any
 
 func CommandLine(sys System, cb cbType, commandLineArgs []string) ExitStatus {
-	_, exitStatus := TestCommandLine(sys, cb, commandLineArgs)
-	return exitStatus
-}
-
-func TestCommandLine(sys System, cb cbType, commandLineArgs []string) (*tsoptions.ParsedCommandLine, ExitStatus) {
 	parsedCommandLine := tsoptions.ParseCommandLine(commandLineArgs, sys)
-	return parsedCommandLine, executeCommandLineWorker(sys, cb, parsedCommandLine)
+	return executeCommandLineWorker(sys, cb, parsedCommandLine)
 }
 
 func executeCommandLineWorker(sys System, cb cbType, commandLine *tsoptions.ParsedCommandLine) ExitStatus {
