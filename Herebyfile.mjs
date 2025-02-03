@@ -71,26 +71,20 @@ function isInstalled(tool) {
     return !!which.sync(tool, { nothrow: true });
 }
 
-const libsDir = "./internal/bundled/libs";
-
-async function generateLibs() {
-    await fs.promises.mkdir("./built/local", { recursive: true });
-
-    const libs = await fs.promises.readdir(libsDir);
-
-    await Promise.all(libs.map(async lib => {
-        fs.promises.copyFile(`${libsDir}/${lib}`, `./built/local/${lib}`);
-    }));
-}
-
-export const lib = task({
+export const generateLibs = task({
     name: "lib",
-    run: generateLibs,
+    run: async () => {
+        await fs.promises.mkdir("./built/local", { recursive: true });
+
+        const libsDir = "./internal/bundled/libs";
+        const libs = await fs.promises.readdir(libsDir);
+
+        await Promise.all(libs.map(async lib => {
+            fs.promises.copyFile(`${libsDir}/${lib}`, `./built/local/${lib}`);
+        }));
+    },
 });
 
-/**
- * @param {string} packagePath
- */
 function buildExecutableToBuilt(packagePath) {
     return $`go build ${options.race ? ["-race"] : []} -tags=noembed -o ./built/local/ ${packagePath}`;
 }
@@ -104,7 +98,7 @@ export const tsgoBuild = task({
 
 export const tsgo = task({
     name: "tsgo",
-    dependencies: [lib, tsgoBuild],
+    dependencies: [generateLibs, tsgoBuild],
 });
 
 export const local = task({
