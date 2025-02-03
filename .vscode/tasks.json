@@ -11,7 +11,7 @@
                 "reveal": "never"
             },
             "problemMatcher": [
-                "$tsc"
+                "$go"
             ]
         },
         {
@@ -23,9 +23,21 @@
                 "panel": "dedicated",
                 "reveal": "never"
             },
-            "problemMatcher": [
-                "$tsc"
-            ]
+            "isBackground": true,
+            "problemMatcher": {
+                "owner": "custom",
+                "fileLocation": "autoDetect",
+                "source": "hereby",
+                "applyTo": "closedDocuments",
+                "pattern": {
+                    "regexp": ""
+                },
+                "background": {
+                    "activeOnStart": true,
+                    "beginsPattern": "\\[build:watch\\] changed due to",
+                    "endsPattern": "\\[build:watch\\] run complete"
+                }
+            }
         },
         {
             "label": "Compile extension",

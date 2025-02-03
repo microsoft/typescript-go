@@ -75,6 +75,7 @@ function isInstalled(tool) {
 }
 
 const libsDir = "./internal/bundled/libs";
+const libsRegexp = /(?:^|[\\/])internal[\\/]bundled[\\/]libs[\\/]/;
 
 async function generateLibs() {
     await fs.promises.mkdir("./built/local", { recursive: true });
@@ -89,15 +90,6 @@ async function generateLibs() {
 export const lib = task({
     name: "lib",
     run: generateLibs,
-});
-
-export const libWatch = task({
-    name: "lib:watch",
-    run: async () => {
-        await watchDebounced("lib:watch", generateLibs, {
-            paths: libsDir,
-        });
-    },
 });
 
 /**
@@ -115,34 +107,14 @@ export const tsgoBuild = task({
     },
 });
 
-export const tsgoBuildWatch = task({
-    name: "tsgo:build:watch",
-    run: async () => {
-        await watchDebounced("tsgo:build:watch", abortSignal => buildExecutableToBuilt("./cmd/tsgo", abortSignal), {
-            paths: ["cmd", "internal"],
-            ignored: path => !path.endsWith(".go") || /[\\/]testdata[\\/]/.test(path),
-        });
-    },
-});
-
 export const tsgo = task({
     name: "tsgo",
     dependencies: [lib, tsgoBuild],
 });
 
-export const tsgoWatch = task({
-    name: "tsgo:watch",
-    dependencies: [libWatch, tsgoBuildWatch],
-});
-
 export const local = task({
     name: "local",
     dependencies: [tsgo],
-});
-
-export const localWatch = task({
-    name: "local:watch",
-    dependencies: [tsgoWatch],
 });
 
 export const build = task({
@@ -152,7 +124,37 @@ export const build = task({
 
 export const buildWatch = task({
     name: "build:watch",
-    dependencies: [localWatch],
+    run: async () => {
+        await watchDebounced("build:watch", async (paths, abortSignal) => {
+            let libsChanged = false;
+            let goChanged = false;
+
+            for (const p of paths) {
+                if (libsRegexp.test(p)) {
+                    libsChanged = true;
+                }
+                else if (p.endsWith(".go")) {
+                    goChanged = true;
+                }
+                if (libsChanged && goChanged) {
+                    break;
+                }
+            }
+
+            if (libsChanged) {
+                console.log("Generating libs...");
+                await generateLibs();
+            }
+
+            if (goChanged) {
+                console.log("Building tsgo...");
+                await buildExecutableToBuilt("./cmd/tsgo", abortSignal);
+            }
+        }, {
+            paths: ["cmd", "internal"],
+            ignored: path => /[\\/]testdata[\\/]/.test(path),
+        });
+    },
 });
 
 export const cleanBuilt = task({
@@ -356,9 +358,17 @@ function rimraf(p) {
     return fs.promises.rm(p, { recursive: true, force: true, maxRetries: process.platform === "win32" ? 10 : 0 });
 }
 
+/** @typedef {{
+ * name: string;
+ * paths: string | string[];
+ * ignored?: (path: string) => boolean;
+ * run: (paths: Set<string>, abortSignal: AbortSignal) => void | Promise<unknown>;
+ * }} WatchTask */
+void 0;
+
 /**
  * @param {string} name
- * @param {(abortSignal: AbortSignal) => void | Promise<unknown>} run
+ * @param {(paths: Set<string>, abortSignal: AbortSignal) => void | Promise<unknown>} run
  * @param {object} options
  * @param {string | string[]} options.paths
  * @param {(path: string) => boolean} [options.ignored]
@@ -377,6 +387,8 @@ async function watchDebounced(name, run, options) {
         ignorePermissionErrors: true,
         alwaysStat: true,
     });
+    // The paths that have changed since the last run.
+    let paths = new Set();
 
     process.on("SIGINT", endWatchMode);
     process.on("beforeExit", endWatchMode);
@@ -388,7 +400,9 @@ async function watchDebounced(name, run, options) {
         if (!token.aborted) {
             running = true;
             try {
-                await run(token);
+                const thePaths = paths;
+                paths = new Set();
+                await run(thePaths, token);
             }
             catch {
                 // ignore
@@ -439,6 +453,7 @@ async function watchDebounced(name, run, options) {
         }
 
         debouncer.enqueue();
+        paths.add(path);
     }
 
     function endRun() {
