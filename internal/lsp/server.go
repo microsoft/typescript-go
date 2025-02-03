@@ -92,7 +92,7 @@ func (s *Server) read() (*lsproto.RequestMessage, error) {
 	}
 
 	// TODO(jakebailey): temporary debug logging
-	if _, err := s.stderr.Write([]byte("REQUEST\n")); err != nil {
+	if _, err := s.stderr.Write([]byte("REQUEST ")); err != nil {
 		return nil, err
 	}
 	if err := s.stderrJSON.Encode(req); err != nil {
@@ -126,7 +126,7 @@ func (s *Server) sendError(id *lsproto.ID, err error) error {
 
 func (s *Server) sendResponse(resp *lsproto.ResponseMessage) error {
 	// TODO(jakebailey): temporary debug logging
-	if _, err := s.stderr.Write([]byte("RESPONSE\n")); err != nil {
+	if _, err := s.stderr.Write([]byte("RESPONSE ")); err != nil {
 		return err
 	}
 	if err := s.stderrJSON.Encode(resp); err != nil {
