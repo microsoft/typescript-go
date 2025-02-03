@@ -33,6 +33,10 @@ type Project struct {
 	hasAddedOrRemovedSymlinks bool
 	deferredClose             bool
 
+	currentDirectory string
+	// Inferred projects only
+	rootPath tspath.Path
+
 	configFileName string
 	configFilePath tspath.Path
 	// rootFileNames was a map from Path to { NormalizedPath, ScriptInfo? } in the original code.
@@ -45,10 +49,24 @@ type Project struct {
 
 func NewConfiguredProject(configFileName string, configFilePath tspath.Path, projectService *ProjectService) *Project {
 	project := &Project{
-		projectService: projectService,
-		kind:           ProjectKindConfigured,
-		configFileName: configFileName,
-		configFilePath: configFilePath,
+		projectService:   projectService,
+		kind:             ProjectKindConfigured,
+		currentDirectory: tspath.GetDirectoryPath(configFileName),
+		configFileName:   configFileName,
+		configFilePath:   configFilePath,
+	}
+	project.languageService = ls.NewLanguageService(project)
+	project.markAsDirty()
+	return project
+}
+
+func NewInferredProject(compilerOptions *core.CompilerOptions, currentDirectory string, projectRootPath tspath.Path, projectService *ProjectService) *Project {
+	project := &Project{
+		projectService:   projectService,
+		kind:             ProjectKindInferred,
+		currentDirectory: currentDirectory,
+		rootPath:         projectRootPath,
+		compilerOptions:  compilerOptions,
 	}
 	project.languageService = ls.NewLanguageService(project)
 	project.markAsDirty()
@@ -67,7 +85,7 @@ func (p *Project) GetCompilerOptions() *core.CompilerOptions {
 
 // GetCurrentDirectory implements LanguageServiceHost.
 func (p *Project) GetCurrentDirectory() string {
-	return p.projectService.host.GetCurrentDirectory()
+	return p.currentDirectory
 }
 
 // GetProjectVersion implements LanguageServiceHost.
@@ -101,7 +119,7 @@ func (p *Project) Trace(msg string) {
 }
 
 func (p *Project) getOrCreateScriptInfoAndAttachToProject(fileName string, scriptKind core.ScriptKind) *scriptInfo {
-	if scriptInfo := p.projectService.getOrCreateScriptInfoNotOpenedByClient(fileName, p.toPath(fileName), scriptKind); scriptInfo != nil {
+	if scriptInfo := p.projectService.getOrCreateScriptInfoNotOpenedByClient(fileName, p.projectService.toPath(fileName), scriptKind); scriptInfo != nil {
 		scriptInfo.attachToProject(p)
 		return scriptInfo
 	}
@@ -178,6 +196,20 @@ func (p *Project) removeFile(info *scriptInfo, fileExists bool, detachFromProjec
 	if detachFromProject {
 		info.detachFromProject(p)
 	}
+	p.markAsDirty()
+}
+
+func (p *Project) addRoot(info *scriptInfo) {
+	// !!!
+	// if p.kind == ProjectKindInferred {
+	// 	p.projectService.startWatchingConfigFilesForInferredProjectRoot(info.path);
+	//  // handle JS toggling
+	// }
+	if p.isRoot(info) {
+		panic("script info is already a root")
+	}
+	p.rootFileNames.Set(info.path, info.fileName)
+	info.attachToProject(p)
 	p.markAsDirty()
 }
 

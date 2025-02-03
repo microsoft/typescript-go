@@ -36,11 +36,21 @@ type changeFileArguments struct {
 	Changes  []ls.TextChange
 }
 
+type ProjectServiceOptions struct {
+}
+
 type ProjectService struct {
-	host                ProjecServicetHost
+	host                ProjectServiceHost
+	options             ProjectServiceOptions
 	comparePathsOptions tspath.ComparePathsOptions
 
 	configuredProjects map[tspath.Path]*Project
+	// unrootedInferredProject is the inferred project for files opened without a projectRootDirectory
+	// (e.g. dynamic files)
+	unrootedInferredProject *Project
+	// inferredProjects is the list of all inferred projects, including the unrootedInferredProject
+	// if it exists
+	inferredProjects []*Project
 
 	documentRegistry *documentRegistry
 	scriptInfos      map[tspath.Path]*scriptInfo
@@ -51,9 +61,10 @@ type ProjectService struct {
 	realpathToScriptInfos       map[tspath.Path]map[*scriptInfo]struct{}
 }
 
-func NewProjectService(host ProjecServicetHost) *ProjectService {
+func NewProjectService(host ProjectServiceHost, options ProjectServiceOptions) *ProjectService {
 	return &ProjectService{
-		host: host,
+		host:    host,
+		options: options,
 		comparePathsOptions: tspath.ComparePathsOptions{
 			UseCaseSensitiveFileNames: host.FS().UseCaseSensitiveFileNames(),
 			CurrentDirectory:          host.GetCurrentDirectory(),
@@ -69,7 +80,7 @@ func NewProjectService(host ProjecServicetHost) *ProjectService {
 }
 
 func (s *ProjectService) OpenClientFile(fileName string, fileContent string, scriptKind core.ScriptKind, projectRootPath string) {
-	path := tspath.ToPath(fileName, s.host.GetCurrentDirectory(), s.host.FS().UseCaseSensitiveFileNames())
+	path := s.toPath(fileName)
 	existing := s.getScriptInfo(path)
 	info := s.getOrCreateOpenScriptInfo(fileName, path, fileContent, scriptKind, projectRootPath)
 	if existing == nil && info != nil && !info.isDynamic {
@@ -91,14 +102,14 @@ func (s *ProjectService) ApplyChangesInOpenFiles(
 	openScriptInfoPaths := make([]tspath.Path, 0, len(openFiles))
 
 	for _, openFile := range openFiles {
-		openFilePath := tspath.ToPath(openFile.FileName, s.host.GetCurrentDirectory(), s.host.FS().UseCaseSensitiveFileNames())
+		openFilePath := s.toPath(openFile.FileName)
 		existingOpenScriptInfos = append(existingOpenScriptInfos, s.getScriptInfo(openFilePath))
 		openScriptInfos = append(openScriptInfos, s.getOrCreateOpenScriptInfo(openFile.FileName, openFilePath, openFile.Content, openFile.ScriptKind, openFile.ProjectRootPath))
 		openScriptInfoPaths = append(openScriptInfoPaths, openFilePath)
 	}
 
 	for _, changedFile := range changedFiles {
-		info := s.getScriptInfo(tspath.ToPath(changedFile.FileName, s.host.GetCurrentDirectory(), s.host.FS().UseCaseSensitiveFileNames()))
+		info := s.getScriptInfo(s.toPath(changedFile.FileName))
 		if info == nil {
 			panic("scriptInfo for changed file not found")
 		}
@@ -106,7 +117,7 @@ func (s *ProjectService) ApplyChangesInOpenFiles(
 	}
 
 	for _, closedFile := range closedFiles {
-		closedFilePath := tspath.ToPath(closedFile, s.host.GetCurrentDirectory(), s.host.FS().UseCaseSensitiveFileNames())
+		closedFilePath := s.toPath(closedFile)
 		assignOrphanScriptInfoToInferredProject = s.closeClientFile(closedFilePath, true /*skipAssignOrphanScriptInfosToInferredProject*/) || assignOrphanScriptInfoToInferredProject
 	}
 
@@ -360,7 +371,7 @@ func (s *ProjectService) createConfiguredProject(configFileName string, configFi
 
 func (s *ProjectService) findCreateOrReloadConfiguredProject(configFileName string, projectLoadKind projectLoadKind, includeDeferredClosedProjects bool) *Project {
 	// !!! many such things omitted
-	configFilePath := tspath.ToPath(configFileName, s.host.GetCurrentDirectory(), s.host.FS().UseCaseSensitiveFileNames())
+	configFilePath := s.toPath(configFileName)
 	project := s.findConfiguredProjectByName(configFilePath, includeDeferredClosedProjects)
 	switch projectLoadKind {
 	case projectLoadKindFind, projectLoadKindCreateReplay:
@@ -408,11 +419,83 @@ func (s *ProjectService) assignProjectToOpenedScriptInfo(info *scriptInfo) assig
 	if info.isOrphan() {
 		// !!!
 		// more new "optimized" stuff
-		// s.assignOrphanScriptInfoToInferredProject(info)
+		if projectRootDirectory, ok := s.openFiles[info.path]; ok {
+			s.assignOrphanScriptInfoToInferredProject(info, projectRootDirectory)
+		} else {
+			panic("opened script info should be in openFiles map")
+		}
 	}
 	return result
 }
 
 func (s *ProjectService) cleanupProjectsAndScriptInfos(toRetainConfiguredProjects map[*Project]projectLoadKind, openFilesWithRetainedConfiguredProject []tspath.Path) {
 	// !!!
+}
+
+func (s *ProjectService) assignOrphanScriptInfoToInferredProject(info *scriptInfo, projectRootDirectory string) {
+	if !info.isOrphan() {
+		panic("scriptInfo is not orphan")
+	}
+	project := s.getOrCreateInferredProjectForProjectRootPath(info, projectRootDirectory)
+	if project == nil {
+		if !info.isDynamic {
+			panic("projectRootDirectory should be provided for non-dynamic script info")
+		}
+		project = s.getOrCreateUnrootedInferredProject()
+	}
+
+	project.addRoot(info)
+	project.updateGraph()
+	// !!! old code ensures that scriptInfo is only part of one project
+}
+
+func (s *ProjectService) getOrCreateUnrootedInferredProject() *Project {
+	if s.unrootedInferredProject == nil {
+		s.unrootedInferredProject = s.createInferredProject(s.host.GetCurrentDirectory(), "")
+	}
+	return s.unrootedInferredProject
+}
+
+func (s *ProjectService) getOrCreateInferredProjectForProjectRootPath(info *scriptInfo, projectRootDirectory string) *Project {
+	if info.isDynamic && projectRootDirectory == "" {
+		return nil
+	}
+
+	projectRootPath := s.toPath(projectRootDirectory)
+	if projectRootPath != "" {
+		for _, project := range s.inferredProjects {
+			if project.rootPath == projectRootPath {
+				return project
+			}
+		}
+		return s.createInferredProject(projectRootDirectory, projectRootPath)
+	}
+
+	var bestMatch *Project
+	for _, project := range s.inferredProjects {
+		if project.rootPath == "" {
+			continue
+		}
+		if !tspath.ContainsPath(string(project.rootPath), string(info.path), s.comparePathsOptions) {
+			continue
+		}
+		if bestMatch != nil && len(bestMatch.rootPath) > len(project.rootPath) {
+			continue
+		}
+		bestMatch = project
+	}
+
+	return bestMatch
+}
+
+func (s *ProjectService) createInferredProject(currentDirectory string, projectRootPath tspath.Path) *Project {
+	// !!!
+	compilerOptions := core.CompilerOptions{}
+	project := NewInferredProject(&compilerOptions, currentDirectory, projectRootPath, s)
+	s.inferredProjects = append(s.inferredProjects, project)
+	return project
+}
+
+func (s *ProjectService) toPath(fileName string) tspath.Path {
+	return tspath.ToPath(fileName, s.host.GetCurrentDirectory(), s.host.FS().UseCaseSensitiveFileNames())
 }
