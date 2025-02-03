@@ -21,20 +21,11 @@ func getFormatOptsOfSys(sys System) *diagnosticwriter.FormattingOptions {
 	}
 }
 
-func shouldBePretty(sys System, options *core.CompilerOptions) bool {
-	if options == nil || options.Pretty.IsTrueOrUnknown() {
-		// todo: return defaultIsPretty(sys);
-		return true
-	}
-	return options.Pretty.IsTrue()
-}
-
 type diagnosticReporter = func(*ast.Diagnostic)
 
-func createDiagnosticReporter(sys System, options *core.CompilerOptions) diagnosticReporter {
+func createDiagnosticReporter(sys System, pretty core.Tristate) diagnosticReporter {
 	formatOpts := getFormatOptsOfSys(sys)
-	// nil options will be treated as the parameter pretty=undefined in the old compiler
-	if options == nil || !shouldBePretty(sys, options) {
+	if pretty.IsFalseOrUnknown() {
 		return func(diagnostic *ast.Diagnostic) {
 			diagnosticwriter.WriteFormatDiagnostic(sys.Writer(), diagnostic, formatOpts)
 			sys.EndWrite()
@@ -44,6 +35,14 @@ func createDiagnosticReporter(sys System, options *core.CompilerOptions) diagnos
 		diagnosticwriter.FormatDiagnosticsWithColorAndContext(sys.Writer(), []*ast.Diagnostic{diagnostic}, formatOpts)
 		sys.EndWrite()
 	}
+}
+
+func shouldBePretty(sys System, options *core.CompilerOptions) bool {
+	if options == nil || options.Pretty.IsTrueOrUnknown() {
+		// todo: return defaultIsPretty(sys);
+		return true
+	}
+	return options.Pretty.IsTrue()
 }
 
 func createReportErrorSummary(sys System, options *core.CompilerOptions) func(diagnostics []*ast.Diagnostic) {

@@ -25,7 +25,7 @@ func TestCommandLine(sys System, cb cbType, commandLineArgs []string) (*tsoption
 
 func executeCommandLineWorker(sys System, cb cbType, commandLine *tsoptions.ParsedCommandLine) ExitStatus {
 	configFileName := ""
-	reportDiagnostic := createDiagnosticReporter(sys, commandLine.CompilerOptions())
+	reportDiagnostic := createDiagnosticReporter(sys, commandLine.CompilerOptions().Pretty)
 	// if commandLine.Options().Locale != nil
 
 	if len(commandLine.Errors) > 0 {
