@@ -3688,8 +3688,45 @@ func (c *Checker) checkInterfaceDeclaration(node *ast.Node) {
 	c.registerForUnusedIdentifiersCheck(node)
 }
 
+type InheritanceInfo struct {
+	prop           *ast.Symbol
+	containingType *Type
+}
+
 func (c *Checker) checkInheritedPropertiesAreIdentical(t *Type, typeNode *ast.Node) bool {
-	return true // !!!
+	baseTypes := c.getBaseTypes(t)
+	if len(baseTypes) < 2 {
+		return true
+	}
+	seen := make(map[string]InheritanceInfo)
+	for id, p := range c.resolveDeclaredMembers(t).declaredMembers {
+		if c.isNamedMember(p, id) {
+			seen[p.Name] = InheritanceInfo{prop: p, containingType: t}
+		}
+	}
+	ok := true
+	for _, base := range baseTypes {
+		properties := c.getPropertiesOfType(c.getTypeWithThisArgument(base, t.AsInterfaceType().thisType, false))
+		for _, prop := range properties {
+			if existing, ok := seen[prop.Name]; !ok {
+				seen[prop.Name] = InheritanceInfo{prop: prop, containingType: base}
+			} else {
+				isInheritedProperty := existing.containingType != t
+				if isInheritedProperty && !c.isPropertyIdenticalTo(existing.prop, prop) {
+					ok = false
+					typeName1 := c.typeToString(existing.containingType)
+					typeName2 := c.typeToString(base)
+					errorInfo := NewDiagnosticForNode(typeNode, diagnostics.Named_property_0_of_types_1_and_2_are_not_identical, c.symbolToString(prop), typeName1, typeName2)
+					c.diagnostics.Add(ast.NewDiagnosticChain(errorInfo, diagnostics.Interface_0_cannot_simultaneously_extend_types_1_and_2, c.typeToString(t), typeName1, typeName2))
+				}
+			}
+		}
+	}
+	return ok
+}
+
+func (c *Checker) isPropertyIdenticalTo(sourceProp *ast.Symbol, targetProp *ast.Symbol) bool {
+	return c.compareProperties(sourceProp, targetProp, c.compareTypesIdentical) != TernaryFalse
 }
 
 func (c *Checker) checkEnumDeclaration(node *ast.Node) {
@@ -4725,11 +4762,41 @@ func (c *Checker) checkExportsOnMergedDeclarations(node *ast.Node) {
 }
 
 func (c *Checker) checkTypeParameters(typeParameterDeclarations []*ast.Node) {
-	// !!!
-
-	for _, typeParameter := range typeParameterDeclarations {
-		typeParameter.ForEachChild(c.checkSourceElement)
+	seenDefault := false
+	for i, node := range typeParameterDeclarations {
+		c.checkTypeParameter(node)
+		defaultTypeNode := node.AsTypeParameter().DefaultType
+		if defaultTypeNode != nil {
+			seenDefault = true
+			c.checkTypeParametersNotReferenced(defaultTypeNode, typeParameterDeclarations, i)
+		} else if seenDefault {
+			c.error(node, diagnostics.Required_type_parameters_may_not_follow_optional_type_parameters)
+		}
+		for j := 0; j < i; j++ {
+			if typeParameterDeclarations[j].Symbol() == node.Symbol() {
+				c.error(node.Name(), diagnostics.Duplicate_identifier_0, scanner.DeclarationNameToString(node.Name()))
+			}
+		}
 	}
+}
+
+// Check that type parameter defaults only reference previously declared type parameters */
+func (c *Checker) checkTypeParametersNotReferenced(root *ast.Node, typeParameters []*ast.Node, index int) {
+	var visit func(*ast.Node) bool
+	visit = func(node *ast.Node) bool {
+		if ast.IsTypeReferenceNode(node) {
+			t := c.getTypeFromTypeReference(node)
+			if t.flags&TypeFlagsTypeParameter != 0 {
+				for i := index; i < len(typeParameters); i++ {
+					if t.symbol == c.getSymbolOfDeclaration(typeParameters[i]) {
+						c.error(node, diagnostics.Type_parameter_defaults_can_only_reference_previously_declared_type_parameters)
+					}
+				}
+			}
+		}
+		return node.ForEachChild(visit)
+	}
+	visit(root)
 }
 
 func (c *Checker) registerForUnusedIdentifiersCheck(node *ast.Node) {
@@ -9866,8 +9933,6 @@ func (c *Checker) checkObjectLiteral(node *ast.Node, checkMode CheckMode) *Type 
 	inDestructuringPattern := ast.IsAssignmentTarget(node)
 	// Grammar checking
 	c.checkGrammarObjectLiteralExpression(node.AsObjectLiteralExpression(), inDestructuringPattern)
-
-	// c.checkGrammarObjectLiteralExpression(node, inDestructuringPattern)
 	var allPropertiesTable ast.SymbolTable
 	if c.strictNullChecks {
 		allPropertiesTable = make(ast.SymbolTable)
@@ -13967,8 +14032,7 @@ func (c *Checker) getTypeFromObjectBindingPattern(pattern *ast.Node, includePatt
 	result := c.newAnonymousType(nil, members, nil, nil, indexInfos)
 	result.objectFlags |= objectFlags
 	if includePatternInType {
-		// !!!
-		// result.pattern = pattern
+		c.patternForType[result] = pattern
 		result.objectFlags |= ObjectFlagsContainsObjectOrArrayLiteral
 	}
 	return result
@@ -14014,8 +14078,7 @@ func (c *Checker) getTypeFromArrayBindingPattern(pattern *ast.Node, includePatte
 	result := c.createTupleTypeEx(elementTypes, elementInfos, false)
 	if includePatternInType {
 		result = c.cloneTypeReference(result)
-		// !!!
-		// result.pattern = pattern
+		c.patternForType[result] = pattern
 		result.objectFlags |= ObjectFlagsContainsObjectOrArrayLiteral
 	}
 	return result
@@ -17695,10 +17758,7 @@ func (c *Checker) getEffectiveTypeArguments(node *ast.Node, typeParameters []*Ty
 	return c.fillMissingTypeArguments(core.Map(node.TypeArguments(), c.getTypeFromTypeNode), typeParameters, c.getMinTypeArgumentCount(typeParameters))
 }
 
-/**
- * Gets the minimum number of type arguments needed to satisfy all non-optional type
- * parameters.
- */
+// Gets the minimum number of type arguments needed to satisfy all non-optional type parameters.
 func (c *Checker) getMinTypeArgumentCount(typeParameters []*Type) int {
 	minTypeArgumentCount := 0
 	for i, typeParameter := range typeParameters {
@@ -18686,7 +18746,51 @@ func (c *Checker) resolveTypeReferenceName(typeReference *ast.Node, meaning ast.
 	if ignoreErrors {
 		return c.unknownSymbol
 	}
-	return c.unknownSymbol // !!! return c.getUnresolvedSymbolForEntityName(name)
+	return c.getUnresolvedSymbolForEntityName(name)
+}
+
+func (c *Checker) getUnresolvedSymbolForEntityName(name *ast.Node) *ast.Symbol {
+	var identifier *ast.Node
+	switch name.Kind {
+	case ast.KindQualifiedName:
+		identifier = name.AsQualifiedName().Right
+	case ast.KindPropertyAccessExpression:
+		identifier = name.Name()
+	default:
+		identifier = name
+	}
+	text := identifier.Text()
+	if text != "" {
+		var parentSymbol *ast.Symbol
+		switch name.Kind {
+		case ast.KindQualifiedName:
+			parentSymbol = c.getUnresolvedSymbolForEntityName(name.AsQualifiedName().Left)
+		case ast.KindPropertyAccessExpression:
+			parentSymbol = c.getUnresolvedSymbolForEntityName(name.Expression())
+		}
+		var path string
+		if parentSymbol != nil {
+			path = getSymbolPath(parentSymbol) + "." + text
+		} else {
+			path = text
+		}
+		result := c.unresolvedSymbols[path]
+		if result == nil {
+			result := c.newSymbolEx(ast.SymbolFlagsTypeAlias, text, ast.CheckFlagsUnresolved)
+			c.unresolvedSymbols[path] = result
+			result.Parent = parentSymbol
+			c.declaredTypeLinks.get(result).declaredType = c.unresolvedType
+		}
+		return result
+	}
+	return c.unknownSymbol
+}
+
+func getSymbolPath(symbol *ast.Symbol) string {
+	if symbol.Parent != nil {
+		return getSymbolPath(symbol.Parent) + "." + symbol.Name
+	}
+	return symbol.Name
 }
 
 func (c *Checker) getTypeReferenceType(node *ast.Node, symbol *ast.Symbol) *Type {
@@ -22697,7 +22801,42 @@ func (c *Checker) isSelfTypeAccess(name *ast.Node, parent *ast.Symbol) bool {
 }
 
 func (c *Checker) isAssignmentToReadonlyEntity(expr *ast.Node, symbol *ast.Symbol, assignmentKind AssignmentKind) bool {
-	return false // !!!
+	if assignmentKind == AssignmentKindNone {
+		// no assigment means it doesn't matter whether the entity is readonly
+		return false
+	}
+	if c.isReadonlySymbol(symbol) {
+		// Allow assignments to readonly properties within constructors of the same class declaration.
+		if symbol.Flags&ast.SymbolFlagsProperty != 0 && ast.IsAccessExpression(expr) && expr.Expression().Kind == ast.KindThisKeyword {
+			// Look for if this is the constructor for the class that `symbol` is a property of.
+			ctor := getContainingFunction(expr)
+			if ctor == nil || !ast.IsConstructorDeclaration(ctor) {
+				return true
+			}
+			if symbol.ValueDeclaration != nil {
+				isAssignmentDeclaration := ast.IsBinaryExpression(symbol.ValueDeclaration)
+				isLocalPropertyDeclaration := ctor.Parent == symbol.ValueDeclaration.Parent
+				isLocalParameterProperty := ctor == symbol.ValueDeclaration.Parent
+				isLocalThisPropertyAssignment := isAssignmentDeclaration && symbol.Parent.ValueDeclaration == ctor.Parent
+				isLocalThisPropertyAssignmentConstructorFunction := isAssignmentDeclaration && symbol.Parent.ValueDeclaration == ctor
+				isWriteableSymbol := isLocalPropertyDeclaration || isLocalParameterProperty || isLocalThisPropertyAssignment || isLocalThisPropertyAssignmentConstructorFunction
+				return !isWriteableSymbol
+			}
+		}
+		return true
+	}
+	if ast.IsAccessExpression(expr) {
+		// references through namespace import should be readonly
+		node := ast.SkipParentheses(expr.Expression())
+		if ast.IsIdentifier(node) {
+			symbol := c.getResolvedSymbol(node)
+			if symbol.Flags&ast.SymbolFlagsAlias != 0 {
+				declaration := c.getDeclarationOfAliasSymbol(symbol)
+				return declaration != nil && ast.IsNamespaceImport(declaration)
+			}
+		}
+	}
+	return false
 }
 
 func (c *Checker) isThisPropertyAccessInConstructor(node *ast.Node, prop *ast.Symbol) bool {
@@ -26099,41 +26238,6 @@ func (c *Checker) getApplicableIndexSymbol(t *Type, keyType *Type) *ast.Symbol {
 		}
 	}
 	return nil
-}
-
-func (c *Checker) getUnresolvedSymbolForEntityName(name *ast.Node) *ast.Symbol {
-	var identifier *ast.Node
-	if name.Kind == ast.KindQualifiedName {
-		identifier = name.AsQualifiedName().Right
-	} else if name.Kind == ast.KindPropertyAccessExpression {
-		identifier = name.Name()
-	} else {
-		identifier = name
-	}
-	text := identifier.Text()
-	if text != "" {
-		var parentSymbol *ast.Symbol
-		if name.Kind == ast.KindQualifiedName {
-			parentSymbol = c.getUnresolvedSymbolForEntityName(name.AsQualifiedName().Left)
-		} else if name.Kind == ast.KindPropertyAccessExpression {
-			parentSymbol = c.getUnresolvedSymbolForEntityName(name.Expression())
-		}
-
-		path := text
-		if parentSymbol != nil {
-			path = getSymbolPath(parentSymbol) + "." + text
-		}
-
-		result := c.unresolvedSymbols[path]
-		if result == nil {
-			result = c.newSymbolEx(ast.SymbolFlagsTypeAlias, text, ast.CheckFlagsUnresolved)
-			c.unresolvedSymbols[path] = result
-			result.Parent = parentSymbol
-			c.typeAliasLinks.get(result).declaredType = c.unresolvedType
-		}
-		return result
-	}
-	return c.unknownSymbol
 }
 
 func (c *Checker) getRegularTypeOfExpression(expr *ast.Node) *Type {

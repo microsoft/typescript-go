@@ -2391,13 +2391,6 @@ func isInNameOfExpressionWithTypeArguments(node *ast.Node) bool {
 	return node.Parent.Kind == ast.KindExpressionWithTypeArguments
 }
 
-func getSymbolPath(symbol *ast.Symbol) string {
-	if symbol.Parent != nil {
-		return getSymbolPath(symbol.Parent) + "." + symbol.Name
-	}
-	return symbol.Name
-}
-
 func getTypeParameterFromJsDoc(node *ast.Node) *ast.Node {
 	name := node.Name().Text()
 	typeParameters := node.Parent.Parent.Parent.TypeParameters()
