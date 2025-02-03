@@ -11,7 +11,7 @@ import {
 let client: LanguageClient;
 
 export function activate(context: vscode.ExtensionContext) {
-    const output = vscode.window.createOutputChannel("TypeScript (LSP)");
+    const output = vscode.window.createOutputChannel("typescript-go");
 
     const exe = context.asAbsolutePath(
         path.join("../", "built", "local", `tsgo${process.platform === "win32" ? ".exe" : ""}`),
@@ -43,7 +43,7 @@ export function activate(context: vscode.ExtensionContext) {
 
     client = new LanguageClient(
         "typescript-go",
-        "TypeScript-go",
+        "typescript-go-lsp",
         serverOptions,
         clientOptions,
     );
