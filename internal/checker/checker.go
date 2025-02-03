@@ -650,7 +650,7 @@ type Checker struct {
 	numericStringType                         *Type
 	uniqueLiteralType                         *Type
 	uniqueLiteralMapper                       *TypeMapper
-	outofbandVarianceMarkerHandler            func(onlyUnreliable bool)
+	reliabilityFlags                          RelationComparisonResult
 	reportUnreliableMapper                    *TypeMapper
 	reportUnmeasurableMapper                  *TypeMapper
 	restrictiveMapper                         *TypeMapper
@@ -973,15 +973,15 @@ func createFileIndexMap(files []*ast.SourceFile) map[*ast.SourceFile]int {
 }
 
 func (c *Checker) reportUnreliableWorker(t *Type) *Type {
-	if c.outofbandVarianceMarkerHandler != nil && (t == c.markerSuperType || t == c.markerSubType || t == c.markerOtherType) {
-		c.outofbandVarianceMarkerHandler(true /*onlyUnreliable*/)
+	if t == c.markerSuperType || t == c.markerSubType || t == c.markerOtherType {
+		c.reliabilityFlags |= RelationComparisonResultReportsUnreliable
 	}
 	return t
 }
 
 func (c *Checker) reportUnmeasurableWorker(t *Type) *Type {
-	if c.outofbandVarianceMarkerHandler != nil && (t == c.markerSuperType || t == c.markerSubType || t == c.markerOtherType) {
-		c.outofbandVarianceMarkerHandler(false /*onlyUnreliable*/)
+	if t == c.markerSuperType || t == c.markerSubType || t == c.markerOtherType {
+		c.reliabilityFlags |= RelationComparisonResultReportsUnmeasurable
 	}
 	return t
 }

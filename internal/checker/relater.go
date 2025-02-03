@@ -1122,16 +1122,8 @@ func (c *Checker) getVariancesWorker(symbol *ast.Symbol, typeParameters []*Type)
 			case modifiers&ast.ModifierFlagsIn != 0:
 				variance = VarianceFlagsContravariant
 			default:
-				unmeasurable := false
-				unreliable := false
-				oldHandler := c.outofbandVarianceMarkerHandler
-				c.outofbandVarianceMarkerHandler = func(onlyUnreliable bool) {
-					if onlyUnreliable {
-						unreliable = true
-					} else {
-						unmeasurable = true
-					}
-				}
+				saveReliabilityFlags := c.reliabilityFlags
+				c.reliabilityFlags = 0
 				// We first compare instantiations where the type parameter is replaced with
 				// marker types that have a known subtype relationship. From this we can infer
 				// invariance, covariance, contravariance or bivariance.
@@ -1146,13 +1138,13 @@ func (c *Checker) getVariancesWorker(symbol *ast.Symbol, typeParameters []*Type)
 				if variance == VarianceFlagsBivariant && c.isTypeAssignableTo(c.createMarkerType(symbol, tp, c.markerOtherType), typeWithSuper) {
 					variance = VarianceFlagsIndependent
 				}
-				c.outofbandVarianceMarkerHandler = oldHandler
-				if unmeasurable {
+				if c.reliabilityFlags&RelationComparisonResultReportsUnmeasurable != 0 {
 					variance |= VarianceFlagsUnmeasurable
 				}
-				if unreliable {
+				if c.reliabilityFlags&RelationComparisonResultReportsUnreliable != 0 {
 					variance |= VarianceFlagsUnreliable
 				}
+				c.reliabilityFlags = saveReliabilityFlags
 			}
 			variances[i] = variance
 		}
@@ -2729,16 +2721,7 @@ func (r *Relater) recursiveTypeRelatedTo(source *Type, target *Type, reportError
 			// We are elaborating errors and the cached result is a failure not due to a comparison overflow,
 			// so we will do the comparison again to generate an error message.
 		} else {
-			if r.c.outofbandVarianceMarkerHandler != nil {
-				// We're in the middle of variance checking - integrate any unmeasurable/unreliable flags from this cached component
-				saved := entry & RelationComparisonResultReportsMask
-				if saved&RelationComparisonResultReportsUnmeasurable != 0 {
-					r.c.instantiateType(source, r.c.reportUnmeasurableMapper)
-				}
-				if saved&RelationComparisonResultReportsUnreliable != 0 {
-					r.c.instantiateType(source, r.c.reportUnreliableMapper)
-				}
-			}
+			r.c.reliabilityFlags |= entry & (RelationComparisonResultReportsUnmeasurable | RelationComparisonResultReportsUnreliable)
 			if reportErrors && entry&RelationComparisonResultOverflow != 0 {
 				message := core.IfElse(entry&RelationComparisonResultComplexityOverflow != 0,
 					diagnostics.Excessive_complexity_comparing_types_0_and_1,
@@ -2788,28 +2771,16 @@ func (r *Relater) recursiveTypeRelatedTo(source *Type, target *Type, reportError
 			r.expandingFlags |= ExpandingFlagsTarget
 		}
 	}
-	propagatingVarianceFlags := RelationComparisonResultNone
-	var originalHandler func(bool)
-	if r.c.outofbandVarianceMarkerHandler != nil {
-		originalHandler = r.c.outofbandVarianceMarkerHandler
-		r.c.outofbandVarianceMarkerHandler = func(onlyUnreliable bool) {
-			if onlyUnreliable {
-				propagatingVarianceFlags |= RelationComparisonResultReportsUnreliable
-			} else {
-				propagatingVarianceFlags |= RelationComparisonResultReportsUnmeasurable
-			}
-			originalHandler(onlyUnreliable)
-		}
-	}
+	saveReliabilityFlags := r.c.reliabilityFlags
+	r.c.reliabilityFlags = 0
 	var result Ternary
 	if r.expandingFlags == ExpandingFlagsBoth {
 		result = TernaryMaybe
 	} else {
 		result = r.structuredTypeRelatedTo(source, target, reportErrors, intersectionState)
 	}
-	if r.c.outofbandVarianceMarkerHandler != nil {
-		r.c.outofbandVarianceMarkerHandler = originalHandler
-	}
+	propagatingVarianceFlags := r.c.reliabilityFlags
+	r.c.reliabilityFlags |= saveReliabilityFlags
 	if recursionFlags&RecursionFlagsSource != 0 {
 		r.sourceStack = r.sourceStack[:len(r.sourceStack)-1]
 	}
