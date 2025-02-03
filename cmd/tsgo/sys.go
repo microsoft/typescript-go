@@ -4,18 +4,19 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"runtime"
 
-	"github.com/microsoft/typescript-go/internal/diagnosticwriter"
+	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/execute"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 )
 
 type osSys struct {
-	writer     io.Writer
-	formatOpts *diagnosticwriter.FormattingOptions
-	fs         vfs.FS
-	cwd        string
+	writer  io.Writer
+	fs      vfs.FS
+	newline string
+	cwd     string
 }
 
 func (s *osSys) FS() vfs.FS {
@@ -26,8 +27,8 @@ func (s *osSys) GetCurrentDirectory() string {
 	return s.cwd
 }
 
-func (s *osSys) GetFormatOpts() *diagnosticwriter.FormattingOptions {
-	return s.formatOpts
+func (s *osSys) NewLine() string {
+	return s.newline
 }
 
 func (s *osSys) Writer() io.Writer {
@@ -45,18 +46,11 @@ func newSystem() *osSys {
 		fmt.Fprintf(os.Stderr, "Error getting current directory: %v\n", err)
 		os.Exit(int(execute.ExitStatusInvalidProject_OutputsSkipped))
 	}
-	cwd = tspath.NormalizePath(cwd)
-	fs := vfs.FromOS()
+
 	return &osSys{
-		cwd:    cwd,
-		fs:     fs,
-		writer: os.Stdout,
-		formatOpts: &diagnosticwriter.FormattingOptions{
-			NewLine: "\n",
-			ComparePathsOptions: tspath.ComparePathsOptions{
-				CurrentDirectory:          cwd,
-				UseCaseSensitiveFileNames: fs.UseCaseSensitiveFileNames(),
-			},
-		},
+		cwd:     tspath.NormalizePath(cwd),
+		fs:      vfs.FromOS(),
+		writer:  os.Stdout,
+		newline: core.IfElse(runtime.GOOS == "windows", "\r\n", "\n"),
 	}
 }

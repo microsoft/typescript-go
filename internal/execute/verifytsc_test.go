@@ -48,7 +48,7 @@ func (test *tscInput) verify(t *testing.T) {
 			// initial test tsc compile
 			baselineBuilder := test.startBaseline()
 			// baseline push sys.GetExecutingFilepath
-			fmt.Fprintln(baselineBuilder, strings.Join(test.commandLineArgs, " "))
+			fmt.Fprint(baselineBuilder, strings.Join(test.commandLineArgs, " ")+"\n")
 			// if (input.baselineSourceMap) generateSourceMapBasleineFiles
 
 			parsedCommandLine, exit := execute.TestCommandLine(test.sys, nil, test.commandLineArgs)

@@ -7,8 +7,6 @@ import (
 	"testing/fstest"
 
 	"github.com/microsoft/typescript-go/internal/bundled"
-	"github.com/microsoft/typescript-go/internal/diagnosticwriter"
-	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
 )
@@ -34,13 +32,6 @@ func newTestSys(fileOrFolderList FileMap, cwd string, args ...string) *testSys {
 		files:        fileList,
 		output:       []string{},
 		currentWrite: &strings.Builder{},
-		formatOpts: &diagnosticwriter.FormattingOptions{
-			NewLine: "\n",
-			ComparePathsOptions: tspath.ComparePathsOptions{
-				CurrentDirectory:          cwd,
-				UseCaseSensitiveFileNames: fs.UseCaseSensitiveFileNames(),
-			},
-		},
 	}
 }
 
@@ -51,7 +42,6 @@ type testSys struct {
 	serializedDiff map[string]string
 	fs             vfs.FS
 	cwd            string
-	formatOpts     *diagnosticwriter.FormattingOptions
 	files          []string
 }
 
@@ -63,8 +53,8 @@ func (s *testSys) GetCurrentDirectory() string {
 	return s.cwd
 }
 
-func (s *testSys) GetFormatOpts() *diagnosticwriter.FormattingOptions {
-	return s.formatOpts
+func (s *testSys) NewLine() string {
+	return "\n"
 }
 
 func (s *testSys) Writer() io.Writer {
@@ -77,7 +67,7 @@ func (s *testSys) EndWrite() {
 	s.currentWrite.Reset()
 }
 
-func (s *testSys) serializeState(baseline io.Writer, order serializeOutputOrder) {
+func (s *testSys) serializeState(baseline *strings.Builder, order serializeOutputOrder) {
 	if order == serializeOutputOrderBefore {
 		s.serializeOutput(baseline)
 	}
@@ -93,8 +83,8 @@ func (s *testSys) serializeState(baseline io.Writer, order serializeOutputOrder)
 	// this.service?.baseline();
 }
 
-func (s *testSys) baselineFS(baseline io.Writer) {
-	fmt.Fprint(baseline, "\n\nCurrentFiles::")
+func (s *testSys) baselineFS(baseline *strings.Builder) {
+	baseline.WriteString("\n\nCurrentFiles::")
 	err := s.FS().WalkDir(s.GetCurrentDirectory(), func(path string, d vfs.DirEntry, e error) error {
 		if d == nil {
 			return nil
@@ -104,7 +94,7 @@ func (s *testSys) baselineFS(baseline io.Writer) {
 			if !ok {
 				return e
 			}
-			fmt.Fprint(baseline, "\n//// ["+path+"]\n"+contents+"\n")
+			baseline.WriteString("\n//// ["+path+"]\n"+contents)
 		}
 		return nil
 	})
@@ -114,7 +104,7 @@ func (s *testSys) baselineFS(baseline io.Writer) {
 }
 
 func (s *testSys) serializeOutput(baseline io.Writer) {
-	fmt.Fprintln(baseline, "\nOutput::")
+	fmt.Fprint(baseline, "\nOutput::\n")
 	// todo screen clears
 	s.baselineOutputs(baseline, 0, len(s.output))
 }
@@ -151,7 +141,7 @@ func (s *testSys) diff(baseline io.Writer) {
 		}
 	}
 	s.serializedDiff = snap
-	fmt.Fprint(baseline, s.GetFormatOpts().NewLine)
+	fmt.Fprintln(baseline)
 }
 
 func diffFSEntry(baseline io.Writer, oldDirContent string, newDirContent string, path string) {
