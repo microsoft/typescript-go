@@ -2,10 +2,13 @@ package printer
 
 import (
 	"fmt"
+	"maps"
+	"slices"
 	"strings"
 	"sync/atomic"
 
 	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/core"
 )
 
 // Stores side-table information used during transformation that can be read by the printer to customize emit
@@ -16,6 +19,7 @@ type EmitContext struct {
 	autoGenerate map[*ast.MemberName]*autoGenerateInfo
 	textSource   map[*ast.StringLiteralNode]*ast.Node
 	original     map[*ast.Node]*ast.Node
+	emitNodes    core.LinkStore[*ast.Node, emitNode]
 }
 
 func NewEmitContext() *EmitContext {
@@ -172,6 +176,9 @@ func (c *EmitContext) SetOriginal(node *ast.Node, original *ast.Node) {
 	existing, ok := c.original[node]
 	if !ok {
 		c.original[node] = original
+		if emitNode := c.emitNodes.TryGet(node); emitNode != nil {
+			c.emitNodes.Get(node).copyFrom(emitNode)
+		}
 	} else if existing != original {
 		panic("Original node already set.")
 	}
@@ -195,3 +202,89 @@ func (c *EmitContext) MostOriginal(node *ast.Node) *ast.Node {
 	}
 	return node
 }
+
+type emitNode struct {
+	emitFlags            EmitFlags
+	commentRange         *core.TextRange
+	sourceMapRange       *core.TextRange
+	tokenSourceMapRanges map[ast.Kind]*core.TextRange
+}
+
+// NOTE: This method is not guaranteed to be thread-safe
+func (e *emitNode) copyFrom(source *emitNode) {
+	e.emitFlags = source.emitFlags
+	e.commentRange = source.commentRange
+	e.sourceMapRange = source.sourceMapRange
+	e.tokenSourceMapRanges = maps.Clone(source.tokenSourceMapRanges)
+}
+
+func (c *EmitContext) EmitFlags(node *ast.Node) EmitFlags {
+	if emitNode := c.emitNodes.TryGet(node); emitNode != nil {
+		return emitNode.emitFlags
+	}
+	return EFNone
+}
+
+func (c *EmitContext) SetEmitFlags(node *ast.Node, flags EmitFlags) {
+	c.emitNodes.Get(node).emitFlags = flags
+}
+
+func (c *EmitContext) AddEmitFlags(node *ast.Node, flags EmitFlags) {
+	c.emitNodes.Get(node).emitFlags |= flags
+}
+
+// Sets the range to use for a node when emitting comments and source maps.
+func (c *EmitContext) SetCommentAndSourceMapRanges(node *ast.Node, loc core.TextRange) {
+	emitNode := c.emitNodes.Get(node)
+	emitNode.commentRange = &loc
+	emitNode.sourceMapRange = &loc
+}
+
+// Gets the range to use for a node when emitting comments.
+func (c *EmitContext) CommentRange(node *ast.Node) core.TextRange {
+	if emitNode := c.emitNodes.TryGet(node); emitNode != nil && emitNode.commentRange != nil {
+		return *emitNode.commentRange
+	}
+	return node.Loc
+}
+
+// Sets the range to use for a node when emitting comments.
+func (c *EmitContext) SetCommentRange(node *ast.Node, loc core.TextRange) {
+	c.emitNodes.Get(node).commentRange = &loc
+}
+
+// Gets the range to use for a node when emitting source maps.
+func (c *EmitContext) SourceMapRange(node *ast.Node) core.TextRange {
+	if emitNode := c.emitNodes.TryGet(node); emitNode != nil && emitNode.sourceMapRange != nil {
+		return *emitNode.sourceMapRange
+	}
+	return node.Loc
+}
+
+// Sets the range to use for a node when emitting source maps.
+func (c *EmitContext) SetSourceMapRange(node *ast.Node, loc core.TextRange) {
+	c.emitNodes.Get(node).sourceMapRange = &loc
+}
+
+// Gets the range for a token of a node when emitting source maps.
+func (c *EmitContext) TokenSourceMapRange(node *ast.Node, kind ast.Kind) *core.TextRange {
+	if emitNode := c.emitNodes.TryGet(node); emitNode != nil {
+		if emitNode.tokenSourceMapRanges == nil {
+			return nil
+		}
+		if loc, ok := emitNode.tokenSourceMapRanges[kind]; ok {
+			return loc
+		}
+	}
+	return nil
+}
+
+// Sets the range for a token of a node when emitting source maps.
+func (c *EmitContext) SetTokenSourceMapRange(node *ast.Node, kind ast.Kind, loc *core.TextRange) {
+	emitNode := c.emitNodes.Get(node)
+	if emitNode.tokenSourceMapRanges == nil {
+		emitNode.tokenSourceMapRanges = make(map[ast.Kind]*core.TextRange)
+	}
+	emitNode.tokenSourceMapRanges[kind] = loc
+}
+
