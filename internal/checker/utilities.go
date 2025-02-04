@@ -14,31 +14,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
-// Links store
-
-type LinkStore[K comparable, V any] struct {
-	entries map[K]*V
-	pool    core.Pool[V]
-}
-
-func (s *LinkStore[K, V]) get(key K) *V {
-	value := s.entries[key]
-	if value != nil {
-		return value
-	}
-	if s.entries == nil {
-		s.entries = make(map[K]*V)
-	}
-	value = s.pool.New()
-	s.entries[key] = value
-	return value
-}
-
-func (s *LinkStore[K, V]) has(key K) bool {
-	_, ok := s.entries[key]
-	return ok
-}
-
 func NewDiagnosticForNode(node *ast.Node, message *diagnostics.Message, args ...any) *ast.Diagnostic {
 	var file *ast.SourceFile
 	var loc core.TextRange
