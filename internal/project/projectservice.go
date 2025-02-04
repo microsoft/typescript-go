@@ -36,8 +36,7 @@ type changeFileArguments struct {
 	Changes  []ls.TextChange
 }
 
-type ProjectServiceOptions struct {
-}
+type ProjectServiceOptions struct{}
 
 type ProjectService struct {
 	host                ProjectServiceHost
