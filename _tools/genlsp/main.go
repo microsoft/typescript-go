@@ -112,7 +112,7 @@ func (g *generator) generate() {
 	}
 
 	// for _, t := range g.model.Requests {
-	// 	fmt.Println(t.Method)
+	// 	if t.Params
 	// }
 
 	// for _, t := range g.model.Notifications {

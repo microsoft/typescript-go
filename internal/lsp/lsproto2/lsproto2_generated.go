@@ -893,8 +893,7 @@ type InitializeError struct {
 	Retry bool `json:"retry"`
 }
 
-type InitializedParams struct {
-}
+type InitializedParams struct{}
 
 // The parameters of a change configuration notification.
 type DidChangeConfigurationParams struct {
@@ -5175,6 +5174,7 @@ type InlineValue = TODO_or
 //
 // @since 3.17.0
 type DocumentDiagnosticReport = TODO_or
+
 type PrepareRenameResult = TODO_or
 
 // A document selector is the combination of one or many document filters.
@@ -5183,6 +5183,7 @@ type PrepareRenameResult = TODO_or
 //
 // The use of a string as a document filter is deprecated @since 3.16.0.
 type DocumentSelector = []DocumentFilter
+
 type ProgressToken = TODO_or
 
 // An identifier to refer to a change annotation stored with a workspace edit.
@@ -5262,4 +5263,5 @@ type NotebookDocumentFilter = TODO_or
 //
 // @since 3.17.0
 type Pattern = string
+
 type RegularExpressionEngineKind = string
