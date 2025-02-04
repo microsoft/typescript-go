@@ -51,7 +51,8 @@
         "**/testdata",
         "_submodules/**",
         "**/*_generated.go",
-        "internal/bundled/libs/**"
+        "internal/bundled/libs/**",
+        "_tools/genlsp/metaModel.json"
     ],
     // Note: if adding new languages, make sure settings.template.json is updated too.
     // Also, if updating typescript, update the one in package.json.
