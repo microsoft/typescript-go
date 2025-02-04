@@ -1,12 +1,21 @@
 package tsoptions
 
-import "strings"
+import (
+	"strings"
+
+	"github.com/microsoft/typescript-go/internal/collections"
+)
+
+var (
+	BuildNameMap = GetNameMapFromList(BuildOpts)
+	WatchNameMap = GetNameMapFromList(optionsForWatch)
+)
 
 func GetNameMapFromList(optDecls []*CommandLineOption) *NameMap {
-	optionsNames := map[string]*CommandLineOption{}
+	optionsNames := collections.NewOrderedMapWithSizeHint[string, *CommandLineOption](len(optDecls))
 	shortOptionNames := map[string]string{}
 	for _, option := range optDecls {
-		optionsNames[strings.ToLower(option.Name)] = option
+		optionsNames.Set(strings.ToLower(option.Name), option)
 		if option.shortName != "" {
 			shortOptionNames[option.shortName] = option.Name
 		}
@@ -18,12 +27,12 @@ func GetNameMapFromList(optDecls []*CommandLineOption) *NameMap {
 }
 
 type NameMap struct {
-	optionsNames     map[string]*CommandLineOption
+	optionsNames     *collections.OrderedMap[string, *CommandLineOption]
 	shortOptionNames map[string]string
 }
 
 func (nm *NameMap) Get(name string) *CommandLineOption {
-	return nm.optionsNames[strings.ToLower(name)]
+	return nm.optionsNames.GetOrZero(strings.ToLower(name))
 }
 
 func (nm *NameMap) GetFromShort(shortName string) *CommandLineOption {

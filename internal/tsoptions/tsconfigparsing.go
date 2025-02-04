@@ -293,17 +293,14 @@ func validateJsonOptionValue(
 		return nil, nil
 	}
 	errors := []*ast.Diagnostic{}
-	d := opt.extraValidation
-	if d != nil {
-		err, result := d(val)
-		if result == nil {
-			return val, nil
+	if opt.extraValidation {
+		diag := specToDiagnostic(val.(string), false)
+		if diag != nil {
+			errors = append(errors, createDiagnosticForNodeInSourceFileOrCompilerDiagnostic(sourceFile, valueExpression, diag))
+			return nil, errors
 		}
-		errors = append(errors, createDiagnosticForNodeInSourceFileOrCompilerDiagnostic(sourceFile, valueExpression, err))
-	} else {
-		return val, nil
 	}
-	return nil, errors
+	return val, nil
 }
 
 func convertJsonOptionOfListType(
@@ -399,7 +396,7 @@ func convertJsonOption(
 		}
 		validatedValue, err := validateJsonOptionValue(opt, value, valueExpression, sourceFile)
 		errors = append(errors, err...)
-		if validatedValue == nil {
+		if err != nil {
 			return validatedValue, errors
 		} else {
 			return normalizeNonListOptionValue(opt, basePath, validatedValue), errors
@@ -509,9 +506,9 @@ func commandLineOptionsToMap(options []*CommandLineOption) map[string]*CommandLi
 
 var commandLineCompilerOptionsMap map[string]*CommandLineOption = commandLineOptionsToMap(OptionsDeclarations)
 
-func convertOptionsFromJson(optionsNameMap map[string]*CommandLineOption, jsonOptions any, basePath string, result *core.CompilerOptions) (*core.CompilerOptions, []*ast.Diagnostic) {
+func convertOptionsFromJson[O optionParser](optionsNameMap map[string]*CommandLineOption, jsonOptions any, basePath string, result O) (O, []*ast.Diagnostic) {
 	if jsonOptions == nil {
-		return nil, nil
+		return result, nil
 	}
 	var errors []*ast.Diagnostic
 	if _, ok := jsonOptions.(map[string]any); ok {
@@ -521,12 +518,12 @@ func convertOptionsFromJson(optionsNameMap map[string]*CommandLineOption, jsonOp
 			if commandLineOptionEnumMapVal != nil {
 				val, ok := commandLineOptionEnumMapVal.Get(strings.ToLower(value.(string)))
 				if ok {
-					errors = ParseCompilerOptions(key, val, result)
+					errors = result.ParseOption(key, val)
 				}
 			} else if ok {
 				convertJson, err := convertJsonOption(opt, value, basePath, nil, nil, nil)
 				errors = append(errors, err...)
-				compilerOptionsErr := ParseCompilerOptions(key, convertJson, result)
+				compilerOptionsErr := result.ParseOption(key, convertJson)
 				errors = append(errors, compilerOptionsErr...)
 			}
 			// else {
@@ -765,7 +762,7 @@ func getDefaultCompilerOptions(configFileName string) *core.CompilerOptions {
 
 func convertCompilerOptionsFromJsonWorker(jsonOptions any, basePath string, configFileName string) (*core.CompilerOptions, []*ast.Diagnostic) {
 	options := getDefaultCompilerOptions(configFileName)
-	_, errors := convertOptionsFromJson(commandLineCompilerOptionsMap, jsonOptions, basePath, options)
+	_, errors := convertOptionsFromJson(commandLineCompilerOptionsMap, jsonOptions, basePath, &compilerOptionsParser{options})
 	if configFileName != "" {
 		options.ConfigFilePath = tspath.NormalizeSlashes(configFileName)
 	}

@@ -125,6 +125,26 @@ func parseJsonToStringKey(json any) map[string]any {
 	return result
 }
 
+type optionParser interface {
+	ParseOption(key string, value any) []*ast.Diagnostic
+}
+
+type compilerOptionsParser struct {
+	*core.CompilerOptions
+}
+
+func (o *compilerOptionsParser) ParseOption(key string, value any) []*ast.Diagnostic {
+	return ParseCompilerOptions(key, value, o.CompilerOptions)
+}
+
+type watchOptionsParser struct {
+	*core.WatchOptions
+}
+
+func (o *watchOptionsParser) ParseOption(key string, value any) []*ast.Diagnostic {
+	return ParseWatchOptions(key, value, o.WatchOptions)
+}
+
 func ParseCompilerOptions(key string, value any, allOptions *core.CompilerOptions) []*ast.Diagnostic {
 	if allOptions == nil {
 		return nil
@@ -362,6 +382,27 @@ func ParseCompilerOptions(key string, value any, allOptions *core.CompilerOption
 		allOptions.NewLine = value.(core.NewLineKind)
 	case "watch":
 		allOptions.Watch = parseTristate(value)
+	}
+	return nil
+}
+
+func ParseWatchOptions(key string, value any, allOptions *core.WatchOptions) []*ast.Diagnostic {
+	if allOptions == nil {
+		return nil
+	}
+	switch key {
+	case "watchFile":
+		allOptions.FileKind = value.(core.WatchFileKind)
+	case "watchDirectory":
+		allOptions.DirectoryKind = value.(core.WatchDirectoryKind)
+	case "fallbackPolling":
+		allOptions.FallbackPolling = value.(core.PollingKind)
+	case "synchronousWatchDirectory":
+		allOptions.SyncWatchDir = parseTristate(value)
+	case "excludeDirectories":
+		allOptions.ExcludeDir = parseStringArray(value)
+	case "excludeFiles":
+		allOptions.ExcludeFiles = parseStringArray(value)
 	}
 	return nil
 }

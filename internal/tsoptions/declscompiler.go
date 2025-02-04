@@ -5,7 +5,9 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 )
 
-var OptionsDeclarations = []*CommandLineOption{
+var OptionsDeclarations = append(commonOptionsWithBuild, optionsForCompiler...)
+
+var optionsForCompiler = []*CommandLineOption{
 	//******* commandOptionsWithoutBuild *******
 	{
 		Name:                     "help",
@@ -206,7 +208,9 @@ var OptionsDeclarations = []*CommandLineOption{
 		description:             diagnostics.Set_the_language_of_the_messaging_from_TypeScript_This_does_not_affect_emit,
 		defaultValueDescription: diagnostics.Platform_specific,
 	},
+}
 
+var commonOptionsWithBuild = []*CommandLineOption{
 	//******* commandOptionsWithoutBuild *******
 
 	// CommandLine only options

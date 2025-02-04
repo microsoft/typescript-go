@@ -36,7 +36,7 @@ type CommandLineOption struct {
 	category *diagnostics.Message
 
 	// defined once
-	extraValidation func(value CompilerOptionsValue) (d *diagnostics.Message, args []string)
+	extraValidation bool
 
 	// true or undefined
 	// used for configDirTemplateSubstitutionOptions
@@ -144,6 +144,19 @@ var commandLineOptionElements = map[string]*CommandLineOption{
 		Name: "extends",
 		Kind: CommandLineOptionTypeString,
 	},
+	// For Watch options
+	"excludeDirectories": {
+		Name:            "excludeDirectory",
+		Kind:            CommandLineOptionTypeString,
+		isFilePath:      true,
+		extraValidation: true,
+	},
+	"excludeFiles": {
+		Name:            "excludeFile",
+		Kind:            CommandLineOptionTypeString,
+		isFilePath:      true,
+		extraValidation: true,
+	},
 }
 
 // CommandLineOption.EnumMap()
@@ -155,6 +168,9 @@ var commandLineOptionEnumMap = map[string]*collections.OrderedMap[string, any]{
 	"moduleDetection":  moduleDetectionOptionMap,
 	"jsx":              jsxOptionMap,
 	"newLine":          newLineOptionMap,
+	"watchFile":        watchFileEnumMap,
+	"watchDirectory":   watchDirectoryEnumMap,
+	"fallbackPolling":  fallbackEnumMap,
 }
 
 // CommandLineOption.DeprecatedKeys()

@@ -2,6 +2,8 @@ package tsoptions
 
 import "github.com/microsoft/typescript-go/internal/compiler/diagnostics"
 
+var BuildOpts = append(commonOptionsWithBuild, optionsForBuild...)
+
 var tscBuildOption = CommandLineOption{
 	Name:                     "build",
 	Kind:                     "boolean",
