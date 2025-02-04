@@ -127,23 +127,30 @@ func parseJsonToStringKey(json any) map[string]any {
 
 type optionParser interface {
 	ParseOption(key string, value any) []*ast.Diagnostic
+	CommandLine() bool
 }
 
 type compilerOptionsParser struct {
 	*core.CompilerOptions
+	commandLine bool
 }
 
 func (o *compilerOptionsParser) ParseOption(key string, value any) []*ast.Diagnostic {
 	return ParseCompilerOptions(key, value, o.CompilerOptions)
 }
 
+func (o *compilerOptionsParser) CommandLine() bool { return o.commandLine }
+
 type watchOptionsParser struct {
 	*core.WatchOptions
+	commandLine bool
 }
 
 func (o *watchOptionsParser) ParseOption(key string, value any) []*ast.Diagnostic {
 	return ParseWatchOptions(key, value, o.WatchOptions)
 }
+
+func (o *watchOptionsParser) CommandLine() bool { return o.commandLine }
 
 func ParseCompilerOptions(key string, value any, allOptions *core.CompilerOptions) []*ast.Diagnostic {
 	if allOptions == nil {

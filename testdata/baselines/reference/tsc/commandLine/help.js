@@ -131,7 +131,4 @@ CompilerOptions::{
     "tscBuild": null
 }
 Output::
-error TS6266: Option 'help' can only be specified on command line.
-
-error TS6266: Option 'help' can only be specified on command line.
 
