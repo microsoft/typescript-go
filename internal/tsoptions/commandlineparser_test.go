@@ -3,6 +3,7 @@ package tsoptions_test
 import (
 	"encoding/json"
 	"path/filepath"
+	"slices"
 	"strings"
 	"testing"
 
@@ -144,14 +145,14 @@ func createVerifyNullForNonNullIncluded(subScenario string, kind tsoptions.Comma
 		subScenario:  subScenario,
 		optionName:   "optionName",
 		nonNullValue: nonNullValue,
-		optDecls: append(tsoptions.OptionsDeclarations, &tsoptions.CommandLineOption{
+		optDecls: slices.Concat(tsoptions.OptionsDeclarations, []*tsoptions.CommandLineOption{{
 			Name:                    "optionName",
 			Kind:                    kind,
 			IsTSConfigOnly:          true,
 			Category:                diagnostics.Backwards_Compatibility,
 			Description:             diagnostics.Enable_project_compilation,
 			DefaultValueDescription: nil,
-		}),
+		}}),
 	}
 }
 

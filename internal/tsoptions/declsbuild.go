@@ -1,8 +1,12 @@
 package tsoptions
 
-import "github.com/microsoft/typescript-go/internal/compiler/diagnostics"
+import (
+	"slices"
 
-var BuildOpts = append(commonOptionsWithBuild, optionsForBuild...)
+	"github.com/microsoft/typescript-go/internal/compiler/diagnostics"
+)
+
+var BuildOpts = slices.Concat(commonOptionsWithBuild, optionsForBuild)
 
 var tscBuildOption = CommandLineOption{
 	Name:                     "build",

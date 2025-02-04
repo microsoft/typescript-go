@@ -138,6 +138,7 @@ var targetOptionMap = collections.NewOrderedMapFromList([]collections.MapEntry[s
 })
 
 var moduleOptionMap = collections.NewOrderedMapFromList([]collections.MapEntry[string, any]{
+	{Key: "none", Value: core.ModuleKindNone},
 	{Key: "commonjs", Value: core.ModuleKindCommonJS},
 	{Key: "amd", Value: core.ModuleKindAMD},
 	{Key: "system", Value: core.ModuleKindSystem},

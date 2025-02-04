@@ -1,11 +1,13 @@
 package tsoptions
 
 import (
+	"slices"
+
 	"github.com/microsoft/typescript-go/internal/compiler/diagnostics"
 	"github.com/microsoft/typescript-go/internal/core"
 )
 
-var OptionsDeclarations = append(commonOptionsWithBuild, optionsForCompiler...)
+var OptionsDeclarations = slices.Concat(commonOptionsWithBuild, optionsForCompiler)
 
 var optionsForCompiler = []*CommandLineOption{
 	//******* commandOptionsWithoutBuild *******
