@@ -516,11 +516,11 @@ func GetFileBasedTestConfigurations(t *testing.T, settings map[string]string, va
 					t.Fatal("Provided test options exceeded the maximum number of variations")
 				}
 				optionEntries = append(optionEntries, append([]string{option}, entries...))
+				continue
 			}
-		} else {
-			// Variation is not supported or not needed for the option
-			nonVariyingOptions[option] = value
 		}
+		// Variation is not supported or not needed for the option
+		nonVariyingOptions[option] = value
 	}
 
 	var configurations []*NamedTestConfiguration
