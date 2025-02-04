@@ -14,6 +14,7 @@ func NewTypeEraserTransformer(emitContext *printer.EmitContext) *TypeEraserTrans
 	visitor := &TypeEraserTransformer{EmitContext: emitContext}
 	visitor.Visit = visitor.visit
 	visitor.Factory = emitContext.Factory
+	visitor.Hooks.SetOriginal = emitContext.SetOriginal
 	return visitor
 }
 

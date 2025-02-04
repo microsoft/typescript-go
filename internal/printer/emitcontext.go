@@ -15,6 +15,7 @@ type EmitContext struct {
 	Factory      *ast.NodeFactory // Required. The NodeFactory to use for creating new nodes
 	autoGenerate map[*ast.MemberName]*autoGenerateInfo
 	textSource   map[*ast.StringLiteralNode]*ast.Node
+	original     map[*ast.Node]*ast.Node
 }
 
 func NewEmitContext() *EmitContext {
@@ -159,3 +160,38 @@ func (c *EmitContext) NewStringLiteralFromNode(textSourceNode *ast.Node) *ast.No
 	return node
 }
 
+func (c *EmitContext) SetOriginal(node *ast.Node, original *ast.Node) {
+	if original == nil {
+		panic("Original cannot be nil.")
+	}
+
+	if c.original == nil {
+		c.original = make(map[*ast.Node]*ast.Node)
+	}
+
+	existing, ok := c.original[node]
+	if !ok {
+		c.original[node] = original
+	} else if existing != original {
+		panic("Original node already set.")
+	}
+}
+
+func (c *EmitContext) Original(node *ast.Node) *ast.Node {
+	return c.original[node]
+}
+
+// Gets the most original node associated with this node by walking Original pointers.
+//
+// This method is analogous to `getOriginalNode` in the old compiler, but the name has changed to avoid accidental
+// conflation with `SetOriginal`/`Original`
+func (c *EmitContext) MostOriginal(node *ast.Node) *ast.Node {
+	if node != nil {
+		original := c.Original(node)
+		for original != nil {
+			node = original
+			original = c.Original(node)
+		}
+	}
+	return node
+}
