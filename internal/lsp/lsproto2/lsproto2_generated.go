@@ -4,6 +4,10 @@ package lsproto2
 
 // Meta model version 3.17.0
 
+type URI string
+
+type DocumentUri string
+
 type ImplementationParams struct {
 	TextDocumentPositionParams
 	WorkDoneProgressParams
@@ -13,8 +17,8 @@ type ImplementationParams struct {
 // Represents a location inside a resource, such as a line
 // inside a text file.
 type Location struct {
-	Uri   TODO_base `json:"uri"`
-	Range *Range    `json:"range"`
+	Uri   DocumentUri `json:"uri"`
+	Range Range       `json:"range"`
 }
 
 type ImplementationRegistrationOptions struct {
@@ -38,21 +42,21 @@ type TypeDefinitionRegistrationOptions struct {
 // A workspace folder inside a client.
 type WorkspaceFolder struct {
 	// The associated URI for this workspace folder.
-	Uri TODO_base `json:"uri"`
+	Uri URI `json:"uri"`
 	// The name of the workspace folder. Used to refer to this
 	// workspace folder in the user interface.
-	Name TODO_base `json:"name"`
+	Name string `json:"name"`
 }
 
 // The parameters of a `workspace/didChangeWorkspaceFolders` notification.
 type DidChangeWorkspaceFoldersParams struct {
 	// The actual workspace folder change event.
-	Event *WorkspaceFoldersChangeEvent `json:"event"`
+	Event WorkspaceFoldersChangeEvent `json:"event"`
 }
 
 // The parameters of a configuration request.
 type ConfigurationParams struct {
-	Items TODO_array `json:"items"`
+	Items []ConfigurationItem `json:"items"`
 }
 
 // Parameters for a {@link DocumentColorRequest}.
@@ -60,15 +64,15 @@ type DocumentColorParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
 	// The text document.
-	TextDocument *TextDocumentIdentifier `json:"textDocument"`
+	TextDocument TextDocumentIdentifier `json:"textDocument"`
 }
 
 // Represents a color range from a document.
 type ColorInformation struct {
 	// The range in the document where this color appears.
-	Range *Range `json:"range"`
+	Range Range `json:"range"`
 	// The actual color value for this color range.
-	Color *Color `json:"color"`
+	Color Color `json:"color"`
 }
 
 type DocumentColorRegistrationOptions struct {
@@ -82,29 +86,29 @@ type ColorPresentationParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
 	// The text document.
-	TextDocument *TextDocumentIdentifier `json:"textDocument"`
+	TextDocument TextDocumentIdentifier `json:"textDocument"`
 	// The color to request presentations for.
-	Color *Color `json:"color"`
+	Color Color `json:"color"`
 	// The range where the color would be inserted. Serves as a context.
-	Range *Range `json:"range"`
+	Range Range `json:"range"`
 }
 
 type ColorPresentation struct {
 	// The label of this color presentation. It will be shown on the color
 	// picker header. By default this is also the text that is inserted when selecting
 	// this color presentation.
-	Label TODO_base `json:"label"`
+	Label string `json:"label"`
 	// An {@link TextEdit edit} which is applied to a document when selecting
 	// this presentation for the color.  When `falsy` the {@link ColorPresentation.label label}
 	// is used.
 	TextEdit *TextEdit `json:"textEdit"`
 	// An optional array of additional {@link TextEdit text edits} that are applied when
 	// selecting this color presentation. Edits must not overlap with the main {@link ColorPresentation.textEdit edit} nor with themselves.
-	AdditionalTextEdits TODO_array `json:"additionalTextEdits"`
+	AdditionalTextEdits *[]TextEdit `json:"additionalTextEdits"`
 }
 
 type WorkDoneProgressOptions struct {
-	WorkDoneProgress TODO_base `json:"workDoneProgress"`
+	WorkDoneProgress *bool `json:"workDoneProgress"`
 }
 
 // General text document registration options.
@@ -119,7 +123,7 @@ type FoldingRangeParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
 	// The text document.
-	TextDocument *TextDocumentIdentifier `json:"textDocument"`
+	TextDocument TextDocumentIdentifier `json:"textDocument"`
 }
 
 // Represents a folding range. To be valid, start and end line must be bigger than zero and smaller
@@ -127,14 +131,14 @@ type FoldingRangeParams struct {
 type FoldingRange struct {
 	// The zero-based start line of the range to fold. The folded area starts after the line's last character.
 	// To be valid, the end must be zero or larger and smaller than the number of lines in the document.
-	StartLine TODO_base `json:"startLine"`
+	StartLine uint32 `json:"startLine"`
 	// The zero-based character offset from where the folded range starts. If not defined, defaults to the length of the start line.
-	StartCharacter TODO_base `json:"startCharacter"`
+	StartCharacter *uint32 `json:"startCharacter"`
 	// The zero-based end line of the range to fold. The folded area ends with the line's last character.
 	// To be valid, the end must be zero or larger and smaller than the number of lines in the document.
-	EndLine TODO_base `json:"endLine"`
+	EndLine uint32 `json:"endLine"`
 	// The zero-based character offset before the folded range ends. If not defined, defaults to the length of the end line.
-	EndCharacter TODO_base `json:"endCharacter"`
+	EndCharacter *uint32 `json:"endCharacter"`
 	// Describes the kind of the folding range such as 'comment' or 'region'. The kind
 	// is used to categorize folding ranges and used by commands like 'Fold all comments'.
 	// See {@link FoldingRangeKind} for an enumeration of standardized kinds.
@@ -144,7 +148,7 @@ type FoldingRange struct {
 	// will be chosen by the client.
 	//
 	// @since 3.17.0
-	CollapsedText TODO_base `json:"collapsedText"`
+	CollapsedText *string `json:"collapsedText"`
 }
 
 type FoldingRangeRegistrationOptions struct {
@@ -170,16 +174,16 @@ type SelectionRangeParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
 	// The text document.
-	TextDocument *TextDocumentIdentifier `json:"textDocument"`
+	TextDocument TextDocumentIdentifier `json:"textDocument"`
 	// The positions inside the text document.
-	Positions TODO_array `json:"positions"`
+	Positions []Position `json:"positions"`
 }
 
 // A selection range represents a part of a selection hierarchy. A selection range
 // may have a parent selection range that contains it.
 type SelectionRange struct {
 	// The {@link Range range} of this selection range.
-	Range *Range `json:"range"`
+	Range Range `json:"range"`
 	// The parent selection range containing this range. Therefore `parent.range` must contain `this.range`.
 	Parent *SelectionRange `json:"parent"`
 }
@@ -192,12 +196,12 @@ type SelectionRangeRegistrationOptions struct {
 
 type WorkDoneProgressCreateParams struct {
 	// The token to be used to report progress.
-	Token *ProgressToken `json:"token"`
+	Token ProgressToken `json:"token"`
 }
 
 type WorkDoneProgressCancelParams struct {
 	// The token to be used to report progress.
-	Token *ProgressToken `json:"token"`
+	Token ProgressToken `json:"token"`
 }
 
 // The parameter of a `textDocument/prepareCallHierarchy` request.
@@ -214,20 +218,20 @@ type CallHierarchyPrepareParams struct {
 // @since 3.16.0
 type CallHierarchyItem struct {
 	// The name of this item.
-	Name TODO_base `json:"name"`
+	Name string `json:"name"`
 	// The kind of this item.
-	Kind *SymbolKind `json:"kind"`
+	Kind SymbolKind `json:"kind"`
 	// Tags for this item.
-	Tags TODO_array `json:"tags"`
+	Tags *[]SymbolTag `json:"tags"`
 	// More detail for this item, e.g. the signature of a function.
-	Detail TODO_base `json:"detail"`
+	Detail *string `json:"detail"`
 	// The resource identifier of this item.
-	Uri TODO_base `json:"uri"`
+	Uri DocumentUri `json:"uri"`
 	// The range enclosing this symbol not including leading/trailing whitespace but everything else, e.g. comments and code.
-	Range *Range `json:"range"`
+	Range Range `json:"range"`
 	// The range that should be selected and revealed when this symbol is being picked, e.g. the name of a function.
 	// Must be contained by the {@link CallHierarchyItem.range `range`}.
-	SelectionRange *Range `json:"selectionRange"`
+	SelectionRange Range `json:"selectionRange"`
 	// A data entry field that is preserved between a call hierarchy prepare and
 	// incoming calls or outgoing calls requests.
 	Data *LSPAny `json:"data"`
@@ -248,7 +252,7 @@ type CallHierarchyRegistrationOptions struct {
 type CallHierarchyIncomingCallsParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
-	Item *CallHierarchyItem `json:"item"`
+	Item CallHierarchyItem `json:"item"`
 }
 
 // Represents an incoming call, e.g. a caller of a method or constructor.
@@ -256,10 +260,10 @@ type CallHierarchyIncomingCallsParams struct {
 // @since 3.16.0
 type CallHierarchyIncomingCall struct {
 	// The item that makes the call.
-	From *CallHierarchyItem `json:"from"`
+	From CallHierarchyItem `json:"from"`
 	// The ranges at which the calls appear. This is relative to the caller
 	// denoted by {@link CallHierarchyIncomingCall.from `this.from`}.
-	FromRanges TODO_array `json:"fromRanges"`
+	FromRanges []Range `json:"fromRanges"`
 }
 
 // The parameter of a `callHierarchy/outgoingCalls` request.
@@ -268,7 +272,7 @@ type CallHierarchyIncomingCall struct {
 type CallHierarchyOutgoingCallsParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
-	Item *CallHierarchyItem `json:"item"`
+	Item CallHierarchyItem `json:"item"`
 }
 
 // Represents an outgoing call, e.g. calling a getter from a method or a method from a constructor etc.
@@ -276,11 +280,11 @@ type CallHierarchyOutgoingCallsParams struct {
 // @since 3.16.0
 type CallHierarchyOutgoingCall struct {
 	// The item that is called.
-	To *CallHierarchyItem `json:"to"`
+	To CallHierarchyItem `json:"to"`
 	// The range at which this item is called. This is the range relative to the caller, e.g the item
 	// passed to {@link CallHierarchyItemProvider.provideCallHierarchyOutgoingCalls `provideCallHierarchyOutgoingCalls`}
 	// and not {@link CallHierarchyOutgoingCall.to `this.to`}.
-	FromRanges TODO_array `json:"fromRanges"`
+	FromRanges []Range `json:"fromRanges"`
 }
 
 // @since 3.16.0
@@ -288,7 +292,7 @@ type SemanticTokensParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
 	// The text document.
-	TextDocument *TextDocumentIdentifier `json:"textDocument"`
+	TextDocument TextDocumentIdentifier `json:"textDocument"`
 }
 
 // @since 3.16.0
@@ -297,14 +301,14 @@ type SemanticTokens struct {
 	// the client will include the result id in the next semantic token request.
 	// A server can then instead of computing all semantic tokens again simply
 	// send a delta.
-	ResultId TODO_base `json:"resultId"`
+	ResultId *string `json:"resultId"`
 	// The actual tokens.
-	Data TODO_array `json:"data"`
+	Data []uint32 `json:"data"`
 }
 
 // @since 3.16.0
 type SemanticTokensPartialResult struct {
-	Data TODO_array `json:"data"`
+	Data []uint32 `json:"data"`
 }
 
 // @since 3.16.0
@@ -319,22 +323,22 @@ type SemanticTokensDeltaParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
 	// The text document.
-	TextDocument *TextDocumentIdentifier `json:"textDocument"`
+	TextDocument TextDocumentIdentifier `json:"textDocument"`
 	// The result id of a previous response. The result Id can either point to a full response
 	// or a delta response depending on what was received last.
-	PreviousResultId TODO_base `json:"previousResultId"`
+	PreviousResultId string `json:"previousResultId"`
 }
 
 // @since 3.16.0
 type SemanticTokensDelta struct {
-	ResultId TODO_base `json:"resultId"`
+	ResultId *string `json:"resultId"`
 	// The semantic token edits to transform a previous result into a new result.
-	Edits TODO_array `json:"edits"`
+	Edits []SemanticTokensEdit `json:"edits"`
 }
 
 // @since 3.16.0
 type SemanticTokensDeltaPartialResult struct {
-	Edits TODO_array `json:"edits"`
+	Edits []SemanticTokensEdit `json:"edits"`
 }
 
 // @since 3.16.0
@@ -342,9 +346,9 @@ type SemanticTokensRangeParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
 	// The text document.
-	TextDocument *TextDocumentIdentifier `json:"textDocument"`
+	TextDocument TextDocumentIdentifier `json:"textDocument"`
 	// The range the semantic tokens are requested for.
-	Range *Range `json:"range"`
+	Range Range `json:"range"`
 }
 
 // Params to show a resource in the UI.
@@ -352,16 +356,16 @@ type SemanticTokensRangeParams struct {
 // @since 3.16.0
 type ShowDocumentParams struct {
 	// The uri to show.
-	Uri TODO_base `json:"uri"`
+	Uri URI `json:"uri"`
 	// Indicates to show the resource in an external program.
 	// To show, for example, `https://code.visualstudio.com/`
 	// in the default WEB browser set `external` to `true`.
-	External TODO_base `json:"external"`
+	External *bool `json:"external"`
 	// An optional property to indicate whether the editor
 	// showing the document should take focus or not.
 	// Clients might ignore this property if an external
 	// program is started.
-	TakeFocus TODO_base `json:"takeFocus"`
+	TakeFocus *bool `json:"takeFocus"`
 	// An optional selection range if the document is a text
 	// document. Clients might ignore the property if an
 	// external program is started or the file is not a text
@@ -374,7 +378,7 @@ type ShowDocumentParams struct {
 // @since 3.16.0
 type ShowDocumentResult struct {
 	// A boolean indicating if the show was successful.
-	Success TODO_base `json:"success"`
+	Success bool `json:"success"`
 }
 
 type LinkedEditingRangeParams struct {
@@ -388,11 +392,11 @@ type LinkedEditingRangeParams struct {
 type LinkedEditingRanges struct {
 	// A list of ranges that can be edited together. The ranges must have
 	// identical length and contain identical text content. The ranges cannot overlap.
-	Ranges TODO_array `json:"ranges"`
+	Ranges []Range `json:"ranges"`
 	// An optional word pattern (regular expression) that describes valid contents for
 	// the given ranges. If no pattern is provided, the client configuration's word
 	// pattern will be used.
-	WordPattern TODO_base `json:"wordPattern"`
+	WordPattern *string `json:"wordPattern"`
 }
 
 type LinkedEditingRangeRegistrationOptions struct {
@@ -407,7 +411,7 @@ type LinkedEditingRangeRegistrationOptions struct {
 // @since 3.16.0
 type CreateFilesParams struct {
 	// An array of all files/folders created in this operation.
-	Files TODO_array `json:"files"`
+	Files []FileCreate `json:"files"`
 }
 
 // A workspace edit represents changes to many resources managed in the workspace. The edit
@@ -424,7 +428,7 @@ type CreateFilesParams struct {
 // the client capability: `workspace.workspaceEdit.failureHandling`
 type WorkspaceEdit struct {
 	// Holds changes to existing resources.
-	Changes TODO_map `json:"changes"`
+	Changes *TODO_map `json:"changes"`
 	// Depending on the client capability `workspace.workspaceEdit.resourceOperations` document changes
 	// are either an array of `TextDocumentEdit`s to express changes to n different text documents
 	// where each text document edit addresses a specific version of a text document. Or it can contain
@@ -435,14 +439,14 @@ type WorkspaceEdit struct {
 	//
 	// If a client neither supports `documentChanges` nor `workspace.workspaceEdit.resourceOperations` then
 	// only plain `TextEdit`s using the `changes` property are supported.
-	DocumentChanges TODO_array `json:"documentChanges"`
+	DocumentChanges *[]TODO_or `json:"documentChanges"`
 	// A map of change annotations that can be referenced in `AnnotatedTextEdit`s or create, rename and
 	// delete file / folder operations.
 	//
 	// Whether clients honor this property depends on the client capability `workspace.changeAnnotationSupport`.
 	//
 	// @since 3.16.0
-	ChangeAnnotations TODO_map `json:"changeAnnotations"`
+	ChangeAnnotations *TODO_map `json:"changeAnnotations"`
 }
 
 // The options to register for file operations.
@@ -450,7 +454,7 @@ type WorkspaceEdit struct {
 // @since 3.16.0
 type FileOperationRegistrationOptions struct {
 	// The actual filters.
-	Filters TODO_array `json:"filters"`
+	Filters []FileOperationFilter `json:"filters"`
 }
 
 // The parameters sent in notifications/requests for user-initiated renames of
@@ -460,7 +464,7 @@ type FileOperationRegistrationOptions struct {
 type RenameFilesParams struct {
 	// An array of all files/folders renamed in this operation. When a folder is renamed, only
 	// the folder will be included, and not its children.
-	Files TODO_array `json:"files"`
+	Files []FileRename `json:"files"`
 }
 
 // The parameters sent in notifications/requests for user-initiated deletes of
@@ -469,7 +473,7 @@ type RenameFilesParams struct {
 // @since 3.16.0
 type DeleteFilesParams struct {
 	// An array of all files/folders deleted in this operation.
-	Files TODO_array `json:"files"`
+	Files []FileDelete `json:"files"`
 }
 
 type MonikerParams struct {
@@ -483,12 +487,12 @@ type MonikerParams struct {
 // @since 3.16.0
 type Moniker struct {
 	// The scheme of the moniker. For example tsc or .Net
-	Scheme TODO_base `json:"scheme"`
+	Scheme string `json:"scheme"`
 	// The identifier of the moniker. The value is opaque in LSIF however
 	// schema owners are allowed to define the structure if they want.
-	Identifier TODO_base `json:"identifier"`
+	Identifier string `json:"identifier"`
 	// The scope in which the moniker is unique
-	Unique *UniquenessLevel `json:"unique"`
+	Unique UniquenessLevel `json:"unique"`
 	// The moniker kind if known.
 	Kind *MonikerKind `json:"kind"`
 }
@@ -509,22 +513,22 @@ type TypeHierarchyPrepareParams struct {
 // @since 3.17.0
 type TypeHierarchyItem struct {
 	// The name of this item.
-	Name TODO_base `json:"name"`
+	Name string `json:"name"`
 	// The kind of this item.
-	Kind *SymbolKind `json:"kind"`
+	Kind SymbolKind `json:"kind"`
 	// Tags for this item.
-	Tags TODO_array `json:"tags"`
+	Tags *[]SymbolTag `json:"tags"`
 	// More detail for this item, e.g. the signature of a function.
-	Detail TODO_base `json:"detail"`
+	Detail *string `json:"detail"`
 	// The resource identifier of this item.
-	Uri TODO_base `json:"uri"`
+	Uri DocumentUri `json:"uri"`
 	// The range enclosing this symbol not including leading/trailing whitespace
 	// but everything else, e.g. comments and code.
-	Range *Range `json:"range"`
+	Range Range `json:"range"`
 	// The range that should be selected and revealed when this symbol is being
 	// picked, e.g. the name of a function. Must be contained by the
 	// {@link TypeHierarchyItem.range `range`}.
-	SelectionRange *Range `json:"selectionRange"`
+	SelectionRange Range `json:"selectionRange"`
 	// A data entry field that is preserved between a type hierarchy prepare and
 	// supertypes or subtypes requests. It could also be used to identify the
 	// type hierarchy in the server, helping improve the performance on
@@ -547,7 +551,7 @@ type TypeHierarchyRegistrationOptions struct {
 type TypeHierarchySupertypesParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
-	Item *TypeHierarchyItem `json:"item"`
+	Item TypeHierarchyItem `json:"item"`
 }
 
 // The parameter of a `typeHierarchy/subtypes` request.
@@ -556,7 +560,7 @@ type TypeHierarchySupertypesParams struct {
 type TypeHierarchySubtypesParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
-	Item *TypeHierarchyItem `json:"item"`
+	Item TypeHierarchyItem `json:"item"`
 }
 
 // A parameter literal used in inline value requests.
@@ -565,12 +569,12 @@ type TypeHierarchySubtypesParams struct {
 type InlineValueParams struct {
 	WorkDoneProgressParams
 	// The text document.
-	TextDocument *TextDocumentIdentifier `json:"textDocument"`
+	TextDocument TextDocumentIdentifier `json:"textDocument"`
 	// The document range for which inline values should be computed.
-	Range *Range `json:"range"`
+	Range Range `json:"range"`
 	// Additional information about the context in which inline values were
 	// requested.
-	Context *InlineValueContext `json:"context"`
+	Context InlineValueContext `json:"context"`
 }
 
 // Inline value options used during static or dynamic registration.
@@ -588,9 +592,9 @@ type InlineValueRegistrationOptions struct {
 type InlayHintParams struct {
 	WorkDoneProgressParams
 	// The text document.
-	TextDocument *TextDocumentIdentifier `json:"textDocument"`
+	TextDocument TextDocumentIdentifier `json:"textDocument"`
 	// The document range for which inlay hints should be computed.
-	Range *Range `json:"range"`
+	Range Range `json:"range"`
 }
 
 // Inlay hint information.
@@ -601,7 +605,7 @@ type InlayHint struct {
 	//
 	// If multiple hints have the same position, they will be shown in the order
 	// they appear in the response.
-	Position *Position `json:"position"`
+	Position Position `json:"position"`
 	// The label of this hint. A human readable string or an array of
 	// InlayHintLabelPart label parts.
 	//
@@ -615,21 +619,21 @@ type InlayHint struct {
 	// *Note* that edits are expected to change the document so that the inlay
 	// hint (or its nearest variant) is now part of the document and the inlay
 	// hint itself is now obsolete.
-	TextEdits TODO_array `json:"textEdits"`
+	TextEdits *[]TextEdit `json:"textEdits"`
 	// The tooltip text when you hover over this item.
-	Tooltip TODO_or `json:"tooltip"`
+	Tooltip *TODO_or `json:"tooltip"`
 	// Render padding before the hint.
 	//
 	// Note: Padding should use the editor's background color, not the
 	// background color of the hint itself. That means padding can be used
 	// to visually align/separate an inlay hint.
-	PaddingLeft TODO_base `json:"paddingLeft"`
+	PaddingLeft *bool `json:"paddingLeft"`
 	// Render padding after the hint.
 	//
 	// Note: Padding should use the editor's background color, not the
 	// background color of the hint itself. That means padding can be used
 	// to visually align/separate an inlay hint.
-	PaddingRight TODO_base `json:"paddingRight"`
+	PaddingRight *bool `json:"paddingRight"`
 	// A data entry field that is preserved on an inlay hint between
 	// a `textDocument/inlayHint` and a `inlayHint/resolve` request.
 	Data *LSPAny `json:"data"`
@@ -651,11 +655,11 @@ type DocumentDiagnosticParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
 	// The text document.
-	TextDocument *TextDocumentIdentifier `json:"textDocument"`
+	TextDocument TextDocumentIdentifier `json:"textDocument"`
 	// The additional identifier  provided during registration.
-	Identifier TODO_base `json:"identifier"`
+	Identifier *string `json:"identifier"`
 	// The result id of a previous response if provided.
-	PreviousResultId TODO_base `json:"previousResultId"`
+	PreviousResultId *string `json:"previousResultId"`
 }
 
 // A partial result for a document diagnostic report.
@@ -669,7 +673,7 @@ type DocumentDiagnosticReportPartialResult struct {
 //
 // @since 3.17.0
 type DiagnosticServerCancellationData struct {
-	RetriggerRequest TODO_base `json:"retriggerRequest"`
+	RetriggerRequest bool `json:"retriggerRequest"`
 }
 
 // Diagnostic registration options.
@@ -688,24 +692,24 @@ type WorkspaceDiagnosticParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
 	// The additional identifier provided during registration.
-	Identifier TODO_base `json:"identifier"`
+	Identifier *string `json:"identifier"`
 	// The currently known diagnostic reports with their
 	// previous result ids.
-	PreviousResultIds TODO_array `json:"previousResultIds"`
+	PreviousResultIds []PreviousResultId `json:"previousResultIds"`
 }
 
 // A workspace diagnostic report.
 //
 // @since 3.17.0
 type WorkspaceDiagnosticReport struct {
-	Items TODO_array `json:"items"`
+	Items []WorkspaceDocumentDiagnosticReport `json:"items"`
 }
 
 // A partial result for a workspace diagnostic report.
 //
 // @since 3.17.0
 type WorkspaceDiagnosticReportPartialResult struct {
-	Items TODO_array `json:"items"`
+	Items []WorkspaceDocumentDiagnosticReport `json:"items"`
 }
 
 // The params sent in an open notebook document notification.
@@ -713,10 +717,10 @@ type WorkspaceDiagnosticReportPartialResult struct {
 // @since 3.17.0
 type DidOpenNotebookDocumentParams struct {
 	// The notebook document that got opened.
-	NotebookDocument *NotebookDocument `json:"notebookDocument"`
+	NotebookDocument NotebookDocument `json:"notebookDocument"`
 	// The text documents that represent the content
 	// of a notebook cell.
-	CellTextDocuments TODO_array `json:"cellTextDocuments"`
+	CellTextDocuments []TextDocumentItem `json:"cellTextDocuments"`
 }
 
 // Registration options specific to a notebook.
@@ -735,7 +739,7 @@ type DidChangeNotebookDocumentParams struct {
 	// to the version after all provided changes have been applied. If
 	// only the text document content of a cell changes the notebook version
 	// doesn't necessarily have to change.
-	NotebookDocument *VersionedNotebookDocumentIdentifier `json:"notebookDocument"`
+	NotebookDocument VersionedNotebookDocumentIdentifier `json:"notebookDocument"`
 	// The actual changes to the notebook document.
 	//
 	// The changes describe single state changes to the notebook document.
@@ -749,7 +753,7 @@ type DidChangeNotebookDocumentParams struct {
 	// - apply the 'notebookDocument/didChange' notifications in the order you receive them.
 	// - apply the `NotebookChangeEvent`s in a single notification in the order
 	//   you receive them.
-	Change *NotebookDocumentChangeEvent `json:"change"`
+	Change NotebookDocumentChangeEvent `json:"change"`
 }
 
 // The params sent in a save notebook document notification.
@@ -757,7 +761,7 @@ type DidChangeNotebookDocumentParams struct {
 // @since 3.17.0
 type DidSaveNotebookDocumentParams struct {
 	// The notebook document that got saved.
-	NotebookDocument *NotebookDocumentIdentifier `json:"notebookDocument"`
+	NotebookDocument NotebookDocumentIdentifier `json:"notebookDocument"`
 }
 
 // The params sent in a close notebook document notification.
@@ -765,10 +769,10 @@ type DidSaveNotebookDocumentParams struct {
 // @since 3.17.0
 type DidCloseNotebookDocumentParams struct {
 	// The notebook document that got closed.
-	NotebookDocument *NotebookDocumentIdentifier `json:"notebookDocument"`
+	NotebookDocument NotebookDocumentIdentifier `json:"notebookDocument"`
 	// The text documents that represent the content
 	// of a notebook cell that got closed.
-	CellTextDocuments TODO_array `json:"cellTextDocuments"`
+	CellTextDocuments []TextDocumentIdentifier `json:"cellTextDocuments"`
 }
 
 // A parameter literal used in inline completion requests.
@@ -780,7 +784,7 @@ type InlineCompletionParams struct {
 	WorkDoneProgressParams
 	// Additional information about the context in which inline completions were
 	// requested.
-	Context *InlineCompletionContext `json:"context"`
+	Context InlineCompletionContext `json:"context"`
 }
 
 // Represents a collection of {@link InlineCompletionItem inline completion items} to be presented in the editor.
@@ -789,7 +793,7 @@ type InlineCompletionParams struct {
 // @proposed
 type InlineCompletionList struct {
 	// The inline completion items
-	Items TODO_array `json:"items"`
+	Items []InlineCompletionItem `json:"items"`
 }
 
 // An inline completion item represents a text snippet that is proposed inline to complete text that is being typed.
@@ -800,7 +804,7 @@ type InlineCompletionItem struct {
 	// The text to replace the range with. Must be set.
 	InsertText TODO_or `json:"insertText"`
 	// A text that is used to decide if this inline completion should be shown. When `falsy` the {@link InlineCompletionItem.insertText} is used.
-	FilterText TODO_base `json:"filterText"`
+	FilterText *string `json:"filterText"`
 	// The range to replace. Must begin and end on the same line.
 	Range *Range `json:"range"`
 	// An optional {@link Command} that is executed *after* inserting this completion.
@@ -823,7 +827,7 @@ type InlineCompletionRegistrationOptions struct {
 // @proposed
 type TextDocumentContentParams struct {
 	// The uri of the text document.
-	Uri TODO_base `json:"uri"`
+	Uri DocumentUri `json:"uri"`
 }
 
 // Result of the `workspace/textDocumentContent` request.
@@ -835,7 +839,7 @@ type TextDocumentContentResult struct {
 	// any subsequent open notifications for the text document might differ
 	// from the returned content due to whitespace and line ending
 	// normalizations done on the client
-	Text TODO_base `json:"text"`
+	Text string `json:"text"`
 }
 
 // Text document content provider registration options.
@@ -853,15 +857,15 @@ type TextDocumentContentRegistrationOptions struct {
 // @proposed
 type TextDocumentContentRefreshParams struct {
 	// The uri of the text document to refresh.
-	Uri TODO_base `json:"uri"`
+	Uri DocumentUri `json:"uri"`
 }
 
 type RegistrationParams struct {
-	Registrations TODO_array `json:"registrations"`
+	Registrations []Registration `json:"registrations"`
 }
 
 type UnregistrationParams struct {
-	Unregisterations TODO_array `json:"unregisterations"`
+	Unregisterations []Unregistration `json:"unregisterations"`
 }
 
 type InitializeParams struct {
@@ -872,7 +876,7 @@ type InitializeParams struct {
 // The result returned from an initialize request.
 type InitializeResult struct {
 	// The capabilities the language server provides.
-	Capabilities *ServerCapabilities `json:"capabilities"`
+	Capabilities ServerCapabilities `json:"capabilities"`
 	// Information about the server.
 	//
 	// @since 3.15.0
@@ -886,7 +890,7 @@ type InitializeError struct {
 	// (1) show the message provided by the ResponseError to the user
 	// (2) user selects retry or cancel
 	// (3) if user selected retry the initialize method is sent again.
-	Retry TODO_base `json:"retry"`
+	Retry bool `json:"retry"`
 }
 
 type InitializedParams struct {
@@ -895,47 +899,47 @@ type InitializedParams struct {
 // The parameters of a change configuration notification.
 type DidChangeConfigurationParams struct {
 	// The actual changed settings
-	Settings *LSPAny `json:"settings"`
+	Settings LSPAny `json:"settings"`
 }
 
 type DidChangeConfigurationRegistrationOptions struct {
-	Section TODO_or `json:"section"`
+	Section *TODO_or `json:"section"`
 }
 
 // The parameters of a notification message.
 type ShowMessageParams struct {
 	// The message type. See {@link MessageType}
-	Type *MessageType `json:"type"`
+	Type MessageType `json:"type"`
 	// The actual message.
-	Message TODO_base `json:"message"`
+	Message string `json:"message"`
 }
 
 type ShowMessageRequestParams struct {
 	// The message type. See {@link MessageType}
-	Type *MessageType `json:"type"`
+	Type MessageType `json:"type"`
 	// The actual message.
-	Message TODO_base `json:"message"`
+	Message string `json:"message"`
 	// The message action items to present.
-	Actions TODO_array `json:"actions"`
+	Actions *[]MessageActionItem `json:"actions"`
 }
 
 type MessageActionItem struct {
 	// A short title like 'Retry', 'Open Log' etc.
-	Title TODO_base `json:"title"`
+	Title string `json:"title"`
 }
 
 // The log message parameters.
 type LogMessageParams struct {
 	// The message type. See {@link MessageType}
-	Type *MessageType `json:"type"`
+	Type MessageType `json:"type"`
 	// The actual message.
-	Message TODO_base `json:"message"`
+	Message string `json:"message"`
 }
 
 // The parameters sent in an open text document notification
 type DidOpenTextDocumentParams struct {
 	// The document that was opened.
-	TextDocument *TextDocumentItem `json:"textDocument"`
+	TextDocument TextDocumentItem `json:"textDocument"`
 }
 
 // The change text document notification's parameters.
@@ -943,7 +947,7 @@ type DidChangeTextDocumentParams struct {
 	// The document that did change. The version number points
 	// to the version after all provided content changes have
 	// been applied.
-	TextDocument *VersionedTextDocumentIdentifier `json:"textDocument"`
+	TextDocument VersionedTextDocumentIdentifier `json:"textDocument"`
 	// The actual content changes. The content changes describe single state changes
 	// to the document. So if there are two content changes c1 (at array index 0) and
 	// c2 (at array index 1) for a document in state S then c1 moves the document from
@@ -955,29 +959,29 @@ type DidChangeTextDocumentParams struct {
 	// - apply the 'textDocument/didChange' notifications in the order you receive them.
 	// - apply the `TextDocumentContentChangeEvent`s in a single notification in the order
 	//   you receive them.
-	ContentChanges TODO_array `json:"contentChanges"`
+	ContentChanges []TextDocumentContentChangeEvent `json:"contentChanges"`
 }
 
 // Describe options to be used when registered for text document change events.
 type TextDocumentChangeRegistrationOptions struct {
 	TextDocumentRegistrationOptions
 	// How documents are synced to the server.
-	SyncKind *TextDocumentSyncKind `json:"syncKind"`
+	SyncKind TextDocumentSyncKind `json:"syncKind"`
 }
 
 // The parameters sent in a close text document notification
 type DidCloseTextDocumentParams struct {
 	// The document that was closed.
-	TextDocument *TextDocumentIdentifier `json:"textDocument"`
+	TextDocument TextDocumentIdentifier `json:"textDocument"`
 }
 
 // The parameters sent in a save text document notification
 type DidSaveTextDocumentParams struct {
 	// The document that was saved.
-	TextDocument *TextDocumentIdentifier `json:"textDocument"`
+	TextDocument TextDocumentIdentifier `json:"textDocument"`
 	// Optional the content when saved. Depends on the includeText value
 	// when the save notification was requested.
-	Text TODO_base `json:"text"`
+	Text *string `json:"text"`
 }
 
 // Save registration options.
@@ -989,43 +993,43 @@ type TextDocumentSaveRegistrationOptions struct {
 // The parameters sent in a will save text document notification.
 type WillSaveTextDocumentParams struct {
 	// The document that will be saved.
-	TextDocument *TextDocumentIdentifier `json:"textDocument"`
+	TextDocument TextDocumentIdentifier `json:"textDocument"`
 	// The 'TextDocumentSaveReason'.
-	Reason *TextDocumentSaveReason `json:"reason"`
+	Reason TextDocumentSaveReason `json:"reason"`
 }
 
 // A text edit applicable to a text document.
 type TextEdit struct {
 	// The range of the text document to be manipulated. To insert
 	// text into a document create a range where start === end.
-	Range *Range `json:"range"`
+	Range Range `json:"range"`
 	// The string to be inserted. For delete operations use an
 	// empty string.
-	NewText TODO_base `json:"newText"`
+	NewText string `json:"newText"`
 }
 
 // The watched files change notification's parameters.
 type DidChangeWatchedFilesParams struct {
 	// The actual file events.
-	Changes TODO_array `json:"changes"`
+	Changes []FileEvent `json:"changes"`
 }
 
 // Describe options to be used when registered for text document change events.
 type DidChangeWatchedFilesRegistrationOptions struct {
 	// The watchers to register.
-	Watchers TODO_array `json:"watchers"`
+	Watchers []FileSystemWatcher `json:"watchers"`
 }
 
 // The publish diagnostic notification's parameters.
 type PublishDiagnosticsParams struct {
 	// The URI for which diagnostic information is reported.
-	Uri TODO_base `json:"uri"`
+	Uri DocumentUri `json:"uri"`
 	// Optional the version number of the document the diagnostics are published for.
 	//
 	// @since 3.15.0
-	Version TODO_base `json:"version"`
+	Version *int32 `json:"version"`
 	// An array of diagnostic information items.
-	Diagnostics TODO_array `json:"diagnostics"`
+	Diagnostics []Diagnostic `json:"diagnostics"`
 }
 
 // Completion parameters
@@ -1048,7 +1052,7 @@ type CompletionItem struct {
 	//
 	// If label details are provided the label itself should
 	// be an unqualified name of the completion item.
-	Label TODO_base `json:"label"`
+	Label string `json:"label"`
 	// Additional details for the label
 	//
 	// @since 3.17.0
@@ -1059,30 +1063,30 @@ type CompletionItem struct {
 	// Tags for this completion item.
 	//
 	// @since 3.15.0
-	Tags TODO_array `json:"tags"`
+	Tags *[]CompletionItemTag `json:"tags"`
 	// A human-readable string with additional information
 	// about this item, like type or symbol information.
-	Detail TODO_base `json:"detail"`
+	Detail *string `json:"detail"`
 	// A human-readable string that represents a doc-comment.
-	Documentation TODO_or `json:"documentation"`
+	Documentation *TODO_or `json:"documentation"`
 	// Indicates if this item is deprecated.
 	// @deprecated Use `tags` instead.
 	// Deprecated: Use `tags` instead.
-	Deprecated TODO_base `json:"deprecated"`
+	Deprecated *bool `json:"deprecated"`
 	// Select this item when showing.
 	//
 	// *Note* that only one completion item can be selected and that the
 	// tool / client decides which item that is. The rule is that the *first*
 	// item of those that match best is selected.
-	Preselect TODO_base `json:"preselect"`
+	Preselect *bool `json:"preselect"`
 	// A string that should be used when comparing this item
 	// with other items. When `falsy` the {@link CompletionItem.label label}
 	// is used.
-	SortText TODO_base `json:"sortText"`
+	SortText *string `json:"sortText"`
 	// A string that should be used when filtering a set of
 	// completion items. When `falsy` the {@link CompletionItem.label label}
 	// is used.
-	FilterText TODO_base `json:"filterText"`
+	FilterText *string `json:"filterText"`
 	// A string that should be inserted into a document when selecting
 	// this completion. When `falsy` the {@link CompletionItem.label label}
 	// is used.
@@ -1094,7 +1098,7 @@ type CompletionItem struct {
 	// `console` is provided it will only insert `sole`. Therefore it is
 	// recommended to use `textEdit` instead since it avoids additional client
 	// side interpretation.
-	InsertText TODO_base `json:"insertText"`
+	InsertText *string `json:"insertText"`
 	// The format of the insert text. The format applies to both the
 	// `insertText` property and the `newText` property of a provided
 	// `textEdit`. If omitted defaults to `InsertTextFormat.PlainText`.
@@ -1128,7 +1132,7 @@ type CompletionItem struct {
 	// contained and starting at the same position.
 	//
 	// @since 3.16.0 additional type `InsertReplaceEdit`
-	TextEdit TODO_or `json:"textEdit"`
+	TextEdit *TODO_or `json:"textEdit"`
 	// The edit text used if the completion item is part of a CompletionList and
 	// CompletionList defines an item default for the text edit range.
 	//
@@ -1139,7 +1143,7 @@ type CompletionItem struct {
 	// property is used as a text.
 	//
 	// @since 3.17.0
-	TextEditText TODO_base `json:"textEditText"`
+	TextEditText *string `json:"textEditText"`
 	// An optional array of additional {@link TextEdit text edits} that are applied when
 	// selecting this completion. Edits must not overlap (including the same insert position)
 	// with the main {@link CompletionItem.textEdit edit} nor with themselves.
@@ -1147,11 +1151,11 @@ type CompletionItem struct {
 	// Additional text edits should be used to change text unrelated to the current cursor position
 	// (for example adding an import statement at the top of the file if the completion item will
 	// insert an unqualified type).
-	AdditionalTextEdits TODO_array `json:"additionalTextEdits"`
+	AdditionalTextEdits *[]TextEdit `json:"additionalTextEdits"`
 	// An optional set of characters that when pressed while this completion is active will accept it first and
 	// then type that character. *Note* that all commit characters should have `length=1` and that superfluous
 	// characters will be ignored.
-	CommitCharacters TODO_array `json:"commitCharacters"`
+	CommitCharacters *[]string `json:"commitCharacters"`
 	// An optional {@link Command command} that is executed *after* inserting this completion. *Note* that
 	// additional modifications to the current document should be described with the
 	// {@link CompletionItem.additionalTextEdits additionalTextEdits}-property.
@@ -1168,7 +1172,7 @@ type CompletionList struct {
 	//
 	// Recomputed lists have all their items replaced (not appended) in the
 	// incomplete completion sessions.
-	IsIncomplete TODO_base `json:"isIncomplete"`
+	IsIncomplete bool `json:"isIncomplete"`
 	// In many cases the items of an actual completion result share the same
 	// value for properties like `commitCharacters` or the range of a text
 	// edit. A completion list can therefore define item defaults which will
@@ -1204,7 +1208,7 @@ type CompletionList struct {
 	// @since 3.18.0
 	ApplyKind *CompletionItemApplyKinds `json:"applyKind"`
 	// The completion items.
-	Items TODO_array `json:"items"`
+	Items []CompletionItem `json:"items"`
 }
 
 // Registration options for a {@link CompletionRequest}.
@@ -1250,7 +1254,7 @@ type SignatureHelpParams struct {
 // active and only one active parameter.
 type SignatureHelp struct {
 	// One or more signatures.
-	Signatures TODO_array `json:"signatures"`
+	Signatures []SignatureInformation `json:"signatures"`
 	// The active signature. If omitted or the value lies outside the
 	// range of `signatures` the value defaults to zero or is ignored if
 	// the `SignatureHelp` has no signatures.
@@ -1260,7 +1264,7 @@ type SignatureHelp struct {
 	//
 	// In future version of the protocol this property might become
 	// mandatory to better express this.
-	ActiveSignature TODO_base `json:"activeSignature"`
+	ActiveSignature *uint32 `json:"activeSignature"`
 	// The active parameter of the active signature.
 	//
 	// If `null`, no parameter of the signature is active (for example a named
@@ -1277,7 +1281,7 @@ type SignatureHelp struct {
 	// In future version of the protocol this property might become
 	// mandatory (but still nullable) to better express the active parameter if
 	// the active signature does have any.
-	ActiveParameter TODO_or `json:"activeParameter"`
+	ActiveParameter *TODO_or `json:"activeParameter"`
 }
 
 // Registration options for a {@link SignatureHelpRequest}.
@@ -1304,7 +1308,7 @@ type ReferenceParams struct {
 	TextDocumentPositionParams
 	WorkDoneProgressParams
 	PartialResultParams
-	Context *ReferenceContext `json:"context"`
+	Context ReferenceContext `json:"context"`
 }
 
 // Registration options for a {@link ReferencesRequest}.
@@ -1325,7 +1329,7 @@ type DocumentHighlightParams struct {
 // the background color of its range.
 type DocumentHighlight struct {
 	// The range this highlight applies to.
-	Range *Range `json:"range"`
+	Range Range `json:"range"`
 	// The highlight kind, default is {@link DocumentHighlightKind.Text text}.
 	Kind *DocumentHighlightKind `json:"kind"`
 }
@@ -1341,7 +1345,7 @@ type DocumentSymbolParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
 	// The text document.
-	TextDocument *TextDocumentIdentifier `json:"textDocument"`
+	TextDocument TextDocumentIdentifier `json:"textDocument"`
 }
 
 // Represents information about programming constructs like variables, classes,
@@ -1352,7 +1356,7 @@ type SymbolInformation struct {
 	//
 	// @deprecated Use tags instead
 	// Deprecated: Use tags instead
-	Deprecated TODO_base `json:"deprecated"`
+	Deprecated *bool `json:"deprecated"`
 	// The location of this symbol. The location's range is used by a tool
 	// to reveal the location in the editor. If the symbol is selected in the
 	// tool the range's start information is used to position the cursor. So
@@ -1362,7 +1366,7 @@ type SymbolInformation struct {
 	// The range doesn't have to denote a node range in the sense of an abstract
 	// syntax tree. It can therefore not be used to re-construct a hierarchy of
 	// the symbols.
-	Location *Location `json:"location"`
+	Location Location `json:"location"`
 }
 
 // Represents programming constructs like variables, classes, interfaces etc.
@@ -1372,29 +1376,29 @@ type SymbolInformation struct {
 type DocumentSymbol struct {
 	// The name of this symbol. Will be displayed in the user interface and therefore must not be
 	// an empty string or a string only consisting of white spaces.
-	Name TODO_base `json:"name"`
+	Name string `json:"name"`
 	// More detail for this symbol, e.g the signature of a function.
-	Detail TODO_base `json:"detail"`
+	Detail *string `json:"detail"`
 	// The kind of this symbol.
-	Kind *SymbolKind `json:"kind"`
+	Kind SymbolKind `json:"kind"`
 	// Tags for this document symbol.
 	//
 	// @since 3.16.0
-	Tags TODO_array `json:"tags"`
+	Tags *[]SymbolTag `json:"tags"`
 	// Indicates if this symbol is deprecated.
 	//
 	// @deprecated Use tags instead
 	// Deprecated: Use tags instead
-	Deprecated TODO_base `json:"deprecated"`
+	Deprecated *bool `json:"deprecated"`
 	// The range enclosing this symbol not including leading/trailing whitespace but everything else
 	// like comments. This information is typically used to determine if the clients cursor is
 	// inside the symbol to reveal in the symbol in the UI.
-	Range *Range `json:"range"`
+	Range Range `json:"range"`
 	// The range that should be selected and revealed when this symbol is being picked, e.g the name of a function.
 	// Must be contained by the `range`.
-	SelectionRange *Range `json:"selectionRange"`
+	SelectionRange Range `json:"selectionRange"`
 	// Children of this symbol, e.g. properties of a class.
-	Children TODO_array `json:"children"`
+	Children *[]DocumentSymbol `json:"children"`
 }
 
 // Registration options for a {@link DocumentSymbolRequest}.
@@ -1408,11 +1412,11 @@ type CodeActionParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
 	// The document in which the command was invoked.
-	TextDocument *TextDocumentIdentifier `json:"textDocument"`
+	TextDocument TextDocumentIdentifier `json:"textDocument"`
 	// The range for which the command was invoked.
-	Range *Range `json:"range"`
+	Range Range `json:"range"`
 	// Context carrying additional information.
-	Context *CodeActionContext `json:"context"`
+	Context CodeActionContext `json:"context"`
 }
 
 // Represents a reference to a command. Provides a title which
@@ -1421,17 +1425,17 @@ type CodeActionParams struct {
 // function when invoked.
 type Command struct {
 	// Title of the command, like `save`.
-	Title TODO_base `json:"title"`
+	Title string `json:"title"`
 	// An optional tooltip.
 	//
 	// @since 3.18.0
 	// @proposed
-	Tooltip TODO_base `json:"tooltip"`
+	Tooltip *string `json:"tooltip"`
 	// The identifier of the actual command handler.
-	Command TODO_base `json:"command"`
+	Command string `json:"command"`
 	// Arguments that the command handler should be
 	// invoked with.
-	Arguments TODO_array `json:"arguments"`
+	Arguments *[]LSPAny `json:"arguments"`
 }
 
 // A code action represents a change that can be performed in code, e.g. to fix a problem or
@@ -1440,13 +1444,13 @@ type Command struct {
 // A CodeAction must set either `edit` and/or a `command`. If both are supplied, the `edit` is applied first, then the `command` is executed.
 type CodeAction struct {
 	// A short, human-readable, title for this code action.
-	Title TODO_base `json:"title"`
+	Title string `json:"title"`
 	// The kind of the code action.
 	//
 	// Used to filter code actions.
 	Kind *CodeActionKind `json:"kind"`
 	// The diagnostics that this code action resolves.
-	Diagnostics TODO_array `json:"diagnostics"`
+	Diagnostics *[]Diagnostic `json:"diagnostics"`
 	// Marks this as a preferred action. Preferred actions are used by the `auto fix` command and can be targeted
 	// by keybindings.
 	//
@@ -1454,7 +1458,7 @@ type CodeAction struct {
 	// A refactoring should be marked preferred if it is the most reasonable choice of actions to take.
 	//
 	// @since 3.15.0
-	IsPreferred TODO_base `json:"isPreferred"`
+	IsPreferred *bool `json:"isPreferred"`
 	// Marks that the code action cannot currently be applied.
 	//
 	// Clients should follow the following guidelines regarding disabled code actions:
@@ -1485,7 +1489,7 @@ type CodeAction struct {
 	// Tags for this code action.
 	//
 	// @since 3.18.0 - proposed
-	Tags TODO_array `json:"tags"`
+	Tags *[]CodeActionTag `json:"tags"`
 }
 
 // Registration options for a {@link CodeActionRequest}.
@@ -1506,7 +1510,7 @@ type WorkspaceSymbolParams struct {
 	// of thumb is to match case-insensitive and to simply check that the
 	// characters of *query* appear in their order in a candidate symbol.
 	// Servers shouldn't use prefix, substring, or similar strict matching.
-	Query TODO_base `json:"query"`
+	Query string `json:"query"`
 }
 
 // A special workspace symbol that supports locations without a range.
@@ -1537,7 +1541,7 @@ type CodeLensParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
 	// The document to request code lens for.
-	TextDocument *TextDocumentIdentifier `json:"textDocument"`
+	TextDocument TextDocumentIdentifier `json:"textDocument"`
 }
 
 // A code lens represents a {@link Command command} that should be shown along with
@@ -1547,7 +1551,7 @@ type CodeLensParams struct {
 // reasons the creation of a code lens and resolving should be done in two stages.
 type CodeLens struct {
 	// The range in which this code lens is valid. Should only span a single line.
-	Range *Range `json:"range"`
+	Range Range `json:"range"`
 	// The command this code lens represents.
 	Command *Command `json:"command"`
 	// A data entry field that is preserved on a code lens item between
@@ -1566,16 +1570,16 @@ type DocumentLinkParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
 	// The document to provide document links for.
-	TextDocument *TextDocumentIdentifier `json:"textDocument"`
+	TextDocument TextDocumentIdentifier `json:"textDocument"`
 }
 
 // A document link is a range in a text document that links to an internal or external resource, like another
 // text document or a web site.
 type DocumentLink struct {
 	// The range this link applies to.
-	Range *Range `json:"range"`
+	Range Range `json:"range"`
 	// The uri this link points to. If missing a resolve request is sent later.
-	Target TODO_base `json:"target"`
+	Target *URI `json:"target"`
 	// The tooltip text when you hover over this link.
 	//
 	// If a tooltip is provided, is will be displayed in a string that includes instructions on how to
@@ -1583,7 +1587,7 @@ type DocumentLink struct {
 	// user settings, and localization.
 	//
 	// @since 3.15.0
-	Tooltip TODO_base `json:"tooltip"`
+	Tooltip *string `json:"tooltip"`
 	// A data entry field that is preserved on a document link between a
 	// DocumentLinkRequest and a DocumentLinkResolveRequest.
 	Data *LSPAny `json:"data"`
@@ -1599,9 +1603,9 @@ type DocumentLinkRegistrationOptions struct {
 type DocumentFormattingParams struct {
 	WorkDoneProgressParams
 	// The document to format.
-	TextDocument *TextDocumentIdentifier `json:"textDocument"`
+	TextDocument TextDocumentIdentifier `json:"textDocument"`
 	// The format options.
-	Options *FormattingOptions `json:"options"`
+	Options FormattingOptions `json:"options"`
 }
 
 // Registration options for a {@link DocumentFormattingRequest}.
@@ -1614,11 +1618,11 @@ type DocumentFormattingRegistrationOptions struct {
 type DocumentRangeFormattingParams struct {
 	WorkDoneProgressParams
 	// The document to format.
-	TextDocument *TextDocumentIdentifier `json:"textDocument"`
+	TextDocument TextDocumentIdentifier `json:"textDocument"`
 	// The range to format
-	Range *Range `json:"range"`
+	Range Range `json:"range"`
 	// The format options
-	Options *FormattingOptions `json:"options"`
+	Options FormattingOptions `json:"options"`
 }
 
 // Registration options for a {@link DocumentRangeFormattingRequest}.
@@ -1634,28 +1638,28 @@ type DocumentRangeFormattingRegistrationOptions struct {
 type DocumentRangesFormattingParams struct {
 	WorkDoneProgressParams
 	// The document to format.
-	TextDocument *TextDocumentIdentifier `json:"textDocument"`
+	TextDocument TextDocumentIdentifier `json:"textDocument"`
 	// The ranges to format
-	Ranges TODO_array `json:"ranges"`
+	Ranges []Range `json:"ranges"`
 	// The format options
-	Options *FormattingOptions `json:"options"`
+	Options FormattingOptions `json:"options"`
 }
 
 // The parameters of a {@link DocumentOnTypeFormattingRequest}.
 type DocumentOnTypeFormattingParams struct {
 	// The document to format.
-	TextDocument *TextDocumentIdentifier `json:"textDocument"`
+	TextDocument TextDocumentIdentifier `json:"textDocument"`
 	// The position around which the on type formatting should happen.
 	// This is not necessarily the exact position where the character denoted
 	// by the property `ch` got typed.
-	Position *Position `json:"position"`
+	Position Position `json:"position"`
 	// The character that has been typed that triggered the formatting
 	// on type request. That is not necessarily the last character that
 	// got inserted into the document since the client could auto insert
 	// characters as well (e.g. like automatic brace completion).
-	Ch TODO_base `json:"ch"`
+	Ch string `json:"ch"`
 	// The formatting options.
-	Options *FormattingOptions `json:"options"`
+	Options FormattingOptions `json:"options"`
 }
 
 // Registration options for a {@link DocumentOnTypeFormattingRequest}.
@@ -1668,13 +1672,13 @@ type DocumentOnTypeFormattingRegistrationOptions struct {
 type RenameParams struct {
 	WorkDoneProgressParams
 	// The document to rename.
-	TextDocument *TextDocumentIdentifier `json:"textDocument"`
+	TextDocument TextDocumentIdentifier `json:"textDocument"`
 	// The position at which this request was sent.
-	Position *Position `json:"position"`
+	Position Position `json:"position"`
 	// The new name of the symbol. If the given name is not valid the
 	// request must return a {@link ResponseError} with an
 	// appropriate message set.
-	NewName TODO_base `json:"newName"`
+	NewName string `json:"newName"`
 }
 
 // Registration options for a {@link RenameRequest}.
@@ -1692,9 +1696,9 @@ type PrepareRenameParams struct {
 type ExecuteCommandParams struct {
 	WorkDoneProgressParams
 	// The identifier of the actual command handler.
-	Command TODO_base `json:"command"`
+	Command string `json:"command"`
 	// Arguments that the command should be invoked with.
-	Arguments TODO_array `json:"arguments"`
+	Arguments *[]LSPAny `json:"arguments"`
 }
 
 // Registration options for a {@link ExecuteCommandRequest}.
@@ -1707,9 +1711,9 @@ type ApplyWorkspaceEditParams struct {
 	// An optional label of the workspace edit. This label is
 	// presented in the user interface for example on an undo
 	// stack to undo the workspace edit.
-	Label TODO_base `json:"label"`
+	Label *string `json:"label"`
 	// The edits to apply.
-	Edit *WorkspaceEdit `json:"edit"`
+	Edit WorkspaceEdit `json:"edit"`
 	// Additional data about the edit.
 	//
 	// @since 3.18.0
@@ -1722,15 +1726,15 @@ type ApplyWorkspaceEditParams struct {
 // @since 3.17 renamed from ApplyWorkspaceEditResponse
 type ApplyWorkspaceEditResult struct {
 	// Indicates whether the edit was applied or not.
-	Applied TODO_base `json:"applied"`
+	Applied bool `json:"applied"`
 	// An optional textual description for why the edit was not applied.
 	// This may be used by the server for diagnostic logging or to provide
 	// a suitable error for a request that triggered the edit.
-	FailureReason TODO_base `json:"failureReason"`
+	FailureReason *string `json:"failureReason"`
 	// Depending on the client's failure handling strategy `failedChange` might
 	// contain the index of the change that failed. This property is only available
 	// if the client signals a `failureHandlingStrategy` in its client capabilities.
-	FailedChange TODO_base `json:"failedChange"`
+	FailedChange *uint32 `json:"failedChange"`
 }
 
 type WorkDoneProgressBegin struct {
@@ -1739,24 +1743,24 @@ type WorkDoneProgressBegin struct {
 	// the kind of operation being performed.
 	//
 	// Examples: "Indexing" or "Linking dependencies".
-	Title TODO_base `json:"title"`
+	Title string `json:"title"`
 	// Controls if a cancel button should show to allow the user to cancel the
 	// long running operation. Clients that don't support cancellation are allowed
 	// to ignore the setting.
-	Cancellable TODO_base `json:"cancellable"`
+	Cancellable *bool `json:"cancellable"`
 	// Optional, more detailed associated progress message. Contains
 	// complementary information to the `title`.
 	//
 	// Examples: "3/25 files", "project/src/module2", "node_modules/some_dep".
 	// If unset, the previous progress message (if any) is still valid.
-	Message TODO_base `json:"message"`
+	Message *string `json:"message"`
 	// Optional progress percentage to display (value 100 is considered 100%).
 	// If not provided infinite progress is assumed and clients are allowed
 	// to ignore the `percentage` value in subsequent in report notifications.
 	//
 	// The value should be steadily rising. Clients are free to ignore values
 	// that are not following this rule. The value range is [0, 100].
-	Percentage TODO_base `json:"percentage"`
+	Percentage *uint32 `json:"percentage"`
 }
 
 type WorkDoneProgressReport struct {
@@ -1765,36 +1769,36 @@ type WorkDoneProgressReport struct {
 	//
 	// Clients that don't support cancellation or don't support controlling the button's
 	// enablement state are allowed to ignore the property.
-	Cancellable TODO_base `json:"cancellable"`
+	Cancellable *bool `json:"cancellable"`
 	// Optional, more detailed associated progress message. Contains
 	// complementary information to the `title`.
 	//
 	// Examples: "3/25 files", "project/src/module2", "node_modules/some_dep".
 	// If unset, the previous progress message (if any) is still valid.
-	Message TODO_base `json:"message"`
+	Message *string `json:"message"`
 	// Optional progress percentage to display (value 100 is considered 100%).
 	// If not provided infinite progress is assumed and clients are allowed
 	// to ignore the `percentage` value in subsequent in report notifications.
 	//
 	// The value should be steadily rising. Clients are free to ignore values
 	// that are not following this rule. The value range is [0, 100]
-	Percentage TODO_base `json:"percentage"`
+	Percentage *uint32 `json:"percentage"`
 }
 
 type WorkDoneProgressEnd struct {
 	Kind TODO_stringLiteral `json:"kind"`
 	// Optional, a final message indicating to for example indicate the outcome
 	// of the operation.
-	Message TODO_base `json:"message"`
+	Message *string `json:"message"`
 }
 
 type SetTraceParams struct {
-	Value *TraceValue `json:"value"`
+	Value TraceValue `json:"value"`
 }
 
 type LogTraceParams struct {
-	Message TODO_base `json:"message"`
-	Verbose TODO_base `json:"verbose"`
+	Message string  `json:"message"`
+	Verbose *string `json:"verbose"`
 }
 
 type CancelParams struct {
@@ -1804,18 +1808,18 @@ type CancelParams struct {
 
 type ProgressParams struct {
 	// The progress token provided by the client or server.
-	Token *ProgressToken `json:"token"`
+	Token ProgressToken `json:"token"`
 	// The progress data.
-	Value *LSPAny `json:"value"`
+	Value LSPAny `json:"value"`
 }
 
 // A parameter literal used in requests to pass a text document and a position inside that
 // document.
 type TextDocumentPositionParams struct {
 	// The text document.
-	TextDocument *TextDocumentIdentifier `json:"textDocument"`
+	TextDocument TextDocumentIdentifier `json:"textDocument"`
 	// The position inside the text document.
-	Position *Position `json:"position"`
+	Position Position `json:"position"`
 }
 
 type WorkDoneProgressParams struct {
@@ -1838,14 +1842,14 @@ type LocationLink struct {
 	// the definition position.
 	OriginSelectionRange *Range `json:"originSelectionRange"`
 	// The target resource identifier of this link.
-	TargetUri TODO_base `json:"targetUri"`
+	TargetUri DocumentUri `json:"targetUri"`
 	// The full target range of this link. If the target for example is a symbol then target range is the
 	// range enclosing this symbol not including leading/trailing whitespace but everything else
 	// like comments. This information is typically used to highlight the range in the editor.
-	TargetRange *Range `json:"targetRange"`
+	TargetRange Range `json:"targetRange"`
 	// The range that should be selected and revealed when this link is being followed, e.g the name of a function.
 	// Must be contained by the `targetRange`. See also `DocumentSymbol#range`
-	TargetSelectionRange *Range `json:"targetSelectionRange"`
+	TargetSelectionRange Range `json:"targetSelectionRange"`
 }
 
 // A range in a text document expressed as (zero-based) start and end positions.
@@ -1863,9 +1867,9 @@ type LocationLink struct {
 // ```
 type Range struct {
 	// The range's start position.
-	Start *Position `json:"start"`
+	Start Position `json:"start"`
 	// The range's end position.
-	End *Position `json:"end"`
+	End Position `json:"end"`
 }
 
 type ImplementationOptions struct {
@@ -1877,7 +1881,7 @@ type ImplementationOptions struct {
 type StaticRegistrationOptions struct {
 	// The id used to register the request. The id can be used to deregister
 	// the request again. See also Registration#id.
-	Id TODO_base `json:"id"`
+	Id *string `json:"id"`
 }
 
 type TypeDefinitionOptions struct {
@@ -1887,34 +1891,34 @@ type TypeDefinitionOptions struct {
 // The workspace folder change event.
 type WorkspaceFoldersChangeEvent struct {
 	// The array of added workspace folders
-	Added TODO_array `json:"added"`
+	Added []WorkspaceFolder `json:"added"`
 	// The array of the removed workspace folders
-	Removed TODO_array `json:"removed"`
+	Removed []WorkspaceFolder `json:"removed"`
 }
 
 type ConfigurationItem struct {
 	// The scope to get the configuration section for.
-	ScopeUri TODO_base `json:"scopeUri"`
+	ScopeUri *URI `json:"scopeUri"`
 	// The configuration section asked for.
-	Section TODO_base `json:"section"`
+	Section *string `json:"section"`
 }
 
 // A literal to identify a text document in the client.
 type TextDocumentIdentifier struct {
 	// The text document's uri.
-	Uri TODO_base `json:"uri"`
+	Uri DocumentUri `json:"uri"`
 }
 
 // Represents a color in RGBA space.
 type Color struct {
 	// The red component of this color in the range [0-1].
-	Red TODO_base `json:"red"`
+	Red TODO_base_decimal `json:"red"`
 	// The green component of this color in the range [0-1].
-	Green TODO_base `json:"green"`
+	Green TODO_base_decimal `json:"green"`
 	// The blue component of this color in the range [0-1].
-	Blue TODO_base `json:"blue"`
+	Blue TODO_base_decimal `json:"blue"`
 	// The alpha component of this color in the range [0-1].
-	Alpha TODO_base `json:"alpha"`
+	Alpha TODO_base_decimal `json:"alpha"`
 }
 
 type DocumentColorOptions struct {
@@ -1958,12 +1962,12 @@ type DeclarationOptions struct {
 // @since 3.17.0 - support for negotiated position encoding.
 type Position struct {
 	// Line position in a document (zero-based).
-	Line TODO_base `json:"line"`
+	Line uint32 `json:"line"`
 	// Character offset on a line in a document (zero-based).
 	//
 	// The meaning of this offset is determined by the negotiated
 	// `PositionEncodingKind`.
-	Character TODO_base `json:"character"`
+	Character uint32 `json:"character"`
 }
 
 type SelectionRangeOptions struct {
@@ -1981,22 +1985,22 @@ type CallHierarchyOptions struct {
 type SemanticTokensOptions struct {
 	WorkDoneProgressOptions
 	// The legend used by the server
-	Legend *SemanticTokensLegend `json:"legend"`
+	Legend SemanticTokensLegend `json:"legend"`
 	// Server supports providing semantic tokens for a specific range
 	// of a document.
-	Range TODO_or `json:"range"`
+	Range *TODO_or `json:"range"`
 	// Server supports providing semantic tokens for a full document.
-	Full TODO_or `json:"full"`
+	Full *TODO_or `json:"full"`
 }
 
 // @since 3.16.0
 type SemanticTokensEdit struct {
 	// The start offset of the edit.
-	Start TODO_base `json:"start"`
+	Start uint32 `json:"start"`
 	// The count of elements to remove.
-	DeleteCount TODO_base `json:"deleteCount"`
+	DeleteCount uint32 `json:"deleteCount"`
 	// The elements to insert.
-	Data TODO_array `json:"data"`
+	Data *[]uint32 `json:"data"`
 }
 
 type LinkedEditingRangeOptions struct {
@@ -2008,7 +2012,7 @@ type LinkedEditingRangeOptions struct {
 // @since 3.16.0
 type FileCreate struct {
 	// A file:// URI for the location of the file/folder being created.
-	Uri TODO_base `json:"uri"`
+	Uri string `json:"uri"`
 }
 
 // Describes textual changes on a text document. A TextDocumentEdit describes all changes
@@ -2017,7 +2021,7 @@ type FileCreate struct {
 // kind of ordering. However the edits must be non overlapping.
 type TextDocumentEdit struct {
 	// The text document to change.
-	TextDocument *OptionalVersionedTextDocumentIdentifier `json:"textDocument"`
+	TextDocument OptionalVersionedTextDocumentIdentifier `json:"textDocument"`
 	// The edits to be applied.
 	//
 	// @since 3.16.0 - support for AnnotatedTextEdit. This is guarded using a
@@ -2025,7 +2029,7 @@ type TextDocumentEdit struct {
 	//
 	// @since 3.18.0 - support for SnippetTextEdit. This is guarded using a
 	// client capability.
-	Edits TODO_array `json:"edits"`
+	Edits []TODO_or `json:"edits"`
 }
 
 // Create file operation.
@@ -2034,7 +2038,7 @@ type CreateFile struct {
 	// A create
 	Kind TODO_stringLiteral `json:"kind"`
 	// The resource to create.
-	Uri TODO_base `json:"uri"`
+	Uri DocumentUri `json:"uri"`
 	// Additional options
 	Options *CreateFileOptions `json:"options"`
 }
@@ -2045,9 +2049,9 @@ type RenameFile struct {
 	// A rename
 	Kind TODO_stringLiteral `json:"kind"`
 	// The old (existing) location.
-	OldUri TODO_base `json:"oldUri"`
+	OldUri DocumentUri `json:"oldUri"`
 	// The new location.
-	NewUri TODO_base `json:"newUri"`
+	NewUri DocumentUri `json:"newUri"`
 	// Rename options.
 	Options *RenameFileOptions `json:"options"`
 }
@@ -2058,7 +2062,7 @@ type DeleteFile struct {
 	// A delete
 	Kind TODO_stringLiteral `json:"kind"`
 	// The file to delete.
-	Uri TODO_base `json:"uri"`
+	Uri DocumentUri `json:"uri"`
 	// Delete options.
 	Options *DeleteFileOptions `json:"options"`
 }
@@ -2069,13 +2073,13 @@ type DeleteFile struct {
 type ChangeAnnotation struct {
 	// A human-readable string describing the actual change. The string
 	// is rendered prominent in the user interface.
-	Label TODO_base `json:"label"`
+	Label string `json:"label"`
 	// A flag which indicates that user confirmation is needed
 	// before applying the change.
-	NeedsConfirmation TODO_base `json:"needsConfirmation"`
+	NeedsConfirmation *bool `json:"needsConfirmation"`
 	// A human-readable string which is rendered less prominent in
 	// the user interface.
-	Description TODO_base `json:"description"`
+	Description *string `json:"description"`
 }
 
 // A filter to describe in which file operation requests or notifications
@@ -2084,9 +2088,9 @@ type ChangeAnnotation struct {
 // @since 3.16.0
 type FileOperationFilter struct {
 	// A Uri scheme like `file` or `untitled`.
-	Scheme TODO_base `json:"scheme"`
+	Scheme *string `json:"scheme"`
 	// The actual file operation pattern.
-	Pattern *FileOperationPattern `json:"pattern"`
+	Pattern FileOperationPattern `json:"pattern"`
 }
 
 // Represents information on a file/folder rename.
@@ -2094,9 +2098,9 @@ type FileOperationFilter struct {
 // @since 3.16.0
 type FileRename struct {
 	// A file:// URI for the original location of the file/folder being renamed.
-	OldUri TODO_base `json:"oldUri"`
+	OldUri string `json:"oldUri"`
 	// A file:// URI for the new location of the file/folder being renamed.
-	NewUri TODO_base `json:"newUri"`
+	NewUri string `json:"newUri"`
 }
 
 // Represents information on a file/folder delete.
@@ -2104,7 +2108,7 @@ type FileRename struct {
 // @since 3.16.0
 type FileDelete struct {
 	// A file:// URI for the location of the file/folder being deleted.
-	Uri TODO_base `json:"uri"`
+	Uri string `json:"uri"`
 }
 
 type MonikerOptions struct {
@@ -2121,10 +2125,10 @@ type TypeHierarchyOptions struct {
 // @since 3.17.0
 type InlineValueContext struct {
 	// The stack frame (as a DAP Id) where the execution has stopped.
-	FrameId TODO_base `json:"frameId"`
+	FrameId int32 `json:"frameId"`
 	// The document range where execution has stopped.
 	// Typically the end position of the range denotes the line where the inline values are shown.
-	StoppedLocation *Range `json:"stoppedLocation"`
+	StoppedLocation Range `json:"stoppedLocation"`
 }
 
 // Provide inline value as text.
@@ -2132,9 +2136,9 @@ type InlineValueContext struct {
 // @since 3.17.0
 type InlineValueText struct {
 	// The document range for which the inline value applies.
-	Range *Range `json:"range"`
+	Range Range `json:"range"`
 	// The text of the inline value.
-	Text TODO_base `json:"text"`
+	Text string `json:"text"`
 }
 
 // Provide inline value through a variable lookup.
@@ -2145,11 +2149,11 @@ type InlineValueText struct {
 type InlineValueVariableLookup struct {
 	// The document range for which the inline value applies.
 	// The range is used to extract the variable name from the underlying document.
-	Range *Range `json:"range"`
+	Range Range `json:"range"`
 	// If specified the name of the variable to look up.
-	VariableName TODO_base `json:"variableName"`
+	VariableName *string `json:"variableName"`
 	// How to perform the lookup.
-	CaseSensitiveLookup TODO_base `json:"caseSensitiveLookup"`
+	CaseSensitiveLookup bool `json:"caseSensitiveLookup"`
 }
 
 // Provide an inline value through an expression evaluation.
@@ -2160,9 +2164,9 @@ type InlineValueVariableLookup struct {
 type InlineValueEvaluatableExpression struct {
 	// The document range for which the inline value applies.
 	// The range is used to extract the evaluatable expression from the underlying document.
-	Range *Range `json:"range"`
+	Range Range `json:"range"`
 	// If specified the expression overrides the extracted expression.
-	Expression TODO_base `json:"expression"`
+	Expression *string `json:"expression"`
 }
 
 // Inline value options used during static registration.
@@ -2178,11 +2182,11 @@ type InlineValueOptions struct {
 // @since 3.17.0
 type InlayHintLabelPart struct {
 	// The value of this label part.
-	Value TODO_base `json:"value"`
+	Value string `json:"value"`
 	// The tooltip text when you hover over this label part. Depending on
 	// the client capability `inlayHint.resolveSupport` clients might resolve
 	// this property late using the resolve request.
-	Tooltip TODO_or `json:"tooltip"`
+	Tooltip *TODO_or `json:"tooltip"`
 	// An optional source code location that represents this
 	// label part.
 	//
@@ -2228,9 +2232,9 @@ type InlayHintLabelPart struct {
 // remove HTML from the markdown to avoid script execution.
 type MarkupContent struct {
 	// The type of the Markup
-	Kind *MarkupKind `json:"kind"`
+	Kind MarkupKind `json:"kind"`
 	// The content itself
-	Value TODO_base `json:"value"`
+	Value string `json:"value"`
 }
 
 // Inlay hint options used during static registration.
@@ -2240,7 +2244,7 @@ type InlayHintOptions struct {
 	WorkDoneProgressOptions
 	// The server provides support to resolve additional
 	// information for an inlay hint item.
-	ResolveProvider TODO_base `json:"resolveProvider"`
+	ResolveProvider *bool `json:"resolveProvider"`
 }
 
 // A full diagnostic report with a set of related documents.
@@ -2255,7 +2259,7 @@ type RelatedFullDocumentDiagnosticReport struct {
 	// a.cpp and result in errors in a header file b.hpp.
 	//
 	// @since 3.17.0
-	RelatedDocuments TODO_map `json:"relatedDocuments"`
+	RelatedDocuments *TODO_map `json:"relatedDocuments"`
 }
 
 // An unchanged diagnostic report with a set of related documents.
@@ -2270,7 +2274,7 @@ type RelatedUnchangedDocumentDiagnosticReport struct {
 	// a.cpp and result in errors in a header file b.hpp.
 	//
 	// @since 3.17.0
-	RelatedDocuments TODO_map `json:"relatedDocuments"`
+	RelatedDocuments *TODO_map `json:"relatedDocuments"`
 }
 
 // A diagnostic report with a full set of problems.
@@ -2282,9 +2286,9 @@ type FullDocumentDiagnosticReport struct {
 	// An optional result id. If provided it will
 	// be sent on the next diagnostic request for the
 	// same document.
-	ResultId TODO_base `json:"resultId"`
+	ResultId *string `json:"resultId"`
 	// The actual items.
-	Items TODO_array `json:"items"`
+	Items []Diagnostic `json:"items"`
 }
 
 // A diagnostic report indicating that the last returned
@@ -2299,7 +2303,7 @@ type UnchangedDocumentDiagnosticReport struct {
 	Kind TODO_stringLiteral `json:"kind"`
 	// A result id which will be sent on the next
 	// diagnostic request for the same document.
-	ResultId TODO_base `json:"resultId"`
+	ResultId string `json:"resultId"`
 }
 
 // Diagnostic options.
@@ -2309,14 +2313,14 @@ type DiagnosticOptions struct {
 	WorkDoneProgressOptions
 	// An optional identifier under which the diagnostics are
 	// managed by the client.
-	Identifier TODO_base `json:"identifier"`
+	Identifier *string `json:"identifier"`
 	// Whether the language has inter file dependencies meaning that
 	// editing code in one file can result in a different diagnostic
 	// set in another file. Inter file dependencies are common for
 	// most programming languages and typically uncommon for linters.
-	InterFileDependencies TODO_base `json:"interFileDependencies"`
+	InterFileDependencies bool `json:"interFileDependencies"`
 	// The server provides support for workspace diagnostics as well.
-	WorkspaceDiagnostics TODO_base `json:"workspaceDiagnostics"`
+	WorkspaceDiagnostics bool `json:"workspaceDiagnostics"`
 }
 
 // A previous result id in a workspace pull request.
@@ -2325,9 +2329,9 @@ type DiagnosticOptions struct {
 type PreviousResultId struct {
 	// The URI for which the client knowns a
 	// result id.
-	Uri TODO_base `json:"uri"`
+	Uri DocumentUri `json:"uri"`
 	// The value of the previous result id.
-	Value TODO_base `json:"value"`
+	Value string `json:"value"`
 }
 
 // A notebook document.
@@ -2335,33 +2339,33 @@ type PreviousResultId struct {
 // @since 3.17.0
 type NotebookDocument struct {
 	// The notebook document's uri.
-	Uri TODO_base `json:"uri"`
+	Uri URI `json:"uri"`
 	// The type of the notebook.
-	NotebookType TODO_base `json:"notebookType"`
+	NotebookType string `json:"notebookType"`
 	// The version number of this document (it will increase after each
 	// change, including undo/redo).
-	Version TODO_base `json:"version"`
+	Version int32 `json:"version"`
 	// Additional metadata stored with the notebook
 	// document.
 	//
 	// Note: should always be an object literal (e.g. LSPObject)
 	Metadata *LSPObject `json:"metadata"`
 	// The cells of a notebook.
-	Cells TODO_array `json:"cells"`
+	Cells []NotebookCell `json:"cells"`
 }
 
 // An item to transfer a text document from the client to the
 // server.
 type TextDocumentItem struct {
 	// The text document's uri.
-	Uri TODO_base `json:"uri"`
+	Uri DocumentUri `json:"uri"`
 	// The text document's language identifier.
-	LanguageId *LanguageKind `json:"languageId"`
+	LanguageId LanguageKind `json:"languageId"`
 	// The version number of this document (it will increase after each
 	// change, including undo/redo).
-	Version TODO_base `json:"version"`
+	Version int32 `json:"version"`
 	// The content of the opened text document.
-	Text TODO_base `json:"text"`
+	Text string `json:"text"`
 }
 
 // Options specific to a notebook plus its cells
@@ -2379,10 +2383,10 @@ type TextDocumentItem struct {
 // @since 3.17.0
 type NotebookDocumentSyncOptions struct {
 	// The notebooks to be synced
-	NotebookSelector TODO_array `json:"notebookSelector"`
+	NotebookSelector []TODO_or `json:"notebookSelector"`
 	// Whether save notification should be forwarded to
 	// the server. Will only be honored if mode === `notebook`.
-	Save TODO_base `json:"save"`
+	Save *bool `json:"save"`
 }
 
 // A versioned notebook document identifier.
@@ -2390,9 +2394,9 @@ type NotebookDocumentSyncOptions struct {
 // @since 3.17.0
 type VersionedNotebookDocumentIdentifier struct {
 	// The version number of this notebook document.
-	Version TODO_base `json:"version"`
+	Version int32 `json:"version"`
 	// The notebook document's uri.
-	Uri TODO_base `json:"uri"`
+	Uri URI `json:"uri"`
 }
 
 // A change event for a notebook document.
@@ -2412,7 +2416,7 @@ type NotebookDocumentChangeEvent struct {
 // @since 3.17.0
 type NotebookDocumentIdentifier struct {
 	// The notebook document's uri.
-	Uri TODO_base `json:"uri"`
+	Uri URI `json:"uri"`
 }
 
 // Provides information about the context in which an inline completion was requested.
@@ -2421,7 +2425,7 @@ type NotebookDocumentIdentifier struct {
 // @proposed
 type InlineCompletionContext struct {
 	// Describes how the inline completion was triggered.
-	TriggerKind *InlineCompletionTriggerKind `json:"triggerKind"`
+	TriggerKind InlineCompletionTriggerKind `json:"triggerKind"`
 	// Provides information about the currently selected item in the autocomplete widget if it is visible.
 	SelectedCompletionInfo *SelectedCompletionInfo `json:"selectedCompletionInfo"`
 }
@@ -2440,7 +2444,7 @@ type StringValue struct {
 	// The kind of string value.
 	Kind TODO_stringLiteral `json:"kind"`
 	// The snippet string.
-	Value TODO_base `json:"value"`
+	Value string `json:"value"`
 }
 
 // Inline completion options used during static registration.
@@ -2457,16 +2461,16 @@ type InlineCompletionOptions struct {
 // @proposed
 type TextDocumentContentOptions struct {
 	// The schemes for which the server provides content.
-	Schemes TODO_array `json:"schemes"`
+	Schemes []string `json:"schemes"`
 }
 
 // General parameters to register for a notification or to register a provider.
 type Registration struct {
 	// The id used to register the request. The id can be used to deregister
 	// the request again.
-	Id TODO_base `json:"id"`
+	Id string `json:"id"`
 	// The method / capability to register for.
-	Method TODO_base `json:"method"`
+	Method string `json:"method"`
 	// Options necessary for the registration.
 	RegisterOptions *LSPAny `json:"registerOptions"`
 }
@@ -2475,9 +2479,9 @@ type Registration struct {
 type Unregistration struct {
 	// The id used to unregister the request or notification. Usually an id
 	// provided during the register request.
-	Id TODO_base `json:"id"`
+	Id string `json:"id"`
 	// The method to unregister for.
-	Method TODO_base `json:"method"`
+	Method string `json:"method"`
 }
 
 // The initialize parameters
@@ -2501,13 +2505,13 @@ type _InitializeParams struct {
 	// (See https://en.wikipedia.org/wiki/IETF_language_tag)
 	//
 	// @since 3.16.0
-	Locale TODO_base `json:"locale"`
+	Locale *string `json:"locale"`
 	// The rootPath of the workspace. Is null
 	// if no folder is open.
 	//
 	// @deprecated in favour of rootUri.
 	// Deprecated: in favour of rootUri.
-	RootPath TODO_or `json:"rootPath"`
+	RootPath *TODO_or `json:"rootPath"`
 	// The rootUri of the workspace. Is null if no
 	// folder is open. If both `rootPath` and `rootUri` are set
 	// `rootUri` wins.
@@ -2516,7 +2520,7 @@ type _InitializeParams struct {
 	// Deprecated: in favour of workspaceFolders.
 	RootUri TODO_or `json:"rootUri"`
 	// The capabilities provided by the client (editor or tool)
-	Capabilities *ClientCapabilities `json:"capabilities"`
+	Capabilities ClientCapabilities `json:"capabilities"`
 	// User provided initialization options.
 	InitializationOptions *LSPAny `json:"initializationOptions"`
 	// The initial trace setting. If omitted trace is disabled ('off').
@@ -2531,7 +2535,7 @@ type WorkspaceFoldersInitializeParams struct {
 	// configured.
 	//
 	// @since 3.6.0
-	WorkspaceFolders TODO_or `json:"workspaceFolders"`
+	WorkspaceFolders *TODO_or `json:"workspaceFolders"`
 }
 
 // Defines the capabilities provided by a language
@@ -2550,96 +2554,96 @@ type ServerCapabilities struct {
 	// Defines how text documents are synced. Is either a detailed structure
 	// defining each notification or for backwards compatibility the
 	// TextDocumentSyncKind number.
-	TextDocumentSync TODO_or `json:"textDocumentSync"`
+	TextDocumentSync *TODO_or `json:"textDocumentSync"`
 	// Defines how notebook documents are synced.
 	//
 	// @since 3.17.0
-	NotebookDocumentSync TODO_or `json:"notebookDocumentSync"`
+	NotebookDocumentSync *TODO_or `json:"notebookDocumentSync"`
 	// The server provides completion support.
 	CompletionProvider *CompletionOptions `json:"completionProvider"`
 	// The server provides hover support.
-	HoverProvider TODO_or `json:"hoverProvider"`
+	HoverProvider *TODO_or `json:"hoverProvider"`
 	// The server provides signature help support.
 	SignatureHelpProvider *SignatureHelpOptions `json:"signatureHelpProvider"`
 	// The server provides Goto Declaration support.
-	DeclarationProvider TODO_or `json:"declarationProvider"`
+	DeclarationProvider *TODO_or `json:"declarationProvider"`
 	// The server provides goto definition support.
-	DefinitionProvider TODO_or `json:"definitionProvider"`
+	DefinitionProvider *TODO_or `json:"definitionProvider"`
 	// The server provides Goto Type Definition support.
-	TypeDefinitionProvider TODO_or `json:"typeDefinitionProvider"`
+	TypeDefinitionProvider *TODO_or `json:"typeDefinitionProvider"`
 	// The server provides Goto Implementation support.
-	ImplementationProvider TODO_or `json:"implementationProvider"`
+	ImplementationProvider *TODO_or `json:"implementationProvider"`
 	// The server provides find references support.
-	ReferencesProvider TODO_or `json:"referencesProvider"`
+	ReferencesProvider *TODO_or `json:"referencesProvider"`
 	// The server provides document highlight support.
-	DocumentHighlightProvider TODO_or `json:"documentHighlightProvider"`
+	DocumentHighlightProvider *TODO_or `json:"documentHighlightProvider"`
 	// The server provides document symbol support.
-	DocumentSymbolProvider TODO_or `json:"documentSymbolProvider"`
+	DocumentSymbolProvider *TODO_or `json:"documentSymbolProvider"`
 	// The server provides code actions. CodeActionOptions may only be
 	// specified if the client states that it supports
 	// `codeActionLiteralSupport` in its initial `initialize` request.
-	CodeActionProvider TODO_or `json:"codeActionProvider"`
+	CodeActionProvider *TODO_or `json:"codeActionProvider"`
 	// The server provides code lens.
 	CodeLensProvider *CodeLensOptions `json:"codeLensProvider"`
 	// The server provides document link support.
 	DocumentLinkProvider *DocumentLinkOptions `json:"documentLinkProvider"`
 	// The server provides color provider support.
-	ColorProvider TODO_or `json:"colorProvider"`
+	ColorProvider *TODO_or `json:"colorProvider"`
 	// The server provides workspace symbol support.
-	WorkspaceSymbolProvider TODO_or `json:"workspaceSymbolProvider"`
+	WorkspaceSymbolProvider *TODO_or `json:"workspaceSymbolProvider"`
 	// The server provides document formatting.
-	DocumentFormattingProvider TODO_or `json:"documentFormattingProvider"`
+	DocumentFormattingProvider *TODO_or `json:"documentFormattingProvider"`
 	// The server provides document range formatting.
-	DocumentRangeFormattingProvider TODO_or `json:"documentRangeFormattingProvider"`
+	DocumentRangeFormattingProvider *TODO_or `json:"documentRangeFormattingProvider"`
 	// The server provides document formatting on typing.
 	DocumentOnTypeFormattingProvider *DocumentOnTypeFormattingOptions `json:"documentOnTypeFormattingProvider"`
 	// The server provides rename support. RenameOptions may only be
 	// specified if the client states that it supports
 	// `prepareSupport` in its initial `initialize` request.
-	RenameProvider TODO_or `json:"renameProvider"`
+	RenameProvider *TODO_or `json:"renameProvider"`
 	// The server provides folding provider support.
-	FoldingRangeProvider TODO_or `json:"foldingRangeProvider"`
+	FoldingRangeProvider *TODO_or `json:"foldingRangeProvider"`
 	// The server provides selection range support.
-	SelectionRangeProvider TODO_or `json:"selectionRangeProvider"`
+	SelectionRangeProvider *TODO_or `json:"selectionRangeProvider"`
 	// The server provides execute command support.
 	ExecuteCommandProvider *ExecuteCommandOptions `json:"executeCommandProvider"`
 	// The server provides call hierarchy support.
 	//
 	// @since 3.16.0
-	CallHierarchyProvider TODO_or `json:"callHierarchyProvider"`
+	CallHierarchyProvider *TODO_or `json:"callHierarchyProvider"`
 	// The server provides linked editing range support.
 	//
 	// @since 3.16.0
-	LinkedEditingRangeProvider TODO_or `json:"linkedEditingRangeProvider"`
+	LinkedEditingRangeProvider *TODO_or `json:"linkedEditingRangeProvider"`
 	// The server provides semantic tokens support.
 	//
 	// @since 3.16.0
-	SemanticTokensProvider TODO_or `json:"semanticTokensProvider"`
+	SemanticTokensProvider *TODO_or `json:"semanticTokensProvider"`
 	// The server provides moniker support.
 	//
 	// @since 3.16.0
-	MonikerProvider TODO_or `json:"monikerProvider"`
+	MonikerProvider *TODO_or `json:"monikerProvider"`
 	// The server provides type hierarchy support.
 	//
 	// @since 3.17.0
-	TypeHierarchyProvider TODO_or `json:"typeHierarchyProvider"`
+	TypeHierarchyProvider *TODO_or `json:"typeHierarchyProvider"`
 	// The server provides inline values.
 	//
 	// @since 3.17.0
-	InlineValueProvider TODO_or `json:"inlineValueProvider"`
+	InlineValueProvider *TODO_or `json:"inlineValueProvider"`
 	// The server provides inlay hints.
 	//
 	// @since 3.17.0
-	InlayHintProvider TODO_or `json:"inlayHintProvider"`
+	InlayHintProvider *TODO_or `json:"inlayHintProvider"`
 	// The server has support for pull model diagnostics.
 	//
 	// @since 3.17.0
-	DiagnosticProvider TODO_or `json:"diagnosticProvider"`
+	DiagnosticProvider *TODO_or `json:"diagnosticProvider"`
 	// Inline completion options used during static registration.
 	//
 	// @since 3.18.0
 	// @proposed
-	InlineCompletionProvider TODO_or `json:"inlineCompletionProvider"`
+	InlineCompletionProvider *TODO_or `json:"inlineCompletionProvider"`
 	// Workspace specific server capabilities.
 	Workspace *WorkspaceOptions `json:"workspace"`
 	// Experimental server capabilities.
@@ -2652,37 +2656,37 @@ type ServerCapabilities struct {
 // @since 3.18.0 ServerInfo type name added.
 type ServerInfo struct {
 	// The name of the server as defined by the server.
-	Name TODO_base `json:"name"`
+	Name string `json:"name"`
 	// The server's version as defined by the server.
-	Version TODO_base `json:"version"`
+	Version *string `json:"version"`
 }
 
 // A text document identifier to denote a specific version of a text document.
 type VersionedTextDocumentIdentifier struct {
 	TextDocumentIdentifier
 	// The version number of this document.
-	Version TODO_base `json:"version"`
+	Version int32 `json:"version"`
 }
 
 // Save options.
 type SaveOptions struct {
 	// The client is supposed to include the content on save.
-	IncludeText TODO_base `json:"includeText"`
+	IncludeText *bool `json:"includeText"`
 }
 
 // An event describing a file change.
 type FileEvent struct {
 	// The file's uri.
-	Uri TODO_base `json:"uri"`
+	Uri DocumentUri `json:"uri"`
 	// The change type.
-	Type *FileChangeType `json:"type"`
+	Type FileChangeType `json:"type"`
 }
 
 type FileSystemWatcher struct {
 	// The glob pattern to watch. See {@link GlobPattern glob pattern} for more detail.
 	//
 	// @since 3.17.0 support for relative patterns.
-	GlobPattern *GlobPattern `json:"globPattern"`
+	GlobPattern GlobPattern `json:"globPattern"`
 	// The kind of events of interest. If omitted it defaults
 	// to WatchKind.Create | WatchKind.Change | WatchKind.Delete
 	// which is 7.
@@ -2693,13 +2697,13 @@ type FileSystemWatcher struct {
 // are only valid in the scope of a resource.
 type Diagnostic struct {
 	// The range at which the message applies
-	Range *Range `json:"range"`
+	Range Range `json:"range"`
 	// The diagnostic's severity. To avoid interpretation mismatches when a
 	// server is used with different clients it is highly recommended that servers
 	// always provide a severity value.
 	Severity *DiagnosticSeverity `json:"severity"`
 	// The diagnostic's code, which usually appear in the user interface.
-	Code TODO_or `json:"code"`
+	Code *TODO_or `json:"code"`
 	// An optional property to describe the error code.
 	// Requires the code field (above) to be present/not null.
 	//
@@ -2708,16 +2712,16 @@ type Diagnostic struct {
 	// A human-readable string describing the source of this
 	// diagnostic, e.g. 'typescript' or 'super lint'. It usually
 	// appears in the user interface.
-	Source TODO_base `json:"source"`
+	Source *string `json:"source"`
 	// The diagnostic's message. It usually appears in the user interface
-	Message TODO_base `json:"message"`
+	Message string `json:"message"`
 	// Additional metadata about the diagnostic.
 	//
 	// @since 3.15.0
-	Tags TODO_array `json:"tags"`
+	Tags *[]DiagnosticTag `json:"tags"`
 	// An array of related diagnostic information, e.g. when symbol-names within
 	// a scope collide all definitions can be marked via this property.
-	RelatedInformation TODO_array `json:"relatedInformation"`
+	RelatedInformation *[]DiagnosticRelatedInformation `json:"relatedInformation"`
 	// A data entry field that is preserved between a `textDocument/publishDiagnostics`
 	// notification and `textDocument/codeAction` request.
 	//
@@ -2728,10 +2732,10 @@ type Diagnostic struct {
 // Contains additional information about the context in which a completion request is triggered.
 type CompletionContext struct {
 	// How the completion was triggered.
-	TriggerKind *CompletionTriggerKind `json:"triggerKind"`
+	TriggerKind CompletionTriggerKind `json:"triggerKind"`
 	// The trigger character (a single character) that has trigger code complete.
 	// Is undefined if `triggerKind !== CompletionTriggerKind.TriggerCharacter`
-	TriggerCharacter TODO_base `json:"triggerCharacter"`
+	TriggerCharacter *string `json:"triggerCharacter"`
 }
 
 // Additional details for a completion item label.
@@ -2740,10 +2744,10 @@ type CompletionContext struct {
 type CompletionItemLabelDetails struct {
 	// An optional string which is rendered less prominently directly after {@link CompletionItem.label label},
 	// without any spacing. Should be used for function signatures and type annotations.
-	Detail TODO_base `json:"detail"`
+	Detail *string `json:"detail"`
 	// An optional string which is rendered less prominently after {@link CompletionItem.detail}. Should be used
 	// for fully qualified names and file paths.
-	Description TODO_base `json:"description"`
+	Description *string `json:"description"`
 }
 
 // A special text edit to provide an insert and a replace operation.
@@ -2751,11 +2755,11 @@ type CompletionItemLabelDetails struct {
 // @since 3.16.0
 type InsertReplaceEdit struct {
 	// The string to be inserted.
-	NewText TODO_base `json:"newText"`
+	NewText string `json:"newText"`
 	// The range if the insert is requested
-	Insert *Range `json:"insert"`
+	Insert Range `json:"insert"`
 	// The range if the replace is requested.
-	Replace *Range `json:"replace"`
+	Replace Range `json:"replace"`
 }
 
 // In many cases the items of an actual completion result share the same
@@ -2777,11 +2781,11 @@ type CompletionItemDefaults struct {
 	// A default commit character set.
 	//
 	// @since 3.17.0
-	CommitCharacters TODO_array `json:"commitCharacters"`
+	CommitCharacters *[]string `json:"commitCharacters"`
 	// A default edit range.
 	//
 	// @since 3.17.0
-	EditRange TODO_or `json:"editRange"`
+	EditRange *TODO_or `json:"editRange"`
 	// A default insert text format.
 	//
 	// @since 3.17.0
@@ -2866,7 +2870,7 @@ type CompletionOptions struct {
 	//
 	// If code complete should automatically be trigger on characters not being valid inside
 	// an identifier (for example `.` in JavaScript) list them in `triggerCharacters`.
-	TriggerCharacters TODO_array `json:"triggerCharacters"`
+	TriggerCharacters *[]string `json:"triggerCharacters"`
 	// The list of all possible characters that commit a completion. This field can be used
 	// if clients don't support individual commit characters per completion item. See
 	// `ClientCapabilities.textDocument.completion.completionItem.commitCharactersSupport`
@@ -2875,10 +2879,10 @@ type CompletionOptions struct {
 	// completion item the ones on the completion item win.
 	//
 	// @since 3.2.0
-	AllCommitCharacters TODO_array `json:"allCommitCharacters"`
+	AllCommitCharacters *[]string `json:"allCommitCharacters"`
 	// The server provides support to resolve additional
 	// information for a completion item.
-	ResolveProvider TODO_base `json:"resolveProvider"`
+	ResolveProvider *bool `json:"resolveProvider"`
 	// The server supports the following `CompletionItem` specific
 	// capabilities.
 	//
@@ -2896,16 +2900,16 @@ type HoverOptions struct {
 // @since 3.15.0
 type SignatureHelpContext struct {
 	// Action that caused signature help to be triggered.
-	TriggerKind *SignatureHelpTriggerKind `json:"triggerKind"`
+	TriggerKind SignatureHelpTriggerKind `json:"triggerKind"`
 	// Character that caused signature help to be triggered.
 	//
 	// This is undefined when `triggerKind !== SignatureHelpTriggerKind.TriggerCharacter`
-	TriggerCharacter TODO_base `json:"triggerCharacter"`
+	TriggerCharacter *string `json:"triggerCharacter"`
 	// `true` if signature help was already showing when it was triggered.
 	//
 	// Retriggers occurs when the signature help is already active and can be caused by actions such as
 	// typing a trigger character, a cursor move, or document content changes.
-	IsRetrigger TODO_base `json:"isRetrigger"`
+	IsRetrigger bool `json:"isRetrigger"`
 	// The currently active `SignatureHelp`.
 	//
 	// The `activeSignatureHelp` has its `SignatureHelp.activeSignature` field updated based on
@@ -2919,12 +2923,12 @@ type SignatureHelpContext struct {
 type SignatureInformation struct {
 	// The label of this signature. Will be shown in
 	// the UI.
-	Label TODO_base `json:"label"`
+	Label string `json:"label"`
 	// The human-readable doc-comment of this signature. Will be shown
 	// in the UI but can be omitted.
-	Documentation TODO_or `json:"documentation"`
+	Documentation *TODO_or `json:"documentation"`
 	// The parameters of this signature.
-	Parameters TODO_array `json:"parameters"`
+	Parameters *[]ParameterInformation `json:"parameters"`
 	// The index of the active parameter.
 	//
 	// If `null`, no parameter of the signature is active (for example a named
@@ -2936,21 +2940,21 @@ type SignatureInformation struct {
 	// `SignatureHelp.activeParameter`.
 	//
 	// @since 3.16.0
-	ActiveParameter TODO_or `json:"activeParameter"`
+	ActiveParameter *TODO_or `json:"activeParameter"`
 }
 
 // Server Capabilities for a {@link SignatureHelpRequest}.
 type SignatureHelpOptions struct {
 	WorkDoneProgressOptions
 	// List of characters that trigger signature help automatically.
-	TriggerCharacters TODO_array `json:"triggerCharacters"`
+	TriggerCharacters *[]string `json:"triggerCharacters"`
 	// List of characters that re-trigger signature help.
 	//
 	// These trigger characters are only active when signature help is already showing. All trigger characters
 	// are also counted as re-trigger characters.
 	//
 	// @since 3.15.0
-	RetriggerCharacters TODO_array `json:"retriggerCharacters"`
+	RetriggerCharacters *[]string `json:"retriggerCharacters"`
 }
 
 // Server Capabilities for a {@link DefinitionRequest}.
@@ -2962,7 +2966,7 @@ type DefinitionOptions struct {
 // requesting references.
 type ReferenceContext struct {
 	// Include the declaration of the current symbol.
-	IncludeDeclaration TODO_base `json:"includeDeclaration"`
+	IncludeDeclaration bool `json:"includeDeclaration"`
 }
 
 // Reference options.
@@ -2978,18 +2982,18 @@ type DocumentHighlightOptions struct {
 // A base for all symbol information.
 type BaseSymbolInformation struct {
 	// The name of this symbol.
-	Name TODO_base `json:"name"`
+	Name string `json:"name"`
 	// The kind of this symbol.
-	Kind *SymbolKind `json:"kind"`
+	Kind SymbolKind `json:"kind"`
 	// Tags for this symbol.
 	//
 	// @since 3.16.0
-	Tags TODO_array `json:"tags"`
+	Tags *[]SymbolTag `json:"tags"`
 	// The name of the symbol containing this symbol. This information is for
 	// user interface purposes (e.g. to render a qualifier in the user interface
 	// if necessary). It can't be used to re-infer a hierarchy for the document
 	// symbols.
-	ContainerName TODO_base `json:"containerName"`
+	ContainerName *string `json:"containerName"`
 }
 
 // Provider options for a {@link DocumentSymbolRequest}.
@@ -2999,7 +3003,7 @@ type DocumentSymbolOptions struct {
 	// are shown for the same document.
 	//
 	// @since 3.16.0
-	Label TODO_base `json:"label"`
+	Label *string `json:"label"`
 }
 
 // Contains additional diagnostic information about the context in which
@@ -3010,12 +3014,12 @@ type CodeActionContext struct {
 	// errors are currently presented to the user for the given range. There is no guarantee
 	// that these accurately reflect the error state of the resource. The primary parameter
 	// to compute code actions is the provided range.
-	Diagnostics TODO_array `json:"diagnostics"`
+	Diagnostics []Diagnostic `json:"diagnostics"`
 	// Requested kind of actions to return.
 	//
 	// Actions not of this kind are filtered out by the client before being shown. So servers
 	// can omit computing them.
-	Only TODO_array `json:"only"`
+	Only *[]CodeActionKind `json:"only"`
 	// The reason why code actions were requested.
 	//
 	// @since 3.17.0
@@ -3029,7 +3033,7 @@ type CodeActionDisabled struct {
 	// Human readable description of why the code action is currently disabled.
 	//
 	// This is displayed in the code actions UI.
-	Reason TODO_base `json:"reason"`
+	Reason string `json:"reason"`
 }
 
 // Provider options for a {@link CodeActionRequest}.
@@ -3039,7 +3043,7 @@ type CodeActionOptions struct {
 	//
 	// The list of kinds may be generic, such as `CodeActionKind.Refactor`, or the server
 	// may list out every specific kind they provide.
-	CodeActionKinds TODO_array `json:"codeActionKinds"`
+	CodeActionKinds *[]CodeActionKind `json:"codeActionKinds"`
 	// Static documentation for a class of code actions.
 	//
 	// Documentation from the provider should be shown in the code actions menu if either:
@@ -3055,19 +3059,19 @@ type CodeActionOptions struct {
 	//
 	// @since 3.18.0
 	// @proposed
-	Documentation TODO_array `json:"documentation"`
+	Documentation *[]CodeActionKindDocumentation `json:"documentation"`
 	// The server provides support to resolve additional
 	// information for a code action.
 	//
 	// @since 3.16.0
-	ResolveProvider TODO_base `json:"resolveProvider"`
+	ResolveProvider *bool `json:"resolveProvider"`
 }
 
 // Location with only uri and does not include range.
 //
 // @since 3.18.0
 type LocationUriOnly struct {
-	Uri TODO_base `json:"uri"`
+	Uri DocumentUri `json:"uri"`
 }
 
 // Server capabilities for a {@link WorkspaceSymbolRequest}.
@@ -3077,41 +3081,41 @@ type WorkspaceSymbolOptions struct {
 	// information for a workspace symbol.
 	//
 	// @since 3.17.0
-	ResolveProvider TODO_base `json:"resolveProvider"`
+	ResolveProvider *bool `json:"resolveProvider"`
 }
 
 // Code Lens provider options of a {@link CodeLensRequest}.
 type CodeLensOptions struct {
 	WorkDoneProgressOptions
 	// Code lens has a resolve provider as well.
-	ResolveProvider TODO_base `json:"resolveProvider"`
+	ResolveProvider *bool `json:"resolveProvider"`
 }
 
 // Provider options for a {@link DocumentLinkRequest}.
 type DocumentLinkOptions struct {
 	WorkDoneProgressOptions
 	// Document links have a resolve provider as well.
-	ResolveProvider TODO_base `json:"resolveProvider"`
+	ResolveProvider *bool `json:"resolveProvider"`
 }
 
 // Value-object describing what options formatting should use.
 type FormattingOptions struct {
 	// Size of a tab in spaces.
-	TabSize TODO_base `json:"tabSize"`
+	TabSize uint32 `json:"tabSize"`
 	// Prefer spaces over tabs.
-	InsertSpaces TODO_base `json:"insertSpaces"`
+	InsertSpaces bool `json:"insertSpaces"`
 	// Trim trailing whitespace on a line.
 	//
 	// @since 3.15.0
-	TrimTrailingWhitespace TODO_base `json:"trimTrailingWhitespace"`
+	TrimTrailingWhitespace *bool `json:"trimTrailingWhitespace"`
 	// Insert a newline character at the end of the file if one does not exist.
 	//
 	// @since 3.15.0
-	InsertFinalNewline TODO_base `json:"insertFinalNewline"`
+	InsertFinalNewline *bool `json:"insertFinalNewline"`
 	// Trim all newlines after the final newline at the end of the file.
 	//
 	// @since 3.15.0
-	TrimFinalNewlines TODO_base `json:"trimFinalNewlines"`
+	TrimFinalNewlines *bool `json:"trimFinalNewlines"`
 }
 
 // Provider options for a {@link DocumentFormattingRequest}.
@@ -3126,15 +3130,15 @@ type DocumentRangeFormattingOptions struct {
 	//
 	// @since 3.18.0
 	// @proposed
-	RangesSupport TODO_base `json:"rangesSupport"`
+	RangesSupport *bool `json:"rangesSupport"`
 }
 
 // Provider options for a {@link DocumentOnTypeFormattingRequest}.
 type DocumentOnTypeFormattingOptions struct {
 	// A character on which formatting should be triggered, like `{`.
-	FirstTriggerCharacter TODO_base `json:"firstTriggerCharacter"`
+	FirstTriggerCharacter string `json:"firstTriggerCharacter"`
 	// More trigger characters.
-	MoreTriggerCharacter TODO_array `json:"moreTriggerCharacter"`
+	MoreTriggerCharacter *[]string `json:"moreTriggerCharacter"`
 }
 
 // Provider options for a {@link RenameRequest}.
@@ -3143,25 +3147,25 @@ type RenameOptions struct {
 	// Renames should be checked and tested before being executed.
 	//
 	// @since version 3.12.0
-	PrepareProvider TODO_base `json:"prepareProvider"`
+	PrepareProvider *bool `json:"prepareProvider"`
 }
 
 // @since 3.18.0
 type PrepareRenamePlaceholder struct {
-	Range       *Range    `json:"range"`
-	Placeholder TODO_base `json:"placeholder"`
+	Range       Range  `json:"range"`
+	Placeholder string `json:"placeholder"`
 }
 
 // @since 3.18.0
 type PrepareRenameDefaultBehavior struct {
-	DefaultBehavior TODO_base `json:"defaultBehavior"`
+	DefaultBehavior bool `json:"defaultBehavior"`
 }
 
 // The server capabilities of a {@link ExecuteCommandRequest}.
 type ExecuteCommandOptions struct {
 	WorkDoneProgressOptions
 	// The commands to be executed on the server
-	Commands TODO_array `json:"commands"`
+	Commands []string `json:"commands"`
 }
 
 // Additional data about a workspace edit.
@@ -3170,15 +3174,15 @@ type ExecuteCommandOptions struct {
 // @proposed
 type WorkspaceEditMetadata struct {
 	// Signal to the editor that this edit is a refactoring.
-	IsRefactoring TODO_base `json:"isRefactoring"`
+	IsRefactoring *bool `json:"isRefactoring"`
 }
 
 // @since 3.16.0
 type SemanticTokensLegend struct {
 	// The token types a server uses.
-	TokenTypes TODO_array `json:"tokenTypes"`
+	TokenTypes []string `json:"tokenTypes"`
 	// The token modifiers a server uses.
-	TokenModifiers TODO_array `json:"tokenModifiers"`
+	TokenModifiers []string `json:"tokenModifiers"`
 }
 
 // Semantic tokens options to support deltas for full documents
@@ -3186,7 +3190,7 @@ type SemanticTokensLegend struct {
 // @since 3.18.0
 type SemanticTokensFullDelta struct {
 	// The server supports deltas for full documents.
-	Delta TODO_base `json:"delta"`
+	Delta *bool `json:"delta"`
 }
 
 // A text document identifier to optionally denote a specific version of a text document.
@@ -3206,7 +3210,7 @@ type OptionalVersionedTextDocumentIdentifier struct {
 type AnnotatedTextEdit struct {
 	TextEdit
 	// The actual identifier of the change annotation
-	AnnotationId *ChangeAnnotationIdentifier `json:"annotationId"`
+	AnnotationId ChangeAnnotationIdentifier `json:"annotationId"`
 }
 
 // An interactive text edit.
@@ -3215,9 +3219,9 @@ type AnnotatedTextEdit struct {
 // @proposed
 type SnippetTextEdit struct {
 	// The range of the text document to be manipulated.
-	Range *Range `json:"range"`
+	Range Range `json:"range"`
 	// The snippet to be inserted.
-	Snippet *StringValue `json:"snippet"`
+	Snippet StringValue `json:"snippet"`
 	// The actual identifier of the snippet edit.
 	AnnotationId *ChangeAnnotationIdentifier `json:"annotationId"`
 }
@@ -3225,7 +3229,7 @@ type SnippetTextEdit struct {
 // A generic resource operation.
 type ResourceOperation struct {
 	// The resource operation kind.
-	Kind TODO_base `json:"kind"`
+	Kind string `json:"kind"`
 	// An optional annotation identifier describing the operation.
 	//
 	// @since 3.16.0
@@ -3235,25 +3239,25 @@ type ResourceOperation struct {
 // Options to create a file.
 type CreateFileOptions struct {
 	// Overwrite existing file. Overwrite wins over `ignoreIfExists`
-	Overwrite TODO_base `json:"overwrite"`
+	Overwrite *bool `json:"overwrite"`
 	// Ignore if exists.
-	IgnoreIfExists TODO_base `json:"ignoreIfExists"`
+	IgnoreIfExists *bool `json:"ignoreIfExists"`
 }
 
 // Rename file options
 type RenameFileOptions struct {
 	// Overwrite target if existing. Overwrite wins over `ignoreIfExists`
-	Overwrite TODO_base `json:"overwrite"`
+	Overwrite *bool `json:"overwrite"`
 	// Ignores if target exists.
-	IgnoreIfExists TODO_base `json:"ignoreIfExists"`
+	IgnoreIfExists *bool `json:"ignoreIfExists"`
 }
 
 // Delete file options
 type DeleteFileOptions struct {
 	// Delete the content recursively if a folder is denoted.
-	Recursive TODO_base `json:"recursive"`
+	Recursive *bool `json:"recursive"`
 	// Ignore the operation if the file doesn't exist.
-	IgnoreIfNotExists TODO_base `json:"ignoreIfNotExists"`
+	IgnoreIfNotExists *bool `json:"ignoreIfNotExists"`
 }
 
 // A pattern to describe in which file operation requests or notifications
@@ -3268,7 +3272,7 @@ type FileOperationPattern struct {
 	// - `{}` to group sub patterns into an OR expression. (e.g. `**​/*.{ts,js}` matches all TypeScript and JavaScript files)
 	// - `[]` to declare a range of characters to match in a path segment (e.g., `example.[0-9]` to match on `example.0`, `example.1`, …)
 	// - `[!...]` to negate a range of characters to match in a path segment (e.g., `example.[!0-9]` to match on `example.a`, `example.b`, but not `example.0`)
-	Glob TODO_base `json:"glob"`
+	Glob string `json:"glob"`
 	// Whether to match files or folders with this pattern.
 	//
 	// Matches both if undefined.
@@ -3283,7 +3287,7 @@ type FileOperationPattern struct {
 type WorkspaceFullDocumentDiagnosticReport struct {
 	FullDocumentDiagnosticReport
 	// The URI for which diagnostic information is reported.
-	Uri TODO_base `json:"uri"`
+	Uri DocumentUri `json:"uri"`
 	// The version number for which the diagnostics are reported.
 	// If the document is not marked as open `null` can be provided.
 	Version TODO_or `json:"version"`
@@ -3295,7 +3299,7 @@ type WorkspaceFullDocumentDiagnosticReport struct {
 type WorkspaceUnchangedDocumentDiagnosticReport struct {
 	UnchangedDocumentDiagnosticReport
 	// The URI for which diagnostic information is reported.
-	Uri TODO_base `json:"uri"`
+	Uri DocumentUri `json:"uri"`
 	// The version number for which the diagnostics are reported.
 	// If the document is not marked as open `null` can be provided.
 	Version TODO_or `json:"version"`
@@ -3310,10 +3314,10 @@ type WorkspaceUnchangedDocumentDiagnosticReport struct {
 // @since 3.17.0
 type NotebookCell struct {
 	// The cell's kind
-	Kind *NotebookCellKind `json:"kind"`
+	Kind NotebookCellKind `json:"kind"`
 	// The URI of the cell's text document
 	// content.
-	Document TODO_base `json:"document"`
+	Document DocumentUri `json:"document"`
 	// Additional metadata stored with the cell.
 	//
 	// Note: should always be an object literal (e.g. LSPObject)
@@ -3330,7 +3334,7 @@ type NotebookDocumentFilterWithNotebook struct {
 	// notebook type. '*' matches every notebook.
 	Notebook TODO_or `json:"notebook"`
 	// The cells of the matching notebook to be synced.
-	Cells TODO_array `json:"cells"`
+	Cells *[]NotebookCellLanguage `json:"cells"`
 }
 
 // @since 3.18.0
@@ -3338,9 +3342,9 @@ type NotebookDocumentFilterWithCells struct {
 	// The notebook to be synced If a string
 	// value is provided it matches against the
 	// notebook type. '*' matches every notebook.
-	Notebook TODO_or `json:"notebook"`
+	Notebook *TODO_or `json:"notebook"`
 	// The cells of the matching notebook to be synced.
-	Cells TODO_array `json:"cells"`
+	Cells []NotebookCellLanguage `json:"cells"`
 }
 
 // Cell changes to a notebook document.
@@ -3352,9 +3356,9 @@ type NotebookDocumentCellChanges struct {
 	Structure *NotebookDocumentCellChangeStructure `json:"structure"`
 	// Changes to notebook cells properties like its
 	// kind, execution summary or metadata.
-	Data TODO_array `json:"data"`
+	Data *[]NotebookCell `json:"data"`
 	// Changes to the text content of notebook cells.
-	TextContent TODO_array `json:"textContent"`
+	TextContent *[]NotebookDocumentCellContentChanges `json:"textContent"`
 }
 
 // Describes the currently selected completion item.
@@ -3363,9 +3367,9 @@ type NotebookDocumentCellChanges struct {
 // @proposed
 type SelectedCompletionInfo struct {
 	// The range that will be replaced if this completion item is accepted.
-	Range *Range `json:"range"`
+	Range Range `json:"range"`
 	// The text the range will be replaced with if this completion is accepted.
-	Text TODO_base `json:"text"`
+	Text string `json:"text"`
 }
 
 // Information about the client
@@ -3374,9 +3378,9 @@ type SelectedCompletionInfo struct {
 // @since 3.18.0 ClientInfo type name added.
 type ClientInfo struct {
 	// The name of the client as defined by the client.
-	Name TODO_base `json:"name"`
+	Name string `json:"name"`
 	// The client's version as defined by the client.
-	Version TODO_base `json:"version"`
+	Version *string `json:"version"`
 }
 
 // Defines the capabilities provided by the client.
@@ -3402,19 +3406,19 @@ type ClientCapabilities struct {
 type TextDocumentSyncOptions struct {
 	// Open and close notifications are sent to the server. If omitted open close notification should not
 	// be sent.
-	OpenClose TODO_base `json:"openClose"`
+	OpenClose *bool `json:"openClose"`
 	// Change notifications are sent to the server. See TextDocumentSyncKind.None, TextDocumentSyncKind.Full
 	// and TextDocumentSyncKind.Incremental. If omitted it defaults to TextDocumentSyncKind.None.
 	Change *TextDocumentSyncKind `json:"change"`
 	// If present will save notifications are sent to the server. If omitted the notification should not be
 	// sent.
-	WillSave TODO_base `json:"willSave"`
+	WillSave *bool `json:"willSave"`
 	// If present will save wait until requests are sent to the server. If omitted the request should not be
 	// sent.
-	WillSaveWaitUntil TODO_base `json:"willSaveWaitUntil"`
+	WillSaveWaitUntil *bool `json:"willSaveWaitUntil"`
 	// If present save notifications are sent to the server. If omitted the notification should not be
 	// sent.
-	Save TODO_or `json:"save"`
+	Save *TODO_or `json:"save"`
 }
 
 // Defines workspace specific capabilities of the server.
@@ -3433,26 +3437,26 @@ type WorkspaceOptions struct {
 	//
 	// @since 3.18.0
 	// @proposed
-	TextDocumentContent TODO_or `json:"textDocumentContent"`
+	TextDocumentContent *TODO_or `json:"textDocumentContent"`
 }
 
 // @since 3.18.0
 type TextDocumentContentChangePartial struct {
 	// The range of the document that changed.
-	Range *Range `json:"range"`
+	Range Range `json:"range"`
 	// The optional length of the range that got replaced.
 	//
 	// @deprecated use range instead.
 	// Deprecated: use range instead.
-	RangeLength TODO_base `json:"rangeLength"`
+	RangeLength *uint32 `json:"rangeLength"`
 	// The new text for the provided range.
-	Text TODO_base `json:"text"`
+	Text string `json:"text"`
 }
 
 // @since 3.18.0
 type TextDocumentContentChangeWholeDocument struct {
 	// The new text of the whole document.
-	Text TODO_base `json:"text"`
+	Text string `json:"text"`
 }
 
 // Structure to capture a description for an error code.
@@ -3460,7 +3464,7 @@ type TextDocumentContentChangeWholeDocument struct {
 // @since 3.16.0
 type CodeDescription struct {
 	// An URI to open with more information about the diagnostic error.
-	Href TODO_base `json:"href"`
+	Href URI `json:"href"`
 }
 
 // Represents a related message and source code location for a diagnostic. This should be
@@ -3468,17 +3472,17 @@ type CodeDescription struct {
 // a symbol in a scope.
 type DiagnosticRelatedInformation struct {
 	// The location of this related diagnostic information.
-	Location *Location `json:"location"`
+	Location Location `json:"location"`
 	// The message of this related diagnostic information.
-	Message TODO_base `json:"message"`
+	Message string `json:"message"`
 }
 
 // Edit range variant that includes ranges for insert and replace operations.
 //
 // @since 3.18.0
 type EditRangeWithInsertReplace struct {
-	Insert  *Range `json:"insert"`
-	Replace *Range `json:"replace"`
+	Insert  Range `json:"insert"`
+	Replace Range `json:"replace"`
 }
 
 // @since 3.18.0
@@ -3488,15 +3492,15 @@ type ServerCompletionItemOptions struct {
 	// receiving a completion item in a resolve call.
 	//
 	// @since 3.17.0
-	LabelDetailsSupport TODO_base `json:"labelDetailsSupport"`
+	LabelDetailsSupport *bool `json:"labelDetailsSupport"`
 }
 
 // @since 3.18.0
 // @deprecated use MarkupContent instead.
 // Deprecated: use MarkupContent instead.
 type MarkedStringWithLanguage struct {
-	Language TODO_base `json:"language"`
-	Value    TODO_base `json:"value"`
+	Language string `json:"language"`
+	Value    string `json:"value"`
 }
 
 // Represents a parameter of a callable-signature. A parameter can
@@ -3517,7 +3521,7 @@ type ParameterInformation struct {
 	Label TODO_or `json:"label"`
 	// The human-readable doc-comment of this parameter. Will be shown
 	// in the UI but can be omitted.
-	Documentation TODO_or `json:"documentation"`
+	Documentation *TODO_or `json:"documentation"`
 }
 
 // Documentation for a class of code actions.
@@ -3530,11 +3534,11 @@ type CodeActionKindDocumentation struct {
 	// If the kind is generic, such as `CodeActionKind.Refactor`, the documentation will be shown whenever any
 	// refactorings are returned. If the kind if more specific, such as `CodeActionKind.RefactorExtract`, the
 	// documentation will only be shown when extract refactoring code actions are returned.
-	Kind *CodeActionKind `json:"kind"`
+	Kind CodeActionKind `json:"kind"`
 	// Command that is ued to display the documentation to the user.
 	//
 	// The title of this documentation code action is taken from {@linkcode Command.title}
-	Command *Command `json:"command"`
+	Command Command `json:"command"`
 }
 
 // A notebook cell text document filter denotes a cell text
@@ -3551,7 +3555,7 @@ type NotebookCellTextDocumentFilter struct {
 	//
 	// Will be matched against the language id of the
 	// notebook cell document. '*' matches every language.
-	Language TODO_base `json:"language"`
+	Language *string `json:"language"`
 }
 
 // Matching options for the file operation pattern.
@@ -3559,22 +3563,22 @@ type NotebookCellTextDocumentFilter struct {
 // @since 3.16.0
 type FileOperationPatternOptions struct {
 	// The pattern should be matched ignoring casing.
-	IgnoreCase TODO_base `json:"ignoreCase"`
+	IgnoreCase *bool `json:"ignoreCase"`
 }
 
 type ExecutionSummary struct {
 	// A strict monotonically increasing value
 	// indicating the execution order of a cell
 	// inside a notebook.
-	ExecutionOrder TODO_base `json:"executionOrder"`
+	ExecutionOrder uint32 `json:"executionOrder"`
 	// Whether the execution was successful or
 	// not if known by the client.
-	Success TODO_base `json:"success"`
+	Success *bool `json:"success"`
 }
 
 // @since 3.18.0
 type NotebookCellLanguage struct {
-	Language TODO_base `json:"language"`
+	Language string `json:"language"`
 }
 
 // Structural changes to cells in a notebook document.
@@ -3582,19 +3586,19 @@ type NotebookCellLanguage struct {
 // @since 3.18.0
 type NotebookDocumentCellChangeStructure struct {
 	// The change to the cell array.
-	Array *NotebookCellArrayChange `json:"array"`
+	Array NotebookCellArrayChange `json:"array"`
 	// Additional opened cell text documents.
-	DidOpen TODO_array `json:"didOpen"`
+	DidOpen *[]TextDocumentItem `json:"didOpen"`
 	// Additional closed cell text documents.
-	DidClose TODO_array `json:"didClose"`
+	DidClose *[]TextDocumentIdentifier `json:"didClose"`
 }
 
 // Content changes to a cell in a notebook document.
 //
 // @since 3.18.0
 type NotebookDocumentCellContentChanges struct {
-	Document *VersionedTextDocumentIdentifier `json:"document"`
-	Changes  TODO_array                       `json:"changes"`
+	Document VersionedTextDocumentIdentifier  `json:"document"`
+	Changes  []TextDocumentContentChangeEvent `json:"changes"`
 }
 
 // Workspace specific client capabilities.
@@ -3602,7 +3606,7 @@ type WorkspaceClientCapabilities struct {
 	// The client supports applying batch edits
 	// to the workspace by supporting the request
 	// 'workspace/applyEdit'
-	ApplyEdit TODO_base `json:"applyEdit"`
+	ApplyEdit *bool `json:"applyEdit"`
 	// Capabilities specific to `WorkspaceEdit`s.
 	WorkspaceEdit *WorkspaceEditClientCapabilities `json:"workspaceEdit"`
 	// Capabilities specific to the `workspace/didChangeConfiguration` notification.
@@ -3616,11 +3620,11 @@ type WorkspaceClientCapabilities struct {
 	// The client has support for workspace folders.
 	//
 	// @since 3.6.0
-	WorkspaceFolders TODO_base `json:"workspaceFolders"`
+	WorkspaceFolders *bool `json:"workspaceFolders"`
 	// The client supports `workspace/configuration` requests.
 	//
 	// @since 3.6.0
-	Configuration TODO_base `json:"configuration"`
+	Configuration *bool `json:"configuration"`
 	// Capabilities specific to the semantic token requests scoped to the
 	// workspace.
 	//
@@ -3771,7 +3775,7 @@ type NotebookDocumentClientCapabilities struct {
 	// Capabilities specific to notebook document synchronization
 	//
 	// @since 3.17.0
-	Synchronization *NotebookDocumentSyncClientCapabilities `json:"synchronization"`
+	Synchronization NotebookDocumentSyncClientCapabilities `json:"synchronization"`
 }
 
 type WindowClientCapabilities struct {
@@ -3784,7 +3788,7 @@ type WindowClientCapabilities struct {
 	// capabilities.
 	//
 	// @since 3.15.0
-	WorkDoneProgress TODO_base `json:"workDoneProgress"`
+	WorkDoneProgress *bool `json:"workDoneProgress"`
 	// Capabilities specific to the showMessage request.
 	//
 	// @since 3.16.0
@@ -3832,12 +3836,12 @@ type GeneralClientCapabilities struct {
 	// side.
 	//
 	// @since 3.17.0
-	PositionEncodings TODO_array `json:"positionEncodings"`
+	PositionEncodings *[]PositionEncodingKind `json:"positionEncodings"`
 }
 
 type WorkspaceFoldersServerCapabilities struct {
 	// The server has support for workspace folders
-	Supported TODO_base `json:"supported"`
+	Supported *bool `json:"supported"`
 	// Whether the server wants to receive workspace folder
 	// change notifications.
 	//
@@ -3845,7 +3849,7 @@ type WorkspaceFoldersServerCapabilities struct {
 	// under which the notification is registered on the client
 	// side. The ID can be used to unregister for these events
 	// using the `client/unregisterCapability` request.
-	ChangeNotifications TODO_or `json:"changeNotifications"`
+	ChangeNotifications *TODO_or `json:"changeNotifications"`
 }
 
 // Options for notifications/requests for user operations on files.
@@ -3876,7 +3880,7 @@ type RelativePattern struct {
 	// against relatively.
 	BaseUri TODO_or `json:"baseUri"`
 	// The actual glob pattern;
-	Pattern *Pattern `json:"pattern"`
+	Pattern Pattern `json:"pattern"`
 }
 
 // A document filter where `language` is required field.
@@ -3884,9 +3888,9 @@ type RelativePattern struct {
 // @since 3.18.0
 type TextDocumentFilterLanguage struct {
 	// A language id, like `typescript`.
-	Language TODO_base `json:"language"`
+	Language string `json:"language"`
 	// A Uri {@link Uri.scheme scheme}, like `file` or `untitled`.
-	Scheme TODO_base `json:"scheme"`
+	Scheme *string `json:"scheme"`
 	// A glob pattern, like **​/*.{ts,js}. See TextDocumentFilter for examples.
 	//
 	// @since 3.18.0 - support for relative patterns. Whether clients support
@@ -3900,9 +3904,9 @@ type TextDocumentFilterLanguage struct {
 // @since 3.18.0
 type TextDocumentFilterScheme struct {
 	// A language id, like `typescript`.
-	Language TODO_base `json:"language"`
+	Language *string `json:"language"`
 	// A Uri {@link Uri.scheme scheme}, like `file` or `untitled`.
-	Scheme TODO_base `json:"scheme"`
+	Scheme string `json:"scheme"`
 	// A glob pattern, like **​/*.{ts,js}. See TextDocumentFilter for examples.
 	//
 	// @since 3.18.0 - support for relative patterns. Whether clients support
@@ -3916,15 +3920,15 @@ type TextDocumentFilterScheme struct {
 // @since 3.18.0
 type TextDocumentFilterPattern struct {
 	// A language id, like `typescript`.
-	Language TODO_base `json:"language"`
+	Language *string `json:"language"`
 	// A Uri {@link Uri.scheme scheme}, like `file` or `untitled`.
-	Scheme TODO_base `json:"scheme"`
+	Scheme *string `json:"scheme"`
 	// A glob pattern, like **​/*.{ts,js}. See TextDocumentFilter for examples.
 	//
 	// @since 3.18.0 - support for relative patterns. Whether clients support
 	// relative patterns depends on the client capability
 	// `textDocuments.filters.relativePatternSupport`.
-	Pattern *GlobPattern `json:"pattern"`
+	Pattern GlobPattern `json:"pattern"`
 }
 
 // A notebook document filter where `notebookType` is required field.
@@ -3932,9 +3936,9 @@ type TextDocumentFilterPattern struct {
 // @since 3.18.0
 type NotebookDocumentFilterNotebookType struct {
 	// The type of the enclosing notebook.
-	NotebookType TODO_base `json:"notebookType"`
+	NotebookType string `json:"notebookType"`
 	// A Uri {@link Uri.scheme scheme}, like `file` or `untitled`.
-	Scheme TODO_base `json:"scheme"`
+	Scheme *string `json:"scheme"`
 	// A glob pattern.
 	Pattern *GlobPattern `json:"pattern"`
 }
@@ -3944,9 +3948,9 @@ type NotebookDocumentFilterNotebookType struct {
 // @since 3.18.0
 type NotebookDocumentFilterScheme struct {
 	// The type of the enclosing notebook.
-	NotebookType TODO_base `json:"notebookType"`
+	NotebookType *string `json:"notebookType"`
 	// A Uri {@link Uri.scheme scheme}, like `file` or `untitled`.
-	Scheme TODO_base `json:"scheme"`
+	Scheme string `json:"scheme"`
 	// A glob pattern.
 	Pattern *GlobPattern `json:"pattern"`
 }
@@ -3956,11 +3960,11 @@ type NotebookDocumentFilterScheme struct {
 // @since 3.18.0
 type NotebookDocumentFilterPattern struct {
 	// The type of the enclosing notebook.
-	NotebookType TODO_base `json:"notebookType"`
+	NotebookType *string `json:"notebookType"`
 	// A Uri {@link Uri.scheme scheme}, like `file` or `untitled`.
-	Scheme TODO_base `json:"scheme"`
+	Scheme *string `json:"scheme"`
 	// A glob pattern.
-	Pattern *GlobPattern `json:"pattern"`
+	Pattern GlobPattern `json:"pattern"`
 }
 
 // A change describing how to move a `NotebookCell`
@@ -3969,21 +3973,21 @@ type NotebookDocumentFilterPattern struct {
 // @since 3.17.0
 type NotebookCellArrayChange struct {
 	// The start oftest of the cell that changed.
-	Start TODO_base `json:"start"`
+	Start uint32 `json:"start"`
 	// The deleted cells
-	DeleteCount TODO_base `json:"deleteCount"`
+	DeleteCount uint32 `json:"deleteCount"`
 	// The new cells, if any
-	Cells TODO_array `json:"cells"`
+	Cells *[]NotebookCell `json:"cells"`
 }
 
 type WorkspaceEditClientCapabilities struct {
 	// The client supports versioned document changes in `WorkspaceEdit`s
-	DocumentChanges TODO_base `json:"documentChanges"`
+	DocumentChanges *bool `json:"documentChanges"`
 	// The resource operations the client supports. Clients should at least
 	// support 'create', 'rename' and 'delete' files and folders.
 	//
 	// @since 3.13.0
-	ResourceOperations TODO_array `json:"resourceOperations"`
+	ResourceOperations *[]ResourceOperationKind `json:"resourceOperations"`
 	// The failure handling strategy of a client if applying the workspace edit
 	// fails.
 	//
@@ -3996,7 +4000,7 @@ type WorkspaceEditClientCapabilities struct {
 	// character.
 	//
 	// @since 3.16.0
-	NormalizesLineEndings TODO_base `json:"normalizesLineEndings"`
+	NormalizesLineEndings *bool `json:"normalizesLineEndings"`
 	// Whether the client in general supports change annotations on text edits,
 	// create file, rename file and delete file changes.
 	//
@@ -4006,35 +4010,35 @@ type WorkspaceEditClientCapabilities struct {
 	//
 	// @since 3.18.0
 	// @proposed
-	MetadataSupport TODO_base `json:"metadataSupport"`
+	MetadataSupport *bool `json:"metadataSupport"`
 	// Whether the client supports snippets as text edits.
 	//
 	// @since 3.18.0
 	// @proposed
-	SnippetEditSupport TODO_base `json:"snippetEditSupport"`
+	SnippetEditSupport *bool `json:"snippetEditSupport"`
 }
 
 type DidChangeConfigurationClientCapabilities struct {
 	// Did change configuration notification supports dynamic registration.
-	DynamicRegistration TODO_base `json:"dynamicRegistration"`
+	DynamicRegistration *bool `json:"dynamicRegistration"`
 }
 
 type DidChangeWatchedFilesClientCapabilities struct {
 	// Did change watched files notification supports dynamic registration. Please note
 	// that the current protocol doesn't support static configuration for file changes
 	// from the server side.
-	DynamicRegistration TODO_base `json:"dynamicRegistration"`
+	DynamicRegistration *bool `json:"dynamicRegistration"`
 	// Whether the client has support for {@link  RelativePattern relative pattern}
 	// or not.
 	//
 	// @since 3.17.0
-	RelativePatternSupport TODO_base `json:"relativePatternSupport"`
+	RelativePatternSupport *bool `json:"relativePatternSupport"`
 }
 
 // Client capabilities for a {@link WorkspaceSymbolRequest}.
 type WorkspaceSymbolClientCapabilities struct {
 	// Symbol request supports dynamic registration.
-	DynamicRegistration TODO_base `json:"dynamicRegistration"`
+	DynamicRegistration *bool `json:"dynamicRegistration"`
 	// Specific capabilities for the `SymbolKind` in the `workspace/symbol` request.
 	SymbolKind *ClientSymbolKindOptions `json:"symbolKind"`
 	// The client supports tags on `SymbolInformation`.
@@ -4053,7 +4057,7 @@ type WorkspaceSymbolClientCapabilities struct {
 // The client capabilities of a {@link ExecuteCommandRequest}.
 type ExecuteCommandClientCapabilities struct {
 	// Execute command supports dynamic registration.
-	DynamicRegistration TODO_base `json:"dynamicRegistration"`
+	DynamicRegistration *bool `json:"dynamicRegistration"`
 }
 
 // @since 3.16.0
@@ -4065,7 +4069,7 @@ type SemanticTokensWorkspaceClientCapabilities struct {
 	// semantic tokens currently shown. It should be used with absolute care
 	// and is useful for situation where a server for example detects a project
 	// wide change that requires such a calculation.
-	RefreshSupport TODO_base `json:"refreshSupport"`
+	RefreshSupport *bool `json:"refreshSupport"`
 }
 
 // @since 3.16.0
@@ -4077,7 +4081,7 @@ type CodeLensWorkspaceClientCapabilities struct {
 	// code lenses currently shown. It should be used with absolute care and is
 	// useful for situation where a server for example detect a project wide
 	// change that requires such a calculation.
-	RefreshSupport TODO_base `json:"refreshSupport"`
+	RefreshSupport *bool `json:"refreshSupport"`
 }
 
 // Capabilities relating to events from file operations by the user in the client.
@@ -4088,19 +4092,19 @@ type CodeLensWorkspaceClientCapabilities struct {
 // @since 3.16.0
 type FileOperationClientCapabilities struct {
 	// Whether the client supports dynamic registration for file requests/notifications.
-	DynamicRegistration TODO_base `json:"dynamicRegistration"`
+	DynamicRegistration *bool `json:"dynamicRegistration"`
 	// The client has support for sending didCreateFiles notifications.
-	DidCreate TODO_base `json:"didCreate"`
+	DidCreate *bool `json:"didCreate"`
 	// The client has support for sending willCreateFiles requests.
-	WillCreate TODO_base `json:"willCreate"`
+	WillCreate *bool `json:"willCreate"`
 	// The client has support for sending didRenameFiles notifications.
-	DidRename TODO_base `json:"didRename"`
+	DidRename *bool `json:"didRename"`
 	// The client has support for sending willRenameFiles requests.
-	WillRename TODO_base `json:"willRename"`
+	WillRename *bool `json:"willRename"`
 	// The client has support for sending didDeleteFiles notifications.
-	DidDelete TODO_base `json:"didDelete"`
+	DidDelete *bool `json:"didDelete"`
 	// The client has support for sending willDeleteFiles requests.
-	WillDelete TODO_base `json:"willDelete"`
+	WillDelete *bool `json:"willDelete"`
 }
 
 // Client workspace capabilities specific to inline values.
@@ -4114,7 +4118,7 @@ type InlineValueWorkspaceClientCapabilities struct {
 	// inline values currently shown. It should be used with absolute care and is
 	// useful for situation where a server for example detects a project wide
 	// change that requires such a calculation.
-	RefreshSupport TODO_base `json:"refreshSupport"`
+	RefreshSupport *bool `json:"refreshSupport"`
 }
 
 // Client workspace capabilities specific to inlay hints.
@@ -4128,7 +4132,7 @@ type InlayHintWorkspaceClientCapabilities struct {
 	// inlay hints currently shown. It should be used with absolute care and
 	// is useful for situation where a server for example detects a project wide
 	// change that requires such a calculation.
-	RefreshSupport TODO_base `json:"refreshSupport"`
+	RefreshSupport *bool `json:"refreshSupport"`
 }
 
 // Workspace client capabilities specific to diagnostic pull requests.
@@ -4142,7 +4146,7 @@ type DiagnosticWorkspaceClientCapabilities struct {
 	// pulled diagnostics currently shown. It should be used with absolute care and
 	// is useful for situation where a server for example detects a project wide
 	// change that requires such a calculation.
-	RefreshSupport TODO_base `json:"refreshSupport"`
+	RefreshSupport *bool `json:"refreshSupport"`
 }
 
 // Client workspace capabilities specific to folding ranges
@@ -4160,7 +4164,7 @@ type FoldingRangeWorkspaceClientCapabilities struct {
 	//
 	// @since 3.18.0
 	// @proposed
-	RefreshSupport TODO_base `json:"refreshSupport"`
+	RefreshSupport *bool `json:"refreshSupport"`
 }
 
 // Client capabilities for a text document content provider.
@@ -4169,33 +4173,33 @@ type FoldingRangeWorkspaceClientCapabilities struct {
 // @proposed
 type TextDocumentContentClientCapabilities struct {
 	// Text document content provider supports dynamic registration.
-	DynamicRegistration TODO_base `json:"dynamicRegistration"`
+	DynamicRegistration *bool `json:"dynamicRegistration"`
 }
 
 type TextDocumentSyncClientCapabilities struct {
 	// Whether text document synchronization supports dynamic registration.
-	DynamicRegistration TODO_base `json:"dynamicRegistration"`
+	DynamicRegistration *bool `json:"dynamicRegistration"`
 	// The client supports sending will save notifications.
-	WillSave TODO_base `json:"willSave"`
+	WillSave *bool `json:"willSave"`
 	// The client supports sending a will save request and
 	// waits for a response providing text edits which will
 	// be applied to the document before it is saved.
-	WillSaveWaitUntil TODO_base `json:"willSaveWaitUntil"`
+	WillSaveWaitUntil *bool `json:"willSaveWaitUntil"`
 	// The client supports did save notifications.
-	DidSave TODO_base `json:"didSave"`
+	DidSave *bool `json:"didSave"`
 }
 
 type TextDocumentFilterClientCapabilities struct {
 	// The client supports Relative Patterns.
 	//
 	// @since 3.18.0
-	RelativePatternSupport TODO_base `json:"relativePatternSupport"`
+	RelativePatternSupport *bool `json:"relativePatternSupport"`
 }
 
 // Completion client capabilities
 type CompletionClientCapabilities struct {
 	// Whether completion supports dynamic registration.
-	DynamicRegistration TODO_base `json:"dynamicRegistration"`
+	DynamicRegistration *bool `json:"dynamicRegistration"`
 	// The client supports the following `CompletionItem` specific
 	// capabilities.
 	CompletionItem     *ClientCompletionItemOptions     `json:"completionItem"`
@@ -4208,7 +4212,7 @@ type CompletionClientCapabilities struct {
 	InsertTextMode *InsertTextMode `json:"insertTextMode"`
 	// The client supports to send additional context information for a
 	// `textDocument/completion` request.
-	ContextSupport TODO_base `json:"contextSupport"`
+	ContextSupport *bool `json:"contextSupport"`
 	// The client supports the following `CompletionList` specific
 	// capabilities.
 	//
@@ -4218,16 +4222,16 @@ type CompletionClientCapabilities struct {
 
 type HoverClientCapabilities struct {
 	// Whether hover supports dynamic registration.
-	DynamicRegistration TODO_base `json:"dynamicRegistration"`
+	DynamicRegistration *bool `json:"dynamicRegistration"`
 	// Client supports the following content formats for the content
 	// property. The order describes the preferred format of the client.
-	ContentFormat TODO_array `json:"contentFormat"`
+	ContentFormat *[]MarkupKind `json:"contentFormat"`
 }
 
 // Client Capabilities for a {@link SignatureHelpRequest}.
 type SignatureHelpClientCapabilities struct {
 	// Whether signature help supports dynamic registration.
-	DynamicRegistration TODO_base `json:"dynamicRegistration"`
+	DynamicRegistration *bool `json:"dynamicRegistration"`
 	// The client supports the following `SignatureInformation`
 	// specific properties.
 	SignatureInformation *ClientSignatureInformationOptions `json:"signatureInformation"`
@@ -4237,7 +4241,7 @@ type SignatureHelpClientCapabilities struct {
 	// `SignatureHelpOptions`.
 	//
 	// @since 3.15.0
-	ContextSupport TODO_base `json:"contextSupport"`
+	ContextSupport *bool `json:"contextSupport"`
 }
 
 // @since 3.14.0
@@ -4245,19 +4249,19 @@ type DeclarationClientCapabilities struct {
 	// Whether declaration supports dynamic registration. If this is set to `true`
 	// the client supports the new `DeclarationRegistrationOptions` return value
 	// for the corresponding server capability as well.
-	DynamicRegistration TODO_base `json:"dynamicRegistration"`
+	DynamicRegistration *bool `json:"dynamicRegistration"`
 	// The client supports additional metadata in the form of declaration links.
-	LinkSupport TODO_base `json:"linkSupport"`
+	LinkSupport *bool `json:"linkSupport"`
 }
 
 // Client Capabilities for a {@link DefinitionRequest}.
 type DefinitionClientCapabilities struct {
 	// Whether definition supports dynamic registration.
-	DynamicRegistration TODO_base `json:"dynamicRegistration"`
+	DynamicRegistration *bool `json:"dynamicRegistration"`
 	// The client supports additional metadata in the form of definition links.
 	//
 	// @since 3.14.0
-	LinkSupport TODO_base `json:"linkSupport"`
+	LinkSupport *bool `json:"linkSupport"`
 }
 
 // Since 3.6.0
@@ -4265,11 +4269,11 @@ type TypeDefinitionClientCapabilities struct {
 	// Whether implementation supports dynamic registration. If this is set to `true`
 	// the client supports the new `TypeDefinitionRegistrationOptions` return value
 	// for the corresponding server capability as well.
-	DynamicRegistration TODO_base `json:"dynamicRegistration"`
+	DynamicRegistration *bool `json:"dynamicRegistration"`
 	// The client supports additional metadata in the form of definition links.
 	//
 	// Since 3.14.0
-	LinkSupport TODO_base `json:"linkSupport"`
+	LinkSupport *bool `json:"linkSupport"`
 }
 
 // @since 3.6.0
@@ -4277,34 +4281,34 @@ type ImplementationClientCapabilities struct {
 	// Whether implementation supports dynamic registration. If this is set to `true`
 	// the client supports the new `ImplementationRegistrationOptions` return value
 	// for the corresponding server capability as well.
-	DynamicRegistration TODO_base `json:"dynamicRegistration"`
+	DynamicRegistration *bool `json:"dynamicRegistration"`
 	// The client supports additional metadata in the form of definition links.
 	//
 	// @since 3.14.0
-	LinkSupport TODO_base `json:"linkSupport"`
+	LinkSupport *bool `json:"linkSupport"`
 }
 
 // Client Capabilities for a {@link ReferencesRequest}.
 type ReferenceClientCapabilities struct {
 	// Whether references supports dynamic registration.
-	DynamicRegistration TODO_base `json:"dynamicRegistration"`
+	DynamicRegistration *bool `json:"dynamicRegistration"`
 }
 
 // Client Capabilities for a {@link DocumentHighlightRequest}.
 type DocumentHighlightClientCapabilities struct {
 	// Whether document highlight supports dynamic registration.
-	DynamicRegistration TODO_base `json:"dynamicRegistration"`
+	DynamicRegistration *bool `json:"dynamicRegistration"`
 }
 
 // Client Capabilities for a {@link DocumentSymbolRequest}.
 type DocumentSymbolClientCapabilities struct {
 	// Whether document symbol supports dynamic registration.
-	DynamicRegistration TODO_base `json:"dynamicRegistration"`
+	DynamicRegistration *bool `json:"dynamicRegistration"`
 	// Specific capabilities for the `SymbolKind` in the
 	// `textDocument/documentSymbol` request.
 	SymbolKind *ClientSymbolKindOptions `json:"symbolKind"`
 	// The client supports hierarchical document symbols.
-	HierarchicalDocumentSymbolSupport TODO_base `json:"hierarchicalDocumentSymbolSupport"`
+	HierarchicalDocumentSymbolSupport *bool `json:"hierarchicalDocumentSymbolSupport"`
 	// The client supports tags on `SymbolInformation`. Tags are supported on
 	// `DocumentSymbol` if `hierarchicalDocumentSymbolSupport` is set to true.
 	// Clients supporting tags have to handle unknown tags gracefully.
@@ -4315,13 +4319,13 @@ type DocumentSymbolClientCapabilities struct {
 	// registering a document symbol provider.
 	//
 	// @since 3.16.0
-	LabelSupport TODO_base `json:"labelSupport"`
+	LabelSupport *bool `json:"labelSupport"`
 }
 
 // The Client Capabilities of a {@link CodeActionRequest}.
 type CodeActionClientCapabilities struct {
 	// Whether code action supports dynamic registration.
-	DynamicRegistration TODO_base `json:"dynamicRegistration"`
+	DynamicRegistration *bool `json:"dynamicRegistration"`
 	// The client support code action literals of type `CodeAction` as a valid
 	// response of the `textDocument/codeAction` request. If the property is not
 	// set the request can only return `Command` literals.
@@ -4331,17 +4335,17 @@ type CodeActionClientCapabilities struct {
 	// Whether code action supports the `isPreferred` property.
 	//
 	// @since 3.15.0
-	IsPreferredSupport TODO_base `json:"isPreferredSupport"`
+	IsPreferredSupport *bool `json:"isPreferredSupport"`
 	// Whether code action supports the `disabled` property.
 	//
 	// @since 3.16.0
-	DisabledSupport TODO_base `json:"disabledSupport"`
+	DisabledSupport *bool `json:"disabledSupport"`
 	// Whether code action supports the `data` property which is
 	// preserved between a `textDocument/codeAction` and a
 	// `codeAction/resolve` request.
 	//
 	// @since 3.16.0
-	DataSupport TODO_base `json:"dataSupport"`
+	DataSupport *bool `json:"dataSupport"`
 	// Whether the client supports resolving additional code action
 	// properties via a separate `codeAction/resolve` request.
 	//
@@ -4354,13 +4358,13 @@ type CodeActionClientCapabilities struct {
 	// for confirmation.
 	//
 	// @since 3.16.0
-	HonorsChangeAnnotations TODO_base `json:"honorsChangeAnnotations"`
+	HonorsChangeAnnotations *bool `json:"honorsChangeAnnotations"`
 	// Whether the client supports documentation for a class of
 	// code actions.
 	//
 	// @since 3.18.0
 	// @proposed
-	DocumentationSupport TODO_base `json:"documentationSupport"`
+	DocumentationSupport *bool `json:"documentationSupport"`
 	// Client supports the tag property on a code action. Clients
 	// supporting tags have to handle unknown tags gracefully.
 	//
@@ -4371,7 +4375,7 @@ type CodeActionClientCapabilities struct {
 // The client capabilities  of a {@link CodeLensRequest}.
 type CodeLensClientCapabilities struct {
 	// Whether code lens supports dynamic registration.
-	DynamicRegistration TODO_base `json:"dynamicRegistration"`
+	DynamicRegistration *bool `json:"dynamicRegistration"`
 	// Whether the client supports resolving additional code lens
 	// properties via a separate `codeLens/resolve` request.
 	//
@@ -4382,51 +4386,51 @@ type CodeLensClientCapabilities struct {
 // The client capabilities of a {@link DocumentLinkRequest}.
 type DocumentLinkClientCapabilities struct {
 	// Whether document link supports dynamic registration.
-	DynamicRegistration TODO_base `json:"dynamicRegistration"`
+	DynamicRegistration *bool `json:"dynamicRegistration"`
 	// Whether the client supports the `tooltip` property on `DocumentLink`.
 	//
 	// @since 3.15.0
-	TooltipSupport TODO_base `json:"tooltipSupport"`
+	TooltipSupport *bool `json:"tooltipSupport"`
 }
 
 type DocumentColorClientCapabilities struct {
 	// Whether implementation supports dynamic registration. If this is set to `true`
 	// the client supports the new `DocumentColorRegistrationOptions` return value
 	// for the corresponding server capability as well.
-	DynamicRegistration TODO_base `json:"dynamicRegistration"`
+	DynamicRegistration *bool `json:"dynamicRegistration"`
 }
 
 // Client capabilities of a {@link DocumentFormattingRequest}.
 type DocumentFormattingClientCapabilities struct {
 	// Whether formatting supports dynamic registration.
-	DynamicRegistration TODO_base `json:"dynamicRegistration"`
+	DynamicRegistration *bool `json:"dynamicRegistration"`
 }
 
 // Client capabilities of a {@link DocumentRangeFormattingRequest}.
 type DocumentRangeFormattingClientCapabilities struct {
 	// Whether range formatting supports dynamic registration.
-	DynamicRegistration TODO_base `json:"dynamicRegistration"`
+	DynamicRegistration *bool `json:"dynamicRegistration"`
 	// Whether the client supports formatting multiple ranges at once.
 	//
 	// @since 3.18.0
 	// @proposed
-	RangesSupport TODO_base `json:"rangesSupport"`
+	RangesSupport *bool `json:"rangesSupport"`
 }
 
 // Client capabilities of a {@link DocumentOnTypeFormattingRequest}.
 type DocumentOnTypeFormattingClientCapabilities struct {
 	// Whether on type formatting supports dynamic registration.
-	DynamicRegistration TODO_base `json:"dynamicRegistration"`
+	DynamicRegistration *bool `json:"dynamicRegistration"`
 }
 
 type RenameClientCapabilities struct {
 	// Whether rename supports dynamic registration.
-	DynamicRegistration TODO_base `json:"dynamicRegistration"`
+	DynamicRegistration *bool `json:"dynamicRegistration"`
 	// Client supports testing for validity of rename operations
 	// before execution.
 	//
 	// @since 3.12.0
-	PrepareSupport TODO_base `json:"prepareSupport"`
+	PrepareSupport *bool `json:"prepareSupport"`
 	// Client supports the default behavior result.
 	//
 	// The value indicates the default behavior used by the
@@ -4441,7 +4445,7 @@ type RenameClientCapabilities struct {
 	// for confirmation.
 	//
 	// @since 3.16.0
-	HonorsChangeAnnotations TODO_base `json:"honorsChangeAnnotations"`
+	HonorsChangeAnnotations *bool `json:"honorsChangeAnnotations"`
 }
 
 type FoldingRangeClientCapabilities struct {
@@ -4449,15 +4453,15 @@ type FoldingRangeClientCapabilities struct {
 	// providers. If this is set to `true` the client supports the new
 	// `FoldingRangeRegistrationOptions` return value for the corresponding
 	// server capability as well.
-	DynamicRegistration TODO_base `json:"dynamicRegistration"`
+	DynamicRegistration *bool `json:"dynamicRegistration"`
 	// The maximum number of folding ranges that the client prefers to receive
 	// per document. The value serves as a hint, servers are free to follow the
 	// limit.
-	RangeLimit TODO_base `json:"rangeLimit"`
+	RangeLimit *uint32 `json:"rangeLimit"`
 	// If set, the client signals that it only supports folding complete lines.
 	// If set, client will ignore specified `startCharacter` and `endCharacter`
 	// properties in a FoldingRange.
-	LineFoldingOnly TODO_base `json:"lineFoldingOnly"`
+	LineFoldingOnly *bool `json:"lineFoldingOnly"`
 	// Specific options for the folding range kind.
 	//
 	// @since 3.17.0
@@ -4472,7 +4476,7 @@ type SelectionRangeClientCapabilities struct {
 	// Whether implementation supports dynamic registration for selection range providers. If this is set to `true`
 	// the client supports the new `SelectionRangeRegistrationOptions` return value for the corresponding server
 	// capability as well.
-	DynamicRegistration TODO_base `json:"dynamicRegistration"`
+	DynamicRegistration *bool `json:"dynamicRegistration"`
 }
 
 // The publish diagnostic client capabilities.
@@ -4482,7 +4486,7 @@ type PublishDiagnosticsClientCapabilities struct {
 	// `textDocument/publishDiagnostics` notification's parameter.
 	//
 	// @since 3.15.0
-	VersionSupport TODO_base `json:"versionSupport"`
+	VersionSupport *bool `json:"versionSupport"`
 }
 
 // @since 3.16.0
@@ -4490,7 +4494,7 @@ type CallHierarchyClientCapabilities struct {
 	// Whether implementation supports dynamic registration. If this is set to `true`
 	// the client supports the new `(TextDocumentRegistrationOptions & StaticRegistrationOptions)`
 	// return value for the corresponding server capability as well.
-	DynamicRegistration TODO_base `json:"dynamicRegistration"`
+	DynamicRegistration *bool `json:"dynamicRegistration"`
 }
 
 // @since 3.16.0
@@ -4498,7 +4502,7 @@ type SemanticTokensClientCapabilities struct {
 	// Whether implementation supports dynamic registration. If this is set to `true`
 	// the client supports the new `(TextDocumentRegistrationOptions & StaticRegistrationOptions)`
 	// return value for the corresponding server capability as well.
-	DynamicRegistration TODO_base `json:"dynamicRegistration"`
+	DynamicRegistration *bool `json:"dynamicRegistration"`
 	// Which requests the client supports and might send to the server
 	// depending on the server's capability. Please note that clients might not
 	// show semantic tokens or degrade some of the user experience if a range
@@ -4507,24 +4511,24 @@ type SemanticTokensClientCapabilities struct {
 	// `request.range` are both set to true but the server only provides a
 	// range provider the client might not render a minimap correctly or might
 	// even decide to not show any semantic tokens at all.
-	Requests *ClientSemanticTokensRequestOptions `json:"requests"`
+	Requests ClientSemanticTokensRequestOptions `json:"requests"`
 	// The token types that the client supports.
-	TokenTypes TODO_array `json:"tokenTypes"`
+	TokenTypes []string `json:"tokenTypes"`
 	// The token modifiers that the client supports.
-	TokenModifiers TODO_array `json:"tokenModifiers"`
+	TokenModifiers []string `json:"tokenModifiers"`
 	// The token formats the clients supports.
-	Formats TODO_array `json:"formats"`
+	Formats []TokenFormat `json:"formats"`
 	// Whether the client supports tokens that can overlap each other.
-	OverlappingTokenSupport TODO_base `json:"overlappingTokenSupport"`
+	OverlappingTokenSupport *bool `json:"overlappingTokenSupport"`
 	// Whether the client supports tokens that can span multiple lines.
-	MultilineTokenSupport TODO_base `json:"multilineTokenSupport"`
+	MultilineTokenSupport *bool `json:"multilineTokenSupport"`
 	// Whether the client allows the server to actively cancel a
 	// semantic token request, e.g. supports returning
 	// LSPErrorCodes.ServerCancelled. If a server does the client
 	// needs to retrigger the request.
 	//
 	// @since 3.17.0
-	ServerCancelSupport TODO_base `json:"serverCancelSupport"`
+	ServerCancelSupport *bool `json:"serverCancelSupport"`
 	// Whether the client uses semantic tokens to augment existing
 	// syntax tokens. If set to `true` client side created syntax
 	// tokens and semantic tokens are both used for colorization. If
@@ -4535,7 +4539,7 @@ type SemanticTokensClientCapabilities struct {
 	// specified.
 	//
 	// @since 3.17.0
-	AugmentsSyntaxTokens TODO_base `json:"augmentsSyntaxTokens"`
+	AugmentsSyntaxTokens *bool `json:"augmentsSyntaxTokens"`
 }
 
 // Client capabilities for the linked editing range request.
@@ -4545,7 +4549,7 @@ type LinkedEditingRangeClientCapabilities struct {
 	// Whether implementation supports dynamic registration. If this is set to `true`
 	// the client supports the new `(TextDocumentRegistrationOptions & StaticRegistrationOptions)`
 	// return value for the corresponding server capability as well.
-	DynamicRegistration TODO_base `json:"dynamicRegistration"`
+	DynamicRegistration *bool `json:"dynamicRegistration"`
 }
 
 // Client capabilities specific to the moniker request.
@@ -4555,7 +4559,7 @@ type MonikerClientCapabilities struct {
 	// Whether moniker supports dynamic registration. If this is set to `true`
 	// the client supports the new `MonikerRegistrationOptions` return value
 	// for the corresponding server capability as well.
-	DynamicRegistration TODO_base `json:"dynamicRegistration"`
+	DynamicRegistration *bool `json:"dynamicRegistration"`
 }
 
 // @since 3.17.0
@@ -4563,7 +4567,7 @@ type TypeHierarchyClientCapabilities struct {
 	// Whether implementation supports dynamic registration. If this is set to `true`
 	// the client supports the new `(TextDocumentRegistrationOptions & StaticRegistrationOptions)`
 	// return value for the corresponding server capability as well.
-	DynamicRegistration TODO_base `json:"dynamicRegistration"`
+	DynamicRegistration *bool `json:"dynamicRegistration"`
 }
 
 // Client capabilities specific to inline values.
@@ -4571,7 +4575,7 @@ type TypeHierarchyClientCapabilities struct {
 // @since 3.17.0
 type InlineValueClientCapabilities struct {
 	// Whether implementation supports dynamic registration for inline value providers.
-	DynamicRegistration TODO_base `json:"dynamicRegistration"`
+	DynamicRegistration *bool `json:"dynamicRegistration"`
 }
 
 // Inlay hint client capabilities.
@@ -4579,7 +4583,7 @@ type InlineValueClientCapabilities struct {
 // @since 3.17.0
 type InlayHintClientCapabilities struct {
 	// Whether inlay hints support dynamic registration.
-	DynamicRegistration TODO_base `json:"dynamicRegistration"`
+	DynamicRegistration *bool `json:"dynamicRegistration"`
 	// Indicates which properties a client can resolve lazily on an inlay
 	// hint.
 	ResolveSupport *ClientInlayHintResolveOptions `json:"resolveSupport"`
@@ -4593,9 +4597,9 @@ type DiagnosticClientCapabilities struct {
 	// Whether implementation supports dynamic registration. If this is set to `true`
 	// the client supports the new `(TextDocumentRegistrationOptions & StaticRegistrationOptions)`
 	// return value for the corresponding server capability as well.
-	DynamicRegistration TODO_base `json:"dynamicRegistration"`
+	DynamicRegistration *bool `json:"dynamicRegistration"`
 	// Whether the clients supports related documents for document diagnostic pulls.
-	RelatedDocumentSupport TODO_base `json:"relatedDocumentSupport"`
+	RelatedDocumentSupport *bool `json:"relatedDocumentSupport"`
 }
 
 // Client capabilities specific to inline completions.
@@ -4604,7 +4608,7 @@ type DiagnosticClientCapabilities struct {
 // @proposed
 type InlineCompletionClientCapabilities struct {
 	// Whether implementation supports dynamic registration for inline completion providers.
-	DynamicRegistration TODO_base `json:"dynamicRegistration"`
+	DynamicRegistration *bool `json:"dynamicRegistration"`
 }
 
 // Notebook specific client capabilities.
@@ -4615,9 +4619,9 @@ type NotebookDocumentSyncClientCapabilities struct {
 	// set to `true` the client supports the new
 	// `(TextDocumentRegistrationOptions & StaticRegistrationOptions)`
 	// return value for the corresponding server capability as well.
-	DynamicRegistration TODO_base `json:"dynamicRegistration"`
+	DynamicRegistration *bool `json:"dynamicRegistration"`
 	// The client supports sending execution summary data per cell.
-	ExecutionSummarySupport TODO_base `json:"executionSummarySupport"`
+	ExecutionSummarySupport *bool `json:"executionSummarySupport"`
 }
 
 // Show message request client capabilities
@@ -4632,17 +4636,17 @@ type ShowMessageRequestClientCapabilities struct {
 type ShowDocumentClientCapabilities struct {
 	// The client has support for the showDocument
 	// request.
-	Support TODO_base `json:"support"`
+	Support bool `json:"support"`
 }
 
 // @since 3.18.0
 type StaleRequestSupportOptions struct {
 	// The client will actively cancel the request.
-	Cancel TODO_base `json:"cancel"`
+	Cancel bool `json:"cancel"`
 	// The list of requests for which the client
 	// will retry the request if it receives a
 	// response with error code `ContentModified`
-	RetryOnContentModified TODO_array `json:"retryOnContentModified"`
+	RetryOnContentModified []string `json:"retryOnContentModified"`
 }
 
 // Client capabilities specific to regular expressions.
@@ -4650,9 +4654,9 @@ type StaleRequestSupportOptions struct {
 // @since 3.16.0
 type RegularExpressionsClientCapabilities struct {
 	// The engine's name.
-	Engine *RegularExpressionEngineKind `json:"engine"`
+	Engine RegularExpressionEngineKind `json:"engine"`
 	// The engine's version.
-	Version TODO_base `json:"version"`
+	Version *string `json:"version"`
 }
 
 // Client capabilities specific to the used markdown parser.
@@ -4660,14 +4664,14 @@ type RegularExpressionsClientCapabilities struct {
 // @since 3.16.0
 type MarkdownClientCapabilities struct {
 	// The name of the parser.
-	Parser TODO_base `json:"parser"`
+	Parser string `json:"parser"`
 	// The version of the parser.
-	Version TODO_base `json:"version"`
+	Version *string `json:"version"`
 	// A list of HTML tags that the client allows / supports in
 	// Markdown.
 	//
 	// @since 3.17.0
-	AllowedTags TODO_array `json:"allowedTags"`
+	AllowedTags *[]string `json:"allowedTags"`
 }
 
 // @since 3.18.0
@@ -4675,7 +4679,7 @@ type ChangeAnnotationsSupportOptions struct {
 	// Whether the client groups edits with equal labels into tree nodes,
 	// for instance all edits labelled with "Changes in Strings" would
 	// be a tree node.
-	GroupsOnLabel TODO_base `json:"groupsOnLabel"`
+	GroupsOnLabel *bool `json:"groupsOnLabel"`
 }
 
 // @since 3.18.0
@@ -4688,20 +4692,20 @@ type ClientSymbolKindOptions struct {
 	// If this property is not present the client only supports
 	// the symbol kinds from `File` to `Array` as defined in
 	// the initial version of the protocol.
-	ValueSet TODO_array `json:"valueSet"`
+	ValueSet *[]SymbolKind `json:"valueSet"`
 }
 
 // @since 3.18.0
 type ClientSymbolTagOptions struct {
 	// The tags supported by the client.
-	ValueSet TODO_array `json:"valueSet"`
+	ValueSet []SymbolTag `json:"valueSet"`
 }
 
 // @since 3.18.0
 type ClientSymbolResolveOptions struct {
 	// The properties that a client can resolve lazily. Usually
 	// `location.range`
-	Properties TODO_array `json:"properties"`
+	Properties []string `json:"properties"`
 }
 
 // @since 3.18.0
@@ -4712,16 +4716,16 @@ type ClientCompletionItemOptions struct {
 	// and `${3:foo}`. `$0` defines the final tab stop, it defaults to
 	// the end of the snippet. Placeholders with equal identifiers are linked,
 	// that is typing in one will update others too.
-	SnippetSupport TODO_base `json:"snippetSupport"`
+	SnippetSupport *bool `json:"snippetSupport"`
 	// Client supports commit characters on a completion item.
-	CommitCharactersSupport TODO_base `json:"commitCharactersSupport"`
+	CommitCharactersSupport *bool `json:"commitCharactersSupport"`
 	// Client supports the following content formats for the documentation
 	// property. The order describes the preferred format of the client.
-	DocumentationFormat TODO_array `json:"documentationFormat"`
+	DocumentationFormat *[]MarkupKind `json:"documentationFormat"`
 	// Client supports the deprecated property on a completion item.
-	DeprecatedSupport TODO_base `json:"deprecatedSupport"`
+	DeprecatedSupport *bool `json:"deprecatedSupport"`
 	// Client supports the preselect property on a completion item.
-	PreselectSupport TODO_base `json:"preselectSupport"`
+	PreselectSupport *bool `json:"preselectSupport"`
 	// Client supports the tag property on a completion item. Clients supporting
 	// tags have to handle unknown tags gracefully. Clients especially need to
 	// preserve unknown tags when sending a completion item back to the server in
@@ -4733,7 +4737,7 @@ type ClientCompletionItemOptions struct {
 	// completion item is inserted in the text or should replace text.
 	//
 	// @since 3.16.0
-	InsertReplaceSupport TODO_base `json:"insertReplaceSupport"`
+	InsertReplaceSupport *bool `json:"insertReplaceSupport"`
 	// Indicates which properties a client can resolve lazily on a completion
 	// item. Before version 3.16.0 only the predefined properties `documentation`
 	// and `details` could be resolved lazily.
@@ -4750,7 +4754,7 @@ type ClientCompletionItemOptions struct {
 	// details (see also `CompletionItemLabelDetails`).
 	//
 	// @since 3.17.0
-	LabelDetailsSupport TODO_base `json:"labelDetailsSupport"`
+	LabelDetailsSupport *bool `json:"labelDetailsSupport"`
 }
 
 // @since 3.18.0
@@ -4763,7 +4767,7 @@ type ClientCompletionItemOptionsKind struct {
 	// If this property is not present the client only supports
 	// the completion items kinds from `Text` to `Reference` as defined in
 	// the initial version of the protocol.
-	ValueSet TODO_array `json:"valueSet"`
+	ValueSet *[]CompletionItemKind `json:"valueSet"`
 }
 
 // The client supports the following `CompletionList` specific
@@ -4779,7 +4783,7 @@ type CompletionListCapabilities struct {
 	// no properties are supported.
 	//
 	// @since 3.17.0
-	ItemDefaults TODO_array `json:"itemDefaults"`
+	ItemDefaults *[]string `json:"itemDefaults"`
 	// Specifies whether the client supports `CompletionList.applyKind` to
 	// indicate how supported values from `completionList.itemDefaults`
 	// and `completion` will be combined.
@@ -4791,53 +4795,53 @@ type CompletionListCapabilities struct {
 	// defined in `CompletionList.applyKind`.
 	//
 	// @since 3.18.0
-	ApplyKindSupport TODO_base `json:"applyKindSupport"`
+	ApplyKindSupport *bool `json:"applyKindSupport"`
 }
 
 // @since 3.18.0
 type ClientSignatureInformationOptions struct {
 	// Client supports the following content formats for the documentation
 	// property. The order describes the preferred format of the client.
-	DocumentationFormat TODO_array `json:"documentationFormat"`
+	DocumentationFormat *[]MarkupKind `json:"documentationFormat"`
 	// Client capabilities specific to parameter information.
 	ParameterInformation *ClientSignatureParameterInformationOptions `json:"parameterInformation"`
 	// The client supports the `activeParameter` property on `SignatureInformation`
 	// literal.
 	//
 	// @since 3.16.0
-	ActiveParameterSupport TODO_base `json:"activeParameterSupport"`
+	ActiveParameterSupport *bool `json:"activeParameterSupport"`
 	// The client supports the `activeParameter` property on
 	// `SignatureHelp`/`SignatureInformation` being set to `null` to
 	// indicate that no parameter should be active.
 	//
 	// @since 3.18.0
 	// @proposed
-	NoActiveParameterSupport TODO_base `json:"noActiveParameterSupport"`
+	NoActiveParameterSupport *bool `json:"noActiveParameterSupport"`
 }
 
 // @since 3.18.0
 type ClientCodeActionLiteralOptions struct {
 	// The code action kind is support with the following value
 	// set.
-	CodeActionKind *ClientCodeActionKindOptions `json:"codeActionKind"`
+	CodeActionKind ClientCodeActionKindOptions `json:"codeActionKind"`
 }
 
 // @since 3.18.0
 type ClientCodeActionResolveOptions struct {
 	// The properties that a client can resolve lazily.
-	Properties TODO_array `json:"properties"`
+	Properties []string `json:"properties"`
 }
 
 // @since 3.18.0 - proposed
 type CodeActionTagOptions struct {
 	// The tags supported by the client.
-	ValueSet TODO_array `json:"valueSet"`
+	ValueSet []CodeActionTag `json:"valueSet"`
 }
 
 // @since 3.18.0
 type ClientCodeLensResolveOptions struct {
 	// The properties that a client can resolve lazily.
-	Properties TODO_array `json:"properties"`
+	Properties []string `json:"properties"`
 }
 
 // @since 3.18.0
@@ -4846,7 +4850,7 @@ type ClientFoldingRangeKindOptions struct {
 	// property exists the client also guarantees that it will
 	// handle values outside its set gracefully and falls back
 	// to a default value when unknown.
-	ValueSet TODO_array `json:"valueSet"`
+	ValueSet *[]FoldingRangeKind `json:"valueSet"`
 }
 
 // @since 3.18.0
@@ -4855,13 +4859,13 @@ type ClientFoldingRangeOptions struct {
 	// folding ranges to display custom labels instead of the default text.
 	//
 	// @since 3.17.0
-	CollapsedText TODO_base `json:"collapsedText"`
+	CollapsedText *bool `json:"collapsedText"`
 }
 
 // General diagnostics capabilities for pull and push model.
 type DiagnosticsCapabilities struct {
 	// Whether the clients accepts diagnostics with related information.
-	RelatedInformation TODO_base `json:"relatedInformation"`
+	RelatedInformation *bool `json:"relatedInformation"`
 	// Client supports the tag property to provide meta data about a diagnostic.
 	// Clients supporting tags have to handle unknown tags gracefully.
 	//
@@ -4870,29 +4874,29 @@ type DiagnosticsCapabilities struct {
 	// Client supports a codeDescription property
 	//
 	// @since 3.16.0
-	CodeDescriptionSupport TODO_base `json:"codeDescriptionSupport"`
+	CodeDescriptionSupport *bool `json:"codeDescriptionSupport"`
 	// Whether code action supports the `data` property which is
 	// preserved between a `textDocument/publishDiagnostics` and
 	// `textDocument/codeAction` request.
 	//
 	// @since 3.16.0
-	DataSupport TODO_base `json:"dataSupport"`
+	DataSupport *bool `json:"dataSupport"`
 }
 
 // @since 3.18.0
 type ClientSemanticTokensRequestOptions struct {
 	// The client will send the `textDocument/semanticTokens/range` request if
 	// the server provides a corresponding handler.
-	Range TODO_or `json:"range"`
+	Range *TODO_or `json:"range"`
 	// The client will send the `textDocument/semanticTokens/full` request if
 	// the server provides a corresponding handler.
-	Full TODO_or `json:"full"`
+	Full *TODO_or `json:"full"`
 }
 
 // @since 3.18.0
 type ClientInlayHintResolveOptions struct {
 	// The properties that a client can resolve lazily.
-	Properties TODO_array `json:"properties"`
+	Properties []string `json:"properties"`
 }
 
 // @since 3.18.0
@@ -4900,24 +4904,24 @@ type ClientShowMessageActionItemOptions struct {
 	// Whether the client supports additional attributes which
 	// are preserved and send back to the server in the
 	// request's response.
-	AdditionalPropertiesSupport TODO_base `json:"additionalPropertiesSupport"`
+	AdditionalPropertiesSupport *bool `json:"additionalPropertiesSupport"`
 }
 
 // @since 3.18.0
 type CompletionItemTagOptions struct {
 	// The tags supported by the client.
-	ValueSet TODO_array `json:"valueSet"`
+	ValueSet []CompletionItemTag `json:"valueSet"`
 }
 
 // @since 3.18.0
 type ClientCompletionItemResolveOptions struct {
 	// The properties that a client can resolve lazily.
-	Properties TODO_array `json:"properties"`
+	Properties []string `json:"properties"`
 }
 
 // @since 3.18.0
 type ClientCompletionItemInsertTextModeOptions struct {
-	ValueSet TODO_array `json:"valueSet"`
+	ValueSet []InsertTextMode `json:"valueSet"`
 }
 
 // @since 3.18.0
@@ -4926,7 +4930,7 @@ type ClientSignatureParameterInformationOptions struct {
 	// simple label string.
 	//
 	// @since 3.14.0
-	LabelOffsetSupport TODO_base `json:"labelOffsetSupport"`
+	LabelOffsetSupport *bool `json:"labelOffsetSupport"`
 }
 
 // @since 3.18.0
@@ -4935,20 +4939,20 @@ type ClientCodeActionKindOptions struct {
 	// property exists the client also guarantees that it will
 	// handle values outside its set gracefully and falls back
 	// to a default value when unknown.
-	ValueSet TODO_array `json:"valueSet"`
+	ValueSet []CodeActionKind `json:"valueSet"`
 }
 
 // @since 3.18.0
 type ClientDiagnosticsTagOptions struct {
 	// The tags supported by the client.
-	ValueSet TODO_array `json:"valueSet"`
+	ValueSet []DiagnosticTag `json:"valueSet"`
 }
 
 // @since 3.18.0
 type ClientSemanticTokensRequestFullDelta struct {
 	// The client will send the `textDocument/semanticTokens/full/delta` request if
 	// the server provides a corresponding handler.
-	Delta TODO_base `json:"delta"`
+	Delta *bool `json:"delta"`
 }
 
 // A set of predefined token types. This set is not fixed
@@ -5115,3 +5119,147 @@ type FailureHandlingKind int
 type PrepareSupportDefaultBehavior int
 
 type TokenFormat int
+
+// The definition of a symbol represented as one or many {@link Location locations}.
+// For most programming languages there is only one location at which a symbol is
+// defined.
+//
+// Servers should prefer returning `DefinitionLink` over `Definition` if supported
+// by the client.
+type Definition TODO_or
+
+// Information about where a symbol is defined.
+//
+// Provides additional metadata over normal {@link Location location} definitions, including the range of
+// the defining symbol
+type DefinitionLink LocationLink
+
+// LSP arrays.
+// @since 3.17.0
+type LSPArray []LSPAny
+
+// The LSP any type.
+// Please note that strictly speaking a property with the value `undefined`
+// can't be converted into JSON preserving the property name. However for
+// convenience it is allowed and assumed that all these properties are
+// optional as well.
+// @since 3.17.0
+type LSPAny TODO_or
+
+// The declaration of a symbol representation as one or many {@link Location locations}.
+type Declaration TODO_or
+
+// Information about where a symbol is declared.
+//
+// Provides additional metadata over normal {@link Location location} declarations, including the range of
+// the declaring symbol.
+//
+// Servers should prefer returning `DeclarationLink` over `Declaration` if supported
+// by the client.
+type DeclarationLink LocationLink
+
+// Inline value information can be provided by different means:
+// - directly as a text value (class InlineValueText).
+// - as a name to use for a variable lookup (class InlineValueVariableLookup)
+// - as an evaluatable expression (class InlineValueEvaluatableExpression)
+// The InlineValue types combines all inline value types into one type.
+//
+// @since 3.17.0
+type InlineValue TODO_or
+
+// The result of a document diagnostic pull request. A report can
+// either be a full report containing all diagnostics for the
+// requested document or an unchanged report indicating that nothing
+// has changed in terms of diagnostics in comparison to the last
+// pull request.
+//
+// @since 3.17.0
+type DocumentDiagnosticReport TODO_or
+type PrepareRenameResult TODO_or
+
+// A document selector is the combination of one or many document filters.
+//
+// @sample `let sel:DocumentSelector = [{ language: 'typescript' }, { language: 'json', pattern: '**∕tsconfig.json' }]`;
+//
+// The use of a string as a document filter is deprecated @since 3.16.0.
+type DocumentSelector []DocumentFilter
+type ProgressToken TODO_or
+
+// An identifier to refer to a change annotation stored with a workspace edit.
+type ChangeAnnotationIdentifier string
+
+// A workspace diagnostic document report.
+//
+// @since 3.17.0
+type WorkspaceDocumentDiagnosticReport TODO_or
+
+// An event describing a change to a text document. If only a text is provided
+// it is considered to be the full content of the document.
+type TextDocumentContentChangeEvent TODO_or
+
+// MarkedString can be used to render human readable text. It is either a markdown string
+// or a code-block that provides a language and a code snippet. The language identifier
+// is semantically equal to the optional language identifier in fenced code blocks in GitHub
+// issues. See https://help.github.com/articles/creating-and-highlighting-code-blocks/#syntax-highlighting
+//
+// The pair of a language and a value is an equivalent to markdown:
+// ```${language}
+// ${value}
+// ```
+//
+// Note that markdown strings will be sanitized - that means html will be escaped.
+// @deprecated use MarkupContent instead.
+// Deprecated: use MarkupContent instead.
+type MarkedString TODO_or
+
+// A document filter describes a top level text document or
+// a notebook cell document.
+//
+// @since 3.17.0 - support for NotebookCellTextDocumentFilter.
+type DocumentFilter TODO_or
+
+// LSP object definition.
+// @since 3.17.0
+type LSPObject TODO_map
+
+// The glob pattern. Either a string pattern or a relative pattern.
+//
+// @since 3.17.0
+type GlobPattern TODO_or
+
+// A document filter denotes a document by different properties like
+// the {@link TextDocument.languageId language}, the {@link Uri.scheme scheme} of
+// its resource, or a glob-pattern that is applied to the {@link TextDocument.fileName path}.
+//
+// Glob patterns can have the following syntax:
+// - `*` to match one or more characters in a path segment
+// - `?` to match on one character in a path segment
+// - `**` to match any number of path segments, including none
+// - `{}` to group sub patterns into an OR expression. (e.g. `**​/*.{ts,js}` matches all TypeScript and JavaScript files)
+// - `[]` to declare a range of characters to match in a path segment (e.g., `example.[0-9]` to match on `example.0`, `example.1`, …)
+// - `[!...]` to negate a range of characters to match in a path segment (e.g., `example.[!0-9]` to match on `example.a`, `example.b`, but not `example.0`)
+//
+// @sample A language filter that applies to typescript files on disk: `{ language: 'typescript', scheme: 'file' }`
+// @sample A language filter that applies to all package.json paths: `{ language: 'json', pattern: '**package.json' }`
+//
+// @since 3.17.0
+type TextDocumentFilter TODO_or
+
+// A notebook document filter denotes a notebook document by
+// different properties. The properties will be match
+// against the notebook's URI (same as with documents)
+//
+// @since 3.17.0
+type NotebookDocumentFilter TODO_or
+
+// The glob pattern to watch relative to the base path. Glob patterns can have the following syntax:
+// - `*` to match one or more characters in a path segment
+// - `?` to match on one character in a path segment
+// - `**` to match any number of path segments, including none
+// - `{}` to group conditions (e.g. `**​/*.{ts,js}` matches all TypeScript and JavaScript files)
+// - `[]` to declare a range of characters to match in a path segment (e.g., `example.[0-9]` to match on `example.0`, `example.1`, …)
+// - `[!...]` to negate a range of characters to match in a path segment (e.g., `example.[!0-9]` to match on `example.a`, `example.b`, but not `example.0`)
+//
+// @since 3.17.0
+type Pattern string
+type RegularExpressionEngineKind string

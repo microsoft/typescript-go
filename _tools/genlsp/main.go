@@ -37,44 +37,6 @@ func main() {
 	}
 }
 
-var supportedMethods = map[string]bool{
-	"initialize":  true,
-	"initialized": true,
-	"shutdown":    true,
-	"exit":        true,
-
-	"$/cancelRequest": true,
-	"$/setTrace":      true,
-
-	"textDocument/didOpen":   true,
-	"textDocument/didChange": true,
-	"textDocument/didClose":  true,
-	"textDocument/didSave":   true,
-
-	"textDocument/publishDiagnostics": true,
-	"textDocument/diagnostics":        true,
-
-	"textDocument/hover": true,
-
-	"textDocument/completion": true,
-	"completionItem/resolve":  true,
-}
-
-func writeDocumentation(buf *bytes.Buffer, doc *string) {
-	if doc != nil {
-		lines := strings.Split(*doc, "\n")
-		for _, line := range lines {
-			buf.WriteString("// " + line + "\n")
-		}
-	}
-}
-
-func writeDeprecation(buf *bytes.Buffer, deprecated *string) {
-	if deprecated != nil {
-		buf.WriteString("// Deprecated: " + *deprecated + "\n")
-	}
-}
-
 type generator struct {
 	model metamodel.MetaModel
 
@@ -93,6 +55,9 @@ func (g *generator) generate() {
 	g.writeLine("")
 	g.writeLine("// Meta model version " + g.model.MetaData.Version)
 	g.writeLine("")
+
+	g.writeLine("type URI string\n")
+	g.writeLine("type DocumentUri string\n")
 
 	for _, t := range g.model.Structures {
 		g.writeDocumentation(t.Documentation)
@@ -115,12 +80,11 @@ func (g *generator) generate() {
 			// TODO(jakebailey): better uppercasing (e.g. URI)
 			g.startLine(strings.Title(p.Name) + " ")
 
-			switch p.Type.Kind {
-			case metamodel.FluffyReference:
-				g.write("*" + *p.Type.Name)
-			default:
-				g.write("TODO_" + string(p.Type.Kind))
+			if p.Optional != nil && *p.Optional {
+				g.write("*")
 			}
+
+			g.writeTypeElement(&p.Type)
 
 			g.finishLine(" `json:\"" + p.Name + "\"`")
 		}
@@ -138,6 +102,15 @@ func (g *generator) generate() {
 		g.writeLine("")
 	}
 
+	for _, t := range g.model.TypeAliases {
+		g.writeDocumentation(t.Documentation)
+		g.writeDeprecation(t.Deprecated)
+
+		g.startLine("type " + t.Name + " ")
+		g.writeTypeElement(&t.Type)
+		g.finishLine("")
+	}
+
 	// for _, t := range g.model.Requests {
 	// 	fmt.Println(t.Method)
 	// }
@@ -145,6 +118,35 @@ func (g *generator) generate() {
 	// for _, t := range g.model.Notifications {
 	// 	fmt.Println(t.Method)
 	// }
+}
+
+func (g *generator) writeTypeElement(t *metamodel.TypeElement) {
+	switch t.Kind {
+	case metamodel.FluffyReference:
+		g.write(*t.Name)
+	case metamodel.TentacledBase:
+		switch *t.Name {
+		case "integer":
+			g.write("int32")
+		case "uinteger":
+			g.write("uint32")
+		case "string":
+			g.write("string")
+		case "boolean":
+			g.write("bool")
+		case "URI":
+			g.write("URI")
+		case "DocumentUri":
+			g.write("DocumentUri")
+		default:
+			g.write("TODO_base_" + *t.Name)
+		}
+	case metamodel.Array:
+		g.write("[]")
+		g.writeTypeElement(t.Element)
+	default:
+		g.write("TODO_" + string(t.Kind))
+	}
 }
 
 func (g *generator) writeDocumentation(doc *string) {
