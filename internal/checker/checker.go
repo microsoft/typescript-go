@@ -12618,6 +12618,11 @@ func (c *Checker) getWriteTypeOfSymbol(symbol *ast.Symbol) *Type {
 	return c.getTypeOfSymbol(symbol)
 }
 
+func (c *Checker) GetTypeOfSymbolAtLocation(symbol *ast.Symbol, location *ast.Node) *Type {
+	// !!!
+	return c.getTypeOfSymbol(symbol)
+}
+
 func (c *Checker) getTypeOfSymbol(symbol *ast.Symbol) *Type {
 	// !!!
 	// checkFlags := symbol.checkFlags
