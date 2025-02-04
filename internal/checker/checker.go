@@ -3703,7 +3703,7 @@ func (c *Checker) checkInheritedPropertiesAreIdentical(t *Type, typeNode *ast.No
 			seen[p.Name] = InheritanceInfo{prop: p, containingType: t}
 		}
 	}
-	ok := true
+	identical := true
 	for _, base := range baseTypes {
 		properties := c.getPropertiesOfType(c.getTypeWithThisArgument(base, t.AsInterfaceType().thisType, false))
 		for _, prop := range properties {
@@ -3712,7 +3712,7 @@ func (c *Checker) checkInheritedPropertiesAreIdentical(t *Type, typeNode *ast.No
 			} else {
 				isInheritedProperty := existing.containingType != t
 				if isInheritedProperty && !c.isPropertyIdenticalTo(existing.prop, prop) {
-					ok = false
+					identical = false
 					typeName1 := c.typeToString(existing.containingType)
 					typeName2 := c.typeToString(base)
 					errorInfo := NewDiagnosticForNode(typeNode, diagnostics.Named_property_0_of_types_1_and_2_are_not_identical, c.symbolToString(prop), typeName1, typeName2)
@@ -3721,7 +3721,7 @@ func (c *Checker) checkInheritedPropertiesAreIdentical(t *Type, typeNode *ast.No
 			}
 		}
 	}
-	return ok
+	return identical
 }
 
 func (c *Checker) isPropertyIdenticalTo(sourceProp *ast.Symbol, targetProp *ast.Symbol) bool {
@@ -4771,7 +4771,7 @@ func (c *Checker) checkTypeParameters(typeParameterDeclarations []*ast.Node) {
 		} else if seenDefault {
 			c.error(node, diagnostics.Required_type_parameters_may_not_follow_optional_type_parameters)
 		}
-		for j := 0; j < i; j++ {
+		for j := range i {
 			if typeParameterDeclarations[j].Symbol() == node.Symbol() {
 				c.error(node.Name(), diagnostics.Duplicate_identifier_0, scanner.DeclarationNameToString(node.Name()))
 			}
