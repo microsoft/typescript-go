@@ -106,7 +106,7 @@ func (g *generator) generate() {
 		g.writeDocumentation(t.Documentation)
 		g.writeDeprecation(t.Deprecated)
 
-		g.startLine("type " + t.Name + " ")
+		g.startLine("type " + t.Name + " = ")
 		g.writeTypeElement(&t.Type)
 		g.finishLine("")
 	}
@@ -138,12 +138,31 @@ func (g *generator) writeTypeElement(t *metamodel.TypeElement) {
 			g.write("URI")
 		case "DocumentUri":
 			g.write("DocumentUri")
+		case "decimal":
+			g.write("float64")
 		default:
 			g.write("TODO_base_" + *t.Name)
 		}
 	case metamodel.Array:
 		g.write("[]")
 		g.writeTypeElement(t.Element)
+	case metamodel.StringLiteral:
+		g.write("string")
+	case metamodel.Map:
+		g.write("map[")
+		g.write(t.Key.Name)
+		g.write("]")
+
+		vt := t.Value.ValueType
+		switch *vt.Kind {
+		case metamodel.FluffyReference:
+			g.write(*vt.Name)
+		case metamodel.Array:
+			g.write("[]")
+			g.writeTypeElement(vt.Element)
+		default:
+			g.write("TODO_map_value_" + string(*vt.Kind))
+		}
 	default:
 		g.write("TODO_" + string(t.Kind))
 	}
