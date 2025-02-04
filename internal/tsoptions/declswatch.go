@@ -19,7 +19,7 @@ var optionsForWatch = []*CommandLineOption{
 		// })),
 		Category:                diagnostics.Watch_and_Build_Modes,
 		Description:             diagnostics.Specify_how_the_TypeScript_watch_mode_works,
-		DefaultValueDescription: core.WatchFileKind_UseFsEvents,
+		DefaultValueDescription: core.WatchFileKindUseFsEvents,
 	},
 	{
 		Name: "watchDirectory",
@@ -32,7 +32,7 @@ var optionsForWatch = []*CommandLineOption{
 		// })),
 		Category:                diagnostics.Watch_and_Build_Modes,
 		Description:             diagnostics.Specify_how_directories_are_watched_on_systems_that_lack_recursive_file_watching_functionality,
-		DefaultValueDescription: core.WatchDirectoryKind_UseFsEvents,
+		DefaultValueDescription: core.WatchDirectoryKindUseFsEvents,
 	},
 	{
 		Name: "fallbackPolling",
@@ -45,7 +45,7 @@ var optionsForWatch = []*CommandLineOption{
 		// })),
 		Category:                diagnostics.Watch_and_Build_Modes,
 		Description:             diagnostics.Specify_what_approach_the_watcher_should_use_if_the_system_runs_out_of_native_file_watchers,
-		DefaultValueDescription: core.PollingKind_PriorityInterval,
+		DefaultValueDescription: core.PollingKindPriorityInterval,
 	},
 	{
 		Name:                    "synchronousWatchDirectory",

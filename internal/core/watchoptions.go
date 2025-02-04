@@ -12,31 +12,31 @@ type WatchOptions struct {
 type WatchFileKind int32
 
 const (
-	WatchFileKind_None                         WatchFileKind = 0
-	WatchFileKind_FixedPollingInterval         WatchFileKind = 1
-	WatchFileKind_PriorityPollingInterval      WatchFileKind = 2
-	WatchFileKind_DynamicPriorityPolling       WatchFileKind = 3
-	WatchFileKind_FixedChunkSizePolling        WatchFileKind = 4
-	WatchFileKind_UseFsEvents                  WatchFileKind = 5
-	WatchFileKind_UseFsEventsOnParentDirectory WatchFileKind = 6
+	WatchFileKindNone                         WatchFileKind = 0
+	WatchFileKindFixedPollingInterval         WatchFileKind = 1
+	WatchFileKindPriorityPollingInterval      WatchFileKind = 2
+	WatchFileKindDynamicPriorityPolling       WatchFileKind = 3
+	WatchFileKindFixedChunkSizePolling        WatchFileKind = 4
+	WatchFileKindUseFsEvents                  WatchFileKind = 5
+	WatchFileKindUseFsEventsOnParentDirectory WatchFileKind = 6
 )
 
 type WatchDirectoryKind int32
 
 const (
-	WatchDirectoryKind_None                   WatchDirectoryKind = 0
-	WatchDirectoryKind_UseFsEvents            WatchDirectoryKind = 1
-	WatchDirectoryKind_FixedPollingInterval   WatchDirectoryKind = 2
-	WatchDirectoryKind_DynamicPriorityPolling WatchDirectoryKind = 3
-	WatchDirectoryKind_FixedChunkSizePolling  WatchDirectoryKind = 4
+	WatchDirectoryKindNone                   WatchDirectoryKind = 0
+	WatchDirectoryKindUseFsEvents            WatchDirectoryKind = 1
+	WatchDirectoryKindFixedPollingInterval   WatchDirectoryKind = 2
+	WatchDirectoryKindDynamicPriorityPolling WatchDirectoryKind = 3
+	WatchDirectoryKindFixedChunkSizePolling  WatchDirectoryKind = 4
 )
 
 type PollingKind int32
 
 const (
-	PollingKind_None             PollingKind = 0
-	PollingKind_FixedInterval    PollingKind = 1
-	PollingKind_PriorityInterval PollingKind = 2
-	PollingKind_DynamicPriority  PollingKind = 3
-	PollingKind_FixedChunkSize   PollingKind = 4
+	PollingKindNone             PollingKind = 0
+	PollingKindFixedInterval    PollingKind = 1
+	PollingKindPriorityInterval PollingKind = 2
+	PollingKindDynamicPriority  PollingKind = 3
+	PollingKindFixedChunkSize   PollingKind = 4
 )

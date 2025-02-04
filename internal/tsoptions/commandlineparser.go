@@ -45,8 +45,8 @@ func ParseCommandLine(
 	}
 	parser := parseCommandLineWorker(CompilerOptionsDidYouMeanDiagnostics, commandLine, host.FS())
 	optionsWithAbsolutePaths := convertToOptionsWithAbsolutePaths(parser.options, commandLineCompilerOptionsMap, host.GetCurrentDirectory())
-	compilerOptions, d1 := convertOptionsFromJson(commandLineCompilerOptionsMap, optionsWithAbsolutePaths, host.GetCurrentDirectory(), &compilerOptionsParser{&core.CompilerOptions{}})
-	watchOptions, d2 := convertOptionsFromJson(commandLineCompilerOptionsMap, optionsWithAbsolutePaths, host.GetCurrentDirectory(), &watchOptionsParser{&core.WatchOptions{}})
+	compilerOptions, d1 := convertOptionsFromJson(commandLineCompilerOptionsMap, optionsWithAbsolutePaths, host.GetCurrentDirectory(), &compilerOptionsParser{&core.CompilerOptions{}, true})
+	watchOptions, d2 := convertOptionsFromJson(commandLineCompilerOptionsMap, optionsWithAbsolutePaths, host.GetCurrentDirectory(), &watchOptionsParser{&core.WatchOptions{}, true})
 	return &ParsedCommandLine{
 		ParsedConfig: &core.ParsedOptions{
 			CompilerOptions: compilerOptions.CompilerOptions,

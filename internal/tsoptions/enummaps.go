@@ -193,24 +193,24 @@ func GetDefaultLibFileName(options *core.CompilerOptions) string {
 }
 
 var watchFileEnumMap = collections.NewOrderedMapFromList([]collections.MapEntry[string, any]{
-	{Key: "fixedpollinginterval", Value: core.WatchFileKind_FixedPollingInterval},
-	{Key: "prioritypollinginterval", Value: core.WatchFileKind_PriorityPollingInterval},
-	{Key: "dynamicprioritypolling", Value: core.WatchFileKind_DynamicPriorityPolling},
-	{Key: "fixedchunksizepolling", Value: core.WatchFileKind_FixedChunkSizePolling},
-	{Key: "usefsevents", Value: core.WatchFileKind_UseFsEvents},
-	{Key: "usefseventsonparentdirectory", Value: core.WatchFileKind_UseFsEventsOnParentDirectory},
+	{Key: "fixedpollinginterval", Value: core.WatchFileKindFixedPollingInterval},
+	{Key: "prioritypollinginterval", Value: core.WatchFileKindPriorityPollingInterval},
+	{Key: "dynamicprioritypolling", Value: core.WatchFileKindDynamicPriorityPolling},
+	{Key: "fixedchunksizepolling", Value: core.WatchFileKindFixedChunkSizePolling},
+	{Key: "usefsevents", Value: core.WatchFileKindUseFsEvents},
+	{Key: "usefseventsonparentdirectory", Value: core.WatchFileKindUseFsEventsOnParentDirectory},
 })
 
 var watchDirectoryEnumMap = collections.NewOrderedMapFromList([]collections.MapEntry[string, any]{
-	{Key: "usefsevents", Value: core.WatchDirectoryKind_UseFsEvents},
-	{Key: "fixedpollinginterval", Value: core.WatchDirectoryKind_FixedPollingInterval},
-	{Key: "dynamicprioritypolling", Value: core.WatchDirectoryKind_DynamicPriorityPolling},
-	{Key: "fixedchunksizepolling", Value: core.WatchDirectoryKind_FixedChunkSizePolling},
+	{Key: "usefsevents", Value: core.WatchDirectoryKindUseFsEvents},
+	{Key: "fixedpollinginterval", Value: core.WatchDirectoryKindFixedPollingInterval},
+	{Key: "dynamicprioritypolling", Value: core.WatchDirectoryKindDynamicPriorityPolling},
+	{Key: "fixedchunksizepolling", Value: core.WatchDirectoryKindFixedChunkSizePolling},
 })
 
 var fallbackEnumMap = collections.NewOrderedMapFromList([]collections.MapEntry[string, any]{
-	{Key: "fixedinterval", Value: core.PollingKind_FixedInterval},
-	{Key: "priorityinterval", Value: core.PollingKind_PriorityInterval},
-	{Key: "dynamicpriority", Value: core.PollingKind_DynamicPriority},
-	{Key: "fixedchunksize", Value: core.PollingKind_FixedChunkSize},
+	{Key: "fixedinterval", Value: core.PollingKindFixedInterval},
+	{Key: "priorityinterval", Value: core.PollingKindPriorityInterval},
+	{Key: "dynamicpriority", Value: core.PollingKindDynamicPriority},
+	{Key: "fixedchunksize", Value: core.PollingKindFixedChunkSize},
 })
