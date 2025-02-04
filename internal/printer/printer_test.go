@@ -2342,27 +2342,26 @@ func TestParenthesizeConditionalType4(t *testing.T) {
 
 func TestNameGeneration(t *testing.T) {
 	t.Parallel()
-	var ctx printer.EmitContext
-	factory := &ctx.Factory
-	file := factory.NewSourceFile("", "", factory.NewNodeList([]*ast.Node{
-		factory.NewVariableStatement(nil, factory.NewVariableDeclarationList(
+	ec := printer.NewEmitContext()
+	file := ec.Factory.NewSourceFile("", "", ec.Factory.NewNodeList([]*ast.Node{
+		ec.Factory.NewVariableStatement(nil, ec.Factory.NewVariableDeclarationList(
 			ast.NodeFlagsNone,
-			factory.NewNodeList([]*ast.Node{
-				factory.NewVariableDeclaration(ctx.NewTempVariable(printer.AutoGenerateOptions{}), nil, nil, nil),
+			ec.Factory.NewNodeList([]*ast.Node{
+				ec.Factory.NewVariableDeclaration(ec.NewTempVariable(printer.AutoGenerateOptions{}), nil, nil, nil),
 			}),
 		)),
-		factory.NewFunctionDeclaration(
+		ec.Factory.NewFunctionDeclaration(
 			nil,
 			nil,
-			factory.NewIdentifier("f"),
+			ec.Factory.NewIdentifier("f"),
 			nil,
-			factory.NewNodeList([]*ast.Node{}),
+			ec.Factory.NewNodeList([]*ast.Node{}),
 			nil,
-			factory.NewBlock(factory.NewNodeList([]*ast.Node{
-				factory.NewVariableStatement(nil, factory.NewVariableDeclarationList(
+			ec.Factory.NewBlock(ec.Factory.NewNodeList([]*ast.Node{
+				ec.Factory.NewVariableStatement(nil, ec.Factory.NewVariableDeclarationList(
 					ast.NodeFlagsNone,
-					factory.NewNodeList([]*ast.Node{
-						factory.NewVariableDeclaration(ctx.NewTempVariable(printer.AutoGenerateOptions{}), nil, nil, nil),
+					ec.Factory.NewNodeList([]*ast.Node{
+						ec.Factory.NewVariableDeclaration(ec.NewTempVariable(printer.AutoGenerateOptions{}), nil, nil, nil),
 					}),
 				)),
 			}), true),
@@ -2370,5 +2369,5 @@ func TestNameGeneration(t *testing.T) {
 	}))
 	ast.SetParentInChildren(file)
 	parseutil.MarkSyntheticRecursive(file)
-	emitutil.CheckEmit(t, &ctx, file.AsSourceFile(), "var _a;\nfunction f() {\n    var _a;\n}")
+	emitutil.CheckEmit(t, ec, file.AsSourceFile(), "var _a;\nfunction f() {\n    var _a;\n}")
 }

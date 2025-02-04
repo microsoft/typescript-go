@@ -45,6 +45,7 @@ func CheckDiagnosticsMessage(t *testing.T, file *ast.SourceFile, message string)
 
 var syntheticRecursiveVisitor = sync.OnceValue(func() *ast.NodeVisitor {
 	v := ast.NodeVisitor{
+		Factory: &ast.NodeFactory{},
 		Hooks: ast.NodeVisitorHooks{
 			VisitNode: func(node *ast.Node, v *ast.NodeVisitor) *ast.Node {
 				if node != nil {

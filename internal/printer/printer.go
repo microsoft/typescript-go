@@ -128,7 +128,7 @@ func NewPrinter(options PrinterOptions, handlers PrintHandlers, emitContext *Emi
 	}
 	// wire up name generator
 	if printer.emitContext == nil {
-		printer.emitContext = &EmitContext{}
+		printer.emitContext = NewEmitContext()
 	}
 	printer.nameGenerator.Context = printer.emitContext
 	printer.nameGenerator.GetTextOfNode = func(node *ast.Node) string { return printer.getTextOfNode(node, false) }

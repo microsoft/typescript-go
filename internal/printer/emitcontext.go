@@ -9,10 +9,16 @@ import (
 )
 
 // Stores side-table information used during transformation that can be read by the printer to customize emit
+//
+// NOTE: EmitContext is not guaranteed to be thread-safe.
 type EmitContext struct {
-	Factory      ast.NodeFactory
+	Factory      *ast.NodeFactory // Required. The NodeFactory to use for creating new nodes
 	autoGenerate map[*ast.MemberName]*autoGenerateInfo
 	textSource   map[*ast.StringLiteralNode]*ast.Node
+}
+
+func NewEmitContext() *EmitContext {
+	return &EmitContext{Factory: &ast.NodeFactory{}}
 }
 
 type AutoGenerateOptions struct {
@@ -21,37 +27,37 @@ type AutoGenerateOptions struct {
 	Suffix string
 }
 
-func (ctx *EmitContext) newGeneratedIdentifier(kind GeneratedIdentifierFlags, text string, options AutoGenerateOptions) (*ast.IdentifierNode, *autoGenerateInfo) {
-	name := ctx.Factory.NewIdentifier(text)
+func (c *EmitContext) newGeneratedIdentifier(kind GeneratedIdentifierFlags, text string, options AutoGenerateOptions) (*ast.IdentifierNode, *autoGenerateInfo) {
+	name := c.Factory.NewIdentifier(text)
 	autoGenerate := &autoGenerateInfo{
 		Id:     autoGenerateId(nextAutoGenerateId.Add(1)),
 		Flags:  kind | (options.Flags & ^GeneratedIdentifierFlagsKindMask),
 		Prefix: options.Prefix,
 		Suffix: options.Suffix,
 	}
-	if ctx.autoGenerate == nil {
-		ctx.autoGenerate = make(map[*ast.MemberName]*autoGenerateInfo)
+	if c.autoGenerate == nil {
+		c.autoGenerate = make(map[*ast.MemberName]*autoGenerateInfo)
 	}
-	ctx.autoGenerate[name] = autoGenerate
+	c.autoGenerate[name] = autoGenerate
 	return name, autoGenerate
 }
 
-func (ctx *EmitContext) NewTempVariable(options AutoGenerateOptions) *ast.IdentifierNode {
-	name, _ := ctx.newGeneratedIdentifier(GeneratedIdentifierFlagsAuto, "", options)
+func (c *EmitContext) NewTempVariable(options AutoGenerateOptions) *ast.IdentifierNode {
+	name, _ := c.newGeneratedIdentifier(GeneratedIdentifierFlagsAuto, "", options)
 	return name
 }
 
-func (ctx *EmitContext) NewLoopVariable(options AutoGenerateOptions) *ast.IdentifierNode {
-	name, _ := ctx.newGeneratedIdentifier(GeneratedIdentifierFlagsLoop, "", options)
+func (c *EmitContext) NewLoopVariable(options AutoGenerateOptions) *ast.IdentifierNode {
+	name, _ := c.newGeneratedIdentifier(GeneratedIdentifierFlagsLoop, "", options)
 	return name
 }
 
-func (ctx *EmitContext) NewUniqueName(text string, options AutoGenerateOptions) *ast.IdentifierNode {
-	name, _ := ctx.newGeneratedIdentifier(GeneratedIdentifierFlagsUnique, text, options)
+func (c *EmitContext) NewUniqueName(text string, options AutoGenerateOptions) *ast.IdentifierNode {
+	name, _ := c.newGeneratedIdentifier(GeneratedIdentifierFlagsUnique, text, options)
 	return name
 }
 
-func (ctx *EmitContext) NewGeneratedNameForNode(node *ast.Node, options AutoGenerateOptions) *ast.IdentifierNode {
+func (c *EmitContext) NewGeneratedNameForNode(node *ast.Node, options AutoGenerateOptions) *ast.IdentifierNode {
 	if len(options.Prefix) > 0 || len(options.Suffix) > 0 {
 		options.Flags |= GeneratedIdentifierFlagsOptimistic
 	}
@@ -67,36 +73,36 @@ func (ctx *EmitContext) NewGeneratedNameForNode(node *ast.Node, options AutoGene
 		text = fmt.Sprintf("generated@%v", ast.GetNodeId(node))
 	}
 
-	name, autoGenerate := ctx.newGeneratedIdentifier(GeneratedIdentifierFlagsNode, text, options)
+	name, autoGenerate := c.newGeneratedIdentifier(GeneratedIdentifierFlagsNode, text, options)
 	autoGenerate.Node = node
 	return name
 }
 
-func (ctx *EmitContext) newGeneratedPrivateIdentifier(kind GeneratedIdentifierFlags, text string, options AutoGenerateOptions) (*ast.PrivateIdentifierNode, *autoGenerateInfo) {
+func (c *EmitContext) newGeneratedPrivateIdentifier(kind GeneratedIdentifierFlags, text string, options AutoGenerateOptions) (*ast.PrivateIdentifierNode, *autoGenerateInfo) {
 	if !strings.HasPrefix(text, "#") {
 		panic("First character of private identifier must be #: " + text)
 	}
 
-	name := ctx.Factory.NewPrivateIdentifier(text)
+	name := c.Factory.NewPrivateIdentifier(text)
 	autoGenerate := &autoGenerateInfo{
 		Id:     autoGenerateId(nextAutoGenerateId.Add(1)),
 		Flags:  kind | (options.Flags &^ GeneratedIdentifierFlagsKindMask),
 		Prefix: options.Prefix,
 		Suffix: options.Suffix,
 	}
-	if ctx.autoGenerate == nil {
-		ctx.autoGenerate = make(map[*ast.MemberName]*autoGenerateInfo)
+	if c.autoGenerate == nil {
+		c.autoGenerate = make(map[*ast.MemberName]*autoGenerateInfo)
 	}
-	ctx.autoGenerate[name] = autoGenerate
+	c.autoGenerate[name] = autoGenerate
 	return name, autoGenerate
 }
 
-func (ctx *EmitContext) NewUniquePrivateName(text string, options AutoGenerateOptions) *ast.PrivateIdentifierNode {
-	name, _ := ctx.newGeneratedPrivateIdentifier(GeneratedIdentifierFlagsUnique, text, options)
+func (c *EmitContext) NewUniquePrivateName(text string, options AutoGenerateOptions) *ast.PrivateIdentifierNode {
+	name, _ := c.newGeneratedPrivateIdentifier(GeneratedIdentifierFlagsUnique, text, options)
 	return name
 }
 
-func (ctx *EmitContext) NewGeneratedPrivateNameForNode(node *ast.Node, options AutoGenerateOptions) *ast.PrivateIdentifierNode {
+func (c *EmitContext) NewGeneratedPrivateNameForNode(node *ast.Node, options AutoGenerateOptions) *ast.PrivateIdentifierNode {
 	if len(options.Prefix) > 0 || len(options.Suffix) > 0 {
 		options.Flags |= GeneratedIdentifierFlagsOptimistic
 	}
@@ -111,24 +117,14 @@ func (ctx *EmitContext) NewGeneratedPrivateNameForNode(node *ast.Node, options A
 		text = fmt.Sprintf("#generated@%v", ast.GetNodeId(node))
 	}
 
-	name, autoGenerate := ctx.newGeneratedPrivateIdentifier(GeneratedIdentifierFlagsNode, text, options)
+	name, autoGenerate := c.newGeneratedPrivateIdentifier(GeneratedIdentifierFlagsNode, text, options)
 	autoGenerate.Node = node
 	return name
 }
 
-func (ctx *EmitContext) NewStringLiteralFromNode(textSourceNode *ast.Node) *ast.Node {
-	var text string
-	if ast.IsMemberName(textSourceNode) || ast.IsJsxNamespacedName(textSourceNode) {
-		text = textSourceNode.Text()
-	}
-	node := ctx.Factory.NewStringLiteral(text)
-	ctx.textSource[node] = textSourceNode
-	return node
-}
-
-func (ctx *EmitContext) HasAutoGenerateInfo(node *ast.MemberName) bool {
+func (c *EmitContext) HasAutoGenerateInfo(node *ast.MemberName) bool {
 	if node != nil {
-		_, ok := ctx.autoGenerate[node]
+		_, ok := c.autoGenerate[node]
 		return ok
 	}
 	return false
@@ -149,3 +145,17 @@ type autoGenerateInfo struct {
 func (info *autoGenerateInfo) Kind() GeneratedIdentifierFlags {
 	return info.Flags & GeneratedIdentifierFlagsKindMask
 }
+
+func (c *EmitContext) NewStringLiteralFromNode(textSourceNode *ast.Node) *ast.Node {
+	var text string
+	if ast.IsMemberName(textSourceNode) || ast.IsJsxNamespacedName(textSourceNode) {
+		text = textSourceNode.Text()
+	}
+	node := c.Factory.NewStringLiteral(text)
+	if c.textSource == nil {
+		c.textSource = make(map[*ast.StringLiteralNode]*ast.Node)
+	}
+	c.textSource[node] = textSourceNode
+	return node
+}
+

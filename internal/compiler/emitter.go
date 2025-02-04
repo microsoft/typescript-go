@@ -50,8 +50,8 @@ func (e *emitter) emitJsFile(sourceFile *ast.SourceFile, jsFilePath string, sour
 	// !!! mark linked references
 
 	// !!! transform the source files?
-	typeEraser := transformers.NewTypeEraserTransformer()
-	sourceFile = typeEraser.VisitSourceFile(sourceFile)
+	emitContext := printer.NewEmitContext()
+	sourceFile = transformers.NewTypeEraserTransformer(emitContext).VisitSourceFile(sourceFile)
 
 	printerOptions := printer.PrinterOptions{
 		NewLine: options.NewLine,
@@ -61,7 +61,7 @@ func (e *emitter) emitJsFile(sourceFile *ast.SourceFile, jsFilePath string, sour
 	// create a printer to print the nodes
 	printer := printer.NewPrinter(printerOptions, printer.PrintHandlers{
 		// !!!
-	}, nil /*emitContext*/)
+	}, emitContext)
 
 	e.printSourceFile(jsFilePath, sourceMapFilePath, sourceFile, printer)
 

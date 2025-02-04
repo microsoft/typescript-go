@@ -2,15 +2,18 @@ package transformers
 
 import (
 	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/printer"
 )
 
 type TypeEraserTransformer struct {
 	ast.NodeVisitor
+	EmitContext *printer.EmitContext
 }
 
-func NewTypeEraserTransformer() *TypeEraserTransformer {
-	visitor := &TypeEraserTransformer{}
+func NewTypeEraserTransformer(emitContext *printer.EmitContext) *TypeEraserTransformer {
+	visitor := &TypeEraserTransformer{EmitContext: emitContext}
 	visitor.Visit = visitor.visit
+	visitor.Factory = emitContext.Factory
 	return visitor
 }
 

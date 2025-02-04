@@ -14,11 +14,11 @@ import (
 func TestTempVariable1(t *testing.T) {
 	t.Parallel()
 
-	ctx := &printer.EmitContext{}
-	name1 := ctx.NewTempVariable(printer.AutoGenerateOptions{})
-	name2 := ctx.NewTempVariable(printer.AutoGenerateOptions{})
+	ec := printer.NewEmitContext()
+	name1 := ec.NewTempVariable(printer.AutoGenerateOptions{})
+	name2 := ec.NewTempVariable(printer.AutoGenerateOptions{})
 
-	g := &printer.NameGenerator{Context: ctx}
+	g := &printer.NameGenerator{Context: ec}
 	text1 := g.GenerateName(name1)
 	text2 := g.GenerateName(name2)
 
@@ -29,17 +29,17 @@ func TestTempVariable1(t *testing.T) {
 func TestTempVariable2(t *testing.T) {
 	t.Parallel()
 
-	ctx := &printer.EmitContext{}
-	name1 := ctx.NewTempVariable(printer.AutoGenerateOptions{
+	ec := printer.NewEmitContext()
+	name1 := ec.NewTempVariable(printer.AutoGenerateOptions{
 		Prefix: "A",
 		Suffix: "B",
 	})
-	name2 := ctx.NewTempVariable(printer.AutoGenerateOptions{
+	name2 := ec.NewTempVariable(printer.AutoGenerateOptions{
 		Prefix: "A",
 		Suffix: "B",
 	})
 
-	g := &printer.NameGenerator{Context: ctx}
+	g := &printer.NameGenerator{Context: ec}
 	text1 := g.GenerateName(name1)
 	text2 := g.GenerateName(name2)
 
@@ -50,10 +50,10 @@ func TestTempVariable2(t *testing.T) {
 func TestTempVariable3(t *testing.T) {
 	t.Parallel()
 
-	ctx := &printer.EmitContext{}
-	name1 := ctx.NewTempVariable(printer.AutoGenerateOptions{})
+	ec := printer.NewEmitContext()
+	name1 := ec.NewTempVariable(printer.AutoGenerateOptions{})
 
-	g := &printer.NameGenerator{Context: ctx}
+	g := &printer.NameGenerator{Context: ec}
 	text1 := g.GenerateName(name1)
 	text2 := g.GenerateName(name1)
 
@@ -64,11 +64,11 @@ func TestTempVariable3(t *testing.T) {
 func TestTempVariableScoped(t *testing.T) {
 	t.Parallel()
 
-	ctx := &printer.EmitContext{}
-	name1 := ctx.NewTempVariable(printer.AutoGenerateOptions{})
-	name2 := ctx.NewTempVariable(printer.AutoGenerateOptions{})
+	ec := printer.NewEmitContext()
+	name1 := ec.NewTempVariable(printer.AutoGenerateOptions{})
+	name2 := ec.NewTempVariable(printer.AutoGenerateOptions{})
 
-	g := &printer.NameGenerator{Context: ctx}
+	g := &printer.NameGenerator{Context: ec}
 	text1 := g.GenerateName(name1)
 	g.PushScope(false)
 	text2 := g.GenerateName(name2)
@@ -81,11 +81,11 @@ func TestTempVariableScoped(t *testing.T) {
 func TestTempVariableScopedReserved(t *testing.T) {
 	t.Parallel()
 
-	ctx := &printer.EmitContext{}
-	name1 := ctx.NewTempVariable(printer.AutoGenerateOptions{Flags: printer.GeneratedIdentifierFlagsReservedInNestedScopes})
-	name2 := ctx.NewTempVariable(printer.AutoGenerateOptions{})
+	ec := printer.NewEmitContext()
+	name1 := ec.NewTempVariable(printer.AutoGenerateOptions{Flags: printer.GeneratedIdentifierFlagsReservedInNestedScopes})
+	name2 := ec.NewTempVariable(printer.AutoGenerateOptions{})
 
-	g := &printer.NameGenerator{Context: ctx}
+	g := &printer.NameGenerator{Context: ec}
 	text1 := g.GenerateName(name1)
 	g.PushScope(false)
 	text2 := g.GenerateName(name2)
@@ -98,11 +98,11 @@ func TestTempVariableScopedReserved(t *testing.T) {
 func TestLoopVariable1(t *testing.T) {
 	t.Parallel()
 
-	ctx := &printer.EmitContext{}
-	name1 := ctx.NewLoopVariable(printer.AutoGenerateOptions{})
-	name2 := ctx.NewLoopVariable(printer.AutoGenerateOptions{})
+	ec := printer.NewEmitContext()
+	name1 := ec.NewLoopVariable(printer.AutoGenerateOptions{})
+	name2 := ec.NewLoopVariable(printer.AutoGenerateOptions{})
 
-	g := &printer.NameGenerator{Context: ctx}
+	g := &printer.NameGenerator{Context: ec}
 	text1 := g.GenerateName(name1)
 	text2 := g.GenerateName(name2)
 
@@ -113,17 +113,17 @@ func TestLoopVariable1(t *testing.T) {
 func TestLoopVariable2(t *testing.T) {
 	t.Parallel()
 
-	ctx := &printer.EmitContext{}
-	name1 := ctx.NewLoopVariable(printer.AutoGenerateOptions{
+	ec := printer.NewEmitContext()
+	name1 := ec.NewLoopVariable(printer.AutoGenerateOptions{
 		Prefix: "A",
 		Suffix: "B",
 	})
-	name2 := ctx.NewLoopVariable(printer.AutoGenerateOptions{
+	name2 := ec.NewLoopVariable(printer.AutoGenerateOptions{
 		Prefix: "A",
 		Suffix: "B",
 	})
 
-	g := &printer.NameGenerator{Context: ctx}
+	g := &printer.NameGenerator{Context: ec}
 	text1 := g.GenerateName(name1)
 	text2 := g.GenerateName(name2)
 
@@ -134,10 +134,10 @@ func TestLoopVariable2(t *testing.T) {
 func TestLoopVariable3(t *testing.T) {
 	t.Parallel()
 
-	ctx := &printer.EmitContext{}
-	name1 := ctx.NewLoopVariable(printer.AutoGenerateOptions{})
+	ec := printer.NewEmitContext()
+	name1 := ec.NewLoopVariable(printer.AutoGenerateOptions{})
 
-	g := &printer.NameGenerator{Context: ctx}
+	g := &printer.NameGenerator{Context: ec}
 	text1 := g.GenerateName(name1)
 	text2 := g.GenerateName(name1)
 
@@ -148,11 +148,11 @@ func TestLoopVariable3(t *testing.T) {
 func TestLoopVariableScoped(t *testing.T) {
 	t.Parallel()
 
-	ctx := &printer.EmitContext{}
-	name1 := ctx.NewLoopVariable(printer.AutoGenerateOptions{})
-	name2 := ctx.NewLoopVariable(printer.AutoGenerateOptions{})
+	ec := printer.NewEmitContext()
+	name1 := ec.NewLoopVariable(printer.AutoGenerateOptions{})
+	name2 := ec.NewLoopVariable(printer.AutoGenerateOptions{})
 
-	g := &printer.NameGenerator{Context: ctx}
+	g := &printer.NameGenerator{Context: ec}
 	text1 := g.GenerateName(name1)
 	g.PushScope(false)
 	text2 := g.GenerateName(name2)
@@ -165,11 +165,11 @@ func TestLoopVariableScoped(t *testing.T) {
 func TestUniqueName1(t *testing.T) {
 	t.Parallel()
 
-	ctx := &printer.EmitContext{}
-	name1 := ctx.NewUniqueName("foo", printer.AutoGenerateOptions{})
-	name2 := ctx.NewUniqueName("foo", printer.AutoGenerateOptions{})
+	ec := printer.NewEmitContext()
+	name1 := ec.NewUniqueName("foo", printer.AutoGenerateOptions{})
+	name2 := ec.NewUniqueName("foo", printer.AutoGenerateOptions{})
 
-	g := &printer.NameGenerator{Context: ctx}
+	g := &printer.NameGenerator{Context: ec}
 	text1 := g.GenerateName(name1)
 	text2 := g.GenerateName(name2)
 
@@ -180,10 +180,10 @@ func TestUniqueName1(t *testing.T) {
 func TestUniqueName2(t *testing.T) {
 	t.Parallel()
 
-	ctx := &printer.EmitContext{}
-	name1 := ctx.NewUniqueName("foo", printer.AutoGenerateOptions{})
+	ec := printer.NewEmitContext()
+	name1 := ec.NewUniqueName("foo", printer.AutoGenerateOptions{})
 
-	g := &printer.NameGenerator{Context: ctx}
+	g := &printer.NameGenerator{Context: ec}
 	text1 := g.GenerateName(name1)
 	text2 := g.GenerateName(name1)
 
@@ -194,11 +194,11 @@ func TestUniqueName2(t *testing.T) {
 func TestUniqueNameScoped(t *testing.T) {
 	t.Parallel()
 
-	ctx := &printer.EmitContext{}
-	name1 := ctx.NewUniqueName("foo", printer.AutoGenerateOptions{})
-	name2 := ctx.NewUniqueName("foo", printer.AutoGenerateOptions{})
+	ec := printer.NewEmitContext()
+	name1 := ec.NewUniqueName("foo", printer.AutoGenerateOptions{})
+	name2 := ec.NewUniqueName("foo", printer.AutoGenerateOptions{})
 
-	g := &printer.NameGenerator{Context: ctx}
+	g := &printer.NameGenerator{Context: ec}
 	assert.Equal(t, "foo_1", g.GenerateName(name1))
 
 	g.PushScope(false)
@@ -209,11 +209,11 @@ func TestUniqueNameScoped(t *testing.T) {
 func TestUniquePrivateName1(t *testing.T) {
 	t.Parallel()
 
-	ctx := &printer.EmitContext{}
-	name1 := ctx.NewUniquePrivateName("#foo", printer.AutoGenerateOptions{})
-	name2 := ctx.NewUniquePrivateName("#foo", printer.AutoGenerateOptions{})
+	ec := printer.NewEmitContext()
+	name1 := ec.NewUniquePrivateName("#foo", printer.AutoGenerateOptions{})
+	name2 := ec.NewUniquePrivateName("#foo", printer.AutoGenerateOptions{})
 
-	g := &printer.NameGenerator{Context: ctx}
+	g := &printer.NameGenerator{Context: ec}
 	text1 := g.GenerateName(name1)
 	text2 := g.GenerateName(name2)
 
@@ -224,10 +224,10 @@ func TestUniquePrivateName1(t *testing.T) {
 func TestUniquePrivateName2(t *testing.T) {
 	t.Parallel()
 
-	ctx := &printer.EmitContext{}
-	name1 := ctx.NewUniquePrivateName("#foo", printer.AutoGenerateOptions{})
+	ec := printer.NewEmitContext()
+	name1 := ec.NewUniquePrivateName("#foo", printer.AutoGenerateOptions{})
 
-	g := &printer.NameGenerator{Context: ctx}
+	g := &printer.NameGenerator{Context: ec}
 	text1 := g.GenerateName(name1)
 	text2 := g.GenerateName(name1)
 
@@ -238,11 +238,11 @@ func TestUniquePrivateName2(t *testing.T) {
 func TestUniquePrivateNameScoped(t *testing.T) {
 	t.Parallel()
 
-	ctx := &printer.EmitContext{}
-	name1 := ctx.NewUniquePrivateName("#foo", printer.AutoGenerateOptions{})
-	name2 := ctx.NewUniquePrivateName("#foo", printer.AutoGenerateOptions{})
+	ec := printer.NewEmitContext()
+	name1 := ec.NewUniquePrivateName("#foo", printer.AutoGenerateOptions{})
+	name2 := ec.NewUniquePrivateName("#foo", printer.AutoGenerateOptions{})
 
-	g := &printer.NameGenerator{Context: ctx}
+	g := &printer.NameGenerator{Context: ec}
 	assert.Equal(t, "#foo_1", g.GenerateName(name1))
 
 	g.PushScope(false) // private names are always reserved in nested scopes
@@ -253,15 +253,15 @@ func TestUniquePrivateNameScoped(t *testing.T) {
 func TestGeneratedNameForIdentifier1(t *testing.T) {
 	t.Parallel()
 
-	ctx := &printer.EmitContext{}
+	ec := printer.NewEmitContext()
 
 	file := parseutil.ParseTypeScript("function f() {}", false /*jsx*/)
 	binder.BindSourceFile(file, &core.CompilerOptions{})
 
 	n := file.Statements.Nodes[0].Name()
-	name1 := ctx.NewGeneratedNameForNode(n, printer.AutoGenerateOptions{})
+	name1 := ec.NewGeneratedNameForNode(n, printer.AutoGenerateOptions{})
 
-	g := &printer.NameGenerator{Context: ctx, GetTextOfNode: (*ast.Node).Text}
+	g := &printer.NameGenerator{Context: ec, GetTextOfNode: (*ast.Node).Text}
 	text1 := g.GenerateName(name1)
 
 	assert.Equal(t, "f_1", text1)
@@ -270,18 +270,18 @@ func TestGeneratedNameForIdentifier1(t *testing.T) {
 func TestGeneratedNameForIdentifier2(t *testing.T) {
 	t.Parallel()
 
-	ctx := &printer.EmitContext{}
+	ec := printer.NewEmitContext()
 
 	file := parseutil.ParseTypeScript("function f() {}", false /*jsx*/)
 	binder.BindSourceFile(file, &core.CompilerOptions{})
 
 	n := file.Statements.Nodes[0].Name()
-	name1 := ctx.NewGeneratedNameForNode(n, printer.AutoGenerateOptions{
+	name1 := ec.NewGeneratedNameForNode(n, printer.AutoGenerateOptions{
 		Prefix: "a",
 		Suffix: "b",
 	})
 
-	g := &printer.NameGenerator{Context: ctx, GetTextOfNode: (*ast.Node).Text}
+	g := &printer.NameGenerator{Context: ec, GetTextOfNode: (*ast.Node).Text}
 	text1 := g.GenerateName(name1)
 
 	assert.Equal(t, "afb", text1)
@@ -290,19 +290,19 @@ func TestGeneratedNameForIdentifier2(t *testing.T) {
 func TestGeneratedNameForIdentifier3(t *testing.T) {
 	t.Parallel()
 
-	ctx := &printer.EmitContext{}
+	ec := printer.NewEmitContext()
 
 	file := parseutil.ParseTypeScript("function f() {}", false /*jsx*/)
 	binder.BindSourceFile(file, &core.CompilerOptions{})
 
 	n := file.Statements.Nodes[0].Name()
-	name1 := ctx.NewGeneratedNameForNode(n, printer.AutoGenerateOptions{
+	name1 := ec.NewGeneratedNameForNode(n, printer.AutoGenerateOptions{
 		Prefix: "a",
 		Suffix: "b",
 	})
-	name2 := ctx.NewGeneratedNameForNode(name1, printer.AutoGenerateOptions{})
+	name2 := ec.NewGeneratedNameForNode(name1, printer.AutoGenerateOptions{})
 
-	g := &printer.NameGenerator{Context: ctx, GetTextOfNode: (*ast.Node).Text}
+	g := &printer.NameGenerator{Context: ec, GetTextOfNode: (*ast.Node).Text}
 	text1 := g.GenerateName(name2)
 
 	assert.Equal(t, "afb_1", text1)
@@ -312,15 +312,15 @@ func TestGeneratedNameForIdentifier3(t *testing.T) {
 func TestGeneratedNameForNamespace1(t *testing.T) {
 	t.Parallel()
 
-	ctx := &printer.EmitContext{}
+	ec := printer.NewEmitContext()
 
 	file := parseutil.ParseTypeScript("namespace foo { }", false /*jsx*/)
 	binder.BindSourceFile(file, &core.CompilerOptions{})
 
 	ns1 := file.Statements.Nodes[0]
-	name1 := ctx.NewGeneratedNameForNode(ns1, printer.AutoGenerateOptions{})
+	name1 := ec.NewGeneratedNameForNode(ns1, printer.AutoGenerateOptions{})
 
-	g := &printer.NameGenerator{Context: ctx, GetTextOfNode: (*ast.Node).Text}
+	g := &printer.NameGenerator{Context: ec, GetTextOfNode: (*ast.Node).Text}
 	text1 := g.GenerateName(name1)
 
 	assert.Equal(t, "foo", text1)
@@ -330,15 +330,15 @@ func TestGeneratedNameForNamespace1(t *testing.T) {
 func TestGeneratedNameForNamespace2(t *testing.T) {
 	t.Parallel()
 
-	ctx := &printer.EmitContext{}
+	ec := printer.NewEmitContext()
 
 	file := parseutil.ParseTypeScript("namespace foo { var foo; }", false /*jsx*/)
 	binder.BindSourceFile(file, &core.CompilerOptions{})
 
 	ns1 := file.Statements.Nodes[0]
-	name1 := ctx.NewGeneratedNameForNode(ns1, printer.AutoGenerateOptions{})
+	name1 := ec.NewGeneratedNameForNode(ns1, printer.AutoGenerateOptions{})
 
-	g := &printer.NameGenerator{Context: ctx, GetTextOfNode: (*ast.Node).Text}
+	g := &printer.NameGenerator{Context: ec, GetTextOfNode: (*ast.Node).Text}
 	text1 := g.GenerateName(name1)
 
 	assert.Equal(t, "foo_1", text1)
@@ -348,17 +348,17 @@ func TestGeneratedNameForNamespace2(t *testing.T) {
 func TestGeneratedNameForNamespace3(t *testing.T) {
 	t.Parallel()
 
-	ctx := &printer.EmitContext{}
+	ec := printer.NewEmitContext()
 
 	file := parseutil.ParseTypeScript("namespace ns1 { namespace foo { var foo; } } namespace ns2 { namespace foo { var foo; } }", false /*jsx*/)
 	binder.BindSourceFile(file, &core.CompilerOptions{})
 
 	ns1 := file.Statements.Nodes[0].AsModuleDeclaration().Body.AsModuleBlock().Statements.Nodes[0]
 	ns2 := file.Statements.Nodes[1].AsModuleDeclaration().Body.AsModuleBlock().Statements.Nodes[0]
-	name1 := ctx.NewGeneratedNameForNode(ns1, printer.AutoGenerateOptions{})
-	name2 := ctx.NewGeneratedNameForNode(ns2, printer.AutoGenerateOptions{})
+	name1 := ec.NewGeneratedNameForNode(ns1, printer.AutoGenerateOptions{})
+	name2 := ec.NewGeneratedNameForNode(ns2, printer.AutoGenerateOptions{})
 
-	g := &printer.NameGenerator{Context: ctx, GetTextOfNode: (*ast.Node).Text}
+	g := &printer.NameGenerator{Context: ec, GetTextOfNode: (*ast.Node).Text}
 	text1 := g.GenerateName(name1)
 	text2 := g.GenerateName(name2)
 
@@ -370,17 +370,17 @@ func TestGeneratedNameForNamespace3(t *testing.T) {
 func TestGeneratedNameForNamespace4(t *testing.T) {
 	t.Parallel()
 
-	ctx := &printer.EmitContext{}
+	ec := printer.NewEmitContext()
 
 	file := parseutil.ParseTypeScript("namespace ns1 { namespace foo { var foo; } } namespace ns2 { namespace foo { var foo; } }", false /*jsx*/)
 	binder.BindSourceFile(file, &core.CompilerOptions{})
 
 	ns1 := file.Statements.Nodes[0].AsModuleDeclaration().Body.AsModuleBlock().Statements.Nodes[0]
 	ns2 := file.Statements.Nodes[1].AsModuleDeclaration().Body.AsModuleBlock().Statements.Nodes[0]
-	name1 := ctx.NewGeneratedNameForNode(ns1, printer.AutoGenerateOptions{})
-	name2 := ctx.NewGeneratedNameForNode(ns2, printer.AutoGenerateOptions{})
+	name1 := ec.NewGeneratedNameForNode(ns1, printer.AutoGenerateOptions{})
+	name2 := ec.NewGeneratedNameForNode(ns2, printer.AutoGenerateOptions{})
 
-	g := &printer.NameGenerator{Context: ctx, GetTextOfNode: (*ast.Node).Text}
+	g := &printer.NameGenerator{Context: ec, GetTextOfNode: (*ast.Node).Text}
 	g.PushScope(false)
 	text1 := g.GenerateName(name1)
 	g.PopScope(false)
@@ -396,16 +396,16 @@ func TestGeneratedNameForNamespace4(t *testing.T) {
 func TestGeneratedNameForNodeCached(t *testing.T) {
 	t.Parallel()
 
-	ctx := &printer.EmitContext{}
+	ec := printer.NewEmitContext()
 
 	file := parseutil.ParseTypeScript("namespace foo { var foo; }", false /*jsx*/)
 	binder.BindSourceFile(file, &core.CompilerOptions{})
 
 	ns1 := file.Statements.Nodes[0]
-	name1 := ctx.NewGeneratedNameForNode(ns1, printer.AutoGenerateOptions{})
-	name2 := ctx.NewGeneratedNameForNode(ns1, printer.AutoGenerateOptions{})
+	name1 := ec.NewGeneratedNameForNode(ns1, printer.AutoGenerateOptions{})
+	name2 := ec.NewGeneratedNameForNode(ns1, printer.AutoGenerateOptions{})
 
-	g := &printer.NameGenerator{Context: ctx, GetTextOfNode: (*ast.Node).Text}
+	g := &printer.NameGenerator{Context: ec, GetTextOfNode: (*ast.Node).Text}
 	text1 := g.GenerateName(name1)
 	text2 := g.GenerateName(name2)
 
@@ -416,15 +416,15 @@ func TestGeneratedNameForNodeCached(t *testing.T) {
 func TestGeneratedNameForImport(t *testing.T) {
 	t.Parallel()
 
-	ctx := &printer.EmitContext{}
+	ec := printer.NewEmitContext()
 
 	file := parseutil.ParseTypeScript("import * as foo from 'foo'", false /*jsx*/)
 	binder.BindSourceFile(file, &core.CompilerOptions{})
 
 	n := file.Statements.Nodes[0]
-	name1 := ctx.NewGeneratedNameForNode(n, printer.AutoGenerateOptions{})
+	name1 := ec.NewGeneratedNameForNode(n, printer.AutoGenerateOptions{})
 
-	g := &printer.NameGenerator{Context: ctx, GetTextOfNode: (*ast.Node).Text}
+	g := &printer.NameGenerator{Context: ec, GetTextOfNode: (*ast.Node).Text}
 	text1 := g.GenerateName(name1)
 
 	assert.Equal(t, "foo_1", text1)
@@ -433,15 +433,15 @@ func TestGeneratedNameForImport(t *testing.T) {
 func TestGeneratedNameForExport(t *testing.T) {
 	t.Parallel()
 
-	ctx := &printer.EmitContext{}
+	ec := printer.NewEmitContext()
 
 	file := parseutil.ParseTypeScript("export * as foo from 'foo'", false /*jsx*/)
 	binder.BindSourceFile(file, &core.CompilerOptions{})
 
 	n := file.Statements.Nodes[0]
-	name1 := ctx.NewGeneratedNameForNode(n, printer.AutoGenerateOptions{})
+	name1 := ec.NewGeneratedNameForNode(n, printer.AutoGenerateOptions{})
 
-	g := &printer.NameGenerator{Context: ctx, GetTextOfNode: (*ast.Node).Text}
+	g := &printer.NameGenerator{Context: ec, GetTextOfNode: (*ast.Node).Text}
 	text1 := g.GenerateName(name1)
 
 	assert.Equal(t, "foo_1", text1)
@@ -450,15 +450,15 @@ func TestGeneratedNameForExport(t *testing.T) {
 func TestGeneratedNameForFunctionDeclaration1(t *testing.T) {
 	t.Parallel()
 
-	ctx := &printer.EmitContext{}
+	ec := printer.NewEmitContext()
 
 	file := parseutil.ParseTypeScript("export function f() {}", false /*jsx*/)
 	binder.BindSourceFile(file, &core.CompilerOptions{})
 
 	n := file.Statements.Nodes[0]
-	name1 := ctx.NewGeneratedNameForNode(n, printer.AutoGenerateOptions{})
+	name1 := ec.NewGeneratedNameForNode(n, printer.AutoGenerateOptions{})
 
-	g := &printer.NameGenerator{Context: ctx, GetTextOfNode: (*ast.Node).Text}
+	g := &printer.NameGenerator{Context: ec, GetTextOfNode: (*ast.Node).Text}
 	text1 := g.GenerateName(name1)
 
 	assert.Equal(t, "f_1", text1)
@@ -467,15 +467,15 @@ func TestGeneratedNameForFunctionDeclaration1(t *testing.T) {
 func TestGeneratedNameForFunctionDeclaration2(t *testing.T) {
 	t.Parallel()
 
-	ctx := &printer.EmitContext{}
+	ec := printer.NewEmitContext()
 
 	file := parseutil.ParseTypeScript("export default function () {}", false /*jsx*/)
 	binder.BindSourceFile(file, &core.CompilerOptions{})
 
 	n := file.Statements.Nodes[0]
-	name1 := ctx.NewGeneratedNameForNode(n, printer.AutoGenerateOptions{})
+	name1 := ec.NewGeneratedNameForNode(n, printer.AutoGenerateOptions{})
 
-	g := &printer.NameGenerator{Context: ctx, GetTextOfNode: (*ast.Node).Text}
+	g := &printer.NameGenerator{Context: ec, GetTextOfNode: (*ast.Node).Text}
 	text1 := g.GenerateName(name1)
 
 	assert.Equal(t, "default_1", text1)
@@ -484,15 +484,15 @@ func TestGeneratedNameForFunctionDeclaration2(t *testing.T) {
 func TestGeneratedNameForClassDeclaration1(t *testing.T) {
 	t.Parallel()
 
-	ctx := &printer.EmitContext{}
+	ec := printer.NewEmitContext()
 
 	file := parseutil.ParseTypeScript("export class C {}", false /*jsx*/)
 	binder.BindSourceFile(file, &core.CompilerOptions{})
 
 	n := file.Statements.Nodes[0]
-	name1 := ctx.NewGeneratedNameForNode(n, printer.AutoGenerateOptions{})
+	name1 := ec.NewGeneratedNameForNode(n, printer.AutoGenerateOptions{})
 
-	g := &printer.NameGenerator{Context: ctx, GetTextOfNode: (*ast.Node).Text}
+	g := &printer.NameGenerator{Context: ec, GetTextOfNode: (*ast.Node).Text}
 	text1 := g.GenerateName(name1)
 
 	assert.Equal(t, "C_1", text1)
@@ -501,15 +501,15 @@ func TestGeneratedNameForClassDeclaration1(t *testing.T) {
 func TestGeneratedNameForClassDeclaration2(t *testing.T) {
 	t.Parallel()
 
-	ctx := &printer.EmitContext{}
+	ec := printer.NewEmitContext()
 
 	file := parseutil.ParseTypeScript("export default class {}", false /*jsx*/)
 	binder.BindSourceFile(file, &core.CompilerOptions{})
 
 	n := file.Statements.Nodes[0]
-	name1 := ctx.NewGeneratedNameForNode(n, printer.AutoGenerateOptions{})
+	name1 := ec.NewGeneratedNameForNode(n, printer.AutoGenerateOptions{})
 
-	g := &printer.NameGenerator{Context: ctx, GetTextOfNode: (*ast.Node).Text}
+	g := &printer.NameGenerator{Context: ec, GetTextOfNode: (*ast.Node).Text}
 	text1 := g.GenerateName(name1)
 
 	assert.Equal(t, "default_1", text1)
@@ -518,15 +518,15 @@ func TestGeneratedNameForClassDeclaration2(t *testing.T) {
 func TestGeneratedNameForExportAssignment(t *testing.T) {
 	t.Parallel()
 
-	ctx := &printer.EmitContext{}
+	ec := printer.NewEmitContext()
 
 	file := parseutil.ParseTypeScript("export default 0", false /*jsx*/)
 	binder.BindSourceFile(file, &core.CompilerOptions{})
 
 	n := file.Statements.Nodes[0]
-	name1 := ctx.NewGeneratedNameForNode(n, printer.AutoGenerateOptions{})
+	name1 := ec.NewGeneratedNameForNode(n, printer.AutoGenerateOptions{})
 
-	g := &printer.NameGenerator{Context: ctx, GetTextOfNode: (*ast.Node).Text}
+	g := &printer.NameGenerator{Context: ec, GetTextOfNode: (*ast.Node).Text}
 	text1 := g.GenerateName(name1)
 
 	assert.Equal(t, "default_1", text1)
@@ -535,15 +535,15 @@ func TestGeneratedNameForExportAssignment(t *testing.T) {
 func TestGeneratedNameForClassExpression(t *testing.T) {
 	t.Parallel()
 
-	ctx := &printer.EmitContext{}
+	ec := printer.NewEmitContext()
 
 	file := parseutil.ParseTypeScript("(class {})", false /*jsx*/)
 	binder.BindSourceFile(file, &core.CompilerOptions{})
 
 	n := file.Statements.Nodes[0].AsExpressionStatement().Expression.AsParenthesizedExpression().Expression
-	name1 := ctx.NewGeneratedNameForNode(n, printer.AutoGenerateOptions{})
+	name1 := ec.NewGeneratedNameForNode(n, printer.AutoGenerateOptions{})
 
-	g := &printer.NameGenerator{Context: ctx, GetTextOfNode: (*ast.Node).Text}
+	g := &printer.NameGenerator{Context: ec, GetTextOfNode: (*ast.Node).Text}
 	text1 := g.GenerateName(name1)
 
 	assert.Equal(t, "class_1", text1)
@@ -552,15 +552,15 @@ func TestGeneratedNameForClassExpression(t *testing.T) {
 func TestGeneratedNameForMethod1(t *testing.T) {
 	t.Parallel()
 
-	ctx := &printer.EmitContext{}
+	ec := printer.NewEmitContext()
 
 	file := parseutil.ParseTypeScript("class C { m() {} }", false /*jsx*/)
 	binder.BindSourceFile(file, &core.CompilerOptions{})
 
 	n := file.Statements.Nodes[0].AsClassDeclaration().Members.Nodes[0]
-	name1 := ctx.NewGeneratedNameForNode(n, printer.AutoGenerateOptions{})
+	name1 := ec.NewGeneratedNameForNode(n, printer.AutoGenerateOptions{})
 
-	g := &printer.NameGenerator{Context: ctx, GetTextOfNode: (*ast.Node).Text}
+	g := &printer.NameGenerator{Context: ec, GetTextOfNode: (*ast.Node).Text}
 	text1 := g.GenerateName(name1)
 
 	assert.Equal(t, "m_1", text1)
@@ -569,15 +569,15 @@ func TestGeneratedNameForMethod1(t *testing.T) {
 func TestGeneratedNameForMethod2(t *testing.T) {
 	t.Parallel()
 
-	ctx := &printer.EmitContext{}
+	ec := printer.NewEmitContext()
 
 	file := parseutil.ParseTypeScript("class C { 0() {} }", false /*jsx*/)
 	binder.BindSourceFile(file, &core.CompilerOptions{})
 
 	n := file.Statements.Nodes[0].AsClassDeclaration().Members.Nodes[0]
-	name1 := ctx.NewGeneratedNameForNode(n, printer.AutoGenerateOptions{})
+	name1 := ec.NewGeneratedNameForNode(n, printer.AutoGenerateOptions{})
 
-	g := &printer.NameGenerator{Context: ctx, GetTextOfNode: (*ast.Node).Text}
+	g := &printer.NameGenerator{Context: ec, GetTextOfNode: (*ast.Node).Text}
 	text1 := g.GenerateName(name1)
 
 	assert.Equal(t, "_a", text1)
@@ -586,15 +586,15 @@ func TestGeneratedNameForMethod2(t *testing.T) {
 func TestGeneratedPrivateNameForMethod(t *testing.T) {
 	t.Parallel()
 
-	ctx := &printer.EmitContext{}
+	ec := printer.NewEmitContext()
 
 	file := parseutil.ParseTypeScript("class C { m() {} }", false /*jsx*/)
 	binder.BindSourceFile(file, &core.CompilerOptions{})
 
 	n := file.Statements.Nodes[0].AsClassDeclaration().Members.Nodes[0]
-	name1 := ctx.NewGeneratedPrivateNameForNode(n, printer.AutoGenerateOptions{})
+	name1 := ec.NewGeneratedPrivateNameForNode(n, printer.AutoGenerateOptions{})
 
-	g := &printer.NameGenerator{Context: ctx, GetTextOfNode: (*ast.Node).Text}
+	g := &printer.NameGenerator{Context: ec, GetTextOfNode: (*ast.Node).Text}
 	text1 := g.GenerateName(name1)
 
 	assert.Equal(t, "#m_1", text1)
@@ -603,15 +603,15 @@ func TestGeneratedPrivateNameForMethod(t *testing.T) {
 func TestGeneratedNameForComputedPropertyName(t *testing.T) {
 	t.Parallel()
 
-	ctx := &printer.EmitContext{}
+	ec := printer.NewEmitContext()
 
 	file := parseutil.ParseTypeScript("class C { [x] }", false /*jsx*/)
 	binder.BindSourceFile(file, &core.CompilerOptions{})
 
 	n := file.Statements.Nodes[0].AsClassDeclaration().Members.Nodes[0].Name()
-	name1 := ctx.NewGeneratedNameForNode(n, printer.AutoGenerateOptions{})
+	name1 := ec.NewGeneratedNameForNode(n, printer.AutoGenerateOptions{})
 
-	g := &printer.NameGenerator{Context: ctx, GetTextOfNode: (*ast.Node).Text}
+	g := &printer.NameGenerator{Context: ec, GetTextOfNode: (*ast.Node).Text}
 	text1 := g.GenerateName(name1)
 
 	assert.Equal(t, "_a", text1)
@@ -620,19 +620,18 @@ func TestGeneratedNameForComputedPropertyName(t *testing.T) {
 func TestGeneratedNameForOther(t *testing.T) {
 	t.Parallel()
 
-	ctx := &printer.EmitContext{}
-	factory := &ctx.Factory
+	ec := printer.NewEmitContext()
 
 	file := parseutil.ParseTypeScript("class C { [x] }", false /*jsx*/)
 	binder.BindSourceFile(file, &core.CompilerOptions{})
 
-	n := factory.NewObjectLiteralExpression(
-		factory.NewNodeList([]*ast.Node{}),
+	n := ec.Factory.NewObjectLiteralExpression(
+		ec.Factory.NewNodeList([]*ast.Node{}),
 		false, /*multiLine*/
 	)
-	name1 := ctx.NewGeneratedNameForNode(n, printer.AutoGenerateOptions{})
+	name1 := ec.NewGeneratedNameForNode(n, printer.AutoGenerateOptions{})
 
-	g := &printer.NameGenerator{Context: ctx, GetTextOfNode: (*ast.Node).Text}
+	g := &printer.NameGenerator{Context: ec, GetTextOfNode: (*ast.Node).Text}
 	text1 := g.GenerateName(name1)
 
 	assert.Equal(t, "_a", text1)

@@ -3,6 +3,7 @@ package transformers
 import (
 	"testing"
 
+	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/testutil/emitutil"
 	"github.com/microsoft/typescript-go/internal/testutil/parseutil"
 )
@@ -64,7 +65,7 @@ func TestTypeEraser(t *testing.T) {
 			t.Parallel()
 			file := parseutil.ParseTypeScript(rec.input, rec.jsx)
 			parseutil.CheckDiagnostics(t, file)
-			emitutil.CheckEmit(t, nil, NewTypeEraserTransformer().VisitSourceFile(file), rec.output)
+			emitutil.CheckEmit(t, nil, NewTypeEraserTransformer(printer.NewEmitContext()).VisitSourceFile(file), rec.output)
 		})
 	}
 }
