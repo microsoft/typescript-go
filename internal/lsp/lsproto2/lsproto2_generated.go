@@ -13,8 +13,8 @@ type ImplementationParams struct {
 // Represents a location inside a resource, such as a line
 // inside a text file.
 type Location struct {
-	Uri TODO_base `json:"uri"`
-	Range *Range `json:"range"`
+	Uri   TODO_base `json:"uri"`
+	Range *Range    `json:"range"`
 }
 
 type ImplementationRegistrationOptions struct {
@@ -142,7 +142,7 @@ type FoldingRange struct {
 	// The text that the client should show when the specified range is
 	// collapsed. If not defined or not supported by the client, a default
 	// will be chosen by the client.
-	// 
+	//
 	// @since 3.17.0
 	CollapsedText TODO_base `json:"collapsedText"`
 }
@@ -201,7 +201,7 @@ type WorkDoneProgressCancelParams struct {
 }
 
 // The parameter of a `textDocument/prepareCallHierarchy` request.
-// 
+//
 // @since 3.16.0
 type CallHierarchyPrepareParams struct {
 	TextDocumentPositionParams
@@ -210,7 +210,7 @@ type CallHierarchyPrepareParams struct {
 
 // Represents programming constructs like functions or constructors in the context
 // of call hierarchy.
-// 
+//
 // @since 3.16.0
 type CallHierarchyItem struct {
 	// The name of this item.
@@ -234,7 +234,7 @@ type CallHierarchyItem struct {
 }
 
 // Call hierarchy options used during static or dynamic registration.
-// 
+//
 // @since 3.16.0
 type CallHierarchyRegistrationOptions struct {
 	TextDocumentRegistrationOptions
@@ -243,7 +243,7 @@ type CallHierarchyRegistrationOptions struct {
 }
 
 // The parameter of a `callHierarchy/incomingCalls` request.
-// 
+//
 // @since 3.16.0
 type CallHierarchyIncomingCallsParams struct {
 	WorkDoneProgressParams
@@ -252,7 +252,7 @@ type CallHierarchyIncomingCallsParams struct {
 }
 
 // Represents an incoming call, e.g. a caller of a method or constructor.
-// 
+//
 // @since 3.16.0
 type CallHierarchyIncomingCall struct {
 	// The item that makes the call.
@@ -263,7 +263,7 @@ type CallHierarchyIncomingCall struct {
 }
 
 // The parameter of a `callHierarchy/outgoingCalls` request.
-// 
+//
 // @since 3.16.0
 type CallHierarchyOutgoingCallsParams struct {
 	WorkDoneProgressParams
@@ -272,7 +272,7 @@ type CallHierarchyOutgoingCallsParams struct {
 }
 
 // Represents an outgoing call, e.g. calling a getter from a method or a method from a constructor etc.
-// 
+//
 // @since 3.16.0
 type CallHierarchyOutgoingCall struct {
 	// The item that is called.
@@ -348,7 +348,7 @@ type SemanticTokensRangeParams struct {
 }
 
 // Params to show a resource in the UI.
-// 
+//
 // @since 3.16.0
 type ShowDocumentParams struct {
 	// The uri to show.
@@ -370,7 +370,7 @@ type ShowDocumentParams struct {
 }
 
 // The result of a showDocument request.
-// 
+//
 // @since 3.16.0
 type ShowDocumentResult struct {
 	// A boolean indicating if the show was successful.
@@ -383,7 +383,7 @@ type LinkedEditingRangeParams struct {
 }
 
 // The result of a linked editing range request.
-// 
+//
 // @since 3.16.0
 type LinkedEditingRanges struct {
 	// A list of ranges that can be edited together. The ranges must have
@@ -403,7 +403,7 @@ type LinkedEditingRangeRegistrationOptions struct {
 
 // The parameters sent in notifications/requests for user-initiated creation of
 // files.
-// 
+//
 // @since 3.16.0
 type CreateFilesParams struct {
 	// An array of all files/folders created in this operation.
@@ -413,12 +413,12 @@ type CreateFilesParams struct {
 // A workspace edit represents changes to many resources managed in the workspace. The edit
 // should either provide `changes` or `documentChanges`. If documentChanges are present
 // they are preferred over `changes` if the client can handle versioned document edits.
-// 
+//
 // Since version 3.13.0 a workspace edit can contain resource operations as well. If resource
 // operations are present clients need to execute the operations in the order in which they
 // are provided. So a workspace edit for example can consist of the following two changes:
 // (1) a create file a.txt and (2) a text document edit which insert text into file a.txt.
-// 
+//
 // An invalid sequence (e.g. (1) delete file a.txt and (2) insert text into file a.txt) will
 // cause failure of the operation. How the client recovers from the failure is described by
 // the client capability: `workspace.workspaceEdit.failureHandling`
@@ -429,24 +429,24 @@ type WorkspaceEdit struct {
 	// are either an array of `TextDocumentEdit`s to express changes to n different text documents
 	// where each text document edit addresses a specific version of a text document. Or it can contain
 	// above `TextDocumentEdit`s mixed with create, rename and delete file / folder operations.
-	// 
+	//
 	// Whether a client supports versioned document edits is expressed via
 	// `workspace.workspaceEdit.documentChanges` client capability.
-	// 
+	//
 	// If a client neither supports `documentChanges` nor `workspace.workspaceEdit.resourceOperations` then
 	// only plain `TextEdit`s using the `changes` property are supported.
 	DocumentChanges TODO_array `json:"documentChanges"`
 	// A map of change annotations that can be referenced in `AnnotatedTextEdit`s or create, rename and
 	// delete file / folder operations.
-	// 
+	//
 	// Whether clients honor this property depends on the client capability `workspace.changeAnnotationSupport`.
-	// 
+	//
 	// @since 3.16.0
 	ChangeAnnotations TODO_map `json:"changeAnnotations"`
 }
 
 // The options to register for file operations.
-// 
+//
 // @since 3.16.0
 type FileOperationRegistrationOptions struct {
 	// The actual filters.
@@ -455,7 +455,7 @@ type FileOperationRegistrationOptions struct {
 
 // The parameters sent in notifications/requests for user-initiated renames of
 // files.
-// 
+//
 // @since 3.16.0
 type RenameFilesParams struct {
 	// An array of all files/folders renamed in this operation. When a folder is renamed, only
@@ -465,7 +465,7 @@ type RenameFilesParams struct {
 
 // The parameters sent in notifications/requests for user-initiated deletes of
 // files.
-// 
+//
 // @since 3.16.0
 type DeleteFilesParams struct {
 	// An array of all files/folders deleted in this operation.
@@ -479,7 +479,7 @@ type MonikerParams struct {
 }
 
 // Moniker definition to match LSIF 0.5 moniker definition.
-// 
+//
 // @since 3.16.0
 type Moniker struct {
 	// The scheme of the moniker. For example tsc or .Net
@@ -499,7 +499,7 @@ type MonikerRegistrationOptions struct {
 }
 
 // The parameter of a `textDocument/prepareTypeHierarchy` request.
-// 
+//
 // @since 3.17.0
 type TypeHierarchyPrepareParams struct {
 	TextDocumentPositionParams
@@ -533,7 +533,7 @@ type TypeHierarchyItem struct {
 }
 
 // Type hierarchy options used during static or dynamic registration.
-// 
+//
 // @since 3.17.0
 type TypeHierarchyRegistrationOptions struct {
 	TextDocumentRegistrationOptions
@@ -542,7 +542,7 @@ type TypeHierarchyRegistrationOptions struct {
 }
 
 // The parameter of a `typeHierarchy/supertypes` request.
-// 
+//
 // @since 3.17.0
 type TypeHierarchySupertypesParams struct {
 	WorkDoneProgressParams
@@ -551,7 +551,7 @@ type TypeHierarchySupertypesParams struct {
 }
 
 // The parameter of a `typeHierarchy/subtypes` request.
-// 
+//
 // @since 3.17.0
 type TypeHierarchySubtypesParams struct {
 	WorkDoneProgressParams
@@ -560,7 +560,7 @@ type TypeHierarchySubtypesParams struct {
 }
 
 // A parameter literal used in inline value requests.
-// 
+//
 // @since 3.17.0
 type InlineValueParams struct {
 	WorkDoneProgressParams
@@ -574,7 +574,7 @@ type InlineValueParams struct {
 }
 
 // Inline value options used during static or dynamic registration.
-// 
+//
 // @since 3.17.0
 type InlineValueRegistrationOptions struct {
 	InlineValueOptions
@@ -583,7 +583,7 @@ type InlineValueRegistrationOptions struct {
 }
 
 // A parameter literal used in inlay hint requests.
-// 
+//
 // @since 3.17.0
 type InlayHintParams struct {
 	WorkDoneProgressParams
@@ -594,24 +594,24 @@ type InlayHintParams struct {
 }
 
 // Inlay hint information.
-// 
+//
 // @since 3.17.0
 type InlayHint struct {
 	// The position of this hint.
-	// 
+	//
 	// If multiple hints have the same position, they will be shown in the order
 	// they appear in the response.
 	Position *Position `json:"position"`
 	// The label of this hint. A human readable string or an array of
 	// InlayHintLabelPart label parts.
-	// 
+	//
 	// *Note* that neither the string nor the label part can be empty.
 	Label TODO_or `json:"label"`
 	// The kind of this hint. Can be omitted in which case the client
 	// should fall back to a reasonable default.
 	Kind *InlayHintKind `json:"kind"`
 	// Optional text edits that are performed when accepting this inlay hint.
-	// 
+	//
 	// *Note* that edits are expected to change the document so that the inlay
 	// hint (or its nearest variant) is now part of the document and the inlay
 	// hint itself is now obsolete.
@@ -619,13 +619,13 @@ type InlayHint struct {
 	// The tooltip text when you hover over this item.
 	Tooltip TODO_or `json:"tooltip"`
 	// Render padding before the hint.
-	// 
+	//
 	// Note: Padding should use the editor's background color, not the
 	// background color of the hint itself. That means padding can be used
 	// to visually align/separate an inlay hint.
 	PaddingLeft TODO_base `json:"paddingLeft"`
 	// Render padding after the hint.
-	// 
+	//
 	// Note: Padding should use the editor's background color, not the
 	// background color of the hint itself. That means padding can be used
 	// to visually align/separate an inlay hint.
@@ -636,7 +636,7 @@ type InlayHint struct {
 }
 
 // Inlay hint options used during static or dynamic registration.
-// 
+//
 // @since 3.17.0
 type InlayHintRegistrationOptions struct {
 	InlayHintOptions
@@ -645,7 +645,7 @@ type InlayHintRegistrationOptions struct {
 }
 
 // Parameters of the document diagnostic request.
-// 
+//
 // @since 3.17.0
 type DocumentDiagnosticParams struct {
 	WorkDoneProgressParams
@@ -659,21 +659,21 @@ type DocumentDiagnosticParams struct {
 }
 
 // A partial result for a document diagnostic report.
-// 
+//
 // @since 3.17.0
 type DocumentDiagnosticReportPartialResult struct {
 	RelatedDocuments TODO_map `json:"relatedDocuments"`
 }
 
 // Cancellation data returned from a diagnostic request.
-// 
+//
 // @since 3.17.0
 type DiagnosticServerCancellationData struct {
 	RetriggerRequest TODO_base `json:"retriggerRequest"`
 }
 
 // Diagnostic registration options.
-// 
+//
 // @since 3.17.0
 type DiagnosticRegistrationOptions struct {
 	TextDocumentRegistrationOptions
@@ -682,7 +682,7 @@ type DiagnosticRegistrationOptions struct {
 }
 
 // Parameters of the workspace diagnostic request.
-// 
+//
 // @since 3.17.0
 type WorkspaceDiagnosticParams struct {
 	WorkDoneProgressParams
@@ -695,21 +695,21 @@ type WorkspaceDiagnosticParams struct {
 }
 
 // A workspace diagnostic report.
-// 
+//
 // @since 3.17.0
 type WorkspaceDiagnosticReport struct {
 	Items TODO_array `json:"items"`
 }
 
 // A partial result for a workspace diagnostic report.
-// 
+//
 // @since 3.17.0
 type WorkspaceDiagnosticReportPartialResult struct {
 	Items TODO_array `json:"items"`
 }
 
 // The params sent in an open notebook document notification.
-// 
+//
 // @since 3.17.0
 type DidOpenNotebookDocumentParams struct {
 	// The notebook document that got opened.
@@ -720,7 +720,7 @@ type DidOpenNotebookDocumentParams struct {
 }
 
 // Registration options specific to a notebook.
-// 
+//
 // @since 3.17.0
 type NotebookDocumentSyncRegistrationOptions struct {
 	NotebookDocumentSyncOptions
@@ -728,7 +728,7 @@ type NotebookDocumentSyncRegistrationOptions struct {
 }
 
 // The params sent in a change notebook document notification.
-// 
+//
 // @since 3.17.0
 type DidChangeNotebookDocumentParams struct {
 	// The notebook document that did change. The version number points
@@ -737,13 +737,13 @@ type DidChangeNotebookDocumentParams struct {
 	// doesn't necessarily have to change.
 	NotebookDocument *VersionedNotebookDocumentIdentifier `json:"notebookDocument"`
 	// The actual changes to the notebook document.
-	// 
+	//
 	// The changes describe single state changes to the notebook document.
 	// So if there are two changes c1 (at array index 0) and c2 (at array
 	// index 1) for a notebook in state S then c1 moves the notebook from
 	// S to S' and c2 from S' to S''. So c1 is computed on the state S and
 	// c2 is computed on the state S'.
-	// 
+	//
 	// To mirror the content of a notebook using change events use the following approach:
 	// - start with the same initial content
 	// - apply the 'notebookDocument/didChange' notifications in the order you receive them.
@@ -753,7 +753,7 @@ type DidChangeNotebookDocumentParams struct {
 }
 
 // The params sent in a save notebook document notification.
-// 
+//
 // @since 3.17.0
 type DidSaveNotebookDocumentParams struct {
 	// The notebook document that got saved.
@@ -761,7 +761,7 @@ type DidSaveNotebookDocumentParams struct {
 }
 
 // The params sent in a close notebook document notification.
-// 
+//
 // @since 3.17.0
 type DidCloseNotebookDocumentParams struct {
 	// The notebook document that got closed.
@@ -772,7 +772,7 @@ type DidCloseNotebookDocumentParams struct {
 }
 
 // A parameter literal used in inline completion requests.
-// 
+//
 // @since 3.18.0
 // @proposed
 type InlineCompletionParams struct {
@@ -784,7 +784,7 @@ type InlineCompletionParams struct {
 }
 
 // Represents a collection of {@link InlineCompletionItem inline completion items} to be presented in the editor.
-// 
+//
 // @since 3.18.0
 // @proposed
 type InlineCompletionList struct {
@@ -793,7 +793,7 @@ type InlineCompletionList struct {
 }
 
 // An inline completion item represents a text snippet that is proposed inline to complete text that is being typed.
-// 
+//
 // @since 3.18.0
 // @proposed
 type InlineCompletionItem struct {
@@ -808,7 +808,7 @@ type InlineCompletionItem struct {
 }
 
 // Inline completion options used during static or dynamic registration.
-// 
+//
 // @since 3.18.0
 // @proposed
 type InlineCompletionRegistrationOptions struct {
@@ -818,7 +818,7 @@ type InlineCompletionRegistrationOptions struct {
 }
 
 // Parameters for the `workspace/textDocumentContent` request.
-// 
+//
 // @since 3.18.0
 // @proposed
 type TextDocumentContentParams struct {
@@ -827,7 +827,7 @@ type TextDocumentContentParams struct {
 }
 
 // Result of the `workspace/textDocumentContent` request.
-// 
+//
 // @since 3.18.0
 // @proposed
 type TextDocumentContentResult struct {
@@ -839,7 +839,7 @@ type TextDocumentContentResult struct {
 }
 
 // Text document content provider registration options.
-// 
+//
 // @since 3.18.0
 // @proposed
 type TextDocumentContentRegistrationOptions struct {
@@ -848,7 +848,7 @@ type TextDocumentContentRegistrationOptions struct {
 }
 
 // Parameters for the `workspace/textDocumentContent/refresh` request.
-// 
+//
 // @since 3.18.0
 // @proposed
 type TextDocumentContentRefreshParams struct {
@@ -874,7 +874,7 @@ type InitializeResult struct {
 	// The capabilities the language server provides.
 	Capabilities *ServerCapabilities `json:"capabilities"`
 	// Information about the server.
-	// 
+	//
 	// @since 3.15.0
 	ServerInfo *ServerInfo `json:"serverInfo"`
 }
@@ -949,7 +949,7 @@ type DidChangeTextDocumentParams struct {
 	// c2 (at array index 1) for a document in state S then c1 moves the document from
 	// S to S' and c2 from S' to S''. So c1 is computed on the state S and c2 is computed
 	// on the state S'.
-	// 
+	//
 	// To mirror the content of a document using change events use the following approach:
 	// - start with the same initial content
 	// - apply the 'textDocument/didChange' notifications in the order you receive them.
@@ -1021,7 +1021,7 @@ type PublishDiagnosticsParams struct {
 	// The URI for which diagnostic information is reported.
 	Uri TODO_base `json:"uri"`
 	// Optional the version number of the document the diagnostics are published for.
-	// 
+	//
 	// @since 3.15.0
 	Version TODO_base `json:"version"`
 	// An array of diagnostic information items.
@@ -1042,22 +1042,22 @@ type CompletionParams struct {
 // proposed to complete text that is being typed.
 type CompletionItem struct {
 	// The label of this completion item.
-	// 
+	//
 	// The label property is also by default the text that
 	// is inserted when selecting this completion.
-	// 
+	//
 	// If label details are provided the label itself should
 	// be an unqualified name of the completion item.
 	Label TODO_base `json:"label"`
 	// Additional details for the label
-	// 
+	//
 	// @since 3.17.0
 	LabelDetails *CompletionItemLabelDetails `json:"labelDetails"`
 	// The kind of this completion item. Based of the kind
 	// an icon is chosen by the editor.
 	Kind *CompletionItemKind `json:"kind"`
 	// Tags for this completion item.
-	// 
+	//
 	// @since 3.15.0
 	Tags TODO_array `json:"tags"`
 	// A human-readable string with additional information
@@ -1070,7 +1070,7 @@ type CompletionItem struct {
 	// Deprecated: Use `tags` instead.
 	Deprecated TODO_base `json:"deprecated"`
 	// Select this item when showing.
-	// 
+	//
 	// *Note* that only one completion item can be selected and that the
 	// tool / client decides which item that is. The rule is that the *first*
 	// item of those that match best is selected.
@@ -1086,7 +1086,7 @@ type CompletionItem struct {
 	// A string that should be inserted into a document when selecting
 	// this completion. When `falsy` the {@link CompletionItem.label label}
 	// is used.
-	// 
+	//
 	// The `insertText` is subject to interpretation by the client side.
 	// Some tools might not take the string literally. For example
 	// VS Code when code complete is requested in this example
@@ -1098,20 +1098,20 @@ type CompletionItem struct {
 	// The format of the insert text. The format applies to both the
 	// `insertText` property and the `newText` property of a provided
 	// `textEdit`. If omitted defaults to `InsertTextFormat.PlainText`.
-	// 
+	//
 	// Please note that the insertTextFormat doesn't apply to
 	// `additionalTextEdits`.
 	InsertTextFormat *InsertTextFormat `json:"insertTextFormat"`
 	// How whitespace and indentation is handled during completion
 	// item insertion. If not provided the clients default value depends on
 	// the `textDocument.completion.insertTextMode` client capability.
-	// 
+	//
 	// @since 3.16.0
 	InsertTextMode *InsertTextMode `json:"insertTextMode"`
 	// An {@link TextEdit edit} which is applied to a document when selecting
 	// this completion. When an edit is provided the value of
 	// {@link CompletionItem.insertText insertText} is ignored.
-	// 
+	//
 	// Most editors support two different operations when accepting a completion
 	// item. One is to insert a completion text and the other is to replace an
 	// existing text with a completion text. Since this can usually not be
@@ -1119,31 +1119,31 @@ type CompletionItem struct {
 	// signal support for `InsertReplaceEdits` via the
 	// `textDocument.completion.insertReplaceSupport` client capability
 	// property.
-	// 
+	//
 	// *Note 1:* The text edit's range as well as both ranges from an insert
 	// replace edit must be a [single line] and they must contain the position
 	// at which completion has been requested.
 	// *Note 2:* If an `InsertReplaceEdit` is returned the edit's insert range
 	// must be a prefix of the edit's replace range, that means it must be
 	// contained and starting at the same position.
-	// 
+	//
 	// @since 3.16.0 additional type `InsertReplaceEdit`
 	TextEdit TODO_or `json:"textEdit"`
 	// The edit text used if the completion item is part of a CompletionList and
 	// CompletionList defines an item default for the text edit range.
-	// 
+	//
 	// Clients will only honor this property if they opt into completion list
 	// item defaults using the capability `completionList.itemDefaults`.
-	// 
+	//
 	// If not provided and a list's default range is provided the label
 	// property is used as a text.
-	// 
+	//
 	// @since 3.17.0
 	TextEditText TODO_base `json:"textEditText"`
 	// An optional array of additional {@link TextEdit text edits} that are applied when
 	// selecting this completion. Edits must not overlap (including the same insert position)
 	// with the main {@link CompletionItem.textEdit edit} nor with themselves.
-	// 
+	//
 	// Additional text edits should be used to change text unrelated to the current cursor position
 	// (for example adding an import statement at the top of the file if the completion item will
 	// insert an unqualified type).
@@ -1165,7 +1165,7 @@ type CompletionItem struct {
 // in the editor.
 type CompletionList struct {
 	// This list it not complete. Further typing results in recomputing this list.
-	// 
+	//
 	// Recomputed lists have all their items replaced (not appended) in the
 	// incomplete completion sessions.
 	IsIncomplete TODO_base `json:"isIncomplete"`
@@ -1173,34 +1173,34 @@ type CompletionList struct {
 	// value for properties like `commitCharacters` or the range of a text
 	// edit. A completion list can therefore define item defaults which will
 	// be used if a completion item itself doesn't specify the value.
-	// 
+	//
 	// If a completion list specifies a default value and a completion item
 	// also specifies a corresponding value, the rules for combining these are
 	// defined by `applyKinds` (if the client supports it), defaulting to
 	// ApplyKind.Replace.
-	// 
+	//
 	// Servers are only allowed to return default values if the client
 	// signals support for this via the `completionList.itemDefaults`
 	// capability.
-	// 
+	//
 	// @since 3.17.0
 	ItemDefaults *CompletionItemDefaults `json:"itemDefaults"`
 	// Specifies how fields from a completion item should be combined with those
 	// from `completionList.itemDefaults`.
-	// 
+	//
 	// If unspecified, all fields will be treated as ApplyKind.Replace.
-	// 
+	//
 	// If a field's value is ApplyKind.Replace, the value from a completion item
 	// (if provided and not `null`) will always be used instead of the value
 	// from `completionItem.itemDefaults`.
-	// 
+	//
 	// If a field's value is ApplyKind.Merge, the values will be merged using
 	// the rules defined against each field below.
-	// 
+	//
 	// Servers are only allowed to return `applyKind` if the client
 	// signals support for this via the `completionList.applyKindSupport`
 	// capability.
-	// 
+	//
 	// @since 3.18.0
 	ApplyKind *CompletionItemApplyKinds `json:"applyKind"`
 	// The completion items.
@@ -1240,7 +1240,7 @@ type SignatureHelpParams struct {
 	WorkDoneProgressParams
 	// The signature help context. This is only available if the client specifies
 	// to send this using the client capability `textDocument.signatureHelp.contextSupport === true`
-	// 
+	//
 	// @since 3.15.0
 	Context *SignatureHelpContext `json:"context"`
 }
@@ -1254,26 +1254,26 @@ type SignatureHelp struct {
 	// The active signature. If omitted or the value lies outside the
 	// range of `signatures` the value defaults to zero or is ignored if
 	// the `SignatureHelp` has no signatures.
-	// 
+	//
 	// Whenever possible implementors should make an active decision about
 	// the active signature and shouldn't rely on a default value.
-	// 
+	//
 	// In future version of the protocol this property might become
 	// mandatory to better express this.
 	ActiveSignature TODO_base `json:"activeSignature"`
 	// The active parameter of the active signature.
-	// 
+	//
 	// If `null`, no parameter of the signature is active (for example a named
 	// argument that does not match any declared parameters). This is only valid
 	// if the client specifies the client capability
 	// `textDocument.signatureHelp.noActiveParameterSupport === true`
-	// 
+	//
 	// If omitted or the value lies outside the range of
 	// `signatures[activeSignature].parameters` defaults to 0 if the active
 	// signature has parameters.
-	// 
+	//
 	// If the active signature has no parameters it is ignored.
-	// 
+	//
 	// In future version of the protocol this property might become
 	// mandatory (but still nullable) to better express the active parameter if
 	// the active signature does have any.
@@ -1349,7 +1349,7 @@ type DocumentSymbolParams struct {
 type SymbolInformation struct {
 	BaseSymbolInformation
 	// Indicates if this symbol is deprecated.
-	// 
+	//
 	// @deprecated Use tags instead
 	// Deprecated: Use tags instead
 	Deprecated TODO_base `json:"deprecated"`
@@ -1358,7 +1358,7 @@ type SymbolInformation struct {
 	// tool the range's start information is used to position the cursor. So
 	// the range usually spans more than the actual symbol's name and does
 	// normally include things like visibility modifiers.
-	// 
+	//
 	// The range doesn't have to denote a node range in the sense of an abstract
 	// syntax tree. It can therefore not be used to re-construct a hierarchy of
 	// the symbols.
@@ -1378,11 +1378,11 @@ type DocumentSymbol struct {
 	// The kind of this symbol.
 	Kind *SymbolKind `json:"kind"`
 	// Tags for this document symbol.
-	// 
+	//
 	// @since 3.16.0
 	Tags TODO_array `json:"tags"`
 	// Indicates if this symbol is deprecated.
-	// 
+	//
 	// @deprecated Use tags instead
 	// Deprecated: Use tags instead
 	Deprecated TODO_base `json:"deprecated"`
@@ -1423,7 +1423,7 @@ type Command struct {
 	// Title of the command, like `save`.
 	Title TODO_base `json:"title"`
 	// An optional tooltip.
-	// 
+	//
 	// @since 3.18.0
 	// @proposed
 	Tooltip TODO_base `json:"tooltip"`
@@ -1436,39 +1436,39 @@ type Command struct {
 
 // A code action represents a change that can be performed in code, e.g. to fix a problem or
 // to refactor code.
-// 
+//
 // A CodeAction must set either `edit` and/or a `command`. If both are supplied, the `edit` is applied first, then the `command` is executed.
 type CodeAction struct {
 	// A short, human-readable, title for this code action.
 	Title TODO_base `json:"title"`
 	// The kind of the code action.
-	// 
+	//
 	// Used to filter code actions.
 	Kind *CodeActionKind `json:"kind"`
 	// The diagnostics that this code action resolves.
 	Diagnostics TODO_array `json:"diagnostics"`
 	// Marks this as a preferred action. Preferred actions are used by the `auto fix` command and can be targeted
 	// by keybindings.
-	// 
+	//
 	// A quick fix should be marked preferred if it properly addresses the underlying error.
 	// A refactoring should be marked preferred if it is the most reasonable choice of actions to take.
-	// 
+	//
 	// @since 3.15.0
 	IsPreferred TODO_base `json:"isPreferred"`
 	// Marks that the code action cannot currently be applied.
-	// 
+	//
 	// Clients should follow the following guidelines regarding disabled code actions:
-	// 
+	//
 	//   - Disabled code actions are not shown in automatic [lightbulbs](https://code.visualstudio.com/docs/editor/editingevolved#_code-action)
 	//     code action menus.
-	// 
+	//
 	//   - Disabled actions are shown as faded out in the code action menu when the user requests a more specific type
 	//     of code action, such as refactorings.
-	// 
+	//
 	//   - If the user has a [keybinding](https://code.visualstudio.com/docs/editor/refactoring#_keybindings-for-code-actions)
 	//     that auto applies a code action and only disabled code actions are returned, the client should show the user an
 	//     error message with `reason` in the editor.
-	// 
+	//
 	// @since 3.16.0
 	Disabled *CodeActionDisabled `json:"disabled"`
 	// The workspace edit this code action performs.
@@ -1479,11 +1479,11 @@ type CodeAction struct {
 	Command *Command `json:"command"`
 	// A data entry field that is preserved on a code action between
 	// a `textDocument/codeAction` and a `codeAction/resolve` request.
-	// 
+	//
 	// @since 3.16.0
 	Data *LSPAny `json:"data"`
 	// Tags for this code action.
-	// 
+	//
 	// @since 3.18.0 - proposed
 	Tags TODO_array `json:"tags"`
 }
@@ -1500,7 +1500,7 @@ type WorkspaceSymbolParams struct {
 	PartialResultParams
 	// A query string to filter symbols by. Clients may send an empty
 	// string here to request all symbols.
-	// 
+	//
 	// The `query`-parameter should be interpreted in a *relaxed way* as editors
 	// will apply their own highlighting and scoring on the results. A good rule
 	// of thumb is to match case-insensitive and to simply check that the
@@ -1510,16 +1510,16 @@ type WorkspaceSymbolParams struct {
 }
 
 // A special workspace symbol that supports locations without a range.
-// 
+//
 // See also SymbolInformation.
-// 
+//
 // @since 3.17.0
 type WorkspaceSymbol struct {
 	BaseSymbolInformation
 	// The location of the symbol. Whether a server is allowed to
 	// return a location without a range depends on the client
 	// capability `workspace.symbol.resolveSupport`.
-	// 
+	//
 	// See SymbolInformation#location for more details.
 	Location TODO_or `json:"location"`
 	// A data entry field that is preserved on a workspace symbol between a
@@ -1542,7 +1542,7 @@ type CodeLensParams struct {
 
 // A code lens represents a {@link Command command} that should be shown along with
 // source text, like the number of references, a way to run tests, etc.
-// 
+//
 // A code lens is _unresolved_ when no command is associated to it. For performance
 // reasons the creation of a code lens and resolving should be done in two stages.
 type CodeLens struct {
@@ -1577,11 +1577,11 @@ type DocumentLink struct {
 	// The uri this link points to. If missing a resolve request is sent later.
 	Target TODO_base `json:"target"`
 	// The tooltip text when you hover over this link.
-	// 
+	//
 	// If a tooltip is provided, is will be displayed in a string that includes instructions on how to
 	// trigger the link, such as `{0} (ctrl + click)`. The specific instructions vary depending on OS,
 	// user settings, and localization.
-	// 
+	//
 	// @since 3.15.0
 	Tooltip TODO_base `json:"tooltip"`
 	// A data entry field that is preserved on a document link between a
@@ -1628,7 +1628,7 @@ type DocumentRangeFormattingRegistrationOptions struct {
 }
 
 // The parameters of a {@link DocumentRangesFormattingRequest}.
-// 
+//
 // @since 3.18.0
 // @proposed
 type DocumentRangesFormattingParams struct {
@@ -1711,14 +1711,14 @@ type ApplyWorkspaceEditParams struct {
 	// The edits to apply.
 	Edit *WorkspaceEdit `json:"edit"`
 	// Additional data about the edit.
-	// 
+	//
 	// @since 3.18.0
 	// @proposed
 	Metadata *WorkspaceEditMetadata `json:"metadata"`
 }
 
 // The result returned from the apply workspace edit request.
-// 
+//
 // @since 3.17 renamed from ApplyWorkspaceEditResponse
 type ApplyWorkspaceEditResult struct {
 	// Indicates whether the edit was applied or not.
@@ -1737,7 +1737,7 @@ type WorkDoneProgressBegin struct {
 	Kind TODO_stringLiteral `json:"kind"`
 	// Mandatory title of the progress operation. Used to briefly inform about
 	// the kind of operation being performed.
-	// 
+	//
 	// Examples: "Indexing" or "Linking dependencies".
 	Title TODO_base `json:"title"`
 	// Controls if a cancel button should show to allow the user to cancel the
@@ -1746,14 +1746,14 @@ type WorkDoneProgressBegin struct {
 	Cancellable TODO_base `json:"cancellable"`
 	// Optional, more detailed associated progress message. Contains
 	// complementary information to the `title`.
-	// 
+	//
 	// Examples: "3/25 files", "project/src/module2", "node_modules/some_dep".
 	// If unset, the previous progress message (if any) is still valid.
 	Message TODO_base `json:"message"`
 	// Optional progress percentage to display (value 100 is considered 100%).
 	// If not provided infinite progress is assumed and clients are allowed
 	// to ignore the `percentage` value in subsequent in report notifications.
-	// 
+	//
 	// The value should be steadily rising. Clients are free to ignore values
 	// that are not following this rule. The value range is [0, 100].
 	Percentage TODO_base `json:"percentage"`
@@ -1762,20 +1762,20 @@ type WorkDoneProgressBegin struct {
 type WorkDoneProgressReport struct {
 	Kind TODO_stringLiteral `json:"kind"`
 	// Controls enablement state of a cancel button.
-	// 
+	//
 	// Clients that don't support cancellation or don't support controlling the button's
 	// enablement state are allowed to ignore the property.
 	Cancellable TODO_base `json:"cancellable"`
 	// Optional, more detailed associated progress message. Contains
 	// complementary information to the `title`.
-	// 
+	//
 	// Examples: "3/25 files", "project/src/module2", "node_modules/some_dep".
 	// If unset, the previous progress message (if any) is still valid.
 	Message TODO_base `json:"message"`
 	// Optional progress percentage to display (value 100 is considered 100%).
 	// If not provided infinite progress is assumed and clients are allowed
 	// to ignore the `percentage` value in subsequent in report notifications.
-	// 
+	//
 	// The value should be steadily rising. Clients are free to ignore values
 	// that are not following this rule. The value range is [0, 100]
 	Percentage TODO_base `json:"percentage"`
@@ -1833,7 +1833,7 @@ type PartialResultParams struct {
 // including an origin range.
 type LocationLink struct {
 	// Span of the origin of this link.
-	// 
+	//
 	// Used as the underlined span for mouse interaction. Defaults to the word range at
 	// the definition position.
 	OriginSelectionRange *Range `json:"originSelectionRange"`
@@ -1849,15 +1849,17 @@ type LocationLink struct {
 }
 
 // A range in a text document expressed as (zero-based) start and end positions.
-// 
+//
 // If you want to specify a range that contains a line including the line ending
 // character(s) then use an end position denoting the start of the next line.
 // For example:
 // ```ts
-// {
-//     start: { line: 5, character: 23 }
-//     end : { line 6, character : 0 }
-// }
+//
+//	{
+//	    start: { line: 5, character: 23 }
+//	    end : { line 6, character : 0 }
+//	}
+//
 // ```
 type Range struct {
 	// The range's start position.
@@ -1949,16 +1951,16 @@ type DeclarationOptions struct {
 // conversion from one encoding into another requires the content of the
 // file / line the conversion is best done where the file is read which is
 // usually on the server side.
-// 
+//
 // Positions are line end character agnostic. So you can not specify a position
 // that denotes `\r|\n` or `\n|` where `|` represents the character offset.
-// 
+//
 // @since 3.17.0 - support for negotiated position encoding.
 type Position struct {
 	// Line position in a document (zero-based).
 	Line TODO_base `json:"line"`
 	// Character offset on a line in a document (zero-based).
-	// 
+	//
 	// The meaning of this offset is determined by the negotiated
 	// `PositionEncodingKind`.
 	Character TODO_base `json:"character"`
@@ -1969,7 +1971,7 @@ type SelectionRangeOptions struct {
 }
 
 // Call hierarchy options used during static registration.
-// 
+//
 // @since 3.16.0
 type CallHierarchyOptions struct {
 	WorkDoneProgressOptions
@@ -2002,7 +2004,7 @@ type LinkedEditingRangeOptions struct {
 }
 
 // Represents information on a file/folder create.
-// 
+//
 // @since 3.16.0
 type FileCreate struct {
 	// A file:// URI for the location of the file/folder being created.
@@ -2017,10 +2019,10 @@ type TextDocumentEdit struct {
 	// The text document to change.
 	TextDocument *OptionalVersionedTextDocumentIdentifier `json:"textDocument"`
 	// The edits to be applied.
-	// 
+	//
 	// @since 3.16.0 - support for AnnotatedTextEdit. This is guarded using a
 	// client capability.
-	// 
+	//
 	// @since 3.18.0 - support for SnippetTextEdit. This is guarded using a
 	// client capability.
 	Edits TODO_array `json:"edits"`
@@ -2062,7 +2064,7 @@ type DeleteFile struct {
 }
 
 // Additional information that describes document changes.
-// 
+//
 // @since 3.16.0
 type ChangeAnnotation struct {
 	// A human-readable string describing the actual change. The string
@@ -2078,7 +2080,7 @@ type ChangeAnnotation struct {
 
 // A filter to describe in which file operation requests or notifications
 // the server is interested in receiving.
-// 
+//
 // @since 3.16.0
 type FileOperationFilter struct {
 	// A Uri scheme like `file` or `untitled`.
@@ -2088,7 +2090,7 @@ type FileOperationFilter struct {
 }
 
 // Represents information on a file/folder rename.
-// 
+//
 // @since 3.16.0
 type FileRename struct {
 	// A file:// URI for the original location of the file/folder being renamed.
@@ -2098,7 +2100,7 @@ type FileRename struct {
 }
 
 // Represents information on a file/folder delete.
-// 
+//
 // @since 3.16.0
 type FileDelete struct {
 	// A file:// URI for the location of the file/folder being deleted.
@@ -2110,7 +2112,7 @@ type MonikerOptions struct {
 }
 
 // Type hierarchy options used during static registration.
-// 
+//
 // @since 3.17.0
 type TypeHierarchyOptions struct {
 	WorkDoneProgressOptions
@@ -2126,7 +2128,7 @@ type InlineValueContext struct {
 }
 
 // Provide inline value as text.
-// 
+//
 // @since 3.17.0
 type InlineValueText struct {
 	// The document range for which the inline value applies.
@@ -2138,7 +2140,7 @@ type InlineValueText struct {
 // Provide inline value through a variable lookup.
 // If only a range is specified, the variable name will be extracted from the underlying document.
 // An optional variable name can be used to override the extracted name.
-// 
+//
 // @since 3.17.0
 type InlineValueVariableLookup struct {
 	// The document range for which the inline value applies.
@@ -2153,7 +2155,7 @@ type InlineValueVariableLookup struct {
 // Provide an inline value through an expression evaluation.
 // If only a range is specified, the expression will be extracted from the underlying document.
 // An optional expression can be used to override the extracted expression.
-// 
+//
 // @since 3.17.0
 type InlineValueEvaluatableExpression struct {
 	// The document range for which the inline value applies.
@@ -2164,7 +2166,7 @@ type InlineValueEvaluatableExpression struct {
 }
 
 // Inline value options used during static registration.
-// 
+//
 // @since 3.17.0
 type InlineValueOptions struct {
 	WorkDoneProgressOptions
@@ -2172,7 +2174,7 @@ type InlineValueOptions struct {
 
 // An inlay hint label part allows for interactive and composite labels
 // of inlay hints.
-// 
+//
 // @since 3.17.0
 type InlayHintLabelPart struct {
 	// The value of this label part.
@@ -2183,18 +2185,18 @@ type InlayHintLabelPart struct {
 	Tooltip TODO_or `json:"tooltip"`
 	// An optional source code location that represents this
 	// label part.
-	// 
+	//
 	// The editor will use this location for the hover and for code navigation
 	// features: This part will become a clickable link that resolves to the
 	// definition of the symbol at the given location (not necessarily the
 	// location itself), it shows the hover that shows at the given location,
 	// and it shows a context menu with further code navigation commands.
-	// 
+	//
 	// Depending on the client capability `inlayHint.resolveSupport` clients
 	// might resolve this property late using the resolve request.
 	Location *Location `json:"location"`
 	// An optional command for this label part.
-	// 
+	//
 	// Depending on the client capability `inlayHint.resolveSupport` clients
 	// might resolve this property late using the resolve request.
 	Command *Command `json:"command"`
@@ -2202,24 +2204,26 @@ type InlayHintLabelPart struct {
 
 // A `MarkupContent` literal represents a string value which content is interpreted base on its
 // kind flag. Currently the protocol supports `plaintext` and `markdown` as markup kinds.
-// 
+//
 // If the kind is `markdown` then the value can contain fenced code blocks like in GitHub issues.
 // See https://help.github.com/articles/creating-and-highlighting-code-blocks/#syntax-highlighting
-// 
+//
 // Here is an example how such a string can be constructed using JavaScript / TypeScript:
 // ```ts
-// let markdown: MarkdownContent = {
-//  kind: MarkupKind.Markdown,
-//  value: [
-//    '# Header',
-//    'Some text',
-//    '```typescript',
-//    'someCode();',
-//    '```'
-//  ].join('\n')
-// };
+//
+//	let markdown: MarkdownContent = {
+//	 kind: MarkupKind.Markdown,
+//	 value: [
+//	   '# Header',
+//	   'Some text',
+//	   '```typescript',
+//	   'someCode();',
+//	   '```'
+//	 ].join('\n')
+//	};
+//
 // ```
-// 
+//
 // *Please Note* that clients might sanitize the return markdown. A client could decide to
 // remove HTML from the markdown to avoid script execution.
 type MarkupContent struct {
@@ -2230,7 +2234,7 @@ type MarkupContent struct {
 }
 
 // Inlay hint options used during static registration.
-// 
+//
 // @since 3.17.0
 type InlayHintOptions struct {
 	WorkDoneProgressOptions
@@ -2240,7 +2244,7 @@ type InlayHintOptions struct {
 }
 
 // A full diagnostic report with a set of related documents.
-// 
+//
 // @since 3.17.0
 type RelatedFullDocumentDiagnosticReport struct {
 	FullDocumentDiagnosticReport
@@ -2249,13 +2253,13 @@ type RelatedFullDocumentDiagnosticReport struct {
 	// diagnostics in a file B which A depends on. An example of
 	// such a language is C/C++ where marco definitions in a file
 	// a.cpp and result in errors in a header file b.hpp.
-	// 
+	//
 	// @since 3.17.0
 	RelatedDocuments TODO_map `json:"relatedDocuments"`
 }
 
 // An unchanged diagnostic report with a set of related documents.
-// 
+//
 // @since 3.17.0
 type RelatedUnchangedDocumentDiagnosticReport struct {
 	UnchangedDocumentDiagnosticReport
@@ -2264,13 +2268,13 @@ type RelatedUnchangedDocumentDiagnosticReport struct {
 	// diagnostics in a file B which A depends on. An example of
 	// such a language is C/C++ where marco definitions in a file
 	// a.cpp and result in errors in a header file b.hpp.
-	// 
+	//
 	// @since 3.17.0
 	RelatedDocuments TODO_map `json:"relatedDocuments"`
 }
 
 // A diagnostic report with a full set of problems.
-// 
+//
 // @since 3.17.0
 type FullDocumentDiagnosticReport struct {
 	// A full document diagnostic report.
@@ -2285,7 +2289,7 @@ type FullDocumentDiagnosticReport struct {
 
 // A diagnostic report indicating that the last returned
 // report is still accurate.
-// 
+//
 // @since 3.17.0
 type UnchangedDocumentDiagnosticReport struct {
 	// A document diagnostic report indicating
@@ -2299,7 +2303,7 @@ type UnchangedDocumentDiagnosticReport struct {
 }
 
 // Diagnostic options.
-// 
+//
 // @since 3.17.0
 type DiagnosticOptions struct {
 	WorkDoneProgressOptions
@@ -2316,7 +2320,7 @@ type DiagnosticOptions struct {
 }
 
 // A previous result id in a workspace pull request.
-// 
+//
 // @since 3.17.0
 type PreviousResultId struct {
 	// The URI for which the client knowns a
@@ -2327,7 +2331,7 @@ type PreviousResultId struct {
 }
 
 // A notebook document.
-// 
+//
 // @since 3.17.0
 type NotebookDocument struct {
 	// The notebook document's uri.
@@ -2339,7 +2343,7 @@ type NotebookDocument struct {
 	Version TODO_base `json:"version"`
 	// Additional metadata stored with the notebook
 	// document.
-	// 
+	//
 	// Note: should always be an object literal (e.g. LSPObject)
 	Metadata *LSPObject `json:"metadata"`
 	// The cells of a notebook.
@@ -2362,16 +2366,16 @@ type TextDocumentItem struct {
 
 // Options specific to a notebook plus its cells
 // to be synced to the server.
-// 
+//
 // If a selector provides a notebook document
 // filter but no cell selector all cells of a
 // matching notebook document will be synced.
-// 
+//
 // If a selector provides no notebook document
 // filter but only a cell selector all notebook
 // document that contain at least one matching
 // cell will be synced.
-// 
+//
 // @since 3.17.0
 type NotebookDocumentSyncOptions struct {
 	// The notebooks to be synced
@@ -2382,7 +2386,7 @@ type NotebookDocumentSyncOptions struct {
 }
 
 // A versioned notebook document identifier.
-// 
+//
 // @since 3.17.0
 type VersionedNotebookDocumentIdentifier struct {
 	// The version number of this notebook document.
@@ -2392,11 +2396,11 @@ type VersionedNotebookDocumentIdentifier struct {
 }
 
 // A change event for a notebook document.
-// 
+//
 // @since 3.17.0
 type NotebookDocumentChangeEvent struct {
 	// The changed meta data if any.
-	// 
+	//
 	// Note: should always be an object literal (e.g. LSPObject)
 	Metadata *LSPObject `json:"metadata"`
 	// Changes to cells
@@ -2404,7 +2408,7 @@ type NotebookDocumentChangeEvent struct {
 }
 
 // A literal to identify a notebook document in the client.
-// 
+//
 // @since 3.17.0
 type NotebookDocumentIdentifier struct {
 	// The notebook document's uri.
@@ -2412,7 +2416,7 @@ type NotebookDocumentIdentifier struct {
 }
 
 // Provides information about the context in which an inline completion was requested.
-// 
+//
 // @since 3.18.0
 // @proposed
 type InlineCompletionContext struct {
@@ -2424,12 +2428,12 @@ type InlineCompletionContext struct {
 
 // A string value used as a snippet is a template which allows to insert text
 // and to control the editor cursor when insertion happens.
-// 
+//
 // A snippet can define tab stops and placeholders with `$1`, `$2`
 // and `${3:foo}`. `$0` defines the final tab stop, it defaults to
 // the end of the snippet. Variables are defined with `$name` and
 // `${name:default value}`.
-// 
+//
 // @since 3.18.0
 // @proposed
 type StringValue struct {
@@ -2440,7 +2444,7 @@ type StringValue struct {
 }
 
 // Inline completion options used during static registration.
-// 
+//
 // @since 3.18.0
 // @proposed
 type InlineCompletionOptions struct {
@@ -2448,7 +2452,7 @@ type InlineCompletionOptions struct {
 }
 
 // Text document content provider options.
-// 
+//
 // @since 3.18.0
 // @proposed
 type TextDocumentContentOptions struct {
@@ -2481,33 +2485,33 @@ type _InitializeParams struct {
 	WorkDoneProgressParams
 	// The process Id of the parent process that started
 	// the server.
-	// 
+	//
 	// Is `null` if the process has not been started by another process.
 	// If the parent process is not alive then the server should exit.
 	ProcessId TODO_or `json:"processId"`
 	// Information about the client
-	// 
+	//
 	// @since 3.15.0
 	ClientInfo *ClientInfo `json:"clientInfo"`
 	// The locale the client is currently showing the user interface
 	// in. This must not necessarily be the locale of the operating
 	// system.
-	// 
+	//
 	// Uses IETF language tags as the value's syntax
 	// (See https://en.wikipedia.org/wiki/IETF_language_tag)
-	// 
+	//
 	// @since 3.16.0
 	Locale TODO_base `json:"locale"`
 	// The rootPath of the workspace. Is null
 	// if no folder is open.
-	// 
+	//
 	// @deprecated in favour of rootUri.
 	// Deprecated: in favour of rootUri.
 	RootPath TODO_or `json:"rootPath"`
 	// The rootUri of the workspace. Is null if no
 	// folder is open. If both `rootPath` and `rootUri` are set
 	// `rootUri` wins.
-	// 
+	//
 	// @deprecated in favour of workspaceFolders.
 	// Deprecated: in favour of workspaceFolders.
 	RootUri TODO_or `json:"rootUri"`
@@ -2521,11 +2525,11 @@ type _InitializeParams struct {
 
 type WorkspaceFoldersInitializeParams struct {
 	// The workspace folders configured in the client when the server starts.
-	// 
+	//
 	// This property is only available if the client supports workspace folders.
 	// It can be `null` if the client supports workspace folders but none are
 	// configured.
-	// 
+	//
 	// @since 3.6.0
 	WorkspaceFolders TODO_or `json:"workspaceFolders"`
 }
@@ -2535,12 +2539,12 @@ type WorkspaceFoldersInitializeParams struct {
 type ServerCapabilities struct {
 	// The position encoding the server picked from the encodings offered
 	// by the client via the client capability `general.positionEncodings`.
-	// 
+	//
 	// If the client didn't provide any position encodings the only valid
 	// value that a server can return is 'utf-16'.
-	// 
+	//
 	// If omitted it defaults to 'utf-16'.
-	// 
+	//
 	// @since 3.17.0
 	PositionEncoding *PositionEncodingKind `json:"positionEncoding"`
 	// Defines how text documents are synced. Is either a detailed structure
@@ -2548,7 +2552,7 @@ type ServerCapabilities struct {
 	// TextDocumentSyncKind number.
 	TextDocumentSync TODO_or `json:"textDocumentSync"`
 	// Defines how notebook documents are synced.
-	// 
+	//
 	// @since 3.17.0
 	NotebookDocumentSync TODO_or `json:"notebookDocumentSync"`
 	// The server provides completion support.
@@ -2600,39 +2604,39 @@ type ServerCapabilities struct {
 	// The server provides execute command support.
 	ExecuteCommandProvider *ExecuteCommandOptions `json:"executeCommandProvider"`
 	// The server provides call hierarchy support.
-	// 
+	//
 	// @since 3.16.0
 	CallHierarchyProvider TODO_or `json:"callHierarchyProvider"`
 	// The server provides linked editing range support.
-	// 
+	//
 	// @since 3.16.0
 	LinkedEditingRangeProvider TODO_or `json:"linkedEditingRangeProvider"`
 	// The server provides semantic tokens support.
-	// 
+	//
 	// @since 3.16.0
 	SemanticTokensProvider TODO_or `json:"semanticTokensProvider"`
 	// The server provides moniker support.
-	// 
+	//
 	// @since 3.16.0
 	MonikerProvider TODO_or `json:"monikerProvider"`
 	// The server provides type hierarchy support.
-	// 
+	//
 	// @since 3.17.0
 	TypeHierarchyProvider TODO_or `json:"typeHierarchyProvider"`
 	// The server provides inline values.
-	// 
+	//
 	// @since 3.17.0
 	InlineValueProvider TODO_or `json:"inlineValueProvider"`
 	// The server provides inlay hints.
-	// 
+	//
 	// @since 3.17.0
 	InlayHintProvider TODO_or `json:"inlayHintProvider"`
 	// The server has support for pull model diagnostics.
-	// 
+	//
 	// @since 3.17.0
 	DiagnosticProvider TODO_or `json:"diagnosticProvider"`
 	// Inline completion options used during static registration.
-	// 
+	//
 	// @since 3.18.0
 	// @proposed
 	InlineCompletionProvider TODO_or `json:"inlineCompletionProvider"`
@@ -2643,7 +2647,7 @@ type ServerCapabilities struct {
 }
 
 // Information about the server
-// 
+//
 // @since 3.15.0
 // @since 3.18.0 ServerInfo type name added.
 type ServerInfo struct {
@@ -2676,7 +2680,7 @@ type FileEvent struct {
 
 type FileSystemWatcher struct {
 	// The glob pattern to watch. See {@link GlobPattern glob pattern} for more detail.
-	// 
+	//
 	// @since 3.17.0 support for relative patterns.
 	GlobPattern *GlobPattern `json:"globPattern"`
 	// The kind of events of interest. If omitted it defaults
@@ -2698,7 +2702,7 @@ type Diagnostic struct {
 	Code TODO_or `json:"code"`
 	// An optional property to describe the error code.
 	// Requires the code field (above) to be present/not null.
-	// 
+	//
 	// @since 3.16.0
 	CodeDescription *CodeDescription `json:"codeDescription"`
 	// A human-readable string describing the source of this
@@ -2708,7 +2712,7 @@ type Diagnostic struct {
 	// The diagnostic's message. It usually appears in the user interface
 	Message TODO_base `json:"message"`
 	// Additional metadata about the diagnostic.
-	// 
+	//
 	// @since 3.15.0
 	Tags TODO_array `json:"tags"`
 	// An array of related diagnostic information, e.g. when symbol-names within
@@ -2716,7 +2720,7 @@ type Diagnostic struct {
 	RelatedInformation TODO_array `json:"relatedInformation"`
 	// A data entry field that is preserved between a `textDocument/publishDiagnostics`
 	// notification and `textDocument/codeAction` request.
-	// 
+	//
 	// @since 3.16.0
 	Data *LSPAny `json:"data"`
 }
@@ -2731,7 +2735,7 @@ type CompletionContext struct {
 }
 
 // Additional details for a completion item label.
-// 
+//
 // @since 3.17.0
 type CompletionItemLabelDetails struct {
 	// An optional string which is rendered less prominently directly after {@link CompletionItem.label label},
@@ -2743,7 +2747,7 @@ type CompletionItemLabelDetails struct {
 }
 
 // A special text edit to provide an insert and a replace operation.
-// 
+//
 // @since 3.16.0
 type InsertReplaceEdit struct {
 	// The string to be inserted.
@@ -2758,87 +2762,87 @@ type InsertReplaceEdit struct {
 // value for properties like `commitCharacters` or the range of a text
 // edit. A completion list can therefore define item defaults which will
 // be used if a completion item itself doesn't specify the value.
-// 
+//
 // If a completion list specifies a default value and a completion item
 // also specifies a corresponding value, the rules for combining these are
 // defined by `applyKinds` (if the client supports it), defaulting to
 // ApplyKind.Replace.
-// 
+//
 // Servers are only allowed to return default values if the client
 // signals support for this via the `completionList.itemDefaults`
 // capability.
-// 
+//
 // @since 3.17.0
 type CompletionItemDefaults struct {
 	// A default commit character set.
-	// 
+	//
 	// @since 3.17.0
 	CommitCharacters TODO_array `json:"commitCharacters"`
 	// A default edit range.
-	// 
+	//
 	// @since 3.17.0
 	EditRange TODO_or `json:"editRange"`
 	// A default insert text format.
-	// 
+	//
 	// @since 3.17.0
 	InsertTextFormat *InsertTextFormat `json:"insertTextFormat"`
 	// A default insert text mode.
-	// 
+	//
 	// @since 3.17.0
 	InsertTextMode *InsertTextMode `json:"insertTextMode"`
 	// A default data value.
-	// 
+	//
 	// @since 3.17.0
 	Data *LSPAny `json:"data"`
 }
 
 // Specifies how fields from a completion item should be combined with those
 // from `completionList.itemDefaults`.
-// 
+//
 // If unspecified, all fields will be treated as ApplyKind.Replace.
-// 
+//
 // If a field's value is ApplyKind.Replace, the value from a completion item (if
 // provided and not `null`) will always be used instead of the value from
 // `completionItem.itemDefaults`.
-// 
+//
 // If a field's value is ApplyKind.Merge, the values will be merged using the rules
 // defined against each field below.
-// 
+//
 // Servers are only allowed to return `applyKind` if the client
 // signals support for this via the `completionList.applyKindSupport`
 // capability.
-// 
+//
 // @since 3.18.0
 type CompletionItemApplyKinds struct {
 	// Specifies whether commitCharacters on a completion will replace or be
 	// merged with those in `completionList.itemDefaults.commitCharacters`.
-	// 
+	//
 	// If ApplyKind.Replace, the commit characters from the completion item will
 	// always be used unless not provided, in which case those from
 	// `completionList.itemDefaults.commitCharacters` will be used. An
 	// empty list can be used if a completion item does not have any commit
 	// characters and also should not use those from
 	// `completionList.itemDefaults.commitCharacters`.
-	// 
+	//
 	// If ApplyKind.Merge the commitCharacters for the completion will be the
 	// union of all values in both `completionList.itemDefaults.commitCharacters`
 	// and the completion's own `commitCharacters`.
-	// 
+	//
 	// @since 3.18.0
 	CommitCharacters *ApplyKind `json:"commitCharacters"`
 	// Specifies whether the `data` field on a completion will replace or
 	// be merged with data from `completionList.itemDefaults.data`.
-	// 
+	//
 	// If ApplyKind.Replace, the data from the completion item will be used if
 	// provided (and not `null`), otherwise
 	// `completionList.itemDefaults.data` will be used. An empty object can
 	// be used if a completion item does not have any data but also should
 	// not use the value from `completionList.itemDefaults.data`.
-	// 
+	//
 	// If ApplyKind.Merge, a shallow merge will be performed between
 	// `completionList.itemDefaults.data` and the completion's own data
 	// using the following rules:
-	// 
+	//
 	// - If a completion's `data` field is not provided (or `null`), the
 	//   entire `data` field from `completionList.itemDefaults.data` will be
 	//   used as-is.
@@ -2846,7 +2850,7 @@ type CompletionItemApplyKinds struct {
 	//   overwrite the field of the same name in
 	//   `completionList.itemDefaults.data` but no merging of nested fields
 	//   within that value will occur.
-	// 
+	//
 	// @since 3.18.0
 	Data *ApplyKind `json:"data"`
 }
@@ -2859,17 +2863,17 @@ type CompletionOptions struct {
 	// starts to type an identifier. For example if the user types `c` in a JavaScript file
 	// code complete will automatically pop up present `console` besides others as a
 	// completion item. Characters that make up identifiers don't need to be listed here.
-	// 
+	//
 	// If code complete should automatically be trigger on characters not being valid inside
 	// an identifier (for example `.` in JavaScript) list them in `triggerCharacters`.
 	TriggerCharacters TODO_array `json:"triggerCharacters"`
 	// The list of all possible characters that commit a completion. This field can be used
 	// if clients don't support individual commit characters per completion item. See
 	// `ClientCapabilities.textDocument.completion.completionItem.commitCharactersSupport`
-	// 
+	//
 	// If a server provides both `allCommitCharacters` and commit characters on an individual
 	// completion item the ones on the completion item win.
-	// 
+	//
 	// @since 3.2.0
 	AllCommitCharacters TODO_array `json:"allCommitCharacters"`
 	// The server provides support to resolve additional
@@ -2877,7 +2881,7 @@ type CompletionOptions struct {
 	ResolveProvider TODO_base `json:"resolveProvider"`
 	// The server supports the following `CompletionItem` specific
 	// capabilities.
-	// 
+	//
 	// @since 3.17.0
 	CompletionItem *ServerCompletionItemOptions `json:"completionItem"`
 }
@@ -2888,22 +2892,22 @@ type HoverOptions struct {
 }
 
 // Additional information about the context in which a signature help request was triggered.
-// 
+//
 // @since 3.15.0
 type SignatureHelpContext struct {
 	// Action that caused signature help to be triggered.
 	TriggerKind *SignatureHelpTriggerKind `json:"triggerKind"`
 	// Character that caused signature help to be triggered.
-	// 
+	//
 	// This is undefined when `triggerKind !== SignatureHelpTriggerKind.TriggerCharacter`
 	TriggerCharacter TODO_base `json:"triggerCharacter"`
 	// `true` if signature help was already showing when it was triggered.
-	// 
+	//
 	// Retriggers occurs when the signature help is already active and can be caused by actions such as
 	// typing a trigger character, a cursor move, or document content changes.
 	IsRetrigger TODO_base `json:"isRetrigger"`
 	// The currently active `SignatureHelp`.
-	// 
+	//
 	// The `activeSignatureHelp` has its `SignatureHelp.activeSignature` field updated based on
 	// the user navigating through available signatures.
 	ActiveSignatureHelp *SignatureHelp `json:"activeSignatureHelp"`
@@ -2922,15 +2926,15 @@ type SignatureInformation struct {
 	// The parameters of this signature.
 	Parameters TODO_array `json:"parameters"`
 	// The index of the active parameter.
-	// 
+	//
 	// If `null`, no parameter of the signature is active (for example a named
 	// argument that does not match any declared parameters). This is only valid
 	// if the client specifies the client capability
 	// `textDocument.signatureHelp.noActiveParameterSupport === true`
-	// 
+	//
 	// If provided (or `null`), this is used in place of
 	// `SignatureHelp.activeParameter`.
-	// 
+	//
 	// @since 3.16.0
 	ActiveParameter TODO_or `json:"activeParameter"`
 }
@@ -2941,10 +2945,10 @@ type SignatureHelpOptions struct {
 	// List of characters that trigger signature help automatically.
 	TriggerCharacters TODO_array `json:"triggerCharacters"`
 	// List of characters that re-trigger signature help.
-	// 
+	//
 	// These trigger characters are only active when signature help is already showing. All trigger characters
 	// are also counted as re-trigger characters.
-	// 
+	//
 	// @since 3.15.0
 	RetriggerCharacters TODO_array `json:"retriggerCharacters"`
 }
@@ -2978,7 +2982,7 @@ type BaseSymbolInformation struct {
 	// The kind of this symbol.
 	Kind *SymbolKind `json:"kind"`
 	// Tags for this symbol.
-	// 
+	//
 	// @since 3.16.0
 	Tags TODO_array `json:"tags"`
 	// The name of the symbol containing this symbol. This information is for
@@ -2993,7 +2997,7 @@ type DocumentSymbolOptions struct {
 	WorkDoneProgressOptions
 	// A human-readable string that is shown when multiple outlines trees
 	// are shown for the same document.
-	// 
+	//
 	// @since 3.16.0
 	Label TODO_base `json:"label"`
 }
@@ -3008,22 +3012,22 @@ type CodeActionContext struct {
 	// to compute code actions is the provided range.
 	Diagnostics TODO_array `json:"diagnostics"`
 	// Requested kind of actions to return.
-	// 
+	//
 	// Actions not of this kind are filtered out by the client before being shown. So servers
 	// can omit computing them.
 	Only TODO_array `json:"only"`
 	// The reason why code actions were requested.
-	// 
+	//
 	// @since 3.17.0
 	TriggerKind *CodeActionTriggerKind `json:"triggerKind"`
 }
 
 // Captures why the code action is currently disabled.
-// 
+//
 // @since 3.18.0
 type CodeActionDisabled struct {
 	// Human readable description of why the code action is currently disabled.
-	// 
+	//
 	// This is displayed in the code actions UI.
 	Reason TODO_base `json:"reason"`
 }
@@ -3032,35 +3036,35 @@ type CodeActionDisabled struct {
 type CodeActionOptions struct {
 	WorkDoneProgressOptions
 	// CodeActionKinds that this server may return.
-	// 
+	//
 	// The list of kinds may be generic, such as `CodeActionKind.Refactor`, or the server
 	// may list out every specific kind they provide.
 	CodeActionKinds TODO_array `json:"codeActionKinds"`
 	// Static documentation for a class of code actions.
-	// 
+	//
 	// Documentation from the provider should be shown in the code actions menu if either:
-	// 
+	//
 	// - Code actions of `kind` are requested by the editor. In this case, the editor will show the documentation that
 	//   most closely matches the requested code action kind. For example, if a provider has documentation for
 	//   both `Refactor` and `RefactorExtract`, when the user requests code actions for `RefactorExtract`,
 	//   the editor will use the documentation for `RefactorExtract` instead of the documentation for `Refactor`.
-	// 
+	//
 	// - Any code actions of `kind` are returned by the provider.
-	// 
+	//
 	// At most one documentation entry should be shown per provider.
-	// 
+	//
 	// @since 3.18.0
 	// @proposed
 	Documentation TODO_array `json:"documentation"`
 	// The server provides support to resolve additional
 	// information for a code action.
-	// 
+	//
 	// @since 3.16.0
 	ResolveProvider TODO_base `json:"resolveProvider"`
 }
 
 // Location with only uri and does not include range.
-// 
+//
 // @since 3.18.0
 type LocationUriOnly struct {
 	Uri TODO_base `json:"uri"`
@@ -3071,7 +3075,7 @@ type WorkspaceSymbolOptions struct {
 	WorkDoneProgressOptions
 	// The server provides support to resolve additional
 	// information for a workspace symbol.
-	// 
+	//
 	// @since 3.17.0
 	ResolveProvider TODO_base `json:"resolveProvider"`
 }
@@ -3097,15 +3101,15 @@ type FormattingOptions struct {
 	// Prefer spaces over tabs.
 	InsertSpaces TODO_base `json:"insertSpaces"`
 	// Trim trailing whitespace on a line.
-	// 
+	//
 	// @since 3.15.0
 	TrimTrailingWhitespace TODO_base `json:"trimTrailingWhitespace"`
 	// Insert a newline character at the end of the file if one does not exist.
-	// 
+	//
 	// @since 3.15.0
 	InsertFinalNewline TODO_base `json:"insertFinalNewline"`
 	// Trim all newlines after the final newline at the end of the file.
-	// 
+	//
 	// @since 3.15.0
 	TrimFinalNewlines TODO_base `json:"trimFinalNewlines"`
 }
@@ -3119,7 +3123,7 @@ type DocumentFormattingOptions struct {
 type DocumentRangeFormattingOptions struct {
 	WorkDoneProgressOptions
 	// Whether the server supports formatting multiple ranges at once.
-	// 
+	//
 	// @since 3.18.0
 	// @proposed
 	RangesSupport TODO_base `json:"rangesSupport"`
@@ -3137,14 +3141,14 @@ type DocumentOnTypeFormattingOptions struct {
 type RenameOptions struct {
 	WorkDoneProgressOptions
 	// Renames should be checked and tested before being executed.
-	// 
+	//
 	// @since version 3.12.0
 	PrepareProvider TODO_base `json:"prepareProvider"`
 }
 
 // @since 3.18.0
 type PrepareRenamePlaceholder struct {
-	Range *Range `json:"range"`
+	Range       *Range    `json:"range"`
 	Placeholder TODO_base `json:"placeholder"`
 }
 
@@ -3161,7 +3165,7 @@ type ExecuteCommandOptions struct {
 }
 
 // Additional data about a workspace edit.
-// 
+//
 // @since 3.18.0
 // @proposed
 type WorkspaceEditMetadata struct {
@@ -3178,7 +3182,7 @@ type SemanticTokensLegend struct {
 }
 
 // Semantic tokens options to support deltas for full documents
-// 
+//
 // @since 3.18.0
 type SemanticTokensFullDelta struct {
 	// The server supports deltas for full documents.
@@ -3197,7 +3201,7 @@ type OptionalVersionedTextDocumentIdentifier struct {
 }
 
 // A special text edit with an additional change annotation.
-// 
+//
 // @since 3.16.0.
 type AnnotatedTextEdit struct {
 	TextEdit
@@ -3206,7 +3210,7 @@ type AnnotatedTextEdit struct {
 }
 
 // An interactive text edit.
-// 
+//
 // @since 3.18.0
 // @proposed
 type SnippetTextEdit struct {
@@ -3223,7 +3227,7 @@ type ResourceOperation struct {
 	// The resource operation kind.
 	Kind TODO_base `json:"kind"`
 	// An optional annotation identifier describing the operation.
-	// 
+	//
 	// @since 3.16.0
 	AnnotationId *ChangeAnnotationIdentifier `json:"annotationId"`
 }
@@ -3254,7 +3258,7 @@ type DeleteFileOptions struct {
 
 // A pattern to describe in which file operation requests or notifications
 // the server is interested in receiving.
-// 
+//
 // @since 3.16.0
 type FileOperationPattern struct {
 	// The glob pattern to match. Glob patterns can have the following syntax:
@@ -3266,7 +3270,7 @@ type FileOperationPattern struct {
 	// - `[!...]` to negate a range of characters to match in a path segment (e.g., `example.[!0-9]` to match on `example.a`, `example.b`, but not `example.0`)
 	Glob TODO_base `json:"glob"`
 	// Whether to match files or folders with this pattern.
-	// 
+	//
 	// Matches both if undefined.
 	Matches *FileOperationPatternKind `json:"matches"`
 	// Additional options used during matching.
@@ -3274,7 +3278,7 @@ type FileOperationPattern struct {
 }
 
 // A full document diagnostic report for a workspace diagnostic result.
-// 
+//
 // @since 3.17.0
 type WorkspaceFullDocumentDiagnosticReport struct {
 	FullDocumentDiagnosticReport
@@ -3286,7 +3290,7 @@ type WorkspaceFullDocumentDiagnosticReport struct {
 }
 
 // An unchanged document diagnostic report for a workspace diagnostic result.
-// 
+//
 // @since 3.17.0
 type WorkspaceUnchangedDocumentDiagnosticReport struct {
 	UnchangedDocumentDiagnosticReport
@@ -3298,11 +3302,11 @@ type WorkspaceUnchangedDocumentDiagnosticReport struct {
 }
 
 // A notebook cell.
-// 
+//
 // A cell's document URI must be unique across ALL notebook
 // cells and can therefore be used to uniquely identify a
 // notebook cell or the cell's text document.
-// 
+//
 // @since 3.17.0
 type NotebookCell struct {
 	// The cell's kind
@@ -3311,7 +3315,7 @@ type NotebookCell struct {
 	// content.
 	Document TODO_base `json:"document"`
 	// Additional metadata stored with the cell.
-	// 
+	//
 	// Note: should always be an object literal (e.g. LSPObject)
 	Metadata *LSPObject `json:"metadata"`
 	// Additional execution summary information
@@ -3340,7 +3344,7 @@ type NotebookDocumentFilterWithCells struct {
 }
 
 // Cell changes to a notebook document.
-// 
+//
 // @since 3.18.0
 type NotebookDocumentCellChanges struct {
 	// Changes to the cell structure to add or
@@ -3354,7 +3358,7 @@ type NotebookDocumentCellChanges struct {
 }
 
 // Describes the currently selected completion item.
-// 
+//
 // @since 3.18.0
 // @proposed
 type SelectedCompletionInfo struct {
@@ -3365,7 +3369,7 @@ type SelectedCompletionInfo struct {
 }
 
 // Information about the client
-// 
+//
 // @since 3.15.0
 // @since 3.18.0 ClientInfo type name added.
 type ClientInfo struct {
@@ -3382,13 +3386,13 @@ type ClientCapabilities struct {
 	// Text document specific client capabilities.
 	TextDocument *TextDocumentClientCapabilities `json:"textDocument"`
 	// Capabilities specific to the notebook document support.
-	// 
+	//
 	// @since 3.17.0
 	NotebookDocument *NotebookDocumentClientCapabilities `json:"notebookDocument"`
 	// Window specific client capabilities.
 	Window *WindowClientCapabilities `json:"window"`
 	// General client capabilities.
-	// 
+	//
 	// @since 3.16.0
 	General *GeneralClientCapabilities `json:"general"`
 	// Experimental client capabilities.
@@ -3414,19 +3418,19 @@ type TextDocumentSyncOptions struct {
 }
 
 // Defines workspace specific capabilities of the server.
-// 
+//
 // @since 3.18.0
 type WorkspaceOptions struct {
 	// The server supports workspace folder.
-	// 
+	//
 	// @since 3.6.0
 	WorkspaceFolders *WorkspaceFoldersServerCapabilities `json:"workspaceFolders"`
 	// The server is interested in notifications/requests for operations on files.
-	// 
+	//
 	// @since 3.16.0
 	FileOperations *FileOperationOptions `json:"fileOperations"`
 	// The server supports the `workspace/textDocumentContent` request.
-	// 
+	//
 	// @since 3.18.0
 	// @proposed
 	TextDocumentContent TODO_or `json:"textDocumentContent"`
@@ -3437,7 +3441,7 @@ type TextDocumentContentChangePartial struct {
 	// The range of the document that changed.
 	Range *Range `json:"range"`
 	// The optional length of the range that got replaced.
-	// 
+	//
 	// @deprecated use range instead.
 	// Deprecated: use range instead.
 	RangeLength TODO_base `json:"rangeLength"`
@@ -3452,7 +3456,7 @@ type TextDocumentContentChangeWholeDocument struct {
 }
 
 // Structure to capture a description for an error code.
-// 
+//
 // @since 3.16.0
 type CodeDescription struct {
 	// An URI to open with more information about the diagnostic error.
@@ -3470,10 +3474,10 @@ type DiagnosticRelatedInformation struct {
 }
 
 // Edit range variant that includes ranges for insert and replace operations.
-// 
+//
 // @since 3.18.0
 type EditRangeWithInsertReplace struct {
-	Insert *Range `json:"insert"`
+	Insert  *Range `json:"insert"`
 	Replace *Range `json:"replace"`
 }
 
@@ -3482,7 +3486,7 @@ type ServerCompletionItemOptions struct {
 	// The server has support for completion item label
 	// details (see also `CompletionItemLabelDetails`) when
 	// receiving a completion item in a resolve call.
-	// 
+	//
 	// @since 3.17.0
 	LabelDetailsSupport TODO_base `json:"labelDetailsSupport"`
 }
@@ -3492,22 +3496,22 @@ type ServerCompletionItemOptions struct {
 // Deprecated: use MarkupContent instead.
 type MarkedStringWithLanguage struct {
 	Language TODO_base `json:"language"`
-	Value TODO_base `json:"value"`
+	Value    TODO_base `json:"value"`
 }
 
 // Represents a parameter of a callable-signature. A parameter can
 // have a label and a doc-comment.
 type ParameterInformation struct {
 	// The label of this parameter information.
-	// 
+	//
 	// Either a string or an inclusive start and exclusive end offsets within its containing
 	// signature label. (see SignatureInformation.label). The offsets are based on a UTF-16
 	// string representation as `Position` and `Range` does.
-	// 
+	//
 	// To avoid ambiguities a server should use the [start, end] offset value instead of using
 	// a substring. Whether a client support this is controlled via `labelOffsetSupport` client
 	// capability.
-	// 
+	//
 	// *Note*: a label of type string should be a substring of its containing signature label.
 	// Its intended use case is to highlight the parameter label part in the `SignatureInformation.label`.
 	Label TODO_or `json:"label"`
@@ -3517,25 +3521,25 @@ type ParameterInformation struct {
 }
 
 // Documentation for a class of code actions.
-// 
+//
 // @since 3.18.0
 // @proposed
 type CodeActionKindDocumentation struct {
 	// The kind of the code action being documented.
-	// 
+	//
 	// If the kind is generic, such as `CodeActionKind.Refactor`, the documentation will be shown whenever any
 	// refactorings are returned. If the kind if more specific, such as `CodeActionKind.RefactorExtract`, the
 	// documentation will only be shown when extract refactoring code actions are returned.
 	Kind *CodeActionKind `json:"kind"`
 	// Command that is ued to display the documentation to the user.
-	// 
+	//
 	// The title of this documentation code action is taken from {@linkcode Command.title}
 	Command *Command `json:"command"`
 }
 
 // A notebook cell text document filter denotes a cell text
 // document by different properties.
-// 
+//
 // @since 3.17.0
 type NotebookCellTextDocumentFilter struct {
 	// A filter that matches against the notebook
@@ -3544,14 +3548,14 @@ type NotebookCellTextDocumentFilter struct {
 	// notebook type. '*' matches every notebook.
 	Notebook TODO_or `json:"notebook"`
 	// A language id like `python`.
-	// 
+	//
 	// Will be matched against the language id of the
 	// notebook cell document. '*' matches every language.
 	Language TODO_base `json:"language"`
 }
 
 // Matching options for the file operation pattern.
-// 
+//
 // @since 3.16.0
 type FileOperationPatternOptions struct {
 	// The pattern should be matched ignoring casing.
@@ -3574,7 +3578,7 @@ type NotebookCellLanguage struct {
 }
 
 // Structural changes to cells in a notebook document.
-// 
+//
 // @since 3.18.0
 type NotebookDocumentCellChangeStructure struct {
 	// The change to the cell array.
@@ -3586,11 +3590,11 @@ type NotebookDocumentCellChangeStructure struct {
 }
 
 // Content changes to a cell in a notebook document.
-// 
+//
 // @since 3.18.0
 type NotebookDocumentCellContentChanges struct {
 	Document *VersionedTextDocumentIdentifier `json:"document"`
-	Changes TODO_array `json:"changes"`
+	Changes  TODO_array                       `json:"changes"`
 }
 
 // Workspace specific client capabilities.
@@ -3610,49 +3614,49 @@ type WorkspaceClientCapabilities struct {
 	// Capabilities specific to the `workspace/executeCommand` request.
 	ExecuteCommand *ExecuteCommandClientCapabilities `json:"executeCommand"`
 	// The client has support for workspace folders.
-	// 
+	//
 	// @since 3.6.0
 	WorkspaceFolders TODO_base `json:"workspaceFolders"`
 	// The client supports `workspace/configuration` requests.
-	// 
+	//
 	// @since 3.6.0
 	Configuration TODO_base `json:"configuration"`
 	// Capabilities specific to the semantic token requests scoped to the
 	// workspace.
-	// 
+	//
 	// @since 3.16.0.
 	SemanticTokens *SemanticTokensWorkspaceClientCapabilities `json:"semanticTokens"`
 	// Capabilities specific to the code lens requests scoped to the
 	// workspace.
-	// 
+	//
 	// @since 3.16.0.
 	CodeLens *CodeLensWorkspaceClientCapabilities `json:"codeLens"`
 	// The client has support for file notifications/requests for user operations on files.
-	// 
+	//
 	// Since 3.16.0
 	FileOperations *FileOperationClientCapabilities `json:"fileOperations"`
 	// Capabilities specific to the inline values requests scoped to the
 	// workspace.
-	// 
+	//
 	// @since 3.17.0.
 	InlineValue *InlineValueWorkspaceClientCapabilities `json:"inlineValue"`
 	// Capabilities specific to the inlay hint requests scoped to the
 	// workspace.
-	// 
+	//
 	// @since 3.17.0.
 	InlayHint *InlayHintWorkspaceClientCapabilities `json:"inlayHint"`
 	// Capabilities specific to the diagnostic requests scoped to the
 	// workspace.
-	// 
+	//
 	// @since 3.17.0.
 	Diagnostics *DiagnosticWorkspaceClientCapabilities `json:"diagnostics"`
 	// Capabilities specific to the folding range requests scoped to the workspace.
-	// 
+	//
 	// @since 3.18.0
 	// @proposed
 	FoldingRange *FoldingRangeWorkspaceClientCapabilities `json:"foldingRange"`
 	// Capabilities specific to the `workspace/textDocumentContent` request.
-	// 
+	//
 	// @since 3.18.0
 	// @proposed
 	TextDocumentContent *TextDocumentContentClientCapabilities `json:"textDocumentContent"`
@@ -3663,7 +3667,7 @@ type TextDocumentClientCapabilities struct {
 	// Defines which synchronization capabilities the client supports.
 	Synchronization *TextDocumentSyncClientCapabilities `json:"synchronization"`
 	// Defines which filters the client supports.
-	// 
+	//
 	// @since 3.18.0
 	Filters *TextDocumentFilterClientCapabilities `json:"filters"`
 	// Capabilities specific to the `textDocument/completion` request.
@@ -3673,17 +3677,17 @@ type TextDocumentClientCapabilities struct {
 	// Capabilities specific to the `textDocument/signatureHelp` request.
 	SignatureHelp *SignatureHelpClientCapabilities `json:"signatureHelp"`
 	// Capabilities specific to the `textDocument/declaration` request.
-	// 
+	//
 	// @since 3.14.0
 	Declaration *DeclarationClientCapabilities `json:"declaration"`
 	// Capabilities specific to the `textDocument/definition` request.
 	Definition *DefinitionClientCapabilities `json:"definition"`
 	// Capabilities specific to the `textDocument/typeDefinition` request.
-	// 
+	//
 	// @since 3.6.0
 	TypeDefinition *TypeDefinitionClientCapabilities `json:"typeDefinition"`
 	// Capabilities specific to the `textDocument/implementation` request.
-	// 
+	//
 	// @since 3.6.0
 	Implementation *ImplementationClientCapabilities `json:"implementation"`
 	// Capabilities specific to the `textDocument/references` request.
@@ -3700,7 +3704,7 @@ type TextDocumentClientCapabilities struct {
 	DocumentLink *DocumentLinkClientCapabilities `json:"documentLink"`
 	// Capabilities specific to the `textDocument/documentColor` and the
 	// `textDocument/colorPresentation` request.
-	// 
+	//
 	// @since 3.6.0
 	ColorProvider *DocumentColorClientCapabilities `json:"colorProvider"`
 	// Capabilities specific to the `textDocument/formatting` request.
@@ -3712,60 +3716,60 @@ type TextDocumentClientCapabilities struct {
 	// Capabilities specific to the `textDocument/rename` request.
 	Rename *RenameClientCapabilities `json:"rename"`
 	// Capabilities specific to the `textDocument/foldingRange` request.
-	// 
+	//
 	// @since 3.10.0
 	FoldingRange *FoldingRangeClientCapabilities `json:"foldingRange"`
 	// Capabilities specific to the `textDocument/selectionRange` request.
-	// 
+	//
 	// @since 3.15.0
 	SelectionRange *SelectionRangeClientCapabilities `json:"selectionRange"`
 	// Capabilities specific to the `textDocument/publishDiagnostics` notification.
 	PublishDiagnostics *PublishDiagnosticsClientCapabilities `json:"publishDiagnostics"`
 	// Capabilities specific to the various call hierarchy requests.
-	// 
+	//
 	// @since 3.16.0
 	CallHierarchy *CallHierarchyClientCapabilities `json:"callHierarchy"`
 	// Capabilities specific to the various semantic token request.
-	// 
+	//
 	// @since 3.16.0
 	SemanticTokens *SemanticTokensClientCapabilities `json:"semanticTokens"`
 	// Capabilities specific to the `textDocument/linkedEditingRange` request.
-	// 
+	//
 	// @since 3.16.0
 	LinkedEditingRange *LinkedEditingRangeClientCapabilities `json:"linkedEditingRange"`
 	// Client capabilities specific to the `textDocument/moniker` request.
-	// 
+	//
 	// @since 3.16.0
 	Moniker *MonikerClientCapabilities `json:"moniker"`
 	// Capabilities specific to the various type hierarchy requests.
-	// 
+	//
 	// @since 3.17.0
 	TypeHierarchy *TypeHierarchyClientCapabilities `json:"typeHierarchy"`
 	// Capabilities specific to the `textDocument/inlineValue` request.
-	// 
+	//
 	// @since 3.17.0
 	InlineValue *InlineValueClientCapabilities `json:"inlineValue"`
 	// Capabilities specific to the `textDocument/inlayHint` request.
-	// 
+	//
 	// @since 3.17.0
 	InlayHint *InlayHintClientCapabilities `json:"inlayHint"`
 	// Capabilities specific to the diagnostic pull model.
-	// 
+	//
 	// @since 3.17.0
 	Diagnostic *DiagnosticClientCapabilities `json:"diagnostic"`
 	// Client capabilities specific to inline completions.
-	// 
+	//
 	// @since 3.18.0
 	// @proposed
 	InlineCompletion *InlineCompletionClientCapabilities `json:"inlineCompletion"`
 }
 
 // Capabilities specific to the notebook document support.
-// 
+//
 // @since 3.17.0
 type NotebookDocumentClientCapabilities struct {
 	// Capabilities specific to notebook document synchronization
-	// 
+	//
 	// @since 3.17.0
 	Synchronization *NotebookDocumentSyncClientCapabilities `json:"synchronization"`
 }
@@ -3773,60 +3777,60 @@ type NotebookDocumentClientCapabilities struct {
 type WindowClientCapabilities struct {
 	// It indicates whether the client supports server initiated
 	// progress using the `window/workDoneProgress/create` request.
-	// 
+	//
 	// The capability also controls Whether client supports handling
 	// of progress notifications. If set servers are allowed to report a
 	// `workDoneProgress` property in the request specific server
 	// capabilities.
-	// 
+	//
 	// @since 3.15.0
 	WorkDoneProgress TODO_base `json:"workDoneProgress"`
 	// Capabilities specific to the showMessage request.
-	// 
+	//
 	// @since 3.16.0
 	ShowMessage *ShowMessageRequestClientCapabilities `json:"showMessage"`
 	// Capabilities specific to the showDocument request.
-	// 
+	//
 	// @since 3.16.0
 	ShowDocument *ShowDocumentClientCapabilities `json:"showDocument"`
 }
 
 // General client capabilities.
-// 
+//
 // @since 3.16.0
 type GeneralClientCapabilities struct {
 	// Client capability that signals how the client
 	// handles stale requests (e.g. a request
 	// for which the client will not process the response
 	// anymore since the information is outdated).
-	// 
+	//
 	// @since 3.17.0
 	StaleRequestSupport *StaleRequestSupportOptions `json:"staleRequestSupport"`
 	// Client capabilities specific to regular expressions.
-	// 
+	//
 	// @since 3.16.0
 	RegularExpressions *RegularExpressionsClientCapabilities `json:"regularExpressions"`
 	// Client capabilities specific to the client's markdown parser.
-	// 
+	//
 	// @since 3.16.0
 	Markdown *MarkdownClientCapabilities `json:"markdown"`
 	// The position encodings supported by the client. Client and server
 	// have to agree on the same position encoding to ensure that offsets
 	// (e.g. character position in a line) are interpreted the same on both
 	// sides.
-	// 
+	//
 	// To keep the protocol backwards compatible the following applies: if
 	// the value 'utf-16' is missing from the array of position encodings
 	// servers can assume that the client supports UTF-16. UTF-16 is
 	// therefore a mandatory encoding.
-	// 
+	//
 	// If omitted it defaults to ['utf-16'].
-	// 
+	//
 	// Implementation considerations: since the conversion from one encoding
 	// into another requires the content of the file / line the conversion
 	// is best done where the file is read which is usually on the server
 	// side.
-	// 
+	//
 	// @since 3.17.0
 	PositionEncodings TODO_array `json:"positionEncodings"`
 }
@@ -3836,7 +3840,7 @@ type WorkspaceFoldersServerCapabilities struct {
 	Supported TODO_base `json:"supported"`
 	// Whether the server wants to receive workspace folder
 	// change notifications.
-	// 
+	//
 	// If a string is provided the string is treated as an ID
 	// under which the notification is registered on the client
 	// side. The ID can be used to unregister for these events
@@ -3845,7 +3849,7 @@ type WorkspaceFoldersServerCapabilities struct {
 }
 
 // Options for notifications/requests for user operations on files.
-// 
+//
 // @since 3.16.0
 type FileOperationOptions struct {
 	// The server is interested in receiving didCreateFiles notifications.
@@ -3865,7 +3869,7 @@ type FileOperationOptions struct {
 // A relative pattern is a helper to construct glob patterns that are matched
 // relatively to a base URI. The common value for a `baseUri` is a workspace
 // folder root, but it can be another absolute URI as well.
-// 
+//
 // @since 3.17.0
 type RelativePattern struct {
 	// A workspace folder or a base URI to which this pattern will be matched
@@ -3876,7 +3880,7 @@ type RelativePattern struct {
 }
 
 // A document filter where `language` is required field.
-// 
+//
 // @since 3.18.0
 type TextDocumentFilterLanguage struct {
 	// A language id, like `typescript`.
@@ -3884,7 +3888,7 @@ type TextDocumentFilterLanguage struct {
 	// A Uri {@link Uri.scheme scheme}, like `file` or `untitled`.
 	Scheme TODO_base `json:"scheme"`
 	// A glob pattern, like **​/*.{ts,js}. See TextDocumentFilter for examples.
-	// 
+	//
 	// @since 3.18.0 - support for relative patterns. Whether clients support
 	// relative patterns depends on the client capability
 	// `textDocuments.filters.relativePatternSupport`.
@@ -3892,7 +3896,7 @@ type TextDocumentFilterLanguage struct {
 }
 
 // A document filter where `scheme` is required field.
-// 
+//
 // @since 3.18.0
 type TextDocumentFilterScheme struct {
 	// A language id, like `typescript`.
@@ -3900,7 +3904,7 @@ type TextDocumentFilterScheme struct {
 	// A Uri {@link Uri.scheme scheme}, like `file` or `untitled`.
 	Scheme TODO_base `json:"scheme"`
 	// A glob pattern, like **​/*.{ts,js}. See TextDocumentFilter for examples.
-	// 
+	//
 	// @since 3.18.0 - support for relative patterns. Whether clients support
 	// relative patterns depends on the client capability
 	// `textDocuments.filters.relativePatternSupport`.
@@ -3908,7 +3912,7 @@ type TextDocumentFilterScheme struct {
 }
 
 // A document filter where `pattern` is required field.
-// 
+//
 // @since 3.18.0
 type TextDocumentFilterPattern struct {
 	// A language id, like `typescript`.
@@ -3916,7 +3920,7 @@ type TextDocumentFilterPattern struct {
 	// A Uri {@link Uri.scheme scheme}, like `file` or `untitled`.
 	Scheme TODO_base `json:"scheme"`
 	// A glob pattern, like **​/*.{ts,js}. See TextDocumentFilter for examples.
-	// 
+	//
 	// @since 3.18.0 - support for relative patterns. Whether clients support
 	// relative patterns depends on the client capability
 	// `textDocuments.filters.relativePatternSupport`.
@@ -3924,7 +3928,7 @@ type TextDocumentFilterPattern struct {
 }
 
 // A notebook document filter where `notebookType` is required field.
-// 
+//
 // @since 3.18.0
 type NotebookDocumentFilterNotebookType struct {
 	// The type of the enclosing notebook.
@@ -3936,7 +3940,7 @@ type NotebookDocumentFilterNotebookType struct {
 }
 
 // A notebook document filter where `scheme` is required field.
-// 
+//
 // @since 3.18.0
 type NotebookDocumentFilterScheme struct {
 	// The type of the enclosing notebook.
@@ -3948,7 +3952,7 @@ type NotebookDocumentFilterScheme struct {
 }
 
 // A notebook document filter where `pattern` is required field.
-// 
+//
 // @since 3.18.0
 type NotebookDocumentFilterPattern struct {
 	// The type of the enclosing notebook.
@@ -3961,7 +3965,7 @@ type NotebookDocumentFilterPattern struct {
 
 // A change describing how to move a `NotebookCell`
 // array from state S to S'.
-// 
+//
 // @since 3.17.0
 type NotebookCellArrayChange struct {
 	// The start oftest of the cell that changed.
@@ -3977,12 +3981,12 @@ type WorkspaceEditClientCapabilities struct {
 	DocumentChanges TODO_base `json:"documentChanges"`
 	// The resource operations the client supports. Clients should at least
 	// support 'create', 'rename' and 'delete' files and folders.
-	// 
+	//
 	// @since 3.13.0
 	ResourceOperations TODO_array `json:"resourceOperations"`
 	// The failure handling strategy of a client if applying the workspace edit
 	// fails.
-	// 
+	//
 	// @since 3.13.0
 	FailureHandling *FailureHandlingKind `json:"failureHandling"`
 	// Whether the client normalizes line endings to the client specific
@@ -3990,21 +3994,21 @@ type WorkspaceEditClientCapabilities struct {
 	// If set to `true` the client will normalize line ending characters
 	// in a workspace edit to the client-specified new line
 	// character.
-	// 
+	//
 	// @since 3.16.0
 	NormalizesLineEndings TODO_base `json:"normalizesLineEndings"`
 	// Whether the client in general supports change annotations on text edits,
 	// create file, rename file and delete file changes.
-	// 
+	//
 	// @since 3.16.0
 	ChangeAnnotationSupport *ChangeAnnotationsSupportOptions `json:"changeAnnotationSupport"`
 	// Whether the client supports `WorkspaceEditMetadata` in `WorkspaceEdit`s.
-	// 
+	//
 	// @since 3.18.0
 	// @proposed
 	MetadataSupport TODO_base `json:"metadataSupport"`
 	// Whether the client supports snippets as text edits.
-	// 
+	//
 	// @since 3.18.0
 	// @proposed
 	SnippetEditSupport TODO_base `json:"snippetEditSupport"`
@@ -4022,7 +4026,7 @@ type DidChangeWatchedFilesClientCapabilities struct {
 	DynamicRegistration TODO_base `json:"dynamicRegistration"`
 	// Whether the client has support for {@link  RelativePattern relative pattern}
 	// or not.
-	// 
+	//
 	// @since 3.17.0
 	RelativePatternSupport TODO_base `json:"relativePatternSupport"`
 }
@@ -4035,13 +4039,13 @@ type WorkspaceSymbolClientCapabilities struct {
 	SymbolKind *ClientSymbolKindOptions `json:"symbolKind"`
 	// The client supports tags on `SymbolInformation`.
 	// Clients supporting tags have to handle unknown tags gracefully.
-	// 
+	//
 	// @since 3.16.0
 	TagSupport *ClientSymbolTagOptions `json:"tagSupport"`
 	// The client support partial workspace symbols. The client will send the
 	// request `workspaceSymbol/resolve` to the server to resolve additional
 	// properties.
-	// 
+	//
 	// @since 3.17.0
 	ResolveSupport *ClientSymbolResolveOptions `json:"resolveSupport"`
 }
@@ -4056,7 +4060,7 @@ type ExecuteCommandClientCapabilities struct {
 type SemanticTokensWorkspaceClientCapabilities struct {
 	// Whether the client implementation supports a refresh request sent from
 	// the server to the client.
-	// 
+	//
 	// Note that this event is global and will force the client to refresh all
 	// semantic tokens currently shown. It should be used with absolute care
 	// and is useful for situation where a server for example detects a project
@@ -4068,7 +4072,7 @@ type SemanticTokensWorkspaceClientCapabilities struct {
 type CodeLensWorkspaceClientCapabilities struct {
 	// Whether the client implementation supports a refresh request sent from the
 	// server to the client.
-	// 
+	//
 	// Note that this event is global and will force the client to refresh all
 	// code lenses currently shown. It should be used with absolute care and is
 	// useful for situation where a server for example detect a project wide
@@ -4077,10 +4081,10 @@ type CodeLensWorkspaceClientCapabilities struct {
 }
 
 // Capabilities relating to events from file operations by the user in the client.
-// 
+//
 // These events do not come from the file system, they come from user operations
 // like renaming a file in the UI.
-// 
+//
 // @since 3.16.0
 type FileOperationClientCapabilities struct {
 	// Whether the client supports dynamic registration for file requests/notifications.
@@ -4100,12 +4104,12 @@ type FileOperationClientCapabilities struct {
 }
 
 // Client workspace capabilities specific to inline values.
-// 
+//
 // @since 3.17.0
 type InlineValueWorkspaceClientCapabilities struct {
 	// Whether the client implementation supports a refresh request sent from the
 	// server to the client.
-	// 
+	//
 	// Note that this event is global and will force the client to refresh all
 	// inline values currently shown. It should be used with absolute care and is
 	// useful for situation where a server for example detects a project wide
@@ -4114,12 +4118,12 @@ type InlineValueWorkspaceClientCapabilities struct {
 }
 
 // Client workspace capabilities specific to inlay hints.
-// 
+//
 // @since 3.17.0
 type InlayHintWorkspaceClientCapabilities struct {
 	// Whether the client implementation supports a refresh request sent from
 	// the server to the client.
-	// 
+	//
 	// Note that this event is global and will force the client to refresh all
 	// inlay hints currently shown. It should be used with absolute care and
 	// is useful for situation where a server for example detects a project wide
@@ -4128,12 +4132,12 @@ type InlayHintWorkspaceClientCapabilities struct {
 }
 
 // Workspace client capabilities specific to diagnostic pull requests.
-// 
+//
 // @since 3.17.0
 type DiagnosticWorkspaceClientCapabilities struct {
 	// Whether the client implementation supports a refresh request sent from
 	// the server to the client.
-	// 
+	//
 	// Note that this event is global and will force the client to refresh all
 	// pulled diagnostics currently shown. It should be used with absolute care and
 	// is useful for situation where a server for example detects a project wide
@@ -4142,25 +4146,25 @@ type DiagnosticWorkspaceClientCapabilities struct {
 }
 
 // Client workspace capabilities specific to folding ranges
-// 
+//
 // @since 3.18.0
 // @proposed
 type FoldingRangeWorkspaceClientCapabilities struct {
 	// Whether the client implementation supports a refresh request sent from the
 	// server to the client.
-	// 
+	//
 	// Note that this event is global and will force the client to refresh all
 	// folding ranges currently shown. It should be used with absolute care and is
 	// useful for situation where a server for example detects a project wide
 	// change that requires such a calculation.
-	// 
+	//
 	// @since 3.18.0
 	// @proposed
 	RefreshSupport TODO_base `json:"refreshSupport"`
 }
 
 // Client capabilities for a text document content provider.
-// 
+//
 // @since 3.18.0
 // @proposed
 type TextDocumentContentClientCapabilities struct {
@@ -4183,7 +4187,7 @@ type TextDocumentSyncClientCapabilities struct {
 
 type TextDocumentFilterClientCapabilities struct {
 	// The client supports Relative Patterns.
-	// 
+	//
 	// @since 3.18.0
 	RelativePatternSupport TODO_base `json:"relativePatternSupport"`
 }
@@ -4194,12 +4198,12 @@ type CompletionClientCapabilities struct {
 	DynamicRegistration TODO_base `json:"dynamicRegistration"`
 	// The client supports the following `CompletionItem` specific
 	// capabilities.
-	CompletionItem *ClientCompletionItemOptions `json:"completionItem"`
+	CompletionItem     *ClientCompletionItemOptions     `json:"completionItem"`
 	CompletionItemKind *ClientCompletionItemOptionsKind `json:"completionItemKind"`
 	// Defines how the client handles whitespace and indentation
 	// when accepting a completion item that uses multi line
 	// text in either `insertText` or `textEdit`.
-	// 
+	//
 	// @since 3.17.0
 	InsertTextMode *InsertTextMode `json:"insertTextMode"`
 	// The client supports to send additional context information for a
@@ -4207,7 +4211,7 @@ type CompletionClientCapabilities struct {
 	ContextSupport TODO_base `json:"contextSupport"`
 	// The client supports the following `CompletionList` specific
 	// capabilities.
-	// 
+	//
 	// @since 3.17.0
 	CompletionList *CompletionListCapabilities `json:"completionList"`
 }
@@ -4231,7 +4235,7 @@ type SignatureHelpClientCapabilities struct {
 	// `textDocument/signatureHelp` request. A client that opts into
 	// contextSupport will also support the `retriggerCharacters` on
 	// `SignatureHelpOptions`.
-	// 
+	//
 	// @since 3.15.0
 	ContextSupport TODO_base `json:"contextSupport"`
 }
@@ -4251,7 +4255,7 @@ type DefinitionClientCapabilities struct {
 	// Whether definition supports dynamic registration.
 	DynamicRegistration TODO_base `json:"dynamicRegistration"`
 	// The client supports additional metadata in the form of definition links.
-	// 
+	//
 	// @since 3.14.0
 	LinkSupport TODO_base `json:"linkSupport"`
 }
@@ -4263,7 +4267,7 @@ type TypeDefinitionClientCapabilities struct {
 	// for the corresponding server capability as well.
 	DynamicRegistration TODO_base `json:"dynamicRegistration"`
 	// The client supports additional metadata in the form of definition links.
-	// 
+	//
 	// Since 3.14.0
 	LinkSupport TODO_base `json:"linkSupport"`
 }
@@ -4275,7 +4279,7 @@ type ImplementationClientCapabilities struct {
 	// for the corresponding server capability as well.
 	DynamicRegistration TODO_base `json:"dynamicRegistration"`
 	// The client supports additional metadata in the form of definition links.
-	// 
+	//
 	// @since 3.14.0
 	LinkSupport TODO_base `json:"linkSupport"`
 }
@@ -4304,12 +4308,12 @@ type DocumentSymbolClientCapabilities struct {
 	// The client supports tags on `SymbolInformation`. Tags are supported on
 	// `DocumentSymbol` if `hierarchicalDocumentSymbolSupport` is set to true.
 	// Clients supporting tags have to handle unknown tags gracefully.
-	// 
+	//
 	// @since 3.16.0
 	TagSupport *ClientSymbolTagOptions `json:"tagSupport"`
 	// The client supports an additional label presented in the UI when
 	// registering a document symbol provider.
-	// 
+	//
 	// @since 3.16.0
 	LabelSupport TODO_base `json:"labelSupport"`
 }
@@ -4321,26 +4325,26 @@ type CodeActionClientCapabilities struct {
 	// The client support code action literals of type `CodeAction` as a valid
 	// response of the `textDocument/codeAction` request. If the property is not
 	// set the request can only return `Command` literals.
-	// 
+	//
 	// @since 3.8.0
 	CodeActionLiteralSupport *ClientCodeActionLiteralOptions `json:"codeActionLiteralSupport"`
 	// Whether code action supports the `isPreferred` property.
-	// 
+	//
 	// @since 3.15.0
 	IsPreferredSupport TODO_base `json:"isPreferredSupport"`
 	// Whether code action supports the `disabled` property.
-	// 
+	//
 	// @since 3.16.0
 	DisabledSupport TODO_base `json:"disabledSupport"`
 	// Whether code action supports the `data` property which is
 	// preserved between a `textDocument/codeAction` and a
 	// `codeAction/resolve` request.
-	// 
+	//
 	// @since 3.16.0
 	DataSupport TODO_base `json:"dataSupport"`
 	// Whether the client supports resolving additional code action
 	// properties via a separate `codeAction/resolve` request.
-	// 
+	//
 	// @since 3.16.0
 	ResolveSupport *ClientCodeActionResolveOptions `json:"resolveSupport"`
 	// Whether the client honors the change annotations in
@@ -4348,18 +4352,18 @@ type CodeActionClientCapabilities struct {
 	// `CodeAction#edit` property by for example presenting
 	// the workspace edit in the user interface and asking
 	// for confirmation.
-	// 
+	//
 	// @since 3.16.0
 	HonorsChangeAnnotations TODO_base `json:"honorsChangeAnnotations"`
 	// Whether the client supports documentation for a class of
 	// code actions.
-	// 
+	//
 	// @since 3.18.0
 	// @proposed
 	DocumentationSupport TODO_base `json:"documentationSupport"`
 	// Client supports the tag property on a code action. Clients
 	// supporting tags have to handle unknown tags gracefully.
-	// 
+	//
 	// @since 3.18.0 - proposed
 	TagSupport *CodeActionTagOptions `json:"tagSupport"`
 }
@@ -4370,7 +4374,7 @@ type CodeLensClientCapabilities struct {
 	DynamicRegistration TODO_base `json:"dynamicRegistration"`
 	// Whether the client supports resolving additional code lens
 	// properties via a separate `codeLens/resolve` request.
-	// 
+	//
 	// @since 3.18.0
 	ResolveSupport *ClientCodeLensResolveOptions `json:"resolveSupport"`
 }
@@ -4380,7 +4384,7 @@ type DocumentLinkClientCapabilities struct {
 	// Whether document link supports dynamic registration.
 	DynamicRegistration TODO_base `json:"dynamicRegistration"`
 	// Whether the client supports the `tooltip` property on `DocumentLink`.
-	// 
+	//
 	// @since 3.15.0
 	TooltipSupport TODO_base `json:"tooltipSupport"`
 }
@@ -4403,7 +4407,7 @@ type DocumentRangeFormattingClientCapabilities struct {
 	// Whether range formatting supports dynamic registration.
 	DynamicRegistration TODO_base `json:"dynamicRegistration"`
 	// Whether the client supports formatting multiple ranges at once.
-	// 
+	//
 	// @since 3.18.0
 	// @proposed
 	RangesSupport TODO_base `json:"rangesSupport"`
@@ -4420,14 +4424,14 @@ type RenameClientCapabilities struct {
 	DynamicRegistration TODO_base `json:"dynamicRegistration"`
 	// Client supports testing for validity of rename operations
 	// before execution.
-	// 
+	//
 	// @since 3.12.0
 	PrepareSupport TODO_base `json:"prepareSupport"`
 	// Client supports the default behavior result.
-	// 
+	//
 	// The value indicates the default behavior used by the
 	// client.
-	// 
+	//
 	// @since 3.16.0
 	PrepareSupportDefaultBehavior *PrepareSupportDefaultBehavior `json:"prepareSupportDefaultBehavior"`
 	// Whether the client honors the change annotations in
@@ -4435,7 +4439,7 @@ type RenameClientCapabilities struct {
 	// rename request's workspace edit by for example presenting
 	// the workspace edit in the user interface and asking
 	// for confirmation.
-	// 
+	//
 	// @since 3.16.0
 	HonorsChangeAnnotations TODO_base `json:"honorsChangeAnnotations"`
 }
@@ -4455,11 +4459,11 @@ type FoldingRangeClientCapabilities struct {
 	// properties in a FoldingRange.
 	LineFoldingOnly TODO_base `json:"lineFoldingOnly"`
 	// Specific options for the folding range kind.
-	// 
+	//
 	// @since 3.17.0
 	FoldingRangeKind *ClientFoldingRangeKindOptions `json:"foldingRangeKind"`
 	// Specific options for the folding range.
-	// 
+	//
 	// @since 3.17.0
 	FoldingRange *ClientFoldingRangeOptions `json:"foldingRange"`
 }
@@ -4476,7 +4480,7 @@ type PublishDiagnosticsClientCapabilities struct {
 	DiagnosticsCapabilities
 	// Whether the client interprets the version property of the
 	// `textDocument/publishDiagnostics` notification's parameter.
-	// 
+	//
 	// @since 3.15.0
 	VersionSupport TODO_base `json:"versionSupport"`
 }
@@ -4518,7 +4522,7 @@ type SemanticTokensClientCapabilities struct {
 	// semantic token request, e.g. supports returning
 	// LSPErrorCodes.ServerCancelled. If a server does the client
 	// needs to retrigger the request.
-	// 
+	//
 	// @since 3.17.0
 	ServerCancelSupport TODO_base `json:"serverCancelSupport"`
 	// Whether the client uses semantic tokens to augment existing
@@ -4526,16 +4530,16 @@ type SemanticTokensClientCapabilities struct {
 	// tokens and semantic tokens are both used for colorization. If
 	// set to `false` the client only uses the returned semantic tokens
 	// for colorization.
-	// 
+	//
 	// If the value is `undefined` then the client behavior is not
 	// specified.
-	// 
+	//
 	// @since 3.17.0
 	AugmentsSyntaxTokens TODO_base `json:"augmentsSyntaxTokens"`
 }
 
 // Client capabilities for the linked editing range request.
-// 
+//
 // @since 3.16.0
 type LinkedEditingRangeClientCapabilities struct {
 	// Whether implementation supports dynamic registration. If this is set to `true`
@@ -4545,7 +4549,7 @@ type LinkedEditingRangeClientCapabilities struct {
 }
 
 // Client capabilities specific to the moniker request.
-// 
+//
 // @since 3.16.0
 type MonikerClientCapabilities struct {
 	// Whether moniker supports dynamic registration. If this is set to `true`
@@ -4563,7 +4567,7 @@ type TypeHierarchyClientCapabilities struct {
 }
 
 // Client capabilities specific to inline values.
-// 
+//
 // @since 3.17.0
 type InlineValueClientCapabilities struct {
 	// Whether implementation supports dynamic registration for inline value providers.
@@ -4571,7 +4575,7 @@ type InlineValueClientCapabilities struct {
 }
 
 // Inlay hint client capabilities.
-// 
+//
 // @since 3.17.0
 type InlayHintClientCapabilities struct {
 	// Whether inlay hints support dynamic registration.
@@ -4582,7 +4586,7 @@ type InlayHintClientCapabilities struct {
 }
 
 // Client capabilities specific to diagnostic pull requests.
-// 
+//
 // @since 3.17.0
 type DiagnosticClientCapabilities struct {
 	DiagnosticsCapabilities
@@ -4595,7 +4599,7 @@ type DiagnosticClientCapabilities struct {
 }
 
 // Client capabilities specific to inline completions.
-// 
+//
 // @since 3.18.0
 // @proposed
 type InlineCompletionClientCapabilities struct {
@@ -4604,7 +4608,7 @@ type InlineCompletionClientCapabilities struct {
 }
 
 // Notebook specific client capabilities.
-// 
+//
 // @since 3.17.0
 type NotebookDocumentSyncClientCapabilities struct {
 	// Whether implementation supports dynamic registration. If this is
@@ -4623,7 +4627,7 @@ type ShowMessageRequestClientCapabilities struct {
 }
 
 // Client capabilities for the showDocument request.
-// 
+//
 // @since 3.16.0
 type ShowDocumentClientCapabilities struct {
 	// The client has support for the showDocument
@@ -4642,7 +4646,7 @@ type StaleRequestSupportOptions struct {
 }
 
 // Client capabilities specific to regular expressions.
-// 
+//
 // @since 3.16.0
 type RegularExpressionsClientCapabilities struct {
 	// The engine's name.
@@ -4652,7 +4656,7 @@ type RegularExpressionsClientCapabilities struct {
 }
 
 // Client capabilities specific to the used markdown parser.
-// 
+//
 // @since 3.16.0
 type MarkdownClientCapabilities struct {
 	// The name of the parser.
@@ -4661,7 +4665,7 @@ type MarkdownClientCapabilities struct {
 	Version TODO_base `json:"version"`
 	// A list of HTML tags that the client allows / supports in
 	// Markdown.
-	// 
+	//
 	// @since 3.17.0
 	AllowedTags TODO_array `json:"allowedTags"`
 }
@@ -4680,7 +4684,7 @@ type ClientSymbolKindOptions struct {
 	// property exists the client also guarantees that it will
 	// handle values outside its set gracefully and falls back
 	// to a default value when unknown.
-	// 
+	//
 	// If this property is not present the client only supports
 	// the symbol kinds from `File` to `Array` as defined in
 	// the initial version of the protocol.
@@ -4703,7 +4707,7 @@ type ClientSymbolResolveOptions struct {
 // @since 3.18.0
 type ClientCompletionItemOptions struct {
 	// Client supports snippets as insert text.
-	// 
+	//
 	// A snippet can define tab stops and placeholders with `$1`, `$2`
 	// and `${3:foo}`. `$0` defines the final tab stop, it defaults to
 	// the end of the snippet. Placeholders with equal identifiers are linked,
@@ -4722,29 +4726,29 @@ type ClientCompletionItemOptions struct {
 	// tags have to handle unknown tags gracefully. Clients especially need to
 	// preserve unknown tags when sending a completion item back to the server in
 	// a resolve call.
-	// 
+	//
 	// @since 3.15.0
 	TagSupport *CompletionItemTagOptions `json:"tagSupport"`
 	// Client support insert replace edit to control different behavior if a
 	// completion item is inserted in the text or should replace text.
-	// 
+	//
 	// @since 3.16.0
 	InsertReplaceSupport TODO_base `json:"insertReplaceSupport"`
 	// Indicates which properties a client can resolve lazily on a completion
 	// item. Before version 3.16.0 only the predefined properties `documentation`
 	// and `details` could be resolved lazily.
-	// 
+	//
 	// @since 3.16.0
 	ResolveSupport *ClientCompletionItemResolveOptions `json:"resolveSupport"`
 	// The client supports the `insertTextMode` property on
 	// a completion item to override the whitespace handling mode
 	// as defined by the client (see `insertTextMode`).
-	// 
+	//
 	// @since 3.16.0
 	InsertTextModeSupport *ClientCompletionItemInsertTextModeOptions `json:"insertTextModeSupport"`
 	// The client has support for completion item label
 	// details (see also `CompletionItemLabelDetails`).
-	// 
+	//
 	// @since 3.17.0
 	LabelDetailsSupport TODO_base `json:"labelDetailsSupport"`
 }
@@ -4755,7 +4759,7 @@ type ClientCompletionItemOptionsKind struct {
 	// property exists the client also guarantees that it will
 	// handle values outside its set gracefully and falls back
 	// to a default value when unknown.
-	// 
+	//
 	// If this property is not present the client only supports
 	// the completion items kinds from `Text` to `Reference` as defined in
 	// the initial version of the protocol.
@@ -4764,28 +4768,28 @@ type ClientCompletionItemOptionsKind struct {
 
 // The client supports the following `CompletionList` specific
 // capabilities.
-// 
+//
 // @since 3.17.0
 type CompletionListCapabilities struct {
 	// The client supports the following itemDefaults on
 	// a completion list.
-	// 
+	//
 	// The value lists the supported property names of the
 	// `CompletionList.itemDefaults` object. If omitted
 	// no properties are supported.
-	// 
+	//
 	// @since 3.17.0
 	ItemDefaults TODO_array `json:"itemDefaults"`
 	// Specifies whether the client supports `CompletionList.applyKind` to
 	// indicate how supported values from `completionList.itemDefaults`
 	// and `completion` will be combined.
-	// 
+	//
 	// If a client supports `applyKind` it must support it for all fields
 	// that it supports that are listed in `CompletionList.applyKind`. This
 	// means when clients add support for new/future fields in completion
 	// items the MUST also support merge for them if those fields are
 	// defined in `CompletionList.applyKind`.
-	// 
+	//
 	// @since 3.18.0
 	ApplyKindSupport TODO_base `json:"applyKindSupport"`
 }
@@ -4799,13 +4803,13 @@ type ClientSignatureInformationOptions struct {
 	ParameterInformation *ClientSignatureParameterInformationOptions `json:"parameterInformation"`
 	// The client supports the `activeParameter` property on `SignatureInformation`
 	// literal.
-	// 
+	//
 	// @since 3.16.0
 	ActiveParameterSupport TODO_base `json:"activeParameterSupport"`
 	// The client supports the `activeParameter` property on
 	// `SignatureHelp`/`SignatureInformation` being set to `null` to
 	// indicate that no parameter should be active.
-	// 
+	//
 	// @since 3.18.0
 	// @proposed
 	NoActiveParameterSupport TODO_base `json:"noActiveParameterSupport"`
@@ -4849,7 +4853,7 @@ type ClientFoldingRangeKindOptions struct {
 type ClientFoldingRangeOptions struct {
 	// If set, the client signals that it supports setting collapsedText on
 	// folding ranges to display custom labels instead of the default text.
-	// 
+	//
 	// @since 3.17.0
 	CollapsedText TODO_base `json:"collapsedText"`
 }
@@ -4860,17 +4864,17 @@ type DiagnosticsCapabilities struct {
 	RelatedInformation TODO_base `json:"relatedInformation"`
 	// Client supports the tag property to provide meta data about a diagnostic.
 	// Clients supporting tags have to handle unknown tags gracefully.
-	// 
+	//
 	// @since 3.15.0
 	TagSupport *ClientDiagnosticsTagOptions `json:"tagSupport"`
 	// Client supports a codeDescription property
-	// 
+	//
 	// @since 3.16.0
 	CodeDescriptionSupport TODO_base `json:"codeDescriptionSupport"`
 	// Whether code action supports the `data` property which is
 	// preserved between a `textDocument/publishDiagnostics` and
 	// `textDocument/codeAction` request.
-	// 
+	//
 	// @since 3.16.0
 	DataSupport TODO_base `json:"dataSupport"`
 }
@@ -4920,7 +4924,7 @@ type ClientCompletionItemInsertTextModeOptions struct {
 type ClientSignatureParameterInformationOptions struct {
 	// The client supports processing label offsets instead of a
 	// simple label string.
-	// 
+	//
 	// @since 3.14.0
 	LabelOffsetSupport TODO_base `json:"labelOffsetSupport"`
 }
@@ -4947,3 +4951,167 @@ type ClientSemanticTokensRequestFullDelta struct {
 	Delta TODO_base `json:"delta"`
 }
 
+// A set of predefined token types. This set is not fixed
+// an clients can specify additional token types via the
+// corresponding client capabilities.
+//
+// @since 3.16.0
+type SemanticTokenTypes int
+
+// A set of predefined token modifiers. This set is not fixed
+// an clients can specify additional token types via the
+// corresponding client capabilities.
+//
+// @since 3.16.0
+type SemanticTokenModifiers int
+
+// The document diagnostic report kinds.
+//
+// @since 3.17.0
+type DocumentDiagnosticReportKind int
+
+// Predefined error codes.
+type ErrorCodes int
+
+type LSPErrorCodes int
+
+// A set of predefined range kinds.
+type FoldingRangeKind int
+
+// A symbol kind.
+type SymbolKind int
+
+// Symbol tags are extra annotations that tweak the rendering of a symbol.
+//
+// @since 3.16
+type SymbolTag int
+
+// Moniker uniqueness level to define scope of the moniker.
+//
+// @since 3.16.0
+type UniquenessLevel int
+
+// The moniker kind.
+//
+// @since 3.16.0
+type MonikerKind int
+
+// Inlay hint kinds.
+//
+// @since 3.17.0
+type InlayHintKind int
+
+// The message type
+type MessageType int
+
+// Defines how the host (editor) should sync
+// document changes to the language server.
+type TextDocumentSyncKind int
+
+// Represents reasons why a text document is saved.
+type TextDocumentSaveReason int
+
+// The kind of a completion entry.
+type CompletionItemKind int
+
+// Completion item tags are extra annotations that tweak the rendering of a completion
+// item.
+//
+// @since 3.15.0
+type CompletionItemTag int
+
+// Defines whether the insert text in a completion item should be interpreted as
+// plain text or a snippet.
+type InsertTextFormat int
+
+// How whitespace and indentation is handled during completion
+// item insertion.
+//
+// @since 3.16.0
+type InsertTextMode int
+
+// A document highlight kind.
+type DocumentHighlightKind int
+
+// A set of predefined code action kinds
+type CodeActionKind int
+
+// Code action tags are extra annotations that tweak the behavior of a code action.
+//
+// @since 3.18.0 - proposed
+type CodeActionTag int
+
+type TraceValue int
+
+// Describes the content type that a client supports in various
+// result literals like `Hover`, `ParameterInfo` or `CompletionItem`.
+//
+// Please note that `MarkupKinds` must not start with a `$`. This kinds
+// are reserved for internal usage.
+type MarkupKind int
+
+// Predefined Language kinds
+// @since 3.18.0
+type LanguageKind int
+
+// Describes how an {@link InlineCompletionItemProvider inline completion provider} was triggered.
+//
+// @since 3.18.0
+// @proposed
+type InlineCompletionTriggerKind int
+
+// A set of predefined position encoding kinds.
+//
+// @since 3.17.0
+type PositionEncodingKind int
+
+// The file event type
+type FileChangeType int
+
+type WatchKind int
+
+// The diagnostic's severity.
+type DiagnosticSeverity int
+
+// The diagnostic tags.
+//
+// @since 3.15.0
+type DiagnosticTag int
+
+// How a completion was triggered
+type CompletionTriggerKind int
+
+// Defines how values from a set of defaults and an individual item will be
+// merged.
+//
+// @since 3.18.0
+type ApplyKind int
+
+// How a signature help was triggered.
+//
+// @since 3.15.0
+type SignatureHelpTriggerKind int
+
+// The reason why code actions were requested.
+//
+// @since 3.17.0
+type CodeActionTriggerKind int
+
+// A pattern kind describing if a glob pattern matches a file a folder or
+// both.
+//
+// @since 3.16.0
+type FileOperationPatternKind int
+
+// A notebook cell kind.
+//
+// @since 3.17.0
+type NotebookCellKind int
+
+type ResourceOperationKind int
+
+type FailureHandlingKind int
+
+type PrepareSupportDefaultBehavior int
+
+type TokenFormat int
