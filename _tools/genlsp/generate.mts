@@ -1,4 +1,7 @@
-import type { MetaModelSchema } from "./metaModelSchema.mts";
+import type {
+    MetaModelSchema,
+    Type,
+} from "./metaModelSchema.mts";
 
 import fs from "node:fs";
 import path from "node:path";
@@ -69,9 +72,7 @@ function titleCase(s: string): string {
     return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
-type TypeElement = MetaModelSchema["structures"][0]["properties"][0]["type"];
-
-function writeTypeElement(t: TypeElement) {
+function writeTypeElement(t: Type) {
     switch (t.kind) {
         case "reference":
             write(t.name);
@@ -125,10 +126,16 @@ function writeTypeElement(t: TypeElement) {
                     write("[]");
                     writeTypeElement(vt.element);
                     break;
+                case "or":
+                    write("TODO_map_value_or_" + vt.items.length);
+                    break;
                 default:
                     write("TODO_map_value_" + vt.kind);
                     break;
             }
+            break;
+        case "or":
+            write("TODO_or_" + t.items.length);
             break;
         default:
             write("TODO_" + t.kind);
@@ -208,16 +215,20 @@ for (const t of model.typeAliases) {
     writeLine("\n");
 }
 
-// for (const t of model.requests) {
-//     writeLine("const " + t.method + ' Method = "' + t.method + '"');
-// }
+function methodNameToIdentifier(method: string): string {
+    return method.split("/").map(v => v === "$" ? "" : titleCase(v)).join("");
+}
 
-// for _, t := range model.Requests {
-// 	if t.Params
-// }
+for (const t of model.requests) {
+    writeDocumentation(t.documentation);
+    writeDeprecation(t.deprecated);
+    writeLine("const MethodRequest" + methodNameToIdentifier(t.method) + ' Method = "' + t.method + '"\n');
+}
 
-// for _, t := range model.Notifications {
-// 	fmt.Println(t.Method)
-// }
+for (const t of model.notifications) {
+    writeDocumentation(t.documentation);
+    writeDeprecation(t.deprecated);
+    writeLine("const MethodNotification" + methodNameToIdentifier(t.method) + ' Method = "' + t.method + '"\n');
+}
 
 fs.writeFileSync(out, parts.join(""));

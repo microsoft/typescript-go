@@ -1,0 +1,12 @@
+{
+    "compilerOptions": {
+        "target": "ESNext",
+        "module": "NodeNext",
+        "strict": true,
+        "noEmit": true,
+        "types": ["node"]
+    },
+    "include": [
+        "./genlsp/*.mts"
+    ]
+}

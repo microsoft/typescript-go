@@ -117,7 +117,7 @@ type WorkDoneProgressOptions struct {
 type TextDocumentRegistrationOptions struct {
 	// A document selector to identify the scope of the registration. If set to null
 	// the document selector provided on the client side will be used.
-	DocumentSelector TODO_or `json:"documentSelector"`
+	DocumentSelector TODO_or_2 `json:"documentSelector"`
 }
 
 // Parameters for a {@link FoldingRangeRequest}.
@@ -441,7 +441,7 @@ type WorkspaceEdit struct {
 	//
 	// If a client neither supports `documentChanges` nor `workspace.workspaceEdit.resourceOperations` then
 	// only plain `TextEdit`s using the `changes` property are supported.
-	DocumentChanges *[]TODO_or `json:"documentChanges"`
+	DocumentChanges *[]TODO_or_4 `json:"documentChanges"`
 	// A map of change annotations that can be referenced in `AnnotatedTextEdit`s or create, rename and
 	// delete file / folder operations.
 	//
@@ -612,7 +612,7 @@ type InlayHint struct {
 	// InlayHintLabelPart label parts.
 	//
 	// *Note* that neither the string nor the label part can be empty.
-	Label TODO_or `json:"label"`
+	Label TODO_or_2 `json:"label"`
 	// The kind of this hint. Can be omitted in which case the client
 	// should fall back to a reasonable default.
 	Kind *InlayHintKind `json:"kind"`
@@ -623,7 +623,7 @@ type InlayHint struct {
 	// hint itself is now obsolete.
 	TextEdits *[]TextEdit `json:"textEdits"`
 	// The tooltip text when you hover over this item.
-	Tooltip *TODO_or `json:"tooltip"`
+	Tooltip *TODO_or_2 `json:"tooltip"`
 	// Render padding before the hint.
 	//
 	// Note: Padding should use the editor's background color, not the
@@ -668,7 +668,7 @@ type DocumentDiagnosticParams struct {
 //
 // @since 3.17.0
 type DocumentDiagnosticReportPartialResult struct {
-	RelatedDocuments map[DocumentUri]TODO_map_value_or `json:"relatedDocuments"`
+	RelatedDocuments map[DocumentUri]TODO_map_value_or_2 `json:"relatedDocuments"`
 }
 
 // Cancellation data returned from a diagnostic request.
@@ -804,7 +804,7 @@ type InlineCompletionList struct {
 // @proposed
 type InlineCompletionItem struct {
 	// The text to replace the range with. Must be set.
-	InsertText TODO_or `json:"insertText"`
+	InsertText TODO_or_2 `json:"insertText"`
 	// A text that is used to decide if this inline completion should be shown. When `falsy` the {@link InlineCompletionItem.insertText} is used.
 	FilterText *string `json:"filterText"`
 	// The range to replace. Must begin and end on the same line.
@@ -904,7 +904,7 @@ type DidChangeConfigurationParams struct {
 }
 
 type DidChangeConfigurationRegistrationOptions struct {
-	Section *TODO_or `json:"section"`
+	Section *TODO_or_2 `json:"section"`
 }
 
 // The parameters of a notification message.
@@ -1069,7 +1069,7 @@ type CompletionItem struct {
 	// about this item, like type or symbol information.
 	Detail *string `json:"detail"`
 	// A human-readable string that represents a doc-comment.
-	Documentation *TODO_or `json:"documentation"`
+	Documentation *TODO_or_2 `json:"documentation"`
 	// Indicates if this item is deprecated.
 	// @deprecated Use `tags` instead.
 	//
@@ -1134,7 +1134,7 @@ type CompletionItem struct {
 	// contained and starting at the same position.
 	//
 	// @since 3.16.0 additional type `InsertReplaceEdit`
-	TextEdit *TODO_or `json:"textEdit"`
+	TextEdit *TODO_or_2 `json:"textEdit"`
 	// The edit text used if the completion item is part of a CompletionList and
 	// CompletionList defines an item default for the text edit range.
 	//
@@ -1228,7 +1228,7 @@ type HoverParams struct {
 // The result of a hover request.
 type Hover struct {
 	// The hover's content
-	Contents TODO_or `json:"contents"`
+	Contents TODO_or_3 `json:"contents"`
 	// An optional range inside the text document that is used to
 	// visualize the hover, e.g. by changing the background color.
 	Range *Range `json:"range"`
@@ -1283,7 +1283,7 @@ type SignatureHelp struct {
 	// In future version of the protocol this property might become
 	// mandatory (but still nullable) to better express the active parameter if
 	// the active signature does have any.
-	ActiveParameter *TODO_or `json:"activeParameter"`
+	ActiveParameter *TODO_or_2 `json:"activeParameter"`
 }
 
 // Registration options for a {@link SignatureHelpRequest}.
@@ -1529,7 +1529,7 @@ type WorkspaceSymbol struct {
 	// capability `workspace.symbol.resolveSupport`.
 	//
 	// See SymbolInformation#location for more details.
-	Location TODO_or `json:"location"`
+	Location TODO_or_2 `json:"location"`
 	// A data entry field that is preserved on a workspace symbol between a
 	// workspace symbol request and a workspace symbol resolve request.
 	Data *LSPAny `json:"data"`
@@ -1807,7 +1807,7 @@ type LogTraceParams struct {
 
 type CancelParams struct {
 	// The request id to cancel.
-	Id TODO_or `json:"id"`
+	Id TODO_or_2 `json:"id"`
 }
 
 type ProgressParams struct {
@@ -1992,9 +1992,9 @@ type SemanticTokensOptions struct {
 	Legend SemanticTokensLegend `json:"legend"`
 	// Server supports providing semantic tokens for a specific range
 	// of a document.
-	Range *TODO_or `json:"range"`
+	Range *TODO_or_2 `json:"range"`
 	// Server supports providing semantic tokens for a full document.
-	Full *TODO_or `json:"full"`
+	Full *TODO_or_2 `json:"full"`
 }
 
 // @since 3.16.0
@@ -2033,7 +2033,7 @@ type TextDocumentEdit struct {
 	//
 	// @since 3.18.0 - support for SnippetTextEdit. This is guarded using a
 	// client capability.
-	Edits []TODO_or `json:"edits"`
+	Edits []TODO_or_3 `json:"edits"`
 }
 
 // Create file operation.
@@ -2190,7 +2190,7 @@ type InlayHintLabelPart struct {
 	// The tooltip text when you hover over this label part. Depending on
 	// the client capability `inlayHint.resolveSupport` clients might resolve
 	// this property late using the resolve request.
-	Tooltip *TODO_or `json:"tooltip"`
+	Tooltip *TODO_or_2 `json:"tooltip"`
 	// An optional source code location that represents this
 	// label part.
 	//
@@ -2263,7 +2263,7 @@ type RelatedFullDocumentDiagnosticReport struct {
 	// a.cpp and result in errors in a header file b.hpp.
 	//
 	// @since 3.17.0
-	RelatedDocuments *map[DocumentUri]TODO_map_value_or `json:"relatedDocuments"`
+	RelatedDocuments *map[DocumentUri]TODO_map_value_or_2 `json:"relatedDocuments"`
 }
 
 // An unchanged diagnostic report with a set of related documents.
@@ -2278,7 +2278,7 @@ type RelatedUnchangedDocumentDiagnosticReport struct {
 	// a.cpp and result in errors in a header file b.hpp.
 	//
 	// @since 3.17.0
-	RelatedDocuments *map[DocumentUri]TODO_map_value_or `json:"relatedDocuments"`
+	RelatedDocuments *map[DocumentUri]TODO_map_value_or_2 `json:"relatedDocuments"`
 }
 
 // A diagnostic report with a full set of problems.
@@ -2387,7 +2387,7 @@ type TextDocumentItem struct {
 // @since 3.17.0
 type NotebookDocumentSyncOptions struct {
 	// The notebooks to be synced
-	NotebookSelector []TODO_or `json:"notebookSelector"`
+	NotebookSelector []TODO_or_2 `json:"notebookSelector"`
 	// Whether save notification should be forwarded to
 	// the server. Will only be honored if mode === `notebook`.
 	Save *bool `json:"save"`
@@ -2496,7 +2496,7 @@ type _InitializeParams struct {
 	//
 	// Is `null` if the process has not been started by another process.
 	// If the parent process is not alive then the server should exit.
-	ProcessId TODO_or `json:"processId"`
+	ProcessId TODO_or_2 `json:"processId"`
 	// Information about the client
 	//
 	// @since 3.15.0
@@ -2516,7 +2516,7 @@ type _InitializeParams struct {
 	// @deprecated in favour of rootUri.
 	//
 	// Deprecated: in favour of rootUri.
-	RootPath *TODO_or `json:"rootPath"`
+	RootPath *TODO_or_2 `json:"rootPath"`
 	// The rootUri of the workspace. Is null if no
 	// folder is open. If both `rootPath` and `rootUri` are set
 	// `rootUri` wins.
@@ -2524,7 +2524,7 @@ type _InitializeParams struct {
 	// @deprecated in favour of workspaceFolders.
 	//
 	// Deprecated: in favour of workspaceFolders.
-	RootUri TODO_or `json:"rootUri"`
+	RootUri TODO_or_2 `json:"rootUri"`
 	// The capabilities provided by the client (editor or tool)
 	Capabilities ClientCapabilities `json:"capabilities"`
 	// User provided initialization options.
@@ -2541,7 +2541,7 @@ type WorkspaceFoldersInitializeParams struct {
 	// configured.
 	//
 	// @since 3.6.0
-	WorkspaceFolders *TODO_or `json:"workspaceFolders"`
+	WorkspaceFolders *TODO_or_2 `json:"workspaceFolders"`
 }
 
 // Defines the capabilities provided by a language
@@ -2560,96 +2560,96 @@ type ServerCapabilities struct {
 	// Defines how text documents are synced. Is either a detailed structure
 	// defining each notification or for backwards compatibility the
 	// TextDocumentSyncKind number.
-	TextDocumentSync *TODO_or `json:"textDocumentSync"`
+	TextDocumentSync *TODO_or_2 `json:"textDocumentSync"`
 	// Defines how notebook documents are synced.
 	//
 	// @since 3.17.0
-	NotebookDocumentSync *TODO_or `json:"notebookDocumentSync"`
+	NotebookDocumentSync *TODO_or_2 `json:"notebookDocumentSync"`
 	// The server provides completion support.
 	CompletionProvider *CompletionOptions `json:"completionProvider"`
 	// The server provides hover support.
-	HoverProvider *TODO_or `json:"hoverProvider"`
+	HoverProvider *TODO_or_2 `json:"hoverProvider"`
 	// The server provides signature help support.
 	SignatureHelpProvider *SignatureHelpOptions `json:"signatureHelpProvider"`
 	// The server provides Goto Declaration support.
-	DeclarationProvider *TODO_or `json:"declarationProvider"`
+	DeclarationProvider *TODO_or_3 `json:"declarationProvider"`
 	// The server provides goto definition support.
-	DefinitionProvider *TODO_or `json:"definitionProvider"`
+	DefinitionProvider *TODO_or_2 `json:"definitionProvider"`
 	// The server provides Goto Type Definition support.
-	TypeDefinitionProvider *TODO_or `json:"typeDefinitionProvider"`
+	TypeDefinitionProvider *TODO_or_3 `json:"typeDefinitionProvider"`
 	// The server provides Goto Implementation support.
-	ImplementationProvider *TODO_or `json:"implementationProvider"`
+	ImplementationProvider *TODO_or_3 `json:"implementationProvider"`
 	// The server provides find references support.
-	ReferencesProvider *TODO_or `json:"referencesProvider"`
+	ReferencesProvider *TODO_or_2 `json:"referencesProvider"`
 	// The server provides document highlight support.
-	DocumentHighlightProvider *TODO_or `json:"documentHighlightProvider"`
+	DocumentHighlightProvider *TODO_or_2 `json:"documentHighlightProvider"`
 	// The server provides document symbol support.
-	DocumentSymbolProvider *TODO_or `json:"documentSymbolProvider"`
+	DocumentSymbolProvider *TODO_or_2 `json:"documentSymbolProvider"`
 	// The server provides code actions. CodeActionOptions may only be
 	// specified if the client states that it supports
 	// `codeActionLiteralSupport` in its initial `initialize` request.
-	CodeActionProvider *TODO_or `json:"codeActionProvider"`
+	CodeActionProvider *TODO_or_2 `json:"codeActionProvider"`
 	// The server provides code lens.
 	CodeLensProvider *CodeLensOptions `json:"codeLensProvider"`
 	// The server provides document link support.
 	DocumentLinkProvider *DocumentLinkOptions `json:"documentLinkProvider"`
 	// The server provides color provider support.
-	ColorProvider *TODO_or `json:"colorProvider"`
+	ColorProvider *TODO_or_3 `json:"colorProvider"`
 	// The server provides workspace symbol support.
-	WorkspaceSymbolProvider *TODO_or `json:"workspaceSymbolProvider"`
+	WorkspaceSymbolProvider *TODO_or_2 `json:"workspaceSymbolProvider"`
 	// The server provides document formatting.
-	DocumentFormattingProvider *TODO_or `json:"documentFormattingProvider"`
+	DocumentFormattingProvider *TODO_or_2 `json:"documentFormattingProvider"`
 	// The server provides document range formatting.
-	DocumentRangeFormattingProvider *TODO_or `json:"documentRangeFormattingProvider"`
+	DocumentRangeFormattingProvider *TODO_or_2 `json:"documentRangeFormattingProvider"`
 	// The server provides document formatting on typing.
 	DocumentOnTypeFormattingProvider *DocumentOnTypeFormattingOptions `json:"documentOnTypeFormattingProvider"`
 	// The server provides rename support. RenameOptions may only be
 	// specified if the client states that it supports
 	// `prepareSupport` in its initial `initialize` request.
-	RenameProvider *TODO_or `json:"renameProvider"`
+	RenameProvider *TODO_or_2 `json:"renameProvider"`
 	// The server provides folding provider support.
-	FoldingRangeProvider *TODO_or `json:"foldingRangeProvider"`
+	FoldingRangeProvider *TODO_or_3 `json:"foldingRangeProvider"`
 	// The server provides selection range support.
-	SelectionRangeProvider *TODO_or `json:"selectionRangeProvider"`
+	SelectionRangeProvider *TODO_or_3 `json:"selectionRangeProvider"`
 	// The server provides execute command support.
 	ExecuteCommandProvider *ExecuteCommandOptions `json:"executeCommandProvider"`
 	// The server provides call hierarchy support.
 	//
 	// @since 3.16.0
-	CallHierarchyProvider *TODO_or `json:"callHierarchyProvider"`
+	CallHierarchyProvider *TODO_or_3 `json:"callHierarchyProvider"`
 	// The server provides linked editing range support.
 	//
 	// @since 3.16.0
-	LinkedEditingRangeProvider *TODO_or `json:"linkedEditingRangeProvider"`
+	LinkedEditingRangeProvider *TODO_or_3 `json:"linkedEditingRangeProvider"`
 	// The server provides semantic tokens support.
 	//
 	// @since 3.16.0
-	SemanticTokensProvider *TODO_or `json:"semanticTokensProvider"`
+	SemanticTokensProvider *TODO_or_2 `json:"semanticTokensProvider"`
 	// The server provides moniker support.
 	//
 	// @since 3.16.0
-	MonikerProvider *TODO_or `json:"monikerProvider"`
+	MonikerProvider *TODO_or_3 `json:"monikerProvider"`
 	// The server provides type hierarchy support.
 	//
 	// @since 3.17.0
-	TypeHierarchyProvider *TODO_or `json:"typeHierarchyProvider"`
+	TypeHierarchyProvider *TODO_or_3 `json:"typeHierarchyProvider"`
 	// The server provides inline values.
 	//
 	// @since 3.17.0
-	InlineValueProvider *TODO_or `json:"inlineValueProvider"`
+	InlineValueProvider *TODO_or_3 `json:"inlineValueProvider"`
 	// The server provides inlay hints.
 	//
 	// @since 3.17.0
-	InlayHintProvider *TODO_or `json:"inlayHintProvider"`
+	InlayHintProvider *TODO_or_3 `json:"inlayHintProvider"`
 	// The server has support for pull model diagnostics.
 	//
 	// @since 3.17.0
-	DiagnosticProvider *TODO_or `json:"diagnosticProvider"`
+	DiagnosticProvider *TODO_or_2 `json:"diagnosticProvider"`
 	// Inline completion options used during static registration.
 	//
 	// @since 3.18.0
 	// @proposed
-	InlineCompletionProvider *TODO_or `json:"inlineCompletionProvider"`
+	InlineCompletionProvider *TODO_or_2 `json:"inlineCompletionProvider"`
 	// Workspace specific server capabilities.
 	Workspace *WorkspaceOptions `json:"workspace"`
 	// Experimental server capabilities.
@@ -2709,7 +2709,7 @@ type Diagnostic struct {
 	// always provide a severity value.
 	Severity *DiagnosticSeverity `json:"severity"`
 	// The diagnostic's code, which usually appear in the user interface.
-	Code *TODO_or `json:"code"`
+	Code *TODO_or_2 `json:"code"`
 	// An optional property to describe the error code.
 	// Requires the code field (above) to be present/not null.
 	//
@@ -2791,7 +2791,7 @@ type CompletionItemDefaults struct {
 	// A default edit range.
 	//
 	// @since 3.17.0
-	EditRange *TODO_or `json:"editRange"`
+	EditRange *TODO_or_2 `json:"editRange"`
 	// A default insert text format.
 	//
 	// @since 3.17.0
@@ -2932,7 +2932,7 @@ type SignatureInformation struct {
 	Label string `json:"label"`
 	// The human-readable doc-comment of this signature. Will be shown
 	// in the UI but can be omitted.
-	Documentation *TODO_or `json:"documentation"`
+	Documentation *TODO_or_2 `json:"documentation"`
 	// The parameters of this signature.
 	Parameters *[]ParameterInformation `json:"parameters"`
 	// The index of the active parameter.
@@ -2946,7 +2946,7 @@ type SignatureInformation struct {
 	// `SignatureHelp.activeParameter`.
 	//
 	// @since 3.16.0
-	ActiveParameter *TODO_or `json:"activeParameter"`
+	ActiveParameter *TODO_or_2 `json:"activeParameter"`
 }
 
 // Server Capabilities for a {@link SignatureHelpRequest}.
@@ -3207,7 +3207,7 @@ type OptionalVersionedTextDocumentIdentifier struct {
 	// (the server has not received an open notification before) the server can send
 	// `null` to indicate that the version is unknown and the content on disk is the
 	// truth (as specified with document content ownership).
-	Version TODO_or `json:"version"`
+	Version TODO_or_2 `json:"version"`
 }
 
 // A special text edit with an additional change annotation.
@@ -3296,7 +3296,7 @@ type WorkspaceFullDocumentDiagnosticReport struct {
 	Uri DocumentUri `json:"uri"`
 	// The version number for which the diagnostics are reported.
 	// If the document is not marked as open `null` can be provided.
-	Version TODO_or `json:"version"`
+	Version TODO_or_2 `json:"version"`
 }
 
 // An unchanged document diagnostic report for a workspace diagnostic result.
@@ -3308,7 +3308,7 @@ type WorkspaceUnchangedDocumentDiagnosticReport struct {
 	Uri DocumentUri `json:"uri"`
 	// The version number for which the diagnostics are reported.
 	// If the document is not marked as open `null` can be provided.
-	Version TODO_or `json:"version"`
+	Version TODO_or_2 `json:"version"`
 }
 
 // A notebook cell.
@@ -3338,7 +3338,7 @@ type NotebookDocumentFilterWithNotebook struct {
 	// The notebook to be synced If a string
 	// value is provided it matches against the
 	// notebook type. '*' matches every notebook.
-	Notebook TODO_or `json:"notebook"`
+	Notebook TODO_or_2 `json:"notebook"`
 	// The cells of the matching notebook to be synced.
 	Cells *[]NotebookCellLanguage `json:"cells"`
 }
@@ -3348,7 +3348,7 @@ type NotebookDocumentFilterWithCells struct {
 	// The notebook to be synced If a string
 	// value is provided it matches against the
 	// notebook type. '*' matches every notebook.
-	Notebook *TODO_or `json:"notebook"`
+	Notebook *TODO_or_2 `json:"notebook"`
 	// The cells of the matching notebook to be synced.
 	Cells []NotebookCellLanguage `json:"cells"`
 }
@@ -3424,7 +3424,7 @@ type TextDocumentSyncOptions struct {
 	WillSaveWaitUntil *bool `json:"willSaveWaitUntil"`
 	// If present save notifications are sent to the server. If omitted the notification should not be
 	// sent.
-	Save *TODO_or `json:"save"`
+	Save *TODO_or_2 `json:"save"`
 }
 
 // Defines workspace specific capabilities of the server.
@@ -3443,7 +3443,7 @@ type WorkspaceOptions struct {
 	//
 	// @since 3.18.0
 	// @proposed
-	TextDocumentContent *TODO_or `json:"textDocumentContent"`
+	TextDocumentContent *TODO_or_2 `json:"textDocumentContent"`
 }
 
 // @since 3.18.0
@@ -3526,10 +3526,10 @@ type ParameterInformation struct {
 	//
 	// *Note*: a label of type string should be a substring of its containing signature label.
 	// Its intended use case is to highlight the parameter label part in the `SignatureInformation.label`.
-	Label TODO_or `json:"label"`
+	Label TODO_or_2 `json:"label"`
 	// The human-readable doc-comment of this parameter. Will be shown
 	// in the UI but can be omitted.
-	Documentation *TODO_or `json:"documentation"`
+	Documentation *TODO_or_2 `json:"documentation"`
 }
 
 // Documentation for a class of code actions.
@@ -3558,7 +3558,7 @@ type NotebookCellTextDocumentFilter struct {
 	// containing the notebook cell. If a string
 	// value is provided it matches against the
 	// notebook type. '*' matches every notebook.
-	Notebook TODO_or `json:"notebook"`
+	Notebook TODO_or_2 `json:"notebook"`
 	// A language id like `python`.
 	//
 	// Will be matched against the language id of the
@@ -3857,7 +3857,7 @@ type WorkspaceFoldersServerCapabilities struct {
 	// under which the notification is registered on the client
 	// side. The ID can be used to unregister for these events
 	// using the `client/unregisterCapability` request.
-	ChangeNotifications *TODO_or `json:"changeNotifications"`
+	ChangeNotifications *TODO_or_2 `json:"changeNotifications"`
 }
 
 // Options for notifications/requests for user operations on files.
@@ -3886,7 +3886,7 @@ type FileOperationOptions struct {
 type RelativePattern struct {
 	// A workspace folder or a base URI to which this pattern will be matched
 	// against relatively.
-	BaseUri TODO_or `json:"baseUri"`
+	BaseUri TODO_or_2 `json:"baseUri"`
 	// The actual glob pattern;
 	Pattern Pattern `json:"pattern"`
 }
@@ -4895,10 +4895,10 @@ type DiagnosticsCapabilities struct {
 type ClientSemanticTokensRequestOptions struct {
 	// The client will send the `textDocument/semanticTokens/range` request if
 	// the server provides a corresponding handler.
-	Range *TODO_or `json:"range"`
+	Range *TODO_or_2 `json:"range"`
 	// The client will send the `textDocument/semanticTokens/full` request if
 	// the server provides a corresponding handler.
-	Full *TODO_or `json:"full"`
+	Full *TODO_or_2 `json:"full"`
 }
 
 // @since 3.18.0
@@ -5134,7 +5134,7 @@ type TokenFormat int
 //
 // Servers should prefer returning `DefinitionLink` over `Definition` if supported
 // by the client.
-type Definition = TODO_or
+type Definition = TODO_or_2
 
 // Information about where a symbol is defined.
 //
@@ -5152,10 +5152,10 @@ type LSPArray = []LSPAny
 // convenience it is allowed and assumed that all these properties are
 // optional as well.
 // @since 3.17.0
-type LSPAny = TODO_or
+type LSPAny = TODO_or_8
 
 // The declaration of a symbol representation as one or many {@link Location locations}.
-type Declaration = TODO_or
+type Declaration = TODO_or_2
 
 // Information about where a symbol is declared.
 //
@@ -5173,7 +5173,7 @@ type DeclarationLink = LocationLink
 // The InlineValue types combines all inline value types into one type.
 //
 // @since 3.17.0
-type InlineValue = TODO_or
+type InlineValue = TODO_or_3
 
 // The result of a document diagnostic pull request. A report can
 // either be a full report containing all diagnostics for the
@@ -5182,9 +5182,9 @@ type InlineValue = TODO_or
 // pull request.
 //
 // @since 3.17.0
-type DocumentDiagnosticReport = TODO_or
+type DocumentDiagnosticReport = TODO_or_2
 
-type PrepareRenameResult = TODO_or
+type PrepareRenameResult = TODO_or_3
 
 // A document selector is the combination of one or many document filters.
 //
@@ -5193,7 +5193,7 @@ type PrepareRenameResult = TODO_or
 // The use of a string as a document filter is deprecated @since 3.16.0.
 type DocumentSelector = []DocumentFilter
 
-type ProgressToken = TODO_or
+type ProgressToken = TODO_or_2
 
 // An identifier to refer to a change annotation stored with a workspace edit.
 type ChangeAnnotationIdentifier = string
@@ -5201,11 +5201,11 @@ type ChangeAnnotationIdentifier = string
 // A workspace diagnostic document report.
 //
 // @since 3.17.0
-type WorkspaceDocumentDiagnosticReport = TODO_or
+type WorkspaceDocumentDiagnosticReport = TODO_or_2
 
 // An event describing a change to a text document. If only a text is provided
 // it is considered to be the full content of the document.
-type TextDocumentContentChangeEvent = TODO_or
+type TextDocumentContentChangeEvent = TODO_or_2
 
 // MarkedString can be used to render human readable text. It is either a markdown string
 // or a code-block that provides a language and a code snippet. The language identifier
@@ -5221,13 +5221,13 @@ type TextDocumentContentChangeEvent = TODO_or
 // @deprecated use MarkupContent instead.
 //
 // Deprecated: use MarkupContent instead.
-type MarkedString = TODO_or
+type MarkedString = TODO_or_2
 
 // A document filter describes a top level text document or
 // a notebook cell document.
 //
 // @since 3.17.0 - support for NotebookCellTextDocumentFilter.
-type DocumentFilter = TODO_or
+type DocumentFilter = TODO_or_2
 
 // LSP object definition.
 // @since 3.17.0
@@ -5236,7 +5236,7 @@ type LSPObject = map[string]LSPAny
 // The glob pattern. Either a string pattern or a relative pattern.
 //
 // @since 3.17.0
-type GlobPattern = TODO_or
+type GlobPattern = TODO_or_2
 
 // A document filter denotes a document by different properties like
 // the {@link TextDocument.languageId language}, the {@link Uri.scheme scheme} of
@@ -5254,14 +5254,14 @@ type GlobPattern = TODO_or
 // @sample A language filter that applies to all package.json paths: `{ language: 'json', pattern: '**package.json' }`
 //
 // @since 3.17.0
-type TextDocumentFilter = TODO_or
+type TextDocumentFilter = TODO_or_3
 
 // A notebook document filter denotes a notebook document by
 // different properties. The properties will be match
 // against the notebook's URI (same as with documents)
 //
 // @since 3.17.0
-type NotebookDocumentFilter = TODO_or
+type NotebookDocumentFilter = TODO_or_3
 
 // The glob pattern to watch relative to the base path. Glob patterns can have the following syntax:
 // - `*` to match one or more characters in a path segment
@@ -5275,3 +5275,481 @@ type NotebookDocumentFilter = TODO_or
 type Pattern = string
 
 type RegularExpressionEngineKind = string
+
+// A request to resolve the implementation locations of a symbol at a given text
+// document position. The request's parameter is of type {@link TextDocumentPositionParams}
+// the response is of type {@link Definition} or a Thenable that resolves to such.
+const MethodRequestTextDocumentImplementation Method = "textDocument/implementation"
+
+// A request to resolve the type definition locations of a symbol at a given text
+// document position. The request's parameter is of type {@link TextDocumentPositionParams}
+// the response is of type {@link Definition} or a Thenable that resolves to such.
+const MethodRequestTextDocumentTypeDefinition Method = "textDocument/typeDefinition"
+
+// The `workspace/workspaceFolders` is sent from the server to the client to fetch the open workspace folders.
+const MethodRequestWorkspaceWorkspaceFolders Method = "workspace/workspaceFolders"
+
+// The 'workspace/configuration' request is sent from the server to the client to fetch a certain
+// configuration setting.
+//
+// This pull model replaces the old push model were the client signaled configuration change via an
+// event. If the server still needs to react to configuration changes (since the server caches the
+// result of `workspace/configuration` requests) the server should register for an empty configuration
+// change event and empty the cache if such an event is received.
+const MethodRequestWorkspaceConfiguration Method = "workspace/configuration"
+
+// A request to list all color symbols found in a given text document. The request's
+// parameter is of type {@link DocumentColorParams} the
+// response is of type {@link ColorInformation ColorInformation[]} or a Thenable
+// that resolves to such.
+const MethodRequestTextDocumentDocumentColor Method = "textDocument/documentColor"
+
+// A request to list all presentation for a color. The request's
+// parameter is of type {@link ColorPresentationParams} the
+// response is of type {@link ColorInformation ColorInformation[]} or a Thenable
+// that resolves to such.
+const MethodRequestTextDocumentColorPresentation Method = "textDocument/colorPresentation"
+
+// A request to provide folding ranges in a document. The request's
+// parameter is of type {@link FoldingRangeParams}, the
+// response is of type {@link FoldingRangeList} or a Thenable
+// that resolves to such.
+const MethodRequestTextDocumentFoldingRange Method = "textDocument/foldingRange"
+
+// @since 3.18.0
+// @proposed
+const MethodRequestWorkspaceFoldingRangeRefresh Method = "workspace/foldingRange/refresh"
+
+// A request to resolve the type definition locations of a symbol at a given text
+// document position. The request's parameter is of type {@link TextDocumentPositionParams}
+// the response is of type {@link Declaration} or a typed array of {@link DeclarationLink}
+// or a Thenable that resolves to such.
+const MethodRequestTextDocumentDeclaration Method = "textDocument/declaration"
+
+// A request to provide selection ranges in a document. The request's
+// parameter is of type {@link SelectionRangeParams}, the
+// response is of type {@link SelectionRange SelectionRange[]} or a Thenable
+// that resolves to such.
+const MethodRequestTextDocumentSelectionRange Method = "textDocument/selectionRange"
+
+// The `window/workDoneProgress/create` request is sent from the server to the client to initiate progress
+// reporting from the server.
+const MethodRequestWindowWorkDoneProgressCreate Method = "window/workDoneProgress/create"
+
+// A request to result a `CallHierarchyItem` in a document at a given position.
+// Can be used as an input to an incoming or outgoing call hierarchy.
+//
+// @since 3.16.0
+const MethodRequestTextDocumentPrepareCallHierarchy Method = "textDocument/prepareCallHierarchy"
+
+// A request to resolve the incoming calls for a given `CallHierarchyItem`.
+//
+// @since 3.16.0
+const MethodRequestCallHierarchyIncomingCalls Method = "callHierarchy/incomingCalls"
+
+// A request to resolve the outgoing calls for a given `CallHierarchyItem`.
+//
+// @since 3.16.0
+const MethodRequestCallHierarchyOutgoingCalls Method = "callHierarchy/outgoingCalls"
+
+// @since 3.16.0
+const MethodRequestTextDocumentSemanticTokensFull Method = "textDocument/semanticTokens/full"
+
+// @since 3.16.0
+const MethodRequestTextDocumentSemanticTokensFullDelta Method = "textDocument/semanticTokens/full/delta"
+
+// @since 3.16.0
+const MethodRequestTextDocumentSemanticTokensRange Method = "textDocument/semanticTokens/range"
+
+// @since 3.16.0
+const MethodRequestWorkspaceSemanticTokensRefresh Method = "workspace/semanticTokens/refresh"
+
+// A request to show a document. This request might open an
+// external program depending on the value of the URI to open.
+// For example a request to open `https://code.visualstudio.com/`
+// will very likely open the URI in a WEB browser.
+//
+// @since 3.16.0
+const MethodRequestWindowShowDocument Method = "window/showDocument"
+
+// A request to provide ranges that can be edited together.
+//
+// @since 3.16.0
+const MethodRequestTextDocumentLinkedEditingRange Method = "textDocument/linkedEditingRange"
+
+// The will create files request is sent from the client to the server before files are actually
+// created as long as the creation is triggered from within the client.
+//
+// The request can return a `WorkspaceEdit` which will be applied to workspace before the
+// files are created. Hence the `WorkspaceEdit` can not manipulate the content of the file
+// to be created.
+//
+// @since 3.16.0
+const MethodRequestWorkspaceWillCreateFiles Method = "workspace/willCreateFiles"
+
+// The will rename files request is sent from the client to the server before files are actually
+// renamed as long as the rename is triggered from within the client.
+//
+// @since 3.16.0
+const MethodRequestWorkspaceWillRenameFiles Method = "workspace/willRenameFiles"
+
+// The did delete files notification is sent from the client to the server when
+// files were deleted from within the client.
+//
+// @since 3.16.0
+const MethodRequestWorkspaceWillDeleteFiles Method = "workspace/willDeleteFiles"
+
+// A request to get the moniker of a symbol at a given text document position.
+// The request parameter is of type {@link TextDocumentPositionParams}.
+// The response is of type {@link Moniker Moniker[]} or `null`.
+const MethodRequestTextDocumentMoniker Method = "textDocument/moniker"
+
+// A request to result a `TypeHierarchyItem` in a document at a given position.
+// Can be used as an input to a subtypes or supertypes type hierarchy.
+//
+// @since 3.17.0
+const MethodRequestTextDocumentPrepareTypeHierarchy Method = "textDocument/prepareTypeHierarchy"
+
+// A request to resolve the supertypes for a given `TypeHierarchyItem`.
+//
+// @since 3.17.0
+const MethodRequestTypeHierarchySupertypes Method = "typeHierarchy/supertypes"
+
+// A request to resolve the subtypes for a given `TypeHierarchyItem`.
+//
+// @since 3.17.0
+const MethodRequestTypeHierarchySubtypes Method = "typeHierarchy/subtypes"
+
+// A request to provide inline values in a document. The request's parameter is of
+// type {@link InlineValueParams}, the response is of type
+// {@link InlineValue InlineValue[]} or a Thenable that resolves to such.
+//
+// @since 3.17.0
+const MethodRequestTextDocumentInlineValue Method = "textDocument/inlineValue"
+
+// @since 3.17.0
+const MethodRequestWorkspaceInlineValueRefresh Method = "workspace/inlineValue/refresh"
+
+// A request to provide inlay hints in a document. The request's parameter is of
+// type {@link InlayHintsParams}, the response is of type
+// {@link InlayHint InlayHint[]} or a Thenable that resolves to such.
+//
+// @since 3.17.0
+const MethodRequestTextDocumentInlayHint Method = "textDocument/inlayHint"
+
+// A request to resolve additional properties for an inlay hint.
+// The request's parameter is of type {@link InlayHint}, the response is
+// of type {@link InlayHint} or a Thenable that resolves to such.
+//
+// @since 3.17.0
+const MethodRequestInlayHintResolve Method = "inlayHint/resolve"
+
+// @since 3.17.0
+const MethodRequestWorkspaceInlayHintRefresh Method = "workspace/inlayHint/refresh"
+
+// The document diagnostic request definition.
+//
+// @since 3.17.0
+const MethodRequestTextDocumentDiagnostic Method = "textDocument/diagnostic"
+
+// The workspace diagnostic request definition.
+//
+// @since 3.17.0
+const MethodRequestWorkspaceDiagnostic Method = "workspace/diagnostic"
+
+// The diagnostic refresh request definition.
+//
+// @since 3.17.0
+const MethodRequestWorkspaceDiagnosticRefresh Method = "workspace/diagnostic/refresh"
+
+// A request to provide inline completions in a document. The request's parameter is of
+// type {@link InlineCompletionParams}, the response is of type
+// {@link InlineCompletion InlineCompletion[]} or a Thenable that resolves to such.
+//
+// @since 3.18.0
+// @proposed
+const MethodRequestTextDocumentInlineCompletion Method = "textDocument/inlineCompletion"
+
+// The `workspace/textDocumentContent` request is sent from the client to the
+// server to request the content of a text document.
+//
+// @since 3.18.0
+// @proposed
+const MethodRequestWorkspaceTextDocumentContent Method = "workspace/textDocumentContent"
+
+// The `workspace/textDocumentContent` request is sent from the server to the client to refresh
+// the content of a specific text document.
+//
+// @since 3.18.0
+// @proposed
+const MethodRequestWorkspaceTextDocumentContentRefresh Method = "workspace/textDocumentContent/refresh"
+
+// The `client/registerCapability` request is sent from the server to the client to register a new capability
+// handler on the client side.
+const MethodRequestClientRegisterCapability Method = "client/registerCapability"
+
+// The `client/unregisterCapability` request is sent from the server to the client to unregister a previously registered capability
+// handler on the client side.
+const MethodRequestClientUnregisterCapability Method = "client/unregisterCapability"
+
+// The initialize request is sent from the client to the server.
+// It is sent once as the request after starting up the server.
+// The requests parameter is of type {@link InitializeParams}
+// the response if of type {@link InitializeResult} of a Thenable that
+// resolves to such.
+const MethodRequestInitialize Method = "initialize"
+
+// A shutdown request is sent from the client to the server.
+// It is sent once when the client decides to shutdown the
+// server. The only notification that is sent after a shutdown request
+// is the exit event.
+const MethodRequestShutdown Method = "shutdown"
+
+// The show message request is sent from the server to the client to show a message
+// and a set of options actions to the user.
+const MethodRequestWindowShowMessageRequest Method = "window/showMessageRequest"
+
+// A document will save request is sent from the client to the server before
+// the document is actually saved. The request can return an array of TextEdits
+// which will be applied to the text document before it is saved. Please note that
+// clients might drop results if computing the text edits took too long or if a
+// server constantly fails on this request. This is done to keep the save fast and
+// reliable.
+const MethodRequestTextDocumentWillSaveWaitUntil Method = "textDocument/willSaveWaitUntil"
+
+// Request to request completion at a given text document position. The request's
+// parameter is of type {@link TextDocumentPosition} the response
+// is of type {@link CompletionItem CompletionItem[]} or {@link CompletionList}
+// or a Thenable that resolves to such.
+//
+// The request can delay the computation of the {@link CompletionItem.detail `detail`}
+// and {@link CompletionItem.documentation `documentation`} properties to the `completionItem/resolve`
+// request. However, properties that are needed for the initial sorting and filtering, like `sortText`,
+// `filterText`, `insertText`, and `textEdit`, must not be changed during resolve.
+const MethodRequestTextDocumentCompletion Method = "textDocument/completion"
+
+// Request to resolve additional information for a given completion item.The request's
+// parameter is of type {@link CompletionItem} the response
+// is of type {@link CompletionItem} or a Thenable that resolves to such.
+const MethodRequestCompletionItemResolve Method = "completionItem/resolve"
+
+// Request to request hover information at a given text document position. The request's
+// parameter is of type {@link TextDocumentPosition} the response is of
+// type {@link Hover} or a Thenable that resolves to such.
+const MethodRequestTextDocumentHover Method = "textDocument/hover"
+
+const MethodRequestTextDocumentSignatureHelp Method = "textDocument/signatureHelp"
+
+// A request to resolve the definition location of a symbol at a given text
+// document position. The request's parameter is of type {@link TextDocumentPosition}
+// the response is of either type {@link Definition} or a typed array of
+// {@link DefinitionLink} or a Thenable that resolves to such.
+const MethodRequestTextDocumentDefinition Method = "textDocument/definition"
+
+// A request to resolve project-wide references for the symbol denoted
+// by the given text document position. The request's parameter is of
+// type {@link ReferenceParams} the response is of type
+// {@link Location Location[]} or a Thenable that resolves to such.
+const MethodRequestTextDocumentReferences Method = "textDocument/references"
+
+// Request to resolve a {@link DocumentHighlight} for a given
+// text document position. The request's parameter is of type {@link TextDocumentPosition}
+// the request response is an array of type {@link DocumentHighlight}
+// or a Thenable that resolves to such.
+const MethodRequestTextDocumentDocumentHighlight Method = "textDocument/documentHighlight"
+
+// A request to list all symbols found in a given text document. The request's
+// parameter is of type {@link TextDocumentIdentifier} the
+// response is of type {@link SymbolInformation SymbolInformation[]} or a Thenable
+// that resolves to such.
+const MethodRequestTextDocumentDocumentSymbol Method = "textDocument/documentSymbol"
+
+// A request to provide commands for the given text document and range.
+const MethodRequestTextDocumentCodeAction Method = "textDocument/codeAction"
+
+// Request to resolve additional information for a given code action.The request's
+// parameter is of type {@link CodeAction} the response
+// is of type {@link CodeAction} or a Thenable that resolves to such.
+const MethodRequestCodeActionResolve Method = "codeAction/resolve"
+
+// A request to list project-wide symbols matching the query string given
+// by the {@link WorkspaceSymbolParams}. The response is
+// of type {@link SymbolInformation SymbolInformation[]} or a Thenable that
+// resolves to such.
+//
+// @since 3.17.0 - support for WorkspaceSymbol in the returned data. Clients
+//
+//	need to advertise support for WorkspaceSymbols via the client capability
+//	`workspace.symbol.resolveSupport`.
+const MethodRequestWorkspaceSymbol Method = "workspace/symbol"
+
+// A request to resolve the range inside the workspace
+// symbol's location.
+//
+// @since 3.17.0
+const MethodRequestWorkspaceSymbolResolve Method = "workspaceSymbol/resolve"
+
+// A request to provide code lens for the given text document.
+const MethodRequestTextDocumentCodeLens Method = "textDocument/codeLens"
+
+// A request to resolve a command for a given code lens.
+const MethodRequestCodeLensResolve Method = "codeLens/resolve"
+
+// A request to refresh all code actions
+//
+// @since 3.16.0
+const MethodRequestWorkspaceCodeLensRefresh Method = "workspace/codeLens/refresh"
+
+// A request to provide document links
+const MethodRequestTextDocumentDocumentLink Method = "textDocument/documentLink"
+
+// Request to resolve additional information for a given document link. The request's
+// parameter is of type {@link DocumentLink} the response
+// is of type {@link DocumentLink} or a Thenable that resolves to such.
+const MethodRequestDocumentLinkResolve Method = "documentLink/resolve"
+
+// A request to format a whole document.
+const MethodRequestTextDocumentFormatting Method = "textDocument/formatting"
+
+// A request to format a range in a document.
+const MethodRequestTextDocumentRangeFormatting Method = "textDocument/rangeFormatting"
+
+// A request to format ranges in a document.
+//
+// @since 3.18.0
+// @proposed
+const MethodRequestTextDocumentRangesFormatting Method = "textDocument/rangesFormatting"
+
+// A request to format a document on type.
+const MethodRequestTextDocumentOnTypeFormatting Method = "textDocument/onTypeFormatting"
+
+// A request to rename a symbol.
+const MethodRequestTextDocumentRename Method = "textDocument/rename"
+
+// A request to test and perform the setup necessary for a rename.
+//
+// @since 3.16 - support for default behavior
+const MethodRequestTextDocumentPrepareRename Method = "textDocument/prepareRename"
+
+// A request send from the client to the server to execute a command. The request might return
+// a workspace edit which the client will apply to the workspace.
+const MethodRequestWorkspaceExecuteCommand Method = "workspace/executeCommand"
+
+// A request sent from the server to the client to modified certain resources.
+const MethodRequestWorkspaceApplyEdit Method = "workspace/applyEdit"
+
+// The `workspace/didChangeWorkspaceFolders` notification is sent from the client to the server when the workspace
+// folder configuration changes.
+const MethodNotificationWorkspaceDidChangeWorkspaceFolders Method = "workspace/didChangeWorkspaceFolders"
+
+// The `window/workDoneProgress/cancel` notification is sent from  the client to the server to cancel a progress
+// initiated on the server side.
+const MethodNotificationWindowWorkDoneProgressCancel Method = "window/workDoneProgress/cancel"
+
+// The did create files notification is sent from the client to the server when
+// files were created from within the client.
+//
+// @since 3.16.0
+const MethodNotificationWorkspaceDidCreateFiles Method = "workspace/didCreateFiles"
+
+// The did rename files notification is sent from the client to the server when
+// files were renamed from within the client.
+//
+// @since 3.16.0
+const MethodNotificationWorkspaceDidRenameFiles Method = "workspace/didRenameFiles"
+
+// The will delete files request is sent from the client to the server before files are actually
+// deleted as long as the deletion is triggered from within the client.
+//
+// @since 3.16.0
+const MethodNotificationWorkspaceDidDeleteFiles Method = "workspace/didDeleteFiles"
+
+// A notification sent when a notebook opens.
+//
+// @since 3.17.0
+const MethodNotificationNotebookDocumentDidOpen Method = "notebookDocument/didOpen"
+
+const MethodNotificationNotebookDocumentDidChange Method = "notebookDocument/didChange"
+
+// A notification sent when a notebook document is saved.
+//
+// @since 3.17.0
+const MethodNotificationNotebookDocumentDidSave Method = "notebookDocument/didSave"
+
+// A notification sent when a notebook closes.
+//
+// @since 3.17.0
+const MethodNotificationNotebookDocumentDidClose Method = "notebookDocument/didClose"
+
+// The initialized notification is sent from the client to the
+// server after the client is fully initialized and the server
+// is allowed to send requests from the server to the client.
+const MethodNotificationInitialized Method = "initialized"
+
+// The exit event is sent from the client to the server to
+// ask the server to exit its process.
+const MethodNotificationExit Method = "exit"
+
+// The configuration change notification is sent from the client to the server
+// when the client's configuration has changed. The notification contains
+// the changed configuration as defined by the language client.
+const MethodNotificationWorkspaceDidChangeConfiguration Method = "workspace/didChangeConfiguration"
+
+// The show message notification is sent from a server to a client to ask
+// the client to display a particular message in the user interface.
+const MethodNotificationWindowShowMessage Method = "window/showMessage"
+
+// The log message notification is sent from the server to the client to ask
+// the client to log a particular message.
+const MethodNotificationWindowLogMessage Method = "window/logMessage"
+
+// The telemetry event notification is sent from the server to the client to ask
+// the client to log telemetry data.
+const MethodNotificationTelemetryEvent Method = "telemetry/event"
+
+// The document open notification is sent from the client to the server to signal
+// newly opened text documents. The document's truth is now managed by the client
+// and the server must not try to read the document's truth using the document's
+// uri. Open in this sense means it is managed by the client. It doesn't necessarily
+// mean that its content is presented in an editor. An open notification must not
+// be sent more than once without a corresponding close notification send before.
+// This means open and close notification must be balanced and the max open count
+// is one.
+const MethodNotificationTextDocumentDidOpen Method = "textDocument/didOpen"
+
+// The document change notification is sent from the client to the server to signal
+// changes to a text document.
+const MethodNotificationTextDocumentDidChange Method = "textDocument/didChange"
+
+// The document close notification is sent from the client to the server when
+// the document got closed in the client. The document's truth now exists where
+// the document's uri points to (e.g. if the document's uri is a file uri the
+// truth now exists on disk). As with the open notification the close notification
+// is about managing the document's content. Receiving a close notification
+// doesn't mean that the document was open in an editor before. A close
+// notification requires a previous open notification to be sent.
+const MethodNotificationTextDocumentDidClose Method = "textDocument/didClose"
+
+// The document save notification is sent from the client to the server when
+// the document got saved in the client.
+const MethodNotificationTextDocumentDidSave Method = "textDocument/didSave"
+
+// A document will save notification is sent from the client to the server before
+// the document is actually saved.
+const MethodNotificationTextDocumentWillSave Method = "textDocument/willSave"
+
+// The watched files notification is sent from the client to the server when
+// the client detects changes to file watched by the language client.
+const MethodNotificationWorkspaceDidChangeWatchedFiles Method = "workspace/didChangeWatchedFiles"
+
+// Diagnostics notification are sent from the server to the client to signal
+// results of validation runs.
+const MethodNotificationTextDocumentPublishDiagnostics Method = "textDocument/publishDiagnostics"
+
+const MethodNotificationSetTrace Method = "$/setTrace"
+
+const MethodNotificationLogTrace Method = "$/logTrace"
+
+const MethodNotificationCancelRequest Method = "$/cancelRequest"
+
+const MethodNotificationProgress Method = "$/progress"
