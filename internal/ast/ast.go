@@ -74,6 +74,7 @@ type NodeFactory struct {
 
 func newNode(kind Kind, data nodeData) *Node {
 	n := data.AsNode()
+	n.Loc = core.UndefinedTextRange()
 	n.Kind = kind
 	n.data = data
 	return n
