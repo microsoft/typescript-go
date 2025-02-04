@@ -464,7 +464,7 @@ type WorkspaceEdit struct {
 	//
 	// If a client neither supports `documentChanges` nor `workspace.workspaceEdit.resourceOperations` then
 	// only plain `TextEdit`s using the `changes` property are supported.
-	DocumentChanges *[]TextDocumentEditOrCreateFileOrRenameFileOrDeleteFile `json:"documentChanges"`
+	DocumentChanges *[]CreateFileOrDeleteFileOrRenameFileOrTextDocumentEdit `json:"documentChanges"`
 	// A map of change annotations that can be referenced in `AnnotatedTextEdit`s or create, rename and
 	// delete file / folder operations.
 	//
@@ -635,7 +635,7 @@ type InlayHint struct {
 	// InlayHintLabelPart label parts.
 	//
 	// *Note* that neither the string nor the label part can be empty.
-	Label StringOrArrayOfInlayHintLabelPart `json:"label"`
+	Label ArrayOfInlayHintLabelPartOrString `json:"label"`
 	// The kind of this hint. Can be omitted in which case the client
 	// should fall back to a reasonable default.
 	Kind *InlayHintKind `json:"kind"`
@@ -646,7 +646,7 @@ type InlayHint struct {
 	// hint itself is now obsolete.
 	TextEdits *[]TextEdit `json:"textEdits"`
 	// The tooltip text when you hover over this item.
-	Tooltip *StringOrMarkupContent `json:"tooltip"`
+	Tooltip *MarkupContentOrString `json:"tooltip"`
 	// Render padding before the hint.
 	//
 	// Note: Padding should use the editor's background color, not the
@@ -827,7 +827,7 @@ type InlineCompletionList struct {
 // @proposed
 type InlineCompletionItem struct {
 	// The text to replace the range with. Must be set.
-	InsertText StringOrStringValue `json:"insertText"`
+	InsertText StringValueOrString `json:"insertText"`
 	// A text that is used to decide if this inline completion should be shown. When `falsy` the {@link InlineCompletionItem.insertText} is used.
 	FilterText *string `json:"filterText"`
 	// The range to replace. Must begin and end on the same line.
@@ -1092,7 +1092,7 @@ type CompletionItem struct {
 	// about this item, like type or symbol information.
 	Detail *string `json:"detail"`
 	// A human-readable string that represents a doc-comment.
-	Documentation *StringOrMarkupContent `json:"documentation"`
+	Documentation *MarkupContentOrString `json:"documentation"`
 	// Indicates if this item is deprecated.
 	// @deprecated Use `tags` instead.
 	//
@@ -1157,7 +1157,7 @@ type CompletionItem struct {
 	// contained and starting at the same position.
 	//
 	// @since 3.16.0 additional type `InsertReplaceEdit`
-	TextEdit *TextEditOrInsertReplaceEdit `json:"textEdit"`
+	TextEdit *InsertReplaceEditOrTextEdit `json:"textEdit"`
 	// The edit text used if the completion item is part of a CompletionList and
 	// CompletionList defines an item default for the text edit range.
 	//
@@ -1251,7 +1251,7 @@ type HoverParams struct {
 // The result of a hover request.
 type Hover struct {
 	// The hover's content
-	Contents MarkupContentOrMarkedStringOrArrayOfMarkedString `json:"contents"`
+	Contents MarkedStringOrMarkupContentOrArrayOfMarkedString `json:"contents"`
 	// An optional range inside the text document that is used to
 	// visualize the hover, e.g. by changing the background color.
 	Range *Range `json:"range"`
@@ -2017,7 +2017,7 @@ type SemanticTokensOptions struct {
 	// of a document.
 	Range *TODO_or_literalBoolean `json:"range"`
 	// Server supports providing semantic tokens for a full document.
-	Full *BooleanOrSemanticTokensFullDelta `json:"full"`
+	Full *SemanticTokensFullDeltaOrBoolean `json:"full"`
 }
 
 // @since 3.16.0
@@ -2056,7 +2056,7 @@ type TextDocumentEdit struct {
 	//
 	// @since 3.18.0 - support for SnippetTextEdit. This is guarded using a
 	// client capability.
-	Edits []TextEditOrAnnotatedTextEditOrSnippetTextEdit `json:"edits"`
+	Edits []AnnotatedTextEditOrSnippetTextEditOrTextEdit `json:"edits"`
 }
 
 // Create file operation.
@@ -2213,7 +2213,7 @@ type InlayHintLabelPart struct {
 	// The tooltip text when you hover over this label part. Depending on
 	// the client capability `inlayHint.resolveSupport` clients might resolve
 	// this property late using the resolve request.
-	Tooltip *StringOrMarkupContent `json:"tooltip"`
+	Tooltip *MarkupContentOrString `json:"tooltip"`
 	// An optional source code location that represents this
 	// label part.
 	//
@@ -2410,7 +2410,7 @@ type TextDocumentItem struct {
 // @since 3.17.0
 type NotebookDocumentSyncOptions struct {
 	// The notebooks to be synced
-	NotebookSelector []NotebookDocumentFilterWithNotebookOrNotebookDocumentFilterWithCells `json:"notebookSelector"`
+	NotebookSelector []NotebookDocumentFilterWithCellsOrNotebookDocumentFilterWithNotebook `json:"notebookSelector"`
 	// Whether save notification should be forwarded to
 	// the server. Will only be honored if mode === `notebook`.
 	Save *bool `json:"save"`
@@ -2583,7 +2583,7 @@ type ServerCapabilities struct {
 	// Defines how text documents are synced. Is either a detailed structure
 	// defining each notification or for backwards compatibility the
 	// TextDocumentSyncKind number.
-	TextDocumentSync *TextDocumentSyncOptionsOrTextDocumentSyncKind `json:"textDocumentSync"`
+	TextDocumentSync *TextDocumentSyncKindOrTextDocumentSyncOptions `json:"textDocumentSync"`
 	// Defines how notebook documents are synced.
 	//
 	// @since 3.17.0
@@ -2591,59 +2591,59 @@ type ServerCapabilities struct {
 	// The server provides completion support.
 	CompletionProvider *CompletionOptions `json:"completionProvider"`
 	// The server provides hover support.
-	HoverProvider *BooleanOrHoverOptions `json:"hoverProvider"`
+	HoverProvider *HoverOptionsOrBoolean `json:"hoverProvider"`
 	// The server provides signature help support.
 	SignatureHelpProvider *SignatureHelpOptions `json:"signatureHelpProvider"`
 	// The server provides Goto Declaration support.
-	DeclarationProvider *BooleanOrDeclarationOptionsOrDeclarationRegistrationOptions `json:"declarationProvider"`
+	DeclarationProvider *DeclarationOptionsOrDeclarationRegistrationOptionsOrBoolean `json:"declarationProvider"`
 	// The server provides goto definition support.
-	DefinitionProvider *BooleanOrDefinitionOptions `json:"definitionProvider"`
+	DefinitionProvider *DefinitionOptionsOrBoolean `json:"definitionProvider"`
 	// The server provides Goto Type Definition support.
-	TypeDefinitionProvider *BooleanOrTypeDefinitionOptionsOrTypeDefinitionRegistrationOptions `json:"typeDefinitionProvider"`
+	TypeDefinitionProvider *TypeDefinitionOptionsOrTypeDefinitionRegistrationOptionsOrBoolean `json:"typeDefinitionProvider"`
 	// The server provides Goto Implementation support.
-	ImplementationProvider *BooleanOrImplementationOptionsOrImplementationRegistrationOptions `json:"implementationProvider"`
+	ImplementationProvider *ImplementationOptionsOrImplementationRegistrationOptionsOrBoolean `json:"implementationProvider"`
 	// The server provides find references support.
-	ReferencesProvider *BooleanOrReferenceOptions `json:"referencesProvider"`
+	ReferencesProvider *ReferenceOptionsOrBoolean `json:"referencesProvider"`
 	// The server provides document highlight support.
-	DocumentHighlightProvider *BooleanOrDocumentHighlightOptions `json:"documentHighlightProvider"`
+	DocumentHighlightProvider *DocumentHighlightOptionsOrBoolean `json:"documentHighlightProvider"`
 	// The server provides document symbol support.
-	DocumentSymbolProvider *BooleanOrDocumentSymbolOptions `json:"documentSymbolProvider"`
+	DocumentSymbolProvider *DocumentSymbolOptionsOrBoolean `json:"documentSymbolProvider"`
 	// The server provides code actions. CodeActionOptions may only be
 	// specified if the client states that it supports
 	// `codeActionLiteralSupport` in its initial `initialize` request.
-	CodeActionProvider *BooleanOrCodeActionOptions `json:"codeActionProvider"`
+	CodeActionProvider *CodeActionOptionsOrBoolean `json:"codeActionProvider"`
 	// The server provides code lens.
 	CodeLensProvider *CodeLensOptions `json:"codeLensProvider"`
 	// The server provides document link support.
 	DocumentLinkProvider *DocumentLinkOptions `json:"documentLinkProvider"`
 	// The server provides color provider support.
-	ColorProvider *BooleanOrDocumentColorOptionsOrDocumentColorRegistrationOptions `json:"colorProvider"`
+	ColorProvider *DocumentColorOptionsOrDocumentColorRegistrationOptionsOrBoolean `json:"colorProvider"`
 	// The server provides workspace symbol support.
-	WorkspaceSymbolProvider *BooleanOrWorkspaceSymbolOptions `json:"workspaceSymbolProvider"`
+	WorkspaceSymbolProvider *WorkspaceSymbolOptionsOrBoolean `json:"workspaceSymbolProvider"`
 	// The server provides document formatting.
-	DocumentFormattingProvider *BooleanOrDocumentFormattingOptions `json:"documentFormattingProvider"`
+	DocumentFormattingProvider *DocumentFormattingOptionsOrBoolean `json:"documentFormattingProvider"`
 	// The server provides document range formatting.
-	DocumentRangeFormattingProvider *BooleanOrDocumentRangeFormattingOptions `json:"documentRangeFormattingProvider"`
+	DocumentRangeFormattingProvider *DocumentRangeFormattingOptionsOrBoolean `json:"documentRangeFormattingProvider"`
 	// The server provides document formatting on typing.
 	DocumentOnTypeFormattingProvider *DocumentOnTypeFormattingOptions `json:"documentOnTypeFormattingProvider"`
 	// The server provides rename support. RenameOptions may only be
 	// specified if the client states that it supports
 	// `prepareSupport` in its initial `initialize` request.
-	RenameProvider *BooleanOrRenameOptions `json:"renameProvider"`
+	RenameProvider *RenameOptionsOrBoolean `json:"renameProvider"`
 	// The server provides folding provider support.
-	FoldingRangeProvider *BooleanOrFoldingRangeOptionsOrFoldingRangeRegistrationOptions `json:"foldingRangeProvider"`
+	FoldingRangeProvider *FoldingRangeOptionsOrFoldingRangeRegistrationOptionsOrBoolean `json:"foldingRangeProvider"`
 	// The server provides selection range support.
-	SelectionRangeProvider *BooleanOrSelectionRangeOptionsOrSelectionRangeRegistrationOptions `json:"selectionRangeProvider"`
+	SelectionRangeProvider *SelectionRangeOptionsOrSelectionRangeRegistrationOptionsOrBoolean `json:"selectionRangeProvider"`
 	// The server provides execute command support.
 	ExecuteCommandProvider *ExecuteCommandOptions `json:"executeCommandProvider"`
 	// The server provides call hierarchy support.
 	//
 	// @since 3.16.0
-	CallHierarchyProvider *BooleanOrCallHierarchyOptionsOrCallHierarchyRegistrationOptions `json:"callHierarchyProvider"`
+	CallHierarchyProvider *CallHierarchyOptionsOrCallHierarchyRegistrationOptionsOrBoolean `json:"callHierarchyProvider"`
 	// The server provides linked editing range support.
 	//
 	// @since 3.16.0
-	LinkedEditingRangeProvider *BooleanOrLinkedEditingRangeOptionsOrLinkedEditingRangeRegistrationOptions `json:"linkedEditingRangeProvider"`
+	LinkedEditingRangeProvider *LinkedEditingRangeOptionsOrLinkedEditingRangeRegistrationOptionsOrBoolean `json:"linkedEditingRangeProvider"`
 	// The server provides semantic tokens support.
 	//
 	// @since 3.16.0
@@ -2651,19 +2651,19 @@ type ServerCapabilities struct {
 	// The server provides moniker support.
 	//
 	// @since 3.16.0
-	MonikerProvider *BooleanOrMonikerOptionsOrMonikerRegistrationOptions `json:"monikerProvider"`
+	MonikerProvider *MonikerOptionsOrMonikerRegistrationOptionsOrBoolean `json:"monikerProvider"`
 	// The server provides type hierarchy support.
 	//
 	// @since 3.17.0
-	TypeHierarchyProvider *BooleanOrTypeHierarchyOptionsOrTypeHierarchyRegistrationOptions `json:"typeHierarchyProvider"`
+	TypeHierarchyProvider *TypeHierarchyOptionsOrTypeHierarchyRegistrationOptionsOrBoolean `json:"typeHierarchyProvider"`
 	// The server provides inline values.
 	//
 	// @since 3.17.0
-	InlineValueProvider *BooleanOrInlineValueOptionsOrInlineValueRegistrationOptions `json:"inlineValueProvider"`
+	InlineValueProvider *InlineValueOptionsOrInlineValueRegistrationOptionsOrBoolean `json:"inlineValueProvider"`
 	// The server provides inlay hints.
 	//
 	// @since 3.17.0
-	InlayHintProvider *BooleanOrInlayHintOptionsOrInlayHintRegistrationOptions `json:"inlayHintProvider"`
+	InlayHintProvider *InlayHintOptionsOrInlayHintRegistrationOptionsOrBoolean `json:"inlayHintProvider"`
 	// The server has support for pull model diagnostics.
 	//
 	// @since 3.17.0
@@ -2672,7 +2672,7 @@ type ServerCapabilities struct {
 	//
 	// @since 3.18.0
 	// @proposed
-	InlineCompletionProvider *BooleanOrInlineCompletionOptions `json:"inlineCompletionProvider"`
+	InlineCompletionProvider *InlineCompletionOptionsOrBoolean `json:"inlineCompletionProvider"`
 	// Workspace specific server capabilities.
 	Workspace *WorkspaceOptions `json:"workspace"`
 	// Experimental server capabilities.
@@ -2814,7 +2814,7 @@ type CompletionItemDefaults struct {
 	// A default edit range.
 	//
 	// @since 3.17.0
-	EditRange *RangeOrEditRangeWithInsertReplace `json:"editRange"`
+	EditRange *EditRangeWithInsertReplaceOrRange `json:"editRange"`
 	// A default insert text format.
 	//
 	// @since 3.17.0
@@ -2955,7 +2955,7 @@ type SignatureInformation struct {
 	Label string `json:"label"`
 	// The human-readable doc-comment of this signature. Will be shown
 	// in the UI but can be omitted.
-	Documentation *StringOrMarkupContent `json:"documentation"`
+	Documentation *MarkupContentOrString `json:"documentation"`
 	// The parameters of this signature.
 	Parameters *[]ParameterInformation `json:"parameters"`
 	// The index of the active parameter.
@@ -3361,7 +3361,7 @@ type NotebookDocumentFilterWithNotebook struct {
 	// The notebook to be synced If a string
 	// value is provided it matches against the
 	// notebook type. '*' matches every notebook.
-	Notebook StringOrNotebookDocumentFilter `json:"notebook"`
+	Notebook NotebookDocumentFilterOrString `json:"notebook"`
 	// The cells of the matching notebook to be synced.
 	Cells *[]NotebookCellLanguage `json:"cells"`
 }
@@ -3371,7 +3371,7 @@ type NotebookDocumentFilterWithCells struct {
 	// The notebook to be synced If a string
 	// value is provided it matches against the
 	// notebook type. '*' matches every notebook.
-	Notebook *StringOrNotebookDocumentFilter `json:"notebook"`
+	Notebook *NotebookDocumentFilterOrString `json:"notebook"`
 	// The cells of the matching notebook to be synced.
 	Cells []NotebookCellLanguage `json:"cells"`
 }
@@ -3447,7 +3447,7 @@ type TextDocumentSyncOptions struct {
 	WillSaveWaitUntil *bool `json:"willSaveWaitUntil"`
 	// If present save notifications are sent to the server. If omitted the notification should not be
 	// sent.
-	Save *BooleanOrSaveOptions `json:"save"`
+	Save *SaveOptionsOrBoolean `json:"save"`
 }
 
 // Defines workspace specific capabilities of the server.
@@ -3552,7 +3552,7 @@ type ParameterInformation struct {
 	Label TODO_or_tupleString `json:"label"`
 	// The human-readable doc-comment of this parameter. Will be shown
 	// in the UI but can be omitted.
-	Documentation *StringOrMarkupContent `json:"documentation"`
+	Documentation *MarkupContentOrString `json:"documentation"`
 }
 
 // Documentation for a class of code actions.
@@ -3581,7 +3581,7 @@ type NotebookCellTextDocumentFilter struct {
 	// containing the notebook cell. If a string
 	// value is provided it matches against the
 	// notebook type. '*' matches every notebook.
-	Notebook StringOrNotebookDocumentFilter `json:"notebook"`
+	Notebook NotebookDocumentFilterOrString `json:"notebook"`
 	// A language id like `python`.
 	//
 	// Will be matched against the language id of the
@@ -3880,7 +3880,7 @@ type WorkspaceFoldersServerCapabilities struct {
 	// under which the notification is registered on the client
 	// side. The ID can be used to unregister for these events
 	// using the `client/unregisterCapability` request.
-	ChangeNotifications *StringOrBoolean `json:"changeNotifications"`
+	ChangeNotifications *BooleanOrString `json:"changeNotifications"`
 }
 
 // Options for notifications/requests for user operations on files.
@@ -4921,7 +4921,7 @@ type ClientSemanticTokensRequestOptions struct {
 	Range *TODO_or_literalBoolean `json:"range"`
 	// The client will send the `textDocument/semanticTokens/full` request if
 	// the server provides a corresponding handler.
-	Full *BooleanOrClientSemanticTokensRequestFullDelta `json:"full"`
+	Full *ClientSemanticTokensRequestFullDeltaOrBoolean `json:"full"`
 }
 
 // @since 3.18.0
@@ -5196,7 +5196,7 @@ type DeclarationLink = LocationLink
 // The InlineValue types combines all inline value types into one type.
 //
 // @since 3.17.0
-type InlineValue = InlineValueTextOrInlineValueVariableLookupOrInlineValueEvaluatableExpression
+type InlineValue = InlineValueEvaluatableExpressionOrInlineValueTextOrInlineValueVariableLookup
 
 // The result of a document diagnostic pull request. A report can
 // either be a full report containing all diagnostics for the
@@ -5207,7 +5207,7 @@ type InlineValue = InlineValueTextOrInlineValueVariableLookupOrInlineValueEvalua
 // @since 3.17.0
 type DocumentDiagnosticReport = RelatedFullDocumentDiagnosticReportOrRelatedUnchangedDocumentDiagnosticReport
 
-type PrepareRenameResult = RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehavior
+type PrepareRenameResult = PrepareRenameDefaultBehaviorOrPrepareRenamePlaceholderOrRange
 
 // A document selector is the combination of one or many document filters.
 //
@@ -5244,13 +5244,13 @@ type TextDocumentContentChangeEvent = TextDocumentContentChangePartialOrTextDocu
 // @deprecated use MarkupContent instead.
 //
 // Deprecated: use MarkupContent instead.
-type MarkedString = StringOrMarkedStringWithLanguage
+type MarkedString = MarkedStringWithLanguageOrString
 
 // A document filter describes a top level text document or
 // a notebook cell document.
 //
 // @since 3.17.0 - support for NotebookCellTextDocumentFilter.
-type DocumentFilter = TextDocumentFilterOrNotebookCellTextDocumentFilter
+type DocumentFilter = NotebookCellTextDocumentFilterOrTextDocumentFilter
 
 // LSP object definition.
 // @since 3.17.0
@@ -5277,14 +5277,14 @@ type GlobPattern = PatternOrRelativePattern
 // @sample A language filter that applies to all package.json paths: `{ language: 'json', pattern: '**package.json' }`
 //
 // @since 3.17.0
-type TextDocumentFilter = TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPattern
+type TextDocumentFilter = TextDocumentFilterLanguageOrTextDocumentFilterPatternOrTextDocumentFilterScheme
 
 // A notebook document filter denotes a notebook document by
 // different properties. The properties will be match
 // against the notebook's URI (same as with documents)
 //
 // @since 3.17.0
-type NotebookDocumentFilter = NotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern
+type NotebookDocumentFilter = NotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterPatternOrNotebookDocumentFilterScheme
 
 // The glob pattern to watch relative to the base path. Glob patterns can have the following syntax:
 // - `*` to match one or more characters in a path segment

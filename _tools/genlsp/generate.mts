@@ -84,7 +84,7 @@ function writeOr(t: OrType, wasOptional = false) {
             return false;
         }
         return true;
-    });
+    }).sort(compareTypes);
     if (nullable) {
         if (wasOptional) {
             write("Nullable[");
@@ -108,6 +108,9 @@ function writeOr(t: OrType, wasOptional = false) {
             else if (t.kind === "array" && t.element.kind === "reference") {
                 names.push("ArrayOf" + titleCase(t.element.name));
             }
+            else if (t.kind === "or") {
+                throw new Error("Nested or types are not supported");
+            }
             else {
                 write("TODO_or_" + t.kind);
             }
@@ -121,6 +124,20 @@ function writeOr(t: OrType, wasOptional = false) {
         write("]");
     }
 }
+
+const typeKindOrder: Type["kind"][] = [
+    "reference",
+    "array",
+    "map",
+    "base",
+    "and",
+    "or",
+    "tuple",
+    "literal",
+    "stringLiteral",
+    "integerLiteral",
+    "booleanLiteral",
+];
 
 function compareTypes(a: Type, b: Type): number {
     if (a.kind === "base" && b.kind === "base") {
@@ -180,7 +197,8 @@ function compareTypes(a: Type, b: Type): number {
     if (a.kind === "booleanLiteral" && b.kind === "booleanLiteral") {
         return a.value === b.value ? 0 : a.value ? 1 : -1;
     }
-    return a.kind.localeCompare(b.kind);
+
+    return typeKindOrder.indexOf(a.kind) - typeKindOrder.indexOf(b.kind);
 }
 
 function writeTypeElement(t: Type, wasOptional = false) {
