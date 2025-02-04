@@ -11,24 +11,25 @@ import (
 	"github.com/microsoft/typescript-go/internal/vfs"
 )
 
-func (p *CommandLineParser) AlternateMode() *AlternateModeDiagnostics {
+func (p *commandLineParser) AlternateMode() *AlternateModeDiagnostics {
 	return p.workerDiagnostics.didYouMean.alternateMode
 }
 
-func (p *CommandLineParser) OptionsDeclarations() []*CommandLineOption {
+func (p *commandLineParser) OptionsDeclarations() []*CommandLineOption {
 	return p.workerDiagnostics.didYouMean.OptionDeclarations
 }
 
-func (p *CommandLineParser) UnknownOptionDiagnostic() *diagnostics.Message {
+func (p *commandLineParser) UnknownOptionDiagnostic() *diagnostics.Message {
 	return p.workerDiagnostics.didYouMean.UnknownOptionDiagnostic
 }
 
-func (p *CommandLineParser) UnknownDidYouMeanDiagnostic() *diagnostics.Message {
+func (p *commandLineParser) UnknownDidYouMeanDiagnostic() *diagnostics.Message {
 	return p.workerDiagnostics.didYouMean.UnknownDidYouMeanDiagnostic
 }
 
-type CommandLineParser struct {
+type commandLineParser struct {
 	workerDiagnostics *ParseCommandLineWorkerDiagnostics
+	optionsMap        *NameMap
 	fs                vfs.FS
 	options           map[string]any
 	fileNames         []string
@@ -63,20 +64,20 @@ func parseCommandLineWorker(
 	parseCommandLineWithDiagnostics *ParseCommandLineWorkerDiagnostics,
 	commandLine []string,
 	fs vfs.FS,
-) *CommandLineParser {
-	parser := &CommandLineParser{
+) *commandLineParser {
+	parser := &commandLineParser{
 		fs:                fs,
 		workerDiagnostics: parseCommandLineWithDiagnostics,
 		fileNames:         []string{},
 		options:           map[string]any{},
 		errors:            []*ast.Diagnostic{},
 	}
-	parser.workerDiagnostics.optionsNameMap = GetNameMapFromList(parser.OptionsDeclarations())
+	parser.optionsMap = GetNameMapFromList(parser.OptionsDeclarations())
 	parser.parseStrings(commandLine)
 	return parser
 }
 
-func (p *CommandLineParser) parseStrings(args []string) {
+func (p *commandLineParser) parseStrings(args []string) {
 	i := 0
 	for i < len(args) {
 		s := args[i]
@@ -89,7 +90,7 @@ func (p *CommandLineParser) parseStrings(args []string) {
 			p.parseResponseFile(s[1:])
 		case '-':
 			inputOptionName := getInputOptionName(s)
-			opt := p.workerDiagnostics.optionsNameMap.GetOptionDeclarationFromName(inputOptionName, true /*allowShort*/)
+			opt := p.optionsMap.GetOptionDeclarationFromName(inputOptionName, true /*allowShort*/)
 			if opt != nil {
 				i = p.parseOptionValue(args, i, opt, nil)
 			} else {
@@ -111,7 +112,7 @@ func getInputOptionName(input string) string {
 	return strings.ToLower(strings.TrimLeft(strings.TrimLeft(input, "-"), "-"))
 }
 
-func (p *CommandLineParser) parseResponseFile(fileName string) {
+func (p *commandLineParser) parseResponseFile(fileName string) {
 	fileContents, errors := TryReadFile(fileName, func(fileName string) (string, bool) {
 		if p.fs == nil {
 			return "", false
@@ -171,13 +172,13 @@ func TryReadFile(fileName string, readFile func(string) (string, bool), errors [
 	return text, errors
 }
 
-func (p *CommandLineParser) parseOptionValue(
+func (p *commandLineParser) parseOptionValue(
 	args []string,
 	i int,
 	opt *CommandLineOption,
 	diag *diagnostics.Message,
 ) int {
-	if opt.isTSConfigOnly && i <= len(args) {
+	if opt.IsTSConfigOnly && i <= len(args) {
 		optValue := ""
 		if i < len(args) {
 			optValue = args[i]
@@ -274,7 +275,7 @@ func (p *CommandLineParser) parseOptionValue(
 	return i
 }
 
-func (p *CommandLineParser) parseListTypeOption(opt *CommandLineOption, value string) ([]string, []*ast.Diagnostic) {
+func (p *commandLineParser) parseListTypeOption(opt *CommandLineOption, value string) ([]string, []*ast.Diagnostic) {
 	return ParseListTypeOption(opt, value)
 }
 

@@ -7,8 +7,9 @@ import (
 )
 
 var (
-	BuildNameMap = GetNameMapFromList(BuildOpts)
-	WatchNameMap = GetNameMapFromList(optionsForWatch)
+	CompilerNameMap = GetNameMapFromList(OptionsDeclarations)
+	BuildNameMap    = GetNameMapFromList(BuildOpts)
+	WatchNameMap    = GetNameMapFromList(optionsForWatch)
 )
 
 func GetNameMapFromList(optDecls []*CommandLineOption) *NameMap {

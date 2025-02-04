@@ -57,7 +57,7 @@ var buildOptionsDidYouMeanDiagnostics = &ParseCommandLineWorkerDiagnostics{
 	didYouMean: DidYouMeanOptionsDiagnostics{
 		alternateMode: &AlternateModeDiagnostics{
 			diagnostic:     diagnostics.Compiler_option_0_may_not_be_used_with_build,
-			optionsNameMap: GetNameMapFromList(OptionsDeclarations),
+			optionsNameMap: CompilerNameMap,
 		},
 		OptionDeclarations:          BuildOpts,
 		UnknownOptionDiagnostic:     diagnostics.Unknown_build_option_0,

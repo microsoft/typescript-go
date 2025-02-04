@@ -1,4 +1,4 @@
-package tsoptions
+package tsoptions_test
 
 import (
 	"encoding/json"
@@ -12,6 +12,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/repo"
 	"github.com/microsoft/typescript-go/internal/testutil/baseline"
 	"github.com/microsoft/typescript-go/internal/testutil/filefixture"
+	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/vfs"
 	"gotest.tools/v3/assert"
 )
@@ -103,8 +104,8 @@ func TestParseCommandLineVerifyNull(t *testing.T) {
 			optionName:   "rootDirs",
 			nonNullValue: "abc,xyz",
 		},
-		createVerifyNullForNonNullIncluded("option of type string", CommandLineOptionTypeString, "hello"),
-		createVerifyNullForNonNullIncluded("option of type number", CommandLineOptionTypeNumber, "10"),
+		createVerifyNullForNonNullIncluded("option of type string", tsoptions.CommandLineOptionTypeString, "hello"),
+		createVerifyNullForNonNullIncluded("option of type number", tsoptions.CommandLineOptionTypeNumber, "10"),
 		// todo: make the following work for tests -- currently it is difficult to do extra options of enum type
 		// createVerifyNullForNonNullIncluded("option of type custom map", CommandLineOptionTypeEnum, "node"),
 	}
@@ -113,46 +114,44 @@ func TestParseCommandLineVerifyNull(t *testing.T) {
 		createSubScenario(
 			verifyNullCase.subScenario+" allows setting it to null",
 			[]string{"--" + verifyNullCase.optionName, "null", "0.ts"},
-			verifyNullCase.workerDiagnostic,
+			verifyNullCase.optDecls,
 		).assertParseResult(t)
 
 		if verifyNullCase.nonNullValue != "" {
 			createSubScenario(
 				verifyNullCase.subScenario+" errors if non null value is passed",
 				[]string{"--" + verifyNullCase.optionName, verifyNullCase.nonNullValue, "0.ts"},
-				verifyNullCase.workerDiagnostic,
+				verifyNullCase.optDecls,
 			).assertParseResult(t)
 		}
 
 		createSubScenario(
 			verifyNullCase.subScenario+" errors if its followed by another option",
 			[]string{"0.ts", "--strictNullChecks", "--" + verifyNullCase.optionName},
-			verifyNullCase.workerDiagnostic,
+			verifyNullCase.optDecls,
 		).assertParseResult(t)
 
 		createSubScenario(
 			verifyNullCase.subScenario+" errors if its last option",
 			[]string{"0.ts", "--" + verifyNullCase.optionName},
-			verifyNullCase.workerDiagnostic,
+			verifyNullCase.optDecls,
 		).assertParseResult(t)
 	}
 }
 
-func createVerifyNullForNonNullIncluded(subScenario string, kind CommandLineOptionKind, nonNullValue string) verifyNull {
-	workerDiagnostics := getParseCommandLineWorkerDiagnostics(append(OptionsDeclarations, &CommandLineOption{
-		Name:                    "optionName",
-		Kind:                    kind,
-		isTSConfigOnly:          true,
-		category:                diagnostics.Backwards_Compatibility,
-		description:             diagnostics.Enable_project_compilation,
-		defaultValueDescription: nil,
-	}))
-
+func createVerifyNullForNonNullIncluded(subScenario string, kind tsoptions.CommandLineOptionKind, nonNullValue string) verifyNull {
 	return verifyNull{
-		subScenario:      subScenario,
-		optionName:       "optionName",
-		nonNullValue:     nonNullValue,
-		workerDiagnostic: workerDiagnostics,
+		subScenario:  subScenario,
+		optionName:   "optionName",
+		nonNullValue: nonNullValue,
+		optDecls: append(tsoptions.OptionsDeclarations, &tsoptions.CommandLineOption{
+			Name:                    "optionName",
+			Kind:                    kind,
+			IsTSConfigOnly:          true,
+			Category:                diagnostics.Backwards_Compatibility,
+			Description:             diagnostics.Enable_project_compilation,
+			DefaultValueDescription: nil,
+		}),
 	}
 }
 
@@ -164,12 +163,12 @@ func (f commandLineSubScenario) assertParseResult(t *testing.T) {
 		tsBaseline := parseExistingCompilerBaseline(t, originalBaseline)
 
 		// f.workerDiagnostic is either defined or set to default pointer in `createSubScenario`
-		parsed := parseCommandLineWorker(f.workerDiagnostic, f.commandLine, vfs.FromOS())
+		parsed := tsoptions.ParseCommandLineTestWorker(f.optDecls, f.commandLine, vfs.FromOS())
 
-		newBaselineFileNames := strings.Join(parsed.fileNames, ",")
+		newBaselineFileNames := strings.Join(parsed.FileNames, ",")
 		assert.Equal(t, tsBaseline.fileNames, newBaselineFileNames)
 
-		o, _ := json.Marshal(parsed.options)
+		o, _ := json.Marshal(parsed.Options)
 		newParsedCompilerOptions := core.CompilerOptions{}
 		e := json.Unmarshal(o, &newParsedCompilerOptions)
 		assert.NilError(t, e)
@@ -183,7 +182,7 @@ func (f commandLineSubScenario) assertParseResult(t *testing.T) {
 		// assert.DeepEqual(t, tsBaseline.watchoptions, newParsedWatchOptions)
 
 		var formattedErrors strings.Builder
-		diagnosticwriter.WriteFormatDiagnostics(&formattedErrors, parsed.errors, &diagnosticwriter.FormattingOptions{NewLine: "\n"})
+		diagnosticwriter.WriteFormatDiagnostics(&formattedErrors, parsed.Errors, &diagnosticwriter.FormattingOptions{NewLine: "\n"})
 		newBaselineErrors := formattedErrors.String()
 
 		// !!!
@@ -261,23 +260,19 @@ func formatNewBaseline(
 // 	return &parser
 // }
 
-func createSubScenario(subScenarioName string, commandline []string, d ...*ParseCommandLineWorkerDiagnostics) *commandLineSubScenario {
+func createSubScenario(subScenarioName string, commandline []string, opts ...[]*tsoptions.CommandLineOption) *commandLineSubScenario {
 	baselineFileName := "tests/baselines/reference/config/commandLineParsing/parseCommandLine/" + subScenarioName + ".js"
-	var workerDiagnostic *ParseCommandLineWorkerDiagnostics
 
-	// d is used for optional workerDiagnostic
-	if d == nil || d[0] == nil {
-		workerDiagnostic = CompilerOptionsDidYouMeanDiagnostics
-	} else {
-		workerDiagnostic = d[0]
-	}
-
-	return &commandLineSubScenario{
+	result := &commandLineSubScenario{
 		filefixture.FromFile(subScenarioName, filepath.Join(repo.TypeScriptSubmodulePath, baselineFileName)),
 		subScenarioName,
 		commandline,
-		workerDiagnostic,
+		nil,
 	}
+	if len(opts) > 0 {
+		result.optDecls = opts[0]
+	}
+	return result
 }
 
 type subScenarioInput struct {
@@ -290,17 +285,17 @@ func (f subScenarioInput) createSubScenario() *commandLineSubScenario {
 }
 
 type commandLineSubScenario struct {
-	baseline         filefixture.Fixture
-	testName         string
-	commandLine      []string
-	workerDiagnostic *ParseCommandLineWorkerDiagnostics
+	baseline    filefixture.Fixture
+	testName    string
+	commandLine []string
+	optDecls    []*tsoptions.CommandLineOption
 }
 
 type verifyNull struct {
-	subScenario      string
-	optionName       string
-	nonNullValue     string
-	workerDiagnostic *ParseCommandLineWorkerDiagnostics
+	subScenario  string
+	optionName   string
+	nonNullValue string
+	optDecls     []*tsoptions.CommandLineOption
 }
 
 type TestCommandLineParser struct {
@@ -313,7 +308,7 @@ func TestAffectsBuildInfo(t *testing.T) {
 	t.Parallel()
 	t.Run("should have affectsBuildInfo true for every option with affectsSemanticDiagnostics", func(t *testing.T) {
 		t.Parallel()
-		for _, option := range OptionsDeclarations {
+		for _, option := range tsoptions.OptionsDeclarations {
 			if option.AffectsSemanticDiagnostics {
 				// semantic diagnostics affect the build info, so ensure they're included
 				assert.Assert(t, option.AffectsBuildInfo)

@@ -40,13 +40,13 @@ var compilerOptionsDeclaration = &CommandLineOption{
 var compileOnSaveCommandLineOption = &CommandLineOption{
 	Name:                    "compileOnSave",
 	Kind:                    CommandLineOptionTypeBoolean,
-	defaultValueDescription: false,
+	DefaultValueDescription: false,
 }
 
 var extendsOptionDeclaration = &CommandLineOption{
 	Name:     "extends",
 	Kind:     CommandLineOptionTypeListOrElement,
-	category: diagnostics.File_Management,
+	Category: diagnostics.File_Management,
 	ElementOptions: map[string]*CommandLineOption{
 		"extends": {Name: "extends", Kind: CommandLineOptionTypeString},
 	},

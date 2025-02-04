@@ -24,16 +24,16 @@ type CommandLineOption struct {
 
 	// used in parsing
 	isFilePath        bool
-	isTSConfigOnly    bool
+	IsTSConfigOnly    bool
 	IsCommandLineOnly bool
 
 	// used in output
-	description              *diagnostics.Message
-	defaultValueDescription  any
+	Description              *diagnostics.Message
+	DefaultValueDescription  any
 	showInSimplifiedHelpView bool
 
 	// used in output in serializing and generate tsconfig
-	category *diagnostics.Message
+	Category *diagnostics.Message
 
 	// a flag indicating whether `validateJsonOptionValue` should perform extra checks
 	extraValidation bool
@@ -95,7 +95,7 @@ var commandLineOptionElements = map[string]*CommandLineOption{
 	"lib": {
 		Name:                    "lib",
 		Kind:                    CommandLineOptionTypeEnum, // libMap,
-		defaultValueDescription: core.TSUnknown,
+		DefaultValueDescription: core.TSUnknown,
 	},
 	"rootDirs": {
 		Name:       "rootDirs",
