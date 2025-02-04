@@ -3169,12 +3169,11 @@ func (c *Checker) issueMemberSpecificError(node *ast.Node, typeWithThis *Type, b
 			prop := c.getPropertyOfType(typeWithThis, declaredProp.Name)
 			baseProp := c.getPropertyOfType(baseWithThis, declaredProp.Name)
 			if prop != nil && baseProp != nil {
-				var diagnostic *ast.Diagnostic
-				c.checkTypeAssignableToEx(c.getTypeOfSymbol(prop), c.getTypeOfSymbol(baseProp), core.OrElse(member.Name(), member), nil /*headMessage*/, &diagnostic)
-				if diagnostic != nil {
-					c.diagnostics.Add(ast.NewDiagnosticChain(diagnostic, diagnostics.Property_0_in_type_1_is_not_assignable_to_the_same_property_in_base_type_2, c.symbolToString(declaredProp), c.typeToString(typeWithThis), c.typeToString(baseWithThis)))
+				var diags []*ast.Diagnostic
+				if !c.checkTypeAssignableToEx(c.getTypeOfSymbol(prop), c.getTypeOfSymbol(baseProp), core.OrElse(member.Name(), member), nil /*headMessage*/, &diags) {
+					c.diagnostics.Add(ast.NewDiagnosticChain(diags[0], diagnostics.Property_0_in_type_1_is_not_assignable_to_the_same_property_in_base_type_2, c.symbolToString(declaredProp), c.typeToString(typeWithThis), c.typeToString(baseWithThis)))
+					issuedMemberError = true
 				}
-				issuedMemberError = true
 			}
 		}
 	}
@@ -6700,9 +6699,10 @@ func (c *Checker) checkTypeArguments(signature *Signature, typeArgumentNodes []*
 			if reportErrors {
 				errorNode = typeArgumentNodes[i]
 			}
-			var diagnostic *ast.Diagnostic
-			if !c.checkTypeAssignableToEx(typeArgument, c.getTypeWithThisArgument(c.instantiateType(constraint, mapper), typeArgument, false), errorNode, typeArgumentHeadMessage, &diagnostic) {
-				if diagnostic != nil {
+			var diags []*ast.Diagnostic
+			if !c.checkTypeAssignableToEx(typeArgument, c.getTypeWithThisArgument(c.instantiateType(constraint, mapper), typeArgument, false), errorNode, typeArgumentHeadMessage, &diags) {
+				if len(diags) != 0 {
+					diagnostic := diags[0]
 					if headMessage != nil {
 						diagnostic = ast.NewDiagnosticChain(diagnostic, diagnostics.Type_0_does_not_satisfy_the_constraint_1)
 					}
@@ -6715,7 +6715,7 @@ func (c *Checker) checkTypeArguments(signature *Signature, typeArgumentNodes []*
 	return typeArgumentTypes
 }
 
-func (c *Checker) isSignatureApplicable(node *ast.Node, args []*ast.Node, signature *Signature, relation *Relation, checkMode CheckMode, reportErrors bool, inferenceContext *InferenceContext, diagnosticOutput **ast.Diagnostic) bool {
+func (c *Checker) isSignatureApplicable(node *ast.Node, args []*ast.Node, signature *Signature, relation *Relation, checkMode CheckMode, reportErrors bool, inferenceContext *InferenceContext, diagnosticOutput *[]*ast.Diagnostic) bool {
 	if isJsxOpeningLikeElement(node) {
 		// !!!
 		// if !c.checkApplicableSignatureForJsxOpeningLikeElement(node, signature, relation, checkMode, reportErrors, containingMessageChain, errorOutputContainer) {
@@ -7058,20 +7058,22 @@ func (c *Checker) reportCallResolutionErrors(s *CallState, signatures []*Signatu
 	case len(s.candidatesForArgumentError) != 0:
 		// !!! Port logic that lists all diagnostics up to 3
 		last := s.candidatesForArgumentError[len(s.candidatesForArgumentError)-1]
-		var diagnostic *ast.Diagnostic
-		c.isSignatureApplicable(s.node, s.args, last, c.assignableRelation, CheckModeNormal, true /*reportErrors*/, nil /*inferenceContext*/, &diagnostic)
-		if len(s.candidatesForArgumentError) > 1 {
-			diagnostic = ast.NewDiagnosticChain(diagnostic, diagnostics.The_last_overload_gave_the_following_error)
-			diagnostic = ast.NewDiagnosticChain(diagnostic, diagnostics.No_overload_matches_this_call)
+		var diags []*ast.Diagnostic
+		c.isSignatureApplicable(s.node, s.args, last, c.assignableRelation, CheckModeNormal, true /*reportErrors*/, nil /*inferenceContext*/, &diags)
+		for _, diagnostic := range diags {
+			if len(s.candidatesForArgumentError) > 1 {
+				diagnostic = ast.NewDiagnosticChain(diagnostic, diagnostics.The_last_overload_gave_the_following_error)
+				diagnostic = ast.NewDiagnosticChain(diagnostic, diagnostics.No_overload_matches_this_call)
+			}
+			if headMessage != nil {
+				diagnostic = ast.NewDiagnosticChain(diagnostic, headMessage)
+			}
+			if last.declaration != nil && len(s.candidatesForArgumentError) > 3 {
+				diagnostic.AddRelatedInfo(NewDiagnosticForNode(last.declaration, diagnostics.The_last_overload_is_declared_here))
+			}
+			// !!! addImplementationSuccessElaboration(last, d)
+			c.diagnostics.Add(diagnostic)
 		}
-		if headMessage != nil {
-			diagnostic = ast.NewDiagnosticChain(diagnostic, headMessage)
-		}
-		if last.declaration != nil && len(s.candidatesForArgumentError) > 3 {
-			diagnostic.AddRelatedInfo(NewDiagnosticForNode(last.declaration, diagnostics.The_last_overload_is_declared_here))
-		}
-		// !!! addImplementationSuccessElaboration(last, d)
-		c.diagnostics.Add(diagnostic)
 	case s.candidateForArgumentArityError != nil:
 		c.diagnostics.Add(c.getArgumentArityError(s.node, []*Signature{s.candidateForArgumentArityError}, s.args, headMessage))
 	case s.candidateForTypeArgumentError != nil:

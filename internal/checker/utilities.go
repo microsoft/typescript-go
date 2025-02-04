@@ -2553,3 +2553,7 @@ func getEnclosingContainer(node *ast.Node) *ast.Node {
 func getDeclarationsOfKind(symbol *ast.Symbol, kind ast.Kind) []*ast.Node {
 	return core.Filter(symbol.Declarations, func(d *ast.Node) bool { return d.Kind == kind })
 }
+
+func hasType(node *ast.Node) bool {
+	return node.Type() != nil
+}
