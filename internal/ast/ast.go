@@ -1468,6 +1468,7 @@ type (
 	ParameterDeclarationNode        = Node
 	HeritageClauseNode              = Node
 	ExpressionWithTypeArgumentsNode = Node
+	EnumDeclarationNode             = Node
 	EnumMemberNode                  = Node
 	ImportClauseNode                = Node
 	ImportAttributesNode            = Node
