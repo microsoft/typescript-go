@@ -35,7 +35,7 @@ type CommandLineOption struct {
 	// used in output in serializing and generate tsconfig
 	category *diagnostics.Message
 
-	// defined once
+	// a flag indicating whether `validateJsonOptionValue` should perform extra checks
 	extraValidation bool
 
 	// true or undefined

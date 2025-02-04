@@ -93,7 +93,6 @@ func (p *CommandLineParser) parseStrings(args []string) {
 			if opt != nil {
 				i = p.parseOptionValue(args, i, opt, nil)
 			} else {
-				// todo: watch options not yet implemented
 				watchOpt := WatchNameMap.GetOptionDeclarationFromName(inputOptionName, true /*allowShort*/)
 				if watchOpt != nil {
 					i = p.parseOptionValue(args, i, watchOpt, watchOptionsDidYouMeanDiagnostics.OptionTypeMismatchDiagnostic)
@@ -176,7 +175,7 @@ func (p *CommandLineParser) parseOptionValue(
 	args []string,
 	i int,
 	opt *CommandLineOption,
-	didYouMean *diagnostics.Message,
+	diag *diagnostics.Message,
 ) int {
 	if opt.isTSConfigOnly && i <= len(args) {
 		optValue := ""
@@ -206,9 +205,8 @@ func (p *CommandLineParser) parseOptionValue(
 		// Check to see if no argument was provided (e.g. "--locale" is the last command-line argument).
 		if i >= len(args) {
 			if opt.Kind != "boolean" {
-				diag := p.workerDiagnostics.OptionTypeMismatchDiagnostic
-				if didYouMean != nil {
-					diag = didYouMean
+				if diag == nil {
+					diag = p.workerDiagnostics.OptionTypeMismatchDiagnostic
 				}
 				p.errors = append(p.errors, ast.NewCompilerDiagnostic(diag, opt.Name, getCompilerOptionValueTypeString(opt)))
 				if opt.Kind == "list" {
