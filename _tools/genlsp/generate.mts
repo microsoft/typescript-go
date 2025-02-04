@@ -59,6 +59,7 @@ function writeDocumentation(doc: string | undefined) {
 
 function writeDeprecation(deprecated: string | undefined) {
     if (deprecated) {
+        writeLine("//");
         startLine("// Deprecated: ");
         finishLine(deprecated);
     }
@@ -146,6 +147,7 @@ writeLine("");
 
 writeLine("type URI string\n");
 writeLine("type DocumentUri string\n");
+writeLine("type Method string\n");
 
 writeLine("");
 
@@ -205,6 +207,10 @@ for (const t of model.typeAliases) {
     writeTypeElement(t.type);
     writeLine("\n");
 }
+
+// for (const t of model.requests) {
+//     writeLine("const " + t.method + ' Method = "' + t.method + '"');
+// }
 
 // for _, t := range model.Requests {
 // 	if t.Params

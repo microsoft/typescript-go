@@ -8,6 +8,8 @@ type URI string
 
 type DocumentUri string
 
+type Method string
+
 type ImplementationParams struct {
 	TextDocumentPositionParams
 	WorkDoneProgressParams
@@ -1070,6 +1072,7 @@ type CompletionItem struct {
 	Documentation *TODO_or `json:"documentation"`
 	// Indicates if this item is deprecated.
 	// @deprecated Use `tags` instead.
+	//
 	// Deprecated: Use `tags` instead.
 	Deprecated *bool `json:"deprecated"`
 	// Select this item when showing.
@@ -1354,6 +1357,7 @@ type SymbolInformation struct {
 	// Indicates if this symbol is deprecated.
 	//
 	// @deprecated Use tags instead
+	//
 	// Deprecated: Use tags instead
 	Deprecated *bool `json:"deprecated"`
 	// The location of this symbol. The location's range is used by a tool
@@ -1387,6 +1391,7 @@ type DocumentSymbol struct {
 	// Indicates if this symbol is deprecated.
 	//
 	// @deprecated Use tags instead
+	//
 	// Deprecated: Use tags instead
 	Deprecated *bool `json:"deprecated"`
 	// The range enclosing this symbol not including leading/trailing whitespace but everything else
@@ -2509,6 +2514,7 @@ type _InitializeParams struct {
 	// if no folder is open.
 	//
 	// @deprecated in favour of rootUri.
+	//
 	// Deprecated: in favour of rootUri.
 	RootPath *TODO_or `json:"rootPath"`
 	// The rootUri of the workspace. Is null if no
@@ -2516,6 +2522,7 @@ type _InitializeParams struct {
 	// `rootUri` wins.
 	//
 	// @deprecated in favour of workspaceFolders.
+	//
 	// Deprecated: in favour of workspaceFolders.
 	RootUri TODO_or `json:"rootUri"`
 	// The capabilities provided by the client (editor or tool)
@@ -3446,6 +3453,7 @@ type TextDocumentContentChangePartial struct {
 	// The optional length of the range that got replaced.
 	//
 	// @deprecated use range instead.
+	//
 	// Deprecated: use range instead.
 	RangeLength *uint32 `json:"rangeLength"`
 	// The new text for the provided range.
@@ -3496,6 +3504,7 @@ type ServerCompletionItemOptions struct {
 
 // @since 3.18.0
 // @deprecated use MarkupContent instead.
+//
 // Deprecated: use MarkupContent instead.
 type MarkedStringWithLanguage struct {
 	Language string `json:"language"`
@@ -5210,6 +5219,7 @@ type TextDocumentContentChangeEvent = TODO_or
 //
 // Note that markdown strings will be sanitized - that means html will be escaped.
 // @deprecated use MarkupContent instead.
+//
 // Deprecated: use MarkupContent instead.
 type MarkedString = TODO_or
 
