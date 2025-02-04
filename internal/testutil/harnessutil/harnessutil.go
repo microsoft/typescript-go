@@ -510,7 +510,7 @@ func GetFileBasedTestConfigurations(t *testing.T, settings map[string]string, va
 	for option, value := range settings {
 		if _, ok := varyByOptions[option]; ok {
 			entries := splitOptionValues(t, value, option)
-			if len(entries) > 0 {
+			if len(entries) > 1 {
 				variationCount *= len(entries)
 				if variationCount > 25 {
 					t.Fatal("Provided test options exceeded the maximum number of variations")
@@ -518,7 +518,7 @@ func GetFileBasedTestConfigurations(t *testing.T, settings map[string]string, va
 				optionEntries = append(optionEntries, append([]string{option}, entries...))
 			}
 		} else {
-			// Variation is not supported for the option
+			// Variation is not supported or not needed for the option
 			nonVariyingOptions[option] = value
 		}
 	}
