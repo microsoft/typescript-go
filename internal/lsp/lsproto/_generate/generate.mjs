@@ -441,7 +441,7 @@ function methodNameToIdentifier(method) {
 writeLine("// Unmarshallers\n");
 
 writeLine("var unmarshallers = map[Method]func([]byte) (any, error){");
-for (const t of model.requests) {
+for (const t of [...model.requests, ...model.notifications]) {
     if (t.messageDirection === "serverToClient") {
         continue;
     }
@@ -453,21 +453,7 @@ for (const t of model.requests) {
         name = t.params.name;
     }
 
-    writeLine(`MethodRequest${methodNameToIdentifier(t.method)}: unmarshallerFor[${name}],`);
-}
-for (const t of model.notifications) {
-    if (t.messageDirection === "serverToClient") {
-        continue;
-    }
-
-    let name = "any";
-    if (t.params) {
-        assert(!Array.isArray(t.params));
-        assert(t.params.kind === "reference");
-        name = t.params.name;
-    }
-
-    writeLine(`MethodNotification${methodNameToIdentifier(t.method)}: unmarshallerFor[${name}],`);
+    writeLine(`Method${methodNameToIdentifier(t.method)}: unmarshallerFor[${name}],`);
 }
 writeLine("}");
 
@@ -476,7 +462,7 @@ writeLine("// Requests\n");
 for (const t of model.requests) {
     writeDocumentation(t.documentation);
     writeDeprecation(t.deprecated);
-    writeLine("const MethodRequest" + methodNameToIdentifier(t.method) + ' Method = "' + t.method + '"\n');
+    writeLine("const Method" + methodNameToIdentifier(t.method) + ' Method = "' + t.method + '"\n');
 }
 
 writeLine("// Notifications\n");
@@ -484,7 +470,7 @@ writeLine("// Notifications\n");
 for (const t of model.notifications) {
     writeDocumentation(t.documentation);
     writeDeprecation(t.deprecated);
-    writeLine("const MethodNotification" + methodNameToIdentifier(t.method) + ' Method = "' + t.method + '"\n');
+    writeLine("const Method" + methodNameToIdentifier(t.method) + ' Method = "' + t.method + '"\n');
 }
 
 writeLine("// Union types\n");

@@ -7076,81 +7076,81 @@ type RegularExpressionEngineKind = string
 // Unmarshallers
 
 var unmarshallers = map[Method]func([]byte) (any, error){
-	MethodRequestTextDocumentImplementation:              unmarshallerFor[ImplementationParams],
-	MethodRequestTextDocumentTypeDefinition:              unmarshallerFor[TypeDefinitionParams],
-	MethodRequestTextDocumentDocumentColor:               unmarshallerFor[DocumentColorParams],
-	MethodRequestTextDocumentColorPresentation:           unmarshallerFor[ColorPresentationParams],
-	MethodRequestTextDocumentFoldingRange:                unmarshallerFor[FoldingRangeParams],
-	MethodRequestTextDocumentDeclaration:                 unmarshallerFor[DeclarationParams],
-	MethodRequestTextDocumentSelectionRange:              unmarshallerFor[SelectionRangeParams],
-	MethodRequestTextDocumentPrepareCallHierarchy:        unmarshallerFor[CallHierarchyPrepareParams],
-	MethodRequestCallHierarchyIncomingCalls:              unmarshallerFor[CallHierarchyIncomingCallsParams],
-	MethodRequestCallHierarchyOutgoingCalls:              unmarshallerFor[CallHierarchyOutgoingCallsParams],
-	MethodRequestTextDocumentSemanticTokensFull:          unmarshallerFor[SemanticTokensParams],
-	MethodRequestTextDocumentSemanticTokensFullDelta:     unmarshallerFor[SemanticTokensDeltaParams],
-	MethodRequestTextDocumentSemanticTokensRange:         unmarshallerFor[SemanticTokensRangeParams],
-	MethodRequestTextDocumentLinkedEditingRange:          unmarshallerFor[LinkedEditingRangeParams],
-	MethodRequestWorkspaceWillCreateFiles:                unmarshallerFor[CreateFilesParams],
-	MethodRequestWorkspaceWillRenameFiles:                unmarshallerFor[RenameFilesParams],
-	MethodRequestWorkspaceWillDeleteFiles:                unmarshallerFor[DeleteFilesParams],
-	MethodRequestTextDocumentMoniker:                     unmarshallerFor[MonikerParams],
-	MethodRequestTextDocumentPrepareTypeHierarchy:        unmarshallerFor[TypeHierarchyPrepareParams],
-	MethodRequestTypeHierarchySupertypes:                 unmarshallerFor[TypeHierarchySupertypesParams],
-	MethodRequestTypeHierarchySubtypes:                   unmarshallerFor[TypeHierarchySubtypesParams],
-	MethodRequestTextDocumentInlineValue:                 unmarshallerFor[InlineValueParams],
-	MethodRequestTextDocumentInlayHint:                   unmarshallerFor[InlayHintParams],
-	MethodRequestInlayHintResolve:                        unmarshallerFor[InlayHint],
-	MethodRequestTextDocumentDiagnostic:                  unmarshallerFor[DocumentDiagnosticParams],
-	MethodRequestWorkspaceDiagnostic:                     unmarshallerFor[WorkspaceDiagnosticParams],
-	MethodRequestTextDocumentInlineCompletion:            unmarshallerFor[InlineCompletionParams],
-	MethodRequestWorkspaceTextDocumentContent:            unmarshallerFor[TextDocumentContentParams],
-	MethodRequestInitialize:                              unmarshallerFor[InitializeParams],
-	MethodRequestShutdown:                                unmarshallerFor[any],
-	MethodRequestTextDocumentWillSaveWaitUntil:           unmarshallerFor[WillSaveTextDocumentParams],
-	MethodRequestTextDocumentCompletion:                  unmarshallerFor[CompletionParams],
-	MethodRequestCompletionItemResolve:                   unmarshallerFor[CompletionItem],
-	MethodRequestTextDocumentHover:                       unmarshallerFor[HoverParams],
-	MethodRequestTextDocumentSignatureHelp:               unmarshallerFor[SignatureHelpParams],
-	MethodRequestTextDocumentDefinition:                  unmarshallerFor[DefinitionParams],
-	MethodRequestTextDocumentReferences:                  unmarshallerFor[ReferenceParams],
-	MethodRequestTextDocumentDocumentHighlight:           unmarshallerFor[DocumentHighlightParams],
-	MethodRequestTextDocumentDocumentSymbol:              unmarshallerFor[DocumentSymbolParams],
-	MethodRequestTextDocumentCodeAction:                  unmarshallerFor[CodeActionParams],
-	MethodRequestCodeActionResolve:                       unmarshallerFor[CodeAction],
-	MethodRequestWorkspaceSymbol:                         unmarshallerFor[WorkspaceSymbolParams],
-	MethodRequestWorkspaceSymbolResolve:                  unmarshallerFor[WorkspaceSymbol],
-	MethodRequestTextDocumentCodeLens:                    unmarshallerFor[CodeLensParams],
-	MethodRequestCodeLensResolve:                         unmarshallerFor[CodeLens],
-	MethodRequestTextDocumentDocumentLink:                unmarshallerFor[DocumentLinkParams],
-	MethodRequestDocumentLinkResolve:                     unmarshallerFor[DocumentLink],
-	MethodRequestTextDocumentFormatting:                  unmarshallerFor[DocumentFormattingParams],
-	MethodRequestTextDocumentRangeFormatting:             unmarshallerFor[DocumentRangeFormattingParams],
-	MethodRequestTextDocumentRangesFormatting:            unmarshallerFor[DocumentRangesFormattingParams],
-	MethodRequestTextDocumentOnTypeFormatting:            unmarshallerFor[DocumentOnTypeFormattingParams],
-	MethodRequestTextDocumentRename:                      unmarshallerFor[RenameParams],
-	MethodRequestTextDocumentPrepareRename:               unmarshallerFor[PrepareRenameParams],
-	MethodRequestWorkspaceExecuteCommand:                 unmarshallerFor[ExecuteCommandParams],
-	MethodNotificationWorkspaceDidChangeWorkspaceFolders: unmarshallerFor[DidChangeWorkspaceFoldersParams],
-	MethodNotificationWindowWorkDoneProgressCancel:       unmarshallerFor[WorkDoneProgressCancelParams],
-	MethodNotificationWorkspaceDidCreateFiles:            unmarshallerFor[CreateFilesParams],
-	MethodNotificationWorkspaceDidRenameFiles:            unmarshallerFor[RenameFilesParams],
-	MethodNotificationWorkspaceDidDeleteFiles:            unmarshallerFor[DeleteFilesParams],
-	MethodNotificationNotebookDocumentDidOpen:            unmarshallerFor[DidOpenNotebookDocumentParams],
-	MethodNotificationNotebookDocumentDidChange:          unmarshallerFor[DidChangeNotebookDocumentParams],
-	MethodNotificationNotebookDocumentDidSave:            unmarshallerFor[DidSaveNotebookDocumentParams],
-	MethodNotificationNotebookDocumentDidClose:           unmarshallerFor[DidCloseNotebookDocumentParams],
-	MethodNotificationInitialized:                        unmarshallerFor[InitializedParams],
-	MethodNotificationExit:                               unmarshallerFor[any],
-	MethodNotificationWorkspaceDidChangeConfiguration:    unmarshallerFor[DidChangeConfigurationParams],
-	MethodNotificationTextDocumentDidOpen:                unmarshallerFor[DidOpenTextDocumentParams],
-	MethodNotificationTextDocumentDidChange:              unmarshallerFor[DidChangeTextDocumentParams],
-	MethodNotificationTextDocumentDidClose:               unmarshallerFor[DidCloseTextDocumentParams],
-	MethodNotificationTextDocumentDidSave:                unmarshallerFor[DidSaveTextDocumentParams],
-	MethodNotificationTextDocumentWillSave:               unmarshallerFor[WillSaveTextDocumentParams],
-	MethodNotificationWorkspaceDidChangeWatchedFiles:     unmarshallerFor[DidChangeWatchedFilesParams],
-	MethodNotificationSetTrace:                           unmarshallerFor[SetTraceParams],
-	MethodNotificationCancelRequest:                      unmarshallerFor[CancelParams],
-	MethodNotificationProgress:                           unmarshallerFor[ProgressParams],
+	MethodTextDocumentImplementation:          unmarshallerFor[ImplementationParams],
+	MethodTextDocumentTypeDefinition:          unmarshallerFor[TypeDefinitionParams],
+	MethodTextDocumentDocumentColor:           unmarshallerFor[DocumentColorParams],
+	MethodTextDocumentColorPresentation:       unmarshallerFor[ColorPresentationParams],
+	MethodTextDocumentFoldingRange:            unmarshallerFor[FoldingRangeParams],
+	MethodTextDocumentDeclaration:             unmarshallerFor[DeclarationParams],
+	MethodTextDocumentSelectionRange:          unmarshallerFor[SelectionRangeParams],
+	MethodTextDocumentPrepareCallHierarchy:    unmarshallerFor[CallHierarchyPrepareParams],
+	MethodCallHierarchyIncomingCalls:          unmarshallerFor[CallHierarchyIncomingCallsParams],
+	MethodCallHierarchyOutgoingCalls:          unmarshallerFor[CallHierarchyOutgoingCallsParams],
+	MethodTextDocumentSemanticTokensFull:      unmarshallerFor[SemanticTokensParams],
+	MethodTextDocumentSemanticTokensFullDelta: unmarshallerFor[SemanticTokensDeltaParams],
+	MethodTextDocumentSemanticTokensRange:     unmarshallerFor[SemanticTokensRangeParams],
+	MethodTextDocumentLinkedEditingRange:      unmarshallerFor[LinkedEditingRangeParams],
+	MethodWorkspaceWillCreateFiles:            unmarshallerFor[CreateFilesParams],
+	MethodWorkspaceWillRenameFiles:            unmarshallerFor[RenameFilesParams],
+	MethodWorkspaceWillDeleteFiles:            unmarshallerFor[DeleteFilesParams],
+	MethodTextDocumentMoniker:                 unmarshallerFor[MonikerParams],
+	MethodTextDocumentPrepareTypeHierarchy:    unmarshallerFor[TypeHierarchyPrepareParams],
+	MethodTypeHierarchySupertypes:             unmarshallerFor[TypeHierarchySupertypesParams],
+	MethodTypeHierarchySubtypes:               unmarshallerFor[TypeHierarchySubtypesParams],
+	MethodTextDocumentInlineValue:             unmarshallerFor[InlineValueParams],
+	MethodTextDocumentInlayHint:               unmarshallerFor[InlayHintParams],
+	MethodInlayHintResolve:                    unmarshallerFor[InlayHint],
+	MethodTextDocumentDiagnostic:              unmarshallerFor[DocumentDiagnosticParams],
+	MethodWorkspaceDiagnostic:                 unmarshallerFor[WorkspaceDiagnosticParams],
+	MethodTextDocumentInlineCompletion:        unmarshallerFor[InlineCompletionParams],
+	MethodWorkspaceTextDocumentContent:        unmarshallerFor[TextDocumentContentParams],
+	MethodInitialize:                          unmarshallerFor[InitializeParams],
+	MethodShutdown:                            unmarshallerFor[any],
+	MethodTextDocumentWillSaveWaitUntil:       unmarshallerFor[WillSaveTextDocumentParams],
+	MethodTextDocumentCompletion:              unmarshallerFor[CompletionParams],
+	MethodCompletionItemResolve:               unmarshallerFor[CompletionItem],
+	MethodTextDocumentHover:                   unmarshallerFor[HoverParams],
+	MethodTextDocumentSignatureHelp:           unmarshallerFor[SignatureHelpParams],
+	MethodTextDocumentDefinition:              unmarshallerFor[DefinitionParams],
+	MethodTextDocumentReferences:              unmarshallerFor[ReferenceParams],
+	MethodTextDocumentDocumentHighlight:       unmarshallerFor[DocumentHighlightParams],
+	MethodTextDocumentDocumentSymbol:          unmarshallerFor[DocumentSymbolParams],
+	MethodTextDocumentCodeAction:              unmarshallerFor[CodeActionParams],
+	MethodCodeActionResolve:                   unmarshallerFor[CodeAction],
+	MethodWorkspaceSymbol:                     unmarshallerFor[WorkspaceSymbolParams],
+	MethodWorkspaceSymbolResolve:              unmarshallerFor[WorkspaceSymbol],
+	MethodTextDocumentCodeLens:                unmarshallerFor[CodeLensParams],
+	MethodCodeLensResolve:                     unmarshallerFor[CodeLens],
+	MethodTextDocumentDocumentLink:            unmarshallerFor[DocumentLinkParams],
+	MethodDocumentLinkResolve:                 unmarshallerFor[DocumentLink],
+	MethodTextDocumentFormatting:              unmarshallerFor[DocumentFormattingParams],
+	MethodTextDocumentRangeFormatting:         unmarshallerFor[DocumentRangeFormattingParams],
+	MethodTextDocumentRangesFormatting:        unmarshallerFor[DocumentRangesFormattingParams],
+	MethodTextDocumentOnTypeFormatting:        unmarshallerFor[DocumentOnTypeFormattingParams],
+	MethodTextDocumentRename:                  unmarshallerFor[RenameParams],
+	MethodTextDocumentPrepareRename:           unmarshallerFor[PrepareRenameParams],
+	MethodWorkspaceExecuteCommand:             unmarshallerFor[ExecuteCommandParams],
+	MethodWorkspaceDidChangeWorkspaceFolders:  unmarshallerFor[DidChangeWorkspaceFoldersParams],
+	MethodWindowWorkDoneProgressCancel:        unmarshallerFor[WorkDoneProgressCancelParams],
+	MethodWorkspaceDidCreateFiles:             unmarshallerFor[CreateFilesParams],
+	MethodWorkspaceDidRenameFiles:             unmarshallerFor[RenameFilesParams],
+	MethodWorkspaceDidDeleteFiles:             unmarshallerFor[DeleteFilesParams],
+	MethodNotebookDocumentDidOpen:             unmarshallerFor[DidOpenNotebookDocumentParams],
+	MethodNotebookDocumentDidChange:           unmarshallerFor[DidChangeNotebookDocumentParams],
+	MethodNotebookDocumentDidSave:             unmarshallerFor[DidSaveNotebookDocumentParams],
+	MethodNotebookDocumentDidClose:            unmarshallerFor[DidCloseNotebookDocumentParams],
+	MethodInitialized:                         unmarshallerFor[InitializedParams],
+	MethodExit:                                unmarshallerFor[any],
+	MethodWorkspaceDidChangeConfiguration:     unmarshallerFor[DidChangeConfigurationParams],
+	MethodTextDocumentDidOpen:                 unmarshallerFor[DidOpenTextDocumentParams],
+	MethodTextDocumentDidChange:               unmarshallerFor[DidChangeTextDocumentParams],
+	MethodTextDocumentDidClose:                unmarshallerFor[DidCloseTextDocumentParams],
+	MethodTextDocumentDidSave:                 unmarshallerFor[DidSaveTextDocumentParams],
+	MethodTextDocumentWillSave:                unmarshallerFor[WillSaveTextDocumentParams],
+	MethodWorkspaceDidChangeWatchedFiles:      unmarshallerFor[DidChangeWatchedFilesParams],
+	MethodSetTrace:                            unmarshallerFor[SetTraceParams],
+	MethodCancelRequest:                       unmarshallerFor[CancelParams],
+	MethodProgress:                            unmarshallerFor[ProgressParams],
 }
 
 // Requests
@@ -7158,15 +7158,15 @@ var unmarshallers = map[Method]func([]byte) (any, error){
 // A request to resolve the implementation locations of a symbol at a given text
 // document position. The request's parameter is of type TextDocumentPositionParams
 // the response is of type Definition or a Thenable that resolves to such.
-const MethodRequestTextDocumentImplementation Method = "textDocument/implementation"
+const MethodTextDocumentImplementation Method = "textDocument/implementation"
 
 // A request to resolve the type definition locations of a symbol at a given text
 // document position. The request's parameter is of type TextDocumentPositionParams
 // the response is of type Definition or a Thenable that resolves to such.
-const MethodRequestTextDocumentTypeDefinition Method = "textDocument/typeDefinition"
+const MethodTextDocumentTypeDefinition Method = "textDocument/typeDefinition"
 
 // The `workspace/workspaceFolders` is sent from the server to the client to fetch the open workspace folders.
-const MethodRequestWorkspaceWorkspaceFolders Method = "workspace/workspaceFolders"
+const MethodWorkspaceWorkspaceFolders Method = "workspace/workspaceFolders"
 
 // The 'workspace/configuration' request is sent from the server to the client to fetch a certain
 // configuration setting.
@@ -7175,74 +7175,74 @@ const MethodRequestWorkspaceWorkspaceFolders Method = "workspace/workspaceFolder
 // event. If the server still needs to react to configuration changes (since the server caches the
 // result of `workspace/configuration` requests) the server should register for an empty configuration
 // change event and empty the cache if such an event is received.
-const MethodRequestWorkspaceConfiguration Method = "workspace/configuration"
+const MethodWorkspaceConfiguration Method = "workspace/configuration"
 
 // A request to list all color symbols found in a given text document. The request's
 // parameter is of type DocumentColorParams the
 // response is of type ColorInformation[] or a Thenable
 // that resolves to such.
-const MethodRequestTextDocumentDocumentColor Method = "textDocument/documentColor"
+const MethodTextDocumentDocumentColor Method = "textDocument/documentColor"
 
 // A request to list all presentation for a color. The request's
 // parameter is of type ColorPresentationParams the
 // response is of type ColorInformation[] or a Thenable
 // that resolves to such.
-const MethodRequestTextDocumentColorPresentation Method = "textDocument/colorPresentation"
+const MethodTextDocumentColorPresentation Method = "textDocument/colorPresentation"
 
 // A request to provide folding ranges in a document. The request's
 // parameter is of type FoldingRangeParams, the
 // response is of type FoldingRangeList or a Thenable
 // that resolves to such.
-const MethodRequestTextDocumentFoldingRange Method = "textDocument/foldingRange"
+const MethodTextDocumentFoldingRange Method = "textDocument/foldingRange"
 
 // Since: 3.18.0
 //
 // Proposed.
-const MethodRequestWorkspaceFoldingRangeRefresh Method = "workspace/foldingRange/refresh"
+const MethodWorkspaceFoldingRangeRefresh Method = "workspace/foldingRange/refresh"
 
 // A request to resolve the type definition locations of a symbol at a given text
 // document position. The request's parameter is of type TextDocumentPositionParams
 // the response is of type Declaration or a typed array of DeclarationLink
 // or a Thenable that resolves to such.
-const MethodRequestTextDocumentDeclaration Method = "textDocument/declaration"
+const MethodTextDocumentDeclaration Method = "textDocument/declaration"
 
 // A request to provide selection ranges in a document. The request's
 // parameter is of type SelectionRangeParams, the
 // response is of type SelectionRange[] or a Thenable
 // that resolves to such.
-const MethodRequestTextDocumentSelectionRange Method = "textDocument/selectionRange"
+const MethodTextDocumentSelectionRange Method = "textDocument/selectionRange"
 
 // The `window/workDoneProgress/create` request is sent from the server to the client to initiate progress
 // reporting from the server.
-const MethodRequestWindowWorkDoneProgressCreate Method = "window/workDoneProgress/create"
+const MethodWindowWorkDoneProgressCreate Method = "window/workDoneProgress/create"
 
 // A request to result a `CallHierarchyItem` in a document at a given position.
 // Can be used as an input to an incoming or outgoing call hierarchy.
 //
 // Since: 3.16.0
-const MethodRequestTextDocumentPrepareCallHierarchy Method = "textDocument/prepareCallHierarchy"
+const MethodTextDocumentPrepareCallHierarchy Method = "textDocument/prepareCallHierarchy"
 
 // A request to resolve the incoming calls for a given `CallHierarchyItem`.
 //
 // Since: 3.16.0
-const MethodRequestCallHierarchyIncomingCalls Method = "callHierarchy/incomingCalls"
+const MethodCallHierarchyIncomingCalls Method = "callHierarchy/incomingCalls"
 
 // A request to resolve the outgoing calls for a given `CallHierarchyItem`.
 //
 // Since: 3.16.0
-const MethodRequestCallHierarchyOutgoingCalls Method = "callHierarchy/outgoingCalls"
+const MethodCallHierarchyOutgoingCalls Method = "callHierarchy/outgoingCalls"
 
 // Since: 3.16.0
-const MethodRequestTextDocumentSemanticTokensFull Method = "textDocument/semanticTokens/full"
+const MethodTextDocumentSemanticTokensFull Method = "textDocument/semanticTokens/full"
 
 // Since: 3.16.0
-const MethodRequestTextDocumentSemanticTokensFullDelta Method = "textDocument/semanticTokens/full/delta"
+const MethodTextDocumentSemanticTokensFullDelta Method = "textDocument/semanticTokens/full/delta"
 
 // Since: 3.16.0
-const MethodRequestTextDocumentSemanticTokensRange Method = "textDocument/semanticTokens/range"
+const MethodTextDocumentSemanticTokensRange Method = "textDocument/semanticTokens/range"
 
 // Since: 3.16.0
-const MethodRequestWorkspaceSemanticTokensRefresh Method = "workspace/semanticTokens/refresh"
+const MethodWorkspaceSemanticTokensRefresh Method = "workspace/semanticTokens/refresh"
 
 // A request to show a document. This request might open an
 // external program depending on the value of the URI to open.
@@ -7250,12 +7250,12 @@ const MethodRequestWorkspaceSemanticTokensRefresh Method = "workspace/semanticTo
 // will very likely open the URI in a WEB browser.
 //
 // Since: 3.16.0
-const MethodRequestWindowShowDocument Method = "window/showDocument"
+const MethodWindowShowDocument Method = "window/showDocument"
 
 // A request to provide ranges that can be edited together.
 //
 // Since: 3.16.0
-const MethodRequestTextDocumentLinkedEditingRange Method = "textDocument/linkedEditingRange"
+const MethodTextDocumentLinkedEditingRange Method = "textDocument/linkedEditingRange"
 
 // The will create files request is sent from the client to the server before files are actually
 // created as long as the creation is triggered from within the client.
@@ -7265,82 +7265,82 @@ const MethodRequestTextDocumentLinkedEditingRange Method = "textDocument/linkedE
 // to be created.
 //
 // Since: 3.16.0
-const MethodRequestWorkspaceWillCreateFiles Method = "workspace/willCreateFiles"
+const MethodWorkspaceWillCreateFiles Method = "workspace/willCreateFiles"
 
 // The will rename files request is sent from the client to the server before files are actually
 // renamed as long as the rename is triggered from within the client.
 //
 // Since: 3.16.0
-const MethodRequestWorkspaceWillRenameFiles Method = "workspace/willRenameFiles"
+const MethodWorkspaceWillRenameFiles Method = "workspace/willRenameFiles"
 
 // The did delete files notification is sent from the client to the server when
 // files were deleted from within the client.
 //
 // Since: 3.16.0
-const MethodRequestWorkspaceWillDeleteFiles Method = "workspace/willDeleteFiles"
+const MethodWorkspaceWillDeleteFiles Method = "workspace/willDeleteFiles"
 
 // A request to get the moniker of a symbol at a given text document position.
 // The request parameter is of type TextDocumentPositionParams.
 // The response is of type Moniker[] or `null`.
-const MethodRequestTextDocumentMoniker Method = "textDocument/moniker"
+const MethodTextDocumentMoniker Method = "textDocument/moniker"
 
 // A request to result a `TypeHierarchyItem` in a document at a given position.
 // Can be used as an input to a subtypes or supertypes type hierarchy.
 //
 // Since: 3.17.0
-const MethodRequestTextDocumentPrepareTypeHierarchy Method = "textDocument/prepareTypeHierarchy"
+const MethodTextDocumentPrepareTypeHierarchy Method = "textDocument/prepareTypeHierarchy"
 
 // A request to resolve the supertypes for a given `TypeHierarchyItem`.
 //
 // Since: 3.17.0
-const MethodRequestTypeHierarchySupertypes Method = "typeHierarchy/supertypes"
+const MethodTypeHierarchySupertypes Method = "typeHierarchy/supertypes"
 
 // A request to resolve the subtypes for a given `TypeHierarchyItem`.
 //
 // Since: 3.17.0
-const MethodRequestTypeHierarchySubtypes Method = "typeHierarchy/subtypes"
+const MethodTypeHierarchySubtypes Method = "typeHierarchy/subtypes"
 
 // A request to provide inline values in a document. The request's parameter is of
 // type InlineValueParams, the response is of type
 // InlineValue[] or a Thenable that resolves to such.
 //
 // Since: 3.17.0
-const MethodRequestTextDocumentInlineValue Method = "textDocument/inlineValue"
+const MethodTextDocumentInlineValue Method = "textDocument/inlineValue"
 
 // Since: 3.17.0
-const MethodRequestWorkspaceInlineValueRefresh Method = "workspace/inlineValue/refresh"
+const MethodWorkspaceInlineValueRefresh Method = "workspace/inlineValue/refresh"
 
 // A request to provide inlay hints in a document. The request's parameter is of
 // type InlayHintsParams, the response is of type
 // InlayHint[] or a Thenable that resolves to such.
 //
 // Since: 3.17.0
-const MethodRequestTextDocumentInlayHint Method = "textDocument/inlayHint"
+const MethodTextDocumentInlayHint Method = "textDocument/inlayHint"
 
 // A request to resolve additional properties for an inlay hint.
 // The request's parameter is of type InlayHint, the response is
 // of type InlayHint or a Thenable that resolves to such.
 //
 // Since: 3.17.0
-const MethodRequestInlayHintResolve Method = "inlayHint/resolve"
+const MethodInlayHintResolve Method = "inlayHint/resolve"
 
 // Since: 3.17.0
-const MethodRequestWorkspaceInlayHintRefresh Method = "workspace/inlayHint/refresh"
+const MethodWorkspaceInlayHintRefresh Method = "workspace/inlayHint/refresh"
 
 // The document diagnostic request definition.
 //
 // Since: 3.17.0
-const MethodRequestTextDocumentDiagnostic Method = "textDocument/diagnostic"
+const MethodTextDocumentDiagnostic Method = "textDocument/diagnostic"
 
 // The workspace diagnostic request definition.
 //
 // Since: 3.17.0
-const MethodRequestWorkspaceDiagnostic Method = "workspace/diagnostic"
+const MethodWorkspaceDiagnostic Method = "workspace/diagnostic"
 
 // The diagnostic refresh request definition.
 //
 // Since: 3.17.0
-const MethodRequestWorkspaceDiagnosticRefresh Method = "workspace/diagnostic/refresh"
+const MethodWorkspaceDiagnosticRefresh Method = "workspace/diagnostic/refresh"
 
 // A request to provide inline completions in a document. The request's parameter is of
 // type InlineCompletionParams, the response is of type
@@ -7349,7 +7349,7 @@ const MethodRequestWorkspaceDiagnosticRefresh Method = "workspace/diagnostic/ref
 // Since: 3.18.0
 //
 // Proposed.
-const MethodRequestTextDocumentInlineCompletion Method = "textDocument/inlineCompletion"
+const MethodTextDocumentInlineCompletion Method = "textDocument/inlineCompletion"
 
 // The `workspace/textDocumentContent` request is sent from the client to the
 // server to request the content of a text document.
@@ -7357,7 +7357,7 @@ const MethodRequestTextDocumentInlineCompletion Method = "textDocument/inlineCom
 // Since: 3.18.0
 //
 // Proposed.
-const MethodRequestWorkspaceTextDocumentContent Method = "workspace/textDocumentContent"
+const MethodWorkspaceTextDocumentContent Method = "workspace/textDocumentContent"
 
 // The `workspace/textDocumentContent` request is sent from the server to the client to refresh
 // the content of a specific text document.
@@ -7365,32 +7365,32 @@ const MethodRequestWorkspaceTextDocumentContent Method = "workspace/textDocument
 // Since: 3.18.0
 //
 // Proposed.
-const MethodRequestWorkspaceTextDocumentContentRefresh Method = "workspace/textDocumentContent/refresh"
+const MethodWorkspaceTextDocumentContentRefresh Method = "workspace/textDocumentContent/refresh"
 
 // The `client/registerCapability` request is sent from the server to the client to register a new capability
 // handler on the client side.
-const MethodRequestClientRegisterCapability Method = "client/registerCapability"
+const MethodClientRegisterCapability Method = "client/registerCapability"
 
 // The `client/unregisterCapability` request is sent from the server to the client to unregister a previously registered capability
 // handler on the client side.
-const MethodRequestClientUnregisterCapability Method = "client/unregisterCapability"
+const MethodClientUnregisterCapability Method = "client/unregisterCapability"
 
 // The initialize request is sent from the client to the server.
 // It is sent once as the request after starting up the server.
 // The requests parameter is of type InitializeParams
 // the response if of type InitializeResult of a Thenable that
 // resolves to such.
-const MethodRequestInitialize Method = "initialize"
+const MethodInitialize Method = "initialize"
 
 // A shutdown request is sent from the client to the server.
 // It is sent once when the client decides to shutdown the
 // server. The only notification that is sent after a shutdown request
 // is the exit event.
-const MethodRequestShutdown Method = "shutdown"
+const MethodShutdown Method = "shutdown"
 
 // The show message request is sent from the server to the client to show a message
 // and a set of options actions to the user.
-const MethodRequestWindowShowMessageRequest Method = "window/showMessageRequest"
+const MethodWindowShowMessageRequest Method = "window/showMessageRequest"
 
 // A document will save request is sent from the client to the server before
 // the document is actually saved. The request can return an array of TextEdits
@@ -7398,7 +7398,7 @@ const MethodRequestWindowShowMessageRequest Method = "window/showMessageRequest"
 // clients might drop results if computing the text edits took too long or if a
 // server constantly fails on this request. This is done to keep the save fast and
 // reliable.
-const MethodRequestTextDocumentWillSaveWaitUntil Method = "textDocument/willSaveWaitUntil"
+const MethodTextDocumentWillSaveWaitUntil Method = "textDocument/willSaveWaitUntil"
 
 // Request to request completion at a given text document position. The request's
 // parameter is of type TextDocumentPosition the response
@@ -7409,51 +7409,51 @@ const MethodRequestTextDocumentWillSaveWaitUntil Method = "textDocument/willSave
 // and `documentation` properties to the `completionItem/resolve`
 // request. However, properties that are needed for the initial sorting and filtering, like `sortText`,
 // `filterText`, `insertText`, and `textEdit`, must not be changed during resolve.
-const MethodRequestTextDocumentCompletion Method = "textDocument/completion"
+const MethodTextDocumentCompletion Method = "textDocument/completion"
 
 // Request to resolve additional information for a given completion item.The request's
 // parameter is of type CompletionItem the response
 // is of type CompletionItem or a Thenable that resolves to such.
-const MethodRequestCompletionItemResolve Method = "completionItem/resolve"
+const MethodCompletionItemResolve Method = "completionItem/resolve"
 
 // Request to request hover information at a given text document position. The request's
 // parameter is of type TextDocumentPosition the response is of
 // type Hover or a Thenable that resolves to such.
-const MethodRequestTextDocumentHover Method = "textDocument/hover"
+const MethodTextDocumentHover Method = "textDocument/hover"
 
-const MethodRequestTextDocumentSignatureHelp Method = "textDocument/signatureHelp"
+const MethodTextDocumentSignatureHelp Method = "textDocument/signatureHelp"
 
 // A request to resolve the definition location of a symbol at a given text
 // document position. The request's parameter is of type TextDocumentPosition
 // the response is of either type Definition or a typed array of
 // DefinitionLink or a Thenable that resolves to such.
-const MethodRequestTextDocumentDefinition Method = "textDocument/definition"
+const MethodTextDocumentDefinition Method = "textDocument/definition"
 
 // A request to resolve project-wide references for the symbol denoted
 // by the given text document position. The request's parameter is of
 // type ReferenceParams the response is of type
 // Location[] or a Thenable that resolves to such.
-const MethodRequestTextDocumentReferences Method = "textDocument/references"
+const MethodTextDocumentReferences Method = "textDocument/references"
 
 // Request to resolve a DocumentHighlight for a given
 // text document position. The request's parameter is of type TextDocumentPosition
 // the request response is an array of type DocumentHighlight
 // or a Thenable that resolves to such.
-const MethodRequestTextDocumentDocumentHighlight Method = "textDocument/documentHighlight"
+const MethodTextDocumentDocumentHighlight Method = "textDocument/documentHighlight"
 
 // A request to list all symbols found in a given text document. The request's
 // parameter is of type TextDocumentIdentifier the
 // response is of type SymbolInformation[] or a Thenable
 // that resolves to such.
-const MethodRequestTextDocumentDocumentSymbol Method = "textDocument/documentSymbol"
+const MethodTextDocumentDocumentSymbol Method = "textDocument/documentSymbol"
 
 // A request to provide commands for the given text document and range.
-const MethodRequestTextDocumentCodeAction Method = "textDocument/codeAction"
+const MethodTextDocumentCodeAction Method = "textDocument/codeAction"
 
 // Request to resolve additional information for a given code action.The request's
 // parameter is of type CodeAction the response
 // is of type CodeAction or a Thenable that resolves to such.
-const MethodRequestCodeActionResolve Method = "codeAction/resolve"
+const MethodCodeActionResolve Method = "codeAction/resolve"
 
 // A request to list project-wide symbols matching the query string given
 // by the WorkspaceSymbolParams. The response is
@@ -7464,134 +7464,134 @@ const MethodRequestCodeActionResolve Method = "codeAction/resolve"
 //
 //	need to advertise support for WorkspaceSymbols via the client capability
 //	`workspace.symbol.resolveSupport`.
-const MethodRequestWorkspaceSymbol Method = "workspace/symbol"
+const MethodWorkspaceSymbol Method = "workspace/symbol"
 
 // A request to resolve the range inside the workspace
 // symbol's location.
 //
 // Since: 3.17.0
-const MethodRequestWorkspaceSymbolResolve Method = "workspaceSymbol/resolve"
+const MethodWorkspaceSymbolResolve Method = "workspaceSymbol/resolve"
 
 // A request to provide code lens for the given text document.
-const MethodRequestTextDocumentCodeLens Method = "textDocument/codeLens"
+const MethodTextDocumentCodeLens Method = "textDocument/codeLens"
 
 // A request to resolve a command for a given code lens.
-const MethodRequestCodeLensResolve Method = "codeLens/resolve"
+const MethodCodeLensResolve Method = "codeLens/resolve"
 
 // A request to refresh all code actions
 //
 // Since: 3.16.0
-const MethodRequestWorkspaceCodeLensRefresh Method = "workspace/codeLens/refresh"
+const MethodWorkspaceCodeLensRefresh Method = "workspace/codeLens/refresh"
 
 // A request to provide document links
-const MethodRequestTextDocumentDocumentLink Method = "textDocument/documentLink"
+const MethodTextDocumentDocumentLink Method = "textDocument/documentLink"
 
 // Request to resolve additional information for a given document link. The request's
 // parameter is of type DocumentLink the response
 // is of type DocumentLink or a Thenable that resolves to such.
-const MethodRequestDocumentLinkResolve Method = "documentLink/resolve"
+const MethodDocumentLinkResolve Method = "documentLink/resolve"
 
 // A request to format a whole document.
-const MethodRequestTextDocumentFormatting Method = "textDocument/formatting"
+const MethodTextDocumentFormatting Method = "textDocument/formatting"
 
 // A request to format a range in a document.
-const MethodRequestTextDocumentRangeFormatting Method = "textDocument/rangeFormatting"
+const MethodTextDocumentRangeFormatting Method = "textDocument/rangeFormatting"
 
 // A request to format ranges in a document.
 //
 // Since: 3.18.0
 //
 // Proposed.
-const MethodRequestTextDocumentRangesFormatting Method = "textDocument/rangesFormatting"
+const MethodTextDocumentRangesFormatting Method = "textDocument/rangesFormatting"
 
 // A request to format a document on type.
-const MethodRequestTextDocumentOnTypeFormatting Method = "textDocument/onTypeFormatting"
+const MethodTextDocumentOnTypeFormatting Method = "textDocument/onTypeFormatting"
 
 // A request to rename a symbol.
-const MethodRequestTextDocumentRename Method = "textDocument/rename"
+const MethodTextDocumentRename Method = "textDocument/rename"
 
 // A request to test and perform the setup necessary for a rename.
 //
 // Since: 3.16 - support for default behavior
-const MethodRequestTextDocumentPrepareRename Method = "textDocument/prepareRename"
+const MethodTextDocumentPrepareRename Method = "textDocument/prepareRename"
 
 // A request send from the client to the server to execute a command. The request might return
 // a workspace edit which the client will apply to the workspace.
-const MethodRequestWorkspaceExecuteCommand Method = "workspace/executeCommand"
+const MethodWorkspaceExecuteCommand Method = "workspace/executeCommand"
 
 // A request sent from the server to the client to modified certain resources.
-const MethodRequestWorkspaceApplyEdit Method = "workspace/applyEdit"
+const MethodWorkspaceApplyEdit Method = "workspace/applyEdit"
 
 // Notifications
 
 // The `workspace/didChangeWorkspaceFolders` notification is sent from the client to the server when the workspace
 // folder configuration changes.
-const MethodNotificationWorkspaceDidChangeWorkspaceFolders Method = "workspace/didChangeWorkspaceFolders"
+const MethodWorkspaceDidChangeWorkspaceFolders Method = "workspace/didChangeWorkspaceFolders"
 
 // The `window/workDoneProgress/cancel` notification is sent from the client to the server to cancel a progress
 // initiated on the server side.
-const MethodNotificationWindowWorkDoneProgressCancel Method = "window/workDoneProgress/cancel"
+const MethodWindowWorkDoneProgressCancel Method = "window/workDoneProgress/cancel"
 
 // The did create files notification is sent from the client to the server when
 // files were created from within the client.
 //
 // Since: 3.16.0
-const MethodNotificationWorkspaceDidCreateFiles Method = "workspace/didCreateFiles"
+const MethodWorkspaceDidCreateFiles Method = "workspace/didCreateFiles"
 
 // The did rename files notification is sent from the client to the server when
 // files were renamed from within the client.
 //
 // Since: 3.16.0
-const MethodNotificationWorkspaceDidRenameFiles Method = "workspace/didRenameFiles"
+const MethodWorkspaceDidRenameFiles Method = "workspace/didRenameFiles"
 
 // The will delete files request is sent from the client to the server before files are actually
 // deleted as long as the deletion is triggered from within the client.
 //
 // Since: 3.16.0
-const MethodNotificationWorkspaceDidDeleteFiles Method = "workspace/didDeleteFiles"
+const MethodWorkspaceDidDeleteFiles Method = "workspace/didDeleteFiles"
 
 // A notification sent when a notebook opens.
 //
 // Since: 3.17.0
-const MethodNotificationNotebookDocumentDidOpen Method = "notebookDocument/didOpen"
+const MethodNotebookDocumentDidOpen Method = "notebookDocument/didOpen"
 
-const MethodNotificationNotebookDocumentDidChange Method = "notebookDocument/didChange"
+const MethodNotebookDocumentDidChange Method = "notebookDocument/didChange"
 
 // A notification sent when a notebook document is saved.
 //
 // Since: 3.17.0
-const MethodNotificationNotebookDocumentDidSave Method = "notebookDocument/didSave"
+const MethodNotebookDocumentDidSave Method = "notebookDocument/didSave"
 
 // A notification sent when a notebook closes.
 //
 // Since: 3.17.0
-const MethodNotificationNotebookDocumentDidClose Method = "notebookDocument/didClose"
+const MethodNotebookDocumentDidClose Method = "notebookDocument/didClose"
 
 // The initialized notification is sent from the client to the
 // server after the client is fully initialized and the server
 // is allowed to send requests from the server to the client.
-const MethodNotificationInitialized Method = "initialized"
+const MethodInitialized Method = "initialized"
 
 // The exit event is sent from the client to the server to
 // ask the server to exit its process.
-const MethodNotificationExit Method = "exit"
+const MethodExit Method = "exit"
 
 // The configuration change notification is sent from the client to the server
 // when the client's configuration has changed. The notification contains
 // the changed configuration as defined by the language client.
-const MethodNotificationWorkspaceDidChangeConfiguration Method = "workspace/didChangeConfiguration"
+const MethodWorkspaceDidChangeConfiguration Method = "workspace/didChangeConfiguration"
 
 // The show message notification is sent from a server to a client to ask
 // the client to display a particular message in the user interface.
-const MethodNotificationWindowShowMessage Method = "window/showMessage"
+const MethodWindowShowMessage Method = "window/showMessage"
 
 // The log message notification is sent from the server to the client to ask
 // the client to log a particular message.
-const MethodNotificationWindowLogMessage Method = "window/logMessage"
+const MethodWindowLogMessage Method = "window/logMessage"
 
 // The telemetry event notification is sent from the server to the client to ask
 // the client to log telemetry data.
-const MethodNotificationTelemetryEvent Method = "telemetry/event"
+const MethodTelemetryEvent Method = "telemetry/event"
 
 // The document open notification is sent from the client to the server to signal
 // newly opened text documents. The document's truth is now managed by the client
@@ -7601,11 +7601,11 @@ const MethodNotificationTelemetryEvent Method = "telemetry/event"
 // be sent more than once without a corresponding close notification send before.
 // This means open and close notification must be balanced and the max open count
 // is one.
-const MethodNotificationTextDocumentDidOpen Method = "textDocument/didOpen"
+const MethodTextDocumentDidOpen Method = "textDocument/didOpen"
 
 // The document change notification is sent from the client to the server to signal
 // changes to a text document.
-const MethodNotificationTextDocumentDidChange Method = "textDocument/didChange"
+const MethodTextDocumentDidChange Method = "textDocument/didChange"
 
 // The document close notification is sent from the client to the server when
 // the document got closed in the client. The document's truth now exists where
@@ -7614,31 +7614,31 @@ const MethodNotificationTextDocumentDidChange Method = "textDocument/didChange"
 // is about managing the document's content. Receiving a close notification
 // doesn't mean that the document was open in an editor before. A close
 // notification requires a previous open notification to be sent.
-const MethodNotificationTextDocumentDidClose Method = "textDocument/didClose"
+const MethodTextDocumentDidClose Method = "textDocument/didClose"
 
 // The document save notification is sent from the client to the server when
 // the document got saved in the client.
-const MethodNotificationTextDocumentDidSave Method = "textDocument/didSave"
+const MethodTextDocumentDidSave Method = "textDocument/didSave"
 
 // A document will save notification is sent from the client to the server before
 // the document is actually saved.
-const MethodNotificationTextDocumentWillSave Method = "textDocument/willSave"
+const MethodTextDocumentWillSave Method = "textDocument/willSave"
 
 // The watched files notification is sent from the client to the server when
 // the client detects changes to file watched by the language client.
-const MethodNotificationWorkspaceDidChangeWatchedFiles Method = "workspace/didChangeWatchedFiles"
+const MethodWorkspaceDidChangeWatchedFiles Method = "workspace/didChangeWatchedFiles"
 
 // Diagnostics notification are sent from the server to the client to signal
 // results of validation runs.
-const MethodNotificationTextDocumentPublishDiagnostics Method = "textDocument/publishDiagnostics"
+const MethodTextDocumentPublishDiagnostics Method = "textDocument/publishDiagnostics"
 
-const MethodNotificationSetTrace Method = "$/setTrace"
+const MethodSetTrace Method = "$/setTrace"
 
-const MethodNotificationLogTrace Method = "$/logTrace"
+const MethodLogTrace Method = "$/logTrace"
 
-const MethodNotificationCancelRequest Method = "$/cancelRequest"
+const MethodCancelRequest Method = "$/cancelRequest"
 
-const MethodNotificationProgress Method = "$/progress"
+const MethodProgress Method = "$/progress"
 
 // Union types
 

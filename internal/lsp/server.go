@@ -62,7 +62,7 @@ func (s *Server) Run() error {
 		}
 
 		if s.initializeParams == nil {
-			if req.Method == lsproto.MethodNotificationInitialized {
+			if req.Method == lsproto.MethodInitialize {
 				if err := s.handleInitialize(req); err != nil {
 					return err
 				}
