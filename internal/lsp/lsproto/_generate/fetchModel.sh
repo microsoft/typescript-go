@@ -9,8 +9,4 @@ curl -sL "https://raw.githubusercontent.com/microsoft/vscode-languageserver-node
 
 json -I -f metaModel.schema.json -e 'Object.assign(this, this.definitions.MetaModel); delete this.definitions.MetaModel'
 
-dprint fmt metaModel.json metaModel.schema.json
-
 npx json-schema-to-typescript metaModel.schema.json > metaModelSchema.mts
-
-dprint fmt metaModelSchema.mts

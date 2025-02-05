@@ -1,7 +1,11 @@
+#!/usr/bin/env node
+
 import assert from "node:assert";
+import cp from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 import url from "node:url";
+import which from "which";
 
 /**
  * @import { MetaModelSchema, OrType, Type } from "./metaModelSchema.mts"
@@ -11,11 +15,7 @@ void 0;
 const __filename = url.fileURLToPath(new URL(import.meta.url));
 const __dirname = path.dirname(__filename);
 
-const out = process.argv[2];
-if (!out) {
-    console.error("Usage: node generate.mts <output file>");
-    process.exit(1);
-}
+const out = path.resolve(__dirname, "../lsp_generated.go");
 
 const metaModelPath = path.resolve(__dirname, "metaModel.json");
 
@@ -538,3 +538,6 @@ for (const [name, members] of unionTypes) {
 }
 
 fs.writeFileSync(out, parts.join(""));
+
+const gofmt = which.sync("gofmt");
+cp.execFileSync(gofmt, ["-w", out]);

@@ -5,9 +5,6 @@ import (
 	"fmt"
 )
 
-//go:generate node ./_generate/generate.mjs lsp_generated.go
-//go:generate gofmt -w lsp_generated.go
-
 type DocumentUri string // !!!
 
 type URI string // !!!
