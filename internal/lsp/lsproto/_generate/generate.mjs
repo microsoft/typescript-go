@@ -88,6 +88,13 @@ function writeDocumentation(doc) {
         const lines = doc.split("\n");
         for (let line of lines) {
             line = line.replace(/\{@link(?:code)?.*?([^} ]+)\}/g, "$1");
+            line = line.replace(/@since (.*)/g, "Since: $1\n//");
+            if (line.startsWith("@deprecated")) {
+                continue;
+            }
+            if (line.startsWith("@proposed")) {
+                line = "Proposed.\n//";
+            }
 
             startLine("// ");
             finishLine(line);
