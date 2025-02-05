@@ -673,7 +673,7 @@ type InlayHint struct {
 	// InlayHintLabelPart label parts.
 	//
 	// *Note* that neither the string nor the label part can be empty.
-	Label StringOrArrayOfInlayHintLabelPart `json:"label,omitempty"`
+	Label StringOrInlayHintLabelParts `json:"label,omitempty"`
 
 	// The kind of this hint. Can be omitted in which case the client
 	// should fall back to a reasonable default.
@@ -993,7 +993,7 @@ type DidChangeConfigurationParams struct {
 }
 
 type DidChangeConfigurationRegistrationOptions struct {
-	Section *StringOrArrayOfString `json:"section,omitempty"`
+	Section *StringOrStrings `json:"section,omitempty"`
 }
 
 // The parameters of a notification message.
@@ -1349,7 +1349,7 @@ type HoverParams struct {
 // The result of a hover request.
 type Hover struct {
 	// The hover's content
-	Contents MarkupContentOrMarkedStringOrArrayOfMarkedString `json:"contents,omitempty"`
+	Contents MarkupContentOrMarkedStringOrMarkedStrings `json:"contents,omitempty"`
 
 	// An optional range inside the text document that is used to
 	// visualize the hover, e.g. by changing the background color.
@@ -6932,7 +6932,7 @@ func (e *TokenFormat) UnmarshalJSON(data []byte) error {
 //
 // Servers should prefer returning `DefinitionLink` over `Definition` if supported
 // by the client.
-type Definition = LocationOrArrayOfLocation
+type Definition = LocationOrLocations
 
 // Information about where a symbol is defined.
 //
@@ -6953,7 +6953,7 @@ type LSPArray = []LSPAny
 type LSPAny = any
 
 // The declaration of a symbol representation as one or many locations.
-type Declaration = LocationOrArrayOfLocation
+type Declaration = LocationOrLocations
 
 // Information about where a symbol is declared.
 //
@@ -7691,35 +7691,35 @@ func (o *TextDocumentEditOrCreateFileOrRenameFileOrDeleteFile) UnmarshalJSON(dat
 	return fmt.Errorf("invalid TextDocumentEditOrCreateFileOrRenameFileOrDeleteFile: %s", data)
 }
 
-type StringOrArrayOfInlayHintLabelPart struct {
-	String                    *string
-	ArrayOfInlayHintLabelPart *[]InlayHintLabelPart
+type StringOrInlayHintLabelParts struct {
+	String              *string
+	InlayHintLabelParts *[]InlayHintLabelPart
 }
 
-func (o StringOrArrayOfInlayHintLabelPart) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("more than one element of StringOrArrayOfInlayHintLabelPart is set", o.String != nil, o.ArrayOfInlayHintLabelPart != nil)
+func (o StringOrInlayHintLabelParts) MarshalJSON() ([]byte, error) {
+	assertOnlyOne("more than one element of StringOrInlayHintLabelParts is set", o.String != nil, o.InlayHintLabelParts != nil)
 	if o.String != nil {
 		return json.Marshal(*o.String)
 	}
-	if o.ArrayOfInlayHintLabelPart != nil {
-		return json.Marshal(*o.ArrayOfInlayHintLabelPart)
+	if o.InlayHintLabelParts != nil {
+		return json.Marshal(*o.InlayHintLabelParts)
 	}
 	panic("unreachable")
 }
 
-func (o *StringOrArrayOfInlayHintLabelPart) UnmarshalJSON(data []byte) error {
-	*o = StringOrArrayOfInlayHintLabelPart{}
+func (o *StringOrInlayHintLabelParts) UnmarshalJSON(data []byte) error {
+	*o = StringOrInlayHintLabelParts{}
 	var vString string
 	if err := json.Unmarshal(data, &vString); err == nil {
 		o.String = &vString
 		return nil
 	}
-	var vArrayOfInlayHintLabelPart []InlayHintLabelPart
-	if err := json.Unmarshal(data, &vArrayOfInlayHintLabelPart); err == nil {
-		o.ArrayOfInlayHintLabelPart = &vArrayOfInlayHintLabelPart
+	var vInlayHintLabelParts []InlayHintLabelPart
+	if err := json.Unmarshal(data, &vInlayHintLabelParts); err == nil {
+		o.InlayHintLabelParts = &vInlayHintLabelParts
 		return nil
 	}
-	return fmt.Errorf("invalid StringOrArrayOfInlayHintLabelPart: %s", data)
+	return fmt.Errorf("invalid StringOrInlayHintLabelParts: %s", data)
 }
 
 type StringOrMarkupContent struct {
@@ -7815,35 +7815,35 @@ func (o *StringOrStringValue) UnmarshalJSON(data []byte) error {
 	return fmt.Errorf("invalid StringOrStringValue: %s", data)
 }
 
-type StringOrArrayOfString struct {
-	String        *string
-	ArrayOfString *[]string
+type StringOrStrings struct {
+	String  *string
+	Strings *[]string
 }
 
-func (o StringOrArrayOfString) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("more than one element of StringOrArrayOfString is set", o.String != nil, o.ArrayOfString != nil)
+func (o StringOrStrings) MarshalJSON() ([]byte, error) {
+	assertOnlyOne("more than one element of StringOrStrings is set", o.String != nil, o.Strings != nil)
 	if o.String != nil {
 		return json.Marshal(*o.String)
 	}
-	if o.ArrayOfString != nil {
-		return json.Marshal(*o.ArrayOfString)
+	if o.Strings != nil {
+		return json.Marshal(*o.Strings)
 	}
 	panic("unreachable")
 }
 
-func (o *StringOrArrayOfString) UnmarshalJSON(data []byte) error {
-	*o = StringOrArrayOfString{}
+func (o *StringOrStrings) UnmarshalJSON(data []byte) error {
+	*o = StringOrStrings{}
 	var vString string
 	if err := json.Unmarshal(data, &vString); err == nil {
 		o.String = &vString
 		return nil
 	}
-	var vArrayOfString []string
-	if err := json.Unmarshal(data, &vArrayOfString); err == nil {
-		o.ArrayOfString = &vArrayOfString
+	var vStrings []string
+	if err := json.Unmarshal(data, &vStrings); err == nil {
+		o.Strings = &vStrings
 		return nil
 	}
-	return fmt.Errorf("invalid StringOrArrayOfString: %s", data)
+	return fmt.Errorf("invalid StringOrStrings: %s", data)
 }
 
 type TextEditOrInsertReplaceEdit struct {
@@ -7877,28 +7877,28 @@ func (o *TextEditOrInsertReplaceEdit) UnmarshalJSON(data []byte) error {
 	return fmt.Errorf("invalid TextEditOrInsertReplaceEdit: %s", data)
 }
 
-type MarkupContentOrMarkedStringOrArrayOfMarkedString struct {
-	MarkupContent       *MarkupContent
-	MarkedString        *MarkedString
-	ArrayOfMarkedString *[]MarkedString
+type MarkupContentOrMarkedStringOrMarkedStrings struct {
+	MarkupContent *MarkupContent
+	MarkedString  *MarkedString
+	MarkedStrings *[]MarkedString
 }
 
-func (o MarkupContentOrMarkedStringOrArrayOfMarkedString) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("more than one element of MarkupContentOrMarkedStringOrArrayOfMarkedString is set", o.MarkupContent != nil, o.MarkedString != nil, o.ArrayOfMarkedString != nil)
+func (o MarkupContentOrMarkedStringOrMarkedStrings) MarshalJSON() ([]byte, error) {
+	assertOnlyOne("more than one element of MarkupContentOrMarkedStringOrMarkedStrings is set", o.MarkupContent != nil, o.MarkedString != nil, o.MarkedStrings != nil)
 	if o.MarkupContent != nil {
 		return json.Marshal(*o.MarkupContent)
 	}
 	if o.MarkedString != nil {
 		return json.Marshal(*o.MarkedString)
 	}
-	if o.ArrayOfMarkedString != nil {
-		return json.Marshal(*o.ArrayOfMarkedString)
+	if o.MarkedStrings != nil {
+		return json.Marshal(*o.MarkedStrings)
 	}
 	panic("unreachable")
 }
 
-func (o *MarkupContentOrMarkedStringOrArrayOfMarkedString) UnmarshalJSON(data []byte) error {
-	*o = MarkupContentOrMarkedStringOrArrayOfMarkedString{}
+func (o *MarkupContentOrMarkedStringOrMarkedStrings) UnmarshalJSON(data []byte) error {
+	*o = MarkupContentOrMarkedStringOrMarkedStrings{}
 	var vMarkupContent MarkupContent
 	if err := json.Unmarshal(data, &vMarkupContent); err == nil {
 		o.MarkupContent = &vMarkupContent
@@ -7909,12 +7909,12 @@ func (o *MarkupContentOrMarkedStringOrArrayOfMarkedString) UnmarshalJSON(data []
 		o.MarkedString = &vMarkedString
 		return nil
 	}
-	var vArrayOfMarkedString []MarkedString
-	if err := json.Unmarshal(data, &vArrayOfMarkedString); err == nil {
-		o.ArrayOfMarkedString = &vArrayOfMarkedString
+	var vMarkedStrings []MarkedString
+	if err := json.Unmarshal(data, &vMarkedStrings); err == nil {
+		o.MarkedStrings = &vMarkedStrings
 		return nil
 	}
-	return fmt.Errorf("invalid MarkupContentOrMarkedStringOrArrayOfMarkedString: %s", data)
+	return fmt.Errorf("invalid MarkupContentOrMarkedStringOrMarkedStrings: %s", data)
 }
 
 type LocationOrLocationUriOnly struct {
@@ -9305,35 +9305,35 @@ func (o *BooleanOrClientSemanticTokensRequestFullDelta) UnmarshalJSON(data []byt
 	return fmt.Errorf("invalid BooleanOrClientSemanticTokensRequestFullDelta: %s", data)
 }
 
-type LocationOrArrayOfLocation struct {
-	Location        *Location
-	ArrayOfLocation *[]Location
+type LocationOrLocations struct {
+	Location  *Location
+	Locations *[]Location
 }
 
-func (o LocationOrArrayOfLocation) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("more than one element of LocationOrArrayOfLocation is set", o.Location != nil, o.ArrayOfLocation != nil)
+func (o LocationOrLocations) MarshalJSON() ([]byte, error) {
+	assertOnlyOne("more than one element of LocationOrLocations is set", o.Location != nil, o.Locations != nil)
 	if o.Location != nil {
 		return json.Marshal(*o.Location)
 	}
-	if o.ArrayOfLocation != nil {
-		return json.Marshal(*o.ArrayOfLocation)
+	if o.Locations != nil {
+		return json.Marshal(*o.Locations)
 	}
 	panic("unreachable")
 }
 
-func (o *LocationOrArrayOfLocation) UnmarshalJSON(data []byte) error {
-	*o = LocationOrArrayOfLocation{}
+func (o *LocationOrLocations) UnmarshalJSON(data []byte) error {
+	*o = LocationOrLocations{}
 	var vLocation Location
 	if err := json.Unmarshal(data, &vLocation); err == nil {
 		o.Location = &vLocation
 		return nil
 	}
-	var vArrayOfLocation []Location
-	if err := json.Unmarshal(data, &vArrayOfLocation); err == nil {
-		o.ArrayOfLocation = &vArrayOfLocation
+	var vLocations []Location
+	if err := json.Unmarshal(data, &vLocations); err == nil {
+		o.Locations = &vLocations
 		return nil
 	}
-	return fmt.Errorf("invalid LocationOrArrayOfLocation: %s", data)
+	return fmt.Errorf("invalid LocationOrLocations: %s", data)
 }
 
 type InlineValueTextOrInlineValueVariableLookupOrInlineValueEvaluatableExpression struct {

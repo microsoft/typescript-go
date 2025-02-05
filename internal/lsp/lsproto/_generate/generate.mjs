@@ -142,7 +142,7 @@ function writeOr(t, wasOptional = false) {
                 name = t.name;
             }
             else if (t.kind === "array" && (t.element.kind === "reference" || t.element.kind === "base")) {
-                name = "ArrayOf" + titleCase(t.element.name);
+                name = titleCase(t.element.name) + "s";
             }
             else if (t.kind === "tuple") {
                 assert(t.items.length === 2);
