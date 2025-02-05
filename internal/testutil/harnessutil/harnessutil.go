@@ -314,6 +314,9 @@ func parseHarnessOption(t *testing.T, key string, value any, options *HarnessOpt
 }
 
 func getOptionValue(t *testing.T, option *tsoptions.CommandLineOption, value string) tsoptions.CompilerOptionsValue {
+	if option.Name == "moduleResolution" && (value == "classic" || value == "node10") { // Deprecated, ignore it for now to avoid errors
+		return core.ModuleResolutionKindUnknown
+	}
 	switch option.Kind {
 	case tsoptions.CommandLineOptionTypeString:
 		return value
