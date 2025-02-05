@@ -40,7 +40,7 @@ export type MapKeyType =
 /**
  * The actual meta model.
  */
-export interface MetaModelSchema {
+export interface MetaModel {
   /**
    * The enumerations.
    */

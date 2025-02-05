@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 import assert from "node:assert";
 import cp from "node:child_process";
 import fs from "node:fs";
@@ -8,7 +6,7 @@ import url from "node:url";
 import which from "which";
 
 /**
- * @import { MetaModelSchema, OrType, Type } from "./metaModelSchema.mts"
+ * @import { MetaModel, OrType, Type } from "./metaModelSchema.mts"
  */
 void 0;
 
@@ -19,7 +17,7 @@ const out = path.resolve(__dirname, "../lsp_generated.go");
 
 const metaModelPath = path.resolve(__dirname, "metaModel.json");
 
-/** @type {MetaModelSchema} */
+/** @type {MetaModel} */
 const model = JSON.parse(fs.readFileSync(metaModelPath, "utf-8"));
 
 /**
