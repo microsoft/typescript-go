@@ -373,6 +373,8 @@ dedent();
 writeLine("}");
 writeLine("");
 
+writeLine("// Structures\n");
+
 for (const t of model.structures) {
     writeDocumentation(t.documentation);
     writeDeprecation(t.deprecated);
@@ -416,6 +418,8 @@ for (const t of model.structures) {
     writeLine("}");
     writeLine("\n");
 }
+
+writeLine("// Enumerations\n");
 
 for (const t of model.enumerations) {
     writeDocumentation(t.documentation);
@@ -501,6 +505,8 @@ for (const t of model.enumerations) {
     writeLine("");
 }
 
+writeLine("// Type aliases\n");
+
 for (const t of model.typeAliases) {
     writeDocumentation(t.documentation);
     writeDeprecation(t.deprecated);
@@ -519,17 +525,23 @@ function methodNameToIdentifier(method: string): string {
     return method.split("/").map(v => v === "$" ? "" : titleCase(v)).join("");
 }
 
+writeLine("// Requests\n");
+
 for (const t of model.requests) {
     writeDocumentation(t.documentation);
     writeDeprecation(t.deprecated);
     writeLine("const MethodRequest" + methodNameToIdentifier(t.method) + ' Method = "' + t.method + '"\n');
 }
 
+writeLine("// Notifications\n");
+
 for (const t of model.notifications) {
     writeDocumentation(t.documentation);
     writeDeprecation(t.deprecated);
     writeLine("const MethodNotification" + methodNameToIdentifier(t.method) + ' Method = "' + t.method + '"\n');
 }
+
+writeLine("// Union types\n");
 
 writeLine("func assertOnlyOneTrue(message string, values ...bool) {");
 indent();

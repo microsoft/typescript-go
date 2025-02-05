@@ -36,6 +36,8 @@ func (n *Nullable[T]) UnmarshalJSON(data []byte) error {
 	return json.Unmarshal(data, &n.Value)
 }
 
+// Structures
+
 type ImplementationParams struct {
 	TextDocumentPositionParams
 	WorkDoneProgressParams
@@ -4989,6 +4991,8 @@ type ClientSemanticTokensRequestFullDelta struct {
 	Delta *bool `json:"delta,omitempty"`
 }
 
+// Enumerations
+
 // A set of predefined token types. This set is not fixed
 // an clients can specify additional token types via the
 // corresponding client capabilities.
@@ -6357,6 +6361,8 @@ func (e *TokenFormat) UnmarshalJSON(data []byte) error {
 	}
 }
 
+// Type aliases
+
 // The definition of a symbol represented as one or many {@link Location locations}.
 // For most programming languages there is only one location at which a symbol is
 // defined.
@@ -6504,6 +6510,8 @@ type NotebookDocumentFilter = NotebookDocumentFilterNotebookTypeOrNotebookDocume
 type Pattern = string
 
 type RegularExpressionEngineKind = string
+
+// Requests
 
 // A request to resolve the implementation locations of a symbol at a given text
 // document position. The request's parameter is of type {@link TextDocumentPositionParams}
@@ -6867,6 +6875,8 @@ const MethodRequestWorkspaceExecuteCommand Method = "workspace/executeCommand"
 // A request sent from the server to the client to modified certain resources.
 const MethodRequestWorkspaceApplyEdit Method = "workspace/applyEdit"
 
+// Notifications
+
 // The `workspace/didChangeWorkspaceFolders` notification is sent from the client to the server when the workspace
 // folder configuration changes.
 const MethodNotificationWorkspaceDidChangeWorkspaceFolders Method = "workspace/didChangeWorkspaceFolders"
@@ -6982,6 +6992,8 @@ const MethodNotificationLogTrace Method = "$/logTrace"
 const MethodNotificationCancelRequest Method = "$/cancelRequest"
 
 const MethodNotificationProgress Method = "$/progress"
+
+// Union types
 
 func assertOnlyOneTrue(message string, values ...bool) {
 	count := 0
