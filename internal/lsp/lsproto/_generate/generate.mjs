@@ -86,7 +86,9 @@ function finishLine(s) {
 function writeDocumentation(doc) {
     if (doc) {
         const lines = doc.split("\n");
-        for (const line of lines) {
+        for (let line of lines) {
+            line = line.replace(/\{@link(?:code)?.*?([^} ]+)\}/g, "$1");
+
             startLine("// ");
             finishLine(line);
         }

@@ -64,7 +64,7 @@ type ConfigurationParams struct {
 	Items []ConfigurationItem `json:"items"`
 }
 
-// Parameters for a {@link DocumentColorRequest}.
+// Parameters for a DocumentColorRequest.
 type DocumentColorParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
@@ -88,7 +88,7 @@ type DocumentColorRegistrationOptions struct {
 	StaticRegistrationOptions
 }
 
-// Parameters for a {@link ColorPresentationRequest}.
+// Parameters for a ColorPresentationRequest.
 type ColorPresentationParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
@@ -109,13 +109,13 @@ type ColorPresentation struct {
 	// this color presentation.
 	Label string `json:"label"`
 
-	// An {@link TextEdit edit} which is applied to a document when selecting
-	// this presentation for the color.  When `falsy` the {@link ColorPresentation.label label}
+	// An edit which is applied to a document when selecting
+	// this presentation for the color.  When `falsy` the label
 	// is used.
 	TextEdit *TextEdit `json:"textEdit,omitempty"`
 
-	// An optional array of additional {@link TextEdit text edits} that are applied when
-	// selecting this color presentation. Edits must not overlap with the main {@link ColorPresentation.textEdit edit} nor with themselves.
+	// An optional array of additional edits that are applied when
+	// selecting this color presentation. Edits must not overlap with the main edit nor with themselves.
 	AdditionalTextEdits *[]TextEdit `json:"additionalTextEdits,omitempty"`
 }
 
@@ -130,7 +130,7 @@ type TextDocumentRegistrationOptions struct {
 	DocumentSelector *DocumentSelector `json:"documentSelector"`
 }
 
-// Parameters for a {@link FoldingRangeRequest}.
+// Parameters for a FoldingRangeRequest.
 type FoldingRangeParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
@@ -158,7 +158,7 @@ type FoldingRange struct {
 
 	// Describes the kind of the folding range such as 'comment' or 'region'. The kind
 	// is used to categorize folding ranges and used by commands like 'Fold all comments'.
-	// See {@link FoldingRangeKind} for an enumeration of standardized kinds.
+	// See FoldingRangeKind for an enumeration of standardized kinds.
 	Kind *FoldingRangeKind `json:"kind,omitempty"`
 
 	// The text that the client should show when the specified range is
@@ -202,7 +202,7 @@ type SelectionRangeParams struct {
 // A selection range represents a part of a selection hierarchy. A selection range
 // may have a parent selection range that contains it.
 type SelectionRange struct {
-	// The {@link Range range} of this selection range.
+	// The range of this selection range.
 	Range Range `json:"range"`
 
 	// The parent selection range containing this range. Therefore `parent.range` must contain `this.range`.
@@ -257,7 +257,7 @@ type CallHierarchyItem struct {
 	Range Range `json:"range"`
 
 	// The range that should be selected and revealed when this symbol is being picked, e.g. the name of a function.
-	// Must be contained by the {@link CallHierarchyItem.range `range`}.
+	// Must be contained by the `range`.
 	SelectionRange Range `json:"selectionRange"`
 
 	// A data entry field that is preserved between a call hierarchy prepare and
@@ -292,7 +292,7 @@ type CallHierarchyIncomingCall struct {
 	From CallHierarchyItem `json:"from"`
 
 	// The ranges at which the calls appear. This is relative to the caller
-	// denoted by {@link CallHierarchyIncomingCall.from `this.from`}.
+	// denoted by `this.from`.
 	FromRanges []Range `json:"fromRanges"`
 }
 
@@ -314,8 +314,8 @@ type CallHierarchyOutgoingCall struct {
 	To CallHierarchyItem `json:"to"`
 
 	// The range at which this item is called. This is the range relative to the caller, e.g the item
-	// passed to {@link CallHierarchyItemProvider.provideCallHierarchyOutgoingCalls `provideCallHierarchyOutgoingCalls`}
-	// and not {@link CallHierarchyOutgoingCall.to `this.to`}.
+	// passed to `provideCallHierarchyOutgoingCalls`
+	// and not `this.to`.
 	FromRanges []Range `json:"fromRanges"`
 }
 
@@ -581,7 +581,7 @@ type TypeHierarchyItem struct {
 
 	// The range that should be selected and revealed when this symbol is being
 	// picked, e.g. the name of a function. Must be contained by the
-	// {@link TypeHierarchyItem.range `range`}.
+	// `range`.
 	SelectionRange Range `json:"selectionRange"`
 
 	// A data entry field that is preserved between a type hierarchy prepare and
@@ -865,7 +865,7 @@ type InlineCompletionParams struct {
 	Context InlineCompletionContext `json:"context"`
 }
 
-// Represents a collection of {@link InlineCompletionItem inline completion items} to be presented in the editor.
+// Represents a collection of items to be presented in the editor.
 //
 // @since 3.18.0
 // @proposed
@@ -882,13 +882,13 @@ type InlineCompletionItem struct {
 	// The text to replace the range with. Must be set.
 	InsertText StringOrStringValue `json:"insertText,omitempty"`
 
-	// A text that is used to decide if this inline completion should be shown. When `falsy` the {@link InlineCompletionItem.insertText} is used.
+	// A text that is used to decide if this inline completion should be shown. When `falsy` the InlineCompletionItem.insertText is used.
 	FilterText *string `json:"filterText,omitempty"`
 
 	// The range to replace. Must begin and end on the same line.
 	Range *Range `json:"range,omitempty"`
 
-	// An optional {@link Command} that is executed *after* inserting this completion.
+	// An optional Command that is executed *after* inserting this completion.
 	Command *Command `json:"command,omitempty"`
 }
 
@@ -989,7 +989,7 @@ type DidChangeConfigurationRegistrationOptions struct {
 
 // The parameters of a notification message.
 type ShowMessageParams struct {
-	// The message type. See {@link MessageType}
+	// The message type. See MessageType
 	Type MessageType `json:"type"`
 
 	// The actual message.
@@ -997,7 +997,7 @@ type ShowMessageParams struct {
 }
 
 type ShowMessageRequestParams struct {
-	// The message type. See {@link MessageType}
+	// The message type. See MessageType
 	Type MessageType `json:"type"`
 
 	// The actual message.
@@ -1014,7 +1014,7 @@ type MessageActionItem struct {
 
 // The log message parameters.
 type LogMessageParams struct {
-	// The message type. See {@link MessageType}
+	// The message type. See MessageType
 	Type MessageType `json:"type"`
 
 	// The actual message.
@@ -1182,17 +1182,17 @@ type CompletionItem struct {
 	Preselect *bool `json:"preselect,omitempty"`
 
 	// A string that should be used when comparing this item
-	// with other items. When `falsy` the {@link CompletionItem.label label}
+	// with other items. When `falsy` the label
 	// is used.
 	SortText *string `json:"sortText,omitempty"`
 
 	// A string that should be used when filtering a set of
-	// completion items. When `falsy` the {@link CompletionItem.label label}
+	// completion items. When `falsy` the label
 	// is used.
 	FilterText *string `json:"filterText,omitempty"`
 
 	// A string that should be inserted into a document when selecting
-	// this completion. When `falsy` the {@link CompletionItem.label label}
+	// this completion. When `falsy` the label
 	// is used.
 	//
 	// The `insertText` is subject to interpretation by the client side.
@@ -1219,9 +1219,9 @@ type CompletionItem struct {
 	// @since 3.16.0
 	InsertTextMode *InsertTextMode `json:"insertTextMode,omitempty"`
 
-	// An {@link TextEdit edit} which is applied to a document when selecting
+	// An edit which is applied to a document when selecting
 	// this completion. When an edit is provided the value of
-	// {@link CompletionItem.insertText insertText} is ignored.
+	// insertText is ignored.
 	//
 	// Most editors support two different operations when accepting a completion
 	// item. One is to insert a completion text and the other is to replace an
@@ -1253,9 +1253,9 @@ type CompletionItem struct {
 	// @since 3.17.0
 	TextEditText *string `json:"textEditText,omitempty"`
 
-	// An optional array of additional {@link TextEdit text edits} that are applied when
+	// An optional array of additional edits that are applied when
 	// selecting this completion. Edits must not overlap (including the same insert position)
-	// with the main {@link CompletionItem.textEdit edit} nor with themselves.
+	// with the main edit nor with themselves.
 	//
 	// Additional text edits should be used to change text unrelated to the current cursor position
 	// (for example adding an import statement at the top of the file if the completion item will
@@ -1267,17 +1267,17 @@ type CompletionItem struct {
 	// characters will be ignored.
 	CommitCharacters *[]string `json:"commitCharacters,omitempty"`
 
-	// An optional {@link Command command} that is executed *after* inserting this completion. *Note* that
+	// An optional command that is executed *after* inserting this completion. *Note* that
 	// additional modifications to the current document should be described with the
-	// {@link CompletionItem.additionalTextEdits additionalTextEdits}-property.
+	// additionalTextEdits-property.
 	Command *Command `json:"command,omitempty"`
 
 	// A data entry field that is preserved on a completion item between a
-	// {@link CompletionRequest} and a {@link CompletionResolveRequest}.
+	// CompletionRequest and a CompletionResolveRequest.
 	Data *LSPAny `json:"data,omitempty"`
 }
 
-// Represents a collection of {@link CompletionItem completion items} to be presented
+// Represents a collection of items to be presented
 // in the editor.
 type CompletionList struct {
 	// This list it not complete. Further typing results in recomputing this list.
@@ -1326,13 +1326,13 @@ type CompletionList struct {
 	Items []CompletionItem `json:"items"`
 }
 
-// Registration options for a {@link CompletionRequest}.
+// Registration options for a CompletionRequest.
 type CompletionRegistrationOptions struct {
 	TextDocumentRegistrationOptions
 	CompletionOptions
 }
 
-// Parameters for a {@link HoverRequest}.
+// Parameters for a HoverRequest.
 type HoverParams struct {
 	TextDocumentPositionParams
 	WorkDoneProgressParams
@@ -1348,13 +1348,13 @@ type Hover struct {
 	Range *Range `json:"range,omitempty"`
 }
 
-// Registration options for a {@link HoverRequest}.
+// Registration options for a HoverRequest.
 type HoverRegistrationOptions struct {
 	TextDocumentRegistrationOptions
 	HoverOptions
 }
 
-// Parameters for a {@link SignatureHelpRequest}.
+// Parameters for a SignatureHelpRequest.
 type SignatureHelpParams struct {
 	TextDocumentPositionParams
 	WorkDoneProgressParams
@@ -1403,26 +1403,26 @@ type SignatureHelp struct {
 	ActiveParameter *Nullable[uint32] `json:"activeParameter,omitempty"`
 }
 
-// Registration options for a {@link SignatureHelpRequest}.
+// Registration options for a SignatureHelpRequest.
 type SignatureHelpRegistrationOptions struct {
 	TextDocumentRegistrationOptions
 	SignatureHelpOptions
 }
 
-// Parameters for a {@link DefinitionRequest}.
+// Parameters for a DefinitionRequest.
 type DefinitionParams struct {
 	TextDocumentPositionParams
 	WorkDoneProgressParams
 	PartialResultParams
 }
 
-// Registration options for a {@link DefinitionRequest}.
+// Registration options for a DefinitionRequest.
 type DefinitionRegistrationOptions struct {
 	TextDocumentRegistrationOptions
 	DefinitionOptions
 }
 
-// Parameters for a {@link ReferencesRequest}.
+// Parameters for a ReferencesRequest.
 type ReferenceParams struct {
 	TextDocumentPositionParams
 	WorkDoneProgressParams
@@ -1431,13 +1431,13 @@ type ReferenceParams struct {
 	Context ReferenceContext `json:"context"`
 }
 
-// Registration options for a {@link ReferencesRequest}.
+// Registration options for a ReferencesRequest.
 type ReferenceRegistrationOptions struct {
 	TextDocumentRegistrationOptions
 	ReferenceOptions
 }
 
-// Parameters for a {@link DocumentHighlightRequest}.
+// Parameters for a DocumentHighlightRequest.
 type DocumentHighlightParams struct {
 	TextDocumentPositionParams
 	WorkDoneProgressParams
@@ -1451,17 +1451,17 @@ type DocumentHighlight struct {
 	// The range this highlight applies to.
 	Range Range `json:"range"`
 
-	// The highlight kind, default is {@link DocumentHighlightKind.Text text}.
+	// The highlight kind, default is text.
 	Kind *DocumentHighlightKind `json:"kind,omitempty"`
 }
 
-// Registration options for a {@link DocumentHighlightRequest}.
+// Registration options for a DocumentHighlightRequest.
 type DocumentHighlightRegistrationOptions struct {
 	TextDocumentRegistrationOptions
 	DocumentHighlightOptions
 }
 
-// Parameters for a {@link DocumentSymbolRequest}.
+// Parameters for a DocumentSymbolRequest.
 type DocumentSymbolParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
@@ -1534,13 +1534,13 @@ type DocumentSymbol struct {
 	Children *[]DocumentSymbol `json:"children,omitempty"`
 }
 
-// Registration options for a {@link DocumentSymbolRequest}.
+// Registration options for a DocumentSymbolRequest.
 type DocumentSymbolRegistrationOptions struct {
 	TextDocumentRegistrationOptions
 	DocumentSymbolOptions
 }
 
-// The parameters of a {@link CodeActionRequest}.
+// The parameters of a CodeActionRequest.
 type CodeActionParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
@@ -1639,13 +1639,13 @@ type CodeAction struct {
 	Tags *[]CodeActionTag `json:"tags,omitempty"`
 }
 
-// Registration options for a {@link CodeActionRequest}.
+// Registration options for a CodeActionRequest.
 type CodeActionRegistrationOptions struct {
 	TextDocumentRegistrationOptions
 	CodeActionOptions
 }
 
-// The parameters of a {@link WorkspaceSymbolRequest}.
+// The parameters of a WorkspaceSymbolRequest.
 type WorkspaceSymbolParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
@@ -1681,12 +1681,12 @@ type WorkspaceSymbol struct {
 	Data *LSPAny `json:"data,omitempty"`
 }
 
-// Registration options for a {@link WorkspaceSymbolRequest}.
+// Registration options for a WorkspaceSymbolRequest.
 type WorkspaceSymbolRegistrationOptions struct {
 	WorkspaceSymbolOptions
 }
 
-// The parameters of a {@link CodeLensRequest}.
+// The parameters of a CodeLensRequest.
 type CodeLensParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
@@ -1695,7 +1695,7 @@ type CodeLensParams struct {
 	TextDocument TextDocumentIdentifier `json:"textDocument"`
 }
 
-// A code lens represents a {@link Command command} that should be shown along with
+// A code lens represents a command that should be shown along with
 // source text, like the number of references, a way to run tests, etc.
 //
 // A code lens is _unresolved_ when no command is associated to it. For performance
@@ -1708,17 +1708,17 @@ type CodeLens struct {
 	Command *Command `json:"command,omitempty"`
 
 	// A data entry field that is preserved on a code lens item between
-	// a {@link CodeLensRequest} and a {@link CodeLensResolveRequest}
+	// a CodeLensRequest and a CodeLensResolveRequest
 	Data *LSPAny `json:"data,omitempty"`
 }
 
-// Registration options for a {@link CodeLensRequest}.
+// Registration options for a CodeLensRequest.
 type CodeLensRegistrationOptions struct {
 	TextDocumentRegistrationOptions
 	CodeLensOptions
 }
 
-// The parameters of a {@link DocumentLinkRequest}.
+// The parameters of a DocumentLinkRequest.
 type DocumentLinkParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
@@ -1750,13 +1750,13 @@ type DocumentLink struct {
 	Data *LSPAny `json:"data,omitempty"`
 }
 
-// Registration options for a {@link DocumentLinkRequest}.
+// Registration options for a DocumentLinkRequest.
 type DocumentLinkRegistrationOptions struct {
 	TextDocumentRegistrationOptions
 	DocumentLinkOptions
 }
 
-// The parameters of a {@link DocumentFormattingRequest}.
+// The parameters of a DocumentFormattingRequest.
 type DocumentFormattingParams struct {
 	WorkDoneProgressParams
 
@@ -1767,13 +1767,13 @@ type DocumentFormattingParams struct {
 	Options FormattingOptions `json:"options"`
 }
 
-// Registration options for a {@link DocumentFormattingRequest}.
+// Registration options for a DocumentFormattingRequest.
 type DocumentFormattingRegistrationOptions struct {
 	TextDocumentRegistrationOptions
 	DocumentFormattingOptions
 }
 
-// The parameters of a {@link DocumentRangeFormattingRequest}.
+// The parameters of a DocumentRangeFormattingRequest.
 type DocumentRangeFormattingParams struct {
 	WorkDoneProgressParams
 
@@ -1787,13 +1787,13 @@ type DocumentRangeFormattingParams struct {
 	Options FormattingOptions `json:"options"`
 }
 
-// Registration options for a {@link DocumentRangeFormattingRequest}.
+// Registration options for a DocumentRangeFormattingRequest.
 type DocumentRangeFormattingRegistrationOptions struct {
 	TextDocumentRegistrationOptions
 	DocumentRangeFormattingOptions
 }
 
-// The parameters of a {@link DocumentRangesFormattingRequest}.
+// The parameters of a DocumentRangesFormattingRequest.
 //
 // @since 3.18.0
 // @proposed
@@ -1810,7 +1810,7 @@ type DocumentRangesFormattingParams struct {
 	Options FormattingOptions `json:"options"`
 }
 
-// The parameters of a {@link DocumentOnTypeFormattingRequest}.
+// The parameters of a DocumentOnTypeFormattingRequest.
 type DocumentOnTypeFormattingParams struct {
 	// The document to format.
 	TextDocument TextDocumentIdentifier `json:"textDocument"`
@@ -1830,13 +1830,13 @@ type DocumentOnTypeFormattingParams struct {
 	Options FormattingOptions `json:"options"`
 }
 
-// Registration options for a {@link DocumentOnTypeFormattingRequest}.
+// Registration options for a DocumentOnTypeFormattingRequest.
 type DocumentOnTypeFormattingRegistrationOptions struct {
 	TextDocumentRegistrationOptions
 	DocumentOnTypeFormattingOptions
 }
 
-// The parameters of a {@link RenameRequest}.
+// The parameters of a RenameRequest.
 type RenameParams struct {
 	WorkDoneProgressParams
 
@@ -1847,12 +1847,12 @@ type RenameParams struct {
 	Position Position `json:"position"`
 
 	// The new name of the symbol. If the given name is not valid the
-	// request must return a {@link ResponseError} with an
+	// request must return a ResponseError with an
 	// appropriate message set.
 	NewName string `json:"newName"`
 }
 
-// Registration options for a {@link RenameRequest}.
+// Registration options for a RenameRequest.
 type RenameRegistrationOptions struct {
 	TextDocumentRegistrationOptions
 	RenameOptions
@@ -1863,7 +1863,7 @@ type PrepareRenameParams struct {
 	WorkDoneProgressParams
 }
 
-// The parameters of a {@link ExecuteCommandRequest}.
+// The parameters of a ExecuteCommandRequest.
 type ExecuteCommandParams struct {
 	WorkDoneProgressParams
 
@@ -1874,7 +1874,7 @@ type ExecuteCommandParams struct {
 	Arguments *[]LSPAny `json:"arguments,omitempty"`
 }
 
-// Registration options for a {@link ExecuteCommandRequest}.
+// Registration options for a ExecuteCommandRequest.
 type ExecuteCommandRegistrationOptions struct {
 	ExecuteCommandOptions
 }
@@ -2021,7 +2021,7 @@ type PartialResultParams struct {
 	PartialResultToken *ProgressToken `json:"partialResultToken,omitempty"`
 }
 
-// Represents the connection of two locations. Provides additional metadata over normal {@link Location locations},
+// Represents the connection of two locations. Provides additional metadata over normal locations,
 // including an origin range.
 type LocationLink struct {
 	// Span of the origin of this link.
@@ -2983,7 +2983,7 @@ type FileEvent struct {
 }
 
 type FileSystemWatcher struct {
-	// The glob pattern to watch. See {@link GlobPattern glob pattern} for more detail.
+	// The glob pattern to watch. See pattern for more detail.
 	//
 	// @since 3.17.0 support for relative patterns.
 	GlobPattern GlobPattern `json:"globPattern"`
@@ -3052,11 +3052,11 @@ type CompletionContext struct {
 //
 // @since 3.17.0
 type CompletionItemLabelDetails struct {
-	// An optional string which is rendered less prominently directly after {@link CompletionItem.label label},
+	// An optional string which is rendered less prominently directly after label,
 	// without any spacing. Should be used for function signatures and type annotations.
 	Detail *string `json:"detail,omitempty"`
 
-	// An optional string which is rendered less prominently after {@link CompletionItem.detail}. Should be used
+	// An optional string which is rendered less prominently after CompletionItem.detail. Should be used
 	// for fully qualified names and file paths.
 	Description *string `json:"description,omitempty"`
 }
@@ -3271,7 +3271,7 @@ type SignatureInformation struct {
 	ActiveParameter *Nullable[uint32] `json:"activeParameter,omitempty"`
 }
 
-// Server Capabilities for a {@link SignatureHelpRequest}.
+// Server Capabilities for a SignatureHelpRequest.
 type SignatureHelpOptions struct {
 	WorkDoneProgressOptions
 
@@ -3287,7 +3287,7 @@ type SignatureHelpOptions struct {
 	RetriggerCharacters *[]string `json:"retriggerCharacters,omitempty"`
 }
 
-// Server Capabilities for a {@link DefinitionRequest}.
+// Server Capabilities for a DefinitionRequest.
 type DefinitionOptions struct {
 	WorkDoneProgressOptions
 }
@@ -3304,7 +3304,7 @@ type ReferenceOptions struct {
 	WorkDoneProgressOptions
 }
 
-// Provider options for a {@link DocumentHighlightRequest}.
+// Provider options for a DocumentHighlightRequest.
 type DocumentHighlightOptions struct {
 	WorkDoneProgressOptions
 }
@@ -3329,7 +3329,7 @@ type BaseSymbolInformation struct {
 	ContainerName *string `json:"containerName,omitempty"`
 }
 
-// Provider options for a {@link DocumentSymbolRequest}.
+// Provider options for a DocumentSymbolRequest.
 type DocumentSymbolOptions struct {
 	WorkDoneProgressOptions
 
@@ -3341,7 +3341,7 @@ type DocumentSymbolOptions struct {
 }
 
 // Contains additional diagnostic information about the context in which
-// a {@link CodeActionProvider.provideCodeActions code action} is run.
+// a action is run.
 type CodeActionContext struct {
 	// An array of diagnostics known on the client side overlapping the range provided to the
 	// `textDocument/codeAction` request. They are provided so that the server knows which
@@ -3372,7 +3372,7 @@ type CodeActionDisabled struct {
 	Reason string `json:"reason"`
 }
 
-// Provider options for a {@link CodeActionRequest}.
+// Provider options for a CodeActionRequest.
 type CodeActionOptions struct {
 	WorkDoneProgressOptions
 
@@ -3413,7 +3413,7 @@ type LocationUriOnly struct {
 	Uri DocumentUri `json:"uri"`
 }
 
-// Server capabilities for a {@link WorkspaceSymbolRequest}.
+// Server capabilities for a WorkspaceSymbolRequest.
 type WorkspaceSymbolOptions struct {
 	WorkDoneProgressOptions
 
@@ -3424,7 +3424,7 @@ type WorkspaceSymbolOptions struct {
 	ResolveProvider *bool `json:"resolveProvider,omitempty"`
 }
 
-// Code Lens provider options of a {@link CodeLensRequest}.
+// Code Lens provider options of a CodeLensRequest.
 type CodeLensOptions struct {
 	WorkDoneProgressOptions
 
@@ -3432,7 +3432,7 @@ type CodeLensOptions struct {
 	ResolveProvider *bool `json:"resolveProvider,omitempty"`
 }
 
-// Provider options for a {@link DocumentLinkRequest}.
+// Provider options for a DocumentLinkRequest.
 type DocumentLinkOptions struct {
 	WorkDoneProgressOptions
 
@@ -3464,12 +3464,12 @@ type FormattingOptions struct {
 	TrimFinalNewlines *bool `json:"trimFinalNewlines,omitempty"`
 }
 
-// Provider options for a {@link DocumentFormattingRequest}.
+// Provider options for a DocumentFormattingRequest.
 type DocumentFormattingOptions struct {
 	WorkDoneProgressOptions
 }
 
-// Provider options for a {@link DocumentRangeFormattingRequest}.
+// Provider options for a DocumentRangeFormattingRequest.
 type DocumentRangeFormattingOptions struct {
 	WorkDoneProgressOptions
 
@@ -3480,7 +3480,7 @@ type DocumentRangeFormattingOptions struct {
 	RangesSupport *bool `json:"rangesSupport,omitempty"`
 }
 
-// Provider options for a {@link DocumentOnTypeFormattingRequest}.
+// Provider options for a DocumentOnTypeFormattingRequest.
 type DocumentOnTypeFormattingOptions struct {
 	// A character on which formatting should be triggered, like `{`.
 	FirstTriggerCharacter string `json:"firstTriggerCharacter"`
@@ -3489,7 +3489,7 @@ type DocumentOnTypeFormattingOptions struct {
 	MoreTriggerCharacter *[]string `json:"moreTriggerCharacter,omitempty"`
 }
 
-// Provider options for a {@link RenameRequest}.
+// Provider options for a RenameRequest.
 type RenameOptions struct {
 	WorkDoneProgressOptions
 
@@ -3511,7 +3511,7 @@ type PrepareRenameDefaultBehavior struct {
 	DefaultBehavior bool `json:"defaultBehavior"`
 }
 
-// The server capabilities of a {@link ExecuteCommandRequest}.
+// The server capabilities of a ExecuteCommandRequest.
 type ExecuteCommandOptions struct {
 	WorkDoneProgressOptions
 
@@ -3932,7 +3932,7 @@ type CodeActionKindDocumentation struct {
 
 	// Command that is ued to display the documentation to the user.
 	//
-	// The title of this documentation code action is taken from {@linkcode Command.title}
+	// The title of this documentation code action is taken from Command.title
 	Command Command `json:"command"`
 }
 
@@ -4348,7 +4348,7 @@ type TextDocumentFilterLanguage struct {
 	// A language id, like `typescript`.
 	Language string `json:"language"`
 
-	// A Uri {@link Uri.scheme scheme}, like `file` or `untitled`.
+	// A Uri scheme, like `file` or `untitled`.
 	Scheme *string `json:"scheme,omitempty"`
 
 	// A glob pattern, like **​/*.{ts,js}. See TextDocumentFilter for examples.
@@ -4366,7 +4366,7 @@ type TextDocumentFilterScheme struct {
 	// A language id, like `typescript`.
 	Language *string `json:"language,omitempty"`
 
-	// A Uri {@link Uri.scheme scheme}, like `file` or `untitled`.
+	// A Uri scheme, like `file` or `untitled`.
 	Scheme string `json:"scheme"`
 
 	// A glob pattern, like **​/*.{ts,js}. See TextDocumentFilter for examples.
@@ -4384,7 +4384,7 @@ type TextDocumentFilterPattern struct {
 	// A language id, like `typescript`.
 	Language *string `json:"language,omitempty"`
 
-	// A Uri {@link Uri.scheme scheme}, like `file` or `untitled`.
+	// A Uri scheme, like `file` or `untitled`.
 	Scheme *string `json:"scheme,omitempty"`
 
 	// A glob pattern, like **​/*.{ts,js}. See TextDocumentFilter for examples.
@@ -4402,7 +4402,7 @@ type NotebookDocumentFilterNotebookType struct {
 	// The type of the enclosing notebook.
 	NotebookType string `json:"notebookType"`
 
-	// A Uri {@link Uri.scheme scheme}, like `file` or `untitled`.
+	// A Uri scheme, like `file` or `untitled`.
 	Scheme *string `json:"scheme,omitempty"`
 
 	// A glob pattern.
@@ -4416,7 +4416,7 @@ type NotebookDocumentFilterScheme struct {
 	// The type of the enclosing notebook.
 	NotebookType *string `json:"notebookType,omitempty"`
 
-	// A Uri {@link Uri.scheme scheme}, like `file` or `untitled`.
+	// A Uri scheme, like `file` or `untitled`.
 	Scheme string `json:"scheme"`
 
 	// A glob pattern.
@@ -4430,7 +4430,7 @@ type NotebookDocumentFilterPattern struct {
 	// The type of the enclosing notebook.
 	NotebookType *string `json:"notebookType,omitempty"`
 
-	// A Uri {@link Uri.scheme scheme}, like `file` or `untitled`.
+	// A Uri scheme, like `file` or `untitled`.
 	Scheme *string `json:"scheme,omitempty"`
 
 	// A glob pattern.
@@ -4507,14 +4507,14 @@ type DidChangeWatchedFilesClientCapabilities struct {
 	// from the server side.
 	DynamicRegistration *bool `json:"dynamicRegistration,omitempty"`
 
-	// Whether the client has support for {@link  RelativePattern relative pattern}
+	// Whether the client has support for pattern
 	// or not.
 	//
 	// @since 3.17.0
 	RelativePatternSupport *bool `json:"relativePatternSupport,omitempty"`
 }
 
-// Client capabilities for a {@link WorkspaceSymbolRequest}.
+// Client capabilities for a WorkspaceSymbolRequest.
 type WorkspaceSymbolClientCapabilities struct {
 	// Symbol request supports dynamic registration.
 	DynamicRegistration *bool `json:"dynamicRegistration,omitempty"`
@@ -4536,7 +4536,7 @@ type WorkspaceSymbolClientCapabilities struct {
 	ResolveSupport *ClientSymbolResolveOptions `json:"resolveSupport,omitempty"`
 }
 
-// The client capabilities of a {@link ExecuteCommandRequest}.
+// The client capabilities of a ExecuteCommandRequest.
 type ExecuteCommandClientCapabilities struct {
 	// Execute command supports dynamic registration.
 	DynamicRegistration *bool `json:"dynamicRegistration,omitempty"`
@@ -4725,7 +4725,7 @@ type HoverClientCapabilities struct {
 	ContentFormat *[]MarkupKind `json:"contentFormat,omitempty"`
 }
 
-// Client Capabilities for a {@link SignatureHelpRequest}.
+// Client Capabilities for a SignatureHelpRequest.
 type SignatureHelpClientCapabilities struct {
 	// Whether signature help supports dynamic registration.
 	DynamicRegistration *bool `json:"dynamicRegistration,omitempty"`
@@ -4754,7 +4754,7 @@ type DeclarationClientCapabilities struct {
 	LinkSupport *bool `json:"linkSupport,omitempty"`
 }
 
-// Client Capabilities for a {@link DefinitionRequest}.
+// Client Capabilities for a DefinitionRequest.
 type DefinitionClientCapabilities struct {
 	// Whether definition supports dynamic registration.
 	DynamicRegistration *bool `json:"dynamicRegistration,omitempty"`
@@ -4791,19 +4791,19 @@ type ImplementationClientCapabilities struct {
 	LinkSupport *bool `json:"linkSupport,omitempty"`
 }
 
-// Client Capabilities for a {@link ReferencesRequest}.
+// Client Capabilities for a ReferencesRequest.
 type ReferenceClientCapabilities struct {
 	// Whether references supports dynamic registration.
 	DynamicRegistration *bool `json:"dynamicRegistration,omitempty"`
 }
 
-// Client Capabilities for a {@link DocumentHighlightRequest}.
+// Client Capabilities for a DocumentHighlightRequest.
 type DocumentHighlightClientCapabilities struct {
 	// Whether document highlight supports dynamic registration.
 	DynamicRegistration *bool `json:"dynamicRegistration,omitempty"`
 }
 
-// Client Capabilities for a {@link DocumentSymbolRequest}.
+// Client Capabilities for a DocumentSymbolRequest.
 type DocumentSymbolClientCapabilities struct {
 	// Whether document symbol supports dynamic registration.
 	DynamicRegistration *bool `json:"dynamicRegistration,omitempty"`
@@ -4829,7 +4829,7 @@ type DocumentSymbolClientCapabilities struct {
 	LabelSupport *bool `json:"labelSupport,omitempty"`
 }
 
-// The Client Capabilities of a {@link CodeActionRequest}.
+// The Client Capabilities of a CodeActionRequest.
 type CodeActionClientCapabilities struct {
 	// Whether code action supports dynamic registration.
 	DynamicRegistration *bool `json:"dynamicRegistration,omitempty"`
@@ -4887,7 +4887,7 @@ type CodeActionClientCapabilities struct {
 	TagSupport *CodeActionTagOptions `json:"tagSupport,omitempty"`
 }
 
-// The client capabilities  of a {@link CodeLensRequest}.
+// The client capabilities  of a CodeLensRequest.
 type CodeLensClientCapabilities struct {
 	// Whether code lens supports dynamic registration.
 	DynamicRegistration *bool `json:"dynamicRegistration,omitempty"`
@@ -4899,7 +4899,7 @@ type CodeLensClientCapabilities struct {
 	ResolveSupport *ClientCodeLensResolveOptions `json:"resolveSupport,omitempty"`
 }
 
-// The client capabilities of a {@link DocumentLinkRequest}.
+// The client capabilities of a DocumentLinkRequest.
 type DocumentLinkClientCapabilities struct {
 	// Whether document link supports dynamic registration.
 	DynamicRegistration *bool `json:"dynamicRegistration,omitempty"`
@@ -4917,13 +4917,13 @@ type DocumentColorClientCapabilities struct {
 	DynamicRegistration *bool `json:"dynamicRegistration,omitempty"`
 }
 
-// Client capabilities of a {@link DocumentFormattingRequest}.
+// Client capabilities of a DocumentFormattingRequest.
 type DocumentFormattingClientCapabilities struct {
 	// Whether formatting supports dynamic registration.
 	DynamicRegistration *bool `json:"dynamicRegistration,omitempty"`
 }
 
-// Client capabilities of a {@link DocumentRangeFormattingRequest}.
+// Client capabilities of a DocumentRangeFormattingRequest.
 type DocumentRangeFormattingClientCapabilities struct {
 	// Whether range formatting supports dynamic registration.
 	DynamicRegistration *bool `json:"dynamicRegistration,omitempty"`
@@ -4935,7 +4935,7 @@ type DocumentRangeFormattingClientCapabilities struct {
 	RangesSupport *bool `json:"rangesSupport,omitempty"`
 }
 
-// Client capabilities of a {@link DocumentOnTypeFormattingRequest}.
+// Client capabilities of a DocumentOnTypeFormattingRequest.
 type DocumentOnTypeFormattingClientCapabilities struct {
 	// Whether on type formatting supports dynamic registration.
 	DynamicRegistration *bool `json:"dynamicRegistration,omitempty"`
@@ -6443,7 +6443,7 @@ func (e *LanguageKind) UnmarshalJSON(data []byte) error {
 	}
 }
 
-// Describes how an {@link InlineCompletionItemProvider inline completion provider} was triggered.
+// Describes how an provider was triggered.
 //
 // @since 3.18.0
 // @proposed
@@ -6886,7 +6886,7 @@ func (e *TokenFormat) UnmarshalJSON(data []byte) error {
 
 // Type aliases
 
-// The definition of a symbol represented as one or many {@link Location locations}.
+// The definition of a symbol represented as one or many locations.
 // For most programming languages there is only one location at which a symbol is
 // defined.
 //
@@ -6896,7 +6896,7 @@ type (
 	Definition = LocationOrArrayOfLocation
 	// Information about where a symbol is defined.
 	//
-	// Provides additional metadata over normal {@link Location location} definitions, including the range of
+	// Provides additional metadata over normal location definitions, including the range of
 	// the defining symbol
 	DefinitionLink = LocationLink
 	// LSP arrays.
@@ -6911,12 +6911,12 @@ type (
 	LSPAny = any
 )
 
-// The declaration of a symbol representation as one or many {@link Location locations}.
+// The declaration of a symbol representation as one or many locations.
 type (
 	Declaration = LocationOrArrayOfLocation
 	// Information about where a symbol is declared.
 	//
-	// Provides additional metadata over normal {@link Location location} declarations, including the range of
+	// Provides additional metadata over normal location declarations, including the range of
 	// the declaring symbol.
 	//
 	// Servers should prefer returning `DeclarationLink` over `Declaration` if supported
@@ -6983,8 +6983,8 @@ type (
 	// @since 3.17.0
 	GlobPattern = PatternOrRelativePattern
 	// A document filter denotes a document by different properties like
-	// the {@link TextDocument.languageId language}, the {@link Uri.scheme scheme} of
-	// its resource, or a glob-pattern that is applied to the {@link TextDocument.fileName path}.
+	// the language, the scheme of
+	// its resource, or a glob-pattern that is applied to the path.
 	//
 	// Glob patterns can have the following syntax:
 	// - `*` to match one or more characters in a path segment
@@ -7101,13 +7101,13 @@ var unmarshallers = map[Method]func([]byte) (any, error){
 // Requests
 
 // A request to resolve the implementation locations of a symbol at a given text
-// document position. The request's parameter is of type {@link TextDocumentPositionParams}
-// the response is of type {@link Definition} or a Thenable that resolves to such.
+// document position. The request's parameter is of type TextDocumentPositionParams
+// the response is of type Definition or a Thenable that resolves to such.
 const MethodRequestTextDocumentImplementation Method = "textDocument/implementation"
 
 // A request to resolve the type definition locations of a symbol at a given text
-// document position. The request's parameter is of type {@link TextDocumentPositionParams}
-// the response is of type {@link Definition} or a Thenable that resolves to such.
+// document position. The request's parameter is of type TextDocumentPositionParams
+// the response is of type Definition or a Thenable that resolves to such.
 const MethodRequestTextDocumentTypeDefinition Method = "textDocument/typeDefinition"
 
 // The `workspace/workspaceFolders` is sent from the server to the client to fetch the open workspace folders.
@@ -7123,20 +7123,20 @@ const MethodRequestWorkspaceWorkspaceFolders Method = "workspace/workspaceFolder
 const MethodRequestWorkspaceConfiguration Method = "workspace/configuration"
 
 // A request to list all color symbols found in a given text document. The request's
-// parameter is of type {@link DocumentColorParams} the
-// response is of type {@link ColorInformation ColorInformation[]} or a Thenable
+// parameter is of type DocumentColorParams the
+// response is of type ColorInformation[] or a Thenable
 // that resolves to such.
 const MethodRequestTextDocumentDocumentColor Method = "textDocument/documentColor"
 
 // A request to list all presentation for a color. The request's
-// parameter is of type {@link ColorPresentationParams} the
-// response is of type {@link ColorInformation ColorInformation[]} or a Thenable
+// parameter is of type ColorPresentationParams the
+// response is of type ColorInformation[] or a Thenable
 // that resolves to such.
 const MethodRequestTextDocumentColorPresentation Method = "textDocument/colorPresentation"
 
 // A request to provide folding ranges in a document. The request's
-// parameter is of type {@link FoldingRangeParams}, the
-// response is of type {@link FoldingRangeList} or a Thenable
+// parameter is of type FoldingRangeParams, the
+// response is of type FoldingRangeList or a Thenable
 // that resolves to such.
 const MethodRequestTextDocumentFoldingRange Method = "textDocument/foldingRange"
 
@@ -7145,14 +7145,14 @@ const MethodRequestTextDocumentFoldingRange Method = "textDocument/foldingRange"
 const MethodRequestWorkspaceFoldingRangeRefresh Method = "workspace/foldingRange/refresh"
 
 // A request to resolve the type definition locations of a symbol at a given text
-// document position. The request's parameter is of type {@link TextDocumentPositionParams}
-// the response is of type {@link Declaration} or a typed array of {@link DeclarationLink}
+// document position. The request's parameter is of type TextDocumentPositionParams
+// the response is of type Declaration or a typed array of DeclarationLink
 // or a Thenable that resolves to such.
 const MethodRequestTextDocumentDeclaration Method = "textDocument/declaration"
 
 // A request to provide selection ranges in a document. The request's
-// parameter is of type {@link SelectionRangeParams}, the
-// response is of type {@link SelectionRange SelectionRange[]} or a Thenable
+// parameter is of type SelectionRangeParams, the
+// response is of type SelectionRange[] or a Thenable
 // that resolves to such.
 const MethodRequestTextDocumentSelectionRange Method = "textDocument/selectionRange"
 
@@ -7224,8 +7224,8 @@ const MethodRequestWorkspaceWillRenameFiles Method = "workspace/willRenameFiles"
 const MethodRequestWorkspaceWillDeleteFiles Method = "workspace/willDeleteFiles"
 
 // A request to get the moniker of a symbol at a given text document position.
-// The request parameter is of type {@link TextDocumentPositionParams}.
-// The response is of type {@link Moniker Moniker[]} or `null`.
+// The request parameter is of type TextDocumentPositionParams.
+// The response is of type Moniker[] or `null`.
 const MethodRequestTextDocumentMoniker Method = "textDocument/moniker"
 
 // A request to result a `TypeHierarchyItem` in a document at a given position.
@@ -7245,8 +7245,8 @@ const MethodRequestTypeHierarchySupertypes Method = "typeHierarchy/supertypes"
 const MethodRequestTypeHierarchySubtypes Method = "typeHierarchy/subtypes"
 
 // A request to provide inline values in a document. The request's parameter is of
-// type {@link InlineValueParams}, the response is of type
-// {@link InlineValue InlineValue[]} or a Thenable that resolves to such.
+// type InlineValueParams, the response is of type
+// InlineValue[] or a Thenable that resolves to such.
 //
 // @since 3.17.0
 const MethodRequestTextDocumentInlineValue Method = "textDocument/inlineValue"
@@ -7255,15 +7255,15 @@ const MethodRequestTextDocumentInlineValue Method = "textDocument/inlineValue"
 const MethodRequestWorkspaceInlineValueRefresh Method = "workspace/inlineValue/refresh"
 
 // A request to provide inlay hints in a document. The request's parameter is of
-// type {@link InlayHintsParams}, the response is of type
-// {@link InlayHint InlayHint[]} or a Thenable that resolves to such.
+// type InlayHintsParams, the response is of type
+// InlayHint[] or a Thenable that resolves to such.
 //
 // @since 3.17.0
 const MethodRequestTextDocumentInlayHint Method = "textDocument/inlayHint"
 
 // A request to resolve additional properties for an inlay hint.
-// The request's parameter is of type {@link InlayHint}, the response is
-// of type {@link InlayHint} or a Thenable that resolves to such.
+// The request's parameter is of type InlayHint, the response is
+// of type InlayHint or a Thenable that resolves to such.
 //
 // @since 3.17.0
 const MethodRequestInlayHintResolve Method = "inlayHint/resolve"
@@ -7287,8 +7287,8 @@ const MethodRequestWorkspaceDiagnostic Method = "workspace/diagnostic"
 const MethodRequestWorkspaceDiagnosticRefresh Method = "workspace/diagnostic/refresh"
 
 // A request to provide inline completions in a document. The request's parameter is of
-// type {@link InlineCompletionParams}, the response is of type
-// {@link InlineCompletion InlineCompletion[]} or a Thenable that resolves to such.
+// type InlineCompletionParams, the response is of type
+// InlineCompletion[] or a Thenable that resolves to such.
 //
 // @since 3.18.0
 // @proposed
@@ -7318,8 +7318,8 @@ const MethodRequestClientUnregisterCapability Method = "client/unregisterCapabil
 
 // The initialize request is sent from the client to the server.
 // It is sent once as the request after starting up the server.
-// The requests parameter is of type {@link InitializeParams}
-// the response if of type {@link InitializeResult} of a Thenable that
+// The requests parameter is of type InitializeParams
+// the response if of type InitializeResult of a Thenable that
 // resolves to such.
 const MethodRequestInitialize Method = "initialize"
 
@@ -7342,49 +7342,49 @@ const MethodRequestWindowShowMessageRequest Method = "window/showMessageRequest"
 const MethodRequestTextDocumentWillSaveWaitUntil Method = "textDocument/willSaveWaitUntil"
 
 // Request to request completion at a given text document position. The request's
-// parameter is of type {@link TextDocumentPosition} the response
-// is of type {@link CompletionItem CompletionItem[]} or {@link CompletionList}
+// parameter is of type TextDocumentPosition the response
+// is of type CompletionItem[] or CompletionList
 // or a Thenable that resolves to such.
 //
-// The request can delay the computation of the {@link CompletionItem.detail `detail`}
-// and {@link CompletionItem.documentation `documentation`} properties to the `completionItem/resolve`
+// The request can delay the computation of the `detail`
+// and `documentation` properties to the `completionItem/resolve`
 // request. However, properties that are needed for the initial sorting and filtering, like `sortText`,
 // `filterText`, `insertText`, and `textEdit`, must not be changed during resolve.
 const MethodRequestTextDocumentCompletion Method = "textDocument/completion"
 
 // Request to resolve additional information for a given completion item.The request's
-// parameter is of type {@link CompletionItem} the response
-// is of type {@link CompletionItem} or a Thenable that resolves to such.
+// parameter is of type CompletionItem the response
+// is of type CompletionItem or a Thenable that resolves to such.
 const MethodRequestCompletionItemResolve Method = "completionItem/resolve"
 
 // Request to request hover information at a given text document position. The request's
-// parameter is of type {@link TextDocumentPosition} the response is of
-// type {@link Hover} or a Thenable that resolves to such.
+// parameter is of type TextDocumentPosition the response is of
+// type Hover or a Thenable that resolves to such.
 const MethodRequestTextDocumentHover Method = "textDocument/hover"
 
 const MethodRequestTextDocumentSignatureHelp Method = "textDocument/signatureHelp"
 
 // A request to resolve the definition location of a symbol at a given text
-// document position. The request's parameter is of type {@link TextDocumentPosition}
-// the response is of either type {@link Definition} or a typed array of
-// {@link DefinitionLink} or a Thenable that resolves to such.
+// document position. The request's parameter is of type TextDocumentPosition
+// the response is of either type Definition or a typed array of
+// DefinitionLink or a Thenable that resolves to such.
 const MethodRequestTextDocumentDefinition Method = "textDocument/definition"
 
 // A request to resolve project-wide references for the symbol denoted
 // by the given text document position. The request's parameter is of
-// type {@link ReferenceParams} the response is of type
-// {@link Location Location[]} or a Thenable that resolves to such.
+// type ReferenceParams the response is of type
+// Location[] or a Thenable that resolves to such.
 const MethodRequestTextDocumentReferences Method = "textDocument/references"
 
-// Request to resolve a {@link DocumentHighlight} for a given
-// text document position. The request's parameter is of type {@link TextDocumentPosition}
-// the request response is an array of type {@link DocumentHighlight}
+// Request to resolve a DocumentHighlight for a given
+// text document position. The request's parameter is of type TextDocumentPosition
+// the request response is an array of type DocumentHighlight
 // or a Thenable that resolves to such.
 const MethodRequestTextDocumentDocumentHighlight Method = "textDocument/documentHighlight"
 
 // A request to list all symbols found in a given text document. The request's
-// parameter is of type {@link TextDocumentIdentifier} the
-// response is of type {@link SymbolInformation SymbolInformation[]} or a Thenable
+// parameter is of type TextDocumentIdentifier the
+// response is of type SymbolInformation[] or a Thenable
 // that resolves to such.
 const MethodRequestTextDocumentDocumentSymbol Method = "textDocument/documentSymbol"
 
@@ -7392,13 +7392,13 @@ const MethodRequestTextDocumentDocumentSymbol Method = "textDocument/documentSym
 const MethodRequestTextDocumentCodeAction Method = "textDocument/codeAction"
 
 // Request to resolve additional information for a given code action.The request's
-// parameter is of type {@link CodeAction} the response
-// is of type {@link CodeAction} or a Thenable that resolves to such.
+// parameter is of type CodeAction the response
+// is of type CodeAction or a Thenable that resolves to such.
 const MethodRequestCodeActionResolve Method = "codeAction/resolve"
 
 // A request to list project-wide symbols matching the query string given
-// by the {@link WorkspaceSymbolParams}. The response is
-// of type {@link SymbolInformation SymbolInformation[]} or a Thenable that
+// by the WorkspaceSymbolParams. The response is
+// of type SymbolInformation[] or a Thenable that
 // resolves to such.
 //
 // @since 3.17.0 - support for WorkspaceSymbol in the returned data. Clients
@@ -7428,8 +7428,8 @@ const MethodRequestWorkspaceCodeLensRefresh Method = "workspace/codeLens/refresh
 const MethodRequestTextDocumentDocumentLink Method = "textDocument/documentLink"
 
 // Request to resolve additional information for a given document link. The request's
-// parameter is of type {@link DocumentLink} the response
-// is of type {@link DocumentLink} or a Thenable that resolves to such.
+// parameter is of type DocumentLink the response
+// is of type DocumentLink or a Thenable that resolves to such.
 const MethodRequestDocumentLinkResolve Method = "documentLink/resolve"
 
 // A request to format a whole document.
