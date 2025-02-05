@@ -9,29 +9,6 @@ import (
 
 // Meta model version 3.17.0
 
-type Method string
-
-type Nullable[T any] struct {
-	Value T
-	Null  bool
-}
-
-func (n Nullable[T]) MarshalJSON() ([]byte, error) {
-	if n.Null {
-		return []byte(`null`), nil
-	}
-	return json.Marshal(n.Value)
-}
-
-func (n *Nullable[T]) UnmarshalJSON(data []byte) error {
-	*n = Nullable[T]{}
-	if string(data) == `null` {
-		n.Null = true
-		return nil
-	}
-	return json.Unmarshal(data, &n.Value)
-}
-
 // Structures
 
 type ImplementationParams struct {
@@ -6508,14 +6485,6 @@ type Pattern = string
 type RegularExpressionEngineKind = string
 
 // Unmarshallers
-
-func unmarshallerFor[T any](data []byte) (any, error) {
-	var v T
-	if err := json.Unmarshal(data, &v); err != nil {
-		return nil, fmt.Errorf("failed to unmarshal %T: %w", (*T)(nil), err)
-	}
-	return &v, nil
-}
 
 var unmarshallers = map[Method]func([]byte) (any, error){
 	MethodRequestTextDocumentImplementation:              unmarshallerFor[ImplementationParams],

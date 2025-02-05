@@ -296,44 +296,6 @@ writeLine("");
 writeLine("// Meta model version " + model.metaData.version);
 writeLine("");
 
-writeLine("type Method string\n");
-
-writeLine("");
-
-writeLine("type Nullable[T any] struct {");
-indent();
-writeLine("Value T");
-writeLine("Null bool");
-dedent();
-writeLine("}");
-writeLine("");
-
-writeLine("func (n Nullable[T]) MarshalJSON() ([]byte, error) {");
-indent();
-writeLine("if n.Null {");
-indent();
-writeLine("return []byte(`null`), nil");
-dedent();
-writeLine("}");
-writeLine("return json.Marshal(n.Value)");
-dedent();
-writeLine("}");
-writeLine("");
-
-writeLine("func (n *Nullable[T]) UnmarshalJSON(data []byte) error {");
-indent();
-writeLine("*n = Nullable[T]{}");
-writeLine("if string(data) == `null` {");
-indent();
-writeLine("n.Null = true");
-writeLine("return nil");
-dedent();
-writeLine("}");
-writeLine("return json.Unmarshal(data, &n.Value)");
-dedent();
-writeLine("}");
-writeLine("");
-
 writeLine("// Structures\n");
 
 for (const t of model.structures) {
@@ -496,18 +458,6 @@ function methodNameToIdentifier(method) {
 }
 
 writeLine("// Unmarshallers\n");
-
-writeLine("func unmarshallerFor[T any](data []byte) (any, error) {");
-indent();
-writeLine("var v T");
-writeLine("if err := json.Unmarshal(data, &v); err != nil {");
-indent();
-writeLine('return nil, fmt.Errorf("failed to unmarshal %T: %w", (*T)(nil), err)');
-dedent();
-writeLine("}");
-writeLine("return &v, nil");
-dedent();
-writeLine("}");
 
 writeLine("var unmarshallers = map[Method]func([]byte) (any, error){");
 indent();

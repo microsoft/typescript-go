@@ -6,10 +6,6 @@ import (
 	"fmt"
 )
 
-type DocumentUri string // !!!
-
-type URI string // !!!
-
 type JSONRPCVersion struct{}
 
 const jsonRPCVersion = `"2.0"`
