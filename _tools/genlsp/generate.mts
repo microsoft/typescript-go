@@ -81,8 +81,9 @@ interface UnionMember {
 
 const unionTypes = new Map<string, UnionMember[]>();
 
-function writeOr(t: OrType, wasOptional = false) {
+function writeOr(t: OrType, wasOptional = false): boolean {
     let nullable = false;
+    let omitEmpty = true;
     const types = t.items.filter(item => {
         if (item.kind === "base" && item.name === "null") {
             nullable = true;
@@ -96,6 +97,7 @@ function writeOr(t: OrType, wasOptional = false) {
         }
         else {
             write("*");
+            omitEmpty = false;
         }
     }
     if (types.length === 1) {
@@ -143,6 +145,7 @@ function writeOr(t: OrType, wasOptional = false) {
     if (nullable && wasOptional) {
         write("]");
     }
+    return omitEmpty;
 }
 
 const typeKindOrder: Type["kind"][] = [
@@ -221,7 +224,7 @@ function compareTypes(a: Type, b: Type): number {
     return typeKindOrder.indexOf(a.kind) - typeKindOrder.indexOf(b.kind);
 }
 
-function writeTypeElement(t: Type, wasOptional = false) {
+function writeTypeElement(t: Type, wasOptional = false): boolean {
     switch (t.kind) {
         case "reference":
             write(t.name);
@@ -268,7 +271,14 @@ function writeTypeElement(t: Type, wasOptional = false) {
             write("int32");
             break;
         case "literal":
-            write("TODO_literal");
+            assert(t.value.properties.length === 0);
+            write("struct{}");
+            break;
+        case "tuple":
+            assert(t.items.length === 2);
+            assert(t.items[0].kind === "base" && t.items[0].name === "uinteger");
+            assert(t.items[1].kind === "base" && t.items[1].name === "uinteger");
+            write("[2]uint32");
             break;
         case "map":
             write("map[");
@@ -293,12 +303,12 @@ function writeTypeElement(t: Type, wasOptional = false) {
             }
             break;
         case "or":
-            writeOr(t, wasOptional);
-            break;
+            return writeOr(t, wasOptional);
         default:
             write("TODO_" + t.kind);
             break;
     }
+    return wasOptional;
 }
 
 // Generation
@@ -382,9 +392,13 @@ for (const t of model.structures) {
             write("*");
         }
 
-        writeTypeElement(p.type, !!p.optional);
-
-        finishLine(' `json:"' + p.name + '"`');
+        const omitEmpty = writeTypeElement(p.type, !!p.optional);
+        write(' `json:"');
+        write(p.name);
+        if (omitEmpty) {
+            write(",omitempty");
+        }
+        finishLine('"`');
     }
 
     dedent();
@@ -428,6 +442,71 @@ for (const t of model.notifications) {
     writeDocumentation(t.documentation);
     writeDeprecation(t.deprecated);
     writeLine("const MethodNotification" + methodNameToIdentifier(t.method) + ' Method = "' + t.method + '"\n');
+}
+
+writeLine("func assertOnlyOneTrue(message string, values ...bool) {");
+indent();
+writeLine("count := 0");
+writeLine("for _, v := range values {");
+indent();
+writeLine("if v {");
+indent();
+writeLine("count++");
+dedent();
+writeLine("}");
+dedent();
+writeLine("}");
+writeLine("if count != 1 {");
+indent();
+writeLine("panic(message)");
+dedent();
+writeLine("}");
+dedent();
+writeLine("}");
+writeLine("");
+
+for (const [name, members] of unionTypes) {
+    writeLine("type " + name + " struct {");
+    indent();
+
+    for (const member of members) {
+        startLine(titleCase(member.name) + " *");
+        writeTypeElement(member.type, false);
+        finishLine("");
+    }
+
+    dedent();
+    writeLine("}");
+    writeLine("");
+
+    writeLine("func (o " + name + ") MarshalJSON() ([]byte, error) {");
+    indent();
+    startLine('assertOnlyOneTrue("invalid union type", ');
+    for (let i = 0; i < members.length; i++) {
+        if (i > 0) {
+            write(", ");
+        }
+        write("o." + titleCase(members[i].name) + " != nil");
+    }
+    finishLine(")");
+
+    for (const member of members) {
+        writeLine("if o." + titleCase(member.name) + " != nil {");
+        indent();
+        writeLine("return json.Marshal(o." + titleCase(member.name) + ")");
+        dedent();
+        writeLine("}");
+    }
+    writeLine('panic("unreachable")');
+    dedent();
+    writeLine("}");
+    writeLine("");
+
+    writeLine("func (o *" + name + ") UnmarshalJSON(data []byte) error {");
+    indent();
+    writeLine('panic("TODO")');
+    dedent();
+    writeLine("}");
 }
 
 fs.writeFileSync(out, parts.join(""));
