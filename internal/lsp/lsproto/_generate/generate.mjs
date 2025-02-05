@@ -527,27 +527,6 @@ for (const t of model.notifications) {
 
 writeLine("// Union types\n");
 
-writeLine("func assertOnlyOneTrue(message string, values ...bool) {");
-indent();
-writeLine("count := 0");
-writeLine("for _, v := range values {");
-indent();
-writeLine("if v {");
-indent();
-writeLine("count++");
-dedent();
-writeLine("}");
-dedent();
-writeLine("}");
-writeLine("if count != 1 {");
-indent();
-writeLine("panic(message)");
-dedent();
-writeLine("}");
-dedent();
-writeLine("}");
-writeLine("");
-
 for (const [name, members] of unionTypes) {
     writeLine("type " + name + " struct {");
     indent();
@@ -564,7 +543,7 @@ for (const [name, members] of unionTypes) {
 
     writeLine("func (o " + name + ") MarshalJSON() ([]byte, error) {");
     indent();
-    startLine('assertOnlyOneTrue("invalid union type", ');
+    startLine(`assertOnlyOne("invalid ${name}", `);
     for (let i = 0; i < members.length; i++) {
         if (i > 0) {
             write(", ");

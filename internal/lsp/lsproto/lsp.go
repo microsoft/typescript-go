@@ -50,3 +50,15 @@ func unmarshallerFor[T any](data []byte) (any, error) {
 	}
 	return &v, nil
 }
+
+func assertOnlyOne(message string, values ...bool) {
+	count := 0
+	for _, v := range values {
+		if v {
+			count++
+		}
+	}
+	if count != 1 {
+		panic(message)
+	}
+}
