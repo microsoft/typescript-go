@@ -7,6 +7,6 @@
         "types": ["node"]
     },
     "include": [
-        "./genlsp/*.mts"
+        "*.mts"
     ]
 }
