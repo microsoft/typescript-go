@@ -17,6 +17,11 @@ const out = path.resolve(__dirname, "../lsp_generated.go");
 
 const metaModelPath = path.resolve(__dirname, "metaModel.json");
 
+if (!fs.existsSync(metaModelPath)) {
+    console.error("Meta model file not found; did you forget to run fetchModel.mjs?");
+    process.exit(1);
+}
+
 /** @type {MetaModel} */
 const model = JSON.parse(fs.readFileSync(metaModelPath, "utf-8"));
 
