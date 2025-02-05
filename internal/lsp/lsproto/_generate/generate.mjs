@@ -104,6 +104,12 @@ function titleCase(s) {
  */
 void 0;
 
+/**
+ * Map from literal value to type name.
+ * @type {Map<string | number | boolean, string>}
+ */
+const literalTypes = new Map();
+
 /** @type {Map<string, UnionMember[]>} */
 const unionTypes = new Map();
 
@@ -219,15 +225,24 @@ function writeTypeElement(t, wasOptional = false) {
             write("[]");
             writeTypeElement(t.element);
             break;
-        case "stringLiteral":
-            write("string");
+        case "stringLiteral": {
+            const typeName = `StringLiteral${titleCase(t.value)}`;
+            literalTypes.set(t.value, typeName);
+            write(typeName);
             break;
-        case "booleanLiteral":
-            write("bool");
+        }
+        case "booleanLiteral": {
+            const typeName = `BooleanLiteral${t.value ? "True" : "False"}`;
+            literalTypes.set(t.value, typeName);
+            write(typeName);
             break;
-        case "integerLiteral":
-            write("int32");
+        }
+        case "integerLiteral": {
+            const typeName = `IntegerLiteral${t.value}`;
+            literalTypes.set(t.value, typeName);
+            write(typeName);
             break;
+        }
         case "literal":
             assert(t.value.properties.length === 0);
             write("struct{}");
@@ -526,6 +541,29 @@ for (const [name, members] of unionTypes) {
     }
     writeLine(`return fmt.Errorf("invalid ${name}: %s", data)`);
     writeLine("}");
+}
+
+writeLine("// Literal types\n");
+
+for (const [value, name] of literalTypes) {
+    const jsonValue = JSON.stringify(value);
+
+    writeLine(`// ${name} is a literal type for ${jsonValue}`);
+    writeLine("type " + name + " struct{}");
+    writeLine("");
+
+    writeLine("func (o " + name + ") MarshalJSON() ([]byte, error) {");
+    writeLine("return []byte(`" + jsonValue + "`), nil");
+    writeLine("}");
+    writeLine("");
+
+    writeLine("func (o *" + name + ") UnmarshalJSON(data []byte) error {");
+    writeLine("if string(data) != `" + jsonValue + "` {");
+    writeLine(`return fmt.Errorf("invalid ${name}: %s", data)`);
+    writeLine("}");
+    writeLine("return nil");
+    writeLine("}");
+    writeLine("");
 }
 
 fs.writeFileSync(out, parts.join(""));

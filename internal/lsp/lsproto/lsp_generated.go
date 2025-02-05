@@ -1922,7 +1922,7 @@ type ApplyWorkspaceEditResult struct {
 }
 
 type WorkDoneProgressBegin struct {
-	Kind string `json:"kind"`
+	Kind StringLiteralBegin `json:"kind"`
 
 	// Mandatory title of the progress operation. Used to briefly inform about
 	// the kind of operation being performed.
@@ -1952,7 +1952,7 @@ type WorkDoneProgressBegin struct {
 }
 
 type WorkDoneProgressReport struct {
-	Kind string `json:"kind"`
+	Kind StringLiteralReport `json:"kind"`
 
 	// Controls enablement state of a cancel button.
 	//
@@ -1977,7 +1977,7 @@ type WorkDoneProgressReport struct {
 }
 
 type WorkDoneProgressEnd struct {
-	Kind string `json:"kind"`
+	Kind StringLiteralEnd `json:"kind"`
 
 	// Optional, a final message indicating to for example indicate the outcome
 	// of the operation.
@@ -2250,7 +2250,7 @@ type CreateFile struct {
 	ResourceOperation
 
 	// A create
-	Kind string `json:"kind"`
+	Kind StringLiteralCreate `json:"kind"`
 
 	// The resource to create.
 	Uri DocumentUri `json:"uri"`
@@ -2264,7 +2264,7 @@ type RenameFile struct {
 	ResourceOperation
 
 	// A rename
-	Kind string `json:"kind"`
+	Kind StringLiteralRename `json:"kind"`
 
 	// The old (existing) location.
 	OldUri DocumentUri `json:"oldUri"`
@@ -2281,7 +2281,7 @@ type DeleteFile struct {
 	ResourceOperation
 
 	// A delete
-	Kind string `json:"kind"`
+	Kind StringLiteralDelete `json:"kind"`
 
 	// The file to delete.
 	Uri DocumentUri `json:"uri"`
@@ -2521,7 +2521,7 @@ type RelatedUnchangedDocumentDiagnosticReport struct {
 // Since: 3.17.0
 type FullDocumentDiagnosticReport struct {
 	// A full document diagnostic report.
-	Kind string `json:"kind"`
+	Kind StringLiteralFull `json:"kind"`
 
 	// An optional result id. If provided it will
 	// be sent on the next diagnostic request for the
@@ -2541,7 +2541,7 @@ type UnchangedDocumentDiagnosticReport struct {
 	// no changes to the last result. A server can
 	// only return `unchanged` if result ids are
 	// provided.
-	Kind string `json:"kind"`
+	Kind StringLiteralUnchanged `json:"kind"`
 
 	// A result id which will be sent on the next
 	// diagnostic request for the same document.
@@ -2701,7 +2701,7 @@ type InlineCompletionContext struct {
 // Proposed.
 type StringValue struct {
 	// The kind of string value.
-	Kind string `json:"kind"`
+	Kind StringLiteralSnippet `json:"kind"`
 
 	// The snippet string.
 	Value string `json:"value"`
@@ -9589,4 +9589,132 @@ func (o *NotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNoteb
 		return nil
 	}
 	return fmt.Errorf("invalid NotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern: %s", data)
+}
+
+// Literal types
+
+// StringLiteralBegin is a literal type for "begin"
+type StringLiteralBegin struct{}
+
+func (o StringLiteralBegin) MarshalJSON() ([]byte, error) {
+	return []byte(`"begin"`), nil
+}
+
+func (o *StringLiteralBegin) UnmarshalJSON(data []byte) error {
+	if string(data) != `"begin"` {
+		return fmt.Errorf("invalid StringLiteralBegin: %s", data)
+	}
+	return nil
+}
+
+// StringLiteralReport is a literal type for "report"
+type StringLiteralReport struct{}
+
+func (o StringLiteralReport) MarshalJSON() ([]byte, error) {
+	return []byte(`"report"`), nil
+}
+
+func (o *StringLiteralReport) UnmarshalJSON(data []byte) error {
+	if string(data) != `"report"` {
+		return fmt.Errorf("invalid StringLiteralReport: %s", data)
+	}
+	return nil
+}
+
+// StringLiteralEnd is a literal type for "end"
+type StringLiteralEnd struct{}
+
+func (o StringLiteralEnd) MarshalJSON() ([]byte, error) {
+	return []byte(`"end"`), nil
+}
+
+func (o *StringLiteralEnd) UnmarshalJSON(data []byte) error {
+	if string(data) != `"end"` {
+		return fmt.Errorf("invalid StringLiteralEnd: %s", data)
+	}
+	return nil
+}
+
+// StringLiteralCreate is a literal type for "create"
+type StringLiteralCreate struct{}
+
+func (o StringLiteralCreate) MarshalJSON() ([]byte, error) {
+	return []byte(`"create"`), nil
+}
+
+func (o *StringLiteralCreate) UnmarshalJSON(data []byte) error {
+	if string(data) != `"create"` {
+		return fmt.Errorf("invalid StringLiteralCreate: %s", data)
+	}
+	return nil
+}
+
+// StringLiteralRename is a literal type for "rename"
+type StringLiteralRename struct{}
+
+func (o StringLiteralRename) MarshalJSON() ([]byte, error) {
+	return []byte(`"rename"`), nil
+}
+
+func (o *StringLiteralRename) UnmarshalJSON(data []byte) error {
+	if string(data) != `"rename"` {
+		return fmt.Errorf("invalid StringLiteralRename: %s", data)
+	}
+	return nil
+}
+
+// StringLiteralDelete is a literal type for "delete"
+type StringLiteralDelete struct{}
+
+func (o StringLiteralDelete) MarshalJSON() ([]byte, error) {
+	return []byte(`"delete"`), nil
+}
+
+func (o *StringLiteralDelete) UnmarshalJSON(data []byte) error {
+	if string(data) != `"delete"` {
+		return fmt.Errorf("invalid StringLiteralDelete: %s", data)
+	}
+	return nil
+}
+
+// StringLiteralFull is a literal type for "full"
+type StringLiteralFull struct{}
+
+func (o StringLiteralFull) MarshalJSON() ([]byte, error) {
+	return []byte(`"full"`), nil
+}
+
+func (o *StringLiteralFull) UnmarshalJSON(data []byte) error {
+	if string(data) != `"full"` {
+		return fmt.Errorf("invalid StringLiteralFull: %s", data)
+	}
+	return nil
+}
+
+// StringLiteralUnchanged is a literal type for "unchanged"
+type StringLiteralUnchanged struct{}
+
+func (o StringLiteralUnchanged) MarshalJSON() ([]byte, error) {
+	return []byte(`"unchanged"`), nil
+}
+
+func (o *StringLiteralUnchanged) UnmarshalJSON(data []byte) error {
+	if string(data) != `"unchanged"` {
+		return fmt.Errorf("invalid StringLiteralUnchanged: %s", data)
+	}
+	return nil
+}
+
+// StringLiteralSnippet is a literal type for "snippet"
+type StringLiteralSnippet struct{}
+
+func (o StringLiteralSnippet) MarshalJSON() ([]byte, error) {
+	return []byte(`"snippet"`), nil
+}
+
+func (o *StringLiteralSnippet) UnmarshalJSON(data []byte) error {
+	if string(data) != `"snippet"` {
+		return fmt.Errorf("invalid StringLiteralSnippet: %s", data)
+	}
+	return nil
 }
