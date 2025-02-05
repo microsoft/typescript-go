@@ -927,7 +927,7 @@ type DidChangeConfigurationParams struct {
 }
 
 type DidChangeConfigurationRegistrationOptions struct {
-	Section *TODO_or_arrayString `json:"section"`
+	Section *ArrayOfStringOrString `json:"section"`
 }
 
 // The parameters of a notification message.
@@ -2015,7 +2015,7 @@ type SemanticTokensOptions struct {
 	Legend SemanticTokensLegend `json:"legend"`
 	// Server supports providing semantic tokens for a specific range
 	// of a document.
-	Range *TODO_or_literalBoolean `json:"range"`
+	Range *BooleanOrEmptyObject `json:"range"`
 	// Server supports providing semantic tokens for a full document.
 	Full *SemanticTokensFullDeltaOrBoolean `json:"full"`
 }
@@ -3549,7 +3549,7 @@ type ParameterInformation struct {
 	//
 	// *Note*: a label of type string should be a substring of its containing signature label.
 	// Its intended use case is to highlight the parameter label part in the `SignatureInformation.label`.
-	Label TODO_or_tupleString `json:"label"`
+	Label StringOrUintegerPair `json:"label"`
 	// The human-readable doc-comment of this parameter. Will be shown
 	// in the UI but can be omitted.
 	Documentation *MarkupContentOrString `json:"documentation"`
@@ -4918,7 +4918,7 @@ type DiagnosticsCapabilities struct {
 type ClientSemanticTokensRequestOptions struct {
 	// The client will send the `textDocument/semanticTokens/range` request if
 	// the server provides a corresponding handler.
-	Range *TODO_or_literalBoolean `json:"range"`
+	Range *BooleanOrEmptyObject `json:"range"`
 	// The client will send the `textDocument/semanticTokens/full` request if
 	// the server provides a corresponding handler.
 	Full *ClientSemanticTokensRequestFullDeltaOrBoolean `json:"full"`

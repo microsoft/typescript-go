@@ -74,7 +74,12 @@ function titleCase(s: string): string {
     return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
-const unionTypes = new Map<string, Type[]>();
+interface UnionMember {
+    type: Type;
+    name: string;
+}
+
+const unionTypes = new Map<string, UnionMember[]>();
 
 function writeOr(t: OrType, wasOptional = false) {
     let nullable = false;
@@ -97,27 +102,42 @@ function writeOr(t: OrType, wasOptional = false) {
         writeTypeElement(types[0]);
     }
     else {
-        const names = [];
+        const members: UnionMember[] = [];
         for (const t of types) {
+            let name;
             if (t.kind === "reference") {
-                names.push(t.name);
+                name = t.name;
             }
             else if (t.kind === "base") {
-                names.push(t.name);
+                name = t.name;
             }
-            else if (t.kind === "array" && t.element.kind === "reference") {
-                names.push("ArrayOf" + titleCase(t.element.name));
+            else if (t.kind === "array" && (t.element.kind === "reference" || t.element.kind === "base")) {
+                name = "ArrayOf" + titleCase(t.element.name);
+            }
+            else if (t.kind === "tuple") {
+                assert(t.items.length === 2);
+                assert(t.items[0].kind === "base" && t.items[0].name === "uinteger");
+                assert(t.items[1].kind === "base" && t.items[1].name === "uinteger");
+                name = "UintegerPair";
             }
             else if (t.kind === "or") {
                 throw new Error("Nested or types are not supported");
             }
-            else {
-                write("TODO_or_" + t.kind);
+            else if (t.kind === "booleanLiteral") {
+                name = t.value ? "True" : "False";
             }
+            else if (t.kind === "literal") {
+                assert(t.value.properties.length === 0);
+                name = "EmptyObject";
+            }
+            else {
+                name = "_TODO_or_" + t.kind + "_";
+            }
+            members.push({ type: t, name });
         }
 
-        const name = names.map(titleCase).join("Or");
-        unionTypes.set(name, types);
+        const name = members.map(m => titleCase(m.name)).join("Or");
+        unionTypes.set(name, members);
         write(name);
     }
     if (nullable && wasOptional) {
@@ -240,6 +260,15 @@ function writeTypeElement(t: Type, wasOptional = false) {
             break;
         case "stringLiteral":
             write("string");
+            break;
+        case "booleanLiteral":
+            write("bool");
+            break;
+        case "integerLiteral":
+            write("int32");
+            break;
+        case "literal":
+            write("TODO_literal");
             break;
         case "map":
             write("map[");
