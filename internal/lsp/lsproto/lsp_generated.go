@@ -986,7 +986,8 @@ type InitializeError struct {
 	Retry bool `json:"retry"`
 }
 
-type InitializedParams struct{}
+type InitializedParams struct {
+}
 
 // The parameters of a change configuration notification.
 type DidChangeConfigurationParams struct {
@@ -5902,7 +5903,8 @@ func (e *LSPErrorCodes) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	switch v {
-	case -32803, -32802, -32801, -32800:
+	case -32803, -32802, -32801,
+		-32800:
 		*e = LSPErrorCodes(v)
 		return nil
 	default:
@@ -6133,7 +6135,8 @@ func (e *MessageType) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	switch v {
-	case 1, 2, 3, 4, 5:
+	case 1, 2, 3,
+		4, 5:
 		*e = MessageType(v)
 		return nil
 	default:
@@ -6794,7 +6797,8 @@ func (e *DiagnosticSeverity) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	switch v {
-	case 1, 2, 3, 4:
+	case 1, 2, 3,
+		4:
 		*e = DiagnosticSeverity(v)
 		return nil
 	default:
