@@ -517,7 +517,7 @@ for (const [name, members] of unionTypes) {
         const name = titleCase(member.name);
         writeLine("if o." + name + " != nil {");
         indent();
-        writeLine("return json.Marshal(o." + name + ")");
+        writeLine("return json.Marshal(*o." + name + ")");
         dedent();
         writeLine("}");
     }
