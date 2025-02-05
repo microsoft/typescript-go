@@ -22,6 +22,16 @@ const metaModelPath = path.resolve(__dirname, "metaModel.json");
 
 const model: MetaModelSchema = JSON.parse(fs.readFileSync(metaModelPath, "utf-8"));
 
+function compareValues(a: string | number, b: string | number): number {
+    if (typeof a === "string" && typeof b === "string") {
+        return a < b ? -1 : a > b ? 1 : 0;
+    }
+    if (typeof a === "number" && typeof b === "number") {
+        return a - b;
+    }
+    throw new Error("Cannot compare values of different types");
+}
+
 let parts: string[] = [];
 let indentLevel = 0;
 
@@ -318,6 +328,7 @@ writeLine("");
 writeLine("package lsproto2");
 writeLine("");
 writeLine(`import "encoding/json"`);
+writeLine(`import "fmt"`);
 writeLine("");
 writeLine("// Meta model version " + model.metaData.version);
 writeLine("");
@@ -410,8 +421,84 @@ for (const t of model.enumerations) {
     writeDocumentation(t.documentation);
     writeDeprecation(t.deprecated);
 
-    writeLine("type " + t.name + " int");
+    let underlyingType: string;
+    switch (t.type.name) {
+        case "string":
+            underlyingType = "string";
+            break;
+        case "integer":
+            underlyingType = "int32";
+            break;
+        case "uinteger":
+            underlyingType = "uint32";
+            break;
+    }
+
+    writeLine("type " + t.name + " " + underlyingType);
     writeLine("\n");
+
+    function valueToLiteral(v: string | number): string {
+        return typeof v === "string" ? '"' + v + '"' : `${v}`;
+    }
+
+    writeLine("const (");
+    indent();
+    for (const v of t.values) {
+        writeDocumentation(v.documentation);
+        writeDeprecation(v.deprecated);
+
+        startLine(t.name);
+        write(v.name);
+        write(" ");
+        write(t.name);
+        write(" = ");
+        finishLine(valueToLiteral(v.value));
+    }
+    dedent();
+    writeLine(")");
+
+    writeLine("");
+
+    writeLine("func (e *" + t.name + ") UnmarshalJSON(data []byte) error {");
+    indent();
+    writeLine("var v " + underlyingType);
+    writeLine("if err := json.Unmarshal(data, &v); err != nil {");
+    indent();
+    writeLine("return err");
+    dedent();
+    writeLine("}");
+    writeLine("switch v {");
+    indent();
+    const values = [...new Set<string | number>(t.values.map(v => v.value))].sort(compareValues);
+    for (let i = 0; i < values.length; i++) {
+        const v = values[i];
+        if (i === 0) {
+            startLine("case ");
+        }
+        write(valueToLiteral(v));
+        if (i === values.length - 1) {
+            writeLine(":");
+        }
+        else {
+            if (i % 3 === 2) {
+                writeLine(",");
+            }
+            else {
+                write(", ");
+            }
+        }
+    }
+    indent();
+    writeLine("*e = " + t.name + "(v)");
+    writeLine("return nil");
+    writeLine("default:");
+    indent();
+    writeLine(`return fmt.Errorf("unknown ${t.name} value: %v", v)`);
+    dedent();
+    writeLine("}");
+    dedent();
+    writeLine("}");
+    writeLine("");
 }
 
 for (const t of model.typeAliases) {
