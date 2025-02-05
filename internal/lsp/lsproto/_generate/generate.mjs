@@ -457,21 +457,23 @@ for (const t of [...model.requests, ...model.notifications]) {
 }
 writeLine("}");
 
-writeLine("// Requests\n");
-
+writeLine("// Requests");
+writeLine("const (");
 for (const t of model.requests) {
     writeDocumentation(t.documentation);
     writeDeprecation(t.deprecated);
-    writeLine("const Method" + methodNameToIdentifier(t.method) + ' Method = "' + t.method + '"\n');
+    writeLine("Method" + methodNameToIdentifier(t.method) + ' Method = "' + t.method + '"');
 }
+writeLine(")\n");
 
-writeLine("// Notifications\n");
-
+writeLine("// Notifications");
+writeLine("const (");
 for (const t of model.notifications) {
     writeDocumentation(t.documentation);
     writeDeprecation(t.deprecated);
-    writeLine("const Method" + methodNameToIdentifier(t.method) + ' Method = "' + t.method + '"\n');
+    writeLine("Method" + methodNameToIdentifier(t.method) + ' Method = "' + t.method + '"');
 }
+writeLine(")\n");
 
 writeLine("// Union types\n");
 

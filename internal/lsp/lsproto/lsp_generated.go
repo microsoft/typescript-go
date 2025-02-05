@@ -7154,491 +7154,400 @@ var unmarshallers = map[Method]func([]byte) (any, error){
 }
 
 // Requests
-
-// A request to resolve the implementation locations of a symbol at a given text
-// document position. The request's parameter is of type TextDocumentPositionParams
-// the response is of type Definition or a Thenable that resolves to such.
-const MethodTextDocumentImplementation Method = "textDocument/implementation"
-
-// A request to resolve the type definition locations of a symbol at a given text
-// document position. The request's parameter is of type TextDocumentPositionParams
-// the response is of type Definition or a Thenable that resolves to such.
-const MethodTextDocumentTypeDefinition Method = "textDocument/typeDefinition"
-
-// The `workspace/workspaceFolders` is sent from the server to the client to fetch the open workspace folders.
-const MethodWorkspaceWorkspaceFolders Method = "workspace/workspaceFolders"
-
-// The 'workspace/configuration' request is sent from the server to the client to fetch a certain
-// configuration setting.
-//
-// This pull model replaces the old push model were the client signaled configuration change via an
-// event. If the server still needs to react to configuration changes (since the server caches the
-// result of `workspace/configuration` requests) the server should register for an empty configuration
-// change event and empty the cache if such an event is received.
-const MethodWorkspaceConfiguration Method = "workspace/configuration"
-
-// A request to list all color symbols found in a given text document. The request's
-// parameter is of type DocumentColorParams the
-// response is of type ColorInformation[] or a Thenable
-// that resolves to such.
-const MethodTextDocumentDocumentColor Method = "textDocument/documentColor"
-
-// A request to list all presentation for a color. The request's
-// parameter is of type ColorPresentationParams the
-// response is of type ColorInformation[] or a Thenable
-// that resolves to such.
-const MethodTextDocumentColorPresentation Method = "textDocument/colorPresentation"
-
-// A request to provide folding ranges in a document. The request's
-// parameter is of type FoldingRangeParams, the
-// response is of type FoldingRangeList or a Thenable
-// that resolves to such.
-const MethodTextDocumentFoldingRange Method = "textDocument/foldingRange"
-
-// Since: 3.18.0
-//
-// Proposed.
-const MethodWorkspaceFoldingRangeRefresh Method = "workspace/foldingRange/refresh"
-
-// A request to resolve the type definition locations of a symbol at a given text
-// document position. The request's parameter is of type TextDocumentPositionParams
-// the response is of type Declaration or a typed array of DeclarationLink
-// or a Thenable that resolves to such.
-const MethodTextDocumentDeclaration Method = "textDocument/declaration"
-
-// A request to provide selection ranges in a document. The request's
-// parameter is of type SelectionRangeParams, the
-// response is of type SelectionRange[] or a Thenable
-// that resolves to such.
-const MethodTextDocumentSelectionRange Method = "textDocument/selectionRange"
-
-// The `window/workDoneProgress/create` request is sent from the server to the client to initiate progress
-// reporting from the server.
-const MethodWindowWorkDoneProgressCreate Method = "window/workDoneProgress/create"
-
-// A request to result a `CallHierarchyItem` in a document at a given position.
-// Can be used as an input to an incoming or outgoing call hierarchy.
-//
-// Since: 3.16.0
-const MethodTextDocumentPrepareCallHierarchy Method = "textDocument/prepareCallHierarchy"
-
-// A request to resolve the incoming calls for a given `CallHierarchyItem`.
-//
-// Since: 3.16.0
-const MethodCallHierarchyIncomingCalls Method = "callHierarchy/incomingCalls"
-
-// A request to resolve the outgoing calls for a given `CallHierarchyItem`.
-//
-// Since: 3.16.0
-const MethodCallHierarchyOutgoingCalls Method = "callHierarchy/outgoingCalls"
-
-// Since: 3.16.0
-const MethodTextDocumentSemanticTokensFull Method = "textDocument/semanticTokens/full"
-
-// Since: 3.16.0
-const MethodTextDocumentSemanticTokensFullDelta Method = "textDocument/semanticTokens/full/delta"
-
-// Since: 3.16.0
-const MethodTextDocumentSemanticTokensRange Method = "textDocument/semanticTokens/range"
-
-// Since: 3.16.0
-const MethodWorkspaceSemanticTokensRefresh Method = "workspace/semanticTokens/refresh"
-
-// A request to show a document. This request might open an
-// external program depending on the value of the URI to open.
-// For example a request to open `https://code.visualstudio.com/`
-// will very likely open the URI in a WEB browser.
-//
-// Since: 3.16.0
-const MethodWindowShowDocument Method = "window/showDocument"
-
-// A request to provide ranges that can be edited together.
-//
-// Since: 3.16.0
-const MethodTextDocumentLinkedEditingRange Method = "textDocument/linkedEditingRange"
-
-// The will create files request is sent from the client to the server before files are actually
-// created as long as the creation is triggered from within the client.
-//
-// The request can return a `WorkspaceEdit` which will be applied to workspace before the
-// files are created. Hence the `WorkspaceEdit` can not manipulate the content of the file
-// to be created.
-//
-// Since: 3.16.0
-const MethodWorkspaceWillCreateFiles Method = "workspace/willCreateFiles"
-
-// The will rename files request is sent from the client to the server before files are actually
-// renamed as long as the rename is triggered from within the client.
-//
-// Since: 3.16.0
-const MethodWorkspaceWillRenameFiles Method = "workspace/willRenameFiles"
-
-// The did delete files notification is sent from the client to the server when
-// files were deleted from within the client.
-//
-// Since: 3.16.0
-const MethodWorkspaceWillDeleteFiles Method = "workspace/willDeleteFiles"
-
-// A request to get the moniker of a symbol at a given text document position.
-// The request parameter is of type TextDocumentPositionParams.
-// The response is of type Moniker[] or `null`.
-const MethodTextDocumentMoniker Method = "textDocument/moniker"
-
-// A request to result a `TypeHierarchyItem` in a document at a given position.
-// Can be used as an input to a subtypes or supertypes type hierarchy.
-//
-// Since: 3.17.0
-const MethodTextDocumentPrepareTypeHierarchy Method = "textDocument/prepareTypeHierarchy"
-
-// A request to resolve the supertypes for a given `TypeHierarchyItem`.
-//
-// Since: 3.17.0
-const MethodTypeHierarchySupertypes Method = "typeHierarchy/supertypes"
-
-// A request to resolve the subtypes for a given `TypeHierarchyItem`.
-//
-// Since: 3.17.0
-const MethodTypeHierarchySubtypes Method = "typeHierarchy/subtypes"
-
-// A request to provide inline values in a document. The request's parameter is of
-// type InlineValueParams, the response is of type
-// InlineValue[] or a Thenable that resolves to such.
-//
-// Since: 3.17.0
-const MethodTextDocumentInlineValue Method = "textDocument/inlineValue"
-
-// Since: 3.17.0
-const MethodWorkspaceInlineValueRefresh Method = "workspace/inlineValue/refresh"
-
-// A request to provide inlay hints in a document. The request's parameter is of
-// type InlayHintsParams, the response is of type
-// InlayHint[] or a Thenable that resolves to such.
-//
-// Since: 3.17.0
-const MethodTextDocumentInlayHint Method = "textDocument/inlayHint"
-
-// A request to resolve additional properties for an inlay hint.
-// The request's parameter is of type InlayHint, the response is
-// of type InlayHint or a Thenable that resolves to such.
-//
-// Since: 3.17.0
-const MethodInlayHintResolve Method = "inlayHint/resolve"
-
-// Since: 3.17.0
-const MethodWorkspaceInlayHintRefresh Method = "workspace/inlayHint/refresh"
-
-// The document diagnostic request definition.
-//
-// Since: 3.17.0
-const MethodTextDocumentDiagnostic Method = "textDocument/diagnostic"
-
-// The workspace diagnostic request definition.
-//
-// Since: 3.17.0
-const MethodWorkspaceDiagnostic Method = "workspace/diagnostic"
-
-// The diagnostic refresh request definition.
-//
-// Since: 3.17.0
-const MethodWorkspaceDiagnosticRefresh Method = "workspace/diagnostic/refresh"
-
-// A request to provide inline completions in a document. The request's parameter is of
-// type InlineCompletionParams, the response is of type
-// InlineCompletion[] or a Thenable that resolves to such.
-//
-// Since: 3.18.0
-//
-// Proposed.
-const MethodTextDocumentInlineCompletion Method = "textDocument/inlineCompletion"
-
-// The `workspace/textDocumentContent` request is sent from the client to the
-// server to request the content of a text document.
-//
-// Since: 3.18.0
-//
-// Proposed.
-const MethodWorkspaceTextDocumentContent Method = "workspace/textDocumentContent"
-
-// The `workspace/textDocumentContent` request is sent from the server to the client to refresh
-// the content of a specific text document.
-//
-// Since: 3.18.0
-//
-// Proposed.
-const MethodWorkspaceTextDocumentContentRefresh Method = "workspace/textDocumentContent/refresh"
-
-// The `client/registerCapability` request is sent from the server to the client to register a new capability
-// handler on the client side.
-const MethodClientRegisterCapability Method = "client/registerCapability"
-
-// The `client/unregisterCapability` request is sent from the server to the client to unregister a previously registered capability
-// handler on the client side.
-const MethodClientUnregisterCapability Method = "client/unregisterCapability"
-
-// The initialize request is sent from the client to the server.
-// It is sent once as the request after starting up the server.
-// The requests parameter is of type InitializeParams
-// the response if of type InitializeResult of a Thenable that
-// resolves to such.
-const MethodInitialize Method = "initialize"
-
-// A shutdown request is sent from the client to the server.
-// It is sent once when the client decides to shutdown the
-// server. The only notification that is sent after a shutdown request
-// is the exit event.
-const MethodShutdown Method = "shutdown"
-
-// The show message request is sent from the server to the client to show a message
-// and a set of options actions to the user.
-const MethodWindowShowMessageRequest Method = "window/showMessageRequest"
-
-// A document will save request is sent from the client to the server before
-// the document is actually saved. The request can return an array of TextEdits
-// which will be applied to the text document before it is saved. Please note that
-// clients might drop results if computing the text edits took too long or if a
-// server constantly fails on this request. This is done to keep the save fast and
-// reliable.
-const MethodTextDocumentWillSaveWaitUntil Method = "textDocument/willSaveWaitUntil"
-
-// Request to request completion at a given text document position. The request's
-// parameter is of type TextDocumentPosition the response
-// is of type CompletionItem[] or CompletionList
-// or a Thenable that resolves to such.
-//
-// The request can delay the computation of the `detail`
-// and `documentation` properties to the `completionItem/resolve`
-// request. However, properties that are needed for the initial sorting and filtering, like `sortText`,
-// `filterText`, `insertText`, and `textEdit`, must not be changed during resolve.
-const MethodTextDocumentCompletion Method = "textDocument/completion"
-
-// Request to resolve additional information for a given completion item.The request's
-// parameter is of type CompletionItem the response
-// is of type CompletionItem or a Thenable that resolves to such.
-const MethodCompletionItemResolve Method = "completionItem/resolve"
-
-// Request to request hover information at a given text document position. The request's
-// parameter is of type TextDocumentPosition the response is of
-// type Hover or a Thenable that resolves to such.
-const MethodTextDocumentHover Method = "textDocument/hover"
-
-const MethodTextDocumentSignatureHelp Method = "textDocument/signatureHelp"
-
-// A request to resolve the definition location of a symbol at a given text
-// document position. The request's parameter is of type TextDocumentPosition
-// the response is of either type Definition or a typed array of
-// DefinitionLink or a Thenable that resolves to such.
-const MethodTextDocumentDefinition Method = "textDocument/definition"
-
-// A request to resolve project-wide references for the symbol denoted
-// by the given text document position. The request's parameter is of
-// type ReferenceParams the response is of type
-// Location[] or a Thenable that resolves to such.
-const MethodTextDocumentReferences Method = "textDocument/references"
-
-// Request to resolve a DocumentHighlight for a given
-// text document position. The request's parameter is of type TextDocumentPosition
-// the request response is an array of type DocumentHighlight
-// or a Thenable that resolves to such.
-const MethodTextDocumentDocumentHighlight Method = "textDocument/documentHighlight"
-
-// A request to list all symbols found in a given text document. The request's
-// parameter is of type TextDocumentIdentifier the
-// response is of type SymbolInformation[] or a Thenable
-// that resolves to such.
-const MethodTextDocumentDocumentSymbol Method = "textDocument/documentSymbol"
-
-// A request to provide commands for the given text document and range.
-const MethodTextDocumentCodeAction Method = "textDocument/codeAction"
-
-// Request to resolve additional information for a given code action.The request's
-// parameter is of type CodeAction the response
-// is of type CodeAction or a Thenable that resolves to such.
-const MethodCodeActionResolve Method = "codeAction/resolve"
-
-// A request to list project-wide symbols matching the query string given
-// by the WorkspaceSymbolParams. The response is
-// of type SymbolInformation[] or a Thenable that
-// resolves to such.
-//
-// Since: 3.17.0 - support for WorkspaceSymbol in the returned data. Clients
-//
-//	need to advertise support for WorkspaceSymbols via the client capability
-//	`workspace.symbol.resolveSupport`.
-const MethodWorkspaceSymbol Method = "workspace/symbol"
-
-// A request to resolve the range inside the workspace
-// symbol's location.
-//
-// Since: 3.17.0
-const MethodWorkspaceSymbolResolve Method = "workspaceSymbol/resolve"
-
-// A request to provide code lens for the given text document.
-const MethodTextDocumentCodeLens Method = "textDocument/codeLens"
-
-// A request to resolve a command for a given code lens.
-const MethodCodeLensResolve Method = "codeLens/resolve"
-
-// A request to refresh all code actions
-//
-// Since: 3.16.0
-const MethodWorkspaceCodeLensRefresh Method = "workspace/codeLens/refresh"
-
-// A request to provide document links
-const MethodTextDocumentDocumentLink Method = "textDocument/documentLink"
-
-// Request to resolve additional information for a given document link. The request's
-// parameter is of type DocumentLink the response
-// is of type DocumentLink or a Thenable that resolves to such.
-const MethodDocumentLinkResolve Method = "documentLink/resolve"
-
-// A request to format a whole document.
-const MethodTextDocumentFormatting Method = "textDocument/formatting"
-
-// A request to format a range in a document.
-const MethodTextDocumentRangeFormatting Method = "textDocument/rangeFormatting"
-
-// A request to format ranges in a document.
-//
-// Since: 3.18.0
-//
-// Proposed.
-const MethodTextDocumentRangesFormatting Method = "textDocument/rangesFormatting"
-
-// A request to format a document on type.
-const MethodTextDocumentOnTypeFormatting Method = "textDocument/onTypeFormatting"
-
-// A request to rename a symbol.
-const MethodTextDocumentRename Method = "textDocument/rename"
-
-// A request to test and perform the setup necessary for a rename.
-//
-// Since: 3.16 - support for default behavior
-const MethodTextDocumentPrepareRename Method = "textDocument/prepareRename"
-
-// A request send from the client to the server to execute a command. The request might return
-// a workspace edit which the client will apply to the workspace.
-const MethodWorkspaceExecuteCommand Method = "workspace/executeCommand"
-
-// A request sent from the server to the client to modified certain resources.
-const MethodWorkspaceApplyEdit Method = "workspace/applyEdit"
+const (
+	// A request to resolve the implementation locations of a symbol at a given text
+	// document position. The request's parameter is of type TextDocumentPositionParams
+	// the response is of type Definition or a Thenable that resolves to such.
+	MethodTextDocumentImplementation Method = "textDocument/implementation"
+	// A request to resolve the type definition locations of a symbol at a given text
+	// document position. The request's parameter is of type TextDocumentPositionParams
+	// the response is of type Definition or a Thenable that resolves to such.
+	MethodTextDocumentTypeDefinition Method = "textDocument/typeDefinition"
+	// The `workspace/workspaceFolders` is sent from the server to the client to fetch the open workspace folders.
+	MethodWorkspaceWorkspaceFolders Method = "workspace/workspaceFolders"
+	// The 'workspace/configuration' request is sent from the server to the client to fetch a certain
+	// configuration setting.
+	//
+	// This pull model replaces the old push model were the client signaled configuration change via an
+	// event. If the server still needs to react to configuration changes (since the server caches the
+	// result of `workspace/configuration` requests) the server should register for an empty configuration
+	// change event and empty the cache if such an event is received.
+	MethodWorkspaceConfiguration Method = "workspace/configuration"
+	// A request to list all color symbols found in a given text document. The request's
+	// parameter is of type DocumentColorParams the
+	// response is of type ColorInformation[] or a Thenable
+	// that resolves to such.
+	MethodTextDocumentDocumentColor Method = "textDocument/documentColor"
+	// A request to list all presentation for a color. The request's
+	// parameter is of type ColorPresentationParams the
+	// response is of type ColorInformation[] or a Thenable
+	// that resolves to such.
+	MethodTextDocumentColorPresentation Method = "textDocument/colorPresentation"
+	// A request to provide folding ranges in a document. The request's
+	// parameter is of type FoldingRangeParams, the
+	// response is of type FoldingRangeList or a Thenable
+	// that resolves to such.
+	MethodTextDocumentFoldingRange Method = "textDocument/foldingRange"
+	// Since: 3.18.0
+	//
+	// Proposed.
+	MethodWorkspaceFoldingRangeRefresh Method = "workspace/foldingRange/refresh"
+	// A request to resolve the type definition locations of a symbol at a given text
+	// document position. The request's parameter is of type TextDocumentPositionParams
+	// the response is of type Declaration or a typed array of DeclarationLink
+	// or a Thenable that resolves to such.
+	MethodTextDocumentDeclaration Method = "textDocument/declaration"
+	// A request to provide selection ranges in a document. The request's
+	// parameter is of type SelectionRangeParams, the
+	// response is of type SelectionRange[] or a Thenable
+	// that resolves to such.
+	MethodTextDocumentSelectionRange Method = "textDocument/selectionRange"
+	// The `window/workDoneProgress/create` request is sent from the server to the client to initiate progress
+	// reporting from the server.
+	MethodWindowWorkDoneProgressCreate Method = "window/workDoneProgress/create"
+	// A request to result a `CallHierarchyItem` in a document at a given position.
+	// Can be used as an input to an incoming or outgoing call hierarchy.
+	//
+	// Since: 3.16.0
+	MethodTextDocumentPrepareCallHierarchy Method = "textDocument/prepareCallHierarchy"
+	// A request to resolve the incoming calls for a given `CallHierarchyItem`.
+	//
+	// Since: 3.16.0
+	MethodCallHierarchyIncomingCalls Method = "callHierarchy/incomingCalls"
+	// A request to resolve the outgoing calls for a given `CallHierarchyItem`.
+	//
+	// Since: 3.16.0
+	MethodCallHierarchyOutgoingCalls Method = "callHierarchy/outgoingCalls"
+	// Since: 3.16.0
+	MethodTextDocumentSemanticTokensFull Method = "textDocument/semanticTokens/full"
+	// Since: 3.16.0
+	MethodTextDocumentSemanticTokensFullDelta Method = "textDocument/semanticTokens/full/delta"
+	// Since: 3.16.0
+	MethodTextDocumentSemanticTokensRange Method = "textDocument/semanticTokens/range"
+	// Since: 3.16.0
+	MethodWorkspaceSemanticTokensRefresh Method = "workspace/semanticTokens/refresh"
+	// A request to show a document. This request might open an
+	// external program depending on the value of the URI to open.
+	// For example a request to open `https://code.visualstudio.com/`
+	// will very likely open the URI in a WEB browser.
+	//
+	// Since: 3.16.0
+	MethodWindowShowDocument Method = "window/showDocument"
+	// A request to provide ranges that can be edited together.
+	//
+	// Since: 3.16.0
+	MethodTextDocumentLinkedEditingRange Method = "textDocument/linkedEditingRange"
+	// The will create files request is sent from the client to the server before files are actually
+	// created as long as the creation is triggered from within the client.
+	//
+	// The request can return a `WorkspaceEdit` which will be applied to workspace before the
+	// files are created. Hence the `WorkspaceEdit` can not manipulate the content of the file
+	// to be created.
+	//
+	// Since: 3.16.0
+	MethodWorkspaceWillCreateFiles Method = "workspace/willCreateFiles"
+	// The will rename files request is sent from the client to the server before files are actually
+	// renamed as long as the rename is triggered from within the client.
+	//
+	// Since: 3.16.0
+	MethodWorkspaceWillRenameFiles Method = "workspace/willRenameFiles"
+	// The did delete files notification is sent from the client to the server when
+	// files were deleted from within the client.
+	//
+	// Since: 3.16.0
+	MethodWorkspaceWillDeleteFiles Method = "workspace/willDeleteFiles"
+	// A request to get the moniker of a symbol at a given text document position.
+	// The request parameter is of type TextDocumentPositionParams.
+	// The response is of type Moniker[] or `null`.
+	MethodTextDocumentMoniker Method = "textDocument/moniker"
+	// A request to result a `TypeHierarchyItem` in a document at a given position.
+	// Can be used as an input to a subtypes or supertypes type hierarchy.
+	//
+	// Since: 3.17.0
+	MethodTextDocumentPrepareTypeHierarchy Method = "textDocument/prepareTypeHierarchy"
+	// A request to resolve the supertypes for a given `TypeHierarchyItem`.
+	//
+	// Since: 3.17.0
+	MethodTypeHierarchySupertypes Method = "typeHierarchy/supertypes"
+	// A request to resolve the subtypes for a given `TypeHierarchyItem`.
+	//
+	// Since: 3.17.0
+	MethodTypeHierarchySubtypes Method = "typeHierarchy/subtypes"
+	// A request to provide inline values in a document. The request's parameter is of
+	// type InlineValueParams, the response is of type
+	// InlineValue[] or a Thenable that resolves to such.
+	//
+	// Since: 3.17.0
+	MethodTextDocumentInlineValue Method = "textDocument/inlineValue"
+	// Since: 3.17.0
+	MethodWorkspaceInlineValueRefresh Method = "workspace/inlineValue/refresh"
+	// A request to provide inlay hints in a document. The request's parameter is of
+	// type InlayHintsParams, the response is of type
+	// InlayHint[] or a Thenable that resolves to such.
+	//
+	// Since: 3.17.0
+	MethodTextDocumentInlayHint Method = "textDocument/inlayHint"
+	// A request to resolve additional properties for an inlay hint.
+	// The request's parameter is of type InlayHint, the response is
+	// of type InlayHint or a Thenable that resolves to such.
+	//
+	// Since: 3.17.0
+	MethodInlayHintResolve Method = "inlayHint/resolve"
+	// Since: 3.17.0
+	MethodWorkspaceInlayHintRefresh Method = "workspace/inlayHint/refresh"
+	// The document diagnostic request definition.
+	//
+	// Since: 3.17.0
+	MethodTextDocumentDiagnostic Method = "textDocument/diagnostic"
+	// The workspace diagnostic request definition.
+	//
+	// Since: 3.17.0
+	MethodWorkspaceDiagnostic Method = "workspace/diagnostic"
+	// The diagnostic refresh request definition.
+	//
+	// Since: 3.17.0
+	MethodWorkspaceDiagnosticRefresh Method = "workspace/diagnostic/refresh"
+	// A request to provide inline completions in a document. The request's parameter is of
+	// type InlineCompletionParams, the response is of type
+	// InlineCompletion[] or a Thenable that resolves to such.
+	//
+	// Since: 3.18.0
+	//
+	// Proposed.
+	MethodTextDocumentInlineCompletion Method = "textDocument/inlineCompletion"
+	// The `workspace/textDocumentContent` request is sent from the client to the
+	// server to request the content of a text document.
+	//
+	// Since: 3.18.0
+	//
+	// Proposed.
+	MethodWorkspaceTextDocumentContent Method = "workspace/textDocumentContent"
+	// The `workspace/textDocumentContent` request is sent from the server to the client to refresh
+	// the content of a specific text document.
+	//
+	// Since: 3.18.0
+	//
+	// Proposed.
+	MethodWorkspaceTextDocumentContentRefresh Method = "workspace/textDocumentContent/refresh"
+	// The `client/registerCapability` request is sent from the server to the client to register a new capability
+	// handler on the client side.
+	MethodClientRegisterCapability Method = "client/registerCapability"
+	// The `client/unregisterCapability` request is sent from the server to the client to unregister a previously registered capability
+	// handler on the client side.
+	MethodClientUnregisterCapability Method = "client/unregisterCapability"
+	// The initialize request is sent from the client to the server.
+	// It is sent once as the request after starting up the server.
+	// The requests parameter is of type InitializeParams
+	// the response if of type InitializeResult of a Thenable that
+	// resolves to such.
+	MethodInitialize Method = "initialize"
+	// A shutdown request is sent from the client to the server.
+	// It is sent once when the client decides to shutdown the
+	// server. The only notification that is sent after a shutdown request
+	// is the exit event.
+	MethodShutdown Method = "shutdown"
+	// The show message request is sent from the server to the client to show a message
+	// and a set of options actions to the user.
+	MethodWindowShowMessageRequest Method = "window/showMessageRequest"
+	// A document will save request is sent from the client to the server before
+	// the document is actually saved. The request can return an array of TextEdits
+	// which will be applied to the text document before it is saved. Please note that
+	// clients might drop results if computing the text edits took too long or if a
+	// server constantly fails on this request. This is done to keep the save fast and
+	// reliable.
+	MethodTextDocumentWillSaveWaitUntil Method = "textDocument/willSaveWaitUntil"
+	// Request to request completion at a given text document position. The request's
+	// parameter is of type TextDocumentPosition the response
+	// is of type CompletionItem[] or CompletionList
+	// or a Thenable that resolves to such.
+	//
+	// The request can delay the computation of the `detail`
+	// and `documentation` properties to the `completionItem/resolve`
+	// request. However, properties that are needed for the initial sorting and filtering, like `sortText`,
+	// `filterText`, `insertText`, and `textEdit`, must not be changed during resolve.
+	MethodTextDocumentCompletion Method = "textDocument/completion"
+	// Request to resolve additional information for a given completion item.The request's
+	// parameter is of type CompletionItem the response
+	// is of type CompletionItem or a Thenable that resolves to such.
+	MethodCompletionItemResolve Method = "completionItem/resolve"
+	// Request to request hover information at a given text document position. The request's
+	// parameter is of type TextDocumentPosition the response is of
+	// type Hover or a Thenable that resolves to such.
+	MethodTextDocumentHover         Method = "textDocument/hover"
+	MethodTextDocumentSignatureHelp Method = "textDocument/signatureHelp"
+	// A request to resolve the definition location of a symbol at a given text
+	// document position. The request's parameter is of type TextDocumentPosition
+	// the response is of either type Definition or a typed array of
+	// DefinitionLink or a Thenable that resolves to such.
+	MethodTextDocumentDefinition Method = "textDocument/definition"
+	// A request to resolve project-wide references for the symbol denoted
+	// by the given text document position. The request's parameter is of
+	// type ReferenceParams the response is of type
+	// Location[] or a Thenable that resolves to such.
+	MethodTextDocumentReferences Method = "textDocument/references"
+	// Request to resolve a DocumentHighlight for a given
+	// text document position. The request's parameter is of type TextDocumentPosition
+	// the request response is an array of type DocumentHighlight
+	// or a Thenable that resolves to such.
+	MethodTextDocumentDocumentHighlight Method = "textDocument/documentHighlight"
+	// A request to list all symbols found in a given text document. The request's
+	// parameter is of type TextDocumentIdentifier the
+	// response is of type SymbolInformation[] or a Thenable
+	// that resolves to such.
+	MethodTextDocumentDocumentSymbol Method = "textDocument/documentSymbol"
+	// A request to provide commands for the given text document and range.
+	MethodTextDocumentCodeAction Method = "textDocument/codeAction"
+	// Request to resolve additional information for a given code action.The request's
+	// parameter is of type CodeAction the response
+	// is of type CodeAction or a Thenable that resolves to such.
+	MethodCodeActionResolve Method = "codeAction/resolve"
+	// A request to list project-wide symbols matching the query string given
+	// by the WorkspaceSymbolParams. The response is
+	// of type SymbolInformation[] or a Thenable that
+	// resolves to such.
+	//
+	// Since: 3.17.0 - support for WorkspaceSymbol in the returned data. Clients
+	//
+	//	need to advertise support for WorkspaceSymbols via the client capability
+	//	`workspace.symbol.resolveSupport`.
+	MethodWorkspaceSymbol Method = "workspace/symbol"
+	// A request to resolve the range inside the workspace
+	// symbol's location.
+	//
+	// Since: 3.17.0
+	MethodWorkspaceSymbolResolve Method = "workspaceSymbol/resolve"
+	// A request to provide code lens for the given text document.
+	MethodTextDocumentCodeLens Method = "textDocument/codeLens"
+	// A request to resolve a command for a given code lens.
+	MethodCodeLensResolve Method = "codeLens/resolve"
+	// A request to refresh all code actions
+	//
+	// Since: 3.16.0
+	MethodWorkspaceCodeLensRefresh Method = "workspace/codeLens/refresh"
+	// A request to provide document links
+	MethodTextDocumentDocumentLink Method = "textDocument/documentLink"
+	// Request to resolve additional information for a given document link. The request's
+	// parameter is of type DocumentLink the response
+	// is of type DocumentLink or a Thenable that resolves to such.
+	MethodDocumentLinkResolve Method = "documentLink/resolve"
+	// A request to format a whole document.
+	MethodTextDocumentFormatting Method = "textDocument/formatting"
+	// A request to format a range in a document.
+	MethodTextDocumentRangeFormatting Method = "textDocument/rangeFormatting"
+	// A request to format ranges in a document.
+	//
+	// Since: 3.18.0
+	//
+	// Proposed.
+	MethodTextDocumentRangesFormatting Method = "textDocument/rangesFormatting"
+	// A request to format a document on type.
+	MethodTextDocumentOnTypeFormatting Method = "textDocument/onTypeFormatting"
+	// A request to rename a symbol.
+	MethodTextDocumentRename Method = "textDocument/rename"
+	// A request to test and perform the setup necessary for a rename.
+	//
+	// Since: 3.16 - support for default behavior
+	MethodTextDocumentPrepareRename Method = "textDocument/prepareRename"
+	// A request send from the client to the server to execute a command. The request might return
+	// a workspace edit which the client will apply to the workspace.
+	MethodWorkspaceExecuteCommand Method = "workspace/executeCommand"
+	// A request sent from the server to the client to modified certain resources.
+	MethodWorkspaceApplyEdit Method = "workspace/applyEdit"
+)
 
 // Notifications
-
-// The `workspace/didChangeWorkspaceFolders` notification is sent from the client to the server when the workspace
-// folder configuration changes.
-const MethodWorkspaceDidChangeWorkspaceFolders Method = "workspace/didChangeWorkspaceFolders"
-
-// The `window/workDoneProgress/cancel` notification is sent from the client to the server to cancel a progress
-// initiated on the server side.
-const MethodWindowWorkDoneProgressCancel Method = "window/workDoneProgress/cancel"
-
-// The did create files notification is sent from the client to the server when
-// files were created from within the client.
-//
-// Since: 3.16.0
-const MethodWorkspaceDidCreateFiles Method = "workspace/didCreateFiles"
-
-// The did rename files notification is sent from the client to the server when
-// files were renamed from within the client.
-//
-// Since: 3.16.0
-const MethodWorkspaceDidRenameFiles Method = "workspace/didRenameFiles"
-
-// The will delete files request is sent from the client to the server before files are actually
-// deleted as long as the deletion is triggered from within the client.
-//
-// Since: 3.16.0
-const MethodWorkspaceDidDeleteFiles Method = "workspace/didDeleteFiles"
-
-// A notification sent when a notebook opens.
-//
-// Since: 3.17.0
-const MethodNotebookDocumentDidOpen Method = "notebookDocument/didOpen"
-
-const MethodNotebookDocumentDidChange Method = "notebookDocument/didChange"
-
-// A notification sent when a notebook document is saved.
-//
-// Since: 3.17.0
-const MethodNotebookDocumentDidSave Method = "notebookDocument/didSave"
-
-// A notification sent when a notebook closes.
-//
-// Since: 3.17.0
-const MethodNotebookDocumentDidClose Method = "notebookDocument/didClose"
-
-// The initialized notification is sent from the client to the
-// server after the client is fully initialized and the server
-// is allowed to send requests from the server to the client.
-const MethodInitialized Method = "initialized"
-
-// The exit event is sent from the client to the server to
-// ask the server to exit its process.
-const MethodExit Method = "exit"
-
-// The configuration change notification is sent from the client to the server
-// when the client's configuration has changed. The notification contains
-// the changed configuration as defined by the language client.
-const MethodWorkspaceDidChangeConfiguration Method = "workspace/didChangeConfiguration"
-
-// The show message notification is sent from a server to a client to ask
-// the client to display a particular message in the user interface.
-const MethodWindowShowMessage Method = "window/showMessage"
-
-// The log message notification is sent from the server to the client to ask
-// the client to log a particular message.
-const MethodWindowLogMessage Method = "window/logMessage"
-
-// The telemetry event notification is sent from the server to the client to ask
-// the client to log telemetry data.
-const MethodTelemetryEvent Method = "telemetry/event"
-
-// The document open notification is sent from the client to the server to signal
-// newly opened text documents. The document's truth is now managed by the client
-// and the server must not try to read the document's truth using the document's
-// uri. Open in this sense means it is managed by the client. It doesn't necessarily
-// mean that its content is presented in an editor. An open notification must not
-// be sent more than once without a corresponding close notification send before.
-// This means open and close notification must be balanced and the max open count
-// is one.
-const MethodTextDocumentDidOpen Method = "textDocument/didOpen"
-
-// The document change notification is sent from the client to the server to signal
-// changes to a text document.
-const MethodTextDocumentDidChange Method = "textDocument/didChange"
-
-// The document close notification is sent from the client to the server when
-// the document got closed in the client. The document's truth now exists where
-// the document's uri points to (e.g. if the document's uri is a file uri the
-// truth now exists on disk). As with the open notification the close notification
-// is about managing the document's content. Receiving a close notification
-// doesn't mean that the document was open in an editor before. A close
-// notification requires a previous open notification to be sent.
-const MethodTextDocumentDidClose Method = "textDocument/didClose"
-
-// The document save notification is sent from the client to the server when
-// the document got saved in the client.
-const MethodTextDocumentDidSave Method = "textDocument/didSave"
-
-// A document will save notification is sent from the client to the server before
-// the document is actually saved.
-const MethodTextDocumentWillSave Method = "textDocument/willSave"
-
-// The watched files notification is sent from the client to the server when
-// the client detects changes to file watched by the language client.
-const MethodWorkspaceDidChangeWatchedFiles Method = "workspace/didChangeWatchedFiles"
-
-// Diagnostics notification are sent from the server to the client to signal
-// results of validation runs.
-const MethodTextDocumentPublishDiagnostics Method = "textDocument/publishDiagnostics"
-
-const MethodSetTrace Method = "$/setTrace"
-
-const MethodLogTrace Method = "$/logTrace"
-
-const MethodCancelRequest Method = "$/cancelRequest"
-
-const MethodProgress Method = "$/progress"
+const (
+	// The `workspace/didChangeWorkspaceFolders` notification is sent from the client to the server when the workspace
+	// folder configuration changes.
+	MethodWorkspaceDidChangeWorkspaceFolders Method = "workspace/didChangeWorkspaceFolders"
+	// The `window/workDoneProgress/cancel` notification is sent from the client to the server to cancel a progress
+	// initiated on the server side.
+	MethodWindowWorkDoneProgressCancel Method = "window/workDoneProgress/cancel"
+	// The did create files notification is sent from the client to the server when
+	// files were created from within the client.
+	//
+	// Since: 3.16.0
+	MethodWorkspaceDidCreateFiles Method = "workspace/didCreateFiles"
+	// The did rename files notification is sent from the client to the server when
+	// files were renamed from within the client.
+	//
+	// Since: 3.16.0
+	MethodWorkspaceDidRenameFiles Method = "workspace/didRenameFiles"
+	// The will delete files request is sent from the client to the server before files are actually
+	// deleted as long as the deletion is triggered from within the client.
+	//
+	// Since: 3.16.0
+	MethodWorkspaceDidDeleteFiles Method = "workspace/didDeleteFiles"
+	// A notification sent when a notebook opens.
+	//
+	// Since: 3.17.0
+	MethodNotebookDocumentDidOpen   Method = "notebookDocument/didOpen"
+	MethodNotebookDocumentDidChange Method = "notebookDocument/didChange"
+	// A notification sent when a notebook document is saved.
+	//
+	// Since: 3.17.0
+	MethodNotebookDocumentDidSave Method = "notebookDocument/didSave"
+	// A notification sent when a notebook closes.
+	//
+	// Since: 3.17.0
+	MethodNotebookDocumentDidClose Method = "notebookDocument/didClose"
+	// The initialized notification is sent from the client to the
+	// server after the client is fully initialized and the server
+	// is allowed to send requests from the server to the client.
+	MethodInitialized Method = "initialized"
+	// The exit event is sent from the client to the server to
+	// ask the server to exit its process.
+	MethodExit Method = "exit"
+	// The configuration change notification is sent from the client to the server
+	// when the client's configuration has changed. The notification contains
+	// the changed configuration as defined by the language client.
+	MethodWorkspaceDidChangeConfiguration Method = "workspace/didChangeConfiguration"
+	// The show message notification is sent from a server to a client to ask
+	// the client to display a particular message in the user interface.
+	MethodWindowShowMessage Method = "window/showMessage"
+	// The log message notification is sent from the server to the client to ask
+	// the client to log a particular message.
+	MethodWindowLogMessage Method = "window/logMessage"
+	// The telemetry event notification is sent from the server to the client to ask
+	// the client to log telemetry data.
+	MethodTelemetryEvent Method = "telemetry/event"
+	// The document open notification is sent from the client to the server to signal
+	// newly opened text documents. The document's truth is now managed by the client
+	// and the server must not try to read the document's truth using the document's
+	// uri. Open in this sense means it is managed by the client. It doesn't necessarily
+	// mean that its content is presented in an editor. An open notification must not
+	// be sent more than once without a corresponding close notification send before.
+	// This means open and close notification must be balanced and the max open count
+	// is one.
+	MethodTextDocumentDidOpen Method = "textDocument/didOpen"
+	// The document change notification is sent from the client to the server to signal
+	// changes to a text document.
+	MethodTextDocumentDidChange Method = "textDocument/didChange"
+	// The document close notification is sent from the client to the server when
+	// the document got closed in the client. The document's truth now exists where
+	// the document's uri points to (e.g. if the document's uri is a file uri the
+	// truth now exists on disk). As with the open notification the close notification
+	// is about managing the document's content. Receiving a close notification
+	// doesn't mean that the document was open in an editor before. A close
+	// notification requires a previous open notification to be sent.
+	MethodTextDocumentDidClose Method = "textDocument/didClose"
+	// The document save notification is sent from the client to the server when
+	// the document got saved in the client.
+	MethodTextDocumentDidSave Method = "textDocument/didSave"
+	// A document will save notification is sent from the client to the server before
+	// the document is actually saved.
+	MethodTextDocumentWillSave Method = "textDocument/willSave"
+	// The watched files notification is sent from the client to the server when
+	// the client detects changes to file watched by the language client.
+	MethodWorkspaceDidChangeWatchedFiles Method = "workspace/didChangeWatchedFiles"
+	// Diagnostics notification are sent from the server to the client to signal
+	// results of validation runs.
+	MethodTextDocumentPublishDiagnostics Method = "textDocument/publishDiagnostics"
+	MethodSetTrace                       Method = "$/setTrace"
+	MethodLogTrace                       Method = "$/logTrace"
+	MethodCancelRequest                  Method = "$/cancelRequest"
+	MethodProgress                       Method = "$/progress"
+)
 
 // Union types
 
