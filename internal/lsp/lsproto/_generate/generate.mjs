@@ -39,15 +39,6 @@ function compareValues(a, b) {
 
 /** @type {string[]} */
 let parts = [];
-let indentLevel = 0;
-
-function indent() {
-    indentLevel++;
-}
-
-function dedent() {
-    indentLevel--;
-}
 
 /**
  * @param {string} s
@@ -60,22 +51,6 @@ function write(s) {
  * @param {string} s
  */
 function writeLine(s) {
-    startLine(s);
-    write("\n");
-}
-
-/**
- * @param {string} s
- */
-function startLine(s) {
-    parts.push("\t".repeat(indentLevel));
-    write(s);
-}
-
-/**
- * @param {string} s
- */
-function finishLine(s) {
     write(s);
     write("\n");
 }
@@ -96,8 +71,8 @@ function writeDocumentation(doc) {
                 line = "Proposed.\n//";
             }
 
-            startLine("// ");
-            finishLine(line);
+            write("// ");
+            writeLine(line);
         }
     }
 }
@@ -108,8 +83,8 @@ function writeDocumentation(doc) {
 function writeDeprecation(deprecated) {
     if (deprecated) {
         writeLine("//");
-        startLine("// Deprecated: ");
-        finishLine(deprecated);
+        write("// Deprecated: ");
+        writeLine(deprecated);
     }
 }
 
@@ -314,7 +289,6 @@ for (const t of model.structures) {
     writeDeprecation(t.deprecated);
 
     writeLine("type " + t.name + " struct {");
-    indent();
 
     for (const e of t.extends ?? []) {
         if (e.kind !== "reference") {
@@ -337,7 +311,7 @@ for (const t of model.structures) {
         writeDocumentation(p.documentation);
         writeDeprecation(p.deprecated);
 
-        startLine(titleCase(p.name) + " ");
+        write(titleCase(p.name) + " ");
 
         if (p.optional) {
             write("*");
@@ -349,11 +323,10 @@ for (const t of model.structures) {
         if (omitEmpty) {
             write(",omitempty");
         }
-        finishLine('"`');
+        writeLine('"`');
         writeLine("");
     }
 
-    dedent();
     writeLine("}");
     writeLine("");
 }
@@ -390,38 +363,32 @@ for (const t of model.enumerations) {
     }
 
     writeLine("const (");
-    indent();
     for (const v of t.values) {
         writeDocumentation(v.documentation);
         writeDeprecation(v.deprecated);
 
-        startLine(t.name);
+        write(t.name);
         write(v.name);
         write(" ");
         write(t.name);
         write(" = ");
-        finishLine(valueToLiteral(v.value));
+        writeLine(valueToLiteral(v.value));
     }
-    dedent();
     writeLine(")");
 
     writeLine("");
 
     writeLine("func (e *" + t.name + ") UnmarshalJSON(data []byte) error {");
-    indent();
     writeLine("var v " + underlyingType);
     writeLine("if err := json.Unmarshal(data, &v); err != nil {");
-    indent();
     writeLine("return err");
-    dedent();
     writeLine("}");
     writeLine("switch v {");
-    indent();
     const values = [...new Set(t.values.map(v => v.value))].sort(compareValues);
     for (let i = 0; i < values.length; i++) {
         const v = values[i];
         if (i === 0) {
-            startLine("case ");
+            write("case ");
         }
         write(valueToLiteral(v));
         if (i === values.length - 1) {
@@ -436,15 +403,11 @@ for (const t of model.enumerations) {
             }
         }
     }
-    indent();
     writeLine("*e = " + t.name + "(v)");
     writeLine("return nil");
     writeLine("default:");
-    indent();
     writeLine(`return fmt.Errorf("unknown ${t.name} value: %v", v)`);
-    dedent();
     writeLine("}");
-    dedent();
     writeLine("}");
     writeLine("");
 }
@@ -460,7 +423,7 @@ for (const t of model.typeAliases) {
         continue;
     }
 
-    startLine("type " + t.name + " = ");
+    write("type " + t.name + " = ");
     writeTypeElement(t.type);
     writeLine("");
     writeLine("");
@@ -477,7 +440,6 @@ function methodNameToIdentifier(method) {
 writeLine("// Unmarshallers\n");
 
 writeLine("var unmarshallers = map[Method]func([]byte) (any, error){");
-indent();
 for (const t of model.requests) {
     if (t.messageDirection === "serverToClient") {
         continue;
@@ -506,7 +468,6 @@ for (const t of model.notifications) {
 
     writeLine(`MethodNotification${methodNameToIdentifier(t.method)}: unmarshallerFor[${name}],`);
 }
-dedent();
 writeLine("}");
 
 writeLine("// Requests\n");
@@ -529,62 +490,52 @@ writeLine("// Union types\n");
 
 for (const [name, members] of unionTypes) {
     writeLine("type " + name + " struct {");
-    indent();
 
     for (const member of members) {
-        startLine(titleCase(member.name) + " *");
+        write(titleCase(member.name) + " *");
         writeTypeElement(member.type, false);
-        finishLine("");
+        writeLine("");
     }
 
-    dedent();
     writeLine("}");
     writeLine("");
 
     writeLine("func (o " + name + ") MarshalJSON() ([]byte, error) {");
-    indent();
-    startLine(`assertOnlyOne("more than one element of ${name} is set", `);
+    write(`assertOnlyOne("more than one element of ${name} is set", `);
     for (let i = 0; i < members.length; i++) {
         if (i > 0) {
             write(", ");
         }
         write("o." + titleCase(members[i].name) + " != nil");
     }
-    finishLine(")");
+    writeLine(")");
 
     for (const member of members) {
         const name = titleCase(member.name);
         writeLine("if o." + name + " != nil {");
-        indent();
         writeLine("return json.Marshal(*o." + name + ")");
-        dedent();
         writeLine("}");
     }
     writeLine('panic("unreachable")');
-    dedent();
     writeLine("}");
     writeLine("");
 
     // TODO: do this way more efficiently
     // TODO: this doesn't work when union members overlap
     writeLine("func (o *" + name + ") UnmarshalJSON(data []byte) error {");
-    indent();
     writeLine("*o = " + name + "{}");
     for (const member of members) {
         const name = titleCase(member.name);
         const local = "v" + name;
-        startLine("var " + local + " ");
+        write("var " + local + " ");
         writeTypeElement(member.type);
-        finishLine("");
+        writeLine("");
         writeLine("if err := json.Unmarshal(data, &" + local + "); err == nil {");
-        indent();
         writeLine("o." + name + " = &" + local);
         writeLine("return nil");
-        dedent();
         writeLine("}");
     }
     writeLine(`return fmt.Errorf("invalid ${name}: %s", data)`);
-    dedent();
     writeLine("}");
 }
 

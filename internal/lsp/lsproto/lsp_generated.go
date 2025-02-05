@@ -166,7 +166,6 @@ type FoldingRange struct {
 	// will be chosen by the client.
 	//
 	// Since: 3.17.0
-	//
 	CollapsedText *string `json:"collapsedText,omitempty"`
 }
 
@@ -492,7 +491,6 @@ type WorkspaceEdit struct {
 	// Whether clients honor this property depends on the client capability `workspace.changeAnnotationSupport`.
 	//
 	// Since: 3.16.0
-	//
 	ChangeAnnotations *map[ChangeAnnotationIdentifier]ChangeAnnotation `json:"changeAnnotations,omitempty"`
 }
 
@@ -823,14 +821,14 @@ type DidChangeNotebookDocumentParams struct {
 	// The changes describe single state changes to the notebook document.
 	// So if there are two changes c1 (at array index 0) and c2 (at array
 	// index 1) for a notebook in state S then c1 moves the notebook from
-	// S to S' and c2 from S' to S''. So c1 is computed on the state S and
+	// S to S' and c2 from S' to S”. So c1 is computed on the state S and
 	// c2 is computed on the state S'.
 	//
 	// To mirror the content of a notebook using change events use the following approach:
-	// - start with the same initial content
-	// - apply the 'notebookDocument/didChange' notifications in the order you receive them.
-	// - apply the `NotebookChangeEvent`s in a single notification in the order
-	//   you receive them.
+	//   - start with the same initial content
+	//   - apply the 'notebookDocument/didChange' notifications in the order you receive them.
+	//   - apply the `NotebookChangeEvent`s in a single notification in the order
+	//     you receive them.
 	Change NotebookDocumentChangeEvent `json:"change"`
 }
 
@@ -972,7 +970,6 @@ type InitializeResult struct {
 	// Information about the server.
 	//
 	// Since: 3.15.0
-	//
 	ServerInfo *ServerInfo `json:"serverInfo,omitempty"`
 }
 
@@ -1049,14 +1046,14 @@ type DidChangeTextDocumentParams struct {
 	// The actual content changes. The content changes describe single state changes
 	// to the document. So if there are two content changes c1 (at array index 0) and
 	// c2 (at array index 1) for a document in state S then c1 moves the document from
-	// S to S' and c2 from S' to S''. So c1 is computed on the state S and c2 is computed
+	// S to S' and c2 from S' to S”. So c1 is computed on the state S and c2 is computed
 	// on the state S'.
 	//
 	// To mirror the content of a document using change events use the following approach:
-	// - start with the same initial content
-	// - apply the 'textDocument/didChange' notifications in the order you receive them.
-	// - apply the `TextDocumentContentChangeEvent`s in a single notification in the order
-	//   you receive them.
+	//   - start with the same initial content
+	//   - apply the 'textDocument/didChange' notifications in the order you receive them.
+	//   - apply the `TextDocumentContentChangeEvent`s in a single notification in the order
+	//     you receive them.
 	ContentChanges []TextDocumentContentChangeEvent `json:"contentChanges"`
 }
 
@@ -1130,7 +1127,6 @@ type PublishDiagnosticsParams struct {
 	// Optional the version number of the document the diagnostics are published for.
 	//
 	// Since: 3.15.0
-	//
 	Version *int32 `json:"version,omitempty"`
 
 	// An array of diagnostic information items.
@@ -1163,7 +1159,6 @@ type CompletionItem struct {
 	// Additional details for the label
 	//
 	// Since: 3.17.0
-	//
 	LabelDetails *CompletionItemLabelDetails `json:"labelDetails,omitempty"`
 
 	// The kind of this completion item. Based of the kind
@@ -1173,7 +1168,6 @@ type CompletionItem struct {
 	// Tags for this completion item.
 	//
 	// Since: 3.15.0
-	//
 	Tags *[]CompletionItemTag `json:"tags,omitempty"`
 
 	// A human-readable string with additional information
@@ -1231,7 +1225,6 @@ type CompletionItem struct {
 	// the `textDocument.completion.insertTextMode` client capability.
 	//
 	// Since: 3.16.0
-	//
 	InsertTextMode *InsertTextMode `json:"insertTextMode,omitempty"`
 
 	// An edit which is applied to a document when selecting
@@ -1254,7 +1247,6 @@ type CompletionItem struct {
 	// contained and starting at the same position.
 	//
 	// Since: 3.16.0 additional type `InsertReplaceEdit`
-	//
 	TextEdit *TextEditOrInsertReplaceEdit `json:"textEdit,omitempty"`
 
 	// The edit text used if the completion item is part of a CompletionList and
@@ -1267,7 +1259,6 @@ type CompletionItem struct {
 	// property is used as a text.
 	//
 	// Since: 3.17.0
-	//
 	TextEditText *string `json:"textEditText,omitempty"`
 
 	// An optional array of additional edits that are applied when
@@ -1318,7 +1309,6 @@ type CompletionList struct {
 	// capability.
 	//
 	// Since: 3.17.0
-	//
 	ItemDefaults *CompletionItemDefaults `json:"itemDefaults,omitempty"`
 
 	// Specifies how fields from a completion item should be combined with those
@@ -1338,7 +1328,6 @@ type CompletionList struct {
 	// capability.
 	//
 	// Since: 3.18.0
-	//
 	ApplyKind *CompletionItemApplyKinds `json:"applyKind,omitempty"`
 
 	// The completion items.
@@ -1382,7 +1371,6 @@ type SignatureHelpParams struct {
 	// to send this using the client capability `textDocument.signatureHelp.contextSupport === true`
 	//
 	// Since: 3.15.0
-	//
 	Context *SignatureHelpContext `json:"context,omitempty"`
 }
 
@@ -1497,7 +1485,6 @@ type SymbolInformation struct {
 
 	// Indicates if this symbol is deprecated.
 	//
-	//
 	// Deprecated: Use tags instead
 	Deprecated *bool `json:"deprecated,omitempty"`
 
@@ -1531,11 +1518,9 @@ type DocumentSymbol struct {
 	// Tags for this document symbol.
 	//
 	// Since: 3.16.0
-	//
 	Tags *[]SymbolTag `json:"tags,omitempty"`
 
 	// Indicates if this symbol is deprecated.
-	//
 	//
 	// Deprecated: Use tags instead
 	Deprecated *bool `json:"deprecated,omitempty"`
@@ -1587,7 +1572,6 @@ type Command struct {
 	// Since: 3.18.0
 	//
 	// Proposed.
-	//
 	Tooltip *string `json:"tooltip,omitempty"`
 
 	// The identifier of the actual command handler.
@@ -1621,7 +1605,6 @@ type CodeAction struct {
 	// A refactoring should be marked preferred if it is the most reasonable choice of actions to take.
 	//
 	// Since: 3.15.0
-	//
 	IsPreferred *bool `json:"isPreferred,omitempty"`
 
 	// Marks that the code action cannot currently be applied.
@@ -1639,7 +1622,6 @@ type CodeAction struct {
 	//     error message with `reason` in the editor.
 	//
 	// Since: 3.16.0
-	//
 	Disabled *CodeActionDisabled `json:"disabled,omitempty"`
 
 	// The workspace edit this code action performs.
@@ -1654,13 +1636,11 @@ type CodeAction struct {
 	// a `textDocument/codeAction` and a `codeAction/resolve` request.
 	//
 	// Since: 3.16.0
-	//
 	Data *LSPAny `json:"data,omitempty"`
 
 	// Tags for this code action.
 	//
 	// Since: 3.18.0 - proposed
-	//
 	Tags *[]CodeActionTag `json:"tags,omitempty"`
 }
 
@@ -1768,7 +1748,6 @@ type DocumentLink struct {
 	// user settings, and localization.
 	//
 	// Since: 3.15.0
-	//
 	Tooltip *string `json:"tooltip,omitempty"`
 
 	// A data entry field that is preserved on a document link between a
@@ -1921,7 +1900,6 @@ type ApplyWorkspaceEditParams struct {
 	// Since: 3.18.0
 	//
 	// Proposed.
-	//
 	Metadata *WorkspaceEditMetadata `json:"metadata,omitempty"`
 }
 
@@ -2519,7 +2497,6 @@ type RelatedFullDocumentDiagnosticReport struct {
 	// a.cpp and result in errors in a header file b.hpp.
 	//
 	// Since: 3.17.0
-	//
 	RelatedDocuments *map[DocumentUri]FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport `json:"relatedDocuments,omitempty"`
 }
 
@@ -2536,7 +2513,6 @@ type RelatedUnchangedDocumentDiagnosticReport struct {
 	// a.cpp and result in errors in a header file b.hpp.
 	//
 	// Since: 3.17.0
-	//
 	RelatedDocuments *map[DocumentUri]FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport `json:"relatedDocuments,omitempty"`
 }
 
@@ -2787,7 +2763,6 @@ type _InitializeParams struct {
 	// Information about the client
 	//
 	// Since: 3.15.0
-	//
 	ClientInfo *ClientInfo `json:"clientInfo,omitempty"`
 
 	// The locale the client is currently showing the user interface
@@ -2798,12 +2773,10 @@ type _InitializeParams struct {
 	// (See https://en.wikipedia.org/wiki/IETF_language_tag)
 	//
 	// Since: 3.16.0
-	//
 	Locale *string `json:"locale,omitempty"`
 
 	// The rootPath of the workspace. Is null
 	// if no folder is open.
-	//
 	//
 	// Deprecated: in favour of rootUri.
 	RootPath *Nullable[string] `json:"rootPath,omitempty"`
@@ -2811,7 +2784,6 @@ type _InitializeParams struct {
 	// The rootUri of the workspace. Is null if no
 	// folder is open. If both `rootPath` and `rootUri` are set
 	// `rootUri` wins.
-	//
 	//
 	// Deprecated: in favour of workspaceFolders.
 	RootUri *DocumentUri `json:"rootUri"`
@@ -2834,7 +2806,6 @@ type WorkspaceFoldersInitializeParams struct {
 	// configured.
 	//
 	// Since: 3.6.0
-	//
 	WorkspaceFolders *Nullable[[]WorkspaceFolder] `json:"workspaceFolders,omitempty"`
 }
 
@@ -2850,7 +2821,6 @@ type ServerCapabilities struct {
 	// If omitted it defaults to 'utf-16'.
 	//
 	// Since: 3.17.0
-	//
 	PositionEncoding *PositionEncodingKind `json:"positionEncoding,omitempty"`
 
 	// Defines how text documents are synced. Is either a detailed structure
@@ -2861,7 +2831,6 @@ type ServerCapabilities struct {
 	// Defines how notebook documents are synced.
 	//
 	// Since: 3.17.0
-	//
 	NotebookDocumentSync *NotebookDocumentSyncOptionsOrNotebookDocumentSyncRegistrationOptions `json:"notebookDocumentSync,omitempty"`
 
 	// The server provides completion support.
@@ -2937,49 +2906,41 @@ type ServerCapabilities struct {
 	// The server provides call hierarchy support.
 	//
 	// Since: 3.16.0
-	//
 	CallHierarchyProvider *BooleanOrCallHierarchyOptionsOrCallHierarchyRegistrationOptions `json:"callHierarchyProvider,omitempty"`
 
 	// The server provides linked editing range support.
 	//
 	// Since: 3.16.0
-	//
 	LinkedEditingRangeProvider *BooleanOrLinkedEditingRangeOptionsOrLinkedEditingRangeRegistrationOptions `json:"linkedEditingRangeProvider,omitempty"`
 
 	// The server provides semantic tokens support.
 	//
 	// Since: 3.16.0
-	//
 	SemanticTokensProvider *SemanticTokensOptionsOrSemanticTokensRegistrationOptions `json:"semanticTokensProvider,omitempty"`
 
 	// The server provides moniker support.
 	//
 	// Since: 3.16.0
-	//
 	MonikerProvider *BooleanOrMonikerOptionsOrMonikerRegistrationOptions `json:"monikerProvider,omitempty"`
 
 	// The server provides type hierarchy support.
 	//
 	// Since: 3.17.0
-	//
 	TypeHierarchyProvider *BooleanOrTypeHierarchyOptionsOrTypeHierarchyRegistrationOptions `json:"typeHierarchyProvider,omitempty"`
 
 	// The server provides inline values.
 	//
 	// Since: 3.17.0
-	//
 	InlineValueProvider *BooleanOrInlineValueOptionsOrInlineValueRegistrationOptions `json:"inlineValueProvider,omitempty"`
 
 	// The server provides inlay hints.
 	//
 	// Since: 3.17.0
-	//
 	InlayHintProvider *BooleanOrInlayHintOptionsOrInlayHintRegistrationOptions `json:"inlayHintProvider,omitempty"`
 
 	// The server has support for pull model diagnostics.
 	//
 	// Since: 3.17.0
-	//
 	DiagnosticProvider *DiagnosticOptionsOrDiagnosticRegistrationOptions `json:"diagnosticProvider,omitempty"`
 
 	// Inline completion options used during static registration.
@@ -2987,7 +2948,6 @@ type ServerCapabilities struct {
 	// Since: 3.18.0
 	//
 	// Proposed.
-	//
 	InlineCompletionProvider *BooleanOrInlineCompletionOptions `json:"inlineCompletionProvider,omitempty"`
 
 	// Workspace specific server capabilities.
@@ -3037,7 +2997,6 @@ type FileSystemWatcher struct {
 	// The glob pattern to watch. See pattern for more detail.
 	//
 	// Since: 3.17.0 support for relative patterns.
-	//
 	GlobPattern GlobPattern `json:"globPattern"`
 
 	// The kind of events of interest. If omitted it defaults
@@ -3064,7 +3023,6 @@ type Diagnostic struct {
 	// Requires the code field (above) to be present/not null.
 	//
 	// Since: 3.16.0
-	//
 	CodeDescription *CodeDescription `json:"codeDescription,omitempty"`
 
 	// A human-readable string describing the source of this
@@ -3078,7 +3036,6 @@ type Diagnostic struct {
 	// Additional metadata about the diagnostic.
 	//
 	// Since: 3.15.0
-	//
 	Tags *[]DiagnosticTag `json:"tags,omitempty"`
 
 	// An array of related diagnostic information, e.g. when symbol-names within
@@ -3089,7 +3046,6 @@ type Diagnostic struct {
 	// notification and `textDocument/codeAction` request.
 	//
 	// Since: 3.16.0
-	//
 	Data *LSPAny `json:"data,omitempty"`
 }
 
@@ -3149,31 +3105,26 @@ type CompletionItemDefaults struct {
 	// A default commit character set.
 	//
 	// Since: 3.17.0
-	//
 	CommitCharacters *[]string `json:"commitCharacters,omitempty"`
 
 	// A default edit range.
 	//
 	// Since: 3.17.0
-	//
 	EditRange *RangeOrEditRangeWithInsertReplace `json:"editRange,omitempty"`
 
 	// A default insert text format.
 	//
 	// Since: 3.17.0
-	//
 	InsertTextFormat *InsertTextFormat `json:"insertTextFormat,omitempty"`
 
 	// A default insert text mode.
 	//
 	// Since: 3.17.0
-	//
 	InsertTextMode *InsertTextMode `json:"insertTextMode,omitempty"`
 
 	// A default data value.
 	//
 	// Since: 3.17.0
-	//
 	Data *LSPAny `json:"data,omitempty"`
 }
 
@@ -3210,7 +3161,6 @@ type CompletionItemApplyKinds struct {
 	// and the completion's own `commitCharacters`.
 	//
 	// Since: 3.18.0
-	//
 	CommitCharacters *ApplyKind `json:"commitCharacters,omitempty"`
 
 	// Specifies whether the `data` field on a completion will replace or
@@ -3226,16 +3176,15 @@ type CompletionItemApplyKinds struct {
 	// `completionList.itemDefaults.data` and the completion's own data
 	// using the following rules:
 	//
-	// - If a completion's `data` field is not provided (or `null`), the
-	//   entire `data` field from `completionList.itemDefaults.data` will be
-	//   used as-is.
-	// - If a completion's `data` field is provided, each field will
-	//   overwrite the field of the same name in
-	//   `completionList.itemDefaults.data` but no merging of nested fields
-	//   within that value will occur.
+	//   - If a completion's `data` field is not provided (or `null`), the
+	//     entire `data` field from `completionList.itemDefaults.data` will be
+	//     used as-is.
+	//   - If a completion's `data` field is provided, each field will
+	//     overwrite the field of the same name in
+	//     `completionList.itemDefaults.data` but no merging of nested fields
+	//     within that value will occur.
 	//
 	// Since: 3.18.0
-	//
 	Data *ApplyKind `json:"data,omitempty"`
 }
 
@@ -3261,7 +3210,6 @@ type CompletionOptions struct {
 	// completion item the ones on the completion item win.
 	//
 	// Since: 3.2.0
-	//
 	AllCommitCharacters *[]string `json:"allCommitCharacters,omitempty"`
 
 	// The server provides support to resolve additional
@@ -3272,7 +3220,6 @@ type CompletionOptions struct {
 	// capabilities.
 	//
 	// Since: 3.17.0
-	//
 	CompletionItem *ServerCompletionItemOptions `json:"completionItem,omitempty"`
 }
 
@@ -3332,7 +3279,6 @@ type SignatureInformation struct {
 	// `SignatureHelp.activeParameter`.
 	//
 	// Since: 3.16.0
-	//
 	ActiveParameter *Nullable[uint32] `json:"activeParameter,omitempty"`
 }
 
@@ -3349,7 +3295,6 @@ type SignatureHelpOptions struct {
 	// are also counted as re-trigger characters.
 	//
 	// Since: 3.15.0
-	//
 	RetriggerCharacters *[]string `json:"retriggerCharacters,omitempty"`
 }
 
@@ -3386,7 +3331,6 @@ type BaseSymbolInformation struct {
 	// Tags for this symbol.
 	//
 	// Since: 3.16.0
-	//
 	Tags *[]SymbolTag `json:"tags,omitempty"`
 
 	// The name of the symbol containing this symbol. This information is for
@@ -3404,7 +3348,6 @@ type DocumentSymbolOptions struct {
 	// are shown for the same document.
 	//
 	// Since: 3.16.0
-	//
 	Label *string `json:"label,omitempty"`
 }
 
@@ -3427,7 +3370,6 @@ type CodeActionContext struct {
 	// The reason why code actions were requested.
 	//
 	// Since: 3.17.0
-	//
 	TriggerKind *CodeActionTriggerKind `json:"triggerKind,omitempty"`
 }
 
@@ -3455,10 +3397,10 @@ type CodeActionOptions struct {
 	//
 	// Documentation from the provider should be shown in the code actions menu if either:
 	//
-	// - Code actions of `kind` are requested by the editor. In this case, the editor will show the documentation that
-	//   most closely matches the requested code action kind. For example, if a provider has documentation for
-	//   both `Refactor` and `RefactorExtract`, when the user requests code actions for `RefactorExtract`,
-	//   the editor will use the documentation for `RefactorExtract` instead of the documentation for `Refactor`.
+	//   - Code actions of `kind` are requested by the editor. In this case, the editor will show the documentation that
+	//     most closely matches the requested code action kind. For example, if a provider has documentation for
+	//     both `Refactor` and `RefactorExtract`, when the user requests code actions for `RefactorExtract`,
+	//     the editor will use the documentation for `RefactorExtract` instead of the documentation for `Refactor`.
 	//
 	// - Any code actions of `kind` are returned by the provider.
 	//
@@ -3467,14 +3409,12 @@ type CodeActionOptions struct {
 	// Since: 3.18.0
 	//
 	// Proposed.
-	//
 	Documentation *[]CodeActionKindDocumentation `json:"documentation,omitempty"`
 
 	// The server provides support to resolve additional
 	// information for a code action.
 	//
 	// Since: 3.16.0
-	//
 	ResolveProvider *bool `json:"resolveProvider,omitempty"`
 }
 
@@ -3493,7 +3433,6 @@ type WorkspaceSymbolOptions struct {
 	// information for a workspace symbol.
 	//
 	// Since: 3.17.0
-	//
 	ResolveProvider *bool `json:"resolveProvider,omitempty"`
 }
 
@@ -3524,19 +3463,16 @@ type FormattingOptions struct {
 	// Trim trailing whitespace on a line.
 	//
 	// Since: 3.15.0
-	//
 	TrimTrailingWhitespace *bool `json:"trimTrailingWhitespace,omitempty"`
 
 	// Insert a newline character at the end of the file if one does not exist.
 	//
 	// Since: 3.15.0
-	//
 	InsertFinalNewline *bool `json:"insertFinalNewline,omitempty"`
 
 	// Trim all newlines after the final newline at the end of the file.
 	//
 	// Since: 3.15.0
-	//
 	TrimFinalNewlines *bool `json:"trimFinalNewlines,omitempty"`
 }
 
@@ -3554,7 +3490,6 @@ type DocumentRangeFormattingOptions struct {
 	// Since: 3.18.0
 	//
 	// Proposed.
-	//
 	RangesSupport *bool `json:"rangesSupport,omitempty"`
 }
 
@@ -3574,7 +3509,6 @@ type RenameOptions struct {
 	// Renames should be checked and tested before being executed.
 	//
 	// Since: version 3.12.0
-	//
 	PrepareProvider *bool `json:"prepareProvider,omitempty"`
 }
 
@@ -3671,7 +3605,6 @@ type ResourceOperation struct {
 	// An optional annotation identifier describing the operation.
 	//
 	// Since: 3.16.0
-	//
 	AnnotationId *ChangeAnnotationIdentifier `json:"annotationId,omitempty"`
 }
 
@@ -3853,7 +3786,6 @@ type ClientCapabilities struct {
 	// Capabilities specific to the notebook document support.
 	//
 	// Since: 3.17.0
-	//
 	NotebookDocument *NotebookDocumentClientCapabilities `json:"notebookDocument,omitempty"`
 
 	// Window specific client capabilities.
@@ -3862,7 +3794,6 @@ type ClientCapabilities struct {
 	// General client capabilities.
 	//
 	// Since: 3.16.0
-	//
 	General *GeneralClientCapabilities `json:"general,omitempty"`
 
 	// Experimental client capabilities.
@@ -3898,13 +3829,11 @@ type WorkspaceOptions struct {
 	// The server supports workspace folder.
 	//
 	// Since: 3.6.0
-	//
 	WorkspaceFolders *WorkspaceFoldersServerCapabilities `json:"workspaceFolders,omitempty"`
 
 	// The server is interested in notifications/requests for operations on files.
 	//
 	// Since: 3.16.0
-	//
 	FileOperations *FileOperationOptions `json:"fileOperations,omitempty"`
 
 	// The server supports the `workspace/textDocumentContent` request.
@@ -3912,7 +3841,6 @@ type WorkspaceOptions struct {
 	// Since: 3.18.0
 	//
 	// Proposed.
-	//
 	TextDocumentContent *TextDocumentContentOptionsOrTextDocumentContentRegistrationOptions `json:"textDocumentContent,omitempty"`
 }
 
@@ -3922,7 +3850,6 @@ type TextDocumentContentChangePartial struct {
 	Range Range `json:"range"`
 
 	// The optional length of the range that got replaced.
-	//
 	//
 	// Deprecated: use range instead.
 	RangeLength *uint32 `json:"rangeLength,omitempty"`
@@ -3972,7 +3899,6 @@ type ServerCompletionItemOptions struct {
 	// receiving a completion item in a resolve call.
 	//
 	// Since: 3.17.0
-	//
 	LabelDetailsSupport *bool `json:"labelDetailsSupport,omitempty"`
 }
 
@@ -4116,27 +4042,23 @@ type WorkspaceClientCapabilities struct {
 	// The client has support for workspace folders.
 	//
 	// Since: 3.6.0
-	//
 	WorkspaceFolders *bool `json:"workspaceFolders,omitempty"`
 
 	// The client supports `workspace/configuration` requests.
 	//
 	// Since: 3.6.0
-	//
 	Configuration *bool `json:"configuration,omitempty"`
 
 	// Capabilities specific to the semantic token requests scoped to the
 	// workspace.
 	//
 	// Since: 3.16.0.
-	//
 	SemanticTokens *SemanticTokensWorkspaceClientCapabilities `json:"semanticTokens,omitempty"`
 
 	// Capabilities specific to the code lens requests scoped to the
 	// workspace.
 	//
 	// Since: 3.16.0.
-	//
 	CodeLens *CodeLensWorkspaceClientCapabilities `json:"codeLens,omitempty"`
 
 	// The client has support for file notifications/requests for user operations on files.
@@ -4148,21 +4070,18 @@ type WorkspaceClientCapabilities struct {
 	// workspace.
 	//
 	// Since: 3.17.0.
-	//
 	InlineValue *InlineValueWorkspaceClientCapabilities `json:"inlineValue,omitempty"`
 
 	// Capabilities specific to the inlay hint requests scoped to the
 	// workspace.
 	//
 	// Since: 3.17.0.
-	//
 	InlayHint *InlayHintWorkspaceClientCapabilities `json:"inlayHint,omitempty"`
 
 	// Capabilities specific to the diagnostic requests scoped to the
 	// workspace.
 	//
 	// Since: 3.17.0.
-	//
 	Diagnostics *DiagnosticWorkspaceClientCapabilities `json:"diagnostics,omitempty"`
 
 	// Capabilities specific to the folding range requests scoped to the workspace.
@@ -4170,7 +4089,6 @@ type WorkspaceClientCapabilities struct {
 	// Since: 3.18.0
 	//
 	// Proposed.
-	//
 	FoldingRange *FoldingRangeWorkspaceClientCapabilities `json:"foldingRange,omitempty"`
 
 	// Capabilities specific to the `workspace/textDocumentContent` request.
@@ -4178,7 +4096,6 @@ type WorkspaceClientCapabilities struct {
 	// Since: 3.18.0
 	//
 	// Proposed.
-	//
 	TextDocumentContent *TextDocumentContentClientCapabilities `json:"textDocumentContent,omitempty"`
 }
 
@@ -4190,7 +4107,6 @@ type TextDocumentClientCapabilities struct {
 	// Defines which filters the client supports.
 	//
 	// Since: 3.18.0
-	//
 	Filters *TextDocumentFilterClientCapabilities `json:"filters,omitempty"`
 
 	// Capabilities specific to the `textDocument/completion` request.
@@ -4205,7 +4121,6 @@ type TextDocumentClientCapabilities struct {
 	// Capabilities specific to the `textDocument/declaration` request.
 	//
 	// Since: 3.14.0
-	//
 	Declaration *DeclarationClientCapabilities `json:"declaration,omitempty"`
 
 	// Capabilities specific to the `textDocument/definition` request.
@@ -4214,13 +4129,11 @@ type TextDocumentClientCapabilities struct {
 	// Capabilities specific to the `textDocument/typeDefinition` request.
 	//
 	// Since: 3.6.0
-	//
 	TypeDefinition *TypeDefinitionClientCapabilities `json:"typeDefinition,omitempty"`
 
 	// Capabilities specific to the `textDocument/implementation` request.
 	//
 	// Since: 3.6.0
-	//
 	Implementation *ImplementationClientCapabilities `json:"implementation,omitempty"`
 
 	// Capabilities specific to the `textDocument/references` request.
@@ -4245,7 +4158,6 @@ type TextDocumentClientCapabilities struct {
 	// `textDocument/colorPresentation` request.
 	//
 	// Since: 3.6.0
-	//
 	ColorProvider *DocumentColorClientCapabilities `json:"colorProvider,omitempty"`
 
 	// Capabilities specific to the `textDocument/formatting` request.
@@ -4263,13 +4175,11 @@ type TextDocumentClientCapabilities struct {
 	// Capabilities specific to the `textDocument/foldingRange` request.
 	//
 	// Since: 3.10.0
-	//
 	FoldingRange *FoldingRangeClientCapabilities `json:"foldingRange,omitempty"`
 
 	// Capabilities specific to the `textDocument/selectionRange` request.
 	//
 	// Since: 3.15.0
-	//
 	SelectionRange *SelectionRangeClientCapabilities `json:"selectionRange,omitempty"`
 
 	// Capabilities specific to the `textDocument/publishDiagnostics` notification.
@@ -4278,49 +4188,41 @@ type TextDocumentClientCapabilities struct {
 	// Capabilities specific to the various call hierarchy requests.
 	//
 	// Since: 3.16.0
-	//
 	CallHierarchy *CallHierarchyClientCapabilities `json:"callHierarchy,omitempty"`
 
 	// Capabilities specific to the various semantic token request.
 	//
 	// Since: 3.16.0
-	//
 	SemanticTokens *SemanticTokensClientCapabilities `json:"semanticTokens,omitempty"`
 
 	// Capabilities specific to the `textDocument/linkedEditingRange` request.
 	//
 	// Since: 3.16.0
-	//
 	LinkedEditingRange *LinkedEditingRangeClientCapabilities `json:"linkedEditingRange,omitempty"`
 
 	// Client capabilities specific to the `textDocument/moniker` request.
 	//
 	// Since: 3.16.0
-	//
 	Moniker *MonikerClientCapabilities `json:"moniker,omitempty"`
 
 	// Capabilities specific to the various type hierarchy requests.
 	//
 	// Since: 3.17.0
-	//
 	TypeHierarchy *TypeHierarchyClientCapabilities `json:"typeHierarchy,omitempty"`
 
 	// Capabilities specific to the `textDocument/inlineValue` request.
 	//
 	// Since: 3.17.0
-	//
 	InlineValue *InlineValueClientCapabilities `json:"inlineValue,omitempty"`
 
 	// Capabilities specific to the `textDocument/inlayHint` request.
 	//
 	// Since: 3.17.0
-	//
 	InlayHint *InlayHintClientCapabilities `json:"inlayHint,omitempty"`
 
 	// Capabilities specific to the diagnostic pull model.
 	//
 	// Since: 3.17.0
-	//
 	Diagnostic *DiagnosticClientCapabilities `json:"diagnostic,omitempty"`
 
 	// Client capabilities specific to inline completions.
@@ -4328,7 +4230,6 @@ type TextDocumentClientCapabilities struct {
 	// Since: 3.18.0
 	//
 	// Proposed.
-	//
 	InlineCompletion *InlineCompletionClientCapabilities `json:"inlineCompletion,omitempty"`
 }
 
@@ -4339,7 +4240,6 @@ type NotebookDocumentClientCapabilities struct {
 	// Capabilities specific to notebook document synchronization
 	//
 	// Since: 3.17.0
-	//
 	Synchronization NotebookDocumentSyncClientCapabilities `json:"synchronization"`
 }
 
@@ -4353,19 +4253,16 @@ type WindowClientCapabilities struct {
 	// capabilities.
 	//
 	// Since: 3.15.0
-	//
 	WorkDoneProgress *bool `json:"workDoneProgress,omitempty"`
 
 	// Capabilities specific to the showMessage request.
 	//
 	// Since: 3.16.0
-	//
 	ShowMessage *ShowMessageRequestClientCapabilities `json:"showMessage,omitempty"`
 
 	// Capabilities specific to the showDocument request.
 	//
 	// Since: 3.16.0
-	//
 	ShowDocument *ShowDocumentClientCapabilities `json:"showDocument,omitempty"`
 }
 
@@ -4379,19 +4276,16 @@ type GeneralClientCapabilities struct {
 	// anymore since the information is outdated).
 	//
 	// Since: 3.17.0
-	//
 	StaleRequestSupport *StaleRequestSupportOptions `json:"staleRequestSupport,omitempty"`
 
 	// Client capabilities specific to regular expressions.
 	//
 	// Since: 3.16.0
-	//
 	RegularExpressions *RegularExpressionsClientCapabilities `json:"regularExpressions,omitempty"`
 
 	// Client capabilities specific to the client's markdown parser.
 	//
 	// Since: 3.16.0
-	//
 	Markdown *MarkdownClientCapabilities `json:"markdown,omitempty"`
 
 	// The position encodings supported by the client. Client and server
@@ -4412,7 +4306,6 @@ type GeneralClientCapabilities struct {
 	// side.
 	//
 	// Since: 3.17.0
-	//
 	PositionEncodings *[]PositionEncodingKind `json:"positionEncodings,omitempty"`
 }
 
@@ -4589,14 +4482,12 @@ type WorkspaceEditClientCapabilities struct {
 	// support 'create', 'rename' and 'delete' files and folders.
 	//
 	// Since: 3.13.0
-	//
 	ResourceOperations *[]ResourceOperationKind `json:"resourceOperations,omitempty"`
 
 	// The failure handling strategy of a client if applying the workspace edit
 	// fails.
 	//
 	// Since: 3.13.0
-	//
 	FailureHandling *FailureHandlingKind `json:"failureHandling,omitempty"`
 
 	// Whether the client normalizes line endings to the client specific
@@ -4606,14 +4497,12 @@ type WorkspaceEditClientCapabilities struct {
 	// character.
 	//
 	// Since: 3.16.0
-	//
 	NormalizesLineEndings *bool `json:"normalizesLineEndings,omitempty"`
 
 	// Whether the client in general supports change annotations on text edits,
 	// create file, rename file and delete file changes.
 	//
 	// Since: 3.16.0
-	//
 	ChangeAnnotationSupport *ChangeAnnotationsSupportOptions `json:"changeAnnotationSupport,omitempty"`
 
 	// Whether the client supports `WorkspaceEditMetadata` in `WorkspaceEdit`s.
@@ -4621,7 +4510,6 @@ type WorkspaceEditClientCapabilities struct {
 	// Since: 3.18.0
 	//
 	// Proposed.
-	//
 	MetadataSupport *bool `json:"metadataSupport,omitempty"`
 
 	// Whether the client supports snippets as text edits.
@@ -4629,7 +4517,6 @@ type WorkspaceEditClientCapabilities struct {
 	// Since: 3.18.0
 	//
 	// Proposed.
-	//
 	SnippetEditSupport *bool `json:"snippetEditSupport,omitempty"`
 }
 
@@ -4648,7 +4535,6 @@ type DidChangeWatchedFilesClientCapabilities struct {
 	// or not.
 	//
 	// Since: 3.17.0
-	//
 	RelativePatternSupport *bool `json:"relativePatternSupport,omitempty"`
 }
 
@@ -4664,7 +4550,6 @@ type WorkspaceSymbolClientCapabilities struct {
 	// Clients supporting tags have to handle unknown tags gracefully.
 	//
 	// Since: 3.16.0
-	//
 	TagSupport *ClientSymbolTagOptions `json:"tagSupport,omitempty"`
 
 	// The client support partial workspace symbols. The client will send the
@@ -4672,7 +4557,6 @@ type WorkspaceSymbolClientCapabilities struct {
 	// properties.
 	//
 	// Since: 3.17.0
-	//
 	ResolveSupport *ClientSymbolResolveOptions `json:"resolveSupport,omitempty"`
 }
 
@@ -4794,7 +4678,6 @@ type FoldingRangeWorkspaceClientCapabilities struct {
 	// Since: 3.18.0
 	//
 	// Proposed.
-	//
 	RefreshSupport *bool `json:"refreshSupport,omitempty"`
 }
 
@@ -4828,7 +4711,6 @@ type TextDocumentFilterClientCapabilities struct {
 	// The client supports Relative Patterns.
 	//
 	// Since: 3.18.0
-	//
 	RelativePatternSupport *bool `json:"relativePatternSupport,omitempty"`
 }
 
@@ -4848,7 +4730,6 @@ type CompletionClientCapabilities struct {
 	// text in either `insertText` or `textEdit`.
 	//
 	// Since: 3.17.0
-	//
 	InsertTextMode *InsertTextMode `json:"insertTextMode,omitempty"`
 
 	// The client supports to send additional context information for a
@@ -4859,7 +4740,6 @@ type CompletionClientCapabilities struct {
 	// capabilities.
 	//
 	// Since: 3.17.0
-	//
 	CompletionList *CompletionListCapabilities `json:"completionList,omitempty"`
 }
 
@@ -4887,7 +4767,6 @@ type SignatureHelpClientCapabilities struct {
 	// `SignatureHelpOptions`.
 	//
 	// Since: 3.15.0
-	//
 	ContextSupport *bool `json:"contextSupport,omitempty"`
 }
 
@@ -4910,7 +4789,6 @@ type DefinitionClientCapabilities struct {
 	// The client supports additional metadata in the form of definition links.
 	//
 	// Since: 3.14.0
-	//
 	LinkSupport *bool `json:"linkSupport,omitempty"`
 }
 
@@ -4937,7 +4815,6 @@ type ImplementationClientCapabilities struct {
 	// The client supports additional metadata in the form of definition links.
 	//
 	// Since: 3.14.0
-	//
 	LinkSupport *bool `json:"linkSupport,omitempty"`
 }
 
@@ -4970,14 +4847,12 @@ type DocumentSymbolClientCapabilities struct {
 	// Clients supporting tags have to handle unknown tags gracefully.
 	//
 	// Since: 3.16.0
-	//
 	TagSupport *ClientSymbolTagOptions `json:"tagSupport,omitempty"`
 
 	// The client supports an additional label presented in the UI when
 	// registering a document symbol provider.
 	//
 	// Since: 3.16.0
-	//
 	LabelSupport *bool `json:"labelSupport,omitempty"`
 }
 
@@ -4991,19 +4866,16 @@ type CodeActionClientCapabilities struct {
 	// set the request can only return `Command` literals.
 	//
 	// Since: 3.8.0
-	//
 	CodeActionLiteralSupport *ClientCodeActionLiteralOptions `json:"codeActionLiteralSupport,omitempty"`
 
 	// Whether code action supports the `isPreferred` property.
 	//
 	// Since: 3.15.0
-	//
 	IsPreferredSupport *bool `json:"isPreferredSupport,omitempty"`
 
 	// Whether code action supports the `disabled` property.
 	//
 	// Since: 3.16.0
-	//
 	DisabledSupport *bool `json:"disabledSupport,omitempty"`
 
 	// Whether code action supports the `data` property which is
@@ -5011,14 +4883,12 @@ type CodeActionClientCapabilities struct {
 	// `codeAction/resolve` request.
 	//
 	// Since: 3.16.0
-	//
 	DataSupport *bool `json:"dataSupport,omitempty"`
 
 	// Whether the client supports resolving additional code action
 	// properties via a separate `codeAction/resolve` request.
 	//
 	// Since: 3.16.0
-	//
 	ResolveSupport *ClientCodeActionResolveOptions `json:"resolveSupport,omitempty"`
 
 	// Whether the client honors the change annotations in
@@ -5028,7 +4898,6 @@ type CodeActionClientCapabilities struct {
 	// for confirmation.
 	//
 	// Since: 3.16.0
-	//
 	HonorsChangeAnnotations *bool `json:"honorsChangeAnnotations,omitempty"`
 
 	// Whether the client supports documentation for a class of
@@ -5037,14 +4906,12 @@ type CodeActionClientCapabilities struct {
 	// Since: 3.18.0
 	//
 	// Proposed.
-	//
 	DocumentationSupport *bool `json:"documentationSupport,omitempty"`
 
 	// Client supports the tag property on a code action. Clients
 	// supporting tags have to handle unknown tags gracefully.
 	//
 	// Since: 3.18.0 - proposed
-	//
 	TagSupport *CodeActionTagOptions `json:"tagSupport,omitempty"`
 }
 
@@ -5057,7 +4924,6 @@ type CodeLensClientCapabilities struct {
 	// properties via a separate `codeLens/resolve` request.
 	//
 	// Since: 3.18.0
-	//
 	ResolveSupport *ClientCodeLensResolveOptions `json:"resolveSupport,omitempty"`
 }
 
@@ -5069,7 +4935,6 @@ type DocumentLinkClientCapabilities struct {
 	// Whether the client supports the `tooltip` property on `DocumentLink`.
 	//
 	// Since: 3.15.0
-	//
 	TooltipSupport *bool `json:"tooltipSupport,omitempty"`
 }
 
@@ -5096,7 +4961,6 @@ type DocumentRangeFormattingClientCapabilities struct {
 	// Since: 3.18.0
 	//
 	// Proposed.
-	//
 	RangesSupport *bool `json:"rangesSupport,omitempty"`
 }
 
@@ -5114,7 +4978,6 @@ type RenameClientCapabilities struct {
 	// before execution.
 	//
 	// Since: 3.12.0
-	//
 	PrepareSupport *bool `json:"prepareSupport,omitempty"`
 
 	// Client supports the default behavior result.
@@ -5123,7 +4986,6 @@ type RenameClientCapabilities struct {
 	// client.
 	//
 	// Since: 3.16.0
-	//
 	PrepareSupportDefaultBehavior *PrepareSupportDefaultBehavior `json:"prepareSupportDefaultBehavior,omitempty"`
 
 	// Whether the client honors the change annotations in
@@ -5133,7 +4995,6 @@ type RenameClientCapabilities struct {
 	// for confirmation.
 	//
 	// Since: 3.16.0
-	//
 	HonorsChangeAnnotations *bool `json:"honorsChangeAnnotations,omitempty"`
 }
 
@@ -5157,13 +5018,11 @@ type FoldingRangeClientCapabilities struct {
 	// Specific options for the folding range kind.
 	//
 	// Since: 3.17.0
-	//
 	FoldingRangeKind *ClientFoldingRangeKindOptions `json:"foldingRangeKind,omitempty"`
 
 	// Specific options for the folding range.
 	//
 	// Since: 3.17.0
-	//
 	FoldingRange *ClientFoldingRangeOptions `json:"foldingRange,omitempty"`
 }
 
@@ -5182,7 +5041,6 @@ type PublishDiagnosticsClientCapabilities struct {
 	// `textDocument/publishDiagnostics` notification's parameter.
 	//
 	// Since: 3.15.0
-	//
 	VersionSupport *bool `json:"versionSupport,omitempty"`
 }
 
@@ -5232,7 +5090,6 @@ type SemanticTokensClientCapabilities struct {
 	// needs to retrigger the request.
 	//
 	// Since: 3.17.0
-	//
 	ServerCancelSupport *bool `json:"serverCancelSupport,omitempty"`
 
 	// Whether the client uses semantic tokens to augment existing
@@ -5245,7 +5102,6 @@ type SemanticTokensClientCapabilities struct {
 	// specified.
 	//
 	// Since: 3.17.0
-	//
 	AugmentsSyntaxTokens *bool `json:"augmentsSyntaxTokens,omitempty"`
 }
 
@@ -5387,7 +5243,6 @@ type MarkdownClientCapabilities struct {
 	// Markdown.
 	//
 	// Since: 3.17.0
-	//
 	AllowedTags *[]string `json:"allowedTags,omitempty"`
 }
 
@@ -5454,14 +5309,12 @@ type ClientCompletionItemOptions struct {
 	// a resolve call.
 	//
 	// Since: 3.15.0
-	//
 	TagSupport *CompletionItemTagOptions `json:"tagSupport,omitempty"`
 
 	// Client support insert replace edit to control different behavior if a
 	// completion item is inserted in the text or should replace text.
 	//
 	// Since: 3.16.0
-	//
 	InsertReplaceSupport *bool `json:"insertReplaceSupport,omitempty"`
 
 	// Indicates which properties a client can resolve lazily on a completion
@@ -5469,7 +5322,6 @@ type ClientCompletionItemOptions struct {
 	// and `details` could be resolved lazily.
 	//
 	// Since: 3.16.0
-	//
 	ResolveSupport *ClientCompletionItemResolveOptions `json:"resolveSupport,omitempty"`
 
 	// The client supports the `insertTextMode` property on
@@ -5477,14 +5329,12 @@ type ClientCompletionItemOptions struct {
 	// as defined by the client (see `insertTextMode`).
 	//
 	// Since: 3.16.0
-	//
 	InsertTextModeSupport *ClientCompletionItemInsertTextModeOptions `json:"insertTextModeSupport,omitempty"`
 
 	// The client has support for completion item label
 	// details (see also `CompletionItemLabelDetails`).
 	//
 	// Since: 3.17.0
-	//
 	LabelDetailsSupport *bool `json:"labelDetailsSupport,omitempty"`
 }
 
@@ -5514,7 +5364,6 @@ type CompletionListCapabilities struct {
 	// no properties are supported.
 	//
 	// Since: 3.17.0
-	//
 	ItemDefaults *[]string `json:"itemDefaults,omitempty"`
 
 	// Specifies whether the client supports `CompletionList.applyKind` to
@@ -5528,7 +5377,6 @@ type CompletionListCapabilities struct {
 	// defined in `CompletionList.applyKind`.
 	//
 	// Since: 3.18.0
-	//
 	ApplyKindSupport *bool `json:"applyKindSupport,omitempty"`
 }
 
@@ -5545,7 +5393,6 @@ type ClientSignatureInformationOptions struct {
 	// literal.
 	//
 	// Since: 3.16.0
-	//
 	ActiveParameterSupport *bool `json:"activeParameterSupport,omitempty"`
 
 	// The client supports the `activeParameter` property on
@@ -5555,7 +5402,6 @@ type ClientSignatureInformationOptions struct {
 	// Since: 3.18.0
 	//
 	// Proposed.
-	//
 	NoActiveParameterSupport *bool `json:"noActiveParameterSupport,omitempty"`
 }
 
@@ -5599,7 +5445,6 @@ type ClientFoldingRangeOptions struct {
 	// folding ranges to display custom labels instead of the default text.
 	//
 	// Since: 3.17.0
-	//
 	CollapsedText *bool `json:"collapsedText,omitempty"`
 }
 
@@ -5612,13 +5457,11 @@ type DiagnosticsCapabilities struct {
 	// Clients supporting tags have to handle unknown tags gracefully.
 	//
 	// Since: 3.15.0
-	//
 	TagSupport *ClientDiagnosticsTagOptions `json:"tagSupport,omitempty"`
 
 	// Client supports a codeDescription property
 	//
 	// Since: 3.16.0
-	//
 	CodeDescriptionSupport *bool `json:"codeDescriptionSupport,omitempty"`
 
 	// Whether code action supports the `data` property which is
@@ -5626,7 +5469,6 @@ type DiagnosticsCapabilities struct {
 	// `textDocument/codeAction` request.
 	//
 	// Since: 3.16.0
-	//
 	DataSupport *bool `json:"dataSupport,omitempty"`
 }
 
@@ -5678,7 +5520,6 @@ type ClientSignatureParameterInformationOptions struct {
 	// simple label string.
 	//
 	// Since: 3.14.0
-	//
 	LabelOffsetSupport *bool `json:"labelOffsetSupport,omitempty"`
 }
 
@@ -5739,10 +5580,8 @@ const (
 	SemanticTokenTypesregexp        SemanticTokenTypes = "regexp"
 	SemanticTokenTypesoperator      SemanticTokenTypes = "operator"
 	// Since: 3.17.0
-	//
 	SemanticTokenTypesdecorator SemanticTokenTypes = "decorator"
 	// Since: 3.18.0
-	//
 	SemanticTokenTypeslabel SemanticTokenTypes = "label"
 )
 
@@ -5772,7 +5611,6 @@ func (e *SemanticTokenTypes) UnmarshalJSON(data []byte) error {
 // corresponding client capabilities.
 //
 // Since: 3.16.0
-//
 type SemanticTokenModifiers string
 
 const (
@@ -5808,7 +5646,6 @@ func (e *SemanticTokenModifiers) UnmarshalJSON(data []byte) error {
 // The document diagnostic report kinds.
 //
 // Since: 3.17.0
-//
 type DocumentDiagnosticReportKind string
 
 const (
@@ -5874,14 +5711,12 @@ const (
 	// the request failed.
 	//
 	// Since: 3.17.0
-	//
 	LSPErrorCodesRequestFailed LSPErrorCodes = -32803
 	// The server cancelled the request. This error code should
 	// only be used for requests that explicitly support being
 	// server cancellable.
 	//
 	// Since: 3.17.0
-	//
 	LSPErrorCodesServerCancelled LSPErrorCodes = -32802
 	// The server detected that the content of a document got
 	// modified outside normal conditions. A server should
@@ -5995,7 +5830,6 @@ func (e *SymbolKind) UnmarshalJSON(data []byte) error {
 // Symbol tags are extra annotations that tweak the rendering of a symbol.
 //
 // Since: 3.16
-//
 type SymbolTag uint32
 
 const (
@@ -6020,7 +5854,6 @@ func (e *SymbolTag) UnmarshalJSON(data []byte) error {
 // Moniker uniqueness level to define scope of the moniker.
 //
 // Since: 3.16.0
-//
 type UniquenessLevel string
 
 const (
@@ -6054,7 +5887,6 @@ func (e *UniquenessLevel) UnmarshalJSON(data []byte) error {
 // The moniker kind.
 //
 // Since: 3.16.0
-//
 type MonikerKind string
 
 const (
@@ -6084,7 +5916,6 @@ func (e *MonikerKind) UnmarshalJSON(data []byte) error {
 // Inlay hint kinds.
 //
 // Since: 3.17.0
-//
 type InlayHintKind uint32
 
 const (
@@ -6125,7 +5956,6 @@ const (
 	// Since: 3.18.0
 	//
 	// Proposed.
-	//
 	MessageTypeDebug MessageType = 5
 )
 
@@ -6258,7 +6088,6 @@ func (e *CompletionItemKind) UnmarshalJSON(data []byte) error {
 // item.
 //
 // Since: 3.15.0
-//
 type CompletionItemTag uint32
 
 const (
@@ -6316,7 +6145,6 @@ func (e *InsertTextFormat) UnmarshalJSON(data []byte) error {
 // item insertion.
 //
 // Since: 3.16.0
-//
 type InsertTextMode uint32
 
 const (
@@ -6417,7 +6245,6 @@ const (
 	// Since: 3.18.0
 	//
 	// Proposed.
-	//
 	CodeActionKindRefactorMove CodeActionKind = "refactor.move"
 	// Base kind for refactoring rewrite actions: 'refactor.rewrite'
 	//
@@ -6442,13 +6269,11 @@ const (
 	// They should not suppress errors or perform unsafe fixes such as generating new types or classes.
 	//
 	// Since: 3.15.0
-	//
 	CodeActionKindSourceFixAll CodeActionKind = "source.fixAll"
 	// Base kind for all code actions applying to the entire notebook's scope. CodeActionKinds using
 	// this should always begin with `notebook.`
 	//
 	// Since: 3.18.0
-	//
 	CodeActionKindNotebook CodeActionKind = "notebook"
 )
 
@@ -6472,7 +6297,6 @@ func (e *CodeActionKind) UnmarshalJSON(data []byte) error {
 // Code action tags are extra annotations that tweak the behavior of a code action.
 //
 // Since: 3.18.0 - proposed
-//
 type CodeActionTag uint32
 
 const (
@@ -6549,7 +6373,6 @@ func (e *MarkupKind) UnmarshalJSON(data []byte) error {
 
 // Predefined Language kinds
 // Since: 3.18.0
-//
 type LanguageKind string
 
 const (
@@ -6565,12 +6388,10 @@ const (
 	// Since: 3.18.0
 	//
 	// Proposed.
-	//
 	LanguageKindD LanguageKind = "d"
 	// Since: 3.18.0
 	//
 	// Proposed.
-	//
 	LanguageKindDelphi          LanguageKind = "pascal"
 	LanguageKindDiff            LanguageKind = "diff"
 	LanguageKindDart            LanguageKind = "dart"
@@ -6600,7 +6421,6 @@ const (
 	// Since: 3.18.0
 	//
 	// Proposed.
-	//
 	LanguageKindPascal          LanguageKind = "pascal"
 	LanguageKindPerl            LanguageKind = "perl"
 	LanguageKindPerl6           LanguageKind = "perl6"
@@ -6666,7 +6486,6 @@ func (e *LanguageKind) UnmarshalJSON(data []byte) error {
 // Since: 3.18.0
 //
 // Proposed.
-//
 type InlineCompletionTriggerKind uint32
 
 const (
@@ -6693,7 +6512,6 @@ func (e *InlineCompletionTriggerKind) UnmarshalJSON(data []byte) error {
 // A set of predefined position encoding kinds.
 //
 // Since: 3.17.0
-//
 type PositionEncodingKind string
 
 const (
@@ -6809,7 +6627,6 @@ func (e *DiagnosticSeverity) UnmarshalJSON(data []byte) error {
 // The diagnostic tags.
 //
 // Since: 3.15.0
-//
 type DiagnosticTag uint32
 
 const (
@@ -6870,7 +6687,6 @@ func (e *CompletionTriggerKind) UnmarshalJSON(data []byte) error {
 // merged.
 //
 // Since: 3.18.0
-//
 type ApplyKind uint32
 
 const (
@@ -6901,7 +6717,6 @@ func (e *ApplyKind) UnmarshalJSON(data []byte) error {
 // How a signature help was triggered.
 //
 // Since: 3.15.0
-//
 type SignatureHelpTriggerKind uint32
 
 const (
@@ -6930,7 +6745,6 @@ func (e *SignatureHelpTriggerKind) UnmarshalJSON(data []byte) error {
 // The reason why code actions were requested.
 //
 // Since: 3.17.0
-//
 type CodeActionTriggerKind uint32
 
 const (
@@ -6961,7 +6775,6 @@ func (e *CodeActionTriggerKind) UnmarshalJSON(data []byte) error {
 // both.
 //
 // Since: 3.16.0
-//
 type FileOperationPatternKind string
 
 const (
@@ -6988,7 +6801,6 @@ func (e *FileOperationPatternKind) UnmarshalJSON(data []byte) error {
 // A notebook cell kind.
 //
 // Since: 3.17.0
-//
 type NotebookCellKind uint32
 
 const (
@@ -7130,7 +6942,6 @@ type DefinitionLink = LocationLink
 
 // LSP arrays.
 // Since: 3.17.0
-//
 type LSPArray = []LSPAny
 
 // The LSP any type.
@@ -7139,7 +6950,6 @@ type LSPArray = []LSPAny
 // convenience it is allowed and assumed that all these properties are
 // optional as well.
 // Since: 3.17.0
-//
 type LSPAny = any
 
 // The declaration of a symbol representation as one or many locations.
@@ -7161,7 +6971,6 @@ type DeclarationLink = LocationLink
 // The InlineValue types combines all inline value types into one type.
 //
 // Since: 3.17.0
-//
 type InlineValue = InlineValueTextOrInlineValueVariableLookupOrInlineValueEvaluatableExpression
 
 // The result of a document diagnostic pull request. A report can
@@ -7171,7 +6980,6 @@ type InlineValue = InlineValueTextOrInlineValueVariableLookupOrInlineValueEvalua
 // pull request.
 //
 // Since: 3.17.0
-//
 type DocumentDiagnosticReport = RelatedFullDocumentDiagnosticReportOrRelatedUnchangedDocumentDiagnosticReport
 
 type PrepareRenameResult = RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehavior
@@ -7181,7 +6989,6 @@ type PrepareRenameResult = RangeOrPrepareRenamePlaceholderOrPrepareRenameDefault
 // @sample `let sel:DocumentSelector = [{ language: 'typescript' }, { language: 'json', pattern: '**∕tsconfig.json' }]`;
 //
 // The use of a string as a document filter is deprecated Since: 3.16.0.
-//
 type DocumentSelector = []DocumentFilter
 
 type ProgressToken = IntegerOrString
@@ -7192,7 +6999,6 @@ type ChangeAnnotationIdentifier = string
 // A workspace diagnostic document report.
 //
 // Since: 3.17.0
-//
 type WorkspaceDocumentDiagnosticReport = WorkspaceFullDocumentDiagnosticReportOrWorkspaceUnchangedDocumentDiagnosticReport
 
 // An event describing a change to a text document. If only a text is provided
@@ -7218,18 +7024,15 @@ type MarkedString = StringOrMarkedStringWithLanguage
 // a notebook cell document.
 //
 // Since: 3.17.0 - support for NotebookCellTextDocumentFilter.
-//
 type DocumentFilter = TextDocumentFilterOrNotebookCellTextDocumentFilter
 
 // LSP object definition.
 // Since: 3.17.0
-//
 type LSPObject = map[string]LSPAny
 
 // The glob pattern. Either a string pattern or a relative pattern.
 //
 // Since: 3.17.0
-//
 type GlobPattern = PatternOrRelativePattern
 
 // A document filter denotes a document by different properties like
@@ -7248,7 +7051,6 @@ type GlobPattern = PatternOrRelativePattern
 // @sample A language filter that applies to all package.json paths: `{ language: 'json', pattern: '**package.json' }`
 //
 // Since: 3.17.0
-//
 type TextDocumentFilter = TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPattern
 
 // A notebook document filter denotes a notebook document by
@@ -7256,7 +7058,6 @@ type TextDocumentFilter = TextDocumentFilterLanguageOrTextDocumentFilterSchemeOr
 // against the notebook's URI (same as with documents)
 //
 // Since: 3.17.0
-//
 type NotebookDocumentFilter = NotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern
 
 // The glob pattern to watch relative to the base path. Glob patterns can have the following syntax:
@@ -7268,7 +7069,6 @@ type NotebookDocumentFilter = NotebookDocumentFilterNotebookTypeOrNotebookDocume
 // - `[!...]` to negate a range of characters to match in a path segment (e.g., `example.[!0-9]` to match on `example.a`, `example.b`, but not `example.0`)
 //
 // Since: 3.17.0
-//
 type Pattern = string
 
 type RegularExpressionEngineKind = string
@@ -7398,7 +7198,6 @@ const MethodRequestTextDocumentFoldingRange Method = "textDocument/foldingRange"
 // Since: 3.18.0
 //
 // Proposed.
-//
 const MethodRequestWorkspaceFoldingRangeRefresh Method = "workspace/foldingRange/refresh"
 
 // A request to resolve the type definition locations of a symbol at a given text
@@ -7421,35 +7220,28 @@ const MethodRequestWindowWorkDoneProgressCreate Method = "window/workDoneProgres
 // Can be used as an input to an incoming or outgoing call hierarchy.
 //
 // Since: 3.16.0
-//
 const MethodRequestTextDocumentPrepareCallHierarchy Method = "textDocument/prepareCallHierarchy"
 
 // A request to resolve the incoming calls for a given `CallHierarchyItem`.
 //
 // Since: 3.16.0
-//
 const MethodRequestCallHierarchyIncomingCalls Method = "callHierarchy/incomingCalls"
 
 // A request to resolve the outgoing calls for a given `CallHierarchyItem`.
 //
 // Since: 3.16.0
-//
 const MethodRequestCallHierarchyOutgoingCalls Method = "callHierarchy/outgoingCalls"
 
 // Since: 3.16.0
-//
 const MethodRequestTextDocumentSemanticTokensFull Method = "textDocument/semanticTokens/full"
 
 // Since: 3.16.0
-//
 const MethodRequestTextDocumentSemanticTokensFullDelta Method = "textDocument/semanticTokens/full/delta"
 
 // Since: 3.16.0
-//
 const MethodRequestTextDocumentSemanticTokensRange Method = "textDocument/semanticTokens/range"
 
 // Since: 3.16.0
-//
 const MethodRequestWorkspaceSemanticTokensRefresh Method = "workspace/semanticTokens/refresh"
 
 // A request to show a document. This request might open an
@@ -7458,13 +7250,11 @@ const MethodRequestWorkspaceSemanticTokensRefresh Method = "workspace/semanticTo
 // will very likely open the URI in a WEB browser.
 //
 // Since: 3.16.0
-//
 const MethodRequestWindowShowDocument Method = "window/showDocument"
 
 // A request to provide ranges that can be edited together.
 //
 // Since: 3.16.0
-//
 const MethodRequestTextDocumentLinkedEditingRange Method = "textDocument/linkedEditingRange"
 
 // The will create files request is sent from the client to the server before files are actually
@@ -7475,21 +7265,18 @@ const MethodRequestTextDocumentLinkedEditingRange Method = "textDocument/linkedE
 // to be created.
 //
 // Since: 3.16.0
-//
 const MethodRequestWorkspaceWillCreateFiles Method = "workspace/willCreateFiles"
 
 // The will rename files request is sent from the client to the server before files are actually
 // renamed as long as the rename is triggered from within the client.
 //
 // Since: 3.16.0
-//
 const MethodRequestWorkspaceWillRenameFiles Method = "workspace/willRenameFiles"
 
 // The did delete files notification is sent from the client to the server when
 // files were deleted from within the client.
 //
 // Since: 3.16.0
-//
 const MethodRequestWorkspaceWillDeleteFiles Method = "workspace/willDeleteFiles"
 
 // A request to get the moniker of a symbol at a given text document position.
@@ -7501,19 +7288,16 @@ const MethodRequestTextDocumentMoniker Method = "textDocument/moniker"
 // Can be used as an input to a subtypes or supertypes type hierarchy.
 //
 // Since: 3.17.0
-//
 const MethodRequestTextDocumentPrepareTypeHierarchy Method = "textDocument/prepareTypeHierarchy"
 
 // A request to resolve the supertypes for a given `TypeHierarchyItem`.
 //
 // Since: 3.17.0
-//
 const MethodRequestTypeHierarchySupertypes Method = "typeHierarchy/supertypes"
 
 // A request to resolve the subtypes for a given `TypeHierarchyItem`.
 //
 // Since: 3.17.0
-//
 const MethodRequestTypeHierarchySubtypes Method = "typeHierarchy/subtypes"
 
 // A request to provide inline values in a document. The request's parameter is of
@@ -7521,11 +7305,9 @@ const MethodRequestTypeHierarchySubtypes Method = "typeHierarchy/subtypes"
 // InlineValue[] or a Thenable that resolves to such.
 //
 // Since: 3.17.0
-//
 const MethodRequestTextDocumentInlineValue Method = "textDocument/inlineValue"
 
 // Since: 3.17.0
-//
 const MethodRequestWorkspaceInlineValueRefresh Method = "workspace/inlineValue/refresh"
 
 // A request to provide inlay hints in a document. The request's parameter is of
@@ -7533,7 +7315,6 @@ const MethodRequestWorkspaceInlineValueRefresh Method = "workspace/inlineValue/r
 // InlayHint[] or a Thenable that resolves to such.
 //
 // Since: 3.17.0
-//
 const MethodRequestTextDocumentInlayHint Method = "textDocument/inlayHint"
 
 // A request to resolve additional properties for an inlay hint.
@@ -7541,29 +7322,24 @@ const MethodRequestTextDocumentInlayHint Method = "textDocument/inlayHint"
 // of type InlayHint or a Thenable that resolves to such.
 //
 // Since: 3.17.0
-//
 const MethodRequestInlayHintResolve Method = "inlayHint/resolve"
 
 // Since: 3.17.0
-//
 const MethodRequestWorkspaceInlayHintRefresh Method = "workspace/inlayHint/refresh"
 
 // The document diagnostic request definition.
 //
 // Since: 3.17.0
-//
 const MethodRequestTextDocumentDiagnostic Method = "textDocument/diagnostic"
 
 // The workspace diagnostic request definition.
 //
 // Since: 3.17.0
-//
 const MethodRequestWorkspaceDiagnostic Method = "workspace/diagnostic"
 
 // The diagnostic refresh request definition.
 //
 // Since: 3.17.0
-//
 const MethodRequestWorkspaceDiagnosticRefresh Method = "workspace/diagnostic/refresh"
 
 // A request to provide inline completions in a document. The request's parameter is of
@@ -7573,7 +7349,6 @@ const MethodRequestWorkspaceDiagnosticRefresh Method = "workspace/diagnostic/ref
 // Since: 3.18.0
 //
 // Proposed.
-//
 const MethodRequestTextDocumentInlineCompletion Method = "textDocument/inlineCompletion"
 
 // The `workspace/textDocumentContent` request is sent from the client to the
@@ -7582,7 +7357,6 @@ const MethodRequestTextDocumentInlineCompletion Method = "textDocument/inlineCom
 // Since: 3.18.0
 //
 // Proposed.
-//
 const MethodRequestWorkspaceTextDocumentContent Method = "workspace/textDocumentContent"
 
 // The `workspace/textDocumentContent` request is sent from the server to the client to refresh
@@ -7591,7 +7365,6 @@ const MethodRequestWorkspaceTextDocumentContent Method = "workspace/textDocument
 // Since: 3.18.0
 //
 // Proposed.
-//
 const MethodRequestWorkspaceTextDocumentContentRefresh Method = "workspace/textDocumentContent/refresh"
 
 // The `client/registerCapability` request is sent from the server to the client to register a new capability
@@ -7689,16 +7462,14 @@ const MethodRequestCodeActionResolve Method = "codeAction/resolve"
 //
 // Since: 3.17.0 - support for WorkspaceSymbol in the returned data. Clients
 //
-//  need to advertise support for WorkspaceSymbols via the client capability
-//  `workspace.symbol.resolveSupport`.
-//
+//	need to advertise support for WorkspaceSymbols via the client capability
+//	`workspace.symbol.resolveSupport`.
 const MethodRequestWorkspaceSymbol Method = "workspace/symbol"
 
 // A request to resolve the range inside the workspace
 // symbol's location.
 //
 // Since: 3.17.0
-//
 const MethodRequestWorkspaceSymbolResolve Method = "workspaceSymbol/resolve"
 
 // A request to provide code lens for the given text document.
@@ -7710,7 +7481,6 @@ const MethodRequestCodeLensResolve Method = "codeLens/resolve"
 // A request to refresh all code actions
 //
 // Since: 3.16.0
-//
 const MethodRequestWorkspaceCodeLensRefresh Method = "workspace/codeLens/refresh"
 
 // A request to provide document links
@@ -7732,7 +7502,6 @@ const MethodRequestTextDocumentRangeFormatting Method = "textDocument/rangeForma
 // Since: 3.18.0
 //
 // Proposed.
-//
 const MethodRequestTextDocumentRangesFormatting Method = "textDocument/rangesFormatting"
 
 // A request to format a document on type.
@@ -7744,7 +7513,6 @@ const MethodRequestTextDocumentRename Method = "textDocument/rename"
 // A request to test and perform the setup necessary for a rename.
 //
 // Since: 3.16 - support for default behavior
-//
 const MethodRequestTextDocumentPrepareRename Method = "textDocument/prepareRename"
 
 // A request send from the client to the server to execute a command. The request might return
@@ -7768,27 +7536,23 @@ const MethodNotificationWindowWorkDoneProgressCancel Method = "window/workDonePr
 // files were created from within the client.
 //
 // Since: 3.16.0
-//
 const MethodNotificationWorkspaceDidCreateFiles Method = "workspace/didCreateFiles"
 
 // The did rename files notification is sent from the client to the server when
 // files were renamed from within the client.
 //
 // Since: 3.16.0
-//
 const MethodNotificationWorkspaceDidRenameFiles Method = "workspace/didRenameFiles"
 
 // The will delete files request is sent from the client to the server before files are actually
 // deleted as long as the deletion is triggered from within the client.
 //
 // Since: 3.16.0
-//
 const MethodNotificationWorkspaceDidDeleteFiles Method = "workspace/didDeleteFiles"
 
 // A notification sent when a notebook opens.
 //
 // Since: 3.17.0
-//
 const MethodNotificationNotebookDocumentDidOpen Method = "notebookDocument/didOpen"
 
 const MethodNotificationNotebookDocumentDidChange Method = "notebookDocument/didChange"
@@ -7796,13 +7560,11 @@ const MethodNotificationNotebookDocumentDidChange Method = "notebookDocument/did
 // A notification sent when a notebook document is saved.
 //
 // Since: 3.17.0
-//
 const MethodNotificationNotebookDocumentDidSave Method = "notebookDocument/didSave"
 
 // A notification sent when a notebook closes.
 //
 // Since: 3.17.0
-//
 const MethodNotificationNotebookDocumentDidClose Method = "notebookDocument/didClose"
 
 // The initialized notification is sent from the client to the
