@@ -590,9 +590,10 @@ for (const [name, members] of unionTypes) {
     finishLine(")");
 
     for (const member of members) {
-        writeLine("if o." + titleCase(member.name) + " != nil {");
+        const name = titleCase(member.name);
+        writeLine("if o." + name + " != nil {");
         indent();
-        writeLine("return json.Marshal(o." + titleCase(member.name) + ")");
+        writeLine("return json.Marshal(o." + name + ")");
         dedent();
         writeLine("}");
     }
@@ -601,9 +602,25 @@ for (const [name, members] of unionTypes) {
     writeLine("}");
     writeLine("");
 
+    // TODO: do this way more efficiently
+    // TODO: this doesn't work when union members overlap
     writeLine("func (o *" + name + ") UnmarshalJSON(data []byte) error {");
     indent();
-    writeLine('panic("TODO")');
+    writeLine("*o = " + name + "{}");
+    for (const member of members) {
+        const name = titleCase(member.name);
+        const local = "v" + name;
+        startLine("var " + local + " ");
+        writeTypeElement(member.type);
+        finishLine("");
+        writeLine("if err := json.Unmarshal(data, &" + local + "); err == nil {");
+        indent();
+        writeLine("o." + name + " = &" + local);
+        writeLine("return nil");
+        dedent();
+        writeLine("}");
+    }
+    writeLine(`return fmt.Errorf("invalid ${name}: %s", data)`);
     dedent();
     writeLine("}");
 }
