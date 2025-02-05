@@ -199,10 +199,10 @@ func (f *commandLineSubScenario) getBaselineName() (baseline.Options, string) {
 }
 
 func parseExistingCompilerBaseline(t *testing.T, baseline string) *TestCommandLineParser {
-	_, rest, _ := strings.Cut(baseline, "CompilerOptions::\n")
-	compilerOptions, rest, watchFound := strings.Cut(rest, "\nWatchOptions::\n")
-	watchOptions, rest, _ := strings.Cut(rest, "\nFileNames::\n")
-	fileNames, errors, _ := strings.Cut(rest, "\nErrors::\n")
+	_, rest1, _ := strings.Cut(baseline, "CompilerOptions::\n")
+	compilerOptions, rest2, watchFound := strings.Cut(rest1, "\nWatchOptions::\n")
+	watchOptions, rest3, _ := strings.Cut(rest2, "\nFileNames::\n")
+	fileNames, errors, _ := strings.Cut(rest3, "\nErrors::\n")
 
 	baselineCompilerOptions := &core.CompilerOptions{}
 	e := json.Unmarshal([]byte(compilerOptions), &baselineCompilerOptions)

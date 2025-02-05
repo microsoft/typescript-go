@@ -3490,7 +3490,7 @@ func (r *Relater) structuredTypeRelatedToWorker(source *Type, target *Type, repo
 				// A source type `S` is related to a target type `{ [P in Q]?: T }` if some constituent `Q'` of `Q` is related to `keyof S` and `S[Q']` is related to `T`.
 				// A source type `S` is related to a target type `{ [P in Q as R]?: T }` if some constituent `R'` of `R` is related to `keyof S` and `S[R']` is related to `T`.
 				if includeOptional && filteredByApplicability.flags&TypeFlagsNever == 0 || !includeOptional && r.isRelatedTo(targetKeys, sourceKeys, RecursionFlagsBoth, false) != TernaryFalse {
-					templateType := r.c.getTemplateTypeFromMappedType(target)
+					templateType = r.c.getTemplateTypeFromMappedType(target)
 					typeParameter := r.c.getTypeParameterFromMappedType(target)
 					// Fastpath: When the template type has the form `Obj[P]` where `P` is the mapped type parameter, directly compare source `S` with `Obj`
 					// to avoid creating the (potentially very large) number of new intermediate types made by manufacturing `S[P]`.

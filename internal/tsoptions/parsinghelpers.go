@@ -59,15 +59,15 @@ func parseNumber(value any) *int {
 
 func parseProjectReference(json any) []core.ProjectReference {
 	var result []core.ProjectReference
-	if v, ok := json.(map[string]any); ok {
+	if json, ok := json.(map[string]any); ok {
 		var reference core.ProjectReference
-		if v, ok := v["path"]; ok {
+		if v, ok := json["path"]; ok {
 			reference.Path = v.(string)
 		}
-		if v, ok := v["originalPath"]; ok {
+		if v, ok := json["originalPath"]; ok {
 			reference.OriginalPath = v.(string)
 		}
-		if v, ok := v["circular"]; ok {
+		if v, ok := json["circular"]; ok {
 			reference.Circular = v.(bool)
 		}
 		result = append(result, reference)

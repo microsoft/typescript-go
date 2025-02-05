@@ -143,8 +143,7 @@ func findConfigFile(searchPath string, fileExists func(string) bool, configName 
 
 // Reads the config file and reports errors. Exits if the config file cannot be found
 func getParsedCommandLineOfConfigFile(configFileName string, options *core.CompilerOptions, sys System, extendedConfigCache map[string]*tsoptions.ExtendedConfigCacheEntry) (*tsoptions.ParsedCommandLine, []*ast.Diagnostic) {
-	errors := []*ast.Diagnostic{}
-	configFileText, errors := tsoptions.TryReadFile(configFileName, sys.FS().ReadFile, errors)
+	configFileText, errors := tsoptions.TryReadFile(configFileName, sys.FS().ReadFile, []*ast.Diagnostic{})
 	if len(errors) > 0 {
 		// these are unrecoverable errors--exit to report them as diagnotics
 		return nil, errors

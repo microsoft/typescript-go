@@ -226,9 +226,9 @@ func (m *mapFS) Open(name string) (fs.File, error) {
 		}, nil
 	}
 
-	if f, ok := f.(fs.ReadDirFile); ok {
+	if dir, ok := f.(fs.ReadDirFile); ok {
 		return &readDirFile{
-			ReadDirFile: f,
+			ReadDirFile: dir,
 			fileInfo:    newInfo,
 		}, nil
 	}

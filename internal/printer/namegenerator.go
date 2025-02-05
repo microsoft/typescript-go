@@ -144,7 +144,7 @@ func (g *nameGenerator) getNodeForGeneratedName(name *ast.MemberName) *ast.Node 
 				}
 
 				// if "node" is a different generated name (having a different "autoGenerateId"), use it and stop traversing.
-				autoGenerate := g.Context.autoGenerate[node]
+				autoGenerate = g.Context.autoGenerate[node]
 				if autoGenerate == nil || autoGenerate.Flags&GeneratedIdentifierFlagsNode == 0 || autoGenerate.Id != autoGenerateId {
 					break
 				}

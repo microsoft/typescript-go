@@ -1148,8 +1148,8 @@ func parseJsonConfigFileContentWorker(
 		}
 	}
 	if fileSpecs.sliceValue != nil {
-		fileSpecs := core.Filter(fileSpecs.sliceValue, func(spec any) bool { return reflect.TypeOf(spec).Kind() == reflect.String })
-		for _, spec := range fileSpecs {
+		fileSpecSlice := core.Filter(fileSpecs.sliceValue, func(spec any) bool { return reflect.TypeOf(spec).Kind() == reflect.String })
+		for _, spec := range fileSpecSlice {
 			if spec, ok := spec.(string); ok {
 				validatedFilesSpecBeforeSubstitution = append(validatedFilesSpecBeforeSubstitution, spec)
 			}
@@ -1183,22 +1183,22 @@ func parseJsonConfigFileContentWorker(
 		parsedConfigOptions := parsedConfig.options
 		fileNames := getFileNamesFromConfigSpecs(configFileSpecs, basePath, parsedConfigOptions, host.FS(), extraFileExtensions)
 		if shouldReportNoInputFiles(fileNames, canJsonReportNoInputFiles(rawConfig), resolutionStack) {
-			includeSpecs := configFileSpecs.includeSpecs
-			excludeSpecs := configFileSpecs.excludeSpecs
-			if includeSpecs == nil {
-				includeSpecs = []string{}
+			includeSpecsJson := configFileSpecs.includeSpecs
+			excludeSpecsJson := configFileSpecs.excludeSpecs
+			if includeSpecsJson == nil {
+				includeSpecsJson = []string{}
 			}
-			if excludeSpecs == nil {
-				excludeSpecs = []string{}
+			if excludeSpecsJson == nil {
+				excludeSpecsJson = []string{}
 			}
-			errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.No_inputs_were_found_in_config_file_0_Specified_include_paths_were_1_and_exclude_paths_were_2, configFileName, core.Must(core.StringifyJson(includeSpecs)), core.Must(core.StringifyJson(excludeSpecs))))
+			errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.No_inputs_were_found_in_config_file_0_Specified_include_paths_were_1_and_exclude_paths_were_2, configFileName, core.Must(core.StringifyJson(includeSpecsJson)), core.Must(core.StringifyJson(excludeSpecsJson))))
 		}
 		return fileNames
 	}
 
 	getProjectReferences := func(basePath string) []core.ProjectReference {
 		var projectReferences []core.ProjectReference = []core.ProjectReference{}
-		referencesOfRaw := getPropFromRaw("references", func(element any) bool { return reflect.TypeOf(element).Kind() == reflect.Map }, "object")
+		referencesOfRaw = getPropFromRaw("references", func(element any) bool { return reflect.TypeOf(element).Kind() == reflect.Map }, "object")
 		if referencesOfRaw.sliceValue != nil {
 			for _, reference := range referencesOfRaw.sliceValue {
 				for _, ref := range parseProjectReference(reference) {

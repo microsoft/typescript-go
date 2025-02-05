@@ -3251,7 +3251,7 @@ basePropertyCheck:
 						if otherBaseType == baseType {
 							continue
 						}
-						if baseSymbol := c.getPropertyOfObjectType(otherBaseType, base.Name); baseSymbol != nil && base != c.getTargetSymbol(baseSymbol) {
+						if baseSymbol = c.getPropertyOfObjectType(otherBaseType, base.Name); baseSymbol != nil && base != c.getTargetSymbol(baseSymbol) {
 							// Derived property exists elsewhere.
 							continue basePropertyCheck
 						}
@@ -3913,9 +3913,9 @@ func (c *Checker) checkVariableLikeDeclaration(node *ast.Node) {
 		parent := node.Parent.Parent
 		parentCheckMode := core.IfElse(hasDotDotDotToken(node), CheckModeRestBindingElement, CheckModeNormal)
 		parentType := c.getTypeForBindingElementParent(parent, parentCheckMode)
-		name := node.PropertyNameOrName()
-		if parentType != nil && !ast.IsBindingPattern(name) {
-			exprType := c.getLiteralTypeFromPropertyName(name)
+		propertyNameOrName := node.PropertyNameOrName()
+		if parentType != nil && !ast.IsBindingPattern(propertyNameOrName) {
+			exprType := c.getLiteralTypeFromPropertyName(propertyNameOrName)
 			if isTypeUsableAsPropertyName(exprType) {
 				nameText := getPropertyNameFromType(exprType)
 				property := c.getPropertyOfType(parentType, nameText)
@@ -4095,8 +4095,8 @@ func (c *Checker) checkVarDeclaredNamesNotShadowed(node *ast.Node) {
 				// here we know that function scoped variable is "shadowed" by block scoped one
 				// a var declatation can't hoist past a lexical declaration and it results in a SyntaxError at runtime
 				if !namesShareScope {
-					name := c.symbolToString(localDeclarationSymbol)
-					c.error(node, diagnostics.Cannot_initialize_outer_scoped_variable_0_in_the_same_scope_as_block_scoped_declaration_1, name, name)
+					stringName := c.symbolToString(localDeclarationSymbol)
+					c.error(node, diagnostics.Cannot_initialize_outer_scoped_variable_0_in_the_same_scope_as_block_scoped_declaration_1, stringName, stringName)
 				}
 			}
 		}
@@ -8821,7 +8821,7 @@ func (c *Checker) checkPropertyAccessibilityAtLocation(location *ast.Node, isSup
 		}
 		if flags&ast.ModifierFlagsStatic != 0 || enclosingClass == nil {
 			if errorNode != nil {
-				class := c.getDeclaringClass(prop)
+				class = c.getDeclaringClass(prop)
 				if class == nil {
 					class = containingType
 				}
@@ -12040,7 +12040,7 @@ func (c *Checker) resolveEntityName(name *ast.Node, meaning ast.SymbolFlags, ign
 	default:
 		panic("Unknown entity name kind")
 	}
-	if symbol != nil {
+	if symbol != nil && symbol != c.unknownSymbol {
 		if !ast.NodeIsSynthesized(name) && ast.IsEntityName(name) && (symbol.Flags&ast.SymbolFlagsAlias != 0 || name.Parent.Kind == ast.KindExportAssignment) {
 			c.markSymbolOfAliasDeclarationIfTypeOnly(getAliasDeclarationFromName(name), symbol, nil /*finalTarget*/, true /*overwriteEmpty*/, nil, "")
 		}
@@ -16342,8 +16342,8 @@ func (c *Checker) reportWideningErrorsInType(t *Type) bool {
 					if !errorReported {
 						// we need to account for property types coming from object literal type normalization in unions
 						valueDeclaration := core.Find(p.Declarations, func(d *ast.Node) bool {
-							valueDeclaration := d.Symbol().ValueDeclaration
-							return valueDeclaration != nil && valueDeclaration.Parent == t.symbol.ValueDeclaration
+							v := d.Symbol().ValueDeclaration
+							return v != nil && v.Parent == t.symbol.ValueDeclaration
 						})
 						if valueDeclaration != nil {
 							c.error(valueDeclaration, diagnostics.Object_literal_s_property_0_implicitly_has_an_1_type, c.symbolToString(p), c.typeToString(c.getWidenedType(s)))
@@ -18778,7 +18778,7 @@ func (c *Checker) getUnresolvedSymbolForEntityName(name *ast.Node) *ast.Symbol {
 		}
 		result := c.unresolvedSymbols[path]
 		if result == nil {
-			result := c.newSymbolEx(ast.SymbolFlagsTypeAlias, text, ast.CheckFlagsUnresolved)
+			result = c.newSymbolEx(ast.SymbolFlagsTypeAlias, text, ast.CheckFlagsUnresolved)
 			c.unresolvedSymbols[path] = result
 			result.Parent = parentSymbol
 			c.declaredTypeLinks.get(result).declaredType = c.unresolvedType
@@ -19240,7 +19240,7 @@ func (c *Checker) getTypeFromTypeAliasReference(node *ast.Node, symbol *ast.Symb
 		if newAliasSymbol != nil {
 			aliasTypeArguments = c.getTypeArgumentsForAliasSymbol(newAliasSymbol)
 		} else if isTypeReferenceType(node) {
-			aliasSymbol := c.resolveTypeReferenceName(node, ast.SymbolFlagsAlias, true /*ignoreErrors*/)
+			aliasSymbol = c.resolveTypeReferenceName(node, ast.SymbolFlagsAlias, true /*ignoreErrors*/)
 			// refers to an alias import/export/reexport - by making sure we use the target as an aliasSymbol,
 			// we ensure the exported symbol is used to refer to the type when it is reserialized later
 			if aliasSymbol != nil && aliasSymbol != c.unknownSymbol {
@@ -20013,11 +20013,11 @@ func (c *Checker) getConditionalType(root *ConditionalRoot, mapper *TypeMapper, 
 						root = newRoot
 						continue
 					}
-					if newRoot, newRootMapper := c.getTailRecursionRoot(falseType, mapper); newRoot != nil {
-						root = newRoot
-						mapper = newRootMapper
+					if recRoot, recRootMapper := c.getTailRecursionRoot(falseType, mapper); recRoot != nil {
+						root = recRoot
+						mapper = recRootMapper
 						alias = nil
-						if newRoot.alias != nil {
+						if recRoot.alias != nil {
 							tailCount++
 						}
 						continue
@@ -24342,7 +24342,7 @@ func (c *Checker) getContextualReturnType(functionDecl *ast.Node, contextFlags C
 	// and that call signature is non-generic, return statements are contextually typed by the return type of the signature
 	signature := c.getContextualSignatureForFunctionLikeDeclaration(functionDecl)
 	if signature != nil && !c.isResolvingReturnTypeOfSignature(signature) {
-		returnType := c.getReturnTypeOfSignature(signature)
+		returnType = c.getReturnTypeOfSignature(signature)
 		functionFlags := getFunctionFlags(functionDecl)
 		if functionFlags&FunctionFlagsGenerator != 0 {
 			return c.filterType(returnType, func(t *Type) bool {

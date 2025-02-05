@@ -2087,7 +2087,7 @@ func (c *Checker) checkGrammarStatementInAmbientContext(node *ast.Node) bool {
 		// this has already been reported, and don't report if it has.
 		//
 		if node.Parent.Kind == ast.KindBlock || node.Parent.Kind == ast.KindModuleBlock || node.Parent.Kind == ast.KindSourceFile {
-			links := c.nodeLinks.get(node.Parent)
+			links = c.nodeLinks.get(node.Parent)
 			// Check if the containing block ever report this error
 			if !links.hasReportedStatementInAmbientContext {
 				links.hasReportedStatementInAmbientContext = c.grammarErrorOnFirstToken(node, diagnostics.Statements_are_not_allowed_in_ambient_contexts)

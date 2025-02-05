@@ -194,7 +194,7 @@ func (c *Checker) inferFromTypes(n *InferenceState, source *Type, target *Type) 
 			// Generally simplifications of instantiable indexes are avoided to keep relationship checking correct, however if our target is an access, we can consider
 			// that key of that access to be "instantiated", since we're looking to find the infernce goal in any way we can.
 			if indexType.flags&TypeFlagsInstantiable != 0 {
-				simplified := c.distributeIndexOverObjectType(c.getSimplifiedType(target.AsIndexedAccessType().objectType, false /*writing*/), indexType, false /*writing*/)
+				simplified = c.distributeIndexOverObjectType(c.getSimplifiedType(target.AsIndexedAccessType().objectType, false /*writing*/), indexType, false /*writing*/)
 				if simplified != nil && simplified != target {
 					c.inferFromTypes(n, source, simplified)
 				}

@@ -352,8 +352,8 @@ func (r *resolutionState) getPackageScopeForPath(directory string) *packagejson.
 		directory,
 		func(directory string) (*packagejson.InfoCacheEntry, bool) {
 			// !!! stop at global cache
-			if result := r.getPackageJsonInfo(directory, false /*onlyRecordFailures*/); result != nil {
-				return result, true
+			if info := r.getPackageJsonInfo(directory, false /*onlyRecordFailures*/); info != nil {
+				return info, true
 			}
 			return nil, false
 		},
@@ -792,8 +792,8 @@ func (r *resolutionState) loadModuleFromNearestNodeModulesDirectoryWorker(ext ex
 				if resolutionFromCache := r.tryFindNonRelativeModuleNameInCache(ModeAwareCacheKey{r.name, mode}, directory); !resolutionFromCache.shouldContinueSearching() {
 					return resolutionFromCache, true
 				}
-				result := r.loadModuleFromImmediateNodeModulesDirectory(ext, directory, typesScopeOnly)
-				return result, !result.shouldContinueSearching()
+				module := r.loadModuleFromImmediateNodeModulesDirectory(ext, directory, typesScopeOnly)
+				return module, !module.shouldContinueSearching()
 			}
 			return continueSearching(), false
 		},
@@ -1053,9 +1053,9 @@ func (r *resolutionState) tryLoadModuleUsingPaths(extensions extensions, moduleN
 			}
 			// A path mapping may have an extension
 			if extension := tspath.TryGetExtensionFromPath(subst); extension != "" {
-				if path, ok := r.tryFile(candidate, onlyRecordFailures /*onlyRecordFailures*/); ok {
+				if candidatePath, ok := r.tryFile(candidate, onlyRecordFailures /*onlyRecordFailures*/); ok {
 					return &resolved{
-						path:      path,
+						path:      candidatePath,
 						extension: extension,
 					}
 				}

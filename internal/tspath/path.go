@@ -686,7 +686,7 @@ func ComparePaths(a string, b string, options ComparePathsOptions) int {
 	bComponents := reducePathComponents(GetPathComponents(b, ""))
 	sharedLength := min(len(aComponents), len(bComponents))
 	for i := 1; i < sharedLength; i++ {
-		result := options.GetComparer()(aComponents[i], bComponents[i])
+		result = options.GetComparer()(aComponents[i], bComponents[i])
 		if result != 0 {
 			return result
 		}
