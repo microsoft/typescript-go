@@ -153,9 +153,6 @@ function writeOr(t, wasOptional = false) {
             else if (t.kind === "or") {
                 throw new Error("Nested or types are not supported");
             }
-            else if (t.kind === "booleanLiteral") {
-                name = t.value ? "True" : "False";
-            }
             else if (t.kind === "literal") {
                 assert(t.value.properties.length === 0);
                 name = "EmptyObject";
