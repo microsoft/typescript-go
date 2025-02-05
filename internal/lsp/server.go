@@ -169,7 +169,7 @@ func (s *Server) handleMessage(req *lsproto.RequestMessage) error {
 		return s.sendError(req.ID, lsproto.ErrInvalidRequest)
 	case *lsproto.HoverParams:
 		return s.sendResult(req.ID, &lsproto.Hover{
-			Contents: lsproto.MarkupContentOrMarkedStringOrArrayOfMarkedString{
+			Contents: lsproto.MarkupContentOrMarkedStringOrMarkedStrings{
 				MarkupContent: &lsproto.MarkupContent{
 					Kind:  lsproto.MarkupKindPlainText,
 					Value: "It works!",
