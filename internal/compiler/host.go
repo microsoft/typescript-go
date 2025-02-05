@@ -14,7 +14,7 @@ type CompilerHost interface {
 	GetCurrentDirectory() string
 	NewLine() string
 	Trace(msg string)
-	GetSourceFile(fileName string, languageVersion core.ScriptTarget, jsdocParsingMode scanner.JSDocParsingMode) *ast.SourceFile
+	GetSourceFile(fileName string, languageVersion core.ScriptTarget) *ast.SourceFile
 }
 
 type FileInfo struct {
@@ -42,6 +42,10 @@ func (h *compilerHost) FS() vfs.FS {
 	return h.fs
 }
 
+func (h *compilerHost) SetOptions(options *core.CompilerOptions) {
+	h.options = options
+}
+
 func (h *compilerHost) GetCurrentDirectory() string {
 	return h.currentDirectory
 }
@@ -57,10 +61,10 @@ func (h *compilerHost) Trace(msg string) {
 	//!!! TODO: implement
 }
 
-func (h *compilerHost) GetSourceFile(fileName string, languageVersion core.ScriptTarget, jsdocParsingMode scanner.JSDocParsingMode) *ast.SourceFile {
+func (h *compilerHost) GetSourceFile(fileName string, languageVersion core.ScriptTarget) *ast.SourceFile {
 	text, _ := h.FS().ReadFile(fileName)
 	if tspath.FileExtensionIs(fileName, tspath.ExtensionJson) {
 		return parser.ParseJSONText(fileName, text)
 	}
-	return parser.ParseSourceFile(fileName, text, languageVersion, jsdocParsingMode)
+	return parser.ParseSourceFile(fileName, text, languageVersion, scanner.JSDocParsingModeParseForTypeErrors)
 }
