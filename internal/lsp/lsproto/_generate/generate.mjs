@@ -62,6 +62,7 @@ function writeDocumentation(doc) {
     if (doc) {
         const lines = doc.split("\n");
         for (let line of lines) {
+            line = line.replace(/(\w ) +/g, "$1");
             line = line.replace(/\{@link(?:code)?.*?([^} ]+)\}/g, "$1");
             line = line.replace(/@since (.*)/g, "Since: $1\n//");
             if (line.startsWith("@deprecated")) {

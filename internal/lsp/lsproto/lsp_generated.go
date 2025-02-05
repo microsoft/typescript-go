@@ -727,7 +727,7 @@ type DocumentDiagnosticParams struct {
 	// The text document.
 	TextDocument TextDocumentIdentifier `json:"textDocument"`
 
-	// The additional identifier  provided during registration.
+	// The additional identifier provided during registration.
 	Identifier *string `json:"identifier,omitempty"`
 
 	// The result id of a previous response if provided.
@@ -4915,7 +4915,7 @@ type CodeActionClientCapabilities struct {
 	TagSupport *CodeActionTagOptions `json:"tagSupport,omitempty"`
 }
 
-// The client capabilities  of a CodeLensRequest.
+// The client capabilities of a CodeLensRequest.
 type CodeLensClientCapabilities struct {
 	// Whether code lens supports dynamic registration.
 	DynamicRegistration *bool `json:"dynamicRegistration,omitempty"`
@@ -7528,7 +7528,7 @@ const MethodRequestWorkspaceApplyEdit Method = "workspace/applyEdit"
 // folder configuration changes.
 const MethodNotificationWorkspaceDidChangeWorkspaceFolders Method = "workspace/didChangeWorkspaceFolders"
 
-// The `window/workDoneProgress/cancel` notification is sent from  the client to the server to cancel a progress
+// The `window/workDoneProgress/cancel` notification is sent from the client to the server to cancel a progress
 // initiated on the server side.
 const MethodNotificationWindowWorkDoneProgressCancel Method = "window/workDoneProgress/cancel"
 
