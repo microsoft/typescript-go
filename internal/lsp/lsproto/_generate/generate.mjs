@@ -318,6 +318,8 @@ for (const t of model.structures) {
         writeLine(m.name);
     }
 
+    writeLine("");
+
     for (const p of t.properties) {
         writeDocumentation(p.documentation);
         writeDeprecation(p.deprecated);

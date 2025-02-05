@@ -68,6 +68,7 @@ type ConfigurationParams struct {
 type DocumentColorParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
+
 	// The text document.
 	TextDocument TextDocumentIdentifier `json:"textDocument"`
 }
@@ -91,6 +92,7 @@ type DocumentColorRegistrationOptions struct {
 type ColorPresentationParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
+
 	// The text document.
 	TextDocument TextDocumentIdentifier `json:"textDocument"`
 
@@ -132,6 +134,7 @@ type TextDocumentRegistrationOptions struct {
 type FoldingRangeParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
+
 	// The text document.
 	TextDocument TextDocumentIdentifier `json:"textDocument"`
 }
@@ -188,6 +191,7 @@ type DeclarationRegistrationOptions struct {
 type SelectionRangeParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
+
 	// The text document.
 	TextDocument TextDocumentIdentifier `json:"textDocument"`
 
@@ -276,6 +280,7 @@ type CallHierarchyRegistrationOptions struct {
 type CallHierarchyIncomingCallsParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
+
 	Item CallHierarchyItem `json:"item"`
 }
 
@@ -297,6 +302,7 @@ type CallHierarchyIncomingCall struct {
 type CallHierarchyOutgoingCallsParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
+
 	Item CallHierarchyItem `json:"item"`
 }
 
@@ -317,6 +323,7 @@ type CallHierarchyOutgoingCall struct {
 type SemanticTokensParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
+
 	// The text document.
 	TextDocument TextDocumentIdentifier `json:"textDocument"`
 }
@@ -349,6 +356,7 @@ type SemanticTokensRegistrationOptions struct {
 type SemanticTokensDeltaParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
+
 	// The text document.
 	TextDocument TextDocumentIdentifier `json:"textDocument"`
 
@@ -374,6 +382,7 @@ type SemanticTokensDeltaPartialResult struct {
 type SemanticTokensRangeParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
+
 	// The text document.
 	TextDocument TextDocumentIdentifier `json:"textDocument"`
 
@@ -597,6 +606,7 @@ type TypeHierarchyRegistrationOptions struct {
 type TypeHierarchySupertypesParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
+
 	Item TypeHierarchyItem `json:"item"`
 }
 
@@ -606,6 +616,7 @@ type TypeHierarchySupertypesParams struct {
 type TypeHierarchySubtypesParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
+
 	Item TypeHierarchyItem `json:"item"`
 }
 
@@ -614,6 +625,7 @@ type TypeHierarchySubtypesParams struct {
 // @since 3.17.0
 type InlineValueParams struct {
 	WorkDoneProgressParams
+
 	// The text document.
 	TextDocument TextDocumentIdentifier `json:"textDocument"`
 
@@ -639,6 +651,7 @@ type InlineValueRegistrationOptions struct {
 // @since 3.17.0
 type InlayHintParams struct {
 	WorkDoneProgressParams
+
 	// The text document.
 	TextDocument TextDocumentIdentifier `json:"textDocument"`
 
@@ -710,6 +723,7 @@ type InlayHintRegistrationOptions struct {
 type DocumentDiagnosticParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
+
 	// The text document.
 	TextDocument TextDocumentIdentifier `json:"textDocument"`
 
@@ -749,6 +763,7 @@ type DiagnosticRegistrationOptions struct {
 type WorkspaceDiagnosticParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
+
 	// The additional identifier provided during registration.
 	Identifier *string `json:"identifier,omitempty"`
 
@@ -844,6 +859,7 @@ type DidCloseNotebookDocumentParams struct {
 type InlineCompletionParams struct {
 	TextDocumentPositionParams
 	WorkDoneProgressParams
+
 	// Additional information about the context in which inline completions were
 	// requested.
 	Context InlineCompletionContext `json:"context"`
@@ -1035,6 +1051,7 @@ type DidChangeTextDocumentParams struct {
 // Describe options to be used when registered for text document change events.
 type TextDocumentChangeRegistrationOptions struct {
 	TextDocumentRegistrationOptions
+
 	// How documents are synced to the server.
 	SyncKind TextDocumentSyncKind `json:"syncKind"`
 }
@@ -1112,6 +1129,7 @@ type CompletionParams struct {
 	TextDocumentPositionParams
 	WorkDoneProgressParams
 	PartialResultParams
+
 	// The completion context. This is only available it the client specifies
 	// to send this using the client capability `textDocument.completion.contextSupport === true`
 	Context *CompletionContext `json:"context,omitempty"`
@@ -1340,6 +1358,7 @@ type HoverRegistrationOptions struct {
 type SignatureHelpParams struct {
 	TextDocumentPositionParams
 	WorkDoneProgressParams
+
 	// The signature help context. This is only available if the client specifies
 	// to send this using the client capability `textDocument.signatureHelp.contextSupport === true`
 	//
@@ -1408,6 +1427,7 @@ type ReferenceParams struct {
 	TextDocumentPositionParams
 	WorkDoneProgressParams
 	PartialResultParams
+
 	Context ReferenceContext `json:"context"`
 }
 
@@ -1445,6 +1465,7 @@ type DocumentHighlightRegistrationOptions struct {
 type DocumentSymbolParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
+
 	// The text document.
 	TextDocument TextDocumentIdentifier `json:"textDocument"`
 }
@@ -1453,6 +1474,7 @@ type DocumentSymbolParams struct {
 // interfaces etc.
 type SymbolInformation struct {
 	BaseSymbolInformation
+
 	// Indicates if this symbol is deprecated.
 	//
 	// @deprecated Use tags instead
@@ -1522,6 +1544,7 @@ type DocumentSymbolRegistrationOptions struct {
 type CodeActionParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
+
 	// The document in which the command was invoked.
 	TextDocument TextDocumentIdentifier `json:"textDocument"`
 
@@ -1626,6 +1649,7 @@ type CodeActionRegistrationOptions struct {
 type WorkspaceSymbolParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
+
 	// A query string to filter symbols by. Clients may send an empty
 	// string here to request all symbols.
 	//
@@ -1644,6 +1668,7 @@ type WorkspaceSymbolParams struct {
 // @since 3.17.0
 type WorkspaceSymbol struct {
 	BaseSymbolInformation
+
 	// The location of the symbol. Whether a server is allowed to
 	// return a location without a range depends on the client
 	// capability `workspace.symbol.resolveSupport`.
@@ -1665,6 +1690,7 @@ type WorkspaceSymbolRegistrationOptions struct {
 type CodeLensParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
+
 	// The document to request code lens for.
 	TextDocument TextDocumentIdentifier `json:"textDocument"`
 }
@@ -1696,6 +1722,7 @@ type CodeLensRegistrationOptions struct {
 type DocumentLinkParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
+
 	// The document to provide document links for.
 	TextDocument TextDocumentIdentifier `json:"textDocument"`
 }
@@ -1732,6 +1759,7 @@ type DocumentLinkRegistrationOptions struct {
 // The parameters of a {@link DocumentFormattingRequest}.
 type DocumentFormattingParams struct {
 	WorkDoneProgressParams
+
 	// The document to format.
 	TextDocument TextDocumentIdentifier `json:"textDocument"`
 
@@ -1748,6 +1776,7 @@ type DocumentFormattingRegistrationOptions struct {
 // The parameters of a {@link DocumentRangeFormattingRequest}.
 type DocumentRangeFormattingParams struct {
 	WorkDoneProgressParams
+
 	// The document to format.
 	TextDocument TextDocumentIdentifier `json:"textDocument"`
 
@@ -1770,6 +1799,7 @@ type DocumentRangeFormattingRegistrationOptions struct {
 // @proposed
 type DocumentRangesFormattingParams struct {
 	WorkDoneProgressParams
+
 	// The document to format.
 	TextDocument TextDocumentIdentifier `json:"textDocument"`
 
@@ -1809,6 +1839,7 @@ type DocumentOnTypeFormattingRegistrationOptions struct {
 // The parameters of a {@link RenameRequest}.
 type RenameParams struct {
 	WorkDoneProgressParams
+
 	// The document to rename.
 	TextDocument TextDocumentIdentifier `json:"textDocument"`
 
@@ -1835,6 +1866,7 @@ type PrepareRenameParams struct {
 // The parameters of a {@link ExecuteCommandRequest}.
 type ExecuteCommandParams struct {
 	WorkDoneProgressParams
+
 	// The identifier of the actual command handler.
 	Command string `json:"command"`
 
@@ -2150,6 +2182,7 @@ type CallHierarchyOptions struct {
 // @since 3.16.0
 type SemanticTokensOptions struct {
 	WorkDoneProgressOptions
+
 	// The legend used by the server
 	Legend SemanticTokensLegend `json:"legend"`
 
@@ -2206,6 +2239,7 @@ type TextDocumentEdit struct {
 // Create file operation.
 type CreateFile struct {
 	ResourceOperation
+
 	// A create
 	Kind string `json:"kind"`
 
@@ -2219,6 +2253,7 @@ type CreateFile struct {
 // Rename file operation
 type RenameFile struct {
 	ResourceOperation
+
 	// A rename
 	Kind string `json:"kind"`
 
@@ -2235,6 +2270,7 @@ type RenameFile struct {
 // Delete file operation
 type DeleteFile struct {
 	ResourceOperation
+
 	// A delete
 	Kind string `json:"kind"`
 
@@ -2433,6 +2469,7 @@ type MarkupContent struct {
 // @since 3.17.0
 type InlayHintOptions struct {
 	WorkDoneProgressOptions
+
 	// The server provides support to resolve additional
 	// information for an inlay hint item.
 	ResolveProvider *bool `json:"resolveProvider,omitempty"`
@@ -2443,6 +2480,7 @@ type InlayHintOptions struct {
 // @since 3.17.0
 type RelatedFullDocumentDiagnosticReport struct {
 	FullDocumentDiagnosticReport
+
 	// Diagnostics of related documents. This information is useful
 	// in programming languages where code in a file A can generate
 	// diagnostics in a file B which A depends on. An example of
@@ -2458,6 +2496,7 @@ type RelatedFullDocumentDiagnosticReport struct {
 // @since 3.17.0
 type RelatedUnchangedDocumentDiagnosticReport struct {
 	UnchangedDocumentDiagnosticReport
+
 	// Diagnostics of related documents. This information is useful
 	// in programming languages where code in a file A can generate
 	// diagnostics in a file B which A depends on. An example of
@@ -2505,6 +2544,7 @@ type UnchangedDocumentDiagnosticReport struct {
 // @since 3.17.0
 type DiagnosticOptions struct {
 	WorkDoneProgressOptions
+
 	// An optional identifier under which the diagnostics are
 	// managed by the client.
 	Identifier *string `json:"identifier,omitempty"`
@@ -2699,6 +2739,7 @@ type Unregistration struct {
 // The initialize parameters
 type _InitializeParams struct {
 	WorkDoneProgressParams
+
 	// The process Id of the parent process that started
 	// the server.
 	//
@@ -2921,6 +2962,7 @@ type ServerInfo struct {
 // A text document identifier to denote a specific version of a text document.
 type VersionedTextDocumentIdentifier struct {
 	TextDocumentIdentifier
+
 	// The version number of this document.
 	Version int32 `json:"version"`
 }
@@ -3138,6 +3180,7 @@ type CompletionItemApplyKinds struct {
 // Completion options.
 type CompletionOptions struct {
 	WorkDoneProgressOptions
+
 	// Most tools trigger completion request automatically without explicitly requesting
 	// it using a keyboard shortcut (e.g. Ctrl+Space). Typically they do so when the user
 	// starts to type an identifier. For example if the user types `c` in a JavaScript file
@@ -3231,6 +3274,7 @@ type SignatureInformation struct {
 // Server Capabilities for a {@link SignatureHelpRequest}.
 type SignatureHelpOptions struct {
 	WorkDoneProgressOptions
+
 	// List of characters that trigger signature help automatically.
 	TriggerCharacters *[]string `json:"triggerCharacters,omitempty"`
 
@@ -3288,6 +3332,7 @@ type BaseSymbolInformation struct {
 // Provider options for a {@link DocumentSymbolRequest}.
 type DocumentSymbolOptions struct {
 	WorkDoneProgressOptions
+
 	// A human-readable string that is shown when multiple outlines trees
 	// are shown for the same document.
 	//
@@ -3330,6 +3375,7 @@ type CodeActionDisabled struct {
 // Provider options for a {@link CodeActionRequest}.
 type CodeActionOptions struct {
 	WorkDoneProgressOptions
+
 	// CodeActionKinds that this server may return.
 	//
 	// The list of kinds may be generic, such as `CodeActionKind.Refactor`, or the server
@@ -3370,6 +3416,7 @@ type LocationUriOnly struct {
 // Server capabilities for a {@link WorkspaceSymbolRequest}.
 type WorkspaceSymbolOptions struct {
 	WorkDoneProgressOptions
+
 	// The server provides support to resolve additional
 	// information for a workspace symbol.
 	//
@@ -3380,6 +3427,7 @@ type WorkspaceSymbolOptions struct {
 // Code Lens provider options of a {@link CodeLensRequest}.
 type CodeLensOptions struct {
 	WorkDoneProgressOptions
+
 	// Code lens has a resolve provider as well.
 	ResolveProvider *bool `json:"resolveProvider,omitempty"`
 }
@@ -3387,6 +3435,7 @@ type CodeLensOptions struct {
 // Provider options for a {@link DocumentLinkRequest}.
 type DocumentLinkOptions struct {
 	WorkDoneProgressOptions
+
 	// Document links have a resolve provider as well.
 	ResolveProvider *bool `json:"resolveProvider,omitempty"`
 }
@@ -3423,6 +3472,7 @@ type DocumentFormattingOptions struct {
 // Provider options for a {@link DocumentRangeFormattingRequest}.
 type DocumentRangeFormattingOptions struct {
 	WorkDoneProgressOptions
+
 	// Whether the server supports formatting multiple ranges at once.
 	//
 	// @since 3.18.0
@@ -3442,6 +3492,7 @@ type DocumentOnTypeFormattingOptions struct {
 // Provider options for a {@link RenameRequest}.
 type RenameOptions struct {
 	WorkDoneProgressOptions
+
 	// Renames should be checked and tested before being executed.
 	//
 	// @since version 3.12.0
@@ -3463,6 +3514,7 @@ type PrepareRenameDefaultBehavior struct {
 // The server capabilities of a {@link ExecuteCommandRequest}.
 type ExecuteCommandOptions struct {
 	WorkDoneProgressOptions
+
 	// The commands to be executed on the server
 	Commands []string `json:"commands"`
 }
@@ -3496,6 +3548,7 @@ type SemanticTokensFullDelta struct {
 // A text document identifier to optionally denote a specific version of a text document.
 type OptionalVersionedTextDocumentIdentifier struct {
 	TextDocumentIdentifier
+
 	// The version number of this document. If a versioned text document identifier
 	// is sent from the server to the client and the file is not open in the editor
 	// (the server has not received an open notification before) the server can send
@@ -3509,6 +3562,7 @@ type OptionalVersionedTextDocumentIdentifier struct {
 // @since 3.16.0.
 type AnnotatedTextEdit struct {
 	TextEdit
+
 	// The actual identifier of the change annotation
 	AnnotationId ChangeAnnotationIdentifier `json:"annotationId"`
 }
@@ -3594,6 +3648,7 @@ type FileOperationPattern struct {
 // @since 3.17.0
 type WorkspaceFullDocumentDiagnosticReport struct {
 	FullDocumentDiagnosticReport
+
 	// The URI for which diagnostic information is reported.
 	Uri DocumentUri `json:"uri"`
 
@@ -3607,6 +3662,7 @@ type WorkspaceFullDocumentDiagnosticReport struct {
 // @since 3.17.0
 type WorkspaceUnchangedDocumentDiagnosticReport struct {
 	UnchangedDocumentDiagnosticReport
+
 	// The URI for which diagnostic information is reported.
 	Uri DocumentUri `json:"uri"`
 
@@ -4951,6 +5007,7 @@ type SelectionRangeClientCapabilities struct {
 // The publish diagnostic client capabilities.
 type PublishDiagnosticsClientCapabilities struct {
 	DiagnosticsCapabilities
+
 	// Whether the client interprets the version property of the
 	// `textDocument/publishDiagnostics` notification's parameter.
 	//
@@ -5072,6 +5129,7 @@ type InlayHintClientCapabilities struct {
 // @since 3.17.0
 type DiagnosticClientCapabilities struct {
 	DiagnosticsCapabilities
+
 	// Whether implementation supports dynamic registration. If this is set to `true`
 	// the client supports the new `(TextDocumentRegistrationOptions & StaticRegistrationOptions)`
 	// return value for the corresponding server capability as well.
