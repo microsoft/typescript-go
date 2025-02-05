@@ -1,13 +1,12 @@
 import assert from "node:assert";
-import type {
-    MetaModelSchema,
-    OrType,
-    Type,
-} from "./metaModelSchema.mts";
-
 import fs from "node:fs";
 import path from "node:path";
 import url from "node:url";
+
+/**
+ * @import { MetaModelSchema, OrType, Type } from "./metaModelSchema.mts"
+ */
+void 0;
 
 const __filename = url.fileURLToPath(new URL(import.meta.url));
 const __dirname = path.dirname(__filename);
@@ -20,9 +19,15 @@ if (!out) {
 
 const metaModelPath = path.resolve(__dirname, "metaModel.json");
 
-const model: MetaModelSchema = JSON.parse(fs.readFileSync(metaModelPath, "utf-8"));
+/** @type {MetaModelSchema} */
+const model = JSON.parse(fs.readFileSync(metaModelPath, "utf-8"));
 
-function compareValues(a: string | number, b: string | number): number {
+/**
+ * @param {string | number} a
+ * @param {string | number} b
+ * @returns {number}
+ */
+function compareValues(a, b) {
     if (typeof a === "string" && typeof b === "string") {
         return a < b ? -1 : a > b ? 1 : 0;
     }
@@ -32,7 +37,8 @@ function compareValues(a: string | number, b: string | number): number {
     throw new Error("Cannot compare values of different types");
 }
 
-let parts: string[] = [];
+/** @type {string[]} */
+let parts = [];
 let indentLevel = 0;
 
 function indent() {
@@ -43,26 +49,41 @@ function dedent() {
     indentLevel--;
 }
 
-function write(s: string) {
+/**
+ * @param {string} s
+ */
+function write(s) {
     parts.push(s);
 }
 
-function writeLine(s: string) {
+/**
+ * @param {string} s
+ */
+function writeLine(s) {
     startLine(s);
     write("\n");
 }
 
-function startLine(s: string) {
+/**
+ * @param {string} s
+ */
+function startLine(s) {
     parts.push("\t".repeat(indentLevel));
     write(s);
 }
 
-function finishLine(s: string) {
+/**
+ * @param {string} s
+ */
+function finishLine(s) {
     write(s);
     write("\n");
 }
 
-function writeDocumentation(doc: string | undefined) {
+/**
+ * @param {string | undefined} doc
+ */
+function writeDocumentation(doc) {
     if (doc) {
         const lines = doc.split("\n");
         for (const line of lines) {
@@ -72,7 +93,10 @@ function writeDocumentation(doc: string | undefined) {
     }
 }
 
-function writeDeprecation(deprecated: string | undefined) {
+/**
+ * @param {string | undefined} deprecated
+ */
+function writeDeprecation(deprecated) {
     if (deprecated) {
         writeLine("//");
         startLine("// Deprecated: ");
@@ -80,18 +104,27 @@ function writeDeprecation(deprecated: string | undefined) {
     }
 }
 
-function titleCase(s: string): string {
+/**
+ * @param {string} s
+ */
+function titleCase(s) {
     return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
-interface UnionMember {
-    type: Type;
-    name: string;
-}
+/**
+ * @typedef {{ type: Type; name: string; }} UnionMember
+ */
+void 0;
 
-const unionTypes = new Map<string, UnionMember[]>();
+/** @type {Map<string, UnionMember[]>} */
+const unionTypes = new Map();
 
-function writeOr(t: OrType, wasOptional = false): boolean {
+/**
+ * @param {OrType} t
+ * @param {boolean} wasOptional
+ * @returns {boolean}
+ */
+function writeOr(t, wasOptional = false) {
     let nullable = false;
     let omitEmpty = true;
     const types = t.items.filter(item => {
@@ -114,7 +147,8 @@ function writeOr(t: OrType, wasOptional = false): boolean {
         writeTypeElement(types[0]);
     }
     else {
-        const members: UnionMember[] = [];
+        /** @type {UnionMember[]} */
+        const members = [];
         for (const t of types) {
             let name;
             if (t.kind === "reference") {
@@ -158,7 +192,12 @@ function writeOr(t: OrType, wasOptional = false): boolean {
     return omitEmpty;
 }
 
-function writeTypeElement(t: Type, wasOptional = false): boolean {
+/**
+ * @param {Type} t
+ * @param {boolean} wasOptional
+ * @returns {boolean}
+ */
+function writeTypeElement(t, wasOptional = false) {
     switch (t.kind) {
         case "reference":
             write(t.name);
@@ -347,7 +386,8 @@ for (const t of model.enumerations) {
     writeDocumentation(t.documentation);
     writeDeprecation(t.deprecated);
 
-    let underlyingType: string;
+    /** @type {string} */
+    let underlyingType;
     switch (t.type.name) {
         case "string":
             underlyingType = "string";
@@ -363,7 +403,11 @@ for (const t of model.enumerations) {
     writeLine("type " + t.name + " " + underlyingType);
     writeLine("\n");
 
-    function valueToLiteral(v: string | number): string {
+    /**
+     * @param {string | number} v
+     * @returns {string}
+     */
+    function valueToLiteral(v) {
         return typeof v === "string" ? '"' + v + '"' : `${v}`;
     }
 
@@ -395,7 +439,7 @@ for (const t of model.enumerations) {
     writeLine("}");
     writeLine("switch v {");
     indent();
-    const values = [...new Set<string | number>(t.values.map(v => v.value))].sort(compareValues);
+    const values = [...new Set(t.values.map(v => v.value))].sort(compareValues);
     for (let i = 0; i < values.length; i++) {
         const v = values[i];
         if (i === 0) {
@@ -443,7 +487,11 @@ for (const t of model.typeAliases) {
     writeLine("\n");
 }
 
-function methodNameToIdentifier(method: string): string {
+/**
+ * @param {string} method
+ * @returns {string}
+ */
+function methodNameToIdentifier(method) {
     return method.split("/").map(v => v === "$" ? "" : titleCase(v)).join("");
 }
 
