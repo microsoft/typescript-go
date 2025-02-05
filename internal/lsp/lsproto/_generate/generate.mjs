@@ -459,6 +459,7 @@ for (const t of model.typeAliases) {
     startLine("type " + t.name + " = ");
     writeTypeElement(t.type);
     writeLine("");
+    writeLine("");
 }
 
 /**

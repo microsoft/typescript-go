@@ -7116,142 +7116,158 @@ func (e *TokenFormat) UnmarshalJSON(data []byte) error {
 //
 // Servers should prefer returning `DefinitionLink` over `Definition` if supported
 // by the client.
-type (
-	Definition = LocationOrArrayOfLocation
-	// Information about where a symbol is defined.
-	//
-	// Provides additional metadata over normal location definitions, including the range of
-	// the defining symbol
-	DefinitionLink = LocationLink
-	// LSP arrays.
-	// Since: 3.17.0
-	//
-	LSPArray = []LSPAny
-	// The LSP any type.
-	// Please note that strictly speaking a property with the value `undefined`
-	// can't be converted into JSON preserving the property name. However for
-	// convenience it is allowed and assumed that all these properties are
-	// optional as well.
-	// Since: 3.17.0
-	//
-	LSPAny = any
-)
+type Definition = LocationOrArrayOfLocation
+
+// Information about where a symbol is defined.
+//
+// Provides additional metadata over normal location definitions, including the range of
+// the defining symbol
+type DefinitionLink = LocationLink
+
+// LSP arrays.
+// Since: 3.17.0
+//
+type LSPArray = []LSPAny
+
+// The LSP any type.
+// Please note that strictly speaking a property with the value `undefined`
+// can't be converted into JSON preserving the property name. However for
+// convenience it is allowed and assumed that all these properties are
+// optional as well.
+// Since: 3.17.0
+//
+type LSPAny = any
 
 // The declaration of a symbol representation as one or many locations.
-type (
-	Declaration = LocationOrArrayOfLocation
-	// Information about where a symbol is declared.
-	//
-	// Provides additional metadata over normal location declarations, including the range of
-	// the declaring symbol.
-	//
-	// Servers should prefer returning `DeclarationLink` over `Declaration` if supported
-	// by the client.
-	DeclarationLink = LocationLink
-	// Inline value information can be provided by different means:
-	// - directly as a text value (class InlineValueText).
-	// - as a name to use for a variable lookup (class InlineValueVariableLookup)
-	// - as an evaluatable expression (class InlineValueEvaluatableExpression)
-	// The InlineValue types combines all inline value types into one type.
-	//
-	// Since: 3.17.0
-	//
-	InlineValue = InlineValueTextOrInlineValueVariableLookupOrInlineValueEvaluatableExpression
-	// The result of a document diagnostic pull request. A report can
-	// either be a full report containing all diagnostics for the
-	// requested document or an unchanged report indicating that nothing
-	// has changed in terms of diagnostics in comparison to the last
-	// pull request.
-	//
-	// Since: 3.17.0
-	//
-	DocumentDiagnosticReport = RelatedFullDocumentDiagnosticReportOrRelatedUnchangedDocumentDiagnosticReport
-	PrepareRenameResult      = RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehavior
-	// A document selector is the combination of one or many document filters.
-	//
-	// @sample `let sel:DocumentSelector = [{ language: 'typescript' }, { language: 'json', pattern: '**∕tsconfig.json' }]`;
-	//
-	// The use of a string as a document filter is deprecated Since: 3.16.0.
-	//
-	DocumentSelector = []DocumentFilter
-	ProgressToken    = IntegerOrString
-	// An identifier to refer to a change annotation stored with a workspace edit.
-	ChangeAnnotationIdentifier = string
-	// A workspace diagnostic document report.
-	//
-	// Since: 3.17.0
-	//
-	WorkspaceDocumentDiagnosticReport = WorkspaceFullDocumentDiagnosticReportOrWorkspaceUnchangedDocumentDiagnosticReport
-	// An event describing a change to a text document. If only a text is provided
-	// it is considered to be the full content of the document.
-	TextDocumentContentChangeEvent = TextDocumentContentChangePartialOrTextDocumentContentChangeWholeDocument
-	// MarkedString can be used to render human readable text. It is either a markdown string
-	// or a code-block that provides a language and a code snippet. The language identifier
-	// is semantically equal to the optional language identifier in fenced code blocks in GitHub
-	// issues. See https://help.github.com/articles/creating-and-highlighting-code-blocks/#syntax-highlighting
-	//
-	// The pair of a language and a value is an equivalent to markdown:
-	// ```${language}
-	// ${value}
-	// ```
-	//
-	// Note that markdown strings will be sanitized - that means html will be escaped.
-	//
-	// Deprecated: use MarkupContent instead.
-	MarkedString = StringOrMarkedStringWithLanguage
-	// A document filter describes a top level text document or
-	// a notebook cell document.
-	//
-	// Since: 3.17.0 - support for NotebookCellTextDocumentFilter.
-	//
-	DocumentFilter = TextDocumentFilterOrNotebookCellTextDocumentFilter
-	// LSP object definition.
-	// Since: 3.17.0
-	//
-	LSPObject = map[string]LSPAny
-	// The glob pattern. Either a string pattern or a relative pattern.
-	//
-	// Since: 3.17.0
-	//
-	GlobPattern = PatternOrRelativePattern
-	// A document filter denotes a document by different properties like
-	// the language, the scheme of
-	// its resource, or a glob-pattern that is applied to the path.
-	//
-	// Glob patterns can have the following syntax:
-	// - `*` to match one or more characters in a path segment
-	// - `?` to match on one character in a path segment
-	// - `**` to match any number of path segments, including none
-	// - `{}` to group sub patterns into an OR expression. (e.g. `**​/*.{ts,js}` matches all TypeScript and JavaScript files)
-	// - `[]` to declare a range of characters to match in a path segment (e.g., `example.[0-9]` to match on `example.0`, `example.1`, …)
-	// - `[!...]` to negate a range of characters to match in a path segment (e.g., `example.[!0-9]` to match on `example.a`, `example.b`, but not `example.0`)
-	//
-	// @sample A language filter that applies to typescript files on disk: `{ language: 'typescript', scheme: 'file' }`
-	// @sample A language filter that applies to all package.json paths: `{ language: 'json', pattern: '**package.json' }`
-	//
-	// Since: 3.17.0
-	//
-	TextDocumentFilter = TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPattern
-	// A notebook document filter denotes a notebook document by
-	// different properties. The properties will be match
-	// against the notebook's URI (same as with documents)
-	//
-	// Since: 3.17.0
-	//
-	NotebookDocumentFilter = NotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern
-	// The glob pattern to watch relative to the base path. Glob patterns can have the following syntax:
-	// - `*` to match one or more characters in a path segment
-	// - `?` to match on one character in a path segment
-	// - `**` to match any number of path segments, including none
-	// - `{}` to group conditions (e.g. `**​/*.{ts,js}` matches all TypeScript and JavaScript files)
-	// - `[]` to declare a range of characters to match in a path segment (e.g., `example.[0-9]` to match on `example.0`, `example.1`, …)
-	// - `[!...]` to negate a range of characters to match in a path segment (e.g., `example.[!0-9]` to match on `example.a`, `example.b`, but not `example.0`)
-	//
-	// Since: 3.17.0
-	//
-	Pattern                     = string
-	RegularExpressionEngineKind = string
-)
+type Declaration = LocationOrArrayOfLocation
+
+// Information about where a symbol is declared.
+//
+// Provides additional metadata over normal location declarations, including the range of
+// the declaring symbol.
+//
+// Servers should prefer returning `DeclarationLink` over `Declaration` if supported
+// by the client.
+type DeclarationLink = LocationLink
+
+// Inline value information can be provided by different means:
+// - directly as a text value (class InlineValueText).
+// - as a name to use for a variable lookup (class InlineValueVariableLookup)
+// - as an evaluatable expression (class InlineValueEvaluatableExpression)
+// The InlineValue types combines all inline value types into one type.
+//
+// Since: 3.17.0
+//
+type InlineValue = InlineValueTextOrInlineValueVariableLookupOrInlineValueEvaluatableExpression
+
+// The result of a document diagnostic pull request. A report can
+// either be a full report containing all diagnostics for the
+// requested document or an unchanged report indicating that nothing
+// has changed in terms of diagnostics in comparison to the last
+// pull request.
+//
+// Since: 3.17.0
+//
+type DocumentDiagnosticReport = RelatedFullDocumentDiagnosticReportOrRelatedUnchangedDocumentDiagnosticReport
+
+type PrepareRenameResult = RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehavior
+
+// A document selector is the combination of one or many document filters.
+//
+// @sample `let sel:DocumentSelector = [{ language: 'typescript' }, { language: 'json', pattern: '**∕tsconfig.json' }]`;
+//
+// The use of a string as a document filter is deprecated Since: 3.16.0.
+//
+type DocumentSelector = []DocumentFilter
+
+type ProgressToken = IntegerOrString
+
+// An identifier to refer to a change annotation stored with a workspace edit.
+type ChangeAnnotationIdentifier = string
+
+// A workspace diagnostic document report.
+//
+// Since: 3.17.0
+//
+type WorkspaceDocumentDiagnosticReport = WorkspaceFullDocumentDiagnosticReportOrWorkspaceUnchangedDocumentDiagnosticReport
+
+// An event describing a change to a text document. If only a text is provided
+// it is considered to be the full content of the document.
+type TextDocumentContentChangeEvent = TextDocumentContentChangePartialOrTextDocumentContentChangeWholeDocument
+
+// MarkedString can be used to render human readable text. It is either a markdown string
+// or a code-block that provides a language and a code snippet. The language identifier
+// is semantically equal to the optional language identifier in fenced code blocks in GitHub
+// issues. See https://help.github.com/articles/creating-and-highlighting-code-blocks/#syntax-highlighting
+//
+// The pair of a language and a value is an equivalent to markdown:
+// ```${language}
+// ${value}
+// ```
+//
+// Note that markdown strings will be sanitized - that means html will be escaped.
+//
+// Deprecated: use MarkupContent instead.
+type MarkedString = StringOrMarkedStringWithLanguage
+
+// A document filter describes a top level text document or
+// a notebook cell document.
+//
+// Since: 3.17.0 - support for NotebookCellTextDocumentFilter.
+//
+type DocumentFilter = TextDocumentFilterOrNotebookCellTextDocumentFilter
+
+// LSP object definition.
+// Since: 3.17.0
+//
+type LSPObject = map[string]LSPAny
+
+// The glob pattern. Either a string pattern or a relative pattern.
+//
+// Since: 3.17.0
+//
+type GlobPattern = PatternOrRelativePattern
+
+// A document filter denotes a document by different properties like
+// the language, the scheme of
+// its resource, or a glob-pattern that is applied to the path.
+//
+// Glob patterns can have the following syntax:
+// - `*` to match one or more characters in a path segment
+// - `?` to match on one character in a path segment
+// - `**` to match any number of path segments, including none
+// - `{}` to group sub patterns into an OR expression. (e.g. `**​/*.{ts,js}` matches all TypeScript and JavaScript files)
+// - `[]` to declare a range of characters to match in a path segment (e.g., `example.[0-9]` to match on `example.0`, `example.1`, …)
+// - `[!...]` to negate a range of characters to match in a path segment (e.g., `example.[!0-9]` to match on `example.a`, `example.b`, but not `example.0`)
+//
+// @sample A language filter that applies to typescript files on disk: `{ language: 'typescript', scheme: 'file' }`
+// @sample A language filter that applies to all package.json paths: `{ language: 'json', pattern: '**package.json' }`
+//
+// Since: 3.17.0
+//
+type TextDocumentFilter = TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPattern
+
+// A notebook document filter denotes a notebook document by
+// different properties. The properties will be match
+// against the notebook's URI (same as with documents)
+//
+// Since: 3.17.0
+//
+type NotebookDocumentFilter = NotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern
+
+// The glob pattern to watch relative to the base path. Glob patterns can have the following syntax:
+// - `*` to match one or more characters in a path segment
+// - `?` to match on one character in a path segment
+// - `**` to match any number of path segments, including none
+// - `{}` to group conditions (e.g. `**​/*.{ts,js}` matches all TypeScript and JavaScript files)
+// - `[]` to declare a range of characters to match in a path segment (e.g., `example.[0-9]` to match on `example.0`, `example.1`, …)
+// - `[!...]` to negate a range of characters to match in a path segment (e.g., `example.[!0-9]` to match on `example.a`, `example.b`, but not `example.0`)
+//
+// Since: 3.17.0
+//
+type Pattern = string
+
+type RegularExpressionEngineKind = string
 
 // Unmarshallers
 
