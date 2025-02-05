@@ -100,7 +100,7 @@ function writeOr(t: OrType, wasOptional = false): boolean {
             return false;
         }
         return true;
-    }).sort(compareTypes);
+    });
     if (nullable) {
         if (wasOptional) {
             write("Nullable[");
@@ -156,82 +156,6 @@ function writeOr(t: OrType, wasOptional = false): boolean {
         write("]");
     }
     return omitEmpty;
-}
-
-const typeKindOrder: Type["kind"][] = [
-    "reference",
-    "array",
-    "map",
-    "base",
-    "and",
-    "or",
-    "tuple",
-    "literal",
-    "stringLiteral",
-    "integerLiteral",
-    "booleanLiteral",
-];
-
-function compareTypes(a: Type, b: Type): number {
-    if (a.kind === "base" && b.kind === "base") {
-        return a.name.localeCompare(b.name);
-    }
-    if (a.kind === "reference" && b.kind === "reference") {
-        return a.name.localeCompare(b.name);
-    }
-    if (a.kind === "array" && b.kind === "array") {
-        return compareTypes(a.element, b.element);
-    }
-    if (a.kind === "map" && b.kind === "map") {
-        return compareTypes(a.key, b.key) || compareTypes(a.value, b.value);
-    }
-    if (a.kind === "or" && b.kind === "or") {
-        const cmp = a.items.length - b.items.length;
-        if (cmp !== 0) {
-            return cmp;
-        }
-        const aItems = a.items.slice().sort(compareTypes);
-        const bItems = b.items.slice().sort(compareTypes);
-
-        for (let i = 0; i < aItems.length; i++) {
-            const cmp = compareTypes(aItems[i], bItems[i]);
-            if (cmp !== 0) {
-                return cmp;
-            }
-        }
-
-        return 0;
-    }
-    if (a.kind === "tuple" && b.kind === "tuple") {
-        const cmp = a.items.length - b.items.length;
-        if (cmp !== 0) {
-            return cmp;
-        }
-        for (let i = 0; i < a.items.length; i++) {
-            const cmp = compareTypes(a.items[i], b.items[i]);
-            if (cmp !== 0) {
-                return cmp;
-            }
-        }
-        return 0;
-    }
-    if (a.kind === "literal" && b.kind === "literal") {
-        // For now, the spec only uses this for empty arrays
-        assert(a.value.properties.length === 0);
-        assert(b.value.properties.length === 0);
-        return 0;
-    }
-    if (a.kind === "stringLiteral" && b.kind === "stringLiteral") {
-        return a.value.localeCompare(b.value);
-    }
-    if (a.kind === "integerLiteral" && b.kind === "integerLiteral") {
-        return a.value - b.value;
-    }
-    if (a.kind === "booleanLiteral" && b.kind === "booleanLiteral") {
-        return a.value === b.value ? 0 : a.value ? 1 : -1;
-    }
-
-    return typeKindOrder.indexOf(a.kind) - typeKindOrder.indexOf(b.kind);
 }
 
 function writeTypeElement(t: Type, wasOptional = false): boolean {

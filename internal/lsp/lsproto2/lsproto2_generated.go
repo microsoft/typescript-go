@@ -469,7 +469,7 @@ type WorkspaceEdit struct {
 	//
 	// If a client neither supports `documentChanges` nor `workspace.workspaceEdit.resourceOperations` then
 	// only plain `TextEdit`s using the `changes` property are supported.
-	DocumentChanges *[]CreateFileOrDeleteFileOrRenameFileOrTextDocumentEdit `json:"documentChanges,omitempty"`
+	DocumentChanges *[]TextDocumentEditOrCreateFileOrRenameFileOrDeleteFile `json:"documentChanges,omitempty"`
 	// A map of change annotations that can be referenced in `AnnotatedTextEdit`s or create, rename and
 	// delete file / folder operations.
 	//
@@ -640,7 +640,7 @@ type InlayHint struct {
 	// InlayHintLabelPart label parts.
 	//
 	// *Note* that neither the string nor the label part can be empty.
-	Label ArrayOfInlayHintLabelPartOrString `json:"label,omitempty"`
+	Label StringOrArrayOfInlayHintLabelPart `json:"label,omitempty"`
 	// The kind of this hint. Can be omitted in which case the client
 	// should fall back to a reasonable default.
 	Kind *InlayHintKind `json:"kind,omitempty"`
@@ -651,7 +651,7 @@ type InlayHint struct {
 	// hint itself is now obsolete.
 	TextEdits *[]TextEdit `json:"textEdits,omitempty"`
 	// The tooltip text when you hover over this item.
-	Tooltip *MarkupContentOrString `json:"tooltip,omitempty"`
+	Tooltip *StringOrMarkupContent `json:"tooltip,omitempty"`
 	// Render padding before the hint.
 	//
 	// Note: Padding should use the editor's background color, not the
@@ -832,7 +832,7 @@ type InlineCompletionList struct {
 // @proposed
 type InlineCompletionItem struct {
 	// The text to replace the range with. Must be set.
-	InsertText StringValueOrString `json:"insertText,omitempty"`
+	InsertText StringOrStringValue `json:"insertText,omitempty"`
 	// A text that is used to decide if this inline completion should be shown. When `falsy` the {@link InlineCompletionItem.insertText} is used.
 	FilterText *string `json:"filterText,omitempty"`
 	// The range to replace. Must begin and end on the same line.
@@ -932,7 +932,7 @@ type DidChangeConfigurationParams struct {
 }
 
 type DidChangeConfigurationRegistrationOptions struct {
-	Section *ArrayOfStringOrString `json:"section,omitempty"`
+	Section *StringOrArrayOfString `json:"section,omitempty"`
 }
 
 // The parameters of a notification message.
@@ -1097,7 +1097,7 @@ type CompletionItem struct {
 	// about this item, like type or symbol information.
 	Detail *string `json:"detail,omitempty"`
 	// A human-readable string that represents a doc-comment.
-	Documentation *MarkupContentOrString `json:"documentation,omitempty"`
+	Documentation *StringOrMarkupContent `json:"documentation,omitempty"`
 	// Indicates if this item is deprecated.
 	// @deprecated Use `tags` instead.
 	//
@@ -1162,7 +1162,7 @@ type CompletionItem struct {
 	// contained and starting at the same position.
 	//
 	// @since 3.16.0 additional type `InsertReplaceEdit`
-	TextEdit *InsertReplaceEditOrTextEdit `json:"textEdit,omitempty"`
+	TextEdit *TextEditOrInsertReplaceEdit `json:"textEdit,omitempty"`
 	// The edit text used if the completion item is part of a CompletionList and
 	// CompletionList defines an item default for the text edit range.
 	//
@@ -1256,7 +1256,7 @@ type HoverParams struct {
 // The result of a hover request.
 type Hover struct {
 	// The hover's content
-	Contents MarkedStringOrMarkupContentOrArrayOfMarkedString `json:"contents,omitempty"`
+	Contents MarkupContentOrMarkedStringOrArrayOfMarkedString `json:"contents,omitempty"`
 	// An optional range inside the text document that is used to
 	// visualize the hover, e.g. by changing the background color.
 	Range *Range `json:"range,omitempty"`
@@ -2022,7 +2022,7 @@ type SemanticTokensOptions struct {
 	// of a document.
 	Range *BooleanOrEmptyObject `json:"range,omitempty"`
 	// Server supports providing semantic tokens for a full document.
-	Full *SemanticTokensFullDeltaOrBoolean `json:"full,omitempty"`
+	Full *BooleanOrSemanticTokensFullDelta `json:"full,omitempty"`
 }
 
 // @since 3.16.0
@@ -2061,7 +2061,7 @@ type TextDocumentEdit struct {
 	//
 	// @since 3.18.0 - support for SnippetTextEdit. This is guarded using a
 	// client capability.
-	Edits []AnnotatedTextEditOrSnippetTextEditOrTextEdit `json:"edits"`
+	Edits []TextEditOrAnnotatedTextEditOrSnippetTextEdit `json:"edits"`
 }
 
 // Create file operation.
@@ -2218,7 +2218,7 @@ type InlayHintLabelPart struct {
 	// The tooltip text when you hover over this label part. Depending on
 	// the client capability `inlayHint.resolveSupport` clients might resolve
 	// this property late using the resolve request.
-	Tooltip *MarkupContentOrString `json:"tooltip,omitempty"`
+	Tooltip *StringOrMarkupContent `json:"tooltip,omitempty"`
 	// An optional source code location that represents this
 	// label part.
 	//
@@ -2415,7 +2415,7 @@ type TextDocumentItem struct {
 // @since 3.17.0
 type NotebookDocumentSyncOptions struct {
 	// The notebooks to be synced
-	NotebookSelector []NotebookDocumentFilterWithCellsOrNotebookDocumentFilterWithNotebook `json:"notebookSelector"`
+	NotebookSelector []NotebookDocumentFilterWithNotebookOrNotebookDocumentFilterWithCells `json:"notebookSelector"`
 	// Whether save notification should be forwarded to
 	// the server. Will only be honored if mode === `notebook`.
 	Save *bool `json:"save,omitempty"`
@@ -2588,7 +2588,7 @@ type ServerCapabilities struct {
 	// Defines how text documents are synced. Is either a detailed structure
 	// defining each notification or for backwards compatibility the
 	// TextDocumentSyncKind number.
-	TextDocumentSync *TextDocumentSyncKindOrTextDocumentSyncOptions `json:"textDocumentSync,omitempty"`
+	TextDocumentSync *TextDocumentSyncOptionsOrTextDocumentSyncKind `json:"textDocumentSync,omitempty"`
 	// Defines how notebook documents are synced.
 	//
 	// @since 3.17.0
@@ -2596,59 +2596,59 @@ type ServerCapabilities struct {
 	// The server provides completion support.
 	CompletionProvider *CompletionOptions `json:"completionProvider,omitempty"`
 	// The server provides hover support.
-	HoverProvider *HoverOptionsOrBoolean `json:"hoverProvider,omitempty"`
+	HoverProvider *BooleanOrHoverOptions `json:"hoverProvider,omitempty"`
 	// The server provides signature help support.
 	SignatureHelpProvider *SignatureHelpOptions `json:"signatureHelpProvider,omitempty"`
 	// The server provides Goto Declaration support.
-	DeclarationProvider *DeclarationOptionsOrDeclarationRegistrationOptionsOrBoolean `json:"declarationProvider,omitempty"`
+	DeclarationProvider *BooleanOrDeclarationOptionsOrDeclarationRegistrationOptions `json:"declarationProvider,omitempty"`
 	// The server provides goto definition support.
-	DefinitionProvider *DefinitionOptionsOrBoolean `json:"definitionProvider,omitempty"`
+	DefinitionProvider *BooleanOrDefinitionOptions `json:"definitionProvider,omitempty"`
 	// The server provides Goto Type Definition support.
-	TypeDefinitionProvider *TypeDefinitionOptionsOrTypeDefinitionRegistrationOptionsOrBoolean `json:"typeDefinitionProvider,omitempty"`
+	TypeDefinitionProvider *BooleanOrTypeDefinitionOptionsOrTypeDefinitionRegistrationOptions `json:"typeDefinitionProvider,omitempty"`
 	// The server provides Goto Implementation support.
-	ImplementationProvider *ImplementationOptionsOrImplementationRegistrationOptionsOrBoolean `json:"implementationProvider,omitempty"`
+	ImplementationProvider *BooleanOrImplementationOptionsOrImplementationRegistrationOptions `json:"implementationProvider,omitempty"`
 	// The server provides find references support.
-	ReferencesProvider *ReferenceOptionsOrBoolean `json:"referencesProvider,omitempty"`
+	ReferencesProvider *BooleanOrReferenceOptions `json:"referencesProvider,omitempty"`
 	// The server provides document highlight support.
-	DocumentHighlightProvider *DocumentHighlightOptionsOrBoolean `json:"documentHighlightProvider,omitempty"`
+	DocumentHighlightProvider *BooleanOrDocumentHighlightOptions `json:"documentHighlightProvider,omitempty"`
 	// The server provides document symbol support.
-	DocumentSymbolProvider *DocumentSymbolOptionsOrBoolean `json:"documentSymbolProvider,omitempty"`
+	DocumentSymbolProvider *BooleanOrDocumentSymbolOptions `json:"documentSymbolProvider,omitempty"`
 	// The server provides code actions. CodeActionOptions may only be
 	// specified if the client states that it supports
 	// `codeActionLiteralSupport` in its initial `initialize` request.
-	CodeActionProvider *CodeActionOptionsOrBoolean `json:"codeActionProvider,omitempty"`
+	CodeActionProvider *BooleanOrCodeActionOptions `json:"codeActionProvider,omitempty"`
 	// The server provides code lens.
 	CodeLensProvider *CodeLensOptions `json:"codeLensProvider,omitempty"`
 	// The server provides document link support.
 	DocumentLinkProvider *DocumentLinkOptions `json:"documentLinkProvider,omitempty"`
 	// The server provides color provider support.
-	ColorProvider *DocumentColorOptionsOrDocumentColorRegistrationOptionsOrBoolean `json:"colorProvider,omitempty"`
+	ColorProvider *BooleanOrDocumentColorOptionsOrDocumentColorRegistrationOptions `json:"colorProvider,omitempty"`
 	// The server provides workspace symbol support.
-	WorkspaceSymbolProvider *WorkspaceSymbolOptionsOrBoolean `json:"workspaceSymbolProvider,omitempty"`
+	WorkspaceSymbolProvider *BooleanOrWorkspaceSymbolOptions `json:"workspaceSymbolProvider,omitempty"`
 	// The server provides document formatting.
-	DocumentFormattingProvider *DocumentFormattingOptionsOrBoolean `json:"documentFormattingProvider,omitempty"`
+	DocumentFormattingProvider *BooleanOrDocumentFormattingOptions `json:"documentFormattingProvider,omitempty"`
 	// The server provides document range formatting.
-	DocumentRangeFormattingProvider *DocumentRangeFormattingOptionsOrBoolean `json:"documentRangeFormattingProvider,omitempty"`
+	DocumentRangeFormattingProvider *BooleanOrDocumentRangeFormattingOptions `json:"documentRangeFormattingProvider,omitempty"`
 	// The server provides document formatting on typing.
 	DocumentOnTypeFormattingProvider *DocumentOnTypeFormattingOptions `json:"documentOnTypeFormattingProvider,omitempty"`
 	// The server provides rename support. RenameOptions may only be
 	// specified if the client states that it supports
 	// `prepareSupport` in its initial `initialize` request.
-	RenameProvider *RenameOptionsOrBoolean `json:"renameProvider,omitempty"`
+	RenameProvider *BooleanOrRenameOptions `json:"renameProvider,omitempty"`
 	// The server provides folding provider support.
-	FoldingRangeProvider *FoldingRangeOptionsOrFoldingRangeRegistrationOptionsOrBoolean `json:"foldingRangeProvider,omitempty"`
+	FoldingRangeProvider *BooleanOrFoldingRangeOptionsOrFoldingRangeRegistrationOptions `json:"foldingRangeProvider,omitempty"`
 	// The server provides selection range support.
-	SelectionRangeProvider *SelectionRangeOptionsOrSelectionRangeRegistrationOptionsOrBoolean `json:"selectionRangeProvider,omitempty"`
+	SelectionRangeProvider *BooleanOrSelectionRangeOptionsOrSelectionRangeRegistrationOptions `json:"selectionRangeProvider,omitempty"`
 	// The server provides execute command support.
 	ExecuteCommandProvider *ExecuteCommandOptions `json:"executeCommandProvider,omitempty"`
 	// The server provides call hierarchy support.
 	//
 	// @since 3.16.0
-	CallHierarchyProvider *CallHierarchyOptionsOrCallHierarchyRegistrationOptionsOrBoolean `json:"callHierarchyProvider,omitempty"`
+	CallHierarchyProvider *BooleanOrCallHierarchyOptionsOrCallHierarchyRegistrationOptions `json:"callHierarchyProvider,omitempty"`
 	// The server provides linked editing range support.
 	//
 	// @since 3.16.0
-	LinkedEditingRangeProvider *LinkedEditingRangeOptionsOrLinkedEditingRangeRegistrationOptionsOrBoolean `json:"linkedEditingRangeProvider,omitempty"`
+	LinkedEditingRangeProvider *BooleanOrLinkedEditingRangeOptionsOrLinkedEditingRangeRegistrationOptions `json:"linkedEditingRangeProvider,omitempty"`
 	// The server provides semantic tokens support.
 	//
 	// @since 3.16.0
@@ -2656,19 +2656,19 @@ type ServerCapabilities struct {
 	// The server provides moniker support.
 	//
 	// @since 3.16.0
-	MonikerProvider *MonikerOptionsOrMonikerRegistrationOptionsOrBoolean `json:"monikerProvider,omitempty"`
+	MonikerProvider *BooleanOrMonikerOptionsOrMonikerRegistrationOptions `json:"monikerProvider,omitempty"`
 	// The server provides type hierarchy support.
 	//
 	// @since 3.17.0
-	TypeHierarchyProvider *TypeHierarchyOptionsOrTypeHierarchyRegistrationOptionsOrBoolean `json:"typeHierarchyProvider,omitempty"`
+	TypeHierarchyProvider *BooleanOrTypeHierarchyOptionsOrTypeHierarchyRegistrationOptions `json:"typeHierarchyProvider,omitempty"`
 	// The server provides inline values.
 	//
 	// @since 3.17.0
-	InlineValueProvider *InlineValueOptionsOrInlineValueRegistrationOptionsOrBoolean `json:"inlineValueProvider,omitempty"`
+	InlineValueProvider *BooleanOrInlineValueOptionsOrInlineValueRegistrationOptions `json:"inlineValueProvider,omitempty"`
 	// The server provides inlay hints.
 	//
 	// @since 3.17.0
-	InlayHintProvider *InlayHintOptionsOrInlayHintRegistrationOptionsOrBoolean `json:"inlayHintProvider,omitempty"`
+	InlayHintProvider *BooleanOrInlayHintOptionsOrInlayHintRegistrationOptions `json:"inlayHintProvider,omitempty"`
 	// The server has support for pull model diagnostics.
 	//
 	// @since 3.17.0
@@ -2677,7 +2677,7 @@ type ServerCapabilities struct {
 	//
 	// @since 3.18.0
 	// @proposed
-	InlineCompletionProvider *InlineCompletionOptionsOrBoolean `json:"inlineCompletionProvider,omitempty"`
+	InlineCompletionProvider *BooleanOrInlineCompletionOptions `json:"inlineCompletionProvider,omitempty"`
 	// Workspace specific server capabilities.
 	Workspace *WorkspaceOptions `json:"workspace,omitempty"`
 	// Experimental server capabilities.
@@ -2819,7 +2819,7 @@ type CompletionItemDefaults struct {
 	// A default edit range.
 	//
 	// @since 3.17.0
-	EditRange *EditRangeWithInsertReplaceOrRange `json:"editRange,omitempty"`
+	EditRange *RangeOrEditRangeWithInsertReplace `json:"editRange,omitempty"`
 	// A default insert text format.
 	//
 	// @since 3.17.0
@@ -2960,7 +2960,7 @@ type SignatureInformation struct {
 	Label string `json:"label"`
 	// The human-readable doc-comment of this signature. Will be shown
 	// in the UI but can be omitted.
-	Documentation *MarkupContentOrString `json:"documentation,omitempty"`
+	Documentation *StringOrMarkupContent `json:"documentation,omitempty"`
 	// The parameters of this signature.
 	Parameters *[]ParameterInformation `json:"parameters,omitempty"`
 	// The index of the active parameter.
@@ -3366,7 +3366,7 @@ type NotebookDocumentFilterWithNotebook struct {
 	// The notebook to be synced If a string
 	// value is provided it matches against the
 	// notebook type. '*' matches every notebook.
-	Notebook NotebookDocumentFilterOrString `json:"notebook,omitempty"`
+	Notebook StringOrNotebookDocumentFilter `json:"notebook,omitempty"`
 	// The cells of the matching notebook to be synced.
 	Cells *[]NotebookCellLanguage `json:"cells,omitempty"`
 }
@@ -3376,7 +3376,7 @@ type NotebookDocumentFilterWithCells struct {
 	// The notebook to be synced If a string
 	// value is provided it matches against the
 	// notebook type. '*' matches every notebook.
-	Notebook *NotebookDocumentFilterOrString `json:"notebook,omitempty"`
+	Notebook *StringOrNotebookDocumentFilter `json:"notebook,omitempty"`
 	// The cells of the matching notebook to be synced.
 	Cells []NotebookCellLanguage `json:"cells"`
 }
@@ -3452,7 +3452,7 @@ type TextDocumentSyncOptions struct {
 	WillSaveWaitUntil *bool `json:"willSaveWaitUntil,omitempty"`
 	// If present save notifications are sent to the server. If omitted the notification should not be
 	// sent.
-	Save *SaveOptionsOrBoolean `json:"save,omitempty"`
+	Save *BooleanOrSaveOptions `json:"save,omitempty"`
 }
 
 // Defines workspace specific capabilities of the server.
@@ -3557,7 +3557,7 @@ type ParameterInformation struct {
 	Label StringOrUintegerPair `json:"label,omitempty"`
 	// The human-readable doc-comment of this parameter. Will be shown
 	// in the UI but can be omitted.
-	Documentation *MarkupContentOrString `json:"documentation,omitempty"`
+	Documentation *StringOrMarkupContent `json:"documentation,omitempty"`
 }
 
 // Documentation for a class of code actions.
@@ -3586,7 +3586,7 @@ type NotebookCellTextDocumentFilter struct {
 	// containing the notebook cell. If a string
 	// value is provided it matches against the
 	// notebook type. '*' matches every notebook.
-	Notebook NotebookDocumentFilterOrString `json:"notebook,omitempty"`
+	Notebook StringOrNotebookDocumentFilter `json:"notebook,omitempty"`
 	// A language id like `python`.
 	//
 	// Will be matched against the language id of the
@@ -3885,7 +3885,7 @@ type WorkspaceFoldersServerCapabilities struct {
 	// under which the notification is registered on the client
 	// side. The ID can be used to unregister for these events
 	// using the `client/unregisterCapability` request.
-	ChangeNotifications *BooleanOrString `json:"changeNotifications,omitempty"`
+	ChangeNotifications *StringOrBoolean `json:"changeNotifications,omitempty"`
 }
 
 // Options for notifications/requests for user operations on files.
@@ -4926,7 +4926,7 @@ type ClientSemanticTokensRequestOptions struct {
 	Range *BooleanOrEmptyObject `json:"range,omitempty"`
 	// The client will send the `textDocument/semanticTokens/full` request if
 	// the server provides a corresponding handler.
-	Full *ClientSemanticTokensRequestFullDeltaOrBoolean `json:"full,omitempty"`
+	Full *BooleanOrClientSemanticTokensRequestFullDelta `json:"full,omitempty"`
 }
 
 // @since 3.18.0
@@ -6408,7 +6408,7 @@ type DeclarationLink = LocationLink
 // The InlineValue types combines all inline value types into one type.
 //
 // @since 3.17.0
-type InlineValue = InlineValueEvaluatableExpressionOrInlineValueTextOrInlineValueVariableLookup
+type InlineValue = InlineValueTextOrInlineValueVariableLookupOrInlineValueEvaluatableExpression
 
 // The result of a document diagnostic pull request. A report can
 // either be a full report containing all diagnostics for the
@@ -6419,7 +6419,7 @@ type InlineValue = InlineValueEvaluatableExpressionOrInlineValueTextOrInlineValu
 // @since 3.17.0
 type DocumentDiagnosticReport = RelatedFullDocumentDiagnosticReportOrRelatedUnchangedDocumentDiagnosticReport
 
-type PrepareRenameResult = PrepareRenameDefaultBehaviorOrPrepareRenamePlaceholderOrRange
+type PrepareRenameResult = RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehavior
 
 // A document selector is the combination of one or many document filters.
 //
@@ -6456,13 +6456,13 @@ type TextDocumentContentChangeEvent = TextDocumentContentChangePartialOrTextDocu
 // @deprecated use MarkupContent instead.
 //
 // Deprecated: use MarkupContent instead.
-type MarkedString = MarkedStringWithLanguageOrString
+type MarkedString = StringOrMarkedStringWithLanguage
 
 // A document filter describes a top level text document or
 // a notebook cell document.
 //
 // @since 3.17.0 - support for NotebookCellTextDocumentFilter.
-type DocumentFilter = NotebookCellTextDocumentFilterOrTextDocumentFilter
+type DocumentFilter = TextDocumentFilterOrNotebookCellTextDocumentFilter
 
 // LSP object definition.
 // @since 3.17.0
@@ -6489,14 +6489,14 @@ type GlobPattern = PatternOrRelativePattern
 // @sample A language filter that applies to all package.json paths: `{ language: 'json', pattern: '**package.json' }`
 //
 // @since 3.17.0
-type TextDocumentFilter = TextDocumentFilterLanguageOrTextDocumentFilterPatternOrTextDocumentFilterScheme
+type TextDocumentFilter = TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPattern
 
 // A notebook document filter denotes a notebook document by
 // different properties. The properties will be match
 // against the notebook's URI (same as with documents)
 //
 // @since 3.17.0
-type NotebookDocumentFilter = NotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterPatternOrNotebookDocumentFilterScheme
+type NotebookDocumentFilter = NotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern
 
 // The glob pattern to watch relative to the base path. Glob patterns can have the following syntax:
 // - `*` to match one or more characters in a path segment
@@ -7007,40 +7007,40 @@ func assertOnlyOneTrue(message string, values ...bool) {
 	}
 }
 
-type CreateFileOrDeleteFileOrRenameFileOrTextDocumentEdit struct {
-	CreateFile       *CreateFile
-	DeleteFile       *DeleteFile
-	RenameFile       *RenameFile
+type TextDocumentEditOrCreateFileOrRenameFileOrDeleteFile struct {
 	TextDocumentEdit *TextDocumentEdit
+	CreateFile       *CreateFile
+	RenameFile       *RenameFile
+	DeleteFile       *DeleteFile
 }
 
-func (o CreateFileOrDeleteFileOrRenameFileOrTextDocumentEdit) MarshalJSON() ([]byte, error) {
-	assertOnlyOneTrue("invalid union type", o.CreateFile != nil, o.DeleteFile != nil, o.RenameFile != nil, o.TextDocumentEdit != nil)
+func (o TextDocumentEditOrCreateFileOrRenameFileOrDeleteFile) MarshalJSON() ([]byte, error) {
+	assertOnlyOneTrue("invalid union type", o.TextDocumentEdit != nil, o.CreateFile != nil, o.RenameFile != nil, o.DeleteFile != nil)
+	if o.TextDocumentEdit != nil {
+		return json.Marshal(o.TextDocumentEdit)
+	}
 	if o.CreateFile != nil {
 		return json.Marshal(o.CreateFile)
-	}
-	if o.DeleteFile != nil {
-		return json.Marshal(o.DeleteFile)
 	}
 	if o.RenameFile != nil {
 		return json.Marshal(o.RenameFile)
 	}
-	if o.TextDocumentEdit != nil {
-		return json.Marshal(o.TextDocumentEdit)
+	if o.DeleteFile != nil {
+		return json.Marshal(o.DeleteFile)
 	}
 	panic("unreachable")
 }
 
-func (o *CreateFileOrDeleteFileOrRenameFileOrTextDocumentEdit) UnmarshalJSON(data []byte) error {
-	*o = CreateFileOrDeleteFileOrRenameFileOrTextDocumentEdit{}
+func (o *TextDocumentEditOrCreateFileOrRenameFileOrDeleteFile) UnmarshalJSON(data []byte) error {
+	*o = TextDocumentEditOrCreateFileOrRenameFileOrDeleteFile{}
+	var vTextDocumentEdit TextDocumentEdit
+	if err := json.Unmarshal(data, &vTextDocumentEdit); err == nil {
+		o.TextDocumentEdit = &vTextDocumentEdit
+		return nil
+	}
 	var vCreateFile CreateFile
 	if err := json.Unmarshal(data, &vCreateFile); err == nil {
 		o.CreateFile = &vCreateFile
-		return nil
-	}
-	var vDeleteFile DeleteFile
-	if err := json.Unmarshal(data, &vDeleteFile); err == nil {
-		o.DeleteFile = &vDeleteFile
 		return nil
 	}
 	var vRenameFile RenameFile
@@ -7048,74 +7048,74 @@ func (o *CreateFileOrDeleteFileOrRenameFileOrTextDocumentEdit) UnmarshalJSON(dat
 		o.RenameFile = &vRenameFile
 		return nil
 	}
-	var vTextDocumentEdit TextDocumentEdit
-	if err := json.Unmarshal(data, &vTextDocumentEdit); err == nil {
-		o.TextDocumentEdit = &vTextDocumentEdit
+	var vDeleteFile DeleteFile
+	if err := json.Unmarshal(data, &vDeleteFile); err == nil {
+		o.DeleteFile = &vDeleteFile
 		return nil
 	}
-	return fmt.Errorf("invalid CreateFileOrDeleteFileOrRenameFileOrTextDocumentEdit: %s", data)
+	return fmt.Errorf("invalid TextDocumentEditOrCreateFileOrRenameFileOrDeleteFile: %s", data)
 }
 
-type ArrayOfInlayHintLabelPartOrString struct {
-	ArrayOfInlayHintLabelPart *[]InlayHintLabelPart
+type StringOrArrayOfInlayHintLabelPart struct {
 	String                    *string
+	ArrayOfInlayHintLabelPart *[]InlayHintLabelPart
 }
 
-func (o ArrayOfInlayHintLabelPartOrString) MarshalJSON() ([]byte, error) {
-	assertOnlyOneTrue("invalid union type", o.ArrayOfInlayHintLabelPart != nil, o.String != nil)
-	if o.ArrayOfInlayHintLabelPart != nil {
-		return json.Marshal(o.ArrayOfInlayHintLabelPart)
-	}
+func (o StringOrArrayOfInlayHintLabelPart) MarshalJSON() ([]byte, error) {
+	assertOnlyOneTrue("invalid union type", o.String != nil, o.ArrayOfInlayHintLabelPart != nil)
 	if o.String != nil {
 		return json.Marshal(o.String)
+	}
+	if o.ArrayOfInlayHintLabelPart != nil {
+		return json.Marshal(o.ArrayOfInlayHintLabelPart)
 	}
 	panic("unreachable")
 }
 
-func (o *ArrayOfInlayHintLabelPartOrString) UnmarshalJSON(data []byte) error {
-	*o = ArrayOfInlayHintLabelPartOrString{}
+func (o *StringOrArrayOfInlayHintLabelPart) UnmarshalJSON(data []byte) error {
+	*o = StringOrArrayOfInlayHintLabelPart{}
+	var vString string
+	if err := json.Unmarshal(data, &vString); err == nil {
+		o.String = &vString
+		return nil
+	}
 	var vArrayOfInlayHintLabelPart []InlayHintLabelPart
 	if err := json.Unmarshal(data, &vArrayOfInlayHintLabelPart); err == nil {
 		o.ArrayOfInlayHintLabelPart = &vArrayOfInlayHintLabelPart
 		return nil
 	}
+	return fmt.Errorf("invalid StringOrArrayOfInlayHintLabelPart: %s", data)
+}
+
+type StringOrMarkupContent struct {
+	String        *string
+	MarkupContent *MarkupContent
+}
+
+func (o StringOrMarkupContent) MarshalJSON() ([]byte, error) {
+	assertOnlyOneTrue("invalid union type", o.String != nil, o.MarkupContent != nil)
+	if o.String != nil {
+		return json.Marshal(o.String)
+	}
+	if o.MarkupContent != nil {
+		return json.Marshal(o.MarkupContent)
+	}
+	panic("unreachable")
+}
+
+func (o *StringOrMarkupContent) UnmarshalJSON(data []byte) error {
+	*o = StringOrMarkupContent{}
 	var vString string
 	if err := json.Unmarshal(data, &vString); err == nil {
 		o.String = &vString
 		return nil
 	}
-	return fmt.Errorf("invalid ArrayOfInlayHintLabelPartOrString: %s", data)
-}
-
-type MarkupContentOrString struct {
-	MarkupContent *MarkupContent
-	String        *string
-}
-
-func (o MarkupContentOrString) MarshalJSON() ([]byte, error) {
-	assertOnlyOneTrue("invalid union type", o.MarkupContent != nil, o.String != nil)
-	if o.MarkupContent != nil {
-		return json.Marshal(o.MarkupContent)
-	}
-	if o.String != nil {
-		return json.Marshal(o.String)
-	}
-	panic("unreachable")
-}
-
-func (o *MarkupContentOrString) UnmarshalJSON(data []byte) error {
-	*o = MarkupContentOrString{}
 	var vMarkupContent MarkupContent
 	if err := json.Unmarshal(data, &vMarkupContent); err == nil {
 		o.MarkupContent = &vMarkupContent
 		return nil
 	}
-	var vString string
-	if err := json.Unmarshal(data, &vString); err == nil {
-		o.String = &vString
-		return nil
-	}
-	return fmt.Errorf("invalid MarkupContentOrString: %s", data)
+	return fmt.Errorf("invalid StringOrMarkupContent: %s", data)
 }
 
 type FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport struct {
@@ -7149,112 +7149,112 @@ func (o *FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport) Unmars
 	return fmt.Errorf("invalid FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport: %s", data)
 }
 
-type StringValueOrString struct {
-	StringValue *StringValue
+type StringOrStringValue struct {
 	String      *string
+	StringValue *StringValue
 }
 
-func (o StringValueOrString) MarshalJSON() ([]byte, error) {
-	assertOnlyOneTrue("invalid union type", o.StringValue != nil, o.String != nil)
-	if o.StringValue != nil {
-		return json.Marshal(o.StringValue)
-	}
+func (o StringOrStringValue) MarshalJSON() ([]byte, error) {
+	assertOnlyOneTrue("invalid union type", o.String != nil, o.StringValue != nil)
 	if o.String != nil {
 		return json.Marshal(o.String)
+	}
+	if o.StringValue != nil {
+		return json.Marshal(o.StringValue)
 	}
 	panic("unreachable")
 }
 
-func (o *StringValueOrString) UnmarshalJSON(data []byte) error {
-	*o = StringValueOrString{}
+func (o *StringOrStringValue) UnmarshalJSON(data []byte) error {
+	*o = StringOrStringValue{}
+	var vString string
+	if err := json.Unmarshal(data, &vString); err == nil {
+		o.String = &vString
+		return nil
+	}
 	var vStringValue StringValue
 	if err := json.Unmarshal(data, &vStringValue); err == nil {
 		o.StringValue = &vStringValue
 		return nil
 	}
+	return fmt.Errorf("invalid StringOrStringValue: %s", data)
+}
+
+type StringOrArrayOfString struct {
+	String        *string
+	ArrayOfString *[]string
+}
+
+func (o StringOrArrayOfString) MarshalJSON() ([]byte, error) {
+	assertOnlyOneTrue("invalid union type", o.String != nil, o.ArrayOfString != nil)
+	if o.String != nil {
+		return json.Marshal(o.String)
+	}
+	if o.ArrayOfString != nil {
+		return json.Marshal(o.ArrayOfString)
+	}
+	panic("unreachable")
+}
+
+func (o *StringOrArrayOfString) UnmarshalJSON(data []byte) error {
+	*o = StringOrArrayOfString{}
 	var vString string
 	if err := json.Unmarshal(data, &vString); err == nil {
 		o.String = &vString
 		return nil
 	}
-	return fmt.Errorf("invalid StringValueOrString: %s", data)
-}
-
-type ArrayOfStringOrString struct {
-	ArrayOfString *[]string
-	String        *string
-}
-
-func (o ArrayOfStringOrString) MarshalJSON() ([]byte, error) {
-	assertOnlyOneTrue("invalid union type", o.ArrayOfString != nil, o.String != nil)
-	if o.ArrayOfString != nil {
-		return json.Marshal(o.ArrayOfString)
-	}
-	if o.String != nil {
-		return json.Marshal(o.String)
-	}
-	panic("unreachable")
-}
-
-func (o *ArrayOfStringOrString) UnmarshalJSON(data []byte) error {
-	*o = ArrayOfStringOrString{}
 	var vArrayOfString []string
 	if err := json.Unmarshal(data, &vArrayOfString); err == nil {
 		o.ArrayOfString = &vArrayOfString
 		return nil
 	}
-	var vString string
-	if err := json.Unmarshal(data, &vString); err == nil {
-		o.String = &vString
-		return nil
-	}
-	return fmt.Errorf("invalid ArrayOfStringOrString: %s", data)
+	return fmt.Errorf("invalid StringOrArrayOfString: %s", data)
 }
 
-type InsertReplaceEditOrTextEdit struct {
-	InsertReplaceEdit *InsertReplaceEdit
+type TextEditOrInsertReplaceEdit struct {
 	TextEdit          *TextEdit
+	InsertReplaceEdit *InsertReplaceEdit
 }
 
-func (o InsertReplaceEditOrTextEdit) MarshalJSON() ([]byte, error) {
-	assertOnlyOneTrue("invalid union type", o.InsertReplaceEdit != nil, o.TextEdit != nil)
-	if o.InsertReplaceEdit != nil {
-		return json.Marshal(o.InsertReplaceEdit)
-	}
+func (o TextEditOrInsertReplaceEdit) MarshalJSON() ([]byte, error) {
+	assertOnlyOneTrue("invalid union type", o.TextEdit != nil, o.InsertReplaceEdit != nil)
 	if o.TextEdit != nil {
 		return json.Marshal(o.TextEdit)
+	}
+	if o.InsertReplaceEdit != nil {
+		return json.Marshal(o.InsertReplaceEdit)
 	}
 	panic("unreachable")
 }
 
-func (o *InsertReplaceEditOrTextEdit) UnmarshalJSON(data []byte) error {
-	*o = InsertReplaceEditOrTextEdit{}
-	var vInsertReplaceEdit InsertReplaceEdit
-	if err := json.Unmarshal(data, &vInsertReplaceEdit); err == nil {
-		o.InsertReplaceEdit = &vInsertReplaceEdit
-		return nil
-	}
+func (o *TextEditOrInsertReplaceEdit) UnmarshalJSON(data []byte) error {
+	*o = TextEditOrInsertReplaceEdit{}
 	var vTextEdit TextEdit
 	if err := json.Unmarshal(data, &vTextEdit); err == nil {
 		o.TextEdit = &vTextEdit
 		return nil
 	}
-	return fmt.Errorf("invalid InsertReplaceEditOrTextEdit: %s", data)
+	var vInsertReplaceEdit InsertReplaceEdit
+	if err := json.Unmarshal(data, &vInsertReplaceEdit); err == nil {
+		o.InsertReplaceEdit = &vInsertReplaceEdit
+		return nil
+	}
+	return fmt.Errorf("invalid TextEditOrInsertReplaceEdit: %s", data)
 }
 
-type MarkedStringOrMarkupContentOrArrayOfMarkedString struct {
-	MarkedString        *MarkedString
+type MarkupContentOrMarkedStringOrArrayOfMarkedString struct {
 	MarkupContent       *MarkupContent
+	MarkedString        *MarkedString
 	ArrayOfMarkedString *[]MarkedString
 }
 
-func (o MarkedStringOrMarkupContentOrArrayOfMarkedString) MarshalJSON() ([]byte, error) {
-	assertOnlyOneTrue("invalid union type", o.MarkedString != nil, o.MarkupContent != nil, o.ArrayOfMarkedString != nil)
-	if o.MarkedString != nil {
-		return json.Marshal(o.MarkedString)
-	}
+func (o MarkupContentOrMarkedStringOrArrayOfMarkedString) MarshalJSON() ([]byte, error) {
+	assertOnlyOneTrue("invalid union type", o.MarkupContent != nil, o.MarkedString != nil, o.ArrayOfMarkedString != nil)
 	if o.MarkupContent != nil {
 		return json.Marshal(o.MarkupContent)
+	}
+	if o.MarkedString != nil {
+		return json.Marshal(o.MarkedString)
 	}
 	if o.ArrayOfMarkedString != nil {
 		return json.Marshal(o.ArrayOfMarkedString)
@@ -7262,16 +7262,16 @@ func (o MarkedStringOrMarkupContentOrArrayOfMarkedString) MarshalJSON() ([]byte,
 	panic("unreachable")
 }
 
-func (o *MarkedStringOrMarkupContentOrArrayOfMarkedString) UnmarshalJSON(data []byte) error {
-	*o = MarkedStringOrMarkupContentOrArrayOfMarkedString{}
-	var vMarkedString MarkedString
-	if err := json.Unmarshal(data, &vMarkedString); err == nil {
-		o.MarkedString = &vMarkedString
-		return nil
-	}
+func (o *MarkupContentOrMarkedStringOrArrayOfMarkedString) UnmarshalJSON(data []byte) error {
+	*o = MarkupContentOrMarkedStringOrArrayOfMarkedString{}
 	var vMarkupContent MarkupContent
 	if err := json.Unmarshal(data, &vMarkupContent); err == nil {
 		o.MarkupContent = &vMarkupContent
+		return nil
+	}
+	var vMarkedString MarkedString
+	if err := json.Unmarshal(data, &vMarkedString); err == nil {
+		o.MarkedString = &vMarkedString
 		return nil
 	}
 	var vArrayOfMarkedString []MarkedString
@@ -7279,7 +7279,7 @@ func (o *MarkedStringOrMarkupContentOrArrayOfMarkedString) UnmarshalJSON(data []
 		o.ArrayOfMarkedString = &vArrayOfMarkedString
 		return nil
 	}
-	return fmt.Errorf("invalid MarkedStringOrMarkupContentOrArrayOfMarkedString: %s", data)
+	return fmt.Errorf("invalid MarkupContentOrMarkedStringOrArrayOfMarkedString: %s", data)
 }
 
 type LocationOrLocationUriOnly struct {
@@ -7375,59 +7375,64 @@ func (o *BooleanOrEmptyObject) UnmarshalJSON(data []byte) error {
 	return fmt.Errorf("invalid BooleanOrEmptyObject: %s", data)
 }
 
-type SemanticTokensFullDeltaOrBoolean struct {
-	SemanticTokensFullDelta *SemanticTokensFullDelta
+type BooleanOrSemanticTokensFullDelta struct {
 	Boolean                 *bool
+	SemanticTokensFullDelta *SemanticTokensFullDelta
 }
 
-func (o SemanticTokensFullDeltaOrBoolean) MarshalJSON() ([]byte, error) {
-	assertOnlyOneTrue("invalid union type", o.SemanticTokensFullDelta != nil, o.Boolean != nil)
-	if o.SemanticTokensFullDelta != nil {
-		return json.Marshal(o.SemanticTokensFullDelta)
-	}
+func (o BooleanOrSemanticTokensFullDelta) MarshalJSON() ([]byte, error) {
+	assertOnlyOneTrue("invalid union type", o.Boolean != nil, o.SemanticTokensFullDelta != nil)
 	if o.Boolean != nil {
 		return json.Marshal(o.Boolean)
+	}
+	if o.SemanticTokensFullDelta != nil {
+		return json.Marshal(o.SemanticTokensFullDelta)
 	}
 	panic("unreachable")
 }
 
-func (o *SemanticTokensFullDeltaOrBoolean) UnmarshalJSON(data []byte) error {
-	*o = SemanticTokensFullDeltaOrBoolean{}
-	var vSemanticTokensFullDelta SemanticTokensFullDelta
-	if err := json.Unmarshal(data, &vSemanticTokensFullDelta); err == nil {
-		o.SemanticTokensFullDelta = &vSemanticTokensFullDelta
-		return nil
-	}
+func (o *BooleanOrSemanticTokensFullDelta) UnmarshalJSON(data []byte) error {
+	*o = BooleanOrSemanticTokensFullDelta{}
 	var vBoolean bool
 	if err := json.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
 		return nil
 	}
-	return fmt.Errorf("invalid SemanticTokensFullDeltaOrBoolean: %s", data)
+	var vSemanticTokensFullDelta SemanticTokensFullDelta
+	if err := json.Unmarshal(data, &vSemanticTokensFullDelta); err == nil {
+		o.SemanticTokensFullDelta = &vSemanticTokensFullDelta
+		return nil
+	}
+	return fmt.Errorf("invalid BooleanOrSemanticTokensFullDelta: %s", data)
 }
 
-type AnnotatedTextEditOrSnippetTextEditOrTextEdit struct {
+type TextEditOrAnnotatedTextEditOrSnippetTextEdit struct {
+	TextEdit          *TextEdit
 	AnnotatedTextEdit *AnnotatedTextEdit
 	SnippetTextEdit   *SnippetTextEdit
-	TextEdit          *TextEdit
 }
 
-func (o AnnotatedTextEditOrSnippetTextEditOrTextEdit) MarshalJSON() ([]byte, error) {
-	assertOnlyOneTrue("invalid union type", o.AnnotatedTextEdit != nil, o.SnippetTextEdit != nil, o.TextEdit != nil)
+func (o TextEditOrAnnotatedTextEditOrSnippetTextEdit) MarshalJSON() ([]byte, error) {
+	assertOnlyOneTrue("invalid union type", o.TextEdit != nil, o.AnnotatedTextEdit != nil, o.SnippetTextEdit != nil)
+	if o.TextEdit != nil {
+		return json.Marshal(o.TextEdit)
+	}
 	if o.AnnotatedTextEdit != nil {
 		return json.Marshal(o.AnnotatedTextEdit)
 	}
 	if o.SnippetTextEdit != nil {
 		return json.Marshal(o.SnippetTextEdit)
 	}
-	if o.TextEdit != nil {
-		return json.Marshal(o.TextEdit)
-	}
 	panic("unreachable")
 }
 
-func (o *AnnotatedTextEditOrSnippetTextEditOrTextEdit) UnmarshalJSON(data []byte) error {
-	*o = AnnotatedTextEditOrSnippetTextEditOrTextEdit{}
+func (o *TextEditOrAnnotatedTextEditOrSnippetTextEdit) UnmarshalJSON(data []byte) error {
+	*o = TextEditOrAnnotatedTextEditOrSnippetTextEdit{}
+	var vTextEdit TextEdit
+	if err := json.Unmarshal(data, &vTextEdit); err == nil {
+		o.TextEdit = &vTextEdit
+		return nil
+	}
 	var vAnnotatedTextEdit AnnotatedTextEdit
 	if err := json.Unmarshal(data, &vAnnotatedTextEdit); err == nil {
 		o.AnnotatedTextEdit = &vAnnotatedTextEdit
@@ -7438,74 +7443,69 @@ func (o *AnnotatedTextEditOrSnippetTextEditOrTextEdit) UnmarshalJSON(data []byte
 		o.SnippetTextEdit = &vSnippetTextEdit
 		return nil
 	}
-	var vTextEdit TextEdit
-	if err := json.Unmarshal(data, &vTextEdit); err == nil {
-		o.TextEdit = &vTextEdit
-		return nil
-	}
-	return fmt.Errorf("invalid AnnotatedTextEditOrSnippetTextEditOrTextEdit: %s", data)
+	return fmt.Errorf("invalid TextEditOrAnnotatedTextEditOrSnippetTextEdit: %s", data)
 }
 
-type NotebookDocumentFilterWithCellsOrNotebookDocumentFilterWithNotebook struct {
-	NotebookDocumentFilterWithCells    *NotebookDocumentFilterWithCells
+type NotebookDocumentFilterWithNotebookOrNotebookDocumentFilterWithCells struct {
 	NotebookDocumentFilterWithNotebook *NotebookDocumentFilterWithNotebook
+	NotebookDocumentFilterWithCells    *NotebookDocumentFilterWithCells
 }
 
-func (o NotebookDocumentFilterWithCellsOrNotebookDocumentFilterWithNotebook) MarshalJSON() ([]byte, error) {
-	assertOnlyOneTrue("invalid union type", o.NotebookDocumentFilterWithCells != nil, o.NotebookDocumentFilterWithNotebook != nil)
-	if o.NotebookDocumentFilterWithCells != nil {
-		return json.Marshal(o.NotebookDocumentFilterWithCells)
-	}
+func (o NotebookDocumentFilterWithNotebookOrNotebookDocumentFilterWithCells) MarshalJSON() ([]byte, error) {
+	assertOnlyOneTrue("invalid union type", o.NotebookDocumentFilterWithNotebook != nil, o.NotebookDocumentFilterWithCells != nil)
 	if o.NotebookDocumentFilterWithNotebook != nil {
 		return json.Marshal(o.NotebookDocumentFilterWithNotebook)
+	}
+	if o.NotebookDocumentFilterWithCells != nil {
+		return json.Marshal(o.NotebookDocumentFilterWithCells)
 	}
 	panic("unreachable")
 }
 
-func (o *NotebookDocumentFilterWithCellsOrNotebookDocumentFilterWithNotebook) UnmarshalJSON(data []byte) error {
-	*o = NotebookDocumentFilterWithCellsOrNotebookDocumentFilterWithNotebook{}
-	var vNotebookDocumentFilterWithCells NotebookDocumentFilterWithCells
-	if err := json.Unmarshal(data, &vNotebookDocumentFilterWithCells); err == nil {
-		o.NotebookDocumentFilterWithCells = &vNotebookDocumentFilterWithCells
-		return nil
-	}
+func (o *NotebookDocumentFilterWithNotebookOrNotebookDocumentFilterWithCells) UnmarshalJSON(data []byte) error {
+	*o = NotebookDocumentFilterWithNotebookOrNotebookDocumentFilterWithCells{}
 	var vNotebookDocumentFilterWithNotebook NotebookDocumentFilterWithNotebook
 	if err := json.Unmarshal(data, &vNotebookDocumentFilterWithNotebook); err == nil {
 		o.NotebookDocumentFilterWithNotebook = &vNotebookDocumentFilterWithNotebook
 		return nil
 	}
-	return fmt.Errorf("invalid NotebookDocumentFilterWithCellsOrNotebookDocumentFilterWithNotebook: %s", data)
-}
-
-type TextDocumentSyncKindOrTextDocumentSyncOptions struct {
-	TextDocumentSyncKind    *TextDocumentSyncKind
-	TextDocumentSyncOptions *TextDocumentSyncOptions
-}
-
-func (o TextDocumentSyncKindOrTextDocumentSyncOptions) MarshalJSON() ([]byte, error) {
-	assertOnlyOneTrue("invalid union type", o.TextDocumentSyncKind != nil, o.TextDocumentSyncOptions != nil)
-	if o.TextDocumentSyncKind != nil {
-		return json.Marshal(o.TextDocumentSyncKind)
+	var vNotebookDocumentFilterWithCells NotebookDocumentFilterWithCells
+	if err := json.Unmarshal(data, &vNotebookDocumentFilterWithCells); err == nil {
+		o.NotebookDocumentFilterWithCells = &vNotebookDocumentFilterWithCells
+		return nil
 	}
+	return fmt.Errorf("invalid NotebookDocumentFilterWithNotebookOrNotebookDocumentFilterWithCells: %s", data)
+}
+
+type TextDocumentSyncOptionsOrTextDocumentSyncKind struct {
+	TextDocumentSyncOptions *TextDocumentSyncOptions
+	TextDocumentSyncKind    *TextDocumentSyncKind
+}
+
+func (o TextDocumentSyncOptionsOrTextDocumentSyncKind) MarshalJSON() ([]byte, error) {
+	assertOnlyOneTrue("invalid union type", o.TextDocumentSyncOptions != nil, o.TextDocumentSyncKind != nil)
 	if o.TextDocumentSyncOptions != nil {
 		return json.Marshal(o.TextDocumentSyncOptions)
+	}
+	if o.TextDocumentSyncKind != nil {
+		return json.Marshal(o.TextDocumentSyncKind)
 	}
 	panic("unreachable")
 }
 
-func (o *TextDocumentSyncKindOrTextDocumentSyncOptions) UnmarshalJSON(data []byte) error {
-	*o = TextDocumentSyncKindOrTextDocumentSyncOptions{}
-	var vTextDocumentSyncKind TextDocumentSyncKind
-	if err := json.Unmarshal(data, &vTextDocumentSyncKind); err == nil {
-		o.TextDocumentSyncKind = &vTextDocumentSyncKind
-		return nil
-	}
+func (o *TextDocumentSyncOptionsOrTextDocumentSyncKind) UnmarshalJSON(data []byte) error {
+	*o = TextDocumentSyncOptionsOrTextDocumentSyncKind{}
 	var vTextDocumentSyncOptions TextDocumentSyncOptions
 	if err := json.Unmarshal(data, &vTextDocumentSyncOptions); err == nil {
 		o.TextDocumentSyncOptions = &vTextDocumentSyncOptions
 		return nil
 	}
-	return fmt.Errorf("invalid TextDocumentSyncKindOrTextDocumentSyncOptions: %s", data)
+	var vTextDocumentSyncKind TextDocumentSyncKind
+	if err := json.Unmarshal(data, &vTextDocumentSyncKind); err == nil {
+		o.TextDocumentSyncKind = &vTextDocumentSyncKind
+		return nil
+	}
+	return fmt.Errorf("invalid TextDocumentSyncOptionsOrTextDocumentSyncKind: %s", data)
 }
 
 type NotebookDocumentSyncOptionsOrNotebookDocumentSyncRegistrationOptions struct {
@@ -7539,59 +7539,64 @@ func (o *NotebookDocumentSyncOptionsOrNotebookDocumentSyncRegistrationOptions) U
 	return fmt.Errorf("invalid NotebookDocumentSyncOptionsOrNotebookDocumentSyncRegistrationOptions: %s", data)
 }
 
-type HoverOptionsOrBoolean struct {
-	HoverOptions *HoverOptions
+type BooleanOrHoverOptions struct {
 	Boolean      *bool
+	HoverOptions *HoverOptions
 }
 
-func (o HoverOptionsOrBoolean) MarshalJSON() ([]byte, error) {
-	assertOnlyOneTrue("invalid union type", o.HoverOptions != nil, o.Boolean != nil)
-	if o.HoverOptions != nil {
-		return json.Marshal(o.HoverOptions)
-	}
+func (o BooleanOrHoverOptions) MarshalJSON() ([]byte, error) {
+	assertOnlyOneTrue("invalid union type", o.Boolean != nil, o.HoverOptions != nil)
 	if o.Boolean != nil {
 		return json.Marshal(o.Boolean)
+	}
+	if o.HoverOptions != nil {
+		return json.Marshal(o.HoverOptions)
 	}
 	panic("unreachable")
 }
 
-func (o *HoverOptionsOrBoolean) UnmarshalJSON(data []byte) error {
-	*o = HoverOptionsOrBoolean{}
-	var vHoverOptions HoverOptions
-	if err := json.Unmarshal(data, &vHoverOptions); err == nil {
-		o.HoverOptions = &vHoverOptions
-		return nil
-	}
+func (o *BooleanOrHoverOptions) UnmarshalJSON(data []byte) error {
+	*o = BooleanOrHoverOptions{}
 	var vBoolean bool
 	if err := json.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
 		return nil
 	}
-	return fmt.Errorf("invalid HoverOptionsOrBoolean: %s", data)
+	var vHoverOptions HoverOptions
+	if err := json.Unmarshal(data, &vHoverOptions); err == nil {
+		o.HoverOptions = &vHoverOptions
+		return nil
+	}
+	return fmt.Errorf("invalid BooleanOrHoverOptions: %s", data)
 }
 
-type DeclarationOptionsOrDeclarationRegistrationOptionsOrBoolean struct {
+type BooleanOrDeclarationOptionsOrDeclarationRegistrationOptions struct {
+	Boolean                        *bool
 	DeclarationOptions             *DeclarationOptions
 	DeclarationRegistrationOptions *DeclarationRegistrationOptions
-	Boolean                        *bool
 }
 
-func (o DeclarationOptionsOrDeclarationRegistrationOptionsOrBoolean) MarshalJSON() ([]byte, error) {
-	assertOnlyOneTrue("invalid union type", o.DeclarationOptions != nil, o.DeclarationRegistrationOptions != nil, o.Boolean != nil)
+func (o BooleanOrDeclarationOptionsOrDeclarationRegistrationOptions) MarshalJSON() ([]byte, error) {
+	assertOnlyOneTrue("invalid union type", o.Boolean != nil, o.DeclarationOptions != nil, o.DeclarationRegistrationOptions != nil)
+	if o.Boolean != nil {
+		return json.Marshal(o.Boolean)
+	}
 	if o.DeclarationOptions != nil {
 		return json.Marshal(o.DeclarationOptions)
 	}
 	if o.DeclarationRegistrationOptions != nil {
 		return json.Marshal(o.DeclarationRegistrationOptions)
 	}
-	if o.Boolean != nil {
-		return json.Marshal(o.Boolean)
-	}
 	panic("unreachable")
 }
 
-func (o *DeclarationOptionsOrDeclarationRegistrationOptionsOrBoolean) UnmarshalJSON(data []byte) error {
-	*o = DeclarationOptionsOrDeclarationRegistrationOptionsOrBoolean{}
+func (o *BooleanOrDeclarationOptionsOrDeclarationRegistrationOptions) UnmarshalJSON(data []byte) error {
+	*o = BooleanOrDeclarationOptionsOrDeclarationRegistrationOptions{}
+	var vBoolean bool
+	if err := json.Unmarshal(data, &vBoolean); err == nil {
+		o.Boolean = &vBoolean
+		return nil
+	}
 	var vDeclarationOptions DeclarationOptions
 	if err := json.Unmarshal(data, &vDeclarationOptions); err == nil {
 		o.DeclarationOptions = &vDeclarationOptions
@@ -7602,67 +7607,67 @@ func (o *DeclarationOptionsOrDeclarationRegistrationOptionsOrBoolean) UnmarshalJ
 		o.DeclarationRegistrationOptions = &vDeclarationRegistrationOptions
 		return nil
 	}
+	return fmt.Errorf("invalid BooleanOrDeclarationOptionsOrDeclarationRegistrationOptions: %s", data)
+}
+
+type BooleanOrDefinitionOptions struct {
+	Boolean           *bool
+	DefinitionOptions *DefinitionOptions
+}
+
+func (o BooleanOrDefinitionOptions) MarshalJSON() ([]byte, error) {
+	assertOnlyOneTrue("invalid union type", o.Boolean != nil, o.DefinitionOptions != nil)
+	if o.Boolean != nil {
+		return json.Marshal(o.Boolean)
+	}
+	if o.DefinitionOptions != nil {
+		return json.Marshal(o.DefinitionOptions)
+	}
+	panic("unreachable")
+}
+
+func (o *BooleanOrDefinitionOptions) UnmarshalJSON(data []byte) error {
+	*o = BooleanOrDefinitionOptions{}
 	var vBoolean bool
 	if err := json.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
 		return nil
 	}
-	return fmt.Errorf("invalid DeclarationOptionsOrDeclarationRegistrationOptionsOrBoolean: %s", data)
-}
-
-type DefinitionOptionsOrBoolean struct {
-	DefinitionOptions *DefinitionOptions
-	Boolean           *bool
-}
-
-func (o DefinitionOptionsOrBoolean) MarshalJSON() ([]byte, error) {
-	assertOnlyOneTrue("invalid union type", o.DefinitionOptions != nil, o.Boolean != nil)
-	if o.DefinitionOptions != nil {
-		return json.Marshal(o.DefinitionOptions)
-	}
-	if o.Boolean != nil {
-		return json.Marshal(o.Boolean)
-	}
-	panic("unreachable")
-}
-
-func (o *DefinitionOptionsOrBoolean) UnmarshalJSON(data []byte) error {
-	*o = DefinitionOptionsOrBoolean{}
 	var vDefinitionOptions DefinitionOptions
 	if err := json.Unmarshal(data, &vDefinitionOptions); err == nil {
 		o.DefinitionOptions = &vDefinitionOptions
 		return nil
 	}
-	var vBoolean bool
-	if err := json.Unmarshal(data, &vBoolean); err == nil {
-		o.Boolean = &vBoolean
-		return nil
-	}
-	return fmt.Errorf("invalid DefinitionOptionsOrBoolean: %s", data)
+	return fmt.Errorf("invalid BooleanOrDefinitionOptions: %s", data)
 }
 
-type TypeDefinitionOptionsOrTypeDefinitionRegistrationOptionsOrBoolean struct {
+type BooleanOrTypeDefinitionOptionsOrTypeDefinitionRegistrationOptions struct {
+	Boolean                           *bool
 	TypeDefinitionOptions             *TypeDefinitionOptions
 	TypeDefinitionRegistrationOptions *TypeDefinitionRegistrationOptions
-	Boolean                           *bool
 }
 
-func (o TypeDefinitionOptionsOrTypeDefinitionRegistrationOptionsOrBoolean) MarshalJSON() ([]byte, error) {
-	assertOnlyOneTrue("invalid union type", o.TypeDefinitionOptions != nil, o.TypeDefinitionRegistrationOptions != nil, o.Boolean != nil)
+func (o BooleanOrTypeDefinitionOptionsOrTypeDefinitionRegistrationOptions) MarshalJSON() ([]byte, error) {
+	assertOnlyOneTrue("invalid union type", o.Boolean != nil, o.TypeDefinitionOptions != nil, o.TypeDefinitionRegistrationOptions != nil)
+	if o.Boolean != nil {
+		return json.Marshal(o.Boolean)
+	}
 	if o.TypeDefinitionOptions != nil {
 		return json.Marshal(o.TypeDefinitionOptions)
 	}
 	if o.TypeDefinitionRegistrationOptions != nil {
 		return json.Marshal(o.TypeDefinitionRegistrationOptions)
 	}
-	if o.Boolean != nil {
-		return json.Marshal(o.Boolean)
-	}
 	panic("unreachable")
 }
 
-func (o *TypeDefinitionOptionsOrTypeDefinitionRegistrationOptionsOrBoolean) UnmarshalJSON(data []byte) error {
-	*o = TypeDefinitionOptionsOrTypeDefinitionRegistrationOptionsOrBoolean{}
+func (o *BooleanOrTypeDefinitionOptionsOrTypeDefinitionRegistrationOptions) UnmarshalJSON(data []byte) error {
+	*o = BooleanOrTypeDefinitionOptionsOrTypeDefinitionRegistrationOptions{}
+	var vBoolean bool
+	if err := json.Unmarshal(data, &vBoolean); err == nil {
+		o.Boolean = &vBoolean
+		return nil
+	}
 	var vTypeDefinitionOptions TypeDefinitionOptions
 	if err := json.Unmarshal(data, &vTypeDefinitionOptions); err == nil {
 		o.TypeDefinitionOptions = &vTypeDefinitionOptions
@@ -7673,36 +7678,36 @@ func (o *TypeDefinitionOptionsOrTypeDefinitionRegistrationOptionsOrBoolean) Unma
 		o.TypeDefinitionRegistrationOptions = &vTypeDefinitionRegistrationOptions
 		return nil
 	}
-	var vBoolean bool
-	if err := json.Unmarshal(data, &vBoolean); err == nil {
-		o.Boolean = &vBoolean
-		return nil
-	}
-	return fmt.Errorf("invalid TypeDefinitionOptionsOrTypeDefinitionRegistrationOptionsOrBoolean: %s", data)
+	return fmt.Errorf("invalid BooleanOrTypeDefinitionOptionsOrTypeDefinitionRegistrationOptions: %s", data)
 }
 
-type ImplementationOptionsOrImplementationRegistrationOptionsOrBoolean struct {
+type BooleanOrImplementationOptionsOrImplementationRegistrationOptions struct {
+	Boolean                           *bool
 	ImplementationOptions             *ImplementationOptions
 	ImplementationRegistrationOptions *ImplementationRegistrationOptions
-	Boolean                           *bool
 }
 
-func (o ImplementationOptionsOrImplementationRegistrationOptionsOrBoolean) MarshalJSON() ([]byte, error) {
-	assertOnlyOneTrue("invalid union type", o.ImplementationOptions != nil, o.ImplementationRegistrationOptions != nil, o.Boolean != nil)
+func (o BooleanOrImplementationOptionsOrImplementationRegistrationOptions) MarshalJSON() ([]byte, error) {
+	assertOnlyOneTrue("invalid union type", o.Boolean != nil, o.ImplementationOptions != nil, o.ImplementationRegistrationOptions != nil)
+	if o.Boolean != nil {
+		return json.Marshal(o.Boolean)
+	}
 	if o.ImplementationOptions != nil {
 		return json.Marshal(o.ImplementationOptions)
 	}
 	if o.ImplementationRegistrationOptions != nil {
 		return json.Marshal(o.ImplementationRegistrationOptions)
 	}
-	if o.Boolean != nil {
-		return json.Marshal(o.Boolean)
-	}
 	panic("unreachable")
 }
 
-func (o *ImplementationOptionsOrImplementationRegistrationOptionsOrBoolean) UnmarshalJSON(data []byte) error {
-	*o = ImplementationOptionsOrImplementationRegistrationOptionsOrBoolean{}
+func (o *BooleanOrImplementationOptionsOrImplementationRegistrationOptions) UnmarshalJSON(data []byte) error {
+	*o = BooleanOrImplementationOptionsOrImplementationRegistrationOptions{}
+	var vBoolean bool
+	if err := json.Unmarshal(data, &vBoolean); err == nil {
+		o.Boolean = &vBoolean
+		return nil
+	}
 	var vImplementationOptions ImplementationOptions
 	if err := json.Unmarshal(data, &vImplementationOptions); err == nil {
 		o.ImplementationOptions = &vImplementationOptions
@@ -7713,160 +7718,160 @@ func (o *ImplementationOptionsOrImplementationRegistrationOptionsOrBoolean) Unma
 		o.ImplementationRegistrationOptions = &vImplementationRegistrationOptions
 		return nil
 	}
+	return fmt.Errorf("invalid BooleanOrImplementationOptionsOrImplementationRegistrationOptions: %s", data)
+}
+
+type BooleanOrReferenceOptions struct {
+	Boolean          *bool
+	ReferenceOptions *ReferenceOptions
+}
+
+func (o BooleanOrReferenceOptions) MarshalJSON() ([]byte, error) {
+	assertOnlyOneTrue("invalid union type", o.Boolean != nil, o.ReferenceOptions != nil)
+	if o.Boolean != nil {
+		return json.Marshal(o.Boolean)
+	}
+	if o.ReferenceOptions != nil {
+		return json.Marshal(o.ReferenceOptions)
+	}
+	panic("unreachable")
+}
+
+func (o *BooleanOrReferenceOptions) UnmarshalJSON(data []byte) error {
+	*o = BooleanOrReferenceOptions{}
 	var vBoolean bool
 	if err := json.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
 		return nil
 	}
-	return fmt.Errorf("invalid ImplementationOptionsOrImplementationRegistrationOptionsOrBoolean: %s", data)
-}
-
-type ReferenceOptionsOrBoolean struct {
-	ReferenceOptions *ReferenceOptions
-	Boolean          *bool
-}
-
-func (o ReferenceOptionsOrBoolean) MarshalJSON() ([]byte, error) {
-	assertOnlyOneTrue("invalid union type", o.ReferenceOptions != nil, o.Boolean != nil)
-	if o.ReferenceOptions != nil {
-		return json.Marshal(o.ReferenceOptions)
-	}
-	if o.Boolean != nil {
-		return json.Marshal(o.Boolean)
-	}
-	panic("unreachable")
-}
-
-func (o *ReferenceOptionsOrBoolean) UnmarshalJSON(data []byte) error {
-	*o = ReferenceOptionsOrBoolean{}
 	var vReferenceOptions ReferenceOptions
 	if err := json.Unmarshal(data, &vReferenceOptions); err == nil {
 		o.ReferenceOptions = &vReferenceOptions
 		return nil
 	}
+	return fmt.Errorf("invalid BooleanOrReferenceOptions: %s", data)
+}
+
+type BooleanOrDocumentHighlightOptions struct {
+	Boolean                  *bool
+	DocumentHighlightOptions *DocumentHighlightOptions
+}
+
+func (o BooleanOrDocumentHighlightOptions) MarshalJSON() ([]byte, error) {
+	assertOnlyOneTrue("invalid union type", o.Boolean != nil, o.DocumentHighlightOptions != nil)
+	if o.Boolean != nil {
+		return json.Marshal(o.Boolean)
+	}
+	if o.DocumentHighlightOptions != nil {
+		return json.Marshal(o.DocumentHighlightOptions)
+	}
+	panic("unreachable")
+}
+
+func (o *BooleanOrDocumentHighlightOptions) UnmarshalJSON(data []byte) error {
+	*o = BooleanOrDocumentHighlightOptions{}
 	var vBoolean bool
 	if err := json.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
 		return nil
 	}
-	return fmt.Errorf("invalid ReferenceOptionsOrBoolean: %s", data)
-}
-
-type DocumentHighlightOptionsOrBoolean struct {
-	DocumentHighlightOptions *DocumentHighlightOptions
-	Boolean                  *bool
-}
-
-func (o DocumentHighlightOptionsOrBoolean) MarshalJSON() ([]byte, error) {
-	assertOnlyOneTrue("invalid union type", o.DocumentHighlightOptions != nil, o.Boolean != nil)
-	if o.DocumentHighlightOptions != nil {
-		return json.Marshal(o.DocumentHighlightOptions)
-	}
-	if o.Boolean != nil {
-		return json.Marshal(o.Boolean)
-	}
-	panic("unreachable")
-}
-
-func (o *DocumentHighlightOptionsOrBoolean) UnmarshalJSON(data []byte) error {
-	*o = DocumentHighlightOptionsOrBoolean{}
 	var vDocumentHighlightOptions DocumentHighlightOptions
 	if err := json.Unmarshal(data, &vDocumentHighlightOptions); err == nil {
 		o.DocumentHighlightOptions = &vDocumentHighlightOptions
 		return nil
 	}
+	return fmt.Errorf("invalid BooleanOrDocumentHighlightOptions: %s", data)
+}
+
+type BooleanOrDocumentSymbolOptions struct {
+	Boolean               *bool
+	DocumentSymbolOptions *DocumentSymbolOptions
+}
+
+func (o BooleanOrDocumentSymbolOptions) MarshalJSON() ([]byte, error) {
+	assertOnlyOneTrue("invalid union type", o.Boolean != nil, o.DocumentSymbolOptions != nil)
+	if o.Boolean != nil {
+		return json.Marshal(o.Boolean)
+	}
+	if o.DocumentSymbolOptions != nil {
+		return json.Marshal(o.DocumentSymbolOptions)
+	}
+	panic("unreachable")
+}
+
+func (o *BooleanOrDocumentSymbolOptions) UnmarshalJSON(data []byte) error {
+	*o = BooleanOrDocumentSymbolOptions{}
 	var vBoolean bool
 	if err := json.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
 		return nil
 	}
-	return fmt.Errorf("invalid DocumentHighlightOptionsOrBoolean: %s", data)
-}
-
-type DocumentSymbolOptionsOrBoolean struct {
-	DocumentSymbolOptions *DocumentSymbolOptions
-	Boolean               *bool
-}
-
-func (o DocumentSymbolOptionsOrBoolean) MarshalJSON() ([]byte, error) {
-	assertOnlyOneTrue("invalid union type", o.DocumentSymbolOptions != nil, o.Boolean != nil)
-	if o.DocumentSymbolOptions != nil {
-		return json.Marshal(o.DocumentSymbolOptions)
-	}
-	if o.Boolean != nil {
-		return json.Marshal(o.Boolean)
-	}
-	panic("unreachable")
-}
-
-func (o *DocumentSymbolOptionsOrBoolean) UnmarshalJSON(data []byte) error {
-	*o = DocumentSymbolOptionsOrBoolean{}
 	var vDocumentSymbolOptions DocumentSymbolOptions
 	if err := json.Unmarshal(data, &vDocumentSymbolOptions); err == nil {
 		o.DocumentSymbolOptions = &vDocumentSymbolOptions
 		return nil
 	}
+	return fmt.Errorf("invalid BooleanOrDocumentSymbolOptions: %s", data)
+}
+
+type BooleanOrCodeActionOptions struct {
+	Boolean           *bool
+	CodeActionOptions *CodeActionOptions
+}
+
+func (o BooleanOrCodeActionOptions) MarshalJSON() ([]byte, error) {
+	assertOnlyOneTrue("invalid union type", o.Boolean != nil, o.CodeActionOptions != nil)
+	if o.Boolean != nil {
+		return json.Marshal(o.Boolean)
+	}
+	if o.CodeActionOptions != nil {
+		return json.Marshal(o.CodeActionOptions)
+	}
+	panic("unreachable")
+}
+
+func (o *BooleanOrCodeActionOptions) UnmarshalJSON(data []byte) error {
+	*o = BooleanOrCodeActionOptions{}
 	var vBoolean bool
 	if err := json.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
 		return nil
 	}
-	return fmt.Errorf("invalid DocumentSymbolOptionsOrBoolean: %s", data)
-}
-
-type CodeActionOptionsOrBoolean struct {
-	CodeActionOptions *CodeActionOptions
-	Boolean           *bool
-}
-
-func (o CodeActionOptionsOrBoolean) MarshalJSON() ([]byte, error) {
-	assertOnlyOneTrue("invalid union type", o.CodeActionOptions != nil, o.Boolean != nil)
-	if o.CodeActionOptions != nil {
-		return json.Marshal(o.CodeActionOptions)
-	}
-	if o.Boolean != nil {
-		return json.Marshal(o.Boolean)
-	}
-	panic("unreachable")
-}
-
-func (o *CodeActionOptionsOrBoolean) UnmarshalJSON(data []byte) error {
-	*o = CodeActionOptionsOrBoolean{}
 	var vCodeActionOptions CodeActionOptions
 	if err := json.Unmarshal(data, &vCodeActionOptions); err == nil {
 		o.CodeActionOptions = &vCodeActionOptions
 		return nil
 	}
-	var vBoolean bool
-	if err := json.Unmarshal(data, &vBoolean); err == nil {
-		o.Boolean = &vBoolean
-		return nil
-	}
-	return fmt.Errorf("invalid CodeActionOptionsOrBoolean: %s", data)
+	return fmt.Errorf("invalid BooleanOrCodeActionOptions: %s", data)
 }
 
-type DocumentColorOptionsOrDocumentColorRegistrationOptionsOrBoolean struct {
+type BooleanOrDocumentColorOptionsOrDocumentColorRegistrationOptions struct {
+	Boolean                          *bool
 	DocumentColorOptions             *DocumentColorOptions
 	DocumentColorRegistrationOptions *DocumentColorRegistrationOptions
-	Boolean                          *bool
 }
 
-func (o DocumentColorOptionsOrDocumentColorRegistrationOptionsOrBoolean) MarshalJSON() ([]byte, error) {
-	assertOnlyOneTrue("invalid union type", o.DocumentColorOptions != nil, o.DocumentColorRegistrationOptions != nil, o.Boolean != nil)
+func (o BooleanOrDocumentColorOptionsOrDocumentColorRegistrationOptions) MarshalJSON() ([]byte, error) {
+	assertOnlyOneTrue("invalid union type", o.Boolean != nil, o.DocumentColorOptions != nil, o.DocumentColorRegistrationOptions != nil)
+	if o.Boolean != nil {
+		return json.Marshal(o.Boolean)
+	}
 	if o.DocumentColorOptions != nil {
 		return json.Marshal(o.DocumentColorOptions)
 	}
 	if o.DocumentColorRegistrationOptions != nil {
 		return json.Marshal(o.DocumentColorRegistrationOptions)
 	}
-	if o.Boolean != nil {
-		return json.Marshal(o.Boolean)
-	}
 	panic("unreachable")
 }
 
-func (o *DocumentColorOptionsOrDocumentColorRegistrationOptionsOrBoolean) UnmarshalJSON(data []byte) error {
-	*o = DocumentColorOptionsOrDocumentColorRegistrationOptionsOrBoolean{}
+func (o *BooleanOrDocumentColorOptionsOrDocumentColorRegistrationOptions) UnmarshalJSON(data []byte) error {
+	*o = BooleanOrDocumentColorOptionsOrDocumentColorRegistrationOptions{}
+	var vBoolean bool
+	if err := json.Unmarshal(data, &vBoolean); err == nil {
+		o.Boolean = &vBoolean
+		return nil
+	}
 	var vDocumentColorOptions DocumentColorOptions
 	if err := json.Unmarshal(data, &vDocumentColorOptions); err == nil {
 		o.DocumentColorOptions = &vDocumentColorOptions
@@ -7877,160 +7882,160 @@ func (o *DocumentColorOptionsOrDocumentColorRegistrationOptionsOrBoolean) Unmars
 		o.DocumentColorRegistrationOptions = &vDocumentColorRegistrationOptions
 		return nil
 	}
+	return fmt.Errorf("invalid BooleanOrDocumentColorOptionsOrDocumentColorRegistrationOptions: %s", data)
+}
+
+type BooleanOrWorkspaceSymbolOptions struct {
+	Boolean                *bool
+	WorkspaceSymbolOptions *WorkspaceSymbolOptions
+}
+
+func (o BooleanOrWorkspaceSymbolOptions) MarshalJSON() ([]byte, error) {
+	assertOnlyOneTrue("invalid union type", o.Boolean != nil, o.WorkspaceSymbolOptions != nil)
+	if o.Boolean != nil {
+		return json.Marshal(o.Boolean)
+	}
+	if o.WorkspaceSymbolOptions != nil {
+		return json.Marshal(o.WorkspaceSymbolOptions)
+	}
+	panic("unreachable")
+}
+
+func (o *BooleanOrWorkspaceSymbolOptions) UnmarshalJSON(data []byte) error {
+	*o = BooleanOrWorkspaceSymbolOptions{}
 	var vBoolean bool
 	if err := json.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
 		return nil
 	}
-	return fmt.Errorf("invalid DocumentColorOptionsOrDocumentColorRegistrationOptionsOrBoolean: %s", data)
-}
-
-type WorkspaceSymbolOptionsOrBoolean struct {
-	WorkspaceSymbolOptions *WorkspaceSymbolOptions
-	Boolean                *bool
-}
-
-func (o WorkspaceSymbolOptionsOrBoolean) MarshalJSON() ([]byte, error) {
-	assertOnlyOneTrue("invalid union type", o.WorkspaceSymbolOptions != nil, o.Boolean != nil)
-	if o.WorkspaceSymbolOptions != nil {
-		return json.Marshal(o.WorkspaceSymbolOptions)
-	}
-	if o.Boolean != nil {
-		return json.Marshal(o.Boolean)
-	}
-	panic("unreachable")
-}
-
-func (o *WorkspaceSymbolOptionsOrBoolean) UnmarshalJSON(data []byte) error {
-	*o = WorkspaceSymbolOptionsOrBoolean{}
 	var vWorkspaceSymbolOptions WorkspaceSymbolOptions
 	if err := json.Unmarshal(data, &vWorkspaceSymbolOptions); err == nil {
 		o.WorkspaceSymbolOptions = &vWorkspaceSymbolOptions
 		return nil
 	}
+	return fmt.Errorf("invalid BooleanOrWorkspaceSymbolOptions: %s", data)
+}
+
+type BooleanOrDocumentFormattingOptions struct {
+	Boolean                   *bool
+	DocumentFormattingOptions *DocumentFormattingOptions
+}
+
+func (o BooleanOrDocumentFormattingOptions) MarshalJSON() ([]byte, error) {
+	assertOnlyOneTrue("invalid union type", o.Boolean != nil, o.DocumentFormattingOptions != nil)
+	if o.Boolean != nil {
+		return json.Marshal(o.Boolean)
+	}
+	if o.DocumentFormattingOptions != nil {
+		return json.Marshal(o.DocumentFormattingOptions)
+	}
+	panic("unreachable")
+}
+
+func (o *BooleanOrDocumentFormattingOptions) UnmarshalJSON(data []byte) error {
+	*o = BooleanOrDocumentFormattingOptions{}
 	var vBoolean bool
 	if err := json.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
 		return nil
 	}
-	return fmt.Errorf("invalid WorkspaceSymbolOptionsOrBoolean: %s", data)
-}
-
-type DocumentFormattingOptionsOrBoolean struct {
-	DocumentFormattingOptions *DocumentFormattingOptions
-	Boolean                   *bool
-}
-
-func (o DocumentFormattingOptionsOrBoolean) MarshalJSON() ([]byte, error) {
-	assertOnlyOneTrue("invalid union type", o.DocumentFormattingOptions != nil, o.Boolean != nil)
-	if o.DocumentFormattingOptions != nil {
-		return json.Marshal(o.DocumentFormattingOptions)
-	}
-	if o.Boolean != nil {
-		return json.Marshal(o.Boolean)
-	}
-	panic("unreachable")
-}
-
-func (o *DocumentFormattingOptionsOrBoolean) UnmarshalJSON(data []byte) error {
-	*o = DocumentFormattingOptionsOrBoolean{}
 	var vDocumentFormattingOptions DocumentFormattingOptions
 	if err := json.Unmarshal(data, &vDocumentFormattingOptions); err == nil {
 		o.DocumentFormattingOptions = &vDocumentFormattingOptions
 		return nil
 	}
+	return fmt.Errorf("invalid BooleanOrDocumentFormattingOptions: %s", data)
+}
+
+type BooleanOrDocumentRangeFormattingOptions struct {
+	Boolean                        *bool
+	DocumentRangeFormattingOptions *DocumentRangeFormattingOptions
+}
+
+func (o BooleanOrDocumentRangeFormattingOptions) MarshalJSON() ([]byte, error) {
+	assertOnlyOneTrue("invalid union type", o.Boolean != nil, o.DocumentRangeFormattingOptions != nil)
+	if o.Boolean != nil {
+		return json.Marshal(o.Boolean)
+	}
+	if o.DocumentRangeFormattingOptions != nil {
+		return json.Marshal(o.DocumentRangeFormattingOptions)
+	}
+	panic("unreachable")
+}
+
+func (o *BooleanOrDocumentRangeFormattingOptions) UnmarshalJSON(data []byte) error {
+	*o = BooleanOrDocumentRangeFormattingOptions{}
 	var vBoolean bool
 	if err := json.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
 		return nil
 	}
-	return fmt.Errorf("invalid DocumentFormattingOptionsOrBoolean: %s", data)
-}
-
-type DocumentRangeFormattingOptionsOrBoolean struct {
-	DocumentRangeFormattingOptions *DocumentRangeFormattingOptions
-	Boolean                        *bool
-}
-
-func (o DocumentRangeFormattingOptionsOrBoolean) MarshalJSON() ([]byte, error) {
-	assertOnlyOneTrue("invalid union type", o.DocumentRangeFormattingOptions != nil, o.Boolean != nil)
-	if o.DocumentRangeFormattingOptions != nil {
-		return json.Marshal(o.DocumentRangeFormattingOptions)
-	}
-	if o.Boolean != nil {
-		return json.Marshal(o.Boolean)
-	}
-	panic("unreachable")
-}
-
-func (o *DocumentRangeFormattingOptionsOrBoolean) UnmarshalJSON(data []byte) error {
-	*o = DocumentRangeFormattingOptionsOrBoolean{}
 	var vDocumentRangeFormattingOptions DocumentRangeFormattingOptions
 	if err := json.Unmarshal(data, &vDocumentRangeFormattingOptions); err == nil {
 		o.DocumentRangeFormattingOptions = &vDocumentRangeFormattingOptions
 		return nil
 	}
+	return fmt.Errorf("invalid BooleanOrDocumentRangeFormattingOptions: %s", data)
+}
+
+type BooleanOrRenameOptions struct {
+	Boolean       *bool
+	RenameOptions *RenameOptions
+}
+
+func (o BooleanOrRenameOptions) MarshalJSON() ([]byte, error) {
+	assertOnlyOneTrue("invalid union type", o.Boolean != nil, o.RenameOptions != nil)
+	if o.Boolean != nil {
+		return json.Marshal(o.Boolean)
+	}
+	if o.RenameOptions != nil {
+		return json.Marshal(o.RenameOptions)
+	}
+	panic("unreachable")
+}
+
+func (o *BooleanOrRenameOptions) UnmarshalJSON(data []byte) error {
+	*o = BooleanOrRenameOptions{}
 	var vBoolean bool
 	if err := json.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
 		return nil
 	}
-	return fmt.Errorf("invalid DocumentRangeFormattingOptionsOrBoolean: %s", data)
-}
-
-type RenameOptionsOrBoolean struct {
-	RenameOptions *RenameOptions
-	Boolean       *bool
-}
-
-func (o RenameOptionsOrBoolean) MarshalJSON() ([]byte, error) {
-	assertOnlyOneTrue("invalid union type", o.RenameOptions != nil, o.Boolean != nil)
-	if o.RenameOptions != nil {
-		return json.Marshal(o.RenameOptions)
-	}
-	if o.Boolean != nil {
-		return json.Marshal(o.Boolean)
-	}
-	panic("unreachable")
-}
-
-func (o *RenameOptionsOrBoolean) UnmarshalJSON(data []byte) error {
-	*o = RenameOptionsOrBoolean{}
 	var vRenameOptions RenameOptions
 	if err := json.Unmarshal(data, &vRenameOptions); err == nil {
 		o.RenameOptions = &vRenameOptions
 		return nil
 	}
-	var vBoolean bool
-	if err := json.Unmarshal(data, &vBoolean); err == nil {
-		o.Boolean = &vBoolean
-		return nil
-	}
-	return fmt.Errorf("invalid RenameOptionsOrBoolean: %s", data)
+	return fmt.Errorf("invalid BooleanOrRenameOptions: %s", data)
 }
 
-type FoldingRangeOptionsOrFoldingRangeRegistrationOptionsOrBoolean struct {
+type BooleanOrFoldingRangeOptionsOrFoldingRangeRegistrationOptions struct {
+	Boolean                         *bool
 	FoldingRangeOptions             *FoldingRangeOptions
 	FoldingRangeRegistrationOptions *FoldingRangeRegistrationOptions
-	Boolean                         *bool
 }
 
-func (o FoldingRangeOptionsOrFoldingRangeRegistrationOptionsOrBoolean) MarshalJSON() ([]byte, error) {
-	assertOnlyOneTrue("invalid union type", o.FoldingRangeOptions != nil, o.FoldingRangeRegistrationOptions != nil, o.Boolean != nil)
+func (o BooleanOrFoldingRangeOptionsOrFoldingRangeRegistrationOptions) MarshalJSON() ([]byte, error) {
+	assertOnlyOneTrue("invalid union type", o.Boolean != nil, o.FoldingRangeOptions != nil, o.FoldingRangeRegistrationOptions != nil)
+	if o.Boolean != nil {
+		return json.Marshal(o.Boolean)
+	}
 	if o.FoldingRangeOptions != nil {
 		return json.Marshal(o.FoldingRangeOptions)
 	}
 	if o.FoldingRangeRegistrationOptions != nil {
 		return json.Marshal(o.FoldingRangeRegistrationOptions)
 	}
-	if o.Boolean != nil {
-		return json.Marshal(o.Boolean)
-	}
 	panic("unreachable")
 }
 
-func (o *FoldingRangeOptionsOrFoldingRangeRegistrationOptionsOrBoolean) UnmarshalJSON(data []byte) error {
-	*o = FoldingRangeOptionsOrFoldingRangeRegistrationOptionsOrBoolean{}
+func (o *BooleanOrFoldingRangeOptionsOrFoldingRangeRegistrationOptions) UnmarshalJSON(data []byte) error {
+	*o = BooleanOrFoldingRangeOptionsOrFoldingRangeRegistrationOptions{}
+	var vBoolean bool
+	if err := json.Unmarshal(data, &vBoolean); err == nil {
+		o.Boolean = &vBoolean
+		return nil
+	}
 	var vFoldingRangeOptions FoldingRangeOptions
 	if err := json.Unmarshal(data, &vFoldingRangeOptions); err == nil {
 		o.FoldingRangeOptions = &vFoldingRangeOptions
@@ -8041,36 +8046,36 @@ func (o *FoldingRangeOptionsOrFoldingRangeRegistrationOptionsOrBoolean) Unmarsha
 		o.FoldingRangeRegistrationOptions = &vFoldingRangeRegistrationOptions
 		return nil
 	}
-	var vBoolean bool
-	if err := json.Unmarshal(data, &vBoolean); err == nil {
-		o.Boolean = &vBoolean
-		return nil
-	}
-	return fmt.Errorf("invalid FoldingRangeOptionsOrFoldingRangeRegistrationOptionsOrBoolean: %s", data)
+	return fmt.Errorf("invalid BooleanOrFoldingRangeOptionsOrFoldingRangeRegistrationOptions: %s", data)
 }
 
-type SelectionRangeOptionsOrSelectionRangeRegistrationOptionsOrBoolean struct {
+type BooleanOrSelectionRangeOptionsOrSelectionRangeRegistrationOptions struct {
+	Boolean                           *bool
 	SelectionRangeOptions             *SelectionRangeOptions
 	SelectionRangeRegistrationOptions *SelectionRangeRegistrationOptions
-	Boolean                           *bool
 }
 
-func (o SelectionRangeOptionsOrSelectionRangeRegistrationOptionsOrBoolean) MarshalJSON() ([]byte, error) {
-	assertOnlyOneTrue("invalid union type", o.SelectionRangeOptions != nil, o.SelectionRangeRegistrationOptions != nil, o.Boolean != nil)
+func (o BooleanOrSelectionRangeOptionsOrSelectionRangeRegistrationOptions) MarshalJSON() ([]byte, error) {
+	assertOnlyOneTrue("invalid union type", o.Boolean != nil, o.SelectionRangeOptions != nil, o.SelectionRangeRegistrationOptions != nil)
+	if o.Boolean != nil {
+		return json.Marshal(o.Boolean)
+	}
 	if o.SelectionRangeOptions != nil {
 		return json.Marshal(o.SelectionRangeOptions)
 	}
 	if o.SelectionRangeRegistrationOptions != nil {
 		return json.Marshal(o.SelectionRangeRegistrationOptions)
 	}
-	if o.Boolean != nil {
-		return json.Marshal(o.Boolean)
-	}
 	panic("unreachable")
 }
 
-func (o *SelectionRangeOptionsOrSelectionRangeRegistrationOptionsOrBoolean) UnmarshalJSON(data []byte) error {
-	*o = SelectionRangeOptionsOrSelectionRangeRegistrationOptionsOrBoolean{}
+func (o *BooleanOrSelectionRangeOptionsOrSelectionRangeRegistrationOptions) UnmarshalJSON(data []byte) error {
+	*o = BooleanOrSelectionRangeOptionsOrSelectionRangeRegistrationOptions{}
+	var vBoolean bool
+	if err := json.Unmarshal(data, &vBoolean); err == nil {
+		o.Boolean = &vBoolean
+		return nil
+	}
 	var vSelectionRangeOptions SelectionRangeOptions
 	if err := json.Unmarshal(data, &vSelectionRangeOptions); err == nil {
 		o.SelectionRangeOptions = &vSelectionRangeOptions
@@ -8081,36 +8086,36 @@ func (o *SelectionRangeOptionsOrSelectionRangeRegistrationOptionsOrBoolean) Unma
 		o.SelectionRangeRegistrationOptions = &vSelectionRangeRegistrationOptions
 		return nil
 	}
-	var vBoolean bool
-	if err := json.Unmarshal(data, &vBoolean); err == nil {
-		o.Boolean = &vBoolean
-		return nil
-	}
-	return fmt.Errorf("invalid SelectionRangeOptionsOrSelectionRangeRegistrationOptionsOrBoolean: %s", data)
+	return fmt.Errorf("invalid BooleanOrSelectionRangeOptionsOrSelectionRangeRegistrationOptions: %s", data)
 }
 
-type CallHierarchyOptionsOrCallHierarchyRegistrationOptionsOrBoolean struct {
+type BooleanOrCallHierarchyOptionsOrCallHierarchyRegistrationOptions struct {
+	Boolean                          *bool
 	CallHierarchyOptions             *CallHierarchyOptions
 	CallHierarchyRegistrationOptions *CallHierarchyRegistrationOptions
-	Boolean                          *bool
 }
 
-func (o CallHierarchyOptionsOrCallHierarchyRegistrationOptionsOrBoolean) MarshalJSON() ([]byte, error) {
-	assertOnlyOneTrue("invalid union type", o.CallHierarchyOptions != nil, o.CallHierarchyRegistrationOptions != nil, o.Boolean != nil)
+func (o BooleanOrCallHierarchyOptionsOrCallHierarchyRegistrationOptions) MarshalJSON() ([]byte, error) {
+	assertOnlyOneTrue("invalid union type", o.Boolean != nil, o.CallHierarchyOptions != nil, o.CallHierarchyRegistrationOptions != nil)
+	if o.Boolean != nil {
+		return json.Marshal(o.Boolean)
+	}
 	if o.CallHierarchyOptions != nil {
 		return json.Marshal(o.CallHierarchyOptions)
 	}
 	if o.CallHierarchyRegistrationOptions != nil {
 		return json.Marshal(o.CallHierarchyRegistrationOptions)
 	}
-	if o.Boolean != nil {
-		return json.Marshal(o.Boolean)
-	}
 	panic("unreachable")
 }
 
-func (o *CallHierarchyOptionsOrCallHierarchyRegistrationOptionsOrBoolean) UnmarshalJSON(data []byte) error {
-	*o = CallHierarchyOptionsOrCallHierarchyRegistrationOptionsOrBoolean{}
+func (o *BooleanOrCallHierarchyOptionsOrCallHierarchyRegistrationOptions) UnmarshalJSON(data []byte) error {
+	*o = BooleanOrCallHierarchyOptionsOrCallHierarchyRegistrationOptions{}
+	var vBoolean bool
+	if err := json.Unmarshal(data, &vBoolean); err == nil {
+		o.Boolean = &vBoolean
+		return nil
+	}
 	var vCallHierarchyOptions CallHierarchyOptions
 	if err := json.Unmarshal(data, &vCallHierarchyOptions); err == nil {
 		o.CallHierarchyOptions = &vCallHierarchyOptions
@@ -8121,36 +8126,36 @@ func (o *CallHierarchyOptionsOrCallHierarchyRegistrationOptionsOrBoolean) Unmars
 		o.CallHierarchyRegistrationOptions = &vCallHierarchyRegistrationOptions
 		return nil
 	}
-	var vBoolean bool
-	if err := json.Unmarshal(data, &vBoolean); err == nil {
-		o.Boolean = &vBoolean
-		return nil
-	}
-	return fmt.Errorf("invalid CallHierarchyOptionsOrCallHierarchyRegistrationOptionsOrBoolean: %s", data)
+	return fmt.Errorf("invalid BooleanOrCallHierarchyOptionsOrCallHierarchyRegistrationOptions: %s", data)
 }
 
-type LinkedEditingRangeOptionsOrLinkedEditingRangeRegistrationOptionsOrBoolean struct {
+type BooleanOrLinkedEditingRangeOptionsOrLinkedEditingRangeRegistrationOptions struct {
+	Boolean                               *bool
 	LinkedEditingRangeOptions             *LinkedEditingRangeOptions
 	LinkedEditingRangeRegistrationOptions *LinkedEditingRangeRegistrationOptions
-	Boolean                               *bool
 }
 
-func (o LinkedEditingRangeOptionsOrLinkedEditingRangeRegistrationOptionsOrBoolean) MarshalJSON() ([]byte, error) {
-	assertOnlyOneTrue("invalid union type", o.LinkedEditingRangeOptions != nil, o.LinkedEditingRangeRegistrationOptions != nil, o.Boolean != nil)
+func (o BooleanOrLinkedEditingRangeOptionsOrLinkedEditingRangeRegistrationOptions) MarshalJSON() ([]byte, error) {
+	assertOnlyOneTrue("invalid union type", o.Boolean != nil, o.LinkedEditingRangeOptions != nil, o.LinkedEditingRangeRegistrationOptions != nil)
+	if o.Boolean != nil {
+		return json.Marshal(o.Boolean)
+	}
 	if o.LinkedEditingRangeOptions != nil {
 		return json.Marshal(o.LinkedEditingRangeOptions)
 	}
 	if o.LinkedEditingRangeRegistrationOptions != nil {
 		return json.Marshal(o.LinkedEditingRangeRegistrationOptions)
 	}
-	if o.Boolean != nil {
-		return json.Marshal(o.Boolean)
-	}
 	panic("unreachable")
 }
 
-func (o *LinkedEditingRangeOptionsOrLinkedEditingRangeRegistrationOptionsOrBoolean) UnmarshalJSON(data []byte) error {
-	*o = LinkedEditingRangeOptionsOrLinkedEditingRangeRegistrationOptionsOrBoolean{}
+func (o *BooleanOrLinkedEditingRangeOptionsOrLinkedEditingRangeRegistrationOptions) UnmarshalJSON(data []byte) error {
+	*o = BooleanOrLinkedEditingRangeOptionsOrLinkedEditingRangeRegistrationOptions{}
+	var vBoolean bool
+	if err := json.Unmarshal(data, &vBoolean); err == nil {
+		o.Boolean = &vBoolean
+		return nil
+	}
 	var vLinkedEditingRangeOptions LinkedEditingRangeOptions
 	if err := json.Unmarshal(data, &vLinkedEditingRangeOptions); err == nil {
 		o.LinkedEditingRangeOptions = &vLinkedEditingRangeOptions
@@ -8161,12 +8166,7 @@ func (o *LinkedEditingRangeOptionsOrLinkedEditingRangeRegistrationOptionsOrBoole
 		o.LinkedEditingRangeRegistrationOptions = &vLinkedEditingRangeRegistrationOptions
 		return nil
 	}
-	var vBoolean bool
-	if err := json.Unmarshal(data, &vBoolean); err == nil {
-		o.Boolean = &vBoolean
-		return nil
-	}
-	return fmt.Errorf("invalid LinkedEditingRangeOptionsOrLinkedEditingRangeRegistrationOptionsOrBoolean: %s", data)
+	return fmt.Errorf("invalid BooleanOrLinkedEditingRangeOptionsOrLinkedEditingRangeRegistrationOptions: %s", data)
 }
 
 type SemanticTokensOptionsOrSemanticTokensRegistrationOptions struct {
@@ -8200,28 +8200,33 @@ func (o *SemanticTokensOptionsOrSemanticTokensRegistrationOptions) UnmarshalJSON
 	return fmt.Errorf("invalid SemanticTokensOptionsOrSemanticTokensRegistrationOptions: %s", data)
 }
 
-type MonikerOptionsOrMonikerRegistrationOptionsOrBoolean struct {
+type BooleanOrMonikerOptionsOrMonikerRegistrationOptions struct {
+	Boolean                    *bool
 	MonikerOptions             *MonikerOptions
 	MonikerRegistrationOptions *MonikerRegistrationOptions
-	Boolean                    *bool
 }
 
-func (o MonikerOptionsOrMonikerRegistrationOptionsOrBoolean) MarshalJSON() ([]byte, error) {
-	assertOnlyOneTrue("invalid union type", o.MonikerOptions != nil, o.MonikerRegistrationOptions != nil, o.Boolean != nil)
+func (o BooleanOrMonikerOptionsOrMonikerRegistrationOptions) MarshalJSON() ([]byte, error) {
+	assertOnlyOneTrue("invalid union type", o.Boolean != nil, o.MonikerOptions != nil, o.MonikerRegistrationOptions != nil)
+	if o.Boolean != nil {
+		return json.Marshal(o.Boolean)
+	}
 	if o.MonikerOptions != nil {
 		return json.Marshal(o.MonikerOptions)
 	}
 	if o.MonikerRegistrationOptions != nil {
 		return json.Marshal(o.MonikerRegistrationOptions)
 	}
-	if o.Boolean != nil {
-		return json.Marshal(o.Boolean)
-	}
 	panic("unreachable")
 }
 
-func (o *MonikerOptionsOrMonikerRegistrationOptionsOrBoolean) UnmarshalJSON(data []byte) error {
-	*o = MonikerOptionsOrMonikerRegistrationOptionsOrBoolean{}
+func (o *BooleanOrMonikerOptionsOrMonikerRegistrationOptions) UnmarshalJSON(data []byte) error {
+	*o = BooleanOrMonikerOptionsOrMonikerRegistrationOptions{}
+	var vBoolean bool
+	if err := json.Unmarshal(data, &vBoolean); err == nil {
+		o.Boolean = &vBoolean
+		return nil
+	}
 	var vMonikerOptions MonikerOptions
 	if err := json.Unmarshal(data, &vMonikerOptions); err == nil {
 		o.MonikerOptions = &vMonikerOptions
@@ -8232,36 +8237,36 @@ func (o *MonikerOptionsOrMonikerRegistrationOptionsOrBoolean) UnmarshalJSON(data
 		o.MonikerRegistrationOptions = &vMonikerRegistrationOptions
 		return nil
 	}
-	var vBoolean bool
-	if err := json.Unmarshal(data, &vBoolean); err == nil {
-		o.Boolean = &vBoolean
-		return nil
-	}
-	return fmt.Errorf("invalid MonikerOptionsOrMonikerRegistrationOptionsOrBoolean: %s", data)
+	return fmt.Errorf("invalid BooleanOrMonikerOptionsOrMonikerRegistrationOptions: %s", data)
 }
 
-type TypeHierarchyOptionsOrTypeHierarchyRegistrationOptionsOrBoolean struct {
+type BooleanOrTypeHierarchyOptionsOrTypeHierarchyRegistrationOptions struct {
+	Boolean                          *bool
 	TypeHierarchyOptions             *TypeHierarchyOptions
 	TypeHierarchyRegistrationOptions *TypeHierarchyRegistrationOptions
-	Boolean                          *bool
 }
 
-func (o TypeHierarchyOptionsOrTypeHierarchyRegistrationOptionsOrBoolean) MarshalJSON() ([]byte, error) {
-	assertOnlyOneTrue("invalid union type", o.TypeHierarchyOptions != nil, o.TypeHierarchyRegistrationOptions != nil, o.Boolean != nil)
+func (o BooleanOrTypeHierarchyOptionsOrTypeHierarchyRegistrationOptions) MarshalJSON() ([]byte, error) {
+	assertOnlyOneTrue("invalid union type", o.Boolean != nil, o.TypeHierarchyOptions != nil, o.TypeHierarchyRegistrationOptions != nil)
+	if o.Boolean != nil {
+		return json.Marshal(o.Boolean)
+	}
 	if o.TypeHierarchyOptions != nil {
 		return json.Marshal(o.TypeHierarchyOptions)
 	}
 	if o.TypeHierarchyRegistrationOptions != nil {
 		return json.Marshal(o.TypeHierarchyRegistrationOptions)
 	}
-	if o.Boolean != nil {
-		return json.Marshal(o.Boolean)
-	}
 	panic("unreachable")
 }
 
-func (o *TypeHierarchyOptionsOrTypeHierarchyRegistrationOptionsOrBoolean) UnmarshalJSON(data []byte) error {
-	*o = TypeHierarchyOptionsOrTypeHierarchyRegistrationOptionsOrBoolean{}
+func (o *BooleanOrTypeHierarchyOptionsOrTypeHierarchyRegistrationOptions) UnmarshalJSON(data []byte) error {
+	*o = BooleanOrTypeHierarchyOptionsOrTypeHierarchyRegistrationOptions{}
+	var vBoolean bool
+	if err := json.Unmarshal(data, &vBoolean); err == nil {
+		o.Boolean = &vBoolean
+		return nil
+	}
 	var vTypeHierarchyOptions TypeHierarchyOptions
 	if err := json.Unmarshal(data, &vTypeHierarchyOptions); err == nil {
 		o.TypeHierarchyOptions = &vTypeHierarchyOptions
@@ -8272,36 +8277,36 @@ func (o *TypeHierarchyOptionsOrTypeHierarchyRegistrationOptionsOrBoolean) Unmars
 		o.TypeHierarchyRegistrationOptions = &vTypeHierarchyRegistrationOptions
 		return nil
 	}
-	var vBoolean bool
-	if err := json.Unmarshal(data, &vBoolean); err == nil {
-		o.Boolean = &vBoolean
-		return nil
-	}
-	return fmt.Errorf("invalid TypeHierarchyOptionsOrTypeHierarchyRegistrationOptionsOrBoolean: %s", data)
+	return fmt.Errorf("invalid BooleanOrTypeHierarchyOptionsOrTypeHierarchyRegistrationOptions: %s", data)
 }
 
-type InlineValueOptionsOrInlineValueRegistrationOptionsOrBoolean struct {
+type BooleanOrInlineValueOptionsOrInlineValueRegistrationOptions struct {
+	Boolean                        *bool
 	InlineValueOptions             *InlineValueOptions
 	InlineValueRegistrationOptions *InlineValueRegistrationOptions
-	Boolean                        *bool
 }
 
-func (o InlineValueOptionsOrInlineValueRegistrationOptionsOrBoolean) MarshalJSON() ([]byte, error) {
-	assertOnlyOneTrue("invalid union type", o.InlineValueOptions != nil, o.InlineValueRegistrationOptions != nil, o.Boolean != nil)
+func (o BooleanOrInlineValueOptionsOrInlineValueRegistrationOptions) MarshalJSON() ([]byte, error) {
+	assertOnlyOneTrue("invalid union type", o.Boolean != nil, o.InlineValueOptions != nil, o.InlineValueRegistrationOptions != nil)
+	if o.Boolean != nil {
+		return json.Marshal(o.Boolean)
+	}
 	if o.InlineValueOptions != nil {
 		return json.Marshal(o.InlineValueOptions)
 	}
 	if o.InlineValueRegistrationOptions != nil {
 		return json.Marshal(o.InlineValueRegistrationOptions)
 	}
-	if o.Boolean != nil {
-		return json.Marshal(o.Boolean)
-	}
 	panic("unreachable")
 }
 
-func (o *InlineValueOptionsOrInlineValueRegistrationOptionsOrBoolean) UnmarshalJSON(data []byte) error {
-	*o = InlineValueOptionsOrInlineValueRegistrationOptionsOrBoolean{}
+func (o *BooleanOrInlineValueOptionsOrInlineValueRegistrationOptions) UnmarshalJSON(data []byte) error {
+	*o = BooleanOrInlineValueOptionsOrInlineValueRegistrationOptions{}
+	var vBoolean bool
+	if err := json.Unmarshal(data, &vBoolean); err == nil {
+		o.Boolean = &vBoolean
+		return nil
+	}
 	var vInlineValueOptions InlineValueOptions
 	if err := json.Unmarshal(data, &vInlineValueOptions); err == nil {
 		o.InlineValueOptions = &vInlineValueOptions
@@ -8312,36 +8317,36 @@ func (o *InlineValueOptionsOrInlineValueRegistrationOptionsOrBoolean) UnmarshalJ
 		o.InlineValueRegistrationOptions = &vInlineValueRegistrationOptions
 		return nil
 	}
-	var vBoolean bool
-	if err := json.Unmarshal(data, &vBoolean); err == nil {
-		o.Boolean = &vBoolean
-		return nil
-	}
-	return fmt.Errorf("invalid InlineValueOptionsOrInlineValueRegistrationOptionsOrBoolean: %s", data)
+	return fmt.Errorf("invalid BooleanOrInlineValueOptionsOrInlineValueRegistrationOptions: %s", data)
 }
 
-type InlayHintOptionsOrInlayHintRegistrationOptionsOrBoolean struct {
+type BooleanOrInlayHintOptionsOrInlayHintRegistrationOptions struct {
+	Boolean                      *bool
 	InlayHintOptions             *InlayHintOptions
 	InlayHintRegistrationOptions *InlayHintRegistrationOptions
-	Boolean                      *bool
 }
 
-func (o InlayHintOptionsOrInlayHintRegistrationOptionsOrBoolean) MarshalJSON() ([]byte, error) {
-	assertOnlyOneTrue("invalid union type", o.InlayHintOptions != nil, o.InlayHintRegistrationOptions != nil, o.Boolean != nil)
+func (o BooleanOrInlayHintOptionsOrInlayHintRegistrationOptions) MarshalJSON() ([]byte, error) {
+	assertOnlyOneTrue("invalid union type", o.Boolean != nil, o.InlayHintOptions != nil, o.InlayHintRegistrationOptions != nil)
+	if o.Boolean != nil {
+		return json.Marshal(o.Boolean)
+	}
 	if o.InlayHintOptions != nil {
 		return json.Marshal(o.InlayHintOptions)
 	}
 	if o.InlayHintRegistrationOptions != nil {
 		return json.Marshal(o.InlayHintRegistrationOptions)
 	}
-	if o.Boolean != nil {
-		return json.Marshal(o.Boolean)
-	}
 	panic("unreachable")
 }
 
-func (o *InlayHintOptionsOrInlayHintRegistrationOptionsOrBoolean) UnmarshalJSON(data []byte) error {
-	*o = InlayHintOptionsOrInlayHintRegistrationOptionsOrBoolean{}
+func (o *BooleanOrInlayHintOptionsOrInlayHintRegistrationOptions) UnmarshalJSON(data []byte) error {
+	*o = BooleanOrInlayHintOptionsOrInlayHintRegistrationOptions{}
+	var vBoolean bool
+	if err := json.Unmarshal(data, &vBoolean); err == nil {
+		o.Boolean = &vBoolean
+		return nil
+	}
 	var vInlayHintOptions InlayHintOptions
 	if err := json.Unmarshal(data, &vInlayHintOptions); err == nil {
 		o.InlayHintOptions = &vInlayHintOptions
@@ -8352,12 +8357,7 @@ func (o *InlayHintOptionsOrInlayHintRegistrationOptionsOrBoolean) UnmarshalJSON(
 		o.InlayHintRegistrationOptions = &vInlayHintRegistrationOptions
 		return nil
 	}
-	var vBoolean bool
-	if err := json.Unmarshal(data, &vBoolean); err == nil {
-		o.Boolean = &vBoolean
-		return nil
-	}
-	return fmt.Errorf("invalid InlayHintOptionsOrInlayHintRegistrationOptionsOrBoolean: %s", data)
+	return fmt.Errorf("invalid BooleanOrInlayHintOptionsOrInlayHintRegistrationOptions: %s", data)
 }
 
 type DiagnosticOptionsOrDiagnosticRegistrationOptions struct {
@@ -8391,128 +8391,128 @@ func (o *DiagnosticOptionsOrDiagnosticRegistrationOptions) UnmarshalJSON(data []
 	return fmt.Errorf("invalid DiagnosticOptionsOrDiagnosticRegistrationOptions: %s", data)
 }
 
-type InlineCompletionOptionsOrBoolean struct {
-	InlineCompletionOptions *InlineCompletionOptions
+type BooleanOrInlineCompletionOptions struct {
 	Boolean                 *bool
+	InlineCompletionOptions *InlineCompletionOptions
 }
 
-func (o InlineCompletionOptionsOrBoolean) MarshalJSON() ([]byte, error) {
-	assertOnlyOneTrue("invalid union type", o.InlineCompletionOptions != nil, o.Boolean != nil)
-	if o.InlineCompletionOptions != nil {
-		return json.Marshal(o.InlineCompletionOptions)
-	}
+func (o BooleanOrInlineCompletionOptions) MarshalJSON() ([]byte, error) {
+	assertOnlyOneTrue("invalid union type", o.Boolean != nil, o.InlineCompletionOptions != nil)
 	if o.Boolean != nil {
 		return json.Marshal(o.Boolean)
+	}
+	if o.InlineCompletionOptions != nil {
+		return json.Marshal(o.InlineCompletionOptions)
 	}
 	panic("unreachable")
 }
 
-func (o *InlineCompletionOptionsOrBoolean) UnmarshalJSON(data []byte) error {
-	*o = InlineCompletionOptionsOrBoolean{}
+func (o *BooleanOrInlineCompletionOptions) UnmarshalJSON(data []byte) error {
+	*o = BooleanOrInlineCompletionOptions{}
+	var vBoolean bool
+	if err := json.Unmarshal(data, &vBoolean); err == nil {
+		o.Boolean = &vBoolean
+		return nil
+	}
 	var vInlineCompletionOptions InlineCompletionOptions
 	if err := json.Unmarshal(data, &vInlineCompletionOptions); err == nil {
 		o.InlineCompletionOptions = &vInlineCompletionOptions
 		return nil
 	}
-	var vBoolean bool
-	if err := json.Unmarshal(data, &vBoolean); err == nil {
-		o.Boolean = &vBoolean
-		return nil
-	}
-	return fmt.Errorf("invalid InlineCompletionOptionsOrBoolean: %s", data)
+	return fmt.Errorf("invalid BooleanOrInlineCompletionOptions: %s", data)
 }
 
-type EditRangeWithInsertReplaceOrRange struct {
-	EditRangeWithInsertReplace *EditRangeWithInsertReplace
+type RangeOrEditRangeWithInsertReplace struct {
 	Range                      *Range
+	EditRangeWithInsertReplace *EditRangeWithInsertReplace
 }
 
-func (o EditRangeWithInsertReplaceOrRange) MarshalJSON() ([]byte, error) {
-	assertOnlyOneTrue("invalid union type", o.EditRangeWithInsertReplace != nil, o.Range != nil)
-	if o.EditRangeWithInsertReplace != nil {
-		return json.Marshal(o.EditRangeWithInsertReplace)
-	}
+func (o RangeOrEditRangeWithInsertReplace) MarshalJSON() ([]byte, error) {
+	assertOnlyOneTrue("invalid union type", o.Range != nil, o.EditRangeWithInsertReplace != nil)
 	if o.Range != nil {
 		return json.Marshal(o.Range)
+	}
+	if o.EditRangeWithInsertReplace != nil {
+		return json.Marshal(o.EditRangeWithInsertReplace)
 	}
 	panic("unreachable")
 }
 
-func (o *EditRangeWithInsertReplaceOrRange) UnmarshalJSON(data []byte) error {
-	*o = EditRangeWithInsertReplaceOrRange{}
-	var vEditRangeWithInsertReplace EditRangeWithInsertReplace
-	if err := json.Unmarshal(data, &vEditRangeWithInsertReplace); err == nil {
-		o.EditRangeWithInsertReplace = &vEditRangeWithInsertReplace
-		return nil
-	}
+func (o *RangeOrEditRangeWithInsertReplace) UnmarshalJSON(data []byte) error {
+	*o = RangeOrEditRangeWithInsertReplace{}
 	var vRange Range
 	if err := json.Unmarshal(data, &vRange); err == nil {
 		o.Range = &vRange
 		return nil
 	}
-	return fmt.Errorf("invalid EditRangeWithInsertReplaceOrRange: %s", data)
-}
-
-type NotebookDocumentFilterOrString struct {
-	NotebookDocumentFilter *NotebookDocumentFilter
-	String                 *string
-}
-
-func (o NotebookDocumentFilterOrString) MarshalJSON() ([]byte, error) {
-	assertOnlyOneTrue("invalid union type", o.NotebookDocumentFilter != nil, o.String != nil)
-	if o.NotebookDocumentFilter != nil {
-		return json.Marshal(o.NotebookDocumentFilter)
+	var vEditRangeWithInsertReplace EditRangeWithInsertReplace
+	if err := json.Unmarshal(data, &vEditRangeWithInsertReplace); err == nil {
+		o.EditRangeWithInsertReplace = &vEditRangeWithInsertReplace
+		return nil
 	}
+	return fmt.Errorf("invalid RangeOrEditRangeWithInsertReplace: %s", data)
+}
+
+type StringOrNotebookDocumentFilter struct {
+	String                 *string
+	NotebookDocumentFilter *NotebookDocumentFilter
+}
+
+func (o StringOrNotebookDocumentFilter) MarshalJSON() ([]byte, error) {
+	assertOnlyOneTrue("invalid union type", o.String != nil, o.NotebookDocumentFilter != nil)
 	if o.String != nil {
 		return json.Marshal(o.String)
+	}
+	if o.NotebookDocumentFilter != nil {
+		return json.Marshal(o.NotebookDocumentFilter)
 	}
 	panic("unreachable")
 }
 
-func (o *NotebookDocumentFilterOrString) UnmarshalJSON(data []byte) error {
-	*o = NotebookDocumentFilterOrString{}
-	var vNotebookDocumentFilter NotebookDocumentFilter
-	if err := json.Unmarshal(data, &vNotebookDocumentFilter); err == nil {
-		o.NotebookDocumentFilter = &vNotebookDocumentFilter
-		return nil
-	}
+func (o *StringOrNotebookDocumentFilter) UnmarshalJSON(data []byte) error {
+	*o = StringOrNotebookDocumentFilter{}
 	var vString string
 	if err := json.Unmarshal(data, &vString); err == nil {
 		o.String = &vString
 		return nil
 	}
-	return fmt.Errorf("invalid NotebookDocumentFilterOrString: %s", data)
-}
-
-type SaveOptionsOrBoolean struct {
-	SaveOptions *SaveOptions
-	Boolean     *bool
-}
-
-func (o SaveOptionsOrBoolean) MarshalJSON() ([]byte, error) {
-	assertOnlyOneTrue("invalid union type", o.SaveOptions != nil, o.Boolean != nil)
-	if o.SaveOptions != nil {
-		return json.Marshal(o.SaveOptions)
+	var vNotebookDocumentFilter NotebookDocumentFilter
+	if err := json.Unmarshal(data, &vNotebookDocumentFilter); err == nil {
+		o.NotebookDocumentFilter = &vNotebookDocumentFilter
+		return nil
 	}
+	return fmt.Errorf("invalid StringOrNotebookDocumentFilter: %s", data)
+}
+
+type BooleanOrSaveOptions struct {
+	Boolean     *bool
+	SaveOptions *SaveOptions
+}
+
+func (o BooleanOrSaveOptions) MarshalJSON() ([]byte, error) {
+	assertOnlyOneTrue("invalid union type", o.Boolean != nil, o.SaveOptions != nil)
 	if o.Boolean != nil {
 		return json.Marshal(o.Boolean)
+	}
+	if o.SaveOptions != nil {
+		return json.Marshal(o.SaveOptions)
 	}
 	panic("unreachable")
 }
 
-func (o *SaveOptionsOrBoolean) UnmarshalJSON(data []byte) error {
-	*o = SaveOptionsOrBoolean{}
-	var vSaveOptions SaveOptions
-	if err := json.Unmarshal(data, &vSaveOptions); err == nil {
-		o.SaveOptions = &vSaveOptions
-		return nil
-	}
+func (o *BooleanOrSaveOptions) UnmarshalJSON(data []byte) error {
+	*o = BooleanOrSaveOptions{}
 	var vBoolean bool
 	if err := json.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
 		return nil
 	}
-	return fmt.Errorf("invalid SaveOptionsOrBoolean: %s", data)
+	var vSaveOptions SaveOptions
+	if err := json.Unmarshal(data, &vSaveOptions); err == nil {
+		o.SaveOptions = &vSaveOptions
+		return nil
+	}
+	return fmt.Errorf("invalid BooleanOrSaveOptions: %s", data)
 }
 
 type TextDocumentContentOptionsOrTextDocumentContentRegistrationOptions struct {
@@ -8577,35 +8577,35 @@ func (o *StringOrUintegerPair) UnmarshalJSON(data []byte) error {
 	return fmt.Errorf("invalid StringOrUintegerPair: %s", data)
 }
 
-type BooleanOrString struct {
-	Boolean *bool
+type StringOrBoolean struct {
 	String  *string
+	Boolean *bool
 }
 
-func (o BooleanOrString) MarshalJSON() ([]byte, error) {
-	assertOnlyOneTrue("invalid union type", o.Boolean != nil, o.String != nil)
-	if o.Boolean != nil {
-		return json.Marshal(o.Boolean)
-	}
+func (o StringOrBoolean) MarshalJSON() ([]byte, error) {
+	assertOnlyOneTrue("invalid union type", o.String != nil, o.Boolean != nil)
 	if o.String != nil {
 		return json.Marshal(o.String)
+	}
+	if o.Boolean != nil {
+		return json.Marshal(o.Boolean)
 	}
 	panic("unreachable")
 }
 
-func (o *BooleanOrString) UnmarshalJSON(data []byte) error {
-	*o = BooleanOrString{}
-	var vBoolean bool
-	if err := json.Unmarshal(data, &vBoolean); err == nil {
-		o.Boolean = &vBoolean
-		return nil
-	}
+func (o *StringOrBoolean) UnmarshalJSON(data []byte) error {
+	*o = StringOrBoolean{}
 	var vString string
 	if err := json.Unmarshal(data, &vString); err == nil {
 		o.String = &vString
 		return nil
 	}
-	return fmt.Errorf("invalid BooleanOrString: %s", data)
+	var vBoolean bool
+	if err := json.Unmarshal(data, &vBoolean); err == nil {
+		o.Boolean = &vBoolean
+		return nil
+	}
+	return fmt.Errorf("invalid StringOrBoolean: %s", data)
 }
 
 type WorkspaceFolderOrURI struct {
@@ -8639,35 +8639,35 @@ func (o *WorkspaceFolderOrURI) UnmarshalJSON(data []byte) error {
 	return fmt.Errorf("invalid WorkspaceFolderOrURI: %s", data)
 }
 
-type ClientSemanticTokensRequestFullDeltaOrBoolean struct {
-	ClientSemanticTokensRequestFullDelta *ClientSemanticTokensRequestFullDelta
+type BooleanOrClientSemanticTokensRequestFullDelta struct {
 	Boolean                              *bool
+	ClientSemanticTokensRequestFullDelta *ClientSemanticTokensRequestFullDelta
 }
 
-func (o ClientSemanticTokensRequestFullDeltaOrBoolean) MarshalJSON() ([]byte, error) {
-	assertOnlyOneTrue("invalid union type", o.ClientSemanticTokensRequestFullDelta != nil, o.Boolean != nil)
-	if o.ClientSemanticTokensRequestFullDelta != nil {
-		return json.Marshal(o.ClientSemanticTokensRequestFullDelta)
-	}
+func (o BooleanOrClientSemanticTokensRequestFullDelta) MarshalJSON() ([]byte, error) {
+	assertOnlyOneTrue("invalid union type", o.Boolean != nil, o.ClientSemanticTokensRequestFullDelta != nil)
 	if o.Boolean != nil {
 		return json.Marshal(o.Boolean)
+	}
+	if o.ClientSemanticTokensRequestFullDelta != nil {
+		return json.Marshal(o.ClientSemanticTokensRequestFullDelta)
 	}
 	panic("unreachable")
 }
 
-func (o *ClientSemanticTokensRequestFullDeltaOrBoolean) UnmarshalJSON(data []byte) error {
-	*o = ClientSemanticTokensRequestFullDeltaOrBoolean{}
-	var vClientSemanticTokensRequestFullDelta ClientSemanticTokensRequestFullDelta
-	if err := json.Unmarshal(data, &vClientSemanticTokensRequestFullDelta); err == nil {
-		o.ClientSemanticTokensRequestFullDelta = &vClientSemanticTokensRequestFullDelta
-		return nil
-	}
+func (o *BooleanOrClientSemanticTokensRequestFullDelta) UnmarshalJSON(data []byte) error {
+	*o = BooleanOrClientSemanticTokensRequestFullDelta{}
 	var vBoolean bool
 	if err := json.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
 		return nil
 	}
-	return fmt.Errorf("invalid ClientSemanticTokensRequestFullDeltaOrBoolean: %s", data)
+	var vClientSemanticTokensRequestFullDelta ClientSemanticTokensRequestFullDelta
+	if err := json.Unmarshal(data, &vClientSemanticTokensRequestFullDelta); err == nil {
+		o.ClientSemanticTokensRequestFullDelta = &vClientSemanticTokensRequestFullDelta
+		return nil
+	}
+	return fmt.Errorf("invalid BooleanOrClientSemanticTokensRequestFullDelta: %s", data)
 }
 
 type LocationOrArrayOfLocation struct {
@@ -8701,33 +8701,28 @@ func (o *LocationOrArrayOfLocation) UnmarshalJSON(data []byte) error {
 	return fmt.Errorf("invalid LocationOrArrayOfLocation: %s", data)
 }
 
-type InlineValueEvaluatableExpressionOrInlineValueTextOrInlineValueVariableLookup struct {
-	InlineValueEvaluatableExpression *InlineValueEvaluatableExpression
+type InlineValueTextOrInlineValueVariableLookupOrInlineValueEvaluatableExpression struct {
 	InlineValueText                  *InlineValueText
 	InlineValueVariableLookup        *InlineValueVariableLookup
+	InlineValueEvaluatableExpression *InlineValueEvaluatableExpression
 }
 
-func (o InlineValueEvaluatableExpressionOrInlineValueTextOrInlineValueVariableLookup) MarshalJSON() ([]byte, error) {
-	assertOnlyOneTrue("invalid union type", o.InlineValueEvaluatableExpression != nil, o.InlineValueText != nil, o.InlineValueVariableLookup != nil)
-	if o.InlineValueEvaluatableExpression != nil {
-		return json.Marshal(o.InlineValueEvaluatableExpression)
-	}
+func (o InlineValueTextOrInlineValueVariableLookupOrInlineValueEvaluatableExpression) MarshalJSON() ([]byte, error) {
+	assertOnlyOneTrue("invalid union type", o.InlineValueText != nil, o.InlineValueVariableLookup != nil, o.InlineValueEvaluatableExpression != nil)
 	if o.InlineValueText != nil {
 		return json.Marshal(o.InlineValueText)
 	}
 	if o.InlineValueVariableLookup != nil {
 		return json.Marshal(o.InlineValueVariableLookup)
 	}
+	if o.InlineValueEvaluatableExpression != nil {
+		return json.Marshal(o.InlineValueEvaluatableExpression)
+	}
 	panic("unreachable")
 }
 
-func (o *InlineValueEvaluatableExpressionOrInlineValueTextOrInlineValueVariableLookup) UnmarshalJSON(data []byte) error {
-	*o = InlineValueEvaluatableExpressionOrInlineValueTextOrInlineValueVariableLookup{}
-	var vInlineValueEvaluatableExpression InlineValueEvaluatableExpression
-	if err := json.Unmarshal(data, &vInlineValueEvaluatableExpression); err == nil {
-		o.InlineValueEvaluatableExpression = &vInlineValueEvaluatableExpression
-		return nil
-	}
+func (o *InlineValueTextOrInlineValueVariableLookupOrInlineValueEvaluatableExpression) UnmarshalJSON(data []byte) error {
+	*o = InlineValueTextOrInlineValueVariableLookupOrInlineValueEvaluatableExpression{}
 	var vInlineValueText InlineValueText
 	if err := json.Unmarshal(data, &vInlineValueText); err == nil {
 		o.InlineValueText = &vInlineValueText
@@ -8738,7 +8733,12 @@ func (o *InlineValueEvaluatableExpressionOrInlineValueTextOrInlineValueVariableL
 		o.InlineValueVariableLookup = &vInlineValueVariableLookup
 		return nil
 	}
-	return fmt.Errorf("invalid InlineValueEvaluatableExpressionOrInlineValueTextOrInlineValueVariableLookup: %s", data)
+	var vInlineValueEvaluatableExpression InlineValueEvaluatableExpression
+	if err := json.Unmarshal(data, &vInlineValueEvaluatableExpression); err == nil {
+		o.InlineValueEvaluatableExpression = &vInlineValueEvaluatableExpression
+		return nil
+	}
+	return fmt.Errorf("invalid InlineValueTextOrInlineValueVariableLookupOrInlineValueEvaluatableExpression: %s", data)
 }
 
 type RelatedFullDocumentDiagnosticReportOrRelatedUnchangedDocumentDiagnosticReport struct {
@@ -8772,31 +8772,31 @@ func (o *RelatedFullDocumentDiagnosticReportOrRelatedUnchangedDocumentDiagnostic
 	return fmt.Errorf("invalid RelatedFullDocumentDiagnosticReportOrRelatedUnchangedDocumentDiagnosticReport: %s", data)
 }
 
-type PrepareRenameDefaultBehaviorOrPrepareRenamePlaceholderOrRange struct {
-	PrepareRenameDefaultBehavior *PrepareRenameDefaultBehavior
-	PrepareRenamePlaceholder     *PrepareRenamePlaceholder
+type RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehavior struct {
 	Range                        *Range
+	PrepareRenamePlaceholder     *PrepareRenamePlaceholder
+	PrepareRenameDefaultBehavior *PrepareRenameDefaultBehavior
 }
 
-func (o PrepareRenameDefaultBehaviorOrPrepareRenamePlaceholderOrRange) MarshalJSON() ([]byte, error) {
-	assertOnlyOneTrue("invalid union type", o.PrepareRenameDefaultBehavior != nil, o.PrepareRenamePlaceholder != nil, o.Range != nil)
-	if o.PrepareRenameDefaultBehavior != nil {
-		return json.Marshal(o.PrepareRenameDefaultBehavior)
+func (o RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehavior) MarshalJSON() ([]byte, error) {
+	assertOnlyOneTrue("invalid union type", o.Range != nil, o.PrepareRenamePlaceholder != nil, o.PrepareRenameDefaultBehavior != nil)
+	if o.Range != nil {
+		return json.Marshal(o.Range)
 	}
 	if o.PrepareRenamePlaceholder != nil {
 		return json.Marshal(o.PrepareRenamePlaceholder)
 	}
-	if o.Range != nil {
-		return json.Marshal(o.Range)
+	if o.PrepareRenameDefaultBehavior != nil {
+		return json.Marshal(o.PrepareRenameDefaultBehavior)
 	}
 	panic("unreachable")
 }
 
-func (o *PrepareRenameDefaultBehaviorOrPrepareRenamePlaceholderOrRange) UnmarshalJSON(data []byte) error {
-	*o = PrepareRenameDefaultBehaviorOrPrepareRenamePlaceholderOrRange{}
-	var vPrepareRenameDefaultBehavior PrepareRenameDefaultBehavior
-	if err := json.Unmarshal(data, &vPrepareRenameDefaultBehavior); err == nil {
-		o.PrepareRenameDefaultBehavior = &vPrepareRenameDefaultBehavior
+func (o *RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehavior) UnmarshalJSON(data []byte) error {
+	*o = RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehavior{}
+	var vRange Range
+	if err := json.Unmarshal(data, &vRange); err == nil {
+		o.Range = &vRange
 		return nil
 	}
 	var vPrepareRenamePlaceholder PrepareRenamePlaceholder
@@ -8804,12 +8804,12 @@ func (o *PrepareRenameDefaultBehaviorOrPrepareRenamePlaceholderOrRange) Unmarsha
 		o.PrepareRenamePlaceholder = &vPrepareRenamePlaceholder
 		return nil
 	}
-	var vRange Range
-	if err := json.Unmarshal(data, &vRange); err == nil {
-		o.Range = &vRange
+	var vPrepareRenameDefaultBehavior PrepareRenameDefaultBehavior
+	if err := json.Unmarshal(data, &vPrepareRenameDefaultBehavior); err == nil {
+		o.PrepareRenameDefaultBehavior = &vPrepareRenameDefaultBehavior
 		return nil
 	}
-	return fmt.Errorf("invalid PrepareRenameDefaultBehaviorOrPrepareRenamePlaceholderOrRange: %s", data)
+	return fmt.Errorf("invalid RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehavior: %s", data)
 }
 
 type WorkspaceFullDocumentDiagnosticReportOrWorkspaceUnchangedDocumentDiagnosticReport struct {
@@ -8874,66 +8874,66 @@ func (o *TextDocumentContentChangePartialOrTextDocumentContentChangeWholeDocumen
 	return fmt.Errorf("invalid TextDocumentContentChangePartialOrTextDocumentContentChangeWholeDocument: %s", data)
 }
 
-type MarkedStringWithLanguageOrString struct {
-	MarkedStringWithLanguage *MarkedStringWithLanguage
+type StringOrMarkedStringWithLanguage struct {
 	String                   *string
+	MarkedStringWithLanguage *MarkedStringWithLanguage
 }
 
-func (o MarkedStringWithLanguageOrString) MarshalJSON() ([]byte, error) {
-	assertOnlyOneTrue("invalid union type", o.MarkedStringWithLanguage != nil, o.String != nil)
-	if o.MarkedStringWithLanguage != nil {
-		return json.Marshal(o.MarkedStringWithLanguage)
-	}
+func (o StringOrMarkedStringWithLanguage) MarshalJSON() ([]byte, error) {
+	assertOnlyOneTrue("invalid union type", o.String != nil, o.MarkedStringWithLanguage != nil)
 	if o.String != nil {
 		return json.Marshal(o.String)
+	}
+	if o.MarkedStringWithLanguage != nil {
+		return json.Marshal(o.MarkedStringWithLanguage)
 	}
 	panic("unreachable")
 }
 
-func (o *MarkedStringWithLanguageOrString) UnmarshalJSON(data []byte) error {
-	*o = MarkedStringWithLanguageOrString{}
-	var vMarkedStringWithLanguage MarkedStringWithLanguage
-	if err := json.Unmarshal(data, &vMarkedStringWithLanguage); err == nil {
-		o.MarkedStringWithLanguage = &vMarkedStringWithLanguage
-		return nil
-	}
+func (o *StringOrMarkedStringWithLanguage) UnmarshalJSON(data []byte) error {
+	*o = StringOrMarkedStringWithLanguage{}
 	var vString string
 	if err := json.Unmarshal(data, &vString); err == nil {
 		o.String = &vString
 		return nil
 	}
-	return fmt.Errorf("invalid MarkedStringWithLanguageOrString: %s", data)
-}
-
-type NotebookCellTextDocumentFilterOrTextDocumentFilter struct {
-	NotebookCellTextDocumentFilter *NotebookCellTextDocumentFilter
-	TextDocumentFilter             *TextDocumentFilter
-}
-
-func (o NotebookCellTextDocumentFilterOrTextDocumentFilter) MarshalJSON() ([]byte, error) {
-	assertOnlyOneTrue("invalid union type", o.NotebookCellTextDocumentFilter != nil, o.TextDocumentFilter != nil)
-	if o.NotebookCellTextDocumentFilter != nil {
-		return json.Marshal(o.NotebookCellTextDocumentFilter)
+	var vMarkedStringWithLanguage MarkedStringWithLanguage
+	if err := json.Unmarshal(data, &vMarkedStringWithLanguage); err == nil {
+		o.MarkedStringWithLanguage = &vMarkedStringWithLanguage
+		return nil
 	}
+	return fmt.Errorf("invalid StringOrMarkedStringWithLanguage: %s", data)
+}
+
+type TextDocumentFilterOrNotebookCellTextDocumentFilter struct {
+	TextDocumentFilter             *TextDocumentFilter
+	NotebookCellTextDocumentFilter *NotebookCellTextDocumentFilter
+}
+
+func (o TextDocumentFilterOrNotebookCellTextDocumentFilter) MarshalJSON() ([]byte, error) {
+	assertOnlyOneTrue("invalid union type", o.TextDocumentFilter != nil, o.NotebookCellTextDocumentFilter != nil)
 	if o.TextDocumentFilter != nil {
 		return json.Marshal(o.TextDocumentFilter)
+	}
+	if o.NotebookCellTextDocumentFilter != nil {
+		return json.Marshal(o.NotebookCellTextDocumentFilter)
 	}
 	panic("unreachable")
 }
 
-func (o *NotebookCellTextDocumentFilterOrTextDocumentFilter) UnmarshalJSON(data []byte) error {
-	*o = NotebookCellTextDocumentFilterOrTextDocumentFilter{}
-	var vNotebookCellTextDocumentFilter NotebookCellTextDocumentFilter
-	if err := json.Unmarshal(data, &vNotebookCellTextDocumentFilter); err == nil {
-		o.NotebookCellTextDocumentFilter = &vNotebookCellTextDocumentFilter
-		return nil
-	}
+func (o *TextDocumentFilterOrNotebookCellTextDocumentFilter) UnmarshalJSON(data []byte) error {
+	*o = TextDocumentFilterOrNotebookCellTextDocumentFilter{}
 	var vTextDocumentFilter TextDocumentFilter
 	if err := json.Unmarshal(data, &vTextDocumentFilter); err == nil {
 		o.TextDocumentFilter = &vTextDocumentFilter
 		return nil
 	}
-	return fmt.Errorf("invalid NotebookCellTextDocumentFilterOrTextDocumentFilter: %s", data)
+	var vNotebookCellTextDocumentFilter NotebookCellTextDocumentFilter
+	if err := json.Unmarshal(data, &vNotebookCellTextDocumentFilter); err == nil {
+		o.NotebookCellTextDocumentFilter = &vNotebookCellTextDocumentFilter
+		return nil
+	}
+	return fmt.Errorf("invalid TextDocumentFilterOrNotebookCellTextDocumentFilter: %s", data)
 }
 
 type PatternOrRelativePattern struct {
@@ -8967,36 +8967,31 @@ func (o *PatternOrRelativePattern) UnmarshalJSON(data []byte) error {
 	return fmt.Errorf("invalid PatternOrRelativePattern: %s", data)
 }
 
-type TextDocumentFilterLanguageOrTextDocumentFilterPatternOrTextDocumentFilterScheme struct {
+type TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPattern struct {
 	TextDocumentFilterLanguage *TextDocumentFilterLanguage
-	TextDocumentFilterPattern  *TextDocumentFilterPattern
 	TextDocumentFilterScheme   *TextDocumentFilterScheme
+	TextDocumentFilterPattern  *TextDocumentFilterPattern
 }
 
-func (o TextDocumentFilterLanguageOrTextDocumentFilterPatternOrTextDocumentFilterScheme) MarshalJSON() ([]byte, error) {
-	assertOnlyOneTrue("invalid union type", o.TextDocumentFilterLanguage != nil, o.TextDocumentFilterPattern != nil, o.TextDocumentFilterScheme != nil)
+func (o TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPattern) MarshalJSON() ([]byte, error) {
+	assertOnlyOneTrue("invalid union type", o.TextDocumentFilterLanguage != nil, o.TextDocumentFilterScheme != nil, o.TextDocumentFilterPattern != nil)
 	if o.TextDocumentFilterLanguage != nil {
 		return json.Marshal(o.TextDocumentFilterLanguage)
-	}
-	if o.TextDocumentFilterPattern != nil {
-		return json.Marshal(o.TextDocumentFilterPattern)
 	}
 	if o.TextDocumentFilterScheme != nil {
 		return json.Marshal(o.TextDocumentFilterScheme)
 	}
+	if o.TextDocumentFilterPattern != nil {
+		return json.Marshal(o.TextDocumentFilterPattern)
+	}
 	panic("unreachable")
 }
 
-func (o *TextDocumentFilterLanguageOrTextDocumentFilterPatternOrTextDocumentFilterScheme) UnmarshalJSON(data []byte) error {
-	*o = TextDocumentFilterLanguageOrTextDocumentFilterPatternOrTextDocumentFilterScheme{}
+func (o *TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPattern) UnmarshalJSON(data []byte) error {
+	*o = TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPattern{}
 	var vTextDocumentFilterLanguage TextDocumentFilterLanguage
 	if err := json.Unmarshal(data, &vTextDocumentFilterLanguage); err == nil {
 		o.TextDocumentFilterLanguage = &vTextDocumentFilterLanguage
-		return nil
-	}
-	var vTextDocumentFilterPattern TextDocumentFilterPattern
-	if err := json.Unmarshal(data, &vTextDocumentFilterPattern); err == nil {
-		o.TextDocumentFilterPattern = &vTextDocumentFilterPattern
 		return nil
 	}
 	var vTextDocumentFilterScheme TextDocumentFilterScheme
@@ -9004,39 +8999,39 @@ func (o *TextDocumentFilterLanguageOrTextDocumentFilterPatternOrTextDocumentFilt
 		o.TextDocumentFilterScheme = &vTextDocumentFilterScheme
 		return nil
 	}
-	return fmt.Errorf("invalid TextDocumentFilterLanguageOrTextDocumentFilterPatternOrTextDocumentFilterScheme: %s", data)
+	var vTextDocumentFilterPattern TextDocumentFilterPattern
+	if err := json.Unmarshal(data, &vTextDocumentFilterPattern); err == nil {
+		o.TextDocumentFilterPattern = &vTextDocumentFilterPattern
+		return nil
+	}
+	return fmt.Errorf("invalid TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPattern: %s", data)
 }
 
-type NotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterPatternOrNotebookDocumentFilterScheme struct {
+type NotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern struct {
 	NotebookDocumentFilterNotebookType *NotebookDocumentFilterNotebookType
-	NotebookDocumentFilterPattern      *NotebookDocumentFilterPattern
 	NotebookDocumentFilterScheme       *NotebookDocumentFilterScheme
+	NotebookDocumentFilterPattern      *NotebookDocumentFilterPattern
 }
 
-func (o NotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterPatternOrNotebookDocumentFilterScheme) MarshalJSON() ([]byte, error) {
-	assertOnlyOneTrue("invalid union type", o.NotebookDocumentFilterNotebookType != nil, o.NotebookDocumentFilterPattern != nil, o.NotebookDocumentFilterScheme != nil)
+func (o NotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern) MarshalJSON() ([]byte, error) {
+	assertOnlyOneTrue("invalid union type", o.NotebookDocumentFilterNotebookType != nil, o.NotebookDocumentFilterScheme != nil, o.NotebookDocumentFilterPattern != nil)
 	if o.NotebookDocumentFilterNotebookType != nil {
 		return json.Marshal(o.NotebookDocumentFilterNotebookType)
-	}
-	if o.NotebookDocumentFilterPattern != nil {
-		return json.Marshal(o.NotebookDocumentFilterPattern)
 	}
 	if o.NotebookDocumentFilterScheme != nil {
 		return json.Marshal(o.NotebookDocumentFilterScheme)
 	}
+	if o.NotebookDocumentFilterPattern != nil {
+		return json.Marshal(o.NotebookDocumentFilterPattern)
+	}
 	panic("unreachable")
 }
 
-func (o *NotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterPatternOrNotebookDocumentFilterScheme) UnmarshalJSON(data []byte) error {
-	*o = NotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterPatternOrNotebookDocumentFilterScheme{}
+func (o *NotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern) UnmarshalJSON(data []byte) error {
+	*o = NotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern{}
 	var vNotebookDocumentFilterNotebookType NotebookDocumentFilterNotebookType
 	if err := json.Unmarshal(data, &vNotebookDocumentFilterNotebookType); err == nil {
 		o.NotebookDocumentFilterNotebookType = &vNotebookDocumentFilterNotebookType
-		return nil
-	}
-	var vNotebookDocumentFilterPattern NotebookDocumentFilterPattern
-	if err := json.Unmarshal(data, &vNotebookDocumentFilterPattern); err == nil {
-		o.NotebookDocumentFilterPattern = &vNotebookDocumentFilterPattern
 		return nil
 	}
 	var vNotebookDocumentFilterScheme NotebookDocumentFilterScheme
@@ -9044,5 +9039,10 @@ func (o *NotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterPatternOrNote
 		o.NotebookDocumentFilterScheme = &vNotebookDocumentFilterScheme
 		return nil
 	}
-	return fmt.Errorf("invalid NotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterPatternOrNotebookDocumentFilterScheme: %s", data)
+	var vNotebookDocumentFilterPattern NotebookDocumentFilterPattern
+	if err := json.Unmarshal(data, &vNotebookDocumentFilterPattern); err == nil {
+		o.NotebookDocumentFilterPattern = &vNotebookDocumentFilterPattern
+		return nil
+	}
+	return fmt.Errorf("invalid NotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern: %s", data)
 }
