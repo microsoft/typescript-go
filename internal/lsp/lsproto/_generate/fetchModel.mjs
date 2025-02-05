@@ -1,4 +1,4 @@
-import { compile } from "json-schema-to-typescript";
+import { compile } from "json-schema-to-typescript-lite";
 import fs from "node:fs";
 import path from "node:path";
 import url from "node:url";
