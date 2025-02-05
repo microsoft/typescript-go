@@ -335,11 +335,12 @@ for (const t of model.structures) {
             write(",omitempty");
         }
         finishLine('"`');
+        writeLine("");
     }
 
     dedent();
     writeLine("}");
-    writeLine("\n");
+    writeLine("");
 }
 
 writeLine("// Enumerations\n");
@@ -363,7 +364,7 @@ for (const t of model.enumerations) {
     }
 
     writeLine("type " + t.name + " " + underlyingType);
-    writeLine("\n");
+    writeLine("");
 
     /**
      * @param {string | number} v
@@ -446,7 +447,7 @@ for (const t of model.typeAliases) {
 
     startLine("type " + t.name + " = ");
     writeTypeElement(t.type);
-    writeLine("\n");
+    writeLine("");
 }
 
 /**
