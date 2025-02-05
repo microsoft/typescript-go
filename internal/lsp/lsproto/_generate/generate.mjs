@@ -543,7 +543,7 @@ for (const [name, members] of unionTypes) {
 
     writeLine("func (o " + name + ") MarshalJSON() ([]byte, error) {");
     indent();
-    startLine(`assertOnlyOne("invalid ${name}", `);
+    startLine(`assertOnlyOne("more than one element of ${name} is set", `);
     for (let i = 0; i < members.length; i++) {
         if (i > 0) {
             write(", ");

@@ -7888,7 +7888,7 @@ type TextDocumentEditOrCreateFileOrRenameFileOrDeleteFile struct {
 }
 
 func (o TextDocumentEditOrCreateFileOrRenameFileOrDeleteFile) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("invalid TextDocumentEditOrCreateFileOrRenameFileOrDeleteFile", o.TextDocumentEdit != nil, o.CreateFile != nil, o.RenameFile != nil, o.DeleteFile != nil)
+	assertOnlyOne("more than one element of TextDocumentEditOrCreateFileOrRenameFileOrDeleteFile is set", o.TextDocumentEdit != nil, o.CreateFile != nil, o.RenameFile != nil, o.DeleteFile != nil)
 	if o.TextDocumentEdit != nil {
 		return json.Marshal(*o.TextDocumentEdit)
 	}
@@ -7935,7 +7935,7 @@ type StringOrArrayOfInlayHintLabelPart struct {
 }
 
 func (o StringOrArrayOfInlayHintLabelPart) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("invalid StringOrArrayOfInlayHintLabelPart", o.String != nil, o.ArrayOfInlayHintLabelPart != nil)
+	assertOnlyOne("more than one element of StringOrArrayOfInlayHintLabelPart is set", o.String != nil, o.ArrayOfInlayHintLabelPart != nil)
 	if o.String != nil {
 		return json.Marshal(*o.String)
 	}
@@ -7966,7 +7966,7 @@ type StringOrMarkupContent struct {
 }
 
 func (o StringOrMarkupContent) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("invalid StringOrMarkupContent", o.String != nil, o.MarkupContent != nil)
+	assertOnlyOne("more than one element of StringOrMarkupContent is set", o.String != nil, o.MarkupContent != nil)
 	if o.String != nil {
 		return json.Marshal(*o.String)
 	}
@@ -7997,7 +7997,7 @@ type FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport struct {
 }
 
 func (o FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("invalid FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport", o.FullDocumentDiagnosticReport != nil, o.UnchangedDocumentDiagnosticReport != nil)
+	assertOnlyOne("more than one element of FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport is set", o.FullDocumentDiagnosticReport != nil, o.UnchangedDocumentDiagnosticReport != nil)
 	if o.FullDocumentDiagnosticReport != nil {
 		return json.Marshal(*o.FullDocumentDiagnosticReport)
 	}
@@ -8028,7 +8028,7 @@ type StringOrStringValue struct {
 }
 
 func (o StringOrStringValue) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("invalid StringOrStringValue", o.String != nil, o.StringValue != nil)
+	assertOnlyOne("more than one element of StringOrStringValue is set", o.String != nil, o.StringValue != nil)
 	if o.String != nil {
 		return json.Marshal(*o.String)
 	}
@@ -8059,7 +8059,7 @@ type StringOrArrayOfString struct {
 }
 
 func (o StringOrArrayOfString) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("invalid StringOrArrayOfString", o.String != nil, o.ArrayOfString != nil)
+	assertOnlyOne("more than one element of StringOrArrayOfString is set", o.String != nil, o.ArrayOfString != nil)
 	if o.String != nil {
 		return json.Marshal(*o.String)
 	}
@@ -8090,7 +8090,7 @@ type TextEditOrInsertReplaceEdit struct {
 }
 
 func (o TextEditOrInsertReplaceEdit) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("invalid TextEditOrInsertReplaceEdit", o.TextEdit != nil, o.InsertReplaceEdit != nil)
+	assertOnlyOne("more than one element of TextEditOrInsertReplaceEdit is set", o.TextEdit != nil, o.InsertReplaceEdit != nil)
 	if o.TextEdit != nil {
 		return json.Marshal(*o.TextEdit)
 	}
@@ -8122,7 +8122,7 @@ type MarkupContentOrMarkedStringOrArrayOfMarkedString struct {
 }
 
 func (o MarkupContentOrMarkedStringOrArrayOfMarkedString) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("invalid MarkupContentOrMarkedStringOrArrayOfMarkedString", o.MarkupContent != nil, o.MarkedString != nil, o.ArrayOfMarkedString != nil)
+	assertOnlyOne("more than one element of MarkupContentOrMarkedStringOrArrayOfMarkedString is set", o.MarkupContent != nil, o.MarkedString != nil, o.ArrayOfMarkedString != nil)
 	if o.MarkupContent != nil {
 		return json.Marshal(*o.MarkupContent)
 	}
@@ -8161,7 +8161,7 @@ type LocationOrLocationUriOnly struct {
 }
 
 func (o LocationOrLocationUriOnly) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("invalid LocationOrLocationUriOnly", o.Location != nil, o.LocationUriOnly != nil)
+	assertOnlyOne("more than one element of LocationOrLocationUriOnly is set", o.Location != nil, o.LocationUriOnly != nil)
 	if o.Location != nil {
 		return json.Marshal(*o.Location)
 	}
@@ -8192,7 +8192,7 @@ type IntegerOrString struct {
 }
 
 func (o IntegerOrString) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("invalid IntegerOrString", o.Integer != nil, o.String != nil)
+	assertOnlyOne("more than one element of IntegerOrString is set", o.Integer != nil, o.String != nil)
 	if o.Integer != nil {
 		return json.Marshal(*o.Integer)
 	}
@@ -8223,7 +8223,7 @@ type BooleanOrEmptyObject struct {
 }
 
 func (o BooleanOrEmptyObject) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("invalid BooleanOrEmptyObject", o.Boolean != nil, o.EmptyObject != nil)
+	assertOnlyOne("more than one element of BooleanOrEmptyObject is set", o.Boolean != nil, o.EmptyObject != nil)
 	if o.Boolean != nil {
 		return json.Marshal(*o.Boolean)
 	}
@@ -8254,7 +8254,7 @@ type BooleanOrSemanticTokensFullDelta struct {
 }
 
 func (o BooleanOrSemanticTokensFullDelta) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("invalid BooleanOrSemanticTokensFullDelta", o.Boolean != nil, o.SemanticTokensFullDelta != nil)
+	assertOnlyOne("more than one element of BooleanOrSemanticTokensFullDelta is set", o.Boolean != nil, o.SemanticTokensFullDelta != nil)
 	if o.Boolean != nil {
 		return json.Marshal(*o.Boolean)
 	}
@@ -8286,7 +8286,7 @@ type TextEditOrAnnotatedTextEditOrSnippetTextEdit struct {
 }
 
 func (o TextEditOrAnnotatedTextEditOrSnippetTextEdit) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("invalid TextEditOrAnnotatedTextEditOrSnippetTextEdit", o.TextEdit != nil, o.AnnotatedTextEdit != nil, o.SnippetTextEdit != nil)
+	assertOnlyOne("more than one element of TextEditOrAnnotatedTextEditOrSnippetTextEdit is set", o.TextEdit != nil, o.AnnotatedTextEdit != nil, o.SnippetTextEdit != nil)
 	if o.TextEdit != nil {
 		return json.Marshal(*o.TextEdit)
 	}
@@ -8325,7 +8325,7 @@ type NotebookDocumentFilterWithNotebookOrNotebookDocumentFilterWithCells struct 
 }
 
 func (o NotebookDocumentFilterWithNotebookOrNotebookDocumentFilterWithCells) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("invalid NotebookDocumentFilterWithNotebookOrNotebookDocumentFilterWithCells", o.NotebookDocumentFilterWithNotebook != nil, o.NotebookDocumentFilterWithCells != nil)
+	assertOnlyOne("more than one element of NotebookDocumentFilterWithNotebookOrNotebookDocumentFilterWithCells is set", o.NotebookDocumentFilterWithNotebook != nil, o.NotebookDocumentFilterWithCells != nil)
 	if o.NotebookDocumentFilterWithNotebook != nil {
 		return json.Marshal(*o.NotebookDocumentFilterWithNotebook)
 	}
@@ -8356,7 +8356,7 @@ type TextDocumentSyncOptionsOrTextDocumentSyncKind struct {
 }
 
 func (o TextDocumentSyncOptionsOrTextDocumentSyncKind) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("invalid TextDocumentSyncOptionsOrTextDocumentSyncKind", o.TextDocumentSyncOptions != nil, o.TextDocumentSyncKind != nil)
+	assertOnlyOne("more than one element of TextDocumentSyncOptionsOrTextDocumentSyncKind is set", o.TextDocumentSyncOptions != nil, o.TextDocumentSyncKind != nil)
 	if o.TextDocumentSyncOptions != nil {
 		return json.Marshal(*o.TextDocumentSyncOptions)
 	}
@@ -8387,7 +8387,7 @@ type NotebookDocumentSyncOptionsOrNotebookDocumentSyncRegistrationOptions struct
 }
 
 func (o NotebookDocumentSyncOptionsOrNotebookDocumentSyncRegistrationOptions) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("invalid NotebookDocumentSyncOptionsOrNotebookDocumentSyncRegistrationOptions", o.NotebookDocumentSyncOptions != nil, o.NotebookDocumentSyncRegistrationOptions != nil)
+	assertOnlyOne("more than one element of NotebookDocumentSyncOptionsOrNotebookDocumentSyncRegistrationOptions is set", o.NotebookDocumentSyncOptions != nil, o.NotebookDocumentSyncRegistrationOptions != nil)
 	if o.NotebookDocumentSyncOptions != nil {
 		return json.Marshal(*o.NotebookDocumentSyncOptions)
 	}
@@ -8418,7 +8418,7 @@ type BooleanOrHoverOptions struct {
 }
 
 func (o BooleanOrHoverOptions) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("invalid BooleanOrHoverOptions", o.Boolean != nil, o.HoverOptions != nil)
+	assertOnlyOne("more than one element of BooleanOrHoverOptions is set", o.Boolean != nil, o.HoverOptions != nil)
 	if o.Boolean != nil {
 		return json.Marshal(*o.Boolean)
 	}
@@ -8450,7 +8450,7 @@ type BooleanOrDeclarationOptionsOrDeclarationRegistrationOptions struct {
 }
 
 func (o BooleanOrDeclarationOptionsOrDeclarationRegistrationOptions) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("invalid BooleanOrDeclarationOptionsOrDeclarationRegistrationOptions", o.Boolean != nil, o.DeclarationOptions != nil, o.DeclarationRegistrationOptions != nil)
+	assertOnlyOne("more than one element of BooleanOrDeclarationOptionsOrDeclarationRegistrationOptions is set", o.Boolean != nil, o.DeclarationOptions != nil, o.DeclarationRegistrationOptions != nil)
 	if o.Boolean != nil {
 		return json.Marshal(*o.Boolean)
 	}
@@ -8489,7 +8489,7 @@ type BooleanOrDefinitionOptions struct {
 }
 
 func (o BooleanOrDefinitionOptions) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("invalid BooleanOrDefinitionOptions", o.Boolean != nil, o.DefinitionOptions != nil)
+	assertOnlyOne("more than one element of BooleanOrDefinitionOptions is set", o.Boolean != nil, o.DefinitionOptions != nil)
 	if o.Boolean != nil {
 		return json.Marshal(*o.Boolean)
 	}
@@ -8521,7 +8521,7 @@ type BooleanOrTypeDefinitionOptionsOrTypeDefinitionRegistrationOptions struct {
 }
 
 func (o BooleanOrTypeDefinitionOptionsOrTypeDefinitionRegistrationOptions) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("invalid BooleanOrTypeDefinitionOptionsOrTypeDefinitionRegistrationOptions", o.Boolean != nil, o.TypeDefinitionOptions != nil, o.TypeDefinitionRegistrationOptions != nil)
+	assertOnlyOne("more than one element of BooleanOrTypeDefinitionOptionsOrTypeDefinitionRegistrationOptions is set", o.Boolean != nil, o.TypeDefinitionOptions != nil, o.TypeDefinitionRegistrationOptions != nil)
 	if o.Boolean != nil {
 		return json.Marshal(*o.Boolean)
 	}
@@ -8561,7 +8561,7 @@ type BooleanOrImplementationOptionsOrImplementationRegistrationOptions struct {
 }
 
 func (o BooleanOrImplementationOptionsOrImplementationRegistrationOptions) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("invalid BooleanOrImplementationOptionsOrImplementationRegistrationOptions", o.Boolean != nil, o.ImplementationOptions != nil, o.ImplementationRegistrationOptions != nil)
+	assertOnlyOne("more than one element of BooleanOrImplementationOptionsOrImplementationRegistrationOptions is set", o.Boolean != nil, o.ImplementationOptions != nil, o.ImplementationRegistrationOptions != nil)
 	if o.Boolean != nil {
 		return json.Marshal(*o.Boolean)
 	}
@@ -8600,7 +8600,7 @@ type BooleanOrReferenceOptions struct {
 }
 
 func (o BooleanOrReferenceOptions) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("invalid BooleanOrReferenceOptions", o.Boolean != nil, o.ReferenceOptions != nil)
+	assertOnlyOne("more than one element of BooleanOrReferenceOptions is set", o.Boolean != nil, o.ReferenceOptions != nil)
 	if o.Boolean != nil {
 		return json.Marshal(*o.Boolean)
 	}
@@ -8631,7 +8631,7 @@ type BooleanOrDocumentHighlightOptions struct {
 }
 
 func (o BooleanOrDocumentHighlightOptions) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("invalid BooleanOrDocumentHighlightOptions", o.Boolean != nil, o.DocumentHighlightOptions != nil)
+	assertOnlyOne("more than one element of BooleanOrDocumentHighlightOptions is set", o.Boolean != nil, o.DocumentHighlightOptions != nil)
 	if o.Boolean != nil {
 		return json.Marshal(*o.Boolean)
 	}
@@ -8662,7 +8662,7 @@ type BooleanOrDocumentSymbolOptions struct {
 }
 
 func (o BooleanOrDocumentSymbolOptions) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("invalid BooleanOrDocumentSymbolOptions", o.Boolean != nil, o.DocumentSymbolOptions != nil)
+	assertOnlyOne("more than one element of BooleanOrDocumentSymbolOptions is set", o.Boolean != nil, o.DocumentSymbolOptions != nil)
 	if o.Boolean != nil {
 		return json.Marshal(*o.Boolean)
 	}
@@ -8693,7 +8693,7 @@ type BooleanOrCodeActionOptions struct {
 }
 
 func (o BooleanOrCodeActionOptions) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("invalid BooleanOrCodeActionOptions", o.Boolean != nil, o.CodeActionOptions != nil)
+	assertOnlyOne("more than one element of BooleanOrCodeActionOptions is set", o.Boolean != nil, o.CodeActionOptions != nil)
 	if o.Boolean != nil {
 		return json.Marshal(*o.Boolean)
 	}
@@ -8725,7 +8725,7 @@ type BooleanOrDocumentColorOptionsOrDocumentColorRegistrationOptions struct {
 }
 
 func (o BooleanOrDocumentColorOptionsOrDocumentColorRegistrationOptions) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("invalid BooleanOrDocumentColorOptionsOrDocumentColorRegistrationOptions", o.Boolean != nil, o.DocumentColorOptions != nil, o.DocumentColorRegistrationOptions != nil)
+	assertOnlyOne("more than one element of BooleanOrDocumentColorOptionsOrDocumentColorRegistrationOptions is set", o.Boolean != nil, o.DocumentColorOptions != nil, o.DocumentColorRegistrationOptions != nil)
 	if o.Boolean != nil {
 		return json.Marshal(*o.Boolean)
 	}
@@ -8764,7 +8764,7 @@ type BooleanOrWorkspaceSymbolOptions struct {
 }
 
 func (o BooleanOrWorkspaceSymbolOptions) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("invalid BooleanOrWorkspaceSymbolOptions", o.Boolean != nil, o.WorkspaceSymbolOptions != nil)
+	assertOnlyOne("more than one element of BooleanOrWorkspaceSymbolOptions is set", o.Boolean != nil, o.WorkspaceSymbolOptions != nil)
 	if o.Boolean != nil {
 		return json.Marshal(*o.Boolean)
 	}
@@ -8795,7 +8795,7 @@ type BooleanOrDocumentFormattingOptions struct {
 }
 
 func (o BooleanOrDocumentFormattingOptions) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("invalid BooleanOrDocumentFormattingOptions", o.Boolean != nil, o.DocumentFormattingOptions != nil)
+	assertOnlyOne("more than one element of BooleanOrDocumentFormattingOptions is set", o.Boolean != nil, o.DocumentFormattingOptions != nil)
 	if o.Boolean != nil {
 		return json.Marshal(*o.Boolean)
 	}
@@ -8826,7 +8826,7 @@ type BooleanOrDocumentRangeFormattingOptions struct {
 }
 
 func (o BooleanOrDocumentRangeFormattingOptions) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("invalid BooleanOrDocumentRangeFormattingOptions", o.Boolean != nil, o.DocumentRangeFormattingOptions != nil)
+	assertOnlyOne("more than one element of BooleanOrDocumentRangeFormattingOptions is set", o.Boolean != nil, o.DocumentRangeFormattingOptions != nil)
 	if o.Boolean != nil {
 		return json.Marshal(*o.Boolean)
 	}
@@ -8857,7 +8857,7 @@ type BooleanOrRenameOptions struct {
 }
 
 func (o BooleanOrRenameOptions) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("invalid BooleanOrRenameOptions", o.Boolean != nil, o.RenameOptions != nil)
+	assertOnlyOne("more than one element of BooleanOrRenameOptions is set", o.Boolean != nil, o.RenameOptions != nil)
 	if o.Boolean != nil {
 		return json.Marshal(*o.Boolean)
 	}
@@ -8889,7 +8889,7 @@ type BooleanOrFoldingRangeOptionsOrFoldingRangeRegistrationOptions struct {
 }
 
 func (o BooleanOrFoldingRangeOptionsOrFoldingRangeRegistrationOptions) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("invalid BooleanOrFoldingRangeOptionsOrFoldingRangeRegistrationOptions", o.Boolean != nil, o.FoldingRangeOptions != nil, o.FoldingRangeRegistrationOptions != nil)
+	assertOnlyOne("more than one element of BooleanOrFoldingRangeOptionsOrFoldingRangeRegistrationOptions is set", o.Boolean != nil, o.FoldingRangeOptions != nil, o.FoldingRangeRegistrationOptions != nil)
 	if o.Boolean != nil {
 		return json.Marshal(*o.Boolean)
 	}
@@ -8929,7 +8929,7 @@ type BooleanOrSelectionRangeOptionsOrSelectionRangeRegistrationOptions struct {
 }
 
 func (o BooleanOrSelectionRangeOptionsOrSelectionRangeRegistrationOptions) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("invalid BooleanOrSelectionRangeOptionsOrSelectionRangeRegistrationOptions", o.Boolean != nil, o.SelectionRangeOptions != nil, o.SelectionRangeRegistrationOptions != nil)
+	assertOnlyOne("more than one element of BooleanOrSelectionRangeOptionsOrSelectionRangeRegistrationOptions is set", o.Boolean != nil, o.SelectionRangeOptions != nil, o.SelectionRangeRegistrationOptions != nil)
 	if o.Boolean != nil {
 		return json.Marshal(*o.Boolean)
 	}
@@ -8969,7 +8969,7 @@ type BooleanOrCallHierarchyOptionsOrCallHierarchyRegistrationOptions struct {
 }
 
 func (o BooleanOrCallHierarchyOptionsOrCallHierarchyRegistrationOptions) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("invalid BooleanOrCallHierarchyOptionsOrCallHierarchyRegistrationOptions", o.Boolean != nil, o.CallHierarchyOptions != nil, o.CallHierarchyRegistrationOptions != nil)
+	assertOnlyOne("more than one element of BooleanOrCallHierarchyOptionsOrCallHierarchyRegistrationOptions is set", o.Boolean != nil, o.CallHierarchyOptions != nil, o.CallHierarchyRegistrationOptions != nil)
 	if o.Boolean != nil {
 		return json.Marshal(*o.Boolean)
 	}
@@ -9009,7 +9009,7 @@ type BooleanOrLinkedEditingRangeOptionsOrLinkedEditingRangeRegistrationOptions s
 }
 
 func (o BooleanOrLinkedEditingRangeOptionsOrLinkedEditingRangeRegistrationOptions) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("invalid BooleanOrLinkedEditingRangeOptionsOrLinkedEditingRangeRegistrationOptions", o.Boolean != nil, o.LinkedEditingRangeOptions != nil, o.LinkedEditingRangeRegistrationOptions != nil)
+	assertOnlyOne("more than one element of BooleanOrLinkedEditingRangeOptionsOrLinkedEditingRangeRegistrationOptions is set", o.Boolean != nil, o.LinkedEditingRangeOptions != nil, o.LinkedEditingRangeRegistrationOptions != nil)
 	if o.Boolean != nil {
 		return json.Marshal(*o.Boolean)
 	}
@@ -9048,7 +9048,7 @@ type SemanticTokensOptionsOrSemanticTokensRegistrationOptions struct {
 }
 
 func (o SemanticTokensOptionsOrSemanticTokensRegistrationOptions) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("invalid SemanticTokensOptionsOrSemanticTokensRegistrationOptions", o.SemanticTokensOptions != nil, o.SemanticTokensRegistrationOptions != nil)
+	assertOnlyOne("more than one element of SemanticTokensOptionsOrSemanticTokensRegistrationOptions is set", o.SemanticTokensOptions != nil, o.SemanticTokensRegistrationOptions != nil)
 	if o.SemanticTokensOptions != nil {
 		return json.Marshal(*o.SemanticTokensOptions)
 	}
@@ -9080,7 +9080,7 @@ type BooleanOrMonikerOptionsOrMonikerRegistrationOptions struct {
 }
 
 func (o BooleanOrMonikerOptionsOrMonikerRegistrationOptions) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("invalid BooleanOrMonikerOptionsOrMonikerRegistrationOptions", o.Boolean != nil, o.MonikerOptions != nil, o.MonikerRegistrationOptions != nil)
+	assertOnlyOne("more than one element of BooleanOrMonikerOptionsOrMonikerRegistrationOptions is set", o.Boolean != nil, o.MonikerOptions != nil, o.MonikerRegistrationOptions != nil)
 	if o.Boolean != nil {
 		return json.Marshal(*o.Boolean)
 	}
@@ -9120,7 +9120,7 @@ type BooleanOrTypeHierarchyOptionsOrTypeHierarchyRegistrationOptions struct {
 }
 
 func (o BooleanOrTypeHierarchyOptionsOrTypeHierarchyRegistrationOptions) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("invalid BooleanOrTypeHierarchyOptionsOrTypeHierarchyRegistrationOptions", o.Boolean != nil, o.TypeHierarchyOptions != nil, o.TypeHierarchyRegistrationOptions != nil)
+	assertOnlyOne("more than one element of BooleanOrTypeHierarchyOptionsOrTypeHierarchyRegistrationOptions is set", o.Boolean != nil, o.TypeHierarchyOptions != nil, o.TypeHierarchyRegistrationOptions != nil)
 	if o.Boolean != nil {
 		return json.Marshal(*o.Boolean)
 	}
@@ -9160,7 +9160,7 @@ type BooleanOrInlineValueOptionsOrInlineValueRegistrationOptions struct {
 }
 
 func (o BooleanOrInlineValueOptionsOrInlineValueRegistrationOptions) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("invalid BooleanOrInlineValueOptionsOrInlineValueRegistrationOptions", o.Boolean != nil, o.InlineValueOptions != nil, o.InlineValueRegistrationOptions != nil)
+	assertOnlyOne("more than one element of BooleanOrInlineValueOptionsOrInlineValueRegistrationOptions is set", o.Boolean != nil, o.InlineValueOptions != nil, o.InlineValueRegistrationOptions != nil)
 	if o.Boolean != nil {
 		return json.Marshal(*o.Boolean)
 	}
@@ -9200,7 +9200,7 @@ type BooleanOrInlayHintOptionsOrInlayHintRegistrationOptions struct {
 }
 
 func (o BooleanOrInlayHintOptionsOrInlayHintRegistrationOptions) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("invalid BooleanOrInlayHintOptionsOrInlayHintRegistrationOptions", o.Boolean != nil, o.InlayHintOptions != nil, o.InlayHintRegistrationOptions != nil)
+	assertOnlyOne("more than one element of BooleanOrInlayHintOptionsOrInlayHintRegistrationOptions is set", o.Boolean != nil, o.InlayHintOptions != nil, o.InlayHintRegistrationOptions != nil)
 	if o.Boolean != nil {
 		return json.Marshal(*o.Boolean)
 	}
@@ -9239,7 +9239,7 @@ type DiagnosticOptionsOrDiagnosticRegistrationOptions struct {
 }
 
 func (o DiagnosticOptionsOrDiagnosticRegistrationOptions) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("invalid DiagnosticOptionsOrDiagnosticRegistrationOptions", o.DiagnosticOptions != nil, o.DiagnosticRegistrationOptions != nil)
+	assertOnlyOne("more than one element of DiagnosticOptionsOrDiagnosticRegistrationOptions is set", o.DiagnosticOptions != nil, o.DiagnosticRegistrationOptions != nil)
 	if o.DiagnosticOptions != nil {
 		return json.Marshal(*o.DiagnosticOptions)
 	}
@@ -9270,7 +9270,7 @@ type BooleanOrInlineCompletionOptions struct {
 }
 
 func (o BooleanOrInlineCompletionOptions) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("invalid BooleanOrInlineCompletionOptions", o.Boolean != nil, o.InlineCompletionOptions != nil)
+	assertOnlyOne("more than one element of BooleanOrInlineCompletionOptions is set", o.Boolean != nil, o.InlineCompletionOptions != nil)
 	if o.Boolean != nil {
 		return json.Marshal(*o.Boolean)
 	}
@@ -9301,7 +9301,7 @@ type RangeOrEditRangeWithInsertReplace struct {
 }
 
 func (o RangeOrEditRangeWithInsertReplace) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("invalid RangeOrEditRangeWithInsertReplace", o.Range != nil, o.EditRangeWithInsertReplace != nil)
+	assertOnlyOne("more than one element of RangeOrEditRangeWithInsertReplace is set", o.Range != nil, o.EditRangeWithInsertReplace != nil)
 	if o.Range != nil {
 		return json.Marshal(*o.Range)
 	}
@@ -9332,7 +9332,7 @@ type StringOrNotebookDocumentFilter struct {
 }
 
 func (o StringOrNotebookDocumentFilter) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("invalid StringOrNotebookDocumentFilter", o.String != nil, o.NotebookDocumentFilter != nil)
+	assertOnlyOne("more than one element of StringOrNotebookDocumentFilter is set", o.String != nil, o.NotebookDocumentFilter != nil)
 	if o.String != nil {
 		return json.Marshal(*o.String)
 	}
@@ -9363,7 +9363,7 @@ type BooleanOrSaveOptions struct {
 }
 
 func (o BooleanOrSaveOptions) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("invalid BooleanOrSaveOptions", o.Boolean != nil, o.SaveOptions != nil)
+	assertOnlyOne("more than one element of BooleanOrSaveOptions is set", o.Boolean != nil, o.SaveOptions != nil)
 	if o.Boolean != nil {
 		return json.Marshal(*o.Boolean)
 	}
@@ -9394,7 +9394,7 @@ type TextDocumentContentOptionsOrTextDocumentContentRegistrationOptions struct {
 }
 
 func (o TextDocumentContentOptionsOrTextDocumentContentRegistrationOptions) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("invalid TextDocumentContentOptionsOrTextDocumentContentRegistrationOptions", o.TextDocumentContentOptions != nil, o.TextDocumentContentRegistrationOptions != nil)
+	assertOnlyOne("more than one element of TextDocumentContentOptionsOrTextDocumentContentRegistrationOptions is set", o.TextDocumentContentOptions != nil, o.TextDocumentContentRegistrationOptions != nil)
 	if o.TextDocumentContentOptions != nil {
 		return json.Marshal(*o.TextDocumentContentOptions)
 	}
@@ -9425,7 +9425,7 @@ type StringOrUintegerPair struct {
 }
 
 func (o StringOrUintegerPair) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("invalid StringOrUintegerPair", o.String != nil, o.UintegerPair != nil)
+	assertOnlyOne("more than one element of StringOrUintegerPair is set", o.String != nil, o.UintegerPair != nil)
 	if o.String != nil {
 		return json.Marshal(*o.String)
 	}
@@ -9456,7 +9456,7 @@ type StringOrBoolean struct {
 }
 
 func (o StringOrBoolean) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("invalid StringOrBoolean", o.String != nil, o.Boolean != nil)
+	assertOnlyOne("more than one element of StringOrBoolean is set", o.String != nil, o.Boolean != nil)
 	if o.String != nil {
 		return json.Marshal(*o.String)
 	}
@@ -9487,7 +9487,7 @@ type WorkspaceFolderOrURI struct {
 }
 
 func (o WorkspaceFolderOrURI) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("invalid WorkspaceFolderOrURI", o.WorkspaceFolder != nil, o.URI != nil)
+	assertOnlyOne("more than one element of WorkspaceFolderOrURI is set", o.WorkspaceFolder != nil, o.URI != nil)
 	if o.WorkspaceFolder != nil {
 		return json.Marshal(*o.WorkspaceFolder)
 	}
@@ -9518,7 +9518,7 @@ type BooleanOrClientSemanticTokensRequestFullDelta struct {
 }
 
 func (o BooleanOrClientSemanticTokensRequestFullDelta) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("invalid BooleanOrClientSemanticTokensRequestFullDelta", o.Boolean != nil, o.ClientSemanticTokensRequestFullDelta != nil)
+	assertOnlyOne("more than one element of BooleanOrClientSemanticTokensRequestFullDelta is set", o.Boolean != nil, o.ClientSemanticTokensRequestFullDelta != nil)
 	if o.Boolean != nil {
 		return json.Marshal(*o.Boolean)
 	}
@@ -9549,7 +9549,7 @@ type LocationOrArrayOfLocation struct {
 }
 
 func (o LocationOrArrayOfLocation) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("invalid LocationOrArrayOfLocation", o.Location != nil, o.ArrayOfLocation != nil)
+	assertOnlyOne("more than one element of LocationOrArrayOfLocation is set", o.Location != nil, o.ArrayOfLocation != nil)
 	if o.Location != nil {
 		return json.Marshal(*o.Location)
 	}
@@ -9581,7 +9581,7 @@ type InlineValueTextOrInlineValueVariableLookupOrInlineValueEvaluatableExpressio
 }
 
 func (o InlineValueTextOrInlineValueVariableLookupOrInlineValueEvaluatableExpression) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("invalid InlineValueTextOrInlineValueVariableLookupOrInlineValueEvaluatableExpression", o.InlineValueText != nil, o.InlineValueVariableLookup != nil, o.InlineValueEvaluatableExpression != nil)
+	assertOnlyOne("more than one element of InlineValueTextOrInlineValueVariableLookupOrInlineValueEvaluatableExpression is set", o.InlineValueText != nil, o.InlineValueVariableLookup != nil, o.InlineValueEvaluatableExpression != nil)
 	if o.InlineValueText != nil {
 		return json.Marshal(*o.InlineValueText)
 	}
@@ -9620,7 +9620,7 @@ type RelatedFullDocumentDiagnosticReportOrRelatedUnchangedDocumentDiagnosticRepo
 }
 
 func (o RelatedFullDocumentDiagnosticReportOrRelatedUnchangedDocumentDiagnosticReport) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("invalid RelatedFullDocumentDiagnosticReportOrRelatedUnchangedDocumentDiagnosticReport", o.RelatedFullDocumentDiagnosticReport != nil, o.RelatedUnchangedDocumentDiagnosticReport != nil)
+	assertOnlyOne("more than one element of RelatedFullDocumentDiagnosticReportOrRelatedUnchangedDocumentDiagnosticReport is set", o.RelatedFullDocumentDiagnosticReport != nil, o.RelatedUnchangedDocumentDiagnosticReport != nil)
 	if o.RelatedFullDocumentDiagnosticReport != nil {
 		return json.Marshal(*o.RelatedFullDocumentDiagnosticReport)
 	}
@@ -9652,7 +9652,7 @@ type RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehavior struct {
 }
 
 func (o RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehavior) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("invalid RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehavior", o.Range != nil, o.PrepareRenamePlaceholder != nil, o.PrepareRenameDefaultBehavior != nil)
+	assertOnlyOne("more than one element of RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehavior is set", o.Range != nil, o.PrepareRenamePlaceholder != nil, o.PrepareRenameDefaultBehavior != nil)
 	if o.Range != nil {
 		return json.Marshal(*o.Range)
 	}
@@ -9691,7 +9691,7 @@ type WorkspaceFullDocumentDiagnosticReportOrWorkspaceUnchangedDocumentDiagnostic
 }
 
 func (o WorkspaceFullDocumentDiagnosticReportOrWorkspaceUnchangedDocumentDiagnosticReport) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("invalid WorkspaceFullDocumentDiagnosticReportOrWorkspaceUnchangedDocumentDiagnosticReport", o.WorkspaceFullDocumentDiagnosticReport != nil, o.WorkspaceUnchangedDocumentDiagnosticReport != nil)
+	assertOnlyOne("more than one element of WorkspaceFullDocumentDiagnosticReportOrWorkspaceUnchangedDocumentDiagnosticReport is set", o.WorkspaceFullDocumentDiagnosticReport != nil, o.WorkspaceUnchangedDocumentDiagnosticReport != nil)
 	if o.WorkspaceFullDocumentDiagnosticReport != nil {
 		return json.Marshal(*o.WorkspaceFullDocumentDiagnosticReport)
 	}
@@ -9722,7 +9722,7 @@ type TextDocumentContentChangePartialOrTextDocumentContentChangeWholeDocument st
 }
 
 func (o TextDocumentContentChangePartialOrTextDocumentContentChangeWholeDocument) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("invalid TextDocumentContentChangePartialOrTextDocumentContentChangeWholeDocument", o.TextDocumentContentChangePartial != nil, o.TextDocumentContentChangeWholeDocument != nil)
+	assertOnlyOne("more than one element of TextDocumentContentChangePartialOrTextDocumentContentChangeWholeDocument is set", o.TextDocumentContentChangePartial != nil, o.TextDocumentContentChangeWholeDocument != nil)
 	if o.TextDocumentContentChangePartial != nil {
 		return json.Marshal(*o.TextDocumentContentChangePartial)
 	}
@@ -9753,7 +9753,7 @@ type StringOrMarkedStringWithLanguage struct {
 }
 
 func (o StringOrMarkedStringWithLanguage) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("invalid StringOrMarkedStringWithLanguage", o.String != nil, o.MarkedStringWithLanguage != nil)
+	assertOnlyOne("more than one element of StringOrMarkedStringWithLanguage is set", o.String != nil, o.MarkedStringWithLanguage != nil)
 	if o.String != nil {
 		return json.Marshal(*o.String)
 	}
@@ -9784,7 +9784,7 @@ type TextDocumentFilterOrNotebookCellTextDocumentFilter struct {
 }
 
 func (o TextDocumentFilterOrNotebookCellTextDocumentFilter) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("invalid TextDocumentFilterOrNotebookCellTextDocumentFilter", o.TextDocumentFilter != nil, o.NotebookCellTextDocumentFilter != nil)
+	assertOnlyOne("more than one element of TextDocumentFilterOrNotebookCellTextDocumentFilter is set", o.TextDocumentFilter != nil, o.NotebookCellTextDocumentFilter != nil)
 	if o.TextDocumentFilter != nil {
 		return json.Marshal(*o.TextDocumentFilter)
 	}
@@ -9815,7 +9815,7 @@ type PatternOrRelativePattern struct {
 }
 
 func (o PatternOrRelativePattern) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("invalid PatternOrRelativePattern", o.Pattern != nil, o.RelativePattern != nil)
+	assertOnlyOne("more than one element of PatternOrRelativePattern is set", o.Pattern != nil, o.RelativePattern != nil)
 	if o.Pattern != nil {
 		return json.Marshal(*o.Pattern)
 	}
@@ -9847,7 +9847,7 @@ type TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPat
 }
 
 func (o TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPattern) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("invalid TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPattern", o.TextDocumentFilterLanguage != nil, o.TextDocumentFilterScheme != nil, o.TextDocumentFilterPattern != nil)
+	assertOnlyOne("more than one element of TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPattern is set", o.TextDocumentFilterLanguage != nil, o.TextDocumentFilterScheme != nil, o.TextDocumentFilterPattern != nil)
 	if o.TextDocumentFilterLanguage != nil {
 		return json.Marshal(*o.TextDocumentFilterLanguage)
 	}
@@ -9887,7 +9887,7 @@ type NotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookD
 }
 
 func (o NotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("invalid NotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern", o.NotebookDocumentFilterNotebookType != nil, o.NotebookDocumentFilterScheme != nil, o.NotebookDocumentFilterPattern != nil)
+	assertOnlyOne("more than one element of NotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern is set", o.NotebookDocumentFilterNotebookType != nil, o.NotebookDocumentFilterScheme != nil, o.NotebookDocumentFilterPattern != nil)
 	if o.NotebookDocumentFilterNotebookType != nil {
 		return json.Marshal(*o.NotebookDocumentFilterNotebookType)
 	}
