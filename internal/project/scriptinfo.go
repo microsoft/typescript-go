@@ -28,9 +28,13 @@ type ScriptInfo struct {
 }
 
 func newScriptInfo(fileName string, path tspath.Path, scriptKind core.ScriptKind) *ScriptInfo {
+	isDynamic := isDynamicFileName(fileName)
+	realpath := core.IfElse(isDynamic, path, "")
 	return &ScriptInfo{
 		fileName:   fileName,
 		path:       path,
+		realpath:   realpath,
+		isDynamic:  isDynamic,
 		scriptKind: scriptKind,
 	}
 }
@@ -44,6 +48,9 @@ func (s *ScriptInfo) Path() tspath.Path {
 }
 
 func (s *ScriptInfo) LineMap() []core.TextPos {
+	if s.lineMap == nil {
+		s.lineMap = core.ComputeLineStarts(s.text)
+	}
 	return s.lineMap
 }
 
@@ -61,6 +68,13 @@ func (s *ScriptInfo) open(newText string) {
 	}
 }
 
+func (s *ScriptInfo) setTextFromDisk(newText string) {
+	if newText != s.text {
+		s.setText(newText)
+		s.matchesDiskText = true
+	}
+}
+
 func (s *ScriptInfo) close(fileExists bool) {
 	s.isOpen = false
 	if fileExists && !s.pendingReloadFromDisk && !s.matchesDiskText {
@@ -72,7 +86,7 @@ func (s *ScriptInfo) close(fileExists bool) {
 func (s *ScriptInfo) setText(newText string) {
 	s.text = newText
 	s.version++
-	s.lineMap = core.ComputeLineStarts(s.text)
+	s.lineMap = nil
 }
 
 func (s *ScriptInfo) markContainingProjectsAsDirty() {
@@ -166,7 +180,9 @@ func (s *ScriptInfo) detachFromProject(project *Project) {
 }
 
 func (s *ScriptInfo) delayReloadNonMixedContentFile() {
-	// !!!
+	if s.isDynamic {
+		panic("cannot reload dynamic file")
+	}
 	s.pendingReloadFromDisk = true
 	s.markContainingProjectsAsDirty()
 }

@@ -340,7 +340,7 @@ func (s *ProjectService) delayUpdateProjectGraph(project *Project) {
 }
 
 func (s *ProjectService) getOrCreateScriptInfoNotOpenedByClient(fileName string, path tspath.Path, scriptKind core.ScriptKind) *ScriptInfo {
-	if tspath.IsRootedDiskPath(fileName) /* !!! || isDynamicFileName(fileName) */ {
+	if tspath.IsRootedDiskPath(fileName) || isDynamicFileName(fileName) {
 		return s.getOrCreateScriptInfoWorker(fileName, path, scriptKind, false /*openedByClient*/, "" /*fileContent*/, false /*deferredDeleteOk*/)
 	}
 	// !!!
@@ -367,32 +367,30 @@ func (s *ProjectService) getOrCreateScriptInfoWorker(fileName string, path tspat
 	info, ok := s.scriptInfos[path]
 	s.scriptInfosMu.RUnlock()
 
-	if ok {
-		if info.deferredDelete {
-			if !openedByClient && !s.host.FS().FileExists(fileName) {
-				// If the file is not opened by client and the file does not exist on the disk, return
-				return core.IfElse(deferredDeleteOk, info, nil)
+	if !ok {
+		if !openedByClient && !isDynamicFileName(fileName) {
+			if content, ok := s.host.FS().ReadFile(fileName); !ok {
+				return nil
+			} else {
+				fileContent = content
 			}
-			info.deferredDelete = false
 		}
-	} else if !openedByClient && !s.host.FS().FileExists(fileName) {
-		return nil
-	} else {
+
+		info = newScriptInfo(fileName, path, scriptKind)
+		info.setTextFromDisk(fileContent)
 		s.scriptInfosMu.Lock()
 		defer s.scriptInfosMu.Unlock()
-		info = newScriptInfo(fileName, path, scriptKind)
 		if prevVersion, ok := s.filenameToScriptInfoVersion[path]; ok {
 			info.version = prevVersion
 			delete(s.filenameToScriptInfoVersion, path)
 		}
 		s.scriptInfos[path] = info
-		// !!!
-		// if !openedByClient {
-		// 	this.watchClosedScriptInfo(info)
-		// } else if !isRootedDiskPath(fileName) && (!isDynamic || this.currentDirectory != currentDirectory) {
-		// 	// File that is opened by user but isn't rooted disk path
-		// 	this.openFilesWithNonRootedDiskPath.set(this.toCanonicalFileName(fileName), info)
-		// }
+	} else if info.deferredDelete {
+		if !openedByClient && !s.host.FS().FileExists(fileName) {
+			// If the file is not opened by client and the file does not exist on the disk, return
+			return core.IfElse(deferredDeleteOk, info, nil)
+		}
+		info.deferredDelete = false
 	}
 
 	if openedByClient {
@@ -401,6 +399,9 @@ func (s *ProjectService) getOrCreateScriptInfoWorker(fileName string, path tspat
 		// !!!
 		// s.stopWatchingScriptInfo(info)
 		info.open(fileContent)
+	} else {
+		// !!!
+		// s.watchClosedScriptInfo(info)
 	}
 	return info
 }

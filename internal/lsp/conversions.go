@@ -54,6 +54,9 @@ func documentUriToFileName(uri lsproto.DocumentUri) string {
 		authority = "ts-nul-authority"
 	}
 	path := parsed.Path
+	if path == "" {
+		path = parsed.Opaque
+	}
 	if !strings.HasPrefix(path, "/") {
 		path = "/" + path
 	}

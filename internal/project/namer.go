@@ -1,6 +1,9 @@
 package project
 
-import "sync"
+import (
+	"fmt"
+	"sync"
+)
 
 type namer struct {
 	mu       sync.Mutex
@@ -14,5 +17,5 @@ func (n *namer) next(name string) string {
 		n.counters = make(map[string]int)
 	}
 	n.counters[name]++
-	return name + string(n.counters[name]) + "*"
+	return fmt.Sprintf("%s%d*", name, n.counters[name])
 }
