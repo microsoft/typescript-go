@@ -2557,3 +2557,22 @@ func getDeclarationsOfKind(symbol *ast.Symbol, kind ast.Kind) []*ast.Node {
 func hasType(node *ast.Node) bool {
 	return node.Type() != nil
 }
+
+func getNonRestParameterCount(sig *Signature) int {
+	return len(sig.parameters) - core.IfElse(signatureHasRestParameter(sig), 1, 0)
+}
+
+func minAndMax[T any](slice []T, getValue func(value T) int) (int, int) {
+	var minValue, maxValue int
+	for i, element := range slice {
+		value := getValue(element)
+		if i == 0 {
+			minValue = value
+			maxValue = value
+		} else {
+			minValue = min(minValue, value)
+			maxValue = max(maxValue, value)
+		}
+	}
+	return minValue, maxValue
+}

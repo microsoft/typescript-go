@@ -2107,11 +2107,10 @@ func (c *Checker) getExplicitTypeOfSymbol(symbol *ast.Symbol, diagnostic *ast.Di
 	}
 	if symbol.Flags&(ast.SymbolFlagsVariable|ast.SymbolFlagsProperty) != 0 {
 		if symbol.CheckFlags&ast.CheckFlagsMapped != 0 {
-			// !!!
-			// origin := (symbol.(MappedSymbol)).Links.syntheticOrigin
-			// if origin != nil && c.getExplicitTypeOfSymbol(origin) != nil {
-			// 	return c.getTypeOfSymbol(symbol)
-			// }
+			origin := c.mappedSymbolLinks.get(symbol).syntheticOrigin
+			if origin != nil && c.getExplicitTypeOfSymbol(origin, diagnostic) != nil {
+				return c.getTypeOfSymbol(symbol)
+			}
 		}
 		declaration := symbol.ValueDeclaration
 		if declaration != nil {
