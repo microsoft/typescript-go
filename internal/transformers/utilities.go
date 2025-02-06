@@ -1,8 +1,6 @@
 package transformers
 
 import (
-	// "slices"
-
 	"slices"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -11,16 +9,16 @@ import (
 )
 
 func copyIdentifier(emitContext *printer.EmitContext, node *ast.IdentifierNode) *ast.IdentifierNode {
-	var copy *ast.IdentifierNode
+	var nodeCopy *ast.IdentifierNode
 	if emitContext.HasAutoGenerateInfo(node) {
-		copy = emitContext.NewGeneratedNameForNode(node, printer.AutoGenerateOptions{})
+		nodeCopy = emitContext.NewGeneratedNameForNode(node, printer.AutoGenerateOptions{})
 	} else {
-		copy = emitContext.Factory.NewIdentifier(node.Text())
-		copy.Flags = node.Flags
-		copy.Loc = node.Loc
+		nodeCopy = emitContext.Factory.NewIdentifier(node.Text())
+		nodeCopy.Flags = node.Flags
+		nodeCopy.Loc = node.Loc
 	}
-	emitContext.SetOriginal(copy, node)
-	return copy
+	emitContext.SetOriginal(nodeCopy, node)
+	return nodeCopy
 }
 
 func getName(emitContext *printer.EmitContext, node *ast.Declaration, allowComments bool, allowSourceMaps bool, emitFlags printer.EmitFlags, ignoreAssignedName bool) *ast.IdentifierNode {
