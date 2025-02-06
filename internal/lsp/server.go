@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"strings"
 
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls"
@@ -19,15 +18,22 @@ type ServerOptions struct {
 	Out io.Writer
 	Err io.Writer
 
+	Cwd                string
+	NewLine            core.NewLineKind
 	FS                 vfs.FS
 	DefaultLibraryPath string
 }
 
 func NewServer(opts *ServerOptions) *Server {
+	if opts.Cwd == "" {
+		panic("Cwd is required")
+	}
 	return &Server{
 		r:                  lsproto.NewBaseReader(opts.In),
 		w:                  lsproto.NewBaseWriter(opts.Out),
 		stderr:             opts.Err,
+		cwd:                opts.Cwd,
+		newLine:            opts.NewLine,
 		fs:                 opts.FS,
 		defaultLibraryPath: opts.DefaultLibraryPath,
 	}
@@ -39,6 +45,8 @@ type Server struct {
 
 	stderr io.Writer
 
+	cwd                string
+	newLine            core.NewLineKind
 	fs                 vfs.FS
 	defaultLibraryPath string
 
@@ -54,17 +62,17 @@ func (s *Server) FS() vfs.FS {
 
 // GetCurrentDirectory implements project.ProjectServiceHost.
 func (s *Server) GetCurrentDirectory() string {
-	return "/"
+	return s.cwd
 }
 
 // NewLine implements project.ProjectServiceHost.
 func (s *Server) NewLine() string {
-	return "\n"
+	return s.newLine.GetNewLineCharacter()
 }
 
 // Trace implements project.ProjectServiceHost.
 func (s *Server) Trace(msg string) {
-	panic("unimplemented")
+	s.Log(msg)
 }
 
 var _ project.ProjectServiceHost = (*Server)(nil)
@@ -173,13 +181,13 @@ func (s *Server) handleInitialize(req *lsproto.RequestMessage) error {
 
 func (s *Server) handleDidOpen(req *lsproto.RequestMessage) error {
 	params := req.Params.(*lsproto.DidOpenTextDocumentParams)
-	s.projectService.OpenClientFile(strings.Replace(string(params.TextDocument.Uri), "file://", "", 1), params.TextDocument.Text, LanguageIDToScriptKind(params.TextDocument.LanguageId), "")
+	s.projectService.OpenClientFile(documentUriToFileName(params.TextDocument.Uri), params.TextDocument.Text, languageKindToScriptKind(params.TextDocument.LanguageId), "")
 	return s.sendResult(req.ID, nil)
 }
 
 func (s *Server) handleDidChange(req *lsproto.RequestMessage) error {
 	params := req.Params.(*lsproto.DidChangeTextDocumentParams)
-	scriptInfo := s.projectService.GetScriptInfo(strings.Replace(string(params.TextDocument.Uri), "file://", "", 1))
+	scriptInfo := s.projectService.GetScriptInfo(documentUriToFileName(params.TextDocument.Uri))
 	if scriptInfo == nil {
 		return s.sendError(req.ID, lsproto.ErrRequestFailed)
 	}
@@ -189,8 +197,8 @@ func (s *Server) handleDidChange(req *lsproto.RequestMessage) error {
 		if partialChange := change.TextDocumentContentChangePartial; partialChange != nil {
 			changes[i] = ls.TextChange{
 				TextRange: core.NewTextRange(
-					LineAndCharacterToPosition(partialChange.Range.Start, scriptInfo.LineMap()),
-					LineAndCharacterToPosition(partialChange.Range.End, scriptInfo.LineMap()),
+					lineAndCharacterToPosition(partialChange.Range.Start, scriptInfo.LineMap()),
+					lineAndCharacterToPosition(partialChange.Range.End, scriptInfo.LineMap()),
 				),
 				NewText: partialChange.Text,
 			}
@@ -207,7 +215,7 @@ func (s *Server) handleDidChange(req *lsproto.RequestMessage) error {
 	s.projectService.ApplyChangesInOpenFiles(
 		nil, /*openFiles*/
 		[]project.ChangeFileArguments{{
-			FileName: strings.Replace(string(params.TextDocument.Uri), "file://", "", 1),
+			FileName: documentUriToFileName(params.TextDocument.Uri),
 			Changes:  changes,
 		}},
 		nil, /*closedFiles*/
@@ -229,7 +237,7 @@ func (s *Server) handleMessage(req *lsproto.RequestMessage) error {
 		file, project := s.GetFileAndProject(params.TextDocument.Uri)
 		hoverText := project.LanguageService().ProvideHover(
 			file.FileName(),
-			LineAndCharacterToPosition(params.Position, file.LineMap()),
+			lineAndCharacterToPosition(params.Position, file.LineMap()),
 		)
 		return s.sendResult(req.ID, &lsproto.Hover{
 			Contents: lsproto.MarkupContentOrMarkedStringOrMarkedStrings{
@@ -240,7 +248,7 @@ func (s *Server) handleMessage(req *lsproto.RequestMessage) error {
 			},
 		})
 	default:
-		fmt.Fprintln(s.stderr, "unknown method", req.Method)
+		s.Log("unknown method", req.Method)
 		if req.ID != nil {
 			return s.sendError(req.ID, lsproto.ErrInvalidRequest)
 		}
@@ -249,7 +257,7 @@ func (s *Server) handleMessage(req *lsproto.RequestMessage) error {
 }
 
 func (s *Server) GetFileAndProject(uri lsproto.DocumentUri) (*project.ScriptInfo, *project.Project) {
-	fileName := strings.Replace(string(uri), "file://", "", 1)
+	fileName := documentUriToFileName(uri)
 	return s.projectService.EnsureDefaultProjectForFile(fileName)
 }
 
