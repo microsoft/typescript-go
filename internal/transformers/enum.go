@@ -208,7 +208,7 @@ func (tx *EnumTransformer) visitEnumDeclaration(node *ast.EnumDeclaration) *ast.
 	}
 
 	// `parameterName` is the declaration name used inside of the enum.
-	parameterName := tx.getNamespaceContainerName(node.AsNode())
+	parameterName := tx.getNamespaceParameterName(node.AsNode())
 
 	// `containerName` is the expression used inside of the enum for assignments.
 	containerName := tx.getNamespaceContainerName(node.AsNode())
