@@ -2154,7 +2154,7 @@ func (c *Checker) getExplicitThisType(node *ast.Node) *Type {
 			return c.getExplicitTypeOfSymbol(signature.thisParameter, nil)
 		}
 	}
-	if ast.IsClassLike(container.Parent) {
+	if container.Parent != nil && ast.IsClassLike(container.Parent) {
 		symbol := c.getSymbolOfDeclaration(container.Parent)
 		if ast.IsStatic(container) {
 			return c.getTypeOfSymbol(symbol)

@@ -1857,7 +1857,7 @@ func (c *Checker) getEffectiveRestType(signature *Signature) *Type {
 
 func (c *Checker) sliceTupleType(t *Type, index int, endSkipCount int) *Type {
 	target := t.TargetTupleType()
-	endIndex := c.getTypeReferenceArity(t) - endSkipCount
+	endIndex := c.getTypeReferenceArity(t) - max(endSkipCount, 0)
 	if index > target.fixedLength {
 		if restArrayType := c.getRestArrayTypeOfTupleType(t); restArrayType != nil {
 			return restArrayType
@@ -4070,7 +4070,10 @@ func (r *Relater) propertiesRelatedTo(source *Type, target *Type, reportErrors b
 				} else {
 					targetPosition = sourcePosition
 				}
-				targetFlags := target.TargetTupleType().elementInfos[targetPosition].flags
+				targetFlags := ElementFlagsNone
+				if targetPosition >= 0 {
+					targetFlags = target.TargetTupleType().elementInfos[targetPosition].flags
+				}
 				if targetFlags&ElementFlagsVariadic != 0 && sourceFlags&ElementFlagsVariadic == 0 {
 					if reportErrors {
 						r.reportError(diagnostics.Source_provides_no_match_for_variadic_element_at_position_0_in_target, targetPosition)

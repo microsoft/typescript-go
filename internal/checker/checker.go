@@ -8372,8 +8372,17 @@ func (c *Checker) checkIdentifier(node *ast.Node, checkMode CheckMode) *Type {
 }
 
 func (c *Checker) checkNewTargetMetaProperty(node *ast.Node) *Type {
-	// !!!
-	return nil
+	container := ast.GetNewTargetContainer(node)
+	if container == nil {
+		c.error(node, diagnostics.Meta_property_0_is_only_allowed_in_the_body_of_a_function_declaration_function_expression_or_constructor, "new.target")
+		return c.errorType
+	} else if ast.IsConstructorDeclaration(container) {
+		symbol := c.getSymbolOfDeclaration(container.Parent)
+		return c.getTypeOfSymbol(symbol)
+	} else {
+		symbol := c.getSymbolOfDeclaration(container)
+		return c.getTypeOfSymbol(symbol)
+	}
 }
 
 func (c *Checker) isSameScopedBindingElement(node *ast.Node, declaration *ast.Node) bool {
@@ -19723,7 +19732,7 @@ func (c *Checker) computeEnumMemberValue(member *ast.Node, autoValue jsnum.Numbe
 	if ast.IsComputedNonLiteralName(member.Name()) {
 		c.error(member.Name(), diagnostics.Computed_property_names_are_not_allowed_in_enums)
 	} else {
-		text := member.Name().Text()
+		text := ast.GetTextOfPropertyName(member.Name())
 		if isNumericLiteralName(text) && !isInfinityOrNaNString(text) {
 			c.error(member.Name(), diagnostics.An_enum_member_cannot_have_a_numeric_name)
 		}
@@ -21116,6 +21125,10 @@ func getNumberLiteralValue(t *Type) jsnum.Number {
 
 func getBigIntLiteralValue(t *Type) PseudoBigInt {
 	return t.AsLiteralType().value.(PseudoBigInt)
+}
+
+func getBooleanLiteralValue(t *Type) bool {
+	return t.AsLiteralType().value.(bool)
 }
 
 func (c *Checker) getEnumLiteralType(value any, enumSymbol *ast.Symbol, symbol *ast.Symbol) *Type {
@@ -26351,7 +26364,7 @@ func (c *Checker) getApplicableIndexInfos(t *Type, keyType *Type) []*IndexInfo {
 
 func (c *Checker) getApplicableIndexSymbol(t *Type, keyType *Type) *ast.Symbol {
 	infos := c.getApplicableIndexInfos(t, keyType)
-	if len(infos) > 0 && t.AsObjectType().members != nil {
+	if len(infos) > 0 && t.flags&TypeFlagsObject != 0 && t.AsObjectType().members != nil {
 		symbol := getIndexSymbolFromSymbolTable(c.resolveStructuredTypeMembers(t).members)
 		if core.Same(infos, c.getIndexInfosOfType(t)) {
 			return symbol
