@@ -13,13 +13,13 @@ import (
 var shadow = &analysis.Analyzer{
 	Name: "shadow",
 	Doc:  "bans shadowing",
-	Run:  runNonEmptyCase,
+	Run:  runShadow,
 	Requires: []*analysis.Analyzer{
 		inspect.Analyzer,
 	},
 }
 
-func runNonEmptyCase(pass *analysis.Pass) (interface{}, error) {
+func runShadow(pass *analysis.Pass) (interface{}, error) {
 	inspect := pass.ResultOf[inspect.Analyzer].(*inspector.Inspector)
 
 	nodeFilter := []ast.Node{

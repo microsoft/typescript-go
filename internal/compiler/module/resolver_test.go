@@ -312,15 +312,15 @@ func runTraceBaseline(t *testing.T, test traceTestCase) {
 		}
 
 		t.Run("concurrent", func(t *testing.T) {
-			concurrenthost := newVFSModuleResolutionHost(test.files, test.currentDirectory)
-			concurrentresolver := module.NewResolver(concurrenthost, test.compilerOptions)
+			concurrentHost := newVFSModuleResolutionHost(test.files, test.currentDirectory)
+			concurrentResolver := module.NewResolver(concurrentHost, test.compilerOptions)
 
 			var wg sync.WaitGroup
 			for _, call := range test.calls {
 				wg.Add(1)
 				go func() {
 					defer wg.Done()
-					doCall(t, concurrentresolver, call, true /*skipLocations*/)
+					doCall(t, concurrentResolver, call, true /*skipLocations*/)
 				}()
 			}
 
