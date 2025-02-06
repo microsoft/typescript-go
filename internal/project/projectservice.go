@@ -190,6 +190,10 @@ func (s *ProjectService) EnsureDefaultProjectForFile(fileName string) (*ScriptIn
 	panic("project not found")
 }
 
+func (s *ProjectService) Close() {
+	// !!!
+}
+
 func (s *ProjectService) ensureProjectStructureUpToDate() {
 	var hasChanges bool
 	for _, project := range s.configuredProjects {

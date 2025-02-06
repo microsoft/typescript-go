@@ -65,6 +65,10 @@ func (r *RequestMessage) UnmarshalJSON(data []byte) error {
 
 	r.ID = raw.ID
 	r.Method = raw.Method
+	if r.Method == "shutdown" || r.Method == "exit" {
+		// These methods have no params.
+		return nil
+	}
 
 	var params any
 	var err error

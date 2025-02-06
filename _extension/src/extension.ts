@@ -11,6 +11,10 @@ import {
 let client: LanguageClient;
 
 export function activate(context: vscode.ExtensionContext) {
+    context.subscriptions.push(vscode.commands.registerCommand("typescript-go.restart", () => {
+        client.restart();
+    }));
+
     const output = vscode.window.createOutputChannel("typescript-go", "log");
     const traceOutput = vscode.window.createOutputChannel("typescript-go (LSP)");
 

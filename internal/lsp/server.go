@@ -266,11 +266,21 @@ func (s *Server) handleMessage(req *lsproto.RequestMessage) error {
 			},
 		})
 	default:
-		s.Log("unknown method", req.Method)
-		if req.ID != nil {
-			return s.sendError(req.ID, lsproto.ErrInvalidRequest)
+		switch req.Method {
+		case lsproto.MethodShutdown:
+			s.projectService.Close()
+			s.Log("shutdown")
+			return s.sendResult(req.ID, nil)
+		case lsproto.MethodExit:
+			s.Log("exit")
+			return fmt.Errorf("exit")
+		default:
+			s.Log("unknown method", req.Method)
+			if req.ID != nil {
+				return s.sendError(req.ID, lsproto.ErrInvalidRequest)
+			}
+			return nil
 		}
-		return nil
 	}
 }
 
