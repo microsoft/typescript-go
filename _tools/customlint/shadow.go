@@ -21,7 +21,6 @@ var shadow = &analysis.Analyzer{
 
 func runShadow(pass *analysis.Pass) (interface{}, error) {
 	inspect := pass.ResultOf[inspect.Analyzer].(*inspector.Inspector)
-
 	nodeFilter := []ast.Node{
 		(*ast.File)(nil),
 		(*ast.FuncDecl)(nil),
@@ -32,11 +31,6 @@ func runShadow(pass *analysis.Pass) (interface{}, error) {
 		(*ast.ForStmt)(nil),
 		(*ast.BlockStmt)(nil),
 	}
-
-	// The inspect package doesn't tell us up front which file is being used,
-	// so keep track of it as part of the traversal. The file is the first node
-	// so will be set before any other nodes are visited.
-	var file *ast.File
 	scopes := []map[string]bool{}
 
 	inspect.Nodes(nodeFilter, func(n ast.Node, push bool) bool {
@@ -48,14 +42,11 @@ func runShadow(pass *analysis.Pass) (interface{}, error) {
 			return false
 		}
 		switch n := n.(type) {
-		case *ast.File:
-			file = n
-			scopes = append(scopes, make(map[string]bool))
-		case *ast.FuncDecl, *ast.CaseClause, *ast.FuncLit, *ast.BlockStmt, *ast.IfStmt, *ast.ForStmt:
+		case *ast.File, *ast.FuncDecl, *ast.CaseClause, *ast.FuncLit, *ast.BlockStmt, *ast.IfStmt, *ast.ForStmt:
 			scopes = append(scopes, make(map[string]bool))
 		case *ast.AssignStmt:
 			if n.Tok == token.DEFINE {
-				checkShadowingAssignment(pass, file, n, scopes)
+				checkShadowingAssignment(pass, n, scopes)
 			}
 		}
 		return true
@@ -64,7 +55,7 @@ func runShadow(pass *analysis.Pass) (interface{}, error) {
 	return nil, nil
 }
 
-func checkShadowingAssignment(pass *analysis.Pass, file *ast.File, stmt *ast.AssignStmt, scopes []map[string]bool) {
+func checkShadowingAssignment(pass *analysis.Pass, stmt *ast.AssignStmt, scopes []map[string]bool) {
 	for _, name := range stmt.Lhs {
 		switch name := name.(type) {
 		case *ast.Ident:
