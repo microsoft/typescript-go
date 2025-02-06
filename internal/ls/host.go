@@ -17,4 +17,5 @@ type Host interface {
 	// GetCompilerOptions was called GetCompilationSettings in the original code.
 	GetCompilerOptions() *core.CompilerOptions
 	GetSourceFile(fileName string, languageVersion core.ScriptTarget) *ast.SourceFile
+	GetDefaultLibraryPath() string
 }

@@ -299,7 +299,7 @@ func (c *Checker) isEnumTypeRelatedTo(source *ast.Symbol, target *ast.Symbol, er
 			targetProperty := c.getPropertyOfType(targetEnumType, sourceProperty.Name)
 			if targetProperty == nil || targetProperty.Flags&ast.SymbolFlagsEnumMember == 0 {
 				if errorReporter != nil {
-					errorReporter(diagnostics.Property_0_is_missing_in_type_1, c.symbolToString(sourceProperty), c.typeToString(c.getDeclaredTypeOfSymbol(targetSymbol)))
+					errorReporter(diagnostics.Property_0_is_missing_in_type_1, c.symbolToString(sourceProperty), c.TypeToString(c.getDeclaredTypeOfSymbol(targetSymbol)))
 				}
 				c.enumRelation[key] = RelationComparisonResultFailed
 				return false
@@ -381,7 +381,7 @@ func (c *Checker) checkTypeRelatedToEx(
 		if errorNode == nil {
 			errorNode = c.currentNode
 		}
-		c.reportDiagnostic(NewDiagnosticForNode(errorNode, message, c.typeToString(source), c.typeToString(target)), diagnosticOutput)
+		c.reportDiagnostic(NewDiagnosticForNode(errorNode, message, c.TypeToString(source), c.TypeToString(target)), diagnosticOutput)
 	} else if r.errorChain != nil {
 		// Check if we should issue an extra diagnostic to produce a quickfix for a slightly incorrect import statement
 		if headMessage != nil && errorNode != nil && result == TernaryFalse && source.symbol != nil && c.exportTypeLinks.has(source.symbol) {
@@ -1272,13 +1272,13 @@ func (c *Checker) getTypeNamesForErrorDisplay(left *Type, right *Type) (string, 
 	if c.symbolValueDeclarationIsContextSensitive(left.symbol) {
 		leftStr = c.typeToStringEx(left, left.symbol.ValueDeclaration, TypeFormatFlagsNone)
 	} else {
-		leftStr = c.typeToString(left)
+		leftStr = c.TypeToString(left)
 	}
 	var rightStr string
 	if c.symbolValueDeclarationIsContextSensitive(right.symbol) {
 		rightStr = c.typeToStringEx(right, right.symbol.ValueDeclaration, TypeFormatFlagsNone)
 	} else {
-		rightStr = c.typeToString(right)
+		rightStr = c.TypeToString(right)
 	}
 	if leftStr == rightStr {
 		leftStr = c.getTypeNameForErrorDisplay(left)
@@ -1612,7 +1612,7 @@ func (c *Checker) compareSignaturesRelated(source *Signature, target *Signature,
 						diagnostics.Construct_signature_return_types_0_and_1_are_incompatible,
 						diagnostics.Call_signature_return_types_0_and_1_are_incompatible)
 				}
-				errorReporter(message, c.typeToString(sourceReturnType), c.typeToString(targetReturnType))
+				errorReporter(message, c.TypeToString(sourceReturnType), c.TypeToString(targetReturnType))
 			}
 		}
 	}
@@ -2559,8 +2559,8 @@ func (r *Relater) isRelatedToEx(originalSource *Type, originalTarget *Type, recu
 		isComparingJsxAttributes := source.objectFlags&ObjectFlagsJsxAttributes != 0
 		if isPerformingCommonPropertyChecks && !r.c.hasCommonProperties(source, target, isComparingJsxAttributes) {
 			if reportErrors {
-				sourceString := r.c.typeToString(core.IfElse(originalSource.alias != nil, originalSource, source))
-				targetString := r.c.typeToString(core.IfElse(originalTarget.alias != nil, originalTarget, target))
+				sourceString := r.c.TypeToString(core.IfElse(originalSource.alias != nil, originalSource, source))
+				targetString := r.c.TypeToString(core.IfElse(originalTarget.alias != nil, originalTarget, target))
 				calls := r.c.getSignaturesOfType(source, SignatureKindCall)
 				constructs := r.c.getSignaturesOfType(source, SignatureKindConstruct)
 				if len(calls) > 0 && r.isRelatedTo(r.c.getReturnTypeOfSignature(calls[0]), target, RecursionFlagsSource, false /*reportErrors*/) != TernaryFalse ||
@@ -2660,9 +2660,9 @@ func (r *Relater) hasExcessProperties(source *Type, target *Type, reportErrors b
 							}
 						}
 						if suggestion != "" {
-							r.reportError(diagnostics.Object_literal_may_only_specify_known_properties_but_0_does_not_exist_in_type_1_Did_you_mean_to_write_2, r.c.symbolToString(prop), r.c.typeToString(errorTarget), suggestion)
+							r.reportError(diagnostics.Object_literal_may_only_specify_known_properties_but_0_does_not_exist_in_type_1_Did_you_mean_to_write_2, r.c.symbolToString(prop), r.c.TypeToString(errorTarget), suggestion)
 						} else {
-							r.reportError(diagnostics.Object_literal_may_only_specify_known_properties_and_0_does_not_exist_in_type_1, r.c.symbolToString(prop), r.c.typeToString(errorTarget))
+							r.reportError(diagnostics.Object_literal_may_only_specify_known_properties_and_0_does_not_exist_in_type_1, r.c.symbolToString(prop), r.c.TypeToString(errorTarget))
 						}
 					}
 				}
@@ -2959,7 +2959,7 @@ func (r *Relater) recursiveTypeRelatedTo(source *Type, target *Type, reportError
 				message := core.IfElse(entry&RelationComparisonResultComplexityOverflow != 0,
 					diagnostics.Excessive_complexity_comparing_types_0_and_1,
 					diagnostics.Excessive_stack_depth_comparing_types_0_and_1)
-				r.reportError(message, r.c.typeToString(source), r.c.typeToString(target))
+				r.reportError(message, r.c.TypeToString(source), r.c.TypeToString(target))
 			}
 			if entry&RelationComparisonResultSucceeded != 0 {
 				return TernaryTrue
@@ -4089,7 +4089,7 @@ func (r *Relater) propertiesRelatedTo(source *Type, target *Type, reportErrors b
 				sourceType := r.c.getTypeOfSymbol(sourceProp)
 				if sourceType.flags&TypeFlagsUndefined == 0 {
 					if reportErrors {
-						r.reportError(diagnostics.Property_0_does_not_exist_on_type_1, r.c.symbolToString(sourceProp), r.c.typeToString(target))
+						r.reportError(diagnostics.Property_0_does_not_exist_on_type_1, r.c.symbolToString(sourceProp), r.c.TypeToString(target))
 					}
 					return TernaryFalse
 				}
@@ -4126,7 +4126,7 @@ func (r *Relater) propertyRelatedTo(source *Type, target *Type, sourceProp *ast.
 				if sourcePropFlags&ast.ModifierFlagsPrivate != 0 && targetPropFlags&ast.ModifierFlagsPrivate != 0 {
 					r.reportError(diagnostics.Types_have_separate_declarations_of_a_private_property_0, r.c.symbolToString(targetProp))
 				} else {
-					r.reportError(diagnostics.Property_0_is_private_in_type_1_but_not_in_type_2, r.c.symbolToString(targetProp), r.c.typeToString(core.IfElse(sourcePropFlags&ast.ModifierFlagsPrivate != 0, source, target)), r.c.typeToString(core.IfElse(sourcePropFlags&ast.ModifierFlagsPrivate != 0, target, source)))
+					r.reportError(diagnostics.Property_0_is_private_in_type_1_but_not_in_type_2, r.c.symbolToString(targetProp), r.c.TypeToString(core.IfElse(sourcePropFlags&ast.ModifierFlagsPrivate != 0, source, target)), r.c.TypeToString(core.IfElse(sourcePropFlags&ast.ModifierFlagsPrivate != 0, target, source)))
 				}
 			}
 			return TernaryFalse
@@ -4136,13 +4136,13 @@ func (r *Relater) propertyRelatedTo(source *Type, target *Type, sourceProp *ast.
 			if reportErrors {
 				sourceType := core.OrElse(r.c.getDeclaringClass(sourceProp), source)
 				targetType := core.OrElse(r.c.getDeclaringClass(targetProp), target)
-				r.reportError(diagnostics.Property_0_is_protected_but_type_1_is_not_a_class_derived_from_2, r.c.symbolToString(targetProp), r.c.typeToString(sourceType), r.c.typeToString(targetType))
+				r.reportError(diagnostics.Property_0_is_protected_but_type_1_is_not_a_class_derived_from_2, r.c.symbolToString(targetProp), r.c.TypeToString(sourceType), r.c.TypeToString(targetType))
 			}
 			return TernaryFalse
 		}
 	case sourcePropFlags&ast.ModifierFlagsProtected != 0:
 		if reportErrors {
-			r.reportError(diagnostics.Property_0_is_protected_in_type_1_but_public_in_type_2, r.c.symbolToString(targetProp), r.c.typeToString(source), r.c.typeToString(target))
+			r.reportError(diagnostics.Property_0_is_protected_in_type_1_but_public_in_type_2, r.c.symbolToString(targetProp), r.c.TypeToString(source), r.c.TypeToString(target))
 		}
 		return TernaryFalse
 	}
@@ -4173,7 +4173,7 @@ func (r *Relater) propertyRelatedTo(source *Type, target *Type, sourceProp *ast.
 		// (M - property in T)
 		// (N - property in S)
 		if reportErrors {
-			r.reportError(diagnostics.Property_0_is_optional_in_type_1_but_required_in_type_2, r.c.symbolToString(targetProp), r.c.typeToString(source), r.c.typeToString(target))
+			r.reportError(diagnostics.Property_0_is_optional_in_type_1_but_required_in_type_2, r.c.symbolToString(targetProp), r.c.TypeToString(source), r.c.TypeToString(target))
 		}
 		return TernaryFalse
 	}
@@ -4206,17 +4206,17 @@ func (r *Relater) reportUnmatchedProperty(source *Type, target *Type, unmatchedP
 	props := r.c.getUnmatchedProperties(source, target, requireOptionalProperties, false /*matchDiscriminantProperties*/)
 	if len(props) == 1 {
 		propName := r.c.symbolToString(unmatchedProperty)
-		r.reportError(diagnostics.Property_0_is_missing_in_type_1_but_required_in_type_2, unmatchedProperty.Name, r.c.typeToString(source), r.c.typeToString(target))
+		r.reportError(diagnostics.Property_0_is_missing_in_type_1_but_required_in_type_2, unmatchedProperty.Name, r.c.TypeToString(source), r.c.TypeToString(target))
 		if len(unmatchedProperty.Declarations) != 0 {
 			r.relatedInfo = append(r.relatedInfo, createDiagnosticForNode(unmatchedProperty.Declarations[0], diagnostics.X_0_is_declared_here, propName))
 		}
 	} else if r.tryElaborateArrayLikeErrors(source, target, false /*reportErrors*/) {
 		if len(props) > 5 {
 			propNames := strings.Join(core.Map(props[:4], r.c.symbolToString), ", ")
-			r.reportError(diagnostics.Type_0_is_missing_the_following_properties_from_type_1_Colon_2_and_3_more, r.c.typeToString(source), r.c.typeToString(target), propNames, len(props)-4)
+			r.reportError(diagnostics.Type_0_is_missing_the_following_properties_from_type_1_Colon_2_and_3_more, r.c.TypeToString(source), r.c.TypeToString(target), propNames, len(props)-4)
 		} else {
 			propNames := strings.Join(core.Map(props, r.c.symbolToString), ", ")
-			r.reportError(diagnostics.Type_0_is_missing_the_following_properties_from_type_1_Colon_2, r.c.typeToString(source), r.c.typeToString(target), propNames)
+			r.reportError(diagnostics.Type_0_is_missing_the_following_properties_from_type_1_Colon_2, r.c.TypeToString(source), r.c.TypeToString(target), propNames)
 		}
 	}
 }
@@ -4232,7 +4232,7 @@ func (r *Relater) tryElaborateArrayLikeErrors(source *Type, target *Type, report
 	if isTupleType(source) {
 		if source.TargetTupleType().readonly && r.c.isMutableArrayOrTuple(target) {
 			if reportErrors {
-				r.reportError(diagnostics.The_type_0_is_readonly_and_cannot_be_assigned_to_the_mutable_type_1, r.c.typeToString(source), r.c.typeToString(target))
+				r.reportError(diagnostics.The_type_0_is_readonly_and_cannot_be_assigned_to_the_mutable_type_1, r.c.TypeToString(source), r.c.TypeToString(target))
 			}
 			return false
 		}
@@ -4240,7 +4240,7 @@ func (r *Relater) tryElaborateArrayLikeErrors(source *Type, target *Type, report
 	}
 	if r.c.isReadonlyArrayType(source) && r.c.isMutableArrayOrTuple(target) {
 		if reportErrors {
-			r.reportError(diagnostics.The_type_0_is_readonly_and_cannot_be_assigned_to_the_mutable_type_1, r.c.typeToString(source), r.c.typeToString(target))
+			r.reportError(diagnostics.The_type_0_is_readonly_and_cannot_be_assigned_to_the_mutable_type_1, r.c.TypeToString(source), r.c.TypeToString(target))
 		}
 		return false
 	}
@@ -4255,7 +4255,7 @@ func (r *Relater) tryElaborateErrorsForPrimitivesAndObjects(source *Type, target
 		(source == r.c.globalNumberType && target == r.c.numberType) ||
 		(source == r.c.globalBooleanType && target == r.c.booleanType) ||
 		(source == r.c.getGlobalESSymbolType() && target == r.c.esSymbolType) {
-		r.reportError(diagnostics.X_0_is_a_primitive_but_1_is_a_wrapper_object_Prefer_using_0_when_possible, r.c.typeToString(target), r.c.typeToString(source))
+		r.reportError(diagnostics.X_0_is_a_primitive_but_1_is_a_wrapper_object_Prefer_using_0_when_possible, r.c.TypeToString(target), r.c.TypeToString(source))
 	}
 }
 
@@ -4348,7 +4348,7 @@ func (r *Relater) signaturesRelatedTo(source *Type, target *Type, kind Signature
 				shouldElaborateErrors = false
 			}
 			if shouldElaborateErrors {
-				r.reportError(diagnostics.Type_0_provides_no_match_for_the_signature_1, r.c.typeToString(source), r.c.signatureToString(t))
+				r.reportError(diagnostics.Type_0_provides_no_match_for_the_signature_1, r.c.TypeToString(source), r.c.signatureToString(t))
 			}
 			return TernaryFalse
 		}
@@ -4453,7 +4453,7 @@ func (r *Relater) typeRelatedToIndexInfo(source *Type, targetInfo *IndexInfo, re
 		return r.membersRelatedToIndexInfo(source, targetInfo, reportErrors, intersectionState)
 	}
 	if reportErrors {
-		r.reportError(diagnostics.Index_signature_for_type_0_is_missing_in_type_1, r.c.typeToString(targetInfo.keyType), r.c.typeToString(source))
+		r.reportError(diagnostics.Index_signature_for_type_0_is_missing_in_type_1, r.c.TypeToString(targetInfo.keyType), r.c.TypeToString(source))
 	}
 	return TernaryFalse
 }
@@ -4520,9 +4520,9 @@ func (r *Relater) indexInfoRelatedTo(sourceInfo *IndexInfo, targetInfo *IndexInf
 	related := r.isRelatedToEx(sourceInfo.valueType, targetInfo.valueType, RecursionFlagsBoth, reportErrors, nil /*headMessage*/, intersectionState)
 	if related == TernaryFalse && reportErrors {
 		if sourceInfo.keyType == targetInfo.keyType {
-			r.reportError(diagnostics.X_0_index_signatures_are_incompatible, r.c.typeToString(sourceInfo.keyType))
+			r.reportError(diagnostics.X_0_index_signatures_are_incompatible, r.c.TypeToString(sourceInfo.keyType))
 		} else {
-			r.reportError(diagnostics.X_0_and_1_index_signatures_are_incompatible, r.c.typeToString(sourceInfo.keyType), r.c.typeToString(targetInfo.keyType))
+			r.reportError(diagnostics.X_0_and_1_index_signatures_are_incompatible, r.c.TypeToString(sourceInfo.keyType), r.c.TypeToString(targetInfo.keyType))
 		}
 	}
 	return related
@@ -4585,7 +4585,7 @@ func (r *Relater) reportErrorResults(originalSource *Type, originalTarget *Type,
 		syntheticParam := r.c.cloneTypeParameter(source)
 		syntheticParam.AsTypeParameter().constraint = r.c.instantiateType(target, newSimpleTypeMapper(source, syntheticParam))
 		if r.c.hasNonCircularBaseConstraint(syntheticParam) {
-			targetConstraintString := r.c.typeToString(target)
+			targetConstraintString := r.c.TypeToString(target)
 			r.relatedInfo = append(r.relatedInfo, NewDiagnosticForNode(source.symbol.Declarations[0], diagnostics.This_type_parameter_might_need_an_extends_0_constraint, targetConstraintString))
 		}
 	}
@@ -4613,9 +4613,9 @@ func (r *Relater) reportRelationError(message *diagnostics.Message, source *Type
 		constraint := r.c.getBaseConstraintOfType(target)
 		switch {
 		case constraint != nil && r.c.isTypeAssignableTo(generalizedSource, constraint):
-			r.reportError(diagnostics.X_0_is_assignable_to_the_constraint_of_type_1_but_1_could_be_instantiated_with_a_different_subtype_of_constraint_2, generalizedSourceType, targetType, r.c.typeToString(constraint))
+			r.reportError(diagnostics.X_0_is_assignable_to_the_constraint_of_type_1_but_1_could_be_instantiated_with_a_different_subtype_of_constraint_2, generalizedSourceType, targetType, r.c.TypeToString(constraint))
 		case constraint != nil && r.c.isTypeAssignableTo(source, constraint):
-			r.reportError(diagnostics.X_0_is_assignable_to_the_constraint_of_type_1_but_1_could_be_instantiated_with_a_different_subtype_of_constraint_2, sourceType, targetType, r.c.typeToString(constraint))
+			r.reportError(diagnostics.X_0_is_assignable_to_the_constraint_of_type_1_but_1_could_be_instantiated_with_a_different_subtype_of_constraint_2, sourceType, targetType, r.c.TypeToString(constraint))
 		default:
 			r.reportError(diagnostics.X_0_could_be_instantiated_with_an_arbitrary_type_which_could_be_unrelated_to_1, targetType, generalizedSourceType)
 		}

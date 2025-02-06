@@ -335,10 +335,11 @@ func Must[T any](v T, err error) T {
 	return v
 }
 
-func StringifyJson(input any) (string, error) {
+func StringifyJson(input any, prefix string, indent string) (string, error) {
 	var buf bytes.Buffer
 	encoder := json.NewEncoder(&buf)
 	encoder.SetEscapeHTML(false)
+	encoder.SetIndent(prefix, indent)
 	if _, ok := input.([]any); ok && len(input.([]any)) == 0 {
 		return "[]", nil
 	}

@@ -1,7 +1,9 @@
 package project
 
 import (
+	"fmt"
 	"slices"
+	"strings"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
@@ -11,6 +13,10 @@ import (
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 )
+
+//go:generate go run golang.org/x/tools/cmd/stringer -type=ProjectKind -output=project_stringer_generated.go
+
+var projectNamer = &namer{}
 
 var _ ls.Host = (*Project)(nil)
 
@@ -25,8 +31,11 @@ const (
 
 type Project struct {
 	projectService *ProjectService
-	kind           ProjectKind
 
+	name string
+	kind ProjectKind
+
+	initialLoadPending        bool
 	dirty                     bool
 	version                   int
 	hasAddedOrRemovedFiles    bool
@@ -48,25 +57,28 @@ type Project struct {
 }
 
 func NewConfiguredProject(configFileName string, configFilePath tspath.Path, projectService *ProjectService) *Project {
-	project := &Project{
-		projectService:   projectService,
-		kind:             ProjectKindConfigured,
-		currentDirectory: tspath.GetDirectoryPath(configFileName),
-		configFileName:   configFileName,
-		configFilePath:   configFilePath,
-	}
-	project.languageService = ls.NewLanguageService(project)
-	project.markAsDirty()
+	project := NewProject(configFileName, ProjectKindConfigured, tspath.GetDirectoryPath(configFileName), projectService)
+	project.configFileName = configFileName
+	project.configFilePath = configFilePath
+	project.initialLoadPending = true
 	return project
 }
 
 func NewInferredProject(compilerOptions *core.CompilerOptions, currentDirectory string, projectRootPath tspath.Path, projectService *ProjectService) *Project {
+	project := NewProject(projectNamer.next("/dev/null/inferredProject"), ProjectKindInferred, currentDirectory, projectService)
+	project.rootPath = projectRootPath
+	project.compilerOptions = compilerOptions
+	return project
+}
+
+func NewProject(name string, kind ProjectKind, currentDirectory string, projectService *ProjectService) *Project {
+	projectService.log(fmt.Sprintf("Creating %sProject: %s, currentDirectory: %s", kind.String(), name, currentDirectory))
 	project := &Project{
 		projectService:   projectService,
-		kind:             ProjectKindInferred,
+		name:             name,
+		kind:             kind,
 		currentDirectory: currentDirectory,
-		rootPath:         projectRootPath,
-		compilerOptions:  compilerOptions,
+		rootFileNames:    &collections.OrderedMap[tspath.Path, string]{},
 	}
 	project.languageService = ls.NewLanguageService(project)
 	project.markAsDirty()
@@ -102,8 +114,14 @@ func (p *Project) GetRootFileNames() []string {
 func (p *Project) GetSourceFile(fileName string, languageVersion core.ScriptTarget) *ast.SourceFile {
 	scriptKind := p.getScriptKind(fileName)
 	if scriptInfo := p.getOrCreateScriptInfoAndAttachToProject(fileName, scriptKind); scriptInfo != nil {
-		oldSourceFile := p.program.GetSourceFileByPath(scriptInfo.path)
-		return p.projectService.documentRegistry.AcquireDocument(scriptInfo, p.GetCompilerOptions(), oldSourceFile, p.program.GetCompilerOptions())
+		var (
+			oldSourceFile      *ast.SourceFile
+			oldCompilerOptions *core.CompilerOptions
+		)
+		if p.program != nil {
+			oldSourceFile = p.program.GetSourceFileByPath(scriptInfo.path)
+		}
+		return p.projectService.documentRegistry.AcquireDocument(scriptInfo, p.GetCompilerOptions(), oldSourceFile, oldCompilerOptions)
 	}
 	return nil
 }
@@ -118,7 +136,16 @@ func (p *Project) Trace(msg string) {
 	p.projectService.host.Trace(msg)
 }
 
-func (p *Project) getOrCreateScriptInfoAndAttachToProject(fileName string, scriptKind core.ScriptKind) *scriptInfo {
+// GetDefaultLibraryPath implements ls.Host.
+func (p *Project) GetDefaultLibraryPath() string {
+	return p.projectService.options.DefaultLibraryPath
+}
+
+func (p *Project) LanguageService() *ls.LanguageService {
+	return p.languageService
+}
+
+func (p *Project) getOrCreateScriptInfoAndAttachToProject(fileName string, scriptKind core.ScriptKind) *ScriptInfo {
 	if scriptInfo := p.projectService.getOrCreateScriptInfoNotOpenedByClient(fileName, p.projectService.toPath(fileName), scriptKind); scriptInfo != nil {
 		scriptInfo.attachToProject(p)
 		return scriptInfo
@@ -137,15 +164,15 @@ func (p *Project) markFileAsDirty(path tspath.Path) {
 }
 
 func (p *Project) markAsDirty() {
-	p.dirty = true
-	p.version++
+	if !p.dirty {
+		p.dirty = true
+		p.version++
+	}
 }
 
-func (p *Project) updateIfDirty() {
+func (p *Project) updateIfDirty() bool {
 	// !!! p.invalidateResolutionsOfFailedLookupLocations()
-	if p.dirty {
-		p.updateGraph()
-	}
+	return p.dirty && p.updateGraph()
 }
 
 func (p *Project) onFileAddedOrRemoved(isSymlink bool) {
@@ -155,11 +182,28 @@ func (p *Project) onFileAddedOrRemoved(isSymlink bool) {
 	}
 }
 
-func (p *Project) updateGraph() {
+// updateGraph updates the set of files that contribute to the project.
+// Returns true if the set of files in has changed. NOTE: this is the
+// opposite of the return value in Strada, which was frequently inverted,
+// as in `updateProjectIfDirty()`.
+func (p *Project) updateGraph() bool {
 	// !!!
+	p.log(fmt.Sprintf("Starting updateGraph: Project: %s", p.name))
+	oldProgram := p.program
+	hasAddedOrRemovedFiles := p.hasAddedOrRemovedFiles
+	p.initialLoadPending = false
 	p.hasAddedOrRemovedFiles = false
 	p.hasAddedOrRemovedSymlinks = false
+	p.dirty = false
 	p.program = p.languageService.GetProgram()
+	p.log(fmt.Sprintf("Finishing updateGraph: Project: %s version: %d", p.name, p.version))
+	if hasAddedOrRemovedFiles {
+		p.log(p.print(true /*writeFileNames*/, true /*writeFileExplanation*/, false /*writeFileVersionAndText*/))
+	} else if p.program != oldProgram {
+		p.log("Different program with same set of files")
+	}
+
+	return true
 }
 
 func (p *Project) isOrphan() bool {
@@ -177,11 +221,11 @@ func (p *Project) toPath(fileName string) tspath.Path {
 	return tspath.ToPath(fileName, p.GetCurrentDirectory(), p.FS().UseCaseSensitiveFileNames())
 }
 
-func (p *Project) isRoot(info *scriptInfo) bool {
+func (p *Project) isRoot(info *ScriptInfo) bool {
 	return p.rootFileNames.Has(info.path)
 }
 
-func (p *Project) removeFile(info *scriptInfo, fileExists bool, detachFromProject bool) {
+func (p *Project) removeFile(info *ScriptInfo, fileExists bool, detachFromProject bool) {
 	if p.isRoot(info) {
 		p.rootFileNames.Delete(info.path)
 	}
@@ -199,7 +243,7 @@ func (p *Project) removeFile(info *scriptInfo, fileExists bool, detachFromProjec
 	p.markAsDirty()
 }
 
-func (p *Project) addRoot(info *scriptInfo) {
+func (p *Project) addRoot(info *ScriptInfo) {
 	// !!!
 	// if p.kind == ProjectKindInferred {
 	// 	p.projectService.startWatchingConfigFilesForInferredProjectRoot(info.path);
@@ -220,4 +264,34 @@ func (p *Project) addMissingRootFile(fileName string, path tspath.Path) {
 
 func (p *Project) clearSourceMapperCache() {
 	// !!!
+}
+
+func (p *Project) print(writeFileNames bool, writeFileExplanation bool, writeFileVersionAndText bool) string {
+	var builder strings.Builder
+	builder.WriteString(fmt.Sprintf("Project '%s' (%s)\n", p.name, p.kind.String()))
+	if p.initialLoadPending {
+		builder.WriteString("\tFiles (0) InitialLoadPending\n")
+	} else if p.program == nil {
+		builder.WriteString("\tFiles (0) NoProgram\n")
+	} else {
+		sourceFiles := p.program.GetSourceFiles()
+		builder.WriteString(fmt.Sprintf("\tFiles (%d)\n", len(sourceFiles)))
+		if writeFileNames {
+			for _, sourceFile := range sourceFiles {
+				builder.WriteString(fmt.Sprintf("\t\t%s", sourceFile.FileName()))
+				if writeFileVersionAndText {
+					builder.WriteString(fmt.Sprintf(" %d %s", sourceFile.Version, sourceFile.Text))
+				}
+				builder.WriteRune('\n')
+			}
+			// !!!
+			// if writeFileExplanation {}
+		}
+	}
+	builder.WriteString("-----------------------------------------------")
+	return builder.String()
+}
+
+func (p *Project) log(s string) {
+	p.projectService.log(s)
 }

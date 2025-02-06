@@ -12,6 +12,12 @@ var factory = &ast.NodeFactory{}
 
 func getNodeChildren(node *ast.Node, sourceFile *ast.SourceFile) []*ast.Node {
 	// !!! implement weak map cache
+	if ast.IsTokenKind(node.Kind) {
+		return nil
+	}
+	if node.Kind == ast.KindSyntaxList {
+		return node.AsSyntaxList().Children
+	}
 	return createChildren(node, sourceFile)
 }
 
@@ -47,9 +53,11 @@ func createChildren(node *ast.Node, sourceFile *ast.SourceFile) []*ast.Node {
 				return child
 			},
 			VisitNodes: func(nodeList *ast.NodeList, v *ast.NodeVisitor) *ast.NodeList {
-				children = addSyntheticNodes(children, pos, nodeList.Pos(), node, scanner)
-				children = append(children, createSyntaxList(nodeList, node, scanner))
-				pos = nodeList.End()
+				if nodeList != nil {
+					children = addSyntheticNodes(children, pos, nodeList.Pos(), node, scanner)
+					children = append(children, createSyntaxList(nodeList, node, scanner))
+					pos = nodeList.End()
+				}
 				return nodeList
 			},
 		},
@@ -90,7 +98,7 @@ func addSyntheticNodes(children []*ast.Node, pos, end int, parent *ast.Node, sca
 		token := scanner.Token()
 		textPos := scanner.TokenEnd()
 		if textPos <= end {
-			if !ast.IsTokenKind(token) {
+			if token == ast.KindIdentifier || !ast.IsTokenKind(token) {
 				// !!! snippet support
 				// if hasTabstop(parent) {
 				// 	continue

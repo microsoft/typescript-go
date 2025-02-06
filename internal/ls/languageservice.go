@@ -58,9 +58,10 @@ func (l *LanguageService) GetProgram() *compiler.Program {
 	compilerOptions := l.host.GetCompilerOptions()
 
 	l.program = compiler.NewProgram(compiler.ProgramOptions{
-		RootFiles: rootFileNames,
-		Host:      l,
-		Options:   compilerOptions,
+		RootFiles:          rootFileNames,
+		Host:               l,
+		Options:            compilerOptions,
+		DefaultLibraryPath: l.host.GetDefaultLibraryPath(),
 	})
 
 	l.program.BindSourceFiles()

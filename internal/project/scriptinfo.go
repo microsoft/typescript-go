@@ -9,7 +9,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/vfs"
 )
 
-type scriptInfo struct {
+type ScriptInfo struct {
 	fileName   string
 	path       tspath.Path
 	realpath   tspath.Path
@@ -17,6 +17,7 @@ type scriptInfo struct {
 	scriptKind core.ScriptKind
 	text       string
 	version    int
+	lineMap    []core.TextPos
 
 	isOpen                bool
 	pendingReloadFromDisk bool
@@ -26,15 +27,31 @@ type scriptInfo struct {
 	containingProjects []*Project
 }
 
-func newScriptInfo(fileName string, path tspath.Path, scriptKind core.ScriptKind) *scriptInfo {
-	return &scriptInfo{
+func newScriptInfo(fileName string, path tspath.Path, scriptKind core.ScriptKind) *ScriptInfo {
+	return &ScriptInfo{
 		fileName:   fileName,
 		path:       path,
 		scriptKind: scriptKind,
 	}
 }
 
-func (s *scriptInfo) open(newText string) {
+func (s *ScriptInfo) FileName() string {
+	return s.fileName
+}
+
+func (s *ScriptInfo) Path() tspath.Path {
+	return s.path
+}
+
+func (s *ScriptInfo) LineMap() []core.TextPos {
+	return s.lineMap
+}
+
+func (s *ScriptInfo) Text() string {
+	return s.text
+}
+
+func (s *ScriptInfo) open(newText string) {
 	s.isOpen = true
 	s.pendingReloadFromDisk = false
 	if newText != s.text {
@@ -44,7 +61,7 @@ func (s *scriptInfo) open(newText string) {
 	}
 }
 
-func (s *scriptInfo) close(fileExists bool) {
+func (s *ScriptInfo) close(fileExists bool) {
 	s.isOpen = false
 	if fileExists && !s.pendingReloadFromDisk && !s.matchesDiskText {
 		s.pendingReloadFromDisk = true
@@ -52,12 +69,13 @@ func (s *scriptInfo) close(fileExists bool) {
 	}
 }
 
-func (s *scriptInfo) setText(newText string) {
+func (s *ScriptInfo) setText(newText string) {
 	s.text = newText
 	s.version++
+	s.lineMap = core.ComputeLineStarts(s.text)
 }
 
-func (s *scriptInfo) markContainingProjectsAsDirty() {
+func (s *ScriptInfo) markContainingProjectsAsDirty() {
 	for _, project := range s.containingProjects {
 		project.markFileAsDirty(s.path)
 	}
@@ -65,7 +83,7 @@ func (s *scriptInfo) markContainingProjectsAsDirty() {
 
 // attachToProject attaches the script info to the project if it's not already attached
 // and returns true if the script info was newly attached.
-func (s *scriptInfo) attachToProject(project *Project) bool {
+func (s *ScriptInfo) attachToProject(project *Project) bool {
 	if !s.isAttached(project) {
 		s.containingProjects = append(s.containingProjects, project)
 		if project.compilerOptions.PreserveSymlinks != core.TSTrue {
@@ -77,16 +95,16 @@ func (s *scriptInfo) attachToProject(project *Project) bool {
 	return false
 }
 
-func (s *scriptInfo) isAttached(project *Project) bool {
+func (s *ScriptInfo) isAttached(project *Project) bool {
 	return slices.Contains(s.containingProjects, project)
 }
 
-func (s *scriptInfo) isSymlink() bool {
+func (s *ScriptInfo) isSymlink() bool {
 	// !!!
 	return false
 }
 
-func (s *scriptInfo) isOrphan() bool {
+func (s *ScriptInfo) isOrphan() bool {
 	if s.deferredDelete {
 		return true
 	}
@@ -98,12 +116,12 @@ func (s *scriptInfo) isOrphan() bool {
 	return true
 }
 
-func (s *scriptInfo) editContent(change ls.TextChange) {
+func (s *ScriptInfo) editContent(change ls.TextChange) {
 	s.setText(change.ApplyTo(s.text))
 	s.markContainingProjectsAsDirty()
 }
 
-func (s *scriptInfo) ensureRealpath(fs vfs.FS) {
+func (s *ScriptInfo) ensureRealpath(fs vfs.FS) {
 	if s.realpath == "" {
 		if len(s.containingProjects) == 0 {
 			panic("scriptInfo must be attached to a project before calling ensureRealpath")
@@ -117,14 +135,14 @@ func (s *scriptInfo) ensureRealpath(fs vfs.FS) {
 	}
 }
 
-func (s *scriptInfo) getRealpathIfDifferent() (tspath.Path, bool) {
+func (s *ScriptInfo) getRealpathIfDifferent() (tspath.Path, bool) {
 	if s.realpath != "" && s.realpath != s.path {
 		return s.realpath, true
 	}
 	return "", false
 }
 
-func (s *scriptInfo) detachAllProjects() {
+func (s *ScriptInfo) detachAllProjects() {
 	for _, project := range s.containingProjects {
 		// !!!
 		// if (isConfiguredProject(p)) {
@@ -140,15 +158,76 @@ func (s *scriptInfo) detachAllProjects() {
 	s.containingProjects = nil
 }
 
-func (s *scriptInfo) detachFromProject(project *Project) {
+func (s *ScriptInfo) detachFromProject(project *Project) {
 	if index := slices.Index(s.containingProjects, project); index != -1 {
 		s.containingProjects[index].onFileAddedOrRemoved(s.isSymlink())
 		s.containingProjects = slices.Delete(s.containingProjects, index, index+1)
 	}
 }
 
-func (s *scriptInfo) delayReloadNonMixedContentFile() {
+func (s *ScriptInfo) delayReloadNonMixedContentFile() {
 	// !!!
 	s.pendingReloadFromDisk = true
 	s.markContainingProjectsAsDirty()
+}
+
+func (s *ScriptInfo) getDefaultProject() *Project {
+	switch len(s.containingProjects) {
+	case 0:
+		panic("scriptInfo must be attached to a project before calling getDefaultProject")
+	case 1:
+		project := s.containingProjects[0]
+		if project.deferredClose || project.kind == ProjectKindAutoImportProvider || project.kind == ProjectKindAuxiliary {
+			panic("scriptInfo must be attached to a non-background project before calling getDefaultProject")
+		}
+		return project
+	default:
+		// If this file belongs to multiple projects, below is the order in which default project is used
+		// - first external project
+		// - for open script info, its default configured project during opening is default if info is part of it
+		// - first configured project of which script info is not a source of project reference redirect
+		// - first configured project
+		// - first inferred project
+		var firstConfiguredProject *Project
+		var firstInferredProject *Project
+		var firstNonSourceOfProjectReferenceRedirect *Project
+		var defaultConfiguredProject *Project
+
+		for index, project := range s.containingProjects {
+			if project.kind == ProjectKindConfigured {
+				if project.deferredClose {
+					continue
+				}
+				// !!! if !project.isSourceOfProjectReferenceRedirect(s.fileName) {
+				if defaultConfiguredProject == nil && index != len(s.containingProjects)-1 {
+					defaultConfiguredProject = project.projectService.findDefaultConfiguredProject(s)
+				}
+				if defaultConfiguredProject == project {
+					return project
+				}
+				if firstNonSourceOfProjectReferenceRedirect == nil {
+					firstNonSourceOfProjectReferenceRedirect = project
+				}
+				// }
+				if firstConfiguredProject == nil {
+					firstConfiguredProject = project
+				}
+			} else if firstInferredProject == nil && project.kind == ProjectKindInferred {
+				firstInferredProject = project
+			}
+		}
+		if defaultConfiguredProject != nil {
+			return defaultConfiguredProject
+		}
+		if firstNonSourceOfProjectReferenceRedirect != nil {
+			return firstNonSourceOfProjectReferenceRedirect
+		}
+		if firstConfiguredProject != nil {
+			return firstConfiguredProject
+		}
+		if firstInferredProject != nil {
+			return firstInferredProject
+		}
+		panic("no project found")
+	}
 }

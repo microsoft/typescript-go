@@ -1,6 +1,8 @@
 package project
 
 import (
+	"sync"
+
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/parser"
@@ -51,11 +53,13 @@ type registryEntry struct {
 // The document registry represents a store of SourceFile objects that can be shared between
 // multiple LanguageService instances.
 type documentRegistry struct {
-	options   tspath.ComparePathsOptions
-	documents map[registryKey]registryEntry
+	options tspath.ComparePathsOptions
+
+	documentsMu sync.RWMutex
+	documents   map[registryKey]registryEntry
 }
 
-func NewDocumentRegistry(options tspath.ComparePathsOptions) *documentRegistry {
+func newDocumentRegistry(options tspath.ComparePathsOptions) *documentRegistry {
 	return &documentRegistry{
 		options:   options,
 		documents: make(map[registryKey]registryEntry),
@@ -73,10 +77,10 @@ func NewDocumentRegistry(options tspath.ComparePathsOptions) *documentRegistry {
 // LanguageService instance over time, as well as across multiple instances. Here, we still
 // reuse files across multiple LanguageServices, but we only reuse them across Program updates
 // when the files haven't changed.
-func (r *documentRegistry) AcquireDocument(scriptInfo *scriptInfo, compilerOptions *core.CompilerOptions, oldSourceFile *ast.SourceFile, oldCompilerOptions *core.CompilerOptions) *ast.SourceFile {
+func (r *documentRegistry) AcquireDocument(scriptInfo *ScriptInfo, compilerOptions *core.CompilerOptions, oldSourceFile *ast.SourceFile, oldCompilerOptions *core.CompilerOptions) *ast.SourceFile {
 	key := newRegistryKey(compilerOptions, scriptInfo.path, scriptInfo.scriptKind)
 	document := r.getDocumentWorker(scriptInfo, compilerOptions, key)
-	if oldSourceFile != nil {
+	if oldSourceFile != nil && oldCompilerOptions != nil {
 		oldKey := newRegistryKey(oldCompilerOptions, scriptInfo.path, oldSourceFile.ScriptKind)
 		r.ReleaseDocument(oldKey)
 	}
@@ -84,6 +88,8 @@ func (r *documentRegistry) AcquireDocument(scriptInfo *scriptInfo, compilerOptio
 }
 
 func (r *documentRegistry) ReleaseDocument(key registryKey) {
+	r.documentsMu.Lock()
+	defer r.documentsMu.Unlock()
 	if entry, ok := r.documents[key]; ok {
 		entry.refCount--
 		if entry.refCount == 0 {
@@ -93,15 +99,19 @@ func (r *documentRegistry) ReleaseDocument(key registryKey) {
 }
 
 func (r *documentRegistry) getDocumentWorker(
-	scriptInfo *scriptInfo,
+	scriptInfo *ScriptInfo,
 	compilerOptions *core.CompilerOptions,
 	key registryKey,
 ) *ast.SourceFile {
 	scriptTarget := core.IfElse(scriptInfo.scriptKind == core.ScriptKindJSON, core.ScriptTargetJSON, compilerOptions.GetEmitScriptTarget())
+	r.documentsMu.RLock()
 	if entry, ok := r.documents[key]; ok {
+		r.documentsMu.RUnlock()
 		// We have an entry for this file. However, it may be for a different version of
 		// the script snapshot. If so, update it appropriately.
 		if entry.sourceFile.Version != scriptInfo.version {
+			r.documentsMu.Lock()
+			defer r.documentsMu.Unlock()
 			entry.sourceFile = parser.ParseSourceFile(scriptInfo.fileName, scriptInfo.text, scriptTarget, scanner.JSDocParsingModeParseAll)
 			entry.sourceFile.Version = scriptInfo.version
 		}
@@ -109,12 +119,15 @@ func (r *documentRegistry) getDocumentWorker(
 		return entry.sourceFile
 	} else {
 		// Have never seen this file with these settings. Create a new source file for it.
+		r.documentsMu.RUnlock()
 		sourceFile := parser.ParseSourceFile(scriptInfo.fileName, scriptInfo.text, scriptTarget, scanner.JSDocParsingModeParseAll)
 		sourceFile.Version = scriptInfo.version
 		entry := registryEntry{
 			sourceFile: sourceFile,
 			refCount:   1,
 		}
+		r.documentsMu.Lock()
+		defer r.documentsMu.Unlock()
 		r.documents[key] = entry
 		return sourceFile
 	}

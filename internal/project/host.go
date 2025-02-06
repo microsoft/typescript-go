@@ -7,4 +7,5 @@ type ProjectServiceHost interface {
 	GetCurrentDirectory() string
 	NewLine() string
 	Trace(msg string)
+	Log(msg ...any)
 }

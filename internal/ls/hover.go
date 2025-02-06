@@ -16,9 +16,10 @@ func (l *LanguageService) ProvideHover(fileName string, position int) string {
 	}
 
 	checker := program.GetTypeChecker()
-	symbol := checker.GetSymbolAtLocation(node)
-	if t := checker.GetTypeOfSymbolAtLocation(symbol, node); t != nil {
-		return t.Flags().String()
+	if symbol := checker.GetSymbolAtLocation(node); symbol != nil {
+		if t := checker.GetTypeOfSymbolAtLocation(symbol, node); t != nil {
+			return checker.TypeToString(t)
+		}
 	}
 	return ""
 }

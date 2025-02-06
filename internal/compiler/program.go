@@ -643,6 +643,10 @@ func (p *Program) GetSourceFileByPath(path tspath.Path) *ast.SourceFile {
 	return p.filesByPath[path]
 }
 
+func (p *Program) GetSourceFiles() []*ast.SourceFile {
+	return p.files
+}
+
 type FileIncludeKind int
 
 const (
