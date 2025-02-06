@@ -2,7 +2,6 @@ package parseutil
 
 import (
 	"strings"
-	"sync"
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -43,7 +42,7 @@ func CheckDiagnosticsMessage(t *testing.T, file *ast.SourceFile, message string)
 	}
 }
 
-var syntheticRecursiveVisitor = sync.OnceValue(func() *ast.NodeVisitor {
+func newSyntheticRecursiveVisitor() *ast.NodeVisitor {
 	v := ast.NodeVisitor{
 		Factory: &ast.NodeFactory{},
 		Hooks: ast.NodeVisitorHooks{
@@ -77,9 +76,9 @@ var syntheticRecursiveVisitor = sync.OnceValue(func() *ast.NodeVisitor {
 		return v.VisitEachChild(node)
 	}
 	return &v
-})
+}
 
 // Sets the Loc of the given node and every Node in its subtree to an undefined TextRange (-1,-1).
 func MarkSyntheticRecursive(node *ast.Node) {
-	syntheticRecursiveVisitor().VisitNode(node)
+	newSyntheticRecursiveVisitor().VisitNode(node)
 }
