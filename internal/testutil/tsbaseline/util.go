@@ -22,16 +22,7 @@ var (
 )
 
 func removeTestPathPrefixes(text string, retainTrailingDirectorySeparator bool) string {
-	testPathPrefix.ReplaceAllStringFunc(text, func(scheme string) string {
-		if scheme != "" {
-			return scheme
-		}
-		if retainTrailingDirectorySeparator {
-			return "/"
-		}
-		return ""
-	})
-	return testPathPrefix.ReplaceAllString(text, "/")
+	return testPathPrefix.ReplaceAllString(text, "")
 }
 
 func isDefaultLibraryFile(filePath string) bool {

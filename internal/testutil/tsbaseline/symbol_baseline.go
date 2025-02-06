@@ -278,7 +278,11 @@ func (walker *typeWriterWalker) writeTypeOrSymbol(node *ast.Node, isSymbolWalk b
 	}
 
 	var symbolString strings.Builder
-	symbolString.WriteString("Symbol(" + walker.checker.SymbolToString(symbol))
+	var parent string
+	if symbol.Parent != nil {
+		parent = walker.checker.SymbolToString(symbol.Parent) + "."
+	}
+	symbolString.WriteString("Symbol(" + parent + walker.checker.SymbolToString(symbol))
 	count := 0
 	for _, declaration := range symbol.Declarations {
 		if count >= 5 {
