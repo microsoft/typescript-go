@@ -155,7 +155,7 @@ func (v *NodeVisitor) VisitEachChild(node *Node) *Node {
 
 	updated := node.VisitEachChild(v)
 	if updated != node && v.Hooks.SetOriginal != nil {
-		v.Hooks.SetOriginal(node, updated)
+		v.Hooks.SetOriginal(updated, node)
 	}
 	return updated
 }
