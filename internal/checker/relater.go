@@ -564,7 +564,7 @@ func (c *Checker) elaborateElement(source *Type, target *Type, relation *Relatio
 		specificSource = c.checkExpressionForMutableLocationWithContextualType(next, sourcePropType)
 	}
 	if c.exactOptionalPropertyTypes && c.isExactOptionalPropertyMismatch(specificSource, targetPropType) {
-		diags = append(diags, createDiagnosticForNode(prop, diagnostics.Type_0_is_not_assignable_to_type_1_with_exactOptionalPropertyTypes_Colon_true_Consider_adding_undefined_to_the_type_of_the_target, c.typeToString(specificSource), c.typeToString(targetPropType)))
+		diags = append(diags, createDiagnosticForNode(prop, diagnostics.Type_0_is_not_assignable_to_type_1_with_exactOptionalPropertyTypes_Colon_true_Consider_adding_undefined_to_the_type_of_the_target, c.TypeToString(specificSource), c.TypeToString(targetPropType)))
 	} else {
 		propName := c.getPropertyNameFromIndex(nameType, nil /*accessNode*/)
 		targetIsOptional := core.OrElse(c.getPropertyOfType(target, propName), c.unknownSymbol).Flags&ast.SymbolFlagsOptional != 0
@@ -603,10 +603,10 @@ func (c *Checker) elaborateElement(source *Type, target *Type, relation *Relatio
 			targetNode = target.symbol.Declarations[0]
 		}
 		if propertyName == "" || nameType.flags&TypeFlagsUniqueESSymbol != 0 {
-			propertyName = c.typeToString(nameType)
+			propertyName = c.TypeToString(nameType)
 		}
 		if !ast.GetSourceFileOfNode(targetNode).HasNoDefaultLib {
-			diagnostic.AddRelatedInfo(createDiagnosticForNode(targetNode, diagnostics.The_expected_type_comes_from_property_0_which_is_declared_here_on_type_1, propertyName, c.typeToString(target)))
+			diagnostic.AddRelatedInfo(createDiagnosticForNode(targetNode, diagnostics.The_expected_type_comes_from_property_0_which_is_declared_here_on_type_1, propertyName, c.TypeToString(target)))
 		}
 	}
 	c.reportDiagnostic(diagnostic, diagnosticOutput)
@@ -2639,9 +2639,9 @@ func (r *Relater) hasExcessProperties(source *Type, target *Type, reportErrors b
 						// 	suggestion = nil
 						// }
 						// if suggestion {
-						// 	reportError(Diagnostics.Property_0_does_not_exist_on_type_1_Did_you_mean_2, propName, c.typeToString(errorTarget), suggestion)
+						// 	reportError(Diagnostics.Property_0_does_not_exist_on_type_1_Did_you_mean_2, propName, c.TypeToString(errorTarget), suggestion)
 						// } else {
-						// 	reportError(Diagnostics.Property_0_does_not_exist_on_type_1, propName, c.typeToString(errorTarget))
+						// 	reportError(Diagnostics.Property_0_does_not_exist_on_type_1, propName, c.TypeToString(errorTarget))
 						// }
 					} else {
 						// use the property's value declaration if the property is assigned inside the literal itself
