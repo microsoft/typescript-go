@@ -7,7 +7,7 @@ import (
 )
 
 func TestCompilerBaselines(t *testing.T) {
-	t.Parallel()
+	// t.Parallel()
 
 	if !bundled.Embedded {
 		// Without embedding, we'd need to read all of the lib files out from disk into the MapFS.
@@ -18,8 +18,9 @@ func TestCompilerBaselines(t *testing.T) {
 	testTypes := []CompilerTestType{TestTypeRegression, TestTypeConformance}
 	for _, testType := range testTypes {
 		t.Run(testType.String(), func(t *testing.T) {
-			t.Parallel()
+			// t.Parallel()
 			cleanUpLocalCompilerTests(testType)
+			// TODO: Pass options to make this run in Strada compatibility mode.
 			runner := NewCompilerBaselineRunner(testType)
 			runner.RunTests(t)
 		})

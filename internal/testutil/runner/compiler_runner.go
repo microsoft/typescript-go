@@ -19,7 +19,7 @@ import (
 )
 
 var (
-	compilerBaselineRegex = regexp.MustCompile(`\.tsx?$`)
+	compilerBaselineRegex = regexp.MustCompile(`\.tsx?$`) // HERE!
 	requireStr            = "require("
 	referencesRegex       = regexp.MustCompile(`reference\spath`)
 )
@@ -126,7 +126,7 @@ func (r *CompilerBaselineRunner) runTest(t *testing.T, filename string) {
 }
 
 func (r *CompilerBaselineRunner) runSingleConfigTest(t *testing.T, test *compilerFileBasedTest, config *harnessutil.NamedTestConfiguration) {
-	t.Parallel()
+	// t.Parallel()
 	payload := makeUnitsFromTest(test.content, test.filename)
 	compilerTest := newCompilerTest(t, test.filename, &payload, config)
 
@@ -301,7 +301,7 @@ func (c *compilerTest) verifyTypesAndSymbols(t *testing.T, suiteName string) {
 		},
 	)
 
-	header := tspath.GetRelativePathFromDirectory(repo.TestDataPath, c.filename, tspath.ComparePathsOptions{})
+	header := tspath.GetRelativePathFromDirectory(repo.TypeScriptSubmodulePath, c.filename, tspath.ComparePathsOptions{})
 	tsbaseline.DoTypeAndSymbolBaseline(
 		t,
 		c.configuredName,

@@ -283,7 +283,7 @@ func parseHarnessOption(t *testing.T, key string, value any, options *HarnessOpt
 	case "fileName":
 		options.FileName = value.(string)
 	case "libFiles":
-		options.LibFiles = value.([]string)
+		options.LibFiles = value.([]string) // TODO: libFiles isn't parsed yet
 	case "noErrorTruncation":
 		options.NoErrorTruncation = value.(bool)
 	case "suppressOutputPathCheck":
@@ -468,7 +468,7 @@ func listFiles(path string, spec *regexp.Regexp, recursive bool) ([]string, erro
 }
 
 func listFilesWorker(spec *regexp.Regexp, recursive bool, folder string) ([]string, error) {
-	folder = tspath.GetNormalizedAbsolutePath(folder, repo.TestDataPath)
+	folder = tspath.GetNormalizedAbsolutePath(folder, repo.TypeScriptSubmodulePath)
 	entries, err := os.ReadDir(folder)
 	if err != nil {
 		return nil, err
