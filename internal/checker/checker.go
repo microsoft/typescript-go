@@ -830,7 +830,7 @@ func NewChecker(program Program) *Checker {
 	c.globalThisSymbol = c.newSymbolEx(ast.SymbolFlagsModule, "globalThis", ast.CheckFlagsReadonly)
 	c.globalThisSymbol.Exports = c.globals
 	c.globals[c.globalThisSymbol.Name] = c.globalThisSymbol
-	c.resolveName = c.createNameResolver().resolve
+	c.resolveName = c.createNameResolver().Resolve
 	c.tupleTypes = make(map[string]*Type)
 	c.unionTypes = make(map[string]*Type)
 	c.unionOfUnionTypes = make(map[UnionOfUnionKey]*Type)
@@ -1259,21 +1259,20 @@ func (c *Checker) addUndefinedToGlobalsOrErrorOnRedeclaration() {
 	}
 }
 
-func (c *Checker) createNameResolver() *NameResolver {
-	return &NameResolver{
-		compilerOptions:                  c.compilerOptions,
-		getSymbolOfDeclaration:           c.getSymbolOfDeclaration,
-		error:                            c.error,
-		globals:                          c.globals,
-		argumentsSymbol:                  c.argumentsSymbol,
-		requireSymbol:                    c.requireSymbol,
-		lookup:                           c.getSymbol,
-		symbolReferenced:                 c.symbolReferenced,
-		setRequiresScopeChangeCache:      c.setRequiresScopeChangeCache,
-		getRequiresScopeChangeCache:      c.getRequiresScopeChangeCache,
-		onPropertyWithInvalidInitializer: c.checkAndReportErrorForInvalidInitializer,
-		onFailedToResolveSymbol:          c.onFailedToResolveSymbol,
-		onSuccessfullyResolvedSymbol:     c.onSuccessfullyResolvedSymbol,
+func (c *Checker) createNameResolver() *binder.NameResolver {
+	return &binder.NameResolver{
+		CompilerOptions:                  c.compilerOptions,
+		GetSymbolOfDeclaration:           c.getSymbolOfDeclaration,
+		Error:                            c.error,
+		Globals:                          c.globals,
+		ArgumentsSymbol:                  c.argumentsSymbol,
+		Lookup:                           c.getSymbol,
+		SymbolReferenced:                 c.symbolReferenced,
+		SetRequiresScopeChangeCache:      c.setRequiresScopeChangeCache,
+		GetRequiresScopeChangeCache:      c.getRequiresScopeChangeCache,
+		OnPropertyWithInvalidInitializer: c.checkAndReportErrorForInvalidInitializer,
+		OnFailedToResolveSymbol:          c.onFailedToResolveSymbol,
+		OnSuccessfullyResolvedSymbol:     c.onSuccessfullyResolvedSymbol,
 	}
 }
 
@@ -1293,7 +1292,7 @@ func (c *Checker) setRequiresScopeChangeCache(node *ast.Node, value core.Tristat
 // 1. When result is undefined, after checking for a missing "this."
 // 2. When result is defined
 func (c *Checker) checkAndReportErrorForInvalidInitializer(errorLocation *ast.Node, name string, propertyWithInvalidInitializer *ast.Node, result *ast.Symbol) bool {
-	if !getEmitStandardClassFields(c.compilerOptions) {
+	if !c.compilerOptions.GetEmitStandardClassFields() {
 		if errorLocation != nil && result == nil && c.checkAndReportErrorForMissingPrefix(errorLocation, name) {
 			return true
 		}
@@ -1407,7 +1406,7 @@ func (c *Checker) checkResolvedBlockScopedVariable(result *ast.Symbol, errorLoca
 			diagnostic = c.error(errorLocation, diagnostics.Enum_0_used_before_its_declaration, declarationName)
 		} else {
 			// Debug.assert(!!(result.flags & ast.SymbolFlagsConstEnum))
-			if getIsolatedModules(c.compilerOptions) {
+			if c.compilerOptions.GetIsolatedModules() {
 				diagnostic = c.error(errorLocation, diagnostics.Enum_0_used_before_its_declaration, declarationName)
 			}
 		}
@@ -1932,7 +1931,7 @@ func (c *Checker) checkConstructorDeclaration(node *ast.Node) {
 	}
 	c.checkSourceElement(node.Body())
 	symbol := c.getSymbolOfDeclaration(node)
-	firstDeclaration := getDeclarationOfKind(symbol, node.Kind)
+	firstDeclaration := ast.GetDeclarationOfKind(symbol, node.Kind)
 	// Only type check the symbol once
 	if node == firstDeclaration {
 		c.checkFunctionOrConstructorSymbol(symbol)
@@ -2060,8 +2059,8 @@ func (c *Checker) checkAccessorDeclaration(node *ast.Node) {
 		// TypeScript 1.0 spec (April 2014): 8.4.3
 		// Accessors for the same member name must specify the same accessibility.
 		symbol := c.getSymbolOfDeclaration(node)
-		getter := getDeclarationOfKind(symbol, ast.KindGetAccessor)
-		setter := getDeclarationOfKind(symbol, ast.KindSetAccessor)
+		getter := ast.GetDeclarationOfKind(symbol, ast.KindGetAccessor)
+		setter := ast.GetDeclarationOfKind(symbol, ast.KindSetAccessor)
 		if getter != nil && setter != nil && c.nodeLinks.Get(getter).flags&NodeCheckFlagsTypeChecked == 0 {
 			c.nodeLinks.Get(getter).flags |= NodeCheckFlagsTypeChecked
 			getterFlags := getEffectiveModifierFlags(getter)
@@ -3144,7 +3143,7 @@ func (c *Checker) checkPropertyInitialization(node *ast.Node) {
 	if !c.strictNullChecks || !c.strictPropertyInitialization || node.Flags&ast.NodeFlagsAmbient != 0 {
 		return
 	}
-	constructor := findConstructorDeclaration(node)
+	constructor := ast.FindConstructorDeclaration(node)
 	for _, member := range node.Members() {
 		if getEffectiveModifierFlags(member)&ast.ModifierFlagsAmbient != 0 {
 			continue
@@ -3208,7 +3207,7 @@ func (c *Checker) checkInterfaceDeclaration(node *ast.Node) {
 	symbol := c.getSymbolOfDeclaration(node)
 	c.checkTypeParameterListsIdentical(symbol)
 	// Only check this symbol once
-	firstInterfaceDecl := getDeclarationOfKind(symbol, ast.KindInterfaceDeclaration)
+	firstInterfaceDecl := ast.GetDeclarationOfKind(symbol, ast.KindInterfaceDeclaration)
 	if node == firstInterfaceDecl {
 		t := c.getDeclaredTypeOfSymbol(symbol)
 		typeWithThis := c.getTypeWithThisArgument(t, nil, false)
@@ -4331,7 +4330,7 @@ func (c *Checker) getQuickTypeOfExpression(node *ast.Node) *Type {
 			return c.getReturnTypeOfSingleNonGenericSignatureOfCallChain(expr)
 		}
 		return c.getReturnTypeOfSingleNonGenericCallSignature(c.checkNonNullExpression(expr.Expression()))
-	case ast.IsAssertionExpression(expr) && !isConstTypeReference(expr.Type()):
+	case ast.IsAssertionExpression(expr) && !ast.IsConstTypeReference(expr.Type()):
 		return c.getTypeFromTypeNode(expr.Type())
 	case ast.IsLiteralExpression(node) || ast.IsBooleanLiteral(node):
 		return c.checkExpression(node)
@@ -11253,7 +11252,7 @@ func (c *Checker) getCommonJsExportEquals(exported *ast.Symbol, moduleSymbol *as
 func (c *Checker) resolveESModuleSymbol(moduleSymbol *ast.Symbol, referencingLocation *ast.Node, dontResolveAlias bool, suppressInteropError bool) *ast.Symbol {
 	symbol := c.resolveExternalModuleSymbol(moduleSymbol, dontResolveAlias)
 	if !dontResolveAlias && symbol != nil {
-		if !suppressInteropError && symbol.Flags&(ast.SymbolFlagsModule|ast.SymbolFlagsVariable) == 0 && getDeclarationOfKind(symbol, ast.KindSourceFile) == nil {
+		if !suppressInteropError && symbol.Flags&(ast.SymbolFlagsModule|ast.SymbolFlagsVariable) == 0 && ast.GetDeclarationOfKind(symbol, ast.KindSourceFile) == nil {
 			compilerOptionName := core.IfElse(c.moduleKind >= core.ModuleKindES2015, "allowSyntheticDefaultImports", "esModuleInterop")
 			c.error(referencingLocation, diagnostics.This_module_can_only_be_referenced_with_ECMAScript_imports_Slashexports_by_turning_on_the_0_flag_and_referencing_its_default_export, compilerOptionName)
 			return symbol
@@ -12220,7 +12219,7 @@ func (c *Checker) getTypeForVariableLikeDeclaration(declaration *ast.Node, inclu
 		fn := declaration.Parent
 		// For a parameter of a set accessor, use the type of the get accessor if one is present
 		if ast.IsSetAccessorDeclaration(fn) && c.hasBindableName(fn) {
-			getter := getDeclarationOfKind(c.getSymbolOfDeclaration(declaration.Parent), ast.KindGetAccessor)
+			getter := ast.GetDeclarationOfKind(c.getSymbolOfDeclaration(declaration.Parent), ast.KindGetAccessor)
 			if getter != nil {
 				getterSignature := c.getSignatureFromDeclaration(getter)
 				thisParameter := c.getAccessorThisParameter(fn)
@@ -12253,7 +12252,7 @@ func (c *Checker) getTypeForVariableLikeDeclaration(declaration *ast.Node, inclu
 		// We have a property declaration with no type annotation or initializer, in noImplicitAny mode or a .js file.
 		// Use control flow analysis of this.xxx assignments in the constructor or static block to determine the type of the property.
 		if !ast.HasStaticModifier(declaration) {
-			constructor := findConstructorDeclaration(declaration.Parent)
+			constructor := ast.FindConstructorDeclaration(declaration.Parent)
 			var t *Type
 			switch {
 			case constructor != nil:
@@ -13776,9 +13775,9 @@ func (c *Checker) getTypeOfAccessors(symbol *ast.Symbol) *Type {
 		if !c.pushTypeResolution(symbol, TypeSystemPropertyNameType) {
 			return c.errorType
 		}
-		getter := getDeclarationOfKind(symbol, ast.KindGetAccessor)
-		setter := getDeclarationOfKind(symbol, ast.KindSetAccessor)
-		property := getDeclarationOfKind(symbol, ast.KindPropertyDeclaration)
+		getter := ast.GetDeclarationOfKind(symbol, ast.KindGetAccessor)
+		setter := ast.GetDeclarationOfKind(symbol, ast.KindSetAccessor)
+		property := ast.GetDeclarationOfKind(symbol, ast.KindPropertyDeclaration)
 		var accessor *ast.Node
 		if property != nil && ast.IsAutoAccessorPropertyDeclaration(property) {
 			accessor = property
@@ -13835,9 +13834,9 @@ func (c *Checker) getWriteTypeOfAccessors(symbol *ast.Symbol) *Type {
 		if !c.pushTypeResolution(symbol, TypeSystemPropertyNameWriteType) {
 			return c.errorType
 		}
-		setter := getDeclarationOfKind(symbol, ast.KindSetAccessor)
+		setter := ast.GetDeclarationOfKind(symbol, ast.KindSetAccessor)
 		if setter == nil {
-			propDeclaration := getDeclarationOfKind(symbol, ast.KindPropertyDeclaration)
+			propDeclaration := ast.GetDeclarationOfKind(symbol, ast.KindPropertyDeclaration)
 			if propDeclaration != nil && ast.IsAutoAccessorPropertyDeclaration(propDeclaration) {
 				setter = propDeclaration
 			}
@@ -15123,7 +15122,7 @@ func (c *Checker) getSignatureFromDeclaration(declaration *ast.Node) *Signature 
 	// If only one accessor includes a this-type annotation, the other behaves as if it had the same type annotation
 	if (ast.IsGetAccessorDeclaration(declaration) || ast.IsSetAccessorDeclaration(declaration)) && c.hasBindableName(declaration) && (!hasThisParameter || thisParameter == nil) {
 		otherKind := core.IfElse(ast.IsGetAccessorDeclaration(declaration), ast.KindSetAccessor, ast.KindGetAccessor)
-		other := getDeclarationOfKind(c.getSymbolOfDeclaration(declaration), otherKind)
+		other := ast.GetDeclarationOfKind(c.getSymbolOfDeclaration(declaration), otherKind)
 		if other != nil {
 			thisParameter = c.getAnnotatedAccessorThisParameter(other)
 		}
@@ -15303,7 +15302,7 @@ func (c *Checker) getReturnTypeFromAnnotation(declaration *ast.Node) *Type {
 		return c.getTypeFromTypeNode(returnType)
 	}
 	if ast.IsGetAccessorDeclaration(declaration) && c.hasBindableName(declaration) {
-		return c.getAnnotatedAccessorType(getDeclarationOfKind(c.getSymbolOfDeclaration(declaration), ast.KindSetAccessor))
+		return c.getAnnotatedAccessorType(ast.GetDeclarationOfKind(c.getSymbolOfDeclaration(declaration), ast.KindSetAccessor))
 	}
 	return nil
 }
@@ -17069,7 +17068,7 @@ func (c *Checker) getAllAccessorDeclarationsForDeclaration(accessor *ast.Accesso
 	} else {
 		panic(fmt.Sprintf("Unexpected node kind %q", accessor.Kind))
 	}
-	otherAccessor := getDeclarationOfKind(c.getSymbolOfDeclaration(accessor), otherKind)
+	otherAccessor := ast.GetDeclarationOfKind(c.getSymbolOfDeclaration(accessor), otherKind)
 
 	var firstAccessor *ast.AccessorDeclaration
 	var secondAccessor *ast.AccessorDeclaration
@@ -17323,7 +17322,7 @@ func (c *Checker) couldContainTypeVariablesWorker(t *Type) bool {
 
 func (c *Checker) isNonGenericTopLevelType(t *Type) bool {
 	if t.alias != nil && len(t.alias.typeArguments) == 0 {
-		declaration := getDeclarationOfKind(t.alias.symbol, ast.KindTypeAliasDeclaration)
+		declaration := ast.GetDeclarationOfKind(t.alias.symbol, ast.KindTypeAliasDeclaration)
 		return declaration != nil && ast.FindAncestorOrQuit(declaration.Parent, func(n *ast.Node) ast.FindAncestorResult {
 			switch n.Kind {
 			case ast.KindSourceFile:
@@ -18950,7 +18949,7 @@ func (c *Checker) computeEnumMemberValue(member *ast.Node, autoValue jsnum.Numbe
 		c.error(member.Name(), diagnostics.Enum_member_must_have_initializer)
 		return evaluatorResult(nil, false, false, false)
 	}
-	if getIsolatedModules(c.compilerOptions) && previous != nil && previous.AsEnumMember().Initializer != nil {
+	if c.compilerOptions.GetIsolatedModules() && previous != nil && previous.AsEnumMember().Initializer != nil {
 		prevValue := c.getEnumMemberValue(previous)
 		_, prevIsNum := prevValue.value.(jsnum.Number)
 		if !prevIsNum || prevValue.resolvedOtherFiles {
@@ -18973,7 +18972,7 @@ func (c *Checker) computeConstantEnumMemberValue(member *ast.Node) EvaluatorResu
 					diagnostics.X_const_enum_member_initializer_was_evaluated_to_a_non_finite_value))
 			}
 		}
-		if getIsolatedModules(c.compilerOptions) {
+		if c.compilerOptions.GetIsolatedModules() {
 			if _, isString := result.value.(string); isString && !result.isSyntacticallyString {
 				memberName := member.Parent.Name().Text() + "." + member.Name().Text()
 				c.error(initializer, diagnostics.X_0_has_a_string_type_but_must_have_syntactically_recognizable_string_syntax_when_isolatedModules_is_enabled, memberName)

@@ -3,7 +3,6 @@ package printer
 import (
 	"fmt"
 	"maps"
-	"slices"
 	"strings"
 	"sync/atomic"
 
@@ -15,15 +14,47 @@ import (
 //
 // NOTE: EmitContext is not guaranteed to be thread-safe.
 type EmitContext struct {
-	Factory      *ast.NodeFactory // Required. The NodeFactory to use for creating new nodes
-	autoGenerate map[*ast.MemberName]*autoGenerateInfo
-	textSource   map[*ast.StringLiteralNode]*ast.Node
-	original     map[*ast.Node]*ast.Node
-	emitNodes    core.LinkStore[*ast.Node, emitNode]
+	Factory       *ast.NodeFactory // Required. The NodeFactory to use for creating new nodes
+	autoGenerate  map[*ast.MemberName]*autoGenerateInfo
+	textSource    map[*ast.StringLiteralNode]*ast.Node
+	original      map[*ast.Node]*ast.Node
+	emitNodes     core.LinkStore[*ast.Node, emitNode]
+	varScopeStack core.Stack[*varScope]
+}
+
+type varScope struct {
+	hoistedVars []*ast.VariableDeclarationNode
 }
 
 func NewEmitContext() *EmitContext {
 	return &EmitContext{Factory: &ast.NodeFactory{}}
+}
+
+func (c *EmitContext) StartVarEnvironment() {
+	c.varScopeStack.Push(&varScope{})
+}
+
+func (c *EmitContext) EndVarEnvironment() []*ast.Statement {
+	scope := c.varScopeStack.Pop()
+	var statements []*ast.Statement
+	if len(scope.hoistedVars) > 0 {
+		varDeclList := c.Factory.NewVariableDeclarationList(ast.NodeFlagsNone, c.Factory.NewNodeList(scope.hoistedVars))
+		varStatement := c.Factory.NewVariableStatement(nil /*modifiers*/, varDeclList)
+		c.SetEmitFlags(varStatement, EFCustomPrologue)
+		statements = append(statements, varStatement)
+	}
+	return statements
+}
+
+func (c *EmitContext) HoistVariable(name *ast.IdentifierNode) {
+	c.HoistInitializedVariable(name, nil /*initializer*/)
+}
+
+func (c *EmitContext) HoistInitializedVariable(name *ast.IdentifierNode, initializer *ast.Expression) {
+	varDecl := c.Factory.NewVariableDeclaration(name, nil /*exclamationToken*/, nil /*typeNode*/, initializer)
+	c.SetEmitFlags(varDecl, EFNoNestedSourceMaps)
+	scope := c.varScopeStack.Peek()
+	scope.hoistedVars = append(scope.hoistedVars, varDecl)
 }
 
 type AutoGenerateOptions struct {
@@ -287,4 +318,3 @@ func (c *EmitContext) SetTokenSourceMapRange(node *ast.Node, kind ast.Kind, loc 
 	}
 	emitNode.tokenSourceMapRanges[kind] = loc
 }
-

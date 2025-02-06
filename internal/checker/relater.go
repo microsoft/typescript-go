@@ -298,8 +298,8 @@ func (c *Checker) isEnumTypeRelatedTo(source *ast.Symbol, target *ast.Symbol, er
 				c.enumRelation[key] = RelationComparisonResultFailed
 				return false
 			}
-			sourceValue := c.getEnumMemberValue(getDeclarationOfKind(sourceProperty, ast.KindEnumMember)).value
-			targetValue := c.getEnumMemberValue(getDeclarationOfKind(targetProperty, ast.KindEnumMember)).value
+			sourceValue := c.getEnumMemberValue(ast.GetDeclarationOfKind(sourceProperty, ast.KindEnumMember)).value
+			targetValue := c.getEnumMemberValue(ast.GetDeclarationOfKind(targetProperty, ast.KindEnumMember)).value
 			if sourceValue != targetValue {
 				// If we have 2 enums with *known* values that differ, they are incompatible.
 				if sourceValue != nil && targetValue != nil {

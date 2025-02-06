@@ -258,6 +258,14 @@ func (n *Node) Expression() *Node {
 		return n.AsAwaitExpression().Expression
 	case KindYieldExpression:
 		return n.AsYieldExpression().Expression
+	case KindIfStatement:
+		return n.AsIfStatement().Expression
+	case KindDoStatement:
+		return n.AsDoStatement().Expression
+	case KindWhileStatement:
+		return n.AsWhileStatement().Expression
+	case KindWithStatement:
+		return n.AsWithStatement().Expression
 	case KindForInStatement, KindForOfStatement:
 		return n.AsForInOrOfStatement().Expression
 	case KindSwitchStatement:
@@ -268,8 +276,12 @@ func (n *Node) Expression() *Node {
 		return n.AsExpressionStatement().Expression
 	case KindReturnStatement:
 		return n.AsReturnStatement().Expression
+	case KindThrowStatement:
+		return n.AsThrowStatement().Expression
 	case KindExternalModuleReference:
 		return n.AsExternalModuleReference().Expression
+	case KindExportAssignment:
+		return n.AsExportAssignment().Expression
 	}
 	panic("Unhandled case in Node.Expression")
 }

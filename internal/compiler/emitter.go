@@ -52,6 +52,7 @@ func (e *emitter) emitJsFile(sourceFile *ast.SourceFile, jsFilePath string, sour
 	// !!! transform the source files?
 	emitContext := printer.NewEmitContext()
 	sourceFile = transformers.NewTypeEraserTransformer(emitContext).VisitSourceFile(sourceFile)
+	sourceFile = transformers.NewEnumTransformer(emitContext, options).VisitSourceFile(sourceFile)
 
 	printerOptions := printer.PrinterOptions{
 		NewLine: options.NewLine,
