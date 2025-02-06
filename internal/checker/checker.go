@@ -7058,7 +7058,7 @@ func (c *Checker) createUnionOfSignaturesForOverloadFailure(candidates []*Signat
 		thisParameter = c.createCombinedSymbolFromTypes(thisParameters, core.Map(thisParameters, c.getTypeOfParameter))
 	}
 	minArgumentCount, maxNonRestParam := minAndMax(candidates, getNonRestParameterCount)
-	parameters := make([]*ast.Symbol, maxNonRestParam)
+	parameters := make([]*ast.Symbol, 0, maxNonRestParam)
 	for i := range maxNonRestParam {
 		symbols := core.MapNonNil(candidates, func(s *Signature) *ast.Symbol {
 			if signatureHasRestParameter(s) {
@@ -7072,7 +7072,7 @@ func (c *Checker) createUnionOfSignaturesForOverloadFailure(candidates []*Signat
 			}
 			return nil
 		})
-		parameters[i] = c.createCombinedSymbolFromTypes(symbols, core.MapNonNil(candidates, func(s *Signature) *Type { return c.tryGetTypeAtPosition(s, i) }))
+		parameters = append(parameters, c.createCombinedSymbolFromTypes(symbols, core.MapNonNil(candidates, func(s *Signature) *Type { return c.tryGetTypeAtPosition(s, i) })))
 	}
 	restParameterSymbols := core.MapNonNil(candidates, func(s *Signature) *ast.Symbol {
 		if signatureHasRestParameter(s) {
