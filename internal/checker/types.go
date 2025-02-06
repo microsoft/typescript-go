@@ -8,7 +8,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 )
 
-//go:generate go run golang.org/x/tools/cmd/stringer -type=SignatureKind,TypeFlags -output=stringer_generated.go
+//go:generate go run golang.org/x/tools/cmd/stringer -type=SignatureKind -output=stringer_generated.go
 
 // ParseFlags
 
@@ -563,10 +563,6 @@ type Type struct {
 	alias       *TypeAlias
 	checker     *Checker
 	data        TypeData // Type specific data
-}
-
-func (t *Type) Flags() TypeFlags {
-	return t.flags
 }
 
 // Casts for concrete struct types
