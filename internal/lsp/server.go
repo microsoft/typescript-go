@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"time"
 
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls"
@@ -39,11 +40,16 @@ func NewServer(opts *ServerOptions) *Server {
 	}
 }
 
+var _ project.ProjectServiceHost = (*Server)(nil)
+
 type Server struct {
 	r *lsproto.BaseReader
 	w *lsproto.BaseWriter
 
 	stderr io.Writer
+
+	requestMethod string
+	requestTime   time.Time
 
 	cwd                string
 	newLine            core.NewLineKind
@@ -52,6 +58,7 @@ type Server struct {
 
 	initializeParams *lsproto.InitializeParams
 
+	logger         *project.Logger
 	projectService *project.ProjectService
 }
 
@@ -74,8 +81,6 @@ func (s *Server) NewLine() string {
 func (s *Server) Trace(msg string) {
 	s.Log(msg)
 }
-
-var _ project.ProjectServiceHost = (*Server)(nil)
 
 func (s *Server) Run() error {
 	for {
@@ -146,6 +151,9 @@ func (s *Server) sendError(id *lsproto.ID, err error) error {
 }
 
 func (s *Server) sendResponse(resp *lsproto.ResponseMessage) error {
+	if !s.requestTime.IsZero() {
+		s.logger.PerfTrace(fmt.Sprintf("%s: %s", s.requestMethod, time.Since(s.requestTime)))
+	}
 	data, err := json.Marshal(resp)
 	if err != nil {
 		return err
@@ -159,10 +167,6 @@ func ptrTo[T any](v T) *T {
 
 func (s *Server) handleInitialize(req *lsproto.RequestMessage) error {
 	s.initializeParams = req.Params.(*lsproto.InitializeParams)
-	s.projectService = project.NewProjectService(s, project.ProjectServiceOptions{
-		DefaultLibraryPath: s.defaultLibraryPath,
-		Logger:             project.NewLogger([]io.Writer{s.stderr}, project.LogLevelVerbose),
-	})
 	return s.sendResult(req.ID, &lsproto.InitializeResult{
 		ServerInfo: &lsproto.ServerInfo{
 			Name:    "typescript-go",
@@ -177,6 +181,15 @@ func (s *Server) handleInitialize(req *lsproto.RequestMessage) error {
 			},
 		},
 	})
+}
+
+func (s *Server) handleInitialized(req *lsproto.RequestMessage) error {
+	s.logger = project.NewLogger([]io.Writer{s.stderr}, project.LogLevelVerbose)
+	s.projectService = project.NewProjectService(s, project.ProjectServiceOptions{
+		DefaultLibraryPath: s.defaultLibraryPath,
+		Logger:             s.logger,
+	})
+	return s.sendResult(req.ID, nil)
 }
 
 func (s *Server) handleDidOpen(req *lsproto.RequestMessage) error {
@@ -225,10 +238,15 @@ func (s *Server) handleDidChange(req *lsproto.RequestMessage) error {
 }
 
 func (s *Server) handleMessage(req *lsproto.RequestMessage) error {
+	s.requestTime = time.Now()
+	s.requestMethod = string(req.Method)
+
 	params := req.Params
 	switch params := params.(type) {
 	case *lsproto.InitializeParams:
 		return s.sendError(req.ID, lsproto.ErrInvalidRequest)
+	case *lsproto.InitializedParams:
+		return s.handleInitialized(req)
 	case *lsproto.DidOpenTextDocumentParams:
 		return s.handleDidOpen(req)
 	case *lsproto.DidChangeTextDocumentParams:
