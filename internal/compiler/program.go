@@ -72,8 +72,11 @@ var extensions = []string{".ts", ".tsx"}
 func NewProgram(options ProgramOptions) *Program {
 	p := &Program{}
 	p.programOptions = options
+	p.compilerOptions = options.Options
 	p.optionsDiagnostics = options.OptionsDiagnostics
-
+	if p.compilerOptions == nil {
+		p.compilerOptions = &core.CompilerOptions{}
+	}
 	// p.maxNodeModuleJsDepth = p.options.MaxNodeModuleJsDepth
 
 	// TODO(ercornel): !!! tracing?
@@ -130,10 +133,6 @@ func NewProgram(options ProgramOptions) *Program {
 			// !!! merge? override? this?
 			rootFiles = parseConfigFileContent.FileNames()
 		}
-	}
-
-	if p.compilerOptions == nil {
-		p.compilerOptions = &core.CompilerOptions{}
 	}
 
 	p.resolver = module.NewResolver(p.host, p.compilerOptions)
