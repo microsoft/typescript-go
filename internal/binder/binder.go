@@ -69,15 +69,6 @@ type Binder struct {
 	singleDeclarationsPool core.Pool[*ast.Node]
 }
 
-type ModuleInstanceState int32
-
-const (
-	ModuleInstanceStateUnknown ModuleInstanceState = iota
-	ModuleInstanceStateNonInstantiated
-	ModuleInstanceStateInstantiated
-	ModuleInstanceStateConstEnumOnly
-)
-
 type ActiveLabel struct {
 	next           *ActiveLabel
 	breakTarget    *ast.FlowLabel
@@ -186,7 +177,7 @@ func (b *Binder) declareSymbolEx(symbolTable ast.SymbolTable, parent *ast.Symbol
 				includes&ast.SymbolFlagsAssignment != 0 && symbol.Flags&ast.SymbolFlagsVariable != 0) {
 				// Assignment declarations are allowed to merge with variables, no matter what other flags they have.
 				if node.Name() != nil {
-					setParent(node.Name(), node)
+					ast.SetParent(node.Name(), node)
 				}
 				// Report errors every position with duplicate declaration
 				// Report errors on previous encountered declarations
@@ -756,9 +747,9 @@ func (b *Binder) bindModuleDeclaration(node *ast.Node) {
 		}
 	} else {
 		state := b.declareModuleSymbol(node)
-		if state != ModuleInstanceStateNonInstantiated {
+		if state != ast.ModuleInstanceStateNonInstantiated {
 			symbol := node.AsModuleDeclaration().Symbol
-			if symbol.Flags&(ast.SymbolFlagsFunction|ast.SymbolFlagsClass|ast.SymbolFlagsRegularEnum) != 0 || state != ModuleInstanceStateConstEnumOnly {
+			if symbol.Flags&(ast.SymbolFlagsFunction|ast.SymbolFlagsClass|ast.SymbolFlagsRegularEnum) != 0 || state != ast.ModuleInstanceStateConstEnumOnly {
 				// if module was already merged with some function, class or non-const enum, treat it as non-const-enum-only
 				symbol.Flags &^= ast.SymbolFlagsConstEnumOnlyModule
 			}
@@ -766,9 +757,9 @@ func (b *Binder) bindModuleDeclaration(node *ast.Node) {
 	}
 }
 
-func (b *Binder) declareModuleSymbol(node *ast.Node) ModuleInstanceState {
-	state := getModuleInstanceState(node, nil /*visited*/)
-	instantiated := state != ModuleInstanceStateNonInstantiated
+func (b *Binder) declareModuleSymbol(node *ast.Node) ast.ModuleInstanceState {
+	state := ast.GetModuleInstanceState(node, nil /*visited*/)
+	instantiated := state != ast.ModuleInstanceStateNonInstantiated
 	b.declareSymbolAndAddToSymbolTable(node, core.IfElse(instantiated, ast.SymbolFlagsValueModule, ast.SymbolFlagsNamespaceModule), core.IfElse(instantiated, ast.SymbolFlagsValueModuleExcludes, ast.SymbolFlagsNamespaceModuleExcludes))
 	return state
 }
@@ -806,7 +797,7 @@ func (b *Binder) bindExportDeclaration(node *ast.Node) {
 	} else if ast.IsNamespaceExport(decl.ExportClause) {
 		// declareSymbol walks up parents to find name text, parent _must_ be set
 		// but won't be set by the normal binder walk until `bindChildren` later on.
-		setParent(decl.ExportClause, node)
+		ast.SetParent(decl.ExportClause, node)
 		b.declareSymbol(ast.GetExports(b.container.Symbol()), b.container.Symbol(), decl.ExportClause, ast.SymbolFlagsAlias, ast.SymbolFlagsAliasExcludes)
 	}
 }
@@ -836,137 +827,6 @@ func (b *Binder) bindJsxAttributes(node *ast.Node) {
 
 func (b *Binder) bindJsxAttribute(node *ast.Node, symbolFlags ast.SymbolFlags, symbolExcludes ast.SymbolFlags) {
 	b.declareSymbolAndAddToSymbolTable(node, symbolFlags, symbolExcludes)
-}
-
-func getModuleInstanceState(node *ast.Node, visited map[ast.NodeId]ModuleInstanceState) ModuleInstanceState {
-	module := node.AsModuleDeclaration()
-	if module.Body != nil && module.Body.Parent == nil {
-		// getModuleInstanceStateForAliasTarget needs to walk up the parent chain, so parent pointers must be set on this tree already
-		setParent(module.Body, node)
-		ast.SetParentInChildren(module.Body)
-	}
-	if module.Body != nil {
-		return getModuleInstanceStateCached(module.Body, visited)
-	} else {
-		return ModuleInstanceStateInstantiated
-	}
-}
-
-func getModuleInstanceStateCached(node *ast.Node, visited map[ast.NodeId]ModuleInstanceState) ModuleInstanceState {
-	if visited == nil {
-		visited = make(map[ast.NodeId]ModuleInstanceState)
-	}
-	nodeId := ast.GetNodeId(node)
-	if cached, ok := visited[nodeId]; ok {
-		if cached != ModuleInstanceStateUnknown {
-			return cached
-		}
-		return ModuleInstanceStateNonInstantiated
-	}
-	visited[nodeId] = ModuleInstanceStateUnknown
-	result := getModuleInstanceStateWorker(node, visited)
-	visited[nodeId] = result
-	return result
-}
-
-func getModuleInstanceStateWorker(node *ast.Node, visited map[ast.NodeId]ModuleInstanceState) ModuleInstanceState {
-	// A module is uninstantiated if it contains only
-	switch node.Kind {
-	case ast.KindInterfaceDeclaration, ast.KindTypeAliasDeclaration:
-		return ModuleInstanceStateNonInstantiated
-	case ast.KindEnumDeclaration:
-		if ast.IsEnumConst(node) {
-			return ModuleInstanceStateConstEnumOnly
-		}
-	case ast.KindImportDeclaration, ast.KindImportEqualsDeclaration:
-		if !ast.HasSyntacticModifier(node, ast.ModifierFlagsExport) {
-			return ModuleInstanceStateNonInstantiated
-		}
-	case ast.KindExportDeclaration:
-		decl := node.AsExportDeclaration()
-		if decl.ModuleSpecifier == nil && decl.ExportClause != nil && decl.ExportClause.Kind == ast.KindNamedExports {
-			state := ModuleInstanceStateNonInstantiated
-			for _, specifier := range decl.ExportClause.AsNamedExports().Elements.Nodes {
-				specifierState := getModuleInstanceStateForAliasTarget(specifier, visited)
-				if specifierState > state {
-					state = specifierState
-				}
-				if state == ModuleInstanceStateInstantiated {
-					return state
-				}
-			}
-			return state
-		}
-	case ast.KindModuleBlock:
-		state := ModuleInstanceStateNonInstantiated
-		node.ForEachChild(func(n *ast.Node) bool {
-			childState := getModuleInstanceStateCached(n, visited)
-			switch childState {
-			case ModuleInstanceStateNonInstantiated:
-				return false
-			case ModuleInstanceStateConstEnumOnly:
-				state = ModuleInstanceStateConstEnumOnly
-				return false
-			case ModuleInstanceStateInstantiated:
-				state = ModuleInstanceStateInstantiated
-				return true
-			}
-			panic("Unhandled case in getModuleInstanceStateWorker")
-		})
-		return state
-	case ast.KindModuleDeclaration:
-		return getModuleInstanceState(node, visited)
-	case ast.KindIdentifier:
-		if node.Flags&ast.NodeFlagsIdentifierIsInJSDocNamespace != 0 {
-			return ModuleInstanceStateNonInstantiated
-		}
-	}
-	return ModuleInstanceStateInstantiated
-}
-
-func getModuleInstanceStateForAliasTarget(node *ast.Node, visited map[ast.NodeId]ModuleInstanceState) ModuleInstanceState {
-	spec := node.AsExportSpecifier()
-	name := spec.PropertyName
-	if name == nil {
-		name = spec.Name()
-	}
-	if name.Kind != ast.KindIdentifier {
-		// Skip for invalid syntax like this: export { "x" }
-		return ModuleInstanceStateInstantiated
-	}
-	for p := node.Parent; p != nil; p = p.Parent {
-		if ast.IsBlock(p) || ast.IsModuleBlock(p) || ast.IsSourceFile(p) {
-			statements := ast.GetStatementsOfBlock(p)
-			found := ModuleInstanceStateUnknown
-			for _, statement := range statements.Nodes {
-				if nodeHasName(statement, name) {
-					if statement.Parent == nil {
-						setParent(statement, p)
-						ast.SetParentInChildren(statement)
-					}
-					state := getModuleInstanceStateCached(statement, visited)
-					if found == ModuleInstanceStateUnknown || state > found {
-						found = state
-					}
-					if found == ModuleInstanceStateInstantiated {
-						return found
-					}
-					if statement.Kind == ast.KindImportEqualsDeclaration {
-						// Treat re-exports of import aliases as instantiated since they're ambiguous. This is consistent
-						// with `export import x = mod.x` being treated as instantiated:
-						//   import x = mod.x;
-						//   export { x };
-						found = ModuleInstanceStateInstantiated
-					}
-				}
-			}
-			if found != ModuleInstanceStateUnknown {
-				return found
-			}
-		}
-	}
-	// Couldn't locate, assume could refer to a value
-	return ModuleInstanceStateInstantiated
 }
 
 func (b *Binder) setExportContextFlag(node *ast.Node) {
@@ -1034,7 +894,7 @@ func (b *Binder) bindClassLikeDeclaration(node *ast.Node) {
 	prototypeSymbol := b.newSymbol(ast.SymbolFlagsProperty|ast.SymbolFlagsPrototype, "prototype")
 	symbolExport := ast.GetExports(symbol)[prototypeSymbol.Name]
 	if symbolExport != nil {
-		setParent(name, node)
+		ast.SetParent(name, node)
 		b.errorOnNode(symbolExport.Declarations[0], diagnostics.Duplicate_identifier_0, ast.SymbolName(prototypeSymbol))
 	}
 	ast.GetExports(symbol)[prototypeSymbol.Name] = prototypeSymbol
@@ -1100,8 +960,8 @@ func (b *Binder) bindFunctionPropertyAssignment(node *ast.Node) {
 		}
 		if funcSymbol != nil {
 			// Fix up parent pointers since we're going to use these nodes before we bind into them
-			setParent(expr.Left, node)
-			setParent(expr.Right, node)
+			ast.SetParent(expr.Left, node)
+			ast.SetParent(expr.Right, node)
 			if ast.HasDynamicName(node) {
 				b.bindAnonymousDeclaration(node, ast.SymbolFlagsProperty|ast.SymbolFlagsAssignment, ast.InternalSymbolNameComputed)
 				addLateBoundAssignmentDeclarationToSymbol(node, funcSymbol)
@@ -1757,8 +1617,8 @@ func (b *Binder) checkUnreachable(node *ast.Node) bool {
 }
 
 func (b *Binder) shouldReportErrorOnModuleDeclaration(node *ast.Node) bool {
-	instanceState := getModuleInstanceState(node, nil /*visited*/)
-	return instanceState == ModuleInstanceStateInstantiated || (instanceState == ModuleInstanceStateConstEnumOnly && b.options.ShouldPreserveConstEnums())
+	instanceState := ast.GetModuleInstanceState(node, nil /*visited*/)
+	return instanceState == ast.ModuleInstanceStateInstantiated || (instanceState == ast.ModuleInstanceStateConstEnumOnly && b.options.ShouldPreserveConstEnums())
 }
 
 func (b *Binder) errorOnEachUnreachableRange(node *ast.Node, isError bool) {
@@ -1799,7 +1659,7 @@ func (b *Binder) isPurelyTypeDeclaration(s *ast.Node) bool {
 	case ast.KindInterfaceDeclaration, ast.KindTypeAliasDeclaration:
 		return true
 	case ast.KindModuleDeclaration:
-		return getModuleInstanceState(s, nil /*visited*/) != ModuleInstanceStateInstantiated
+		return ast.GetModuleInstanceState(s, nil /*visited*/) != ast.ModuleInstanceStateInstantiated
 	case ast.KindEnumDeclaration:
 		return !isEnumDeclarationWithPreservedEmit(s, b.options)
 	default:
@@ -2782,12 +2642,6 @@ func (b *Binder) addDiagnostic(diagnostic *ast.Diagnostic) {
 	b.file.SetBindDiagnostics(append(b.file.BindDiagnostics(), diagnostic))
 }
 
-func setParent(child *ast.Node, parent *ast.Node) {
-	if child != nil {
-		child.Parent = parent
-	}
-}
-
 func isSignedNumericLiteral(node *ast.Node) bool {
 	if node.Kind == ast.KindPrefixUnaryExpression {
 		node := node.AsPrefixUnaryExpression()
@@ -2813,18 +2667,6 @@ func getPostfixTokenFromNode(node *ast.Node) *ast.Node {
 		return node.AsMethodSignatureDeclaration().PostfixToken
 	}
 	panic("Unhandled case in getPostfixTokenFromNode")
-}
-
-func nodeHasName(statement *ast.Node, id *ast.Node) bool {
-	name := statement.Name()
-	if name != nil {
-		return ast.IsIdentifier(name) && name.AsIdentifier().Text == id.AsIdentifier().Text
-	}
-	if ast.IsVariableStatement(statement) {
-		declarations := statement.AsVariableStatement().DeclarationList.AsVariableDeclarationList().Declarations.Nodes
-		return core.Some(declarations, func(d *ast.Node) bool { return nodeHasName(d, id) })
-	}
-	return false
 }
 
 func isAsyncFunction(node *ast.Node) bool {

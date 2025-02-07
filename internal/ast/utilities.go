@@ -1857,13 +1857,11 @@ func GetMeaningFromDeclaration(node *Node) SemanticMeaning {
 	case KindModuleDeclaration:
 		if IsAmbientModule(node) {
 			return SemanticMeaningNamespace | SemanticMeaningValue
+		} else if GetModuleInstanceState(node, nil /*visited*/) == ModuleInstanceStateInstantiated {
+			return SemanticMeaningNamespace | SemanticMeaningValue
 		} else {
 			return SemanticMeaningNamespace
 		}
-		// !!! Needs binder function
-		// else if (getModuleInstanceState(node as ModuleDeclaration) === ModuleInstanceState.Instantiated) {
-		// 	return SemanticMeaning.Namespace | SemanticMeaning.Value;
-		// }
 
 	case KindEnumDeclaration,
 		KindNamedImports,
@@ -1912,4 +1910,162 @@ func IsJumpStatementTarget(node *Node) bool {
 
 func IsBreakOrContinueStatement(node *Node) bool {
 	return NodeKindIs(node, KindBreakStatement, KindContinueStatement)
+}
+
+type ModuleInstanceState int32
+
+const (
+	ModuleInstanceStateUnknown ModuleInstanceState = iota
+	ModuleInstanceStateNonInstantiated
+	ModuleInstanceStateInstantiated
+	ModuleInstanceStateConstEnumOnly
+)
+
+func SetParent(child *Node, parent *Node) {
+	if child != nil {
+		child.Parent = parent
+	}
+}
+
+func GetModuleInstanceState(node *Node, visited map[NodeId]ModuleInstanceState) ModuleInstanceState {
+	module := node.AsModuleDeclaration()
+	if module.Body != nil && module.Body.Parent == nil {
+		// getModuleInstanceStateForAliasTarget needs to walk up the parent chain, so parent pointers must be set on this tree already
+		SetParent(module.Body, node)
+		SetParentInChildren(module.Body)
+	}
+	if module.Body != nil {
+		return getModuleInstanceStateCached(module.Body, visited)
+	} else {
+		return ModuleInstanceStateInstantiated
+	}
+}
+
+func getModuleInstanceStateCached(node *Node, visited map[NodeId]ModuleInstanceState) ModuleInstanceState {
+	if visited == nil {
+		visited = make(map[NodeId]ModuleInstanceState)
+	}
+	nodeId := GetNodeId(node)
+	if cached, ok := visited[nodeId]; ok {
+		if cached != ModuleInstanceStateUnknown {
+			return cached
+		}
+		return ModuleInstanceStateNonInstantiated
+	}
+	visited[nodeId] = ModuleInstanceStateUnknown
+	result := getModuleInstanceStateWorker(node, visited)
+	visited[nodeId] = result
+	return result
+}
+
+func getModuleInstanceStateWorker(node *Node, visited map[NodeId]ModuleInstanceState) ModuleInstanceState {
+	// A module is uninstantiated if it contains only
+	switch node.Kind {
+	case KindInterfaceDeclaration, KindTypeAliasDeclaration:
+		return ModuleInstanceStateNonInstantiated
+	case KindEnumDeclaration:
+		if IsEnumConst(node) {
+			return ModuleInstanceStateConstEnumOnly
+		}
+	case KindImportDeclaration, KindImportEqualsDeclaration:
+		if !HasSyntacticModifier(node, ModifierFlagsExport) {
+			return ModuleInstanceStateNonInstantiated
+		}
+	case KindExportDeclaration:
+		decl := node.AsExportDeclaration()
+		if decl.ModuleSpecifier == nil && decl.ExportClause != nil && decl.ExportClause.Kind == KindNamedExports {
+			state := ModuleInstanceStateNonInstantiated
+			for _, specifier := range decl.ExportClause.AsNamedExports().Elements.Nodes {
+				specifierState := getModuleInstanceStateForAliasTarget(specifier, visited)
+				if specifierState > state {
+					state = specifierState
+				}
+				if state == ModuleInstanceStateInstantiated {
+					return state
+				}
+			}
+			return state
+		}
+	case KindModuleBlock:
+		state := ModuleInstanceStateNonInstantiated
+		node.ForEachChild(func(n *Node) bool {
+			childState := getModuleInstanceStateCached(n, visited)
+			switch childState {
+			case ModuleInstanceStateNonInstantiated:
+				return false
+			case ModuleInstanceStateConstEnumOnly:
+				state = ModuleInstanceStateConstEnumOnly
+				return false
+			case ModuleInstanceStateInstantiated:
+				state = ModuleInstanceStateInstantiated
+				return true
+			}
+			panic("Unhandled case in getModuleInstanceStateWorker")
+		})
+		return state
+	case KindModuleDeclaration:
+		return GetModuleInstanceState(node, visited)
+	case KindIdentifier:
+		if node.Flags&NodeFlagsIdentifierIsInJSDocNamespace != 0 {
+			return ModuleInstanceStateNonInstantiated
+		}
+	}
+	return ModuleInstanceStateInstantiated
+}
+
+func getModuleInstanceStateForAliasTarget(node *Node, visited map[NodeId]ModuleInstanceState) ModuleInstanceState {
+	spec := node.AsExportSpecifier()
+	name := spec.PropertyName
+	if name == nil {
+		name = spec.Name()
+	}
+	if name.Kind != KindIdentifier {
+		// Skip for invalid syntax like this: export { "x" }
+		return ModuleInstanceStateInstantiated
+	}
+	for p := node.Parent; p != nil; p = p.Parent {
+		if IsBlock(p) || IsModuleBlock(p) || IsSourceFile(p) {
+			statements := GetStatementsOfBlock(p)
+			found := ModuleInstanceStateUnknown
+			for _, statement := range statements.Nodes {
+				if NodeHasName(statement, name) {
+					if statement.Parent == nil {
+						SetParent(statement, p)
+						SetParentInChildren(statement)
+					}
+					state := getModuleInstanceStateCached(statement, visited)
+					if found == ModuleInstanceStateUnknown || state > found {
+						found = state
+					}
+					if found == ModuleInstanceStateInstantiated {
+						return found
+					}
+					if statement.Kind == KindImportEqualsDeclaration {
+						// Treat re-exports of import aliases as instantiated since they're ambiguous. This is consistent
+						// with `export import x = mod.x` being treated as instantiated:
+						//   import x = mod.x;
+						//   export { x };
+						found = ModuleInstanceStateInstantiated
+					}
+				}
+			}
+			if found != ModuleInstanceStateUnknown {
+				return found
+			}
+		}
+	}
+	// Couldn't locate, assume could refer to a value
+	return ModuleInstanceStateInstantiated
+}
+
+func NodeHasName(statement *Node, id *Node) bool {
+	name := statement.Name()
+	if name != nil {
+		return IsIdentifier(name) && name.AsIdentifier().Text == id.AsIdentifier().Text
+	}
+	if IsVariableStatement(statement) {
+		declarations := statement.AsVariableStatement().DeclarationList.AsVariableDeclarationList().Declarations.Nodes
+		return core.Some(declarations, func(d *Node) bool { return NodeHasName(d, id) })
+	}
+	return false
 }
