@@ -72,11 +72,7 @@ var extensions = []string{".ts", ".tsx"}
 func NewProgram(options ProgramOptions) *Program {
 	p := &Program{}
 	p.programOptions = options
-	p.compilerOptions = options.Options
 	p.optionsDiagnostics = options.OptionsDiagnostics
-	if p.compilerOptions == nil {
-		p.compilerOptions = &core.CompilerOptions{}
-	}
 
 	// p.maxNodeModuleJsDepth = p.options.MaxNodeModuleJsDepth
 
@@ -116,19 +112,19 @@ func NewProgram(options ProgramOptions) *Program {
 			tsConfigSourceFile,
 			p.host,
 			p.host.GetCurrentDirectory(),
-			nil,
+			options.Options,
 			p.configFilePath,
 			/*resolutionStack*/ nil,
 			/*extraFileExtensions*/ nil,
 			/*extendedConfigCache*/ nil,
 		)
 
+		p.compilerOptions = parseConfigFileContent.CompilerOptions()
+
 		if len(parseConfigFileContent.Errors) > 0 {
 			p.optionsDiagnostics = append(p.optionsDiagnostics, parseConfigFileContent.Errors...)
 			return p
 		}
-
-		p.compilerOptions = tsoptions.MergeCompilerOptions(parseConfigFileContent.CompilerOptions(), p.compilerOptions)
 
 		if rootFiles == nil {
 			// !!! merge? override? this?
