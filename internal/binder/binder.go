@@ -758,7 +758,7 @@ func (b *Binder) bindModuleDeclaration(node *ast.Node) {
 }
 
 func (b *Binder) declareModuleSymbol(node *ast.Node) ast.ModuleInstanceState {
-	state := ast.GetModuleInstanceState(node, nil /*visited*/)
+	state := ast.GetModuleInstanceState(node)
 	instantiated := state != ast.ModuleInstanceStateNonInstantiated
 	b.declareSymbolAndAddToSymbolTable(node, core.IfElse(instantiated, ast.SymbolFlagsValueModule, ast.SymbolFlagsNamespaceModule), core.IfElse(instantiated, ast.SymbolFlagsValueModuleExcludes, ast.SymbolFlagsNamespaceModuleExcludes))
 	return state
@@ -1617,7 +1617,7 @@ func (b *Binder) checkUnreachable(node *ast.Node) bool {
 }
 
 func (b *Binder) shouldReportErrorOnModuleDeclaration(node *ast.Node) bool {
-	instanceState := ast.GetModuleInstanceState(node, nil /*visited*/)
+	instanceState := ast.GetModuleInstanceState(node)
 	return instanceState == ast.ModuleInstanceStateInstantiated || (instanceState == ast.ModuleInstanceStateConstEnumOnly && b.options.ShouldPreserveConstEnums())
 }
 
@@ -1659,7 +1659,7 @@ func (b *Binder) isPurelyTypeDeclaration(s *ast.Node) bool {
 	case ast.KindInterfaceDeclaration, ast.KindTypeAliasDeclaration:
 		return true
 	case ast.KindModuleDeclaration:
-		return ast.GetModuleInstanceState(s, nil /*visited*/) != ast.ModuleInstanceStateInstantiated
+		return ast.GetModuleInstanceState(s) != ast.ModuleInstanceStateInstantiated
 	case ast.KindEnumDeclaration:
 		return !isEnumDeclarationWithPreservedEmit(s, b.options)
 	default:

@@ -1857,7 +1857,7 @@ func GetMeaningFromDeclaration(node *Node) SemanticMeaning {
 	case KindModuleDeclaration:
 		if IsAmbientModule(node) {
 			return SemanticMeaningNamespace | SemanticMeaningValue
-		} else if GetModuleInstanceState(node, nil /*visited*/) == ModuleInstanceStateInstantiated {
+		} else if GetModuleInstanceState(node) == ModuleInstanceStateInstantiated {
 			return SemanticMeaningNamespace | SemanticMeaningValue
 		} else {
 			return SemanticMeaningNamespace
@@ -1927,7 +1927,10 @@ func SetParent(child *Node, parent *Node) {
 	}
 }
 
-func GetModuleInstanceState(node *Node, visited map[NodeId]ModuleInstanceState) ModuleInstanceState {
+func GetModuleInstanceState(node *Node) ModuleInstanceState {
+	return getModuleInstanceState(node, nil)
+}
+func getModuleInstanceState(node *Node, visited map[NodeId]ModuleInstanceState) ModuleInstanceState {
 	module := node.AsModuleDeclaration()
 	if module.Body != nil && module.Body.Parent == nil {
 		// getModuleInstanceStateForAliasTarget needs to walk up the parent chain, so parent pointers must be set on this tree already
@@ -2004,7 +2007,7 @@ func getModuleInstanceStateWorker(node *Node, visited map[NodeId]ModuleInstanceS
 		})
 		return state
 	case KindModuleDeclaration:
-		return GetModuleInstanceState(node, visited)
+		return getModuleInstanceState(node, visited)
 	case KindIdentifier:
 		if node.Flags&NodeFlagsIdentifierIsInJSDocNamespace != 0 {
 			return ModuleInstanceStateNonInstantiated
