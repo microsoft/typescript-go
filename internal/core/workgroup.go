@@ -6,7 +6,11 @@ import (
 )
 
 type WorkGroup interface {
+	// Queue queues a function to run. It may be invoked immediately, or deferred until RunAndWait.
+	// It is not safe to call Queue after RunAndWait has returned.
 	Queue(fn func())
+
+	// RunAndWait runs all queued functions, blocking until they have all completed.
 	RunAndWait()
 }
 
