@@ -132,6 +132,10 @@ func NewProgram(options ProgramOptions) *Program {
 		}
 	}
 
+	if p.compilerOptions == nil {
+		p.compilerOptions = &core.CompilerOptions{}
+	}
+
 	p.resolver = module.NewResolver(p.host, p.compilerOptions)
 
 	var libs []string
