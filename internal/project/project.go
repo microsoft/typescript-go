@@ -126,6 +126,26 @@ func (p *Project) GetSourceFile(fileName string, languageVersion core.ScriptTarg
 	return nil
 }
 
+// GetProgram implements LanguageServiceHost. Updates the program if needed.
+func (p *Project) GetProgram() *compiler.Program {
+	if !p.dirty && p.program != nil {
+		return p.program
+	}
+
+	rootFileNames := p.GetRootFileNames()
+	compilerOptions := p.GetCompilerOptions()
+
+	p.program = compiler.NewProgram(compiler.ProgramOptions{
+		RootFiles:          rootFileNames,
+		Host:               p,
+		Options:            compilerOptions,
+		DefaultLibraryPath: p.GetDefaultLibraryPath(),
+	})
+
+	p.program.BindSourceFiles()
+	return p.program
+}
+
 // NewLine implements LanguageServiceHost.
 func (p *Project) NewLine() string {
 	return p.projectService.host.NewLine()

@@ -10,9 +10,7 @@ import (
 var _ compiler.CompilerHost = (*LanguageService)(nil)
 
 type LanguageService struct {
-	host               Host
-	program            *compiler.Program
-	lastProjectVersion int
+	host Host
 }
 
 func NewLanguageService(host Host) *LanguageService {
@@ -48,22 +46,5 @@ func (l *LanguageService) GetSourceFile(fileName string, languageVersion core.Sc
 
 // GetProgram updates the program if the project version has changed.
 func (l *LanguageService) GetProgram() *compiler.Program {
-	hostVersion := l.host.GetProjectVersion()
-	if l.program != nil && hostVersion == l.lastProjectVersion {
-		return l.program
-	}
-
-	l.lastProjectVersion = hostVersion
-	rootFileNames := l.host.GetRootFileNames()
-	compilerOptions := l.host.GetCompilerOptions()
-
-	l.program = compiler.NewProgram(compiler.ProgramOptions{
-		RootFiles:          rootFileNames,
-		Host:               l,
-		Options:            compilerOptions,
-		DefaultLibraryPath: l.host.GetDefaultLibraryPath(),
-	})
-
-	l.program.BindSourceFiles()
-	return l.program
+	return l.host.GetProgram()
 }
