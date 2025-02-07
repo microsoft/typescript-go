@@ -48,21 +48,19 @@ func newRegistryKey(options *core.CompilerOptions, path tspath.Path, scriptKind 
 type registryEntry struct {
 	sourceFile *ast.SourceFile
 	refCount   int
+	mu         sync.Mutex
 }
 
 // The document registry represents a store of SourceFile objects that can be shared between
 // multiple LanguageService instances.
 type documentRegistry struct {
-	options tspath.ComparePathsOptions
-
-	documentsMu sync.RWMutex
-	documents   map[registryKey]registryEntry
+	options   tspath.ComparePathsOptions
+	documents sync.Map
 }
 
 func newDocumentRegistry(options tspath.ComparePathsOptions) *documentRegistry {
 	return &documentRegistry{
-		options:   options,
-		documents: make(map[registryKey]registryEntry),
+		options: options,
 	}
 }
 
@@ -88,12 +86,13 @@ func (r *documentRegistry) AcquireDocument(scriptInfo *ScriptInfo, compilerOptio
 }
 
 func (r *documentRegistry) ReleaseDocument(key registryKey) {
-	r.documentsMu.Lock()
-	defer r.documentsMu.Unlock()
-	if entry, ok := r.documents[key]; ok {
+	if entryAny, ok := r.documents.Load(key); ok {
+		entry := entryAny.(*registryEntry)
+		entry.mu.Lock()
+		defer entry.mu.Unlock()
 		entry.refCount--
 		if entry.refCount == 0 {
-			delete(r.documents, key)
+			r.documents.Delete(key)
 		}
 	}
 }
@@ -104,31 +103,31 @@ func (r *documentRegistry) getDocumentWorker(
 	key registryKey,
 ) *ast.SourceFile {
 	scriptTarget := core.IfElse(scriptInfo.scriptKind == core.ScriptKindJSON, core.ScriptTargetJSON, compilerOptions.GetEmitScriptTarget())
-	r.documentsMu.RLock()
-	if entry, ok := r.documents[key]; ok {
-		r.documentsMu.RUnlock()
+	if entryAny, ok := r.documents.Load(key); ok {
 		// We have an entry for this file. However, it may be for a different version of
 		// the script snapshot. If so, update it appropriately.
+		entry := entryAny.(*registryEntry)
 		if entry.sourceFile.Version != scriptInfo.version {
-			r.documentsMu.Lock()
-			defer r.documentsMu.Unlock()
-			entry.sourceFile = parser.ParseSourceFile(scriptInfo.fileName, scriptInfo.text, scriptTarget, scanner.JSDocParsingModeParseAll)
-			entry.sourceFile.Version = scriptInfo.version
+			sourceFile := parser.ParseSourceFile(scriptInfo.fileName, scriptInfo.text, scriptTarget, scanner.JSDocParsingModeParseAll)
+			sourceFile.Version = scriptInfo.version
+			entry.mu.Lock()
+			defer entry.mu.Unlock()
+			entry.sourceFile = sourceFile
 		}
 		entry.refCount++
 		return entry.sourceFile
 	} else {
 		// Have never seen this file with these settings. Create a new source file for it.
-		r.documentsMu.RUnlock()
 		sourceFile := parser.ParseSourceFile(scriptInfo.fileName, scriptInfo.text, scriptTarget, scanner.JSDocParsingModeParseAll)
 		sourceFile.Version = scriptInfo.version
-		entry := registryEntry{
+		entryAny, _ := r.documents.LoadOrStore(key, &registryEntry{
 			sourceFile: sourceFile,
-			refCount:   1,
-		}
-		r.documentsMu.Lock()
-		defer r.documentsMu.Unlock()
-		r.documents[key] = entry
+			refCount:   0,
+		})
+		entry := entryAny.(*registryEntry)
+		entry.mu.Lock()
+		defer entry.mu.Unlock()
+		entry.refCount++
 		return sourceFile
 	}
 }
