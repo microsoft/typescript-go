@@ -1425,7 +1425,195 @@ func (c *Checker) checkResolvedBlockScopedVariable(result *ast.Symbol, errorLoca
 }
 
 func (c *Checker) isBlockScopedNameDeclaredBeforeUse(declaration *ast.Node, usage *ast.Node) bool {
-	return true // !!!
+	declarationFile := ast.GetSourceFileOfNode(declaration)
+	useFile := ast.GetSourceFileOfNode(usage)
+	declContainer := ast.GetEnclosingBlockScopeContainer(declaration)
+	if declarationFile != useFile {
+		if (c.moduleKind != core.ModuleKindNone && (declarationFile.ExternalModuleIndicator != nil || useFile.ExternalModuleIndicator != nil)) || c.compilerOptions.OutFile == "" || isInTypeQuery(usage) || declaration.Flags&ast.NodeFlagsAmbient != 0 {
+			// nodes are in different files and order cannot be determined
+			return true
+		}
+		// declaration is after usage
+		// can be legal if usage is deferred (i.e. inside function or in initializer of instance property)
+		if c.isUsedInFunctionOrInstanceProperty(usage, declaration, declContainer) {
+			return true
+		}
+		sourceFiles := c.program.SourceFiles()
+		return slices.Index(sourceFiles, declarationFile) <= slices.Index(sourceFiles, useFile)
+	}
+	// deferred usage in a type context is always OK regardless of the usage position:
+	if usage.Flags&ast.NodeFlagsJSDoc != 0 || isInTypeQuery(usage) || c.isInAmbientOrTypeNode(usage) {
+		return true
+	}
+	if declaration.Pos() <= usage.Pos() && !(ast.IsPropertyDeclaration(declaration) && isThisProperty(usage.Parent) && declaration.Initializer() == nil && !isExclamationToken(declaration.AsPropertyDeclaration().PostfixToken)) {
+		// declaration is before usage
+		switch {
+		case declaration.Kind == ast.KindBindingElement:
+			// still might be illegal if declaration and usage are both binding elements (eg var [a = b, b = b] = [1, 2])
+			errorBindingElement := getAncestor(usage, ast.KindBindingElement)
+			if errorBindingElement != nil {
+				return ast.FindAncestor(errorBindingElement, ast.IsBindingElement) != ast.FindAncestor(declaration, ast.IsBindingElement) || declaration.Pos() < errorBindingElement.Pos()
+			}
+			// or it might be illegal if usage happens before parent variable is declared (eg var [a] = a)
+			return c.isBlockScopedNameDeclaredBeforeUse(getAncestor(declaration, ast.KindVariableDeclaration), usage)
+		case declaration.Kind == ast.KindVariableDeclaration:
+			// still might be illegal if usage is in the initializer of the variable declaration (eg var a = a)
+			return !isImmediatelyUsedInInitializerOfBlockScopedVariable(declaration, usage, declContainer)
+		case ast.IsClassLike(declaration):
+			// still might be illegal if the usage is within a computed property name in the class (eg class A { static p = "a"; [A.p]() {} })
+			// or when used within a decorator in the class (e.g. `@dec(A.x) class A { static x = "x" }`),
+			// except when used in a function that is not an IIFE (e.g., `@dec(() => A.x) class A { ... }`)
+			container := usage
+			for container != nil && container != declaration {
+				if ast.IsComputedPropertyName(container) && container.Parent.Parent == declaration ||
+					!c.legacyDecorators && ast.IsDecorator(container) && (container.Parent == declaration ||
+						ast.IsMethodDeclaration(container.Parent) && container.Parent.Parent == declaration ||
+						ast.IsAccessor(container.Parent) && container.Parent.Parent == declaration ||
+						ast.IsPropertyDeclaration(container.Parent) && container.Parent.Parent == declaration ||
+						ast.IsParameter(container.Parent) && container.Parent.Parent.Parent == declaration) {
+					break
+				}
+				container = container.Parent
+			}
+			if container == nil || container == declaration {
+				return true
+			}
+			if !c.legacyDecorators && ast.IsDecorator(container) {
+				n := usage
+				for n != nil && n != container {
+					if ast.IsFunctionLike(n) && ast.GetImmediatelyInvokedFunctionExpression(n) == nil {
+						break
+					}
+					n = n.Parent
+				}
+				return n != nil && n != container
+			}
+			return false
+		case ast.IsPropertyDeclaration(declaration):
+			// still might be illegal if a self-referencing property initializer (eg private x = this.x)
+			return !isPropertyImmediatelyReferencedWithinDeclaration(declaration, usage, false /*stopAtAnyPropertyDeclaration*/)
+		case ast.IsParameterPropertyDeclaration(declaration, declaration.Parent):
+			// foo = this.bar is illegal in emitStandardClassFields when bar is a parameter property
+			return !(c.emitStandardClassFields && ast.GetContainingClass(declaration) == ast.GetContainingClass(usage) && c.isUsedInFunctionOrInstanceProperty(usage, declaration, declContainer))
+		}
+		return true
+	}
+	// declaration is after usage, but it can still be legal if usage is deferred:
+	// 1. inside an export specifier
+	// 2. inside a function
+	// 3. inside an instance property initializer, a reference to a non-instance property
+	//    (except when emitStandardClassFields: true and the reference is to a parameter property)
+	// 4. inside a static property initializer, a reference to a static method in the same class
+	// 5. inside a TS export= declaration (since we will move the export statement during emit to avoid TDZ)
+	if ast.IsExportSpecifier(usage.Parent) || ast.IsExportAssignment(usage.Parent) && usage.Parent.AsExportAssignment().IsExportEquals {
+		// export specifiers do not use the variable, they only make it available for use
+		return true
+	}
+	// When resolving symbols for exports, the `usage` location passed in can be the export site directly
+	if ast.IsExportAssignment(usage) && usage.AsExportAssignment().IsExportEquals {
+		return true
+	}
+	if c.isUsedInFunctionOrInstanceProperty(usage, declaration, declContainer) {
+		if c.emitStandardClassFields && ast.GetContainingClass(declaration) != nil && (ast.IsPropertyDeclaration(declaration) || ast.IsParameterPropertyDeclaration(declaration, declaration.Parent)) {
+			return !isPropertyImmediatelyReferencedWithinDeclaration(declaration, usage, true /*stopAtAnyPropertyDeclaration*/)
+		}
+		return true
+	}
+	return false
+}
+
+func (c *Checker) isUsedInFunctionOrInstanceProperty(usage *ast.Node, declaration *ast.Node, declContainer *ast.Node) bool {
+	for current := usage; current != nil && current != declContainer; current = current.Parent {
+		if ast.IsFunctionLike(current) {
+			return true
+		}
+		if ast.IsClassStaticBlockDeclaration(current) {
+			return declaration.Pos() < usage.Pos()
+		}
+		if current.Parent != nil && ast.IsPropertyDeclaration(current.Parent) && current.Parent.Initializer() == current {
+			if ast.IsStatic(current.Parent) {
+				if ast.IsMethodDeclaration(declaration) {
+					return true
+				}
+				if ast.IsPropertyDeclaration(declaration) && ast.GetContainingClass(usage) == ast.GetContainingClass(declaration) {
+					propName := declaration.Name()
+					if ast.IsIdentifier(propName) || ast.IsPrivateIdentifier(propName) {
+						t := c.getTypeOfSymbol(c.getSymbolOfDeclaration(declaration))
+						staticBlocks := core.Filter(declaration.Parent.Members(), ast.IsClassStaticBlockDeclaration)
+						if c.isPropertyInitializedInStaticBlocks(propName, t, staticBlocks, declaration.Parent.Pos(), current.Pos()) {
+							return true
+						}
+					}
+				}
+			} else {
+				isDeclarationInstanceProperty := ast.IsPropertyDeclaration(declaration) && !ast.IsStatic(declaration)
+				if !isDeclarationInstanceProperty || ast.GetContainingClass(usage) != ast.GetContainingClass(declaration) {
+					return true
+				}
+			}
+		}
+	}
+	return false
+}
+
+func isImmediatelyUsedInInitializerOfBlockScopedVariable(declaration *ast.Node, usage *ast.Node, declContainer *ast.Node) bool {
+	switch declaration.Parent.Parent.Kind {
+	case ast.KindVariableStatement, ast.KindForStatement, ast.KindForOfStatement:
+		// variable statement/for/for-of statement case,
+		// use site should not be inside variable declaration (initializer of declaration or binding element)
+		if isSameScopeDescendentOf(usage, declaration, declContainer) {
+			return true
+		}
+	}
+	// ForIn/ForOf case - use site should not be used in expression part
+	grandparent := declaration.Parent.Parent
+	return ast.IsForInOrOfStatement(grandparent) && isSameScopeDescendentOf(usage, grandparent.Expression(), declContainer)
+}
+
+// Starting from 'initial' node walk up the parent chain until 'stopAt' node is reached.
+// If at any point current node is equal to 'parent' node - return true.
+// If current node is an IIFE, continue walking up.
+// Return false if 'stopAt' node is reached or isFunctionLike(current) === true.
+func isSameScopeDescendentOf(initial *ast.Node, parent *ast.Node, stopAt *ast.Node) bool {
+	if parent == nil {
+		return false
+	}
+	for n := initial; n != nil; n = n.Parent {
+		if n == parent {
+			return true
+		}
+		if n == stopAt || ast.IsFunctionLike(n) && (ast.GetImmediatelyInvokedFunctionExpression(n) == nil || (getFunctionFlags(n)&FunctionFlagsAsyncGenerator != 0)) {
+			return false
+		}
+	}
+	return false
+}
+
+// stopAtAnyPropertyDeclaration is used for detecting ES-standard class field use-before-def errors
+func isPropertyImmediatelyReferencedWithinDeclaration(declaration *ast.Node, usage *ast.Node, stopAtAnyPropertyDeclaration bool) bool {
+	// always legal if usage is after declaration
+	if usage.End() > declaration.End() {
+		return false
+	}
+	// still might be legal if usage is deferred (e.g. x: any = () => this.x)
+	// otherwise illegal if immediately referenced within the declaration (e.g. x: any = this.x)
+	for node := usage; node != nil && node != declaration; node = node.Parent {
+		switch node.Kind {
+		case ast.KindArrowFunction:
+			return false
+		case ast.KindPropertyDeclaration:
+			// even when stopping at any property declaration, they need to come from the same class
+			if stopAtAnyPropertyDeclaration && (ast.IsPropertyDeclaration(declaration) && node.Parent == declaration.Parent || ast.IsParameterPropertyDeclaration(declaration, declaration.Parent) && node.Parent == declaration.Parent.Parent) {
+				return true
+			}
+		case ast.KindBlock:
+			switch node.Parent.Kind {
+			case ast.KindMethodDeclaration, ast.KindGetAccessor, ast.KindSetAccessor:
+				return false
+			}
+		}
+	}
+	return true
 }
 
 func (c *Checker) checkAndReportErrorForMissingPrefix(errorLocation *ast.Node, name string) bool {
