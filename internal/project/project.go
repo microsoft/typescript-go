@@ -214,8 +214,8 @@ func (p *Project) updateGraph() bool {
 	p.initialLoadPending = false
 	p.hasAddedOrRemovedFiles = false
 	p.hasAddedOrRemovedSymlinks = false
+	p.program = p.GetProgram()
 	p.dirty = false
-	p.program = p.languageService.GetProgram()
 	p.log(fmt.Sprintf("Finishing updateGraph: Project: %s version: %d", p.name, p.version))
 	if hasAddedOrRemovedFiles {
 		p.log(p.print(true /*writeFileNames*/, true /*writeFileExplanation*/, false /*writeFileVersionAndText*/))

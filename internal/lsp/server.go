@@ -177,6 +177,8 @@ func (s *Server) handleMessage(req *lsproto.RequestMessage) error {
 		return s.handleDidChange(req)
 	case *lsproto.HoverParams:
 		return s.handleHover(req)
+	case *lsproto.DefinitionParams:
+		return s.handleDefinition(req)
 	default:
 		switch req.Method {
 		case lsproto.MethodShutdown:
@@ -206,6 +208,9 @@ func (s *Server) handleInitialize(req *lsproto.RequestMessage) error {
 				TextDocumentSyncKind: ptrTo(lsproto.TextDocumentSyncKindIncremental),
 			},
 			HoverProvider: &lsproto.BooleanOrHoverOptions{
+				Boolean: ptrTo(true),
+			},
+			DefinitionProvider: &lsproto.BooleanOrDefinitionOptions{
 				Boolean: ptrTo(true),
 			},
 		},
@@ -281,6 +286,27 @@ func (s *Server) handleHover(req *lsproto.RequestMessage) error {
 			},
 		},
 	})
+}
+
+func (s *Server) handleDefinition(req *lsproto.RequestMessage) error {
+	params := req.Params.(*lsproto.DefinitionParams)
+	file, project := s.getFileAndProject(params.TextDocument.Uri)
+	locations := project.LanguageService().ProvideDefinitions(
+		file.FileName(),
+		lineAndCharacterToPosition(params.Position, file.LineMap()),
+	)
+	lspLocations := make([]lsproto.Location, len(locations))
+	for i, loc := range locations {
+		if info := s.projectService.GetScriptInfo(loc.FileName); info != nil {
+			lspLocations[i] = toLspLocation(loc, info.LineMap())
+		} else {
+			s.logger.Error("failed to get script info for file: " + loc.FileName)
+			return s.sendError(req.ID, lsproto.ErrRequestFailed)
+		}
+	}
+
+	s.sendResult(req.ID, &lsproto.Definition{Locations: &lspLocations})
+	return nil
 }
 
 func (s *Server) getFileAndProject(uri lsproto.DocumentUri) (*project.ScriptInfo, *project.Project) {

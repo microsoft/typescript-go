@@ -3,9 +3,11 @@ package lsp
 import (
 	"fmt"
 	"net/url"
+	"sort"
 	"strings"
 
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 )
 
@@ -37,6 +39,19 @@ func lineAndCharacterToPosition(lineAndCharacter lsproto.Position, lineMap []cor
 		panic("resulting position is out of bounds")
 	}
 	return res
+}
+
+func positionToLineAndCharacter(position int, lineMap []core.TextPos) lsproto.Position {
+	line := sort.Search(len(lineMap), func(i int) bool {
+		return int(lineMap[i]) > position
+	}) - 1
+	if line < 0 {
+		line = 0
+	}
+	return lsproto.Position{
+		Line:      uint32(line),
+		Character: uint32(position - int(lineMap[line])),
+	}
 }
 
 func documentUriToFileName(uri lsproto.DocumentUri) string {
@@ -73,4 +88,24 @@ func documentUriToFileName(uri lsproto.DocumentUri) string {
 		fragment = "#" + fragment
 	}
 	return fmt.Sprintf("^/%s/%s%s%s", parsed.Scheme, authority, path, fragment)
+}
+
+func fileNameToDocumentUri(fileName string) lsproto.DocumentUri {
+	if strings.HasPrefix(fileName, "^/") {
+		return lsproto.DocumentUri(strings.Replace(fileName[2:], "/ts-nul-authority/", ":", 1))
+	}
+	if firstSlash := strings.IndexByte(fileName, '/'); firstSlash > 0 && fileName[firstSlash-1] == ':' {
+		return lsproto.DocumentUri("file:///" + url.PathEscape(fileName[:firstSlash]) + fileName[firstSlash:])
+	}
+	return lsproto.DocumentUri("file://" + fileName)
+}
+
+func toLspLocation(location ls.Location, lineMap []core.TextPos) lsproto.Location {
+	return lsproto.Location{
+		Uri: fileNameToDocumentUri(location.FileName),
+		Range: lsproto.Range{
+			Start: positionToLineAndCharacter(location.Range.Pos(), lineMap),
+			End:   positionToLineAndCharacter(location.Range.End(), lineMap),
+		},
+	}
 }

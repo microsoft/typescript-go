@@ -10,3 +10,8 @@ type TextChange struct {
 func (t TextChange) ApplyTo(text string) string {
 	return text[:t.Pos()] + t.NewText + text[t.End():]
 }
+
+type Location struct {
+	FileName string
+	Range    core.TextRange
+}

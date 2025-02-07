@@ -48,3 +48,12 @@ func (l *LanguageService) GetSourceFile(fileName string, languageVersion core.Sc
 func (l *LanguageService) GetProgram() *compiler.Program {
 	return l.host.GetProgram()
 }
+
+func (l *LanguageService) getProgramAndFile(fileName string) (*compiler.Program, *ast.SourceFile) {
+	program := l.GetProgram()
+	file := program.GetSourceFile(fileName)
+	if file == nil {
+		panic("file not found")
+	}
+	return program, file
+}
