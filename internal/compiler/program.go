@@ -116,7 +116,7 @@ func NewProgram(options ProgramOptions) *Program {
 			tsConfigSourceFile,
 			p.host,
 			p.host.GetCurrentDirectory(),
-			nil,
+			p.compilerOptions,
 			p.configFilePath,
 			/*resolutionStack*/ nil,
 			/*extraFileExtensions*/ nil,
@@ -128,8 +128,7 @@ func NewProgram(options ProgramOptions) *Program {
 			return p
 		}
 
-		// !!! this modifies p.compilerOptions
-		tsoptions.MergeCompilerOptions(p.compilerOptions, parseConfigFileContent.CompilerOptions())
+		p.compilerOptions = parseConfigFileContent.CompilerOptions()
 
 		if rootFiles == nil {
 			// !!! merge? override? this?
