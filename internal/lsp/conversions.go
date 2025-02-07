@@ -42,7 +42,14 @@ func lineAndCharacterToPosition(lineAndCharacter lsproto.Position, lineMap []cor
 func documentUriToFileName(uri lsproto.DocumentUri) string {
 	uriStr := string(uri)
 	if strings.HasPrefix(uriStr, "file:///") {
-		return uriStr[7:]
+		path := uriStr[7:]
+		if len(path) >= 4 {
+			if nextSlash := strings.IndexByte(path[1:], '/'); nextSlash != -1 {
+				if possibleDrive, _ := url.PathUnescape(path[1 : nextSlash+2]); strings.HasSuffix(possibleDrive, ":/") {
+					return possibleDrive + path[len(possibleDrive)+3:]
+				}
+			}
+		}
 	}
 	if strings.HasPrefix(uriStr, "file://") {
 		// UNC path
