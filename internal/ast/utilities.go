@@ -1851,8 +1851,7 @@ func GetMeaningFromDeclaration(node *Node) SemanticMeaning {
 		KindTypeAliasDeclaration,
 		KindTypeLiteral:
 		return SemanticMeaningType
-	case KindEnumMember,
-		KindClassDeclaration:
+	case KindEnumMember, KindClassDeclaration:
 		return SemanticMeaningValue | SemanticMeaningType
 
 	case KindModuleDeclaration:
