@@ -1792,3 +1792,104 @@ func TryGetTextOfPropertyName(name *Node) (string, bool) {
 	}
 	return "", false
 }
+
+type SemanticMeaning int32
+
+const (
+	SemanticMeaningNone      SemanticMeaning = 0
+	SemanticMeaningValue     SemanticMeaning = 1 << 0
+	SemanticMeaningType      SemanticMeaning = 1 << 1
+	SemanticMeaningNamespace SemanticMeaning = 1 << 2
+	SemanticMeaningAll       SemanticMeaning = SemanticMeaningValue | SemanticMeaningType | SemanticMeaningNamespace
+)
+
+func GetMeaningFromDeclaration(node *Node) SemanticMeaning {
+	switch node.Kind {
+	case KindVariableDeclaration:
+		return SemanticMeaningValue
+	case KindParameter,
+		KindBindingElement,
+		KindPropertyDeclaration,
+		KindPropertySignature,
+		KindPropertyAssignment,
+		KindShorthandPropertyAssignment,
+		KindMethodDeclaration,
+		KindMethodSignature,
+		KindConstructor,
+		KindGetAccessor,
+		KindSetAccessor,
+		KindFunctionDeclaration,
+		KindFunctionExpression,
+		KindArrowFunction,
+		KindCatchClause,
+		KindJsxAttribute:
+		return SemanticMeaningValue
+
+	case KindTypeParameter,
+		KindInterfaceDeclaration,
+		KindTypeAliasDeclaration,
+		KindTypeLiteral:
+		return SemanticMeaningType
+	case KindEnumMember,
+		KindClassDeclaration:
+		return SemanticMeaningValue | SemanticMeaningType
+
+	case KindModuleDeclaration:
+		if IsAmbientModule(node) {
+			return SemanticMeaningNamespace | SemanticMeaningValue
+		} else {
+			return SemanticMeaningNamespace
+		}
+		// !!! Needs binder function
+		// else if (getModuleInstanceState(node as ModuleDeclaration) === ModuleInstanceState.Instantiated) {
+		// 	return SemanticMeaning.Namespace | SemanticMeaning.Value;
+		// }
+
+	case KindEnumDeclaration,
+		KindNamedImports,
+		KindImportSpecifier,
+		KindImportEqualsDeclaration,
+		KindImportDeclaration,
+		KindExportAssignment,
+		KindExportDeclaration:
+		return SemanticMeaningAll
+
+	// An external module can be a Value
+	case KindSourceFile:
+		return SemanticMeaningNamespace | SemanticMeaningValue
+	}
+
+	return SemanticMeaningAll
+}
+
+func IsPropertyAccessOrQualifiedName(node *Node) bool {
+	return node.Kind == KindPropertyAccessExpression || node.Kind == KindQualifiedName
+}
+
+func IsLabelName(node *Node) bool {
+	return IsLabelOfLabeledStatement(node) || IsJumpStatementTarget(node)
+}
+
+func IsLabelOfLabeledStatement(node *Node) bool {
+	if !IsIdentifier(node) {
+		return false
+	}
+	if !IsLabeledStatement(node.Parent) {
+		return false
+	}
+	return node == node.Parent.Label()
+}
+
+func IsJumpStatementTarget(node *Node) bool {
+	if !IsIdentifier(node) {
+		return false
+	}
+	if !IsBreakOrContinueStatement(node.Parent) {
+		return false
+	}
+	return node == node.Parent.Label()
+}
+
+func IsBreakOrContinueStatement(node *Node) bool {
+	return NodeKindIs(node, KindBreakStatement, KindContinueStatement)
+}

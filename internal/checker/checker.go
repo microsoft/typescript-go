@@ -3617,7 +3617,7 @@ func (c *Checker) checkDecorators(node *ast.Node) {
 }
 
 func (c *Checker) checkIteratedTypeOrElementType(use IterationUse, inputType *Type, sentType *Type, errorNode *ast.Node) *Type {
-	if isTypeAny(inputType) {
+	if IsTypeAny(inputType) {
 		return inputType
 	}
 	t := c.getIteratedTypeOrElementType(use, inputType, sentType, errorNode, true /*checkAssignability*/)
@@ -3743,7 +3743,7 @@ func (c *Checker) getIteratedTypeOrElementType(use IterationUse, inputType *Type
 // `IterableIterator`-like, or `Generator`-like (for a non-async generator); or `AsyncIterable`-like,
 // `AsyncIterator`-like, `AsyncIterableIterator`-like, or `AsyncGenerator`-like (for an async generator).
 func (c *Checker) getIterationTypeOfGeneratorFunctionReturnType(typeKind IterationTypeKind, returnType *Type, isAsyncGenerator bool) *Type {
-	if isTypeAny(returnType) {
+	if IsTypeAny(returnType) {
 		return nil
 	}
 	iterationTypes := c.getIterationTypesOfGeneratorFunctionReturnType(returnType, isAsyncGenerator)
@@ -3751,7 +3751,7 @@ func (c *Checker) getIterationTypeOfGeneratorFunctionReturnType(typeKind Iterati
 }
 
 func (c *Checker) getIterationTypesOfGeneratorFunctionReturnType(t *Type, isAsyncGenerator bool) IterationTypes {
-	if isTypeAny(t) {
+	if IsTypeAny(t) {
 		return IterationTypes{c.anyType, c.anyType, c.anyType}
 	}
 	use := core.IfElse(isAsyncGenerator, IterationUseAsyncGeneratorReturnType, IterationUseGeneratorReturnType)
@@ -3765,7 +3765,7 @@ func (c *Checker) getIterationTypesOfGeneratorFunctionReturnType(t *Type, isAsyn
 
 // Gets the requested "iteration type" from an `Iterable`-like or `AsyncIterable`-like type.
 func (c *Checker) getIterationTypeOfIterable(use IterationUse, typeKind IterationTypeKind, inputType *Type, errorNode *ast.Node) *Type {
-	if isTypeAny(inputType) {
+	if IsTypeAny(inputType) {
 		return nil
 	}
 	iterationTypes := c.getIterationTypesOfIterable(inputType, use, errorNode)
@@ -3792,7 +3792,7 @@ func (c *Checker) getIterationTypeOfIterable(use IterationUse, typeKind Iteratio
 // For a **for-await-of** statement or a `yield*` in an async generator we will look for
 // the `[Symbol.asyncIterator]()` method first, and then the `[Symbol.iterator]()` method.
 func (c *Checker) getIterationTypesOfIterable(t *Type, use IterationUse, errorNode *ast.Node) IterationTypes {
-	if isTypeAny(t) {
+	if IsTypeAny(t) {
 		return IterationTypes{c.anyType, c.anyType, c.anyType}
 	}
 	key := IterationTypesKey{typeId: t.id, use: use&IterationUseCacheFlags | core.IfElse(errorNode != nil, IterationUseReportError, 0)}
@@ -3953,7 +3953,7 @@ func (c *Checker) getAsyncFromSyncIterationTypes(iterationTypes IterationTypes, 
 func (c *Checker) getIterationTypesOfIterableSlow(t *Type, r *IterationTypesResolver, errorNode *ast.Node) IterationTypes {
 	if method := c.getPropertyOfType(t, c.getPropertyNameForKnownSymbolName(r.iteratorSymbolName)); method != nil && method.Flags&ast.SymbolFlagsOptional == 0 {
 		methodType := c.getTypeOfSymbol(method)
-		if isTypeAny(methodType) {
+		if IsTypeAny(methodType) {
 			return IterationTypes{c.anyType, c.anyType, c.anyType}
 		}
 		if signatures := c.getSignaturesOfType(methodType, SignatureKindCall); len(signatures) != 0 {
@@ -3979,7 +3979,7 @@ func (c *Checker) getIterationTypesOfIterator(t *Type, r *IterationTypesResolver
 //
 // NOTE: You probably don't want to call this directly and should be calling `getIterationTypesOfIterator` instead.
 func (c *Checker) getIterationTypesOfIteratorWorker(t *Type, r *IterationTypesResolver, errorNode *ast.Node) IterationTypes {
-	if isTypeAny(t) {
+	if IsTypeAny(t) {
 		return IterationTypes{c.anyType, c.anyType, c.anyType}
 	}
 	iterationTypes := c.getIterationTypesOfIteratorFast(t, r)
@@ -4038,7 +4038,7 @@ func (c *Checker) getIterationTypesOfMethod(t *Type, resolver *IterationTypesRes
 			methodType = c.getTypeWithFacts(c.getTypeOfSymbol(method), TypeFactsNEUndefinedOrNull)
 		}
 	}
-	if isTypeAny(methodType) {
+	if IsTypeAny(methodType) {
 		return IterationTypes{c.anyType, c.anyType, c.anyType}
 	}
 	// Both async and non-async iterators *must* have a `next` method.
@@ -4128,7 +4128,7 @@ func (c *Checker) getIterationTypesOfMethod(t *Type, resolver *IterationTypesRes
 }
 
 func (c *Checker) getIterationTypesOfIteratorResult(t *Type) IterationTypes {
-	if isTypeAny(t) {
+	if IsTypeAny(t) {
 		return IterationTypes{c.anyType, c.anyType, c.anyType}
 	}
 	// As an optimization, if the type is an instantiation of one of the global `IteratorYieldResult<T>`
@@ -5462,7 +5462,7 @@ func (c *Checker) resolveSignature(node *ast.Node, candidatesOutArray *[]*Signat
 func (c *Checker) resolveCallExpression(node *ast.Node, candidatesOutArray *[]*Signature, checkMode CheckMode) *Signature {
 	if node.Expression().Kind == ast.KindSuperKeyword {
 		superType := c.checkSuperExpression(node.Expression())
-		if isTypeAny(superType) {
+		if IsTypeAny(superType) {
 			for _, arg := range node.Arguments() {
 				// Still visit arguments so they get marked for visibility, etc
 				c.checkExpression(arg)
@@ -5578,7 +5578,7 @@ func (c *Checker) resolveNewExpression(node *ast.Node, candidatesOutArray *[]*Si
 	// TS 1.0 spec: 4.11
 	// If expressionType is of type Any, Args can be any argument
 	// list and the result of the operation is of type Any.
-	if isTypeAny(expressionType) {
+	if IsTypeAny(expressionType) {
 		if len(node.TypeArguments()) != 0 {
 			c.error(node, diagnostics.Untyped_function_calls_may_not_accept_type_arguments)
 		}
@@ -6728,7 +6728,7 @@ func (c *Checker) resolveErrorCall(node *ast.Node) *Signature {
  */
 func (c *Checker) isUntypedFunctionCall(funcType *Type, apparentFuncType *Type, numCallSignatures int, numConstructSignatures int) bool {
 	// We exclude union types because we may have a union of function types that happen to have no common signatures.
-	return isTypeAny(funcType) || isTypeAny(apparentFuncType) && funcType.flags&TypeFlagsTypeParameter != 0 ||
+	return IsTypeAny(funcType) || IsTypeAny(apparentFuncType) && funcType.flags&TypeFlagsTypeParameter != 0 ||
 		numCallSignatures == 0 && numConstructSignatures == 0 && apparentFuncType.flags&TypeFlagsUnion == 0 &&
 			c.getReducedType(apparentFuncType).flags&TypeFlagsNever == 0 && c.isTypeAssignableTo(funcType, c.globalFunctionType)
 }
@@ -7510,7 +7510,7 @@ func (c *Checker) checkYieldExpression(node *ast.Node) *Type {
 		t = c.anyType
 		if c.noImplicitAny && !expressionResultIsUnused(node) {
 			contextualType := c.getContextualType(node, ContextFlagsNone)
-			if contextualType == nil || isTypeAny(contextualType) {
+			if contextualType == nil || IsTypeAny(contextualType) {
 				c.error(node, diagnostics.X_yield_expression_implicitly_results_in_an_any_type_because_its_containing_generator_lacks_a_return_type_annotation)
 			}
 		}
@@ -7802,7 +7802,7 @@ func (c *Checker) checkPropertyAccessExpressionOrQualifiedName(node *ast.Node, l
 		widenedType = c.getWidenedType(leftType)
 	}
 	apparentType := c.getApparentType(widenedType)
-	isAnyLike := isTypeAny(apparentType) || apparentType == c.silentNeverType
+	isAnyLike := IsTypeAny(apparentType) || apparentType == c.silentNeverType
 	var prop *ast.Symbol
 	if ast.IsPrivateIdentifier(right) {
 		// !!!
@@ -8809,7 +8809,7 @@ func (c *Checker) checkBinaryLikeExpression(left *ast.Node, operatorToken *ast.N
 		} else if c.isTypeAssignableToKindEx(leftType, TypeFlagsStringLike, true /*strict*/) || c.isTypeAssignableToKindEx(rightType, TypeFlagsStringLike, true /*strict*/) {
 			// If one or both operands are of the String primitive type, the result is of the String primitive type.
 			resultType = c.stringType
-		} else if isTypeAny(leftType) || isTypeAny(rightType) {
+		} else if IsTypeAny(leftType) || IsTypeAny(rightType) {
 			// Otherwise, the result is of type Any.
 			// NOTE: unknown type here denotes error type. Old compiler treated this case as any type so do we.
 			if c.isErrorType(leftType) || c.isErrorType(rightType) {
@@ -8842,7 +8842,7 @@ func (c *Checker) checkBinaryLikeExpression(left *ast.Node, operatorToken *ast.N
 			leftType = c.getBaseTypeOfLiteralTypeForComparison(c.checkNonNullType(leftType, left))
 			rightType = c.getBaseTypeOfLiteralTypeForComparison(c.checkNonNullType(rightType, right))
 			c.reportOperatorErrorUnless(leftType, operator, rightType, errorNode, func(left *Type, right *Type) bool {
-				if isTypeAny(left) || isTypeAny(right) {
+				if IsTypeAny(left) || IsTypeAny(right) {
 					return true
 				}
 				leftAssignableToNumber := c.isTypeAssignableTo(left, c.numberOrBigIntType)
@@ -9330,7 +9330,7 @@ func (c *Checker) checkInstanceOfExpression(left *ast.Expression, right *ast.Exp
 	// and the right operand to be of type Any, a subtype of the 'Function' interface type, or have a call or construct signature.
 	// The result is always of the Boolean primitive type.
 	// NOTE: do not raise error if leftType is unknown as related error was already reported
-	if !isTypeAny(leftType) && c.allTypesAssignableToKind(leftType, TypeFlagsPrimitive) {
+	if !IsTypeAny(leftType) && c.allTypesAssignableToKind(leftType, TypeFlagsPrimitive) {
 		c.error(left, diagnostics.The_left_hand_side_of_an_instanceof_expression_must_be_of_type_any_an_object_type_or_a_type_parameter)
 	}
 	signature := c.getResolvedSignature(left.Parent, nil /*candidatesOutArray*/, checkMode)
@@ -12508,7 +12508,7 @@ func (c *Checker) isMixinConstructorType(t *Type) bool {
 		s := signatures[0]
 		if len(s.typeParameters) == 0 && len(s.parameters) == 1 && signatureHasRestParameter(s) {
 			paramType := c.getTypeOfParameter(s.parameters[0])
-			return isTypeAny(paramType) || c.getElementTypeOfArrayType(paramType) == c.anyType
+			return IsTypeAny(paramType) || c.getElementTypeOfArrayType(paramType) == c.anyType
 		}
 	}
 	return false
@@ -12745,9 +12745,9 @@ func (c *Checker) getDefaultConstraintOfConditionalType(t *Type) *Type {
 		trueConstraint := c.getInferredTrueTypeFromConditionalType(t)
 		falseConstraint := c.getFalseTypeFromConditionalType(t)
 		switch {
-		case isTypeAny(trueConstraint):
+		case IsTypeAny(trueConstraint):
 			d.resolvedDefaultConstraint = falseConstraint
-		case isTypeAny(falseConstraint):
+		case IsTypeAny(falseConstraint):
 			d.resolvedDefaultConstraint = trueConstraint
 		default:
 			d.resolvedDefaultConstraint = c.getUnionType([]*Type{trueConstraint, falseConstraint})
@@ -13176,7 +13176,7 @@ func (c *Checker) getTypeForBindingElementParent(node *ast.Node, checkMode Check
 
 func (c *Checker) getBindingElementTypeFromParentType(declaration *ast.Node, parentType *Type, noTupleBoundsCheck bool) *Type {
 	// If an any type was inferred for parent, infer that for the binding element
-	if isTypeAny(parentType) {
+	if IsTypeAny(parentType) {
 		return parentType
 	}
 	pattern := declaration.Parent
@@ -22102,7 +22102,7 @@ func (c *Checker) getPropertyTypeForIndexType(originalObjectType *Type, objectTy
 			c.error(indexNode, diagnostics.Type_0_cannot_be_used_as_an_index_type, typeString)
 		}
 	}
-	if isTypeAny(indexType) {
+	if IsTypeAny(indexType) {
 		return indexType
 	}
 	return nil
@@ -22918,7 +22918,7 @@ func (c *Checker) getPromisedTypeOfPromiseEx(t *Type, errorNode *ast.Node, thisT
 	//          ) => any
 	//      ): any;
 	//  }
-	if isTypeAny(t) {
+	if IsTypeAny(t) {
 		return nil
 	}
 	key := CachedTypeKey{kind: CachedTypeKindPromisedTypeOfPromise, typeId: t.id}
@@ -22936,7 +22936,7 @@ func (c *Checker) getPromisedTypeOfPromiseEx(t *Type, errorNode *ast.Node, thisT
 	}
 	thenFunction := c.getTypeOfPropertyOfType(t, "then")
 	// TODO: GH#18217
-	if isTypeAny(thenFunction) {
+	if IsTypeAny(thenFunction) {
 		return nil
 	}
 	var thenSignatures []*Signature
@@ -22970,7 +22970,7 @@ func (c *Checker) getPromisedTypeOfPromiseEx(t *Type, errorNode *ast.Node, thisT
 		return nil
 	}
 	onfulfilledParameterType := c.getTypeWithFacts(c.getUnionType(core.Map(candidates, c.getTypeOfFirstParameterOfSignature)), TypeFactsNEUndefinedOrNull)
-	if isTypeAny(onfulfilledParameterType) {
+	if IsTypeAny(onfulfilledParameterType) {
 		return nil
 	}
 	onfulfilledParameterSignatures := c.getSignaturesOfType(onfulfilledParameterType, SignatureKindCall)
@@ -24743,7 +24743,7 @@ func (c *Checker) getAwaitedTypeNoAlias(t *Type) *Type {
 }
 
 func (c *Checker) getAwaitedTypeNoAliasEx(t *Type, errorNode *ast.Node, diagnosticMessage *diagnostics.Message, args ...any) *Type {
-	if isTypeAny(t) {
+	if IsTypeAny(t) {
 		return t
 	}
 	// If this is already an `Awaited<T>`, just return it. This avoids `Awaited<Awaited<T>>` in higher-order
@@ -24866,7 +24866,7 @@ func (c *Checker) isAwaitedTypeInstantiation(t *Type) bool {
 
 func (c *Checker) isAwaitedTypeNeeded(t *Type) bool {
 	// If this is already an `Awaited<T>`, we shouldn't wrap it. This helps to avoid `Awaited<Awaited<T>>` in higher-order.
-	if isTypeAny(t) || c.isAwaitedTypeInstantiation(t) {
+	if IsTypeAny(t) || c.isAwaitedTypeInstantiation(t) {
 		return false
 	}
 	// We only need `Awaited<T>` if `T` contains possibly non-primitive types.
@@ -25357,7 +25357,7 @@ func (c *Checker) isThisPropertyAndThisTyped(node *ast.Node) bool {
 			if containingLiteral != nil {
 				contextualType := c.getApparentTypeOfContextualType(containingLiteral, ContextFlagsNone)
 				t := c.getThisTypeOfObjectLiteralFromContextualType(containingLiteral, contextualType)
-				return t != nil && !isTypeAny(t)
+				return t != nil && !IsTypeAny(t)
 			}
 		}
 	}
@@ -25591,4 +25591,8 @@ func (c *Checker) getRegularTypeOfExpression(expr *ast.Node) *Type {
 		expr = expr.Parent
 	}
 	return c.getRegularTypeOfLiteralType(c.getTypeOfExpression(expr))
+}
+
+func (c *Checker) GetTypeAtLocation(node *ast.Node) *Type {
+	return c.getTypeOfNode(node)
 }

@@ -585,6 +585,18 @@ func (n *Node) Comments() []*Node {
 	panic("Unhandled case in Node.Comments: " + n.Kind.String())
 }
 
+func (n *Node) Label() *Node {
+	switch n.Kind {
+	case KindLabeledStatement:
+		return n.AsLabeledStatement().Label
+	case KindBreakStatement:
+		return n.AsBreakStatement().Label
+	case KindContinueStatement:
+		return n.AsContinueStatement().Label
+	}
+	panic("Unhandled case in Node.Label: " + n.Kind.String())
+}
+
 // Node casts
 
 func (n *Node) AsIdentifier() *Identifier {
@@ -2347,6 +2359,10 @@ func (node *LabeledStatement) ForEachChild(v Visitor) bool {
 
 func (node *LabeledStatement) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateLabeledStatement(node, v.VisitNode(node.Label), v.VisitNode(node.Statement))
+}
+
+func IsLabeledStatement(node *Node) bool {
+	return node.Kind == KindLabeledStatement
 }
 
 // ExpressionStatement
@@ -6568,6 +6584,10 @@ func (node *JsxClosingElement) ForEachChild(v Visitor) bool {
 
 func (node *JsxSpreadAttribute) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateJsxSpreadAttribute(node, v.VisitNode(node.Expression))
+}
+
+func IsJsxClosingElement(node *Node) bool {
+	return node.Kind == KindJsxClosingElement
 }
 
 // JsxExpression

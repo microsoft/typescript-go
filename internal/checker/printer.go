@@ -54,6 +54,10 @@ func (c *Checker) typeToStringEx(t *Type, enclosingDeclaration *ast.Node, flags 
 	return p.string()
 }
 
+func (c *Checker) TypeToString(t *Type) string {
+	return c.typeToString(t)
+}
+
 func (c *Checker) SourceFileWithTypes(sourceFile *ast.SourceFile) string {
 	p := c.newPrinter(TypeFormatFlagsInTypeAlias)
 	p.printSourceFileWithTypes(sourceFile)
