@@ -117,7 +117,9 @@ var moduleResolutionOptionMap = collections.NewOrderedMapFromList([]collections.
 	{Key: "node16", Value: core.ModuleResolutionKindNode16},
 	{Key: "nodenext", Value: core.ModuleResolutionKindNodeNext},
 	{Key: "bundler", Value: core.ModuleResolutionKindBundler},
-	{Key: "node", Value: core.ModuleResolutionKindBundler}, // TODO: remove when node is fully deprecated -- this is helpful for testing porting
+	{Key: "node", Value: core.ModuleResolutionKindBundler},    // TODO: remove when node is fully deprecated -- this is helpful for testing porting
+	{Key: "classic", Value: core.ModuleResolutionKindBundler}, // TODO: remove when fully deprecated
+	{Key: "node10", Value: core.ModuleResolutionKindBundler},  // TODO: remove when fully deprecated
 })
 
 var targetOptionMap = collections.NewOrderedMapFromList([]collections.MapEntry[string, any]{
@@ -192,3 +194,26 @@ func GetDefaultLibFileName(options *core.CompilerOptions) string {
 	}
 	return name
 }
+
+var watchFileEnumMap = collections.NewOrderedMapFromList([]collections.MapEntry[string, any]{
+	{Key: "fixedpollinginterval", Value: core.WatchFileKindFixedPollingInterval},
+	{Key: "prioritypollinginterval", Value: core.WatchFileKindPriorityPollingInterval},
+	{Key: "dynamicprioritypolling", Value: core.WatchFileKindDynamicPriorityPolling},
+	{Key: "fixedchunksizepolling", Value: core.WatchFileKindFixedChunkSizePolling},
+	{Key: "usefsevents", Value: core.WatchFileKindUseFsEvents},
+	{Key: "usefseventsonparentdirectory", Value: core.WatchFileKindUseFsEventsOnParentDirectory},
+})
+
+var watchDirectoryEnumMap = collections.NewOrderedMapFromList([]collections.MapEntry[string, any]{
+	{Key: "usefsevents", Value: core.WatchDirectoryKindUseFsEvents},
+	{Key: "fixedpollinginterval", Value: core.WatchDirectoryKindFixedPollingInterval},
+	{Key: "dynamicprioritypolling", Value: core.WatchDirectoryKindDynamicPriorityPolling},
+	{Key: "fixedchunksizepolling", Value: core.WatchDirectoryKindFixedChunkSizePolling},
+})
+
+var fallbackEnumMap = collections.NewOrderedMapFromList([]collections.MapEntry[string, any]{
+	{Key: "fixedinterval", Value: core.PollingKindFixedInterval},
+	{Key: "priorityinterval", Value: core.PollingKindPriorityInterval},
+	{Key: "dynamicpriority", Value: core.PollingKindDynamicPriority},
+	{Key: "fixedchunksize", Value: core.PollingKindFixedChunkSize},
+})

@@ -5,6 +5,7 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
 func parseTristate(value any) core.Tristate {
@@ -123,6 +124,33 @@ func parseJsonToStringKey(json any) map[string]any {
 	}
 	return result
 }
+
+type optionParser interface {
+	ParseOption(key string, value any) []*ast.Diagnostic
+	CommandLine() bool
+}
+
+type compilerOptionsParser struct {
+	*core.CompilerOptions
+	commandLine bool
+}
+
+func (o *compilerOptionsParser) ParseOption(key string, value any) []*ast.Diagnostic {
+	return ParseCompilerOptions(key, value, o.CompilerOptions)
+}
+
+func (o *compilerOptionsParser) CommandLine() bool { return o.commandLine }
+
+type watchOptionsParser struct {
+	*core.WatchOptions
+	commandLine bool
+}
+
+func (o *watchOptionsParser) ParseOption(key string, value any) []*ast.Diagnostic {
+	return ParseWatchOptions(key, value, o.WatchOptions)
+}
+
+func (o *watchOptionsParser) CommandLine() bool { return o.commandLine }
 
 func ParseCompilerOptions(key string, value any, allOptions *core.CompilerOptions) []*ast.Diagnostic {
 	if allOptions == nil {
@@ -365,9 +393,30 @@ func ParseCompilerOptions(key string, value any, allOptions *core.CompilerOption
 	return nil
 }
 
-// MergeCompilerOptions merges the source compiler options into the target compiler options.
+func ParseWatchOptions(key string, value any, allOptions *core.WatchOptions) []*ast.Diagnostic {
+	if allOptions == nil {
+		return nil
+	}
+	switch key {
+	case "watchFile":
+		allOptions.FileKind = value.(core.WatchFileKind)
+	case "watchDirectory":
+		allOptions.DirectoryKind = value.(core.WatchDirectoryKind)
+	case "fallbackPolling":
+		allOptions.FallbackPolling = value.(core.PollingKind)
+	case "synchronousWatchDirectory":
+		allOptions.SyncWatchDir = parseTristate(value)
+	case "excludeDirectories":
+		allOptions.ExcludeDir = parseStringArray(value)
+	case "excludeFiles":
+		allOptions.ExcludeFiles = parseStringArray(value)
+	}
+	return nil
+}
+
+// mergeCompilerOptions merges the source compiler options into the target compiler options.
 // Fields in the source options will overwrite the corresponding fields in the target options.
-func MergeCompilerOptions(targetOptions, sourceOptions *core.CompilerOptions) *core.CompilerOptions {
+func mergeCompilerOptions(targetOptions, sourceOptions *core.CompilerOptions) *core.CompilerOptions {
 	if sourceOptions == nil {
 		return targetOptions
 	}
@@ -385,4 +434,28 @@ func MergeCompilerOptions(targetOptions, sourceOptions *core.CompilerOptions) *c
 		}
 	}
 	return targetOptions
+}
+
+func convertToOptionsWithAbsolutePaths(optionsBase map[string]any, optionMap map[string]*CommandLineOption, cwd string) map[string]any {
+	// !!! convert to options with absolute paths was previously done with `CompilerOptions` object, but for ease of implementation, we do it pre-conversion.
+	// !!! Revisit this choice if/when refactoring when conversion is done in tsconfig parsing
+	if optionsBase == nil {
+		return nil
+	}
+	for o, v := range optionsBase {
+		option := optionMap[o]
+		if option == nil || !option.isFilePath {
+			continue
+		}
+		if option.Kind == "list" {
+			if arr, ok := v.([]string); ok {
+				optionsBase[o] = core.Map(arr, func(item string) string {
+					return tspath.GetNormalizedAbsolutePath(item, cwd)
+				})
+			}
+		} else {
+			optionsBase[o] = tspath.GetNormalizedAbsolutePath(v.(string), cwd)
+		}
+	}
+	return optionsBase
 }

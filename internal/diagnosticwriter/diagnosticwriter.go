@@ -58,7 +58,7 @@ func FormatDiagnosticsWithColorAndContext(output io.Writer, diags []*ast.Diagnos
 
 		if diagnostic.File() != nil && diagnostic.Code() != diagnostics.File_appears_to_be_binary.Code() {
 			fmt.Fprint(output, formatOpts.NewLine)
-			writeCodeSnippet(output, diagnostic.File(), diagnostic.Pos(), diagnostic.Len(), getCategoryFormat(diagnostic.Category()), formatOpts)
+			writeCodeSnippet(output, diagnostic.File(), diagnostic.Pos(), diagnostic.Len(), getCategoryFormat(diagnostic.Category()), "", formatOpts)
 		}
 
 		if (diagnostic.RelatedInformation() != nil) && (len(diagnostic.RelatedInformation()) > 0) {
@@ -67,19 +67,22 @@ func FormatDiagnosticsWithColorAndContext(output io.Writer, diags []*ast.Diagnos
 				file := relatedInformation.File()
 				if file != nil {
 					fmt.Fprint(output, formatOpts.NewLine)
+					fmt.Fprint(output, "  ")
 					pos := relatedInformation.Pos()
 					WriteLocation(output, file, pos, formatOpts, writeWithStyleAndReset)
-					writeCodeSnippet(output, file, pos, relatedInformation.Len(), foregroundColorEscapeCyan, formatOpts)
+					fmt.Fprint(output, " - ")
+					WriteFlattenedDiagnosticMessage(output, relatedInformation, formatOpts.NewLine)
+					writeCodeSnippet(output, file, pos, relatedInformation.Len(), foregroundColorEscapeCyan, "    ", formatOpts)
 				}
 				fmt.Fprint(output, formatOpts.NewLine)
-				WriteFlattenedDiagnosticMessage(output, relatedInformation, formatOpts.NewLine)
+				// WriteFlattenedDiagnosticMessage(output, relatedInformation, formatOpts.NewLine)
 			}
 		}
 	}
 	fmt.Fprint(output, formatOpts.NewLine)
 }
 
-func writeCodeSnippet(writer io.Writer, sourceFile *ast.SourceFile, start int, length int, squiggleColor string, formatOpts *FormattingOptions) {
+func writeCodeSnippet(writer io.Writer, sourceFile *ast.SourceFile, start int, length int, squiggleColor string, indent string, formatOpts *FormattingOptions) {
 	firstLine, firstLineChar := scanner.GetLineAndCharacterOfPosition(sourceFile, start)
 	lastLine, lastLineChar := scanner.GetLineAndCharacterOfPosition(sourceFile, start+length)
 
@@ -97,6 +100,7 @@ func writeCodeSnippet(writer io.Writer, sourceFile *ast.SourceFile, start int, l
 		// If the error spans over 5 lines, we'll only show the first 2 and last 2 lines,
 		// so we'll skip ahead to the second-to-last line.
 		if hasMoreThanFiveLines && firstLine+1 < i && i < lastLine-1 {
+			fmt.Fprint(writer, indent)
 			fmt.Fprint(writer, gutterStyleSequence)
 			fmt.Fprintf(writer, "%*s", gutterWidth, ellipsis)
 			fmt.Fprint(writer, resetEscapeSequence)
@@ -117,6 +121,7 @@ func writeCodeSnippet(writer io.Writer, sourceFile *ast.SourceFile, start int, l
 		lineContent = strings.ReplaceAll(lineContent, "\t", " ")                                  // convert tabs to single spaces
 
 		// Output the gutter and the actual contents of the line.
+		fmt.Fprint(writer, indent)
 		fmt.Fprint(writer, gutterStyleSequence)
 		fmt.Fprintf(writer, "%*d", gutterWidth, i+1)
 		fmt.Fprint(writer, resetEscapeSequence)
@@ -125,6 +130,7 @@ func writeCodeSnippet(writer io.Writer, sourceFile *ast.SourceFile, start int, l
 		fmt.Fprint(writer, formatOpts.NewLine)
 
 		// Output the gutter and the error span for the line using tildes.
+		fmt.Fprint(writer, indent)
 		fmt.Fprint(writer, gutterStyleSequence)
 		fmt.Fprintf(writer, "%*s", gutterWidth, "")
 		fmt.Fprint(writer, resetEscapeSequence)
@@ -154,6 +160,12 @@ func writeCodeSnippet(writer io.Writer, sourceFile *ast.SourceFile, start int, l
 
 		fmt.Fprint(writer, resetEscapeSequence)
 	}
+}
+
+func FlattenDiagnosticMessage(d *ast.Diagnostic, newLine string) string {
+	var output strings.Builder
+	WriteFlattenedDiagnosticMessage(&output, d, newLine)
+	return output.String()
 }
 
 func WriteFlattenedDiagnosticMessage(writer io.Writer, diagnostic *ast.Diagnostic, newline string) {
@@ -232,14 +244,17 @@ func WriteErrorSummaryText(output io.Writer, allDiagnostics []*ast.Diagnostic, f
 		return
 	}
 
-	firstFile := errorSummary.SortedFileList[0]
+	firstFile := &ast.SourceFile{}
+	if len(errorSummary.SortedFileList) > 0 {
+		firstFile = errorSummary.SortedFileList[0]
+	}
 	firstFileName := prettyPathForFileError(firstFile, errorSummary.ErrorsByFiles[firstFile], formatOpts)
 	numErroringFiles := len(errorSummary.ErrorsByFiles)
 
 	var message string
 	if totalErrorCount == 1 {
 		// Special-case a single error.
-		if len(errorSummary.GlobalErrors) > 0 {
+		if len(errorSummary.GlobalErrors) > 0 || firstFileName == "" {
 			message = diagnostics.Found_1_error.Format()
 		} else {
 			message = diagnostics.Found_1_error_in_0.Format(firstFileName)
@@ -333,6 +348,9 @@ func writeTabularErrorsDisplay(output io.Writer, errorSummary *ErrorSummary, for
 }
 
 func prettyPathForFileError(file *ast.SourceFile, fileErrors []*ast.Diagnostic, formatOpts *FormattingOptions) string {
+	if file == nil || len(fileErrors) == 0 {
+		return ""
+	}
 	line, _ := scanner.GetLineAndCharacterOfPosition(file, fileErrors[0].Loc().Pos())
 	fileName := file.FileName()
 	if tspath.PathIsAbsolute(fileName) && tspath.PathIsAbsolute(formatOpts.CurrentDirectory) {

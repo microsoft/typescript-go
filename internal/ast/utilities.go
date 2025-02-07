@@ -842,12 +842,17 @@ func GetSourceFileOfNode(node *Node) *SourceFile {
 	return nil
 }
 
-func SetParentInChildren(node *Node) {
-	node.ForEachChild(func(child *Node) bool {
-		child.Parent = node
-		SetParentInChildren(child)
+func SetParentInChildren(parent *Node) {
+	var visit func(*Node) bool
+	visit = func(child *Node) bool {
+		child.Parent = parent
+		saveParent := parent
+		parent = child
+		parent.ForEachChild(visit)
+		parent = saveParent
 		return false
-	})
+	}
+	parent.ForEachChild(visit)
 }
 
 // Walks up the parents of a node to find the ancestor that matches the callback
@@ -1778,6 +1783,11 @@ func IsQuestionToken(node *Node) bool {
 	return node != nil && node.Kind == KindQuestionToken
 }
 
+func GetTextOfPropertyName(name *Node) string {
+	text, _ := TryGetTextOfPropertyName(name)
+	return text
+}
+
 func TryGetTextOfPropertyName(name *Node) (string, bool) {
 	switch name.Kind {
 	case KindIdentifier, KindPrivateIdentifier, KindStringLiteral, KindNumericLiteral, KindBigIntLiteral,
@@ -1791,6 +1801,17 @@ func TryGetTextOfPropertyName(name *Node) (string, bool) {
 		return name.AsJsxNamespacedName().Namespace.Text() + ":" + name.Name().Text(), true
 	}
 	return "", false
+}
+
+func GetNewTargetContainer(node *Node) *Node {
+	container := GetThisContainer(node, false /*includeArrowFunctions*/, false /*includeClassComputedPropertyName*/)
+	if container != nil {
+		switch container.Kind {
+		case KindConstructor, KindFunctionDeclaration, KindFunctionExpression:
+			return container
+		}
+	}
+	return nil
 }
 
 type SemanticMeaning int32

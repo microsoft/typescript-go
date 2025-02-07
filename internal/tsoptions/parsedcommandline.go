@@ -9,7 +9,6 @@ import (
 
 type ParsedCommandLine struct {
 	ParsedConfig *core.ParsedOptions
-	// WatchOptions WatchOptions
 
 	ConfigFile *ast.SourceFile // TsConfigSourceFile, used in Program and ExecuteCommandLine
 	Errors     []*ast.Diagnostic
@@ -17,22 +16,6 @@ type ParsedCommandLine struct {
 	// WildcardDirectories map[string]watchDirectoryFlags
 	CompileOnSave *bool
 	// TypeAquisition *core.TypeAcquisition
-}
-
-func NewParsedCommandLine(
-	options *core.ParsedOptions,
-	configFile *ast.SourceFile,
-	errors []*ast.Diagnostic,
-	raw any,
-	compileOnSave *bool,
-) ParsedCommandLine {
-	return ParsedCommandLine{
-		ParsedConfig:  options,
-		ConfigFile:    configFile,
-		Errors:        errors,
-		Raw:           raw,
-		CompileOnSave: compileOnSave,
-	}
 }
 
 func (p *ParsedCommandLine) SetParsedOptions(o *core.ParsedOptions) {
