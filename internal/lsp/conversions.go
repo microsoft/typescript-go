@@ -71,5 +71,5 @@ func documentUriToFileName(uri lsproto.DocumentUri) string {
 	if fragment != "" {
 		fragment = "#" + fragment
 	}
-	return fmt.Sprintf("^/%s/%s/%s%s", parsed.Scheme, authority, path, fragment)
+	return fmt.Sprintf("^/%s/%s%s%s", parsed.Scheme, authority, path, fragment)
 }
