@@ -161,8 +161,37 @@ func (s *Server) sendResponse(resp *lsproto.ResponseMessage) error {
 	return s.w.Write(data)
 }
 
-func ptrTo[T any](v T) *T {
-	return &v
+func (s *Server) handleMessage(req *lsproto.RequestMessage) error {
+	s.requestTime = time.Now()
+	s.requestMethod = string(req.Method)
+
+	params := req.Params
+	switch params.(type) {
+	case *lsproto.InitializeParams:
+		return s.sendError(req.ID, lsproto.ErrInvalidRequest)
+	case *lsproto.InitializedParams:
+		return s.handleInitialized(req)
+	case *lsproto.DidOpenTextDocumentParams:
+		return s.handleDidOpen(req)
+	case *lsproto.DidChangeTextDocumentParams:
+		return s.handleDidChange(req)
+	case *lsproto.HoverParams:
+		return s.handleHover(req)
+	default:
+		switch req.Method {
+		case lsproto.MethodShutdown:
+			s.projectService.Close()
+			return s.sendResult(req.ID, nil)
+		case lsproto.MethodExit:
+			return nil
+		default:
+			s.Log("unknown method", req.Method)
+			if req.ID != nil {
+				return s.sendError(req.ID, lsproto.ErrInvalidRequest)
+			}
+			return nil
+		}
+	}
 }
 
 func (s *Server) handleInitialize(req *lsproto.RequestMessage) error {
@@ -237,58 +266,32 @@ func (s *Server) handleDidChange(req *lsproto.RequestMessage) error {
 	return s.sendResult(req.ID, nil)
 }
 
-func (s *Server) handleMessage(req *lsproto.RequestMessage) error {
-	s.requestTime = time.Now()
-	s.requestMethod = string(req.Method)
-
-	params := req.Params
-	switch params := params.(type) {
-	case *lsproto.InitializeParams:
-		return s.sendError(req.ID, lsproto.ErrInvalidRequest)
-	case *lsproto.InitializedParams:
-		return s.handleInitialized(req)
-	case *lsproto.DidOpenTextDocumentParams:
-		return s.handleDidOpen(req)
-	case *lsproto.DidChangeTextDocumentParams:
-		return s.handleDidChange(req)
-	case *lsproto.HoverParams:
-		file, project := s.GetFileAndProject(params.TextDocument.Uri)
-		hoverText := project.LanguageService().ProvideHover(
-			file.FileName(),
-			lineAndCharacterToPosition(params.Position, file.LineMap()),
-		)
-		return s.sendResult(req.ID, &lsproto.Hover{
-			Contents: lsproto.MarkupContentOrMarkedStringOrMarkedStrings{
-				MarkupContent: &lsproto.MarkupContent{
-					Kind:  lsproto.MarkupKindPlainText,
-					Value: hoverText,
-				},
+func (s *Server) handleHover(req *lsproto.RequestMessage) error {
+	params := req.Params.(*lsproto.HoverParams)
+	file, project := s.getFileAndProject(params.TextDocument.Uri)
+	hoverText := project.LanguageService().ProvideHover(
+		file.FileName(),
+		lineAndCharacterToPosition(params.Position, file.LineMap()),
+	)
+	return s.sendResult(req.ID, &lsproto.Hover{
+		Contents: lsproto.MarkupContentOrMarkedStringOrMarkedStrings{
+			MarkupContent: &lsproto.MarkupContent{
+				Kind:  lsproto.MarkupKindPlainText,
+				Value: hoverText,
 			},
-		})
-	default:
-		switch req.Method {
-		case lsproto.MethodShutdown:
-			s.projectService.Close()
-			s.Log("shutdown")
-			return s.sendResult(req.ID, nil)
-		case lsproto.MethodExit:
-			s.Log("exit")
-			return nil
-		default:
-			s.Log("unknown method", req.Method)
-			if req.ID != nil {
-				return s.sendError(req.ID, lsproto.ErrInvalidRequest)
-			}
-			return nil
-		}
-	}
+		},
+	})
 }
 
-func (s *Server) GetFileAndProject(uri lsproto.DocumentUri) (*project.ScriptInfo, *project.Project) {
+func (s *Server) getFileAndProject(uri lsproto.DocumentUri) (*project.ScriptInfo, *project.Project) {
 	fileName := documentUriToFileName(uri)
 	return s.projectService.EnsureDefaultProjectForFile(fileName)
 }
 
 func (s *Server) Log(msg ...any) {
 	fmt.Fprintln(s.stderr, msg...)
+}
+
+func ptrTo[T any](v T) *T {
+	return &v
 }

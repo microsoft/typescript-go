@@ -442,7 +442,7 @@ func (s *ProjectService) getConfigFileNameForFile(info *ScriptInfo, findFromCach
 		}
 		return "", false
 	})
-	s.log(fmt.Sprintf("getConfigFileNameForFile:: File: %s ProjectRootPath: %s:: Result: %s", info.fileName, s.openFiles[info.path], fileName))
+	s.logf("getConfigFileNameForFile:: File: %s ProjectRootPath: %s:: Result: %s", info.fileName, s.openFiles[info.path], fileName)
 	return fileName
 }
 
@@ -615,14 +615,14 @@ func (s *ProjectService) loadConfiguredProject(project *Project) {
 			nil, /*extendedConfigCache*/
 		)
 
-		s.log(fmt.Sprintf("Config: %s : %s",
+		s.logf("Config: %s : %s",
 			project.configFileName,
 			core.Must(core.StringifyJson(map[string]interface{}{
 				"rootNames":         parsedCommandLine.FileNames(),
 				"options":           parsedCommandLine.CompilerOptions(),
 				"projectReferences": parsedCommandLine.ProjectReferences(),
 			}, "    ", "  ")),
-		))
+		)
 
 		newRootScriptInfos := make(map[tspath.Path]struct{}, len(parsedCommandLine.FileNames()))
 		project.compilerOptions = parsedCommandLine.CompilerOptions()
@@ -675,7 +675,7 @@ func (s *ProjectService) printProjects() {
 	s.log("Open files: ")
 	for path, projectRootPath := range s.openFiles {
 		info := s.getScriptInfo(path)
-		s.log(fmt.Sprintf("\tFileName: %s ProjectRootPath: %s", info.fileName, projectRootPath))
+		s.logf("\tFileName: %s ProjectRootPath: %s", info.fileName, projectRootPath)
 		s.log("\t\tProjects: " + strings.Join(core.Map(info.containingProjects, func(project *Project) string { return project.name }), ", "))
 	}
 	s.options.Logger.EndGroup()
@@ -683,4 +683,8 @@ func (s *ProjectService) printProjects() {
 
 func (s *ProjectService) log(msg string) {
 	s.options.Logger.Info(msg)
+}
+
+func (s *ProjectService) logf(format string, args ...interface{}) {
+	s.log(fmt.Sprintf(format, args...))
 }

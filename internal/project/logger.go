@@ -1,6 +1,7 @@
 package project
 
 import (
+	"bufio"
 	"fmt"
 	"io"
 	"strings"
@@ -17,14 +18,18 @@ const (
 )
 
 type Logger struct {
-	outputs []io.Writer
+	outputs []*bufio.Writer
 	level   LogLevel
 	inGroup bool
 	seq     int
 }
 
 func NewLogger(outputs []io.Writer, level LogLevel) *Logger {
-	return &Logger{outputs: outputs, level: level}
+	var o []*bufio.Writer
+	for _, w := range outputs {
+		o = append(o, bufio.NewWriter(w))
+	}
+	return &Logger{outputs: o, level: level}
 }
 
 func (l *Logger) PerfTrace(s string) {
@@ -56,22 +61,18 @@ func (l *Logger) HasLevel(level LogLevel) bool {
 }
 
 func (l *Logger) msg(s string, messageType string) {
-	var builder strings.Builder
-	builder.WriteString(fmt.Sprintf("%s %d", messageType, l.seq))
-	builder.WriteString(strings.Repeat(" ", max(0, 10-builder.Len())))
-	builder.WriteRune('[')
-	builder.WriteString(time.Now().Format("15:04:05.000"))
-	builder.WriteString("] ")
-	builder.WriteString(s)
-	builder.WriteRune('\n')
+	for _, output := range l.outputs {
+		header := fmt.Sprintf("%s %d", messageType, l.seq)
+		output.WriteString(header)
+		output.WriteString(strings.Repeat(" ", max(0, 10-len(header))))
+		output.WriteRune('[')
+		output.WriteString(time.Now().Format("15:04:05.000"))
+		output.WriteString("] ")
+		output.WriteString(s)
+		output.WriteRune('\n')
+		output.Flush() //nolint: errcheck
+	}
 	if !l.inGroup {
 		l.seq++
-	}
-	l.write([]byte(builder.String()))
-}
-
-func (l *Logger) write(s []byte) {
-	for _, output := range l.outputs {
-		output.Write(s) //nolint: errcheck
 	}
 }
