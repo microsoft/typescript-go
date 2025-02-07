@@ -70,7 +70,7 @@ type ProjectService struct {
 
 func NewProjectService(host ProjectServiceHost, options ProjectServiceOptions) *ProjectService {
 	options.Logger.Info(fmt.Sprintf("currentDirectory:: %s useCaseSensitiveFileNames:: %t", host.GetCurrentDirectory(), host.FS().UseCaseSensitiveFileNames()))
-	options.Logger.Info(fmt.Sprintf("libs Location:: %s", options.DefaultLibraryPath))
+	options.Logger.Info("libs Location:: " + options.DefaultLibraryPath)
 	return &ProjectService{
 		host:    host,
 		options: options,
@@ -676,7 +676,7 @@ func (s *ProjectService) printProjects() {
 	for path, projectRootPath := range s.openFiles {
 		info := s.getScriptInfo(path)
 		s.log(fmt.Sprintf("\tFileName: %s ProjectRootPath: %s", info.fileName, projectRootPath))
-		s.log(fmt.Sprintf("\t\tProjects: %s", strings.Join(core.Map(info.containingProjects, func(project *Project) string { return project.name }), ", ")))
+		s.log("\t\tProjects: " + strings.Join(core.Map(info.containingProjects, func(project *Project) string { return project.name }), ", "))
 	}
 	s.options.Logger.EndGroup()
 }

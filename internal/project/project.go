@@ -188,7 +188,7 @@ func (p *Project) onFileAddedOrRemoved(isSymlink bool) {
 // as in `updateProjectIfDirty()`.
 func (p *Project) updateGraph() bool {
 	// !!!
-	p.log(fmt.Sprintf("Starting updateGraph: Project: %s", p.name))
+	p.log("Starting updateGraph: Project: " + p.name)
 	oldProgram := p.program
 	hasAddedOrRemovedFiles := p.hasAddedOrRemovedFiles
 	p.initialLoadPending = false
@@ -278,7 +278,7 @@ func (p *Project) print(writeFileNames bool, writeFileExplanation bool, writeFil
 		builder.WriteString(fmt.Sprintf("\tFiles (%d)\n", len(sourceFiles)))
 		if writeFileNames {
 			for _, sourceFile := range sourceFiles {
-				builder.WriteString(fmt.Sprintf("\t\t%s", sourceFile.FileName()))
+				builder.WriteString("\t\t" + sourceFile.FileName())
 				if writeFileVersionAndText {
 					builder.WriteString(fmt.Sprintf(" %d %s", sourceFile.Version, sourceFile.Text))
 				}

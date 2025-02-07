@@ -72,6 +72,6 @@ func (l *Logger) msg(s string, messageType string) {
 
 func (l *Logger) write(s []byte) {
 	for _, output := range l.outputs {
-		output.Write(s)
+		output.Write(s) //nolint: errcheck
 	}
 }

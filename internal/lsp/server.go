@@ -273,7 +273,7 @@ func (s *Server) handleMessage(req *lsproto.RequestMessage) error {
 			return s.sendResult(req.ID, nil)
 		case lsproto.MethodExit:
 			s.Log("exit")
-			return fmt.Errorf("exit")
+			return nil
 		default:
 			s.Log("unknown method", req.Method)
 			if req.ID != nil {
