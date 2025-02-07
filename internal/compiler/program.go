@@ -77,6 +77,7 @@ func NewProgram(options ProgramOptions) *Program {
 	if p.compilerOptions == nil {
 		p.compilerOptions = &core.CompilerOptions{}
 	}
+
 	// p.maxNodeModuleJsDepth = p.options.MaxNodeModuleJsDepth
 
 	// TODO(ercornel): !!! tracing?
