@@ -5,8 +5,8 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/printer"
-	"github.com/microsoft/typescript-go/internal/testutil/emitutil"
-	"github.com/microsoft/typescript-go/internal/testutil/parseutil"
+	"github.com/microsoft/typescript-go/internal/testutil/emittestutil"
+	"github.com/microsoft/typescript-go/internal/testutil/parsetestutil"
 )
 
 func TestTypeEraser(t *testing.T) {
@@ -67,9 +67,9 @@ func TestTypeEraser(t *testing.T) {
 	for _, rec := range data {
 		t.Run(rec.title, func(t *testing.T) {
 			t.Parallel()
-			file := parseutil.ParseTypeScript(rec.input, rec.jsx)
-			parseutil.CheckDiagnostics(t, file)
-			emitutil.CheckEmit(t, nil, NewTypeEraserTransformer(printer.NewEmitContext(), &core.CompilerOptions{}).TransformSourceFile(file), rec.output)
+			file := parsetestutil.ParseTypeScript(rec.input, rec.jsx)
+			parsetestutil.CheckDiagnostics(t, file)
+			emittestutil.CheckEmit(t, nil, NewTypeEraserTransformer(printer.NewEmitContext(), &core.CompilerOptions{}).TransformSourceFile(file), rec.output)
 		})
 	}
 }

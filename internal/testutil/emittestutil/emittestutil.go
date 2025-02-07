@@ -1,4 +1,4 @@
-package emitutil
+package emittestutil
 
 import (
 	"strings"
@@ -7,7 +7,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/printer"
-	"github.com/microsoft/typescript-go/internal/testutil/parseutil"
+	"github.com/microsoft/typescript-go/internal/testutil/parsetestutil"
 	"gotest.tools/v3/assert"
 )
 
@@ -24,6 +24,6 @@ func CheckEmit(t *testing.T, emitContext *printer.EmitContext, file *ast.SourceF
 	text := printer.EmitSourceFile(file)
 	actual := strings.TrimSuffix(text, "\n")
 	assert.Equal(t, expected, actual)
-	file2 := parseutil.ParseTypeScript(text, file.LanguageVariant == core.LanguageVariantJSX)
-	parseutil.CheckDiagnosticsMessage(t, file2, "error on reparse: ")
+	file2 := parsetestutil.ParseTypeScript(text, file.LanguageVariant == core.LanguageVariantJSX)
+	parsetestutil.CheckDiagnosticsMessage(t, file2, "error on reparse: ")
 }

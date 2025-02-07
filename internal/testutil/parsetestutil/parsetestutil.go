@@ -1,4 +1,4 @@
-package parseutil
+package parsetestutil
 
 import (
 	"strings"

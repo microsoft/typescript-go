@@ -6,8 +6,8 @@ import (
 	"github.com/microsoft/typescript-go/internal/binder"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/printer"
-	"github.com/microsoft/typescript-go/internal/testutil/emitutil"
-	"github.com/microsoft/typescript-go/internal/testutil/parseutil"
+	"github.com/microsoft/typescript-go/internal/testutil/emittestutil"
+	"github.com/microsoft/typescript-go/internal/testutil/parsetestutil"
 )
 
 func TestEnumTransformer(t *testing.T) {
@@ -206,11 +206,11 @@ func TestEnumTransformer(t *testing.T) {
 		t.Run(rec.title, func(t *testing.T) {
 			t.Parallel()
 			options := &core.CompilerOptions{}
-			file := parseutil.ParseTypeScript(rec.input, false /*jsx*/)
-			parseutil.CheckDiagnostics(t, file)
+			file := parsetestutil.ParseTypeScript(rec.input, false /*jsx*/)
+			parsetestutil.CheckDiagnostics(t, file)
 			binder.BindSourceFile(file, options)
 			emitContext := printer.NewEmitContext()
-			emitutil.CheckEmit(t, emitContext, NewRuntimeSyntaxTransformer(emitContext, options).TransformSourceFile(file), rec.output)
+			emittestutil.CheckEmit(t, emitContext, NewRuntimeSyntaxTransformer(emitContext, options).TransformSourceFile(file), rec.output)
 		})
 	}
 }
@@ -367,11 +367,11 @@ func TestNamespaceTransformer(t *testing.T) {
 		t.Run(rec.title, func(t *testing.T) {
 			t.Parallel()
 			options := &core.CompilerOptions{}
-			file := parseutil.ParseTypeScript(rec.input, false /*jsx*/)
-			parseutil.CheckDiagnostics(t, file)
+			file := parsetestutil.ParseTypeScript(rec.input, false /*jsx*/)
+			parsetestutil.CheckDiagnostics(t, file)
 			binder.BindSourceFile(file, options)
 			emitContext := printer.NewEmitContext()
-			emitutil.CheckEmit(t, emitContext, NewRuntimeSyntaxTransformer(emitContext, options).TransformSourceFile(file), rec.output)
+			emittestutil.CheckEmit(t, emitContext, NewRuntimeSyntaxTransformer(emitContext, options).TransformSourceFile(file), rec.output)
 		})
 	}
 }
