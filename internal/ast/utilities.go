@@ -1930,6 +1930,7 @@ func SetParent(child *Node, parent *Node) {
 func GetModuleInstanceState(node *Node) ModuleInstanceState {
 	return getModuleInstanceState(node, nil)
 }
+
 func getModuleInstanceState(node *Node, visited map[NodeId]ModuleInstanceState) ModuleInstanceState {
 	module := node.AsModuleDeclaration()
 	if module.Body != nil && module.Body.Parent == nil {
