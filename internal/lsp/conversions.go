@@ -50,6 +50,7 @@ func documentUriToFileName(uri lsproto.DocumentUri) string {
 				}
 			}
 		}
+		return path
 	}
 	if strings.HasPrefix(uriStr, "file://") {
 		// UNC path
