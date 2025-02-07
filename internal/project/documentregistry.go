@@ -128,6 +128,6 @@ func (r *documentRegistry) getDocumentWorker(
 		entry.mu.Lock()
 		defer entry.mu.Unlock()
 		entry.refCount++
-		return sourceFile
+		return entry.sourceFile
 	}
 }
