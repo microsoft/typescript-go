@@ -4,6 +4,7 @@ import (
 	"slices"
 
 	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/binder"
 	"github.com/microsoft/typescript-go/internal/jsnum"
 	"github.com/microsoft/typescript-go/internal/printer"
 )
@@ -21,10 +22,21 @@ func copyIdentifier(emitContext *printer.EmitContext, node *ast.IdentifierNode) 
 	return nodeCopy
 }
 
-func getName(emitContext *printer.EmitContext, node *ast.Declaration, allowComments bool, allowSourceMaps bool, emitFlags printer.EmitFlags, ignoreAssignedName bool) *ast.IdentifierNode {
+type nameOptions struct {
+	allowComments   bool
+	allowSourceMaps bool
+}
+
+type assignedNameOptions struct {
+	allowComments      bool
+	allowSourceMaps    bool
+	ignoreAssignedName bool
+}
+
+func getName(emitContext *printer.EmitContext, node *ast.Declaration, emitFlags printer.EmitFlags, opts assignedNameOptions) *ast.IdentifierNode {
 	var nodeName *ast.IdentifierNode
 	if node != nil {
-		if ignoreAssignedName {
+		if opts.ignoreAssignedName {
 			nodeName = ast.GetNonAssignedNameOfDeclaration(node)
 		} else {
 			nodeName = ast.GetNameOfDeclaration(node)
@@ -33,10 +45,10 @@ func getName(emitContext *printer.EmitContext, node *ast.Declaration, allowComme
 
 	if nodeName != nil {
 		name := copyIdentifier(emitContext, nodeName)
-		if !allowComments {
+		if !opts.allowComments {
 			emitContext.AddEmitFlags(name, printer.EFNoComments)
 		}
-		if !allowSourceMaps {
+		if !opts.allowSourceMaps {
 			emitContext.AddEmitFlags(name, printer.EFNoSourceMap)
 		}
 		return name
@@ -52,16 +64,31 @@ func getName(emitContext *printer.EmitContext, node *ast.Declaration, allowComme
 // The value of the allowComments parameter indicates whether comments may be emitted for the name.
 // The value of the allowSourceMaps parameter indicates whether source maps may be emitted for the name.
 // The value of the ignoreAssignedName parameter indicates whether the assigned name of a declaration shouldn't be considered.
-func getLocalName(emitContext *printer.EmitContext, node *ast.Declaration, allowComments bool, allowSourceMaps bool, ignoreAssignedName bool) *ast.IdentifierNode {
-	return getName(emitContext, node, allowComments, allowSourceMaps, printer.EFLocalName, ignoreAssignedName)
+func getLocalName(emitContext *printer.EmitContext, node *ast.Declaration, opts assignedNameOptions) *ast.IdentifierNode {
+	return getName(emitContext, node, printer.EFLocalName, opts)
 }
 
 // Gets the name of a declaration to use during emit.
 //
 // The value of the allowComments parameter indicates whether comments may be emitted for the name.
 // The value of the allowSourceMaps parameter indicates whether source maps may be emitted for the name.
-func getDeclarationName(emitContext *printer.EmitContext, node *ast.Declaration, allowComments bool, allowSourceMaps bool) *ast.IdentifierNode {
-	return getName(emitContext, node, allowComments, allowSourceMaps, printer.EFNone, false /*ignoreAssignedName*/)
+func getDeclarationName(emitContext *printer.EmitContext, node *ast.Declaration, opts nameOptions) *ast.IdentifierNode {
+	return getName(emitContext, node, printer.EFNone, assignedNameOptions{allowComments: opts.allowComments, allowSourceMaps: opts.allowSourceMaps})
+}
+
+func getNamespaceMemberName(emitContext *printer.EmitContext, ns *ast.IdentifierNode, name *ast.IdentifierNode, opts nameOptions) *ast.IdentifierNode {
+	if !emitContext.HasAutoGenerateInfo(name) {
+		name = copyIdentifier(emitContext, name)
+	}
+	qualifiedName := emitContext.Factory.NewPropertyAccessExpression(ns, nil /*questionDotToken*/, name, ast.NodeFlagsNone)
+	emitContext.CopyCommentAndSourceMapRangesTo(qualifiedName, name)
+	if !opts.allowComments {
+		emitContext.AddEmitFlags(qualifiedName, printer.EFNoComments)
+	}
+	if !opts.allowSourceMaps {
+		emitContext.AddEmitFlags(qualifiedName, printer.EFNoSourceMap)
+	}
+	return qualifiedName
 }
 
 func isIdentifierReference(name *ast.IdentifierNode, parent *ast.Node) bool {
@@ -188,4 +215,178 @@ func constantExpression(value any, factory *ast.NodeFactory) *ast.Expression {
 		return factory.NewNumericLiteral(value.String())
 	}
 	return nil
+}
+
+func isInstantiatedModule(node *ast.ModuleDeclarationNode, preserveConstEnums bool) bool {
+	moduleState := binder.GetModuleInstanceState(node, nil /*visited*/)
+	return moduleState == binder.ModuleInstanceStateInstantiated ||
+		(preserveConstEnums && moduleState == binder.ModuleInstanceStateConstEnumOnly)
+}
+
+func flattenCommaElement(node *ast.Expression, expressions []*ast.Expression) []*ast.Expression {
+	if ast.IsBinaryExpression(node) && ast.NodeIsSynthesized(node) && node.AsBinaryExpression().OperatorToken.Kind == ast.KindCommaToken {
+		expressions = flattenCommaElement(node.AsBinaryExpression().Left, expressions)
+		expressions = flattenCommaElement(node.AsBinaryExpression().Right, expressions)
+	} else {
+		expressions = append(expressions, node)
+	}
+	return expressions
+}
+
+func flattenCommaElements(expressions []*ast.Expression) []*ast.Expression {
+	var result []*ast.Expression
+	for _, expression := range expressions {
+		result = flattenCommaElement(expression, result)
+	}
+	return result
+}
+
+func inlineExpressions(expressions []*ast.Expression, factory *ast.NodeFactory) *ast.Expression {
+	if len(expressions) == 0 {
+		return nil
+	}
+	if len(expressions) == 1 {
+		return expressions[0]
+	}
+	expressions = flattenCommaElements(expressions)
+	expression := expressions[0]
+	for _, next := range expressions[1:] {
+		expression = factory.NewBinaryExpression(expression, factory.NewToken(ast.KindCommaToken), next)
+	}
+	return expression
+}
+
+func convertBindingElementToArrayAssignmentElement(emitContext *printer.EmitContext, element *ast.BindingElement) *ast.Expression {
+	if element.Name() == nil {
+		elision := emitContext.Factory.NewOmittedExpression()
+		emitContext.SetOriginal(elision, element.AsNode())
+		emitContext.CopyCommentAndSourceMapRangesTo(elision, element.AsNode())
+		return elision
+	}
+	if element.DotDotDotToken != nil {
+		spread := emitContext.Factory.NewSpreadElement(element.Name())
+		emitContext.SetOriginal(spread, element.AsNode())
+		emitContext.CopyCommentAndSourceMapRangesTo(spread, element.AsNode())
+		return spread
+	}
+	expression := convertBindingNameToAssignmentElementTarget(emitContext, element.Name())
+	if element.Initializer != nil {
+		assignment := emitContext.Factory.NewBinaryExpression(
+			expression,
+			emitContext.Factory.NewToken(ast.KindEqualsToken),
+			element.Initializer,
+		)
+		emitContext.SetOriginal(assignment, element.AsNode())
+		emitContext.CopyCommentAndSourceMapRangesTo(assignment, element.AsNode())
+		return assignment
+	}
+	return expression
+}
+
+func convertBindingElementToObjectAssignmentElement(emitContext *printer.EmitContext, element *ast.BindingElement) *ast.ObjectLiteralElement {
+	if element.DotDotDotToken != nil {
+		spread := emitContext.Factory.NewSpreadAssignment(element.Name())
+		emitContext.SetOriginal(spread, element.AsNode())
+		emitContext.CopyCommentAndSourceMapRangesTo(spread, element.AsNode())
+		return spread
+	}
+	if element.PropertyName != nil {
+		expression := convertBindingNameToAssignmentElementTarget(emitContext, element.Name())
+		if element.Initializer != nil {
+			expression = emitContext.Factory.NewBinaryExpression(
+				expression,
+				emitContext.Factory.NewToken(ast.KindEqualsToken),
+				element.Initializer,
+			)
+		}
+		assignment := emitContext.Factory.NewPropertyAssignment(nil /*modifiers*/, element.PropertyName, nil /*postfixToken*/, expression)
+		emitContext.SetOriginal(assignment, element.AsNode())
+		emitContext.CopyCommentAndSourceMapRangesTo(assignment, element.AsNode())
+		return assignment
+	}
+	var equalsToken *ast.TokenNode
+	if element.Initializer != nil {
+		equalsToken = emitContext.Factory.NewToken(ast.KindEqualsToken)
+	}
+	assignment := emitContext.Factory.NewShorthandPropertyAssignment(
+		nil, /*modifiers*/
+		element.Name(),
+		nil, /*postfixToken*/
+		equalsToken,
+		element.Initializer,
+	)
+	emitContext.SetOriginal(assignment, element.AsNode())
+	emitContext.CopyCommentAndSourceMapRangesTo(assignment, element.AsNode())
+	return assignment
+}
+
+func convertBindingPatternToAssignmentPattern(emitContext *printer.EmitContext, element *ast.BindingPattern) *ast.Expression {
+	switch element.Kind {
+	case ast.KindArrayBindingPattern:
+		return convertBindingElementToArrayAssignmentPattern(emitContext, element)
+	case ast.KindObjectBindingPattern:
+		return convertBindingElementToObjectAssignmentPattern(emitContext, element)
+	default:
+		panic("Unknown binding pattern")
+	}
+}
+
+func convertBindingElementToObjectAssignmentPattern(emitContext *printer.EmitContext, element *ast.BindingPattern) *ast.Expression {
+	var properties []*ast.ObjectLiteralElement
+	for _, element := range element.Elements.Nodes {
+		properties = append(properties, convertBindingElementToObjectAssignmentElement(emitContext, element.AsBindingElement()))
+	}
+	propertyList := emitContext.Factory.NewNodeList(properties)
+	propertyList.Loc = element.Elements.Loc
+	object := emitContext.Factory.NewObjectLiteralExpression(propertyList, false /*multiLine*/)
+	emitContext.SetOriginal(object, element.AsNode())
+	emitContext.CopyCommentAndSourceMapRangesTo(object, element.AsNode())
+	return object
+}
+
+func convertBindingElementToArrayAssignmentPattern(emitContext *printer.EmitContext, element *ast.BindingPattern) *ast.Expression {
+	var elements []*ast.Expression
+	for _, element := range element.Elements.Nodes {
+		elements = append(elements, convertBindingElementToArrayAssignmentElement(emitContext, element.AsBindingElement()))
+	}
+	elementList := emitContext.Factory.NewNodeList(elements)
+	elementList.Loc = element.Elements.Loc
+	object := emitContext.Factory.NewArrayLiteralExpression(elementList, false /*multiLine*/)
+	emitContext.SetOriginal(object, element.AsNode())
+	emitContext.CopyCommentAndSourceMapRangesTo(object, element.AsNode())
+	return object
+}
+
+func convertBindingNameToAssignmentElementTarget(emitContext *printer.EmitContext, element *ast.Node) *ast.Expression {
+	if ast.IsBindingPattern(element) {
+		return convertBindingPatternToAssignmentPattern(emitContext, element.AsBindingPattern())
+	}
+	return element
+}
+
+func convertVariableDeclarationToAssignmentExpression(emitContext *printer.EmitContext, element *ast.VariableDeclaration) *ast.Expression {
+	if element.Initializer == nil {
+		return nil
+	}
+	expression := convertBindingNameToAssignmentElementTarget(emitContext, element.Name())
+	assignment := emitContext.Factory.NewBinaryExpression(
+		expression,
+		emitContext.Factory.NewToken(ast.KindEqualsToken),
+		element.Initializer,
+	)
+	emitContext.SetOriginal(assignment, element.AsNode())
+	emitContext.CopyCommentAndSourceMapRangesTo(assignment, element.AsNode())
+	return assignment
+}
+
+func convertEntityNameToExpression(emitContext *printer.EmitContext, name *ast.EntityName) *ast.Expression {
+	if ast.IsQualifiedName(name) {
+		left := convertEntityNameToExpression(emitContext, name.AsQualifiedName().Left)
+		right := name.AsQualifiedName().Right
+		prop := emitContext.Factory.NewPropertyAccessExpression(left, nil /*questionDotToken*/, right, ast.NodeFlagsNone)
+		emitContext.SetOriginal(prop, name)
+		emitContext.CopyCommentAndSourceMapRangesTo(prop, name)
+		return prop
+	}
+	return copyIdentifier(emitContext, name)
 }

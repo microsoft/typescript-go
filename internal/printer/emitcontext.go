@@ -14,12 +14,16 @@ import (
 //
 // NOTE: EmitContext is not guaranteed to be thread-safe.
 type EmitContext struct {
-	Factory       *ast.NodeFactory // Required. The NodeFactory to use for creating new nodes
+	Factory       *ast.NodeFactory // Required. The NodeFactory to use to create new nodes
 	autoGenerate  map[*ast.MemberName]*autoGenerateInfo
 	textSource    map[*ast.StringLiteralNode]*ast.Node
 	original      map[*ast.Node]*ast.Node
 	emitNodes     core.LinkStore[*ast.Node, emitNode]
 	varScopeStack core.Stack[*varScope]
+
+	isCustomPrologue           func(node *ast.Statement) bool
+	isHoistedFunction          func(node *ast.Statement) bool
+	isHoistedVariableStatement func(node *ast.Statement) bool
 }
 
 type varScope struct {
@@ -27,7 +31,11 @@ type varScope struct {
 }
 
 func NewEmitContext() *EmitContext {
-	return &EmitContext{Factory: &ast.NodeFactory{}}
+	c := &EmitContext{Factory: &ast.NodeFactory{}}
+	c.isCustomPrologue = c.isCustomPrologueWorker
+	c.isHoistedFunction = c.isHoistedFunctionWorker
+	c.isHoistedVariableStatement = c.isHoistedVariableStatementWorker
+	return c
 }
 
 func (c *EmitContext) StartVarEnvironment() {
@@ -44,6 +52,147 @@ func (c *EmitContext) EndVarEnvironment() []*ast.Statement {
 		statements = append(statements, varStatement)
 	}
 	return statements
+}
+
+// Invokes c.EndVarEnvironment() and merges the results into `statements`
+func (c *EmitContext) EndAndMergeVarEnvironment(statements []*ast.Statement) []*ast.Statement {
+	return c.MergeEnvironment(statements, c.EndVarEnvironment())
+}
+
+func (c *EmitContext) isCustomPrologueWorker(node *ast.Statement) bool {
+	return c.EmitFlags(node)&EFCustomPrologue != 0
+}
+
+func (c *EmitContext) isHoistedFunctionWorker(node *ast.Statement) bool {
+	return c.isCustomPrologueWorker(node) && ast.IsFunctionDeclaration(node)
+}
+
+func isHoistedVariable(node *ast.VariableDeclarationNode) bool {
+	return ast.IsIdentifier(node.Name()) && node.Initializer() == nil
+}
+
+func (c *EmitContext) isHoistedVariableStatementWorker(node *ast.Statement) bool {
+	return c.isCustomPrologueWorker(node) &&
+		ast.IsVariableStatement(node) &&
+		core.Every(node.AsVariableStatement().DeclarationList.AsVariableDeclarationList().Declarations.Nodes, isHoistedVariable)
+}
+
+func findSpanEnd[T any](array []T, test func(value T) bool, start int) int {
+	i := start
+	for i < len(array) && test(array[i]) {
+		i++
+	}
+	return i
+}
+
+// Merges declarations produced by c.EndVarEnvironment() into a statement list
+func (c *EmitContext) MergeEnvironmentList(statements *ast.StatementList, declarations []*ast.Statement) *ast.StatementList {
+	if result, changed := c.mergeEnvironment(statements.Nodes, declarations); changed {
+		list := c.Factory.NewNodeList(result)
+		list.Loc = statements.Loc
+		return list
+	}
+	return statements
+}
+
+// Merges declarations produced by c.EndVarEnvironment() into a statement list
+func (c *EmitContext) MergeEnvironment(statements []*ast.Statement, declarations []*ast.Statement) []*ast.Statement {
+	result, _ := c.mergeEnvironment(statements, declarations)
+	return result
+}
+
+func (c *EmitContext) mergeEnvironment(statements []*ast.Statement, declarations []*ast.Statement) ([]*ast.Statement, bool) {
+	if len(declarations) == 0 {
+		return statements, false
+	}
+
+	// When we merge new lexical statements into an existing statement list, we merge them in the following manner:
+	//
+	// Given:
+	//
+	// | Left                               | Right                               |
+	// |------------------------------------|-------------------------------------|
+	// | [standard prologues (left)]        | [standard prologues (right)]        |
+	// | [hoisted functions (left)]         | [hoisted functions (right)]         |
+	// | [hoisted variables (left)]         | [hoisted variables (right)]         |
+	// | [lexical init statements (left)]   | [lexical init statements (right)]   |
+	// | [other statements (left)]          |                                     |
+	//
+	// The resulting statement list will be:
+	//
+	// | Result                              |
+	// |-------------------------------------|
+	// | [standard prologues (right)]        |
+	// | [standard prologues (left)]         |
+	// | [hoisted functions (right)]         |
+	// | [hoisted functions (left)]          |
+	// | [hoisted variables (right)]         |
+	// | [hoisted variables (left)]          |
+	// | [lexical init statements (right)]   |
+	// | [lexical init statements (left)]    |
+	// | [other statements (left)]           |
+	//
+	// NOTE: It is expected that new lexical init statements must be evaluated before existing lexical init statements,
+	// as the prior transformation may depend on the evaluation of the lexical init statements to be in the correct state.
+
+	changed := false
+
+	// find standard prologues on left in the following order: standard directives, hoisted functions, hoisted variables, other custom
+	leftStandardPrologueEnd := findSpanEnd(statements, ast.IsPrologueDirective, 0)
+	leftHoistedFunctionsEnd := findSpanEnd(statements, c.isHoistedFunction, leftStandardPrologueEnd)
+	leftHoistedVariablesEnd := findSpanEnd(statements, c.isHoistedVariableStatement, leftHoistedFunctionsEnd)
+
+	// find standard prologues on right in the following order: standard directives, hoisted functions, hoisted variables, other custom
+	rightStandardPrologueEnd := findSpanEnd(declarations, ast.IsPrologueDirective, 0)
+	rightHoistedFunctionsEnd := findSpanEnd(declarations, c.isHoistedFunction, rightStandardPrologueEnd)
+	rightHoistedVariablesEnd := findSpanEnd(declarations, c.isHoistedVariableStatement, rightHoistedFunctionsEnd)
+	rightCustomPrologueEnd := findSpanEnd(declarations, c.isCustomPrologue, rightHoistedVariablesEnd)
+	if rightCustomPrologueEnd != len(declarations) {
+		panic("Expected declarations to be valid standard or custom prologues")
+	}
+
+	left := statements
+
+	// splice other custom prologues from right into left
+	if rightCustomPrologueEnd > rightHoistedVariablesEnd {
+		left = core.Splice(left, leftHoistedVariablesEnd, 0, declarations[rightHoistedVariablesEnd:rightCustomPrologueEnd]...)
+		changed = true
+	}
+
+	// splice hoisted variables from right into left
+	if rightHoistedVariablesEnd > rightHoistedFunctionsEnd {
+		left = core.Splice(left, leftHoistedFunctionsEnd, 0, declarations[rightHoistedFunctionsEnd:rightHoistedVariablesEnd]...)
+		changed = true
+	}
+
+	// splice hoisted functions from right into left
+	if rightHoistedFunctionsEnd > rightStandardPrologueEnd {
+		left = core.Splice(left, leftStandardPrologueEnd, 0, declarations[rightStandardPrologueEnd:rightHoistedFunctionsEnd]...)
+		changed = true
+	}
+
+	// splice standard prologues from right into left (that are not already in left)
+	if rightStandardPrologueEnd > 0 {
+		if leftStandardPrologueEnd == 0 {
+			left = core.Splice(left, 0, 0, declarations[:rightStandardPrologueEnd]...)
+			changed = true
+		} else {
+			var leftPrologues core.Set[string]
+			for i := 0; i < leftStandardPrologueEnd; i++ {
+				leftPrologue := statements[i]
+				leftPrologues.Add(leftPrologue.Expression().Text())
+			}
+			for i := rightStandardPrologueEnd - 1; i >= 0; i-- {
+				rightPrologue := declarations[i]
+				if !leftPrologues.Has(rightPrologue.Expression().Text()) {
+					left = core.Concatenate([]*ast.Statement{rightPrologue}, left)
+					changed = true
+				}
+			}
+		}
+	}
+
+	return left, changed
 }
 
 func (c *EmitContext) HoistVariable(name *ast.IdentifierNode) {
@@ -234,15 +383,24 @@ func (c *EmitContext) MostOriginal(node *ast.Node) *ast.Node {
 	return node
 }
 
+type emitNodeFlags uint32
+
+const (
+	hasCommentRange emitNodeFlags = 1 << iota
+	hasSourceMapRange
+)
+
 type emitNode struct {
+	flags                emitNodeFlags
 	emitFlags            EmitFlags
-	commentRange         *core.TextRange
-	sourceMapRange       *core.TextRange
-	tokenSourceMapRanges map[ast.Kind]*core.TextRange
+	commentRange         core.TextRange
+	sourceMapRange       core.TextRange
+	tokenSourceMapRanges map[ast.Kind]core.TextRange
 }
 
 // NOTE: This method is not guaranteed to be thread-safe
 func (e *emitNode) copyFrom(source *emitNode) {
+	e.flags = source.flags
 	e.emitFlags = source.emitFlags
 	e.commentRange = source.commentRange
 	e.sourceMapRange = source.sourceMapRange
@@ -264,57 +422,71 @@ func (c *EmitContext) AddEmitFlags(node *ast.Node, flags EmitFlags) {
 	c.emitNodes.Get(node).emitFlags |= flags
 }
 
-// Sets the range to use for a node when emitting comments and source maps.
-func (c *EmitContext) SetCommentAndSourceMapRanges(node *ast.Node, loc core.TextRange) {
-	emitNode := c.emitNodes.Get(node)
-	emitNode.commentRange = &loc
-	emitNode.sourceMapRange = &loc
-}
-
 // Gets the range to use for a node when emitting comments.
 func (c *EmitContext) CommentRange(node *ast.Node) core.TextRange {
-	if emitNode := c.emitNodes.TryGet(node); emitNode != nil && emitNode.commentRange != nil {
-		return *emitNode.commentRange
+	if emitNode := c.emitNodes.TryGet(node); emitNode != nil && emitNode.flags&hasCommentRange != 0 {
+		return emitNode.commentRange
 	}
 	return node.Loc
 }
 
 // Sets the range to use for a node when emitting comments.
 func (c *EmitContext) SetCommentRange(node *ast.Node, loc core.TextRange) {
-	c.emitNodes.Get(node).commentRange = &loc
+	emitNode := c.emitNodes.Get(node)
+	emitNode.commentRange = loc
+	emitNode.flags |= hasCommentRange
+}
+
+// Sets the range to use for a node when emitting comments.
+func (c *EmitContext) CopyCommentRange(to *ast.Node, from *ast.Node) {
+	c.SetCommentRange(to, c.CommentRange(from))
 }
 
 // Gets the range to use for a node when emitting source maps.
 func (c *EmitContext) SourceMapRange(node *ast.Node) core.TextRange {
-	if emitNode := c.emitNodes.TryGet(node); emitNode != nil && emitNode.sourceMapRange != nil {
-		return *emitNode.sourceMapRange
+	if emitNode := c.emitNodes.TryGet(node); emitNode != nil && emitNode.flags&hasSourceMapRange != 0 {
+		return emitNode.sourceMapRange
 	}
 	return node.Loc
 }
 
 // Sets the range to use for a node when emitting source maps.
 func (c *EmitContext) SetSourceMapRange(node *ast.Node, loc core.TextRange) {
-	c.emitNodes.Get(node).sourceMapRange = &loc
+	emitNode := c.emitNodes.Get(node)
+	emitNode.sourceMapRange = loc
+	emitNode.flags |= hasSourceMapRange
+}
+
+// Sets the range to use for a node when emitting source maps.
+func (c *EmitContext) CopySourceMapRange(to *ast.Node, from *ast.Node) {
+	c.SetSourceMapRange(to, c.SourceMapRange(from))
+}
+
+// Sets the range to use for a node when emitting comments and source maps.
+func (c *EmitContext) CopyCommentAndSourceMapRangesTo(to *ast.Node, from *ast.Node) {
+	emitNode := c.emitNodes.Get(to)
+	commentRange := c.CommentRange(from)
+	sourceMapRange := c.SourceMapRange(from)
+	emitNode.commentRange = commentRange
+	emitNode.sourceMapRange = sourceMapRange
+	emitNode.flags |= hasCommentRange | hasSourceMapRange
 }
 
 // Gets the range for a token of a node when emitting source maps.
-func (c *EmitContext) TokenSourceMapRange(node *ast.Node, kind ast.Kind) *core.TextRange {
-	if emitNode := c.emitNodes.TryGet(node); emitNode != nil {
-		if emitNode.tokenSourceMapRanges == nil {
-			return nil
-		}
+func (c *EmitContext) TokenSourceMapRange(node *ast.Node, kind ast.Kind) (core.TextRange, bool) {
+	if emitNode := c.emitNodes.TryGet(node); emitNode != nil && emitNode.tokenSourceMapRanges != nil {
 		if loc, ok := emitNode.tokenSourceMapRanges[kind]; ok {
-			return loc
+			return loc, true
 		}
 	}
-	return nil
+	return core.TextRange{}, false
 }
 
 // Sets the range for a token of a node when emitting source maps.
-func (c *EmitContext) SetTokenSourceMapRange(node *ast.Node, kind ast.Kind, loc *core.TextRange) {
+func (c *EmitContext) SetTokenSourceMapRange(node *ast.Node, kind ast.Kind, loc core.TextRange) {
 	emitNode := c.emitNodes.Get(node)
 	if emitNode.tokenSourceMapRanges == nil {
-		emitNode.tokenSourceMapRanges = make(map[ast.Kind]*core.TextRange)
+		emitNode.tokenSourceMapRanges = make(map[ast.Kind]core.TextRange)
 	}
 	emitNode.tokenSourceMapRanges[kind] = loc
 }

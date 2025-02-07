@@ -6,20 +6,26 @@ import (
 )
 
 type Transformer struct {
-	ast.NodeVisitor
-	EmitContext *printer.EmitContext
+	emitContext *printer.EmitContext
+	factory     *ast.NodeFactory
+	visitor     ast.NodeVisitor
 }
 
 func (tx *Transformer) newTransformer(visit func(node *ast.Node) *ast.Node, emitContext *printer.EmitContext) *Transformer {
-	if tx.Visit != nil || tx.EmitContext != nil || tx.Factory != nil {
+	if tx.emitContext != nil {
 		panic("Transformer already initialized")
 	}
 	if emitContext == nil {
 		emitContext = printer.NewEmitContext()
 	}
-	tx.Visit = visit
-	tx.EmitContext = emitContext
-	tx.Factory = emitContext.Factory
-	tx.Hooks.SetOriginal = emitContext.SetOriginal
+	tx.emitContext = emitContext
+	tx.factory = emitContext.Factory
+	tx.visitor.Visit = visit
+	tx.visitor.Factory = emitContext.Factory
+	tx.visitor.Hooks.SetOriginal = emitContext.SetOriginal
 	return tx
+}
+
+func (tx *Transformer) TransformSourceFile(file *ast.SourceFile) *ast.SourceFile {
+	return tx.visitor.VisitSourceFile(file)
 }

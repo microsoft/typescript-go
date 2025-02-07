@@ -767,7 +767,7 @@ func (b *Binder) bindModuleDeclaration(node *ast.Node) {
 }
 
 func (b *Binder) declareModuleSymbol(node *ast.Node) ModuleInstanceState {
-	state := getModuleInstanceState(node, nil /*visited*/)
+	state := GetModuleInstanceState(node, nil /*visited*/)
 	instantiated := state != ModuleInstanceStateNonInstantiated
 	b.declareSymbolAndAddToSymbolTable(node, core.IfElse(instantiated, ast.SymbolFlagsValueModule, ast.SymbolFlagsNamespaceModule), core.IfElse(instantiated, ast.SymbolFlagsValueModuleExcludes, ast.SymbolFlagsNamespaceModuleExcludes))
 	return state
@@ -838,7 +838,7 @@ func (b *Binder) bindJsxAttribute(node *ast.Node, symbolFlags ast.SymbolFlags, s
 	b.declareSymbolAndAddToSymbolTable(node, symbolFlags, symbolExcludes)
 }
 
-func getModuleInstanceState(node *ast.Node, visited map[ast.NodeId]ModuleInstanceState) ModuleInstanceState {
+func GetModuleInstanceState(node *ast.ModuleDeclarationNode, visited map[ast.NodeId]ModuleInstanceState) ModuleInstanceState {
 	module := node.AsModuleDeclaration()
 	if module.Body != nil && module.Body.Parent == nil {
 		// getModuleInstanceStateForAliasTarget needs to walk up the parent chain, so parent pointers must be set on this tree already
@@ -915,7 +915,7 @@ func getModuleInstanceStateWorker(node *ast.Node, visited map[ast.NodeId]ModuleI
 		})
 		return state
 	case ast.KindModuleDeclaration:
-		return getModuleInstanceState(node, visited)
+		return GetModuleInstanceState(node, visited)
 	case ast.KindIdentifier:
 		if node.Flags&ast.NodeFlagsIdentifierIsInJSDocNamespace != 0 {
 			return ModuleInstanceStateNonInstantiated
@@ -1757,7 +1757,7 @@ func (b *Binder) checkUnreachable(node *ast.Node) bool {
 }
 
 func (b *Binder) shouldReportErrorOnModuleDeclaration(node *ast.Node) bool {
-	instanceState := getModuleInstanceState(node, nil /*visited*/)
+	instanceState := GetModuleInstanceState(node, nil /*visited*/)
 	return instanceState == ModuleInstanceStateInstantiated || (instanceState == ModuleInstanceStateConstEnumOnly && b.options.ShouldPreserveConstEnums())
 }
 
@@ -1799,7 +1799,7 @@ func (b *Binder) isPurelyTypeDeclaration(s *ast.Node) bool {
 	case ast.KindInterfaceDeclaration, ast.KindTypeAliasDeclaration:
 		return true
 	case ast.KindModuleDeclaration:
-		return getModuleInstanceState(s, nil /*visited*/) != ModuleInstanceStateInstantiated
+		return GetModuleInstanceState(s, nil /*visited*/) != ModuleInstanceStateInstantiated
 	case ast.KindEnumDeclaration:
 		return !isEnumDeclarationWithPreservedEmit(s, b.options)
 	default:

@@ -3,6 +3,7 @@ package transformers
 import (
 	"testing"
 
+	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/testutil/emitutil"
 	"github.com/microsoft/typescript-go/internal/testutil/parseutil"
@@ -20,6 +21,9 @@ func TestTypeEraser(t *testing.T) {
 		{title: "InterfaceDeclaration", input: "interface I { }", output: ""},
 		{title: "TypeAliasDeclaration", input: "type T = U;", output: ""},
 		{title: "NamespaceExportDeclaration", input: "export as namespace N;", output: ""},
+		{title: "UninstantiatedNamespace1", input: "namespace N {}", output: ""},
+		{title: "UninstantiatedNamespace2", input: "namespace N { export interface I {} }", output: ""},
+		{title: "UninstantiatedNamespace3", input: "namespace N { export type T = U; }", output: ""},
 		{title: "ExpressionWithTypeArguments", input: "F<T>", output: "F;"},
 		{title: "PropertyDeclaration1", input: "class C { declare x; }", output: "class C {\n}"},
 		{title: "PropertyDeclaration2", input: "class C { public x: number; }", output: "class C {\n    x;\n}"},
@@ -65,7 +69,7 @@ func TestTypeEraser(t *testing.T) {
 			t.Parallel()
 			file := parseutil.ParseTypeScript(rec.input, rec.jsx)
 			parseutil.CheckDiagnostics(t, file)
-			emitutil.CheckEmit(t, nil, NewTypeEraserTransformer(printer.NewEmitContext()).VisitSourceFile(file), rec.output)
+			emitutil.CheckEmit(t, nil, NewTypeEraserTransformer(printer.NewEmitContext(), &core.CompilerOptions{}).TransformSourceFile(file), rec.output)
 		})
 	}
 }

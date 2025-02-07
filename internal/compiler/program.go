@@ -116,7 +116,7 @@ func NewProgram(options ProgramOptions) *Program {
 			tsConfigSourceFile,
 			p.host,
 			p.host.GetCurrentDirectory(),
-			nil,
+			p.compilerOptions,
 			p.configFilePath,
 			/*resolutionStack*/ nil,
 			/*extraFileExtensions*/ nil,

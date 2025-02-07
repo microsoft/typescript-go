@@ -24,5 +24,5 @@ func extractModifiers(emitContext *printer.EmitContext, modifiers *ast.ModifierL
 	}
 	tx := modifierVisitor{AllowedModifiers: allowed}
 	tx.newTransformer(tx.visit, emitContext)
-	return tx.VisitModifiers(modifiers)
+	return tx.visitor.VisitModifiers(modifiers)
 }

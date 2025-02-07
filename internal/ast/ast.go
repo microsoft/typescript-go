@@ -105,7 +105,11 @@ func (list *NodeList) Pos() int { return list.Loc.Pos() }
 func (list *NodeList) End() int { return list.Loc.End() }
 
 func (list *NodeList) HasTrailingComma() bool {
-	return len(list.Nodes) > 0 && list.Nodes[len(list.Nodes)-1].End() < list.End()
+	if len(list.Nodes) == 0 || PositionIsSynthesized(list.End()) {
+		return false
+	}
+	last := list.Nodes[len(list.Nodes)-1]
+	return !PositionIsSynthesized(last.End()) && last.End() < list.End()
 }
 
 // ModifierList
@@ -163,7 +167,11 @@ func (n *Node) TemplateLiteralLikeData() *TemplateLiteralLikeBase {
 }
 
 func (n *Node) Symbol() *Symbol {
-	return n.DeclarationData().Symbol
+	data := n.DeclarationData()
+	if data != nil {
+		return data.Symbol
+	}
+	return nil
 }
 
 func (n *Node) LocalSymbol() *Symbol {
@@ -1484,6 +1492,7 @@ type (
 	ExpressionWithTypeArgumentsNode = Node
 	EnumDeclarationNode             = Node
 	EnumMemberNode                  = Node
+	ModuleDeclarationNode           = Node
 	ImportClauseNode                = Node
 	ImportAttributesNode            = Node
 	ImportAttributeNode             = Node
@@ -4228,6 +4237,9 @@ type BinaryExpression struct {
 }
 
 func (f *NodeFactory) NewBinaryExpression(left *Expression, operatorToken *TokenNode, right *Expression) *Node {
+	if operatorToken == nil {
+		panic("operatorToken is required")
+	}
 	data := f.binaryExpressionPool.New()
 	data.Left = left
 	data.OperatorToken = operatorToken
