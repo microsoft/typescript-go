@@ -190,7 +190,7 @@ func (p *Program) BindSourceFiles() {
 			})
 		}
 	}
-	wg.Wait()
+	wg.RunAndWait()
 }
 
 func (p *Program) CheckSourceFiles() {
@@ -203,7 +203,7 @@ func (p *Program) CheckSourceFiles() {
 			}
 		})
 	}
-	wg.Wait()
+	wg.RunAndWait()
 }
 
 func (p *Program) createCheckers() {
@@ -610,7 +610,7 @@ func (p *Program) Emit(options *EmitOptions) *EmitResult {
 	}
 
 	// wait for emit to complete
-	wg.Wait()
+	wg.RunAndWait()
 
 	// collect results from emit, preserving input order
 	result := &EmitResult{}

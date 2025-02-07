@@ -7,7 +7,7 @@ import (
 
 type WorkGroup interface {
 	Queue(fn func())
-	Wait()
+	RunAndWait()
 }
 
 func NewWorkGroup(singleThreaded bool) WorkGroup {
@@ -36,7 +36,7 @@ func (w *parallelWorkGroup) Queue(fn func()) {
 	}()
 }
 
-func (w *parallelWorkGroup) Wait() {
+func (w *parallelWorkGroup) RunAndWait() {
 	defer w.done.Store(true)
 	w.wg.Wait()
 }
@@ -59,7 +59,7 @@ func (w *singleThreadedWorkGroup) Queue(fn func()) {
 	w.fns = append(w.fns, fn)
 }
 
-func (w *singleThreadedWorkGroup) Wait() {
+func (w *singleThreadedWorkGroup) RunAndWait() {
 	defer w.done.Store(true)
 	for {
 		fn := w.pop()

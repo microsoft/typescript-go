@@ -61,7 +61,7 @@ func processAllProgramFiles(
 
 	loader.startTasks(loader.rootTasks)
 
-	loader.wg.Wait()
+	loader.wg.RunAndWait()
 
 	files, libFiles := []*ast.SourceFile{}, []*ast.SourceFile{}
 	for task := range loader.collectTasks(loader.rootTasks) {
