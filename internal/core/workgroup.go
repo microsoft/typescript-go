@@ -27,7 +27,7 @@ var _ WorkGroup = (*parallelWorkGroup)(nil)
 
 func (w *parallelWorkGroup) Queue(fn func()) {
 	if w.done.Load() {
-		panic("Queue called after Wait returned")
+		panic("Queue called after RunAndWait returned")
 	}
 
 	w.wg.Add(1)
@@ -62,7 +62,7 @@ var _ WorkGroup = (*singleThreadedWorkGroup)(nil)
 
 func (w *singleThreadedWorkGroup) Queue(fn func()) {
 	if w.done.Load() {
-		panic("Queue called after Wait returned")
+		panic("Queue called after RunAndWait returned")
 	}
 
 	w.fnsMu.Lock()
