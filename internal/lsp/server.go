@@ -305,8 +305,7 @@ func (s *Server) handleDefinition(req *lsproto.RequestMessage) error {
 		}
 	}
 
-	s.sendResult(req.ID, &lsproto.Definition{Locations: &lspLocations})
-	return nil
+	return s.sendResult(req.ID, &lsproto.Definition{Locations: &lspLocations})
 }
 
 func (s *Server) getFileAndProject(uri lsproto.DocumentUri) (*project.ScriptInfo, *project.Project) {

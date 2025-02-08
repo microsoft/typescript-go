@@ -63,14 +63,14 @@ func (l *Logger) HasLevel(level LogLevel) bool {
 func (l *Logger) msg(s string, messageType string) {
 	for _, output := range l.outputs {
 		header := fmt.Sprintf("%s %d", messageType, l.seq)
-		output.WriteString(header)
-		output.WriteString(strings.Repeat(" ", max(0, 10-len(header))))
-		output.WriteRune('[')
-		output.WriteString(time.Now().Format("15:04:05.000"))
-		output.WriteString("] ")
-		output.WriteString(s)
-		output.WriteRune('\n')
-		output.Flush() //nolint: errcheck
+		output.WriteString(header)                                      //nolint: errcheck
+		output.WriteString(strings.Repeat(" ", max(0, 10-len(header)))) //nolint: errcheck
+		output.WriteRune('[')                                           //nolint: errcheck
+		output.WriteString(time.Now().Format("15:04:05.000"))           //nolint: errcheck
+		output.WriteString("] ")                                        //nolint: errcheck
+		output.WriteString(s)                                           //nolint: errcheck
+		output.WriteRune('\n')                                          //nolint: errcheck
+		output.Flush()
 	}
 	if !l.inGroup {
 		l.seq++
