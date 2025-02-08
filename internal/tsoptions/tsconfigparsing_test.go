@@ -547,6 +547,14 @@ func baselineParseConfigWith(t *testing.T, baselineFileName string, noSubmoduleB
 		}
 		baselineContent.WriteString("\n")
 		baselineContent.WriteString("configFileName:: " + config.configFileName + "\n")
+		if noSubmoduleBaseline {
+			baselineContent.WriteString("CompilerOptions::\n")
+			enc := json.NewEncoder(&baselineContent)
+			enc.SetIndent("", "  ")
+			enc.SetEscapeHTML(false)
+			assert.NilError(t, enc.Encode(parsedConfigFileContent.CompilerOptions()))
+			baselineContent.WriteString("\n")
+		}
 		baselineContent.WriteString("FileNames::\n")
 		baselineContent.WriteString(strings.Join(parsedConfigFileContent.ParsedConfig.FileNames, ",") + "\n")
 		baselineContent.WriteString("Errors::\n")
