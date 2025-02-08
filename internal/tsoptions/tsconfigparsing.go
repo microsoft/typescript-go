@@ -89,14 +89,11 @@ type configFileSpecs struct {
 	// Present to report errors (user specified specs), validatedIncludeSpecs are used for file name matching
 	includeSpecs any
 	// Present to report errors (user specified specs), validatedExcludeSpecs are used for file name matching
-	excludeSpecs                            any
-	validatedFilesSpec                      []string
-	validatedIncludeSpecs                   []string
-	validatedExcludeSpecs                   []string
-	validatedFilesSpecBeforeSubstitution    []string
-	validatedIncludeSpecsBeforeSubstitution []string
-	validatedExcludeSpecsBeforeSubstitution []string
-	isDefaultIncludeSpec                    bool
+	excludeSpecs          any
+	validatedFilesSpec    []string
+	validatedIncludeSpecs []string
+	validatedExcludeSpecs []string
+	isDefaultIncludeSpec  bool
 }
 type fileExtensionInfo struct {
 	extension      string
@@ -1112,9 +1109,6 @@ func parseJsonConfigFileContentWorker(
 		includeSpecs = propOfRaw{sliceValue: []any{defaultIncludeSpec}}
 		isDefaultIncludeSpec = true
 	}
-	var validatedIncludeSpecsBeforeSubstitution []string
-	var validatedExcludeSpecsBeforeSubstitution []string
-	var validatedFilesSpecBeforeSubstitution []string
 	var validatedIncludeSpecs []string
 	var validatedExcludeSpecs []string
 	var validatedFilesSpec []string
@@ -1123,42 +1117,24 @@ func parseJsonConfigFileContentWorker(
 	// file system.
 	if includeSpecs.sliceValue != nil {
 		var err []*ast.Diagnostic
-		validatedIncludeSpecsBeforeSubstitution, err = validateSpecs(includeSpecs.sliceValue, true /*disallowTrailingRecursion*/, tsconfigToSourceFile(sourceFile), "include")
+		validatedIncludeSpecs, err = validateSpecs(includeSpecs.sliceValue, true /*disallowTrailingRecursion*/, tsconfigToSourceFile(sourceFile), "include")
 		errors = append(errors, err...)
-		validatedIncludeSpecs = getSubstitutedStringArrayWithConfigDirTemplate(
-			validatedIncludeSpecsBeforeSubstitution,
-			basePathForFileNames,
-		)
-		if validatedIncludeSpecs == nil {
-			validatedIncludeSpecs = validatedIncludeSpecsBeforeSubstitution
-		}
+		substituteStringArrayWithConfigDirTemplate(validatedIncludeSpecs, basePathForFileNames)
 	}
 	if excludeSpecs.sliceValue != nil {
 		var err []*ast.Diagnostic
-		validatedExcludeSpecsBeforeSubstitution, err = validateSpecs(excludeSpecs.sliceValue, false /*disallowTrailingRecursion*/, tsconfigToSourceFile(sourceFile), "exclude")
+		validatedExcludeSpecs, err = validateSpecs(excludeSpecs.sliceValue, false /*disallowTrailingRecursion*/, tsconfigToSourceFile(sourceFile), "exclude")
 		errors = append(errors, err...)
-		validatedExcludeSpecs = getSubstitutedStringArrayWithConfigDirTemplate(
-			validatedExcludeSpecsBeforeSubstitution,
-			basePathForFileNames,
-		)
-		if validatedExcludeSpecs == nil {
-			validatedExcludeSpecs = validatedExcludeSpecsBeforeSubstitution
-		}
+		substituteStringArrayWithConfigDirTemplate(validatedExcludeSpecs, basePathForFileNames)
 	}
 	if fileSpecs.sliceValue != nil {
 		fileSpecs := core.Filter(fileSpecs.sliceValue, func(spec any) bool { return reflect.TypeOf(spec).Kind() == reflect.String })
 		for _, spec := range fileSpecs {
 			if spec, ok := spec.(string); ok {
-				validatedFilesSpecBeforeSubstitution = append(validatedFilesSpecBeforeSubstitution, spec)
+				validatedFilesSpec = append(validatedFilesSpec, spec)
 			}
 		}
-		validatedFilesSpec = getSubstitutedStringArrayWithConfigDirTemplate(
-			validatedFilesSpecBeforeSubstitution,
-			basePathForFileNames,
-		)
-	}
-	if validatedFilesSpec == nil {
-		validatedFilesSpec = validatedFilesSpecBeforeSubstitution
+		substituteStringArrayWithConfigDirTemplate(validatedFilesSpec, basePathForFileNames)
 	}
 	configFileSpecs := configFileSpecs{
 		fileSpecs.sliceValue,
@@ -1167,9 +1143,6 @@ func parseJsonConfigFileContentWorker(
 		validatedFilesSpec,
 		validatedIncludeSpecs,
 		validatedExcludeSpecs,
-		validatedFilesSpecBeforeSubstitution,
-		validatedIncludeSpecsBeforeSubstitution,
-		validatedExcludeSpecsBeforeSubstitution,
 		isDefaultIncludeSpec,
 	}
 
@@ -1355,14 +1328,12 @@ func getSubstitutedPathWithConfigDirTemplate(value string, basePath string) stri
 	return tspath.GetNormalizedAbsolutePath(strings.Replace(value, configDirTemplate, "./", 1), basePath)
 }
 
-func getSubstitutedStringArrayWithConfigDirTemplate(list []string, basePath string) []string {
-	list = slices.Clone(list)
+func substituteStringArrayWithConfigDirTemplate(list []string, basePath string) {
 	for i, element := range list {
 		if startsWithConfigDirTemplate(element) {
 			list[i] = getSubstitutedPathWithConfigDirTemplate(element, basePath)
 		}
 	}
-	return list
 }
 
 func handleOptionConfigDirTemplateSubstitution(options *core.CompilerOptions, basePath string) {
@@ -1372,12 +1343,12 @@ func handleOptionConfigDirTemplateSubstitution(options *core.CompilerOptions, ba
 
 	// !!! don't hardcode this; use options declarations?
 
-	for k, v := range options.Paths {
-		options.Paths[k] = getSubstitutedStringArrayWithConfigDirTemplate(v, basePath)
+	for _, v := range options.Paths {
+		substituteStringArrayWithConfigDirTemplate(v, basePath)
 	}
 
-	options.RootDirs = getSubstitutedStringArrayWithConfigDirTemplate(options.RootDirs, basePath)
-	options.TypeRoots = getSubstitutedStringArrayWithConfigDirTemplate(options.TypeRoots, basePath)
+	substituteStringArrayWithConfigDirTemplate(options.RootDirs, basePath)
+	substituteStringArrayWithConfigDirTemplate(options.TypeRoots, basePath)
 
 	if startsWithConfigDirTemplate(options.GenerateCpuProfile) {
 		options.GenerateCpuProfile = getSubstitutedPathWithConfigDirTemplate(options.GenerateCpuProfile, basePath)
