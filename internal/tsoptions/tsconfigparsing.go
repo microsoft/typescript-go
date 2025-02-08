@@ -1032,24 +1032,22 @@ func parseJsonConfigFileContentWorker(
 	extendedConfigCache map[string]*ExtendedConfigCacheEntry,
 ) *ParsedCommandLine {
 	// Debug.assert((json === undefined && sourceFile !== undefined) || (json !== undefined && sourceFile === undefined));
+
+	basePathForFileNames := ""
+	if configFileName != "" {
+		basePathForFileNames = tspath.NormalizePath(directoryOfCombinedPath(configFileName, basePath))
+	} else {
+		basePathForFileNames = tspath.NormalizePath(basePath)
+	}
+
 	var errors []*ast.Diagnostic
 	resolutionStackString := []string{}
 	parsedConfig, errors := parseConfig(json, sourceFile, host, basePath, configFileName, resolutionStackString, extendedConfigCache)
 	mergeCompilerOptions(parsedConfig.options, existingOptions)
-	// const options = handleOptionConfigDirTemplateSubstitution(
-	// 	extend(existingOptions, parsedConfig.options), //function in core.ts
-	// 	configDirTemplateSubstitutionOptions,
-	// 	basePath,
-	// )
+	handleOptionConfigDirTemplateSubstitution(parsedConfig.options, basePathForFileNames)
 	rawConfig := parseJsonToStringKey(parsedConfig.raw)
-	basePathForFileNames := ""
-	if configFileName != "" {
-		if parsedConfig.options != nil {
-			parsedConfig.options.ConfigFilePath = tspath.NormalizeSlashes(configFileName)
-		}
-		basePathForFileNames = tspath.NormalizePath(directoryOfCombinedPath(configFileName, basePath))
-	} else {
-		basePathForFileNames = tspath.NormalizePath(basePath)
+	if configFileName != "" && parsedConfig.options != nil {
+		parsedConfig.options.ConfigFilePath = tspath.NormalizeSlashes(configFileName)
 	}
 	getPropFromRaw := func(prop string, validateElement func(value any) bool, elementTypeName string) propOfRaw {
 		value, exists := rawConfig[prop]
@@ -1358,18 +1356,53 @@ func getSubstitutedPathWithConfigDirTemplate(value string, basePath string) stri
 }
 
 func getSubstitutedStringArrayWithConfigDirTemplate(list []string, basePath string) []string {
-	if list == nil {
-		return nil
-	}
-	var result []string
-	for _, element := range list {
-		if !startsWithConfigDirTemplate(element) {
-			continue
-		} else {
-			result = append(result, getSubstitutedPathWithConfigDirTemplate(element, basePath))
+	list = slices.Clone(list)
+	for i, element := range list {
+		if startsWithConfigDirTemplate(element) {
+			list[i] = getSubstitutedPathWithConfigDirTemplate(element, basePath)
 		}
 	}
-	return result
+	return list
+}
+
+func handleOptionConfigDirTemplateSubstitution(options *core.CompilerOptions, basePath string) {
+	if options == nil {
+		return
+	}
+
+	// !!! don't hardcode this; use options declarations?
+
+	for k, v := range options.Paths {
+		options.Paths[k] = getSubstitutedStringArrayWithConfigDirTemplate(v, basePath)
+	}
+
+	options.RootDirs = getSubstitutedStringArrayWithConfigDirTemplate(options.RootDirs, basePath)
+	options.TypeRoots = getSubstitutedStringArrayWithConfigDirTemplate(options.TypeRoots, basePath)
+
+	if startsWithConfigDirTemplate(options.GenerateCpuProfile) {
+		options.GenerateCpuProfile = getSubstitutedPathWithConfigDirTemplate(options.GenerateCpuProfile, basePath)
+	}
+	if startsWithConfigDirTemplate(options.GenerateTrace) {
+		options.GenerateTrace = getSubstitutedPathWithConfigDirTemplate(options.GenerateTrace, basePath)
+	}
+	if startsWithConfigDirTemplate(options.OutFile) {
+		options.OutFile = getSubstitutedPathWithConfigDirTemplate(options.OutFile, basePath)
+	}
+	if startsWithConfigDirTemplate(options.OutDir) {
+		options.OutDir = getSubstitutedPathWithConfigDirTemplate(options.OutDir, basePath)
+	}
+	if startsWithConfigDirTemplate(options.RootDir) {
+		options.RootDir = getSubstitutedPathWithConfigDirTemplate(options.RootDir, basePath)
+	}
+	if startsWithConfigDirTemplate(options.TsBuildInfoFile) {
+		options.TsBuildInfoFile = getSubstitutedPathWithConfigDirTemplate(options.TsBuildInfoFile, basePath)
+	}
+	if startsWithConfigDirTemplate(options.BaseUrl) {
+		options.BaseUrl = getSubstitutedPathWithConfigDirTemplate(options.BaseUrl, basePath)
+	}
+	if startsWithConfigDirTemplate(options.DeclarationDir) {
+		options.DeclarationDir = getSubstitutedPathWithConfigDirTemplate(options.DeclarationDir, basePath)
+	}
 }
 
 // hasFileWithHigherPriorityExtension determines whether a literal or wildcard file has already been included that has a higher extension priority.
