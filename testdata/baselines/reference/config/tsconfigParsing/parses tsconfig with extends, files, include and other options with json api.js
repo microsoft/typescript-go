@@ -29,8 +29,6 @@ Fs::
   "ts-node": {
     "compilerOptions": {
       "module": "commonjs",
-	  "lib": ["ES2024"],
-      "target": "ES2024",
     },
     "transpileOnly": true
   }
