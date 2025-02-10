@@ -559,7 +559,7 @@ func convertArrayLiteralExpressionToJson(
 	}
 	// Filter out invalid values
 	if len(elements) == 0 {
-		return []string{}, nil
+		return []any{}, nil
 	}
 	var errors []*ast.Diagnostic
 	var value []any
