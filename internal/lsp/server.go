@@ -332,14 +332,14 @@ func codeFence(lang string, code string) string {
 	}
 	var result strings.Builder
 	result.Grow(len(code) + len(lang) + 2*ticks + 2)
-	for i := 0; i < ticks; i++ {
+	for range ticks {
 		result.WriteByte('`')
 	}
 	result.WriteString(lang)
 	result.WriteByte('\n')
 	result.WriteString(code)
 	result.WriteByte('\n')
-	for i := 0; i < ticks; i++ {
+	for range ticks {
 		result.WriteByte('`')
 	}
 	return result.String()
