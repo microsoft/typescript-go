@@ -477,7 +477,7 @@ var tsconfigWithExtends = `{
   "exclude": [],
   "ts-node": {
     "compilerOptions": {
-      "module": "commonjs",
+      "module": "commonjs"
     },
     "transpileOnly": true
   }
