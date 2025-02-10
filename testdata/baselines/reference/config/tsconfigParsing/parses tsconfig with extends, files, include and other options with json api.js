@@ -1,39 +1,40 @@
 Fs::
-//// [/apath/dist/output.js]
+//// [/dist/output.js]
 
 
-//// [/apath/node_modules/module.ts]
+//// [/node_modules/module.ts]
 
 
-//// [/apath/src/app.ts]
+//// [/src/app.ts]
 
 
-//// [/apath/src/index.ts]
+//// [/src/index.ts]
 
 
-//// [/apath/tsconfig.json]
+//// [/tsconfig.json]
 {
-  "compilerOptions": {
-    "outDir": "./dist",
-    "strict": true,
-    "noImplicitAny": true,
-    "target": "ES2017",
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-    "moduleDetection": "auto",
-    "jsx": "react",
-	"maxNodeModuleJsDepth": 1,
-	"paths": {
-      "jquery": ["./vendor/jquery/dist/jquery"]
-    }
-  },
-  "files": ["/apath/src/index.ts", "/apath/src/app.ts"],
-  "include": ["/apath/src/**/*"],
-  "exclude": ["/apath/node_modules", "/apath/dist"]
+				"extends": "./tsconfigWithExtends.json",
+				"compilerOptions": {
+				    "outDir": "./dist",
+    				"strict": true,
+    				"noImplicitAny": true,
+				},
+			}
+
+//// [/tsconfigWithExtends.json]
+{
+  "files": ["/src/index.ts", "/src/app.ts"],
+  "include": ["/src/**/*"],
+  "ts-node": {
+    "compilerOptions": {
+      "module": "commonjs"
+    },
+    "transpileOnly": true
+  }
 }
 
 
-configFileName:: /apath/tsconfig.json
+configFileName:: tsconfig.json
 CompilerOptions::
 {
   "allowJs": null,
@@ -74,7 +75,7 @@ CompilerOptions::
   "inlineSources": null,
   "init": null,
   "incremental": null,
-  "jsx": 3,
+  "jsx": 0,
   "jsxFactory": "",
   "jsxFragmentFactory": "",
   "jsxImportSource": "",
@@ -82,10 +83,10 @@ CompilerOptions::
   "lib": null,
   "locale": "",
   "mapRoot": "",
-  "module": 99,
-  "moduleResolution": 100,
+  "module": 0,
+  "moduleResolution": 0,
   "moduleSuffixes": null,
-  "moduleDetectionKind": 1,
+  "moduleDetectionKind": 0,
   "newLine": 0,
   "noEmit": null,
   "noCheck": null,
@@ -105,13 +106,9 @@ CompilerOptions::
   "noImplicitOverride": null,
   "noUncheckedSideEffectImports": null,
   "out": "",
-  "outDir": "/apath/dist",
+  "outDir": "/dist",
   "outFile": "",
-  "paths": {
-    "jquery": [
-      "./vendor/jquery/dist/jquery"
-    ]
-  },
+  "paths": null,
   "preserveConstEnums": null,
   "preserveSymlinks": null,
   "project": "",
@@ -135,7 +132,7 @@ CompilerOptions::
   "sourceMap": null,
   "sourceRoot": "",
   "suppressOutputPathCheck": null,
-  "target": 4,
+  "target": 0,
   "traceResolution": null,
   "tsBuildInfoFile": "",
   "typeRoots": null,
@@ -144,9 +141,9 @@ CompilerOptions::
   "useUnknownInCatchVariables": null,
   "verbatimModuleSyntax": null,
   "maxNodeModuleJsDepth": null,
-  "configFilePath": "/apath/tsconfig.json",
+  "configFilePath": "/tsconfig.json",
   "noDtsResolution": null,
-  "pathsBasePath": "/apath",
+  "pathsBasePath": "",
   "diagnostics": null,
   "extendedDiagnostics": null,
   "generateCpuProfile": "",
@@ -165,6 +162,6 @@ CompilerOptions::
 }
 
 FileNames::
-/apath/src/index.ts,/apath/src/app.ts
+/src/index.ts,/src/app.ts
 Errors::
 

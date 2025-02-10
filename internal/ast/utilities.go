@@ -1758,6 +1758,10 @@ func isJSDocLinkLike(node *Node) bool {
 	return NodeKindIs(node, KindJSDocLink, KindJSDocLinkCode, KindJSDocLinkPlain)
 }
 
+func IsJSDocTag(node *Node) bool {
+	return node.Kind >= KindFirstJSDocTagNode && node.Kind <= KindLastJSDocTagNode
+}
+
 func isJSXTagName(node *Node) bool {
 	parent := node.Parent
 	switch parent.Kind {
@@ -1803,6 +1807,27 @@ func TryGetTextOfPropertyName(name *Node) (string, bool) {
 	return "", false
 }
 
+func IsJSDocCommentContainingNode(node *Node) bool {
+	return node.Kind == KindJSDoc ||
+		node.Kind == KindJSDocText ||
+		node.Kind == KindJSDocTypeLiteral ||
+		node.Kind == KindJSDocSignature ||
+		isJSDocLinkLike(node) ||
+		IsJSDocTag(node)
+}
+
+func IsJSDocNode(node *Node) bool {
+	return node.Kind >= KindFirstJSDocNode && node.Kind <= KindLastJSDocNode
+}
+
+func IsNonWhitespaceToken(node *Node) bool {
+	return IsTokenKind(node.Kind) && !IsWhitespaceOnlyJsxText(node)
+}
+
+func IsWhitespaceOnlyJsxText(node *Node) bool {
+	return node.Kind == KindJsxText && node.AsJsxText().ContainsOnlyTriviaWhiteSpaces
+}
+
 func GetNewTargetContainer(node *Node) *Node {
 	container := GetThisContainer(node, false /*includeArrowFunctions*/, false /*includeClassComputedPropertyName*/)
 	if container != nil {
@@ -1812,4 +1837,24 @@ func GetNewTargetContainer(node *Node) *Node {
 		}
 	}
 	return nil
+}
+
+func GetEnclosingBlockScopeContainer(node *Node) *Node {
+	return FindAncestor(node.Parent, func(current *Node) bool {
+		return IsBlockScope(current, current.Parent)
+	})
+}
+
+func IsBlockScope(node *Node, parentNode *Node) bool {
+	switch node.Kind {
+	case KindSourceFile, KindCaseBlock, KindCatchClause, KindModuleDeclaration, KindForStatement, KindForInStatement, KindForOfStatement,
+		KindConstructor, KindMethodDeclaration, KindGetAccessor, KindSetAccessor, KindFunctionDeclaration, KindFunctionExpression,
+		KindArrowFunction, KindPropertyDeclaration, KindClassStaticBlockDeclaration:
+		return true
+	case KindBlock:
+		// function block is not considered block-scope container
+		// see comment in binder.ts: bind(...), case for SyntaxKind.Block
+		return !IsFunctionLikeOrClassStaticBlockDeclaration(parentNode)
+	}
+	return false
 }

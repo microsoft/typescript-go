@@ -1,39 +1,35 @@
 Fs::
-//// [/apath/dist/output.js]
+//// [/dist/output.js]
 
 
-//// [/apath/node_modules/module.ts]
+//// [/node_modules/module.ts]
 
 
-//// [/apath/src/app.ts]
+//// [/src/app.ts]
 
 
-//// [/apath/src/index.ts]
+//// [/src/index.ts]
 
 
-//// [/apath/tsconfig.json]
+//// [/tsconfig.base.json]
 {
   "compilerOptions": {
-    "outDir": "./dist",
-    "strict": true,
-    "noImplicitAny": true,
-    "target": "ES2017",
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-    "moduleDetection": "auto",
-    "jsx": "react",
-	"maxNodeModuleJsDepth": 1,
-	"paths": {
-      "jquery": ["./vendor/jquery/dist/jquery"]
-    }
-  },
-  "files": ["/apath/src/index.ts", "/apath/src/app.ts"],
-  "include": ["/apath/src/**/*"],
-  "exclude": ["/apath/node_modules", "/apath/dist"]
+    "outFile": "${configDir}/outFile",
+    "outDir": "${configDir}/outDir",
+    "rootDir": "${configDir}/rootDir",
+    "tsBuildInfoFile": "${configDir}/tsBuildInfoFile",
+    "baseUrl": "${configDir}/baseUrl",
+    "declarationDir": "${configDir}/declarationDir",
+  }
 }
 
+//// [/tsconfig.json]
+{
+				"extends": "./tsconfig.base.json"
+			}
 
-configFileName:: /apath/tsconfig.json
+
+configFileName:: tsconfig.json
 CompilerOptions::
 {
   "allowJs": null,
@@ -46,7 +42,7 @@ CompilerOptions::
   "allowUnusedLabels": null,
   "assumeChangesOnlyAffectDirectDependencies": null,
   "alwaysStrict": null,
-  "baseUrl": "",
+  "baseUrl": "/baseUrl",
   "build": null,
   "checkJs": null,
   "customConditions": null,
@@ -56,7 +52,7 @@ CompilerOptions::
   "emitDecoratorMetadata": null,
   "downlevelIteration": null,
   "declaration": null,
-  "declarationDir": "",
+  "declarationDir": "/declarationDir",
   "declarationMap": null,
   "disableSizeLimit": null,
   "disableSourceOfProjectReferenceRedirect": null,
@@ -74,7 +70,7 @@ CompilerOptions::
   "inlineSources": null,
   "init": null,
   "incremental": null,
-  "jsx": 3,
+  "jsx": 0,
   "jsxFactory": "",
   "jsxFragmentFactory": "",
   "jsxImportSource": "",
@@ -82,16 +78,16 @@ CompilerOptions::
   "lib": null,
   "locale": "",
   "mapRoot": "",
-  "module": 99,
-  "moduleResolution": 100,
+  "module": 0,
+  "moduleResolution": 0,
   "moduleSuffixes": null,
-  "moduleDetectionKind": 1,
+  "moduleDetectionKind": 0,
   "newLine": 0,
   "noEmit": null,
   "noCheck": null,
   "noErrorTruncation": null,
   "noFallthroughCasesInSwitch": null,
-  "noImplicitAny": true,
+  "noImplicitAny": null,
   "noImplicitThis": null,
   "noImplicitReturns": null,
   "noEmitHelpers": null,
@@ -105,13 +101,9 @@ CompilerOptions::
   "noImplicitOverride": null,
   "noUncheckedSideEffectImports": null,
   "out": "",
-  "outDir": "/apath/dist",
-  "outFile": "",
-  "paths": {
-    "jquery": [
-      "./vendor/jquery/dist/jquery"
-    ]
-  },
+  "outDir": "/outDir",
+  "outFile": "/outFile",
+  "paths": null,
   "preserveConstEnums": null,
   "preserveSymlinks": null,
   "project": "",
@@ -121,10 +113,10 @@ CompilerOptions::
   "removeComments": null,
   "rewriteRelativeImportExtensions": null,
   "reactNamespace": "",
-  "rootDir": "",
+  "rootDir": "/rootDir",
   "rootDirs": null,
   "skipLibCheck": null,
-  "strict": true,
+  "strict": null,
   "strictBindCallApply": null,
   "strictBuiltinIteratorReturn": null,
   "strictFunctionTypes": null,
@@ -135,18 +127,18 @@ CompilerOptions::
   "sourceMap": null,
   "sourceRoot": "",
   "suppressOutputPathCheck": null,
-  "target": 4,
+  "target": 0,
   "traceResolution": null,
-  "tsBuildInfoFile": "",
+  "tsBuildInfoFile": "/tsBuildInfoFile",
   "typeRoots": null,
   "types": null,
   "useDefineForClassFields": null,
   "useUnknownInCatchVariables": null,
   "verbatimModuleSyntax": null,
   "maxNodeModuleJsDepth": null,
-  "configFilePath": "/apath/tsconfig.json",
+  "configFilePath": "/tsconfig.json",
   "noDtsResolution": null,
-  "pathsBasePath": "/apath",
+  "pathsBasePath": "",
   "diagnostics": null,
   "extendedDiagnostics": null,
   "generateCpuProfile": "",
@@ -165,6 +157,6 @@ CompilerOptions::
 }
 
 FileNames::
-/apath/src/index.ts,/apath/src/app.ts
+/src/app.ts,/src/index.ts
 Errors::
 
