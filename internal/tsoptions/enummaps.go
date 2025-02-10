@@ -135,6 +135,7 @@ var targetOptionMap = collections.NewOrderedMapFromList([]collections.MapEntry[s
 	{Key: "es2021", Value: core.ScriptTargetES2021},
 	{Key: "es2022", Value: core.ScriptTargetES2022},
 	{Key: "es2023", Value: core.ScriptTargetES2023},
+	// {"es2024", string(core.ScriptTargetES2024},
 	{Key: "esnext", Value: core.ScriptTargetESNext},
 })
 
