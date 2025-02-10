@@ -474,9 +474,12 @@ var parseJsonConfigFileTests = []struct {
 var tsconfigWithExtends = `{
   "files": ["/src/index.ts", "/src/app.ts"],
   "include": ["/src/**/*"],
+  "exclude": [],
   "ts-node": {
     "compilerOptions": {
-      "module": "commonjs"
+      "module": "commonjs",
+	  "lib": ["ES2024"],
+      "target": "ES2024",
     },
     "transpileOnly": true
   }
