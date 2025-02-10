@@ -50,6 +50,10 @@ export function activate(context: vscode.ExtensionContext) {
         ],
         outputChannel: output,
         traceOutputChannel: traceOutput,
+        diagnosticPullOptions: {
+            onChange: true,
+            onSave: true,
+        },
     };
 
     client = new LanguageClient(
