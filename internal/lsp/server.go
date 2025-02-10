@@ -330,5 +330,10 @@ func codeFence(lang string, code string) string {
 	for strings.Contains(code, strings.Repeat("`", ticks)) {
 		ticks++
 	}
-	return strings.Repeat("`", ticks) + "\n" + code + "\n" + strings.Repeat("`", ticks)
+	var result strings.Builder
+	result.Grow(len(code) + len(lang) + 2*ticks + 2)
+	result.WriteString(strings.Repeat("`", ticks) + lang + "\n")
+	result.WriteString(code + "\n")
+	result.WriteString(strings.Repeat("`", ticks))
+	return result.String()
 }
