@@ -34,6 +34,10 @@ const { values: options } = parseArgs({
     noembed: false,
 });
 
+const goBuildFlags = [
+    ...(options.race ? ["-race"] : []),
+];
+
 /**
  * @type {<T>(fn: () => T) => (() => T)}
  */
@@ -97,7 +101,7 @@ export const lib = task({
  * @param {AbortSignal} [abortSignal]
  */
 function buildExecutableToBuilt(packagePath, abortSignal) {
-    return $({ cancelSignal: abortSignal })`go build ${options.race ? ["-race"] : []} -tags=noembed -o ./built/local/ ${packagePath}`;
+    return $({ cancelSignal: abortSignal })`go build ${goBuildFlags} -tags=noembed -o ./built/local/ ${packagePath}`;
 }
 
 export const tsgoBuild = task({
@@ -172,7 +176,7 @@ export const generate = task({
 });
 
 const goTestFlags = [
-    ...(options.race ? ["-race"] : []),
+    ...goBuildFlags,
     ...(options.noembed ? ["-tags=noembed"] : []),
 ];
 
