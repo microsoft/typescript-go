@@ -181,6 +181,7 @@ jobs:
       - format
       - generate
       - tidy
+      - smoke
 
     steps:
       - name: Check required jobs
