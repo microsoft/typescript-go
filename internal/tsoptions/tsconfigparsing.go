@@ -274,7 +274,7 @@ func isCompilerOptionsValue(option *CommandLineOption, value any) bool {
 		}
 		if option.Kind == "enum" && reflect.TypeOf(value).Kind() == reflect.String {
 			_, ok := option.EnumMap().Get(strings.ToLower(value.(string)))
-			return ok || option.DeprecatedKeys().Has(strings.ToLower(value.(string)))
+			return ok || (option.DeprecatedKeys() != nil && option.DeprecatedKeys().Has(strings.ToLower(value.(string))))
 		}
 	}
 	return false
@@ -286,7 +286,7 @@ func validateJsonOptionValue(
 	valueExpression *ast.Expression,
 	sourceFile *ast.SourceFile,
 ) (any, []*ast.Diagnostic) {
-	if val == nil || val == "" {
+	if val == nil {
 		return nil, nil
 	}
 	errors := []*ast.Diagnostic{}
@@ -559,7 +559,7 @@ func convertArrayLiteralExpressionToJson(
 	}
 	// Filter out invalid values
 	if len(elements) == 0 {
-		return []string{}, nil
+		return []any{}, nil
 	}
 	var errors []*ast.Diagnostic
 	var value []any

@@ -450,6 +450,7 @@ var parseJsonConfigFileTests = []struct {
 				    "outDir": "./dist",
     				"strict": true,
     				"noImplicitAny": true,
+					"baseUrl": "",
 				},
 			}`,
 			configFileName: "tsconfig.json",
@@ -474,6 +475,7 @@ var parseJsonConfigFileTests = []struct {
 var tsconfigWithExtends = `{
   "files": ["/src/index.ts", "/src/app.ts"],
   "include": ["/src/**/*"],
+  "exclude": [],
   "ts-node": {
     "compilerOptions": {
       "module": "commonjs"

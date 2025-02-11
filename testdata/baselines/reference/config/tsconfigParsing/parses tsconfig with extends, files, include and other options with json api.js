@@ -18,6 +18,7 @@ Fs::
 				    "outDir": "./dist",
     				"strict": true,
     				"noImplicitAny": true,
+					"baseUrl": "",
 				},
 			}
 
@@ -25,6 +26,7 @@ Fs::
 {
   "files": ["/src/index.ts", "/src/app.ts"],
   "include": ["/src/**/*"],
+  "exclude": [],
   "ts-node": {
     "compilerOptions": {
       "module": "commonjs"
@@ -47,7 +49,7 @@ CompilerOptions::
   "allowUnusedLabels": null,
   "assumeChangesOnlyAffectDirectDependencies": null,
   "alwaysStrict": null,
-  "baseUrl": "",
+  "baseUrl": "/",
   "build": null,
   "checkJs": null,
   "customConditions": null,
