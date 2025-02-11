@@ -3,7 +3,7 @@ description: Setup Go
 
 inputs:
   go-version:
-    default: '>=1.23.0'
+    default: '>=1.24.0'
   cache-name:
     default: 'cache'
 
