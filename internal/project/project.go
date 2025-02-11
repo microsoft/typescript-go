@@ -90,6 +90,11 @@ func (p *Project) FS() vfs.FS {
 	return p.projectService.host.FS()
 }
 
+// DefaultLibraryPath implements LanguageServiceHost.
+func (p *Project) DefaultLibraryPath() string {
+	return p.projectService.host.DefaultLibraryPath()
+}
+
 // GetCompilerOptions implements LanguageServiceHost.
 func (p *Project) GetCompilerOptions() *core.CompilerOptions {
 	return p.compilerOptions
@@ -217,10 +222,9 @@ func (p *Project) updateProgram() {
 	compilerOptions := p.GetCompilerOptions()
 
 	p.program = compiler.NewProgram(compiler.ProgramOptions{
-		RootFiles:          rootFileNames,
-		Host:               p,
-		Options:            compilerOptions,
-		DefaultLibraryPath: p.GetDefaultLibraryPath(),
+		RootFiles: rootFileNames,
+		Host:      p,
+		Options:   compilerOptions,
 	})
 
 	p.program.BindSourceFiles()
