@@ -27,15 +27,19 @@ const { values: options } = parseArgs({
         race: { type: "boolean" },
         fix: { type: "boolean" },
         noembed: { type: "boolean" },
+        debug: { type: "boolean" },
     },
     strict: false,
     allowPositionals: true,
     allowNegative: true,
     noembed: false,
+    debug: false,
 });
 
 const goBuildFlags = [
     ...(options.race ? ["-race"] : []),
+    // https://github.com/go-delve/delve/blob/62cd2d423c6a85991e49d6a70cc5cb3e97d6ceef/Documentation/usage/dlv_exec.md?plain=1#L12
+    ...(options.debug ? ["-gcflags=all=-N -l"] : []),
 ];
 
 /**
