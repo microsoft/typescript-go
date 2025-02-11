@@ -5,7 +5,6 @@ import { $ as _$ } from "execa";
 import { glob } from "glob";
 import { task } from "hereby";
 import assert from "node:assert";
-import { debug } from "node:console";
 import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
