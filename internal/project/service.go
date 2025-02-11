@@ -293,20 +293,7 @@ func (s *Service) delayUpdateProjectGraph(project *Project) {
 }
 
 func (s *Service) getOrCreateScriptInfoNotOpenedByClient(fileName string, path tspath.Path, scriptKind core.ScriptKind) *ScriptInfo {
-	if tspath.IsRootedDiskPath(fileName) || isDynamicFileName(fileName) || isBundledUri(fileName) {
-		return s.getOrCreateScriptInfoWorker(fileName, path, scriptKind, false /*openedByClient*/, "" /*fileContent*/, false /*deferredDeleteOk*/)
-	}
-	// !!!
-	// This is non rooted path with different current directory than project service current directory
-	// Only paths recognized are open relative file paths
-	// const info = this.openFilesWithNonRootedDiskPath.get(this.toCanonicalFileName(fileName))
-	// if info {
-	// 	return info
-	// }
-
-	// This means triple slash references wont be resolved in dynamic and unsaved files
-	// which is intentional since we dont know what it means to be relative to non disk files
-	return nil
+	return s.getOrCreateScriptInfoWorker(fileName, path, scriptKind, false /*openedByClient*/, "" /*fileContent*/, false /*deferredDeleteOk*/)
 }
 
 func (s *Service) getOrCreateOpenScriptInfo(fileName string, path tspath.Path, fileContent string, scriptKind core.ScriptKind, projectRootPath string) *ScriptInfo {
