@@ -117,11 +117,7 @@ func main() {
 	if args := os.Args[1:]; len(args) > 0 {
 		switch args[0] {
 		case "tsc":
-			exit, watcher := execute.CommandLine(newSystem(), nil, args[1:])
-			if exit != execute.ExitStatusSuccess || watcher == nil {
-				os.Exit(int(exit))
-			}
-			os.Exit(start(watcher))
+			os.Exit(int(execute.CommandLine(newSystem(), nil, args[1:])))
 		case "lsp":
 			os.Exit(runLSP(args[1:]))
 		}

@@ -30,10 +30,6 @@ func (p *ParsedCommandLine) CompilerOptions() *core.CompilerOptions {
 	return p.ParsedConfig.CompilerOptions
 }
 
-func (p *ParsedCommandLine) WatchOptions() *core.WatchOptions {
-	return p.ParsedConfig.WatchOptions
-}
-
 func (p *ParsedCommandLine) FileNames() []string {
 	return p.ParsedConfig.FileNames
 }
