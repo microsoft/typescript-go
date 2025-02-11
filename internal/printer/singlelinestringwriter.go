@@ -8,6 +8,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/stringutil"
 )
 
+// TODO: Definitely not threadsafe - make one per checker instead of one global one (threadlocal storage would be neat)
 var SingleLineStringWriter EmitTextWriter = &singleLineStringWriter{}
 
 type singleLineStringWriter struct {

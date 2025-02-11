@@ -1435,10 +1435,10 @@ func IsDynamicName(name *Node) bool {
 }
 
 func IsEntityNameExpression(node *Node) bool {
-	return node.Kind == KindIdentifier || isPropertyAccessEntityNameExpression(node)
+	return node.Kind == KindIdentifier || IsPropertyAccessEntityNameExpression(node)
 }
 
-func isPropertyAccessEntityNameExpression(node *Node) bool {
+func IsPropertyAccessEntityNameExpression(node *Node) bool {
 	if node.Kind == KindPropertyAccessExpression {
 		expr := node.AsPropertyAccessExpression()
 		return expr.Name().Kind == KindIdentifier && IsEntityNameExpression(expr.Expression)

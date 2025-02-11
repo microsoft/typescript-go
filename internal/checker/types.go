@@ -75,6 +75,37 @@ const (
 	TypeFormatFlagsInTypeAlias         TypeFormatFlags = 1 << 23 // Writing type in type alias declaration
 )
 
+const TypeFormatFlagsNodeBuilderFlagsMask = TypeFormatFlagsNoTruncation | TypeFormatFlagsWriteArrayAsGenericType | TypeFormatFlagsGenerateNamesForShadowedTypeParams | TypeFormatFlagsUseStructuralFallback | TypeFormatFlagsWriteTypeArgumentsOfSignature |
+	TypeFormatFlagsUseFullyQualifiedType | TypeFormatFlagsSuppressAnyReturnType | TypeFormatFlagsMultilineObjectLiterals | TypeFormatFlagsWriteClassExpressionAsTypeLiteral |
+	TypeFormatFlagsUseTypeOfFunction | TypeFormatFlagsOmitParameterModifiers | TypeFormatFlagsUseAliasDefinedOutsideCurrentScope | TypeFormatFlagsAllowUniqueESSymbolType | TypeFormatFlagsInTypeAlias |
+	TypeFormatFlagsUseSingleQuotesForStringLiteralType | TypeFormatFlagsNoTypeReduction | TypeFormatFlagsOmitThisParameter
+
+// dprint-ignore
+type SymbolFormatFlags int32
+
+const (
+	SymbolFormatFlagsNone SymbolFormatFlags = 0
+	// Write symbols's type argument if it is instantiated symbol
+	// eg. class C<T> { p: T }   <-- Show p as C<T>.p here
+	//     var a: C<number>;
+	//     var p = a.p; <--- Here p is property of C<number> so show it as C<number>.p instead of just C.p
+	SymbolFormatFlagsWriteTypeParametersOrArguments SymbolFormatFlags = 1 << 0
+	// Use only external alias information to get the symbol name in the given context
+	// eg.  module m { export class c { } } import x = m.c;
+	// When this flag is specified m.c will be used to refer to the class instead of alias symbol x
+	SymbolFormatFlagsUseOnlyExternalAliasing SymbolFormatFlags = 1 << 1
+	// Build symbol name using any nodes needed, instead of just components of an entity name
+	SymbolFormatFlagsAllowAnyNodeKind SymbolFormatFlags = 1 << 2
+	// Prefer aliases which are not directly visible
+	SymbolFormatFlagsUseAliasDefinedOutsideCurrentScope SymbolFormatFlags = 1 << 3
+	// { [E.A]: 1 }
+	/** @internal */
+	SymbolFormatFlagsWriteComputedProps SymbolFormatFlags = 1 << 4
+	// Skip building an accessible symbol chain
+	/** @internal */
+	SymbolFormatFlagsDoNotIncludeSymbolChain SymbolFormatFlags = 1 << 5
+)
+
 // Ids
 
 type TypeId uint32
@@ -697,6 +728,8 @@ type StructuredType struct {
 	signatures         []*Signature // Signatures (call + construct)
 	callSignatureCount int          // Count of call signatures
 	indexInfos         []*IndexInfo
+
+	objectTypeWithoutAbstractConstructSignatures *Type
 }
 
 func (t *StructuredType) AsStructuredType() *StructuredType { return t }
