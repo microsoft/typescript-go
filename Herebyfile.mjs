@@ -36,6 +36,19 @@ const { values: options } = parseArgs({
     debug: false,
 });
 
+const defaultGoBuildTags = [
+    ...(options.noembed ? ["noembed"] : []),
+];
+
+/**
+ * @param  {...string} extra
+ * @returns
+ */
+function goBuildTags(...extra) {
+    const tags = new Set(defaultGoBuildTags.concat(extra));
+    return tags.size ? [`-tags=${[...tags].join(",")}`] : [];
+}
+
 const goBuildFlags = [
     ...(options.race ? ["-race"] : []),
     // https://github.com/go-delve/delve/blob/62cd2d423c6a85991e49d6a70cc5cb3e97d6ceef/Documentation/usage/dlv_exec.md?plain=1#L12
@@ -105,7 +118,7 @@ export const lib = task({
  * @param {AbortSignal} [abortSignal]
  */
 function buildExecutableToBuilt(packagePath, abortSignal) {
-    return $({ cancelSignal: abortSignal })`go build ${goBuildFlags} -tags=noembed -o ./built/local/ ${packagePath}`;
+    return $({ cancelSignal: abortSignal })`go build ${goBuildFlags} ${goBuildTags("noembed")} -o ./built/local/ ${packagePath}`;
 }
 
 export const tsgoBuild = task({
@@ -181,7 +194,7 @@ export const generate = task({
 
 const goTestFlags = [
     ...goBuildFlags,
-    ...(options.noembed ? ["-tags=noembed"] : []),
+    ...goBuildTags(),
 ];
 
 const gotestsum = memoize(() => {
