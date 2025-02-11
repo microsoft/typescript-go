@@ -30,7 +30,7 @@ const (
 )
 
 type Project struct {
-	projectService *ProjectService
+	projectService *Service
 
 	name string
 	kind Kind
@@ -56,7 +56,7 @@ type Project struct {
 	program         *compiler.Program
 }
 
-func NewConfiguredProject(configFileName string, configFilePath tspath.Path, projectService *ProjectService) *Project {
+func NewConfiguredProject(configFileName string, configFilePath tspath.Path, projectService *Service) *Project {
 	project := NewProject(configFileName, KindConfigured, tspath.GetDirectoryPath(configFileName), projectService)
 	project.configFileName = configFileName
 	project.configFilePath = configFilePath
@@ -64,14 +64,14 @@ func NewConfiguredProject(configFileName string, configFilePath tspath.Path, pro
 	return project
 }
 
-func NewInferredProject(compilerOptions *core.CompilerOptions, currentDirectory string, projectRootPath tspath.Path, projectService *ProjectService) *Project {
+func NewInferredProject(compilerOptions *core.CompilerOptions, currentDirectory string, projectRootPath tspath.Path, projectService *Service) *Project {
 	project := NewProject(projectNamer.next("/dev/null/inferredProject"), KindInferred, currentDirectory, projectService)
 	project.rootPath = projectRootPath
 	project.compilerOptions = compilerOptions
 	return project
 }
 
-func NewProject(name string, kind Kind, currentDirectory string, projectService *ProjectService) *Project {
+func NewProject(name string, kind Kind, currentDirectory string, projectService *Service) *Project {
 	projectService.log(fmt.Sprintf("Creating %sProject: %s, currentDirectory: %s", kind.String(), name, currentDirectory))
 	project := &Project{
 		projectService:   projectService,

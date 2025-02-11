@@ -18,7 +18,7 @@ import (
 	"gotest.tools/v3/assert"
 )
 
-func TestProjectService(t *testing.T) {
+func TestService(t *testing.T) {
 	t.Parallel()
 	files := map[string]string{
 		"home/projects/TS/p1/tsconfig.json": `{
@@ -160,9 +160,9 @@ func TestProjectService(t *testing.T) {
 	})
 }
 
-func setup(files map[string]string) (*project.ProjectService, *projectServiceHost) {
+func setup(files map[string]string) (*project.Service, *projectServiceHost) {
 	host := newProjectServiceHost(files)
-	service := project.NewProjectService(host, project.ProjectServiceOptions{
+	service := project.NewService(host, project.ServiceOptions{
 		Logger: host.logger,
 	})
 	return service, host
@@ -217,4 +217,4 @@ func (p *projectServiceHost) NewLine() string {
 	return "\n"
 }
 
-var _ project.ProjectServiceHost = (*projectServiceHost)(nil)
+var _ project.ServiceHost = (*projectServiceHost)(nil)

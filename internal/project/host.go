@@ -2,7 +2,7 @@ package project
 
 import "github.com/microsoft/typescript-go/internal/vfs"
 
-type ProjectServiceHost interface {
+type ServiceHost interface {
 	FS() vfs.FS
 	DefaultLibraryPath() string
 	GetCurrentDirectory() string

@@ -41,7 +41,7 @@ func NewServer(opts *ServerOptions) *Server {
 	}
 }
 
-var _ project.ProjectServiceHost = (*Server)(nil)
+var _ project.ServiceHost = (*Server)(nil)
 
 type Server struct {
 	r *lsproto.BaseReader
@@ -60,7 +60,7 @@ type Server struct {
 	initializeParams *lsproto.InitializeParams
 
 	logger         *project.Logger
-	projectService *project.ProjectService
+	projectService *project.Service
 	converters     *converters
 }
 
@@ -233,7 +233,7 @@ func (s *Server) handleInitialize(req *lsproto.RequestMessage) error {
 
 func (s *Server) handleInitialized(req *lsproto.RequestMessage) error {
 	s.logger = project.NewLogger([]io.Writer{s.stderr}, project.LogLevelVerbose)
-	s.projectService = project.NewProjectService(s, project.ProjectServiceOptions{
+	s.projectService = project.NewService(s, project.ServiceOptions{
 		DefaultLibraryPath: s.defaultLibraryPath,
 		Logger:             s.logger,
 	})
