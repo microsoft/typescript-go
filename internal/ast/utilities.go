@@ -1858,3 +1858,174 @@ func IsBlockScope(node *Node, parentNode *Node) bool {
 	}
 	return false
 }
+
+type ancestorNode struct {
+	prev *ancestorNode
+	parent *Node
+}
+
+func pushAncestor(ancestors *ancestorNode, node *Node, parent *Node) *ancestorNode {
+	if node.Parent != nil {
+		return ancestors
+	}
+	return &ancestorNode{ prev: ancestors, parent: parent }
+}
+
+func popAncestor(ancestors *ancestorNode, node *Node) (*ancestorNode, *Node) {
+	if node.Parent != nil {
+		return ancestors, node.Parent
+	}
+	if ancestors == nil {
+		panic("pop without push")
+	}
+	return ancestors.prev, ancestors.parent
+}
+
+type ModuleInstanceState int32
+
+const (
+	ModuleInstanceStateUnknown ModuleInstanceState = iota
+	ModuleInstanceStateNonInstantiated
+	ModuleInstanceStateInstantiated
+	ModuleInstanceStateConstEnumOnly
+)
+
+func GetModuleInstanceState(node *Node) ModuleInstanceState {
+	return getModuleInstanceState(node, nil, nil)
+}
+
+func getModuleInstanceState(node *Node, ancestors *ancestorNode, visited map[NodeId]ModuleInstanceState) ModuleInstanceState {
+	module := node.AsModuleDeclaration()
+	if module.Body != nil {
+		return getModuleInstanceStateCached(module.Body, pushAncestor(ancestors, module.Body, node), visited)
+	} else {
+		return ModuleInstanceStateInstantiated
+	}
+}
+
+func getModuleInstanceStateCached(node *Node, ancestors *ancestorNode, visited map[NodeId]ModuleInstanceState) ModuleInstanceState {
+	if visited == nil {
+		visited = make(map[NodeId]ModuleInstanceState)
+	}
+	nodeId := GetNodeId(node)
+	if cached, ok := visited[nodeId]; ok {
+		if cached != ModuleInstanceStateUnknown {
+			return cached
+		}
+		return ModuleInstanceStateNonInstantiated
+	}
+	visited[nodeId] = ModuleInstanceStateUnknown
+	result := getModuleInstanceStateWorker(node, ancestors, visited)
+	visited[nodeId] = result
+	return result
+}
+
+func getModuleInstanceStateWorker(node *Node, ancestors *ancestorNode, visited map[NodeId]ModuleInstanceState) ModuleInstanceState {
+	// A module is uninstantiated if it contains only
+	switch node.Kind {
+	case KindInterfaceDeclaration, KindTypeAliasDeclaration:
+		return ModuleInstanceStateNonInstantiated
+	case KindEnumDeclaration:
+		if IsEnumConst(node) {
+			return ModuleInstanceStateConstEnumOnly
+		}
+	case KindImportDeclaration, KindImportEqualsDeclaration:
+		if !HasSyntacticModifier(node, ModifierFlagsExport) {
+			return ModuleInstanceStateNonInstantiated
+		}
+	case KindExportDeclaration:
+		decl := node.AsExportDeclaration()
+		if decl.ModuleSpecifier == nil && decl.ExportClause != nil && decl.ExportClause.Kind == KindNamedExports {
+			state := ModuleInstanceStateNonInstantiated
+
+			ancestors = pushAncestor(ancestors, decl.ExportClause, node)
+			for _, specifier := range decl.ExportClause.AsNamedExports().Elements.Nodes {
+				specifierState := getModuleInstanceStateForAliasTarget(specifier, pushAncestor(ancestors, specifier, decl.ExportClause), visited)
+				if specifierState > state {
+					state = specifierState
+				}
+				if state == ModuleInstanceStateInstantiated {
+					return state
+				}
+			}
+			return state
+		}
+	case KindModuleBlock:
+		state := ModuleInstanceStateNonInstantiated
+		node.ForEachChild(func(n *Node) bool {
+			childState := getModuleInstanceStateCached(n, pushAncestor(ancestors, n, node), visited)
+			switch childState {
+			case ModuleInstanceStateNonInstantiated:
+				return false
+			case ModuleInstanceStateConstEnumOnly:
+				state = ModuleInstanceStateConstEnumOnly
+				return false
+			case ModuleInstanceStateInstantiated:
+				state = ModuleInstanceStateInstantiated
+				return true
+			}
+			panic("Unhandled case in getModuleInstanceStateWorker")
+		})
+		return state
+	case KindModuleDeclaration:
+		return getModuleInstanceState(node, ancestors, visited)
+	case KindIdentifier:
+		if node.Flags&NodeFlagsIdentifierIsInJSDocNamespace != 0 {
+			return ModuleInstanceStateNonInstantiated
+		}
+	}
+	return ModuleInstanceStateInstantiated
+}
+
+func getModuleInstanceStateForAliasTarget(node *Node, ancestors *ancestorNode, visited map[NodeId]ModuleInstanceState) ModuleInstanceState {
+	spec := node.AsExportSpecifier()
+	name := spec.PropertyName
+	if name == nil {
+		name = spec.Name()
+	}
+	if name.Kind != KindIdentifier {
+		// Skip for invalid syntax like this: export { "x" }
+		return ModuleInstanceStateInstantiated
+	}
+	for a, p := popAncestor(ancestors, node); p != nil; a, p = popAncestor(a, p) {
+		if IsBlock(p) || IsModuleBlock(p) || IsSourceFile(p) {
+			statements := GetStatementsOfBlock(p)
+			found := ModuleInstanceStateUnknown
+			for _, statement := range statements.Nodes {
+				if NodeHasName(statement, name) {
+					state := getModuleInstanceStateCached(statement, pushAncestor(a, statement, p), visited)
+					if found == ModuleInstanceStateUnknown || state > found {
+						found = state
+					}
+					if found == ModuleInstanceStateInstantiated {
+						return found
+					}
+					if statement.Kind == KindImportEqualsDeclaration {
+						// Treat re-exports of import aliases as instantiated since they're ambiguous. This is consistent
+						// with `export import x = mod.x` being treated as instantiated:
+						//   import x = mod.x;
+						//   export { x };
+						found = ModuleInstanceStateInstantiated
+					}
+				}
+			}
+			if found != ModuleInstanceStateUnknown {
+				return found
+			}
+		}
+	}
+	// Couldn't locate, assume could refer to a value
+	return ModuleInstanceStateInstantiated
+}
+
+func NodeHasName(statement *Node, id *Node) bool {
+	name := statement.Name()
+	if name != nil {
+		return IsIdentifier(name) && name.AsIdentifier().Text == id.AsIdentifier().Text
+	}
+	if IsVariableStatement(statement) {
+		declarations := statement.AsVariableStatement().DeclarationList.AsVariableDeclarationList().Declarations.Nodes
+		return core.Some(declarations, func(d *Node) bool { return NodeHasName(d, id) })
+	}
+	return false
+}
