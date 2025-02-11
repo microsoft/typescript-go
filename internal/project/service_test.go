@@ -20,6 +20,10 @@ import (
 
 func TestService(t *testing.T) {
 	t.Parallel()
+	if !bundled.Embedded {
+		t.Skip("bundled files are not embedded")
+	}
+
 	files := map[string]string{
 		"home/projects/TS/p1/tsconfig.json": `{
 			"compilerOptions": {
