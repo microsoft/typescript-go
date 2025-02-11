@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"slices"
 	"strings"
+	"sync"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
@@ -31,6 +32,7 @@ const (
 
 type Project struct {
 	projectService *Service
+	mu             sync.Mutex
 
 	name string
 	kind Kind
@@ -187,6 +189,8 @@ func (p *Project) markFileAsDirty(path tspath.Path) {
 }
 
 func (p *Project) markAsDirty() {
+	p.mu.Lock()
+	defer p.mu.Unlock()
 	if !p.dirty {
 		p.dirty = true
 		p.version++
@@ -199,6 +203,8 @@ func (p *Project) updateIfDirty() bool {
 }
 
 func (p *Project) onFileAddedOrRemoved(isSymlink bool) {
+	p.mu.Lock()
+	defer p.mu.Unlock()
 	p.hasAddedOrRemovedFiles = true
 	if isSymlink {
 		p.hasAddedOrRemovedSymlinks = true
