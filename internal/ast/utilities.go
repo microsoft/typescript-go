@@ -1860,7 +1860,7 @@ func IsBlockScope(node *Node, parentNode *Node) bool {
 }
 
 type ancestorNode struct {
-	prev *ancestorNode
+	prev   *ancestorNode
 	parent *Node
 }
 
@@ -1868,7 +1868,7 @@ func pushAncestor(ancestors *ancestorNode, node *Node, parent *Node) *ancestorNo
 	if node.Parent != nil {
 		return ancestors
 	}
-	return &ancestorNode{ prev: ancestors, parent: parent }
+	return &ancestorNode{prev: ancestors, parent: parent}
 }
 
 func popAncestor(ancestors *ancestorNode, node *Node) (*ancestorNode, *Node) {
