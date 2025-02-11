@@ -50,7 +50,6 @@ export function activate(context: vscode.ExtensionContext) {
         ],
         outputChannel: output,
         traceOutputChannel: traceOutput,
-        diagnosticCollectionName: "tsgo",
         diagnosticPullOptions: {
             onChange: true,
             onSave: true,

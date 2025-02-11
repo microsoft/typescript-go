@@ -18,67 +18,6 @@ type converters struct {
 	projectService *project.ProjectService
 }
 
-func (c *converters) languageKindToScriptKind(languageID lsproto.LanguageKind) core.ScriptKind {
-	switch languageID {
-	case "typescript":
-		return core.ScriptKindTS
-	case "typescriptreact":
-		return core.ScriptKindTSX
-	case "javascript":
-		return core.ScriptKindJS
-	case "javascriptreact":
-		return core.ScriptKindJSX
-	default:
-		return core.ScriptKindUnknown
-	}
-}
-
-func (c *converters) documentUriToFileName(uri lsproto.DocumentUri) string {
-	uriStr := string(uri)
-	if strings.HasPrefix(uriStr, "file:///") {
-		path := uriStr[7:]
-		if len(path) >= 4 {
-			if nextSlash := strings.IndexByte(path[1:], '/'); nextSlash != -1 {
-				if possibleDrive, _ := url.PathUnescape(path[1 : nextSlash+2]); strings.HasSuffix(possibleDrive, ":/") {
-					return possibleDrive + path[len(possibleDrive)+3:]
-				}
-			}
-		}
-		return path
-	}
-	if strings.HasPrefix(uriStr, "file://") {
-		// UNC path
-		return uriStr[5:]
-	}
-	parsed := core.Must(url.Parse(uriStr))
-	authority := parsed.Host
-	if authority == "" {
-		authority = "ts-nul-authority"
-	}
-	path := parsed.Path
-	if path == "" {
-		path = parsed.Opaque
-	}
-	if !strings.HasPrefix(path, "/") {
-		path = "/" + path
-	}
-	fragment := parsed.Fragment
-	if fragment != "" {
-		fragment = "#" + fragment
-	}
-	return fmt.Sprintf("^/%s/%s%s%s", parsed.Scheme, authority, path, fragment)
-}
-
-func (c *converters) fileNameToDocumentUri(fileName string) lsproto.DocumentUri {
-	if strings.HasPrefix(fileName, "^/") {
-		return lsproto.DocumentUri(strings.Replace(fileName[2:], "/ts-nul-authority/", ":", 1))
-	}
-	if firstSlash := strings.IndexByte(fileName, '/'); firstSlash > 0 && fileName[firstSlash-1] == ':' {
-		return lsproto.DocumentUri("file:///" + url.PathEscape(fileName[:firstSlash]) + fileName[firstSlash:])
-	}
-	return lsproto.DocumentUri("file://" + fileName)
-}
-
 func (c *converters) toLspRange(fileName string, textRange core.TextRange) (lsproto.Range, error) {
 	scriptInfo := c.projectService.GetScriptInfo(fileName)
 	if scriptInfo == nil {
@@ -119,13 +58,13 @@ func (c *converters) toLspLocation(location ls.Location) (lsproto.Location, erro
 		return lsproto.Location{}, err
 	}
 	return lsproto.Location{
-		Uri:   c.fileNameToDocumentUri(location.FileName),
+		Uri:   fileNameToDocumentUri(location.FileName),
 		Range: rng,
 	}, nil
 }
 
 func (c *converters) fromLspLocation(location lsproto.Location) (ls.Location, error) {
-	fileName := c.documentUriToFileName(location.Uri)
+	fileName := documentUriToFileName(location.Uri)
 	rng, err := c.fromLspRange(location.Range, fileName)
 	if err != nil {
 		return ls.Location{}, err
@@ -162,7 +101,7 @@ func (c *converters) toLspDiagnostic(diagnostic *ast.Diagnostic) (lsproto.Diagno
 		}
 		relatedInformation = append(relatedInformation, lsproto.DiagnosticRelatedInformation{
 			Location: lsproto.Location{
-				Uri:   c.fileNameToDocumentUri(related.File().FileName()),
+				Uri:   fileNameToDocumentUri(related.File().FileName()),
 				Range: relatedRange,
 			},
 			Message: related.Message(),
@@ -176,6 +115,7 @@ func (c *converters) toLspDiagnostic(diagnostic *ast.Diagnostic) (lsproto.Diagno
 		},
 		Severity:           &severity,
 		Message:            diagnostic.Message(),
+		Source:             ptrTo("ts"),
 		RelatedInformation: &relatedInformation,
 	}, nil
 }
@@ -186,6 +126,67 @@ func (c *converters) lineAndCharacterToPosition(lineAndCharacter lsproto.Positio
 		return 0, fmt.Errorf("no script info found for %s", fileName)
 	}
 	return lineAndCharacterToPosition(lineAndCharacter, scriptInfo.LineMap()), nil
+}
+
+func languageKindToScriptKind(languageID lsproto.LanguageKind) core.ScriptKind {
+	switch languageID {
+	case "typescript":
+		return core.ScriptKindTS
+	case "typescriptreact":
+		return core.ScriptKindTSX
+	case "javascript":
+		return core.ScriptKindJS
+	case "javascriptreact":
+		return core.ScriptKindJSX
+	default:
+		return core.ScriptKindUnknown
+	}
+}
+
+func documentUriToFileName(uri lsproto.DocumentUri) string {
+	uriStr := string(uri)
+	if strings.HasPrefix(uriStr, "file:///") {
+		path := uriStr[7:]
+		if len(path) >= 4 {
+			if nextSlash := strings.IndexByte(path[1:], '/'); nextSlash != -1 {
+				if possibleDrive, _ := url.PathUnescape(path[1 : nextSlash+2]); strings.HasSuffix(possibleDrive, ":/") {
+					return possibleDrive + path[len(possibleDrive)+3:]
+				}
+			}
+		}
+		return path
+	}
+	if strings.HasPrefix(uriStr, "file://") {
+		// UNC path
+		return uriStr[5:]
+	}
+	parsed := core.Must(url.Parse(uriStr))
+	authority := parsed.Host
+	if authority == "" {
+		authority = "ts-nul-authority"
+	}
+	path := parsed.Path
+	if path == "" {
+		path = parsed.Opaque
+	}
+	if !strings.HasPrefix(path, "/") {
+		path = "/" + path
+	}
+	fragment := parsed.Fragment
+	if fragment != "" {
+		fragment = "#" + fragment
+	}
+	return fmt.Sprintf("^/%s/%s%s%s", parsed.Scheme, authority, path, fragment)
+}
+
+func fileNameToDocumentUri(fileName string) lsproto.DocumentUri {
+	if strings.HasPrefix(fileName, "^/") {
+		return lsproto.DocumentUri(strings.Replace(fileName[2:], "/ts-nul-authority/", ":", 1))
+	}
+	if firstSlash := strings.IndexByte(fileName, '/'); firstSlash > 0 && fileName[firstSlash-1] == ':' {
+		return lsproto.DocumentUri("file:///" + url.PathEscape(fileName[:firstSlash]) + fileName[firstSlash:])
+	}
+	return lsproto.DocumentUri("file://" + fileName)
 }
 
 func lineAndCharacterToPosition(lineAndCharacter lsproto.Position, lineMap []core.TextPos) int {

@@ -5,6 +5,7 @@ import { $ as _$ } from "execa";
 import { glob } from "glob";
 import { task } from "hereby";
 import assert from "node:assert";
+import { debug } from "node:console";
 import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
@@ -27,11 +28,13 @@ const { values: options } = parseArgs({
         race: { type: "boolean" },
         fix: { type: "boolean" },
         noembed: { type: "boolean" },
+        debug: { type: "boolean" },
     },
     strict: false,
     allowPositionals: true,
     allowNegative: true,
     noembed: false,
+    debug: false,
 });
 
 /**
@@ -97,7 +100,7 @@ export const lib = task({
  * @param {AbortSignal} [abortSignal]
  */
 function buildExecutableToBuilt(packagePath, abortSignal) {
-    return $({ cancelSignal: abortSignal })`go build ${options.race ? ["-race"] : []} -tags=noembed -o ./built/local/ ${packagePath}`;
+    return $({ cancelSignal: abortSignal })`go build ${options.race ? ["-race"] : []} ${options.debug ? [`-gcflags=all=-N -l`] : []} -tags=noembed -o ./built/local/ ${packagePath}`;
 }
 
 export const tsgoBuild = task({

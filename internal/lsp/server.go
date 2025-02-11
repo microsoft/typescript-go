@@ -38,7 +38,6 @@ func NewServer(opts *ServerOptions) *Server {
 		newLine:            opts.NewLine,
 		fs:                 opts.FS,
 		defaultLibraryPath: opts.DefaultLibraryPath,
-		converters:         &converters{},
 	}
 }
 
@@ -233,19 +232,19 @@ func (s *Server) handleInitialized(req *lsproto.RequestMessage) error {
 		DefaultLibraryPath: s.defaultLibraryPath,
 		Logger:             s.logger,
 	})
-	s.converters.projectService = s.projectService
+	s.converters = &converters{projectService: s.projectService}
 	return s.sendResult(req.ID, nil)
 }
 
 func (s *Server) handleDidOpen(req *lsproto.RequestMessage) error {
 	params := req.Params.(*lsproto.DidOpenTextDocumentParams)
-	s.projectService.OpenClientFile(s.converters.documentUriToFileName(params.TextDocument.Uri), params.TextDocument.Text, s.converters.languageKindToScriptKind(params.TextDocument.LanguageId), "")
+	s.projectService.OpenClientFile(documentUriToFileName(params.TextDocument.Uri), params.TextDocument.Text, languageKindToScriptKind(params.TextDocument.LanguageId), "")
 	return s.sendResult(req.ID, nil)
 }
 
 func (s *Server) handleDidChange(req *lsproto.RequestMessage) error {
 	params := req.Params.(*lsproto.DidChangeTextDocumentParams)
-	scriptInfo := s.projectService.GetScriptInfo(s.converters.documentUriToFileName(params.TextDocument.Uri))
+	scriptInfo := s.projectService.GetScriptInfo(documentUriToFileName(params.TextDocument.Uri))
 	if scriptInfo == nil {
 		return s.sendError(req.ID, lsproto.ErrRequestFailed)
 	}
@@ -271,7 +270,7 @@ func (s *Server) handleDidChange(req *lsproto.RequestMessage) error {
 	s.projectService.ApplyChangesInOpenFiles(
 		nil, /*openFiles*/
 		[]project.ChangeFileArguments{{
-			FileName: s.converters.documentUriToFileName(params.TextDocument.Uri),
+			FileName: documentUriToFileName(params.TextDocument.Uri),
 			Changes:  changes,
 		}},
 		nil, /*closedFiles*/
@@ -343,7 +342,7 @@ func (s *Server) handleDefinition(req *lsproto.RequestMessage) error {
 }
 
 func (s *Server) getFileAndProject(uri lsproto.DocumentUri) (*project.ScriptInfo, *project.Project) {
-	fileName := s.converters.documentUriToFileName(uri)
+	fileName := documentUriToFileName(uri)
 	return s.projectService.EnsureDefaultProjectForFile(fileName)
 }
 
