@@ -26,19 +26,6 @@ type assignProjectResult struct {
 	// configFileErrors []*ast.Diagnostic
 }
 
-type OpenFileArguments struct {
-	FileName        string
-	Content         string
-	ScriptKind      core.ScriptKind
-	HasMixedContent bool
-	ProjectRootPath string
-}
-
-type ChangeFileArguments struct {
-	FileName string
-	Changes  []ls.TextChange
-}
-
 type ProjectServiceOptions struct {
 	DefaultLibraryPath string
 	Logger             *Logger
@@ -92,6 +79,15 @@ func NewProjectService(host ProjectServiceHost, options ProjectServiceOptions) *
 	}
 }
 
+func (s *ProjectService) Projects() []*Project {
+	projects := make([]*Project, 0, len(s.configuredProjects)+len(s.inferredProjects))
+	for _, project := range s.configuredProjects {
+		projects = append(projects, project)
+	}
+	projects = append(projects, s.inferredProjects...)
+	return projects
+}
+
 func (s *ProjectService) GetScriptInfo(fileName string) *ScriptInfo {
 	return s.getScriptInfo(s.toPath(fileName))
 }
@@ -105,7 +101,7 @@ func (s *ProjectService) getScriptInfo(path tspath.Path) *ScriptInfo {
 	return nil
 }
 
-func (s *ProjectService) OpenClientFile(fileName string, fileContent string, scriptKind core.ScriptKind, projectRootPath string) {
+func (s *ProjectService) OpenFile(fileName string, fileContent string, scriptKind core.ScriptKind, projectRootPath string) {
 	path := s.toPath(fileName)
 	existing := s.getScriptInfo(path)
 	info := s.getOrCreateOpenScriptInfo(fileName, path, fileContent, scriptKind, projectRootPath)
@@ -118,60 +114,13 @@ func (s *ProjectService) OpenClientFile(fileName string, fileContent string, scr
 	s.printProjects()
 }
 
-func (s *ProjectService) ApplyChangesInOpenFiles(
-	openFiles []OpenFileArguments,
-	changedFiles []ChangeFileArguments,
-	closedFiles []string,
-) {
-	var assignOrphanScriptInfosToInferredProject bool
-	existingOpenScriptInfos := make([]*ScriptInfo, 0, len(openFiles))
-	openScriptInfos := make([]*ScriptInfo, 0, len(openFiles))
-	openScriptInfoPaths := make([]tspath.Path, 0, len(openFiles))
-
-	for _, openFile := range openFiles {
-		openFilePath := s.toPath(openFile.FileName)
-		existingOpenScriptInfos = append(existingOpenScriptInfos, s.getScriptInfo(openFilePath))
-		openScriptInfos = append(openScriptInfos, s.getOrCreateOpenScriptInfo(openFile.FileName, openFilePath, openFile.Content, openFile.ScriptKind, openFile.ProjectRootPath))
-		openScriptInfoPaths = append(openScriptInfoPaths, openFilePath)
+func (s *ProjectService) ChangeFile(fileName string, changes []ls.TextChange) {
+	path := s.toPath(fileName)
+	info := s.getScriptInfo(path)
+	if info == nil {
+		panic("scriptInfo not found")
 	}
-
-	for _, changedFile := range changedFiles {
-		info := s.getScriptInfo(s.toPath(changedFile.FileName))
-		if info == nil {
-			panic("scriptInfo for changed file not found")
-		}
-		s.applyChangesToFile(info, changedFile.Changes)
-	}
-
-	for _, closedFile := range closedFiles {
-		closedFilePath := s.toPath(closedFile)
-		assignOrphanScriptInfosToInferredProject = s.closeClientFile(closedFilePath, true /*skipAssignOrphanScriptInfosToInferredProject*/) || assignOrphanScriptInfosToInferredProject
-	}
-
-	retainedProjects := make(map[*Project]projectLoadKind)
-	for i, existing := range existingOpenScriptInfos {
-		if existing == nil && openScriptInfos[i] != nil && !openScriptInfos[i].isDynamic {
-			// !!!
-			// s.tryInvokeWildcardDirectories(openScriptInfos[i])
-		}
-	}
-	for _, info := range openScriptInfos {
-		for project, loadKind := range s.assignProjectToOpenedScriptInfo(info).retainProjects {
-			retainedProjects[project] = loadKind
-		}
-	}
-
-	if assignOrphanScriptInfosToInferredProject {
-		// !!!
-		// s.assignOrphanScriptInfosToInferredProject()
-	}
-
-	if len(openScriptInfos) > 0 {
-		s.cleanupProjectsAndScriptInfos(retainedProjects, openScriptInfoPaths)
-		s.printProjects()
-	} else if len(closedFiles) > 0 {
-		s.printProjects()
-	}
+	s.applyChangesToFile(info, changes)
 }
 
 func (s *ProjectService) EnsureDefaultProjectForFile(fileName string) (*ScriptInfo, *Project) {
@@ -336,7 +285,7 @@ func (s *ProjectService) delayUpdateProjectGraph(project *Project) {
 		return
 	}
 	project.markAsDirty()
-	if project.kind == ProjectKindAutoImportProvider || project.kind == ProjectKindAuxiliary {
+	if project.kind == KindAutoImportProvider || project.kind == KindAuxiliary {
 		return
 	}
 	// !!! throttle
@@ -344,7 +293,7 @@ func (s *ProjectService) delayUpdateProjectGraph(project *Project) {
 }
 
 func (s *ProjectService) getOrCreateScriptInfoNotOpenedByClient(fileName string, path tspath.Path, scriptKind core.ScriptKind) *ScriptInfo {
-	if tspath.IsRootedDiskPath(fileName) || isDynamicFileName(fileName) {
+	if tspath.IsRootedDiskPath(fileName) || isDynamicFileName(fileName) || isBundledUri(fileName) {
 		return s.getOrCreateScriptInfoWorker(fileName, path, scriptKind, false /*openedByClient*/, "" /*fileContent*/, false /*deferredDeleteOk*/)
 	}
 	// !!!

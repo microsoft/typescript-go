@@ -243,7 +243,7 @@ func (s *Server) handleInitialized(req *lsproto.RequestMessage) error {
 
 func (s *Server) handleDidOpen(req *lsproto.RequestMessage) error {
 	params := req.Params.(*lsproto.DidOpenTextDocumentParams)
-	s.projectService.OpenClientFile(documentUriToFileName(params.TextDocument.Uri), params.TextDocument.Text, languageKindToScriptKind(params.TextDocument.LanguageId), "")
+	s.projectService.OpenFile(documentUriToFileName(params.TextDocument.Uri), params.TextDocument.Text, languageKindToScriptKind(params.TextDocument.LanguageId), "")
 	return s.sendResult(req.ID, nil)
 }
 
@@ -272,15 +272,7 @@ func (s *Server) handleDidChange(req *lsproto.RequestMessage) error {
 		}
 	}
 
-	s.projectService.ApplyChangesInOpenFiles(
-		nil, /*openFiles*/
-		[]project.ChangeFileArguments{{
-			FileName: documentUriToFileName(params.TextDocument.Uri),
-			Changes:  changes,
-		}},
-		nil, /*closedFiles*/
-	)
-
+	s.projectService.ChangeFile(documentUriToFileName(params.TextDocument.Uri), changes)
 	return s.sendResult(req.ID, nil)
 }
 

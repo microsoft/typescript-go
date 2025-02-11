@@ -7,6 +7,4 @@ type ProjectServiceHost interface {
 	DefaultLibraryPath() string
 	GetCurrentDirectory() string
 	NewLine() string
-	Trace(msg string)
-	Log(msg ...any)
 }
