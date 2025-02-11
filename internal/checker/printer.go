@@ -47,7 +47,7 @@ func (c *Checker) symbolToString(s *ast.Symbol) string {
 	return "(missing)"
 }
 
-func (c *Checker) typeToString(t *Type) string {
+func (c *Checker) TypeToString(t *Type) string {
 	return c.typeToStringEx(t, nil, TypeFormatFlagsNone)
 }
 
@@ -55,10 +55,6 @@ func (c *Checker) typeToStringEx(t *Type, enclosingDeclaration *ast.Node, flags 
 	p := c.newPrinter(flags)
 	p.printType(t)
 	return p.string()
-}
-
-func (c *Checker) TypeToString(t *Type) string {
-	return c.typeToString(t)
 }
 
 func (c *Checker) SourceFileWithTypes(sourceFile *ast.SourceFile) string {
@@ -251,7 +247,7 @@ func (p *Printer) printObjectType(t *Type) {
 		p.printParameterizedType(t)
 	case t.objectFlags&ObjectFlagsClassOrInterface != 0:
 		p.printName(t.symbol)
-	case p.c.isGenericMappedType(t):
+	case p.c.isGenericMappedType(t) || t.objectFlags&ObjectFlagsMapped != 0 && t.AsMappedType().containsError:
 		p.printMappedType(t)
 	default:
 		p.printAnonymousType(t)

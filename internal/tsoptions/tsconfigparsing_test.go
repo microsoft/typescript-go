@@ -441,7 +441,7 @@ var parseJsonConfigFileTests = []struct {
 		}},
 	},
 	{
-		title:               "parses tsconfig with extends, files and include",
+		title:               "parses tsconfig with extends, files, include and other options",
 		noSubmoduleBaseline: true,
 		input: []testConfig{{
 			jsonText: `{
@@ -450,6 +450,7 @@ var parseJsonConfigFileTests = []struct {
 				    "outDir": "./dist",
     				"strict": true,
     				"noImplicitAny": true,
+					"baseUrl": "",
 				},
 			}`,
 			configFileName: "tsconfig.json",
@@ -457,11 +458,30 @@ var parseJsonConfigFileTests = []struct {
 			allFileList:    map[string]string{"/tsconfigWithExtends.json": tsconfigWithExtends, "/src/index.ts": "", "/src/app.ts": "", "/node_modules/module.ts": "", "/dist/output.js": ""},
 		}},
 	},
+	{
+		title:               "parses tsconfig with extends and configDir",
+		noSubmoduleBaseline: true,
+		input: []testConfig{{
+			jsonText: `{
+				"extends": "./tsconfig.base.json"
+			}`,
+			configFileName: "tsconfig.json",
+			basePath:       "/",
+			allFileList:    map[string]string{"/tsconfig.base.json": tsconfigWithExtendsAndConfigDir, "/src/index.ts": "", "/src/app.ts": "", "/node_modules/module.ts": "", "/dist/output.js": ""},
+		}},
+	},
 }
 
 var tsconfigWithExtends = `{
   "files": ["/src/index.ts", "/src/app.ts"],
   "include": ["/src/**/*"],
+  "exclude": [],
+  "ts-node": {
+    "compilerOptions": {
+      "module": "commonjs"
+    },
+    "transpileOnly": true
+  }
 }`
 
 var tsconfigWithoutConfigDir = `{
@@ -473,6 +493,17 @@ var tsconfigWithoutConfigDir = `{
 var tsconfigWithConfigDir = `{
   "compilerOptions": {
     "outDir": "${configDir}/bin"
+  }
+}`
+
+var tsconfigWithExtendsAndConfigDir = `{
+  "compilerOptions": {
+    "outFile": "${configDir}/outFile",
+    "outDir": "${configDir}/outDir",
+    "rootDir": "${configDir}/rootDir",
+    "tsBuildInfoFile": "${configDir}/tsBuildInfoFile",
+    "baseUrl": "${configDir}/baseUrl",
+    "declarationDir": "${configDir}/declarationDir",
   }
 }`
 
@@ -547,6 +578,14 @@ func baselineParseConfigWith(t *testing.T, baselineFileName string, noSubmoduleB
 		}
 		baselineContent.WriteString("\n")
 		baselineContent.WriteString("configFileName:: " + config.configFileName + "\n")
+		if noSubmoduleBaseline {
+			baselineContent.WriteString("CompilerOptions::\n")
+			enc := json.NewEncoder(&baselineContent)
+			enc.SetIndent("", "  ")
+			enc.SetEscapeHTML(false)
+			assert.NilError(t, enc.Encode(parsedConfigFileContent.CompilerOptions()))
+			baselineContent.WriteString("\n")
+		}
 		baselineContent.WriteString("FileNames::\n")
 		baselineContent.WriteString(strings.Join(parsedConfigFileContent.ParsedConfig.FileNames, ",") + "\n")
 		baselineContent.WriteString("Errors::\n")

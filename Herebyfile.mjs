@@ -27,12 +27,33 @@ const { values: options } = parseArgs({
         race: { type: "boolean" },
         fix: { type: "boolean" },
         noembed: { type: "boolean" },
+        debug: { type: "boolean" },
     },
     strict: false,
     allowPositionals: true,
     allowNegative: true,
     noembed: false,
+    debug: false,
 });
+
+const defaultGoBuildTags = [
+    ...(options.noembed ? ["noembed"] : []),
+];
+
+/**
+ * @param  {...string} extra
+ * @returns
+ */
+function goBuildTags(...extra) {
+    const tags = new Set(defaultGoBuildTags.concat(extra));
+    return tags.size ? [`-tags=${[...tags].join(",")}`] : [];
+}
+
+const goBuildFlags = [
+    ...(options.race ? ["-race"] : []),
+    // https://github.com/go-delve/delve/blob/62cd2d423c6a85991e49d6a70cc5cb3e97d6ceef/Documentation/usage/dlv_exec.md?plain=1#L12
+    ...(options.debug ? ["-gcflags=all=-N -l"] : []),
+];
 
 /**
  * @type {<T>(fn: () => T) => (() => T)}
@@ -97,7 +118,7 @@ export const lib = task({
  * @param {AbortSignal} [abortSignal]
  */
 function buildExecutableToBuilt(packagePath, abortSignal) {
-    return $({ cancelSignal: abortSignal })`go build ${options.race ? ["-race"] : []} -tags=noembed -o ./built/local/ ${packagePath}`;
+    return $({ cancelSignal: abortSignal })`go build ${goBuildFlags} ${goBuildTags("noembed")} -o ./built/local/ ${packagePath}`;
 }
 
 export const tsgoBuild = task({
@@ -129,16 +150,22 @@ export const buildWatch = task({
             let libsChanged = false;
             let goChanged = false;
 
-            for (const p of paths) {
-                if (libsRegexp.test(p)) {
-                    libsChanged = true;
+            if (paths) {
+                for (const p of paths) {
+                    if (libsRegexp.test(p)) {
+                        libsChanged = true;
+                    }
+                    else if (p.endsWith(".go")) {
+                        goChanged = true;
+                    }
+                    if (libsChanged && goChanged) {
+                        break;
+                    }
                 }
-                else if (p.endsWith(".go")) {
-                    goChanged = true;
-                }
-                if (libsChanged && goChanged) {
-                    break;
-                }
+            }
+            else {
+                libsChanged = true;
+                goChanged = true;
             }
 
             if (libsChanged) {
@@ -172,8 +199,8 @@ export const generate = task({
 });
 
 const goTestFlags = [
-    ...(options.race ? ["-race"] : []),
-    ...(options.noembed ? ["-tags=noembed"] : []),
+    ...goBuildFlags,
+    ...goBuildTags(),
 ];
 
 const gotestsum = memoize(() => {
@@ -368,7 +395,7 @@ void 0;
 
 /**
  * @param {string} name
- * @param {(paths: Set<string>, abortSignal: AbortSignal) => void | Promise<unknown>} run
+ * @param {(paths: Set<string> | undefined, abortSignal: AbortSignal) => void | Promise<unknown>} run
  * @param {object} options
  * @param {string | string[]} options.paths
  * @param {(path: string) => boolean} [options.ignored]
@@ -388,7 +415,8 @@ async function watchDebounced(name, run, options) {
         alwaysStat: true,
     });
     // The paths that have changed since the last run.
-    let paths = new Set();
+    /** @type {Set<string> | undefined} */
+    let paths;
 
     process.on("SIGINT", endWatchMode);
     process.on("beforeExit", endWatchMode);
@@ -453,6 +481,7 @@ async function watchDebounced(name, run, options) {
         }
 
         debouncer.enqueue();
+        paths ??= new Set();
         paths.add(path);
     }
 
