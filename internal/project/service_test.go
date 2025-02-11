@@ -177,7 +177,7 @@ type projectServiceHost struct {
 }
 
 func newProjectServiceHost(files map[string]string) *projectServiceHost {
-	var mapFs = make(fstest.MapFS, len(files))
+	mapFs := make(fstest.MapFS, len(files))
 	for name, content := range files {
 		mapFs[name] = &fstest.MapFile{Data: []byte(content)}
 	}
