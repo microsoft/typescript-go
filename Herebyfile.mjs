@@ -126,7 +126,6 @@ export const buildWatch = task({
     name: "build:watch",
     run: async () => {
         await watchDebounced("build:watch", async (paths, abortSignal) => {
-            console.log(paths);
             let libsChanged = false;
             let goChanged = false;
 
