@@ -2,16 +2,15 @@ package jsnum
 
 import (
 	"encoding/json"
-	"errors"
 	"flag"
 	"fmt"
 	"math"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"slices"
 	"testing"
 
+	"github.com/microsoft/typescript-go/internal/testutil/jstest"
 	"gotest.tools/v3/assert"
 )
 
@@ -200,27 +199,14 @@ func TestStringRoundtrip(t *testing.T) {
 	}
 }
 
-func getNodeExe(t testing.TB) string {
-	t.Helper()
-
-	const exeName = "node"
-	exe, err := exec.LookPath(exeName)
-	if err != nil {
-		t.Skipf("%s not found: %v", exeName, err)
-	}
-	return exe
-}
-
 func TestStringJS(t *testing.T) {
 	t.Parallel()
-
-	exe := getNodeExe(t)
 
 	t.Run("stringTests", func(t *testing.T) {
 		t.Parallel()
 
 		// These tests should roundtrip both ways.
-		stringTestsResults := getStringResultsFromJS(t, exe, stringTests)
+		stringTestsResults := getStringResultsFromJS(t, stringTests)
 		for i, test := range stringTests {
 			t.Run(fmt.Sprintf("%v", float64(test.number)), func(t *testing.T) {
 				t.Parallel()
@@ -234,7 +220,7 @@ func TestStringJS(t *testing.T) {
 		t.Parallel()
 
 		// These tests should convert the string to the same number.
-		fromStringTestsResults := getStringResultsFromJS(t, exe, fromStringTests)
+		fromStringTestsResults := getStringResultsFromJS(t, fromStringTests)
 		for i, test := range fromStringTests {
 			t.Run(fmt.Sprintf("fromString %q", test.str), func(t *testing.T) {
 				t.Parallel()
@@ -249,8 +235,6 @@ func isFuzzing() bool {
 }
 
 func FuzzStringJS(f *testing.F) {
-	exe := getNodeExe(f)
-
 	if isFuzzing() {
 		// Avoid running anything other than regressions in the fuzzing mode.
 		for _, test := range stringTests {
@@ -265,7 +249,7 @@ func FuzzStringJS(f *testing.F) {
 		n := Number(f)
 		nStr := n.String()
 
-		results := getStringResultsFromJS(t, exe, []stringTest{{number: n, str: nStr}})
+		results := getStringResultsFromJS(t, []stringTest{{number: n, str: nStr}})
 		assert.Equal(t, len(results), 1)
 
 		nToJSStr := results[0].str
@@ -277,8 +261,6 @@ func FuzzStringJS(f *testing.F) {
 }
 
 func FuzzFromStringJS(f *testing.F) {
-	exe := getNodeExe(f)
-
 	if isFuzzing() {
 		// Avoid running anything other than regressions in the fuzzing mode.
 		for _, test := range stringTests {
@@ -295,13 +277,13 @@ func FuzzFromStringJS(f *testing.F) {
 		}
 
 		n := FromString(s)
-		results := getStringResultsFromJS(t, exe, []stringTest{{str: s}})
+		results := getStringResultsFromJS(t, []stringTest{{str: s}})
 		assert.Equal(t, len(results), 1)
 		assertEqualNumber(t, n, results[0].number)
 	})
 }
 
-func getStringResultsFromJS(t testing.TB, exe string, tests []stringTest) []stringTest {
+func getStringResultsFromJS(t testing.TB, tests []stringTest) []stringTest {
 	t.Helper()
 	tmpdir := t.TempDir()
 
@@ -341,37 +323,24 @@ func getStringResultsFromJS(t testing.TB, exe string, tests []stringTest) []stri
 			return [(new Uint32Array(buffer))[0], (new Uint32Array(buffer))[1]];
 		}
 
-		const input = JSON.parse(fs.readFileSync(process.argv[2], 'utf8'));
+		module.exports = function(inputFile) {
+			const input = JSON.parse(fs.readFileSync(inputFile, 'utf8'));
 
-		const output = input.map((input) => ({
-			str: ""+fromBits(input.bits),
-			bits: toBits(+input.str),	
-		}));
+			const output = input.map((input) => ({
+				str: ""+fromBits(input.bits),
+				bits: toBits(+input.str),	
+			}));
 
-		process.stdout.write(JSON.stringify(output));
+			return output;
+		};
 	`
 
 	scriptPath := filepath.Join(tmpdir, "script.cjs")
 	err = os.WriteFile(scriptPath, []byte(script), 0o644)
 	assert.NilError(t, err)
 
-	execCmd := exec.Command(exe, scriptPath, jsonInputPath)
-
-	stdout, err := execCmd.Output()
-	if err != nil {
-		var exitErr *exec.ExitError
-		if errors.As(err, &exitErr) {
-			t.Fatalf("failed to execute: %v\n%s", err, exitErr.Stderr)
-		} else {
-			t.Fatalf("failed to execute: %v", err)
-		}
-	}
-
-	var outputData []data
-
-	err = json.Unmarshal(stdout, &outputData)
+	outputData, err := jstest.EvalNodeScript[[]data](t, script, t.TempDir(), jsonInputPath)
 	assert.NilError(t, err)
-
 	assert.Equal(t, len(outputData), len(tests))
 
 	output := make([]stringTest, len(tests))
