@@ -23,11 +23,12 @@ import (
 )
 
 type diagnosticMessage struct {
-	Category                     string `json:"category"`
-	Code                         int    `json:"code"`
-	ReportsUnnecessary           bool   `json:"reportsUnnecessary"`
-	ReportsDeprecated            bool   `json:"reportsDeprecated"`
-	ElidedInCompatibilityPyramid bool   `json:"elidedInCompatibilityPyramid"`
+	Category           string `json:"category"`
+	Code               int    `json:"code"`
+	ReportsUnnecessary bool   `json:"reportsUnnecessary"`
+	ReportsDeprecated  bool   `json:"reportsDeprecated"`
+	// spelling error here is [sic] in Strada
+	ElidedInCompatibilityPyramid bool `json:"elidedInCompatabilityPyramid"`
 
 	key string
 }
