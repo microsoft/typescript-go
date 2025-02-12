@@ -9,6 +9,7 @@ import (
 	"path/filepath"
 	"runtime"
 	"runtime/pprof"
+	"slices"
 	"strings"
 	"time"
 
@@ -202,7 +203,7 @@ func main() {
 			// !!! the checker already reads noCheck, but do it here just for stats printing for now
 			if compilerOptions.NoCheck.IsFalseOrUnknown() {
 				checkStart := time.Now()
-				diagnostics = program.GetSemanticDiagnostics(nil)
+				diagnostics = slices.Concat(program.GetGlobalDiagnostics(), program.GetSemanticDiagnostics(nil))
 				checkTime = time.Since(checkStart)
 			}
 		}
@@ -224,7 +225,7 @@ func main() {
 	runtime.ReadMemStats(&memStats)
 
 	if !opts.devel.quiet && len(diagnostics) != 0 {
-		printDiagnostics(diagnostics, host, compilerOptions)
+		printDiagnostics(ts.SortAndDeduplicateDiagnostics(diagnostics), host, compilerOptions)
 	}
 
 	if compilerOptions.ListFiles.IsTrue() {

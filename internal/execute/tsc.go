@@ -172,7 +172,6 @@ func performCompilation(sys System, cb cbType, config *tsoptions.ParsedCommandLi
 	// todo: cache, statistics, tracing
 	program := compiler.NewProgramFromParsedCommandLine(config, host)
 	options := program.Options()
-	allDiagnostics := program.GetOptionsDiagnostics()
 
 	// todo: early exit logic and append diagnostics
 	diagnostics := program.GetSyntacticDiagnostics(nil)
@@ -199,12 +198,9 @@ func performCompilation(sys System, cb cbType, config *tsoptions.ParsedCommandLi
 	}
 	diagnostics = append(diagnostics, emitResult.Diagnostics...)
 
-	allDiagnostics = append(allDiagnostics, diagnostics...)
-	if allDiagnostics != nil {
-		allDiagnostics = compiler.SortAndDeduplicateDiagnostics(allDiagnostics)
-		for _, diagnostic := range allDiagnostics {
-			reportDiagnostic(diagnostic)
-		}
+	diagnostics = compiler.SortAndDeduplicateDiagnostics(diagnostics)
+	for _, diagnostic := range diagnostics {
+		reportDiagnostic(diagnostic)
 	}
 
 	// !!! if (write)
@@ -215,7 +211,7 @@ func performCompilation(sys System, cb cbType, config *tsoptions.ParsedCommandLi
 		// todo: listFiles(program, sys.Writer())
 	}
 
-	createReportErrorSummary(sys, config.CompilerOptions())(allDiagnostics)
+	createReportErrorSummary(sys, config.CompilerOptions())(diagnostics)
 
 	reportStatistics(sys, program)
 	if cb != nil {

@@ -275,7 +275,7 @@ func (p *Program) GetGlobalDiagnostics() []*ast.Diagnostic {
 }
 
 func (p *Program) GetOptionsDiagnostics() []*ast.Diagnostic {
-	return SortAndDeduplicateDiagnostics(append(p.GetGlobalDiagnostics(), p.getOptionsDiagnosticsOfConfigFile()...))
+	return SortAndDeduplicateDiagnostics(p.getOptionsDiagnosticsOfConfigFile())
 }
 
 func (p *Program) getOptionsDiagnosticsOfConfigFile() []*ast.Diagnostic {
