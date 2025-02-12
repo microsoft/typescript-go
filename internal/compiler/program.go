@@ -7,7 +7,6 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/binder"
-	"github.com/microsoft/typescript-go/internal/bundled"
 	"github.com/microsoft/typescript-go/internal/checker"
 	"github.com/microsoft/typescript-go/internal/compiler/diagnostics"
 	"github.com/microsoft/typescript-go/internal/compiler/module"
@@ -27,7 +26,6 @@ type ProgramOptions struct {
 	Options            *core.CompilerOptions
 	SingleThreaded     bool
 	ProjectReference   []core.ProjectReference
-	DefaultLibraryPath string
 	OptionsDiagnostics []*ast.Diagnostic
 }
 
@@ -46,7 +44,6 @@ type Program struct {
 	resolvedModules map[tspath.Path]module.ModeAwareCache[*module.ResolvedModule]
 
 	comparePathsOptions tspath.ComparePathsOptions
-	defaultLibraryPath  string
 
 	files       []*ast.SourceFile
 	filesByPath map[tspath.Path]*ast.SourceFile
@@ -87,11 +84,6 @@ func NewProgram(options ProgramOptions) *Program {
 	p.host = options.Host
 	if p.host == nil {
 		panic("host required")
-	}
-
-	p.defaultLibraryPath = options.DefaultLibraryPath
-	if p.defaultLibraryPath == "" {
-		panic("default library path required")
 	}
 
 	rootFiles := options.RootFiles
@@ -143,12 +135,12 @@ func NewProgram(options ProgramOptions) *Program {
 	if p.compilerOptions.NoLib != core.TSTrue {
 		if p.compilerOptions.Lib == nil {
 			name := tsoptions.GetDefaultLibFileName(p.compilerOptions)
-			libs = append(libs, tspath.CombinePaths(p.defaultLibraryPath, name))
+			libs = append(libs, tspath.CombinePaths(p.host.DefaultLibraryPath(), name))
 		} else {
 			for _, lib := range p.compilerOptions.Lib {
 				name, ok := tsoptions.GetLibFileName(lib)
 				if ok {
-					libs = append(libs, tspath.CombinePaths(p.defaultLibraryPath, name))
+					libs = append(libs, tspath.CombinePaths(p.host.DefaultLibraryPath(), name))
 				}
 				// !!! error on unknown name
 			}
@@ -171,7 +163,6 @@ func NewProgramFromParsedCommandLine(config *tsoptions.ParsedCommandLine, host C
 		Host:      host,
 		// todo: ProjectReferences
 		OptionsDiagnostics: config.GetConfigFileParsingDiagnostics(),
-		DefaultLibraryPath: bundled.LibPath(),
 	}
 	return NewProgram(programOptions)
 }
@@ -493,6 +484,10 @@ func (p *Program) CommonSourceDirectory() string {
 	return p.commonSourceDirectory
 }
 
+func (p *Program) GetCompilerOptions() *core.CompilerOptions {
+	return p.compilerOptions
+}
+
 func computeCommonSourceDirectoryOfFilenames(fileNames []string, currentDirectory string, useCaseSensitiveFileNames bool) string {
 	var commonPathComponents []string
 	for _, sourceFile := range fileNames {
@@ -631,7 +626,15 @@ func (p *Program) Emit(options *EmitOptions) *EmitResult {
 
 func (p *Program) GetSourceFile(filename string) *ast.SourceFile {
 	path := tspath.ToPath(filename, p.host.GetCurrentDirectory(), p.host.FS().UseCaseSensitiveFileNames())
+	return p.GetSourceFileByPath(path)
+}
+
+func (p *Program) GetSourceFileByPath(path tspath.Path) *ast.SourceFile {
 	return p.filesByPath[path]
+}
+
+func (p *Program) GetSourceFiles() []*ast.SourceFile {
+	return p.files
 }
 
 type FileIncludeKind int

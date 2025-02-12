@@ -4,7 +4,6 @@ import (
 	"slices"
 
 	"github.com/microsoft/typescript-go/internal/ast"
-	"github.com/microsoft/typescript-go/internal/binder"
 	"github.com/microsoft/typescript-go/internal/jsnum"
 	"github.com/microsoft/typescript-go/internal/printer"
 )
@@ -218,9 +217,9 @@ func constantExpression(value any, factory *ast.NodeFactory) *ast.Expression {
 }
 
 func isInstantiatedModule(node *ast.ModuleDeclarationNode, preserveConstEnums bool) bool {
-	moduleState := binder.GetModuleInstanceState(node, nil /*visited*/)
-	return moduleState == binder.ModuleInstanceStateInstantiated ||
-		(preserveConstEnums && moduleState == binder.ModuleInstanceStateConstEnumOnly)
+	moduleState := ast.GetModuleInstanceState(node)
+	return moduleState == ast.ModuleInstanceStateInstantiated ||
+		(preserveConstEnums && moduleState == ast.ModuleInstanceStateConstEnumOnly)
 }
 
 func flattenCommaElement(node *ast.Expression, expressions []*ast.Expression) []*ast.Expression {

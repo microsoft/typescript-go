@@ -1674,13 +1674,10 @@ func isVariableLike(node *ast.Node) bool {
 }
 
 func getAncestor(node *ast.Node, kind ast.Kind) *ast.Node {
-	for node != nil {
-		if node.Kind == kind {
-			return node
-		}
+	for node != nil && node.Kind != kind {
 		node = node.Parent
 	}
-	return nil
+	return node
 }
 
 func isLiteralExpressionOfObject(node *ast.Node) bool {
