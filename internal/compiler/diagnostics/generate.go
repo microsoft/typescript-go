@@ -27,7 +27,7 @@ type diagnosticMessage struct {
 	Code                         int    `json:"code"`
 	ReportsUnnecessary           bool   `json:"reportsUnnecessary"`
 	ReportsDeprecated            bool   `json:"reportsDeprecated"`
-	ElidedInCompatabilityPyramid bool   `json:"elidedInCompatabilityPyramid"`
+	ElidedInCompatibilityPyramid bool   `json:"elidedInCompatibilityPyramid"`
 
 	key string
 }
@@ -86,8 +86,8 @@ func main() {
 		if m.ReportsUnnecessary {
 			buf.WriteString(`, reportsUnnecessary: true`)
 		}
-		if m.ElidedInCompatabilityPyramid {
-			buf.WriteString(`, elidedInCompatabilityPyramid: true`)
+		if m.ElidedInCompatibilityPyramid {
+			buf.WriteString(`, elidedInCompatibilityPyramid: true`)
 		}
 		if m.ReportsDeprecated {
 			buf.WriteString(`, reportsDeprecated: true`)
