@@ -186,6 +186,7 @@ func TestUniqueName2(t *testing.T) {
 	text2 := g.GenerateName(name1)
 
 	assert.Equal(t, "foo_1", text1)
+	// !!! extremely suspicious, why isn't this foo_2?
 	assert.Equal(t, "foo_1", text2)
 }
 
