@@ -17501,7 +17501,7 @@ func (c *Checker) resolveIntersectionTypeMembers(t *Type) {
 func (c *Checker) appendSignatures(signatures []*Signature, newSignatures []*Signature) []*Signature {
 	for _, sig := range newSignatures {
 		if len(signatures) == 0 || core.Every(signatures, func(s *Signature) bool {
-			return c.compareSignaturesIdentical(s, sig, false /*partialMatch*/, false /*ignoreThisTypes*/, false /*ignoreReturnTypes*/, c.compareTypesIdentical) == 0
+			return c.compareSignaturesIdentical(s, sig, false /*partialMatch*/, false /*ignoreThisTypes*/, false /*ignoreReturnTypes*/, c.compareTypesIdentical) == TernaryFalse
 		}) {
 			signatures = append(signatures, sig)
 		}
