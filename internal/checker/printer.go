@@ -32,19 +32,22 @@ func (c *Checker) SymbolToString(s *ast.Symbol) string {
 }
 
 func (c *Checker) symbolToString(s *ast.Symbol) string {
+	if scanner.IsValidIdentifier(s.Name, c.languageVersion) {
+		return s.Name
+	}
 	if s.ValueDeclaration != nil {
 		name := ast.GetNameOfDeclaration(s.ValueDeclaration)
 		if name != nil {
 			return scanner.GetTextOfNode(name)
 		}
 	}
-	if len(s.Name) >= 1 && s.Name[0] != '\xFE' {
-		return s.Name
+	if len(s.Name) == 0 || s.Name[0] != '\xFE' {
+		return "\"" + s.Name + "\"" // !!! Implement escaping
 	}
-	return "###"
+	return "(missing)"
 }
 
-func (c *Checker) typeToString(t *Type) string {
+func (c *Checker) TypeToString(t *Type) string {
 	return c.typeToStringEx(t, nil, TypeFormatFlagsNone)
 }
 
@@ -244,7 +247,7 @@ func (p *Printer) printObjectType(t *Type) {
 		p.printParameterizedType(t)
 	case t.objectFlags&ObjectFlagsClassOrInterface != 0:
 		p.printName(t.symbol)
-	case p.c.isGenericMappedType(t):
+	case p.c.isGenericMappedType(t) || t.objectFlags&ObjectFlagsMapped != 0 && t.AsMappedType().containsError:
 		p.printMappedType(t)
 	default:
 		p.printAnonymousType(t)

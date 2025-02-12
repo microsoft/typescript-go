@@ -1,11 +1,15 @@
 package core
 
 import (
+	"bytes"
+	"encoding/json"
 	"iter"
 	"slices"
+	"strings"
 	"unicode/utf8"
 
 	"github.com/microsoft/typescript-go/internal/stringutil"
+	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
 func Filter[T any](slice []T, f func(T) bool) []T {
@@ -15,6 +19,22 @@ func Filter[T any](slice []T, f func(T) bool) []T {
 			for i++; i < len(slice); i++ {
 				value = slice[i]
 				if f(value) {
+					result = append(result, value)
+				}
+			}
+			return result
+		}
+	}
+	return slice
+}
+
+func FilterIndex[T any](slice []T, f func(T, int, []T) bool) []T {
+	for i, value := range slice {
+		if !f(value, i, slice) {
+			result := slices.Clone(slice[:i])
+			for i++; i < len(slice); i++ {
+				value = slice[i]
+				if f(value, i, slice) {
 					result = append(result, value)
 				}
 			}
@@ -298,4 +318,52 @@ func ComputeLineStarts(text string) []TextPos {
 	}
 	result = append(result, TextPos(lineStart))
 	return result
+}
+
+func Flatten[T any](array [][]T) []T {
+	var result []T
+	for _, subArray := range array {
+		result = append(result, subArray...)
+	}
+	return result
+}
+
+func Must[T any](v T, err error) T {
+	if err != nil {
+		panic(err)
+	}
+	return v
+}
+
+func StringifyJson(input any, prefix string, indent string) (string, error) {
+	var buf bytes.Buffer
+	encoder := json.NewEncoder(&buf)
+	encoder.SetEscapeHTML(false)
+	encoder.SetIndent(prefix, indent)
+	if _, ok := input.([]any); ok && len(input.([]any)) == 0 {
+		return "[]", nil
+	}
+	if err := encoder.Encode(input); err != nil {
+		return "", err
+	}
+	return strings.TrimSpace(buf.String()), nil
+}
+
+func GetScriptKindFromFileName(fileName string) ScriptKind {
+	dotPos := strings.LastIndex(fileName, ".")
+	if dotPos >= 0 {
+		switch strings.ToLower(fileName[dotPos:]) {
+		case tspath.ExtensionJs, tspath.ExtensionCjs, tspath.ExtensionMjs:
+			return ScriptKindJS
+		case tspath.ExtensionJsx:
+			return ScriptKindJSX
+		case tspath.ExtensionTs, tspath.ExtensionCts, tspath.ExtensionMts:
+			return ScriptKindTS
+		case tspath.ExtensionTsx:
+			return ScriptKindTSX
+		case tspath.ExtensionJson:
+			return ScriptKindJSON
+		}
+	}
+	return ScriptKindUnknown
 }

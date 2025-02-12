@@ -582,11 +582,18 @@ func checkDiagnostics(t *testing.T, file *ast.SourceFile) {
 
 func checkEmit(t *testing.T, file *ast.SourceFile, expected string) {
 	t.Helper()
-	printer := &Printer{
-		Options: PrinterOptions{
+	checkEmit2(t, &EmitContext{}, file, expected)
+}
+
+func checkEmit2(t *testing.T, ctx *EmitContext, file *ast.SourceFile, expected string) {
+	t.Helper()
+	printer := NewPrinter(
+		PrinterOptions{
 			NewLine: core.NewLineKindLF,
 		},
-	}
+		PrintHandlers{},
+		ctx,
+	)
 	text := printer.EmitSourceFile(file)
 	actual := strings.TrimSuffix(text, "\n")
 	assert.Equal(t, expected, actual)
@@ -605,7 +612,7 @@ func setParentRecursive(node *ast.Node, parent *ast.Node) {
 }
 
 func parseJavaScript(text string, jsx bool) *ast.SourceFile {
-	file := parser.ParseSourceFile(core.IfElse(jsx, "main.tsx", "main.ts"), text, core.ScriptTargetESNext)
+	file := parser.ParseSourceFile(core.IfElse(jsx, "main.tsx", "main.ts"), text, core.ScriptTargetESNext, scanner.JSDocParsingModeParseAll)
 	setParentRecursive(file.AsNode(), nil)
 	return file
 }
@@ -650,11 +657,9 @@ func TestParenthesizeDecorator(t *testing.T) {
 
 	var factory ast.NodeFactory
 	file := factory.NewSourceFile("", "", factory.NewNodeList(
-		core.NewTextRange(-1, -1),
 		[]*ast.Node{
 			factory.NewClassDeclaration(
 				factory.NewModifierList(
-					core.NewTextRange(-1, -1),
 					[]*ast.Node{
 						factory.NewDecorator(
 							factory.NewBinaryExpression(
@@ -668,7 +673,7 @@ func TestParenthesizeDecorator(t *testing.T) {
 				factory.NewIdentifier("C"),
 				nil,
 				nil,
-				factory.NewNodeList(core.NewTextRange(-1, -1), []*ast.Node{}),
+				factory.NewNodeList([]*ast.Node{}),
 			),
 		},
 	))
@@ -683,14 +688,13 @@ func TestParenthesizeComputedPropertyName(t *testing.T) {
 
 	var factory ast.NodeFactory
 	file := factory.NewSourceFile("", "", factory.NewNodeList(
-		core.NewTextRange(-1, -1),
 		[]*ast.Node{
 			factory.NewClassDeclaration(
 				nil, /*modifiers*/
 				factory.NewIdentifier("C"),
 				nil, /*typeParameters*/
 				nil, /*heritageClauses*/
-				factory.NewNodeList(core.NewTextRange(-1, -1), []*ast.Node{
+				factory.NewNodeList([]*ast.Node{
 					factory.NewPropertyDeclaration(
 						nil, /*modifiers*/
 						factory.NewComputedPropertyName(
@@ -719,12 +723,10 @@ func TestParenthesizeArrayLiteral(t *testing.T) {
 
 	var factory ast.NodeFactory
 	file := factory.NewSourceFile("", "", factory.NewNodeList(
-		core.NewTextRange(-1, -1),
 		[]*ast.Node{
 			factory.NewExpressionStatement(
 				factory.NewArrayLiteralExpression(
 					factory.NewNodeList(
-						core.NewTextRange(-1, -1),
 						[]*ast.Node{
 							// will be parenthesized on emit:
 							factory.NewBinaryExpression(
@@ -749,7 +751,6 @@ func TestParenthesizePropertyAccess1(t *testing.T) {
 
 	var factory ast.NodeFactory
 	file := factory.NewSourceFile("", "", factory.NewNodeList(
-		core.NewTextRange(-1, -1),
 		[]*ast.Node{
 			factory.NewExpressionStatement(
 				factory.NewPropertyAccessExpression(
@@ -776,7 +777,6 @@ func TestParenthesizePropertyAccess2(t *testing.T) {
 
 	var factory ast.NodeFactory
 	file := factory.NewSourceFile("", "", factory.NewNodeList(
-		core.NewTextRange(-1, -1),
 		[]*ast.Node{
 			factory.NewExpressionStatement(
 				factory.NewPropertyAccessExpression(
@@ -804,7 +804,6 @@ func TestParenthesizePropertyAccess3(t *testing.T) {
 
 	var factory ast.NodeFactory
 	file := factory.NewSourceFile("", "", factory.NewNodeList(
-		core.NewTextRange(-1, -1),
 		[]*ast.Node{
 			factory.NewExpressionStatement(
 				factory.NewPropertyAccessExpression(
@@ -831,7 +830,6 @@ func TestParenthesizeElementAccess1(t *testing.T) {
 
 	var factory ast.NodeFactory
 	file := factory.NewSourceFile("", "", factory.NewNodeList(
-		core.NewTextRange(-1, -1),
 		[]*ast.Node{
 			factory.NewExpressionStatement(
 				factory.NewElementAccessExpression(
@@ -858,7 +856,6 @@ func TestParenthesizeElementAccess2(t *testing.T) {
 
 	var factory ast.NodeFactory
 	file := factory.NewSourceFile("", "", factory.NewNodeList(
-		core.NewTextRange(-1, -1),
 		[]*ast.Node{
 			factory.NewExpressionStatement(
 				factory.NewElementAccessExpression(
@@ -886,7 +883,6 @@ func TestParenthesizeElementAccess3(t *testing.T) {
 
 	var factory ast.NodeFactory
 	file := factory.NewSourceFile("", "", factory.NewNodeList(
-		core.NewTextRange(-1, -1),
 		[]*ast.Node{
 			factory.NewExpressionStatement(
 				factory.NewElementAccessExpression(
@@ -913,7 +909,6 @@ func TestParenthesizeCall1(t *testing.T) {
 
 	var factory ast.NodeFactory
 	file := factory.NewSourceFile("", "", factory.NewNodeList(
-		core.NewTextRange(-1, -1),
 		[]*ast.Node{
 			factory.NewExpressionStatement(
 				factory.NewCallExpression(
@@ -925,7 +920,7 @@ func TestParenthesizeCall1(t *testing.T) {
 					),
 					nil, /*questionDotToken*/
 					nil, /*typeArguments*/
-					factory.NewNodeList(core.NewTextRange(-1, -1), []*ast.Node{}),
+					factory.NewNodeList([]*ast.Node{}),
 					ast.NodeFlagsNone,
 				),
 			),
@@ -941,7 +936,6 @@ func TestParenthesizeCall2(t *testing.T) {
 
 	var factory ast.NodeFactory
 	file := factory.NewSourceFile("", "", factory.NewNodeList(
-		core.NewTextRange(-1, -1),
 		[]*ast.Node{
 			factory.NewExpressionStatement(
 				factory.NewCallExpression(
@@ -954,7 +948,7 @@ func TestParenthesizeCall2(t *testing.T) {
 					),
 					nil, /*questionDotToken*/
 					nil, /*typeArguments*/
-					factory.NewNodeList(core.NewTextRange(-1, -1), []*ast.Node{}),
+					factory.NewNodeList([]*ast.Node{}),
 					ast.NodeFlagsNone,
 				),
 			),
@@ -970,7 +964,6 @@ func TestParenthesizeCall3(t *testing.T) {
 
 	var factory ast.NodeFactory
 	file := factory.NewSourceFile("", "", factory.NewNodeList(
-		core.NewTextRange(-1, -1),
 		[]*ast.Node{
 			factory.NewExpressionStatement(
 				factory.NewCallExpression(
@@ -982,7 +975,7 @@ func TestParenthesizeCall3(t *testing.T) {
 					),
 					nil, /*questionDotToken*/
 					nil, /*typeArguments*/
-					factory.NewNodeList(core.NewTextRange(-1, -1), []*ast.Node{}),
+					factory.NewNodeList([]*ast.Node{}),
 					ast.NodeFlagsNone,
 				),
 			),
@@ -998,14 +991,13 @@ func TestParenthesizeCall4(t *testing.T) {
 
 	var factory ast.NodeFactory
 	file := factory.NewSourceFile("", "", factory.NewNodeList(
-		core.NewTextRange(-1, -1),
 		[]*ast.Node{
 			factory.NewExpressionStatement(
 				factory.NewCallExpression(
 					factory.NewIdentifier("a"),
 					nil, /*questionDotToken*/
 					nil, /*typeArguments*/
-					factory.NewNodeList(core.NewTextRange(-1, -1), []*ast.Node{
+					factory.NewNodeList([]*ast.Node{
 						factory.NewBinaryExpression(
 							factory.NewIdentifier("b"),
 							factory.NewToken(ast.KindCommaToken),
@@ -1027,7 +1019,6 @@ func TestParenthesizeNew1(t *testing.T) {
 
 	var factory ast.NodeFactory
 	file := factory.NewSourceFile("", "", factory.NewNodeList(
-		core.NewTextRange(-1, -1),
 		[]*ast.Node{
 			factory.NewExpressionStatement(
 				factory.NewNewExpression(
@@ -1038,7 +1029,7 @@ func TestParenthesizeNew1(t *testing.T) {
 						factory.NewIdentifier("b"),
 					),
 					nil, /*typeArguments*/
-					factory.NewNodeList(core.NewTextRange(-1, -1), []*ast.Node{}),
+					factory.NewNodeList([]*ast.Node{}),
 				),
 			),
 		},
@@ -1053,7 +1044,6 @@ func TestParenthesizeNew2(t *testing.T) {
 
 	var factory ast.NodeFactory
 	file := factory.NewSourceFile("", "", factory.NewNodeList(
-		core.NewTextRange(-1, -1),
 		[]*ast.Node{
 			factory.NewExpressionStatement(
 				factory.NewNewExpression(
@@ -1062,7 +1052,7 @@ func TestParenthesizeNew2(t *testing.T) {
 						factory.NewIdentifier("C"),
 						nil, /*questionDotToken*/
 						nil, /*typeArguments*/
-						factory.NewNodeList(core.NewTextRange(-1, -1), []*ast.Node{}),
+						factory.NewNodeList([]*ast.Node{}),
 						ast.NodeFlagsNone,
 					),
 					nil, /*typeArguments*/
@@ -1081,13 +1071,12 @@ func TestParenthesizeNew3(t *testing.T) {
 
 	var factory ast.NodeFactory
 	file := factory.NewSourceFile("", "", factory.NewNodeList(
-		core.NewTextRange(-1, -1),
 		[]*ast.Node{
 			factory.NewExpressionStatement(
 				factory.NewNewExpression(
 					factory.NewIdentifier("C"),
 					nil, /*typeArguments*/
-					factory.NewNodeList(core.NewTextRange(-1, -1), []*ast.Node{
+					factory.NewNodeList([]*ast.Node{
 						factory.NewBinaryExpression(
 							factory.NewIdentifier("a"),
 							factory.NewToken(ast.KindCommaToken),
@@ -1108,7 +1097,6 @@ func TestParenthesizeTaggedTemplate1(t *testing.T) {
 
 	var factory ast.NodeFactory
 	file := factory.NewSourceFile("", "", factory.NewNodeList(
-		core.NewTextRange(-1, -1),
 		[]*ast.Node{
 			factory.NewExpressionStatement(
 				factory.NewTaggedTemplateExpression(
@@ -1136,7 +1124,6 @@ func TestParenthesizeTaggedTemplate2(t *testing.T) {
 
 	var factory ast.NodeFactory
 	file := factory.NewSourceFile("", "", factory.NewNodeList(
-		core.NewTextRange(-1, -1),
 		[]*ast.Node{
 			factory.NewExpressionStatement(
 				factory.NewTaggedTemplateExpression(
@@ -1165,7 +1152,6 @@ func TestParenthesizeTypeAssertion1(t *testing.T) {
 
 	var factory ast.NodeFactory
 	file := factory.NewSourceFile("", "", factory.NewNodeList(
-		core.NewTextRange(-1, -1),
 		[]*ast.Node{
 			factory.NewExpressionStatement(
 				factory.NewTypeAssertion(
@@ -1193,18 +1179,17 @@ func TestParenthesizeArrowFunction1(t *testing.T) {
 
 	var factory ast.NodeFactory
 	file := factory.NewSourceFile("", "", factory.NewNodeList(
-		core.NewTextRange(-1, -1),
 		[]*ast.Node{
 			factory.NewExpressionStatement(
 				factory.NewArrowFunction(
 					nil, /*modifiers*/
 					nil, /*typeParameters*/
-					factory.NewNodeList(core.NewTextRange(-1, -1), []*ast.Node{}),
+					factory.NewNodeList([]*ast.Node{}),
 					nil, /*returnType*/
 					factory.NewToken(ast.KindEqualsGreaterThanToken),
 					// will be parenthesized on emit:
 					factory.NewObjectLiteralExpression(
-						factory.NewNodeList(core.NewTextRange(-1, -1), []*ast.Node{}),
+						factory.NewNodeList([]*ast.Node{}),
 						false, /*multiLine*/
 					),
 				),
@@ -1221,19 +1206,18 @@ func TestParenthesizeArrowFunction2(t *testing.T) {
 
 	var factory ast.NodeFactory
 	file := factory.NewSourceFile("", "", factory.NewNodeList(
-		core.NewTextRange(-1, -1),
 		[]*ast.Node{
 			factory.NewExpressionStatement(
 				factory.NewArrowFunction(
 					nil, /*modifiers*/
 					nil, /*typeParameters*/
-					factory.NewNodeList(core.NewTextRange(-1, -1), []*ast.Node{}),
+					factory.NewNodeList([]*ast.Node{}),
 					nil, /*returnType*/
 					factory.NewToken(ast.KindEqualsGreaterThanToken),
 					// will be parenthesized on emit:
 					factory.NewPropertyAccessExpression(
 						factory.NewObjectLiteralExpression(
-							factory.NewNodeList(core.NewTextRange(-1, -1), []*ast.Node{}),
+							factory.NewNodeList([]*ast.Node{}),
 							false, /*multiLine*/
 						),
 						nil, /*questionDotToken*/
@@ -1254,7 +1238,6 @@ func TestParenthesizeDelete(t *testing.T) {
 
 	var factory ast.NodeFactory
 	file := factory.NewSourceFile("", "", factory.NewNodeList(
-		core.NewTextRange(-1, -1),
 		[]*ast.Node{
 			factory.NewExpressionStatement(
 				factory.NewDeleteExpression(
@@ -1278,7 +1261,6 @@ func TestParenthesizeVoid(t *testing.T) {
 
 	var factory ast.NodeFactory
 	file := factory.NewSourceFile("", "", factory.NewNodeList(
-		core.NewTextRange(-1, -1),
 		[]*ast.Node{
 			factory.NewExpressionStatement(
 				factory.NewVoidExpression(
@@ -1302,7 +1284,6 @@ func TestParenthesizeTypeOf(t *testing.T) {
 
 	var factory ast.NodeFactory
 	file := factory.NewSourceFile("", "", factory.NewNodeList(
-		core.NewTextRange(-1, -1),
 		[]*ast.Node{
 			factory.NewExpressionStatement(
 				factory.NewTypeOfExpression(
@@ -1326,7 +1307,6 @@ func TestParenthesizeAwait(t *testing.T) {
 
 	var factory ast.NodeFactory
 	file := factory.NewSourceFile("", "", factory.NewNodeList(
-		core.NewTextRange(-1, -1),
 		[]*ast.Node{
 			factory.NewExpressionStatement(
 				factory.NewAwaitExpression(
@@ -1402,10 +1382,10 @@ func makeSide(label string, kind ast.Kind, factory *ast.NodeFactory) *ast.Node {
 		return factory.NewArrowFunction(
 			nil, /*modifiers*/
 			nil, /*typeParameters*/
-			factory.NewNodeList(core.NewTextRange(-1, -1), []*ast.Node{}),
+			factory.NewNodeList([]*ast.Node{}),
 			nil, /*returnType*/
 			factory.NewToken(ast.KindEqualsGreaterThanToken),
-			factory.NewBlock(factory.NewNodeList(core.NewTextRange(-1, -1), []*ast.Node{}), false /*multiLine*/),
+			factory.NewBlock(factory.NewNodeList([]*ast.Node{}), false /*multiLine*/),
 		)
 	case isBinaryOperator(kind):
 		return factory.NewBinaryExpression(
@@ -1449,7 +1429,6 @@ func TestParenthesizeBinary(t *testing.T) {
 
 			var factory ast.NodeFactory
 			file := factory.NewSourceFile("", "", factory.NewNodeList(
-				core.NewTextRange(-1, -1),
 				[]*ast.Node{
 					factory.NewExpressionStatement(
 						factory.NewBinaryExpression(
@@ -1472,7 +1451,6 @@ func TestParenthesizeConditional1(t *testing.T) {
 
 	var factory ast.NodeFactory
 	file := factory.NewSourceFile("", "", factory.NewNodeList(
-		core.NewTextRange(-1, -1),
 		[]*ast.Node{
 			factory.NewExpressionStatement(
 				factory.NewConditionalExpression(
@@ -1500,7 +1478,6 @@ func TestParenthesizeConditional2(t *testing.T) {
 
 	var factory ast.NodeFactory
 	file := factory.NewSourceFile("", "", factory.NewNodeList(
-		core.NewTextRange(-1, -1),
 		[]*ast.Node{
 			factory.NewExpressionStatement(
 				factory.NewConditionalExpression(
@@ -1528,7 +1505,6 @@ func TestParenthesizeConditional3(t *testing.T) {
 
 	var factory ast.NodeFactory
 	file := factory.NewSourceFile("", "", factory.NewNodeList(
-		core.NewTextRange(-1, -1),
 		[]*ast.Node{
 			factory.NewExpressionStatement(
 				factory.NewConditionalExpression(
@@ -1536,11 +1512,11 @@ func TestParenthesizeConditional3(t *testing.T) {
 					factory.NewArrowFunction(
 						nil, /*modifiers*/
 						nil, /*typeParameters*/
-						factory.NewNodeList(core.NewTextRange(-1, -1), []*ast.Node{}),
+						factory.NewNodeList([]*ast.Node{}),
 						nil, /*returnType*/
 						factory.NewToken(ast.KindEqualsGreaterThanToken),
 						factory.NewBlock(
-							factory.NewNodeList(core.NewTextRange(-1, -1), []*ast.Node{}),
+							factory.NewNodeList([]*ast.Node{}),
 							false, /*multiLine*/
 						),
 					),
@@ -1562,7 +1538,6 @@ func TestParenthesizeConditional4(t *testing.T) {
 
 	var factory ast.NodeFactory
 	file := factory.NewSourceFile("", "", factory.NewNodeList(
-		core.NewTextRange(-1, -1),
 		[]*ast.Node{
 			factory.NewExpressionStatement(
 				factory.NewConditionalExpression(
@@ -1586,7 +1561,6 @@ func TestParenthesizeConditional5(t *testing.T) {
 
 	var factory ast.NodeFactory
 	file := factory.NewSourceFile("", "", factory.NewNodeList(
-		core.NewTextRange(-1, -1),
 		[]*ast.Node{
 			factory.NewExpressionStatement(
 				factory.NewConditionalExpression(
@@ -1614,7 +1588,6 @@ func TestParenthesizeConditional6(t *testing.T) {
 
 	var factory ast.NodeFactory
 	file := factory.NewSourceFile("", "", factory.NewNodeList(
-		core.NewTextRange(-1, -1),
 		[]*ast.Node{
 			factory.NewExpressionStatement(
 				factory.NewConditionalExpression(
@@ -1642,7 +1615,6 @@ func TestParenthesizeYield1(t *testing.T) {
 
 	var factory ast.NodeFactory
 	file := factory.NewSourceFile("", "", factory.NewNodeList(
-		core.NewTextRange(-1, -1),
 		[]*ast.Node{
 			factory.NewExpressionStatement(
 				factory.NewYieldExpression(
@@ -1671,12 +1643,10 @@ func TestParenthesizeSpreadElement1(t *testing.T) {
 
 	var factory ast.NodeFactory
 	file := factory.NewSourceFile("", "", factory.NewNodeList(
-		core.NewTextRange(-1, -1),
 		[]*ast.Node{
 			factory.NewExpressionStatement(
 				factory.NewArrayLiteralExpression(
 					factory.NewNodeList(
-						core.NewTextRange(-1, -1),
 						[]*ast.Node{
 							factory.NewSpreadElement(
 								// will be parenthesized on emit:
@@ -1703,7 +1673,6 @@ func TestParenthesizeSpreadElement2(t *testing.T) {
 
 	var factory ast.NodeFactory
 	file := factory.NewSourceFile("", "", factory.NewNodeList(
-		core.NewTextRange(-1, -1),
 		[]*ast.Node{
 			factory.NewExpressionStatement(
 				factory.NewCallExpression(
@@ -1711,7 +1680,6 @@ func TestParenthesizeSpreadElement2(t *testing.T) {
 					nil, /*questionDotToken*/
 					nil, /*typeArguments*/
 					factory.NewNodeList(
-						core.NewTextRange(-1, -1),
 						[]*ast.Node{
 							factory.NewSpreadElement(
 								// will be parenthesized on emit:
@@ -1738,14 +1706,12 @@ func TestParenthesizeSpreadElement3(t *testing.T) {
 
 	var factory ast.NodeFactory
 	file := factory.NewSourceFile("", "", factory.NewNodeList(
-		core.NewTextRange(-1, -1),
 		[]*ast.Node{
 			factory.NewExpressionStatement(
 				factory.NewNewExpression(
 					factory.NewIdentifier("a"),
 					nil, /*typeArguments*/
 					factory.NewNodeList(
-						core.NewTextRange(-1, -1),
 						[]*ast.Node{
 							factory.NewSpreadElement(
 								// will be parenthesized on emit:
@@ -1771,7 +1737,6 @@ func TestParenthesizeExpressionWithTypeArguments(t *testing.T) {
 
 	var factory ast.NodeFactory
 	file := factory.NewSourceFile("", "", factory.NewNodeList(
-		core.NewTextRange(-1, -1),
 		[]*ast.Node{
 			factory.NewExpressionStatement(
 				factory.NewExpressionWithTypeArguments(
@@ -1782,7 +1747,6 @@ func TestParenthesizeExpressionWithTypeArguments(t *testing.T) {
 						factory.NewIdentifier("b"),
 					),
 					factory.NewNodeList(
-						core.NewTextRange(-1, -1),
 						[]*ast.Node{
 							factory.NewTypeReferenceNode(
 								factory.NewIdentifier("c"),
@@ -1804,7 +1768,6 @@ func TestParenthesizeAsExpression(t *testing.T) {
 
 	var factory ast.NodeFactory
 	file := factory.NewSourceFile("", "", factory.NewNodeList(
-		core.NewTextRange(-1, -1),
 		[]*ast.Node{
 			factory.NewExpressionStatement(
 				factory.NewAsExpression(
@@ -1832,7 +1795,6 @@ func TestParenthesizeSatisfiesExpression(t *testing.T) {
 
 	var factory ast.NodeFactory
 	file := factory.NewSourceFile("", "", factory.NewNodeList(
-		core.NewTextRange(-1, -1),
 		[]*ast.Node{
 			factory.NewExpressionStatement(
 				factory.NewSatisfiesExpression(
@@ -1860,7 +1822,6 @@ func TestParenthesizeNonNullExpression(t *testing.T) {
 
 	var factory ast.NodeFactory
 	file := factory.NewSourceFile("", "", factory.NewNodeList(
-		core.NewTextRange(-1, -1),
 		[]*ast.Node{
 			factory.NewExpressionStatement(
 				factory.NewNonNullExpression(
@@ -1870,6 +1831,7 @@ func TestParenthesizeNonNullExpression(t *testing.T) {
 						factory.NewToken(ast.KindCommaToken),
 						factory.NewIdentifier("b"),
 					),
+					ast.NodeFlagsNone,
 				),
 			),
 		},
@@ -1884,12 +1846,10 @@ func TestParenthesizeExpressionStatement1(t *testing.T) {
 
 	var factory ast.NodeFactory
 	file := factory.NewSourceFile("", "", factory.NewNodeList(
-		core.NewTextRange(-1, -1),
 		[]*ast.Node{
 			factory.NewExpressionStatement(
 				factory.NewObjectLiteralExpression(
 					factory.NewNodeList(
-						core.NewTextRange(-1, -1),
 						[]*ast.Node{},
 					),
 					false, /*multiLine*/
@@ -1907,7 +1867,6 @@ func TestParenthesizeExpressionStatement2(t *testing.T) {
 
 	var factory ast.NodeFactory
 	file := factory.NewSourceFile("", "", factory.NewNodeList(
-		core.NewTextRange(-1, -1),
 		[]*ast.Node{
 			factory.NewExpressionStatement(
 				factory.NewFunctionExpression(
@@ -1916,12 +1875,11 @@ func TestParenthesizeExpressionStatement2(t *testing.T) {
 					nil, /*name*/
 					nil, /*typeParameters*/
 					factory.NewNodeList(
-						core.NewTextRange(-1, -1),
 						[]*ast.Node{},
 					),
 					nil, /*returnType*/
 					factory.NewBlock(
-						factory.NewNodeList(core.NewTextRange(-1, -1), []*ast.Node{}),
+						factory.NewNodeList([]*ast.Node{}),
 						false, /*multiLine*/
 					),
 				),
@@ -1938,7 +1896,6 @@ func TestParenthesizeExpressionStatement3(t *testing.T) {
 
 	var factory ast.NodeFactory
 	file := factory.NewSourceFile("", "", factory.NewNodeList(
-		core.NewTextRange(-1, -1),
 		[]*ast.Node{
 			factory.NewExpressionStatement(
 				factory.NewClassExpression(
@@ -1947,7 +1904,6 @@ func TestParenthesizeExpressionStatement3(t *testing.T) {
 					nil, /*typeParameters*/
 					nil, /*heritageClauses*/
 					factory.NewNodeList(
-						core.NewTextRange(-1, -1),
 						[]*ast.Node{},
 					),
 				),
@@ -1964,7 +1920,6 @@ func TestParenthesizeExpressionDefault1(t *testing.T) {
 
 	var factory ast.NodeFactory
 	file := factory.NewSourceFile("", "", factory.NewNodeList(
-		core.NewTextRange(-1, -1),
 		[]*ast.Node{
 			factory.NewExportAssignment(
 				nil,   /*modifiers*/
@@ -1976,7 +1931,6 @@ func TestParenthesizeExpressionDefault1(t *testing.T) {
 					nil, /*typeParameters*/
 					nil, /*heritageClauses*/
 					factory.NewNodeList(
-						core.NewTextRange(-1, -1),
 						[]*ast.Node{},
 					),
 				),
@@ -1993,7 +1947,6 @@ func TestParenthesizeExpressionDefault2(t *testing.T) {
 
 	var factory ast.NodeFactory
 	file := factory.NewSourceFile("", "", factory.NewNodeList(
-		core.NewTextRange(-1, -1),
 		[]*ast.Node{
 			factory.NewExportAssignment(
 				nil,   /*modifiers*/
@@ -2005,13 +1958,11 @@ func TestParenthesizeExpressionDefault2(t *testing.T) {
 					nil, /*name*/
 					nil, /*typeParameters*/
 					factory.NewNodeList(
-						core.NewTextRange(-1, -1),
 						[]*ast.Node{},
 					),
 					nil, /*returnType*/
 					factory.NewBlock(
 						factory.NewNodeList(
-							core.NewTextRange(-1, -1),
 							[]*ast.Node{},
 						),
 						false, /*multiLine*/
@@ -2030,7 +1981,6 @@ func TestParenthesizeExpressionDefault3(t *testing.T) {
 
 	var factory ast.NodeFactory
 	file := factory.NewSourceFile("", "", factory.NewNodeList(
-		core.NewTextRange(-1, -1),
 		[]*ast.Node{
 			factory.NewExportAssignment(
 				nil,   /*modifiers*/
@@ -2054,7 +2004,6 @@ func TestParenthesizeArrayType(t *testing.T) {
 
 	var factory ast.NodeFactory
 	file := factory.NewSourceFile("", "", factory.NewNodeList(
-		core.NewTextRange(-1, -1),
 		[]*ast.Node{
 			factory.NewTypeAliasDeclaration(
 				nil,                        /*modifiers*/
@@ -2064,7 +2013,6 @@ func TestParenthesizeArrayType(t *testing.T) {
 					// will be parenthesized on emit:
 					factory.NewUnionTypeNode(
 						factory.NewNodeList(
-							core.NewTextRange(-1, -1),
 							[]*ast.Node{
 								factory.NewTypeReferenceNode(factory.NewIdentifier("a"), nil /*typeArguments*/),
 								factory.NewTypeReferenceNode(factory.NewIdentifier("b"), nil /*typeArguments*/),
@@ -2085,7 +2033,6 @@ func TestParenthesizeOptionalType(t *testing.T) {
 
 	var factory ast.NodeFactory
 	file := factory.NewSourceFile("", "", factory.NewNodeList(
-		core.NewTextRange(-1, -1),
 		[]*ast.Node{
 			factory.NewTypeAliasDeclaration(
 				nil,                        /*modifiers*/
@@ -2093,13 +2040,11 @@ func TestParenthesizeOptionalType(t *testing.T) {
 				nil,                        /*typeParameters*/
 				factory.NewTupleTypeNode(
 					factory.NewNodeList(
-						core.NewTextRange(-1, -1),
 						[]*ast.Node{
 							factory.NewOptionalTypeNode(
 								// will be parenthesized on emit:
 								factory.NewUnionTypeNode(
 									factory.NewNodeList(
-										core.NewTextRange(-1, -1),
 										[]*ast.Node{
 											factory.NewTypeReferenceNode(factory.NewIdentifier("a"), nil /*typeArguments*/),
 											factory.NewTypeReferenceNode(factory.NewIdentifier("b"), nil /*typeArguments*/),
@@ -2123,7 +2068,6 @@ func TestParenthesizeUnionType1(t *testing.T) {
 
 	var factory ast.NodeFactory
 	file := factory.NewSourceFile("", "", factory.NewNodeList(
-		core.NewTextRange(-1, -1),
 		[]*ast.Node{
 			factory.NewTypeAliasDeclaration(
 				nil,                        /*modifiers*/
@@ -2131,14 +2075,12 @@ func TestParenthesizeUnionType1(t *testing.T) {
 				nil,                        /*typeParameters*/
 				factory.NewUnionTypeNode(
 					factory.NewNodeList(
-						core.NewTextRange(-1, -1),
 						[]*ast.Node{
 							factory.NewTypeReferenceNode(factory.NewIdentifier("a"), nil /*typeArguments*/),
 							// will be parenthesized on emit:
 							factory.NewFunctionTypeNode(
 								nil, /*typeParameters*/
 								factory.NewNodeList(
-									core.NewTextRange(-1, -1),
 									[]*ast.Node{},
 								),
 								factory.NewTypeReferenceNode(factory.NewIdentifier("b"), nil /*typeArguments*/),
@@ -2159,7 +2101,6 @@ func TestParenthesizeUnionType2(t *testing.T) {
 
 	var factory ast.NodeFactory
 	file := factory.NewSourceFile("", "", factory.NewNodeList(
-		core.NewTextRange(-1, -1),
 		[]*ast.Node{
 			factory.NewTypeAliasDeclaration(
 				nil,                        /*modifiers*/
@@ -2167,7 +2108,6 @@ func TestParenthesizeUnionType2(t *testing.T) {
 				nil,                        /*typeParameters*/
 				factory.NewUnionTypeNode(
 					factory.NewNodeList(
-						core.NewTextRange(-1, -1),
 						[]*ast.Node{
 							// will be parenthesized on emit:
 							factory.NewInferTypeNode(
@@ -2195,7 +2135,6 @@ func TestParenthesizeIntersectionType(t *testing.T) {
 
 	var factory ast.NodeFactory
 	file := factory.NewSourceFile("", "", factory.NewNodeList(
-		core.NewTextRange(-1, -1),
 		[]*ast.Node{
 			factory.NewTypeAliasDeclaration(
 				nil,                        /*modifiers*/
@@ -2203,13 +2142,11 @@ func TestParenthesizeIntersectionType(t *testing.T) {
 				nil,                        /*typeParameters*/
 				factory.NewIntersectionTypeNode(
 					factory.NewNodeList(
-						core.NewTextRange(-1, -1),
 						[]*ast.Node{
 							factory.NewTypeReferenceNode(factory.NewIdentifier("a"), nil /*typeArguments*/),
 							// will be parenthesized on emit:
 							factory.NewUnionTypeNode(
 								factory.NewNodeList(
-									core.NewTextRange(-1, -1),
 									[]*ast.Node{
 										factory.NewTypeReferenceNode(factory.NewIdentifier("b"), nil /*typeArguments*/),
 										factory.NewTypeReferenceNode(factory.NewIdentifier("c"), nil /*typeArguments*/),
@@ -2232,7 +2169,6 @@ func TestParenthesizeReadonlyTypeOperator1(t *testing.T) {
 
 	var factory ast.NodeFactory
 	file := factory.NewSourceFile("", "", factory.NewNodeList(
-		core.NewTextRange(-1, -1),
 		[]*ast.Node{
 			factory.NewTypeAliasDeclaration(
 				nil,                        /*modifiers*/
@@ -2243,7 +2179,6 @@ func TestParenthesizeReadonlyTypeOperator1(t *testing.T) {
 					// will be parenthesized on emit:
 					factory.NewUnionTypeNode(
 						factory.NewNodeList(
-							core.NewTextRange(-1, -1),
 							[]*ast.Node{
 								factory.NewTypeReferenceNode(factory.NewIdentifier("a"), nil /*typeArguments*/),
 								factory.NewTypeReferenceNode(factory.NewIdentifier("b"), nil /*typeArguments*/),
@@ -2264,7 +2199,6 @@ func TestParenthesizeReadonlyTypeOperator2(t *testing.T) {
 
 	var factory ast.NodeFactory
 	file := factory.NewSourceFile("", "", factory.NewNodeList(
-		core.NewTextRange(-1, -1),
 		[]*ast.Node{
 			factory.NewTypeAliasDeclaration(
 				nil,                        /*modifiers*/
@@ -2291,7 +2225,6 @@ func TestParenthesizeKeyofTypeOperator(t *testing.T) {
 
 	var factory ast.NodeFactory
 	file := factory.NewSourceFile("", "", factory.NewNodeList(
-		core.NewTextRange(-1, -1),
 		[]*ast.Node{
 			factory.NewTypeAliasDeclaration(
 				nil,                        /*modifiers*/
@@ -2302,7 +2235,6 @@ func TestParenthesizeKeyofTypeOperator(t *testing.T) {
 					// will be parenthesized on emit:
 					factory.NewUnionTypeNode(
 						factory.NewNodeList(
-							core.NewTextRange(-1, -1),
 							[]*ast.Node{
 								factory.NewTypeReferenceNode(factory.NewIdentifier("a"), nil /*typeArguments*/),
 								factory.NewTypeReferenceNode(factory.NewIdentifier("b"), nil /*typeArguments*/),
@@ -2323,7 +2255,6 @@ func TestParenthesizeIndexedAccessType(t *testing.T) {
 
 	var factory ast.NodeFactory
 	file := factory.NewSourceFile("", "", factory.NewNodeList(
-		core.NewTextRange(-1, -1),
 		[]*ast.Node{
 			factory.NewTypeAliasDeclaration(
 				nil,                        /*modifiers*/
@@ -2333,7 +2264,6 @@ func TestParenthesizeIndexedAccessType(t *testing.T) {
 					// will be parenthesized on emit:
 					factory.NewUnionTypeNode(
 						factory.NewNodeList(
-							core.NewTextRange(-1, -1),
 							[]*ast.Node{
 								factory.NewTypeReferenceNode(factory.NewIdentifier("a"), nil /*typeArguments*/),
 								factory.NewTypeReferenceNode(factory.NewIdentifier("b"), nil /*typeArguments*/),
@@ -2355,7 +2285,6 @@ func TestParenthesizeConditionalType1(t *testing.T) {
 
 	var factory ast.NodeFactory
 	file := factory.NewSourceFile("", "", factory.NewNodeList(
-		core.NewTextRange(-1, -1),
 		[]*ast.Node{
 			factory.NewTypeAliasDeclaration(
 				nil,                        /*modifiers*/
@@ -2366,7 +2295,6 @@ func TestParenthesizeConditionalType1(t *testing.T) {
 					factory.NewFunctionTypeNode(
 						nil, /*typeParameters*/
 						factory.NewNodeList(
-							core.NewTextRange(-1, -1),
 							[]*ast.Node{},
 						),
 						factory.NewTypeReferenceNode(factory.NewIdentifier("a"), nil /*typeArguments*/),
@@ -2388,7 +2316,6 @@ func TestParenthesizeConditionalType2(t *testing.T) {
 
 	var factory ast.NodeFactory
 	file := factory.NewSourceFile("", "", factory.NewNodeList(
-		core.NewTextRange(-1, -1),
 		[]*ast.Node{
 			factory.NewTypeAliasDeclaration(
 				nil,                        /*modifiers*/
@@ -2419,7 +2346,6 @@ func TestParenthesizeConditionalType3(t *testing.T) {
 
 	var factory ast.NodeFactory
 	file := factory.NewSourceFile("", "", factory.NewNodeList(
-		core.NewTextRange(-1, -1),
 		[]*ast.Node{
 			factory.NewTypeAliasDeclaration(
 				nil,                        /*modifiers*/
@@ -2430,7 +2356,6 @@ func TestParenthesizeConditionalType3(t *testing.T) {
 					factory.NewFunctionTypeNode(
 						nil, /*typeParameters*/
 						factory.NewNodeList(
-							core.NewTextRange(-1, -1),
 							[]*ast.Node{},
 						),
 						// will be parenthesized on emit:
@@ -2458,46 +2383,74 @@ func TestParenthesizeConditionalType4(t *testing.T) {
 	t.Parallel()
 
 	var factory ast.NodeFactory
-	file := factory.NewSourceFile("", "", factory.NewNodeList(
-		core.NewTextRange(-1, -1),
-		[]*ast.Node{
-			factory.NewTypeAliasDeclaration(
-				nil,                        /*modifiers*/
-				factory.NewIdentifier("_"), /*name*/
-				nil,                        /*typeParameters*/
-				factory.NewConditionalTypeNode(
-					factory.NewTypeReferenceNode(factory.NewIdentifier("a"), nil /*typeArguments*/),
-					factory.NewFunctionTypeNode(
-						nil, /*typeParameters*/
+	file := factory.NewSourceFile("", "", factory.NewNodeList([]*ast.Node{
+		factory.NewTypeAliasDeclaration(
+			nil,                        /*modifiers*/
+			factory.NewIdentifier("_"), /*name*/
+			nil,                        /*typeParameters*/
+			factory.NewConditionalTypeNode(
+				factory.NewTypeReferenceNode(factory.NewIdentifier("a"), nil /*typeArguments*/),
+				factory.NewFunctionTypeNode(
+					nil, /*typeParameters*/
+					factory.NewNodeList(
+						[]*ast.Node{},
+					),
+					// will be parenthesized on emit:
+					factory.NewUnionTypeNode(
 						factory.NewNodeList(
-							core.NewTextRange(-1, -1),
-							[]*ast.Node{},
-						),
-						// will be parenthesized on emit:
-						factory.NewUnionTypeNode(
-							factory.NewNodeList(
-								core.NewTextRange(-1, -1),
-								[]*ast.Node{
-									factory.NewInferTypeNode(
-										factory.NewTypeParameterDeclaration(
-											nil,
-											factory.NewIdentifier("b"),
-											factory.NewTypeReferenceNode(factory.NewIdentifier("c"), nil /*typeArguments*/),
-											nil, /*defaultType*/
-										),
+							[]*ast.Node{
+								factory.NewInferTypeNode(
+									factory.NewTypeParameterDeclaration(
+										nil,
+										factory.NewIdentifier("b"),
+										factory.NewTypeReferenceNode(factory.NewIdentifier("c"), nil /*typeArguments*/),
+										nil, /*defaultType*/
 									),
-									factory.NewTypeReferenceNode(factory.NewIdentifier("d"), nil /*typeArguments*/),
-								},
-							),
+								),
+								factory.NewTypeReferenceNode(factory.NewIdentifier("d"), nil /*typeArguments*/),
+							},
 						),
 					),
-					factory.NewTypeReferenceNode(factory.NewIdentifier("e"), nil /*typeArguments*/),
-					factory.NewTypeReferenceNode(factory.NewIdentifier("f"), nil /*typeArguments*/),
 				),
+				factory.NewTypeReferenceNode(factory.NewIdentifier("e"), nil /*typeArguments*/),
+				factory.NewTypeReferenceNode(factory.NewIdentifier("f"), nil /*typeArguments*/),
 			),
-		},
-	))
+		),
+	}))
 	setParentRecursive(file, nil)
 	markSyntheticRecursive(file)
 	checkEmit(t, file.AsSourceFile(), "type _ = a extends () => (infer b extends c) | d ? e : f;")
+}
+
+func TestNameGeneration(t *testing.T) {
+	t.Parallel()
+	ctx := &EmitContext{}
+	factory := &ctx.Factory
+	file := factory.NewSourceFile("", "", factory.NewNodeList([]*ast.Node{
+		factory.NewVariableStatement(nil, factory.NewVariableDeclarationList(
+			ast.NodeFlagsNone,
+			factory.NewNodeList([]*ast.Node{
+				factory.NewVariableDeclaration(ctx.NewTempVariable(AutoGenerateOptions{}), nil, nil, nil),
+			}),
+		)),
+		factory.NewFunctionDeclaration(
+			nil,
+			nil,
+			factory.NewIdentifier("f"),
+			nil,
+			factory.NewNodeList([]*ast.Node{}),
+			nil,
+			factory.NewBlock(factory.NewNodeList([]*ast.Node{
+				factory.NewVariableStatement(nil, factory.NewVariableDeclarationList(
+					ast.NodeFlagsNone,
+					factory.NewNodeList([]*ast.Node{
+						factory.NewVariableDeclaration(ctx.NewTempVariable(AutoGenerateOptions{}), nil, nil, nil),
+					}),
+				)),
+			}), true),
+		),
+	}))
+	setParentRecursive(file, nil)
+	markSyntheticRecursive(file)
+	checkEmit2(t, ctx, file.AsSourceFile(), "var _a;\nfunction f() {\n    var _a;\n}")
 }

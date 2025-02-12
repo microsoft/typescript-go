@@ -24,33 +24,33 @@ type CommandLineOption struct {
 
 	// used in parsing
 	isFilePath        bool
-	isTSConfigOnly    bool
-	isCommandLineOnly bool
+	IsTSConfigOnly    bool
+	IsCommandLineOnly bool
 
 	// used in output
-	description              *diagnostics.Message
-	defaultValueDescription  any
+	Description              *diagnostics.Message
+	DefaultValueDescription  any
 	showInSimplifiedHelpView bool
 
 	// used in output in serializing and generate tsconfig
-	category *diagnostics.Message
+	Category *diagnostics.Message
 
-	// defined once
-	extraValidation func(value CompilerOptionsValue) (d *diagnostics.Message, args []string)
+	// a flag indicating whether `validateJsonOptionValue` should perform extra checks
+	extraValidation bool
 
 	// true or undefined
 	// used for configDirTemplateSubstitutionOptions
 	allowConfigDirTemplateSubstitution bool
 
 	// used for filter in compilerrunner
-	affectsDeclarationPath     bool
-	affectsProgramStructure    bool
-	affectsSemanticDiagnostics bool
-	affectsBuildInfo           bool
-	affectsBindDiagnostics     bool
-	affectsSourceFile          bool
-	affectsModuleResolution    bool
-	affectsEmit                bool
+	AffectsDeclarationPath     bool
+	AffectsProgramStructure    bool
+	AffectsSemanticDiagnostics bool
+	AffectsBuildInfo           bool
+	AffectsBindDiagnostics     bool
+	AffectsSourceFile          bool
+	AffectsModuleResolution    bool
+	AffectsEmit                bool
 
 	allowJsFlag bool
 	strictFlag  bool
@@ -61,6 +61,8 @@ type CommandLineOption struct {
 
 	// used for CommandLineOptionTypeList
 	listPreserveFalsyValues bool
+	// used for compilerOptionsDeclaration
+	ElementOptions map[string]*CommandLineOption
 }
 
 func (o *CommandLineOption) DeprecatedKeys() *core.Set[string] {
@@ -93,7 +95,7 @@ var commandLineOptionElements = map[string]*CommandLineOption{
 	"lib": {
 		Name:                    "lib",
 		Kind:                    CommandLineOptionTypeEnum, // libMap,
-		defaultValueDescription: core.TSUnknown,
+		DefaultValueDescription: core.TSUnknown,
 	},
 	"rootDirs": {
 		Name:       "rootDirs",
@@ -121,6 +123,40 @@ var commandLineOptionElements = map[string]*CommandLineOption{
 		Name: "plugin",
 		Kind: CommandLineOptionTypeObject,
 	},
+	// For tsconfig root options
+	"references": {
+		Name: "references",
+		Kind: CommandLineOptionTypeObject,
+	},
+	"files": {
+		Name: "files",
+		Kind: CommandLineOptionTypeString,
+	},
+	"include": {
+		Name: "include",
+		Kind: CommandLineOptionTypeString,
+	},
+	"exclude": {
+		Name: "exclude",
+		Kind: CommandLineOptionTypeString,
+	},
+	"extends": {
+		Name: "extends",
+		Kind: CommandLineOptionTypeString,
+	},
+	// For Watch options
+	"excludeDirectories": {
+		Name:            "excludeDirectory",
+		Kind:            CommandLineOptionTypeString,
+		isFilePath:      true,
+		extraValidation: true,
+	},
+	"excludeFiles": {
+		Name:            "excludeFile",
+		Kind:            CommandLineOptionTypeString,
+		isFilePath:      true,
+		extraValidation: true,
+	},
 }
 
 // CommandLineOption.EnumMap()
@@ -132,11 +168,14 @@ var commandLineOptionEnumMap = map[string]*collections.OrderedMap[string, any]{
 	"moduleDetection":  moduleDetectionOptionMap,
 	"jsx":              jsxOptionMap,
 	"newLine":          newLineOptionMap,
+	"watchFile":        watchFileEnumMap,
+	"watchDirectory":   watchDirectoryEnumMap,
+	"fallbackPolling":  fallbackEnumMap,
 }
 
 // CommandLineOption.DeprecatedKeys()
 var commandLineOptionDeprecated = map[string]*core.Set[string]{
-	"moduleResolution": core.NewSetFromItems[string]("node"),
+	"moduleResolution": core.NewSetFromItems[string]("node", "classic", "node10"),
 	"target":           core.NewSetFromItems[string]("es3"),
 }
 

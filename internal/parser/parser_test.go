@@ -11,12 +11,21 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/repo"
+	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/testutil/fixtures"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"gotest.tools/v3/assert"
 )
 
 func BenchmarkParse(b *testing.B) {
+	jsdocModes := []struct {
+		name string
+		mode scanner.JSDocParsingMode
+	}{
+		{"tsc", scanner.JSDocParsingModeParseForTypeErrors},
+		{"server", scanner.JSDocParsingModeParseAll},
+	}
+
 	for _, f := range fixtures.BenchFixtures {
 		b.Run(f.Name(), func(b *testing.B) {
 			f.SkipIfNotExist(b)
@@ -24,8 +33,13 @@ func BenchmarkParse(b *testing.B) {
 			fileName := f.Path()
 			sourceText := f.ReadFile(b)
 
-			for range b.N {
-				ParseSourceFile(fileName, sourceText, core.ScriptTargetESNext)
+			for _, jsdoc := range jsdocModes {
+				b.Run(jsdoc.name, func(b *testing.B) {
+					jsdocMode := jsdoc.mode
+					for range b.N {
+						ParseSourceFile(fileName, sourceText, core.ScriptTargetESNext, jsdocMode)
+					}
+				})
 			}
 		})
 	}
@@ -63,7 +77,7 @@ func TestParseTypeScriptRepo(t *testing.T) {
 					if strings.HasSuffix(f.name, ".json") {
 						sourceFile = ParseJSONText(f.path, string(sourceText))
 					} else {
-						sourceFile = ParseSourceFile(f.path, string(sourceText), core.ScriptTargetESNext)
+						sourceFile = ParseSourceFile(f.path, string(sourceText), core.ScriptTargetESNext, scanner.JSDocParsingModeParseAll)
 					}
 
 					if !test.ignoreErrors {

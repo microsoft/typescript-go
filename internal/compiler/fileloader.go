@@ -8,10 +8,8 @@ import (
 	"sync"
 
 	"github.com/microsoft/typescript-go/internal/ast"
-	"github.com/microsoft/typescript-go/internal/binder"
 	"github.com/microsoft/typescript-go/internal/compiler/module"
 	"github.com/microsoft/typescript-go/internal/core"
-	"github.com/microsoft/typescript-go/internal/parser"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
@@ -27,7 +25,7 @@ type fileLoader struct {
 
 	mu                      sync.Mutex
 	wg                      *core.WorkGroup
-	processedFileNames      core.Set[string]
+	tasksByFileName         map[string]*parseTask
 	currentNodeModulesDepth int
 	defaultLibraryPath      string
 	comparePathsOptions     tspath.ComparePathsOptions
@@ -47,7 +45,8 @@ func processAllProgramFiles(
 		programOptions:     programOptions,
 		compilerOptions:    compilerOptions,
 		resolver:           resolver,
-		defaultLibraryPath: programOptions.DefaultLibraryPath,
+		tasksByFileName:    make(map[string]*parseTask),
+		defaultLibraryPath: host.DefaultLibraryPath(),
 		comparePathsOptions: tspath.ComparePathsOptions{
 			UseCaseSensitiveFileNames: host.FS().UseCaseSensitiveFileNames(),
 			CurrentDirectory:          host.GetCurrentDirectory(),
@@ -58,13 +57,14 @@ func processAllProgramFiles(
 
 	loader.addRootTasks(rootFiles, false)
 	loader.addRootTasks(libs, true)
+	loader.addAutomaticTypeDirectiveTasks()
 
 	loader.startTasks(loader.rootTasks)
 
 	loader.wg.Wait()
 
 	files, libFiles := []*ast.SourceFile{}, []*ast.SourceFile{}
-	for task := range iterTasks(loader.rootTasks) {
+	for task := range loader.collectTasks(loader.rootTasks) {
 		if task.isLib {
 			libFiles = append(libFiles, task.file)
 		} else {
@@ -83,36 +83,62 @@ func (p *fileLoader) addRootTasks(files []string, isLib bool) {
 	}
 }
 
+func (p *fileLoader) addAutomaticTypeDirectiveTasks() {
+	var containingDirectory string
+	if p.compilerOptions.ConfigFilePath != "" {
+		containingDirectory = tspath.GetDirectoryPath(p.compilerOptions.ConfigFilePath)
+	} else {
+		containingDirectory = p.host.GetCurrentDirectory()
+	}
+	containingFileName := tspath.CombinePaths(containingDirectory, module.InferredTypesContainingFile)
+
+	automaticTypeDirectiveNames := module.GetAutomaticTypeDirectiveNames(p.compilerOptions, p.host)
+	for _, name := range automaticTypeDirectiveNames {
+		resolved := p.resolver.ResolveTypeReferenceDirective(name, containingFileName, core.ModuleKindNodeNext, nil)
+		if resolved.IsResolved() {
+			p.rootTasks = append(p.rootTasks, &parseTask{normalizedFilePath: resolved.ResolvedFileName, isLib: false})
+		}
+	}
+}
+
 func (p *fileLoader) startTasks(tasks []*parseTask) {
 	if len(tasks) > 0 {
 		p.mu.Lock()
 		defer p.mu.Unlock()
-		for _, task := range tasks {
-			if !p.processedFileNames.Has(task.normalizedFilePath) {
-				p.processedFileNames.Add(task.normalizedFilePath)
+		for i, task := range tasks {
+			// dedup tasks to ensure correct file order, regardless of which task would be started first
+			if existingTask, ok := p.tasksByFileName[task.normalizedFilePath]; ok {
+				tasks[i] = existingTask
+			} else {
+				p.tasksByFileName[task.normalizedFilePath] = task
 				task.start(p)
 			}
 		}
 	}
 }
 
-func iterTasks(tasks []*parseTask) iter.Seq[*parseTask] {
+func (p *fileLoader) collectTasks(tasks []*parseTask) iter.Seq[*parseTask] {
 	return func(yield func(*parseTask) bool) {
-		iterTasksWorker(tasks, yield)
+		p.collectTasksWorker(tasks, yield)
 	}
 }
 
-func iterTasksWorker(tasks []*parseTask, yield func(*parseTask) bool) bool {
+func (p *fileLoader) collectTasksWorker(tasks []*parseTask, yield func(*parseTask) bool) bool {
 	for _, task := range tasks {
-		if len(task.subTasks) > 0 {
-			if !iterTasksWorker(task.subTasks, yield) {
-				return false
-			}
-		}
+		if _, ok := p.tasksByFileName[task.normalizedFilePath]; ok {
+			// ensure we only walk each task once
+			delete(p.tasksByFileName, task.normalizedFilePath)
 
-		if task.file != nil {
-			if !yield(task) {
-				return false
+			if len(task.subTasks) > 0 {
+				if !p.collectTasksWorker(task.subTasks, yield) {
+					return false
+				}
+			}
+
+			if task.file != nil {
+				if !yield(task) {
+					return false
+				}
 			}
 		}
 	}
@@ -189,8 +215,7 @@ func (t *parseTask) start(loader *fileLoader) {
 
 func (p *fileLoader) parseSourceFile(fileName string) *ast.SourceFile {
 	path := tspath.ToPath(fileName, p.host.GetCurrentDirectory(), p.host.FS().UseCaseSensitiveFileNames())
-	text, _ := p.host.FS().ReadFile(fileName)
-	sourceFile := parser.ParseSourceFile(fileName, text, p.compilerOptions.GetEmitScriptTarget())
+	sourceFile := p.host.GetSourceFile(fileName, p.compilerOptions.GetEmitScriptTarget())
 	sourceFile.SetPath(path)
 	return sourceFile
 }
@@ -246,10 +271,10 @@ func (p *fileLoader) collectDynamicImportOrRequireOrJsDocImportCalls(file *ast.S
 		// } else
 		if ast.IsImportCall(node) && len(node.Arguments()) >= 1 && ast.IsStringLiteralLike(node.Arguments()[0]) {
 			// we have to check the argument list has length of at least 1. We will still have to process these even though we have parsing error.
-			binder.SetParentInChildren(node) // we need parent data on imports before the program is fully bound, so we ensure it's set here
+			ast.SetParentInChildren(node) // we need parent data on imports before the program is fully bound, so we ensure it's set here
 			file.Imports = append(file.Imports, node.Arguments()[0])
 		} else if ast.IsLiteralImportTypeNode(node) {
-			binder.SetParentInChildren(node) // we need parent data on imports before the program is fully bound, so we ensure it's set here
+			ast.SetParentInChildren(node) // we need parent data on imports before the program is fully bound, so we ensure it's set here
 			file.Imports = append(file.Imports, node.AsImportTypeNode().Argument.AsLiteralTypeNode().Literal)
 		}
 		// else if isJavaScriptFile && isJSDocImportTag(node) {
@@ -272,7 +297,7 @@ func (p *fileLoader) collectModuleReferences(file *ast.SourceFile, node *ast.Sta
 		if moduleNameExpr != nil && ast.IsStringLiteral(moduleNameExpr) {
 			moduleName := moduleNameExpr.AsStringLiteral().Text
 			if moduleName != "" && (!inAmbientModule || !tspath.IsExternalModuleNameRelative(moduleName)) {
-				binder.SetParentInChildren(node) // we need parent data on imports before the program is fully bound, so we ensure it's set here
+				ast.SetParentInChildren(node) // we need parent data on imports before the program is fully bound, so we ensure it's set here
 				file.Imports = append(file.Imports, moduleNameExpr)
 				if file.UsesUriStyleNodeCoreModules != core.TSTrue && p.currentNodeModulesDepth == 0 && !file.IsDeclarationFile {
 					if strings.HasPrefix(moduleName, "node:") && !exclusivelyPrefixedNodeCoreModules[moduleName] {
@@ -288,7 +313,7 @@ func (p *fileLoader) collectModuleReferences(file *ast.SourceFile, node *ast.Sta
 		return
 	}
 	if ast.IsModuleDeclaration(node) && ast.IsAmbientModule(node) && (inAmbientModule || ast.HasSyntacticModifier(node, ast.ModifierFlagsAmbient) || file.IsDeclarationFile) {
-		binder.SetParentInChildren(node)
+		ast.SetParentInChildren(node)
 		nameText := node.AsModuleDeclaration().Name().Text()
 		// Ambient module declarations can be interpreted as augmentations for some existing external modules.
 		// This will happen in two cases:
@@ -420,5 +445,5 @@ func getNodeAtPosition(file *ast.SourceFile, position int, isJavaScriptFile bool
 }
 
 func nodeContainsPosition(node *ast.Node, position int) bool {
-	return node.Pos() <= position && (position < node.End() || (position == node.End() && (node.Kind == ast.KindEndOfFile)))
+	return node.Kind >= ast.KindFirstNode && node.Pos() <= position && (position < node.End() || position == node.End() && node.Kind == ast.KindEndOfFile)
 }

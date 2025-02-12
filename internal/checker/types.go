@@ -78,6 +78,12 @@ const (
 
 type TypeId uint32
 
+// Links for referenced symbols
+
+type SymbolReferenceLinks struct {
+	referenceKinds ast.SymbolFlags // Flags for the meanings of the symbol that were referenced
+}
+
 // Links for value symbols
 
 type ValueSymbolLinks struct {
@@ -86,8 +92,22 @@ type ValueSymbolLinks struct {
 	target         *ast.Symbol
 	mapper         *TypeMapper
 	nameType       *Type
-	keyType        *Type // Key type for mapped type member
 	containingType *Type // Mapped type for mapped type property, containing union or intersection type for synthetic property
+}
+
+// Additional links for mapped symbols
+
+type MappedSymbolLinks struct {
+	keyType         *Type       // Key type for mapped type member
+	syntheticOrigin *ast.Symbol // For a property on a mapped or spread type, points back to the original property
+}
+
+// Additional links for deferred type symbols
+
+type DeferredSymbolLinks struct {
+	parent            *Type   // Source union/intersection of a deferred type
+	constituents      []*Type // Calculated list of constituents for a deferred type
+	writeConstituents []*Type // Constituents of a deferred `writeType`
 }
 
 // Links for alias symbols
@@ -138,7 +158,8 @@ type TypeAliasLinks struct {
 // Links for declared types (type parameters, class types, interface types, enums)
 
 type DeclaredTypeLinks struct {
-	declaredType *Type
+	declaredType          *Type
+	typeParametersChecked bool
 }
 
 // Links for switch clauses
@@ -318,8 +339,9 @@ type AssertionLinks struct {
 // SourceFile links
 
 type SourceFileLinks struct {
-	typeChecked   bool
-	deferredNodes collections.OrderedSet[*ast.Node]
+	typeChecked          bool
+	deferredNodes        collections.OrderedSet[*ast.Node]
+	identifierCheckNodes []*ast.Node
 }
 
 // Signature specific links
@@ -679,6 +701,8 @@ type IntrinsicType struct {
 	TypeBase
 	intrinsicName string
 }
+
+func (t *IntrinsicType) IntrinsicName() string { return t.intrinsicName }
 
 // LiteralTypeData
 
