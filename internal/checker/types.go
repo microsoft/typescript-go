@@ -193,7 +193,7 @@ type MembersOrExportsResolutionKind int
 
 const (
 	MembersOrExportsResolutionKindResolvedExports MembersOrExportsResolutionKind = 0
-	MembersOrExportsResolutionKindresolvedMembers MembersOrExportsResolutionKind = 1
+	MembersOrExportsResolutionKindResolvedMembers MembersOrExportsResolutionKind = 1
 )
 
 type MembersAndExportsLinks [2]ast.SymbolTable // Indexed by MembersOrExportsResolutionKind
