@@ -209,7 +209,7 @@ func (m *OrderedMap[K, V]) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (m *OrderedMap[K, V]) UnmarshalJSONV2(dec *jsontext.Decoder, opts json2.Options) error {
+func (m *OrderedMap[K, V]) UnmarshalJSONFrom(dec *jsontext.Decoder, opts json2.Options) error {
 	token, err := dec.ReadToken()
 	if err != nil {
 		return err

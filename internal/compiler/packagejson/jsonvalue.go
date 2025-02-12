@@ -78,7 +78,7 @@ func (v *JSONValue) UnmarshalJSON(data []byte) error {
 	return unmarshalJSONValue[JSONValue](v, data)
 }
 
-func (v *JSONValue) UnmarshalJSONV2(dec *jsontext.Decoder, opts json2.Options) error {
+func (v *JSONValue) UnmarshalJSONFrom(dec *jsontext.Decoder, opts json2.Options) error {
 	return unmarshalJSONValueV2[JSONValue](v, dec, opts)
 }
 
