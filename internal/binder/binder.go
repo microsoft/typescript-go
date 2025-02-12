@@ -90,14 +90,13 @@ func (label *ActiveLabel) BreakTarget() *ast.FlowNode    { return label.breakTar
 func (label *ActiveLabel) ContinueTarget() *ast.FlowNode { return label.continueTarget }
 
 func BindSourceFile(file *ast.SourceFile, options *core.CompilerOptions) {
-	file.BindOnce.Do(func() {
+	file.BindOnce(func() {
 		b := &Binder{}
 		b.file = file
 		b.options = options
 		b.languageVersion = options.GetEmitScriptTarget()
 		b.bind = b.bindWorker // Allocate closure once
 		b.bind(file.AsNode())
-		file.IsBound.Store(true)
 		file.SymbolCount = b.symbolCount
 		file.ClassifiableNames = b.classifiableNames
 	})
