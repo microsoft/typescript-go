@@ -7534,12 +7534,12 @@ type Pragma struct {
 type PragmaKindFlags = uint8
 
 const (
-	PragmaKindFlagsNone PragmaKindFlags = 0
 	PragmaKindTripleSlashXML PragmaKindFlags = 1 << iota
 	PragmaKindSingleLine
 	PragmaKindMultiLine
-	PragmaKindAll     = PragmaKindTripleSlashXML | PragmaKindSingleLine | PragmaKindMultiLine
-	PragmaKindDefault = PragmaKindAll
+	PragmaKindFlagsNone PragmaKindFlags = 0
+	PragmaKindAll                       = PragmaKindTripleSlashXML | PragmaKindSingleLine | PragmaKindMultiLine
+	PragmaKindDefault                   = PragmaKindAll
 )
 
 type PragmaArgumentSpecification struct {
