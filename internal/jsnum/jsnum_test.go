@@ -114,8 +114,9 @@ func TestBitwiseNOT(t *testing.T) {
 		input, want Number
 	}{
 		{-2147483649, Number(2147483647).BitwiseNOT()},
-		{-2147483648, Number(-2147483648).BitwiseNOT()},
 		{-4294967296, Number(0).BitwiseNOT()},
+		{2147483648, Number(-2147483648).BitwiseNOT()},
+		{4294967296, Number(0).BitwiseNOT()},
 	}
 
 	for _, test := range tests {
