@@ -17,6 +17,7 @@ import (
 )
 
 func FuzzTokens(f *testing.F) {
+	repo.SkipIfNoTypeScriptSubmodule(f)
 	files := []string{
 		filepath.Join(repo.TypeScriptSubmodulePath, "src/server/project.ts"),
 	}
