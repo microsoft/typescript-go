@@ -238,7 +238,7 @@ func (p *Printer) writeAs(text string, writeKind WriteKind) {
 	case WriteKindLiteral:
 		p.writeLiteral(text)
 	default:
-		panic(fmt.Sprintf("unexpected printer.WriteKind: %v", p.writeKind))
+		panic(fmt.Sprintf("unexpected printer.WriteKind: %v", writeKind))
 	}
 }
 
