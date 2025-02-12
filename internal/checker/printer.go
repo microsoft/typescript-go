@@ -38,11 +38,16 @@ func (c *Checker) symbolToString(s *ast.Symbol) string {
 	if s.ValueDeclaration != nil {
 		name := ast.GetNameOfDeclaration(s.ValueDeclaration)
 		if name != nil {
+			if name.Loc.Pos() == name.Loc.End() {
+				return "(Missing)"
+			}
 			return scanner.GetTextOfNode(name)
 		}
 	}
-	if len(s.Name) == 0 || s.Name[0] != '\xFE' {
-		return "\"" + s.Name + "\"" // !!! Implement escaping
+	if s.Name[0] == '\xFE' {
+		return "__" + s.Name[1:]
+	} else if len(s.Name) == 0 {
+		return "\"\"" // !!! Implement escaping
 	}
 	return "(missing)"
 }

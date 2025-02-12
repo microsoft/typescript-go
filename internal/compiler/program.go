@@ -173,7 +173,7 @@ func (p *Program) Host() CompilerHost                    { return p.host }
 func (p *Program) OptionsDiagnostics() []*ast.Diagnostic { return p.optionsDiagnostics }
 
 func (p *Program) BindSourceFiles() {
-	wg := core.NewWorkGroup(p.programOptions.SingleThreaded)
+	wg := core.NewWorkGroup(true) //p.programOptions.SingleThreaded)
 	for _, file := range p.files {
 		if !file.IsBound {
 			wg.Run(func() {

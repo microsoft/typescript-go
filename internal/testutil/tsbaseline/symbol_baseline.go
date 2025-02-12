@@ -279,8 +279,28 @@ func (walker *typeWriterWalker) writeTypeOrSymbol(node *ast.Node, isSymbolWalk b
 
 	var symbolString strings.Builder
 	var parent string
-	if symbol.Parent != nil {
-		parent = walker.checker.SymbolToString(symbol.Parent) + "."
+	// TODO: Should also exclude moduledeclarations
+	if symbol.Parent != nil && (symbol.Parent.ValueDeclaration == nil || symbol.Parent.ValueDeclaration.Kind != ast.KindSourceFile) {
+		s := walker.checker.SymbolToString(symbol.Parent)
+		if s != "(missing)" {
+			parent = s + "."
+		}
+	} else if node.Parent.Kind == ast.KindQualifiedName && node.Parent.AsQualifiedName().Left.Kind == ast.KindIdentifier && node.Parent.AsQualifiedName().Right == node {
+		syntaxParent := walker.checker.GetSymbolAtLocation(node.Parent.AsQualifiedName().Left)
+		if syntaxParent != nil {
+			s := walker.checker.SymbolToString(syntaxParent)
+			if s != "(missing)" {
+				parent = s + "."
+			}
+		}
+	} else if node.Parent.Kind == ast.KindPropertyAccessExpression && node.Parent.AsPropertyAccessExpression().Expression.Kind == ast.KindIdentifier && node.Parent.AsPropertyAccessExpression().Name() == node {
+		syntaxParent := walker.checker.GetSymbolAtLocation(node.Parent.AsPropertyAccessExpression().Expression)
+		if syntaxParent != nil {
+			s := walker.checker.SymbolToString(syntaxParent)
+			if s != "(missing)" {
+				parent = s + "."
+			}
+		}
 	}
 	symbolString.WriteString("Symbol(" + parent + walker.checker.SymbolToString(symbol))
 	count := 0

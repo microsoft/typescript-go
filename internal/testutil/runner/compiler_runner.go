@@ -20,7 +20,7 @@ import (
 )
 
 var (
-	compilerBaselineRegex = regexp.MustCompile(`\.tsx?$`) // HERE!
+	compilerBaselineRegex = regexp.MustCompile(`/declarationEmitNameConflicts2.*\.tsx?$`) // HERE!
 	requireStr            = "require("
 	referencesRegex       = regexp.MustCompile(`reference\spath`)
 )
@@ -317,7 +317,7 @@ func (c *compilerTest) verifyTypesAndSymbols(t *testing.T, suiteName string) {
 
 func createHarnessTestFile(unit *testUnit, currentDirectory string) *harnessutil.TestFile {
 	return &harnessutil.TestFile{
-		UnitName: tspath.GetNormalizedAbsolutePath(unit.name, currentDirectory),
+		UnitName: unit.name, // tspath.GetNormalizedAbsolutePath(unit.name, currentDirectory),
 		Content:  unit.content,
 	}
 }

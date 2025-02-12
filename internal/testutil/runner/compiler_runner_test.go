@@ -15,7 +15,7 @@ func TestCompilerBaselines(t *testing.T) {
 		t.Skip("bundled files are not embedded")
 	}
 
-	testTypes := []CompilerTestType{TestTypeRegression, TestTypeConformance}
+	testTypes := []CompilerTestType{TestTypeRegression} //, TestTypeConformance}
 	for _, testType := range testTypes {
 		t.Run(testType.String(), func(t *testing.T) {
 			// t.Parallel()

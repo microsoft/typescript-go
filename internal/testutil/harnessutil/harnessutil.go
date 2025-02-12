@@ -169,7 +169,7 @@ func setOptionsFromTestConfig(t *testing.T, testConfig TestConfiguration, compil
 		if name == "typescriptversion" {
 			continue
 		}
-
+		// TODO: I guess this is now lowercase too by mistake
 		commandLineOption := getCommandLineOption(name)
 		if commandLineOption != nil {
 			parsedValue := getOptionValue(t, commandLineOption, value)
