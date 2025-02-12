@@ -11,10 +11,10 @@ import (
 	"github.com/microsoft/typescript-go/internal/repo"
 )
 
-const loaderScript = `import script from "./script.js";
+const loaderScript = `import script from "./script.mjs";
 process.stdout.write(JSON.stringify(await script(...process.argv.slice(2))));`
 
-const tsLoaderScript = `import script from "./script.js";
+const tsLoaderScript = `import script from "./script.mjs";
 import * as ts from "./typescript.js";
 process.stdout.write(JSON.stringify(await script(ts, ...process.argv.slice(2))));`
 
@@ -47,11 +47,11 @@ func EvalNodeScriptWithTS[T any](t testing.TB, script string, dir string, args .
 func evalNodeScript[T any](t testing.TB, script string, loader string, dir string, args ...string) (result T, err error) {
 	t.Helper()
 	exe := getNodeExe(t)
-	scriptPath := dir + "/script.js"
+	scriptPath := dir + "/script.mjs"
 	if err = os.WriteFile(scriptPath, []byte(script), 0o644); err != nil {
 		return result, err
 	}
-	loaderPath := dir + "/loader.js"
+	loaderPath := dir + "/loader.mjs"
 	if err = os.WriteFile(loaderPath, []byte(loader), 0o644); err != nil {
 		return result, err
 	}
