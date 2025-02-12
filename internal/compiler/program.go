@@ -254,7 +254,7 @@ func getModuleNames(file *ast.SourceFile) []*ast.Node {
 }
 
 func (p *Program) GetSyntacticDiagnostics(sourceFile *ast.SourceFile) []*ast.Diagnostic {
-	return p.getDiagnosticsHelper(sourceFile, false /*ensureBound*/, false /*ensureChecked*/, p.getSyntaticDiagnosticsForFile)
+	return p.getDiagnosticsHelper(sourceFile, false /*ensureBound*/, false /*ensureChecked*/, p.getSyntacticDiagnosticsForFile)
 }
 
 func (p *Program) GetBindDiagnostics(sourceFile *ast.SourceFile) []*ast.Diagnostic {
@@ -286,7 +286,7 @@ func (p *Program) getOptionsDiagnosticsOfConfigFile() []*ast.Diagnostic {
 	return p.optionsDiagnostics
 }
 
-func (p *Program) getSyntaticDiagnosticsForFile(sourceFile *ast.SourceFile) []*ast.Diagnostic {
+func (p *Program) getSyntacticDiagnosticsForFile(sourceFile *ast.SourceFile) []*ast.Diagnostic {
 	return sourceFile.Diagnostics()
 }
 
