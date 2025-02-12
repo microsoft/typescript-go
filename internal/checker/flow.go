@@ -289,7 +289,7 @@ func (c *Checker) getTypeAtFlowCall(f *FlowState, flow *ast.FlowNode) FlowType {
 
 func (c *Checker) narrowTypeByTypePredicate(f *FlowState, t *Type, predicate *TypePredicate, callExpression *ast.Node, assumeTrue bool) *Type {
 	// Don't narrow from 'any' if the predicate type is exactly 'Object' or 'Function'
-	if predicate.t != nil && !(isTypeAny(t) && (predicate.t == c.globalObjectType || predicate.t == c.globalFunctionType)) {
+	if predicate.t != nil && !(IsTypeAny(t) && (predicate.t == c.globalObjectType || predicate.t == c.globalFunctionType)) {
 		predicateArgument := c.getTypePredicateArgument(predicate, callExpression)
 		if predicateArgument != nil {
 			if c.isMatchingReference(f.reference, predicateArgument) {
@@ -736,14 +736,14 @@ func (c *Checker) narrowTypeByConstructor(t *Type, operator ast.Kind, identifier
 	// Get the type of the prototype, if it is undefined, or the global `Object` or `Function` types then do not narrow.
 	prototypeType := c.getTypeOfSymbol(prototypeProperty)
 	var candidate *Type
-	if !isTypeAny(prototypeType) {
+	if !IsTypeAny(prototypeType) {
 		candidate = prototypeType
 	}
 	if candidate == nil || candidate == c.globalObjectType || candidate == c.globalFunctionType {
 		return t
 	}
 	// If the type that is being narrowed is `any` then just return the `candidate` type since every type is a subtype of `any`.
-	if isTypeAny(t) {
+	if IsTypeAny(t) {
 		return candidate
 	}
 	// Filter out types that are not considered to be "constructed by" the `candidate` type.
@@ -798,7 +798,7 @@ func (c *Checker) narrowTypeByInstanceof(f *FlowState, t *Type, expr *ast.Binary
 	instanceType := c.mapType(rightType, c.getInstanceType)
 	// Don't narrow from `any` if the target type is exactly `Object` or `Function`, and narrow
 	// in the false branch only if the target is a non-empty object type.
-	if isTypeAny(t) && (instanceType == c.globalObjectType || instanceType == c.globalFunctionType) || !assumeTrue && !(instanceType.flags&TypeFlagsObject != 0 && !c.isEmptyAnonymousObjectType(instanceType)) {
+	if IsTypeAny(t) && (instanceType == c.globalObjectType || instanceType == c.globalFunctionType) || !assumeTrue && !(instanceType.flags&TypeFlagsObject != 0 && !c.isEmptyAnonymousObjectType(instanceType)) {
 		return t
 	}
 	return c.getNarrowedType(t, instanceType, assumeTrue, true /*checkDerived*/)
@@ -923,7 +923,7 @@ func (c *Checker) getNarrowedTypeWorker(t *Type, candidate *Type, assumeTrue boo
 
 func (c *Checker) getInstanceType(constructorType *Type) *Type {
 	prototypePropertyType := c.getTypeOfPropertyOfType(constructorType, "prototype")
-	if prototypePropertyType != nil && !isTypeAny(prototypePropertyType) {
+	if prototypePropertyType != nil && !IsTypeAny(prototypePropertyType) {
 		return prototypePropertyType
 	}
 	constructSignatures := c.getSignaturesOfType(constructorType, SignatureKindConstruct)
@@ -1579,7 +1579,11 @@ func (c *Checker) isMatchingReference(source *ast.Node, target *ast.Node) bool {
 			}
 		}
 	case ast.KindQualifiedName:
-		return ast.IsAccessExpression(target) && source.AsQualifiedName().Right.Text() == target.Name().Text() && c.isMatchingReference(source.AsQualifiedName().Left, target.Expression())
+		if ast.IsAccessExpression(target) {
+			if targetPropertyName, ok := c.getAccessedPropertyName(target); ok {
+				return source.AsQualifiedName().Right.Text() == targetPropertyName && c.isMatchingReference(source.AsQualifiedName().Left, target.Expression())
+			}
+		}
 	case ast.KindBinaryExpression:
 		return ast.IsBinaryExpression(source) && source.AsBinaryExpression().OperatorToken.Kind == ast.KindCommaToken && c.isMatchingReference(source.AsBinaryExpression().Right, target)
 	}
@@ -2402,7 +2406,7 @@ func (c *Checker) getFlowTypeInConstructor(symbol *ast.Symbol, constructor *ast.
 	reference.FlowNodeData().FlowNode = constructor.AsConstructorDeclaration().ReturnFlowNode
 	flowType := c.getFlowTypeOfProperty(reference, symbol)
 	if c.noImplicitAny && (flowType == c.autoType || flowType == c.autoArrayType) {
-		c.error(symbol.ValueDeclaration, diagnostics.Member_0_implicitly_has_an_1_type, c.symbolToString(symbol), c.typeToString(flowType))
+		c.error(symbol.ValueDeclaration, diagnostics.Member_0_implicitly_has_an_1_type, c.symbolToString(symbol), c.TypeToString(flowType))
 	}
 	// We don't infer a type if assignments are only null or undefined.
 	if everyType(flowType, c.isNullableType) {
@@ -2425,7 +2429,7 @@ func (c *Checker) getFlowTypeInStaticBlocks(symbol *ast.Symbol, staticBlocks []*
 		reference.FlowNodeData().FlowNode = staticBlock.AsClassStaticBlockDeclaration().ReturnFlowNode
 		flowType := c.getFlowTypeOfProperty(reference, symbol)
 		if c.noImplicitAny && (flowType == c.autoType || flowType == c.autoArrayType) {
-			c.error(symbol.ValueDeclaration, diagnostics.Member_0_implicitly_has_an_1_type, c.symbolToString(symbol), c.typeToString(flowType))
+			c.error(symbol.ValueDeclaration, diagnostics.Member_0_implicitly_has_an_1_type, c.symbolToString(symbol), c.TypeToString(flowType))
 		}
 		// We don't infer a type if assignments are only null or undefined.
 		if everyType(flowType, c.isNullableType) {

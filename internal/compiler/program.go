@@ -7,7 +7,6 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/binder"
-	"github.com/microsoft/typescript-go/internal/bundled"
 	"github.com/microsoft/typescript-go/internal/checker"
 	"github.com/microsoft/typescript-go/internal/compiler/diagnostics"
 	"github.com/microsoft/typescript-go/internal/compiler/module"
@@ -21,32 +20,30 @@ import (
 )
 
 type ProgramOptions struct {
-	ConfigFilePath     string
-	RootFiles          []string
-	Host               CompilerHost
-	Options            *core.CompilerOptions
-	SingleThreaded     bool
-	ProjectReference   []core.ProjectReference
-	DefaultLibraryPath string
-	OptionsDiagnostics []*ast.Diagnostic
+	ConfigFilePath               string
+	RootFiles                    []string
+	Host                         CompilerHost
+	Options                      *core.CompilerOptions
+	SingleThreaded               bool
+	ProjectReference             []core.ProjectReference
+	ConfigFileParsingDiagnostics []*ast.Diagnostic
 }
 
 type Program struct {
-	host               CompilerHost
-	programOptions     ProgramOptions
-	compilerOptions    *core.CompilerOptions
-	configFilePath     string
-	nodeModules        map[string]*ast.SourceFile
-	checkers           []*checker.Checker
-	checkersByFile     map[*ast.SourceFile]*checker.Checker
-	currentDirectory   string
-	optionsDiagnostics []*ast.Diagnostic
+	host                         CompilerHost
+	programOptions               ProgramOptions
+	compilerOptions              *core.CompilerOptions
+	configFilePath               string
+	nodeModules                  map[string]*ast.SourceFile
+	checkers                     []*checker.Checker
+	checkersByFile               map[*ast.SourceFile]*checker.Checker
+	currentDirectory             string
+	configFileParsingDiagnostics []*ast.Diagnostic
 
 	resolver        *module.Resolver
 	resolvedModules map[tspath.Path]module.ModeAwareCache[*module.ResolvedModule]
 
 	comparePathsOptions tspath.ComparePathsOptions
-	defaultLibraryPath  string
 
 	files       []*ast.SourceFile
 	filesByPath map[tspath.Path]*ast.SourceFile
@@ -73,7 +70,7 @@ func NewProgram(options ProgramOptions) *Program {
 	p := &Program{}
 	p.programOptions = options
 	p.compilerOptions = options.Options
-	p.optionsDiagnostics = options.OptionsDiagnostics
+	p.configFileParsingDiagnostics = slices.Clip(options.ConfigFileParsingDiagnostics)
 	if p.compilerOptions == nil {
 		p.compilerOptions = &core.CompilerOptions{}
 	}
@@ -89,11 +86,6 @@ func NewProgram(options ProgramOptions) *Program {
 		panic("host required")
 	}
 
-	p.defaultLibraryPath = options.DefaultLibraryPath
-	if p.defaultLibraryPath == "" {
-		panic("default library path required")
-	}
-
 	rootFiles := options.RootFiles
 
 	p.configFilePath = options.ConfigFilePath
@@ -104,7 +96,7 @@ func NewProgram(options ProgramOptions) *Program {
 		}
 		parsedConfig := parser.ParseJSONText(p.configFilePath, jsonText)
 		if len(parsedConfig.Diagnostics()) > 0 {
-			p.optionsDiagnostics = append(p.optionsDiagnostics, parsedConfig.Diagnostics()...)
+			p.configFileParsingDiagnostics = append(p.configFileParsingDiagnostics, parsedConfig.Diagnostics()...)
 			return p
 		}
 
@@ -116,19 +108,19 @@ func NewProgram(options ProgramOptions) *Program {
 			tsConfigSourceFile,
 			p.host,
 			p.host.GetCurrentDirectory(),
-			nil,
+			options.Options,
 			p.configFilePath,
 			/*resolutionStack*/ nil,
 			/*extraFileExtensions*/ nil,
 			/*extendedConfigCache*/ nil,
 		)
 
+		p.compilerOptions = parseConfigFileContent.CompilerOptions()
+
 		if len(parseConfigFileContent.Errors) > 0 {
-			p.optionsDiagnostics = append(p.optionsDiagnostics, parseConfigFileContent.Errors...)
+			p.configFileParsingDiagnostics = append(p.configFileParsingDiagnostics, parseConfigFileContent.Errors...)
 			return p
 		}
-
-		p.compilerOptions = tsoptions.MergeCompilerOptions(parseConfigFileContent.CompilerOptions(), p.compilerOptions)
 
 		if rootFiles == nil {
 			// !!! merge? override? this?
@@ -143,12 +135,12 @@ func NewProgram(options ProgramOptions) *Program {
 	if p.compilerOptions.NoLib != core.TSTrue {
 		if p.compilerOptions.Lib == nil {
 			name := tsoptions.GetDefaultLibFileName(p.compilerOptions)
-			libs = append(libs, tspath.CombinePaths(p.defaultLibraryPath, name))
+			libs = append(libs, tspath.CombinePaths(p.host.DefaultLibraryPath(), name))
 		} else {
 			for _, lib := range p.compilerOptions.Lib {
 				name, ok := tsoptions.GetLibFileName(lib)
 				if ok {
-					libs = append(libs, tspath.CombinePaths(p.defaultLibraryPath, name))
+					libs = append(libs, tspath.CombinePaths(p.host.DefaultLibraryPath(), name))
 				}
 				// !!! error on unknown name
 			}
@@ -170,21 +162,22 @@ func NewProgramFromParsedCommandLine(config *tsoptions.ParsedCommandLine, host C
 		Options:   config.CompilerOptions(),
 		Host:      host,
 		// todo: ProjectReferences
-		OptionsDiagnostics: config.GetConfigFileParsingDiagnostics(),
-		DefaultLibraryPath: bundled.LibPath(),
+		ConfigFileParsingDiagnostics: config.GetConfigFileParsingDiagnostics(),
 	}
 	return NewProgram(programOptions)
 }
 
-func (p *Program) SourceFiles() []*ast.SourceFile        { return p.files }
-func (p *Program) Options() *core.CompilerOptions        { return p.compilerOptions }
-func (p *Program) Host() CompilerHost                    { return p.host }
-func (p *Program) OptionsDiagnostics() []*ast.Diagnostic { return p.optionsDiagnostics }
+func (p *Program) SourceFiles() []*ast.SourceFile { return p.files }
+func (p *Program) Options() *core.CompilerOptions { return p.compilerOptions }
+func (p *Program) Host() CompilerHost             { return p.host }
+func (p *Program) GetConfigFileParsingDiagnostics() []*ast.Diagnostic {
+	return slices.Clip(p.configFileParsingDiagnostics)
+}
 
 func (p *Program) BindSourceFiles() {
 	wg := core.NewWorkGroup(p.programOptions.SingleThreaded)
 	for _, file := range p.files {
-		if !file.IsBound {
+		if !file.IsBound() {
 			wg.Queue(func() {
 				binder.BindSourceFile(file, p.compilerOptions)
 			})
@@ -292,7 +285,7 @@ func (p *Program) getOptionsDiagnosticsOfConfigFile() []*ast.Diagnostic {
 	if p.Options() == nil || p.Options().ConfigFilePath == "" {
 		return nil
 	}
-	return p.optionsDiagnostics
+	return p.configFileParsingDiagnostics // TODO: actually call getDiagnosticsHelper on config path
 }
 
 func (p *Program) getSyntaticDiagnosticsForFile(sourceFile *ast.SourceFile) []*ast.Diagnostic {
@@ -493,6 +486,10 @@ func (p *Program) CommonSourceDirectory() string {
 	return p.commonSourceDirectory
 }
 
+func (p *Program) GetCompilerOptions() *core.CompilerOptions {
+	return p.compilerOptions
+}
+
 func computeCommonSourceDirectoryOfFilenames(fileNames []string, currentDirectory string, useCaseSensitiveFileNames bool) string {
 	var commonPathComponents []string
 	for _, sourceFile := range fileNames {
@@ -631,7 +628,15 @@ func (p *Program) Emit(options *EmitOptions) *EmitResult {
 
 func (p *Program) GetSourceFile(filename string) *ast.SourceFile {
 	path := tspath.ToPath(filename, p.host.GetCurrentDirectory(), p.host.FS().UseCaseSensitiveFileNames())
+	return p.GetSourceFileByPath(path)
+}
+
+func (p *Program) GetSourceFileByPath(path tspath.Path) *ast.SourceFile {
 	return p.filesByPath[path]
+}
+
+func (p *Program) GetSourceFiles() []*ast.SourceFile {
+	return p.files
 }
 
 type FileIncludeKind int

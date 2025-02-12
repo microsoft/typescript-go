@@ -106,8 +106,14 @@ func (c *Checker) inferFromTypes(n *InferenceState, source *Type, target *Type) 
 		// infer { extra: any } for T. But when inferring to 'string[] & Iterable<T>' we want to keep the
 		// string[] on the source side and infer string for T.
 		if source.flags&TypeFlagsUnion == 0 {
+			var sourceTypes []*Type
+			if source.flags&TypeFlagsIntersection != 0 {
+				sourceTypes = source.Types()
+			} else {
+				sourceTypes = []*Type{source}
+			}
 			// Infer between identically matching source and target constituents and remove the matching types.
-			sources, targets := c.inferFromMatchingTypes(n, source.Distributed(), target.Distributed(), (*Checker).isTypeIdenticalTo)
+			sources, targets := c.inferFromMatchingTypes(n, sourceTypes, target.Types(), (*Checker).isTypeIdenticalTo)
 			if len(sources) == 0 || len(targets) == 0 {
 				return
 			}
@@ -495,7 +501,7 @@ func (c *Checker) inferToTemplateLiteralType(n *InferenceState, source *Type, ta
 			// allowed template literal placeholder types, infer from a literal type corresponding to the constraint.
 			if source.flags&TypeFlagsStringLiteral != 0 && target.flags&TypeFlagsTypeVariable != 0 {
 				if inferenceContext := getInferenceInfoForType(n, target); inferenceContext != nil {
-					if constraint := c.getBaseConstraintOfType(inferenceContext.typeParameter); constraint != nil && !isTypeAny(constraint) {
+					if constraint := c.getBaseConstraintOfType(inferenceContext.typeParameter); constraint != nil && !IsTypeAny(constraint) {
 						allTypeFlags := TypeFlagsNone
 						for _, t := range constraint.Distributed() {
 							allTypeFlags |= t.flags
@@ -1222,6 +1228,9 @@ func (c *Checker) inferFromIntraExpressionSites(n *InferenceContext) {
 func (c *Checker) getInferredType(n *InferenceContext, index int) *Type {
 	inference := n.inferences[index]
 	if inference.inferredType == nil {
+		if inference.typeParameter == c.errorType {
+			return inference.typeParameter
+		}
 		var inferredType *Type
 		var fallbackType *Type
 		if n.signature != nil {

@@ -102,6 +102,14 @@ type MappedSymbolLinks struct {
 	syntheticOrigin *ast.Symbol // For a property on a mapped or spread type, points back to the original property
 }
 
+// Additional links for deferred type symbols
+
+type DeferredSymbolLinks struct {
+	parent            *Type   // Source union/intersection of a deferred type
+	constituents      []*Type // Calculated list of constituents for a deferred type
+	writeConstituents []*Type // Constituents of a deferred `writeType`
+}
+
 // Links for alias symbols
 
 type AliasSymbolLinks struct {
@@ -693,6 +701,8 @@ type IntrinsicType struct {
 	TypeBase
 	intrinsicName string
 }
+
+func (t *IntrinsicType) IntrinsicName() string { return t.intrinsicName }
 
 // LiteralTypeData
 

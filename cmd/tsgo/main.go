@@ -9,6 +9,7 @@ import (
 	"path/filepath"
 	"runtime"
 	"runtime/pprof"
+	"slices"
 	"strings"
 	"time"
 
@@ -154,15 +155,14 @@ func main() {
 
 	currentDirectory = tspath.GetDirectoryPath(configFilePath)
 	// !!! is the working directory actually the config path?
-	host := ts.NewCompilerHost(compilerOptions, currentDirectory, fs)
+	host := ts.NewCompilerHost(compilerOptions, currentDirectory, fs, defaultLibraryPath)
 
 	parseStart := time.Now()
 	program := ts.NewProgram(ts.ProgramOptions{
-		ConfigFilePath:     configFilePath,
-		Options:            compilerOptions,
-		SingleThreaded:     opts.devel.singleThreaded,
-		Host:               host,
-		DefaultLibraryPath: defaultLibraryPath,
+		ConfigFilePath: configFilePath,
+		Options:        compilerOptions,
+		SingleThreaded: opts.devel.singleThreaded,
+		Host:           host,
 	})
 	parseTime := time.Since(parseStart)
 
@@ -185,7 +185,7 @@ func main() {
 
 	var bindTime, checkTime time.Duration
 
-	diagnostics := program.GetOptionsDiagnostics()
+	diagnostics := program.GetConfigFileParsingDiagnostics()
 	if len(diagnostics) != 0 {
 		printDiagnostics(diagnostics, host, compilerOptions)
 		os.Exit(1)
@@ -203,7 +203,7 @@ func main() {
 			// !!! the checker already reads noCheck, but do it here just for stats printing for now
 			if compilerOptions.NoCheck.IsFalseOrUnknown() {
 				checkStart := time.Now()
-				diagnostics = program.GetSemanticDiagnostics(nil)
+				diagnostics = slices.Concat(program.GetGlobalDiagnostics(), program.GetSemanticDiagnostics(nil))
 				checkTime = time.Since(checkStart)
 			}
 		}
@@ -225,7 +225,7 @@ func main() {
 	runtime.ReadMemStats(&memStats)
 
 	if !opts.devel.quiet && len(diagnostics) != 0 {
-		printDiagnostics(diagnostics, host, compilerOptions)
+		printDiagnostics(ts.SortAndDeduplicateDiagnostics(diagnostics), host, compilerOptions)
 	}
 
 	if compilerOptions.ListFiles.IsTrue() {

@@ -168,11 +168,11 @@ func getParsedCommandLineOfConfigFile(configFileName string, options *core.Compi
 }
 
 func performCompilation(sys System, cb cbType, config *tsoptions.ParsedCommandLine, reportDiagnostic diagnosticReporter) ExitStatus {
-	host := compiler.NewCompilerHost(config.CompilerOptions(), sys.GetCurrentDirectory(), sys.FS())
+	host := compiler.NewCompilerHost(config.CompilerOptions(), sys.GetCurrentDirectory(), sys.FS(), sys.DefaultLibraryPath())
 	// todo: cache, statistics, tracing
 	program := compiler.NewProgramFromParsedCommandLine(config, host)
 	options := program.Options()
-	allDiagnostics := program.GetOptionsDiagnostics()
+	allDiagnostics := program.GetConfigFileParsingDiagnostics()
 
 	// todo: early exit logic and append diagnostics
 	diagnostics := program.GetSyntacticDiagnostics(nil)
@@ -200,11 +200,9 @@ func performCompilation(sys System, cb cbType, config *tsoptions.ParsedCommandLi
 	diagnostics = append(diagnostics, emitResult.Diagnostics...)
 
 	allDiagnostics = append(allDiagnostics, diagnostics...)
-	if allDiagnostics != nil {
-		allDiagnostics = compiler.SortAndDeduplicateDiagnostics(allDiagnostics)
-		for _, diagnostic := range allDiagnostics {
-			reportDiagnostic(diagnostic)
-		}
+	allDiagnostics = compiler.SortAndDeduplicateDiagnostics(allDiagnostics)
+	for _, diagnostic := range allDiagnostics {
+		reportDiagnostic(diagnostic)
 	}
 
 	// !!! if (write)

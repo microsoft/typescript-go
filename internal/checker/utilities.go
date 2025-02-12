@@ -56,7 +56,7 @@ func NewDiagnosticChainForNode(chain *ast.Diagnostic, node *ast.Node, message *d
 	return NewDiagnosticForNode(node, message, args...)
 }
 
-func isIntrinsicJsxName(name string) bool {
+func IsIntrinsicJsxName(name string) bool {
 	if len(name) == 0 {
 		return false
 	}
@@ -1094,7 +1094,7 @@ func hasDotDotDotToken(node *ast.Node) bool {
 	return false
 }
 
-func isTypeAny(t *Type) bool {
+func IsTypeAny(t *Type) bool {
 	return t != nil && t.flags&TypeFlagsAny != 0
 }
 
@@ -2178,13 +2178,10 @@ func isVariableLike(node *ast.Node) bool {
 }
 
 func getAncestor(node *ast.Node, kind ast.Kind) *ast.Node {
-	for node != nil {
-		if node.Kind == kind {
-			return node
-		}
+	for node != nil && node.Kind != kind {
 		node = node.Parent
 	}
-	return nil
+	return node
 }
 
 func isLiteralExpressionOfObject(node *ast.Node) bool {
@@ -2355,7 +2352,7 @@ func isInRightSideOfImportOrExportAssignment(node *ast.EntityName) bool {
 }
 
 func isJsxIntrinsicTagName(tagName *ast.Node) bool {
-	return ast.IsIdentifier(tagName) && isIntrinsicJsxName(tagName.Text()) || ast.IsJsxNamespacedName(tagName)
+	return ast.IsIdentifier(tagName) && IsIntrinsicJsxName(tagName.Text()) || ast.IsJsxNamespacedName(tagName)
 }
 
 func getContainingObjectLiteral(f *ast.SignatureDeclaration) *ast.Node {
