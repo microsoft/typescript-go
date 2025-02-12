@@ -7534,7 +7534,7 @@ type Pragma struct {
 type PragmaKindFlags = uint8
 
 const (
-	PragmaKindFlagsNone PragmaKindFlags = iota
+	PragmaKindFlagsNone PragmaKindFlags = 1 << iota
 	PragmaKindTripleSlashXML
 	PragmaKindSingleLine
 	PragmaKindMultiLine
