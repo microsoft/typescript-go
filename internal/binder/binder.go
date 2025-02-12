@@ -177,7 +177,7 @@ func (b *Binder) declareSymbolEx(symbolTable ast.SymbolTable, parent *ast.Symbol
 				includes&ast.SymbolFlagsAssignment != 0 && symbol.Flags&ast.SymbolFlagsVariable != 0) {
 				// Assignment declarations are allowed to merge with variables, no matter what other flags they have.
 				if node.Name() != nil {
-					ast.SetParent(node.Name(), node)
+					setParent(node.Name(), node)
 				}
 				// Report errors every position with duplicate declaration
 				// Report errors on previous encountered declarations
@@ -797,7 +797,7 @@ func (b *Binder) bindExportDeclaration(node *ast.Node) {
 	} else if ast.IsNamespaceExport(decl.ExportClause) {
 		// declareSymbol walks up parents to find name text, parent _must_ be set
 		// but won't be set by the normal binder walk until `bindChildren` later on.
-		ast.SetParent(decl.ExportClause, node)
+		setParent(decl.ExportClause, node)
 		b.declareSymbol(ast.GetExports(b.container.Symbol()), b.container.Symbol(), decl.ExportClause, ast.SymbolFlagsAlias, ast.SymbolFlagsAliasExcludes)
 	}
 }
@@ -894,7 +894,7 @@ func (b *Binder) bindClassLikeDeclaration(node *ast.Node) {
 	prototypeSymbol := b.newSymbol(ast.SymbolFlagsProperty|ast.SymbolFlagsPrototype, "prototype")
 	symbolExport := ast.GetExports(symbol)[prototypeSymbol.Name]
 	if symbolExport != nil {
-		ast.SetParent(name, node)
+		setParent(name, node)
 		b.errorOnNode(symbolExport.Declarations[0], diagnostics.Duplicate_identifier_0, ast.SymbolName(prototypeSymbol))
 	}
 	ast.GetExports(symbol)[prototypeSymbol.Name] = prototypeSymbol
@@ -960,8 +960,8 @@ func (b *Binder) bindFunctionPropertyAssignment(node *ast.Node) {
 		}
 		if funcSymbol != nil {
 			// Fix up parent pointers since we're going to use these nodes before we bind into them
-			ast.SetParent(expr.Left, node)
-			ast.SetParent(expr.Right, node)
+			setParent(expr.Left, node)
+			setParent(expr.Right, node)
 			if ast.HasDynamicName(node) {
 				b.bindAnonymousDeclaration(node, ast.SymbolFlagsProperty|ast.SymbolFlagsAssignment, ast.InternalSymbolNameComputed)
 				addLateBoundAssignmentDeclarationToSymbol(node, funcSymbol)
@@ -2640,6 +2640,12 @@ func (b *Binder) createDiagnosticForNode(node *ast.Node, message *diagnostics.Me
 
 func (b *Binder) addDiagnostic(diagnostic *ast.Diagnostic) {
 	b.file.SetBindDiagnostics(append(b.file.BindDiagnostics(), diagnostic))
+}
+
+func setParent(child *ast.Node, parent *ast.Node) {
+	if child != nil {
+		child.Parent = parent
+	}
 }
 
 func isSignedNumericLiteral(node *ast.Node) bool {

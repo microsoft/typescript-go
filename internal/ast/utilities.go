@@ -1957,6 +1957,31 @@ func IsBreakOrContinueStatement(node *Node) bool {
 	return NodeKindIs(node, KindBreakStatement, KindContinueStatement)
 }
 
+// GetModuleInstanceState is used during binding as well as in transformations and tests, and therefore may be invoked
+// with a node that does not yet have its `Parent` pointer set. In this case, an `ancestors` represents a stack of
+// virtual `Parent` pointers that can be used to walk up the tree. Since `getModuleInstanceStateForAliasTarget` may
+// potentially walk up out of the provided `Node`, merely setting the parent pointers for a given `ModuleDeclaration`
+// prior to invoking `GetModuleInstanceState` is not sufficient. It is, however, necessary that the `Parent` pointers
+// for all ancestors of the `Node` provided to `GetModuleInstanceState` have ben set.
+
+// Push a virtual parent pointer onto `ancestors` and return it.
+func pushAncestor(ancestors []*Node, parent *Node) []*Node {
+	return append(ancestors, parent)
+}
+
+// If a virtual `Parent` exists on the stack, returns the previous stack entry and the virtual `Parent“.
+// Otherwise, `node` must have an actual `Parent` pointer and we return nil and the parent.
+func popAncestor(ancestors []*Node, node *Node) ([]*Node, *Node) {
+	if len(ancestors) == 0 {
+		if node.Parent == nil {
+			panic("pop without push")
+		}
+		return nil, node.Parent
+	}
+	n := len(ancestors) - 1
+	return ancestors[:n], ancestors[n]
+}
+
 type ModuleInstanceState int32
 
 const (
@@ -1966,31 +1991,20 @@ const (
 	ModuleInstanceStateConstEnumOnly
 )
 
-func SetParent(child *Node, parent *Node) {
-	if child != nil {
-		child.Parent = parent
-	}
-}
-
 func GetModuleInstanceState(node *Node) ModuleInstanceState {
-	return getModuleInstanceState(node, nil)
+	return getModuleInstanceState(node, nil, nil)
 }
 
-func getModuleInstanceState(node *Node, visited map[NodeId]ModuleInstanceState) ModuleInstanceState {
+func getModuleInstanceState(node *Node, ancestors []*Node, visited map[NodeId]ModuleInstanceState) ModuleInstanceState {
 	module := node.AsModuleDeclaration()
-	if module.Body != nil && module.Body.Parent == nil {
-		// getModuleInstanceStateForAliasTarget needs to walk up the parent chain, so parent pointers must be set on this tree already
-		SetParent(module.Body, node)
-		SetParentInChildren(module.Body)
-	}
 	if module.Body != nil {
-		return getModuleInstanceStateCached(module.Body, visited)
+		return getModuleInstanceStateCached(module.Body, pushAncestor(ancestors, node), visited)
 	} else {
 		return ModuleInstanceStateInstantiated
 	}
 }
 
-func getModuleInstanceStateCached(node *Node, visited map[NodeId]ModuleInstanceState) ModuleInstanceState {
+func getModuleInstanceStateCached(node *Node, ancestors []*Node, visited map[NodeId]ModuleInstanceState) ModuleInstanceState {
 	if visited == nil {
 		visited = make(map[NodeId]ModuleInstanceState)
 	}
@@ -2002,12 +2016,12 @@ func getModuleInstanceStateCached(node *Node, visited map[NodeId]ModuleInstanceS
 		return ModuleInstanceStateNonInstantiated
 	}
 	visited[nodeId] = ModuleInstanceStateUnknown
-	result := getModuleInstanceStateWorker(node, visited)
+	result := getModuleInstanceStateWorker(node, ancestors, visited)
 	visited[nodeId] = result
 	return result
 }
 
-func getModuleInstanceStateWorker(node *Node, visited map[NodeId]ModuleInstanceState) ModuleInstanceState {
+func getModuleInstanceStateWorker(node *Node, ancestors []*Node, visited map[NodeId]ModuleInstanceState) ModuleInstanceState {
 	// A module is uninstantiated if it contains only
 	switch node.Kind {
 	case KindInterfaceDeclaration, KindTypeAliasDeclaration:
@@ -2024,8 +2038,10 @@ func getModuleInstanceStateWorker(node *Node, visited map[NodeId]ModuleInstanceS
 		decl := node.AsExportDeclaration()
 		if decl.ModuleSpecifier == nil && decl.ExportClause != nil && decl.ExportClause.Kind == KindNamedExports {
 			state := ModuleInstanceStateNonInstantiated
+			ancestors = pushAncestor(ancestors, node)
+			ancestors = pushAncestor(ancestors, decl.ExportClause)
 			for _, specifier := range decl.ExportClause.AsNamedExports().Elements.Nodes {
-				specifierState := getModuleInstanceStateForAliasTarget(specifier, visited)
+				specifierState := getModuleInstanceStateForAliasTarget(specifier, ancestors, visited)
 				if specifierState > state {
 					state = specifierState
 				}
@@ -2037,8 +2053,9 @@ func getModuleInstanceStateWorker(node *Node, visited map[NodeId]ModuleInstanceS
 		}
 	case KindModuleBlock:
 		state := ModuleInstanceStateNonInstantiated
+		ancestors = pushAncestor(ancestors, node)
 		node.ForEachChild(func(n *Node) bool {
-			childState := getModuleInstanceStateCached(n, visited)
+			childState := getModuleInstanceStateCached(n, ancestors, visited)
 			switch childState {
 			case ModuleInstanceStateNonInstantiated:
 				return false
@@ -2053,7 +2070,7 @@ func getModuleInstanceStateWorker(node *Node, visited map[NodeId]ModuleInstanceS
 		})
 		return state
 	case KindModuleDeclaration:
-		return getModuleInstanceState(node, visited)
+		return getModuleInstanceState(node, ancestors, visited)
 	case KindIdentifier:
 		if node.Flags&NodeFlagsIdentifierIsInJSDocNamespace != 0 {
 			return ModuleInstanceStateNonInstantiated
@@ -2062,7 +2079,7 @@ func getModuleInstanceStateWorker(node *Node, visited map[NodeId]ModuleInstanceS
 	return ModuleInstanceStateInstantiated
 }
 
-func getModuleInstanceStateForAliasTarget(node *Node, visited map[NodeId]ModuleInstanceState) ModuleInstanceState {
+func getModuleInstanceStateForAliasTarget(node *Node, ancestors []*Node, visited map[NodeId]ModuleInstanceState) ModuleInstanceState {
 	spec := node.AsExportSpecifier()
 	name := spec.PropertyName
 	if name == nil {
@@ -2072,17 +2089,14 @@ func getModuleInstanceStateForAliasTarget(node *Node, visited map[NodeId]ModuleI
 		// Skip for invalid syntax like this: export { "x" }
 		return ModuleInstanceStateInstantiated
 	}
-	for p := node.Parent; p != nil; p = p.Parent {
+	for ancestors, p := popAncestor(ancestors, node); p != nil; ancestors, p = popAncestor(ancestors, p) {
 		if IsBlock(p) || IsModuleBlock(p) || IsSourceFile(p) {
 			statements := GetStatementsOfBlock(p)
 			found := ModuleInstanceStateUnknown
+			statementsAncestors := pushAncestor(ancestors, p)
 			for _, statement := range statements.Nodes {
 				if NodeHasName(statement, name) {
-					if statement.Parent == nil {
-						SetParent(statement, p)
-						SetParentInChildren(statement)
-					}
-					state := getModuleInstanceStateCached(statement, visited)
+					state := getModuleInstanceStateCached(statement, statementsAncestors, visited)
 					if found == ModuleInstanceStateUnknown || state > found {
 						found = state
 					}
