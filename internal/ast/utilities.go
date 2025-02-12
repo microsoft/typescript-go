@@ -1087,8 +1087,18 @@ func getCombinedFlags[T ~uint32](node *Node, getFlags func(*Node) T) T {
 	return flags
 }
 
+func getEffectiveModifierFlags(node *Node) ModifierFlags {
+	flags := node.ModifierFlags()
+
+	// !!! JSDoc modifiers
+	if node.Flags&NodeFlagsNestedNamespace != 0 || node.Kind == KindIdentifier && node.Flags&NodeFlagsIdentifierIsInJSDocNamespace != 0 {
+		flags |= ModifierFlagsExport
+	}
+	return flags & ModifierFlagsSyntacticModifiers
+}
+
 func GetCombinedModifierFlags(node *Node) ModifierFlags {
-	return getCombinedFlags(node, (*Node).ModifierFlags)
+	return getCombinedFlags(node, getEffectiveModifierFlags)
 }
 
 func GetCombinedNodeFlags(node *Node) NodeFlags {
