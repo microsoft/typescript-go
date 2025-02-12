@@ -155,7 +155,7 @@ func isVariableDeclarationInitializedWithRequireHelper(node *ast.Node, allowAcce
 		if allowAccessedRequire {
 			initializer = getLeftmostAccessExpression(initializer)
 		}
-		return isRequireCall(initializer, true /*requireStringLiteralLikeArgument*/)
+		return ast.IsRequireCall(initializer, true /*requireStringLiteralLikeArgument*/)
 	}
 	return false
 }
@@ -165,18 +165,6 @@ func getLeftmostAccessExpression(expr *ast.Node) *ast.Node {
 		expr = expr.Expression()
 	}
 	return expr
-}
-
-func isRequireCall(node *ast.Node, requireStringLiteralLikeArgument bool) bool {
-	if ast.IsCallExpression(node) {
-		callExpression := node.AsCallExpression()
-		if len(callExpression.Arguments.Nodes) == 1 {
-			if ast.IsIdentifier(callExpression.Expression) && callExpression.Expression.AsIdentifier().Text == "require" {
-				return !requireStringLiteralLikeArgument || ast.IsStringLiteralLike(callExpression.Arguments.Nodes[0])
-			}
-		}
-	}
-	return false
 }
 
 func isStaticPrivateIdentifierProperty(s *ast.Symbol) bool {

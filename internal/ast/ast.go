@@ -2,6 +2,7 @@ package ast
 
 import (
 	"fmt"
+	"strings"
 	"sync"
 	"sync/atomic"
 
@@ -5778,6 +5779,53 @@ func IsImportAttributes(node *Node) bool {
 	return node.Kind == KindImportAttributes
 }
 
+func (node *ImportAttributesNode) GetResolutionModeOverride( /* !!! grammarErrorOnNode?: (node: Node, diagnostic: DiagnosticMessage) => void*/ ) (core.ResolutionMode, bool) {
+	if node == nil {
+		return core.ResolutionModeNone, false
+	}
+
+	attributes := node.AsImportAttributes().Attributes
+
+	if len(attributes.Nodes) != 1 {
+		// !!!
+		// grammarErrorOnNode?.(
+		//     node,
+		//     node.token === SyntaxKind.WithKeyword
+		//         ? Diagnostics.Type_import_attributes_should_have_exactly_one_key_resolution_mode_with_value_import_or_require
+		//         : Diagnostics.Type_import_assertions_should_have_exactly_one_key_resolution_mode_with_value_import_or_require,
+		// );
+		return core.ResolutionModeNone, false
+	}
+
+	elem := attributes.Nodes[0].AsImportAttribute()
+	if !IsStringLiteralLike(elem.Name()) {
+		return core.ResolutionModeNone, false
+	}
+	if elem.Name().Text() != "resolution-mode" {
+		// !!!
+		// grammarErrorOnNode?.(
+		//     elem.name,
+		//     node.token === SyntaxKind.WithKeyword
+		//         ? Diagnostics.resolution_mode_is_the_only_valid_key_for_type_import_attributes
+		//         : Diagnostics.resolution_mode_is_the_only_valid_key_for_type_import_assertions,
+		// );
+		return core.ResolutionModeNone, false
+	}
+	if !IsStringLiteralLike(elem.Value) {
+		return core.ResolutionModeNone, false
+	}
+	if elem.Value.Text() != "import" && elem.Value.Text() != "require" {
+		// !!!
+		// grammarErrorOnNode?.(elem.value, Diagnostics.resolution_mode_should_be_either_require_or_import);
+		return core.ResolutionModeNone, false
+	}
+	if elem.Value.Text() == "import" {
+		return core.ResolutionModeESM, true
+	} else {
+		return core.ModuleKindCommonJS, true
+	}
+}
+
 // TypeQueryNode
 
 type TypeQueryNode struct {
@@ -7240,6 +7288,10 @@ func (node *JSDocImportTag) ForEachChild(v Visitor) bool {
 	return visit(v, node.TagName) || visit(v, node.ImportClause) || visit(v, node.ModuleSpecifier) || visit(v, node.Attributes) || visitNodeList(v, node.Comment)
 }
 
+func (node *Node) IsJSDocImportTag() bool {
+	return node.Kind == KindJSDocImportTag
+}
+
 // JSDocCallbackTag
 type JSDocCallbackTag struct {
 	JSDocTagBase
@@ -7512,6 +7564,71 @@ func (node *SourceFile) LineMap() []core.TextPos {
 		}
 	}
 	return lineMap
+}
+
+func (file *SourceFile) CollectDynamicImportOrRequireOrJsDocImportCalls() {
+	lastIndex := 0
+	for {
+		index := strings.Index(file.Text[lastIndex:], "import")
+		if index == -1 {
+			break
+		}
+		index += lastIndex
+		node := file.GetNodeAtPosition(index, false /* !!! isJavaScriptFile */)
+		// if isJavaScriptFile && isRequireCall(node /*requireStringLiteralLikeArgument*/, true) {
+		// 	setParentRecursive(node /*incremental*/, false) // we need parent data on imports before the program is fully bound, so we ensure it's set here
+		// 	imports = append(imports, node.arguments[0])
+		// } else
+		if IsImportCall(node) && len(node.Arguments()) >= 1 && IsStringLiteralLike(node.Arguments()[0]) {
+			// we have to check the argument list has length of at least 1. We will still have to process these even though we have parsing error.
+			SetParentInChildren(node) // we need parent data on imports before the program is fully bound, so we ensure it's set here
+			file.Imports = append(file.Imports, node.Arguments()[0])
+		} else if IsLiteralImportTypeNode(node) {
+			SetParentInChildren(node) // we need parent data on imports before the program is fully bound, so we ensure it's set here
+			file.Imports = append(file.Imports, node.AsImportTypeNode().Argument.AsLiteralTypeNode().Literal)
+		}
+		// else if isJavaScriptFile && isJSDocImportTag(node) {
+		// 	const moduleNameExpr = getExternalModuleName(node)
+		// 	if moduleNameExpr && isStringLiteral(moduleNameExpr) && moduleNameExpr.text {
+		// 		setParentRecursive(node /*incremental*/, false)
+		// 		imports = append(imports, moduleNameExpr)
+		// 	}
+		// }
+		lastIndex = min(index+len("import"), len(file.Text))
+	}
+}
+
+// Returns a token if position is in [start-of-leading-trivia, end), includes JSDoc only in JS files
+func (file *SourceFile) GetNodeAtPosition(position int, isJavaScriptFile bool) *Node {
+	current := file.AsNode()
+	for {
+		var child *Node
+		if isJavaScriptFile /* && hasJSDocNodes(current) */ {
+			for _, jsDoc := range current.JSDoc(file) {
+				if nodeContainsPosition(jsDoc, position) {
+					child = jsDoc
+					break
+				}
+			}
+		}
+		if child == nil {
+			current.ForEachChild(func(node *Node) bool {
+				if nodeContainsPosition(node, position) {
+					child = node
+					return true
+				}
+				return false
+			})
+		}
+		if child == nil {
+			return current
+		}
+		current = child
+	}
+}
+
+func nodeContainsPosition(node *Node, position int) bool {
+	return node.Kind >= KindFirstNode && node.Pos() <= position && (position < node.End() || position == node.End() && node.Kind == KindEndOfFile)
 }
 
 func IsSourceFile(node *Node) bool {

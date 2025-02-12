@@ -274,6 +274,10 @@ const (
 	ModuleKindPreserve ModuleKind = 200
 )
 
+func (moduleKind ModuleKind) IsNonNodeESM() bool {
+	return moduleKind >= ModuleKindES2015 && moduleKind <= ModuleKindESNext
+}
+
 type ResolutionMode = ModuleKind // ModuleKindNone | ModuleKindCommonJS | ModuleKindESNext
 
 const (

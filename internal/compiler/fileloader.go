@@ -9,6 +9,7 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/compiler/module"
+	"github.com/microsoft/typescript-go/internal/compiler/packagejson"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -30,6 +31,12 @@ type fileLoader struct {
 	defaultLibraryPath      string
 	comparePathsOptions     tspath.ComparePathsOptions
 	rootTasks               []*parseTask
+}
+
+type sourceFileMetadata struct {
+	file              *ast.SourceFile
+	impliedNodeFormat core.ResolutionMode
+	packageJsonScope  *packagejson.InfoCacheEntry
 }
 
 func processAllProgramFiles(
@@ -94,7 +101,7 @@ func (p *fileLoader) addAutomaticTypeDirectiveTasks() {
 
 	automaticTypeDirectiveNames := module.GetAutomaticTypeDirectiveNames(p.compilerOptions, p.host)
 	for _, name := range automaticTypeDirectiveNames {
-		resolved := p.resolver.ResolveTypeReferenceDirective(name, containingFileName, core.ModuleKindNodeNext, nil)
+		resolved := p.resolver.ResolveTypeReferenceDirective(name, containingFileName, core.ResolutionModeNone, nil)
 		if resolved.IsResolved() {
 			p.rootTasks = append(p.rootTasks, &parseTask{normalizedFilePath: resolved.ResolvedFileName, isLib: false})
 		}
@@ -176,6 +183,7 @@ type parseTask struct {
 func (t *parseTask) start(loader *fileLoader) {
 	loader.wg.Run(func() {
 		file := loader.parseSourceFile(t.normalizedFilePath)
+		metadata := loader.buildFileMetadata(file)
 
 		// !!! if noResolve, skip all of this
 		loader.collectExternalModuleReferences(file)
@@ -183,12 +191,13 @@ func (t *parseTask) start(loader *fileLoader) {
 		t.subTasks = make([]*parseTask, 0, len(file.ReferencedFiles)+len(file.Imports)+len(file.ModuleAugmentations))
 
 		for _, ref := range file.ReferencedFiles {
-			resolvedPath := loader.resolveTripleslashPathReference(ref.FileName, file.FileName())
+			resolvedPath := resolveTripleslashPathReference(ref.FileName, file.FileName())
 			t.addSubTask(resolvedPath, false)
 		}
 
 		for _, ref := range file.TypeReferenceDirectives {
-			resolved := loader.resolver.ResolveTypeReferenceDirective(ref.FileName, file.FileName(), core.ModuleKindCommonJS /* !!! */, nil)
+			resolutionMode := getModeForTypeReferenceDirectiveInFile(ref, metadata, loader.compilerOptions)
+			resolved := loader.resolver.ResolveTypeReferenceDirective(ref.FileName, file.FileName(), resolutionMode, nil)
 			if resolved.IsResolved() {
 				t.addSubTask(resolved.ResolvedFileName, false)
 			}
@@ -204,7 +213,7 @@ func (t *parseTask) start(loader *fileLoader) {
 			}
 		}
 
-		for _, imp := range loader.resolveImportsAndModuleAugmentations(file) {
+		for _, imp := range loader.resolveImportsAndModuleAugmentations(metadata) {
 			t.addSubTask(imp, false)
 		}
 
@@ -223,6 +232,45 @@ func (p *fileLoader) parseSourceFile(fileName string) *ast.SourceFile {
 func (t *parseTask) addSubTask(fileName string, isLib bool) {
 	normalizedFilePath := tspath.NormalizePath(fileName)
 	t.subTasks = append(t.subTasks, &parseTask{normalizedFilePath: normalizedFilePath, isLib: isLib})
+}
+
+func (p *fileLoader) buildFileMetadata(sourceFile *ast.SourceFile) *sourceFileMetadata {
+	fileMetadata := &sourceFileMetadata{file: sourceFile}
+	fileName := sourceFile.FileName()
+	moduleResolution := p.compilerOptions.GetModuleResolutionKind()
+	shouldLookUpFromPackageJson := core.ModuleResolutionKindNode16 <= moduleResolution && moduleResolution <= core.ModuleResolutionKindNodeNext || tspath.ContainsPath(fileName, "/node_modules/", p.comparePathsOptions)
+
+	if hasEsModuleExtension(fileName) {
+		fileMetadata.impliedNodeFormat = core.ResolutionModeESM
+	} else if hasCommonJsExtension(fileName) {
+		fileMetadata.impliedNodeFormat = core.ResolutionModeCommonJS
+	} else if shouldLookUpFromPackageJson && hasStandardExtension(fileName) {
+		pkgJsonScope := p.resolver.GetPackageScopeForPath(tspath.GetDirectoryPath(fileName))
+
+		if pkgJsonScope != nil {
+			if pkgJsonScope.Contents.Type.Value == "module" {
+				fileMetadata.impliedNodeFormat = core.ResolutionModeESM
+			} else {
+				fileMetadata.impliedNodeFormat = core.ResolutionModeCommonJS
+			}
+		}
+
+		fileMetadata.packageJsonScope = pkgJsonScope
+	}
+
+	return fileMetadata
+}
+
+func hasEsModuleExtension(fileName string) bool {
+	return tspath.FileExtensionIsOneOf(fileName, []string{tspath.ExtensionDmts, tspath.ExtensionMts, tspath.ExtensionMjs})
+}
+
+func hasCommonJsExtension(fileName string) bool {
+	return tspath.FileExtensionIsOneOf(fileName, []string{tspath.ExtensionCjs, tspath.ExtensionCts, tspath.ExtensionDcts})
+}
+
+func hasStandardExtension(fileName string) bool {
+	return tspath.FileExtensionIsOneOf(fileName, []string{tspath.ExtensionDts, tspath.ExtensionTs, tspath.ExtensionTsx, tspath.ExtensionJs, tspath.ExtensionJsx})
 }
 
 func (p *fileLoader) collectExternalModuleReferences(file *ast.SourceFile) {
@@ -252,39 +300,7 @@ func (p *fileLoader) collectExternalModuleReferences(file *ast.SourceFile) {
 	}
 
 	if file.Flags&ast.NodeFlagsPossiblyContainsDynamicImport != 0 {
-		p.collectDynamicImportOrRequireOrJsDocImportCalls(file)
-	}
-}
-
-func (p *fileLoader) collectDynamicImportOrRequireOrJsDocImportCalls(file *ast.SourceFile) {
-	lastIndex := 0
-	for {
-		index := strings.Index(file.Text[lastIndex:], "import")
-		if index == -1 {
-			break
-		}
-		index += lastIndex
-		node := getNodeAtPosition(file, index, false /* !!! isJavaScriptFile */)
-		// if isJavaScriptFile && isRequireCall(node /*requireStringLiteralLikeArgument*/, true) {
-		// 	setParentRecursive(node /*incremental*/, false) // we need parent data on imports before the program is fully bound, so we ensure it's set here
-		// 	imports = append(imports, node.arguments[0])
-		// } else
-		if ast.IsImportCall(node) && len(node.Arguments()) >= 1 && ast.IsStringLiteralLike(node.Arguments()[0]) {
-			// we have to check the argument list has length of at least 1. We will still have to process these even though we have parsing error.
-			ast.SetParentInChildren(node) // we need parent data on imports before the program is fully bound, so we ensure it's set here
-			file.Imports = append(file.Imports, node.Arguments()[0])
-		} else if ast.IsLiteralImportTypeNode(node) {
-			ast.SetParentInChildren(node) // we need parent data on imports before the program is fully bound, so we ensure it's set here
-			file.Imports = append(file.Imports, node.AsImportTypeNode().Argument.AsLiteralTypeNode().Literal)
-		}
-		// else if isJavaScriptFile && isJSDocImportTag(node) {
-		// 	const moduleNameExpr = getExternalModuleName(node)
-		// 	if moduleNameExpr && isStringLiteral(moduleNameExpr) && moduleNameExpr.text {
-		// 		setParentRecursive(node /*incremental*/, false)
-		// 		imports = append(imports, moduleNameExpr)
-		// 	}
-		// }
-		lastIndex = min(index+len("import"), len(file.Text))
+		file.CollectDynamicImportOrRequireOrJsDocImportCalls()
 	}
 }
 
@@ -341,7 +357,7 @@ func (p *fileLoader) collectModuleReferences(file *ast.SourceFile, node *ast.Sta
 	}
 }
 
-func (p *fileLoader) resolveTripleslashPathReference(moduleName string, containingFile string) string {
+func resolveTripleslashPathReference(moduleName string, containingFile string) string {
 	basePath := tspath.GetDirectoryPath(containingFile)
 	referencedFileName := moduleName
 
@@ -351,12 +367,13 @@ func (p *fileLoader) resolveTripleslashPathReference(moduleName string, containi
 	return tspath.NormalizePath(referencedFileName)
 }
 
-func (p *fileLoader) resolveImportsAndModuleAugmentations(file *ast.SourceFile) []string {
+func (p *fileLoader) resolveImportsAndModuleAugmentations(item *sourceFileMetadata) []string {
+	file := item.file
 	toParse := make([]string, 0, len(file.Imports))
 	if len(file.Imports) > 0 || len(file.ModuleAugmentations) > 0 {
 		moduleNames := getModuleNames(file)
-		resolutions := p.resolveModuleNames(moduleNames, file)
-
+		resolutions := p.resolveModuleNames(moduleNames, item)
+		optionsForFile := p.getCompilerOptionsForFile(file)
 		resolutionsInFile := make(module.ModeAwareCache[*module.ResolvedModule], len(resolutions))
 
 		p.resolvedModulesMutex.Lock()
@@ -366,12 +383,12 @@ func (p *fileLoader) resolveImportsAndModuleAugmentations(file *ast.SourceFile) 
 		}
 		p.resolvedModules[file.Path()] = resolutionsInFile
 
-		for i, resolution := range resolutions {
-			resolvedFileName := resolution.ResolvedFileName
+		for _, resolution := range resolutions {
+			resolvedFileName := resolution.resolvedModule.ResolvedFileName
 			// TODO(ercornel): !!!: check if from node modules
 
-			mode := core.ModuleKindCommonJS // !!!
-			resolutionsInFile[module.ModeAwareCacheKey{Name: moduleNames[i].Text(), Mode: mode}] = resolution
+			mode := getModeForUsageLocation(item, resolution.node, optionsForFile)
+			resolutionsInFile[module.ModeAwareCacheKey{Name: resolution.node.Text(), Mode: mode}] = resolution.resolvedModule
 
 			// add file to program only if:
 			// - resolution was successful
@@ -384,7 +401,7 @@ func (p *fileLoader) resolveImportsAndModuleAugmentations(file *ast.SourceFile) 
 			// Don't add the file if it has a bad extension (e.g. 'tsx' if we don't have '--allowJs')
 			// This may still end up being an untyped module -- the file won't be included but imports will be allowed.
 
-			shouldAddFile := resolution.IsResolved() && tspath.FileExtensionIsOneOf(resolvedFileName, []string{".ts", ".tsx", ".mts", ".cts"})
+			shouldAddFile := resolution.resolvedModule.IsResolved() && tspath.FileExtensionIsOneOf(resolvedFileName, []string{".ts", ".tsx", ".mts", ".cts"})
 			// TODO(ercornel): !!!: other checks on whether or not to add the file
 
 			if shouldAddFile {
@@ -396,54 +413,199 @@ func (p *fileLoader) resolveImportsAndModuleAugmentations(file *ast.SourceFile) 
 	return toParse
 }
 
-func (p *fileLoader) resolveModuleNames(entries []*ast.Node, file *ast.SourceFile) []*module.ResolvedModule {
+type resolution struct {
+	node           *ast.Node
+	resolvedModule *module.ResolvedModule
+}
+
+func (p *fileLoader) resolveModuleNames(entries []*ast.Node, item *sourceFileMetadata) []*resolution {
 	if len(entries) == 0 {
 		return nil
 	}
 
-	resolvedModules := make([]*module.ResolvedModule, 0, len(entries))
+	resolvedModules := make([]*resolution, 0, len(entries))
 
 	for _, entry := range entries {
 		moduleName := entry.Text()
 		if moduleName == "" {
 			continue
 		}
-		resolvedModule := p.resolver.ResolveModuleName(moduleName, file.FileName(), core.ModuleKindCommonJS /* !!! */, nil)
-		resolvedModules = append(resolvedModules, resolvedModule)
+		resolvedModule := p.resolver.ResolveModuleName(moduleName, item.file.FileName(), item.impliedNodeFormat /* !!! */, nil)
+		resolvedModules = append(resolvedModules, &resolution{node: entry, resolvedModule: resolvedModule})
 	}
 
 	return resolvedModules
 }
 
-// Returns a token if position is in [start-of-leading-trivia, end), includes JSDoc only in JS files
-func getNodeAtPosition(file *ast.SourceFile, position int, isJavaScriptFile bool) *ast.Node {
-	current := file.AsNode()
-	for {
-		var child *ast.Node
-		if isJavaScriptFile /* && hasJSDocNodes(current) */ {
-			for _, jsDoc := range current.JSDoc(file) {
-				if nodeContainsPosition(jsDoc, position) {
-					child = jsDoc
-					break
-				}
-			}
-		}
-		if child == nil {
-			current.ForEachChild(func(node *ast.Node) bool {
-				if nodeContainsPosition(node, position) {
-					child = node
-					return true
-				}
-				return false
-			})
-		}
-		if child == nil {
-			return current
-		}
-		current = child
+func (p *fileLoader) getCompilerOptionsForFile(file *ast.SourceFile) *core.CompilerOptions {
+	// !!! return getRedirectReferenceForResolution(file)?.commandLine.options || options;
+	return p.compilerOptions
+}
+
+func getModeForTypeReferenceDirectiveInFile(ref *ast.FileReference, item *sourceFileMetadata, options *core.CompilerOptions) core.ResolutionMode {
+	if ref.ResolutionMode != core.ResolutionModeNone {
+		return ref.ResolutionMode
+	} else {
+		return getDefaultResolutionModeForFile(item, options)
 	}
 }
 
-func nodeContainsPosition(node *ast.Node, position int) bool {
-	return node.Kind >= ast.KindFirstNode && node.Pos() <= position && (position < node.End() || position == node.End() && node.Kind == ast.KindEndOfFile)
+func getDefaultResolutionModeForFile(item *sourceFileMetadata, options *core.CompilerOptions) core.ResolutionMode {
+	if importSyntaxAffectsModuleResolution(options) {
+		return getImpliedNodeFormatForEmitWorker(item, options)
+	} else {
+		return core.ResolutionModeNone
+	}
+}
+
+/*
+Use `program.getModeForUsageLocation`, which retrieves the correct `compilerOptions`, instead of this function whenever possible.
+Calculates the final resolution mode for a given module reference node. This function only returns a result when module resolution
+settings allow differing resolution between ESM imports and CJS requires, or when a mode is explicitly provided via import attributes,
+which cause an `import` or `require` condition to be used during resolution regardless of module resolution settings. In absence of
+overriding attributes, and in modes that support differing resolution, the result indicates the syntax the usage would emit to JavaScript.
+Some examples:
+
+	    // tsc foo.mts --module nodenext
+	    import {} from "mod";
+	    // Result: ESNext - the import emits as ESM due to `impliedNodeFormat` set by .mts file extension
+
+		// tsc foo.cts --module nodenext
+		import {} from "mod";
+		// Result: CommonJS - the import emits as CJS due to `impliedNodeFormat` set by .cts file extension
+
+		// tsc foo.ts --module preserve --moduleResolution bundler
+		import {} from "mod";
+		// Result: ESNext - the import emits as ESM due to `--module preserve` and `--moduleResolution bundler`
+		// supports conditional imports/exports
+
+		// tsc foo.ts --module preserve --moduleResolution node10
+		import {} from "mod";
+		// Result: undefined - the import emits as ESM due to `--module preserve`, but `--moduleResolution node10`
+		// does not support conditional imports/exports
+
+		// tsc foo.ts --module commonjs --moduleResolution node10
+		import type {} from "mod" with { "resolution-mode": "import" };
+		// Result: ESNext - conditional imports/exports always supported with "resolution-mode" attribute
+
+Parameters:
+
+- file: The file the import or import-like reference is contained within
+
+- usage: The module reference string
+
+- compilerOptions: The compiler options for the program that owns the file. If the file belongs to a referenced project, the compiler options
+should be the options of the referenced project, not the referencing project.
+
+Returns:
+
+- The final resolution mode of the import
+*/
+func getModeForUsageLocation(item *sourceFileMetadata, usage *ast.Node, options *core.CompilerOptions) core.ResolutionMode {
+	if ast.IsImportDeclaration(usage.Parent) || ast.IsExportDeclaration(usage.Parent) || usage.Parent.IsJSDocImportTag() {
+		isTypeOnly := ast.IsExclusivelyTypeOnlyImportOrExport(usage.Parent)
+		if isTypeOnly {
+			var override core.ResolutionMode
+			var ok bool
+			switch usage.Parent.Kind {
+			case ast.KindImportDeclaration:
+				override, ok = usage.Parent.AsImportDeclaration().Attributes.GetResolutionModeOverride()
+			case ast.KindExportDeclaration:
+				override, ok = usage.Parent.AsExportDeclaration().Attributes.GetResolutionModeOverride()
+			case ast.KindJSDocImportTag:
+				override, ok = usage.Parent.AsJSDocImportTag().Attributes.GetResolutionModeOverride()
+			}
+			if ok {
+				return override
+			}
+		}
+	}
+	if usage.Parent.Parent != nil && ast.IsImportTypeNode(usage.Parent.Parent) {
+		if override, ok := usage.Parent.Parent.AsImportTypeNode().Attributes.GetResolutionModeOverride(); ok {
+			return override
+		}
+	}
+
+	if options != nil && importSyntaxAffectsModuleResolution(options) {
+		return getEmitSyntaxForUsageLocationWorker(item, usage, options)
+	}
+
+	return core.ResolutionModeNone
+}
+
+func importSyntaxAffectsModuleResolution(options *core.CompilerOptions) bool {
+	moduleResolution := options.ModuleResolution
+	return core.ModuleResolutionKindNode16 <= moduleResolution && moduleResolution <= core.ModuleResolutionKindNodeNext ||
+		options.ResolvePackageJsonExports.IsTrue() || options.ResolvePackageJsonImports.IsTrue()
+}
+
+func getEmitSyntaxForUsageLocationWorker(item *sourceFileMetadata, usage *ast.Node, options *core.CompilerOptions) core.ResolutionMode {
+	if options == nil {
+		// This should always be provided, but we try to fail somewhat
+		// gracefully to allow projects like ts-node time to update.
+		return core.ResolutionModeNone
+	}
+
+	exprParentParent := ast.WalkUpParenthesizedExpressions(usage.Parent).Parent
+	if exprParentParent != nil && ast.IsImportEqualsDeclaration(exprParentParent) || ast.IsRequireCall(usage.Parent /*requireStringLiteralLikeArgument*/, false) {
+		return core.ModuleKindCommonJS
+	}
+	if ast.IsImportCall(ast.WalkUpParenthesizedExpressions(usage.Parent)) {
+		if shouldTransformImportCallWorker(item, options) {
+			return core.ModuleKindCommonJS
+		} else {
+			return core.ModuleKindESNext
+		}
+	}
+	// If we're in --module preserve on an input file, we know that an import
+	// is an import. But if this is a declaration file, we'd prefer to use the
+	// impliedNodeFormat. Since we want things to be consistent between the two,
+	// we need to issue errors when the user writes ESM syntax in a definitely-CJS
+	// file, until/unless declaration emit can indicate a true ESM import. On the
+	// other hand, writing CJS syntax in a definitely-ESM file is fine, since declaration
+	// emit preserves the CJS syntax.
+	fileEmitMode := getEmitModuleFormatOfFile(item, options)
+	if fileEmitMode == core.ModuleKindCommonJS {
+		return core.ModuleKindCommonJS
+	} else {
+		if fileEmitMode.IsNonNodeESM() || fileEmitMode == core.ModuleKindPreserve {
+			return core.ModuleKindESNext
+		}
+	}
+	return core.ModuleKindNone
+}
+
+func getEmitModuleFormatOfFile(item *sourceFileMetadata, options *core.CompilerOptions) core.ResolutionMode {
+	implied := getImpliedNodeFormatForEmitWorker(item, options)
+	if implied != core.ResolutionModeNone {
+		return implied
+	} else {
+		return options.GetEmitModuleKind()
+	}
+}
+
+func shouldTransformImportCallWorker(metadata *sourceFileMetadata, options *core.CompilerOptions) bool {
+	moduleKind := options.GetEmitModuleKind()
+	if core.ModuleKindNode16 <= moduleKind && moduleKind <= core.ModuleKindNodeNext || moduleKind == core.ModuleKindPreserve {
+		return false
+	}
+	return getImpliedNodeFormatForEmitWorker(metadata, options) < core.ModuleKindES2015
+}
+
+func getImpliedNodeFormatForEmitWorker(metadata *sourceFileMetadata, options *core.CompilerOptions) core.ResolutionMode {
+	moduleKind := options.ModuleKind
+	if core.ModuleKindNode16 <= moduleKind && moduleKind <= core.ModuleKindNodeNext {
+		return metadata.impliedNodeFormat
+	}
+	if metadata.impliedNodeFormat == core.ModuleKindCommonJS &&
+		(metadata.packageJsonScope.Contents.Type.Value == "commonjs" ||
+			tspath.FileExtensionIsOneOf(metadata.file.FileName(), []string{tspath.ExtensionCjs, tspath.ExtensionCts})) {
+		return core.ModuleKindCommonJS
+	}
+	if metadata.impliedNodeFormat == core.ModuleKindESNext &&
+		(metadata.packageJsonScope.Contents.Type.Value == "module" ||
+			tspath.FileExtensionIsOneOf(metadata.file.FileName(), []string{tspath.ExtensionMjs, tspath.ExtensionMts})) {
+		return core.ModuleKindESNext
+	}
+	return core.ResolutionModeNone
 }

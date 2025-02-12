@@ -1147,6 +1147,18 @@ func IsInJSFile(node *Node) bool {
 	return node != nil && node.Flags&NodeFlagsJavaScriptFile != 0
 }
 
+func IsRequireCall(node *Node, requireStringLiteralLikeArgument bool) bool {
+	if IsCallExpression(node) {
+		callExpression := node.AsCallExpression()
+		if len(callExpression.Arguments.Nodes) == 1 {
+			if IsIdentifier(callExpression.Expression) && callExpression.Expression.AsIdentifier().Text == "require" {
+				return !requireStringLiteralLikeArgument || IsStringLiteralLike(callExpression.Arguments.Nodes[0])
+			}
+		}
+	}
+	return false
+}
+
 func IsDeclaration(node *Node) bool {
 	if node.Kind == KindTypeParameter {
 		return node.Parent != nil
@@ -1194,6 +1206,20 @@ func IsJsxTagName(node *Node) bool {
 
 func IsImportOrExportSpecifier(node *Node) bool {
 	return IsImportSpecifier(node) || IsExportSpecifier(node)
+}
+
+func IsExclusivelyTypeOnlyImportOrExport(decl *Node) bool {
+	switch decl.Kind {
+	case KindImportDeclaration:
+		importDecl := decl.AsImportDeclaration()
+		if importDecl.ImportClause != nil {
+			return importDecl.ImportClause.AsImportClause().IsTypeOnly
+		}
+	case KindExportDeclaration:
+		return decl.AsExportDeclaration().IsTypeOnly
+	}
+
+	return false
 }
 
 func isVoidZero(node *Node) bool {
