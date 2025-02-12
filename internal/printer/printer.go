@@ -3261,11 +3261,10 @@ func (p *Printer) emitModuleDeclaration(node *ast.ModuleDeclaration) {
 	}
 	if body == nil {
 		p.writeTrailingSemicolon()
-		p.exitNode(node.AsNode())
-		return
+	} else {
+		p.writeSpace()
+		p.emitModuleBlock(body.AsModuleBlock())
 	}
-	p.writeSpace()
-	p.emitModuleBlock(body.AsModuleBlock())
 	p.exitNode(node.AsNode())
 }
 
