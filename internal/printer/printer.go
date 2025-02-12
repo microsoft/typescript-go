@@ -1817,7 +1817,7 @@ func (p *Printer) emitIndexedAccessType(node *ast.IndexedAccessTypeNode) {
 	p.exitNode(node.AsNode())
 }
 
-func (p *Printer) emitMappedTypeParamerter(node *ast.TypeParameterDeclaration) {
+func (p *Printer) emitMappedTypeParameter(node *ast.TypeParameterDeclaration) {
 	p.enterNode(node.AsNode())
 	p.emitBindingIdentifier(node.Name().AsIdentifier())
 	p.writeSpace()
@@ -1845,7 +1845,7 @@ func (p *Printer) emitMappedType(node *ast.MappedTypeNode) {
 		p.writeSpace()
 	}
 	p.writePunctuation("[")
-	p.emitMappedTypeParamerter(node.TypeParameter.AsTypeParameter())
+	p.emitMappedTypeParameter(node.TypeParameter.AsTypeParameter())
 	if node.NameType != nil {
 		p.writeSpace()
 		p.writeKeyword("as")
@@ -3261,6 +3261,7 @@ func (p *Printer) emitModuleDeclaration(node *ast.ModuleDeclaration) {
 	}
 	if body == nil {
 		p.writeTrailingSemicolon()
+		p.exitNode(node.AsNode())
 		return
 	}
 	p.writeSpace()
