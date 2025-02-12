@@ -796,7 +796,7 @@ func parseOwnConfigOfJson(
 	// watchOptions := convertWatchOptionsFromJsonWorker(json.watchOptions, basePath, errors)
 	// json.compileOnSave = convertCompileOnSaveOptionFromJson(json, basePath, errors)
 	var extendedConfigPath []string
-	if json["extends"] != nil || json["extends"] == "" {
+	if json["extends"] != nil && json["extends"] != "" {
 		extendedConfigPath, err = getExtendsConfigPathOrArray(json["extends"], host, basePath, configFileName, nil, nil, nil)
 		errors = append(errors, err...)
 	}
