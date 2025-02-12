@@ -365,7 +365,7 @@ func (n *Node) MemberList() *NodeList {
 	case KindMappedType:
 		return n.AsMappedTypeNode().Members
 	}
-	panic("Unhandled case in Node.Members")
+	panic("Unhandled case in Node.MemberList")
 }
 
 func (n *Node) Members() []*Node {
