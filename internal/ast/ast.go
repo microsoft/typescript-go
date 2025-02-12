@@ -167,11 +167,7 @@ func (n *Node) TemplateLiteralLikeData() *TemplateLiteralLikeBase {
 }
 
 func (n *Node) Symbol() *Symbol {
-	data := n.DeclarationData()
-	if data != nil {
-		return data.Symbol
-	}
-	return nil
+	return n.DeclarationData().Symbol
 }
 
 func (n *Node) LocalSymbol() *Symbol {

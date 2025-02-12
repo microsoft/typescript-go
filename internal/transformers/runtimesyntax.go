@@ -809,7 +809,7 @@ func (tx *RuntimeSyntaxTransformer) getSymbolExportContainer(location *ast.Node,
 			return symbolFile.AsNode()
 		}
 		return ast.FindAncestor(location.Parent, func(n *ast.Node) bool {
-			return n.Kind == ast.KindModuleDeclaration || n.Kind == ast.KindEnumDeclaration || n.Symbol() == parentSymbol
+			return (n.Kind == ast.KindModuleDeclaration || n.Kind == ast.KindEnumDeclaration) && n.Symbol() == parentSymbol
 		})
 	}
 	return nil
