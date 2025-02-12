@@ -10,6 +10,7 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/repo"
+	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
 const loaderScript = `import script from "./script.mjs";
@@ -37,7 +38,12 @@ func EvalNodeScriptWithTS[T any](t testing.TB, script string, dir string, args .
 	if dir == "" {
 		dir = t.TempDir()
 	}
-	tsSrc := filepath.Join(repo.RootPath, "node_modules/typescript/lib/typescript.js")
+	tsSrc := tspath.NormalizePath(filepath.Join(repo.RootPath, "node_modules/typescript/lib/typescript.js"))
+	if tsSrc[0] == '/' {
+		tsSrc = "file://" + tsSrc
+	} else {
+		tsSrc = "file:///" + tsSrc
+	}
 	tsLoaderScript := fmt.Sprintf(`import script from "./script.mjs";
 import * as ts from "%s";
 process.stdout.write(JSON.stringify(await script(ts, ...process.argv.slice(2))));`, tsSrc)
