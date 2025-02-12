@@ -4590,7 +4590,7 @@ func (iterationTypes *IterationTypes) getType(typeKind IterationTypeKind) *Type 
 	case IterationTypeKindNext:
 		return iterationTypes.nextType
 	}
-	panic("Unhandled case in getIterationTypeOfIterable")
+	panic("Unhandled case in getType(IterationTypeKind)")
 }
 
 func (c *Checker) combineIterationTypes(iterationTypes []IterationTypes) IterationTypes {
@@ -13946,7 +13946,7 @@ func getUnionKey(types []*Type, origin *Type, alias *TypeAlias) string {
 		b.WriteByte('|')
 		b.WriteTypes(types)
 	default:
-		panic("Unhandled case in getUnionId")
+		panic("Unhandled case in getUnionKey")
 	}
 	b.WriteAlias(alias)
 	return b.String()
