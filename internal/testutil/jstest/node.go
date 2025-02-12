@@ -18,10 +18,9 @@ const tsLoaderScript = `import script from "./script.mjs";
 import * as ts from "./typescript.js";
 process.stdout.write(JSON.stringify(await script(ts, ...process.argv.slice(2))));`
 
-// EvalNodeScript imports a Node.js script that exports a single function,
+// EvalNodeScript imports a Node.js script that deafult-exports a single function,
 // calls it with the provided arguments, and unmarshals the JSON-stringified
-// awaited return value into T. The script's function can either be exported
-// with `module.exports =` or `export default`.
+// awaited return value into T.
 func EvalNodeScript[T any](t testing.TB, script string, dir string, args ...string) (result T, err error) {
 	return evalNodeScript[T](t, script, loaderScript, dir, args...)
 }

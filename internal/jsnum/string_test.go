@@ -308,7 +308,7 @@ func getStringResultsFromJS(t testing.TB, tests []stringTest) []stringTest {
 	assert.NilError(t, err)
 
 	script := `
-		const fs = require('fs');
+		import fs from 'fs';
 
 		function fromBits(bits) {
 			const buffer = new ArrayBuffer(8);
@@ -323,7 +323,7 @@ func getStringResultsFromJS(t testing.TB, tests []stringTest) []stringTest {
 			return [(new Uint32Array(buffer))[0], (new Uint32Array(buffer))[1]];
 		}
 
-		module.exports = function(inputFile) {
+		export default function(inputFile) {
 			const input = JSON.parse(fs.readFileSync(inputFile, 'utf8'));
 
 			const output = input.map((input) => ({
@@ -335,11 +335,7 @@ func getStringResultsFromJS(t testing.TB, tests []stringTest) []stringTest {
 		};
 	`
 
-	scriptPath := filepath.Join(tmpdir, "script.cjs")
-	err = os.WriteFile(scriptPath, []byte(script), 0o644)
-	assert.NilError(t, err)
-
-	outputData, err := jstest.EvalNodeScript[[]data](t, script, t.TempDir(), jsonInputPath)
+	outputData, err := jstest.EvalNodeScript[[]data](t, script, tmpdir, jsonInputPath)
 	assert.NilError(t, err)
 	assert.Equal(t, len(outputData), len(tests))
 
