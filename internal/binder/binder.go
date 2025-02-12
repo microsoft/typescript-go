@@ -2261,7 +2261,6 @@ func (b *Binder) bindBinaryExpressionFlow(node *ast.Node) {
 				b.currentFlow = saveCurrentFlow
 			}
 			b.hasFlowEffects = b.hasFlowEffects || saveHasFlowEffects
-			b.currentFlow = finishFlowLabel(postExpressionLabel)
 		} else {
 			b.bindLogicalLikeExpression(node, b.currentTrueTarget, b.currentFalseTarget)
 		}
