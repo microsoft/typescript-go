@@ -33,6 +33,7 @@ type FS interface {
 	// GetEntries returns the entries in the specified directory.
 	GetEntries(path string) []fs.DirEntry
 
+	Stat(path string) FileInfo
 	// WalkDir walks the file tree rooted at root, calling walkFn for each file or directory in the tree.
 	// It is has the same behavior as [fs.WalkDir], but with paths as [string].
 	WalkDir(root string, walkFn WalkDirFunc) error
@@ -43,7 +44,10 @@ type FS interface {
 }
 
 // DirEntry is [fs.DirEntry].
-type DirEntry = fs.DirEntry
+type (
+	DirEntry = fs.DirEntry
+	FileInfo = fs.FileInfo
+)
 
 var (
 	ErrInvalid    = fs.ErrInvalid    // "invalid argument"
@@ -92,7 +96,7 @@ func (vfs *common) rootAndPath(path string) (fsys fs.FS, rootName string, rest s
 	return vfs.rootFor(rootName), rootName, rest
 }
 
-func (vfs *common) stat(path string) fs.FileInfo {
+func (vfs *common) Stat(path string) FileInfo {
 	fsys, _, rest := vfs.rootAndPath(path)
 	if fsys == nil {
 		return nil
@@ -105,12 +109,12 @@ func (vfs *common) stat(path string) fs.FileInfo {
 }
 
 func (vfs *common) FileExists(path string) bool {
-	stat := vfs.stat(path)
+	stat := vfs.Stat(path)
 	return stat != nil && !stat.IsDir()
 }
 
 func (vfs *common) DirectoryExists(path string) bool {
-	stat := vfs.stat(path)
+	stat := vfs.Stat(path)
 	return stat != nil && stat.IsDir()
 }
 
