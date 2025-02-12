@@ -7466,7 +7466,7 @@ func (c *Checker) isPromiseResolveArityError(node *ast.Node) bool {
 
 func getErrorNodeForCallNode(node *ast.Node) *ast.Node {
 	if ast.IsCallExpression(node) {
-		node := node.Expression()
+		node = node.Expression()
 		if ast.IsPropertyAccessExpression(node) {
 			node = node.Name()
 		}
