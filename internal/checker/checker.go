@@ -2378,15 +2378,15 @@ func (c *Checker) checkObjectTypeForDuplicateDeclarations(node *ast.Node, checkP
 		if len(symbol.Declarations) > 1 {
 			var names map[string]int
 			if isStatic {
-				if instanceNames == nil {
-					instanceNames = make(map[string]int)
-				}
-				names = instanceNames
-			} else {
 				if staticNames == nil {
 					staticNames = make(map[string]int)
 				}
 				names = staticNames
+			} else {
+				if instanceNames == nil {
+					instanceNames = make(map[string]int)
+				}
+				names = instanceNames
 			}
 			if state := names[symbol.Name]; state != 2 {
 				if state == 1 {
