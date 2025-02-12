@@ -2840,14 +2840,12 @@ func (p *Printer) emitBlock(node *ast.Block) {
 	p.enterNode(node.AsNode())
 	p.generateNames(node.AsNode())
 	p.emitTokenWithComment(ast.KindOpenBraceToken, node.Pos(), WriteKindPunctuation, node.AsNode())
-	p.increaseIndent()
 
 	format := core.IfElse(!node.Multiline && p.isEmptyBlock(node.AsNode(), node.Statements) || p.shouldEmitOnSingleLine(node.AsNode()),
 		LFSingleLineBlockStatements,
 		LFMultiLineBlockStatements)
 	p.emitList((*Printer).emitStatement, node.AsNode(), node.Statements, format)
 
-	p.decreaseIndent()
 	p.emitTokenWithCommentEx(ast.KindCloseBraceToken, node.Statements.End(), WriteKindPunctuation, node.AsNode(), format&LFMultiLine != 0 /*indentLeading*/)
 	p.exitNode(node.AsNode())
 }
