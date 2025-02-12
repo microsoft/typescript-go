@@ -339,7 +339,7 @@ func (n *Node) TypeParameterList() *NodeList {
 			return funcLike.TypeParameters
 		}
 	}
-	panic("Unhandled case in Node.TypeParameters")
+	panic("Unhandled case in Node.TypeParameterList")
 }
 
 func (n *Node) TypeParameters() []*Node {
