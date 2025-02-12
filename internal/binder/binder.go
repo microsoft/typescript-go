@@ -90,6 +90,14 @@ func (label *ActiveLabel) BreakTarget() *ast.FlowNode    { return label.breakTar
 func (label *ActiveLabel) ContinueTarget() *ast.FlowNode { return label.continueTarget }
 
 func BindSourceFile(file *ast.SourceFile, options *core.CompilerOptions) {
+	// This is constructed this way to make the compiler "out-line" the function,
+	// avoiding most work in the common case where the file has already been bound.
+	if !file.IsBound() {
+		bindSourceFile(file, options)
+	}
+}
+
+func bindSourceFile(file *ast.SourceFile, options *core.CompilerOptions) {
 	file.BindOnce(func() {
 		b := &Binder{}
 		b.file = file
