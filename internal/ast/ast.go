@@ -7385,7 +7385,6 @@ type SourceFile struct {
 	EndFlowNode                 *FlowNode
 	JsGlobalAugmentations       SymbolTable
 	IsDeclarationFile           bool
-	IsBound                     bool
 	ModuleReferencesProcessed   bool
 	HasNoDefaultLib             bool
 	UsesUriStyleNodeCoreModules core.Tristate
@@ -7403,6 +7402,8 @@ type SourceFile struct {
 	TypeReferenceDirectives     []*FileReference
 	LibReferenceDirectives      []*FileReference
 	Version                     int
+	IsBound                     atomic.Bool
+	BindOnce                    sync.Once
 }
 
 func (f *NodeFactory) NewSourceFile(text string, fileName string, statements *NodeList) *Node {
