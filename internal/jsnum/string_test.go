@@ -201,6 +201,7 @@ func TestStringRoundtrip(t *testing.T) {
 
 func TestStringJS(t *testing.T) {
 	t.Parallel()
+	jstest.SkipIfNoNodeJS(t)
 
 	t.Run("stringTests", func(t *testing.T) {
 		t.Parallel()
@@ -235,6 +236,8 @@ func isFuzzing() bool {
 }
 
 func FuzzStringJS(f *testing.F) {
+	jstest.SkipIfNoNodeJS(f)
+
 	if isFuzzing() {
 		// Avoid running anything other than regressions in the fuzzing mode.
 		for _, test := range stringTests {
@@ -261,6 +264,8 @@ func FuzzStringJS(f *testing.F) {
 }
 
 func FuzzFromStringJS(f *testing.F) {
+	jstest.SkipIfNoNodeJS(f)
+
 	if isFuzzing() {
 		// Avoid running anything other than regressions in the fuzzing mode.
 		for _, test := range stringTests {

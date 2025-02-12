@@ -1,6 +1,7 @@
 package ls
 
 import (
+	"flag"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -17,6 +18,7 @@ import (
 )
 
 func FuzzTokens(f *testing.F) {
+	jstest.SkipIfNoNodeJS(f)
 	repo.SkipIfNoTypeScriptSubmodule(f)
 	files := []string{
 		filepath.Join(repo.TypeScriptSubmodulePath, "src/server/project.ts"),
@@ -24,11 +26,14 @@ func FuzzTokens(f *testing.F) {
 	for _, file := range files {
 		fileText, err := os.ReadFile(file)
 		assert.NilError(f, err)
-		f.Add(0)
-		f.Add(len(fileText) / 2)
-		f.Add(len(fileText) - 1)
+		if isFuzzing() {
+			f.Add(0)
+			f.Add(len(fileText) / 2)
+			f.Add(len(fileText) - 1)
+		}
 
 		f.Fuzz(func(t *testing.T, pos int) {
+			t.Parallel()
 			if pos < 0 {
 				pos = -pos
 			}
@@ -81,4 +86,8 @@ func tsGetTokenAtPosition(t *testing.T, fileText string, position int) (kind str
 	info, err := jstest.EvalNodeScriptWithTS[tokenInfo](t, script, dir, strconv.Itoa(position))
 	assert.NilError(t, err)
 	return info.Kind, info.Pos
+}
+
+func isFuzzing() bool {
+	return flag.CommandLine.Lookup("test.fuzz").Value.String() != ""
 }

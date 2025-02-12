@@ -6,6 +6,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"sync"
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/repo"
@@ -14,9 +15,14 @@ import (
 const loaderScript = `import script from "./script.mjs";
 process.stdout.write(JSON.stringify(await script(...process.argv.slice(2))));`
 
-const tsLoaderScript = `import script from "./script.mjs";
-import * as ts from "./typescript.js";
-process.stdout.write(JSON.stringify(await script(ts, ...process.argv.slice(2))));`
+var getNodeExeOnce = sync.OnceValue(func() string {
+	const exeName = "node"
+	exe, err := exec.LookPath(exeName)
+	if err != nil {
+		return ""
+	}
+	return exe
+})
 
 // EvalNodeScript imports a Node.js script that deafult-exports a single function,
 // calls it with the provided arguments, and unmarshals the JSON-stringified
@@ -31,16 +37,18 @@ func EvalNodeScriptWithTS[T any](t testing.TB, script string, dir string, args .
 	if dir == "" {
 		dir = t.TempDir()
 	}
-	tsDest := filepath.Join(dir, "typescript.js")
 	tsSrc := filepath.Join(repo.RootPath, "node_modules/typescript/lib/typescript.js")
-	tsText, err := os.ReadFile(tsSrc)
-	if err != nil {
-		return result, err
-	}
-	if err = os.WriteFile(tsDest, tsText, 0o644); err != nil {
-		return result, err
-	}
+	tsLoaderScript := fmt.Sprintf(`import script from "./script.mjs";
+import * as ts from "%s";
+process.stdout.write(JSON.stringify(await script(ts, ...process.argv.slice(2))));`, tsSrc)
 	return evalNodeScript[T](t, script, tsLoaderScript, dir, args...)
+}
+
+func SkipIfNoNodeJS(t testing.TB) {
+	t.Helper()
+	if getNodeExeOnce() == "" {
+		t.Skip("Node.js not found")
+	}
 }
 
 func evalNodeScript[T any](t testing.TB, script string, loader string, dir string, args ...string) (result T, err error) {
@@ -73,12 +81,9 @@ func evalNodeScript[T any](t testing.TB, script string, loader string, dir strin
 }
 
 func getNodeExe(t testing.TB) string {
-	t.Helper()
-
-	const exeName = "node"
-	exe, err := exec.LookPath(exeName)
-	if err != nil {
-		t.Skipf("%s not found: %v", exeName, err)
+	if exe := getNodeExeOnce(); exe != "" {
+		return exe
 	}
-	return exe
+	t.Fatal("Node.js not found")
+	return ""
 }
