@@ -43,32 +43,33 @@ type Binder struct {
 	bind                    func(*ast.Node) bool
 	unreachableFlow         ast.FlowNode
 	reportedUnreachableFlow ast.FlowNode
-	parent                  *ast.Node
-	container               *ast.Node
-	thisParentContainer     *ast.Node
-	blockScopeContainer     *ast.Node
-	lastContainer           *ast.Node
-	currentFlow             *ast.FlowNode
-	currentBreakTarget      *ast.FlowLabel
-	currentContinueTarget   *ast.FlowLabel
-	currentReturnTarget     *ast.FlowLabel
-	currentTrueTarget       *ast.FlowLabel
-	currentFalseTarget      *ast.FlowLabel
-	currentExceptionTarget  *ast.FlowLabel
-	preSwitchCaseFlow       *ast.FlowNode
-	activeLabelList         *ActiveLabel
-	emitFlags               ast.NodeFlags
-	seenThisKeyword         bool
-	hasExplicitReturn       bool
-	hasFlowEffects          bool
-	inStrictMode            bool
-	inAssignmentPattern     bool
-	symbolCount             int
-	classifiableNames       core.Set[string]
-	symbolPool              core.Pool[ast.Symbol]
-	flowNodePool            core.Pool[ast.FlowNode]
-	flowListPool            core.Pool[ast.FlowList]
-	singleDeclarationsPool  core.Pool[*ast.Node]
+
+	parent                 *ast.Node
+	container              *ast.Node
+	thisParentContainer    *ast.Node
+	blockScopeContainer    *ast.Node
+	lastContainer          *ast.Node
+	currentFlow            *ast.FlowNode
+	currentBreakTarget     *ast.FlowLabel
+	currentContinueTarget  *ast.FlowLabel
+	currentReturnTarget    *ast.FlowLabel
+	currentTrueTarget      *ast.FlowLabel
+	currentFalseTarget     *ast.FlowLabel
+	currentExceptionTarget *ast.FlowLabel
+	preSwitchCaseFlow      *ast.FlowNode
+	activeLabelList        *ActiveLabel
+	emitFlags              ast.NodeFlags
+	seenThisKeyword        bool
+	hasExplicitReturn      bool
+	hasFlowEffects         bool
+	inStrictMode           bool
+	inAssignmentPattern    bool
+	symbolCount            int
+	classifiableNames      core.Set[string]
+	symbolPool             core.Pool[ast.Symbol]
+	flowNodePool           core.Pool[ast.FlowNode]
+	flowListPool           core.Pool[ast.FlowList]
+	singleDeclarationsPool core.Pool[*ast.Node]
 }
 
 type ModuleInstanceState int32
