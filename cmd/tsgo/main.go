@@ -185,7 +185,7 @@ func main() {
 
 	var bindTime, checkTime time.Duration
 
-	diagnostics := program.GetOptionsDiagnostics()
+	diagnostics := program.GetConfigFileParsingDiagnostics()
 	if len(diagnostics) != 0 {
 		printDiagnostics(diagnostics, host, compilerOptions)
 		os.Exit(1)
