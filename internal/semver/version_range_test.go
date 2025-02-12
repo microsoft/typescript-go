@@ -858,8 +858,6 @@ func TestTildesOfVersionRanges(t *testing.T) {
 		{"~1", "1.0.0", true},
 		{"~1", "1.2.0", true},
 		{"~1", "1.2.3", true},
-		{"~1", "1.2.0", true},
-		{"~1", "1.2.3", true},
 		{"~1", "0.0.0", false},
 		{"~1", "2.0.0", false},
 		{"~1.2", "1.2.0", true},
