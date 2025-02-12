@@ -608,6 +608,18 @@ func (n *Node) Comments() []*Node {
 	panic("Unhandled case in Node.Comments: " + n.Kind.String())
 }
 
+func (n *Node) Label() *Node {
+	switch n.Kind {
+	case KindLabeledStatement:
+		return n.AsLabeledStatement().Label
+	case KindBreakStatement:
+		return n.AsBreakStatement().Label
+	case KindContinueStatement:
+		return n.AsContinueStatement().Label
+	}
+	panic("Unhandled case in Node.Label: " + n.Kind.String())
+}
+
 // Node casts
 
 func (n *Node) AsIdentifier() *Identifier {
@@ -2372,6 +2384,10 @@ func (node *LabeledStatement) ForEachChild(v Visitor) bool {
 
 func (node *LabeledStatement) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateLabeledStatement(node, v.visitNode(node.Label), v.visitNode(node.Statement))
+}
+
+func IsLabeledStatement(node *Node) bool {
+	return node.Kind == KindLabeledStatement
 }
 
 // ExpressionStatement
@@ -6598,6 +6614,10 @@ func (node *JsxSpreadAttribute) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateJsxSpreadAttribute(node, v.visitNode(node.Expression))
 }
 
+func IsJsxClosingElement(node *Node) bool {
+	return node.Kind == KindJsxClosingElement
+}
+
 // JsxExpression
 
 type JsxExpression struct {
@@ -7411,7 +7431,6 @@ type SourceFile struct {
 	EndFlowNode                 *FlowNode
 	JsGlobalAugmentations       SymbolTable
 	IsDeclarationFile           bool
-	IsBound                     bool
 	ModuleReferencesProcessed   bool
 	HasNoDefaultLib             bool
 	UsesUriStyleNodeCoreModules core.Tristate
@@ -7429,6 +7448,8 @@ type SourceFile struct {
 	TypeReferenceDirectives     []*FileReference
 	LibReferenceDirectives      []*FileReference
 	Version                     int
+	isBound                     atomic.Bool
+	bindOnce                    sync.Once
 }
 
 func (f *NodeFactory) NewSourceFile(text string, fileName string, statements *NodeList) *Node {
@@ -7518,6 +7539,17 @@ func (node *SourceFile) LineMap() []core.TextPos {
 		}
 	}
 	return lineMap
+}
+
+func (node *SourceFile) IsBound() bool {
+	return node.isBound.Load()
+}
+
+func (node *SourceFile) BindOnce(bind func()) {
+	node.bindOnce.Do(func() {
+		bind()
+		node.isBound.Store(true)
+	})
 }
 
 func IsSourceFile(node *Node) bool {
