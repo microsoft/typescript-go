@@ -10,13 +10,13 @@ func BinarySearchUniqueFunc[S ~[]E, E, T any](x S, target T, cmp func(int, E) in
 	low, high := 0, n-1
 	for low <= high {
 		middle := low + ((high - low) >> 1)
-		switch cmp(middle, x[middle]) {
-		case -1:
+		value := cmp(middle, x[middle])
+		if value < 0 {
 			low = middle + 1
-		case 0:
-			return middle, true
-		case 1:
+		} else if value > 0 {
 			high = middle - 1
+		} else {
+			return middle, true
 		}
 	}
 	return low, false
