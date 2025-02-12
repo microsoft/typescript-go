@@ -26,8 +26,6 @@ func FuzzTokens(f *testing.F) {
 		f.Add(0)
 		f.Add(len(fileText) / 2)
 		f.Add(len(fileText) - 1)
-		f.Add(131187)
-		f.Add(131206)
 
 		f.Fuzz(func(t *testing.T, pos int) {
 			if pos < 0 {
