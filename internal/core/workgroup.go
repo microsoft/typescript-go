@@ -2,7 +2,6 @@ package core
 
 import (
 	"fmt"
-	"runtime/debug"
 	"sync"
 	"sync/atomic"
 )
@@ -24,9 +23,8 @@ func NewWorkGroup(singleThreaded bool) WorkGroup {
 }
 
 type parallelWorkGroup struct {
-	done       atomic.Bool
-	wg         sync.WaitGroup
-	panicValue atomic.Pointer[panicValue]
+	done atomic.Bool
+	wg   sync.WaitGroup
 }
 
 type panicValue struct {
@@ -48,16 +46,6 @@ func (w *parallelWorkGroup) Queue(fn func()) {
 	w.wg.Add(1)
 	go func() {
 		defer w.wg.Done()
-
-		defer func() {
-			if r := recover(); r != nil {
-				w.panicValue.Store(&panicValue{
-					value: r,
-					stack: debug.Stack(),
-				})
-			}
-		}()
-
 		fn()
 	}()
 }
@@ -65,9 +53,6 @@ func (w *parallelWorkGroup) Queue(fn func()) {
 func (w *parallelWorkGroup) RunAndWait() {
 	defer w.done.Store(true)
 	w.wg.Wait()
-	if panicValue := w.panicValue.Load(); panicValue != nil {
-		panic(panicValue)
-	}
 }
 
 type singleThreadedWorkGroup struct {
