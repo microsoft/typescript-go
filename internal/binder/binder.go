@@ -37,36 +37,38 @@ const (
 )
 
 type Binder struct {
-	file                   *ast.SourceFile
-	options                *core.CompilerOptions
-	languageVersion        core.ScriptTarget
-	bind                   func(*ast.Node) bool
-	parent                 *ast.Node
-	container              *ast.Node
-	thisParentContainer    *ast.Node
-	blockScopeContainer    *ast.Node
-	lastContainer          *ast.Node
-	currentFlow            *ast.FlowNode
-	currentBreakTarget     *ast.FlowLabel
-	currentContinueTarget  *ast.FlowLabel
-	currentReturnTarget    *ast.FlowLabel
-	currentTrueTarget      *ast.FlowLabel
-	currentFalseTarget     *ast.FlowLabel
-	currentExceptionTarget *ast.FlowLabel
-	preSwitchCaseFlow      *ast.FlowNode
-	activeLabelList        *ActiveLabel
-	emitFlags              ast.NodeFlags
-	seenThisKeyword        bool
-	hasExplicitReturn      bool
-	hasFlowEffects         bool
-	inStrictMode           bool
-	inAssignmentPattern    bool
-	symbolCount            int
-	classifiableNames      core.Set[string]
-	symbolPool             core.Pool[ast.Symbol]
-	flowNodePool           core.Pool[ast.FlowNode]
-	flowListPool           core.Pool[ast.FlowList]
-	singleDeclarationsPool core.Pool[*ast.Node]
+	file                    *ast.SourceFile
+	options                 *core.CompilerOptions
+	languageVersion         core.ScriptTarget
+	bind                    func(*ast.Node) bool
+	unreachableFlow         ast.FlowNode
+	reportedUnreachableFlow ast.FlowNode
+	parent                  *ast.Node
+	container               *ast.Node
+	thisParentContainer     *ast.Node
+	blockScopeContainer     *ast.Node
+	lastContainer           *ast.Node
+	currentFlow             *ast.FlowNode
+	currentBreakTarget      *ast.FlowLabel
+	currentContinueTarget   *ast.FlowLabel
+	currentReturnTarget     *ast.FlowLabel
+	currentTrueTarget       *ast.FlowLabel
+	currentFalseTarget      *ast.FlowLabel
+	currentExceptionTarget  *ast.FlowLabel
+	preSwitchCaseFlow       *ast.FlowNode
+	activeLabelList         *ActiveLabel
+	emitFlags               ast.NodeFlags
+	seenThisKeyword         bool
+	hasExplicitReturn       bool
+	hasFlowEffects          bool
+	inStrictMode            bool
+	inAssignmentPattern     bool
+	symbolCount             int
+	classifiableNames       core.Set[string]
+	symbolPool              core.Pool[ast.Symbol]
+	flowNodePool            core.Pool[ast.FlowNode]
+	flowListPool            core.Pool[ast.FlowList]
+	singleDeclarationsPool  core.Pool[*ast.Node]
 }
 
 type ModuleInstanceState int32
@@ -99,10 +101,12 @@ func BindSourceFile(file *ast.SourceFile, options *core.CompilerOptions) {
 
 func bindSourceFile(file *ast.SourceFile, options *core.CompilerOptions) {
 	file.BindOnce(func() {
-		b := &Binder{}
+		b := Binder{}
 		b.file = file
 		b.options = options
 		b.languageVersion = options.GetEmitScriptTarget()
+		b.unreachableFlow.Flags = ast.FlowFlagsUnreachable
+		b.reportedUnreachableFlow.Flags = ast.FlowFlagsUnreachable
 		b.bind = b.bindWorker // Allocate closure once
 		b.bind(file.AsNode())
 		file.SymbolCount = b.symbolCount
@@ -465,10 +469,10 @@ func (b *Binder) createFlowCondition(flags ast.FlowFlags, antecedent *ast.FlowNo
 		if flags&ast.FlowFlagsTrueCondition != 0 {
 			return antecedent
 		}
-		return ast.UnreachableFlow
+		return &b.unreachableFlow
 	}
 	if (expression.Kind == ast.KindTrueKeyword && flags&ast.FlowFlagsFalseCondition != 0 || expression.Kind == ast.KindFalseKeyword && flags&ast.FlowFlagsTrueCondition != 0) && !ast.IsExpressionOfOptionalChainRoot(expression) && !ast.IsNullishCoalesce(expression.Parent) {
-		return ast.UnreachableFlow
+		return &b.unreachableFlow
 	}
 	if !isNarrowingExpression(expression) {
 		return antecedent
@@ -544,9 +548,9 @@ func (b *Binder) addAntecedent(label *ast.FlowLabel, antecedent *ast.FlowNode) {
 	}
 }
 
-func finishFlowLabel(label *ast.FlowLabel) *ast.FlowNode {
+func (b *Binder) finishFlowLabel(label *ast.FlowLabel) *ast.FlowNode {
 	if label.Antecedents == nil {
-		return ast.UnreachableFlow
+		return &b.unreachableFlow
 	}
 	if label.Antecedents.Next == nil {
 		return label.Antecedents.Flow
@@ -1432,7 +1436,7 @@ func (b *Binder) bindContainer(node *ast.Node, containerFlags ContainerFlags) {
 
 		if b.currentReturnTarget != nil {
 			b.addAntecedent(b.currentReturnTarget, b.currentFlow)
-			b.currentFlow = finishFlowLabel(b.currentReturnTarget)
+			b.currentFlow = b.finishFlowLabel(b.currentReturnTarget)
 			if node.Kind == ast.KindConstructor || node.Kind == ast.KindClassStaticBlockDeclaration {
 				setReturnFlowNode(node, b.currentFlow)
 			}
@@ -1599,7 +1603,7 @@ func (b *Binder) checkUnreachable(node *ast.Node) bool {
 	if b.currentFlow.Flags&ast.FlowFlagsUnreachable == 0 {
 		return false
 	}
-	if b.currentFlow == ast.UnreachableFlow {
+	if b.currentFlow == &b.unreachableFlow {
 		// report errors on all statements except empty ones
 		// report errors on class declarations
 		// report errors on enums with preserved emit
@@ -1609,7 +1613,7 @@ func (b *Binder) checkUnreachable(node *ast.Node) bool {
 			isEnumDeclarationWithPreservedEmit(node, b.options) ||
 			ast.IsModuleDeclaration(node) && b.shouldReportErrorOnModuleDeclaration(node)
 		if reportError {
-			b.currentFlow = ast.ReportedUnreachableFlow
+			b.currentFlow = &b.reportedUnreachableFlow
 			if b.options.AllowUnreachableCode != core.TSTrue {
 				// unreachable code is reported if
 				// - user has explicitly asked about it AND
@@ -1769,11 +1773,11 @@ func (b *Binder) bindWhileStatement(node *ast.Node) {
 	topFlow := b.currentFlow
 	b.currentFlow = preWhileLabel
 	b.bindCondition(stmt.Expression, preBodyLabel, postWhileLabel)
-	b.currentFlow = finishFlowLabel(preBodyLabel)
+	b.currentFlow = b.finishFlowLabel(preBodyLabel)
 	b.bindIterativeStatement(stmt.Statement, postWhileLabel, preWhileLabel)
 	b.addAntecedent(preWhileLabel, b.currentFlow)
 	b.addAntecedent(preWhileLabel, topFlow)
-	b.currentFlow = finishFlowLabel(postWhileLabel)
+	b.currentFlow = b.finishFlowLabel(postWhileLabel)
 }
 
 func (b *Binder) bindDoStatement(node *ast.Node) {
@@ -1785,10 +1789,10 @@ func (b *Binder) bindDoStatement(node *ast.Node) {
 	b.currentFlow = preDoLabel
 	b.bindIterativeStatement(stmt.Statement, postDoLabel, preConditionLabel)
 	b.addAntecedent(preConditionLabel, b.currentFlow)
-	b.currentFlow = finishFlowLabel(preConditionLabel)
+	b.currentFlow = b.finishFlowLabel(preConditionLabel)
 	b.bindCondition(stmt.Expression, preDoLabel, postDoLabel)
 	b.addAntecedent(preDoLabel, topFlow)
-	b.currentFlow = finishFlowLabel(postDoLabel)
+	b.currentFlow = b.finishFlowLabel(postDoLabel)
 }
 
 func (b *Binder) bindForStatement(node *ast.Node) {
@@ -1800,12 +1804,12 @@ func (b *Binder) bindForStatement(node *ast.Node) {
 	topFlow := b.currentFlow
 	b.currentFlow = preLoopLabel
 	b.bindCondition(stmt.Condition, preBodyLabel, postLoopLabel)
-	b.currentFlow = finishFlowLabel(preBodyLabel)
+	b.currentFlow = b.finishFlowLabel(preBodyLabel)
 	b.bindIterativeStatement(stmt.Statement, postLoopLabel, preLoopLabel)
 	b.bind(stmt.Incrementor)
 	b.addAntecedent(preLoopLabel, b.currentFlow)
 	b.addAntecedent(preLoopLabel, topFlow)
-	b.currentFlow = finishFlowLabel(postLoopLabel)
+	b.currentFlow = b.finishFlowLabel(postLoopLabel)
 }
 
 func (b *Binder) bindForInOrForOfStatement(node *ast.Node) {
@@ -1826,7 +1830,7 @@ func (b *Binder) bindForInOrForOfStatement(node *ast.Node) {
 	b.bindIterativeStatement(stmt.Statement, postLoopLabel, preLoopLabel)
 	b.addAntecedent(preLoopLabel, b.currentFlow)
 	b.addAntecedent(preLoopLabel, topFlow)
-	b.currentFlow = finishFlowLabel(postLoopLabel)
+	b.currentFlow = b.finishFlowLabel(postLoopLabel)
 }
 
 func (b *Binder) bindIfStatement(node *ast.Node) {
@@ -1835,13 +1839,13 @@ func (b *Binder) bindIfStatement(node *ast.Node) {
 	elseLabel := b.createBranchLabel()
 	postIfLabel := b.createBranchLabel()
 	b.bindCondition(stmt.Expression, thenLabel, elseLabel)
-	b.currentFlow = finishFlowLabel(thenLabel)
+	b.currentFlow = b.finishFlowLabel(thenLabel)
 	b.bind(stmt.ThenStatement)
 	b.addAntecedent(postIfLabel, b.currentFlow)
-	b.currentFlow = finishFlowLabel(elseLabel)
+	b.currentFlow = b.finishFlowLabel(elseLabel)
 	b.bind(stmt.ElseStatement)
 	b.addAntecedent(postIfLabel, b.currentFlow)
-	b.currentFlow = finishFlowLabel(postIfLabel)
+	b.currentFlow = b.finishFlowLabel(postIfLabel)
 }
 
 func (b *Binder) bindReturnStatement(node *ast.Node) {
@@ -1849,14 +1853,14 @@ func (b *Binder) bindReturnStatement(node *ast.Node) {
 	if b.currentReturnTarget != nil {
 		b.addAntecedent(b.currentReturnTarget, b.currentFlow)
 	}
-	b.currentFlow = ast.UnreachableFlow
+	b.currentFlow = &b.unreachableFlow
 	b.hasExplicitReturn = true
 	b.hasFlowEffects = true
 }
 
 func (b *Binder) bindThrowStatement(node *ast.Node) {
 	b.bind(node.AsThrowStatement().Expression)
-	b.currentFlow = ast.UnreachableFlow
+	b.currentFlow = &b.unreachableFlow
 	b.hasFlowEffects = true
 }
 
@@ -1893,7 +1897,7 @@ func (b *Binder) findActiveLabel(name string) *ActiveLabel {
 func (b *Binder) bindBreakOrContinueFlow(flowLabel *ast.FlowLabel) {
 	if flowLabel != nil {
 		b.addAntecedent(flowLabel, b.currentFlow)
-		b.currentFlow = ast.UnreachableFlow
+		b.currentFlow = &b.unreachableFlow
 		b.hasFlowEffects = true
 	}
 }
@@ -1920,7 +1924,7 @@ func (b *Binder) bindTryStatement(node *ast.Node) {
 	b.addAntecedent(normalExitLabel, b.currentFlow)
 	if stmt.CatchClause != nil {
 		// Start of catch clause is the target of exceptions from try block.
-		b.currentFlow = finishFlowLabel(exceptionLabel)
+		b.currentFlow = b.finishFlowLabel(exceptionLabel)
 		// The currentExceptionTarget now represents control flows from exceptions in the catch clause.
 		// Effectively, in a try-catch-finally, if an exception occurs in the try block, the catch block
 		// acts like a second try block.
@@ -1953,7 +1957,7 @@ func (b *Binder) bindTryStatement(node *ast.Node) {
 		b.bind(stmt.FinallyBlock)
 		if b.currentFlow.Flags&ast.FlowFlagsUnreachable != 0 {
 			// If the end of the finally block is unreachable, the end of the entire try statement is unreachable.
-			b.currentFlow = ast.UnreachableFlow
+			b.currentFlow = &b.unreachableFlow
 		} else {
 			// If we have an IIFE return target and return statements in the try or catch blocks, add a control
 			// flow that goes back through the finally block and back through only the return statements.
@@ -1971,11 +1975,11 @@ func (b *Binder) bindTryStatement(node *ast.Node) {
 			if normalExitLabel.Antecedents != nil {
 				b.currentFlow = b.createReduceLabel(finallyLabel, normalExitLabel.Antecedents, b.currentFlow)
 			} else {
-				b.currentFlow = ast.UnreachableFlow
+				b.currentFlow = &b.unreachableFlow
 			}
 		}
 	} else {
-		b.currentFlow = finishFlowLabel(normalExitLabel)
+		b.currentFlow = b.finishFlowLabel(normalExitLabel)
 	}
 }
 
@@ -1997,18 +2001,18 @@ func (b *Binder) bindSwitchStatement(node *ast.Node) {
 	}
 	b.currentBreakTarget = saveBreakTarget
 	b.preSwitchCaseFlow = savePreSwitchCaseFlow
-	b.currentFlow = finishFlowLabel(postSwitchLabel)
+	b.currentFlow = b.finishFlowLabel(postSwitchLabel)
 }
 
 func (b *Binder) bindCaseBlock(node *ast.Node) {
 	switchStatement := node.Parent
 	clauses := node.AsCaseBlock().Clauses.Nodes
 	isNarrowingSwitch := switchStatement.Expression().Kind == ast.KindTrueKeyword || isNarrowingExpression(switchStatement.Expression())
-	var fallthroughFlow *ast.FlowNode = ast.UnreachableFlow
+	var fallthroughFlow *ast.FlowNode = &b.unreachableFlow
 	for i := 0; i < len(clauses); i++ {
 		clauseStart := i
 		for len(clauses[i].AsCaseOrDefaultClause().Statements.Nodes) == 0 && i+1 < len(clauses) {
-			if fallthroughFlow == ast.UnreachableFlow {
+			if fallthroughFlow == &b.unreachableFlow {
 				b.currentFlow = b.preSwitchCaseFlow
 			}
 			b.bind(clauses[i])
@@ -2021,7 +2025,7 @@ func (b *Binder) bindCaseBlock(node *ast.Node) {
 		}
 		b.addAntecedent(preCaseLabel, preCaseFlow)
 		b.addAntecedent(preCaseLabel, fallthroughFlow)
-		b.currentFlow = finishFlowLabel(preCaseLabel)
+		b.currentFlow = b.finishFlowLabel(preCaseLabel)
 		clause := clauses[i]
 		b.bind(clause)
 		fallthroughFlow = b.currentFlow
@@ -2075,7 +2079,7 @@ func (b *Binder) bindLabeledStatement(node *ast.Node) {
 	}
 	b.activeLabelList = b.activeLabelList.next
 	b.addAntecedent(postStatementLabel, b.currentFlow)
-	b.currentFlow = finishFlowLabel(postStatementLabel)
+	b.currentFlow = b.finishFlowLabel(postStatementLabel)
 }
 
 func (b *Binder) bindPrefixUnaryExpressionFlow(node *ast.Node) {
@@ -2132,12 +2136,12 @@ func (b *Binder) bindBinaryExpressionFlow(node *ast.Node) {
 			b.hasFlowEffects = false
 			b.bindLogicalLikeExpression(node, postExpressionLabel, postExpressionLabel)
 			if b.hasFlowEffects {
-				b.currentFlow = finishFlowLabel(postExpressionLabel)
+				b.currentFlow = b.finishFlowLabel(postExpressionLabel)
 			} else {
 				b.currentFlow = saveCurrentFlow
 			}
 			b.hasFlowEffects = b.hasFlowEffects || saveHasFlowEffects
-			b.currentFlow = finishFlowLabel(postExpressionLabel)
+			b.currentFlow = b.finishFlowLabel(postExpressionLabel)
 		} else {
 			b.bindLogicalLikeExpression(node, b.currentTrueTarget, b.currentFalseTarget)
 		}
@@ -2171,7 +2175,7 @@ func (b *Binder) bindLogicalLikeExpression(node *ast.Node, trueTarget *ast.FlowL
 	} else {
 		b.bindCondition(expr.Left, trueTarget, preRightLabel)
 	}
-	b.currentFlow = finishFlowLabel(preRightLabel)
+	b.currentFlow = b.finishFlowLabel(preRightLabel)
 	b.bind(expr.OperatorToken)
 	if ast.IsLogicalOrCoalescingAssignmentOperator(expr.OperatorToken.Kind) {
 		b.doWithConditionalBranches(b.bind, expr.Right, trueTarget, falseTarget)
@@ -2200,16 +2204,16 @@ func (b *Binder) bindConditionalExpressionFlow(node *ast.Node) {
 	saveHasFlowEffects := b.hasFlowEffects
 	b.hasFlowEffects = false
 	b.bindCondition(expr.Condition, trueLabel, falseLabel)
-	b.currentFlow = finishFlowLabel(trueLabel)
+	b.currentFlow = b.finishFlowLabel(trueLabel)
 	b.bind(expr.QuestionToken)
 	b.bind(expr.WhenTrue)
 	b.addAntecedent(postExpressionLabel, b.currentFlow)
-	b.currentFlow = finishFlowLabel(falseLabel)
+	b.currentFlow = b.finishFlowLabel(falseLabel)
 	b.bind(expr.ColonToken)
 	b.bind(expr.WhenFalse)
 	b.addAntecedent(postExpressionLabel, b.currentFlow)
 	if b.hasFlowEffects {
-		b.currentFlow = finishFlowLabel(postExpressionLabel)
+		b.currentFlow = b.finishFlowLabel(postExpressionLabel)
 	} else {
 		b.currentFlow = saveCurrentFlow
 	}
@@ -2255,7 +2259,7 @@ func (b *Binder) bindOptionalChainFlow(node *ast.Node) {
 		saveHasFlowEffects := b.hasFlowEffects
 		b.bindOptionalChain(node, postExpressionLabel, postExpressionLabel)
 		if b.hasFlowEffects {
-			b.currentFlow = finishFlowLabel(postExpressionLabel)
+			b.currentFlow = b.finishFlowLabel(postExpressionLabel)
 		} else {
 			b.currentFlow = saveCurrentFlow
 		}
@@ -2283,7 +2287,7 @@ func (b *Binder) bindOptionalChain(node *ast.Node, trueTarget *ast.FlowLabel, fa
 	}
 	b.bindOptionalExpression(node.Expression(), core.IfElse(preChainLabel != nil, preChainLabel, trueTarget), falseTarget)
 	if preChainLabel != nil {
-		b.currentFlow = finishFlowLabel(preChainLabel)
+		b.currentFlow = b.finishFlowLabel(preChainLabel)
 	}
 	b.doWithConditionalBranches(b.bindOptionalChainRest, node, trueTarget, falseTarget)
 	if ast.IsOutermostOptionalChain(node) {
@@ -2382,13 +2386,13 @@ func (b *Binder) bindInitializer(node *ast.Node) {
 	}
 	entryFlow := b.currentFlow
 	b.bind(node)
-	if entryFlow == ast.UnreachableFlow || entryFlow == b.currentFlow {
+	if entryFlow == &b.unreachableFlow || entryFlow == b.currentFlow {
 		return
 	}
 	exitFlow := b.createBranchLabel()
 	b.addAntecedent(exitFlow, entryFlow)
 	b.addAntecedent(exitFlow, b.currentFlow)
-	b.currentFlow = finishFlowLabel(exitFlow)
+	b.currentFlow = b.finishFlowLabel(exitFlow)
 }
 
 func isEnumDeclarationWithPreservedEmit(node *ast.Node, options *core.CompilerOptions) bool {
