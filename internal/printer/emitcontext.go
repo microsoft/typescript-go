@@ -178,7 +178,7 @@ func (c *EmitContext) mergeEnvironment(statements []*ast.Statement, declarations
 			changed = true
 		} else {
 			var leftPrologues core.Set[string]
-			for i := 0; i < leftStandardPrologueEnd; i++ {
+			for i := range leftStandardPrologueEnd {
 				leftPrologue := statements[i]
 				leftPrologues.Add(leftPrologue.Expression().Text())
 			}

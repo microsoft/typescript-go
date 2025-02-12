@@ -372,7 +372,6 @@ func (tx *RuntimeSyntaxTransformer) transformEnumMember(
 			}
 		}
 	} else {
-
 		// Enum members with an initializer may restore auto-numbering if the initializer is a numeric literal. If we
 		// cannot syntactically determine the initializer value and the following enum member is auto-numbered, we will
 		// use an `auto` variable to perform the remaining auto-numbering at runtime.
@@ -684,7 +683,6 @@ func (tx *RuntimeSyntaxTransformer) visitShorthandPropertyAssignment(node *ast.S
 		location := tx.emitContext.MostOriginal(node.AsNode())
 		if symbol := tx.getReferencedExport(location, node.Name().Text()); symbol != nil {
 			if container := tx.getSymbolExportContainer(location, symbol); container != nil && container.Kind == ast.KindModuleDeclaration && contains(location, container) {
-
 				containerName := tx.getNamespaceContainerName(container)
 
 				memberName := copyIdentifier(tx.emitContext, node.Name())
