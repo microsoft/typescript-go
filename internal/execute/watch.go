@@ -1,0 +1,66 @@
+package execute
+
+import (
+	"fmt"
+	"time"
+
+	"github.com/microsoft/typescript-go/internal/compiler"
+	"github.com/microsoft/typescript-go/internal/tsoptions"
+)
+
+func start(w *watcher) ExitStatus {
+	if w.configFileName == "" {
+		w.host = compiler.NewCompilerHost(w.options.CompilerOptions(), w.sys.GetCurrentDirectory(), w.sys.FS(), w.sys.DefaultLibraryPath())
+	}
+	watchInterval := 100 * time.Millisecond
+	for !w.sys.IsTestDone() {
+		if w.configFileName != "" {
+			// only need to reparse options/ update host if we are watching a config file
+			extendedConfigCache := map[string]*tsoptions.ExtendedConfigCacheEntry{}
+			configParseResult, errors := getParsedCommandLineOfConfigFile(w.configFileName, w.options.CompilerOptions(), w.sys, extendedConfigCache)
+			if len(errors) > 0 {
+				// these are unrecoverable errors--report them and do not build
+				for _, e := range errors {
+					w.reportDiagnostic(e)
+				}
+				// wait longer to allow user to fix errors
+				time.Sleep(watchInterval * 10)
+				continue
+			}
+			w.options = configParseResult
+			w.host = compiler.NewCompilerHost(w.options.CompilerOptions(), w.sys.GetCurrentDirectory(), w.sys.FS(), w.sys.DefaultLibraryPath())
+		}
+		w.program = compiler.NewProgramFromParsedCommandLine(w.options, w.host)
+		if hasBeenModified(w, w.program) {
+			fmt.Fprint(w.sys.Writer(), "build starting at ", w.sys.Now(), w.sys.NewLine())
+			w.compileAndEmit()
+			fmt.Fprint(w.sys.Writer(), "build finished ", w.sys.Now(), w.sys.NewLine())
+		} else {
+			// print something???
+			fmt.Fprint(w.sys.Writer(), "no changes detected at ", w.sys.Now(), w.sys.NewLine())
+		}
+		time.Sleep(watchInterval)
+	}
+	return ExitStatusSuccess
+}
+
+func hasBeenModified(w *watcher, program *compiler.Program) bool {
+	// checks watcher's snapshot against program file modified times
+	currState := map[string]time.Time{}
+	filesModified := false
+	for _, sourceFile := range program.SourceFiles() {
+		fileName := sourceFile.FileName()
+		currState[fileName] = w.sys.FS().Stat(fileName).ModTime()
+		if !filesModified {
+			if currState[fileName] != w.prevModified[fileName] {
+				filesModified = true
+			}
+			delete(w.prevModified, fileName)
+		}
+	}
+	if len(w.prevModified) > 0 {
+		filesModified = true
+	}
+	w.prevModified = currState
+	return filesModified
+}

@@ -5,6 +5,7 @@ import (
 	"io"
 	"strings"
 	"testing/fstest"
+	"time"
 
 	"github.com/microsoft/typescript-go/internal/bundled"
 	"github.com/microsoft/typescript-go/internal/vfs"
@@ -45,6 +46,16 @@ type testSys struct {
 	defaultLibraryPath string
 	cwd                string
 	files              []string
+}
+
+func (s *testSys) IsTestDone() bool {
+	// todo: test is done if there are no edits left. Edits are not yet implemented
+	return true
+}
+
+func (s *testSys) Now() time.Time {
+	// todo: make a "test time" structure
+	return time.Now()
 }
 
 func (s *testSys) FS() vfs.FS {

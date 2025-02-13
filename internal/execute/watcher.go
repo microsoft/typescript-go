@@ -1,38 +1,35 @@
 package execute
 
 import (
-	"fmt"
 	"time"
 
+	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 )
 
 type watcher struct {
-	sys                System
-	config 		   *tsoptions.ParsedCommandLine
+	sys              System
+	configFileName   string
+	options          *tsoptions.ParsedCommandLine
 	reportDiagnostic diagnosticReporter
+
+	host         compiler.CompilerHost
+	program      *compiler.Program
+	prevModified map[string]time.Time
 }
 
 func createWatcher(sys System, configParseResult *tsoptions.ParsedCommandLine, reportDiagnostic diagnosticReporter) *watcher {
 	return &watcher{
-		sys: sys,
-		config: configParseResult,
+		sys:              sys,
+		configFileName:   configParseResult.ConfigFile.SourceFile.FileName(),
+		options:          configParseResult,
 		reportDiagnostic: reportDiagnostic,
 		// reportWatchStatus: createWatchStatusReporter(sys, configParseResult.CompilerOptions().Pretty),
 	}
 }
 
-func (w *watcher) Start() ExitStatus {
-	watchInterval := 100 * time.Millisecond
-	for {
-		// todo: for non interval based watch, wait for file change event here
-		fmt.Fprint(w.sys.Writer(), "build starting at ", time.Now(), "\n")
-		w.compileAndEmit()
-		fmt.Fprint(w.sys.Writer(), "build finished ", time.Now(), "\n")
-		time.Sleep(watchInterval)
-	}
-}
-
 func (w *watcher) compileAndEmit() {
-	performCompilation(w.sys, nil, w.config, w.reportDiagnostic)
+	// !!! output/error reporting is currently the same as non-watch mode
+	// diagnostics, emitResult, exitStatus :=
+	compileAndEmit(w.sys, w.program, w.reportDiagnostic)
 }

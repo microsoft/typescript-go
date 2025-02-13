@@ -133,16 +133,15 @@ CompilerOptions::{
 Output::
 //// [/home/src/workspaces/solution/project/index.ts]\nimport { x } from "../utils";
 //// [/home/src/workspaces/solution/project/tsconfig.json]\n{
-		"references": [
-			{ "path": "../utils" },
-		],
-	}),
-},
+	"references": [
+		{ "path": "../utils" },
+	],
+}
 //// [/home/src/workspaces/solution/src/utils/index.ts]\nexport const x = 10;
 //// [/home/src/workspaces/solution/src/utils/tsconfig.json]\n{
 	"compilerOptions": {
 		"composite": true,
 		"noEmit": true,
 	},
-})
+}
 

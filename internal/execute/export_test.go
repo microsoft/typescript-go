@@ -6,3 +6,8 @@ func CommandLineTest(sys System, cb cbType, commandLineArgs []string) (*tsoption
 	parsedCommandLine := tsoptions.ParseCommandLine(commandLineArgs, sys)
 	return parsedCommandLine, executeCommandLineWorker(sys, cb, parsedCommandLine)
 }
+
+func CommandLineTestWatch(sys System, cb cbType, commandLineArgs []string) (*tsoptions.ParsedCommandLine, ExitStatus) {
+	parsedCommandLine := tsoptions.ParseCommandLine(commandLineArgs, sys)
+	return parsedCommandLine, executeCommandLineWorker(sys, cb, parsedCommandLine)
+}

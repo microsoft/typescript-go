@@ -1196,8 +1196,9 @@ func parseJsonConfigFileContentWorker(
 			FileNames:         getFileNames(basePathForFileNames),
 			ProjectReferences: getProjectReferences(basePathForFileNames),
 		},
-		Raw:    parsedConfig.raw,
-		Errors: errors,
+		ConfigFile: sourceFile,
+		Raw:        parsedConfig.raw,
+		Errors:     errors,
 	}
 }
 

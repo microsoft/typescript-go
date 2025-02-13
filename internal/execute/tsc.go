@@ -70,10 +70,9 @@ func executeCommandLineWorker(sys System, cb cbType, commandLine *tsoptions.Pars
 		return ExitStatusDiagnosticsPresent_OutputsSkipped
 	}
 
-	// !!! convert to options with absolute paths is usualy done here, but for ease of implementation, it's done in `tsoptions.ParseCommandLine`
+	// !!! convert to options with absolute paths is usualy done here, but for ease of implementation, it's done in `tsoptions.ParseCommandLine()`
 	compilerOptionsFromCommandLine := commandLine.CompilerOptions()
 
-	exitStatus := ExitStatusSuccess
 	if configFileName != "" {
 		extendedConfigCache := map[string]*tsoptions.ExtendedConfigCacheEntry{}
 		configParseResult, errors := getParsedCommandLineOfConfigFile(configFileName, compilerOptionsFromCommandLine, sys, extendedConfigCache)
@@ -89,39 +88,34 @@ func executeCommandLineWorker(sys System, cb cbType, commandLine *tsoptions.Pars
 		}
 		// updateReportDiagnostic
 		if isWatchSet(configParseResult.CompilerOptions()) {
-			return createWatcher(sys, commandLine, reportDiagnostic).Start()
+			return start(createWatcher(sys, configParseResult, reportDiagnostic))
 		} else if isIncrementalCompilation(configParseResult.CompilerOptions()) {
 			return ExitStatusNotImplementedIncremental
-		} else {
-			exitStatus = performCompilation(
-				sys,
-				cb,
-				configParseResult,
-				reportDiagnostic,
-			)
 		}
+		return performCompilation(
+			sys,
+			cb,
+			configParseResult,
+			reportDiagnostic,
+		)
 	} else {
 		if compilerOptionsFromCommandLine.ShowConfig.IsTrue() {
 			return ExitStatusNotImplemented
 		}
 		// todo update reportDiagnostic
-		commandLine.SetCompilerOptions(compilerOptionsFromCommandLine)
 		if isWatchSet(compilerOptionsFromCommandLine) {
 			// !!! reportWatchModeWithoutSysSupport
-			return createWatcher(sys, commandLine, reportDiagnostic).Start()
+			return start(createWatcher(sys, commandLine, reportDiagnostic))
 		} else if isIncrementalCompilation(compilerOptionsFromCommandLine) {
 			return ExitStatusNotImplementedIncremental
-		} else {
-			exitStatus = performCompilation(
-				sys,
-				cb,
-				commandLine,
-				reportDiagnostic,
-			)
 		}
 	}
-
-	return exitStatus
+	return performCompilation(
+		sys,
+		cb,
+		commandLine,
+		reportDiagnostic,
+	)
 }
 
 func findConfigFile(searchPath string, fileExists func(string) bool, configName string) string {

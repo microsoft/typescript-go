@@ -116,14 +116,13 @@ func TestProjectReferences(t *testing.T) {
 		"composite": true,
 		"noEmit": true,
 	},
-})`,
+}`,
 			"/home/src/workspaces/solution/project/index.ts": `import { x } from "../utils";`,
 			"/home/src/workspaces/solution/project/tsconfig.json": `{
-		"references": [
-			{ "path": "../utils" },
-		],
-	}),
-},`,
+	"references": [
+		{ "path": "../utils" },
+	],
+}`,
 		},
 			"/home/src/workspaces/solution",
 		),
