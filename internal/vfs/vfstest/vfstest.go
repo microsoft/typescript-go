@@ -41,7 +41,7 @@ type sys struct {
 // The paths must be all POSIX-style or all Windows-style, but not both.
 //
 // For paths like `c:/foo/bar`, fsys will be used as though it's rooted at `/` and the path is `/c:/foo/bar`.
-func FromMap(m map[string]any, useCaseSensitiveFileNames bool) vfs.FS {
+func FromMap[File any](m map[string]File, useCaseSensitiveFileNames bool) vfs.FS {
 	posix := false
 	windows := false
 
@@ -68,7 +68,7 @@ func FromMap(m map[string]any, useCaseSensitiveFileNames bool) vfs.FS {
 	mfs := make(fstest.MapFS, len(m))
 	for p, f := range m {
 		var file *fstest.MapFile
-		switch f := f.(type) {
+		switch f := any(f).(type) {
 		case string:
 			file = &fstest.MapFile{Data: []byte(f)}
 		case []byte:
