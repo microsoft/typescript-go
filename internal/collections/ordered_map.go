@@ -169,6 +169,11 @@ func (m *OrderedMap[K, V]) clone() OrderedMap[K, V] {
 	}
 }
 
+var (
+	_ json.Unmarshaler      = (*OrderedMap[string, string])(nil)
+	_ json2.UnmarshalerFrom = (*OrderedMap[string, string])(nil)
+)
+
 func (m *OrderedMap[K, V]) UnmarshalJSON(data []byte) error {
 	if string(data) == "null" {
 		// By convention, to approximate the behavior of Unmarshal itself,
@@ -209,7 +214,7 @@ func (m *OrderedMap[K, V]) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (m *OrderedMap[K, V]) UnmarshalJSONFrom(dec *jsontext.Decoder, opts json2.Options) error {
+func (m *OrderedMap[K, V]) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	token, err := dec.ReadToken()
 	if err != nil {
 		return err
@@ -226,10 +231,10 @@ func (m *OrderedMap[K, V]) UnmarshalJSONFrom(dec *jsontext.Decoder, opts json2.O
 	for dec.PeekKind() != '}' { // jsontext.ObjectEnd.Kind()
 		var key K
 		var value V
-		if err := json2.UnmarshalDecode(dec, &key, opts); err != nil {
+		if err := json2.UnmarshalDecode(dec, &key); err != nil {
 			return err
 		}
-		if err := json2.UnmarshalDecode(dec, &value, opts); err != nil {
+		if err := json2.UnmarshalDecode(dec, &value); err != nil {
 			return err
 		}
 		m.Set(key, value)
