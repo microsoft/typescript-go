@@ -6,7 +6,7 @@ import (
 	"testing/fstest"
 	"unicode/utf16"
 
-	"github.com/microsoft/typescript-go/internal/vfs"
+	"github.com/microsoft/typescript-go/internal/vfs/iovfs"
 	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
 	"gotest.tools/v3/assert"
 )
@@ -127,7 +127,7 @@ func TestBOM(t *testing.T) {
 				},
 			}
 
-			fs := vfs.FromIOFS(testfs, true)
+			fs := iovfs.From(testfs, true)
 
 			content, ok := fs.ReadFile("/foo.ts")
 			assert.Assert(t, ok)
@@ -144,7 +144,7 @@ func TestBOM(t *testing.T) {
 			},
 		}
 
-		fs := vfs.FromIOFS(testfs, true)
+		fs := iovfs.From(testfs, true)
 
 		content, ok := fs.ReadFile("/foo.ts")
 		assert.Assert(t, ok)
