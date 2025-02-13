@@ -23,7 +23,7 @@ type EmitHost interface {
 	CommonSourceDirectory() string
 	IsEmitBlocked(file string) bool
 	WriteFile(fileName string, text string, writeByteOrderMark bool, relatedSourceFiles []*ast.SourceFile, data *WriteFileData) error
-	getEmitResolver(file *ast.SourceFile) checker.EmitResolver
+	GetEmitResolver(file *ast.SourceFile) checker.EmitResolver
 }
 
 var _ EmitHost = (*emitHost)(nil)
@@ -50,7 +50,7 @@ func (host *emitHost) WriteFile(fileName string, text string, writeByteOrderMark
 	return host.program.host.FS().WriteFile(fileName, text, writeByteOrderMark)
 }
 
-func (host *emitHost) getEmitResolver(file *ast.SourceFile) checker.EmitResolver {
+func (host *emitHost) GetEmitResolver(file *ast.SourceFile) checker.EmitResolver {
 	checker := host.program.getTypeCheckerForFile(file)
 	return checker.NewEmitResolver(file)
 }

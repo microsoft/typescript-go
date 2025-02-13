@@ -22,7 +22,6 @@ const (
 type emitter struct {
 	host               EmitHost
 	emitOnly           emitOnly
-	forceDtsEmit       bool
 	emittedFilesList   []string
 	emitterDiagnostics ast.DiagnosticsCollection
 	emitSkipped        bool
@@ -58,7 +57,7 @@ func (e *emitter) emitJsFile(sourceFile *ast.SourceFile, jsFilePath string, sour
 
 	var emitResolver checker.EmitResolver
 	if !options.VerbatimModuleSyntax.IsTrue() {
-		emitResolver = e.host.getEmitResolver(sourceFile) // !!! conditionally skip diagnostics
+		emitResolver = e.host.GetEmitResolver(sourceFile) // !!! conditionally skip diagnostics
 		e.markLinkedReferences(sourceFile, emitResolver)
 	}
 
