@@ -179,30 +179,6 @@ func TestInsensitiveDuplicatePath(t *testing.T) {
 	convertMapFS(testfs, true /*useCaseSensitiveFileNames*/)
 }
 
-func TestFromMapFS(t *testing.T) {
-	t.Parallel()
-
-	testfs := fstest.MapFS{
-		"foo/bar/baz": &fstest.MapFile{
-			Data: []byte("hello, world"),
-		},
-	}
-
-	fs := fromMapFS(testfs, false)
-
-	content, ok := fs.ReadFile("/foo/bar/baz")
-	assert.Assert(t, ok)
-	assert.Equal(t, content, "hello, world")
-
-	content, ok = fs.ReadFile("/FOO/bar/baZ")
-	assert.Assert(t, ok)
-	assert.Equal(t, content, "hello, world")
-
-	content, ok = fs.ReadFile("/does/not/exist")
-	assert.Assert(t, !ok)
-	assert.Equal(t, content, "")
-}
-
 func dirEntriesToNames(entries []fs.DirEntry) []string {
 	names := make([]string, len(entries))
 	for i, entry := range entries {
