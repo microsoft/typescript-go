@@ -14,7 +14,7 @@ import (
 func TestVFSTestMapFS(t *testing.T) {
 	t.Parallel()
 
-	fs := vfstest.FromMap(map[string]any{
+	fs := vfstest.FromMap(map[string]string{
 		"/foo.ts":        "hello, world",
 		"/dir1/file1.ts": "export const foo = 42;",
 		"/dir1/file2.ts": "export const foo = 42;",
@@ -56,7 +56,7 @@ func TestVFSTestMapFS(t *testing.T) {
 func TestVFSTestMapFSWindows(t *testing.T) {
 	t.Parallel()
 
-	fs := vfstest.FromMap(map[string]any{
+	fs := vfstest.FromMap(map[string]string{
 		"c:/foo.ts":        "hello, world",
 		"c:/dir1/file1.ts": "export const foo = 42;",
 		"c:/dir1/file2.ts": "export const foo = 42;",

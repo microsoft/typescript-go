@@ -21,8 +21,8 @@ func TestGetSymbolAtLocation(t *testing.T) {
 declare const foo: Foo;
 foo.bar;`
 	fs := vfstest.FromMap(map[string]string{
-		".foo.ts": content,
-		"tsconfig.json": `
+		"/foo.ts": content,
+		"/tsconfig.json": `
 				{
 					"compilerOptions": {}
 				}
