@@ -4097,7 +4097,7 @@ func (p *Printer) emitListRange(emit func(p *Printer, node *ast.Node), parentNod
 			p.writeSpace()
 		}
 	} else {
-		end := min(start + count, length)
+		end := min(start+count, length)
 
 		p.emitListItems(emit, parentNode, children.Nodes[start:end], format, children.HasTrailingComma(), children.Loc)
 	}
