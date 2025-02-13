@@ -186,7 +186,7 @@ func compileAndEmit(sys System, program *compiler.Program, reportDiagnostic diag
 	// todo: check if third return needed after execute is fully implemented
 
 	options := program.Options()
-	allDiagnostics := program.GetOptionsDiagnostics()
+	allDiagnostics := program.GetConfigFileParsingDiagnostics()
 
 	// todo: early exit logic and append diagnostics
 	diagnostics := program.GetSyntacticDiagnostics(nil)
@@ -214,11 +214,9 @@ func compileAndEmit(sys System, program *compiler.Program, reportDiagnostic diag
 	diagnostics = append(diagnostics, emitResult.Diagnostics...)
 
 	allDiagnostics = append(allDiagnostics, diagnostics...)
-	if allDiagnostics != nil {
-		allDiagnostics = compiler.SortAndDeduplicateDiagnostics(allDiagnostics)
-		for _, diagnostic := range allDiagnostics {
-			reportDiagnostic(diagnostic)
-		}
+	allDiagnostics = compiler.SortAndDeduplicateDiagnostics(allDiagnostics)
+	for _, diagnostic := range allDiagnostics {
+		reportDiagnostic(diagnostic)
 	}
 
 	// !!! if (write)
