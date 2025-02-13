@@ -188,7 +188,7 @@ func TestFromMapFS(t *testing.T) {
 		},
 	}
 
-	fs := FromMapFS(testfs, false)
+	fs := fromMapFS(testfs, false)
 
 	content, ok := fs.ReadFile("/foo/bar/baz")
 	assert.Assert(t, ok)
@@ -216,7 +216,7 @@ func TestWritableFS(t *testing.T) {
 
 	testfs := fstest.MapFS{}
 
-	fs := FromMapFS(testfs, false)
+	fs := fromMapFS(testfs, false)
 
 	err := fs.WriteFile("/foo/bar/baz", "hello, world", false)
 	assert.NilError(t, err)
@@ -241,7 +241,7 @@ func TestStress(t *testing.T) {
 
 	testfs := fstest.MapFS{}
 
-	fs := FromMapFS(testfs, false)
+	fs := fromMapFS(testfs, false)
 
 	ops := []func(){
 		func() { _ = fs.WriteFile("/foo/bar/baz.txt", "hello, world", false) },

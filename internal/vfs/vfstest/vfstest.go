@@ -83,14 +83,14 @@ func FromMap[File any](m map[string]File, useCaseSensitiveFileNames bool) vfs.FS
 		mfs[p] = file
 	}
 
-	return FromMapFS(mfs, useCaseSensitiveFileNames)
+	return fromMapFS(mfs, useCaseSensitiveFileNames)
 }
 
-// FromTestMapFS creates a new [vfs.FS] from a [fstest.MapFS]. The provided FS will be augmented
+// fromMapFS creates a new [vfs.FS] from a [fstest.MapFS]. The provided FS will be augmented
 // to properly handle case-insensitive queries.
 //
 // For paths like `c:/foo/bar`, fsys will be used as though it's rooted at `/` and the path is `/c:/foo/bar`.
-func FromMapFS(m fstest.MapFS, useCaseSensitiveFileNames bool) vfs.FS {
+func fromMapFS(m fstest.MapFS, useCaseSensitiveFileNames bool) vfs.FS {
 	return vfs.FromIOFS(convertMapFS(m, useCaseSensitiveFileNames), useCaseSensitiveFileNames)
 }
 
