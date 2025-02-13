@@ -225,17 +225,18 @@ func parseFloatString(s string) float64 {
 	if hasExp {
 		sb.WriteString("e")
 
-		c2, negative := strings.CutPrefix(c, "-")
+		var negative bool
+		c, negative = strings.CutPrefix(c, "-")
 		if negative {
 			sb.WriteString("-")
 		} else {
-			c2, _ = strings.CutPrefix(c2, "+")
+			c, _ = strings.CutPrefix(c, "+")
 		}
-		c2 = trimLeadingZeros(c2)
-		if !isAllDigits(c2) {
+		c = trimLeadingZeros(c)
+		if !isAllDigits(c) {
 			return math.NaN()
 		}
-		sb.WriteString(c2)
+		sb.WriteString(c)
 	}
 
 	return stringToFloat64(sb.String())
