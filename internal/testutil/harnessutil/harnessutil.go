@@ -530,9 +530,7 @@ func GetFileBasedTestConfigurations(t *testing.T, settings map[string]string, va
 		varyingConfigurations := computeFileBasedTestConfigurationVariations(variationCount, optionEntries)
 		for _, varyingConfig := range varyingConfigurations {
 			description := getFileBasedTestConfigurationDescription(varyingConfig)
-			for key, value := range nonVariyingOptions {
-				varyingConfig[key] = value
-			}
+			maps.Copy(varyingConfig, nonVariyingOptions)
 			configurations = append(configurations, &NamedTestConfiguration{description, varyingConfig})
 		}
 	} else if len(nonVariyingOptions) > 0 {

@@ -208,9 +208,7 @@ func positionToLineAndCharacter(position int, lineMap []core.TextPos) lsproto.Po
 	line := sort.Search(len(lineMap), func(i int) bool {
 		return int(lineMap[i]) > position
 	}) - 1
-	if line < 0 {
-		line = 0
-	}
+	line = max(0, line)
 	return lsproto.Position{
 		Line:      uint32(line),
 		Character: uint32(position - int(lineMap[line])),
