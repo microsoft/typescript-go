@@ -35,15 +35,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os:
-          - ubuntu-latest
-          - windows-latest
-          - macos-latest
-        no-submodules:
-          - false
-        race:
-          - false
         include:
+          - os: ubuntu-latest
+          - os: windows-latest
+          - os: macos-latest
           - os: ubuntu-latest
             no-submodules: true
           - os: ubuntu-latest
