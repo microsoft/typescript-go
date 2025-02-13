@@ -3,10 +3,8 @@ package vfs_test
 import (
 	"encoding/binary"
 	"testing"
-	"testing/fstest"
 	"unicode/utf16"
 
-	"github.com/microsoft/typescript-go/internal/vfs/iovfs"
 	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
 	"gotest.tools/v3/assert"
 )
@@ -121,13 +119,9 @@ func TestBOM(t *testing.T) {
 				assert.NilError(t, err)
 			}
 
-			testfs := fstest.MapFS{
-				"foo.ts": &fstest.MapFile{
-					Data: buf,
-				},
-			}
-
-			fs := iovfs.From(testfs, true)
+			fs := vfstest.FromMap(map[string][]byte{
+				"/foo.ts": buf,
+			}, true)
 
 			content, ok := fs.ReadFile("/foo.ts")
 			assert.Assert(t, ok)
@@ -138,13 +132,9 @@ func TestBOM(t *testing.T) {
 	t.Run("UTF8", func(t *testing.T) {
 		t.Parallel()
 
-		testfs := fstest.MapFS{
-			"foo.ts": &fstest.MapFile{
-				Data: []byte("\xEF\xBB\xBF" + expected),
-			},
-		}
-
-		fs := iovfs.From(testfs, true)
+		fs := vfstest.FromMap(map[string][]byte{
+			"/foo.ts": []byte("\xEF\xBB\xBF" + expected),
+		}, true)
 
 		content, ok := fs.ReadFile("/foo.ts")
 		assert.Assert(t, ok)
