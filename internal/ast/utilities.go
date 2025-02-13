@@ -2085,7 +2085,7 @@ func getModuleInstanceStateWorker(node *Node, ancestors []*Node, visited map[Nod
 	return ModuleInstanceStateInstantiated
 }
 
-func getModuleInstanceStateForAliasTarget(node *Node, ancestors []*Node, visited map[NodeId]ModuleInstanceState) ModuleInstanceState {
+func getModuleInstanceStateForAliasTarget(node *Node, ancestorNodes []*Node, visited map[NodeId]ModuleInstanceState) ModuleInstanceState {
 	spec := node.AsExportSpecifier()
 	name := spec.PropertyName
 	if name == nil {
@@ -2095,7 +2095,7 @@ func getModuleInstanceStateForAliasTarget(node *Node, ancestors []*Node, visited
 		// Skip for invalid syntax like this: export { "x" }
 		return ModuleInstanceStateInstantiated
 	}
-	for ancestors, p := popAncestor(ancestors, node); p != nil; ancestors, p = popAncestor(ancestors, p) {
+	for ancestors, p := popAncestor(ancestorNodes, node); p != nil; ancestors, p = popAncestor(ancestors, p) {
 		if IsBlock(p) || IsModuleBlock(p) || IsSourceFile(p) {
 			statements := GetStatementsOfBlock(p)
 			found := ModuleInstanceStateUnknown

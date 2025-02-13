@@ -65,6 +65,10 @@ linters-settings:
     ignorePackageGlobs:
       - encoding/*
       - github.com/go-json-experiment/*
+  govet:
+    enable-all: true
+    disable:
+      - fieldalignment
 #   revive:
 #     enable-all-rules: true
 #     rules:

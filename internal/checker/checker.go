@@ -3847,7 +3847,7 @@ basePropertyCheck:
 				overriddenInstanceProperty := basePropertyFlags != ast.SymbolFlagsProperty && derivedPropertyFlags == ast.SymbolFlagsProperty
 				overriddenInstanceAccessor := basePropertyFlags == ast.SymbolFlagsProperty && derivedPropertyFlags != ast.SymbolFlagsProperty
 				if overriddenInstanceProperty || overriddenInstanceAccessor {
-					errorMessage := core.IfElse(overriddenInstanceProperty,
+					errorMessage = core.IfElse(overriddenInstanceProperty,
 						diagnostics.X_0_is_defined_as_an_accessor_in_class_1_but_is_overridden_here_in_2_as_an_instance_property,
 						diagnostics.X_0_is_defined_as_a_property_in_class_1_but_is_overridden_here_in_2_as_an_accessor)
 					c.error(core.OrElse(ast.GetNameOfDeclaration(derived.ValueDeclaration), derived.ValueDeclaration), errorMessage, c.symbolToString(base), c.TypeToString(baseType), c.TypeToString(t))
@@ -4468,9 +4468,9 @@ func (c *Checker) checkVariableLikeDeclaration(node *ast.Node) {
 		parent := node.Parent.Parent
 		parentCheckMode := core.IfElse(hasDotDotDotToken(node), CheckModeRestBindingElement, CheckModeNormal)
 		parentType := c.getTypeForBindingElementParent(parent, parentCheckMode)
-		name := node.PropertyNameOrName()
-		if parentType != nil && !ast.IsBindingPattern(name) {
-			exprType := c.getLiteralTypeFromPropertyName(name)
+		propertyNameOrName := node.PropertyNameOrName()
+		if parentType != nil && !ast.IsBindingPattern(propertyNameOrName) {
+			exprType := c.getLiteralTypeFromPropertyName(propertyNameOrName)
 			if isTypeUsableAsPropertyName(exprType) {
 				nameText := getPropertyNameFromType(exprType)
 				property := c.getPropertyOfType(parentType, nameText)
@@ -5461,8 +5461,8 @@ func (c *Checker) checkNonNullTypeWithReporter(t *Type, node *ast.Node, reportEr
 	facts := c.getTypeFacts(t, TypeFactsIsUndefinedOrNull)
 	if facts&TypeFactsIsUndefinedOrNull != 0 {
 		reportError(c, node, facts)
-		t := c.getNonNullableType(t)
-		if t.flags&(TypeFlagsNullable|TypeFlagsNever) != 0 {
+		nonNullable := c.getNonNullableType(t)
+		if nonNullable.flags&(TypeFlagsNullable|TypeFlagsNever) != 0 {
 			return c.errorType
 		}
 	}
@@ -10245,7 +10245,7 @@ func (c *Checker) checkArrayLiteralDestructuringElementAssignment(node *ast.Node
 				// We create a synthetic expression so that getIndexedAccessType doesn't get confused
 				// when the element is a SyntaxKind.ElementAccessExpression.
 				accessFlags := AccessFlagsExpressionPosition | core.IfElse(c.hasDefaultValue(element), AccessFlagsAllowMissing, 0)
-				elementType := core.OrElse(c.getIndexedAccessTypeOrUndefined(sourceType, indexType, accessFlags, c.createSyntheticExpression(element, indexType, false, nil), nil), c.errorType)
+				elementType = core.OrElse(c.getIndexedAccessTypeOrUndefined(sourceType, indexType, accessFlags, c.createSyntheticExpression(element, indexType, false, nil), nil), c.errorType)
 				assignedType := elementType
 				if c.hasDefaultValue(element) {
 					assignedType = c.getTypeWithFacts(elementType, TypeFactsNEUndefined)
@@ -13701,11 +13701,11 @@ func (c *Checker) padTupleType(t *Type, pattern *ast.Node) *Type {
 	for i := c.getTypeReferenceArity(t); i < len(patternElements); i++ {
 		e := patternElements[i]
 		if i < len(patternElements)-1 || !(ast.IsBindingElement(e) && hasDotDotDotToken(e)) {
-			t := c.anyType
+			pad := c.anyType
 			if !ast.IsOmittedExpression(e) && c.hasDefaultValue(e) {
-				t = c.getTypeFromBindingElement(e, false /*includePatternInType*/, false /*reportErrors*/)
+				pad = c.getTypeFromBindingElement(e, false /*includePatternInType*/, false /*reportErrors*/)
 			}
-			elementTypes = append(elementTypes, t)
+			elementTypes = append(elementTypes, pad)
 			elementInfos = append(elementInfos, TupleElementInfo{flags: ElementFlagsOptional})
 			if !ast.IsOmittedExpression(e) && !c.hasDefaultValue(e) {
 				c.reportImplicitAny(e, c.anyType, WideningKindNormal)
@@ -16758,7 +16758,6 @@ func (c *Checker) getReturnTypeFromBody(fn *ast.Node, checkMode CheckMode) *Type
 		if len(types) == 0 {
 			// For an async function, the return type will not be void/undefined, but rather a Promise for void/undefined.
 			contextualReturnType := c.getContextualReturnType(fn, ContextFlagsNone)
-			var returnType *Type
 			if contextualReturnType != nil && core.OrElse(c.unwrapReturnType(contextualReturnType, functionFlags), c.voidType).flags&TypeFlagsUndefined != 0 {
 				returnType = c.undefinedType
 			} else {
@@ -17596,7 +17595,7 @@ func (c *Checker) getTypeOfMappedSymbol(symbol *ast.Symbol) *Type {
 func (c *Checker) getLowerBoundOfKeyType(t *Type) *Type {
 	switch {
 	case t.flags&TypeFlagsIndex != 0:
-		t := c.getApparentType(t.AsIndexType().target)
+		t = c.getApparentType(t.AsIndexType().target)
 		if c.isGenericTupleType(t) {
 			return c.getKnownKeysOfTupleType(t)
 		}
@@ -25332,15 +25331,15 @@ func (c *Checker) getContextualTypeForElementExpression(t *Type, index int, leng
 				return c.getTypeArguments(t)[c.getTypeReferenceArity(t)-offset]
 			}
 			// Return a union of the possible contextual element types with no subtype reduction.
-			index := t.TargetTupleType().fixedLength
+			i := t.TargetTupleType().fixedLength
 			if firstSpreadIndex >= 0 {
-				index = min(index, firstSpreadIndex)
+				i = min(i, firstSpreadIndex)
 			}
 			endSkipCount := fixedEndLength
 			if length >= 0 && lastSpreadIndex >= 0 {
 				endSkipCount = min(fixedEndLength, length-lastSpreadIndex)
 			}
-			return c.getElementTypeOfSliceOfTupleType(t, index, endSkipCount, false /*writing*/, true /*noReductions*/)
+			return c.getElementTypeOfSliceOfTupleType(t, i, endSkipCount, false /*writing*/, true /*noReductions*/)
 		}
 		// If element index is known and a contextual property with that name exists, return it. Otherwise return the
 		// iterated or element type of the contextual type.

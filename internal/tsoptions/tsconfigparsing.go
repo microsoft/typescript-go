@@ -527,8 +527,8 @@ func convertOptionsFromJson[O optionParser](optionsNameMap map[string]*CommandLi
 			opt, ok := optionsNameMap[key]
 			commandLineOptionEnumMapVal := opt.EnumMap()
 			if commandLineOptionEnumMapVal != nil {
-				val, ok := commandLineOptionEnumMapVal.Get(strings.ToLower(value.(string)))
-				if ok {
+				val, ok2 := commandLineOptionEnumMapVal.Get(strings.ToLower(value.(string)))
+				if ok2 {
 					errors = result.ParseOption(key, val)
 				}
 			} else if ok {
@@ -1136,7 +1136,7 @@ func parseJsonConfigFileContentWorker(
 		}
 		substituteStringArrayWithConfigDirTemplate(validatedFilesSpec, basePathForFileNames)
 	}
-	configFileSpecs := configFileSpecs{
+	configFileSpecsValue := configFileSpecs{
 		fileSpecs.sliceValue,
 		includeSpecs.sliceValue,
 		excludeSpecs.sliceValue,
@@ -1147,15 +1147,15 @@ func parseJsonConfigFileContentWorker(
 	}
 
 	if sourceFile != nil {
-		sourceFile.configFileSpecs = &configFileSpecs
+		sourceFile.configFileSpecs = &configFileSpecsValue
 	}
 
 	getFileNames := func(basePath string) []string {
 		parsedConfigOptions := parsedConfig.options
-		fileNames := getFileNamesFromConfigSpecs(configFileSpecs, basePath, parsedConfigOptions, host.FS(), extraFileExtensions)
+		fileNames := getFileNamesFromConfigSpecs(configFileSpecsValue, basePath, parsedConfigOptions, host.FS(), extraFileExtensions)
 		if shouldReportNoInputFiles(fileNames, canJsonReportNoInputFiles(rawConfig), resolutionStack) {
-			includeSpecs := configFileSpecs.includeSpecs
-			excludeSpecs := configFileSpecs.excludeSpecs
+			includeSpecs := configFileSpecsValue.includeSpecs
+			excludeSpecs := configFileSpecsValue.excludeSpecs
 			if includeSpecs == nil {
 				includeSpecs = []string{}
 			}

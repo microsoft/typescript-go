@@ -179,11 +179,6 @@ type compilerTest struct {
 	hasNonDtsFiles bool
 }
 
-type testCaseContentWithConfig struct {
-	testCaseContent
-	configuration harnessutil.TestConfiguration
-}
-
 func newCompilerTest(
 	t *testing.T,
 	filename string,
@@ -202,18 +197,13 @@ func newCompilerTest(
 	if namedConfiguration != nil {
 		configuration = namedConfiguration.Config
 	}
-	testCaseContentWithConfig := testCaseContentWithConfig{
-		testCaseContent: *testContent,
-		configuration:   configuration,
-	}
 
-	harnessConfig := testCaseContentWithConfig.configuration
-	currentDirectory := harnessConfig["currentDirectory"]
+	currentDirectory := configuration["currentDirectory"]
 	if currentDirectory == "" {
 		currentDirectory = srcFolder
 	}
 
-	units := testCaseContentWithConfig.testUnitData
+	units := testContent.testUnitData
 	var toBeCompiled []*harnessutil.TestFile
 	var otherFiles []*harnessutil.TestFile
 	var tsConfigOptions core.CompilerOptions
@@ -221,14 +211,14 @@ func newCompilerTest(
 		units,
 		func(unit *testUnit) bool { return !tspath.FileExtensionIs(unit.name, tspath.ExtensionDts) })
 	var tsConfigFiles []*harnessutil.TestFile
-	if testCaseContentWithConfig.tsConfig != nil {
-		tsConfigOptions = *testCaseContentWithConfig.tsConfig.ParsedConfig.CompilerOptions
+	if testContent.tsConfig != nil {
+		tsConfigOptions = *testContent.tsConfig.ParsedConfig.CompilerOptions
 		tsConfigFiles = []*harnessutil.TestFile{
-			createHarnessTestFile(testCaseContentWithConfig.tsConfigFileUnitData, currentDirectory),
+			createHarnessTestFile(testContent.tsConfigFileUnitData, currentDirectory),
 		}
 		for _, unit := range units {
 			if slices.Contains(
-				testCaseContentWithConfig.tsConfig.ParsedConfig.FileNames,
+				testContent.tsConfig.ParsedConfig.FileNames,
 				tspath.GetNormalizedAbsolutePath(unit.name, currentDirectory),
 			) {
 				toBeCompiled = append(toBeCompiled, createHarnessTestFile(unit, currentDirectory))
@@ -237,9 +227,9 @@ func newCompilerTest(
 			}
 		}
 	} else {
-		baseUrl, ok := harnessConfig["baseUrl"]
+		baseUrl, ok := configuration["baseUrl"]
 		if ok && !tspath.IsRootedDiskPath(baseUrl) {
-			harnessConfig["baseUrl"] = tspath.GetNormalizedAbsolutePath(baseUrl, currentDirectory)
+			configuration["baseUrl"] = tspath.GetNormalizedAbsolutePath(baseUrl, currentDirectory)
 		}
 
 		lastUnit := units[len(units)-1]
@@ -247,7 +237,7 @@ func newCompilerTest(
 		// If the last file in a test uses require or a triple slash reference we'll assume all other files will be brought in via references,
 		// otherwise, assume all files are just meant to be in the same compilation session without explicit references to one another.
 
-		if testCaseContentWithConfig.configuration["noimplicitreferences"] != "" ||
+		if configuration["noimplicitreferences"] != "" ||
 			strings.Contains(lastUnit.content, requireStr) ||
 			referencesRegex.MatchString(lastUnit.content) {
 			toBeCompiled = append(toBeCompiled, createHarnessTestFile(lastUnit, currentDirectory))
@@ -263,10 +253,10 @@ func newCompilerTest(
 		t,
 		toBeCompiled,
 		otherFiles,
-		harnessConfig,
+		configuration,
 		&tsConfigOptions,
 		currentDirectory,
-		testCaseContentWithConfig.symlinks,
+		testContent.symlinks,
 	)
 
 	return &compilerTest{

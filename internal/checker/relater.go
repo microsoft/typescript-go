@@ -3188,7 +3188,6 @@ func (r *Relater) isSourceIntersectionNeedingExtraCheck(source *Type, target *Ty
 }
 
 func (r *Relater) structuredTypeRelatedToWorker(source *Type, target *Type, reportErrors bool, intersectionState IntersectionState) Ternary {
-	var result Ternary
 	var varianceCheckFailed bool
 	var originalErrorChain *ErrorChain
 	saveErrorState := r.getErrorState()
@@ -3247,7 +3246,7 @@ func (r *Relater) structuredTypeRelatedToWorker(source *Type, target *Type, repo
 		case source.flags&TypeFlagsIndex != 0:
 			return r.isRelatedTo(source.Target(), target.Target(), RecursionFlagsBoth, false /*reportErrors*/)
 		case source.flags&TypeFlagsIndexedAccess != 0:
-			result = r.isRelatedTo(source.AsIndexedAccessType().objectType, target.AsIndexedAccessType().objectType, RecursionFlagsBoth, false /*reportErrors*/)
+			result := r.isRelatedTo(source.AsIndexedAccessType().objectType, target.AsIndexedAccessType().objectType, RecursionFlagsBoth, false /*reportErrors*/)
 			if result != TernaryFalse {
 				result &= r.isRelatedTo(source.AsIndexedAccessType().indexType, target.AsIndexedAccessType().indexType, RecursionFlagsBoth, false /*reportErrors*/)
 				if result != TernaryFalse {
@@ -3256,7 +3255,7 @@ func (r *Relater) structuredTypeRelatedToWorker(source *Type, target *Type, repo
 			}
 		case source.flags&TypeFlagsConditional != 0:
 			if source.AsConditionalType().root.isDistributive == target.AsConditionalType().root.isDistributive {
-				result = r.isRelatedTo(source.AsConditionalType().checkType, target.AsConditionalType().checkType, RecursionFlagsBoth, false /*reportErrors*/)
+				result := r.isRelatedTo(source.AsConditionalType().checkType, target.AsConditionalType().checkType, RecursionFlagsBoth, false /*reportErrors*/)
 				if result != TernaryFalse {
 					result &= r.isRelatedTo(source.AsConditionalType().extendsType, target.AsConditionalType().extendsType, RecursionFlagsBoth, false /*reportErrors*/)
 					if result != TernaryFalse {
@@ -3271,7 +3270,7 @@ func (r *Relater) structuredTypeRelatedToWorker(source *Type, target *Type, repo
 				}
 			}
 		case source.flags&TypeFlagsSubstitution != 0:
-			result = r.isRelatedTo(source.AsSubstitutionType().baseType, target.AsSubstitutionType().baseType, RecursionFlagsBoth, false /*reportErrors*/)
+			result := r.isRelatedTo(source.AsSubstitutionType().baseType, target.AsSubstitutionType().baseType, RecursionFlagsBoth, false /*reportErrors*/)
 			if result != TernaryFalse {
 				result &= r.isRelatedTo(source.AsSubstitutionType().constraint, target.AsSubstitutionType().constraint, RecursionFlagsBoth, false /*reportErrors*/)
 				if result != TernaryFalse {
@@ -3283,7 +3282,7 @@ func (r *Relater) structuredTypeRelatedToWorker(source *Type, target *Type, repo
 			return TernaryFalse
 		}
 	case source.flags&TypeFlagsUnionOrIntersection != 0 || target.flags&TypeFlagsUnionOrIntersection != 0:
-		result = r.unionOrIntersectionRelatedTo(source, target, reportErrors, intersectionState)
+		result := r.unionOrIntersectionRelatedTo(source, target, reportErrors, intersectionState)
 		if result != TernaryFalse {
 			return result
 		}
@@ -3320,13 +3319,13 @@ func (r *Relater) structuredTypeRelatedToWorker(source *Type, target *Type, repo
 	// For a generic type T and a type U that is assignable to T, [...U] is assignable to T, U is assignable to readonly [...T],
 	// and U is assignable to [...T] when U is constrained to a mutable array or tuple type.
 	if isSingleElementGenericTupleType(source) && !source.TargetTupleType().readonly {
-		result = r.isRelatedTo(r.c.getTypeArguments(source)[0], target, RecursionFlagsSource, false /*reportErrors*/)
+		result := r.isRelatedTo(r.c.getTypeArguments(source)[0], target, RecursionFlagsSource, false /*reportErrors*/)
 		if result != TernaryFalse {
 			return result
 		}
 	}
 	if isSingleElementGenericTupleType(target) && (target.TargetTupleType().readonly || r.c.isMutableArrayOrTuple(r.c.getBaseConstraintOrType(source))) {
-		result = r.isRelatedTo(source, r.c.getTypeArguments(target)[0], RecursionFlagsTarget, false /*reportErrors*/)
+		result := r.isRelatedTo(source, r.c.getTypeArguments(target)[0], RecursionFlagsTarget, false /*reportErrors*/)
 		if result != TernaryFalse {
 			return result
 		}
@@ -3338,7 +3337,7 @@ func (r *Relater) structuredTypeRelatedToWorker(source *Type, target *Type, repo
 			if getMappedTypeModifiers(source)&MappedTypeModifiersIncludeOptional == 0 {
 				templateType := r.c.getTemplateTypeFromMappedType(source)
 				indexedAccessType := r.c.getIndexedAccessType(target, r.c.getTypeParameterFromMappedType(source))
-				result = r.isRelatedTo(templateType, indexedAccessType, RecursionFlagsBoth, reportErrors)
+				result := r.isRelatedTo(templateType, indexedAccessType, RecursionFlagsBoth, reportErrors)
 				if result != TernaryFalse {
 					return result
 				}
@@ -3350,7 +3349,7 @@ func (r *Relater) structuredTypeRelatedToWorker(source *Type, target *Type, repo
 			constraint := r.c.getConstraintOfTypeParameter(source)
 			if constraint != nil {
 				for constraint != nil && someType(constraint, func(c *Type) bool { return c.flags&TypeFlagsTypeParameter != 0 }) {
-					result = r.isRelatedTo(constraint, target, RecursionFlagsSource, false /*reportErrors*/)
+					result := r.isRelatedTo(constraint, target, RecursionFlagsSource, false /*reportErrors*/)
 					if result != TernaryFalse {
 						return result
 					}
@@ -3363,7 +3362,7 @@ func (r *Relater) structuredTypeRelatedToWorker(source *Type, target *Type, repo
 		if source.flags&TypeFlagsIndexedAccess != 0 {
 			// Relate components directly before falling back to constraint relationships
 			// A type S[K] is related to a type T[J] if S is related to T and K is related to J.
-			result = r.isRelatedTo(source.AsIndexedAccessType().objectType, target.AsIndexedAccessType().objectType, RecursionFlagsBoth, reportErrors)
+			result := r.isRelatedTo(source.AsIndexedAccessType().objectType, target.AsIndexedAccessType().objectType, RecursionFlagsBoth, reportErrors)
 			if result != TernaryFalse {
 				result &= r.isRelatedTo(source.AsIndexedAccessType().indexType, target.AsIndexedAccessType().indexType, RecursionFlagsBoth, reportErrors)
 			}
@@ -3389,7 +3388,7 @@ func (r *Relater) structuredTypeRelatedToWorker(source *Type, target *Type, repo
 						// create a new chain for the constraint error
 						r.restoreErrorState(saveErrorState)
 					}
-					result = r.isRelatedToEx(source, constraint, RecursionFlagsTarget, reportErrors, nil /*headMessage*/, intersectionState)
+					result := r.isRelatedToEx(source, constraint, RecursionFlagsTarget, reportErrors, nil /*headMessage*/, intersectionState)
 					if result != TernaryFalse {
 						return result
 					}
@@ -3409,7 +3408,7 @@ func (r *Relater) structuredTypeRelatedToWorker(source *Type, target *Type, repo
 		targetType := target.AsIndexType().target
 		// A keyof S is related to a keyof T if T is related to S.
 		if source.flags&TypeFlagsIndex != 0 {
-			result = r.isRelatedTo(targetType, source.AsIndexType().target, RecursionFlagsBoth, false /*reportErrors*/)
+			result := r.isRelatedTo(targetType, source.AsIndexType().target, RecursionFlagsBoth, false /*reportErrors*/)
 			if result != TernaryFalse {
 				return result
 			}
@@ -3417,7 +3416,7 @@ func (r *Relater) structuredTypeRelatedToWorker(source *Type, target *Type, repo
 		if isTupleType(targetType) {
 			// An index type can have a tuple type target when the tuple type contains variadic elements.
 			// Check if the source is related to the known keys of the tuple type.
-			result = r.isRelatedTo(source, r.c.getKnownKeysOfTupleType(targetType), RecursionFlagsTarget, reportErrors)
+			result := r.isRelatedTo(source, r.c.getKnownKeysOfTupleType(targetType), RecursionFlagsTarget, reportErrors)
 			if result != TernaryFalse {
 				return result
 			}
@@ -3472,6 +3471,7 @@ func (r *Relater) structuredTypeRelatedToWorker(source *Type, target *Type, repo
 			skipTrue := !r.c.isTypeAssignableTo(r.c.getPermissiveInstantiation(c.checkType), r.c.getPermissiveInstantiation(c.extendsType))
 			skipFalse := !skipTrue && r.c.isTypeAssignableTo(r.c.getRestrictiveInstantiation(c.checkType), r.c.getRestrictiveInstantiation(c.extendsType))
 			// TODO: Find a nice way to include potential conditional type breakdowns in error output, if they seem good (they usually don't)
+			var result Ternary
 			if skipTrue {
 				result = TernaryTrue
 			} else {
@@ -3547,7 +3547,7 @@ func (r *Relater) structuredTypeRelatedToWorker(source *Type, target *Type, repo
 					// to avoid creating the (potentially very large) number of new intermediate types made by manufacturing `S[P]`.
 					nonNullComponent := r.c.extractTypesOfKind(templateType, ^TypeFlagsNullable)
 					if !keysRemapped && nonNullComponent.flags&TypeFlagsIndexedAccess != 0 && nonNullComponent.AsIndexedAccessType().indexType == typeParameter {
-						result = r.isRelatedTo(source, nonNullComponent.AsIndexedAccessType().objectType, RecursionFlagsTarget, reportErrors)
+						result := r.isRelatedTo(source, nonNullComponent.AsIndexedAccessType().objectType, RecursionFlagsTarget, reportErrors)
 						if result != TernaryFalse {
 							return result
 						}
@@ -3569,7 +3569,7 @@ func (r *Relater) structuredTypeRelatedToWorker(source *Type, target *Type, repo
 						}
 						indexedAccessType := r.c.getIndexedAccessType(source, indexingType)
 						// Compare `S[indexingType]` to `T`, where `T` is the type of a property of the target type.
-						result = r.isRelatedTo(indexedAccessType, templateType, RecursionFlagsBoth, reportErrors)
+						result := r.isRelatedTo(indexedAccessType, templateType, RecursionFlagsBoth, reportErrors)
 						if result != TernaryFalse {
 							return result
 						}
@@ -3589,7 +3589,7 @@ func (r *Relater) structuredTypeRelatedToWorker(source *Type, target *Type, repo
 				constraint = r.c.unknownType
 			}
 			// hi-speed no-this-instantiation check (less accurate, but avoids costly `this`-instantiation when the constraint will suffice), see #28231 for report on why this is needed
-			result = r.isRelatedToEx(constraint, target, RecursionFlagsSource, false /*reportErrors*/, nil /*headMessage*/, intersectionState)
+			result := r.isRelatedToEx(constraint, target, RecursionFlagsSource, false /*reportErrors*/, nil /*headMessage*/, intersectionState)
 			if result != TernaryFalse {
 				return result
 			}
@@ -3612,7 +3612,7 @@ func (r *Relater) structuredTypeRelatedToWorker(source *Type, target *Type, repo
 		}
 	case source.flags&TypeFlagsIndex != 0:
 		isDeferredMappedIndex := r.c.shouldDeferIndexType(source.AsIndexType().target, source.AsIndexType().indexFlags) && source.AsIndexType().target.objectFlags&ObjectFlagsMapped != 0
-		result = r.isRelatedTo(r.c.stringNumberSymbolType, target, RecursionFlagsSource, reportErrors && !isDeferredMappedIndex)
+		result := r.isRelatedTo(r.c.stringNumberSymbolType, target, RecursionFlagsSource, reportErrors && !isDeferredMappedIndex)
 		if result != TernaryFalse {
 			return result
 		}
@@ -3658,7 +3658,7 @@ func (r *Relater) structuredTypeRelatedToWorker(source *Type, target *Type, repo
 				mapper = ctx.mapper
 			}
 			if r.c.isTypeIdenticalTo(sourceExtends, target.AsConditionalType().extendsType) && (r.isRelatedTo(source.AsConditionalType().checkType, target.AsConditionalType().checkType, RecursionFlagsBoth, false) != 0 || r.isRelatedTo(target.AsConditionalType().checkType, source.AsConditionalType().checkType, RecursionFlagsBoth, false) != 0) {
-				result = r.isRelatedTo(r.c.instantiateType(r.c.getTrueTypeFromConditionalType(source), mapper), r.c.getTrueTypeFromConditionalType(target), RecursionFlagsBoth, reportErrors)
+				result := r.isRelatedTo(r.c.instantiateType(r.c.getTrueTypeFromConditionalType(source), mapper), r.c.getTrueTypeFromConditionalType(target), RecursionFlagsBoth, reportErrors)
 				if result != TernaryFalse {
 					result &= r.isRelatedTo(r.c.getFalseTypeFromConditionalType(source), r.c.getFalseTypeFromConditionalType(target), RecursionFlagsBoth, reportErrors)
 				}
@@ -3671,7 +3671,7 @@ func (r *Relater) structuredTypeRelatedToWorker(source *Type, target *Type, repo
 		// when `O` is a conditional (`never` is trivially assignable to `O`, as is `O`!).
 		defaultConstraint := r.c.getDefaultConstraintOfConditionalType(source)
 		if defaultConstraint != nil {
-			result = r.isRelatedTo(defaultConstraint, target, RecursionFlagsSource, reportErrors)
+			result := r.isRelatedTo(defaultConstraint, target, RecursionFlagsSource, reportErrors)
 			if result != TernaryFalse {
 				return result
 			}
@@ -3682,7 +3682,7 @@ func (r *Relater) structuredTypeRelatedToWorker(source *Type, target *Type, repo
 			distributiveConstraint := r.c.getConstraintOfDistributiveConditionalType(source)
 			if distributiveConstraint != nil {
 				r.restoreErrorState(saveErrorState)
-				result = r.isRelatedTo(distributiveConstraint, target, RecursionFlagsSource, reportErrors)
+				result := r.isRelatedTo(distributiveConstraint, target, RecursionFlagsSource, reportErrors)
 				if result != TernaryFalse {
 					return result
 				}
@@ -3692,7 +3692,7 @@ func (r *Relater) structuredTypeRelatedToWorker(source *Type, target *Type, repo
 		if target.flags&TypeFlagsTemplateLiteral == 0 {
 			constraint := r.c.getBaseConstraintOfType(source)
 			if constraint != nil && constraint != source {
-				result = r.isRelatedTo(constraint, target, RecursionFlagsSource, reportErrors)
+				result := r.isRelatedTo(constraint, target, RecursionFlagsSource, reportErrors)
 				if result != TernaryFalse {
 					return result
 				}
@@ -3703,14 +3703,14 @@ func (r *Relater) structuredTypeRelatedToWorker(source *Type, target *Type, repo
 			if source.AsStringMappingType().symbol != target.AsStringMappingType().symbol {
 				return TernaryFalse
 			}
-			result = r.isRelatedTo(source.AsStringMappingType().target, target.AsStringMappingType().target, RecursionFlagsBoth, reportErrors)
+			result := r.isRelatedTo(source.AsStringMappingType().target, target.AsStringMappingType().target, RecursionFlagsBoth, reportErrors)
 			if result != TernaryFalse {
 				return result
 			}
 		} else {
 			constraint := r.c.getBaseConstraintOfType(source)
 			if constraint != nil {
-				result = r.isRelatedTo(constraint, target, RecursionFlagsSource, reportErrors)
+				result := r.isRelatedTo(constraint, target, RecursionFlagsSource, reportErrors)
 				if result != TernaryFalse {
 					return result
 				}
@@ -3723,7 +3723,7 @@ func (r *Relater) structuredTypeRelatedToWorker(source *Type, target *Type, repo
 		}
 		if r.c.isGenericMappedType(target) {
 			if r.c.isGenericMappedType(source) {
-				result = r.mappedTypeRelatedTo(source, target, reportErrors)
+				result := r.mappedTypeRelatedTo(source, target, reportErrors)
 				if result != TernaryFalse {
 					return result
 				}
@@ -3780,7 +3780,7 @@ func (r *Relater) structuredTypeRelatedToWorker(source *Type, target *Type, repo
 		if source.flags&(TypeFlagsObject|TypeFlagsIntersection) != 0 && target.flags&TypeFlagsObject != 0 {
 			// Report structural errors only if we haven't reported any errors yet
 			reportStructuralErrors := reportErrors && r.errorChain == saveErrorState.errorChain && !sourceIsPrimitive
-			result = r.propertiesRelatedTo(source, target, reportStructuralErrors, core.Set[string]{} /*excludedProperties*/, false /*optionalsOnly*/, intersectionState)
+			result := r.propertiesRelatedTo(source, target, reportStructuralErrors, core.Set[string]{} /*excludedProperties*/, false /*optionalsOnly*/, intersectionState)
 			if result != TernaryFalse {
 				result &= r.signaturesRelatedTo(source, target, SignatureKindCall, reportStructuralErrors, intersectionState)
 				if result != TernaryFalse {

@@ -94,7 +94,7 @@ func (s *Server) Run() error {
 		req, err := s.read()
 		if err != nil {
 			if errors.Is(err, lsproto.ErrInvalidRequest) {
-				if err := s.sendError(nil, err); err != nil {
+				if err = s.sendError(nil, err); err != nil {
 					return err
 				}
 				continue
@@ -128,7 +128,7 @@ func (s *Server) read() (*lsproto.RequestMessage, error) {
 	}
 
 	req := &lsproto.RequestMessage{}
-	if err := json.Unmarshal(data, req); err != nil {
+	if err = json.Unmarshal(data, req); err != nil {
 		return nil, fmt.Errorf("%w: %w", lsproto.ErrInvalidRequest, err)
 	}
 

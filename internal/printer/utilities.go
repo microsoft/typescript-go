@@ -226,24 +226,24 @@ func getLiteralText(node *ast.LiteralLikeNode, sourceFile *ast.SourceFile, flags
 	switch node.Kind {
 	case ast.KindStringLiteral:
 		var b strings.Builder
-		var quoteChar quoteChar
+		var quote quoteChar
 		if node.AsStringLiteral().TokenFlags&ast.TokenFlagsSingleQuote != 0 {
-			quoteChar = quoteCharSingleQuote
+			quote = quoteCharSingleQuote
 		} else {
-			quoteChar = quoteCharDoubleQuote
+			quote = quoteCharDoubleQuote
 		}
 
 		text := node.Text()
 
 		// Write leading quote character
 		b.Grow(len(text) + 2)
-		b.WriteRune(rune(quoteChar))
+		b.WriteRune(rune(quote))
 
 		// Write text
-		escapeStringWorker(text, quoteChar, flags, &b)
+		escapeStringWorker(text, quote, flags, &b)
 
 		// Write trailing quote character
-		b.WriteRune(rune(quoteChar))
+		b.WriteRune(rune(quote))
 		return b.String()
 
 	case ast.KindNoSubstitutionTemplateLiteral,

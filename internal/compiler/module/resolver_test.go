@@ -306,8 +306,8 @@ func runTraceBaseline(t *testing.T, test traceTestCase) {
 		}
 
 		t.Run("concurrent", func(t *testing.T) {
-			host := newVFSModuleResolutionHost(test.files, test.currentDirectory)
-			resolver := module.NewResolver(host, test.compilerOptions)
+			concurrentHost := newVFSModuleResolutionHost(test.files, test.currentDirectory)
+			resolver := module.NewResolver(concurrentHost, test.compilerOptions)
 
 			var wg sync.WaitGroup
 			for _, call := range test.calls {
