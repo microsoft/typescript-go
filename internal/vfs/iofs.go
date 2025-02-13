@@ -27,7 +27,7 @@ type WritableFS interface {
 // If the provided [fs.FS] implements [WritableFS], it will be used to implement the WriteFile method.
 //
 // Deprecated: FromIOFS does not actually handle case-insensitivity; ensure the passed in [fs.FS]
-// respects case-insensitive file names if needed. Consider using [vfstest.FromMapFS] for testing.
+// respects case-insensitive file names if needed. Consider using [vfstest.FromMap] for testing.
 func FromIOFS(fsys fs.FS, useCaseSensitiveFileNames bool) FS {
 	var realpath func(path string) (string, error)
 	if fsys, ok := fsys.(RealpathFS); ok {
