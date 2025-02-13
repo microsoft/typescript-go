@@ -39,8 +39,6 @@ type sys struct {
 // The paths must be normalized absolute paths according to the tspath package,
 // without trailing directory separators.
 // The paths must be all POSIX-style or all Windows-style, but not both.
-//
-// For paths like `c:/foo/bar`, fsys will be used as though it's rooted at `/` and the path is `/c:/foo/bar`.
 func FromMap[File any](m map[string]File, useCaseSensitiveFileNames bool) vfs.FS {
 	posix := false
 	windows := false
