@@ -2,6 +2,7 @@ package compiler
 
 import (
 	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/checker"
 	"github.com/microsoft/typescript-go/internal/compiler/diagnostics"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/printer"
@@ -21,6 +22,7 @@ const (
 type emitter struct {
 	host               EmitHost
 	emitOnly           emitOnly
+	forceDtsEmit       bool
 	emittedFilesList   []string
 	emitterDiagnostics ast.DiagnosticsCollection
 	emitSkipped        bool
@@ -37,6 +39,13 @@ func (e *emitter) emit() {
 	e.emitBuildInfo(e.paths.buildInfoPath)
 }
 
+func (e *emitter) markLinkedReferences(file *ast.SourceFile, emitResolver checker.EmitResolver) {
+	if ast.IsInJSFile(file.AsNode()) {
+		return // JS files don't use reference calculations as they don't do import ellision, no need to calculate it
+	}
+	emitResolver.MarkLinkedReferencesRecursively(file)
+}
+
 func (e *emitter) emitJsFile(sourceFile *ast.SourceFile, jsFilePath string, sourceMapFilePath string) {
 	options := e.host.Options()
 
@@ -47,11 +56,18 @@ func (e *emitter) emitJsFile(sourceFile *ast.SourceFile, jsFilePath string, sour
 		return
 	}
 
-	// !!! mark linked references
+	var emitResolver checker.EmitResolver
+	if !options.VerbatimModuleSyntax.IsTrue() {
+		emitResolver = e.host.getEmitResolver(sourceFile) // !!! conditionally skip diagnostics
+		e.markLinkedReferences(sourceFile, emitResolver)
+	}
 
 	// !!! transform the source files?
 	emitContext := printer.NewEmitContext()
 	sourceFile = transformers.NewTypeEraserTransformer(emitContext, options).TransformSourceFile(sourceFile)
+	if !options.VerbatimModuleSyntax.IsTrue() {
+		sourceFile = transformers.NewImportElisionTransformer(emitContext, options, emitResolver).TransformSourceFile(sourceFile)
+	}
 	sourceFile = transformers.NewRuntimeSyntaxTransformer(emitContext, options).TransformSourceFile(sourceFile)
 
 	printerOptions := printer.PrinterOptions{
