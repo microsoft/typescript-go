@@ -214,9 +214,7 @@ func dirEntriesToNames(entries []fs.DirEntry) []string {
 func TestWritableFS(t *testing.T) {
 	t.Parallel()
 
-	testfs := fstest.MapFS{}
-
-	fs := fromMapFS(testfs, false)
+	fs := FromMap[any](nil, false)
 
 	err := fs.WriteFile("/foo/bar/baz", "hello, world", false)
 	assert.NilError(t, err)
@@ -239,9 +237,7 @@ func TestWritableFS(t *testing.T) {
 func TestStress(t *testing.T) {
 	t.Parallel()
 
-	testfs := fstest.MapFS{}
-
-	fs := fromMapFS(testfs, false)
+	fs := FromMap[any](nil, false)
 
 	ops := []func(){
 		func() { _ = fs.WriteFile("/foo/bar/baz.txt", "hello, world", false) },
