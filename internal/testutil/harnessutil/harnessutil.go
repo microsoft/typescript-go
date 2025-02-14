@@ -491,7 +491,7 @@ func getFileBasedTestConfigurationDescription(config TestConfiguration) string {
 	keys := slices.Sorted(maps.Keys(config))
 	for i, key := range keys {
 		if i > 0 {
-			output.WriteString(", ")
+			output.WriteString(",")
 		}
 		fmt.Fprintf(&output, "%s=%s", key, config[key])
 	}
