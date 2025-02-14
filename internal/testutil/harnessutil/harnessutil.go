@@ -309,6 +309,8 @@ func parseHarnessOption(t *testing.T, key string, value any, options *HarnessOpt
 	}
 }
 
+var deprecatedModuleResolution []string = []string{"node", "classic", "node10"}
+
 func getOptionValue(t *testing.T, option *tsoptions.CommandLineOption, value string) tsoptions.CompilerOptionsValue {
 	switch option.Kind {
 	case tsoptions.CommandLineOptionTypeString:
@@ -611,6 +613,10 @@ func getValueOfOptionString(t *testing.T, option string, value string) tsoptions
 	optionDecl := getCommandLineOption(option)
 	if optionDecl == nil {
 		t.Fatalf("Unknown option '%s'", option)
+	}
+	// TODO(gabritto): remove this when we deprecate the tests containing those option values
+	if optionDecl.Name == "moduleResolution" && slices.Contains(deprecatedModuleResolution, strings.ToLower(value)) {
+		return value
 	}
 	return getOptionValue(t, optionDecl, value)
 }
