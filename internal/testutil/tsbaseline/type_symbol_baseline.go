@@ -53,12 +53,11 @@ func DoTypeAndSymbolBaseline(
 
 	fullWalker := newTypeWriterWalker(program, hasErrorBaseline)
 
-	if !opts.IsDiff {
-		t.Run("type", func(t *testing.T) {
-			defer testutil.RecoverAndFail(t, "Panic on creating type baseline for test "+header)
-			checkBaselines(t, baselinePath, allFiles, fullWalker, header, opts, false /*isSymbolBaseline*/)
-		})
-	}
+	t.Run("type", func(t *testing.T) {
+		defer testutil.RecoverAndFail(t, "Panic on creating type baseline for test "+header)
+		checkBaselines(t, baselinePath, allFiles, fullWalker, header, opts, false /*isSymbolBaseline*/)
+	})
+
 	t.Run("symbol", func(t *testing.T) {
 		defer testutil.RecoverAndFail(t, "Panic on creating symbol baseline for test "+header)
 		checkBaselines(t, baselinePath, allFiles, fullWalker, header, opts, true /*isSymbolBaseline*/)
@@ -395,5 +394,5 @@ func isIntrinsicJsxTag(node *ast.Node) bool {
 	if node.Parent.TagName() != node {
 		return false
 	}
-	return checker.IsIntrinsicJsxName(node.Text())
+	return checker.IsIntrinsicJsxName(scanner.GetTextOfNode(node))
 }
