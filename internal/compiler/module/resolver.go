@@ -789,7 +789,7 @@ func (r *resolutionState) loadModuleFromNearestNodeModulesDirectoryWorker(ext ex
 		func(directory string) (result *resolved, stop bool) {
 			// !!! stop at global cache
 			if tspath.GetBaseFileName(directory) != "node_modules" {
-				if resolutionFromCache := r.tryFindNonRelativeModuleNameInCache(ModeAwareCacheKey{r.name, mode}, directory); !resolutionFromCache.shouldContinueSearching() {
+				if resolutionFromCache := r.tryFindNonRelativeModuleNameInCache(ModeAwareCacheKey{r.name, mode}, directory); !resolutionFromCache.shouldContinueSearching() && extensionIsOk(ext, resolutionFromCache.extension) {
 					return resolutionFromCache, true
 				}
 				result := r.loadModuleFromImmediateNodeModulesDirectory(ext, directory, typesScopeOnly)
