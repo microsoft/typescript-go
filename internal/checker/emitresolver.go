@@ -1,6 +1,8 @@
 package checker
 
 import (
+	"sync"
+
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
 )
@@ -16,14 +18,8 @@ var _ EmitResolver = &emitResolver{}
 
 type emitResolver struct {
 	checker                 *Checker
+	checkerMu               sync.Mutex
 	isValueAliasDeclaration func(node *ast.Node) bool
-}
-
-func (c *Checker) NewEmitResolver(file *ast.SourceFile) EmitResolver {
-	// Ensure we have all the type information in place for this file so that all the
-	// emitter questions of this resolver will return the right information.
-	c.checkSourceFile(file)
-	return &emitResolver{checker: c}
 }
 
 func isConstEnumOrConstEnumOnlyModule(s *ast.Symbol) bool {
@@ -35,6 +31,10 @@ func (r *emitResolver) IsReferencedAliasDeclaration(node *ast.Node) bool {
 	if !c.canCollectSymbolAliasAccessabilityData || !r.isBoundNode(node) {
 		return true
 	}
+
+	r.checkerMu.Lock()
+	defer r.checkerMu.Unlock()
+
 	if c.isAliasSymbolDeclaration(node) {
 		if symbol := c.getSymbolOfDeclaration(node); symbol != nil {
 			aliasLinks := c.aliasSymbolLinks.Get(symbol)
@@ -58,6 +58,15 @@ func (r *emitResolver) IsValueAliasDeclaration(node *ast.Node) bool {
 		return true
 	}
 
+	r.checkerMu.Lock()
+	defer r.checkerMu.Unlock()
+
+	return r.isValueAliasDeclarationWorker(node)
+}
+
+func (r *emitResolver) isValueAliasDeclarationWorker(node *ast.Node) bool {
+	c := r.checker
+
 	switch node.Kind {
 	case ast.KindImportEqualsDeclaration:
 		return r.isAliasResolvedToValue(c.getSymbolOfDeclaration(node), false /*excludeTypeOnlyValues*/)
@@ -70,7 +79,7 @@ func (r *emitResolver) IsValueAliasDeclaration(node *ast.Node) bool {
 	case ast.KindExportDeclaration:
 		exportClause := node.AsExportDeclaration().ExportClause
 		if r.isValueAliasDeclaration == nil {
-			r.isValueAliasDeclaration = r.IsValueAliasDeclaration
+			r.isValueAliasDeclaration = r.isValueAliasDeclarationWorker
 		}
 		return exportClause != nil && (ast.IsNamespaceExport(exportClause) ||
 			core.Some(exportClause.AsNamedExports().Elements.Nodes, r.isValueAliasDeclaration))
@@ -120,6 +129,10 @@ func (r *emitResolver) IsTopLevelValueImportEqualsWithEntityName(node *ast.Node)
 	if ast.NodeIsMissing(n.ModuleReference) || n.ModuleReference.Kind != ast.KindExternalModuleReference {
 		return false
 	}
+
+	r.checkerMu.Lock()
+	defer r.checkerMu.Unlock()
+
 	return r.isAliasResolvedToValue(c.getSymbolOfDeclaration(node), false /*excludeTypeOnlyValues*/)
 }
 
@@ -132,6 +145,9 @@ func (r *emitResolver) isBoundNode(node *ast.Node) bool {
 }
 
 func (r *emitResolver) MarkLinkedReferencesRecursively(file *ast.SourceFile) {
+	r.checkerMu.Lock()
+	defer r.checkerMu.Unlock()
+
 	if file != nil {
 		var visit ast.Visitor
 		visit = func(n *ast.Node) bool {

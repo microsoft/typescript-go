@@ -7,6 +7,7 @@ import (
 	"slices"
 	"strconv"
 	"strings"
+	"sync"
 	"unicode/utf8"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -779,6 +780,8 @@ type Checker struct {
 	couldContainTypeVariables                 func(*Type) bool
 	isStringIndexSignatureOnlyType            func(*Type) bool
 	markNodeAssignments                       func(*ast.Node) bool
+	emitResolver                              *emitResolver
+	emitResolverOnce                          sync.Once
 }
 
 func NewChecker(program Program) *Checker {
@@ -27548,4 +27551,19 @@ func (c *Checker) getRegularTypeOfExpression(expr *ast.Node) *Type {
 
 func (c *Checker) GetTypeAtLocation(node *ast.Node) *Type {
 	return c.getTypeOfNode(node)
+}
+
+func (c *Checker) GetEmitResolver(file *ast.SourceFile, skipDiagnostics bool) EmitResolver {
+	c.emitResolverOnce.Do(func() {
+		c.emitResolver = &emitResolver{checker: c}
+	})
+
+	if !skipDiagnostics {
+		// Ensure we have all the type information in place for this file so that all the
+		// emitter questions of this resolver will return the right information.
+		c.emitResolver.checkerMu.Lock()
+		defer c.emitResolver.checkerMu.Unlock()
+		c.checkSourceFile(file)
+	}
+	return c.emitResolver
 }

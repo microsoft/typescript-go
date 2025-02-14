@@ -29,7 +29,6 @@ type emitter struct {
 	writer             printer.EmitTextWriter
 	paths              *outputPaths
 	sourceFile         *ast.SourceFile
-	checker            *checker.Checker
 }
 
 func (e *emitter) emit() {
@@ -54,10 +53,7 @@ func (e *emitter) emitJsFile(sourceFile *ast.SourceFile, jsFilePath string, sour
 
 	var emitResolver checker.EmitResolver
 	if importElisionEnabled {
-		if e.checker == nil {
-			panic("Expected Program.hasCheckerDependentEmit() to return true for this file.")
-		}
-		emitResolver = e.checker.NewEmitResolver(sourceFile) // !!! conditionally skip diagnostics
+		emitResolver = e.host.GetEmitResolver(sourceFile, false /*skipDiagnostics*/) // !!! conditionally skip diagnostics
 		emitResolver.MarkLinkedReferencesRecursively(sourceFile)
 	}
 
