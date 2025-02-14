@@ -16,7 +16,7 @@ func TestTypeEraser(t *testing.T) {
 		input  string
 		output string
 		jsx    bool
-		vsm    bool
+		vms    bool
 	}{
 		{title: "Modifiers", input: "class C { public x; private y }", output: "class C {\n    x;\n    y;\n}"},
 		{title: "InterfaceDeclaration", input: "interface I { }", output: ""},
@@ -75,7 +75,7 @@ func TestTypeEraser(t *testing.T) {
 		{title: "ImportDeclaration#6", input: "import type x from \"m\";", output: ""},
 		{title: "ImportDeclaration#7", input: "import type { x } from \"m\";", output: ""},
 		{title: "ImportDeclaration#8", input: "import { type x } from \"m\";", output: ""},
-		{title: "ImportDeclaration#9", input: "import { type x } from \"m\";", output: "import {} from \"m\";", vsm: true},
+		{title: "ImportDeclaration#9", input: "import { type x } from \"m\";", output: "import {} from \"m\";", vms: true},
 		{title: "ExportDeclaration#1", input: "export * from \"m\";", output: "export * from \"m\";"},
 		{title: "ExportDeclaration#2", input: "export * as x from \"m\";", output: "export * as x from \"m\";"},
 		{title: "ExportDeclaration#3", input: "export { x } from \"m\";", output: "export { x } from \"m\";"},
@@ -83,7 +83,7 @@ func TestTypeEraser(t *testing.T) {
 		{title: "ExportDeclaration#5", input: "export type * as x from \"m\";", output: ""},
 		{title: "ExportDeclaration#6", input: "export type { x } from \"m\";", output: ""},
 		{title: "ExportDeclaration#7", input: "export { type x } from \"m\";", output: ""},
-		{title: "ExportDeclaration#7", input: "export { type x } from \"m\";", output: "export {} from \"m\";", vsm: true},
+		{title: "ExportDeclaration#7", input: "export { type x } from \"m\";", output: "export {} from \"m\";", vms: true},
 	}
 
 	for _, rec := range data {
@@ -92,7 +92,7 @@ func TestTypeEraser(t *testing.T) {
 			file := parsetestutil.ParseTypeScript(rec.input, rec.jsx)
 			parsetestutil.CheckDiagnostics(t, file)
 			compilerOptions := &core.CompilerOptions{}
-			if rec.vsm {
+			if rec.vms {
 				compilerOptions.VerbatimModuleSyntax = core.TSTrue
 			}
 			emittestutil.CheckEmit(t, nil, NewTypeEraserTransformer(printer.NewEmitContext(), compilerOptions).TransformSourceFile(file), rec.output)
