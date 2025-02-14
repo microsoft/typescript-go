@@ -27,6 +27,10 @@ func (r *resolved) shouldContinueSearching() bool {
 	return r == nil
 }
 
+func (r *resolved) isResolved() bool {
+	return r != nil && r.path != ""
+}
+
 func unresolved() *resolved {
 	return &resolved{}
 }
@@ -789,8 +793,10 @@ func (r *resolutionState) loadModuleFromNearestNodeModulesDirectoryWorker(ext ex
 		func(directory string) (result *resolved, stop bool) {
 			// !!! stop at global cache
 			if tspath.GetBaseFileName(directory) != "node_modules" {
-				if resolutionFromCache := r.tryFindNonRelativeModuleNameInCache(ModeAwareCacheKey{r.name, mode}, directory); !resolutionFromCache.shouldContinueSearching() && extensionIsOk(ext, resolutionFromCache.extension) {
-					return resolutionFromCache, true
+				if resolutionFromCache := r.tryFindNonRelativeModuleNameInCache(ModeAwareCacheKey{r.name, mode}, directory); !resolutionFromCache.shouldContinueSearching() {
+					if !resolutionFromCache.isResolved() || extensionIsOk(ext, resolutionFromCache.extension) {
+						return resolutionFromCache, true
+					}
 				}
 				result := r.loadModuleFromImmediateNodeModulesDirectory(ext, directory, typesScopeOnly)
 				return result, !result.shouldContinueSearching()
