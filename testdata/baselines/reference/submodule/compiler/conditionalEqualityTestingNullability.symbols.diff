@@ -1,0 +1,11 @@
+--- old.conditionalEqualityTestingNullability.symbols
++++ new.conditionalEqualityTestingNullability.symbols
+@@ -22,7 +22,7 @@
+ >T : Symbol(T, Decl(conditionalEqualityTestingNullability.ts, 5, 14))
+ 
+     x : () => T
+->x : Symbol(Foo.x, Decl(conditionalEqualityTestingNullability.ts, 5, 18))
++>x : Symbol(x, Decl(conditionalEqualityTestingNullability.ts, 5, 18))
+ >T : Symbol(T, Decl(conditionalEqualityTestingNullability.ts, 5, 14))
+ }
+ 

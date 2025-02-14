@@ -1,0 +1,23 @@
+--- old.types.forAwait.es2018.1.symbols
++++ new.types.forAwait.es2018.1.symbols
+@@ -3,16 +3,16 @@
+ === types.forAwait.es2018.1.ts ===
+ declare const asyncIterable: AsyncIterable<number>;
+ >asyncIterable : Symbol(asyncIterable, Decl(types.forAwait.es2018.1.ts, 0, 13))
+->AsyncIterable : Symbol(AsyncIterable, Decl(lib.es2018.asynciterable.d.ts, --, --))
++>AsyncIterable : Symbol(AsyncIterable)
+ 
+ declare const iterable: Iterable<number>;
+ >iterable : Symbol(iterable, Decl(types.forAwait.es2018.1.ts, 1, 13))
+->Iterable : Symbol(Iterable, Decl(lib.es2015.iterable.d.ts, --, --))
++>Iterable : Symbol(Iterable)
+ 
+ declare const iterableOfPromise: Iterable<Promise<number>>;
+ >iterableOfPromise : Symbol(iterableOfPromise, Decl(types.forAwait.es2018.1.ts, 2, 13))
+->Iterable : Symbol(Iterable, Decl(lib.es2015.iterable.d.ts, --, --))
+->Promise : Symbol(Promise, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.promise.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2018.promise.d.ts, --, --))
++>Iterable : Symbol(Iterable)
++>Promise : Symbol(Promise)
+ 
+ async function f1() {
+ >f1 : Symbol(f1, Decl(types.forAwait.es2018.1.ts, 2, 59))

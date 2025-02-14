@@ -1,0 +1,30 @@
+--- old.exportEqualErrorType.symbols
++++ new.exportEqualErrorType.symbols
+@@ -6,9 +6,7 @@
+ >connect : Symbol(connect, Decl(exportEqualErrorType_1.ts, 0, 0))
+ 
+ connect().use(connect.static('foo')); // Error  1      The property 'static' does not exist on value of type ''.
+->connect().use : Symbol(connect.connectExport.use, Decl(exportEqualErrorType_0.ts, 4, 36))
+ >connect : Symbol(connect, Decl(exportEqualErrorType_1.ts, 0, 0))
+->use : Symbol(connect.connectExport.use, Decl(exportEqualErrorType_0.ts, 4, 36))
+ >connect : Symbol(connect, Decl(exportEqualErrorType_1.ts, 0, 0))
+ 
+ === exportEqualErrorType_0.ts ===
+@@ -27,7 +25,7 @@
+ >connectExport : Symbol(connectExport, Decl(exportEqualErrorType_0.ts, 3, 5))
+ 
+         use: (mod: connectModule) => connectExport;
+->use : Symbol(connectExport.use, Decl(exportEqualErrorType_0.ts, 4, 36))
++>use : Symbol(use, Decl(exportEqualErrorType_0.ts, 4, 36))
+ >mod : Symbol(mod, Decl(exportEqualErrorType_0.ts, 5, 14))
+ >connectModule : Symbol(connectModule, Decl(exportEqualErrorType_0.ts, 0, 15))
+ >connectExport : Symbol(connectExport, Decl(exportEqualErrorType_0.ts, 3, 5))
+@@ -38,7 +36,7 @@
+ 
+     (): server.connectExport;
+ >server : Symbol(server, Decl(exportEqualErrorType_0.ts, 0, 0), Decl(exportEqualErrorType_0.ts, 8, 3))
+->connectExport : Symbol(server.connectExport, Decl(exportEqualErrorType_0.ts, 3, 5))
++>connectExport : Symbol(connectExport, Decl(exportEqualErrorType_0.ts, 3, 5))
+ 
+     foo: Date;
+ >foo : Symbol(foo, Decl(exportEqualErrorType_0.ts, 9, 29))

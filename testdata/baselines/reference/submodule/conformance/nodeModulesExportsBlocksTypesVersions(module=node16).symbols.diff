@@ -1,0 +1,12 @@
+--- old.nodeModulesExportsBlocksTypesVersions(module=node16).symbols
++++ new.nodeModulesExportsBlocksTypesVersions(module=node16).symbols
+@@ -1,5 +1,9 @@
+ //// [tests/cases/conformance/node/nodeModulesExportsBlocksTypesVersions.ts] ////
+ 
++=== /node_modules/exports-and-types-versions/dist/foo.js ===
++
++module.exports = {};
++
+ === /node_modules/exports-and-types-versions/types/foo.d.ts ===
+ 
+ export {};

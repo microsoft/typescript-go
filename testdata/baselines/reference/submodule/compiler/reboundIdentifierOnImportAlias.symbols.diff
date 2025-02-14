@@ -1,0 +1,9 @@
+--- old.reboundIdentifierOnImportAlias.symbols
++++ new.reboundIdentifierOnImportAlias.symbols
+@@ -15,5 +15,5 @@
+ 
+     import F = Foo;
+ >F : Symbol(F, Decl(reboundIdentifierOnImportAlias.ts, 4, 16))
+->Foo : Symbol(F, Decl(reboundIdentifierOnImportAlias.ts, 0, 0))
++>Foo : Symbol(Foo, Decl(reboundIdentifierOnImportAlias.ts, 0, 0))
+ }

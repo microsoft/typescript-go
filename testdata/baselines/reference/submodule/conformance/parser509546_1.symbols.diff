@@ -1,0 +1,10 @@
+--- old.parser509546_1.symbols
++++ new.parser509546_1.symbols
+@@ -5,6 +5,6 @@
+ >Logger : Symbol(Logger, Decl(parser509546_1.ts, 0, 0))
+ 
+      public
+->public : Symbol(Logger.public, Decl(parser509546_1.ts, 0, 21))
++>public : Symbol(public, Decl(parser509546_1.ts, 0, 21))
+ }
+ 

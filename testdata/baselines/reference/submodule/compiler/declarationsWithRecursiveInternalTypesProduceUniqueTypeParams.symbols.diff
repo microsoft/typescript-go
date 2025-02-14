@@ -1,0 +1,54 @@
+--- old.declarationsWithRecursiveInternalTypesProduceUniqueTypeParams.symbols
++++ new.declarationsWithRecursiveInternalTypesProduceUniqueTypeParams.symbols
+@@ -39,9 +39,6 @@
+ >set : Symbol(set, Decl(declarationsWithRecursiveInternalTypesProduceUniqueTypeParams.ts, 8, 13))
+ >newU : Symbol(newU, Decl(declarationsWithRecursiveInternalTypesProduceUniqueTypeParams.ts, 8, 21))
+ >U : Symbol(U, Decl(declarationsWithRecursiveInternalTypesProduceUniqueTypeParams.ts, 7, 20))
+->Object.is : Symbol(ObjectConstructor.is, Decl(lib.es2015.core.d.ts, --, --))
+->Object : Symbol(Object, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+->is : Symbol(ObjectConstructor.is, Decl(lib.es2015.core.d.ts, --, --))
+ >u : Symbol(u, Decl(declarationsWithRecursiveInternalTypesProduceUniqueTypeParams.ts, 7, 23))
+ >newU : Symbol(newU, Decl(declarationsWithRecursiveInternalTypesProduceUniqueTypeParams.ts, 8, 21))
+ >t : Symbol(t, Decl(declarationsWithRecursiveInternalTypesProduceUniqueTypeParams.ts, 6, 35))
+@@ -49,10 +46,6 @@
+ >newU : Symbol(newU, Decl(declarationsWithRecursiveInternalTypesProduceUniqueTypeParams.ts, 8, 21))
+ 
+         return Object.assign(
+->Object.assign : Symbol(ObjectConstructor.assign, Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --))
+->Object : Symbol(Object, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+->assign : Symbol(ObjectConstructor.assign, Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --))
+-
+             <K extends Key<U>>(key: K) =>
+ >K : Symbol(K, Decl(declarationsWithRecursiveInternalTypesProduceUniqueTypeParams.ts, 10, 13))
+ >Key : Symbol(Key, Decl(declarationsWithRecursiveInternalTypesProduceUniqueTypeParams.ts, 0, 0))
+@@ -78,12 +71,6 @@
+ 
+                     return update(Object.assign(Array.isArray(u) ? [] : {}, u, { [key]: v }));
+ >update : Symbol(update, Decl(declarationsWithRecursiveInternalTypesProduceUniqueTypeParams.ts, 7, 28))
+->Object.assign : Symbol(ObjectConstructor.assign, Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --))
+->Object : Symbol(Object, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+->assign : Symbol(ObjectConstructor.assign, Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --))
+->Array.isArray : Symbol(ArrayConstructor.isArray, Decl(lib.es5.d.ts, --, --))
+->Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
+->isArray : Symbol(ArrayConstructor.isArray, Decl(lib.es5.d.ts, --, --))
+ >u : Symbol(u, Decl(declarationsWithRecursiveInternalTypesProduceUniqueTypeParams.ts, 7, 23))
+ >u : Symbol(u, Decl(declarationsWithRecursiveInternalTypesProduceUniqueTypeParams.ts, 7, 23))
+ >[key] : Symbol([key], Decl(declarationsWithRecursiveInternalTypesProduceUniqueTypeParams.ts, 12, 80))
+@@ -118,7 +105,7 @@
+ export const testRecFun = <T extends Object>(parent: T) => {
+ >testRecFun : Symbol(testRecFun, Decl(declarationsWithRecursiveInternalTypesProduceUniqueTypeParams.ts, 21, 12))
+ >T : Symbol(T, Decl(declarationsWithRecursiveInternalTypesProduceUniqueTypeParams.ts, 21, 27))
+->Object : Symbol(Object, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
++>Object : Symbol(Object)
+ >parent : Symbol(parent, Decl(declarationsWithRecursiveInternalTypesProduceUniqueTypeParams.ts, 21, 45))
+ >T : Symbol(T, Decl(declarationsWithRecursiveInternalTypesProduceUniqueTypeParams.ts, 21, 27))
+ 
+@@ -130,7 +117,7 @@
+         deeper: <U extends Object>(child: U) =>
+ >deeper : Symbol(deeper, Decl(declarationsWithRecursiveInternalTypesProduceUniqueTypeParams.ts, 23, 23))
+ >U : Symbol(U, Decl(declarationsWithRecursiveInternalTypesProduceUniqueTypeParams.ts, 24, 17))
+->Object : Symbol(Object, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
++>Object : Symbol(Object)
+ >child : Symbol(child, Decl(declarationsWithRecursiveInternalTypesProduceUniqueTypeParams.ts, 24, 35))
+ >U : Symbol(U, Decl(declarationsWithRecursiveInternalTypesProduceUniqueTypeParams.ts, 24, 17))
+ 

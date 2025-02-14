@@ -1,0 +1,11 @@
+--- old.nestedGenerics.symbols
++++ new.nestedGenerics.symbols
+@@ -6,7 +6,7 @@
+ >T : Symbol(T, Decl(nestedGenerics.ts, 0, 14))
+ 
+ 	t: T;
+->t : Symbol(Foo.t, Decl(nestedGenerics.ts, 0, 18))
++>t : Symbol(t, Decl(nestedGenerics.ts, 0, 18))
+ >T : Symbol(T, Decl(nestedGenerics.ts, 0, 14))
+ }
+ 

@@ -1,0 +1,50 @@
+//// [tests/cases/conformance/es2022/es2022SharedMemory.ts] ////
+
+=== es2022SharedMemory.ts ===
+const sab = new SharedArrayBuffer(Int32Array.BYTES_PER_ELEMENT * 1024);
+>sab : Symbol(sab, Decl(es2022SharedMemory.ts, 0, 5))
+
+const int32 = new Int32Array(sab);
+>int32 : Symbol(int32, Decl(es2022SharedMemory.ts, 1, 5))
+>sab : Symbol(sab, Decl(es2022SharedMemory.ts, 0, 5))
+
+const sab64 = new SharedArrayBuffer(BigInt64Array.BYTES_PER_ELEMENT * 1024);
+>sab64 : Symbol(sab64, Decl(es2022SharedMemory.ts, 2, 5))
+
+const int64 = new BigInt64Array(sab64);
+>int64 : Symbol(int64, Decl(es2022SharedMemory.ts, 3, 5))
+>sab64 : Symbol(sab64, Decl(es2022SharedMemory.ts, 2, 5))
+
+const waitValue = Atomics.wait(int32, 0, 0);
+>waitValue : Symbol(waitValue, Decl(es2022SharedMemory.ts, 4, 5))
+>int32 : Symbol(int32, Decl(es2022SharedMemory.ts, 1, 5))
+
+const { async, value } = Atomics.waitAsync(int32, 0, 0);
+>async : Symbol(async, Decl(es2022SharedMemory.ts, 5, 7))
+>value : Symbol(value, Decl(es2022SharedMemory.ts, 5, 14))
+>int32 : Symbol(int32, Decl(es2022SharedMemory.ts, 1, 5))
+
+const { async: async64, value: value64 } = Atomics.waitAsync(int64, 0, BigInt(0));
+>async64 : Symbol(async64, Decl(es2022SharedMemory.ts, 6, 7))
+>value64 : Symbol(value64, Decl(es2022SharedMemory.ts, 6, 23))
+>int64 : Symbol(int64, Decl(es2022SharedMemory.ts, 3, 5))
+
+const main = async () => {
+>main : Symbol(main, Decl(es2022SharedMemory.ts, 8, 5))
+
+    if (async) {
+>async : Symbol(async, Decl(es2022SharedMemory.ts, 5, 7))
+
+        await value;
+>value : Symbol(value, Decl(es2022SharedMemory.ts, 5, 14))
+    }
+    if (async64) {
+>async64 : Symbol(async64, Decl(es2022SharedMemory.ts, 6, 7))
+
+        await value64;
+>value64 : Symbol(value64, Decl(es2022SharedMemory.ts, 6, 23))
+    }
+}
+main();
+>main : Symbol(main, Decl(es2022SharedMemory.ts, 8, 5))
+

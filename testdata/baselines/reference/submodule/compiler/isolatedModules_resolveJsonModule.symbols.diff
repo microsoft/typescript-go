@@ -1,0 +1,10 @@
+--- old.isolatedModules_resolveJsonModule.symbols
++++ new.isolatedModules_resolveJsonModule.symbols
+@@ -4,7 +4,3 @@
+ import j = require("./j.json");
+ >j : Symbol(j, Decl(a.ts, 0, 0))
+ 
+-=== /j.json ===
+-
+-{}
+-

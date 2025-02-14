@@ -1,0 +1,11 @@
+--- old.importTypeAmdBundleRewrite.symbols
++++ new.importTypeAmdBundleRewrite.symbols
+@@ -5,7 +5,7 @@
+ >Foo : Symbol(Foo, Decl(c.ts, 0, 0))
+ 
+     x: 12;
+->x : Symbol(Foo.x, Decl(c.ts, 0, 22))
++>x : Symbol(x, Decl(c.ts, 0, 22))
+ }
+ === a/inner.ts ===
+ const c: import("./b/c").Foo = {x: 12};

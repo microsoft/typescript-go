@@ -1,0 +1,15 @@
+//// [tests/cases/compiler/contextuallyTypeArgumentsKeyword.ts] ////
+
+=== foo.js ===
+// Repro for #16585
+const x = {
+>x : Symbol(x, Decl(foo.js, 1, 5))
+
+    bar() {
+>bar : Symbol(bar, Decl(foo.js, 1, 11))
+
+        setTimeout(function() { arguments }, 0);
+>arguments : Symbol(arguments)
+    }
+}
+

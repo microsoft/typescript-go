@@ -1,0 +1,19 @@
+--- old.duplicatePackage_relativeImportWithinPackage_scoped.symbols
++++ new.duplicatePackage_relativeImportWithinPackage_scoped.symbols
+@@ -16,7 +16,7 @@
+ >C : Symbol(C, Decl(index.d.ts, 0, 0))
+ 
+     private x: number;
+->x : Symbol(C.x, Decl(index.d.ts, 0, 16))
++>x : Symbol(x, Decl(index.d.ts, 0, 16))
+ }
+ 
+ === /node_modules/a/index.d.ts ===
+@@ -41,6 +41,6 @@
+ >C : Symbol(C, Decl(index.d.ts, 0, 0))
+ 
+     private x: number;
+->x : Symbol(C.x, Decl(index.d.ts, 0, 16))
++>x : Symbol(x, Decl(index.d.ts, 0, 16))
+ }
+ 

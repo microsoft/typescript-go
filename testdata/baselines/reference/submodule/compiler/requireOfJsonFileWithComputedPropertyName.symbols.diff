@@ -1,0 +1,11 @@
+--- old.requireOfJsonFileWithComputedPropertyName.symbols
++++ new.requireOfJsonFileWithComputedPropertyName.symbols
+@@ -19,8 +19,3 @@
+ >b2 : Symbol(b2, Decl(file1.ts, 1, 11))
+ }
+ 
+-=== b.json ===
+-{
+-    [a]: 10
+->[a] : Symbol([a], Decl(b.json, 0, 1))
+-}

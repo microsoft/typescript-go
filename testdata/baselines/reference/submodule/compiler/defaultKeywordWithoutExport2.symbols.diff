@@ -1,0 +1,10 @@
+--- old.defaultKeywordWithoutExport2.symbols
++++ new.defaultKeywordWithoutExport2.symbols
+@@ -2,6 +2,6 @@
+ 
+ === defaultKeywordWithoutExport2.ts ===
+ default function () {
+-> : Symbol((Missing), Decl(defaultKeywordWithoutExport2.ts, 0, 7))
++> : Symbol(, Decl(defaultKeywordWithoutExport2.ts, 0, 7))
+ 
+ }

@@ -1,0 +1,20 @@
+--- old.jsxExcessPropsAndAssignability.symbols
++++ new.jsxExcessPropsAndAssignability.symbols
+@@ -13,7 +13,7 @@
+     ComposedComponent: React.ComponentClass<ComposedComponentProps>,
+ >ComposedComponent : Symbol(ComposedComponent, Decl(jsxExcessPropsAndAssignability.tsx, 4, 51))
+ >React : Symbol(React, Decl(jsxExcessPropsAndAssignability.tsx, 2, 6))
+->ComponentClass : Symbol(React.ComponentClass, Decl(react16.d.ts, 421, 9))
++>ComponentClass : Symbol(ComponentClass)
+ >ComposedComponentProps : Symbol(ComposedComponentProps, Decl(jsxExcessPropsAndAssignability.tsx, 4, 15))
+ 
+ ) => {
+@@ -25,7 +25,7 @@
+     const WrapperComponent: React.ComponentClass<WrapperComponentProps> = null as any;
+ >WrapperComponent : Symbol(WrapperComponent, Decl(jsxExcessPropsAndAssignability.tsx, 8, 9))
+ >React : Symbol(React, Decl(jsxExcessPropsAndAssignability.tsx, 2, 6))
+->ComponentClass : Symbol(React.ComponentClass, Decl(react16.d.ts, 421, 9))
++>ComponentClass : Symbol(ComponentClass)
+ >WrapperComponentProps : Symbol(WrapperComponentProps, Decl(jsxExcessPropsAndAssignability.tsx, 6, 6))
+ 
+     const props: ComposedComponentProps = null as any;

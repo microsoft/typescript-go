@@ -1,0 +1,56 @@
+--- old.unusedLocalsAndParametersDeferred.symbols
++++ new.unusedLocalsAndParametersDeferred.symbols
+@@ -70,7 +70,7 @@
+ 
+     // Method declaration paramter
+     method(a) {
+->method : Symbol(C.method, Decl(unusedLocalsAndParametersDeferred.ts, 32, 9))
++>method : Symbol(method, Decl(unusedLocalsAndParametersDeferred.ts, 32, 9))
+ >a : Symbol(a, Decl(unusedLocalsAndParametersDeferred.ts, 34, 11))
+ 
+         defered(() => {
+@@ -83,7 +83,7 @@
+     }
+     // Accessor declaration paramter
+     set x(v: number) {
+->x : Symbol(C.x, Decl(unusedLocalsAndParametersDeferred.ts, 38, 5))
++>x : Symbol(x, Decl(unusedLocalsAndParametersDeferred.ts, 38, 5))
+ >v : Symbol(v, Decl(unusedLocalsAndParametersDeferred.ts, 40, 10))
+ 
+         defered(() => {
+@@ -96,7 +96,7 @@
+     }
+     // in a property initalizer
+     p = defered(() => {
+->p : Symbol(C.p, Decl(unusedLocalsAndParametersDeferred.ts, 44, 5))
++>p : Symbol(p, Decl(unusedLocalsAndParametersDeferred.ts, 44, 5))
+ >defered : Symbol(defered, Decl(unusedLocalsAndParametersDeferred.ts, 0, 11))
+ 
+         prop1;
+@@ -116,7 +116,7 @@
+ 
+     // Method declaration paramter
+     method(a) {
+->method : Symbol(E.method, Decl(unusedLocalsAndParametersDeferred.ts, 55, 15))
++>method : Symbol(method, Decl(unusedLocalsAndParametersDeferred.ts, 55, 15))
+ >a : Symbol(a, Decl(unusedLocalsAndParametersDeferred.ts, 57, 11))
+ 
+         defered(() => {
+@@ -129,7 +129,7 @@
+     }
+     // Accessor declaration paramter
+     set x(v: number) {
+->x : Symbol(E.x, Decl(unusedLocalsAndParametersDeferred.ts, 61, 5))
++>x : Symbol(x, Decl(unusedLocalsAndParametersDeferred.ts, 61, 5))
+ >v : Symbol(v, Decl(unusedLocalsAndParametersDeferred.ts, 63, 10))
+ 
+         defered(() => {
+@@ -142,7 +142,7 @@
+     }
+     // in a property initalizer
+     p = defered(() => {
+->p : Symbol(E.p, Decl(unusedLocalsAndParametersDeferred.ts, 67, 5))
++>p : Symbol(p, Decl(unusedLocalsAndParametersDeferred.ts, 67, 5))
+ >defered : Symbol(defered, Decl(unusedLocalsAndParametersDeferred.ts, 0, 11))
+ 
+         prop2;

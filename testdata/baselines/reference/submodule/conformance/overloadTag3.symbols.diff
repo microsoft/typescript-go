@@ -1,0 +1,11 @@
+--- old.overloadTag3.symbols
++++ new.overloadTag3.symbols
+@@ -17,7 +17,7 @@
+      * @param {T} value
+      */
+     bar(value) { }
+->bar : Symbol(Foo.bar, Decl(a.js, 8, 21))
++>bar : Symbol(bar, Decl(a.js, 8, 21))
+ >value : Symbol(value, Decl(a.js, 13, 8))
+ }
+ 

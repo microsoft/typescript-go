@@ -1,0 +1,39 @@
+--- old.mappedTypeRecursiveInference.symbols
++++ new.mappedTypeRecursiveInference.symbols
+@@ -3,7 +3,7 @@
+ === mappedTypeRecursiveInference.ts ===
+ interface A { a: A }
+ >A : Symbol(A, Decl(mappedTypeRecursiveInference.ts, 0, 0))
+->a : Symbol(A.a, Decl(mappedTypeRecursiveInference.ts, 0, 13))
++>a : Symbol(a, Decl(mappedTypeRecursiveInference.ts, 0, 13))
+ >A : Symbol(A, Decl(mappedTypeRecursiveInference.ts, 0, 0))
+ 
+ declare let a: A;
+@@ -87,7 +87,7 @@
+ 
+ let xhr: XMLHttpRequest;
+ >xhr : Symbol(xhr, Decl(mappedTypeRecursiveInference.ts, 17, 3))
+->XMLHttpRequest : Symbol(XMLHttpRequest, Decl(lib.dom.d.ts, --, --), Decl(lib.dom.d.ts, --, --))
++>XMLHttpRequest : Symbol(XMLHttpRequest)
+ 
+ const out2 = foo(xhr);
+ >out2 : Symbol(out2, Decl(mappedTypeRecursiveInference.ts, 18, 5))
+@@ -95,18 +95,8 @@
+ >xhr : Symbol(xhr, Decl(mappedTypeRecursiveInference.ts, 17, 3))
+ 
+ out2.responseXML
+->out2.responseXML : Symbol(responseXML, Decl(lib.dom.d.ts, --, --))
+ >out2 : Symbol(out2, Decl(mappedTypeRecursiveInference.ts, 18, 5))
+->responseXML : Symbol(responseXML, Decl(lib.dom.d.ts, --, --))
+ 
+ out2.responseXML.activeElement.className.length
+->out2.responseXML.activeElement.className.length : Symbol(length, Decl(lib.es5.d.ts, --, --))
+->out2.responseXML.activeElement.className : Symbol(className, Decl(lib.dom.d.ts, --, --))
+->out2.responseXML.activeElement : Symbol(activeElement, Decl(lib.dom.d.ts, --, --))
+->out2.responseXML : Symbol(responseXML, Decl(lib.dom.d.ts, --, --))
+ >out2 : Symbol(out2, Decl(mappedTypeRecursiveInference.ts, 18, 5))
+->responseXML : Symbol(responseXML, Decl(lib.dom.d.ts, --, --))
+->activeElement : Symbol(activeElement, Decl(lib.dom.d.ts, --, --))
+->className : Symbol(className, Decl(lib.dom.d.ts, --, --))
+->length : Symbol(length, Decl(lib.es5.d.ts, --, --))
+ 

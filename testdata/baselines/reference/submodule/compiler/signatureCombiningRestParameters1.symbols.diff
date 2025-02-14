@@ -1,0 +1,12 @@
+--- old.signatureCombiningRestParameters1.symbols
++++ new.signatureCombiningRestParameters1.symbols
+@@ -38,9 +38,6 @@
+ for (const [key, fn] of Object.entries(map)) {
+ >key : Symbol(key, Decl(signatureCombiningRestParameters1.ts, 15, 12))
+ >fn : Symbol(fn, Decl(signatureCombiningRestParameters1.ts, 15, 16))
+->Object.entries : Symbol(ObjectConstructor.entries, Decl(lib.es2017.object.d.ts, --, --), Decl(lib.es2017.object.d.ts, --, --))
+->Object : Symbol(Object, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+->entries : Symbol(ObjectConstructor.entries, Decl(lib.es2017.object.d.ts, --, --), Decl(lib.es2017.object.d.ts, --, --))
+ >map : Symbol(map, Decl(signatureCombiningRestParameters1.ts, 9, 13))
+ 
+   fn(...args);

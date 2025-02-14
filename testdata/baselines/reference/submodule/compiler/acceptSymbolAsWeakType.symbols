@@ -1,0 +1,60 @@
+//// [tests/cases/compiler/acceptSymbolAsWeakType.ts] ////
+
+=== acceptSymbolAsWeakType.ts ===
+const s: symbol = Symbol('s');
+>s : Symbol(s, Decl(acceptSymbolAsWeakType.ts, 0, 5))
+
+const ws = new WeakSet([s]);
+>ws : Symbol(ws, Decl(acceptSymbolAsWeakType.ts, 2, 5))
+>s : Symbol(s, Decl(acceptSymbolAsWeakType.ts, 0, 5))
+
+ws.add(s);
+>ws : Symbol(ws, Decl(acceptSymbolAsWeakType.ts, 2, 5))
+>s : Symbol(s, Decl(acceptSymbolAsWeakType.ts, 0, 5))
+
+ws.has(s);
+>ws : Symbol(ws, Decl(acceptSymbolAsWeakType.ts, 2, 5))
+>s : Symbol(s, Decl(acceptSymbolAsWeakType.ts, 0, 5))
+
+ws.delete(s);
+>ws : Symbol(ws, Decl(acceptSymbolAsWeakType.ts, 2, 5))
+>s : Symbol(s, Decl(acceptSymbolAsWeakType.ts, 0, 5))
+
+const wm = new WeakMap([[s, false]]);
+>wm : Symbol(wm, Decl(acceptSymbolAsWeakType.ts, 7, 5))
+>s : Symbol(s, Decl(acceptSymbolAsWeakType.ts, 0, 5))
+
+wm.set(s, true);
+>wm : Symbol(wm, Decl(acceptSymbolAsWeakType.ts, 7, 5))
+>s : Symbol(s, Decl(acceptSymbolAsWeakType.ts, 0, 5))
+
+wm.has(s);
+>wm : Symbol(wm, Decl(acceptSymbolAsWeakType.ts, 7, 5))
+>s : Symbol(s, Decl(acceptSymbolAsWeakType.ts, 0, 5))
+
+wm.get(s);
+>wm : Symbol(wm, Decl(acceptSymbolAsWeakType.ts, 7, 5))
+>s : Symbol(s, Decl(acceptSymbolAsWeakType.ts, 0, 5))
+
+wm.delete(s);
+>wm : Symbol(wm, Decl(acceptSymbolAsWeakType.ts, 7, 5))
+>s : Symbol(s, Decl(acceptSymbolAsWeakType.ts, 0, 5))
+
+const wr = new WeakRef(s);
+>wr : Symbol(wr, Decl(acceptSymbolAsWeakType.ts, 13, 5))
+>s : Symbol(s, Decl(acceptSymbolAsWeakType.ts, 0, 5))
+
+wr.deref();
+>wr : Symbol(wr, Decl(acceptSymbolAsWeakType.ts, 13, 5))
+
+const f = new FinalizationRegistry(() => {});
+>f : Symbol(f, Decl(acceptSymbolAsWeakType.ts, 16, 5))
+
+f.register(s, null);
+>f : Symbol(f, Decl(acceptSymbolAsWeakType.ts, 16, 5))
+>s : Symbol(s, Decl(acceptSymbolAsWeakType.ts, 0, 5))
+
+f.unregister(s);
+>f : Symbol(f, Decl(acceptSymbolAsWeakType.ts, 16, 5))
+>s : Symbol(s, Decl(acceptSymbolAsWeakType.ts, 0, 5))
+

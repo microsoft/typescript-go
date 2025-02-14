@@ -1,0 +1,10 @@
+--- old.typedefOnSemicolonClassElement.symbols
++++ new.typedefOnSemicolonClassElement.symbols
+@@ -8,6 +8,6 @@
+   ;
+   /** @type {A} */
+   a = 'ok'
+->a : Symbol(Preferences.a, Decl(typedefOnSemicolonClassElement.js, 2, 3))
++>a : Symbol(a, Decl(typedefOnSemicolonClassElement.js, 2, 3))
+ }
+ 

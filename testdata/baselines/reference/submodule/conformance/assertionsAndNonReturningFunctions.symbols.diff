@@ -1,0 +1,32 @@
+--- old.assertionsAndNonReturningFunctions.symbols
++++ new.assertionsAndNonReturningFunctions.symbols
+@@ -59,9 +59,7 @@
+ >x : Symbol(x, Decl(assertionsAndNonReturningFunctions.js, 30, 12))
+ 
+         x.length;
+->x.length : Symbol(String.length, Decl(lib.es5.d.ts, --, --))
+ >x : Symbol(x, Decl(assertionsAndNonReturningFunctions.js, 30, 12))
+->length : Symbol(String.length, Decl(lib.es5.d.ts, --, --))
+     }
+     if (!!true) {
+         assert2(typeof x === "string");
+@@ -69,9 +67,7 @@
+ >x : Symbol(x, Decl(assertionsAndNonReturningFunctions.js, 30, 12))
+ 
+         x.length;
+->x.length : Symbol(String.length, Decl(lib.es5.d.ts, --, --))
+ >x : Symbol(x, Decl(assertionsAndNonReturningFunctions.js, 30, 12))
+->length : Symbol(String.length, Decl(lib.es5.d.ts, --, --))
+     }
+     if (!!true) {
+         assertIsString(x);
+@@ -79,9 +75,7 @@
+ >x : Symbol(x, Decl(assertionsAndNonReturningFunctions.js, 30, 12))
+ 
+         x.length;
+->x.length : Symbol(String.length, Decl(lib.es5.d.ts, --, --))
+ >x : Symbol(x, Decl(assertionsAndNonReturningFunctions.js, 30, 12))
+->length : Symbol(String.length, Decl(lib.es5.d.ts, --, --))
+     }
+     if (!!true) {
+         fail();

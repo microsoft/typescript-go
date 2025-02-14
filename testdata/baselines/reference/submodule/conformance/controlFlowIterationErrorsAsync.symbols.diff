@@ -1,0 +1,70 @@
+--- old.controlFlowIterationErrorsAsync.symbols
++++ new.controlFlowIterationErrorsAsync.symbols
+@@ -9,9 +9,7 @@
+ >s : Symbol(s, Decl(controlFlowIterationErrorsAsync.ts, 2, 19))
+ 
+     return s.length;
+->s.length : Symbol(String.length, Decl(lib.es5.d.ts, --, --))
+ >s : Symbol(s, Decl(controlFlowIterationErrorsAsync.ts, 2, 19))
+->length : Symbol(String.length, Decl(lib.es5.d.ts, --, --))
+ }
+ 
+ async function f1() {
+@@ -65,12 +63,12 @@
+ declare function foo(x: string): Promise<number>;
+ >foo : Symbol(foo, Decl(controlFlowIterationErrorsAsync.ts, 24, 1), Decl(controlFlowIterationErrorsAsync.ts, 26, 49))
+ >x : Symbol(x, Decl(controlFlowIterationErrorsAsync.ts, 26, 21))
+->Promise : Symbol(Promise, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.promise.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2018.promise.d.ts, --, --))
++>Promise : Symbol(Promise)
+ 
+ declare function foo(x: number): Promise<string>;
+ >foo : Symbol(foo, Decl(controlFlowIterationErrorsAsync.ts, 24, 1), Decl(controlFlowIterationErrorsAsync.ts, 26, 49))
+ >x : Symbol(x, Decl(controlFlowIterationErrorsAsync.ts, 27, 21))
+->Promise : Symbol(Promise, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.promise.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2018.promise.d.ts, --, --))
++>Promise : Symbol(Promise)
+ 
+ async function g1() {
+ >g1 : Symbol(g1, Decl(controlFlowIterationErrorsAsync.ts, 27, 49))
+@@ -123,7 +121,7 @@
+ async function asNumber(x: string | number): Promise<number> {
+ >asNumber : Symbol(asNumber, Decl(controlFlowIterationErrorsAsync.ts, 47, 1))
+ >x : Symbol(x, Decl(controlFlowIterationErrorsAsync.ts, 49, 24))
+->Promise : Symbol(Promise, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.promise.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2018.promise.d.ts, --, --))
++>Promise : Symbol(Promise)
+ 
+     return +x;
+ >x : Symbol(x, Decl(controlFlowIterationErrorsAsync.ts, 49, 24))
+@@ -264,7 +262,7 @@
+ declare function foox(x: string | undefined): Promise<string>
+ >foox : Symbol(foox, Decl(controlFlowIterationErrorsAsync.ts, 104, 1))
+ >x : Symbol(x, Decl(controlFlowIterationErrorsAsync.ts, 108, 22))
+->Promise : Symbol(Promise, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.promise.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2018.promise.d.ts, --, --))
++>Promise : Symbol(Promise)
+ 
+ async () => {
+   let bar: string | undefined = undefined;
+@@ -291,12 +289,12 @@
+ >myQuery : Symbol(myQuery, Decl(controlFlowIterationErrorsAsync.ts, 116, 1))
+ >input : Symbol(input, Decl(controlFlowIterationErrorsAsync.ts, 120, 25))
+ >lastId : Symbol(lastId, Decl(controlFlowIterationErrorsAsync.ts, 120, 33))
+->Promise : Symbol(Promise, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.promise.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2018.promise.d.ts, --, --))
++>Promise : Symbol(Promise)
+ >entities : Symbol(entities, Decl(controlFlowIterationErrorsAsync.ts, 120, 74))
+ 
+ async function myFunc(): Promise<void> {
+ >myFunc : Symbol(myFunc, Decl(controlFlowIterationErrorsAsync.ts, 120, 97))
+->Promise : Symbol(Promise, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.promise.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2018.promise.d.ts, --, --))
++>Promise : Symbol(Promise)
+ 
+   let lastId: number | undefined = undefined;
+ >lastId : Symbol(lastId, Decl(controlFlowIterationErrorsAsync.ts, 123, 5))
+@@ -315,9 +313,7 @@
+     lastId = entities[entities.length - 1];
+ >lastId : Symbol(lastId, Decl(controlFlowIterationErrorsAsync.ts, 123, 5))
+ >entities : Symbol(entities, Decl(controlFlowIterationErrorsAsync.ts, 126, 11))
+->entities.length : Symbol(Array.length, Decl(lib.es5.d.ts, --, --))
+ >entities : Symbol(entities, Decl(controlFlowIterationErrorsAsync.ts, 126, 11))
+->length : Symbol(Array.length, Decl(lib.es5.d.ts, --, --))
+   } 
+ }
+ 

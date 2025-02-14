@@ -1,0 +1,21 @@
+--- old.baseExpressionTypeParameters.symbols
++++ new.baseExpressionTypeParameters.symbols
+@@ -11,7 +11,7 @@
+ >Base : Symbol(Base, Decl(baseExpressionTypeParameters.ts, 2, 20))
+ 
+         static prop: T;
+->prop : Symbol(Base.prop, Decl(baseExpressionTypeParameters.ts, 3, 16))
++>prop : Symbol(prop, Decl(baseExpressionTypeParameters.ts, 3, 16))
+ >T : Symbol(T, Decl(baseExpressionTypeParameters.ts, 2, 14))
+     }
+     return Base;
+@@ -29,7 +29,7 @@
+ >Gen : Symbol(Gen, Decl(baseExpressionTypeParameters.ts, 7, 1))
+ 
+ <string>Spec.prop;
+->Spec.prop : Symbol(Base.prop, Decl(baseExpressionTypeParameters.ts, 3, 16))
++>Spec.prop : Symbol(prop, Decl(baseExpressionTypeParameters.ts, 3, 16))
+ >Spec : Symbol(Spec, Decl(baseExpressionTypeParameters.ts, 9, 33))
+->prop : Symbol(Base.prop, Decl(baseExpressionTypeParameters.ts, 3, 16))
++>prop : Symbol(prop, Decl(baseExpressionTypeParameters.ts, 3, 16))
+ 

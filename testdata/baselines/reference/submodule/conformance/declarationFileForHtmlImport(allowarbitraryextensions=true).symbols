@@ -1,0 +1,44 @@
+//// [tests/cases/conformance/nonjsExtensions/declarationFileForHtmlImport.ts] ////
+
+=== component.d.html.ts ===
+// html modules were proposed at https://github.com/WICG/webcomponents/blob/gh-pages/proposals/html-modules-explainer.md
+
+// per proposal, `default` is user-defined, but if not present, will be the document of the imported module
+declare var doc: Document;
+>doc : Symbol(doc, Decl(component.d.html.ts, 3, 11))
+>Document : Symbol(Document)
+
+export default doc;
+>doc : Symbol(doc, Decl(component.d.html.ts, 3, 11))
+
+// all other exports are just whatever was exported in module script blocks in the html file
+export const blogPost: Element;
+>blogPost : Symbol(blogPost, Decl(component.d.html.ts, 7, 12))
+>Element : Symbol(Element)
+
+export class HTML5Element extends HTMLElement {
+>HTML5Element : Symbol(HTML5Element, Decl(component.d.html.ts, 7, 31))
+
+    connectedCallback(): void;
+>connectedCallback : Symbol(connectedCallback, Decl(component.d.html.ts, 9, 47))
+}
+
+=== file.ts ===
+import * as mod from "./component.html";
+>mod : Symbol(mod, Decl(file.ts, 0, 6))
+
+window.customElements.define("my-html5-element", mod.HTML5Element);
+>mod.HTML5Element : Symbol(HTML5Element, Decl(component.d.html.ts, 7, 31))
+>mod : Symbol(mod, Decl(file.ts, 0, 6))
+>HTML5Element : Symbol(HTML5Element, Decl(component.d.html.ts, 7, 31))
+
+if (document !== mod.default) {
+>mod.default : Symbol(default, Decl(component.d.html.ts, 3, 26))
+>mod : Symbol(mod, Decl(file.ts, 0, 6))
+>default : Symbol(default, Decl(component.d.html.ts, 3, 26))
+
+    document.body.appendChild(mod.blogPost);
+>mod.blogPost : Symbol(blogPost, Decl(component.d.html.ts, 7, 12))
+>mod : Symbol(mod, Decl(file.ts, 0, 6))
+>blogPost : Symbol(blogPost, Decl(component.d.html.ts, 7, 12))
+}

@@ -1,0 +1,49 @@
+--- old.stringLiteralTypesAsTags03.symbols
++++ new.stringLiteralTypesAsTags03.symbols
+@@ -8,7 +8,7 @@
+ >Entity : Symbol(Entity, Decl(stringLiteralTypesAsTags03.ts, 0, 21))
+ 
+     kind: Kind;
+->kind : Symbol(Entity.kind, Decl(stringLiteralTypesAsTags03.ts, 2, 18))
++>kind : Symbol(kind, Decl(stringLiteralTypesAsTags03.ts, 2, 18))
+ >Kind : Symbol(Kind, Decl(stringLiteralTypesAsTags03.ts, 0, 0))
+ }
+ 
+@@ -17,10 +17,10 @@
+ >Entity : Symbol(Entity, Decl(stringLiteralTypesAsTags03.ts, 0, 21))
+ 
+     kind: "A";
+->kind : Symbol(A.kind, Decl(stringLiteralTypesAsTags03.ts, 6, 28))
++>kind : Symbol(kind, Decl(stringLiteralTypesAsTags03.ts, 6, 28))
+ 
+     a: number;
+->a : Symbol(A.a, Decl(stringLiteralTypesAsTags03.ts, 7, 14))
++>a : Symbol(a, Decl(stringLiteralTypesAsTags03.ts, 7, 14))
+ }
+ 
+ interface B extends Entity {
+@@ -28,10 +28,10 @@
+ >Entity : Symbol(Entity, Decl(stringLiteralTypesAsTags03.ts, 0, 21))
+ 
+     kind: "B";
+->kind : Symbol(B.kind, Decl(stringLiteralTypesAsTags03.ts, 11, 28))
++>kind : Symbol(kind, Decl(stringLiteralTypesAsTags03.ts, 11, 28))
+ 
+     b: string;
+->b : Symbol(B.b, Decl(stringLiteralTypesAsTags03.ts, 12, 14))
++>b : Symbol(b, Decl(stringLiteralTypesAsTags03.ts, 12, 14))
+ }
+ 
+ // Currently (2015-12-14), we write '"A" | "A"' and '"B" | "B"' to avoid
+@@ -64,9 +64,9 @@
+ >Entity : Symbol(Entity, Decl(stringLiteralTypesAsTags03.ts, 0, 21))
+ 
+     return entity.kind === kind;
+->entity.kind : Symbol(Entity.kind, Decl(stringLiteralTypesAsTags03.ts, 2, 18))
++>entity.kind : Symbol(kind, Decl(stringLiteralTypesAsTags03.ts, 2, 18))
+ >entity : Symbol(entity, Decl(stringLiteralTypesAsTags03.ts, 22, 17))
+->kind : Symbol(Entity.kind, Decl(stringLiteralTypesAsTags03.ts, 2, 18))
++>kind : Symbol(kind, Decl(stringLiteralTypesAsTags03.ts, 2, 18))
+ >kind : Symbol(kind, Decl(stringLiteralTypesAsTags03.ts, 22, 32))
+ }
+ 

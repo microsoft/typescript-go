@@ -1,0 +1,45 @@
+--- old.stringLiteralTypesInImplementationSignatures2.symbols
++++ new.stringLiteralTypesInImplementationSignatures2.symbols
+@@ -15,11 +15,11 @@
+ >C : Symbol(C, Decl(stringLiteralTypesInImplementationSignatures2.ts, 3, 25))
+ 
+     foo(x: string);
+->foo : Symbol(C.foo, Decl(stringLiteralTypesInImplementationSignatures2.ts, 5, 9), Decl(stringLiteralTypesInImplementationSignatures2.ts, 6, 19))
++>foo : Symbol(foo, Decl(stringLiteralTypesInImplementationSignatures2.ts, 5, 9), Decl(stringLiteralTypesInImplementationSignatures2.ts, 6, 19))
+ >x : Symbol(x, Decl(stringLiteralTypesInImplementationSignatures2.ts, 6, 8))
+ 
+     foo(x: 'hi') { }
+->foo : Symbol(C.foo, Decl(stringLiteralTypesInImplementationSignatures2.ts, 5, 9), Decl(stringLiteralTypesInImplementationSignatures2.ts, 6, 19))
++>foo : Symbol(foo, Decl(stringLiteralTypesInImplementationSignatures2.ts, 5, 9), Decl(stringLiteralTypesInImplementationSignatures2.ts, 6, 19))
+ >x : Symbol(x, Decl(stringLiteralTypesInImplementationSignatures2.ts, 7, 8))
+ }
+ 
+@@ -33,12 +33,12 @@
+ >x : Symbol(x, Decl(stringLiteralTypesInImplementationSignatures2.ts, 12, 5))
+ 
+     foo(x: 'a', y: 'a');
+->foo : Symbol(I.foo, Decl(stringLiteralTypesInImplementationSignatures2.ts, 12, 14), Decl(stringLiteralTypesInImplementationSignatures2.ts, 13, 24))
++>foo : Symbol(foo, Decl(stringLiteralTypesInImplementationSignatures2.ts, 12, 14), Decl(stringLiteralTypesInImplementationSignatures2.ts, 13, 24))
+ >x : Symbol(x, Decl(stringLiteralTypesInImplementationSignatures2.ts, 13, 8))
+ >y : Symbol(y, Decl(stringLiteralTypesInImplementationSignatures2.ts, 13, 15))
+ 
+     foo(x: 'hi', y: 'hi');
+->foo : Symbol(I.foo, Decl(stringLiteralTypesInImplementationSignatures2.ts, 12, 14), Decl(stringLiteralTypesInImplementationSignatures2.ts, 13, 24))
++>foo : Symbol(foo, Decl(stringLiteralTypesInImplementationSignatures2.ts, 12, 14), Decl(stringLiteralTypesInImplementationSignatures2.ts, 13, 24))
+ >x : Symbol(x, Decl(stringLiteralTypesInImplementationSignatures2.ts, 14, 8))
+ >y : Symbol(y, Decl(stringLiteralTypesInImplementationSignatures2.ts, 14, 16))
+ }
+@@ -65,11 +65,11 @@
+ >b : Symbol(b, Decl(stringLiteralTypesInImplementationSignatures2.ts, 24, 3))
+ 
+     foo(x: 'hi') { },
+->foo : Symbol(foo, Decl(stringLiteralTypesInImplementationSignatures2.ts, 24, 9), Decl(stringLiteralTypesInImplementationSignatures2.ts, 25, 21))
++>foo : Symbol(foo, Decl(stringLiteralTypesInImplementationSignatures2.ts, 24, 9))
+ >x : Symbol(x, Decl(stringLiteralTypesInImplementationSignatures2.ts, 25, 8))
+ 
+     foo(x: 'a') { },
+->foo : Symbol(foo, Decl(stringLiteralTypesInImplementationSignatures2.ts, 24, 9), Decl(stringLiteralTypesInImplementationSignatures2.ts, 25, 21))
++>foo : Symbol(foo, Decl(stringLiteralTypesInImplementationSignatures2.ts, 25, 21))
+ >x : Symbol(x, Decl(stringLiteralTypesInImplementationSignatures2.ts, 26, 8))
+ }
+ 

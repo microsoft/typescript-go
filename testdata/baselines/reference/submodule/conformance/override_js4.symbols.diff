@@ -1,0 +1,19 @@
+--- old.override_js4.symbols
++++ new.override_js4.symbols
+@@ -5,7 +5,7 @@
+ >A : Symbol(A, Decl(a.js, 0, 0))
+ 
+     doSomething() {}
+->doSomething : Symbol(A.doSomething, Decl(a.js, 0, 9))
++>doSomething : Symbol(doSomething, Decl(a.js, 0, 9))
+ }
+ 
+ class B extends A {
+@@ -14,6 +14,6 @@
+ 
+     /** @override  */
+     doSomethang() {}
+->doSomethang : Symbol(B.doSomethang, Decl(a.js, 4, 19))
++>doSomethang : Symbol(doSomethang, Decl(a.js, 4, 19))
+ }
+ 

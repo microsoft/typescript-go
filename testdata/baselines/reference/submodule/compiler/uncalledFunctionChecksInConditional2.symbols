@@ -1,0 +1,155 @@
+//// [tests/cases/compiler/uncalledFunctionChecksInConditional2.ts] ////
+
+=== uncalledFunctionChecksInConditional2.ts ===
+{
+  const perf = window.performance
+>perf : Symbol(perf, Decl(uncalledFunctionChecksInConditional2.ts, 1, 7))
+
+  // Simplified
+  if (
+    perf &&
+>perf : Symbol(perf, Decl(uncalledFunctionChecksInConditional2.ts, 1, 7))
+
+    perf.measure &&
+>perf : Symbol(perf, Decl(uncalledFunctionChecksInConditional2.ts, 1, 7))
+
+    perf.clearMarks &&
+>perf : Symbol(perf, Decl(uncalledFunctionChecksInConditional2.ts, 1, 7))
+
+    perf.clearMeasures
+>perf : Symbol(perf, Decl(uncalledFunctionChecksInConditional2.ts, 1, 7))
+
+  ) {
+    perf.measure("");
+>perf : Symbol(perf, Decl(uncalledFunctionChecksInConditional2.ts, 1, 7))
+
+    perf.clearMarks("")
+>perf : Symbol(perf, Decl(uncalledFunctionChecksInConditional2.ts, 1, 7))
+
+    perf.clearMeasures("")
+>perf : Symbol(perf, Decl(uncalledFunctionChecksInConditional2.ts, 1, 7))
+  }
+
+  // With ||
+  if (
+    perf &&
+>perf : Symbol(perf, Decl(uncalledFunctionChecksInConditional2.ts, 1, 7))
+
+    perf.mark &&
+>perf : Symbol(perf, Decl(uncalledFunctionChecksInConditional2.ts, 1, 7))
+
+    perf.measure || !!true
+>perf : Symbol(perf, Decl(uncalledFunctionChecksInConditional2.ts, 1, 7))
+
+  ) {
+    perf.mark("");
+>perf : Symbol(perf, Decl(uncalledFunctionChecksInConditional2.ts, 1, 7))
+  }
+
+  // With ??
+  if (
+    (
+      perf &&
+>perf : Symbol(perf, Decl(uncalledFunctionChecksInConditional2.ts, 1, 7))
+
+      perf.mark &&
+>perf : Symbol(perf, Decl(uncalledFunctionChecksInConditional2.ts, 1, 7))
+
+      perf.measure
+>perf : Symbol(perf, Decl(uncalledFunctionChecksInConditional2.ts, 1, 7))
+
+    ) ?? !!true
+  ) {
+    perf.mark("");
+>perf : Symbol(perf, Decl(uncalledFunctionChecksInConditional2.ts, 1, 7))
+  }
+};
+
+// Original #49192
+declare let inBrowser: boolean;
+>inBrowser : Symbol(inBrowser, Decl(uncalledFunctionChecksInConditional2.ts, 37, 11))
+{
+  let mark;
+>mark : Symbol(mark, Decl(uncalledFunctionChecksInConditional2.ts, 39, 5))
+
+  let measure;
+>measure : Symbol(measure, Decl(uncalledFunctionChecksInConditional2.ts, 40, 5))
+
+  const perf = inBrowser && window.performance
+>perf : Symbol(perf, Decl(uncalledFunctionChecksInConditional2.ts, 41, 7))
+>inBrowser : Symbol(inBrowser, Decl(uncalledFunctionChecksInConditional2.ts, 37, 11))
+
+  /* istanbul ignore if */
+  if (
+    perf &&
+>perf : Symbol(perf, Decl(uncalledFunctionChecksInConditional2.ts, 41, 7))
+
+    perf.mark &&
+>perf : Symbol(perf, Decl(uncalledFunctionChecksInConditional2.ts, 41, 7))
+
+    perf.measure &&
+>perf : Symbol(perf, Decl(uncalledFunctionChecksInConditional2.ts, 41, 7))
+
+    perf.clearMarks &&
+>perf : Symbol(perf, Decl(uncalledFunctionChecksInConditional2.ts, 41, 7))
+
+    perf.clearMeasures
+>perf : Symbol(perf, Decl(uncalledFunctionChecksInConditional2.ts, 41, 7))
+
+  ) {
+    mark = (tag) => perf.mark(tag)
+>mark : Symbol(mark, Decl(uncalledFunctionChecksInConditional2.ts, 39, 5))
+>tag : Symbol(tag, Decl(uncalledFunctionChecksInConditional2.ts, 50, 12))
+>perf : Symbol(perf, Decl(uncalledFunctionChecksInConditional2.ts, 41, 7))
+>tag : Symbol(tag, Decl(uncalledFunctionChecksInConditional2.ts, 50, 12))
+
+    measure = (name, startTag, endTag) => {
+>measure : Symbol(measure, Decl(uncalledFunctionChecksInConditional2.ts, 40, 5))
+>name : Symbol(name, Decl(uncalledFunctionChecksInConditional2.ts, 51, 15))
+>startTag : Symbol(startTag, Decl(uncalledFunctionChecksInConditional2.ts, 51, 20))
+>endTag : Symbol(endTag, Decl(uncalledFunctionChecksInConditional2.ts, 51, 30))
+
+      perf.measure(name, startTag, endTag)
+>perf : Symbol(perf, Decl(uncalledFunctionChecksInConditional2.ts, 41, 7))
+>name : Symbol(name, Decl(uncalledFunctionChecksInConditional2.ts, 51, 15))
+>startTag : Symbol(startTag, Decl(uncalledFunctionChecksInConditional2.ts, 51, 20))
+>endTag : Symbol(endTag, Decl(uncalledFunctionChecksInConditional2.ts, 51, 30))
+
+      perf.clearMarks(startTag)
+>perf : Symbol(perf, Decl(uncalledFunctionChecksInConditional2.ts, 41, 7))
+>startTag : Symbol(startTag, Decl(uncalledFunctionChecksInConditional2.ts, 51, 20))
+
+      perf.clearMarks(endTag)
+>perf : Symbol(perf, Decl(uncalledFunctionChecksInConditional2.ts, 41, 7))
+>endTag : Symbol(endTag, Decl(uncalledFunctionChecksInConditional2.ts, 51, 30))
+
+      // perf.clearMeasures(name)
+    }
+  }
+};
+
+let _isMobile: boolean;
+>_isMobile : Symbol(_isMobile, Decl(uncalledFunctionChecksInConditional2.ts, 60, 3))
+
+function isMobile() {
+>isMobile : Symbol(isMobile, Decl(uncalledFunctionChecksInConditional2.ts, 60, 23))
+
+  if (_isMobile === undefined) {
+>_isMobile : Symbol(_isMobile, Decl(uncalledFunctionChecksInConditional2.ts, 60, 3))
+>undefined : Symbol(undefined)
+
+    const isMobileMatch =
+>isMobileMatch : Symbol(isMobileMatch, Decl(uncalledFunctionChecksInConditional2.ts, 63, 9))
+
+      typeof window !== 'undefined' &&
+      window.matchMedia && // no error
+      window.matchMedia('(max-device-width: 680px)');
+    _isMobile = isMobileMatch && isMobileMatch.matches;
+>_isMobile : Symbol(_isMobile, Decl(uncalledFunctionChecksInConditional2.ts, 60, 3))
+>isMobileMatch : Symbol(isMobileMatch, Decl(uncalledFunctionChecksInConditional2.ts, 63, 9))
+>isMobileMatch : Symbol(isMobileMatch, Decl(uncalledFunctionChecksInConditional2.ts, 63, 9))
+  }
+  return _isMobile;
+>_isMobile : Symbol(_isMobile, Decl(uncalledFunctionChecksInConditional2.ts, 60, 3))
+}
+

@@ -1,0 +1,33 @@
+//// [tests/cases/compiler/errorConstructorSubtypes.ts] ////
+
+=== errorConstructorSubtypes.ts ===
+// In Node, ErrorConstructor is augmented with extra properties. Excerpted below.
+interface ErrorConstructor {
+>ErrorConstructor : Symbol(ErrorConstructor, Decl(errorConstructorSubtypes.ts, 0, 0))
+
+  captureStackTrace(targetObject: Object, constructorOpt?: Function): void;
+>captureStackTrace : Symbol(captureStackTrace, Decl(errorConstructorSubtypes.ts, 1, 28))
+>targetObject : Symbol(targetObject, Decl(errorConstructorSubtypes.ts, 2, 20))
+>Object : Symbol(Object)
+>constructorOpt : Symbol(constructorOpt, Decl(errorConstructorSubtypes.ts, 2, 41))
+>Function : Symbol(Function)
+}
+
+declare var x: ErrorConstructor
+>x : Symbol(x, Decl(errorConstructorSubtypes.ts, 5, 11))
+>ErrorConstructor : Symbol(ErrorConstructor, Decl(errorConstructorSubtypes.ts, 0, 0))
+
+x = Error; // OK
+>x : Symbol(x, Decl(errorConstructorSubtypes.ts, 5, 11))
+
+x = RangeError;
+>x : Symbol(x, Decl(errorConstructorSubtypes.ts, 5, 11))
+
+new x().message
+>x : Symbol(x, Decl(errorConstructorSubtypes.ts, 5, 11))
+
+x.captureStackTrace
+>x.captureStackTrace : Symbol(captureStackTrace, Decl(errorConstructorSubtypes.ts, 1, 28))
+>x : Symbol(x, Decl(errorConstructorSubtypes.ts, 5, 11))
+>captureStackTrace : Symbol(captureStackTrace, Decl(errorConstructorSubtypes.ts, 1, 28))
+

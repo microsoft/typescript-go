@@ -1,0 +1,28 @@
+--- old.decoratorMetadataTypeOnlyImport.symbols
++++ new.decoratorMetadataTypeOnlyImport.symbols
+@@ -1,6 +1,6 @@
+ //// [tests/cases/compiler/decoratorMetadataTypeOnlyImport.ts] ////
+ 
+-=== ./a.ts ===
++=== a.ts ===
+ import { List } from 'unknown-module';
+ >List : Symbol(List, Decl(a.ts, 0, 8))
+ 
+@@ -8,7 +8,7 @@
+ >MyList : Symbol(MyList, Decl(a.ts, 0, 38))
+ >List : Symbol(List, Decl(a.ts, 0, 8))
+ 
+-=== ./b.ts ===
++=== b.ts ===
+ import { type MyList } from './a';
+ >MyList : Symbol(MyList, Decl(b.ts, 0, 8))
+ 
+@@ -20,7 +20,7 @@
+ 
+   @Decorator myList?: MyList;
+ >Decorator : Symbol(Decorator, Decl(b.ts, 2, 11))
+->myList : Symbol(Foo.myList, Decl(b.ts, 4, 11))
++>myList : Symbol(myList, Decl(b.ts, 4, 11))
+ >MyList : Symbol(MyList, Decl(b.ts, 0, 8))
+ }
+ 

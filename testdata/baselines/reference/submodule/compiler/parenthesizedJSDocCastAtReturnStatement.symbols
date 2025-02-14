@@ -1,0 +1,22 @@
+//// [tests/cases/compiler/parenthesizedJSDocCastAtReturnStatement.ts] ////
+
+=== index.js ===
+/** @type {Map<string, string | Set<string>>} */
+const cache = new Map()
+>cache : Symbol(cache, Decl(index.js, 1, 5))
+
+/**
+ * @param {string} key
+ * @returns {() => string}
+ */
+const getStringGetter = (key) => {
+>getStringGetter : Symbol(getStringGetter, Decl(index.js, 7, 5))
+>key : Symbol(key, Decl(index.js, 7, 25))
+
+  return () => {
+    return /** @type {string} */ (cache.get(key))
+>cache : Symbol(cache, Decl(index.js, 1, 5))
+>key : Symbol(key, Decl(index.js, 7, 25))
+  }
+}
+

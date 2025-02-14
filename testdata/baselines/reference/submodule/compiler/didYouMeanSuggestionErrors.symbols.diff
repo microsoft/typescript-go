@@ -1,0 +1,16 @@
+--- old.didYouMeanSuggestionErrors.symbols
++++ new.didYouMeanSuggestionErrors.symbols
+@@ -51,11 +51,11 @@
+ 
+         const k: Symbol = null as any;
+ >k : Symbol(k, Decl(didYouMeanSuggestionErrors.ts, 24, 13))
+->Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --))
++>Symbol : Symbol(Symbol)
+ 
+         const l: Promise<any> = null as any;
+ >l : Symbol(l, Decl(didYouMeanSuggestionErrors.ts, 25, 13))
+->Promise : Symbol(Promise, Decl(lib.es5.d.ts, --, --))
++>Promise : Symbol(Promise)
+ 
+     });
+ });

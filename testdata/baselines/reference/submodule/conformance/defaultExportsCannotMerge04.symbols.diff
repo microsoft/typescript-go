@@ -1,0 +1,11 @@
+--- old.defaultExportsCannotMerge04.symbols
++++ new.defaultExportsCannotMerge04.symbols
+@@ -2,7 +2,7 @@
+ 
+ === defaultExportsCannotMerge04.ts ===
+ export default function Foo() {
+->Foo : Symbol(Foo, Decl(defaultExportsCannotMerge04.ts, 0, 0))
++>Foo : Symbol(default, Decl(defaultExportsCannotMerge04.ts, 0, 0))
+ }
+ 
+ namespace Foo {

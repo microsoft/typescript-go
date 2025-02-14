@@ -1,0 +1,11 @@
+//// [tests/cases/compiler/contextualSignatureInObjectFreeze.ts] ////
+
+=== contextualSignatureInObjectFreeze.ts ===
+// #49101
+
+Object.freeze({
+    f: function () { }
+>f : Symbol(f, Decl(contextualSignatureInObjectFreeze.ts, 2, 15))
+
+})
+

@@ -1,0 +1,8 @@
+//// [tests/cases/conformance/async/es5/asyncArrowFunction/asyncArrowFunction1_es5.ts] ////
+
+=== asyncArrowFunction1_es5.ts ===
+var foo = async (): Promise<void> => {
+>foo : Symbol(foo, Decl(asyncArrowFunction1_es5.ts, 0, 3))
+>Promise : Symbol(Promise)
+
+};

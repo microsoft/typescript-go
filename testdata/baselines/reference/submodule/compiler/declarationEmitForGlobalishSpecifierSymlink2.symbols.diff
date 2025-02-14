@@ -1,0 +1,18 @@
+--- old.declarationEmitForGlobalishSpecifierSymlink2.symbols
++++ new.declarationEmitForGlobalishSpecifierSymlink2.symbols
+@@ -9,7 +9,7 @@
+ >A : Symbol(A, Decl(impl.d.ts, 0, 26))
+ 
+     Val
+->Val : Symbol(A.Val, Decl(impl.d.ts, 1, 15))
++>Val : Symbol(Val, Decl(impl.d.ts, 1, 15))
+ }
+ === /cache/typescript-fsa/index.d.ts ===
+ 
+@@ -28,6 +28,5 @@
+ === /p2/index.d.ts ===
+ export const a: import("typescript-fsa").A;
+ >a : Symbol(a, Decl(index.d.ts, 0, 12))
+->A : Symbol(A, Decl(impl.d.ts, 0, 26))
+ 
+ 

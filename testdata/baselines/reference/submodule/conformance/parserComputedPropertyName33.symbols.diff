@@ -1,0 +1,11 @@
+--- old.parserComputedPropertyName33.symbols
++++ new.parserComputedPropertyName33.symbols
+@@ -6,7 +6,7 @@
+ 
+     // No ASI
+     [e] = 0
+->[e] : Symbol(C[e], Decl(parserComputedPropertyName33.ts, 0, 9))
++>[e] : Symbol([e], Decl(parserComputedPropertyName33.ts, 0, 9))
+ 
+     [e2]() { }
+ }

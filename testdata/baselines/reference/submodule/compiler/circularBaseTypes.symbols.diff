@@ -1,0 +1,10 @@
+--- old.circularBaseTypes.symbols
++++ new.circularBaseTypes.symbols
+@@ -43,6 +43,6 @@
+ >Y : Symbol(Y, Decl(circularBaseTypes.ts, 12, 55))
+ 
+   a: "";
+->a : Symbol(Y.a, Decl(circularBaseTypes.ts, 13, 26))
++>a : Symbol(a, Decl(circularBaseTypes.ts, 13, 26))
+ }
+ 

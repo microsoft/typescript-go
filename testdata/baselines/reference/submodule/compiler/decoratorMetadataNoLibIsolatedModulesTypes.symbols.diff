@@ -1,0 +1,11 @@
+--- old.decoratorMetadataNoLibIsolatedModulesTypes.symbols
++++ new.decoratorMetadataNoLibIsolatedModulesTypes.symbols
+@@ -6,7 +6,7 @@
+ 
+     @Decorate
+     member: Map<string, number>;
+->member : Symbol(B.member, Decl(decoratorMetadataNoLibIsolatedModulesTypes.ts, 0, 16))
++>member : Symbol(member, Decl(decoratorMetadataNoLibIsolatedModulesTypes.ts, 0, 16))
+ >Map : Symbol(Map)
+ }
+ 

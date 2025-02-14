@@ -1,0 +1,10 @@
+--- old.argumentsReferenceInConstructor2_Js.symbols
++++ new.argumentsReferenceInConstructor2_Js.symbols
+@@ -17,7 +17,6 @@
+ 		 */
+ 		this["arguments"] = foo;
+ >this : Symbol(A, Decl(a.js, 0, 0))
+->"arguments" : Symbol(A["arguments"], Decl(a.js, 6, 24))
+ >foo : Symbol(foo, Decl(a.js, 6, 13))
+ 	}
+ }

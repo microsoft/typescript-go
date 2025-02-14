@@ -1,0 +1,18 @@
+--- old.expandoFunctionSymbolPropertyJs.symbols
++++ new.expandoFunctionSymbolPropertyJs.symbols
+@@ -3,14 +3,13 @@
+ === /types.ts ===
+ export const symb = Symbol();
+ >symb : Symbol(symb, Decl(types.ts, 0, 12))
+->Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2019.symbol.d.ts, --, --))
+ 
+ export interface TestSymb {
+ >TestSymb : Symbol(TestSymb, Decl(types.ts, 0, 29))
+ 
+   (): void;
+   readonly [symb]: boolean;
+->[symb] : Symbol(TestSymb[symb], Decl(types.ts, 3, 11))
++>[symb] : Symbol([symb], Decl(types.ts, 3, 11))
+ >symb : Symbol(symb, Decl(types.ts, 0, 12))
+ }
+ 

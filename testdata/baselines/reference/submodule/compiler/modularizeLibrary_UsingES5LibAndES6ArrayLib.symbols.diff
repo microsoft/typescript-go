@@ -1,0 +1,12 @@
+--- old.modularizeLibrary_UsingES5LibAndES6ArrayLib.symbols
++++ new.modularizeLibrary_UsingES5LibAndES6ArrayLib.symbols
+@@ -9,9 +9,6 @@
+ >z : Symbol(z, Decl(modularizeLibrary_UsingES5LibAndES6ArrayLib.ts, 1, 32))
+ 
+     return Array.from(arguments);
+->Array.from : Symbol(ArrayConstructor.from, Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --))
+->Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --))
+->from : Symbol(ArrayConstructor.from, Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --))
+ >arguments : Symbol(arguments)
+ }
+ 

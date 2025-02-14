@@ -1,0 +1,60 @@
+//// [tests/cases/compiler/regexpExecAndMatchTypeUsages.ts] ////
+
+=== regexpExecAndMatchTypeUsages.ts ===
+export function foo(matchResult: RegExpMatchArray, execResult: RegExpExecArray) {
+>foo : Symbol(foo, Decl(regexpExecAndMatchTypeUsages.ts, 0, 0))
+>matchResult : Symbol(matchResult, Decl(regexpExecAndMatchTypeUsages.ts, 0, 20))
+>RegExpMatchArray : Symbol(RegExpMatchArray)
+>execResult : Symbol(execResult, Decl(regexpExecAndMatchTypeUsages.ts, 0, 50))
+>RegExpExecArray : Symbol(RegExpExecArray)
+
+    matchResult[0].length;
+>matchResult : Symbol(matchResult, Decl(regexpExecAndMatchTypeUsages.ts, 0, 20))
+
+    matchResult[999].length;
+>matchResult : Symbol(matchResult, Decl(regexpExecAndMatchTypeUsages.ts, 0, 20))
+
+    matchResult.index + 0;
+>matchResult : Symbol(matchResult, Decl(regexpExecAndMatchTypeUsages.ts, 0, 20))
+
+    matchResult.input.length;
+>matchResult : Symbol(matchResult, Decl(regexpExecAndMatchTypeUsages.ts, 0, 20))
+
+    matchResult.groups["someVariable"].length;
+>matchResult : Symbol(matchResult, Decl(regexpExecAndMatchTypeUsages.ts, 0, 20))
+
+    matchResult.groups = undefined;
+>matchResult : Symbol(matchResult, Decl(regexpExecAndMatchTypeUsages.ts, 0, 20))
+>undefined : Symbol(undefined)
+
+    execResult[0].length;
+>execResult : Symbol(execResult, Decl(regexpExecAndMatchTypeUsages.ts, 0, 50))
+
+    execResult[999].length;
+>execResult : Symbol(execResult, Decl(regexpExecAndMatchTypeUsages.ts, 0, 50))
+
+    execResult.index + 0;
+>execResult : Symbol(execResult, Decl(regexpExecAndMatchTypeUsages.ts, 0, 50))
+
+    execResult.input.length;
+>execResult : Symbol(execResult, Decl(regexpExecAndMatchTypeUsages.ts, 0, 50))
+
+    execResult.groups["someVariable"].length;
+>execResult : Symbol(execResult, Decl(regexpExecAndMatchTypeUsages.ts, 0, 50))
+
+    execResult.groups = undefined;
+>execResult : Symbol(execResult, Decl(regexpExecAndMatchTypeUsages.ts, 0, 50))
+>undefined : Symbol(undefined)
+
+    if (Math.random()) {
+        matchResult = execResult;
+>matchResult : Symbol(matchResult, Decl(regexpExecAndMatchTypeUsages.ts, 0, 20))
+>execResult : Symbol(execResult, Decl(regexpExecAndMatchTypeUsages.ts, 0, 50))
+    }
+    else {
+        execResult = matchResult
+>execResult : Symbol(execResult, Decl(regexpExecAndMatchTypeUsages.ts, 0, 50))
+>matchResult : Symbol(matchResult, Decl(regexpExecAndMatchTypeUsages.ts, 0, 20))
+    }
+}
+

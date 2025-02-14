@@ -1,0 +1,16 @@
+//// [tests/cases/compiler/modularizeLibrary_Dom.asynciterable.ts] ////
+
+=== modularizeLibrary_Dom.asynciterable.ts ===
+navigator.storage.getDirectory().then(async directory => {
+>directory : Symbol(directory, Decl(modularizeLibrary_Dom.asynciterable.ts, 0, 43))
+
+    for await (const [key, handle] of directory) {
+>key : Symbol(key, Decl(modularizeLibrary_Dom.asynciterable.ts, 1, 22))
+>handle : Symbol(handle, Decl(modularizeLibrary_Dom.asynciterable.ts, 1, 26))
+>directory : Symbol(directory, Decl(modularizeLibrary_Dom.asynciterable.ts, 0, 43))
+
+        handle.kind;
+>handle : Symbol(handle, Decl(modularizeLibrary_Dom.asynciterable.ts, 1, 26))
+    }
+});
+

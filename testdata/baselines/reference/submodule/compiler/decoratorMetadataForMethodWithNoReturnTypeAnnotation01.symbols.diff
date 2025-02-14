@@ -1,0 +1,11 @@
+--- old.decoratorMetadataForMethodWithNoReturnTypeAnnotation01.symbols
++++ new.decoratorMetadataForMethodWithNoReturnTypeAnnotation01.symbols
+@@ -17,7 +17,7 @@
+ >decorator : Symbol(decorator, Decl(decoratorMetadataForMethodWithNoReturnTypeAnnotation01.ts, 0, 11))
+ 
+     doSomething() {
+->doSomething : Symbol(MyClass.doSomething, Decl(decoratorMetadataForMethodWithNoReturnTypeAnnotation01.ts, 5, 5))
++>doSomething : Symbol(doSomething, Decl(decoratorMetadataForMethodWithNoReturnTypeAnnotation01.ts, 5, 5))
+ 
+     }
+ }

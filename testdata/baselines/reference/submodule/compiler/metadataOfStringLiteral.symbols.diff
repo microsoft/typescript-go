@@ -1,0 +1,9 @@
+--- old.metadataOfStringLiteral.symbols
++++ new.metadataOfStringLiteral.symbols
+@@ -14,5 +14,5 @@
+ >PropDeco : Symbol(PropDeco, Decl(metadataOfStringLiteral.ts, 0, 0))
+ 
+     public foo: "foo" | "bar";
+->foo : Symbol(Foo.foo, Decl(metadataOfStringLiteral.ts, 2, 11))
++>foo : Symbol(foo, Decl(metadataOfStringLiteral.ts, 2, 11))
+ }

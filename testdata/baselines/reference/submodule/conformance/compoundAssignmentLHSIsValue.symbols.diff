@@ -1,0 +1,38 @@
+--- old.compoundAssignmentLHSIsValue.symbols
++++ new.compoundAssignmentLHSIsValue.symbols
+@@ -19,7 +19,7 @@
+ >value : Symbol(value, Decl(compoundAssignmentLHSIsValue.ts, 1, 3))
+     }
+     foo() {
+->foo : Symbol(C.foo, Decl(compoundAssignmentLHSIsValue.ts, 8, 5))
++>foo : Symbol(foo, Decl(compoundAssignmentLHSIsValue.ts, 8, 5))
+ 
+         this *= value;
+ >this : Symbol(C, Decl(compoundAssignmentLHSIsValue.ts, 1, 15))
+@@ -30,7 +30,7 @@
+ >value : Symbol(value, Decl(compoundAssignmentLHSIsValue.ts, 1, 3))
+     }
+     static sfoo() {
+->sfoo : Symbol(C.sfoo, Decl(compoundAssignmentLHSIsValue.ts, 12, 5))
++>sfoo : Symbol(sfoo, Decl(compoundAssignmentLHSIsValue.ts, 12, 5))
+ 
+         this *= value;
+ >this : Symbol(C, Decl(compoundAssignmentLHSIsValue.ts, 1, 15))
+@@ -170,7 +170,7 @@
+     }
+ 
+     foo() {
+->foo : Symbol(Derived.foo, Decl(compoundAssignmentLHSIsValue.ts, 70, 5))
++>foo : Symbol(foo, Decl(compoundAssignmentLHSIsValue.ts, 70, 5))
+ 
+         super *= value;
+ >super : Symbol(C, Decl(compoundAssignmentLHSIsValue.ts, 1, 15))
+@@ -182,7 +182,7 @@
+     }
+ 
+     static sfoo() {
+->sfoo : Symbol(Derived.sfoo, Decl(compoundAssignmentLHSIsValue.ts, 75, 5))
++>sfoo : Symbol(sfoo, Decl(compoundAssignmentLHSIsValue.ts, 75, 5))
+ 
+         super *= value;
+ >super : Symbol(C, Decl(compoundAssignmentLHSIsValue.ts, 1, 15))

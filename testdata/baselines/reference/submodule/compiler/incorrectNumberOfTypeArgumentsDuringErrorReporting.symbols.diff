@@ -1,0 +1,32 @@
+--- old.incorrectNumberOfTypeArgumentsDuringErrorReporting.symbols
++++ new.incorrectNumberOfTypeArgumentsDuringErrorReporting.symbols
+@@ -5,7 +5,7 @@
+ >ObjA : Symbol(ObjA, Decl(incorrectNumberOfTypeArgumentsDuringErrorReporting.ts, 0, 0))
+ 
+   y?:string,
+->y : Symbol(ObjA.y, Decl(incorrectNumberOfTypeArgumentsDuringErrorReporting.ts, 0, 16))
++>y : Symbol(y, Decl(incorrectNumberOfTypeArgumentsDuringErrorReporting.ts, 0, 16))
+ }
+ 
+ interface ObjB {[key:string]:any}
+@@ -16,9 +16,9 @@
+ >Opts : Symbol(Opts, Decl(incorrectNumberOfTypeArgumentsDuringErrorReporting.ts, 4, 33))
+ >A : Symbol(A, Decl(incorrectNumberOfTypeArgumentsDuringErrorReporting.ts, 6, 15))
+ >B : Symbol(B, Decl(incorrectNumberOfTypeArgumentsDuringErrorReporting.ts, 6, 17))
+->a : Symbol(Opts.a, Decl(incorrectNumberOfTypeArgumentsDuringErrorReporting.ts, 6, 22))
++>a : Symbol(a, Decl(incorrectNumberOfTypeArgumentsDuringErrorReporting.ts, 6, 22))
+ >A : Symbol(A, Decl(incorrectNumberOfTypeArgumentsDuringErrorReporting.ts, 6, 15))
+->b : Symbol(Opts.b, Decl(incorrectNumberOfTypeArgumentsDuringErrorReporting.ts, 6, 26))
++>b : Symbol(b, Decl(incorrectNumberOfTypeArgumentsDuringErrorReporting.ts, 6, 26))
+ >B : Symbol(B, Decl(incorrectNumberOfTypeArgumentsDuringErrorReporting.ts, 6, 17))
+ 
+ const fn = <
+@@ -43,7 +43,7 @@
+ >MyObjA : Symbol(MyObjA, Decl(incorrectNumberOfTypeArgumentsDuringErrorReporting.ts, 11, 32))
+ 
+   x:string,
+->x : Symbol(MyObjA.x, Decl(incorrectNumberOfTypeArgumentsDuringErrorReporting.ts, 13, 18))
++>x : Symbol(x, Decl(incorrectNumberOfTypeArgumentsDuringErrorReporting.ts, 13, 18))
+ }
+ 
+ fn<MyObjA>({

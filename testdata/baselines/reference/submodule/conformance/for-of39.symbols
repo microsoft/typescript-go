@@ -1,0 +1,17 @@
+//// [tests/cases/conformance/es6/for-ofStatements/for-of39.ts] ////
+
+=== for-of39.ts ===
+var map = new Map([["", true], ["", 0]]);
+>map : Symbol(map, Decl(for-of39.ts, 0, 3))
+
+for (var [k, v] of map) {
+>k : Symbol(k, Decl(for-of39.ts, 1, 10))
+>v : Symbol(v, Decl(for-of39.ts, 1, 12))
+>map : Symbol(map, Decl(for-of39.ts, 0, 3))
+
+    k;
+>k : Symbol(k, Decl(for-of39.ts, 1, 10))
+
+    v;
+>v : Symbol(v, Decl(for-of39.ts, 1, 12))
+}

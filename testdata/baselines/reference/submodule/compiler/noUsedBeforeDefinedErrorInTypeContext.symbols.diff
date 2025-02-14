@@ -1,0 +1,11 @@
+--- old.noUsedBeforeDefinedErrorInTypeContext.symbols
++++ new.noUsedBeforeDefinedErrorInTypeContext.symbols
+@@ -8,7 +8,7 @@
+ >T : Symbol(T, Decl(noUsedBeforeDefinedErrorInTypeContext.ts, 2, 17))
+ 
+     owner: T;
+->owner : Symbol(IThing.owner, Decl(noUsedBeforeDefinedErrorInTypeContext.ts, 2, 21))
++>owner : Symbol(owner, Decl(noUsedBeforeDefinedErrorInTypeContext.ts, 2, 21))
+ >T : Symbol(T, Decl(noUsedBeforeDefinedErrorInTypeContext.ts, 2, 17))
+ }
+ 

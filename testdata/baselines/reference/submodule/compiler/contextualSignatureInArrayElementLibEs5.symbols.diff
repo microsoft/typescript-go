@@ -1,0 +1,14 @@
+--- old.contextualSignatureInArrayElementLibEs5.symbols
++++ new.contextualSignatureInArrayElementLibEs5.symbols
+@@ -8,9 +8,9 @@
+ 
+   arg: Record<string, (arg: string) => void> | Array<(arg: number) => void>
+ >arg : Symbol(arg, Decl(contextualSignatureInArrayElementLibEs5.ts, 2, 22))
+->Record : Symbol(Record, Decl(lib.es5.d.ts, --, --))
++>Record : Symbol(Record)
+ >arg : Symbol(arg, Decl(contextualSignatureInArrayElementLibEs5.ts, 3, 23))
+->Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
++>Array : Symbol(Array)
+ >arg : Symbol(arg, Decl(contextualSignatureInArrayElementLibEs5.ts, 3, 54))
+ 
+ ): void;

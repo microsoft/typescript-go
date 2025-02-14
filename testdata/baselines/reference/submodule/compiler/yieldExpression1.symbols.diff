@@ -1,0 +1,11 @@
+--- old.yieldExpression1.symbols
++++ new.yieldExpression1.symbols
+@@ -10,7 +10,7 @@
+ 
+ function* b(): IterableIterator<number> {
+ >b : Symbol(b, Decl(yieldExpression1.ts, 3, 1))
+->IterableIterator : Symbol(IterableIterator, Decl(lib.es2015.iterable.d.ts, --, --))
++>IterableIterator : Symbol(IterableIterator)
+ 
+     yield;
+     yield 0;

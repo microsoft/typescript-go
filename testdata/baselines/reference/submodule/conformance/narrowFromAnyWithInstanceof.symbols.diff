@@ -1,0 +1,26 @@
+--- old.narrowFromAnyWithInstanceof.symbols
++++ new.narrowFromAnyWithInstanceof.symbols
+@@ -37,9 +37,9 @@
+ >Error : Symbol(Error, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+ 
+     x.message;
+->x.message : Symbol(Error.message, Decl(lib.es5.d.ts, --, --))
++>x.message : Symbol(message, Decl(lib.es5.d.ts, --, --))
+ >x : Symbol(x, Decl(narrowFromAnyWithInstanceof.ts, 0, 11))
+->message : Symbol(Error.message, Decl(lib.es5.d.ts, --, --))
++>message : Symbol(message, Decl(lib.es5.d.ts, --, --))
+ 
+     x.mesage;
+ >x : Symbol(x, Decl(narrowFromAnyWithInstanceof.ts, 0, 11))
+@@ -50,9 +50,9 @@
+ >Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
+ 
+     x.getDate();
+->x.getDate : Symbol(Date.getDate, Decl(lib.es5.d.ts, --, --))
++>x.getDate : Symbol(getDate, Decl(lib.es5.d.ts, --, --))
+ >x : Symbol(x, Decl(narrowFromAnyWithInstanceof.ts, 0, 11))
+->getDate : Symbol(Date.getDate, Decl(lib.es5.d.ts, --, --))
++>getDate : Symbol(getDate, Decl(lib.es5.d.ts, --, --))
+ 
+     x.getHuors();
+ >x : Symbol(x, Decl(narrowFromAnyWithInstanceof.ts, 0, 11))

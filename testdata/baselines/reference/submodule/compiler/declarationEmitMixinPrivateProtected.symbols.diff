@@ -1,0 +1,59 @@
+--- old.declarationEmitMixinPrivateProtected.symbols
++++ new.declarationEmitMixinPrivateProtected.symbols
+@@ -12,15 +12,15 @@
+ >DisposableMixin : Symbol(DisposableMixin, Decl(first.ts, 2, 5))
+ 
+     protected _onDispose() {
+->_onDispose : Symbol(DisposableMixin._onDispose, Decl(first.ts, 2, 31))
++>_onDispose : Symbol(_onDispose, Decl(first.ts, 2, 31))
+ 
+         this._assertIsStripped()
+->this._assertIsStripped : Symbol(DisposableMixin._assertIsStripped, Decl(first.ts, 5, 5))
++>this._assertIsStripped : Symbol(_assertIsStripped, Decl(first.ts, 5, 5))
+ >this : Symbol(DisposableMixin, Decl(first.ts, 2, 23))
+->_assertIsStripped : Symbol(DisposableMixin._assertIsStripped, Decl(first.ts, 5, 5))
++>_assertIsStripped : Symbol(_assertIsStripped, Decl(first.ts, 5, 5))
+     }
+     private _assertIsStripped() {
+->_assertIsStripped : Symbol(DisposableMixin._assertIsStripped, Decl(first.ts, 5, 5))
++>_assertIsStripped : Symbol(_assertIsStripped, Decl(first.ts, 5, 5))
+     }
+ };
+ 
+@@ -35,7 +35,7 @@
+ >DisposableMixin : Symbol(DisposableMixin, Decl(first.ts, 2, 5))
+ 
+     protected _onDispose() {
+->_onDispose : Symbol(Monitor._onDispose, Decl(first.ts, 12, 51))
++>_onDispose : Symbol(_onDispose, Decl(first.ts, 12, 51))
+     }
+ }
+ 
+@@ -51,15 +51,15 @@
+ >DisposableMixin : Symbol(DisposableMixin, Decl(another.ts, 2, 5))
+ 
+     protected _onDispose() {
+->_onDispose : Symbol(DisposableMixin._onDispose, Decl(another.ts, 2, 31))
++>_onDispose : Symbol(_onDispose, Decl(another.ts, 2, 31))
+ 
+         this._assertIsStripped()
+->this._assertIsStripped : Symbol(DisposableMixin._assertIsStripped, Decl(another.ts, 5, 5))
++>this._assertIsStripped : Symbol(_assertIsStripped, Decl(another.ts, 5, 5))
+ >this : Symbol(DisposableMixin, Decl(another.ts, 2, 23))
+->_assertIsStripped : Symbol(DisposableMixin._assertIsStripped, Decl(another.ts, 5, 5))
++>_assertIsStripped : Symbol(_assertIsStripped, Decl(another.ts, 5, 5))
+     }
+     private _assertIsStripped() {
+->_assertIsStripped : Symbol(DisposableMixin._assertIsStripped, Decl(another.ts, 5, 5))
++>_assertIsStripped : Symbol(_assertIsStripped, Decl(another.ts, 5, 5))
+     }
+ };
+ 
+@@ -68,6 +68,6 @@
+ >DisposableMixin : Symbol(DisposableMixin, Decl(another.ts, 2, 5))
+ 
+     protected _onDispose() {
+->_onDispose : Symbol(default._onDispose, Decl(another.ts, 10, 51))
++>_onDispose : Symbol(_onDispose, Decl(another.ts, 10, 51))
+     }
+ }

@@ -1,0 +1,84 @@
+--- old.mergedInterfacesWithInheritedPrivates3.symbols
++++ new.mergedInterfacesWithInheritedPrivates3.symbols
+@@ -5,14 +5,14 @@
+ >C : Symbol(C, Decl(mergedInterfacesWithInheritedPrivates3.ts, 0, 0))
+ 
+     private x: number;
+->x : Symbol(C.x, Decl(mergedInterfacesWithInheritedPrivates3.ts, 0, 9))
++>x : Symbol(x, Decl(mergedInterfacesWithInheritedPrivates3.ts, 0, 9))
+ }
+ 
+ class C2 {
+ >C2 : Symbol(C2, Decl(mergedInterfacesWithInheritedPrivates3.ts, 2, 1))
+ 
+     private x: number;
+->x : Symbol(C2.x, Decl(mergedInterfacesWithInheritedPrivates3.ts, 4, 10))
++>x : Symbol(x, Decl(mergedInterfacesWithInheritedPrivates3.ts, 4, 10))
+ }
+ 
+ interface A extends C { // error
+@@ -20,7 +20,7 @@
+ >C : Symbol(C, Decl(mergedInterfacesWithInheritedPrivates3.ts, 0, 0))
+ 
+     y: string;
+->y : Symbol(A.y, Decl(mergedInterfacesWithInheritedPrivates3.ts, 8, 23))
++>y : Symbol(y, Decl(mergedInterfacesWithInheritedPrivates3.ts, 8, 23))
+ }
+ 
+ interface A extends C2 { 
+@@ -28,7 +28,7 @@
+ >C2 : Symbol(C2, Decl(mergedInterfacesWithInheritedPrivates3.ts, 2, 1))
+ 
+     z: string;
+->z : Symbol(A.z, Decl(mergedInterfacesWithInheritedPrivates3.ts, 12, 24))
++>z : Symbol(z, Decl(mergedInterfacesWithInheritedPrivates3.ts, 12, 24))
+ }
+ 
+ class D extends C implements A { // error
+@@ -37,10 +37,10 @@
+ >A : Symbol(A, Decl(mergedInterfacesWithInheritedPrivates3.ts, 6, 1), Decl(mergedInterfacesWithInheritedPrivates3.ts, 10, 1))
+ 
+     y: string;
+->y : Symbol(D.y, Decl(mergedInterfacesWithInheritedPrivates3.ts, 16, 32))
++>y : Symbol(y, Decl(mergedInterfacesWithInheritedPrivates3.ts, 16, 32))
+ 
+     z: string;
+->z : Symbol(D.z, Decl(mergedInterfacesWithInheritedPrivates3.ts, 17, 14))
++>z : Symbol(z, Decl(mergedInterfacesWithInheritedPrivates3.ts, 17, 14))
+ }
+ 
+ module M {
+@@ -50,14 +50,14 @@
+ >C : Symbol(C, Decl(mergedInterfacesWithInheritedPrivates3.ts, 21, 10))
+ 
+         private x: string;
+->x : Symbol(C.x, Decl(mergedInterfacesWithInheritedPrivates3.ts, 22, 13))
++>x : Symbol(x, Decl(mergedInterfacesWithInheritedPrivates3.ts, 22, 13))
+     }
+ 
+     class C2 {
+ >C2 : Symbol(C2, Decl(mergedInterfacesWithInheritedPrivates3.ts, 24, 5))
+ 
+         private x: number;
+->x : Symbol(C2.x, Decl(mergedInterfacesWithInheritedPrivates3.ts, 26, 14))
++>x : Symbol(x, Decl(mergedInterfacesWithInheritedPrivates3.ts, 26, 14))
+     }
+ 
+     interface A extends C { // error, privates conflict
+@@ -65,7 +65,7 @@
+ >C : Symbol(C, Decl(mergedInterfacesWithInheritedPrivates3.ts, 21, 10))
+ 
+         y: string;
+->y : Symbol(A.y, Decl(mergedInterfacesWithInheritedPrivates3.ts, 30, 27))
++>y : Symbol(y, Decl(mergedInterfacesWithInheritedPrivates3.ts, 30, 27))
+     }
+ 
+     interface A extends C2 {
+@@ -73,6 +73,6 @@
+ >C2 : Symbol(C2, Decl(mergedInterfacesWithInheritedPrivates3.ts, 24, 5))
+ 
+         z: string;
+->z : Symbol(A.z, Decl(mergedInterfacesWithInheritedPrivates3.ts, 34, 28))
++>z : Symbol(z, Decl(mergedInterfacesWithInheritedPrivates3.ts, 34, 28))
+     }
+ }

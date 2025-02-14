@@ -1,0 +1,21 @@
+--- old.awaitUsingDeclarationsWithAsyncIteratorObject.symbols
++++ new.awaitUsingDeclarationsWithAsyncIteratorObject.symbols
+@@ -3,15 +3,15 @@
+ === awaitUsingDeclarationsWithAsyncIteratorObject.ts ===
+ declare const ai: AsyncIterator<string, undefined>;
+ >ai : Symbol(ai, Decl(awaitUsingDeclarationsWithAsyncIteratorObject.ts, 0, 13))
+->AsyncIterator : Symbol(AsyncIterator, Decl(lib.es2018.asynciterable.d.ts, --, --))
++>AsyncIterator : Symbol(AsyncIterator)
+ 
+ declare const aio: AsyncIteratorObject<string, undefined, unknown>;
+ >aio : Symbol(aio, Decl(awaitUsingDeclarationsWithAsyncIteratorObject.ts, 1, 13))
+->AsyncIteratorObject : Symbol(AsyncIteratorObject, Decl(lib.es2018.asynciterable.d.ts, --, --), Decl(lib.esnext.disposable.d.ts, --, --))
++>AsyncIteratorObject : Symbol(AsyncIteratorObject)
+ 
+ declare const ag: AsyncGenerator<string, void>;
+ >ag : Symbol(ag, Decl(awaitUsingDeclarationsWithAsyncIteratorObject.ts, 2, 13))
+->AsyncGenerator : Symbol(AsyncGenerator, Decl(lib.es2018.asyncgenerator.d.ts, --, --))
++>AsyncGenerator : Symbol(AsyncGenerator)
+ 
+ async function f() {
+ >f : Symbol(f, Decl(awaitUsingDeclarationsWithAsyncIteratorObject.ts, 2, 47))

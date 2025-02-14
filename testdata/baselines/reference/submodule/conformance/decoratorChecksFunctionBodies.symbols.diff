@@ -1,0 +1,11 @@
+--- old.decoratorChecksFunctionBodies.symbols
++++ new.decoratorChecksFunctionBodies.symbols
+@@ -27,7 +27,7 @@
+ 
+     })
+     m() {
+->m : Symbol(A.m, Decl(decoratorChecksFunctionBodies.ts, 4, 9))
++>m : Symbol(m, Decl(decoratorChecksFunctionBodies.ts, 4, 9))
+ 
+     }
+ }

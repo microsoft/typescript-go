@@ -1,0 +1,20 @@
+--- old.declarationsForFileShadowingGlobalNoError.symbols
++++ new.declarationsForFileShadowingGlobalNoError.symbols
+@@ -3,7 +3,7 @@
+ === dom.ts ===
+ export type DOMNode = Node;
+ >DOMNode : Symbol(DOMNode, Decl(dom.ts, 0, 0))
+->Node : Symbol(Node, Decl(lib.dom.d.ts, --, --), Decl(lib.dom.d.ts, --, --))
++>Node : Symbol(Node)
+ 
+ === custom.ts ===
+ export type Node = {};
+@@ -29,7 +29,7 @@
+ >Base : Symbol(Base, Decl(index.ts, 5, 22))
+ 
+     get(domNode: DOMNode) {}
+->get : Symbol((Anonymous class).get, Decl(index.ts, 6, 29))
++>get : Symbol(get, Decl(index.ts, 6, 29))
+ >domNode : Symbol(domNode, Decl(index.ts, 7, 8))
+ >DOMNode : Symbol(DOMNode, Decl(index.ts, 1, 8))
+   }

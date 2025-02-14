@@ -1,0 +1,10 @@
+--- old.parserIsClassMemberStart.symbols
++++ new.parserIsClassMemberStart.symbols
+@@ -5,6 +5,6 @@
+ >C : Symbol(C, Decl(parserIsClassMemberStart.ts, 0, 0))
+ 
+     type!: number;
+->type : Symbol(C.type, Decl(parserIsClassMemberStart.ts, 0, 9))
++>type : Symbol(type, Decl(parserIsClassMemberStart.ts, 0, 9))
+ }
+ 

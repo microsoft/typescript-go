@@ -1,0 +1,11 @@
+--- old.checkJsFiles6.symbols
++++ new.checkJsFiles6.symbols
+@@ -1,1 +0,0 @@
+-<no content>
+@@ -0,0 +1,6 @@
++//// [tests/cases/compiler/checkJsFiles6.ts] ////
++
++=== a.js ===
++var x;
++>x : Symbol(x, Decl(a.js, 0, 3))
++

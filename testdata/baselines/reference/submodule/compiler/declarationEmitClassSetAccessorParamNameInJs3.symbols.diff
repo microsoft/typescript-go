@@ -1,0 +1,11 @@
+--- old.declarationEmitClassSetAccessorParamNameInJs3.symbols
++++ new.declarationEmitClassSetAccessorParamNameInJs3.symbols
+@@ -10,7 +10,7 @@
+      * @param {{ prop: string | undefined }} baz Baz.
+      */
+     set bar({ prop = 'foo' }) {}
+->bar : Symbol(Foo.bar, Decl(foo.js, 0, 18))
++>bar : Symbol(bar, Decl(foo.js, 0, 18))
+ >prop : Symbol(prop, Decl(foo.js, 6, 13))
+ }
+ 

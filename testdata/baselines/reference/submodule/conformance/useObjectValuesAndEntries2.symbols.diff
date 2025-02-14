@@ -1,0 +1,17 @@
+--- old.useObjectValuesAndEntries2.symbols
++++ new.useObjectValuesAndEntries2.symbols
+@@ -8,7 +8,6 @@
+ 
+ for (var x of Object.values(o)) {
+ >x : Symbol(x, Decl(useObjectValuesAndEntries2.ts, 2, 8))
+->Object : Symbol(Object, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+ >o : Symbol(o, Decl(useObjectValuesAndEntries2.ts, 0, 3))
+ 
+     let y = x;
+@@ -18,6 +17,5 @@
+ 
+ var entries = Object.entries(o);
+ >entries : Symbol(entries, Decl(useObjectValuesAndEntries2.ts, 6, 3))
+->Object : Symbol(Object, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+ >o : Symbol(o, Decl(useObjectValuesAndEntries2.ts, 0, 3))
+ 

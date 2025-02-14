@@ -1,0 +1,20 @@
+--- old.specializedInheritedConstructors1.symbols
++++ new.specializedInheritedConstructors1.symbols
+@@ -6,7 +6,7 @@
+ >TModel : Symbol(TModel, Decl(specializedInheritedConstructors1.ts, 0, 22))
+ 
+     model: TModel;
+->model : Symbol(ViewOptions.model, Decl(specializedInheritedConstructors1.ts, 0, 31))
++>model : Symbol(model, Decl(specializedInheritedConstructors1.ts, 0, 31))
+ >TModel : Symbol(TModel, Decl(specializedInheritedConstructors1.ts, 0, 22))
+ }
+ 
+@@ -20,7 +20,7 @@
+ >TModel : Symbol(TModel, Decl(specializedInheritedConstructors1.ts, 4, 11))
+ 
+     model: TModel;
+->model : Symbol(View.model, Decl(specializedInheritedConstructors1.ts, 5, 49))
++>model : Symbol(model, Decl(specializedInheritedConstructors1.ts, 5, 49))
+ >TModel : Symbol(TModel, Decl(specializedInheritedConstructors1.ts, 4, 11))
+ }
+ 

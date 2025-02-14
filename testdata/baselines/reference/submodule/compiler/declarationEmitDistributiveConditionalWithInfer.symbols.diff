@@ -1,0 +1,11 @@
+--- old.declarationEmitDistributiveConditionalWithInfer.symbols
++++ new.declarationEmitDistributiveConditionalWithInfer.symbols
+@@ -12,7 +12,7 @@
+ >Collection : Symbol(Collection, Decl(declarationEmitDistributiveConditionalWithInfer.ts, 2, 13))
+ 
+         => FlatArray<Collection[Field], 0>[]) => { };
+->FlatArray : Symbol(FlatArray, Decl(lib.es2019.array.d.ts, --, --))
++>FlatArray : Symbol(FlatArray)
+ >Collection : Symbol(Collection, Decl(declarationEmitDistributiveConditionalWithInfer.ts, 2, 13))
+ >Field : Symbol(Field, Decl(declarationEmitDistributiveConditionalWithInfer.ts, 2, 24))
+ 

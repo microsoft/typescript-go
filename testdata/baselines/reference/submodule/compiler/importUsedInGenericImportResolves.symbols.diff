@@ -1,0 +1,11 @@
+--- old.importUsedInGenericImportResolves.symbols
++++ new.importUsedInGenericImportResolves.symbols
+@@ -6,7 +6,7 @@
+ >P : Symbol(P, Decl(test1.d.ts, 0, 19))
+ 
+     a: P;
+->a : Symbol(T.a, Decl(test1.d.ts, 0, 23))
++>a : Symbol(a, Decl(test1.d.ts, 0, 23))
+ >P : Symbol(P, Decl(test1.d.ts, 0, 19))
+ }
+ 

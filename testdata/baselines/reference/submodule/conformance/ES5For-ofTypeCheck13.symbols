@@ -1,0 +1,17 @@
+//// [tests/cases/conformance/statements/for-ofStatements/ES5For-ofTypeCheck13.ts] ////
+
+=== ES5For-ofTypeCheck13.ts ===
+const strSet: Set<string> = new Set()
+>strSet : Symbol(strSet, Decl(ES5For-ofTypeCheck13.ts, 0, 5))
+>Set : Symbol(Set)
+
+strSet.add('Hello')
+>strSet : Symbol(strSet, Decl(ES5For-ofTypeCheck13.ts, 0, 5))
+
+strSet.add('World')
+>strSet : Symbol(strSet, Decl(ES5For-ofTypeCheck13.ts, 0, 5))
+
+for (const str of strSet) { }
+>str : Symbol(str, Decl(ES5For-ofTypeCheck13.ts, 3, 10))
+>strSet : Symbol(strSet, Decl(ES5For-ofTypeCheck13.ts, 0, 5))
+

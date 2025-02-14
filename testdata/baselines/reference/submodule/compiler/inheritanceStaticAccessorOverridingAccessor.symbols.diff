@@ -1,0 +1,32 @@
+--- old.inheritanceStaticAccessorOverridingAccessor.symbols
++++ new.inheritanceStaticAccessorOverridingAccessor.symbols
+@@ -5,12 +5,12 @@
+ >a : Symbol(a, Decl(inheritanceStaticAccessorOverridingAccessor.ts, 0, 0))
+ 
+     static get x() {
+->x : Symbol(a.x, Decl(inheritanceStaticAccessorOverridingAccessor.ts, 0, 9), Decl(inheritanceStaticAccessorOverridingAccessor.ts, 3, 5))
++>x : Symbol(x, Decl(inheritanceStaticAccessorOverridingAccessor.ts, 0, 9), Decl(inheritanceStaticAccessorOverridingAccessor.ts, 3, 5))
+ 
+         return "20";
+     }
+     static set x(aValue: string) {
+->x : Symbol(a.x, Decl(inheritanceStaticAccessorOverridingAccessor.ts, 0, 9), Decl(inheritanceStaticAccessorOverridingAccessor.ts, 3, 5))
++>x : Symbol(x, Decl(inheritanceStaticAccessorOverridingAccessor.ts, 0, 9), Decl(inheritanceStaticAccessorOverridingAccessor.ts, 3, 5))
+ >aValue : Symbol(aValue, Decl(inheritanceStaticAccessorOverridingAccessor.ts, 4, 17))
+ 
+     }
+@@ -21,12 +21,12 @@
+ >a : Symbol(a, Decl(inheritanceStaticAccessorOverridingAccessor.ts, 0, 0))
+ 
+     static get x() {
+->x : Symbol(b.x, Decl(inheritanceStaticAccessorOverridingAccessor.ts, 9, 19), Decl(inheritanceStaticAccessorOverridingAccessor.ts, 12, 5))
++>x : Symbol(x, Decl(inheritanceStaticAccessorOverridingAccessor.ts, 9, 19), Decl(inheritanceStaticAccessorOverridingAccessor.ts, 12, 5))
+ 
+         return "20";
+     }
+     static set x(aValue: string) {
+->x : Symbol(b.x, Decl(inheritanceStaticAccessorOverridingAccessor.ts, 9, 19), Decl(inheritanceStaticAccessorOverridingAccessor.ts, 12, 5))
++>x : Symbol(x, Decl(inheritanceStaticAccessorOverridingAccessor.ts, 9, 19), Decl(inheritanceStaticAccessorOverridingAccessor.ts, 12, 5))
+ >aValue : Symbol(aValue, Decl(inheritanceStaticAccessorOverridingAccessor.ts, 13, 17))
+ 
+     }

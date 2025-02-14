@@ -1,0 +1,11 @@
+--- old.expandoFunctionSymbolProperty.symbols
++++ new.expandoFunctionSymbolProperty.symbols
+@@ -12,7 +12,7 @@
+ 
+   (): void;
+   readonly [symb]: boolean;
+->[symb] : Symbol(TestSymb[symb], Decl(expandoFunctionSymbolProperty.ts, 5, 11))
++>[symb] : Symbol([symb], Decl(expandoFunctionSymbolProperty.ts, 5, 11))
+ >symb : Symbol(symb, Decl(expandoFunctionSymbolProperty.ts, 2, 5))
+ }
+ 

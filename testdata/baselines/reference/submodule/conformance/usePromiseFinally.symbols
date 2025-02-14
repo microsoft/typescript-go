@@ -1,0 +1,10 @@
+//// [tests/cases/conformance/es2018/usePromiseFinally.ts] ////
+
+=== usePromiseFinally.ts ===
+let promise1 = new Promise(function(resolve, reject) {})
+>promise1 : Symbol(promise1, Decl(usePromiseFinally.ts, 0, 3))
+>resolve : Symbol(resolve, Decl(usePromiseFinally.ts, 0, 36))
+>reject : Symbol(reject, Decl(usePromiseFinally.ts, 0, 44))
+
+                .finally(function() {});
+

@@ -1,0 +1,12 @@
+--- old.propertyAccess7.symbols
++++ new.propertyAccess7.symbols
+@@ -5,7 +5,7 @@
+ >foo : Symbol(foo, Decl(propertyAccess7.ts, 0, 3))
+ 
+ foo.toUpperCase();
+->foo.toUpperCase : Symbol(String.toUpperCase, Decl(lib.es5.d.ts, --, --))
++>foo.toUpperCase : Symbol(toUpperCase, Decl(lib.es5.d.ts, --, --))
+ >foo : Symbol(foo, Decl(propertyAccess7.ts, 0, 3))
+->toUpperCase : Symbol(String.toUpperCase, Decl(lib.es5.d.ts, --, --))
++>toUpperCase : Symbol(toUpperCase, Decl(lib.es5.d.ts, --, --))
+ 

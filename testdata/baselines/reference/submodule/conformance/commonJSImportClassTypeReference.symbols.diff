@@ -1,0 +1,40 @@
+--- old.commonJSImportClassTypeReference.symbols
++++ new.commonJSImportClassTypeReference.symbols
+@@ -3,8 +3,6 @@
+ === main.js ===
+ const { K } = require("./mod1");
+ >K : Symbol(K, Decl(main.js, 0, 7))
+->require : Symbol(require)
+->"./mod1" : Symbol("mod1", Decl(mod1.js, 0, 0))
+ 
+ /** @param {K} k */
+ function f(k) {
+@@ -12,9 +10,7 @@
+ >k : Symbol(k, Decl(main.js, 2, 11))
+ 
+     k.values()
+->k.values : Symbol(K.values, Decl(mod1.js, 0, 9))
+ >k : Symbol(k, Decl(main.js, 2, 11))
+->values : Symbol(K.values, Decl(mod1.js, 0, 9))
+ }
+ 
+ === mod1.js ===
+@@ -22,15 +18,12 @@
+ >K : Symbol(K, Decl(mod1.js, 0, 0))
+ 
+     values() {
+->values : Symbol(K.values, Decl(mod1.js, 0, 9))
++>values : Symbol(values, Decl(mod1.js, 0, 9))
+ 
+         return new K()
+->K : Symbol(K, Decl(mod1.js, 0, 0))
++>K : Symbol(K, Decl(main.js, 0, 7))
+     }
+ }
+ exports.K = K;
+->exports.K : Symbol(K, Decl(mod1.js, 4, 1))
+->exports : Symbol(K, Decl(mod1.js, 4, 1))
+->K : Symbol(K, Decl(mod1.js, 4, 1))
+->K : Symbol(K, Decl(mod1.js, 0, 0))
++>K : Symbol(K, Decl(main.js, 0, 7))
+ 

@@ -1,0 +1,9 @@
+--- old.verifyDefaultLib_dom.symbols
++++ new.verifyDefaultLib_dom.symbols
+@@ -3,5 +3,5 @@
+ === verifyDefaultLib_dom.ts ===
+ var x: HTMLElement;
+ >x : Symbol(x, Decl(verifyDefaultLib_dom.ts, 0, 3))
+->HTMLElement : Symbol(HTMLElement, Decl(lib.dom.d.ts, --, --), Decl(lib.dom.d.ts, --, --))
++>HTMLElement : Symbol(HTMLElement)
+ 

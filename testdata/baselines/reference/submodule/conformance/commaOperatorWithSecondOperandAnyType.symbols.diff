@@ -1,0 +1,24 @@
+--- old.commaOperatorWithSecondOperandAnyType.symbols
++++ new.commaOperatorWithSecondOperandAnyType.symbols
+@@ -77,8 +77,8 @@
+ 
+ "string", [null, 1];
+ "string".charAt(0), [null, 1];
+->"string".charAt : Symbol(String.charAt, Decl(lib.es5.d.ts, --, --))
+->charAt : Symbol(String.charAt, Decl(lib.es5.d.ts, --, --))
++>"string".charAt : Symbol(charAt, Decl(lib.es5.d.ts, --, --))
++>charAt : Symbol(charAt, Decl(lib.es5.d.ts, --, --))
+ 
+ true, x("any");
+ >x : Symbol(x, Decl(commaOperatorWithSecondOperandAnyType.ts, 21, 3))
+@@ -101,8 +101,8 @@
+ 
+ var resultIsAny9 = ("string".charAt(0), undefined);
+ >resultIsAny9 : Symbol(resultIsAny9, Decl(commaOperatorWithSecondOperandAnyType.ts, 33, 3))
+->"string".charAt : Symbol(String.charAt, Decl(lib.es5.d.ts, --, --))
+->charAt : Symbol(String.charAt, Decl(lib.es5.d.ts, --, --))
++>"string".charAt : Symbol(charAt, Decl(lib.es5.d.ts, --, --))
++>charAt : Symbol(charAt, Decl(lib.es5.d.ts, --, --))
+ >undefined : Symbol(undefined)
+ 
+ var resultIsAny10 = (true, x("any"));

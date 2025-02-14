@@ -1,0 +1,16 @@
+--- old.typesVersionsDeclarationEmit.ambient.symbols
++++ new.typesVersionsDeclarationEmit.ambient.symbols
+@@ -15,7 +15,7 @@
+ >vb : Symbol(vb, Decl(main.ts, 4, 12))
+ >fb : Symbol(fb, Decl(main.ts, 1, 8))
+ 
+-=== node_modules/ext/ts3.1/index.d.ts ===
++=== node_modules/ext/index.d.ts ===
+ declare module "ext" {
+ >"ext" : Symbol("ext", Decl(index.d.ts, 0, 0))
+ 
+@@ -36,4 +36,3 @@
+ >fb : Symbol(fb, Decl(index.d.ts, 5, 25))
+ >B : Symbol(B, Decl(index.d.ts, 4, 28))
+ }
+-

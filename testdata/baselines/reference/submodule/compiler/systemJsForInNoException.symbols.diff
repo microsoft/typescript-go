@@ -1,0 +1,12 @@
+--- old.systemJsForInNoException.symbols
++++ new.systemJsForInNoException.symbols
+@@ -10,9 +10,6 @@
+ >obj : Symbol(obj, Decl(systemJsForInNoException.ts, 0, 12))
+ 
+     console.log(obj[key]);
+->console.log : Symbol(Console.log, Decl(lib.dom.d.ts, --, --))
+->console : Symbol(console, Decl(lib.dom.d.ts, --, --))
+->log : Symbol(Console.log, Decl(lib.dom.d.ts, --, --))
+ >obj : Symbol(obj, Decl(systemJsForInNoException.ts, 0, 12))
+ >key : Symbol(key, Decl(systemJsForInNoException.ts, 1, 8))
+ 

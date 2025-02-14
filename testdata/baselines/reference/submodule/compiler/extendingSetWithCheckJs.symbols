@@ -1,0 +1,34 @@
+//// [tests/cases/compiler/extendingSetWithCheckJs.ts] ////
+
+=== extendingSetWithCheckJs.ts ===
+class MySet extends Set {
+>MySet : Symbol(MySet, Decl(extendingSetWithCheckJs.ts, 0, 0))
+
+    constructor() {
+        super();
+    }
+}
+
+class MyWeakSet extends WeakSet {
+>MyWeakSet : Symbol(MyWeakSet, Decl(extendingSetWithCheckJs.ts, 4, 1))
+
+    constructor() {
+        super();
+    }
+}
+
+class MyMap extends Map {
+>MyMap : Symbol(MyMap, Decl(extendingSetWithCheckJs.ts, 10, 1))
+
+    constructor() {
+        super();
+    }
+}
+
+class MyWeakMap extends WeakMap {
+>MyWeakMap : Symbol(MyWeakMap, Decl(extendingSetWithCheckJs.ts, 16, 1))
+
+    constructor() {
+        super();
+    }
+}

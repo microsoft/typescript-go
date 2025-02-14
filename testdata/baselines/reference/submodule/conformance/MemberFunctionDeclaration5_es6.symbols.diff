@@ -1,0 +1,9 @@
+--- old.MemberFunctionDeclaration5_es6.symbols
++++ new.MemberFunctionDeclaration5_es6.symbols
+@@ -6,5 +6,5 @@
+ 
+    *
+ }
+-> : Symbol(C[(Missing)], Decl(MemberFunctionDeclaration5_es6.ts, 0, 9))
++> : Symbol(, Decl(MemberFunctionDeclaration5_es6.ts, 0, 9))
+ 

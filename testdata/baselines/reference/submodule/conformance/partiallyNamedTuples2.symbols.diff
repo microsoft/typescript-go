@@ -1,0 +1,31 @@
+--- old.partiallyNamedTuples2.symbols
++++ new.partiallyNamedTuples2.symbols
+@@ -8,7 +8,7 @@
+ >Value : Symbol(Value, Decl(partiallyNamedTuples2.ts, 1, 54))
+ 
+   get<Key extends GetKeys<Keys>>(...key: Key): GetResult<Keys, Key, Value>;
+->get : Symbol(MultiKeyMap.get, Decl(partiallyNamedTuples2.ts, 1, 63))
++>get : Symbol(get, Decl(partiallyNamedTuples2.ts, 1, 63))
+ >Key : Symbol(Key, Decl(partiallyNamedTuples2.ts, 2, 6))
+ >GetKeys : Symbol(GetKeys, Decl(partiallyNamedTuples2.ts, 3, 1))
+ >Keys : Symbol(Keys, Decl(partiallyNamedTuples2.ts, 1, 22))
+@@ -66,7 +66,7 @@
+ >Rest : Symbol(Rest, Decl(partiallyNamedTuples2.ts, 16, 33))
+ 
+   ? Iterable<[...Rest, Value]>
+->Iterable : Symbol(Iterable, Decl(lib.es2015.iterable.d.ts, --, --))
++>Iterable : Symbol(Iterable)
+ >Rest : Symbol(Rest, Decl(partiallyNamedTuples2.ts, 16, 33))
+ >Value : Symbol(Value, Decl(partiallyNamedTuples2.ts, 12, 27))
+ 
+@@ -80,8 +80,8 @@
+ 
+ const matches = x.get(id1);
+ >matches : Symbol(matches, Decl(partiallyNamedTuples2.ts, 21, 5))
+->x.get : Symbol(MultiKeyMap.get, Decl(partiallyNamedTuples2.ts, 1, 63))
++>x.get : Symbol(get, Decl(partiallyNamedTuples2.ts, 1, 63))
+ >x : Symbol(x, Decl(partiallyNamedTuples2.ts, 19, 5))
+->get : Symbol(MultiKeyMap.get, Decl(partiallyNamedTuples2.ts, 1, 63))
++>get : Symbol(get, Decl(partiallyNamedTuples2.ts, 1, 63))
+ >id1 : Symbol(id1, Decl(partiallyNamedTuples2.ts, 20, 5))
+ 

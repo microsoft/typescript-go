@@ -1,0 +1,11 @@
+--- old.instanceMemberWithComputedPropertyName2.symbols
++++ new.instanceMemberWithComputedPropertyName2.symbols
+@@ -10,7 +10,7 @@
+ >C : Symbol(C, Decl(instanceMemberWithComputedPropertyName2.ts, 2, 12))
+ 
+     [x]: string;
+->[x] : Symbol(C[x], Decl(instanceMemberWithComputedPropertyName2.ts, 3, 9))
++>[x] : Symbol([x], Decl(instanceMemberWithComputedPropertyName2.ts, 3, 9))
+ >x : Symbol(x, Decl(instanceMemberWithComputedPropertyName2.ts, 2, 5))
+ }
+ 

@@ -1,0 +1,8 @@
+--- old.iterableArrayPattern28.symbols
++++ new.iterableArrayPattern28.symbols
+@@ -10,5 +10,4 @@
+ 
+ takeFirstTwoEntries(...new Map([["", 0], ["hello", true]]));
+ >takeFirstTwoEntries : Symbol(takeFirstTwoEntries, Decl(iterableArrayPattern28.ts, 0, 0))
+->Map : Symbol(Map, Decl(lib.es2015.collection.d.ts, --, --), Decl(lib.es2015.collection.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
+ 

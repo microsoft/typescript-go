@@ -1,0 +1,19 @@
+--- old.lateBoundClassMemberAssignmentJS3.symbols
++++ new.lateBoundClassMemberAssignmentJS3.symbols
+@@ -3,7 +3,6 @@
+ === lateBoundClassMemberAssignmentJS.js ===
+ const _sym = Symbol("_sym");
+ >_sym : Symbol(_sym, Decl(lateBoundClassMemberAssignmentJS.js, 0, 5))
+->Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
+ 
+ export class MyClass {
+ >MyClass : Symbol(MyClass, Decl(lateBoundClassMemberAssignmentJS.js, 0, 28))
+@@ -19,7 +18,7 @@
+     }
+ 
+     method() {
+->method : Symbol(MyClass.method, Decl(lateBoundClassMemberAssignmentJS.js, 5, 5))
++>method : Symbol(method, Decl(lateBoundClassMemberAssignmentJS.js, 5, 5))
+ 
+         var self = this
+ >self : Symbol(self, Decl(lateBoundClassMemberAssignmentJS.js, 8, 11))

@@ -1,0 +1,33 @@
+//// [tests/cases/compiler/unknownLikeUnionObjectFlagsNotPropagated.ts] ////
+
+=== unknownLikeUnionObjectFlagsNotPropagated.ts ===
+// repro from #52475#issuecomment-1411215277
+
+type MyType = {} | null | undefined;
+>MyType : Symbol(MyType, Decl(unknownLikeUnionObjectFlagsNotPropagated.ts, 0, 0))
+
+const myVar: MyType = null as MyType;
+>myVar : Symbol(myVar, Decl(unknownLikeUnionObjectFlagsNotPropagated.ts, 4, 5))
+>MyType : Symbol(MyType, Decl(unknownLikeUnionObjectFlagsNotPropagated.ts, 0, 0))
+>MyType : Symbol(MyType, Decl(unknownLikeUnionObjectFlagsNotPropagated.ts, 0, 0))
+
+myVar?.toLocaleString;
+>myVar : Symbol(myVar, Decl(unknownLikeUnionObjectFlagsNotPropagated.ts, 4, 5))
+
+myVar;
+>myVar : Symbol(myVar, Decl(unknownLikeUnionObjectFlagsNotPropagated.ts, 4, 5))
+
+async function myUnusedFunction() {
+>myUnusedFunction : Symbol(myUnusedFunction, Decl(unknownLikeUnionObjectFlagsNotPropagated.ts, 7, 6))
+
+    const fetch1 = Promise.resolve(['hello', 'world']);
+>fetch1 : Symbol(fetch1, Decl(unknownLikeUnionObjectFlagsNotPropagated.ts, 10, 9))
+
+    const [data1] = await Promise.all([fetch1]);
+>data1 : Symbol(data1, Decl(unknownLikeUnionObjectFlagsNotPropagated.ts, 11, 11))
+>fetch1 : Symbol(fetch1, Decl(unknownLikeUnionObjectFlagsNotPropagated.ts, 10, 9))
+
+    data1.length;
+>data1 : Symbol(data1, Decl(unknownLikeUnionObjectFlagsNotPropagated.ts, 11, 11))
+}
+

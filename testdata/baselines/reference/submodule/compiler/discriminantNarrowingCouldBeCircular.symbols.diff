@@ -1,0 +1,42 @@
+--- old.discriminantNarrowingCouldBeCircular.symbols
++++ new.discriminantNarrowingCouldBeCircular.symbols
+@@ -12,7 +12,7 @@
+ 
+ const o: Record<string, string> | undefined = {};
+ >o : Symbol(o, Decl(discriminantNarrowingCouldBeCircular.ts, 2, 5))
+->Record : Symbol(Record, Decl(lib.es5.d.ts, --, --))
++>Record : Symbol(Record)
+ 
+ if (o) {
+ >o : Symbol(o, Decl(discriminantNarrowingCouldBeCircular.ts, 2, 5))
+@@ -75,9 +75,7 @@
+     if (!parents || !parent || !parents.includes(parent.a))
+ >parents : Symbol(parents, Decl(discriminantNarrowingCouldBeCircular.ts, 19, 9))
+ >parent : Symbol(parent, Decl(discriminantNarrowingCouldBeCircular.ts, 18, 9))
+->parents.includes : Symbol(Array.includes, Decl(lib.es2016.array.include.d.ts, --, --))
+ >parents : Symbol(parents, Decl(discriminantNarrowingCouldBeCircular.ts, 19, 9))
+->includes : Symbol(Array.includes, Decl(lib.es2016.array.include.d.ts, --, --))
+ >parent.a : Symbol(a, Decl(discriminantNarrowingCouldBeCircular.ts, 11, 19))
+ >parent : Symbol(parent, Decl(discriminantNarrowingCouldBeCircular.ts, 18, 9))
+ >a : Symbol(a, Decl(discriminantNarrowingCouldBeCircular.ts, 11, 19))
+@@ -98,8 +96,8 @@
+ 
+   ): data is Record<PropertyKey, unknown>;
+ >data : Symbol(data, Decl(discriminantNarrowingCouldBeCircular.ts, 26, 35))
+->Record : Symbol(Record, Decl(lib.es5.d.ts, --, --))
+->PropertyKey : Symbol(PropertyKey, Decl(lib.es5.d.ts, --, --))
++>Record : Symbol(Record)
++>PropertyKey : Symbol(PropertyKey)
+   
+   declare const myObj2: unknown;
+ >myObj2 : Symbol(myObj2, Decl(discriminantNarrowingCouldBeCircular.ts, 30, 15))
+@@ -120,9 +118,6 @@
+ >deeperKeys : Symbol(deeperKeys, Decl(discriminantNarrowingCouldBeCircular.ts, 34, 13))
+ >isPlainObject2 : Symbol(isPlainObject2, Decl(discriminantNarrowingCouldBeCircular.ts, 24, 1))
+ >deeper : Symbol(deeper, Decl(discriminantNarrowingCouldBeCircular.ts, 33, 13))
+->Object.keys : Symbol(ObjectConstructor.keys, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --))
+->Object : Symbol(Object, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+->keys : Symbol(ObjectConstructor.keys, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --))
+ >deeper : Symbol(deeper, Decl(discriminantNarrowingCouldBeCircular.ts, 33, 13))
+       }
+   }

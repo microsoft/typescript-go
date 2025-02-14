@@ -1,0 +1,10 @@
+--- old.jsDeclarationsClassLikeHeuristic.symbols
++++ new.jsDeclarationsClassLikeHeuristic.symbols
+@@ -9,7 +9,5 @@
+ >A : Symbol(A, Decl(index.js, 1, 3))
+ 
+ A.prototype.b = {};
+->A.prototype : Symbol(A.b, Decl(index.js, 2, 7))
+ >A : Symbol(A, Decl(index.js, 1, 3))
+->b : Symbol(A.b, Decl(index.js, 2, 7))
+ 

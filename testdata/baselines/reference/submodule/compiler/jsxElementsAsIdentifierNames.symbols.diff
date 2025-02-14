@@ -1,0 +1,28 @@
+--- old.jsxElementsAsIdentifierNames.symbols
++++ new.jsxElementsAsIdentifierNames.symbols
+@@ -11,8 +11,8 @@
+ >IntrinsicElements : Symbol(IntrinsicElements, Decl(a.tsx, 1, 20))
+ 
+         ["package"]: any;
+->["package"] : Symbol(IntrinsicElements["package"], Decl(a.tsx, 2, 33))
+->"package" : Symbol(IntrinsicElements["package"], Decl(a.tsx, 2, 33))
++>["package"] : Symbol(package, Decl(a.tsx, 2, 33))
++>"package" : Symbol(package, Decl(a.tsx, 2, 33))
+     }
+ }
+ 
+@@ -20,14 +20,11 @@
+ >A : Symbol(A, Decl(a.tsx, 5, 1))
+ 
+     return <package />
+->package : Symbol(JSX.IntrinsicElements["package"], Decl(a.tsx, 2, 33))
+ }
+ 
+ function B() {
+ >B : Symbol(B, Decl(a.tsx, 9, 1))
+ 
+     return <package></package>
+->package : Symbol(JSX.IntrinsicElements["package"], Decl(a.tsx, 2, 33))
+->package : Symbol(JSX.IntrinsicElements["package"], Decl(a.tsx, 2, 33))
+ }
+ 

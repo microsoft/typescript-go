@@ -1,0 +1,12 @@
+//// [tests/cases/conformance/es2017/useSharedArrayBuffer6.ts] ////
+
+=== useSharedArrayBuffer6.ts ===
+var foge = new SharedArrayBuffer(1024);
+>foge : Symbol(foge, Decl(useSharedArrayBuffer6.ts, 0, 3))
+
+foge.length; // should error
+>foge : Symbol(foge, Decl(useSharedArrayBuffer6.ts, 0, 3))
+
+var length = SharedArrayBuffer.length;
+>length : Symbol(length, Decl(useSharedArrayBuffer6.ts, 3, 3))
+

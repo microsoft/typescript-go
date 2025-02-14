@@ -1,0 +1,19 @@
+--- old.conflictMarkerDiff3Trivia2.symbols
++++ new.conflictMarkerDiff3Trivia2.symbols
+@@ -5,7 +5,7 @@
+ >C : Symbol(C, Decl(conflictMarkerDiff3Trivia2.ts, 0, 0))
+ 
+   foo() {
+->foo : Symbol(C.foo, Decl(conflictMarkerDiff3Trivia2.ts, 0, 9))
++>foo : Symbol(foo, Decl(conflictMarkerDiff3Trivia2.ts, 0, 9))
+ 
+ <<<<<<< B
+      a();
+@@ -19,6 +19,6 @@
+ >>>>>>> A
+ 
+   public bar() { }
+->bar : Symbol(C.bar, Decl(conflictMarkerDiff3Trivia2.ts, 4, 3))
++>bar : Symbol(bar, Decl(conflictMarkerDiff3Trivia2.ts, 4, 3))
+ }
+ 

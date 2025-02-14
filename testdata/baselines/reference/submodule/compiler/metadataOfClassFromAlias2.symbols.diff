@@ -1,0 +1,19 @@
+--- old.metadataOfClassFromAlias2.symbols
++++ new.metadataOfClassFromAlias2.symbols
+@@ -5,7 +5,7 @@
+ >SomeClass : Symbol(SomeClass, Decl(auxiliry.ts, 0, 0))
+ 
+     field: string;
+->field : Symbol(SomeClass.field, Decl(auxiliry.ts, 0, 24))
++>field : Symbol(field, Decl(auxiliry.ts, 0, 24))
+ }
+ 
+ === test.ts ===
+@@ -24,6 +24,6 @@
+ 
+     @annotation() array: SomeClass | null | string;
+ >annotation : Symbol(annotation, Decl(test.ts, 0, 39))
+->array : Symbol(ClassA.array, Decl(test.ts, 4, 21))
++>array : Symbol(array, Decl(test.ts, 4, 21))
+ >SomeClass : Symbol(SomeClass, Decl(test.ts, 0, 8))
+ }

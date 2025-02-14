@@ -1,0 +1,19 @@
+--- old.classExtendsShadowedConstructorFunction.symbols
++++ new.classExtendsShadowedConstructorFunction.symbols
+@@ -3,7 +3,7 @@
+ === classExtendsShadowedConstructorFunction.ts ===
+ class C { foo: string; }
+ >C : Symbol(C, Decl(classExtendsShadowedConstructorFunction.ts, 0, 0))
+->foo : Symbol(C.foo, Decl(classExtendsShadowedConstructorFunction.ts, 0, 9))
++>foo : Symbol(foo, Decl(classExtendsShadowedConstructorFunction.ts, 0, 9))
+ 
+ module M {
+ >M : Symbol(M, Decl(classExtendsShadowedConstructorFunction.ts, 0, 24))
+@@ -16,6 +16,6 @@
+ >C : Symbol(C, Decl(classExtendsShadowedConstructorFunction.ts, 3, 7))
+ 
+         bar: string;
+->bar : Symbol(D.bar, Decl(classExtendsShadowedConstructorFunction.ts, 4, 23))
++>bar : Symbol(bar, Decl(classExtendsShadowedConstructorFunction.ts, 4, 23))
+     }
+ }

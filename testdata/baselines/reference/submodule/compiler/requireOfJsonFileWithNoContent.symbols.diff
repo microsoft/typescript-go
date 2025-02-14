@@ -1,0 +1,8 @@
+--- old.requireOfJsonFileWithNoContent.symbols
++++ new.requireOfJsonFileWithNoContent.symbols
+@@ -24,5 +24,3 @@
+ >b : Symbol(b, Decl(file1.ts, 4, 7))
+ }
+ 
+-=== b.json ===
+-

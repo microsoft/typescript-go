@@ -1,0 +1,10 @@
+--- old.parserComputedPropertyName24.symbols
++++ new.parserComputedPropertyName24.symbols
+@@ -5,6 +5,6 @@
+ >C : Symbol(C, Decl(parserComputedPropertyName24.ts, 0, 0))
+ 
+     set [e](v) { }
+->[e] : Symbol(C[e], Decl(parserComputedPropertyName24.ts, 0, 9))
++>[e] : Symbol([e], Decl(parserComputedPropertyName24.ts, 0, 9))
+ >v : Symbol(v, Decl(parserComputedPropertyName24.ts, 1, 12))
+ }

@@ -1,0 +1,10 @@
+--- old.templateStringMultiline3.symbols
++++ new.templateStringMultiline3.symbols
+@@ -2,6 +2,7 @@
+ 
+ === templateStringMultiline3.ts ===
+ 
++
+ // newlines are <CR>
+ `
+ \

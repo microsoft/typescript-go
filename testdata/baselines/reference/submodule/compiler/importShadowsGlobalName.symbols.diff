@@ -1,0 +1,13 @@
+--- old.importShadowsGlobalName.symbols
++++ new.importShadowsGlobalName.symbols
+@@ -11,10 +11,3 @@
+ export = Bar;
+ >Bar : Symbol(Bar, Decl(Bar.ts, 0, 30))
+ 
+-=== Foo.ts ===
+-class Foo {}
+->Foo : Symbol(Foo, Decl(Foo.ts, 0, 0))
+-
+-export = Foo;
+->Foo : Symbol(Foo, Decl(Foo.ts, 0, 0))
+-

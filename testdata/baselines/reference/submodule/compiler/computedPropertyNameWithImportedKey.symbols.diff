@@ -1,0 +1,10 @@
+--- old.computedPropertyNameWithImportedKey.symbols
++++ new.computedPropertyNameWithImportedKey.symbols
+@@ -3,7 +3,6 @@
+ === /a.ts ===
+ export const a = Symbol();
+ >a : Symbol(a, Decl(a.ts, 0, 12))
+->Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
+ 
+ === /b.ts ===
+ import { a } from "./a";

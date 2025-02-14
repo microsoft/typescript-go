@@ -1,0 +1,11 @@
+--- old.declFileOptionalInterfaceMethod.symbols
++++ new.declFileOptionalInterfaceMethod.symbols
+@@ -5,7 +5,7 @@
+ >X : Symbol(X, Decl(declFileOptionalInterfaceMethod.ts, 0, 0))
+ 
+     f? <T>();
+->f : Symbol(X.f, Decl(declFileOptionalInterfaceMethod.ts, 0, 13))
++>f : Symbol(f, Decl(declFileOptionalInterfaceMethod.ts, 0, 13))
+ >T : Symbol(T, Decl(declFileOptionalInterfaceMethod.ts, 1, 8))
+ }
+ 

@@ -1,0 +1,11 @@
+--- old.multiLinePropertyAccessAndArrowFunctionIndent1.symbols
++++ new.multiLinePropertyAccessAndArrowFunctionIndent1.symbols
+@@ -15,7 +15,7 @@
+             .then((data: ng.IHttpPromiseCallbackArg<Role>) => data.data));
+ >data : Symbol(data, Decl(multiLinePropertyAccessAndArrowFunctionIndent1.ts, 3, 19))
+ >ng : Symbol(ng)
+->IHttpPromiseCallbackArg : Symbol(ng.IHttpPromiseCallbackArg)
++>IHttpPromiseCallbackArg : Symbol(IHttpPromiseCallbackArg)
+ >Role : Symbol(Role)
+ >data : Symbol(data, Decl(multiLinePropertyAccessAndArrowFunctionIndent1.ts, 3, 19))
+ 

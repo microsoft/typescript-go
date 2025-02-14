@@ -1,0 +1,10 @@
+--- old.commentOnStaticMember1.symbols
++++ new.commentOnStaticMember1.symbols
+@@ -6,6 +6,6 @@
+ 
+     //Hello World
+     static foo(){
+->foo : Symbol(Greeter.foo, Decl(commentOnStaticMember1.ts, 0, 15))
++>foo : Symbol(foo, Decl(commentOnStaticMember1.ts, 0, 15))
+     }
+ }

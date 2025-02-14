@@ -1,0 +1,20 @@
+--- old.intersectionTypeInference.symbols
++++ new.intersectionTypeInference.symbols
+@@ -60,7 +60,7 @@
+ >T : Symbol(T, Decl(intersectionTypeInference.ts, 13, 12))
+ 
+     a: T;
+->a : Symbol(A.a, Decl(intersectionTypeInference.ts, 13, 16))
++>a : Symbol(a, Decl(intersectionTypeInference.ts, 13, 16))
+ >T : Symbol(T, Decl(intersectionTypeInference.ts, 13, 12))
+ }
+ 
+@@ -69,7 +69,7 @@
+ >U : Symbol(U, Decl(intersectionTypeInference.ts, 17, 12))
+ 
+     b: U;
+->b : Symbol(B.b, Decl(intersectionTypeInference.ts, 17, 16))
++>b : Symbol(b, Decl(intersectionTypeInference.ts, 17, 16))
+ >U : Symbol(U, Decl(intersectionTypeInference.ts, 17, 12))
+ }
+ 

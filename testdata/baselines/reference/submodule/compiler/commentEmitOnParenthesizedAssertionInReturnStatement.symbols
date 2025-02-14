@@ -1,0 +1,32 @@
+//// [tests/cases/compiler/commentEmitOnParenthesizedAssertionInReturnStatement.ts] ////
+
+=== commentEmitOnParenthesizedAssertionInReturnStatement.ts ===
+export class Foo {
+>Foo : Symbol(Foo, Decl(commentEmitOnParenthesizedAssertionInReturnStatement.ts, 0, 0))
+
+  client = {
+>client : Symbol(client, Decl(commentEmitOnParenthesizedAssertionInReturnStatement.ts, 0, 18))
+
+    getThing: () => Promise.resolve('')
+>getThing : Symbol(getThing, Decl(commentEmitOnParenthesizedAssertionInReturnStatement.ts, 1, 12))
+  }
+
+  foo(): Promise<void> {
+>foo : Symbol(foo, Decl(commentEmitOnParenthesizedAssertionInReturnStatement.ts, 3, 3))
+>Promise : Symbol(Promise)
+
+    return (
+      /* TODO: Avoid using type assertions, please refactor. */ this.client
+>this.client        .getThing : Symbol(getThing, Decl(commentEmitOnParenthesizedAssertionInReturnStatement.ts, 1, 12))
+>this.client : Symbol(client, Decl(commentEmitOnParenthesizedAssertionInReturnStatement.ts, 0, 18))
+>this : Symbol(Foo, Decl(commentEmitOnParenthesizedAssertionInReturnStatement.ts, 0, 0))
+>client : Symbol(client, Decl(commentEmitOnParenthesizedAssertionInReturnStatement.ts, 0, 18))
+
+        .getThing() as unknown as Promise<void>
+>getThing : Symbol(getThing, Decl(commentEmitOnParenthesizedAssertionInReturnStatement.ts, 1, 12))
+>Promise : Symbol(Promise)
+
+    );
+  }
+}
+

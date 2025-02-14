@@ -1,0 +1,9 @@
+--- old.interfaceWithOptionalProperty.symbols
++++ new.interfaceWithOptionalProperty.symbols
+@@ -5,5 +5,5 @@
+ >I : Symbol(I, Decl(interfaceWithOptionalProperty.ts, 0, 0))
+ 
+     x?: number;
+->x : Symbol(I.x, Decl(interfaceWithOptionalProperty.ts, 0, 13))
++>x : Symbol(x, Decl(interfaceWithOptionalProperty.ts, 0, 13))
+ }

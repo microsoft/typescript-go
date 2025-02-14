@@ -1,0 +1,8 @@
+--- old.jsxIntrinsicElementsExtendsRecord.symbols
++++ new.jsxIntrinsicElementsExtendsRecord.symbols
+@@ -10,5 +10,4 @@
+ }
+ 
+ <a />;
+->a : Symbol(JSX.IntrinsicElements, Decl(index.tsx, 0, 23))
+ 

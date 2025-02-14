@@ -1,0 +1,14 @@
+--- old.internalAliasInitializedModuleInsideTopLevelModuleWithoutExport.symbols
++++ new.internalAliasInitializedModuleInsideTopLevelModuleWithoutExport.symbols
+@@ -21,8 +21,8 @@
+ export var x: b.c = new b.c();
+ >x : Symbol(x, Decl(internalAliasInitializedModuleInsideTopLevelModuleWithoutExport.ts, 8, 10))
+ >b : Symbol(b, Decl(internalAliasInitializedModuleInsideTopLevelModuleWithoutExport.ts, 5, 1))
+->c : Symbol(b.c, Decl(internalAliasInitializedModuleInsideTopLevelModuleWithoutExport.ts, 1, 21))
+->b.c : Symbol(b.c, Decl(internalAliasInitializedModuleInsideTopLevelModuleWithoutExport.ts, 1, 21))
++>c : Symbol(c, Decl(internalAliasInitializedModuleInsideTopLevelModuleWithoutExport.ts, 1, 21))
++>b.c : Symbol(c, Decl(internalAliasInitializedModuleInsideTopLevelModuleWithoutExport.ts, 1, 21))
+ >b : Symbol(b, Decl(internalAliasInitializedModuleInsideTopLevelModuleWithoutExport.ts, 5, 1))
+->c : Symbol(b.c, Decl(internalAliasInitializedModuleInsideTopLevelModuleWithoutExport.ts, 1, 21))
++>c : Symbol(c, Decl(internalAliasInitializedModuleInsideTopLevelModuleWithoutExport.ts, 1, 21))
+ 
