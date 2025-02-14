@@ -567,6 +567,10 @@ type sourceMapEmitResult struct {
 	sourceMap            *sourcemap.RawSourceMap
 }
 
+func (p *Program) hasCheckerDependentEmit(file *ast.SourceFile) bool {
+	return p.compilerOptions.VerbatimModuleSyntax.IsFalseOrUnknown() && !ast.IsInJSFile(file.AsNode())
+}
+
 func (p *Program) Emit(options *EmitOptions) *EmitResult {
 	// !!! performance measurement
 
@@ -580,16 +584,68 @@ func (p *Program) Emit(options *EmitOptions) *EmitResult {
 	wg := core.NewWorkGroup(p.programOptions.SingleThreaded)
 
 	var emitters []*emitter
-	sourceFiles := getSourceFilesToEmit(host, options.TargetSourceFile, options.forceDtsEmit)
-	for _, sourceFile := range sourceFiles {
-		emitter := &emitter{
+
+	// Partition source files by the checker they depend on for emit, if any
+	var checkerDependentEmitters [][]*emitter
+	var checkerIndependentEmitters []*emitter
+	for i, file := range p.files {
+		if options.TargetSourceFile != nil && file != options.TargetSourceFile {
+			continue
+		}
+		if !sourceFileMayBeEmitted(file, host, options.forceDtsEmit) {
+			continue
+		}
+
+		e := &emitter{
 			host:              host,
 			emittedFilesList:  nil,
 			sourceMapDataList: nil,
 			writer:            nil,
-			sourceFile:        sourceFile,
+			sourceFile:        file,
 		}
-		emitters = append(emitters, emitter)
+
+		if p.hasCheckerDependentEmit(file) {
+			p.createCheckers()
+			if len(checkerDependentEmitters) != len(p.checkers) {
+				checkerDependentEmitters = make([][]*emitter, len(p.checkers))
+			}
+			index := i % len(p.checkers)
+			checkerDependentEmitters[index] = append(checkerDependentEmitters[index], e)
+		} else {
+			checkerIndependentEmitters = append(checkerIndependentEmitters, e)
+		}
+		emitters = append(emitters, e)
+	}
+
+	// queue checker-dependent source files
+	if len(checkerDependentEmitters) > 0 {
+		for index, checker := range p.checkers {
+			if perCheckerEmitters := checkerDependentEmitters[index]; len(perCheckerEmitters) > 0 {
+				wg.Queue(func() {
+					// take an unused writer
+					writer := writerPool.Get().(printer.EmitTextWriter)
+
+					for _, emitter := range perCheckerEmitters {
+						writer.Clear()
+
+						// attach writer and perform emit
+						emitter.writer = writer
+						emitter.checker = checker
+						emitter.paths = getOutputPathsFor(emitter.sourceFile, emitter.host, options.forceDtsEmit)
+						emitter.emit()
+						emitter.writer = nil
+						emitter.checker = nil
+					}
+
+					// put the writer back in the pool
+					writerPool.Put(writer)
+				})
+			}
+		}
+	}
+
+	// queue checker-independent source files
+	for _, emitter := range checkerIndependentEmitters {
 		wg.Queue(func() {
 			// take an unused writer
 			writer := writerPool.Get().(printer.EmitTextWriter)
@@ -597,9 +653,11 @@ func (p *Program) Emit(options *EmitOptions) *EmitResult {
 
 			// attach writer and perform emit
 			emitter.writer = writer
-			emitter.paths = getOutputPathsFor(sourceFile, host, options.forceDtsEmit)
+			emitter.checker = nil
+			emitter.paths = getOutputPathsFor(emitter.sourceFile, emitter.host, options.forceDtsEmit)
 			emitter.emit()
 			emitter.writer = nil
+			emitter.checker = nil
 
 			// put the writer back in the pool
 			writerPool.Put(writer)

@@ -2,7 +2,6 @@ package compiler
 
 import (
 	"github.com/microsoft/typescript-go/internal/ast"
-	"github.com/microsoft/typescript-go/internal/checker"
 	"github.com/microsoft/typescript-go/internal/core"
 )
 
@@ -23,7 +22,6 @@ type EmitHost interface {
 	CommonSourceDirectory() string
 	IsEmitBlocked(file string) bool
 	WriteFile(fileName string, text string, writeByteOrderMark bool, relatedSourceFiles []*ast.SourceFile, data *WriteFileData) error
-	GetEmitResolver(file *ast.SourceFile) checker.EmitResolver
 }
 
 var _ EmitHost = (*emitHost)(nil)
@@ -48,9 +46,4 @@ func (host *emitHost) IsEmitBlocked(file string) bool {
 
 func (host *emitHost) WriteFile(fileName string, text string, writeByteOrderMark bool, _ []*ast.SourceFile, _ *WriteFileData) error {
 	return host.program.host.FS().WriteFile(fileName, text, writeByteOrderMark)
-}
-
-func (host *emitHost) GetEmitResolver(file *ast.SourceFile) checker.EmitResolver {
-	checker := host.program.getTypeCheckerForFile(file)
-	return checker.NewEmitResolver(file)
 }

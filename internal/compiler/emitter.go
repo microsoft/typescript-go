@@ -29,6 +29,7 @@ type emitter struct {
 	writer             printer.EmitTextWriter
 	paths              *outputPaths
 	sourceFile         *ast.SourceFile
+	checker            *checker.Checker
 }
 
 func (e *emitter) emit() {
@@ -36,13 +37,6 @@ func (e *emitter) emit() {
 	e.emitJsFile(e.sourceFile, e.paths.jsFilePath, e.paths.sourceMapFilePath)
 	e.emitDeclarationFile(e.sourceFile, e.paths.declarationFilePath, e.paths.declarationMapPath)
 	e.emitBuildInfo(e.paths.buildInfoPath)
-}
-
-func (e *emitter) markLinkedReferences(file *ast.SourceFile, emitResolver checker.EmitResolver) {
-	if ast.IsInJSFile(file.AsNode()) {
-		return // JS files don't use reference calculations as they don't do import ellision, no need to calculate it
-	}
-	emitResolver.MarkLinkedReferencesRecursively(file)
 }
 
 func (e *emitter) emitJsFile(sourceFile *ast.SourceFile, jsFilePath string, sourceMapFilePath string) {
@@ -55,16 +49,22 @@ func (e *emitter) emitJsFile(sourceFile *ast.SourceFile, jsFilePath string, sour
 		return
 	}
 
+	// JS files don't use reference calculations as they don't do import ellision, no need to calculate it
+	importElisionEnabled := !options.VerbatimModuleSyntax.IsTrue() && !ast.IsInJSFile(sourceFile.AsNode())
+
 	var emitResolver checker.EmitResolver
-	if !options.VerbatimModuleSyntax.IsTrue() {
-		emitResolver = e.host.GetEmitResolver(sourceFile) // !!! conditionally skip diagnostics
-		e.markLinkedReferences(sourceFile, emitResolver)
+	if importElisionEnabled {
+		if e.checker == nil {
+			panic("Expected Program.hasCheckerDependentEmit() to return true for this file.")
+		}
+		emitResolver = e.checker.NewEmitResolver(sourceFile) // !!! conditionally skip diagnostics
+		emitResolver.MarkLinkedReferencesRecursively(sourceFile)
 	}
 
 	// !!! transform the source files?
 	emitContext := printer.NewEmitContext()
 	sourceFile = transformers.NewTypeEraserTransformer(emitContext, options).TransformSourceFile(sourceFile)
-	if !options.VerbatimModuleSyntax.IsTrue() {
+	if importElisionEnabled {
 		sourceFile = transformers.NewImportElisionTransformer(emitContext, options, emitResolver).TransformSourceFile(sourceFile)
 	}
 	sourceFile = transformers.NewRuntimeSyntaxTransformer(emitContext, options).TransformSourceFile(sourceFile)
