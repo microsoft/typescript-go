@@ -349,7 +349,6 @@ const (
 	ReferenceHintProperty
 	ReferenceHintExportAssignment
 	ReferenceHintJsx
-	ReferenceHintAsyncFunction
 	ReferenceHintExportImportEquals
 	ReferenceHintExportSpecifier
 	ReferenceHintDecorator
@@ -24432,8 +24431,6 @@ func (c *Checker) markLinkedReferences(location *ast.Node, hint ReferenceHint, p
 		c.markExportAssignmentAliasReferenced(location)
 	case ReferenceHintJsx:
 		c.markJsxAliasReferenced(location)
-	case ReferenceHintAsyncFunction:
-		c.markAsyncFunctionAliasReferenced(location)
 	case ReferenceHintExportImportEquals:
 		c.markImportEqualsAliasReferenced(location)
 	case ReferenceHintExportSpecifier:
@@ -24493,10 +24490,6 @@ func (c *Checker) markLinkedReferences(location *ast.Node, hint ReferenceHint, p
 		if ast.IsExportSpecifier(location) {
 			c.markExportSpecifierAliasReferenced(location)
 			return
-		}
-		if ast.IsFunctionLikeDeclaration(location) || ast.IsMethodSignatureDeclaration(location) {
-			c.markAsyncFunctionAliasReferenced(location)
-			// Might be decorated, fall through to decorator final case
 		}
 		if !c.compilerOptions.EmitDecoratorMetadata.IsTrue() {
 			return
@@ -24706,16 +24699,6 @@ func (c *Checker) markExportAssignmentAliasReferenced(location *ast.Node /*Expor
 
 func (c *Checker) markJsxAliasReferenced(node *ast.Node /*JsxOpeningLikeElement | JsxOpeningFragment*/) {
 	// !!!
-}
-
-func (c *Checker) markAsyncFunctionAliasReferenced(location *ast.Node /*FunctionLikeDeclaration | MethodSignature*/) {
-	if c.languageVersion < core.ScriptTargetES2015 {
-		if getFunctionFlags(location)&FunctionFlagsAsync != 0 {
-			// !!! returnTypeNode := getEffectiveReturnTypeNode(location);
-			returnTypeNode := location.Type()
-			c.markTypeNodeAsReferenced(returnTypeNode)
-		}
-	}
 }
 
 func (c *Checker) markImportEqualsAliasReferenced(location *ast.Node /*ImportEqualsDeclaration*/) {
