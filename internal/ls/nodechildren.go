@@ -2,15 +2,28 @@ package ls
 
 import (
 	"fmt"
+	"sync"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/scanner"
 )
 
-var factory = &ast.NodeFactory{}
+var factoryPool = sync.Pool{
+	New: func() any {
+		return &ast.NodeFactory{}
+	},
+}
 
-func getNodeChildren(node *ast.Node, sourceFile *ast.SourceFile) []*ast.Node {
+func getNodeFactory() *ast.NodeFactory {
+	return factoryPool.Get().(*ast.NodeFactory)
+}
+
+func putNodeFactory(factory *ast.NodeFactory) {
+	factoryPool.Put(factory)
+}
+
+func getNodeChildren(node *ast.Node, sourceFile *ast.SourceFile, factory *ast.NodeFactory) []*ast.Node {
 	// !!! implement weak map cache
 	if ast.IsTokenKind(node.Kind) {
 		return nil
@@ -18,10 +31,10 @@ func getNodeChildren(node *ast.Node, sourceFile *ast.SourceFile) []*ast.Node {
 	if node.Kind == ast.KindSyntaxList {
 		return node.AsSyntaxList().Children
 	}
-	return createChildren(node, sourceFile)
+	return createChildren(node, sourceFile, factory)
 }
 
-func createChildren(node *ast.Node, sourceFile *ast.SourceFile) []*ast.Node {
+func createChildren(node *ast.Node, sourceFile *ast.SourceFile, factory *ast.NodeFactory) []*ast.Node {
 	var children []*ast.Node
 	if ast.IsJSDocCommentContainingNode(node) {
 		// Don't add trivia for "tokens" since this is in a comment
@@ -36,7 +49,7 @@ func createChildren(node *ast.Node, sourceFile *ast.SourceFile) []*ast.Node {
 	pos := node.Pos()
 
 	processNode := func(child *ast.Node) {
-		children = addSyntheticNodes(children, pos, child.Pos(), node, scanner)
+		children = addSyntheticNodes(children, pos, child.Pos(), node, scanner, factory)
 		children = append(children, child)
 		pos = child.End()
 	}
@@ -54,11 +67,27 @@ func createChildren(node *ast.Node, sourceFile *ast.SourceFile) []*ast.Node {
 			},
 			VisitNodes: func(nodeList *ast.NodeList, v *ast.NodeVisitor) *ast.NodeList {
 				if nodeList != nil {
-					children = addSyntheticNodes(children, pos, nodeList.Pos(), node, scanner)
-					children = append(children, createSyntaxList(nodeList, node, scanner))
+					children = addSyntheticNodes(children, pos, nodeList.Pos(), node, scanner, factory)
+					children = append(children, createSyntaxList(nodeList, node, scanner, factory))
 					pos = nodeList.End()
 				}
 				return nodeList
+			},
+			VisitModifiers: func(modifiers *ast.ModifierList, v *ast.NodeVisitor) *ast.ModifierList {
+				if modifiers != nil {
+					children = addSyntheticNodes(children, pos, modifiers.Pos(), node, scanner, factory)
+					children = append(children, createSyntaxList(&modifiers.NodeList, node, scanner, factory))
+					pos = modifiers.End()
+				}
+				return modifiers
+			},
+			VisitToken: func(token *ast.TokenNode, v *ast.NodeVisitor) *ast.Node {
+				if token != nil {
+					children = addSyntheticNodes(children, pos, token.Pos(), node, scanner, factory)
+					children = append(children, token)
+					pos = token.End()
+				}
+				return token
 			},
 		},
 	}
@@ -72,26 +101,26 @@ func createChildren(node *ast.Node, sourceFile *ast.SourceFile) []*ast.Node {
 	// Restoring the scanner position ensures that.
 	pos = node.Pos()
 	node.VisitEachChild(visitor)
-	children = addSyntheticNodes(children, pos, node.End(), node, scanner)
+	children = addSyntheticNodes(children, pos, node.End(), node, scanner, factory)
 	return children
 }
 
-func createSyntaxList(nodeList *ast.NodeList, parent *ast.Node, scanner *scanner.Scanner) *ast.Node {
+func createSyntaxList(nodeList *ast.NodeList, parent *ast.Node, scanner *scanner.Scanner, factory *ast.NodeFactory) *ast.Node {
 	children := make([]*ast.Node, 0, len(nodeList.Nodes))
 	pos := nodeList.Pos()
 	for _, child := range nodeList.Nodes {
-		children = addSyntheticNodes(children, pos, child.Pos(), parent, scanner)
+		children = addSyntheticNodes(children, pos, child.Pos(), parent, scanner, factory)
 		children = append(children, child)
 		pos = child.End()
 	}
-	children = addSyntheticNodes(children, pos, nodeList.End(), parent, scanner)
+	children = addSyntheticNodes(children, pos, nodeList.End(), parent, scanner, factory)
 	list := factory.NewSyntaxList(children)
 	list.Loc = nodeList.Loc
 	list.Parent = parent
 	return list
 }
 
-func addSyntheticNodes(children []*ast.Node, pos, end int, parent *ast.Node, scanner *scanner.Scanner) []*ast.Node {
+func addSyntheticNodes(children []*ast.Node, pos, end int, parent *ast.Node, scanner *scanner.Scanner, factory *ast.NodeFactory) []*ast.Node {
 	scanner.ResetPos(pos)
 	for pos < end {
 		scanner.Scan()
