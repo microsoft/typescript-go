@@ -17,6 +17,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/repo"
+	"github.com/microsoft/typescript-go/internal/testutil/race"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
@@ -192,70 +193,70 @@ var harnessCommandLineOptions = []*tsoptions.CommandLineOption{
 	},
 	{
 		Name: "useCaseSensitiveFileNames",
-		Kind: "boolean",
+		Kind: tsoptions.CommandLineOptionTypeBoolean,
 	},
 	{
 		Name: "baselineFile",
-		Kind: "string",
+		Kind: tsoptions.CommandLineOptionTypeString,
 	},
 	{
 		Name: "includeBuiltFile",
-		Kind: "string",
+		Kind: tsoptions.CommandLineOptionTypeString,
 	},
 	{
 		Name: "fileName",
-		Kind: "string",
+		Kind: tsoptions.CommandLineOptionTypeString,
 	},
 	{
 		Name: "libFiles",
-		Kind: "string",
+		Kind: tsoptions.CommandLineOptionTypeList,
 	},
 	{
 		Name: "noErrorTruncation",
-		Kind: "boolean",
+		Kind: tsoptions.CommandLineOptionTypeBoolean,
 	},
 	{
 		Name: "suppressOutputPathCheck",
-		Kind: "boolean",
+		Kind: tsoptions.CommandLineOptionTypeBoolean,
 	},
 	{
 		Name: "noImplicitReferences",
-		Kind: "boolean",
+		Kind: tsoptions.CommandLineOptionTypeBoolean,
 	},
 	{
 		Name: "currentDirectory",
-		Kind: "string",
+		Kind: tsoptions.CommandLineOptionTypeString,
 	},
 	{
 		Name: "symlink",
-		Kind: "string",
+		Kind: tsoptions.CommandLineOptionTypeString,
 	},
 	{
 		Name: "link",
-		Kind: "string",
+		Kind: tsoptions.CommandLineOptionTypeString,
 	},
 	{
-		Name: "noKindsAndSymbols",
-		Kind: "boolean",
+		Name: "noTypesAndSymbols",
+		Kind: tsoptions.CommandLineOptionTypeBoolean,
 	},
 	// Emitted js baseline will print full paths for every output file
 	{
 		Name: "fullEmitPaths",
-		Kind: "boolean",
+		Kind: tsoptions.CommandLineOptionTypeBoolean,
 	},
 	{
 		Name: "noCheck",
-		Kind: "boolean",
+		Kind: tsoptions.CommandLineOptionTypeBoolean,
 	},
 	// used to enable error collection in `transpile` baselines
 	{
 		Name: "reportDiagnostics",
-		Kind: "boolean",
+		Kind: tsoptions.CommandLineOptionTypeBoolean,
 	},
 	// Adds suggestion diagnostics to error baselines
 	{
 		Name: "captureSuggestions",
-		Kind: "boolean",
+		Kind: tsoptions.CommandLineOptionTypeBoolean,
 	},
 }
 
@@ -441,9 +442,10 @@ func newCompilationResult(
 // !!! Temporary while we don't have the real `createProgram`
 func createProgram(host compiler.CompilerHost, options *core.CompilerOptions, rootFiles []string) *compiler.Program {
 	programOptions := compiler.ProgramOptions{
-		RootFiles: rootFiles,
-		Host:      host,
-		Options:   options,
+		RootFiles:      rootFiles,
+		Host:           host,
+		Options:        options,
+		SingleThreaded: !race.Enabled, // Tests are single-threaded by default for ease of debugging, unless we're testing with race mode
 	}
 	program := compiler.NewProgram(programOptions)
 	return program

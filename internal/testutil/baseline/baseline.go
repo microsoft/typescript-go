@@ -4,19 +4,56 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/repo"
+	"github.com/pkg/diff"
 )
 
 type Options struct {
 	Subfolder string
+	IsDiff    bool
 }
 
 const NoContent = "<no content>"
 
 func Run(t *testing.T, fileName string, actual string, opts Options) {
-	writeComparison(t, actual, fileName, false /*useSubmodule*/, opts)
+	if opts.IsDiff {
+		diff := getBaselineDiff(t, actual, fileName)
+		diffFileName := fileName + ".diff"
+		opts.Subfolder = "diff/" + opts.Subfolder
+		// Write original baseline in addition to diff baseline
+		if actual != NoContent {
+			localFileName := localPath(fileName, opts.Subfolder)
+			if err := os.MkdirAll(filepath.Dir(localFileName), 0o755); err != nil {
+				t.Fatal(fmt.Errorf("failed to create directories for the local baseline file %s: %w", localFileName, err))
+			}
+			if err := os.WriteFile(localFileName, []byte(actual), 0o644); err != nil {
+				t.Fatal(fmt.Errorf("failed to write the local baseline file %s: %w", localFileName, err))
+			}
+		}
+		writeComparison(t, diff, diffFileName, false /*useSubmodule*/, opts)
+	} else {
+		writeComparison(t, actual, fileName, false /*useSubmodule*/, opts)
+	}
+}
+
+func getBaselineDiff(t *testing.T, actual string, fileName string) string {
+	expected := NoContent
+	refFileName := submoduleReferencePath(fileName, "" /*subfolder*/)
+	if content, err := os.ReadFile(refFileName); err == nil {
+		expected = string(content)
+	}
+	if actual == expected {
+		return NoContent
+	}
+	var b strings.Builder
+	err := diff.Text("old."+fileName, "new."+fileName, expected, actual, &b)
+	if err != nil {
+		t.Fatalf("failed to diff the actual and expected content: %v", err)
+	}
+	return b.String()
 }
 
 func RunAgainstSubmodule(t *testing.T, fileName string, actual string, opts Options) {

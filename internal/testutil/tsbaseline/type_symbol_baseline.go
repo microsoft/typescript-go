@@ -13,6 +13,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/scanner"
+	"github.com/microsoft/typescript-go/internal/testutil"
 	"github.com/microsoft/typescript-go/internal/testutil/baseline"
 	"github.com/microsoft/typescript-go/internal/testutil/harnessutil"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -53,9 +54,12 @@ func DoTypeAndSymbolBaseline(
 	fullWalker := newTypeWriterWalker(program, hasErrorBaseline)
 
 	t.Run("type", func(t *testing.T) {
+		defer testutil.RecoverAndFail(t, "Panic on creating type baseline for test "+header)
 		checkBaselines(t, baselinePath, allFiles, fullWalker, header, opts, false /*isSymbolBaseline*/)
 	})
+
 	t.Run("symbol", func(t *testing.T) {
+		defer testutil.RecoverAndFail(t, "Panic on creating symbol baseline for test "+header)
 		checkBaselines(t, baselinePath, allFiles, fullWalker, header, opts, true /*isSymbolBaseline*/)
 	})
 }
@@ -70,9 +74,9 @@ func checkBaselines(
 	isSymbolBaseline bool,
 ) {
 	fullExtension := core.IfElse(isSymbolBaseline, ".symbols", ".types")
-	outputFileName := tspath.RemoveFileExtension(baselinePath)
+	outputFileName := tsExtension.ReplaceAllString(baselinePath, fullExtension)
 	fullBaseline := generateBaseline(allFiles, fullWalker, header, isSymbolBaseline)
-	baseline.Run(t, outputFileName+fullExtension, fullBaseline, opts)
+	baseline.Run(t, outputFileName, fullBaseline, opts)
 }
 
 func generateBaseline(
@@ -390,5 +394,5 @@ func isIntrinsicJsxTag(node *ast.Node) bool {
 	if node.Parent.TagName() != node {
 		return false
 	}
-	return checker.IsIntrinsicJsxName(node.Text())
+	return checker.IsIntrinsicJsxName(scanner.GetTextOfNode(node))
 }

@@ -19,8 +19,26 @@ func TestCompilerBaselines(t *testing.T) {
 	for _, testType := range testTypes {
 		t.Run(testType.String(), func(t *testing.T) {
 			t.Parallel()
-			cleanUpLocalCompilerTests(testType)
-			runner := NewCompilerBaselineRunner(testType)
+			runner := NewCompilerBaselineRunner(testType, false /*isDiff*/)
+			runner.RunTests(t)
+		})
+	}
+}
+
+func TestCompilerDiffBaselines(t *testing.T) {
+	t.Parallel()
+
+	if !bundled.Embedded {
+		// Without embedding, we'd need to read all of the lib files out from disk into the MapFS.
+		// Just skip this for now.
+		t.Skip("bundled files are not embedded")
+	}
+
+	testTypes := []CompilerTestType{TestTypeRegression, TestTypeConformance}
+	for _, testType := range testTypes {
+		t.Run(testType.String(), func(t *testing.T) {
+			t.Parallel()
+			runner := NewCompilerBaselineRunner(testType, true /*isDiff*/)
 			runner.RunTests(t)
 		})
 	}

@@ -188,7 +188,7 @@ func (p *Program) BindSourceFiles() {
 
 func (p *Program) CheckSourceFiles() {
 	p.createCheckers()
-	wg := core.NewWorkGroup(false)
+	wg := core.NewWorkGroup(p.programOptions.SingleThreaded)
 	for index, checker := range p.checkers {
 		wg.Queue(func() {
 			for i := index; i < len(p.files); i += len(p.checkers) {
