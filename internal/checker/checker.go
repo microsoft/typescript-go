@@ -24618,7 +24618,7 @@ func (c *Checker) markIdentifierAliasReferenced(location *ast.IdentifierNode) {
 	}
 }
 
-func (c *Checker) markPropertyAliasReferenced(location *ast.Node /*PropertyAccessExpression | QualifiedName*/, propSymbol *ast.Symbol /*|nil*/, parentType *Type /*|nil*/) {
+func (c *Checker) markPropertyAliasReferenced(location *ast.Node /*PropertyAccessExpression | QualifiedName*/, propSymbol *ast.Symbol, parentType *Type) {
 	var left *ast.Node
 	if ast.IsPropertyAccessExpression(location) {
 		left = location.AsPropertyAccessExpression().Expression
@@ -24723,7 +24723,7 @@ func getDeclarationContainer(node *ast.Node) *ast.Node {
 	}).Parent
 }
 
-func (c *Checker) markExportSpecifierAliasReferenced(location *ast.Node /*ExportSpecifier*/) {
+func (c *Checker) markExportSpecifierAliasReferenced(location *ast.ExportSpecifierNode) {
 	if location.Parent.Parent.AsExportDeclaration().ModuleSpecifier == nil && !location.AsExportSpecifier().IsTypeOnly && !location.Parent.Parent.AsExportDeclaration().IsTypeOnly {
 		exportedName := location.PropertyName()
 		if exportedName == nil {
@@ -24745,7 +24745,6 @@ func (c *Checker) markExportSpecifierAliasReferenced(location *ast.Node /*Export
 				c.markIdentifierAliasReferenced(exportedName) // marks target of export as used
 			}
 		}
-		// return;
 	}
 }
 
@@ -24864,13 +24863,13 @@ func getEntityNameFromTypeNode(node *ast.TypeNode) *ast.Node {
 
 // If a TypeNode can be resolved to a value symbol imported from an external module, it is
 // marked as referenced to prevent import elision.
-func (c *Checker) markTypeNodeAsReferenced(node *ast.TypeNode /*| nil*/) {
+func (c *Checker) markTypeNodeAsReferenced(node *ast.TypeNode) {
 	if node != nil {
-		c.markEntityNameOrEntityExpressionAsReference(getEntityNameFromTypeNode(node) /*forDecoratorMetadata*/, false)
+		c.markEntityNameOrEntityExpressionAsReference(getEntityNameFromTypeNode(node), false /*forDecoratorMetadata*/)
 	}
 }
 
-func (c *Checker) markDecoratorMedataDataTypeNodeAsReferenced(node *ast.TypeNode /*| nil*/) {
+func (c *Checker) markDecoratorMedataDataTypeNodeAsReferenced(node *ast.TypeNode) {
 	// !!!
 }
 
