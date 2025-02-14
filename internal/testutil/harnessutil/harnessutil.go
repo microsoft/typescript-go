@@ -579,7 +579,9 @@ func splitOptionValues(t *testing.T, value string, option string) []string {
 	// add (and deduplicate) all included entries
 	for _, include := range includes {
 		value := getValueOfOptionString(t, option, include)
-		variations[value] = include
+		if _, ok := variations[value]; !ok {
+			variations[value] = include
+		}
 	}
 
 	allValues := getAllValuesForOption(option)
@@ -587,7 +589,9 @@ func splitOptionValues(t *testing.T, value string, option string) []string {
 		// add all entries
 		for _, include := range allValues {
 			value := getValueOfOptionString(t, option, include)
-			variations[value] = include
+			if _, ok := variations[value]; !ok {
+				variations[value] = include
+			}
 		}
 	}
 
