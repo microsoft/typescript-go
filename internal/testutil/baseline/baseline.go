@@ -26,8 +26,13 @@ func Run(t *testing.T, fileName string, actual string, opts Options) {
 		diff := getBaselineDiff(t, actual, fileName)
 		diffFileName := fileName + ".diff"
 		opts.Subfolder = filepath.Join(submoduleFolder, opts.Subfolder)
-		// Write original baseline in addition to diff baseline
-		if actual != NoContent {
+		referenceFileName := referencePath(fileName, opts.Subfolder)
+		expected := NoContent
+		if content, err := os.ReadFile(referenceFileName); err == nil {
+			expected = string(content)
+		}
+		// Write original baseline in addition to diff baseline, if needed, but don't fail if they don't match
+		if actual != expected {
 			localFileName := localPath(fileName, opts.Subfolder)
 			if err := os.MkdirAll(filepath.Dir(localFileName), 0o755); err != nil {
 				t.Fatal(fmt.Errorf("failed to create directories for the local baseline file %s: %w", localFileName, err))
