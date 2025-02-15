@@ -495,7 +495,7 @@ func getFileBasedTestConfigurationDescription(config TestConfiguration) string {
 		if i > 0 {
 			output.WriteString(",")
 		}
-		fmt.Fprintf(&output, "%s=%s", key, config[key])
+		fmt.Fprintf(&output, "%s=%s", key, strings.ToLower(config[key]))
 	}
 	return output.String()
 }
