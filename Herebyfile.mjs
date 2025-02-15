@@ -213,7 +213,7 @@ const goTest = memoize(() => {
 });
 
 async function runTests() {
-    await $`${gotestsum()} ./...`;
+    await $`${gotestsum()} ./... ${isCI ? ["--timeout=45m"] : []}`;
 }
 
 export const test = task({
