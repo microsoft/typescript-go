@@ -1,5 +1,5 @@
---- old.classStaticBlock24(module=UMD).symbols
-+++ new.classStaticBlock24(module=UMD).symbols
+--- old.classStaticBlock24(module=umd).symbols
++++ new.classStaticBlock24(module=umd).symbols
 @@ -5,13 +5,13 @@
  >C : Symbol(C, Decl(classStaticBlock24.ts, 0, 0))
  

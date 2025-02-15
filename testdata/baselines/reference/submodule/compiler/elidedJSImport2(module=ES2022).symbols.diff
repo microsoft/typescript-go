@@ -1,5 +1,5 @@
---- old.elidedJSImport2(module=ES2022).symbols
-+++ new.elidedJSImport2(module=ES2022).symbols
+--- old.elidedJSImport2(module=es2022).symbols
++++ new.elidedJSImport2(module=es2022).symbols
 @@ -25,14 +25,14 @@
  >Foo : Symbol(Foo, Decl(other.d.ts, 0, 0))
  

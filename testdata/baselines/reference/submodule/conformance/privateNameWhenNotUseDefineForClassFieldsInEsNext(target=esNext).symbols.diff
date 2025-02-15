@@ -1,5 +1,5 @@
---- old.privateNameWhenNotUseDefineForClassFieldsInEsNext(target=esNext).symbols
-+++ new.privateNameWhenNotUseDefineForClassFieldsInEsNext(target=esNext).symbols
+--- old.privateNameWhenNotUseDefineForClassFieldsInEsNext(target=esnext).symbols
++++ new.privateNameWhenNotUseDefineForClassFieldsInEsNext(target=esnext).symbols
 @@ -5,58 +5,58 @@
  >TestWithStatics : Symbol(TestWithStatics, Decl(privateNameWhenNotUseDefineForClassFieldsInEsNext.ts, 0, 0))
  
