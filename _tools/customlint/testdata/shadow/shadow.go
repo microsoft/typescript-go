@@ -254,3 +254,27 @@ func F16b() {
 
 	println(foo, bar)
 }
+
+type someError struct{}
+
+func (*someError) Error() string {
+	return "some error"
+}
+
+var errSome = &someError{}
+
+func F17(read func() (v any, err error), sendError func(error) error) error {
+	for {
+		v, err := read()
+		if err != nil {
+			if err == errSome {
+				if err := sendError(err); err != nil {
+					return err
+				}
+				continue
+			}
+			return err
+		}
+		println(v)
+	}
+}
