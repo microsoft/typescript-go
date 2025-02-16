@@ -10,7 +10,6 @@ import (
 	"golang.org/x/tools/go/analysis"
 	"golang.org/x/tools/go/analysis/passes/ctrlflow"
 	"golang.org/x/tools/go/analysis/passes/inspect"
-	"golang.org/x/tools/go/analysis/passes/shadow"
 	"golang.org/x/tools/go/ast/inspector"
 	"golang.org/x/tools/go/cfg"
 )
@@ -28,12 +27,6 @@ var shadowAnalyzer = &analysis.Analyzer{
 		}).run()
 	},
 }
-
-var oldShadowAnalyzer = func() *analysis.Analyzer {
-	cpy := *shadow.Analyzer
-	cpy.Name = "oldshadow"
-	return &cpy
-}()
 
 type shadowPass struct {
 	pass    *analysis.Pass
@@ -210,10 +203,9 @@ func (s *shadowPass) handleAssignment(n ast.Node) {
 			continue
 		}
 
-		// c := s.currentCFG()
-		// fmt.Println(fnScope, c.Format(s.pass.Fset))
-
-		s.report(ident, shadowed)
+		if s.positionIsReachable(ident, nextShadowUse.Pos()) {
+			s.report(ident, shadowed)
+		}
 	}
 }
 
@@ -236,6 +228,49 @@ func (s *shadowPass) currentCFG() *cfg.CFG {
 		return s.cfgs.FuncLit(last)
 	}
 	return s.cfgs.FuncDecl(s.funcDecl)
+}
+
+func (s *shadowPass) positionIsReachable(ident *ast.Ident, pos token.Pos) bool {
+	c := s.currentCFG()
+
+	var start *cfg.Block
+	for _, b := range c.Blocks {
+		if posInBlock(b, ident.Pos()) {
+			start = b
+			break
+		}
+	}
+	if start == nil {
+		return false // TODO: error
+	}
+
+	seen := make(map[*cfg.Block]struct{})
+	var posReachable func(b *cfg.Block) (found bool)
+	posReachable = func(b *cfg.Block) (found bool) {
+		if _, ok := seen[b]; ok {
+			return false
+		}
+		seen[b] = struct{}{}
+
+		if posInBlock(b, pos) {
+			return true
+		}
+
+		return slices.ContainsFunc(b.Succs, posReachable)
+	}
+
+	return posReachable(start)
+}
+
+func posInBlock(b *cfg.Block, pos token.Pos) bool {
+	if len(b.Nodes) == 0 {
+		return false
+	}
+
+	first := b.Nodes[0]
+	last := b.Nodes[len(b.Nodes)-1]
+
+	return first.Pos() <= pos && pos <= last.End()
 }
 
 func comparePos[T ast.Node](a, b T) int {

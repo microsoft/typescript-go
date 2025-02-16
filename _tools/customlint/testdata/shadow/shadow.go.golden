@@ -28,8 +28,6 @@
 			value := 2 // OK
 			~~~~~
 !!! oldshadow: declaration of "value" shadows declaration at line 22
-			~~~~~
-!!! shadow: declaration of "value" shadows declaration at line 22
 			println(value)
 			return value
 		}
@@ -63,8 +61,6 @@
 			value := 2 // OK
 			~~~~~
 !!! oldshadow: declaration of "value" shadows declaration at line 49
-			~~~~~
-!!! shadow: declaration of "value" shadows declaration at line 49
 			println(value)
 			return value
 		}
@@ -228,8 +224,6 @@
 		value := 1
 		if value == 1 {
 			value := value // OK
-			~~~~~
-!!! shadow: declaration of "value" shadows declaration at line 176
 			println(value)
 			return value
 		}
@@ -239,8 +233,6 @@
 	func F13a(value int) int {
 		if value == 1 {
 			value := value // OK
-			~~~~~
-!!! shadow: declaration of "value" shadows declaration at line 185
 			println(value)
 			return value
 		}
@@ -253,8 +245,6 @@
 			value, other := value, 1234 // OK
 			~~~~~
 !!! oldshadow: declaration of "value" shadows declaration at line 195
-			~~~~~
-!!! shadow: declaration of "value" shadows declaration at line 195
 			println(value, other)
 			return value
 		}
