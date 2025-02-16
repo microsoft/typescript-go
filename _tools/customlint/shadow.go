@@ -164,12 +164,11 @@ func (s *shadowPass) handleAssignment(n ast.Node) {
 		if !types.Identical(obj.Type(), shadowed.Type()) {
 			continue
 		}
-		// Always ban shadowing something outside a function (package-lock declarations).
-		// TODO(jakebailey): fix this; catches if statements etc
-		// if _, ok := s.scopes[shadowedScope].(*ast.FuncType); !ok {
-		// 	s.report(ident, shadowed)
-		// 	continue
-		// }
+		// Always error if the shadowed identifier is not in the same function.
+		if enc := s.enclosingFunctionScope(shadowedScope); enc == nil || enc != s.enclosingFunctionScope(obj.Parent()) {
+			s.report(ident, shadowed)
+			continue
+		}
 
 		uses := s.objectUses[obj]
 		var lastUse *ast.Ident
@@ -177,7 +176,7 @@ func (s *shadowPass) handleAssignment(n ast.Node) {
 			lastUse = uses[len(uses)-1]
 		}
 		if lastUse == nil {
-			// Unused variable.
+			// Unused variable?
 			continue
 		}
 
@@ -189,21 +188,6 @@ func (s *shadowPass) handleAssignment(n ast.Node) {
 		}
 
 		nextShadowUse := shadowUses[idx]
-
-		fnScope := s.currentFunctionScope()
-
-		if nextShadowUse.End() > fnScope.End() {
-			// line := s.pass.Fset.Position(nextShadowUse.Pos()).Line
-			// fmt.Println("next shadow use of", ident.Name, "on line", line, "is outside the current function")
-			// continue
-			// TODO(jakebailey): either these should always report because
-			// their meaning is unclear, or we need to walk up to find the
-			// function literal in the shadowed scope and then do CFG reachability
-			// from there.
-			s.report(ident, shadowed)
-			continue
-		}
-
 		if s.positionIsReachable(ident, nextShadowUse.Pos()) {
 			s.report(ident, shadowed)
 		}
@@ -213,14 +197,6 @@ func (s *shadowPass) handleAssignment(n ast.Node) {
 func (s *shadowPass) report(ident *ast.Ident, shadowed types.Object) {
 	line := s.pass.Fset.Position(shadowed.Pos()).Line
 	s.pass.ReportRangef(ident, "declaration of %q shadows declaration at line %d", ident.Name, line)
-}
-
-func (s *shadowPass) currentFunctionScope() *types.Scope {
-	if len(s.funcLits) > 0 {
-		last := s.funcLits[len(s.funcLits)-1]
-		return s.pass.TypesInfo.Scopes[last.Type]
-	}
-	return s.pass.TypesInfo.Scopes[s.funcDecl.Type]
 }
 
 func (s *shadowPass) currentCFG() *cfg.CFG {
@@ -263,6 +239,15 @@ func (s *shadowPass) positionIsReachable(ident *ast.Ident, pos token.Pos) bool {
 	return posReachable(start)
 }
 
+func (s *shadowPass) enclosingFunctionScope(scope *types.Scope) *types.Scope {
+	for ; scope != types.Universe; scope = scope.Parent() {
+		if _, ok := s.scopes[scope].(*ast.FuncType); ok {
+			return scope
+		}
+	}
+	return nil
+}
+
 func posInBlock(b *cfg.Block, pos token.Pos) bool {
 	if len(b.Nodes) == 0 {
 		return false
@@ -276,6 +261,10 @@ func posInBlock(b *cfg.Block, pos token.Pos) bool {
 
 func comparePos[T ast.Node](a, b T) int {
 	return cmp.Compare(a.Pos(), b.Pos())
+}
+
+func nodeContainsPos(node ast.Node, pos token.Pos) bool {
+	return node.Pos() <= pos && pos <= node.End()
 }
 
 func isTypeName(obj types.Object) bool {

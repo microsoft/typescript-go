@@ -93,7 +93,7 @@
 		value := 1
 	
 		fn := func() int {
-			value := 2 // OK
+			value := 2 // Dubious
 			~~~~~
 !!! shadow: declaration of "value" shadows declaration at line 87
 			println(value)
@@ -237,7 +237,9 @@
 	
 	func F14b() int {
 		if globalValue == 1 {
-			globalValue := 2 // OK
+			globalValue := 2 // Dubious
+			~~~~~~~~~~~
+!!! shadow: declaration of "globalValue" shadows declaration at line 204
 			println(globalValue)
 			return globalValue
 		}

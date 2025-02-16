@@ -87,7 +87,7 @@ func F8() int {
 	value := 1
 
 	fn := func() int {
-		value := 2 // OK
+		value := 2 // Dubious
 		println(value)
 		return value
 	}
@@ -213,7 +213,7 @@ func F14a() int {
 
 func F14b() int {
 	if globalValue == 1 {
-		globalValue := 2 // OK
+		globalValue := 2 // Dubious
 		println(globalValue)
 		return globalValue
 	}
