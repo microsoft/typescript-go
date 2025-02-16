@@ -238,8 +238,6 @@
 	func F14b() int {
 		if globalValue == 1 {
 			globalValue := 2 // OK
-			~~~~~~~~~~~
-!!! shadow: declaration of "globalValue" shadows declaration at line 204
 			println(globalValue)
 			return globalValue
 		}
@@ -249,8 +247,6 @@
 	func F15(m1 map[string]int, m2 map[string]int) int {
 		if v1, ok := m1["a"]; ok {
 			if v2, ok := m2["a"]; ok { // OK
-			       ~~
-!!! shadow: declaration of "ok" shadows declaration at line 224
 				return v1 + v2
 			}
 		}

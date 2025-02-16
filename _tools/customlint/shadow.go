@@ -165,10 +165,11 @@ func (s *shadowPass) handleAssignment(n ast.Node) {
 			continue
 		}
 		// Always ban shadowing something outside a function (package-lock declarations).
-		if _, ok := s.scopes[shadowedScope].(*ast.FuncType); !ok {
-			s.report(ident, shadowed)
-			continue
-		}
+		// TODO(jakebailey): fix this; catches if statements etc
+		// if _, ok := s.scopes[shadowedScope].(*ast.FuncType); !ok {
+		// 	s.report(ident, shadowed)
+		// 	continue
+		// }
 
 		uses := s.objectUses[obj]
 		var lastUse *ast.Ident
