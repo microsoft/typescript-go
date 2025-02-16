@@ -142,14 +142,6 @@ func (s *shadowPass) handleAssignment(n ast.Node) {
 		if !types.Identical(obj.Type(), shadowed.Type()) {
 			continue
 		}
-		shadowedFunctionScope := s.enclosingFunctionScope(shadowedScope)
-		objFunctionScope := s.enclosingFunctionScope(obj.Parent())
-
-		// Always error if the shadowed identifier is not in the same function.
-		if shadowedFunctionScope == nil || shadowedFunctionScope != objFunctionScope {
-			s.report(ident, shadowed)
-			continue
-		}
 
 		uses := s.objectUses[obj]
 		var lastUse *ast.Ident
@@ -165,6 +157,15 @@ func (s *shadowPass) handleAssignment(n ast.Node) {
 		idx, _ := slices.BinarySearchFunc(shadowUses, lastUse, comparePos)
 		if idx == len(shadowUses) {
 			// Shadowed variable is never used after shadowing.
+			continue
+		}
+
+		shadowedFunctionScope := s.enclosingFunctionScope(shadowedScope)
+		objFunctionScope := s.enclosingFunctionScope(obj.Parent())
+
+		// Always error if the shadowed identifier is not in the same function.
+		if shadowedFunctionScope == nil || shadowedFunctionScope != objFunctionScope {
+			s.report(ident, shadowed)
 			continue
 		}
 

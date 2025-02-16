@@ -262,11 +262,7 @@
 	
 		callIt(func() {
 			foo := 3 // OK
-			~~~
-!!! shadow: declaration of "foo" shadows declaration at line 233
 			bar := 4 // OK
-			~~~
-!!! shadow: declaration of "bar" shadows declaration at line 234
 			println(foo, bar)
 		})
 	}
