@@ -2,7 +2,6 @@ package customlint
 
 import (
 	"cmp"
-	"fmt"
 	"go/ast"
 	"go/token"
 	"go/types"
@@ -200,8 +199,8 @@ func (s *shadowPass) handleAssignment(n ast.Node) {
 		fnScope := s.currentFunctionScope()
 
 		if nextShadowUse.End() > fnScope.End() {
-			line := s.pass.Fset.Position(nextShadowUse.Pos()).Line
-			fmt.Println("next shadow use of", ident.Name, "on line", line, "is outside the current function")
+			// line := s.pass.Fset.Position(nextShadowUse.Pos()).Line
+			// fmt.Println("next shadow use of", ident.Name, "on line", line, "is outside the current function")
 			// continue
 			// TODO(jakebailey): either these should always report because
 			// their meaning is unclear, or we need to walk up to find the
