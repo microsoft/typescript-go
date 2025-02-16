@@ -255,3 +255,37 @@
 		return 0
 	}
 	
+	func F16() {
+		foo := 1
+		bar := 2
+		println(foo, bar)
+	
+		callIt(func() {
+			foo := 3 // OK
+			~~~
+!!! shadow: declaration of "foo" shadows declaration at line 233
+			bar := 4 // OK
+			~~~
+!!! shadow: declaration of "bar" shadows declaration at line 234
+			println(foo, bar)
+		})
+	}
+	
+	func F16b() {
+		foo := 1
+		bar := 2
+		println(foo, bar)
+	
+		callIt(func() {
+			foo := 3 // Bad
+			~~~
+!!! shadow: declaration of "foo" shadows declaration at line 245
+			bar := 4 // Bad
+			~~~
+!!! shadow: declaration of "bar" shadows declaration at line 246
+			println(foo, bar)
+		})
+	
+		println(foo, bar)
+	}
+	

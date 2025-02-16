@@ -228,3 +228,29 @@ func F15(m1 map[string]int, m2 map[string]int) int {
 	}
 	return 0
 }
+
+func F16() {
+	foo := 1
+	bar := 2
+	println(foo, bar)
+
+	callIt(func() {
+		foo := 3 // OK
+		bar := 4 // OK
+		println(foo, bar)
+	})
+}
+
+func F16b() {
+	foo := 1
+	bar := 2
+	println(foo, bar)
+
+	callIt(func() {
+		foo := 3 // Bad
+		bar := 4 // Bad
+		println(foo, bar)
+	})
+
+	println(foo, bar)
+}
