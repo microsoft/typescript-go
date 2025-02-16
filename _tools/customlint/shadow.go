@@ -20,11 +20,7 @@ var shadowAnalyzer = &analysis.Analyzer{
 	URL:      "https://pkg.go.dev/golang.org/x/tools/go/analysis/passes/shadow",
 	Requires: []*analysis.Analyzer{inspect.Analyzer, ctrlflow.Analyzer},
 	Run: func(pass *analysis.Pass) (any, error) {
-		return (&shadowPass{
-			pass:    pass,
-			inspect: pass.ResultOf[inspect.Analyzer].(*inspector.Inspector),
-			cfgs:    pass.ResultOf[ctrlflow.Analyzer].(*ctrlflow.CFGs),
-		}).run()
+		return (&shadowPass{pass: pass}).run()
 	},
 }
 
@@ -33,15 +29,16 @@ type shadowPass struct {
 	inspect *inspector.Inspector
 	cfgs    *ctrlflow.CFGs
 
-	objectDefs map[types.Object]*ast.Ident
-	objectUses map[types.Object][]*ast.Ident
-	scopes     map[*types.Scope]ast.Node
-
-	funcDecl *ast.FuncDecl
-	funcLits []*ast.FuncLit
+	objectDefs     map[types.Object]*ast.Ident
+	objectUses     map[types.Object][]*ast.Ident
+	scopes         map[*types.Scope]ast.Node
+	fnTypeToParent map[*ast.FuncType]ast.Node
 }
 
 func (s *shadowPass) run() (any, error) {
+	s.inspect = s.pass.ResultOf[inspect.Analyzer].(*inspector.Inspector)
+	s.cfgs = s.pass.ResultOf[ctrlflow.Analyzer].(*ctrlflow.CFGs)
+
 	s.objectDefs = make(map[types.Object]*ast.Ident)
 	for id, obj := range s.pass.TypesInfo.Defs {
 		if obj != nil {
@@ -64,44 +61,25 @@ func (s *shadowPass) run() (any, error) {
 		s.scopes[scope] = id
 	}
 
-	nodeFilter := []ast.Node{
+	s.fnTypeToParent = make(map[*ast.FuncType]ast.Node)
+
+	for n := range s.inspect.PreorderSeq(
 		(*ast.FuncDecl)(nil),
 		(*ast.FuncLit)(nil),
 		(*ast.AssignStmt)(nil),
 		(*ast.GenDecl)(nil),
-	}
-	s.inspect.Nodes(nodeFilter, func(n ast.Node, push bool) (proceed bool) {
-		if !push {
-			switch n.(type) {
-			case *ast.FuncDecl:
-				s.funcDecl = nil
-			case *ast.FuncLit:
-				s.funcLits = s.funcLits[:len(s.funcLits)-1]
-			}
-			return true
-		}
-
-		// var c *cfg.CFG
+	) {
 		switch n := n.(type) {
+		case *ast.FuncDecl:
+			s.fnTypeToParent[n.Type] = n
+		case *ast.FuncLit:
+			s.fnTypeToParent[n.Type] = n
 		case *ast.AssignStmt:
 			s.handleAssignment(n)
-			return true
 		case *ast.GenDecl:
 			s.handleAssignment(n)
-			return true
-
-		case *ast.FuncDecl:
-			s.funcDecl = n
-			// c = s.cfgs.FuncDecl(n)
-		case *ast.FuncLit:
-			s.funcLits = append(s.funcLits, n)
-			// c = s.cfgs.FuncLit(n)
 		}
-
-		// fmt.Println(n, c.Format(s.pass.Fset))
-
-		return true
-	})
+	}
 
 	return nil, nil
 }
@@ -164,8 +142,11 @@ func (s *shadowPass) handleAssignment(n ast.Node) {
 		if !types.Identical(obj.Type(), shadowed.Type()) {
 			continue
 		}
+		shadowedFunctionScope := s.enclosingFunctionScope(shadowedScope)
+		objFunctionScope := s.enclosingFunctionScope(obj.Parent())
+
 		// Always error if the shadowed identifier is not in the same function.
-		if enc := s.enclosingFunctionScope(shadowedScope); enc == nil || enc != s.enclosingFunctionScope(obj.Parent()) {
+		if shadowedFunctionScope == nil || shadowedFunctionScope != objFunctionScope {
 			s.report(ident, shadowed)
 			continue
 		}
@@ -188,7 +169,8 @@ func (s *shadowPass) handleAssignment(n ast.Node) {
 		}
 
 		nextShadowUse := shadowUses[idx]
-		if s.positionIsReachable(ident, nextShadowUse.Pos()) {
+		cfg := s.cfgFor(s.fnTypeToParent[s.scopes[objFunctionScope].(*ast.FuncType)])
+		if positionIsReachable(cfg, ident, nextShadowUse.Pos()) {
 			s.report(ident, shadowed)
 		}
 	}
@@ -199,17 +181,7 @@ func (s *shadowPass) report(ident *ast.Ident, shadowed types.Object) {
 	s.pass.ReportRangef(ident, "declaration of %q shadows declaration at line %d", ident.Name, line)
 }
 
-func (s *shadowPass) currentCFG() *cfg.CFG {
-	if len(s.funcLits) > 0 {
-		last := s.funcLits[len(s.funcLits)-1]
-		return s.cfgs.FuncLit(last)
-	}
-	return s.cfgs.FuncDecl(s.funcDecl)
-}
-
-func (s *shadowPass) positionIsReachable(ident *ast.Ident, pos token.Pos) bool {
-	c := s.currentCFG()
-
+func positionIsReachable(c *cfg.CFG, ident *ast.Ident, pos token.Pos) bool {
 	var start *cfg.Block
 	for _, b := range c.Blocks {
 		if posInBlock(b, ident.Pos()) {
@@ -218,7 +190,7 @@ func (s *shadowPass) positionIsReachable(ident *ast.Ident, pos token.Pos) bool {
 		}
 	}
 	if start == nil {
-		return false // TODO: error
+		return true
 	}
 
 	seen := make(map[*cfg.Block]struct{})
@@ -246,6 +218,17 @@ func (s *shadowPass) enclosingFunctionScope(scope *types.Scope) *types.Scope {
 		}
 	}
 	return nil
+}
+
+func (s *shadowPass) cfgFor(n ast.Node) *cfg.CFG {
+	switch n := n.(type) {
+	case *ast.FuncDecl:
+		return s.cfgs.FuncDecl(n)
+	case *ast.FuncLit:
+		return s.cfgs.FuncLit(n)
+	default:
+		panic("unexpected node type")
+	}
 }
 
 func posInBlock(b *cfg.Block, pos token.Pos) bool {
