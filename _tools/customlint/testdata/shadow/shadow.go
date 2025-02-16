@@ -1,0 +1,221 @@
+package shadow
+
+func F1() int {
+	value := 1
+	if value == 1 {
+		value := 2 // Bad
+		println(value)
+	}
+	return value
+}
+
+func F1a() int {
+	value := 1
+	if value == 1 {
+		value := 2 // OK
+		println(value)
+	}
+	return 1234
+}
+
+func F2() int {
+	value := 1
+	if value == 1 {
+		value := 2 // OK
+		println(value)
+		return value
+	}
+	return value
+}
+
+func F2a() int {
+	value := 1
+	if value == 1 {
+		value := 2 // OK
+		println(value)
+		return value
+	}
+	return 1234
+}
+
+func F3(value int) int {
+	if value == 1 {
+		value := 2 // Bad
+		println(value)
+	}
+	return value
+}
+
+func F4(value int) int {
+	if value == 1 {
+		value := 2 // OK
+		println(value)
+		return value
+	}
+	return value
+}
+
+type isType int
+
+func F5() isType {
+	var isType isType // OK
+	return isType
+}
+
+type isAlias int
+
+func F6() isAlias {
+	var isAlias isAlias // OK
+	return isAlias
+}
+
+func F7() int {
+	value := 1
+
+	fn := func() {
+		value := 2 // Bad
+		println(value)
+	}
+
+	fn()
+	fn()
+
+	return value
+}
+
+func F8() int {
+	value := 1
+
+	fn := func() int {
+		value := 2 // OK
+		println(value)
+		return value
+	}
+
+	fn()
+	fn()
+
+	return value
+}
+
+func callIt(fn func()) {
+	fn()
+}
+
+func F9() int {
+	value := 1
+
+	callIt(func() {
+		value := 2 // Bad
+		println(value)
+	})
+
+	return value
+}
+
+func callIt2(fn func() int) int {
+	return fn()
+}
+
+func F10() int {
+	value := 1
+
+	callIt2(func() int {
+		value := 2 // Bad
+		println(value)
+		return value
+	})
+
+	return value
+}
+
+func F11() int {
+	value := 1
+
+	callIt(func() {
+		value := 2 // Bad
+
+		callIt(func() {
+			value := 3 // Bad
+			println(value)
+		})
+
+		println(value)
+	})
+
+	return value
+}
+
+func F12() int {
+	value := 1
+	if value == 1 {
+		value := value // Bad
+		println(value)
+	}
+	return value
+}
+
+func F12a(value int) int {
+	if value == 1 {
+		value := value // Bad
+		println(value)
+	}
+	return value
+}
+
+func F12b() int {
+	value := 1
+	if value == 1 {
+		value, other := value, 1234 // Bad
+		println(value, other)
+	}
+	return value
+}
+
+func F13() int {
+	value := 1
+	if value == 1 {
+		value := value // OK
+		println(value)
+		return value
+	}
+	return value
+}
+
+func F13a(value int) int {
+	if value == 1 {
+		value := value // OK
+		println(value)
+		return value
+	}
+	return value
+}
+
+func F13b() int {
+	value := 1
+	if value == 1 {
+		value, other := value, 1234 // OK
+		println(value, other)
+		return value
+	}
+	return value
+}
+
+var globalValue int
+
+func F14a() int {
+	if globalValue == 1 {
+		globalValue := 2 // Bad
+		println(globalValue)
+	}
+	return globalValue
+}
+
+func F14b() int {
+	if globalValue == 1 {
+		globalValue := 2 // OK
+		println(globalValue)
+		return globalValue
+	}
+	return globalValue
+}
