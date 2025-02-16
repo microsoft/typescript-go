@@ -219,3 +219,12 @@ func F14b() int {
 	}
 	return globalValue
 }
+
+func F15(m1 map[string]int, m2 map[string]int) int {
+	if v1, ok := m1["a"]; ok {
+		if v2, ok := m2["a"]; ok { // OK
+			return v1 + v2
+		}
+	}
+	return 0
+}
