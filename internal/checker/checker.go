@@ -3847,10 +3847,10 @@ basePropertyCheck:
 				overriddenInstanceProperty := basePropertyFlags != ast.SymbolFlagsProperty && derivedPropertyFlags == ast.SymbolFlagsProperty
 				overriddenInstanceAccessor := basePropertyFlags == ast.SymbolFlagsProperty && derivedPropertyFlags != ast.SymbolFlagsProperty
 				if overriddenInstanceProperty || overriddenInstanceAccessor {
-					errorMessage := core.IfElse(overriddenInstanceProperty,
+					instancePropErrorMessage := core.IfElse(overriddenInstanceProperty,
 						diagnostics.X_0_is_defined_as_an_accessor_in_class_1_but_is_overridden_here_in_2_as_an_instance_property,
 						diagnostics.X_0_is_defined_as_a_property_in_class_1_but_is_overridden_here_in_2_as_an_accessor)
-					c.error(core.OrElse(ast.GetNameOfDeclaration(derived.ValueDeclaration), derived.ValueDeclaration), errorMessage, c.symbolToString(base), c.TypeToString(baseType), c.TypeToString(t))
+					c.error(core.OrElse(ast.GetNameOfDeclaration(derived.ValueDeclaration), derived.ValueDeclaration), instancePropErrorMessage, c.symbolToString(base), c.TypeToString(baseType), c.TypeToString(t))
 				}
 				// !!!
 				// } else if c.useDefineForClassFields {
@@ -4468,9 +4468,9 @@ func (c *Checker) checkVariableLikeDeclaration(node *ast.Node) {
 		parent := node.Parent.Parent
 		parentCheckMode := core.IfElse(hasDotDotDotToken(node), CheckModeRestBindingElement, CheckModeNormal)
 		parentType := c.getTypeForBindingElementParent(parent, parentCheckMode)
-		name := node.PropertyNameOrName()
-		if parentType != nil && !ast.IsBindingPattern(name) {
-			exprType := c.getLiteralTypeFromPropertyName(name)
+		propNameName := node.PropertyNameOrName()
+		if parentType != nil && !ast.IsBindingPattern(propNameName) {
+			exprType := c.getLiteralTypeFromPropertyName(propNameName)
 			if isTypeUsableAsPropertyName(exprType) {
 				nameText := getPropertyNameFromType(exprType)
 				property := c.getPropertyOfType(parentType, nameText)
@@ -5461,8 +5461,8 @@ func (c *Checker) checkNonNullTypeWithReporter(t *Type, node *ast.Node, reportEr
 	facts := c.getTypeFacts(t, TypeFactsIsUndefinedOrNull)
 	if facts&TypeFactsIsUndefinedOrNull != 0 {
 		reportError(c, node, facts)
-		t := c.getNonNullableType(t)
-		if t.flags&(TypeFlagsNullable|TypeFlagsNever) != 0 {
+		nonNullable := c.getNonNullableType(t)
+		if nonNullable.flags&(TypeFlagsNullable|TypeFlagsNever) != 0 {
 			return c.errorType
 		}
 	}
@@ -13701,11 +13701,11 @@ func (c *Checker) padTupleType(t *Type, pattern *ast.Node) *Type {
 	for i := c.getTypeReferenceArity(t); i < len(patternElements); i++ {
 		e := patternElements[i]
 		if i < len(patternElements)-1 || !(ast.IsBindingElement(e) && hasDotDotDotToken(e)) {
-			t := c.anyType
+			elementType := c.anyType
 			if !ast.IsOmittedExpression(e) && c.hasDefaultValue(e) {
-				t = c.getTypeFromBindingElement(e, false /*includePatternInType*/, false /*reportErrors*/)
+				elementType = c.getTypeFromBindingElement(e, false /*includePatternInType*/, false /*reportErrors*/)
 			}
-			elementTypes = append(elementTypes, t)
+			elementTypes = append(elementTypes, elementType)
 			elementInfos = append(elementInfos, TupleElementInfo{flags: ElementFlagsOptional})
 			if !ast.IsOmittedExpression(e) && !c.hasDefaultValue(e) {
 				c.reportImplicitAny(e, c.anyType, WideningKindNormal)
