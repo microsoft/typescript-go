@@ -593,9 +593,9 @@ func (s *Scanner) Scan() ast.Kind {
 						}
 						s.pos++
 					} else {
-						ch, size := s.charAndSize()
-						if stringutil.IsLineBreak(ch) {
-							break
+						commentCh, size := s.charAndSize()
+						if stringutil.IsLineBreak(commentCh) {
+							s.tokenFlags |= ast.TokenFlagsPrecedingLineBreak
 						}
 						s.pos += size
 					}
