@@ -557,15 +557,15 @@ func (s *Scanner) Scan() ast.Kind {
 			if s.charAt(1) == '/' {
 				s.pos += 2
 				for {
-					ch := s.char()
-					if ch <= 0x7F {
-						if ch < 0 || ch == '\r' || ch == '\n' {
+					commentCh := s.char()
+					if commentCh <= 0x7F {
+						if commentCh < 0 || commentCh == '\r' || commentCh == '\n' {
 							break
 						}
 						s.pos++
 					} else {
-						ch, size := s.charAndSize()
-						if stringutil.IsLineBreak(ch) {
+						commentCh, size := s.charAndSize()
+						if stringutil.IsLineBreak(commentCh) {
 							break
 						}
 						s.pos += size
@@ -802,7 +802,7 @@ func (s *Scanner) Scan() ast.Kind {
 			if s.charAt(1) == '!' {
 				if s.pos == 0 {
 					s.pos += 2
-					for ch, size := s.charAndSize(); size > 0 && !stringutil.IsLineBreak(ch); ch, size = s.charAndSize() {
+					for shebangCh, size := s.charAndSize(); size > 0 && !stringutil.IsLineBreak(shebangCh); shebangCh, size = s.charAndSize() {
 						s.pos += size
 					}
 					continue
@@ -2015,11 +2015,11 @@ func SkipTriviaEx(text string, pos int, options *SkipTriviaOptions) int {
 				if text[pos+1] == '/' {
 					pos += 2
 					for pos < len(text) {
-						ch, size := utf8.DecodeRuneInString(text[pos:])
-						if stringutil.IsLineBreak(ch) {
+						commentCh, commentSize := utf8.DecodeRuneInString(text[pos:])
+						if stringutil.IsLineBreak(commentCh) {
 							break
 						}
-						pos += size
+						pos += commentSize
 					}
 					canConsumeStar = false
 					continue
@@ -2031,8 +2031,8 @@ func SkipTriviaEx(text string, pos int, options *SkipTriviaOptions) int {
 							pos += 2
 							break
 						}
-						_, size := utf8.DecodeRuneInString(text[pos:])
-						pos += size
+						_, commentSize := utf8.DecodeRuneInString(text[pos:])
+						pos += commentSize
 					}
 					canConsumeStar = false
 					continue
