@@ -25332,15 +25332,15 @@ func (c *Checker) getContextualTypeForElementExpression(t *Type, index int, leng
 				return c.getTypeArguments(t)[c.getTypeReferenceArity(t)-offset]
 			}
 			// Return a union of the possible contextual element types with no subtype reduction.
-			index := t.TargetTupleType().fixedLength
+			tupleIndex := t.TargetTupleType().fixedLength
 			if firstSpreadIndex >= 0 {
-				index = min(index, firstSpreadIndex)
+				tupleIndex = min(tupleIndex, firstSpreadIndex)
 			}
 			endSkipCount := fixedEndLength
 			if length >= 0 && lastSpreadIndex >= 0 {
 				endSkipCount = min(fixedEndLength, length-lastSpreadIndex)
 			}
-			return c.getElementTypeOfSliceOfTupleType(t, index, endSkipCount, false /*writing*/, true /*noReductions*/)
+			return c.getElementTypeOfSliceOfTupleType(t, tupleIndex, endSkipCount, false /*writing*/, true /*noReductions*/)
 		}
 		// If element index is known and a contextual property with that name exists, return it. Otherwise return the
 		// iterated or element type of the contextual type.
