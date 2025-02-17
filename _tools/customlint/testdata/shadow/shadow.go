@@ -278,3 +278,21 @@ func F17(read func() (v any, err error), sendError func(error) error) error {
 		println(v)
 	}
 }
+
+func F18(index int) int {
+	return callIt2(func() int {
+		if index == 0 {
+			return 1234
+		}
+
+		if index == 1 {
+			// Dubuious; did this mean to keep the value for another execution?
+			index := 2
+			println(index)
+			return index
+		}
+
+		println(index)
+		return index
+	})
+}

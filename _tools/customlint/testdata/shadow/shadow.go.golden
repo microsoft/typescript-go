@@ -311,3 +311,23 @@
 		}
 	}
 	
+	func F18(index int) int {
+		return callIt2(func() int {
+			if index == 0 {
+				return 1234
+			}
+	
+			if index == 1 {
+				// Dubuious; did this mean to keep the value for another execution?
+				index := 2
+				~~~~~
+!!! shadow: declaration of "index" shadows declaration at line 282
+				println(index)
+				return index
+			}
+	
+			println(index)
+			return index
+		})
+	}
+	
