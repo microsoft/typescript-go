@@ -169,9 +169,8 @@ func (s *shadowPass) handleAssignment(n ast.Node) {
 			continue
 		}
 
-		nextShadowUse := shadowUses[idx]
 		cfg := s.cfgFor(s.fnTypeToParent[s.scopes[objFunctionScope].(*ast.FuncType)])
-		if positionIsReachable(cfg, ident, nextShadowUse.Pos()) {
+		if positionIsReachable(cfg, ident, shadowUses[idx:]) {
 			s.report(ident, shadowed)
 		}
 	}
@@ -182,7 +181,7 @@ func (s *shadowPass) report(ident *ast.Ident, shadowed types.Object) {
 	s.pass.ReportRangef(ident, "declaration of %q shadows declaration at line %d", ident.Name, line)
 }
 
-func positionIsReachable(c *cfg.CFG, ident *ast.Ident, pos token.Pos) bool {
+func positionIsReachable(c *cfg.CFG, ident *ast.Ident, shadowUses []*ast.Ident) bool {
 	var start *cfg.Block
 	for _, b := range c.Blocks {
 		if posInBlock(b, ident.Pos()) {
@@ -195,21 +194,23 @@ func positionIsReachable(c *cfg.CFG, ident *ast.Ident, pos token.Pos) bool {
 	}
 
 	seen := make(map[*cfg.Block]struct{})
-	var posReachable func(b *cfg.Block) (found bool)
-	posReachable = func(b *cfg.Block) (found bool) {
+	var reachable func(b *cfg.Block) (found bool)
+	reachable = func(b *cfg.Block) (found bool) {
 		if _, ok := seen[b]; ok {
 			return false
 		}
 		seen[b] = struct{}{}
 
-		if posInBlock(b, pos) {
-			return true
+		for _, use := range shadowUses {
+			if posInBlock(b, use.Pos()) {
+				return true
+			}
 		}
 
-		return slices.ContainsFunc(b.Succs, posReachable)
+		return slices.ContainsFunc(b.Succs, reachable)
 	}
 
-	return posReachable(start)
+	return reachable(start)
 }
 
 func (s *shadowPass) enclosingFunctionScope(scope *types.Scope) *types.Scope {
