@@ -3847,10 +3847,10 @@ basePropertyCheck:
 				overriddenInstanceProperty := basePropertyFlags != ast.SymbolFlagsProperty && derivedPropertyFlags == ast.SymbolFlagsProperty
 				overriddenInstanceAccessor := basePropertyFlags == ast.SymbolFlagsProperty && derivedPropertyFlags != ast.SymbolFlagsProperty
 				if overriddenInstanceProperty || overriddenInstanceAccessor {
-					instancePropErrorMessage := core.IfElse(overriddenInstanceProperty,
+					errorMessage := core.IfElse(overriddenInstanceProperty,
 						diagnostics.X_0_is_defined_as_an_accessor_in_class_1_but_is_overridden_here_in_2_as_an_instance_property,
 						diagnostics.X_0_is_defined_as_a_property_in_class_1_but_is_overridden_here_in_2_as_an_accessor)
-					c.error(core.OrElse(ast.GetNameOfDeclaration(derived.ValueDeclaration), derived.ValueDeclaration), instancePropErrorMessage, c.symbolToString(base), c.TypeToString(baseType), c.TypeToString(t))
+					c.error(core.OrElse(ast.GetNameOfDeclaration(derived.ValueDeclaration), derived.ValueDeclaration), errorMessage, c.symbolToString(base), c.TypeToString(baseType), c.TypeToString(t))
 				}
 				// !!!
 				// } else if c.useDefineForClassFields {

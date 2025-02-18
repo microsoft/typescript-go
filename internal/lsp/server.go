@@ -94,8 +94,8 @@ func (s *Server) Run() error {
 		req, err := s.read()
 		if err != nil {
 			if errors.Is(err, lsproto.ErrInvalidRequest) {
-				if sendErr := s.sendError(nil, err); sendErr != nil {
-					return sendErr
+				if err := s.sendError(nil, err); err != nil {
+					return err
 				}
 				continue
 			}

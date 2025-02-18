@@ -527,8 +527,8 @@ func convertOptionsFromJson[O optionParser](optionsNameMap map[string]*CommandLi
 			opt, ok := optionsNameMap[key]
 			commandLineOptionEnumMapVal := opt.EnumMap()
 			if commandLineOptionEnumMapVal != nil {
-				val, isEnum := commandLineOptionEnumMapVal.Get(strings.ToLower(value.(string)))
-				if isEnum {
+				val, ok := commandLineOptionEnumMapVal.Get(strings.ToLower(value.(string)))
+				if ok {
 					errors = result.ParseOption(key, val)
 				}
 			} else if ok {
