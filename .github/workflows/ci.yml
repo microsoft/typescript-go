@@ -45,8 +45,10 @@ jobs:
             race: true
           - os: ubuntu-latest
             noembed: true
+          - os: ubuntu-latest
+            concurrent-test-program: true
 
-    name: test (${{ matrix.os }}${{ (matrix.no-submodules && ' without submodules') || '' }}${{ (matrix.race && ' in race mode') || '' }}${{ (matrix.noembed && ' with noembed') || '' }})
+    name: test (${{ matrix.os }}${{ (matrix.no-submodules && ' without submodules') || '' }}${{ (matrix.race && ' in race mode') || '' }}${{ (matrix.noembed && ' with noembed') || '' }})${{ (matrix.noembed && ' with concurrent test programs') || '' }})
 
     runs-on: ${{ matrix.os }}
 
@@ -71,10 +73,11 @@ jobs:
 
       - name: Tests
         id: test
-        run: npx hereby test:all ${RACE_FLAG:+"$RACE_FLAG"} ${NOEMBED_FLAG:+"$NOEMBED_FLAG"}
+        run: npx hereby test:all ${RACE_FLAG:+"$RACE_FLAG"} ${NOEMBED_FLAG:+"$NOEMBED_FLAG"} ${CONCURRENTTESTPROGRAM_FLAG:+"$CONCURRENTTESTPROGRAM_FLAG"}
         env:
           RACE_FLAG: ${{ (matrix.race && '--race') || '' }}
           NOEMBED_FLAG: ${{ (matrix.noembed && '--noembed') || '' }}
+          CONCURRENTTESTPROGRAM_FLAG: ${{ (matrix.concurrent-test-program && '--concurrentTestPrograms') || '' }}
 
       - run: git add .
       - run: git diff --staged --exit-code --stat
