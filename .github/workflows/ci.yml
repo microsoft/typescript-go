@@ -48,7 +48,7 @@ jobs:
           - os: ubuntu-latest
             concurrent-test-program: true
 
-    name: test (${{ matrix.os }}${{ (matrix.no-submodules && ' without submodules') || '' }}${{ (matrix.race && ' in race mode') || '' }}${{ (matrix.noembed && ' with noembed') || '' }})${{ (matrix.noembed && ' with concurrent test programs') || '' }})
+    name: test (${{ matrix.os }}${{ (matrix.no-submodules && ' without submodules') || '' }}${{ (matrix.race && ' in race mode') || '' }}${{ (matrix.noembed && ' with noembed') || '' }}${{ (matrix.noembed && ' with concurrent test programs') || '' }})
 
     runs-on: ${{ matrix.os }}
 
