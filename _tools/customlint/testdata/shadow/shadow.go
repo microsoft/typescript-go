@@ -312,3 +312,21 @@ func F19() {
 	setAndPrint(1234)
 	print()
 }
+
+func add(a, b int) int {
+	return a + b
+}
+
+func F20(value int) int {
+	switch {
+	case value < 10:
+		value := add(value, value) // OK
+		if value < 10 {
+			return value
+		}
+		return value + 1
+	case value < 20:
+		return value
+	}
+	return value
+}
