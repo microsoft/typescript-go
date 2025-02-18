@@ -108,9 +108,7 @@ func (s *shadowPass) handleAssignment(n ast.Node) {
 			if !ok {
 				continue
 			}
-			for _, ident := range valueSpec.Names {
-				idents = append(idents, ident)
-			}
+			idents = append(idents, valueSpec.Names...)
 		}
 	}
 
