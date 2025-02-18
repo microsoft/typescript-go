@@ -5,7 +5,7 @@
 		if value == 1 {
 			value := 2 // Bad
 			~~~~~
-!!! shadow: declaration of "value" shadows declaration at line 4
+!!! shadow: declaration of "value" shadows declaration at line 4 and is reachable from use at line 9
 			println(value)
 		}
 		return value
@@ -44,7 +44,7 @@
 		if value == 1 {
 			value := 2 // Bad
 			~~~~~
-!!! shadow: declaration of "value" shadows declaration at line 41
+!!! shadow: declaration of "value" shadows declaration at line 41 and is reachable from use at line 46
 			println(value)
 		}
 		return value
@@ -79,7 +79,7 @@
 		fn := func() {
 			value := 2 // Bad
 			~~~~~
-!!! shadow: declaration of "value" shadows declaration at line 73
+!!! shadow: declaration of "value" shadows non-local declaration at line 73
 			println(value)
 		}
 	
@@ -95,7 +95,7 @@
 		fn := func() int {
 			value := 2 // Dubious
 			~~~~~
-!!! shadow: declaration of "value" shadows declaration at line 87
+!!! shadow: declaration of "value" shadows non-local declaration at line 87
 			println(value)
 			return value
 		}
@@ -116,7 +116,7 @@
 		callIt(func() {
 			value := 2 // Bad
 			~~~~~
-!!! shadow: declaration of "value" shadows declaration at line 106
+!!! shadow: declaration of "value" shadows non-local declaration at line 106
 			println(value)
 		})
 	
@@ -133,7 +133,7 @@
 		callIt2(func() int {
 			value := 2 // Bad
 			~~~~~
-!!! shadow: declaration of "value" shadows declaration at line 121
+!!! shadow: declaration of "value" shadows non-local declaration at line 121
 			println(value)
 			return value
 		})
@@ -147,12 +147,12 @@
 		callIt(func() {
 			value := 2 // Bad
 			~~~~~
-!!! shadow: declaration of "value" shadows declaration at line 133
+!!! shadow: declaration of "value" shadows non-local declaration at line 133
 	
 			callIt(func() {
 				value := 3 // Bad
 				~~~~~
-!!! shadow: declaration of "value" shadows declaration at line 136
+!!! shadow: declaration of "value" shadows non-local declaration at line 136
 				println(value)
 			})
 	
@@ -167,7 +167,7 @@
 		if value == 1 {
 			value := value // Bad
 			~~~~~
-!!! shadow: declaration of "value" shadows declaration at line 150
+!!! shadow: declaration of "value" shadows declaration at line 150 and is reachable from use at line 152
 			println(value)
 		}
 		return value
@@ -177,7 +177,7 @@
 		if value == 1 {
 			value := value // Bad
 			~~~~~
-!!! shadow: declaration of "value" shadows declaration at line 158
+!!! shadow: declaration of "value" shadows declaration at line 158 and is reachable from use at line 160
 			println(value)
 		}
 		return value
@@ -188,7 +188,7 @@
 		if value == 1 {
 			value, other := value, 1234 // Bad
 			~~~~~
-!!! shadow: declaration of "value" shadows declaration at line 167
+!!! shadow: declaration of "value" shadows declaration at line 167 and is reachable from use at line 169
 			println(value, other)
 		}
 		return value
@@ -198,6 +198,8 @@
 		value := 1
 		if value == 1 {
 			value := value // OK
+			~~~~~
+!!! shadow: declaration of "value" shadows declaration at line 176 and is reachable from use at line 178
 			println(value)
 			return value
 		}
@@ -207,6 +209,8 @@
 	func F13a(value int) int {
 		if value == 1 {
 			value := value // OK
+			~~~~~
+!!! shadow: declaration of "value" shadows declaration at line 185 and is reachable from use at line 187
 			println(value)
 			return value
 		}
@@ -217,6 +221,8 @@
 		value := 1
 		if value == 1 {
 			value, other := value, 1234 // OK
+			~~~~~
+!!! shadow: declaration of "value" shadows declaration at line 195 and is reachable from use at line 197
 			println(value, other)
 			return value
 		}
@@ -229,7 +235,7 @@
 		if globalValue == 1 {
 			globalValue := 2 // Bad
 			~~~~~~~~~~~
-!!! shadow: declaration of "globalValue" shadows declaration at line 204
+!!! shadow: declaration of "globalValue" shadows non-local declaration at line 204
 			println(globalValue)
 		}
 		return globalValue
@@ -239,7 +245,7 @@
 		if globalValue == 1 {
 			globalValue := 2 // Dubious
 			~~~~~~~~~~~
-!!! shadow: declaration of "globalValue" shadows declaration at line 204
+!!! shadow: declaration of "globalValue" shadows non-local declaration at line 204
 			println(globalValue)
 			return globalValue
 		}
@@ -262,7 +268,11 @@
 	
 		callIt(func() {
 			foo := 3 // OK
+			~~~
+!!! shadow: declaration of "foo" shadows non-local declaration at line 233
 			bar := 4 // OK
+			~~~
+!!! shadow: declaration of "bar" shadows non-local declaration at line 234
 			println(foo, bar)
 		})
 	}
@@ -275,10 +285,10 @@
 		callIt(func() {
 			foo := 3 // Bad
 			~~~
-!!! shadow: declaration of "foo" shadows declaration at line 245
+!!! shadow: declaration of "foo" shadows non-local declaration at line 245
 			bar := 4 // Bad
 			~~~
-!!! shadow: declaration of "bar" shadows declaration at line 246
+!!! shadow: declaration of "bar" shadows non-local declaration at line 246
 			println(foo, bar)
 		})
 	
@@ -301,7 +311,7 @@
 					// OK: use after asignnent above; switching to = below would not be observable.
 					if err := sendError(err); err != nil {
 					   ~~~
-!!! shadow: declaration of "err" shadows declaration at line 268
+!!! shadow: declaration of "err" shadows declaration at line 268 and is reachable from use at line 272
 						return err
 					}
 					continue
@@ -321,6 +331,8 @@
 			if v == "bad value" {
 				// OK: use after asignnent above; switching to = below would not be observable.
 				if err := sendError(err); err != nil {
+				   ~~~
+!!! shadow: declaration of "err" shadows declaration at line 285 and is reachable from use at line 291
 					return err
 				}
 			}
@@ -337,7 +349,7 @@
 				// Dubuious; did this mean to keep the value for another execution?
 				index := 2
 				~~~~~
-!!! shadow: declaration of "index" shadows declaration at line 298
+!!! shadow: declaration of "index" shadows non-local declaration at line 298
 				println(index)
 				return index
 			}
@@ -356,6 +368,8 @@
 	
 		setAndPrint := func(v int) {
 			value := v
+			~~~~~
+!!! shadow: declaration of "value" shadows non-local declaration at line 317
 			println(value)
 		}
 	
@@ -373,6 +387,8 @@
 		setAndPrint := func(v int) {
 			println(value)
 			value := v
+			~~~~~
+!!! shadow: declaration of "value" shadows non-local declaration at line 333
 			println(value)
 		}
 	
@@ -388,6 +404,8 @@
 		switch {
 		case value < 10:
 			value := add(value, value) // OK
+			~~~~~
+!!! shadow: declaration of "value" shadows declaration at line 353 and is reachable from use at line 356
 			if value < 10 {
 				return value
 			}
@@ -403,6 +421,8 @@
 		case value < 10:
 			println(value)
 			value := add(value, value) // OK
+			~~~~~
+!!! shadow: declaration of "value" shadows declaration at line 367 and is reachable from use at line 370
 			println(value)
 			if value < 10 {
 				return value
