@@ -296,3 +296,19 @@ func F18(index int) int {
 		return index
 	})
 }
+
+func F19() {
+	value := 1
+
+	print := func() {
+		println(value)
+	}
+
+	setAndPrint := func(v int) {
+		value := v
+		println(value)
+	}
+
+	setAndPrint(1234)
+	print()
+}
