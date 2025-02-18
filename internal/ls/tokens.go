@@ -2,7 +2,6 @@ package ls
 
 import (
 	"fmt"
-	"slices"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
@@ -15,13 +14,120 @@ func getTouchingPropertyName(sourceFile *ast.SourceFile, position int) *ast.Node
 	})
 }
 
+func getTouchingPropertyName_fast(sourceFile *ast.SourceFile, position int) *ast.Node {
+	return getTokenAtPosition_fast(sourceFile, position, false, false, func(node *ast.Node) bool {
+		return ast.IsPropertyNameLiteral(node) || ast.IsKeywordKind(node.Kind) || ast.IsPrivateIdentifier(node)
+	})
+}
+
+func getTokenAtPosition(
+	sourceFile *ast.SourceFile,
+	position int,
+	allowPositionInLeadingTrivia bool,
+	includeEndPosition bool,
+	includePrecedingTokenAtEndPosition func(node *ast.Node) bool,
+) *ast.Node {
+	var foundToken *ast.Node
+	current := sourceFile.AsNode()
+	factory := getNodeFactory()
+	for {
+		children := getNodeChildren(current, sourceFile, factory)
+		index, match := core.BinarySearchUniqueFunc(children, position, func(middle int, node *ast.Node) int {
+			// This last callback is more of a selector than a comparator -
+			// `0` causes the `node` result to be returned
+			// `1` causes recursion on the left of the middle
+			// `-1` causes recursion on the right of the middle
+
+			// Let's say you have 3 nodes, spanning positons
+			// pos: 1, end: 3
+			// pos: 3, end: 3
+			// pos: 3, end: 5
+			// and you're looking for the token at positon 3 - all 3 of these nodes are overlapping with position 3.
+			// In fact, there's a _good argument_ that node 2 shouldn't even be allowed to exist - depending on if
+			// the start or end of the ranges are considered inclusive, it's either wholly subsumed by the first or the last node.
+			// Unfortunately, such nodes do exist. :( - See fourslash/completionsImport_tsx.tsx - empty jsx attributes create
+			// a zero-length node.
+			// What also you may not expect is that which node we return depends on the includePrecedingTokenAtEndPosition flag.
+			// Specifically, if includePrecedingTokenAtEndPosition is set, we return the 1-3 node, while if it's unset, we
+			// return the 3-5 node. (The zero length node is never correct.) This is because the includePrecedingTokenAtEndPosition
+			// flag causes us to return the first node whose end position matches the position and which produces and acceptable token
+			// kind. Meanwhile, if includePrecedingTokenAtEndPosition is unset, we look for the first node whose start is <= the
+			// position and whose end is greater than the position.
+
+			// There are more sophisticated end tests later, but this one is very fast
+			// and allows us to skip a bunch of work
+			if node.End() < position {
+				return -1
+			}
+
+			start := node.Pos()
+			if !allowPositionInLeadingTrivia {
+				start = scanner.GetTokenPosOfNode(node, sourceFile, true /*includeJSDoc*/)
+			}
+
+			if start > position {
+				return 1
+			}
+
+			// first element whose start position is before the input and whose end position is after or equal to the input
+			if result, found := nodeContainsPosition(node, start, position, sourceFile, includeEndPosition, factory, includePrecedingTokenAtEndPosition); result {
+				if found != nil {
+					foundToken = found
+				}
+				if middle > 0 {
+					// we want the _first_ element that contains the position, so left-recur if the prior node also contains the position
+					prevNode := children[middle-1]
+					prevNodeStart := prevNode.Pos()
+					if !allowPositionInLeadingTrivia {
+						prevNodeStart = scanner.GetTokenPosOfNode(prevNode, sourceFile, true /*includeJSDoc*/)
+					}
+					if result, found := nodeContainsPosition(prevNode, prevNodeStart, position, sourceFile, includeEndPosition, factory, includePrecedingTokenAtEndPosition); result {
+						if found != nil {
+							foundToken = found
+						}
+						return 1
+					}
+				}
+				return 0
+			}
+
+			// this complex condition makes us left-recur around a zero-length node when includePrecedingTokenAtEndPosition is set, rather than right-recur on it
+			if includePrecedingTokenAtEndPosition != nil && start == position && middle > 0 && children[middle-1].End() == position {
+				prevNode := children[middle-1]
+				prevNodeStart := prevNode.Pos()
+				if !allowPositionInLeadingTrivia {
+					prevNodeStart = scanner.GetTokenPosOfNode(prevNode, sourceFile, true /*includeJSDoc*/)
+				}
+				if result, found := nodeContainsPosition(prevNode, prevNodeStart, position, sourceFile, includeEndPosition, factory, includePrecedingTokenAtEndPosition); result {
+					if found != nil {
+						foundToken = found
+					}
+					return 1
+				}
+			}
+			return -1
+		})
+
+		if foundToken != nil {
+			return foundToken
+		}
+		if match {
+			current = children[index]
+			continue
+		}
+		return current
+	}
+}
+
 func getTokenAtPosition_fast(
 	sourceFile *ast.SourceFile,
 	position int,
 	allowPositionInLeadingTrivia bool,
 	includeEndPosition bool,
+	includePrecedingTokenAtEndPosition func(node *ast.Node) bool,
 ) *ast.Node {
 	var next *ast.Node
+	var foundToken *ast.Node
 	factory := getNodeFactory()
 	current := sourceFile.AsNode()
 	left := current.Pos()
@@ -42,8 +148,10 @@ func getTokenAtPosition_fast(
 			return 1
 		}
 
-		var result bool
-		if result, _ = nodeContainsPosition(node, start, position, sourceFile, includeEndPosition, factory, nil); result {
+		if result, found := nodeContainsPosition(node, start, position, sourceFile, includeEndPosition, factory, nil); result {
+			if found != nil {
+				foundToken = found
+			}
 			return 0
 		}
 
@@ -136,6 +244,9 @@ func getTokenAtPosition_fast(
 
 	for {
 		visitEachChildAndJSDoc(current, sourceFile, nodeVisitor)
+		if foundToken != nil {
+			return foundToken
+		}
 		if next == nil {
 			if ast.IsTokenKind(current.Kind) || ast.IsJSDocCommentContainingNode(current) {
 				return current
@@ -177,97 +288,6 @@ func getTokenAtPosition_fast(
 	}
 }
 
-func getTokenAtPosition(
-	sourceFile *ast.SourceFile,
-	position int,
-	allowPositionInLeadingTrivia bool,
-	includeEndPosition bool,
-	includePrecedingTokenAtEndPosition func(node *ast.Node) bool,
-) *ast.Node {
-	var foundToken *ast.Node
-	current := sourceFile.AsNode()
-	factory := getNodeFactory()
-	for {
-		children := getNodeChildren(current, sourceFile, factory)
-		index, match := core.BinarySearchUniqueFunc(children, position, func(middle int, node *ast.Node) int {
-			// This last callback is more of a selector than a comparator -
-			// `0` causes the `node` result to be returned
-			// `1` causes recursion on the left of the middle
-			// `-1` causes recursion on the right of the middle
-
-			// Let's say you have 3 nodes, spanning positons
-			// pos: 1, end: 3
-			// pos: 3, end: 3
-			// pos: 3, end: 5
-			// and you're looking for the token at positon 3 - all 3 of these nodes are overlapping with position 3.
-			// In fact, there's a _good argument_ that node 2 shouldn't even be allowed to exist - depending on if
-			// the start or end of the ranges are considered inclusive, it's either wholly subsumed by the first or the last node.
-			// Unfortunately, such nodes do exist. :( - See fourslash/completionsImport_tsx.tsx - empty jsx attributes create
-			// a zero-length node.
-			// What also you may not expect is that which node we return depends on the includePrecedingTokenAtEndPosition flag.
-			// Specifically, if includePrecedingTokenAtEndPosition is set, we return the 1-3 node, while if it's unset, we
-			// return the 3-5 node. (The zero length node is never correct.) This is because the includePrecedingTokenAtEndPosition
-			// flag causes us to return the first node whose end position matches the position and which produces and acceptable token
-			// kind. Meanwhile, if includePrecedingTokenAtEndPosition is unset, we look for the first node whose start is <= the
-			// position and whose end is greater than the position.
-
-			// There are more sophisticated end tests later, but this one is very fast
-			// and allows us to skip a bunch of work
-			if node.End() < position {
-				return -1
-			}
-
-			start := node.Pos()
-			if !allowPositionInLeadingTrivia {
-				start = scanner.GetTokenPosOfNode(node, sourceFile, true /*includeJSDoc*/)
-			}
-
-			if start > position {
-				return 1
-			}
-
-			// first element whose start position is before the input and whose end position is after or equal to the input
-			var result bool
-			if result, foundToken = nodeContainsPosition(node, start, position, sourceFile, includeEndPosition, factory, includePrecedingTokenAtEndPosition); result {
-				if middle > 0 {
-					// we want the _first_ element that contains the position, so left-recur if the prior node also contains the position
-					prevNode := children[middle-1]
-					prevNodeStart := prevNode.Pos()
-					if !allowPositionInLeadingTrivia {
-						prevNodeStart = scanner.GetTokenPosOfNode(prevNode, sourceFile, true /*includeJSDoc*/)
-					}
-					if result, foundToken = nodeContainsPosition(prevNode, prevNodeStart, position, sourceFile, includeEndPosition, factory, includePrecedingTokenAtEndPosition); result {
-						return 1
-					}
-				}
-				return 0
-			}
-
-			// this complex condition makes us left-recur around a zero-length node when includePrecedingTokenAtEndPosition is set, rather than right-recur on it
-			if includePrecedingTokenAtEndPosition != nil && start == position && middle > 0 && children[middle-1].End() == position {
-				prevNode := children[middle-1]
-				prevNodeStart := prevNode.Pos()
-				if !allowPositionInLeadingTrivia {
-					prevNodeStart = scanner.GetTokenPosOfNode(prevNode, sourceFile, true /*includeJSDoc*/)
-				}
-				if result, foundToken = nodeContainsPosition(prevNode, prevNodeStart, position, sourceFile, includeEndPosition, factory, includePrecedingTokenAtEndPosition); result {
-					return 1
-				}
-			}
-			return -1
-		})
-
-		if foundToken != nil {
-			return foundToken
-		}
-		if match {
-			current = children[index]
-			continue
-		}
-		return current
-	}
-}
-
 func nodeContainsPosition(node *ast.Node, nodeStart int, position int, sourceFile *ast.SourceFile, includeEndPosition bool, factory *ast.NodeFactory, includePrecedingTokenAtEndPosition func(node *ast.Node) bool) (result bool, foundToken *ast.Node) {
 	if nodeStart > position {
 		// If this child begins after position, then all subsequent children will as well.
@@ -296,12 +316,11 @@ func findPrecedingToken(position int, sourceFile *ast.SourceFile, startNode *ast
 	}
 
 	children := getNodeChildren(node, sourceFile, factory)
-	index, match := slices.BinarySearchFunc(children, position, func(middle *ast.Node, _ int) int {
+	index, match := core.BinarySearchUniqueFunc(children, position, func(index int, middle *ast.Node) int {
 		// This last callback is more of a selector than a comparator -
 		// `0` causes the `middle` result to be returned
 		// `1` causes recursion on the left of the middle
 		// `-1` causes recursion on the right of the middle
-		index := slices.Index(children, middle)
 		if position < middle.End() {
 			// first element whose end position is greater than the input position
 			if index == 0 || position >= children[index-1].End() {
