@@ -261,10 +261,10 @@
 		println(foo, bar)
 	
 		callIt(func() {
-			foo := 3 // OK
+			foo := 3 // Bad
 			~~~
 !!! shadow: declaration of "foo" shadows non-local declaration at line 233
-			bar := 4 // OK
+			bar := 4 // Bad
 			~~~
 !!! shadow: declaration of "bar" shadows non-local declaration at line 234
 			println(foo, bar)

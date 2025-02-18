@@ -235,8 +235,8 @@ func F16() {
 	println(foo, bar)
 
 	callIt(func() {
-		foo := 3 // OK
-		bar := 4 // OK
+		foo := 3 // Bad
+		bar := 4 // Bad
 		println(foo, bar)
 	})
 }
