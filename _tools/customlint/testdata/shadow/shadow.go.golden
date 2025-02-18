@@ -298,6 +298,7 @@
 			v, err := read()
 			if err != nil {
 				if err == errSome {
+					// OK: use after asignnent above; switching to = below would not be observable.
 					if err := sendError(err); err != nil {
 					   ~~~
 !!! shadow: declaration of "err" shadows declaration at line 268
@@ -311,6 +312,21 @@
 		}
 	}
 	
+	func F17b(read func() (v any, err error), sendError func(error) error) error {
+		for {
+			v, err := read()
+			if err != nil {
+				return err
+			}
+			if v == "bad value" {
+				// OK: use after asignnent above; switching to = below would not be observable.
+				if err := sendError(err); err != nil {
+					return err
+				}
+			}
+		}
+	}
+	
 	func F18(index int) int {
 		return callIt2(func() int {
 			if index == 0 {
@@ -321,7 +337,7 @@
 				// Dubuious; did this mean to keep the value for another execution?
 				index := 2
 				~~~~~
-!!! shadow: declaration of "index" shadows declaration at line 282
+!!! shadow: declaration of "index" shadows declaration at line 298
 				println(index)
 				return index
 			}

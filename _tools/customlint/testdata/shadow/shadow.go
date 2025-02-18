@@ -268,6 +268,7 @@ func F17(read func() (v any, err error), sendError func(error) error) error {
 		v, err := read()
 		if err != nil {
 			if err == errSome {
+				// OK: use after asignnent above; switching to = below would not be observable.
 				if err := sendError(err); err != nil {
 					return err
 				}
@@ -276,6 +277,21 @@ func F17(read func() (v any, err error), sendError func(error) error) error {
 			return err
 		}
 		println(v)
+	}
+}
+
+func F17b(read func() (v any, err error), sendError func(error) error) error {
+	for {
+		v, err := read()
+		if err != nil {
+			return err
+		}
+		if v == "bad value" {
+			// OK: use after asignnent above; switching to = below would not be observable.
+			if err := sendError(err); err != nil {
+				return err
+			}
+		}
 	}
 }
 
