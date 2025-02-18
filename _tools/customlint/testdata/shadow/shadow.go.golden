@@ -304,8 +304,6 @@
 				if err == errSome {
 					// OK: use after asignnent above; switching to = below would not be observable.
 					if err := sendError(err); err != nil {
-					   ~~~
-!!! shadow: declaration of "err" shadows declaration at line 268 and is reachable from use at line 269
 						return err
 					}
 					continue
@@ -325,8 +323,6 @@
 			if v == "bad value" {
 				// OK: use after asignnent above; switching to = below would not be observable.
 				if err := sendError(err); err != nil {
-				   ~~~
-!!! shadow: declaration of "err" shadows declaration at line 285 and is reachable from use at line 286
 					return err
 				}
 			}

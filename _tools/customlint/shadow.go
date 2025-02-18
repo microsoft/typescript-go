@@ -162,7 +162,7 @@ func (s *shadowPass) handleAssignment(n ast.Node) {
 
 		cfg := s.cfgFor(s.fnTypeToParent[s.scopes[objFunctionScope].(*ast.FuncType)])
 
-		if reachable, ok := positionIsReachable(cfg, ident, s.objectUses[shadowed]); ok {
+		if reachable, ok := positionIsReachable(cfg, ident, shadowed.Pos(), s.objectUses[shadowed]); ok {
 			s.report(ident, shadowed, reachable)
 		}
 	}
@@ -183,7 +183,7 @@ func (s *shadowPass) reportWithUse(ident *ast.Ident, use token.Pos) {
 	s.pass.ReportRangef(ident, "declaration of %q shadows declaration at line %d", ident.Name, line)
 }
 
-func positionIsReachable(c *cfg.CFG, ident *ast.Ident, shadowUses []*ast.Ident) (reachablePos token.Pos, found bool) {
+func positionIsReachable(c *cfg.CFG, ident *ast.Ident, shadowDecl token.Pos, shadowUses []*ast.Ident) (reachablePos token.Pos, found bool) {
 	var start *cfg.Block
 	for _, b := range c.Blocks {
 		if posInBlock(b, ident.Pos()) {
@@ -202,6 +202,12 @@ func positionIsReachable(c *cfg.CFG, ident *ast.Ident, shadowUses []*ast.Ident) 
 			return 0, false
 		}
 		seen[b] = struct{}{}
+
+		if posInBlock(b, shadowDecl) {
+			// We hit the declaration; any value we could have written
+			// will be written over again, so ineffectual.
+			return 0, false
+		}
 
 		for _, use := range shadowUses {
 			if posInBlock(b, use.Pos()) {
