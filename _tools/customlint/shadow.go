@@ -16,7 +16,7 @@ import (
 
 var shadowAnalyzer = &analysis.Analyzer{
 	Name:     "shadow",
-	Doc:      "check for possible unintended shadowing of variables",
+	Doc:      "check for unintended shadowing of variables",
 	URL:      "https://pkg.go.dev/golang.org/x/tools/go/analysis/passes/shadow",
 	Requires: []*analysis.Analyzer{inspect.Analyzer, ctrlflow.Analyzer},
 	Run: func(pass *analysis.Pass) (any, error) {
