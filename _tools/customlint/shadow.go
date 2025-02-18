@@ -218,7 +218,15 @@ func positionIsReachable(c *cfg.CFG, ident *ast.Ident, shadowUses []*ast.Ident) 
 		return 0, false
 	}
 
-	return reachable(start)
+	// Start from start's successors, since a block can only reach itself
+	// through its successors (and therefore should not be checked first).
+	for _, succ := range start.Succs {
+		if pos, found := reachable(succ); found {
+			return pos, true
+		}
+	}
+
+	return 0, false
 }
 
 func (s *shadowPass) enclosingFunctionScope(scope *types.Scope) *types.Scope {

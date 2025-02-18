@@ -167,7 +167,7 @@
 		if value == 1 {
 			value := value // Bad
 			~~~~~
-!!! shadow: declaration of "value" shadows declaration at line 150 and is reachable from use at line 152
+!!! shadow: declaration of "value" shadows declaration at line 150 and is reachable from use at line 155
 			println(value)
 		}
 		return value
@@ -177,7 +177,7 @@
 		if value == 1 {
 			value := value // Bad
 			~~~~~
-!!! shadow: declaration of "value" shadows declaration at line 158 and is reachable from use at line 160
+!!! shadow: declaration of "value" shadows declaration at line 158 and is reachable from use at line 163
 			println(value)
 		}
 		return value
@@ -188,7 +188,7 @@
 		if value == 1 {
 			value, other := value, 1234 // Bad
 			~~~~~
-!!! shadow: declaration of "value" shadows declaration at line 167 and is reachable from use at line 169
+!!! shadow: declaration of "value" shadows declaration at line 167 and is reachable from use at line 172
 			println(value, other)
 		}
 		return value
@@ -198,8 +198,6 @@
 		value := 1
 		if value == 1 {
 			value := value // OK
-			~~~~~
-!!! shadow: declaration of "value" shadows declaration at line 176 and is reachable from use at line 178
 			println(value)
 			return value
 		}
@@ -209,8 +207,6 @@
 	func F13a(value int) int {
 		if value == 1 {
 			value := value // OK
-			~~~~~
-!!! shadow: declaration of "value" shadows declaration at line 185 and is reachable from use at line 187
 			println(value)
 			return value
 		}
@@ -221,8 +217,6 @@
 		value := 1
 		if value == 1 {
 			value, other := value, 1234 // OK
-			~~~~~
-!!! shadow: declaration of "value" shadows declaration at line 195 and is reachable from use at line 197
 			println(value, other)
 			return value
 		}
@@ -311,7 +305,7 @@
 					// OK: use after asignnent above; switching to = below would not be observable.
 					if err := sendError(err); err != nil {
 					   ~~~
-!!! shadow: declaration of "err" shadows declaration at line 268 and is reachable from use at line 272
+!!! shadow: declaration of "err" shadows declaration at line 268 and is reachable from use at line 269
 						return err
 					}
 					continue
@@ -332,7 +326,7 @@
 				// OK: use after asignnent above; switching to = below would not be observable.
 				if err := sendError(err); err != nil {
 				   ~~~
-!!! shadow: declaration of "err" shadows declaration at line 285 and is reachable from use at line 291
+!!! shadow: declaration of "err" shadows declaration at line 285 and is reachable from use at line 286
 					return err
 				}
 			}
@@ -404,8 +398,6 @@
 		switch {
 		case value < 10:
 			value := add(value, value) // OK
-			~~~~~
-!!! shadow: declaration of "value" shadows declaration at line 353 and is reachable from use at line 356
 			if value < 10 {
 				return value
 			}
@@ -421,8 +413,6 @@
 		case value < 10:
 			println(value)
 			value := add(value, value) // OK
-			~~~~~
-!!! shadow: declaration of "value" shadows declaration at line 367 and is reachable from use at line 370
 			println(value)
 			if value < 10 {
 				return value
