@@ -98,7 +98,7 @@ func (r *CompilerBaselineRunner) RunTests(t *testing.T) {
 	}
 	for _, filename := range files {
 		if slices.Contains(deprecatedTests, tspath.GetBaseFileName(filename)) {
-			t.Logf("Skipping deprecated test %s", filename)
+			// t.Logf("Skipping deprecated test %s", filename)
 			continue
 		}
 		r.runTest(t, filename)
