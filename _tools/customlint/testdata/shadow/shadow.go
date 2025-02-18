@@ -313,6 +313,23 @@ func F19() {
 	print()
 }
 
+func F19b() {
+	value := 1
+
+	print := func() {
+		println(value)
+	}
+
+	setAndPrint := func(v int) {
+		println(value)
+		value := v
+		println(value)
+	}
+
+	setAndPrint(1234)
+	print()
+}
+
 func add(a, b int) int {
 	return a + b
 }
@@ -321,6 +338,22 @@ func F20(value int) int {
 	switch {
 	case value < 10:
 		value := add(value, value) // OK
+		if value < 10 {
+			return value
+		}
+		return value + 1
+	case value < 20:
+		return value
+	}
+	return value
+}
+
+func F20a(value int) int {
+	switch {
+	case value < 10:
+		println(value)
+		value := add(value, value) // OK
+		println(value)
 		if value < 10 {
 			return value
 		}
