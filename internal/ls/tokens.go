@@ -60,11 +60,7 @@ func getTokenAtPosition(
 				return -1
 			}
 
-			start := node.Pos()
-			if !allowPositionInLeadingTrivia {
-				start = scanner.GetTokenPosOfNode(node, sourceFile, true /*includeJSDoc*/)
-			}
-
+			start := getPosition(node, sourceFile, allowPositionInLeadingTrivia)
 			if start > position {
 				return 1
 			}
@@ -77,10 +73,7 @@ func getTokenAtPosition(
 				if middle > 0 {
 					// we want the _first_ element that contains the position, so left-recur if the prior node also contains the position
 					prevNode := children[middle-1]
-					prevNodeStart := prevNode.Pos()
-					if !allowPositionInLeadingTrivia {
-						prevNodeStart = scanner.GetTokenPosOfNode(prevNode, sourceFile, true /*includeJSDoc*/)
-					}
+					prevNodeStart := getPosition(prevNode, sourceFile, allowPositionInLeadingTrivia)
 					if result, found := nodeContainsPosition(prevNode, prevNodeStart, position, sourceFile, includeEndPosition, factory, includePrecedingTokenAtEndPosition); result {
 						if found != nil {
 							foundToken = found
@@ -94,10 +87,7 @@ func getTokenAtPosition(
 			// this complex condition makes us left-recur around a zero-length node when includePrecedingTokenAtEndPosition is set, rather than right-recur on it
 			if includePrecedingTokenAtEndPosition != nil && start == position && middle > 0 && children[middle-1].End() == position {
 				prevNode := children[middle-1]
-				prevNodeStart := prevNode.Pos()
-				if !allowPositionInLeadingTrivia {
-					prevNodeStart = scanner.GetTokenPosOfNode(prevNode, sourceFile, true /*includeJSDoc*/)
-				}
+				prevNodeStart := getPosition(prevNode, sourceFile, allowPositionInLeadingTrivia)
 				if result, found := nodeContainsPosition(prevNode, prevNodeStart, position, sourceFile, includeEndPosition, factory, includePrecedingTokenAtEndPosition); result {
 					if found != nil {
 						foundToken = found
@@ -126,11 +116,10 @@ func getTokenAtPosition_fast(
 	includeEndPosition bool,
 	includePrecedingTokenAtEndPosition func(node *ast.Node) bool,
 ) *ast.Node {
-	var next *ast.Node
-	var foundToken *ast.Node
+	var next, foundToken, prevSubtree *ast.Node
 	factory := getNodeFactory()
 	current := sourceFile.AsNode()
-	left := current.Pos()
+	left := 0
 	right := -1
 
 	testNode := func(node *ast.Node) int {
@@ -138,8 +127,8 @@ func getTokenAtPosition_fast(
 			return -1
 		}
 
-		start := node.Pos()
-		if node.Kind == ast.KindJSDoc {
+		start := getPosition(node, sourceFile, allowPositionInLeadingTrivia)
+		if node.Kind == ast.KindJSDoc && allowPositionInLeadingTrivia {
 			// There is a bug where JSDoc nodes don't include their leading trivia in their start position,
 			// which breaks binary searching, since the token *after* them has a position *before* them.
 			start = node.Parent.Pos()
@@ -148,7 +137,7 @@ func getTokenAtPosition_fast(
 			return 1
 		}
 
-		if result, found := nodeContainsPosition(node, start, position, sourceFile, includeEndPosition, factory, nil); result {
+		if result, found := nodeContainsPosition(node, start, position, sourceFile, includeEndPosition, factory, includePrecedingTokenAtEndPosition); result {
 			if found != nil {
 				foundToken = found
 			}
@@ -170,7 +159,7 @@ func getTokenAtPosition_fast(
 		if match {
 			next = nodes[index]
 		} else if index < len(nodes) {
-			right = nodes[index].Pos()
+			right = getPosition(nodes[index], sourceFile, allowPositionInLeadingTrivia)
 		}
 	}
 
@@ -183,7 +172,13 @@ func getTokenAtPosition_fast(
 				if node != nil && next == nil && right < 0 {
 					switch testNode(node) {
 					case -1:
-						left = node.End()
+						if !ast.IsJSDocKind(node.Kind) {
+							// We can't move the left boundary into or beyond JSDoc,
+							// because we may end up returning the token after this JSDoc,
+							// constructing it with the scanner, and we need to include
+							// all its leading trivia in its position.
+							left = node.End()
+						}
 					case 0:
 						if node.Flags&ast.NodeFlagsHasJSDoc != 0 {
 							visitNodes(node.JSDoc(sourceFile))
@@ -192,15 +187,22 @@ func getTokenAtPosition_fast(
 							next = node
 						}
 					case 1:
-						right = node.Pos()
+						right = getPosition(node, sourceFile, allowPositionInLeadingTrivia)
 					}
 				}
 				return node
 			},
 			VisitNodes: func(nodeList *ast.NodeList, visitor *ast.NodeVisitor) *ast.NodeList {
-				if nodeList != nil && next == nil && right < 0 {
-					if nodeList.Pos() > position {
-						right = nodeList.Pos()
+				if nodeList != nil && len(nodeList.Nodes) > 0 && next == nil && right < 0 {
+					start := nodeList.Pos()
+					if !ast.IsJSDocKind(nodeList.Nodes[0].Kind) {
+						start = getPosition(nodeList.Nodes[0], sourceFile, allowPositionInLeadingTrivia)
+					}
+					if start > position {
+						right = start
+					} else if nodeList.End() == position && (includeEndPosition || includePrecedingTokenAtEndPosition != nil) && nodeList.Nodes[len(nodeList.Nodes)-1].End() == position {
+						left = nodeList.End()
+						prevSubtree = nodeList.Nodes[len(nodeList.Nodes)-1]
 					} else if nodeList.End() <= position {
 						left = nodeList.End()
 					} else {
@@ -211,9 +213,13 @@ func getTokenAtPosition_fast(
 			},
 			VisitModifiers: func(modifiers *ast.ModifierList, visitor *ast.NodeVisitor) *ast.ModifierList {
 				if modifiers != nil && next == nil && right < 0 {
-					if modifiers.Pos() > position {
-						right = modifiers.Pos()
-					} else if modifiers.End() <= position {
+					start := getPosition(modifiers.Nodes[0], sourceFile, allowPositionInLeadingTrivia)
+					if start > position {
+						right = start
+					} else if modifiers.End() == position && (includeEndPosition || includePrecedingTokenAtEndPosition != nil) {
+						left = modifiers.End()
+						prevSubtree = modifiers.Nodes[len(modifiers.Nodes)-1]
+					} else if modifiers.End() < position {
 						left = modifiers.End()
 					} else {
 						visitNodes(modifiers.Nodes)
@@ -227,14 +233,11 @@ func getTokenAtPosition_fast(
 					case -1:
 						left = token.End()
 					case 0:
-						if token.Flags&ast.NodeFlagsHasJSDoc != 0 {
-							visitNodes(token.JSDoc(sourceFile))
-						}
 						if next == nil {
 							next = token
 						}
 					case 1:
-						right = token.Pos()
+						right = getPosition(token, sourceFile, allowPositionInLeadingTrivia)
 					}
 				}
 				return token
@@ -248,20 +251,27 @@ func getTokenAtPosition_fast(
 			return foundToken
 		}
 		if next == nil {
+			if prevSubtree != nil {
+				child := findRightmostNode(prevSubtree, sourceFile)
+				if child.End() == position && includePrecedingTokenAtEndPosition(child) {
+					// Optimization: includePrecedingTokenAtEndPosition only ever returns true
+					// for real AST nodes, so we don't run the scanner here.
+					return child
+				}
+			}
 			if ast.IsTokenKind(current.Kind) || ast.IsJSDocCommentContainingNode(current) {
 				return current
 			}
 			if right < 0 {
 				right = current.End()
 			}
-			pos := left
-			end := right
-			scanner := scanner.GetScannerForSourceFile(sourceFile, pos)
-			for pos < end {
+			scanner := scanner.GetScannerForSourceFile(sourceFile, left)
+			for left < right {
 				token := scanner.Token()
-				tokenStart := scanner.TokenFullStart()
+				tokenFullStart := scanner.TokenFullStart()
+				tokenStart := core.IfElse(allowPositionInLeadingTrivia, tokenFullStart, scanner.TokenStart())
 				tokenEnd := scanner.TokenEnd()
-				if tokenStart <= position && position < tokenEnd {
+				if tokenStart <= position && (position < tokenEnd || position == tokenEnd && includeEndPosition) {
 					if token == ast.KindIdentifier || !ast.IsTokenKind(token) {
 						if ast.IsJSDocKind(current.Kind) {
 							return current
@@ -269,11 +279,19 @@ func getTokenAtPosition_fast(
 						panic(fmt.Sprintf("did not expect %s to have %s in its trivia", current.Kind.String(), token.String()))
 					}
 					tokenNode := factory.NewToken(token)
-					tokenNode.Loc = core.NewTextRange(tokenStart, tokenEnd)
+					tokenNode.Loc = core.NewTextRange(tokenFullStart, tokenEnd)
 					tokenNode.Parent = current
 					return tokenNode
 				}
-				pos = tokenEnd
+				if includePrecedingTokenAtEndPosition != nil && tokenEnd == position {
+					prevToken := factory.NewToken(token)
+					prevToken.Loc = core.NewTextRange(tokenFullStart, tokenEnd)
+					prevToken.Parent = current
+					if includePrecedingTokenAtEndPosition(prevToken) {
+						return prevToken
+					}
+				}
+				left = tokenEnd
 				scanner.Scan()
 			}
 			return current
@@ -286,6 +304,20 @@ func getTokenAtPosition_fast(
 		right = -1
 		next = nil
 	}
+}
+
+func getPosition(node *ast.Node, sourceFile *ast.SourceFile, allowPositionInLeadingTrivia bool) int {
+	if allowPositionInLeadingTrivia {
+		return node.Pos()
+	}
+	return scanner.GetTokenPosOfNode(node, sourceFile, true /*includeJsDoc*/)
+}
+
+func maybeSkipTrivia(pos int, sourceFile *ast.SourceFile, allowPositionInLeadingTrivia bool) int {
+	if allowPositionInLeadingTrivia {
+		return pos
+	}
+	return scanner.SkipTrivia(sourceFile.Text, pos)
 }
 
 func nodeContainsPosition(node *ast.Node, nodeStart int, position int, sourceFile *ast.SourceFile, includeEndPosition bool, factory *ast.NodeFactory, includePrecedingTokenAtEndPosition func(node *ast.Node) bool) (result bool, foundToken *ast.Node) {
@@ -369,6 +401,47 @@ func findPrecedingToken(position int, sourceFile *ast.SourceFile, startNode *ast
 		return findRightmostToken(candidate, sourceFile, factory)
 	}
 	return nil
+}
+
+func findRightmostNode(node *ast.Node, sourceFile *ast.SourceFile) *ast.Node {
+	var next *ast.Node
+	current := node
+	visitNode := func(node *ast.Node, _ *ast.NodeVisitor) *ast.Node {
+		if node != nil {
+			next = node
+		}
+		return node
+	}
+	visitor := &ast.NodeVisitor{
+		Visit: func(node *ast.Node) *ast.Node {
+			return node
+		},
+		Hooks: ast.NodeVisitorHooks{
+			VisitNode:  visitNode,
+			VisitToken: visitNode,
+			VisitNodes: func(nodeList *ast.NodeList, visitor *ast.NodeVisitor) *ast.NodeList {
+				if nodeList != nil && len(nodeList.Nodes) > 0 {
+					next = nodeList.Nodes[len(nodeList.Nodes)-1]
+				}
+				return nodeList
+			},
+			VisitModifiers: func(modifiers *ast.ModifierList, visitor *ast.NodeVisitor) *ast.ModifierList {
+				if modifiers != nil && len(modifiers.Nodes) > 0 {
+					next = modifiers.Nodes[len(modifiers.Nodes)-1]
+				}
+				return modifiers
+			},
+		},
+	}
+
+	for {
+		current.VisitEachChild(visitor)
+		if next == nil {
+			return current
+		}
+		current = next
+		next = nil
+	}
 }
 
 func nodeHasTokens(node *ast.Node, sourceFile *ast.SourceFile) bool {

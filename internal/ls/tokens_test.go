@@ -134,8 +134,17 @@ func TestGetTouchingPropertyNameFast(t *testing.T) {
 			t.Run(fmt.Sprintf("pos: %d", pos), func(t *testing.T) {
 				t.Parallel()
 				slow := getTouchingPropertyName(file, pos)
+				if slow.Kind == ast.KindSyntaxList {
+					slow = slow.Parent
+				}
 				fast := getTouchingPropertyName_fast(file, pos)
-				assert.Equal(t, toTokenInfo(slow), toTokenInfo(fast))
+				if fast.Kind == ast.KindJSDoc && slow.Kind == ast.KindIdentifier && slow.End() < pos {
+					// The slow version (ported from Strada) has a bug where it can return an identifier
+					// inside JSDoc where the position isn't actually touching the end of the identifier.
+					return
+				}
+				slowToken, fastToken := toTokenInfo(slow), toTokenInfo(fast)
+				assert.Equal(t, fastToken, slowToken)
 			})
 		}
 	}
