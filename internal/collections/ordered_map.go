@@ -105,6 +105,10 @@ func (m *OrderedMap[K, V]) Delete(key K) (V, bool) {
 // A slice of the keys can be obtained by calling `slices.Collect`.
 func (m *OrderedMap[K, V]) Keys() iter.Seq[K] {
 	return func(yield func(K) bool) {
+		if m == nil {
+			return
+		}
+
 		// We use a for loop here to ensure we enumerate new items added during iteration.
 		//nolint:intrange
 		for i := 0; i < len(m.keys); i++ {
@@ -119,6 +123,10 @@ func (m *OrderedMap[K, V]) Keys() iter.Seq[K] {
 // A slice of the values can be obtained by calling `slices.Collect`.
 func (m *OrderedMap[K, V]) Values() iter.Seq[V] {
 	return func(yield func(V) bool) {
+		if m == nil {
+			return
+		}
+
 		// We use a for loop here to ensure we enumerate new items added during iteration.
 		//nolint:intrange
 		for i := 0; i < len(m.keys); i++ {
@@ -132,6 +140,10 @@ func (m *OrderedMap[K, V]) Values() iter.Seq[V] {
 // Entries returns an iterator over the key-value pairs in the map.
 func (m *OrderedMap[K, V]) Entries() iter.Seq2[K, V] {
 	return func(yield func(K, V) bool) {
+		if m == nil {
+			return
+		}
+
 		// We use a for loop here to ensure we enumerate new items added during iteration.
 		//nolint:intrange
 		for i := 0; i < len(m.keys); i++ {
@@ -153,11 +165,19 @@ func (m *OrderedMap[K, V]) Clear() {
 
 // Size returns the number of key-value pairs in the map.
 func (m *OrderedMap[K, V]) Size() int {
+	if m == nil {
+		return 0
+	}
+
 	return len(m.keys)
 }
 
 // Clone returns a shallow copy of the map.
 func (m *OrderedMap[K, V]) Clone() *OrderedMap[K, V] {
+	if m == nil {
+		return nil
+	}
+
 	m2 := m.clone()
 	return &m2
 }
@@ -167,6 +187,14 @@ func (m *OrderedMap[K, V]) clone() OrderedMap[K, V] {
 		keys: slices.Clone(m.keys),
 		mp:   maps.Clone(m.mp),
 	}
+}
+
+func (m OrderedMap[K, V]) MarshalJSON() ([]byte, error) {
+	if len(m.mp) == 0 {
+		return []byte("{}"), nil
+	}
+	// TODO(jakebailey): implement proper sort order
+	return json.Marshal(m.mp)
 }
 
 func (m *OrderedMap[K, V]) UnmarshalJSON(data []byte) error {
