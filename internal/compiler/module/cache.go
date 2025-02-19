@@ -18,6 +18,7 @@ type caches struct {
 	typeReferenceDirectiveCache                   *resolutionCache[*ResolvedTypeReferenceDirective]
 	packageJsonInfoCache                          *packagejson.InfoCache
 	resolvedTypeReferenceDirectiveLookupLocations map[*ResolvedTypeReferenceDirective]*LookupLocations
+	parsedPatternsCache                           map[*map[string][]string]parsedPatterns
 }
 
 func newCaches(

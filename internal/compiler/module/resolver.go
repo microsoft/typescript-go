@@ -1031,7 +1031,7 @@ func (r *resolutionState) tryLoadModuleUsingPathsIfEligible() *resolved {
 		return continueSearching()
 	}
 	baseDirectory := getPathsBasePath(r.compilerOptions, r.resolver.host.GetCurrentDirectory())
-	pathPatterns := tryParsePatterns(r.compilerOptions.Paths)
+	pathPatterns := tryParsePatternsCached(r.resolver, &r.compilerOptions.Paths)
 	return r.tryLoadModuleUsingPaths(
 		r.extensions,
 		r.name,
@@ -1702,10 +1702,21 @@ type parsedPatterns struct {
 	patterns           []core.Pattern
 }
 
-func tryParsePatterns(paths map[string][]string) parsedPatterns {
-	// !!! TS has a weakmap cache
-	// We could store a cache on Resolver, but maybe we can wait and profile
+func tryParsePatternsCached(r *Resolver, paths *map[string][]string) parsedPatterns {
+	var pathPatterns parsedPatterns
+	if cached, ok := r.parsedPatternsCache[paths]; ok {
+		pathPatterns = cached
+	} else {
+		pathPatterns = tryParsePatterns(*paths)
+		if r.parsedPatternsCache == nil {
+			r.parsedPatternsCache = make(map[*map[string][]string]parsedPatterns)
+		}
+		r.caches.parsedPatternsCache[paths] = pathPatterns
+	}
+	return pathPatterns
+}
 
+func tryParsePatterns(paths map[string][]string) parsedPatterns {
 	numPatterns := 0
 	for path := range paths {
 		if pattern := core.TryParsePattern(path); pattern.IsValid() && pattern.StarIndex == -1 {
