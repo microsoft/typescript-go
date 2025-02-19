@@ -193,8 +193,28 @@ func (m OrderedMap[K, V]) MarshalJSON() ([]byte, error) {
 	if len(m.mp) == 0 {
 		return []byte("{}"), nil
 	}
-	// TODO(jakebailey): implement proper sort order
-	return json.Marshal(m.mp)
+	var buf bytes.Buffer
+	buf.WriteByte('{')
+	enc := json.NewEncoder(&buf)
+	enc.SetEscapeHTML(false)
+
+	for i, k := range m.keys {
+		if i > 0 {
+			buf.WriteByte(',')
+		}
+
+		if err := enc.Encode(k); err != nil {
+			return nil, err
+		}
+
+		buf.WriteByte(':')
+
+		if err := enc.Encode(m.mp[k]); err != nil {
+			return nil, err
+		}
+	}
+	buf.WriteByte('}')
+	return buf.Bytes(), nil
 }
 
 func (m *OrderedMap[K, V]) UnmarshalJSON(data []byte) error {
