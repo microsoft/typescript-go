@@ -305,10 +305,19 @@ export const lint = task({
     name: "lint",
     run: async () => {
         await buildCustomLinter();
+
+        const lintArgs = ["run", "--sort-results"];
+        if (isCI) {
+            lintArgs.push("--timeout=5m");
+        }
+        if (options.fix) {
+            lintArgs.push("--fix");
+        }
+
         const resolvedCustomLinterPath = path.resolve(customLinterPath);
-        await $`${resolvedCustomLinterPath} run ${options.fix ? ["--fix"] : []} ${isCI ? ["--timeout=5m"] : []}`;
+        await $`${resolvedCustomLinterPath} ${lintArgs}`;
         console.log("Linting _tools");
-        await $({ cwd: "./_tools" })`${resolvedCustomLinterPath} run ${options.fix ? ["--fix"] : []} ${isCI ? ["--timeout=5m"] : []}`;
+        await $({ cwd: "./_tools" })`${resolvedCustomLinterPath} ${lintArgs}`;
     },
 });
 
