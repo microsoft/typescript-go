@@ -1705,8 +1705,24 @@ type parsedPatterns struct {
 func tryParsePatterns(paths map[string][]string) parsedPatterns {
 	// !!! TS has a weakmap cache
 	// We could store a cache on Resolver, but maybe we can wait and profile
-	matchableStringSet := collections.OrderedSet[string]{}
-	patterns := make([]core.Pattern, 0, len(paths))
+
+	numPatterns := 0
+	for path := range paths {
+		if pattern := core.TryParsePattern(path); pattern.IsValid() && pattern.StarIndex == -1 {
+			numPatterns++
+		}
+	}
+	numMatchables := len(paths) - numPatterns
+
+	var patterns []core.Pattern
+	var matchableStringSet collections.OrderedSet[string]
+	if numPatterns != 0 {
+		patterns = make([]core.Pattern, 0, numPatterns)
+	}
+	if numMatchables != 0 {
+		matchableStringSet = *collections.NewOrderedSetWithSizeHint[string](numMatchables)
+	}
+
 	for path := range paths {
 		if pattern := core.TryParsePattern(path); pattern.IsValid() {
 			if pattern.StarIndex == -1 {
