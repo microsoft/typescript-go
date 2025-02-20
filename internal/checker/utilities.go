@@ -4,6 +4,7 @@ import (
 	"cmp"
 	"slices"
 	"strings"
+	"sync"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/binder"
@@ -329,10 +330,10 @@ type NameResolver struct {
 	compilerOptions                  *core.CompilerOptions
 	getSymbolOfDeclaration           func(node *ast.Node) *ast.Symbol
 	error                            func(location *ast.Node, message *diagnostics.Message, args ...any) *ast.Diagnostic
-	globals                          ast.SymbolTable
 	argumentsSymbol                  *ast.Symbol
 	requireSymbol                    *ast.Symbol
 	lookup                           func(symbols ast.SymbolTable, name string, meaning ast.SymbolFlags) *ast.Symbol
+	lookupGlobal                     func(name string, meaning ast.SymbolFlags) *ast.Symbol
 	symbolReferenced                 func(symbol *ast.Symbol, meaning ast.SymbolFlags)
 	setRequiresScopeChangeCache      func(node *ast.Node, value core.Tristate)
 	getRequiresScopeChangeCache      func(node *ast.Node) core.Tristate
@@ -634,7 +635,7 @@ loop:
 	}
 	if result == nil {
 		if !excludeGlobals {
-			result = r.lookup(r.globals, name, meaning)
+			result = r.lookupGlobal(name, meaning)
 		}
 	}
 	if nameNotFoundMessage != nil {
@@ -1051,6 +1052,10 @@ func getNonAugmentationDeclaration(symbol *ast.Symbol) *ast.Node {
 
 func isExternalModuleAugmentation(node *ast.Node) bool {
 	return ast.IsAmbientModule(node) && ast.IsModuleAugmentationExternal(node)
+}
+
+func isTopLevelInExternalModuleAugmentation(node *ast.Node) bool {
+	return node != nil && node.Parent != nil && ast.IsModuleBlock(node.Parent) && isExternalModuleAugmentation(node.Parent.Parent)
 }
 
 func isSyntacticDefault(node *ast.Node) bool {
@@ -1618,13 +1623,8 @@ func isBitwiseOperatorOrHigher(kind ast.Kind) bool {
 	return isBitwiseOperator(kind) || isEqualityOperatorOrHigher(kind)
 }
 
-// NOTE: The version in utilities includes ExclamationToken, which is not a binary operator.
-func isLogicalOperator(kind ast.Kind) bool {
-	return kind == ast.KindAmpersandAmpersandToken || kind == ast.KindBarBarToken
-}
-
 func isLogicalOperatorOrHigher(kind ast.Kind) bool {
-	return isLogicalOperator(kind) || isBitwiseOperatorOrHigher(kind)
+	return ast.IsLogicalBinaryOperator(kind) || isBitwiseOperatorOrHigher(kind)
 }
 
 func isAssignmentOperatorOrHigher(kind ast.Kind) bool {
@@ -2577,3 +2577,195 @@ func minAndMax[T any](slice []T, getValue func(value T) int) (int, int) {
 func isModuleExportsAccessExpression(node *ast.Node) bool {
 	return ast.IsAccessExpression(node) && ast.IsModuleIdentifier(node.Expression()) && ast.GetElementOrPropertyAccessName(node) == "exports"
 }
+
+func getNonModifierTokenRangeOfNode(node *ast.Node) core.TextRange {
+	pos := node.Pos()
+	if node.Modifiers() != nil {
+		pos = core.LastOrNil(node.Modifiers().Nodes).End()
+	}
+	return scanner.GetRangeOfTokenAtPosition(ast.GetSourceFileOfNode(node), pos)
+}
+
+func symbolName(symbol *ast.Symbol) string {
+	if symbol.ValueDeclaration != nil && ast.IsPrivateIdentifierClassElementDeclaration(symbol.ValueDeclaration) {
+		return symbol.ValueDeclaration.Name().Text()
+	}
+	return symbol.Name
+}
+
+type FeatureMapEntry struct {
+	lib   string
+	props []string
+}
+
+var getFeatureMap = sync.OnceValue(func() map[string][]FeatureMapEntry {
+	return map[string][]FeatureMapEntry{
+		"Array": {
+			{lib: "es2015", props: []string{"find", "findIndex", "fill", "copyWithin", "entries", "keys", "values"}},
+			{lib: "es2016", props: []string{"includes"}},
+			{lib: "es2019", props: []string{"flat", "flatMap"}},
+			{lib: "es2022", props: []string{"at"}},
+			{lib: "es2023", props: []string{"findLastIndex", "findLast", "toReversed", "toSorted", "toSpliced", "with"}},
+		},
+		"Iterator": {
+			{lib: "es2015", props: []string{}},
+		},
+		"AsyncIterator": {
+			{lib: "es2015", props: []string{}},
+		},
+		"Atomics": {
+			{lib: "es2017", props: []string{}},
+		},
+		"SharedArrayBuffer": {
+			{lib: "es2017", props: []string{}},
+		},
+		"AsyncIterable": {
+			{lib: "es2018", props: []string{}},
+		},
+		"AsyncIterableIterator": {
+			{lib: "es2018", props: []string{}},
+		},
+		"AsyncGenerator": {
+			{lib: "es2018", props: []string{}},
+		},
+		"AsyncGeneratorFunction": {
+			{lib: "es2018", props: []string{}},
+		},
+		"RegExp": {
+			{lib: "es2015", props: []string{"flags", "sticky", "unicode"}},
+			{lib: "es2018", props: []string{"dotAll"}},
+		},
+		"Reflect": {
+			{lib: "es2015", props: []string{"apply", "construct", "defineProperty", "deleteProperty", "get", "getOwnPropertyDescriptor", "getPrototypeOf", "has", "isExtensible", "ownKeys", "preventExtensions", "set", "setPrototypeOf"}},
+		},
+		"ArrayConstructor": {
+			{lib: "es2015", props: []string{"from", "of"}},
+			{lib: "esnext", props: []string{"fromAsync"}},
+		},
+		"ObjectConstructor": {
+			{lib: "es2015", props: []string{"assign", "getOwnPropertySymbols", "keys", "is", "setPrototypeOf"}},
+			{lib: "es2017", props: []string{"values", "entries", "getOwnPropertyDescriptors"}},
+			{lib: "es2019", props: []string{"fromEntries"}},
+			{lib: "es2022", props: []string{"hasOwn"}},
+		},
+		"NumberConstructor": {
+			{lib: "es2015", props: []string{"isFinite", "isInteger", "isNaN", "isSafeInteger", "parseFloat", "parseInt"}},
+		},
+		"Math": {
+			{lib: "es2015", props: []string{"clz32", "imul", "sign", "log10", "log2", "log1p", "expm1", "cosh", "sinh", "tanh", "acosh", "asinh", "atanh", "hypot", "trunc", "fround", "cbrt"}},
+		},
+		"Map": {
+			{lib: "es2015", props: []string{"entries", "keys", "values"}},
+		},
+		"Set": {
+			{lib: "es2015", props: []string{"entries", "keys", "values"}},
+		},
+		"PromiseConstructor": {
+			{lib: "es2015", props: []string{"all", "race", "reject", "resolve"}},
+			{lib: "es2020", props: []string{"allSettled"}},
+			{lib: "es2021", props: []string{"any"}},
+		},
+		"Symbol": {
+			{lib: "es2015", props: []string{"for", "keyFor"}},
+			{lib: "es2019", props: []string{"description"}},
+		},
+		"WeakMap": {
+			{lib: "es2015", props: []string{"entries", "keys", "values"}},
+		},
+		"WeakSet": {
+			{lib: "es2015", props: []string{"entries", "keys", "values"}},
+		},
+		"String": {
+			{lib: "es2015", props: []string{"codePointAt", "includes", "endsWith", "normalize", "repeat", "startsWith", "anchor", "big", "blink", "bold", "fixed", "fontcolor", "fontsize", "italics", "link", "small", "strike", "sub", "sup"}},
+			{lib: "es2017", props: []string{"padStart", "padEnd"}},
+			{lib: "es2019", props: []string{"trimStart", "trimEnd", "trimLeft", "trimRight"}},
+			{lib: "es2020", props: []string{"matchAll"}},
+			{lib: "es2021", props: []string{"replaceAll"}},
+			{lib: "es2022", props: []string{"at"}},
+			{lib: "esnext", props: []string{"isWellFormed", "toWellFormed"}},
+		},
+		"StringConstructor": {
+			{lib: "es2015", props: []string{"fromCodePoint", "raw"}},
+		},
+		"DateTimeFormat": {
+			{lib: "es2017", props: []string{"formatToParts"}},
+		},
+		"Promise": {
+			{lib: "es2015", props: []string{}},
+			{lib: "es2018", props: []string{"finally"}},
+		},
+		"RegExpMatchArray": {
+			{lib: "es2018", props: []string{"groups"}},
+		},
+		"RegExpExecArray": {
+			{lib: "es2018", props: []string{"groups"}},
+		},
+		"Intl": {
+			{lib: "es2018", props: []string{"PluralRules"}},
+		},
+		"NumberFormat": {
+			{lib: "es2018", props: []string{"formatToParts"}},
+		},
+		"SymbolConstructor": {
+			{lib: "es2020", props: []string{"matchAll"}},
+		},
+		"DataView": {
+			{lib: "es2020", props: []string{"setBigInt64", "setBigUint64", "getBigInt64", "getBigUint64"}},
+		},
+		"BigInt": {
+			{lib: "es2020", props: []string{}},
+		},
+		"RelativeTimeFormat": {
+			{lib: "es2020", props: []string{"format", "formatToParts", "resolvedOptions"}},
+		},
+		"Int8Array": {
+			{lib: "es2022", props: []string{"at"}},
+			{lib: "es2023", props: []string{"findLastIndex", "findLast", "toReversed", "toSorted", "toSpliced", "with"}},
+		},
+		"Uint8Array": {
+			{lib: "es2022", props: []string{"at"}},
+			{lib: "es2023", props: []string{"findLastIndex", "findLast", "toReversed", "toSorted", "toSpliced", "with"}},
+		},
+		"Uint8ClampedArray": {
+			{lib: "es2022", props: []string{"at"}},
+			{lib: "es2023", props: []string{"findLastIndex", "findLast", "toReversed", "toSorted", "toSpliced", "with"}},
+		},
+		"Int16Array": {
+			{lib: "es2022", props: []string{"at"}},
+			{lib: "es2023", props: []string{"findLastIndex", "findLast", "toReversed", "toSorted", "toSpliced", "with"}},
+		},
+		"Uint16Array": {
+			{lib: "es2022", props: []string{"at"}},
+			{lib: "es2023", props: []string{"findLastIndex", "findLast", "toReversed", "toSorted", "toSpliced", "with"}},
+		},
+		"Int32Array": {
+			{lib: "es2022", props: []string{"at"}},
+			{lib: "es2023", props: []string{"findLastIndex", "findLast", "toReversed", "toSorted", "toSpliced", "with"}},
+		},
+		"Uint32Array": {
+			{lib: "es2022", props: []string{"at"}},
+			{lib: "es2023", props: []string{"findLastIndex", "findLast", "toReversed", "toSorted", "toSpliced", "with"}},
+		},
+		"Float32Array": {
+			{lib: "es2022", props: []string{"at"}},
+			{lib: "es2023", props: []string{"findLastIndex", "findLast", "toReversed", "toSorted", "toSpliced", "with"}},
+		},
+		"Float64Array": {
+			{lib: "es2022", props: []string{"at"}},
+			{lib: "es2023", props: []string{"findLastIndex", "findLast", "toReversed", "toSorted", "toSpliced", "with"}},
+		},
+		"BigInt64Array": {
+			{lib: "es2020", props: []string{}},
+			{lib: "es2022", props: []string{"at"}},
+			{lib: "es2023", props: []string{"findLastIndex", "findLast", "toReversed", "toSorted", "toSpliced", "with"}},
+		},
+		"BigUint64Array": {
+			{lib: "es2020", props: []string{}},
+			{lib: "es2022", props: []string{"at"}},
+			{lib: "es2023", props: []string{"findLastIndex", "findLast", "toReversed", "toSorted", "toSpliced", "with"}},
+		},
+		"Error": {
+			{lib: "es2022", props: []string{"cause"}},
+		},
+	}
+})
