@@ -1698,7 +1698,7 @@ func getPathsBasePath(options *core.CompilerOptions, currentDirectory string) st
 }
 
 type parsedPatterns struct {
-	matchableStringSet collections.OrderedSet[string]
+	matchableStringSet core.Set[string]
 	patterns           []core.Pattern
 }
 
@@ -1728,12 +1728,12 @@ func tryParsePatterns(pathMappings *collections.OrderedMap[string, []string]) pa
 	numMatchables := pathMappings.Size() - numPatterns
 
 	var patterns []core.Pattern
-	var matchableStringSet collections.OrderedSet[string]
+	var matchableStringSet core.Set[string]
 	if numPatterns != 0 {
 		patterns = make([]core.Pattern, 0, numPatterns)
 	}
 	if numMatchables != 0 {
-		matchableStringSet = *collections.NewOrderedSetWithSizeHint[string](numMatchables)
+		matchableStringSet = *core.NewSetWithSizeHint[string](numMatchables)
 	}
 
 	for path := range paths {
