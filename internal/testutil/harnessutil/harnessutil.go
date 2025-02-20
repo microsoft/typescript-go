@@ -20,6 +20,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/parser"
 	"github.com/microsoft/typescript-go/internal/repo"
 	"github.com/microsoft/typescript-go/internal/scanner"
+	"github.com/microsoft/typescript-go/internal/testutil"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
@@ -359,7 +360,7 @@ func (h *cachedCompilerHost) GetSourceFile(fileName string, path tspath.Path, la
 	text, _ := h.FS().ReadFile(fileName)
 
 	key := sourceFileCacheKey{
-		SourceFileAffectingCompilerOptions: h.options.SourceFileAffectingCompilerOptions(),
+		SourceFileAffectingCompilerOptions: h.options.SourceFileAffecting(),
 		path:                               path,
 		text:                               text,
 	}

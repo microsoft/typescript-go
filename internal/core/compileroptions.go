@@ -264,7 +264,7 @@ type SourceFileAffectingCompilerOptions struct {
 	ModuleDetection ModuleDetectionKind
 }
 
-func (options *CompilerOptions) SourceFileAffectingCompilerOptions() SourceFileAffectingCompilerOptions {
+func (options *CompilerOptions) SourceFileAffecting() SourceFileAffectingCompilerOptions {
 	return SourceFileAffectingCompilerOptions{
 		Target:          options.Target,
 		Jsx:             options.Jsx,
