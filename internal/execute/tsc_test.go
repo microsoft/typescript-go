@@ -139,7 +139,7 @@ func TestExtends(t *testing.T) {
 		t.Skip("bundled files are not embedded")
 	}
 
-	extendsSys := newTestSys(FileMap{
+	extendsSysFiles := FileMap{
 		"/home/src/projects/configs/first/tsconfig.json": `{
 	"extends": "../second/tsconfig.json",
 	"include": ["${configDir}/src"],
@@ -187,22 +187,22 @@ func TestExtends(t *testing.T) {
 		"/home/src/projects/myproject/root2/other/sometype2/index.d.ts": `
 	export const k = 10;
 `,
-	}, "/home/src/projects/myproject")
+	}
 
 	cases := []tscInput{{
 		scenario:        "extends",
 		subScenario:     "configDir template",
-		sys:             extendsSys,
+		sys:             newTestSys(extendsSysFiles, "/home/src/projects/myproject"),
 		commandLineArgs: []string{"--explainFiles"},
 	}, {
 		scenario:        "extends",
 		subScenario:     "configDir template showConfig",
-		sys:             extendsSys,
+		sys:             newTestSys(extendsSysFiles, "/home/src/projects/myproject"),
 		commandLineArgs: []string{"--showConfig"},
 	}, {
 		scenario:        "extends",
 		subScenario:     "configDir template with commandline",
-		sys:             extendsSys,
+		sys:             newTestSys(extendsSysFiles, "/home/src/projects/myproject"),
 		commandLineArgs: []string{"--explainFiles", "--outDir", "${configDir}/outDir"},
 	}}
 
