@@ -1578,7 +1578,7 @@ func (c *Checker) getSuggestionForGlobalSymbolNameLookup(name string, meaning as
 //     for every 5 characters, and 1 insertion/deletion at 3 characters)
 func (c *Checker) getSpellingSuggestionForName(name string, symbols []*ast.Symbol, meaning ast.SymbolFlags) *ast.Symbol {
 	getCandidateName := func(candidate *ast.Symbol) string {
-		candidateName := symbolName(candidate)
+		candidateName := ast.SymbolName(candidate)
 		if len(candidateName) == 0 || candidateName[0] == '"' || candidateName[0] == '\xFE' {
 			return ""
 		}

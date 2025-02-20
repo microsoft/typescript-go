@@ -442,14 +442,8 @@ func levenshteinWithMax(s1 []rune, s2 []rune, maxValue float64) float64 {
 	}
 	for i := 1; i <= len(s1); i++ {
 		c1 := s1[i-1]
-		minJ := int(math.Ceil(float64(i) - maxValue))
-		if minJ < 1 {
-			minJ = 1
-		}
-		maxJ := int(math.Floor(maxValue + float64(i)))
-		if maxJ > len(s2) {
-			maxJ = len(s2)
-		}
+		minJ := max(int(math.Ceil(float64(i)-maxValue)), 1)
+		maxJ := min(int(math.Floor(maxValue+float64(i))), len(s2))
 		colMin := float64(i)
 		current[0] = colMin
 		for j := 1; j < minJ; j++ {

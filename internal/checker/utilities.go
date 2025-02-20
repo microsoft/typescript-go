@@ -2082,13 +2082,6 @@ func getNonModifierTokenRangeOfNode(node *ast.Node) core.TextRange {
 	return scanner.GetRangeOfTokenAtPosition(ast.GetSourceFileOfNode(node), pos)
 }
 
-func symbolName(symbol *ast.Symbol) string {
-	if symbol.ValueDeclaration != nil && ast.IsPrivateIdentifierClassElementDeclaration(symbol.ValueDeclaration) {
-		return symbol.ValueDeclaration.Name().Text()
-	}
-	return symbol.Name
-}
-
 type FeatureMapEntry struct {
 	lib   string
 	props []string
