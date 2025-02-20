@@ -1,0 +1,1 @@
+/** @note Here is some JSDoc attached to the EOF token */

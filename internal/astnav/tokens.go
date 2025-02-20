@@ -1,4 +1,4 @@
-package ls
+package astnav
 
 import (
 	"fmt"
@@ -23,17 +23,20 @@ func putNodeFactory(factory *ast.NodeFactory) {
 	factoryPool.Put(factory)
 }
 
-func getTouchingPropertyName(sourceFile *ast.SourceFile, position int) *ast.Node {
-	return getTokenAtPosition(sourceFile, position, false, false, func(node *ast.Node) bool {
+func GetTouchingPropertyName(sourceFile *ast.SourceFile, position int) *ast.Node {
+	return getTokenAtPosition(sourceFile, position, false /*allowPositionInLeadingTrivia*/, func(node *ast.Node) bool {
 		return ast.IsPropertyNameLiteral(node) || ast.IsKeywordKind(node.Kind) || ast.IsPrivateIdentifier(node)
 	})
+}
+
+func GetTokenAtPosition(sourceFile *ast.SourceFile, position int) *ast.Node {
+	return getTokenAtPosition(sourceFile, position, true /*allowPositionInLeadingTrivia*/, nil)
 }
 
 func getTokenAtPosition(
 	sourceFile *ast.SourceFile,
 	position int,
 	allowPositionInLeadingTrivia bool,
-	includeEndPosition bool,
 	includePrecedingTokenAtEndPosition func(node *ast.Node) bool,
 ) *ast.Node {
 	var next, prevSubtree *ast.Node
@@ -57,7 +60,7 @@ func getTokenAtPosition(
 			return 1
 		}
 
-		match, endMatch := nodeContainsPosition(node, start, position, sourceFile, includeEndPosition)
+		match, endMatch := nodeContainsPosition(node, start, position, sourceFile)
 		if endMatch != nil && includePrecedingTokenAtEndPosition != nil {
 			prevSubtree = endMatch
 		}
@@ -121,7 +124,7 @@ func getTokenAtPosition(
 					}
 					if start > position {
 						right = start
-					} else if nodeList.End() == position && (includeEndPosition || includePrecedingTokenAtEndPosition != nil) && nodeList.Nodes[len(nodeList.Nodes)-1].End() == position {
+					} else if nodeList.End() == position && includePrecedingTokenAtEndPosition != nil && nodeList.Nodes[len(nodeList.Nodes)-1].End() == position {
 						left = nodeList.End()
 						prevSubtree = nodeList.Nodes[len(nodeList.Nodes)-1]
 					} else if nodeList.End() <= position {
@@ -137,7 +140,7 @@ func getTokenAtPosition(
 					start := getPosition(modifiers.Nodes[0], sourceFile, allowPositionInLeadingTrivia)
 					if start > position {
 						right = start
-					} else if modifiers.End() == position && (includeEndPosition || includePrecedingTokenAtEndPosition != nil) {
+					} else if modifiers.End() == position && includePrecedingTokenAtEndPosition != nil {
 						left = modifiers.End()
 						prevSubtree = modifiers.Nodes[len(modifiers.Nodes)-1]
 					} else if modifiers.End() < position {
@@ -190,7 +193,7 @@ func getTokenAtPosition(
 				tokenFullStart := scanner.TokenFullStart()
 				tokenStart := core.IfElse(allowPositionInLeadingTrivia, tokenFullStart, scanner.TokenStart())
 				tokenEnd := scanner.TokenEnd()
-				if tokenStart <= position && (position < tokenEnd || position == tokenEnd && includeEndPosition) {
+				if tokenStart <= position && (position < tokenEnd) {
 					if token == ast.KindIdentifier || !ast.IsTokenKind(token) {
 						if ast.IsJSDocKind(current.Kind) {
 							return current
@@ -232,18 +235,14 @@ func getPosition(node *ast.Node, sourceFile *ast.SourceFile, allowPositionInLead
 	return scanner.GetTokenPosOfNode(node, sourceFile, true /*includeJsDoc*/)
 }
 
-func nodeContainsPosition(node *ast.Node, nodeStart int, position int, sourceFile *ast.SourceFile, includeEndPosition bool) (result bool, prevSubtree *ast.Node) {
+func nodeContainsPosition(node *ast.Node, nodeStart int, position int, sourceFile *ast.SourceFile) (result bool, prevSubtree *ast.Node) {
 	if nodeStart > position {
-		// If this child begins after position, then all subsequent children will as well.
 		return false, nil
 	}
-	if position < node.End() || position == node.End() && includeEndPosition {
+	if position < node.End() {
 		return true, nil
 	}
-	if position == node.End() {
-		return false, node
-	}
-	return false, nil
+	return false, core.IfElse(position == node.End(), node, nil)
 }
 
 func findRightmostNode(node *ast.Node, sourceFile *ast.SourceFile) *ast.Node {

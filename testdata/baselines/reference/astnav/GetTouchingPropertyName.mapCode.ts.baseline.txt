@@ -1,0 +1,45 @@
+〚Positions: [757, 757]〛
+【TS: Identifier [748, 756)】
+《Go: JSDoc [743, 759)》
+40 │import { ChangeTracker } from "./textChanges.js";
+41 │
+42 │《/** @【internal】 〚*〛/》
+43 │export function mapCode(
+44 │    sourceFile: SourceFile,
+
+
+〚Positions: [759, 759]〛
+【TS: Identifier [748, 756)】
+《Go: FunctionDeclaration [741, 1542)》
+38 │    UserPreferences,
+39 │} from "./_namespaces/ts.js";
+40 │import { ChangeTracker } from "./textChanges.js";《
+41 │
+42 │/** @【internal】 */〚
+43 │〛export function mapCode(
+44 │    sourceFile: SourceFile,
+45 │    contents: string[],
+46 │    focusLocations: TextSpan[][] | undefined,
+47 │    host: LanguageServiceHost,
+   │........ 14 lines omitted ........
+61 │                    flattenedLocations,
+62 │                );
+63 │            }
+64 │        },
+65 │    );
+66 │}》
+67 │
+68 │/**
+
+
+〚Positions: [1544, 1660]〛
+【TS: JSDoc [1544, 1663)】
+《Go: JSDocText [1544, 1661)》
+66 │}
+67 │
+68 │《【〚/**
+69 │ * Tries to parse something into either "top-level" statements, or into blocks
+70 │ * of class-context definitions.
+71 │ 〛》*/】
+72 │function parse(sourceFile: SourceFile, content: string): NodeArray<Node> {
+73 │    // We're going to speculatively parse different kinds of contexts to see
