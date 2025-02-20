@@ -7774,45 +7774,62 @@ type SourceFile struct {
 	NodeBase
 	DeclarationBase
 	LocalsContainerBase
-	Text                        string
-	fileName                    string
-	path                        tspath.Path
-	Statements                  *NodeList // NodeList[*Statement]
+
+	// Fields set by NewSourceFile
+
+	Text       string
+	fileName   string
+	path       tspath.Path
+	Statements *NodeList // NodeList[*Statement]
+
+	// Fields set by parser
 	diagnostics                 []*Diagnostic
 	jsdocDiagnostics            []*Diagnostic
-	bindDiagnostics             []*Diagnostic
-	BindSuggestionDiagnostics   []*Diagnostic
-	ImpliedNodeFormat           core.ModuleKind
-	lineMapMu                   sync.RWMutex
-	lineMap                     []core.TextPos
 	LanguageVersion             core.ScriptTarget
 	LanguageVariant             core.LanguageVariant
 	ScriptKind                  core.ScriptKind
-	CommonJsModuleIndicator     *Node
-	ExternalModuleIndicator     *Node
-	EndFlowNode                 *FlowNode
-	JsGlobalAugmentations       SymbolTable
 	IsDeclarationFile           bool
 	HasNoDefaultLib             bool
 	UsesUriStyleNodeCoreModules core.Tristate
-	SymbolCount                 int
-	ClassifiableNames           core.Set[string]
 	Identifiers                 map[string]string
 	Imports                     []*LiteralLikeNode // []LiteralLikeNode
 	ModuleAugmentations         []*ModuleName      // []ModuleName
-	PatternAmbientModules       []PatternAmbientModule
 	AmbientModuleNames          []string
 	CommentDirectives           []CommentDirective
 	jsdocCache                  map[*Node][]*Node
-	tokenCacheMu                sync.Mutex
-	tokenCache                  map[*Node][]*Node
 	Pragmas                     []Pragma
 	ReferencedFiles             []*FileReference
 	TypeReferenceDirectives     []*FileReference
 	LibReferenceDirectives      []*FileReference
-	Version                     int
-	isBound                     atomic.Bool
-	bindOnce                    sync.Once
+
+	// Fields set by binder
+
+	isBound                   atomic.Bool
+	bindOnce                  sync.Once
+	bindDiagnostics           []*Diagnostic
+	BindSuggestionDiagnostics []*Diagnostic
+	EndFlowNode               *FlowNode
+	SymbolCount               int
+	ClassifiableNames         core.Set[string]
+	PatternAmbientModules     []PatternAmbientModule
+
+	// Fields set by LineMap
+
+	lineMapMu sync.RWMutex
+	lineMap   []core.TextPos
+
+	// Fields set by document registry
+
+	Version int
+
+	// !!!
+
+	ImpliedNodeFormat       core.ModuleKind
+	CommonJsModuleIndicator *Node
+	ExternalModuleIndicator *Node
+	JsGlobalAugmentations   SymbolTable
+	tokenCacheMu            sync.Mutex
+	tokenCache              map[*Node][]*Node
 }
 
 func (f *NodeFactory) NewSourceFile(text string, fileName string, path tspath.Path, statements *NodeList) *Node {
