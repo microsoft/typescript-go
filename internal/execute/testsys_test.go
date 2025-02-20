@@ -66,14 +66,9 @@ func (s *testSys) EndWrite() {
 	s.currentWrite.Reset()
 }
 
-func (s *testSys) serializeState(baseline *strings.Builder, order serializeOutputOrder) {
-	if order == serializeOutputOrderBefore {
-		s.serializeOutput(baseline)
-	}
-	s.diff(baseline)
-	if order == serializeOutputOrderAfter {
-		s.serializeOutput(baseline)
-	}
+func (s *testSys) serializeState(baseline *strings.Builder) {
+	s.baselineOutput(baseline)
+	s.baselineFSwithDiff(baseline)
 	// todo watch
 	// this.serializeWatches(baseline);
 	// this.timeoutCallbacks.serialize(baseline);
@@ -82,39 +77,22 @@ func (s *testSys) serializeState(baseline *strings.Builder, order serializeOutpu
 	// this.service?.baseline();
 }
 
-func (s *testSys) baselineFS(baseline *strings.Builder) {
-	baseline.WriteString("\n\nCurrentFiles::")
-	err := s.FS().WalkDir(s.GetCurrentDirectory(), func(path string, d vfs.DirEntry, e error) error {
-		if d == nil {
-			return nil
-		}
-		if !d.IsDir() {
-			contents, ok := s.FS().ReadFile(path)
-			if !ok {
-				return e
-			}
-			baseline.WriteString("\n//// [" + path + "]\n" + contents)
-		}
-		return nil
-	})
-	if err != nil {
-		panic("walkdir error during fs baseline")
-	}
-}
-
-func (s *testSys) serializeOutput(baseline io.Writer) {
+func (s *testSys) baselineOutput(baseline io.Writer) {
 	fmt.Fprint(baseline, "\nOutput::\n")
+	if len(s.output) == 0 {
+		fmt.Fprint(baseline, "No output\n")
+	}
 	// todo screen clears
 	s.baselineOutputs(baseline, 0, len(s.output))
 }
 
-func (s *testSys) diff(baseline io.Writer) {
+func (s *testSys) baselineFSwithDiff(baseline io.Writer) {
 	// todo: watch isnt implemented
 	// todo: not sure if this actually runs diff correctly, but don't really care atm because we aren't passing edits into the test, so we don't care abt diffs
 	snap := map[string]string{}
 
 	err := s.FS().WalkDir(s.GetCurrentDirectory(), func(path string, d vfs.DirEntry, e error) error {
-		if d == nil {
+		if !s.FS().FileExists(path) {
 			return nil
 		}
 
@@ -148,7 +126,7 @@ func diffFSEntry(baseline io.Writer, oldDirContent string, newDirContent string,
 	if newDirContent == "" {
 		fmt.Fprint(baseline, `//// [`, path, `] deleted`, "\n")
 	} else if newDirContent == oldDirContent {
-		return
+		fmt.Fprint(baseline, `//// [`, path, `] no change`, "\n")
 	} else {
 		fmt.Fprint(baseline, `//// [`, path, `]\n`, newDirContent, "\n")
 	}

@@ -47,9 +47,6 @@ func (test *tscInput) verify(t *testing.T) {
 			t.Parallel()
 			// initial test tsc compile
 			baselineBuilder := test.startBaseline()
-			// baseline push sys.GetExecutingFilepath
-			fmt.Fprint(baselineBuilder, strings.Join(test.commandLineArgs, " ")+"\n")
-			// if (input.baselineSourceMap) generateSourceMapBasleineFiles
 
 			parsedCommandLine, exit := execute.CommandLineTest(test.sys, nil, test.commandLineArgs)
 			baselineBuilder.WriteString("\n\nExitStatus:: " + fmt.Sprint(exit))
@@ -58,7 +55,7 @@ func (test *tscInput) verify(t *testing.T) {
 			baselineBuilder.WriteString("\n\nCompilerOptions::")
 			baselineBuilder.Write(compilerOptionsString)
 
-			test.sys.serializeState(baselineBuilder, serializeOutputOrderBefore)
+			test.sys.serializeState(baselineBuilder)
 			options, name := test.getBaselineName("")
 			baseline.Run(t, name, baselineBuilder.String(), options)
 		})
@@ -104,5 +101,8 @@ func (test *tscInput) startBaseline() *strings.Builder {
 		test.sys.FS().UseCaseSensitiveFileNames(),
 		"\nInput::",
 	)
+	fmt.Fprint(s, strings.Join(test.commandLineArgs, " "))
+	test.sys.baselineFSwithDiff(s)
+
 	return s
 }
