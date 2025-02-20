@@ -358,9 +358,19 @@ var sourceFileCache sync.Map
 func (h *cachedCompilerHost) GetSourceFile(fileName string, path tspath.Path, languageVersion core.ScriptTarget) *ast.SourceFile {
 	text, _ := h.FS().ReadFile(fileName)
 
+	type sourceFileCacheKey struct {
+		core.SourceFileAffectingCompilerOptions
+		fileName        string
+		path            tspath.Path
+		languageVersion core.ScriptTarget
+		text            string
+	}
+
 	key := sourceFileCacheKey{
 		SourceFileAffectingCompilerOptions: h.options.SourceFileAffecting(),
+		fileName:                           fileName,
 		path:                               path,
+		languageVersion:                    languageVersion,
 		text:                               text,
 	}
 
@@ -379,12 +389,6 @@ func (h *cachedCompilerHost) GetSourceFile(fileName string, path tspath.Path, la
 
 	result, _ := sourceFileCache.LoadOrStore(key, sourceFile)
 	return result.(*ast.SourceFile)
-}
-
-type sourceFileCacheKey struct {
-	core.SourceFileAffectingCompilerOptions
-	path tspath.Path
-	text string
 }
 
 func createCompilerHost(fs vfs.FS, defaultLibraryPath string, options *core.CompilerOptions, currentDirectory string) compiler.CompilerHost {
