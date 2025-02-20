@@ -40,15 +40,19 @@ jobs:
           - os: windows-latest
           - os: macos-latest
           - os: ubuntu-latest
+            name: 'no submodules'
             no-submodules: true
-          - os: ubuntu-latest
+          - os: ['self-hosted', '1ES.Pool=TypeScript-1ES-GitHub-XL', '1ES.ImageOverride=mariner-2.0']
+            name: 'race mode'
             race: true
           - os: ubuntu-latest
+            name: 'noembed'
             noembed: true
           - os: ubuntu-latest
+            name: 'concurrent test programs'
             concurrent-test-program: true
 
-    name: test (${{ matrix.os }}${{ (matrix.no-submodules && ' without submodules') || '' }}${{ (matrix.race && ' in race mode') || '' }}${{ (matrix.noembed && ' with noembed') || '' }}${{ (matrix.concurrent-test-program && ' with concurrent test programs') || '' }})
+    name: test (${{ matrix.name || matrix.os }})
 
     runs-on: ${{ matrix.os }}
 
