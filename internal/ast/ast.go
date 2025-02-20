@@ -7816,10 +7816,11 @@ type SourceFile struct {
 	bindOnce                    sync.Once
 }
 
-func (f *NodeFactory) NewSourceFile(text string, fileName string, statements *NodeList) *Node {
+func (f *NodeFactory) NewSourceFile(text string, fileName string, path tspath.Path, statements *NodeList) *Node {
 	data := &SourceFile{}
 	data.Text = text
 	data.fileName = fileName
+	data.path = path
 	data.Statements = statements
 	data.LanguageVersion = core.ScriptTargetLatest
 	return newNode(KindSourceFile, data)
@@ -7831,10 +7832,6 @@ func (node *SourceFile) FileName() string {
 
 func (node *SourceFile) Path() tspath.Path {
 	return node.path
-}
-
-func (node *SourceFile) SetPath(p tspath.Path) {
-	node.path = p
 }
 
 func (node *SourceFile) Diagnostics() []*Diagnostic {
@@ -7875,8 +7872,7 @@ func (node *SourceFile) VisitEachChild(v *NodeVisitor) *Node {
 
 func (f *NodeFactory) UpdateSourceFile(node *SourceFile, statements *StatementList) *Node {
 	if statements != node.Statements {
-		updated := f.NewSourceFile(node.Text, node.fileName, statements).AsSourceFile()
-		updated.path = node.path
+		updated := f.NewSourceFile(node.Text, node.fileName, node.path, statements).AsSourceFile()
 		updated.LanguageVersion = node.LanguageVersion
 		updated.LanguageVariant = node.LanguageVariant
 		updated.ScriptKind = node.ScriptKind

@@ -20,7 +20,7 @@ import (
 )
 
 type ProgramOptions struct {
-	ConfigFilePath               string
+	ConfigFileName               string
 	RootFiles                    []string
 	Host                         CompilerHost
 	Options                      *core.CompilerOptions
@@ -33,7 +33,7 @@ type Program struct {
 	host                         CompilerHost
 	programOptions               ProgramOptions
 	compilerOptions              *core.CompilerOptions
-	configFilePath               string
+	configFileName               string
 	nodeModules                  map[string]*ast.SourceFile
 	checkers                     []*checker.Checker
 	checkersByFile               map[*ast.SourceFile]*checker.Checker
@@ -88,13 +88,14 @@ func NewProgram(options ProgramOptions) *Program {
 
 	rootFiles := options.RootFiles
 
-	p.configFilePath = options.ConfigFilePath
-	if p.configFilePath != "" {
-		jsonText, ok := p.host.FS().ReadFile(p.configFilePath)
+	p.configFileName = options.ConfigFileName
+	if p.configFileName != "" {
+		jsonText, ok := p.host.FS().ReadFile(p.configFileName)
 		if !ok {
 			panic("config file not found")
 		}
-		parsedConfig := parser.ParseJSONText(p.configFilePath, jsonText)
+		configFilePath := tspath.ToPath(p.configFileName, p.host.GetCurrentDirectory(), p.host.FS().UseCaseSensitiveFileNames())
+		parsedConfig := parser.ParseJSONText(p.configFileName, configFilePath, jsonText)
 		if len(parsedConfig.Diagnostics()) > 0 {
 			p.configFileParsingDiagnostics = append(p.configFileParsingDiagnostics, parsedConfig.Diagnostics()...)
 			return p
@@ -109,7 +110,7 @@ func NewProgram(options ProgramOptions) *Program {
 			p.host,
 			p.host.GetCurrentDirectory(),
 			options.Options,
-			p.configFilePath,
+			p.configFileName,
 			/*resolutionStack*/ nil,
 			/*extraFileExtensions*/ nil,
 			/*extendedConfigCache*/ nil,
