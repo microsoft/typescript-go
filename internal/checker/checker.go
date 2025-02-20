@@ -1542,25 +1542,18 @@ func (c *Checker) getSuggestionForSymbolNameLookup(symbols ast.SymbolTable, name
 	if symbol != nil {
 		return symbol
 	}
-	return c.getSpellingSuggestionForName(name, slices.Collect(maps.Values(symbols)), meaning)
-}
-
-func (c *Checker) getSuggestionForGlobalSymbolNameLookup(name string, meaning ast.SymbolFlags) *ast.Symbol {
-	symbol := c.getSymbol(c.globals, name, meaning)
-	if symbol != nil {
-		return symbol
-	}
-	if c.globalSymbols == nil {
-		c.globalSymbols = slices.Concat([]*ast.Symbol{
+	allSymbols := slices.Collect(maps.Values(symbols))
+	if meaning&ast.SymbolFlagsGlobalLookup != 0 {
+		allSymbols = slices.Concat([]*ast.Symbol{
 			c.newSymbol(ast.SymbolFlagsTypeAlias, "string"),
 			c.newSymbol(ast.SymbolFlagsTypeAlias, "number"),
 			c.newSymbol(ast.SymbolFlagsTypeAlias, "boolean"),
 			c.newSymbol(ast.SymbolFlagsTypeAlias, "object"),
 			c.newSymbol(ast.SymbolFlagsTypeAlias, "bigint"),
 			c.newSymbol(ast.SymbolFlagsTypeAlias, "symbol"),
-		}, slices.Collect(maps.Values(c.globals)))
+		}, allSymbols)
 	}
-	return c.getSpellingSuggestionForName(name, c.globalSymbols, meaning)
+	return c.getSpellingSuggestionForName(name, allSymbols, meaning)
 }
 
 // Given a name and a list of symbols whose names are *not* equal to the name, return a spelling suggestion if there is
@@ -1954,7 +1947,7 @@ func (c *Checker) addTypeOnlyDeclarationRelatedInfo(diagnostic *ast.Diagnostic, 
 }
 
 func (c *Checker) getSymbol(symbols ast.SymbolTable, name string, meaning ast.SymbolFlags) *ast.Symbol {
-	if meaning != 0 {
+	if meaning&ast.SymbolFlagsAll != 0 {
 		symbol := c.getMergedSymbol(symbols[name])
 		if symbol != nil {
 			if symbol.Flags&meaning != 0 {
@@ -1971,10 +1964,6 @@ func (c *Checker) getSymbol(symbols ast.SymbolTable, name string, meaning ast.Sy
 	}
 	// return nil if we can't find a symbol
 	return nil
-}
-
-func (c *Checker) lookupGlobalSymbol(name string, meaning ast.SymbolFlags) *ast.Symbol {
-	return c.getSymbol(c.globals, name, meaning)
 }
 
 func (c *Checker) CheckSourceFile(sourceFile *ast.SourceFile) {
