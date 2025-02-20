@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"iter"
 	"slices"
+	"sort"
 	"strings"
 	"unicode/utf8"
 
@@ -338,6 +339,16 @@ func ComputeLineStarts(text string) []TextPos {
 	}
 	result = append(result, TextPos(lineStart))
 	return result
+}
+
+func PositionToLineAndCharacter(position int, lineStarts []TextPos) (line int, character int) {
+	line = sort.Search(len(lineStarts), func(i int) bool {
+		return int(lineStarts[i]) > position
+	}) - 1
+	if line < 0 {
+		line = 0
+	}
+	return line, position - int(lineStarts[line])
 }
 
 func Flatten[T any](array [][]T) []T {

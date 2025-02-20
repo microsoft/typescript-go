@@ -12,6 +12,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/parser"
 	"github.com/microsoft/typescript-go/internal/repo"
 	"github.com/microsoft/typescript-go/internal/scanner"
+	"github.com/microsoft/typescript-go/internal/testutil/baseline"
 	"github.com/microsoft/typescript-go/internal/testutil/jstest"
 	"gotest.tools/v3/assert"
 )
@@ -20,174 +21,58 @@ var testFiles = []string{
 	filepath.Join(repo.TypeScriptSubmodulePath, "src/server/project.ts"),
 }
 
-func BenchmarkTokens(b *testing.B) {
-	repo.SkipIfNoTypeScriptSubmodule(b)
-	for _, fileName := range testFiles {
-		fileText, err := os.ReadFile(fileName)
-		assert.NilError(b, err)
-		positionCount := 50
-		positions := make([]int, positionCount)
-		for i := range positionCount {
-			positions[i] = i * len(fileText) / positionCount
-		}
-		file := parser.ParseSourceFile("file.ts", string(fileText), core.ScriptTargetLatest, scanner.JSDocParsingModeParseAll)
-		ast.SetParentInChildren(file.AsNode())
-		for _, pos := range positions {
-			b.Run(fmt.Sprintf("getTokenAtPosition:%s:%d", filepath.Base(fileName), pos), func(b *testing.B) {
-				for range b.N {
-					getTokenAtPosition(file, pos, true /*allowPositionInLeadingTrivia*/, false /*includeEndPosition*/, nil)
-				}
-			})
-			b.Run(fmt.Sprintf("getTokenAtPosition_fast:%s:%d", filepath.Base(fileName), pos), func(b *testing.B) {
-				for range b.N {
-					getTokenAtPosition_fast(file, pos, true /*allowPositionInLeadingTrivia*/, false /*includeEndPosition*/, nil)
-				}
-			})
-		}
-	}
-}
-
-func TestGetTokenAtPositionFast(t *testing.T) {
+func TestGetTokenAtPositionBaseline(t *testing.T) {
 	t.Parallel()
 	repo.SkipIfNoTypeScriptSubmodule(t)
 	for _, fileName := range testFiles {
 		fileText, err := os.ReadFile(fileName)
 		assert.NilError(t, err)
-		positionCount := len(fileText)
-		positions := make([]int, positionCount)
-		for i := range positionCount {
-			positions[i] = i * len(fileText) / positionCount
-		}
-		file := parser.ParseSourceFile("file.ts", string(fileText), core.ScriptTargetLatest, scanner.JSDocParsingModeParseAll)
-		for _, pos := range positions {
-			t.Run(fmt.Sprintf("pos: %d", pos), func(t *testing.T) {
-				t.Parallel()
-				slow := getTokenAtPosition(file, pos, true /*allowPositionInLeadingTrivia*/, false /*includeEndPosition*/, nil)
-				fast := getTokenAtPosition_fast(file, pos, true, false, nil)
-				if fast.Kind == ast.KindJSDoc && slow.Kind != ast.KindJSDoc && pos < fast.Pos() {
-					// JSDoc positions are incorrect, which has been worked around in getTokenAtPosition_fast.
-					// When the cursor is in whitespace before JSDoc, the fast version will return the JSDoc token,
-					// whereas the slow version will return the node containing the JSDoc, whose first non-comment
-					// token is after the JSDoc.
-					return
-				}
-				assert.Equal(
-					t,
-					slow.Kind,
-					fast.Kind,
-					pos,
-				)
-			})
-		}
-	}
-}
 
-func TestGetTokenAtPosition(t *testing.T) {
-	t.Parallel()
-	jstest.SkipIfNoNodeJS(t)
-	repo.SkipIfNoTypeScriptSubmodule(t)
-	for _, fileName := range testFiles {
-		fileText, err := os.ReadFile(fileName)
-		assert.NilError(t, err)
 		file := parser.ParseSourceFile("file.ts", string(fileText), core.ScriptTargetLatest, scanner.JSDocParsingModeParseAll)
-		ast.SetParentInChildren(file.AsNode())
-		positionCount := 100
-		positions := make([]int, positionCount)
-		for i := range positionCount {
-			positions[i] = i * len(fileText) / positionCount
+		positions := make([]int, len(fileText))
+		for i := range positions {
+			positions[i] = i
 		}
 
+		// Get TypeScript tokens for all positions at once
 		tsTokens := tsGetTokensAtPositions(t, string(fileText), positions)
-		t.Run(fileName, func(t *testing.T) {
-			t.Parallel()
-			for i, pos := range positions {
-				t.Run(fmt.Sprintf("pos: %d", pos), func(t *testing.T) {
-					t.Parallel()
-					goToken := getTokenAtPosition(file, pos, true /*allowPositionInLeadingTrivia*/, false /*includeEndPosition*/, nil)
-					if goToken.Kind == ast.KindJSDocText && strings.HasPrefix(tsTokens[i].Kind, "JSDoc") {
-						// Strada sometimes stored plain-text JSDoc comments as strings
-						// on JSDoc nodes, whereas Corsa stores them as JSDocText nodes.
-						// It's fine for Corsa to return a deeper, more specific node in
-						// this case.
-						return
-					}
-					assert.Equal(t, tsTokens[i], toTokenInfo(goToken))
-				})
+
+		// Build the baseline output
+		var output strings.Builder
+		currentDiff := tokenDiff{}
+
+		for pos, tsToken := range tsTokens {
+			goToken := toTokenInfo(getTokenAtPosition(file, pos, true, false, nil))
+
+			if goToken != tsToken {
+				diff := tokenDiff{goToken: goToken, tsToken: tsToken}
+				if currentDiff != diff {
+					writeRangeDiff(&output, file, diff)
+					currentDiff = diff
+				}
+			} else {
+				currentDiff = tokenDiff{}
 			}
+		}
+		if currentDiff != (tokenDiff{}) {
+			writeRangeDiff(&output, file, currentDiff)
+		}
+
+		baseline.Run(t, filepath.Base(fileName)+".tokens.baseline.txt", output.String(), baseline.Options{
+			Subfolder: "tokens",
 		})
 	}
 }
 
-func TestGetTouchingPropertyNameFast(t *testing.T) {
-	t.Parallel()
-	repo.SkipIfNoTypeScriptSubmodule(t)
-	for _, fileName := range testFiles {
-		fileText, err := os.ReadFile(fileName)
-		assert.NilError(t, err)
-		positionCount := len(fileText)
-		positions := make([]int, positionCount)
-		for i := range positionCount {
-			positions[i] = i * len(fileText) / positionCount
-		}
-		file := parser.ParseSourceFile("file.ts", string(fileText), core.ScriptTargetLatest, scanner.JSDocParsingModeParseAll)
-		for _, pos := range positions {
-			t.Run(fmt.Sprintf("pos: %d", pos), func(t *testing.T) {
-				t.Parallel()
-				slow := getTouchingPropertyName(file, pos)
-				if slow.Kind == ast.KindSyntaxList {
-					slow = slow.Parent
-				}
-				fast := getTouchingPropertyName_fast(file, pos)
-				if fast.Kind == ast.KindJSDoc && slow.Kind == ast.KindIdentifier && slow.End() < pos {
-					// The slow version (ported from Strada) has a bug where it can return an identifier
-					// inside JSDoc where the position isn't actually touching the end of the identifier.
-					return
-				}
-				slowToken, fastToken := toTokenInfo(slow), toTokenInfo(fast)
-				assert.Equal(t, fastToken, slowToken)
-			})
-		}
-	}
-}
-
-func TestGetTouchingPropertyName(t *testing.T) {
-	t.Parallel()
-	jstest.SkipIfNoNodeJS(t)
-	repo.SkipIfNoTypeScriptSubmodule(t)
-	for _, fileName := range testFiles {
-		fileText, err := os.ReadFile(fileName)
-		assert.NilError(t, err)
-		file := parser.ParseSourceFile("file.ts", string(fileText), core.ScriptTargetLatest, scanner.JSDocParsingModeParseAll)
-		positionCount := len(fileText)
-		positions := make([]int, positionCount)
-		for i := range positionCount {
-			positions[i] = i * len(fileText) / positionCount
-		}
-
-		tsTokens := tsGetTouchingPropertyName(t, string(fileText), positions)
-		t.Run(fileName, func(t *testing.T) {
-			t.Parallel()
-			for i, pos := range positions {
-				t.Run(fmt.Sprintf("pos: %d", pos), func(t *testing.T) {
-					t.Parallel()
-					goToken := getTouchingPropertyName(file, pos)
-					if goToken.Kind == ast.KindJSDocText && strings.HasPrefix(tsTokens[i].Kind, "JSDoc") {
-						// Strada sometimes stored plain-text JSDoc comments as strings
-						// on JSDoc nodes, whereas Corsa stores them as JSDocText nodes.
-						// It's fine for Corsa to return a deeper, more specific node in
-						// this case.
-						return
-					}
-					assert.Equal(t, tsTokens[i], toTokenInfo(goToken))
-				})
-			}
-		})
-	}
+type tokenDiff struct {
+	goToken tokenInfo
+	tsToken tokenInfo
 }
 
 type tokenInfo struct {
 	Kind string `json:"kind"`
 	Pos  int    `json:"pos"`
+	End  int    `json:"end"`
 }
 
 func toTokenInfo(node *ast.Node) tokenInfo {
@@ -199,6 +84,7 @@ func toTokenInfo(node *ast.Node) tokenInfo {
 	return tokenInfo{
 		Kind: kind,
 		Pos:  node.Pos(),
+		End:  node.End(),
 	}
 }
 
@@ -222,6 +108,7 @@ func tsGetTokensAtPositions(t testing.TB, fileText string, positions []int) []to
 				return {
 					kind: ts.Debug.formatSyntaxKind(token.kind),
 					pos: token.pos,
+					end: token.end,
 				};
 			});
 		};`
@@ -251,6 +138,7 @@ func tsGetTouchingPropertyName(t testing.TB, fileText string, positions []int) [
 				return {
 					kind: ts.Debug.formatSyntaxKind(token.kind),
 					pos: token.pos,
+					end: token.end,
 				};
 			});
 		};`
@@ -258,4 +146,42 @@ func tsGetTouchingPropertyName(t testing.TB, fileText string, positions []int) [
 	info, err := jstest.EvalNodeScriptWithTS[[]tokenInfo](t, script, dir, core.Must(core.StringifyJson(positions, "", "")))
 	assert.NilError(t, err)
 	return info
+}
+
+func writeRangeDiff(output *strings.Builder, file *ast.SourceFile, diff tokenDiff) {
+	lines := file.LineMap()
+	tsStartLine, _ := core.PositionToLineAndCharacter(diff.tsToken.Pos, lines)
+	tsEndLine, _ := core.PositionToLineAndCharacter(diff.tsToken.End, lines)
+	goStartLine, _ := core.PositionToLineAndCharacter(diff.goToken.Pos, lines)
+	goEndLine, _ := core.PositionToLineAndCharacter(diff.goToken.End, lines)
+	contextLines := 2
+	startLine := min(tsStartLine, goStartLine)
+	endLine := max(tsEndLine, goEndLine)
+	contextStart := max(0, startLine-contextLines)
+	contextEnd := min(len(lines)-1, endLine+contextLines)
+
+	if output.Len() > 0 {
+		output.WriteString("\n\n")
+	}
+
+	output.WriteString(fmt.Sprintf("Line %d:\n", contextStart+1))
+	output.WriteString(fmt.Sprintf("【TS: %s [%d, %d)】\n", diff.tsToken.Kind, diff.tsToken.Pos, diff.tsToken.End))
+	output.WriteString(fmt.Sprintf("《Go: %s [%d, %d)》\n", diff.goToken.Kind, diff.goToken.Pos, diff.goToken.End))
+	output.WriteString(file.Text[lines[contextStart]:lines[startLine]])
+	for pos := int(lines[startLine]); pos < int(lines[endLine+1]); pos++ {
+		if pos == diff.tsToken.Pos {
+			output.WriteString("【")
+		}
+		if pos == diff.goToken.Pos {
+			output.WriteString("《")
+		}
+		output.WriteByte(file.Text[pos])
+		if pos == diff.tsToken.End-1 {
+			output.WriteString("】")
+		}
+		if pos == diff.goToken.End-1 {
+			output.WriteString("》")
+		}
+	}
+	output.WriteString(file.Text[lines[endLine+1]:lines[contextEnd]])
 }
