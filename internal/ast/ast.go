@@ -7783,6 +7783,7 @@ type SourceFile struct {
 	Statements *NodeList // NodeList[*Statement]
 
 	// Fields set by parser
+
 	diagnostics                 []*Diagnostic
 	jsdocDiagnostics            []*Diagnostic
 	LanguageVersion             core.ScriptTarget
