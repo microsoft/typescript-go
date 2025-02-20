@@ -10,36 +10,15 @@ import (
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
-type sourceFileAffectingCompilerOptions struct {
-	// !!! generate this
-	target          core.ScriptTarget
-	jsx             core.JsxEmit
-	jsxImportSource string
-	importHelpers   core.Tristate
-	alwaysStrict    core.Tristate
-	moduleDetection core.ModuleDetectionKind
-}
-
-func getSourceFileAffectingCompilerOptions(options *core.CompilerOptions) sourceFileAffectingCompilerOptions {
-	return sourceFileAffectingCompilerOptions{
-		target:          options.Target,
-		jsx:             options.Jsx,
-		jsxImportSource: options.JsxImportSource,
-		importHelpers:   options.ImportHelpers,
-		alwaysStrict:    options.AlwaysStrict,
-		moduleDetection: options.ModuleDetection,
-	}
-}
-
 type registryKey struct {
-	sourceFileAffectingCompilerOptions
+	core.SourceFileAffectingCompilerOptions
 	path       tspath.Path
 	scriptKind core.ScriptKind
 }
 
 func newRegistryKey(options *core.CompilerOptions, path tspath.Path, scriptKind core.ScriptKind) registryKey {
 	return registryKey{
-		sourceFileAffectingCompilerOptions: getSourceFileAffectingCompilerOptions(options),
+		SourceFileAffectingCompilerOptions: options.SourceFileAffectingCompilerOptions(),
 		path:                               path,
 		scriptKind:                         scriptKind,
 	}
