@@ -983,7 +983,7 @@ func (r *resolutionState) createResolvedModule(resolved *resolved, isExternalLib
 
 func (r *resolutionState) createResolvedTypeReferenceDirective(resolved *resolved, primary bool) *ResolvedTypeReferenceDirective {
 	var resolvedTypeReferenceDirective ResolvedTypeReferenceDirective
-	if resolved != nil {
+	if resolved.isResolved() {
 		if !tspath.ExtensionIsTs(resolved.extension) {
 			panic("expected a TypeScript file extension")
 		}
@@ -1023,7 +1023,7 @@ func (r *resolutionState) tryLoadModuleUsingOptionalResolutionSettings() *resolv
 }
 
 func (r *resolutionState) tryLoadModuleUsingPathsIfEligible() *resolved {
-	if len(r.compilerOptions.Paths) > 0 && !tspath.PathIsRelative(r.name) {
+	if r.compilerOptions.Paths.Size() > 0 && !tspath.PathIsRelative(r.name) {
 		if r.resolver.traceEnabled() {
 			r.resolver.host.Trace(diagnostics.X_paths_option_is_specified_looking_for_a_pattern_to_match_module_name_0.Format(r.name))
 		}
@@ -1031,7 +1031,7 @@ func (r *resolutionState) tryLoadModuleUsingPathsIfEligible() *resolved {
 		return continueSearching()
 	}
 	baseDirectory := getPathsBasePath(r.compilerOptions, r.resolver.host.GetCurrentDirectory())
-	pathPatterns := tryParsePatternsCached(r.resolver, &r.compilerOptions.Paths)
+	pathPatterns := tryParsePatternsCached(r.resolver, r.compilerOptions.Paths)
 	return r.tryLoadModuleUsingPaths(
 		r.extensions,
 		r.name,
@@ -1045,13 +1045,13 @@ func (r *resolutionState) tryLoadModuleUsingPathsIfEligible() *resolved {
 	)
 }
 
-func (r *resolutionState) tryLoadModuleUsingPaths(extensions extensions, moduleName string, containingDirectory string, paths map[string][]string, pathPatterns parsedPatterns, loader resolutionKindSpecificLoader, onlyRecordFailures bool) *resolved {
+func (r *resolutionState) tryLoadModuleUsingPaths(extensions extensions, moduleName string, containingDirectory string, paths *collections.OrderedMap[string, []string], pathPatterns parsedPatterns, loader resolutionKindSpecificLoader, onlyRecordFailures bool) *resolved {
 	if matchedPattern := matchPatternOrExact(pathPatterns, moduleName); matchedPattern.IsValid() {
 		matchedStar := matchedPattern.MatchedText(moduleName)
 		if r.resolver.traceEnabled() {
 			r.resolver.host.Trace(diagnostics.Module_name_0_matched_pattern_1.Format(moduleName, matchedPattern.Text))
 		}
-		for _, subst := range paths[matchedPattern.Text] {
+		for _, subst := range paths.GetOrZero(matchedPattern.Text) {
 			path := strings.Replace(subst, "*", matchedStar, 1)
 			candidate := tspath.NormalizePath(tspath.CombinePaths(containingDirectory, path))
 			if r.resolver.traceEnabled() {
@@ -1688,7 +1688,7 @@ func moveToNextDirectorySeparatorIfAvailable(path string, prevSeparatorIndex int
 }
 
 func getPathsBasePath(options *core.CompilerOptions, currentDirectory string) string {
-	if len(options.Paths) == 0 {
+	if options.Paths.Size() == 0 {
 		return ""
 	}
 	if options.PathsBasePath != "" {
@@ -1702,28 +1702,30 @@ type parsedPatterns struct {
 	patterns           []core.Pattern
 }
 
-func tryParsePatternsCached(r *Resolver, paths *map[string][]string) parsedPatterns {
+func tryParsePatternsCached(r *Resolver, paths *collections.OrderedMap[string, []string]) parsedPatterns {
 	var pathPatterns parsedPatterns
 	if cached, ok := r.parsedPatternsCache[paths]; ok {
 		pathPatterns = cached
 	} else {
-		pathPatterns = tryParsePatterns(*paths)
+		pathPatterns = tryParsePatterns(paths)
 		if r.parsedPatternsCache == nil {
-			r.parsedPatternsCache = make(map[*map[string][]string]parsedPatterns)
+			r.parsedPatternsCache = make(map[*collections.OrderedMap[string, []string]]parsedPatterns)
 		}
 		r.caches.parsedPatternsCache[paths] = pathPatterns
 	}
 	return pathPatterns
 }
 
-func tryParsePatterns(paths map[string][]string) parsedPatterns {
+func tryParsePatterns(pathMappings *collections.OrderedMap[string, []string]) parsedPatterns {
+	paths := pathMappings.Keys()
+
 	numPatterns := 0
 	for path := range paths {
 		if pattern := core.TryParsePattern(path); pattern.IsValid() && pattern.StarIndex == -1 {
 			numPatterns++
 		}
 	}
-	numMatchables := len(paths) - numPatterns
+	numMatchables := pathMappings.Size() - numPatterns
 
 	var patterns []core.Pattern
 	var matchableStringSet collections.OrderedSet[string]

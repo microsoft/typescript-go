@@ -6,6 +6,7 @@ import (
 	"sync"
 
 	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler/packagejson"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -18,7 +19,7 @@ type caches struct {
 	typeReferenceDirectiveCache                   *resolutionCache[*ResolvedTypeReferenceDirective]
 	packageJsonInfoCache                          *packagejson.InfoCache
 	resolvedTypeReferenceDirectiveLookupLocations map[*ResolvedTypeReferenceDirective]*LookupLocations
-	parsedPatternsCache                           map[*map[string][]string]parsedPatterns
+	parsedPatternsCache                           map[*collections.OrderedMap[string, []string]]parsedPatterns
 }
 
 func newCaches(
