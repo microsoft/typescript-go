@@ -8,7 +8,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/repo"
 	"github.com/microsoft/typescript-go/internal/tspath"
-	"github.com/microsoft/typescript-go/internal/vfs"
+	"github.com/microsoft/typescript-go/internal/vfs/osvfs"
 	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
 )
 
@@ -34,7 +34,7 @@ foo.bar;`
 	host := compiler.NewCompilerHost(nil, cd, fs, bundled.LibPath())
 	opts := compiler.ProgramOptions{
 		Host:           host,
-		ConfigFilePath: "/tsconfig.json",
+		ConfigFileName: "/tsconfig.json",
 	}
 	p := compiler.NewProgram(opts)
 	p.BindSourceFiles()
@@ -56,7 +56,7 @@ func TestCheckSrcCompiler(t *testing.T) {
 	t.Parallel()
 
 	repo.SkipIfNoTypeScriptSubmodule(t)
-	fs := vfs.FromOS()
+	fs := osvfs.FS()
 	fs = bundled.WrapFS(fs)
 
 	rootPath := tspath.CombinePaths(tspath.NormalizeSlashes(repo.TypeScriptSubmodulePath), "src", "compiler")
@@ -64,7 +64,7 @@ func TestCheckSrcCompiler(t *testing.T) {
 	host := compiler.NewCompilerHost(nil, rootPath, fs, bundled.LibPath())
 	opts := compiler.ProgramOptions{
 		Host:           host,
-		ConfigFilePath: tspath.CombinePaths(rootPath, "tsconfig.json"),
+		ConfigFileName: tspath.CombinePaths(rootPath, "tsconfig.json"),
 	}
 	p := compiler.NewProgram(opts)
 	p.CheckSourceFiles()

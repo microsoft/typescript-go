@@ -1268,7 +1268,7 @@ func GetNameOfDeclaration(declaration *Node) *Node {
 	if declaration == nil {
 		return nil
 	}
-	nonAssignedName := getNonAssignedNameOfDeclaration(declaration)
+	nonAssignedName := GetNonAssignedNameOfDeclaration(declaration)
 	if nonAssignedName != nil {
 		return nonAssignedName
 	}
@@ -1278,7 +1278,8 @@ func GetNameOfDeclaration(declaration *Node) *Node {
 	return nil
 }
 
-func getNonAssignedNameOfDeclaration(declaration *Node) *Node {
+func GetNonAssignedNameOfDeclaration(declaration *Node) *Node {
+	// !!!
 	switch declaration.Kind {
 	case KindBinaryExpression:
 		if IsFunctionPropertyAssignment(declaration) {
@@ -2149,4 +2150,70 @@ func NodeHasName(statement *Node, id *Node) bool {
 
 func IsInternalModuleImportEqualsDeclaration(node *Node) bool {
 	return IsImportEqualsDeclaration(node) && node.AsImportEqualsDeclaration().ModuleReference.Kind != KindExternalModuleReference
+}
+
+func GetAssertedTypeNode(node *Node) *Node {
+	switch node.Kind {
+	case KindAsExpression:
+		return node.AsAsExpression().Type
+	case KindSatisfiesExpression:
+		return node.AsSatisfiesExpression().Type
+	case KindTypeAssertionExpression:
+		return node.AsTypeAssertion().Type
+	}
+	panic("Unhandled case in getAssertedTypeNode")
+}
+
+func IsConstAssertion(node *Node) bool {
+	switch node.Kind {
+	case KindAsExpression, KindTypeAssertionExpression:
+		return IsConstTypeReference(GetAssertedTypeNode(node))
+	}
+	return false
+}
+
+func IsConstTypeReference(node *Node) bool {
+	return IsTypeReferenceNode(node) && len(node.TypeArguments()) == 0 && IsIdentifier(node.AsTypeReferenceNode().TypeName) && node.AsTypeReferenceNode().TypeName.Text() == "const"
+}
+
+func IsGlobalSourceFile(node *Node) bool {
+	return node.Kind == KindSourceFile && !IsExternalOrCommonJsModule(node.AsSourceFile())
+}
+
+func IsParameterLikeOrReturnTag(node *Node) bool {
+	switch node.Kind {
+	case KindParameter, KindTypeParameter, KindJSDocParameterTag, KindJSDocReturnTag:
+		return true
+	}
+	return false
+}
+
+func GetDeclarationOfKind(symbol *Symbol, kind Kind) *Node {
+	for _, declaration := range symbol.Declarations {
+		if declaration.Kind == kind {
+			return declaration
+		}
+	}
+	return nil
+}
+
+func FindConstructorDeclaration(node *ClassLikeDeclaration) *Node {
+	for _, member := range node.ClassLikeData().Members.Nodes {
+		if IsConstructorDeclaration(member) && NodeIsPresent(member.AsConstructorDeclaration().Body) {
+			return member
+		}
+	}
+	return nil
+}
+
+func GetFirstIdentifier(node *Node) *Node {
+	switch node.Kind {
+	case KindIdentifier:
+		return node
+	case KindQualifiedName:
+		return GetFirstIdentifier(node.AsQualifiedName().Left)
+	case KindPropertyAccessExpression:
+		return GetFirstIdentifier(node.AsPropertyAccessExpression().Expression)
+	}
+	panic("Unhandled case in GetFirstIdentifier")
 }
