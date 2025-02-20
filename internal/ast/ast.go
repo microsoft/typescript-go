@@ -7793,7 +7793,6 @@ type SourceFile struct {
 	EndFlowNode                 *FlowNode
 	JsGlobalAugmentations       SymbolTable
 	IsDeclarationFile           bool
-	ModuleReferencesProcessed   bool
 	HasNoDefaultLib             bool
 	UsesUriStyleNodeCoreModules core.Tristate
 	SymbolCount                 int
