@@ -197,15 +197,15 @@ func GetAssignmentTarget(node *Node) *Node {
 	}
 }
 
-func isLogicalBinaryOperator(token Kind) bool {
+func IsLogicalBinaryOperator(token Kind) bool {
 	return token == KindBarBarToken || token == KindAmpersandAmpersandToken
 }
 
 func IsLogicalOrCoalescingBinaryOperator(token Kind) bool {
-	return isLogicalBinaryOperator(token) || token == KindQuestionQuestionToken
+	return IsLogicalBinaryOperator(token) || token == KindQuestionQuestionToken
 }
 
-func isLogicalOrCoalescingBinaryExpression(expr *Node) bool {
+func IsLogicalOrCoalescingBinaryExpression(expr *Node) bool {
 	return IsBinaryExpression(expr) && IsLogicalOrCoalescingBinaryOperator(expr.AsBinaryExpression().OperatorToken.Kind)
 }
 
@@ -224,7 +224,7 @@ func IsLogicalExpression(node *Node) bool {
 		} else if node.Kind == KindPrefixUnaryExpression && node.AsPrefixUnaryExpression().Operator == KindExclamationToken {
 			node = node.AsPrefixUnaryExpression().Operand
 		} else {
-			return isLogicalOrCoalescingBinaryExpression(node)
+			return IsLogicalOrCoalescingBinaryExpression(node)
 		}
 	}
 }
@@ -858,8 +858,7 @@ func SetParentInChildren(parent *Node) {
 // Walks up the parents of a node to find the ancestor that matches the callback
 func FindAncestor(node *Node, callback func(*Node) bool) *Node {
 	for node != nil {
-		result := callback(node)
-		if result {
+		if callback(node) {
 			return node
 		}
 		node = node.Parent
@@ -1236,6 +1235,14 @@ func GetElementOrPropertyAccessArgumentExpressionOrName(node *Node) *Node {
 	panic("Unhandled case in GetElementOrPropertyAccessArgumentExpressionOrName")
 }
 
+func GetElementOrPropertyAccessName(node *Node) string {
+	name := getElementOrPropertyAccessArgumentExpressionOrName(node)
+	if name == nil {
+		return ""
+	}
+	return name.Text()
+}
+
 func IsExpressionWithTypeArgumentsInClassExtendsClause(node *Node) bool {
 	return TryGetClassExtendingExpressionWithTypeArguments(node) != nil
 }
@@ -1261,7 +1268,7 @@ func GetNameOfDeclaration(declaration *Node) *Node {
 	if declaration == nil {
 		return nil
 	}
-	nonAssignedName := getNonAssignedNameOfDeclaration(declaration)
+	nonAssignedName := GetNonAssignedNameOfDeclaration(declaration)
 	if nonAssignedName != nil {
 		return nonAssignedName
 	}
@@ -1271,7 +1278,8 @@ func GetNameOfDeclaration(declaration *Node) *Node {
 	return nil
 }
 
-func getNonAssignedNameOfDeclaration(declaration *Node) *Node {
+func GetNonAssignedNameOfDeclaration(declaration *Node) *Node {
+	// !!!
 	switch declaration.Kind {
 	case KindBinaryExpression:
 		if IsFunctionPropertyAssignment(declaration) {
@@ -1580,6 +1588,16 @@ func GetExternalModuleName(node *Node) *Expression {
 	panic("Unhandled case in getExternalModuleName")
 }
 
+func GetImportAttributes(node *Node) *Node {
+	switch node.Kind {
+	case KindImportDeclaration:
+		return node.AsImportDeclaration().Attributes
+	case KindExportDeclaration:
+		return node.AsExportDeclaration().Attributes
+	}
+	panic("Unhandled case in getImportAttributes")
+}
+
 func getImportTypeNodeLiteral(node *Node) *Node {
 	if IsImportTypeNode(node) {
 		importTypeNode := node.AsImportTypeNode()
@@ -1857,4 +1875,345 @@ func IsBlockScope(node *Node, parentNode *Node) bool {
 		return !IsFunctionLikeOrClassStaticBlockDeclaration(parentNode)
 	}
 	return false
+}
+
+type SemanticMeaning int32
+
+const (
+	SemanticMeaningNone      SemanticMeaning = 0
+	SemanticMeaningValue     SemanticMeaning = 1 << 0
+	SemanticMeaningType      SemanticMeaning = 1 << 1
+	SemanticMeaningNamespace SemanticMeaning = 1 << 2
+	SemanticMeaningAll       SemanticMeaning = SemanticMeaningValue | SemanticMeaningType | SemanticMeaningNamespace
+)
+
+func GetMeaningFromDeclaration(node *Node) SemanticMeaning {
+	switch node.Kind {
+	case KindVariableDeclaration:
+		return SemanticMeaningValue
+	case KindParameter,
+		KindBindingElement,
+		KindPropertyDeclaration,
+		KindPropertySignature,
+		KindPropertyAssignment,
+		KindShorthandPropertyAssignment,
+		KindMethodDeclaration,
+		KindMethodSignature,
+		KindConstructor,
+		KindGetAccessor,
+		KindSetAccessor,
+		KindFunctionDeclaration,
+		KindFunctionExpression,
+		KindArrowFunction,
+		KindCatchClause,
+		KindJsxAttribute:
+		return SemanticMeaningValue
+
+	case KindTypeParameter,
+		KindInterfaceDeclaration,
+		KindTypeAliasDeclaration,
+		KindTypeLiteral:
+		return SemanticMeaningType
+	case KindEnumMember, KindClassDeclaration:
+		return SemanticMeaningValue | SemanticMeaningType
+
+	case KindModuleDeclaration:
+		if IsAmbientModule(node) {
+			return SemanticMeaningNamespace | SemanticMeaningValue
+		} else if GetModuleInstanceState(node) == ModuleInstanceStateInstantiated {
+			return SemanticMeaningNamespace | SemanticMeaningValue
+		} else {
+			return SemanticMeaningNamespace
+		}
+
+	case KindEnumDeclaration,
+		KindNamedImports,
+		KindImportSpecifier,
+		KindImportEqualsDeclaration,
+		KindImportDeclaration,
+		KindExportAssignment,
+		KindExportDeclaration:
+		return SemanticMeaningAll
+
+	// An external module can be a Value
+	case KindSourceFile:
+		return SemanticMeaningNamespace | SemanticMeaningValue
+	}
+
+	return SemanticMeaningAll
+}
+
+func IsPropertyAccessOrQualifiedName(node *Node) bool {
+	return node.Kind == KindPropertyAccessExpression || node.Kind == KindQualifiedName
+}
+
+func IsLabelName(node *Node) bool {
+	return IsLabelOfLabeledStatement(node) || IsJumpStatementTarget(node)
+}
+
+func IsLabelOfLabeledStatement(node *Node) bool {
+	if !IsIdentifier(node) {
+		return false
+	}
+	if !IsLabeledStatement(node.Parent) {
+		return false
+	}
+	return node == node.Parent.Label()
+}
+
+func IsJumpStatementTarget(node *Node) bool {
+	if !IsIdentifier(node) {
+		return false
+	}
+	if !IsBreakOrContinueStatement(node.Parent) {
+		return false
+	}
+	return node == node.Parent.Label()
+}
+
+func IsBreakOrContinueStatement(node *Node) bool {
+	return NodeKindIs(node, KindBreakStatement, KindContinueStatement)
+}
+
+// GetModuleInstanceState is used during binding as well as in transformations and tests, and therefore may be invoked
+// with a node that does not yet have its `Parent` pointer set. In this case, an `ancestors` represents a stack of
+// virtual `Parent` pointers that can be used to walk up the tree. Since `getModuleInstanceStateForAliasTarget` may
+// potentially walk up out of the provided `Node`, merely setting the parent pointers for a given `ModuleDeclaration`
+// prior to invoking `GetModuleInstanceState` is not sufficient. It is, however, necessary that the `Parent` pointers
+// for all ancestors of the `Node` provided to `GetModuleInstanceState` have ben set.
+
+// Push a virtual parent pointer onto `ancestors` and return it.
+func pushAncestor(ancestors []*Node, parent *Node) []*Node {
+	return append(ancestors, parent)
+}
+
+// If a virtual `Parent` exists on the stack, returns the previous stack entry and the virtual `Parent“.
+// Otherwise, we return `nil` and the value of `node.Parent`.
+func popAncestor(ancestors []*Node, node *Node) ([]*Node, *Node) {
+	if len(ancestors) == 0 {
+		return nil, node.Parent
+	}
+	n := len(ancestors) - 1
+	return ancestors[:n], ancestors[n]
+}
+
+type ModuleInstanceState int32
+
+const (
+	ModuleInstanceStateUnknown ModuleInstanceState = iota
+	ModuleInstanceStateNonInstantiated
+	ModuleInstanceStateInstantiated
+	ModuleInstanceStateConstEnumOnly
+)
+
+func GetModuleInstanceState(node *Node) ModuleInstanceState {
+	return getModuleInstanceState(node, nil, nil)
+}
+
+func getModuleInstanceState(node *Node, ancestors []*Node, visited map[NodeId]ModuleInstanceState) ModuleInstanceState {
+	module := node.AsModuleDeclaration()
+	if module.Body != nil {
+		return getModuleInstanceStateCached(module.Body, pushAncestor(ancestors, node), visited)
+	} else {
+		return ModuleInstanceStateInstantiated
+	}
+}
+
+func getModuleInstanceStateCached(node *Node, ancestors []*Node, visited map[NodeId]ModuleInstanceState) ModuleInstanceState {
+	if visited == nil {
+		visited = make(map[NodeId]ModuleInstanceState)
+	}
+	nodeId := GetNodeId(node)
+	if cached, ok := visited[nodeId]; ok {
+		if cached != ModuleInstanceStateUnknown {
+			return cached
+		}
+		return ModuleInstanceStateNonInstantiated
+	}
+	visited[nodeId] = ModuleInstanceStateUnknown
+	result := getModuleInstanceStateWorker(node, ancestors, visited)
+	visited[nodeId] = result
+	return result
+}
+
+func getModuleInstanceStateWorker(node *Node, ancestors []*Node, visited map[NodeId]ModuleInstanceState) ModuleInstanceState {
+	// A module is uninstantiated if it contains only
+	switch node.Kind {
+	case KindInterfaceDeclaration, KindTypeAliasDeclaration:
+		return ModuleInstanceStateNonInstantiated
+	case KindEnumDeclaration:
+		if IsEnumConst(node) {
+			return ModuleInstanceStateConstEnumOnly
+		}
+	case KindImportDeclaration, KindImportEqualsDeclaration:
+		if !HasSyntacticModifier(node, ModifierFlagsExport) {
+			return ModuleInstanceStateNonInstantiated
+		}
+	case KindExportDeclaration:
+		decl := node.AsExportDeclaration()
+		if decl.ModuleSpecifier == nil && decl.ExportClause != nil && decl.ExportClause.Kind == KindNamedExports {
+			state := ModuleInstanceStateNonInstantiated
+			ancestors = pushAncestor(ancestors, node)
+			ancestors = pushAncestor(ancestors, decl.ExportClause)
+			for _, specifier := range decl.ExportClause.AsNamedExports().Elements.Nodes {
+				specifierState := getModuleInstanceStateForAliasTarget(specifier, ancestors, visited)
+				if specifierState > state {
+					state = specifierState
+				}
+				if state == ModuleInstanceStateInstantiated {
+					return state
+				}
+			}
+			return state
+		}
+	case KindModuleBlock:
+		state := ModuleInstanceStateNonInstantiated
+		ancestors = pushAncestor(ancestors, node)
+		node.ForEachChild(func(n *Node) bool {
+			childState := getModuleInstanceStateCached(n, ancestors, visited)
+			switch childState {
+			case ModuleInstanceStateNonInstantiated:
+				return false
+			case ModuleInstanceStateConstEnumOnly:
+				state = ModuleInstanceStateConstEnumOnly
+				return false
+			case ModuleInstanceStateInstantiated:
+				state = ModuleInstanceStateInstantiated
+				return true
+			}
+			panic("Unhandled case in getModuleInstanceStateWorker")
+		})
+		return state
+	case KindModuleDeclaration:
+		return getModuleInstanceState(node, ancestors, visited)
+	case KindIdentifier:
+		if node.Flags&NodeFlagsIdentifierIsInJSDocNamespace != 0 {
+			return ModuleInstanceStateNonInstantiated
+		}
+	}
+	return ModuleInstanceStateInstantiated
+}
+
+func getModuleInstanceStateForAliasTarget(node *Node, ancestors []*Node, visited map[NodeId]ModuleInstanceState) ModuleInstanceState {
+	spec := node.AsExportSpecifier()
+	name := spec.PropertyName
+	if name == nil {
+		name = spec.Name()
+	}
+	if name.Kind != KindIdentifier {
+		// Skip for invalid syntax like this: export { "x" }
+		return ModuleInstanceStateInstantiated
+	}
+	for ancestors, p := popAncestor(ancestors, node); p != nil; ancestors, p = popAncestor(ancestors, p) {
+		if IsBlock(p) || IsModuleBlock(p) || IsSourceFile(p) {
+			statements := GetStatementsOfBlock(p)
+			found := ModuleInstanceStateUnknown
+			statementsAncestors := pushAncestor(ancestors, p)
+			for _, statement := range statements.Nodes {
+				if NodeHasName(statement, name) {
+					state := getModuleInstanceStateCached(statement, statementsAncestors, visited)
+					if found == ModuleInstanceStateUnknown || state > found {
+						found = state
+					}
+					if found == ModuleInstanceStateInstantiated {
+						return found
+					}
+					if statement.Kind == KindImportEqualsDeclaration {
+						// Treat re-exports of import aliases as instantiated since they're ambiguous. This is consistent
+						// with `export import x = mod.x` being treated as instantiated:
+						//   import x = mod.x;
+						//   export { x };
+						found = ModuleInstanceStateInstantiated
+					}
+				}
+			}
+			if found != ModuleInstanceStateUnknown {
+				return found
+			}
+		}
+	}
+	// Couldn't locate, assume could refer to a value
+	return ModuleInstanceStateInstantiated
+}
+
+func NodeHasName(statement *Node, id *Node) bool {
+	name := statement.Name()
+	if name != nil {
+		return IsIdentifier(name) && name.AsIdentifier().Text == id.AsIdentifier().Text
+	}
+	if IsVariableStatement(statement) {
+		declarations := statement.AsVariableStatement().DeclarationList.AsVariableDeclarationList().Declarations.Nodes
+		return core.Some(declarations, func(d *Node) bool { return NodeHasName(d, id) })
+	}
+	return false
+}
+
+func IsInternalModuleImportEqualsDeclaration(node *Node) bool {
+	return IsImportEqualsDeclaration(node) && node.AsImportEqualsDeclaration().ModuleReference.Kind != KindExternalModuleReference
+}
+
+func GetAssertedTypeNode(node *Node) *Node {
+	switch node.Kind {
+	case KindAsExpression:
+		return node.AsAsExpression().Type
+	case KindSatisfiesExpression:
+		return node.AsSatisfiesExpression().Type
+	case KindTypeAssertionExpression:
+		return node.AsTypeAssertion().Type
+	}
+	panic("Unhandled case in getAssertedTypeNode")
+}
+
+func IsConstAssertion(node *Node) bool {
+	switch node.Kind {
+	case KindAsExpression, KindTypeAssertionExpression:
+		return IsConstTypeReference(GetAssertedTypeNode(node))
+	}
+	return false
+}
+
+func IsConstTypeReference(node *Node) bool {
+	return IsTypeReferenceNode(node) && len(node.TypeArguments()) == 0 && IsIdentifier(node.AsTypeReferenceNode().TypeName) && node.AsTypeReferenceNode().TypeName.Text() == "const"
+}
+
+func IsGlobalSourceFile(node *Node) bool {
+	return node.Kind == KindSourceFile && !IsExternalOrCommonJsModule(node.AsSourceFile())
+}
+
+func IsParameterLikeOrReturnTag(node *Node) bool {
+	switch node.Kind {
+	case KindParameter, KindTypeParameter, KindJSDocParameterTag, KindJSDocReturnTag:
+		return true
+	}
+	return false
+}
+
+func GetDeclarationOfKind(symbol *Symbol, kind Kind) *Node {
+	for _, declaration := range symbol.Declarations {
+		if declaration.Kind == kind {
+			return declaration
+		}
+	}
+	return nil
+}
+
+func FindConstructorDeclaration(node *ClassLikeDeclaration) *Node {
+	for _, member := range node.ClassLikeData().Members.Nodes {
+		if IsConstructorDeclaration(member) && NodeIsPresent(member.AsConstructorDeclaration().Body) {
+			return member
+		}
+	}
+	return nil
+}
+
+func GetFirstIdentifier(node *Node) *Node {
+	switch node.Kind {
+	case KindIdentifier:
+		return node
+	case KindQualifiedName:
+		return GetFirstIdentifier(node.AsQualifiedName().Left)
+	case KindPropertyAccessExpression:
+		return GetFirstIdentifier(node.AsPropertyAccessExpression().Expression)
+	}
+	panic("Unhandled case in GetFirstIdentifier")
 }

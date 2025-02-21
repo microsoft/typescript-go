@@ -49,7 +49,20 @@ func (c *Checker) symbolToString(s *ast.Symbol) string {
 	} else if len(s.Name) == 0 {
 		return "\"\"" // !!! Implement escaping
 	}
-	return "(missing)"
+	switch s.Name {
+	case ast.InternalSymbolNameClass:
+		return "(Anonymous class)"
+	case ast.InternalSymbolNameFunction:
+		return "(Anonymous function)"
+	case ast.InternalSymbolNameType, ast.InternalSymbolNameObject:
+		return "(Anonymous type)"
+	case ast.InternalSymbolNameComputed:
+		return "(Computed name)"
+	}
+	if len(s.Name) >= 2 && s.Name[1] == '@' {
+		return "(Unique symbol)"
+	}
+	return "(Missing)"
 }
 
 func (c *Checker) TypeToString(t *Type) string {

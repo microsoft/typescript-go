@@ -304,8 +304,8 @@ func (c *Checker) isEnumTypeRelatedTo(source *ast.Symbol, target *ast.Symbol, er
 				c.enumRelation[key] = RelationComparisonResultFailed
 				return false
 			}
-			sourceValue := c.getEnumMemberValue(getDeclarationOfKind(sourceProperty, ast.KindEnumMember)).value
-			targetValue := c.getEnumMemberValue(getDeclarationOfKind(targetProperty, ast.KindEnumMember)).value
+			sourceValue := c.getEnumMemberValue(ast.GetDeclarationOfKind(sourceProperty, ast.KindEnumMember)).value
+			targetValue := c.getEnumMemberValue(ast.GetDeclarationOfKind(targetProperty, ast.KindEnumMember)).value
 			if sourceValue != targetValue {
 				// If we have 2 enums with *known* values that differ, they are incompatible.
 				if sourceValue != nil && targetValue != nil {
@@ -384,8 +384,8 @@ func (c *Checker) checkTypeRelatedToEx(
 		c.reportDiagnostic(NewDiagnosticForNode(errorNode, message, c.TypeToString(source), c.TypeToString(target)), diagnosticOutput)
 	} else if r.errorChain != nil {
 		// Check if we should issue an extra diagnostic to produce a quickfix for a slightly incorrect import statement
-		if headMessage != nil && errorNode != nil && result == TernaryFalse && source.symbol != nil && c.exportTypeLinks.has(source.symbol) {
-			links := c.exportTypeLinks.get(source.symbol)
+		if headMessage != nil && errorNode != nil && result == TernaryFalse && source.symbol != nil && c.exportTypeLinks.Has(source.symbol) {
+			links := c.exportTypeLinks.Get(source.symbol)
 			if links.originatingImport != nil && !ast.IsImportCall(links.originatingImport) {
 				helpfulRetry := c.checkTypeRelatedTo(c.getTypeOfSymbol(links.target), target, relation /*errorNode*/, nil)
 				if helpfulRetry {
@@ -402,7 +402,7 @@ func (c *Checker) checkTypeRelatedToEx(
 }
 
 func createDiagnosticChainFromErrorChain(chain *ErrorChain, errorNode *ast.Node, relatedInfo []*ast.Diagnostic) *ast.Diagnostic {
-	for chain != nil && chain.message.ElidedInCompatabilityPyramid() {
+	for chain != nil && chain.message.ElidedInCompatibilityPyramid() {
 		chain = chain.next
 	}
 	if chain == nil {
@@ -1324,7 +1324,7 @@ func (c *Checker) getVariances(t *Type) []VarianceFlags {
 }
 
 func (c *Checker) getAliasVariances(symbol *ast.Symbol) []VarianceFlags {
-	return c.getVariancesWorker(symbol, c.typeAliasLinks.get(symbol).typeParameters)
+	return c.getVariancesWorker(symbol, c.typeAliasLinks.Get(symbol).typeParameters)
 }
 
 // Return an array containing the variance of each type parameter. The variance is effectively
@@ -1333,7 +1333,7 @@ func (c *Checker) getAliasVariances(symbol *ast.Symbol) []VarianceFlags {
 // instantiations of the generic type for type arguments with known relations. The function
 // returns an empty slice when invoked recursively for the given generic type.
 func (c *Checker) getVariancesWorker(symbol *ast.Symbol, typeParameters []*Type) []VarianceFlags {
-	links := c.varianceLinks.get(symbol)
+	links := c.varianceLinks.Get(symbol)
 	if links.variances == nil {
 		oldVarianceComputation := c.inVarianceComputation
 		saveResolutionStart := c.resolutionStart
@@ -1399,7 +1399,7 @@ func (c *Checker) createMarkerType(symbol *ast.Symbol, source *Type, target *Typ
 	}
 	var result *Type
 	if symbol.Flags&ast.SymbolFlagsTypeAlias != 0 {
-		result = c.getTypeAliasInstantiation(symbol, c.instantiateTypes(c.typeAliasLinks.get(symbol).typeParameters, mapper), nil)
+		result = c.getTypeAliasInstantiation(symbol, c.instantiateTypes(c.typeAliasLinks.Get(symbol).typeParameters, mapper), nil)
 	} else {
 		result = c.createTypeReference(t, c.instantiateTypes(t.AsInterfaceType().TypeParameters(), mapper))
 	}
@@ -1654,7 +1654,7 @@ func (c *Checker) compareTypePredicateRelatedTo(source *TypePredicate, target *T
 
 // Returns true if `s` is `(...args: A) => R` where `A` is `any`, `any[]`, `never`, or `never[]`, and `R` is `any` or `unknown`.
 func (c *Checker) isTopSignature(s *Signature) bool {
-	if s.typeParameters == nil && (s.thisParameter == nil || isTypeAny(c.getTypeOfParameter(s.thisParameter))) && len(s.parameters) == 1 && signatureHasRestParameter(s) {
+	if s.typeParameters == nil && (s.thisParameter == nil || IsTypeAny(c.getTypeOfParameter(s.thisParameter))) && len(s.parameters) == 1 && signatureHasRestParameter(s) {
 		paramType := c.getTypeOfParameter(s.parameters[0])
 		var restType *Type
 		if c.isArrayType(paramType) {
@@ -1767,7 +1767,7 @@ func (c *Checker) tryGetTypeAtPosition(signature *Signature, pos int) *Type {
 func (c *Checker) getRestOrAnyTypeAtPosition(source *Signature, pos int) *Type {
 	restType := c.getRestTypeAtPosition(source, pos, false)
 	if restType != nil {
-		if elementType := c.getElementTypeOfArrayType(restType); elementType != nil && isTypeAny(elementType) {
+		if elementType := c.getElementTypeOfArrayType(restType); elementType != nil && IsTypeAny(elementType) {
 			return c.anyType
 		}
 	}
@@ -1834,7 +1834,7 @@ func (c *Checker) isValidDeclarationForTupleLabel(d *ast.Node) bool {
 
 func (c *Checker) getNonArrayRestType(signature *Signature) *Type {
 	restType := c.getEffectiveRestType(signature)
-	if restType != nil && !c.isArrayType(restType) && !isTypeAny(restType) {
+	if restType != nil && !c.isArrayType(restType) && !IsTypeAny(restType) {
 		return restType
 	}
 	return nil
@@ -1844,7 +1844,7 @@ func (c *Checker) getEffectiveRestType(signature *Signature) *Type {
 	if signatureHasRestParameter(signature) {
 		restType := c.getTypeOfSymbol(signature.parameters[len(signature.parameters)-1])
 		if !isTupleType(restType) {
-			if isTypeAny(restType) {
+			if IsTypeAny(restType) {
 				return c.anyArrayType
 			}
 			return restType
@@ -3193,7 +3193,7 @@ func (r *Relater) structuredTypeRelatedToWorker(source *Type, target *Type, repo
 	var originalErrorChain *ErrorChain
 	saveErrorState := r.getErrorState()
 	relateVariances := func(sourceTypeArguments []*Type, targetTypeArguments []*Type, variances []VarianceFlags, intersectionState IntersectionState) (Ternary, bool) {
-		if result := r.typeArgumentsRelatedTo(sourceTypeArguments, targetTypeArguments, variances, reportErrors, intersectionState); result != TernaryFalse {
+		if result = r.typeArgumentsRelatedTo(sourceTypeArguments, targetTypeArguments, variances, reportErrors, intersectionState); result != TernaryFalse {
 			return result, true
 		}
 		if core.Some(variances, func(v VarianceFlags) bool { return v&VarianceFlagsAllowsStructuralFallback != 0 }) {
@@ -3308,7 +3308,7 @@ func (r *Relater) structuredTypeRelatedToWorker(source *Type, target *Type, repo
 		if len(variances) == 0 {
 			return TernaryUnknown
 		}
-		params := r.c.typeAliasLinks.get(source.alias.symbol).typeParameters
+		params := r.c.typeAliasLinks.Get(source.alias.symbol).typeParameters
 		minParams := r.c.getMinTypeArgumentCount(params)
 		sourceTypes := r.c.fillMissingTypeArguments(source.alias.typeArguments, params, minParams)
 		targetTypes := r.c.fillMissingTypeArguments(target.alias.typeArguments, params, minParams)

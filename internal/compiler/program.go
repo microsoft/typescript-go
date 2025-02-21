@@ -20,25 +20,25 @@ import (
 )
 
 type ProgramOptions struct {
-	ConfigFilePath     string
-	RootFiles          []string
-	Host               CompilerHost
-	Options            *core.CompilerOptions
-	SingleThreaded     bool
-	ProjectReference   []core.ProjectReference
-	OptionsDiagnostics []*ast.Diagnostic
+	ConfigFileName               string
+	RootFiles                    []string
+	Host                         CompilerHost
+	Options                      *core.CompilerOptions
+	SingleThreaded               bool
+	ProjectReference             []core.ProjectReference
+	ConfigFileParsingDiagnostics []*ast.Diagnostic
 }
 
 type Program struct {
-	host               CompilerHost
-	programOptions     ProgramOptions
-	compilerOptions    *core.CompilerOptions
-	configFilePath     string
-	nodeModules        map[string]*ast.SourceFile
-	checkers           []*checker.Checker
-	checkersByFile     map[*ast.SourceFile]*checker.Checker
-	currentDirectory   string
-	optionsDiagnostics []*ast.Diagnostic
+	host                         CompilerHost
+	programOptions               ProgramOptions
+	compilerOptions              *core.CompilerOptions
+	configFileName               string
+	nodeModules                  map[string]*ast.SourceFile
+	checkers                     []*checker.Checker
+	checkersByFile               map[*ast.SourceFile]*checker.Checker
+	currentDirectory             string
+	configFileParsingDiagnostics []*ast.Diagnostic
 
 	resolver        *module.Resolver
 	resolvedModules map[tspath.Path]module.ModeAwareCache[*module.ResolvedModule]
@@ -70,7 +70,7 @@ func NewProgram(options ProgramOptions) *Program {
 	p := &Program{}
 	p.programOptions = options
 	p.compilerOptions = options.Options
-	p.optionsDiagnostics = options.OptionsDiagnostics
+	p.configFileParsingDiagnostics = slices.Clip(options.ConfigFileParsingDiagnostics)
 	if p.compilerOptions == nil {
 		p.compilerOptions = &core.CompilerOptions{}
 	}
@@ -88,15 +88,16 @@ func NewProgram(options ProgramOptions) *Program {
 
 	rootFiles := options.RootFiles
 
-	p.configFilePath = options.ConfigFilePath
-	if p.configFilePath != "" {
-		jsonText, ok := p.host.FS().ReadFile(p.configFilePath)
+	p.configFileName = options.ConfigFileName
+	if p.configFileName != "" {
+		jsonText, ok := p.host.FS().ReadFile(p.configFileName)
 		if !ok {
 			panic("config file not found")
 		}
-		parsedConfig := parser.ParseJSONText(p.configFilePath, jsonText)
+		configFilePath := tspath.ToPath(p.configFileName, p.host.GetCurrentDirectory(), p.host.FS().UseCaseSensitiveFileNames())
+		parsedConfig := parser.ParseJSONText(p.configFileName, configFilePath, jsonText)
 		if len(parsedConfig.Diagnostics()) > 0 {
-			p.optionsDiagnostics = append(p.optionsDiagnostics, parsedConfig.Diagnostics()...)
+			p.configFileParsingDiagnostics = append(p.configFileParsingDiagnostics, parsedConfig.Diagnostics()...)
 			return p
 		}
 
@@ -109,7 +110,7 @@ func NewProgram(options ProgramOptions) *Program {
 			p.host,
 			p.host.GetCurrentDirectory(),
 			options.Options,
-			p.configFilePath,
+			p.configFileName,
 			/*resolutionStack*/ nil,
 			/*extraFileExtensions*/ nil,
 			/*extendedConfigCache*/ nil,
@@ -118,7 +119,7 @@ func NewProgram(options ProgramOptions) *Program {
 		p.compilerOptions = parseConfigFileContent.CompilerOptions()
 
 		if len(parseConfigFileContent.Errors) > 0 {
-			p.optionsDiagnostics = append(p.optionsDiagnostics, parseConfigFileContent.Errors...)
+			p.configFileParsingDiagnostics = append(p.configFileParsingDiagnostics, parseConfigFileContent.Errors...)
 			return p
 		}
 
@@ -162,39 +163,41 @@ func NewProgramFromParsedCommandLine(config *tsoptions.ParsedCommandLine, host C
 		Options:   config.CompilerOptions(),
 		Host:      host,
 		// todo: ProjectReferences
-		OptionsDiagnostics: config.GetConfigFileParsingDiagnostics(),
+		ConfigFileParsingDiagnostics: config.GetConfigFileParsingDiagnostics(),
 	}
 	return NewProgram(programOptions)
 }
 
-func (p *Program) SourceFiles() []*ast.SourceFile        { return p.files }
-func (p *Program) Options() *core.CompilerOptions        { return p.compilerOptions }
-func (p *Program) Host() CompilerHost                    { return p.host }
-func (p *Program) OptionsDiagnostics() []*ast.Diagnostic { return p.optionsDiagnostics }
+func (p *Program) SourceFiles() []*ast.SourceFile { return p.files }
+func (p *Program) Options() *core.CompilerOptions { return p.compilerOptions }
+func (p *Program) Host() CompilerHost             { return p.host }
+func (p *Program) GetConfigFileParsingDiagnostics() []*ast.Diagnostic {
+	return slices.Clip(p.configFileParsingDiagnostics)
+}
 
 func (p *Program) BindSourceFiles() {
 	wg := core.NewWorkGroup(true) //p.programOptions.SingleThreaded)
 	for _, file := range p.files {
-		if !file.IsBound {
-			wg.Run(func() {
+		if !file.IsBound() {
+			wg.Queue(func() {
 				binder.BindSourceFile(file, p.compilerOptions)
 			})
 		}
 	}
-	wg.Wait()
+	wg.RunAndWait()
 }
 
 func (p *Program) CheckSourceFiles() {
 	p.createCheckers()
 	wg := core.NewWorkGroup(false)
 	for index, checker := range p.checkers {
-		wg.Run(func() {
+		wg.Queue(func() {
 			for i := index; i < len(p.files); i += len(p.checkers) {
 				checker.CheckSourceFile(p.files[i])
 			}
 		})
 	}
-	wg.Wait()
+	wg.RunAndWait()
 }
 
 func (p *Program) createCheckers() {
@@ -254,7 +257,7 @@ func getModuleNames(file *ast.SourceFile) []*ast.Node {
 }
 
 func (p *Program) GetSyntacticDiagnostics(sourceFile *ast.SourceFile) []*ast.Diagnostic {
-	return p.getDiagnosticsHelper(sourceFile, false /*ensureBound*/, false /*ensureChecked*/, p.getSyntaticDiagnosticsForFile)
+	return p.getDiagnosticsHelper(sourceFile, false /*ensureBound*/, false /*ensureChecked*/, p.getSyntacticDiagnosticsForFile)
 }
 
 func (p *Program) GetBindDiagnostics(sourceFile *ast.SourceFile) []*ast.Diagnostic {
@@ -283,10 +286,10 @@ func (p *Program) getOptionsDiagnosticsOfConfigFile() []*ast.Diagnostic {
 	if p.Options() == nil || p.Options().ConfigFilePath == "" {
 		return nil
 	}
-	return p.optionsDiagnostics
+	return p.configFileParsingDiagnostics // TODO: actually call getDiagnosticsHelper on config path
 }
 
-func (p *Program) getSyntaticDiagnosticsForFile(sourceFile *ast.SourceFile) []*ast.Diagnostic {
+func (p *Program) getSyntacticDiagnosticsForFile(sourceFile *ast.SourceFile) []*ast.Diagnostic {
 	return sourceFile.Diagnostics()
 }
 
@@ -388,81 +391,25 @@ func (p *Program) PrintSourceFileWithTypes() {
 	}
 }
 
-var unprefixedNodeCoreModules = map[string]bool{
-	"assert":              true,
-	"assert/strict":       true,
-	"async_hooks":         true,
-	"buffer":              true,
-	"child_process":       true,
-	"cluster":             true,
-	"console":             true,
-	"constants":           true,
-	"crypto":              true,
-	"dgram":               true,
-	"diagnostics_channel": true,
-	"dns":                 true,
-	"dns/promises":        true,
-	"domain":              true,
-	"events":              true,
-	"fs":                  true,
-	"fs/promises":         true,
-	"http":                true,
-	"http2":               true,
-	"https":               true,
-	"inspector":           true,
-	"inspector/promises":  true,
-	"module":              true,
-	"net":                 true,
-	"os":                  true,
-	"path":                true,
-	"path/posix":          true,
-	"path/win32":          true,
-	"perf_hooks":          true,
-	"process":             true,
-	"punycode":            true,
-	"querystring":         true,
-	"readline":            true,
-	"readline/promises":   true,
-	"repl":                true,
-	"stream":              true,
-	"stream/consumers":    true,
-	"stream/promises":     true,
-	"stream/web":          true,
-	"string_decoder":      true,
-	"sys":                 true,
-	"test/mock_loader":    true,
-	"timers":              true,
-	"timers/promises":     true,
-	"tls":                 true,
-	"trace_events":        true,
-	"tty":                 true,
-	"url":                 true,
-	"util":                true,
-	"util/types":          true,
-	"v8":                  true,
-	"vm":                  true,
-	"wasi":                true,
-	"worker_threads":      true,
-	"zlib":                true,
-}
-
-var exclusivelyPrefixedNodeCoreModules = map[string]bool{
-	"node:sea":            true,
-	"node:sqlite":         true,
-	"node:test":           true,
-	"node:test/reporters": true,
-}
-
 func (p *Program) GetEmitModuleFormatOfFile(sourceFile *ast.SourceFile) core.ModuleKind {
-	// !!!
-	// Must reimplement the below.
-	// Also, previous version is a method on `TypeCheckerHost`/`Program`.
+	return p.GetEmitModuleFormatOfFileWorker(sourceFile, p.compilerOptions)
+}
 
-	// mode, hadImpliedFormat := getImpliedNodeFormatForEmitWorker(sourceFile, options)
-	// if !hadImpliedFormat {
-	// 	mode = options.GetEmitModuleKind()
-	// }
-	return p.compilerOptions.GetEmitModuleKind()
+func (p *Program) GetEmitModuleFormatOfFileWorker(sourceFile *ast.SourceFile, options *core.CompilerOptions) core.ModuleKind {
+	result := p.GetImpliedNodeFormatForEmitWorker(sourceFile, options)
+	if result != core.ModuleKindNone {
+		return result
+	}
+	return options.GetEmitModuleKind()
+}
+
+func (p *Program) GetImpliedNodeFormatForEmit(sourceFile *ast.SourceFile) core.ResolutionMode {
+	return p.GetImpliedNodeFormatForEmitWorker(sourceFile, p.compilerOptions)
+}
+
+func (p *Program) GetImpliedNodeFormatForEmitWorker(sourceFile *ast.SourceFile, options *core.CompilerOptions) core.ResolutionMode {
+	// !!!
+	return core.ModuleKindNone
 }
 
 func (p *Program) CommonSourceDirectory() string {
@@ -588,7 +535,7 @@ func (p *Program) Emit(options *EmitOptions) *EmitResult {
 			sourceFile:        sourceFile,
 		}
 		emitters = append(emitters, emitter)
-		wg.Run(func() {
+		wg.Queue(func() {
 			// take an unused writer
 			writer := writerPool.Get().(printer.EmitTextWriter)
 			writer.Clear()
@@ -605,7 +552,7 @@ func (p *Program) Emit(options *EmitOptions) *EmitResult {
 	}
 
 	// wait for emit to complete
-	wg.Wait()
+	wg.RunAndWait()
 
 	// collect results from emit, preserving input order
 	result := &EmitResult{}

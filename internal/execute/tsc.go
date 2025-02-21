@@ -74,7 +74,7 @@ func executeCommandLineWorker(sys System, cb cbType, commandLine *tsoptions.Pars
 	compilerOptionsFromCommandLine := commandLine.CompilerOptions()
 
 	if configFileName != "" {
-		extendedConfigCache := map[string]*tsoptions.ExtendedConfigCacheEntry{}
+		extendedConfigCache := map[tspath.Path]*tsoptions.ExtendedConfigCacheEntry{}
 		configParseResult, errors := getParsedCommandLineOfConfigFile(configFileName, compilerOptionsFromCommandLine, sys, extendedConfigCache)
 		if len(errors) != 0 {
 			// these are unrecoverable errors--exit to report them as diagnotics
@@ -142,7 +142,7 @@ func findConfigFile(searchPath string, fileExists func(string) bool, configName 
 }
 
 // Reads the config file and reports errors. Exits if the config file cannot be found
-func getParsedCommandLineOfConfigFile(configFileName string, options *core.CompilerOptions, sys System, extendedConfigCache map[string]*tsoptions.ExtendedConfigCacheEntry) (*tsoptions.ParsedCommandLine, []*ast.Diagnostic) {
+func getParsedCommandLineOfConfigFile(configFileName string, options *core.CompilerOptions, sys System, extendedConfigCache map[tspath.Path]*tsoptions.ExtendedConfigCacheEntry) (*tsoptions.ParsedCommandLine, []*ast.Diagnostic) {
 	errors := []*ast.Diagnostic{}
 	configFileText, errors := tsoptions.TryReadFile(configFileName, sys.FS().ReadFile, errors)
 	if len(errors) > 0 {
@@ -150,9 +150,8 @@ func getParsedCommandLineOfConfigFile(configFileName string, options *core.Compi
 		return nil, errors
 	}
 
-	tsConfigSourceFile := tsoptions.NewTsconfigSourceFileFromFilePath(configFileName, configFileText)
 	cwd := sys.GetCurrentDirectory()
-	tsConfigSourceFile.SourceFile.SetPath(tspath.ToPath(configFileName, cwd, sys.FS().UseCaseSensitiveFileNames()))
+	tsConfigSourceFile := tsoptions.NewTsconfigSourceFileFromFilePath(configFileName, tspath.ToPath(configFileName, cwd, sys.FS().UseCaseSensitiveFileNames()), configFileText)
 	// tsConfigSourceFile.resolvedPath = tsConfigSourceFile.FileName()
 	// tsConfigSourceFile.originalFileName = tsConfigSourceFile.FileName()
 	return tsoptions.ParseJsonSourceFileConfigFileContent(
@@ -172,7 +171,7 @@ func performCompilation(sys System, cb cbType, config *tsoptions.ParsedCommandLi
 	// todo: cache, statistics, tracing
 	program := compiler.NewProgramFromParsedCommandLine(config, host)
 	options := program.Options()
-	allDiagnostics := program.GetOptionsDiagnostics()
+	allDiagnostics := program.GetConfigFileParsingDiagnostics()
 
 	// todo: early exit logic and append diagnostics
 	diagnostics := program.GetSyntacticDiagnostics(nil)
@@ -200,11 +199,9 @@ func performCompilation(sys System, cb cbType, config *tsoptions.ParsedCommandLi
 	diagnostics = append(diagnostics, emitResult.Diagnostics...)
 
 	allDiagnostics = append(allDiagnostics, diagnostics...)
-	if allDiagnostics != nil {
-		allDiagnostics = compiler.SortAndDeduplicateDiagnostics(allDiagnostics)
-		for _, diagnostic := range allDiagnostics {
-			reportDiagnostic(diagnostic)
-		}
+	allDiagnostics = compiler.SortAndDeduplicateDiagnostics(allDiagnostics)
+	for _, diagnostic := range allDiagnostics {
+		reportDiagnostic(diagnostic)
 	}
 
 	// !!! if (write)

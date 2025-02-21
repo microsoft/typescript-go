@@ -1195,7 +1195,7 @@ func (c *Checker) checkGrammarJsxName(node *ast.JsxTagNameExpression) bool {
 		return c.grammarErrorOnNode(node.Expression(), diagnostics.JSX_property_access_expressions_cannot_include_JSX_namespace_names)
 	}
 
-	if ast.IsJsxNamespacedName(node) && c.compilerOptions.GetJSXTransformEnabled() && !isIntrinsicJsxName(node.AsJsxNamespacedName().Namespace.Text()) {
+	if ast.IsJsxNamespacedName(node) && c.compilerOptions.GetJSXTransformEnabled() && !IsIntrinsicJsxName(node.AsJsxNamespacedName().Namespace.Text()) {
 		return c.grammarErrorOnNode(node, diagnostics.React_components_cannot_include_JSX_namespace_names)
 	}
 
@@ -2074,7 +2074,7 @@ func (c *Checker) checkGrammarSourceFile(node *ast.SourceFile) bool {
 func (c *Checker) checkGrammarStatementInAmbientContext(node *ast.Node) bool {
 	if node.Flags&ast.NodeFlagsAmbient != 0 {
 		// Find containing block which is either Block, ModuleBlock, SourceFile
-		links := c.nodeLinks.get(node)
+		links := c.nodeLinks.Get(node)
 		if !links.hasReportedStatementInAmbientContext && (ast.IsFunctionLike(node.Parent) || ast.IsAccessor(node.Parent)) {
 			links.hasReportedStatementInAmbientContext = c.grammarErrorOnFirstToken(node, diagnostics.An_implementation_cannot_be_declared_in_ambient_contexts)
 			return links.hasReportedStatementInAmbientContext
@@ -2086,7 +2086,7 @@ func (c *Checker) checkGrammarStatementInAmbientContext(node *ast.Node) bool {
 		// this has already been reported, and don't report if it has.
 		//
 		if node.Parent.Kind == ast.KindBlock || node.Parent.Kind == ast.KindModuleBlock || node.Parent.Kind == ast.KindSourceFile {
-			links := c.nodeLinks.get(node.Parent)
+			links := c.nodeLinks.Get(node.Parent)
 			// Check if the containing block ever report this error
 			if !links.hasReportedStatementInAmbientContext {
 				links.hasReportedStatementInAmbientContext = c.grammarErrorOnFirstToken(node, diagnostics.Statements_are_not_allowed_in_ambient_contexts)

@@ -16,7 +16,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/testutil/tsbaseline"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
-	"github.com/microsoft/typescript-go/internal/vfs"
+	"github.com/microsoft/typescript-go/internal/vfs/osvfs"
 )
 
 var (
@@ -49,19 +49,19 @@ func (t *CompilerTestType) String() string {
 }
 
 type CompilerBaselineRunner struct {
-	testFiles    []string
-	basePath     string
-	testSuitName string
+	testFiles     []string
+	basePath      string
+	testSuiteName string
 }
 
 var _ Runner = (*CompilerBaselineRunner)(nil)
 
 func NewCompilerBaselineRunner(testType CompilerTestType) *CompilerBaselineRunner {
-	testSuitName := testType.String()
-	basePath := "tests/cases/" + testSuitName
+	testSuiteName := testType.String()
+	basePath := "tests/cases/" + testSuiteName
 	return &CompilerBaselineRunner{
-		basePath:     basePath,
-		testSuitName: testSuitName,
+		basePath:      basePath,
+		testSuiteName: testSuiteName,
 	}
 }
 
@@ -131,8 +131,8 @@ func (r *CompilerBaselineRunner) runSingleConfigTest(t *testing.T, test *compile
 	payload := makeUnitsFromTest(test.content, test.filename)
 	compilerTest := newCompilerTest(t, test.filename, &payload, config)
 
-	compilerTest.verifyDiagnostics(t, r.testSuitName)
-	compilerTest.verifyTypesAndSymbols(t, r.testSuitName)
+	compilerTest.verifyDiagnostics(t, r.testSuiteName)
+	compilerTest.verifyTypesAndSymbols(t, r.testSuiteName)
 	// !!! Verify all baselines
 }
 
@@ -143,7 +143,7 @@ type compilerFileBasedTest struct {
 }
 
 func getCompilerFileBasedTest(t *testing.T, filename string) *compilerFileBasedTest {
-	content, ok := vfs.FromOS().ReadFile(filename)
+	content, ok := osvfs.FS().ReadFile(filename)
 	if !ok {
 		panic("Could not read test file: " + filename)
 	}
