@@ -15,12 +15,12 @@ const embedded = true
 
 const scheme = "bundled:///"
 
-func splitPath(path string) (root string, rest string, ok bool) {
+func splitPath(path string) (rest string, ok bool) {
 	rest, ok = strings.CutPrefix(path, scheme)
 	if !ok {
-		return "", "", false
+		return "", false
 	}
-	return scheme, rest, true
+	return rest, true
 }
 
 func libPath() string {
@@ -47,58 +47,58 @@ func (vfs *wrappedFS) UseCaseSensitiveFileNames() bool {
 }
 
 func (vfs *wrappedFS) FileExists(path string) bool {
-	if _, rest, ok := splitPath(path); ok {
+	if rest, ok := splitPath(path); ok {
 		return embeddedVFS.FileExists("/" + rest)
 	}
 	return vfs.fs.FileExists(path)
 }
 
 func (vfs *wrappedFS) ReadFile(path string) (contents string, ok bool) {
-	if _, rest, ok := splitPath(path); ok {
+	if rest, ok := splitPath(path); ok {
 		return embeddedVFS.ReadFile("/" + rest)
 	}
 	return vfs.fs.ReadFile(path)
 }
 
 func (vfs *wrappedFS) DirectoryExists(path string) bool {
-	if _, rest, ok := splitPath(path); ok {
+	if rest, ok := splitPath(path); ok {
 		return embeddedVFS.DirectoryExists("/" + rest)
 	}
 	return vfs.fs.DirectoryExists(path)
 }
 
 func (vfs *wrappedFS) GetDirectories(path string) []string {
-	if _, rest, ok := splitPath(path); ok {
+	if rest, ok := splitPath(path); ok {
 		return embeddedVFS.GetDirectories("/" + rest)
 	}
 	return vfs.fs.GetDirectories(path)
 }
 
 func (vfs *wrappedFS) GetEntries(path string) []fs.DirEntry {
-	if _, rest, ok := splitPath(path); ok {
+	if rest, ok := splitPath(path); ok {
 		return embeddedVFS.GetEntries("/" + rest)
 	}
 	return vfs.fs.GetEntries(path)
 }
 
 func (vfs *wrappedFS) WalkDir(root string, walkFn vfs.WalkDirFunc) error {
-	if originalRoot, rest, ok := splitPath(root); ok {
+	if rest, ok := splitPath(root); ok {
 		return embeddedVFS.WalkDir("/"+rest, func(path string, d fs.DirEntry, err error) error {
-			return walkFn(originalRoot+strings.TrimPrefix(path, "/"), d, err)
+			return walkFn(scheme+strings.TrimPrefix(path, "/"), d, err)
 		})
 	}
 	return vfs.fs.WalkDir(root, walkFn)
 }
 
 func (vfs *wrappedFS) Realpath(path string) string {
-	if _, rest, ok := splitPath(path); ok {
+	if rest, ok := splitPath(path); ok {
 		return embeddedVFS.Realpath("/" + rest)
 	}
 	return vfs.fs.Realpath(path)
 }
 
 func (vfs *wrappedFS) WriteFile(path string, data string, writeByteOrderMark bool) error {
-	if _, _, ok := splitPath(path); ok {
+	if _, ok := splitPath(path); ok {
 		panic("cannot write to embedded file system")
 	}
 	return vfs.fs.WriteFile(path, data, writeByteOrderMark)
