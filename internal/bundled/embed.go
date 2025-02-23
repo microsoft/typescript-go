@@ -95,11 +95,10 @@ func (vfs *wrappedFS) GetEntries(path string) []fs.DirEntry {
 	return vfs.fs.GetEntries(path)
 }
 
-//nolint:errorlint
 func (vfs *wrappedFS) WalkDir(root string, walkFn vfs.WalkDirFunc) error {
 	if rest, ok := splitPath(root); ok {
 		if err := vfs.walkDir(rest, walkFn); err != nil {
-			if err == fs.SkipAll {
+			if err == fs.SkipAll { //nolint:errorlint
 				return nil
 			}
 			return err
@@ -109,7 +108,6 @@ func (vfs *wrappedFS) WalkDir(root string, walkFn vfs.WalkDirFunc) error {
 	return vfs.fs.WalkDir(root, walkFn)
 }
 
-//nolint:errorlint
 func (vfs *wrappedFS) walkDir(rest string, walkFn vfs.WalkDirFunc) error {
 	var entries []fs.DirEntry
 	switch rest {
@@ -125,10 +123,10 @@ func (vfs *wrappedFS) walkDir(rest string, walkFn vfs.WalkDirFunc) error {
 		name := rest + "/" + entry.Name()
 
 		if err := walkFn(scheme+name, entry, nil); err != nil {
-			if err == fs.SkipAll {
+			if err == fs.SkipAll { //nolint:errorlint
 				return fs.SkipAll
 			}
-			if err == fs.SkipDir {
+			if err == fs.SkipDir { //nolint:errorlint
 				continue
 			}
 			return err
