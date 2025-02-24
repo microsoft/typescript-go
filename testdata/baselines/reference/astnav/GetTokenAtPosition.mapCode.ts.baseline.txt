@@ -1,24 +1,48 @@
 〚Positions: [741, 742]〛
 【TS: ExportKeyword [741, 766)】
-《Go: JSDoc [743, 759)》
+《Go: JSDoc [741, 759)》
 38 │    UserPreferences,
 39 │} from "./_namespaces/ts.js";
-40 │import { ChangeTracker } from "./textChanges.js";【〚
+40 │import { ChangeTracker } from "./textChanges.js";《【〚
 41 │
-42 │〛《/** @internal */》
+42 │〛/** @internal */》
 43 │export】 function mapCode(
 44 │    sourceFile: SourceFile,
 45 │    contents: string[],
 
 
+〚Positions: [743, 746]〛
+【TS: JSDoc [743, 759)】
+《Go: JSDoc [741, 759)》
+38 │    UserPreferences,
+39 │} from "./_namespaces/ts.js";
+40 │import { ChangeTracker } from "./textChanges.js";《
+41 │
+42 │【〚/** 〛@internal */】》
+43 │export function mapCode(
+44 │    sourceFile: SourceFile,
+
+
+〚Positions: [757, 758]〛
+【TS: JSDoc [743, 759)】
+《Go: JSDoc [741, 759)》
+38 │    UserPreferences,
+39 │} from "./_namespaces/ts.js";
+40 │import { ChangeTracker } from "./textChanges.js";《
+41 │
+42 │【/** @internal 〚*/〛】》
+43 │export function mapCode(
+44 │    sourceFile: SourceFile,
+
+
 〚Positions: [1542, 1543]〛
 【TS: FunctionKeyword [1542, 1672)】
-《Go: JSDoc [1544, 1663)》
+《Go: JSDoc [1542, 1663)》
 64 │        },
 65 │    );
-66 │}【〚
+66 │}《【〚
 67 │
-68 │〛《/**
+68 │〛/**
 69 │ * Tries to parse something into either "top-level" statements, or into blocks
 70 │ * of class-context definitions.
 71 │ */》
@@ -36,5 +60,20 @@
 69 │ * Tries to parse something into either "top-level" statements, or into blocks
 70 │ * of class-context definitions.
 71 │ 〛》*/】
+72 │function parse(sourceFile: SourceFile, content: string): NodeArray<Node> {
+73 │    // We're going to speculatively parse different kinds of contexts to see
+
+
+〚Positions: [1661, 1662]〛
+【TS: JSDoc [1544, 1663)】
+《Go: JSDoc [1542, 1663)》
+64 │        },
+65 │    );
+66 │}《
+67 │
+68 │【/**
+69 │ * Tries to parse something into either "top-level" statements, or into blocks
+70 │ * of class-context definitions.
+71 │ 〚*/〛】》
 72 │function parse(sourceFile: SourceFile, content: string): NodeArray<Node> {
 73 │    // We're going to speculatively parse different kinds of contexts to see

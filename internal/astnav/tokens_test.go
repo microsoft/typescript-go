@@ -71,7 +71,7 @@ func baselineTokens(t *testing.T, testName string, getTSTokens func(fileText str
 				positions[i] = i
 			}
 			tsTokens := getTSTokens(string(fileText), positions)
-			file := parser.ParseSourceFile("file.ts", string(fileText), core.ScriptTargetLatest, scanner.JSDocParsingModeParseAll)
+			file := parser.ParseSourceFile("file.ts", "file.ts", string(fileText), core.ScriptTargetLatest, scanner.JSDocParsingModeParseAll)
 
 			var output strings.Builder
 			currentRange := core.NewTextRange(0, 0)

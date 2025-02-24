@@ -51,11 +51,6 @@ func getTokenAtPosition(
 		}
 
 		start := getPosition(node, sourceFile, allowPositionInLeadingTrivia)
-		if node.Kind == ast.KindJSDoc && allowPositionInLeadingTrivia {
-			// There is a bug where JSDoc nodes don't include their leading trivia in their start position,
-			// which breaks binary searching, since the token *after* them has a position *before* them.
-			start = node.Parent.Pos()
-		}
 		if start > position {
 			return 1
 		}
@@ -220,9 +215,6 @@ func getTokenAtPosition(
 		}
 		current = next
 		left = current.Pos()
-		if current.Kind == ast.KindJSDoc {
-			left = current.Parent.Pos()
-		}
 		right = -1
 		next = nil
 	}
