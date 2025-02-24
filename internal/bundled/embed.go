@@ -191,7 +191,6 @@ func (fi *fileInfo) Info() (fs.FileInfo, error) {
 	return fi, nil
 }
 
-// Type implements fs.DirEntry.
 func (fi *fileInfo) Type() fs.FileMode {
 	return fi.mode.Type()
 }
