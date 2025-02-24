@@ -16,11 +16,7 @@ const embedded = true
 const scheme = "bundled:///"
 
 func splitPath(path string) (rest string, ok bool) {
-	rest, ok = strings.CutPrefix(path, scheme)
-	if !ok {
-		return "", false
-	}
-	return rest, true
+	return strings.CutPrefix(path, scheme)
 }
 
 func libPath() string {
