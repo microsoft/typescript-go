@@ -13,11 +13,12 @@ import (
 )
 
 type fakeProgram struct {
-	singleThreaded            bool
-	compilerOptions           *core.CompilerOptions
-	files                     []*ast.SourceFile
-	getEmitModuleFormatOfFile func(sourceFile *ast.SourceFile) core.ModuleKind
-	getResolvedModule         func(currentSourceFile *ast.SourceFile, moduleReference string) *ast.SourceFile
+	singleThreaded              bool
+	compilerOptions             *core.CompilerOptions
+	files                       []*ast.SourceFile
+	getEmitModuleFormatOfFile   func(sourceFile *ast.SourceFile) core.ModuleKind
+	getImpliedNodeFormatForEmit func(sourceFile *ast.SourceFile) core.ModuleKind
+	getResolvedModule           func(currentSourceFile *ast.SourceFile, moduleReference string) *ast.SourceFile
 }
 
 func (p *fakeProgram) Options() *core.CompilerOptions {
@@ -42,6 +43,10 @@ func (p *fakeProgram) BindSourceFiles() {
 
 func (p *fakeProgram) GetEmitModuleFormatOfFile(sourceFile *ast.SourceFile) core.ModuleKind {
 	return p.getEmitModuleFormatOfFile(sourceFile)
+}
+
+func (p *fakeProgram) GetImpliedNodeFormatForEmit(sourceFile *ast.SourceFile) core.ModuleKind {
+	return p.getImpliedNodeFormatForEmit(sourceFile)
 }
 
 func (p *fakeProgram) GetResolvedModule(currentSourceFile *ast.SourceFile, moduleReference string) *ast.SourceFile {
@@ -101,6 +106,9 @@ func TestImportElision(t *testing.T) {
 				compilerOptions: compilerOptions,
 				files:           files,
 				getEmitModuleFormatOfFile: func(sourceFile *ast.SourceFile) core.ModuleKind {
+					return core.ModuleKindESNext
+				},
+				getImpliedNodeFormatForEmit: func(sourceFile *ast.SourceFile) core.ModuleKind {
 					return core.ModuleKindESNext
 				},
 				getResolvedModule: func(currentSourceFile *ast.SourceFile, moduleReference string) *ast.SourceFile {
