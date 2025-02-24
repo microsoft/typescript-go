@@ -195,15 +195,10 @@ func getTokenAtPosition(
 						}
 						panic(fmt.Sprintf("did not expect %s to have %s in its trivia", current.Kind.String(), token.String()))
 					}
-					tokenNode := factory.NewToken(token)
-					tokenNode.Loc = core.NewTextRange(tokenFullStart, tokenEnd)
-					tokenNode.Parent = current
-					return tokenNode
+					return sourceFile.GetOrCreateToken(token, tokenFullStart, tokenEnd, current, factory)
 				}
 				if includePrecedingTokenAtEndPosition != nil && tokenEnd == position {
-					prevToken := factory.NewToken(token)
-					prevToken.Loc = core.NewTextRange(tokenFullStart, tokenEnd)
-					prevToken.Parent = current
+					prevToken := sourceFile.GetOrCreateToken(token, tokenFullStart, tokenEnd, current, factory)
 					if includePrecedingTokenAtEndPosition(prevToken) {
 						return prevToken
 					}

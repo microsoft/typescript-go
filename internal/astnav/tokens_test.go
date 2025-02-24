@@ -30,16 +30,31 @@ func TestGetTokenAtPosition(t *testing.T) {
 	t.Parallel()
 	repo.SkipIfNoTypeScriptSubmodule(t)
 	jstest.SkipIfNoNodeJS(t)
-	baselineTokens(
-		t,
-		"GetTokenAtPosition",
-		func(fileText string, positions []int) []tokenInfo {
-			return tsGetTokensAtPositions(t, fileText, positions)
-		},
-		func(file *ast.SourceFile, pos int) tokenInfo {
-			return toTokenInfo(astnav.GetTokenAtPosition(file, pos))
-		},
-	)
+
+	t.Run("baseline", func(t *testing.T) {
+		t.Parallel()
+		baselineTokens(
+			t,
+			"GetTokenAtPosition",
+			func(fileText string, positions []int) []tokenInfo {
+				return tsGetTokensAtPositions(t, fileText, positions)
+			},
+			func(file *ast.SourceFile, pos int) tokenInfo {
+				return toTokenInfo(astnav.GetTokenAtPosition(file, pos))
+			},
+		)
+	})
+
+	t.Run("pointer equality", func(t *testing.T) {
+		t.Parallel()
+		fileText := `
+			function foo() {
+				return 0;
+			}
+		`
+		file := parser.ParseSourceFile("file.ts", "file.ts", fileText, core.ScriptTargetLatest, scanner.JSDocParsingModeParseAll)
+		assert.Equal(t, astnav.GetTokenAtPosition(file, 0), astnav.GetTokenAtPosition(file, 0))
+	})
 }
 
 func TestGetTouchingPropertyName(t *testing.T) {
