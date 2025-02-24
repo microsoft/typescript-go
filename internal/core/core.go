@@ -490,3 +490,7 @@ func levenshteinWithMax(s1 []rune, s2 []rune, maxValue float64) float64 {
 	}
 	return res
 }
+
+func Identity[T any](t T) T {
+	return t
+}
