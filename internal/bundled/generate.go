@@ -120,7 +120,7 @@ func generateEmbedded(libs []lib) {
 	code.WriteString("var libsEntries = []fs.DirEntry{\n")
 	for i, lib := range libs {
 		varName := libVarNames[i]
-		fmt.Fprintf(&code, "\tfs.FileInfoToDirEntry(&embeddedFileInfo{name: %q, size: int64(len(%s))}),\n", lib.target, varName)
+		fmt.Fprintf(&code, "\t&fileInfo{name: %q, size: int64(len(%s))},\n", lib.target, varName)
 	}
 	code.WriteString("}\n")
 

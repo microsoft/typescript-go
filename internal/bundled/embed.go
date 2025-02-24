@@ -76,7 +76,7 @@ func (vfs *wrappedFS) GetDirectories(path string) []string {
 }
 
 var rootEntries = []fs.DirEntry{
-	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "libs", mode: fs.ModeDir}),
+	fs.FileInfoToDirEntry(&fileInfo{name: "libs", mode: fs.ModeDir}),
 }
 
 func (vfs *wrappedFS) GetEntries(path string) []fs.DirEntry {
@@ -152,34 +152,46 @@ func (vfs *wrappedFS) WriteFile(path string, data string, writeByteOrderMark boo
 	return vfs.fs.WriteFile(path, data, writeByteOrderMark)
 }
 
-type embeddedFileInfo struct {
+type fileInfo struct {
 	mode fs.FileMode
 	name string
 	size int64
 }
 
-var _ fs.FileInfo = (*embeddedFileInfo)(nil)
+var (
+	_ fs.FileInfo = (*fileInfo)(nil)
+	_ fs.DirEntry = (*fileInfo)(nil)
+)
 
-func (e *embeddedFileInfo) IsDir() bool {
-	return e.mode.IsDir()
+func (fi *fileInfo) IsDir() bool {
+	return fi.mode.IsDir()
 }
 
-func (e *embeddedFileInfo) ModTime() time.Time {
+func (fi *fileInfo) ModTime() time.Time {
 	return time.Time{}
 }
 
-func (e *embeddedFileInfo) Mode() fs.FileMode {
-	return e.mode
+func (fi *fileInfo) Mode() fs.FileMode {
+	return fi.mode
 }
 
-func (e *embeddedFileInfo) Name() string {
-	return e.name
+func (fi *fileInfo) Name() string {
+	return fi.name
 }
 
-func (e *embeddedFileInfo) Size() int64 {
-	return e.size
+func (fi *fileInfo) Size() int64 {
+	return fi.size
 }
 
-func (e *embeddedFileInfo) Sys() any {
+func (fi *fileInfo) Sys() any {
 	return nil
+}
+
+func (fi *fileInfo) Info() (fs.FileInfo, error) {
+	return fi, nil
+}
+
+// Type implements fs.DirEntry.
+func (fi *fileInfo) Type() fs.FileMode {
+	return fi.mode.Type()
 }
