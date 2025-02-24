@@ -55,6 +55,9 @@ export function activate(context: vscode.ExtensionContext) {
             onSave: true,
             onTabs: true,
             match(documentSelector, resource) {
+                if (resource.scheme === "file" && /\.(?:[cm]?[jt]s|[tj]sx)$/.test(resource.path)) {
+                    return true;
+                }
                 const document = vscode.workspace.textDocuments.find(doc => doc.uri.toString() === resource.toString());
                 if (!document) {
                     return false;
