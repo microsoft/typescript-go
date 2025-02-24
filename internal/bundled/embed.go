@@ -44,7 +44,7 @@ func (vfs *wrappedFS) UseCaseSensitiveFileNames() bool {
 
 func (vfs *wrappedFS) FileExists(path string) bool {
 	if rest, ok := splitPath(path); ok {
-		_, ok := readEmbeddedFile(rest)
+		_, ok := embeddedContents[rest]
 		return ok
 	}
 	return vfs.fs.FileExists(path)
@@ -52,7 +52,8 @@ func (vfs *wrappedFS) FileExists(path string) bool {
 
 func (vfs *wrappedFS) ReadFile(path string) (contents string, ok bool) {
 	if rest, ok := splitPath(path); ok {
-		return readEmbeddedFile(rest)
+		contents, ok = embeddedContents[rest]
+		return contents, ok
 	}
 	return vfs.fs.ReadFile(path)
 }

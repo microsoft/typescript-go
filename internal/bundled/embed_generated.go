@@ -10,557 +10,375 @@ import (
 	_ "embed"
 )
 
-func readEmbeddedFile(path string) (string, bool) {
-	switch path {
-	case "libs/lib.d.ts":
-		return lib_d_ts, true
-	case "libs/lib.decorators.d.ts":
-		return lib_decorators_d_ts, true
-	case "libs/lib.decorators.legacy.d.ts":
-		return lib_decorators_legacy_d_ts, true
-	case "libs/lib.dom.asynciterable.d.ts":
-		return lib_dom_asynciterable_d_ts, true
-	case "libs/lib.dom.d.ts":
-		return lib_dom_d_ts, true
-	case "libs/lib.dom.iterable.d.ts":
-		return lib_dom_iterable_d_ts, true
-	case "libs/lib.es2015.collection.d.ts":
-		return lib_es2015_collection_d_ts, true
-	case "libs/lib.es2015.core.d.ts":
-		return lib_es2015_core_d_ts, true
-	case "libs/lib.es2015.d.ts":
-		return lib_es2015_d_ts, true
-	case "libs/lib.es2015.generator.d.ts":
-		return lib_es2015_generator_d_ts, true
-	case "libs/lib.es2015.iterable.d.ts":
-		return lib_es2015_iterable_d_ts, true
-	case "libs/lib.es2015.promise.d.ts":
-		return lib_es2015_promise_d_ts, true
-	case "libs/lib.es2015.proxy.d.ts":
-		return lib_es2015_proxy_d_ts, true
-	case "libs/lib.es2015.reflect.d.ts":
-		return lib_es2015_reflect_d_ts, true
-	case "libs/lib.es2015.symbol.d.ts":
-		return lib_es2015_symbol_d_ts, true
-	case "libs/lib.es2015.symbol.wellknown.d.ts":
-		return lib_es2015_symbol_wellknown_d_ts, true
-	case "libs/lib.es2016.array.include.d.ts":
-		return lib_es2016_array_include_d_ts, true
-	case "libs/lib.es2016.d.ts":
-		return lib_es2016_d_ts, true
-	case "libs/lib.es2016.full.d.ts":
-		return lib_es2016_full_d_ts, true
-	case "libs/lib.es2016.intl.d.ts":
-		return lib_es2016_intl_d_ts, true
-	case "libs/lib.es2017.d.ts":
-		return lib_es2017_d_ts, true
-	case "libs/lib.es2017.date.d.ts":
-		return lib_es2017_date_d_ts, true
-	case "libs/lib.es2017.full.d.ts":
-		return lib_es2017_full_d_ts, true
-	case "libs/lib.es2017.intl.d.ts":
-		return lib_es2017_intl_d_ts, true
-	case "libs/lib.es2017.object.d.ts":
-		return lib_es2017_object_d_ts, true
-	case "libs/lib.es2017.sharedmemory.d.ts":
-		return lib_es2017_sharedmemory_d_ts, true
-	case "libs/lib.es2017.string.d.ts":
-		return lib_es2017_string_d_ts, true
-	case "libs/lib.es2017.typedarrays.d.ts":
-		return lib_es2017_typedarrays_d_ts, true
-	case "libs/lib.es2018.asyncgenerator.d.ts":
-		return lib_es2018_asyncgenerator_d_ts, true
-	case "libs/lib.es2018.asynciterable.d.ts":
-		return lib_es2018_asynciterable_d_ts, true
-	case "libs/lib.es2018.d.ts":
-		return lib_es2018_d_ts, true
-	case "libs/lib.es2018.full.d.ts":
-		return lib_es2018_full_d_ts, true
-	case "libs/lib.es2018.intl.d.ts":
-		return lib_es2018_intl_d_ts, true
-	case "libs/lib.es2018.promise.d.ts":
-		return lib_es2018_promise_d_ts, true
-	case "libs/lib.es2018.regexp.d.ts":
-		return lib_es2018_regexp_d_ts, true
-	case "libs/lib.es2019.array.d.ts":
-		return lib_es2019_array_d_ts, true
-	case "libs/lib.es2019.d.ts":
-		return lib_es2019_d_ts, true
-	case "libs/lib.es2019.full.d.ts":
-		return lib_es2019_full_d_ts, true
-	case "libs/lib.es2019.intl.d.ts":
-		return lib_es2019_intl_d_ts, true
-	case "libs/lib.es2019.object.d.ts":
-		return lib_es2019_object_d_ts, true
-	case "libs/lib.es2019.string.d.ts":
-		return lib_es2019_string_d_ts, true
-	case "libs/lib.es2019.symbol.d.ts":
-		return lib_es2019_symbol_d_ts, true
-	case "libs/lib.es2020.bigint.d.ts":
-		return lib_es2020_bigint_d_ts, true
-	case "libs/lib.es2020.d.ts":
-		return lib_es2020_d_ts, true
-	case "libs/lib.es2020.date.d.ts":
-		return lib_es2020_date_d_ts, true
-	case "libs/lib.es2020.full.d.ts":
-		return lib_es2020_full_d_ts, true
-	case "libs/lib.es2020.intl.d.ts":
-		return lib_es2020_intl_d_ts, true
-	case "libs/lib.es2020.number.d.ts":
-		return lib_es2020_number_d_ts, true
-	case "libs/lib.es2020.promise.d.ts":
-		return lib_es2020_promise_d_ts, true
-	case "libs/lib.es2020.sharedmemory.d.ts":
-		return lib_es2020_sharedmemory_d_ts, true
-	case "libs/lib.es2020.string.d.ts":
-		return lib_es2020_string_d_ts, true
-	case "libs/lib.es2020.symbol.wellknown.d.ts":
-		return lib_es2020_symbol_wellknown_d_ts, true
-	case "libs/lib.es2021.d.ts":
-		return lib_es2021_d_ts, true
-	case "libs/lib.es2021.full.d.ts":
-		return lib_es2021_full_d_ts, true
-	case "libs/lib.es2021.intl.d.ts":
-		return lib_es2021_intl_d_ts, true
-	case "libs/lib.es2021.promise.d.ts":
-		return lib_es2021_promise_d_ts, true
-	case "libs/lib.es2021.string.d.ts":
-		return lib_es2021_string_d_ts, true
-	case "libs/lib.es2021.weakref.d.ts":
-		return lib_es2021_weakref_d_ts, true
-	case "libs/lib.es2022.array.d.ts":
-		return lib_es2022_array_d_ts, true
-	case "libs/lib.es2022.d.ts":
-		return lib_es2022_d_ts, true
-	case "libs/lib.es2022.error.d.ts":
-		return lib_es2022_error_d_ts, true
-	case "libs/lib.es2022.full.d.ts":
-		return lib_es2022_full_d_ts, true
-	case "libs/lib.es2022.intl.d.ts":
-		return lib_es2022_intl_d_ts, true
-	case "libs/lib.es2022.object.d.ts":
-		return lib_es2022_object_d_ts, true
-	case "libs/lib.es2022.regexp.d.ts":
-		return lib_es2022_regexp_d_ts, true
-	case "libs/lib.es2022.sharedmemory.d.ts":
-		return lib_es2022_sharedmemory_d_ts, true
-	case "libs/lib.es2022.string.d.ts":
-		return lib_es2022_string_d_ts, true
-	case "libs/lib.es2023.array.d.ts":
-		return lib_es2023_array_d_ts, true
-	case "libs/lib.es2023.collection.d.ts":
-		return lib_es2023_collection_d_ts, true
-	case "libs/lib.es2023.d.ts":
-		return lib_es2023_d_ts, true
-	case "libs/lib.es2023.full.d.ts":
-		return lib_es2023_full_d_ts, true
-	case "libs/lib.es2023.intl.d.ts":
-		return lib_es2023_intl_d_ts, true
-	case "libs/lib.es5.d.ts":
-		return lib_es5_d_ts, true
-	case "libs/lib.es6.d.ts":
-		return lib_es6_d_ts, true
-	case "libs/lib.esnext.array.d.ts":
-		return lib_esnext_array_d_ts, true
-	case "libs/lib.esnext.collection.d.ts":
-		return lib_esnext_collection_d_ts, true
-	case "libs/lib.esnext.d.ts":
-		return lib_esnext_d_ts, true
-	case "libs/lib.esnext.decorators.d.ts":
-		return lib_esnext_decorators_d_ts, true
-	case "libs/lib.esnext.disposable.d.ts":
-		return lib_esnext_disposable_d_ts, true
-	case "libs/lib.esnext.full.d.ts":
-		return lib_esnext_full_d_ts, true
-	case "libs/lib.esnext.intl.d.ts":
-		return lib_esnext_intl_d_ts, true
-	case "libs/lib.esnext.iterator.d.ts":
-		return lib_esnext_iterator_d_ts, true
-	case "libs/lib.esnext.object.d.ts":
-		return lib_esnext_object_d_ts, true
-	case "libs/lib.esnext.promise.d.ts":
-		return lib_esnext_promise_d_ts, true
-	case "libs/lib.esnext.regexp.d.ts":
-		return lib_esnext_regexp_d_ts, true
-	case "libs/lib.esnext.string.d.ts":
-		return lib_esnext_string_d_ts, true
-	case "libs/lib.scripthost.d.ts":
-		return lib_scripthost_d_ts, true
-	case "libs/lib.webworker.asynciterable.d.ts":
-		return lib_webworker_asynciterable_d_ts, true
-	case "libs/lib.webworker.d.ts":
-		return lib_webworker_d_ts, true
-	case "libs/lib.webworker.importscripts.d.ts":
-		return lib_webworker_importscripts_d_ts, true
-	case "libs/lib.webworker.iterable.d.ts":
-		return lib_webworker_iterable_d_ts, true
-	}
-	return "", false
+var (
+	//go:embed libs/lib.d.ts
+	libs_lib_d_ts string
+	//go:embed libs/lib.decorators.d.ts
+	libs_lib_decorators_d_ts string
+	//go:embed libs/lib.decorators.legacy.d.ts
+	libs_lib_decorators_legacy_d_ts string
+	//go:embed libs/lib.dom.asynciterable.d.ts
+	libs_lib_dom_asynciterable_d_ts string
+	//go:embed libs/lib.dom.d.ts
+	libs_lib_dom_d_ts string
+	//go:embed libs/lib.dom.iterable.d.ts
+	libs_lib_dom_iterable_d_ts string
+	//go:embed libs/lib.es2015.collection.d.ts
+	libs_lib_es2015_collection_d_ts string
+	//go:embed libs/lib.es2015.core.d.ts
+	libs_lib_es2015_core_d_ts string
+	//go:embed libs/lib.es2015.d.ts
+	libs_lib_es2015_d_ts string
+	//go:embed libs/lib.es2015.generator.d.ts
+	libs_lib_es2015_generator_d_ts string
+	//go:embed libs/lib.es2015.iterable.d.ts
+	libs_lib_es2015_iterable_d_ts string
+	//go:embed libs/lib.es2015.promise.d.ts
+	libs_lib_es2015_promise_d_ts string
+	//go:embed libs/lib.es2015.proxy.d.ts
+	libs_lib_es2015_proxy_d_ts string
+	//go:embed libs/lib.es2015.reflect.d.ts
+	libs_lib_es2015_reflect_d_ts string
+	//go:embed libs/lib.es2015.symbol.d.ts
+	libs_lib_es2015_symbol_d_ts string
+	//go:embed libs/lib.es2015.symbol.wellknown.d.ts
+	libs_lib_es2015_symbol_wellknown_d_ts string
+	//go:embed libs/lib.es2016.array.include.d.ts
+	libs_lib_es2016_array_include_d_ts string
+	//go:embed libs/lib.es2016.d.ts
+	libs_lib_es2016_d_ts string
+	//go:embed libs/lib.es2016.full.d.ts
+	libs_lib_es2016_full_d_ts string
+	//go:embed libs/lib.es2016.intl.d.ts
+	libs_lib_es2016_intl_d_ts string
+	//go:embed libs/lib.es2017.d.ts
+	libs_lib_es2017_d_ts string
+	//go:embed libs/lib.es2017.date.d.ts
+	libs_lib_es2017_date_d_ts string
+	//go:embed libs/lib.es2017.full.d.ts
+	libs_lib_es2017_full_d_ts string
+	//go:embed libs/lib.es2017.intl.d.ts
+	libs_lib_es2017_intl_d_ts string
+	//go:embed libs/lib.es2017.object.d.ts
+	libs_lib_es2017_object_d_ts string
+	//go:embed libs/lib.es2017.sharedmemory.d.ts
+	libs_lib_es2017_sharedmemory_d_ts string
+	//go:embed libs/lib.es2017.string.d.ts
+	libs_lib_es2017_string_d_ts string
+	//go:embed libs/lib.es2017.typedarrays.d.ts
+	libs_lib_es2017_typedarrays_d_ts string
+	//go:embed libs/lib.es2018.asyncgenerator.d.ts
+	libs_lib_es2018_asyncgenerator_d_ts string
+	//go:embed libs/lib.es2018.asynciterable.d.ts
+	libs_lib_es2018_asynciterable_d_ts string
+	//go:embed libs/lib.es2018.d.ts
+	libs_lib_es2018_d_ts string
+	//go:embed libs/lib.es2018.full.d.ts
+	libs_lib_es2018_full_d_ts string
+	//go:embed libs/lib.es2018.intl.d.ts
+	libs_lib_es2018_intl_d_ts string
+	//go:embed libs/lib.es2018.promise.d.ts
+	libs_lib_es2018_promise_d_ts string
+	//go:embed libs/lib.es2018.regexp.d.ts
+	libs_lib_es2018_regexp_d_ts string
+	//go:embed libs/lib.es2019.array.d.ts
+	libs_lib_es2019_array_d_ts string
+	//go:embed libs/lib.es2019.d.ts
+	libs_lib_es2019_d_ts string
+	//go:embed libs/lib.es2019.full.d.ts
+	libs_lib_es2019_full_d_ts string
+	//go:embed libs/lib.es2019.intl.d.ts
+	libs_lib_es2019_intl_d_ts string
+	//go:embed libs/lib.es2019.object.d.ts
+	libs_lib_es2019_object_d_ts string
+	//go:embed libs/lib.es2019.string.d.ts
+	libs_lib_es2019_string_d_ts string
+	//go:embed libs/lib.es2019.symbol.d.ts
+	libs_lib_es2019_symbol_d_ts string
+	//go:embed libs/lib.es2020.bigint.d.ts
+	libs_lib_es2020_bigint_d_ts string
+	//go:embed libs/lib.es2020.d.ts
+	libs_lib_es2020_d_ts string
+	//go:embed libs/lib.es2020.date.d.ts
+	libs_lib_es2020_date_d_ts string
+	//go:embed libs/lib.es2020.full.d.ts
+	libs_lib_es2020_full_d_ts string
+	//go:embed libs/lib.es2020.intl.d.ts
+	libs_lib_es2020_intl_d_ts string
+	//go:embed libs/lib.es2020.number.d.ts
+	libs_lib_es2020_number_d_ts string
+	//go:embed libs/lib.es2020.promise.d.ts
+	libs_lib_es2020_promise_d_ts string
+	//go:embed libs/lib.es2020.sharedmemory.d.ts
+	libs_lib_es2020_sharedmemory_d_ts string
+	//go:embed libs/lib.es2020.string.d.ts
+	libs_lib_es2020_string_d_ts string
+	//go:embed libs/lib.es2020.symbol.wellknown.d.ts
+	libs_lib_es2020_symbol_wellknown_d_ts string
+	//go:embed libs/lib.es2021.d.ts
+	libs_lib_es2021_d_ts string
+	//go:embed libs/lib.es2021.full.d.ts
+	libs_lib_es2021_full_d_ts string
+	//go:embed libs/lib.es2021.intl.d.ts
+	libs_lib_es2021_intl_d_ts string
+	//go:embed libs/lib.es2021.promise.d.ts
+	libs_lib_es2021_promise_d_ts string
+	//go:embed libs/lib.es2021.string.d.ts
+	libs_lib_es2021_string_d_ts string
+	//go:embed libs/lib.es2021.weakref.d.ts
+	libs_lib_es2021_weakref_d_ts string
+	//go:embed libs/lib.es2022.array.d.ts
+	libs_lib_es2022_array_d_ts string
+	//go:embed libs/lib.es2022.d.ts
+	libs_lib_es2022_d_ts string
+	//go:embed libs/lib.es2022.error.d.ts
+	libs_lib_es2022_error_d_ts string
+	//go:embed libs/lib.es2022.full.d.ts
+	libs_lib_es2022_full_d_ts string
+	//go:embed libs/lib.es2022.intl.d.ts
+	libs_lib_es2022_intl_d_ts string
+	//go:embed libs/lib.es2022.object.d.ts
+	libs_lib_es2022_object_d_ts string
+	//go:embed libs/lib.es2022.regexp.d.ts
+	libs_lib_es2022_regexp_d_ts string
+	//go:embed libs/lib.es2022.sharedmemory.d.ts
+	libs_lib_es2022_sharedmemory_d_ts string
+	//go:embed libs/lib.es2022.string.d.ts
+	libs_lib_es2022_string_d_ts string
+	//go:embed libs/lib.es2023.array.d.ts
+	libs_lib_es2023_array_d_ts string
+	//go:embed libs/lib.es2023.collection.d.ts
+	libs_lib_es2023_collection_d_ts string
+	//go:embed libs/lib.es2023.d.ts
+	libs_lib_es2023_d_ts string
+	//go:embed libs/lib.es2023.full.d.ts
+	libs_lib_es2023_full_d_ts string
+	//go:embed libs/lib.es2023.intl.d.ts
+	libs_lib_es2023_intl_d_ts string
+	//go:embed libs/lib.es5.d.ts
+	libs_lib_es5_d_ts string
+	//go:embed libs/lib.es6.d.ts
+	libs_lib_es6_d_ts string
+	//go:embed libs/lib.esnext.array.d.ts
+	libs_lib_esnext_array_d_ts string
+	//go:embed libs/lib.esnext.collection.d.ts
+	libs_lib_esnext_collection_d_ts string
+	//go:embed libs/lib.esnext.d.ts
+	libs_lib_esnext_d_ts string
+	//go:embed libs/lib.esnext.decorators.d.ts
+	libs_lib_esnext_decorators_d_ts string
+	//go:embed libs/lib.esnext.disposable.d.ts
+	libs_lib_esnext_disposable_d_ts string
+	//go:embed libs/lib.esnext.full.d.ts
+	libs_lib_esnext_full_d_ts string
+	//go:embed libs/lib.esnext.intl.d.ts
+	libs_lib_esnext_intl_d_ts string
+	//go:embed libs/lib.esnext.iterator.d.ts
+	libs_lib_esnext_iterator_d_ts string
+	//go:embed libs/lib.esnext.object.d.ts
+	libs_lib_esnext_object_d_ts string
+	//go:embed libs/lib.esnext.promise.d.ts
+	libs_lib_esnext_promise_d_ts string
+	//go:embed libs/lib.esnext.regexp.d.ts
+	libs_lib_esnext_regexp_d_ts string
+	//go:embed libs/lib.esnext.string.d.ts
+	libs_lib_esnext_string_d_ts string
+	//go:embed libs/lib.scripthost.d.ts
+	libs_lib_scripthost_d_ts string
+	//go:embed libs/lib.webworker.asynciterable.d.ts
+	libs_lib_webworker_asynciterable_d_ts string
+	//go:embed libs/lib.webworker.d.ts
+	libs_lib_webworker_d_ts string
+	//go:embed libs/lib.webworker.importscripts.d.ts
+	libs_lib_webworker_importscripts_d_ts string
+	//go:embed libs/lib.webworker.iterable.d.ts
+	libs_lib_webworker_iterable_d_ts string
+)
+
+var embeddedContents = map[string]string{
+	"libs/lib.d.ts":                         libs_lib_d_ts,
+	"libs/lib.decorators.d.ts":              libs_lib_decorators_d_ts,
+	"libs/lib.decorators.legacy.d.ts":       libs_lib_decorators_legacy_d_ts,
+	"libs/lib.dom.asynciterable.d.ts":       libs_lib_dom_asynciterable_d_ts,
+	"libs/lib.dom.d.ts":                     libs_lib_dom_d_ts,
+	"libs/lib.dom.iterable.d.ts":            libs_lib_dom_iterable_d_ts,
+	"libs/lib.es2015.collection.d.ts":       libs_lib_es2015_collection_d_ts,
+	"libs/lib.es2015.core.d.ts":             libs_lib_es2015_core_d_ts,
+	"libs/lib.es2015.d.ts":                  libs_lib_es2015_d_ts,
+	"libs/lib.es2015.generator.d.ts":        libs_lib_es2015_generator_d_ts,
+	"libs/lib.es2015.iterable.d.ts":         libs_lib_es2015_iterable_d_ts,
+	"libs/lib.es2015.promise.d.ts":          libs_lib_es2015_promise_d_ts,
+	"libs/lib.es2015.proxy.d.ts":            libs_lib_es2015_proxy_d_ts,
+	"libs/lib.es2015.reflect.d.ts":          libs_lib_es2015_reflect_d_ts,
+	"libs/lib.es2015.symbol.d.ts":           libs_lib_es2015_symbol_d_ts,
+	"libs/lib.es2015.symbol.wellknown.d.ts": libs_lib_es2015_symbol_wellknown_d_ts,
+	"libs/lib.es2016.array.include.d.ts":    libs_lib_es2016_array_include_d_ts,
+	"libs/lib.es2016.d.ts":                  libs_lib_es2016_d_ts,
+	"libs/lib.es2016.full.d.ts":             libs_lib_es2016_full_d_ts,
+	"libs/lib.es2016.intl.d.ts":             libs_lib_es2016_intl_d_ts,
+	"libs/lib.es2017.d.ts":                  libs_lib_es2017_d_ts,
+	"libs/lib.es2017.date.d.ts":             libs_lib_es2017_date_d_ts,
+	"libs/lib.es2017.full.d.ts":             libs_lib_es2017_full_d_ts,
+	"libs/lib.es2017.intl.d.ts":             libs_lib_es2017_intl_d_ts,
+	"libs/lib.es2017.object.d.ts":           libs_lib_es2017_object_d_ts,
+	"libs/lib.es2017.sharedmemory.d.ts":     libs_lib_es2017_sharedmemory_d_ts,
+	"libs/lib.es2017.string.d.ts":           libs_lib_es2017_string_d_ts,
+	"libs/lib.es2017.typedarrays.d.ts":      libs_lib_es2017_typedarrays_d_ts,
+	"libs/lib.es2018.asyncgenerator.d.ts":   libs_lib_es2018_asyncgenerator_d_ts,
+	"libs/lib.es2018.asynciterable.d.ts":    libs_lib_es2018_asynciterable_d_ts,
+	"libs/lib.es2018.d.ts":                  libs_lib_es2018_d_ts,
+	"libs/lib.es2018.full.d.ts":             libs_lib_es2018_full_d_ts,
+	"libs/lib.es2018.intl.d.ts":             libs_lib_es2018_intl_d_ts,
+	"libs/lib.es2018.promise.d.ts":          libs_lib_es2018_promise_d_ts,
+	"libs/lib.es2018.regexp.d.ts":           libs_lib_es2018_regexp_d_ts,
+	"libs/lib.es2019.array.d.ts":            libs_lib_es2019_array_d_ts,
+	"libs/lib.es2019.d.ts":                  libs_lib_es2019_d_ts,
+	"libs/lib.es2019.full.d.ts":             libs_lib_es2019_full_d_ts,
+	"libs/lib.es2019.intl.d.ts":             libs_lib_es2019_intl_d_ts,
+	"libs/lib.es2019.object.d.ts":           libs_lib_es2019_object_d_ts,
+	"libs/lib.es2019.string.d.ts":           libs_lib_es2019_string_d_ts,
+	"libs/lib.es2019.symbol.d.ts":           libs_lib_es2019_symbol_d_ts,
+	"libs/lib.es2020.bigint.d.ts":           libs_lib_es2020_bigint_d_ts,
+	"libs/lib.es2020.d.ts":                  libs_lib_es2020_d_ts,
+	"libs/lib.es2020.date.d.ts":             libs_lib_es2020_date_d_ts,
+	"libs/lib.es2020.full.d.ts":             libs_lib_es2020_full_d_ts,
+	"libs/lib.es2020.intl.d.ts":             libs_lib_es2020_intl_d_ts,
+	"libs/lib.es2020.number.d.ts":           libs_lib_es2020_number_d_ts,
+	"libs/lib.es2020.promise.d.ts":          libs_lib_es2020_promise_d_ts,
+	"libs/lib.es2020.sharedmemory.d.ts":     libs_lib_es2020_sharedmemory_d_ts,
+	"libs/lib.es2020.string.d.ts":           libs_lib_es2020_string_d_ts,
+	"libs/lib.es2020.symbol.wellknown.d.ts": libs_lib_es2020_symbol_wellknown_d_ts,
+	"libs/lib.es2021.d.ts":                  libs_lib_es2021_d_ts,
+	"libs/lib.es2021.full.d.ts":             libs_lib_es2021_full_d_ts,
+	"libs/lib.es2021.intl.d.ts":             libs_lib_es2021_intl_d_ts,
+	"libs/lib.es2021.promise.d.ts":          libs_lib_es2021_promise_d_ts,
+	"libs/lib.es2021.string.d.ts":           libs_lib_es2021_string_d_ts,
+	"libs/lib.es2021.weakref.d.ts":          libs_lib_es2021_weakref_d_ts,
+	"libs/lib.es2022.array.d.ts":            libs_lib_es2022_array_d_ts,
+	"libs/lib.es2022.d.ts":                  libs_lib_es2022_d_ts,
+	"libs/lib.es2022.error.d.ts":            libs_lib_es2022_error_d_ts,
+	"libs/lib.es2022.full.d.ts":             libs_lib_es2022_full_d_ts,
+	"libs/lib.es2022.intl.d.ts":             libs_lib_es2022_intl_d_ts,
+	"libs/lib.es2022.object.d.ts":           libs_lib_es2022_object_d_ts,
+	"libs/lib.es2022.regexp.d.ts":           libs_lib_es2022_regexp_d_ts,
+	"libs/lib.es2022.sharedmemory.d.ts":     libs_lib_es2022_sharedmemory_d_ts,
+	"libs/lib.es2022.string.d.ts":           libs_lib_es2022_string_d_ts,
+	"libs/lib.es2023.array.d.ts":            libs_lib_es2023_array_d_ts,
+	"libs/lib.es2023.collection.d.ts":       libs_lib_es2023_collection_d_ts,
+	"libs/lib.es2023.d.ts":                  libs_lib_es2023_d_ts,
+	"libs/lib.es2023.full.d.ts":             libs_lib_es2023_full_d_ts,
+	"libs/lib.es2023.intl.d.ts":             libs_lib_es2023_intl_d_ts,
+	"libs/lib.es5.d.ts":                     libs_lib_es5_d_ts,
+	"libs/lib.es6.d.ts":                     libs_lib_es6_d_ts,
+	"libs/lib.esnext.array.d.ts":            libs_lib_esnext_array_d_ts,
+	"libs/lib.esnext.collection.d.ts":       libs_lib_esnext_collection_d_ts,
+	"libs/lib.esnext.d.ts":                  libs_lib_esnext_d_ts,
+	"libs/lib.esnext.decorators.d.ts":       libs_lib_esnext_decorators_d_ts,
+	"libs/lib.esnext.disposable.d.ts":       libs_lib_esnext_disposable_d_ts,
+	"libs/lib.esnext.full.d.ts":             libs_lib_esnext_full_d_ts,
+	"libs/lib.esnext.intl.d.ts":             libs_lib_esnext_intl_d_ts,
+	"libs/lib.esnext.iterator.d.ts":         libs_lib_esnext_iterator_d_ts,
+	"libs/lib.esnext.object.d.ts":           libs_lib_esnext_object_d_ts,
+	"libs/lib.esnext.promise.d.ts":          libs_lib_esnext_promise_d_ts,
+	"libs/lib.esnext.regexp.d.ts":           libs_lib_esnext_regexp_d_ts,
+	"libs/lib.esnext.string.d.ts":           libs_lib_esnext_string_d_ts,
+	"libs/lib.scripthost.d.ts":              libs_lib_scripthost_d_ts,
+	"libs/lib.webworker.asynciterable.d.ts": libs_lib_webworker_asynciterable_d_ts,
+	"libs/lib.webworker.d.ts":               libs_lib_webworker_d_ts,
+	"libs/lib.webworker.importscripts.d.ts": libs_lib_webworker_importscripts_d_ts,
+	"libs/lib.webworker.iterable.d.ts":      libs_lib_webworker_iterable_d_ts,
 }
 
-//go:embed libs/lib.d.ts
-var lib_d_ts string
-
-//go:embed libs/lib.decorators.d.ts
-var lib_decorators_d_ts string
-
-//go:embed libs/lib.decorators.legacy.d.ts
-var lib_decorators_legacy_d_ts string
-
-//go:embed libs/lib.dom.asynciterable.d.ts
-var lib_dom_asynciterable_d_ts string
-
-//go:embed libs/lib.dom.d.ts
-var lib_dom_d_ts string
-
-//go:embed libs/lib.dom.iterable.d.ts
-var lib_dom_iterable_d_ts string
-
-//go:embed libs/lib.es2015.collection.d.ts
-var lib_es2015_collection_d_ts string
-
-//go:embed libs/lib.es2015.core.d.ts
-var lib_es2015_core_d_ts string
-
-//go:embed libs/lib.es2015.d.ts
-var lib_es2015_d_ts string
-
-//go:embed libs/lib.es2015.generator.d.ts
-var lib_es2015_generator_d_ts string
-
-//go:embed libs/lib.es2015.iterable.d.ts
-var lib_es2015_iterable_d_ts string
-
-//go:embed libs/lib.es2015.promise.d.ts
-var lib_es2015_promise_d_ts string
-
-//go:embed libs/lib.es2015.proxy.d.ts
-var lib_es2015_proxy_d_ts string
-
-//go:embed libs/lib.es2015.reflect.d.ts
-var lib_es2015_reflect_d_ts string
-
-//go:embed libs/lib.es2015.symbol.d.ts
-var lib_es2015_symbol_d_ts string
-
-//go:embed libs/lib.es2015.symbol.wellknown.d.ts
-var lib_es2015_symbol_wellknown_d_ts string
-
-//go:embed libs/lib.es2016.array.include.d.ts
-var lib_es2016_array_include_d_ts string
-
-//go:embed libs/lib.es2016.d.ts
-var lib_es2016_d_ts string
-
-//go:embed libs/lib.es2016.full.d.ts
-var lib_es2016_full_d_ts string
-
-//go:embed libs/lib.es2016.intl.d.ts
-var lib_es2016_intl_d_ts string
-
-//go:embed libs/lib.es2017.d.ts
-var lib_es2017_d_ts string
-
-//go:embed libs/lib.es2017.date.d.ts
-var lib_es2017_date_d_ts string
-
-//go:embed libs/lib.es2017.full.d.ts
-var lib_es2017_full_d_ts string
-
-//go:embed libs/lib.es2017.intl.d.ts
-var lib_es2017_intl_d_ts string
-
-//go:embed libs/lib.es2017.object.d.ts
-var lib_es2017_object_d_ts string
-
-//go:embed libs/lib.es2017.sharedmemory.d.ts
-var lib_es2017_sharedmemory_d_ts string
-
-//go:embed libs/lib.es2017.string.d.ts
-var lib_es2017_string_d_ts string
-
-//go:embed libs/lib.es2017.typedarrays.d.ts
-var lib_es2017_typedarrays_d_ts string
-
-//go:embed libs/lib.es2018.asyncgenerator.d.ts
-var lib_es2018_asyncgenerator_d_ts string
-
-//go:embed libs/lib.es2018.asynciterable.d.ts
-var lib_es2018_asynciterable_d_ts string
-
-//go:embed libs/lib.es2018.d.ts
-var lib_es2018_d_ts string
-
-//go:embed libs/lib.es2018.full.d.ts
-var lib_es2018_full_d_ts string
-
-//go:embed libs/lib.es2018.intl.d.ts
-var lib_es2018_intl_d_ts string
-
-//go:embed libs/lib.es2018.promise.d.ts
-var lib_es2018_promise_d_ts string
-
-//go:embed libs/lib.es2018.regexp.d.ts
-var lib_es2018_regexp_d_ts string
-
-//go:embed libs/lib.es2019.array.d.ts
-var lib_es2019_array_d_ts string
-
-//go:embed libs/lib.es2019.d.ts
-var lib_es2019_d_ts string
-
-//go:embed libs/lib.es2019.full.d.ts
-var lib_es2019_full_d_ts string
-
-//go:embed libs/lib.es2019.intl.d.ts
-var lib_es2019_intl_d_ts string
-
-//go:embed libs/lib.es2019.object.d.ts
-var lib_es2019_object_d_ts string
-
-//go:embed libs/lib.es2019.string.d.ts
-var lib_es2019_string_d_ts string
-
-//go:embed libs/lib.es2019.symbol.d.ts
-var lib_es2019_symbol_d_ts string
-
-//go:embed libs/lib.es2020.bigint.d.ts
-var lib_es2020_bigint_d_ts string
-
-//go:embed libs/lib.es2020.d.ts
-var lib_es2020_d_ts string
-
-//go:embed libs/lib.es2020.date.d.ts
-var lib_es2020_date_d_ts string
-
-//go:embed libs/lib.es2020.full.d.ts
-var lib_es2020_full_d_ts string
-
-//go:embed libs/lib.es2020.intl.d.ts
-var lib_es2020_intl_d_ts string
-
-//go:embed libs/lib.es2020.number.d.ts
-var lib_es2020_number_d_ts string
-
-//go:embed libs/lib.es2020.promise.d.ts
-var lib_es2020_promise_d_ts string
-
-//go:embed libs/lib.es2020.sharedmemory.d.ts
-var lib_es2020_sharedmemory_d_ts string
-
-//go:embed libs/lib.es2020.string.d.ts
-var lib_es2020_string_d_ts string
-
-//go:embed libs/lib.es2020.symbol.wellknown.d.ts
-var lib_es2020_symbol_wellknown_d_ts string
-
-//go:embed libs/lib.es2021.d.ts
-var lib_es2021_d_ts string
-
-//go:embed libs/lib.es2021.full.d.ts
-var lib_es2021_full_d_ts string
-
-//go:embed libs/lib.es2021.intl.d.ts
-var lib_es2021_intl_d_ts string
-
-//go:embed libs/lib.es2021.promise.d.ts
-var lib_es2021_promise_d_ts string
-
-//go:embed libs/lib.es2021.string.d.ts
-var lib_es2021_string_d_ts string
-
-//go:embed libs/lib.es2021.weakref.d.ts
-var lib_es2021_weakref_d_ts string
-
-//go:embed libs/lib.es2022.array.d.ts
-var lib_es2022_array_d_ts string
-
-//go:embed libs/lib.es2022.d.ts
-var lib_es2022_d_ts string
-
-//go:embed libs/lib.es2022.error.d.ts
-var lib_es2022_error_d_ts string
-
-//go:embed libs/lib.es2022.full.d.ts
-var lib_es2022_full_d_ts string
-
-//go:embed libs/lib.es2022.intl.d.ts
-var lib_es2022_intl_d_ts string
-
-//go:embed libs/lib.es2022.object.d.ts
-var lib_es2022_object_d_ts string
-
-//go:embed libs/lib.es2022.regexp.d.ts
-var lib_es2022_regexp_d_ts string
-
-//go:embed libs/lib.es2022.sharedmemory.d.ts
-var lib_es2022_sharedmemory_d_ts string
-
-//go:embed libs/lib.es2022.string.d.ts
-var lib_es2022_string_d_ts string
-
-//go:embed libs/lib.es2023.array.d.ts
-var lib_es2023_array_d_ts string
-
-//go:embed libs/lib.es2023.collection.d.ts
-var lib_es2023_collection_d_ts string
-
-//go:embed libs/lib.es2023.d.ts
-var lib_es2023_d_ts string
-
-//go:embed libs/lib.es2023.full.d.ts
-var lib_es2023_full_d_ts string
-
-//go:embed libs/lib.es2023.intl.d.ts
-var lib_es2023_intl_d_ts string
-
-//go:embed libs/lib.es5.d.ts
-var lib_es5_d_ts string
-
-//go:embed libs/lib.es6.d.ts
-var lib_es6_d_ts string
-
-//go:embed libs/lib.esnext.array.d.ts
-var lib_esnext_array_d_ts string
-
-//go:embed libs/lib.esnext.collection.d.ts
-var lib_esnext_collection_d_ts string
-
-//go:embed libs/lib.esnext.d.ts
-var lib_esnext_d_ts string
-
-//go:embed libs/lib.esnext.decorators.d.ts
-var lib_esnext_decorators_d_ts string
-
-//go:embed libs/lib.esnext.disposable.d.ts
-var lib_esnext_disposable_d_ts string
-
-//go:embed libs/lib.esnext.full.d.ts
-var lib_esnext_full_d_ts string
-
-//go:embed libs/lib.esnext.intl.d.ts
-var lib_esnext_intl_d_ts string
-
-//go:embed libs/lib.esnext.iterator.d.ts
-var lib_esnext_iterator_d_ts string
-
-//go:embed libs/lib.esnext.object.d.ts
-var lib_esnext_object_d_ts string
-
-//go:embed libs/lib.esnext.promise.d.ts
-var lib_esnext_promise_d_ts string
-
-//go:embed libs/lib.esnext.regexp.d.ts
-var lib_esnext_regexp_d_ts string
-
-//go:embed libs/lib.esnext.string.d.ts
-var lib_esnext_string_d_ts string
-
-//go:embed libs/lib.scripthost.d.ts
-var lib_scripthost_d_ts string
-
-//go:embed libs/lib.webworker.asynciterable.d.ts
-var lib_webworker_asynciterable_d_ts string
-
-//go:embed libs/lib.webworker.d.ts
-var lib_webworker_d_ts string
-
-//go:embed libs/lib.webworker.importscripts.d.ts
-var lib_webworker_importscripts_d_ts string
-
-//go:embed libs/lib.webworker.iterable.d.ts
-var lib_webworker_iterable_d_ts string
-
 var libsEntries = []fs.DirEntry{
-	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.d.ts", size: int64(len(lib_d_ts))}),
-	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.decorators.d.ts", size: int64(len(lib_decorators_d_ts))}),
-	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.decorators.legacy.d.ts", size: int64(len(lib_decorators_legacy_d_ts))}),
-	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.dom.asynciterable.d.ts", size: int64(len(lib_dom_asynciterable_d_ts))}),
-	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.dom.d.ts", size: int64(len(lib_dom_d_ts))}),
-	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.dom.iterable.d.ts", size: int64(len(lib_dom_iterable_d_ts))}),
-	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2015.collection.d.ts", size: int64(len(lib_es2015_collection_d_ts))}),
-	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2015.core.d.ts", size: int64(len(lib_es2015_core_d_ts))}),
-	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2015.d.ts", size: int64(len(lib_es2015_d_ts))}),
-	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2015.generator.d.ts", size: int64(len(lib_es2015_generator_d_ts))}),
-	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2015.iterable.d.ts", size: int64(len(lib_es2015_iterable_d_ts))}),
-	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2015.promise.d.ts", size: int64(len(lib_es2015_promise_d_ts))}),
-	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2015.proxy.d.ts", size: int64(len(lib_es2015_proxy_d_ts))}),
-	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2015.reflect.d.ts", size: int64(len(lib_es2015_reflect_d_ts))}),
-	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2015.symbol.d.ts", size: int64(len(lib_es2015_symbol_d_ts))}),
-	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2015.symbol.wellknown.d.ts", size: int64(len(lib_es2015_symbol_wellknown_d_ts))}),
-	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2016.array.include.d.ts", size: int64(len(lib_es2016_array_include_d_ts))}),
-	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2016.d.ts", size: int64(len(lib_es2016_d_ts))}),
-	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2016.full.d.ts", size: int64(len(lib_es2016_full_d_ts))}),
-	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2016.intl.d.ts", size: int64(len(lib_es2016_intl_d_ts))}),
-	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2017.d.ts", size: int64(len(lib_es2017_d_ts))}),
-	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2017.date.d.ts", size: int64(len(lib_es2017_date_d_ts))}),
-	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2017.full.d.ts", size: int64(len(lib_es2017_full_d_ts))}),
-	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2017.intl.d.ts", size: int64(len(lib_es2017_intl_d_ts))}),
-	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2017.object.d.ts", size: int64(len(lib_es2017_object_d_ts))}),
-	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2017.sharedmemory.d.ts", size: int64(len(lib_es2017_sharedmemory_d_ts))}),
-	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2017.string.d.ts", size: int64(len(lib_es2017_string_d_ts))}),
-	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2017.typedarrays.d.ts", size: int64(len(lib_es2017_typedarrays_d_ts))}),
-	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2018.asyncgenerator.d.ts", size: int64(len(lib_es2018_asyncgenerator_d_ts))}),
-	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2018.asynciterable.d.ts", size: int64(len(lib_es2018_asynciterable_d_ts))}),
-	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2018.d.ts", size: int64(len(lib_es2018_d_ts))}),
-	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2018.full.d.ts", size: int64(len(lib_es2018_full_d_ts))}),
-	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2018.intl.d.ts", size: int64(len(lib_es2018_intl_d_ts))}),
-	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2018.promise.d.ts", size: int64(len(lib_es2018_promise_d_ts))}),
-	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2018.regexp.d.ts", size: int64(len(lib_es2018_regexp_d_ts))}),
-	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2019.array.d.ts", size: int64(len(lib_es2019_array_d_ts))}),
-	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2019.d.ts", size: int64(len(lib_es2019_d_ts))}),
-	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2019.full.d.ts", size: int64(len(lib_es2019_full_d_ts))}),
-	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2019.intl.d.ts", size: int64(len(lib_es2019_intl_d_ts))}),
-	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2019.object.d.ts", size: int64(len(lib_es2019_object_d_ts))}),
-	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2019.string.d.ts", size: int64(len(lib_es2019_string_d_ts))}),
-	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2019.symbol.d.ts", size: int64(len(lib_es2019_symbol_d_ts))}),
-	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2020.bigint.d.ts", size: int64(len(lib_es2020_bigint_d_ts))}),
-	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2020.d.ts", size: int64(len(lib_es2020_d_ts))}),
-	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2020.date.d.ts", size: int64(len(lib_es2020_date_d_ts))}),
-	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2020.full.d.ts", size: int64(len(lib_es2020_full_d_ts))}),
-	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2020.intl.d.ts", size: int64(len(lib_es2020_intl_d_ts))}),
-	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2020.number.d.ts", size: int64(len(lib_es2020_number_d_ts))}),
-	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2020.promise.d.ts", size: int64(len(lib_es2020_promise_d_ts))}),
-	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2020.sharedmemory.d.ts", size: int64(len(lib_es2020_sharedmemory_d_ts))}),
-	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2020.string.d.ts", size: int64(len(lib_es2020_string_d_ts))}),
-	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2020.symbol.wellknown.d.ts", size: int64(len(lib_es2020_symbol_wellknown_d_ts))}),
-	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2021.d.ts", size: int64(len(lib_es2021_d_ts))}),
-	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2021.full.d.ts", size: int64(len(lib_es2021_full_d_ts))}),
-	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2021.intl.d.ts", size: int64(len(lib_es2021_intl_d_ts))}),
-	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2021.promise.d.ts", size: int64(len(lib_es2021_promise_d_ts))}),
-	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2021.string.d.ts", size: int64(len(lib_es2021_string_d_ts))}),
-	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2021.weakref.d.ts", size: int64(len(lib_es2021_weakref_d_ts))}),
-	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2022.array.d.ts", size: int64(len(lib_es2022_array_d_ts))}),
-	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2022.d.ts", size: int64(len(lib_es2022_d_ts))}),
-	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2022.error.d.ts", size: int64(len(lib_es2022_error_d_ts))}),
-	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2022.full.d.ts", size: int64(len(lib_es2022_full_d_ts))}),
-	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2022.intl.d.ts", size: int64(len(lib_es2022_intl_d_ts))}),
-	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2022.object.d.ts", size: int64(len(lib_es2022_object_d_ts))}),
-	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2022.regexp.d.ts", size: int64(len(lib_es2022_regexp_d_ts))}),
-	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2022.sharedmemory.d.ts", size: int64(len(lib_es2022_sharedmemory_d_ts))}),
-	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2022.string.d.ts", size: int64(len(lib_es2022_string_d_ts))}),
-	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2023.array.d.ts", size: int64(len(lib_es2023_array_d_ts))}),
-	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2023.collection.d.ts", size: int64(len(lib_es2023_collection_d_ts))}),
-	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2023.d.ts", size: int64(len(lib_es2023_d_ts))}),
-	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2023.full.d.ts", size: int64(len(lib_es2023_full_d_ts))}),
-	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2023.intl.d.ts", size: int64(len(lib_es2023_intl_d_ts))}),
-	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es5.d.ts", size: int64(len(lib_es5_d_ts))}),
-	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es6.d.ts", size: int64(len(lib_es6_d_ts))}),
-	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.esnext.array.d.ts", size: int64(len(lib_esnext_array_d_ts))}),
-	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.esnext.collection.d.ts", size: int64(len(lib_esnext_collection_d_ts))}),
-	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.esnext.d.ts", size: int64(len(lib_esnext_d_ts))}),
-	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.esnext.decorators.d.ts", size: int64(len(lib_esnext_decorators_d_ts))}),
-	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.esnext.disposable.d.ts", size: int64(len(lib_esnext_disposable_d_ts))}),
-	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.esnext.full.d.ts", size: int64(len(lib_esnext_full_d_ts))}),
-	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.esnext.intl.d.ts", size: int64(len(lib_esnext_intl_d_ts))}),
-	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.esnext.iterator.d.ts", size: int64(len(lib_esnext_iterator_d_ts))}),
-	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.esnext.object.d.ts", size: int64(len(lib_esnext_object_d_ts))}),
-	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.esnext.promise.d.ts", size: int64(len(lib_esnext_promise_d_ts))}),
-	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.esnext.regexp.d.ts", size: int64(len(lib_esnext_regexp_d_ts))}),
-	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.esnext.string.d.ts", size: int64(len(lib_esnext_string_d_ts))}),
-	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.scripthost.d.ts", size: int64(len(lib_scripthost_d_ts))}),
-	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.webworker.asynciterable.d.ts", size: int64(len(lib_webworker_asynciterable_d_ts))}),
-	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.webworker.d.ts", size: int64(len(lib_webworker_d_ts))}),
-	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.webworker.importscripts.d.ts", size: int64(len(lib_webworker_importscripts_d_ts))}),
-	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.webworker.iterable.d.ts", size: int64(len(lib_webworker_iterable_d_ts))}),
+	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.d.ts", size: int64(len(libs_lib_d_ts))}),
+	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.decorators.d.ts", size: int64(len(libs_lib_decorators_d_ts))}),
+	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.decorators.legacy.d.ts", size: int64(len(libs_lib_decorators_legacy_d_ts))}),
+	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.dom.asynciterable.d.ts", size: int64(len(libs_lib_dom_asynciterable_d_ts))}),
+	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.dom.d.ts", size: int64(len(libs_lib_dom_d_ts))}),
+	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.dom.iterable.d.ts", size: int64(len(libs_lib_dom_iterable_d_ts))}),
+	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2015.collection.d.ts", size: int64(len(libs_lib_es2015_collection_d_ts))}),
+	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2015.core.d.ts", size: int64(len(libs_lib_es2015_core_d_ts))}),
+	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2015.d.ts", size: int64(len(libs_lib_es2015_d_ts))}),
+	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2015.generator.d.ts", size: int64(len(libs_lib_es2015_generator_d_ts))}),
+	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2015.iterable.d.ts", size: int64(len(libs_lib_es2015_iterable_d_ts))}),
+	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2015.promise.d.ts", size: int64(len(libs_lib_es2015_promise_d_ts))}),
+	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2015.proxy.d.ts", size: int64(len(libs_lib_es2015_proxy_d_ts))}),
+	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2015.reflect.d.ts", size: int64(len(libs_lib_es2015_reflect_d_ts))}),
+	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2015.symbol.d.ts", size: int64(len(libs_lib_es2015_symbol_d_ts))}),
+	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2015.symbol.wellknown.d.ts", size: int64(len(libs_lib_es2015_symbol_wellknown_d_ts))}),
+	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2016.array.include.d.ts", size: int64(len(libs_lib_es2016_array_include_d_ts))}),
+	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2016.d.ts", size: int64(len(libs_lib_es2016_d_ts))}),
+	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2016.full.d.ts", size: int64(len(libs_lib_es2016_full_d_ts))}),
+	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2016.intl.d.ts", size: int64(len(libs_lib_es2016_intl_d_ts))}),
+	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2017.d.ts", size: int64(len(libs_lib_es2017_d_ts))}),
+	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2017.date.d.ts", size: int64(len(libs_lib_es2017_date_d_ts))}),
+	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2017.full.d.ts", size: int64(len(libs_lib_es2017_full_d_ts))}),
+	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2017.intl.d.ts", size: int64(len(libs_lib_es2017_intl_d_ts))}),
+	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2017.object.d.ts", size: int64(len(libs_lib_es2017_object_d_ts))}),
+	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2017.sharedmemory.d.ts", size: int64(len(libs_lib_es2017_sharedmemory_d_ts))}),
+	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2017.string.d.ts", size: int64(len(libs_lib_es2017_string_d_ts))}),
+	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2017.typedarrays.d.ts", size: int64(len(libs_lib_es2017_typedarrays_d_ts))}),
+	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2018.asyncgenerator.d.ts", size: int64(len(libs_lib_es2018_asyncgenerator_d_ts))}),
+	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2018.asynciterable.d.ts", size: int64(len(libs_lib_es2018_asynciterable_d_ts))}),
+	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2018.d.ts", size: int64(len(libs_lib_es2018_d_ts))}),
+	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2018.full.d.ts", size: int64(len(libs_lib_es2018_full_d_ts))}),
+	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2018.intl.d.ts", size: int64(len(libs_lib_es2018_intl_d_ts))}),
+	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2018.promise.d.ts", size: int64(len(libs_lib_es2018_promise_d_ts))}),
+	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2018.regexp.d.ts", size: int64(len(libs_lib_es2018_regexp_d_ts))}),
+	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2019.array.d.ts", size: int64(len(libs_lib_es2019_array_d_ts))}),
+	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2019.d.ts", size: int64(len(libs_lib_es2019_d_ts))}),
+	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2019.full.d.ts", size: int64(len(libs_lib_es2019_full_d_ts))}),
+	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2019.intl.d.ts", size: int64(len(libs_lib_es2019_intl_d_ts))}),
+	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2019.object.d.ts", size: int64(len(libs_lib_es2019_object_d_ts))}),
+	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2019.string.d.ts", size: int64(len(libs_lib_es2019_string_d_ts))}),
+	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2019.symbol.d.ts", size: int64(len(libs_lib_es2019_symbol_d_ts))}),
+	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2020.bigint.d.ts", size: int64(len(libs_lib_es2020_bigint_d_ts))}),
+	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2020.d.ts", size: int64(len(libs_lib_es2020_d_ts))}),
+	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2020.date.d.ts", size: int64(len(libs_lib_es2020_date_d_ts))}),
+	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2020.full.d.ts", size: int64(len(libs_lib_es2020_full_d_ts))}),
+	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2020.intl.d.ts", size: int64(len(libs_lib_es2020_intl_d_ts))}),
+	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2020.number.d.ts", size: int64(len(libs_lib_es2020_number_d_ts))}),
+	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2020.promise.d.ts", size: int64(len(libs_lib_es2020_promise_d_ts))}),
+	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2020.sharedmemory.d.ts", size: int64(len(libs_lib_es2020_sharedmemory_d_ts))}),
+	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2020.string.d.ts", size: int64(len(libs_lib_es2020_string_d_ts))}),
+	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2020.symbol.wellknown.d.ts", size: int64(len(libs_lib_es2020_symbol_wellknown_d_ts))}),
+	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2021.d.ts", size: int64(len(libs_lib_es2021_d_ts))}),
+	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2021.full.d.ts", size: int64(len(libs_lib_es2021_full_d_ts))}),
+	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2021.intl.d.ts", size: int64(len(libs_lib_es2021_intl_d_ts))}),
+	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2021.promise.d.ts", size: int64(len(libs_lib_es2021_promise_d_ts))}),
+	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2021.string.d.ts", size: int64(len(libs_lib_es2021_string_d_ts))}),
+	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2021.weakref.d.ts", size: int64(len(libs_lib_es2021_weakref_d_ts))}),
+	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2022.array.d.ts", size: int64(len(libs_lib_es2022_array_d_ts))}),
+	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2022.d.ts", size: int64(len(libs_lib_es2022_d_ts))}),
+	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2022.error.d.ts", size: int64(len(libs_lib_es2022_error_d_ts))}),
+	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2022.full.d.ts", size: int64(len(libs_lib_es2022_full_d_ts))}),
+	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2022.intl.d.ts", size: int64(len(libs_lib_es2022_intl_d_ts))}),
+	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2022.object.d.ts", size: int64(len(libs_lib_es2022_object_d_ts))}),
+	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2022.regexp.d.ts", size: int64(len(libs_lib_es2022_regexp_d_ts))}),
+	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2022.sharedmemory.d.ts", size: int64(len(libs_lib_es2022_sharedmemory_d_ts))}),
+	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2022.string.d.ts", size: int64(len(libs_lib_es2022_string_d_ts))}),
+	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2023.array.d.ts", size: int64(len(libs_lib_es2023_array_d_ts))}),
+	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2023.collection.d.ts", size: int64(len(libs_lib_es2023_collection_d_ts))}),
+	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2023.d.ts", size: int64(len(libs_lib_es2023_d_ts))}),
+	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2023.full.d.ts", size: int64(len(libs_lib_es2023_full_d_ts))}),
+	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es2023.intl.d.ts", size: int64(len(libs_lib_es2023_intl_d_ts))}),
+	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es5.d.ts", size: int64(len(libs_lib_es5_d_ts))}),
+	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.es6.d.ts", size: int64(len(libs_lib_es6_d_ts))}),
+	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.esnext.array.d.ts", size: int64(len(libs_lib_esnext_array_d_ts))}),
+	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.esnext.collection.d.ts", size: int64(len(libs_lib_esnext_collection_d_ts))}),
+	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.esnext.d.ts", size: int64(len(libs_lib_esnext_d_ts))}),
+	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.esnext.decorators.d.ts", size: int64(len(libs_lib_esnext_decorators_d_ts))}),
+	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.esnext.disposable.d.ts", size: int64(len(libs_lib_esnext_disposable_d_ts))}),
+	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.esnext.full.d.ts", size: int64(len(libs_lib_esnext_full_d_ts))}),
+	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.esnext.intl.d.ts", size: int64(len(libs_lib_esnext_intl_d_ts))}),
+	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.esnext.iterator.d.ts", size: int64(len(libs_lib_esnext_iterator_d_ts))}),
+	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.esnext.object.d.ts", size: int64(len(libs_lib_esnext_object_d_ts))}),
+	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.esnext.promise.d.ts", size: int64(len(libs_lib_esnext_promise_d_ts))}),
+	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.esnext.regexp.d.ts", size: int64(len(libs_lib_esnext_regexp_d_ts))}),
+	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.esnext.string.d.ts", size: int64(len(libs_lib_esnext_string_d_ts))}),
+	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.scripthost.d.ts", size: int64(len(libs_lib_scripthost_d_ts))}),
+	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.webworker.asynciterable.d.ts", size: int64(len(libs_lib_webworker_asynciterable_d_ts))}),
+	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.webworker.d.ts", size: int64(len(libs_lib_webworker_d_ts))}),
+	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.webworker.importscripts.d.ts", size: int64(len(libs_lib_webworker_importscripts_d_ts))}),
+	fs.FileInfoToDirEntry(&embeddedFileInfo{name: "lib.webworker.iterable.d.ts", size: int64(len(libs_lib_webworker_iterable_d_ts))}),
 }
