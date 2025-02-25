@@ -412,15 +412,15 @@ func getExtendsConfigPathOrArray(
 	if configFileName != "" {
 		newBase = directoryOfCombinedPath(configFileName, basePath)
 	}
-
-	var errors []*ast.Diagnostic
 	if reflect.TypeOf(value).Kind() == reflect.String {
 		val, err := getExtendsConfigPath(value.(string), host, newBase, valueExpression, sourceFile)
 		if val != "" {
 			extendedConfigPathArray = append(extendedConfigPathArray, val)
 		}
-		errors = append(errors, err...)
-	} else if reflect.TypeOf(value).Kind() == reflect.Slice {
+		return extendedConfigPathArray, err
+	}
+	var errors []*ast.Diagnostic
+	if reflect.TypeOf(value).Kind() == reflect.Slice {
 		for index, fileName := range value.([]any) {
 			var expression *ast.Expression = nil
 			if valueExpression != nil {
@@ -433,8 +433,7 @@ func getExtendsConfigPathOrArray(
 				}
 				errors = append(errors, err...)
 			} else {
-				var err []*ast.Diagnostic
-				_, err = convertJsonOption(extendsOptionDeclaration.Elements(), value, basePath, propertyAssignment, expression, sourceFile)
+				_, err := convertJsonOption(extendsOptionDeclaration.Elements(), value, basePath, propertyAssignment, expression, sourceFile)
 				errors = append(errors, err...)
 			}
 		}
