@@ -86,9 +86,8 @@ func (vfs *Common) GetAccessibleEntries(path string) (result vfs.Entries) {
 
 		if entryType&fs.ModeSymlink != 0 {
 			// Easy case; UNIX-like system will clearly mark symlinks.
-			info := vfs.stat(path + "/" + entry.Name())
-			if info != nil {
-				addToResult(entry.Name(), info.Mode())
+			if stat := vfs.stat(path + "/" + entry.Name()); stat != nil {
+				addToResult(entry.Name(), stat.Mode())
 			}
 			continue
 		}
@@ -96,8 +95,7 @@ func (vfs *Common) GetAccessibleEntries(path string) (result vfs.Entries) {
 		if entryType&fs.ModeIrregular != 0 && vfs.Realpath != nil {
 			// Could be a Windows junction. Try Realpath.
 			fullPath := path + "/" + entry.Name()
-			realpath := vfs.Realpath(fullPath)
-			if fullPath != realpath {
+			if realpath := vfs.Realpath(fullPath); fullPath != realpath {
 				if stat := vfs.stat(realpath); stat != nil {
 					addToResult(entry.Name(), stat.Mode())
 				}
