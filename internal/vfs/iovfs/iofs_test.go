@@ -1,4 +1,4 @@
-package vfs_test
+package iovfs_test
 
 import (
 	"slices"
@@ -7,6 +7,7 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/testutil"
 	"github.com/microsoft/typescript-go/internal/vfs"
+	"github.com/microsoft/typescript-go/internal/vfs/iovfs"
 	"gotest.tools/v3/assert"
 )
 
@@ -28,7 +29,7 @@ func TestIOFS(t *testing.T) {
 		},
 	}
 
-	fs := vfs.FromIOFS(testfs, true)
+	fs := iovfs.From(testfs, true)
 
 	t.Run("ReadFile", func(t *testing.T) {
 		t.Parallel()
@@ -65,13 +66,12 @@ func TestIOFS(t *testing.T) {
 		assert.Assert(t, !fs.DirectoryExists("/bar"))
 	})
 
-	t.Run("GetDirectories", func(t *testing.T) {
+	t.Run("GetAccessibleEntries", func(t *testing.T) {
 		t.Parallel()
 
-		dirs := fs.GetDirectories("/")
-		slices.Sort(dirs)
-
-		assert.DeepEqual(t, dirs, []string{"dir1", "dir2"})
+		entries := fs.GetAccessibleEntries("/")
+		assert.DeepEqual(t, entries.Directories, []string{"dir1", "dir2"})
+		assert.DeepEqual(t, entries.Files, []string{"foo.ts"})
 	})
 
 	t.Run("WalkDir", func(t *testing.T) {

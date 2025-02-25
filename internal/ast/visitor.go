@@ -7,8 +7,8 @@ import (
 // NodeVisitor
 
 type NodeVisitor struct {
-	Visit   func(node *Node) *Node // The callback used to visit a node
-	Factory NodeFactory            // A NodeFactory used to produce new nodes when passed to VisitEachChild
+	Visit   func(node *Node) *Node // Required. The callback used to visit a node
+	Factory *NodeFactory           // Required. The NodeFactory used to produce new nodes when passed to VisitEachChild
 	Hooks   NodeVisitorHooks       // Hooks to be invoked when visiting a node
 }
 
@@ -68,7 +68,7 @@ func (v *NodeVisitor) VisitNodes(nodes *NodeList) *NodeList {
 		return nodes
 	}
 
-	if result, changed := v.visitSlice(nodes.Nodes); changed {
+	if result, changed := v.VisitSlice(nodes.Nodes); changed {
 		list := v.Factory.NewNodeList(result)
 		list.Loc = nodes.Loc
 		return list
@@ -90,7 +90,7 @@ func (v *NodeVisitor) VisitModifiers(nodes *ModifierList) *ModifierList {
 		return nodes
 	}
 
-	if result, changed := v.visitSlice(nodes.Nodes); changed {
+	if result, changed := v.VisitSlice(nodes.Nodes); changed {
 		list := v.Factory.NewModifierList(result)
 		list.Loc = nodes.Loc
 		return list
@@ -99,7 +99,14 @@ func (v *NodeVisitor) VisitModifiers(nodes *ModifierList) *ModifierList {
 	return nodes
 }
 
-func (v *NodeVisitor) visitSlice(nodes []*Node) (result []*Node, changed bool) {
+// Visits a slice of Nodes, returning the resulting slice and a value indicating whether the slice was changed.
+//
+//   - If the input slice is nil, the output is nil.
+//   - If v.Visit is nil, then the output is the input.
+//   - If v.Visit returns nil, the visited Node will be absent in the output.
+//   - If v.Visit returns a different Node than the input, a new slice will be generated and returned.
+//   - If v.Visit returns a SyntaxList Node, then the children of that node will be merged into the output and a new slice will be returned.
+func (v *NodeVisitor) VisitSlice(nodes []*Node) (result []*Node, changed bool) {
 	if nodes == nil || v.Visit == nil {
 		return nodes, false
 	}
@@ -155,7 +162,7 @@ func (v *NodeVisitor) VisitEachChild(node *Node) *Node {
 
 	updated := node.VisitEachChild(v)
 	if updated != node && v.Hooks.SetOriginal != nil {
-		v.Hooks.SetOriginal(node, updated)
+		v.Hooks.SetOriginal(updated, node)
 	}
 	return updated
 }
