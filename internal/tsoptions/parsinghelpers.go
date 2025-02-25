@@ -13,6 +13,9 @@ func parseTristate(value any) core.Tristate {
 	if value == nil {
 		return core.TSUnknown
 	}
+	if v, ok := value.(core.Tristate); ok {
+		return v
+	}
 	if value == true {
 		return core.TSTrue
 	} else {
@@ -128,32 +131,28 @@ func parseJsonToStringKey(json any) *collections.OrderedMap[string, any] {
 
 type optionParser interface {
 	ParseOption(key string, value any) []*ast.Diagnostic
-	CommandLine() bool
 }
 
 type compilerOptionsParser struct {
 	*core.CompilerOptions
-	commandLine bool
 }
 
 func (o *compilerOptionsParser) ParseOption(key string, value any) []*ast.Diagnostic {
 	return ParseCompilerOptions(key, value, o.CompilerOptions)
 }
 
-func (o *compilerOptionsParser) CommandLine() bool { return o.commandLine }
-
 type watchOptionsParser struct {
 	*core.WatchOptions
-	commandLine bool
 }
 
 func (o *watchOptionsParser) ParseOption(key string, value any) []*ast.Diagnostic {
 	return ParseWatchOptions(key, value, o.WatchOptions)
 }
 
-func (o *watchOptionsParser) CommandLine() bool { return o.commandLine }
-
 func ParseCompilerOptions(key string, value any, allOptions *core.CompilerOptions) []*ast.Diagnostic {
+	if value == nil {
+		return nil
+	}
 	if allOptions == nil {
 		return nil
 	}
@@ -394,9 +393,278 @@ func ParseCompilerOptions(key string, value any, allOptions *core.CompilerOption
 	return nil
 }
 
+func ParseMapEntryToCompilerOptions(key string, value any, allOptions *core.CompilerOptions) []*ast.Diagnostic {
+	// this assumes any `key`, `value` pair will have `value` already be the correct type. this function should no error handling
+	if value == nil {
+		return nil
+	}
+	if allOptions == nil {
+		allOptions = &core.CompilerOptions{}
+	}
+	switch key {
+	case "allowJs":
+		allOptions.AllowJs = parseTristate(value)
+	case "allowSyntheticDefaultImports":
+		allOptions.AllowSyntheticDefaultImports = parseTristate(value)
+	case "allowNonTsExtensions":
+		allOptions.AllowNonTsExtensions = parseTristate(value)
+	case "allowUmdGlobalAccess":
+		allOptions.AllowUmdGlobalAccess = parseTristate(value)
+	case "allowUnreachableCode":
+		allOptions.AllowUnreachableCode = parseTristate(value)
+	case "allowUnusedLabels":
+		allOptions.AllowUnusedLabels = parseTristate(value)
+	case "allowArbitraryExtensions":
+		allOptions.AllowArbitraryExtensions = parseTristate(value)
+	case "alwaysStrict":
+		allOptions.AlwaysStrict = parseTristate(value)
+	case "assumeChangesOnlyAffectDirectDependencies":
+		allOptions.AssumeChangesOnlyAffectDirectDependencies = parseTristate(value)
+	case "baseUrl":
+		allOptions.BaseUrl = value.(string)
+	case "build":
+		allOptions.Build = parseTristate(value)
+	case "checkJs":
+		allOptions.CheckJs = parseTristate(value)
+	case "customConditions":
+		allOptions.CustomConditions = value.([]string)
+	case "composite":
+		allOptions.Composite = parseTristate(value)
+	case "declarationDir":
+		allOptions.DeclarationDir = value.(string)
+	case "diagnostics":
+		allOptions.Diagnostics = parseTristate(value)
+	case "disableSizeLimit":
+		allOptions.DisableSizeLimit = parseTristate(value)
+	case "disableSourceOfProjectReferenceRedirect":
+		allOptions.DisableSourceOfProjectReferenceRedirect = parseTristate(value)
+	case "disableSolutionSearching":
+		allOptions.DisableSolutionSearching = parseTristate(value)
+	case "disableReferencedProjectLoad":
+		allOptions.DisableReferencedProjectLoad = parseTristate(value)
+	case "declarationMap":
+		allOptions.DeclarationMap = parseTristate(value)
+	case "declaration":
+		allOptions.Declaration = parseTristate(value)
+	case "extendedDiagnostics":
+		allOptions.ExtendedDiagnostics = parseTristate(value)
+	case "emitDecoratorMetadata":
+		allOptions.EmitDecoratorMetadata = parseTristate(value)
+	case "esModuleInterop":
+		allOptions.ESModuleInterop = parseTristate(value)
+	case "exactOptionalPropertyTypes":
+		allOptions.ExactOptionalPropertyTypes = parseTristate(value)
+	case "explainFiles":
+		allOptions.ExplainFiles = parseTristate(value)
+	case "experimentalDecorators":
+		allOptions.ExperimentalDecorators = parseTristate(value)
+	case "forceConsistentCasingInFileNames":
+		allOptions.ForceConsistentCasingInFileNames = parseTristate(value)
+	case "generateCpuProfile":
+		allOptions.GenerateCpuProfile = value.(string)
+	case "generateTrace":
+		allOptions.GenerateTrace = value.(string)
+	case "isolatedModules":
+		allOptions.IsolatedModules = parseTristate(value)
+	case "ignoreDeprecations":
+		allOptions.IgnoreDeprecations = value.(string)
+	case "importHelpers":
+		allOptions.ImportHelpers = parseTristate(value)
+	case "incremental":
+		allOptions.Incremental = parseTristate(value)
+	case "init":
+		allOptions.Init = parseTristate(value)
+	case "inlineSourceMap":
+		allOptions.InlineSourceMap = parseTristate(value)
+	case "inlineSources":
+		allOptions.InlineSources = parseTristate(value)
+	case "isolatedDeclarations":
+		allOptions.IsolatedDeclarations = parseTristate(value)
+	case "jsx":
+		allOptions.Jsx = value.(core.JsxEmit)
+	case "jsxFactory":
+		allOptions.JsxFactory = value.(string)
+	case "jsxFragmentFactory":
+		allOptions.JsxFragmentFactory = value.(string)
+	case "jsxImportSource":
+		allOptions.JsxImportSource = value.(string)
+	case "keyofStringsOnly":
+		allOptions.KeyofStringsOnly = parseTristate(value)
+	case "lib":
+		allOptions.Lib = value.([]string)
+	case "listEmittedFiles":
+		allOptions.ListEmittedFiles = parseTristate(value)
+	case "listFiles":
+		allOptions.ListFiles = parseTristate(value)
+	case "listFilesOnly":
+		allOptions.ListFilesOnly = parseTristate(value)
+	case "locale":
+		allOptions.Locale = value.(string)
+	case "mapRoot":
+		allOptions.MapRoot = value.(string)
+	case "module":
+		allOptions.ModuleKind = value.(core.ModuleKind)
+	case "moduleResolution":
+		allOptions.ModuleResolution = value.(core.ModuleResolutionKind)
+	case "moduleSuffixes":
+		allOptions.ModuleSuffixes = value.([]string)
+	case "moduleDetection":
+		allOptions.ModuleDetection = value.(core.ModuleDetectionKind)
+	case "noCheck":
+		allOptions.NoCheck = parseTristate(value)
+	case "noFallthroughCasesInSwitch":
+		allOptions.NoFallthroughCasesInSwitch = parseTristate(value)
+	case "noEmitForJsFiles":
+		allOptions.NoEmitForJsFiles = parseTristate(value)
+	case "noImplicitAny":
+		allOptions.NoImplicitAny = parseTristate(value)
+	case "noImplicitThis":
+		allOptions.NoImplicitThis = parseTristate(value)
+	case "noPropertyAccessFromIndexSignature":
+		allOptions.NoPropertyAccessFromIndexSignature = parseTristate(value)
+	case "noUncheckedIndexedAccess":
+		allOptions.NoUncheckedIndexedAccess = parseTristate(value)
+	case "noEmitHelpers":
+		allOptions.NoEmitHelpers = parseTristate(value)
+	case "noEmitOnError":
+		allOptions.NoEmitOnError = parseTristate(value)
+	case "noImplicitReturns":
+		allOptions.NoImplicitReturns = parseTristate(value)
+	case "noUnusedLocals":
+		allOptions.NoUnusedLocals = parseTristate(value)
+	case "noUnusedParameters":
+		allOptions.NoUnusedParameters = parseTristate(value)
+	case "noImplicitOverride":
+		allOptions.NoImplicitOverride = parseTristate(value)
+	case "noUncheckedSideEffectImports":
+		allOptions.NoUncheckedSideEffectImports = parseTristate(value)
+	case "out":
+		allOptions.Out = value.(string)
+	case "outFile":
+		allOptions.OutFile = value.(string)
+	case "noResolve":
+		allOptions.NoResolve = parseTristate(value)
+	case "paths":
+		allOptions.Paths = parseStringMap(value)
+	case "preserveWatchOutput":
+		allOptions.PreserveWatchOutput = parseTristate(value)
+	case "preserveConstEnums":
+		allOptions.PreserveConstEnums = parseTristate(value)
+	case "preserveSymlinks":
+		allOptions.PreserveSymlinks = parseTristate(value)
+	case "project":
+		allOptions.Project = value.(string)
+	case "pretty":
+		allOptions.Pretty = parseTristate(value)
+	case "resolveJsonModule":
+		allOptions.ResolveJsonModule = parseTristate(value)
+	case "resolvePackageJsonExports":
+		allOptions.ResolvePackageJsonExports = parseTristate(value)
+	case "resolvePackageJsonImports":
+		allOptions.ResolvePackageJsonImports = parseTristate(value)
+	case "reactNamespace":
+		allOptions.ReactNamespace = value.(string)
+	case "rootDir":
+		allOptions.RootDir = value.(string)
+	case "rootDirs":
+		allOptions.RootDirs = value.([]string)
+	case "removeComments":
+		allOptions.RemoveComments = parseTristate(value)
+	case "strict":
+		allOptions.Strict = parseTristate(value)
+	case "strictBindCallApply":
+		allOptions.StrictBindCallApply = parseTristate(value)
+	case "strictFunctionTypes":
+		allOptions.StrictFunctionTypes = parseTristate(value)
+	case "strictNullChecks":
+		allOptions.StrictNullChecks = parseTristate(value)
+	case "strictPropertyInitialization":
+		allOptions.StrictPropertyInitialization = parseTristate(value)
+	case "skipDefaultLibCheck":
+		allOptions.SkipDefaultLibCheck = parseTristate(value)
+	case "sourceMap":
+		allOptions.SourceMap = parseTristate(value)
+	case "sourceRoot":
+		allOptions.SourceRoot = value.(string)
+	case "stripInternal":
+		allOptions.StripInternal = parseTristate(value)
+	case "suppressOutputPathCheck":
+		allOptions.SuppressOutputPathCheck = parseTristate(value)
+	case "target":
+		allOptions.Target = value.(core.ScriptTarget)
+	case "traceResolution":
+		allOptions.TraceResolution = parseTristate(value)
+	case "tsBuildInfoFile":
+		allOptions.TsBuildInfoFile = value.(string)
+	case "typeRoots":
+		allOptions.TypeRoots = value.([]string)
+	case "tscBuild":
+		allOptions.TscBuild = parseTristate(value)
+	case "types":
+		allOptions.Types = value.([]string)
+	case "useDefineForClassFields":
+		allOptions.UseDefineForClassFields = parseTristate(value)
+	case "useUnknownInCatchVariables":
+		allOptions.UseUnknownInCatchVariables = parseTristate(value)
+	case "verbatimModuleSyntax":
+		allOptions.VerbatimModuleSyntax = parseTristate(value)
+	case "version":
+		allOptions.Version = parseTristate(value)
+	case "maxNodeModuleJsDepth":
+		allOptions.MaxNodeModuleJsDepth = value.(*int)
+	case "skipLibCheck":
+		allOptions.SkipLibCheck = parseTristate(value)
+	case "noEmit":
+		allOptions.NoEmit = parseTristate(value)
+	case "showConfig":
+		allOptions.ShowConfig = parseTristate(value)
+	case "configFilePath":
+		allOptions.ConfigFilePath = value.(string)
+	case "noDtsResolution":
+		allOptions.NoDtsResolution = parseTristate(value)
+	case "pathsBasePath":
+		allOptions.PathsBasePath = value.(string)
+	case "outDir":
+		allOptions.OutDir = value.(string)
+	case "newLine":
+		allOptions.NewLine = value.(core.NewLineKind)
+	case "watch":
+		allOptions.Watch = parseTristate(value)
+	}
+	return nil
+}
+
 func ParseWatchOptions(key string, value any, allOptions *core.WatchOptions) []*ast.Diagnostic {
 	if allOptions == nil {
 		return nil
+	}
+	switch key {
+	case "watchFile":
+		if value != nil {
+			allOptions.FileKind = value.(core.WatchFileKind)
+		}
+	case "watchDirectory":
+		if value != nil {
+			allOptions.DirectoryKind = value.(core.WatchDirectoryKind)
+		}
+	case "fallbackPolling":
+		if value != nil {
+			allOptions.FallbackPolling = value.(core.PollingKind)
+		}
+	case "synchronousWatchDirectory":
+		allOptions.SyncWatchDir = parseTristate(value)
+	case "excludeDirectories":
+		allOptions.ExcludeDir = parseStringArray(value)
+	case "excludeFiles":
+		allOptions.ExcludeFiles = parseStringArray(value)
+	}
+	return nil
+}
+
+func ParseMapEntryToWatchOptions(key string, value any, allOptions *core.WatchOptions) []*ast.Diagnostic {
+	// this assumes any `key`, `value` pair will have `value` already be the correct type. this function should no error handling
+	if allOptions == nil {
+		allOptions = &core.WatchOptions{}
 	}
 	switch key {
 	case "watchFile":
@@ -408,9 +676,9 @@ func ParseWatchOptions(key string, value any, allOptions *core.WatchOptions) []*
 	case "synchronousWatchDirectory":
 		allOptions.SyncWatchDir = parseTristate(value)
 	case "excludeDirectories":
-		allOptions.ExcludeDir = parseStringArray(value)
+		allOptions.ExcludeDir = value.([]string)
 	case "excludeFiles":
-		allOptions.ExcludeFiles = parseStringArray(value)
+		allOptions.ExcludeFiles = value.([]string)
 	}
 	return nil
 }

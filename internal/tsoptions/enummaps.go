@@ -102,10 +102,16 @@ var libMap = collections.NewOrderedMapFromList([]collections.MapEntry[string, an
 	{Key: "decorators.legacy", Value: "lib.decorators.legacy.d.ts"},
 })
 
-var Libs = slices.Collect(libMap.Keys())
+var (
+	Libs        = slices.Collect(libMap.Keys())
+	LibFilesSet = core.NewSetFromItems(core.Map(slices.Collect(libMap.Values()), func(s any) string { return s.(string) })...)
+)
 
 func GetLibFileName(libName string) (string, bool) {
 	libName = tspath.ToFileNameLowerCase(libName)
+	if LibFilesSet.Has(libName) {
+		return libName, true
+	}
 	lib, ok := libMap.Get(libName)
 	if !ok {
 		return "", false
