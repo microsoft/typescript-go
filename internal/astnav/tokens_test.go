@@ -150,10 +150,14 @@ func tsGetTokensAtPositions(t testing.TB, fileText string, positions []int) []to
 	dir := t.TempDir()
 	err := os.WriteFile(filepath.Join(dir, "file.ts"), []byte(fileText), 0o644)
 	assert.NilError(t, err)
+
+	err = os.WriteFile(filepath.Join(dir, "positions.json"), []byte(core.Must(core.StringifyJson(positions, "", ""))), 0o644)
+	assert.NilError(t, err)
+
 	script := `
 		import fs from "fs";
-		export default (ts, positions) => {
-			positions = JSON.parse(positions);
+		export default (ts) => {
+			const positions = JSON.parse(fs.readFileSync("positions.json", "utf8"));
 			const fileText = fs.readFileSync("file.ts", "utf8");
 			const file = ts.createSourceFile(
 				"file.ts",
@@ -174,7 +178,7 @@ func tsGetTokensAtPositions(t testing.TB, fileText string, positions []int) []to
 			});
 		};`
 
-	info, err := jstest.EvalNodeScriptWithTS[[]tokenInfo](t, script, dir, core.Must(core.StringifyJson(positions, "", "")))
+	info, err := jstest.EvalNodeScriptWithTS[[]tokenInfo](t, script, dir, "")
 	assert.NilError(t, err)
 	return info
 }
@@ -183,10 +187,14 @@ func tsGetTouchingPropertyName(t testing.TB, fileText string, positions []int) [
 	dir := t.TempDir()
 	err := os.WriteFile(filepath.Join(dir, "file.ts"), []byte(fileText), 0o644)
 	assert.NilError(t, err)
+
+	err = os.WriteFile(filepath.Join(dir, "positions.json"), []byte(core.Must(core.StringifyJson(positions, "", ""))), 0o644)
+	assert.NilError(t, err)
+
 	script := `
 		import fs from "fs";
-		export default (ts, positions) => {
-			positions = JSON.parse(positions);
+		export default (ts) => {
+			const positions = JSON.parse(fs.readFileSync("positions.json", "utf8"));
 			const fileText = fs.readFileSync("file.ts", "utf8");
 			const file = ts.createSourceFile(
 				"file.ts",
@@ -207,7 +215,7 @@ func tsGetTouchingPropertyName(t testing.TB, fileText string, positions []int) [
 			});
 		};`
 
-	info, err := jstest.EvalNodeScriptWithTS[[]tokenInfo](t, script, dir, core.Must(core.StringifyJson(positions, "", "")))
+	info, err := jstest.EvalNodeScriptWithTS[[]tokenInfo](t, script, dir, "")
 	assert.NilError(t, err)
 	return info
 }
