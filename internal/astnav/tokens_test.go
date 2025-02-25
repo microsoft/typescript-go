@@ -23,33 +23,12 @@ import (
 var testFiles = []string{
 	// !!! EOFToken JSDoc parsing is missing
 	// filepath.Join(repo.TestDataPath, "fixtures/astnav/eofJSDoc.ts"),
-	filepath.Join(repo.TestDataPath, "fixtures/astnav/mapCode.ts"),
-	filepath.Join(repo.TestDataPath, "fixtures/astnav/project.ts"),
-}
-
-func BenchmarkGetTokenAtPosition(b *testing.B) {
-	for _, fileName := range testFiles {
-		b.Run(filepath.Base(fileName), func(b *testing.B) {
-			fileText, err := os.ReadFile(fileName)
-			assert.NilError(b, err)
-			file := parser.ParseSourceFile("file.ts", "file.ts", string(fileText), core.ScriptTargetLatest, scanner.JSDocParsingModeParseAll)
-
-			positions := make([]int, len(fileText))
-			for i := range positions {
-				positions[i] = i
-			}
-			b.ResetTimer()
-			for range b.N {
-				for pos := range positions {
-					astnav.GetTokenAtPosition(file, pos)
-				}
-			}
-		})
-	}
+	filepath.Join(repo.TypeScriptSubmodulePath, "src/services/mapCode.ts"),
 }
 
 func TestGetTokenAtPosition(t *testing.T) {
 	t.Parallel()
+	repo.SkipIfNoTypeScriptSubmodule(t)
 	jstest.SkipIfNoNodeJS(t)
 
 	t.Run("baseline", func(t *testing.T) {
@@ -81,6 +60,7 @@ func TestGetTokenAtPosition(t *testing.T) {
 func TestGetTouchingPropertyName(t *testing.T) {
 	t.Parallel()
 	jstest.SkipIfNoNodeJS(t)
+	repo.SkipIfNoTypeScriptSubmodule(t)
 
 	baselineTokens(
 		t,
