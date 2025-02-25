@@ -28,7 +28,7 @@ func TestSymlinkRealpath(t *testing.T) {
 	assert.NilError(t, os.MkdirAll(target, 0o777))
 	assert.NilError(t, os.WriteFile(targetFile, []byte(expectedContents), 0o666))
 
-	mklink(t, targetFile, linkFile)
+	mklink(t, target, link)
 
 	gotContents, err := os.ReadFile(linkFile)
 	assert.NilError(t, err)
