@@ -7934,7 +7934,6 @@ func (node *SourceFile) GetOrCreateToken(
 	pos int,
 	end int,
 	parent *Node,
-	factory *NodeFactory,
 ) *TokenNode {
 	node.tokenCacheMu.Lock()
 	defer node.tokenCacheMu.Unlock()
@@ -7952,7 +7951,7 @@ func (node *SourceFile) GetOrCreateToken(
 		return token
 	}
 
-	token := factory.NewToken(kind)
+	token := newNode(kind, &Token{})
 	token.Loc = loc
 	token.Parent = parent
 	node.tokenCache[loc] = token

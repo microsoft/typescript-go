@@ -2,26 +2,11 @@ package astnav
 
 import (
 	"fmt"
-	"sync"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/scanner"
 )
-
-var factoryPool = sync.Pool{
-	New: func() any {
-		return &ast.NodeFactory{}
-	},
-}
-
-func getNodeFactory() *ast.NodeFactory {
-	return factoryPool.Get().(*ast.NodeFactory)
-}
-
-func putNodeFactory(factory *ast.NodeFactory) {
-	factoryPool.Put(factory)
-}
 
 func GetTouchingPropertyName(sourceFile *ast.SourceFile, position int) *ast.Node {
 	return getTokenAtPosition(sourceFile, position, false /*allowPositionInLeadingTrivia*/, func(node *ast.Node) bool {
@@ -47,8 +32,6 @@ func getTokenAtPosition(
 	// in memory. If there is no token at the given position (possible when
 	// `allowPositionInLeadingTrivia` is false), the lowest node that encloses the
 	// position is returned.
-	factory := getNodeFactory()
-	defer putNodeFactory(factory)
 
 	// `next` tracks the node whose children will be visited on the next iteration.
 	// `prevSubtree` is a node whose end position is equal to the target position,
@@ -176,10 +159,10 @@ func getTokenAtPosition(
 						}
 						panic(fmt.Sprintf("did not expect %s to have %s in its trivia", current.Kind.String(), token.String()))
 					}
-					return sourceFile.GetOrCreateToken(token, tokenFullStart, tokenEnd, current, factory)
+					return sourceFile.GetOrCreateToken(token, tokenFullStart, tokenEnd, current)
 				}
 				if includePrecedingTokenAtEndPosition != nil && tokenEnd == position {
-					prevToken := sourceFile.GetOrCreateToken(token, tokenFullStart, tokenEnd, current, factory)
+					prevToken := sourceFile.GetOrCreateToken(token, tokenFullStart, tokenEnd, current)
 					if includePrecedingTokenAtEndPosition(prevToken) {
 						return prevToken
 					}
