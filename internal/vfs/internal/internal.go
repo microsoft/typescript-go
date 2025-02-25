@@ -11,7 +11,8 @@ import (
 )
 
 type Common struct {
-	RootFor func(root string) fs.FS
+	RootFor  func(root string) fs.FS
+	Realpath func(path string) string
 }
 
 func RootLength(p string) int {
@@ -65,11 +66,42 @@ func (vfs *Common) GetDirectories(path string) []string {
 	// TODO: should this really exist? ReadDir with manual filtering seems like a better idea.
 	var dirs []string
 	for _, entry := range entries {
-		if entry.IsDir() {
+		if vfs.entryIsType(path, entry, true) {
 			dirs = append(dirs, entry.Name())
 		}
 	}
 	return dirs
+}
+
+func (vfs *Common) entryIsType(parent string, entry fs.DirEntry, isDir bool) bool {
+	if isDir == entry.IsDir() {
+		return true
+	}
+
+	entryType := entry.Type()
+
+	if entryType&fs.ModeSymlink != 0 {
+		info := vfs.stat(parent + "/" + entry.Name())
+		if info != nil && isDir == info.IsDir() {
+			return true
+		}
+		return false
+	}
+
+	if entryType&fs.ModeIrregular != 0 && vfs.Realpath != nil {
+		// Could be a Windows junction. Try Realpath.
+		path := parent + "/" + entry.Name()
+		realpath := vfs.Realpath(path)
+		if path != realpath {
+			stat := vfs.stat(realpath)
+			if stat != nil && isDir == stat.IsDir() {
+				return true
+			}
+			return false
+		}
+	}
+
+	return false
 }
 
 func (vfs *Common) GetEntries(path string) []fs.DirEntry {

@@ -22,6 +22,7 @@ type FS interface {
 	DirectoryExists(path string) bool
 
 	// GetDirectories returns the names of the directories in the specified directory.
+	// GetDirectories includes symlinks to directories.
 	GetDirectories(path string) []string
 
 	// GetEntries returns the entries in the specified directory.
