@@ -67,11 +67,11 @@ func (vfs *wrappedFS) DirectoryExists(path string) bool {
 	return vfs.fs.DirectoryExists(path)
 }
 
-func (vfs *wrappedFS) GetDirectories(path string) []string {
+func (vfs *wrappedFS) GetAccessibleEntries(path string) vfs.Entries {
 	if _, rest, ok := splitPath(path); ok {
-		return embeddedVFS.GetDirectories("/" + rest)
+		return embeddedVFS.GetAccessibleEntries("/" + rest)
 	}
-	return vfs.fs.GetDirectories(path)
+	return vfs.fs.GetAccessibleEntries(path)
 }
 
 func (vfs *wrappedFS) GetEntries(path string) []fs.DirEntry {
