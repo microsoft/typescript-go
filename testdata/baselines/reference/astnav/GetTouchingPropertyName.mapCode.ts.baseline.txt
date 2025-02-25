@@ -1,6 +1,6 @@
-〚Positions: [743, 746]〛
-【TS: JSDoc [743, 759)】
-《Go: JSDoc [741, 759)》
+〚Positions: [784, 787]〛
+【TS: JSDoc [784, 800)】
+《Go: JSDoc [780, 800)》
 38 │    UserPreferences,
 39 │} from "./_namespaces/ts.js";
 40 │import { ChangeTracker } from "./textChanges.js";《
@@ -10,9 +10,9 @@
 44 │    sourceFile: SourceFile,
 
 
-〚Positions: [757, 757]〛
-【TS: Identifier [748, 756)】
-《Go: JSDoc [741, 759)》
+〚Positions: [798, 798]〛
+【TS: Identifier [789, 797)】
+《Go: JSDoc [780, 800)》
 38 │    UserPreferences,
 39 │} from "./_namespaces/ts.js";
 40 │import { ChangeTracker } from "./textChanges.js";《
@@ -22,9 +22,9 @@
 44 │    sourceFile: SourceFile,
 
 
-〚Positions: [758, 758]〛
-【TS: JSDoc [743, 759)】
-《Go: JSDoc [741, 759)》
+〚Positions: [799, 799]〛
+【TS: JSDoc [784, 800)】
+《Go: JSDoc [780, 800)》
 38 │    UserPreferences,
 39 │} from "./_namespaces/ts.js";
 40 │import { ChangeTracker } from "./textChanges.js";《
@@ -34,15 +34,15 @@
 44 │    sourceFile: SourceFile,
 
 
-〚Positions: [759, 759]〛
-【TS: Identifier [748, 756)】
-《Go: FunctionDeclaration [741, 1542)》
+〚Positions: [800, 800]〛
+【TS: Identifier [789, 797)】
+《Go: FunctionDeclaration [780, 1607)》
 38 │    UserPreferences,
 39 │} from "./_namespaces/ts.js";
 40 │import { ChangeTracker } from "./textChanges.js";《
 41 │
-42 │/** @【internal】 */〚
-43 │〛export function mapCode(
+42 │/** @【internal】 */〚〛
+43 │export function mapCode(
 44 │    sourceFile: SourceFile,
 45 │    contents: string[],
 46 │    focusLocations: TextSpan[][] | undefined,
@@ -58,9 +58,9 @@
 68 │/**
 
 
-〚Positions: [1544, 1660]〛
-【TS: JSDoc [1544, 1663)】
-《Go: JSDocText [1544, 1661)》
+〚Positions: [1611, 1730]〛
+【TS: JSDoc [1611, 1733)】
+《Go: JSDocText [1611, 1731)》
 66 │}
 67 │
 68 │《【〚/**
@@ -71,9 +71,9 @@
 73 │    // We're going to speculatively parse different kinds of contexts to see
 
 
-〚Positions: [1661, 1662]〛
-【TS: JSDoc [1544, 1663)】
-《Go: JSDoc [1542, 1663)》
+〚Positions: [1731, 1732]〛
+【TS: JSDoc [1611, 1733)】
+《Go: JSDoc [1607, 1733)》
 64 │        },
 65 │    );
 66 │}《

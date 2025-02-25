@@ -1,6 +1,6 @@
-〚Positions: [741, 742]〛
-【TS: ExportKeyword [741, 766)】
-《Go: JSDoc [741, 759)》
+〚Positions: [780, 783]〛
+【TS: ExportKeyword [780, 808)】
+《Go: JSDoc [780, 800)》
 38 │    UserPreferences,
 39 │} from "./_namespaces/ts.js";
 40 │import { ChangeTracker } from "./textChanges.js";《【〚
@@ -11,9 +11,9 @@
 45 │    contents: string[],
 
 
-〚Positions: [743, 746]〛
-【TS: JSDoc [743, 759)】
-《Go: JSDoc [741, 759)》
+〚Positions: [784, 787]〛
+【TS: JSDoc [784, 800)】
+《Go: JSDoc [780, 800)》
 38 │    UserPreferences,
 39 │} from "./_namespaces/ts.js";
 40 │import { ChangeTracker } from "./textChanges.js";《
@@ -23,9 +23,9 @@
 44 │    sourceFile: SourceFile,
 
 
-〚Positions: [757, 758]〛
-【TS: JSDoc [743, 759)】
-《Go: JSDoc [741, 759)》
+〚Positions: [798, 799]〛
+【TS: JSDoc [784, 800)】
+《Go: JSDoc [780, 800)》
 38 │    UserPreferences,
 39 │} from "./_namespaces/ts.js";
 40 │import { ChangeTracker } from "./textChanges.js";《
@@ -35,9 +35,9 @@
 44 │    sourceFile: SourceFile,
 
 
-〚Positions: [1542, 1543]〛
-【TS: FunctionKeyword [1542, 1672)】
-《Go: JSDoc [1542, 1663)》
+〚Positions: [1607, 1610]〛
+【TS: FunctionKeyword [1607, 1743)】
+《Go: JSDoc [1607, 1733)》
 64 │        },
 65 │    );
 66 │}《【〚
@@ -51,9 +51,9 @@
 74 │    // which one makes the most sense, and grab the NodeArray from there. Do
 
 
-〚Positions: [1544, 1660]〛
-【TS: JSDoc [1544, 1663)】
-《Go: JSDocText [1544, 1661)》
+〚Positions: [1611, 1730]〛
+【TS: JSDoc [1611, 1733)】
+《Go: JSDocText [1611, 1731)》
 66 │}
 67 │
 68 │《【〚/**
@@ -64,9 +64,9 @@
 73 │    // We're going to speculatively parse different kinds of contexts to see
 
 
-〚Positions: [1661, 1662]〛
-【TS: JSDoc [1544, 1663)】
-《Go: JSDoc [1542, 1663)》
+〚Positions: [1731, 1732]〛
+【TS: JSDoc [1611, 1733)】
+《Go: JSDoc [1607, 1733)》
 64 │        },
 65 │    );
 66 │}《
