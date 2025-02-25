@@ -44,10 +44,10 @@ func (c *Checker) symbolToString(s *ast.Symbol) string {
 			return scanner.GetTextOfNode(name)
 		}
 	}
-	if s.Name[0] == '\xFE' {
-		return "__" + s.Name[1:]
-	} else if len(s.Name) == 0 {
+	if len(s.Name) == 0 {
 		return "\"\"" // !!! Implement escaping
+	} else if s.Name[0] == '\xFE' {
+		return "__" + s.Name[1:]
 	}
 	switch s.Name {
 	case ast.InternalSymbolNameClass:
