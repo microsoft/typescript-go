@@ -156,6 +156,6 @@ func (vfs *osFS) WriteFile(path string, content string, writeByteOrderMark bool)
 	return vfs.writeFile(path, content, writeByteOrderMark)
 }
 
-func (vfs *osFS) Stat(path string) FileInfo {
+func (vfs *osFS) Stat(path string) vfs.FileInfo {
 	return vfs.common.Stat(path)
 }

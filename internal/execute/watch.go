@@ -6,25 +6,24 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
+	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
 func start(w *watcher) ExitStatus {
 	if w.configFileName == "" {
 		w.host = compiler.NewCompilerHost(w.options.CompilerOptions(), w.sys.GetCurrentDirectory(), w.sys.FS(), w.sys.DefaultLibraryPath())
 	}
-	watchInterval := 100 * time.Millisecond
+	watchInterval := 500 * time.Millisecond
 	for !w.sys.IsTestDone() {
 		if w.configFileName != "" {
-			// only need to reparse options/ update host if we are watching a config file
-			extendedConfigCache := map[string]*tsoptions.ExtendedConfigCacheEntry{}
+			// only need to reparse tsconfig options/update host if we are watching a config file
+			extendedConfigCache := map[tspath.Path]*tsoptions.ExtendedConfigCacheEntry{}
 			configParseResult, errors := getParsedCommandLineOfConfigFile(w.configFileName, w.options.CompilerOptions(), w.sys, extendedConfigCache)
 			if len(errors) > 0 {
 				// these are unrecoverable errors--report them and do not build
 				for _, e := range errors {
 					w.reportDiagnostic(e)
 				}
-				// wait longer to allow user to fix errors
-				time.Sleep(watchInterval * 10)
 				continue
 			}
 			w.options = configParseResult
@@ -63,4 +62,51 @@ func hasBeenModified(w *watcher, program *compiler.Program) bool {
 	}
 	w.prevModified = currState
 	return filesModified
+}
+
+func WatchTest(sys System, commandLineArgs []string) {
+	commandLine := tsoptions.ParseCommandLine(commandLineArgs, sys)
+	configFileName := tspath.NormalizePath(commandLine.CompilerOptions().Project)
+	if configFileName != "" || sys.FS().DirectoryExists(configFileName) {
+		configFileName = tspath.CombinePaths(configFileName, "tsconfig.json")
+	}
+	if !sys.FS().FileExists(configFileName) {
+		return
+	}
+	if configFileName != "" {
+		extendedConfigCache := map[tspath.Path]*tsoptions.ExtendedConfigCacheEntry{}
+		commandLine, _ = getParsedCommandLineOfConfigFile(configFileName, commandLine.CompilerOptions(), sys, extendedConfigCache)
+	}
+
+	w := createWatcher(sys, commandLine, createDiagnosticReporter(sys, commandLine.CompilerOptions().Pretty))
+
+	w.host = compiler.NewCompilerHost(w.options.CompilerOptions(), w.sys.GetCurrentDirectory(), w.sys.FS(), w.sys.DefaultLibraryPath())
+
+	totalTime := time.Duration(0)
+	for i := range 10 {
+		startTime := time.Now()
+
+		extendedConfigCache := map[tspath.Path]*tsoptions.ExtendedConfigCacheEntry{}
+		w.options, _ = getParsedCommandLineOfConfigFile(w.configFileName, w.options.CompilerOptions(), w.sys, extendedConfigCache)
+		configTime := time.Now()
+
+		w.host = compiler.NewCompilerHost(w.options.CompilerOptions(), w.sys.GetCurrentDirectory(), w.sys.FS(), w.sys.DefaultLibraryPath())
+		hostTime := time.Now()
+
+		w.program = compiler.NewProgramFromParsedCommandLine(w.options, w.host)
+		timeProgram := time.Now()
+
+		hasBeenModified(w, w.program)
+		timeModified := time.Now()
+
+		timeCheck := timeModified.Sub(startTime)
+		fmt.Fprint(w.sys.Writer(), i,
+			": ", timeCheck,
+			"    ", configTime.Sub(startTime),
+			"    ", hostTime.Sub(configTime),
+			"    ", timeProgram.Sub(hostTime),
+			"    ", timeModified.Sub(timeProgram), sys.NewLine())
+		totalTime += timeCheck
+	}
+	fmt.Fprint(w.sys.Writer(), "total time taken ", totalTime, sys.NewLine())
 }

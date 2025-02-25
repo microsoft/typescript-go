@@ -95,9 +95,10 @@ func (vfs *wrappedFS) GetEntries(path string) []fs.DirEntry {
 }
 
 func (vfs *wrappedFS) Stat(path string) vfs.FileInfo {
-	if _, path, ok := splitPath(path); ok {
-		return embeddedVFS.Stat("/" + path)
-	}
+	// !!! probably ok since
+	// if path, ok := splitPath(path); ok {
+	// 	return embeddedVFS.Stat("/" + path)
+	// }
 	return vfs.fs.Stat(path)
 }
 
