@@ -76,7 +76,7 @@ func TestTsc(t *testing.T) {
 	(&tscInput{
 		scenario:        "commandLine",
 		subScenario:     "Parse --lib option with file name",
-		sys:             newTestSys(nil, ""),
+		sys:             newTestSys(FileMap{"/home/src/workspaces/project/first.ts": `export const Key = Symbol()`}, ""),
 		commandLineArgs: []string{"--lib", "es6 ", "first.ts"},
 	}).verify(t)
 

@@ -133,4 +133,5 @@ CompilerOptions::{
     "tscBuild": null
 }
 Output::
+//// [/home/src/workspaces/project/first.ts]\nexport const Key = Symbol()
 
