@@ -28,7 +28,7 @@ func TestSymlinkRealpath(t *testing.T) {
 	assert.NilError(t, os.MkdirAll(target, 0o777))
 	assert.NilError(t, os.WriteFile(targetFile, []byte(expectedContents), 0o666))
 
-	mklink(t, target, link)
+	mklink(t, target, link, true)
 
 	gotContents, err := os.ReadFile(linkFile)
 	assert.NilError(t, err)
@@ -47,10 +47,10 @@ func TestSymlinkRealpath(t *testing.T) {
 	}
 }
 
-func mklink(t *testing.T, target, link string) {
+func mklink(t *testing.T, target, link string, isDir bool) {
 	t.Helper()
 
-	if runtime.GOOS == "windows" {
+	if runtime.GOOS == "windows" && isDir {
 		// Don't use os.Symlink on Windows, as it creates a "real" symlink, not a junction.
 		assert.NilError(t, exec.Command("cmd", "/c", "mklink", "/J", link, target).Run())
 	} else {
@@ -80,10 +80,10 @@ func TestGetAccessibleEntries(t *testing.T) {
 	assert.NilError(t, os.MkdirAll(targetDir1, 0o777))
 	assert.NilError(t, os.MkdirAll(targetDir2, 0o777))
 
-	mklink(t, targetFile1, filepath.Join(link, "file1"))
-	mklink(t, targetFile2, filepath.Join(link, "file2"))
-	mklink(t, targetDir1, filepath.Join(link, "dir1"))
-	mklink(t, targetDir2, filepath.Join(link, "dir2"))
+	mklink(t, targetFile1, filepath.Join(link, "file1"), false)
+	mklink(t, targetFile2, filepath.Join(link, "file2"), false)
+	mklink(t, targetDir1, filepath.Join(link, "dir1"), true)
+	mklink(t, targetDir2, filepath.Join(link, "dir2"), true)
 
 	fs := FS()
 
