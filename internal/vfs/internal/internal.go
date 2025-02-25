@@ -94,6 +94,7 @@ func (vfs *Common) GetAccessibleEntries(path string) (result vfs.Entries) {
 
 		if entryType&fs.ModeIrregular != 0 && vfs.Realpath != nil {
 			// Could be a Windows junction. Try Realpath.
+			// TODO(jakebailey): use syscall.Win32FileAttributeData instead
 			fullPath := path + "/" + entry.Name()
 			if realpath := vfs.Realpath(fullPath); fullPath != realpath {
 				if stat := vfs.stat(realpath); stat != nil {
