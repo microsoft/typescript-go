@@ -108,6 +108,7 @@ var (
 )
 
 func GetLibFileName(libName string) (string, bool) {
+	// checks if the libName is a valid lib name or file name and converts the lib name to the filename if needed
 	libName = tspath.ToFileNameLowerCase(libName)
 	if LibFilesSet.Has(libName) {
 		return libName, true
