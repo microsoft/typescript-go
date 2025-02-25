@@ -74,17 +74,21 @@ func TestGetAccessibleEntries(t *testing.T) {
 	assert.NilError(t, os.WriteFile(targetFile1, []byte("hello"), 0o666))
 	assert.NilError(t, os.WriteFile(targetFile2, []byte("world"), 0o666))
 
+	targetDir1 := filepath.Join(target, "dir1")
+	targetDir2 := filepath.Join(target, "dir2")
+
+	assert.NilError(t, os.MkdirAll(targetDir1, 0o777))
+	assert.NilError(t, os.MkdirAll(targetDir2, 0o777))
+
 	mklink(t, targetFile1, filepath.Join(link, "file1"))
 	mklink(t, targetFile2, filepath.Join(link, "file2"))
-
-	targetDir := filepath.Join(target, "dir")
-	assert.NilError(t, os.MkdirAll(targetDir, 0o777))
-	mklink(t, targetDir, filepath.Join(link, "dir"))
+	mklink(t, targetDir1, filepath.Join(link, "dir1"))
+	mklink(t, targetDir2, filepath.Join(link, "dir2"))
 
 	fs := FS()
 
 	entries := fs.GetAccessibleEntries(tspath.NormalizePath(link))
 
-	assert.DeepEqual(t, entries.Directories, []string{"dir"})
+	assert.DeepEqual(t, entries.Directories, []string{"dir1", "dir2"})
 	assert.DeepEqual(t, entries.Files, []string{"file1", "file2"})
 }
