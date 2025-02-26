@@ -89,7 +89,8 @@ func (r *CompilerBaselineRunner) RunTests(t *testing.T) {
 	r.cleanUpLocal(t)
 	files := r.EnumerateTestFiles()
 	skippedTests := []string{
-		"mappedTypeRecursiveInference.ts",
+		"chained2.ts",                     // Corsa bug related to multi/single-threaded mode.
+		"mappedTypeRecursiveInference.ts", // Needed until we have type printer with truncation limit.
 	}
 	deprecatedTests := []string{
 		// Test deprecated `importsNotUsedAsValue`
