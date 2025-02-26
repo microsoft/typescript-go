@@ -49,7 +49,7 @@ func (test *tscInput) verify(t *testing.T) {
 			baselineBuilder := test.startBaseline()
 
 			parsedCommandLine, exit := execute.CommandLineTest(test.sys, nil, test.commandLineArgs)
-			baselineBuilder.WriteString("\n\nExitStatus:: " + fmt.Sprint(exit))
+			baselineBuilder.WriteString("ExitStatus:: " + fmt.Sprint(exit))
 
 			compilerOptionsString, _ := json.MarshalIndent(parsedCommandLine.CompilerOptions(), "", "    ")
 			baselineBuilder.WriteString("\n\nCompilerOptions::")
@@ -101,8 +101,7 @@ func (test *tscInput) startBaseline() *strings.Builder {
 		test.sys.FS().UseCaseSensitiveFileNames(),
 		"\nInput::",
 	)
-	fmt.Fprint(s, strings.Join(test.commandLineArgs, " "))
+	fmt.Fprint(s, strings.Join(test.commandLineArgs, " "), "\n")
 	test.sys.baselineFSwithDiff(s)
-
 	return s
 }

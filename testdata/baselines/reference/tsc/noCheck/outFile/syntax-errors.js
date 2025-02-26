@@ -1,10 +1,16 @@
 
 currentDirectory::/home/src/workspaces/project
 useCaseSensitiveFileNames::true
-Input::--lib es6  first.ts
-//// [/home/src/workspaces/project/first.ts]\nexport const Key = Symbol()
+Input::--noCheck --outFile built
+//// [/home/src/workspaces/project/a.ts]\nexport const a = "hello
+//// [/home/src/workspaces/project/b.ts]\nexport const b = 10;
+//// [/home/src/workspaces/project/tsconfig.json]\n{
+	"compilerOptions": {
+		"declaration": true,
+	}
+}
 
-ExitStatus:: 0
+ExitStatus:: 2
 
 CompilerOptions::{
     "allowJs": null,
@@ -50,9 +56,7 @@ CompilerOptions::{
     "jsxFragmentFactory": "",
     "jsxImportSource": "",
     "keyofStringsOnly": null,
-    "lib": [
-        "lib.es2015.d.ts"
-    ],
+    "lib": null,
     "locale": "",
     "mapRoot": "",
     "module": 0,
@@ -61,7 +65,7 @@ CompilerOptions::{
     "moduleDetectionKind": 0,
     "newLine": 0,
     "noEmit": null,
-    "noCheck": null,
+    "noCheck": true,
     "noErrorTruncation": null,
     "noFallthroughCasesInSwitch": null,
     "noImplicitAny": null,
@@ -79,7 +83,7 @@ CompilerOptions::{
     "noUncheckedSideEffectImports": null,
     "out": "",
     "outDir": "",
-    "outFile": "",
+    "outFile": "/home/src/workspaces/project/built",
     "paths": null,
     "preserveConstEnums": null,
     "preserveSymlinks": null,
@@ -133,7 +137,16 @@ CompilerOptions::{
     "tscBuild": null
 }
 Output::
-//// [/home/src/workspaces/project/first.js]\nexport const Key = Symbol();
+a.ts(1,24): error TS1002: Unterminated string literal.
 
-//// [/home/src/workspaces/project/first.ts] no change
+
+Found 1 error in a.ts[90m:1[0m
+
+//// [/home/src/workspaces/project/a.js]\nexport const a = "hello;
+
+//// [/home/src/workspaces/project/a.ts] no change
+//// [/home/src/workspaces/project/b.js]\nexport const b = 10;
+
+//// [/home/src/workspaces/project/b.ts] no change
+//// [/home/src/workspaces/project/tsconfig.json] no change
 
