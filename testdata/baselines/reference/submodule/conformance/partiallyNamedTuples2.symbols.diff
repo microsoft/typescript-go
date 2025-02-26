@@ -9,15 +9,6 @@
  >Key : Symbol(Key, Decl(partiallyNamedTuples2.ts, 2, 6))
  >GetKeys : Symbol(GetKeys, Decl(partiallyNamedTuples2.ts, 3, 1))
  >Keys : Symbol(Keys, Decl(partiallyNamedTuples2.ts, 1, 22))
-@@ -66,7 +66,7 @@
- >Rest : Symbol(Rest, Decl(partiallyNamedTuples2.ts, 16, 33))
- 
-   ? Iterable<[...Rest, Value]>
-->Iterable : Symbol(Iterable, Decl(lib.es2015.iterable.d.ts, --, --))
-+>Iterable : Symbol(Iterable)
- >Rest : Symbol(Rest, Decl(partiallyNamedTuples2.ts, 16, 33))
- >Value : Symbol(Value, Decl(partiallyNamedTuples2.ts, 12, 27))
- 
 @@ -80,8 +80,8 @@
  
  const matches = x.get(id1);

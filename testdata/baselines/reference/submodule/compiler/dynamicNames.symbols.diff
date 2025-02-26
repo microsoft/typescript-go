@@ -1,12 +1,6 @@
 --- old.dynamicNames.symbols
 +++ new.dynamicNames.symbols
-@@ -9,21 +9,20 @@
- 
- export const s0 = Symbol();
- >s0 : Symbol(s0, Decl(module.ts, 2, 12))
-->Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2019.symbol.d.ts, --, --))
- 
- export interface T0 {
+@@ -15,15 +15,15 @@
  >T0 : Symbol(T0, Decl(module.ts, 2, 27))
  
      [c0]: number;
@@ -25,7 +19,7 @@
  >s0 : Symbol(s0, Decl(module.ts, 2, 12))
  }
  export declare class T1 implements T2 {
-@@ -31,15 +30,15 @@
+@@ -31,15 +31,15 @@
  >T2 : Symbol(T2, Decl(module.ts, 12, 1))
  
      [c0]: number;
@@ -44,7 +38,7 @@
  >s0 : Symbol(s0, Decl(module.ts, 2, 12))
  }
  export declare class T2 extends T1 {
-@@ -50,7 +49,7 @@
+@@ -50,7 +50,7 @@
  >T3 : Symbol(T3, Decl(module.ts, 14, 1))
  
      [c0]: number;
@@ -53,7 +47,7 @@
  >c0 : Symbol(c0, Decl(module.ts, 0, 12))
  
      [c1]: string;
-@@ -94,19 +93,19 @@
+@@ -94,19 +94,19 @@
  >T4 : Symbol(T4, Decl(main.ts, 6, 36))
  
          [N.c2]: number;
@@ -76,7 +70,7 @@
  >N.s1 : Symbol(s1, Decl(main.ts, 6, 16))
  >N : Symbol(N, Decl(main.ts, 1, 30))
  >s1 : Symbol(s1, Decl(main.ts, 6, 16))
-@@ -116,19 +115,19 @@
+@@ -116,19 +116,19 @@
  >T4 : Symbol(T4, Decl(main.ts, 6, 36))
  
          [N.c2]: number;
@@ -99,7 +93,7 @@
  >N.s1 : Symbol(s1, Decl(main.ts, 6, 16))
  >N : Symbol(N, Decl(main.ts, 1, 30))
  >s1 : Symbol(s1, Decl(main.ts, 6, 16))
-@@ -141,7 +140,7 @@
+@@ -141,7 +141,7 @@
  >T7 : Symbol(T7, Decl(main.ts, 19, 5))
  
          [N.c2]: number;
@@ -108,7 +102,7 @@
  >N.c2 : Symbol(c2, Decl(main.ts, 4, 16))
  >N : Symbol(N, Decl(main.ts, 1, 30))
  >c2 : Symbol(c2, Decl(main.ts, 4, 16))
-@@ -176,15 +175,15 @@
+@@ -176,15 +176,15 @@
  >T8 : Symbol(T8, Decl(main.ts, 29, 32))
  
      [c4]: number;
@@ -127,7 +121,7 @@
  >s2 : Symbol(s2, Decl(main.ts, 29, 12))
  }
  declare class T9 implements T8 {
-@@ -192,15 +191,15 @@
+@@ -192,15 +192,15 @@
  >T8 : Symbol(T8, Decl(main.ts, 29, 32))
  
      [c4]: number;
@@ -146,7 +140,7 @@
  >s2 : Symbol(s2, Decl(main.ts, 29, 12))
  }
  declare class T10 extends T9 {
-@@ -211,7 +210,7 @@
+@@ -211,7 +211,7 @@
  >T11 : Symbol(T11, Decl(main.ts, 42, 1))
  
      [c4]: number;
@@ -155,7 +149,7 @@
  >c4 : Symbol(c4, Decl(main.ts, 27, 12))
  
      [c5]: string;
-@@ -228,13 +227,13 @@
+@@ -228,13 +228,13 @@
  >T12 : Symbol(T12, Decl(main.ts, 47, 2))
  
      a: number;
@@ -172,7 +166,7 @@
  >s2 : Symbol(s2, Decl(main.ts, 29, 12))
  }
  declare class T13 implements T2 {
-@@ -242,13 +241,13 @@
+@@ -242,13 +242,13 @@
  >T2 : Symbol(T2, Decl(main.ts, 0, 28))
  
      a: number;
@@ -189,7 +183,7 @@
  >s2 : Symbol(s2, Decl(main.ts, 29, 12))
  }
  declare class T14 extends T13 {
-@@ -274,13 +273,13 @@
+@@ -274,13 +274,13 @@
  >C : Symbol(C, Decl(main.ts, 65, 2))
  
      static a: number;
@@ -206,7 +200,7 @@
  >s2 : Symbol(s2, Decl(main.ts, 29, 12))
  }
  
-@@ -323,22 +322,22 @@
+@@ -323,22 +323,22 @@
  let t4: N.T4;
  >t4 : Symbol(t4, Decl(main.ts, 81, 3))
  >N : Symbol(N, Decl(main.ts, 1, 30))
@@ -233,7 +227,7 @@
  
  let t8: T8;
  >t8 : Symbol(t8, Decl(main.ts, 85, 3))
-@@ -452,7 +451,7 @@
+@@ -452,7 +452,7 @@
  >o1 : Symbol(o1, Decl(main.ts, 101, 12))
  
      [c4]: 1,
@@ -242,7 +236,7 @@
  >c4 : Symbol(c4, Decl(main.ts, 27, 12))
  
      [c5]: "a",
-@@ -493,23 +492,23 @@
+@@ -493,23 +493,23 @@
  >RI : Symbol(RI, Decl(main.ts, 117, 4))
  
  rI.x
@@ -272,7 +266,7 @@
  }
  
  declare const rC: RC<"a">;
-@@ -517,22 +516,22 @@
+@@ -517,22 +517,22 @@
  >RC : Symbol(RC, Decl(main.ts, 124, 4))
  
  rC.x

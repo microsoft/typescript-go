@@ -32,14 +32,18 @@ class C {
 >loadAsync : Symbol(loadAsync, Decl(2.ts, 4, 13))
 
         this.myModule.then(Zero => {
+>this.myModule.then : Symbol(then, Decl(lib.es5.d.ts, --, --))
 >this.myModule : Symbol(myModule, Decl(2.ts, 1, 9))
 >this : Symbol(C, Decl(2.ts, 0, 25))
 >myModule : Symbol(myModule, Decl(2.ts, 1, 9))
+>then : Symbol(then, Decl(lib.es5.d.ts, --, --))
 >Zero : Symbol(Zero, Decl(2.ts, 5, 27))
 
             console.log(Zero.foo());
 >console : Symbol(console, Decl(2.ts, 0, 11))
+>Zero.foo : Symbol(foo, Decl(0.ts, 2, 1))
 >Zero : Symbol(Zero, Decl(2.ts, 5, 27))
+>foo : Symbol(foo, Decl(0.ts, 2, 1))
 
         }, async err => {
 >err : Symbol(err, Decl(2.ts, 7, 16))
@@ -53,7 +57,9 @@ class C {
 
             console.log(one.backup());
 >console : Symbol(console, Decl(2.ts, 0, 11))
+>one.backup : Symbol(backup, Decl(1.ts, 0, 0))
 >one : Symbol(one, Decl(2.ts, 9, 15))
+>backup : Symbol(backup, Decl(1.ts, 0, 0))
 
         });
     }

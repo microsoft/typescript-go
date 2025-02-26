@@ -1,10 +1,9 @@
 --- old.importCallExpressionNestedCJS2.symbols
 +++ new.importCallExpressionNestedCJS2.symbols
-@@ -9,7 +9,4 @@
- >foo : Symbol(foo, Decl(index.ts, 0, 0))
+@@ -10,6 +10,5 @@
  
      return await import((await import("./foo")).default);
-->(await import("./foo")).default : Symbol(default, Decl(foo.ts, 0, 0))
+ >(await import("./foo")).default : Symbol(default, Decl(foo.ts, 0, 0))
 ->"./foo" : Symbol("foo", Decl(foo.ts, 0, 0))
-->default : Symbol(default, Decl(foo.ts, 0, 0))
+ >default : Symbol(default, Decl(foo.ts, 0, 0))
  }

@@ -1,6 +1,6 @@
 --- old.correctOrderOfPromiseMethod.symbols
 +++ new.correctOrderOfPromiseMethod.symbols
-@@ -5,39 +5,36 @@
+@@ -5,17 +5,17 @@
  >A : Symbol(A, Decl(correctOrderOfPromiseMethod.ts, 0, 0))
  
      id: string
@@ -21,52 +21,43 @@
  }
  
  async function countEverything(): Promise<number> {
- >countEverything : Symbol(countEverything, Decl(correctOrderOfPromiseMethod.ts, 7, 1))
-->Promise : Symbol(Promise, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.promise.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
-+>Promise : Symbol(Promise)
- 
-     const providerA = async (): Promise<A[]> => { return [] }
- >providerA : Symbol(providerA, Decl(correctOrderOfPromiseMethod.ts, 10, 9))
-->Promise : Symbol(Promise, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.promise.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
-+>Promise : Symbol(Promise)
- >A : Symbol(A, Decl(correctOrderOfPromiseMethod.ts, 0, 0))
- 
-     const providerB = async (): Promise<B[]> => { return [] }
- >providerB : Symbol(providerB, Decl(correctOrderOfPromiseMethod.ts, 11, 9))
-->Promise : Symbol(Promise, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.promise.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
-+>Promise : Symbol(Promise)
- >B : Symbol(B, Decl(correctOrderOfPromiseMethod.ts, 2, 1))
- 
+@@ -35,9 +35,9 @@
      const [resultA, resultB] = await Promise.all([
  >resultA : Symbol(resultA, Decl(correctOrderOfPromiseMethod.ts, 13, 11))
  >resultB : Symbol(resultB, Decl(correctOrderOfPromiseMethod.ts, 13, 19))
 ->Promise.all : Symbol(PromiseConstructor.all, Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.promise.d.ts, --, --))
-->Promise : Symbol(Promise, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.promise.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Promise.all : Symbol(all, Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.promise.d.ts, --, --))
+ >Promise : Symbol(Promise, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.promise.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
 ->all : Symbol(PromiseConstructor.all, Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.promise.d.ts, --, --))
++>all : Symbol(all, Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.promise.d.ts, --, --))
  
          providerA(),
  >providerA : Symbol(providerA, Decl(correctOrderOfPromiseMethod.ts, 10, 9))
-@@ -62,12 +59,8 @@
+@@ -62,12 +62,12 @@
  >dataB : Symbol(dataB, Decl(correctOrderOfPromiseMethod.ts, 19, 9))
  
          return dataA.length + dataB.length;
 ->dataA.length : Symbol(Array.length, Decl(lib.es5.d.ts, --, --))
++>dataA.length : Symbol(length, Decl(lib.es5.d.ts, --, --))
  >dataA : Symbol(dataA, Decl(correctOrderOfPromiseMethod.ts, 18, 9))
 ->length : Symbol(Array.length, Decl(lib.es5.d.ts, --, --))
 ->dataB.length : Symbol(Array.length, Decl(lib.es5.d.ts, --, --))
++>length : Symbol(length, Decl(lib.es5.d.ts, --, --))
++>dataB.length : Symbol(length, Decl(lib.es5.d.ts, --, --))
  >dataB : Symbol(dataB, Decl(correctOrderOfPromiseMethod.ts, 19, 9))
 ->length : Symbol(Array.length, Decl(lib.es5.d.ts, --, --))
++>length : Symbol(length, Decl(lib.es5.d.ts, --, --))
      }
      return 0;
  }
-@@ -76,9 +69,6 @@
- 
+@@ -77,8 +77,8 @@
  const expected: Promise<["a", "b", "c"]> = Promise.all(undefined as readonly ["a", "b", "c"]);
  >expected : Symbol(expected, Decl(correctOrderOfPromiseMethod.ts, 28, 5))
-->Promise : Symbol(Promise, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.promise.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
+ >Promise : Symbol(Promise, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.promise.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
 ->Promise.all : Symbol(PromiseConstructor.all, Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.promise.d.ts, --, --))
-->Promise : Symbol(Promise, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.promise.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Promise.all : Symbol(all, Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.promise.d.ts, --, --))
+ >Promise : Symbol(Promise, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.promise.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
 ->all : Symbol(PromiseConstructor.all, Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.promise.d.ts, --, --))
-+>Promise : Symbol(Promise)
++>all : Symbol(all, Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.promise.d.ts, --, --))
  >undefined : Symbol(undefined)
  

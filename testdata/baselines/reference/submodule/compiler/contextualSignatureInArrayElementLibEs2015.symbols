@@ -8,9 +8,9 @@ declare function test(
 
   arg: Record<string, (arg: string) => void> | Array<(arg: number) => void>
 >arg : Symbol(arg, Decl(contextualSignatureInArrayElementLibEs2015.ts, 2, 22))
->Record : Symbol(Record)
+>Record : Symbol(Record, Decl(lib.es5.d.ts, --, --))
 >arg : Symbol(arg, Decl(contextualSignatureInArrayElementLibEs2015.ts, 3, 23))
->Array : Symbol(Array)
+>Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
 >arg : Symbol(arg, Decl(contextualSignatureInArrayElementLibEs2015.ts, 3, 54))
 
 ): void;

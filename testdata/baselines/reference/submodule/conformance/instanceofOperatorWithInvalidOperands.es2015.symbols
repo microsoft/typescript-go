@@ -85,7 +85,7 @@ var o1: {};
 
 var o2: Object;
 >o2 : Symbol(o2, Decl(instanceofOperatorWithInvalidOperands.es2015.ts, 30, 3))
->Object : Symbol(Object)
+>Object : Symbol(Object, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
 
 var o3: C;
 >o3 : Symbol(o3, Decl(instanceofOperatorWithInvalidOperands.es2015.ts, 31, 3))
@@ -146,6 +146,9 @@ var rc1 = '' instanceof {};
 var o4: {[Symbol.hasInstance](value: { x: number }): boolean;};
 >o4 : Symbol(o4, Decl(instanceofOperatorWithInvalidOperands.es2015.ts, 48, 3))
 >[Symbol.hasInstance] : Symbol([Symbol.hasInstance], Decl(instanceofOperatorWithInvalidOperands.es2015.ts, 48, 9))
+>Symbol.hasInstance : Symbol(hasInstance, Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
+>Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
+>hasInstance : Symbol(hasInstance, Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
 >value : Symbol(value, Decl(instanceofOperatorWithInvalidOperands.es2015.ts, 48, 30))
 >x : Symbol(x, Decl(instanceofOperatorWithInvalidOperands.es2015.ts, 48, 38))
 
@@ -162,6 +165,9 @@ var ra10 = o5 instanceof o4;
 var o6: {[Symbol.hasInstance](value: unknown): number;};
 >o6 : Symbol(o6, Decl(instanceofOperatorWithInvalidOperands.es2015.ts, 53, 3))
 >[Symbol.hasInstance] : Symbol([Symbol.hasInstance], Decl(instanceofOperatorWithInvalidOperands.es2015.ts, 53, 9))
+>Symbol.hasInstance : Symbol(hasInstance, Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
+>Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
+>hasInstance : Symbol(hasInstance, Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
 >value : Symbol(value, Decl(instanceofOperatorWithInvalidOperands.es2015.ts, 53, 30))
 
 var rb11 = x instanceof o6;

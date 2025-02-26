@@ -1,14 +1,5 @@
 --- old.unionReductionWithStringMappingAndIdenticalBaseTypeExistsNoCrash.symbols
 +++ new.unionReductionWithStringMappingAndIdenticalBaseTypeExistsNoCrash.symbols
-@@ -19,7 +19,7 @@
-     | string
-     | number
-     | Iterable<ReactNode>
-->Iterable : Symbol(Iterable, Decl(lib.es2015.iterable.d.ts, --, --))
-+>Iterable : Symbol(Iterable)
- >ReactNode : Symbol(ReactNode, Decl(index.d.ts, 3, 25))
- 
-     | boolean
 @@ -48,15 +48,15 @@
  
    > {
@@ -127,21 +118,15 @@
  
  === src/index.tsx ===
  import React from 'react'
-@@ -244,29 +244,22 @@
- >T : Symbol(T, Decl(index.tsx, 2, 28))
- >str : Symbol(str, Decl(index.tsx, 2, 46))
- >T : Symbol(T, Decl(index.tsx, 2, 28))
-->Capitalize : Symbol(Capitalize, Decl(lib.es5.d.ts, --, --))
-+>Capitalize : Symbol(Capitalize)
- >T : Symbol(T, Decl(index.tsx, 2, 28))
- 
- const displayEnum = (value: string) => upperFirst(value.toLowerCase())
+@@ -251,22 +251,17 @@
  >displayEnum : Symbol(displayEnum, Decl(index.tsx, 4, 5))
  >value : Symbol(value, Decl(index.tsx, 4, 21))
  >upperFirst : Symbol(upperFirst, Decl(index.tsx, 0, 25))
 ->value.toLowerCase : Symbol(String.toLowerCase, Decl(lib.es5.d.ts, --, --))
++>value.toLowerCase : Symbol(toLowerCase, Decl(lib.es5.d.ts, --, --))
  >value : Symbol(value, Decl(index.tsx, 4, 21))
 ->toLowerCase : Symbol(String.toLowerCase, Decl(lib.es5.d.ts, --, --))
++>toLowerCase : Symbol(toLowerCase, Decl(lib.es5.d.ts, --, --))
  
  function Comp() {
  >Comp : Symbol(Comp, Decl(index.tsx, 4, 70))

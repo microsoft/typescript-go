@@ -9,6 +9,7 @@ const x = {
 >bar : Symbol(bar, Decl(foo.js, 1, 11))
 
         setTimeout(function() { arguments }, 0);
+>setTimeout : Symbol(setTimeout, Decl(lib.dom.d.ts, --, --))
 >arguments : Symbol(arguments)
     }
 }

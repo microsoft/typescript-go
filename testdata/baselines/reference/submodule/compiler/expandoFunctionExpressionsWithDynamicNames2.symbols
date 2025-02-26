@@ -3,6 +3,7 @@
 === expandoFunctionExpressionsWithDynamicNames2.ts ===
 const mySymbol = Symbol();
 >mySymbol : Symbol(mySymbol, Decl(expandoFunctionExpressionsWithDynamicNames2.ts, 0, 5))
+>Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2019.symbol.d.ts, --, --))
 
 interface Foo {
 >Foo : Symbol(Foo, Decl(expandoFunctionExpressionsWithDynamicNames2.ts, 0, 26))

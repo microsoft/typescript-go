@@ -6,6 +6,7 @@ export namespace ns {
 
     const s = Symbol();
 >s : Symbol(s, Decl(typeNamedUndefined1.ts, 1, 9))
+>Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2019.symbol.d.ts, --, --))
 
     export type undefined = typeof s;
 >undefined : Symbol(undefined, Decl(typeNamedUndefined1.ts, 1, 23))

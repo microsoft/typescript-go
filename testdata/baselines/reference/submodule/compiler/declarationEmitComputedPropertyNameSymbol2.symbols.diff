@@ -1,12 +1,6 @@
 --- old.declarationEmitComputedPropertyNameSymbol2.symbols
 +++ new.declarationEmitComputedPropertyNameSymbol2.symbols
-@@ -6,15 +6,14 @@
- 
-   export const sym = Symbol();
- >sym : Symbol(sym, Decl(type.ts, 1, 14))
-->Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2019.symbol.d.ts, --, --))
- }
- export type Type = { x?: { [Foo.sym]: 0 } };
+@@ -12,9 +12,9 @@
  >Type : Symbol(Type, Decl(type.ts, 2, 1))
  >x : Symbol(x, Decl(type.ts, 3, 20))
  >[Foo.sym] : Symbol([Foo.sym], Decl(type.ts, 3, 26))

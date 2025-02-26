@@ -9,11 +9,14 @@ export class Foo {
 
     getThing: () => Promise.resolve('')
 >getThing : Symbol(getThing, Decl(commentEmitOnParenthesizedAssertionInReturnStatement.ts, 1, 12))
+>Promise.resolve : Symbol(resolve, Decl(lib.es2015.promise.d.ts, --, --), Decl(lib.es2015.promise.d.ts, --, --), Decl(lib.es2015.promise.d.ts, --, --))
+>Promise : Symbol(Promise, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.promise.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2018.promise.d.ts, --, --))
+>resolve : Symbol(resolve, Decl(lib.es2015.promise.d.ts, --, --), Decl(lib.es2015.promise.d.ts, --, --), Decl(lib.es2015.promise.d.ts, --, --))
   }
 
   foo(): Promise<void> {
 >foo : Symbol(foo, Decl(commentEmitOnParenthesizedAssertionInReturnStatement.ts, 3, 3))
->Promise : Symbol(Promise)
+>Promise : Symbol(Promise, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.promise.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2018.promise.d.ts, --, --))
 
     return (
       /* TODO: Avoid using type assertions, please refactor. */ this.client
@@ -24,7 +27,7 @@ export class Foo {
 
         .getThing() as unknown as Promise<void>
 >getThing : Symbol(getThing, Decl(commentEmitOnParenthesizedAssertionInReturnStatement.ts, 1, 12))
->Promise : Symbol(Promise)
+>Promise : Symbol(Promise, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.promise.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2018.promise.d.ts, --, --))
 
     );
   }

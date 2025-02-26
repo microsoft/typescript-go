@@ -1,6 +1,6 @@
 --- old.binopAssignmentShouldHaveType.symbols
 +++ new.binopAssignmentShouldHaveType.symbols
-@@ -12,23 +12,21 @@
+@@ -12,23 +12,23 @@
  >Bug : Symbol(Bug, Decl(binopAssignmentShouldHaveType.ts, 2, 13))
  
    getName():string {
@@ -18,6 +18,7 @@
  
     if ((name= this.getName()).length > 0) {
 ->(name= this.getName()).length : Symbol(String.length, Decl(lib.es5.d.ts, --, --))
++>(name= this.getName()).length : Symbol(length, Decl(lib.es5.d.ts, --, --))
  >name : Symbol(name, Decl(binopAssignmentShouldHaveType.ts, 8, 6))
 ->this.getName : Symbol(Bug.getName, Decl(binopAssignmentShouldHaveType.ts, 3, 19))
 +>this.getName : Symbol(getName, Decl(binopAssignmentShouldHaveType.ts, 3, 19))
@@ -25,6 +26,7 @@
 ->getName : Symbol(Bug.getName, Decl(binopAssignmentShouldHaveType.ts, 3, 19))
 ->length : Symbol(String.length, Decl(lib.es5.d.ts, --, --))
 +>getName : Symbol(getName, Decl(binopAssignmentShouldHaveType.ts, 3, 19))
++>length : Symbol(length, Decl(lib.es5.d.ts, --, --))
  
      console.log(name);
  >console : Symbol(console, Decl(binopAssignmentShouldHaveType.ts, 0, 11))

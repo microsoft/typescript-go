@@ -1,12 +1,6 @@
 --- old.declarationEmitComputedNameCausesImportToBePainted.symbols
 +++ new.declarationEmitComputedNameCausesImportToBePainted.symbols
-@@ -3,13 +3,12 @@
- === context.ts ===
- export const Key = Symbol();
- >Key : Symbol(Key, Decl(context.ts, 0, 12))
-->Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
- 
- export interface Context {
+@@ -9,7 +9,7 @@
  >Context : Symbol(Context, Decl(context.ts, 0, 28))
  
    [Key]: string;

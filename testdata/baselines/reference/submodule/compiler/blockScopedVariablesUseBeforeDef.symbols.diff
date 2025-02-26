@@ -80,19 +80,23 @@
  >x : Symbol(x, Decl(blockScopedVariablesUseBeforeDef.ts, 87, 7))
              }
          }
-@@ -228,15 +228,9 @@
+@@ -228,15 +228,15 @@
  
      ] = ((): [number, number] => {
          (() => console.log(a))();  // should error
 ->console.log : Symbol(Console.log, Decl(lib.dom.d.ts, --, --))
-->console : Symbol(console, Decl(lib.dom.d.ts, --, --))
++>console.log : Symbol(log, Decl(lib.dom.d.ts, --, --))
+ >console : Symbol(console, Decl(lib.dom.d.ts, --, --))
 ->log : Symbol(Console.log, Decl(lib.dom.d.ts, --, --))
++>log : Symbol(log, Decl(lib.dom.d.ts, --, --))
  >a : Symbol(a, Decl(blockScopedVariablesUseBeforeDef.ts, 106, 11))
  
          console.log(a);            // should error
 ->console.log : Symbol(Console.log, Decl(lib.dom.d.ts, --, --))
-->console : Symbol(console, Decl(lib.dom.d.ts, --, --))
++>console.log : Symbol(log, Decl(lib.dom.d.ts, --, --))
+ >console : Symbol(console, Decl(lib.dom.d.ts, --, --))
 ->log : Symbol(Console.log, Decl(lib.dom.d.ts, --, --))
++>log : Symbol(log, Decl(lib.dom.d.ts, --, --))
  >a : Symbol(a, Decl(blockScopedVariablesUseBeforeDef.ts, 106, 11))
  
          const b = () => a;         // should be ok

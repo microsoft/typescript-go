@@ -9,33 +9,39 @@
  }
  
  namespace OpNamespace {
-@@ -17,15 +17,9 @@
+@@ -17,15 +17,15 @@
  
  const uniqueSymbol0 = Symbol.for("");
  >uniqueSymbol0 : Symbol(uniqueSymbol0, Decl(uniqueSymbolsPropertyNames.ts, 8, 5))
 ->Symbol.for : Symbol(SymbolConstructor.for, Decl(lib.es2015.symbol.d.ts, --, --))
-->Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2019.symbol.d.ts, --, --))
++>Symbol.for : Symbol(for, Decl(lib.es2015.symbol.d.ts, --, --))
+ >Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2019.symbol.d.ts, --, --))
 ->for : Symbol(SymbolConstructor.for, Decl(lib.es2015.symbol.d.ts, --, --))
++>for : Symbol(for, Decl(lib.es2015.symbol.d.ts, --, --))
  
  const uniqueSymbol1 = Symbol.for("");
  >uniqueSymbol1 : Symbol(uniqueSymbol1, Decl(uniqueSymbolsPropertyNames.ts, 9, 5))
 ->Symbol.for : Symbol(SymbolConstructor.for, Decl(lib.es2015.symbol.d.ts, --, --))
-->Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2019.symbol.d.ts, --, --))
++>Symbol.for : Symbol(for, Decl(lib.es2015.symbol.d.ts, --, --))
+ >Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2019.symbol.d.ts, --, --))
 ->for : Symbol(SymbolConstructor.for, Decl(lib.es2015.symbol.d.ts, --, --))
++>for : Symbol(for, Decl(lib.es2015.symbol.d.ts, --, --))
  
  
  function getUniqueSymbol0(): typeof uniqueSymbol0 {
-@@ -50,9 +44,6 @@
+@@ -50,9 +50,9 @@
  
    equal: Symbol.for("equal"),
  >equal : Symbol(equal, Decl(uniqueSymbolsPropertyNames.ts, 20, 21))
 ->Symbol.for : Symbol(SymbolConstructor.for, Decl(lib.es2015.symbol.d.ts, --, --))
-->Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2019.symbol.d.ts, --, --))
++>Symbol.for : Symbol(for, Decl(lib.es2015.symbol.d.ts, --, --))
+ >Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2019.symbol.d.ts, --, --))
 ->for : Symbol(SymbolConstructor.for, Decl(lib.es2015.symbol.d.ts, --, --))
++>for : Symbol(for, Decl(lib.es2015.symbol.d.ts, --, --))
  
  } as OpTypes;
  >OpTypes : Symbol(OpTypes, Decl(uniqueSymbolsPropertyNames.ts, 0, 0))
-@@ -77,15 +68,15 @@
+@@ -77,15 +77,15 @@
  
    [Op.equal]: "first",
  >[Op.equal] : Symbol([Op.equal], Decl(uniqueSymbolsPropertyNames.ts, 30, 12), Decl(uniqueSymbolsPropertyNames.ts, 31, 22))
@@ -55,7 +61,7 @@
  
  };
  
-@@ -94,15 +85,15 @@
+@@ -94,15 +94,15 @@
  
    [OpNamespace.equal]: "first",
  >[OpNamespace.equal] : Symbol([OpNamespace.equal], Decl(uniqueSymbolsPropertyNames.ts, 35, 12), Decl(uniqueSymbolsPropertyNames.ts, 36, 31))
@@ -75,31 +81,31 @@
  
  };
  
-@@ -131,19 +122,19 @@
+@@ -131,19 +131,19 @@
  >Cls1 : Symbol(Cls1, Decl(uniqueSymbolsPropertyNames.ts, 45, 2))
  
    [uniqueSymbol0] = "first";
 ->[uniqueSymbol0] : Symbol(Cls1[uniqueSymbol0], Decl(uniqueSymbolsPropertyNames.ts, 47, 12), Decl(uniqueSymbolsPropertyNames.ts, 48, 28))
-+>[uniqueSymbol0] : Symbol([uniqueSymbol0], Decl(uniqueSymbolsPropertyNames.ts, 47, 12))
++>[uniqueSymbol0] : Symbol([uniqueSymbol0], Decl(uniqueSymbolsPropertyNames.ts, 47, 12), Decl(uniqueSymbolsPropertyNames.ts, 48, 28))
  >uniqueSymbol0 : Symbol(uniqueSymbol0, Decl(uniqueSymbolsPropertyNames.ts, 8, 5))
  
    [uniqueSymbol0] = "last";
 ->[uniqueSymbol0] : Symbol(Cls1[uniqueSymbol0], Decl(uniqueSymbolsPropertyNames.ts, 47, 12), Decl(uniqueSymbolsPropertyNames.ts, 48, 28))
-+>[uniqueSymbol0] : Symbol([uniqueSymbol0], Decl(uniqueSymbolsPropertyNames.ts, 48, 28))
++>[uniqueSymbol0] : Symbol([uniqueSymbol0], Decl(uniqueSymbolsPropertyNames.ts, 47, 12), Decl(uniqueSymbolsPropertyNames.ts, 48, 28))
  >uniqueSymbol0 : Symbol(uniqueSymbol0, Decl(uniqueSymbolsPropertyNames.ts, 8, 5))
  
    [uniqueSymbol1] = "first";
 ->[uniqueSymbol1] : Symbol(Cls1[uniqueSymbol1], Decl(uniqueSymbolsPropertyNames.ts, 49, 27), Decl(uniqueSymbolsPropertyNames.ts, 50, 28))
-+>[uniqueSymbol1] : Symbol([uniqueSymbol1], Decl(uniqueSymbolsPropertyNames.ts, 49, 27))
++>[uniqueSymbol1] : Symbol([uniqueSymbol1], Decl(uniqueSymbolsPropertyNames.ts, 49, 27), Decl(uniqueSymbolsPropertyNames.ts, 50, 28))
  >uniqueSymbol1 : Symbol(uniqueSymbol1, Decl(uniqueSymbolsPropertyNames.ts, 9, 5))
  
    [uniqueSymbol1] = "last";
 ->[uniqueSymbol1] : Symbol(Cls1[uniqueSymbol1], Decl(uniqueSymbolsPropertyNames.ts, 49, 27), Decl(uniqueSymbolsPropertyNames.ts, 50, 28))
-+>[uniqueSymbol1] : Symbol([uniqueSymbol1], Decl(uniqueSymbolsPropertyNames.ts, 50, 28))
++>[uniqueSymbol1] : Symbol([uniqueSymbol1], Decl(uniqueSymbolsPropertyNames.ts, 49, 27), Decl(uniqueSymbolsPropertyNames.ts, 50, 28))
  >uniqueSymbol1 : Symbol(uniqueSymbol1, Decl(uniqueSymbolsPropertyNames.ts, 9, 5))
  }
  
-@@ -151,34 +142,34 @@
+@@ -151,34 +151,34 @@
  >Cls2 : Symbol(Cls2, Decl(uniqueSymbolsPropertyNames.ts, 52, 1))
  
    [OpNamespace.equal] = "first";

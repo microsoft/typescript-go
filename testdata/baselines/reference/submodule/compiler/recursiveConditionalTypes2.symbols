@@ -32,12 +32,12 @@ interface ClassSpec {
 
   publicExtends?: Record<string, ClassSpec>;
 >publicExtends : Symbol(publicExtends, Decl(recursiveConditionalTypes2.ts, 10, 19))
->Record : Symbol(Record)
+>Record : Symbol(Record, Decl(lib.es5.d.ts, --, --))
 >ClassSpec : Symbol(ClassSpec, Decl(recursiveConditionalTypes2.ts, 6, 10))
 
   privateExtends?: Record<string, ClassSpec>;
 >privateExtends : Symbol(privateExtends, Decl(recursiveConditionalTypes2.ts, 11, 44))
->Record : Symbol(Record)
+>Record : Symbol(Record, Decl(lib.es5.d.ts, --, --))
 >ClassSpec : Symbol(ClassSpec, Decl(recursiveConditionalTypes2.ts, 6, 10))
 }
 
@@ -45,7 +45,7 @@ type MaybeMergePrivateSuperSpec<T> = T extends Record<string, ClassSpec>
 >MaybeMergePrivateSuperSpec : Symbol(MaybeMergePrivateSuperSpec, Decl(recursiveConditionalTypes2.ts, 13, 1))
 >T : Symbol(T, Decl(recursiveConditionalTypes2.ts, 15, 32))
 >T : Symbol(T, Decl(recursiveConditionalTypes2.ts, 15, 32))
->Record : Symbol(Record)
+>Record : Symbol(Record, Decl(lib.es5.d.ts, --, --))
 >ClassSpec : Symbol(ClassSpec, Decl(recursiveConditionalTypes2.ts, 6, 10))
 
   ? MergePrivateSuperSpec<T>
@@ -92,7 +92,7 @@ type MergePrivateSpecs<T extends ClassSpec, U extends ClassSpec> = {
 type MergePrivateSuperSpec<T extends Record<string, ClassSpec>> =
 >MergePrivateSuperSpec : Symbol(MergePrivateSuperSpec, Decl(recursiveConditionalTypes2.ts, 26, 2))
 >T : Symbol(T, Decl(recursiveConditionalTypes2.ts, 28, 27))
->Record : Symbol(Record)
+>Record : Symbol(Record, Decl(lib.es5.d.ts, --, --))
 >ClassSpec : Symbol(ClassSpec, Decl(recursiveConditionalTypes2.ts, 6, 10))
 
   UnionToIntersection<
@@ -169,7 +169,7 @@ type DefaultsDeep<T, U extends T> = {
 >DefaultsDeep : Symbol(DefaultsDeep, Decl(recursiveConditionalTypes2.ts, 44, 2))
 >T : Symbol(T, Decl(recursiveConditionalTypes2.ts, 46, 18))
 >P : Symbol(P, Decl(recursiveConditionalTypes2.ts, 47, 3))
->NonNullable : Symbol(NonNullable)
+>NonNullable : Symbol(NonNullable, Decl(lib.es5.d.ts, --, --))
 >U : Symbol(U, Decl(recursiveConditionalTypes2.ts, 46, 20))
 >P : Symbol(P, Decl(recursiveConditionalTypes2.ts, 47, 3))
 

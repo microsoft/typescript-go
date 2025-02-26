@@ -4,6 +4,7 @@
 interface MiddlewareArray<T> extends Array<T> {}
 >MiddlewareArray : Symbol(MiddlewareArray, Decl(index.tsx, 0, 0))
 >T : Symbol(T, Decl(index.tsx, 0, 26))
+>Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --) ... and 2 more)
 >T : Symbol(T, Decl(index.tsx, 0, 26))
 
 declare function configureStore(options: { middleware: MiddlewareArray<any> }): void;
@@ -62,6 +63,7 @@ declare namespace React {
 
   interface ReactNodeArray extends Array<ReactNode> {}
 >ReactNodeArray : Symbol(ReactNodeArray, Decl(index.tsx, 16, 43))
+>Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --) ... and 2 more)
 >ReactNode : Symbol(ReactNode, Decl(index.tsx, 12, 3))
 }
 declare namespace JSX {
@@ -76,8 +78,8 @@ declare namespace JSX {
 >DetailedHTMLProps : Symbol(DetailedHTMLProps, Decl(index.tsx, 8, 25))
 >React : Symbol(React, Decl(index.tsx, 6, 3), Decl(index.tsx, 25, 11))
 >HTMLAttributes : Symbol(HTMLAttributes, Decl(index.tsx, 9, 61))
->HTMLUListElement : Symbol(HTMLUListElement)
->HTMLUListElement : Symbol(HTMLUListElement)
+>HTMLUListElement : Symbol(HTMLUListElement, Decl(lib.dom.d.ts, --, --), Decl(lib.dom.d.ts, --, --))
+>HTMLUListElement : Symbol(HTMLUListElement, Decl(lib.dom.d.ts, --, --), Decl(lib.dom.d.ts, --, --))
 
     li: React.DetailedHTMLProps<React.HTMLAttributes<HTMLLIElement>, HTMLLIElement>;
 >li : Symbol(li, Decl(index.tsx, 21, 90))
@@ -85,8 +87,8 @@ declare namespace JSX {
 >DetailedHTMLProps : Symbol(DetailedHTMLProps, Decl(index.tsx, 8, 25))
 >React : Symbol(React, Decl(index.tsx, 6, 3), Decl(index.tsx, 25, 11))
 >HTMLAttributes : Symbol(HTMLAttributes, Decl(index.tsx, 9, 61))
->HTMLLIElement : Symbol(HTMLLIElement)
->HTMLLIElement : Symbol(HTMLLIElement)
+>HTMLLIElement : Symbol(HTMLLIElement, Decl(lib.dom.d.ts, --, --), Decl(lib.dom.d.ts, --, --))
+>HTMLLIElement : Symbol(HTMLLIElement, Decl(lib.dom.d.ts, --, --), Decl(lib.dom.d.ts, --, --))
   }
 }
 declare var React: any;
@@ -102,7 +104,9 @@ const Component = () => {
     <ul>
       <li>All</li>
       {categories.map((category) => (
+>categories.map : Symbol(map, Decl(lib.es5.d.ts, --, --))
 >categories : Symbol(categories, Decl(index.tsx, 28, 7))
+>map : Symbol(map, Decl(lib.es5.d.ts, --, --))
 >category : Symbol(category, Decl(index.tsx, 33, 23))
 
         <li key={category}>{category}</li> // Error about 'key' only

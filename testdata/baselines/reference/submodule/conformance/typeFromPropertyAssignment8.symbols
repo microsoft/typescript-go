@@ -27,6 +27,9 @@ my.app.Application()
 === b.js ===
 var min = window.min || {};
 >min : Symbol(min, Decl(b.js, 0, 3))
+>window.min : Symbol(min, Decl(b.js, 0, 3))
+>window : Symbol(window, Decl(lib.dom.d.ts, --, --))
+>min : Symbol(min, Decl(b.js, 0, 3))
 
 min.app = min.app || {};
 >min : Symbol(min, Decl(b.js, 0, 3))

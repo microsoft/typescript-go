@@ -4,12 +4,15 @@
 // declarations with call initializer
 const constCall = Symbol();
 >constCall : Symbol(constCall, Decl(uniqueSymbols.ts, 1, 5))
+>Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2019.symbol.d.ts, --, --))
 
 let letCall = Symbol();
 >letCall : Symbol(letCall, Decl(uniqueSymbols.ts, 2, 3))
+>Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2019.symbol.d.ts, --, --))
 
 var varCall = Symbol();
 >varCall : Symbol(varCall, Decl(uniqueSymbols.ts, 3, 3))
+>Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2019.symbol.d.ts, --, --))
 
 // ambient declaration with type
 declare const constType: unique symbol;
@@ -18,6 +21,7 @@ declare const constType: unique symbol;
 // declaration with type and call initializer
 const constTypeAndCall: unique symbol = Symbol();
 >constTypeAndCall : Symbol(constTypeAndCall, Decl(uniqueSymbols.ts, 9, 5))
+>Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2019.symbol.d.ts, --, --))
 
 // declaration from initializer
 const constInitToConstCall = constCall;
@@ -119,7 +123,7 @@ function* genFuncYieldVarCall() { yield varCall; }
 // generator function yield with return type query
 function* genFuncYieldConstCallWithTypeQuery(): IterableIterator<typeof constCall> { yield constCall; }
 >genFuncYieldConstCallWithTypeQuery : Symbol(genFuncYieldConstCallWithTypeQuery, Decl(uniqueSymbols.ts, 44, 50))
->IterableIterator : Symbol(IterableIterator)
+>IterableIterator : Symbol(IterableIterator, Decl(lib.es2015.iterable.d.ts, --, --))
 >constCall : Symbol(constCall, Decl(uniqueSymbols.ts, 1, 5))
 >constCall : Symbol(constCall, Decl(uniqueSymbols.ts, 1, 5))
 
@@ -155,21 +159,26 @@ class C {
 
     static readonly readonlyStaticCall = Symbol();
 >readonlyStaticCall : Symbol(readonlyStaticCall, Decl(uniqueSymbols.ts, 60, 9))
+>Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2019.symbol.d.ts, --, --))
 
     static readonly readonlyStaticType: unique symbol;
 >readonlyStaticType : Symbol(readonlyStaticType, Decl(uniqueSymbols.ts, 61, 50))
 
     static readonly readonlyStaticTypeAndCall: unique symbol = Symbol();
 >readonlyStaticTypeAndCall : Symbol(readonlyStaticTypeAndCall, Decl(uniqueSymbols.ts, 62, 54))
+>Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2019.symbol.d.ts, --, --))
 
     static readwriteStaticCall = Symbol();
 >readwriteStaticCall : Symbol(readwriteStaticCall, Decl(uniqueSymbols.ts, 63, 72))
+>Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2019.symbol.d.ts, --, --))
 
     readonly readonlyCall = Symbol();
 >readonlyCall : Symbol(readonlyCall, Decl(uniqueSymbols.ts, 64, 42))
+>Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2019.symbol.d.ts, --, --))
 
     readwriteCall = Symbol();
 >readwriteCall : Symbol(readwriteCall, Decl(uniqueSymbols.ts, 66, 37))
+>Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2019.symbol.d.ts, --, --))
 }
 declare const c: C;
 >c : Symbol(c, Decl(uniqueSymbols.ts, 69, 13))
@@ -385,6 +394,9 @@ const constInitToLReadonlyNestedTypeWithIndexedAccess: L["nested"]["readonlyNest
 // type argument inference
 const promiseForConstCall = Promise.resolve(constCall);
 >promiseForConstCall : Symbol(promiseForConstCall, Decl(uniqueSymbols.ts, 115, 5))
+>Promise.resolve : Symbol(resolve, Decl(lib.es2015.promise.d.ts, --, --), Decl(lib.es2015.promise.d.ts, --, --), Decl(lib.es2015.promise.d.ts, --, --))
+>Promise : Symbol(Promise, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.promise.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2018.promise.d.ts, --, --))
+>resolve : Symbol(resolve, Decl(lib.es2015.promise.d.ts, --, --), Decl(lib.es2015.promise.d.ts, --, --), Decl(lib.es2015.promise.d.ts, --, --))
 >constCall : Symbol(constCall, Decl(uniqueSymbols.ts, 1, 5))
 
 const arrayOfConstCall = [constCall];
@@ -659,14 +671,23 @@ N["s"] || "";
 
 // conditionals
 Math.random() * 2 ? s : "a";
+>Math.random : Symbol(random, Decl(lib.es5.d.ts, --, --))
+>Math : Symbol(Math, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
+>random : Symbol(random, Decl(lib.es5.d.ts, --, --))
 >s : Symbol(s, Decl(uniqueSymbols.ts, 119, 13))
 
 Math.random() * 2 ? N.s : "a";
+>Math.random : Symbol(random, Decl(lib.es5.d.ts, --, --))
+>Math : Symbol(Math, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
+>random : Symbol(random, Decl(lib.es5.d.ts, --, --))
 >N.s : Symbol(s, Decl(uniqueSymbols.ts, 120, 27))
 >N : Symbol(N, Decl(uniqueSymbols.ts, 119, 31))
 >s : Symbol(s, Decl(uniqueSymbols.ts, 120, 27))
 
 Math.random() * 2 ? N["s"] : "a";
+>Math.random : Symbol(random, Decl(lib.es5.d.ts, --, --))
+>Math : Symbol(Math, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
+>random : Symbol(random, Decl(lib.es5.d.ts, --, --))
 >N : Symbol(N, Decl(uniqueSymbols.ts, 119, 31))
 >"s" : Symbol(s, Decl(uniqueSymbols.ts, 120, 27))
 
@@ -719,17 +740,17 @@ interface Context {
 
     method2(): Promise<typeof s>;
 >method2 : Symbol(method2, Decl(uniqueSymbols.ts, 218, 24))
->Promise : Symbol(Promise)
+>Promise : Symbol(Promise, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.promise.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2018.promise.d.ts, --, --))
 >s : Symbol(s, Decl(uniqueSymbols.ts, 119, 13))
 
     method3(): AsyncIterableIterator<typeof s>;
 >method3 : Symbol(method3, Decl(uniqueSymbols.ts, 219, 33))
->AsyncIterableIterator : Symbol(AsyncIterableIterator)
+>AsyncIterableIterator : Symbol(AsyncIterableIterator, Decl(lib.es2018.asynciterable.d.ts, --, --))
 >s : Symbol(s, Decl(uniqueSymbols.ts, 119, 13))
 
     method4(): IterableIterator<typeof s>;
 >method4 : Symbol(method4, Decl(uniqueSymbols.ts, 220, 47))
->IterableIterator : Symbol(IterableIterator)
+>IterableIterator : Symbol(IterableIterator, Decl(lib.es2015.iterable.d.ts, --, --))
 >s : Symbol(s, Decl(uniqueSymbols.ts, 119, 13))
 
     method5(p?: typeof s): typeof s;

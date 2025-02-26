@@ -1,9 +1,0 @@
---- old.verifyDefaultLib_webworker.symbols
-+++ new.verifyDefaultLib_webworker.symbols
-@@ -3,5 +3,5 @@
- === verifyDefaultLib_webworker.ts ===
- var x: Worker;
- >x : Symbol(x, Decl(verifyDefaultLib_webworker.ts, 0, 3))
-->Worker : Symbol(Worker, Decl(lib.webworker.d.ts, --, --), Decl(lib.webworker.d.ts, --, --))
-+>Worker : Symbol(Worker)
- 

@@ -1,14 +1,7 @@
 --- old.jsDeclarationsComputedNames.symbols
 +++ new.jsDeclarationsComputedNames.symbols
-@@ -3,17 +3,11 @@
- === index.js ===
- const TopLevelSym = Symbol();
- >TopLevelSym : Symbol(TopLevelSym, Decl(index.js, 0, 5))
-->Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
- 
- const InnerSym = Symbol();
- >InnerSym : Symbol(InnerSym, Decl(index.js, 1, 5))
-->Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
+@@ -10,10 +10,6 @@
+ >Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
  
  module.exports = {
 ->module.exports : Symbol(module.exports, Decl(index.js, 0, 0))
@@ -18,17 +11,7 @@
      [TopLevelSym](x = 12) {
  >[TopLevelSym] : Symbol([TopLevelSym], Decl(index.js, 2, 18))
  >TopLevelSym : Symbol(TopLevelSym, Decl(index.js, 0, 5))
-@@ -40,21 +34,19 @@
- === index2.js ===
- const TopLevelSym = Symbol();
- >TopLevelSym : Symbol(TopLevelSym, Decl(index2.js, 0, 5))
-->Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
- 
- const InnerSym = Symbol();
- >InnerSym : Symbol(InnerSym, Decl(index2.js, 1, 5))
-->Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
- 
- export class MyClass {
+@@ -50,11 +46,11 @@
  >MyClass : Symbol(MyClass, Decl(index2.js, 1, 26))
  
      static [TopLevelSym] = 12;

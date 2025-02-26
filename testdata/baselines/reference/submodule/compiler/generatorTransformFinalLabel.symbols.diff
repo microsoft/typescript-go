@@ -1,9 +1,0 @@
---- old.generatorTransformFinalLabel.symbols
-+++ new.generatorTransformFinalLabel.symbols
-@@ -12,6 +12,5 @@
-     }
-     else {
-         throw Error('test')
-->Error : Symbol(Error, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
-     }
- }

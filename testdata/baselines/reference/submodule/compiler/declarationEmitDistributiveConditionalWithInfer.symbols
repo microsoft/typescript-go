@@ -12,7 +12,7 @@ export const fun = (
 >Collection : Symbol(Collection, Decl(declarationEmitDistributiveConditionalWithInfer.ts, 2, 13))
 
         => FlatArray<Collection[Field], 0>[]) => { };
->FlatArray : Symbol(FlatArray)
+>FlatArray : Symbol(FlatArray, Decl(lib.es2019.array.d.ts, --, --))
 >Collection : Symbol(Collection, Decl(declarationEmitDistributiveConditionalWithInfer.ts, 2, 13))
 >Field : Symbol(Field, Decl(declarationEmitDistributiveConditionalWithInfer.ts, 2, 24))
 

@@ -1,14 +1,6 @@
 --- old.declarationEmitPrivateSymbolCausesVarDeclarationEmit2.symbols
 +++ new.declarationEmitPrivateSymbolCausesVarDeclarationEmit2.symbols
-@@ -3,7 +3,6 @@
- === a.ts ===
- export const x = Symbol();
- >x : Symbol(x, Decl(a.ts, 0, 12))
-->Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
- 
- === b.ts ===
- import { x } from "./a";
-@@ -13,7 +12,7 @@
+@@ -13,7 +13,7 @@
  >C : Symbol(C, Decl(b.ts, 0, 24))
  
    private [x]: number = 1;
@@ -17,7 +9,7 @@
  >x : Symbol(x, Decl(b.ts, 0, 8))
  }
  
-@@ -29,7 +28,7 @@
+@@ -29,7 +29,7 @@
  >C : Symbol(C, Decl(c.ts, 1, 8))
  
    private [x]: 12 = 12;

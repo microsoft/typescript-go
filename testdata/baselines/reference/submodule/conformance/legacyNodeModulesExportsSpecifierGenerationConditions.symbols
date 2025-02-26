@@ -3,6 +3,8 @@
 === index.ts ===
 export const a = async () => (await import("inner")).x();
 >a : Symbol(a, Decl(index.ts, 0, 12))
+>(await import("inner")).x : Symbol(x, Decl(index.d.ts, 0, 8))
+>x : Symbol(x, Decl(index.d.ts, 0, 8))
 
 === node_modules/inner/index.d.ts ===
 export { x } from "./other.js";

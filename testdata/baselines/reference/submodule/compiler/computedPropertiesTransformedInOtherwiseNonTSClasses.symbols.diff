@@ -1,12 +1,6 @@
 --- old.computedPropertiesTransformedInOtherwiseNonTSClasses.symbols
 +++ new.computedPropertiesTransformedInOtherwiseNonTSClasses.symbols
-@@ -6,13 +6,12 @@
- 
-     export const x = Symbol();
- >x : Symbol(x, Decl(computedPropertiesTransformedInOtherwiseNonTSClasses.ts, 1, 16))
-->Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
- 
-     class NotTransformed { 
+@@ -12,7 +12,7 @@
  >NotTransformed : Symbol(NotTransformed, Decl(computedPropertiesTransformedInOtherwiseNonTSClasses.ts, 1, 30))
  
          [NS.x]: number;

@@ -9,6 +9,9 @@ interface AConstructor {
 
     [Symbol.hasInstance](value: unknown): value is A;
 >[Symbol.hasInstance] : Symbol([Symbol.hasInstance], Decl(typeGuardsWithInstanceOfBySymbolHasInstance.ts, 1, 14))
+>Symbol.hasInstance : Symbol(hasInstance, Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
+>Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2019.symbol.d.ts, --, --))
+>hasInstance : Symbol(hasInstance, Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
 >value : Symbol(value, Decl(typeGuardsWithInstanceOfBySymbolHasInstance.ts, 2, 25))
 >value : Symbol(value, Decl(typeGuardsWithInstanceOfBySymbolHasInstance.ts, 2, 25))
 >A : Symbol(A, Decl(typeGuardsWithInstanceOfBySymbolHasInstance.ts, 3, 1), Decl(typeGuardsWithInstanceOfBySymbolHasInstance.ts, 7, 11))
@@ -67,6 +70,9 @@ interface BConstructor {
 
     [Symbol.hasInstance](value: unknown): value is B<any>;
 >[Symbol.hasInstance] : Symbol([Symbol.hasInstance], Decl(typeGuardsWithInstanceOfBySymbolHasInstance.ts, 23, 20))
+>Symbol.hasInstance : Symbol(hasInstance, Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
+>Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2019.symbol.d.ts, --, --))
+>hasInstance : Symbol(hasInstance, Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
 >value : Symbol(value, Decl(typeGuardsWithInstanceOfBySymbolHasInstance.ts, 24, 25))
 >value : Symbol(value, Decl(typeGuardsWithInstanceOfBySymbolHasInstance.ts, 24, 25))
 >B : Symbol(B, Decl(typeGuardsWithInstanceOfBySymbolHasInstance.ts, 25, 1), Decl(typeGuardsWithInstanceOfBySymbolHasInstance.ts, 29, 11))
@@ -140,6 +146,9 @@ interface CConstructor {
 
     [Symbol.hasInstance](value: unknown): value is C1 | C2;
 >[Symbol.hasInstance] : Symbol([Symbol.hasInstance], Decl(typeGuardsWithInstanceOfBySymbolHasInstance.ts, 48, 28))
+>Symbol.hasInstance : Symbol(hasInstance, Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
+>Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2019.symbol.d.ts, --, --))
+>hasInstance : Symbol(hasInstance, Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
 >value : Symbol(value, Decl(typeGuardsWithInstanceOfBySymbolHasInstance.ts, 49, 25))
 >value : Symbol(value, Decl(typeGuardsWithInstanceOfBySymbolHasInstance.ts, 49, 25))
 >C1 : Symbol(C1, Decl(typeGuardsWithInstanceOfBySymbolHasInstance.ts, 50, 1))
@@ -235,6 +244,9 @@ declare var D: {
 
     [Symbol.hasInstance](value: unknown): value is D;
 >[Symbol.hasInstance] : Symbol([Symbol.hasInstance], Decl(typeGuardsWithInstanceOfBySymbolHasInstance.ts, 83, 14))
+>Symbol.hasInstance : Symbol(hasInstance, Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
+>Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2019.symbol.d.ts, --, --))
+>hasInstance : Symbol(hasInstance, Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
 >value : Symbol(value, Decl(typeGuardsWithInstanceOfBySymbolHasInstance.ts, 84, 25))
 >value : Symbol(value, Decl(typeGuardsWithInstanceOfBySymbolHasInstance.ts, 84, 25))
 >D : Symbol(D, Decl(typeGuardsWithInstanceOfBySymbolHasInstance.ts, 76, 1), Decl(typeGuardsWithInstanceOfBySymbolHasInstance.ts, 82, 11))
@@ -284,6 +296,9 @@ interface EConstructor {
 
     [Symbol.hasInstance](value: unknown): value is E1 | E2;
 >[Symbol.hasInstance] : Symbol([Symbol.hasInstance], Decl(typeGuardsWithInstanceOfBySymbolHasInstance.ts, 101, 20))
+>Symbol.hasInstance : Symbol(hasInstance, Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
+>Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2019.symbol.d.ts, --, --))
+>hasInstance : Symbol(hasInstance, Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
 >value : Symbol(value, Decl(typeGuardsWithInstanceOfBySymbolHasInstance.ts, 102, 25))
 >value : Symbol(value, Decl(typeGuardsWithInstanceOfBySymbolHasInstance.ts, 102, 25))
 >E1 : Symbol(E1, Decl(typeGuardsWithInstanceOfBySymbolHasInstance.ts, 103, 1))
@@ -360,6 +375,9 @@ interface FConstructor {
     new (): any;
     [Symbol.hasInstance](value: unknown): value is any;
 >[Symbol.hasInstance] : Symbol([Symbol.hasInstance], Decl(typeGuardsWithInstanceOfBySymbolHasInstance.ts, 130, 16))
+>Symbol.hasInstance : Symbol(hasInstance, Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
+>Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2019.symbol.d.ts, --, --))
+>hasInstance : Symbol(hasInstance, Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
 >value : Symbol(value, Decl(typeGuardsWithInstanceOfBySymbolHasInstance.ts, 131, 25))
 >value : Symbol(value, Decl(typeGuardsWithInstanceOfBySymbolHasInstance.ts, 131, 25))
 }
@@ -418,6 +436,9 @@ interface GConstructor {
 
     [Symbol.hasInstance](value: unknown): value is G1; // overrides priority
 >[Symbol.hasInstance] : Symbol([Symbol.hasInstance], Decl(typeGuardsWithInstanceOfBySymbolHasInstance.ts, 154, 15))
+>Symbol.hasInstance : Symbol(hasInstance, Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
+>Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2019.symbol.d.ts, --, --))
+>hasInstance : Symbol(hasInstance, Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
 >value : Symbol(value, Decl(typeGuardsWithInstanceOfBySymbolHasInstance.ts, 155, 25))
 >value : Symbol(value, Decl(typeGuardsWithInstanceOfBySymbolHasInstance.ts, 155, 25))
 >G1 : Symbol(G1, Decl(typeGuardsWithInstanceOfBySymbolHasInstance.ts, 156, 1))
@@ -484,6 +505,9 @@ interface HConstructor {
 
     [Symbol.hasInstance](value: unknown): value is H; // overrides priority
 >[Symbol.hasInstance] : Symbol([Symbol.hasInstance], Decl(typeGuardsWithInstanceOfBySymbolHasInstance.ts, 180, 14))
+>Symbol.hasInstance : Symbol(hasInstance, Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
+>Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2019.symbol.d.ts, --, --))
+>hasInstance : Symbol(hasInstance, Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
 >value : Symbol(value, Decl(typeGuardsWithInstanceOfBySymbolHasInstance.ts, 181, 25))
 >value : Symbol(value, Decl(typeGuardsWithInstanceOfBySymbolHasInstance.ts, 181, 25))
 >H : Symbol(H, Decl(typeGuardsWithInstanceOfBySymbolHasInstance.ts, 182, 1), Decl(typeGuardsWithInstanceOfBySymbolHasInstance.ts, 186, 11))
@@ -534,6 +558,7 @@ var obj17: any;
 
 if (obj17 instanceof Object) { // can't narrow type from 'any' to 'Object'
 >obj17 : Symbol(obj17, Decl(typeGuardsWithInstanceOfBySymbolHasInstance.ts, 200, 3))
+>Object : Symbol(Object, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
 
     obj17.foo1;
 >obj17 : Symbol(obj17, Decl(typeGuardsWithInstanceOfBySymbolHasInstance.ts, 200, 3))
@@ -547,6 +572,7 @@ var obj18: any;
 
 if (obj18 instanceof Function) { // can't narrow type from 'any' to 'Function'
 >obj18 : Symbol(obj18, Decl(typeGuardsWithInstanceOfBySymbolHasInstance.ts, 206, 3))
+>Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.esnext.decorators.d.ts, --, --))
 
     obj18.foo1;
 >obj18 : Symbol(obj18, Decl(typeGuardsWithInstanceOfBySymbolHasInstance.ts, 206, 3))

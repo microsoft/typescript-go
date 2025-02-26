@@ -1,19 +1,15 @@
 --- old.discriminateWithOptionalProperty3(exactoptionalpropertytypes=false).symbols
 +++ new.discriminateWithOptionalProperty3(exactoptionalpropertytypes=false).symbols
-@@ -10,18 +10,17 @@
- 
- declare class GraphQLError extends Error {
- >GraphQLError : Symbol(GraphQLError, Decl(discriminateWithOptionalProperty3.ts, 2, 37))
-->Error : Symbol(Error, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2022.error.d.ts, --, --))
+@@ -13,7 +13,7 @@
+ >Error : Symbol(Error, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2022.error.d.ts, --, --))
  
    originalError: Error;
 ->originalError : Symbol(GraphQLError.originalError, Decl(discriminateWithOptionalProperty3.ts, 4, 42))
-->Error : Symbol(Error, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2022.error.d.ts, --, --))
 +>originalError : Symbol(originalError, Decl(discriminateWithOptionalProperty3.ts, 4, 42))
-+>Error : Symbol(Error)
+ >Error : Symbol(Error, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2022.error.d.ts, --, --))
  }
  
- interface ExecutionArgs {
+@@ -21,7 +21,7 @@
  >ExecutionArgs : Symbol(ExecutionArgs, Decl(discriminateWithOptionalProperty3.ts, 6, 1))
  
    variableValues?: Maybe<{ readonly [variable: string]: unknown }>;
@@ -22,7 +18,7 @@
  >Maybe : Symbol(Maybe, Decl(discriminateWithOptionalProperty3.ts, 0, 0))
  >variable : Symbol(variable, Decl(discriminateWithOptionalProperty3.ts, 9, 37))
  }
-@@ -30,7 +29,7 @@
+@@ -30,7 +30,7 @@
  >ExecutionContext : Symbol(ExecutionContext, Decl(discriminateWithOptionalProperty3.ts, 10, 1))
  
    variableValues: { [variable: string]: unknown };
@@ -31,22 +27,7 @@
  >variable : Symbol(variable, Decl(discriminateWithOptionalProperty3.ts, 13, 21))
  }
  
-@@ -39,7 +38,7 @@
- 
-   | { errors: ReadonlyArray<GraphQLError>; coerced?: never }
- >errors : Symbol(errors, Decl(discriminateWithOptionalProperty3.ts, 17, 5))
-->ReadonlyArray : Symbol(ReadonlyArray, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2016.array.include.d.ts, --, --) ... and 3 more)
-+>ReadonlyArray : Symbol(ReadonlyArray)
- >GraphQLError : Symbol(GraphQLError, Decl(discriminateWithOptionalProperty3.ts, 2, 37))
- >coerced : Symbol(coerced, Decl(discriminateWithOptionalProperty3.ts, 17, 42))
- 
-@@ -66,12 +65,12 @@
- >ExecutionArgs : Symbol(ExecutionArgs, Decl(discriminateWithOptionalProperty3.ts, 6, 1))
- 
- ): ReadonlyArray<GraphQLError> | ExecutionContext {
-->ReadonlyArray : Symbol(ReadonlyArray, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2016.array.include.d.ts, --, --) ... and 3 more)
-+>ReadonlyArray : Symbol(ReadonlyArray)
- >GraphQLError : Symbol(GraphQLError, Decl(discriminateWithOptionalProperty3.ts, 2, 37))
+@@ -71,7 +71,7 @@
  >ExecutionContext : Symbol(ExecutionContext, Decl(discriminateWithOptionalProperty3.ts, 10, 1))
  
    const { variableValues: rawVariableValues } = args;
@@ -55,25 +36,3 @@
  >rawVariableValues : Symbol(rawVariableValues, Decl(discriminateWithOptionalProperty3.ts, 27, 9))
  >args : Symbol(args, Decl(discriminateWithOptionalProperty3.ts, 24, 38))
  
-@@ -86,17 +85,17 @@
- >errors : Symbol(errors, Decl(discriminateWithOptionalProperty3.ts, 17, 5), Decl(discriminateWithOptionalProperty3.ts, 18, 47))
- 
-     return coercedVariableValues.errors;
-->coercedVariableValues.errors : Symbol(errors, Decl(discriminateWithOptionalProperty3.ts, 17, 5))
-+>coercedVariableValues.errors : Symbol(errors, Decl(discriminateWithOptionalProperty3.ts, 17, 5), Decl(discriminateWithOptionalProperty3.ts, 18, 47))
- >coercedVariableValues : Symbol(coercedVariableValues, Decl(discriminateWithOptionalProperty3.ts, 29, 7))
-->errors : Symbol(errors, Decl(discriminateWithOptionalProperty3.ts, 17, 5))
-+>errors : Symbol(errors, Decl(discriminateWithOptionalProperty3.ts, 17, 5), Decl(discriminateWithOptionalProperty3.ts, 18, 47))
-   }
- 
-   return {
-     variableValues: coercedVariableValues.coerced,
- >variableValues : Symbol(variableValues, Decl(discriminateWithOptionalProperty3.ts, 35, 10))
-->coercedVariableValues.coerced : Symbol(coerced, Decl(discriminateWithOptionalProperty3.ts, 18, 5))
-+>coercedVariableValues.coerced : Symbol(coerced, Decl(discriminateWithOptionalProperty3.ts, 17, 42), Decl(discriminateWithOptionalProperty3.ts, 18, 5))
- >coercedVariableValues : Symbol(coercedVariableValues, Decl(discriminateWithOptionalProperty3.ts, 29, 7))
-->coerced : Symbol(coerced, Decl(discriminateWithOptionalProperty3.ts, 18, 5))
-+>coerced : Symbol(coerced, Decl(discriminateWithOptionalProperty3.ts, 17, 42), Decl(discriminateWithOptionalProperty3.ts, 18, 5))
- 
-   };
- }

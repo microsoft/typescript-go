@@ -1,12 +1,6 @@
 --- old.uniqueSymbolAllowsIndexInObjectWithIndexSignature.symbols
 +++ new.uniqueSymbolAllowsIndexInObjectWithIndexSignature.symbols
-@@ -4,13 +4,12 @@
- // https://github.com/Microsoft/TypeScript/issues/21962
- export const SYM = Symbol('a unique symbol');
- >SYM : Symbol(SYM, Decl(uniqueSymbolAllowsIndexInObjectWithIndexSignature.ts, 1, 12))
-->Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
- 
- export interface I {
+@@ -10,7 +10,7 @@
  >I : Symbol(I, Decl(uniqueSymbolAllowsIndexInObjectWithIndexSignature.ts, 1, 45))
  
    [SYM]: 'sym';

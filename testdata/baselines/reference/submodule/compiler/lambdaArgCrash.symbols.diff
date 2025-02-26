@@ -26,21 +26,23 @@
  >listener : Symbol(listener, Decl(lambdaArgCrash.ts, 12, 6))
  
  		 /// <summary>Registers a new listener for the event.</summary>
-@@ -27,11 +27,9 @@
+@@ -27,11 +27,11 @@
  		 /// <param name="listener">The callback function to register.</param>
  
  		 this._listeners.push(listener);
 ->this._listeners.push : Symbol(Array.push, Decl(lib.es5.d.ts, --, --))
 ->this._listeners : Symbol(Event._listeners, Decl(lambdaArgCrash.ts, 0, 13))
++>this._listeners.push : Symbol(push, Decl(lib.es5.d.ts, --, --))
 +>this._listeners : Symbol(_listeners, Decl(lambdaArgCrash.ts, 0, 13))
  >this : Symbol(Event, Decl(lambdaArgCrash.ts, 0, 0))
 ->_listeners : Symbol(Event._listeners, Decl(lambdaArgCrash.ts, 0, 13))
 ->push : Symbol(Array.push, Decl(lib.es5.d.ts, --, --))
 +>_listeners : Symbol(_listeners, Decl(lambdaArgCrash.ts, 0, 13))
++>push : Symbol(push, Decl(lib.es5.d.ts, --, --))
  >listener : Symbol(listener, Decl(lambdaArgCrash.ts, 12, 6))
  
  	}
-@@ -43,15 +41,15 @@
+@@ -43,15 +43,15 @@
  >Event : Symbol(Event, Decl(lambdaArgCrash.ts, 0, 0))
  
  	 add(listener: (items: ItemSet) => void ) {

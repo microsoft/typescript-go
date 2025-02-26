@@ -1,6 +1,6 @@
 --- old.usingDeclarationsWithObjectLiterals1.symbols
 +++ new.usingDeclarationsWithObjectLiterals1.symbols
-@@ -5,31 +5,22 @@
+@@ -5,31 +5,31 @@
  >MyDisposable : Symbol(MyDisposable, Decl(usingDeclarationsWithObjectLiterals1.ts, 0, 0))
  
    value: number;
@@ -10,9 +10,11 @@
    [Symbol.dispose](): void;
 ->[Symbol.dispose] : Symbol(MyDisposable[Symbol.dispose], Decl(usingDeclarationsWithObjectLiterals1.ts, 1, 16))
 ->Symbol.dispose : Symbol(SymbolConstructor.dispose, Decl(lib.esnext.disposable.d.ts, --, --))
-->Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2019.symbol.d.ts, --, --))
-->dispose : Symbol(SymbolConstructor.dispose, Decl(lib.esnext.disposable.d.ts, --, --))
 +>[Symbol.dispose] : Symbol([Symbol.dispose], Decl(usingDeclarationsWithObjectLiterals1.ts, 1, 16))
++>Symbol.dispose : Symbol(dispose, Decl(lib.esnext.disposable.d.ts, --, --))
+ >Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2019.symbol.d.ts, --, --))
+->dispose : Symbol(SymbolConstructor.dispose, Decl(lib.esnext.disposable.d.ts, --, --))
++>dispose : Symbol(dispose, Decl(lib.esnext.disposable.d.ts, --, --))
  }
  
  {
@@ -20,8 +22,10 @@
  >_ : Symbol(_, Decl(usingDeclarationsWithObjectLiterals1.ts, 6, 7))
  >[Symbol.dispose] : Symbol([Symbol.dispose], Decl(usingDeclarationsWithObjectLiterals1.ts, 6, 13))
 ->Symbol.dispose : Symbol(SymbolConstructor.dispose, Decl(lib.esnext.disposable.d.ts, --, --))
-->Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2019.symbol.d.ts, --, --))
++>Symbol.dispose : Symbol(dispose, Decl(lib.esnext.disposable.d.ts, --, --))
+ >Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2019.symbol.d.ts, --, --))
 ->dispose : Symbol(SymbolConstructor.dispose, Decl(lib.esnext.disposable.d.ts, --, --))
++>dispose : Symbol(dispose, Decl(lib.esnext.disposable.d.ts, --, --))
  }
  
  {
@@ -29,22 +33,26 @@
  >_ : Symbol(_, Decl(usingDeclarationsWithObjectLiterals1.ts, 10, 7))
  >[Symbol.dispose] : Symbol([Symbol.dispose], Decl(usingDeclarationsWithObjectLiterals1.ts, 10, 13))
 ->Symbol.dispose : Symbol(SymbolConstructor.dispose, Decl(lib.esnext.disposable.d.ts, --, --))
-->Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2019.symbol.d.ts, --, --))
++>Symbol.dispose : Symbol(dispose, Decl(lib.esnext.disposable.d.ts, --, --))
+ >Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2019.symbol.d.ts, --, --))
 ->dispose : Symbol(SymbolConstructor.dispose, Decl(lib.esnext.disposable.d.ts, --, --))
++>dispose : Symbol(dispose, Decl(lib.esnext.disposable.d.ts, --, --))
  >value : Symbol(value, Decl(usingDeclarationsWithObjectLiterals1.ts, 10, 36))
  }
  
-@@ -38,9 +29,6 @@
+@@ -38,9 +38,9 @@
  >_ : Symbol(_, Decl(usingDeclarationsWithObjectLiterals1.ts, 14, 7))
  >MyDisposable : Symbol(MyDisposable, Decl(usingDeclarationsWithObjectLiterals1.ts, 0, 0))
  >[Symbol.dispose] : Symbol([Symbol.dispose], Decl(usingDeclarationsWithObjectLiterals1.ts, 14, 27))
 ->Symbol.dispose : Symbol(SymbolConstructor.dispose, Decl(lib.esnext.disposable.d.ts, --, --))
-->Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2019.symbol.d.ts, --, --))
++>Symbol.dispose : Symbol(dispose, Decl(lib.esnext.disposable.d.ts, --, --))
+ >Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2019.symbol.d.ts, --, --))
 ->dispose : Symbol(SymbolConstructor.dispose, Decl(lib.esnext.disposable.d.ts, --, --))
++>dispose : Symbol(dispose, Decl(lib.esnext.disposable.d.ts, --, --))
  >value : Symbol(value, Decl(usingDeclarationsWithObjectLiterals1.ts, 14, 50))
  >extra : Symbol(extra, Decl(usingDeclarationsWithObjectLiterals1.ts, 14, 60))
  }
-@@ -49,14 +37,11 @@
+@@ -49,13 +49,13 @@
  >MyAsyncDisposable : Symbol(MyAsyncDisposable, Decl(usingDeclarationsWithObjectLiterals1.ts, 15, 1))
  
    value: number;
@@ -54,21 +62,23 @@
    [Symbol.asyncDispose](): Promise<void>;
 ->[Symbol.asyncDispose] : Symbol(MyAsyncDisposable[Symbol.asyncDispose], Decl(usingDeclarationsWithObjectLiterals1.ts, 18, 16))
 ->Symbol.asyncDispose : Symbol(SymbolConstructor.asyncDispose, Decl(lib.esnext.disposable.d.ts, --, --))
-->Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2019.symbol.d.ts, --, --))
-->asyncDispose : Symbol(SymbolConstructor.asyncDispose, Decl(lib.esnext.disposable.d.ts, --, --))
-->Promise : Symbol(Promise, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.promise.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2018.promise.d.ts, --, --))
 +>[Symbol.asyncDispose] : Symbol([Symbol.asyncDispose], Decl(usingDeclarationsWithObjectLiterals1.ts, 18, 16))
-+>Promise : Symbol(Promise)
++>Symbol.asyncDispose : Symbol(asyncDispose, Decl(lib.esnext.disposable.d.ts, --, --))
+ >Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2019.symbol.d.ts, --, --))
+->asyncDispose : Symbol(SymbolConstructor.asyncDispose, Decl(lib.esnext.disposable.d.ts, --, --))
++>asyncDispose : Symbol(asyncDispose, Decl(lib.esnext.disposable.d.ts, --, --))
+ >Promise : Symbol(Promise, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.promise.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2018.promise.d.ts, --, --))
  }
  
- async function f() {
-@@ -65,18 +50,12 @@
+@@ -65,18 +65,18 @@
      await using _ = { async [Symbol.asyncDispose]() {} };
  >_ : Symbol(_, Decl(usingDeclarationsWithObjectLiterals1.ts, 24, 15))
  >[Symbol.asyncDispose] : Symbol([Symbol.asyncDispose], Decl(usingDeclarationsWithObjectLiterals1.ts, 24, 21))
 ->Symbol.asyncDispose : Symbol(SymbolConstructor.asyncDispose, Decl(lib.esnext.disposable.d.ts, --, --))
-->Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2019.symbol.d.ts, --, --))
++>Symbol.asyncDispose : Symbol(asyncDispose, Decl(lib.esnext.disposable.d.ts, --, --))
+ >Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2019.symbol.d.ts, --, --))
 ->asyncDispose : Symbol(SymbolConstructor.asyncDispose, Decl(lib.esnext.disposable.d.ts, --, --))
++>asyncDispose : Symbol(asyncDispose, Decl(lib.esnext.disposable.d.ts, --, --))
    }
  
    {
@@ -76,18 +86,22 @@
  >_ : Symbol(_, Decl(usingDeclarationsWithObjectLiterals1.ts, 28, 15))
  >[Symbol.asyncDispose] : Symbol([Symbol.asyncDispose], Decl(usingDeclarationsWithObjectLiterals1.ts, 28, 21))
 ->Symbol.asyncDispose : Symbol(SymbolConstructor.asyncDispose, Decl(lib.esnext.disposable.d.ts, --, --))
-->Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2019.symbol.d.ts, --, --))
++>Symbol.asyncDispose : Symbol(asyncDispose, Decl(lib.esnext.disposable.d.ts, --, --))
+ >Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2019.symbol.d.ts, --, --))
 ->asyncDispose : Symbol(SymbolConstructor.asyncDispose, Decl(lib.esnext.disposable.d.ts, --, --))
++>asyncDispose : Symbol(asyncDispose, Decl(lib.esnext.disposable.d.ts, --, --))
  >value : Symbol(value, Decl(usingDeclarationsWithObjectLiterals1.ts, 28, 55))
    }
  
-@@ -87,9 +66,6 @@
+@@ -87,9 +87,9 @@
  
        async [Symbol.asyncDispose]() {},
  >[Symbol.asyncDispose] : Symbol([Symbol.asyncDispose], Decl(usingDeclarationsWithObjectLiterals1.ts, 32, 40))
 ->Symbol.asyncDispose : Symbol(SymbolConstructor.asyncDispose, Decl(lib.esnext.disposable.d.ts, --, --))
-->Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2019.symbol.d.ts, --, --))
++>Symbol.asyncDispose : Symbol(asyncDispose, Decl(lib.esnext.disposable.d.ts, --, --))
+ >Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2019.symbol.d.ts, --, --))
 ->asyncDispose : Symbol(SymbolConstructor.asyncDispose, Decl(lib.esnext.disposable.d.ts, --, --))
++>asyncDispose : Symbol(asyncDispose, Decl(lib.esnext.disposable.d.ts, --, --))
  
        value: 1,
  >value : Symbol(value, Decl(usingDeclarationsWithObjectLiterals1.ts, 33, 39))

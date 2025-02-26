@@ -1,16 +1,6 @@
 --- old.noUnusedLocals_writeOnlyProperty_dynamicNames.symbols
 +++ new.noUnusedLocals_writeOnlyProperty_dynamicNames.symbols
-@@ -3,25 +3,23 @@
- === noUnusedLocals_writeOnlyProperty_dynamicNames.ts ===
- const x = Symbol("x");
- >x : Symbol(x, Decl(noUnusedLocals_writeOnlyProperty_dynamicNames.ts, 0, 5))
-->Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
- 
- const y = Symbol("y");
- >y : Symbol(y, Decl(noUnusedLocals_writeOnlyProperty_dynamicNames.ts, 1, 5))
-->Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
- 
- class C {
+@@ -13,15 +13,15 @@
  >C : Symbol(C, Decl(noUnusedLocals_writeOnlyProperty_dynamicNames.ts, 1, 22))
  
      private [x]: number;

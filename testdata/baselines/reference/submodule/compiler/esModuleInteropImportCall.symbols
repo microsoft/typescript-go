@@ -12,9 +12,13 @@ export = foo;
 
 === index.ts ===
 import("./foo").then(f => {
+>import("./foo").then : Symbol(then, Decl(lib.es5.d.ts, --, --))
+>then : Symbol(then, Decl(lib.es5.d.ts, --, --))
 >f : Symbol(f, Decl(index.ts, 0, 21))
 
     f.default;
+>f.default : Symbol(default)
 >f : Symbol(f, Decl(index.ts, 0, 21))
+>default : Symbol(default)
 
 });

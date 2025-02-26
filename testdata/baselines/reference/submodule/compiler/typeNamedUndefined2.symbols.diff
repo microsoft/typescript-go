@@ -1,14 +1,6 @@
 --- old.typeNamedUndefined2.symbols
 +++ new.typeNamedUndefined2.symbols
-@@ -9,7 +9,6 @@
- 
-         export const s = Symbol();
- >s : Symbol(s, Decl(typeNamedUndefined2.ts, 2, 20))
-->Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2019.symbol.d.ts, --, --))
- 
-         export type undefined = typeof s;
- >undefined : Symbol(undefined, Decl(typeNamedUndefined2.ts, 2, 34))
-@@ -29,8 +28,8 @@
+@@ -29,8 +29,8 @@
  >x : Symbol(x, Decl(typeNamedUndefined2.ts, 8, 1))
  >p : Symbol(p, Decl(typeNamedUndefined2.ts, 10, 18))
  >ns : Symbol(ns, Decl(typeNamedUndefined2.ts, 0, 0))
@@ -19,11 +11,3 @@
  
      return p;
  >p : Symbol(p, Decl(typeNamedUndefined2.ts, 10, 18))
-@@ -41,7 +40,6 @@
- 
-     export const s = Symbol();
- >s : Symbol(s, Decl(typeNamedUndefined2.ts, 15, 16))
-->Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2019.symbol.d.ts, --, --))
- 
-     export type undefined = typeof s;
- >undefined : Symbol(undefined, Decl(typeNamedUndefined2.ts, 15, 30))

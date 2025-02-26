@@ -9,6 +9,7 @@ export namespace ns {
 
         export const s = Symbol();
 >s : Symbol(s, Decl(typeNamedUndefined2.ts, 2, 20))
+>Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2019.symbol.d.ts, --, --))
 
         export type undefined = typeof s;
 >undefined : Symbol(undefined, Decl(typeNamedUndefined2.ts, 2, 34))
@@ -40,6 +41,7 @@ export namespace undefined {
 
     export const s = Symbol();
 >s : Symbol(s, Decl(typeNamedUndefined2.ts, 15, 16))
+>Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2019.symbol.d.ts, --, --))
 
     export type undefined = typeof s;
 >undefined : Symbol(undefined, Decl(typeNamedUndefined2.ts, 15, 30))
